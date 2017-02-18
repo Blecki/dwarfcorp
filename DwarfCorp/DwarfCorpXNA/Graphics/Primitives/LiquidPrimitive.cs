@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -23,32 +21,67 @@ namespace DwarfCorp
         // Easy successor lookup.
         private static Vector3[] faceDeltas = new Vector3[6];
 
-        // Lookup to see which faces we are going to draw.
-        private static bool[] drawFace = new bool[6];
-
-        // A list of unattached voxels we can change to the neighbors of the voxel who's faces we are drawing.
-        private static List<Voxel> neighbors;
-
-        // A list of which voxels are valid in the neighbors list.  We can't just set a neighbor to null as we reuse them so we use this.
-        // Does not need to be cleared between sets of face drawing as retrievedNeighbors stops us from using a stale value.
-        private static bool[] validNeighbors;
-
-        // A list of which neighbors in the neighbors list have been filled in with the current Voxel's neighbors.
-        // This does need to be cleared between drawing the faces on a Voxel.
-        private static bool[] retrievedNeighbors;
-
-        // Stored positions for the current Voxel's vertexes.  Lets us reuse the stored value when another face uses the same position.
-        private static Vector3[] vertexPositions;
-
-        // Stored foaminess value for the current Voxel's vertexes.
-        private static float[] vertexFoaminess;
-
-        // A flag to show if a particular vertex has already been calculated.  Must be cleared when drawing faces on a new Voxel position.
-        private static bool[] vertexCalculated;
-
         // A flag to avoid reinitializing the static values.
         private static bool StaticsInitialized = false;
 
+        private static List<LiquidRebuildCache> caches;
+
+        private class LiquidRebuildCache
+        {
+            public LiquidRebuildCache()
+            {
+                int euclidianNeighborCount = 27;
+                neighbors = new List<Voxel>(euclidianNeighborCount);
+                validNeighbors = new bool[euclidianNeighborCount];
+                retrievedNeighbors = new bool[euclidianNeighborCount];
+
+                for (int i = 0; i < 27; i++) neighbors.Add(new Voxel());
+
+                int vertexCount = (int)VoxelVertex.Count;
+                vertexCalculated = new bool[vertexCount];
+                vertexFoaminess = new float[vertexCount];
+                vertexPositions = new Vector3[vertexCount];
+            }
+
+            public void Reset()
+            {
+                // Clear the retrieved list for this run.
+                for (int i = 0; i < retrievedNeighbors.Length; i++)
+                    retrievedNeighbors[i] = false;
+
+                for (int i = 0; i < vertexCalculated.Length; i++)
+                    vertexCalculated[i] = false;
+            }
+
+            // Lookup to see which faces we are going to draw.
+            internal bool[] drawFace = new bool[6];
+
+            // A list of unattached voxels we can change to the neighbors of the voxel who's faces we are drawing.
+            internal List<Voxel> neighbors;
+
+            // A list of which voxels are valid in the neighbors list.  We can't just set a neighbor to null as we reuse them so we use this.
+            // Does not need to be cleared between sets of face drawing as retrievedNeighbors stops us from using a stale value.
+            internal bool[] validNeighbors;
+
+            // A list of which neighbors in the neighbors list have been filled in with the current Voxel's neighbors.
+            // This does need to be cleared between drawing the faces on a Voxel.
+            internal bool[] retrievedNeighbors;
+
+            // Stored positions for the current Voxel's vertexes.  Lets us reuse the stored value when another face uses the same position.
+            internal Vector3[] vertexPositions;
+
+            // Stored foaminess value for the current Voxel's vertexes.
+            internal float[] vertexFoaminess;
+
+            // A flag to show if a particular vertex has already been calculated.  Must be cleared when drawing faces on a new Voxel position.
+            internal bool[] vertexCalculated;
+
+            // A flag to show if the cache is in use at that moment.
+            internal bool inUse;
+        }
+
+        [ThreadStatic]
+        private static LiquidRebuildCache cache;
 
         public LiquidPrimitive(LiquidType type) :
             base()
@@ -68,17 +101,7 @@ namespace DwarfCorp
             faceDeltas[(int)BoxFace.Top] = new Vector3(0, 1, 0);
             faceDeltas[(int)BoxFace.Bottom] = new Vector3(0, -1, 0);
 
-            int euclidianNeighborCount = 27;
-            neighbors = new List<Voxel>(euclidianNeighborCount);
-            validNeighbors = new bool[euclidianNeighborCount];
-            retrievedNeighbors = new bool[euclidianNeighborCount];
-
-            for (int i = 0; i < 27; i++) neighbors.Add(new Voxel());
-
-            int vertexCount = (int)VoxelVertex.Count;
-            vertexCalculated = new bool[vertexCount];
-            vertexFoaminess = new float[vertexCount];
-            vertexPositions = new Vector3[vertexCount];
+            caches = new List<LiquidRebuildCache>();
 
             StaticsInitialized = true;
         }
@@ -95,16 +118,39 @@ namespace DwarfCorp
                 if (lp != null) lps[(int)lp.LiqType] = lp;
             }
 
-            // We check all parts of the array before setting any to avoid somehow setting a few then leaving before we can unset them.
-            for (int i = 0; i < lps.Length; i++)
+            // We are going to lock around the IsBuilding check/set to avoid the situation where two threads could both pass through
+            // if they both checked IsBuilding at the same time before either of them set IsBuilding.
+            lock (caches)
             {
-                if (lps[i] != null && lps[i].IsBuilding) return;
-            }
+                // We check all parts of the array before setting any to avoid somehow setting a few then leaving before we can unset them.
+                for (int i = 0; i < lps.Length; i++)
+                {
+                    if (lps[i] != null && lps[i].IsBuilding) return;
+                }
 
-            // Now we know we are safe so we can set IsBuilding.
-            for (int i = 0; i < lps.Length; i++)
-            {
-                if (lps[i] != null) lps[i].IsBuilding = true;
+                // Now we know we are safe so we can set IsBuilding.
+                for (int i = 0; i < lps.Length; i++)
+                {
+                    if (lps[i] != null) lps[i].IsBuilding = true;
+                }
+
+                // Now we have to get a valid cache object.
+                bool cacheSet = false;
+                for (int i = 0; i < caches.Count; i++)
+                {
+                    if (!caches[i].inUse)
+                    {
+                        cache = caches[i];
+                        cache.inUse = true;
+                        cacheSet = true;
+                    }
+                }
+                if (!cacheSet)
+                {
+                    cache = new LiquidRebuildCache();
+                    cache.inUse = true;
+                    caches.Add(cache);
+                }
             }
 
             LiquidType curLiqType = LiquidType.None;
@@ -165,7 +211,7 @@ namespace DwarfCorp
                                     {
                                         if (!(vox.WaterLevel == 0 || y == (int)chunk.Manager.ChunkData.MaxViewingLevel))
                                         {
-                                            drawFace[(int)face] = false;
+                                            cache.drawFace[(int)face] = false;
                                             continue;
                                         }
                                     }
@@ -173,13 +219,13 @@ namespace DwarfCorp
                                     {
                                         if (vox.WaterLevel != 0 || !vox.IsEmpty)
                                         {
-                                            drawFace[(int)face] = false;
+                                            cache.drawFace[(int)face] = false;
                                             continue;
                                         }
                                     }
                                 }
 
-                                drawFace[(int)face] = true;
+                                cache.drawFace[(int)face] = true;
                                 facesToDraw++;
                             }
 
@@ -256,6 +302,9 @@ namespace DwarfCorp
                 }
                 updatedPrimative.IsBuilding = false;
             }
+
+            cache.inUse = false;
+            cache = null;
         }
 
         private static void CreateWaterFaces(Voxel voxel,
@@ -264,25 +313,17 @@ namespace DwarfCorp
                                             ExtendedVertex[] vertices,
                                             int startVertex)
         {
-            // Clear the retrieved list for this run.
-            for (int i = 0; i < retrievedNeighbors.Length; i++)
-                retrievedNeighbors[i] = false;
-
-            for (int i = 0; i < vertexCalculated.Length; i++)
-                vertexCalculated[i] = false;
-
-            // TODO: Remove this as it's for testing.
-            //for (int i = 0; i < validNeighbors.Count; i++)
-            //    validNeighbors[i] = false;
+            // Reset the appropriate parts of the cache.
+            cache.Reset();
 
             // These are reused for every face.
             Vector3 origin = chunk.Origin + new Vector3(x, y, z);
             int index = chunk.Data.IndexAt(x, y, z);
             float centerWaterlevel = chunk.Data.Water[chunk.Data.IndexAt(x, y, z)].WaterLevel;
 
-            for (int faces = 0; faces < drawFace.Length; faces++)
+            for (int faces = 0; faces < cache.drawFace.Length; faces++)
             {
-                if (!drawFace[faces]) continue;
+                if (!cache.drawFace[faces]) continue;
                 BoxFace face = (BoxFace)faces;
 
                 // Let's get the vertex/index positions for the current face.
@@ -305,7 +346,7 @@ namespace DwarfCorp
                     // We are going to have to reuse some vertices when drawing a single so we'll store the position/foaminess
                     // for quick lookup when we find one of those reused ones.
                     // When drawing multiple faces the Vertex overlap gets bigger, which is a bonus.
-                    if (!vertexCalculated[(int)currentVertex])
+                    if (!cache.vertexCalculated[(int)currentVertex])
                     {
                         float count = 1.0f;
                         float emptyNeighbors = 0.0f;
@@ -322,17 +363,17 @@ namespace DwarfCorp
 
                             // If we haven't gotten this Voxel yet then retrieve it.
                             // This allows us to only get a particular voxel once a function call instead of once per vertexCount/per face.
-                            if (!retrievedNeighbors[key])
+                            if (!cache.retrievedNeighbors[key])
                             {
-                                Voxel neighbor = neighbors[key];
-                                validNeighbors[key] = voxel.GetNeighborBySuccessor(succ, ref neighbor, false);
-                                retrievedNeighbors[key] = true;
+                                Voxel neighbor = cache.neighbors[key];
+                                cache.validNeighbors[key] = voxel.GetNeighborBySuccessor(succ, ref neighbor, false);
+                                cache.retrievedNeighbors[key] = true;
                             }
                             // Only continue if it's a valid (non-null) voxel.
-                            if (!validNeighbors[key]) continue;
+                            if (!cache.validNeighbors[key]) continue;
 
                             // Now actually do the math.
-                            Voxel vox = neighbors[key];
+                            Voxel vox = cache.neighbors[key];
                             averageWaterLevel += vox.WaterLevel;
                             count++;
                             if (vox.WaterLevel < 1) emptyNeighbors++;
@@ -350,15 +391,15 @@ namespace DwarfCorp
                         pos += origin;
 
                         // Store the vertex information for future use when we need it again on this or another face.
-                        vertexCalculated[(int)currentVertex] = true;
-                        vertexFoaminess[(int)currentVertex] = foaminess;
-                        vertexPositions[(int)currentVertex] = pos;
+                        cache.vertexCalculated[(int)currentVertex] = true;
+                        cache.vertexFoaminess[(int)currentVertex] = foaminess;
+                        cache.vertexPositions[(int)currentVertex] = pos;
                     }
                     else
                     {
                         // We've already calculated this one.  Time for a cheap grab from the lookup.
-                        foaminess = vertexFoaminess[(int)currentVertex];
-                        pos = vertexPositions[(int)currentVertex];
+                        foaminess = cache.vertexFoaminess[(int)currentVertex];
+                        pos = cache.vertexPositions[(int)currentVertex];
                     }
 
                     switch (face)
