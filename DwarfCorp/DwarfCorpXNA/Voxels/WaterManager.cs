@@ -42,9 +42,10 @@ namespace DwarfCorp
 
     public enum LiquidType
     {
-        None,
+        None = 0,
         Water,
-        Lava
+        Lava,
+        Count
     }
 
     /// <summary>

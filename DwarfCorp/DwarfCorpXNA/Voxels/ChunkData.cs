@@ -463,22 +463,35 @@ namespace DwarfCorp
 
         public void RecomputeNeighbors()
         {
-            foreach(VoxelChunk chunk in ChunkMap.Select(chunks => chunks.Value))
+            foreach (VoxelChunk chunk in ChunkMap.Select(chunks => chunks.Value))
             {
                 chunk.Neighbors.Clear();
+                chunk.EuclidianNeighbors.Clear();
             }
 
-            foreach(KeyValuePair<Point3, VoxelChunk> chunks in ChunkMap)
+            foreach (KeyValuePair<Point3, VoxelChunk> chunks in ChunkMap)
             {
                 VoxelChunk chunk = chunks.Value;
-                List<VoxelChunk> adjacents = GetAdjacentChunks(chunk);
-                foreach(VoxelChunk c in adjacents)
+
+                Point3 successor = new Point3(0, 0, 0);
+                for (successor.X = -1; successor.X < 2; successor.X++)
                 {
-                    if(!c.Neighbors.ContainsKey(chunk.ID) && chunk != c)
+                    for (successor.Z = -1; successor.Z < 2; successor.Z++)
                     {
-                        c.Neighbors[chunk.ID] = (chunk);
+                        for (successor.Y = -1; successor.Y < 2; successor.Y++)
+                        {
+                            Point3 sideChunkID = chunk.ID + successor;
+                            VoxelChunk sideChunk;
+                            ChunkMap.TryGetValue(sideChunkID, out sideChunk);
+                            if (successor.Y == 0 && sideChunk != null)
+                            {
+                                if (!sideChunk.Neighbors.ContainsKey(chunk.ID) && chunk != sideChunk)
+                                    chunk.Neighbors[chunk.ID] = chunk;
+                                chunk.Neighbors[sideChunkID] = sideChunk;
+                            }
+                            chunk.EuclidianNeighbors[VoxelChunk.SuccessorToEuclidianLookupKey(successor)] = sideChunk;
+                        }
                     }
-                    chunk.Neighbors[c.ID] = c;
                 }
             }
         }
@@ -517,38 +530,16 @@ namespace DwarfCorp
 
         public bool GetVoxel(VoxelChunk checkFirst, Vector3 worldLocation, ref Voxel newReference)
         {
-            while(true)
+            if (checkFirst != null)
             {
-                if(checkFirst != null)
-                {
-                    if(checkFirst.IsWorldLocationValid(worldLocation))
-                    {
-                        if(!checkFirst.GetVoxelAtWorldLocation(worldLocation, ref newReference))
-                        {
-                            return false;
-                        }
-
-                        Vector3 grid = checkFirst.WorldToGrid(worldLocation);
-                        newReference.Chunk = checkFirst;
-                        newReference.GridPosition = new Vector3((int) grid.X, (int) grid.Y, (int) grid.Z);
-
-                        return true;
-                    }
-
-                    checkFirst = null;
-                    continue;
-                }
-
-                VoxelChunk chunk = GetVoxelChunkAtWorldLocation(worldLocation);
-
-                if (chunk == null)
-                {
-                    return false;
-                }
-
-
-                return chunk.GetVoxelAtWorldLocation(worldLocation, ref newReference);
+                if (checkFirst.GetVoxelAtWorldLocation(worldLocation, ref newReference)) return true;
             }
+
+            VoxelChunk chunk = GetVoxelChunkAtWorldLocation(worldLocation);
+
+            if (chunk == null) return false;
+
+            return chunk.GetVoxelAtValidWorldLocation(worldLocation, ref newReference);
         }
 
         public Point3 GetChunkID(Vector3 origin)
@@ -690,10 +681,11 @@ namespace DwarfCorp
 
         public void LoadFromFile(GameFile gameFile, Action<String> SetLoadingMessage)
         {
-            foreach(VoxelChunk chunk in gameFile.Data.ChunkData.Select(file => file.ToChunk(chunkManager)))
+            foreach (VoxelChunk chunk in gameFile.Data.ChunkData.Select(file => file.ToChunk(chunkManager)))
             {
                 AddChunk(chunk);
             }
+            RecomputeNeighbors();
             chunkManager.UpdateBounds();
             chunkManager.UpdateRebuildList();
             chunkManager.CreateGraphics(SetLoadingMessage, this);

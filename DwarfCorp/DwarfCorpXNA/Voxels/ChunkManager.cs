@@ -884,6 +884,7 @@ namespace DwarfCorp
                 }
             }
             RecalculateBounds();
+            chunkData.RecomputeNeighbors();
             SetLoadingMessage("Generating Ores...");
 
             GenerateOres();
@@ -1124,9 +1125,6 @@ namespace DwarfCorp
                 chunk.RebuildPending = false;
                 chunk.RebuildLiquidPending = false;
             }
-
-            chunkData.RecomputeNeighbors();
-
 
             SetLoadingMessage("Cleaning Up.");
         }
