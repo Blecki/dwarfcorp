@@ -162,45 +162,17 @@ namespace DwarfCorp
         public void AddObject(IBoundedObject bounded, CollisionType type)
         {
             if(type == CollisionType.None)
-            {
                 return;
-            }
-            BoundingBox box = bounded.GetBoundingBox();
-            Point3 minPoint = new Point3(MathFunctions.FloorInt(box.Min.X), MathFunctions.FloorInt(box.Min.Y), MathFunctions.FloorInt(box.Min.Z));
-            Point3 maxPoint = new Point3(MathFunctions.FloorInt(box.Max.X), MathFunctions.FloorInt(box.Max.Y), MathFunctions.FloorInt(box.Max.Z));
-            Point3 iter = new Point3();
-            for (iter.X = minPoint.X; iter.X <= maxPoint.X; iter.X++)
-            {
-                for (iter.Y = minPoint.Y; iter.Y <= maxPoint.Y; iter.Y++)
-                {
-                    for (iter.Z = minPoint.Z; iter.Z <= maxPoint.Z; iter.Z++)
-                    {
-                        Hashes[type].AddItem(bounded, iter);
-                    }
-                }
-            }
 
+            Hashes[type].AddItem(bounded, new IntegerBoundingBox(bounded.GetBoundingBox()));
         }
 
         public void RemoveObject(IBoundedObject bounded, BoundingBox oldLocation, CollisionType type)
         {
             if(type == CollisionType.None)
-            {
                 return;
-            }
-            Point3 minPoint = new Point3(MathFunctions.FloorInt(oldLocation.Min.X), MathFunctions.FloorInt(oldLocation.Min.Y), MathFunctions.FloorInt(oldLocation.Min.Z));
-            Point3 maxPoint = new Point3(MathFunctions.FloorInt(oldLocation.Max.X), MathFunctions.FloorInt(oldLocation.Max.Y), MathFunctions.FloorInt(oldLocation.Max.Z));
-            Point3 iter = new Point3();
-            for (iter.X = minPoint.X; iter.X <= maxPoint.X; iter.X++)
-            {
-                for (iter.Y = minPoint.Y; iter.Y <= maxPoint.Y; iter.Y++)
-                {
-                    for (iter.Z = minPoint.Z; iter.Z <= maxPoint.Z; iter.Z++)
-                    {
-                        Hashes[type].RemoveItem(bounded, iter);
-                    }
-                }
-            }
+
+            Hashes[type].RemoveItem(bounded, new IntegerBoundingBox(oldLocation));
         }
 
         public List<IBoundedObject> GetObjectsAt(Voxel voxel, CollisionType queryType)

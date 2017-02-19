@@ -50,11 +50,12 @@ namespace DwarfCorp
         }
     }
 
+    // Todo: Change to take object bounding boxes, not points.
     public class IntegerOctTreeNode<T>
     {
         public IntegerBoundingBox Bounds;
         public IntegerOctTreeNode<T>[] Children;
-        public List<Tuple<T, Point3>> Items = new List<Tuple<T, Point3>>();
+        public List<Tuple<T, IntegerBoundingBox>> Items = new List<Tuple<T, IntegerBoundingBox>>();
         private Point3 Mid;
 
         public IntegerOctTreeNode(Vector3 Min, Vector3 Max) : this(new Point3((int)Math.Floor(Min.X), (int)Math.Floor(Min.Y), (int)Math.Floor(Min.Z)), new Point3((int)Math.Ceiling(Max.X), (int)Math.Ceiling(Max.Y), (int)Math.Ceiling(Max.Z)))
@@ -101,33 +102,28 @@ namespace DwarfCorp
             };
         }
 
-        private int Bin(Point3 P)
-        {
-            var x = (P.X < Mid.X) ? 0 : 1;
-            var y = (P.Y < Mid.Y) ? 0 : 2;
-            var z = (P.Z < Mid.Z) ? 0 : 4;
-            return x + y + z;
-        }
-
-        public void AddItem(T Item, Point3 Point)
+        public void AddItem(T Item, IntegerBoundingBox Point)
         {
             AddToTree(Tuple.Create(Item, Point), 8);
         }
 
-        private void AddToTree(Tuple<T, Point3> Item, int SubdivideThreshold)
+        private void AddToTree(Tuple<T, IntegerBoundingBox> Item, int SubdivideThreshold)
         {
-            if (!Bounds.Contains(Item.Item2)) return;
+            if (!Bounds.Intersects(Item.Item2)) return;
 
             if (Children != null)
             {
-                Children[Bin(Item.Item2)].AddToTree(Item, SubdivideThreshold);
+                for (var i = 0; i < 8; ++i)
+                    Children[i].AddToTree(Item, SubdivideThreshold);
             }
             else if (Items.Count == SubdivideThreshold && Bounds.Width > 8)
             {
                 Subdivide();
                 for (var i = 0; i < Items.Count; ++i)
-                    Children[Bin(Items[i].Item2)].AddToTree(Items[i], SubdivideThreshold);
-                Children[Bin(Item.Item2)].AddToTree(Item, SubdivideThreshold);
+                    for (var c = 0; c < 8; ++c)
+                        Children[c].AddToTree(Items[i], SubdivideThreshold);
+                for (var c = 0; c < 8; ++c)
+                    Children[c].AddToTree(Item, SubdivideThreshold);
                 Items.Clear();
             }
             else
@@ -136,14 +132,14 @@ namespace DwarfCorp
             }
         }
 
-        public void RemoveItem(T Item, Point3 Point)
+        public void RemoveItem(T Item, IntegerBoundingBox Point)
         {
             RemoveFromTree(Tuple.Create(Item, Point));
         }
 
-        private void RemoveFromTree(Tuple<T, Point3> Item)
+        private void RemoveFromTree(Tuple<T, IntegerBoundingBox> Item)
         {
-            if (!Bounds.Contains(Item.Item2)) return;
+            if (!Bounds.Intersects(Item.Item2)) return;
             if (Children == null)
                 Items.RemoveAll(t => Object.ReferenceEquals(t.Item1, Item.Item1));
             else
@@ -158,9 +154,7 @@ namespace DwarfCorp
                 if (Children == null)
                 {
                     for (var i = 0; i < Items.Count; ++i)
-                        if (Point.X == Items[i].Item2.X &&
-                            Point.Y == Items[i].Item2.Y &&
-                            Point.Z == Items[i].Item2.Z)
+                        if (Items[i].Item2.Contains(Point))
                             Results.Add(Items[i].Item1);
                 }
                 else
@@ -179,13 +173,8 @@ namespace DwarfCorp
                 if (Children == null)
                 {
                     for (var i = 0; i < Items.Count; ++i)
-                    {
-                        var P = Items[i].Item2;
-                        if (P.X >= SearchBounds.Min.X && P.X <= SearchBounds.Max.X &&
-                            P.Y >= SearchBounds.Min.Y && P.Y <= SearchBounds.Max.Y &&
-                            P.Z >= SearchBounds.Min.Z && P.Z <= SearchBounds.Max.Z)
+                        if (Items[i].Item2.Intersects(SearchBounds))
                             results.Add(Items[i].Item1);
-                    }
                 }
                 else
                 {
