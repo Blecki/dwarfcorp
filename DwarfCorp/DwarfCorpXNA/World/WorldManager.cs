@@ -355,6 +355,18 @@ namespace DwarfCorp
 #endif
             {
                 SetLoadingMessage("Initializing ...");
+
+                if (Natives == null)
+                {
+                    FactionLibrary library = new FactionLibrary();
+                    library.Initialize(this, CompanyMakerState.CompanyInformation);
+                    Natives = new List<Faction>();
+                    for (int i = 0; i < 10; i++)
+                    {
+                        Natives.Add(library.GenerateFaction(this, i, 10));
+                    }
+
+                }
                 // Todo: How is this initialized by save games?
                 InitializeStaticData(CompanyMakerState.CompanyInformation, Natives);
 
@@ -458,6 +470,12 @@ namespace DwarfCorp
         /// </summary>
         public void InitializeStaticData(CompanyInformation CompanyInformation, List<Faction> natives)
         {
+            foreach (Faction faction in natives)
+            {
+                faction.World = this;
+                faction.WallBuilder.World = this;
+            }
+
             ComponentManager = new ComponentManager(this, CompanyInformation, natives);
             ComponentManager.RootComponent = new Body(ComponentManager, "root", null, Matrix.Identity, Vector3.Zero,
                 Vector3.Zero, false);
@@ -932,7 +950,7 @@ namespace DwarfCorp
 
             // Actually create the BuildRoom.
             BalloonPort toBuild = new BalloonPort(PlayerFaction, designations, this);
-            BuildRoomOrder buildDes = new BuildRoomOrder(toBuild, roomDes.Faction, roomDes.Faction.World);
+            BuildRoomOrder buildDes = new BuildRoomOrder(toBuild, roomDes.Faction, this);
             buildDes.Build(true);
             roomDes.DesignatedRooms.Add(toBuild);
             return toBuild;

@@ -861,7 +861,7 @@ namespace DwarfCorp
 
             Color[] worldData = new Color[size * size];
             WorldGeneratorState.worldMap = new Texture2D(graphics, size, size);
-            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap, DwarfGame.World.SeaLevel);
+            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap, 0.17f);
             Overworld.Name = "hills" + MathFunctions.Random.Next(9999);
         }
 
@@ -891,7 +891,7 @@ namespace DwarfCorp
 
             Color[] worldData = new Color[size * size];
             WorldGeneratorState.worldMap = new Texture2D(graphicsDevice, size, size);
-            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap, DwarfGame.World.SeaLevel);
+            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap, 0.17f);
             Overworld.Name = "Cliffs_" + MathFunctions.Random.Next(9999);
         }
 
@@ -916,7 +916,7 @@ namespace DwarfCorp
 
             Color[] worldData = new Color[size * size];
             WorldGeneratorState.worldMap = new Texture2D(graphics, size, size);
-            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap, DwarfGame.World.SeaLevel);
+            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap, 0.17f);
             Overworld.Name = "flat_" + MathFunctions.Random.Next(9999);
         }
 

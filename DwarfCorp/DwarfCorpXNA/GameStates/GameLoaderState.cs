@@ -261,7 +261,7 @@ namespace DwarfCorp.GameStates
             back.OnClicked += back_OnClicked;
         }
 
-        public void LoadDescriptor(GameLoadDescriptor descriptor, WorldManager world)
+        public void LoadDescriptor(GameLoadDescriptor descriptor)
         {
             lock (descriptor.Lock)
             {
@@ -338,7 +338,7 @@ namespace DwarfCorp.GameStates
 
         void loadButton_OnClicked()
         {
-            LoadDescriptor(SelectedDescriptor, DwarfGame.World);
+            LoadDescriptor(SelectedDescriptor);
         }
 
         private void worldPicture_OnClicked(int picture)

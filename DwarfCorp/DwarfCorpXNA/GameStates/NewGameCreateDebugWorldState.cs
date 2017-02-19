@@ -97,21 +97,13 @@ namespace DwarfCorp.GameStates
                 {
                     Overworld.CreateCliffsLand(Game.GraphicsDevice);
                     StateManager.ClearState();
-                    FactionLibrary library = new FactionLibrary();
-                    library.Initialize(DwarfGame.World, new CompanyInformation());
-                    List<Faction> natives = new List<Faction>();
-                    for (int i = 0; i < 10; i++)
-                    {
-                        natives.Add(library.GenerateFaction(DwarfGame.World, i, 10));
-                    }
                     WorldSettings settings = new WorldSettings()
                     {
                         ExistingFile = null,
                         ColonySize = new Point3(8, 1, 8),
                         WorldScale = 2.0f,
                         WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / 2.0f,
-                            Overworld.Map.GetLength(1) / 2.0f) * 0.5f,
-                            Natives = natives
+                            Overworld.Map.GetLength(1) / 2.0f) * 0.5f
                     };
                     StateManager.PushState(new LoadState(Game, StateManager, settings));
                 });

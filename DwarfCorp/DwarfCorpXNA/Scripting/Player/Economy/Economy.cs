@@ -102,7 +102,8 @@ namespace DwarfCorp
                 Company.GenerateRandom(1800, 60.0f, Company.Sector.Finance)
             };
 
-            WorldManager.Time.NewDay += Time_NewDay;
+            if (worldManager != null)
+             WorldManager.Time.NewDay += Time_NewDay;
         }
 
         [OnDeserialized]

@@ -67,6 +67,7 @@ namespace DwarfCorp
         public WorldSetupState(DwarfGame game, GameStateManager stateManager, WorldSettings settings) :
             base(game, "WorldSetupState", stateManager)
         {
+            Settings = settings;
             IsInitialized = false;
             if (settings == null)
             {
