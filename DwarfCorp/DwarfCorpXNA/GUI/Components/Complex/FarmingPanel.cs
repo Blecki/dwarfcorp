@@ -91,7 +91,7 @@ namespace DwarfCorp
             }
             else
             {
-                World.ShowTooltip("Nothing to plant.");
+                World.ShowToolPopup("Nothing to plant.");
             }
         }
 

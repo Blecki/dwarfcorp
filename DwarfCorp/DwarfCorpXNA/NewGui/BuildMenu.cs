@@ -110,7 +110,7 @@ namespace DwarfCorp.NewGui
                             Master.Faction.WallBuilder.CurrentVoxelType = null;
                             Master.Faction.CraftBuilder.IsEnabled = false;
                             Master.CurrentToolMode = GameMaster.ToolMode.Build;
-                            World.ShowTooltip("Click and drag to build " + item.Name);
+                            World.ShowToolPopup("Click and drag to build " + item.Name);
                             this.Close();
                         };
                     });
@@ -151,7 +151,7 @@ namespace DwarfCorp.NewGui
                                 Master.Faction.WallBuilder.CurrentVoxelType = item.Data as VoxelType;
                                 Master.Faction.CraftBuilder.IsEnabled = false;
                                 Master.CurrentToolMode = GameMaster.ToolMode.Build;
-                                World.ShowTooltip("Click and drag to build " + item.Name + " wall.");
+                                World.ShowToolPopup("Click and drag to build " + item.Name + " wall.");
                                 this.Close();
                             };
                     });

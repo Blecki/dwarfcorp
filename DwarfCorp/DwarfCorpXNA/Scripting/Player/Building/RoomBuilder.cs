@@ -347,7 +347,7 @@ namespace DwarfCorp
             {
                 if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Build).Count == 0)
                 {
-                    World.ShowTooltip("None of the selected units can build rooms.");
+                    World.ShowToolPopup("None of the selected units can build rooms.");
                 }
                 else if (CurrentRoomData.Verify(refs, Faction, World))
                 {
@@ -371,7 +371,7 @@ namespace DwarfCorp
                         tip += "\n";
                     }
 
-                    World.ShowTooltip("Release to build here.");
+                    World.ShowToolPopup("Release to build here.");
 
                     displayObjects = RoomLibrary.GenerateRoomComponentsTemplate(CurrentRoomData, refs, Faction.Components, 
                         World.ChunkManager.Content, World.ChunkManager.Graphics);
@@ -404,7 +404,7 @@ namespace DwarfCorp
             {
                 if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Build).Count == 0)
                 {
-                    World.ShowTooltip("None of the selected units can build rooms.");
+                    World.ShowToolPopup("None of the selected units can build rooms.");
                 }
                 else if (CurrentRoomData.Verify(refs, Faction, World))
                 {
@@ -438,7 +438,7 @@ namespace DwarfCorp
 
                     World.NewGui.ShowDialog(new NewGui.Confirm
                         {
-                            Text = "Do you want to destroy this " + Drawer2D.WrapColor(existingRoom.RoomData.Name, Color.DarkRed) + "?",
+                            Text = "Do you want to destroy this" + existingRoom.RoomData.Name + "?",
                             OnClose = (sender) => destroyDialog_OnClosed((sender as NewGui.Confirm).DialogResult, existingRoom)
                         });
 

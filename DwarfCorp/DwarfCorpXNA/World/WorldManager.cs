@@ -280,6 +280,7 @@ namespace DwarfCorp
 
         public Action<String> ShowTooltip = null;
         public Action<String> ShowInfo = null;
+        public Action<String> ShowToolPopup = null;
         public Action<Gum.MousePointer> SetMouse = null;
         public Gum.MousePointer MousePointer = new Gum.MousePointer("mouse", 1, 0);
         

@@ -481,17 +481,17 @@ namespace DwarfCorp
             if (shiftPressed && AllowShiftClick)
             {
                 amount = item.CurrentAmount;
-                World.ShowTooltip("Moved " + amount);
+                World.ShowToolPopup("Moved " + amount);
             }
             else if (controlPressed && AllowControlClick)
             {
                 amount = Math.Min(item.CurrentAmount, 5);
-                World.ShowTooltip("Moved " + amount);
+                World.ShowToolPopup("Moved " + amount);
             }
             else if (altPressed && AllowAltClick)
             {
                 amount = Math.Min(item.CurrentAmount, 10);
-                World.ShowTooltip("Moved " + amount);
+                World.ShowToolPopup("Moved " + amount);
             }
 
             switch(Behavior)

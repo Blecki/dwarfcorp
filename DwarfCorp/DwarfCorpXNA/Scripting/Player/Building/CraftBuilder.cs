@@ -191,13 +191,13 @@ namespace DwarfCorp
         {
             if (IsDesignation(designation.Location))
             {
-                World.ShowTooltip(Drawer2D.WrapColor("Something is already being built there!", Color.Red));
+                World.ShowToolPopup("Something is already being built there!");
                 return false;
             }
 
             if (Faction.GetNearestRoomOfType(WorkshopRoom.WorkshopName, designation.Location.Position) == null)
             {
-                World.ShowTooltip(Drawer2D.WrapColor("Can't build, no workshops!", Color.Red));
+                World.ShowToolPopup("Can't build, no workshops!");
                 return false;
             }
 
@@ -210,7 +210,7 @@ namespace DwarfCorp
                     neededResources += "" + amount.NumResources + " " + amount.ResourceType.ToString() + " ";
                 }
 
-                World.ShowTooltip(Drawer2D.WrapColor("Not enough resources! Need " + neededResources + ".", Color.Red));
+                World.ShowToolPopup("Not enough resources! Need " + neededResources + ".");
                 return false;
             }
 
@@ -229,7 +229,7 @@ namespace DwarfCorp
 
                         if (!neighborFound)
                         {
-                            World.ShowTooltip("Must be built next to wall!");
+                            World.ShowToolPopup("Must be built next to wall!");
                             return false;
                         }
 
@@ -242,7 +242,7 @@ namespace DwarfCorp
 
                         if (below.IsEmpty)
                         {
-                            World.ShowTooltip(Drawer2D.WrapColor("Must be built on solid ground!", Color.Red));
+                            World.ShowToolPopup("Must be built on solid ground!");
                             return false;
                         }
                         break;
@@ -266,7 +266,7 @@ namespace DwarfCorp
                     {
                         if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Craft).Count == 0)
                         {
-                            World.ShowTooltip("None of the selected units can craft items.");
+                            World.ShowToolPopup("None of the selected units can craft items.");
                             return;
                         }
                         List<Task> assignments = new List<Task>();
