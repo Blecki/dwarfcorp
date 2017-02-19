@@ -1,4 +1,4 @@
-﻿// MainMenuState.cs
+// MainMenuState.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -82,7 +82,17 @@ namespace DwarfCorp.GameStates
                 OnClick = OnClick,
                 Tooltip = Tooltip,
                 TextHorizontalAlign = Gum.HorizontalAlign.Center,
-                TextVerticalAlign = Gum.VerticalAlign.Center
+                TextVerticalAlign = Gum.VerticalAlign.Center,
+                OnMouseEnter = (widget, input) =>
+                {
+                    widget.TextColor = Color.DarkRed.ToVector4();
+                    widget.Invalidate();
+                },
+                OnMouseLeave = (widget, input) =>
+                {
+                    widget.TextColor = Color.Black.ToVector4();
+                    widget.Invalidate();
+                }
             });
         }
 
