@@ -127,10 +127,10 @@ namespace DwarfCorp
         
         public void GetBodiesIntersecting(BoundingBox box, List<Body> components, CollisionManager.CollisionType type)
         {
-            HashSet<Body> set = new HashSet<Body>();
+            HashSet<IBoundedObject> set = new HashSet<IBoundedObject>();
             CollisionManager.GetObjectsIntersecting(box, set, type);
 
-            components.AddRange(set);
+            components.AddRange(set.Where(o => o is Body).Select(o => o as Body));
         }
 
         public List<Body> SelectRootBodiesOnScreen(Rectangle selectionRectangle, Camera camera)

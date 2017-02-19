@@ -560,9 +560,8 @@
     <Compile Include="Tools\Datastructures\CollisionManager.cs" />
     <Compile Include="Tools\Datastructures\Datastructures.cs" />
     <Compile Include="Tools\Datastructures\IBoundedObject.cs" />
+    <Compile Include="Tools\Datastructures\IntegerOctTree.cs" />
     <Compile Include="Tools\Datastructures\MinBag.cs" />
-    <Compile Include="Tools\Datastructures\Octree.cs" />
-    <Compile Include="Tools\Datastructures\OctreeNode.cs" />
     <Compile Include="Tools\Datastructures\PriorityQueue.cs" />
     <Compile Include="Tools\Datastructures\ThreadSafeRandom.cs" />
     <Compile Include="Tools\Extensions.cs" />

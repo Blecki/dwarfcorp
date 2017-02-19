@@ -427,11 +427,11 @@ namespace DwarfCorp
                 Thread.Sleep(10);
             }
 
-            HashSet<Body> locatables = new HashSet<Body>();
+            HashSet<IBoundedObject> locatables = new HashSet<IBoundedObject>();
 
             chunkManager.Components.CollisionManager.GetObjectsIntersecting(chunk.GetBoundingBox(), locatables, CollisionManager.CollisionType.Static | CollisionManager.CollisionType.Dynamic);
 
-            foreach(Body component in locatables)
+            foreach(var component in locatables.Where(o => o is Body).Select(o => o as Body))
             {
                 component.IsDead = true;
             }
