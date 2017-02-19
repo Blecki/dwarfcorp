@@ -1,4 +1,6 @@
 
+using System;
+using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -40,8 +42,8 @@ namespace DwarfCorp
 
         public Matrix LightProjection
         {
-            get { return Parameters["xLightProtection"].GetValueMatrix(); }
-            set {  Parameters["xLightProjection"].SetValue(value);}
+            get { return Parameters["xLightProj"].GetValueMatrix(); }
+            set {  Parameters["xLightProj"].SetValue(value);}
         }
 
         public Matrix ReflectionView 
@@ -245,8 +247,8 @@ namespace DwarfCorp
 
         public Texture2D LightMap
         {
-            get { return Parameters["xLightMap"].GetValueTexture2D(); }
-            set {  Parameters["xLightMap"].SetValue(value);}
+            get { return Parameters["xLightmap"].GetValueTexture2D(); }
+            set {  Parameters["xLightmap"].SetValue(value);}
         }
 
         public Color LightRampTint
@@ -290,7 +292,6 @@ namespace DwarfCorp
             SetDefaults();
         }
 
-
         public Shader(Effect cloneSource, bool defaults) :
             this(cloneSource)
         {
@@ -309,6 +310,8 @@ namespace DwarfCorp
         {
             FogStart = 40.0f;
             FogEnd = 80.0f;
+            LightView = Matrix.Identity;
+            LightProjection = Matrix.Identity;
         }
     }
 }

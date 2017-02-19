@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -142,11 +143,17 @@ namespace DwarfCorp
 
         public PoliticsDictionary FactionPolitics { get; set; }
 
-        public WorldManager Wold { get; set; }
+        [JsonIgnore]
+        public WorldManager World { get; set; }
+
+        public void OnDeserializing(StreamingContext ctx)
+        {
+            World = DwarfGame.World;
+        }
 
         public Diplomacy(FactionLibrary factions, WorldManager world)
         {
-            Wold = world;
+            World = world;
             Factions = factions;
             FactionPolitics = new PoliticsDictionary();
         }

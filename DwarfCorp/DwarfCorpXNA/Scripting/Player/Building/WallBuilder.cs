@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -108,7 +109,14 @@ namespace DwarfCorp
 
         public Texture2D BlockTextures { get; set; }
 
+        [JsonIgnore]
         public WorldManager World { get; set; }
+
+        [OnDeserialized]
+        public void OnDeserializing(StreamingContext ctx)
+        {
+            World = DwarfGame.World;
+        }
 
         public PutDesignator()
         {
@@ -218,6 +226,11 @@ namespace DwarfCorp
 
         public void VoxelsSelected(List<Voxel> refs, InputManager.MouseButton button)
         {
+            if (Faction == null)
+            {
+                Faction = World.PlayerFaction;
+            }
+
             if(CurrentVoxelType == null)
             {
                 return;

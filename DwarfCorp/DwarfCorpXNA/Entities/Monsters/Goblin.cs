@@ -1,4 +1,4 @@
-﻿// Goblin.cs
+// Goblin.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -116,7 +116,7 @@ namespace DwarfCorp
             };
 
 
-            MinimapIcon minimapIcon = new MinimapIcon(Physics, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 3, 0));
+            MinimapIcon minimapIcon = new MinimapIcon(Physics, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 3, 0));
 
 
 

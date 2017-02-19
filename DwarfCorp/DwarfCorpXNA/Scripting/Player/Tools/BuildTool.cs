@@ -1,4 +1,4 @@
-﻿// BuildTool.cs
+// BuildTool.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -75,6 +75,8 @@ namespace DwarfCorp
 
             Player.World.Paused = true;
             */
+
+            Player.Faction.RoomBuilder.OnEnter();
         }
 
         public override void OnEnd()

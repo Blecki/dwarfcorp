@@ -1,4 +1,4 @@
-﻿// Dwarf.cs
+// Dwarf.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -148,7 +148,7 @@ namespace DwarfCorp
                 ContentPaths.Audio.jump
             };
 
-            MinimapIcon minimapIcon = new MinimapIcon(Physics, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 0, 0));
+            MinimapIcon minimapIcon = new MinimapIcon(Physics, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 0));
 
             Stats.FullName = TextGenerator.GenerateRandom("$firstname", " ", "$lastname");
             Stats.Size = 5;

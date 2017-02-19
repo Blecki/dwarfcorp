@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -66,7 +67,15 @@ namespace DwarfCorp
         public bool IsEnabled { get; set; }
         protected Body CurrentCraftBody { get; set; }
         protected CraftDesignation CurrentDesignation { get; set; }
+
+        [JsonIgnore]
         private WorldManager World { get; set; }
+
+        [OnDeserialized]
+        public void OnDeserializing(StreamingContext ctx)
+        {
+            World = DwarfGame.World;
+        }
 
         public CraftBuilder()
         {
@@ -139,6 +148,11 @@ namespace DwarfCorp
                     CurrentCraftBody = null;
                 }
                 return;
+            }
+
+            if (Faction == null)
+            {
+                Faction = player.Faction;
             }
 
             if (CurrentCraftType != null && CurrentCraftBody == null)

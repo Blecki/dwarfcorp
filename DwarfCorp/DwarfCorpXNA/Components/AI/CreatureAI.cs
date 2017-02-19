@@ -169,7 +169,6 @@ namespace DwarfCorp
         public CreatureStats Stats
         {
             get { return Creature.Stats; }
-            set { Creature.Stats = value; }
         }
 
         /// <summary> Wrapper around Creature.Status </summary>
@@ -339,6 +338,11 @@ namespace DwarfCorp
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (!IsActive) return;
+
+            if (Faction == null && !string.IsNullOrEmpty(Creature.Allies))
+            {
+                Faction = Manager.Factions.Factions[Creature.Allies];
+            }
 
             IdleTimer.Update(gameTime);
             SpeakTimer.Update(gameTime);

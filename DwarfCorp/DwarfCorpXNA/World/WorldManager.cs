@@ -1314,7 +1314,7 @@ namespace DwarfCorp
 
         private bool SaveThreadRoutine(string filename)
         {
-            try
+            //try
             {
                 System.Threading.Thread.CurrentThread.Name = "Save";
                 DirectoryInfo worldDirectory =
@@ -1341,13 +1341,13 @@ namespace DwarfCorp
                         FileName = DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves" +
                                    Path.DirectorySeparatorChar + filename + Path.DirectorySeparatorChar +
                                    "screenshot.png",
-                        Resolution = new Point(GraphicsDevice.Viewport.Width / 4, GraphicsDevice.Viewport.Height / 4)
+                        Resolution = new Point(640, 480)
                     });
                 }
             }
-            catch (Exception exception)
+            //catch (Exception exception)
             {
-                throw new WaitStateException(exception.Message);
+                //throw new WaitStateException(exception.Message);
             }
             return true;
         }

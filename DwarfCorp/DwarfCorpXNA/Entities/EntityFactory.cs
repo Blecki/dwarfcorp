@@ -241,7 +241,7 @@ namespace DwarfCorp
             Shadow shadow = new Shadow(componentManager, "shadow", balloon, shadowTransform, new SpriteSheet(ContentPaths.Effects.shadowcircle));
             BalloonAI balloonAI = new BalloonAI(balloon, target, order, master);
 
-            MinimapIcon minimapIcon = new MinimapIcon(balloon, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 2, 0));
+            MinimapIcon minimapIcon = new MinimapIcon(balloon, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 0));
 
             return balloon;
         }

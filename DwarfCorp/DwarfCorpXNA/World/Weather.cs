@@ -64,8 +64,13 @@ namespace DwarfCorp
             public static Dictionary<StormType, StormProperties> Properties { get; set; }
             private static bool staticsInitialized = false;
 
-            public void InitializeStatics(ParticleManager particles)
+            public static void InitializeStatics(ParticleManager particles)
             {
+                if (staticsInitialized)
+                {
+                    return;
+                }
+
                 staticsInitialized = true;
                 Properties = new Dictionary<StormType, StormProperties>()
                 {
@@ -225,6 +230,7 @@ namespace DwarfCorp
 
             public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
             {
+                Storm.InitializeStatics(chunks.World.ParticleManager);
                 BoundingBox box = chunks.Bounds;
                 box.Expand(10.0f);
 

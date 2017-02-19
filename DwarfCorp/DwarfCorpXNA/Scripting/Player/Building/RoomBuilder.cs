@@ -32,6 +32,7 @@
 // THE SOFTWARE.
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -54,7 +55,14 @@ namespace DwarfCorp
         public RoomData CurrentRoomData { get; set; }
         public Faction Faction { get; set; }
         private List<Body> displayObjects = null;
+        [JsonIgnore]
         private WorldManager World { get; set; }
+
+        [OnDeserialized]
+        public void OnDeserializing(StreamingContext ctx)
+        {
+            World = DwarfGame.World;
+        }
 
         public List<Room> FilterRoomsByType(string type)
         {
@@ -73,6 +81,15 @@ namespace DwarfCorp
             BuildDesignations = new List<BuildRoomOrder>();
             CurrentRoomData = RoomLibrary.GetData("BedRoom");
             Faction = faction;
+        }
+
+
+        public void OnEnter()
+        {
+            if (Faction == null)
+            {
+                Faction = World.PlayerFaction;
+            }
         }
 
         public void OnExit()
@@ -230,6 +247,11 @@ namespace DwarfCorp
 
         public void Update(MouseState mouseState, KeyboardState keyState, DwarfGame game, DwarfTime time)
         {
+            if (Faction == null)
+            {
+                Faction = World.PlayerFaction;
+            }
+
             World.SetMouse(World.MousePointer);
         }
 
@@ -303,6 +325,10 @@ namespace DwarfCorp
 
         public void OnVoxelsDragged(List<Voxel> refs, InputManager.MouseButton button)
         {
+            if (Faction == null)
+            {
+                Faction = World.PlayerFaction;
+            }
 
             if (displayObjects != null)
             {

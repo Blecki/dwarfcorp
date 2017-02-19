@@ -157,6 +157,11 @@ namespace DwarfCorp
     public class Faction
     {
 
+        public Faction()
+        {
+            
+        }
+
         public Faction(WorldManager world)
         {
             World = world;
@@ -248,6 +253,8 @@ namespace DwarfCorp
         public int TerritorySize { get; set; }
         public Race Race { get; set; }
         public Economy Economy { get; set; }
+
+        [JsonIgnore]
         public ComponentManager Components { get { return World.ComponentManager; }}
 
         public List<TradeEnvoy> TradeEnvoys { get; set; }
@@ -273,7 +280,14 @@ namespace DwarfCorp
         public List<CreatureAI> SelectedMinions { get; set; }
         public bool IsRaceFaction { get; set; }
 
+        [JsonIgnore]
         public WorldManager World { get; set; }
+
+        [OnDeserialized]
+        public void OnDeserialized(StreamingContext ctx)
+        {
+            World = DwarfGame.World;
+        }
 
         public static List<CreatureAI> FilterMinionsWithCapability(List<CreatureAI> minions, GameMaster.ToolMode action)
         {
@@ -320,6 +334,9 @@ namespace DwarfCorp
 
         public void Update(DwarfTime time)
         {
+            RoomBuilder.Faction = this;
+            CraftBuilder.Faction = this;
+            WallBuilder.Faction = this;
             RoomBuilder.CheckRemovals();
 
             Minions.RemoveAll(m => m.IsDead);
