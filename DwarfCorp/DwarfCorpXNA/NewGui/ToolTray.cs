@@ -44,6 +44,7 @@ namespace DwarfCorp.NewGui
         {
             public Widget ExpansionChild;
             public bool KeepChildVisible = false;
+            public bool ExpandChildWhenDisabled = false;
 
             public Icon()
             {
@@ -56,7 +57,7 @@ namespace DwarfCorp.NewGui
                         child.Invalidate();
                     }
 
-                    if (ExpansionChild != null && (sender as FramedIcon).Enabled)
+                    if (ExpansionChild != null && (ExpandChildWhenDisabled || (sender as FramedIcon).Enabled))
                     {
                         ExpansionChild.Hidden = false;
                         Root.SafeCall(ExpansionChild.OnShown, ExpansionChild);
@@ -77,6 +78,9 @@ namespace DwarfCorp.NewGui
                 {
                     if (ExpansionChild != null)
                     {
+                        if (ExpandChildWhenDisabled && ExpansionChild.Hidden == false)
+                            return;
+
                         ExpansionChild.Hidden = true;
                         ExpansionChild.Invalidate();
                     }
@@ -89,6 +93,9 @@ namespace DwarfCorp.NewGui
                         var midPoint = sender.Rect.X + (sender.Rect.Width / 2);
                         ExpansionChild.Rect.X = midPoint - (ExpansionChild.Rect.Width / 2);
                         ExpansionChild.Rect.Y = sender.Rect.Y - ExpansionChild.Rect.Height;
+
+                        if (ExpansionChild.Rect.X < Parent.Rect.X)
+                            ExpansionChild.Rect.X = Parent.Rect.X;
                     }
                 };
             }

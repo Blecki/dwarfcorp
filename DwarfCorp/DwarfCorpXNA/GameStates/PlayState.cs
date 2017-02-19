@@ -558,9 +558,9 @@ namespace DwarfCorp.GameStates
                         Message = message,
                         OnClick = (sender, args) => { if (clickAction != null) clickAction(); },
                         Rect = new Rectangle(
-                            BottomRightTray.Rect.X,
+                            GameSpeedControls.Rect.X - 64,
                             GameSpeedControls.Rect.Y - 128,
-                            BottomRightTray.Rect.Width,
+                            GameSpeedControls.Rect.Width + 64,
                             128)
                     });
 
@@ -695,6 +695,7 @@ namespace DwarfCorp.GameStates
                                     // Todo: Need to get all the icons into one sheet.
                                     Icon = data.Icon,
                                     KeepChildVisible = true, // So the player can interact with the popup.
+                                    ExpandChildWhenDisabled = true,
                                     ExpansionChild = new NewGui.BuildCraftInfo
                                     {
                                         Data = data,
@@ -714,8 +715,12 @@ namespace DwarfCorp.GameStates
                                         Master.Faction.CraftBuilder.CurrentCraftType = data;
                                         ChangeTool(GameMaster.ToolMode.Build);
                                         DwarfGame.World.ShowTooltip("Click and drag to build " + data.Name);
+                                    },
+                                    OnConstruct = (sender) =>
+                                    {
+                                        ToolbarItems.Add(new ToolbarItem(sender, () =>
+                                            ((sender as NewGui.ToolTray.Icon).ExpansionChild as NewGui.BuildCraftInfo).CanBuild()));
                                     }
-                                    //Todo: Add to toolbar item list & disable if not enough resources?
                                 })
                         }
                     },
