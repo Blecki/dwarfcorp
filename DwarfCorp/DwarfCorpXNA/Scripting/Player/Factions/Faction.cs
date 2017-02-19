@@ -157,8 +157,9 @@ namespace DwarfCorp
     public class Faction
     {
 
-        public Faction()
+        public Faction(WorldManager world)
         {
+            World = world;
             Threats = new List<Creature>();
             Minions = new List<CreatureAI>();
             SelectedMinions = new List<CreatureAI>();
@@ -171,9 +172,9 @@ namespace DwarfCorp
             GatherDesignations = new List<Body>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
-            RoomBuilder = new RoomBuilder(this);
-            WallBuilder = new PutDesignator(this, TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles));
-            CraftBuilder = new CraftBuilder(this);
+            RoomBuilder = new RoomBuilder(this, world);
+            WallBuilder = new PutDesignator(this, TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles), world);
+            CraftBuilder = new CraftBuilder(this, world);
             IsRaceFaction = false;
             TradeMoney = 0.0f;
         }
@@ -195,17 +196,21 @@ namespace DwarfCorp
             public State ExpiditionState { get; set; }
             public bool ShouldRemove { get; set; }
 
-            public Expidition()
+            public Expidition(DateTime date)
             {
                 ExpiditionState = State.Arriving;
                 ShouldRemove = false;
                 Creatures = new List<CreatureAI>();
-                DeathTimer = new DateTimer(DwarfGame.World.Time.CurrentDate, new TimeSpan(1, 12, 0, 0));
+                DeathTimer = new DateTimer(date, new TimeSpan(1, 12, 0, 0));
             }
         }
 
         public class TradeEnvoy : Expidition
         {
+            public TradeEnvoy(DateTime date) : base(date)
+            {
+            }
+
             public float TradeMoney { get; set; }
             public List<ResourceAmount> TradeGoods { get; set; }
 
@@ -232,6 +237,9 @@ namespace DwarfCorp
 
         public class WarParty : Expidition
         {
+            public WarParty(DateTime date) : base(date)
+            {
+            }
         }
 
         public float TradeMoney { get; set; }
@@ -240,7 +248,7 @@ namespace DwarfCorp
         public int TerritorySize { get; set; }
         public Race Race { get; set; }
         public Economy Economy { get; set; }
-        public ComponentManager Components { get { return DwarfGame.World.ComponentManager; }}
+        public ComponentManager Components { get { return World.ComponentManager; }}
 
         public List<TradeEnvoy> TradeEnvoys { get; set; }
         public List<WarParty> WarParties { get; set; }
@@ -264,6 +272,8 @@ namespace DwarfCorp
         public string Name { get; set; }
         public List<CreatureAI> SelectedMinions { get; set; }
         public bool IsRaceFaction { get; set; }
+
+        public WorldManager World { get; set; }
 
         public static List<CreatureAI> FilterMinionsWithCapability(List<CreatureAI> minions, GameMaster.ToolMode action)
         {
@@ -962,8 +972,8 @@ namespace DwarfCorp
             Dwarf newMinion =
                 EntityFactory.GenerateDwarf(
                     rooms.First().GetBoundingBox().Center() + Vector3.UnitY * 15,
-                    Components, GameState.Game.Content, GameState.Game.GraphicsDevice, DwarfGame.World.ChunkManager,
-                    DwarfGame.World.Camera, this, DwarfGame.World.PlanService, "Player", currentApplicant.Class, currentApplicant.Level.Index).GetChildrenOfType<Dwarf>().First();
+                    Components, GameState.Game.Content, GameState.Game.GraphicsDevice, World.ChunkManager,
+                    World.Camera, this, World.PlanService, "Player", currentApplicant.Class, currentApplicant.Level.Index).GetChildrenOfType<Dwarf>().First();
 
             newMinion.Stats.CurrentClass = currentApplicant.Class;
             newMinion.Stats.LevelIndex = currentApplicant.Level.Index - 1;
@@ -971,7 +981,7 @@ namespace DwarfCorp
             newMinion.Stats.FullName = currentApplicant.Name;
             newMinion.AI.AddMoney(currentApplicant.Level.Pay * 4);
 
-            DwarfGame.World.MakeAnnouncement("New hire!", String.Format("{0} was hired as a {1}.",
+            World.MakeAnnouncement("New hire!", String.Format("{0} was hired as a {1}.",
                 currentApplicant.Name, currentApplicant.Level.Name), newMinion.AI.ZoomToMe);
         }
 
@@ -1002,7 +1012,7 @@ namespace DwarfCorp
                 Vector3 offset = MathFunctions.RandVector3Cube() * 5;
                 Voxel voxel = new Voxel();
                 
-                if (DwarfGame.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position + offset, ref voxel, true))
+                if (World.ChunkManager.ChunkData.GetFirstVoxelUnder(position + offset, ref voxel, true))
                 {
                     Body body = EntityFactory.CreateEntity<Body>(creature, position + offset);
                     CreatureAI ai = body.GetChildrenOfType<CreatureAI>().FirstOrDefault();

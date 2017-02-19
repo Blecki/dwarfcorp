@@ -1,4 +1,4 @@
-﻿// MainMenuState.cs
+// MainMenuState.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -98,10 +98,10 @@ namespace DwarfCorp.GameStates
                     //GUI.MouseMode = GUISkin.MousePointer.Wait;
                     DwarfGame.World.Natives = new List<Faction>();
                     FactionLibrary library = new FactionLibrary();
-                    library.Initialize(null, new CompanyInformation());
+                    library.Initialize(DwarfGame.World, new CompanyInformation());
                     for (int i = 0; i < 10; i++)
                     {
-                        DwarfGame.World.Natives.Add(library.GenerateFaction(i, 10));
+                        DwarfGame.World.Natives.Add(library.GenerateFaction(DwarfGame.World, i, 10));
                     }
                     DwarfGame.World.WorldSize = new Point3(8, 1, 8);
                     DwarfGame.World.WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / DwarfGame.World.WorldScale,

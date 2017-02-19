@@ -1,4 +1,4 @@
-﻿// GameLoaderState.cs
+// GameLoaderState.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -261,7 +261,7 @@ namespace DwarfCorp.GameStates
             back.OnClicked += back_OnClicked;
         }
 
-        public void LoadDescriptor(GameLoadDescriptor descriptor)
+        public void LoadDescriptor(GameLoadDescriptor descriptor, WorldManager world)
         {
             lock (descriptor.Lock)
             {
@@ -271,7 +271,7 @@ namespace DwarfCorp.GameStates
                 }
 
 
-                DwarfGame.World.ExistingFile = descriptor.FileName;
+                world.ExistingFile = descriptor.FileName;
                 GUI.MouseMode = GUISkin.MousePointer.Wait;
             
                 JoinThreads();
@@ -340,7 +340,7 @@ namespace DwarfCorp.GameStates
 
         void loadButton_OnClicked()
         {
-            LoadDescriptor(SelectedDescriptor);
+            LoadDescriptor(SelectedDescriptor, DwarfGame.World);
         }
 
         private void worldPicture_OnClicked(int picture)

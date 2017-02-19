@@ -1,4 +1,4 @@
-﻿// WorldGeneratorState.cs
+// WorldGeneratorState.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -833,10 +833,10 @@ namespace DwarfCorp.GameStates
                 LoadingMessage = "Factions";
                 NativeCivilizations = new List<Faction>();
                 FactionLibrary library = new FactionLibrary();
-                library.Initialize(null, new CompanyInformation());
+                library.Initialize(DwarfGame.World, new CompanyInformation());
                 for (int i = 0; i < Settings.NumCivilizations; i++)
                 {
-                    NativeCivilizations.Add(library.GenerateFaction(i, Settings.NumCivilizations));
+                    NativeCivilizations.Add(library.GenerateFaction(DwarfGame.World, i, Settings.NumCivilizations));
                 }
                 SeedCivs(Overworld.Map, Settings.NumCivilizations, NativeCivilizations);
                 GrowCivs(Overworld.Map, 200, NativeCivilizations);

@@ -1,4 +1,4 @@
-﻿// Diplomacy.cs
+// Diplomacy.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -142,9 +142,11 @@ namespace DwarfCorp
 
         public PoliticsDictionary FactionPolitics { get; set; }
 
+        public WorldManager Wold { get; set; }
 
-        public Diplomacy(FactionLibrary factions)
+        public Diplomacy(FactionLibrary factions, WorldManager world)
         {
+            Wold = world;
             Factions = factions;
             FactionPolitics = new PoliticsDictionary();
         }
@@ -200,7 +202,7 @@ namespace DwarfCorp
                             DistanceToCapital = new TimeSpan(0, (int)(timeInMinutes), 0)
                         };
 
-                        politics.DispatchNewTradeEnvoy(DwarfGame.World.Time.CurrentDate);
+                        politics.DispatchNewTradeEnvoy(now);
 
                         if (faction.Value.Race == otherFaction.Value.Race)
                         {
@@ -238,7 +240,7 @@ namespace DwarfCorp
 
         public void SendTradeEnvoy(Faction natives, WorldManager world)
         {
-            if (!world.World.gameState.IsActiveState) return;
+            if (!world.gameState.IsActiveState) return;
             Faction.TradeEnvoy envoy = null;
             if (natives.Race.IsNative)
             {
@@ -247,7 +249,7 @@ namespace DwarfCorp
                         world.PlayerFaction, MathFunctions.Random.Next(4) + 1, false));
                 if (creatures.Count > 0)
                 {
-                    envoy = new Faction.TradeEnvoy()
+                    envoy = new Faction.TradeEnvoy(world.Time.CurrentDate)
                     {
                         Creatures = creatures,
                         OtherFaction = world.PlayerFaction,
@@ -287,7 +289,7 @@ namespace DwarfCorp
                         creature.Physics.LocalTransform = tf;
                     }
 
-                    envoy = new Faction.TradeEnvoy()
+                    envoy = new Faction.TradeEnvoy(world.Time.CurrentDate)
                     {
                         Creatures = creatures,
                         OtherFaction = world.PlayerFaction,
@@ -312,32 +314,32 @@ namespace DwarfCorp
         public void SendWarParty(Faction natives)
         {
             // todo
-            DwarfGame.World.MakeAnnouncement(String.Format("War party from {0} has arrived!", natives.Name), null);
-            Politics politics = GetPolitics(natives, DwarfGame.World.PlayerFaction);
+            natives.World.MakeAnnouncement(String.Format("War party from {0} has arrived!", natives.Name), null);
+            Politics politics = GetPolitics(natives, natives.World.PlayerFaction);
             politics.WasAtWar = true;
-            List<CreatureAI> creatures = DwarfGame.World.MonsterSpawner.Spawn(DwarfGame.World.MonsterSpawner.GenerateSpawnEvent(natives, DwarfGame.World.PlayerFaction, MathFunctions.Random.Next(5) + 1, true));
+            List<CreatureAI> creatures = natives.World.MonsterSpawner.Spawn(natives.World.MonsterSpawner.GenerateSpawnEvent(natives, natives.World.PlayerFaction, MathFunctions.Random.Next(5) + 1, true));
 
-            natives.WarParties.Add(new Faction.WarParty()
+            natives.WarParties.Add(new Faction.WarParty(natives.World.Time.CurrentDate)
             {
                 Creatures = creatures,
-                OtherFaction = DwarfGame.World.PlayerFaction,
+                OtherFaction = natives.World.PlayerFaction,
                 ShouldRemove = false
             });
 
         }
 
 
-        public void Update(DwarfTime time, DateTime currentDate)
+        public void Update(DwarfTime time, DateTime currentDate, WorldManager world)
         {
             foreach (var mypolitics in FactionPolitics)
             {
                 Pair<string> pair = mypolitics.Key;
-                if (!pair.IsSelfPair() && pair.Contains(DwarfGame.World.PlayerFaction.Name))
+                if (!pair.IsSelfPair() && pair.Contains(world.PlayerFaction.Name))
                 {
                    
                     Faction otherFaction = null;
 
-                    otherFaction = pair.First.Equals(DwarfGame.World.PlayerFaction.Name) ? Factions.Factions[pair.Second] : Factions.Factions[pair.First];
+                    otherFaction = pair.First.Equals(world.PlayerFaction.Name) ? Factions.Factions[pair.Second] : Factions.Factions[pair.First];
                     UpdateTradeEnvoys(otherFaction);
                     UpdateWarParties(otherFaction);
                     Race race = otherFaction.Race;
@@ -353,12 +355,12 @@ namespace DwarfCorp
 
                             if (relation.TradePartyTimer.HasTriggered)
                             {
-                                SendTradeEnvoy(otherFaction, DwarfGame.World);
+                                SendTradeEnvoy(otherFaction, world);
                             }
                         }
                         else if (otherFaction.TradeEnvoys.Count == 0)
                         {
-                            relation.DispatchNewTradeEnvoy(DwarfGame.World.Time.CurrentDate);
+                            relation.DispatchNewTradeEnvoy(world.Time.CurrentDate);
                         }
 
                     }
@@ -376,7 +378,7 @@ namespace DwarfCorp
                         }
                         else if (otherFaction.WarParties.Count == 0)
                         {
-                            relation.DispatchNewWarParty(DwarfGame.World.Time.CurrentDate);
+                            relation.DispatchNewWarParty(world.Time.CurrentDate);
                         }
                     }
                 }
@@ -389,12 +391,12 @@ namespace DwarfCorp
         {
             foreach (Faction.TradeEnvoy envoy in faction.TradeEnvoys)
             {
-                if (envoy.DeathTimer.Update(DwarfGame.World.Time.CurrentDate))
+                if (envoy.DeathTimer.Update(faction.World.Time.CurrentDate))
                 {
                     envoy.Creatures.ForEach((creature) => creature.GetRootComponent().Die());
                 }
 
-                Diplomacy.Politics politics = DwarfGame.World.ComponentManager.Diplomacy.GetPolitics(faction, envoy.OtherFaction);
+                Diplomacy.Politics politics = faction.World.ComponentManager.Diplomacy.GetPolitics(faction, envoy.OtherFaction);
                 if (politics.GetCurrentRelationship() == Relationship.Hateful)
                 {
                     RecallEnvoy(envoy);
@@ -412,7 +414,7 @@ namespace DwarfCorp
                                 Change = -1.0f,
                                 Description = "You attacked our trade delegates",
                                 Duration = new TimeSpan(1, 0, 0, 0),
-                                Time = DwarfGame.World.Time.CurrentDate
+                                Time = faction.World.Time.CurrentDate
                             });
                         }
                         else
@@ -422,7 +424,7 @@ namespace DwarfCorp
                                 Change = -2.0f,
                                 Description = "You attacked our trade delegates more than once",
                                 Duration = new TimeSpan(1, 0, 0, 0),
-                                Time = DwarfGame.World.Time.CurrentDate
+                                Time = faction.World.Time.CurrentDate
                             });
                         }
                     }
@@ -446,7 +448,7 @@ namespace DwarfCorp
                         envoy.ExpiditionState = Faction.Expidition.State.Trading;
                         GameState.Game.StateManager.PushState(new DiplomacyState(GameState.Game,
                             GameState.Game.StateManager,
-                            DwarfGame.World.World, envoy)
+                            faction.World, envoy)
                         {
                             Name = "DiplomacyState_" + faction.Name,
                             Envoy = envoy
@@ -456,7 +458,7 @@ namespace DwarfCorp
                 }
                 else if (envoy.ExpiditionState == Faction.Expidition.State.Leaving)
                 {
-                    BoundingBox worldBBox = DwarfGame.World.ChunkManager.Bounds;
+                    BoundingBox worldBBox = faction.World.ChunkManager.Bounds;
 
                     foreach (CreatureAI creature in envoy.Creatures)
                     {
@@ -491,12 +493,12 @@ namespace DwarfCorp
         {
             foreach (Faction.WarParty party in faction.WarParties)
             {
-                if (party.DeathTimer.Update(DwarfGame.World.Time.CurrentDate))
+                if (party.DeathTimer.Update(faction.World.Time.CurrentDate))
                 {
                     party.Creatures.ForEach((creature) => creature.Die());
                 }
 
-                Diplomacy.Politics politics =  DwarfGame.World.ComponentManager.Diplomacy.GetPolitics(faction, party.OtherFaction);
+                Diplomacy.Politics politics =  faction.World.ComponentManager.Diplomacy.GetPolitics(faction, party.OtherFaction);
                 if (politics.GetCurrentRelationship() != Relationship.Hateful)
                 {
                     RecallWarParty(party);

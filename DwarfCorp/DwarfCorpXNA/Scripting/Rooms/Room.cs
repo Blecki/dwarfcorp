@@ -1,4 +1,4 @@
-﻿// Room.cs
+// Room.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -52,7 +52,7 @@ namespace DwarfCorp
 
         public bool IsBuilt { get; set; }
         public RoomData RoomData { get; set; }
-        protected static int Counter = 0;
+        private static int Counter = 0;
 
         public bool wasDeserialized = false;
         [JsonIgnore]
@@ -98,13 +98,13 @@ namespace DwarfCorp
         }
 
 
-        public virtual void OnBuilt()
+        public void OnBuilt()
         {
             
         }
 
 
-        public virtual void CreateGUIObjects()
+        public void CreateGUIObjects()
         {
          
         }

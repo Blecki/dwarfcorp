@@ -109,7 +109,7 @@ namespace DwarfCorp
             Factions = new FactionLibrary();
             if (natives != null && natives.Count > 0)
             {
-                Factions.AddFactions(natives);
+                Factions.AddFactions(state, natives);
             }
             Factions.Initialize(state, CompanyInformation);
             Point playerOrigin = new Point((int)(World.WorldOrigin.X), (int)(World.WorldOrigin.Y));

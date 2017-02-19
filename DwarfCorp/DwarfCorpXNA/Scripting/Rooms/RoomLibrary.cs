@@ -1,4 +1,4 @@
-﻿// RoomLibrary.cs
+// RoomLibrary.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -153,7 +153,7 @@ namespace DwarfCorp
             }
         }
 
-        public static void BuildAllComponents(List<Body> components, Room room)
+        public static void BuildAllComponents(List<Body> components, Room room, ParticleManager particles)
         {
             foreach (Body createdComponent in components)
             {
@@ -163,7 +163,7 @@ namespace DwarfCorp
                 createdComponent.LocalTransform = offsetTransform;
                 createdComponent.AnimationQueue.Add(new EaseMotion(0.8f, offsetTransform, endPos));
                 room.AddBody(createdComponent);
-                DwarfGame.World.ParticleManager.Trigger("puff", endPos + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 10);
+                particles.Trigger("puff", endPos + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 10);
                 createdComponent.SetActiveRecursive(true);
             }
         }
@@ -172,7 +172,7 @@ namespace DwarfCorp
             Microsoft.Xna.Framework.Content.ContentManager content, GraphicsDevice graphics)
         {
             List<Body> components = new List<Body>();
-            RoomTile[,] currentTiles = RoomTemplate.CreateFromRoom(voxels, DwarfGame.World.ChunkManager);
+            RoomTile[,] currentTiles = RoomTemplate.CreateFromRoom(voxels, componentManager.World.ChunkManager);
             float[,] rotations = new float[currentTiles.GetLength(0), currentTiles.GetLength(1)];
             foreach (RoomTemplate myTemp in roomData.Templates)
             {

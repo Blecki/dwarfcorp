@@ -1,4 +1,4 @@
-﻿// ChunkGenerator.cs
+// ChunkGenerator.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -82,9 +82,11 @@ namespace DwarfCorp
         public float CaveSize { get; set; }
         public float AquiferSize { get; set; }
         public float LavaSize { get; set; }
+        public static float WorldScale { get; set; }
 
-        public ChunkGenerator(VoxelLibrary voxLibrary, int randomSeed, float noiseScale, float maxMountainHeight)
+        public ChunkGenerator(VoxelLibrary voxLibrary, int randomSeed, float noiseScale, float maxMountainHeight, float worldScale)
         {
+            WorldScale = worldScale;
             NoiseGenerator = new Perlin(randomSeed);
             NoiseScale = noiseScale;
 
@@ -215,7 +217,7 @@ namespace DwarfCorp
                     }
 
 
-                    Vector2 vec = new Vector2(x + chunk.Origin.X, z + chunk.Origin.Z)/DwarfGame.World.WorldScale;
+                    Vector2 vec = new Vector2(x + chunk.Origin.X, z + chunk.Origin.Z)/WorldScale;
                     if (Overworld.GetWater(Overworld.Map, vec) != Overworld.WaterType.Volcano)
                     {
                         continue;
@@ -258,14 +260,14 @@ namespace DwarfCorp
 
         public static BiomeData GetBiomeAt(Vector3 worldPosition)
         {
-            Vector2 vec = new Vector2(worldPosition.X, worldPosition.Z) / DwarfGame.World.WorldScale;
+            Vector2 vec = new Vector2(worldPosition.X, worldPosition.Z) / WorldScale;
             Overworld.Biome biome = Overworld.Map[(int)MathFunctions.Clamp(vec.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(vec.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
             return BiomeLibrary.Biomes[biome];
         }
 
         public static float GetValueAt(Vector3 worldPosition, Overworld.ScalarFieldType T)
         {
-            Vector2 vec = new Vector2(worldPosition.X, worldPosition.Z) / DwarfGame.World.WorldScale;
+            Vector2 vec = new Vector2(worldPosition.X, worldPosition.Z) / WorldScale;
             return Overworld.GetValue(Overworld.Map, new Vector2(MathFunctions.Clamp(vec.X, 0, Overworld.Map.GetLength(0) - 1),
                 MathFunctions.Clamp(vec.Y, 0, Overworld.Map.GetLength(1) - 1)), T);
         }
@@ -278,7 +280,7 @@ namespace DwarfCorp
             {
                 for (int z = 0; z < chunk.SizeZ; z++)
                 {
-                    Vector2 vec = new Vector2(x + chunk.Origin.X, z + chunk.Origin.Z) / DwarfGame.World.WorldScale;
+                    Vector2 vec = new Vector2(x + chunk.Origin.X, z + chunk.Origin.Z) / WorldScale;
                     Overworld.Biome biome = Overworld.Map[(int)MathFunctions.Clamp(vec.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(vec.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
                     BiomeData biomeData = BiomeLibrary.Biomes[biome];
 
@@ -321,7 +323,7 @@ namespace DwarfCorp
             {
                 for(int z = 0; z < chunk.SizeZ; z++)
                 {
-                    Vector2 vec = new Vector2(x + chunk.Origin.X, z + chunk.Origin.Z) / DwarfGame.World.WorldScale;
+                    Vector2 vec = new Vector2(x + chunk.Origin.X, z + chunk.Origin.Z) / WorldScale;
                     Overworld.Biome biome = Overworld.Map[(int)MathFunctions.Clamp(vec.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(vec.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
                     BiomeData biomeData = BiomeLibrary.Biomes[biome];
 
@@ -417,7 +419,7 @@ namespace DwarfCorp
             }
         }
 
-        public void GenerateCaves(VoxelChunk chunk)
+        public void GenerateCaves(VoxelChunk chunk, WorldManager world)
         {
             Vector3 origin = chunk.Origin;
             int chunkSizeX = chunk.SizeX;
@@ -498,7 +500,7 @@ namespace DwarfCorp
                                         if (GameSettings.Default.FogofWar)
                                         {
                                             ExploredListener listener = new ExploredListener(
-                                                DwarfGame.World.ComponentManager, entity, DwarfGame.World.ChunkManager, vUnder);
+                                                world.ComponentManager, entity, world.ChunkManager, vUnder);
                                         }
                                     }
                                 }
@@ -518,9 +520,9 @@ namespace DwarfCorp
                                 {
                                     entity.GetRootComponent().SetActiveRecursive(false);
                                     entity.GetRootComponent().SetVisibleRecursive(false);
-                                    ExploredListener listener = new ExploredListener(DwarfGame.World.ComponentManager,
+                                    ExploredListener listener = new ExploredListener(world.ComponentManager,
                                         entity,
-                                        DwarfGame.World.ChunkManager, chunk.MakeVoxel(x, y, z));
+                                        world.ChunkManager, chunk.MakeVoxel(x, y, z));
                                 }
                                 break;
                             }
@@ -607,13 +609,13 @@ namespace DwarfCorp
             {
                 for(int z = 0; z < chunkSizeZ; z++)
                 {
-                    Vector2 v = new Vector2(x + origin.X, z + origin.Z) / DwarfGame.World.WorldScale;
+                    Vector2 v = new Vector2(x + origin.X, z + origin.Z) / WorldScale;
 
                     Overworld.Biome biome = Overworld.Map[(int)MathFunctions.Clamp(v.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(v.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
 
                     BiomeData biomeData = BiomeLibrary.Biomes[biome];
 
-                    Vector2 pos = new Vector2(x + origin.X, z + origin.Z) / DwarfGame.World.WorldScale;
+                    Vector2 pos = new Vector2(x + origin.X, z + origin.Z) / WorldScale;
                     float hNorm = Overworld.LinearInterpolate(pos, Overworld.Map, Overworld.ScalarFieldType.Height);
                     float h = MathFunctions.Clamp(hNorm * chunkSizeY, 0.0f, chunkSizeY - 2);
                     int stoneHeight = (int) Math.Max(h - 2, 1);
@@ -676,7 +678,7 @@ namespace DwarfCorp
 
             GenerateWater(c);
             GenerateLava(c);
-            GenerateCaves(c);
+            GenerateCaves(c, components.World);
             //GenerateAquifers(c);
             //GenerateLavaTubes(c);
 

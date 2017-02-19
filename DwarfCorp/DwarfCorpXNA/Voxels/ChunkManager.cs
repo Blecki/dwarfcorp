@@ -132,8 +132,8 @@ namespace DwarfCorp
         public bool ExitThreads { get; set; }
 
         private Camera camera = null;
-
-        public ComponentManager Components { get { return DwarfGame.World.ComponentManager; }}
+        public WorldManager World { get; set; }
+        public ComponentManager Components { get { return World.ComponentManager; }}
         public ContentManager Content { get; set; }
 
         private readonly HashSet<VoxelChunk> visibleSet = new HashSet<VoxelChunk>();
@@ -150,10 +150,12 @@ namespace DwarfCorp
         public List<Voxel> KilledVoxels { get; set; }
 
         public ChunkManager(ContentManager content, 
+            WorldManager world,
             uint chunkSizeX, uint chunkSizeY, uint chunkSizeZ, 
             Camera camera, GraphicsDevice graphics,
             ChunkGenerator chunkGen, int maxChunksX, int maxChunksY, int maxChunksZ)
         {
+            World = world;
             KilledVoxels = new List<Voxel>();
             ExitThreads = false;
             drawDistSq = DrawDistance * DrawDistance;
@@ -695,7 +697,7 @@ namespace DwarfCorp
                                     Texture2D tilemap)
         {
             Vector3[] corners = new Vector3[8];
-            Camera tempCamera = new Camera(DwarfGame.World, camera.Target, camera.Position, camera.FOV, camera.AspectRatio, camera.NearPlane, 30);
+            Camera tempCamera = new Camera(World, camera.Target, camera.Position, camera.FOV, camera.AspectRatio, camera.NearPlane, 30);
             tempCamera.GetFrustrum().GetCorners(corners);
             BoundingBox cameraBox = MathFunctions.GetBoundingBox(corners);
             cameraBox = cameraBox.Expand(1.0f);
@@ -975,7 +977,7 @@ namespace DwarfCorp
                     {
                         ChunkData.AddChunk(chunk);
                         ChunkGen.GenerateVegetation(chunk, Components, Content, Graphics);
-                        ChunkGen.GenerateFauna(chunk, Components, Content, Graphics, DwarfGame.World.ComponentManager.Factions);
+                        ChunkGen.GenerateFauna(chunk, Components, Content, Graphics, World.ComponentManager.Factions);
                         List<VoxelChunk> adjacents = ChunkData.GetAdjacentChunks(chunk);
                         foreach(VoxelChunk c in adjacents)
                         {

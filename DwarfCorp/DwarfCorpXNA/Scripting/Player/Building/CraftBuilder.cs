@@ -1,4 +1,4 @@
-﻿// CraftBuilder.cs
+// CraftBuilder.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -66,14 +66,16 @@ namespace DwarfCorp
         public bool IsEnabled { get; set; }
         protected Body CurrentCraftBody { get; set; }
         protected CraftDesignation CurrentDesignation { get; set; }
+        private WorldManager World { get; set; }
 
         public CraftBuilder()
         {
             IsEnabled = false;
         }
 
-        public CraftBuilder(Faction faction)
+        public CraftBuilder(Faction faction, WorldManager world)
         {
+            World = world;
             Faction = faction;
             Designations = new List<CraftDesignation>();
             IsEnabled = false;
@@ -175,13 +177,13 @@ namespace DwarfCorp
         {
             if (IsDesignation(designation.Location))
             {
-                DwarfGame.World.ShowTooltip(Drawer2D.WrapColor("Something is already being built there!", Color.Red));
+                World.ShowTooltip(Drawer2D.WrapColor("Something is already being built there!", Color.Red));
                 return false;
             }
 
             if (Faction.GetNearestRoomOfType(WorkshopRoom.WorkshopName, designation.Location.Position) == null)
             {
-                DwarfGame.World.ShowTooltip(Drawer2D.WrapColor("Can't build, no workshops!", Color.Red));
+                World.ShowTooltip(Drawer2D.WrapColor("Can't build, no workshops!", Color.Red));
                 return false;
             }
 
@@ -194,7 +196,7 @@ namespace DwarfCorp
                     neededResources += "" + amount.NumResources + " " + amount.ResourceType.ToString() + " ";
                 }
 
-                DwarfGame.World.ShowTooltip(Drawer2D.WrapColor("Not enough resources! Need " + neededResources + ".", Color.Red));
+                World.ShowTooltip(Drawer2D.WrapColor("Not enough resources! Need " + neededResources + ".", Color.Red));
                 return false;
             }
 
@@ -213,7 +215,7 @@ namespace DwarfCorp
 
                         if (!neighborFound)
                         {
-                            DwarfGame.World.ShowTooltip("Must be built next to wall!");
+                            World.ShowTooltip("Must be built next to wall!");
                             return false;
                         }
 
@@ -226,7 +228,7 @@ namespace DwarfCorp
 
                         if (below.IsEmpty)
                         {
-                            DwarfGame.World.ShowTooltip(Drawer2D.WrapColor("Must be built on solid ground!", Color.Red));
+                            World.ShowTooltip(Drawer2D.WrapColor("Must be built on solid ground!", Color.Red));
                             return false;
                         }
                         break;
@@ -250,7 +252,7 @@ namespace DwarfCorp
                     {
                         if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Craft).Count == 0)
                         {
-                            DwarfGame.World.ShowTooltip("None of the selected units can craft items.");
+                            World.ShowTooltip("None of the selected units can craft items.");
                             return;
                         }
                         List<Task> assignments = new List<Task>();
@@ -269,11 +271,11 @@ namespace DwarfCorp
                                 {
                                     ItemType = CurrentCraftType,
                                     Location = r,
-                                    WorkPile = new WorkPile(DwarfGame.World.ComponentManager, startPos)
+                                    WorkPile = new WorkPile(World.ComponentManager, startPos)
                                 };
 
                                 newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));
-                                DwarfGame.World.ParticleManager.Trigger("puff", pos, Color.White, 10);
+                                World.ParticleManager.Trigger("puff", pos, Color.White, 10);
                                 if (IsValid(newDesignation))
                                 {
                                     AddDesignation(newDesignation);
@@ -289,7 +291,7 @@ namespace DwarfCorp
 
                         if (assignments.Count > 0)
                         {
-                            TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(DwarfGame.World.Master.SelectedMinions, GameMaster.ToolMode.Craft));
+                            TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(World.Master.SelectedMinions, GameMaster.ToolMode.Craft));
                         }
 
                         break;

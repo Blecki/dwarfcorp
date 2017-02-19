@@ -1,4 +1,4 @@
-﻿// GodModeTool.cs
+// GodModeTool.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -217,7 +217,7 @@ namespace DwarfCorp
             if(command.Contains("Build/"))
             {
                 string type = command.Substring(6);
-                BuildRoomOrder des = new BuildRoomOrder(RoomLibrary.CreateRoom(Player.Faction, type, refs, false, Player.World), Player.Faction);
+                BuildRoomOrder des = new BuildRoomOrder(RoomLibrary.CreateRoom(Player.Faction, type, refs, false, Player.World), Player.Faction, Player.World);
                 Player.Faction.RoomBuilder.BuildDesignations.Add(des);
                 Player.Faction.RoomBuilder.DesignatedRooms.Add(des.ToBuild);
                 des.Build();

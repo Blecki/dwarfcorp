@@ -53,7 +53,8 @@ namespace DwarfCorp
         public List<BuildRoomOrder> BuildDesignations { get; set; }
         public RoomData CurrentRoomData { get; set; }
         public Faction Faction { get; set; }
-        private List<Body> displayObjects = null; 
+        private List<Body> displayObjects = null;
+        private WorldManager World { get; set; }
 
         public List<Room> FilterRoomsByType(string type)
         {
@@ -65,8 +66,9 @@ namespace DwarfCorp
             
         }
 
-        public RoomBuilder(Faction faction)
+        public RoomBuilder(Faction faction, WorldManager world)
         {
+            World = world;
             DesignatedRooms = new List<Room>();
             BuildDesignations = new List<BuildRoomOrder>();
             CurrentRoomData = RoomLibrary.GetData("BedRoom");
@@ -228,7 +230,7 @@ namespace DwarfCorp
 
         public void Update(MouseState mouseState, KeyboardState keyState, DwarfGame game, DwarfTime time)
         {
-            DwarfGame.World.SetMouse(DwarfGame.World.MousePointer);
+            World.SetMouse(World.MousePointer);
         }
 
         private void BuildNewVoxels(IEnumerable<Voxel> refs)
@@ -262,15 +264,15 @@ namespace DwarfCorp
                 {
                     if(CurrentRoomData != RoomLibrary.GetData("Stockpile"))
                     {
-                        Room toBuild = RoomLibrary.CreateRoom(Faction, CurrentRoomData.Name, designations.ToList(), true, DwarfGame.World);
+                        Room toBuild = RoomLibrary.CreateRoom(Faction, CurrentRoomData.Name, designations.ToList(), true, World);
                         DesignatedRooms.Add(toBuild);
-                        order = new BuildRoomOrder(toBuild, this.Faction);
+                        order = new BuildRoomOrder(toBuild, Faction, Faction.World);
                         order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild, v));
                         BuildDesignations.Add(order);
                     }
                     else
                     {
-                        Stockpile toBuild = new Stockpile(Faction, DwarfGame.World);
+                        Stockpile toBuild = new Stockpile(Faction, World);
                         DesignatedRooms.Add(toBuild);
                         order = new BuildStockpileOrder(toBuild, this.Faction);
                         order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild, v));
@@ -281,11 +283,11 @@ namespace DwarfCorp
 
             if(order != null)
             {
-                order.CreateFences(DwarfGame.World.ComponentManager);
+                order.CreateFences(World.ComponentManager);
                 TaskManager.AssignTasks(new List<Task>()
                 {
                     new BuildRoomTask(order)
-                }, Faction.FilterMinionsWithCapability(DwarfGame.World.Master.SelectedMinions, GameMaster.ToolMode.Build));
+                }, Faction.FilterMinionsWithCapability(World.Master.SelectedMinions, GameMaster.ToolMode.Build));
             }
         }
 
@@ -319,9 +321,9 @@ namespace DwarfCorp
             {
                 if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Build).Count == 0)
                 {
-                    DwarfGame.World.ShowTooltip("None of the selected units can build rooms.");
+                    World.ShowTooltip("None of the selected units can build rooms.");
                 }
-                else if (CurrentRoomData.Verify(refs, Faction, DwarfGame.World))
+                else if (CurrentRoomData.Verify(refs, Faction, World))
                 {
                     List<Quantitiy<Resource.ResourceTags>> requirements =
                         CurrentRoomData.GetRequiredResources(refs.Count, Faction);
@@ -343,10 +345,10 @@ namespace DwarfCorp
                         tip += "\n";
                     }
 
-                    DwarfGame.World.ShowTooltip("Release to build here.");
+                    World.ShowTooltip("Release to build here.");
 
                     displayObjects = RoomLibrary.GenerateRoomComponentsTemplate(CurrentRoomData, refs, Faction.Components, 
-                        DwarfGame.World.ChunkManager.Content, DwarfGame.World.ChunkManager.Graphics);
+                        World.ChunkManager.Content, World.ChunkManager.Graphics);
 
                     foreach(Body thing in displayObjects)
                     {
@@ -376,9 +378,9 @@ namespace DwarfCorp
             {
                 if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Build).Count == 0)
                 {
-                    DwarfGame.World.ShowTooltip("None of the selected units can build rooms.");
+                    World.ShowTooltip("None of the selected units can build rooms.");
                 }
-                else if (CurrentRoomData.Verify(refs, Faction, DwarfGame.World))
+                else if (CurrentRoomData.Verify(refs, Faction, World))
                 {
                     BuildNewVoxels(refs);    
                 }
@@ -408,7 +410,7 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    DwarfGame.World.NewGui.ShowDialog(new NewGui.Confirm
+                    World.NewGui.ShowDialog(new NewGui.Confirm
                         {
                             Text = "Do you want to destroy this " + Drawer2D.WrapColor(existingRoom.RoomData.Name, Color.DarkRed) + "?",
                             OnClose = (sender) => destroyDialog_OnClosed((sender as NewGui.Confirm).DialogResult, existingRoom)

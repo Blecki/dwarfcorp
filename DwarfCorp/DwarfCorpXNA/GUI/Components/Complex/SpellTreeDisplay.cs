@@ -1,4 +1,4 @@
-﻿// SpellTreeDisplay.cs
+// SpellTreeDisplay.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -206,10 +206,11 @@ namespace DwarfCorp
             
         }
 
+        private GameMaster Master { get; set; }
 
-
-        public SpellTreeDisplay(DwarfGUI gui, GUIComponent parent, SpellTree tree) : base(gui, parent)
+        public SpellTreeDisplay(DwarfGUI gui, GUIComponent parent, SpellTree tree, GameMaster master) : base(gui, parent)
         {
+            Master = master;
             Tree = tree;
 
             Scroller = new ScrollView(gui, this)
@@ -501,7 +502,7 @@ namespace DwarfCorp
             if (spell.IsResearched || (spell.Parent != null &&  !spell.Parent.IsResearched)) return;
             else
             {
-                List<CreatureAI> wizards = Faction.FilterMinionsWithCapability(DwarfGame.World.Master.SelectedMinions, GameMaster.ToolMode.Magic);
+                List<CreatureAI> wizards = Faction.FilterMinionsWithCapability(Master.SelectedMinions, GameMaster.ToolMode.Magic);
 
                 foreach (CreatureAI wizard in wizards)
                 {

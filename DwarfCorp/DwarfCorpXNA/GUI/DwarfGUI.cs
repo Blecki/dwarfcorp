@@ -93,6 +93,7 @@ namespace DwarfCorp
 
         public DwarfGUI(DwarfGame game, SpriteFont defaultFont, SpriteFont titleFont, SpriteFont smallFont, InputManager input)
         {
+            IndicatorManager.DefaultFont = defaultFont;
             EnableMouseEvents = true;
             IsMouseVisible = true;
             MouseMode = GUISkin.MousePointer.Pointer;

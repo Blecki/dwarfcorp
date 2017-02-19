@@ -292,10 +292,6 @@ namespace DwarfCorp
             }
         }
 
-        // Since world, like many of the other classes, is pretty much a singleton given how many variables it has
-        // this provides singleton access
-        public WorldManager World;
-
         // event that is called when the world is done loading
         public delegate void OnLoaded();
         public event OnLoaded OnLoadedEvent;
@@ -312,7 +308,7 @@ namespace DwarfCorp
         /// <param name="game">The program currently running</param>
         public WorldManager(DwarfGame Game)
         {
-            World = this;
+            InitialEmbark = Embarkment.DefaultEmbarkment;
             this.Game = Game;
             Content = Game.Content;
             GraphicsDevice = Game.GraphicsDevice;
@@ -431,6 +427,10 @@ namespace DwarfCorp
         /// <param name="c">The chunk the dwarves belong to</param>
         public void CreateInitialDwarves(VoxelChunk c)
         {
+            if (InitialEmbark == null)
+            {
+                InitialEmbark = Embarkment.DefaultEmbarkment;
+            }
             Vector3 g = c.WorldToGrid(Camera.Position);
             // Find the height of the world at the camera
             float h = c.GetFilledVoxelGridHeightAt((int)g.X, ChunkHeight - 1, (int)g.Z);
@@ -464,7 +464,7 @@ namespace DwarfCorp
             Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
             Vector3 extents = new Vector3(1500, 1500, 1500);
             ComponentManager.CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
-            ComponentManager.Diplomacy = new Diplomacy(ComponentManager.Factions);
+            ComponentManager.Diplomacy = new Diplomacy(ComponentManager.Factions, this);
             ComponentManager.Diplomacy.Initialize(Time.CurrentDate);
 
             CompositeLibrary.Initialize();
@@ -502,7 +502,7 @@ namespace DwarfCorp
                 PlanService.Restart();
 
             JobLibrary.Initialize();
-            MonsterSpawner = new MonsterSpawner();
+            MonsterSpawner = new MonsterSpawner(this);
             EntityFactory.Initialize(this);
         }
 
@@ -559,7 +559,7 @@ namespace DwarfCorp
             }
 
 
-            ChunkGenerator = new ChunkGenerator(VoxelLibrary, Seed, 0.02f, ChunkHeight / 2.0f)
+            ChunkGenerator = new ChunkGenerator(VoxelLibrary, Seed, 0.02f, ChunkHeight / 2.0f, this.WorldScale)
             {
                 SeaLevel = SeaLevel
             };
@@ -585,7 +585,7 @@ namespace DwarfCorp
             Drawer3D.Camera = Camera;
 
             // Creates the terrain management system.
-            ChunkManager = new ChunkManager(Content, (uint)ChunkWidth, (uint)ChunkHeight, (uint)ChunkWidth, Camera,
+            ChunkManager = new ChunkManager(Content, this, (uint)ChunkWidth, (uint)ChunkHeight, (uint)ChunkWidth, Camera,
                 GraphicsDevice,
                 ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
 
@@ -932,7 +932,7 @@ namespace DwarfCorp
 
             // Actually create the BuildRoom.
             BalloonPort toBuild = new BalloonPort(PlayerFaction, designations, this);
-            BuildRoomOrder buildDes = new BuildRoomOrder(toBuild, roomDes.Faction);
+            BuildRoomOrder buildDes = new BuildRoomOrder(toBuild, roomDes.Faction, roomDes.Faction.World);
             buildDes.Build(true);
             roomDes.DesignatedRooms.Add(toBuild);
             return toBuild;
@@ -1219,7 +1219,7 @@ namespace DwarfCorp
             if (!Paused)
             {
                 Time.Update(gameTime);
-                ComponentManager.Diplomacy.Update(gameTime, Time.CurrentDate);
+                ComponentManager.Diplomacy.Update(gameTime, Time.CurrentDate, this);
                 ComponentManager.Update(gameTime, ChunkManager, Camera);
                 Sky.TimeOfDay = Time.GetSkyLightness();
 
@@ -1245,7 +1245,7 @@ namespace DwarfCorp
             InstanceManager.Update(gameTime, Camera, GraphicsDevice);
 
             SoundManager.Update(gameTime, Camera);
-            Weather.Update();
+            Weather.Update(this.Time.CurrentDate, this);
 
             // Make sure that the slice slider snaps to the current viewing level (an integer)
             //if(!LevelSlider.IsMouseOver)

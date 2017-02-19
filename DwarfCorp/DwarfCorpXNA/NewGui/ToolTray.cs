@@ -23,7 +23,13 @@ namespace DwarfCorp.NewGui
 
             public void CollapseTrays()
             {
-                if (IsRootTray) return;
+                if (IsRootTray)
+                {
+                    foreach (var child in Children)
+                        if (child is Icon)
+                            (child as Icon).Unexpand();
+                    return;
+                }
 
                 Hidden = true;
 
@@ -112,6 +118,15 @@ namespace DwarfCorp.NewGui
             {
                 if (Parent != null && Parent is Tray)
                     (Parent as Tray).CollapseTrays();
+            }
+
+            public void Unexpand()
+            {
+                if (ExpansionChild != null)
+                {
+                    ExpansionChild.Hidden = true;
+                    ExpansionChild.Invalidate();
+                }
             }
         }
     }

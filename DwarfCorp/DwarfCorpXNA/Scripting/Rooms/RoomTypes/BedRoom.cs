@@ -122,8 +122,9 @@ namespace DwarfCorp
 
             bedroomTemplates.Add(lamp);
             bedroomTemplates.Add(bed);
-            Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
-            return new RoomData(BedRoomName, 0, "BrownTileFloor", roomResources, bedroomTemplates, new ImageFrame(roomIcons, 16, 2, 1))
+
+            return new RoomData(BedRoomName, 0, "BrownTileFloor", roomResources, bedroomTemplates, 
+                new Gum.TileReference("rooms", 6))
             {
                 Description = "Dwarves relax and rest here",
                 CanBuildAboveGround = false,

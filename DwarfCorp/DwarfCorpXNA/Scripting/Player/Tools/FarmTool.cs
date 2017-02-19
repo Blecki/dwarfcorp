@@ -1,4 +1,4 @@
-﻿// BuildTool.cs
+// BuildTool.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -49,7 +49,7 @@ namespace DwarfCorp
     public class FarmTool : PlayerTool
     {
         public FarmingPanel FarmPanel { get; set; }
-        public BuildMenu.BuildType BuildType { get; set; }
+        public NewGui.BuildMenu.BuildTypes BuildType { get; set; }
         public string PlantType { get; set; }
         public List<ResourceAmount> RequiredResources { get; set; } 
         public enum FarmMode
@@ -269,7 +269,7 @@ namespace DwarfCorp
             }
             int w = 600;
             int h = 350;
-            FarmPanel = new FarmingPanel(Player.World.GUI, Player.World.GUI.RootComponent)
+            FarmPanel = new FarmingPanel(Player.World.GUI, Player.World.GUI.RootComponent, Player.World)
             {
                 LocalBounds = new Rectangle(PlayState.Game.GraphicsDevice.Viewport.Width / 2 - w / 2, PlayState.Game.GraphicsDevice.Viewport.Height / 2 - h / 2, w, h),
                 IsVisible = true,

@@ -262,7 +262,7 @@ namespace DwarfCorp.GameStates
                             ItemSource = RoomLibrary.GetRoomTypes().Select(name => RoomLibrary.GetData(name))
                                 .Select(data => new NewGui.ToolTray.Icon
                                 {
-                                    Icon = new TileReference("rooms", roomIcons.ConvertRectToIndex(data.Icon.SourceRect)),
+                                    Icon = data.NewIcon,
                                     ExpansionChild = new NewGui.BuildRoomInfo
                                     {
                                         Data = data,

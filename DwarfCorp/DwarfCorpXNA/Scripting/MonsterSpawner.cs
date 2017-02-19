@@ -1,4 +1,4 @@
-﻿// MonsterSpawner.cs
+// MonsterSpawner.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -55,15 +55,17 @@ namespace DwarfCorp
         public List<Faction> SpawnFactions = new List<Faction>();
         public int LastSpawnHour = 0;
         public int SpawnRate = 4;
+        public WorldManager World { get; set; }
 
-        public MonsterSpawner()
+        public MonsterSpawner(WorldManager world)
         {
+            World = world;
             SpawnFactions = new List<Faction>();
         }
 
         public void Update(DwarfTime t)
         {
-            bool shouldSpawn = DwarfGame.World.Time.IsNight() && Math.Abs(DwarfGame.World.Time.CurrentDate.TimeOfDay.Hours - LastSpawnHour) > SpawnRate;
+            bool shouldSpawn = World.Time.IsNight() && Math.Abs(World.Time.CurrentDate.TimeOfDay.Hours - LastSpawnHour) > SpawnRate;
 
             if (shouldSpawn)
             {
@@ -80,7 +82,7 @@ namespace DwarfCorp
         {
             float padding = 2.0f;
             int side = MathFunctions.Random.Next(4);
-            BoundingBox bounds = DwarfGame.World.ChunkManager.Bounds;
+            BoundingBox bounds = World.ChunkManager.Bounds;
             Vector3 pos = Vector3.Zero;
             switch (side)
             {

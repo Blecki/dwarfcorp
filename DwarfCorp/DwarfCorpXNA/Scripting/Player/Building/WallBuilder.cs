@@ -55,9 +55,11 @@ namespace DwarfCorp
         public Voxel Vox;
         public VoxelType Type;
         public CreatureAI ReservedCreature = null;
+        private WorldManager World { get; set; }
 
-        public WallBuilder(Voxel v, VoxelType t)
+        public WallBuilder(Voxel v, VoxelType t, WorldManager world)
         {
+            World = world;
             Vox = v;
             Type = t;
         }
@@ -72,7 +74,7 @@ namespace DwarfCorp
             v.Health = Type.StartingHealth;
             chunk.NotifyTotalRebuild(!v.IsInterior);
 
-            DwarfGame.World.ParticleManager.Trigger("puff", v.Position, Color.White, 20);
+            World.ParticleManager.Trigger("puff", v.Position, Color.White, 20);
 
             List<Body> components = new List<Body>();
             manager.Components.GetBodiesIntersecting(Vox.GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic);
@@ -106,13 +108,16 @@ namespace DwarfCorp
 
         public Texture2D BlockTextures { get; set; }
 
+        public WorldManager World { get; set; }
+
         public PutDesignator()
         {
             
         }
 
-        public PutDesignator(Faction faction, Texture2D blockTextures)
+        public PutDesignator(Faction faction, Texture2D blockTextures, WorldManager world)
         {
+            World = world;
             Faction = faction;
             Designations = new List<WallBuilder>();
             BlockTextures = blockTextures;
@@ -223,7 +228,7 @@ namespace DwarfCorp
                 {
                     if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Build).Count == 0)
                     {
-                        DwarfGame.World.ShowTooltip("None of the selected units can build walls.");
+                        World.ShowTooltip("None of the selected units can build walls.");
                         return;
                     }
                     List<Task> assignments = new List<Task>();
@@ -231,17 +236,17 @@ namespace DwarfCorp
 
                     if (!Verify(validRefs, CurrentVoxelType.ResourceToRelease))
                     {
-                        DwarfGame.World.ShowTooltip("Can't build this! Need at least " + validRefs.Count + " " + ResourceLibrary.Resources[CurrentVoxelType.ResourceToRelease].ResourceName + ".");
+                        World.ShowTooltip("Can't build this! Need at least " + validRefs.Count + " " + ResourceLibrary.Resources[CurrentVoxelType.ResourceToRelease].ResourceName + ".");
                         return;
                     }
 
                     foreach (Voxel r in validRefs)
                     {
-                        AddDesignation(new WallBuilder(r, CurrentVoxelType));
+                        AddDesignation(new WallBuilder(r, CurrentVoxelType, World));
                         assignments.Add(new BuildVoxelTask(r, CurrentVoxelType));
                     }
 
-                    TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(DwarfGame.World.Master.SelectedMinions, GameMaster.ToolMode.Build));
+                    TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(World.Master.SelectedMinions, GameMaster.ToolMode.Build));
 
                     break;
                 }

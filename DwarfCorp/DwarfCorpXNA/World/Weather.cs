@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -23,10 +23,8 @@ namespace DwarfCorp
             Forecast= new List<Storm>();
         }
 
-        public void Update()
+        public void Update(DateTime currentDate, WorldManager world)
         {
-            DateTime currentDate = DwarfGame.World.Time.CurrentDate;
-
             foreach (Storm storm in Forecast)
             {
                 if (!storm.IsInitialized && currentDate > storm.Date)
@@ -39,7 +37,7 @@ namespace DwarfCorp
 
             if (Forecast.Count == 0)
             {
-                Forecast = CreateForecast(5);
+                Forecast = CreateForecast(currentDate, world.ChunkManager.Bounds, world, 5);
             }
         }
 
@@ -64,16 +62,18 @@ namespace DwarfCorp
             }
 
             public static Dictionary<StormType, StormProperties> Properties { get; set; }
+            private static bool staticsInitialized = false;
 
-            static Storm()
+            public void InitializeStatics(ParticleManager particles)
             {
+                staticsInitialized = true;
                 Properties = new Dictionary<StormType, StormProperties>()
                 {
                     {
                         StormType.RainStorm, new StormProperties()
                         {
-                            RainEffect = DwarfGame.World.ParticleManager.Effects["rain"],
-                            HitEffect = DwarfGame.World.ParticleManager.Effects["splat"],
+                            RainEffect = particles.Effects["rain"],
+                            HitEffect = particles.Effects["splat"],
                             RainSpeed = 30,
                             CreatesLiquid = true,
                             LiquidToCreate = LiquidType.Water
@@ -82,8 +82,8 @@ namespace DwarfCorp
                     {
                         StormType.SnowStorm, new StormProperties()
                         {
-                            RainEffect = DwarfGame.World.ParticleManager.Effects["snowflake"],
-                            HitEffect = DwarfGame.World.ParticleManager.Effects["snow_particle"],
+                            RainEffect = particles.Effects["snowflake"],
+                            HitEffect = particles.Effects["snow_particle"],
                             RainSpeed = 10,
                             RainRandom = 10f,
                             CreatesVoxel = true,
@@ -93,21 +93,29 @@ namespace DwarfCorp
                 };
             }
 
-            public Storm()
+            public WorldManager World { get; set; }
+
+            public Storm(ParticleManager particles, WorldManager world)
             {
+                World = world;
                 IsInitialized = false;
                 TypeofStorm = StormType.RainStorm;
+
+                if (!staticsInitialized)
+                {
+                    InitializeStatics(particles);
+                }
             }
 
             public bool IsDone()
             {
-                return IsInitialized && DwarfGame.World.Time.CurrentDate > Date;
+                return IsInitialized && World.Time.CurrentDate > Date;
             }
 
             public void Start()
             {
-                DwarfGame.World.MakeAnnouncement("A storm is coming!", null);
-                BoundingBox bounds = DwarfGame.World.ChunkManager.Bounds;
+                World.MakeAnnouncement("A storm is coming!", null);
+                BoundingBox bounds = World.ChunkManager.Bounds;
                 Vector3 extents = bounds.Extents();
                 Vector3 center = bounds.Center();
                 Vector3 windNormalized = WindSpeed / WindSpeed.Length();
@@ -119,7 +127,7 @@ namespace DwarfCorp
                 {
                     Vector3 cloudPos = offset + perp * 5 * (i - numClouds / 2) + MathFunctions.RandVector3Cube() * 10;
 
-                    Cloud cloud = new Cloud(Intensity, 5, offset.Y + MathFunctions.Rand(-3.0f, 3.0f), cloudPos)
+                    Cloud cloud = new Cloud(World.ComponentManager, Intensity, 5, offset.Y + MathFunctions.Rand(-3.0f, 3.0f), cloudPos)
                     {
                         Velocity = WindSpeed,
                         TypeofStorm = TypeofStorm
@@ -130,10 +138,10 @@ namespace DwarfCorp
         }
 
 
-        public static Storm CreateStorm(Vector3 windSpeed, float intensity)
+        public static Storm CreateStorm(Vector3 windSpeed, float intensity, WorldManager world)
         {
             windSpeed.Y = 0;
-            Storm storm = new Storm()
+            Storm storm = new Storm(world.ParticleManager, world)
             {
                 WindSpeed = windSpeed,
                 Intensity = intensity,
@@ -142,14 +150,14 @@ namespace DwarfCorp
             return storm;
         }
 
-        public static List<Storm> CreateForecast(int days)
+        public static List<Storm> CreateForecast(DateTime date, BoundingBox bounds, WorldManager world, int days)
         {
             List<Storm> foreCast = new List<Storm>();
-            DateTime date = DwarfGame.World.Time.CurrentDate;
+  
             for (int i = 0; i < days; i++)
             {
                 // Each day, a storm could originate from a randomly selected biome
-                Vector3 randomSample = MathFunctions.RandVector3Box(DwarfGame.World.ChunkManager.Bounds);
+                Vector3 randomSample = MathFunctions.RandVector3Box(bounds);
                 float rain = ChunkGenerator.GetValueAt(randomSample, Overworld.ScalarFieldType.Rainfall);
                 float temperature = ChunkGenerator.GetValueAt(randomSample, Overworld.ScalarFieldType.Temperature);
                 // Generate storms according to the rainfall in the biome. Up to 4 storms per day.
@@ -160,7 +168,7 @@ namespace DwarfCorp
                 for (int j = 0; j < numStorms; j++)
                 {
                     bool isSnow = MathFunctions.RandEvent(1.0f - temperature);
-                    Storm storm = new Storm
+                    Storm storm = new Storm(world.ParticleManager, world)
                     {
                         WindSpeed = MathFunctions.RandVector3Cube()*5,
                         Intensity = MathFunctions.Rand(rain, rain*2),
@@ -202,8 +210,8 @@ namespace DwarfCorp
                 TypeofStorm = StormType.RainStorm;
             }
 
-            public Cloud(float raininess, int maxRain, float height, Vector3 pos) :
-                base(pos, new SpriteSheet(ContentPaths.Particles.stormclouds), new Point(0, 0), DwarfGame.World.ComponentManager.RootComponent)
+            public Cloud(ComponentManager manager, float raininess, int maxRain, float height, Vector3 pos) :
+                base(pos, new SpriteSheet(ContentPaths.Particles.stormclouds), new Point(0, 0), manager.RootComponent)
             {
                 Matrix tf = LocalTransform;
                 tf.Translation = new Vector3(pos.X, height, pos.Z);
@@ -279,7 +287,7 @@ namespace DwarfCorp
                         RainDrops[i].Particle.Velocity = RainDrops[i].Vel;
                     }
 
-                    if (!DwarfGame.World.ChunkManager.ChunkData.GetVoxel(RainDrops[i].Pos, ref test)) continue;
+                    if (!chunks.ChunkData.GetVoxel(RainDrops[i].Pos, ref test)) continue;
                     if (test == null || test.IsEmpty || test.WaterLevel > 0) continue;
 
                     RainDrops[i].IsAlive = false;
