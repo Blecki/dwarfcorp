@@ -270,13 +270,11 @@ namespace DwarfCorp.GameStates
                     return;
                 }
 
-
-                world.ExistingFile = descriptor.FileName;
                 GUI.MouseMode = GUISkin.MousePointer.Wait;
             
                 JoinThreads();
                 StateManager.ClearState();
-                StateManager.PushState(new LoadState(Game, Game.StateManager));
+                StateManager.PushState(new LoadState(Game, Game.StateManager, new WorldSettings() { ExistingFile = descriptor.FileName, Name =  descriptor.FileName}));
                 Games.Clear();
             }
         }

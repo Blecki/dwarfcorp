@@ -1,4 +1,4 @@
-﻿// WorldSetupState.cs
+// WorldSetupState.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -64,23 +64,14 @@ namespace DwarfCorp
         private const string High = "High";
         private const string VeryHigh = "Very High"; 
 
-        public WorldSetupState(DwarfGame game, GameStateManager stateManager) :
+        public WorldSetupState(DwarfGame game, GameStateManager stateManager, WorldSettings settings) :
             base(game, "WorldSetupState", stateManager)
         {
             IsInitialized = false;
-            Settings = new WorldSettings()
+            if (settings == null)
             {
-                Width = 512,
-                Height = 512,
-                Name = GetRandomWorldName(),
-                NumCivilizations = 5,
-                NumFaults = 3,
-                NumRains = 1000,
-                NumVolcanoes = 3,
-                RainfallScale = 1.0f,
-                SeaLevel = 0.17f,
-                TemperatureScale = 1.0f
-            };
+                Settings = new WorldSettings();
+            }
         }
 
         public void CreateGUI()

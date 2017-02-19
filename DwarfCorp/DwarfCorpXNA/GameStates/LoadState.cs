@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
@@ -41,10 +41,11 @@ namespace DwarfCorp.GameStates
         };
 
         private Timer TipTimer = new Timer(5, false);
-        
-        public LoadState(DwarfGame game, GameStateManager stateManager) :
+        public WorldSettings Settings { get; set; }
+        public LoadState(DwarfGame game, GameStateManager stateManager, WorldSettings settings) :
             base(game, "LoadState", stateManager)
         {
+            Settings = settings;
             EnableScreensaver = true;
 
             Runner = new DwarfRunner(game);
@@ -78,13 +79,17 @@ namespace DwarfCorp.GameStates
             // instead these functions should be instantiated inside LoadState.
             World = new WorldManager(Game)
             {
-                WorldOrigin = DwarfGame.World.WorldOrigin,
-                WorldScale = DwarfGame.World.WorldScale,
-                WorldSize = DwarfGame.World.WorldSize,
-                InitialEmbark = DwarfGame.World.InitialEmbark,
-                ExistingFile = DwarfGame.World.ExistingFile,
-                SeaLevel = DwarfGame.World.SeaLevel
+                WorldOrigin = Settings.WorldOrigin,
+                WorldScale = Settings.WorldScale,
+                WorldSize = Settings.ColonySize,
+                InitialEmbark = Settings.InitalEmbarkment,
+                ExistingFile = Settings.ExistingFile,
+                SeaLevel = Settings.SeaLevel,
+                Natives = Settings.Natives
             };
+            World.WorldScale = Settings.WorldScale;
+            World.WorldGenerationOrigin = Settings.WorldGenerationOrigin;
+
             DwarfGame.World = World;
             World.OnLoadedEvent += World_OnLoadedEvent;
 
