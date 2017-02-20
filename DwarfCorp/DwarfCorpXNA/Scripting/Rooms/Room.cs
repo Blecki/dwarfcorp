@@ -112,12 +112,12 @@ namespace DwarfCorp
         public List<Body> GetComponentsInRoom()
         {
             List<Body> toReturn = new List<Body>();
-            HashSet<Body> components = new HashSet<Body>();
+            HashSet<IBoundedObject> components = new HashSet<IBoundedObject>();
             BoundingBox box = GetBoundingBox();
             box.Max += new Vector3(0, 0, 2);
             World.ComponentManager.CollisionManager.GetObjectsIntersecting(GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
 
-            toReturn.AddRange(components);
+            toReturn.AddRange(components.Where(o => o is Body).Select(o => o as Body));
 
             return toReturn;
         }

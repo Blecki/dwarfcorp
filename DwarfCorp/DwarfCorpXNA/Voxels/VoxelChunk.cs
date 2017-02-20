@@ -865,7 +865,7 @@ namespace DwarfCorp
         {
             BiomeData biomeData = BiomeLibrary.Biomes[biome];
 
-            string grassType = biomeData.GrassVoxel;
+            string grassType = biomeData.GrassLayer.VoxelType;
 
             for (int i = 0; i < biomeData.Motes.Count; i++)
             {
