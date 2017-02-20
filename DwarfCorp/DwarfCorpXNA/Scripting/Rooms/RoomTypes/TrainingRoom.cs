@@ -120,8 +120,8 @@ namespace DwarfCorp
                 {Resource.ResourceTags.Stone, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Stone)},
             };
 
-            Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
-            return new RoomData(TrainingRoomName, 3, "CobblestoneFloor", roomResources, trainingTemplates, new ImageFrame(roomIcons, 16, 3, 0))
+            return new RoomData(TrainingRoomName, 3, "CobblestoneFloor", roomResources, trainingTemplates, 
+                new Gum.TileReference("rooms", 3))
             {
                 Description = "Military dwarves train here",
                 MinimumSideLength = 4,

@@ -255,9 +255,10 @@ namespace DwarfCorp.GameStates
                                             CompanyInformation.LogoBackground = gc.SelectedItem.Background;
                                             CompanyLogoDisplay.Invalidate();
                                         }
-                                    }
+                                    },
+                                PopupDestructionType = PopupDestructionType.DestroyOnOffClick
                             };
-                            GuiRoot.ShowPopup(chooser, false);
+                            GuiRoot.ShowPopup(chooser);
                         }
                 });
 
@@ -291,9 +292,10 @@ namespace DwarfCorp.GameStates
                                 CompanyInformation.LogoBackgroundColor = gc.SelectedItem.BackgroundColor;
                                 CompanyLogoDisplay.Invalidate();
                             }
-                        }
+                        },
+                        PopupDestructionType = PopupDestructionType.DestroyOnOffClick
                     };
-                    GuiRoot.ShowPopup(chooser, false);
+                    GuiRoot.ShowPopup(chooser);
                 }
             });
 
@@ -330,9 +332,10 @@ namespace DwarfCorp.GameStates
                                 CompanyInformation.LogoSymbol = gc.SelectedItem.Background;
                                 CompanyLogoDisplay.Invalidate();
                             }
-                        }
+                        },
+                        PopupDestructionType = PopupDestructionType.DestroyOnOffClick
                     };
-                    GuiRoot.ShowPopup(chooser, false);
+                    GuiRoot.ShowPopup(chooser);
                 }
             });
 
@@ -366,9 +369,10 @@ namespace DwarfCorp.GameStates
                                 CompanyInformation.LogoSymbolColor = gc.SelectedItem.BackgroundColor;
                                 CompanyLogoDisplay.Invalidate();
                             }
-                        }
+                        },
+                        PopupDestructionType = PopupDestructionType.DestroyOnOffClick
                     };
-                    GuiRoot.ShowPopup(chooser, false);
+                    GuiRoot.ShowPopup(chooser);
                 }
             });
 

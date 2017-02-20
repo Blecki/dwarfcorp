@@ -37,9 +37,6 @@ namespace DwarfCorp
 
         public Camera CameraController { get; set; }
 
-        public ToolMode CurrentToolMode { get; set; }
-
-
         [JsonIgnore]
         public DwarfGUI GUI { get; set; }
 
@@ -54,12 +51,27 @@ namespace DwarfCorp
 
         public Faction Faction { get; set; }
 
+        #region  Player tool management
+
         [JsonIgnore]
         public Dictionary<ToolMode, PlayerTool> Tools { get; set; }
 
         [JsonIgnore]
         public PlayerTool CurrentTool { get { return Tools[CurrentToolMode]; } }
-            
+
+        public ToolMode CurrentToolMode { get; set; }
+
+        public void ChangeTool(ToolMode NewTool)
+        {
+            Tools[NewTool].OnBegin();
+            if (CurrentToolMode != NewTool)
+                CurrentTool.OnEnd();
+            CurrentToolMode = NewTool;
+        }
+
+        #endregion
+
+
         [JsonIgnore]
         public List<CreatureAI> SelectedMinions { get { return Faction.SelectedMinions; }set { Faction.SelectedMinions = value; } }
 
