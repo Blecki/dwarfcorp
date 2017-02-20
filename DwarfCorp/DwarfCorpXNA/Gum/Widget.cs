@@ -34,7 +34,6 @@ namespace Gum
         #endregion
 
         #region Appearance
-
         /// <summary>
         /// If transparent, this widget is not drawn. Children may still be drawn.
         /// </summary>
