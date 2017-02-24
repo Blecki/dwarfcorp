@@ -1,4 +1,4 @@
-﻿// WorldLoaderState.cs
+// WorldLoaderState.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -293,7 +293,7 @@ namespace DwarfCorp.GameStates
             back.OnClicked += back_OnClicked;
         }
 
-        public void LoadDescriptor(WorldLoadDescriptor descriptor)
+        public void LoadDescriptor(WorldLoadDescriptor descriptor, WorldManager world)
         {
             try
             {
@@ -309,8 +309,8 @@ namespace DwarfCorp.GameStates
                     Overworld.Map = descriptor.File.Data.CreateMap();
 
                     Overworld.Name = descriptor.File.Data.Name;
-                    DwarfGame.World.WorldWidth = Overworld.Map.GetLength(1);
-                    DwarfGame.World.WorldHeight = Overworld.Map.GetLength(0);
+                    world.WorldWidth = Overworld.Map.GetLength(1);
+                    world.WorldHeight = Overworld.Map.GetLength(0);
 
                     WorldGeneratorState state = StateManager.GetState<WorldGeneratorState>();
 
@@ -401,7 +401,7 @@ namespace DwarfCorp.GameStates
 
         void loadButton_OnClicked()
         {
-            LoadDescriptor(SelectedDescriptor);
+            LoadDescriptor(SelectedDescriptor, DwarfGame.World);
         }
 
         private void worldPicture_OnClicked(int picture)

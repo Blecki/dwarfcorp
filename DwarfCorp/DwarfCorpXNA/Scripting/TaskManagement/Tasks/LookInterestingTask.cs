@@ -1,4 +1,4 @@
-﻿// LookInterestingTask.cs
+// LookInterestingTask.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -93,7 +93,7 @@ namespace DwarfCorp
         /// <returns>The voxel within the radius which is over land if it exists, null otherwise.</returns>
         public Voxel FindLand(int radius, Voxel checkVoxel)
         {
-            return DwarfGame.World.ChunkManager.BreadthFirstSearch(checkVoxel, radius * radius, voxel => voxel != null && voxel.IsEmpty && voxel.WaterLevel == 0 && !voxel.IsBottomEmpty());
+            return checkVoxel.Chunk.Manager.BreadthFirstSearch(checkVoxel, radius * radius, voxel => voxel != null && voxel.IsEmpty && voxel.WaterLevel == 0 && !voxel.IsBottomEmpty());
         }
 
         /// <summary>

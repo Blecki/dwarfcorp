@@ -1,4 +1,4 @@
-﻿// VoxelChunk.cs
+// VoxelChunk.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -865,7 +865,7 @@ namespace DwarfCorp
         {
             BiomeData biomeData = BiomeLibrary.Biomes[biome];
 
-            string grassType = biomeData.GrassVoxel;
+            string grassType = biomeData.GrassLayer.VoxelType;
 
             for (int i = 0; i < biomeData.Motes.Count; i++)
             {
@@ -942,7 +942,7 @@ namespace DwarfCorp
 
         public void BuildGrassMotes()
         {
-            Vector2 v = new Vector2(Origin.X, Origin.Z) / DwarfGame.World.WorldScale;
+            Vector2 v = new Vector2(Origin.X, Origin.Z) / Manager.World.WorldScale;
 
             Overworld.Biome biome = Overworld.Map[(int)MathFunctions.Clamp(v.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(v.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
             BuildGrassMotes(biome);

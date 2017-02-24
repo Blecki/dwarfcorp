@@ -1,4 +1,4 @@
-﻿// ParticleEmitter.cs
+// ParticleEmitter.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -237,7 +237,7 @@ namespace DwarfCorp
 
         
 
-        public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
+        public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             ApplyTintingToEffect(effect);
             Sprites.Render(graphicsDevice, effect, camera, !renderingForWater);

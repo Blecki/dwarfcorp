@@ -1,4 +1,4 @@
-﻿// Voxel.cs
+// Voxel.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -488,15 +488,15 @@ namespace DwarfCorp
                 return null;
             }
 
-            if(DwarfGame.World.ParticleManager != null)
+            if(Chunk.Manager.World.ParticleManager != null)
             {
-                DwarfGame.World.ParticleManager.Trigger(Type.ParticleType, Position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
-                DwarfGame.World.ParticleManager.Trigger("puff", Position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
+                Chunk.Manager.World.ParticleManager.Trigger(Type.ParticleType, Position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
+                Chunk.Manager.World.ParticleManager.Trigger("puff", Position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
             }
 
-            if(DwarfGame.World.Master != null)
+            if(Chunk.Manager.World.Master != null)
             {
-                DwarfGame.World.Master.Faction.OnVoxelDestroyed(this);
+                Chunk.Manager.World.Master.Faction.OnVoxelDestroyed(this);
             }
 
             SoundManager.PlaySound(Type.ExplosionSound, Position);

@@ -1,4 +1,4 @@
-﻿// BatchedSprite.cs
+// BatchedSprite.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -143,7 +143,7 @@ namespace DwarfCorp
             Camera camera,
             SpriteBatch spriteBatch,
             GraphicsDevice graphicsDevice,
-            Effect effect, bool renderingForWater)
+            Shader effect, bool renderingForWater)
         {
             if(Primitive == null)
             {
@@ -155,16 +155,16 @@ namespace DwarfCorp
             {
                 if(!LightsWithVoxels)
                 {
-                    effect.Parameters["xTint"].SetValue(new Vector4(1, 1, 1, 1));
+                    effect.LightRampTint = Color.White;
                 }
                 else
                 {
-                    effect.Parameters["xTint"].SetValue(Tint.ToVector4());
+                    effect.LightRampTint = Tint;
                 }
 
                 RasterizerState r = graphicsDevice.RasterizerState;
                 graphicsDevice.RasterizerState = rasterState;
-                effect.Parameters["xTexture"].SetValue(SpriteSheet.GetTexture());
+                effect.MainTexture = SpriteSheet.GetTexture();
 
                 DepthStencilState origDepthStencil = graphicsDevice.DepthStencilState;
                 DepthStencilState newDepthStencil = DepthStencilState.DepthRead;
@@ -172,7 +172,7 @@ namespace DwarfCorp
 
 
                 //Matrix oldWorld = effect.Parameters["xWorld"].GetValueMatrix();
-                effect.Parameters["xWorld"].SetValue(GlobalTransform);
+                effect.World = GlobalTransform;
 
                 foreach(EffectPass pass in effect.CurrentTechnique.Passes)
                 {
@@ -180,7 +180,7 @@ namespace DwarfCorp
                     Primitive.Render(graphicsDevice);
                 }
 
-                effect.Parameters["xWorld"].SetValue(Matrix.Identity);
+                effect.World = Matrix.Identity;
 
                 if(origDepthStencil != null)
                 {

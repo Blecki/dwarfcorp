@@ -1,4 +1,4 @@
-﻿// WallBuilder.cs
+// WallBuilder.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -55,9 +56,11 @@ namespace DwarfCorp
         public Voxel Vox;
         public VoxelType Type;
         public CreatureAI ReservedCreature = null;
+        private WorldManager World { get; set; }
 
-        public WallBuilder(Voxel v, VoxelType t)
+        public WallBuilder(Voxel v, VoxelType t, WorldManager world)
         {
+            World = world;
             Vox = v;
             Type = t;
         }
@@ -72,7 +75,7 @@ namespace DwarfCorp
             v.Health = Type.StartingHealth;
             chunk.NotifyTotalRebuild(!v.IsInterior);
 
-            DwarfGame.World.ParticleManager.Trigger("puff", v.Position, Color.White, 20);
+            World.ParticleManager.Trigger("puff", v.Position, Color.White, 20);
 
             List<Body> components = new List<Body>();
             manager.Components.GetBodiesIntersecting(Vox.GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic);
@@ -106,13 +109,23 @@ namespace DwarfCorp
 
         public Texture2D BlockTextures { get; set; }
 
+        [JsonIgnore]
+        public WorldManager World { get; set; }
+
+        [OnDeserialized]
+        public void OnDeserializing(StreamingContext ctx)
+        {
+            World = DwarfGame.World;
+        }
+
         public PutDesignator()
         {
             
         }
 
-        public PutDesignator(Faction faction, Texture2D blockTextures)
+        public PutDesignator(Faction faction, Texture2D blockTextures, WorldManager world)
         {
+            World = world;
             Faction = faction;
             Designations = new List<WallBuilder>();
             BlockTextures = blockTextures;
@@ -179,17 +192,18 @@ namespace DwarfCorp
         }
 
 
-        public void Render(DwarfTime gameTime, GraphicsDevice graphics, Effect effect)
+        public void Render(DwarfTime gameTime, GraphicsDevice graphics, Shader effect)
         {
             float t = (float)gameTime.TotalGameTime.TotalSeconds;
             float st = (float) Math.Sin(t * 4) * 0.5f + 0.5f;
-            effect.Parameters["xTexture"].SetValue(BlockTextures);
-            effect.Parameters["xTint"].SetValue(new Vector4(1.0f, 1.0f, 2.0f, 0.5f * st + 0.45f));
+            effect.MainTexture = BlockTextures;
+            effect.LightRampTint = Color.White;
+            effect.VertexColorTint = new Color(1.0f, 1.0f, 2.0f, 0.5f * st + 0.45f);
             //Matrix oldWorld = effect.Parameters["xWorld"].GetValueMatrix();
             foreach(WallBuilder put in Designations)
             {
                 Drawer3D.DrawBox(put.Vox.GetBoundingBox(), Color.LightBlue, st * 0.01f + 0.05f);
-                effect.Parameters["xWorld"].SetValue(Matrix.CreateTranslation(put.Vox.Position));
+                effect.World = Matrix.CreateTranslation(put.Vox.Position);
 
                 foreach(EffectPass pass in effect.CurrentTechnique.Passes)
                 {
@@ -198,8 +212,9 @@ namespace DwarfCorp
                 }
             }
 
-            effect.Parameters["xTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-            effect.Parameters["xWorld"].SetValue(Matrix.Identity);
+            effect.LightRampTint = Color.White;
+            effect.VertexColorTint = Color.White;
+            effect.World = Matrix.Identity;
         }
 
         public bool Verify(List<Voxel> refs, ResourceLibrary.ResourceType type)
@@ -211,6 +226,11 @@ namespace DwarfCorp
 
         public void VoxelsSelected(List<Voxel> refs, InputManager.MouseButton button)
         {
+            if (Faction == null)
+            {
+                Faction = World.PlayerFaction;
+            }
+
             if(CurrentVoxelType == null)
             {
                 return;
@@ -221,7 +241,7 @@ namespace DwarfCorp
                 {
                     if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Build).Count == 0)
                     {
-                        DwarfGame.World.ShowTooltip("None of the selected units can build walls.");
+                        World.ShowToolPopup("None of the selected units can build walls.");
                         return;
                     }
                     List<Task> assignments = new List<Task>();
@@ -229,17 +249,17 @@ namespace DwarfCorp
 
                     if (!Verify(validRefs, CurrentVoxelType.ResourceToRelease))
                     {
-                        DwarfGame.World.ShowTooltip("Can't build this! Need at least " + validRefs.Count + " " + ResourceLibrary.Resources[CurrentVoxelType.ResourceToRelease].ResourceName + ".");
+                        World.ShowToolPopup("Can't build this! Need at least " + validRefs.Count + " " + ResourceLibrary.Resources[CurrentVoxelType.ResourceToRelease].ResourceName + ".");
                         return;
                     }
 
                     foreach (Voxel r in validRefs)
                     {
-                        AddDesignation(new WallBuilder(r, CurrentVoxelType));
+                        AddDesignation(new WallBuilder(r, CurrentVoxelType, World));
                         assignments.Add(new BuildVoxelTask(r, CurrentVoxelType));
                     }
 
-                    TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(DwarfGame.World.Master.SelectedMinions, GameMaster.ToolMode.Build));
+                    TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(World.Master.SelectedMinions, GameMaster.ToolMode.Build));
 
                     break;
                 }

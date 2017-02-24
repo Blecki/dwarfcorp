@@ -1,4 +1,4 @@
-﻿// FileUtils.cs
+// FileUtils.cs
 // 
 //  Modified MIT License (MIT)
 //  

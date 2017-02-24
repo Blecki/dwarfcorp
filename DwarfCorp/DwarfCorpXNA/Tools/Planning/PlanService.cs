@@ -1,4 +1,4 @@
-﻿// PlanService.cs
+// PlanService.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -260,7 +260,8 @@ namespace DwarfCorp
     {
         public override AStarPlanResponse HandleRequest(AstarPlanRequest req)
         {
-            List<Creature.MoveAction> path = AStarPlanner.FindPath(req.Sender.Movement, req.Start, req.GoalRegion, DwarfGame.World.ChunkManager, req.MaxExpansions, req.HeuristicWeight);
+            List<Creature.MoveAction> path = AStarPlanner.FindPath(req.Sender.Movement, req.Start, req.GoalRegion, req.Sender.Manager.World.ChunkManager, 
+                req.MaxExpansions, req.HeuristicWeight);
 
             AStarPlanResponse res = new AStarPlanResponse
             {

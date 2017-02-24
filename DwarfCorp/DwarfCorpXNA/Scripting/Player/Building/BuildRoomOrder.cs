@@ -1,4 +1,4 @@
-﻿// BuildRoomOrder.cs
+// BuildRoomOrder.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -52,9 +52,10 @@ namespace DwarfCorp
         public Faction Faction { get; set; }
         public List<GameComponent> WorkObjects = new List<GameComponent>(); 
         public bool IsBuilt { get; set; }
-
-        public BuildRoomOrder(Room toBuild, Faction faction)
+        private WorldManager World { get; set; }
+        public BuildRoomOrder(Room toBuild, Faction faction, WorldManager world)
         {
+            World = world;
             ToBuild = toBuild;
             PutResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>();
             VoxelOrders = new List<BuildVoxelOrder>();
@@ -161,13 +162,13 @@ namespace DwarfCorp
             IsBuilt = true;
             ToBuild.IsBuilt = true;
             List<Body> components = RoomLibrary.GenerateRoomComponentsTemplate(ToBuild.RoomData, ToBuild.Voxels,
-                Faction.Components, DwarfGame.World.ChunkManager.Content, DwarfGame.World.ChunkManager.Graphics);
-            RoomLibrary.BuildAllComponents(components, ToBuild);
+                Faction.Components, World.ChunkManager.Content, World.ChunkManager.Graphics);
+            RoomLibrary.BuildAllComponents(components, ToBuild, World.ParticleManager);
             ToBuild.OnBuilt();
 
             if (!silent)
             {
-                DwarfGame.World.MakeAnnouncement("Built room!", String.Format("{0} was built", ToBuild.ID));
+                World.MakeAnnouncement("Built room!", String.Format("{0} was built", ToBuild.ID));
             }
 
             foreach (GameComponent fence in WorkObjects)

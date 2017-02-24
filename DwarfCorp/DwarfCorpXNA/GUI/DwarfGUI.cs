@@ -1,4 +1,4 @@
-﻿// DwarfGUI.cs
+// DwarfGUI.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -93,6 +93,7 @@ namespace DwarfCorp
 
         public DwarfGUI(DwarfGame game, SpriteFont defaultFont, SpriteFont titleFont, SpriteFont smallFont, InputManager input)
         {
+            IndicatorManager.DefaultFont = defaultFont;
             EnableMouseEvents = true;
             IsMouseVisible = true;
             MouseMode = GUISkin.MousePointer.Pointer;
@@ -205,7 +206,7 @@ namespace DwarfCorp
 
         public void PostRender(DwarfTime time)
         {
-            if (IsMouseVisible)
+            if (IsMouseVisible && IsMouseOver())
             {
                 MouseState mouse = Mouse.GetState();
                 Skin.RenderMouse(mouse.X, mouse.Y, MouseScale, MouseMode, DwarfGame.SpriteBatch, MouseTint);

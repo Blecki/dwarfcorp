@@ -1,4 +1,4 @@
-﻿// ComboBoxSelector.cs
+// ComboBoxSelector.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -169,8 +169,6 @@ namespace DwarfCorp
                 List<Entry> column = Columns[currentColumn];
                 Vector2 measure = Datastructures.SafeMeasure(Font, s.LocalName);
                 height += (int) measure.Y;
-                column.Add(s);
-
                 if(height > bestHeight)
                 {
                     bestHeight = height;
@@ -179,9 +177,13 @@ namespace DwarfCorp
                 if(height >= MaxHeight || height + y + Box.GlobalBounds.Y + 32 > GameSettings.Default.ResolutionY)
                 {
                     height = 0;
-                    Columns.Add(new List<Entry>());
+                    Columns.Add(new List<Entry>(){s});
                     currentColumn++;
                     columnWidth += ColumnWidth;
+                }
+                else
+                {
+                    column.Add(s);
                 }
             }
 
@@ -201,10 +203,9 @@ namespace DwarfCorp
                 columnWidth -= ColumnWidth;
             }
 
-            bestHeight += 15;
+            bestHeight += 32;
 
             LocalBounds = new Rectangle(x,y,columnWidth, bestHeight);
-
             ClickTimer = new Timer(0.1f, true, Timer.TimerMode.Real);
             InputManager.MouseClickedCallback += InputManager_MouseClickedCallback;
             Drawn = true;
@@ -329,7 +330,7 @@ namespace DwarfCorp
                     }
 
                     float columnMeasure = MeasureColumn(column).Y;
-                    PixelsPerValue = (int) columnMeasure / column.Count;
+                    PixelsPerValue = (int) (columnMeasure / column.Count);
                     int h = 0;
 
                     foreach(Entry s in column)

@@ -941,6 +941,16 @@ namespace DwarfCorp
         /// </summary>
         public static ThreadSafeRandom Random = new ThreadSafeRandom();
 
+        public static Vector3 ProjectOutOfHalfPlane(Vector3 position, Vector3 origin, float dist)
+        {
+            float dy = position.Y - origin.Y;
+            if (dy < dist)
+            {
+                return new Vector3(position.X, origin.Y + dist, position.Z);
+            }
+            return position;
+        }
+
         public static Vector3 ProjectOutOfCylinder(Vector3 position, Vector3 origin, float radius)
         {
             Vector3 pos2d = new Vector3(position.X - origin.X, 0, position.Z - origin.Z);

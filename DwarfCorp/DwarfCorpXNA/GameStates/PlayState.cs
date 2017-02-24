@@ -14,15 +14,14 @@ namespace DwarfCorp.GameStates
         private bool IsShuttingDown { get; set; }
         private bool QuitOnNextUpdate { get; set; }
         public bool ShouldReset { get; set; }
-        public static WorldManager World { get; set; }
+
+        public WorldManager World { get; set; }
 
         public GameMaster Master
         {
             get { return World.Master; }
             set { World.Master = value; }
-        }
-
-        public bool Paused
+        }        public bool Paused
         {
             get { return World.Paused; }
             set { World.Paused = value; }
@@ -135,6 +134,8 @@ namespace DwarfCorp.GameStates
                     {
                         GuiRoot.MousePointer = mouse;
                     };
+
+                World.ShowToolPopup += text => GuiRoot.ShowTooltip(new Point(GuiRoot.MousePosition.X, GuiRoot.MousePosition.Y - 30), text, 3.0f);
 
                 World.gameState = this;
                 World.OnLoseEvent += World_OnLoseEvent;
@@ -642,7 +643,7 @@ namespace DwarfCorp.GameStates
                                         Master.Faction.WallBuilder.CurrentVoxelType = null;
                                         Master.Faction.CraftBuilder.IsEnabled = false;
                                         ChangeTool(GameMaster.ToolMode.Build);
-                                        DwarfGame.World.ShowTooltip("Click and drag to build " + data.Name);
+                                        World.ShowToolPopup("Click and drag to build " + data.Name);
                                     }
                                     //Todo: Add to toolbar item list & disable if not enough resources?
                                 })
@@ -674,7 +675,7 @@ namespace DwarfCorp.GameStates
                                         Master.Faction.WallBuilder.CurrentVoxelType = data;
                                         Master.Faction.CraftBuilder.IsEnabled = false;
                                         ChangeTool(GameMaster.ToolMode.Build);
-                                        DwarfGame.World.ShowTooltip("Click and drag to build " + data.Name + " wall.");
+                                        World.ShowToolPopup("Click and drag to build " + data.Name + " wall.");
                                     }
                                     //Todo: Add to toolbar item list & disable if not enough resources?
                                 })
@@ -714,7 +715,7 @@ namespace DwarfCorp.GameStates
                                         Master.Faction.CraftBuilder.IsEnabled = true;
                                         Master.Faction.CraftBuilder.CurrentCraftType = data;
                                         ChangeTool(GameMaster.ToolMode.Build);
-                                        DwarfGame.World.ShowTooltip("Click and drag to build " + data.Name);
+                                        World.ShowToolPopup("Click and drag to build " + data.Name);
                                     },
                                     OnConstruct = (sender) =>
                                     {
@@ -757,7 +758,7 @@ namespace DwarfCorp.GameStates
                                         Master.Faction.CraftBuilder.IsEnabled = true;
                                         Master.Faction.CraftBuilder.CurrentCraftType = data;
                                         ChangeTool(GameMaster.ToolMode.Build);
-                                        DwarfGame.World.ShowTooltip("Click and drag to build " + data.Name);
+                                        World.ShowToolPopup("Click and drag to build " + data.Name);
                                     }
                                     //Todo: Add to toolbar item list & disable if not enough resources?
                                 })
@@ -807,7 +808,7 @@ namespace DwarfCorp.GameStates
                                         Master.Faction.CraftBuilder.IsEnabled = true;
                                         Master.Faction.CraftBuilder.CurrentCraftType = data;
                                         ChangeTool(GameMaster.ToolMode.Build);
-                                        DwarfGame.World.ShowTooltip("Click and drag to build " + data.Name);
+                                        World.ShowToolPopup("Click and drag to build " + data.Name);
                                     }
                                     //Todo: Add to toolbar item list & disable if not enough resources?
                                 })

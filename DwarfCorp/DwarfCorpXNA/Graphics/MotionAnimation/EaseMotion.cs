@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,8 +13,13 @@ namespace DwarfCorp
         public Matrix Start { get; set; }
         public Vector3 EndPos { get; set; }
 
-        public EaseMotion(float time, Matrix start, Vector3 end) :
-            base(time, false)
+        public EaseMotion()
+        {
+            
+        }
+
+        public EaseMotion(float animTime, Matrix start, Vector3 end) :
+            base(animTime, false)
         {
             Start = start;
             EndPos = end;

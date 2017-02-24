@@ -300,9 +300,8 @@ namespace DwarfCorp
             return false;
         }
 
-        public bool IsVoxelOccluded(Voxel voxel)
+        public bool IsVoxelOccluded(Voxel voxel, Vector3 cameraPos)
         {
-            Vector3 cameraPos = DwarfGame.World.Camera.Position;
             Vector3 voxelPoint = voxel.Position + Vector3.One * 0.5f;
             Voxel atPos = new Voxel();
             foreach (Point3 coord in MathFunctions.RasterizeLine(cameraPos, voxelPoint))

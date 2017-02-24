@@ -1,4 +1,4 @@
-﻿// BiomeData.cs
+// BiomeData.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -46,6 +46,7 @@ namespace DwarfCorp
     {
         public Overworld.Biome Biome { get; set; }
 
+
         public string Name
         {
             get { return Biome.ToString(); }
@@ -59,10 +60,10 @@ namespace DwarfCorp
 
         public List<VegetationData> Vegetation { get; set; }
         public List<DetailMoteData> Motes { get; set; }
-        public List<FaunaData> Fauna { get; set; } 
-        public string GrassVoxel { get; set; }
-        public string SoilVoxel { get; set; }
-        public string SubsurfVoxel { get; set; }
+        public List<FaunaData> Fauna { get; set; }
+        public Layer GrassLayer { get; set; }
+        public Layer SoilLayer { get; set; }
+        public List<Layer> SubsurfaceLayers { get; set; }
         public string ShoreVoxel { get; set; }
         public bool ClumpGrass { get; set; }
         public float ClumpSize { get; set; }
@@ -79,6 +80,7 @@ namespace DwarfCorp
             Vegetation = new List<VegetationData>();
             Motes = new List<DetailMoteData>();
             Fauna = new List<FaunaData>();
+            SubsurfaceLayers = new List<Layer>();
             ClumpGrass = false;
             ClumpSize = 30.0f;
             ClumpTreshold = 0.75f;

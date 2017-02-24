@@ -1,4 +1,4 @@
-﻿// Tinter.cs
+// Tinter.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -145,12 +145,12 @@ namespace DwarfCorp
             base.Update(gameTime, chunks, camera);
         }
 
-        public void ApplyTintingToEffect(Effect effect)
+        public void ApplyTintingToEffect(Shader effect)
         {
             if (IsVisible)
             {
-                effect.Parameters["xTint"].SetValue(new Vector4(Tint.R, Tint.G, Tint.B, Tint.A));
-                effect.Parameters["xColorTint"].SetValue(new Vector4(VertexColorTint.R, VertexColorTint.G, VertexColorTint.B, VertexColorTint.A));
+                effect.LightRampTint = Tint;
+                effect.VertexColorTint = VertexColorTint;
             }
         }
     }
