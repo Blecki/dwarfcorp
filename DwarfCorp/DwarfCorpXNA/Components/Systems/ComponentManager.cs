@@ -157,7 +157,7 @@ namespace DwarfCorp
                     continue;
                 }
                 if (!component.IsVisible) continue;
-                toReturn.Add(component.GetRootComponent().GetComponent<Body>());
+                toReturn.Add(component.GetEntityRootComponent().GetComponent<Body>());
             }
             return toReturn;
         }
@@ -210,14 +210,18 @@ namespace DwarfCorp
 
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            GamePerformance.Instance.StartTrackPerformance("Update Transforms");
             if(RootComponent != null)
             {
-                RootComponent.UpdateTransformsRecursive();
+                RootComponent.UpdateTransformsRecursive(null);
             }
+            GamePerformance.Instance.StopTrackPerformance("Update Transforms");
 
+            GamePerformance.Instance.StartTrackPerformance("Factions");
             Factions.Update(gameTime);
+            GamePerformance.Instance.StopTrackPerformance("Factions");
 
-
+            GamePerformance.Instance.StartTrackPerformance("Update Components");
             foreach(GameComponent component in Components.Values)
             {
                 component.Manager = this;
@@ -235,7 +239,7 @@ namespace DwarfCorp
                     component.IsVisible = false;
                 }
             }
-
+            GamePerformance.Instance.StopTrackPerformance("Update Components");
 
             HandleAddRemoves();
         }

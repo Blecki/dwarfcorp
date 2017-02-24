@@ -397,7 +397,7 @@ namespace DwarfCorp
                         Velocity += dampingForce * FixedDT / numVelocitySteps;
                         AngularVelocity *= AngularDamping;
                         UpdateBoundingBox();
-                        UpdateTransformsRecursive();
+                        UpdateTransformsRecursive(Parent as Body);
                     }
                 }
             }

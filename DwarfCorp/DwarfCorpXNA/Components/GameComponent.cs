@@ -254,7 +254,7 @@ namespace DwarfCorp
         /// <returns>The first component of type T.</returns>
         public T GetComponent<T>(bool self=true) where T : GameComponent
         {
-            return GetRootComponent().GetChildrenOfType<T>(self).FirstOrDefault();
+            return GetEntityRootComponent().GetChildrenOfType<T>(self).FirstOrDefault();
         }
 
         /// <summary>
@@ -591,14 +591,12 @@ namespace DwarfCorp
         /// Gets the anscestor of this component which has no parent.
         /// </summary>
         /// <returns>The anscestor of this component with no parent.</returns>
-        public GameComponent GetRootComponent()
+        public GameComponent GetEntityRootComponent()
         {
-            GameComponent p = this;
+            var p = this;
 
-            while(p != null && p.Parent != Manager.RootComponent)
-            {
+            while(p.Parent != null && !Object.ReferenceEquals(p.Parent, Manager.RootComponent))
                 p = p.Parent;
-            }
 
             return p;
         }
@@ -716,23 +714,7 @@ namespace DwarfCorp
             // in the GameComponent constructor so we can't put AddToCache there.
             cache.addFunction(this);
         }
-
-        public void RemoveCacheType(string cacheName)
-        {
-            GameObjectCaching.GameComponentCache cache = GameObjectCaching.GetCacheByName(cacheName);
-            if (cache == null) return;
-
-            if (cacheTypeNames == null)
-            {
-                cacheTypeNames = new List<string>();
-                cacheTypes = new List<GameObjectCaching.GameComponentCache>();
-            }
-            else if (!cacheTypeNames.Contains(cacheName)) return;
-            cacheTypeNames.Remove(cacheName);
-            cacheTypes.Remove(cache);
-            cache.removeFunction(this);
-        }
-
+        
         public void AddToCache(GameComponent cachedObject)
         {
             if (cacheTypes == null) return;

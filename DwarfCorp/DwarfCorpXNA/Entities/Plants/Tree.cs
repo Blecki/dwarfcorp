@@ -131,7 +131,7 @@ namespace DwarfCorp
 
         public virtual Seedling BecomeSeedling()
         {
-            UpdateTransformsRecursive();
+            UpdateTransformsRecursive(Parent as Body);
             SetActiveRecursive(false);
             SetVisibleRecursive(false);
 

@@ -493,8 +493,8 @@ namespace DwarfCorp
                                         }
                                         float treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
                                         GameComponent entity = EntityFactory.CreateEntity<GameComponent>(veg.Name, chunk.Origin + new Vector3(x, y, z) + new Vector3(0, treeSize * offset, 0), Blackboard.Create("Scale", treeSize));
-                                        entity.GetRootComponent().SetActiveRecursive(false);
-                                        entity.GetRootComponent().SetVisibleRecursive(false);
+                                        entity.GetEntityRootComponent().SetActiveRecursive(false);
+                                        entity.GetEntityRootComponent().SetVisibleRecursive(false);
                                         if (GameSettings.Default.FogofWar)
                                         {
                                             ExploredListener listener = new ExploredListener(
@@ -516,8 +516,8 @@ namespace DwarfCorp
 
                                 if (GameSettings.Default.FogofWar)
                                 {
-                                    entity.GetRootComponent().SetActiveRecursive(false);
-                                    entity.GetRootComponent().SetVisibleRecursive(false);
+                                    entity.GetEntityRootComponent().SetActiveRecursive(false);
+                                    entity.GetEntityRootComponent().SetVisibleRecursive(false);
                                     ExploredListener listener = new ExploredListener(DwarfGame.World.ComponentManager,
                                         entity,
                                         DwarfGame.World.ChunkManager, chunk.MakeVoxel(x, y, z));

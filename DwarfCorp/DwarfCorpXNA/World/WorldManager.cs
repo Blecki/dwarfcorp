@@ -309,7 +309,7 @@ namespace DwarfCorp
         /// <summary>
         /// Creates a new play state
         /// </summary>
-        /// <param name="game">The program currently running</param>
+        /// <param name="Game">The program currently running</param>
         public WorldManager(DwarfGame Game)
         {
             World = this;
@@ -1220,13 +1220,25 @@ namespace DwarfCorp
             if (!Paused)
             {
                 Time.Update(gameTime);
+
+                GamePerformance.Instance.StartTrackPerformance("Diplomacy");
                 ComponentManager.Diplomacy.Update(gameTime, Time.CurrentDate);
+                GamePerformance.Instance.StopTrackPerformance("Diplomacy");
+
+                GamePerformance.Instance.StartTrackPerformance("Components");
                 ComponentManager.Update(gameTime, ChunkManager, Camera);
+                GamePerformance.Instance.StopTrackPerformance("Components");
+
                 Sky.TimeOfDay = Time.GetSkyLightness();
 
                 Sky.CosTime = (float)(Time.GetTotalHours() * 2 * Math.PI / 24.0f);
                 DefaultShader.Parameters["xTimeOfDay"].SetValue(Sky.TimeOfDay);
+
+                GamePerformance.Instance.StartTrackPerformance("Monster Spawner");
                 MonsterSpawner.Update(gameTime);
+                GamePerformance.Instance.StopTrackPerformance("Monster Spawner");
+
+                GamePerformance.Instance.StartTrackPerformance("All Asleep");
                 bool allAsleep = Master.AreAllEmployeesAsleep();
                 if (SleepPrompt && allAsleep && !FastForwardToDay && Time.IsNight())
                 {
@@ -1239,14 +1251,26 @@ namespace DwarfCorp
                 {
                     SleepPrompt = true;
                 }
+                GamePerformance.Instance.StopTrackPerformance("All Asleep");
             }
 
             // These things are updated even when the game is paused
-            ChunkManager.Update(gameTime, Camera, GraphicsDevice);
-            InstanceManager.Update(gameTime, Camera, GraphicsDevice);
 
+            GamePerformance.Instance.StartTrackPerformance("Chunk Manager");
+            ChunkManager.Update(gameTime, Camera, GraphicsDevice);
+            GamePerformance.Instance.StopTrackPerformance("Chunk Manager");
+
+            GamePerformance.Instance.StartTrackPerformance("Instance Manager");
+            InstanceManager.Update(gameTime, Camera, GraphicsDevice);
+            GamePerformance.Instance.StopTrackPerformance("Instance Manager");
+
+            GamePerformance.Instance.StartTrackPerformance("Sound Manager");
             SoundManager.Update(gameTime, Camera);
+            GamePerformance.Instance.StopTrackPerformance("Sound Manager");
+
+            GamePerformance.Instance.StartTrackPerformance("Weather");
             Weather.Update();
+            GamePerformance.Instance.StopTrackPerformance("Weather");
 
             // Make sure that the slice slider snaps to the current viewing level (an integer)
             //if(!LevelSlider.IsMouseOver)

@@ -117,7 +117,7 @@ namespace DwarfCorp
         void CurrentMinionPanel_Fire(CreatureAI creature)
         {
             SoundManager.PlaySound(ContentPaths.Audio.change);
-            creature.GetRootComponent().Delete();
+            creature.GetEntityRootComponent().Delete();
             creature.IsDead = true;
 
             Faction.Minions.Remove(creature);

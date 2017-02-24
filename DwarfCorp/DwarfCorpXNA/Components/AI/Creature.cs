@@ -147,7 +147,7 @@ namespace DwarfCorp
         public void Hatch()
         {
             EntityFactory.CreateEntity<Body>(Adult, ParentBody.Position);
-            GetRootComponent().Die();
+            GetEntityRootComponent().Die();
         }
     }
 

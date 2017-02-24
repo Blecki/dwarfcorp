@@ -355,37 +355,30 @@ namespace DwarfCorp
         }
 
 
-        public void UpdateTransformsRecursive()
+        public void UpdateTransformsRecursive(Body ParentBody)
         {
-
-            if(Parent is Body)
+            if (ParentBody != null)
             {
-                Body locatable = (Body) Parent;
-
-                //if(HasMoved)
-                {
-                    GlobalTransform = LocalTransform * locatable.GlobalTransform;
-                    hasMoved = false;
-                }
+                GlobalTransform = LocalTransform * ParentBody.GlobalTransform;
+                hasMoved = false;
             }
             else
             {
-                //if(HasMoved)
-                {
-                    GlobalTransform = LocalTransform;
-                    hasMoved = false;
-                }
+                GlobalTransform = LocalTransform;
+                hasMoved = false;
             }
-
-
-            lock(Children)
+            
+            //lock(Children)
             {
-                foreach(Body locatable in Children.OfType<Body>())
+                for (int i = 0; i < Children.Count; ++i)
                 {
-                    locatable.UpdateTransformsRecursive();
+                    var childBody = Children[i] as Body;
+                    if (childBody != null)
+                        childBody.UpdateTransformsRecursive(this);
                 }
             }
 
+            // Setting the global transform does this...
             UpdateBoundingBox();
         }
 
