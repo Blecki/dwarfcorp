@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.NewGui
 {
+    // Todo: Delete this class.
     public class BuildMenu : Gum.Widget
     {
         public GameMaster Master;
@@ -63,7 +64,7 @@ namespace DwarfCorp.NewGui
                 BuildTab(tabPanel, "Rooms", RoomLibrary.GetRoomTypes().Select(name => RoomLibrary.GetData(name)).Select(data =>
                     new BuildableItem
                     {
-                        Icon = new TileReference("rooms", iconSheet.ConvertRectToIndex(data.Icon.SourceRect)),
+                        Icon = data.NewIcon,
                         Name = data.Name,
                         Data = data
                     }),
@@ -164,7 +165,7 @@ namespace DwarfCorp.NewGui
                 BuildTab(tabPanel, "Objects",
                     CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Object).Select(craft => new BuildableItem
                     {
-                        Icon = new TileReference("furniture", iconSheet.ConvertRectToIndex(craft.Image.SourceRect)),
+                        Icon = craft.Icon,
                         Name = craft.Name,
                         Data = craft
                     }),

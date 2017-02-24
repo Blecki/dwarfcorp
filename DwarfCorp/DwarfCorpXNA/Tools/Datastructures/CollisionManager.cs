@@ -39,98 +39,96 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    //[JsonObject(IsReference = true)]
+    //public class SpatialHash<T>
+    //{
+    //    public Dictionary<Point3, List<T>> HashMap { get; set; }
+
+    //    public SpatialHash()
+    //    {
+    //        HashMap = new Dictionary<Point3, List<T>>();
+    //    }
+
+    //    public List<T> GetItems(Point3 location)
+    //    {
+    //        if (HashMap.ContainsKey(location))
+    //            return HashMap[location];
+    //        else return null;
+    //    }
+
+    //    public List<T> GetItems(Voxel voxel)
+    //    {
+    //        return GetItems(new Point3(MathFunctions.FloorInt(voxel.Position.X),
+    //                    MathFunctions.FloorInt(voxel.Position.Y),
+    //                    MathFunctions.FloorInt(voxel.Position.Z)));
+    //    }
+
+    //    public void GetItemsInBox<TObject>(BoundingBox box, HashSet<TObject> items) where TObject : T
+    //    {
+    //        Point3 minPoint = new Point3(MathFunctions.FloorInt(box.Min.X), MathFunctions.FloorInt(box.Min.Y), MathFunctions.FloorInt(box.Min.Z));
+    //        Point3 maxPoint = new Point3(MathFunctions.FloorInt(box.Max.X), MathFunctions.FloorInt(box.Max.Y), MathFunctions.FloorInt(box.Max.Z));
+    //        Point3 iter = new Point3();
+    //        for (iter.X = minPoint.X; iter.X <= maxPoint.X; iter.X++)
+    //        {
+    //            for (iter.Y = minPoint.Y; iter.Y <= maxPoint.Y; iter.Y++)
+    //            {
+    //                for (iter.Z = minPoint.Z; iter.Z <= maxPoint.Z; iter.Z++)
+    //                {
+    //                    List<T> itemsInVoxel = GetItems(iter);
+
+    //                    if (itemsInVoxel == null) continue;
+
+    //                    foreach (TObject item in itemsInVoxel.OfType<TObject>())
+    //                    {
+    //                        items.Add(item);
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }
+
+    //    public void AddItem(Point3 location, T item)
+    //    {
+    //        if (HashMap.ContainsKey(location))
+    //        {
+    //            HashMap[location].Add(item);
+    //        }
+    //        else
+    //        {
+    //            List<T> items = new List<T> {item};
+    //            HashMap[location] = items;
+    //        }
+    //    }
 
 
-    [JsonObject(IsReference = true)]
-    public class SpatialHash<T>
-    {
-        public Dictionary<Point3, List<T>> HashMap { get; set; }
+    //    public void AddItems(Point3 location, IEnumerable<T> items)
+    //    {
+    //        if (HashMap.ContainsKey(location))
+    //        {
+    //            HashMap[location].AddRange(items);
+    //        }
+    //        else
+    //        {
+    //            List<T> itemsToAdd = new List<T>();
+    //            itemsToAdd.AddRange(items);
+    //            HashMap[location] = itemsToAdd;
+    //        }
+    //    }
 
-        public SpatialHash()
-        {
-            HashMap = new Dictionary<Point3, List<T>>();
-        }
+    //    public bool RemoveItem(Point3 location, T item)
+    //    {
+    //        if (!HashMap.ContainsKey(location)) return false;
 
-        public List<T> GetItems(Point3 location)
-        {
-            if (HashMap.ContainsKey(location))
-                return HashMap[location];
-            else return null;
-        }
+    //        List<T> items = HashMap[location];
+    //        bool removed =  items.Remove(item);
 
-        public List<T> GetItems(Voxel voxel)
-        {
-            return GetItems(new Point3(MathFunctions.FloorInt(voxel.Position.X),
-                        MathFunctions.FloorInt(voxel.Position.Y),
-                        MathFunctions.FloorInt(voxel.Position.Z)));
-        }
-
-        public void GetItemsInBox<TObject>(BoundingBox box, HashSet<TObject> items) where TObject : T
-        {
-            Point3 minPoint = new Point3(MathFunctions.FloorInt(box.Min.X), MathFunctions.FloorInt(box.Min.Y), MathFunctions.FloorInt(box.Min.Z));
-            Point3 maxPoint = new Point3(MathFunctions.FloorInt(box.Max.X), MathFunctions.FloorInt(box.Max.Y), MathFunctions.FloorInt(box.Max.Z));
-            Point3 iter = new Point3();
-            for (iter.X = minPoint.X; iter.X <= maxPoint.X; iter.X++)
-            {
-                for (iter.Y = minPoint.Y; iter.Y <= maxPoint.Y; iter.Y++)
-                {
-                    for (iter.Z = minPoint.Z; iter.Z <= maxPoint.Z; iter.Z++)
-                    {
-                        List<T> itemsInVoxel = GetItems(iter);
-
-                        if (itemsInVoxel == null) continue;
-
-                        foreach (TObject item in itemsInVoxel.OfType<TObject>())
-                        {
-                            items.Add(item);
-                        }
-                    }
-                }
-            }
-        }
-
-        public void AddItem(Point3 location, T item)
-        {
-            if (HashMap.ContainsKey(location))
-            {
-                HashMap[location].Add(item);
-            }
-            else
-            {
-                List<T> items = new List<T> {item};
-                HashMap[location] = items;
-            }
-        }
-
-
-        public void AddItems(Point3 location, IEnumerable<T> items)
-        {
-            if (HashMap.ContainsKey(location))
-            {
-                HashMap[location].AddRange(items);
-            }
-            else
-            {
-                List<T> itemsToAdd = new List<T>();
-                itemsToAdd.AddRange(items);
-                HashMap[location] = itemsToAdd;
-            }
-        }
-
-        public bool RemoveItem(Point3 location, T item)
-        {
-            if (!HashMap.ContainsKey(location)) return false;
-
-            List<T> items = HashMap[location];
-            bool removed =  items.Remove(item);
-
-            if (items.Count == 0)
-            {
-                HashMap.Remove(location);
-            }
-            return removed;
-        }
-    }
+    //        if (items.Count == 0)
+    //        {
+    //            HashMap.Remove(location);
+    //        }
+    //        return removed;
+    //    }
+    //}
 
     /// <summary>
     /// Maintains a number of labeled octrees, and allows collision
@@ -147,7 +145,7 @@ namespace DwarfCorp
             Dynamic = 4
         }
 
-        public Dictionary<CollisionType, SpatialHash<IBoundedObject>> Hashes { get; set; }
+        public Dictionary<CollisionType, IntegerOctTreeNode<IBoundedObject>> Hashes { get; set; }
 
         public CollisionManager()
         {
@@ -156,53 +154,25 @@ namespace DwarfCorp
 
         public CollisionManager(BoundingBox bounds)
         {
-            Hashes = new Dictionary<CollisionType, SpatialHash<IBoundedObject>>();
-            Hashes[CollisionType.Static] = new SpatialHash<IBoundedObject>();
-            Hashes[CollisionType.Dynamic] = new SpatialHash<IBoundedObject>();
+            Hashes = new Dictionary<CollisionType, IntegerOctTreeNode<IBoundedObject>>();
+            Hashes[CollisionType.Static] = new IntegerOctTreeNode<IBoundedObject>(bounds.Min, bounds.Max);
+            Hashes[CollisionType.Dynamic] = new IntegerOctTreeNode<IBoundedObject>(bounds.Min, bounds.Max);
         }
 
         public void AddObject(IBoundedObject bounded, CollisionType type)
         {
             if(type == CollisionType.None)
-            {
                 return;
-            }
-            BoundingBox box = bounded.GetBoundingBox();
-            Point3 minPoint = new Point3(MathFunctions.FloorInt(box.Min.X), MathFunctions.FloorInt(box.Min.Y), MathFunctions.FloorInt(box.Min.Z));
-            Point3 maxPoint = new Point3(MathFunctions.FloorInt(box.Max.X), MathFunctions.FloorInt(box.Max.Y), MathFunctions.FloorInt(box.Max.Z));
-            Point3 iter = new Point3();
-            for (iter.X = minPoint.X; iter.X <= maxPoint.X; iter.X++)
-            {
-                for (iter.Y = minPoint.Y; iter.Y <= maxPoint.Y; iter.Y++)
-                {
-                    for (iter.Z = minPoint.Z; iter.Z <= maxPoint.Z; iter.Z++)
-                    {
-                        Hashes[type].AddItem(iter, bounded);
-                    }
-                }
-            }
 
+            Hashes[type].AddItem(bounded, new IntegerBoundingBox(bounded.GetBoundingBox()));
         }
 
         public void RemoveObject(IBoundedObject bounded, BoundingBox oldLocation, CollisionType type)
         {
             if(type == CollisionType.None)
-            {
                 return;
-            }
-            Point3 minPoint = new Point3(MathFunctions.FloorInt(oldLocation.Min.X), MathFunctions.FloorInt(oldLocation.Min.Y), MathFunctions.FloorInt(oldLocation.Min.Z));
-            Point3 maxPoint = new Point3(MathFunctions.FloorInt(oldLocation.Max.X), MathFunctions.FloorInt(oldLocation.Max.Y), MathFunctions.FloorInt(oldLocation.Max.Z));
-            Point3 iter = new Point3();
-            for (iter.X = minPoint.X; iter.X <= maxPoint.X; iter.X++)
-            {
-                for (iter.Y = minPoint.Y; iter.Y <= maxPoint.Y; iter.Y++)
-                {
-                    for (iter.Z = minPoint.Z; iter.Z <= maxPoint.Z; iter.Z++)
-                    {
-                        Hashes[type].RemoveItem(iter, bounded);
-                    }
-                }
-            }
+
+            Hashes[type].RemoveItem(bounded, new IntegerBoundingBox(oldLocation));
         }
 
         public List<IBoundedObject> GetObjectsAt(Voxel voxel, CollisionType queryType)
@@ -214,142 +184,36 @@ namespace DwarfCorp
 
         public List<IBoundedObject> GetObjectsAt(Point3 pos, CollisionType queryType)
         {
-            List<IBoundedObject> toReturn = new List<IBoundedObject>();
+            HashSet<IBoundedObject> toReturn = new HashSet<IBoundedObject>();
             switch ((int)queryType)
             {
                 case (int)CollisionType.Static:
                 case (int)CollisionType.Dynamic:
-                    toReturn = Hashes[queryType].GetItems(pos);
+                    Hashes[queryType].FindItemsAt(pos, toReturn);
                     break;
                 case ((int)CollisionType.Static | (int)CollisionType.Dynamic):
-                    toReturn.AddRange(Hashes[CollisionType.Static].GetItems(pos));
-                    toReturn.AddRange(Hashes[CollisionType.Dynamic].GetItems(pos));
+                    Hashes[CollisionType.Static].FindItemsAt(pos, toReturn);
+                    Hashes[CollisionType.Dynamic].FindItemsAt(pos, toReturn);
                     break;
             }
-            return toReturn;
+            return toReturn.ToList();
         }
 
 
-        public void GetObjectsIntersecting<TObject>(BoundingBox box, HashSet<TObject> set, CollisionType queryType) where TObject : IBoundedObject
+        public void GetObjectsIntersecting(BoundingBox box, HashSet<IBoundedObject> set, CollisionType queryType)
         {
             switch((int) queryType)
             {
                 case (int) CollisionType.Static:
                 case (int) CollisionType.Dynamic:
-                    Hashes[queryType].GetItemsInBox(box, set);
+                    Hashes[queryType].FindItemsInBox(new IntegerBoundingBox(box), set);
                     break;
                 case ((int) CollisionType.Static | (int) CollisionType.Dynamic):
-                    Hashes[CollisionType.Static].GetItemsInBox(box, set);
-                    Hashes[CollisionType.Dynamic].GetItemsInBox(box, set);
+                    Hashes[CollisionType.Static].FindItemsInBox(new IntegerBoundingBox(box), set);
+                    Hashes[CollisionType.Dynamic].FindItemsInBox(new IntegerBoundingBox(box), set);
                     break;
             }
         }
-
-        // Old frustrum culling method.  Not used anymore
-        public void GetObjectsIntersecting<TObject>(BoundingFrustum frustum, HashSet<TObject> set, CollisionType queryType) where TObject : IBoundedObject
-        {
-            List<SpatialHash<IBoundedObject>> hashes = new List<SpatialHash<IBoundedObject>>();
-            switch ((int)queryType)
-            {
-                case (int)CollisionType.Static:
-                case (int)CollisionType.Dynamic:
-                    hashes.Add(Hashes[queryType]);
-                    break;
-                case ((int)CollisionType.Static | (int)CollisionType.Dynamic):
-                    hashes.Add(Hashes[CollisionType.Static]);
-                    hashes.Add(Hashes[CollisionType.Dynamic]);
-                    break;
-            }
-
-            BoundingBox frustumBox = MathFunctions.GetBoundingBox(frustum.GetCorners());
-
-            for (int i = 0; i < hashes.Count; i++)
-            {
-                SpatialHash<IBoundedObject> hash = hashes[i];
-                foreach (KeyValuePair<Point3, List<IBoundedObject>> kvp in hash.HashMap)
-                {
-                    List<IBoundedObject> objectList = kvp.Value;
-                    if (objectList != null && frustumBox.Contains(kvp.Key.ToVector3()) == ContainmentType.Contains)
-                    {
-                        for (int j = 0; j < objectList.Count; j++)
-                        {
-                            if (!(objectList[j] is TObject)) continue;
-                            TObject obj = (TObject)objectList[j];
-
-                            if (!set.Contains(obj))
-                            {
-                                bool intersect = obj.GetBoundingBox().Intersects(frustum);
-                                if (intersect)
-                                {
-                                    set.Add(obj);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        public void GetObjectsIntersecting<TObject>(BoundingSphere sphere, HashSet<TObject> set, CollisionType queryType) where TObject : IBoundedObject
-        {
-            HashSet<TObject> intersectingBounds = new HashSet<TObject>();
-            BoundingBox box = MathFunctions.GetBoundingBox(sphere);
-            switch ((int)queryType)
-            {
-                case (int)CollisionType.Static:
-                case (int)CollisionType.Dynamic:
-                    Hashes[queryType].GetItemsInBox(box, intersectingBounds);
-                    break;
-                case ((int)CollisionType.Static | (int)CollisionType.Dynamic):
-                    Hashes[CollisionType.Static].GetItemsInBox(box, intersectingBounds);
-                    Hashes[CollisionType.Dynamic].GetItemsInBox(box, intersectingBounds);
-                    break;
-            }
-            intersectingBounds.RemoveWhere(obj => !obj.GetBoundingBox().Intersects(sphere));
-        }
-
-
-
-        public void GetObjectsIntersecting<TObject>(Ray ray, HashSet<TObject> set, CollisionType queryType)
-            where TObject : IBoundedObject
-        {
-            if (queryType == (CollisionType.Static | CollisionType.Dynamic))
-            {
-                GetObjectsIntersecting<TObject>(ray, set, CollisionType.Static);
-                GetObjectsIntersecting<TObject>(ray, set, CollisionType.Dynamic);
-            }
-            else foreach(Point3 pos in MathFunctions.RasterizeLine(ray.Position, ray.Direction*100 + ray.Position))
-            {
-                if (queryType != CollisionType.Static && queryType != CollisionType.Dynamic) continue;
-
-                List<IBoundedObject> obj = Hashes[queryType].GetItems(pos);
-                if (obj == null) continue;
-                foreach (TObject item in obj.OfType<TObject>().Where(item => !set.Contains(item) && ray.Intersects(item.GetBoundingBox()) != null))
-                {
-                    set.Add(item);
-                }
-            }
-        }
-
-
-        public HashSet<T> GetVisibleObjects<T>(BoundingFrustum getFrustrum, CollisionType collisionType) where T : IBoundedObject
-        {
-            HashSet<T> objects = new HashSet<T>();
-            GetObjectsIntersecting(getFrustrum, objects, collisionType);
-            return objects;
-        }
-
-        public void DebugDraw()
-        {
-            foreach (var pair in Hashes)
-            {
-                foreach (var cell in pair.Value.HashMap)
-                {
-                    if(cell.Value != null)
-                        Drawer2D.DrawText(cell.Value.Count + "", cell.Key.ToVector3() + Vector3.One * 0.5f, Color.White, Color.Black);
-                }
-            }
-
-        }
+     
     }
 }

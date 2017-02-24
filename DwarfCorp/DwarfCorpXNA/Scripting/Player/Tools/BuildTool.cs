@@ -60,7 +60,7 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
-            if (BuildPanel != null && BuildPanel.Root != null)
+            /*if (BuildPanel != null && BuildPanel.Root != null)
                 BuildPanel.Close();
 
             BuildPanel = Player.World.NewGui.ConstructWidget(new NewGui.BuildMenu
@@ -70,17 +70,18 @@ namespace DwarfCorp
                 }) as NewGui.BuildMenu;
 
             Player.World.NewGui.ShowDialog(BuildPanel);
-
+            
             Player.Faction.CraftBuilder.IsEnabled = false;
 
             Player.World.Paused = true;
+            */
         }
 
         public override void OnEnd()
         {
-            if (BuildPanel != null && BuildPanel.Root != null)
-                BuildPanel.Close();
-            BuildPanel = null;
+            //if (BuildPanel != null && BuildPanel.Root != null)
+            //    BuildPanel.Close();
+            //BuildPanel = null;
             Player.Faction.CraftBuilder.IsEnabled = false;
             Player.Faction.RoomBuilder.OnExit();
         }
