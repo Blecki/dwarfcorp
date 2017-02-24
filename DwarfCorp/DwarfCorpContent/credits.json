@@ -70,8 +70,16 @@
     "Divider": false
   },
   {
+  {
     "Name": "Anthony Casteel",
-    "Role": "Programming Consultant",
+    "Role": "Programming Contractor",
+    "Color": "255, 255, 255, 255",
+    "RandomFlash": false,
+    "Divider": false
+  },
+  {
+    "Name": "Jason Berg",
+    "Role": "Programming Contractor",
     "Color": "255, 255, 255, 255",
     "RandomFlash": false,
     "Divider": false

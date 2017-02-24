@@ -1,4 +1,4 @@
-﻿// MagicTool.cs
+// MagicTool.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -103,8 +103,11 @@ namespace DwarfCorp
 
         public override void OnEnd()
         {
-            MagicMenu.TweenOut(Drawer2D.Alignment.Right);
-            MagicBar.TweenOut(Drawer2D.Alignment.Right);
+            if (MagicMenu != null)
+            {
+                MagicMenu.TweenOut(Drawer2D.Alignment.Right);
+                MagicBar.TweenOut(Drawer2D.Alignment.Right);
+            }
         }
 
 

@@ -1,4 +1,4 @@
-﻿// RoomData.cs
+// RoomData.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -126,21 +126,31 @@ namespace DwarfCorp
 
             if (maxExtents < MinimumSideLength || minExtents < MinimumSideWidth)
             {
-                world.ShowTooltip(Drawer2D.WrapColor("Room is too small", Color.Red) + " (minimum is " + MinimumSideLength + " x " + MinimumSideWidth +")!");
+                world.ShowToolPopup("Room is too small (minimum is " + MinimumSideLength + " x " + MinimumSideWidth + ")!");
                 return false;
             }
 
             if (!HasAvailableResources(refs.Count, faction))
             {
-                world.ShowTooltip(Drawer2D.WrapColor("Not enough resources for this room.", Color.Red));
+                world.ShowToolPopup("Not enough resources for this room.");
                 return false;
             }
 
             int height = -1;
+            bool anyEmpty = false;
             foreach (Voxel voxel in refs)
             {
 
-                if (voxel.IsEmpty) continue;
+                if (voxel.IsEmpty)
+                {
+                    continue;
+                }
+
+                if (!anyEmpty && voxel.IsTopEmpty())
+                {
+                    anyEmpty = true;
+                }
+
                 if (voxel.Type.IsInvincible) continue;
 
                 if (height == -1)
@@ -149,7 +159,7 @@ namespace DwarfCorp
                 }
                 else if (height != (int) voxel.GridPosition.Y && !CanBuildOnMultipleLevels)
                 {
-                    world.ShowTooltip(Drawer2D.WrapColor("Room must be on flat ground!", Color.Red));
+                    world.ShowToolPopup("Room must be on flat ground!");
                     return false;
                 }
 
@@ -157,7 +167,7 @@ namespace DwarfCorp
                 {
                     if (!voxel.Type.IsSoil)
                     {
-                        world.ShowTooltip(Drawer2D.WrapColor("Room must be built on soil!", Color.Red));
+                        world.ShowToolPopup("Room must be built on soil!");
                         return false;
                     }
                 }
@@ -166,18 +176,24 @@ namespace DwarfCorp
                 {
                     if (voxel.Chunk.Data.SunColors[voxel.Index] <= 5) continue;
 
-                    world.ShowTooltip(Drawer2D.WrapColor("Room can't be built aboveground!", Color.Red));
+                    world.ShowToolPopup("Room can't be built aboveground!");
                     return false;
                 } 
                 else if (!CanBuildBelowGround)
                 {
                     if (voxel.Chunk.Data.SunColors[voxel.Index] >= 5) continue;
 
-                    world.ShowTooltip(Drawer2D.WrapColor("Room can't be built belowground!", Color.Red));
+                    world.ShowToolPopup("Room can't be built belowground!");
                     return false;
                 }
 
 
+            }
+
+            if (!anyEmpty)
+            {
+                world.ShowToolPopup("Room must be built in free space.");
+                return false;
             }
 
             return true;

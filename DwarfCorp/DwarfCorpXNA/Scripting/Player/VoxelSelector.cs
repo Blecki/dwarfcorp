@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -354,7 +354,7 @@ namespace DwarfCorp
                         {
                             SelectionBuffer.RemoveAll(
                                 voxel =>
-                                    (!voxel.Equals(underMouse) && Chunks.ChunkData.IsVoxelOccluded(voxel)));
+                                    (!voxel.Equals(underMouse) && Chunks.ChunkData.IsVoxelOccluded(voxel, World.Camera.Position)));
                         }
                         if (newVoxel)
                             Dragged.Invoke(SelectionBuffer, InputManager.MouseButton.Right);

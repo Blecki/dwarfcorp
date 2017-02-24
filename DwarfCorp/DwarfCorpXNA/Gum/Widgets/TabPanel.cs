@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -140,7 +140,17 @@ namespace Gum.Widgets
                 Graphics = Graphics,
                 OnClick = (sender, args) => SelectedTab = tabIndex,
                 TextSize = TextSize,
-                TextColor = TextColor
+                TextColor = TextColor,
+                OnMouseEnter = (widget, action) =>
+                {
+                    widget.TextColor = new Vector4(0.5f, 0, 0, 1.0f);
+                    widget.Invalidate();
+                },
+                OnMouseLeave = (widget, action) =>
+                {
+                    widget.TextColor = TextColor;
+                    widget.Invalidate();
+                }
             });
 
             SendToBack(tabButton);

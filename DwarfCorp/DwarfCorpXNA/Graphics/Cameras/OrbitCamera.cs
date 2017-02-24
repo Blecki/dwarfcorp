@@ -398,7 +398,7 @@ namespace DwarfCorp
             Target = projectedTarget * 0.05f + Target * 0.95f;
             float currRadius = (Position - Target).Length();
             float newRadius = Math.Max(currRadius + diffRadius, 3.0f);
-            Position = MathFunctions.ProjectOutOfCylinder(MathFunctions.ProjectToSphere(Position - right*diffTheta * 2 - up*diffPhi * 2, newRadius, Target), Target, 3.0f);
+            Position = MathFunctions.ProjectOutOfHalfPlane(MathFunctions.ProjectOutOfCylinder(MathFunctions.ProjectToSphere(Position - right*diffTheta * 2 - up*diffPhi * 2, newRadius, Target), Target, 3.0f), Target, 2.0f);
             UpdateViewMatrix();
         }
 

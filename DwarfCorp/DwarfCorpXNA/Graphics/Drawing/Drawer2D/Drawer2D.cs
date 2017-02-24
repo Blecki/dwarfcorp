@@ -1,4 +1,4 @@
-﻿// Drawer2D.cs
+// Drawer2D.cs
 // 
 //  Modified MIT License (MIT)
 //  

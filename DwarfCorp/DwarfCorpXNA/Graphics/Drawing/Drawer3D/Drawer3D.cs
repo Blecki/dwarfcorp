@@ -1,4 +1,4 @@
-﻿// Drawer3D.cs
+// Drawer3D.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -85,7 +85,7 @@ namespace DwarfCorp
             Commands.Add(new PlaneDrawCommand(new Vector3((maxX + minX) * 0.5f, y, (maxZ + minZ) * 0.5f), new Vector3((maxX - minX), 1.0f, (maxZ - minZ)), color));
         }
 
-        public static void Render(GraphicsDevice device, Effect effect, bool delete)
+        public static void Render(GraphicsDevice device, Shader effect, bool delete)
         {
             BlendState origBlen = device.BlendState;
             device.BlendState = BlendState.NonPremultiplied;
@@ -94,8 +94,8 @@ namespace DwarfCorp
             RasterizerState oldState = device.RasterizerState;
             device.RasterizerState = newState;
 
-            effect.CurrentTechnique = effect.Techniques["Untextured"];
-            effect.Parameters["xWorld"].SetValue(Matrix.Identity);
+            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Untextured];
+            effect.World = Matrix.Identity;
 
 
             DrawCommand3D.LineStrip strips = new DrawCommand3D.LineStrip()
@@ -133,7 +133,7 @@ namespace DwarfCorp
                 }
             }
         
-            effect.CurrentTechnique = effect.Techniques["Textured"];
+            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
 
             foreach (DrawCommand3D command in Commands)
             {

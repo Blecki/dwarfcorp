@@ -1,4 +1,4 @@
-﻿// KillEntityTask.cs
+// KillEntityTask.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -148,7 +148,7 @@ namespace DwarfCorp
                 }
 
                 Voxel target = new Voxel();
-                bool voxExists = DwarfGame.World.ChunkManager.ChunkData.GetVoxel(EntityToKill.Position, ref target);
+                bool voxExists = agent.Manager.World.ChunkManager.ChunkData.GetVoxel(EntityToKill.Position, ref target);
                 if (!voxExists || !PlanAct.PathExists(agent.Physics.CurrentVoxel, target, agent.AI))
                 {
                     return false;
@@ -160,7 +160,7 @@ namespace DwarfCorp
                     return true;
                 }
                 Relationship relation =
-                    DwarfGame.World.ComponentManager.Diplomacy.GetPolitics(ai.Faction, agent.Faction).GetCurrentRelationship();
+                    agent.Manager.Diplomacy.GetPolitics(ai.Faction, agent.Faction).GetCurrentRelationship();
                 return relation == Relationship.Hateful || relation == Relationship.Indifferent;
             }
         }

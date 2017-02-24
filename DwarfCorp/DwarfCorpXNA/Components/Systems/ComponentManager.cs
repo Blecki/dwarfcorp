@@ -1,4 +1,4 @@
-﻿// ComponentManager.cs
+// ComponentManager.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -109,7 +109,7 @@ namespace DwarfCorp
             Factions = new FactionLibrary();
             if (natives != null && natives.Count > 0)
             {
-                Factions.AddFactions(natives);
+                Factions.AddFactions(state, natives);
             }
             Factions.Initialize(state, CompanyInformation);
             Point playerOrigin = new Point((int)(World.WorldOrigin.X), (int)(World.WorldOrigin.Y));
@@ -271,7 +271,7 @@ namespace DwarfCorp
         }
 
         public void RenderSelectionBuffer(DwarfTime time, ChunkManager chunks, Camera camera,
-            SpriteBatch spriteBatch, GraphicsDevice graphics, Effect effect)
+            SpriteBatch spriteBatch, GraphicsDevice graphics, Shader effect)
         {
             effect.CurrentTechnique = effect.Techniques["Selection"];
             foreach (Body bodyToDraw in visibleComponents)
@@ -286,7 +286,7 @@ namespace DwarfCorp
             Camera camera,
             SpriteBatch spriteBatch,
             GraphicsDevice graphicsDevice,
-            Effect effect,
+            Shader effect,
             WaterRenderType waterRenderMode, float waterLevel)
         {
             bool renderForWater = (waterRenderMode != WaterRenderType.None);
@@ -303,7 +303,6 @@ namespace DwarfCorp
                 {
                     Body b = bodies[i];
 
-                    if (!b.IsActive) continue;
                     if (!b.IsVisible) continue;
                     if (b.IsAboveCullPlane) continue;
 
@@ -320,7 +319,7 @@ namespace DwarfCorp
                 Camera = camera;
             }
 
-            effect.Parameters["xEnableLighting"].SetValue(GameSettings.Default.CursorLightEnabled ? 1 : 0);
+            effect.EnableLighting = GameSettings.Default.CursorLightEnabled;
             graphicsDevice.RasterizerState = RasterizerState.CullNone;
 
             foreach (Body bodyToDraw in visibleComponents)
@@ -332,7 +331,7 @@ namespace DwarfCorp
                 }
                 bodyToDraw.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderForWater);
             }
-            effect.Parameters["xEnableLighting"].SetValue(0);
+            effect.EnableLighting = false;
         }
 
         public static int CompareZDepth(Body A, Body B)

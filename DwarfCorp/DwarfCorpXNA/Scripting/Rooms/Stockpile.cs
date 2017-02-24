@@ -1,4 +1,4 @@
-﻿// Stockpile.cs
+// Stockpile.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -68,6 +68,7 @@ namespace DwarfCorp
         {
             Boxes = new List<Body>();
             ReplacementType = VoxelLibrary.GetVoxelType("Stockpile");
+            Faction = null;
         }
 
 
@@ -102,7 +103,7 @@ namespace DwarfCorp
             component.AnimationQueue.Add(deathMotion);
             deathMotion.OnComplete += component.Die;
             SoundManager.PlaySound(ContentPaths.Audio.whoosh, component.LocalTransform.Translation);
-            DwarfGame.World.ParticleManager.Trigger("puff", component.LocalTransform.Translation + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 90);
+            Faction.World.ParticleManager.Trigger("puff", component.LocalTransform.Translation + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 90);
         }
 
         public void CreateBox(Vector3 pos)
@@ -114,7 +115,8 @@ namespace DwarfCorp
             crate.AnimationQueue.Add(new EaseMotion(0.8f, crate.LocalTransform, endPos));
             Boxes.Add(crate);
             SoundManager.PlaySound(ContentPaths.Audio.whoosh, startPos);
-            DwarfGame.World.ParticleManager.Trigger("puff", pos + new Vector3(0.5f, 1.5f, 0.5f), Color.White, 90);
+            if (Faction != null)
+                Faction.World.ParticleManager.Trigger("puff", pos + new Vector3(0.5f, 1.5f, 0.5f), Color.White, 90);
         }
 
         public void HandleBoxes()

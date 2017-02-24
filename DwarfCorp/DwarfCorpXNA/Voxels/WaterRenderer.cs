@@ -1,4 +1,4 @@
-﻿// WaterRenderer.cs
+// WaterRenderer.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -135,19 +135,19 @@ namespace DwarfCorp
             }
         }
 
-        public void DrawReflectionMap(DwarfTime gameTime, WorldManager game, float waterHeight, Matrix reflectionViewMatrix, Effect effect, GraphicsDevice device)
+        public void DrawReflectionMap(DwarfTime gameTime, WorldManager game, float waterHeight, Matrix reflectionViewMatrix, Shader effect, GraphicsDevice device)
         {
             if (!DrawReflections) return;
             Plane reflectionPlane = CreatePlane(waterHeight, new Vector3(0, -1, 0), reflectionViewMatrix, true);
 
-            effect.Parameters["ClipPlane0"].SetValue(new Vector4(reflectionPlane.Normal, reflectionPlane.D));
-            effect.Parameters["Clipping"].SetValue(1);
-            effect.Parameters["GhostMode"].SetValue(0);
+            effect.ClipPlane = new Vector4(reflectionPlane.Normal, reflectionPlane.D);
+            effect.ClippingEnabled = true;
+            effect.GhostClippingEnabled = false;
             device.SetRenderTarget(reflectionRenderTarget);
 
 
             device.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.CornflowerBlue, 1.0f, 0);
-            effect.Parameters["xView"].SetValue(reflectionViewMatrix);
+            effect.View = reflectionViewMatrix;
 
             //game.DrawSky();
 
@@ -165,27 +165,27 @@ namespace DwarfCorp
 
             if(DrawComponentsReflected)
             {
-                effect.Parameters["xView"].SetValue(reflectionViewMatrix);
+                effect.View = reflectionViewMatrix;
                 game.DrawComponents(gameTime, effect, reflectionViewMatrix, ComponentManager.WaterRenderType.Reflective, waterHeight);
             }
 
-            effect.Parameters["Clipping"].SetValue(0);
+            effect.ClippingEnabled = false;
             device.SetRenderTarget(null);
 
             ReflectionMap = reflectionRenderTarget;
         }
 
-        public void DrawWaterFlat(GraphicsDevice device, Matrix view, Matrix projection, Effect effect, ChunkManager chunks)
+        public void DrawWaterFlat(GraphicsDevice device, Matrix view, Matrix projection, Shader effect, ChunkManager chunks)
         {
-            effect.CurrentTechnique = effect.Techniques["WaterFlat"];
+            effect.CurrentTechnique = effect.Techniques[Shader.Technique.WaterFlat];
             Matrix worldMatrix = Matrix.Identity;
-            effect.Parameters["xWorld"].SetValue(worldMatrix);
-            effect.Parameters["xView"].SetValue(view);
-            effect.Parameters["xProjection"].SetValue(projection);
+            effect.World = worldMatrix;
+            effect.View = view;
+            effect.Projection = projection;
 
             foreach (KeyValuePair<LiquidType, LiquidAsset> asset in LiquidAssets)
             {
-                effect.Parameters["xFlatColor"].SetValue(asset.Value.FlatColor);
+                effect.FlatWaterColor = new Color(asset.Value.FlatColor);
 
 
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
@@ -208,7 +208,7 @@ namespace DwarfCorp
 
         public void DrawWater(GraphicsDevice device,
             float time,
-            Effect effect,
+            Shader effect,
             Matrix viewMatrix,
             Matrix reflectionViewMatrix,
             Matrix projectionMatrix,
@@ -218,11 +218,11 @@ namespace DwarfCorp
         {
             if (DrawReflections)
             {
-                effect.CurrentTechnique = effect.Techniques["Water"];
+                effect.CurrentTechnique = effect.Techniques[Shader.Technique.Water];
             }
             else
             {
-                effect.CurrentTechnique = effect.Techniques["WaterTextured"];
+                effect.CurrentTechnique = effect.Techniques[Shader.Technique.WaterTextured];
             }
 
             BlendState origState = device.BlendState;
@@ -233,40 +233,40 @@ namespace DwarfCorp
            
 
             Matrix worldMatrix = Matrix.Identity;
-            effect.Parameters["xWorld"].SetValue(worldMatrix);
-            effect.Parameters["xView"].SetValue(viewMatrix);
-            effect.Parameters["xCamPos"].SetValue(camera.Position);
+            effect.World = worldMatrix;
+            effect.View = viewMatrix;
+            effect.CameraPosition = camera.Position;
             if (DrawReflections)
             {
-                effect.Parameters["xReflectionView"].SetValue(reflectionViewMatrix);
+                effect.ReflectionView = reflectionViewMatrix;
             }
 
-            effect.Parameters["xProjection"].SetValue(projectionMatrix);
+            effect.Projection = projectionMatrix;
 
             if (DrawReflections)
-                effect.Parameters["xReflectionMap"].SetValue(ReflectionMap);
+                effect.WaterReflectionMap = ReflectionMap;
 
-            effect.Parameters["xShoreGradient"].SetValue(ShoreMap);
-            effect.Parameters["xTime"].SetValue(time);
-            effect.Parameters["xWindDirection"].SetValue(windDirection);
-            effect.Parameters["xCamPos"].SetValue(camera.Position);
+            effect.WaterShoreGradient = ShoreMap;
+            effect.Time = time;
+            effect.WindDirection = windDirection;
+            effect.CameraPosition = camera.Position;
             
 
             foreach (KeyValuePair<LiquidType, LiquidAsset> asset in LiquidAssets)
             {
                 
-                effect.Parameters["xWaveLength"].SetValue(asset.Value.WaveLength);
-                effect.Parameters["xWaveHeight"].SetValue(asset.Value.WaveHeight);
-                effect.Parameters["xWindForce"].SetValue(asset.Value.WindForce);
+                effect.WaveLength = asset.Value.WaveLength;
+                effect.WaveHeight = asset.Value.WaveHeight;
+                effect.WindForce = asset.Value.WindForce;
                 if (DrawReflections)
                 {
-                    effect.Parameters["xWaterBumpMap"].SetValue(asset.Value.BumpTexture);
-                    effect.Parameters["xWaterReflective"].SetValue(asset.Value.Reflection);
+                    effect.WaterBumpMap = asset.Value.BumpTexture;
+                    effect.WaterReflectance = asset.Value.Reflection;
                 }
-                effect.Parameters["xTexture"].SetValue(asset.Value.BaseTexture);
-                effect.Parameters["xWaterOpacity"].SetValue(asset.Value.Opactiy);
-                effect.Parameters["xWaterMinOpacity"].SetValue(asset.Value.MinOpacity);
-                effect.Parameters["xRippleColor"].SetValue(asset.Value.RippleColor);
+                effect.MainTexture = asset.Value.BaseTexture;
+                effect.WaterOpacity = asset.Value.Opactiy;
+                effect.MinWaterOpacity = asset.Value.MinOpacity; 
+                effect.RippleColor = new Color(asset.Value.RippleColor);
 
 
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)

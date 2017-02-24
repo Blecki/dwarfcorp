@@ -1,4 +1,4 @@
-﻿// Voxel.cs
+// Voxel.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -39,7 +39,7 @@ using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
-
+using System.Diagnostics;
 
 namespace DwarfCorp
 {
@@ -49,7 +49,7 @@ namespace DwarfCorp
     /// </summary>
     public enum VoxelVertex
     {
-        FrontTopLeft,
+        FrontTopLeft = 0,
         FrontTopRight,
         FrontBottomLeft,
         FrontBottomRight,
@@ -57,6 +57,7 @@ namespace DwarfCorp
         BackTopRight,
         BackBottomLeft,
         BackBottomRight,
+        Count
     }
 
     /// <summary>
@@ -218,6 +219,28 @@ namespace DwarfCorp
             }
         }
 
+        // This function does the same as setting Chunk then GridPosition except avoids regenerating the quick compare
+        // more than once.  Only set generateQuickCompare to false if you intend the voxel to be a throwaway
+        // during a time sensitive loop.
+        public void ChangeVoxel(VoxelChunk chunk, Vector3 gridPosition, bool generateQuickCompare)
+        {
+            ChangeVoxel(chunk, new Point3(gridPosition), generateQuickCompare);
+        }
+
+        // This function does the same as setting Chunk then GridPosition except avoids regenerating the quick compare
+        // more than once.  Only set generateQuickCompare to false if you intend the voxel to be a throwaway
+        // during a time sensitive loop.
+        public void ChangeVoxel(VoxelChunk chunk, Point3 gridPosition, bool generateQuickCompare = true)
+        {
+            System.Diagnostics.Debug.Assert(chunk != null, "ChangeVoxel was passed a null chunk.");
+            _chunk = chunk;
+            chunkID = _chunk.ID;
+            gridpos = gridPosition.ToVector3();
+            index = Chunk.Data.IndexAt((int)gridpos.X, (int)gridpos.Y, (int)gridpos.Z);
+            if (generateQuickCompare) RegenerateQuickCompare();
+            else quickCompare = invalidCompareValue;
+        }
+
 
         [JsonIgnore]
         public static List<VoxelVertex> VoxelVertexList { get; set; }
@@ -250,11 +273,17 @@ namespace DwarfCorp
             set { chunkID = value; RegenerateQuickCompare(); }
         }
 
-        [NonSerialized]
+        [JsonIgnore]
         private ulong quickCompare;
+        private const ulong invalidCompareValue = 0xFFFFFFFFFFFFFFFFUL;
+
+        [JsonIgnore]
         public ulong QuickCompare
         {
-            get { return quickCompare; }
+            get {
+                System.Diagnostics.Debug.Assert(quickCompare == invalidCompareValue, "Voxel was generated without Quick Compare.  Set using GridPosition instead.");
+                return quickCompare;
+            }
         }
 
         private void RegenerateQuickCompare()
@@ -324,6 +353,66 @@ namespace DwarfCorp
                 Chunk.MakeVoxel((int)GridPosition.X, (int)GridPosition.Y - 1, (int)GridPosition.Z);
         }
 
+        public bool GetNeighborBySuccessor(Vector3 succ, ref Voxel neighbor, bool requireQuickCompare = true)
+        {
+            Debug.Assert(neighbor != null, "Null reference passed");
+            Debug.Assert(_chunk != null, "Voxel has no valid chunk reference");
+
+            Vector3 newPos = gridpos + succ;
+            Point3 chunkSuccessor = Point3.Zero;
+            bool useSuccessor = false;
+
+            if (newPos.X >= _chunk.SizeX)
+            {
+                chunkSuccessor.X = 1;
+                newPos.X = 0;
+                useSuccessor = true;
+            }
+            else if (newPos.X < 0)
+            {
+                chunkSuccessor.X = -1;
+                newPos.X = _chunk.SizeX - 1;
+                useSuccessor = true;
+            }
+
+            if (newPos.Y >= _chunk.SizeY)
+            {
+                chunkSuccessor.Y = 1;
+                newPos.Y = 0;
+                useSuccessor = true;
+            }
+            else if (newPos.Y < 0)
+            {
+                chunkSuccessor.Y = -1;
+                newPos.Y = _chunk.SizeY - 1;
+                useSuccessor = true;
+            }
+
+            if (newPos.Z >= _chunk.SizeZ)
+            {
+                chunkSuccessor.Z = 1;
+                newPos.Z = 0;
+                useSuccessor = true;
+            }
+            else if (newPos.Z < 0)
+            {
+                chunkSuccessor.Z = -1;
+                newPos.Z = _chunk.SizeZ - 1;
+                useSuccessor = true;
+            }
+
+            VoxelChunk useChunk;
+            if (useSuccessor)
+            {
+                useChunk = _chunk.EuclidianNeighbors[VoxelChunk.SuccessorToEuclidianLookupKey(chunkSuccessor)];
+                if (useChunk == null) return false;
+            } else
+            {
+                useChunk = _chunk;
+            }
+            neighbor.ChangeVoxel(useChunk, newPos, requireQuickCompare);
+            return true;
+        }
 
         public bool IsBottomEmpty()
         {
@@ -392,8 +481,6 @@ namespace DwarfCorp
             staticsCreated = true;
         }
 
-
-
         public List<Body> Kill()
         {
             if (IsEmpty)
@@ -401,15 +488,15 @@ namespace DwarfCorp
                 return null;
             }
 
-            if(DwarfGame.World.ParticleManager != null)
+            if(Chunk.Manager.World.ParticleManager != null)
             {
-                DwarfGame.World.ParticleManager.Trigger(Type.ParticleType, Position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
-                DwarfGame.World.ParticleManager.Trigger("puff", Position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
+                Chunk.Manager.World.ParticleManager.Trigger(Type.ParticleType, Position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
+                Chunk.Manager.World.ParticleManager.Trigger("puff", Position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
             }
 
-            if(DwarfGame.World.Master != null)
+            if(Chunk.Manager.World.Master != null)
             {
-                DwarfGame.World.Master.Faction.OnVoxelDestroyed(this);
+                Chunk.Manager.World.Master.Faction.OnVoxelDestroyed(this);
             }
 
             SoundManager.PlaySound(Type.ExplosionSound, Position);

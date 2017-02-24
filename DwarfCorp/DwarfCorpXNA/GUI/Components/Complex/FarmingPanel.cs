@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,17 +22,19 @@ namespace DwarfCorp
         public Button PlantButton { get; set; }
         public ComboBox PlantSelector { get; set; }
         public Button HarvestButton { get; set; }
+        private WorldManager World { get; set; }
 
-        public FarmingPanel(DwarfGUI gui, GUIComponent parent, WindowButtons buttons = WindowButtons.CloseButton) 
+        public FarmingPanel(DwarfGUI gui, GUIComponent parent, WorldManager world, WindowButtons buttons = WindowButtons.CloseButton) 
             : base(gui, parent, buttons)
         {
             MinWidth = 512;
             MinHeight = 256;
-            Setup();
+            Setup(world);
         }
 
-        public void Setup()
+        public void Setup(WorldManager world)
         {
+            World = world;
             Children.Clear();
             Layout = new GridLayout(GUI, this, 3, 3);
 
@@ -45,7 +47,7 @@ namespace DwarfCorp
             PlantButton.OnClicked += PlantButton_OnClicked;
 
             PlantSelector = new ComboBox(GUI, Layout);
-            List<ResourceAmount> resources = DwarfGame.World.Master.Faction.ListResourcesWithTag(Resource.ResourceTags.Plantable);
+            List<ResourceAmount> resources = world.Master.Faction.ListResourcesWithTag(Resource.ResourceTags.Plantable);
             foreach (ResourceAmount resource in resources)
             {
                 if (resource.NumResources > 0)
@@ -89,7 +91,7 @@ namespace DwarfCorp
             }
             else
             {
-                DwarfGame.World.ShowTooltip("Nothing to plant.");
+                World.ShowToolPopup("Nothing to plant.");
             }
         }
 

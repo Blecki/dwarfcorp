@@ -1,4 +1,4 @@
-﻿// BuildTool.cs
+// BuildTool.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -131,12 +131,12 @@ namespace DwarfCorp
                         {
                             if (!voxel.Type.IsSoil)
                             {
-                                Player.World.ShowTooltip("Can only till soil!");
+                                Player.World.ShowToolPopup("Can only till soil!");
                                 continue;
                             }
                             if (voxel.TypeName == "TilledSoil")
                             {
-                                Player.World.ShowTooltip("Soil already tilled!");
+                                Player.World.ShowToolPopup("Soil already tilled!");
                                 continue;
                             }
                             if (!HasTile(voxel))
@@ -183,12 +183,12 @@ namespace DwarfCorp
 
                         if (currentAmount == 0)
                         {
-                            Player.World.ShowTooltip("Not enough " + PlantType + " in stocks!");
+                            Player.World.ShowToolPopup("Not enough " + PlantType + " in stocks!");
                             break;
                         }
                         if (voxel.TypeName != "TilledSoil")
                         {
-                            Player.World.ShowTooltip("Can only plant on tilled soil!");
+                            Player.World.ShowToolPopup("Can only plant on tilled soil!");
                             continue;
                         }
 
@@ -196,7 +196,7 @@ namespace DwarfCorp
                         {
                             if (voxel.SunColor == 0)
                             {
-                                Player.World.ShowTooltip("Can only plant " + PlantType + " above ground.");
+                                Player.World.ShowToolPopup("Can only plant " + PlantType + " above ground.");
                                 continue;
                             }
                         }
@@ -206,7 +206,7 @@ namespace DwarfCorp
                         {
                             if (voxel.SunColor > 0)
                             {
-                                Player.World.ShowTooltip("Can only plant " + PlantType + " below ground.");
+                                Player.World.ShowToolPopup("Can only plant " + PlantType + " below ground.");
                                 continue;
                             }
                         }
@@ -220,7 +220,7 @@ namespace DwarfCorp
                         }
                         else
                         {
-                            Player.World.ShowTooltip("Something is already planted here!");
+                            Player.World.ShowToolPopup("Something is already planted here!");
                             continue;
                         }
                     }
@@ -269,7 +269,7 @@ namespace DwarfCorp
             }
             int w = 600;
             int h = 350;
-            FarmPanel = new FarmingPanel(Player.World.GUI, Player.World.GUI.RootComponent)
+            FarmPanel = new FarmingPanel(Player.World.GUI, Player.World.GUI.RootComponent, Player.World)
             {
                 LocalBounds = new Rectangle(PlayState.Game.GraphicsDevice.Viewport.Width / 2 - w / 2, PlayState.Game.GraphicsDevice.Viewport.Height / 2 - h / 2, w, h),
                 IsVisible = true,
@@ -283,13 +283,13 @@ namespace DwarfCorp
 
         void FarmPanel_OnTill()
         {
-            Player.World.ShowTooltip("Click and drag to till soil.");
+            Player.World.ShowToolPopup("Click and drag to till soil.");
             Mode = FarmMode.Tilling;
         }
 
         void FarmPanel_OnPlant(string plantType, string resource)
         {
-            Player.World.ShowTooltip("Click and drag to plant " + plantType + ".");
+            Player.World.ShowToolPopup("Click and drag to plant " + plantType + ".");
             Mode = FarmMode.Planting;
             PlantType = plantType;
             RequiredResources = new List<ResourceAmount>() {new ResourceAmount(resource)};
@@ -297,7 +297,7 @@ namespace DwarfCorp
 
         void FarmPanel_OnHarvest()
         {
-            Player.World.ShowTooltip("Click and drag to harvest.");
+            Player.World.ShowToolPopup("Click and drag to harvest.");
             Mode = FarmMode.Harvesting;
         }
 

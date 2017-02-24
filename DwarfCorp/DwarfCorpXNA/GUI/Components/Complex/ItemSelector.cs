@@ -1,4 +1,4 @@
-﻿// ItemSelector.cs
+// ItemSelector.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -177,9 +177,12 @@ namespace DwarfCorp
             return HatedThings.Any(tags => resource.Tags.Contains(tags));
         }
 
-        public ItemSelector(DwarfGUI gui, GUIComponent parent, string title, bool hasMoney, bool moneyEditable) :
+        private WorldManager World { get; set; }
+
+        public ItemSelector(DwarfGUI gui, GUIComponent parent, WorldManager world, string title, bool hasMoney, bool moneyEditable) :
             base(gui, parent, title)
         {
+            World = world;
             LikedThings = new List<Resource.ResourceTags>();
             HatedThings = new List<Resource.ResourceTags>();
             CommonThings = new List<Resource.ResourceTags>();
@@ -478,17 +481,17 @@ namespace DwarfCorp
             if (shiftPressed && AllowShiftClick)
             {
                 amount = item.CurrentAmount;
-                DwarfGame.World.ShowTooltip("Moved " + amount);
+                World.ShowToolPopup("Moved " + amount);
             }
             else if (controlPressed && AllowControlClick)
             {
                 amount = Math.Min(item.CurrentAmount, 5);
-                DwarfGame.World.ShowTooltip("Moved " + amount);
+                World.ShowToolPopup("Moved " + amount);
             }
             else if (altPressed && AllowAltClick)
             {
                 amount = Math.Min(item.CurrentAmount, 10);
-                DwarfGame.World.ShowTooltip("Moved " + amount);
+                World.ShowToolPopup("Moved " + amount);
             }
 
             switch(Behavior)

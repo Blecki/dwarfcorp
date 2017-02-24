@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -84,12 +84,11 @@ namespace DwarfCorp
             device.BlendState = OldBlendState;
         }
 
-        public void BindShadowmapEffect(Effect effect)
+        public void BindShadowmapEffect(Shader effect)
         {
-            effect.Parameters["xShadowMap" +
-                              ""].SetValue(ShadowTexture);
-            effect.Parameters["xLightView"].SetValue(LightView);
-            effect.Parameters["xLightProj"].SetValue(LightProj);
+            effect.ShadowMap = ShadowTexture;
+            effect.LightView = LightView;
+            effect.LightProjection = LightProj;
         }
 
         public void BindShadowmap(GraphicsDevice device)
@@ -110,12 +109,12 @@ namespace DwarfCorp
             device.BlendState = BlendMode;
         }
 
-        public void PrepareEffect(Effect effect, bool instanced)
+        public void PrepareEffect(Shader effect, bool instanced)
         {
-            effect.CurrentTechnique = instanced ? effect.Techniques["ShadowInstanced"] : effect.Techniques["Shadow"];
-            effect.Parameters["xView"].SetValue(LightView);
-            effect.Parameters["xProjection"].SetValue(LightProj);
-            effect.Parameters["xEnableFog"].SetValue(0);
+            effect.CurrentTechnique = instanced ? effect.Techniques[Shader.Technique.ShadowMapInstanced] : effect.Techniques[Shader.Technique.ShadowMap];
+            effect.View = LightView;
+            effect.Projection = LightProj;
+            effect.EnbleFog = false;
         }
 
     }
