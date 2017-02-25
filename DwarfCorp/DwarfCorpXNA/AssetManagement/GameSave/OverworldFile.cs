@@ -1,4 +1,4 @@
-﻿// OverworldFile.cs
+// OverworldFile.cs
 // 
 //  Modified MIT License (MIT)
 //  

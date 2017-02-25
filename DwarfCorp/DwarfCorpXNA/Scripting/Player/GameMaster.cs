@@ -83,9 +83,9 @@ namespace DwarfCorp
 
         protected void OnDeserialized(StreamingContext context)
         {
-            Initialize(GameState.Game, DwarfGame.World.ComponentManager, DwarfGame.World.ChunkManager, DwarfGame.World.Camera, DwarfGame.World.ChunkManager.Graphics,  DwarfGame.World.GUI);
-            DwarfGame.World.Master = this;
-            World = DwarfGame.World;
+            World = (WorldManager) (context.Context);
+            Initialize(GameState.Game, World.ComponentManager, World.ChunkManager, World.Camera, World.ChunkManager.Graphics, World.GUI);
+            World.Master = this;
         }
 
         public GameMaster()

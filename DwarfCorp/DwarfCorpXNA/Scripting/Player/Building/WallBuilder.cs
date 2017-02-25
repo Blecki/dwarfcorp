@@ -115,7 +115,7 @@ namespace DwarfCorp
         [OnDeserialized]
         public void OnDeserializing(StreamingContext ctx)
         {
-            World = DwarfGame.World;
+            World = ((WorldManager)ctx.Context);
         }
 
         public PutDesignator()

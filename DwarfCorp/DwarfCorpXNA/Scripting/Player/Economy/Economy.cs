@@ -109,7 +109,7 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            WorldManager = DwarfGame.World;
+            WorldManager = ((WorldManager)context.Context);
         }
 
         public void UpdateStocks(DateTime time)

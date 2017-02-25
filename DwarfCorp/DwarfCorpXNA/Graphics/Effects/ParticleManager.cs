@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -52,7 +52,8 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            Components = DwarfGame.World.ComponentManager;
+            // Assume that the context is a world manager.
+            Components = ((WorldManager) context.Context).ComponentManager;
         }
         
 

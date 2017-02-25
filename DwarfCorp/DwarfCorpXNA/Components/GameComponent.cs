@@ -169,7 +169,8 @@ namespace DwarfCorp
         [OnDeserialized]
         void OnDeserializing(StreamingContext context)
         {
-            Manager = DwarfGame.World.ComponentManager;
+            // Assume the context passed in is a WorldManager
+            Manager = ((WorldManager) context.Context).ComponentManager;
         }
 
         /// <summary>

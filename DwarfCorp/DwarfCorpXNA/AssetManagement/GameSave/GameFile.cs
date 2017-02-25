@@ -128,10 +128,10 @@ namespace DwarfCorp
             return "zgame";
         }
 
-        public GameFile(string file, bool compressed)
+        public GameFile(string file, bool compressed, WorldManager world)
         {
             Data = new GameData();
-            ReadFile(file, compressed);
+            ReadFile(file, compressed, world);
         }
 
         public GameFile()
@@ -144,12 +144,12 @@ namespace DwarfCorp
             Data = file.Data;
         }
 
-        public bool LoadComponents(string filePath)
+        public bool LoadComponents(string filePath, WorldManager world)
         {
             string[] componentFiles = SaveData.GetFilesInDirectory(filePath, DwarfGame.COMPRESSED_BINARY_SAVES, "Components", GameFile.CompressedExtension, GameFile.Extension);
             if (componentFiles.Length > 0)
             {
-                Data.Components = FileUtils.LoadJson<ComponentManager>(componentFiles[0], DwarfGame.COMPRESSED_BINARY_SAVES);
+                Data.Components = FileUtils.LoadJson<ComponentManager>(componentFiles[0], DwarfGame.COMPRESSED_BINARY_SAVES, world);
             }
             else
             {
@@ -159,7 +159,7 @@ namespace DwarfCorp
             return true;
         }
 
-        public  bool ReadFile(string filePath, bool isCompressed)
+        public  bool ReadFile(string filePath, bool isCompressed, WorldManager world)
         {
             if(!System.IO.Directory.Exists(filePath))
             {
@@ -183,7 +183,7 @@ namespace DwarfCorp
 
                 if(cameraFiles.Length > 0)
                 {
-                    Data.Camera = FileUtils.LoadJson<OrbitCamera>(cameraFiles[0], false);
+                    Data.Camera = FileUtils.LoadJson<OrbitCamera>(cameraFiles[0], false, world);
                 }
                 else
                 {

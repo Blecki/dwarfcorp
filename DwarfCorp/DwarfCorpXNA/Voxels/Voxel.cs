@@ -549,9 +549,10 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            if (DwarfGame.World.ChunkManager.ChunkData.ChunkMap.ContainsKey(chunkID))
+            WorldManager world = ((WorldManager) context.Context);
+            if (world.ChunkManager.ChunkData.ChunkMap.ContainsKey(chunkID))
             {
-                Chunk = DwarfGame.World.ChunkManager.ChunkData.ChunkMap[chunkID];
+                Chunk = world.ChunkManager.ChunkData.ChunkMap[chunkID];
                 index = Chunk.Data.IndexAt((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z);
                 RegenerateQuickCompare();
             }

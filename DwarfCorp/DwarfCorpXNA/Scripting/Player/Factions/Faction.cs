@@ -286,7 +286,7 @@ namespace DwarfCorp
         [OnDeserialized]
         public void OnDeserialized(StreamingContext ctx)
         {
-            World = DwarfGame.World;
+            World = ((WorldManager)ctx.Context);
         }
 
         public static List<CreatureAI> FilterMinionsWithCapability(List<CreatureAI> minions, GameMaster.ToolMode action)
