@@ -788,8 +788,9 @@ WVertexToPixel WaterVS_Flat(float4 inPos : POSITION, float2 inTex : TEXCOORD0, f
 	WVertexToPixel Output = (WVertexToPixel)0;
 
 	float4x4 preViewProjection = mul(xView, xProjection);
-	float4x4 preWorldViewProjection = mul(xWorld, preViewProjection);
-	Output.Position = mul(inPos, preWorldViewProjection);
+	float4 pos3d = mul(inPos, xWorld);
+	pos3d += GetNoise(pos3d);
+	Output.Position = mul(pos3d, preViewProjection);
 	Output.Color = xFlatColor;
 
 	if (Clipping) Output.ClipDistance = dot(mul(xWorld, inPos), ClipPlane0);
