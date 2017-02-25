@@ -162,6 +162,7 @@
     <Compile Include="Components\Physics\Physics.cs" />
     <Compile Include="Components\Systems\ComponentManager.cs" />
     <Compile Include="Components\Systems\Message.cs" />
+    <Compile Include="Components\IUpdateableComponent.cs" />
     <Compile Include="ControlSettings.cs" />
     <Compile Include="DeProfiler.cs" />
     <Compile Include="DwarfGame.cs" />

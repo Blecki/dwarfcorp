@@ -41,7 +41,7 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class BearTrap : Body
+    public class BearTrap : Body, IUpdateableComponent
     {
         public Sensor Sensor { get; set; }
         public Sprite Sprite { get; set; }
@@ -108,7 +108,7 @@ namespace DwarfCorp
             }
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
 
             if (ShouldDie)

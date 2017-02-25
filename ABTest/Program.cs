@@ -28,10 +28,35 @@ namespace ABTest
         }
     }
 
+    interface ITest
+    {
+        void Foo();
+    }
+
+    class TestOne : ITest
+    {
+        public void Foo()
+        {
+            Console.WriteLine("One!");
+        }
+    }
+
+    class TestTwo : TestOne, ITest
+    {
+        new public void Foo()
+        {
+            Console.WriteLine("Two, then -");
+            base.Foo();
+        }
+    }
+
     class Program
     {
         static void Main(string[] args)
         {
+            ITest foo = new TestTwo();
+            foo.Foo();
+
             var iterations = 100000;
             var cubeSize = 128;
             var hash = new SpacialHash.SpatialHash<SpacialHashTag>();

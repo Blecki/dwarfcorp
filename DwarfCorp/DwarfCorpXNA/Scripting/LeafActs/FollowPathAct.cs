@@ -336,7 +336,7 @@ namespace DwarfCorp
                     Matrix transformMatrix = Agent.Physics.LocalTransform;
                     transformMatrix.Translation = prevPosition;
                     var act = new MeleeAct(Creature.AI,
-                        action.InteractObject.GetRootComponent().GetChildrenOfType<Body>(true).FirstOrDefault());
+                        action.InteractObject.GetEntityRootComponent().GetChildrenOfType<Body>(true).FirstOrDefault());
                     act.Initialize();
 
                     foreach (Status status in act.Run())

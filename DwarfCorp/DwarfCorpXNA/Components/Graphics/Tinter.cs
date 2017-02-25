@@ -42,7 +42,7 @@ namespace DwarfCorp
     /// <summary>
     /// This component has a color tint which can change over time.
     /// </summary>
-    public class Tinter : Body
+    public class Tinter : Body, IUpdateableComponent
     {
         public bool LightsWithVoxels { get; set; }
         public Color Tint { get; set; }
@@ -94,7 +94,7 @@ namespace DwarfCorp
             return LightingTimer.HasTriggered;
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             LightingTimer.Update(gameTime);
             StartTimer.Update(gameTime);
@@ -132,11 +132,11 @@ namespace DwarfCorp
             }
             else if(LightsWithVoxels)
             {
-                Vector4 lerpTint = new Vector4((float) TargetTint.R / 255.0f, (float) TargetTint.G / 255.0f, (float) TargetTint.B / 255.0f, (float) TargetTint.A / 255.0f);
-                Vector4 currTint = new Vector4((float) Tint.R / 255.0f, (float) Tint.G / 255.0f, (float) Tint.B / 255.0f, (float) Tint.A / 255.0f);
+                //Vector4 lerpTint = new Vector4((float) TargetTint.R / 255.0f, (float) TargetTint.G / 255.0f, (float) TargetTint.B / 255.0f, (float) TargetTint.A / 255.0f);
+                //Vector4 currTint = new Vector4((float) Tint.R / 255.0f, (float) Tint.G / 255.0f, (float) Tint.B / 255.0f, (float) Tint.A / 255.0f);
 
-                Vector4 delta = lerpTint - currTint;
-                lerpTint = currTint + delta * Math.Max(Math.Min(LightingTimer.CurrentTimeSeconds * TintChangeRate, 1.0f), 0.0f);
+                //Vector4 delta = lerpTint - currTint;
+                //lerpTint = currTint + delta * Math.Max(Math.Min(LightingTimer.CurrentTimeSeconds * TintChangeRate, 1.0f), 0.0f);
 
                 //Tint = new Color(lerpTint.X, lerpTint.Y, lerpTint.Z, lerpTint.W);
                 Tint = TargetTint;

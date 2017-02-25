@@ -43,7 +43,7 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
 
-    public class Fairy : Creature
+    public class Fairy : Creature, IUpdateableComponent
     {
 
         public Timer ParticleTimer { get; set; }
@@ -65,7 +65,7 @@ namespace DwarfCorp
             Initialize(new FairyClass());
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (ParticleTimer.HasTriggered)
             {

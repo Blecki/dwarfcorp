@@ -44,7 +44,7 @@ namespace DwarfCorp
     /// This component represents a list of several billboards which are efficiently drawn through state batching.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class BatchedSprite : Sprite
+    public class BatchedSprite : Sprite, IUpdateableComponent
     {
         public List<Matrix> LocalTransforms { get; set; }
         public List<float> Rotations { get; set; }
@@ -123,12 +123,10 @@ namespace DwarfCorp
             Primitive = new BatchBillboardPrimitive(graphicsDevice, SpriteSheet.GetTexture(), Width, Height, Frame, 1.0f, 1.0f, false, LocalTransforms, Tints, Colors);
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if(LightsWithVoxels)
-            {
                 base.Update(gameTime, chunks, camera);
-            }
         }
 
         public bool ShouldDraw(Camera camera)

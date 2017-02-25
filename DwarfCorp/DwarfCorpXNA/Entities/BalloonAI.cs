@@ -46,7 +46,7 @@ namespace DwarfCorp
     /// A simple hacked AI script for the DwarfCorp balloon. Has a state machine which makes it go up and down.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class BalloonAI : GameComponent
+    public class BalloonAI : GameComponent, IUpdateableComponent
     {
         public Body Body { get; set; }
         public PIDController VelocityController { get; set; }
@@ -95,7 +95,7 @@ namespace DwarfCorp
             }
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             Vector3 targetVelocity = TargetPosition - Body.GlobalTransform.Translation;
 
@@ -160,9 +160,6 @@ namespace DwarfCorp
 
                     break;
             }
-
-
-            base.Update(gameTime, chunks, camera);
         }
     }
 

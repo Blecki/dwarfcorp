@@ -45,7 +45,7 @@ namespace DwarfCorp
     /// Basic physics object. When attached to an entity, it causes it to obey gravity, and collide with stuff.
     /// All objects are just axis-aligned boxes that are treated as point masses.
     /// </summary>
-    public class Physics : Body
+    public class Physics : Body, IUpdateableComponent
     {
         /// <summary>
         /// Gets or sets the angular velocity in radians per second.
@@ -243,25 +243,20 @@ namespace DwarfCorp
             LocalTransform = transform;
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (!IsActive) return;
 
-            // Check to see if we're outside the bounds of the world.
-            BoundingBox bounds = chunks.Bounds;
-            bounds.Max.Y += 50;
-
             // If we're not sleeping and moving very slowly, go to sleep.
-            if (!IsSleeping && (Velocity).Length() < 0.15f)
+            if (!IsSleeping && Velocity.LengthSquared() < 0.0225f)
             {
                 SleepTimer.Update(gameTime);
                 if (SleepTimer.HasTriggered)
                 {
                     applyGravityThisFrame = false;
-                    Velocity *= 0.0f;
+                    Velocity = Vector3.Zero;
                     IsSleeping = true;
                 }
-
             }
             else
             {
@@ -272,11 +267,7 @@ namespace DwarfCorp
             // If not sleeping, update physics.
             if (!IsSleeping || overrideSleepThisFrame)
             {
-                if (overrideSleepThisFrame)
-                {
-                    overrideSleepThisFrame = false;
-                }
-
+                overrideSleepThisFrame = false;
 
                 float dt = (float)(gameTime.ElapsedGameTime.TotalSeconds);
                 // Calculate the number of timesteps to apply.
@@ -289,6 +280,10 @@ namespace DwarfCorp
                 }
 
                 float velocityLength = Velocity.Length();
+
+                // Check to see if we're outside the bounds of the world.
+                BoundingBox worldBounds = chunks.Bounds;
+                worldBounds.Max.Y += 50;
 
                 // For each timestep, move and collide.
                 for (int n = 0; n < numTimesteps; n++)
@@ -315,7 +310,7 @@ namespace DwarfCorp
 
                         Matrix transform = LocalTransform;
                         // Avoid leaving the world.
-                        if (bounds.Contains(LocalTransform.Translation + Velocity * dt) != ContainmentType.Contains)
+                        if (worldBounds.Contains(LocalTransform.Translation + Velocity * dt) != ContainmentType.Contains)
                         {
                             transform.Translation = LocalTransform.Translation - 0.1f * Velocity * dt;
                             Velocity = new Vector3(Velocity.X * -0.9f, Velocity.Y, Velocity.Z * -0.9f);
@@ -324,7 +319,7 @@ namespace DwarfCorp
 
                         // If we're outside the world, die
                         if (LocalTransform.Translation.Y < -10 ||
-                            bounds.Contains(GetBoundingBox()) == ContainmentType.Disjoint)
+                            worldBounds.Contains(GetBoundingBox()) == ContainmentType.Disjoint)
                         {
                             Die();
                         }
@@ -397,12 +392,12 @@ namespace DwarfCorp
                         Velocity += dampingForce * FixedDT / numVelocitySteps;
                         AngularVelocity *= AngularDamping;
                         UpdateBoundingBox();
-                        UpdateTransformsRecursive();
+                        UpdateTransformsRecursive(Parent as Body);
                     }
                 }
             }
 
-            if (!applyGravityThisFrame) applyGravityThisFrame = true;
+            applyGravityThisFrame = true;
             CheckLiquids(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
             PreviousVelocity = Velocity;
             PreviousPosition = Position;
@@ -500,23 +495,20 @@ namespace DwarfCorp
             return true;
         }
 
+        private IEnumerable<Voxel> LocationPlusNeighbors()
+        {
+            yield return CurrentVoxel;
+            foreach (var neighbor in Neighbors)
+                yield return neighbor;
+        }
 
         public virtual void HandleCollisions(ChunkManager chunks, float dt)
         {
             if (CollideMode == CollisionMode.None) return;
 
-
-            List<Voxel> vs = new List<Voxel>
-            {
-                CurrentVoxel
-            };
-            vs.AddRange(Neighbors);
-
-            // TODO: Find a faster way to do this
-            // Vector3 half = Vector3.One*0.5f;
-            //vs.Sort((a, b) => (MathFunctions.L1(LocalTransform.Translation, a.Position + half).CompareTo(MathFunctions.L1(LocalTransform.Translation, b.Position + half))));
             int y = (int)Position.Y;
-            foreach (Voxel v in vs)
+
+            foreach (Voxel v in LocationPlusNeighbors())
             {
                 if (v == null || v.Chunk == null || v.IsEmpty)
                 {
@@ -533,8 +525,7 @@ namespace DwarfCorp
                     continue;
                 }
 
-                BoundingBox voxAABB = v.GetBoundingBox();
-                if (Collide(voxAABB, dt))
+                if (Collide(v.GetBoundingBox(), dt))
                 {
                     OnTerrainCollision(v);
                 }
