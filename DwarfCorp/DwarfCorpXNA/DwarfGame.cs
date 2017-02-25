@@ -54,8 +54,6 @@ namespace DwarfCorp
         public static Gum.Input.GumInputMapper GumInputMapper;
         public static Gum.Input.Input GumInput;
         public static Gum.RenderData GumSkin;
-        public static WorldManager World { get; set; }
-
         public DwarfGame()
         {
             GameState.Game = this;
@@ -78,7 +76,6 @@ namespace DwarfCorp
             {
                 Console.Error.WriteLine(exception.Message);
             }
-            World = new WorldManager(this);
         }
 
         public static string GetGameDirectory()

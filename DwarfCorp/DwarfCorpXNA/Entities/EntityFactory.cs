@@ -47,6 +47,8 @@ namespace DwarfCorp
     /// </summary>
     internal class EntityFactory
     {
+        public static ComponentManager Components = null;
+
         public static InstanceManager InstanceManager = null;
 
         public static Dictionary<string, Func<Vector3, Blackboard, GameComponent>> EntityFuncs { get; set; }
@@ -86,6 +88,7 @@ namespace DwarfCorp
 
         public static void Initialize(WorldManager world)
         {
+            Components = world.ComponentManager;
             RegisterEntity("Crate", (position, data) => new Crate(world.ComponentManager, position));
             RegisterEntity("Balloon", (position, data) => CreateBalloon(position + new Vector3(0, 1000, 0), position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, null, world.PlayerFaction));
             RegisterEntity("Work Pile", (position, data) => new WorkPile(world.ComponentManager, position));

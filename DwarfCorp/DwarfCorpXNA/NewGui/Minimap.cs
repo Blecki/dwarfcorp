@@ -164,14 +164,16 @@ namespace DwarfCorp.NewGui
         {
             if (!HomeSet)
             {
-                HomePosition = World.Camera.Target;
+                HomePosition = World.Camera.Position;
                 HomeSet = true;
             }
 
 
             //Camera.Update(time, World.ChunkManager);
             Camera.Target = World.Camera.Target;
-            Camera.Position = World.Camera.Position + Vector3.Up*50 + Vector3.Backward * 5;
+            Vector3 cameraToTarget = World.Camera.Target - World.Camera.Position;
+            cameraToTarget.Normalize();
+            Camera.Position = World.Camera.Target + Vector3.Up*50 - cameraToTarget * 4;
             Camera.UpdateViewMatrix();
             Camera.UpdateProjectionMatrix();
 

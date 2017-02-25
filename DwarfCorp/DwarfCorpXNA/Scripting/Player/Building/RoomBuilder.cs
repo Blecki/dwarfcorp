@@ -61,7 +61,7 @@ namespace DwarfCorp
         [OnDeserialized]
         public void OnDeserializing(StreamingContext ctx)
         {
-            World = DwarfGame.World;
+            World = ((WorldManager)ctx.Context);
         }
 
         public List<Room> FilterRoomsByType(string type)

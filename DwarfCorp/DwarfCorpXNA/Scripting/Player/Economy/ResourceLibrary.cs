@@ -1,4 +1,4 @@
-﻿// ResourceLibrary.cs
+// ResourceLibrary.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -119,7 +119,7 @@ namespace DwarfCorp
         {
             Resources[resource.ResourceName] = resource;
 
-            EntityFactory.RegisterEntity(resource.ResourceName + " Resource", (position, data) => new ResourceEntity(DwarfGame.World.ComponentManager, resource.Type, position));
+            EntityFactory.RegisterEntity(resource.ResourceName + " Resource", (position, data) => new ResourceEntity(EntityFactory.Components, resource.Type, position));
         }
 
         public static void Initialize()

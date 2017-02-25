@@ -540,7 +540,7 @@ namespace DwarfCorp
             if (fileExists)
             {
                 SetLoadingMessage("Loading " + ExistingFile);
-                gameFile = new GameFile(ExistingFile, DwarfGame.COMPRESSED_BINARY_SAVES);
+                gameFile = new GameFile(ExistingFile, DwarfGame.COMPRESSED_BINARY_SAVES, this);
                 Sky.TimeOfDay = gameFile.Data.Metadata.TimeOfDay;
                 Time = gameFile.Data.Metadata.Time;
                 WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
@@ -754,7 +754,7 @@ namespace DwarfCorp
             if (!string.IsNullOrEmpty(ExistingFile))
             {
                 InstanceManager.Clear();
-                gameFile.LoadComponents(ExistingFile);
+                gameFile.LoadComponents(ExistingFile, this);
                 ComponentManager = gameFile.Data.Components;
                 ComponentManager.World = this;
                 GameComponent.ResetMaxGlobalId(ComponentManager.GetMaxComponentID() + 1);

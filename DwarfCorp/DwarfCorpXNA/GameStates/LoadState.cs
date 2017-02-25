@@ -55,13 +55,12 @@ namespace DwarfCorp.GameStates
         {
             // Todo: Decouple gui/input from world.
             // Copy important bits to PlayState - This is a hack; decouple world from gui and input instead.
-            DwarfGame.World = World;
             PlayState.Input = Input;
             PlayState.GUI = GUI;
 
             // Hack: So that saved games still load.
-            if (DwarfGame.World.PlayerCompany.Information == null)
-                DwarfGame.World.PlayerCompany.Information = new CompanyInformation();
+            if (World.PlayerCompany.Information == null)
+                World.PlayerCompany.Information = new CompanyInformation();
 
             StateManager.PopState();
             StateManager.PushState(new PlayState(Game, StateManager, World));
@@ -90,7 +89,6 @@ namespace DwarfCorp.GameStates
             World.WorldScale = Settings.WorldScale;
             World.WorldGenerationOrigin = Settings.WorldGenerationOrigin;
 
-            DwarfGame.World = World;
             World.OnLoadedEvent += World_OnLoadedEvent;
 
             // Todo - Save gui creation for play state. We're only creating it here so we can give it to
