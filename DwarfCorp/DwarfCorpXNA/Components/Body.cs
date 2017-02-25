@@ -49,7 +49,7 @@ namespace DwarfCorp
     /// also live inside an octree for faster access to colliding or nearby objects.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class Body : GameComponent, IBoundedObject
+    public class Body : GameComponent, IBoundedObject, IUpdateableComponent
     {
         public bool WasAddedToOctree
         {
@@ -300,7 +300,7 @@ namespace DwarfCorp
         }
 
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (MathFunctions.HasNan(Position))
             {
@@ -336,8 +336,6 @@ namespace DwarfCorp
                     AnimationQueue.RemoveAt(0);
                 }
             }
-
-            base.Update(gameTime, chunks, camera);
         }
 
         /// <summary>

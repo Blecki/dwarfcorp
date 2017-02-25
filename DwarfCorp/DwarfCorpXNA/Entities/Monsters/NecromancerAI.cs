@@ -69,12 +69,7 @@ namespace DwarfCorp
             SummonTimer.HasTriggered = true;
             AttackRange = 10;
         }
-
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
-        {
-            base.Update(gameTime, chunks, camera);
-        }
-
+        
         public override Task ActOnIdle()
         {
             return new ActWrapperTask(new Wrap(SummonSkeletons))

@@ -118,7 +118,6 @@ namespace DwarfCorp
         {
             SoundManager.PlaySound(ContentPaths.Audio.change);
             creature.GetEntityRootComponent().Delete();
-            creature.IsDead = true;
 
             Faction.Minions.Remove(creature);
             Faction.SelectedMinions.Remove(creature);

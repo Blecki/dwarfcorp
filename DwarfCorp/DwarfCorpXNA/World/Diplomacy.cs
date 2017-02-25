@@ -471,7 +471,6 @@ namespace DwarfCorp
                         if (MathFunctions.Dist2D(worldBBox, creature.Position) < 2.0f)
                         {
                             creature.GetEntityRootComponent().Delete();
-                            creature.IsDead = true;
                         }
                     }
                 }

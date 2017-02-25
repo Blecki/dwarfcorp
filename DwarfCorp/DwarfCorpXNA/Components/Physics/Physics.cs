@@ -45,7 +45,7 @@ namespace DwarfCorp
     /// Basic physics object. When attached to an entity, it causes it to obey gravity, and collide with stuff.
     /// All objects are just axis-aligned boxes that are treated as point masses.
     /// </summary>
-    public class Physics : Body
+    public class Physics : Body, IUpdateableComponent
     {
         /// <summary>
         /// Gets or sets the angular velocity in radians per second.
@@ -243,7 +243,7 @@ namespace DwarfCorp
             LocalTransform = transform;
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (!IsActive) return;
 
@@ -272,11 +272,7 @@ namespace DwarfCorp
             // If not sleeping, update physics.
             if (!IsSleeping || overrideSleepThisFrame)
             {
-                if (overrideSleepThisFrame)
-                {
-                    overrideSleepThisFrame = false;
-                }
-
+                overrideSleepThisFrame = false;
 
                 float dt = (float)(gameTime.ElapsedGameTime.TotalSeconds);
                 // Calculate the number of timesteps to apply.
@@ -500,23 +496,20 @@ namespace DwarfCorp
             return true;
         }
 
+        private IEnumerable<Voxel> LocationPlusNeighbors()
+        {
+            yield return CurrentVoxel;
+            foreach (var neighbor in Neighbors)
+                yield return neighbor;
+        }
 
         public virtual void HandleCollisions(ChunkManager chunks, float dt)
         {
             if (CollideMode == CollisionMode.None) return;
 
-
-            List<Voxel> vs = new List<Voxel>
-            {
-                CurrentVoxel
-            };
-            vs.AddRange(Neighbors);
-
-            // TODO: Find a faster way to do this
-            // Vector3 half = Vector3.One*0.5f;
-            //vs.Sort((a, b) => (MathFunctions.L1(LocalTransform.Translation, a.Position + half).CompareTo(MathFunctions.L1(LocalTransform.Translation, b.Position + half))));
             int y = (int)Position.Y;
-            foreach (Voxel v in vs)
+
+            foreach (Voxel v in LocationPlusNeighbors())
             {
                 if (v == null || v.Chunk == null || v.IsEmpty)
                 {
@@ -533,8 +526,7 @@ namespace DwarfCorp
                     continue;
                 }
 
-                BoundingBox voxAABB = v.GetBoundingBox();
-                if (Collide(voxAABB, dt))
+                if (Collide(v.GetBoundingBox(), dt))
                 {
                     OnTerrainCollision(v);
                 }

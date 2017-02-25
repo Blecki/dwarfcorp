@@ -105,7 +105,7 @@ namespace DwarfCorp
     }
 
     [JsonObject(IsReference = true)]
-    public class Egg : GameComponent
+    public class Egg : GameComponent, IUpdateableComponent
     {
         public string Adult { get; set; }
         public DateTime Birthday { get; set; }
@@ -134,14 +134,12 @@ namespace DwarfCorp
             manager.AddComponent(this);
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (Manager.World.Time.CurrentDate > Birthday)
             {
                 Hatch();
             }
-
-            base.Update(gameTime, chunks, camera);
         }
 
         public void Hatch()
@@ -156,7 +154,7 @@ namespace DwarfCorp
     ///     related to creatures (such as dwarves and goblins).
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class Creature : Health
+    public class Creature : Health, IUpdateableComponent
     {
         /// <summary> Enum describing the character's current action (used for animation) </summary>
         public enum CharacterMode
@@ -489,7 +487,7 @@ namespace DwarfCorp
         }
 
         /// <summary> Updates the creature </summary>
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (!IsActive) return;
 
@@ -513,8 +511,6 @@ namespace DwarfCorp
                     EggTimer = new Timer(120.0f + MathFunctions.Rand(-30.0f, 30.0f), false);
                 }
             }
-
-            base.Update(gameTime, chunks, camera);
         }
 
         /// <summary> 

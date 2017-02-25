@@ -45,7 +45,7 @@ namespace DwarfCorp
     /// When a voxel is destroyed, this component kills whatever it is attached to.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class VoxelListener : GameComponent
+    public class VoxelListener : GameComponent, IUpdateableComponent
     {
         public Point3 VoxelID;
 
@@ -84,7 +84,7 @@ namespace DwarfCorp
 
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (firstIter)
             {
@@ -105,10 +105,7 @@ namespace DwarfCorp
                     Chunk.MakeVoxel(VoxelID.X, VoxelID.Y, VoxelID.Z).Kill();
                 }
             }
-
-            base.Update(gameTime, chunks, camera);
         }
-
 
         void VoxelListener_OnVoxelDestroyed(Point3 voxelID)
         {

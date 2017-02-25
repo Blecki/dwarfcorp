@@ -111,7 +111,7 @@ namespace DwarfCorp
     /// This component manages a set of particles, and can emit them at certain locations. The particle manager keeps track of a small set of these.
     /// </summary>
     [JsonObject(IsReference =  true)]
-    public class ParticleEmitter : Tinter
+    public class ParticleEmitter : Tinter, IUpdateableComponent
     {
         [JsonIgnore]
         public FixedInstanceArray Sprites { get; set; }
@@ -271,7 +271,7 @@ namespace DwarfCorp
             p.LifeRemaining = -1;
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             ParticleEmitter._camera = camera;
 

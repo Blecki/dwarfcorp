@@ -42,7 +42,7 @@ namespace DwarfCorp
     /// <summary>
     /// This component has a color tint which can change over time.
     /// </summary>
-    public class Tinter : Body
+    public class Tinter : Body, IUpdateableComponent
     {
         public bool LightsWithVoxels { get; set; }
         public Color Tint { get; set; }
@@ -94,7 +94,7 @@ namespace DwarfCorp
             return LightingTimer.HasTriggered;
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             LightingTimer.Update(gameTime);
             StartTimer.Update(gameTime);

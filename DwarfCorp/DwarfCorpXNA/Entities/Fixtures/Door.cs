@@ -41,7 +41,7 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class Door : Fixture
+    public class Door : Fixture, IUpdateableComponent
     {
         public Faction TeamFaction { get; set; }
         public Matrix ClosedTransform { get; set; }
@@ -106,7 +106,7 @@ namespace DwarfCorp
             IsOpen = false;
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (IsMoving)
             {

@@ -46,7 +46,7 @@ namespace DwarfCorp
     /// of the camera.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class OrientedAnimation : Sprite
+    public class OrientedAnimation : Sprite, IUpdateableComponent
     {
         public enum Orientation
         {
@@ -107,7 +107,7 @@ namespace DwarfCorp
         {
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             CalculateCurrentOrientation(camera);
 

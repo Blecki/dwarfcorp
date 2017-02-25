@@ -45,7 +45,7 @@ namespace DwarfCorp
     /// <summary>
     /// This component follows its parent at a specified radius;
     /// </summary>
-    public class Follower : Body
+    public class Follower : Body, IUpdateableComponent
     {
         public Body ParentBody { get; set; }
         public float FollowRadius { get; set;  }
@@ -65,7 +65,7 @@ namespace DwarfCorp
             FollowRate = 0.1f;
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             Vector3 parentCurrentPos = ParentBody.Position;
             if ((parentCurrentPos - TargetPos).Length() > FollowRadius)

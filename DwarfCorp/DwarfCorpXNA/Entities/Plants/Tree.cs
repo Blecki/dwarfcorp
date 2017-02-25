@@ -44,7 +44,7 @@ namespace DwarfCorp
 {
 
     [JsonObject(IsReference = true)]
-    public class Seedling : Fixture
+    public class Seedling : Fixture, IUpdateableComponent
     {
         public DateTime FullyGrownDay { get; set; }
         public DateTime Birthday { get; set; }
@@ -89,7 +89,7 @@ namespace DwarfCorp
             base.Die();
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (Manager.World.Time.CurrentDate >= FullyGrownDay)
             {

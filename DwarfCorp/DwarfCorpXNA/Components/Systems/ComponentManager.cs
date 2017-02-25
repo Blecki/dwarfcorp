@@ -55,6 +55,7 @@ namespace DwarfCorp
     public class ComponentManager
     {
         public Dictionary<uint, GameComponent> Components { get; set; }
+        public List<IUpdateableComponent> UpdatableComponents { get; set; }
 
         private List<GameComponent> Removals { get; set; }
        
@@ -90,7 +91,6 @@ namespace DwarfCorp
             GameObjectCaching.Reset();
             RootComponent.RefreshCacheTypesRecursive();
         }
-       
 
         public ComponentManager()
         {
@@ -101,6 +101,7 @@ namespace DwarfCorp
         {
             World = state;
             Components = new Dictionary<uint, GameComponent>();
+            UpdatableComponents = new List<IUpdateableComponent>();
             Removals = new List<GameComponent>();
             Additions = new List<GameComponent>();
             Camera = null;
@@ -168,7 +169,7 @@ namespace DwarfCorp
         public void AddComponent(GameComponent component)
         {
             AdditionMutex.WaitOne();
-            Additions.Add(component);
+            Additions.Add(component);            
             AdditionMutex.ReleaseMutex();
         }
 
@@ -187,13 +188,10 @@ namespace DwarfCorp
             }
 
             Components.Remove(component.GlobalID);
+            if (component is IUpdateableComponent) UpdatableComponents.Remove(component as IUpdateableComponent);
 
-            List<GameComponent> children = component.GetAllChildrenRecursive();
-
-            foreach(GameComponent child in children)
-            {
-                Components.Remove(child.GlobalID);
-            }
+            foreach (var child in component.GetAllChildrenRecursive())
+                RemoveComponentImmediate(child);
         }
 
         private void AddComponentImmediate(GameComponent component)
@@ -204,7 +202,9 @@ namespace DwarfCorp
             }
             else if (!Components.ContainsKey(component.GlobalID))
             {
-                Components[component.GlobalID] = component;   
+                Components[component.GlobalID] = component;
+                if (component is IUpdateableComponent)
+                    UpdatableComponents.Add(component as IUpdateableComponent);
             }
         }
 
@@ -221,23 +221,18 @@ namespace DwarfCorp
             Factions.Update(gameTime);
             GamePerformance.Instance.StopTrackPerformance("Factions");
 
+            GamePerformance.Instance.TrackValueType("Component Count", Components.Count);
             GamePerformance.Instance.StartTrackPerformance("Update Components");
-            foreach(GameComponent component in Components.Values)
+            foreach(var component in UpdatableComponents)
             {
-                component.Manager = this;
+                //component.Manager = this;
 
                 if(component.IsActive)
                 {
+                    GamePerformance.Instance.StartTrackPerformance("Component Update " + component.GetType().Name);
                     component.Update(gameTime, chunks, camera);
-                }
-
-                if(component.IsDead)
-                {
-                    Removals.Add(component);
-                    component.IsActive = false;
-                    component.IsDead = true;
-                    component.IsVisible = false;
-                }
+                    GamePerformance.Instance.StopTrackPerformance("Component Update " + component.GetType().Name);
+                }                
             }
             GamePerformance.Instance.StopTrackPerformance("Update Components");
 

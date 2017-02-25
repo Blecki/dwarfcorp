@@ -62,12 +62,7 @@ namespace DwarfCorp
             HasBones = false;
             Initialize(workerClass);
         }
-
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
-        {
-            base.Update(gameTime, chunks, camera);
-        }
-
+        
         public void Initialize(EmployeeClass dwarfClass)
         {
             Physics.Orientation = Physics.OrientMode.RotateY;

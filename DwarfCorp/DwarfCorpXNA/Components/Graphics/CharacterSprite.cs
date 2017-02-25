@@ -48,7 +48,7 @@ namespace DwarfCorp
     /// certain effects such as blinking.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class CharacterSprite : OrientedAnimation
+    public class CharacterSprite : OrientedAnimation, IUpdateableComponent
     {
         [JsonIgnore]
         public GraphicsDevice Graphics { get; set; }
@@ -227,7 +227,7 @@ namespace DwarfCorp
             blinkTrigger.Reset(blinkTime);
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if(isBlinking)
             {

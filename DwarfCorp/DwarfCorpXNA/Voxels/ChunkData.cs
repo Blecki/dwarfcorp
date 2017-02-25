@@ -433,7 +433,7 @@ namespace DwarfCorp
 
             foreach(var component in locatables.Where(o => o is Body).Select(o => o as Body))
             {
-                component.IsDead = true;
+                component.Die();
             }
 
             chunk.Destroy(chunkManager.Graphics);

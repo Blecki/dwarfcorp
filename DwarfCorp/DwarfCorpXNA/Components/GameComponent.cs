@@ -114,7 +114,7 @@ namespace DwarfCorp
         /// <value>
         ///   <c>true</c> if this instance is dead; otherwise, <c>false</c>.
         /// </value>
-        public bool IsDead { get; set; }
+        public bool IsDead { get; private set; }
 
         /// <summary>
         /// Gets or sets the tags. Tags are just arbitrary strings attached to objects.
@@ -275,18 +275,6 @@ namespace DwarfCorp
             return toReturn;
         }
 
-
-        /// <summary>
-        /// Updates the component.
-        /// </summary>
-        /// <param name="gameTime">The game time.</param>
-        /// <param name="chunks">The chunk manager.</param>
-        /// <param name="camera">The camera.</param>
-        public virtual void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
-        {
-        }
-
-
         /// <summary>
         /// Renders the component to the selection buffer (for selecting stuff on screen).
         /// </summary>
@@ -394,6 +382,10 @@ namespace DwarfCorp
             }
 
             RemoveFromParent();
+
+            IsActive = false;
+            IsVisible = false;
+            Manager.RemoveComponent(this);
         }
 
         /// <summary>
@@ -415,6 +407,10 @@ namespace DwarfCorp
             }
 
             RemoveFromParent();
+
+            IsActive = false;
+            IsVisible = false;
+            Manager.RemoveComponent(this);
         }
 
         /// <summary>
@@ -571,7 +567,6 @@ namespace DwarfCorp
         }
 
         #endregion
-
 
         #region recursive_child_operators
 

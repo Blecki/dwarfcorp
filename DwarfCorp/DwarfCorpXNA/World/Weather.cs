@@ -176,7 +176,7 @@ namespace DwarfCorp
         }
 
 
-        public class Cloud : Fixture
+        public class Cloud : Fixture, IUpdateableComponent
         {
             public float Raininess { get; set; }
             public float Height { get; set; }
@@ -215,7 +215,7 @@ namespace DwarfCorp
                 Velocity = new Vector3(1, 0, 0);
             }
 
-            public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+            new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
             {
                 BoundingBox box = chunks.Bounds;
                 box.Expand(10.0f);
