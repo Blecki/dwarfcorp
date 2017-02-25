@@ -175,10 +175,6 @@ namespace DwarfCorp
         protected override void Update(GameTime time)
         {
             GamePerformance.Instance.PreUpdate();
-            if (DwarfTime.LastTime == null)
-            {
-                DwarfTime.LastTime = new DwarfTime(time);
-            }
             DwarfTime.LastTime.Update(time);
             StateManager.Update(DwarfTime.LastTime);
             base.Update(time);

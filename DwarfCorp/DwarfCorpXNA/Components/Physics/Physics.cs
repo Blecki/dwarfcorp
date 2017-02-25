@@ -247,21 +247,16 @@ namespace DwarfCorp
         {
             if (!IsActive) return;
 
-            // Check to see if we're outside the bounds of the world.
-            BoundingBox bounds = chunks.Bounds;
-            bounds.Max.Y += 50;
-
             // If we're not sleeping and moving very slowly, go to sleep.
-            if (!IsSleeping && (Velocity).Length() < 0.15f)
+            if (!IsSleeping && Velocity.LengthSquared() < 0.0225f)
             {
                 SleepTimer.Update(gameTime);
                 if (SleepTimer.HasTriggered)
                 {
                     applyGravityThisFrame = false;
-                    Velocity *= 0.0f;
+                    Velocity = Vector3.Zero;
                     IsSleeping = true;
                 }
-
             }
             else
             {
@@ -285,6 +280,10 @@ namespace DwarfCorp
                 }
 
                 float velocityLength = Velocity.Length();
+
+                // Check to see if we're outside the bounds of the world.
+                BoundingBox worldBounds = chunks.Bounds;
+                worldBounds.Max.Y += 50;
 
                 // For each timestep, move and collide.
                 for (int n = 0; n < numTimesteps; n++)
@@ -311,7 +310,7 @@ namespace DwarfCorp
 
                         Matrix transform = LocalTransform;
                         // Avoid leaving the world.
-                        if (bounds.Contains(LocalTransform.Translation + Velocity * dt) != ContainmentType.Contains)
+                        if (worldBounds.Contains(LocalTransform.Translation + Velocity * dt) != ContainmentType.Contains)
                         {
                             transform.Translation = LocalTransform.Translation - 0.1f * Velocity * dt;
                             Velocity = new Vector3(Velocity.X * -0.9f, Velocity.Y, Velocity.Z * -0.9f);
@@ -320,7 +319,7 @@ namespace DwarfCorp
 
                         // If we're outside the world, die
                         if (LocalTransform.Translation.Y < -10 ||
-                            bounds.Contains(GetBoundingBox()) == ContainmentType.Disjoint)
+                            worldBounds.Contains(GetBoundingBox()) == ContainmentType.Disjoint)
                         {
                             Die();
                         }
@@ -398,7 +397,7 @@ namespace DwarfCorp
                 }
             }
 
-            if (!applyGravityThisFrame) applyGravityThisFrame = true;
+            applyGravityThisFrame = true;
             CheckLiquids(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
             PreviousVelocity = Velocity;
             PreviousPosition = Position;
