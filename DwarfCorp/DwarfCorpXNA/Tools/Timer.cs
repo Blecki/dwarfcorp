@@ -127,8 +127,8 @@ namespace DwarfCorp
             else
             {
                 ElapsedGameTime = new TimeSpan((long)(time.ElapsedGameTime.Ticks * Speed));
-                if (ElapsedGameTime.TotalSeconds > MaximumElapsedGameTime)
-                    ElapsedGameTime = TimeSpan.FromSeconds(MaximumElapsedGameTime);
+                if (ElapsedGameTime.TotalSeconds > MaximumElapsedGameTime * Speed)
+                    ElapsedGameTime = TimeSpan.FromSeconds(MaximumElapsedGameTime * Speed);
                 TotalGameTime += ElapsedGameTime;
             }
         }
