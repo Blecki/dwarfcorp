@@ -89,7 +89,6 @@ namespace DwarfCorp.GameStates
             World.WorldScale = Settings.WorldScale;
             World.WorldGenerationOrigin = Settings.WorldGenerationOrigin;
 
-            DwarfGame.World = World;
             World.OnLoadedEvent += World_OnLoadedEvent;
 
             // Todo - Save gui creation for play state. We're only creating it here so we can give it to
