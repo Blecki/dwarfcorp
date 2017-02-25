@@ -55,7 +55,7 @@ namespace DwarfCorp
     public class ComponentManager
     {
         public Dictionary<uint, GameComponent> Components { get; set; }
-        public List<IUpdateableComponent> UpdatableComponents { get; set; }
+        public List<IUpdateableComponent> UpdateableComponents { get; set; }
 
         private List<GameComponent> Removals { get; set; }
        
@@ -101,7 +101,7 @@ namespace DwarfCorp
         {
             World = state;
             Components = new Dictionary<uint, GameComponent>();
-            UpdatableComponents = new List<IUpdateableComponent>();
+            UpdateableComponents = new List<IUpdateableComponent>();
             Removals = new List<GameComponent>();
             Additions = new List<GameComponent>();
             Camera = null;
@@ -188,7 +188,7 @@ namespace DwarfCorp
             }
 
             Components.Remove(component.GlobalID);
-            if (component is IUpdateableComponent) UpdatableComponents.Remove(component as IUpdateableComponent);
+            if (component is IUpdateableComponent) UpdateableComponents.Remove(component as IUpdateableComponent);
 
             foreach (var child in component.GetAllChildrenRecursive())
                 RemoveComponentImmediate(child);
@@ -204,7 +204,7 @@ namespace DwarfCorp
             {
                 Components[component.GlobalID] = component;
                 if (component is IUpdateableComponent)
-                    UpdatableComponents.Add(component as IUpdateableComponent);
+                    UpdateableComponents.Add(component as IUpdateableComponent);
             }
         }
 
@@ -222,8 +222,9 @@ namespace DwarfCorp
             GamePerformance.Instance.StopTrackPerformance("Factions");
 
             GamePerformance.Instance.TrackValueType("Component Count", Components.Count);
+            GamePerformance.Instance.TrackValueType("Updateable Count", UpdateableComponents.Count);
             GamePerformance.Instance.StartTrackPerformance("Update Components");
-            foreach(var component in UpdatableComponents)
+            foreach(var component in UpdateableComponents)
             {
                 //component.Manager = this;
 
