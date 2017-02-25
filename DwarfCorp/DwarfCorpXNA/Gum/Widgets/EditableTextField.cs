@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -110,12 +110,30 @@ namespace Gum.Widgets
                     Root.SafeCall(OnTextChange, this);
                     Invalidate();
                 };
+
+            var color = TextColor;
+            OnMouseEnter += (widget, action) =>
+            {
+                widget.TextColor = new Vector4(0.5f, 0, 0, 1.0f);
+                widget.Invalidate();
+            };
+
+            OnMouseLeave += (widget, action) =>
+            {
+                widget.TextColor = color;
+                widget.Invalidate();
+            };
         }
 
         protected override Mesh Redraw()
         {
             if (Object.ReferenceEquals(this, Root.FocusItem))
             {
+                if (CursorPosition > Text.Length || CursorPosition < 0)
+                {
+                    CursorPosition = Text.Length;
+                }
+
                 var cursorTime = (int)(Math.Floor(Root.RunTime / Root.CursorBlinkTime));
                 if ((cursorTime & 1) == 1)
                 {

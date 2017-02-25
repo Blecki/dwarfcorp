@@ -1,4 +1,4 @@
-﻿// Economy.cs
+// Economy.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -74,10 +74,10 @@ namespace DwarfCorp
             
         }
 
-        public Economy(Faction faction, float currentMoney, WorldManager WorldManager, 
+        public Economy(Faction faction, float currentMoney, WorldManager worldManager, 
             CompanyInformation CompanyInformation)
         {
-            this.WorldManager = WorldManager;
+            this.WorldManager = worldManager;
             Company = Company.GenerateRandom(currentMoney, 1.0f, Company.Sector.Exploration);
             Company.Information = CompanyInformation;
             Company.Assets = currentMoney;
@@ -102,13 +102,14 @@ namespace DwarfCorp
                 Company.GenerateRandom(1800, 60.0f, Company.Sector.Finance)
             };
 
-            DwarfGame.World.Time.NewDay += Time_NewDay;
+            if (worldManager != null)
+             WorldManager.Time.NewDay += Time_NewDay;
         }
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            WorldManager = DwarfGame.World.World;
+            WorldManager = DwarfGame.World;
         }
 
         public void UpdateStocks(DateTime time)
@@ -132,17 +133,17 @@ namespace DwarfCorp
             float diff = Company.StockPrice - originalStockPrice;
             if (Company.StockPrice <= 0)
             {
-                DwarfGame.World.InvokeLoss();
+                WorldManager.InvokeLoss();
             }
 
             if (Company.Assets <= 0)
             {
-                DwarfGame.World.MakeAnnouncement("We're bankrupt!", "If we don't make a profit by tomorrow, our stock will crash!");
+                WorldManager.MakeAnnouncement("We're bankrupt!", "If we don't make a profit by tomorrow, our stock will crash!");
             }
 
             string symbol = diff > 0 ? "+" : "";
 
-            DwarfGame.World.MakeAnnouncement(String.Format("{0} {1} {2}{3}",
+            WorldManager.MakeAnnouncement(String.Format("{0} {1} {2}{3}",
                 Company.TickerName, Company.StockPrice.ToString("F2"), symbol, diff.ToString("F2")),
                 String.Format("Our stock price changed by {0}{1} today.", symbol, diff.ToString("F2")));
         }

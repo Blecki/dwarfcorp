@@ -51,11 +51,13 @@ namespace DwarfCorp
         public int Y;
         public int Z;
 
-        public Point3(Microsoft.Xna.Framework.Vector3 vect)
+        public static readonly Point3 Zero = new Point3(0, 0, 0);
+
+        public Point3(Vector3 vect)
         {
-            X = (int) vect.X;
-            Y = (int) vect.Y;
-            Z = (int) vect.Z;
+            X = MathFunctions.FloorInt(vect.X);
+            Y = MathFunctions.FloorInt(vect.Y);
+            Z = MathFunctions.FloorInt(vect.Z);
         }
 
         public Point3(int x, int y, int z)

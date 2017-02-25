@@ -1,4 +1,4 @@
-﻿// OrientedAnimation.cs
+// OrientedAnimation.cs
 // 
 //  Modified MIT License (MIT)
 //  

@@ -1,4 +1,4 @@
-﻿// Creature.cs
+// Creature.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -433,7 +433,16 @@ namespace DwarfCorp
                 currentCharacterMode = value;
                 if (Sprite != null)
                 {
-                    Sprite.SetCurrentAnimation(value.ToString());
+                    if (Sprite.HasAnimation(currentCharacterMode, OrientedAnimation.Orientation.Forward))
+                    { 
+                        Sprite.SetCurrentAnimation(value.ToString());
+                    }
+                    else
+                    {
+                        Sprite.SetCurrentAnimation(currentCharacterMode != CharacterMode.Walking
+                            ? CharacterMode.Walking.ToString()
+                            : CharacterMode.Idle.ToString());
+                    }
                 }
             }
         }

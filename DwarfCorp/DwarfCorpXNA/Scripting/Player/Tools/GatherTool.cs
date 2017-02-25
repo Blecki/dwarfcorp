@@ -1,4 +1,4 @@
-﻿// GatherTool.cs
+// GatherTool.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -124,7 +124,7 @@ namespace DwarfCorp
             if (Player.World.IsMouseOverGui)
                 Player.World.SetMouse(Player.World.MousePointer);
             else
-                Player.World.SetMouse(new Gum.MousePointer("mouse", 1, 7));
+                Player.World.SetMouse(new Gum.MousePointer("mouse", 1, 6));
 
 
         }

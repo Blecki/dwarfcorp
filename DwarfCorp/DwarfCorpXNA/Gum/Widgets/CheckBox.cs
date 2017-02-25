@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,6 +25,19 @@ namespace Gum.Widgets
 
             if (String.IsNullOrEmpty(Graphics))
                 Graphics = "checkbox";
+
+            var color = TextColor;
+            OnMouseEnter += (widget, action) =>
+            {
+                widget.TextColor = new Vector4(0.5f, 0, 0, 1.0f);
+                widget.Invalidate();
+            };
+
+            OnMouseLeave += (widget, action) =>
+            {
+                widget.TextColor = color;
+                widget.Invalidate();
+            };
         }
 
         public override Rectangle GetDrawableInterior()

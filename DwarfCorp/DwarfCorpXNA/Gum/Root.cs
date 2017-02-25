@@ -27,6 +27,7 @@ namespace Gum
         public int ScaleRatio { get; private set; }
         public Widget RootItem { get; private set; }
         public Widget TooltipItem { get; private set; }
+        public Widget PopupToolTipItem { get; private set; }
         private List<Widget> UpdateItems = new List<Widget>();
         public Widget MouseDownItem { get; private set; }
 
@@ -39,6 +40,14 @@ namespace Gum
         public float CursorBlinkTime = 0.3f;
         internal double RunTime = 0.0f;
 
+        struct TimedAction
+        {
+            public float Start;
+            public float Duration;
+            public Action OnTimeOut;
+        }
+
+        private List<TimedAction> TimedActions = new List<TimedAction>(); 
         private List<Widget> PopupStack = new List<Widget>();
 
         public Root(Point IdealSize, RenderData RenderData)
@@ -69,6 +78,7 @@ namespace Gum
             FocusItem = null;
             PopupStack.Clear();
             TooltipItem = null;
+            PopupToolTipItem = null;
             RootItem = ConstructWidget(new Widget
                 {
                     Rect = VirtualScreen,
@@ -146,6 +156,7 @@ namespace Gum
             if (Object.ReferenceEquals(FocusItem, Widget)) FocusItem = null;
             if (Object.ReferenceEquals(HoverItem, Widget)) HoverItem = null;
             if (Object.ReferenceEquals(TooltipItem, Widget)) TooltipItem = null;
+            if (Object.ReferenceEquals(PopupToolTipItem, Widget)) PopupToolTipItem = null;
             UpdateItems.RemoveAll(p => Object.ReferenceEquals(p, Widget));
             if (PopupStack.Contains(Widget)) PopupStack = new List<Widget>();
         }
@@ -194,24 +205,46 @@ namespace Gum
             RootItem.AddChild(Popup);
         }
 
-        public void ShowTooltip(Point Where, String Tip)
+        public void ShowTooltip(Point Where, String Tip, float time = -1.0f)
         {
-            if (TooltipItem != null)
-                DestroyWidget(TooltipItem);
-
-            TooltipItem = ConstructWidget(new Widget
+            var item = ConstructWidget(new Widget
                 {
                     Text = Tip,
-                    Border = "border-thin",
+                    Border = "border-dark",
                     Font = TooltipFont,
-                    TextSize = TooltipTextSize
+                    TextSize = TooltipTextSize,
+                    TextColor = new Vector4(1, 1, 1, 1)
                 });
-            var bestSize = TooltipItem.GetBestSize();
-            TooltipItem.Rect = new Rectangle(
+            var bestSize = item.GetBestSize();
+            item.Rect = new Rectangle(
                 Where.X + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2, 
                 Where.Y, bestSize.X, bestSize.Y);
 
-            RootItem.AddChild(TooltipItem);
+            RootItem.AddChild(item);
+
+            if (time > 0.0f)
+            {
+                if (PopupToolTipItem != null)
+                {
+                    DestroyWidget(PopupToolTipItem);
+                }
+                PopupToolTipItem = item;
+                TimedActions.Add(new TimedAction()
+                {
+                    Start = (float)this.RunTime,
+                    Duration = time,
+                    OnTimeOut = () => DestroyWidget(item)
+                });
+            }
+            else
+            {
+                if (TooltipItem != null)
+                {
+                    DestroyWidget(TooltipItem);
+                }
+
+                TooltipItem = item;
+            }
         }
 
         /// <summary>
@@ -407,6 +440,18 @@ namespace Gum
                 SafeCall(item.OnUpdate, item, Time);
 
             if (HoverItem != null) SafeCall(HoverItem.OnHover, HoverItem);
+
+            float now = (float) (Time.TotalGameTime.TotalSeconds);
+            foreach (TimedAction action in TimedActions)
+            {
+                float time = now - action.Start;
+
+                if (time > action.Duration)
+                {
+                    action.OnTimeOut();
+                }
+            }
+            TimedActions.RemoveAll(action => now - action.Start > action.Duration);
         }
 
         public void Draw()

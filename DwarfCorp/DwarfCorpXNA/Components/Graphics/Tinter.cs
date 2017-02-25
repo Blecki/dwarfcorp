@@ -1,4 +1,4 @@
-﻿// Tinter.cs
+// Tinter.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -132,11 +132,11 @@ namespace DwarfCorp
             }
             else if(LightsWithVoxels)
             {
-                Vector4 lerpTint = new Vector4((float) TargetTint.R / 255.0f, (float) TargetTint.G / 255.0f, (float) TargetTint.B / 255.0f, (float) TargetTint.A / 255.0f);
-                Vector4 currTint = new Vector4((float) Tint.R / 255.0f, (float) Tint.G / 255.0f, (float) Tint.B / 255.0f, (float) Tint.A / 255.0f);
+                //Vector4 lerpTint = new Vector4((float) TargetTint.R / 255.0f, (float) TargetTint.G / 255.0f, (float) TargetTint.B / 255.0f, (float) TargetTint.A / 255.0f);
+                //Vector4 currTint = new Vector4((float) Tint.R / 255.0f, (float) Tint.G / 255.0f, (float) Tint.B / 255.0f, (float) Tint.A / 255.0f);
 
-                Vector4 delta = lerpTint - currTint;
-                lerpTint = currTint + delta * Math.Max(Math.Min(LightingTimer.CurrentTimeSeconds * TintChangeRate, 1.0f), 0.0f);
+                //Vector4 delta = lerpTint - currTint;
+                //lerpTint = currTint + delta * Math.Max(Math.Min(LightingTimer.CurrentTimeSeconds * TintChangeRate, 1.0f), 0.0f);
 
                 //Tint = new Color(lerpTint.X, lerpTint.Y, lerpTint.Z, lerpTint.W);
                 Tint = TargetTint;
@@ -145,12 +145,12 @@ namespace DwarfCorp
             base.Update(gameTime, chunks, camera);
         }
 
-        public void ApplyTintingToEffect(Effect effect)
+        public void ApplyTintingToEffect(Shader effect)
         {
             if (IsVisible)
             {
-                effect.Parameters["xTint"].SetValue(new Vector4(Tint.R, Tint.G, Tint.B, Tint.A));
-                effect.Parameters["xColorTint"].SetValue(new Vector4(VertexColorTint.R, VertexColorTint.G, VertexColorTint.B, VertexColorTint.A));
+                effect.LightRampTint = Tint;
+                effect.VertexColorTint = VertexColorTint;
             }
         }
     }

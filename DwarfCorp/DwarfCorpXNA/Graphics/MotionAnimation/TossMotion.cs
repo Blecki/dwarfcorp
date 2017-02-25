@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,8 +14,13 @@ namespace DwarfCorp
         public float Height { get; set; }
         public Vector3 EndPos { get; set; }
 
-        public TossMotion(float time, float height, Matrix start, Vector3 end) :
-            base(time, false)
+        public TossMotion()
+        {
+            
+        }
+
+        public TossMotion(float animTime, float height, Matrix start, Vector3 end) :
+            base(animTime, false)
         {
             Start = start;
             EndPos = end;

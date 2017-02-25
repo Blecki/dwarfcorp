@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +14,11 @@ namespace DwarfCorp
         public event Completed OnComplete;
 
         public Timer Time { get; set; }
+
+        public MotionAnimation()
+        {
+            
+        }
 
         public MotionAnimation(float time, bool loop)
         {
@@ -47,7 +52,7 @@ namespace DwarfCorp
         {
             Time.Update(t);
 
-            if(IsDone())
+            if(IsDone() && OnComplete != null)
             {
                 OnComplete.Invoke();
             }

@@ -1,4 +1,4 @@
-﻿// GameComponent.cs
+// GameComponent.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -285,7 +285,7 @@ namespace DwarfCorp
         /// <param name="graphicsDevice">The graphics device.</param>
         /// <param name="effect">The shader to use.</param>
         public virtual void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera,
-            SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect)
+            SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect)
         {
             
         }

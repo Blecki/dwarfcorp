@@ -43,7 +43,7 @@ namespace DwarfCorp
     public class BuildStockpileOrder : BuildRoomOrder
     {
         public BuildStockpileOrder(Stockpile toBuild, Faction faction) 
-            : base(toBuild, faction)
+            : base(toBuild, faction, faction.World)
         {
         }
 

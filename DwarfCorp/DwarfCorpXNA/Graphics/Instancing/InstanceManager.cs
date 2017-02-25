@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -154,7 +154,7 @@ namespace DwarfCorp
             }
         }
 
-        public void RenderSelectionBuffer(GraphicsDevice device, Effect effect, Camera camera, bool resetVertices)
+        public void RenderSelectionBuffer(GraphicsDevice device, Shader effect, Camera camera, bool resetVertices)
         {
             foreach (FixedInstanceArray list in Instances.Values)
             {
@@ -162,14 +162,14 @@ namespace DwarfCorp
             }
         }
 
-        public void Render(GraphicsDevice device, Effect effect, Camera camera, bool resetVertices)
+        public void Render(GraphicsDevice device, Shader effect, Camera camera, bool resetVertices)
         {
             foreach(FixedInstanceArray list in Instances.Values)
             {
                 list.Render(device, effect, camera, resetVertices);
             }
-            effect.CurrentTechnique = effect.Techniques["Textured"];
-            effect.Parameters["xWorld"].SetValue(Matrix.Identity);
+            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
+            effect.World = Matrix.Identity;
         }
     }
 

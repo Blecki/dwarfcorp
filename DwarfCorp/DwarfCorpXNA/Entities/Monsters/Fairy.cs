@@ -1,4 +1,4 @@
-﻿// Fairy.cs
+// Fairy.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -150,7 +150,7 @@ namespace DwarfCorp
                 ContentPaths.Audio.tinkle
             };
 
-            MinimapIcon minimapIcon = new MinimapIcon(Physics, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 0, 0));
+            MinimapIcon minimapIcon = new MinimapIcon(Physics, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 0));
 
             //new LightEmitter("Light Emitter", Sprite, Matrix.Identity, Vector3.One, Vector3.One, 255, 150);
             new Bobber(0.25f, 3.0f, MathFunctions.Rand(), Sprite);

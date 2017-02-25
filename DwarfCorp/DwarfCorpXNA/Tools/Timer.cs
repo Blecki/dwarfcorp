@@ -1,4 +1,4 @@
-﻿// Timer.cs
+// Timer.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -145,6 +145,7 @@ namespace DwarfCorp
     /// A timer fires at a fixed interval when updated. Some timers automatically reset.
     /// Other timers need to be manually reset.
     /// </summary>
+    [JsonObject(IsReference = true)]
     public class Timer
     {
         [JsonIgnore]

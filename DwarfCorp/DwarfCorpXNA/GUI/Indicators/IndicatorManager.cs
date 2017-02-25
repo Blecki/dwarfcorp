@@ -1,4 +1,4 @@
-﻿// IndicatorManager.cs
+// IndicatorManager.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -111,6 +111,12 @@ namespace DwarfCorp
     public class TextIndicator : Indicator
     {
         public string Text { get; set; }
+        public SpriteFont Font { get; set; }
+
+        public TextIndicator(SpriteFont font)
+        {
+            Font = font;
+        }
 
         public override void Update(DwarfTime time)
         {
@@ -133,7 +139,7 @@ namespace DwarfCorp
             switch (Mode)
             {
                 case IndicatorMode.Indicator2D:
-                    Drawer2D.DrawAlignedText(DwarfGame.SpriteBatch, Text, DwarfGame.World.GUI.DefaultFont, Tint, Drawer2D.Alignment.Center,  new Rectangle((int)Position.X, (int)Position.Y, 32, 32));
+                    Drawer2D.DrawAlignedText(DwarfGame.SpriteBatch, Text, Font, Tint, Drawer2D.Alignment.Center,  new Rectangle((int)Position.X, (int)Position.Y, 32, 32));
                     break;
                 case IndicatorMode.Indicator3D:
                     Drawer2D.DrawText(Text, Position, Tint, Color.Transparent);
@@ -191,6 +197,8 @@ namespace DwarfCorp
 
         public static List<Indicator> Indicators = new List<Indicator>();
         private static readonly Object IndicatorLock = new object();
+
+        public static SpriteFont DefaultFont { get; set; }
 
         public static void SetupStandards()
         {
@@ -290,7 +298,7 @@ namespace DwarfCorp
         {
             lock (IndicatorLock)
             {
-                Indicators.Add(new TextIndicator()
+                Indicators.Add(new TextIndicator(DefaultFont)
                 {
                     Text = indicator,
                     Tint = color,
