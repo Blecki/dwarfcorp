@@ -148,7 +148,7 @@ namespace DwarfCorp
 
         public void OnDeserializing(StreamingContext ctx)
         {
-            World = DwarfGame.World;
+            World = ((WorldManager)ctx.Context);
         }
 
         public Diplomacy(FactionLibrary factions, WorldManager world)
