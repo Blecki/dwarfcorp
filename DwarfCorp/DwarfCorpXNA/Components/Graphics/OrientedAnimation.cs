@@ -64,15 +64,15 @@ namespace DwarfCorp
             "BACKWARD"
         };
 
-        public delegate void FrameEvent(Animation animation, Orientation orientation, int frame);
+        //public delegate void FrameEvent(Animation animation, Orientation orientation, int frame);
 
-        public event FrameEvent OnFrame;
+        //public event FrameEvent OnFrame;
 
-        protected virtual void InvokeOnFrame(Animation animation, Orientation orientation, int frame)
-        {
-            FrameEvent handler = OnFrame;
-            if (handler != null) handler(animation, orientation, frame);
-        }
+        //protected virtual void InvokeOnFrame(Animation animation, Orientation orientation, int frame)
+        //{
+        //    FrameEvent handler = OnFrame;
+        //    if (handler != null) handler(animation, orientation, frame);
+        //}
 
         public Orientation CurrentOrientation { get; set; }
 
@@ -111,29 +111,32 @@ namespace DwarfCorp
         {
             CalculateCurrentOrientation(camera);
 
-            foreach (string orient in OrientationStrings)
-            {
-                string animationName = currentMode + orient;
+            //foreach (string orient in OrientationStrings)
+            //{
+            //    string animationName = currentMode + orient;
 
-                if (!Animations.ContainsKey(animationName)) continue;
+            //    if (!Animations.ContainsKey(animationName)) continue;
 
-                Animation animation = Animations[animationName];
-                animation.Update(gameTime);
-            }
+            //    Animation animation = Animations[animationName];
+            //    animation.Update(gameTime);
+            //}
 
             string s = currentMode + OrientationStrings[(int) CurrentOrientation];
             if(Animations.ContainsKey(s))
             {
+                var previousAnimation = CurrentAnimation;
                 CurrentAnimation = Animations[s];
+                if (previousAnimation.Name.StartsWith(currentMode))
+                    CurrentAnimation.Sychronize(previousAnimation);
                 SpriteSheet = CurrentAnimation.SpriteSheet;
             }
 
             base.Update(gameTime, chunks, camera);
 
-            if (CurrentAnimation != null && CurrentAnimation.LastFrame != CurrentAnimation.CurrentFrame)
-            {
-                InvokeOnFrame(CurrentAnimation, CurrentOrientation, CurrentAnimation.CurrentFrame);
-            }
+            //if (CurrentAnimation != null && CurrentAnimation.LastFrame != CurrentAnimation.CurrentFrame)
+            //{
+            //    InvokeOnFrame(CurrentAnimation, CurrentOrientation, CurrentAnimation.CurrentFrame);
+            //}
         }
 
         public void CalculateCurrentOrientation(Camera camera)
