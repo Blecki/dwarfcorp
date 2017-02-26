@@ -115,7 +115,7 @@ namespace DwarfCorp
                         Color color = new Color(VoxelUnder.SunColor, 255, 0);
 
                         TargetTint = color;
-                        ColorAppplied = true;
+                        //ColorAppplied = true;
                     }
                 }
                 else

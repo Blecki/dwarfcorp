@@ -142,14 +142,8 @@ namespace DwarfCorp
 
         new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if(IsActive)
-            {
-                if(CurrentAnimation != null)
-                {
-                    CurrentAnimation.Update(gameTime);
-                }
-            }
-
+            if (CurrentAnimation != null)
+                CurrentAnimation.Update(gameTime);
 
             base.Update(gameTime, chunks, camera);
         }

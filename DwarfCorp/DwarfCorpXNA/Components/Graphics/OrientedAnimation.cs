@@ -144,25 +144,19 @@ namespace DwarfCorp
             float xComponent = Vector3.Dot(camera.ViewMatrix.Forward, GlobalTransform.Left);
             float yComponent = Vector3.Dot(camera.ViewMatrix.Forward, GlobalTransform.Forward);
 
+            // Todo: There should be a way to do this without trig.
             float angle = (float) Math.Atan2(yComponent, xComponent);
 
-
-            if(angle > -MathHelper.PiOver4 && angle < MathHelper.PiOver4)
-            {
-                CurrentOrientation = Orientation.Left;
-            }
-            else if(angle > MathHelper.PiOver4 && angle < 3.0f * MathHelper.PiOver4)
-            {
-                CurrentOrientation = Orientation.Backward;
-            }
-            else if((angle > 3.0f * MathHelper.PiOver4 || angle < -3.0f * MathHelper.PiOver4))
-            {
+            if (angle > 3.0f * MathHelper.PiOver4)
                 CurrentOrientation = Orientation.Right;
-            }
-            else
-            {
+            else if (angle > MathHelper.PiOver4)
+                CurrentOrientation = Orientation.Backward;
+            else if (angle > -MathHelper.PiOver4)
+                CurrentOrientation = Orientation.Left;
+            else if (angle > -3.0f * MathHelper.PiOver4)
                 CurrentOrientation = Orientation.Forward;
-            }
+            else
+                CurrentOrientation = Orientation.Right;
         }
     }
 
