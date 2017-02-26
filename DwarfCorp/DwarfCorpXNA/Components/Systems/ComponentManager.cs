@@ -86,8 +86,10 @@ namespace DwarfCorp
             RemovalMutex = new Mutex();
             Removals = new List<GameComponent>();
             Additions = new List<GameComponent>();
-            CollisionManager = new CollisionManager(new BoundingBox());
-            GameObjectCaching.Reset();
+            World = (WorldManager)context.Context;
+            Vector3 origin = new Vector3(World.WorldOrigin.X, 0, World.WorldOrigin.Y);
+            Vector3 extents = new Vector3(1500, 1500, 1500);
+            CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents)); GameObjectCaching.Reset();
             RootComponent.RefreshCacheTypesRecursive();
         }
        
