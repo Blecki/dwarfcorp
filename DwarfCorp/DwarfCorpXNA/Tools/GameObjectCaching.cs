@@ -77,62 +77,18 @@ namespace DwarfCorp
 
         #endregion
 
-        #region RenderBodyCache
-        public const string RenderBodyCache = "renderBodyCache";
-
-        private static GameComponentCache renderBodyCache;
-
-        // Used by ComponentManager.Render to only cull and test things that actually draw using GameComponent.Render.
-        private static List<Body> renderBodies;
-
-        public static List<Body> RenderBodies
-        {
-            get { return renderBodies; }
-        }
-
-
-        private static void AddRenderBody(GameComponent newBody)
-        {
-            if (!newBody.HasOwnRender) return;
-            System.Diagnostics.Debug.Assert(newBody is Body);
-
-            Body body = newBody as Body;
-            lock (renderBodies)
-            {
-                if (renderBodies.Contains(body)) return;
-                renderBodies.Add(body);
-            }
-        }
-
-        private static void RemoveRenderBody(GameComponent bodyToRemove)
-        {
-            System.Diagnostics.Debug.Assert(bodyToRemove is Body);
-            Body body = bodyToRemove as Body;
-            lock (renderBodies)
-            {
-                if (renderBodies.Contains(body))
-                    renderBodies.Remove(body);
-            }
-        }
-
-        #endregion
-
         public static void Initialize()
         {
             cacheLookup = new Dictionary<string, GameComponentCache>();
             minimapIcons = new List<MinimapIcon>();
-            renderBodies = new List<Body>();
             miniMapIconCache = new GameComponentCache(MiniMapIconCache, AddMinimapIcon, RemoveMinimapIcon);
             cacheLookup.Add(MiniMapIconCache, miniMapIconCache);
-            renderBodyCache = new GameComponentCache(RenderBodyCache, AddRenderBody, RemoveRenderBody);
-            cacheLookup.Add(RenderBodyCache, renderBodyCache);
 
             CreateOwnRenderLookup();
         }
 
         public static void Reset()
         {
-            renderBodies.Clear();
             minimapIcons.Clear();
         }
 

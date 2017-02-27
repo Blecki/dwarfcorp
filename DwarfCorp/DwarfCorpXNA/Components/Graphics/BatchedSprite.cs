@@ -136,7 +136,7 @@ namespace DwarfCorp
             return (diff).LengthSquared() < CullDistance;
         }
 
-        public override void Render(DwarfTime gameTime,
+        public new void Render(DwarfTime gameTime,
             ChunkManager chunks,
             Camera camera,
             SpriteBatch spriteBatch,

@@ -82,7 +82,6 @@ namespace DwarfCorp
                     GUIObject.IsVisible = false;
                 }
             }
-            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
         }
 
         public override void Die()

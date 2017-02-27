@@ -49,7 +49,7 @@ namespace DwarfCorp
     /// also live inside an octree for faster access to colliding or nearby objects.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class Body : GameComponent, IBoundedObject
+    public class Body : GameComponent, IBoundedObject, IUpdateableComponent
     {
         public bool WasAddedToOctree
         {
@@ -198,8 +198,6 @@ namespace DwarfCorp
                 OnDestroyed += Body_OnDestroyed;
 
             lastBounds = GetBoundingBox();
-
-            AddCacheType(GameObjectCaching.RenderBodyCache);
         }
 
         public Body(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool addToCollisionManager) :
@@ -225,7 +223,6 @@ namespace DwarfCorp
 
             lastBounds = GetBoundingBox();
 
-            AddCacheType(GameObjectCaching.RenderBodyCache);
         }
 
         public void OrientToWalls()

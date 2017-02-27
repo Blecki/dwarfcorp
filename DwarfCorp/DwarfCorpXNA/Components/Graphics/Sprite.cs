@@ -46,7 +46,7 @@ namespace DwarfCorp
     /// The rectangle is drawn in such a way that it is always more or less facing the camera.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class Sprite : Tinter, IUpdateableComponent, I RenderableComponent
+    public class Sprite : Tinter, IUpdateableComponent, IRenderableComponent
     {
         public Dictionary<string, Animation> Animations { get; set; }
         
