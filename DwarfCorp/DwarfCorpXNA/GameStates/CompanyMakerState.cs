@@ -1,4 +1,4 @@
-﻿// CompanyMakerState.cs
+// CompanyMakerState.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -97,7 +97,7 @@ namespace DwarfCorp.GameStates
                 TextSize = 2
             });
 
-            mainPanel.AddChild(new Widget
+            mainPanel.AddChild(new Gum.Widgets.Button
             {
                 Text = "CREATE!",
                 TextHorizontalAlign = HorizontalAlign.Center,
@@ -115,7 +115,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.FloatBottomRight
             });
 
-            mainPanel.AddChild(new Widget
+            mainPanel.AddChild(new Gum.Widgets.Button
             {
                 Text = "BACK",
                 TextHorizontalAlign = HorizontalAlign.Center,
@@ -137,7 +137,7 @@ namespace DwarfCorp.GameStates
                 Padding = new Margin(0,0,2,2)
             });
 
-            nameRow.AddChild(new Widget
+            nameRow.AddChild(new Gum.Widget
             {
                 MinimumSize = new Point(64, 0),
                 Text = "Name",
@@ -146,7 +146,7 @@ namespace DwarfCorp.GameStates
                 TextVerticalAlign = VerticalAlign.Center
             });
 
-            nameRow.AddChild(new Widget
+            nameRow.AddChild(new Gum.Widgets.Button
             {
                 Text = "Randomize",
                 AutoLayout = AutoLayout.DockRight,

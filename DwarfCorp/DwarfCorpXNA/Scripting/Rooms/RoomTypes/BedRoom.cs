@@ -123,7 +123,7 @@ namespace DwarfCorp
             bedroomTemplates.Add(lamp);
             bedroomTemplates.Add(bed);
 
-            return new RoomData(BedRoomName, 0, "BrownTileFloor", roomResources, bedroomTemplates, 
+            return new RoomData(BedRoomName, 0, "Brown Tile", roomResources, bedroomTemplates, 
                 new Gum.TileReference("rooms", 6))
             {
                 Description = "Dwarves relax and rest here",

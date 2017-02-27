@@ -64,6 +64,7 @@ namespace DwarfCorp
             Name = "Kill Entity: " + entity.Name + " " + entity.GlobalID;
             EntityToKill = entity;
             Priority = PriorityType.Urgent;
+            AutoRetry = true;
         }
 
         public override Task Clone()
@@ -84,6 +85,11 @@ namespace DwarfCorp
             }
 
             else return (agent.AI.Position - EntityToKill.LocalTransform.Translation).LengthSquared() * 0.01f;
+        }
+
+        public override bool ShouldRetry(Creature agent)
+        {
+            return EntityToKill != null && !EntityToKill.IsDead;
         }
 
         public override bool ShouldDelete(Creature agent)

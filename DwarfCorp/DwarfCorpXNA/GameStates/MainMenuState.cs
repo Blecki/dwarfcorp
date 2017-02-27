@@ -74,7 +74,7 @@ namespace DwarfCorp.GameStates
 
         private void MakeMenuItem(Gum.Widget Menu, string Name, string Tooltip, Action<Gum.Widget, Gum.InputEventArgs> OnClick)
         {
-            Menu.AddChild(new Gum.Widget
+            Menu.AddChild(new Gum.Widgets.Button
             {
                 AutoLayout = Gum.AutoLayout.DockTop,
                 Border = "border-thin",
@@ -83,16 +83,6 @@ namespace DwarfCorp.GameStates
                 Tooltip = Tooltip,
                 TextHorizontalAlign = Gum.HorizontalAlign.Center,
                 TextVerticalAlign = Gum.VerticalAlign.Center,
-                OnMouseEnter = (widget, input) =>
-                {
-                    widget.TextColor = Color.DarkRed.ToVector4();
-                    widget.Invalidate();
-                },
-                OnMouseLeave = (widget, input) =>
-                {
-                    widget.TextColor = Color.Black.ToVector4();
-                    widget.Invalidate();
-                }
             });
         }
 

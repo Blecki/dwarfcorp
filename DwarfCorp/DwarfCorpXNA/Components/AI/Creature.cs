@@ -510,14 +510,14 @@ namespace DwarfCorp
             {
                 if (EggTimer == null)
                 {
-                    EggTimer = new Timer(120.0f, false);
+                    EggTimer = new Timer(1200.0f, false);
                 }
                 EggTimer.Update(gameTime);
 
                 if (EggTimer.HasTriggered)
                 {
                     LayEgg();
-                    EggTimer = new Timer(120.0f + MathFunctions.Rand(-30.0f, 30.0f), false);
+                    EggTimer = new Timer(1200.0f + MathFunctions.Rand(-30.0f, 30.0f), false);
                 }
             }
         }

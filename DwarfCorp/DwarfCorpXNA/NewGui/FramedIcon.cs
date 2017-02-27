@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -38,6 +38,17 @@ namespace DwarfCorp.NewGui
             }
         }
 
+        private bool _mouseisOver = false;
+        public bool MouseIsOver
+        {
+            get { return _mouseisOver; }
+            set
+            {
+                _mouseisOver = value;
+                Invalidate();
+            }
+        }
+
         public override void Construct()
         {
             Background = new TileReference("icon-frame", 0);
@@ -47,6 +58,17 @@ namespace DwarfCorp.NewGui
                 var lambdaOnClick = this.OnClick;
                 OnClick = (sender, args) => { if (Enabled) lambdaOnClick(sender, args); };
             }
+
+
+            OnMouseEnter += (widget, action) =>
+            {
+                MouseIsOver = true;
+            };
+
+            OnMouseLeave += (widget, action) =>
+            {
+                MouseIsOver = false;
+            };
         }
 
         public override Point GetBestSize()
@@ -67,7 +89,7 @@ namespace DwarfCorp.NewGui
             meshes.Add(Gum.Mesh.Quad()
                     .Scale(Rect.Width, Rect.Height)
                     .Translate(Rect.X, Rect.Y)
-                    .Colorize(Hilite ? new Vector4(1,0,0,1) : BackgroundColor)
+                    .Colorize(MouseIsOver ? new Vector4(1, 0.5f, 0.5f, 1) : (Hilite ? new Vector4(1,0,0,1) : BackgroundColor))
                     .Texture(Root.GetTileSheet(Background.Sheet).TileMatrix(Background.Tile)));
 
             if (Icon != null)

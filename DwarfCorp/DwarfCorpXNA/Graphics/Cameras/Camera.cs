@@ -1,4 +1,4 @@
-﻿// Camera.cs
+// Camera.cs
 // 
 //  Modified MIT License (MIT)
 //  

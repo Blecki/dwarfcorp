@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DwarfCorp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -34,7 +35,7 @@ namespace Gum
         public MousePointer MousePointer = null;
         public Point MousePosition = new Point(0, 0);
         private DateTime MouseMotionTime = DateTime.Now;
-        public float SecondsBeforeTooltip = 1.0f;
+        public float SecondsBeforeTooltip = 0.5f;
         public String TooltipFont = null;
         public int TooltipTextSize = 1;
         public float CursorBlinkTime = 0.3f;
@@ -216,10 +217,11 @@ namespace Gum
                     TextColor = new Vector4(1, 1, 1, 1)
                 });
             var bestSize = item.GetBestSize();
-            item.Rect = new Rectangle(
+            Rectangle rect = new Rectangle(
                 Where.X + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2, 
                 Where.Y, bestSize.X, bestSize.Y);
-
+            rect = MathFunctions.SnapRect(rect, RealScreen);
+            item.Rect = rect;
             RootItem.AddChild(item);
 
             if (time > 0.0f)
