@@ -48,7 +48,7 @@ namespace DwarfCorp
     /// Efficiently drawn by the instance manager using state batching.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class Mesh : Tinter
+    public class Mesh : Tinter, IUpdateableComponent
     {
         public string ModelType { get; set; }
         [JsonIgnore]
@@ -80,7 +80,7 @@ namespace DwarfCorp
 
         private bool firstIter = true;
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             base.Update(gameTime, chunks, camera);
 

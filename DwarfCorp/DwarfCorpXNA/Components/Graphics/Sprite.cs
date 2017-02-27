@@ -46,7 +46,7 @@ namespace DwarfCorp
     /// The rectangle is drawn in such a way that it is always more or less facing the camera.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class Sprite : Tinter
+    public class Sprite : Tinter, IUpdateableComponent, I RenderableComponent
     {
         public Dictionary<string, Animation> Animations { get; set; }
         
@@ -140,16 +140,10 @@ namespace DwarfCorp
             base.ReceiveMessageRecursive(messageToReceive);
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if(IsActive)
-            {
-                if(CurrentAnimation != null)
-                {
-                    CurrentAnimation.Update(gameTime);
-                }
-            }
-
+            if (CurrentAnimation != null)
+                CurrentAnimation.Update(gameTime);
 
             base.Update(gameTime, chunks, camera);
         }
@@ -164,7 +158,7 @@ namespace DwarfCorp
             Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
         }
 
-        public override void Render(DwarfTime gameTime,
+        public void Render(DwarfTime gameTime,
             ChunkManager chunks,
             Camera camera,
             SpriteBatch spriteBatch,

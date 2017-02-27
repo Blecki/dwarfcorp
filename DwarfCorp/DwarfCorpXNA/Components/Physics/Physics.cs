@@ -45,7 +45,7 @@ namespace DwarfCorp
     /// Basic physics object. When attached to an entity, it causes it to obey gravity, and collide with stuff.
     /// All objects are just axis-aligned boxes that are treated as point masses.
     /// </summary>
-    public class Physics : Body
+    public class Physics : Body, IUpdateableComponent
     {
         /// <summary>
         /// Gets or sets the angular velocity in radians per second.
@@ -180,6 +180,7 @@ namespace DwarfCorp
         /// or very fast machines, and to protect stability during fast forward.
         /// </summary>
         public const float FixedDT = 1.0f / 60.0f;
+        public const int MaxTimesteps = 1; // The maximum number of timesteps to try and calculate in a single frame.
 
         /// <summary>
         /// Does this physics object collide on all sides, none,
@@ -243,25 +244,24 @@ namespace DwarfCorp
             LocalTransform = transform;
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (!IsActive) return;
 
-            // Check to see if we're outside the bounds of the world.
-            BoundingBox bounds = chunks.Bounds;
-            bounds.Max.Y += 50;
-
+            // How would this get a NaN anyway?
+            if (MathFunctions.HasNan(Velocity))
+                Velocity = Vector3.Zero;
+            
             // If we're not sleeping and moving very slowly, go to sleep.
-            if (!IsSleeping && (Velocity).Length() < 0.15f)
+            if (!IsSleeping && Velocity.LengthSquared() < 0.0225f)
             {
                 SleepTimer.Update(gameTime);
                 if (SleepTimer.HasTriggered)
                 {
                     applyGravityThisFrame = false;
-                    Velocity *= 0.0f;
+                    Velocity = Vector3.Zero;
                     IsSleeping = true;
                 }
-
             }
             else
             {
@@ -272,137 +272,129 @@ namespace DwarfCorp
             // If not sleeping, update physics.
             if (!IsSleeping || overrideSleepThisFrame)
             {
-                if (overrideSleepThisFrame)
-                {
-                    overrideSleepThisFrame = false;
-                }
-
+                overrideSleepThisFrame = false;
 
                 float dt = (float)(gameTime.ElapsedGameTime.TotalSeconds);
-                // Calculate the number of timesteps to apply.
-                int numTimesteps = Math.Max((int)(dt / FixedDT), 1);
 
-                // If the velocity is messed up, set it to zero.
-                if (MathFunctions.HasNan(Velocity))
-                {
-                    Velocity = Vector3.Zero;
-                }
+                // Calculate the number of timesteps to apply.
+                int numTimesteps = Math.Min(MaxTimesteps, Math.Max((int)(dt / FixedDT), 1));
 
                 float velocityLength = Velocity.Length();
+
+                // Prepare expanded world bounds.
+                BoundingBox worldBounds = chunks.Bounds;
+                worldBounds.Max.Y += 50;
 
                 // For each timestep, move and collide.
                 for (int n = 0; n < numTimesteps; n++)
                 {
+                    // Move by a fixed amount.
+                    Move(FixedDT);
 
-                    int numVelocitySteps = Math.Max((int)(velocityLength), 1);
-
-                    for (int i = 0; i < numVelocitySteps; i++)
+                    // Get the current voxel.
+                    chunks.ChunkData.GetVoxel(Position, ref CurrentVoxel);
+                    if (CurrentVoxel != null && CurrentVoxel.Chunk != null)
                     {
-                        // Move by a fixed amount.
-                        Move(FixedDT / numVelocitySteps);
+                        Vector3 gridPos = CurrentVoxel.GridPosition;
+                        CurrentVoxel.Chunk.GetNeighborsSuccessors(VoxelChunk.ManhattanSuccessors, (int)gridPos.X,
+                            (int)gridPos.Y, (int)gridPos.Z, Neighbors);
+                    }
 
-                        // Get the current voxel.
-                        chunks.ChunkData.GetVoxel(Position, ref CurrentVoxel);
-                        if (CurrentVoxel != null && CurrentVoxel.Chunk != null)
+                    // Collide with the world.
+                    HandleCollisions(chunks, FixedDT);
+
+                    Matrix transform = LocalTransform;
+                    // Avoid leaving the world.
+                    if (worldBounds.Contains(LocalTransform.Translation + Velocity * dt) != ContainmentType.Contains)
+                    {
+                        transform.Translation = LocalTransform.Translation - 0.1f * Velocity * dt;
+                        Velocity = new Vector3(Velocity.X * -0.9f, Velocity.Y, Velocity.Z * -0.9f);
+                    }
+
+
+                    // If we're outside the world, die
+                    if (LocalTransform.Translation.Y < -10 ||
+                        worldBounds.Contains(GetBoundingBox()) == ContainmentType.Disjoint)
+                    {
+                        Die();
+                    }
+
+
+                    // Orientation logic.
+                    if (Orientation == OrientMode.Physics)
+                    {
+                        Matrix dA = Matrix.Identity;
+                        dA *= Matrix.CreateRotationX(AngularVelocity.X * FixedDT);
+                        dA *= Matrix.CreateRotationY(AngularVelocity.Y * FixedDT);
+                        dA *= Matrix.CreateRotationZ(AngularVelocity.Z * FixedDT);
+
+                        transform = dA * transform;
+                    }
+                    else if (Orientation != OrientMode.Fixed)
+                    {
+                        if (Velocity.Length() > 0.4f)
                         {
-                            Vector3 gridPos = CurrentVoxel.GridPosition;
-                            CurrentVoxel.Chunk.GetNeighborsSuccessors(VoxelChunk.ManhattanSuccessors, (int)gridPos.X,
-                                (int)gridPos.Y, (int)gridPos.Z, Neighbors);
-                        }
-
-                        // Collide with the world.
-                        HandleCollisions(chunks, FixedDT / numVelocitySteps);
-
-                        Matrix transform = LocalTransform;
-                        // Avoid leaving the world.
-                        if (bounds.Contains(LocalTransform.Translation + Velocity * dt) != ContainmentType.Contains)
-                        {
-                            transform.Translation = LocalTransform.Translation - 0.1f * Velocity * dt;
-                            Velocity = new Vector3(Velocity.X * -0.9f, Velocity.Y, Velocity.Z * -0.9f);
-                        }
-
-
-                        // If we're outside the world, die
-                        if (LocalTransform.Translation.Y < -10 ||
-                            bounds.Contains(GetBoundingBox()) == ContainmentType.Disjoint)
-                        {
-                            Die();
-                        }
-
-
-                        // Orientation logic.
-                        if (Orientation == OrientMode.Physics)
-                        {
-                            Matrix dA = Matrix.Identity;
-                            dA *= Matrix.CreateRotationX(AngularVelocity.X * FixedDT);
-                            dA *= Matrix.CreateRotationY(AngularVelocity.Y * FixedDT);
-                            dA *= Matrix.CreateRotationZ(AngularVelocity.Z * FixedDT);
-
-                            transform = dA * transform;
-                        }
-                        else if (Orientation != OrientMode.Fixed)
-                        {
-                            if (Velocity.Length() > 0.4f)
+                            if (Orientation == OrientMode.LookAt)
                             {
-                                if (Orientation == OrientMode.LookAt)
-                                {
-                                    Matrix newTransform =
-                                        Matrix.Invert(Matrix.CreateLookAt(Position, Position + Velocity, Vector3.Down));
-                                    newTransform.Translation = transform.Translation;
-                                    transform = newTransform;
-                                }
-                                else if (Orientation == OrientMode.RotateY)
-                                {
+                                Matrix newTransform =
+                                    Matrix.Invert(Matrix.CreateLookAt(Position, Position + Velocity, Vector3.Down));
+                                newTransform.Translation = transform.Translation;
+                                transform = newTransform;
+                            }
+                            else if (Orientation == OrientMode.RotateY)
+                            {
 
-                                    Rotation = (float)Math.Atan2(Velocity.X, -Velocity.Z);
-                                    Quaternion newRotation =
-                                        Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationY(Rotation));
-                                    Quaternion oldRotation = Quaternion.CreateFromRotationMatrix(LocalTransform);
-                                    Quaternion finalRot = Quaternion.Slerp(oldRotation, newRotation, 0.1f);
-                                    finalRot.Normalize();
-                                    Matrix newTransform = Matrix.CreateFromQuaternion(finalRot);
-                                    newTransform.Translation = transform.Translation;
-                                    newTransform.Right.Normalize();
-                                    newTransform.Up.Normalize();
-                                    newTransform.Forward.Normalize();
-                                    newTransform.M14 = 0;
-                                    newTransform.M24 = 0;
-                                    newTransform.M34 = 0;
-                                    newTransform.M44 = 1;
-                                    transform = newTransform;
-                                }
+                                Rotation = (float)Math.Atan2(Velocity.X, -Velocity.Z);
+                                Quaternion newRotation =
+                                    Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationY(Rotation));
+                                Quaternion oldRotation = Quaternion.CreateFromRotationMatrix(LocalTransform);
+                                Quaternion finalRot = Quaternion.Slerp(oldRotation, newRotation, 0.1f);
+                                finalRot.Normalize();
+                                Matrix newTransform = Matrix.CreateFromQuaternion(finalRot);
+                                newTransform.Translation = transform.Translation;
+                                newTransform.Right.Normalize();
+                                newTransform.Up.Normalize();
+                                newTransform.Forward.Normalize();
+                                newTransform.M14 = 0;
+                                newTransform.M24 = 0;
+                                newTransform.M34 = 0;
+                                newTransform.M44 = 1;
+                                transform = newTransform;
                             }
                         }
-
-                        // Final check to ensure we're in the world.
-                        transform.Translation = ClampToBounds(transform.Translation);
-                        LocalTransform = transform;
-
-                        // Assume that if velocity is small, we're standing on ground (lol bad assumption)
-                        // Apply friction.
-                        if (Math.Abs(Velocity.Y) < 0.1f)
-                        {
-                            Velocity = new Vector3(Velocity.X * Friction, Velocity.Y, Velocity.Z * Friction);
-                        }
-
-                        // Apply gravity.
-                        if (applyGravityThisFrame)
-                        {
-                            ApplyForce(Gravity, FixedDT / numVelocitySteps);
-                        }
-
-                        // Damp the velocity.
-                        Vector3 dampingForce = -Velocity * (1.0f - LinearDamping);
-
-                        Velocity += dampingForce * FixedDT / numVelocitySteps;
-                        AngularVelocity *= AngularDamping;
-                        UpdateBoundingBox();
-                        UpdateTransformsRecursive();
                     }
+
+                    // Final check to ensure we're in the world.
+                    transform.Translation = ClampToBounds(transform.Translation);
+                    LocalTransform = transform;
+
+                    // Assume that if velocity is small, we're standing on ground (lol bad assumption)
+                    // Apply friction.
+                    if (Math.Abs(Velocity.Y) < 0.1f)
+                    {
+                        Velocity = new Vector3(Velocity.X * Friction, Velocity.Y, Velocity.Z * Friction);
+                    }
+
+                    // Apply gravity.
+                    if (applyGravityThisFrame)
+                    {
+                        ApplyForce(Gravity, FixedDT);
+                    }
+
+                    // Damp the velocity.
+                    Vector3 dampingForce = -Velocity * (1.0f - LinearDamping);
+
+                    Velocity += dampingForce * FixedDT;
+                    AngularVelocity *= AngularDamping;
+
+                    // These will get called next time around anyway...
+                    UpdateBoundingBox();
+                    UpdateTransformsRecursive(Parent as Body);
                 }
+
             }
 
-            if (!applyGravityThisFrame) applyGravityThisFrame = true;
+            applyGravityThisFrame = true;
             CheckLiquids(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
             PreviousVelocity = Velocity;
             PreviousPosition = Position;
@@ -500,23 +492,20 @@ namespace DwarfCorp
             return true;
         }
 
+        private IEnumerable<Voxel> LocationPlusNeighbors()
+        {
+            yield return CurrentVoxel;
+            foreach (var neighbor in Neighbors)
+                yield return neighbor;
+        }
 
         public virtual void HandleCollisions(ChunkManager chunks, float dt)
         {
             if (CollideMode == CollisionMode.None) return;
 
-
-            List<Voxel> vs = new List<Voxel>
-            {
-                CurrentVoxel
-            };
-            vs.AddRange(Neighbors);
-
-            // TODO: Find a faster way to do this
-            // Vector3 half = Vector3.One*0.5f;
-            //vs.Sort((a, b) => (MathFunctions.L1(LocalTransform.Translation, a.Position + half).CompareTo(MathFunctions.L1(LocalTransform.Translation, b.Position + half))));
             int y = (int)Position.Y;
-            foreach (Voxel v in vs)
+
+            foreach (Voxel v in LocationPlusNeighbors())
             {
                 if (v == null || v.Chunk == null || v.IsEmpty)
                 {
@@ -533,8 +522,7 @@ namespace DwarfCorp
                     continue;
                 }
 
-                BoundingBox voxAABB = v.GetBoundingBox();
-                if (Collide(voxAABB, dt))
+                if (Collide(v.GetBoundingBox(), dt))
                 {
                     OnTerrainCollision(v);
                 }

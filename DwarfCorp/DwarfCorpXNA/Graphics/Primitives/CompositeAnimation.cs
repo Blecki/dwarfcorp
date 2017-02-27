@@ -204,18 +204,18 @@ namespace DwarfCorp
         public override void NextFrame()
         {
             CurrentFrame++;
-            InvokeNextFrame(CurrentFrame);
+            //InvokeNextFrame(CurrentFrame);
             if (CurrentFrame >= CompositeFrames.Count)
             {
                 if (Loops)
                 {
                     CurrentFrame = 0;
-                    InvokeAnimationLooped();
+                    //InvokeAnimationLooped();
                 }
                 else
                 {
                     CurrentFrame = CompositeFrames.Count - 1;
-                    InvokeAnimationCompleted();
+                    //InvokeAnimationCompleted();
                 }
             }
             UpdatePrimitive();

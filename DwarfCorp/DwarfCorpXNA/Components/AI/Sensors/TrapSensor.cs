@@ -44,7 +44,7 @@ namespace DwarfCorp
     /// This is a sensor for traps that damages HealthComponents that collide with the sensor
     /// </summary>
     [JsonObject(IsReference = true)]
-    class TrapSensor : Sensor
+    class TrapSensor : Sensor, IUpdateableComponent
     {
         public TrapSensor(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
             base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
@@ -65,6 +65,17 @@ namespace DwarfCorp
                     hc.Damage(1000000);
                 }
             }
+        }
+
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        {
+            //if (DrawBoundingBox)
+            //{
+                Drawer3D.DrawBox(BoundingBox, Color.White, 0.02f);
+                Drawer3D.DrawBox(GetRotatedBoundingBox(), Color.Red, 0.02f);
+            //}
+
+            base.Update(gameTime, chunks, camera);
         }
     }
 }

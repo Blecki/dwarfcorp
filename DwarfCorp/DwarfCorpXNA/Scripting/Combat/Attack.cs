@@ -276,7 +276,7 @@ namespace DwarfCorp
                 case AttackMode.Melee:
                 case AttackMode.Dogfight:
                     {
-                        Health health = other.GetRootComponent().GetChildrenOfType<Health>(true).FirstOrDefault();
+                        Health health = other.GetEntityRootComponent().GetChildrenOfType<Health>(true).FirstOrDefault();
                         if (health != null)
                         {
                             health.Damage(DamageAmount + bonus);

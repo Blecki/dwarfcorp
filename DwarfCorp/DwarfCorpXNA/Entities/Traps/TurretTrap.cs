@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    public class TurretTrap : Body
+    public class TurretTrap : Body, IUpdateableComponent
     {
         public Attack Weapon { get; set; }
         public Fixture BaseSprite { get; set; }
@@ -76,7 +76,7 @@ namespace DwarfCorp
             TurretSprite.LocalTransform = turretTransform;
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (closestCreature != null && !closestCreature.IsDead)
             {

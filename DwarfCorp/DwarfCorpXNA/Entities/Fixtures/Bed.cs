@@ -71,7 +71,7 @@ namespace DwarfCorp
     }
 
     [JsonObject(IsReference = true)]
-    public class Bookshelf : Body
+    public class Bookshelf : Body, IRenderableComponent
     {
         private Box bedModel;
         public Bookshelf()
@@ -97,7 +97,7 @@ namespace DwarfCorp
             CollisionType = CollisionManager.CollisionType.Static;
         }
 
-        public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
+        public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
             GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);

@@ -46,7 +46,7 @@ namespace DwarfCorp
     ///     Component which manages the AI, scripting, and status of a particular creature (such as a Dwarf or Goblin)
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class CreatureAI : GameComponent
+    public class CreatureAI : GameComponent, IUpdateableComponent
     {
         /// <summary> maximum number of messages the creature has in its mind </summary>
         public int MaxMessages = 10;
@@ -335,7 +335,7 @@ namespace DwarfCorp
         }
 
         /// <summary> Update this creature </summary>
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (!IsActive) return;
 
@@ -475,8 +475,6 @@ namespace DwarfCorp
             {
                 history.Value.Update();
             }
-
-            base.Update(gameTime, chunks, camera);
         }
 
         /// <summary> updates the creature's experience points. </summary>
@@ -1419,7 +1417,7 @@ namespace DwarfCorp
 
                         foreach (GameComponent body in enumerable)
                         {
-                            Door door = body.GetRootComponent().GetChildrenOfType<Door>(true).FirstOrDefault();
+                            Door door = body.GetEntityRootComponent().GetChildrenOfType<Door>(true).FirstOrDefault();
                             // If there is an enemy door blocking movement, we can destroy it to get through.
                             if (door != null)
                             {
