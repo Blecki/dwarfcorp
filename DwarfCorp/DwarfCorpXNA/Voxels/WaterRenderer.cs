@@ -277,6 +277,7 @@ namespace DwarfCorp
                         VoxelChunk chunk = chunkpair.Value;
                         if (chunk.IsVisible)
                         {
+                            if (chunk.noRender) continue;
                             //chunk.PrimitiveMutex.WaitOne();
                             chunk.Liquids[asset.Key].Render(device);
                             //chunk.PrimitiveMutex.ReleaseMutex();

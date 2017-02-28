@@ -925,7 +925,7 @@ namespace DwarfCorp
                     {
                         Voxel v = chunk.MakeVoxel((int)gridPos.X, y, (int)gridPos.Z);
                         v.Type = VoxelLibrary.GetVoxelType("Scaffold");
-                        chunk.Data.Water[v.Index].WaterLevel = 0;
+                        chunk.Data.Water[v.Index] = new WaterCell();
                         v.Chunk = chunk;
                         v.Chunk.NotifyTotalRebuild(!v.IsInterior);
 

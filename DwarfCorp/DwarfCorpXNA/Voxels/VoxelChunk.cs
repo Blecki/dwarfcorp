@@ -194,6 +194,9 @@ namespace DwarfCorp
             get { return sizeZ; }
         }
 
+        // TODO: Debug only, remove in a release build.
+        public bool noRender;
+
         public bool IsVisible { get; set; }
         public bool ShouldRebuild { get; set; }
         public bool IsRebuilding { get; set; }
@@ -792,6 +795,7 @@ namespace DwarfCorp
 
         public void Render(GraphicsDevice device)
         {
+            if (noRender) return;
             if (!RenderWireframe)
             {
                 Primitive.Render(device);
@@ -813,6 +817,33 @@ namespace DwarfCorp
             }
             LiquidPrimitive.InitializePrimativesFromChunk(this, toInit);
             ShouldRebuildWater = false;
+        }
+
+        // Retrieves all Voxel objects in the VoxelChunk.
+        // Reuses the same reference 
+        public IEnumerable<Voxel> GetAllVoxels()
+        {
+            Voxel v = new Voxel(new Point3(0, 0, 0), this);
+
+            VoxelData data = Data;
+            for (int i = 0; i < data.Types.Length; i++)
+            {
+                v.GridPosition = data.CoordsAt(i);
+                yield return v;
+            }
+        }
+
+        public IEnumerable<Voxel> GetAllVoxelsWithWater()
+        {
+            Voxel v = new Voxel(new Point3(0, 0, 0), this);
+
+            VoxelData data = Data;
+            for (int i = 0; i < data.Types.Length; i++)
+            {
+                if (data.Water[i].WaterLevel == 0) continue;
+                v.GridPosition = data.CoordsAt(i);
+                yield return v;
+            }
         }
 
         private byte getMax(byte[] values)
@@ -950,7 +981,7 @@ namespace DwarfCorp
 
         public void Rebuild(GraphicsDevice g)
         {
-            //Drawer3D.DrawBox(GetBoundingBox(), Color.White, 0.1f);
+            Drawer3D.DrawBox(GetBoundingBox(), Color.White, 0.1f);
 
             if (g == null || g.IsDisposed)
             {
@@ -1730,7 +1761,7 @@ namespace DwarfCorp
                 else
                 {
                     Point3 chunkID = ID;
-                    if (nx >= SizeZ)
+                    if (nx >= SizeX)
                     {
                         chunkID.X += 1;
                         nx = 0;
@@ -1864,6 +1895,7 @@ namespace DwarfCorp
             {
                 foreach (VoxelChunk chunk in Neighbors.Values)
                 {
+                    if (chunk == null) continue;
                     chunk.ShouldRebuild = true;
                     chunk.ShouldRecalculateLighting = true;
                     chunk.ShouldRebuildWater = true;

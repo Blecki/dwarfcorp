@@ -150,6 +150,8 @@ namespace DwarfCorp
             SelectorBox.AddValue("Fill Water");
             SelectorBox.AddValue("Fill Lava");
             SelectorBox.AddValue("Fire");
+            SelectorBox.AddValue("Inspect Above");
+            SelectorBox.AddValue("Toggle Chunk Render");
             SelectorBox.OnSelectionModified += SelectorBox_OnSelectionModified;
 
 
@@ -232,7 +234,24 @@ namespace DwarfCorp
                         EntityFactory.CreateEntity<Body>(type, vox.Position + new Vector3(0.5f, 0.5f, 0.5f));
                     }
                 }
+            } else if (command.Contains("Inspect"))
+            {
+                int waterTotal = 0;
+                foreach (Voxel vox in refs.Where(vox => vox != null))
+                {
+                    waterTotal += vox.WaterLevel;
+                }
+                GamePerformance.Instance.TrackValueType("waterLevel", waterTotal);
             }
+            else if (command.Contains("Toggle"))
+            {
+                foreach(Voxel vox in refs)
+                {
+                    if (vox == null) continue;
+                    vox.Chunk.noRender = !vox.Chunk.noRender;
+                    break;
+                }
+            }        
             else
             {
                 foreach(Voxel vox in refs.Where(vox => vox != null))
@@ -265,8 +284,7 @@ namespace DwarfCorp
                             vox.Chunk.NotifyDestroyed(new Point3(vox.GridPosition));
                             vox.Type = VoxelType.TypeList[0];
                             vox.Water = new WaterCell();
-
-                            vox.Chunk.Manager.KilledVoxels.Add(vox);
+                            vox.Chunk.Manager.KilledVoxels.Enqueue(vox);
                         }
                             break;
                         case "Kill Block":

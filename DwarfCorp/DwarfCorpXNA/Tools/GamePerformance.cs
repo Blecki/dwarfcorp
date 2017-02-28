@@ -24,6 +24,24 @@ namespace DwarfCorp
         public static bool DebugToggle2;
 
         /// <summary>
+        /// A boolean toggle changed with a keyboard button press.  Allows realtime switching between two code blocks
+        /// for comparsion testing.
+        /// </summary>
+        public static bool DebugToggle3;
+
+        /// <summary>
+        /// A boolean toggle changed with a keyboard button press.  Allows realtime switching between two code blocks
+        /// for comparsion testing.
+        /// </summary>
+        public static bool DebugToggle4;
+
+        /// <summary>
+        /// A boolean toggle changed with a keyboard button press.  Allows realtime switching between two code blocks
+        /// for comparsion testing.
+        /// </summary>
+        public static bool DebugToggle5;
+
+        /// <summary>
         /// One copy per thread.  Lets us tell when we haven't set up that thread yet.
         /// </summary>
         [ThreadStatic]
@@ -126,6 +144,21 @@ namespace DwarfCorp
         /// Stores if the key to toggle the debug flag is pressed to allow it to change only once per keypress.
         /// </summary>
         private Boolean debug2ToggleKeyPressed;
+
+        /// <summary>
+        /// Stores if the key to toggle the debug flag is pressed to allow it to change only once per keypress.
+        /// </summary>
+        private Boolean debug3ToggleKeyPressed;
+
+        /// <summary>
+        /// Stores if the key to toggle the debug flag is pressed to allow it to change only once per keypress.
+        /// </summary>
+        private Boolean debug4ToggleKeyPressed;
+
+        /// <summary>
+        /// Stores if the key to toggle the debug flag is pressed to allow it to change only once per keypress.
+        /// </summary>
+        private Boolean debug5ToggleKeyPressed;
 
         /// <summary>
         /// Stores if the key to toggle the overlay flag is pressed to allow it to change only once per keypress.
@@ -1066,6 +1099,59 @@ namespace DwarfCorp
                 }
             }
 
+            if (keyboard.IsKeyDown(ControlSettings.Mappings.DebugToggle3))
+            {
+                if (!debug3ToggleKeyPressed) debug3ToggleKeyPressed = true;
+            }
+            else
+            {
+                if (debug3ToggleKeyPressed)
+                {
+                    SoundManager.PlaySound(ContentPaths.Audio.pick, .25f);
+                    DebugToggle3 = !DebugToggle3;
+                    debug3ToggleKeyPressed = false;
+
+                    Instance.EnterZone("UnsettledWater");
+                    Instance.StartTrackPerformance("Whateverthefuck");
+                    //DwarfGame.World.ChunkManager.Water.ConvertAllWater(127);
+                    WaterManager.instance.FindAllUnsettledWater();
+                    Instance.StopTrackPerformance("Whateverthefuck");
+                    Instance.ExitZone("UnsettledWater");
+                }
+            }
+
+            if (keyboard.IsKeyDown(ControlSettings.Mappings.DebugToggle4))
+            {
+                if (!debug4ToggleKeyPressed) debug4ToggleKeyPressed = true;
+            }
+            else
+            {
+                if (debug4ToggleKeyPressed)
+                {
+                    SoundManager.PlaySound(ContentPaths.Audio.pick, .25f);
+                    DebugToggle4 = !DebugToggle4;
+                    debug4ToggleKeyPressed = false;
+                }
+            }
+
+            if (keyboard.IsKeyDown(ControlSettings.Mappings.DebugToggle5))
+            {
+                if (!debug5ToggleKeyPressed) debug5ToggleKeyPressed = true;
+            }
+            else
+            {
+                if (debug5ToggleKeyPressed)
+                {
+                    SoundManager.PlaySound(ContentPaths.Audio.pick, .25f);
+                    DebugToggle5 = !DebugToggle5;
+                    debug5ToggleKeyPressed = false;
+
+                    if (WaterManager.ticksToRun == 0) WaterManager.ticksToRun++;
+                    else WaterManager.ticksToRun = 0;
+                    //WaterManager.ticksToRun++;
+                    WaterManager.ticksUntilSettled = 0;
+                }
+            }
         }
 
         /// <summary>

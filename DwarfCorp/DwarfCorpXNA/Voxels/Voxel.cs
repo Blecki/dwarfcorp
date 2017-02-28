@@ -150,7 +150,7 @@ namespace DwarfCorp
         {
             get
             {
-                return GridPosition + Chunk.Origin;
+                return worldpos;
             }
         }
 
@@ -203,6 +203,7 @@ namespace DwarfCorp
         }
 
         private Vector3 gridpos = Vector3.Zero;
+        private Vector3 worldpos = Vector3.Zero;
 
         public Vector3 GridPosition
         {
@@ -213,6 +214,7 @@ namespace DwarfCorp
 
                 if (Chunk != null)
                 {
+                    worldpos = value + Chunk.Origin;
                     index = Chunk.Data.IndexAt((int)gridpos.X, (int)gridpos.Y, (int)gridpos.Z);
                     RegenerateQuickCompare();
                 }
@@ -232,10 +234,11 @@ namespace DwarfCorp
         // during a time sensitive loop.
         public void ChangeVoxel(VoxelChunk chunk, Point3 gridPosition, bool generateQuickCompare = true)
         {
-            System.Diagnostics.Debug.Assert(chunk != null, "ChangeVoxel was passed a null chunk.");
+            Debug.Assert(chunk != null, "ChangeVoxel was passed a null chunk.");
             _chunk = chunk;
             chunkID = _chunk.ID;
             gridpos = gridPosition.ToVector3();
+            worldpos = gridpos + chunk.Origin;
             index = Chunk.Data.IndexAt((int)gridpos.X, (int)gridpos.Y, (int)gridpos.Z);
             if (generateQuickCompare) RegenerateQuickCompare();
             else quickCompare = invalidCompareValue;
@@ -304,6 +307,17 @@ namespace DwarfCorp
             GridPosition = other.GridPosition;
         }
 
+        public void CopyFrom(Voxel v)
+        {
+            System.Diagnostics.Debug.Assert(v == null, "CopyFrom was passed a null voxel.");
+            this._chunk = v._chunk;
+            this.chunkID = v.chunkID;
+            this.gridpos = v.gridpos;
+            this.worldpos = v.worldpos;
+            this.index = v.index;
+            this.quickCompare = v.quickCompare;
+        }
+
         [JsonIgnore]
         public float Health
         {
@@ -353,11 +367,24 @@ namespace DwarfCorp
                 Chunk.MakeVoxel((int)GridPosition.X, (int)GridPosition.Y - 1, (int)GridPosition.Z);
         }
 
+        /// <summary>
+        /// A function to quickly get a neighbor voxel using a successor.
+        /// </summary>
+        /// <param name="succ">A successor that ranges within the VoxelChunk size.</param>
+        /// <param name="neighbor">The existing Voxel that will be filled out with the new data.</param>
+        /// <param name="requireQuickCompare">Whether to calculate the QuickCompare value for that voxel.  Faster when you do not need it.</param>
+        /// <returns>Returns true when the voxel was properly filled out.</returns>
         public bool GetNeighborBySuccessor(Vector3 succ, ref Voxel neighbor, bool requireQuickCompare = true)
         {
             Debug.Assert(neighbor != null, "Null reference passed");
             Debug.Assert(_chunk != null, "Voxel has no valid chunk reference");
-
+            
+            // I am limiting this to the chunk size because the _chunk.EuclidianNeighbors lookup only covers chunks
+            // one step away.  We could do a check based on if it is still within range of that neighbor but I think
+            // it would cause more problems than it would solve.
+            Debug.Assert(Math.Abs(succ.X) <= _chunk.SizeX, "Successor is out of range on X coordinate.");
+            Debug.Assert(Math.Abs(succ.Y) <= _chunk.SizeY, "Successor is out of range on Y coordinate.");
+            Debug.Assert(Math.Abs(succ.Z) <= _chunk.SizeZ, "Successor is out of range on Z coordinate.");
             Vector3 newPos = gridpos + succ;
             Point3 chunkSuccessor = Point3.Zero;
             bool useSuccessor = false;
@@ -365,39 +392,39 @@ namespace DwarfCorp
             if (newPos.X >= _chunk.SizeX)
             {
                 chunkSuccessor.X = 1;
-                newPos.X = 0;
+                newPos.X -= _chunk.SizeX;
                 useSuccessor = true;
             }
             else if (newPos.X < 0)
             {
                 chunkSuccessor.X = -1;
-                newPos.X = _chunk.SizeX - 1;
+                newPos.X += _chunk.SizeX;
                 useSuccessor = true;
             }
 
             if (newPos.Y >= _chunk.SizeY)
             {
                 chunkSuccessor.Y = 1;
-                newPos.Y = 0;
+                newPos.Y -= _chunk.SizeY;
                 useSuccessor = true;
             }
             else if (newPos.Y < 0)
             {
                 chunkSuccessor.Y = -1;
-                newPos.Y = _chunk.SizeY - 1;
+                newPos.Y += _chunk.SizeY;
                 useSuccessor = true;
             }
 
             if (newPos.Z >= _chunk.SizeZ)
             {
                 chunkSuccessor.Z = 1;
-                newPos.Z = 0;
+                newPos.Z -= _chunk.SizeZ;
                 useSuccessor = true;
             }
             else if (newPos.Z < 0)
             {
                 chunkSuccessor.Z = -1;
-                newPos.Z = _chunk.SizeZ - 1;
+                newPos.Z += _chunk.SizeZ;
                 useSuccessor = true;
             }
 
@@ -516,7 +543,7 @@ namespace DwarfCorp
                 }
             }
 
-            Chunk.Manager.KilledVoxels.Add(this);
+            Chunk.Manager.KilledVoxels.Enqueue(this);
             Chunk.Data.Types[Index] = 0;
             return emittedResources;
         }

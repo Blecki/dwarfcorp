@@ -147,7 +147,9 @@ namespace DwarfCorp
             get { return chunkData; }
         }
 
-        public List<Voxel> KilledVoxels { get; set; }
+        public Queue<Voxel> PlacedVoxels { get; set; }
+
+        public Queue<Voxel> KilledVoxels { get; set; }
 
         public ChunkManager(ContentManager content, 
             WorldManager world,
@@ -156,7 +158,8 @@ namespace DwarfCorp
             ChunkGenerator chunkGen, int maxChunksX, int maxChunksY, int maxChunksZ)
         {
             World = world;
-            KilledVoxels = new List<Voxel>();
+            PlacedVoxels = new Queue<Voxel>();
+            KilledVoxels = new Queue<Voxel>();
             ExitThreads = false;
             drawDistSq = DrawDistance * DrawDistance;
             Content = content;
@@ -286,17 +289,15 @@ namespace DwarfCorp
                     }
 
                     GamePerformance.Instance.PreThreadLoop(GamePerformance.ThreadIdentifier.RebuildWater);
+                    GamePerformance.Instance.EnterZone("RebuildWater");
                     while (!PauseThreads && RebuildLiquidsList.Count > 0)
                     {
                         VoxelChunk chunk = null;
 
-                        //LiquidLock.WaitOne();
                         if (!RebuildLiquidsList.TryDequeue(out chunk))
                         {
-                            //LiquidLock.ReleaseMutex();
                             break;
                         }
-                        //LiquidLock.ReleaseMutex();
 
                         if (chunk == null)
                         {
@@ -305,7 +306,9 @@ namespace DwarfCorp
 
                         try
                         {
+                            GamePerformance.Instance.StartTrackPerformance("rebuildLiquids");
                             chunk.RebuildLiquids();
+                            GamePerformance.Instance.StopTrackPerformance("rebuildLiquids");
                             chunk.RebuildLiquidPending = false;
                             chunk.ShouldRebuildWater = false;
                         }
@@ -317,6 +320,7 @@ namespace DwarfCorp
                         }
                     }
                     GamePerformance.Instance.PostThreadLoop(GamePerformance.ThreadIdentifier.RebuildWater);
+                    GamePerformance.Instance.ExitZone("RebuildWater");
                 }
             }
 #if CREATE_CRASH_LOGS
@@ -533,12 +537,10 @@ namespace DwarfCorp
             {
                 toRebuildLiquids.Sort(CompareChunkDistance);
 
-                //LiquidLock.WaitOne();
                 foreach(VoxelChunk chunk in toRebuildLiquids.Where(chunk => !RebuildLiquidsList.Contains(chunk)))
                 {
                     RebuildLiquidsList.Enqueue(chunk);
                 }
-                //LiquidLock.ReleaseMutex();
             }
 
 
@@ -1013,15 +1015,33 @@ namespace DwarfCorp
                 chunk.Update(gameTime);
             }
 
+            GamePerformance.Instance.StartTrackPerformance("SplashTransfers");
             Water.Splash(gameTime);
             Water.HandleTransfers(gameTime);
+            GamePerformance.Instance.StopTrackPerformance("SplashTransfers");
 
             HashSet<VoxelChunk> affectedChunks = new HashSet<VoxelChunk>();
             
-            foreach (Voxel voxel in KilledVoxels)
+            while(KilledVoxels.Count > 0 || PlacedVoxels.Count > 0)
             {
+                Voxel voxel = null;
+                if (KilledVoxels.Count > 0)
+                {
+                    voxel = KilledVoxels.Dequeue();
+                    if (GameSettings.Default.FogofWar)
+                        ChunkData.Reveal(voxel);
+                    voxel.Chunk.NotifyDestroyed(new Point3(voxel.GridPosition));
+                    if (voxel.IsEmpty) Water.OnVoxelDestroyed(voxel);
+                }
+                else if (PlacedVoxels.Count > 0)
+                {
+                    voxel = PlacedVoxels.Dequeue();
+                    // Add placement specific code here.
+                }
+
+                if (voxel == null) break;
+
                 affectedChunks.Add(voxel.Chunk);
-                voxel.Chunk.NotifyDestroyed(new Point3(voxel.GridPosition));
                 List<Point3> neighbors = voxel.Chunk.GetEuclidianSuccessorByVoxel(voxel);
                 Point3 gridPos = voxel.ChunkID;
                 for (int i = 0; i < neighbors.Count; i++)
@@ -1036,6 +1056,9 @@ namespace DwarfCorp
             {
                 ChunkData.Reveal(KilledVoxels);
             }
+
+            if (affectedChunks.Count != 0)
+                GamePerformance.Instance.TrackValueType("affectedChunks", affectedChunks.Count);
 
             lock (RebuildList)
             {

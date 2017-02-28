@@ -41,6 +41,17 @@ namespace DwarfCorp
     {
         public byte WaterLevel;
         public LiquidType Type;
-    }
 
+        public WaterCell(byte level, LiquidType type)
+        {
+            WaterLevel = level;
+            Type = type;
+        }
+
+        public void Clear()
+        {
+            WaterLevel = 0;
+            Type = LiquidType.None;
+        }
+    }
 }
