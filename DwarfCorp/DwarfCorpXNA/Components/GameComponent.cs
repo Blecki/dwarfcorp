@@ -192,6 +192,7 @@ namespace DwarfCorp
         /// Initializes a new instance of the <see cref="GameComponent"/> class, while adding it to the component manager.
         /// </summary>
         /// <param name="createNew">if set to <c>true</c> adds this component to the manager..</param>
+        /// <param name="manager">The component manager to add the component to</param>
         public GameComponent(bool createNew, ComponentManager manager)
         {
             Manager = manager;
