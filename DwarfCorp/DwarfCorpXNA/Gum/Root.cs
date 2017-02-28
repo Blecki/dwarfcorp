@@ -134,7 +134,7 @@ namespace Gum
         /// Widgets must be constructed or some operations will fail. Use this function to construct a widget 
         /// when the widget is not being immediately added to its parent.
         /// </summary>
-        /// <param name="CreatedWidget"></param>
+        /// <param name="NewWidget"></param>
         /// <returns></returns>
         public Widget ConstructWidget(Widget NewWidget)
         {

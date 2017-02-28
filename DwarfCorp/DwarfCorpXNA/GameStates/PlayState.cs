@@ -82,6 +82,7 @@ namespace DwarfCorp.GameStates
         /// </summary>
         /// <param name="game">The program currently running</param>
         /// <param name="stateManager">The game state manager this state will belong to</param>
+        /// <param name="world">The world manager</param>
         public PlayState(DwarfGame game, GameStateManager stateManager, WorldManager world) :
             base(game, "PlayState", stateManager)
         {

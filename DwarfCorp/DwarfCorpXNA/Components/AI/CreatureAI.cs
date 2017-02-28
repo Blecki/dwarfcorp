@@ -124,7 +124,7 @@ namespace DwarfCorp
         public Timer PlannerTimer { get; set; }
         /// <summary> When this timer triggers, the creature will stop trying to reach a local target (if it is blocked by a voxel for instance </summary>
         public Timer LocalControlTimeout { get; set; }
-        /// <summary> When this timer triggers, the creature will wander in a new direction when it has nothing to do. </sumamry>
+        /// <summary> When this timer triggers, the creature will wander in a new direction when it has nothing to do. </summary>
         public Timer WanderTimer { get; set; }
         /// <summary> This is the timeout for waiting on services (like the path planning service) </summary>
         public Timer ServiceTimeout { get; set; }

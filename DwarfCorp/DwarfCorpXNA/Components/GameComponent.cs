@@ -221,6 +221,7 @@ namespace DwarfCorp
         /// </summary>
         /// <param name="name">The name of the component.</param>
         /// <param name="parent">The parent component.</param>
+        /// <param name="manager">The component manager.</param>
         public GameComponent(string name, GameComponent parent, ComponentManager manager) :
             this(true, manager)
         {

@@ -107,7 +107,7 @@ namespace NativeAssemblerInjection
         /// <summary>
         /// Gets the address of the method stub
         /// </summary>
-        /// <param name="methodHandle">The method handle.</param>
+        /// <param name="method">The method handle.</param>
         /// <returns></returns>
         public static IntPtr GetMethodAddress(MethodBase method)
         {
