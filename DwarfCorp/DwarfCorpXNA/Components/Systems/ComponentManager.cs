@@ -105,7 +105,7 @@ namespace DwarfCorp
             World = state;
             Components = new Dictionary<uint, GameComponent>();
             UpdateableComponents = new Dictionary<Type, List<IUpdateableComponent>>();
-            RenderableComponents = new Dictionary<Type, List<IRenderableComponent>>();
+            RenderableComponents = new List<IRenderableComponent>();
             Removals = new List<GameComponent>();
             Additions = new List<GameComponent>();
             Camera = null;
@@ -200,9 +200,7 @@ namespace DwarfCorp
             }
             if (component is IRenderableComponent)
             {
-                var type = component.GetType();
-                if (RenderableComponents.ContainsKey(type))
-                    RenderableComponents[type].Remove(component as IRenderableComponent);
+                RenderableComponents.Remove(component as IRenderableComponent);
             }
 
             foreach (var child in component.GetAllChildrenRecursive())
@@ -227,10 +225,7 @@ namespace DwarfCorp
                 }
                 if (component is IRenderableComponent)
                 {
-                    var type = component.GetType();
-                    if (!RenderableComponents.ContainsKey(type))
-                        RenderableComponents.Add(type, new List<IRenderableComponent>());
-                    RenderableComponents[type].Add(component as IRenderableComponent);
+                    RenderableComponents.Add(component as IRenderableComponent);
                 }
             }
         }
@@ -328,25 +323,19 @@ namespace DwarfCorp
 
                 BoundingFrustum frustrum = camera.GetFrustrum();
 
-                //List<Body> bodies = GameObjectCaching.RenderBodies;
-
-                //                for (int i = 0; i < bodies.Count; i++)
-                foreach (KeyValuePair<Type, List<IRenderableComponent>> renderList in RenderableComponents)
+                foreach (IRenderableComponent b in RenderableComponents)
                 {
-                    foreach (IRenderableComponent b in renderList.Value)
+                    if (!b.IsVisible) continue;
+                    if (b.IsAboveCullPlane) continue;
+
+                    if (b.FrustrumCull)
                     {
-                        if (!b.IsVisible) continue;
-                        if (b.IsAboveCullPlane) continue;
-
-                        if (b.FrustrumCull)
-                        {
-                            if ((b.GlobalTransform.Translation - camera.Position).LengthSquared() >= chunks.DrawDistanceSquared) continue;
-                            if (!(b.GetBoundingBox().Intersects(frustrum))) continue;
-                        }
-
-                        System.Diagnostics.Debug.Assert(!visibleComponents.Contains(b));
-                        visibleComponents.Add(b);
+                        if ((b.GlobalTransform.Translation - camera.Position).LengthSquared() >= chunks.DrawDistanceSquared) continue;
+                        if (!(b.GetBoundingBox().Intersects(frustrum))) continue;
                     }
+
+                    System.Diagnostics.Debug.Assert(!visibleComponents.Contains(b));
+                    visibleComponents.Add(b);
                 }
 
                 Camera = camera;
@@ -364,38 +353,38 @@ namespace DwarfCorp
                 }
                 bodyToDraw.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderForWater);
             }
-        effect.EnableLighting = false;
+            effect.EnableLighting = false;
         }
 
-    public static int CompareZDepth(Body A, Body B)
-    {
-        if (A == B)
+        public static int CompareZDepth(Body A, Body B)
         {
-            return 0;
+            if (A == B)
+            {
+                return 0;
+            }
+
+            else if (A.Parent == B.Parent && A.DrawInFrontOfSiblings)
+            {
+                return 1;
+            }
+            else if (B.Parent == A.Parent && B.DrawInFrontOfSiblings)
+            {
+                return -1;
+            }
+            else if ((Camera.Position - A.GlobalTransform.Translation).LengthSquared() < (Camera.Position - B.GlobalTransform.Translation).LengthSquared())
+            {
+                return 1;
+            }
+            else
+            {
+                return -1;
+            }
         }
 
-        else if (A.Parent == B.Parent && A.DrawInFrontOfSiblings)
+        public uint GetMaxComponentID()
         {
-            return 1;
-        }
-        else if (B.Parent == A.Parent && B.DrawInFrontOfSiblings)
-        {
-            return -1;
-        }
-        else if ((Camera.Position - A.GlobalTransform.Translation).LengthSquared() < (Camera.Position - B.GlobalTransform.Translation).LengthSquared())
-        {
-            return 1;
-        }
-        else
-        {
-            return -1;
+            return Components.Aggregate<KeyValuePair<uint, GameComponent>, uint>(0, (current, component) => Math.Max(current, component.Value.GlobalID));
         }
     }
-
-    public uint GetMaxComponentID()
-    {
-        return Components.Aggregate<KeyValuePair<uint, GameComponent>, uint>(0, (current, component) => Math.Max(current, component.Value.GlobalID));
-    }
-}
 
 }
