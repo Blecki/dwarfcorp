@@ -383,7 +383,8 @@ namespace DwarfCorp
 
 
             Sprites.Update(gameTime, camera, chunks.Graphics);
-            base.Update(gameTime, chunks, camera);
+            if (Particles.Count > 0)
+                base.Update(gameTime, chunks, camera);
         }
     }
 
