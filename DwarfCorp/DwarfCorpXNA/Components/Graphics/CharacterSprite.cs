@@ -218,6 +218,7 @@ namespace DwarfCorp
         {
             if(isBlinking)
             {
+                blinkTimer.Update(gameTime);
                 blinkTrigger.Update(gameTime);
 
                 if(blinkTrigger.HasTriggered)
@@ -236,9 +237,6 @@ namespace DwarfCorp
                     isCoolingDown = false;
                 }
             }
-
-            blinkTimer.Update(gameTime);
-
 
             base.Update(gameTime, chunks, camera);
         }

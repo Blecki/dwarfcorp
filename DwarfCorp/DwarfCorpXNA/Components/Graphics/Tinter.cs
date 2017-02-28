@@ -48,12 +48,12 @@ namespace DwarfCorp
         public Color Tint { get; set; }
         public Color TargetTint { get; set; }
         public float TintChangeRate { get; set; }
-        public Timer LightingTimer { get; set; }
+        //public Timer LightingTimer { get; set; }
         public Voxel VoxelUnder = null;
         public bool ColorAppplied = false;
         private bool entityLighting = GameSettings.Default.EntityLighting;
         public Color VertexColorTint { get; set; }
-        public Timer StartTimer { get; set; }
+        //public Timer StartTimer { get; set; }
 
         public Tinter()
         {
@@ -65,8 +65,8 @@ namespace DwarfCorp
         {
             LightsWithVoxels = true;
             Tint = new Color(255, 255, 0);
-            LightingTimer = new Timer(0.2f, true);
-            StartTimer = new Timer(0.5f, true);
+            //LightingTimer = new Timer(0.2f, true);
+            //StartTimer = new Timer(0.5f, true);
             TargetTint = Tint;
             TintChangeRate = 1.0f;
             LightsWithVoxels = true;
@@ -84,28 +84,28 @@ namespace DwarfCorp
             base.ReceiveMessageRecursive(messageToReceive);
         }
 
-        public bool ShouldUpdate()
-        {
-            if(!StartTimer.HasTriggered)
-            {
-                return false;
-            }
+        //public bool ShouldUpdate()
+        //{
+        //    if(!StartTimer.HasTriggered)
+        //    {
+        //        return false;
+        //    }
 
-            return LightingTimer.HasTriggered;
-        }
+        //    return LightingTimer.HasTriggered;
+        //}
 
         new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            LightingTimer.Update(gameTime);
-            StartTimer.Update(gameTime);
+            //LightingTimer.Update(gameTime);
+            //StartTimer.Update(gameTime);
 
             if (!LightsWithVoxels)
             {
                 Tint = Color.White;
             }
 
-            if(ShouldUpdate())
-            {
+            //if(ShouldUpdate())
+            //{
                 if (entityLighting)
                 {
                     bool success = chunks.ChunkData.GetVoxel(Position, ref VoxelUnder);
@@ -115,7 +115,7 @@ namespace DwarfCorp
                         Color color = new Color(VoxelUnder.SunColor, 255, 0);
 
                         TargetTint = color;
-                        ColorAppplied = true;
+                        //ColorAppplied = true;
                     }
                 }
                 else
@@ -123,24 +123,24 @@ namespace DwarfCorp
                     TargetTint = new Color(200, 255, 0);
                 }
 
-                LightingTimer.HasTriggered = false;
-                LightingTimer.Reset(LightingTimer.TargetTimeSeconds);
-            }
-            else if(!entityLighting)
-            {
-                TargetTint = new Color(200, 255, 0);
-            }
-            else if(LightsWithVoxels)
-            {
-                //Vector4 lerpTint = new Vector4((float) TargetTint.R / 255.0f, (float) TargetTint.G / 255.0f, (float) TargetTint.B / 255.0f, (float) TargetTint.A / 255.0f);
+               // LightingTimer.HasTriggered = false;
+               // LightingTimer.Reset(LightingTimer.TargetTimeSeconds);
+            //}
+            //else if(!entityLighting)
+            //{
+            //    TargetTint = new Color(200, 255, 0);
+            //}
+            //else if(LightsWithVoxels)
+            //{
+            //    //Vector4 lerpTint = new Vector4((float) TargetTint.R / 255.0f, (float) TargetTint.G / 255.0f, (float) TargetTint.B / 255.0f, (float) TargetTint.A / 255.0f);
                 //Vector4 currTint = new Vector4((float) Tint.R / 255.0f, (float) Tint.G / 255.0f, (float) Tint.B / 255.0f, (float) Tint.A / 255.0f);
 
                 //Vector4 delta = lerpTint - currTint;
                 //lerpTint = currTint + delta * Math.Max(Math.Min(LightingTimer.CurrentTimeSeconds * TintChangeRate, 1.0f), 0.0f);
 
                 //Tint = new Color(lerpTint.X, lerpTint.Y, lerpTint.Z, lerpTint.W);
-                Tint = TargetTint;
-            }
+            //    Tint = TargetTint;
+            //}
 
             base.Update(gameTime, chunks, camera);
         }
