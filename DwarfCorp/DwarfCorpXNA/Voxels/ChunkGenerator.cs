@@ -520,8 +520,7 @@ namespace DwarfCorp
                                 {
                                     entity.GetEntityRootComponent().SetActiveRecursive(false);
                                     entity.GetEntityRootComponent().SetVisibleRecursive(false);
-                                    ExploredListener listener = new ExploredListener(world.ComponentManager,
-                                        entity,
+                                    ExploredListener listener = new ExploredListener(world.ComponentManager,                                        entity,
                                         world.ChunkManager, chunk.MakeVoxel(x, y, z));
                                 }
                                 break;

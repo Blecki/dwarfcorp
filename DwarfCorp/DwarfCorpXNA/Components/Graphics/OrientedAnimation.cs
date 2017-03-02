@@ -126,7 +126,7 @@ namespace DwarfCorp
             {
                 var previousAnimation = CurrentAnimation;
                 CurrentAnimation = Animations[s];
-                if (previousAnimation.Name.StartsWith(currentMode))
+                if (previousAnimation != null && previousAnimation.Name.StartsWith(currentMode))
                     CurrentAnimation.Sychronize(previousAnimation);
                 SpriteSheet = CurrentAnimation.SpriteSheet;
             }

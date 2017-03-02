@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -190,6 +190,7 @@ namespace DwarfCorp
         public override void Update(DwarfTime gameTime, Timer.TimerMode mode = Timer.TimerMode.Game)
         {
             base.Update(gameTime, mode);
+            CurrentFrame = Math.Min(Math.Max(CurrentFrame, 0), CompositeFrames.Count - 1);
             CurrentOffset = Composite.PushFrame(CompositeFrames[CurrentFrame]);
             HasValidFrame = true;
             UpdatePrimitive();

@@ -959,6 +959,7 @@ namespace DwarfCorp
 
                         TossMotion toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f),
                             2.5f + MathFunctions.Rand(-0.5f, 0.5f), newEntity.LocalTransform, position);
+                        newEntity.GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
                         newEntity.AnimationQueue.Add(toss);
                         toss.OnComplete += () => toss_OnComplete(newEntity);
 

@@ -1,4 +1,4 @@
-﻿// PlaceVoxelAct.cs
+// PlaceVoxelAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -64,7 +64,7 @@ namespace DwarfCorp
                 yield break;
             }
 
-            foreach (Status status in Creature.HitAndWait(1.0f, true))
+            foreach (Status status in Creature.HitAndWait(1.0f, true, Voxel.Position))
             {
                 if (status == Status.Running)
                 {
@@ -85,6 +85,7 @@ namespace DwarfCorp
                 {
                     TossMotion motion = new TossMotion(1.0f, 2.0f, grabbed.LocalTransform, Voxel.Position + new Vector3(0.5f, 0.5f, 0.5f));
                     motion.OnComplete += grabbed.Die;
+                    grabbed.GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
                     grabbed.AnimationQueue.Add(motion);
 
                     WallBuilder put = Creature.Faction.WallBuilder.GetDesignation(Voxel);

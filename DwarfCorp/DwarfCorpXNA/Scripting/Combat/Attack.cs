@@ -1,4 +1,4 @@
-﻿// Attack.cs
+// Attack.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -83,7 +83,7 @@ namespace DwarfCorp
         public string HitParticles { get; set; }
         public string ProjectileType { get; set; }
         public float LaunchSpeed { get; set; }
-
+        public bool HasTriggered { get; set; }
         public AttackTrigger TriggerMode { get; set; }
         public int TriggerFrame { get; set; }
 
@@ -116,6 +116,7 @@ namespace DwarfCorp
             AnimationAsset = other.AnimationAsset;
             TriggerMode = other.TriggerMode;
             TriggerFrame = other.TriggerFrame;
+            HasTriggered = false;
         }
 
         public void CreateHitAnimation()
@@ -223,37 +224,45 @@ namespace DwarfCorp
             EntityFactory.CreateEntity<Body>(ProjectileType, start, data);
         }
 
-        public void PerformNoDamage(Creature performer, DwarfTime time, Vector3 pos)
+        public bool PerformNoDamage(Creature performer, DwarfTime time, Vector3 pos)
         {
             switch (TriggerMode)
             {
                 case AttackTrigger.Timer:
                     RechargeTimer.Update(time);
-                    if (!RechargeTimer.HasTriggered) return;
+                    if (!RechargeTimer.HasTriggered)
+                    {
+                        HasTriggered = false;
+                        return false;
+                    }
                     break;
                 case AttackTrigger.Animation:
                     if (performer.Sprite.CurrentAnimation == null ||
                         performer.Sprite.CurrentAnimation.CurrentFrame != TriggerFrame)
-                        return;
+                    {
+                        HasTriggered = false;
+                        return false;
+                    }
                     break;
             }
-
             if (Mode == AttackMode.Melee)
             {
-                PlayNoise(pos);
                 if (HitParticles != "")
                 {
                     performer.Manager.World.ParticleManager.Trigger(HitParticles, pos, Color.White, 5);
                 }
 
 
-                if (HitAnimation != null)
+                if (HitAnimation != null && !HasTriggered)
                 {
                     HitAnimation.Reset();
                     HitAnimation.Play();
-                    IndicatorManager.DrawIndicator(HitAnimation, pos, 0.6f, 2.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
+                    IndicatorManager.DrawIndicator(HitAnimation.Clone(), pos, 10.0f, 1.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
+                    PlayNoise(pos);
                 }
             }
+            HasTriggered = true;
+            return true;
         }
 
         public bool Perform(Creature performer, Body other, DwarfTime time, float bonus, Vector3 pos, string faction)
@@ -263,14 +272,28 @@ namespace DwarfCorp
             {
                 case AttackTrigger.Timer:
                     RechargeTimer.Update(time);
-                    if (!RechargeTimer.HasTriggered) return false;
+                    if (!RechargeTimer.HasTriggered)
+                    {
+                        HasTriggered = false;
+                        return false;
+                    }
                     break;
                 case AttackTrigger.Animation:
                     if (performer.Sprite.CurrentAnimation == null ||
                         performer.Sprite.CurrentAnimation.CurrentFrame != TriggerFrame)
+                    {
+                        HasTriggered = false;
                         return false;
+                    }
                     break;
             }
+
+            if (HasTriggered)
+            {
+                return true;
+            }
+
+            HasTriggered = true;
             switch (Mode)
             {
                 case AttackMode.Melee:

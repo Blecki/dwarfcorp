@@ -135,7 +135,7 @@ namespace Gum
         /// Widgets must be constructed or some operations will fail. Use this function to construct a widget 
         /// when the widget is not being immediately added to its parent.
         /// </summary>
-        /// <param name="CreatedWidget"></param>
+        /// <param name="NewWidget"></param>
         /// <returns></returns>
         public Widget ConstructWidget(Widget NewWidget)
         {
@@ -267,6 +267,8 @@ namespace Gum
         /// Shortcut to call an action without having to check for null.
         /// </summary>
         /// <param name="Action"></param>
+        /// <param name="Widget"></param>
+        /// <param name="Args"></param>
         public void SafeCall<T>(Action<Widget, T> Action, Widget Widget, T Args)
         {
             if (Action != null) Action(Widget, Args);
@@ -277,6 +279,7 @@ namespace Gum
         /// Shortcut to call an action without having to check for null.
         /// </summary>
         /// <param name="Action"></param>
+        /// <param name="Widget"></param>
         public void SafeCall(Action<Widget> Action, Widget Widget)
         {
             if (Action != null) Action(Widget);
@@ -307,7 +310,8 @@ namespace Gum
         /// <summary>
         /// Process mouse events.
         /// </summary>
-        /// <param name="State"></param>
+        /// <param name="Event"></param>
+        /// <param name="Args"></param>
         public void HandleInput(InputEvents Event, InputEventArgs Args)
         {
             switch (Event)

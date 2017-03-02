@@ -32,6 +32,7 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -107,9 +108,12 @@ namespace DwarfCorp
         public List<WallBuilder> Designations { get; set; }
         public VoxelType CurrentVoxelType { get; set; }
 
+        [JsonIgnore]
         public Texture2D BlockTextures { get; set; }
 
-        [JsonIgnore]
+        private List<Voxel> Selected { get; set; }
+        private bool verified = false;
+            [JsonIgnore]
         public WorldManager World { get; set; }
 
         [OnDeserialized]
@@ -129,6 +133,7 @@ namespace DwarfCorp
             Faction = faction;
             Designations = new List<WallBuilder>();
             BlockTextures = blockTextures;
+            Selected = new List<Voxel>();
         }
 
         public CreatureAI GetReservedCreature(Voxel reference)
@@ -198,11 +203,10 @@ namespace DwarfCorp
             float st = (float) Math.Sin(t * 4) * 0.5f + 0.5f;
             effect.MainTexture = BlockTextures;
             effect.LightRampTint = Color.White;
-            effect.VertexColorTint = new Color(1.0f, 1.0f, 2.0f, 0.5f * st + 0.45f);
-            //Matrix oldWorld = effect.Parameters["xWorld"].GetValueMatrix();
+            effect.VertexColorTint = new Color(0.4f, 1.0f, 1.0f, 0.5f * st + 0.45f);
             foreach(WallBuilder put in Designations)
             {
-                Drawer3D.DrawBox(put.Vox.GetBoundingBox(), Color.LightBlue, st * 0.01f + 0.05f);
+                //Drawer3D.DrawBox(put.Vox.GetBoundingBox(), Color.LightBlue, st * 0.01f + 0.05f);
                 effect.World = Matrix.CreateTranslation(put.Vox.Position);
 
                 foreach(EffectPass pass in effect.CurrentTechnique.Passes)
@@ -212,9 +216,44 @@ namespace DwarfCorp
                 }
             }
 
+
+            effect.VertexColorTint = verified ? new Color(0.0f, 1.0f, 0.0f, 0.5f * st + 0.45f) : new Color(1.0f, 0.0f, 0.0f, 0.5f * st + 0.45f);
+            foreach (Voxel voxel in Selected)
+            {
+                effect.World = Matrix.CreateTranslation(voxel.Position);
+
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    VoxelLibrary.GetPrimitive(CurrentVoxelType).Render(graphics);
+                }
+            }
+
             effect.LightRampTint = Color.White;
             effect.VertexColorTint = Color.White;
             effect.World = Matrix.Identity;
+        }
+
+        public void VoxelDragged(List<Voxel> refs)
+        {
+            if (CurrentVoxelType == null)
+                return;
+            verified = Verify(refs, CurrentVoxelType.ResourceToRelease);
+
+            if (!verified)
+            {
+                World.ShowToolPopup("Can't build this! Need at least " + refs.Count + " " + ResourceLibrary.Resources[CurrentVoxelType.ResourceToRelease].ResourceName + ".");
+            }
+            else
+            {
+                World.ShowToolPopup("Release to build.");
+            }
+
+            Selected.Clear();
+            foreach (Voxel voxel in refs)
+            {
+                Selected.Add(new Voxel(voxel));
+            }
         }
 
         public bool Verify(List<Voxel> refs, ResourceLibrary.ResourceType type)
@@ -235,6 +274,7 @@ namespace DwarfCorp
             {
                 return;
             }
+            Selected.Clear();
             switch(button)
             {
                 case (InputManager.MouseButton.Left):

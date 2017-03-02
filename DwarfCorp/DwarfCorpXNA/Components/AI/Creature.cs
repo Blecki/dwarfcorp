@@ -725,7 +725,7 @@ namespace DwarfCorp
         /// Basic Act that causes the creature to wait for the specified time.
         /// Also draws a loading bar above the creature's head when relevant.
         /// </summary>
-        public IEnumerable<Act.Status> HitAndWait(float f, bool loadBar)
+        public IEnumerable<Act.Status> HitAndWait(float f, bool loadBar, Vector3 pos)
         {
             var waitTimer = new Timer(f, true);
 
@@ -745,7 +745,7 @@ namespace DwarfCorp
                         waitTimer.CurrentTimeSeconds / waitTimer.TargetTimeSeconds);
                 }
 
-                Attacks[0].PerformNoDamage(this, DwarfTime.LastTime, AI.Position);
+                Attacks[0].PerformNoDamage(this, DwarfTime.LastTime, pos);
                 Physics.Velocity = Vector3.Zero;
                 Sprite.ReloopAnimations(CharacterMode.Attacking);
                 yield return Act.Status.Running;
@@ -753,6 +753,7 @@ namespace DwarfCorp
             Sprite.PauseAnimations(CharacterMode.Attacking);
             CurrentCharacterMode = CharacterMode.Idle;
             yield return Act.Status.Success;
+            yield break;
         }
 
         /// <summary>

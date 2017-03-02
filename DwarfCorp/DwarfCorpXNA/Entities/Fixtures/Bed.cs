@@ -96,11 +96,5 @@ namespace DwarfCorp
             Tags.Add("Books");
             CollisionType = CollisionManager.CollisionType.Static;
         }
-
-        public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
-            GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
-        {
-            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
-        }
     }
 }
