@@ -231,6 +231,7 @@ namespace DwarfCorp
             this.LastFrame = Other.LastFrame;
             this.CurrentFrame = Other.CurrentFrame;
             this.FrameTimer = Other.FrameTimer;
+            this.ConstrainCurrentFrame();
         }
 
         public virtual void Update(DwarfTime gameTime, Timer.TimerMode mode = Timer.TimerMode.Game)
@@ -258,18 +259,20 @@ namespace DwarfCorp
         public virtual void NextFrame()
         {
             CurrentFrame++;
-            //InvokeNextFrame(CurrentFrame);
 
-            if(CurrentFrame >= Frames.Count)
+            ConstrainCurrentFrame();
+        }
+
+        public virtual void ConstrainCurrentFrame()
+        {
+            if (CurrentFrame >= Frames.Count)
             {
-                if(Loops)
+                if (Loops)
                 {
-                    //InvokeAnimationLooped();
                     CurrentFrame = 0;
                 }
                 else
                 {
-                    //InvokeAnimationCompleted();
                     CurrentFrame = Frames.Count - 1;
                 }
             }
