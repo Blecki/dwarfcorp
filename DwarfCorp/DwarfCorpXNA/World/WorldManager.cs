@@ -1448,16 +1448,6 @@ namespace DwarfCorp
             effect.ClippingEnabled = true;
             GraphicsDevice.BlendState = BlendState.NonPremultiplied;
             ChunkManager.Render(Camera, gameTime, GraphicsDevice, effect, Matrix.Identity);
-
-            if (Master.CurrentToolMode == GameMaster.ToolMode.Build)
-            {
-                effect.View = view;
-                effect.Projection = Camera.ProjectionMatrix;
-                effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
-                GraphicsDevice.BlendState = BlendState.NonPremultiplied;
-                Master.Faction.WallBuilder.Render(gameTime, GraphicsDevice, effect);
-                Master.Faction.CraftBuilder.Render(gameTime, GraphicsDevice, effect);
-            }
             Camera.ViewMatrix = viewMatrix;
             effect.ClippingEnabled = true;
         }
@@ -1661,6 +1651,17 @@ namespace DwarfCorp
 
             DrawComponents(gameTime, DefaultShader, Camera.ViewMatrix, ComponentManager.WaterRenderType.None,
                 lastWaterHeight);
+
+
+            if (Master.CurrentToolMode == GameMaster.ToolMode.Build)
+            {
+                DefaultShader.View = Camera.ViewMatrix;
+                DefaultShader.Projection = Camera.ProjectionMatrix;
+                DefaultShader.CurrentTechnique = DefaultShader.Techniques[Shader.Technique.Textured];
+                GraphicsDevice.BlendState = BlendState.NonPremultiplied;
+                Master.Faction.WallBuilder.Render(gameTime, GraphicsDevice, DefaultShader);
+                Master.Faction.CraftBuilder.Render(gameTime, GraphicsDevice, DefaultShader);
+            }
 
             WaterRenderer.DrawWater(
                 GraphicsDevice,

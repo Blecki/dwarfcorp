@@ -199,11 +199,14 @@ namespace DwarfCorp
 
         public void Render(DwarfTime gameTime, GraphicsDevice graphics, Shader effect)
         {
+            DepthStencilState state = graphics.DepthStencilState;
+            graphics.DepthStencilState = DepthStencilState.DepthRead;
+            
             float t = (float)gameTime.TotalGameTime.TotalSeconds;
             float st = (float) Math.Sin(t * 4) * 0.5f + 0.5f;
             effect.MainTexture = BlockTextures;
             effect.LightRampTint = Color.White;
-            effect.VertexColorTint = new Color(0.4f, 1.0f, 1.0f, 0.5f * st + 0.45f);
+            effect.VertexColorTint = new Color(0.1f, 0.9f, 1.0f, 0.5f * st + 0.45f);
             foreach(WallBuilder put in Designations)
             {
                 //Drawer3D.DrawBox(put.Vox.GetBoundingBox(), Color.LightBlue, st * 0.01f + 0.05f);
@@ -216,6 +219,10 @@ namespace DwarfCorp
                 }
             }
 
+            if (CurrentVoxelType == null)
+            {
+                Selected.Clear();
+            }
 
             effect.VertexColorTint = verified ? new Color(0.0f, 1.0f, 0.0f, 0.5f * st + 0.45f) : new Color(1.0f, 0.0f, 0.0f, 0.5f * st + 0.45f);
             foreach (Voxel voxel in Selected)
@@ -232,6 +239,7 @@ namespace DwarfCorp
             effect.LightRampTint = Color.White;
             effect.VertexColorTint = Color.White;
             effect.World = Matrix.Identity;
+            graphics.DepthStencilState = state;
         }
 
         public void VoxelDragged(List<Voxel> refs)
