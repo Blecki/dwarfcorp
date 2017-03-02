@@ -56,7 +56,7 @@ namespace DwarfCorp
     {
         public Dictionary<uint, GameComponent> Components { get; set; }
         public Dictionary<System.Type, List<IUpdateableComponent>> UpdateableComponents { get; set; }
-        public Dictionary<System.Type, List<IRenderableComponent>> RenderableComponents { get; set; }
+        public List<IRenderableComponent> RenderableComponents { get; set; }
 
         private List<GameComponent> Removals { get; set; }
 

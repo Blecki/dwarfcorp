@@ -1876,66 +1876,6 @@ namespace DwarfCorp
             return v == null || v.IsEmpty;
         }
 
-        public bool HasNoNeighbors(Voxel v)
-        {
-            Vector3 pos = v.Position;
-            Vector3 gridPos = v.GridPosition;
-
-            if (!Manager.ChunkData.ChunkMap.ContainsKey(v.ChunkID))
-            {
-                return false;
-            }
-
-            VoxelChunk chunk = Manager.ChunkData.ChunkMap[v.ChunkID];
-            Point3 gridPoint = new Point3(gridPos);
-
-            bool interior = Voxel.IsInteriorPoint(gridPoint, chunk);
-
-
-            if (interior)
-            {
-                for (int i = 0; i < 6; i++)
-                {
-                    Vector3 neighbor = ManhattanSuccessors[i];
-                    int index = Data.IndexAt(gridPoint.X + (int)neighbor.X, gridPoint.Y + (int)neighbor.Y, gridPoint.Z + (int)neighbor.Z);
-
-                    if (Data.Types[index] != 0)
-                    {
-                        return false;
-                    }
-                }
-            }
-            else
-            {
-
-                Voxel atPos = new Voxel();
-                for (int i = 0; i < 6; i++)
-                {
-                    Vector3 neighbor = ManhattanSuccessors[i];
-
-                    if (!IsGridPositionValid(neighbor + gridPos))
-                    {
-                        if (Manager.ChunkData.GetNonNullVoxelAtWorldLocation(pos + neighbor, ref atPos) && !atPos.IsEmpty)
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        int index = Data.IndexAt(gridPoint.X + (int)neighbor.X, gridPoint.Y + (int)neighbor.Y, gridPoint.Z + (int)neighbor.Z);
-
-                        if (Data.Types[index] != 0)
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }
-
-            return true;
-        }
-
-
         public bool IsCompletelySurrounded(Voxel v, bool ramps)
         {
             if (!Manager.ChunkData.ChunkMap.ContainsKey(v.ChunkID))
@@ -1969,7 +1909,7 @@ namespace DwarfCorp
                 {
                     Vector3 neighbor = ManhattanSuccessors[i];
 
-                    if (!Manager.ChunkData.GetNonNullVoxelAtWorldLocationCheckFirst(chunk, pos + neighbor, ref atPos) || atPos.IsEmpty || (ramps && atPos.RampType != RampType.None))
+                    if (!Manager.ChunkData.GetNonEmptyVoxelAtWorldLocation(chunk, pos + neighbor, ref atPos) || (ramps && atPos.RampType != RampType.None))
                     {
                         return false;
                     }

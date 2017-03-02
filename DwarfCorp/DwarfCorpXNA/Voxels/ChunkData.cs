@@ -269,9 +269,7 @@ namespace DwarfCorp
             {
                 Vector3 pos = new Vector3(coord.X, coord.Y, coord.Z);
 
-                bool success = GetNonNullVoxelAtWorldLocationCheckFirst(null, pos, ref atPos);
-
-                if (success && !atPos.IsEmpty)
+                if (GetNonEmptyVoxelAtWorldLocation(null, pos, ref atPos))
                 {
                     return true;
                 }
@@ -308,31 +306,13 @@ namespace DwarfCorp
             {
                 Vector3 pos = new Vector3(coord.X, coord.Y, coord.Z);
 
-                bool success = GetNonNullVoxelAtWorldLocationCheckFirst(null, pos, ref atPos);
+                bool success = GetNonEmptyVoxelAtWorldLocation(null, pos, ref atPos);
 
-                if (success && atPos.IsVisible && !atPos.Equals(voxel))
+                if (success && atPos.IsVisible && !atPos.IsSameAs(voxel))
                 {
                     return true;
                 }
             }
-            return false;
-        }
-
-        public bool CheckOcclusionRay(Vector3 rayStart, Vector3 rayEnd)
-        {
-            Voxel atPos = new Voxel();
-            foreach (Point3 coord in MathFunctions.RasterizeLine(rayStart, rayEnd))
-            {
-                Vector3 pos = new Vector3(coord.X, coord.Y, coord.Z);
-
-                bool success = GetNonNullVoxelAtWorldLocationCheckFirst(null, pos, ref atPos);
-
-                if (success && atPos.IsVisible)
-                {
-                    return true;
-                }
-            }
-
             return false;
         }
 
@@ -381,11 +361,10 @@ namespace DwarfCorp
             Voxel atPos = new Voxel();
             Voxel prev = new Voxel();
             foreach (Point3 coord in MathFunctions.RasterizeLine(rayStart, rayEnd))
-            //for(float dn = 0.0f; dn < length; dn += 0.2f)
             {
                 Vector3 pos = new Vector3(coord.X, coord.Y, coord.Z);
 
-                bool success = GetNonNullVoxelAtWorldLocationCheckFirst(null, pos, ref atPos);
+                bool success = GetNonEmptyVoxelAtWorldLocation(null, pos, ref atPos);
                 if (draw)
                 {
                     Drawer3D.DrawBox(new BoundingBox(pos, pos + new Vector3(1f, 1f, 1f)), Color.White, 0.01f);
@@ -397,7 +376,6 @@ namespace DwarfCorp
                 }
                 prev.Chunk = atPos.Chunk;
                 prev.GridPosition = atPos.GridPosition;
-
             }
 
             return null;
@@ -547,15 +525,15 @@ namespace DwarfCorp
         }
 
         /// <summary> 
-        /// Given a world location, returns the voxel at that location if it exists
-        /// Otherwise returns null.
+        /// Fills out a voxel reference for the world location passed in if the
+        /// world location is valid and that voxel position is not empty.
         /// </summary>
         /// <param Name="worldLocation">A floating point vector location in the world space</param>
-        /// <param Name="depth">unused</param>
-        /// <returns>The voxel at that location (as a list)</returns>
-        public bool GetNonNullVoxelAtWorldLocation(Vector3 worldLocation, ref Voxel voxel)
+        /// <param Name="voxel">A reference to the voxel that will be filled out</param>
+        /// <returns>True if the voxel reference was filled out.</returns>
+        public bool GetNonEmptyVoxelAtWorldLocation(Vector3 worldLocation, ref Voxel voxel)
         {
-            return GetNonNullVoxelAtWorldLocationCheckFirst(null, worldLocation, ref voxel);
+            return GetNonEmptyVoxelAtWorldLocation(null, worldLocation, ref voxel);
         }
 
         public float GetFilledVoxelGridHeightAt(float x, float y, float z)
@@ -573,30 +551,22 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        /// TODO: Get rid of the recursion
-        /// Recursive function which gets all the voxels at a position in the world, assuming the voxel is in a given chunk
+        /// Fills out a voxel reference for the world location passed in if the
+        /// world location is valid and that voxel position is not empty.
         /// </summary>
         /// <param Name="checkFirst">The voxel chunk to check first</param>
-        /// <param Name="worldLocation">The point in the world to check</param>
-        /// <param Name="toReturn">A list of voxels to get</param>
-        /// <param Name="depth">The depth of the recursion</param>
-        public bool GetNonNullVoxelAtWorldLocationCheckFirst(VoxelChunk checkFirst, Vector3 worldLocation, ref Voxel toReturn)
+        /// <param Name="worldLocation">A floating point vector location in the world space</param>
+        /// <param Name="toReturn">A reference to the voxel that will be filled out</param>
+        public bool GetNonEmptyVoxelAtWorldLocation(VoxelChunk checkFirst, Vector3 worldLocation, ref Voxel toReturn)
         {
 
             if(checkFirst != null)
             {
-                if(!checkFirst.IsWorldLocationValid(worldLocation))
+                if (checkFirst.GetVoxelAtWorldLocation(worldLocation, ref toReturn))
                 {
-                    return GetNonNullVoxelAtWorldLocation(worldLocation, ref toReturn);
+                    if (!toReturn.IsEmpty)
+                        return true;
                 }
-
-                bool success = checkFirst.GetVoxelAtWorldLocation(worldLocation, ref toReturn);
-
-                if(success && !toReturn.IsEmpty)
-                {
-                    return true;
-                }
-                return GetNonNullVoxelAtWorldLocation(worldLocation, ref toReturn);
             }
 
             VoxelChunk chunk = GetVoxelChunkAtWorldLocation(worldLocation);
@@ -606,19 +576,11 @@ namespace DwarfCorp
                 return false;
             }
 
-            if(!chunk.IsWorldLocationValid(worldLocation))
-            {
-                return false;
-            }
-
-            if (chunk.GetVoxelAtWorldLocation(worldLocation, ref toReturn) && !toReturn.IsEmpty)
+            if (chunk.GetVoxelAtValidWorldLocation(worldLocation, ref toReturn) && !toReturn.IsEmpty)
             {
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         public List<LiquidPrimitive> GetAllLiquidPrimitives()

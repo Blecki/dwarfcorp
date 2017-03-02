@@ -421,7 +421,7 @@ namespace DwarfCorp
                                 }
                                 else
                                 {
-                                    if (!chunk.Manager.ChunkData.GetNonNullVoxelAtWorldLocation(new Vector3(x + (int)delta.X + 0.5f, y + (int)delta.Y + 0.5f, z + (int)delta.Z + 0.5f) + chunk.Origin, ref worldVoxel) || !worldVoxel.IsVisible)
+                                    if (!chunk.Manager.ChunkData.GetNonEmptyVoxelAtWorldLocation(new Vector3(x + (int)delta.X + 0.5f, y + (int)delta.Y + 0.5f, z + (int)delta.Z + 0.5f) + chunk.Origin, ref worldVoxel) || !worldVoxel.IsVisible)
                                     {
                                         faceVisible[face] = true;
                                     }
@@ -533,7 +533,7 @@ namespace DwarfCorp
                             }
                             else
                             {
-                                bool success = chunk.Manager.ChunkData.GetNonNullVoxelAtWorldLocation(new Vector3(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z) + chunk.Origin, ref worldVoxel);
+                                bool success = chunk.Manager.ChunkData.GetNonEmptyVoxelAtWorldLocation(new Vector3(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z) + chunk.Origin, ref worldVoxel);
                                     drawFace[(int)face] = !success || (worldVoxel.IsExplored && worldVoxel.IsEmpty) || !worldVoxel.IsVisible ||
                                                      (worldVoxel.Type.CanRamp && worldVoxel.RampType != RampType.None &&
                                                       IsSideFace(face) &&

@@ -106,9 +106,8 @@ namespace DwarfCorp
                 else
                 {
                     Voxel vox = new Voxel();
-                    World.ChunkManager.ChunkData.GetNonNullVoxelAtWorldLocation(World.CursorLightPos, ref vox);
-
-                    OnVoxelsSelected(World.Master.Spells, new List<Voxel>(){vox});
+                    if (World.ChunkManager.ChunkData.GetNonEmptyVoxelAtWorldLocation(World.CursorLightPos, ref vox))
+                        OnVoxelsSelected(World.Master.Spells, new List<Voxel>(){vox});
                 }
             }
             base.Update(time, voxSelector, bodySelector);
