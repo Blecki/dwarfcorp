@@ -132,7 +132,7 @@ namespace DwarfCorp
         public void Reveal(IEnumerable<Voxel> voxels)
         {
             if (!GameSettings.Default.FogofWar) return;
-            List<Point3> affectedChunks = new List<Point3>();
+            HashSet<Point3> affectedChunks = new HashSet<Point3>();
             Queue<Voxel> q = new Queue<Voxel>(128);
 
             foreach (Voxel voxel in voxels)
