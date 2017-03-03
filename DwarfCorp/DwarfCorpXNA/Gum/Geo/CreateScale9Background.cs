@@ -77,6 +77,7 @@ namespace Gum
         /// </summary>
         /// <param name="Rect"></param>
         /// <param name="Tiles"></param>
+        /// <param name="Corners"></param>
         /// <returns></returns>
         public static Mesh CreateScale9Background(
             Rectangle Rect, 

@@ -42,7 +42,7 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class Table : Body
+    public class Table : Body, IUpdateableComponent
     {
         public ManaBattery Battery { get; set; }
 
@@ -134,7 +134,7 @@ namespace DwarfCorp
 
         }
 
-        public override void Update(DwarfTime time, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime time, ChunkManager chunks, Camera camera)
         {
             if (Battery != null)
             {

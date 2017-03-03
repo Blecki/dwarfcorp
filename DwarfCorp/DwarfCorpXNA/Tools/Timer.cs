@@ -127,18 +127,23 @@ namespace DwarfCorp
             else
             {
                 ElapsedGameTime = new TimeSpan((long)(time.ElapsedGameTime.Ticks * Speed));
+                if (ElapsedGameTime.TotalSeconds > MaximumElapsedGameTime * Speed)
+                    ElapsedGameTime = TimeSpan.FromSeconds(MaximumElapsedGameTime * Speed);
                 TotalGameTime += ElapsedGameTime;
             }
         }
 
         [JsonIgnore]
-        public static DwarfTime LastTime { get; set; }
+        public static DwarfTime LastTime = new DwarfTime();
 
         [JsonIgnore]
         public static float Dt
         {
             get { return (float)LastTime.ElapsedGameTime.TotalSeconds; }
         }
+
+        [JsonIgnore]
+        public static double MaximumElapsedGameTime = 60.0f / 10.0f;
     }
 
     /// <summary>

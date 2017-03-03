@@ -45,7 +45,7 @@ namespace DwarfCorp
     /// <summary>
     /// Generic component with a box that fires when other components enter it.
     /// </summary>
-    public class Sensor : Body
+    public class Sensor : Body, IUpdateableComponent
     {
 
         public delegate void Sense(List<Body> sensed);
@@ -71,7 +71,7 @@ namespace DwarfCorp
             ;
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             FireTimer.Update(gameTime);
             if(FireTimer.HasTriggered)

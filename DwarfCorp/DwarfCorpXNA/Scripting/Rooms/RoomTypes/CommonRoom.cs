@@ -123,7 +123,7 @@ namespace DwarfCorp
             commonRoomTemplates.Add(lamp);
             commonRoomTemplates.Add(table);
 
-            return new RoomData(CommonRoomName, 1, "CobblestoneFloor", roomResources, commonRoomTemplates,
+            return new RoomData(CommonRoomName, 1, "Cobble", roomResources, commonRoomTemplates,
                 new Gum.TileReference("rooms", 2))
             {
                 Description = "Dwarves come here to socialize and drink",

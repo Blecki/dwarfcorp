@@ -42,7 +42,7 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class WorldGUIObject : Body
+    public class WorldGUIObject : Body, IRenderableComponent
     {
         [JsonIgnore]
         public GUIComponent GUIObject { get; set; }
@@ -64,7 +64,7 @@ namespace DwarfCorp
         }
 
 
-        public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Microsoft.Xna.Framework.Graphics.GraphicsDevice graphicsDevice, DwarfCorp.Shader effect, bool renderingForWater)
+        public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Microsoft.Xna.Framework.Graphics.GraphicsDevice graphicsDevice, DwarfCorp.Shader effect, bool renderingForWater)
         {
             if (GUIObject != null)
             {
@@ -82,7 +82,6 @@ namespace DwarfCorp
                     GUIObject.IsVisible = false;
                 }
             }
-            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
         }
 
         public override void Die()

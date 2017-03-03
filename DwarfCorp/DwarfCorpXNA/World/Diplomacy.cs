@@ -199,7 +199,7 @@ namespace DwarfCorp
                         Point c2 = otherFaction.Value.Center;
                         double dist = Math.Sqrt(Math.Pow(c1.X - c2.X, 2) + Math.Pow(c1.Y - c2.Y, 2));
                         // Time always takes between 1 and 4 days of travel.
-                        double timeInMinutes = Math.Min(Math.Max(dist * 8.0f, 1440), 1440 * 4);
+                        double timeInMinutes = Math.Min(Math.Max(dist * 16.0f, 1440), 1440 * 4);
 
                         Politics politics = new Politics()
                         {
@@ -400,7 +400,7 @@ namespace DwarfCorp
             {
                 if (envoy.DeathTimer.Update(faction.World.Time.CurrentDate))
                 {
-                    envoy.Creatures.ForEach((creature) => creature.GetRootComponent().Die());
+                    envoy.Creatures.ForEach((creature) => creature.GetEntityRootComponent().Die());
                 }
 
                 Diplomacy.Politics politics = faction.World.ComponentManager.Diplomacy.GetPolitics(faction, envoy.OtherFaction);
@@ -453,6 +453,9 @@ namespace DwarfCorp
                         if (!tradePort.IsRestingOnZone(creature.Position)) continue;
 
                         envoy.ExpiditionState = Faction.Expidition.State.Trading;
+
+                        World.Paused = true;
+
                         GameState.Game.StateManager.PushState(new DiplomacyState(GameState.Game,
                             GameState.Game.StateManager,
                             faction.World, envoy)
@@ -479,8 +482,7 @@ namespace DwarfCorp
                     {
                         if (MathFunctions.Dist2D(worldBBox, creature.Position) < 2.0f)
                         {
-                            creature.GetRootComponent().Delete();
-                            creature.IsDead = true;
+                            creature.GetEntityRootComponent().Delete();
                         }
                     }
                 }

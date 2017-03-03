@@ -119,7 +119,7 @@ namespace DwarfCorp
         {
             Resources[resource.ResourceName] = resource;
 
-            EntityFactory.RegisterEntity(resource.ResourceName + " Resource", (position, data) => new ResourceEntity(EntityFactory.Components, resource.Type, position));
+            EntityFactory.RegisterEntity(resource.ResourceName + " Resource", (position, data) => new ResourceEntity(EntityFactory.World.ComponentManager, resource.Type, position));
         }
 
         public static void Initialize()

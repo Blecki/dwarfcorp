@@ -58,7 +58,7 @@ namespace DwarfCorp
     }
 
     [JsonObject(IsReference = true)]
-    public class Stove : Fixture
+    public class Stove : Fixture, IUpdateableComponent
     {
 
         public Stove()
@@ -81,7 +81,7 @@ namespace DwarfCorp
              */
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (MathFunctions.RandEvent(0.01f))
             {

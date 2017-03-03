@@ -817,6 +817,7 @@ namespace DwarfCorp
         public TradePanel(DwarfGUI gui, GUIComponent parent, Faction faction, Faction otherFaction, List<ResourceAmount> resources)
             : base(gui, parent)
         {
+            World = faction.World;
             Resources = resources;
             GoodsSent = new List<ResourceAmount>();
             GoodsReceived = new List<ResourceAmount>();

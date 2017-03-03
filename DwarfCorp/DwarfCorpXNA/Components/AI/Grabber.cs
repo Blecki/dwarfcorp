@@ -43,7 +43,7 @@ namespace DwarfCorp
     /// <summary>
     /// This component represents the "Hands" of a creature. It's a generic way of attaching and detaching objects from each other.
     /// </summary>
-    public class Grabber : Body
+    public class Grabber : Body, IUpdateableComponent
     {
         public struct GrabbedItem
         {
@@ -66,7 +66,7 @@ namespace DwarfCorp
             MaxGrabs = 1;
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             foreach(GrabbedItem grabbed in GrabbedComponents)
             {

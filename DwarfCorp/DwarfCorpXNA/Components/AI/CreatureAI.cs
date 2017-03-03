@@ -46,7 +46,7 @@ namespace DwarfCorp
     ///     Component which manages the AI, scripting, and status of a particular creature (such as a Dwarf or Goblin)
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class CreatureAI : GameComponent
+    public class CreatureAI : GameComponent, IUpdateableComponent
     {
         /// <summary> maximum number of messages the creature has in its mind </summary>
         public int MaxMessages = 10;
@@ -124,7 +124,7 @@ namespace DwarfCorp
         public Timer PlannerTimer { get; set; }
         /// <summary> When this timer triggers, the creature will stop trying to reach a local target (if it is blocked by a voxel for instance </summary>
         public Timer LocalControlTimeout { get; set; }
-        /// <summary> When this timer triggers, the creature will wander in a new direction when it has nothing to do. </sumamry>
+        /// <summary> When this timer triggers, the creature will wander in a new direction when it has nothing to do. </summary>
         public Timer WanderTimer { get; set; }
         /// <summary> This is the timeout for waiting on services (like the path planning service) </summary>
         public Timer ServiceTimeout { get; set; }
@@ -257,6 +257,16 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Raycasts to the specified target and returns true if the ray hit a voxel before hitting the target.
+        /// </summary>
+        /// <param name="target">The target.</param>
+        /// <returns>True if the ray hit a voxel before the target.</returns>
+        public bool Raycast(Vector3 target)
+        {
+            return Manager.World.ChunkManager.ChunkData.CheckRaySolid(Creature.AI.Position, target);
+        }
+
         /// <summary> Find the task from the list of tasks which is easiest to perform. </summary>
         public Task GetEasiestTask(List<Task> tasks)
         {
@@ -335,7 +345,7 @@ namespace DwarfCorp
         }
 
         /// <summary> Update this creature </summary>
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (!IsActive) return;
 
@@ -475,8 +485,6 @@ namespace DwarfCorp
             {
                 history.Value.Update();
             }
-
-            base.Update(gameTime, chunks, camera);
         }
 
         /// <summary> updates the creature's experience points. </summary>
@@ -941,6 +949,7 @@ namespace DwarfCorp
                     NumFailures = 0;
                 }
             }
+
         }
     }
 
@@ -1419,7 +1428,7 @@ namespace DwarfCorp
 
                         foreach (GameComponent body in enumerable)
                         {
-                            Door door = body.GetRootComponent().GetChildrenOfType<Door>(true).FirstOrDefault();
+                            Door door = body.GetEntityRootComponent().GetChildrenOfType<Door>(true).FirstOrDefault();
                             // If there is an enemy door blocking movement, we can destroy it to get through.
                             if (door != null)
                             {

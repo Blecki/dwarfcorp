@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -37,7 +37,7 @@ namespace DwarfCorp.GameStates
 
         private void MakeMenuItem(Gum.Widget Menu, string Name, string Tooltip, Action<Gum.Widget, Gum.InputEventArgs> OnClick)
         {
-            Menu.AddChild(new Gum.Widget
+            Menu.AddChild(new Gum.Widgets.Button
             {
                 AutoLayout = Gum.AutoLayout.DockTop,
                 Border = "border-thin",

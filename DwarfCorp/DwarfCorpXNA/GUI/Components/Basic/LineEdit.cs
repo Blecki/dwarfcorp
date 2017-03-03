@@ -1,4 +1,4 @@
-﻿// LineEdit.cs
+// LineEdit.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -134,6 +134,7 @@ namespace DwarfCorp
                             Carat = 0;
                         }
 
+                        Carat = MathFunctions.Clamp(Carat, 0, Text.Length);
                         Text = Text.Insert(Carat, k.ToString());
                         Carat = MathFunctions.Clamp(Carat + 1, 0, Text.Length);
                     }

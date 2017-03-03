@@ -55,9 +55,11 @@ namespace DwarfCorp
     public class ComponentManager
     {
         public Dictionary<uint, GameComponent> Components { get; set; }
+        public Dictionary<System.Type, List<IUpdateableComponent>> UpdateableComponents { get; set; }
+        public List<IRenderableComponent> RenderableComponents { get; set; }
 
         private List<GameComponent> Removals { get; set; }
-       
+
         private List<GameComponent> Additions { get; set; }
 
         public Body RootComponent { get; set; }
@@ -69,7 +71,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public Mutex RemovalMutex { get; set; }
 
-        public  ParticleManager ParticleManager { get; set; }
+        public ParticleManager ParticleManager { get; set; }
         [JsonIgnore]
         public CollisionManager CollisionManager { get; set; }
 
@@ -86,21 +88,24 @@ namespace DwarfCorp
             RemovalMutex = new Mutex();
             Removals = new List<GameComponent>();
             Additions = new List<GameComponent>();
-            CollisionManager = new CollisionManager(new BoundingBox());
-            GameObjectCaching.Reset();
+            World = (WorldManager)context.Context;
+            Vector3 origin = new Vector3(World.WorldOrigin.X, 0, World.WorldOrigin.Y);
+            Vector3 extents = new Vector3(1500, 1500, 1500);
+            CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents)); GameObjectCaching.Reset();
             RootComponent.RefreshCacheTypesRecursive();
         }
-       
 
         public ComponentManager()
         {
-            
+
         }
 
-        public ComponentManager(WorldManager state, CompanyInformation CompanyInformation, List<Faction> natives )
+        public ComponentManager(WorldManager state, CompanyInformation CompanyInformation, List<Faction> natives)
         {
             World = state;
             Components = new Dictionary<uint, GameComponent>();
+            UpdateableComponents = new Dictionary<Type, List<IUpdateableComponent>>();
+            RenderableComponents = new List<IRenderableComponent>();
             Removals = new List<GameComponent>();
             Additions = new List<GameComponent>();
             Camera = null;
@@ -124,7 +129,7 @@ namespace DwarfCorp
         {
             return toFilter.Where(component => component.Tags.Contains(tag)).ToList();
         }
-        
+
         public void GetBodiesIntersecting(BoundingBox box, List<Body> components, CollisionManager.CollisionType type)
         {
             HashSet<IBoundedObject> set = new HashSet<IBoundedObject>();
@@ -157,7 +162,7 @@ namespace DwarfCorp
                     continue;
                 }
                 if (!component.IsVisible) continue;
-                toReturn.Add(component.GetRootComponent().GetComponent<Body>());
+                toReturn.Add(component.GetEntityRootComponent().GetComponent<Body>());
             }
             return toReturn;
         }
@@ -181,19 +186,25 @@ namespace DwarfCorp
 
         private void RemoveComponentImmediate(GameComponent component)
         {
-            if(!Components.ContainsKey(component.GlobalID))
+            if (!Components.ContainsKey(component.GlobalID))
             {
                 return;
             }
 
             Components.Remove(component.GlobalID);
-
-            List<GameComponent> children = component.GetAllChildrenRecursive();
-
-            foreach(GameComponent child in children)
+            if (component is IUpdateableComponent)
             {
-                Components.Remove(child.GlobalID);
+                var type = component.GetType();
+                if (UpdateableComponents.ContainsKey(type))
+                    UpdateableComponents[type].Remove(component as IUpdateableComponent);
             }
+            if (component is IRenderableComponent)
+            {
+                RenderableComponents.Remove(component as IRenderableComponent);
+            }
+
+            foreach (var child in component.GetAllChildrenRecursive())
+                RemoveComponentImmediate(child);
         }
 
         private void AddComponentImmediate(GameComponent component)
@@ -204,38 +215,53 @@ namespace DwarfCorp
             }
             else if (!Components.ContainsKey(component.GlobalID))
             {
-                Components[component.GlobalID] = component;   
+                Components[component.GlobalID] = component;
+                if (component is IUpdateableComponent)
+                {
+                    var type = component.GetType();
+                    if (!UpdateableComponents.ContainsKey(type))
+                        UpdateableComponents.Add(type, new List<IUpdateableComponent>());
+                    UpdateableComponents[type].Add(component as IUpdateableComponent);
+                }
+                if (component is IRenderableComponent)
+                {
+                    RenderableComponents.Add(component as IRenderableComponent);
+                }
             }
         }
 
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if(RootComponent != null)
+            GamePerformance.Instance.StartTrackPerformance("Update Transforms");
+            if (RootComponent != null)
             {
-                RootComponent.UpdateTransformsRecursive();
+                RootComponent.UpdateTransformsRecursive(null);
             }
+            GamePerformance.Instance.StopTrackPerformance("Update Transforms");
 
+            GamePerformance.Instance.StartTrackPerformance("Factions");
             Factions.Update(gameTime);
+            GamePerformance.Instance.StopTrackPerformance("Factions");
 
+            GamePerformance.Instance.TrackValueType("Component Count", Components.Count);
+            GamePerformance.Instance.TrackValueType("Updateable Count", UpdateableComponents.Count);
+            GamePerformance.Instance.TrackValueType("Renderable Count", RenderableComponents.Count);
 
-            foreach(GameComponent component in Components.Values)
-            {
-                component.Manager = this;
-
-                if(component.IsActive)
+            GamePerformance.Instance.StartTrackPerformance("Update Components");
+            foreach (var componentType in UpdateableComponents)
+                foreach (var component in componentType.Value)
                 {
-                    component.Update(gameTime, chunks, camera);
+                    //component.Manager = this;
+
+                    if (component.IsActive)
+                    {
+                        GamePerformance.Instance.StartTrackPerformance("Component Update " + component.GetType().Name);
+                        component.Update(gameTime, chunks, camera);
+                        GamePerformance.Instance.StopTrackPerformance("Component Update " + component.GetType().Name);
+                    }
                 }
 
-                if(component.IsDead)
-                {
-                    Removals.Add(component);
-                    component.IsActive = false;
-                    component.IsDead = true;
-                    component.IsVisible = false;
-                }
-            }
-
+            GamePerformance.Instance.StopTrackPerformance("Update Components");
 
             HandleAddRemoves();
         }
@@ -243,7 +269,7 @@ namespace DwarfCorp
         public void HandleAddRemoves()
         {
             AdditionMutex.WaitOne();
-            foreach(GameComponent component in Additions)
+            foreach (GameComponent component in Additions)
             {
                 AddComponentImmediate(component);
             }
@@ -252,7 +278,7 @@ namespace DwarfCorp
             AdditionMutex.ReleaseMutex();
 
             RemovalMutex.WaitOne();
-            foreach(GameComponent component in Removals)
+            foreach (GameComponent component in Removals)
             {
                 RemoveComponentImmediate(component);
             }
@@ -260,9 +286,9 @@ namespace DwarfCorp
             Removals.Clear();
             RemovalMutex.ReleaseMutex();
         }
-                
 
-        private HashSet<Body> visibleComponents = new HashSet<Body>();
+
+        private HashSet<IRenderableComponent> visibleComponents = new HashSet<IRenderableComponent>();
 
         public enum WaterRenderType
         {
@@ -297,12 +323,8 @@ namespace DwarfCorp
 
                 BoundingFrustum frustrum = camera.GetFrustrum();
 
-                List<Body> bodies = GameObjectCaching.RenderBodies;
-
-                for (int i = 0; i < bodies.Count; i++)
+                foreach (IRenderableComponent b in RenderableComponents)
                 {
-                    Body b = bodies[i];
-
                     if (!b.IsVisible) continue;
                     if (b.IsAboveCullPlane) continue;
 
@@ -322,7 +344,7 @@ namespace DwarfCorp
             effect.EnableLighting = GameSettings.Default.CursorLightEnabled;
             graphicsDevice.RasterizerState = RasterizerState.CullNone;
 
-            foreach (Body bodyToDraw in visibleComponents)
+            foreach (IRenderableComponent bodyToDraw in visibleComponents)
             {
                 if (waterRenderMode == WaterRenderType.Reflective &&
                    !(bodyToDraw.GetBoundingBox().Min.Y > waterLevel - 2))
@@ -336,20 +358,20 @@ namespace DwarfCorp
 
         public static int CompareZDepth(Body A, Body B)
         {
-            if(A == B)
+            if (A == B)
             {
                 return 0;
             }
 
-            else if(A.Parent == B.Parent && A.DrawInFrontOfSiblings)
+            else if (A.Parent == B.Parent && A.DrawInFrontOfSiblings)
             {
                 return 1;
             }
-            else if(B.Parent == A.Parent && B.DrawInFrontOfSiblings)
+            else if (B.Parent == A.Parent && B.DrawInFrontOfSiblings)
             {
                 return -1;
             }
-            else if((Camera.Position - A.GlobalTransform.Translation).LengthSquared() < (Camera.Position - B.GlobalTransform.Translation).LengthSquared())
+            else if ((Camera.Position - A.GlobalTransform.Translation).LengthSquared() < (Camera.Position - B.GlobalTransform.Translation).LengthSquared())
             {
                 return 1;
             }

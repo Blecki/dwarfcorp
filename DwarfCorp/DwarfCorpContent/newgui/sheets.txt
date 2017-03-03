@@ -1,4 +1,4 @@
-﻿{
+{
 	"Sheets": [
 		{ 
 			"Name": "logo",
@@ -169,6 +169,12 @@
 		{
 			"Name": "resources",
 			"Texture": "newgui/resources",
+			"TileWidth": 32,
+			"TileHeight": 32
+		},
+		{
+			"Name": "voxels",
+			"Texture": "newgui/voxels",
 			"TileWidth": 32,
 			"TileHeight": 32
 		},

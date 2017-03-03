@@ -310,7 +310,14 @@ TVertexToPixel TexturedVS(float4 inPos : POSITION,
 	Output.Color = inColor * lightTint;
 	Output.Color.a = lightTint.a;
 	Output.ColorTint = tint * xColorTint;
+	Output.Color.a *= xColorTint.a;
+	/* Dumb fake lighting for testing.
+	float3 normal = normalize(inPos - float3(0.5, 0.5, 0.5));
+	float3 lightPos = normalize(float3(-0.0, 0.5, -1));
 
+	Output.Color.r *= clamp(dot(normal, lightPos), 0, 1);
+	Output.Color.g = 0.8;
+	*/
 	if(xEnableLighting)
 	{
 		for (int i = 0; i < MAX_LIGHTS; i++)

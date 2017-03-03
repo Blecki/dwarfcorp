@@ -46,7 +46,7 @@ namespace DwarfCorp
     /// of the camera.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class OrientedAnimation : Sprite
+    public class OrientedAnimation : Sprite, IUpdateableComponent
     {
         public enum Orientation
         {
@@ -64,15 +64,15 @@ namespace DwarfCorp
             "BACKWARD"
         };
 
-        public delegate void FrameEvent(Animation animation, Orientation orientation, int frame);
+        //public delegate void FrameEvent(Animation animation, Orientation orientation, int frame);
 
-        public event FrameEvent OnFrame;
+        //public event FrameEvent OnFrame;
 
-        protected virtual void InvokeOnFrame(Animation animation, Orientation orientation, int frame)
-        {
-            FrameEvent handler = OnFrame;
-            if (handler != null) handler(animation, orientation, frame);
-        }
+        //protected virtual void InvokeOnFrame(Animation animation, Orientation orientation, int frame)
+        //{
+        //    FrameEvent handler = OnFrame;
+        //    if (handler != null) handler(animation, orientation, frame);
+        //}
 
         public Orientation CurrentOrientation { get; set; }
 
@@ -107,34 +107,36 @@ namespace DwarfCorp
         {
         }
 
-
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             CalculateCurrentOrientation(camera);
 
-            foreach (string orient in OrientationStrings)
-            {
-                string animationName = currentMode + orient;
+            //foreach (string orient in OrientationStrings)
+            //{
+            //    string animationName = currentMode + orient;
 
-                if (!Animations.ContainsKey(animationName)) continue;
+            //    if (!Animations.ContainsKey(animationName)) continue;
 
-                Animation animation = Animations[animationName];
-                animation.Update(gameTime);
-            }
+            //    Animation animation = Animations[animationName];
+            //    animation.Update(gameTime);
+            //}
 
             string s = currentMode + OrientationStrings[(int) CurrentOrientation];
             if(Animations.ContainsKey(s))
             {
+                var previousAnimation = CurrentAnimation;
                 CurrentAnimation = Animations[s];
+                if (previousAnimation != null && previousAnimation.Name.StartsWith(currentMode))
+                    CurrentAnimation.Sychronize(previousAnimation);
                 SpriteSheet = CurrentAnimation.SpriteSheet;
             }
 
             base.Update(gameTime, chunks, camera);
 
-            if (CurrentAnimation != null && CurrentAnimation.LastFrame != CurrentAnimation.CurrentFrame)
-            {
-                InvokeOnFrame(CurrentAnimation, CurrentOrientation, CurrentAnimation.CurrentFrame);
-            }
+            //if (CurrentAnimation != null && CurrentAnimation.LastFrame != CurrentAnimation.CurrentFrame)
+            //{
+            //    InvokeOnFrame(CurrentAnimation, CurrentOrientation, CurrentAnimation.CurrentFrame);
+            //}
         }
 
         public void CalculateCurrentOrientation(Camera camera)
@@ -142,25 +144,19 @@ namespace DwarfCorp
             float xComponent = Vector3.Dot(camera.ViewMatrix.Forward, GlobalTransform.Left);
             float yComponent = Vector3.Dot(camera.ViewMatrix.Forward, GlobalTransform.Forward);
 
+            // Todo: There should be a way to do this without trig.
             float angle = (float) Math.Atan2(yComponent, xComponent);
 
-
-            if(angle > -MathHelper.PiOver4 && angle < MathHelper.PiOver4)
-            {
-                CurrentOrientation = Orientation.Left;
-            }
-            else if(angle > MathHelper.PiOver4 && angle < 3.0f * MathHelper.PiOver4)
-            {
-                CurrentOrientation = Orientation.Backward;
-            }
-            else if((angle > 3.0f * MathHelper.PiOver4 || angle < -3.0f * MathHelper.PiOver4))
-            {
+            if (angle > 3.0f * MathHelper.PiOver4)
                 CurrentOrientation = Orientation.Right;
-            }
-            else
-            {
+            else if (angle > MathHelper.PiOver4)
+                CurrentOrientation = Orientation.Backward;
+            else if (angle > -MathHelper.PiOver4)
+                CurrentOrientation = Orientation.Left;
+            else if (angle > -3.0f * MathHelper.PiOver4)
                 CurrentOrientation = Orientation.Forward;
-            }
+            else
+                CurrentOrientation = Orientation.Right;
         }
     }
 

@@ -1,4 +1,4 @@
-﻿// MathFunctions.cs
+// MathFunctions.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -874,6 +874,11 @@ namespace DwarfCorp
         public static Rectangle SnapRect(Vector2 min, Vector2 max, Rectangle outer)
         {
             Rectangle inner = new Rectangle((int)min.X, (int)min.Y, (int)max.X, (int)max.Y);
+            return SnapRect(inner, outer);
+        }
+
+        public static Rectangle SnapRect(Rectangle inner, Rectangle outer)
+        {
             return new Rectangle(Clamp(inner.X, outer.X, outer.Right - inner.Width), Clamp(inner.Y, outer.Y, outer.Bottom - inner.Height), inner.Width, inner.Height);
         }
 

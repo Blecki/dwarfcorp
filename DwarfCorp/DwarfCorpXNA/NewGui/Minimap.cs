@@ -199,7 +199,6 @@ namespace DwarfCorp.NewGui
 
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, null, RasterizerState.CullNone);
             Viewport viewPort = new Viewport(RenderTarget.Bounds);
-
             foreach (MinimapIcon icon in GameObjectCaching.MinimapIcons)
             {
                 if (!icon.Parent.IsVisible)
@@ -214,7 +213,6 @@ namespace DwarfCorp.NewGui
                     DwarfGame.SpriteBatch.Draw(icon.Icon.Image, new Vector2(screenPos.X, screenPos.Y), icon.Icon.SourceRect, Color.White, 0.0f, new Vector2(icon.Icon.SourceRect.Width / 2.0f, icon.Icon.SourceRect.Height / 2.0f), icon.IconScale, SpriteEffects.None, 0);
                 }
             }
-
 
             DwarfGame.SpriteBatch.End();
 

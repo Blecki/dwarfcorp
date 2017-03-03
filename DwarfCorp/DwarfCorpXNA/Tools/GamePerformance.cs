@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Collections.Concurrent;
+using System.Linq;
 
 namespace DwarfCorp
 {
@@ -464,6 +465,14 @@ namespace DwarfCorp
             {
                 ZoneData data = GetData(false);
                 if (data != null) data.FinishCollection();
+            }
+
+            public float GetTimeForSort()
+            {
+                lock (zoneDataLockObject)
+                {
+                    return zoneData.Sum(d => d.Value == null ? 0.0f : d.Value.GetAverageResult());
+                }
             }
 
             public override void Render()
@@ -1153,7 +1162,14 @@ namespace DwarfCorp
 
             lock (internalTrackerLockObject)
             {
-                foreach (KeyValuePair<string, Tracker> kvp in internalTrackers)
+                foreach (KeyValuePair<string, Tracker> kvp in internalTrackers.OrderByDescending(p =>
+                {
+                    if (p.Value is GamePerformance.PerformanceTracker)
+                    {
+                        return (p.Value as PerformanceTracker).GetTimeForSort();
+                    }
+                    else return float.PositiveInfinity;
+                }))
                 {
                     if (kvp.Value != null) kvp.Value.Render();
                 }

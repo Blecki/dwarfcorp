@@ -105,9 +105,9 @@ namespace DwarfCorp
             DrawCommands.Enqueue(new PolygonDrawCommand(points, closed, color, width));
         }
 
-        public static void DrawPolygon(Camera camera, List<Vector3> points, Color color, int width, bool closed)
+        public static void DrawPolygon(Camera camera, List<Vector3> points, Color color, int width, bool closed, Viewport viewport)
         {
-            DrawCommands.Enqueue(new PolygonDrawCommand(camera, points, closed, color, width));
+            DrawCommands.Enqueue(new PolygonDrawCommand(camera, points, closed, color, width, viewport));
         }
 
         public static void DrawZAlignedRect(Camera camera, Vector3 center, float xWidth, float zHeight, int width, Color color)
@@ -120,7 +120,7 @@ namespace DwarfCorp
                 center + new Vector3(xWidth, 0, -zHeight)
             };
 
-            DrawPolygon(camera, points, color, width, true);
+            DrawPolygon(camera, points, color, width, true, GameState.Game.GraphicsDevice.Viewport);
 
         } 
 
