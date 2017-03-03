@@ -118,7 +118,6 @@ namespace DwarfCorp
         public Egg(string adult, ComponentManager manager, Vector3 position) :
             base(false, manager)
         {
-            Manager = manager;
             Adult = adult;
             Birthday = Manager.World.Time.CurrentDate + new TimeSpan(0, 12, 0, 0);
 

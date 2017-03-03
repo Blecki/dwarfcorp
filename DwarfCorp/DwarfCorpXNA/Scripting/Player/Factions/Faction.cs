@@ -178,7 +178,7 @@ namespace DwarfCorp
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
             RoomBuilder = new RoomBuilder(this, world);
-            WallBuilder = new PutDesignator(this, TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles), world);
+            WallBuilder = new PutDesignator(this, world);
             CraftBuilder = new CraftBuilder(this, world);
             IsRaceFaction = false;
             TradeMoney = 0.0f;

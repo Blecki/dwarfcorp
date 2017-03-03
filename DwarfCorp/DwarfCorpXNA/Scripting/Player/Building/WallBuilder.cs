@@ -107,10 +107,6 @@ namespace DwarfCorp
         public Faction Faction { get; set; }
         public List<WallBuilder> Designations { get; set; }
         public VoxelType CurrentVoxelType { get; set; }
-
-        [JsonIgnore]
-        public Texture2D BlockTextures { get; set; }
-
         private List<Voxel> Selected { get; set; }
         private bool verified = false;
             [JsonIgnore]
@@ -127,12 +123,11 @@ namespace DwarfCorp
             
         }
 
-        public PutDesignator(Faction faction, Texture2D blockTextures, WorldManager world)
+        public PutDesignator(Faction faction, WorldManager world)
         {
             World = world;
             Faction = faction;
             Designations = new List<WallBuilder>();
-            BlockTextures = blockTextures;
             Selected = new List<Voxel>();
         }
 
@@ -204,7 +199,7 @@ namespace DwarfCorp
             
             float t = (float)gameTime.TotalGameTime.TotalSeconds;
             float st = (float) Math.Sin(t * 4) * 0.5f + 0.5f;
-            effect.MainTexture = BlockTextures;
+            effect.MainTexture = World.ChunkManager.ChunkData.Tilemap;
             effect.LightRampTint = Color.White;
             effect.VertexColorTint = new Color(0.1f, 0.9f, 1.0f, 0.5f * st + 0.45f);
             foreach(WallBuilder put in Designations)
@@ -217,6 +212,11 @@ namespace DwarfCorp
                     pass.Apply();
                     VoxelLibrary.GetPrimitive(put.Type.Name).Render(graphics);
                 }
+            }
+
+            if (Selected == null)
+            {
+                Selected = new List<Voxel>();
             }
 
             if (CurrentVoxelType == null)
