@@ -13,6 +13,7 @@ namespace DwarfCorp.NewGui
     public class BuildWallInfo : Widget
     {
         public VoxelType Data;
+        public GameMaster Master;
 
         public override void Construct()
         {
@@ -27,6 +28,14 @@ namespace DwarfCorp.NewGui
             Font = "font";
             Text = builder.ToString();
         }
-        
+
+        public bool CanBuild()
+        {
+            var requirment = ResourceLibrary.Resources[Data.ResourceToRelease];
+            foreach (var resource in Master.Faction.ListResources())
+                if (resource.Value.ResourceType == requirment.Type) return true;
+            return false;
+        }
+
     }
 }

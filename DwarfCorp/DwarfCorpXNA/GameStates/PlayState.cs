@@ -551,6 +551,8 @@ namespace DwarfCorp.GameStates
 
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
 
+            #region Announcer and info tray
+
             World.OnAnnouncement = (title, message, clickAction) =>
                 {
                     var announcer = GuiRoot.RootItem.AddChild(new NewGui.AnnouncementPopup
@@ -579,10 +581,9 @@ namespace DwarfCorp.GameStates
                 Transparent = true
             }) as NewGui.InfoTray;
 
-            #region Setup bottom right tray
+            #endregion
 
-            var roomIcons = GuiRoot.GetTileSheet("rooms") as Gum.TileSheet;
-            var craftIcons = GuiRoot.GetTileSheet("crafts") as Gum.TileSheet;
+            #region Setup tool tray tray
 
             BottomRightTray = GuiRoot.RootItem.AddChild(new NewGui.ToolTray.Tray
             {
@@ -625,6 +626,7 @@ namespace DwarfCorp.GameStates
                     {
                         Icon = new Gum.TileReference("tool-icons", 2),
                         KeepChildVisible = true,
+                        ExpandChildWhenDisabled = true,
                         ExpansionChild = new NewGui.ToolTray.Tray
                         {
                             ItemSource = RoomLibrary.GetRoomTypes().Select(name => RoomLibrary.GetData(name))
@@ -634,7 +636,8 @@ namespace DwarfCorp.GameStates
                                     ExpansionChild = new NewGui.BuildRoomInfo
                                     {
                                         Data = data,
-                                        Rect = new Rectangle(0,0,256,128)
+                                        Rect = new Rectangle(0,0,256,128),
+                                        Master = Master
                                     },
                                     OnClick = (sender, args) =>
                                     {
@@ -644,8 +647,12 @@ namespace DwarfCorp.GameStates
                                         Master.Faction.CraftBuilder.IsEnabled = false;
                                         ChangeTool(GameMaster.ToolMode.Build);
                                         World.ShowToolPopup("Click and drag to build " + data.Name);
+                                    },
+                                    OnConstruct = (sender) =>
+                                    {
+                                        ToolbarItems.Add(new ToolbarItem(sender, () =>
+                                            ((sender as NewGui.ToolTray.Icon).ExpansionChild as NewGui.BuildRoomInfo).CanBuild()));
                                     }
-                                    //Todo: Add to toolbar item list & disable if not enough resources?
                                 })
                         }
                     },
@@ -656,6 +663,7 @@ namespace DwarfCorp.GameStates
                     {
                         Icon = new Gum.TileReference("tool-icons", 2),
                         KeepChildVisible = true,
+                        ExpandChildWhenDisabled = true,
                         ExpansionChild = new NewGui.ToolTray.Tray
                         {
                             ItemSource = VoxelLibrary.GetTypes().Where(voxel => voxel.IsBuildable)
@@ -666,7 +674,8 @@ namespace DwarfCorp.GameStates
                                     ExpansionChild = new NewGui.BuildWallInfo
                                     {
                                         Data = data,
-                                        Rect = new Rectangle(0,0,256,128)
+                                        Rect = new Rectangle(0,0,256,128),
+                                        Master = Master
                                     },
                                     OnClick = (sender, args) =>
                                     {
@@ -676,8 +685,12 @@ namespace DwarfCorp.GameStates
                                         Master.Faction.CraftBuilder.IsEnabled = false;
                                         ChangeTool(GameMaster.ToolMode.Build);
                                         World.ShowToolPopup("Click and drag to build " + data.Name + " wall.");
+                                    },
+                                    OnConstruct = (sender) =>
+                                    {
+                                        ToolbarItems.Add(new ToolbarItem(sender, () =>
+                                            ((sender as NewGui.ToolTray.Icon).ExpansionChild as NewGui.BuildWallInfo).CanBuild()));
                                     }
-                                    //Todo: Add to toolbar item list & disable if not enough resources?
                                 })
                         }
                     },
@@ -693,7 +706,6 @@ namespace DwarfCorp.GameStates
                             ItemSource = CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Object)
                                 .Select(data => new NewGui.ToolTray.Icon
                                 {
-                                    // Todo: Need to get all the icons into one sheet.
                                     Icon = data.Icon,
                                     KeepChildVisible = true, // So the player can interact with the popup.
                                     ExpandChildWhenDisabled = true,
