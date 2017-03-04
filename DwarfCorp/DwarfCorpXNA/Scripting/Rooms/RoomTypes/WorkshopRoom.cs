@@ -98,7 +98,7 @@ namespace DwarfCorp
             RoomTemplate anvil = new RoomTemplate(PlacementType.All, anvilTemp, anvilAcc);
             workshopTemplates.Add(anvil);
 
-            return new RoomData(WorkshopName, 2, "CobblestoneFloor", roomResources, workshopTemplates,
+            return new RoomData(WorkshopName, 2, "Cobble", roomResources, workshopTemplates,
                 new Gum.TileReference("rooms", 5))
             {
                 Description = "Craftsdwarves build mechanisms here",

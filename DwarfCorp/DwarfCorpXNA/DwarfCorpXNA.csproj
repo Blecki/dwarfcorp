@@ -158,6 +158,7 @@
     <Compile Include="Components\Graphics\Tinter.cs" />
     <Compile Include="Components\GUI\MinimapIcon.cs" />
     <Compile Include="Components\GUI\WorldGUIObject.cs" />
+    <Compile Include="Components\IRenderableComponent.cs" />
     <Compile Include="Components\Physics\Flammable.cs" />
     <Compile Include="Components\Physics\Physics.cs" />
     <Compile Include="Components\Systems\ComponentManager.cs" />
@@ -357,6 +358,7 @@
     <Compile Include="Gum\TextureAtlasCompiler.cs" />
     <Compile Include="Gum\TileReference.cs" />
     <Compile Include="Gum\Widget.cs" />
+    <Compile Include="Gum\Widgets\Button.cs" />
     <Compile Include="Gum\Widgets\CheckBox.cs" />
     <Compile Include="Gum\Widgets\ComboBox.cs" />
     <Compile Include="Gum\Widgets\EditableTextField.cs" />
@@ -440,6 +442,7 @@
     <Compile Include="Scripting\ControlFlow\Not.cs" />
     <Compile Include="Scripting\ControlFlow\Parallel.cs" />
     <Compile Include="Scripting\ControlFlow\Select.cs" />
+    <Compile Include="Scripting\ControlFlow\SeqComp.cs" />
     <Compile Include="Scripting\ControlFlow\Sequence.cs" />
     <Compile Include="Scripting\ControlFlow\Wait.cs" />
     <Compile Include="Scripting\ControlFlow\WhileLoop.cs" />

@@ -124,14 +124,24 @@ namespace DwarfCorp
         /// </value>
         public List<string> Tags { get; set; }
 
+        
+        /// <summary>
+        /// Gets or sets the world.
+        /// </summary>
+        /// <value>
+        /// The world.
+        /// </value>
+        [JsonIgnore]
+        public WorldManager World { get; set; }
 
         /// <summary>
-        /// Gets the component manager (statically stored in PlayState).
+        /// Gets the component manager (from world)
         /// </summary>
         /// <value>
         /// The manager.
-        /// </value>
-        public ComponentManager Manager { get; set; }
+        /// </value
+        [JsonIgnore]
+        public ComponentManager Manager { get { return World.ComponentManager; } }
 
         /// <summary>
         /// A list of the GameComponentCache type handlers this component subscribes to.
@@ -170,7 +180,7 @@ namespace DwarfCorp
         void OnDeserializing(StreamingContext context)
         {
             // Assume the context passed in is a WorldManager
-            Manager = ((WorldManager) context.Context).ComponentManager;
+            World = ((WorldManager) context.Context);
         }
 
         /// <summary>
@@ -178,7 +188,7 @@ namespace DwarfCorp
         /// </summary>
         public GameComponent()
         {
-            Manager = null;
+            World = null;
             Children = new List<GameComponent>();
             Name = "uninitialized";
             IsVisible = true;
@@ -192,9 +202,10 @@ namespace DwarfCorp
         /// Initializes a new instance of the <see cref="GameComponent"/> class, while adding it to the component manager.
         /// </summary>
         /// <param name="createNew">if set to <c>true</c> adds this component to the manager..</param>
+        /// <param name="manager">The component manager to add the component to</param>
         public GameComponent(bool createNew, ComponentManager manager)
         {
-            Manager = manager;
+            World = manager.World;
             lock (globalIdLock)
             {
                 GlobalID = maxGlobalID;
@@ -221,6 +232,7 @@ namespace DwarfCorp
         /// </summary>
         /// <param name="name">The name of the component.</param>
         /// <param name="parent">The parent component.</param>
+        /// <param name="manager">The component manager.</param>
         public GameComponent(string name, GameComponent parent, ComponentManager manager) :
             this(true, manager)
         {

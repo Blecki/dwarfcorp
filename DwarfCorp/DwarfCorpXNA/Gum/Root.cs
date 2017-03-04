@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DwarfCorp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -34,7 +35,7 @@ namespace Gum
         public MousePointer MousePointer = null;
         public Point MousePosition = new Point(0, 0);
         private DateTime MouseMotionTime = DateTime.Now;
-        public float SecondsBeforeTooltip = 1.0f;
+        public float SecondsBeforeTooltip = 0.5f;
         public String TooltipFont = null;
         public int TooltipTextSize = 1;
         public float CursorBlinkTime = 0.3f;
@@ -134,7 +135,7 @@ namespace Gum
         /// Widgets must be constructed or some operations will fail. Use this function to construct a widget 
         /// when the widget is not being immediately added to its parent.
         /// </summary>
-        /// <param name="CreatedWidget"></param>
+        /// <param name="NewWidget"></param>
         /// <returns></returns>
         public Widget ConstructWidget(Widget NewWidget)
         {
@@ -216,10 +217,11 @@ namespace Gum
                     TextColor = new Vector4(1, 1, 1, 1)
                 });
             var bestSize = item.GetBestSize();
-            item.Rect = new Rectangle(
+            Rectangle rect = new Rectangle(
                 Where.X + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2, 
                 Where.Y, bestSize.X, bestSize.Y);
-
+            rect = MathFunctions.SnapRect(rect, RealScreen);
+            item.Rect = rect;
             RootItem.AddChild(item);
 
             if (time > 0.0f)
@@ -265,6 +267,8 @@ namespace Gum
         /// Shortcut to call an action without having to check for null.
         /// </summary>
         /// <param name="Action"></param>
+        /// <param name="Widget"></param>
+        /// <param name="Args"></param>
         public void SafeCall<T>(Action<Widget, T> Action, Widget Widget, T Args)
         {
             if (Action != null) Action(Widget, Args);
@@ -275,6 +279,7 @@ namespace Gum
         /// Shortcut to call an action without having to check for null.
         /// </summary>
         /// <param name="Action"></param>
+        /// <param name="Widget"></param>
         public void SafeCall(Action<Widget> Action, Widget Widget)
         {
             if (Action != null) Action(Widget);
@@ -305,7 +310,8 @@ namespace Gum
         /// <summary>
         /// Process mouse events.
         /// </summary>
-        /// <param name="State"></param>
+        /// <param name="Event"></param>
+        /// <param name="Args"></param>
         public void HandleInput(InputEvents Event, InputEventArgs Args)
         {
             switch (Event)

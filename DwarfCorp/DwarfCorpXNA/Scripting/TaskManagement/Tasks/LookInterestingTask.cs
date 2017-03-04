@@ -90,6 +90,7 @@ namespace DwarfCorp
         /// Finds a voxel to stand on within a radius of N voxels using BFS.
         /// </summary>
         /// <param name="radius">The radius to search in.</param>
+        /// <param name="checkVoxel">The voxel to start the search from</param>
         /// <returns>The voxel within the radius which is over land if it exists, null otherwise.</returns>
         public Voxel FindLand(int radius, Voxel checkVoxel)
         {

@@ -148,6 +148,12 @@ namespace DwarfCorp
                 return;
             }
 
+            // If we have no data objects at all and we aren't going to be adding new ones there's no point in running
+            // any more code here.  The only way to get Data.Count to be zero is after processing AddRemove in the code block
+            // which means numActiveInstances will properly be set to zero.  The moment an Addition happens we'll pass this check
+            // and start outputting again.
+            if (Data.Count + Additions.Count == 0) return;
+
             DeleteNulls();
             sortTimer.Update(time);
 
@@ -157,7 +163,9 @@ namespace DwarfCorp
                 sortTimer.Reset(sortTimer.TargetTimeSeconds);
             }
 
-            AddRemove();
+            // There's no reason to go into this function and deal with the Mutex if we have nothing to do.
+            if (Additions.Count + Removals.Count > 0)
+                AddRemove();
 
 
             if (instanceVertexes == null)

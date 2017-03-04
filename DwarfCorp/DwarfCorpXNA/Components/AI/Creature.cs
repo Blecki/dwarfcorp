@@ -118,7 +118,6 @@ namespace DwarfCorp
         public Egg(string adult, ComponentManager manager, Vector3 position) :
             base(false, manager)
         {
-            Manager = manager;
             Adult = adult;
             Birthday = Manager.World.Time.CurrentDate + new TimeSpan(0, 12, 0, 0);
 
@@ -510,14 +509,14 @@ namespace DwarfCorp
             {
                 if (EggTimer == null)
                 {
-                    EggTimer = new Timer(120.0f, false);
+                    EggTimer = new Timer(1200.0f, false);
                 }
                 EggTimer.Update(gameTime);
 
                 if (EggTimer.HasTriggered)
                 {
                     LayEgg();
-                    EggTimer = new Timer(120.0f + MathFunctions.Rand(-30.0f, 30.0f), false);
+                    EggTimer = new Timer(1200.0f + MathFunctions.Rand(-30.0f, 30.0f), false);
                 }
             }
         }
@@ -725,7 +724,7 @@ namespace DwarfCorp
         /// Basic Act that causes the creature to wait for the specified time.
         /// Also draws a loading bar above the creature's head when relevant.
         /// </summary>
-        public IEnumerable<Act.Status> HitAndWait(float f, bool loadBar)
+        public IEnumerable<Act.Status> HitAndWait(float f, bool loadBar, Vector3 pos)
         {
             var waitTimer = new Timer(f, true);
 
@@ -745,7 +744,7 @@ namespace DwarfCorp
                         waitTimer.CurrentTimeSeconds / waitTimer.TargetTimeSeconds);
                 }
 
-                Attacks[0].PerformNoDamage(this, DwarfTime.LastTime, AI.Position);
+                Attacks[0].PerformNoDamage(this, DwarfTime.LastTime, pos);
                 Physics.Velocity = Vector3.Zero;
                 Sprite.ReloopAnimations(CharacterMode.Attacking);
                 yield return Act.Status.Running;
@@ -753,6 +752,7 @@ namespace DwarfCorp
             Sprite.PauseAnimations(CharacterMode.Attacking);
             CurrentCharacterMode = CharacterMode.Idle;
             yield return Act.Status.Success;
+            yield break;
         }
 
         /// <summary>

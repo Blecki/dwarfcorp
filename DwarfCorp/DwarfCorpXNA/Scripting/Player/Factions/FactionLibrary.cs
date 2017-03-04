@@ -74,7 +74,8 @@ namespace DwarfCorp
                 Name = TextGenerator.GenerateRandom(Datastructures.SelectRandom(race.FactionNameTemplates).ToArray()),
                 PrimaryColor = new HSLColor(idx * (255.0f / n), 255.0, MathFunctions.Rand(100.0f, 200.0f)),
                 SecondaryColor = new HSLColor(MathFunctions.Rand(0, 255.0f), 255.0, MathFunctions.Rand(100.0f, 200.0f)),
-                TradeMoney = MathFunctions.Rand(250.0f, 20000.0f)
+                TradeMoney = MathFunctions.Rand(250.0f, 20000.0f),
+                Center = new Point(MathFunctions.RandInt(0, Overworld.Map.GetLength(0)), MathFunctions.RandInt(0, Overworld.Map.GetLength(1)))
             };
         }
 

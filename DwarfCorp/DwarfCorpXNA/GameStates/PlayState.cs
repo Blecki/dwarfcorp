@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+using System.IO;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
@@ -82,6 +83,7 @@ namespace DwarfCorp.GameStates
         /// </summary>
         /// <param name="game">The program currently running</param>
         /// <param name="stateManager">The game state manager this state will belong to</param>
+        /// <param name="world">The world manager</param>
         public PlayState(DwarfGame game, GameStateManager stateManager, WorldManager world) :
             base(game, "PlayState", stateManager)
         {
@@ -294,6 +296,12 @@ namespace DwarfCorp.GameStates
 
             if (World.ShowingWorld)
             {
+                /*For regenerating the voxel icon image! Do not delete!*/
+                //Texture2D tex = VoxelLibrary.RenderIcons(Game.GraphicsDevice, World.DefaultShader, World.ChunkManager, 256, 256, 32);
+                //Game.GraphicsDevice.SetRenderTarget(null);
+                //tex.SaveAsPng(new FileStream("voxels.png", FileMode.Create),  256, 256);
+                //Game.Exit();
+
                 GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
                 World.Render(gameTime);
 
@@ -600,7 +608,8 @@ namespace DwarfCorp.GameStates
                         {
                             ToolbarItems.Add(new ToolbarItem(sender, () => true));
                             AddToolSelectIcon(GameMaster.ToolMode.SelectUnits, sender);
-                        }
+                        },
+                        Tooltip = "Select dwarves"
                     },
                     #endregion
 
@@ -616,6 +625,7 @@ namespace DwarfCorp.GameStates
                                 minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Build))));
                             AddToolSelectIcon(GameMaster.ToolMode.Build, sender);
                         },
+                        Tooltip = "Build",
                         ExpansionChild = new NewGui.ToolTray.Tray
                         {
                             ItemSource = new NewGui.ToolTray.Icon[]
@@ -625,6 +635,7 @@ namespace DwarfCorp.GameStates
                     new NewGui.ToolTray.Icon
                     {
                         Icon = new Gum.TileReference("tool-icons", 2),
+                        Tooltip = "Build rooms",
                         KeepChildVisible = true,
                         ExpandChildWhenDisabled = true,
                         ExpansionChild = new NewGui.ToolTray.Tray
@@ -664,13 +675,15 @@ namespace DwarfCorp.GameStates
                         Icon = new Gum.TileReference("tool-icons", 2),
                         KeepChildVisible = true,
                         ExpandChildWhenDisabled = true,
+                        Tooltip = "Build walls",
                         ExpansionChild = new NewGui.ToolTray.Tray
                         {
                             ItemSource = VoxelLibrary.GetTypes().Where(voxel => voxel.IsBuildable)
                                 .Select(data => new NewGui.ToolTray.Icon
                                 {
+                                    Tooltip = "Build " + data.Name,
                                     // Todo: Need icons for wall types.
-                                    Icon = new Gum.TileReference("rooms", 0),
+                                    Icon = new Gum.TileReference("voxels", data.ID),
                                     ExpansionChild = new NewGui.BuildWallInfo
                                     {
                                         Data = data,
@@ -700,6 +713,7 @@ namespace DwarfCorp.GameStates
                     new NewGui.ToolTray.Icon
                     {
                         Icon = new Gum.TileReference("tool-icons", 2),
+                        Tooltip = "Craft items",
                         KeepChildVisible = true,
                         ExpansionChild = new NewGui.ToolTray.Tray
                         {
@@ -707,6 +721,7 @@ namespace DwarfCorp.GameStates
                                 .Select(data => new NewGui.ToolTray.Icon
                                 {
                                     Icon = data.Icon,
+                                    Tooltip = "Craft " + data.Name,
                                     KeepChildVisible = true, // So the player can interact with the popup.
                                     ExpandChildWhenDisabled = true,
                                     ExpansionChild = new NewGui.BuildCraftInfo
@@ -746,11 +761,13 @@ namespace DwarfCorp.GameStates
                         KeepChildVisible = true,
                         ExpansionChild = new NewGui.ToolTray.Tray
                         {
+                            Tooltip = "Craft resource",
                             ItemSource = CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Resource && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated) && !ResourceLibrary.Resources[item.ResourceCreated].Tags.Contains(Resource.ResourceTags.Edible))
                                 .Select(data => new NewGui.ToolTray.Icon
                                 {
                                     // Todo: Need to get all the icons into one sheet.
                                     Icon = data.Icon,
+                                    Tooltip = "Craft " + data.Name,
                                     KeepChildVisible = true, // So the player can interact with the popup.
                                     ExpansionChild = new NewGui.BuildCraftInfo
                                     {
@@ -788,6 +805,7 @@ namespace DwarfCorp.GameStates
                     {
                         Icon = new Gum.TileReference("tool-icons", 27),
                         KeepChildVisible = true,
+                        Tooltip = "Cook food",
                         OnConstruct = (sender) =>
                         {
                             ToolbarItems.Add(new ToolbarItem(sender, () =>
@@ -832,6 +850,7 @@ namespace DwarfCorp.GameStates
                     new NewGui.ToolTray.Icon
                     {
                         Icon = new Gum.TileReference("tool-icons", 0),
+                        Tooltip = "Dig",
                         OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Dig),
                         OnConstruct = (sender) =>
                         {
@@ -847,6 +866,7 @@ namespace DwarfCorp.GameStates
                     new NewGui.ToolTray.Icon
                     {
                         Icon = new Gum.TileReference("tool-icons", 6),
+                        Tooltip = "Gather",
                         OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Gather),
                         OnConstruct = (sender) =>
                         {
@@ -862,6 +882,7 @@ namespace DwarfCorp.GameStates
                     new NewGui.ToolTray.Icon
                     {
                         Icon = new Gum.TileReference("tool-icons", 1),
+                        Tooltip = "Chop trees",
                         OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Chop),
                         OnConstruct = (sender) =>
                         {
@@ -877,6 +898,7 @@ namespace DwarfCorp.GameStates
                     new NewGui.ToolTray.Icon
                     {
                         Icon = new Gum.TileReference("tool-icons", 4),
+                        Tooltip = "Guard",
                         OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Guard),
                         OnConstruct = (sender) =>
                         {
@@ -892,6 +914,7 @@ namespace DwarfCorp.GameStates
                     new NewGui.ToolTray.Icon
                     {
                         Icon = new Gum.TileReference("tool-icons", 3),
+                        Tooltip = "Attack",
                         OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Attack),
                         OnConstruct = (sender) =>
                         {
@@ -907,6 +930,7 @@ namespace DwarfCorp.GameStates
                     new NewGui.ToolTray.Icon
                     {
                         Icon = new Gum.TileReference("tool-icons", 13),
+                        Tooltip = "Farm",
                         OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Farm),
                         OnConstruct = (sender) =>
                         {
@@ -922,6 +946,7 @@ namespace DwarfCorp.GameStates
                     new NewGui.ToolTray.Icon
                     {
                         Icon = new Gum.TileReference("tool-icons", 14),
+                        Tooltip = "Magic",
                         OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Magic),
                         OnConstruct = (sender) =>
                         {

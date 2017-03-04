@@ -198,8 +198,6 @@ namespace DwarfCorp
                 OnDestroyed += Body_OnDestroyed;
 
             lastBounds = GetBoundingBox();
-
-            AddCacheType(GameObjectCaching.RenderBodyCache);
         }
 
         public Body(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool addToCollisionManager) :
@@ -225,7 +223,6 @@ namespace DwarfCorp
 
             lastBounds = GetBoundingBox();
 
-            AddCacheType(GameObjectCaching.RenderBodyCache);
         }
 
         public void OrientToWalls()
@@ -339,19 +336,19 @@ namespace DwarfCorp
             }
         }
 
-        /// <summary>
-        /// Renders the component.
-        /// </summary>
-        /// <param name="gameTime">The game time.</param>
-        /// <param name="chunks">The chunk manager.</param>
-        /// <param name="camera">The camera.</param>
-        /// <param name="spriteBatch">The sprite batch.</param>
-        /// <param name="graphicsDevice">The graphics device.</param>
-        /// <param name="effect">The shader to use.</param>
-        /// <param name="renderingForWater">if set to <c>true</c> rendering for water reflections.</param>
-        public virtual void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
-        {
-        }
+        ///// <summary>
+        ///// Renders the component.
+        ///// </summary>
+        ///// <param name="gameTime">The game time.</param>
+        ///// <param name="chunks">The chunk manager.</param>
+        ///// <param name="camera">The camera.</param>
+        ///// <param name="spriteBatch">The sprite batch.</param>
+        ///// <param name="graphicsDevice">The graphics device.</param>
+        ///// <param name="effect">The shader to use.</param>
+        ///// <param name="renderingForWater">if set to <c>true</c> rendering for water reflections.</param>
+        //public virtual void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
+        //{
+        //}
 
 
         public void UpdateTransformsRecursive(Body ParentBody)

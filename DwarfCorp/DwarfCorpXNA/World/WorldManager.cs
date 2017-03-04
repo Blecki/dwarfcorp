@@ -357,6 +357,13 @@ namespace DwarfCorp
             {
                 SetLoadingMessage("Initializing ...");
 
+                SetLoadingMessage("Creating Sky...");
+                CreateSky();
+
+                if (!string.IsNullOrEmpty(ExistingFile))
+                {
+                    LoadExistingFile();
+                }
                 if (Natives == null)
                 {
                     FactionLibrary library = new FactionLibrary();
@@ -376,9 +383,6 @@ namespace DwarfCorp
 
                 SetLoadingMessage("Creating Particles ...");
                 CreateParticles();
-
-                SetLoadingMessage("Creating Sky...");
-                CreateSky();
 
                 SetLoadingMessage("Creating Shadows...");
                 CreateShadows();
@@ -525,13 +529,46 @@ namespace DwarfCorp
             EntityFactory.Initialize(this);
         }
 
+        public void LoadExistingFile()
+        {
+            SetLoadingMessage("Loading " + ExistingFile);
+            gameFile = new GameFile(ExistingFile, DwarfGame.COMPRESSED_BINARY_SAVES, this);
+            Sky.TimeOfDay = gameFile.Data.Metadata.TimeOfDay;
+            Time = gameFile.Data.Metadata.Time;
+            WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
+            WorldScale = gameFile.Data.Metadata.WorldScale;
+            GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
+            GameSettings.Default.ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
+            GameID = gameFile.Data.GameID;
+            if (gameFile.Data.Metadata.OverworldFile != null && gameFile.Data.Metadata.OverworldFile != "flat")
+            {
+                SetLoadingMessage("Loading world " + gameFile.Data.Metadata.OverworldFile);
+                Overworld.Name = gameFile.Data.Metadata.OverworldFile;
+                DirectoryInfo worldDirectory =
+                    Directory.CreateDirectory(DwarfGame.GetGameDirectory() + ProgramData.DirChar + "Worlds" +
+                                              ProgramData.DirChar + Overworld.Name);
+                OverworldFile overWorldFile =
+                    new OverworldFile(
+                        worldDirectory.FullName + ProgramData.DirChar + "world." + OverworldFile.CompressedExtension,
+                        DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
+                Overworld.Map = overWorldFile.Data.CreateMap();
+                Overworld.Name = overWorldFile.Data.Name;
+                WorldWidth = Overworld.Map.GetLength(1);
+                WorldHeight = Overworld.Map.GetLength(0);
+            }
+            else
+            {
+                SetLoadingMessage("Generating flat world..");
+                Overworld.CreateUniformLand(GraphicsDevice);
+            }
+        }
+
         /// <summary>
         /// Creates the terrain that is immediately around the player's spawn point.
         /// If loading from a file, loads the existing terrain from a file.
         /// </summary>
         public void GenerateInitialChunks()
         {
-            gameFile = null;
 
             bool fileExists = !string.IsNullOrEmpty(ExistingFile);
 
@@ -539,38 +576,6 @@ namespace DwarfCorp
             // This is preliminary stuff that just makes sure the file exists and can be loaded.
             if (fileExists)
             {
-                SetLoadingMessage("Loading " + ExistingFile);
-                gameFile = new GameFile(ExistingFile, DwarfGame.COMPRESSED_BINARY_SAVES, this);
-                Sky.TimeOfDay = gameFile.Data.Metadata.TimeOfDay;
-                Time = gameFile.Data.Metadata.Time;
-                WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
-                WorldScale = gameFile.Data.Metadata.WorldScale;
-                GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
-                GameSettings.Default.ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
-
-                if (gameFile.Data.Metadata.OverworldFile != null && gameFile.Data.Metadata.OverworldFile != "flat")
-                {
-                    SetLoadingMessage("Loading world " + gameFile.Data.Metadata.OverworldFile);
-                    Overworld.Name = gameFile.Data.Metadata.OverworldFile;
-                    DirectoryInfo worldDirectory =
-                        Directory.CreateDirectory(DwarfGame.GetGameDirectory() + ProgramData.DirChar + "Worlds" +
-                                                  ProgramData.DirChar + Overworld.Name);
-                    OverworldFile overWorldFile =
-                        new OverworldFile(
-                            worldDirectory.FullName + ProgramData.DirChar + "world." + OverworldFile.CompressedExtension,
-                            DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
-                    Overworld.Map = overWorldFile.Data.CreateMap();
-                    Overworld.Name = overWorldFile.Data.Name;
-                    WorldWidth = Overworld.Map.GetLength(1);
-                    WorldHeight = Overworld.Map.GetLength(0);
-                }
-                else
-                {
-                    SetLoadingMessage("Generating flat world..");
-                    Overworld.CreateUniformLand(GraphicsDevice);
-                }
-
-                GameID = gameFile.Data.GameID;
             }
             else
             {
@@ -1448,16 +1453,6 @@ namespace DwarfCorp
             effect.ClippingEnabled = true;
             GraphicsDevice.BlendState = BlendState.NonPremultiplied;
             ChunkManager.Render(Camera, gameTime, GraphicsDevice, effect, Matrix.Identity);
-
-            if (Master.CurrentToolMode == GameMaster.ToolMode.Build)
-            {
-                effect.View = view;
-                effect.Projection = Camera.ProjectionMatrix;
-                effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
-                GraphicsDevice.BlendState = BlendState.NonPremultiplied;
-                Master.Faction.WallBuilder.Render(gameTime, GraphicsDevice, effect);
-                Master.Faction.CraftBuilder.Render(gameTime, GraphicsDevice, effect);
-            }
             Camera.ViewMatrix = viewMatrix;
             effect.ClippingEnabled = true;
         }
@@ -1661,6 +1656,17 @@ namespace DwarfCorp
 
             DrawComponents(gameTime, DefaultShader, Camera.ViewMatrix, ComponentManager.WaterRenderType.None,
                 lastWaterHeight);
+
+
+            if (Master.CurrentToolMode == GameMaster.ToolMode.Build)
+            {
+                DefaultShader.View = Camera.ViewMatrix;
+                DefaultShader.Projection = Camera.ProjectionMatrix;
+                DefaultShader.CurrentTechnique = DefaultShader.Techniques[Shader.Technique.Textured];
+                GraphicsDevice.BlendState = BlendState.NonPremultiplied;
+                Master.Faction.WallBuilder.Render(gameTime, GraphicsDevice, DefaultShader);
+                Master.Faction.CraftBuilder.Render(gameTime, GraphicsDevice, DefaultShader);
+            }
 
             WaterRenderer.DrawWater(
                 GraphicsDevice,

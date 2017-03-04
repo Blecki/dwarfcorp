@@ -120,7 +120,7 @@ namespace DwarfCorp
                 {Resource.ResourceTags.Stone, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Stone)},
             };
 
-            return new RoomData(TrainingRoomName, 3, "CobblestoneFloor", roomResources, trainingTemplates, 
+            return new RoomData(TrainingRoomName, 3, "Cobble", roomResources, trainingTemplates, 
                 new Gum.TileReference("rooms", 3))
             {
                 Description = "Military dwarves train here",
