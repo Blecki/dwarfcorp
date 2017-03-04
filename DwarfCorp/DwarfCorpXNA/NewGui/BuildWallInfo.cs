@@ -33,7 +33,8 @@ namespace DwarfCorp.NewGui
         {
             var requirment = ResourceLibrary.Resources[Data.ResourceToRelease];
             foreach (var resource in Master.Faction.ListResources())
-                if (resource.Value.ResourceType == requirment.Type) return true;
+                if (resource.Value.ResourceType == requirment.Type && resource.Value.NumResources > 0)
+                    return true;
             return false;
         }
 

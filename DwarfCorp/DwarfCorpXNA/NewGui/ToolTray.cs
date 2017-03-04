@@ -96,6 +96,9 @@ namespace DwarfCorp.NewGui
 
                         if (ExpansionChild.Rect.X < Parent.Rect.X)
                             ExpansionChild.Rect.X = Parent.Rect.X;
+
+                        if (ExpansionChild.Rect.Right > Root.VirtualScreen.Right)
+                            ExpansionChild.Rect.X = Root.VirtualScreen.Right - ExpansionChild.Rect.Width;
                     }
                 };
             }
