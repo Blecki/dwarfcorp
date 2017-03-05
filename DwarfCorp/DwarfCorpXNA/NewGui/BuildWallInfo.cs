@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,16 +16,17 @@ namespace DwarfCorp.NewGui
 
         public override void Construct()
         {
-            Border = "border-fancy";
+            Border = "border-dark";
 
             var builder = new StringBuilder();
-            builder.AppendLine(String.Format("{0} Wall", Data.Name));
+            builder.AppendLine(String.Format("Place {0}", Data.Name));
             builder.AppendLine(String.Format("Strength: {0}", Data.StartingHealth));
             builder.AppendLine(String.Format("Requires: {0}", ResourceLibrary.Resources[Data.ResourceToRelease].ResourceName));
-            builder.Append("CLICK TO BUILD");
+            builder.Append("Click to build.");
             
             Font = "font";
             Text = builder.ToString();
+            TextColor = new Vector4(1, 1, 1, 1);
         }
         
     }

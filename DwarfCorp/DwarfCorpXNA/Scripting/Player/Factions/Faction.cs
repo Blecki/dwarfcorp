@@ -898,6 +898,11 @@ namespace DwarfCorp
             return true;
         }
 
+        public bool HasResources(ResourceLibrary.ResourceType resource)
+        {
+            return HasResources(new List<ResourceAmount>() {new ResourceAmount(resource)});
+        }
+
         public bool RemoveResources(List<ResourceAmount> resources, Vector3 position, bool createItems = true)
         {
             Dictionary<ResourceLibrary.ResourceType, ResourceAmount> amounts = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();

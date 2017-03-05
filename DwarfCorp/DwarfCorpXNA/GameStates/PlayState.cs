@@ -667,31 +667,42 @@ namespace DwarfCorp.GameStates
                     {
                         Icon = new Gum.TileReference("tool-icons", 2),
                         KeepChildVisible = true,
-                        Tooltip = "Build walls",
+                        Tooltip = "Place blocks",
                         ExpansionChild = new NewGui.ToolTray.Tray
                         {
-                            ItemSource = VoxelLibrary.GetTypes().Where(voxel => voxel.IsBuildable)
-                                .Select(data => new NewGui.ToolTray.Icon
+                                ItemSource =  new List<Gum.Widget>(),
+                                OnShown = (widget) =>
                                 {
-                                    Tooltip = "Build " + data.Name,
-                                    // Todo: Need icons for wall types.
-                                    Icon = new Gum.TileReference("voxels", data.ID),
-                                    ExpansionChild = new NewGui.BuildWallInfo
-                                    {
-                                        Data = data,
-                                        Rect = new Rectangle(0,0,256,128)
-                                    },
-                                    OnClick = (sender, args) =>
-                                    {
-                                        Master.Faction.RoomBuilder.CurrentRoomData = null;
-                                        Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                                        Master.Faction.WallBuilder.CurrentVoxelType = data;
-                                        Master.Faction.CraftBuilder.IsEnabled = false;
-                                        ChangeTool(GameMaster.ToolMode.Build);
-                                        World.ShowToolPopup("Click and drag to build " + data.Name + " wall.");
-                                    },
-                                    //Todo: Add to toolbar item list & disable if not enough resources?
-                                })
+                                    widget.Clear();
+                                    ((NewGui.ToolTray.Tray) widget).ItemSource = VoxelLibrary.GetTypes()
+                                        .Where(voxel => voxel.IsBuildable && World.PlayerFaction.HasResources(voxel.ResourceToRelease))
+                                        .Select(data => new NewGui.ToolTray.Icon
+                                        {
+                                            Tooltip = "Build " + data.Name,
+                                            // Todo: Need icons for wall types.
+                                            Icon = new Gum.TileReference("voxels", data.ID),
+                                            ExpansionChild = new NewGui.BuildWallInfo
+                                            {
+                                                Data = data,
+                                                Rect = new Rectangle(0, 0, 256, 128)
+                                            },
+                                            OnClick = (sender, args) =>
+                                            {
+                                                Master.Faction.RoomBuilder.CurrentRoomData = null;
+                                                Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+                                                Master.Faction.WallBuilder.CurrentVoxelType = data;
+                                                Master.Faction.CraftBuilder.IsEnabled = false;
+                                                ChangeTool(GameMaster.ToolMode.Build);
+                                                World.ShowToolPopup("Click and drag to build " + data.Name + " wall.");
+                                            },
+                                            Hidden = false
+                                            //Todo: Add to toolbar item list & disable if not enough resources?
+                                        });
+                                    widget.Construct();
+                                    widget.Hidden = false;
+                                    widget.Invalidate();
+                                    widget.Layout();
+                                }
                         }
                     },
                     #endregion

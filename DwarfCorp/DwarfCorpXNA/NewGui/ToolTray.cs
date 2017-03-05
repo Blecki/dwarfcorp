@@ -15,7 +15,10 @@ namespace DwarfCorp.NewGui
 
             public override void Construct()
             {
-                SizeToGrid = new Point(ItemSource.Count(), 1);
+                if (ItemSource != null)
+                {
+                    SizeToGrid = new Point(ItemSource.Count(), 1);
+                }
                 Corners = Scale9Corners.Top | Scale9Corners.Right | Scale9Corners.Left;
                 Hidden = !IsRootTray;
                 base.Construct();
