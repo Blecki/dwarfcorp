@@ -137,7 +137,11 @@ namespace DwarfCorp.GameStates
                         GuiRoot.MousePointer = mouse;
                     };
 
-                World.ShowToolPopup += text => GuiRoot.ShowTooltip(new Point(GuiRoot.MousePosition.X, GuiRoot.MousePosition.Y - 30), text, 3.0f);
+                World.ShowToolPopup += text => GuiRoot.ShowPopup(new NewGui.ToolPopup
+                {
+                    Text = text,
+                    Rect = new Rectangle(GuiRoot.MousePosition.X, GuiRoot.MousePosition.Y, 1, 1)
+                }, Gum.Root.PopupExclusivity.DestroyExistingPopups);
 
                 World.gameState = this;
                 World.OnLoseEvent += World_OnLoseEvent;

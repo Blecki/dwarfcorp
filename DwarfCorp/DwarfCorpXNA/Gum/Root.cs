@@ -28,7 +28,6 @@ namespace Gum
         public int ScaleRatio { get; private set; }
         public Widget RootItem { get; private set; }
         public Widget TooltipItem { get; private set; }
-        public Widget PopupToolTipItem { get; private set; }
         private List<Widget> UpdateItems = new List<Widget>();
         public Widget MouseDownItem { get; private set; }
 
@@ -41,14 +40,6 @@ namespace Gum
         public float CursorBlinkTime = 0.3f;
         internal double RunTime = 0.0f;
 
-        struct TimedAction
-        {
-            public float Start;
-            public float Duration;
-            public Action OnTimeOut;
-        }
-
-        private List<TimedAction> TimedActions = new List<TimedAction>(); 
         private List<Widget> PopupStack = new List<Widget>();
 
         public Root(Point IdealSize, RenderData RenderData)
@@ -79,7 +70,6 @@ namespace Gum
             FocusItem = null;
             PopupStack.Clear();
             TooltipItem = null;
-            PopupToolTipItem = null;
             RootItem = ConstructWidget(new Widget
                 {
                     Rect = VirtualScreen,
@@ -157,7 +147,6 @@ namespace Gum
             if (Object.ReferenceEquals(FocusItem, Widget)) FocusItem = null;
             if (Object.ReferenceEquals(HoverItem, Widget)) HoverItem = null;
             if (Object.ReferenceEquals(TooltipItem, Widget)) TooltipItem = null;
-            if (Object.ReferenceEquals(PopupToolTipItem, Widget)) PopupToolTipItem = null;
             UpdateItems.RemoveAll(p => Object.ReferenceEquals(p, Widget));
             if (PopupStack.Contains(Widget)) PopupStack = new List<Widget>();
         }
@@ -195,58 +184,50 @@ namespace Gum
         {
             RootItem.AddChild(Dialog);
         }
+
+        public enum PopupExclusivity
+        {
+            DestroyExistingPopups,
+            AddToStack
+        }
         
         /// <summary>
         /// Show a widget as a popup. Replaces any existing popup widget already displayed.
         /// </summary>
         /// <param name="Popup"></param>
-        public void ShowPopup(Widget Popup)
+        public void ShowPopup(Widget Popup, PopupExclusivity Exclusivity = PopupExclusivity.AddToStack)
         {
+            if (Exclusivity == PopupExclusivity.DestroyExistingPopups)
+                CleanupPopupStack();
+
             PopupStack.Add(Popup);
             RootItem.AddChild(Popup);
         }
 
-        public void ShowTooltip(Point Where, String Tip, float time = -1.0f)
+        public void ShowTooltip(Point Where, String Tip)
         {
             var item = ConstructWidget(new Widget
-                {
-                    Text = Tip,
-                    Border = "border-dark",
-                    Font = TooltipFont,
-                    TextSize = TooltipTextSize,
-                    TextColor = new Vector4(1, 1, 1, 1)
-                });
+            {
+                Text = Tip,
+                Border = "border-dark",
+                Font = TooltipFont,
+                TextSize = TooltipTextSize,
+                TextColor = new Vector4(1, 1, 1, 1)
+            });
+
             var bestSize = item.GetBestSize();
             Rectangle rect = new Rectangle(
-                Where.X + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2, 
+                Where.X + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2,
                 Where.Y, bestSize.X, bestSize.Y);
+
             rect = MathFunctions.SnapRect(rect, RealScreen);
             item.Rect = rect;
             RootItem.AddChild(item);
+            
+            if (TooltipItem != null)
+                DestroyWidget(TooltipItem);
 
-            if (time > 0.0f)
-            {
-                if (PopupToolTipItem != null)
-                {
-                    DestroyWidget(PopupToolTipItem);
-                }
-                PopupToolTipItem = item;
-                TimedActions.Add(new TimedAction()
-                {
-                    Start = (float)this.RunTime,
-                    Duration = time,
-                    OnTimeOut = () => DestroyWidget(item)
-                });
-            }
-            else
-            {
-                if (TooltipItem != null)
-                {
-                    DestroyWidget(TooltipItem);
-                }
-
-                TooltipItem = item;
-            }
+            TooltipItem = item;
         }
 
         /// <summary>
@@ -446,18 +427,6 @@ namespace Gum
                 SafeCall(item.OnUpdate, item, Time);
 
             if (HoverItem != null) SafeCall(HoverItem.OnHover, HoverItem);
-
-            float now = (float) (Time.TotalGameTime.TotalSeconds);
-            foreach (TimedAction action in TimedActions)
-            {
-                float time = now - action.Start;
-
-                if (time > action.Duration)
-                {
-                    action.OnTimeOut();
-                }
-            }
-            TimedActions.RemoveAll(action => now - action.Start > action.Duration);
         }
 
         public void Draw()
