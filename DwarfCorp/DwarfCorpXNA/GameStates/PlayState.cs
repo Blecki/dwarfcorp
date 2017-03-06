@@ -641,13 +641,13 @@ namespace DwarfCorp.GameStates
                         Icon = new Gum.TileReference("tool-icons", 2),
                         Tooltip = "Build rooms",
                         KeepChildVisible = true,
-                        ExpandChildWhenDisabled = true,
                         ExpansionChild = new NewGui.ToolTray.Tray
                         {
                             ItemSource = RoomLibrary.GetRoomTypes().Select(name => RoomLibrary.GetData(name))
                                 .Select(data => new NewGui.ToolTray.Icon
                                 {
                                     Icon = data.NewIcon,
+                                    ExpandChildWhenDisabled = true,
                                     ExpansionChild = new NewGui.BuildRoomInfo
                                     {
                                         Data = data,
@@ -679,36 +679,40 @@ namespace DwarfCorp.GameStates
                         Icon = new Gum.TileReference("tool-icons", 2),
                         KeepChildVisible = true,
                         ExpandChildWhenDisabled = true,
-                        Tooltip = "Build walls",
+                        Tooltip = "Place blocks",
                         ExpansionChild = new NewGui.ToolTray.Tray
                         {
-                            ItemSource = VoxelLibrary.GetTypes().Where(voxel => voxel.IsBuildable)
-                                .Select(data => new NewGui.ToolTray.Icon
+                                ItemSource =  new List<Gum.Widget>(),
+                                OnShown = (widget) =>
                                 {
-                                    Tooltip = "Build " + data.Name,
-                                    // Todo: Need icons for wall types.
-                                    Icon = new Gum.TileReference("voxels", data.ID),
-                                    ExpansionChild = new NewGui.BuildWallInfo
-                                    {
-                                        Data = data,
-                                        Rect = new Rectangle(0,0,256,128),
-                                        Master = Master
-                                    },
-                                    OnClick = (sender, args) =>
-                                    {
-                                        Master.Faction.RoomBuilder.CurrentRoomData = null;
-                                        Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                                        Master.Faction.WallBuilder.CurrentVoxelType = data;
-                                        Master.Faction.CraftBuilder.IsEnabled = false;
-                                        ChangeTool(GameMaster.ToolMode.Build);
-                                        World.ShowToolPopup("Click and drag to build " + data.Name + " wall.");
-                                    },
-                                    OnConstruct = (sender) =>
-                                    {
-                                        ToolbarItems.Add(new ToolbarItem(sender, () =>
-                                            ((sender as NewGui.ToolTray.Icon).ExpansionChild as NewGui.BuildWallInfo).CanBuild()));
-                                    }
-                                })
+                                    widget.Clear();
+                                    ((NewGui.ToolTray.Tray) widget).ItemSource = VoxelLibrary.GetTypes()
+                                        .Where(voxel => voxel.IsBuildable && World.PlayerFaction.HasResources(voxel.ResourceToRelease))
+                                        .Select(data => new NewGui.ToolTray.Icon
+                                        {
+                                            Tooltip = "Build " + data.Name,
+                                            Icon = new Gum.TileReference("voxels", data.ID),
+                                            ExpansionChild = new NewGui.BuildWallInfo
+                                            {
+                                                Data = data,
+                                                Rect = new Rectangle(0, 0, 256, 128)
+                                            },
+                                            OnClick = (sender, args) =>
+                                            {
+                                                Master.Faction.RoomBuilder.CurrentRoomData = null;
+                                                Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+                                                Master.Faction.WallBuilder.CurrentVoxelType = data;
+                                                Master.Faction.CraftBuilder.IsEnabled = false;
+                                                ChangeTool(GameMaster.ToolMode.Build);
+                                                World.ShowToolPopup("Click and drag to build " + data.Name + " wall.");
+                                            },
+                                            Hidden = false
+                                        });
+                                    widget.Construct();
+                                    widget.Hidden = false;
+                                    widget.Layout();
+                                }
+                        
                         }
                     },
                     #endregion
