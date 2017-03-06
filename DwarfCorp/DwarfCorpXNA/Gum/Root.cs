@@ -301,8 +301,7 @@ namespace Gum
                     {
                         // Destroy tooltips when the mouse moves.
                         MouseMotionTime = DateTime.Now;
-                        if (TooltipItem != null) DestroyWidget(TooltipItem);
-
+                        
                         MousePosition = ScreenPointToGuiPoint(new Point(Args.X, Args.Y));
                         var newArgs = new InputEventArgs { X = MousePosition.X, Y = MousePosition.Y };
                         // Detect hover item and fire mouse enter/leave events as appropriate.
@@ -311,6 +310,7 @@ namespace Gum
                         {
                             if (HoverItem != null) SafeCall(HoverItem.OnMouseLeave, HoverItem, newArgs);
                             if (newHoverItem != null) SafeCall(newHoverItem.OnMouseEnter, newHoverItem, newArgs);
+                            if (TooltipItem != null) DestroyWidget(TooltipItem);
                             HoverItem = newHoverItem;
                         }
 

@@ -143,7 +143,7 @@ namespace Gum
                     }
                     else
                     {
-                        if (lineLength + wordLength >= Width)
+                        if (lineLength + wordLength > Width)
                         {
                             if (r.Length > 0)
                                 r.Append("\n");
@@ -174,7 +174,7 @@ namespace Gum
 
             if (w.Length != 0)
             {
-                if (lineLength + wordLength >= Width && r.Length > 0)
+                if (lineLength + wordLength > Width && r.Length > 0)
                     r.Append("\n");
                 r.Append(w);
             }
