@@ -20,7 +20,7 @@ namespace DwarfCorp.NewGui
             set
             {
                 _enabled = value;
-                if (!_enabled) Root.SafeCall(OnDisable, this);
+                if (!_enabled && Root != null) Root.SafeCall(OnDisable, this);
                 Invalidate();
             }
         }
@@ -47,6 +47,25 @@ namespace DwarfCorp.NewGui
                 _mouseisOver = value;
                 Invalidate();
             }
+        }
+
+        private bool _drawFrame = true;
+        public bool DrawFrame
+        {
+            get { return _drawFrame; }
+            set
+            {
+                _drawFrame = value;
+                Invalidate();
+            }
+        }
+
+        private Vector4 iconTint = Vector4.One;
+
+        public Vector4 IconTint
+        {
+            get { return iconTint; }
+            set { iconTint = value; Invalidate(); }
         }
 
         public override void Construct()
@@ -86,11 +105,16 @@ namespace DwarfCorp.NewGui
         {
             var meshes = new List<Gum.Mesh>();
 
-            meshes.Add(Gum.Mesh.Quad()
+            if (DrawFrame)
+            {
+                meshes.Add(Gum.Mesh.Quad()
                     .Scale(Rect.Width, Rect.Height)
                     .Translate(Rect.X, Rect.Y)
-                    .Colorize(MouseIsOver ? new Vector4(1, 0.5f, 0.5f, 1) : (Hilite ? new Vector4(1,0,0,1) : BackgroundColor))
+                    .Colorize(MouseIsOver
+                        ? new Vector4(1, 0.5f, 0.5f, 1)
+                        : (Hilite ? new Vector4(1, 0, 0, 1) : BackgroundColor))
                     .Texture(Root.GetTileSheet(Background.Sheet).TileMatrix(Background.Tile)));
+            }
 
             if (Icon != null)
             {
@@ -100,7 +124,7 @@ namespace DwarfCorp.NewGui
                     .Texture(iconSheet.TileMatrix(Icon.Tile))
                     .Translate(Rect.X + (Rect.Width / 2) - (iconSheet.TileWidth / 2),
                         Rect.Y + (Rect.Height / 2) - (iconSheet.TileHeight / 2))
-                    .Colorize(Enabled ? new Vector4(1, 1, 1, 1) : new Vector4(0.15f, 0.15f, 0.15f, 1)));
+                    .Colorize(Enabled ? IconTint : new Vector4(0.15f * IconTint.X, 0.15f * IconTint.Y, 0.15f * IconTint.Z, 1 * IconTint.W)));
             }
             
             return Gum.Mesh.Merge(meshes.ToArray());

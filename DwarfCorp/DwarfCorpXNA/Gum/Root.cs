@@ -180,11 +180,12 @@ namespace Gum
             SafeCall(Widget.OnClose, Widget);
         }            
 
-        public void RegisterForUpdate(Widget Widget)
+        public Widget RegisterForUpdate(Widget Widget)
         {
             if (!Object.ReferenceEquals(this, Widget.Root)) throw new InvalidOperationException();
             if (!UpdateItems.Contains(Widget))
                 UpdateItems.Add(Widget);
+            return Widget;
         }
 
         /// <summary>
