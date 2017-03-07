@@ -13,6 +13,7 @@ namespace DwarfCorp.NewGui
     public class BuildRoomInfo : Widget
     {
         public RoomData Data;
+        public GameMaster Master;
 
         public override void Construct()
         {
@@ -38,6 +39,17 @@ namespace DwarfCorp.NewGui
             
             Font = "font";
             Text = builder.ToString();
+        }
+
+        public bool CanBuild()
+        {
+            foreach (var requirment in Data.RequiredResources)
+            {
+                var inventory = Master.Faction.ListResourcesWithTag(requirment.Value.ResourceType);
+                if (inventory.Sum(r => r.NumResources) < requirment.Value.NumResources) return false;
+            }
+
+            return true;
         }
         
     }

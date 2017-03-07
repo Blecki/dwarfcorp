@@ -311,16 +311,18 @@ namespace Gum
             // Add text label
             if (!String.IsNullOrEmpty(Text))
             {
+                var drawableArea = GetDrawableInterior();
                 var stringMeshSize = new Rectangle();
                 var font = Root.GetTileSheet(Font);
+                var text = (font is VariableWidthFont) ? (font as VariableWidthFont).WordWrapString(
+                    Text, TextSize, drawableArea.Width) : Text;
                 var stringMesh = Mesh.CreateStringMesh(
-                    Text,
+                    text,
                     font,
                     new Vector2(TextSize, TextSize),
                     out stringMeshSize)
                     .Colorize(TextColor);
 
-                var drawableArea = GetDrawableInterior();
 
                 var textDrawPos = Vector2.Zero;
 

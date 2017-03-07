@@ -86,11 +86,6 @@ namespace DwarfCorp
         public float DrawDistance
         {
             get { return GameSettings.Default.ChunkDrawDistance; }
-            set
-            {
-                GameSettings.Default.ChunkDrawDistance = value;
-                drawDistSq = value * value;
-            }
         }
 
         protected float drawDistSq = 0;
@@ -98,23 +93,12 @@ namespace DwarfCorp
         public float DrawDistanceSquared
         {
             get { return drawDistSq; }
-            set
-            {
-                drawDistSq = value;
-                GameSettings.Default.ChunkDrawDistance = (float) Math.Sqrt(value);
-            }
-        }
-
-        public float RemoveDistance
-        {
-            get { return GameSettings.Default.ChunkUnloadDistance; }
-            set { GameSettings.Default.ChunkDrawDistance = value; }
         }
 
         public float GenerateDistance
         {
             get { return GameSettings.Default.ChunkGenerateDistance; }
-            set { GameSettings.Default.ChunkDrawDistance = value; }
+            set { GameSettings.Default.ChunkGenerateDistance = value; }
         }
 
         public GraphicsDevice Graphics { get; set; }
