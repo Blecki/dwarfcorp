@@ -163,6 +163,25 @@ namespace DwarfCorp.GameStates
 
             MakeMenuItem(frame, "BACK", "Goodbye.", (sender, args) => StateManager.PopState());
 
+            MakeMenuItem(frame, "DIPLOMACY", "FUCK", (sender, args) =>
+            {
+                var pane = GuiRoot.ConstructWidget(new NewGui.ResourceColumns
+                {
+                    SourceResources = new List<ResourceAmount>(
+                        new ResourceAmount[]
+                        {
+                            new ResourceAmount(ResourceLibrary.ResourceType.Ale, 10),
+                            new ResourceAmount(ResourceLibrary.ResourceType.Berry, 10),
+                            new ResourceAmount(ResourceLibrary.ResourceType.Bones, 10),
+                            new ResourceAmount("Ruby", 10)
+                        }),
+                    Rect = GuiRoot.VirtualScreen
+                });
+
+                GuiRoot.ShowDialog(pane);
+                GuiRoot.RootItem.Layout();
+            });
+
             GuiRoot.RootItem.Layout();
         }
 
