@@ -7,18 +7,28 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.NewGui
 {
-    public class ResourceColumns : Widget
+    public class ResourceColumns : TwoColumns
     {
         public List<ResourceAmount> SourceResources;
         public List<ResourceAmount> SelectedResources;
+        public String LeftHeader;
+        public String RightHeader;
+        public int Money;
+        private Gum.Widgets.EditableTextField MoneyField;
 
-        public enum ColumnOrder
+        public int TradeMoney { get { return Int32.Parse(MoneyField.Text); } }
+
+        public float TotalSelectedValue
         {
-            SourceFirst,
-            SelectedFirst
+            get
+            {
+                return SelectedResources.Sum(r =>
+                    ResourceLibrary.GetResourceByName(r.ResourceType).MoneyValue * r.NumResources) +
+                    TradeMoney;
+            }
         }
 
-        public ColumnOrder Order = ColumnOrder.SelectedFirst;
+        public Action<Widget> OnTotalSelectedChanged;
 
         public ResourceColumns()
         {
@@ -28,14 +38,57 @@ namespace DwarfCorp.NewGui
 
         public override void Construct()
         {
-            var leftPanel = AddChild(new Gum.Widgets.WidgetListView
+            var leftPanel = AddChild(new Widget());
+
+            leftPanel.AddChild(new Gum.Widget
             {
-                ItemHeight = 32
+                Text = LeftHeader,
+                AutoLayout = AutoLayout.DockTop
+            });
+
+            leftPanel.AddChild(new Gum.Widget
+            {
+                MinimumSize = new Point(0, 32),
+                AutoLayout = AutoLayout.DockBottom,
+                Text = Money.ToString()
+            });
+
+            var leftList = leftPanel.AddChild(new Gum.Widgets.WidgetListView
+            {
+                ItemHeight = 32,
+                AutoLayout = AutoLayout.DockFill
             }) as Gum.Widgets.WidgetListView;
 
-            var rightPanel = AddChild(new Gum.Widgets.WidgetListView
-            {
+            var rightPanel = AddChild(new Widget());
 
+            rightPanel.AddChild(new Gum.Widget
+            {
+                Text = RightHeader,
+                AutoLayout = AutoLayout.DockTop
+            });
+
+            MoneyField = rightPanel.AddChild(new Gum.Widgets.EditableTextField
+            {
+                Text = "0",
+                MinimumSize = new Point(0, 32),
+                AutoLayout = AutoLayout.DockBottom,
+                BeforeTextChange = (sender, args) =>
+                {
+                    var v = 0;
+                    if (int.TryParse(args.NewText, out v))
+                    {
+                        sender.Text = args.NewText;
+                        Root.SafeCall(OnTotalSelectedChanged, this);
+                    }
+                    else
+                        args.Cancelled = true;
+                }
+            }) as Gum.Widgets.EditableTextField;
+
+            var rightList = rightPanel.AddChild(new Gum.Widgets.WidgetListView
+            {
+                ItemHeight = 32,
+                AutoLayout = AutoLayout.DockFill
             }) as Gum.Widgets.WidgetListView;
         
             foreach (var resource in SourceResources)
@@ -56,7 +109,7 @@ namespace DwarfCorp.NewGui
                         existingEntry = new ResourceAmount(lambdaResource.ResourceType, 0);
                         SelectedResources.Add(existingEntry);
                         var rightLineItem = CreateLineItem(existingEntry);
-                        rightPanel.AddItem(rightLineItem);
+                        rightList.AddItem(rightLineItem);
 
                         rightLineItem.TriggerOnChildClick = true;
                         rightLineItem.OnClick = (_sender, _args) =>
@@ -67,26 +120,30 @@ namespace DwarfCorp.NewGui
                             {
                                 var index = SelectedResources.IndexOf(existingEntry);
                                 SelectedResources.RemoveAt(index);
-                                rightPanel.RemoveChild(rightPanel.GetChild(index + 1));
+                                rightList.RemoveChild(rightList.GetChild(index + 1));
                             }
 
-                            UpdateRightColumn(rightPanel);
+                            UpdateRightColumn(rightList);
 
                             var sourceEntry = SourceResources.FirstOrDefault(
                                 r => r.ResourceType == existingEntry.ResourceType);
                             sourceEntry.NumResources += 1;
                             UpdateLineItemText(
-                                leftPanel.GetChild(SourceResources.IndexOf(sourceEntry) + 1), 
+                                leftList.GetChild(SourceResources.IndexOf(sourceEntry) + 1), 
                                 sourceEntry);
+
+                            Root.SafeCall(OnTotalSelectedChanged, this);
                         };
                     }
                     existingEntry.NumResources += 1;
 
-                    UpdateRightColumn(rightPanel);
+                    UpdateRightColumn(rightList);
                     UpdateLineItemText(lineItem, lambdaResource);
+
+                    Root.SafeCall(OnTotalSelectedChanged, this);
                 };
 
-                leftPanel.AddItem(lineItem);
+                leftList.AddItem(lineItem);
             }
 
         }
@@ -112,15 +169,16 @@ namespace DwarfCorp.NewGui
                 MinimumSize = new Point(32, 32),
                 MaximumSize = new Point(32, 32),
                 Background = new TileReference("resources", resourceInfo.NewGuiSprite),
-                AutoLayout = AutoLayout.DockLeft
+                AutoLayout = AutoLayout.DockLeft,
+                BackgroundColor = resourceInfo.Tint.ToVector4()
             });
 
             r.AddChild(new Gum.Widget
             {
                 AutoLayout = AutoLayout.DockFill,
-                Text = String.Format("{0} at ${1} each", Resource.NumResources, resourceInfo.MoneyValue),
-                Font = "outline-font",
-                TextColor = new Vector4(1,1,1,1),
+                Text = String.Format("{0} at ${1}e", Resource.NumResources, resourceInfo.MoneyValue),
+                //Font = "outline-font",
+                //TextColor = new Vector4(1,1,1,1),
                 TextVerticalAlign = VerticalAlign.Center
             });
 
@@ -129,32 +187,10 @@ namespace DwarfCorp.NewGui
 
         private void UpdateLineItemText(Widget LineItem, ResourceAmount Resource)
         {
-            LineItem.GetChild(1).Text = String.Format("{0} at ${1} each",
+            LineItem.GetChild(1).Text = String.Format("{0} at ${1}e",
                 Resource.NumResources,
                 ResourceLibrary.GetResourceByName(Resource.ResourceType).MoneyValue);
             LineItem.GetChild(1).Invalidate();
         }
-
-        public override void Layout()
-        {
-            if (Order == ColumnOrder.SelectedFirst)
-            {
-                Children[0].Rect = new Rectangle(Rect.X, Rect.Y, Rect.Width / 2, Rect.Height);
-                Children[0].Layout();
-
-                Children[1].Rect = new Rectangle(Rect.X + Rect.Width / 2, Rect.Y, Rect.Width / 2, Rect.Height);
-                Children[1].Layout();
-            }
-            else
-            {
-                Children[1].Rect = new Rectangle(Rect.X, Rect.Y, Rect.Width / 2, Rect.Height);
-                Children[1].Layout();
-
-                Children[0].Rect = new Rectangle(Rect.X + Rect.Width / 2, Rect.Y, Rect.Width / 2, Rect.Height);
-                Children[0].Layout();
-            }
-        }
-
-
     }
 }
