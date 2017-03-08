@@ -320,7 +320,7 @@ namespace DwarfCorp
 
                         SelectionBuffer = Select(buffer, FirstVoxel.Position, underMouse.Position).ToList();
 
-                        if (!altPressed)
+                        if (!altPressed && Brush != VoxelBrush.Stairs)
                         {
                             if (SelectionType == VoxelSelectionType.SelectFilled)
                             { 
@@ -376,12 +376,16 @@ namespace DwarfCorp
                         }
 
 
-                        SelectionBuffer = Select(buffer, FirstVoxel.Position, underMouse.Position).ToList();
-                        if (!altPressed)
+                        SelectionBuffer = Chunks.GetVoxelsIntersecting(buffer);
+
+                        if (!altPressed && Brush != VoxelBrush.Stairs)
                         {
-                            SelectionBuffer.RemoveAll(
+                            if (SelectionType == VoxelSelectionType.SelectFilled)
+                            {
+                                SelectionBuffer.RemoveAll(
                                 voxel =>
-                                    (!voxel.Equals(underMouse) && Chunks.ChunkData.IsVoxelOccluded(voxel, World.Camera.Position)));
+                                    (!voxel.Equals(underMouse) && !Chunks.ChunkData.IsVoxelVisibleSurface(voxel)));
+                            }
                         }
                         if (newVoxel)
                             Dragged.Invoke(SelectionBuffer, InputManager.MouseButton.Right);
@@ -408,7 +412,7 @@ namespace DwarfCorp
                 }
                 default:
                 {
-                    return Chunks.GetVoxelsIntersecting(GetStair(buffer, start, end));
+                    return Chunks.GetVoxelsIntersecting(GetStair(buffer, start, end, SelectionType == VoxelSelectionType.SelectFilled));
                 }
             }
         }
@@ -419,7 +423,7 @@ namespace DwarfCorp
         /// </summary>
         /// <param name="box">The box.</param>
         /// <returns>A stairstep starting filled on the bottom row, pointing in the maximum x or z direction</returns>
-        private IEnumerable<Vector3> GetStair(BoundingBox box,  Vector3 start, Vector3 end)
+        private IEnumerable<Vector3> GetStair(BoundingBox box,  Vector3 start, Vector3 end, bool invert)
         {
             int minX = MathFunctions.FloorInt(box.Min.X + 0.5f);
             int minY = MathFunctions.FloorInt(box.Min.Y + 0.5f);
@@ -427,10 +431,13 @@ namespace DwarfCorp
             int maxX = MathFunctions.FloorInt(box.Max.X - 0.5f);
             int maxY = MathFunctions.FloorInt(box.Max.Y - 0.5f);
             int maxZ = MathFunctions.FloorInt(box.Max.Z - 0.5f);
-            //max y ----x
-            //      --- xx
-            //      --- xxx
-            //      --- xxxx
+
+            // If not inverted, selects the Xs
+            // If inverted, selects the Os
+            //max y ----xOOOO
+            //      --- xxOOO
+            //      --- xxxOO
+            //      --- xxxxO
             //min y --- xxxxx
             //        minx --- maxx
             float dx = box.Max.X - box.Min.X;
@@ -439,16 +446,36 @@ namespace DwarfCorp
             bool direction = dx > dz;
             bool positiveDir = direction ? dir.X < 0 : dir.Z < 0;
             int step = 0;
+
+            // Always make staircases go exactly to the top or bottom of the selection.
+            if (direction && invert)
+            {
+                minY = maxY - (maxX - minX);
+            }
+            else if (direction)
+            {
+                maxY = minY + (maxX - minX);
+            }
+            else if (invert)
+            {
+                minY = maxY - (maxZ - minZ);
+            }
+            else
+            {
+                maxY = minY + (maxZ - minZ);
+            }
+            int dy = maxY - minY;
             // Start from the bottom of the stairs up to the top.
             for (int y = minY; y <= maxY; y++)
             {
+                int carve = invert ? MathFunctions.Clamp(dy - step, 0, dy) : step;
                 // If stairs are in x direction
                 if (direction)
                 {
                     if (positiveDir)
                     {
                         // Start from min x, and march up to maxY - y
-                        for (int x = minX; x <= MathFunctions.Clamp(maxX - step, minX, maxX); x++)
+                        for (int x = minX; x <= MathFunctions.Clamp(maxX - carve, minX, maxX); x++)
                         {
                             for (int z = minZ; z <= maxZ; z++)
                             {
@@ -459,7 +486,7 @@ namespace DwarfCorp
                     else
                     {
                         // Start from min x, and march up to maxY - y
-                        for (int x = maxX; x >= MathFunctions.Clamp(minX + step, minX, maxX); x--)
+                        for (int x = maxX; x >= MathFunctions.Clamp(minX + carve, minX, maxX); x--)
                         {
                             for (int z = minZ; z <= maxZ; z++)
                             {
@@ -475,7 +502,7 @@ namespace DwarfCorp
                     if (positiveDir)
                     {
                         // Start from min z, and march up to maxY - y
-                        for (int z = minZ; z <= MathFunctions.Clamp(maxZ - step, minZ, maxZ); z++)
+                        for (int z = minZ; z <= MathFunctions.Clamp(maxZ - carve, minZ, maxZ); z++)
                         {
                             for (int x = minX; x <= maxX; x++)
                             {
@@ -486,7 +513,7 @@ namespace DwarfCorp
                     else
                     {
                         // Start from min z, and march up to maxY - y
-                        for (int z = maxZ; z >= MathFunctions.Clamp(minZ + step, minZ, maxZ); z--)
+                        for (int z = maxZ; z >= MathFunctions.Clamp(minZ + carve, minZ, maxZ); z--)
                         {
                             for (int x = minX; x <= maxX; x++)
                             {
