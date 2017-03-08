@@ -380,6 +380,7 @@
     <Compile Include="NewGui\BuildRoomInfo.cs" />
     <Compile Include="NewGui\FramedIcon.cs" />
     <Compile Include="NewGui\CompanyLogo.cs" />
+    <Compile Include="NewGui\ToggleTray.cs" />
     <Compile Include="NewGui\ToolPopup.cs" />
     <Compile Include="NewGui\ToolTray.cs" />
     <Compile Include="NewGui\IconTray.cs" />

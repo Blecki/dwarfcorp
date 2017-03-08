@@ -48,7 +48,7 @@ namespace DwarfCorp.GameStates
         private NewGui.GameSpeedControls GameSpeedControls;
         private Gum.Widget ResourcePanel;
         private NewGui.InfoTray InfoTray;
-        private NewGui.IconTray BrushTray;
+        private NewGui.ToggleTray BrushTray;
 
         private class ToolbarItem
         {
@@ -599,9 +599,10 @@ namespace DwarfCorp.GameStates
                 Transparent = true
             }) as NewGui.InfoTray;
 
+            #endregion
             #region Setup brush
 
-            BrushTray = GuiRoot.RootItem.AddChild(new NewGui.IconTray
+            BrushTray = GuiRoot.RootItem.AddChild(new NewGui.ToggleTray
             {
                 AutoLayout = AutoLayout.FloatRight,
                 Rect = new Rectangle(256, 0, 32, 128),
@@ -615,73 +616,33 @@ namespace DwarfCorp.GameStates
                                 Icon = new Gum.TileReference("tool-icons", 29),
                                 DrawFrame = false,
                                 Tooltip = "Block brush",
-                                OnMouseEnter = (widget, args) =>
-                                {
-                                    (widget as NewGui.FramedIcon).IconTint = new Vector4(0.99f, 0.9f, 0.8f, 1.0f);
-                                },
-                                OnMouseLeave = (widget, args) =>
-                                {
-                                    (widget as NewGui.FramedIcon).IconTint = Vector4.One;
-                                },
                                 OnClick = (widget, args) =>
                                 {
                                     Master.VoxSelector.Brush = VoxelBrush.Box;
-                                },
-                                Enabled = true
+                                }
                             },
                             new NewGui.FramedIcon
                             {
                                 Icon = new Gum.TileReference("tool-icons", 30),
                                 DrawFrame = false,
                                 Tooltip = "Shell brush",
-                                OnMouseEnter = (widget, args) =>
-                                {
-                                    (widget as NewGui.FramedIcon).IconTint = new Vector4(0.99f, 0.9f, 0.8f, 1.0f);
-                                },
-                                OnMouseLeave = (widget, args) =>
-                                {
-                                    (widget as NewGui.FramedIcon).IconTint = Vector4.One;
-                                },
                                 OnClick = (widget, args) =>
                                 {
                                     Master.VoxSelector.Brush = VoxelBrush.Shell;
-                                },
-                                Enabled = false
+                                }
                             },
                             new NewGui.FramedIcon
                             {
                                 Icon = new Gum.TileReference("tool-icons", 31),
                                 DrawFrame = false,
                                 Tooltip = "Stairs brush",
-                                OnMouseEnter = (widget, args) =>
-                                {
-                                    (widget as NewGui.FramedIcon).IconTint = new Vector4(0.99f, 0.9f, 0.8f, 1.0f);
-                                },
-                                OnMouseLeave = (widget, args) =>
-                                {
-                                    (widget as NewGui.FramedIcon).IconTint = Vector4.One;
-                                },
                                 OnClick = (widget, args) =>
                                 {
                                     Master.VoxSelector.Brush = VoxelBrush.Stairs;
-                                },
-                                Enabled = false
+                                }
                             }
-                        },
-                        OnClick = (widget, args) =>
-                        {
-                            var tray = widget as NewGui.IconTray;
-                            var items = tray.Children;
-                            var button0 = items[0] as NewGui.FramedIcon;
-                            var button1 = items[1] as NewGui.FramedIcon;
-                            var button2 = items[2] as NewGui.FramedIcon;
-
-                            button0.Enabled = Master.VoxSelector.Brush == VoxelBrush.Box;
-                            button1.Enabled = Master.VoxSelector.Brush == VoxelBrush.Shell;
-                            button2.Enabled = Master.VoxSelector.Brush == VoxelBrush.Stairs;
-
                         }
-            }) as NewGui.IconTray;
+            }) as NewGui.ToggleTray;
 
 
             #endregion

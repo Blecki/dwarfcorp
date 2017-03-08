@@ -60,14 +60,6 @@ namespace DwarfCorp.NewGui
             }
         }
 
-        private Vector4 iconTint = Vector4.One;
-
-        public Vector4 IconTint
-        {
-            get { return iconTint; }
-            set { iconTint = value; Invalidate(); }
-        }
-
         public override void Construct()
         {
             Background = new TileReference("icon-frame", 0);
@@ -124,7 +116,7 @@ namespace DwarfCorp.NewGui
                     .Texture(iconSheet.TileMatrix(Icon.Tile))
                     .Translate(Rect.X + (Rect.Width / 2) - (iconSheet.TileWidth / 2),
                         Rect.Y + (Rect.Height / 2) - (iconSheet.TileHeight / 2))
-                    .Colorize(Enabled ? IconTint : new Vector4(0.15f * IconTint.X, 0.15f * IconTint.Y, 0.15f * IconTint.Z, 1 * IconTint.W)));
+                    .Colorize(Enabled ? Tint : new Vector4(0.15f * Tint.X, 0.15f * Tint.Y, 0.15f * Tint.Z, 1 * Tint.W)));
             }
             
             return Gum.Mesh.Merge(meshes.ToArray());
