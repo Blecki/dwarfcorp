@@ -14,10 +14,12 @@ namespace DwarfCorp.NewGui
 
         public override void Construct()
         {
+            Border = "border-dark";
             Root.RegisterForUpdate(this);
             var bestSize = GetBestSize();
             Rect.Width = bestSize.X;
             Rect.Height = bestSize.Y;
+
 
             Rect = MathFunctions.SnapRect(Rect, Root.VirtualScreen);
 
