@@ -541,6 +541,17 @@ TPixelToFrame SelectionPS_Alphatest(SelectionBufferToPixel PSIn)
 	return Output;
 }
 
+TPixelToFrame SilhouettePS(TVertexToPixel PSIn)
+{
+	TPixelToFrame Output = (TPixelToFrame)0;
+	float2 textureCoords = ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds);
+	float4 texColor = tex2D(TextureSampler, textureCoords);
+	clip((texColor.a - 0.5));
+	Output.Color.rgb = PSIn.ColorTint;
+	Output.Color.a = 0.2;
+	return Output;
+}
+
 TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
 {
     TPixelToFrame Output = (TPixelToFrame)0;
@@ -656,6 +667,15 @@ technique Textured
         VertexShader = compile vs_2_0 TexturedVSNonInstanced();
         PixelShader  = compile ps_2_0 TexturedPS_Alphatest();
     }
+}
+
+technique Silhouette
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_2_0 TexturedVSNonInstanced();
+		PixelShader = compile ps_2_0 SilhouettePS();
+	}
 }
 
 technique Textured_From_Lightmap

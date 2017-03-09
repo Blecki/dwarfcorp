@@ -54,6 +54,9 @@ namespace DwarfCorp
         public Animation CurrentAnimation { get; set; }
         public OrientMode OrientationType { get; set; }
         public bool DistortPosition { get; set; }
+        public bool DrawSilhouette { get; set; }
+        public Color SilhouetteColor { get; set; }
+
 
         public enum OrientMode
         {
@@ -74,6 +77,8 @@ namespace DwarfCorp
             OrientationType = OrientMode.Spherical;
             BillboardRotation = 0.0f;
             DistortPosition = true;
+            DrawSilhouette = false;
+            SilhouetteColor = new Color(0.0f, 1.0f, 1.0f, 0.5f);
         }
 
         public Sprite()
@@ -177,8 +182,6 @@ namespace DwarfCorp
             {
                 CurrentAnimation.PreRender();
                 SpriteSheet = CurrentAnimation.SpriteSheet;
-                effect.MainTexture = SpriteSheet.GetTexture();
-
                 if(OrientationType != OrientMode.Fixed)
                 {
                     if(camera.Projection == Camera.ProjectionMode.Perspective)
@@ -233,6 +236,25 @@ namespace DwarfCorp
                     effect.World = rotation;
                 }
 
+                
+                effect.MainTexture = SpriteSheet.GetTexture();
+                if (DrawSilhouette)
+                {
+                    Color oldTint = effect.VertexColorTint;
+                    effect.VertexColorTint = SilhouetteColor;
+                    graphicsDevice.DepthStencilState = DepthStencilState.None;
+                    var oldTechnique = effect.CurrentTechnique;
+                    effect.CurrentTechnique = effect.Techniques[Shader.Technique.Silhouette];
+                    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                    {
+                        pass.Apply();
+                        CurrentAnimation.Primitives[CurrentAnimation.CurrentFrame].Render(graphicsDevice);
+                    }
+
+                    graphicsDevice.DepthStencilState = DepthStencilState.Default;
+                    effect.VertexColorTint = oldTint;
+                    effect.CurrentTechnique = oldTechnique;
+                }
 
                 foreach(EffectPass pass in effect.CurrentTechnique.Passes)
                 {

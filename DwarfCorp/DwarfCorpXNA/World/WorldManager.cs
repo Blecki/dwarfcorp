@@ -1471,11 +1471,11 @@ namespace DwarfCorp
         {
             if (!WaterRenderer.DrawComponentsReflected && waterRenderType == ComponentManager.WaterRenderType.Reflective)
                 return;
-            effect.View = view; 
-            ComponentManager.Render(gameTime, ChunkManager, Camera, DwarfGame.SpriteBatch, GraphicsDevice, effect,
-                waterRenderType, waterLevel);
+            effect.View = view;
             bool reset = waterRenderType == ComponentManager.WaterRenderType.None;
             InstanceManager.Render(GraphicsDevice, effect, Camera, reset);
+            ComponentManager.Render(gameTime, ChunkManager, Camera, DwarfGame.SpriteBatch, GraphicsDevice, effect,
+                waterRenderType, waterLevel);
         }
 
         /// <summary>
