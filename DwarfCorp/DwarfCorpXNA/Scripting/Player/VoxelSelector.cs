@@ -109,7 +109,7 @@ namespace DwarfCorp
         /// <summary>
         /// The brush to use for selection.
         /// </summary>
-        public VoxelBrush Brush = VoxelBrush.Stairs;
+        public VoxelBrush Brush = VoxelBrush.Box;
 
         public WorldManager World;
 
