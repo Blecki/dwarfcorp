@@ -381,6 +381,9 @@
     <Compile Include="NewGui\FramedIcon.cs" />
     <Compile Include="NewGui\CompanyLogo.cs" />
     <Compile Include="NewGui\ToggleTray.cs" />
+    <Compile Include="NewGui\TwoColumns.cs" />
+    <Compile Include="NewGui\TradePanel.cs" />
+    <Compile Include="NewGui\ResourceColumns.cs" />
     <Compile Include="NewGui\ToolPopup.cs" />
     <Compile Include="NewGui\ToolTray.cs" />
     <Compile Include="NewGui\IconTray.cs" />

@@ -148,6 +148,13 @@ namespace DwarfCorp.GameStates
             });
         }
 
+        private class MockTradeEntity : NewGui.ITradeEntity
+        {
+            public int Money { get; set; }
+            public List<ResourceAmount> Resources { get; set; }
+            public int AvailableSpace { get; set; }
+        }
+
         public void MakeMenu()
         {
             GuiRoot.RootItem.Clear();
@@ -162,6 +169,32 @@ namespace DwarfCorp.GameStates
                 });   
 
             MakeMenuItem(frame, "BACK", "Goodbye.", (sender, args) => StateManager.PopState());
+
+            MakeMenuItem(frame, "DIPLOMACY", "FUCK", (sender, args) =>
+            {
+                var playerFaction = new MockTradeEntity();
+                playerFaction.Resources = new List<ResourceAmount>(new ResourceAmount[] { (new ResourceAmount(ResourceLibrary.ResourceType.Ale, 10)) });
+                playerFaction.Money = 1000;
+                playerFaction.AvailableSpace = 100;
+
+                var envoyFaction = new MockTradeEntity();
+                envoyFaction.Resources = new List<ResourceAmount>();
+                envoyFaction.Resources.Add(new ResourceAmount(ResourceLibrary.ResourceType.Ale, 10));
+                envoyFaction.Resources.Add(new ResourceAmount(ResourceLibrary.ResourceType.Berry, 10));
+                envoyFaction.Resources.Add(new ResourceAmount(ResourceLibrary.ResourceType.Bones, 10));
+                envoyFaction.Resources.Add(new ResourceAmount("Ruby", 10));
+                envoyFaction.Money = 1000;
+
+                var pane = GuiRoot.ConstructWidget(new NewGui.TradePanel
+                {
+                    Player = playerFaction,
+                    Envoy = envoyFaction,
+                    Rect = GuiRoot.VirtualScreen
+                });
+
+                GuiRoot.ShowDialog(pane);
+                GuiRoot.RootItem.Layout();
+            });
 
             GuiRoot.RootItem.Layout();
         }
