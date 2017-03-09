@@ -4,30 +4,22 @@ using System.Linq;
 using System.Text;
 using Gum;
 using Microsoft.Xna.Framework;
+using DwarfCorp.Trade;
 
 namespace DwarfCorp.NewGui
 {
     public class ResourceColumns : TwoColumns
     {
-        public List<ResourceAmount> SourceResources;
-        public List<ResourceAmount> SelectedResources;
+        public ITradeEntity TradeEntity;
+        public ITradeEntity ValueSourceEntity;
+        private List<ResourceAmount> SourceResources;
+        public List<ResourceAmount> SelectedResources { get; private set; }
         public String LeftHeader;
         public String RightHeader;
-        public int Money;
         private Gum.Widgets.EditableTextField MoneyField;
 
         public int TradeMoney { get { return Int32.Parse(MoneyField.Text); } }
-
-        public float TotalSelectedValue
-        {
-            get
-            {
-                return SelectedResources.Sum(r =>
-                    ResourceLibrary.GetResourceByName(r.ResourceType).MoneyValue * r.NumResources) +
-                    TradeMoney;
-            }
-        }
-
+        
         public int TotalSelectedItems
         {
             get
@@ -46,7 +38,10 @@ namespace DwarfCorp.NewGui
 
         public override void Construct()
         {
+            SourceResources = new List<ResourceAmount>(TradeEntity.Resources);
+
             var leftPanel = AddChild(new Widget());
+            
 
             leftPanel.AddChild(new Gum.Widget
             {
@@ -58,7 +53,7 @@ namespace DwarfCorp.NewGui
             {
                 MinimumSize = new Point(0, 32),
                 AutoLayout = AutoLayout.DockBottom,
-                Text = Money.ToString()
+                Text = TradeEntity.Money.ToString()
             });
 
             var leftList = leftPanel.AddChild(new Gum.Widgets.WidgetListView
@@ -184,11 +179,13 @@ namespace DwarfCorp.NewGui
             r.AddChild(new Gum.Widget
             {
                 AutoLayout = AutoLayout.DockFill,
-                Text = String.Format("{0} at ${1}e", Resource.NumResources, resourceInfo.MoneyValue),
+                //Text = String.Format("{0} at ${1}e", Resource.NumResources, resourceInfo.MoneyValue),
                 //Font = "outline-font",
                 //TextColor = new Vector4(1,1,1,1),
                 TextVerticalAlign = VerticalAlign.Center
             });
+
+            UpdateLineItemText(r, Resource);
 
             return r;
         }
@@ -197,7 +194,7 @@ namespace DwarfCorp.NewGui
         {
             LineItem.GetChild(1).Text = String.Format("{0} at ${1}e",
                 Resource.NumResources,
-                ResourceLibrary.GetResourceByName(Resource.ResourceType).MoneyValue);
+                ValueSourceEntity.ComputeValue(Resource.ResourceType));
             LineItem.GetChild(1).Invalidate();
         }
     }

@@ -166,6 +166,8 @@
     <Compile Include="Components\IUpdateableComponent.cs" />
     <Compile Include="ControlSettings.cs" />
     <Compile Include="DeProfiler.cs" />
+    <Compile Include="Diplomacy\ITradeEntity.cs" />
+    <Compile Include="Diplomacy\TradeTransaction.cs" />
     <Compile Include="DwarfGame.cs" />
     <Compile Include="Entities\Animals\Bat.cs" />
     <Compile Include="Entities\Animals\Bird.cs" />
@@ -659,6 +661,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <PropertyGroup>

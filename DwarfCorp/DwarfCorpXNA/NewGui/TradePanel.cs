@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using Gum;
 using Microsoft.Xna.Framework;
+using DwarfCorp.Trade;
 
 namespace DwarfCorp.NewGui
 {
-    public interface ITradeEntity
+    public enum TradeDialogResult
     {
-        List<ResourceAmount> Resources { get; }
-        int Money { get; }
-        int AvailableSpace { get; }
+        Cancel,
+        Propose
     }
 
     public class TradePanel : Widget
@@ -23,8 +23,14 @@ namespace DwarfCorp.NewGui
         private Widget TotalDisplay;
         private Widget SpaceDisplay;
 
+        public TradeDialogResult Result { get; private set; }
+        public TradeTransaction Transaction { get; private set; }
+
         public override void Construct()
         {
+            Transaction = null;
+            Result = TradeDialogResult.Cancel;
+
             Border = "border-fancy";
 
             var bottomRow = AddChild(new Widget
@@ -46,6 +52,39 @@ namespace DwarfCorp.NewGui
                 AutoLayout = AutoLayout.DockLeft
             });
 
+            bottomRow.AddChild(new Widget
+            {
+                Font = "outline-font",
+                Border = "border-button",
+                TextColor = new Vector4(1, 1, 1, 1),
+                Text = "Propose Trade",
+                AutoLayout = AutoLayout.DockRight,
+                OnClick = (sender, args) =>
+                {
+                    Result = TradeDialogResult.Propose;
+                    Transaction = new TradeTransaction
+                    {
+                        EnvoyEntity = Envoy,
+                        EnvoyItems = EnvoyColumns.SelectedResources,
+                        EnvoyMoney = EnvoyColumns.TradeMoney,
+                        PlayerEntity = Player,
+                        PlayerItems = PlayerColumns.SelectedResources,
+                        PlayerMoney = PlayerColumns.TradeMoney
+                    };
+                    this.Close();
+                }
+            });
+
+            bottomRow.AddChild(new Widget
+            {
+                Font = "outline-font",
+                Border = "border-button",
+                TextColor = new Vector4(1, 1, 1, 1),
+                Text = "Cancel",
+                AutoLayout = AutoLayout.DockRight,
+                OnClick = (sender, args) => this.Close()
+            });
+
             var mainPanel = AddChild(new TwoColumns
             {
                 AutoLayout = AutoLayout.DockFill
@@ -53,30 +92,32 @@ namespace DwarfCorp.NewGui
 
             EnvoyColumns = mainPanel.AddChild(new ResourceColumns
             {
-                SourceResources = Envoy.Resources,
+                TradeEntity = Envoy,
+                ValueSourceEntity = Envoy,
                 AutoLayout = AutoLayout.DockFill,
                 LeftHeader = "Their Items",
                 RightHeader = "They Offer",
-                Money = Envoy.Money,
                 OnTotalSelectedChanged = (s) => UpdateBottomDisplays()
             }) as ResourceColumns;
 
             PlayerColumns = mainPanel.AddChild(new ResourceColumns
             {
-                SourceResources = Player.Resources,
+                TradeEntity = Player,
+                ValueSourceEntity = Envoy,
                 AutoLayout = AutoLayout.DockFill,
                 ReverseColumnOrder = true,
-                LeftHeader = "Out Items",
+                LeftHeader = "Our Items",
                 RightHeader = "We Offer",
-                Money = Player.Money,
                 OnTotalSelectedChanged = (s) => UpdateBottomDisplays()
             }) as ResourceColumns;
-            
+
+            UpdateBottomDisplays();
         }        
 
         private void UpdateBottomDisplays()
         {
-            var net = EnvoyColumns.TotalSelectedValue - PlayerColumns.TotalSelectedValue;
+            var net = (Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney) -
+                (Envoy.ComputeValue(PlayerColumns.SelectedResources) + PlayerColumns.TradeMoney);
             TotalDisplay.Text = String.Format("${0}", net);
             TotalDisplay.Invalidate();
 
