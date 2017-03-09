@@ -11,6 +11,7 @@ namespace DwarfCorp.NewGui
     {
         List<ResourceAmount> Resources { get; }
         int Money { get; }
+        int AvailableSpace { get; }
     }
 
     public class TradePanel : Widget
@@ -20,6 +21,7 @@ namespace DwarfCorp.NewGui
         private ResourceColumns PlayerColumns;
         private ResourceColumns EnvoyColumns;
         private Widget TotalDisplay;
+        private Widget SpaceDisplay;
 
         public override void Construct()
         {
@@ -38,6 +40,12 @@ namespace DwarfCorp.NewGui
                 Text = "$0"
             });
 
+            SpaceDisplay = bottomRow.AddChild(new Widget
+            {
+                MinimumSize = new Point(128, 0),
+                AutoLayout = AutoLayout.DockLeft
+            });
+
             var mainPanel = AddChild(new TwoColumns
             {
                 AutoLayout = AutoLayout.DockFill
@@ -50,7 +58,7 @@ namespace DwarfCorp.NewGui
                 LeftHeader = "Their Items",
                 RightHeader = "They Offer",
                 Money = Envoy.Money,
-                OnTotalSelectedChanged = (s) => UpdateTotalDisplay()
+                OnTotalSelectedChanged = (s) => UpdateBottomDisplays()
             }) as ResourceColumns;
 
             PlayerColumns = mainPanel.AddChild(new ResourceColumns
@@ -61,16 +69,21 @@ namespace DwarfCorp.NewGui
                 LeftHeader = "Out Items",
                 RightHeader = "We Offer",
                 Money = Player.Money,
-                OnTotalSelectedChanged = (s) => UpdateTotalDisplay()
+                OnTotalSelectedChanged = (s) => UpdateBottomDisplays()
             }) as ResourceColumns;
             
         }        
 
-        private void UpdateTotalDisplay()
+        private void UpdateBottomDisplays()
         {
             var net = EnvoyColumns.TotalSelectedValue - PlayerColumns.TotalSelectedValue;
             TotalDisplay.Text = String.Format("${0}", net);
             TotalDisplay.Invalidate();
+
+            SpaceDisplay.Text = String.Format("{0}/{1}",
+                EnvoyColumns.TotalSelectedItems - PlayerColumns.TotalSelectedItems,
+                Player.AvailableSpace);
+            SpaceDisplay.Invalidate();
         }
     }
 }

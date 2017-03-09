@@ -28,6 +28,14 @@ namespace DwarfCorp.NewGui
             }
         }
 
+        public int TotalSelectedItems
+        {
+            get
+            {
+                return SelectedResources.Sum(r => r.NumResources);
+            }
+        }
+
         public Action<Widget> OnTotalSelectedChanged;
 
         public ResourceColumns()

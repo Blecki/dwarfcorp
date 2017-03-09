@@ -152,6 +152,7 @@ namespace DwarfCorp.GameStates
         {
             public int Money { get; set; }
             public List<ResourceAmount> Resources { get; set; }
+            public int AvailableSpace { get; set; }
         }
 
         public void MakeMenu()
@@ -174,6 +175,7 @@ namespace DwarfCorp.GameStates
                 var playerFaction = new MockTradeEntity();
                 playerFaction.Resources = new List<ResourceAmount>(new ResourceAmount[] { (new ResourceAmount(ResourceLibrary.ResourceType.Ale, 10)) });
                 playerFaction.Money = 1000;
+                playerFaction.AvailableSpace = 100;
 
                 var envoyFaction = new MockTradeEntity();
                 envoyFaction.Resources = new List<ResourceAmount>();
