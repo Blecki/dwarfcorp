@@ -86,11 +86,6 @@ namespace DwarfCorp
         public float DrawDistance
         {
             get { return GameSettings.Default.ChunkDrawDistance; }
-            set
-            {
-                GameSettings.Default.ChunkDrawDistance = value;
-                drawDistSq = value * value;
-            }
         }
 
         protected float drawDistSq = 0;
@@ -98,23 +93,12 @@ namespace DwarfCorp
         public float DrawDistanceSquared
         {
             get { return drawDistSq; }
-            set
-            {
-                drawDistSq = value;
-                GameSettings.Default.ChunkDrawDistance = (float) Math.Sqrt(value);
-            }
-        }
-
-        public float RemoveDistance
-        {
-            get { return GameSettings.Default.ChunkUnloadDistance; }
-            set { GameSettings.Default.ChunkDrawDistance = value; }
         }
 
         public float GenerateDistance
         {
             get { return GameSettings.Default.ChunkGenerateDistance; }
-            set { GameSettings.Default.ChunkDrawDistance = value; }
+            set { GameSettings.Default.ChunkGenerateDistance = value; }
         }
 
         public GraphicsDevice Graphics { get; set; }
@@ -1045,6 +1029,19 @@ namespace DwarfCorp
                 }
             }
             KilledVoxels.Clear();
+        }
+
+        public IEnumerable<Voxel> GetVoxelsIntersecting(IEnumerable<Vector3> positions)
+        {
+            foreach (Vector3 vec in positions)
+            {
+                Voxel vox = new Voxel();
+                bool success = ChunkData.GetVoxel(vec, ref vox);
+                if (success)
+                {
+                    yield return vox;
+                }
+            }
         }
 
         public List<Voxel> GetVoxelsIntersecting(BoundingBox box)

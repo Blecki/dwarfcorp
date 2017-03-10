@@ -341,8 +341,17 @@ namespace DwarfCorp
 
             Minions.RemoveAll(m => m.IsDead);
             SelectedMinions.RemoveAll(m => m.IsDead);
-            Minions.ForEach(m => m.Creature.SelectionCircle.IsVisible = false);
-            SelectedMinions.ForEach(m => m.Creature.SelectionCircle.IsVisible = true);
+            Minions.ForEach(m =>
+            {
+                m.Creature.SelectionCircle.IsVisible = false;
+                m.Creature.Sprite.DrawSilhouette = false;
+            });
+            SelectedMinions.ForEach(m => {
+                                             m.Creature.SelectionCircle.IsVisible = true;
+                                             m.Creature.Sprite.DrawSilhouette = true;
+            }
+
+    );
             
             // Turned off until a non-O(n^2) collision method is create.
             //CollideMinions(time);

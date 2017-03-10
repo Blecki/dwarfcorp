@@ -255,9 +255,9 @@ namespace DwarfCorp
 
                     if (component.IsActive)
                     {
-                        GamePerformance.Instance.StartTrackPerformance("Component Update " + component.GetType().Name);
+                        //GamePerformance.Instance.StartTrackPerformance("Component Update " + component.GetType().Name);
                         component.Update(gameTime, chunks, camera);
-                        GamePerformance.Instance.StopTrackPerformance("Component Update " + component.GetType().Name);
+                        //GamePerformance.Instance.StopTrackPerformance("Component Update " + component.GetType().Name);
                     }
                 }
 

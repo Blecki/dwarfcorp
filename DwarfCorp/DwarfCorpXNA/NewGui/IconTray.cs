@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +17,11 @@ namespace DwarfCorp.NewGui
 
         public Scale9Corners Corners = Scale9Corners.All;
 
+        public IconTray()
+        {
+            Border = "tray-border";
+        }
+
         public override Rectangle GetDrawableInterior()
         {
             // Don't account for border.
@@ -25,7 +30,6 @@ namespace DwarfCorp.NewGui
 
         public override void Construct()
         {
-            Border = "tray-border";
             InteriorMargin = new Margin(0,0,0,0);
             if (Corners.HasFlag(Scale9Corners.Top)) InteriorMargin.Top = 12;
             if (Corners.HasFlag(Scale9Corners.Bottom)) InteriorMargin.Bottom = 12;
@@ -69,7 +73,14 @@ namespace DwarfCorp.NewGui
 
         protected override Gum.Mesh Redraw()
         {
-            return Gum.Mesh.CreateScale9Background(Rect, Root.GetTileSheet(Border), Corners);
+            if (Border != null)
+            {
+                return Gum.Mesh.CreateScale9Background(Rect, Root.GetTileSheet(Border), Corners);
+            }
+            else
+            {
+                return base.Redraw();
+            }
         }
     }
 }

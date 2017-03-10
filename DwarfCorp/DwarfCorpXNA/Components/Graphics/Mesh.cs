@@ -1,4 +1,4 @@
-﻿// Mesh.cs
+// Mesh.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -84,9 +84,9 @@ namespace DwarfCorp
         {
             base.Update(gameTime, chunks, camera);
 
-            if(Instance != null  && (HasMoved || firstIter || Instance.Color != TargetTint))
+            if(Instance != null  && (HasMoved || firstIter || Instance.Color != Tint))
             {
-                Instance.Color = TargetTint;
+                Instance.Color = Tint;
                 Instance.Transform = GlobalTransform;
                 Instance.SelectionBufferColor = GetGlobalIDColor();
                 firstIter = false;

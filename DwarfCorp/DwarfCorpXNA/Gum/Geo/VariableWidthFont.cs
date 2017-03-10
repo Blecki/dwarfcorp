@@ -122,5 +122,64 @@ namespace Gum
             }
             return size;
         }
+
+        public String WordWrapString(String S, float GlyphWidthScale, float Width)
+        {
+            var r = new StringBuilder();
+            var w = new StringBuilder();
+
+            float lineLength = 0;
+            float wordLength = 0;
+
+            foreach(var c in S)
+            {
+                if (c == '\r' || c == '\t') continue;
+
+                if (c == ' ' || c == '\n')
+                {
+                    if (w.Length == 0)
+                    {
+                        lineLength += Glyphs[0].Width * GlyphWidthScale;
+                    }
+                    else
+                    {
+                        if (lineLength + wordLength > Width)
+                        {
+                            if (r.Length > 0)
+                                r.Append("\n");
+                            r.Append(w);
+                            lineLength = wordLength + Glyphs[0].Width * GlyphWidthScale;
+                            wordLength = 0;
+                            w.Clear();
+                        }
+                        else
+                        {
+                            r.Append(w);
+                            lineLength += wordLength + Glyphs[0].Width * GlyphWidthScale;
+                            wordLength = 0;
+                            w.Clear();
+                        }
+                    }
+
+                    r.Append(c);
+                    if (c == '\n')
+                        lineLength = 0;
+                }
+                else
+                {
+                    w.Append(c);
+                    wordLength += Glyphs[c - ' '].Width * GlyphWidthScale;
+                }
+            }
+
+            if (w.Length != 0)
+            {
+                if (lineLength + wordLength > Width && r.Length > 0)
+                    r.Append("\n");
+                r.Append(w);
+            }
+
+            return r.ToString();
+        }
     }
 }

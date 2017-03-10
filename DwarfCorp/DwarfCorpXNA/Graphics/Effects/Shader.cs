@@ -284,6 +284,7 @@ namespace DwarfCorp
             public static string TexturedWithColorScale = "Textured_colorscale";
             public static string Instanced = "Instanced";
             public static string SelectionBufferInstanced = "Instanced_SelectionBuffer";
+            public static string Silhouette = "Silhouette";
         }
 
         public Shader(GraphicsDevice graphicsDevice, byte[] effectCode) 
