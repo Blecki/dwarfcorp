@@ -148,11 +148,36 @@ namespace DwarfCorp.GameStates
             });
         }
 
-        private class MockTradeEntity : NewGui.ITradeEntity
+        private class MockTradeEntity : Trade.ITradeEntity
         {
             public int Money { get; set; }
             public List<ResourceAmount> Resources { get; set; }
             public int AvailableSpace { get; set; }
+
+            public float ComputeValue(List<ResourceAmount> Resources)
+            {
+                return Resources.Sum(r => r.NumResources * ComputeValue(r.ResourceType));
+            }
+
+            public float ComputeValue(ResourceLibrary.ResourceType ResourceType)
+            {
+                return ResourceLibrary.GetResourceByName(ResourceType).MoneyValue;
+            }
+
+            public void RemoveResources(List<ResourceAmount> Resources)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void AddResources(List<ResourceAmount> Resources)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void AddMoney(float Money)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public void MakeMenu()
