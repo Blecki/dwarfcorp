@@ -290,11 +290,6 @@ namespace DwarfCorp
             // of an action.
             float score = (a.Position - b.Position).LengthSquared() * ActionCost(movement, action);
 
-            if (action == Creature.MoveType.ClimbWalls)
-            {
-                Console.Out.WriteLine("Yes!");
-            }
-
             return score;
         }
 
