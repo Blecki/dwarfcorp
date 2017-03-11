@@ -456,13 +456,18 @@ namespace DwarfCorp
 
                         World.Paused = true;
 
-                        GameState.Game.StateManager.PushState(new DiplomacyState(GameState.Game,
+                        GameState.Game.StateManager.PushState(new Dialogue.DialogueState(
+                            GameState.Game,
                             GameState.Game.StateManager,
-                            faction.World, envoy)
-                        {
-                            Name = "DiplomacyState_" + faction.Name,
-                            Envoy = envoy
-                        });
+                            envoy,
+                            World.PlayerFaction));
+                        //GameState.Game.StateManager.PushState(new DiplomacyState(GameState.Game,
+                        //    GameState.Game.StateManager,
+                        //    faction.World, envoy)
+                        //{
+                        //    Name = "DiplomacyState_" + faction.Name,
+                        //    Envoy = envoy
+                        //});
                         break;
                     }
                 }

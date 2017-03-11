@@ -10,6 +10,7 @@ namespace DwarfCorp.NewGui
 {
     public enum TradeDialogResult
     {
+        Pending,
         Cancel,
         Propose
     }
@@ -29,7 +30,7 @@ namespace DwarfCorp.NewGui
         public override void Construct()
         {
             Transaction = null;
-            Result = TradeDialogResult.Cancel;
+            Result = TradeDialogResult.Pending;
 
             Border = "border-fancy";
 
@@ -82,7 +83,11 @@ namespace DwarfCorp.NewGui
                 TextColor = new Vector4(1, 1, 1, 1),
                 Text = "Cancel",
                 AutoLayout = AutoLayout.DockRight,
-                OnClick = (sender, args) => this.Close()
+                OnClick = (sender, args) =>
+                {
+                    Result = TradeDialogResult.Cancel;
+                    this.Close();
+                }                    
             });
 
             var mainPanel = AddChild(new TwoColumns

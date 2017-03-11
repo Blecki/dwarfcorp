@@ -166,6 +166,9 @@
     <Compile Include="Components\IUpdateableComponent.cs" />
     <Compile Include="ControlSettings.cs" />
     <Compile Include="DeProfiler.cs" />
+    <Compile Include="Diplomacy\DialogueTree.cs" />
+    <Compile Include="Diplomacy\DialogueTreeTypes.cs" />
+    <Compile Include="Diplomacy\DialogueState.cs" />
     <Compile Include="Diplomacy\ITradeEntity.cs" />
     <Compile Include="Diplomacy\TradeTransaction.cs" />
     <Compile Include="DwarfGame.cs" />
