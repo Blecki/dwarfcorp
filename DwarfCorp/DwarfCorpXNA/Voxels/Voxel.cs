@@ -499,7 +499,7 @@ namespace DwarfCorp
                 Chunk.Manager.World.Master.Faction.OnVoxelDestroyed(this);
             }
 
-            SoundManager.PlaySound(Type.ExplosionSound, Position);
+            Type.ExplosionSound.Play(Position);
 
             List<Body> emittedResources = null;
             if (Type.ReleasesResource)

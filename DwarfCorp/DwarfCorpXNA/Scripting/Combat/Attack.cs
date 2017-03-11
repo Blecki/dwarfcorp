@@ -184,7 +184,8 @@ namespace DwarfCorp
                     case AttackMode.Melee:
                     {
                         other.Health -= DamageAmount + bonus;
-                        PlayNoise(other.Position);
+                        other.Type.HitSound.Play(other.Position);
+                        //PlayNoise(other.Position);
                         if (HitParticles != "")
                         {
                             performer.Manager.World.ParticleManager.Trigger(HitParticles, other.Position, Color.White, 5);

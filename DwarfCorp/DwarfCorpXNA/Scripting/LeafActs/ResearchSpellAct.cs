@@ -1,4 +1,4 @@
-﻿// ResearchSpellAct.cs
+// ResearchSpellAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -88,7 +88,7 @@ namespace DwarfCorp
                     Creature.Manager.World.MakeAnnouncement(String.Format("Researched {0}", Spell.Spell.Name),
                         String.Format("{0} ({1}) discovered the {2} spell!", Creature.Stats.FullName,
                         Creature.Stats.CurrentLevel.Name, Spell.Spell.Name),
-                        Agent.ZoomToMe);
+                        Agent.ZoomToMe, ContentPaths.Audio.Oscar.gui_positive_generic);
                 }
 
                 starParitcle.Update(DwarfTime.LastTime);

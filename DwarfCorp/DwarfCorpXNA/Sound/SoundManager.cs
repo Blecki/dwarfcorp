@@ -1,4 +1,4 @@
-﻿// SoundManager.cs
+// SoundManager.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -46,6 +46,38 @@ using Microsoft.Xna.Framework.Media;
 namespace DwarfCorp
 {
 
+    public struct SoundSource
+    {
+        public List<string> Sounds;
+        public float Volume;
+        public bool RandomPitch;
+
+        public static SoundSource Create(string sound)
+        {
+            return new SoundSource()
+            {
+                RandomPitch = true,
+                Sounds = new List<string>() {sound},
+                Volume = 1.0f
+            };
+        }
+
+        public static SoundSource Create(params string[] sounds)
+        {
+            return new SoundSource()
+            {
+                RandomPitch = true,
+                Sounds = sounds.ToList(),
+                Volume = 1.0f
+            };
+        }
+
+        public void Play(Vector3 position, float pitch = 0.0f)
+        {
+            SoundManager.PlaySound(Datastructures.SelectRandom(Sounds), position, RandomPitch, Volume, pitch);
+        }
+    }
+
     /// <summary>
     /// Manages and creates 3D sounds.
     /// </summary>
@@ -77,6 +109,8 @@ namespace DwarfCorp
                 SoundEffect effect = Content.Load<SoundEffect>(name);
                 EffectLibrary[name] = effect;
             }
+            SoundEffect.DistanceScale = 0.01f;
+            SoundEffect.DopplerScale = 0.1f;
         }
 
         public static void SetActiveSongs(params string[] songs)
@@ -100,7 +134,7 @@ namespace DwarfCorp
             MediaPlayer.Volume = GameSettings.Default.MasterVolume * GameSettings.Default.MusicVolume;
         }
 
-        public static Sound3D PlaySound(string name, Vector3 location, bool randomPitch, float volume = 1.0f)
+        public static Sound3D PlaySound(string name, Vector3 location, bool randomPitch, float volume = 1.0f, float pitch = 0.0f)
         {
             if(Content == null)
             {
@@ -111,7 +145,7 @@ namespace DwarfCorp
             if (!EffectLibrary.ContainsKey(name))
             {
                 effect = Content.Load<SoundEffect>(name);
-                EffectLibrary[name] = effect;
+                EffectLibrary[name] = effect;   
             }
             else
             {
@@ -143,7 +177,7 @@ namespace DwarfCorp
 
                 if (randomPitch)
                 {
-                    sound.EffectInstance.Pitch = (float)(MathFunctions.Random.NextDouble() * 1.0f - 0.5f);
+                    sound.EffectInstance.Pitch = MathFunctions.Clamp((float)(MathFunctions.Random.NextDouble() * 1.0f - 0.5f) + pitch, -1.0f, 1.0f);
                 }
                 ActiveSounds.Add(sound);
 
@@ -160,7 +194,7 @@ namespace DwarfCorp
             PlaySound(name, 1.0f);
         }
 
-        public static void PlaySound(string name, float volume = 1.0f)
+        public static void PlaySound(string name, float volume)
         {
             // TODO: Remove this block once the SoundManager is initialized in a better location.
             if (Content == null) return;
@@ -198,7 +232,7 @@ namespace DwarfCorp
             Listener.Up = viewInverse.Up;
             Listener.Velocity = camera.Velocity;
             Listener.Forward = viewInverse.Forward;
-           
+          
 
             foreach(Sound3D instance in ActiveSounds)
             {
@@ -220,7 +254,7 @@ namespace DwarfCorp
                     Emitter.Position = instance.Position;
                     instance.EffectInstance.Apply3D(Listener, Emitter);
 
-                    instance.EffectInstance.Volume = Math.Max(Math.Min(400.0f / (camera.Position - instance.Position).LengthSquared(), 0.999f), 0.001f);
+                    //instance.EffectInstance.Volume = Math.Max(Math.Min(400.0f / (camera.Position - instance.Position).LengthSquared(), 0.999f), 0.001f);
                     instance.EffectInstance.Volume *= (GameSettings.Default.MasterVolume * GameSettings.Default.SoundEffectVolume * instance.VolumeMultiplier);
 
                     instance.EffectInstance.Play();

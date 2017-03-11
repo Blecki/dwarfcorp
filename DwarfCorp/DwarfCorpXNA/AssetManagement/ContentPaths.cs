@@ -1,4 +1,4 @@
-﻿// ContentPaths.cs
+// ContentPaths.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -50,6 +50,39 @@ namespace DwarfCorp
 
         public class Audio
         {
+            public class Oscar
+            {
+                public static string voxel_dirt_destroy = ProgramData.CreatePath("Audio", "oscar", "sfx_env_voxel_dirt_destroy");
+                public static string voxel_metal_destroy = ProgramData.CreatePath("Audio", "oscar", "sfx_env_voxel_metal_destroy");
+                public static string voxel_sand_destroy = ProgramData.CreatePath("Audio", "oscar", "sfx_env_voxel_sand_destroy");
+                public static string voxel_snow_destroy = ProgramData.CreatePath("Audio", "oscar", "sfx_env_voxel_snow_destroy");
+                public static string voxel_stone_destroy = ProgramData.CreatePath("Audio", "oscar", "sfx_env_voxel_stone_destroy");
+                public static string voxel_wood_destroy = ProgramData.CreatePath("Audio", "oscar", "sfx_env_voxel_wood_destroy");
+                public static string pick_dirt_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_pick_dirt_1");
+                public static string pick_dirt_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_pick_dirt_2");
+                public static string pick_dirt_3 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_pick_dirt_3");
+                public static string pick_stone_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_pick_stone_1");
+                public static string pick_stone_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_pick_stone_2");
+                public static string pick_stone_3 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_pick_stone_3");
+                public static string pick_wood_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_pick_wood_1");
+                public static string pick_wood_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_pick_wood_2");
+                public static string pick_wood_3 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_pick_wood_3");
+
+                public static string gui_change_selection = ProgramData.CreatePath("Audio", "oscar",
+                    "sfx_gui_change_selection");
+                public static string gui_click_voxel = ProgramData.CreatePath("Audio", "oscar", "sfx_gui_click_voxel");
+
+                public static string gui_confirm_selection = ProgramData.CreatePath("Audio", "oscar",
+                    "sfx_gui_confirm_selection");
+
+                public static string gui_positive_generic = ProgramData.CreatePath("Audio", "oscar",
+                    "sfx_gui_positive_generic");
+
+                public static string gui_positive_great_success = ProgramData.CreatePath("Audio", "oscar", "sfx_gui_positive_great_success");
+
+                public static string gui_window_close = ProgramData.CreatePath("Audio", "oscar", "sfx_gui_window_close");
+                public static string gui_window_open = ProgramData.CreatePath("Audio", "oscar", "sfx_gui_window_open");
+            }
             public static string chew = ProgramData.CreatePath("Audio", "chew");
             public static string explode = ProgramData.CreatePath("Audio", "explode");
             public static string fire = ProgramData.CreatePath("Audio", "fire");

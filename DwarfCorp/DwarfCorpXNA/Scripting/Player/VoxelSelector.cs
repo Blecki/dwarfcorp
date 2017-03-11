@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using DwarfCorp.GameStates;
+using LibNoise;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Math = System.Math;
 
 namespace DwarfCorp
 {
@@ -111,6 +113,10 @@ namespace DwarfCorp
         /// </summary>
         public VoxelBrush Brush = VoxelBrush.Box;
 
+        public SoundSource ClickSound;
+        public SoundSource DragSound;
+        public SoundSource ReleaseSound;
+
         public WorldManager World;
 
         public VoxelSelector(WorldManager world, Camera camera, GraphicsDevice graphics, ChunkManager chunks)
@@ -135,6 +141,12 @@ namespace DwarfCorp
             DeleteColor = Color.Red;
             BoxYOffset = 0;
             LastMouseWheel = 0;
+            ClickSound = SoundSource.Create(ContentPaths.Audio.Oscar.gui_change_selection);
+            ClickSound.RandomPitch = false;
+            DragSound = SoundSource.Create(ContentPaths.Audio.Oscar.gui_click_voxel);
+            DragSound.RandomPitch = false;
+            ReleaseSound = SoundSource.Create(ContentPaths.Audio.Oscar.gui_confirm_selection);
+            ReleaseSound.RandomPitch = false;
         }
 
         /// <summary>
@@ -210,6 +222,8 @@ namespace DwarfCorp
         /// The box y offset.
         /// </value>
         public float BoxYOffset { get; set; }
+
+        private int PrevBoxYOffsetInt = 0;
         /// <summary>
         /// Gets or sets the last value of the mouse wheel.
         /// </summary>
@@ -231,6 +245,11 @@ namespace DwarfCorp
             Voxel underMouse = GetVoxelUnderMouse();
             // Keep track of whether a new voxel has been selected.
             bool newVoxel = underMouse != null && !underMouse.Equals(VoxelUnderMouse);
+
+            if (underMouse == null)
+            {
+                return;
+            }
 
             // If there is a voxel under the mouse...
             if (underMouse != null)
@@ -266,9 +285,16 @@ namespace DwarfCorp
             // for building pits and tall walls using the mouse wheel.
             if (keyboard.IsKeyDown(Keys.LeftAlt) || keyboard.IsKeyDown(Keys.RightAlt))
             {
-                BoxYOffset += (mouse.ScrollWheelValue - LastMouseWheel) * 0.01f;
+                var change = mouse.ScrollWheelValue - LastMouseWheel;
+                BoxYOffset += (change) * 0.01f;
+                int offset = (int) BoxYOffset;
+                if (offset != PrevBoxYOffsetInt)
+                {
+                    DragSound.Play(World.CursorPos);
+                    newVoxel = true;
+                }
+                PrevBoxYOffsetInt = offset;
                 LastMouseWheel = mouse.ScrollWheelValue;
-                newVoxel = true;
                 altPressed = true;
             }
             else
@@ -289,9 +315,11 @@ namespace DwarfCorp
                 // On release, select voxels.
                 if (mouse.LeftButton == ButtonState.Released)
                 {
+                    ReleaseSound.Play(World.CursorPos);
                     isLeftPressed = false;
                     LeftReleasedCallback();
                     BoxYOffset = 0;
+                    PrevBoxYOffsetInt = 0;
                 }
                 // Otherwise, update the selection buffer
                 else
@@ -331,16 +359,20 @@ namespace DwarfCorp
                         }
 
                         if (newVoxel)
+                        {
+                            DragSound.Play(World.CursorPos, SelectionBuffer.Count / 20.0f);
                             Dragged.Invoke(SelectionBuffer, InputManager.MouseButton.Left);
+                        }
                     }
                 }
             }
             // If the mouse was not previously pressed, but is now pressed, then notify us of that.
             else if (mouse.LeftButton == ButtonState.Pressed)
             {
-                LeftPressedCallback();
+                ClickSound.Play(World.CursorPos); ;
                 isLeftPressed = true;
                 BoxYOffset = 0;
+                PrevBoxYOffsetInt = 0;
             }
 
             // Case where the right mouse button is pressed (mirrors left mouse button)
@@ -349,9 +381,11 @@ namespace DwarfCorp
             {
                 if (mouse.RightButton == ButtonState.Released)
                 {
+                    ReleaseSound.Play(World.CursorPos);
                     isRightPressed = false;
                     RightReleasedCallback();
                     BoxYOffset = 0;
+                    PrevBoxYOffsetInt = 0;
                 }
                 else
                 {
@@ -388,12 +422,16 @@ namespace DwarfCorp
                             }
                         }
                         if (newVoxel)
+                        {
+                            DragSound.Play(World.CursorPos, SelectionBuffer.Count / 20.0f);
                             Dragged.Invoke(SelectionBuffer, InputManager.MouseButton.Right);
+                        }
                     }
                 }
             }
             else if (mouse.RightButton == ButtonState.Pressed)
             {
+                ClickSound.Play(World.CursorPos);
                 RightPressedCallback();
                 BoxYOffset = 0;
                 isRightPressed = true;

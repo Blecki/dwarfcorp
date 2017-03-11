@@ -230,10 +230,15 @@ namespace DwarfCorp
         // More statics. Hate this.
         public Action<String, String, Action> OnAnnouncement;
 
-        public void MakeAnnouncement(String Title, String Message, Action ClickAction = null)
+        public void MakeAnnouncement(String Title, String Message, Action ClickAction = null, string sound = null)
         {
             if (OnAnnouncement != null)
                 OnAnnouncement(Title, Message, ClickAction);
+
+            if (!string.IsNullOrEmpty(sound))
+            {
+                SoundManager.PlaySound(sound, 0.01f);
+            }
         }
 
 

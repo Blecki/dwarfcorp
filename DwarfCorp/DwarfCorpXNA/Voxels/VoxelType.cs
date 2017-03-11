@@ -53,7 +53,7 @@ namespace DwarfCorp
         public float RampSize { get; set; }
         public bool IsBuildable { get; set; }
         public string ParticleType { get; set; }
-        public string ExplosionSound { get; set; }
+        public SoundSource ExplosionSound { get; set; }
         public bool HasTransitionTextures { get; set; }
         public bool EmitsLight { get; set; }
         public float MinSpawnHeight { get; set; }
@@ -71,7 +71,7 @@ namespace DwarfCorp
         public Color Tint { get; set; }
         public bool SpawnOnSurface { get; set; }
         private static short maxID = 0;
-
+        public SoundSource HitSound { get; set; }
         public static List<VoxelType> TypeList = new List<VoxelType>();
 
         public VoxelType(VoxelType parent, string subtype)
@@ -109,6 +109,7 @@ namespace DwarfCorp
             SpawnVeins = false;
             Rarity = 1.0f;
             SpawnOnSurface = false;
+            HitSound = parent.HitSound;
         }
 
         public VoxelType()
@@ -126,7 +127,7 @@ namespace DwarfCorp
             IsBuildable = false;
             ParticleType = "puff";
             IsInvincible = false;
-            ExplosionSound = ContentPaths.Audio.gravel;
+            ExplosionSound = SoundSource.Create(ContentPaths.Audio.gravel);
             HasTransitionTextures = false;
             TransitionTextures = new Dictionary<TransitionTexture, BoxPrimitive.BoxTextureCoords>();
             IsSoil = false;
@@ -145,6 +146,7 @@ namespace DwarfCorp
             SpawnVeins = false;
             Rarity = 1.0f;
             SpawnOnSurface = false;
+            HitSound = SoundSource.Create(ContentPaths.Audio.pick);
         }
     }
 
