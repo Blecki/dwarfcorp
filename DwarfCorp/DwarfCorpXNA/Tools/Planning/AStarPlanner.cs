@@ -1,4 +1,4 @@
-﻿// AStarPlanner.cs
+// AStarPlanner.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -31,6 +31,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 
 namespace DwarfCorp
@@ -288,6 +289,11 @@ namespace DwarfCorp
             // Otherwise, the cost is the distance between the voxels multiplied by the intrinsic cost
             // of an action.
             float score = (a.Position - b.Position).LengthSquared() * ActionCost(movement, action);
+
+            if (action == Creature.MoveType.ClimbWalls)
+            {
+                Console.Out.WriteLine("Yes!");
+            }
 
             return score;
         }

@@ -803,6 +803,9 @@ namespace DwarfCorp
                     portBox.Center() + new Vector3(0, 100, 0),
                     portBox.Center() + new Vector3(0, 10, 0), ComponentManager, Content,
                     GraphicsDevice, new ShipmentOrder(0, null), Master.Faction);
+
+                Camera.Target = portBox.Center();
+                Camera.Position = Camera.Target + new Vector3(0, 15, -15);
             }
         }
 
