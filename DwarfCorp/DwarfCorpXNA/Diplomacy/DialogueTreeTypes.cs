@@ -13,6 +13,7 @@ namespace DwarfCorp.Dialogue
     {
         private Action<DialogueContext> NextAction = null;
         public Gum.Widget Panel;
+        public NewGui.TradePanel TradePanel;
 
         public Faction.TradeEnvoy Envoy;
         public String EnvoyName = "TODO";
