@@ -38,9 +38,13 @@ namespace DwarfCorp.Dialogue
 
             var dialoguePanel = GuiRoot.RootItem.AddChild(new Gum.Widget
             {
+                Font = "outline-font",
+                TextColor = new Vector4(1,1,1,1),
                 MinimumSize = new Point(256, 0),
                 MaximumSize = new Point(256, Int32.MaxValue),
-                AutoLayout = Gum.AutoLayout.DockRight
+                AutoLayout = Gum.AutoLayout.DockRight,
+                Border = "border-fancy",
+                InteriorMargin = new Gum.Margin(128,0,0,0)
             });
 
             GuiRoot.RootItem.Layout();
