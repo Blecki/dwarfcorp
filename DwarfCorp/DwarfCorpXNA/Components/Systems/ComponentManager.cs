@@ -288,7 +288,7 @@ namespace DwarfCorp
         }
 
 
-        private HashSet<IRenderableComponent> visibleComponents = new HashSet<IRenderableComponent>();
+        private List<IRenderableComponent> visibleComponents = new List<IRenderableComponent>();
 
         public enum WaterRenderType
         {
@@ -344,6 +344,7 @@ namespace DwarfCorp
             effect.EnableLighting = GameSettings.Default.CursorLightEnabled;
             graphicsDevice.RasterizerState = RasterizerState.CullNone;
 
+            visibleComponents.Sort(CompareZDepth);
             foreach (IRenderableComponent bodyToDraw in visibleComponents)
             {
                 if (waterRenderMode == WaterRenderType.Reflective &&
@@ -356,22 +357,14 @@ namespace DwarfCorp
             effect.EnableLighting = false;
         }
 
-        public static int CompareZDepth(Body A, Body B)
+        public static int CompareZDepth(IRenderableComponent A, IRenderableComponent B)
         {
             if (A == B)
             {
                 return 0;
             }
 
-            else if (A.Parent == B.Parent && A.DrawInFrontOfSiblings)
-            {
-                return 1;
-            }
-            else if (B.Parent == A.Parent && B.DrawInFrontOfSiblings)
-            {
-                return -1;
-            }
-            else if ((Camera.Position - A.GlobalTransform.Translation).LengthSquared() < (Camera.Position - B.GlobalTransform.Translation).LengthSquared())
+             if ((Camera.Position - A.GlobalTransform.Translation).LengthSquared() < (Camera.Position - B.GlobalTransform.Translation).LengthSquared())
             {
                 return 1;
             }
