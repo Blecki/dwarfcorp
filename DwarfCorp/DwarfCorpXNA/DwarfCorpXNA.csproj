@@ -385,6 +385,7 @@
     <Compile Include="NewGui\BuildRoomInfo.cs" />
     <Compile Include="NewGui\FramedIcon.cs" />
     <Compile Include="NewGui\CompanyLogo.cs" />
+    <Compile Include="NewGui\MoneyEditor.cs" />
     <Compile Include="NewGui\TwoColumns.cs" />
     <Compile Include="NewGui\TradePanel.cs" />
     <Compile Include="NewGui\ResourceColumns.cs" />

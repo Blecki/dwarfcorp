@@ -44,13 +44,18 @@ namespace DwarfCorp.NewGui
             {
                 MinimumSize = new Point(128, 0),
                 AutoLayout = AutoLayout.DockLeft,
-                Text = "$0"
+                Font = "outline-font",
+                TextColor = new Vector4(1, 1, 1, 1),
+                TextVerticalAlign = VerticalAlign.Center
             });
 
             SpaceDisplay = bottomRow.AddChild(new Widget
             {
                 MinimumSize = new Point(128, 0),
-                AutoLayout = AutoLayout.DockLeft
+                AutoLayout = AutoLayout.DockLeft,
+                Font = "outline-font",
+                TextColor = new Vector4(1, 1, 1, 1),
+                TextVerticalAlign = VerticalAlign.Center
             });
 
             bottomRow.AddChild(new Widget
@@ -62,17 +67,24 @@ namespace DwarfCorp.NewGui
                 AutoLayout = AutoLayout.DockRight,
                 OnClick = (sender, args) =>
                 {
-                    Result = TradeDialogResult.Propose;
-                    Transaction = new TradeTransaction
+                    if (EnvoyColumns.Valid && PlayerColumns.Valid)
                     {
-                        EnvoyEntity = Envoy,
-                        EnvoyItems = EnvoyColumns.SelectedResources,
-                        EnvoyMoney = EnvoyColumns.TradeMoney,
-                        PlayerEntity = Player,
-                        PlayerItems = PlayerColumns.SelectedResources,
-                        PlayerMoney = PlayerColumns.TradeMoney
-                    };
-                    this.Close();
+                        Result = TradeDialogResult.Propose;
+                        Transaction = new TradeTransaction
+                        {
+                            EnvoyEntity = Envoy,
+                            EnvoyItems = EnvoyColumns.SelectedResources,
+                            EnvoyMoney = EnvoyColumns.TradeMoney,
+                            PlayerEntity = Player,
+                            PlayerItems = PlayerColumns.SelectedResources,
+                            PlayerMoney = PlayerColumns.TradeMoney
+                        };
+                        this.Close();
+                    }
+                    else
+                    {
+                        Root.ShowTooltip(Root.MousePosition, "Trade is invalid");
+                    }
                 }
             });
 
@@ -83,6 +95,7 @@ namespace DwarfCorp.NewGui
                 TextColor = new Vector4(1, 1, 1, 1),
                 Text = "Cancel",
                 AutoLayout = AutoLayout.DockRight,
+                Padding = new Margin(0,0,0,16),
                 OnClick = (sender, args) =>
                 {
                     Result = TradeDialogResult.Cancel;
@@ -130,6 +143,8 @@ namespace DwarfCorp.NewGui
                 EnvoyColumns.TotalSelectedItems - PlayerColumns.TotalSelectedItems,
                 Player.AvailableSpace);
             SpaceDisplay.Invalidate();
+
+
         }
     }
 }
