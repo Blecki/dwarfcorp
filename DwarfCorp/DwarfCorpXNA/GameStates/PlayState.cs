@@ -246,7 +246,7 @@ namespace DwarfCorp.GameStates
             #endregion
 
             #region Update resource panel
-            ResourcePanel.Clear();
+            ResourcePanel.Children.Clear(); // Very unsafe.
 
             var resourceCount = Master.Faction.ListResources().Where(p => p.Value.NumResources > 0).Count();
             var visibleResources = (MinimapFrame.Rect.Top - ResourcePanel.Rect.Top) / 32;
