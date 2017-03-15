@@ -133,7 +133,7 @@ namespace DwarfCorp.GameStates
         public override void Update(DwarfTime gameTime)
         {
             foreach (var item in DwarfGame.GumInputMapper.GetInputQueue())
-                if (item.Message == Gum.InputEvents.KeyDown)
+                if (item.Message == Gum.InputEvents.KeyPress)
                     Runner.Jump();
 
             GuiRoot.Update(gameTime.ToGameTime());

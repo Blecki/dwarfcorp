@@ -249,6 +249,7 @@ namespace DwarfCorp.GameStates
 
             // Todo: Write a resource panel widget.
             ResourcePanel.Children.Clear(); // Very unsafe.
+            var existingResourceEntries = new List<Gum.Widget>(ResourcePanel.Children);
 
             var resourceCount = Master.Faction.ListResources().Where(p => p.Value.NumResources > 0).Count();
             var visibleResources = (MinimapFrame.Rect.Top - ResourcePanel.Rect.Top) / 32;
@@ -270,34 +271,44 @@ namespace DwarfCorp.GameStates
 
                 var resourceTemplate = ResourceLibrary.GetResourceByName(resource.Key);
 
-                var row = ResourcePanel.AddChild(new Gum.Widget
+                var row = existingResourceEntries.FirstOrDefault(w => (w.Tag as String) == resource.Key);
+                if (row == null)
+                {
+                    row = ResourcePanel.AddChild(new Gum.Widget
                     {
                         MinimumSize = new Point(0, 32),
-                        AutoLayout = global::Gum.AutoLayout.DockTop
+                        AutoLayout = global::Gum.AutoLayout.DockTop,
+                        Tag = resource.Key
                     });
 
-                row.AddChild(new Gum.Widget
+                    row.AddChild(new Gum.Widget
                     {
                         Background = new Gum.TileReference("resources", resourceTemplate.NewGuiSprite),
                         MinimumSize = new Point(32, 32),
                         AutoLayout = global::Gum.AutoLayout.DockLeft,
                         Tooltip = string.Format("{0} - {1}",
-                            resourceTemplate.ResourceName,
-                            resourceTemplate.Description)
+                                resourceTemplate.ResourceName,
+                                resourceTemplate.Description)
                     });
 
-                row.AddChild(new Gum.Widget
-                {
-                    Text = resource.Value.NumResources.ToString(),
-                    MinimumSize = new Point(32, 32),
-                    AutoLayout = global::Gum.AutoLayout.DockLeft,
-                    Tooltip = string.Format("{0} - {1}",
-                        resourceTemplate.ResourceName,
-                        resourceTemplate.Description),
-                    Font = "outline-font",
-                    TextVerticalAlign = global::Gum.VerticalAlign.Center,
-                    TextColor = new Vector4(1,1,1,1)
-                });
+                    row.AddChild(new Gum.Widget
+                    {
+                        Text = resource.Value.NumResources.ToString(),
+                        MinimumSize = new Point(32, 32),
+                        AutoLayout = global::Gum.AutoLayout.DockLeft,
+                        Tooltip = string.Format("{0} - {1}",
+                            resourceTemplate.ResourceName,
+                            resourceTemplate.Description),
+                        Font = "outline-font",
+                        TextVerticalAlign = global::Gum.VerticalAlign.Center,
+                        TextColor = new Vector4(1, 1, 1, 1)
+                    });
+                }
+                else
+                    ResourcePanel.AddChild(row);
+
+                row.GetChild(1).Text = resource.Value.NumResources.ToString();
+                row.GetChild(1).Invalidate();
             }
             ResourcePanel.Layout();
             #endregion

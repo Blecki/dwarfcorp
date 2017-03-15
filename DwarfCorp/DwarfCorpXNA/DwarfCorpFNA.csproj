@@ -18,7 +18,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\DwarfCorpFNA\bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;WINDOWS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;WINDOWS GEMFNA</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -27,7 +27,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\DwarfCorpFNA\bin\Release\</OutputPath>
-    <DefineConstants>WINDOWS</DefineConstants>
+    <DefineConstants>WINDOWS GEMFNA</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -100,6 +100,7 @@
     <Compile Include="Entities\Animals\Bat.cs" />
     <Compile Include="Entities\Animals\Bird.cs" />
     <Compile Include="Entities\Animals\BirdAI.cs" />
+    <Compile Include="Entities\Animals\Chicken.cs" />
     <Compile Include="Entities\Animals\Deer.cs" />
     <Compile Include="Entities\Animals\Frog.cs" />
     <Compile Include="Entities\Animals\Rabbit.cs" />
@@ -129,6 +130,7 @@
     <Compile Include="Entities\Monsters\Fairy.cs" />
     <Compile Include="Entities\Monsters\Goblin.cs" />
     <Compile Include="Entities\Monsters\Moleman.cs" />
+    <Compile Include="Entities\Monsters\MudGolem.cs" />
     <Compile Include="Entities\Monsters\Necromancer.cs" />
     <Compile Include="Entities\Monsters\NecromancerAI.cs" />
     <Compile Include="Entities\Monsters\Skeleton.cs" />
@@ -234,7 +236,6 @@
     <Compile Include="GUI\Components\Complex\ActDisplay.cs" />
     <Compile Include="GUI\Components\Complex\AIDebugger.cs" />
     <Compile Include="GUI\Components\Complex\ApplicationPanel.cs" />
-    <Compile Include="GUI\Components\Complex\BuildMenu.cs" />
     <Compile Include="GUI\Components\Complex\CapitalPanel.cs" />
     <Compile Include="GUI\Components\Complex\ColorDialog.cs" />
     <Compile Include="GUI\Components\Complex\ColorSelector.cs" />
@@ -301,7 +302,6 @@
     <Compile Include="LanguageGenerator\Language.cs" />
     <Compile Include="LanguageGenerator\TextAtom.cs" />
     <Compile Include="LanguageGenerator\TextGenerator.cs" />
-    <Compile Include="NativeInjector.cs" />
     <Compile Include="NewGui\AnnouncementPopup.cs" />
     <Compile Include="NewGui\BuildCraftInfo.cs" />
     <Compile Include="NewGui\BuildMenu.cs" />
