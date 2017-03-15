@@ -246,6 +246,8 @@ namespace DwarfCorp.GameStates
             #endregion
 
             #region Update resource panel
+
+            // Todo: Write a resource panel widget.
             ResourcePanel.Children.Clear(); // Very unsafe.
 
             var resourceCount = Master.Faction.ListResources().Where(p => p.Value.NumResources > 0).Count();
