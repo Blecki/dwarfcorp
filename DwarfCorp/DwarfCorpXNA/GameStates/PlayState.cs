@@ -49,6 +49,7 @@ namespace DwarfCorp.GameStates
         private Gum.Widget ResourcePanel;
         private NewGui.InfoTray InfoTray;
         private NewGui.ToggleTray BrushTray;
+        private Gum.Widgets.VerticalScrollBar ResourceScroller;
 
         private class ToolbarItem
         {
@@ -251,39 +252,69 @@ namespace DwarfCorp.GameStates
             #endregion
 
             #region Update resource panel
-            ResourcePanel.Clear();
-            foreach (var resource in Master.Faction.ListResources().Where(p => p.Value.NumResources > 0))
+
+            // Todo: Write a resource panel widget.
+            ResourcePanel.Children.Clear(); // Very unsafe.
+            var existingResourceEntries = new List<Gum.Widget>(ResourcePanel.Children);
+
+            var resourceCount = Master.Faction.ListResources().Where(p => p.Value.NumResources > 0).Count();
+            var visibleResources = (MinimapFrame.Rect.Top - ResourcePanel.Rect.Top) / 32;
+
+            if (ResourcePanel.Rect.Top + (resourceCount * 32) > MinimapFrame.Rect.Top)
             {
+                ResourcePanel.AddChild(ResourceScroller);
+                ResourceScroller.ScrollArea = resourceCount - visibleResources;
+            }
+            else
+                ResourceScroller.ScrollPosition = 0;
+
+            int totalSize = 0;
+
+            foreach (var resource in Master.Faction.ListResources().Where(p => p.Value.NumResources > 0).Skip(ResourceScroller.ScrollPosition))
+            {
+                if (ResourcePanel.Rect.Top + totalSize > MinimapFrame.Rect.Top) break;
+                totalSize += 32;
+
                 var resourceTemplate = ResourceLibrary.GetResourceByName(resource.Key);
 
-                var row = ResourcePanel.AddChild(new Gum.Widget
+                var row = existingResourceEntries.FirstOrDefault(w => (w.Tag as String) == resource.Key);
+                if (row == null)
+                {
+                    row = ResourcePanel.AddChild(new Gum.Widget
                     {
                         MinimumSize = new Point(0, 32),
-                        AutoLayout = global::Gum.AutoLayout.DockTop
+                        AutoLayout = global::Gum.AutoLayout.DockTop,
+                        Tag = resource.Key
                     });
 
-                row.AddChild(new Gum.Widget
+                    row.AddChild(new Gum.Widget
                     {
                         Background = new Gum.TileReference("resources", resourceTemplate.NewGuiSprite),
                         MinimumSize = new Point(32, 32),
                         AutoLayout = global::Gum.AutoLayout.DockLeft,
                         Tooltip = string.Format("{0} - {1}",
-                            resourceTemplate.ResourceName,
-                            resourceTemplate.Description)
+                                resourceTemplate.ResourceName,
+                                resourceTemplate.Description)
                     });
 
-                row.AddChild(new Gum.Widget
-                {
-                    Text = resource.Value.NumResources.ToString(),
-                    MinimumSize = new Point(32, 32),
-                    AutoLayout = global::Gum.AutoLayout.DockLeft,
-                    Tooltip = string.Format("{0} - {1}",
-                        resourceTemplate.ResourceName,
-                        resourceTemplate.Description),
-                    Font = "outline-font",
-                    TextVerticalAlign = global::Gum.VerticalAlign.Center,
-                    TextColor = new Vector4(1,1,1,1)
-                });
+                    row.AddChild(new Gum.Widget
+                    {
+                        Text = resource.Value.NumResources.ToString(),
+                        MinimumSize = new Point(32, 32),
+                        AutoLayout = global::Gum.AutoLayout.DockLeft,
+                        Tooltip = string.Format("{0} - {1}",
+                            resourceTemplate.ResourceName,
+                            resourceTemplate.Description),
+                        Font = "outline-font",
+                        TextVerticalAlign = global::Gum.VerticalAlign.Center,
+                        TextColor = new Vector4(1, 1, 1, 1)
+                    });
+                }
+                else
+                    ResourcePanel.AddChild(row);
+
+                row.GetChild(1).Text = resource.Value.NumResources.ToString();
+                row.GetChild(1).Invalidate();
             }
             ResourcePanel.Layout();
             #endregion
@@ -471,7 +502,6 @@ namespace DwarfCorp.GameStates
 
             LevelLabel = levelRow.AddChild(new Gum.Widget
             {
-                Rect = new Rectangle(48, 32, 128, 20),
                 AutoLayout = global::Gum.AutoLayout.DockFill,
                 Font = "outline-font",
                 OnLayout = (sender) => sender.Rect.X += 36,
@@ -482,11 +512,18 @@ namespace DwarfCorp.GameStates
 
             ResourcePanel = GuiRoot.RootItem.AddChild(new Gum.Widget
                 {
-                    Transparent = true,
-                    Rect = new Rectangle(0, 104, 128, 128),
+                    //Transparent = true,
                     AutoLayout = global::Gum.AutoLayout.None,
-                    OnLayout = sender => sender.Rect.Y = infoPanel.Rect.Bottom + 4
+                    OnLayout = sender =>
+                    {
+                        sender.Rect = new Rectangle(0, levelRow.Rect.Bottom, 128, GuiRoot.VirtualScreen.Height - levelRow.Rect.Bottom - 204);
+                    }
                 });
+
+            ResourceScroller = GuiRoot.ConstructWidget(new Gum.Widgets.VerticalScrollBar
+            {
+                AutoLayout = Gum.AutoLayout.DockLeft
+            }) as Gum.Widgets.VerticalScrollBar;
 
             #region Setup time display
             TimeLabel = GuiRoot.RootItem.AddChild(new Gum.Widget
@@ -652,6 +689,8 @@ namespace DwarfCorp.GameStates
 
             #region Setup tool tray tray
 
+
+            #region Setup tool tray
 
             BottomRightTray = GuiRoot.RootItem.AddChild(new NewGui.ToolTray.Tray
             {
@@ -1088,26 +1127,17 @@ namespace DwarfCorp.GameStates
                 {
                     Master.SelectedMinions.AddRange(Master.Faction.Minions);
                 }
-                int i = 0;
-                if (index == 0 || Master.SelectedMinions.Count > 0)
+
+                if (index == 0 || Master.SelectedMinions.Count > 0 && index < BottomRightTray.Children.Count)
                 {
-                    //foreach (var pair in ToolbarItems)
-                    //{
-                    //    if (i == index)
-                    //    {
-                    //        List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions,
-                    //            pair.Key);
-
-                    //        if ((index == 0 || minions.Count > 0))
-                    //        {
-                    //            pair.Value.OnClick(null,null);
-                    //            break;
-                    //        }
-                    //    }
-                    //    i++;
-                    //}
-
-                    //Master.ToolBar.CurrentMode = modes[index];
+                    GuiRoot.SafeCall(
+                        BottomRightTray.Children[index].OnClick,
+                        BottomRightTray.Children[index],
+                        new Gum.InputEventArgs
+                        {
+                            X = BottomRightTray.Children[index].Rect.X,
+                            Y = BottomRightTray.Children[index].Rect.Y
+                        });
                 }
             }
             else if (key == ControlSettings.Mappings.Pause)
@@ -1127,6 +1157,8 @@ namespace DwarfCorp.GameStates
             else if (key == ControlSettings.Mappings.ToggleGUI)
             {
                 // Todo: Reimplement.
+                GuiRoot.RootItem.Hidden = !GuiRoot.RootItem.Hidden;
+                GuiRoot.RootItem.Invalidate();
                 GUI.RootComponent.IsVisible = !GUI.RootComponent.IsVisible;
             }
         }

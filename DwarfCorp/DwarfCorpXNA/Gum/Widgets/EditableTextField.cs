@@ -10,6 +10,7 @@ namespace Gum.Widgets
     public class EditableTextField : Widget
     {
         private int CursorPosition = 0;
+        public bool HiliteOnMouseOver = true;
 
         public Action<Widget> OnTextChange = null;
 
@@ -60,7 +61,8 @@ namespace Gum.Widgets
                             clickX -= glyphSize.X;
                             searchIndex += 1;
                         }
-                        
+
+                        CursorPosition = clickIndex;
                         Invalidate();
                     }
                     else
@@ -107,22 +109,25 @@ namespace Gum.Widgets
                         Root.SafeCall(OnTextChange, this);
                         Invalidate();
                     }
-                    Root.SafeCall(OnTextChange, this);
+                    //Root.SafeCall(OnTextChange, this);
                     Invalidate();
                 };
 
-            var color = TextColor;
-            OnMouseEnter += (widget, action) =>
+            if (HiliteOnMouseOver)
             {
-                widget.TextColor = new Vector4(0.5f, 0, 0, 1.0f);
-                widget.Invalidate();
-            };
+                var color = TextColor;
+                OnMouseEnter += (widget, action) =>
+                {
+                    widget.TextColor = new Vector4(0.5f, 0, 0, 1.0f);
+                    widget.Invalidate();
+                };
 
-            OnMouseLeave += (widget, action) =>
-            {
-                widget.TextColor = color;
-                widget.Invalidate();
-            };
+                OnMouseLeave += (widget, action) =>
+                {
+                    widget.TextColor = color;
+                    widget.Invalidate();
+                };
+            }
         }
 
         protected override Mesh Redraw()

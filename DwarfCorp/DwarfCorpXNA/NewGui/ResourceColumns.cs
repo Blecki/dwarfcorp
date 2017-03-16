@@ -16,9 +16,10 @@ namespace DwarfCorp.NewGui
         public List<ResourceAmount> SelectedResources { get; private set; }
         public String LeftHeader;
         public String RightHeader;
-        private Gum.Widgets.EditableTextField MoneyField;
+        private MoneyEditor MoneyField;
 
-        public int TradeMoney { get { return Int32.Parse(MoneyField.Text); } }
+        public int TradeMoney { get { return MoneyField.CurrentValue; } }
+        public bool Valid { get { return MoneyField.Valid; } }
         
         public int TotalSelectedItems
         {
@@ -46,6 +47,8 @@ namespace DwarfCorp.NewGui
             leftPanel.AddChild(new Gum.Widget
             {
                 Text = LeftHeader,
+                Font = "outline-font",
+                TextColor = new Vector4(1, 1, 1, 1),
                 AutoLayout = AutoLayout.DockTop
             });
 
@@ -53,7 +56,11 @@ namespace DwarfCorp.NewGui
             {
                 MinimumSize = new Point(0, 32),
                 AutoLayout = AutoLayout.DockBottom,
-                Text = TradeEntity.Money.ToString()
+                Font = "outline-font",
+                TextColor = new Vector4(1, 1, 1, 1),
+                Text = String.Format("${0}", TradeEntity.Money.ToString()),
+                TextHorizontalAlign = ReverseColumnOrder ? HorizontalAlign.Left : HorizontalAlign.Right,
+                TextVerticalAlign = VerticalAlign.Center
             });
 
             var leftList = leftPanel.AddChild(new Gum.Widgets.WidgetListView
@@ -67,26 +74,18 @@ namespace DwarfCorp.NewGui
             rightPanel.AddChild(new Gum.Widget
             {
                 Text = RightHeader,
+                Font = "outline-font",
+                TextColor = new Vector4(1,1,1,1),
                 AutoLayout = AutoLayout.DockTop
             });
 
-            MoneyField = rightPanel.AddChild(new Gum.Widgets.EditableTextField
+            MoneyField = rightPanel.AddChild(new MoneyEditor
             {
-                Text = "0",
+                MaximumValue = TradeEntity.Money,
                 MinimumSize = new Point(0, 32),
                 AutoLayout = AutoLayout.DockBottom,
-                BeforeTextChange = (sender, args) =>
-                {
-                    var v = 0;
-                    if (int.TryParse(args.NewText, out v))
-                    {
-                        sender.Text = args.NewText;
-                        Root.SafeCall(OnTotalSelectedChanged, this);
-                    }
-                    else
-                        args.Cancelled = true;
-                }
-            }) as Gum.Widgets.EditableTextField;
+                OnValueChanged = (sender) => Root.SafeCall(OnTotalSelectedChanged, this)
+            }) as MoneyEditor;
 
             var rightList = rightPanel.AddChild(new Gum.Widgets.WidgetListView
             {
