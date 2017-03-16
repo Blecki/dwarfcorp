@@ -363,15 +363,9 @@ namespace DwarfCorp
             {
                 return 0;
             }
-
-             if ((Camera.Position - A.GlobalTransform.Translation).LengthSquared() < (Camera.Position - B.GlobalTransform.Translation).LengthSquared())
-            {
-                return 1;
-            }
-            else
-            {
-                return -1;
-            }
+            return
+                (Camera.Position - A.GlobalTransform.Translation).LengthSquared()
+                    .CompareTo((Camera.Position - B.GlobalTransform.Translation).LengthSquared());
         }
 
         public uint GetMaxComponentID()

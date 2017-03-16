@@ -807,6 +807,11 @@ namespace DwarfCorp
             {
                 foreach (ResourceAmount resource in stockpile.Resources)
                 {
+                    if (resource.NumResources == 0)
+                    {
+                        continue;
+                    }
+
                     if (toReturn.ContainsKey(resource.ResourceType))
                     {
                         toReturn[resource.ResourceType].NumResources += resource.NumResources;

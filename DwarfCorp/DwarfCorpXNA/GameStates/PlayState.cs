@@ -1,4 +1,3 @@
-using System.Drawing;
 using System.IO;
 using Gum;
 using Gum.Input;
@@ -683,12 +682,6 @@ namespace DwarfCorp.GameStates
 
 
             #endregion
-
-            #region Setup bottom right tray
-            #endregion
-
-            #region Setup tool tray tray
-
 
             #region Setup tool tray
 
