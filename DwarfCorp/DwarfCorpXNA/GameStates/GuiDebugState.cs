@@ -148,6 +148,38 @@ namespace DwarfCorp.GameStates
             });
         }
 
+        private class MockTradeEntity : Trade.ITradeEntity
+        {
+            public int Money { get; set; }
+            public List<ResourceAmount> Resources { get; set; }
+            public int AvailableSpace { get; set; }
+
+            public float ComputeValue(List<ResourceAmount> Resources)
+            {
+                return Resources.Sum(r => r.NumResources * ComputeValue(r.ResourceType));
+            }
+
+            public float ComputeValue(ResourceLibrary.ResourceType ResourceType)
+            {
+                return ResourceLibrary.GetResourceByName(ResourceType).MoneyValue;
+            }
+
+            public void RemoveResources(List<ResourceAmount> Resources)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void AddResources(List<ResourceAmount> Resources)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void AddMoney(float Money)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public void MakeMenu()
         {
             GuiRoot.RootItem.Clear();
@@ -162,6 +194,32 @@ namespace DwarfCorp.GameStates
                 });   
 
             MakeMenuItem(frame, "BACK", "Goodbye.", (sender, args) => StateManager.PopState());
+
+            MakeMenuItem(frame, "DIPLOMACY", "FUCK", (sender, args) =>
+            {
+                var playerFaction = new MockTradeEntity();
+                playerFaction.Resources = new List<ResourceAmount>(new ResourceAmount[] { (new ResourceAmount(ResourceLibrary.ResourceType.Ale, 10)) });
+                playerFaction.Money = 1000;
+                playerFaction.AvailableSpace = 100;
+
+                var envoyFaction = new MockTradeEntity();
+                envoyFaction.Resources = new List<ResourceAmount>();
+                envoyFaction.Resources.Add(new ResourceAmount(ResourceLibrary.ResourceType.Ale, 10));
+                envoyFaction.Resources.Add(new ResourceAmount(ResourceLibrary.ResourceType.Berry, 10));
+                envoyFaction.Resources.Add(new ResourceAmount(ResourceLibrary.ResourceType.Bones, 10));
+                envoyFaction.Resources.Add(new ResourceAmount("Ruby", 10));
+                envoyFaction.Money = 1000;
+
+                var pane = GuiRoot.ConstructWidget(new NewGui.TradePanel
+                {
+                    Player = playerFaction,
+                    Envoy = envoyFaction,
+                    Rect = GuiRoot.VirtualScreen
+                });
+
+                GuiRoot.ShowDialog(pane);
+                GuiRoot.RootItem.Layout();
+            });
 
             GuiRoot.RootItem.Layout();
         }

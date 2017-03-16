@@ -35,7 +35,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -487,10 +487,10 @@ namespace DwarfCorp
             }
         }
 
+        private int lastXPAnnouncement = 0;
         /// <summary> updates the creature's experience points. </summary>
         public void UpdateXP()
         {
-            bool announced = false;
             foreach (int xp in XPEvents)
             {
                 Stats.XP += xp;
@@ -498,14 +498,14 @@ namespace DwarfCorp
 
                 IndicatorManager.DrawIndicator(sign + xp + " XP",
                     Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, xp > 0 ? Color.Green : Color.Red);
-                if (Stats.IsOverQualified && !announced)
+                if (Stats.IsOverQualified && lastXPAnnouncement != Stats.XP)
                 {
-                    announced = true;
+                    lastXPAnnouncement = Stats.XP;
                     Manager.World.MakeAnnouncement(String.Format("{0} ({1}) wants a promotion!",
                             Stats.FullName, Stats.CurrentLevel.Name),
                         String.Format("{0} can now be promoted to {1}.",
                             Stats.FullName, Stats.CurrentClass.Levels[Stats.LevelIndex + 1].Name),
-                        () => EconomyState.PushEconomyState(Manager.World));
+                        () => EconomyState.PushEconomyState(Manager.World), ContentPaths.Audio.Oscar.gui_positive_generic);
                 }
             }
             XPEvents.Clear();

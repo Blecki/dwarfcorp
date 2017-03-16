@@ -1884,6 +1884,118 @@
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Audio\oscar\sfx_env_voxel_dirt_destroy.wav">
+      <Name>sfx_env_voxel_dirt_destroy</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_env_voxel_metal_destroy.wav">
+      <Name>sfx_env_voxel_metal_destroy</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_env_voxel_sand_destroy.wav">
+      <Name>sfx_env_voxel_sand_destroy</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_env_voxel_snow_destroy.wav">
+      <Name>sfx_env_voxel_snow_destroy</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_env_voxel_stone_destroy.wav">
+      <Name>sfx_env_voxel_stone_destroy</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_env_voxel_wood_destroy.wav">
+      <Name>sfx_env_voxel_wood_destroy</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_gui_change_selection.wav">
+      <Name>sfx_gui_change_selection</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_gui_click_voxel.wav">
+      <Name>sfx_gui_click_voxel</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_gui_confirm_selection.wav">
+      <Name>sfx_gui_confirm_selection</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_gui_positive_generic.wav">
+      <Name>sfx_gui_positive_generic</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_gui_positive_great_success.wav">
+      <Name>sfx_gui_positive_great_success</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_gui_window_close.wav">
+      <Name>sfx_gui_window_close</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_gui_window_open.wav">
+      <Name>sfx_gui_window_open</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_pick_dirt_1.wav">
+      <Name>sfx_ic_dwarf_pick_dirt_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_pick_dirt_2.wav">
+      <Name>sfx_ic_dwarf_pick_dirt_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_pick_dirt_3.wav">
+      <Name>sfx_ic_dwarf_pick_dirt_3</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_pick_stone_1.wav">
+      <Name>sfx_ic_dwarf_pick_stone_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_pick_stone_2.wav">
+      <Name>sfx_ic_dwarf_pick_stone_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_pick_stone_3.wav">
+      <Name>sfx_ic_dwarf_pick_stone_3</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_pick_wood_1.wav">
+      <Name>sfx_ic_dwarf_pick_wood_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_pick_wood_2.wav">
+      <Name>sfx_ic_dwarf_pick_wood_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_pick_wood_3.wav">
+      <Name>sfx_ic_dwarf_pick_wood_3</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <PropertyGroup>
     <PostBuildEvent>

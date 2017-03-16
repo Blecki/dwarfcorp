@@ -274,7 +274,7 @@ namespace DwarfCorp
 
                     natives.TradeEnvoys.Add(envoy);
                     world.MakeAnnouncement(String.Format("Trade envoy from {0} has arrived!", natives.Name),
-                        "Click to zoom to location.", creatures.First().ZoomToMe);
+                        "Click to zoom to location.", creatures.First().ZoomToMe, ContentPaths.Audio.Oscar.gui_positive_generic);
                 }
             }
             else
@@ -312,7 +312,7 @@ namespace DwarfCorp
                     envoy.DistributeGoods();
                     natives.TradeEnvoys.Add(envoy);
                     world.MakeAnnouncement(String.Format("Trade envoy from {0} has arrived!",
-                        natives.Name), "Click to zoom to location.", creatures.First().ZoomToMe);
+                        natives.Name), "Click to zoom to location.", creatures.First().ZoomToMe, ContentPaths.Audio.Oscar.gui_positive_generic);
                 }
             }
 
@@ -456,13 +456,18 @@ namespace DwarfCorp
 
                         World.Paused = true;
 
-                        GameState.Game.StateManager.PushState(new DiplomacyState(GameState.Game,
+                        GameState.Game.StateManager.PushState(new Dialogue.DialogueState(
+                            GameState.Game,
                             GameState.Game.StateManager,
-                            faction.World, envoy)
-                        {
-                            Name = "DiplomacyState_" + faction.Name,
-                            Envoy = envoy
-                        });
+                            envoy,
+                            World.PlayerFaction));
+                        //GameState.Game.StateManager.PushState(new DiplomacyState(GameState.Game,
+                        //    GameState.Game.StateManager,
+                        //    faction.World, envoy)
+                        //{
+                        //    Name = "DiplomacyState_" + faction.Name,
+                        //    Envoy = envoy
+                        //});
                         break;
                     }
                 }

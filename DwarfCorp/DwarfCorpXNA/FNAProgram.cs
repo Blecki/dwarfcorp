@@ -62,6 +62,7 @@ namespace DwarfCorp
             try
 #endif
             {
+                //fbDeprofiler.DeProfiler.Load();
                 using (DwarfGame game = new DwarfGame())
                 {
                     game.Run();

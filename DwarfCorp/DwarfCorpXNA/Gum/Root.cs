@@ -35,7 +35,7 @@ namespace Gum
         public Point MousePosition = new Point(0, 0);
         private DateTime MouseMotionTime = DateTime.Now;
         public float SecondsBeforeTooltip = 0.5f;
-        public String TooltipFont = null;
+        public String TooltipFont = "font";
         public int TooltipTextSize = 1;
         public float CursorBlinkTime = 0.3f;
         internal double RunTime = 0.0f;

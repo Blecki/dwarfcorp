@@ -268,9 +268,8 @@ namespace DwarfCorp
                 }
             }
 
-            SoundManager.PlaySound(ContentPaths.Audio.change);
             World.MakeAnnouncement("Pay day!", String.Format("We paid our employees {0} today.",
-                total.ToString("C")));
+                total.ToString("C")), null, ContentPaths.Audio.change);
         }
 
 
