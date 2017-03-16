@@ -14,6 +14,8 @@ namespace DwarfCorp.Dialogue
         private Action<DialogueContext> NextAction = null;
         public Gum.Widget Panel;
         public NewGui.TradePanel TradePanel;
+        public Animation SpeakerAnimation;
+        private Timer SpeechTimer = new Timer();
 
         public Faction.TradeEnvoy Envoy;
         public String EnvoyName = "TODO";
@@ -24,6 +26,9 @@ namespace DwarfCorp.Dialogue
         {
             Panel.Text = Text;
             Panel.Layout();
+
+            SpeakerAnimation.Loop();
+            SpeechTimer.Reset(100.0f);
         }
 
         public void ClearOptions()
@@ -48,13 +53,19 @@ namespace DwarfCorp.Dialogue
             this.NextAction = NextAction;
         }
 
-        public void Update()
+        public void Update(DwarfTime Time)
         {
+            SpeechTimer.Update(Time);
+            if (SpeechTimer.HasTriggered)
+                SpeakerAnimation.Stop();
+
             var next = NextAction;
             NextAction = null;
 
             if (next != null)
                 next(this);
+
+
         }
     }    
 }

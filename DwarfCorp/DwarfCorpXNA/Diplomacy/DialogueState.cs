@@ -13,6 +13,7 @@ namespace DwarfCorp.Dialogue
     {
         private Gum.Root GuiRoot;
         private DialogueContext DialogueContext;
+        private Animation SpeakerAnimation;
 
         public DialogueState(
             DwarfGame Game, 
@@ -49,8 +50,14 @@ namespace DwarfCorp.Dialogue
 
             GuiRoot.RootItem.Layout();
 
+            SpeakerAnimation = new Animation(DialogueContext.Envoy.OwnerFaction.Race.TalkAnimation);
+            DialogueContext.SpeakerAnimation = SpeakerAnimation;
+
+
             DialogueContext.Panel = dialoguePanel;
             DialogueContext.Transition(DialogueTree.ConversationRoot);
+
+
 
             IsInitialized = true;
             base.OnEnter();
@@ -67,13 +74,30 @@ namespace DwarfCorp.Dialogue
                 }
             }
 
-            DialogueContext.Update();
+            DialogueContext.Update(gameTime);
             GuiRoot.Update(gameTime.ToGameTime());
             base.Update(gameTime);
         }
 
         public override void Render(DwarfTime gameTime)
         {
+            // Draw speaker anim;
+            //Image.Image = Animation.SpriteSheet.GetTexture();
+            //Image.SourceRect = Animation.GetCurrentFrameRect();
+
+            var texture = SpeakerAnimation.SpriteSheet.GetTexture();
+            var frame = SpeakerAnimation.GetCurrentFrameRect();
+
+            var offset = new Vector2((float)frame.X / (float)texture.Width, (float)frame.Y / (float)texture.Height);
+            var scale = new Vector2((float)frame.Width / (float)texture.Width, (float)frame.Height / (float)texture.Height);
+
+            var quad = Gum.Mesh.Quad().Texture(Matrix.CreateScale(scale.X, scale.Y, 1.0f))
+                .Texture(Matrix.CreateTranslation(offset.X, offset.Y, 0.0f))
+                .Scale(200, 200);
+
+            GuiRoot.DrawMesh(quad, texture);
+
+
             GuiRoot.Draw();
             base.Render(gameTime);
         }
