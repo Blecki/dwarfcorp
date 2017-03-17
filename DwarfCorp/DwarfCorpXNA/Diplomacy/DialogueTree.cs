@@ -31,17 +31,37 @@ namespace DwarfCorp.Dialogue
              });
         }
 
+        public static Action<DialogueContext> RootWithPrompt(String Prompt)
+        {
+            return (context) =>
+            {
+                context.Say(Prompt);
+                context.ClearOptions();
+                context.AddOption("Trade", Trade);
+                context.AddOption("Leave", (_context) =>
+                {
+                    Diplomacy.RecallEnvoy(context.Envoy);
+                    context.Say(Datastructures.SelectRandom(_context.Envoy.OwnerFaction.Race.Speech.Farewells));
+                    context.ClearOptions();
+                    context.AddOption("Goodbye.", (_) =>
+                    {
+                        GameState.Game.StateManager.PopState();
+                    });
+                });
+            };
+        }
+
         public static void Trade(DialogueContext Context)
         {
-            Context.TradePanel = Context.Panel.Root.ConstructWidget(new NewGui.TradePanel
+            Context.TradePanel = Context.ChoicePanel.Root.ConstructWidget(new NewGui.TradePanel
             {
-                Rect = Context.Panel.Root.VirtualScreen,
+                Rect = Context.ChoicePanel.Root.VirtualScreen,
                 Envoy = new Trade.EnvoyTradeEntity(Context.Envoy),
                 Player = new Trade.PlayerTradeEntity(Context.PlayerFaction)
             }) as NewGui.TradePanel;
 
             Context.TradePanel.Layout();
-            Context.Panel.Root.ShowDialog(Context.TradePanel);
+            Context.ChoicePanel.Root.ShowDialog(Context.TradePanel);
 
             Context.Transition(WaitForTradeToFinish);
         }
@@ -57,8 +77,22 @@ namespace DwarfCorp.Dialogue
         public static void ProcessTrade(DialogueContext Context)
         {
             if (Context.TradePanel.Result == NewGui.TradeDialogResult.Propose)
-                Context.TradePanel.Transaction.Apply();
-            Context.Transition(ConversationRoot);
+            {
+                var envoyProfit = -Context.TradePanel.Transaction.ValueForPlayer;
+                if (envoyProfit <= 0)
+                {
+                    Context.Transition(RootWithPrompt("What is this? Are you insulting me?"));
+                }
+                else
+                {
+                    Context.TradePanel.Transaction.Apply();
+                    Context.Transition(ConversationRoot);
+                }
+            }
+            else
+            {
+                Context.Transition(RootWithPrompt("Changed your mind?"));
+            }
         }
     }
 }

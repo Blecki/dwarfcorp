@@ -37,27 +37,25 @@ namespace DwarfCorp.Dialogue
             GuiRoot = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
 
-            var dialoguePanel = GuiRoot.RootItem.AddChild(new Gum.Widget
+            DialogueContext.SpeechBubble = GuiRoot.RootItem.AddChild(new Gum.Widget
             {
+                Rect = new Rectangle(200, 0, GuiRoot.VirtualScreen.Width - 200, 200),
+                Border = "speech-bubble-reverse",
                 Font = "outline-font",
-                TextColor = new Vector4(1,1,1,1),
-                MinimumSize = new Point(256, 0),
-                MaximumSize = new Point(256, Int32.MaxValue),
-                AutoLayout = Gum.AutoLayout.DockRight,
-                Border = "border-fancy",
-                InteriorMargin = new Gum.Margin(128,0,0,0)
+                TextColor = new Vector4(1,1,1,1)
             });
 
-            GuiRoot.RootItem.Layout();
+            DialogueContext.ChoicePanel = GuiRoot.RootItem.AddChild(new Gum.Widget
+            {
+                Rect = new Rectangle(200, 200, GuiRoot.VirtualScreen.Width - 400, 
+                GuiRoot.VirtualScreen.Height - 200),
+                Border = "border-fancy",
+            });
 
             SpeakerAnimation = new Animation(DialogueContext.Envoy.OwnerFaction.Race.TalkAnimation);
             DialogueContext.SpeakerAnimation = SpeakerAnimation;
 
-
-            DialogueContext.Panel = dialoguePanel;
             DialogueContext.Transition(DialogueTree.ConversationRoot);
-
-
 
             IsInitialized = true;
             base.OnEnter();

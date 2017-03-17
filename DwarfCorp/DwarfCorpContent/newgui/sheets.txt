@@ -155,6 +155,12 @@
 			"TileHeight": 30
 		},
 		{
+			"Name": "speech-bubble-reverse",
+			"Texture": "newgui/speech-bubble-reverse",
+			"TileWidth": 30,
+			"TileHeight": 30
+		},
+		{
 			"Name": "dwarf",
 			"Texture": "newgui/diplo-dorf",
 			"TileWidth": 64,

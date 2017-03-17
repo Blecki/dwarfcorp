@@ -33,10 +33,15 @@ namespace DwarfCorp.Trade
         public List<ResourceAmount> Resources { get { return SourceEnvoy.TradeGoods; } }
         public void AddMoney(float Money) { }
         public void AddResources(List<ResourceAmount> Resources) { }
+
         public float ComputeValue(ResourceLibrary.ResourceType Resource)
         {
-            // Todo: Account for rare or common items.
-            return ResourceLibrary.GetResourceByName(Resource).MoneyValue;
+            var resource = ResourceLibrary.GetResourceByName(Resource);
+            if (SourceEnvoy.OwnerFaction.Race.CommonResources.Any(r => resource.Tags.Contains(r)))
+                return resource.MoneyValue * 0.5f;
+            if (SourceEnvoy.OwnerFaction.Race.RareResources.Any(r => resource.Tags.Contains(r)))
+                return resource.MoneyValue * 2.0f;
+            return resource.MoneyValue;
         }
 
         public float ComputeValue(List<ResourceAmount> Resources)
