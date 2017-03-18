@@ -13,31 +13,71 @@ namespace DwarfCorp.Dialogue
     {
         public static void ConversationRoot(DialogueContext Context)
         {
-            if (Context.Politics.WasAtWar)
-            {
-                Context.AddOption("Make peace", MakePeace);
-                Context.AddOption("Continue the war", DeclareWar);
-            }
-            else
-            {
-                Context.Say(String.Format("{0} I am {1} of {2}.",
+            RootWithPrompt(String.Format("{0} I am {1} of {2}.",
                         Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.Greetings),
                         Context.EnvoyName,
-                        Context.Envoy.OwnerFaction.Name));
-                Context.ClearOptions();
-                Context.AddOption("Trade", Trade);
-                Context.AddOption("Declare war", DeclareWar);
-                Context.AddOption("Leave", (context) =>
-                 {
-                     Diplomacy.RecallEnvoy(context.Envoy);
-                     Context.Say(Datastructures.SelectRandom(context.Envoy.OwnerFaction.Race.Speech.Farewells));
-                     Context.ClearOptions();
-                     Context.AddOption("Goodbye.", (_) =>
+                        Context.Envoy.OwnerFaction.Name))(Context);
+        }
+
+        public static Action<DialogueContext> RootWithPrompt(String Prompt)
+        {
+            return (Context) =>
+            {
+                if (Context.Politics.WasAtWar)
+                {
+                    Context.Say("We are at war.");
+                    Context.AddOption("Make peace", MakePeace);
+                    Context.AddOption("Continue the war", DeclareWar);
+                }
+                else
+                {
+                    Context.Say(Prompt);
+                    Context.ClearOptions();
+                    Context.AddOption("Trade", Trade);
+                    Context.AddOption("Declare war", DeclareWar);
+                    Context.AddOption("What is your opinion of us?", (context) =>
+                    {
+                        var prompt = String.Format("So far, our relationship has been {0}", context.Politics.GetCurrentRelationship());
+                        if (context.Politics.RecentEvents.Count > 0)
+                        {
+                            prompt += ", because ";
+                            prompt += TextGenerator.GetListString(context.Politics.RecentEvents.Select(e => e.Description).ToList());
+                        }
+                        prompt += ".";
+                        Context.Transition(RootWithPrompt(prompt));
+                    });
+                    Context.AddOption("What is something you have many of?", (context) =>
+                    {
+                        Context.Transition(RootWithPrompt(String.Format("We have many of {0}.",
+                            Datastructures.SelectRandom(context.Envoy.OwnerFaction.Race.CommonResources))));
+                    });
+                    Context.AddOption("What is something you have few of?", (context) =>
+                    {
+                        Context.Transition(RootWithPrompt(String.Format("We have few of {0}.",
+                            Datastructures.SelectRandom(context.Envoy.OwnerFaction.Race.RareResources))));
+                    });
+                    Context.AddOption("What is something you hate?", (context) =>
+                    {
+                        Context.Transition(RootWithPrompt(String.Format("We hate {0}.",
+                            Datastructures.SelectRandom(context.Envoy.OwnerFaction.Race.HatedResources))));
+                    });
+                    Context.AddOption("What is something you like?", (context) =>
+                    {
+                        Context.Transition(RootWithPrompt(String.Format("We like {0}.",
+                            Datastructures.SelectRandom(context.Envoy.OwnerFaction.Race.LikedResources))));
+                    });
+                    Context.AddOption("Leave", (context) =>
                      {
-                         GameState.Game.StateManager.PopState();
+                         Context.Say(Datastructures.SelectRandom(context.Envoy.OwnerFaction.Race.Speech.Farewells));
+                         Context.ClearOptions();
+                         Context.AddOption("Goodbye.", (_) =>
+                         {
+                             Diplomacy.RecallEnvoy(context.Envoy);
+                             GameState.Game.StateManager.PopState();
+                         });
                      });
-                 });
-            }
+                }
+            };
         }
 
         public static void MakePeace(DialogueContext Context)
@@ -72,28 +112,24 @@ namespace DwarfCorp.Dialogue
 
             Context.Say(Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.WarDeclarations));
             Context.ClearOptions();
-            Context.AddOption("Goodbye.", (_) =>
+
+            Context.AddOption("Goodbye.", (context) =>
             {
+                Diplomacy.RecallEnvoy(context.Envoy);
                 GameState.Game.StateManager.PopState();
             });
         }
 
-        public static Action<DialogueContext> RootWithPrompt(String Prompt)
+        public static Action<DialogueContext> GoodbyeWithPrompt(String Prompt)
         {
             return (context) =>
             {
                 context.Say(Prompt);
                 context.ClearOptions();
-                context.AddOption("Trade", Trade);
-                context.AddOption("Leave", (_context) =>
+                context.AddOption("Goodbye.", (_) =>
                 {
                     Diplomacy.RecallEnvoy(context.Envoy);
-                    context.Say(Datastructures.SelectRandom(_context.Envoy.OwnerFaction.Race.Speech.Farewells));
-                    context.ClearOptions();
-                    context.AddOption("Goodbye.", (_) =>
-                    {
-                        GameState.Game.StateManager.PopState();
-                    });
+                    GameState.Game.StateManager.PopState();
                 });
             };
         }
@@ -125,8 +161,51 @@ namespace DwarfCorp.Dialogue
         {
             if (Context.TradePanel.Result == NewGui.TradeDialogResult.Propose)
             {
-                Context.TradePanel.Transaction.Apply();
-                Context.Transition(ConversationRoot);
+                var containsHatedItem = Context.TradePanel.Transaction.PlayerItems
+                    .Select(item => ResourceLibrary.GetResourceByName(item.ResourceType))
+                    .SelectMany(item => item.Tags)
+                    .Any(tag => Context.Envoy.OwnerFaction.Race.HatedResources.Contains(tag));
+                var containsLikedItem = Context.TradePanel.Transaction.PlayerItems
+                    .Select(item => ResourceLibrary.GetResourceByName(item.ResourceType))
+                    .SelectMany(item => item.Tags)
+                    .Any(tag => Context.Envoy.OwnerFaction.Race.LikedResources.Contains(tag));
+
+                if (containsHatedItem)
+                {
+                    Context.Transition(GoodbyeWithPrompt("What is this garbage?"));
+
+                    Context.Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                    {
+                        Change = -0.25f,
+                        Description = "you tried to give us something offensive",
+                        Duration = new TimeSpan(4, 0, 0, 0),
+                        Time = Context.World.Time.CurrentDate
+                    });
+                }
+                else
+                {
+                    if (containsLikedItem)
+                    {
+                        Context.Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                        {
+                            Change = 0.25f,
+                            Description = "you gave us something we liked",
+                            Duration = new TimeSpan(4, 0, 0, 0),
+                            Time = Context.World.Time.CurrentDate
+                        });
+                    }
+
+                    Context.TradePanel.Transaction.Apply();
+                    Context.Transition(RootWithPrompt("That is a good trade."));
+
+                    Context.Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                    {
+                        Change = 0.25f,
+                        Description = "we had profitable trade",
+                        Duration = new TimeSpan(2, 0, 0, 0),
+                        Time = Context.World.Time.CurrentDate
+                    });
+                }
             }
             else
             {

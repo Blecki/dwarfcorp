@@ -100,6 +100,9 @@ namespace Gum
 
         public String Tooltip = null;
 
+        public Vector4 HoverTextColor = Vector4.One;
+        public bool ChangeColorOnHover = false;
+
         #endregion
 
         #region Events
@@ -134,7 +137,10 @@ namespace Gum
         public Root Root { get; internal set; }
         internal bool Constructed = false;
 
-        public Widget() { }
+        public Widget()
+        {
+
+        }
 
         internal void _Construct(Root Root)
         {
@@ -147,7 +153,27 @@ namespace Gum
             }
         }
 
-        public virtual void Construct() { }
+        public virtual void Construct()
+        {
+            if (ChangeColorOnHover)
+            {
+                OnMouseEnter += (sender, args) =>
+                {
+                    var t = TextColor;
+                    TextColor = HoverTextColor;
+                    HoverTextColor = t;
+                    Invalidate();
+                };
+
+                OnMouseLeave += (sender, args) =>
+                {
+                    var t = TextColor;
+                    TextColor = HoverTextColor;
+                    HoverTextColor = t;
+                    Invalidate();
+                };
+            }
+        }
 
         public Widget FindWidgetAt(int x, int y)
         {

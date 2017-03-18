@@ -48,7 +48,9 @@ namespace DwarfCorp.Dialogue
                 OnClick = (sender, args) => Transition(Action),
                 AutoLayout = Gum.AutoLayout.DockTop,
                 Font = "outline-font",
-                TextColor = new Vector4(1,1,1,1)
+                TextColor = new Vector4(1,1,1,1),
+                ChangeColorOnHover = true,
+                HoverTextColor = new Vector4(1,0,0,1)
             });
 
             ChoicePanel.Layout();
