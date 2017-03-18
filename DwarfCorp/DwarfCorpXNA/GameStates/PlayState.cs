@@ -115,7 +115,7 @@ namespace DwarfCorp.GameStates
             if (!IsInitialized)
             {
                 // Setup new gui. Double rendering the mouse?
-                GuiRoot = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
+                GuiRoot = new Gum.Root(Gum.Root.MinimumSize, DwarfGame.GumSkin);
                 GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
                 World.NewGui = GuiRoot;
 
@@ -173,7 +173,7 @@ namespace DwarfCorp.GameStates
 
             if (GuiRoot.ResolutionChanged())
             {
-                GuiRoot.ResizeVirtualScreen(new Point(640, 480));
+                GuiRoot.ResizeVirtualScreen(new Point(1024, 768));
                 GuiRoot.ResetGui();
                 CreateGUIComponents();
 

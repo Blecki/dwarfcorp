@@ -84,7 +84,7 @@ namespace DwarfCorp.GameStates
         private void RebuildGui()
         {
             // Create and initialize GUI framework.
-            GuiRoot = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
+            GuiRoot = new Gum.Root(Gum.Root.MinimumSize, DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
 
             // CONSTRUCT GUI HERE...
@@ -321,7 +321,7 @@ namespace DwarfCorp.GameStates
 
             Resolution = leftPanel.AddChild(LabelAndDockWidget("Resolution", new Gum.Widgets.ComboBox
                 {
-                    Items = DisplayModes.Select(dm => dm.Key).ToList(),
+                    Items = DisplayModes.Where(dm => dm.Value.Width >= 1024 && dm.Value.Height >= 768).Select(dm => dm.Key).ToList(),
                     OnSelectedIndexChanged = OnItemChanged,
                     Border = "border-thin"
                 })).GetChild(1) as Gum.Widgets.ComboBox;

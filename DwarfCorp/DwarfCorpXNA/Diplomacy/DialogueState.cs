@@ -14,14 +14,18 @@ namespace DwarfCorp.Dialogue
         private Gum.Root GuiRoot;
         private DialogueContext DialogueContext;
         private Animation SpeakerAnimation;
+        private WorldManager World;
 
         public DialogueState(
             DwarfGame Game, 
             GameStateManager StateManager,
             Faction.TradeEnvoy Envoy, 
-            Faction PlayerFaction) :
+            Faction PlayerFaction,
+            WorldManager World) :
             base(Game, "GuiStateTemplate", StateManager)
         {
+            this.World = World;
+
             DialogueContext = new DialogueContext
             {
                 Envoy = Envoy,
@@ -34,7 +38,7 @@ namespace DwarfCorp.Dialogue
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
 
-            GuiRoot = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
+            GuiRoot = new Gum.Root(Gum.Root.MinimumSize, DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
 
             DialogueContext.SpeechBubble = GuiRoot.RootItem.AddChild(new Gum.Widget
@@ -55,8 +59,25 @@ namespace DwarfCorp.Dialogue
             SpeakerAnimation = new Animation(DialogueContext.Envoy.OwnerFaction.Race.TalkAnimation);
             DialogueContext.SpeakerAnimation = SpeakerAnimation;
 
-            DialogueContext.Transition(DialogueTree.ConversationRoot);
+            DialogueContext.Politics = World.ComponentManager.Diplomacy.GetPolitics(
+                DialogueContext.PlayerFaction, DialogueContext.Envoy.OwnerFaction);
+            DialogueContext.World = World;
 
+            if (!DialogueContext.Politics.HasMet)
+            {
+                DialogueContext.Politics.HasMet = true;
+
+                DialogueContext.Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                {
+                    Change = 0.0f,
+                    Description = "we just met",
+                    Duration = new TimeSpan(1, 0, 0, 0),
+                    Time = World.Time.CurrentDate
+                });
+            }
+
+            DialogueContext.Transition(DialogueTree.ConversationRoot);
+            
             IsInitialized = true;
             base.OnEnter();
         }

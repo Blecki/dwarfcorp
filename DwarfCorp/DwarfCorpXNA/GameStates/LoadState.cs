@@ -103,7 +103,7 @@ namespace DwarfCorp.GameStates
             World.Setup(GUI);
 
             DwarfGame.GumInputMapper.GetInputQueue();
-            GuiRoot = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
+            GuiRoot = new Gum.Root(Gum.Root.MinimumSize, DwarfGame.GumSkin);
 
             Tip = GuiRoot.RootItem.AddChild(new Gum.Widget
             {

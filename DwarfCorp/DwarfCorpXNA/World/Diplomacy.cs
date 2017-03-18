@@ -460,7 +460,8 @@ namespace DwarfCorp
                             GameState.Game,
                             GameState.Game.StateManager,
                             envoy,
-                            World.PlayerFaction));
+                            World.PlayerFaction,
+                            World));
                         //GameState.Game.StateManager.PushState(new DiplomacyState(GameState.Game,
                         //    GameState.Game.StateManager,
                         //    faction.World, envoy)

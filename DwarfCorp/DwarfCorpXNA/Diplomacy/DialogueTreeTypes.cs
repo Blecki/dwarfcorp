@@ -23,6 +23,9 @@ namespace DwarfCorp.Dialogue
 
         public Faction PlayerFaction;
 
+        public Diplomacy.Politics Politics;
+        public WorldManager World;
+
         public void Say(String Text)
         {
             SpeechBubble.Text = Text;
@@ -43,7 +46,9 @@ namespace DwarfCorp.Dialogue
             {
                 Text = Prompt,
                 OnClick = (sender, args) => Transition(Action),
-                AutoLayout = Gum.AutoLayout.DockTop
+                AutoLayout = Gum.AutoLayout.DockTop,
+                Font = "outline-font",
+                TextColor = new Vector4(1,1,1,1)
             });
 
             ChoicePanel.Layout();

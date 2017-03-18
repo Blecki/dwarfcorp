@@ -22,6 +22,7 @@ namespace Gum
         public Widget HoverItem { get; private set; }
         public Widget FocusItem { get; private set; }
 
+        public static Point MinimumSize = new Point(1024, 768);
         public Rectangle VirtualScreen { get; private set; }
         public Rectangle RealScreen { get; private set; }
         public Point ResolutionAtCreation { get; private set; }
@@ -93,9 +94,9 @@ namespace Gum
             ScaleRatio = 1;
 
             // How many times can we multiply the ideal size and still fit on the screen?
-            while (((VirtualSize.X * (ScaleRatio + 1)) <= screenSize.X) &&
-                ((VirtualSize.Y * (ScaleRatio + 1)) <= screenSize.Y))
-                ScaleRatio += 1;
+            //while (((VirtualSize.X * (ScaleRatio + 1)) <= screenSize.X) &&
+            //    ((VirtualSize.Y * (ScaleRatio + 1)) <= screenSize.Y))
+            //    ScaleRatio += 1;
 
             // How much space did we leave to the left and right? 
             var horizontalExpansion = ((screenSize.X - (VirtualSize.X * ScaleRatio)) / 2) / ScaleRatio;

@@ -13,22 +13,69 @@ namespace DwarfCorp.Dialogue
     {
         public static void ConversationRoot(DialogueContext Context)
         {
-            Context.Say(String.Format("{0} I am {1} of {2}.",
-                    Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.Greetings),
-                    Context.EnvoyName,
-                    Context.Envoy.OwnerFaction.Name));
-            Context.ClearOptions();
-            Context.AddOption("Trade", Trade);
-            Context.AddOption("Leave", (context) =>
-             {
-                 Diplomacy.RecallEnvoy(context.Envoy);
-                 Context.Say(Datastructures.SelectRandom(context.Envoy.OwnerFaction.Race.Speech.Farewells));
-                 Context.ClearOptions();
-                 Context.AddOption("Goodbye.", (_) => 
+            if (Context.Politics.WasAtWar)
+            {
+                Context.AddOption("Make peace", MakePeace);
+                Context.AddOption("Continue the war", DeclareWar);
+            }
+            else
+            {
+                Context.Say(String.Format("{0} I am {1} of {2}.",
+                        Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.Greetings),
+                        Context.EnvoyName,
+                        Context.Envoy.OwnerFaction.Name));
+                Context.ClearOptions();
+                Context.AddOption("Trade", Trade);
+                Context.AddOption("Declare war", DeclareWar);
+                Context.AddOption("Leave", (context) =>
                  {
-                     GameState.Game.StateManager.PopState();
+                     Diplomacy.RecallEnvoy(context.Envoy);
+                     Context.Say(Datastructures.SelectRandom(context.Envoy.OwnerFaction.Race.Speech.Farewells));
+                     Context.ClearOptions();
+                     Context.AddOption("Goodbye.", (_) =>
+                     {
+                         GameState.Game.StateManager.PopState();
+                     });
                  });
-             });
+            }
+        }
+
+        public static void MakePeace(DialogueContext Context)
+        {
+            if (!Context.Politics.HasEvent("you made peace with us"))
+            {
+                Context.Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                {
+                    Change = 0.4f,
+                    Description = "you made peace with us",
+                    Duration = new TimeSpan(4, 0, 0, 0),
+                    Time = Context.World.Time.CurrentDate
+                });
+            }
+
+            ConversationRoot(Context);
+        }
+
+        public static void DeclareWar(DialogueContext Context)
+        {
+            if (!Context.Politics.HasEvent("you declared war on us"))
+            {
+                Context.Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                {
+                    Change = -2.0f,
+                    Description = "you declared war on us",
+                    Duration = new TimeSpan(4, 0, 0, 0),
+                    Time = Context.World.Time.CurrentDate
+                });
+                Context.Politics.WasAtWar = true;
+            }
+
+            Context.Say(Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.WarDeclarations));
+            Context.ClearOptions();
+            Context.AddOption("Goodbye.", (_) =>
+            {
+                GameState.Game.StateManager.PopState();
+            });
         }
 
         public static Action<DialogueContext> RootWithPrompt(String Prompt)
@@ -78,16 +125,8 @@ namespace DwarfCorp.Dialogue
         {
             if (Context.TradePanel.Result == NewGui.TradeDialogResult.Propose)
             {
-                var envoyProfit = -Context.TradePanel.Transaction.ValueForPlayer;
-                if (envoyProfit <= 0)
-                {
-                    Context.Transition(RootWithPrompt("What is this? Are you insulting me?"));
-                }
-                else
-                {
-                    Context.TradePanel.Transaction.Apply();
-                    Context.Transition(ConversationRoot);
-                }
+                Context.TradePanel.Transaction.Apply();
+                Context.Transition(ConversationRoot);
             }
             else
             {
