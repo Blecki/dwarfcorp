@@ -1,4 +1,4 @@
-﻿// SpellTree.cs
+// SpellTree.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using Newtonsoft.Json;
 
@@ -65,6 +66,35 @@ namespace DwarfCorp
                 }
             }
 
+            public IEnumerable<Node> Enumerate()
+            {
+                foreach (var spell in Children)
+                {
+                    yield return spell;
+                    foreach (var child in spell.Enumerate())
+                    {
+                        yield return child;
+                    }
+                }
+            }
+
+            public IEnumerable<Node> EnumerateSubtrees(Func<Node, bool> emitPredicate, Func<Node, bool> expandPredicate)
+            {
+                foreach (var spell in Children.Where(child => emitPredicate(child) || expandPredicate(child)))
+                {
+                    if (emitPredicate(spell))
+                        yield return spell;
+
+                    if (expandPredicate(spell))
+                    {
+                        foreach (var child in spell.EnumerateSubtrees(emitPredicate, expandPredicate))
+                        {
+                            yield return child;
+                        }
+                    }
+                }
+            }
+
             public void SetupParentsRecursive()
             {
                 foreach (Node node in Children)
@@ -94,6 +124,36 @@ namespace DwarfCorp
             Mana = 100.0f;
             MaxMana = 100.0f;
         }
+
+        public IEnumerable<Node> Enumerate()
+        {
+            foreach (var spell in RootSpells)
+            {
+                yield return spell;
+                foreach (var child in spell.Enumerate())
+                {
+                    yield return child;
+                }
+            } 
+        }
+
+        public IEnumerable<Node> EnumerateSubtrees(Func<Node, bool> emitPredicate, Func<Node, bool> expandPredicate)
+        {
+            foreach (var spell in RootSpells.Where(spell => emitPredicate(spell) || expandPredicate(spell)))
+            {
+                if(emitPredicate(spell))
+                    yield return spell;
+
+                if (expandPredicate(spell))
+                {
+                    foreach (var child in spell.EnumerateSubtrees(emitPredicate, expandPredicate))
+                    {
+                        yield return child;
+                    }
+                }
+            }
+        }
+
 
         public bool CanCast(Spell spell)
         {

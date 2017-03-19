@@ -1,4 +1,5 @@
 using System.IO;
+using DwarfCorp.NewGui;
 using Gum;
 using Gum.Input;
 using Microsoft.Xna.Framework;
@@ -1027,15 +1028,91 @@ namespace DwarfCorp.GameStates
                     {
                         Icon = new Gum.TileReference("tool-icons", 13),
                         Tooltip = "Farm",
-                        OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Farm),
+
+                        KeepChildVisible = true,
                         OnConstruct = (sender) =>
                         {
                             ToolbarItems.Add(new ToolbarItem(sender, () =>
                             Master.Faction.SelectedMinions.Any(minion =>
                                 minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm))));
                             AddToolSelectIcon(GameMaster.ToolMode.Farm, sender);
-                        }
-                    },
+                        },
+                        ExpansionChild = new NewGui.ToolTray.Tray
+                        {
+                            ItemSource = new NewGui.ToolTray.Icon[]
+                            {
+                                new NewGui.ToolTray.Icon
+                                {
+                                    Icon = new Gum.TileReference("tool-icons", 13),
+                                    Tooltip = "Till soil",
+                                    KeepChildVisible = true,
+                                    OnClick = (sender, args) =>
+                                    {
+                                        World.ShowToolPopup("Click and drag to till soil.");
+                                        ChangeTool(GameMaster.ToolMode.Farm);
+                                        ((FarmTool)(Master.Tools[GameMaster.ToolMode.Farm])).Mode = FarmTool.FarmMode.Tilling;
+                                    }
+                                },
+                                new NewGui.ToolTray.Icon
+                                {
+                                    Icon = new Gum.TileReference("tool-icons", 13),
+                                    Tooltip = "Plant",
+                                    KeepChildVisible = true,
+                                    ExpansionChild = new NewGui.ToolTray.Tray
+                                    {
+                                        ItemSource = new List<Widget>(),
+                                        OnShown = (widget) =>
+                                        {
+                                            widget.Clear();
+                                             ((NewGui.ToolTray.Tray) widget).
+                                            ItemSource = Master.Faction.ListResourcesWithTag(
+                                                Resource.ResourceTags.Plantable).Select(
+                                                    resource => new NewGui.ToolTray.Icon
+                                                    {
+                                                        Icon =
+                                                            new TileReference("resources",
+                                                                resource.ResourceType.GetResource().NewGuiSprite),
+                                                        Tooltip = "Plant " + resource.ResourceType,
+                                                        OnClick = (sender, args) =>
+                                                        {
+                                                            World.ShowToolPopup("Click and drag to plant " +
+                                                                                resource.ResourceType + ".");
+                                                            ChangeTool(GameMaster.ToolMode.Farm);
+                                                            ((FarmTool) (Master.Tools[GameMaster.ToolMode.Farm])).Mode =
+                                                                FarmTool.FarmMode.Planting;
+                                                            ((FarmTool) (Master.Tools[GameMaster.ToolMode.Farm]))
+                                                                .PlantType = resource.ResourceType;
+                                                            ((FarmTool) (Master.Tools[GameMaster.ToolMode.Farm]))
+                                                                .RequiredResources = new List<ResourceAmount>()
+                                                                {
+                                                                    new
+                                                                        ResourceAmount(resource.ResourceType)
+                                                                };
+                                                        },
+                                                        ExpansionChild = new NewGui.PlantInfo()
+                                                        {
+                                                            Type = resource.ResourceType,
+                                                            Rect = new Rectangle(0, 0, 256, 128),
+                                                            Master = Master
+                                                        },
+                                                    }
+                                                );
+                                                widget.Construct();
+                                                widget.Hidden = false;
+                                                widget.Layout();
+                                        }
+                                    }
+                                },
+                                new NewGui.ToolTray.Icon
+                                {
+                                    Icon = new Gum.TileReference("tool-icons", 13),
+                                    Tooltip = "Harvest",
+                                    KeepChildVisible = true,
+                                },
+
+                            }
+                       }
+                                },
                     #endregion
 
                     #region Magic tool
@@ -1047,11 +1124,71 @@ namespace DwarfCorp.GameStates
                         OnConstruct = (sender) =>
                         {
                             ToolbarItems.Add(new ToolbarItem(sender, () =>
-                            Master.Faction.SelectedMinions.Any(minion =>
-                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Magic))));
+                                Master.Faction.SelectedMinions.Any(minion =>
+                                    minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Magic))));
                             AddToolSelectIcon(GameMaster.ToolMode.Magic, sender);
+                        },
+                        KeepChildVisible = true,
+                        ExpansionChild = new NewGui.ToolTray.Tray
+                        {
+                            ItemSource = new NewGui.ToolTray.Icon[]
+                            {
+                                new NewGui.ToolTray.Icon
+                                {
+                                    Icon = new Gum.TileReference("tool-icons", 14),
+                                    Tooltip = "Cast",
+                                    KeepChildVisible = true,
+                                    ExpansionChild = new ToolTray.Tray()
+                                    {
+                                        ItemSource = Master.Spells.Enumerate().Where(spell => spell.IsResearched).Select(spell => new NewGui.ToolTray.Icon
+                                        {
+                                            Icon = new TileReference("tool-icons", spell.Spell.TileRef),
+                                            Tooltip = "Cast " + spell.Spell.Name,
+                                            ExpansionChild = new NewGui.SpellInfo()
+                                            {
+                                                Spell = spell,
+                                                Rect = new Rectangle(0, 0, 256, 128),
+                                                Master = Master
+                                            },
+                                            OnClick = (widget, args) =>
+                                            {
+                                                ChangeTool(GameMaster.ToolMode.Magic);
+                                                ((MagicTool) Master.Tools[GameMaster.ToolMode.Magic]).CurrentSpell =
+                                                    spell.Spell;
+                                            }
+                                        })
+                                    }
+                                },
+                                new NewGui.ToolTray.Icon
+                                {
+                                    Icon = new TileReference("tool-icons", 14),
+                                    Tooltip = "Research",
+                                    KeepChildVisible = true,
+                                    ExpansionChild = new ToolTray.Tray()
+                                    {
+                                        ItemSource = Master.Spells.EnumerateSubtrees(spell => !spell.IsResearched, 
+                                        spell => spell.IsResearched && spell.Children.Any(child => !child.IsResearched)).Select(spell => 
+                                            new NewGui.ToolTray.Icon
+                                        {
+                                            Icon = new TileReference("tool-icons", spell.Spell.TileRef),
+                                            Tooltip = "Research " + spell.Spell.Name,
+                                            ExpansionChild = new NewGui.SpellInfo()
+                                            {
+                                                Spell = spell,
+                                                Rect = new Rectangle(0, 0, 256, 128),
+                                                Master = Master
+                                            },
+                                            OnClick = (widget, args) =>
+                                            {
+                                                ((MagicTool) Master.Tools[GameMaster.ToolMode.Magic]).Research(spell);
+                                            }
+                                        })
+                                    }
+                                }
+                            }
                         }
                     },
+
                     #endregion
 
                 }

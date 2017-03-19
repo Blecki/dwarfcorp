@@ -1,4 +1,4 @@
-﻿// PlaceBlockSpell.cs
+// PlaceBlockSpell.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -62,6 +62,7 @@ namespace DwarfCorp
                 Recharges = false;
                 RechargeTimer = new Timer(5.0f, false);
                 ManaCost = 15;
+                TileRef = 17;
                 Mode = SpellMode.SelectEmptyVoxels;
             }
             else
@@ -72,6 +73,7 @@ namespace DwarfCorp
                 Recharges = false;
                 RechargeTimer = new Timer(5.0f, false);
                 ManaCost = 25;
+                TileRef = 18;
                 Mode = SpellMode.SelectFilledVoxels;
             }
 
