@@ -69,14 +69,15 @@ namespace DwarfCorp.NewGui
                 {
                     if (EnvoyColumns.Valid && PlayerColumns.Valid)
                     {
-                        var net = (Envoy.ComputeValue(EnvoyColumns.SelectedResources) 
-                            + EnvoyColumns.TradeMoney) 
-                            - (Envoy.ComputeValue(PlayerColumns.SelectedResources) 
-                            + PlayerColumns.TradeMoney);
+                        var net =
+                            (Envoy.ComputeValue(PlayerColumns.SelectedResources)
+                            + PlayerColumns.TradeMoney)
+                            -(Envoy.ComputeValue(EnvoyColumns.SelectedResources) 
+                            + EnvoyColumns.TradeMoney);
                         var player = Envoy.ComputeValue(PlayerColumns.SelectedResources) + PlayerColumns.TradeMoney;
-                        var tradeTarget = player * -0.25;
+                        var tradeTarget = player * 0.25;
 
-                        if (net <= tradeTarget)
+                        if (net > tradeTarget)
                         {
                             Result = TradeDialogResult.Propose;
                             Transaction = new TradeTransaction
@@ -148,11 +149,17 @@ namespace DwarfCorp.NewGui
 
         private void UpdateBottomDisplays()
         {
-            var net = (Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney) -
-                (Envoy.ComputeValue(PlayerColumns.SelectedResources) + PlayerColumns.TradeMoney);
+            var net = (Envoy.ComputeValue(PlayerColumns.SelectedResources) + PlayerColumns.TradeMoney)
+                - (Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney);
             var player = Envoy.ComputeValue(PlayerColumns.SelectedResources) + PlayerColumns.TradeMoney;
-            var tradeTarget = player * -0.25;
-            TotalDisplay.Text = String.Format("${0} [{1}]", net, tradeTarget);
+            var tradeTarget = player * 0.25;
+            TotalDisplay.Text = String.Format("Their Profit ${0} [{1}]", net, tradeTarget);
+
+            if (net > tradeTarget)
+                TotalDisplay.TextColor = new Vector4(1, 1, 1, 1);
+            else
+                TotalDisplay.TextColor = new Vector4(1, 0, 0, 1);
+
             TotalDisplay.Invalidate();
 
             SpaceDisplay.Text = String.Format("{0}/{1}",

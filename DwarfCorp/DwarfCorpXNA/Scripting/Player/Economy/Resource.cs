@@ -99,11 +99,6 @@ namespace DwarfCorp
             Bone
         }
 
-        public Resource()
-        {
-            PlantToGenerate = "";
-        }
-
         public Resource(Resource other)
         {
             Type = other.Type;

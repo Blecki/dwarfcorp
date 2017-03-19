@@ -435,6 +435,7 @@ namespace DwarfCorp
             }
             toReturn.Tint = Resources[baseMaterial].Tint;
             toReturn.Image = new NamedImageFrame(ContentPaths.Entities.DwarfObjects.crafts, 32, tile.X, tile.Y);
+            toReturn.NewGuiSprite = (tile.Y * 4) + tile.X;
             Add(toReturn);
             toReturn.ShortName = baseMaterial + " " + names[item];
             return toReturn;

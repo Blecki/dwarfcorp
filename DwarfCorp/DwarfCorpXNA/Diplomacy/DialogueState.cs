@@ -76,6 +76,8 @@ namespace DwarfCorp.Dialogue
                 });
             }
 
+            DialogueContext.EnvoyName = TextGenerator.GenerateRandom(Datastructures.SelectRandom(DialogueContext.Envoy.OwnerFaction.Race.NameTemplates).ToArray());
+            
             DialogueContext.Transition(DialogueTree.ConversationRoot);
             
             IsInitialized = true;
