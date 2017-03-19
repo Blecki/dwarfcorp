@@ -69,17 +69,31 @@ namespace DwarfCorp.NewGui
                 {
                     if (EnvoyColumns.Valid && PlayerColumns.Valid)
                     {
-                        Result = TradeDialogResult.Propose;
-                        Transaction = new TradeTransaction
+                        var net = (Envoy.ComputeValue(EnvoyColumns.SelectedResources) 
+                            + EnvoyColumns.TradeMoney) 
+                            - (Envoy.ComputeValue(PlayerColumns.SelectedResources) 
+                            + PlayerColumns.TradeMoney);
+                        var player = Envoy.ComputeValue(PlayerColumns.SelectedResources) + PlayerColumns.TradeMoney;
+                        var tradeTarget = player * -0.25;
+
+                        if (net <= tradeTarget)
                         {
-                            EnvoyEntity = Envoy,
-                            EnvoyItems = EnvoyColumns.SelectedResources,
-                            EnvoyMoney = EnvoyColumns.TradeMoney,
-                            PlayerEntity = Player,
-                            PlayerItems = PlayerColumns.SelectedResources,
-                            PlayerMoney = PlayerColumns.TradeMoney
-                        };
-                        this.Close();
+                            Result = TradeDialogResult.Propose;
+                            Transaction = new TradeTransaction
+                            {
+                                EnvoyEntity = Envoy,
+                                EnvoyItems = EnvoyColumns.SelectedResources,
+                                EnvoyMoney = EnvoyColumns.TradeMoney,
+                                PlayerEntity = Player,
+                                PlayerItems = PlayerColumns.SelectedResources,
+                                PlayerMoney = PlayerColumns.TradeMoney
+                            };
+                            this.Close();
+                        }
+                        else
+                        {
+                            Root.ShowTooltip(Root.MousePosition, "Make us a better offer.");
+                        }
                     }
                     else
                     {
@@ -136,15 +150,15 @@ namespace DwarfCorp.NewGui
         {
             var net = (Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney) -
                 (Envoy.ComputeValue(PlayerColumns.SelectedResources) + PlayerColumns.TradeMoney);
-            TotalDisplay.Text = String.Format("${0}", net);
+            var player = Envoy.ComputeValue(PlayerColumns.SelectedResources) + PlayerColumns.TradeMoney;
+            var tradeTarget = player * -0.25;
+            TotalDisplay.Text = String.Format("${0} [{1}]", net, tradeTarget);
             TotalDisplay.Invalidate();
 
             SpaceDisplay.Text = String.Format("{0}/{1}",
                 EnvoyColumns.TotalSelectedItems - PlayerColumns.TotalSelectedItems,
                 Player.AvailableSpace);
             SpaceDisplay.Invalidate();
-
-
         }
     }
 }

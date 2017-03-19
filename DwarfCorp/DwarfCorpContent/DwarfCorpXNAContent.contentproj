@@ -1883,8 +1883,11 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="newgui\speech-bubble-reverse.png">
+      <Name>speech-bubble-reverse</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+	 </Compile>
     <Compile Include="Audio\oscar\sfx_env_voxel_dirt_destroy.wav">
       <Name>sfx_env_voxel_dirt_destroy</Name>
       <Importer>WavImporter</Importer>

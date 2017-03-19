@@ -14,14 +14,18 @@ namespace DwarfCorp.Dialogue
         private Gum.Root GuiRoot;
         private DialogueContext DialogueContext;
         private Animation SpeakerAnimation;
+        private WorldManager World;
 
         public DialogueState(
             DwarfGame Game, 
             GameStateManager StateManager,
             Faction.TradeEnvoy Envoy, 
-            Faction PlayerFaction) :
+            Faction PlayerFaction,
+            WorldManager World) :
             base(Game, "GuiStateTemplate", StateManager)
         {
+            this.World = World;
+
             DialogueContext = new DialogueContext
             {
                 Envoy = Envoy,
@@ -34,31 +38,46 @@ namespace DwarfCorp.Dialogue
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
 
-            GuiRoot = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
+            GuiRoot = new Gum.Root(Gum.Root.MinimumSize, DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
 
-            var dialoguePanel = GuiRoot.RootItem.AddChild(new Gum.Widget
+            DialogueContext.SpeechBubble = GuiRoot.RootItem.AddChild(new Gum.Widget
             {
+                Rect = new Rectangle(200, 0, GuiRoot.VirtualScreen.Width - 200, 200),
+                Border = "speech-bubble-reverse",
                 Font = "outline-font",
-                TextColor = new Vector4(1,1,1,1),
-                MinimumSize = new Point(256, 0),
-                MaximumSize = new Point(256, Int32.MaxValue),
-                AutoLayout = Gum.AutoLayout.DockRight,
-                Border = "border-fancy",
-                InteriorMargin = new Gum.Margin(128,0,0,0)
+                TextColor = new Vector4(1,1,1,1)
             });
 
-            GuiRoot.RootItem.Layout();
+            DialogueContext.ChoicePanel = GuiRoot.RootItem.AddChild(new Gum.Widget
+            {
+                Rect = new Rectangle(200, 200, GuiRoot.VirtualScreen.Width - 400, 
+                GuiRoot.VirtualScreen.Height - 200),
+                Border = "border-fancy",
+            });
 
             SpeakerAnimation = new Animation(DialogueContext.Envoy.OwnerFaction.Race.TalkAnimation);
             DialogueContext.SpeakerAnimation = SpeakerAnimation;
 
+            DialogueContext.Politics = World.ComponentManager.Diplomacy.GetPolitics(
+                DialogueContext.PlayerFaction, DialogueContext.Envoy.OwnerFaction);
+            DialogueContext.World = World;
 
-            DialogueContext.Panel = dialoguePanel;
+            if (!DialogueContext.Politics.HasMet)
+            {
+                DialogueContext.Politics.HasMet = true;
+
+                DialogueContext.Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                {
+                    Change = 0.0f,
+                    Description = "we just met",
+                    Duration = new TimeSpan(1, 0, 0, 0),
+                    Time = World.Time.CurrentDate
+                });
+            }
+
             DialogueContext.Transition(DialogueTree.ConversationRoot);
-
-
-
+            
             IsInitialized = true;
             base.OnEnter();
         }

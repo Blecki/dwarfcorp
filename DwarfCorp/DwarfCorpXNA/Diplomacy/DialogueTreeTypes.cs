@@ -12,7 +12,8 @@ namespace DwarfCorp.Dialogue
     public class DialogueContext
     {
         private Action<DialogueContext> NextAction = null;
-        public Gum.Widget Panel;
+        public Gum.Widget ChoicePanel;
+        public Gum.Widget SpeechBubble;
         public NewGui.TradePanel TradePanel;
         public Animation SpeakerAnimation;
         private Timer SpeechTimer = new Timer();
@@ -22,10 +23,13 @@ namespace DwarfCorp.Dialogue
 
         public Faction PlayerFaction;
 
+        public Diplomacy.Politics Politics;
+        public WorldManager World;
+
         public void Say(String Text)
         {
-            Panel.Text = Text;
-            Panel.Layout();
+            SpeechBubble.Text = Text;
+            SpeechBubble.Invalidate();
 
             SpeakerAnimation.Loop();
             SpeechTimer.Reset(100.0f);
@@ -33,19 +37,23 @@ namespace DwarfCorp.Dialogue
 
         public void ClearOptions()
         {
-            Panel.Clear();
+            ChoicePanel.Clear();
         }
 
         public void AddOption(String Prompt, Action<DialogueContext> Action)
         {
-            Panel.AddChild(new Gum.Widget
+            ChoicePanel.AddChild(new Gum.Widget
             {
                 Text = Prompt,
                 OnClick = (sender, args) => Transition(Action),
-                AutoLayout = Gum.AutoLayout.DockTop
+                AutoLayout = Gum.AutoLayout.DockTop,
+                Font = "outline-font",
+                TextColor = new Vector4(1,1,1,1),
+                ChangeColorOnHover = true,
+                HoverTextColor = new Vector4(1,0,0,1)
             });
 
-            Panel.Layout();
+            ChoicePanel.Layout();
         }
 
         public void Transition(Action<DialogueContext> NextAction)
