@@ -125,7 +125,7 @@ namespace DwarfCorp
         {
             if (CurrentSpell != null && (CurrentSpell.Mode == Spell.SpellMode.SelectFilledVoxels || CurrentSpell.Mode == Spell.SpellMode.SelectEmptyVoxels))
             {
-                CurrentSpell.OnVoxelsSelected(MagicMenu.SpellTree.Tree, voxels);
+                CurrentSpell.OnVoxelsSelected(Player.Spells, voxels);
             }
         }
 
@@ -133,7 +133,31 @@ namespace DwarfCorp
         {
             if (CurrentSpell != null && CurrentSpell.Mode == Spell.SpellMode.SelectEntities)
             {
-                CurrentSpell.OnEntitiesSelected(MagicMenu.SpellTree.Tree, bodies);
+                CurrentSpell.OnEntitiesSelected(Player.Spells, bodies);
+            }
+        }
+
+        public void Research(SpellTree.Node spell)
+        {
+            List<CreatureAI> wizards = Faction.FilterMinionsWithCapability(Player.SelectedMinions, GameMaster.ToolMode.Magic);
+            var body = Player.Faction.FindNearestItemWithTags("Research", Vector3.Zero, false);
+
+            if (body != null)
+            { 
+                Player.World.ShowToolPopup(string.Format("{0} wizard{2} sent to research {1}", wizards.Count, spell.Spell.Name, wizards.Count > 1 ? "s" : ""));
+
+                foreach (CreatureAI wizard in wizards)
+                {
+                    wizard.Tasks.Add(new ActWrapperTask(new GoResearchSpellAct(wizard, spell))
+                    {
+                        Priority = Task.PriorityType.Low
+                    });
+                }
+            }
+            else
+            {
+                Player.World.ShowToolPopup(string.Format("Can't research {0}, no library has been built.",
+                    spell.Spell.Name));
             }
         }
 

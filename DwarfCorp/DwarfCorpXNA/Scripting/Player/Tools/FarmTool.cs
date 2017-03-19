@@ -263,6 +263,7 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
+            /*
             if (FarmPanel != null)
             {
                 FarmPanel.Destroy();
@@ -279,6 +280,7 @@ namespace DwarfCorp
             FarmPanel.OnPlant += FarmPanel_OnPlant;
             FarmPanel.OnTill += FarmPanel_OnTill;
             FarmPanel.TweenIn(Drawer2D.Alignment.Right, 0.25f);
+             */
         }
 
         void FarmPanel_OnTill()
@@ -303,7 +305,7 @@ namespace DwarfCorp
 
         public override void OnEnd()
         {
-            FarmPanel.TweenOut(Drawer2D.Alignment.Right, 0.25f);
+            //FarmPanel.TweenOut(Drawer2D.Alignment.Right, 0.25f);
         }
 
 

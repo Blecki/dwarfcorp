@@ -318,8 +318,10 @@
     <Compile Include="NewGui\InfoTray.cs" />
     <Compile Include="NewGui\Minimap.cs" />
     <Compile Include="NewGui\MoneyEditor.cs" />
+    <Compile Include="NewGui\PlantInfo.cs" />
     <Compile Include="NewGui\Popup.cs" />
     <Compile Include="NewGui\ResourceColumns.cs" />
+    <Compile Include="NewGui\SpellInfo.cs" />
     <Compile Include="NewGui\TileSheetExtension.cs" />
     <Compile Include="NewGui\ToggleTray.cs" />
     <Compile Include="NewGui\ToolPopup.cs" />

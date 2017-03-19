@@ -1,4 +1,4 @@
-﻿// Physics.cs
+// Physics.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -180,7 +180,7 @@ namespace DwarfCorp
         /// or very fast machines, and to protect stability during fast forward.
         /// </summary>
         public const float FixedDT = 1.0f / 60.0f;
-        public const int MaxTimesteps = 1; // The maximum number of timesteps to try and calculate in a single frame.
+        public const int MaxTimesteps = 5; // The maximum number of timesteps to try and calculate in a single frame.
 
         /// <summary>
         /// Does this physics object collide on all sides, none,
@@ -279,17 +279,17 @@ namespace DwarfCorp
                 // Calculate the number of timesteps to apply.
                 int numTimesteps = Math.Min(MaxTimesteps, Math.Max((int)(dt / FixedDT), 1));
 
-                float velocityLength = Velocity.Length();
+                float velocityLength = Math.Max(Velocity.Length(), 1.0f);
 
                 // Prepare expanded world bounds.
                 BoundingBox worldBounds = chunks.Bounds;
                 worldBounds.Max.Y += 50;
 
                 // For each timestep, move and collide.
-                for (int n = 0; n < numTimesteps; n++)
+                for (int n = 0; n < numTimesteps * velocityLength; n++)
                 {
                     // Move by a fixed amount.
-                    Move(FixedDT);
+                    Move(FixedDT / velocityLength);
 
                     // Get the current voxel.
                     chunks.ChunkData.GetVoxel(Position, ref CurrentVoxel);
@@ -378,7 +378,7 @@ namespace DwarfCorp
                     // Apply gravity.
                     if (applyGravityThisFrame)
                     {
-                        ApplyForce(Gravity, FixedDT);
+                        ApplyForce(Gravity, FixedDT / velocityLength);
                     }
 
                     // Damp the velocity.

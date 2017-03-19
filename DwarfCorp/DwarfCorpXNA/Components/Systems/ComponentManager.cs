@@ -364,7 +364,7 @@ namespace DwarfCorp
                 return 0;
             }
             return
-                (Camera.Position - A.GlobalTransform.Translation).LengthSquared()
+                -(Camera.Position - A.GlobalTransform.Translation).LengthSquared()
                     .CompareTo((Camera.Position - B.GlobalTransform.Translation).LengthSquared());
         }
 

@@ -30,6 +30,10 @@ namespace DwarfCorp.NewGui
 
         public override void Construct()
         {
+            if (ItemSource == null)
+            {
+                ItemSource = new List<Widget>();
+            }
             InteriorMargin = new Margin(0,0,0,0);
             if (Corners.HasFlag(Scale9Corners.Top)) InteriorMargin.Top = 12;
             if (Corners.HasFlag(Scale9Corners.Bottom)) InteriorMargin.Bottom = 12;

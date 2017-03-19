@@ -48,6 +48,7 @@ namespace DwarfCorp
         public string Name { get; set; }
         public string Description { get; set; }
         public ImageFrame Image { get; set; }
+        public int TileRef { get; set; }
         public float ManaCost { get; set; }
         public SpellMode Mode { get; set; }
         public Timer RechargeTimer { get; set; }

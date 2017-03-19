@@ -1,4 +1,4 @@
-﻿// DestroyBlockSpell.cs
+// DestroyBlockSpell.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -56,6 +56,7 @@ namespace DwarfCorp
             Name = "Destroy Blocks";
             Hint = "Click and drag to destroy blocks";
             Recharges = false;
+            TileRef = 18;
         }
         public override void OnVoxelsSelected(SpellTree tree, List<Voxel> voxels)
         {

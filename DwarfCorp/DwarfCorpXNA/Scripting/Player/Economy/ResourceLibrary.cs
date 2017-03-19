@@ -93,6 +93,11 @@ namespace DwarfCorp
             {
                 return _value;
             }
+
+            public Resource GetResource()
+            {
+                return ResourceLibrary.GetResourceByName(_value);
+            }
         }
 
         public static Dictionary<ResourceType, Resource> Resources = new Dictionary<ResourceType, Resource>();
