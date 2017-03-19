@@ -1140,23 +1140,34 @@ namespace DwarfCorp.GameStates
                                     KeepChildVisible = true,
                                     ExpansionChild = new ToolTray.Tray()
                                     {
-                                        ItemSource = Master.Spells.Enumerate().Where(spell => spell.IsResearched).Select(spell => new NewGui.ToolTray.Icon
+                                        OnShown = (widget) =>
                                         {
-                                            Icon = new TileReference("tool-icons", spell.Spell.TileRef),
-                                            Tooltip = "Cast " + spell.Spell.Name,
-                                            ExpansionChild = new NewGui.SpellInfo()
-                                            {
-                                                Spell = spell,
-                                                Rect = new Rectangle(0, 0, 256, 128),
-                                                Master = Master
-                                            },
-                                            OnClick = (widget, args) =>
-                                            {
-                                                ChangeTool(GameMaster.ToolMode.Magic);
-                                                ((MagicTool) Master.Tools[GameMaster.ToolMode.Magic]).CurrentSpell =
-                                                    spell.Spell;
-                                            }
-                                        })
+                                            widget.Clear();
+                                            ((NewGui.ToolTray.Tray) widget).ItemSource =
+                                                Master.Spells.Enumerate()
+                                                    .Where(spell => spell.IsResearched)
+                                                    .Select(spell => new NewGui.ToolTray.Icon
+                                                    {
+                                                        Icon = new TileReference("tool-icons", spell.Spell.TileRef),
+                                                        Tooltip = "Cast " + spell.Spell.Name,
+                                                        ExpansionChild = new NewGui.SpellInfo()
+                                                        {
+                                                            Spell = spell,
+                                                            Rect = new Rectangle(0, 0, 256, 128),
+                                                            Master = Master
+                                                        },
+                                                        OnClick = (widget2, args2) =>
+                                                        {
+                                                            ChangeTool(GameMaster.ToolMode.Magic);
+                                                            ((MagicTool) Master.Tools[GameMaster.ToolMode.Magic])
+                                                                .CurrentSpell =
+                                                                spell.Spell;
+                                                        }
+                                                    });
+                                            widget.Construct();
+                                            widget.Hidden = false;
+                                            widget.Layout();
+                                        }
                                     }
                                 },
                                 new NewGui.ToolTray.Icon
@@ -1166,29 +1177,39 @@ namespace DwarfCorp.GameStates
                                     KeepChildVisible = true,
                                     ExpansionChild = new ToolTray.Tray()
                                     {
-                                        ItemSource = Master.Spells.EnumerateSubtrees(spell => !spell.IsResearched, 
-                                        spell => spell.IsResearched && spell.Children.Any(child => !child.IsResearched)).Select(spell => 
-                                            new NewGui.ToolTray.Icon
+                                        OnShown = (widget) =>
                                         {
-                                            Icon = new TileReference("tool-icons", spell.Spell.TileRef),
-                                            Tooltip = "Research " + spell.Spell.Name,
-                                            ExpansionChild = new NewGui.SpellInfo()
-                                            {
-                                                Spell = spell,
-                                                Rect = new Rectangle(0, 0, 256, 128),
-                                                Master = Master
-                                            },
-                                            OnClick = (widget, args) =>
-                                            {
-                                                ((MagicTool) Master.Tools[GameMaster.ToolMode.Magic]).Research(spell);
-                                            }
-                                        })
+                                            widget.Clear();
+                                            ((NewGui.ToolTray.Tray) widget).ItemSource = Master.Spells.EnumerateSubtrees
+                                                (spell => !spell.IsResearched,
+                                                    spell =>
+                                                        spell.IsResearched &&
+                                                        spell.Children.Any(child => !child.IsResearched))
+                                                .Select(spell =>
+                                                    new NewGui.ToolTray.Icon
+                                                    {
+                                                        Icon = new TileReference("tool-icons", spell.Spell.TileRef),
+                                                        Tooltip = "Research " + spell.Spell.Name,
+                                                        ExpansionChild = new NewGui.SpellInfo()
+                                                        {
+                                                            Spell = spell,
+                                                            Rect = new Rectangle(0, 0, 256, 128),
+                                                            Master = Master
+                                                        },
+                                                        OnClick =
+                                                            (button, args2) =>
+                                                                ((MagicTool) Master.Tools[GameMaster.ToolMode.Magic])
+                                                                    .Research(spell)
+                                                    });
+                                            widget.Construct();
+                                            widget.Hidden = false;
+                                            widget.Layout();
+                                        }
                                     }
                                 }
                             }
                         }
-                    },
-
+                    }
                     #endregion
 
                 }
