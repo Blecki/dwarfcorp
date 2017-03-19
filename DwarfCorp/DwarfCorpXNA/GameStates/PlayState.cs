@@ -616,9 +616,9 @@ namespace DwarfCorp.GameStates
                         Message = message,
                         OnClick = (sender, args) => { if (clickAction != null) clickAction(); },
                         Rect = new Rectangle(
-                            GameSpeedControls.Rect.X - 64,
+                            GameSpeedControls.Rect.X - 128,
                             GameSpeedControls.Rect.Y - 128,
-                            GameSpeedControls.Rect.Width + 64,
+                            GameSpeedControls.Rect.Width + 128,
                             128)
                     });
 
