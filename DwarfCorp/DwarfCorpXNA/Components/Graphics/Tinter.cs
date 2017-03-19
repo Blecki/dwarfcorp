@@ -46,7 +46,6 @@ namespace DwarfCorp
     {
         public bool LightsWithVoxels { get; set; }
         public Color Tint { get; set; }
-        public Color TargetTint { get; set; }
         public float TintChangeRate { get; set; }
         //public Timer LightingTimer { get; set; }
         public Voxel VoxelUnder = null;
@@ -67,7 +66,6 @@ namespace DwarfCorp
             Tint = new Color(255, 255, 0);
             //LightingTimer = new Timer(0.2f, true);
             //StartTimer = new Timer(0.5f, true);
-            TargetTint = Tint;
             TintChangeRate = 1.0f;
             LightsWithVoxels = true;
             VoxelUnder = new Voxel();
@@ -106,7 +104,7 @@ namespace DwarfCorp
 
             //if(ShouldUpdate())
             //{
-                if (entityLighting)
+                if (entityLighting && LightsWithVoxels)
                 {
                     bool success = chunks.ChunkData.GetVoxel(Position, ref VoxelUnder);
 
@@ -114,13 +112,13 @@ namespace DwarfCorp
                     {
                         Color color = new Color(VoxelUnder.SunColor, 255, 0);
 
-                        TargetTint = color;
+                        Tint = color;
                         //ColorAppplied = true;
                     }
                 }
                 else
                 {
-                    TargetTint = new Color(200, 255, 0);
+                    Tint = new Color(200, 255, 0);
                 }
 
                // LightingTimer.HasTriggered = false;

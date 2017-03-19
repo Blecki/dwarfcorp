@@ -230,10 +230,15 @@ namespace DwarfCorp
         // More statics. Hate this.
         public Action<String, String, Action> OnAnnouncement;
 
-        public void MakeAnnouncement(String Title, String Message, Action ClickAction = null)
+        public void MakeAnnouncement(String Title, String Message, Action ClickAction = null, string sound = null)
         {
             if (OnAnnouncement != null)
                 OnAnnouncement(Title, Message, ClickAction);
+
+            if (!string.IsNullOrEmpty(sound))
+            {
+                SoundManager.PlaySound(sound, 0.01f);
+            }
         }
 
 
@@ -798,6 +803,9 @@ namespace DwarfCorp
                     portBox.Center() + new Vector3(0, 100, 0),
                     portBox.Center() + new Vector3(0, 10, 0), ComponentManager, Content,
                     GraphicsDevice, new ShipmentOrder(0, null), Master.Faction);
+
+                Camera.Target = portBox.Center();
+                Camera.Position = Camera.Target + new Vector3(0, 15, -15);
             }
         }
 
@@ -1471,11 +1479,11 @@ namespace DwarfCorp
         {
             if (!WaterRenderer.DrawComponentsReflected && waterRenderType == ComponentManager.WaterRenderType.Reflective)
                 return;
-            effect.View = view; 
-            ComponentManager.Render(gameTime, ChunkManager, Camera, DwarfGame.SpriteBatch, GraphicsDevice, effect,
-                waterRenderType, waterLevel);
+            effect.View = view;
             bool reset = waterRenderType == ComponentManager.WaterRenderType.None;
             InstanceManager.Render(GraphicsDevice, effect, Camera, reset);
+            ComponentManager.Render(gameTime, ChunkManager, Camera, DwarfGame.SpriteBatch, GraphicsDevice, effect,
+                waterRenderType, waterLevel);
         }
 
         /// <summary>

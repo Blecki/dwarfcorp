@@ -1031,6 +1031,19 @@ namespace DwarfCorp
             KilledVoxels.Clear();
         }
 
+        public IEnumerable<Voxel> GetVoxelsIntersecting(IEnumerable<Vector3> positions)
+        {
+            foreach (Vector3 vec in positions)
+            {
+                Voxel vox = new Voxel();
+                bool success = ChunkData.GetVoxel(vec, ref vox);
+                if (success)
+                {
+                    yield return vox;
+                }
+            }
+        }
+
         public List<Voxel> GetVoxelsIntersecting(BoundingBox box)
         {
             HashSet<VoxelChunk> intersects = new HashSet<VoxelChunk>();

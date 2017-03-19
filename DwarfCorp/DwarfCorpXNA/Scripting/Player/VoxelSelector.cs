@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using DwarfCorp.GameStates;
+using LibNoise;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Math = System.Math;
 
 namespace DwarfCorp
 {
@@ -23,11 +25,33 @@ namespace DwarfCorp
     }
 
     /// <summary>
+    /// The voxel selector can be configured to select using a 
+    /// parametric brush.
+    /// </summary>
+    public enum VoxelBrush
+    {
+        /// <summary>
+        /// Default selection type. Selects everything in a bounding box.
+        /// </summary>
+        Box,
+        /// <summary>
+        /// Selects voxels in a shell on the outside of a box.
+        /// </summary>
+        Shell,
+        /// <summary>
+        /// Selects voxels in a stairstep pattern along the longest
+        /// axis.
+        /// </summary>
+        Stairs
+    }
+
+    /// <summary>
     /// This class handles selecting and deselecting regions of voxels with the mouse. It is used
     /// in multiple tools.
     /// </summary>
     public class VoxelSelector
     {
+
         /// <summary>
         /// Called whenever the mouse cursor is dragged.
         /// </summary>
@@ -84,6 +108,15 @@ namespace DwarfCorp
         private bool isRightPressed;
 
 
+        /// <summary>
+        /// The brush to use for selection.
+        /// </summary>
+        public VoxelBrush Brush = VoxelBrush.Box;
+
+        public SoundSource ClickSound;
+        public SoundSource DragSound;
+        public SoundSource ReleaseSound;
+
         public WorldManager World;
 
         public VoxelSelector(WorldManager world, Camera camera, GraphicsDevice graphics, ChunkManager chunks)
@@ -108,6 +141,12 @@ namespace DwarfCorp
             DeleteColor = Color.Red;
             BoxYOffset = 0;
             LastMouseWheel = 0;
+            ClickSound = SoundSource.Create(ContentPaths.Audio.Oscar.gui_change_selection);
+            ClickSound.RandomPitch = false;
+            DragSound = SoundSource.Create(ContentPaths.Audio.Oscar.gui_click_voxel);
+            DragSound.RandomPitch = false;
+            ReleaseSound = SoundSource.Create(ContentPaths.Audio.Oscar.gui_confirm_selection);
+            ReleaseSound.RandomPitch = false;
         }
 
         /// <summary>
@@ -183,6 +222,8 @@ namespace DwarfCorp
         /// The box y offset.
         /// </value>
         public float BoxYOffset { get; set; }
+
+        private int PrevBoxYOffsetInt = 0;
         /// <summary>
         /// Gets or sets the last value of the mouse wheel.
         /// </summary>
@@ -204,6 +245,11 @@ namespace DwarfCorp
             Voxel underMouse = GetVoxelUnderMouse();
             // Keep track of whether a new voxel has been selected.
             bool newVoxel = underMouse != null && !underMouse.Equals(VoxelUnderMouse);
+
+            if (underMouse == null)
+            {
+                return;
+            }
 
             // If there is a voxel under the mouse...
             if (underMouse != null)
@@ -239,9 +285,16 @@ namespace DwarfCorp
             // for building pits and tall walls using the mouse wheel.
             if (keyboard.IsKeyDown(Keys.LeftAlt) || keyboard.IsKeyDown(Keys.RightAlt))
             {
-                BoxYOffset += (mouse.ScrollWheelValue - LastMouseWheel) * 0.01f;
+                var change = mouse.ScrollWheelValue - LastMouseWheel;
+                BoxYOffset += (change) * 0.01f;
+                int offset = (int) BoxYOffset;
+                if (offset != PrevBoxYOffsetInt)
+                {
+                    DragSound.Play(World.CursorPos);
+                    newVoxel = true;
+                }
+                PrevBoxYOffsetInt = offset;
                 LastMouseWheel = mouse.ScrollWheelValue;
-                newVoxel = true;
                 altPressed = true;
             }
             else
@@ -262,9 +315,11 @@ namespace DwarfCorp
                 // On release, select voxels.
                 if (mouse.LeftButton == ButtonState.Released)
                 {
+                    ReleaseSound.Play(World.CursorPos);
                     isLeftPressed = false;
                     LeftReleasedCallback();
                     BoxYOffset = 0;
+                    PrevBoxYOffsetInt = 0;
                 }
                 // Otherwise, update the selection buffer
                 else
@@ -291,9 +346,9 @@ namespace DwarfCorp
                             buffer.Min.Y += BoxYOffset;
                         }
 
-                        SelectionBuffer = Chunks.GetVoxelsIntersecting(buffer);
+                        SelectionBuffer = Select(buffer, FirstVoxel.Position, underMouse.Position).ToList();
 
-                        if (!altPressed)
+                        if (!altPressed && Brush != VoxelBrush.Stairs)
                         {
                             if (SelectionType == VoxelSelectionType.SelectFilled)
                             { 
@@ -304,16 +359,20 @@ namespace DwarfCorp
                         }
 
                         if (newVoxel)
+                        {
+                            DragSound.Play(World.CursorPos, SelectionBuffer.Count / 20.0f);
                             Dragged.Invoke(SelectionBuffer, InputManager.MouseButton.Left);
+                        }
                     }
                 }
             }
             // If the mouse was not previously pressed, but is now pressed, then notify us of that.
             else if (mouse.LeftButton == ButtonState.Pressed)
             {
-                LeftPressedCallback();
+                ClickSound.Play(World.CursorPos); ;
                 isLeftPressed = true;
                 BoxYOffset = 0;
+                PrevBoxYOffsetInt = 0;
             }
 
             // Case where the right mouse button is pressed (mirrors left mouse button)
@@ -322,9 +381,11 @@ namespace DwarfCorp
             {
                 if (mouse.RightButton == ButtonState.Released)
                 {
+                    ReleaseSound.Play(World.CursorPos);
                     isRightPressed = false;
                     RightReleasedCallback();
                     BoxYOffset = 0;
+                    PrevBoxYOffsetInt = 0;
                 }
                 else
                 {
@@ -350,23 +411,205 @@ namespace DwarfCorp
 
 
                         SelectionBuffer = Chunks.GetVoxelsIntersecting(buffer);
-                        if (!altPressed)
+
+                        if (!altPressed && Brush != VoxelBrush.Stairs)
                         {
-                            SelectionBuffer.RemoveAll(
+                            if (SelectionType == VoxelSelectionType.SelectFilled)
+                            {
+                                SelectionBuffer.RemoveAll(
                                 voxel =>
-                                    (!voxel.Equals(underMouse) && Chunks.ChunkData.IsVoxelOccluded(voxel, World.Camera.Position)));
+                                    (!voxel.Equals(underMouse) && !Chunks.ChunkData.IsVoxelVisibleSurface(voxel)));
+                            }
                         }
                         if (newVoxel)
+                        {
+                            DragSound.Play(World.CursorPos, SelectionBuffer.Count / 20.0f);
                             Dragged.Invoke(SelectionBuffer, InputManager.MouseButton.Right);
+                        }
                     }
                 }
             }
             else if (mouse.RightButton == ButtonState.Pressed)
             {
+                ClickSound.Play(World.CursorPos);
                 RightPressedCallback();
                 BoxYOffset = 0;
                 isRightPressed = true;
             }
+        }
+
+        public IEnumerable<Voxel> Select(BoundingBox buffer, Vector3 start, Vector3 end)
+        {
+            switch (Brush)
+            {
+                case VoxelBrush.Box:
+                    return Chunks.GetVoxelsIntersecting(buffer);
+                case VoxelBrush.Shell:
+                {
+                    return Chunks.GetVoxelsIntersecting(GetShell(buffer));
+                }
+                default:
+                {
+                    return Chunks.GetVoxelsIntersecting(GetStair(buffer, start, end, SelectionType == VoxelSelectionType.SelectFilled));
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Gets a stairstep stretching accross the box.
+        /// </summary>
+        /// <param name="box">The box.</param>
+        /// <returns>A stairstep starting filled on the bottom row, pointing in the maximum x or z direction</returns>
+        private IEnumerable<Vector3> GetStair(BoundingBox box,  Vector3 start, Vector3 end, bool invert)
+        {
+            int minX = MathFunctions.FloorInt(box.Min.X + 0.5f);
+            int minY = MathFunctions.FloorInt(box.Min.Y + 0.5f);
+            int minZ = MathFunctions.FloorInt(box.Min.Z + 0.5f);
+            int maxX = MathFunctions.FloorInt(box.Max.X - 0.5f);
+            int maxY = MathFunctions.FloorInt(box.Max.Y - 0.5f);
+            int maxZ = MathFunctions.FloorInt(box.Max.Z - 0.5f);
+
+            // If not inverted, selects the Xs
+            // If inverted, selects the Os
+            //max y ----xOOOO
+            //      --- xxOOO
+            //      --- xxxOO
+            //      --- xxxxO
+            //min y --- xxxxx
+            //        minx --- maxx
+            float dx = box.Max.X - box.Min.X;
+            float dz = box.Max.Z - box.Min.Z;
+            Vector3 dir = end - start;
+            bool direction = dx > dz;
+            bool positiveDir = direction ? dir.X < 0 : dir.Z < 0;
+            int step = 0;
+
+            // Always make staircases go exactly to the top or bottom of the selection.
+            if (direction && invert)
+            {
+                minY = maxY - (maxX - minX);
+            }
+            else if (direction)
+            {
+                maxY = minY + (maxX - minX);
+            }
+            else if (invert)
+            {
+                minY = maxY - (maxZ - minZ);
+            }
+            else
+            {
+                maxY = minY + (maxZ - minZ);
+            }
+            int dy = maxY - minY;
+            // Start from the bottom of the stairs up to the top.
+            for (int y = minY; y <= maxY; y++)
+            {
+                int carve = invert ? MathFunctions.Clamp(dy - step, 0, dy) : step;
+                // If stairs are in x direction
+                if (direction)
+                {
+                    if (positiveDir)
+                    {
+                        // Start from min x, and march up to maxY - y
+                        for (int x = minX; x <= MathFunctions.Clamp(maxX - carve, minX, maxX); x++)
+                        {
+                            for (int z = minZ; z <= maxZ; z++)
+                            {
+                                yield return new Vector3(x + 0.5f, y + 0.5f, z + 0.5f);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Start from min x, and march up to maxY - y
+                        for (int x = maxX; x >= MathFunctions.Clamp(minX + carve, minX, maxX); x--)
+                        {
+                            for (int z = minZ; z <= maxZ; z++)
+                            {
+                                yield return new Vector3(x + 0.5f, y + 0.5f, z + 0.5f);
+                            }
+                        }
+                    }
+                    step++;
+                }
+                // Otherwise, they are in the z direction.
+                else
+                {
+                    if (positiveDir)
+                    {
+                        // Start from min z, and march up to maxY - y
+                        for (int z = minZ; z <= MathFunctions.Clamp(maxZ - carve, minZ, maxZ); z++)
+                        {
+                            for (int x = minX; x <= maxX; x++)
+                            {
+                                yield return new Vector3(x + 0.5f, y + 0.5f, z + 0.5f);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Start from min z, and march up to maxY - y
+                        for (int z = maxZ; z >= MathFunctions.Clamp(minZ + carve, minZ, maxZ); z--)
+                        {
+                            for (int x = minX; x <= maxX; x++)
+                            {
+                                yield return new Vector3(x + 0.5f, y + 0.5f, z + 0.5f);
+                            }
+                        }
+                    }
+                    step++;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Gets the 1-voxel shell of a bounding box.
+        /// </summary>
+        /// <param name="box">The box.</param>
+        /// <returns>A list of points on the boundary of the box.</returns>
+        private IEnumerable<Vector3> GetShell(BoundingBox box)
+        {
+            int minX = MathFunctions.FloorInt(box.Min.X + 0.5f);
+            int minY = MathFunctions.FloorInt(box.Min.Y + 0.5f);
+            int minZ = MathFunctions.FloorInt(box.Min.Z + 0.5f);
+            int maxX = MathFunctions.FloorInt(box.Max.X - 0.5f);
+            int maxY = MathFunctions.FloorInt(box.Max.Y - 0.5f);
+            int maxZ = MathFunctions.FloorInt(box.Max.Z - 0.5f);
+            
+            for (int y = minY; y <= maxY; y++)
+            {
+                // yx planes
+                for (int z = minZ; z <= maxZ; z++)
+                {
+                    yield return new Vector3(minX + 0.5f, y + 0.5f, z + 0.5f);
+                    yield return new Vector3(maxX + 0.5f, y + 0.5f, z + 0.5f);
+                }
+                // yz planes
+                for (int x = minX; x <= maxX; x++)
+                {
+                    yield return new Vector3(x + 0.5f, y + 0.5f, minZ + 0.5f);
+                    yield return new Vector3(x + 0.5f, y + 0.5f, maxZ + 0.5f);
+                }
+            }
+
+
+            /*
+            if (maxY - minY > 1)
+            {
+                for (int x = minX; x < maxX; x++)
+                {
+                    // xz planes
+                    for (int z = minZ; z < maxZ; z++)
+                    {
+                        yield return new Vector3(x + 0.5f, minY + 0.5f, z + 0.5f);
+                        yield return new Vector3(x + 0.5f, maxY + 0.5f, z + 0.5f);
+                    }
+                }
+            }
+             */
         }
 
         public void DraggedCallback(List<Voxel> voxels, InputManager.MouseButton button)

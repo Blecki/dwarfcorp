@@ -42,6 +42,20 @@ namespace Gum
         // If Hidden, widget is not drawn and does not interact.
         public bool Hidden = false;
 
+        // If has an icon, tint it to this color
+        private Vector4? _tint = null;
+
+        public Vector4 Tint
+        {
+            get
+            {
+                if (_tint.HasValue) return _tint.Value;
+                else if (Parent != null) return Parent.Tint;
+                else return Vector4.One;
+            }
+            set { _tint = value; Invalidate(); }
+        }
+
         private Vector4? _backgroundColor = null;
         public Vector4 BackgroundColor
         {
@@ -135,6 +149,7 @@ namespace Gum
         internal List<Widget> Children = new List<Widget>();
         public Widget Parent { get; private set; }
         public Root Root { get; internal set; }
+
         internal bool Constructed = false;
 
         public Widget()

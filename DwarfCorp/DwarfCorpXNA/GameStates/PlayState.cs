@@ -1,4 +1,6 @@
 using System.IO;
+using Gum;
+using Gum.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -7,6 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Point = Microsoft.Xna.Framework.Point;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace DwarfCorp.GameStates
 {
@@ -43,6 +47,7 @@ namespace DwarfCorp.GameStates
         private NewGui.GameSpeedControls GameSpeedControls;
         private Gum.Widget ResourcePanel;
         private NewGui.InfoTray InfoTray;
+        private NewGui.ToggleTray BrushTray;
         private Gum.Widgets.VerticalScrollBar ResourceScroller;
 
         private class ToolbarItem
@@ -629,6 +634,52 @@ namespace DwarfCorp.GameStates
                 },
                 Transparent = true
             }) as NewGui.InfoTray;
+
+            #endregion
+            #region Setup brush
+
+            BrushTray = GuiRoot.RootItem.AddChild(new NewGui.ToggleTray
+            {
+                AutoLayout = AutoLayout.FloatRight,
+                Rect = new Rectangle(256, 0, 32, 128),
+                SizeToGrid = new Point(1, 3),
+                Border = null,
+                ItemSource = new Gum.Widget[]
+               
+                        { 
+                            new NewGui.FramedIcon
+                            {
+                                Icon = new Gum.TileReference("tool-icons", 29),
+                                DrawFrame = false,
+                                Tooltip = "Block brush",
+                                OnClick = (widget, args) =>
+                                {
+                                    Master.VoxSelector.Brush = VoxelBrush.Box;
+                                }
+                            },
+                            new NewGui.FramedIcon
+                            {
+                                Icon = new Gum.TileReference("tool-icons", 30),
+                                DrawFrame = false,
+                                Tooltip = "Shell brush",
+                                OnClick = (widget, args) =>
+                                {
+                                    Master.VoxSelector.Brush = VoxelBrush.Shell;
+                                }
+                            },
+                            new NewGui.FramedIcon
+                            {
+                                Icon = new Gum.TileReference("tool-icons", 31),
+                                DrawFrame = false,
+                                Tooltip = "Stairs brush",
+                                OnClick = (widget, args) =>
+                                {
+                                    Master.VoxSelector.Brush = VoxelBrush.Stairs;
+                                }
+                            }
+                        }
+            }) as NewGui.ToggleTray;
+
 
             #endregion
 

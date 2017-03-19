@@ -177,7 +177,7 @@ namespace DwarfCorp
 
                     if (faction.Key == otherFaction.Key)
                     {
-                        FactionPolitics[pair] = new Politics()
+                        FactionPolitics[pair] = new Politics(now)
                         {
                             Faction = faction.Value,
                             HasMet = true,
@@ -201,7 +201,7 @@ namespace DwarfCorp
                         // Time always takes between 1 and 4 days of travel.
                         double timeInMinutes = Math.Min(Math.Max(dist * 16.0f, 1440), 1440 * 4);
 
-                        Politics politics = new Politics()
+                        Politics politics = new Politics(now)
                         {
                             Faction = otherFaction.Value,
                             HasMet = false,
@@ -274,7 +274,7 @@ namespace DwarfCorp
 
                     natives.TradeEnvoys.Add(envoy);
                     world.MakeAnnouncement(String.Format("Trade envoy from {0} has arrived!", natives.Name),
-                        "Click to zoom to location.", creatures.First().ZoomToMe);
+                        "Click to zoom to location.", creatures.First().ZoomToMe, ContentPaths.Audio.Oscar.gui_positive_generic);
                 }
             }
             else
@@ -312,7 +312,7 @@ namespace DwarfCorp
                     envoy.DistributeGoods();
                     natives.TradeEnvoys.Add(envoy);
                     world.MakeAnnouncement(String.Format("Trade envoy from {0} has arrived!",
-                        natives.Name), "Click to zoom to location.", creatures.First().ZoomToMe);
+                        natives.Name), "Click to zoom to location.", creatures.First().ZoomToMe, ContentPaths.Audio.Oscar.gui_positive_generic);
                 }
             }
 

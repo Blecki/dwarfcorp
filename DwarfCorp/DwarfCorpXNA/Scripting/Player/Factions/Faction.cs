@@ -341,8 +341,17 @@ namespace DwarfCorp
 
             Minions.RemoveAll(m => m.IsDead);
             SelectedMinions.RemoveAll(m => m.IsDead);
-            Minions.ForEach(m => m.Creature.SelectionCircle.IsVisible = false);
-            SelectedMinions.ForEach(m => m.Creature.SelectionCircle.IsVisible = true);
+            Minions.ForEach(m =>
+            {
+                m.Creature.SelectionCircle.IsVisible = false;
+                m.Creature.Sprite.DrawSilhouette = false;
+            });
+            SelectedMinions.ForEach(m => {
+                                             m.Creature.SelectionCircle.IsVisible = true;
+                                             m.Creature.Sprite.DrawSilhouette = true;
+            }
+
+    );
             
             // Turned off until a non-O(n^2) collision method is create.
             //CollideMinions(time);
@@ -798,6 +807,11 @@ namespace DwarfCorp
             {
                 foreach (ResourceAmount resource in stockpile.Resources)
                 {
+                    if (resource.NumResources == 0)
+                    {
+                        continue;
+                    }
+
                     if (toReturn.ContainsKey(resource.ResourceType))
                     {
                         toReturn[resource.ResourceType].NumResources += resource.NumResources;
@@ -1005,7 +1019,7 @@ namespace DwarfCorp
             newMinion.AI.AddMoney(currentApplicant.Level.Pay * 4);
 
             World.MakeAnnouncement("New hire!", String.Format("{0} was hired as a {1}.",
-                currentApplicant.Name, currentApplicant.Level.Name), newMinion.AI.ZoomToMe);
+                currentApplicant.Name, currentApplicant.Level.Name), newMinion.AI.ZoomToMe,  ContentPaths.Audio.Oscar.gui_positive_generic);
         }
 
         public Body DispatchBalloon()

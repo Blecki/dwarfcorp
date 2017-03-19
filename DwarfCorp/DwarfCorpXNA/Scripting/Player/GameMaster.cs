@@ -268,9 +268,8 @@ namespace DwarfCorp
                 }
             }
 
-            SoundManager.PlaySound(ContentPaths.Audio.change);
             World.MakeAnnouncement("Pay day!", String.Format("We paid our employees {0} today.",
-                total.ToString("C")));
+                total.ToString("C")), null, ContentPaths.Audio.change);
         }
 
 
@@ -283,6 +282,7 @@ namespace DwarfCorp
             {
                 //Drawer2D.DrawZAlignedRect(creature.Position + Vector3.Down * 0.5f, 0.25f, 0.25f, 2, new Color(255, 255, 255, 50));
                 creature.Creature.SelectionCircle.IsVisible = true;
+                creature.Creature.Sprite.DrawSilhouette = true;
                 foreach(Task task in creature.Tasks)
                 {
                     if (task.IsFeasible(creature.Creature))
