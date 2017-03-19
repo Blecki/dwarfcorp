@@ -1,4 +1,4 @@
-﻿// CreateEntitySpell.cs
+// CreateEntitySpell.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -60,6 +60,7 @@ namespace DwarfCorp
             ManaCost = 50;
             Mode = transmute ? SpellMode.SelectEntities : SpellMode.SelectEmptyVoxels;
             Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 4, 2);
+            TileRef = 20;
         }
 
         public void CreateEntity(Vector3 position)

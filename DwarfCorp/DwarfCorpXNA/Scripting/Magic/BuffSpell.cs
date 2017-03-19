@@ -1,4 +1,4 @@
-﻿// BuffSpell.cs
+// BuffSpell.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -61,6 +61,7 @@ namespace DwarfCorp
             Hint = "Click and drag to select creatures";
             ManaCost = 20;
             Image = new NamedImageFrame(ContentPaths.GUI.icons, 32, 0, 2);
+            TileRef = 16;
         }
 
 

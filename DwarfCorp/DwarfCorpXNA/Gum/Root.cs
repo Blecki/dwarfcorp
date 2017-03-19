@@ -435,10 +435,7 @@ namespace Gum
             Draw(Point.Zero);
         }
 
-        /// <summary>
-        /// Draw a quad using the device provided earlier. Depth testing should be off.
-        /// </summary>
-        public void DrawQuad(Rectangle Quad, Texture2D Texture)
+        public void DrawMesh(Mesh Mesh, Texture2D Texture)
         {
             RenderData.Device.DepthStencilState = DepthStencilState.None;
 
@@ -469,10 +466,18 @@ namespace Gum
 
             RenderData.Effect.CurrentTechnique.Passes[0].Apply();
 
+            Mesh.Render(RenderData.Device);
+        }
+
+        /// <summary>
+        /// Draw a quad using the device provided earlier. Depth testing should be off.
+        /// </summary>
+        public void DrawQuad(Rectangle Quad, Texture2D Texture)
+        {            
             var mesh = Mesh.Quad()
                     .Scale(Quad.Width, Quad.Height)
                     .Translate(Quad.X, Quad.Y);
-            mesh.Render(RenderData.Device);
+            DrawMesh(mesh, Texture);
         }
 
         /// <summary>

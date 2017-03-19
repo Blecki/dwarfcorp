@@ -1,4 +1,4 @@
-﻿// InspectSpell.cs
+// InspectSpell.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -72,6 +72,7 @@ namespace DwarfCorp
                     Description = "Mouse over a block to get info about it";
                     Hint = "Mouse over a block for info";
                     RechargeTimer = new Timer(0.1f, true);
+                    TileRef = 15;
                     break;
                 }
                 case InspectType.InspectEntity:
@@ -83,6 +84,7 @@ namespace DwarfCorp
                     Description = "Select an entity to get info about it";
                     Hint = "Mouse over entities for info";
                     RechargeTimer = new Timer(0.1f, true);
+                    TileRef = 15;
                     break;
                 }
             }
