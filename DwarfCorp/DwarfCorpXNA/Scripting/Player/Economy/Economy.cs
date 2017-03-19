@@ -55,11 +55,11 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Economy
     {
-        public float CurrentMoney {
+        public DwarfBux CurrentMoney {
             get 
             {
                 return
-                Company != null ? Company.Assets : 0.0f; 
+                Company != null ? Company.Assets : new DwarfBux(0m); 
             } 
             set { if(Company != null) {Company.Assets = value;} } }
         public Company Company { get; set; }
@@ -74,11 +74,11 @@ namespace DwarfCorp
             
         }
 
-        public Economy(Faction faction, float currentMoney, WorldManager worldManager, 
+        public Economy(Faction faction, DwarfBux currentMoney, WorldManager worldManager, 
             CompanyInformation CompanyInformation)
         {
             this.WorldManager = worldManager;
-            Company = Company.GenerateRandom(currentMoney, 1.0f, Company.Sector.Exploration);
+            Company = Company.GenerateRandom(currentMoney, 1.0m, Company.Sector.Exploration);
             Company.Information = CompanyInformation;
             Company.Assets = currentMoney;
 
@@ -87,19 +87,19 @@ namespace DwarfCorp
             Market  = new List<Company>
             {
                 Company,
-                Company.GenerateRandom(1000, 1.0f, Company.Sector.Exploration),
-                Company.GenerateRandom(1200, 5.0f, Company.Sector.Exploration),
-                Company.GenerateRandom(1500, 10.0f, Company.Sector.Exploration),
-                Company.GenerateRandom(1300, 10.0f, Company.Sector.Manufacturing),
-                Company.GenerateRandom(1200, 10.0f, Company.Sector.Manufacturing),
-                Company.GenerateRandom(1500, 15.0f, Company.Sector.Military),
-                Company.GenerateRandom(1300, 10.0f, Company.Sector.Military),
-                Company.GenerateRandom(1200, 15.0f, Company.Sector.Military),
-                Company.GenerateRandom(1500, 25.0f, Company.Sector.Magic),
-                Company.GenerateRandom(1200, 30.0f, Company.Sector.Magic),
-                Company.GenerateRandom(1300, 40.0f, Company.Sector.Magic),
-                Company.GenerateRandom(1500, 50.0f, Company.Sector.Finance),
-                Company.GenerateRandom(1800, 60.0f, Company.Sector.Finance)
+                Company.GenerateRandom(1000m, 1.0m, Company.Sector.Exploration),
+                Company.GenerateRandom(1200m, 5.0m, Company.Sector.Exploration),
+                Company.GenerateRandom(1500m, 10.0m, Company.Sector.Exploration),
+                Company.GenerateRandom(1300m, 10.0m, Company.Sector.Manufacturing),
+                Company.GenerateRandom(1200m, 10.0m, Company.Sector.Manufacturing),
+                Company.GenerateRandom(1500m, 15.0m, Company.Sector.Military),
+                Company.GenerateRandom(1300m, 10.0m, Company.Sector.Military),
+                Company.GenerateRandom(1200m, 15.0m, Company.Sector.Military),
+                Company.GenerateRandom(1500m, 25.0m, Company.Sector.Magic),
+                Company.GenerateRandom(1200m, 30.0m, Company.Sector.Magic),
+                Company.GenerateRandom(1300m, 40.0m, Company.Sector.Magic),
+                Company.GenerateRandom(1500m, 50.0m, Company.Sector.Finance),
+                Company.GenerateRandom(1800m, 60.0m, Company.Sector.Finance)
             };
 
             if (worldManager != null)
@@ -114,38 +114,38 @@ namespace DwarfCorp
 
         public void UpdateStocks(DateTime time)
         {
-            float marketBias = (float)Math.Sin(DwarfTime.LastTime.TotalGameTime.TotalSeconds * 0.001f) * 0.25f;
-            float originalStockPrice = Company.StockPrice;
+            decimal marketBias = (decimal)Math.Sin(DwarfTime.LastTime.TotalGameTime.TotalSeconds * 0.001f) * 0.25m;
+            DwarfBux originalStockPrice = Company.StockPrice;
             foreach (Company company in Market)
             {
-                float assetDiff = company.Assets - company.LastAssets;
-                float assetBonus = Math.Min(Math.Max(assetDiff * 0.01f, -1.5f), 1.5f);
-                if (company.Assets <= 0)
+                DwarfBux assetDiff = company.Assets - company.LastAssets;
+                DwarfBux assetBonus = Math.Min(Math.Max(assetDiff * 0.01m, -1.5m), 1.5m);
+                if (company.Assets <= 0m)
                 {
-                    assetBonus -= 1.5f;
+                    assetBonus -= 1.5m;
                 }
-                float newPrice = Math.Max(company.StockPrice + marketBias + MathFunctions.Rand()*0.5f - 0.25f + assetBonus, 0);
+                DwarfBux newPrice = Math.Max(company.StockPrice + marketBias + (decimal)MathFunctions.Rand() * 0.5m - 0.25m + assetBonus, 0m);
                 company.StockHistory.Add(newPrice);
                 company.StockPrice = newPrice;
                 company.LastAssets = company.Assets;
             }
 
-            float diff = Company.StockPrice - originalStockPrice;
-            if (Company.StockPrice <= 0)
+            DwarfBux diff = Company.StockPrice - originalStockPrice;
+            if (Company.StockPrice <= 0m)
             {
                 WorldManager.InvokeLoss();
             }
 
-            if (Company.Assets <= 0)
+            if (Company.Assets <= 0m)
             {
                 WorldManager.MakeAnnouncement("We're bankrupt!", "If we don't make a profit by tomorrow, our stock will crash!");
             }
 
-            string symbol = diff > 0 ? "+" : "";
+            string symbol = diff > 0m ? "+" : "";
 
             WorldManager.MakeAnnouncement(String.Format("{0} {1} {2}{3}",
-                Company.TickerName, Company.StockPrice.ToString("F2"), symbol, diff.ToString("F2")),
-                String.Format("Our stock price changed by {0}{1} today.", symbol, diff.ToString("F2")));
+                Company.TickerName, Company.StockPrice, symbol, diff),
+                String.Format("Our stock price changed by {0}{1} today.", symbol, diff));
         }
 
         void Time_NewDay(DateTime time)

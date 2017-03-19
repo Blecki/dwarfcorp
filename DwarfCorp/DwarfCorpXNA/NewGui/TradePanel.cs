@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -151,8 +151,8 @@ namespace DwarfCorp.NewGui
             var net = (Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney) -
                 (Envoy.ComputeValue(PlayerColumns.SelectedResources) + PlayerColumns.TradeMoney);
             var player = Envoy.ComputeValue(PlayerColumns.SelectedResources) + PlayerColumns.TradeMoney;
-            var tradeTarget = player * -0.25;
-            TotalDisplay.Text = String.Format("${0} [{1}]", net, tradeTarget);
+            var tradeTarget = player * -0.25m;
+            TotalDisplay.Text = String.Format("{0} [{1}]", net, tradeTarget);
             TotalDisplay.Invalidate();
 
             SpaceDisplay.Text = String.Format("{0}/{1}",

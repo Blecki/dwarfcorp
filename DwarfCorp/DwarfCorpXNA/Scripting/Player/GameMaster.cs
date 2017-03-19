@@ -232,7 +232,7 @@ namespace DwarfCorp
 
         public void PayEmployees()
         {
-            float total = 0;
+            DwarfBux total = 0;
             bool noMoney = false;
             foreach (CreatureAI creature in Faction.Minions)
             {
@@ -243,9 +243,9 @@ namespace DwarfCorp
 
                 if (!noMoney)
                 {
-                    float pay = creature.Stats.CurrentLevel.Pay;
+                    DwarfBux pay = creature.Stats.CurrentLevel.Pay;
                     total += pay;
-                    Faction.Economy.CurrentMoney = Math.Max(Faction.Economy.CurrentMoney - pay, 0);
+                    Faction.Economy.CurrentMoney = Math.Max(Faction.Economy.CurrentMoney - pay, 0m);
                     creature.AddMoney(pay);
                 }
                 else
@@ -253,7 +253,7 @@ namespace DwarfCorp
                     creature.AddThought(Thought.ThoughtType.NotPaid);
                 }
 
-                if (!(Faction.Economy.CurrentMoney > 0))
+                if (!(Faction.Economy.CurrentMoney > 0m))
                 {
                     if (!noMoney)
                     {
@@ -269,7 +269,7 @@ namespace DwarfCorp
             }
 
             World.MakeAnnouncement("Pay day!", String.Format("We paid our employees {0} today.",
-                total.ToString("C")), null, ContentPaths.Audio.change);
+                total), null, ContentPaths.Audio.change);
         }
 
 

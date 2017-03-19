@@ -723,6 +723,7 @@ namespace DwarfCorp
             effect.VertexColorTint = Color.White;
             effect.SelfIlluminationEnabled = true;
             effect.EnableShadows = GameSettings.Default.UseDynamicShadows;
+            effect.EnableLighting = true;
             graphicsDevice.RasterizerState = state;
             Graphics.BlendState = BlendState.NonPremultiplied;
             List<VoxelChunk> renderListCopy = RenderList.ToArray().ToList();

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -150,7 +150,7 @@ namespace DwarfCorp.GameStates
 
         private class MockTradeEntity : Trade.ITradeEntity
         {
-            public int Money { get; set; }
+            public DwarfBux Money { get; set; }
             public List<ResourceAmount> Resources { get; set; }
             public int AvailableSpace { get; set; }
 
@@ -174,7 +174,7 @@ namespace DwarfCorp.GameStates
                 throw new NotImplementedException();
             }
 
-            public void AddMoney(float Money)
+            public void AddMoney(DwarfBux Money)
             {
                 throw new NotImplementedException();
             }
@@ -199,7 +199,7 @@ namespace DwarfCorp.GameStates
             {
                 var playerFaction = new MockTradeEntity();
                 playerFaction.Resources = new List<ResourceAmount>(new ResourceAmount[] { (new ResourceAmount(ResourceLibrary.ResourceType.Ale, 10)) });
-                playerFaction.Money = 1000;
+                playerFaction.Money = 1000m;
                 playerFaction.AvailableSpace = 100;
 
                 var envoyFaction = new MockTradeEntity();
@@ -208,7 +208,7 @@ namespace DwarfCorp.GameStates
                 envoyFaction.Resources.Add(new ResourceAmount(ResourceLibrary.ResourceType.Berry, 10));
                 envoyFaction.Resources.Add(new ResourceAmount(ResourceLibrary.ResourceType.Bones, 10));
                 envoyFaction.Resources.Add(new ResourceAmount("Ruby", 10));
-                envoyFaction.Money = 1000;
+                envoyFaction.Money = 1000m;
 
                 var pane = GuiRoot.ConstructWidget(new NewGui.TradePanel
                 {

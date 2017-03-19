@@ -1,4 +1,4 @@
-﻿// EmployeeClass.cs
+// EmployeeClass.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -55,7 +55,7 @@ namespace DwarfCorp
         {
             public int Index;
             public string Name;
-            public float Pay;
+            public DwarfBux Pay;
             public int XP;
             public CreatureStats.StatNums BaseStats;
         }

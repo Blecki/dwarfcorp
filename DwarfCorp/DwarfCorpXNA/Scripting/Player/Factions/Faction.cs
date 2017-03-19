@@ -181,7 +181,7 @@ namespace DwarfCorp
             WallBuilder = new PutDesignator(this, world);
             CraftBuilder = new CraftBuilder(this, world);
             IsRaceFaction = false;
-            TradeMoney = 0.0f;
+            TradeMoney = 0.0m;
         }
 
         public class Expidition
@@ -216,7 +216,7 @@ namespace DwarfCorp
             {
             }
 
-            public float TradeMoney { get; set; }
+            public DwarfBux TradeMoney { get; set; }
             public List<ResourceAmount> TradeGoods { get; set; }
 
             public void DistributeGoods()
@@ -247,7 +247,7 @@ namespace DwarfCorp
             }
         }
 
-        public float TradeMoney { get; set; }
+        public DwarfBux TradeMoney { get; set; }
         public Point StartingPlace { get; set; }
         public Point Center { get; set; }
         public int TerritorySize { get; set; }
@@ -1005,7 +1005,7 @@ namespace DwarfCorp
                 return;
             }
 
-            Economy.CurrentMoney -= currentApplicant.Level.Pay*4;
+            Economy.CurrentMoney -= currentApplicant.Level.Pay*4m;
             Dwarf newMinion =
                 EntityFactory.GenerateDwarf(
                     rooms.First().GetBoundingBox().Center() + Vector3.UnitY * 15,
@@ -1016,7 +1016,7 @@ namespace DwarfCorp
             newMinion.Stats.LevelIndex = currentApplicant.Level.Index - 1;
             newMinion.Stats.LevelUp();
             newMinion.Stats.FullName = currentApplicant.Name;
-            newMinion.AI.AddMoney(currentApplicant.Level.Pay * 4);
+            newMinion.AI.AddMoney(currentApplicant.Level.Pay * 4m);
 
             World.MakeAnnouncement("New hire!", String.Format("{0} was hired as a {1}.",
                 currentApplicant.Name, currentApplicant.Level.Name), newMinion.AI.ZoomToMe,  ContentPaths.Audio.Oscar.gui_positive_generic);

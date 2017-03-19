@@ -1,4 +1,4 @@
-﻿// Company.cs
+// Company.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -54,11 +54,11 @@ namespace DwarfCorp
         };
 
         public Sector Industry { get; set; }
-        public float StockPrice { get; set; }
-        public float Assets { get; set; }
-        public float LastAssets { get; set; }
+        public DwarfBux StockPrice { get; set; }
+        public DwarfBux Assets { get; set; }
+        public DwarfBux LastAssets { get; set; }
         public string TickerName { get { return GenerateTickerName(Information.Name); } }
-        public List<float> StockHistory { get; set; }
+        public List<DwarfBux> StockHistory { get; set; }
 
         public CompanyInformation Information;
 
@@ -122,20 +122,20 @@ namespace DwarfCorp
             return TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
         }
 
-        public static List<float> GenerateRandomStockHistory(float current, int length)
+        public static List<DwarfBux> GenerateRandomStockHistory(DwarfBux current, int length)
         {
-            List<float> history = new List<float>();
-            float startPrice = current + (float)MathFunctions.Random.NextDouble()*current*0.5f - current * 0.5f;
-            float slope = (current - startPrice) / length;
+            List<DwarfBux> history = new List<DwarfBux>();
+            DwarfBux startPrice = current + (float)MathFunctions.Random.NextDouble()*current*0.5f - current * 0.5f;
+            double slope = (double)((current - startPrice).Value) / (double)length;
             for (int i = 0; i < length - 1; i++)
             {
-                history.Add((float)MathFunctions.Random.NextDouble() * 0.5f + slope * i + startPrice);
+                history.Add((decimal)(MathFunctions.Random.NextDouble() * 0.5 + slope * i + (double)startPrice.Value));
             }
             history.Add(current);
             return history;
         }
 
-        public static Company GenerateRandom(float assets, float stockPrice, Sector industry)
+        public static Company GenerateRandom(DwarfBux assets, DwarfBux stockPrice, Sector industry)
         {
             // Todo: Find out how random companies are actually used and reimplement logo generation.
             /*

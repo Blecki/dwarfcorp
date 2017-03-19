@@ -1,4 +1,4 @@
-﻿// StockTicker.cs
+// StockTicker.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -50,8 +50,8 @@ namespace DwarfCorp
         public Economy Economy { get; set; }
         public int Window { get; set; }
         public GUIComponent DrawSurface { get; set; }
-        public float MinStock = 0.0f;
-        public float MaxStock = 100.0f;
+        public DwarfBux MinStock = 0.0m;
+        public DwarfBux MaxStock = 100.0m;
         public Color TickColor { get; set; }
         public List<Company> FilteredCompanies = new List<Company>();
         public string SelectedIndustry = "";
@@ -157,7 +157,7 @@ namespace DwarfCorp
             MaxStock = 0;
             MinStock = 9999;
 
-            foreach (float stock in FilteredCompanies.SelectMany(company => company.StockHistory))
+            foreach (DwarfBux stock in FilteredCompanies.SelectMany(company => company.StockHistory))
             {
                 MaxStock = Math.Max(stock, MaxStock);
                 MinStock = Math.Min(stock, MinStock);
@@ -173,12 +173,13 @@ namespace DwarfCorp
                     {
                         continue;
                     }
-                    float price1 = company.StockHistory[i - 1];
-                    float normalizedPrice1 = (price1 - MinStock) / (MaxStock - MinStock);
-                    float price0 = company.StockHistory[i];
-                    float normalizedPrice0 = (price0 - MinStock) / (MaxStock - MinStock);
+                    DwarfBux price1 = company.StockHistory[i - 1];
+                    DwarfBux normalizedPrice1 = (price1 - MinStock) / (MaxStock - MinStock);
+                    DwarfBux price0 = company.StockHistory[i];
+                    DwarfBux normalizedPrice0 = (price0 - MinStock) / (MaxStock - MinStock);
 
-                    Drawer2D.DrawLine(batch, new Vector2(x + tick, y + h - normalizedPrice0 * h), new Vector2(x + prevtick, y + h - normalizedPrice1 * h), new Color(company.Information.LogoBackgroundColor), 2);
+                    Drawer2D.DrawLine(batch, new Vector2(x + tick, y + h - (float)((decimal)normalizedPrice0 * h)), 
+                        new Vector2(x + prevtick, y + h - (float)((decimal)normalizedPrice1 * h)), new Color(company.Information.LogoBackgroundColor), 2);
                 }
             }
 
@@ -201,21 +202,21 @@ namespace DwarfCorp
             MaxStock = 0;
             MinStock = 9999;
 
-            foreach (float stock in FilteredCompanies.SelectMany(company => company.StockHistory))
+            foreach (DwarfBux stock in FilteredCompanies.SelectMany(company => company.StockHistory))
             {
                 MaxStock = Math.Max(stock, MaxStock);
                 MinStock = Math.Min(stock, MinStock);
             }
 
-            MaxStock *= (FilteredCompanies.Count / 2);
-            MinStock *= (FilteredCompanies.Count / 2);
+            MaxStock *= (double)(FilteredCompanies.Count / 2);
+            MinStock *= (double)(FilteredCompanies.Count / 2);
 
             for (int i = 1; i < Window; i++)
             {
                 int tick = (w / (Window + 1)) * (i + 1);
                 int prevtick = (w / (Window + 1)) * (i);
-                float prevAverage = 0.0f;
-                float currAverage = 0.0f;
+                DwarfBux prevAverage = 0.0m;
+                DwarfBux currAverage = 0.0m;
 
                 foreach (Company company in FilteredCompanies)
                 {
@@ -227,14 +228,14 @@ namespace DwarfCorp
                     currAverage += company.StockHistory[i - 1];
                     
                 }
- 
-                float normalizedPrice1 = (currAverage - MinStock) / (MaxStock - MinStock);
-                float normalizedPrice0 = (prevAverage - MinStock) / (MaxStock - MinStock);
+
+                DwarfBux normalizedPrice1 = (currAverage - MinStock) / (MaxStock - MinStock);
+                DwarfBux normalizedPrice0 = (prevAverage - MinStock) / (MaxStock - MinStock);
 
                 if (currAverage > 0)
                 {
-                    Drawer2D.DrawLine(batch, new Vector2(x + tick, y + h - normalizedPrice0*h),
-                        new Vector2(x + prevtick, y + h - normalizedPrice1*h), Color.Black, 2);
+                    Drawer2D.DrawLine(batch, new Vector2(x + tick, y + h - (float)((decimal)normalizedPrice0*h)),
+                        new Vector2(x + prevtick, y + h - (float)((decimal)normalizedPrice1*h)), Color.Black, 2);
                 }
             }
 
@@ -250,7 +251,7 @@ namespace DwarfCorp
             MaxStock = 0;
             MinStock = 9999;
 
-            foreach (float stock in FilteredCompanies.SelectMany(company => company.StockHistory))
+            foreach (DwarfBux stock in FilteredCompanies.SelectMany(company => company.StockHistory))
             {
                 MaxStock = Math.Max(stock, MaxStock);
                 MinStock = Math.Min(stock, MinStock);
@@ -276,13 +277,13 @@ namespace DwarfCorp
                     {
                         continue;
                     }
-                    float price0 = company.StockHistory[i];
-                    float normalizedPrice0 = (price0 - MinStock) / (MaxStock - MinStock);
+                    DwarfBux price0 = company.StockHistory[i];
+                    DwarfBux normalizedPrice0 = (price0 - MinStock) / (MaxStock - MinStock);
 
                     if (j % company.StockHistory.Count == (i - 1))
                     {
                         StockIcon icon = Icons[j];
-                        icon.DestRect = new Rectangle((int) (x + tick), (int) (y + h - normalizedPrice0*h) - 16, 32, 32);
+                        icon.DestRect = new Rectangle((int) (x + tick), (int) (y + h - (float)((decimal)normalizedPrice0*h)) - 16, 32, 32);
                         Icons[j] = icon;
                     }
                     j++;
@@ -307,7 +308,7 @@ namespace DwarfCorp
             if (SelectedCompany != null)
             {
                 ToolTip = SelectedCompany.Information.Name + " (" + SelectedCompany.TickerName + ")\n" +
-                    " Share Price: " + SelectedCompany.StockPrice.ToString("C") + "\n" +
+                    " Share Price: " + SelectedCompany.StockPrice + "\n" +
                     " Industry: " + SelectedCompany.Industry.ToString() +"\n" +
                     " Motto: " + SelectedCompany.Information.Motto;
                 if (FilteredCompanies.Contains(SelectedCompany))
@@ -360,11 +361,11 @@ namespace DwarfCorp
                 RenderCompanies(time, batch);
             }
 
-            float midStock = (MaxStock + MinStock) * 0.5f;
+            DwarfBux midStock = (MaxStock + MinStock) * 0.5m;
 
-            Drawer2D.DrawAlignedText(batch, MinStock.ToString("C"), GUI.SmallFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, new Rectangle(x - 10, y + h - 30, 30, 30));
-            Drawer2D.DrawAlignedText(batch, midStock.ToString("C"), GUI.SmallFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, new Rectangle(x - 10, y + (h / 2) - 30, 30, 30));
-            Drawer2D.DrawAlignedText(batch, MaxStock.ToString("C"), GUI.SmallFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, new Rectangle(x - 10, y, 30, 30));
+            Drawer2D.DrawAlignedText(batch, MinStock.ToString(), GUI.SmallFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, new Rectangle(x - 10, y + h - 30, 30, 30));
+            Drawer2D.DrawAlignedText(batch, midStock.ToString(), GUI.SmallFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, new Rectangle(x - 10, y + (h / 2) - 30, 30, 30));
+            Drawer2D.DrawAlignedText(batch, MaxStock.ToString(), GUI.SmallFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, new Rectangle(x - 10, y, 30, 30));
             base.Render(time, batch);
         }
     }

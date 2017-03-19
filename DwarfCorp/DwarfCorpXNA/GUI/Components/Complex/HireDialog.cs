@@ -1,4 +1,4 @@
-﻿// HireDialog.cs
+// HireDialog.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -199,10 +199,10 @@ namespace DwarfCorp
 
             bool hasBalloonPort = rooms.Any(room => room.RoomData.Name == "BalloonPort");
 
-            if (CurrentApplicant.Level.Pay*4 > Faction.Economy.CurrentMoney)
+            if (CurrentApplicant.Level.Pay*4m > Faction.Economy.CurrentMoney)
             {
                 Dialog.Popup(GUI, "Can't hire!",
-                    "We can't afford the signing bonus. Our treasury: " + Faction.Economy.CurrentMoney.ToString("C"), ButtonType.OK, 500, 300, this, LocalBounds.Width / 2 - 250, LocalBounds.Height/2 - 150);
+                    "We can't afford the signing bonus. Our treasury: " + Faction.Economy.CurrentMoney, ButtonType.OK, 500, 300, this, LocalBounds.Width / 2 - 250, LocalBounds.Height/2 - 150);
             }
             else if (!hasBalloonPort)
             {

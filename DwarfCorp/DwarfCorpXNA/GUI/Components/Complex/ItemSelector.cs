@@ -144,9 +144,9 @@ namespace DwarfCorp
             return total;
         }
 
-        public float ComputeTotal()
+        public DwarfBux ComputeTotal()
         {
-            float total = 0;
+            DwarfBux total = 0;
 
             foreach(GItem item in Items)
             {

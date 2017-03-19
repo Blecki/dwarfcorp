@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +18,7 @@ namespace DwarfCorp.NewGui
         public String RightHeader;
         private MoneyEditor MoneyField;
 
-        public int TradeMoney { get { return MoneyField.CurrentValue; } }
+        public DwarfBux TradeMoney { get { return (decimal)MoneyField.CurrentValue; } }
         public bool Valid { get { return MoneyField.Valid; } }
         
         public int TotalSelectedItems
@@ -81,7 +81,7 @@ namespace DwarfCorp.NewGui
 
             MoneyField = rightPanel.AddChild(new MoneyEditor
             {
-                MaximumValue = TradeEntity.Money,
+                MaximumValue = (int)TradeEntity.Money,
                 MinimumSize = new Point(0, 32),
                 AutoLayout = AutoLayout.DockBottom,
                 OnValueChanged = (sender) => Root.SafeCall(OnTotalSelectedChanged, this)
