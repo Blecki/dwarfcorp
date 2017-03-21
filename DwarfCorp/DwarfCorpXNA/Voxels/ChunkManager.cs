@@ -765,7 +765,7 @@ namespace DwarfCorp
             effect.SelfIlluminationEnabled = true;
             effect.EnableShadows = GameSettings.Default.UseDynamicShadows;
             effect.World = Matrix.Identity;
-
+            effect.EnableLighting = true;
             List<VoxelChunk> renderListCopy = RenderList.ToArray().ToList();
 
             foreach (VoxelChunk chunk in renderListCopy)

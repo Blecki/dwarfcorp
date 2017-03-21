@@ -359,9 +359,12 @@ namespace DwarfCorp
             List<ulong> removalKeys = new List<ulong>();
             foreach (KeyValuePair<ulong, BuildOrder> kvp in DigDesignations)
             {
-                Voxel v = kvp.Value.Vox;
+                Voxel v = kvp.Value.Vox;;
                 if (v.IsEmpty || v.Health <= 0.0f || v.Type.Name == "empty" || v.Type.IsInvincible)
+                {
+                    Drawer3D.UnHighlightVoxel(v);
                     removalKeys.Add(kvp.Key);
+                }
             }
 
             for (int i = 0; i < removalKeys.Count; i++)
@@ -614,7 +617,10 @@ namespace DwarfCorp
         public void RemoveDigDesignation(Voxel vox)
         {
             if (DigDesignations.ContainsKey(vox.QuickCompare))
+            {
                 DigDesignations.Remove(vox.QuickCompare);
+                Drawer3D.UnHighlightVoxel(vox);
+            }
         }
 
         public bool IsDigDesignation(Voxel vox)

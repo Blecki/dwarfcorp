@@ -1648,6 +1648,8 @@ namespace DwarfCorp
 
             //ComponentManager.CollisionManager.DebugDraw();
 
+            DefaultShader.View = Camera.ViewMatrix;
+            DefaultShader.Projection = Camera.ProjectionMatrix;
             // Render simple geometry (boxes, etc.)
             Drawer3D.Render(GraphicsDevice, DefaultShader, true);
 

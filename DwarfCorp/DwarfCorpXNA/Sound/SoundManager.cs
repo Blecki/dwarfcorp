@@ -255,7 +255,7 @@ namespace DwarfCorp
                     instance.EffectInstance.Apply3D(Listener, Emitter);
                     instance.EffectInstance.Play();
                     Emitter.Position = instance.Position;
-                    instance.EffectInstance.Apply3D(Listener, Emitter);
+                    //instance.EffectInstance.Apply3D(Listener, Emitter);
 
                     //instance.EffectInstance.Volume = Math.Max(Math.Min(400.0f / (camera.Position - instance.Position).LengthSquared(), 0.999f), 0.001f);
                     instance.HasStarted = true;

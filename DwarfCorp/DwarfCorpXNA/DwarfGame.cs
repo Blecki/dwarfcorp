@@ -67,7 +67,6 @@ namespace DwarfCorp
             Graphics.IsFullScreen = GameSettings.Default.Fullscreen;
             Graphics.PreferredBackBufferWidth = GameSettings.Default.ResolutionX;
             Graphics.PreferredBackBufferHeight = GameSettings.Default.ResolutionY;
-
             try
             {
                 Graphics.ApplyChanges();
