@@ -191,9 +191,18 @@ namespace DwarfCorp.NewGui
 
         private void UpdateLineItemText(Widget LineItem, ResourceAmount Resource)
         {
+            var resourceInfo = ResourceLibrary.GetResourceByName(Resource.ResourceType);
+
             LineItem.GetChild(1).Text = String.Format("{0} at ${1}e",
                 Resource.NumResources,
                 ValueSourceEntity.ComputeValue(Resource.ResourceType));
+            LineItem.Tooltip = resourceInfo.ResourceName + "\n" + resourceInfo.Description;
+
+            if (resourceInfo.Tags.Contains(DwarfCorp.Resource.ResourceTags.Craft))
+                LineItem.GetChild(0).Background = new TileReference("crafts", resourceInfo.NewGuiSprite);
+            else
+                LineItem.GetChild(0).Background = new TileReference("resources", resourceInfo.NewGuiSprite);
+
             LineItem.GetChild(1).Invalidate();
         }
     }

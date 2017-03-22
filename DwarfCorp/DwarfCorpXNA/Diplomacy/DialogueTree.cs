@@ -48,23 +48,23 @@ namespace DwarfCorp.Dialogue
                     });
                     Context.AddOption("What is something you have many of?", (context) =>
                     {
-                        Context.Transition(RootWithPrompt(String.Format("We have many of {0}.",
-                            Datastructures.SelectRandom(context.Envoy.OwnerFaction.Race.CommonResources))));
+                        Context.Transition(RootWithPrompt(String.Format("We have many {0}.",
+                            GetPluralForm(Datastructures.SelectRandom(context.Envoy.OwnerFaction.Race.CommonResources)))));
                     });
                     Context.AddOption("What is something you have few of?", (context) =>
                     {
-                        Context.Transition(RootWithPrompt(String.Format("We have few of {0}.",
-                            Datastructures.SelectRandom(context.Envoy.OwnerFaction.Race.RareResources))));
+                        Context.Transition(RootWithPrompt(String.Format("We have few {0}.",
+                            GetPluralForm(Datastructures.SelectRandom(context.Envoy.OwnerFaction.Race.RareResources)))));
                     });
                     Context.AddOption("What is something you hate?", (context) =>
                     {
                         Context.Transition(RootWithPrompt(String.Format("We hate {0}.",
-                            Datastructures.SelectRandom(context.Envoy.OwnerFaction.Race.HatedResources))));
+                            GetPluralForm(Datastructures.SelectRandom(context.Envoy.OwnerFaction.Race.HatedResources)))));
                     });
                     Context.AddOption("What is something you like?", (context) =>
                     {
                         Context.Transition(RootWithPrompt(String.Format("We like {0}.",
-                            Datastructures.SelectRandom(context.Envoy.OwnerFaction.Race.LikedResources))));
+                            GetPluralForm(Datastructures.SelectRandom(context.Envoy.OwnerFaction.Race.LikedResources)))));
                     });
                     Context.AddOption("Leave", (context) =>
                      {
@@ -172,7 +172,7 @@ namespace DwarfCorp.Dialogue
 
                 if (containsHatedItem)
                 {
-                    Context.Transition(GoodbyeWithPrompt("What is this garbage?"));
+                    Context.Transition(GoodbyeWithPrompt(Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.BadTrades)));
 
                     Context.Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
                     {
@@ -196,7 +196,7 @@ namespace DwarfCorp.Dialogue
                     }
 
                     Context.TradePanel.Transaction.Apply();
-                    Context.Transition(RootWithPrompt("That is a good trade."));
+                    Context.Transition(RootWithPrompt(Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.GoodTrades)));
 
                     Context.Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
                     {
@@ -211,6 +211,48 @@ namespace DwarfCorp.Dialogue
             {
                 Context.Transition(RootWithPrompt("Changed your mind?"));
             }
+        }
+
+        static Dictionary<Resource.ResourceTags, String> PluralMap = null;
+
+        private static String GetPluralForm(Resource.ResourceTags Tag)
+        {
+            if (PluralMap == null)
+            {
+                PluralMap = new Dictionary<Resource.ResourceTags, string>();
+
+                PluralMap.Add(Resource.ResourceTags.Edible, "edibles");
+                PluralMap.Add(Resource.ResourceTags.Material, "materials");
+                PluralMap.Add(Resource.ResourceTags.HardMaterial, "hard materials");
+                PluralMap.Add(Resource.ResourceTags.Precious, "precious things");
+                PluralMap.Add(Resource.ResourceTags.Flammable, "flammable things");
+                PluralMap.Add(Resource.ResourceTags.SelfIlluminating, "self illuminating things");
+                PluralMap.Add(Resource.ResourceTags.Wood, "wood");
+                PluralMap.Add(Resource.ResourceTags.Metal, "metal");
+                PluralMap.Add(Resource.ResourceTags.Stone, "stone");
+                PluralMap.Add(Resource.ResourceTags.Fuel, "fuel");
+                PluralMap.Add(Resource.ResourceTags.Magical, "magical items");
+                PluralMap.Add(Resource.ResourceTags.Soil, "soil");
+                PluralMap.Add(Resource.ResourceTags.Grain, "grain");
+                PluralMap.Add(Resource.ResourceTags.Fungus, "fungi");
+                PluralMap.Add(Resource.ResourceTags.None, "WUT");
+                PluralMap.Add(Resource.ResourceTags.AnimalProduct, "animal products");
+                PluralMap.Add(Resource.ResourceTags.Meat, "meat");
+                PluralMap.Add(Resource.ResourceTags.Gem, "gems");
+                PluralMap.Add(Resource.ResourceTags.Craft, "crafts");
+                PluralMap.Add(Resource.ResourceTags.Encrustable, "encrustable items");
+                PluralMap.Add(Resource.ResourceTags.Alcohol, "alcoholic drinks");
+                PluralMap.Add(Resource.ResourceTags.Brewable, "brewed drinks");
+                PluralMap.Add(Resource.ResourceTags.Bakeable, "baked goods");
+                PluralMap.Add(Resource.ResourceTags.RawFood, "raw food");
+                PluralMap.Add(Resource.ResourceTags.PreparedFood, "prepared food");
+                PluralMap.Add(Resource.ResourceTags.Plantable, "seeds");
+                PluralMap.Add(Resource.ResourceTags.AboveGroundPlant, "plants");
+                PluralMap.Add(Resource.ResourceTags.BelowGroundPlant, "cave plants");
+                PluralMap.Add(Resource.ResourceTags.Bone, "bones");
+            }
+
+            return PluralMap[Tag];
         }
     }
 }

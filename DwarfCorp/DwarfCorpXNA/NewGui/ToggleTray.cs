@@ -14,6 +14,7 @@ namespace DwarfCorp.NewGui
         public Vector4 ToggledTint = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
         public Vector4 OffTint = new Vector4(0.15f, 0.15f, 0.15f, 0.5f);
         public Vector4 HoverTint = new Vector4(0.95f, 0.8f, 0.6f, 1.0f);
+
         public override void Construct()
         {
             base.Construct();
@@ -21,27 +22,27 @@ namespace DwarfCorp.NewGui
 
             for (int i = 0; i < Children.Count; i++)
             {
-                Children[i].Tint = i == 0 ? ToggledTint : OffTint;
+                (Children[i] as FramedIcon).Tint = i == 0 ? ToggledTint : OffTint;
                 int i1 = i;
                 Children[i].OnMouseEnter += (widget, args) =>
                 {
-                    widget.Tint = HoverTint;
+                    (widget as FramedIcon).Tint = HoverTint;
                 };
 
                 Children[i].OnMouseLeave += (widget, args) =>
                 {
-                    widget.Tint = i1 == SelectedChild ? ToggledTint : OffTint;
+                    (widget as FramedIcon).Tint = i1 == SelectedChild ? ToggledTint : OffTint;
                 };
 
                 Children[i].OnClick += (widget, args) =>
                 {
                     SelectedChild = i1;
-                    widget.Tint = ToggledTint;
+                    (widget as FramedIcon).Tint = ToggledTint;
 
                     for (int j = 0; j < Children.Count; j++)
                     {
                         if (i1 == j) continue;
-                        Children[j].Tint = OffTint;
+                        (Children[j] as FramedIcon).Tint = OffTint;
                     }
                 };
             }

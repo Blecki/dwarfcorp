@@ -936,8 +936,12 @@ namespace DwarfCorp.GameStates
                                         Master.Faction.CraftBuilder.CurrentCraftType = data;
                                         ChangeTool(GameMaster.ToolMode.Build);
                                         World.ShowToolPopup("Click and drag to build " + data.Name);
+                                    },
+                                    OnConstruct = (sender) =>
+                                    {
+                                        ToolbarItems.Add(new ToolbarItem(sender, () =>
+                                            ((sender as NewGui.ToolTray.Icon).ExpansionChild as NewGui.BuildCraftInfo).CanBuild()));
                                     }
-                                    //Todo: Add to toolbar item list & disable if not enough resources?
                                 })
                         }
                     },
@@ -1279,16 +1283,9 @@ namespace DwarfCorp.GameStates
                     Master.SelectedMinions.AddRange(Master.Faction.Minions);
                 }
 
-                if (index == 0 || Master.SelectedMinions.Count > 0 && index < BottomRightTray.Children.Count)
+                if (index == 0 || Master.SelectedMinions.Count > 0)
                 {
-                    GuiRoot.SafeCall(
-                        BottomRightTray.Children[index].OnClick,
-                        BottomRightTray.Children[index],
-                        new Gum.InputEventArgs
-                        {
-                            X = BottomRightTray.Children[index].Rect.X,
-                            Y = BottomRightTray.Children[index].Rect.Y
-                        });
+                    BottomRightTray.FindTopTray().Hotkey(index);
                 }
             }
             else if (key == ControlSettings.Mappings.Pause)

@@ -41,6 +41,33 @@ namespace DwarfCorp.NewGui
                     (Parent as Icon).CollapseTrays();
                 }
             }
+
+            public Tray FindTopTray()
+            {
+                foreach (var child in Children)
+                {
+                    var icon = child as Icon;
+                    if (icon == null) continue;
+                    var nestedTray = icon.ExpansionChild as Tray;
+                    if (nestedTray != null && nestedTray.Hidden == false)
+                        return nestedTray.FindTopTray();
+                }
+
+                return this;
+            }
+
+            public void Hotkey(int Key)
+            {
+                if (Key < 0 || Key >= Children.Count) return;
+                var icon = GetChild(Key) as Icon;
+                if (icon == null) return;
+                Root.SafeCall(icon.OnClick, icon, new InputEventArgs
+                {
+                    X = icon.Rect.X,
+                    Y = icon.Rect.Y
+                });
+                icon.Expand();
+            }
         }
 
         public class Icon : FramedIcon
@@ -138,6 +165,15 @@ namespace DwarfCorp.NewGui
                 if (ExpansionChild != null)
                 {
                     ExpansionChild.Hidden = true;
+                    ExpansionChild.Invalidate();
+                }
+            }
+
+            public void Expand()
+            {
+                if (ExpansionChild != null)
+                {
+                    ExpansionChild.Hidden = false;
                     ExpansionChild.Invalidate();
                 }
             }

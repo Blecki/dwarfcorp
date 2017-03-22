@@ -12,6 +12,8 @@ namespace DwarfCorp.NewGui
     /// </summary>
     public class FramedIcon : Widget
     {
+        public Vector4 Tint = Vector4.One;
+        
         public TileReference Icon = null;
         private bool _enabled = true;
         public bool Enabled
