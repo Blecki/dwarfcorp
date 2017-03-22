@@ -26,18 +26,13 @@ namespace DwarfCorp.NewGui
 
             public void CollapseTrays()
             {
-                if (IsRootTray)
+                foreach (var child in Children)
+                    if (child is Icon)
+                        (child as Icon).Unexpand();
+                
+                if (!IsRootTray && Parent != null && Parent is Icon)
                 {
-                    foreach (var child in Children)
-                        if (child is Icon)
-                            (child as Icon).Unexpand();
-                    return;
-                }
-
-                Hidden = true;
-
-                if (Parent != null && Parent is Icon)
-                {
+                    Hidden = true;
                     (Parent as Icon).CollapseTrays();
                 }
             }
