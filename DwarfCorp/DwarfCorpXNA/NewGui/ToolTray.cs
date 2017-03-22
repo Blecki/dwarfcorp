@@ -61,12 +61,22 @@ namespace DwarfCorp.NewGui
                 if (Key < 0 || Key >= Children.Count) return;
                 var icon = GetChild(Key) as Icon;
                 if (icon == null) return;
-                Root.SafeCall(icon.OnClick, icon, new InputEventArgs
+
+                if (icon.ExpansionChild is Tray)
+                    Root.SafeCall(icon.OnMouseEnter, icon, new InputEventArgs
+                    {
+                        X = icon.Rect.X,
+                        Y = icon.Rect.Y
+                    });
+                else
                 {
-                    X = icon.Rect.X,
-                    Y = icon.Rect.Y
-                });
-                icon.Expand();
+                    Root.SafeCall(icon.OnClick, icon, new InputEventArgs
+                    {
+                        X = icon.Rect.X,
+                        Y = icon.Rect.Y
+                    });
+                    CollapseTrays();
+                }                
             }
         }
 
@@ -98,10 +108,7 @@ namespace DwarfCorp.NewGui
                 OnMouseLeave = (sender, args) =>
                 {
                     if (!KeepChildVisible && ExpansionChild != null)
-                    {
-                        ExpansionChild.Hidden = true;
-                        ExpansionChild.Invalidate();
-                    }
+                        Unexpand();
                 };
 
                 OnDisable = (sender) =>
