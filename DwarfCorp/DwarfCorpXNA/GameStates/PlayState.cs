@@ -346,9 +346,12 @@ namespace DwarfCorp.GameStates
                 GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
                 World.Render(gameTime);
 
-                if (!MinimapFrame.Hidden)
-                    MinimapRenderer.Render(new Rectangle(0, GuiRoot.VirtualScreen.Bottom - 192, 192, 192), GuiRoot);
-                GuiRoot.Draw();
+                if (Game.StateManager.CurrentState == this)
+                {
+                    if (!MinimapFrame.Hidden)
+                        MinimapRenderer.Render(new Rectangle(0, GuiRoot.VirtualScreen.Bottom - 192, 192, 192), GuiRoot);
+                    GuiRoot.Draw();
+                }
 
                 // SpriteBatch Begin and End must be called again. Hopefully we can factor this out with the new gui
                 RasterizerState rasterizerState = new RasterizerState()

@@ -36,6 +36,10 @@ namespace Gum.Input
         public System.Threading.Mutex QueueLock = new System.Threading.Mutex();
         public List<QueuedInput> Queued = new List<QueuedInput>();
 
+        private bool CtrlDown = false;
+        private bool AltDown = false;
+        private bool ShiftDown = false;
+
         public List<QueuedInput> GetInputQueue()
         {
             QueueLock.WaitOne();
@@ -77,6 +81,14 @@ namespace Gum.Input
                 case WindowMessage.WM_KEYDOWN:
                     {
                         var args = new System.Windows.Forms.KeyEventArgs((System.Windows.Forms.Keys)Msg.WParam);
+
+                        if (args.KeyData == System.Windows.Forms.Keys.Alt)
+                            AltDown = true;
+                        if (args.KeyData == System.Windows.Forms.Keys.ControlKey)
+                            CtrlDown = true;
+                        if (args.KeyData == System.Windows.Forms.Keys.ShiftKey)
+                            ShiftDown = true;
+
                         Queued.Add(new QueuedInput
                         {
                             Message = Gum.InputEvents.KeyDown,
@@ -94,6 +106,14 @@ namespace Gum.Input
                 case WindowMessage.WM_KEYUP:
                     {
                         var args = new System.Windows.Forms.KeyEventArgs((System.Windows.Forms.Keys)Msg.WParam);
+
+                        if (args.KeyData == System.Windows.Forms.Keys.Alt)
+                            AltDown = false;
+                        if (args.KeyData == System.Windows.Forms.Keys.ControlKey)
+                            CtrlDown = false;
+                        if (args.KeyData == System.Windows.Forms.Keys.ShiftKey)
+                            ShiftDown = false;
+
                         Queued.Add(new QueuedInput
                         {
                             Message = Gum.InputEvents.KeyUp,
@@ -115,6 +135,9 @@ namespace Gum.Input
                             Message = Gum.InputEvents.MouseDown,
                             Args = new Gum.InputEventArgs
                             {
+                                Alt = AltDown,
+                                Control = CtrlDown,
+                                Shift = ShiftDown,
                                 X = (int)((int)Msg.LParam & 0x0000FFFFu),
                                 Y = (int)((int)Msg.LParam & 0xFFFF0000u) >> 16
                             }
@@ -129,6 +152,9 @@ namespace Gum.Input
                             Message = Gum.InputEvents.MouseUp,
                             Args = new Gum.InputEventArgs
                             {
+                                Alt = AltDown,
+                                Control = CtrlDown,
+                                Shift = ShiftDown,
                                 X = (int)((int)Msg.LParam & 0x0000FFFFu),
                                 Y = (int)((int)Msg.LParam & 0xFFFF0000u) >> 16
                             }
@@ -138,6 +164,9 @@ namespace Gum.Input
                             Message = Gum.InputEvents.MouseClick,
                             Args = new Gum.InputEventArgs
                             {
+                                Alt = AltDown,
+                                Control = CtrlDown,
+                                Shift = ShiftDown,
                                 X = (int)((int)Msg.LParam & 0x0000FFFFu),
                                 Y = (int)((int)Msg.LParam & 0xFFFF0000u) >> 16
                             }
@@ -152,6 +181,9 @@ namespace Gum.Input
                             Message = Gum.InputEvents.MouseMove,
                             Args = new Gum.InputEventArgs
                             {
+                                Alt = AltDown,
+                                Control = CtrlDown,
+                                Shift = ShiftDown,
                                 X = (int)((int)Msg.LParam & 0x0000FFFFu),
                                 Y = (int)((int)Msg.LParam & 0xFFFF0000u) >> 16
                             }

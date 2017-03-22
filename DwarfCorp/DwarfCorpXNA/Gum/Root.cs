@@ -348,7 +348,14 @@ namespace Gum
                 case InputEvents.MouseClick:
                     {
                         MousePosition = ScreenPointToGuiPoint(new Point(Args.X, Args.Y));
-                        var newArgs = new InputEventArgs { X = MousePosition.X, Y = MousePosition.Y };
+                        var newArgs = new InputEventArgs
+                        {
+                            Alt = Args.Alt,
+                            Control = Args.Control,
+                            Shift = Args.Shift,
+                            X = MousePosition.X,
+                            Y = MousePosition.Y
+                        };
 
                         if (PopupStack.Count != 0)
                         {
