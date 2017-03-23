@@ -69,23 +69,27 @@ namespace DwarfCorp.NewGui
                 TextColor = new Vector4(1, 1, 1, 1),
                 Text = "0",
                 HiliteOnMouseOver = false,
-                OnTextChange = (sender) =>
+                BeforeTextChange = (sender, args) =>
                 {
                     sender.TextColor = new Vector4(1, 0, 0, 1);
                     Valid = false;
 
                     int newValue;
-                    if (Int32.TryParse(sender.Text, out newValue))
+                    if (Int32.TryParse(args.NewText, out newValue))
                     {
-                        if (newValue >= 0 && newValue <= MaximumValue)
-                        {
-                            _currentValue = newValue;
-                            sender.TextColor = new Vector4(1, 1, 1, 1);
-                            Valid = true;
-                            Root.SafeCall(OnValueChanged, this);
-                        }                       
+                        if (newValue < 0) newValue = 0;
+                        if (newValue > MaximumValue) newValue = MaximumValue;
+                        _currentValue = newValue;
+                        sender.TextColor = new Vector4(1, 1, 1, 1);
+                        Valid = true;
+                        args.NewText = newValue.ToString();
                     }
-
+                    else
+                        args.Cancelled = true;
+                },
+                OnTextChange = (sender) =>
+                {
+                    Root.SafeCall(OnValueChanged, this);
                     sender.Invalidate();
                 }
             }) as Gum.Widgets.EditableTextField;
