@@ -16,7 +16,7 @@ namespace DwarfCorp.Dialogue
         public Gum.Widget SpeechBubble;
         public NewGui.TradePanel TradePanel;
         public Animation SpeakerAnimation;
-        private Timer SpeechTimer = new Timer();
+        private Timer SpeechTimer = new Timer(0.0f, true);
 
         public Faction.TradeEnvoy Envoy;
         public String EnvoyName = "TODO";
@@ -32,7 +32,7 @@ namespace DwarfCorp.Dialogue
             SpeechBubble.Invalidate();
 
             SpeakerAnimation.Loop();
-            SpeechTimer.Reset(100.0f);
+            SpeechTimer.Reset(Text.Length * 0.1f);
         }
 
         public void ClearOptions()
@@ -66,6 +66,8 @@ namespace DwarfCorp.Dialogue
             SpeechTimer.Update(Time);
             if (SpeechTimer.HasTriggered)
                 SpeakerAnimation.Stop();
+            else
+                SpeakerAnimation.Update(Time);
 
             var next = NextAction;
             NextAction = null;

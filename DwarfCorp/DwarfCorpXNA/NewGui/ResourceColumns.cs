@@ -103,7 +103,10 @@ namespace DwarfCorp.NewGui
                 {
                     if (lambdaResource.NumResources == 0) return;
 
-                    lambdaResource.NumResources -= 1;
+                    var toMove = 1;
+                    if (args.Control) toMove = lambdaResource.NumResources;
+                    if (args.Shift) toMove = Math.Min(5, lambdaResource.NumResources);
+                    lambdaResource.NumResources -= toMove;
 
                     var existingEntry = SelectedResources.FirstOrDefault(r => r.ResourceType == lambdaResource.ResourceType);
                     if (existingEntry == null)
@@ -116,7 +119,10 @@ namespace DwarfCorp.NewGui
                         rightLineItem.TriggerOnChildClick = true;
                         rightLineItem.OnClick = (_sender, _args) =>
                         {
-                            existingEntry.NumResources -= 1;
+                            var _toMove = 1;
+                            if (args.Control) _toMove = lambdaResource.NumResources;
+                            if (args.Shift) _toMove = Math.Min(5, lambdaResource.NumResources);
+                            existingEntry.NumResources -= _toMove;
 
                             if (existingEntry.NumResources == 0)
                             {
@@ -129,7 +135,7 @@ namespace DwarfCorp.NewGui
 
                             var sourceEntry = SourceResources.FirstOrDefault(
                                 r => r.ResourceType == existingEntry.ResourceType);
-                            sourceEntry.NumResources += 1;
+                            sourceEntry.NumResources += _toMove;
                             UpdateLineItemText(
                                 leftList.GetChild(SourceResources.IndexOf(sourceEntry) + 1), 
                                 sourceEntry);
@@ -137,7 +143,7 @@ namespace DwarfCorp.NewGui
                             Root.SafeCall(OnTotalSelectedChanged, this);
                         };
                     }
-                    existingEntry.NumResources += 1;
+                    existingEntry.NumResources += toMove;
 
                     UpdateRightColumn(rightList);
                     UpdateLineItemText(lineItem, lambdaResource);

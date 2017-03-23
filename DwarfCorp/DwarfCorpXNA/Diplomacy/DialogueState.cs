@@ -51,7 +51,7 @@ namespace DwarfCorp.Dialogue
 
             DialogueContext.ChoicePanel = GuiRoot.RootItem.AddChild(new Gum.Widget
             {
-                Rect = new Rectangle(200, 200, GuiRoot.VirtualScreen.Width - 400, 
+                Rect = new Rectangle(200, 200, GuiRoot.VirtualScreen.Width - 200, 
                 GuiRoot.VirtualScreen.Height - 200),
                 Border = "border-fancy",
             });
