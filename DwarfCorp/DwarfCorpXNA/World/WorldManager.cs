@@ -895,7 +895,7 @@ namespace DwarfCorp
                     bool isPosX = (dx == size && dz == 0);
                     bool isPosZ = (dz == size & dx == 0);
                     bool isNegX = (dx == -size && dz == 0);
-                    bool isNegZ = (dz == -size && dz == 0);
+                    bool isNegZ = (dz == -size && dx == 0);
                     bool isSide = (isPosX || isNegX || isPosZ || isNegZ);
 
                     Vector3 offset = Vector3.Zero;
@@ -914,7 +914,7 @@ namespace DwarfCorp
                         {
                             offset = -Vector3.UnitX;
                         }
-                        else if (isNegZ)
+                        else // At this point it can only be that isNegZ is true.
                         {
                             offset = -Vector3.UnitZ;
                         }
