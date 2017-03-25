@@ -189,7 +189,7 @@
          "AssetName" : "Entities\\Moleman\\moleman",
          "FrameHeight" : 40,
          "FrameWidth" : 40
-      },
+      }
    ],
    "Tints" : [ "255, 255, 255, 255"]
 }

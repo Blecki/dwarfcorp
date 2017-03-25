@@ -267,7 +267,7 @@
        "LikedResources" :  ["AnimalProduct", "Magical"],
        "HatedResources" :  ["AboveGroundPlant", "BelowGroundPlant"],
        "CommonResources" :  ["Bone", "Magical"],
-       "RareResources" :  ["RawFood", "AnimalProduct", "Metal", "Gem"],
+       "RareResources" :  ["RawFood", "AnimalProduct", "Metal", "Gem"]
     },
     "Herbivore": {
         "Name": "Herbivore",

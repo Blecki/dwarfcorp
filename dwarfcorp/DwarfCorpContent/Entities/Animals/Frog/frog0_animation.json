@@ -148,7 +148,7 @@
          "AssetName" : "Entities\\Animals\\Frog\\frog0",
          "FrameHeight" : 24,
          "FrameWidth" : 32
-      },
+      }
    ],
    "Tints" : [ "255, 255, 255, 255"]
 }

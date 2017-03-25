@@ -408,7 +408,7 @@
       {
         "Name": "Chicken",
         "SpawnProbability": 0.0001
-      },
+      }
     ],
     "GrassLayer": {
         "VoxelType" :  "JungleGrass",

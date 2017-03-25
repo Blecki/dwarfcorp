@@ -39,7 +39,7 @@
          "AssetName" : "Entities\\Mudman\\mudman",
          "FrameHeight" : 64,
          "FrameWidth" : 64
-      },
+      }
    ],
    "Tints" : [ "255, 255, 255, 255"]
 }

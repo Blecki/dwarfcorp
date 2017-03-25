@@ -160,7 +160,7 @@
          "AssetName" : "Entities\\Animals\\Spider\\spider",
          "FrameHeight" : 16,
          "FrameWidth" : 32
-      },
+      }
    ],
    "Tints" : [ "255, 255, 255, 255"]
 }

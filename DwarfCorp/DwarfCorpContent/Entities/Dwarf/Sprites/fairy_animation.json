@@ -91,7 +91,7 @@
          "AssetName" : "Entities\\Dwarf\\Sprites\\fairy",
          "FrameHeight" : 32,
          "FrameWidth" : 32
-      },
+      }
    ],
    "Tints" : [ "255, 255, 255, 255" ]
 }
