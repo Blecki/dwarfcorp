@@ -1,4 +1,4 @@
-﻿// StockResourceAct.cs
+// StockResourceAct.cs
 // 
 //  Modified MIT License (MIT)
 //  

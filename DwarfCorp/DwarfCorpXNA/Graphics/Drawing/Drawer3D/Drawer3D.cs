@@ -257,7 +257,7 @@ namespace DwarfCorp
                 Voxels.Add(new Voxel(voxel));
                 Valid = false;
             }
-
+             
             public void RemoveVoxel(Voxel voxel)
             {
                 int before = Voxels.Count;

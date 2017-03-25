@@ -1,4 +1,4 @@
-﻿// PutResourceInZoneAct.cs
+// PutResourceInZoneAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -125,7 +125,7 @@ namespace DwarfCorp
             {
                 if (Zone.AddItem(b))
                 {
-                    Creature.NoiseMaker.MakeNoise("Hurt", Creature.AI.Position);
+                    Creature.NoiseMaker.MakeNoise("Stockpile", Creature.AI.Position);
                     Creature.Stats.NumItemsGathered++;
                     Creature.AI.AddXP(1);
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;

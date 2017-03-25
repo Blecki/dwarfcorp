@@ -127,9 +127,9 @@ namespace DwarfCorp
 
             NoiseMaker.Noises["Ok"] = new List<string>()
             {
-                ContentPaths.Audio.ok0,
-                ContentPaths.Audio.ok1,
-                ContentPaths.Audio.ok2
+                ContentPaths.Audio.Oscar.dwarf_ok_1,
+                ContentPaths.Audio.Oscar.dwarf_ok_2,
+                ContentPaths.Audio.Oscar.dwarf_ok_3
             };
 
 
@@ -141,6 +141,21 @@ namespace DwarfCorp
             NoiseMaker.Noises["Jump"] = new List<string>
             {
                 ContentPaths.Audio.jump
+            };
+
+            NoiseMaker.Noises["Stash"] = new List<string>()
+            {
+                ContentPaths.Audio.Oscar.dwarf_stash_item
+            };
+
+            NoiseMaker.Noises["StashMoney"] = new List<string>()
+            {
+                ContentPaths.Audio.Oscar.dwarf_stash_money
+            };
+
+            NoiseMaker.Noises["Stockpile"] = new List<string>()
+            {
+                ContentPaths.Audio.Oscar.dwarf_stockpile
             };
 
             MinimapIcon minimapIcon = new MinimapIcon(Physics, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 0));
