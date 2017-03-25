@@ -75,6 +75,8 @@ namespace DwarfCorp.NewGui
                     Valid = false;
 
                     int newValue;
+                    if (args.NewText.Length == 0) args.NewText = "0";
+
                     if (Int32.TryParse(args.NewText, out newValue))
                     {
                         if (newValue < 0) newValue = 0;

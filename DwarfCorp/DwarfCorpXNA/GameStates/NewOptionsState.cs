@@ -271,31 +271,11 @@ namespace DwarfCorp.GameStates
                 Padding = new Margin(4, 4, 0, 0)
             });
 
-            panel.AddChild(new Widget
-                {
-                    Text = "NON-FUNCTIONAL UNTIL INPUT SYSTEM REDONE",
-                    AutoLayout = AutoLayout.DockTop
-                });
-
-            foreach (var binding in DwarfGame.GumInput.EnumerateBindableActions())
+            panel.AddChild(new NewGui.KeyEditor
             {
-                // Todo: Columns?
-
-                var entryPanel = panel.AddChild(new Widget
-                    {
-                        MinimumSize = new Point(0, 20),
-                        AutoLayout = AutoLayout.DockTop
-                    });
-
-                entryPanel.AddChild(new Widget
-                    {
-                        Text = binding.Key,
-                        AutoLayout = AutoLayout.DockLeft
-                    });
-
-                // Todo: Editable key field.
-
-            }
+                KeyManager = new KeyManager(),
+                AutoLayout = AutoLayout.DockFill
+            });
         }
 
         private void CreateGraphicsTab()

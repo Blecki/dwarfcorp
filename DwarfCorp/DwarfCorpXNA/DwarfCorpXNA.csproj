@@ -366,6 +366,7 @@
     <Compile Include="Gum\Widgets\Button.cs" />
     <Compile Include="Gum\Widgets\CheckBox.cs" />
     <Compile Include="Gum\Widgets\ComboBox.cs" />
+    <Compile Include="Gum\Widgets\KeyField.cs" />
     <Compile Include="Gum\Widgets\EditableTextField.cs" />
     <Compile Include="Gum\Widgets\HorizontalFloatSlider.cs" />
     <Compile Include="Gum\Widgets\HorizontalSlider.cs" />
@@ -389,6 +390,7 @@
     <Compile Include="NewGui\SpellInfo.cs" />
     <Compile Include="NewGui\ToggleTray.cs" />
     <Compile Include="NewGui\MoneyEditor.cs" />
+    <Compile Include="NewGui\KeyEditor.cs" />
     <Compile Include="NewGui\TwoColumns.cs" />
     <Compile Include="NewGui\TradePanel.cs" />
     <Compile Include="NewGui\ResourceColumns.cs" />

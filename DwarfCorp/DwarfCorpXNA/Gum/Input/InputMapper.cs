@@ -72,7 +72,7 @@ namespace Gum.Input
                                 KeyValue = args.KeyChar,
                                 Alt = false,
                                 Control = false,
-                                Shift = false
+                                Shift = false,
                             }
                         });
                         handled = true;
@@ -81,13 +81,18 @@ namespace Gum.Input
                 case WindowMessage.WM_KEYDOWN:
                     {
                         var args = new System.Windows.Forms.KeyEventArgs((System.Windows.Forms.Keys)Msg.WParam);
-
+                        
                         if (args.KeyData == System.Windows.Forms.Keys.Alt)
                             AltDown = true;
                         if (args.KeyData == System.Windows.Forms.Keys.ControlKey)
                             CtrlDown = true;
                         if (args.KeyData == System.Windows.Forms.Keys.ShiftKey)
                             ShiftDown = true;
+
+                        var extended = ((int)Msg.LParam & 0x01000000) != 0;
+                        var realCode = args.KeyCode;
+                        if (realCode == System.Windows.Forms.Keys.ControlKey)
+                            realCode = extended ? System.Windows.Forms.Keys.RControlKey : System.Windows.Forms.Keys.LControlKey;
 
                         Queued.Add(new QueuedInput
                         {
@@ -97,7 +102,7 @@ namespace Gum.Input
                                 Alt = args.Alt,
                                 Control = args.Control,
                                 Shift = args.Shift,
-                                KeyValue = (int)args.KeyCode
+                                KeyValue = (int)realCode,
                             }
                         });
                         handled = true;
