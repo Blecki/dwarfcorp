@@ -27,13 +27,13 @@ namespace DwarfCorp
         /// One copy per thread.  Lets us tell when we haven't set up that thread yet.
         /// </summary>
         [ThreadStatic]
-        public static bool threadInitialized = false;
+        public static bool threadInitialized;
 
         /// <summary>
         /// A thread ID number.  Set when we call a class function from that new thread.
         /// </summary>
         [ThreadStatic]
-        public static int threadIdentifier = 0;
+        public static int threadIdentifier;
 
         /// <summary>
         /// Keeps track of the current zone we are in for the thread.
@@ -50,7 +50,7 @@ namespace DwarfCorp
         /// <summary>
         /// A value incremented as we call functions from new threads.
         /// </summary>
-        public static int threadCount = 0;
+        public static int threadCount;
 
         public enum ThreadIdentifier
         {
@@ -90,17 +90,12 @@ namespace DwarfCorp
         /// <summary>
         /// Object used to synchronize threadLoopTrackers access.
         /// </summary>
-        private Object threadLoopLockObject;
+        private object threadLoopLockObject;
 
         /// <summary>
         /// Object used to synchronize internalTrackers access.
         /// </summary>
-        private Object internalTrackerLockObject;
-
-        /// <summary>
-        /// Object used to synchronize zoneList access.  Not needed right now as we are using a ConcurrentDictionary.
-        /// </summary>
-        private Object zoneListLockObject;
+        private object internalTrackerLockObject;
 
         /// <summary>
         /// Dictionary used to store information about the zones.
@@ -158,9 +153,6 @@ namespace DwarfCorp
         /// </summary>
         private Vector2 guiPosition;
 
-        private float LastRenderTime { get; set; }
-        private float LastUpdateTime { get; set; }
-
         /// <summary>
         /// Singleton object.  Not a lazy instantiated one.  Call GamePerformance.Initialize first.
         /// </summary>
@@ -182,9 +174,8 @@ namespace DwarfCorp
             threadLoopTrackers = new Dictionary<ThreadIdentifier, ThreadLoopTracker>();
             zoneList = new ConcurrentDictionary<string, TrackerZone>();
 
-            threadLoopLockObject = new Object();
-            internalTrackerLockObject = new Object();
-            zoneListLockObject = new Object();
+            threadLoopLockObject = new object();
+            internalTrackerLockObject = new object();
 
             internalWatch = Stopwatch.StartNew();
 
@@ -236,10 +227,6 @@ namespace DwarfCorp
             public int HistorySize;
             public bool RenderAsPercentofZone;
             public bool vanishWhenUnused;
-            public TrackerOptions()
-            {
-
-            }
         }
 
         public enum CollectionZone
@@ -255,17 +242,17 @@ namespace DwarfCorp
         {
             private string name;
             private int id;
-            private Object lockObject;
+            private object lockObject;
             private int entranceCount;
             private long time;
             private long lastZoneTime;
-            private static int nextID = 0;
+            private static int nextID;
 
             public TrackerZone()
             {
                 id = nextID;
                 nextID++;
-                lockObject = new Object();
+                lockObject = new object();
             }
 
             public TrackerZone(string zoneName)
@@ -338,8 +325,7 @@ namespace DwarfCorp
             private string _name;
 
             private Dictionary<int, ZoneData> zoneData;
-            private Object zoneDataLockObject;
-            private int zonesUsed;
+            private object zoneDataLockObject;
 
             public class ZoneData
             {
@@ -414,15 +400,12 @@ namespace DwarfCorp
                 }
             }
 
-            private string[] percentLegend = new string[] { "100%", "0%" };
-
             public PerformanceTracker(GamePerformance parent, string name)
                 : base(parent)
             {
                 _name = name;
-                zonesUsed = 0;
                 zoneData = new Dictionary<int, ZoneData>();
-                zoneDataLockObject = new Object();
+                zoneDataLockObject = new object();
             }
 
             public void StartTracking()
@@ -450,7 +433,6 @@ namespace DwarfCorp
                     {
                         zoneData.Add(z.ID, data);
                     }
-                    zonesUsed++;
                 }
                 return data;
             }
@@ -486,7 +468,7 @@ namespace DwarfCorp
 
                         float average = data.GetAverageResult();
                         average *= microsecondMultiplier;
-                        _parent.DrawString(String.Format("{{{0}}}[{1}] {2}: {3}us {4}", data.ThreadName, data.ZoneName, _name, average, data.CallCount), Color.White);
+                        _parent.DrawString(string.Format("{{{0}}}[{1}] {2}: {3}us {4}", data.ThreadName, data.ZoneName, _name, average, data.CallCount), Color.White);
                     }
                 }
             }
@@ -588,7 +570,6 @@ namespace DwarfCorp
                 history.Enqueue(time);
                 if (history.Count > maxHistory)
                     total -= history.Dequeue();
-                _parent.LastUpdateTime = time;
                 base.PostUpdate();
             }
 
@@ -597,7 +578,7 @@ namespace DwarfCorp
                 float average = 0;
                 if (history.Count > 0) average = (float)total / history.Count;
                 average = average * microsecondMultiplier;
-                _parent.DrawString("Update time: " + average.ToString() + "us", Color.White);
+                _parent.DrawString("Update time: " + average + "us", Color.White);
                 base.Render();
             }
         }
@@ -632,7 +613,6 @@ namespace DwarfCorp
                 history.Enqueue(time);
                 if (history.Count > maxHistory)
                     total -= history.Dequeue();
-                _parent.LastRenderTime = time;
                 base.PostRender();
             }
 
@@ -641,7 +621,7 @@ namespace DwarfCorp
                 float average = 0;
                 if (history.Count > 0) average = (float)total / history.Count;
                 average = average * microsecondMultiplier;
-                _parent.DrawString("Render time: " + average.ToString() + "us", Color.White);
+                _parent.DrawString("Render time: " + average + "us", Color.White);
                 base.Render();
             }
         }
@@ -730,10 +710,10 @@ namespace DwarfCorp
             }
         }
 
-        public class ThreadLoopTracker : Tracker
+        private class ThreadLoopTracker : Tracker
         {
-            private object lockObject;
-            private string name;
+            private readonly object lockObject;
+            private readonly string name;
             private int id;
             private long time;
             private long finalTime;
@@ -742,7 +722,7 @@ namespace DwarfCorp
             {
                 id = threadID;
                 this.name = name;
-                lockObject = new Object();
+                lockObject = new object();
             }
 
             public override void PreThreadLoop()
@@ -769,7 +749,7 @@ namespace DwarfCorp
                 {
                     average = finalTime * microsecondMultiplier;
                 }
-                _parent.DrawString(String.Format("[{0}] {1}us", name, average), Color.White);
+                _parent.DrawString(string.Format("[{0}] {1}us", name, average), Color.White);
                 base.Render();
             }
         }
@@ -824,21 +804,9 @@ namespace DwarfCorp
             return t;
         } */
 
-        public void RegisterThreadLoopTracker(String name, ThreadIdentifier identifier)
+        public void RegisterThreadLoopTracker(string name, ThreadIdentifier identifier)
         {
             int threadID = ThreadID;
-
-            switch (identifier)
-            {
-                case ThreadIdentifier.RebuildVoxels:
-                    //rebuildThreadIdentifier = threadID;
-                    break;
-                case ThreadIdentifier.RebuildWater:
-                    //waterThreadIdentifier = threadID;
-                    break;
-                default:
-                    break;
-            }
 
             ThreadLoopTracker loopTracker = new ThreadLoopTracker(this, name, threadID);
 
@@ -848,12 +816,12 @@ namespace DwarfCorp
             }
         }
 
-        public void RegisterZone(String zoneName)
+        public void RegisterZone(string zoneName)
         {
 
         }
 
-        public void EnterZone(String zoneName)
+        public void EnterZone(string zoneName)
         {
             int id = ThreadID;
             TrackerZone z;
@@ -872,7 +840,7 @@ namespace DwarfCorp
             }
         }
 
-        public void ExitZone(String zoneName)
+        public void ExitZone(string zoneName)
         {
             TrackerZone z;
             if (!zoneList.TryGetValue(zoneName, out z))
@@ -894,7 +862,7 @@ namespace DwarfCorp
         /// Call this at the start of the location you want to track performance of.
         /// </summary>
         /// <param name="name">The display name for the tracker.</param>
-        public void StartTrackPerformance(String name)
+        public void StartTrackPerformance(string name)
         {
             Tracker t;
             if (internalTrackers.TryGetValue(name, out t))
@@ -921,7 +889,7 @@ namespace DwarfCorp
         /// Call this at the end of the location you want to track performance of.
         /// </summary>
         /// <param name="name">The display name of the tracker you used to start tracking.</param>
-        public void StopTrackPerformance(String name)
+        public void StopTrackPerformance(string name)
         {
             long endTime = Stopwatch.GetTimestamp();
             Tracker t;
@@ -948,7 +916,7 @@ namespace DwarfCorp
         /// <typeparam name="T"></typeparam>
         /// <param name="name">The display name of the tracker.</param>
         /// <param name="variable">The ValueType based variable you wish to track.</param>
-        public void TrackValueType<T>(String name, T variable) where T : struct
+        public void TrackValueType<T>(string name, T variable) where T : struct
         {
             Tracker t;
             if (internalTrackers.TryGetValue(name, out t))
@@ -977,7 +945,7 @@ namespace DwarfCorp
         /// <typeparam name="T"></typeparam>
         /// <param name="name">The display name of the tracker.</param>
         /// <param name="variable">The Object based variable you wish to track.</param>
-        public void TrackReferenceType<T>(String name, T variable) where T : class
+        public void TrackReferenceType<T>(string name, T variable) where T : class
         {
             Tracker t;
             if (internalTrackers.TryGetValue(name, out t))
@@ -1023,6 +991,12 @@ namespace DwarfCorp
         public void Update()
         {
             KeyboardState keyboard = Keyboard.GetState();
+
+            if (keyboard.IsKeyDown(Keys.F12))
+            {
+                SoundManager.PlaySound(ContentPaths.Audio.pick, .25f);
+                internalTrackers.Clear();
+            }
 
             if (keyboard.IsKeyDown(ControlSettings.Mappings.TogglePerformanceOverlay))
             {
@@ -1162,13 +1136,14 @@ namespace DwarfCorp
 
             lock (internalTrackerLockObject)
             {
+                //foreach (KeyValuePair<string, Tracker> kvp in internalTrackers)
                 foreach (KeyValuePair<string, Tracker> kvp in internalTrackers.OrderByDescending(p =>
                 {
-                    if (p.Value is GamePerformance.PerformanceTracker)
+                    if (p.Value is PerformanceTracker)
                     {
-                        return (p.Value as PerformanceTracker).GetTimeForSort();
+                        return ((PerformanceTracker) p.Value).GetTimeForSort();
                     }
-                    else return float.PositiveInfinity;
+                    return float.PositiveInfinity;
                 }))
                 {
                     if (kvp.Value != null) kvp.Value.Render();
