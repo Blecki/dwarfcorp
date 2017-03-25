@@ -154,12 +154,12 @@ namespace DwarfCorp.GameStates
             public List<ResourceAmount> Resources { get; set; }
             public int AvailableSpace { get; set; }
 
-            public float ComputeValue(List<ResourceAmount> Resources)
+            public DwarfBux ComputeValue(List<ResourceAmount> Resources)
             {
-                return Resources.Sum(r => r.NumResources * ComputeValue(r.ResourceType));
+                return Resources.Sum(r => (decimal)r.NumResources * ComputeValue(r.ResourceType));
             }
 
-            public float ComputeValue(ResourceLibrary.ResourceType ResourceType)
+            public DwarfBux ComputeValue(ResourceLibrary.ResourceType ResourceType)
             {
                 return ResourceLibrary.GetResourceByName(ResourceType).MoneyValue;
             }
@@ -208,6 +208,10 @@ namespace DwarfCorp.GameStates
                 envoyFaction.Resources.Add(new ResourceAmount(ResourceLibrary.ResourceType.Berry, 10));
                 envoyFaction.Resources.Add(new ResourceAmount(ResourceLibrary.ResourceType.Bones, 10));
                 envoyFaction.Resources.Add(new ResourceAmount("Ruby", 10));
+                for (int i = 0; i < 20; i++)
+                {
+                    envoyFaction.Resources.Add(new ResourceAmount(ResourceLibrary.GenerateTrinket(ResourceLibrary.ResourceType.Bones, 1.0f)));
+                }
                 envoyFaction.Money = 1000m;
 
                 var pane = GuiRoot.ConstructWidget(new NewGui.TradePanel

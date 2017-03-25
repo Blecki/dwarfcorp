@@ -1,4 +1,4 @@
-﻿// GItem.cs
+// GItem.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -53,9 +53,9 @@ namespace DwarfCorp
         public int MaxAmount { get; set; }
         public int MinAmount { get; set; }
         public int CurrentAmount { get; set; }
-        public float Price { get; set; }
+        public DwarfBux Price { get; set; }
 
-        public GItem(Resource resource, ImageFrame imag, Color tint, int min, int max, int currentAmount, float price)
+        public GItem(Resource resource, ImageFrame imag, Color tint, int min, int max, int currentAmount, DwarfBux price)
         {
             Tint = tint;
             Name = resource.ShortName;

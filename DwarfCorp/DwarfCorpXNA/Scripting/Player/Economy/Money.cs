@@ -65,6 +65,22 @@ namespace DwarfCorp
             return new DwarfBux() {Value = a.Value*b.Value};
         }
 
+        public static DwarfBux operator *(DwarfBux a, int value)
+        {
+            return new DwarfBux()
+            {
+                Value = a.Value*(decimal) value
+            };
+        }
+
+        public static DwarfBux operator *(int value, DwarfBux a)
+        {
+            return new DwarfBux()
+            {
+                Value = a.Value * (decimal)value
+            };
+        }
+
         public static DwarfBux operator *(DwarfBux a, float value)
         {
             return new DwarfBux()

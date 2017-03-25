@@ -17,6 +17,7 @@ namespace DwarfCorp.NewGui
         public String LeftHeader;
         public String RightHeader;
         private MoneyEditor MoneyField;
+        public String MoneyLabel;
 
         public DwarfBux TradeMoney { get { return (decimal)MoneyField.CurrentValue; } }
         public bool Valid { get { return MoneyField.Valid; } }
@@ -47,8 +48,8 @@ namespace DwarfCorp.NewGui
             leftPanel.AddChild(new Gum.Widget
             {
                 Text = LeftHeader,
-                Font = "outline-font",
-                TextColor = new Vector4(1, 1, 1, 1),
+                Font = "font-hires",
+                TextColor = new Vector4(0,  0, 0, 1),
                 AutoLayout = AutoLayout.DockTop
             });
 
@@ -56,9 +57,9 @@ namespace DwarfCorp.NewGui
             {
                 MinimumSize = new Point(0, 32),
                 AutoLayout = AutoLayout.DockBottom,
-                Font = "outline-font",
-                TextColor = new Vector4(1, 1, 1, 1),
-                Text = String.Format("${0}", TradeEntity.Money.ToString()),
+                Font = "font",
+                TextColor = new Vector4(0, 0, 0, 1),
+                Text = String.Format(MoneyLabel + ": {0}", TradeEntity.Money.ToString()),
                 TextHorizontalAlign = ReverseColumnOrder ? HorizontalAlign.Left : HorizontalAlign.Right,
                 TextVerticalAlign = VerticalAlign.Center
             });
@@ -74,8 +75,8 @@ namespace DwarfCorp.NewGui
             rightPanel.AddChild(new Gum.Widget
             {
                 Text = RightHeader,
-                Font = "outline-font",
-                TextColor = new Vector4(1,1,1,1),
+                Font = "font-hires",
+                TextColor = new Vector4(0,0,0,1),
                 AutoLayout = AutoLayout.DockTop
             });
 
@@ -178,7 +179,7 @@ namespace DwarfCorp.NewGui
                 MaximumSize = new Point(32, 32),
                 Background = new TileReference("resources", resourceInfo.NewGuiSprite),
                 AutoLayout = AutoLayout.DockLeft,
-                BackgroundColor = resourceInfo.Tint.ToVector4()
+                BackgroundColor = resourceInfo.Tint.ToVector4(),
             });
 
             r.AddChild(new Gum.Widget
@@ -187,7 +188,9 @@ namespace DwarfCorp.NewGui
                 //Text = String.Format("{0} at ${1}e", Resource.NumResources, resourceInfo.MoneyValue),
                 //Font = "outline-font",
                 //TextColor = new Vector4(1,1,1,1),
-                TextVerticalAlign = VerticalAlign.Center
+                TextVerticalAlign = VerticalAlign.Center,
+                HoverTextColor = Color.DarkRed.ToVector4(),
+                ChangeColorOnHover = true
             });
 
             UpdateLineItemText(r, Resource);
@@ -199,7 +202,7 @@ namespace DwarfCorp.NewGui
         {
             var resourceInfo = ResourceLibrary.GetResourceByName(Resource.ResourceType);
 
-            LineItem.GetChild(1).Text = String.Format("{0} at ${1}e",
+            LineItem.GetChild(1).Text = String.Format("{0} at {1}",
                 Resource.NumResources,
                 ValueSourceEntity.ComputeValue(Resource.ResourceType));
             LineItem.Tooltip = resourceInfo.ResourceName + "\n" + resourceInfo.Description;

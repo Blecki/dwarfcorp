@@ -61,7 +61,7 @@ namespace DwarfCorp
             World = world;
         }
 
-        public List<GItem> GetResources(float priceMultiplier)
+        public List<GItem> GetResources(decimal priceMultiplier)
         {
             return (from r in ResourceLibrary.Resources.Values
                     select new GItem(r, r.Image, r.Tint, 0, 1000, 1000, r.MoneyValue * priceMultiplier)).ToList();
@@ -101,7 +101,7 @@ namespace DwarfCorp
 
             buyBoxLayout.SetComponentPosition(BuySelector, 0, 0, 2, 10);
 
-            BuySelector.Items.AddRange(GetResources(1.0f));
+            BuySelector.Items.AddRange(GetResources(1.0m));
             BuySelector.ReCreateItems();
 
 
@@ -375,8 +375,8 @@ namespace DwarfCorp
     {
        public List<ResourceAmount> GoodsReceived { get; set; } 
        public List<ResourceAmount> GoodsSent { get; set; }
-       public float MoneyReceived { get; set; }
-       public float MoneySent { get; set; }
+       public DwarfBux MoneyReceived { get; set; }
+       public DwarfBux MoneySent { get; set; }
        public List<Resource.ResourceTags> LikedThings { get; set; }
        public List<Resource.ResourceTags> HatedThings { get; set; }
        public List<Resource.ResourceTags> RareThings { get; set; }
@@ -386,25 +386,25 @@ namespace DwarfCorp
         {
             LikedThings = new List<Resource.ResourceTags>();
             HatedThings = new List<Resource.ResourceTags>();
-            MoneyReceived = 0.0f;
-            MoneySent = 0.0f;
+            MoneyReceived = 0.0m;
+            MoneySent = 0.0m;
         }
 
         public struct Profit
         {
-            public float TotalProfit 
+            public DwarfBux TotalProfit 
             {
                 get { return TheirValue - OurValue; }
             }
             
-            public float OurValue { get; set; }
-            public float TheirValue { get; set; }
+            public DwarfBux OurValue { get; set; }
+            public DwarfBux TheirValue { get; set; }
             
             public float PercentProfit
             {
                 get
                 {
-                    if (TheirValue > 0) return TotalProfit/(TheirValue);
+                    if (TheirValue > 0) return (float)TotalProfit.Value/((float)TheirValue.Value);
                     else return 0.0f;
                 }
             }
@@ -430,17 +430,17 @@ namespace DwarfCorp
             return HatedThings.Any(tags => ResourceLibrary.GetResourceByName(resource).Tags.Contains(tags));
         }
 
-        public float GetPrice(ResourceLibrary.ResourceType type)
+        public DwarfBux GetPrice(ResourceLibrary.ResourceType type)
         {
             Resource item = ResourceLibrary.GetResourceByName(type);
-            float price = item.MoneyValue;
+            DwarfBux price = item.MoneyValue;
             if (IsRare(type))
             {
-                price *= 2;
+                price *= 2m;
             }
             else if (IsCommon(type))
             {
-                price *= 0.5f;
+                price *= 0.5m;
             }
 
             return price;
@@ -458,8 +458,8 @@ namespace DwarfCorp
 
         public Profit GetProfit()
         {
-            float ourAmount = GoodsReceived.Sum(amount => amount.NumResources*GetPrice(amount.ResourceType)) + MoneyReceived;
-            float theirAmount = GoodsSent.Sum(amount => amount.NumResources * GetPrice(amount.ResourceType)) + MoneySent;
+            DwarfBux ourAmount = GoodsReceived.Sum(amount => amount.NumResources*GetPrice(amount.ResourceType)) + MoneyReceived;
+            DwarfBux theirAmount = GoodsSent.Sum(amount => amount.NumResources * GetPrice(amount.ResourceType)) + MoneySent;
 
             return new Profit() { OurValue = ourAmount, TheirValue = theirAmount };
         }
@@ -609,15 +609,15 @@ namespace DwarfCorp
                     HatedThings = TheirGoods.HatedThings,
                     RareThings = TheirGoods.RareThings,
                     CommonThings = TheirGoods.CommonThings,
-                    MoneyReceived = TheirTrades.MoneyEdit.CurrentMoney,
-                    MoneySent = MyTrades.MoneyEdit.CurrentMoney
+                    MoneyReceived = (decimal)TheirTrades.MoneyEdit.CurrentMoney,
+                    MoneySent = (decimal)MyTrades.MoneyEdit.CurrentMoney
                 });
 
-            float total = trade.GetProfit().TotalProfit;
+            DwarfBux total = trade.GetProfit().TotalProfit;
 
             if (total >= 0)
             {
-                BuyTotal.Text = "Their Profit: " + (total).ToString("C");
+                BuyTotal.Text = "Their Profit: " + (total);
 
                 if (trade.GetProfit().PercentProfit > 0.25f)
                 {
@@ -631,7 +631,7 @@ namespace DwarfCorp
             }
             else
             {
-                BuyTotal.Text = "Their Loss: " + (total).ToString("C");
+                BuyTotal.Text = "Their Loss: " + (total);
                 BuyTotal.TextColor = total < 0 ? Color.DarkRed : Color.Black;
             }
 
@@ -651,8 +651,8 @@ namespace DwarfCorp
                 HatedThings = TheirGoods.HatedThings,
                 RareThings = TheirGoods.RareThings,
                 CommonThings = TheirGoods.CommonThings,
-                MoneyReceived = TheirTrades.MoneyEdit.CurrentMoney,
-                MoneySent = MyTrades.MoneyEdit.CurrentMoney
+                MoneyReceived = (decimal)TheirTrades.MoneyEdit.CurrentMoney,
+                MoneySent = (decimal)MyTrades.MoneyEdit.CurrentMoney
             });
             OnTraded.Invoke(trade);
         }

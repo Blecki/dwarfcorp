@@ -132,7 +132,8 @@ namespace DwarfCorp
             }
         }
 
-        public FactionLibrary Factions { get; set; }
+        [JsonIgnore]
+        public FactionLibrary Factions { get { return World.ComponentManager.Factions; }}
 
 
         [JsonArrayAttribute]
@@ -151,10 +152,14 @@ namespace DwarfCorp
             World = ((WorldManager)ctx.Context);
         }
 
-        public Diplomacy(FactionLibrary factions, WorldManager world)
+        public Diplomacy()
+        {
+            
+        }
+
+        public Diplomacy(WorldManager world)
         {
             World = world;
-            Factions = factions;
             FactionPolitics = new PoliticsDictionary();
         }
 
@@ -338,6 +343,7 @@ namespace DwarfCorp
 
         public void Update(DwarfTime time, DateTime currentDate, WorldManager world)
         {
+            World = world;
             foreach (var mypolitics in FactionPolitics)
             {
                 Pair<string> pair = mypolitics.Key;
@@ -444,6 +450,13 @@ namespace DwarfCorp
                        
                         Room tradePort = envoy.OtherFaction.GetNearestRoomOfType(BalloonPort.BalloonPortName,
                             creature.Position);
+
+                        if (tradePort == null)
+                        {
+                            World.MakeAnnouncement("No trade port!", "We need a balloon trade port to trade.");
+                            RecallEnvoy(envoy);
+                            break;
+                        }
 
                         if (creature.Tasks.Count == 0)
                         {

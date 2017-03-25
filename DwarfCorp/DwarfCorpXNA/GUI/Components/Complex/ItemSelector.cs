@@ -150,7 +150,7 @@ namespace DwarfCorp
 
             foreach(GItem item in Items)
             {
-                total += item.CurrentAmount * item.Price;
+                total += (decimal)item.CurrentAmount * item.Price;
                 total += PerItemCost * item.CurrentAmount;
             }
 
@@ -298,16 +298,16 @@ namespace DwarfCorp
             }
         }
 
-        public float GetPrice(GItem item)
+        public DwarfBux GetPrice(GItem item)
         {
-            float price = item.Price;
+            DwarfBux price = item.Price;
             if (IsRare(item.ResourceType))
             {
                 price *= 2;
             }
             else if (IsCommon(item.ResourceType))
             {
-                price *= 0.5f;
+                price *= 0.5m;
             }
 
             return price;
@@ -364,8 +364,8 @@ namespace DwarfCorp
                     Label priceLabel = component as Label;
 
                     if (priceLabel == null) break;
-                    float price = GetPrice(item);
-                    priceLabel.Text = price.ToString("C");
+                    DwarfBux price = GetPrice(item);
+                    priceLabel.Text = price.ToString();
 
                     break;
 
@@ -375,7 +375,7 @@ namespace DwarfCorp
 
                     if (totalpriceLabel == null) break;
 
-                    totalpriceLabel.Text = (item.CurrentAmount * GetPrice(item)).ToString("C");
+                    totalpriceLabel.Text = (item.CurrentAmount * GetPrice(item)).ToString();
 
                     break;
 
@@ -428,7 +428,7 @@ namespace DwarfCorp
                     return label;
                 
                 case Column.PricePerItem:
-                    Label priceLabel = new Label(GUI, Layout, GetPrice(item).ToString("C"), GUI.SmallFont)
+                    Label priceLabel = new Label(GUI, Layout, GetPrice(item).ToString(), GUI.SmallFont)
                     {
                         ToolTip = "Price per item",
                     };
@@ -438,7 +438,7 @@ namespace DwarfCorp
 
 
                 case Column.TotalPrice:
-                    Label totalLabel = new Label(GUI, Layout, (GetPrice(item) * item.CurrentAmount).ToString("C"), GUI.SmallFont)
+                    Label totalLabel = new Label(GUI, Layout, (GetPrice(item) * item.CurrentAmount).ToString(), GUI.SmallFont)
                     {
                         ToolTip = "Total price"
                     };

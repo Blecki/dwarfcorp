@@ -1,4 +1,4 @@
-﻿// DraggableItem.cs
+// DraggableItem.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -172,11 +172,11 @@ namespace DwarfCorp
                 if(Item.CurrentAmount < 256)
                 {
                     Drawer2D.DrawStrokedText(batch, "" + Item.CurrentAmount, GUI.SmallFont, new Vector2(GetImageBounds().X, GetImageBounds().Y), Color.White, Color.Black);
-                    Drawer2D.DrawStrokedText(batch, "" + (Item.CurrentAmount * Item.Price).ToString("C"), GUI.SmallFont, new Vector2(GetImageBounds().X + GetImageBounds().Width / 2, GetImageBounds().Y + GetImageBounds().Height - 20), Color.White, Color.Black);
+                    Drawer2D.DrawStrokedText(batch, "" + new DwarfBux((decimal)Item.CurrentAmount * Item.Price), GUI.SmallFont, new Vector2(GetImageBounds().X + GetImageBounds().Width / 2, GetImageBounds().Y + GetImageBounds().Height - 20), Color.White, Color.Black);
                 }
                 else
                 {
-                    Drawer2D.DrawStrokedText(batch, "" + Item.Price.ToString("C"), GUI.SmallFont, new Vector2(GetImageBounds().X + GetImageBounds().Width / 2, GetImageBounds().Y + GetImageBounds().Height - 20), Color.White, Color.Black);
+                    Drawer2D.DrawStrokedText(batch, "" + Item.Price.ToString(), GUI.SmallFont, new Vector2(GetImageBounds().X + GetImageBounds().Width / 2, GetImageBounds().Y + GetImageBounds().Height - 20), Color.White, Color.Black);
                 }
                 //batch.DrawString(GUI.SmallFont, "" + Item.CurrentAmount, new Vector2(GetImageBounds().X, GetImageBounds().Y), Color.Black);
             }

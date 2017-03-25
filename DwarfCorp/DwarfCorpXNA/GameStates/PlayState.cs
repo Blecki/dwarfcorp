@@ -147,7 +147,7 @@ namespace DwarfCorp.GameStates
                 World.ShowToolPopup += text => GuiRoot.ShowPopup(new NewGui.ToolPopup
                 {
                     Text = text,
-                    Rect = new Rectangle(GuiRoot.MousePosition.X, GuiRoot.MousePosition.Y, 1, 1)
+                    Rect = new Rectangle(GuiRoot.MousePosition.X + 32, GuiRoot.MousePosition.Y + 32, 1, 1)
                 }, Gum.Root.PopupExclusivity.DestroyExistingPopups);
 
                 World.gameState = this;

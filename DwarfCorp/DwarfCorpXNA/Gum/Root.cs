@@ -220,7 +220,7 @@ namespace Gum
             var bestSize = item.GetBestSize();
             Rectangle rect = new Rectangle(
                 Where.X + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2,
-                Where.Y, bestSize.X, bestSize.Y);
+                Where.Y + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2, bestSize.X, bestSize.Y);
 
             rect = MathFunctions.SnapRect(rect, RealScreen);
             item.Rect = rect;

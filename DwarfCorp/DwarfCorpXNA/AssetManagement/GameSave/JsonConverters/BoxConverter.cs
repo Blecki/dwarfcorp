@@ -87,8 +87,15 @@ namespace DwarfCorp
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            JValue jObject = serializer.Deserialize<JValue>(reader);
-            return new DwarfBux(decimal.Parse(jObject.Value.ToString()));
+            try
+            {
+                JValue jObject = serializer.Deserialize<JValue>(reader);
+                return new DwarfBux(decimal.Parse(jObject.Value.ToString()));
+            }
+            catch (InvalidCastException exception)
+            {
+                return new DwarfBux(0);
+            }
         }
 
         public override bool CanWrite

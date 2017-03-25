@@ -1,4 +1,4 @@
-﻿// Resource.cs
+// Resource.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -44,7 +44,7 @@ namespace DwarfCorp
     {
         public ResourceLibrary.ResourceType Type { get; set; }
         public string ResourceName { get { return Type; }}
-        public float MoneyValue { get; set; }
+        public DwarfBux MoneyValue { get; set; }
         public string Description { get; set; }
         public NamedImageFrame Image { get; set; }
         public int NewGuiSprite = 0;
@@ -114,7 +114,7 @@ namespace DwarfCorp
             PlantToGenerate = other.PlantToGenerate;
         }
 
-        public Resource(ResourceLibrary.ResourceType type,  float money, string description, NamedImageFrame image, int NewGuiSprite, Color tint, params ResourceTags[] tags)
+        public Resource(ResourceLibrary.ResourceType type,  DwarfBux money, string description, NamedImageFrame image, int NewGuiSprite, Color tint, params ResourceTags[] tags)
         {
             Type = type;
             MoneyValue = money;

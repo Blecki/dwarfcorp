@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -44,8 +44,8 @@ namespace DwarfCorp.NewGui
             {
                 MinimumSize = new Point(128, 0),
                 AutoLayout = AutoLayout.DockLeft,
-                Font = "outline-font",
-                TextColor = new Vector4(1, 1, 1, 1),
+                Font = "font",
+                TextColor = new Vector4(0, 0, 0, 1),
                 TextVerticalAlign = VerticalAlign.Center
             });
 
@@ -53,16 +53,16 @@ namespace DwarfCorp.NewGui
             {
                 MinimumSize = new Point(128, 0),
                 AutoLayout = AutoLayout.DockLeft,
-                Font = "outline-font",
-                TextColor = new Vector4(1, 1, 1, 1),
+                Font = "font",
+                TextColor = new Vector4(0, 0, 0, 1),
                 TextVerticalAlign = VerticalAlign.Center
             });
 
-            bottomRow.AddChild(new Widget
+            bottomRow.AddChild(new Gum.Widgets.Button
             {
-                Font = "outline-font",
+                Font = "font",
                 Border = "border-button",
-                TextColor = new Vector4(1, 1, 1, 1),
+                TextColor = new Vector4(0, 0, 0, 1),
                 Text = "Propose Trade",
                 AutoLayout = AutoLayout.DockRight,
                 OnClick = (sender, args) =>
@@ -103,11 +103,11 @@ namespace DwarfCorp.NewGui
                 }
             });
 
-            bottomRow.AddChild(new Widget
+            bottomRow.AddChild(new Gum.Widgets.Button
             {
-                Font = "outline-font",
+                Font = "font",
                 Border = "border-button",
-                TextColor = new Vector4(1, 1, 1, 1),
+                TextColor = new Vector4(0, 0, 0, 1),
                 Text = "Cancel",
                 AutoLayout = AutoLayout.DockRight,
                 Padding = new Margin(0,0,0,16),
@@ -130,6 +130,7 @@ namespace DwarfCorp.NewGui
                 AutoLayout = AutoLayout.DockFill,
                 LeftHeader = "Their Items",
                 RightHeader = "They Offer",
+                MoneyLabel = "Their money",
                 OnTotalSelectedChanged = (s) => UpdateBottomDisplays()
             }) as ResourceColumns;
 
@@ -141,6 +142,7 @@ namespace DwarfCorp.NewGui
                 ReverseColumnOrder = true,
                 LeftHeader = "Our Items",
                 RightHeader = "We Offer",
+                MoneyLabel = "Our money",
                 OnTotalSelectedChanged = (s) => UpdateBottomDisplays()
             }) as ResourceColumns;
 
@@ -154,16 +156,16 @@ namespace DwarfCorp.NewGui
             var player = Envoy.ComputeValue(PlayerColumns.SelectedResources) + PlayerColumns.TradeMoney;
             var tradeTarget = player * 0.25;
             TotalDisplay.Text = String.Format("{0} [{1}]", net, tradeTarget);
-            TotalDisplay.Text = String.Format("Their Profit ${0} [{1}]", net, tradeTarget);
+            TotalDisplay.Text = String.Format("Their Profit {0} [{1}]", net, tradeTarget);
 
             if (net > tradeTarget)
-                TotalDisplay.TextColor = new Vector4(1, 1, 1, 1);
+                TotalDisplay.TextColor = new Vector4(0, 0, 0, 1);
             else
                 TotalDisplay.TextColor = new Vector4(1, 0, 0, 1);
 
             TotalDisplay.Invalidate();
 
-            SpaceDisplay.Text = String.Format("{0}/{1}",
+            SpaceDisplay.Text = String.Format("Stockpile space: {0}/{1}",
                 EnvoyColumns.TotalSelectedItems - PlayerColumns.TotalSelectedItems,
                 Player.AvailableSpace);
             SpaceDisplay.Invalidate();

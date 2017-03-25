@@ -1,4 +1,4 @@
-﻿// FollowPathAct.cs
+// FollowPathAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -106,8 +106,11 @@ namespace DwarfCorp
             {
                 hasNextAction = true;
                 nextAction = Path[nextID];
-                diff = (nextAction.Voxel.Position + half - (action.Voxel.Position + half));
-                diffNorm = diff.Length();
+                if (nextAction.Voxel != null)
+                {
+                    diff = (nextAction.Voxel.Position + half - (action.Voxel.Position + half));
+                    diffNorm = diff.Length();
+                }
             }
             float unitTime = (1.25f / (Agent.Stats.Dexterity + 0.001f) + RandomTimeOffset) /
                              Agent.Movement.Speed(action.MoveType);

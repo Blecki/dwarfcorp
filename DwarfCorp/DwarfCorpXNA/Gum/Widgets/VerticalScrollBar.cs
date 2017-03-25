@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -90,8 +90,8 @@ namespace Gum.Widgets
 
             var bar = Mesh.CreateScale9Background(
                 new Rectangle(Rect.X, Rect.Y + tiles.TileHeight + (int)barTop, Rect.Width, Math.Max(16, (int)(barBottom - barTop))),
-                Root.GetTileSheet("border-thin"),
-                Scale9Corners.Top | Scale9Corners.Bottom);
+                Root.GetTileSheet("brown-frame"),
+                Scale9Corners.Top | Scale9Corners.Bottom | Scale9Corners.Left | Scale9Corners.Right);
 
             return Mesh.Merge(topButton, bottomButton, background, bar);
         }

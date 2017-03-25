@@ -11,8 +11,8 @@ namespace DwarfCorp.Trade
         List<ResourceAmount> Resources { get; }
         DwarfBux Money { get; }
         int AvailableSpace { get; }
-        float ComputeValue(List<ResourceAmount> Resources);
-        float ComputeValue(ResourceLibrary.ResourceType Resource);
+        DwarfBux ComputeValue(List<ResourceAmount> Resources);
+        DwarfBux ComputeValue(ResourceLibrary.ResourceType Resource);
 
         void RemoveResources(List<ResourceAmount> Resources);
         void AddResources(List<ResourceAmount> Resources);
@@ -34,19 +34,19 @@ namespace DwarfCorp.Trade
         public void AddMoney(DwarfBux Money) { }
         public void AddResources(List<ResourceAmount> Resources) { }
 
-        public float ComputeValue(ResourceLibrary.ResourceType Resource)
+        public DwarfBux ComputeValue(ResourceLibrary.ResourceType Resource)
         {
             var resource = ResourceLibrary.GetResourceByName(Resource);
             if (SourceEnvoy.OwnerFaction.Race.CommonResources.Any(r => resource.Tags.Contains(r)))
-                return resource.MoneyValue * 0.5f;
+                return resource.MoneyValue * 0.5m;
             if (SourceEnvoy.OwnerFaction.Race.RareResources.Any(r => resource.Tags.Contains(r)))
-                return resource.MoneyValue * 2.0f;
+                return resource.MoneyValue * 2.0m;
             return resource.MoneyValue;
         }
 
-        public float ComputeValue(List<ResourceAmount> Resources)
+        public DwarfBux ComputeValue(List<ResourceAmount> Resources)
         {
-            return Resources.Sum(r => ComputeValue(r.ResourceType) * r.NumResources);
+            return Resources.Sum(r => ComputeValue(r.ResourceType) * (decimal)r.NumResources);
         }
 
         public void RemoveResources(List<ResourceAmount> Resources) { }
@@ -72,14 +72,14 @@ namespace DwarfCorp.Trade
                 Faction.AddResources(resource);
         }
 
-        public float ComputeValue(ResourceLibrary.ResourceType Resource)
+        public DwarfBux ComputeValue(ResourceLibrary.ResourceType Resource)
         {
             return ResourceLibrary.GetResourceByName(Resource).MoneyValue;
         }
 
-        public float ComputeValue(List<ResourceAmount> Resources)
+        public DwarfBux ComputeValue(List<ResourceAmount> Resources)
         {
-            return Resources.Sum(r => ComputeValue(r.ResourceType) * r.NumResources);
+            return Resources.Sum(r => ComputeValue(r.ResourceType) * (decimal)r.NumResources);
         }
 
         public void RemoveResources(List<ResourceAmount> Resources)
