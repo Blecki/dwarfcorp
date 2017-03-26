@@ -331,9 +331,9 @@ namespace DwarfCorp.GameStates
         /// <param name="gameTime">The current time</param>
         public override void Render(DwarfTime gameTime)
         {
+            Game.Graphics.GraphicsDevice.SetRenderTarget(null);
+            Game.Graphics.GraphicsDevice.Clear(Color.Black);
             EnableScreensaver = !World.ShowingWorld;
-
-            MinimapRenderer.PreRender(gameTime, DwarfGame.SpriteBatch);
 
             if (World.ShowingWorld)
             {
@@ -342,7 +342,7 @@ namespace DwarfCorp.GameStates
                 //Game.GraphicsDevice.SetRenderTarget(null);
                 //tex.SaveAsPng(new FileStream("voxels.png", FileMode.Create),  256, 256);
                 //Game.Exit();
-
+                MinimapRenderer.PreRender(gameTime, DwarfGame.SpriteBatch);
                 GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
                 World.Render(gameTime);
 
