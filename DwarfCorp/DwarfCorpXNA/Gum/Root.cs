@@ -214,7 +214,8 @@ namespace Gum
                 Border = "border-dark",
                 Font = TooltipFont,
                 TextSize = TooltipTextSize,
-                TextColor = new Vector4(1, 1, 1, 1)
+                TextColor = new Vector4(1, 1, 1, 1),
+                IsFloater = true,
             });
 
             var bestSize = item.GetBestSize();

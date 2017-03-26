@@ -295,6 +295,7 @@ namespace DwarfCorp
             {
                 return GUI.IsMouseOver() ||
                     NewGui.HoverItem != null;
+                // Don't detect tooltips and tool popups.
             }
         }
 
