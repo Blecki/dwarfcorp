@@ -54,6 +54,17 @@ namespace Gum.Input
             MessageFilter.AddMessageFilter((c) => HandleEvent(c));
         }
 
+        private System.Windows.Forms.Keys TranslateKey(IntPtr LParam, System.Windows.Forms.Keys Key)
+        {
+            var extended = ((int)LParam & 0x01000000) != 0;
+            var realCode = Key;
+            if (realCode == System.Windows.Forms.Keys.ControlKey)
+                realCode = extended ? System.Windows.Forms.Keys.RControlKey : System.Windows.Forms.Keys.LControlKey;
+            if (realCode == System.Windows.Forms.Keys.ShiftKey)
+                realCode = extended ? System.Windows.Forms.Keys.RShiftKey : System.Windows.Forms.Keys.LShiftKey;
+            return realCode;
+        }
+
         private bool HandleEvent(System.Windows.Forms.Message Msg)
         {
             QueueLock.WaitOne();
@@ -89,10 +100,7 @@ namespace Gum.Input
                         if (args.KeyData == System.Windows.Forms.Keys.ShiftKey)
                             ShiftDown = true;
 
-                        var extended = ((int)Msg.LParam & 0x01000000) != 0;
-                        var realCode = args.KeyCode;
-                        if (realCode == System.Windows.Forms.Keys.ControlKey)
-                            realCode = extended ? System.Windows.Forms.Keys.RControlKey : System.Windows.Forms.Keys.LControlKey;
+                        var realCode = TranslateKey(Msg.LParam, args.KeyCode);
 
                         Queued.Add(new QueuedInput
                         {
@@ -118,6 +126,8 @@ namespace Gum.Input
                             CtrlDown = false;
                         if (args.KeyData == System.Windows.Forms.Keys.ShiftKey)
                             ShiftDown = false;
+                        
+                        var realCode = TranslateKey(Msg.LParam, args.KeyCode);
 
                         Queued.Add(new QueuedInput
                         {
