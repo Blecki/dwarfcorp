@@ -149,6 +149,8 @@ namespace Gum
         public Widget Parent { get; private set; }
         public Root Root { get; internal set; }
 
+        public bool IsFloater = false;
+
         internal bool Constructed = false;
 
         public Widget()
@@ -191,7 +193,7 @@ namespace Gum
 
         public Widget FindWidgetAt(int x, int y)
         {
-            foreach (var child in Children.Reverse<Widget>().Where(c => !c.Hidden))
+            foreach (var child in Children.Reverse<Widget>().Where(c => !c.Hidden && !c.IsFloater))
             {
                 var item = child.FindWidgetAt(x, y);
                 if (item != null) return item;
