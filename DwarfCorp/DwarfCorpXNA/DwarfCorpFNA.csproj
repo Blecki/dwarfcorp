@@ -294,6 +294,7 @@
     <Compile Include="Gum\Widgets\EditableTextField.cs" />
     <Compile Include="Gum\Widgets\HorizontalFloatSlider.cs" />
     <Compile Include="Gum\Widgets\HorizontalSlider.cs" />
+    <Compile Include="Gum\Widgets\KeyField.cs" />
     <Compile Include="Gum\Widgets\ListView.cs" />
     <Compile Include="Gum\Widgets\TabPanel.cs" />
     <Compile Include="Gum\Widgets\TextGrid.cs" />
@@ -316,6 +317,7 @@
     <Compile Include="NewGui\IconTray.cs" />
     <Compile Include="NewGui\InfoTicker.cs" />
     <Compile Include="NewGui\InfoTray.cs" />
+    <Compile Include="NewGui\KeyEditor.cs" />
     <Compile Include="NewGui\Minimap.cs" />
     <Compile Include="NewGui\MoneyEditor.cs" />
     <Compile Include="NewGui\PlantInfo.cs" />
