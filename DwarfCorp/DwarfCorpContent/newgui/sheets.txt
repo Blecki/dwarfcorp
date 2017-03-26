@@ -190,6 +190,12 @@
 			"TileHeight": 32
 		},
 		{
+			"Name": "coins",
+			"Texture": "Entities/DwarfObjects/coinpiles",
+			"TileWidth": 32,
+			"TileHeight": 32
+		},
+		{
 			"Name": "voxels",
 			"Texture": "newgui/voxels",
 			"TileWidth": 32,

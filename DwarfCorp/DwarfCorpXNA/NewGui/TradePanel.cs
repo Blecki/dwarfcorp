@@ -156,18 +156,30 @@ namespace DwarfCorp.NewGui
             var player = Envoy.ComputeValue(PlayerColumns.SelectedResources) + PlayerColumns.TradeMoney;
             var tradeTarget = player * 0.25;
             TotalDisplay.Text = String.Format("{0} [{1}]", net, tradeTarget);
-            TotalDisplay.Text = String.Format("Their Profit {0} [{1}]", net, tradeTarget);
-
+            TotalDisplay.Text = String.Format("Their {2} {0}\n[need {1}]", net, tradeTarget, net >= 0 ? "Profit" : "Loss");
+            TotalDisplay.Tooltip = String.Format("They are {1} with this trade.\nTheir {0} is " + net + ".\nThey need at least " + tradeTarget + " to be happy.", net >= 0 ? "profit" : "loss",
+                net >= 0 ? "happy" : "unhappy");
             if (net > tradeTarget)
                 TotalDisplay.TextColor = new Vector4(0, 0, 0, 1);
             else
-                TotalDisplay.TextColor = new Vector4(1, 0, 0, 1);
+                TotalDisplay.TextColor = Color.DarkRed.ToVector4();
 
             TotalDisplay.Invalidate();
 
-            SpaceDisplay.Text = String.Format("Stockpile space: {0}/{1}",
-                EnvoyColumns.TotalSelectedItems - PlayerColumns.TotalSelectedItems,
+            SpaceDisplay.Text = String.Format("Stockpile space used: {0}/{1}",
+                Math.Max(EnvoyColumns.TotalSelectedItems - PlayerColumns.TotalSelectedItems, 0),
                 Player.AvailableSpace);
+
+            if (EnvoyColumns.TotalSelectedItems - PlayerColumns.TotalSelectedItems > Player.AvailableSpace)
+            {
+                SpaceDisplay.TextColor = Color.DarkRed.ToVector4();
+            }
+            else
+            {
+                SpaceDisplay.TextColor = Color.Black.ToVector4();
+            }
+
+            SpaceDisplay.Tooltip = "We need this much space to make this trade.";
             SpaceDisplay.Invalidate();
         }
     }

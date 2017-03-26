@@ -60,7 +60,7 @@ namespace DwarfCorp.NewGui
                 Font = "font",
                 TextColor = new Vector4(0, 0, 0, 1),
                 Text = String.Format(MoneyLabel + ": {0}", TradeEntity.Money.ToString()),
-                TextHorizontalAlign = ReverseColumnOrder ? HorizontalAlign.Left : HorizontalAlign.Right,
+                TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center
             });
 
@@ -83,9 +83,10 @@ namespace DwarfCorp.NewGui
             MoneyField = rightPanel.AddChild(new MoneyEditor
             {
                 MaximumValue = (int)TradeEntity.Money,
-                MinimumSize = new Point(0, 32),
+                MinimumSize = new Point(0, 33),
                 AutoLayout = AutoLayout.DockBottom,
-                OnValueChanged = (sender) => Root.SafeCall(OnTotalSelectedChanged, this)
+                OnValueChanged = (sender) => Root.SafeCall(OnTotalSelectedChanged, this),
+                Tooltip = "Money to trade."
             }) as MoneyEditor;
 
             var rightList = rightPanel.AddChild(new Gum.Widgets.WidgetListView

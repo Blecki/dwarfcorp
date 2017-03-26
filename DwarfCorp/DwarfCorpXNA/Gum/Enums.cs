@@ -35,7 +35,7 @@ namespace Gum
         FloatTopRight,
         FloatTopLeft,
         FloatBottomRight,
-        FloatBottomLeft,
+        FloatBottomLeft
     }
 
     public enum PopupDestructionType

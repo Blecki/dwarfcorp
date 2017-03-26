@@ -56,7 +56,7 @@ namespace DwarfCorp
         {
             return new DwarfBux()
             {
-                Value = a._value + b._value
+                Value = a._value - b._value
             };
         }
 
