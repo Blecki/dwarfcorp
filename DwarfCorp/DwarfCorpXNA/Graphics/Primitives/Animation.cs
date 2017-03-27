@@ -40,7 +40,7 @@ namespace DwarfCorp
 
         public SpriteSheet SpriteSheet { get; set; }
 
-
+        /*
         public delegate void NextFrameEvent(int frame);
         public event NextFrameEvent OnNextFrame;
 
@@ -70,6 +70,7 @@ namespace DwarfCorp
                 handler.Invoke(frame);
             }
         }
+        */
 
         public struct SimpleDescriptor
         {
@@ -225,6 +226,13 @@ namespace DwarfCorp
             CreatePrimitives(GameState.Game.GraphicsDevice);
         }
 
+        public void Sychronize(Animation Other)
+        {
+            this.LastFrame = Other.LastFrame;
+            this.CurrentFrame = Other.CurrentFrame;
+            this.FrameTimer = Other.FrameTimer;
+        }
+
         public virtual void Update(DwarfTime gameTime, Timer.TimerMode mode = Timer.TimerMode.Game)
         {
             if(IsPlaying)
@@ -250,18 +258,18 @@ namespace DwarfCorp
         public virtual void NextFrame()
         {
             CurrentFrame++;
-            InvokeNextFrame(CurrentFrame);
+            //InvokeNextFrame(CurrentFrame);
 
             if(CurrentFrame >= Frames.Count)
             {
                 if(Loops)
                 {
-                    InvokeAnimationLooped();
+                    //InvokeAnimationLooped();
                     CurrentFrame = 0;
                 }
                 else
                 {
-                    InvokeAnimationCompleted();
+                    //InvokeAnimationCompleted();
                     CurrentFrame = Frames.Count - 1;
                 }
             }

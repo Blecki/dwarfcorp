@@ -1,4 +1,4 @@
-﻿// SpellLibrary.cs
+// SpellLibrary.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -44,7 +44,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class SpellLibrary
     {
-        public static SpellTree CreateSpellTree()
+        public static SpellTree CreateSpellTree(WorldManager world)
         {
             Texture2D icons = TextureManager.GetTexture(ContentPaths.GUI.icons);
 
@@ -55,14 +55,14 @@ namespace DwarfCorp
                 {
                     new SpellTree.Node()
                     {
-                        Spell = new InspectSpell(InspectSpell.InspectType.InspectEntity),
+                        Spell = new InspectSpell(world,InspectSpell.InspectType.InspectEntity),
                         ResearchProgress = 10.0f,
                         ResearchTime = 10.0f,
                         Children = new List<SpellTree.Node>()
                         {
                             new SpellTree.Node()
                             {
-                                Spell = new BuffSpell(
+                                Spell = new BuffSpell(world,
                                     new Creature.StatBuff(30.0f, new CreatureStats.StatNums()
                                     {
                                         Dexterity = 2.0f,
@@ -86,7 +86,7 @@ namespace DwarfCorp
                                 {
                                       new SpellTree.Node()
                                       {
-                                            Spell = new BuffSpell(
+                                            Spell = new BuffSpell(world,
                                                 new Creature.StatBuff(60.0f, new CreatureStats.StatNums()
                                                 {
                                                     Dexterity = 5.0f,
@@ -107,7 +107,7 @@ namespace DwarfCorp
                                             {
                                                 new SpellTree.Node()
                                                 {
-                                                    Spell = new CreateEntitySpell("Fairy", false)
+                                                    Spell = new CreateEntitySpell(world, "Fairy", false)
                                                     {
                                                         Name = "Magic Helper",
                                                         Description = "Creates a magical helper employee who persists for 30 seconds",
@@ -122,12 +122,14 @@ namespace DwarfCorp
                                         },
                                         new SpellTree.Node()
                                         {
-                                            Spell = new BuffSpell(new Creature.ThoughtBuff(30.0f, Thought.ThoughtType.Magic) {SoundOnStart = ContentPaths.Audio.powerup})
+                                            Spell = new BuffSpell(world,
+                                                new Creature.ThoughtBuff(30.0f, Thought.ThoughtType.Magic) {SoundOnStart = ContentPaths.Audio.powerup})
                                             {
                                                 Name = "Minor Happiness",
                                                 Description = "Makes the selected creatures happy for 30 seconds.",
                                                 Hint = "Click and drag to select creatures",
-                                                Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 5, 2)
+                                                Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 5, 2),
+                                                TileRef =  21
                                             },
                                             ResearchTime = 60.0f,
                                             ResearchProgress = 0.0f,
@@ -135,12 +137,14 @@ namespace DwarfCorp
                                             {
                                                 new SpellTree.Node()
                                                 {
-                                                    Spell = new BuffSpell(new Creature.ThoughtBuff(60.0f, Thought.ThoughtType.Magic) {SoundOnStart = ContentPaths.Audio.powerup})
+                                                    Spell = new BuffSpell(world,
+                                                        new Creature.ThoughtBuff(60.0f, Thought.ThoughtType.Magic) {SoundOnStart = ContentPaths.Audio.powerup})
                                                     {
                                                         Name = "Major Happiness",
                                                         Description = "Makes the selected creatures happy for 60 seconds.",
                                                         Hint = "Click and drag to select creatures",
-                                                        Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 5, 2)
+                                                        Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 5, 2),
+                                                        TileRef = 21
                                                     },
                                                     ResearchTime = 120.0f,
                                                     ResearchProgress = 0.0f
@@ -153,14 +157,14 @@ namespace DwarfCorp
                     },
                     new SpellTree.Node()
                     {
-                        Spell = new InspectSpell(InspectSpell.InspectType.InspectBlock),
+                        Spell = new InspectSpell(world, InspectSpell.InspectType.InspectBlock),
                         ResearchProgress = 25.0f,
                         ResearchTime = 25.0f,
                         Children = new List<SpellTree.Node>()
                         {
                             new SpellTree.Node()
                             {
-                                Spell = new PlaceBlockSpell("Dirt", false),
+                                Spell = new PlaceBlockSpell(world, "Dirt", false),
                                 ResearchProgress = 0.0f,
                                 ResearchTime = 50.0f,
                                 
@@ -170,7 +174,7 @@ namespace DwarfCorp
                                     {
                                         ResearchProgress = 0.0f,
                                         ResearchTime = 100.0f,
-                                        Spell = new PlaceBlockSpell("Stone", false),
+                                        Spell = new PlaceBlockSpell(world, "Stone", false),
 
                                         Children = new List<SpellTree.Node>()
                                         {
@@ -178,7 +182,7 @@ namespace DwarfCorp
                                             {
                                                 ResearchProgress = 0.0f,
                                                 ResearchTime = 150.0f,
-                                                Spell = new DestroyBlockSpell()
+                                                Spell = new DestroyBlockSpell(world)
                                             }
                                         }
                                     }
@@ -186,10 +190,11 @@ namespace DwarfCorp
                             },
                             new SpellTree.Node()
                             {
-                                Spell = new PlaceBlockSpell("Magic", false)
+                                Spell = new PlaceBlockSpell(world, "Magic", false)
                                 {
                                      Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 2, 3),
-                                     Description = "Creates a temporary magic wall."
+                                     Description = "Creates a temporary magic wall.",
+                                     TileRef = 26
                                 },
                                 ResearchProgress = 0.0f,
                                 ResearchTime = 50.0f,
@@ -200,14 +205,14 @@ namespace DwarfCorp
                                     {
                                         ResearchProgress = 0.0f,
                                         ResearchTime = 100.0f,
-                                        Spell = new PlaceBlockSpell("Iron", true),
+                                        Spell = new PlaceBlockSpell(world, "Iron", true),
                                         Children = new List<SpellTree.Node>()
                                         {
                                             new SpellTree.Node()
                                             {
                                                 ResearchProgress = 0.0f,
                                                 ResearchTime = 150.0f,
-                                                Spell = new PlaceBlockSpell("Gold", true)
+                                                Spell = new PlaceBlockSpell(world, "Gold", true)
                                             }
                                         }
                                     }
@@ -218,12 +223,13 @@ namespace DwarfCorp
                     },
                     new SpellTree.Node()
                     {
-                        Spell = new BuffSpell(new Creature.OngoingHealBuff(2, 10) { Particles = "heart", SoundOnStart = ContentPaths.Audio.powerup, SoundOnEnd = ContentPaths.Audio.wurp}) 
+                        Spell = new BuffSpell(world, new Creature.OngoingHealBuff(2, 10) { Particles = "heart", SoundOnStart = ContentPaths.Audio.powerup, SoundOnEnd = ContentPaths.Audio.wurp}) 
                         {
                             Name = "Minor Heal",
                             Description = "Heals 2 damage per second for 10 seconds",
                             Hint = "Click and drag to select creatures",
-                            Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 3, 2)
+                            Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 3, 2),
+                            TileRef = 19
                         },
                         ResearchProgress = 0.0f,
                         ResearchTime = 30.0f,
@@ -231,12 +237,13 @@ namespace DwarfCorp
                         {
                             new SpellTree.Node()
                             {
-                                Spell = new BuffSpell(new Creature.OngoingHealBuff(5, 10){Particles = "heart", SoundOnStart = ContentPaths.Audio.powerup, SoundOnEnd = ContentPaths.Audio.wurp})
+                                Spell = new BuffSpell(world, new Creature.OngoingHealBuff(5, 10){Particles = "heart", SoundOnStart = ContentPaths.Audio.powerup, SoundOnEnd = ContentPaths.Audio.wurp})
                                 {
                                     Name = "Major Heal",
                                     Description = "Heals 5 damage per second for 10 seconds",
                                     Hint = "Click and drag to select creatures",
-                                    Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 3, 2)
+                                    Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 3, 2),
+                                    TileRef = 19
                                 },
                                 ResearchProgress = 0.0f,
                                 ResearchTime = 150.0f
@@ -258,7 +265,7 @@ namespace DwarfCorp
 
         
 
-        public static SpellTree MakeFakeTree()
+        public static SpellTree MakeFakeTree(WorldManager world)
         {
             SpellTree toReturn = new SpellTree();
 
@@ -271,16 +278,16 @@ namespace DwarfCorp
                 {
                     ResearchProgress = MathFunctions.Rand(0, 101.0f),
                     ResearchTime = 100.0f,
-                    Spell = new InspectSpell(val > 0.5f ?  InspectSpell.InspectType.InspectBlock : InspectSpell.InspectType.InspectEntity)
+                    Spell = new InspectSpell(world, val > 0.5f ?  InspectSpell.InspectType.InspectBlock : InspectSpell.InspectType.InspectEntity)
                 };
                 toReturn.RootSpells.Add(root);
-                MakeFakeSubtree(root);
+                MakeFakeSubtree(world, root);
             }
 
             return toReturn;
         }
 
-        public static void MakeFakeSubtree(SpellTree.Node node)
+        public static void MakeFakeSubtree(WorldManager world, SpellTree.Node node)
         {
             int numChildren = (int)MathFunctions.Rand(-2, 4);
             for (int j = 0; j < numChildren; j++)
@@ -289,10 +296,10 @@ namespace DwarfCorp
                 {
                     ResearchProgress = MathFunctions.Rand(0, 101.0f),
                     ResearchTime = 100.0f,
-                    Spell = new DestroyBlockSpell()
+                    Spell = new DestroyBlockSpell(world)
                 };
                 node.Children.Add(newNode);
-                MakeFakeSubtree(newNode);
+                MakeFakeSubtree(world, newNode);
             }
         }
     }

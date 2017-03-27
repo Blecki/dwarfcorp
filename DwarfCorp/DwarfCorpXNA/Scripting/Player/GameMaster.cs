@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -37,9 +37,6 @@ namespace DwarfCorp
 
         public Camera CameraController { get; set; }
 
-        public ToolMode CurrentToolMode { get; set; }
-
-
         [JsonIgnore]
         public DwarfGUI GUI { get; set; }
 
@@ -54,22 +51,41 @@ namespace DwarfCorp
 
         public Faction Faction { get; set; }
 
+        #region  Player tool management
+
         [JsonIgnore]
         public Dictionary<ToolMode, PlayerTool> Tools { get; set; }
 
         [JsonIgnore]
         public PlayerTool CurrentTool { get { return Tools[CurrentToolMode]; } }
-            
+
+        public ToolMode CurrentToolMode { get; set; }
+
+        public void ChangeTool(ToolMode NewTool)
+        {
+            Tools[NewTool].OnBegin();
+            if (CurrentToolMode != NewTool)
+                CurrentTool.OnEnd();
+            CurrentToolMode = NewTool;
+        }
+
+        #endregion
+
+
         [JsonIgnore]
         public List<CreatureAI> SelectedMinions { get { return Faction.SelectedMinions; }set { Faction.SelectedMinions = value; } }
 
         [JsonIgnore]
         public SpellTree Spells { get; set; }
 
+        [JsonIgnore]
+        public WorldManager World { get; set; }
+
         protected void OnDeserialized(StreamingContext context)
         {
-            Initialize(GameState.Game, DwarfGame.World.ComponentManager, DwarfGame.World.ChunkManager, DwarfGame.World.Camera, DwarfGame.World.ChunkManager.Graphics,  DwarfGame.World.GUI);
-            DwarfGame.World.Master = this;
+            World = (WorldManager) (context.Context);
+            Initialize(GameState.Game, World.ComponentManager, World.ChunkManager, World.Camera, World.ChunkManager.Graphics, World.GUI);
+            World.Master = this;
         }
 
         public GameMaster()
@@ -78,12 +94,14 @@ namespace DwarfCorp
 
         public GameMaster(Faction faction, DwarfGame game, ComponentManager components, ChunkManager chunks, Camera camera, GraphicsDevice graphics, DwarfGUI gui)
         {
+            World = components.World;
             Faction = faction;
             Initialize(game, components, chunks, camera, graphics, gui);
             VoxSelector.Selected += OnSelected;
             VoxSelector.Dragged += OnDrag;
             BodySelector.Selected += OnBodiesSelected;
-            DwarfGame.World.Time.NewDay += Time_NewDay;
+            World.Master = this;
+            World.Time.NewDay += Time_NewDay;
         }
 
         public void Initialize(DwarfGame game, ComponentManager components, ChunkManager chunks, Camera camera, GraphicsDevice graphics, DwarfGUI gui)
@@ -91,11 +109,11 @@ namespace DwarfCorp
             RoomLibrary.InitializeStatics();
 
             CameraController = camera;
-            VoxSelector = new VoxelSelector(CameraController, chunks.Graphics, chunks);
+            VoxSelector = new VoxelSelector(World, CameraController, chunks.Graphics, chunks);
             BodySelector = new BodySelector(CameraController, chunks.Graphics, components);
             GUI = gui;
             SelectedMinions = new List<CreatureAI>();
-            Spells = SpellLibrary.CreateSpellTree();
+            Spells = SpellLibrary.CreateSpellTree(components.World);
             CreateTools();
 
             InputManager.KeyReleasedCallback += OnKeyReleased;
@@ -109,7 +127,7 @@ namespace DwarfCorp
             VoxSelector.Selected -= OnSelected;
             VoxSelector.Dragged -= OnDrag;
             BodySelector.Selected -= OnBodiesSelected;
-            DwarfGame.World.Time.NewDay -= Time_NewDay;
+            World.Time.NewDay -= Time_NewDay;
             InputManager.KeyReleasedCallback -= OnKeyReleased;
             Tools[ToolMode.God].Destroy();
             Tools[ToolMode.SelectUnits].Destroy();
@@ -239,7 +257,7 @@ namespace DwarfCorp
                 {
                     if (!noMoney)
                     {
-                        DwarfGame.World.MakeAnnouncement("We're bankrupt!",
+                        World.MakeAnnouncement("We're bankrupt!",
                             "If we don't make a profit by tomorrow, our stock will crash!");
                     }
                     noMoney = true;
@@ -250,9 +268,8 @@ namespace DwarfCorp
                 }
             }
 
-            SoundManager.PlaySound(ContentPaths.Audio.change);
-            DwarfGame.World.MakeAnnouncement("Pay day!", String.Format("We paid our employees {0} today.",
-                total.ToString("C")));
+            World.MakeAnnouncement("Pay day!", String.Format("We paid our employees {0} today.",
+                total.ToString("C")), null, ContentPaths.Audio.change);
         }
 
 
@@ -265,6 +282,7 @@ namespace DwarfCorp
             {
                 //Drawer2D.DrawZAlignedRect(creature.Position + Vector3.Down * 0.5f, 0.25f, 0.25f, 2, new Color(255, 255, 255, 50));
                 creature.Creature.SelectionCircle.IsVisible = true;
+                creature.Creature.Sprite.DrawSilhouette = true;
                 foreach(Task task in creature.Tasks)
                 {
                     if (task.IsFeasible(creature.Creature))
@@ -326,7 +344,7 @@ namespace DwarfCorp
                 }
             }
 
-            if (!DwarfGame.World.Paused)
+            if (!World.Paused)
             {
 
             }
@@ -351,7 +369,7 @@ namespace DwarfCorp
 
                 if (deadMinion != null)
                 {
-                    DwarfGame.World.MakeAnnouncement(
+                    World.MakeAnnouncement(
                         String.Format("{0} ({1}) died!", deadMinion.Stats.FullName, deadMinion.Stats.CurrentLevel.Name),
                         "One of our employees has died!");
                     Faction.Economy.Company.StockPrice -= MathFunctions.Rand(0, 0.5f);
@@ -381,7 +399,7 @@ namespace DwarfCorp
         {
             if(KeyManager.RotationEnabled())
             {
-                DwarfGame.World.SetMouse(null);
+                World.SetMouse(null);
             }
           
         }
@@ -409,12 +427,12 @@ namespace DwarfCorp
         {
             if(key == ControlSettings.Mappings.SliceUp)
             {
-                DwarfGame.World.ChunkManager.ChunkData.SetMaxViewingLevel(DwarfGame.World.ChunkManager.ChunkData.MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
+                World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
             }
 
             if(key == ControlSettings.Mappings.SliceDown)
             {
-                DwarfGame.World.ChunkManager.ChunkData.SetMaxViewingLevel(DwarfGame.World.ChunkManager.ChunkData.MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
+                World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
             }
 
 
@@ -422,7 +440,7 @@ namespace DwarfCorp
             {
                 if(CurrentToolMode == ToolMode.God)
                 {
-                    
+                    CurrentToolMode = ToolMode.SelectUnits;
                     GodModeTool godMode = (GodModeTool) Tools[ToolMode.God];
                     godMode.IsActive = false;
                 }
@@ -438,7 +456,7 @@ namespace DwarfCorp
         // Todo: Delete this.
         public bool IsMouseOverGui()
         {
-            return DwarfGame.World.IsMouseOverGui;
+            return World.IsMouseOverGui;
             //return GUI.IsMouseOver() || (GUI.FocusComponent != null);
         }
 

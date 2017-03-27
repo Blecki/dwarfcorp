@@ -1,4 +1,4 @@
-﻿// Stockpile.cs
+// Stockpile.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -68,11 +68,12 @@ namespace DwarfCorp
         {
             Boxes = new List<Body>();
             ReplacementType = VoxelLibrary.GetVoxelType("Stockpile");
+            Faction = null;
         }
 
 
-        public Stockpile(Faction faction) :
-            base(false, new List<Voxel>(), RoomLibrary.GetData(StockpileName), DwarfGame.World.ChunkManager)
+        public Stockpile(Faction faction, WorldManager world) :
+            base(false, new List<Voxel>(), RoomLibrary.GetData(StockpileName), world)
         {
             Boxes = new List<Body>();
             ReplacementType = VoxelLibrary.GetVoxelType("Stockpile");
@@ -80,16 +81,16 @@ namespace DwarfCorp
             Faction = faction;
         }
 
-        public Stockpile(Faction faction, IEnumerable<Voxel> voxels, RoomData data, ChunkManager chunks) :
-            base(voxels, data, chunks)
+        public Stockpile(Faction faction, IEnumerable<Voxel> voxels, RoomData data, WorldManager world) :
+            base(voxels, data, world)
         {
             Boxes = new List<Body>();
             faction.Stockpiles.Add(this);
             Faction = faction;
         }
 
-        public Stockpile(Faction faction, bool designation, IEnumerable<Voxel> designations, RoomData data, ChunkManager chunks) :
-            base(designation, designations, data, chunks)
+        public Stockpile(Faction faction, bool designation, IEnumerable<Voxel> designations, RoomData data, WorldManager world) :
+            base(designation, designations, data, world)
         {
             Boxes = new List<Body>();
             faction.Stockpiles.Add(this);
@@ -102,7 +103,7 @@ namespace DwarfCorp
             component.AnimationQueue.Add(deathMotion);
             deathMotion.OnComplete += component.Die;
             SoundManager.PlaySound(ContentPaths.Audio.whoosh, component.LocalTransform.Translation);
-            DwarfGame.World.ParticleManager.Trigger("puff", component.LocalTransform.Translation + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 90);
+            Faction.World.ParticleManager.Trigger("puff", component.LocalTransform.Translation + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 90);
         }
 
         public void CreateBox(Vector3 pos)
@@ -114,7 +115,8 @@ namespace DwarfCorp
             crate.AnimationQueue.Add(new EaseMotion(0.8f, crate.LocalTransform, endPos));
             Boxes.Add(crate);
             SoundManager.PlaySound(ContentPaths.Audio.whoosh, startPos);
-            DwarfGame.World.ParticleManager.Trigger("puff", pos + new Vector3(0.5f, 1.5f, 0.5f), Color.White, 90);
+            if (Faction != null)
+                Faction.World.ParticleManager.Trigger("puff", pos + new Vector3(0.5f, 1.5f, 0.5f), Color.White, 90);
         }
 
         public void HandleBoxes()
@@ -165,6 +167,7 @@ namespace DwarfCorp
             HandleBoxes();
 
             TossMotion toss = new TossMotion(1.0f, 2.5f, component.LocalTransform, Boxes[Boxes.Count - 1].LocalTransform.Translation + new Vector3(0.5f, 0.5f, 0.5f));
+            component.GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
             component.AnimationQueue.Add(toss);
             toss.OnComplete += component.Die;
 
@@ -209,8 +212,9 @@ namespace DwarfCorp
            Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>()
             {
             };
-            Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
-            return new RoomData(StockpileName, 0, "Stockpile", roomResources, stockpileTemplates, new ImageFrame(roomIcons, 16, 0, 0))
+
+            return new RoomData(StockpileName, 0, "Stockpile", roomResources, stockpileTemplates, 
+                new Gum.TileReference("rooms", 0))
             {
                 Description = "Dwarves can stock resources here",
             };

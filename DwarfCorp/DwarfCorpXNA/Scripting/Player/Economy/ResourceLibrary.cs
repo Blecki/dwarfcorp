@@ -1,4 +1,4 @@
-﻿// ResourceLibrary.cs
+// ResourceLibrary.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -93,6 +93,11 @@ namespace DwarfCorp
             {
                 return _value;
             }
+
+            public Resource GetResource()
+            {
+                return ResourceLibrary.GetResourceByName(_value);
+            }
         }
 
         public static Dictionary<ResourceType, Resource> Resources = new Dictionary<ResourceType, Resource>();
@@ -119,7 +124,7 @@ namespace DwarfCorp
         {
             Resources[resource.ResourceName] = resource;
 
-            EntityFactory.RegisterEntity(resource.ResourceName + " Resource", (position, data) => new ResourceEntity(resource.Type, position));
+            EntityFactory.RegisterEntity(resource.ResourceName + " Resource", (position, data) => new ResourceEntity(EntityFactory.World.ComponentManager, resource.Type, position));
         }
 
         public static void Initialize()

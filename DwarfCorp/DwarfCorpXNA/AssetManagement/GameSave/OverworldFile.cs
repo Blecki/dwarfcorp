@@ -1,4 +1,4 @@
-﻿// OverworldFile.cs
+// OverworldFile.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -57,6 +57,7 @@ namespace DwarfCorp
             public float[,] Temperature { get; set; }
             public int[,] Water { get; set; }
             public float[,] Weathering { get; set; }
+            public float SeaLevel { get; set; }
 
             [Newtonsoft.Json.JsonIgnore] [NonSerialized] public Texture2D Screenshot;
 
@@ -88,14 +89,14 @@ namespace DwarfCorp
                 return toReturn;
             }
 
-            public Texture2D CreateTexture(GraphicsDevice device, int width, int height)
+            public Texture2D CreateTexture(GraphicsDevice device, int width, int height, float seaLevel)
             {
                 Texture2D toReturn = null;
                 Overworld.MapData[,] mapData = CreateMap();
                 toReturn = new Texture2D(device, width, height);
                 System.Threading.Mutex imageMutex = new System.Threading.Mutex();
                 Color[] worldData = new Color[width * height];
-                Overworld.TextureFromHeightMap("Height", mapData, Overworld.ScalarFieldType.Height, width, height, imageMutex, worldData, toReturn, DwarfGame.World.SeaLevel);
+                Overworld.TextureFromHeightMap("Height", mapData, Overworld.ScalarFieldType.Height, width, height, imageMutex, worldData, toReturn, seaLevel);
 
                 return toReturn;
             }
@@ -104,7 +105,7 @@ namespace DwarfCorp
             {
             }
 
-            public OverworldData(GraphicsDevice device, Overworld.MapData[,] map, string name)
+            public OverworldData(GraphicsDevice device, Overworld.MapData[,] map, string name, float seaLevel)
             {
                 int sizeX = map.GetLength(0);
                 int sizeY = map.GetLength(1);
@@ -117,6 +118,7 @@ namespace DwarfCorp
                 Weathering = new float[sizeX, sizeY];
                 Height = new float[sizeX, sizeY];
                 Name = name;
+                SeaLevel = seaLevel;
 
                 for(int x = 0; x < sizeX; x++)
                 {
@@ -134,7 +136,7 @@ namespace DwarfCorp
                     }
                 }
 
-                Screenshot = CreateTexture(device, sizeX, sizeY);
+                Screenshot = CreateTexture(device, sizeX, sizeY, seaLevel);
             }
         }
 
@@ -147,9 +149,9 @@ namespace DwarfCorp
         {
         }
 
-        public OverworldFile(GraphicsDevice device, Overworld.MapData[,] map, string name)
+        public OverworldFile(GraphicsDevice device, Overworld.MapData[,] map, string name, float seaLevel)
         {
-            Data = new OverworldData(device, map, name);
+            Data = new OverworldData(device, map, name, seaLevel);
         }
 
         public OverworldFile(string fileName, bool isCompressed, bool isBinary)

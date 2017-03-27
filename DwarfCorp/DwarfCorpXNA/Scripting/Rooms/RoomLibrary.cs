@@ -1,4 +1,4 @@
-﻿// RoomLibrary.cs
+// RoomLibrary.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -107,40 +107,40 @@ namespace DwarfCorp
         {
             return b.Any(p => FurnitureIntersects(a, p));
         }
-
-        public static Room CreateRoom(Faction faction, string name, List<Voxel> designations, bool blueprint)
+      
+        public static Room CreateRoom(Faction faction, string name, List<Voxel> designations, bool blueprint, WorldManager world)
         {
             if (name == BalloonPort.BalloonPortName)
             {
-                return blueprint ? new BalloonPort(faction, true, designations, DwarfGame.World.ChunkManager) : new BalloonPort(faction, designations, DwarfGame.World.ChunkManager);
+                return blueprint ? new BalloonPort(faction, true, designations, world) : new BalloonPort(faction, designations, world);
             } 
             else if (name == BedRoom.BedRoomName)
             {
-                return blueprint ? new BedRoom(true, designations, DwarfGame.World.ChunkManager) : new BedRoom(designations, DwarfGame.World.ChunkManager);
+                return blueprint ? new BedRoom(true, designations, world) : new BedRoom(designations, world);
             }
             else if (name == CommonRoom.CommonRoomName)
             {
-                return blueprint ? new CommonRoom(true, designations, DwarfGame.World.ChunkManager) : new CommonRoom(designations, DwarfGame.World.ChunkManager);
+                return blueprint ? new CommonRoom(true, designations, world) : new CommonRoom(designations, world);
             }
             else if (name == LibraryRoom.LibraryRoomName)
             {
-                return blueprint ? new LibraryRoom(true, designations, DwarfGame.World.ChunkManager) : new LibraryRoom(designations, DwarfGame.World.ChunkManager);
+                return blueprint ? new LibraryRoom(true, designations, world) : new LibraryRoom(designations, world);
             }
             else if (name == TrainingRoom.TrainingRoomName)
             {
-                return blueprint ? new TrainingRoom(true, designations, DwarfGame.World.ChunkManager) : new TrainingRoom(designations, DwarfGame.World.ChunkManager); 
+                return blueprint ? new TrainingRoom(true, designations, world) : new TrainingRoom(designations, world); 
             }
             else if (name == WorkshopRoom.WorkshopName)
             {
-                return blueprint ? new WorkshopRoom(true, designations, DwarfGame.World.ChunkManager) : new WorkshopRoom(designations, DwarfGame.World.ChunkManager); 
+                return blueprint ? new WorkshopRoom(true, designations, world) : new WorkshopRoom(designations, world); 
             }
             else if (name == Kitchen.KitchenName)
             {
-                return blueprint ? new Kitchen(true, designations, DwarfGame.World.ChunkManager) : new Kitchen(designations, DwarfGame.World.ChunkManager); 
+                return blueprint ? new Kitchen(true, designations, world) : new Kitchen(designations, world); 
             }
             else if (name == Stockpile.StockpileName)
             {
-                Stockpile toBuild = new Stockpile(faction);
+                Stockpile toBuild = new Stockpile(faction, world);
                 foreach (Voxel voxel in designations)
                 {
                     toBuild.AddVoxel(voxel);
@@ -153,7 +153,7 @@ namespace DwarfCorp
             }
         }
 
-        public static void BuildAllComponents(List<Body> components, Room room)
+        public static void BuildAllComponents(List<Body> components, Room room, ParticleManager particles)
         {
             foreach (Body createdComponent in components)
             {
@@ -163,7 +163,7 @@ namespace DwarfCorp
                 createdComponent.LocalTransform = offsetTransform;
                 createdComponent.AnimationQueue.Add(new EaseMotion(0.8f, offsetTransform, endPos));
                 room.AddBody(createdComponent);
-                DwarfGame.World.ParticleManager.Trigger("puff", endPos + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 10);
+                particles.Trigger("puff", endPos + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 10);
                 createdComponent.SetActiveRecursive(true);
             }
         }
@@ -172,7 +172,7 @@ namespace DwarfCorp
             Microsoft.Xna.Framework.Content.ContentManager content, GraphicsDevice graphics)
         {
             List<Body> components = new List<Body>();
-            RoomTile[,] currentTiles = RoomTemplate.CreateFromRoom(voxels, DwarfGame.World.ChunkManager);
+            RoomTile[,] currentTiles = RoomTemplate.CreateFromRoom(voxels, componentManager.World.ChunkManager);
             float[,] rotations = new float[currentTiles.GetLength(0), currentTiles.GetLength(1)];
             foreach (RoomTemplate myTemp in roomData.Templates)
             {

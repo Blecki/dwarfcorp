@@ -122,8 +122,9 @@ namespace DwarfCorp
 
             bedroomTemplates.Add(lamp);
             bedroomTemplates.Add(bed);
-            Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
-            return new RoomData(BedRoomName, 0, "BrownTileFloor", roomResources, bedroomTemplates, new ImageFrame(roomIcons, 16, 2, 1))
+
+            return new RoomData(BedRoomName, 0, "Brown Tile", roomResources, bedroomTemplates, 
+                new Gum.TileReference("rooms", 6))
             {
                 Description = "Dwarves relax and rest here",
                 CanBuildAboveGround = false,
@@ -137,13 +138,13 @@ namespace DwarfCorp
             RoomData = BedRoomData;
         }
 
-        public BedRoom(bool designation, IEnumerable<Voxel> designations, ChunkManager chunks) :
-            base(designation, designations, BedRoomData, chunks)
+        public BedRoom(bool designation, IEnumerable<Voxel> designations, WorldManager world) :
+            base(designation, designations, BedRoomData, world)
         {
         }
 
-        public BedRoom(IEnumerable<Voxel> voxels, ChunkManager chunks) :
-            base(voxels, BedRoomData, chunks)
+        public BedRoom(IEnumerable<Voxel> voxels, WorldManager world) :
+            base(voxels, BedRoomData, world)
         {
             OnBuilt();
         }

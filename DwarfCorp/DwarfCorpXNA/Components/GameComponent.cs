@@ -1,4 +1,4 @@
-﻿// GameComponent.cs
+// GameComponent.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -114,7 +114,7 @@ namespace DwarfCorp
         /// <value>
         ///   <c>true</c> if this instance is dead; otherwise, <c>false</c>.
         /// </value>
-        public bool IsDead { get; set; }
+        public bool IsDead { get; private set; }
 
         /// <summary>
         /// Gets or sets the tags. Tags are just arbitrary strings attached to objects.
@@ -124,14 +124,24 @@ namespace DwarfCorp
         /// </value>
         public List<string> Tags { get; set; }
 
+        
+        /// <summary>
+        /// Gets or sets the world.
+        /// </summary>
+        /// <value>
+        /// The world.
+        /// </value>
+        [JsonIgnore]
+        public WorldManager World { get; set; }
 
         /// <summary>
-        /// Gets the component manager (statically stored in PlayState).
+        /// Gets the component manager (from world)
         /// </summary>
         /// <value>
         /// The manager.
-        /// </value>
-        public ComponentManager Manager { get; set; }
+        /// </value
+        [JsonIgnore]
+        public ComponentManager Manager { get { return World.ComponentManager; } }
 
         /// <summary>
         /// A list of the GameComponentCache type handlers this component subscribes to.
@@ -169,7 +179,8 @@ namespace DwarfCorp
         [OnDeserialized]
         void OnDeserializing(StreamingContext context)
         {
-            Manager = DwarfGame.World.ComponentManager;
+            // Assume the context passed in is a WorldManager
+            World = ((WorldManager) context.Context);
         }
 
         /// <summary>
@@ -177,7 +188,7 @@ namespace DwarfCorp
         /// </summary>
         public GameComponent()
         {
-            Manager = null;
+            World = null;
             Children = new List<GameComponent>();
             Name = "uninitialized";
             IsVisible = true;
@@ -191,9 +202,10 @@ namespace DwarfCorp
         /// Initializes a new instance of the <see cref="GameComponent"/> class, while adding it to the component manager.
         /// </summary>
         /// <param name="createNew">if set to <c>true</c> adds this component to the manager..</param>
+        /// <param name="manager">The component manager to add the component to</param>
         public GameComponent(bool createNew, ComponentManager manager)
         {
-            Manager = manager;
+            World = manager.World;
             lock (globalIdLock)
             {
                 GlobalID = maxGlobalID;
@@ -220,6 +232,7 @@ namespace DwarfCorp
         /// </summary>
         /// <param name="name">The name of the component.</param>
         /// <param name="parent">The parent component.</param>
+        /// <param name="manager">The component manager.</param>
         public GameComponent(string name, GameComponent parent, ComponentManager manager) :
             this(true, manager)
         {
@@ -254,7 +267,7 @@ namespace DwarfCorp
         /// <returns>The first component of type T.</returns>
         public T GetComponent<T>(bool self=true) where T : GameComponent
         {
-            return GetRootComponent().GetChildrenOfType<T>(self).FirstOrDefault();
+            return GetEntityRootComponent().GetChildrenOfType<T>(self).FirstOrDefault();
         }
 
         /// <summary>
@@ -275,18 +288,6 @@ namespace DwarfCorp
             return toReturn;
         }
 
-
-        /// <summary>
-        /// Updates the component.
-        /// </summary>
-        /// <param name="gameTime">The game time.</param>
-        /// <param name="chunks">The chunk manager.</param>
-        /// <param name="camera">The camera.</param>
-        public virtual void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
-        {
-        }
-
-
         /// <summary>
         /// Renders the component to the selection buffer (for selecting stuff on screen).
         /// </summary>
@@ -297,7 +298,7 @@ namespace DwarfCorp
         /// <param name="graphicsDevice">The graphics device.</param>
         /// <param name="effect">The shader to use.</param>
         public virtual void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera,
-            SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect)
+            SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect)
         {
             
         }
@@ -394,6 +395,10 @@ namespace DwarfCorp
             }
 
             RemoveFromParent();
+
+            IsActive = false;
+            IsVisible = false;
+            Manager.RemoveComponent(this);
         }
 
         /// <summary>
@@ -415,6 +420,10 @@ namespace DwarfCorp
             }
 
             RemoveFromParent();
+
+            IsActive = false;
+            IsVisible = false;
+            Manager.RemoveComponent(this);
         }
 
         /// <summary>
@@ -425,7 +434,7 @@ namespace DwarfCorp
         {
             string toReturn = "";
 
-            if(Parent == DwarfGame.World.ComponentManager.RootComponent)
+            if(Parent == Manager.RootComponent)
                 toReturn += Name;
 
             foreach (GameComponent component in Children)
@@ -572,7 +581,6 @@ namespace DwarfCorp
 
         #endregion
 
-
         #region recursive_child_operators
 
         /// <summary>
@@ -591,14 +599,12 @@ namespace DwarfCorp
         /// Gets the anscestor of this component which has no parent.
         /// </summary>
         /// <returns>The anscestor of this component with no parent.</returns>
-        public GameComponent GetRootComponent()
+        public GameComponent GetEntityRootComponent()
         {
-            GameComponent p = this;
+            var p = this;
 
-            while(p != null && p.Parent != Manager.RootComponent)
-            {
+            while(p.Parent != null && !Object.ReferenceEquals(p.Parent, Manager.RootComponent))
                 p = p.Parent;
-            }
 
             return p;
         }
@@ -716,23 +722,7 @@ namespace DwarfCorp
             // in the GameComponent constructor so we can't put AddToCache there.
             cache.addFunction(this);
         }
-
-        public void RemoveCacheType(string cacheName)
-        {
-            GameObjectCaching.GameComponentCache cache = GameObjectCaching.GetCacheByName(cacheName);
-            if (cache == null) return;
-
-            if (cacheTypeNames == null)
-            {
-                cacheTypeNames = new List<string>();
-                cacheTypes = new List<GameObjectCaching.GameComponentCache>();
-            }
-            else if (!cacheTypeNames.Contains(cacheName)) return;
-            cacheTypeNames.Remove(cacheName);
-            cacheTypes.Remove(cache);
-            cache.removeFunction(this);
-        }
-
+        
         public void AddToCache(GameComponent cachedObject)
         {
             if (cacheTypes == null) return;

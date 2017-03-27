@@ -1,4 +1,4 @@
-﻿// ChunkManager.cs
+// ChunkManager.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -86,11 +86,6 @@ namespace DwarfCorp
         public float DrawDistance
         {
             get { return GameSettings.Default.ChunkDrawDistance; }
-            set
-            {
-                GameSettings.Default.ChunkDrawDistance = value;
-                drawDistSq = value * value;
-            }
         }
 
         protected float drawDistSq = 0;
@@ -98,23 +93,12 @@ namespace DwarfCorp
         public float DrawDistanceSquared
         {
             get { return drawDistSq; }
-            set
-            {
-                drawDistSq = value;
-                GameSettings.Default.ChunkDrawDistance = (float) Math.Sqrt(value);
-            }
-        }
-
-        public float RemoveDistance
-        {
-            get { return GameSettings.Default.ChunkUnloadDistance; }
-            set { GameSettings.Default.ChunkDrawDistance = value; }
         }
 
         public float GenerateDistance
         {
             get { return GameSettings.Default.ChunkGenerateDistance; }
-            set { GameSettings.Default.ChunkDrawDistance = value; }
+            set { GameSettings.Default.ChunkGenerateDistance = value; }
         }
 
         public GraphicsDevice Graphics { get; set; }
@@ -132,8 +116,8 @@ namespace DwarfCorp
         public bool ExitThreads { get; set; }
 
         private Camera camera = null;
-
-        public ComponentManager Components { get { return DwarfGame.World.ComponentManager; }}
+        public WorldManager World { get; set; }
+        public ComponentManager Components { get { return World.ComponentManager; }}
         public ContentManager Content { get; set; }
 
         private readonly HashSet<VoxelChunk> visibleSet = new HashSet<VoxelChunk>();
@@ -150,10 +134,12 @@ namespace DwarfCorp
         public List<Voxel> KilledVoxels { get; set; }
 
         public ChunkManager(ContentManager content, 
+            WorldManager world,
             uint chunkSizeX, uint chunkSizeY, uint chunkSizeZ, 
             Camera camera, GraphicsDevice graphics,
             ChunkGenerator chunkGen, int maxChunksX, int maxChunksY, int maxChunksZ)
         {
+            World = world;
             KilledVoxels = new List<Voxel>();
             ExitThreads = false;
             drawDistSq = DrawDistance * DrawDistance;
@@ -614,17 +600,17 @@ namespace DwarfCorp
 
 
 
-        public void SimpleRender(GraphicsDevice graphicsDevice, Effect effect, Texture2D tilemap)
+        public void SimpleRender(GraphicsDevice graphicsDevice, Shader effect, Texture2D tilemap)
         {
-            effect.Parameters["xIllumination"].SetValue(ChunkData.IllumMap);
-            effect.Parameters["xTexture"].SetValue(tilemap);
-            effect.Parameters["xSunGradient"].SetValue(ChunkData.SunMap);
-            effect.Parameters["xAmbientGradient"].SetValue(ChunkData.AmbientMap);
-            effect.Parameters["xTorchGradient"].SetValue(ChunkData.TorchMap);
-            effect.Parameters["xTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-            effect.Parameters["xColorTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-            effect.Parameters["SelfIllumination"].SetValue(0);
-            effect.Parameters["xEnableShadows"].SetValue(0);
+            effect.SelfIlluminationTexture = ChunkData.IllumMap;
+            effect.MainTexture = tilemap;
+            effect.SunlightGradient = ChunkData.SunMap;
+            effect.AmbientOcclusionGradient = ChunkData.AmbientMap;
+            effect.TorchlightGradient = ChunkData.TorchMap;
+            effect.LightRampTint = Color.White;
+            effect.VertexColorTint = Color.White;
+            effect.SelfIlluminationEnabled = false;
+            effect.EnableShadows = false;
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
@@ -641,17 +627,17 @@ namespace DwarfCorp
             return MathFunctions.GetBoundingBox(toAdd);
         }
 
-        public void RenderAll(Camera renderCamera, DwarfTime gameTime, GraphicsDevice graphicsDevice, Effect effect, Matrix worldMatrix, Texture2D tilemap)
+        public void RenderAll(Camera renderCamera, DwarfTime gameTime, GraphicsDevice graphicsDevice, Shader effect, Matrix worldMatrix, Texture2D tilemap)
         {
-            effect.Parameters["xIllumination"].SetValue(ChunkData.IllumMap);
-            effect.Parameters["xTexture"].SetValue(tilemap);
-            effect.Parameters["xSunGradient"].SetValue(ChunkData.SunMap);
-            effect.Parameters["xAmbientGradient"].SetValue(ChunkData.AmbientMap);
-            effect.Parameters["xTorchGradient"].SetValue(ChunkData.TorchMap);
-            effect.Parameters["xTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-            effect.Parameters["xColorTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-            effect.Parameters["SelfIllumination"].SetValue(1);
-            effect.Parameters["xEnableShadows"].SetValue(0);
+            effect.SelfIlluminationTexture = ChunkData.IllumMap;
+            effect.MainTexture = tilemap;
+            effect.SunlightGradient = ChunkData.SunMap;
+            effect.AmbientOcclusionGradient = ChunkData.AmbientMap;
+            effect.TorchlightGradient = ChunkData.TorchMap;
+            effect.LightRampTint = Color.White;
+            effect.VertexColorTint = Color.White;
+            effect.SelfIlluminationEnabled = true;
+            effect.EnableShadows = false;
 
 			BoundingFrustum cameraFrustrum = renderCamera.GetFrustrum();
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
@@ -665,17 +651,17 @@ namespace DwarfCorp
                     }
                 }
             }
-            effect.Parameters["SelfIllumination"].SetValue(0);
+            effect.SelfIlluminationEnabled = false;
         }
 
-        public void RenderSelectionBuffer(Effect effect, GraphicsDevice graphicsDevice,
+        public void RenderSelectionBuffer(Shader effect, GraphicsDevice graphicsDevice,
             Matrix viewmatrix)
         {
-            effect.CurrentTechnique = effect.Techniques["Selection"];
-            effect.Parameters["xTexture"].SetValue(ChunkData.Tilemap);
-            effect.Parameters["xWorld"].SetValue(Matrix.Identity);
-            effect.Parameters["xView"].SetValue(viewmatrix);
-            effect.Parameters["xID"].SetValue(Vector4.Zero);
+            effect.CurrentTechnique = effect.Techniques[Shader.Technique.SelectionBuffer];
+            effect.MainTexture = ChunkData.Tilemap;
+            effect.World = Matrix.Identity;
+            effect.View = viewmatrix;
+            effect.SelectionBufferColor = Vector4.Zero;
             List<VoxelChunk> renderListCopy = RenderList.ToArray().ToList();
 
             foreach (VoxelChunk chunk in renderListCopy)
@@ -688,19 +674,19 @@ namespace DwarfCorp
             }
         }
 
-        public void RenderShadowmap(Effect effect,
+        public void RenderShadowmap(Shader effect,
                                     GraphicsDevice graphicsDevice, 
                                     ShadowRenderer shadowRenderer,
                                     Matrix worldMatrix, 
                                     Texture2D tilemap)
         {
             Vector3[] corners = new Vector3[8];
-            Camera tempCamera = new Camera(camera.Target, camera.Position, camera.FOV, camera.AspectRatio, camera.NearPlane, 30);
+            Camera tempCamera = new Camera(World, camera.Target, camera.Position, camera.FOV, camera.AspectRatio, camera.NearPlane, 30);
             tempCamera.GetFrustrum().GetCorners(corners);
             BoundingBox cameraBox = MathFunctions.GetBoundingBox(corners);
             cameraBox = cameraBox.Expand(1.0f);
-            effect.Parameters["xWorld"].SetValue(worldMatrix);
-            effect.Parameters["xTexture"].SetValue(tilemap);
+            effect.World = worldMatrix;
+            effect.MainTexture = tilemap;
             shadowRenderer.SetupViewProj(cameraBox);
             shadowRenderer.PrepareEffect(effect, false);
             shadowRenderer.BindShadowmapEffect(effect);
@@ -717,26 +703,26 @@ namespace DwarfCorp
                 }
             }
             shadowRenderer.UnbindShadowmap(graphicsDevice);
-            effect.CurrentTechnique = effect.Techniques["Textured"];
-            effect.Parameters["SelfIllumination"].SetValue(0);
+            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
+            effect.SelfIlluminationEnabled = false;
         }
 
         public void RenderLightmaps(Camera renderCamera, DwarfTime gameTime, GraphicsDevice graphicsDevice,
-            Effect effect, Matrix worldMatrix)
+            Shader effect, Matrix worldMatrix)
         {
             RasterizerState state = RasterizerState.CullNone;
             RasterizerState origState = graphicsDevice.RasterizerState;
 
-            effect.CurrentTechnique = effect.Techniques["Lightmap"];
-            effect.Parameters["xIllumination"].SetValue(ChunkData.IllumMap);
-            effect.Parameters["xTexture"].SetValue(ChunkData.Tilemap);
-            effect.Parameters["xSunGradient"].SetValue(ChunkData.SunMap);
-            effect.Parameters["xAmbientGradient"].SetValue(ChunkData.AmbientMap);
-            effect.Parameters["xTorchGradient"].SetValue(ChunkData.TorchMap);
-            effect.Parameters["xTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-            effect.Parameters["xColorTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-            effect.Parameters["SelfIllumination"].SetValue(1);
-            effect.Parameters["xEnableShadows"].SetValue(GameSettings.Default.UseDynamicShadows ? 1 : 0);
+            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Lightmap];
+            effect.SelfIlluminationTexture = ChunkData.IllumMap;
+            effect.MainTexture = ChunkData.Tilemap;
+            effect.SunlightGradient = ChunkData.SunMap;
+            effect.AmbientOcclusionGradient = ChunkData.AmbientMap;
+            effect.TorchlightGradient = ChunkData.TorchMap;
+            effect.LightRampTint = Color.White;
+            effect.VertexColorTint = Color.White;
+            effect.SelfIlluminationEnabled = true;
+            effect.EnableShadows = GameSettings.Default.UseDynamicShadows;
             graphicsDevice.RasterizerState = state;
             Graphics.BlendState = BlendState.NonPremultiplied;
             List<VoxelChunk> renderListCopy = RenderList.ToArray().ToList();
@@ -751,32 +737,33 @@ namespace DwarfCorp
                 }
             }
             Graphics.SetRenderTarget(null);
-            effect.Parameters["SelfIllumination"].SetValue(0);
-            effect.CurrentTechnique = effect.Techniques["Textured"];
+            effect.SelfIlluminationEnabled = false;
+            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
             graphicsDevice.RasterizerState = origState;
         }
 
-        public void Render(Camera renderCamera, DwarfTime gameTime, GraphicsDevice graphicsDevice, Effect effect, Matrix worldMatrix)
+        public void Render(Camera renderCamera, DwarfTime gameTime, GraphicsDevice graphicsDevice, Shader effect, Matrix worldMatrix)
         {
             if (GameSettings.Default.UseLightmaps)
             {
-                effect.CurrentTechnique = effect.Techniques["Textured_From_Lightmap"];
-                effect.Parameters["xEnableShadows"].SetValue(0);
+                effect.CurrentTechnique = effect.Techniques[Shader.Technique.TexturedWithLightmap];
+                effect.EnableShadows = false;
             }
             else
             {
-                effect.CurrentTechnique = effect.Techniques["Textured"];
-                effect.Parameters["xEnableShadows"].SetValue(GameSettings.Default.UseDynamicShadows ? 1 : 0);
+                effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
+                effect.EnableShadows = GameSettings.Default.UseDynamicShadows;
             }
-            effect.Parameters["xIllumination"].SetValue(ChunkData.IllumMap);
-            effect.Parameters["xTexture"].SetValue(ChunkData.Tilemap);
-            effect.Parameters["xSunGradient"].SetValue(ChunkData.SunMap);
-            effect.Parameters["xAmbientGradient"].SetValue(ChunkData.AmbientMap);
-            effect.Parameters["xTorchGradient"].SetValue(ChunkData.TorchMap);
-            effect.Parameters["xTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-            effect.Parameters["xColorTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-            effect.Parameters["SelfIllumination"].SetValue(1);
-            effect.Parameters["xWorld"].SetValue(Matrix.Identity);
+            effect.SelfIlluminationTexture = ChunkData.IllumMap;
+            effect.MainTexture = ChunkData.Tilemap;
+            effect.SunlightGradient = ChunkData.SunMap;
+            effect.AmbientOcclusionGradient = ChunkData.AmbientMap;
+            effect.TorchlightGradient = ChunkData.TorchMap;
+            effect.LightRampTint = Color.White;
+            effect.VertexColorTint = Color.White;
+            effect.SelfIlluminationEnabled = true;
+            effect.EnableShadows = GameSettings.Default.UseDynamicShadows;
+            effect.World = Matrix.Identity;
 
             List<VoxelChunk> renderListCopy = RenderList.ToArray().ToList();
 
@@ -786,16 +773,16 @@ namespace DwarfCorp
                 {
                     if (GameSettings.Default.UseLightmaps)
                     {
-                        effect.Parameters["xLightmap"].SetValue(chunk.Primitive.Lightmap);
-                        effect.Parameters["pixelSize"].SetValue(new Vector2(1.0f/chunk.Primitive.Lightmap.Width,
-                            1.0f/chunk.Primitive.Lightmap.Height));
+                        effect.LightMap = chunk.Primitive.Lightmap;
+                        effect.PixelSize = new Vector2(1.0f/chunk.Primitive.Lightmap.Width,
+                            1.0f/chunk.Primitive.Lightmap.Height);
                     }
                     pass.Apply();
                     chunk.Render(Graphics);
                 }
             }
-            effect.Parameters["SelfIllumination"].SetValue(0);
-            effect.CurrentTechnique = effect.Techniques["Textured"];
+            effect.SelfIlluminationEnabled = false;
+            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
         }
 
         public void GenerateOres()
@@ -883,6 +870,7 @@ namespace DwarfCorp
                 }
             }
             RecalculateBounds();
+            chunkData.RecomputeNeighbors();
             SetLoadingMessage("Generating Ores...");
 
             GenerateOres();
@@ -973,7 +961,7 @@ namespace DwarfCorp
                     {
                         ChunkData.AddChunk(chunk);
                         ChunkGen.GenerateVegetation(chunk, Components, Content, Graphics);
-                        ChunkGen.GenerateFauna(chunk, Components, Content, Graphics, DwarfGame.World.ComponentManager.Factions);
+                        ChunkGen.GenerateFauna(chunk, Components, Content, Graphics, World.ComponentManager.Factions);
                         List<VoxelChunk> adjacents = ChunkData.GetAdjacentChunks(chunk);
                         foreach(VoxelChunk c in adjacents)
                         {
@@ -1018,12 +1006,13 @@ namespace DwarfCorp
             {
                 affectedChunks.Add(voxel.Chunk);
                 voxel.Chunk.NotifyDestroyed(new Point3(voxel.GridPosition));
-                if (!voxel.IsInterior)
+                List<Point3> neighbors = voxel.Chunk.GetEuclidianSuccessorByVoxel(voxel);
+                Point3 gridPos = voxel.ChunkID;
+                for (int i = 0; i < neighbors.Count; i++)
                 {
-                    foreach (KeyValuePair<Point3, VoxelChunk> n in voxel.Chunk.Neighbors)
-                    {
-                        affectedChunks.Add(n.Value);
-                    }
+                    VoxelChunk chunk;
+                    if (chunkData.ChunkMap.TryGetValue(gridPos + neighbors[i], out chunk))
+                        affectedChunks.Add(chunk);
                 }
             }
 
@@ -1040,6 +1029,19 @@ namespace DwarfCorp
                 }
             }
             KilledVoxels.Clear();
+        }
+
+        public IEnumerable<Voxel> GetVoxelsIntersecting(IEnumerable<Vector3> positions)
+        {
+            foreach (Vector3 vec in positions)
+            {
+                Voxel vox = new Voxel();
+                bool success = ChunkData.GetVoxel(vec, ref vox);
+                if (success)
+                {
+                    yield return vox;
+                }
+            }
         }
 
         public List<Voxel> GetVoxelsIntersecting(BoundingBox box)
@@ -1122,9 +1124,6 @@ namespace DwarfCorp
                 chunk.RebuildPending = false;
                 chunk.RebuildLiquidPending = false;
             }
-
-            chunkData.RecomputeNeighbors();
-
 
             SetLoadingMessage("Cleaning Up.");
         }

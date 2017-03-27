@@ -18,7 +18,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\DwarfCorpFNA\bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;WINDOWS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;WINDOWS GEMFNA</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -27,7 +27,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\DwarfCorpFNA\bin\Release\</OutputPath>
-    <DefineConstants>WINDOWS</DefineConstants>
+    <DefineConstants>WINDOWS GEMFNA</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -41,7 +41,6 @@
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Management" />
     <Reference Include="System.Management.Instrumentation" />
-    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssetManagement\ContentPathGenerator.cs" />
@@ -85,15 +84,23 @@
     <Compile Include="Components\Graphics\Tinter.cs" />
     <Compile Include="Components\GUI\MinimapIcon.cs" />
     <Compile Include="Components\GUI\WorldGUIObject.cs" />
+    <Compile Include="Components\IRenderableComponent.cs" />
+    <Compile Include="Components\IUpdateableComponent.cs" />
     <Compile Include="Components\Physics\Flammable.cs" />
     <Compile Include="Components\Physics\Physics.cs" />
     <Compile Include="Components\Systems\ComponentManager.cs" />
     <Compile Include="Components\Systems\Message.cs" />
     <Compile Include="ControlSettings.cs" />
+    <Compile Include="Diplomacy\DialogueState.cs" />
+    <Compile Include="Diplomacy\DialogueTree.cs" />
+    <Compile Include="Diplomacy\DialogueTreeTypes.cs" />
+    <Compile Include="Diplomacy\ITradeEntity.cs" />
+    <Compile Include="Diplomacy\TradeTransaction.cs" />
     <Compile Include="DwarfGame.cs" />
     <Compile Include="Entities\Animals\Bat.cs" />
     <Compile Include="Entities\Animals\Bird.cs" />
     <Compile Include="Entities\Animals\BirdAI.cs" />
+    <Compile Include="Entities\Animals\Chicken.cs" />
     <Compile Include="Entities\Animals\Deer.cs" />
     <Compile Include="Entities\Animals\Frog.cs" />
     <Compile Include="Entities\Animals\Rabbit.cs" />
@@ -123,6 +130,7 @@
     <Compile Include="Entities\Monsters\Fairy.cs" />
     <Compile Include="Entities\Monsters\Goblin.cs" />
     <Compile Include="Entities\Monsters\Moleman.cs" />
+    <Compile Include="Entities\Monsters\MudGolem.cs" />
     <Compile Include="Entities\Monsters\Necromancer.cs" />
     <Compile Include="Entities\Monsters\NecromancerAI.cs" />
     <Compile Include="Entities\Monsters\Skeleton.cs" />
@@ -146,6 +154,7 @@
     <Compile Include="GameStates\GameLoaderState.cs" />
     <Compile Include="GameStates\GameState.cs" />
     <Compile Include="GameStates\GameStateManager.cs" />
+    <Compile Include="GameStates\GuiDebugState.cs" />
     <Compile Include="GameStates\GuiStateTemplate.cs" />
     <Compile Include="GameStates\IntroState.cs" />
     <Compile Include="GameStates\LoadState.cs" />
@@ -159,9 +168,6 @@
     <Compile Include="GameStates\WorldGeneratorState.cs" />
     <Compile Include="GameStates\WorldLoaderState.cs" />
     <Compile Include="GameStates\WorldSetupState.cs" />
-    <Compile Include="GemInput\GumInputMapper.cs" />
-    <Compile Include="GemInput\Input.cs" />
-    <Compile Include="GemInput\MessageFilter.cs" />
     <Compile Include="Graphics\Cameras\Camera.cs" />
     <Compile Include="Graphics\Cameras\OrbitCamera.cs" />
     <Compile Include="Graphics\Drawing\Drawer2D\DrawCommand2D.cs" />
@@ -182,6 +188,7 @@
     <Compile Include="Graphics\Effects\BloomSettings.cs" />
     <Compile Include="Graphics\Effects\FXAA.cs" />
     <Compile Include="Graphics\Effects\ParticleManager.cs" />
+    <Compile Include="Graphics\Effects\Shader.cs" />
     <Compile Include="Graphics\Effects\ShadowRenderer.cs" />
     <Compile Include="Graphics\Effects\SkyRenderer.cs" />
     <Compile Include="Graphics\Instancing\FixedInstanceArray.cs" />
@@ -229,7 +236,6 @@
     <Compile Include="GUI\Components\Complex\ActDisplay.cs" />
     <Compile Include="GUI\Components\Complex\AIDebugger.cs" />
     <Compile Include="GUI\Components\Complex\ApplicationPanel.cs" />
-    <Compile Include="GUI\Components\Complex\BuildMenu.cs" />
     <Compile Include="GUI\Components\Complex\CapitalPanel.cs" />
     <Compile Include="GUI\Components\Complex\ColorDialog.cs" />
     <Compile Include="GUI\Components\Complex\ColorSelector.cs" />
@@ -257,10 +263,50 @@
     <Compile Include="GUI\Layouts\Layout.cs" />
     <Compile Include="GUI\Skins\GUISkin.cs" />
     <Compile Include="GUI\ToolTipManager.cs" />
+    <Compile Include="Gum\Enums.cs" />
+    <Compile Include="Gum\Geo\Basics.cs" />
+    <Compile Include="Gum\Geo\CreateQuad.cs" />
+    <Compile Include="Gum\Geo\CreateScale9Background.cs" />
+    <Compile Include="Gum\Geo\CreateStringMesh.cs" />
+    <Compile Include="Gum\Geo\CreateTabPanelBackground.cs" />
+    <Compile Include="Gum\Geo\ITileSheet.cs" />
+    <Compile Include="Gum\Geo\Mesh.cs" />
+    <Compile Include="Gum\Geo\TileSheet.cs" />
+    <Compile Include="Gum\Geo\VariableWidthFont.cs" />
+    <Compile Include="Gum\HelperExtensions.cs" />
+    <Compile Include="Gum\InputEventArgs.cs" />
+    <Compile Include="Gum\Input\Input.cs" />
+    <Compile Include="Gum\Input\FNAInputMapper.cs" />
+    <Compile Include="Gum\JsonTileSheet.cs" />
+    <Compile Include="Gum\Layout.cs" />
+    <Compile Include="Gum\Margin.cs" />
+    <Compile Include="Gum\MousePointer.cs" />
+    <Compile Include="Gum\RectangleExtension.cs" />
+    <Compile Include="Gum\RenderData.cs" />
+    <Compile Include="Gum\Root.cs" />
+    <Compile Include="Gum\TextFieldLogic.cs" />
+    <Compile Include="Gum\TextureAtlasCompiler.cs" />
+    <Compile Include="Gum\TileReference.cs" />
+    <Compile Include="Gum\Widget.cs" />
+    <Compile Include="Gum\Widgets\Button.cs" />
+    <Compile Include="Gum\Widgets\CheckBox.cs" />
+    <Compile Include="Gum\Widgets\ComboBox.cs" />
+    <Compile Include="Gum\Widgets\EditableTextField.cs" />
+    <Compile Include="Gum\Widgets\HorizontalFloatSlider.cs" />
+    <Compile Include="Gum\Widgets\HorizontalSlider.cs" />
+    <Compile Include="Gum\Widgets\ListView.cs" />
+    <Compile Include="Gum\Widgets\TabPanel.cs" />
+    <Compile Include="Gum\Widgets\TextGrid.cs" />
+    <Compile Include="Gum\Widgets\VerticalScrollBar.cs" />
+    <Compile Include="Gum\Widgets\WidgetListView.cs" />
     <Compile Include="LanguageGenerator\Language.cs" />
     <Compile Include="LanguageGenerator\TextAtom.cs" />
     <Compile Include="LanguageGenerator\TextGenerator.cs" />
     <Compile Include="NewGui\AnnouncementPopup.cs" />
+    <Compile Include="NewGui\BuildCraftInfo.cs" />
+    <Compile Include="NewGui\BuildMenu.cs" />
+    <Compile Include="NewGui\BuildRoomInfo.cs" />
+    <Compile Include="NewGui\BuildWallInfo.cs" />
     <Compile Include="NewGui\CompanyLogo.cs" />
     <Compile Include="NewGui\Confirm.cs" />
     <Compile Include="NewGui\FramedIcon.cs" />
@@ -269,10 +315,22 @@
     <Compile Include="NewGui\GridPanel.cs" />
     <Compile Include="NewGui\IconTray.cs" />
     <Compile Include="NewGui\InfoTicker.cs" />
+    <Compile Include="NewGui\InfoTray.cs" />
     <Compile Include="NewGui\Minimap.cs" />
+    <Compile Include="NewGui\MoneyEditor.cs" />
+    <Compile Include="NewGui\PlantInfo.cs" />
     <Compile Include="NewGui\Popup.cs" />
+    <Compile Include="NewGui\ResourceColumns.cs" />
+    <Compile Include="NewGui\SpellInfo.cs" />
+    <Compile Include="NewGui\TileSheetExtension.cs" />
+    <Compile Include="NewGui\ToggleTray.cs" />
+    <Compile Include="NewGui\ToolPopup.cs" />
+    <Compile Include="NewGui\ToolTray.cs" />
+    <Compile Include="NewGui\TradePanel.cs" />
+    <Compile Include="NewGui\TwoColumns.cs" />
     <Compile Include="ProgramData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Screensaver\DwarfRunner.cs" />
     <Compile Include="Screensaver\Terrain2D.cs" />
     <Compile Include="Scripting\Act.cs" />
     <Compile Include="Scripting\BehaviorExtensions.cs" />
@@ -442,9 +500,8 @@
     <Compile Include="Tools\Datastructures\CollisionManager.cs" />
     <Compile Include="Tools\Datastructures\Datastructures.cs" />
     <Compile Include="Tools\Datastructures\IBoundedObject.cs" />
+    <Compile Include="Tools\Datastructures\IntegerOctTree.cs" />
     <Compile Include="Tools\Datastructures\MinBag.cs" />
-    <Compile Include="Tools\Datastructures\Octree.cs" />
-    <Compile Include="Tools\Datastructures\OctreeNode.cs" />
     <Compile Include="Tools\Datastructures\PriorityQueue.cs" />
     <Compile Include="Tools\Datastructures\ThreadSafeRandom.cs" />
     <Compile Include="Tools\Extensions.cs" />
@@ -567,10 +624,6 @@
     <ProjectReference Include="..\..\FNA\FNA.csproj">
       <Project>{35253ce1-c864-4cd3-8249-4d1319748e8f}</Project>
       <Name>FNA</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\gemgui\Gum\FnaGum.csproj">
-      <Project>{803efe3a-4db5-4f86-b212-273350ed9c07}</Project>
-      <Name>FnaGum</Name>
     </ProjectReference>
     <ProjectReference Include="..\LibNoise\LibNoise.csproj">
       <Project>{031c8cff-f147-44ea-b7e5-0a5644808a7e}</Project>

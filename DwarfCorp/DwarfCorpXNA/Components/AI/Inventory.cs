@@ -65,7 +65,7 @@ namespace DwarfCorp
         }
 
         public Inventory(string name, Body parent) :
-            base(name, parent, Matrix.Identity, parent.BoundingBox.Extents(), parent.BoundingBoxPos)
+            base(parent.Manager, name, parent, Matrix.Identity, parent.BoundingBox.Extents(), parent.BoundingBoxPos)
         {
             DropRate = 0.75f;
         }
@@ -123,7 +123,7 @@ namespace DwarfCorp
             TossMotion toss = new TossMotion(0.5f + MathFunctions.Rand(0.05f, 0.08f),
                 1.0f, item.UserData.GlobalTransform, Position);
             item.UserData.AnimationQueue.Add(toss);
-            toss.OnComplete += () => item.UserData.GetRootComponent().Delete();
+            toss.OnComplete += () => item.UserData.GetEntityRootComponent().Delete();
 
             return true;
         }

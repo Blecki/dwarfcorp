@@ -1,4 +1,4 @@
-﻿// CreateEntitySpell.cs
+// CreateEntitySpell.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -46,24 +46,27 @@ namespace DwarfCorp
         public string Entity { get; set; }
         public bool Transmute { get; set; }
 
-        public CreateEntitySpell()
+        public CreateEntitySpell(WorldManager world) :
+            base(world)
         {
             
         }
 
-        public CreateEntitySpell(string entity, bool transmute)
+        public CreateEntitySpell(WorldManager world, string entity, bool transmute) :
+            base(world)
         {
             Entity = entity;
             Transmute = transmute;
             ManaCost = 50;
             Mode = transmute ? SpellMode.SelectEntities : SpellMode.SelectEmptyVoxels;
             Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 4, 2);
+            TileRef = 20;
         }
 
         public void CreateEntity(Vector3 position)
         {
             EntityFactory.CreateEntity<Body>(Entity, position);
-            DwarfGame.World.ParticleManager.Trigger("star_particle", position, Color.White, 4);
+            World.ParticleManager.Trigger("star_particle", position, Color.White, 4);
             Vector3 p = position + Vector3.Up;
             IndicatorManager.DrawIndicator("-" + ManaCost + " M", p, 1.0f, Color.Red);
         }
@@ -102,7 +105,7 @@ namespace DwarfCorp
 
             if (got)
             {
-                SoundManager.PlaySound(ContentPaths.Audio.tinkle, DwarfGame.World.CursorLightPos, true, 1.0f);
+                SoundManager.PlaySound(ContentPaths.Audio.tinkle, World.CursorLightPos, true, 1.0f);
             }
 
             base.OnVoxelsSelected(tree, voxels);

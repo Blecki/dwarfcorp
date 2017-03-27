@@ -280,7 +280,7 @@ namespace DwarfCorp
         public void CreateResearchTab()
         {
             ResearchTab = Selector.AddTab("Research Spells");
-            SpellTree = new SpellTreeDisplay(GUI, ResearchTab, Master.Spells)
+            SpellTree = new SpellTreeDisplay(GUI, ResearchTab, Master.Spells, Master)
             {
                 WidthSizeMode = SizeMode.Fit,
                 HeightSizeMode = SizeMode.Fit

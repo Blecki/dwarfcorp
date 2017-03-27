@@ -1,4 +1,4 @@
-﻿// TextGenerator.cs
+// TextGenerator.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -91,8 +91,9 @@ namespace DwarfCorp
             return item;
         }
 
-        public static string GetListString(List<string> tokens)
+        public static string GetListString(IEnumerable<string> tokenEnumerator)
         {
+            List<string> tokens = tokenEnumerator.ToList();
             string list = "";
             for (int i = 0; i < tokens.Count; i++)
             {

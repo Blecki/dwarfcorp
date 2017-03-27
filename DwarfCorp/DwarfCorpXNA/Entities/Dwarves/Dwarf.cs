@@ -1,4 +1,4 @@
-﻿// Dwarf.cs
+// Dwarf.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -52,9 +52,9 @@ namespace DwarfCorp
         {
             
         }
-        public Dwarf(CreatureStats stats, string allies, PlanService planService, Faction faction,  string name, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, EmployeeClass workerClass, Vector3 position) :
-            base(stats, allies, planService, faction, 
-            new Physics( "Dwarf", DwarfGame.World.ComponentManager.RootComponent, Matrix.CreateTranslation(position), 
+        public Dwarf(ComponentManager manager, CreatureStats stats, string allies, PlanService planService, Faction faction,  string name, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, EmployeeClass workerClass, Vector3 position) :
+            base(stats, allies, planService, faction,
+            new Physics("Dwarf", manager.RootComponent, Matrix.CreateTranslation(position), 
                         new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0)),
                chunks, graphics, content, name)
         {
@@ -62,12 +62,7 @@ namespace DwarfCorp
             HasBones = false;
             Initialize(workerClass);
         }
-
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
-        {
-            base.Update(gameTime, chunks, camera);
-        }
-
+        
         public void Initialize(EmployeeClass dwarfClass)
         {
             Physics.Orientation = Physics.OrientMode.RotateY;
@@ -148,7 +143,7 @@ namespace DwarfCorp
                 ContentPaths.Audio.jump
             };
 
-            MinimapIcon minimapIcon = new MinimapIcon(Physics, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 0, 0));
+            MinimapIcon minimapIcon = new MinimapIcon(Physics, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 0));
 
             Stats.FullName = TextGenerator.GenerateRandom("$firstname", " ", "$lastname");
             Stats.Size = 5;

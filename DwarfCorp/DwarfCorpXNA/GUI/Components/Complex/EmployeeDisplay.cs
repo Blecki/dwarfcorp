@@ -48,11 +48,12 @@ namespace DwarfCorp
 
         public GroupBox CurrentMinionBox { get; set; }
         public MinionPanel CurrentMinionPanel { get; set; }
-
-        public EmployeeDisplay(DwarfGUI gui, GUIComponent parent, Faction faction) :
+        public CompanyInformation Company { get; set; }
+        public EmployeeDisplay(DwarfGUI gui, GUIComponent parent, Faction faction, CompanyInformation company) :
             base(gui, parent)
         {
             Faction = faction;
+            Company = company;
             Initialize();
         }
 
@@ -116,8 +117,7 @@ namespace DwarfCorp
         void CurrentMinionPanel_Fire(CreatureAI creature)
         {
             SoundManager.PlaySound(ContentPaths.Audio.change);
-            creature.GetRootComponent().Delete();
-            creature.IsDead = true;
+            creature.GetEntityRootComponent().Delete();
 
             Faction.Minions.Remove(creature);
             Faction.SelectedMinions.Remove(creature);
@@ -138,7 +138,7 @@ namespace DwarfCorp
 
         void hireButton_OnClicked()
         {
-            HireDialog dialog = HireDialog.Popup(GUI, Faction);
+            HireDialog dialog = HireDialog.Popup(GUI, Faction, Company);
             dialog.OnHired += dialog_OnHired;
         }
 

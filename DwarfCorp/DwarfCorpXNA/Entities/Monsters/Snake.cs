@@ -43,7 +43,7 @@ using System.Text;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class Snake : Creature
+    public class Snake : Creature, IUpdateableComponent
     {
         private float ANIM_SPEED = 5.0f;
         public Physics[] Tail;
@@ -62,7 +62,7 @@ namespace DwarfCorp
                     Size = 3
                 },
                 "Herbivore",
-                DwarfGame.World.PlanService,
+                manager.World.PlanService,
                 manager.Factions.Factions["Herbivore"],
                 new Physics
                 (
@@ -147,7 +147,7 @@ namespace DwarfCorp
 
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             base.Update(gameTime, chunks, camera);
             Physics prev, next;

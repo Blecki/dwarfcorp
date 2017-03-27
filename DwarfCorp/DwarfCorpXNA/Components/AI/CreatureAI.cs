@@ -1,4 +1,4 @@
-﻿// CreatureAI.cs
+// CreatureAI.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -34,7 +34,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
+using System.Runtime.Serialization;
+//using System.Windows.Forms;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -45,7 +46,7 @@ namespace DwarfCorp
     ///     Component which manages the AI, scripting, and status of a particular creature (such as a Dwarf or Goblin)
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class CreatureAI : GameComponent
+    public class CreatureAI : GameComponent, IUpdateableComponent
     {
         /// <summary> maximum number of messages the creature has in its mind </summary>
         public int MaxMessages = 10;
@@ -123,7 +124,7 @@ namespace DwarfCorp
         public Timer PlannerTimer { get; set; }
         /// <summary> When this timer triggers, the creature will stop trying to reach a local target (if it is blocked by a voxel for instance </summary>
         public Timer LocalControlTimeout { get; set; }
-        /// <summary> When this timer triggers, the creature will wander in a new direction when it has nothing to do. </sumamry>
+        /// <summary> When this timer triggers, the creature will wander in a new direction when it has nothing to do. </summary>
         public Timer WanderTimer { get; set; }
         /// <summary> This is the timeout for waiting on services (like the path planning service) </summary>
         public Timer ServiceTimeout { get; set; }
@@ -168,7 +169,6 @@ namespace DwarfCorp
         public CreatureStats Stats
         {
             get { return Creature.Stats; }
-            set { Creature.Stats = value; }
         }
 
         /// <summary> Wrapper around Creature.Status </summary>
@@ -204,7 +204,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public ChunkManager Chunks
         {
-            get { return DwarfGame.World.ChunkManager; }
+            get { return Manager.World.ChunkManager; }
         }
 
         /// <summary> Blackboard used for Acts. </summary>
@@ -255,6 +255,16 @@ namespace DwarfCorp
                     Faction.Threats.Add(threat.Creature);
                 }
             }
+        }
+
+        /// <summary>
+        /// Raycasts to the specified target and returns true if the ray hit a voxel before hitting the target.
+        /// </summary>
+        /// <param name="target">The target.</param>
+        /// <returns>True if the ray hit a voxel before the target.</returns>
+        public bool Raycast(Vector3 target)
+        {
+            return Manager.World.ChunkManager.ChunkData.CheckRaySolid(Creature.AI.Position, target);
         }
 
         /// <summary> Find the task from the list of tasks which is easiest to perform. </summary>
@@ -330,14 +340,19 @@ namespace DwarfCorp
         /// <summary> Animate the PlayState Camera to look at this creature </summary>
         public void ZoomToMe()
         {
-            DwarfGame.World.Camera.ZoomTo(Position + Vector3.Up * 8.0f);
-            DwarfGame.World.ChunkManager.ChunkData.SetMaxViewingLevel((int)Position.Y, ChunkManager.SliceMode.Y);
+            Manager.World.Camera.ZoomTo(Position + Vector3.Up * 8.0f);
+            Manager.World.ChunkManager.ChunkData.SetMaxViewingLevel((int)Position.Y, ChunkManager.SliceMode.Y);
         }
 
         /// <summary> Update this creature </summary>
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (!IsActive) return;
+
+            if (Faction == null && !string.IsNullOrEmpty(Creature.Allies))
+            {
+                Faction = Manager.Factions.Factions[Creature.Allies];
+            }
 
             IdleTimer.Update(gameTime);
             SpeakTimer.Update(gameTime);
@@ -347,7 +362,7 @@ namespace DwarfCorp
             PreEmptTasks();
 
             // Try to go to sleep if we are low on energy and it is night time.
-            if (Status.Energy.IsUnhappy() && DwarfGame.World.Time.IsNight())
+            if (Status.Energy.IsUnhappy() && Manager.World.Time.IsNight())
             {
                 Task toReturn = new SatisfyTirednessTask();
                 toReturn.SetupScript(Creature);
@@ -428,7 +443,7 @@ namespace DwarfCorp
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Sad);
                         if (Creature.Allies == "Dwarf")
                         {
-                            DwarfGame.World.MakeAnnouncement(String.Format("{0} ({1}) refuses to workd!",
+                            Manager.World.MakeAnnouncement(String.Format("{0} ({1}) refuses to workd!",
                                 Stats.FullName, Stats.CurrentLevel.Name),
                                 "Our employee is unhappy, and would rather not work!", ZoomToMe);
                         }
@@ -470,10 +485,9 @@ namespace DwarfCorp
             {
                 history.Value.Update();
             }
-
-            base.Update(gameTime, chunks, camera);
         }
 
+        private int lastXPAnnouncement = 0;
         /// <summary> updates the creature's experience points. </summary>
         public void UpdateXP()
         {
@@ -484,6 +498,15 @@ namespace DwarfCorp
 
                 IndicatorManager.DrawIndicator(sign + xp + " XP",
                     Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, xp > 0 ? Color.Green : Color.Red);
+                if (Stats.IsOverQualified && lastXPAnnouncement != Stats.XP)
+                {
+                    lastXPAnnouncement = Stats.XP;
+                    Manager.World.MakeAnnouncement(String.Format("{0} ({1}) wants a promotion!",
+                            Stats.FullName, Stats.CurrentLevel.Name),
+                        String.Format("{0} can now be promoted to {1}.",
+                            Stats.FullName, Stats.CurrentClass.Levels[Stats.LevelIndex + 1].Name),
+                        () => EconomyState.PushEconomyState(Manager.World), ContentPaths.Audio.Oscar.gui_positive_generic);
+                }
             }
             XPEvents.Clear();
         }
@@ -642,7 +665,7 @@ namespace DwarfCorp
         {
             if (!HasThought(type))
             {
-                AddThought(Thought.CreateStandardThought(type, DwarfGame.World.Time.CurrentDate), true);
+                AddThought(Thought.CreateStandardThought(type, Manager.World.Time.CurrentDate), true);
             }
         }
 
@@ -699,7 +722,7 @@ namespace DwarfCorp
         /// <summary> Updates the thoughts in the creature's head. </summary>
         public void UpdateThoughts()
         {
-            Thoughts.RemoveAll(thought => thought.IsOver(DwarfGame.World.Time.CurrentDate));
+            Thoughts.RemoveAll(thought => thought.IsOver(Manager.World.Time.CurrentDate));
             Status.Happiness.CurrentValue = 50.0f;
 
             foreach (Thought thought in Thoughts)
@@ -750,9 +773,9 @@ namespace DwarfCorp
                 {
                     Creature.AI.Tasks.Add(task);
 
-                    if (Faction == DwarfGame.World.PlayerFaction)
+                    if (Faction == Manager.World.PlayerFaction)
                     {
-                        DwarfGame.World.MakeAnnouncement(
+                        Manager.World.MakeAnnouncement(
                             String.Format("{0} is fighting {1}!", Stats.FullName,
                                 TextGenerator.IndefiniteArticle(enemy.Creature.Name)),
                             String.Format("{0} the {1} is fighting {2} {3}", Stats.FullName,
@@ -926,6 +949,7 @@ namespace DwarfCorp
                     NumFailures = 0;
                 }
             }
+
         }
     }
 
@@ -1103,7 +1127,7 @@ namespace DwarfCorp
         private Voxel[, ,] GetNeighborhood(Voxel voxel)
         {
             var neighborHood = new Voxel[3, 3, 3];
-            CollisionManager objectHash = DwarfGame.World.ComponentManager.CollisionManager;
+            CollisionManager objectHash = Creature.Manager.World.ComponentManager.CollisionManager;
 
             VoxelChunk startChunk = voxel.Chunk;
             var x = (int)voxel.GridPosition.X;
@@ -1120,7 +1144,7 @@ namespace DwarfCorp
                         int ny = dy + y;
                         int nz = dz + z;
                         if (
-                            !DwarfGame.World.ChunkManager.ChunkData.GetVoxel(startChunk,
+                            !Creature.Manager.World.ChunkManager.ChunkData.GetVoxel(startChunk,
                                 new Vector3(nx, ny, nz) + startChunk.Origin,
                                 ref neighborHood[dx + 1, dy + 1, dz + 1]))
                         {
@@ -1164,7 +1188,7 @@ namespace DwarfCorp
         public List<Creature.MoveAction> GetMoveActions(Vector3 pos)
         {
             var vox = new Voxel();
-            DwarfGame.World.ChunkManager.ChunkData.GetVoxel(pos, ref vox);
+            Creature.Manager.World.ChunkManager.ChunkData.GetVoxel(pos, ref vox);
             return GetMoveActions(vox);
         }
 
@@ -1173,13 +1197,13 @@ namespace DwarfCorp
         {
             var toReturn = new List<Creature.MoveAction>();
 
-            CollisionManager objectHash = DwarfGame.World.ComponentManager.CollisionManager;
+            CollisionManager objectHash = Creature.Manager.World.ComponentManager.CollisionManager;
 
             Voxel[, ,] neighborHood = GetNeighborhood(voxel);
             var x = (int)voxel.GridPosition.X;
             var y = (int)voxel.GridPosition.Y;
             var z = (int)voxel.GridPosition.Z;
-            bool inWater = (neighborHood[1, 1, 1] != null && neighborHood[1, 1, 1].WaterLevel > 5);
+            bool inWater = (neighborHood[1, 1, 1] != null && neighborHood[1, 1, 1].WaterLevel > WaterManager.inWaterThreshold);
             bool standingOnGround = (neighborHood[1, 0, 1] != null && !neighborHood[1, 0, 1].IsEmpty);
             bool topCovered = (neighborHood[1, 2, 1] != null && !neighborHood[1, 2, 1].IsEmpty);
             bool hasNeighbors = HasNeighbors(neighborHood);
@@ -1393,7 +1417,7 @@ namespace DwarfCorp
                 {
                     // Do one final check to see if there is an object blocking the motion.
                     bool blockedByObject = false;
-                    List<IBoundedObject> objectsAtNeighbor = DwarfGame.World.ComponentManager.CollisionManager.GetObjectsAt(
+                    List<IBoundedObject> objectsAtNeighbor = Creature.Manager.CollisionManager.GetObjectsAt(
                         n, CollisionManager.CollisionType.Static);
 
                     // If there is an object blocking the motion, determine if it can be passed through.
@@ -1404,12 +1428,12 @@ namespace DwarfCorp
 
                         foreach (GameComponent body in enumerable)
                         {
-                            Door door = body.GetRootComponent().GetChildrenOfType<Door>(true).FirstOrDefault();
+                            Door door = body.GetEntityRootComponent().GetChildrenOfType<Door>(true).FirstOrDefault();
                             // If there is an enemy door blocking movement, we can destroy it to get through.
                             if (door != null)
                             {
                                 if (
-                                    DwarfGame.World.ComponentManager.Diplomacy.GetPolitics(door.TeamFaction, Creature.Faction)
+                                    Creature.Manager.Diplomacy.GetPolitics(door.TeamFaction, Creature.Faction)
                                         .GetCurrentRelationship() !=
                                     Relationship.Loving)
                                 {

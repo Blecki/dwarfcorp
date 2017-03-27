@@ -1,4 +1,4 @@
-﻿// WorldLoaderState.cs
+// WorldLoaderState.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -77,9 +77,12 @@ namespace DwarfCorp.GameStates
 
         public WorldLoadDescriptor SelectedDescriptor { get; set; }
 
+        public WorldSettings Settings { get; set; }
+
         public WorldLoaderState(DwarfGame game, GameStateManager stateManager) :
             base(game, "WorldLoaderState", stateManager)
         {
+            Settings = new WorldSettings();
             IsInitialized = false;
             Worlds = new List<WorldLoadDescriptor>();
             ExitThreads = false;
@@ -293,7 +296,7 @@ namespace DwarfCorp.GameStates
             back.OnClicked += back_OnClicked;
         }
 
-        public void LoadDescriptor(WorldLoadDescriptor descriptor)
+        public void LoadDescriptor(WorldLoadDescriptor descriptor, WorldSettings settings)
         {
             try
             {
@@ -309,16 +312,18 @@ namespace DwarfCorp.GameStates
                     Overworld.Map = descriptor.File.Data.CreateMap();
 
                     Overworld.Name = descriptor.File.Data.Name;
-                    DwarfGame.World.WorldWidth = Overworld.Map.GetLength(1);
-                    DwarfGame.World.WorldHeight = Overworld.Map.GetLength(0);
+                    settings.Width = Overworld.Map.GetLength(1);
+                    settings.Height = Overworld.Map.GetLength(0);
 
-                    WorldGeneratorState state = StateManager.GetState<WorldGeneratorState>();
-
-                    WorldGeneratorState.worldMap = descriptor.File.Data.CreateTexture(Game.GraphicsDevice, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1));
+                    WorldGeneratorState.worldMap = descriptor.File.Data.CreateTexture(Game.GraphicsDevice, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), descriptor.File.Data.SeaLevel);
 
                     JoinThreads();
                     StateManager.PopState();
-                    StateManager.PushState(new WorldGeneratorState(Game, Game.StateManager));
+                    StateManager.PushState(new WorldGeneratorState(Game, Game.StateManager)
+                    {
+                        Settings = Settings
+                    });
+                    WorldGeneratorState state = StateManager.GetState<WorldGeneratorState>();
                     state.Progress.Value = 1.0f;
                     state.GenerationComplete = true;
                     state.DoneGenerating = true;
@@ -401,7 +406,7 @@ namespace DwarfCorp.GameStates
 
         void loadButton_OnClicked()
         {
-            LoadDescriptor(SelectedDescriptor);
+            LoadDescriptor(SelectedDescriptor, Settings);
         }
 
         private void worldPicture_OnClicked(int picture)

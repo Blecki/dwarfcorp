@@ -1,4 +1,4 @@
-﻿// KillEntityTask.cs
+// KillEntityTask.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -53,12 +53,18 @@ namespace DwarfCorp
         public Body EntityToKill = null;
         public KillType Mode { get; set; }
 
+        public KillEntityTask()
+        {
+            
+        }
+
         public KillEntityTask(Body entity, KillType type)
         {
             Mode = type;
             Name = "Kill Entity: " + entity.Name + " " + entity.GlobalID;
             EntityToKill = entity;
             Priority = PriorityType.Urgent;
+            AutoRetry = true;
         }
 
         public override Task Clone()
@@ -79,6 +85,11 @@ namespace DwarfCorp
             }
 
             else return (agent.AI.Position - EntityToKill.LocalTransform.Translation).LengthSquared() * 0.01f;
+        }
+
+        public override bool ShouldRetry(Creature agent)
+        {
+            return EntityToKill != null && !EntityToKill.IsDead;
         }
 
         public override bool ShouldDelete(Creature agent)
@@ -143,7 +154,7 @@ namespace DwarfCorp
                 }
 
                 Voxel target = new Voxel();
-                bool voxExists = DwarfGame.World.ChunkManager.ChunkData.GetVoxel(EntityToKill.Position, ref target);
+                bool voxExists = agent.Manager.World.ChunkManager.ChunkData.GetVoxel(EntityToKill.Position, ref target);
                 if (!voxExists || !PlanAct.PathExists(agent.Physics.CurrentVoxel, target, agent.AI))
                 {
                     return false;
@@ -155,7 +166,7 @@ namespace DwarfCorp
                     return true;
                 }
                 Relationship relation =
-                    DwarfGame.World.ComponentManager.Diplomacy.GetPolitics(ai.Faction, agent.Faction).GetCurrentRelationship();
+                    agent.Manager.Diplomacy.GetPolitics(ai.Faction, agent.Faction).GetCurrentRelationship();
                 return relation == Relationship.Hateful || relation == Relationship.Indifferent;
             }
         }

@@ -122,8 +122,9 @@ namespace DwarfCorp
 
             commonRoomTemplates.Add(lamp);
             commonRoomTemplates.Add(table);
-            Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
-            return new RoomData(CommonRoomName, 1, "CobblestoneFloor", roomResources, commonRoomTemplates, new ImageFrame(roomIcons, 16, 2, 0))
+
+            return new RoomData(CommonRoomName, 1, "Cobble", roomResources, commonRoomTemplates,
+                new Gum.TileReference("rooms", 2))
             {
                 Description = "Dwarves come here to socialize and drink",
                 CanBuildAboveGround = false
@@ -136,12 +137,12 @@ namespace DwarfCorp
             RoomData = CommonRoomData;
         }
 
-        public CommonRoom(bool designation, IEnumerable<Voxel> designations, ChunkManager chunks) :
+        public CommonRoom(bool designation, IEnumerable<Voxel> designations, WorldManager chunks) :
             base(designation, designations, CommonRoomData, chunks)
         {
         }
 
-        public CommonRoom(IEnumerable<Voxel> voxels, ChunkManager chunks) :
+        public CommonRoom(IEnumerable<Voxel> voxels, WorldManager chunks) :
             base(voxels, CommonRoomData, chunks)
         {
             OnBuilt();

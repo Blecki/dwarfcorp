@@ -1,4 +1,4 @@
-﻿// MeleeAct.cs
+// MeleeAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -253,6 +253,11 @@ namespace DwarfCorp
                 // If we're out of attack range, run toward the target.
                 if(!Creature.AI.Movement.IsSessile && !intersectsbounds && diff.Length() > CurrentAttack.Range)
                 {
+                    if (Creature.AI.Raycast(Target.Position))
+                    {
+                        yield return Status.Fail;
+                        yield break;
+                    }
                     Creature.CurrentCharacterMode = defaultCharachterMode;
                     Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, targetPos, Creature.Physics.GlobalTransform.Translation) * 0.9f;
                     output.Y = 0.0f;
@@ -269,7 +274,7 @@ namespace DwarfCorp
                 }
                 // If we have a ranged weapon, try avoiding the target for a few seconds to get within range.
                 else if (!Creature.AI.Movement.IsSessile && !intersectsbounds && !avoided && (CurrentAttack.Mode == Attack.AttackMode.Ranged &&
-                    diff.Length() < CurrentAttack.Range*0.75f))
+                    diff.Length() < CurrentAttack.Range*0.15f))
                 {
                     FailTimer.Reset();
                     foreach (Act.Status stat in AvoidTarget(CurrentAttack.Range, 3.0f))
@@ -281,6 +286,11 @@ namespace DwarfCorp
                 // Else, stop and attack
                 else
                 {
+                    if (Creature.AI.Raycast(Target.Position))
+                    {
+                        yield return Status.Fail;
+                        yield break;
+                    }
                     FailTimer.Reset();
                     avoided = false;
                     Creature.Physics.Orientation = Physics.OrientMode.Fixed;

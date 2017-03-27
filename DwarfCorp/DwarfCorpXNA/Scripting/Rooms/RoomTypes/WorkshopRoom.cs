@@ -98,8 +98,8 @@ namespace DwarfCorp
             RoomTemplate anvil = new RoomTemplate(PlacementType.All, anvilTemp, anvilAcc);
             workshopTemplates.Add(anvil);
 
-            Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
-            return new RoomData(WorkshopName, 2, "CobblestoneFloor", roomResources, workshopTemplates, new ImageFrame(roomIcons, 16, 1, 1))
+            return new RoomData(WorkshopName, 2, "Cobble", roomResources, workshopTemplates,
+                new Gum.TileReference("rooms", 5))
             {
                 Description = "Craftsdwarves build mechanisms here",
                 CanBuildAboveGround = false
@@ -111,12 +111,12 @@ namespace DwarfCorp
             RoomData = WorkshopRoomData;
         }
 
-        public WorkshopRoom(bool designation, IEnumerable<Voxel> designations, ChunkManager chunks) :
+        public WorkshopRoom(bool designation, IEnumerable<Voxel> designations, WorldManager chunks) :
             base(designation, designations, WorkshopRoomData, chunks)
         {
         }
 
-        public WorkshopRoom(IEnumerable<Voxel> voxels, ChunkManager chunks) :
+        public WorkshopRoom(IEnumerable<Voxel> voxels, WorldManager chunks) :
             base(voxels, WorkshopRoomData, chunks)
         {
             OnBuilt();

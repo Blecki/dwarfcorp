@@ -1,4 +1,4 @@
-﻿// BuildTool.cs
+// BuildTool.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -60,27 +60,30 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
-            if (BuildPanel != null && BuildPanel.Root != null)
+            /*if (BuildPanel != null && BuildPanel.Root != null)
                 BuildPanel.Close();
 
-            BuildPanel = DwarfGame.World.NewGui.ConstructWidget(new NewGui.BuildMenu
+            BuildPanel = Player.World.NewGui.ConstructWidget(new NewGui.BuildMenu
                 {
                     Master = Player,
                     BuildType = BuildType
                 }) as NewGui.BuildMenu;
 
-            DwarfGame.World.NewGui.ShowDialog(BuildPanel);
-
+            Player.World.NewGui.ShowDialog(BuildPanel);
+            
             Player.Faction.CraftBuilder.IsEnabled = false;
 
-            DwarfGame.World.Paused = true;
+            Player.World.Paused = true;
+            */
+
+            Player.Faction.RoomBuilder.OnEnter();
         }
 
         public override void OnEnd()
         {
-            if (BuildPanel != null && BuildPanel.Root != null)
-                BuildPanel.Close();
-            BuildPanel = null;
+            //if (BuildPanel != null && BuildPanel.Root != null)
+            //    BuildPanel.Close();
+            //BuildPanel = null;
             Player.Faction.CraftBuilder.IsEnabled = false;
             Player.Faction.RoomBuilder.OnExit();
         }
@@ -90,7 +93,7 @@ namespace DwarfCorp
             if (Player.IsCameraRotationModeActive())
             {
                 Player.VoxSelector.Enabled = false;
-                DwarfGame.World.SetMouse(null);
+                Player.World.SetMouse(null);
                 Player.BodySelector.Enabled = false;
                 return;
             }
@@ -103,26 +106,26 @@ namespace DwarfCorp
                 Player.VoxSelector.Enabled = true;
                 Player.BodySelector.Enabled = false;
 
-                if (DwarfGame.World.IsMouseOverGui)
-                    DwarfGame.World.SetMouse(DwarfGame.World.MousePointer);
+                if (Player.World.IsMouseOverGui)
+                    Player.World.SetMouse(Player.World.MousePointer);
                 else
-                    DwarfGame.World.SetMouse(new Gum.MousePointer("mouse", 1, 4));
+                    Player.World.SetMouse(new Gum.MousePointer("mouse", 1, 4));
             }
             else
             {
                 Player.VoxSelector.Enabled = false;
                 Player.BodySelector.Enabled = false;
 
-                if (DwarfGame.World.IsMouseOverGui)
-                    DwarfGame.World.SetMouse(DwarfGame.World.MousePointer);
+                if (Player.World.IsMouseOverGui)
+                    Player.World.SetMouse(Player.World.MousePointer);
                 else
-                    DwarfGame.World.SetMouse(new Gum.MousePointer("mouse", 1, 11));
+                    Player.World.SetMouse(new Gum.MousePointer("mouse", 1, 11));
             }
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-            Player.Faction.RoomBuilder.Render(time, DwarfGame.World.ChunkManager.Graphics);
+            Player.Faction.RoomBuilder.Render(time, Player.World.ChunkManager.Graphics);
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
@@ -133,6 +136,7 @@ namespace DwarfCorp
         public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
         {
             Player.Faction.RoomBuilder.OnVoxelsDragged(voxels, button);
+            Player.Faction.WallBuilder.VoxelDragged(voxels);
         }
     }
 }

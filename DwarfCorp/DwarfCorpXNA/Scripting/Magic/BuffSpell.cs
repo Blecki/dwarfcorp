@@ -1,4 +1,4 @@
-﻿// BuffSpell.cs
+// BuffSpell.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -45,12 +45,14 @@ namespace DwarfCorp
     {
         public List<Creature.Buff> Buffs { get; set; } 
         
-        public BuffSpell()
+        public BuffSpell(WorldManager world) :
+            base(world)
         {
             
         }
 
-        public BuffSpell(params Creature.Buff[] buffs)
+        public BuffSpell(WorldManager world, params Creature.Buff[] buffs) :
+            base(world)
         {
             Buffs = buffs.ToList();
             Mode = SpellMode.SelectEntities;
@@ -59,6 +61,7 @@ namespace DwarfCorp
             Hint = "Click and drag to select creatures";
             ManaCost = 20;
             Image = new NamedImageFrame(ContentPaths.GUI.icons, 32, 0, 2);
+            TileRef = 16;
         }
 
 

@@ -1,4 +1,4 @@
-﻿// BuildRoomOrder.cs
+// BuildRoomOrder.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -52,9 +52,10 @@ namespace DwarfCorp
         public Faction Faction { get; set; }
         public List<GameComponent> WorkObjects = new List<GameComponent>(); 
         public bool IsBuilt { get; set; }
-
-        public BuildRoomOrder(Room toBuild, Faction faction)
+        private WorldManager World { get; set; }
+        public BuildRoomOrder(Room toBuild, Faction faction, WorldManager world)
         {
+            World = world;
             ToBuild = toBuild;
             PutResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>();
             VoxelOrders = new List<BuildVoxelOrder>();
@@ -63,7 +64,7 @@ namespace DwarfCorp
         }
 
 
-        public void CreateFences()
+        public void CreateFences(ComponentManager components)
         {
             Voxel neighbor = new Voxel();
 
@@ -72,31 +73,33 @@ namespace DwarfCorp
             foreach (BuildVoxelOrder order in VoxelOrders)
             {
                 Voxel voxel = order.Voxel;
-                if (voxel.GetNeighbor(new Vector3(0, 0, 1), ref neighbor) && !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
+                if (voxel.GetNeighbor(new Vector3(0, 0, 1), ref neighbor) &&
+                    !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
                 {
-                    WorkObjects.Add(new WorkFence(voxel.Position + off + new Vector3(0, 0, 0.45f), (float)Math.Atan2(0, 1)));
+                    WorkObjects.Add(new WorkFence(components, voxel.Position + off + new Vector3(0, 0, 0.45f),
+                        (float) Math.Atan2(0, 1)));
                 }
 
                 if (voxel.GetNeighbor(new Vector3(0, 0, -1), ref neighbor) && !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
                 {
-                    WorkObjects.Add(new WorkFence(voxel.Position + off + new Vector3(0, 0, -0.45f), (float)Math.Atan2(0, -1)));
+                    WorkObjects.Add(new WorkFence(components, voxel.Position + off + new Vector3(0, 0, -0.45f), (float)Math.Atan2(0, -1)));
                 }
 
 
                 if (voxel.GetNeighbor(new Vector3(1, 0, 0), ref neighbor) && !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
                 {
-                    WorkObjects.Add(new WorkFence(voxel.Position + off + new Vector3(0.45f, 0, 0.0f), (float)Math.Atan2(1, 0)));
+                    WorkObjects.Add(new WorkFence(components, voxel.Position + off + new Vector3(0.45f, 0, 0.0f), (float)Math.Atan2(1, 0)));
                 }
 
 
                 if (voxel.GetNeighbor(new Vector3(-1, 0, 0), ref neighbor) && !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
                 {
-                    WorkObjects.Add(new WorkFence(voxel.Position + off + new Vector3(-0.45f, 0, 0.0f), (float)Math.Atan2(-1, 0)));
+                    WorkObjects.Add(new WorkFence(components, voxel.Position + off + new Vector3(-0.45f, 0, 0.0f), (float)Math.Atan2(-1, 0)));
                 }
 
                 if (MathFunctions.RandEvent(0.1f))
                 {
-                    WorkObjects.Add(new WorkPile(voxel.Position + off));
+                    WorkObjects.Add(new WorkPile(components, voxel.Position + off));
                 }
             }
         }
@@ -159,13 +162,13 @@ namespace DwarfCorp
             IsBuilt = true;
             ToBuild.IsBuilt = true;
             List<Body> components = RoomLibrary.GenerateRoomComponentsTemplate(ToBuild.RoomData, ToBuild.Voxels,
-                Faction.Components, DwarfGame.World.ChunkManager.Content, DwarfGame.World.ChunkManager.Graphics);
-            RoomLibrary.BuildAllComponents(components, ToBuild);
+                Faction.Components, World.ChunkManager.Content, World.ChunkManager.Graphics);
+            RoomLibrary.BuildAllComponents(components, ToBuild, World.ParticleManager);
             ToBuild.OnBuilt();
 
             if (!silent)
             {
-                DwarfGame.World.MakeAnnouncement("Built room!", String.Format("{0} was built", ToBuild.ID));
+                World.MakeAnnouncement("Built room!", String.Format("{0} was built", ToBuild.ID), null,  ContentPaths.Audio.Oscar.gui_positive_generic);
             }
 
             foreach (GameComponent fence in WorkObjects)

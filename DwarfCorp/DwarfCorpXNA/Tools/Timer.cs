@@ -1,4 +1,4 @@
-﻿// Timer.cs
+// Timer.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -126,26 +127,33 @@ namespace DwarfCorp
             else
             {
                 ElapsedGameTime = new TimeSpan((long)(time.ElapsedGameTime.Ticks * Speed));
+                if (ElapsedGameTime.TotalSeconds > MaximumElapsedGameTime * Speed)
+                    ElapsedGameTime = TimeSpan.FromSeconds(MaximumElapsedGameTime * Speed);
                 TotalGameTime += ElapsedGameTime;
             }
         }
 
         [JsonIgnore]
-        public static DwarfTime LastTime { get; set; }
+        public static DwarfTime LastTime = new DwarfTime();
 
         [JsonIgnore]
         public static float Dt
         {
             get { return (float)LastTime.ElapsedGameTime.TotalSeconds; }
         }
+
+        [JsonIgnore]
+        public static double MaximumElapsedGameTime = 60.0f / 10.0f;
     }
 
     /// <summary>
     /// A timer fires at a fixed interval when updated. Some timers automatically reset.
     /// Other timers need to be manually reset.
     /// </summary>
+    [JsonObject(IsReference = true)]
     public class Timer
     {
+        [JsonIgnore]
         public float StartTimeSeconds { get; set; }
         public float TargetTimeSeconds { get; set; }
         public float CurrentTimeSeconds { get; set; }
@@ -158,6 +166,17 @@ namespace DwarfCorp
         {
             Real,
             Game
+        }
+
+        [OnDeserialized]
+        public void OnDeserialized(StreamingContext ctx)
+        {
+            StartTimeSeconds = -1;
+        }
+
+        public Timer()
+        {
+            
         }
 
         public Timer(float targetTimeSeconds, bool triggerOnce, TimerMode mode = TimerMode.Game)

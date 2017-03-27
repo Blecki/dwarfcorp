@@ -1,4 +1,4 @@
-﻿// FileUtils.cs
+// FileUtils.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -54,6 +54,12 @@ namespace DwarfCorp
     public static class FileUtils
     {
 
+        /// <summary>
+        /// Loads a serialized binary object from the given file.
+        /// </summary>
+        /// <typeparam name="T">The type to deserialize</typeparam>
+        /// <param name="filepath">The filepath.</param>
+        /// <returns>A deserialized object of type T if it could be deserialized, exception otherwise.</returns>
         public static T LoadBinary<T>(string filepath)
         {
             IFormatter formatter = new BinaryFormatter();
@@ -72,6 +78,13 @@ namespace DwarfCorp
         }
 
 
+        /// <summary>
+        /// Serializes and saves an object to binary file path.
+        /// </summary>
+        /// <typeparam name="T">The type of the object to serialize</typeparam>
+        /// <param name="obj">The object.</param>
+        /// <param name="filepath">The filepath.</param>
+        /// <returns>True if the object could be saved.</returns>
         public static bool SaveBinary<T>(T obj, string filepath)
         {
             IFormatter formatter = new BinaryFormatter();
@@ -82,10 +95,18 @@ namespace DwarfCorp
         }
 
 
-        public static T LoadJsonFromString<T>(string jsonText)
+        /// <summary>
+        /// Given the inline text of a JSON serialization, creates an object of type T deserialized from it.
+        /// </summary>
+        /// <typeparam name="T">The type of the object being deserialized</typeparam>
+        /// <param name="jsonText">The json text.</param>
+        /// <param name="context">The context object (ie the World).</param>
+        /// <returns>An object of type T if it could be serialized, or an exception otherwise</returns>
+        public static T LoadJsonFromString<T>(string jsonText, object context = null)
         {
             return JsonConvert.DeserializeObject<T>(jsonText, new JsonSerializerSettings()
             {
+                Context = new StreamingContext(StreamingContextStates.File, context),
                 ReferenceLoopHandling = ReferenceLoopHandling.Error,
                 TypeNameHandling = TypeNameHandling.All,
                 ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
@@ -101,11 +122,20 @@ namespace DwarfCorp
             });
         }
 
-        public static T LoadJson<T>(string filePath, bool isCompressed)
+        /// <summary>
+        /// Loads the json from a file.
+        /// </summary>
+        /// <typeparam name="T">The type of the object to deserialized</typeparam>
+        /// <param name="filePath">The file path.</param>
+        /// <param name="isCompressed">if set to <c>true</c> file is gzip compressed.</param>
+        /// <param name="context">The context object passed to deserialized objects (ie the world).</param>
+        /// <returns>An object of type T if it could be deserialized.</returns>
+        public static T LoadJson<T>(string filePath, bool isCompressed, object context = null)
         {
             string jsonText = Load(filePath, isCompressed);
             return JsonConvert.DeserializeObject<T>(jsonText, new JsonSerializerSettings()
             {
+                Context = new StreamingContext(StreamingContextStates.File, context),
                 ReferenceLoopHandling = ReferenceLoopHandling.Error,
                 TypeNameHandling = TypeNameHandling.All,
                 ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
@@ -121,6 +151,13 @@ namespace DwarfCorp
             });
         }
 
+        /// <summary>
+        /// Serializes an object and writes it to a file using the most basic Json settings.
+        /// </summary>
+        /// <typeparam name="T">The type of the object to save.</typeparam>
+        /// <param name="obj">The object.</param>
+        /// <param name="filePath">The file path.</param>
+        /// <returns>True if the object could be saved.</returns>
         public static bool SaveBasicJson<T>(T obj, string filePath)
         {
             JsonSerializer serializer = new JsonSerializer
@@ -142,6 +179,14 @@ namespace DwarfCorp
 
         }
 
+        /// <summary>
+        /// Saves an object of type T to JSON using the full serialization method (most robust).
+        /// </summary>
+        /// <typeparam name="T">The type of the object.</typeparam>
+        /// <param name="obj">The object to save.</param>
+        /// <param name="filePath">The file path.</param>
+        /// <param name="compress">if set to <c>true</c> write with GZIP compression.</param>
+        /// <returns>True if the object could be saved.</returns>
         public static bool SaveJSon<T>(T obj, string filePath, bool compress)
         {
             JsonSerializer serializer = new JsonSerializer
@@ -163,6 +208,15 @@ namespace DwarfCorp
 
         }
 
+        /// <summary>
+        /// Saves an object of type T using the given Json Serializer
+        /// </summary>
+        /// <typeparam name="T">the type of the object to save.</typeparam>
+        /// <param name="serializer">The serializer.</param>
+        /// <param name="obj">The object.</param>
+        /// <param name="filePath">The file path.</param>
+        /// <param name="compress">if set to <c>true</c> uses gzip compression.</param>
+        /// <returns>true if the object could be saved.</returns>
         public static bool Save<T>(JsonSerializer serializer, T obj, string filePath, bool compress)
         {
 
@@ -187,6 +241,13 @@ namespace DwarfCorp
         }
 
 
+        /// <summary>
+        /// Writes the given string to an output file.
+        /// </summary>
+        /// <param name="output">The string to write.</param>
+        /// <param name="filePath">The file path.</param>
+        /// <param name="isCompressed">if set to <c>true</c> writes the file using gzip compression.</param>
+        /// <returns>True if the file could be saved.</returns>
         public static bool Save(string output, string filePath, bool isCompressed)
         {
             if(!isCompressed)
@@ -210,6 +271,12 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Loads the specified file path.
+        /// </summary>
+        /// <param name="filePath">The file path.</param>
+        /// <param name="isCompressed">if set to <c>true</c> [is compressed].</param>
+        /// <returns>The text content of the file.</returns>
         public static string Load(string filePath, bool isCompressed)
         {
             string text = "";
@@ -218,6 +285,11 @@ namespace DwarfCorp
             return text;
         }
 
+        /// <summary>
+        /// Decompresses a byte array from gzip.
+        /// </summary>
+        /// <param name="gzip">The gzip-encoded byte array.</param>
+        /// <returns>A decompressed byte array.</returns>
         public static byte[] Decompress(byte[] gzip)
         {
             using(GZipStream stream = new GZipStream(new MemoryStream(gzip), CompressionMode.Decompress))
@@ -240,11 +312,22 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Decompresses the file in the specified file path, returning a decompressed string.
+        /// </summary>
+        /// <param name="filePath">The file path.</param>
+        /// <returns>A decompressed string.</returns>
         public static string Decompress(string filePath)
         {
             return Decompress(filePath, Encoding.UTF8);
         }
 
+        /// <summary>
+        /// Decompresses the specified file path using the given encoding.
+        /// </summary>
+        /// <param name="filePath">The file path.</param>
+        /// <param name="encoding">The encoding.</param>
+        /// <returns>A decompressed string contents of the file.</returns>
         public static string Decompress(string filePath, Encoding encoding)
         {
             byte[] file = File.ReadAllBytes(filePath);

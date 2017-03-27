@@ -42,7 +42,7 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class Projectile : Physics
+    public class Projectile : Physics, IUpdateableComponent
     {
 
         public Sprite Sprite { get; set; }
@@ -57,8 +57,8 @@ namespace DwarfCorp
             
         }
 
-        public Projectile(Vector3 position, Vector3 initialVelocity, Health.DamageAmount damage, float size, string asset, string hitParticles, string hitNoise, Body target, bool animated = false, bool singleSprite = false) : 
-            base("Projectile", DwarfGame.World.ComponentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(size, size, size), Vector3.One, 1.0f, 1.0f, 1.0f, 1.0f, new Vector3(0, -10, 0) )
+        public Projectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Health.DamageAmount damage, float size, string asset, string hitParticles, string hitNoise, Body target, bool animated = false, bool singleSprite = false) :
+            base("Projectile", manager.RootComponent, Matrix.CreateTranslation(position), new Vector3(size, size, size), Vector3.One, 1.0f, 1.0f, 1.0f, 1.0f, new Vector3(0, -10, 0))
         {
             Target = target;
             HitAnimation = null;
@@ -75,7 +75,7 @@ namespace DwarfCorp
                 spriteSheet.FrameHeight = spriteSheet.FrameWidth;
             }
 
-            Sprite = new Sprite(DwarfGame.World.ComponentManager, "Sprite", this, Matrix.CreateRotationY((float)Math.PI * 0.5f),
+            Sprite = new Sprite(manager, "Sprite", this, Matrix.CreateRotationY((float)Math.PI * 0.5f),
                 spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Fixed
@@ -97,7 +97,7 @@ namespace DwarfCorp
 
             if (!singleSprite)
             {
-                Sprite2 = new Sprite(DwarfGame.World.ComponentManager, "Sprite2", Sprite,
+                Sprite2 = new Sprite(manager, "Sprite2", Sprite,
                     Matrix.CreateRotationX((float) Math.PI*0.5f),
                     spriteSheet, false)
                 {
@@ -114,7 +114,7 @@ namespace DwarfCorp
                 }
             }
             Damage = damage;
-            HitParticles = new ParticleTrigger(hitParticles, DwarfGame.World.ComponentManager, "Hit Particles", this,
+            HitParticles = new ParticleTrigger(hitParticles, manager, "Hit Particles", this,
                 Matrix.Identity, new Vector3(size * 0.5f, size * 0.5f, size * 0.5f), Vector3.Zero)
             {
                 TriggerOnDeath = true,
@@ -124,7 +124,7 @@ namespace DwarfCorp
             DamageRadius = (float)Math.Pow(size*4, 2);
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (Target != null && (Target.Position - Position).LengthSquared() < DamageRadius)
             {
@@ -162,9 +162,9 @@ namespace DwarfCorp
                 if (Target != null)
                 {
                     Vector3 camvelocity0 = GameState.Game.GraphicsDevice.Viewport.Project( Position,
-                        DwarfGame.World.Camera.ProjectionMatrix, DwarfGame.World.Camera.ViewMatrix, Matrix.Identity);
+                        Manager.World.Camera.ProjectionMatrix, Manager.World.Camera.ViewMatrix, Matrix.Identity);
                     Vector3 camvelocity1 = GameState.Game.GraphicsDevice.Viewport.Project(Position + Velocity,
-                        DwarfGame.World.Camera.ProjectionMatrix, DwarfGame.World.Camera.ViewMatrix, Matrix.Identity);
+                        Manager.World.Camera.ProjectionMatrix, Manager.World.Camera.ViewMatrix, Matrix.Identity);
                     IndicatorManager.DrawIndicator(HitAnimation, Target.Position,
                         HitAnimation.FrameHZ*HitAnimation.Frames.Count + 1.0f, 1.0f, Vector2.Zero, Color.White, camvelocity1.X - camvelocity0.X > 0);
                 }
@@ -199,8 +199,8 @@ namespace DwarfCorp
             
         }
 
-        public FireballProjectile(Vector3 position, Vector3 initialVelocity, Body target) :
-            base(position, initialVelocity, new Health.DamageAmount() { Amount = 15.0f, DamageType = Health.DamageType.Fire }, 0.25f, ContentPaths.Particles.fireball, "flame", ContentPaths.Audio.fire, target)
+        public FireballProjectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Body target) :
+            base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 15.0f, DamageType = Health.DamageType.Fire }, 0.25f, ContentPaths.Particles.fireball, "flame", ContentPaths.Audio.fire, target)
         {
             HitAnimation = new Animation(ContentPaths.Effects.pierce, 32, 32, 0, 1, 2, 3);
             Sprite.LightsWithVoxels = false;
@@ -216,8 +216,8 @@ namespace DwarfCorp
             
         }
 
-        public ArrowProjectile(Vector3 position, Vector3 initialVelocity, Body target) :
-            base(position, initialVelocity, new Health.DamageAmount() { Amount = 10.0f, DamageType = Health.DamageType.Slashing }, 0.25f, ContentPaths.Entities.Elf.Sprites.arrow, "puff", ContentPaths.Audio.hit, target)
+        public ArrowProjectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Body target) :
+            base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 10.0f, DamageType = Health.DamageType.Slashing }, 0.25f, ContentPaths.Entities.Elf.Sprites.arrow, "puff", ContentPaths.Audio.hit, target)
         {
             HitAnimation = new Animation(ContentPaths.Effects.pierce, 32, 32, 0, 1, 2);
         }
@@ -231,8 +231,8 @@ namespace DwarfCorp
 
         }
 
-        public WebProjectile(Vector3 position, Vector3 initialVelocity, Body target) :
-            base(position, initialVelocity, new Health.DamageAmount() { Amount = 10.0f, DamageType = Health.DamageType.Acid }, 0.25f, ContentPaths.Entities.Animals.Spider.webshot, "puff", ContentPaths.Audio.whoosh, target)
+        public WebProjectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Body target) :
+            base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 10.0f, DamageType = Health.DamageType.Acid }, 0.25f, ContentPaths.Entities.Animals.Spider.webshot, "puff", ContentPaths.Audio.whoosh, target)
         {
             HitAnimation = new Animation(ContentPaths.Entities.Animals.Spider.webstick, 32, 32, 0);
         }
@@ -246,8 +246,8 @@ namespace DwarfCorp
 
         }
 
-        public BulletProjectile(Vector3 position, Vector3 initialVelocity, Body target) :
-            base(position, initialVelocity, new Health.DamageAmount() { Amount = 30.0f, DamageType = Health.DamageType.Normal }, 0.25f, ContentPaths.Particles.stone_particle, "puff", ContentPaths.Audio.explode, target)
+        public BulletProjectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Body target) :
+            base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 30.0f, DamageType = Health.DamageType.Normal }, 0.25f, ContentPaths.Particles.stone_particle, "puff", ContentPaths.Audio.explode, target)
         {
             HitAnimation = new Animation(ContentPaths.Effects.explode, 32, 32, 0, 1, 2, 3, 4);
         }
@@ -260,8 +260,8 @@ namespace DwarfCorp
 
         }
 
-        public MudProjectile(Vector3 position, Vector3 initialVelocity, Body target) :
-            base(position, initialVelocity, new Health.DamageAmount() { Amount = 30.0f, DamageType = Health.DamageType.Normal }, 0.25f, ContentPaths.Entities.mudman_projectile, "dirt_particle", ContentPaths.Audio.gravel, target, true, true)
+        public MudProjectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Body target) :
+            base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 30.0f, DamageType = Health.DamageType.Normal }, 0.25f, ContentPaths.Entities.mudman_projectile, "dirt_particle", ContentPaths.Audio.gravel, target, true, true)
         {
             HitAnimation = new Animation(ContentPaths.Effects.flash, 32, 32, 0, 1, 2, 3, 4);
         }

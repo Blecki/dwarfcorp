@@ -1,4 +1,4 @@
-﻿// MathFunctions.cs
+// MathFunctions.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -874,6 +874,11 @@ namespace DwarfCorp
         public static Rectangle SnapRect(Vector2 min, Vector2 max, Rectangle outer)
         {
             Rectangle inner = new Rectangle((int)min.X, (int)min.Y, (int)max.X, (int)max.Y);
+            return SnapRect(inner, outer);
+        }
+
+        public static Rectangle SnapRect(Rectangle inner, Rectangle outer)
+        {
             return new Rectangle(Clamp(inner.X, outer.X, outer.Right - inner.Width), Clamp(inner.Y, outer.Y, outer.Bottom - inner.Height), inner.Width, inner.Height);
         }
 
@@ -940,5 +945,43 @@ namespace DwarfCorp
         /// it should probably NOT be called from threads other than the main thread to maintain seed consistency.
         /// </summary>
         public static ThreadSafeRandom Random = new ThreadSafeRandom();
+
+        public static Vector3 ProjectOutOfHalfPlane(Vector3 position, Vector3 origin, float dist)
+        {
+            float dy = position.Y - origin.Y;
+            if (dy < dist)
+            {
+                return new Vector3(position.X, origin.Y + dist, position.Z);
+            }
+            return position;
+        }
+
+        public static Vector3 ProjectOutOfCylinder(Vector3 position, Vector3 origin, float radius)
+        {
+            Vector3 pos2d = new Vector3(position.X - origin.X, 0, position.Z - origin.Z);
+            bool isInCylinder = pos2d.Length() < radius;
+
+            if (isInCylinder)
+            {
+                pos2d.Normalize();
+                pos2d *= radius;
+                return new Vector3(origin.X + pos2d.X, position.Y, origin.Z + pos2d.Z);
+            }
+            return position;
+        }
+
+        public static Vector3 ProjectToSphere(Vector3 position, float radius, Vector3 target)
+        {
+            Vector3 normDiff = position - target;
+            normDiff.Normalize();
+            normDiff *= radius;
+            return normDiff + target;
+        }
+
+        public static Vector2 LinearToSpherical(Vector3 position, float radius, Vector3 target)
+        {
+            Vector3 p = position - target;
+            return new Vector2((float)Math.Atan2(p.Y, p.X), (float)Math.Acos(p.Z / radius));
+        }
     }
 }

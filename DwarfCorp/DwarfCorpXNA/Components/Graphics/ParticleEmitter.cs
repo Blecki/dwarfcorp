@@ -1,4 +1,4 @@
-﻿// ParticleEmitter.cs
+// ParticleEmitter.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -32,9 +32,7 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -111,7 +109,7 @@ namespace DwarfCorp
     /// This component manages a set of particles, and can emit them at certain locations. The particle manager keeps track of a small set of these.
     /// </summary>
     [JsonObject(IsReference =  true)]
-    public class ParticleEmitter : Tinter
+    public class ParticleEmitter : Tinter, IUpdateableComponent, IRenderableComponent
     {
         [JsonIgnore]
         public FixedInstanceArray Sprites { get; set; }
@@ -235,9 +233,7 @@ namespace DwarfCorp
             }
         }
 
-        
-
-        public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
+        public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             ApplyTintingToEffect(effect);
             Sprites.Render(graphicsDevice, effect, camera, !renderingForWater);
@@ -271,7 +267,7 @@ namespace DwarfCorp
             p.LifeRemaining = -1;
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             ParticleEmitter._camera = camera;
 
@@ -387,7 +383,8 @@ namespace DwarfCorp
 
 
             Sprites.Update(gameTime, camera, chunks.Graphics);
-            base.Update(gameTime, chunks, camera);
+            if (Particles.Count > 0)
+                base.Update(gameTime, chunks, camera);
         }
     }
 

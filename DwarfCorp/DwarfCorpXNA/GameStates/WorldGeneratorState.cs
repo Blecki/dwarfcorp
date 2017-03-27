@@ -1,4 +1,4 @@
-﻿// WorldGeneratorState.cs
+// WorldGeneratorState.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -241,11 +241,7 @@ namespace DwarfCorp.GameStates
         {
             IsGenerating = false;
             DoneGenerating = false;
-            DwarfGame.World.WorldWidth = Settings.Width;
-            DwarfGame.World.WorldHeight = Settings.Height;
-            DwarfGame.World.SeaLevel = Settings.SeaLevel;
             MathFunctions.Random = new ThreadSafeRandom(Seed);
-            DwarfGame.World.WorldSize = new Point3(8, 1, 8);
 
             Overworld.Volcanoes = new List<Vector2>();
 
@@ -427,13 +423,13 @@ namespace DwarfCorp.GameStates
             }
             else
             {
-                StateManager.PushState(new WorldSetupState(Game, Game.StateManager));   
+                StateManager.PushState(new WorldSetupState(Game, Game.StateManager, Settings));   
             }
         }
 
         void embarkCombo_OnSelectionModified(string arg)
         {
-            DwarfGame.World.InitialEmbark = Embarkment.EmbarkmentLibrary[arg];
+            Settings.InitalEmbarkment = Embarkment.EmbarkmentLibrary[arg];
         }
 
         void MapPanel_OnDragged(InputManager.MouseButton button, Vector2 delta)
@@ -457,27 +453,27 @@ namespace DwarfCorp.GameStates
             switch (arg)
             {
                 case "Tiny":
-                    DwarfGame.World.WorldSize = new Point3(4, 1, 4);
+                    Settings.ColonySize = new Point3(4, 1, 4);
                     break;
                 case "Small":
-                    DwarfGame.World.WorldSize = new Point3(8, 1, 8);
+                    Settings.ColonySize = new Point3(8, 1, 8);
                     break;
                 case "Medium":
-                    DwarfGame.World.WorldSize = new Point3(10, 1, 10);
+                    Settings.ColonySize = new Point3(10, 1, 10);
                     break;
                 case "Large":
-                    DwarfGame.World.WorldSize = new Point3(16, 1, 16);
+                    Settings.ColonySize = new Point3(16, 1, 16);
                     break;
                 case "Huge":
-                    DwarfGame.World.WorldSize = new Point3(24, 1, 24);
+                    Settings.ColonySize = new Point3(24, 1, 24);
                     break;
             }
-            float w = DwarfGame.World.WorldSize.X * DwarfGame.World.WorldScale;
-            float h = DwarfGame.World.WorldSize.Z * DwarfGame.World.WorldScale;
-            float clickX = Math.Max(Math.Min(DwarfGame.World.WorldGenerationOrigin.X, DwarfGame.World.WorldWidth - w - 1), w + 1);
-            float clickY = Math.Max(Math.Min(DwarfGame.World.WorldGenerationOrigin.Y, DwarfGame.World.WorldHeight - h - 1), h + 1);
+            float w = Settings.ColonySize.X * Settings.WorldScale;
+            float h = Settings.ColonySize.Z * Settings.WorldScale;
+            float clickX = Math.Max(Math.Min(Settings.WorldGenerationOrigin.X, Settings.Width - w - 1), w + 1);
+            float clickY = Math.Max(Math.Min(Settings.WorldGenerationOrigin.Y, Settings.Height - h - 1), h + 1);
 
-            DwarfGame.World.WorldGenerationOrigin = new Vector2((int)(clickX), (int)(clickY));
+            Settings.WorldGenerationOrigin = new Vector2((int)(clickX), (int)(clickY));
         }
 
 
@@ -486,7 +482,7 @@ namespace DwarfCorp.GameStates
             if(GenerationComplete)
             {
                 System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetGameDirectory() + ProgramData.DirChar + "Worlds" + ProgramData.DirChar + Settings.Name);
-                OverworldFile file = new OverworldFile(Game.GraphicsDevice, Overworld.Map, Settings.Name);
+                OverworldFile file = new OverworldFile(Game.GraphicsDevice, Overworld.Map, Settings.Name, Settings.SeaLevel);
                 file.WriteFile(worldDirectory.FullName + ProgramData.DirChar + "world." + OverworldFile.CompressedExtension, true, true);
                 file.SaveScreenshot(worldDirectory.FullName + ProgramData.DirChar + "screenshot.png");
                 Dialog.Popup(GUI, "Save", "File saved.", Dialog.ButtonType.OK);
@@ -532,11 +528,11 @@ namespace DwarfCorp.GameStates
                 Overworld.Name = Settings.Name;
                 GUI.MouseMode = GUISkin.MousePointer.Wait;
                 StateManager.ClearState();
-                DwarfGame.World.ExistingFile = null;
-                DwarfGame.World.WorldOrigin = DwarfGame.World.WorldGenerationOrigin;
-                StateManager.PushState(new LoadState(Game, StateManager));
+                Settings.ExistingFile = null;
+                Settings.WorldOrigin = Settings.WorldGenerationOrigin;
+                StateManager.PushState(new LoadState(Game, StateManager, Settings));
 
-                DwarfGame.World.Natives = NativeCivilizations;
+                Settings.Natives = NativeCivilizations;
             }
         }
 
@@ -575,8 +571,8 @@ namespace DwarfCorp.GameStates
             DoneGenerating = false;
             if(!IsGenerating && !DoneGenerating)
             {
-                DwarfGame.World.WorldGenerationOrigin = new Vector2(DwarfGame.World.WorldWidth / 2, DwarfGame.World.WorldHeight / 2);
-                genThread = new Thread(unused => GenerateWorld(Seed, (int) DwarfGame.World.WorldWidth, (int) DwarfGame.World.WorldHeight));
+                Settings.WorldGenerationOrigin = new Vector2(Settings.Width / 2, Settings.Height / 2);
+                genThread = new Thread(unused => GenerateWorld(Seed, (int) Settings.Width, (int) Settings.Height));
                 genThread.Name = "GenerateWorld";
                 genThread.Start();
                 IsGenerating = true;
@@ -596,14 +592,14 @@ namespace DwarfCorp.GameStates
 
             Point worldPos = ScreenToWorld(new Vector2(ms.X, ms.Y));
 
-            float w = DwarfGame.World.WorldSize.X * DwarfGame.World.WorldScale;
-            float h = DwarfGame.World.WorldSize.Z * DwarfGame.World.WorldScale;
+            float w = Settings.ColonySize.X * Settings.WorldScale;
+            float h = Settings.ColonySize.Z * Settings.WorldScale;
             float clickX = worldPos.X;
             float clickY = worldPos.Y;
-            clickX = Math.Max(Math.Min(clickX, DwarfGame.World.WorldWidth - w - 1), w + 1);
-            clickY = Math.Max(Math.Min(clickY, DwarfGame.World.WorldHeight - h - 1), h + 1 );
+            clickX = Math.Max(Math.Min(clickX, Settings.Width - w - 1), w + 1);
+            clickY = Math.Max(Math.Min(clickY, Settings.Height - h - 1), h + 1 );
            
-            DwarfGame.World.WorldGenerationOrigin = new Vector2((int)(clickX), (int)(clickY));
+            Settings.WorldGenerationOrigin = new Vector2((int)(clickX), (int)(clickY));
         }
 
         public Dictionary<string, Color> GenerateFactionColors()
@@ -836,7 +832,7 @@ namespace DwarfCorp.GameStates
                 library.Initialize(null, new CompanyInformation());
                 for (int i = 0; i < Settings.NumCivilizations; i++)
                 {
-                    NativeCivilizations.Add(library.GenerateFaction(i, Settings.NumCivilizations));
+                    NativeCivilizations.Add(library.GenerateFaction(null, i, Settings.NumCivilizations));
                 }
                 SeedCivs(Overworld.Map, Settings.NumCivilizations, NativeCivilizations);
                 GrowCivs(Overworld.Map, 200, NativeCivilizations);
@@ -1309,9 +1305,9 @@ namespace DwarfCorp.GameStates
 
         public Rectangle GetSpawnRectangle()
         {
-            int w = (int) (DwarfGame.World.WorldSize.X * DwarfGame.World.WorldScale);
-            int h = (int) (DwarfGame.World.WorldSize.Z * DwarfGame.World.WorldScale);
-            return new Rectangle((int)DwarfGame.World.WorldGenerationOrigin.X - w, (int)DwarfGame.World.WorldGenerationOrigin.Y - h, w * 2, h * 2);
+            int w = (int) (Settings.ColonySize.X * Settings.WorldScale);
+            int h = (int) (Settings.ColonySize.Z * Settings.WorldScale);
+            return new Rectangle((int)Settings.WorldGenerationOrigin.X - w, (int)Settings.WorldGenerationOrigin.Y - h, w * 2, h * 2);
         }
 
         public void GetSpawnRectangleOnImage(ref Point a, ref Point b, ref Point c, ref Point d, ref bool valid)
@@ -1347,8 +1343,8 @@ namespace DwarfCorp.GameStates
             if(GenerationComplete)
             {
                 Rectangle imageBounds = MapPanel.GetImageBounds();
-                float scaleX = ((float)imageBounds.Width / (float)DwarfGame.World.WorldWidth);
-                float scaleY = ((float)imageBounds.Height / (float)DwarfGame.World.WorldHeight);
+                float scaleX = ((float)imageBounds.Width / (float)Settings.Width);
+                float scaleY = ((float)imageBounds.Height / (float)Settings.Height);
                 Rectangle spawnRect = GetSpawnRectangle();
                 Point a = new Point(), b = new Point(), c= new Point(), d = new Point();
                 bool valid = true;
@@ -1432,5 +1428,39 @@ namespace DwarfCorp.GameStates
         public int NumFaults { get; set; }
         public float SeaLevel { get; set; }
         public float TemperatureScale { get; set; }
+        public Point3 ColonySize { get; set; }
+        public Vector2 WorldGenerationOrigin { get; set; }
+        public float WorldScale { get; set; }
+        public Embarkment InitalEmbarkment { get; set; }
+        public Vector2 WorldOrigin { get; set; }
+        public string ExistingFile { get; set; }
+        public List<Faction> Natives { get; set; }
+
+
+
+        public static string GetRandomWorldName()
+        {
+            List<List<string>> templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.worlds);
+            return TextGenerator.GenerateRandom(templates);
+        }
+
+        public WorldSettings()
+        {
+            Width = 512;
+            Height = 512;
+            Name = GetRandomWorldName();
+            NumCivilizations = 5;
+            NumFaults = 3;
+            NumRains = 1000;
+            NumVolcanoes = 3;
+            RainfallScale = 1.0f;
+            SeaLevel = 0.17f;
+            TemperatureScale = 1.0f;
+            ColonySize = new Point3(8, 1, 8);
+            WorldScale = 2.0f;
+            InitalEmbarkment = Embarkment.DefaultEmbarkment;
+            WorldOrigin = new Vector2(Width / WorldScale, Height / WorldScale) * 0.5f;
+            ExistingFile = null;
+        }
     }
 }

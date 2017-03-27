@@ -1,4 +1,4 @@
-﻿// WallBuilder.cs
+// WallBuilder.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -32,7 +32,9 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+//using System.Diagnostics.Eventing.Reader;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -55,9 +57,11 @@ namespace DwarfCorp
         public Voxel Vox;
         public VoxelType Type;
         public CreatureAI ReservedCreature = null;
+        private WorldManager World { get; set; }
 
-        public WallBuilder(Voxel v, VoxelType t)
+        public WallBuilder(Voxel v, VoxelType t, WorldManager world)
         {
+            World = world;
             Vox = v;
             Type = t;
         }
@@ -72,7 +76,7 @@ namespace DwarfCorp
             v.Health = Type.StartingHealth;
             chunk.NotifyTotalRebuild(!v.IsInterior);
 
-            DwarfGame.World.ParticleManager.Trigger("puff", v.Position, Color.White, 20);
+            World.ParticleManager.Trigger("puff", v.Position, Color.White, 20);
 
             List<Body> components = new List<Body>();
             manager.Components.GetBodiesIntersecting(Vox.GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic);
@@ -103,19 +107,28 @@ namespace DwarfCorp
         public Faction Faction { get; set; }
         public List<WallBuilder> Designations { get; set; }
         public VoxelType CurrentVoxelType { get; set; }
+        private List<Voxel> Selected { get; set; }
+        private bool verified = false;
+            [JsonIgnore]
+        public WorldManager World { get; set; }
 
-        public Texture2D BlockTextures { get; set; }
+        [OnDeserialized]
+        public void OnDeserializing(StreamingContext ctx)
+        {
+            World = ((WorldManager)ctx.Context);
+        }
 
         public PutDesignator()
         {
             
         }
 
-        public PutDesignator(Faction faction, Texture2D blockTextures)
+        public PutDesignator(Faction faction, WorldManager world)
         {
+            World = world;
             Faction = faction;
             Designations = new List<WallBuilder>();
-            BlockTextures = blockTextures;
+            Selected = new List<Voxel>();
         }
 
         public CreatureAI GetReservedCreature(Voxel reference)
@@ -179,17 +192,20 @@ namespace DwarfCorp
         }
 
 
-        public void Render(DwarfTime gameTime, GraphicsDevice graphics, Effect effect)
+        public void Render(DwarfTime gameTime, GraphicsDevice graphics, Shader effect)
         {
+            DepthStencilState state = graphics.DepthStencilState;
+            graphics.DepthStencilState = DepthStencilState.DepthRead;
+            
             float t = (float)gameTime.TotalGameTime.TotalSeconds;
             float st = (float) Math.Sin(t * 4) * 0.5f + 0.5f;
-            effect.Parameters["xTexture"].SetValue(BlockTextures);
-            effect.Parameters["xTint"].SetValue(new Vector4(1.0f, 1.0f, 2.0f, 0.5f * st + 0.45f));
-            //Matrix oldWorld = effect.Parameters["xWorld"].GetValueMatrix();
+            effect.MainTexture = World.ChunkManager.ChunkData.Tilemap;
+            effect.LightRampTint = Color.White;
+            effect.VertexColorTint = new Color(0.1f, 0.9f, 1.0f, 0.5f * st + 0.45f);
             foreach(WallBuilder put in Designations)
             {
-                Drawer3D.DrawBox(put.Vox.GetBoundingBox(), Color.LightBlue, st * 0.01f + 0.05f);
-                effect.Parameters["xWorld"].SetValue(Matrix.CreateTranslation(put.Vox.Position));
+                //Drawer3D.DrawBox(put.Vox.GetBoundingBox(), Color.LightBlue, st * 0.01f + 0.05f);
+                effect.World = Matrix.CreateTranslation(put.Vox.Position);
 
                 foreach(EffectPass pass in effect.CurrentTechnique.Passes)
                 {
@@ -198,8 +214,54 @@ namespace DwarfCorp
                 }
             }
 
-            effect.Parameters["xTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-            effect.Parameters["xWorld"].SetValue(Matrix.Identity);
+            if (Selected == null)
+            {
+                Selected = new List<Voxel>();
+            }
+
+            if (CurrentVoxelType == null)
+            {
+                Selected.Clear();
+            }
+
+            effect.VertexColorTint = verified ? new Color(0.0f, 1.0f, 0.0f, 0.5f * st + 0.45f) : new Color(1.0f, 0.0f, 0.0f, 0.5f * st + 0.45f);
+            foreach (Voxel voxel in Selected)
+            {
+                effect.World = Matrix.CreateTranslation(voxel.Position);
+
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    VoxelLibrary.GetPrimitive(CurrentVoxelType).Render(graphics);
+                }
+            }
+
+            effect.LightRampTint = Color.White;
+            effect.VertexColorTint = Color.White;
+            effect.World = Matrix.Identity;
+            graphics.DepthStencilState = state;
+        }
+
+        public void VoxelDragged(List<Voxel> refs)
+        {
+            if (CurrentVoxelType == null)
+                return;
+            verified = Verify(refs, CurrentVoxelType.ResourceToRelease);
+
+            if (!verified)
+            {
+                World.ShowToolPopup("Can't build this! Need at least " + refs.Count + " " + ResourceLibrary.Resources[CurrentVoxelType.ResourceToRelease].ResourceName + ".");
+            }
+            else
+            {
+                World.ShowToolPopup("Release to build.");
+            }
+
+            Selected.Clear();
+            foreach (Voxel voxel in refs)
+            {
+                Selected.Add(new Voxel(voxel));
+            }
         }
 
         public bool Verify(List<Voxel> refs, ResourceLibrary.ResourceType type)
@@ -211,17 +273,23 @@ namespace DwarfCorp
 
         public void VoxelsSelected(List<Voxel> refs, InputManager.MouseButton button)
         {
+            if (Faction == null)
+            {
+                Faction = World.PlayerFaction;
+            }
+
             if(CurrentVoxelType == null)
             {
                 return;
             }
+            Selected.Clear();
             switch(button)
             {
                 case (InputManager.MouseButton.Left):
                 {
                     if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Build).Count == 0)
                     {
-                        DwarfGame.World.ShowTooltip("None of the selected units can build walls.");
+                        World.ShowToolPopup("None of the selected units can build walls.");
                         return;
                     }
                     List<Task> assignments = new List<Task>();
@@ -229,17 +297,17 @@ namespace DwarfCorp
 
                     if (!Verify(validRefs, CurrentVoxelType.ResourceToRelease))
                     {
-                        DwarfGame.World.ShowTooltip("Can't build this! Need at least " + validRefs.Count + " " + ResourceLibrary.Resources[CurrentVoxelType.ResourceToRelease].ResourceName + ".");
+                        World.ShowToolPopup("Can't build this! Need at least " + validRefs.Count + " " + ResourceLibrary.Resources[CurrentVoxelType.ResourceToRelease].ResourceName + ".");
                         return;
                     }
 
                     foreach (Voxel r in validRefs)
                     {
-                        AddDesignation(new WallBuilder(r, CurrentVoxelType));
+                        AddDesignation(new WallBuilder(r, CurrentVoxelType, World));
                         assignments.Add(new BuildVoxelTask(r, CurrentVoxelType));
                     }
 
-                    TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(DwarfGame.World.Master.SelectedMinions, GameMaster.ToolMode.Build));
+                    TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(World.Master.SelectedMinions, GameMaster.ToolMode.Build));
 
                     break;
                 }

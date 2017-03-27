@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -148,6 +148,12 @@ namespace DwarfCorp
                 return;
             }
 
+            // If we have no data objects at all and we aren't going to be adding new ones there's no point in running
+            // any more code here.  The only way to get Data.Count to be zero is after processing AddRemove in the code block
+            // which means numActiveInstances will properly be set to zero.  The moment an Addition happens we'll pass this check
+            // and start outputting again.
+            if (Data.Count + Additions.Count == 0) return;
+
             DeleteNulls();
             sortTimer.Update(time);
 
@@ -157,7 +163,9 @@ namespace DwarfCorp
                 sortTimer.Reset(sortTimer.TargetTimeSeconds);
             }
 
-            AddRemove();
+            // There's no reason to go into this function and deal with the Mutex if we have nothing to do.
+            if (Additions.Count + Removals.Count > 0)
+                AddRemove();
 
 
             if (instanceVertexes == null)
@@ -179,7 +187,7 @@ namespace DwarfCorp
         }
 
 
-        public void Render(GraphicsDevice graphics, Effect effect, Camera cam, bool rebuildVertices, string mode)
+        public void Render(GraphicsDevice graphics, Shader effect, Camera cam, bool rebuildVertices, string mode)
         {
             Camera = cam;
 
@@ -194,8 +202,8 @@ namespace DwarfCorp
                 graphics.RasterizerState = rasterState;
 
                 effect.CurrentTechnique = effect.Techniques[mode];
-                effect.Parameters["xEnableLighting"].SetValue(1);
-                effect.Parameters["xColorTint"].SetValue(Vector4.One);
+                effect.EnableLighting = true;
+                effect.VertexColorTint = Color.White;
                 if (Model.VertexBuffer == null || Model.IndexBuffer == null)
                 {
                     Model.ResetBuffer(graphics);
@@ -211,8 +219,8 @@ namespace DwarfCorp
                 BlendState blendState = graphics.BlendState;
                 graphics.BlendState = BlendMode;
 
-                effect.Parameters["xTexture"].SetValue(Texture);
-                effect.Parameters["xTint"].SetValue(Vector4.One);
+                effect.MainTexture = Texture;
+                effect.LightRampTint = Color.White;
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
@@ -238,29 +246,29 @@ namespace DwarfCorp
                      */
                 }
 
-                effect.CurrentTechnique = effect.Techniques["Textured"];
-                effect.Parameters["xWorld"].SetValue(Matrix.Identity);
+                effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
+                effect.World = Matrix.Identity;
                 graphics.BlendState = blendState;
             }
         }
 
 
-        public void Render(GraphicsDevice graphics, Effect effect, Camera cam, bool rebuildVertices)
+        public void Render(GraphicsDevice graphics, Shader effect, Camera cam, bool rebuildVertices)
         {
-            Render(graphics, effect, cam, rebuildVertices, "Instanced");
+            Render(graphics, effect, cam, rebuildVertices, Shader.Technique.Instanced);
         }
 
-        public void RenderSelectionBuffer(GraphicsDevice graphics, Effect effect, Camera cam, bool rebuildVertices)
+        public void RenderSelectionBuffer(GraphicsDevice graphics, Shader effect, Camera cam, bool rebuildVertices)
         {
             if (Model == null || Model.MaxVertex < 3 || numActiveInstances < 1)
             {
                 return;
             }
 
-            effect.Parameters["xTexture"].SetValue(Texture);
-            effect.Parameters["xTint"].SetValue(Vector4.One);
-            effect.Parameters["xColorTint"].SetValue(Vector4.One);
-            effect.CurrentTechnique = effect.Techniques["Instanced_SelectionBuffer"];
+            effect.MainTexture = Texture;
+            effect.LightRampTint = Color.White;
+            effect.VertexColorTint = Color.White;
+            effect.CurrentTechnique = effect.Techniques[Shader.Technique.SelectionBufferInstanced];
 
             graphics.SetVertexBuffers(Model.VertexBuffer, new VertexBufferBinding(instanceBuffer, 0, 1));
             graphics.Indices = Model.IndexBuffer;

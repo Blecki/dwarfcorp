@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,11 +13,14 @@ namespace DwarfCorp.NewGui
         public Point ItemSpacing = new Point(2, 2);
         public Point SizeToGrid = new Point(1, 1);
 
-        private GridPanel Panel = null;
-        
         public IEnumerable<Widget> ItemSource;
 
         public Scale9Corners Corners = Scale9Corners.All;
+
+        public IconTray()
+        {
+            Border = "tray-border";
+        }
 
         public override Rectangle GetDrawableInterior()
         {
@@ -27,7 +30,10 @@ namespace DwarfCorp.NewGui
 
         public override void Construct()
         {
-            Border = "tray-border";
+            if (ItemSource == null)
+            {
+                ItemSource = new List<Widget>();
+            }
             InteriorMargin = new Margin(0,0,0,0);
             if (Corners.HasFlag(Scale9Corners.Top)) InteriorMargin.Top = 12;
             if (Corners.HasFlag(Scale9Corners.Bottom)) InteriorMargin.Bottom = 12;
@@ -41,28 +47,44 @@ namespace DwarfCorp.NewGui
             MaximumSize.Y = InteriorMargin.Top + InteriorMargin.Bottom + (SizeToGrid.Y * ItemSize.Y) + ((SizeToGrid.Y - 1) * ItemSpacing.Y);
             MinimumSize = MaximumSize;
 
-            Panel = AddChild(new GridPanel
-                {
-                    AutoLayout = Gum.AutoLayout.DockFill,
-                    ItemSize = ItemSize,
-                    ItemSpacing = ItemSpacing
-                }) as GridPanel;
+            Rect.Width = MinimumSize.X;
+            Rect.Height = MinimumSize.Y;
 
             foreach (var item in ItemSource)
-                Panel.AddChild(item);
+                AddChild(item);
         }
 
         public override void Layout()
         {
             Root.SafeCall(OnLayout, this);
-            Panel.Rect = GetDrawableInterior();
-            Panel.Layout();
+            var rect = GetDrawableInterior();
+
+            var pos = new Point(rect.X, rect.Y);
+            foreach (var child in EnumerateChildren())
+            {
+                child.Rect = new Rectangle(pos.X, pos.Y, ItemSize.X, ItemSize.Y);
+                pos.X += ItemSize.X + ItemSpacing.X;
+                if (pos.X > rect.Right - ItemSize.X)
+                {
+                    pos.X = rect.X;
+                    pos.Y += ItemSize.Y + ItemSpacing.Y;
+                }
+                child.Layout();
+            }
+
             Invalidate();   
         }
 
         protected override Gum.Mesh Redraw()
         {
-            return Gum.Mesh.CreateScale9Background(Rect, Root.GetTileSheet(Border), Corners);
+            if (Border != null)
+            {
+                return Gum.Mesh.CreateScale9Background(Rect, Root.GetTileSheet(Border), Corners);
+            }
+            else
+            {
+                return base.Redraw();
+            }
         }
     }
 }

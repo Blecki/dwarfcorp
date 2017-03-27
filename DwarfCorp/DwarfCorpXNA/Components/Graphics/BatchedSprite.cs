@@ -1,4 +1,4 @@
-﻿// BatchedSprite.cs
+// BatchedSprite.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -44,7 +44,7 @@ namespace DwarfCorp
     /// This component represents a list of several billboards which are efficiently drawn through state batching.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class BatchedSprite : Sprite
+    public class BatchedSprite : Sprite, IUpdateableComponent
     {
         public List<Matrix> LocalTransforms { get; set; }
         public List<float> Rotations { get; set; }
@@ -123,12 +123,10 @@ namespace DwarfCorp
             Primitive = new BatchBillboardPrimitive(graphicsDevice, SpriteSheet.GetTexture(), Width, Height, Frame, 1.0f, 1.0f, false, LocalTransforms, Tints, Colors);
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if(LightsWithVoxels)
-            {
                 base.Update(gameTime, chunks, camera);
-            }
         }
 
         public bool ShouldDraw(Camera camera)
@@ -138,12 +136,12 @@ namespace DwarfCorp
             return (diff).LengthSquared() < CullDistance;
         }
 
-        public override void Render(DwarfTime gameTime,
+        public new void Render(DwarfTime gameTime,
             ChunkManager chunks,
             Camera camera,
             SpriteBatch spriteBatch,
             GraphicsDevice graphicsDevice,
-            Effect effect, bool renderingForWater)
+            Shader effect, bool renderingForWater)
         {
             if(Primitive == null)
             {
@@ -155,16 +153,16 @@ namespace DwarfCorp
             {
                 if(!LightsWithVoxels)
                 {
-                    effect.Parameters["xTint"].SetValue(new Vector4(1, 1, 1, 1));
+                    effect.LightRampTint = Color.White;
                 }
                 else
                 {
-                    effect.Parameters["xTint"].SetValue(Tint.ToVector4());
+                    effect.LightRampTint = Tint;
                 }
 
                 RasterizerState r = graphicsDevice.RasterizerState;
                 graphicsDevice.RasterizerState = rasterState;
-                effect.Parameters["xTexture"].SetValue(SpriteSheet.GetTexture());
+                effect.MainTexture = SpriteSheet.GetTexture();
 
                 DepthStencilState origDepthStencil = graphicsDevice.DepthStencilState;
                 DepthStencilState newDepthStencil = DepthStencilState.DepthRead;
@@ -172,7 +170,7 @@ namespace DwarfCorp
 
 
                 //Matrix oldWorld = effect.Parameters["xWorld"].GetValueMatrix();
-                effect.Parameters["xWorld"].SetValue(GlobalTransform);
+                effect.World = GlobalTransform;
 
                 foreach(EffectPass pass in effect.CurrentTechnique.Passes)
                 {
@@ -180,7 +178,7 @@ namespace DwarfCorp
                     Primitive.Render(graphicsDevice);
                 }
 
-                effect.Parameters["xWorld"].SetValue(Matrix.Identity);
+                effect.World = Matrix.Identity;
 
                 if(origDepthStencil != null)
                 {

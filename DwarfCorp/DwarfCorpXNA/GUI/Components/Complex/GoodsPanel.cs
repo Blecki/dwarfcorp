@@ -1,4 +1,4 @@
-﻿// GoodsPanel.cs
+// GoodsPanel.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -54,7 +54,12 @@ namespace DwarfCorp
 
         public ItemSelector ShoppingCart { get; set; }
         public ItemSelector SellCart { get; set; }
+        public WorldManager World { get; set; }
 
+        public GoodsPanel(DwarfGUI gui, GUIComponent parent, WorldManager world) : base(gui, parent)
+        {
+            World = world;
+        }
 
         public List<GItem> GetResources(float priceMultiplier)
         {
@@ -81,7 +86,7 @@ namespace DwarfCorp
 
             GridLayout buyBoxLayout = new GridLayout(GUI, buyTab, 10, 4);
 
-            BuySelector = new ItemSelector(GUI, buyBoxLayout, "Items", false, false)
+            BuySelector = new ItemSelector(GUI, buyBoxLayout, World, "Items", false, false)
             {
                 Columns = new List<ItemSelector.Column>()
                 {
@@ -100,7 +105,7 @@ namespace DwarfCorp
             BuySelector.ReCreateItems();
 
 
-            ShoppingCart = new ItemSelector(GUI, buyBoxLayout, "Order", false, false)
+            ShoppingCart = new ItemSelector(GUI, buyBoxLayout, World, "Order", false, false)
             {
                 Columns = new List<ItemSelector.Column>()
                 {
@@ -230,7 +235,7 @@ namespace DwarfCorp
 
             GridLayout sellBoxLayout = new GridLayout(GUI, sellTab, 10, 4);
 
-            SellSelector = new ItemSelector(GUI, sellBoxLayout, "Items", false, false)
+            SellSelector = new ItemSelector(GUI, sellBoxLayout, World, "Items", false, false)
             {
                 Columns = new List<ItemSelector.Column>()
                 {
@@ -250,7 +255,7 @@ namespace DwarfCorp
             SellSelector.ReCreateItems();
 
 
-            SellCart = new ItemSelector(GUI, sellBoxLayout, "Order", false, false)
+            SellCart = new ItemSelector(GUI, sellBoxLayout, World, "Order", false, false)
             {
                 Columns = new List<ItemSelector.Column>()
                 {
@@ -474,13 +479,16 @@ namespace DwarfCorp
             if (handler != null) handler(e);
         }
 
-        public TradeDialog(DwarfGUI gui, GUIComponent parent, Faction otherFaction, List<ResourceAmount> resources, WindowButtons buttons)
+        private WorldManager World { get; set; }
+
+        public TradeDialog(DwarfGUI gui, GUIComponent parent, WorldManager world,
+            Faction otherFaction, List<ResourceAmount> resources, WindowButtons buttons)
             : base(gui, parent,buttons)
         {
-            
+            World = World;
             IsResizeable = false;
             IsDraggable = false;
-            TradePanel = new TradePanel(GUI, this, DwarfGame.World.PlayerFaction, otherFaction, resources)
+            TradePanel = new TradePanel(GUI, this, world.PlayerFaction, otherFaction, resources)
             {
                 WidthSizeMode = SizeMode.Fit,
                 HeightSizeMode = SizeMode.Fit
@@ -502,7 +510,7 @@ namespace DwarfCorp
 
         public static TradeDialog Popup(DwarfGUI gui, int w, int h, GUIComponent parent, int x, int y, WindowButtons buttons, Faction faction, List<ResourceAmount> resources)
         {
-            TradeDialog d = new TradeDialog(gui, parent, faction, resources, buttons)
+            TradeDialog d = new TradeDialog(gui, parent, faction.World, faction, resources, buttons)
             {
                 LocalBounds = new Rectangle(x, y, w, h),
                 MinWidth = w,
@@ -545,6 +553,14 @@ namespace DwarfCorp
 
         public delegate void OnCancel();
         public event OnCancel OnCanceled;
+
+        private WorldManager World { get; set; }
+
+        public TradePanel(DwarfGUI gui, GUIComponent parent, WorldManager world) :
+            base(gui, parent)
+        {
+            World = world;
+        }
 
         protected virtual void InvokeCancel()
         {
@@ -646,7 +662,7 @@ namespace DwarfCorp
         {
             if (Faction.ComputeStockpileSpace() < MyGoods.ComputeSpace() + TheirTrades.ComputeSpace())
             {
-                DwarfGame.World.ShowTooltip("Not enough stockpile space!");
+                World.ShowToolPopup("Not enough stockpile space!");
                 return;
             }
 
@@ -656,7 +672,7 @@ namespace DwarfCorp
 
         public void CreateSelector()
         {
-            TheirGoods = new ItemSelector(GUI, Layout, "Their Items", true, false)
+            TheirGoods = new ItemSelector(GUI, Layout, World, "Their Items", true, false)
             {
                 Columns = new List<ItemSelector.Column>()
                 {
@@ -681,7 +697,7 @@ namespace DwarfCorp
             TheirGoods.Items.AddRange(GetResources(Resources));
             TheirGoods.ReCreateItems();
 
-            TheirTrades = new ItemSelector(GUI, Layout, "They Offer", true, true)
+            TheirTrades = new ItemSelector(GUI, Layout, World, "They Offer", true, true)
             {
                 Columns = new List<ItemSelector.Column>()
                 {
@@ -704,7 +720,7 @@ namespace DwarfCorp
 
             Layout.SetComponentPosition(TheirTrades, 1, 0, 1, 9);
 
-            MyTrades = new ItemSelector(GUI, Layout, "We Offer", true, true)
+            MyTrades = new ItemSelector(GUI, Layout, World, "We Offer", true, true)
             {
                 Columns = new List<ItemSelector.Column>()
                 {
@@ -727,7 +743,7 @@ namespace DwarfCorp
             MyTrades.ReCreateItems();
             Layout.SetComponentPosition(MyTrades, 2, 0, 1, 9);
 
-            MyGoods = new ItemSelector(GUI, Layout, "Our Items", true, false)
+            MyGoods = new ItemSelector(GUI, Layout, World, "Our Items", true, false)
             {
                 Columns = new List<ItemSelector.Column>()
                 {
@@ -801,6 +817,7 @@ namespace DwarfCorp
         public TradePanel(DwarfGUI gui, GUIComponent parent, Faction faction, Faction otherFaction, List<ResourceAmount> resources)
             : base(gui, parent)
         {
+            World = faction.World;
             Resources = resources;
             GoodsSent = new List<ResourceAmount>();
             GoodsReceived = new List<ResourceAmount>();

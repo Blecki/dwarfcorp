@@ -1,4 +1,4 @@
-﻿// GodModeTool.cs
+// GodModeTool.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -66,6 +66,11 @@ namespace DwarfCorp
 
                 Player.VoxSelector.SelectionType = GetSelectionType(value);
                 SelectorPanel.IsVisible = value;
+
+                if (!value)
+                {
+                    SelectorBox.Kill();
+                }
             }
         }
 
@@ -76,7 +81,7 @@ namespace DwarfCorp
 
         private VoxelSelectionType GetSelectionType(bool active)
         {
-            return active ? VoxelSelectionType.SelectEmpty : orignalSelection;
+            return active ? GetSelectionTypeBySelectionBoxValue(SelectorBox.CurrentValue) : orignalSelection;
         }
 
 
@@ -87,7 +92,7 @@ namespace DwarfCorp
 
         public override void OnEnd()
         {
-
+            IsActive = false;
         }
 
         public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
@@ -103,7 +108,7 @@ namespace DwarfCorp
             
             SelectorPanel = new Window(GUI, gui.RootComponent)
             {
-                LocalBounds = new Rectangle(200, 200, 300, 200)
+                LocalBounds = new Rectangle(5, 5, 300, 200)
             };
 
             Label label = new Label(GUI, SelectorPanel, "Cheat Mode!", GUI.DefaultFont)
@@ -118,7 +123,7 @@ namespace DwarfCorp
             };
 
             IsActive = false;
-            Chunks = DwarfGame.World.ChunkManager;
+            Chunks = Player.World.ChunkManager;
 
 
             foreach(string s in RoomLibrary.GetRoomTypes())
@@ -156,7 +161,7 @@ namespace DwarfCorp
             tradeButton.OnClicked += () =>
             {
                 Faction toSend = null;
-                foreach (var faction in DwarfGame.World.ComponentManager.Factions.Factions)
+                foreach (var faction in Player.World.ComponentManager.Factions.Factions)
                 {
                     if (faction.Value.Race.IsIntelligent && faction.Value.Race.IsNative)
                     {
@@ -165,7 +170,7 @@ namespace DwarfCorp
                     }
                 }
                 if (toSend == null) return;
-                DwarfGame.World.ComponentManager.Diplomacy.SendTradeEnvoy(toSend);
+                Player.World.ComponentManager.Diplomacy.SendTradeEnvoy(toSend, Player.World);
             };
 
             SelectorPanel.IsVisible = false;
@@ -177,16 +182,21 @@ namespace DwarfCorp
             SelectorBox.CleanUp();
         }
 
-        private void SelectorBox_OnSelectionModified(string arg)
+        private VoxelSelectionType GetSelectionTypeBySelectionBoxValue(string arg)
         {
-            if(arg == "Delete Block" || arg.Contains("Build") || arg == "Kill Block")
+            if (arg == "Delete Block" || arg.Contains("Build") || arg == "Kill Block")
             {
-                Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+                return VoxelSelectionType.SelectFilled;
             }
             else
             {
-                Player.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+                return VoxelSelectionType.SelectEmpty;
             }
+        }
+
+        private void SelectorBox_OnSelectionModified(string arg)
+        {
+            Player.VoxSelector.SelectionType = GetSelectionTypeBySelectionBoxValue(arg);
         }
 
         public override void OnVoxelsSelected(List<Voxel> refs, InputManager.MouseButton button)
@@ -207,7 +217,7 @@ namespace DwarfCorp
             if(command.Contains("Build/"))
             {
                 string type = command.Substring(6);
-                BuildRoomOrder des = new BuildRoomOrder(RoomLibrary.CreateRoom(Player.Faction, type, refs, false), Player.Faction);
+                BuildRoomOrder des = new BuildRoomOrder(RoomLibrary.CreateRoom(Player.Faction, type, refs, false, Player.World), Player.Faction, Player.World);
                 Player.Faction.RoomBuilder.BuildDesignations.Add(des);
                 Player.Faction.RoomBuilder.DesignatedRooms.Add(des.ToBuild);
                 des.Build();
@@ -236,8 +246,8 @@ namespace DwarfCorp
 
                         if (type == "Magic")
                         {
-                            new VoxelListener(DwarfGame.World.ComponentManager, DwarfGame.World.ComponentManager.RootComponent,
-                                DwarfGame.World.ChunkManager, vox)
+                            new VoxelListener(Player.World.ComponentManager, Player.World.ComponentManager.RootComponent,
+                                Player.World.ChunkManager, vox)
                             {
                                 DestroyOnTimer = true,
                                 DestroyTimer = new Timer(5.0f + MathFunctions.Rand(-0.5f, 0.5f), true)
@@ -251,16 +261,12 @@ namespace DwarfCorp
                     {
                         case "Delete Block":
                         {
-                            DwarfGame.World.Master.Faction.OnVoxelDestroyed(vox);
+                            Player.World.Master.Faction.OnVoxelDestroyed(vox);
                             vox.Chunk.NotifyDestroyed(new Point3(vox.GridPosition));
                             vox.Type = VoxelType.TypeList[0];
                             vox.Water = new WaterCell();
 
-                            if(!chunksToRebuild.Contains(vox.ChunkID))
-                            {
-                                Chunks.ChunkData.ChunkMap[vox.ChunkID].NotifyTotalRebuild(vox.IsEmpty && !vox.IsInterior);
-                            }
-                            chunksToRebuild.Add(vox.ChunkID);
+                            vox.Chunk.Manager.KilledVoxels.Add(vox);
                         }
                             break;
                         case "Kill Block":
@@ -277,7 +283,7 @@ namespace DwarfCorp
                         {
                             if (vox.IsEmpty)
                             {
-                                vox.WaterLevel = 8;
+                                vox.WaterLevel = WaterManager.maxWaterLevel;
                                 vox.Chunk.Data.Water[vox.Index].Type = LiquidType.Water;
                                 chunksToRebuild.Add(vox.ChunkID);
                             }
@@ -288,7 +294,7 @@ namespace DwarfCorp
                             Vector3 gridPos = vox.GridPosition;
                             if (vox.IsEmpty)
                             {
-                                vox.WaterLevel = 8;
+                                vox.WaterLevel = WaterManager.maxWaterLevel;
                                 vox.Chunk.Data.Water[vox.Index].Type = LiquidType.Lava;
                                 chunksToRebuild.Add(vox.ChunkID);
                             }
@@ -334,13 +340,13 @@ namespace DwarfCorp
             if (Player.IsCameraRotationModeActive())
             {
                 Player.VoxSelector.Enabled = false;
-                DwarfGame.World.SetMouse(null);
+                Player.World.SetMouse(null);
                 return;
             }
 
             Player.VoxSelector.Enabled = true;
             Player.BodySelector.Enabled = false;
-            DwarfGame.World.SetMouse(DwarfGame.World.MousePointer);
+            Player.World.SetMouse(Player.World.MousePointer);
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)

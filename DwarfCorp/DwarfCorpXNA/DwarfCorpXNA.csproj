@@ -42,19 +42,20 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\x86\Debug</OutputPath>
-    <DefineConstants>TRACE;DEBUG;WINDOWS XNA_BUILD</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;WINDOWS XNA_BUILD GEMXNA</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <PlatformTarget>x86</PlatformTarget>
     <XnaCompressContent>True</XnaCompressContent>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\x86\Release</OutputPath>
-    <DefineConstants>TRACE;WINDOWS XNA_BUILD</DefineConstants>
+    <DefineConstants>TRACE;WINDOWS XNA_BUILD GEMXNA</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
@@ -63,6 +64,7 @@
     <XnaCompressContent>true</XnaCompressContent>
     <DocumentationFile>bin\x86\Release\DwarfCorp.XML</DocumentationFile>
     <NoWarn>1591</NoWarn>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>DwarfCorp.Program</StartupObject>
@@ -156,11 +158,19 @@
     <Compile Include="Components\Graphics\Tinter.cs" />
     <Compile Include="Components\GUI\MinimapIcon.cs" />
     <Compile Include="Components\GUI\WorldGUIObject.cs" />
+    <Compile Include="Components\IRenderableComponent.cs" />
     <Compile Include="Components\Physics\Flammable.cs" />
     <Compile Include="Components\Physics\Physics.cs" />
     <Compile Include="Components\Systems\ComponentManager.cs" />
     <Compile Include="Components\Systems\Message.cs" />
+    <Compile Include="Components\IUpdateableComponent.cs" />
     <Compile Include="ControlSettings.cs" />
+    <Compile Include="DeProfiler.cs" />
+    <Compile Include="Diplomacy\DialogueTree.cs" />
+    <Compile Include="Diplomacy\DialogueTreeTypes.cs" />
+    <Compile Include="Diplomacy\DialogueState.cs" />
+    <Compile Include="Diplomacy\ITradeEntity.cs" />
+    <Compile Include="Diplomacy\TradeTransaction.cs" />
     <Compile Include="DwarfGame.cs" />
     <Compile Include="Entities\Animals\Bat.cs" />
     <Compile Include="Entities\Animals\Bird.cs" />
@@ -252,6 +262,7 @@
     <Compile Include="Graphics\Effects\BloomSettings.cs" />
     <Compile Include="Graphics\Effects\FXAA.cs" />
     <Compile Include="Graphics\Effects\ParticleManager.cs" />
+    <Compile Include="Graphics\Effects\Shader.cs" />
     <Compile Include="Graphics\Effects\ShadowRenderer.cs" />
     <Compile Include="Graphics\Effects\SkyRenderer.cs" />
     <Compile Include="Graphics\Instancing\FixedInstanceArray.cs" />
@@ -299,7 +310,6 @@
     <Compile Include="GUI\Components\Complex\ActDisplay.cs" />
     <Compile Include="GUI\Components\Complex\AIDebugger.cs" />
     <Compile Include="GUI\Components\Complex\ApplicationPanel.cs" />
-    <Compile Include="GUI\Components\Complex\BuildMenu.cs" />
     <Compile Include="GUI\Components\Complex\CapitalPanel.cs" />
     <Compile Include="GUI\Components\Complex\ColorDialog.cs" />
     <Compile Include="GUI\Components\Complex\ColorSelector.cs" />
@@ -327,13 +337,63 @@
     <Compile Include="GUI\Layouts\Layout.cs" />
     <Compile Include="GUI\Skins\GUISkin.cs" />
     <Compile Include="GUI\ToolTipManager.cs" />
+    <Compile Include="Gum\Enums.cs" />
+    <Compile Include="Gum\Geo\Basics.cs" />
+    <Compile Include="Gum\Geo\CreateQuad.cs" />
+    <Compile Include="Gum\Geo\CreateScale9Background.cs" />
+    <Compile Include="Gum\Geo\CreateStringMesh.cs" />
+    <Compile Include="Gum\Geo\CreateTabPanelBackground.cs" />
+    <Compile Include="Gum\Geo\ITileSheet.cs" />
+    <Compile Include="Gum\Geo\Mesh.cs" />
+    <Compile Include="Gum\Geo\TileSheet.cs" />
+    <Compile Include="Gum\Geo\VariableWidthFont.cs" />
+    <Compile Include="Gum\HelperExtensions.cs" />
+    <Compile Include="Gum\InputEventArgs.cs" />
+    <Compile Include="Gum\Input\Input.cs" />
+    <Compile Include="Gum\Input\InputMapper.cs" />
+    <Compile Include="Gum\Input\MessageFilter.cs" />
+    <Compile Include="Gum\JsonTileSheet.cs" />
+    <Compile Include="Gum\Layout.cs" />
+    <Compile Include="Gum\Margin.cs" />
+    <Compile Include="Gum\MousePointer.cs" />
+    <Compile Include="Gum\RectangleExtension.cs" />
+    <Compile Include="Gum\RenderData.cs" />
+    <Compile Include="Gum\Root.cs" />
+    <Compile Include="Gum\TextFieldLogic.cs" />
+    <Compile Include="Gum\TextureAtlasCompiler.cs" />
+    <Compile Include="Gum\TileReference.cs" />
+    <Compile Include="Gum\Widget.cs" />
+    <Compile Include="Gum\Widgets\Button.cs" />
+    <Compile Include="Gum\Widgets\CheckBox.cs" />
+    <Compile Include="Gum\Widgets\ComboBox.cs" />
+    <Compile Include="Gum\Widgets\EditableTextField.cs" />
+    <Compile Include="Gum\Widgets\HorizontalFloatSlider.cs" />
+    <Compile Include="Gum\Widgets\HorizontalSlider.cs" />
+    <Compile Include="Gum\Widgets\ListView.cs" />
+    <Compile Include="Gum\Widgets\TabPanel.cs" />
+    <Compile Include="Gum\Widgets\TextGrid.cs" />
+    <Compile Include="Gum\Widgets\VerticalScrollBar.cs" />
+    <Compile Include="Gum\Widgets\WidgetListView.cs" />
     <Compile Include="LanguageGenerator\Language.cs" />
     <Compile Include="LanguageGenerator\TextAtom.cs" />
     <Compile Include="LanguageGenerator\TextGenerator.cs" />
+    <Compile Include="NativeInjector.cs" />
     <Compile Include="NewGui\AnnouncementPopup.cs" />
+    <Compile Include="NewGui\BuildCraftInfo.cs" />
     <Compile Include="NewGui\BuildMenu.cs" />
+    <Compile Include="NewGui\BuildWallInfo.cs" />
+    <Compile Include="NewGui\BuildRoomInfo.cs" />
     <Compile Include="NewGui\FramedIcon.cs" />
     <Compile Include="NewGui\CompanyLogo.cs" />
+    <Compile Include="NewGui\PlantInfo.cs" />
+    <Compile Include="NewGui\SpellInfo.cs" />
+    <Compile Include="NewGui\ToggleTray.cs" />
+    <Compile Include="NewGui\MoneyEditor.cs" />
+    <Compile Include="NewGui\TwoColumns.cs" />
+    <Compile Include="NewGui\TradePanel.cs" />
+    <Compile Include="NewGui\ResourceColumns.cs" />
+    <Compile Include="NewGui\ToolPopup.cs" />
+    <Compile Include="NewGui\ToolTray.cs" />
     <Compile Include="NewGui\IconTray.cs" />
     <Compile Include="NewGui\GridChooser.cs" />
     <Compile Include="NewGui\GridPanel.cs" />
@@ -395,6 +455,7 @@
     <Compile Include="Scripting\ControlFlow\Not.cs" />
     <Compile Include="Scripting\ControlFlow\Parallel.cs" />
     <Compile Include="Scripting\ControlFlow\Select.cs" />
+    <Compile Include="Scripting\ControlFlow\SeqComp.cs" />
     <Compile Include="Scripting\ControlFlow\Sequence.cs" />
     <Compile Include="Scripting\ControlFlow\Wait.cs" />
     <Compile Include="Scripting\ControlFlow\WhileLoop.cs" />
@@ -517,9 +578,8 @@
     <Compile Include="Tools\Datastructures\CollisionManager.cs" />
     <Compile Include="Tools\Datastructures\Datastructures.cs" />
     <Compile Include="Tools\Datastructures\IBoundedObject.cs" />
+    <Compile Include="Tools\Datastructures\IntegerOctTree.cs" />
     <Compile Include="Tools\Datastructures\MinBag.cs" />
-    <Compile Include="Tools\Datastructures\Octree.cs" />
-    <Compile Include="Tools\Datastructures\OctreeNode.cs" />
     <Compile Include="Tools\Datastructures\PriorityQueue.cs" />
     <Compile Include="Tools\Datastructures\ThreadSafeRandom.cs" />
     <Compile Include="Tools\Extensions.cs" />
@@ -595,10 +655,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\gemgui\Gum\XnaGum.csproj">
-      <Project>{0d1fcdab-10c5-4c3c-985f-c9082daa53a5}</Project>
-      <Name>XnaGum</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DwarfCorpContent\DwarfCorpXNAContent.contentproj">
       <Project>{D48F9E36-1F42-4633-B745-8C659D9550D4}</Project>
       <Name>DwarfCorpXNAContent</Name>
@@ -612,6 +668,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <PropertyGroup>

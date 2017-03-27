@@ -1,4 +1,4 @@
-﻿// BoxDrawCommand3D.cs
+// BoxDrawCommand3D.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -136,12 +136,12 @@ namespace DwarfCorp
             }
         }
 
-        public override void Render(GraphicsDevice device, Effect effect)
+        public override void Render(GraphicsDevice device, Shader effect)
         {
             Matrix w = Matrix.Identity;
 
-            effect.Parameters["xWorld"].SetValue(w);
-            effect.CurrentTechnique = effect.Techniques["Untextured"];
+            effect.World = w;
+            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Untextured];
             for(int i = 0; i < _stripVertices.Count; i++)
             {
                 foreach(EffectPass pass in effect.CurrentTechnique.Passes)
@@ -151,7 +151,7 @@ namespace DwarfCorp
                     device.DrawUserPrimitives(PrimitiveType.TriangleStrip, _stripVertices[i], 0, _stripTriangleCounts[i]);
                 }
             }
-            effect.CurrentTechnique = effect.Techniques["Textured"];
+            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
         }
     }
 
@@ -190,8 +190,8 @@ namespace DwarfCorp
             DrawAccumlatedStrips = false;
             if (VertBuffer == null)
             {
-                VertBuffer = new VertexBuffer(DwarfGame.World.GUI.Graphics, VertexPositionColor.VertexDeclaration, 4, BufferUsage.None);
-                IndexBuffer = new IndexBuffer(DwarfGame.World.GUI.Graphics, typeof(short), 6, BufferUsage.None);
+                VertBuffer = new VertexBuffer(GameState.Game.GraphicsDevice, VertexPositionColor.VertexDeclaration, 4, BufferUsage.None);
+                IndexBuffer = new IndexBuffer(GameState.Game.GraphicsDevice, typeof(short), 6, BufferUsage.None);
                 VertBuffer.SetData(TopFace);
                 IndexBuffer.SetData(Idx);
             }
@@ -200,12 +200,12 @@ namespace DwarfCorp
         }
 
 
-        public override void Render(GraphicsDevice device, Effect effect)
+        public override void Render(GraphicsDevice device, Shader effect)
         {
 
-            effect.Parameters["xWorld"].SetValue(PlaneTransform);
-            effect.Parameters["xTint"].SetValue(ColorToDraw.ToVector4());
-            effect.CurrentTechnique = effect.Techniques["Untextured"];
+            effect.World = PlaneTransform;
+            effect.LightRampTint = ColorToDraw;
+            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Untextured];
             device.SetVertexBuffer(VertBuffer);
             device.Indices = IndexBuffer;
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
@@ -213,7 +213,7 @@ namespace DwarfCorp
                 pass.Apply();
                 device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 4, 0, 2);
             }
-            effect.CurrentTechnique = effect.Techniques["Textured"];
+            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
         }
 
         public override void AccumulateStrips(LineStrip vertices)

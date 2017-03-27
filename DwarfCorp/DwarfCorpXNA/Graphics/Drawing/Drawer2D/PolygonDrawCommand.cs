@@ -1,4 +1,4 @@
-﻿// PolygonDrawCommand.cs
+// PolygonDrawCommand.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -64,16 +64,16 @@ namespace DwarfCorp
             LineWidth = lineWidth;
         }
 
-        public PolygonDrawCommand(List<Vector3> points, bool isClosed, Color lineColor, int lineWidth)
+        public PolygonDrawCommand(Camera camera, IEnumerable<Vector3> points, bool isClosed, Color lineColor, int lineWidth, Viewport viewport)
         {
             Points = new List<Vector2>();
 
-            BoundingFrustum cameraFrustrum = DwarfGame.World.Camera.GetFrustrum();
+            BoundingFrustum cameraFrustrum = camera.GetFrustrum();
             foreach(Vector3 point in points)
             {
                 if(cameraFrustrum.Contains(point) == ContainmentType.Contains)
                 {
-                    Vector3 screenVec = GameState.Game.GraphicsDevice.Viewport.Project(point, DwarfGame.World.Camera.ProjectionMatrix, DwarfGame.World.Camera.ViewMatrix, Matrix.Identity);
+                    Vector3 screenVec = viewport.Project(point, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
                     Points.Add(new Vector2(screenVec.X, screenVec.Y));
                 }
             }

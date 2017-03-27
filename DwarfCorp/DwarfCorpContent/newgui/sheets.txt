@@ -1,4 +1,4 @@
-﻿{
+{
 	"Sheets": [
 		{ 
 			"Name": "logo",
@@ -29,9 +29,9 @@
 		},
 		{
 			"Name": "mouse",
-			"Texture": "newgui/pointers",
-			"TileWidth": 16,
-			"TileHeight" : 16
+			"Texture": "newgui/pointers2",
+			"TileWidth": 32,
+			"TileHeight" : 32
 		},
 		{
 			"Name": "basic",
@@ -173,6 +173,12 @@
 			"TileHeight": 32
 		},
 		{
+			"Name": "voxels",
+			"Texture": "newgui/voxels",
+			"TileWidth": 32,
+			"TileHeight": 32
+		},
+		{
 			"Name": "crafts",
 			"Texture": "newgui/crafts",
 			"TileWidth": 32,
@@ -187,6 +193,12 @@
 		{
 			"Name": "furniture",
 			"Texture": "newgui/interior_furniture",
+			"TileWidth": 32,
+			"TileHeight": 32
+		},
+		{
+			"Name": "beartrap",
+			"Texture": "newgui/beartrap",
 			"TileWidth": 32,
 			"TileHeight": 32
 		}

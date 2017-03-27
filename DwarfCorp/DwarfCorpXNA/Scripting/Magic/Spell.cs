@@ -1,4 +1,4 @@
-﻿// Spell.cs
+// Spell.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -48,11 +48,14 @@ namespace DwarfCorp
         public string Name { get; set; }
         public string Description { get; set; }
         public ImageFrame Image { get; set; }
+        public int TileRef { get; set; }
         public float ManaCost { get; set; }
         public SpellMode Mode { get; set; }
         public Timer RechargeTimer { get; set; }
         public string Hint { get; set; }
         public bool Recharges { get; set; }
+        [JsonIgnore]
+        public WorldManager World { get; set; }
 
         public enum SpellMode
         {
@@ -64,9 +67,9 @@ namespace DwarfCorp
         }
 
 
-        public Spell()
+        public Spell(WorldManager world)
         {
-            
+            World = world;
         }
 
         public virtual bool OnCast(SpellTree tree)
@@ -79,8 +82,8 @@ namespace DwarfCorp
             }
             else
             {
-                SoundManager.PlaySound(ContentPaths.Audio.wurp, DwarfGame.World.CursorLightPos, true, 0.25f);
-                DwarfGame.World.ShowTooltip("Not enough mana. Need " + (int)ManaCost + " but only have " + (int)tree.Mana);
+                SoundManager.PlaySound(ContentPaths.Audio.wurp, World.CursorLightPos, true, 0.25f);
+                World.ShowToolPopup("Not enough mana. Need " + (int)ManaCost + " but only have " + (int)tree.Mana);
             }
             return canCast;
         }
@@ -97,7 +100,7 @@ namespace DwarfCorp
 
         public virtual void OnButtonTriggered()
         {
-            DwarfGame.World.ShowTooltip(Hint);
+            World.ShowToolPopup(Hint);
         }
 
         public virtual void OnContinuousUpdate(DwarfTime time)
@@ -134,7 +137,7 @@ namespace DwarfCorp
 
             if (!Recharges || RechargeTimer.HasTriggered)
             {
-                DwarfGame.World.ParticleManager.Trigger("star_particle", DwarfGame.World.CursorLightPos + Vector3.Up * 0.5f, Color.White, 2);
+                World.ParticleManager.Trigger("star_particle", World.CursorLightPos + Vector3.Up * 0.5f, Color.White, 2);
             }
         }
 
@@ -142,8 +145,8 @@ namespace DwarfCorp
         {
             if (Recharges && !RechargeTimer.HasTriggered)
             {
-                Drawer2D.DrawLoadBar(DwarfGame.World.CursorLightPos - Vector3.Up, Color.White, Color.Black, 150, 20, RechargeTimer.CurrentTimeSeconds / RechargeTimer.TargetTimeSeconds);
-                Drawer2D.DrawTextBox("Charging...", DwarfGame.World.CursorLightPos + Vector3.Up * 2);
+                Drawer2D.DrawLoadBar(World.Camera, World.CursorLightPos - Vector3.Up, Color.White, Color.Black, 150, 20, RechargeTimer.CurrentTimeSeconds / RechargeTimer.TargetTimeSeconds);
+                Drawer2D.DrawTextBox("Charging...", World.CursorLightPos + Vector3.Up * 2);
             }
         }
 

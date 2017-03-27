@@ -44,6 +44,8 @@ namespace DwarfCorp
 
     public class DwarfGame : Game
     {
+        public static bool COMPRESSED_BINARY_SAVES = false;
+
         public GameStateManager StateManager { get; set; }
         public GraphicsDeviceManager Graphics;
         public TextureManager TextureManager { get; set; }
@@ -52,8 +54,6 @@ namespace DwarfCorp
         public static Gum.Input.GumInputMapper GumInputMapper;
         public static Gum.Input.Input GumInput;
         public static Gum.RenderData GumSkin;
-        public static WorldManager World { get; set; }
-
         public DwarfGame()
         {
             GameState.Game = this;
@@ -76,7 +76,6 @@ namespace DwarfCorp
             {
                 Console.Error.WriteLine(exception.Message);
             }
-            World = new WorldManager(this);
         }
 
         public static string GetGameDirectory()
@@ -173,10 +172,6 @@ namespace DwarfCorp
         protected override void Update(GameTime time)
         {
             GamePerformance.Instance.PreUpdate();
-            if (DwarfTime.LastTime == null)
-            {
-                DwarfTime.LastTime = new DwarfTime(time);
-            }
             DwarfTime.LastTime.Update(time);
             StateManager.Update(DwarfTime.LastTime);
             base.Update(time);

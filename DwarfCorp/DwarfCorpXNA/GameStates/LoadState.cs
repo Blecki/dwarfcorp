@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
@@ -41,10 +41,11 @@ namespace DwarfCorp.GameStates
         };
 
         private Timer TipTimer = new Timer(5, false);
-        
-        public LoadState(DwarfGame game, GameStateManager stateManager) :
+        public WorldSettings Settings { get; set; }
+        public LoadState(DwarfGame game, GameStateManager stateManager, WorldSettings settings) :
             base(game, "LoadState", stateManager)
         {
+            Settings = settings;
             EnableScreensaver = true;
 
             Runner = new DwarfRunner(game);
@@ -54,16 +55,15 @@ namespace DwarfCorp.GameStates
         {
             // Todo: Decouple gui/input from world.
             // Copy important bits to PlayState - This is a hack; decouple world from gui and input instead.
-            DwarfGame.World = World;
             PlayState.Input = Input;
             PlayState.GUI = GUI;
 
             // Hack: So that saved games still load.
-            if (DwarfGame.World.PlayerCompany.Information == null)
-                DwarfGame.World.PlayerCompany.Information = new CompanyInformation();
+            if (World.PlayerCompany.Information == null)
+                World.PlayerCompany.Information = new CompanyInformation();
 
             StateManager.PopState();
-            StateManager.PushState(new PlayState(Game, StateManager));
+            StateManager.PushState(new PlayState(Game, StateManager, World));
 
             World.OnSetLoadingMessage = null;         
         }
@@ -78,13 +78,17 @@ namespace DwarfCorp.GameStates
             // instead these functions should be instantiated inside LoadState.
             World = new WorldManager(Game)
             {
-                WorldOrigin = DwarfGame.World.WorldOrigin,
-                WorldScale = DwarfGame.World.WorldScale,
-                WorldSize = DwarfGame.World.WorldSize,
-                InitialEmbark = DwarfGame.World.InitialEmbark,
-                ExistingFile = DwarfGame.World.ExistingFile
+                WorldOrigin = Settings.WorldOrigin,
+                WorldScale = Settings.WorldScale,
+                WorldSize = Settings.ColonySize,
+                InitialEmbark = Settings.InitalEmbarkment,
+                ExistingFile = Settings.ExistingFile,
+                SeaLevel = Settings.SeaLevel,
+                Natives = Settings.Natives
             };
-            DwarfGame.World = World;
+            World.WorldScale = Settings.WorldScale;
+            World.WorldGenerationOrigin = Settings.WorldGenerationOrigin;
+
             World.OnLoadedEvent += World_OnLoadedEvent;
 
             // Todo - Save gui creation for play state. We're only creating it here so we can give it to
@@ -129,7 +133,7 @@ namespace DwarfCorp.GameStates
         public override void Update(DwarfTime gameTime)
         {
             foreach (var item in DwarfGame.GumInputMapper.GetInputQueue())
-                if (item.Message == Gum.InputEvents.KeyDown)
+                if (item.Message == Gum.InputEvents.KeyPress)
                     Runner.Jump();
 
             GuiRoot.Update(gameTime.ToGameTime());

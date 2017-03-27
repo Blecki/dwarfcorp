@@ -1,4 +1,4 @@
-﻿// GameFile.cs
+// GameFile.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -71,45 +71,47 @@ namespace DwarfCorp
 
                 foreach(ChunkFile chunk in ChunkData)
                 {
-                    chunk.WriteFile(directory + ProgramData.DirChar + "Chunks" + ProgramData.DirChar + chunk.ID.X + "_" + chunk.ID.Y + "_" + chunk.ID.Z + "." + ChunkFile.CompressedExtension, true, true);
+                    chunk.WriteFile(directory + ProgramData.DirChar + "Chunks" + ProgramData.DirChar + chunk.ID.X + "_" + chunk.ID.Y + "_" + chunk.ID.Z + "." + (DwarfGame.COMPRESSED_BINARY_SAVES ? ChunkFile.CompressedExtension : ChunkFile.Extension), DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
                 }
 
-                Metadata.WriteFile(directory + ProgramData.DirChar + "MetaData." + MetaData.CompressedExtension, true);
-                
-                FileUtils.SaveJSon(Camera, directory + ProgramData.DirChar + "Camera." + "json", false);
+                Metadata.WriteFile(directory + ProgramData.DirChar + "MetaData." + (DwarfGame.COMPRESSED_BINARY_SAVES ? MetaData.CompressedExtension : MetaData.Extension), 
+                    DwarfGame.COMPRESSED_BINARY_SAVES);
 
-                FileUtils.SaveJSon(Components, directory + ProgramData.DirChar + "Components." + "zcomp", true);
+                FileUtils.SaveJSon(Camera, directory + ProgramData.DirChar + "Camera." + (DwarfGame.COMPRESSED_BINARY_SAVES ? GameFile.CompressedExtension : GameFile.Extension), DwarfGame.COMPRESSED_BINARY_SAVES);
+
+                FileUtils.SaveJSon(Components, directory + ProgramData.DirChar + "Components." 
+                    + (DwarfGame.COMPRESSED_BINARY_SAVES ? GameFile.CompressedExtension : GameFile.Extension), DwarfGame.COMPRESSED_BINARY_SAVES);
             }
         }
 
         public GameData Data { get; set; }
+       
+        public static string Extension = "json";
+        public static string CompressedExtension = "zip";
 
-        public static string Extension = "game";
-        public static string CompressedExtension = "zgame";
-
-        public GameFile(string overworld, int id)
+        public GameFile(string overworld, int id, WorldManager world)
         {
             Data = new GameData
             {
                 Metadata =
                 {
                     OverworldFile = overworld,
-                    WorldOrigin = DwarfGame.World.WorldOrigin,
-                    WorldScale = DwarfGame.World.WorldScale,
-                    TimeOfDay = DwarfGame.World.Sky.TimeOfDay,
-                    ChunkHeight = DwarfGame.World.ChunkHeight,
-                    ChunkWidth = DwarfGame.World.ChunkWidth,
+                    WorldOrigin = world.WorldOrigin,
+                    WorldScale = world.WorldScale,
+                    TimeOfDay = world.Sky.TimeOfDay,
+                    ChunkHeight = world.ChunkHeight,
+                    ChunkWidth = world.ChunkWidth,
                     GameID = id,
-                    Time = DwarfGame.World.Time
+                    Time = world.Time
                 },
-                Camera = DwarfGame.World.Camera,
-                Components = DwarfGame.World.ComponentManager,
+                Camera = world.Camera,
+                Components = world.ComponentManager,
                 ChunkData = new List<ChunkFile>(),
                 GameID = id,
             };
 
 
-            foreach(ChunkFile file in DwarfGame.World.ChunkManager.ChunkData.ChunkMap.Select(pair => new ChunkFile(pair.Value)))
+            foreach (ChunkFile file in world.ChunkManager.ChunkData.ChunkMap.Select(pair => new ChunkFile(pair.Value)))
             {
                 Data.ChunkData.Add(file);
             }
@@ -126,10 +128,10 @@ namespace DwarfCorp
             return "zgame";
         }
 
-        public GameFile(string file, bool compressed)
+        public GameFile(string file, bool compressed, WorldManager world)
         {
             Data = new GameData();
-            ReadFile(file, compressed);
+            ReadFile(file, compressed, world);
         }
 
         public GameFile()
@@ -142,12 +144,12 @@ namespace DwarfCorp
             Data = file.Data;
         }
 
-        public bool LoadComponents(string filePath)
+        public bool LoadComponents(string filePath, WorldManager world)
         {
-            string[] componentFiles = SaveData.GetFilesInDirectory(filePath, true, "zcomp", "zcomp");
+            string[] componentFiles = SaveData.GetFilesInDirectory(filePath, DwarfGame.COMPRESSED_BINARY_SAVES, "Components", GameFile.CompressedExtension, GameFile.Extension);
             if (componentFiles.Length > 0)
             {
-                Data.Components = FileUtils.LoadJson<ComponentManager>(componentFiles[0], true);
+                Data.Components = FileUtils.LoadJson<ComponentManager>(componentFiles[0], DwarfGame.COMPRESSED_BINARY_SAVES, world);
             }
             else
             {
@@ -157,7 +159,7 @@ namespace DwarfCorp
             return true;
         }
 
-        public  bool ReadFile(string filePath, bool isCompressed)
+        public  bool ReadFile(string filePath, bool isCompressed, WorldManager world)
         {
             if(!System.IO.Directory.Exists(filePath))
             {
@@ -166,7 +168,7 @@ namespace DwarfCorp
             else
             {
                 string[] screenshots = SaveData.GetFilesInDirectory(filePath, false, "png", "png");
-                string[] metaFiles = SaveData.GetFilesInDirectory(filePath, isCompressed, GameFile.MetaData.CompressedExtension, GameFile.MetaData.Extension);
+                string[] metaFiles = SaveData.GetFilesInDirectory(filePath, isCompressed, "MetaData", GameFile.MetaData.CompressedExtension, GameFile.MetaData.Extension);
                 string[] cameraFiles = SaveData.GetFilesInDirectory(filePath, false, "json", "json");
 
                 if(metaFiles.Length > 0)
@@ -181,7 +183,7 @@ namespace DwarfCorp
 
                 if(cameraFiles.Length > 0)
                 {
-                    Data.Camera = FileUtils.LoadJson<OrbitCamera>(cameraFiles[0], false);
+                    Data.Camera = FileUtils.LoadJson<OrbitCamera>(cameraFiles[0], false, world);
                 }
                 else
                 {
@@ -198,7 +200,7 @@ namespace DwarfCorp
                     Data.ChunkData = new List<ChunkFile>();
                     foreach(string chunk in chunks)
                     {
-                        Data.ChunkData.Add(new ChunkFile(chunk, isCompressed, true));
+                        Data.ChunkData.Add(new ChunkFile(chunk, isCompressed, DwarfGame.COMPRESSED_BINARY_SAVES));
                     }
                 }
                 else

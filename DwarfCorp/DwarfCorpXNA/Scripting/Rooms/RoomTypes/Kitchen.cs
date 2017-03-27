@@ -147,8 +147,8 @@ namespace DwarfCorp
             workshopTemplates.Add(stove);
             workshopTemplates.Add(barrel);
 
-            Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
-            return new RoomData(KitchenName, 2, "BlueTileFloor", roomResources, workshopTemplates, new ImageFrame(roomIcons, 16, 3, 2))
+            return new RoomData(KitchenName, 2, "Blue Tile", roomResources, workshopTemplates, 
+                new Gum.TileReference("rooms", 11))
             {
                 Description = "Cooking is done here",
                 CanBuildAboveGround = false
@@ -160,13 +160,13 @@ namespace DwarfCorp
             RoomData = KitchenRoomData;
         }
 
-        public Kitchen(bool designation, IEnumerable<Voxel> designations, ChunkManager chunks) :
+        public Kitchen(bool designation, IEnumerable<Voxel> designations, WorldManager chunks) :
             base(designation, designations, KitchenRoomData, chunks)
         {
         }
 
-        public Kitchen(IEnumerable<Voxel> voxels, ChunkManager chunks) :
-            base(voxels, KitchenRoomData, chunks)
+        public Kitchen(IEnumerable<Voxel> voxels, WorldManager world) :
+            base(voxels, KitchenRoomData, world)
         {
             OnBuilt();
         }

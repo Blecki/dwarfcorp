@@ -1,4 +1,4 @@
-﻿// LineListCommand3D.cs
+// LineListCommand3D.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -73,22 +73,22 @@ namespace DwarfCorp
 
         }
 
-        public override void Render(GraphicsDevice device, Effect effect)
+        public override void Render(GraphicsDevice device, Shader effect)
         {
             if(triangleCount <= 0 || Points.Count() < 2)
             {
                 return;
             }
             Matrix w = Matrix.Identity;
-            effect.Parameters["xWorld"].SetValue(w);
-            effect.CurrentTechnique = effect.Techniques["Untextured"];
+            effect.World = w;
+            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Untextured];
             foreach(EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
 
                 device.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, triangles, 0, triangleCount - 2);
             }
-            effect.CurrentTechnique = effect.Techniques["Textured"];
+            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
 
         }
     }

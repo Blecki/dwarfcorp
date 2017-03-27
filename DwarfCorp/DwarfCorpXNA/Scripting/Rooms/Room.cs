@@ -1,4 +1,4 @@
-﻿// Room.cs
+// Room.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -52,7 +52,7 @@ namespace DwarfCorp
 
         public bool IsBuilt { get; set; }
         public RoomData RoomData { get; set; }
-        protected static int Counter = 0;
+        private static int Counter = 0;
 
         public bool wasDeserialized = false;
         [JsonIgnore]
@@ -63,24 +63,22 @@ namespace DwarfCorp
             
         }
 
-        public Room(bool designation, IEnumerable<Voxel> designations, RoomData data, ChunkManager chunks) :
-            base(data.Name + " " + Counter, chunks)
+        public Room(bool designation, IEnumerable<Voxel> designations, RoomData data, WorldManager world) :
+            base(data.Name + " " + Counter, world)
         {
             RoomData = data;
             ReplacementType = VoxelLibrary.GetVoxelType(RoomData.FloorType);
-            Chunks = chunks;
             Counter++;
             Designations = designations.ToList();
             IsBuilt = false;
         }
 
 
-        public Room(IEnumerable<Voxel> voxels, RoomData data, ChunkManager chunks) :
-            base(data.Name + " " + Counter, chunks)
+        public Room(IEnumerable<Voxel> voxels, RoomData data, WorldManager world) :
+            base(data.Name + " " + Counter, world)
         {
             RoomData = data;
             ReplacementType = VoxelLibrary.GetVoxelType(RoomData.FloorType);
-            Chunks = chunks;
 
             Designations = new List<Voxel>();
             Counter++;
@@ -100,13 +98,13 @@ namespace DwarfCorp
         }
 
 
-        public virtual void OnBuilt()
+        public void OnBuilt()
         {
             
         }
 
 
-        public virtual void CreateGUIObjects()
+        public void CreateGUIObjects()
         {
          
         }
@@ -114,12 +112,12 @@ namespace DwarfCorp
         public List<Body> GetComponentsInRoom()
         {
             List<Body> toReturn = new List<Body>();
-            HashSet<Body> components = new HashSet<Body>();
+            HashSet<IBoundedObject> components = new HashSet<IBoundedObject>();
             BoundingBox box = GetBoundingBox();
             box.Max += new Vector3(0, 0, 2);
-            DwarfGame.World.ComponentManager.CollisionManager.GetObjectsIntersecting(GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
+            World.ComponentManager.CollisionManager.GetObjectsIntersecting(GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
 
-            toReturn.AddRange(components);
+            toReturn.AddRange(components.Where(o => o is Body).Select(o => o as Body));
 
             return toReturn;
         }

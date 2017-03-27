@@ -1,4 +1,4 @@
-﻿// SaveData.cs
+// SaveData.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -53,6 +53,18 @@ namespace DwarfCorp
         public virtual bool WriteFile(string filePath, bool compress)
         {
             return false;
+        }
+
+        public static string[] GetFilesInDirectory(string dir, bool compressed, string name, string compressedExtension, string extension)
+        {
+            if (compressed)
+            {
+                return System.IO.Directory.GetFiles(dir, name + "." + compressedExtension);
+            }
+            else
+            {
+                return System.IO.Directory.GetFiles(dir, name + "." + extension);
+            }
         }
 
         public static string[] GetFilesInDirectory(string dir, bool compressed, string compressedExtension, string extension)

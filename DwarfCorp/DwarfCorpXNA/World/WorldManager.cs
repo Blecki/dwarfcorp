@@ -1,4 +1,4 @@
-﻿// PlayState.cs
+// PlayState.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -71,7 +71,7 @@ namespace DwarfCorp
         // The horizontal size of the overworld in pixels
         public int WorldWidth = 800;
 
-        // Used to pass WorldOrigin from the WorldGenState into DwarfGame.World.
+        // Used to pass WorldOrigin from the WorldGenState into 
         public Vector2 WorldGenerationOrigin { get; set; }
 
         // The origin of the overworld in pixels [(0, 0, 0) in world space.]
@@ -85,6 +85,8 @@ namespace DwarfCorp
 
         // The number of voxels along y in a chunk.
         public int ChunkHeight { get { return GameSettings.Default.ChunkHeight; } }
+
+        public Vector3 CursorPos { get { return CursorLightPos; } }
 
         // The current coordinate of the cursor light
         public Vector3 CursorLightPos
@@ -102,7 +104,7 @@ namespace DwarfCorp
         public Texture2D Tilesheet;
 
         // The shader used to draw the terrain and most entities
-        public Effect DefaultShader;
+        public Shader DefaultShader;
 
         // The player's view into the world.
         public OrbitCamera Camera;
@@ -228,10 +230,15 @@ namespace DwarfCorp
         // More statics. Hate this.
         public Action<String, String, Action> OnAnnouncement;
 
-        public void MakeAnnouncement(String Title, String Message, Action ClickAction = null)
+        public void MakeAnnouncement(String Title, String Message, Action ClickAction = null, string sound = null)
         {
             if (OnAnnouncement != null)
                 OnAnnouncement(Title, Message, ClickAction);
+
+            if (!string.IsNullOrEmpty(sound))
+            {
+                SoundManager.PlaySound(sound, 0.01f);
+            }
         }
 
 
@@ -278,6 +285,7 @@ namespace DwarfCorp
 
         public Action<String> ShowTooltip = null;
         public Action<String> ShowInfo = null;
+        public Action<String> ShowToolPopup = null;
         public Action<Gum.MousePointer> SetMouse = null;
         public Gum.MousePointer MousePointer = new Gum.MousePointer("mouse", 1, 0);
         
@@ -289,10 +297,6 @@ namespace DwarfCorp
                     NewGui.HoverItem != null;
             }
         }
-
-        // Since world, like many of the other classes, is pretty much a singleton given how many variables it has
-        // this provides singleton access
-        public WorldManager World;
 
         // event that is called when the world is done loading
         public delegate void OnLoaded();
@@ -307,10 +311,10 @@ namespace DwarfCorp
         /// <summary>
         /// Creates a new play state
         /// </summary>
-        /// <param name="game">The program currently running</param>
+        /// <param name="Game">The program currently running</param>
         public WorldManager(DwarfGame Game)
         {
-            World = this;
+            InitialEmbark = Embarkment.DefaultEmbarkment;
             this.Game = Game;
             Content = Game.Content;
             GraphicsDevice = Game.GraphicsDevice;
@@ -357,6 +361,25 @@ namespace DwarfCorp
 #endif
             {
                 SetLoadingMessage("Initializing ...");
+
+                SetLoadingMessage("Creating Sky...");
+                CreateSky();
+
+                if (!string.IsNullOrEmpty(ExistingFile))
+                {
+                    LoadExistingFile();
+                }
+                if (Natives == null)
+                {
+                    FactionLibrary library = new FactionLibrary();
+                    library.Initialize(this, CompanyMakerState.CompanyInformation);
+                    Natives = new List<Faction>();
+                    for (int i = 0; i < 10; i++)
+                    {
+                        Natives.Add(library.GenerateFaction(this, i, 10));
+                    }
+
+                }
                 // Todo: How is this initialized by save games?
                 InitializeStaticData(CompanyMakerState.CompanyInformation, Natives);
 
@@ -365,9 +388,6 @@ namespace DwarfCorp
 
                 SetLoadingMessage("Creating Particles ...");
                 CreateParticles();
-
-                SetLoadingMessage("Creating Sky...");
-                CreateSky();
 
                 SetLoadingMessage("Creating Shadows...");
                 CreateShadows();
@@ -429,6 +449,10 @@ namespace DwarfCorp
         /// <param name="c">The chunk the dwarves belong to</param>
         public void CreateInitialDwarves(VoxelChunk c)
         {
+            if (InitialEmbark == null)
+            {
+                InitialEmbark = Embarkment.DefaultEmbarkment;
+            }
             Vector3 g = c.WorldToGrid(Camera.Position);
             // Find the height of the world at the camera
             float h = c.GetFilledVoxelGridHeightAt((int)g.X, ChunkHeight - 1, (int)g.Z);
@@ -446,8 +470,8 @@ namespace DwarfCorp
                 creat.Velocity = new Vector3(1, 0, 0);
             }
 
-            Camera.Target = new Vector3(Camera.Position.X, h + 10, Camera.Position.Z + 10);
-            Camera.Phi = -(float)Math.PI * 0.3f;
+            Camera.Target = new Vector3(Camera.Position.X, h, Camera.Position.Z + 10);
+            Camera.Position = new Vector3(Camera.Target.X, Camera.Target.Y + 20, Camera.Position.Z - 10);
         }
 
         /// <summary>
@@ -456,13 +480,19 @@ namespace DwarfCorp
         /// </summary>
         public void InitializeStaticData(CompanyInformation CompanyInformation, List<Faction> natives)
         {
+            foreach (Faction faction in natives)
+            {
+                faction.World = this;
+                faction.WallBuilder.World = this;
+            }
+
             ComponentManager = new ComponentManager(this, CompanyInformation, natives);
             ComponentManager.RootComponent = new Body(ComponentManager, "root", null, Matrix.Identity, Vector3.Zero,
                 Vector3.Zero, false);
             Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
             Vector3 extents = new Vector3(1500, 1500, 1500);
             ComponentManager.CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
-            ComponentManager.Diplomacy = new Diplomacy(ComponentManager.Factions);
+            ComponentManager.Diplomacy = new Diplomacy(ComponentManager.Factions, this);
             ComponentManager.Diplomacy.Initialize(Time.CurrentDate);
 
             CompositeLibrary.Initialize();
@@ -481,11 +511,8 @@ namespace DwarfCorp
 
             Tilesheet = TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles);
             AspectRatio = GraphicsDevice.Viewport.AspectRatio;
-            DefaultShader = Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders);
-            DefaultShader.Parameters["xFogStart"].SetValue(40.0f);
-            DefaultShader.Parameters["xFogEnd"].SetValue(80.0f);
+            DefaultShader = new Shader(Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders), true);
 
-            VoxelLibrary = new VoxelLibrary();
             VoxelLibrary.InitializeDefaultLibrary(GraphicsDevice, Tilesheet);
 
             bloom = new BloomComponent(Game)
@@ -503,8 +530,42 @@ namespace DwarfCorp
                 PlanService.Restart();
 
             JobLibrary.Initialize();
-            MonsterSpawner = new MonsterSpawner();
-            EntityFactory.Initialize();
+            MonsterSpawner = new MonsterSpawner(this);
+            EntityFactory.Initialize(this);
+        }
+
+        public void LoadExistingFile()
+        {
+            SetLoadingMessage("Loading " + ExistingFile);
+            gameFile = new GameFile(ExistingFile, DwarfGame.COMPRESSED_BINARY_SAVES, this);
+            Sky.TimeOfDay = gameFile.Data.Metadata.TimeOfDay;
+            Time = gameFile.Data.Metadata.Time;
+            WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
+            WorldScale = gameFile.Data.Metadata.WorldScale;
+            GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
+            GameSettings.Default.ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
+            GameID = gameFile.Data.GameID;
+            if (gameFile.Data.Metadata.OverworldFile != null && gameFile.Data.Metadata.OverworldFile != "flat")
+            {
+                SetLoadingMessage("Loading world " + gameFile.Data.Metadata.OverworldFile);
+                Overworld.Name = gameFile.Data.Metadata.OverworldFile;
+                DirectoryInfo worldDirectory =
+                    Directory.CreateDirectory(DwarfGame.GetGameDirectory() + ProgramData.DirChar + "Worlds" +
+                                              ProgramData.DirChar + Overworld.Name);
+                OverworldFile overWorldFile =
+                    new OverworldFile(
+                        worldDirectory.FullName + ProgramData.DirChar + "world." + OverworldFile.CompressedExtension,
+                        DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
+                Overworld.Map = overWorldFile.Data.CreateMap();
+                Overworld.Name = overWorldFile.Data.Name;
+                WorldWidth = Overworld.Map.GetLength(1);
+                WorldHeight = Overworld.Map.GetLength(0);
+            }
+            else
+            {
+                SetLoadingMessage("Generating flat world..");
+                Overworld.CreateUniformLand(GraphicsDevice);
+            }
         }
 
         /// <summary>
@@ -513,7 +574,6 @@ namespace DwarfCorp
         /// </summary>
         public void GenerateInitialChunks()
         {
-            gameFile = null;
 
             bool fileExists = !string.IsNullOrEmpty(ExistingFile);
 
@@ -521,38 +581,6 @@ namespace DwarfCorp
             // This is preliminary stuff that just makes sure the file exists and can be loaded.
             if (fileExists)
             {
-                SetLoadingMessage("Loading " + ExistingFile);
-                gameFile = new GameFile(ExistingFile, true);
-                Sky.TimeOfDay = gameFile.Data.Metadata.TimeOfDay;
-                DwarfGame.World.Time = gameFile.Data.Metadata.Time;
-                WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
-                WorldScale = gameFile.Data.Metadata.WorldScale;
-                GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
-                GameSettings.Default.ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
-
-                if (gameFile.Data.Metadata.OverworldFile != null && gameFile.Data.Metadata.OverworldFile != "flat")
-                {
-                    SetLoadingMessage("Loading world " + gameFile.Data.Metadata.OverworldFile);
-                    Overworld.Name = gameFile.Data.Metadata.OverworldFile;
-                    DirectoryInfo worldDirectory =
-                        Directory.CreateDirectory(DwarfGame.GetGameDirectory() + ProgramData.DirChar + "Worlds" +
-                                                  ProgramData.DirChar + Overworld.Name);
-                    OverworldFile overWorldFile =
-                        new OverworldFile(
-                            worldDirectory.FullName + ProgramData.DirChar + "world." + OverworldFile.CompressedExtension,
-                            true, true);
-                    Overworld.Map = overWorldFile.Data.CreateMap();
-                    Overworld.Name = overWorldFile.Data.Name;
-                    WorldWidth = Overworld.Map.GetLength(1);
-                    WorldHeight = Overworld.Map.GetLength(0);
-                }
-                else
-                {
-                    SetLoadingMessage("Generating flat world..");
-                    Overworld.CreateUniformLand(GraphicsDevice);
-                }
-
-                GameID = gameFile.Data.GameID;
             }
             else
             {
@@ -560,7 +588,7 @@ namespace DwarfCorp
             }
 
 
-            ChunkGenerator = new ChunkGenerator(VoxelLibrary, Seed, 0.02f, ChunkHeight / 2.0f)
+            ChunkGenerator = new ChunkGenerator(VoxelLibrary, Seed, 0.02f, ChunkHeight / 2.0f, this.WorldScale)
             {
                 SeaLevel = SeaLevel
             };
@@ -578,14 +606,15 @@ namespace DwarfCorp
             // facing down slightly.
             Camera = fileExists
                 ? gameFile.Data.Camera
-                : new OrbitCamera(0, 0, 10f, new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + globalOffset,
-                    new Vector3(0, 50, 0) + globalOffset, MathHelper.PiOver4, AspectRatio, 0.1f,
+                : new OrbitCamera(this, new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + globalOffset,
+                    new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + globalOffset + Vector3.Up  * 10.0f + Vector3.Backward * 10, 
+                    MathHelper.PiOver4, AspectRatio, 0.1f,
                     GameSettings.Default.VertexCullDistance);
-
+            Camera.World = this;
             Drawer3D.Camera = Camera;
 
             // Creates the terrain management system.
-            ChunkManager = new ChunkManager(Content, (uint)ChunkWidth, (uint)ChunkHeight, (uint)ChunkWidth, Camera,
+            ChunkManager = new ChunkManager(Content, this, (uint)ChunkWidth, (uint)ChunkHeight, (uint)ChunkWidth, Camera,
                 GraphicsDevice,
                 ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
 
@@ -602,8 +631,6 @@ namespace DwarfCorp
                 WorldOrigin = new Vector2(globalOffset.X, globalOffset.Z);
                 Camera.Position = new Vector3(0, 10, 0) + globalOffset;
                 Camera.Target = new Vector3(0, 10, 1) + globalOffset;
-                Camera.Radius = 0.01f;
-                Camera.Phi = -1.57f;
             }
 
 
@@ -620,14 +647,6 @@ namespace DwarfCorp
                 ChunkManager.ChunkData.LoadFromFile(gameFile, SetLoadingMessage);
             }
 
-            // If there's no file, for some reason we modify the camera position...
-            // TODO: Figure out why the camera keeps needing to be reset.
-            if (!fileExists)
-            {
-                Camera.Radius = 0.01f;
-                Camera.Phi = -1.57f / 4.0f;
-                Camera.Theta = 0.0f;
-            }
 
             // Finally, the chunk manager's threads are started to allow it to 
             // dynamically rebuild terrain
@@ -745,8 +764,9 @@ namespace DwarfCorp
             if (!string.IsNullOrEmpty(ExistingFile))
             {
                 InstanceManager.Clear();
-                gameFile.LoadComponents(ExistingFile);
+                gameFile.LoadComponents(ExistingFile, this);
                 ComponentManager = gameFile.Data.Components;
+                ComponentManager.World = this;
                 GameComponent.ResetMaxGlobalId(ComponentManager.GetMaxComponentID() + 1);
                 Sky.TimeOfDay = gameFile.Data.Metadata.TimeOfDay;
                 Time = gameFile.Data.Metadata.Time;
@@ -755,6 +775,7 @@ namespace DwarfCorp
                 GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
                 GameSettings.Default.ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
             }
+            
             Master = new GameMaster(ComponentManager.Factions.Factions["Player"], Game, ComponentManager, ChunkManager,
                 Camera, GraphicsDevice, GUI);
         }
@@ -771,16 +792,20 @@ namespace DwarfCorp
                 BalloonPort port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager,
                     Camera.Position.X, Camera.Position.Z, 3);
                 CreateInitialDwarves(c);
-                DwarfGame.World.PlayerFaction.Economy.CurrentMoney = InitialEmbark.Money;
+                PlayerFaction.Economy.CurrentMoney = InitialEmbark.Money;
 
                 foreach (var res in InitialEmbark.Resources)
                 {
                     PlayerFaction.AddResources(new ResourceAmount(res.Key, res.Value));
                 }
+                var portBox = port.GetBoundingBox();
                 EntityFactory.CreateBalloon(
-                    new Vector3(Camera.Position.X, ChunkHeight - 2, Camera.Position.Z) + new Vector3(0, 1000, 0),
-                    new Vector3(Camera.Position.X, ChunkHeight - 2, Camera.Position.Z), ComponentManager, Content,
+                    portBox.Center() + new Vector3(0, 100, 0),
+                    portBox.Center() + new Vector3(0, 10, 0), ComponentManager, Content,
                     GraphicsDevice, new ShipmentOrder(0, null), Master.Faction);
+
+                Camera.Target = portBox.Center();
+                Camera.Position = Camera.Target + new Vector3(0, 15, -15);
             }
         }
 
@@ -938,8 +963,8 @@ namespace DwarfCorp
 
 
             // Actually create the BuildRoom.
-            BalloonPort toBuild = new BalloonPort(PlayerFaction, designations, chunkManager);
-            BuildRoomOrder buildDes = new BuildRoomOrder(toBuild, roomDes.Faction);
+            BalloonPort toBuild = new BalloonPort(PlayerFaction, designations, this);
+            BuildRoomOrder buildDes = new BuildRoomOrder(toBuild, roomDes.Faction, this);
             buildDes.Build(true);
             roomDes.DesignatedRooms.Add(toBuild);
             return toBuild;
@@ -1215,7 +1240,7 @@ namespace DwarfCorp
             AspectRatio = GraphicsDevice.Viewport.AspectRatio;
             Camera.AspectRatio = AspectRatio;
 
-            Camera.Update(gameTime, DwarfGame.World.ChunkManager);
+            Camera.Update(gameTime, ChunkManager);
 
             if (KeyManager.RotationEnabled())
                 Mouse.SetPosition(Game.GraphicsDevice.Viewport.Width / 2,
@@ -1226,13 +1251,25 @@ namespace DwarfCorp
             if (!Paused)
             {
                 Time.Update(gameTime);
-                ComponentManager.Diplomacy.Update(gameTime, Time.CurrentDate);
+
+                //GamePerformance.Instance.StartTrackPerformance("Diplomacy");
+                ComponentManager.Diplomacy.Update(gameTime, Time.CurrentDate, this);
+                //GamePerformance.Instance.StopTrackPerformance("Diplomacy");
+
+                //GamePerformance.Instance.StartTrackPerformance("Components");
                 ComponentManager.Update(gameTime, ChunkManager, Camera);
+                //GamePerformance.Instance.StopTrackPerformance("Components");
+
                 Sky.TimeOfDay = Time.GetSkyLightness();
 
                 Sky.CosTime = (float)(Time.GetTotalHours() * 2 * Math.PI / 24.0f);
-                DefaultShader.Parameters["xTimeOfDay"].SetValue(Sky.TimeOfDay);
+                DefaultShader.TimeOfDay = Sky.TimeOfDay;
+
+                //GamePerformance.Instance.StartTrackPerformance("Monster Spawner");
                 MonsterSpawner.Update(gameTime);
+                //GamePerformance.Instance.StopTrackPerformance("Monster Spawner");
+
+                //GamePerformance.Instance.StartTrackPerformance("All Asleep");
                 bool allAsleep = Master.AreAllEmployeesAsleep();
                 if (SleepPrompt && allAsleep && !FastForwardToDay && Time.IsNight())
                 {
@@ -1245,14 +1282,26 @@ namespace DwarfCorp
                 {
                     SleepPrompt = true;
                 }
+                //GamePerformance.Instance.StopTrackPerformance("All Asleep");
             }
 
             // These things are updated even when the game is paused
-            ChunkManager.Update(gameTime, Camera, GraphicsDevice);
-            InstanceManager.Update(gameTime, Camera, GraphicsDevice);
 
+            //GamePerformance.Instance.StartTrackPerformance("Chunk Manager");
+            ChunkManager.Update(gameTime, Camera, GraphicsDevice);
+            //GamePerformance.Instance.StopTrackPerformance("Chunk Manager");
+
+            //GamePerformance.Instance.StartTrackPerformance("Instance Manager");
+            InstanceManager.Update(gameTime, Camera, GraphicsDevice);
+            //GamePerformance.Instance.StopTrackPerformance("Instance Manager");
+
+            //GamePerformance.Instance.StartTrackPerformance("Sound Manager");
             SoundManager.Update(gameTime, Camera);
-            Weather.Update();
+            //GamePerformance.Instance.StopTrackPerformance("Sound Manager");
+
+            //GamePerformance.Instance.StartTrackPerformance("Weather");
+            Weather.Update(this.Time.CurrentDate, this);
+            //GamePerformance.Instance.StopTrackPerformance("Weather");
 
             // Make sure that the slice slider snaps to the current viewing level (an integer)
             //if(!LevelSlider.IsMouseOver)
@@ -1303,23 +1352,23 @@ namespace DwarfCorp
 
         private bool SaveThreadRoutine(string filename)
         {
-            try
+            //try
             {
                 System.Threading.Thread.CurrentThread.Name = "Save";
                 DirectoryInfo worldDirectory =
                     Directory.CreateDirectory(DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Worlds" +
                                               Path.DirectorySeparatorChar + Overworld.Name);
 
-                OverworldFile file = new OverworldFile(Game.GraphicsDevice, Overworld.Map, Overworld.Name);
+                OverworldFile file = new OverworldFile(Game.GraphicsDevice, Overworld.Map, Overworld.Name, SeaLevel);
                 file.WriteFile(
                     worldDirectory.FullName + Path.DirectorySeparatorChar + "world." + OverworldFile.CompressedExtension,
-                    true, true);
+                    DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
                 file.SaveScreenshot(worldDirectory.FullName + Path.DirectorySeparatorChar + "screenshot.png");
 
-                gameFile = new GameFile(Overworld.Name, GameID);
+                gameFile = new GameFile(Overworld.Name, GameID, this);
                 gameFile.WriteFile(
                     DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves" + Path.DirectorySeparatorChar +
-                    filename, true);
+                    filename, DwarfGame.COMPRESSED_BINARY_SAVES);
                 // GameFile instance is no longer needed.
                 gameFile = null;
 
@@ -1330,13 +1379,13 @@ namespace DwarfCorp
                         FileName = DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves" +
                                    Path.DirectorySeparatorChar + filename + Path.DirectorySeparatorChar +
                                    "screenshot.png",
-                        Resolution = new Point(GraphicsDevice.Viewport.Width / 4, GraphicsDevice.Viewport.Height / 4)
+                        Resolution = new Point(640, 480)
                     });
                 }
             }
-            catch (Exception exception)
+            //catch (Exception exception)
             {
-                throw new WaitStateException(exception.Message);
+                //throw new WaitStateException(exception.Message);
             }
             return true;
         }
@@ -1366,7 +1415,7 @@ namespace DwarfCorp
         /// <param name="gameTime">The game time.</param>
         /// <param name="effect">The effect.</param>
         /// <param name="view">The view.</param>
-        public void DrawSelectionBuffer(DwarfTime gameTime, Effect effect, Matrix view)
+        public void DrawSelectionBuffer(DwarfTime gameTime, Shader effect, Matrix view)
         {
             if (SelectionBuffer == null)
             {
@@ -1381,11 +1430,11 @@ namespace DwarfCorp
             Plane slicePlane = WaterRenderer.CreatePlane(SlicePlane, new Vector3(0, -1, 0), Camera.ViewMatrix, false);
 
             // Draw the whole world, and make sure to handle slicing
-            DefaultShader.Parameters["ClipPlane0"].SetValue(new Vector4(slicePlane.Normal, slicePlane.D));
-            DefaultShader.Parameters["Clipping"].SetValue(1);
-            effect.Parameters["xView"].SetValue(view);
-            effect.Parameters["xProjection"].SetValue(Camera.ProjectionMatrix);
-            effect.Parameters["xWorld"].SetValue(Matrix.Identity);
+            effect.ClipPlane = new Vector4(slicePlane.Normal, slicePlane.D);
+            effect.ClippingEnabled = true;
+            effect.View = view;
+            effect.Projection = Camera.ProjectionMatrix;
+            effect.World = Matrix.Identity;
             ChunkManager.RenderSelectionBuffer(effect, GraphicsDevice, Camera.ViewMatrix);
             ComponentManager.RenderSelectionBuffer(gameTime, ChunkManager, Camera, DwarfGame.SpriteBatch, GraphicsDevice, effect);
             InstanceManager.RenderSelectionBuffer(GraphicsDevice, effect, Camera, false);
@@ -1398,32 +1447,22 @@ namespace DwarfCorp
         /// Draws all the 3D terrain and entities
         /// </summary>
         /// <param name="gameTime">The current time</param>
-        /// <param name="cubeEffect">The textured shader</param>
+        /// <param name="effect">The textured shader</param>
         /// <param name="view">The view matrix of the camera</param> 
-        public void Draw3DThings(DwarfTime gameTime, Effect cubeEffect, Matrix view)
+        public void Draw3DThings(DwarfTime gameTime, Shader effect, Matrix view)
         {
             Matrix viewMatrix = Camera.ViewMatrix;
             Camera.ViewMatrix = view;
 
             GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-            cubeEffect.Parameters["xView"].SetValue(view);
-            cubeEffect.Parameters["xProjection"].SetValue(Camera.ProjectionMatrix);
-            cubeEffect.CurrentTechnique = cubeEffect.Techniques["Textured"];
-            cubeEffect.Parameters["Clipping"].SetValue(1);
+            effect.View = view;
+            effect.Projection = Camera.ProjectionMatrix;
+            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
+            effect.ClippingEnabled = true;
             GraphicsDevice.BlendState = BlendState.NonPremultiplied;
-            ChunkManager.Render(Camera, gameTime, GraphicsDevice, cubeEffect, Matrix.Identity);
-
-            if (Master.CurrentToolMode == GameMaster.ToolMode.Build)
-            {
-                cubeEffect.Parameters["xView"].SetValue(view);
-                cubeEffect.Parameters["xProjection"].SetValue(Camera.ProjectionMatrix);
-                cubeEffect.CurrentTechnique = cubeEffect.Techniques["Textured"];
-                GraphicsDevice.BlendState = BlendState.NonPremultiplied;
-                Master.Faction.WallBuilder.Render(gameTime, GraphicsDevice, cubeEffect);
-                Master.Faction.CraftBuilder.Render(gameTime, GraphicsDevice, cubeEffect);
-            }
+            ChunkManager.Render(Camera, gameTime, GraphicsDevice, effect, Matrix.Identity);
             Camera.ViewMatrix = viewMatrix;
-            cubeEffect.Parameters["Clipping"].SetValue(1);
+            effect.ClippingEnabled = true;
         }
 
 
@@ -1435,16 +1474,16 @@ namespace DwarfCorp
         /// <param name="view">The view matrix</param>
         /// <param name="waterRenderType">Whether we are rendering for reflection/refraction or nothing</param>
         /// <param name="waterLevel">The estimated height of water</param>
-        public void DrawComponents(DwarfTime gameTime, Effect effect, Matrix view,
+        public void DrawComponents(DwarfTime gameTime, Shader effect, Matrix view,
             ComponentManager.WaterRenderType waterRenderType, float waterLevel)
         {
             if (!WaterRenderer.DrawComponentsReflected && waterRenderType == ComponentManager.WaterRenderType.Reflective)
                 return;
-            effect.Parameters["xView"].SetValue(view);
-            ComponentManager.Render(gameTime, ChunkManager, Camera, DwarfGame.SpriteBatch, GraphicsDevice, effect,
-                waterRenderType, waterLevel);
+            effect.View = view;
             bool reset = waterRenderType == ComponentManager.WaterRenderType.None;
             InstanceManager.Render(GraphicsDevice, effect, Camera, reset);
+            ComponentManager.Render(gameTime, ChunkManager, Camera, DwarfGame.SpriteBatch, GraphicsDevice, effect,
+                waterRenderType, waterLevel);
         }
 
         /// <summary>
@@ -1541,8 +1580,8 @@ namespace DwarfCorp
             // Controls the sky fog
             float x = (1.0f - Sky.TimeOfDay);
             x = x * x;
-            DefaultShader.Parameters["xFogColor"].SetValue(new Vector3(0.32f * x, 0.58f * x, 0.9f * x));
-            DefaultShader.Parameters["xLightPositions"].SetValue(LightPositions);
+            DefaultShader.FogColor = new Color(0.32f * x, 0.58f * x, 0.9f * x);
+            DefaultShader.LightPositions = LightPositions;
 
             CompositeLibrary.Render(GraphicsDevice, DwarfGame.SpriteBatch);
             CompositeLibrary.Update();
@@ -1582,7 +1621,7 @@ namespace DwarfCorp
             }
 
             // Draw the sky
-            GraphicsDevice.Clear(new Color(DefaultShader.Parameters["xFogColor"].GetValueVector3()));
+            GraphicsDevice.Clear(DefaultShader.FogColor);
             DrawSky(gameTime, Camera.ViewMatrix, 1.0f);
 
             // Defines the current slice for the GPU
@@ -1597,15 +1636,15 @@ namespace DwarfCorp
             Plane slicePlane = WaterRenderer.CreatePlane(SlicePlane, new Vector3(0, -1, 0), Camera.ViewMatrix, false);
 
             // Draw the whole world, and make sure to handle slicing
-            DefaultShader.Parameters["ClipPlane0"].SetValue(new Vector4(slicePlane.Normal, slicePlane.D));
-            DefaultShader.Parameters["Clipping"].SetValue(1);
+            DefaultShader.ClipPlane = new Vector4(slicePlane.Normal, slicePlane.D);
+            DefaultShader.ClippingEnabled = true;
             //Blue ghost effect above the current slice.
-            DefaultShader.Parameters["GhostMode"].SetValue(1);
+            DefaultShader.GhostClippingEnabled = true;
             Draw3DThings(gameTime, DefaultShader, Camera.ViewMatrix);
 
             // Now we want to draw the water on top of everything else
-            DefaultShader.Parameters["Clipping"].SetValue(1);
-            DefaultShader.Parameters["GhostMode"].SetValue(0);
+            DefaultShader.ClippingEnabled = true;
+            DefaultShader.GhostClippingEnabled = false;
 
             //ComponentManager.CollisionManager.DebugDraw();
 
@@ -1613,10 +1652,11 @@ namespace DwarfCorp
             Drawer3D.Render(GraphicsDevice, DefaultShader, true);
 
             // Now draw all of the entities in the game
-            DefaultShader.Parameters["ClipPlane0"].SetValue(new Vector4(slicePlane.Normal, slicePlane.D));
-            DefaultShader.Parameters["Clipping"].SetValue(1);
-            DefaultShader.Parameters["GhostMode"].SetValue(1);
-            DefaultShader.Parameters["xEnableShadows"].SetValue(GameSettings.Default.UseDynamicShadows ? 1 : 0);
+            DefaultShader.ClipPlane = new Vector4(slicePlane.Normal, slicePlane.D);
+            DefaultShader.ClippingEnabled = true;
+            DefaultShader.GhostClippingEnabled = true;
+            DefaultShader.EnableShadows = GameSettings.Default.UseDynamicShadows;
+
             if (GameSettings.Default.UseDynamicShadows)
             {
                 Shadows.BindShadowmapEffect(DefaultShader);
@@ -1624,6 +1664,17 @@ namespace DwarfCorp
 
             DrawComponents(gameTime, DefaultShader, Camera.ViewMatrix, ComponentManager.WaterRenderType.None,
                 lastWaterHeight);
+
+
+            if (Master.CurrentToolMode == GameMaster.ToolMode.Build)
+            {
+                DefaultShader.View = Camera.ViewMatrix;
+                DefaultShader.Projection = Camera.ProjectionMatrix;
+                DefaultShader.CurrentTechnique = DefaultShader.Techniques[Shader.Technique.Textured];
+                GraphicsDevice.BlendState = BlendState.NonPremultiplied;
+                Master.Faction.WallBuilder.Render(gameTime, GraphicsDevice, DefaultShader);
+                Master.Faction.CraftBuilder.Render(gameTime, GraphicsDevice, DefaultShader);
+            }
 
             WaterRenderer.DrawWater(
                 GraphicsDevice,
@@ -1636,7 +1687,7 @@ namespace DwarfCorp
                 Camera,
                 ChunkManager);
 
-            DefaultShader.Parameters["Clipping"].SetValue(0);
+            DefaultShader.ClippingEnabled = false;
 
             if (GameSettings.Default.EnableGlow)
             {

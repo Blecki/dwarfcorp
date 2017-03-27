@@ -1,4 +1,4 @@
-﻿// MainMenuState.cs
+// MainMenuState.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -82,55 +82,60 @@ namespace DwarfCorp.GameStates
                 {
                     Overworld.CreateHillsLand(Game.GraphicsDevice);
                     StateManager.ClearState();
-                    DwarfGame.World.ExistingFile = null;
-                    DwarfGame.World.WorldSize = new Point3(8, 1, 8);
-                    DwarfGame.World.WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / DwarfGame.World.WorldScale,
-                                                                     Overworld.Map.GetLength(1) / DwarfGame.World.WorldScale) * 0.5f;
-                    StateManager.PushState(new LoadState(Game, StateManager));
+                    WorldSettings settings = new WorldSettings()
+                    {
+                        ExistingFile = null,
+                        ColonySize = new Point3(8, 1, 8),
+                        WorldScale =  2.0f,
+                        WorldOrigin = new Vector2(Overworld.Map.GetLength(0)/2.0f,
+                            Overworld.Map.GetLength(1)/2.0f)*0.5f
+                    };
+                    StateManager.PushState(new LoadState(Game, StateManager, settings));
                 });
 
             MakeMenuItem(frame, "Cliffs", "Create a cliff-y world.", (sender, args) =>
                 {
                     Overworld.CreateCliffsLand(Game.GraphicsDevice);
                     StateManager.ClearState();
-                    DwarfGame.World.ExistingFile = null;
-                    DwarfGame.World.WorldSize = new Point3(8, 1, 8);
-                    //GUI.MouseMode = GUISkin.MousePointer.Wait;
-                    DwarfGame.World.Natives = new List<Faction>();
-                    FactionLibrary library = new FactionLibrary();
-                    library.Initialize(null, new CompanyInformation());
-                    for (int i = 0; i < 10; i++)
+                    WorldSettings settings = new WorldSettings()
                     {
-                        DwarfGame.World.Natives.Add(library.GenerateFaction(i, 10));
-                    }
-                    DwarfGame.World.WorldSize = new Point3(8, 1, 8);
-                    DwarfGame.World.WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / DwarfGame.World.WorldScale,
-                                                                     Overworld.Map.GetLength(1) / DwarfGame.World.WorldScale) * 0.5f;
-                    StateManager.PushState(new LoadState(Game, StateManager));
+                        ExistingFile = null,
+                        ColonySize = new Point3(8, 1, 8),
+                        WorldScale = 2.0f,
+                        WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / 2.0f,
+                            Overworld.Map.GetLength(1) / 2.0f) * 0.5f
+                    };
+                    StateManager.PushState(new LoadState(Game, StateManager, settings));
                 });
 
             MakeMenuItem(frame, "Flat", "Create a flat world.", (sender, args) =>
                 {
                     Overworld.CreateUniformLand(Game.GraphicsDevice);
                     StateManager.ClearState();
-                    DwarfGame.World.ExistingFile = null;
-                    DwarfGame.World.WorldSize = new Point3(8, 1, 8);
-                    DwarfGame.World.WorldSize = new Point3(8, 1, 8);
-                    DwarfGame.World.WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / DwarfGame.World.WorldScale,
-                                                                     Overworld.Map.GetLength(1) / DwarfGame.World.WorldScale) * 0.5f;
-                    StateManager.PushState(new LoadState(Game, StateManager));
+                    WorldSettings settings = new WorldSettings()
+                    {
+                        ExistingFile = null,
+                        ColonySize = new Point3(8, 1, 8),
+                        WorldScale = 2.0f,
+                        WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / 2.0f,
+                            Overworld.Map.GetLength(1) / 2.0f) * 0.5f
+                    };
+                    StateManager.PushState(new LoadState(Game, StateManager, settings));
                 });
 
             MakeMenuItem(frame, "Ocean", "Create an ocean world", (sender, args) =>
                 {
-                    Overworld.CreateOceanLand(Game.GraphicsDevice);
+                    Overworld.CreateOceanLand(Game.GraphicsDevice, 0.17f);
                     StateManager.ClearState();
-                    DwarfGame.World.ExistingFile = null;
-                    DwarfGame.World.WorldSize = new Point3(8, 1, 8);
-                    DwarfGame.World.WorldSize = new Point3(8, 1, 8);
-                    DwarfGame.World.WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / DwarfGame.World.WorldScale,
-                                                                     Overworld.Map.GetLength(1) / DwarfGame.World.WorldScale) * 0.5f;
-                    StateManager.PushState(new LoadState(Game, StateManager));
+                    WorldSettings settings = new WorldSettings()
+                    {
+                        ExistingFile = null,
+                        ColonySize = new Point3(8, 1, 8),
+                        WorldScale = 2.0f,
+                        WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / 2.0f,
+                            Overworld.Map.GetLength(1) / 2.0f) * 0.5f
+                    };
+                    StateManager.PushState(new LoadState(Game, StateManager, settings));
                 });
 
             MakeMenuItem(frame, "Back", "Go back to the main menu.", (sender, args) => StateManager.PopState());
@@ -141,7 +146,7 @@ namespace DwarfCorp.GameStates
 
         private void MakeMenuItem(Gum.Widget Menu, string Name, string Tooltip, Action<Gum.Widget, Gum.InputEventArgs> OnClick)
         {
-            Menu.AddChild(new Gum.Widget
+            Menu.AddChild(new Gum.Widgets.Button
             {
                 AutoLayout = Gum.AutoLayout.DockTop,
                 Border = "border-thin",

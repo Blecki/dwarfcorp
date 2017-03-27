@@ -43,7 +43,7 @@ namespace DwarfCorp
     /// <summary>
     /// This component projects a billboard shadow to the ground below an entity.
     /// </summary>
-    public class Shadow : Sprite
+    public class Shadow : Sprite, IUpdateableComponent
     {
         public float GlobalScale { get; set; }
         public Timer UpdateTimer { get; set; }
@@ -65,7 +65,7 @@ namespace DwarfCorp
             OriginalTransform = LocalTransform;
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             UpdateTimer.Update(gameTime);
             if(UpdateTimer.HasTriggered)

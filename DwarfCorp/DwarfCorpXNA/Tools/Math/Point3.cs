@@ -51,11 +51,13 @@ namespace DwarfCorp
         public int Y;
         public int Z;
 
-        public Point3(Microsoft.Xna.Framework.Vector3 vect)
+        public static readonly Point3 Zero = new Point3(0, 0, 0);
+
+        public Point3(Vector3 vect)
         {
-            X = (int) vect.X;
-            Y = (int) vect.Y;
-            Z = (int) vect.Z;
+            X = MathFunctions.FloorInt(vect.X);
+            Y = MathFunctions.FloorInt(vect.Y);
+            Z = MathFunctions.FloorInt(vect.Z);
         }
 
         public Point3(int x, int y, int z)
@@ -85,6 +87,11 @@ namespace DwarfCorp
             }
             Point3 other = (Point3) obj;
             return other.X == X && other.Y == Y && other.Z == Z;
+        }
+
+        public static Point3 operator +(Point3 toAdd1, Point3 toAdd2)
+        {
+            return new Point3(toAdd1.X + toAdd2.X, toAdd1.Y + toAdd2.Y, toAdd1.Z + toAdd2.Z);
         }
 
         public Vector3 ToVector3()

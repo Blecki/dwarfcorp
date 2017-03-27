@@ -139,7 +139,6 @@ namespace DwarfCorp
         public int EdgePadding { get; set; }
         public GridLayout Layout { get; set; }
         public InputManager Input { get; set; }
-        public WorldManager PlayState { get; set; }
         public Dictionary<string, GUIComponent> Tabs { get; set; }
         public Faction Faction { get; set; }
         public SpeakerComponent Talker { get; set; }
@@ -147,7 +146,7 @@ namespace DwarfCorp
         public SpeechNode CurrentNode { get; set; }
         public Faction PlayerFation
         {
-            get { return DwarfGame.World.PlayerFaction; }
+            get { return World.PlayerFaction; }
         }
         public Panel SpeechBubble { get; set; }
         public Label SpeechLabel { get; set; }
@@ -159,21 +158,21 @@ namespace DwarfCorp
         public IEnumerator<SpeechNode> CurrentEnumerator { get; set; }
         public SpeechNode PreeTree { get; set; }
         public List<ResourceAmount> Resources { get; set; }
-    
+        public WorldManager World { get; set; }
         public Diplomacy.Politics Politics
         {
-            get { return DwarfGame.World.ComponentManager.Diplomacy.GetPolitics(DwarfGame.World.PlayerFaction, Faction); }
+            get { return World.ComponentManager.Diplomacy.GetPolitics(World.PlayerFaction, Faction); }
         }
         public Button BackButton { get; set; }
         public Faction.TradeEnvoy Envoy { get; set; }
 
-        public DiplomacyState(DwarfGame game, GameStateManager stateManager, WorldManager play, Faction.TradeEnvoy envoy) :
+        public DiplomacyState(DwarfGame game, GameStateManager stateManager, WorldManager world, Faction.TradeEnvoy envoy) :
             base(game, "DiplomacyState", stateManager)
         {
 
             EdgePadding = 128;
             Input = new InputManager();
-            PlayState = play;
+            World = world;
             EnableScreensaver = false;
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
             Faction = envoy.OwnerFaction;
@@ -252,7 +251,7 @@ namespace DwarfCorp
                         Change = -0.25f,
                         Description = "you tried to give us something offensive",
                         Duration = new TimeSpan(4, 0, 0, 0),
-                        Time = DwarfGame.World.Time.CurrentDate
+                        Time = World.Time.CurrentDate
                     });
                 }
                 else if ((!LastEvent.IsHate() && LastEvent.IsLike()) && !Politics.HasEvent("you gave us something we liked"))
@@ -262,7 +261,7 @@ namespace DwarfCorp
                         Change = 0.25f,
                         Description = "you gave us something we liked",
                         Duration = new TimeSpan(4, 0, 0, 0),
-                        Time = DwarfGame.World.Time.CurrentDate
+                        Time = World.Time.CurrentDate
                     });
                 }
 
@@ -277,7 +276,7 @@ namespace DwarfCorp
                             Change = 0.25f,
                             Description = "we had profitable trade",
                             Duration = new TimeSpan(2, 0, 0, 0),
-                            Time = DwarfGame.World.Time.CurrentDate
+                            Time = World.Time.CurrentDate
                         });
                     }
 
@@ -415,7 +414,7 @@ namespace DwarfCorp
                                         Change = 0.4f,
                                         Description = "you made peace with us",
                                         Duration = new TimeSpan(4, 0, 0, 0),
-                                        Time = DwarfGame.World.Time.CurrentDate
+                                        Time = World.Time.CurrentDate
                                     });
                                 }
                                 return SpeechNode.Echo(DialougeTree);
@@ -446,7 +445,7 @@ namespace DwarfCorp
                     Change = 0.0f,
                     Description = "we just met",
                     Duration = new TimeSpan(1, 0, 0, 0),
-                    Time = DwarfGame.World.Time.CurrentDate
+                    Time = World.Time.CurrentDate
                 });
             }
 
@@ -465,7 +464,7 @@ namespace DwarfCorp
                     Change = -2.0f,
                     Description = "you declared war on us",
                     Duration = new TimeSpan(4, 0, 0, 0),
-                    Time = DwarfGame.World.Time.CurrentDate
+                    Time = World.Time.CurrentDate
                 });
                 Politics.WasAtWar = true;
             }
@@ -594,7 +593,7 @@ namespace DwarfCorp
 
         private IEnumerable<SpeechNode> WhatDoYouThink()
         {
-            Diplomacy.Politics p = DwarfGame.World.ComponentManager.Diplomacy.GetPolitics(Faction, PlayerFation);
+            Diplomacy.Politics p = World.ComponentManager.Diplomacy.GetPolitics(Faction, PlayerFation);
             Relationship r = p.GetCurrentRelationship();
             string relationship = "So far, our relationship has been " + r;
 
@@ -693,9 +692,9 @@ namespace DwarfCorp
 
         public override void OnEnter()
         {
-            //DwarfGame.World.GUI.RootComponent.IsVisible = false;
-            //DwarfGame.World.GUI.ToolTipManager.ToolTip = "";
-            DwarfGame.World.Paused = true;
+            //World.GUI.RootComponent.IsVisible = false;
+            //World.GUI.ToolTipManager.ToolTip = "";
+            World.Paused = true;
             Initialize();
 
             base.OnEnter();
@@ -703,15 +702,15 @@ namespace DwarfCorp
 
         public override void OnExit()
         {
-            //DwarfGame.World.GUI.RootComponent.IsVisible = true;
-            DwarfGame.World.Paused = false;
+            //World.GUI.RootComponent.IsVisible = true;
+            World.Paused = false;
             base.OnExit();
         }
 
 
         private void back_OnClicked()
         {
-            //DwarfGame.World.GUI.RootComponent.IsVisible = true;
+            //World.GUI.RootComponent.IsVisible = true;
             StateManager.PopState();
         }
 

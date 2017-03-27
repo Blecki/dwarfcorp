@@ -1,4 +1,4 @@
-﻿// Elf.cs
+// Elf.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -48,6 +48,11 @@ namespace DwarfCorp
     /// </summary>
     public class MudGolem : Creature
     {
+        public MudGolem()
+        {
+            
+        }
+
         public MudGolem(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, Vector3 position) :
             base(stats, allies, planService, faction, new Physics("MudGolem", manager.RootComponent, Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0)),
                  chunks, graphics, content, name)
@@ -70,7 +75,7 @@ namespace DwarfCorp
 
             Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero);
 
-            AI = new MudGolemAI(this, Sensors, DwarfGame.World.PlanService) { Movement = { IsSessile = true, CanFly = false, CanSwim = false, CanWalk = false, CanClimb = false, CanClimbWalls = false} };
+            AI = new MudGolemAI(this, Sensors, Manager.World.PlanService) { Movement = { IsSessile = true, CanFly = false, CanSwim = false, CanWalk = false, CanClimb = false, CanClimbWalls = false} };
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
@@ -110,7 +115,7 @@ namespace DwarfCorp
             };
 
 
-            MinimapIcon minimapIcon = new MinimapIcon(Physics, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 3, 0));
+            MinimapIcon minimapIcon = new MinimapIcon(Physics, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 3, 0));
 
 
             NoiseMaker.Noises["Chew"] = new List<string>
@@ -130,6 +135,11 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class MudGolemAI : CreatureAI
     {
+        public MudGolemAI()
+        {
+            
+        }
+
         public MudGolemAI(Creature creature, EnemySensor enemySensor, PlanService planService) :
             base(creature, "MudGolemAI", enemySensor, planService)
         {

@@ -70,20 +70,8 @@ sampler IllumSampler = sampler_state { texture = <xIllumination> ;  magfilter = 
 sampler TextureSampler = sampler_state { texture = <xTexture> ; magfilter = POINT; minfilter = LINEAR; mipfilter=POINT; AddressU = clamp; AddressV = clamp;};
 
 sampler ColorscaleSampler = sampler_state { texture = <xTexture>; magfilter = POINT; minfilter = LINEAR; mipfilter = POINT; AddressU = clamp; AddressV = clamp; };
-Texture xTexture0;
-
-Texture xTexture1;
-sampler TextureSampler1 = sampler_state { texture = <xTexture1>; magfilter = POINT; minfilter = LINEAR; mipfilter = POINT; AddressU = clamp; AddressV = clamp; };
-
-Texture xTexture2;
-sampler TextureSampler2 = sampler_state { texture = <xTexture2>; magfilter = POINT; minfilter = LINEAR; mipfilter = POINT; AddressU = clamp; AddressV = clamp; };
-
-Texture xTexture3;
-sampler TextureSampler3 = sampler_state { texture = <xTexture3>; magfilter = POINT; minfilter = LINEAR; mipfilter = POINT; AddressU = clamp; AddressV = clamp; };
 
 sampler WrappedTextureSampler = sampler_state { texture = <xTexture>; magfilter = POINT; minfilter = LINEAR; mipfilter = POINT; AddressU = wrap; AddressV = wrap; };
-
-sampler WrappedTextureSampler1 = sampler_state { texture = <xTexture1>; magfilter = POINT; minfilter = LINEAR; mipfilter = POINT; AddressU = wrap; AddressV = wrap; };
 
 Texture xReflectionMap;
 float xWaterReflective;
@@ -91,7 +79,7 @@ float xWaterReflective;
 Texture xSunGradient;
 Texture xAmbientGradient;
 Texture xTorchGradient;
-Texture xRefractionMap;
+
 Texture xShoreGradient;
 Texture xLightmap;
 // Light ramp tint
@@ -110,8 +98,6 @@ sampler TorchSampler = sampler_state { texture = <xTorchGradient>; magfilter = P
 sampler ShoreSampler = sampler_state { texture = <xShoreGradient>; magfilter = POINT; minfilter = POINT; mipfilter = POINT; AddressU = wrap; AddressV = clamp; };
 
 sampler ReflectionSampler = sampler_state { texture = <xReflectionMap> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = clamp; AddressV = clamp;};
-
-sampler RefractionSampler = sampler_state { texture = <xRefractionMap> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = clamp; AddressV = clamp;};
 
 sampler WaterBumpMapSampler = sampler_state { texture = <xWaterBumpMap> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = wrap; AddressV = wrap;};
 
@@ -161,14 +147,6 @@ sampler ShadowMapSampler = sampler_state { texture = <xShadowMap>; magfilter = L
 		return Output;
 	}
 
-	technique Untextured_2_0
-	{
-		pass Pass0
-		{
-			VertexShader = compile vs_2_0 UTexturedVS();
-			PixelShader = compile ps_2_0 UTexturedPS();
-		}
-	}
 
 	technique Untextured
 	{
@@ -332,7 +310,14 @@ TVertexToPixel TexturedVS(float4 inPos : POSITION,
 	Output.Color = inColor * lightTint;
 	Output.Color.a = lightTint.a;
 	Output.ColorTint = tint * xColorTint;
+	Output.Color.a *= xColorTint.a;
+	/* Dumb fake lighting for testing.
+	float3 normal = normalize(inPos - float3(0.5, 0.5, 0.5));
+	float3 lightPos = normalize(float3(-0.0, 0.5, -1));
 
+	Output.Color.r *= clamp(dot(normal, lightPos), 0, 1);
+	Output.Color.g = 0.8;
+	*/
 	if(xEnableLighting)
 	{
 		for (int i = 0; i < MAX_LIGHTS; i++)
@@ -556,6 +541,17 @@ TPixelToFrame SelectionPS_Alphatest(SelectionBufferToPixel PSIn)
 	return Output;
 }
 
+TPixelToFrame SilhouettePS(TVertexToPixel PSIn)
+{
+	TPixelToFrame Output = (TPixelToFrame)0;
+	float2 textureCoords = ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds);
+	float4 texColor = tex2D(TextureSampler, textureCoords);
+	clip((texColor.a - 0.5));
+	Output.Color.rgb = PSIn.ColorTint;
+	Output.Color.a = 0.2;
+	return Output;
+}
+
 TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
 {
     TPixelToFrame Output = (TPixelToFrame)0;
@@ -671,6 +667,15 @@ technique Textured
         VertexShader = compile vs_2_0 TexturedVSNonInstanced();
         PixelShader  = compile ps_2_0 TexturedPS_Alphatest();
     }
+}
+
+technique Silhouette
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_2_0 TexturedVSNonInstanced();
+		PixelShader = compile ps_2_0 SilhouettePS();
+	}
 }
 
 technique Textured_From_Lightmap
@@ -810,8 +815,9 @@ WVertexToPixel WaterVS_Flat(float4 inPos : POSITION, float2 inTex : TEXCOORD0, f
 	WVertexToPixel Output = (WVertexToPixel)0;
 
 	float4x4 preViewProjection = mul(xView, xProjection);
-	float4x4 preWorldViewProjection = mul(xWorld, preViewProjection);
-	Output.Position = mul(inPos, preWorldViewProjection);
+	float4 pos3d = mul(inPos, xWorld);
+	pos3d += GetNoise(pos3d);
+	Output.Position = mul(pos3d, preViewProjection);
 	Output.Color = xFlatColor;
 
 	if (Clipping) Output.ClipDistance = dot(mul(xWorld, inPos), ClipPlane0);

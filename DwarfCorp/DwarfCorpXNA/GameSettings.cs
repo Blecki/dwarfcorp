@@ -1,4 +1,4 @@
-﻿// GameSettings.cs
+// GameSettings.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -72,7 +72,7 @@ namespace DwarfCorp
             public bool SelfIlluminationEnabled = true;
             public bool ParticlePhysics = true;
             public bool GrassMotes = true;
-            public int NumMotes = 1;
+            public int NumMotes = 512;
             public bool InvertZoom = false;
             public bool EnableAIDebugger = false;
             public float ChunkGenerateDistance = 80.0f;

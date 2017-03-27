@@ -1,4 +1,4 @@
-﻿// MinimapIcon.cs
+// MinimapIcon.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -43,15 +43,15 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class MinimapIcon : Body
     {
-        public ImageFrame Icon { get; set; }
+        public NamedImageFrame Icon { get; set; }
         public float IconScale { get; set; }
         public MinimapIcon()
         {
 
         }
 
-        public MinimapIcon(Body parent, ImageFrame icon) :
-            base("Icon", parent, Matrix.Identity, Vector3.One, Vector3.Zero)
+        public MinimapIcon(Body parent, NamedImageFrame icon) :
+            base(parent.Manager, "Icon", parent, Matrix.Identity, Vector3.One, Vector3.Zero)
         {
             Icon = icon;
             IconScale = 1.0f;

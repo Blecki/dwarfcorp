@@ -1,4 +1,4 @@
-﻿// PlanAct.cs
+// PlanAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -93,12 +93,12 @@ namespace DwarfCorp
             MaxExpansions = 1000;
             PathOut = pathOut;
             TargetName = target;
-            PlanSubscriber = new PlanSubscriber(DwarfGame.World.PlanService);
+            PlanSubscriber = new PlanSubscriber(agent.Manager.World.PlanService);
             WaitingOnResponse = false;
             MaxTimeouts = 4;
             Timeouts = 0;
             Radius = 0;
-            Weights = new List<float> {10.0f, 20.0f, 30.0f, 40.0f};
+            Weights = new List<float> {1.0f, 10.0f, 20.0f, 30.0f, 40.0f};
         }
 
         public Voxel GetTarget()
@@ -123,7 +123,7 @@ namespace DwarfCorp
 
         public static bool PathExists(Voxel voxA, Voxel voxB, CreatureAI creature)
         {
-            var path = AStarPlanner.FindPath(creature.Movement, voxA, new VoxelGoalRegion(voxB), DwarfGame.World.ChunkManager, 1000, 10);
+            var path = AStarPlanner.FindPath(creature.Movement, voxA, new VoxelGoalRegion(voxB), creature.Manager.World.ChunkManager, 1000, 1);
             return path != null && path.Count > 0;
         }
 
@@ -149,7 +149,7 @@ namespace DwarfCorp
 
                 PlannerTimer.Update(DwarfTime.LastTime);
 
-                ChunkManager chunks = DwarfGame.World.ChunkManager;
+                ChunkManager chunks = Creature.Manager.World.ChunkManager;
                 if(PlannerTimer.HasTriggered || Timeouts == 0)
                 {
 
@@ -234,6 +234,10 @@ namespace DwarfCorp
                             WaitingOnResponse = false;
 
                             statusResult = Status.Success;
+                        }
+                        else if (Timeouts < MaxTimeouts)
+                        {
+                            yield return Status.Running;
                         }
                         else
                         {

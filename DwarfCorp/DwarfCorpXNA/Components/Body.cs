@@ -1,4 +1,4 @@
-﻿// Body.cs
+// Body.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -49,7 +49,7 @@ namespace DwarfCorp
     /// also live inside an octree for faster access to colliding or nearby objects.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class Body : GameComponent, IBoundedObject
+    public class Body : GameComponent, IBoundedObject, IUpdateableComponent
     {
         public bool WasAddedToOctree
         {
@@ -185,8 +185,8 @@ namespace DwarfCorp
         }
 
 
-        public Body(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
-            this(parent.Manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos, true)
+        public Body(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
+            this(manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos, true)
         {
             DrawReservation = false;
             AnimationQueue = new List<MotionAnimation>();
@@ -198,8 +198,6 @@ namespace DwarfCorp
                 OnDestroyed += Body_OnDestroyed;
 
             lastBounds = GetBoundingBox();
-
-            AddCacheType(GameObjectCaching.RenderBodyCache);
         }
 
         public Body(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool addToCollisionManager) :
@@ -225,7 +223,6 @@ namespace DwarfCorp
 
             lastBounds = GetBoundingBox();
 
-            AddCacheType(GameObjectCaching.RenderBodyCache);
         }
 
         public void OrientToWalls()
@@ -233,7 +230,7 @@ namespace DwarfCorp
             Voxel curr = new Voxel();
             Voxel[] neighbors = new Voxel[4];
             Vector3 pos = LocalTransform.Translation;
-            if (DwarfGame.World.ChunkManager.ChunkData.GetVoxel(pos, ref curr))
+            if (Manager.World.ChunkManager.ChunkData.GetVoxel(pos, ref curr))
             {
                 
                 curr.Chunk.Get2DManhattanNeighbors(neighbors, (int)curr.GridPosition.X, (int)curr.GridPosition.Y, (int)curr.GridPosition.Z);
@@ -300,29 +297,30 @@ namespace DwarfCorp
         }
 
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if (MathFunctions.HasNan(Position))
-            {
-                Die();
-            }
+            //if (MathFunctions.HasNan(Position))
+            //{
+            //    Die();
+            //}
 
             IsAboveCullPlane =  GlobalTransform.Translation.Y - GetBoundingBox().Extents().Y > (chunks.ChunkData.MaxViewingLevel + 5);
-            if(DrawScreenRect)
-            {
-                Drawer2D.DrawRect(GetScreenRect(camera), Color.Transparent, Color.White, 1);
-            }
 
-            if(DrawBoundingBox)
-            {
-                Drawer3D.DrawBox(BoundingBox, Color.White, 0.02f);
-                Drawer3D.DrawBox(GetRotatedBoundingBox(), Color.Red, 0.02f);
-            }
+            //if(DrawScreenRect) // Never true.
+            //{
+            //    Drawer2D.DrawRect(GetScreenRect(camera), Color.Transparent, Color.White, 1);
+            //}
 
-            if (DrawReservation && IsReserved)
-            {
-                Drawer3D.DrawBox(BoundingBox, Color.White, 0.02f);
-            }
+            //if(DrawBoundingBox) // Only used by TrapSensor
+            //{
+            //    Drawer3D.DrawBox(BoundingBox, Color.White, 0.02f);
+            //    Drawer3D.DrawBox(GetRotatedBoundingBox(), Color.Red, 0.02f);
+            //}
+
+            //if (DrawReservation && IsReserved) // Never true.
+            //{
+            //    Drawer3D.DrawBox(BoundingBox, Color.White, 0.02f);
+            //}
 
             if(AnimationQueue.Count > 0)
             {
@@ -336,56 +334,47 @@ namespace DwarfCorp
                     AnimationQueue.RemoveAt(0);
                 }
             }
-
-            base.Update(gameTime, chunks, camera);
         }
 
-        /// <summary>
-        /// Renders the component.
-        /// </summary>
-        /// <param name="gameTime">The game time.</param>
-        /// <param name="chunks">The chunk manager.</param>
-        /// <param name="camera">The camera.</param>
-        /// <param name="spriteBatch">The sprite batch.</param>
-        /// <param name="graphicsDevice">The graphics device.</param>
-        /// <param name="effect">The shader to use.</param>
-        /// <param name="renderingForWater">if set to <c>true</c> rendering for water reflections.</param>
-        public virtual void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
+        ///// <summary>
+        ///// Renders the component.
+        ///// </summary>
+        ///// <param name="gameTime">The game time.</param>
+        ///// <param name="chunks">The chunk manager.</param>
+        ///// <param name="camera">The camera.</param>
+        ///// <param name="spriteBatch">The sprite batch.</param>
+        ///// <param name="graphicsDevice">The graphics device.</param>
+        ///// <param name="effect">The shader to use.</param>
+        ///// <param name="renderingForWater">if set to <c>true</c> rendering for water reflections.</param>
+        //public virtual void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
+        //{
+        //}
+
+
+        public void UpdateTransformsRecursive(Body ParentBody)
         {
-        }
-
-
-        public void UpdateTransformsRecursive()
-        {
-
-            if(Parent is Body)
+            if (ParentBody != null)
             {
-                Body locatable = (Body) Parent;
-
-                //if(HasMoved)
-                {
-                    GlobalTransform = LocalTransform * locatable.GlobalTransform;
-                    hasMoved = false;
-                }
+                GlobalTransform = LocalTransform * ParentBody.GlobalTransform;
+                hasMoved = false;
             }
             else
             {
-                //if(HasMoved)
-                {
-                    GlobalTransform = LocalTransform;
-                    hasMoved = false;
-                }
+                GlobalTransform = LocalTransform;
+                hasMoved = false;
             }
-
-
-            lock(Children)
+            
+            //lock(Children)
             {
-                foreach(Body locatable in Children.OfType<Body>())
+                for (int i = 0; i < Children.Count; ++i)
                 {
-                    locatable.UpdateTransformsRecursive();
+                    var childBody = Children[i] as Body;
+                    if (childBody != null)
+                        childBody.UpdateTransformsRecursive(this);
                 }
             }
 
+            // Setting the global transform does this...
             UpdateBoundingBox();
         }
 

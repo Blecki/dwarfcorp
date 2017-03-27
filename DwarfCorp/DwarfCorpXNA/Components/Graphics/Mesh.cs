@@ -1,4 +1,4 @@
-﻿// Mesh.cs
+// Mesh.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -48,7 +48,7 @@ namespace DwarfCorp
     /// Efficiently drawn by the instance manager using state batching.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class Mesh : Tinter
+    public class Mesh : Tinter, IUpdateableComponent
     {
         public string ModelType { get; set; }
         [JsonIgnore]
@@ -59,7 +59,7 @@ namespace DwarfCorp
         [OnDeserialized]
         protected void OnDeserialized(StreamingContext context)
         {
-            Instance = DwarfGame.World.InstanceManager.AddInstance(ModelType, GlobalTransform, Tint);
+            Instance = Manager.World.InstanceManager.AddInstance(ModelType, GlobalTransform, Tint);
             Instance.SelectionBufferColor = GetGlobalIDColor();
             instanceVisible = true;
         }
@@ -69,24 +69,24 @@ namespace DwarfCorp
             
         }
 
-        public Mesh(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, string modelType, bool addToCollisionManager) :
+        public Mesh(string name, GameComponent parent, Matrix localTransform, string modelType, bool addToCollisionManager) :
             base(name, parent, localTransform, Vector3.Zero, Vector3.Zero, addToCollisionManager)
         {
             ModelType = modelType;
-            Instance = DwarfGame.World.InstanceManager.AddInstance(ModelType, GlobalTransform, Tint);
+            Instance = Manager.World.InstanceManager.AddInstance(ModelType, GlobalTransform, Tint);
             Instance.SelectionBufferColor = GetGlobalIDColor();
             instanceVisible = true;
         }
 
         private bool firstIter = true;
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             base.Update(gameTime, chunks, camera);
 
-            if(Instance != null  && (HasMoved || firstIter || Instance.Color != TargetTint))
+            if(Instance != null  && (HasMoved || firstIter || Instance.Color != Tint))
             {
-                Instance.Color = TargetTint;
+                Instance.Color = Tint;
                 Instance.Transform = GlobalTransform;
                 Instance.SelectionBufferColor = GetGlobalIDColor();
                 firstIter = false;
@@ -105,7 +105,7 @@ namespace DwarfCorp
 
         public override void Die()
         {
-            DwarfGame.World.InstanceManager.Instances[ModelType].Remove(Instance);
+            Manager.World.InstanceManager.Instances[ModelType].Remove(Instance);
             base.Die();
         }
 
@@ -115,11 +115,11 @@ namespace DwarfCorp
             {
                 if(value && !instanceVisible)
                 {
-                    DwarfGame.World.InstanceManager.Instances[ModelType].Add(Instance);
+                    Manager.World.InstanceManager.Instances[ModelType].Add(Instance);
                 }
                 else if(!value && instanceVisible)
                 {
-                    DwarfGame.World.InstanceManager.Instances[ModelType].Remove(Instance);
+                    Manager.World.InstanceManager.Instances[ModelType].Remove(Instance);
                 }
             }
 

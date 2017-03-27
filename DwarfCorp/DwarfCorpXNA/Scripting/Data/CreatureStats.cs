@@ -1,4 +1,4 @@
-﻿// CreatureStats.cs
+// CreatureStats.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -147,25 +147,12 @@ namespace DwarfCorp
         public EmployeeClass.Level CurrentLevel { get { return CurrentClass.Levels[LevelIndex]; } }
 
         private int xp = 0;
-        private bool announced = false;
         public int XP
         {
             get { return xp; }
             set
             {
                 xp = value;
-                if (IsOverQualified)
-                {
-                    if (!announced)
-                    {
-                        announced = true;
-                        DwarfGame.World.MakeAnnouncement(String.Format("{0} ({1}) wants a promotion!",
-                                FullName, CurrentLevel.Name),
-                            String.Format("{0} can now be promoted to {1}.",
-                                FullName, CurrentClass.Levels[LevelIndex + 1].Name),
-                            EconomyState.PushEconomyState);
-                    }
-                }
             }
         }
 
@@ -248,7 +235,6 @@ namespace DwarfCorp
             Wisdom = Math.Max(Wisdom, CurrentLevel.BaseStats.Wisdom);
             Charisma = Math.Max(Charisma, CurrentLevel.BaseStats.Charisma);
             Intelligence = Math.Max(Intelligence, CurrentLevel.BaseStats.Intelligence);
-            announced = false;
         }
     }
 

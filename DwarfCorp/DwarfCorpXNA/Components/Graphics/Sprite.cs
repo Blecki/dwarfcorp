@@ -1,4 +1,4 @@
-﻿// Sprite.cs
+// Sprite.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -46,7 +46,7 @@ namespace DwarfCorp
     /// The rectangle is drawn in such a way that it is always more or less facing the camera.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class Sprite : Tinter
+    public class Sprite : Tinter, IUpdateableComponent, IRenderableComponent
     {
         public Dictionary<string, Animation> Animations { get; set; }
         
@@ -54,6 +54,9 @@ namespace DwarfCorp
         public Animation CurrentAnimation { get; set; }
         public OrientMode OrientationType { get; set; }
         public bool DistortPosition { get; set; }
+        public bool DrawSilhouette { get; set; }
+        public Color SilhouetteColor { get; set; }
+
 
         public enum OrientMode
         {
@@ -74,6 +77,8 @@ namespace DwarfCorp
             OrientationType = OrientMode.Spherical;
             BillboardRotation = 0.0f;
             DistortPosition = true;
+            DrawSilhouette = false;
+            SilhouetteColor = new Color(0.0f, 1.0f, 1.0f, 0.5f);
         }
 
         public Sprite()
@@ -140,36 +145,30 @@ namespace DwarfCorp
             base.ReceiveMessageRecursive(messageToReceive);
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if(IsActive)
-            {
-                if(CurrentAnimation != null)
-                {
-                    CurrentAnimation.Update(gameTime);
-                }
-            }
-
+            if (CurrentAnimation != null)
+                CurrentAnimation.Update(gameTime);
 
             base.Update(gameTime, chunks, camera);
         }
 
         public override void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
-            GraphicsDevice graphicsDevice, Effect effect)
+            GraphicsDevice graphicsDevice, Shader effect)
         {
             if (!IsVisible) return;
 
             base.RenderSelectionBuffer(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect);
-            effect.Parameters["xID"].SetValue(GetGlobalIDColor().ToVector4());
+            effect.SelectionBufferColor = GetGlobalIDColor().ToVector4();
             Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
         }
 
-        public override void Render(DwarfTime gameTime,
+        public void Render(DwarfTime gameTime,
             ChunkManager chunks,
             Camera camera,
             SpriteBatch spriteBatch,
             GraphicsDevice graphicsDevice,
-            Effect effect,
+            Shader effect,
             bool renderingForWater)
         {
             ApplyTintingToEffect(effect);
@@ -183,8 +182,6 @@ namespace DwarfCorp
             {
                 CurrentAnimation.PreRender();
                 SpriteSheet = CurrentAnimation.SpriteSheet;
-                effect.Parameters["xTexture"].SetValue(SpriteSheet.GetTexture());
-
                 if(OrientationType != OrientMode.Fixed)
                 {
                     if(camera.Projection == Camera.ProjectionMode.Perspective)
@@ -201,7 +198,7 @@ namespace DwarfCorp
 
                             Matrix worldRot = Matrix.CreateScale(new Vector3(xscale, yscale, zscale)) * rot * noTransBill;
                             worldRot.Translation = DistortPosition ? bill.Translation + VertexNoise.GetNoiseVectorFromRepeatingTexture(bill.Translation) : bill.Translation;
-                            effect.Parameters["xWorld"].SetValue(worldRot);
+                            effect.World = worldRot;
                         }
                         else
                         {
@@ -222,23 +219,42 @@ namespace DwarfCorp
 
                             Matrix worldRot = Matrix.CreateConstrainedBillboard(GlobalTransform.Translation, camera.Position, axis, null, null);
                             worldRot.Translation = DistortPosition ? worldRot.Translation + VertexNoise.GetNoiseVectorFromRepeatingTexture(worldRot.Translation) : worldRot.Translation;
-                            effect.Parameters["xWorld"].SetValue(worldRot);
+                            effect.World = worldRot;
                         }
                     }
                     else
                     {
                         Matrix rotation = Matrix.CreateRotationY(-(float) Math.PI * 0.25f) * Matrix.CreateTranslation(GlobalTransform.Translation);
                         rotation.Translation = DistortPosition ? rotation.Translation + VertexNoise.GetNoiseVectorFromRepeatingTexture(rotation.Translation) : rotation.Translation;
-                        effect.Parameters["xWorld"].SetValue(rotation);
+                        effect.World = rotation;
                     }
                 }
                 else
                 {
                     Matrix rotation = GlobalTransform;
                     rotation.Translation = DistortPosition ? rotation.Translation + VertexNoise.GetNoiseVectorFromRepeatingTexture(rotation.Translation) : rotation.Translation;
-                    effect.Parameters["xWorld"].SetValue(rotation);
+                    effect.World = rotation;
                 }
 
+                
+                effect.MainTexture = SpriteSheet.GetTexture();
+                if (DrawSilhouette)
+                {
+                    Color oldTint = effect.VertexColorTint;
+                    effect.VertexColorTint = SilhouetteColor;
+                    graphicsDevice.DepthStencilState = DepthStencilState.None;
+                    var oldTechnique = effect.CurrentTechnique;
+                    effect.CurrentTechnique = effect.Techniques[Shader.Technique.Silhouette];
+                    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                    {
+                        pass.Apply();
+                        CurrentAnimation.Primitives[CurrentAnimation.CurrentFrame].Render(graphicsDevice);
+                    }
+
+                    graphicsDevice.DepthStencilState = DepthStencilState.Default;
+                    effect.VertexColorTint = oldTint;
+                    effect.CurrentTechnique = oldTechnique;
+                }
 
                 foreach(EffectPass pass in effect.CurrentTechnique.Passes)
                 {

@@ -49,8 +49,8 @@ namespace DwarfCorp
 
         }
 
-        public Anvil(Vector3 position) :
-            base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 3), DwarfGame.World.ComponentManager.RootComponent)
+        public Anvil(ComponentManager manager, Vector3 position) :
+            base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 3), manager.RootComponent)
         {
             Name = "Anvil";
             Tags.Add("Anvil");
@@ -58,7 +58,7 @@ namespace DwarfCorp
     }
 
     [JsonObject(IsReference = true)]
-    public class Stove : Fixture
+    public class Stove : Fixture, IUpdateableComponent
     {
 
         public Stove()
@@ -66,8 +66,8 @@ namespace DwarfCorp
 
         }
 
-        public Stove(Vector3 position) :
-            base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 4), DwarfGame.World.ComponentManager.RootComponent)
+        public Stove(ComponentManager manager, Vector3 position) :
+            base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 4), manager.RootComponent)
         {
             Name = "Stove";
             Tags.Add("Stove");
@@ -81,11 +81,11 @@ namespace DwarfCorp
              */
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (MathFunctions.RandEvent(0.01f))
             {
-                DwarfGame.World.ParticleManager.Trigger("smoke", GlobalTransform.Translation + Vector3.Up * .5f, Color.White, 1);
+                Manager.World.ParticleManager.Trigger("smoke", GlobalTransform.Translation + Vector3.Up * .5f, Color.White, 1);
             }
             base.Update(gameTime, chunks, camera);
         }
@@ -101,8 +101,8 @@ namespace DwarfCorp
 
         }
 
-        public Barrel(Vector3 position) :
-            base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 0), DwarfGame.World.ComponentManager.RootComponent)
+        public Barrel(ComponentManager manager, Vector3 position) :
+            base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 0), manager.RootComponent)
         {
             Name = "Barrel";
             Tags.Add("Barrel");

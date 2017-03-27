@@ -45,7 +45,7 @@ namespace DwarfCorp
     /// When a voxel is destroyed, this component kills whatever it is attached to.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class VoxelListener : GameComponent
+    public class VoxelListener : GameComponent, IUpdateableComponent
     {
         public Point3 VoxelID;
 
@@ -63,7 +63,7 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            Chunk = DwarfGame.World.ChunkManager.ChunkData.ChunkMap[ChunkID];
+            Chunk = Manager.World.ChunkManager.ChunkData.ChunkMap[ChunkID];
             firstIter = true;
             Chunk.OnVoxelDestroyed += VoxelListener_OnVoxelDestroyed;
         }
@@ -84,7 +84,7 @@ namespace DwarfCorp
 
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (firstIter)
             {
@@ -105,16 +105,13 @@ namespace DwarfCorp
                     Chunk.MakeVoxel(VoxelID.X, VoxelID.Y, VoxelID.Z).Kill();
                 }
             }
-
-            base.Update(gameTime, chunks, camera);
         }
-
 
         void VoxelListener_OnVoxelDestroyed(Point3 voxelID)
         {
             if (voxelID.Equals(VoxelID))
             {
-                GetRootComponent().Die();
+                GetEntityRootComponent().Die();
             }
         }
 
@@ -145,7 +142,7 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            Chunk = DwarfGame.World.ChunkManager.ChunkData.ChunkMap[ChunkID];
+            Chunk = Manager.World.ChunkManager.ChunkData.ChunkMap[ChunkID];
             Chunk.OnVoxelExplored += ExploredListener_OnVoxelExplored;
         }
 
@@ -169,8 +166,8 @@ namespace DwarfCorp
         {
             if (voxelID.Equals(VoxelID))
             {
-                GetRootComponent().SetActiveRecursive(true);
-                GetRootComponent().SetVisibleRecursive(true);
+                GetEntityRootComponent().SetActiveRecursive(true);
+                GetEntityRootComponent().SetVisibleRecursive(true);
                 Delete();
             }
         }

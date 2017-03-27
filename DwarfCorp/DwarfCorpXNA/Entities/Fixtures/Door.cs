@@ -41,7 +41,7 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class Door : Fixture
+    public class Door : Fixture, IUpdateableComponent
     {
         public Faction TeamFaction { get; set; }
         public Matrix ClosedTransform { get; set; }
@@ -53,10 +53,10 @@ namespace DwarfCorp
             IsOpen = false;
         }
 
-        public Door(Vector3 position, Faction team, SpriteSheet sheet, Point frame, float hp) :
+        public Door(ComponentManager manager, Vector3 position, Faction team, SpriteSheet sheet, Point frame, float hp) :
             base(
             position, sheet, frame,
-            DwarfGame.World.ComponentManager.RootComponent)
+            manager.RootComponent)
         {
             IsMoving = false;
             IsOpen = false;
@@ -71,7 +71,7 @@ namespace DwarfCorp
             ClosedTransform = LocalTransform;
             AddToCollisionManager = true;
             CollisionType = CollisionManager.CollisionType.Static;
-            Health health = new Health(DwarfGame.World.ComponentManager, "Health", this, hp, 0.0f, hp);
+            Health health = new Health(manager, "Health", this, hp, 0.0f, hp);
             
         }
 
@@ -106,7 +106,7 @@ namespace DwarfCorp
             IsOpen = false;
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (IsMoving)
             {

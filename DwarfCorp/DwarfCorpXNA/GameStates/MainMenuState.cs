@@ -1,4 +1,4 @@
-﻿// MainMenuState.cs
+// MainMenuState.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -74,7 +74,7 @@ namespace DwarfCorp.GameStates
 
         private void MakeMenuItem(Gum.Widget Menu, string Name, string Tooltip, Action<Gum.Widget, Gum.InputEventArgs> OnClick)
         {
-            Menu.AddChild(new Gum.Widget
+            Menu.AddChild(new Gum.Widgets.Button
             {
                 AutoLayout = Gum.AutoLayout.DockTop,
                 Border = "border-thin",
@@ -82,7 +82,7 @@ namespace DwarfCorp.GameStates
                 OnClick = OnClick,
                 Tooltip = Tooltip,
                 TextHorizontalAlign = Gum.HorizontalAlign.Center,
-                TextVerticalAlign = Gum.VerticalAlign.Center
+                TextVerticalAlign = Gum.VerticalAlign.Center,
             });
         }
 

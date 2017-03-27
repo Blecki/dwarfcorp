@@ -1,4 +1,4 @@
-﻿// RoomBuilder.cs
+// RoomBuilder.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -32,6 +32,7 @@
 // THE SOFTWARE.
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -53,7 +54,15 @@ namespace DwarfCorp
         public List<BuildRoomOrder> BuildDesignations { get; set; }
         public RoomData CurrentRoomData { get; set; }
         public Faction Faction { get; set; }
-        private List<Body> displayObjects = null; 
+        private List<Body> displayObjects = null;
+        [JsonIgnore]
+        private WorldManager World { get; set; }
+
+        [OnDeserialized]
+        public void OnDeserializing(StreamingContext ctx)
+        {
+            World = ((WorldManager)ctx.Context);
+        }
 
         public List<Room> FilterRoomsByType(string type)
         {
@@ -65,12 +74,22 @@ namespace DwarfCorp
             
         }
 
-        public RoomBuilder(Faction faction)
+        public RoomBuilder(Faction faction, WorldManager world)
         {
+            World = world;
             DesignatedRooms = new List<Room>();
             BuildDesignations = new List<BuildRoomOrder>();
             CurrentRoomData = RoomLibrary.GetData("BedRoom");
             Faction = faction;
+        }
+
+
+        public void OnEnter()
+        {
+            if (Faction == null)
+            {
+                Faction = World.PlayerFaction;
+            }
         }
 
         public void OnExit()
@@ -228,7 +247,12 @@ namespace DwarfCorp
 
         public void Update(MouseState mouseState, KeyboardState keyState, DwarfGame game, DwarfTime time)
         {
-            DwarfGame.World.SetMouse(DwarfGame.World.MousePointer);
+            if (Faction == null)
+            {
+                Faction = World.PlayerFaction;
+            }
+
+            World.SetMouse(World.MousePointer);
         }
 
         private void BuildNewVoxels(IEnumerable<Voxel> refs)
@@ -262,15 +286,15 @@ namespace DwarfCorp
                 {
                     if(CurrentRoomData != RoomLibrary.GetData("Stockpile"))
                     {
-                        Room toBuild = RoomLibrary.CreateRoom(Faction, CurrentRoomData.Name, designations.ToList(), true);
+                        Room toBuild = RoomLibrary.CreateRoom(Faction, CurrentRoomData.Name, designations.ToList(), true, World);
                         DesignatedRooms.Add(toBuild);
-                        order = new BuildRoomOrder(toBuild, this.Faction);
+                        order = new BuildRoomOrder(toBuild, Faction, Faction.World);
                         order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild, v));
                         BuildDesignations.Add(order);
                     }
                     else
                     {
-                        Stockpile toBuild = new Stockpile(Faction);
+                        Stockpile toBuild = new Stockpile(Faction, World);
                         DesignatedRooms.Add(toBuild);
                         order = new BuildStockpileOrder(toBuild, this.Faction);
                         order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild, v));
@@ -281,11 +305,11 @@ namespace DwarfCorp
 
             if(order != null)
             {
-                order.CreateFences();
+                order.CreateFences(World.ComponentManager);
                 TaskManager.AssignTasks(new List<Task>()
                 {
                     new BuildRoomTask(order)
-                }, Faction.FilterMinionsWithCapability(DwarfGame.World.Master.SelectedMinions, GameMaster.ToolMode.Build));
+                }, Faction.FilterMinionsWithCapability(World.Master.SelectedMinions, GameMaster.ToolMode.Build));
             }
         }
 
@@ -301,6 +325,10 @@ namespace DwarfCorp
 
         public void OnVoxelsDragged(List<Voxel> refs, InputManager.MouseButton button)
         {
+            if (Faction == null)
+            {
+                Faction = World.PlayerFaction;
+            }
 
             if (displayObjects != null)
             {
@@ -319,9 +347,9 @@ namespace DwarfCorp
             {
                 if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Build).Count == 0)
                 {
-                    DwarfGame.World.ShowTooltip("None of the selected units can build rooms.");
+                    World.ShowToolPopup("None of the selected units can build rooms.");
                 }
-                else if (CurrentRoomData.Verify(refs, Faction))
+                else if (CurrentRoomData.Verify(refs, Faction, World))
                 {
                     List<Quantitiy<Resource.ResourceTags>> requirements =
                         CurrentRoomData.GetRequiredResources(refs.Count, Faction);
@@ -343,10 +371,10 @@ namespace DwarfCorp
                         tip += "\n";
                     }
 
-                    DwarfGame.World.ShowTooltip("Release to build her.");
+                    World.ShowToolPopup("Release to build here.");
 
                     displayObjects = RoomLibrary.GenerateRoomComponentsTemplate(CurrentRoomData, refs, Faction.Components, 
-                        DwarfGame.World.ChunkManager.Content, DwarfGame.World.ChunkManager.Graphics);
+                        World.ChunkManager.Content, World.ChunkManager.Graphics);
 
                     foreach(Body thing in displayObjects)
                     {
@@ -376,9 +404,9 @@ namespace DwarfCorp
             {
                 if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Build).Count == 0)
                 {
-                    DwarfGame.World.ShowTooltip("None of the selected units can build rooms.");
+                    World.ShowToolPopup("None of the selected units can build rooms.");
                 }
-                else if (CurrentRoomData.Verify(refs, Faction))
+                else if (CurrentRoomData.Verify(refs, Faction, World))
                 {
                     BuildNewVoxels(refs);    
                 }
@@ -408,9 +436,9 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    DwarfGame.World.NewGui.ShowDialog(new NewGui.Confirm
+                    World.NewGui.ShowDialog(new NewGui.Confirm
                         {
-                            Text = "Do you want to destroy this " + Drawer2D.WrapColor(existingRoom.RoomData.Name, Color.DarkRed) + "?",
+                            Text = "Do you want to destroy this" + existingRoom.RoomData.Name + "?",
                             OnClose = (sender) => destroyDialog_OnClosed((sender as NewGui.Confirm).DialogResult, existingRoom)
                         });
 

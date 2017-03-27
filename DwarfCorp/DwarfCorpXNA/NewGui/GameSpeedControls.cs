@@ -20,7 +20,12 @@ namespace DwarfCorp.NewGui
         public int CurrentSpeed
         {
             get { return _currentSpeed; }
-            set { SetGameSpeed(value); }
+            set
+            {
+                _currentSpeed = Math.Min(MaximumSpeed, Math.Max(value, 0));
+                Root.SafeCall(this.OnSpeedChanged, this, _currentSpeed);
+                UpdateLabels();
+            }
         }
 
         public int MaximumSpeed = 3;
@@ -28,6 +33,20 @@ namespace DwarfCorp.NewGui
 
         private Gum.Widget TimeLabel;
         private Gum.Widget PlayPauseButton;
+        public Action<Gum.Widget, int> OnSpeedChanged;
+
+        public void Pause()
+        {
+            PlaySpeed = Math.Max(CurrentSpeed, 1);
+            CurrentSpeed = 0;
+        }
+
+        public void Resume()
+        {
+            CurrentSpeed = PlaySpeed;
+        }
+
+        public PlayState PlayState { get; set; }
 
         public override void Construct()
         {
@@ -54,15 +73,15 @@ namespace DwarfCorp.NewGui
                 Tooltip = "Pause",
                 OnClick = (sender, args) =>
                     {
-                        if (PlayState.Paused)
+                        if (CurrentSpeed == 0)
                         {
                             if (PlaySpeed == 0) PlaySpeed = 1;
-                            SetGameSpeed(PlaySpeed);
+                            CurrentSpeed = PlaySpeed;
                         }
                         else
                         {
                             PlaySpeed = CurrentSpeed;
-                            SetGameSpeed(0);
+                            CurrentSpeed = 0;
                         }
                     },
                 TextVerticalAlign = Gum.VerticalAlign.Center
@@ -76,7 +95,7 @@ namespace DwarfCorp.NewGui
                 Tooltip = "Increase Speed",
                 OnClick = (sender, args) =>
                 {
-                    SetGameSpeed(CurrentSpeed + 1);
+                    CurrentSpeed += 1;
                 },
                 TextVerticalAlign = Gum.VerticalAlign.Center
             });
@@ -89,7 +108,7 @@ namespace DwarfCorp.NewGui
                 Tooltip = "Decrease Speed",
                 OnClick = (sender, args) =>
                 {
-                    SetGameSpeed(CurrentSpeed - 1);
+                    CurrentSpeed -= 1;
                 },
                 TextVerticalAlign = Gum.VerticalAlign.Center
             });
@@ -98,19 +117,14 @@ namespace DwarfCorp.NewGui
             base.Construct();
         }
 
-        // Todo: This doesn't belong here. Actual manipulation of the speed should not be handled by the gui.
-        private void SetGameSpeed(int NewSpeed)
+        private void UpdateLabels()
         {
-            _currentSpeed = Math.Min(MaximumSpeed, Math.Max(NewSpeed, 0));
             TimeLabel.Text = String.Format("{0}x", _currentSpeed);
             TimeLabel.Invalidate();
 
             PlayPauseButton.Text = (_currentSpeed == 0 ? ">" : "||");
             PlayPauseButton.Tooltip = (_currentSpeed == 0 ? "Resume" : "Pause");
             PlayPauseButton.Invalidate();
-
-            DwarfTime.LastTime.Speed = (float)_currentSpeed;
-            PlayState.Paused = _currentSpeed == 0;
         }
     }
 }

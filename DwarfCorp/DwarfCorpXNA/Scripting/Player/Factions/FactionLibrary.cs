@@ -1,4 +1,4 @@
-﻿// FactionLibrary.cs
+// FactionLibrary.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -47,11 +47,11 @@ namespace DwarfCorp
         public List<string> Party;
         public Dictionary<ResourceLibrary.ResourceType, int> Resources;
         public float Money;
-
+        public static Embarkment DefaultEmbarkment = null;
         public static void Initialize()
         {
             EmbarkmentLibrary = ContentPaths.LoadFromJson<Dictionary<string, Embarkment>>(ContentPaths.World.embarks);
-            DwarfGame.World.InitialEmbark = EmbarkmentLibrary["Normal"];
+            DefaultEmbarkment = EmbarkmentLibrary["Normal"];
         }
     }
 
@@ -64,17 +64,18 @@ namespace DwarfCorp
         public Dictionary<string, Faction> Factions { get; set; }
         public Dictionary<string, Race> Races { get; set; }
         
-        public Faction GenerateFaction(int idx , int n)
+        public Faction GenerateFaction(WorldManager world, int idx , int n)
         {
             Race race = Datastructures.SelectRandom(Races.Values.Where(r => r.IsIntelligent && r.IsNative));
 
-            return new Faction()
+            return new Faction(world)
             {
                 Race = race,
                 Name = TextGenerator.GenerateRandom(Datastructures.SelectRandom(race.FactionNameTemplates).ToArray()),
                 PrimaryColor = new HSLColor(idx * (255.0f / n), 255.0, MathFunctions.Rand(100.0f, 200.0f)),
                 SecondaryColor = new HSLColor(MathFunctions.Rand(0, 255.0f), 255.0, MathFunctions.Rand(100.0f, 200.0f)),
-                TradeMoney = MathFunctions.Rand(250.0f, 20000.0f)
+                TradeMoney = MathFunctions.Rand(250.0f, 20000.0f),
+                Center = new Point(MathFunctions.RandInt(0, Overworld.Map.GetLength(0)), MathFunctions.RandInt(0, Overworld.Map.GetLength(1)))
             };
         }
 
@@ -94,13 +95,13 @@ namespace DwarfCorp
             if (Factions == null)
             {
                 Factions = new Dictionary<string, Faction>();
-                Factions["Player"] = new Faction
+                Factions["Player"] = new Faction(state)
                 {
                     Name = "Player",
                     Race = Races["Dwarf"]
                 };
 
-                Factions["Motherland"] = new Faction()
+                Factions["Motherland"] = new Faction(state)
                 {
                     Name = "Motherland",
                     Race = Races["Dwarf"],
@@ -110,42 +111,42 @@ namespace DwarfCorp
             }
 
 
-            Factions["Goblins"] = new Faction
+            Factions["Goblins"] = new Faction(state)
             {
                 Name = "Goblins",
                 Race = Races["Goblins"],
                 IsRaceFaction = true
             };
 
-            Factions["Elf"] = new Faction
+            Factions["Elf"] = new Faction(state)
             {
                 Name = "Elf",
                 Race = Races["Elf"],
                 IsRaceFaction = true
             };
 
-            Factions["Undead"] = new Faction
+            Factions["Undead"] = new Faction(state)
             {
                 Name = "Undead",
                 Race = Races["Undead"],
                 IsRaceFaction = true
             };
 
-            Factions["Demon"] = new Faction
+            Factions["Demon"] = new Faction(state)
             {
                 Name = "Demon",
                 Race = Races["Demon"],
                 IsRaceFaction = true
             };
 
-            Factions["Herbivore"] = new Faction
+            Factions["Herbivore"] = new Faction(state)
             {
                 Name = "Herbivore",
                 Race = Races["Herbivore"],
                 IsRaceFaction = true
             };
 
-            Factions["Carnivore"] = new Faction
+            Factions["Carnivore"] = new Faction(state)
             {
                 Name = "Carnivore",
                 Race = Races["Carnivore"],
@@ -153,7 +154,7 @@ namespace DwarfCorp
             };
 
 
-            Factions["Molemen"] = new Faction
+            Factions["Molemen"] = new Faction(state)
             {
                 Name = "Molemen",
                 Race = Races["Molemen"],
@@ -178,7 +179,7 @@ namespace DwarfCorp
             }
         }
 
-        public void AddFactions(List<Faction> factionsInSpawn)
+        public void AddFactions(WorldManager world, List<Faction> factionsInSpawn)
         {
             if (Factions == null)
             {
@@ -189,13 +190,13 @@ namespace DwarfCorp
                     InitializeRaces();
                 }
 
-                Factions["Player"] = new Faction
+                Factions["Player"] = new Faction(world)
                 {
                     Name = "Player",
                     Race = Races["Dwarf"]
                 };
 
-                Factions["Motherland"] = new Faction()
+                Factions["Motherland"] = new Faction(world)
                 {
                     Name = "Motherland",
                     Race = Races["Dwarf"],
@@ -203,14 +204,14 @@ namespace DwarfCorp
                     TradeMoney = 10000
                 };
 
-                Factions["Herbivore"] = new Faction
+                Factions["Herbivore"] = new Faction(world)
                 {
                     Name = "Herbivore",
                     Race = Races["Herbivore"],
                     IsRaceFaction = true
                 };
 
-                Factions["Carnivore"] = new Faction
+                Factions["Carnivore"] = new Faction(world)
                 {
                     Name = "Carnivore",
                     Race = Races["Carnivore"],

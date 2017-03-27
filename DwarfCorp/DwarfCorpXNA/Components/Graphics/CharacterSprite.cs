@@ -1,4 +1,4 @@
-﻿// CharacterSprite.cs
+// CharacterSprite.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -48,7 +48,7 @@ namespace DwarfCorp
     /// certain effects such as blinking.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class CharacterSprite : OrientedAnimation
+    public class CharacterSprite : OrientedAnimation, IUpdateableComponent
     {
         [JsonIgnore]
         public GraphicsDevice Graphics { get; set; }
@@ -60,8 +60,8 @@ namespace DwarfCorp
         private bool isCoolingDown = false;
 
 
-        public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
-            GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
+        public new void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
+            GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             if (!isBlinking)
             {
@@ -79,7 +79,7 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            Graphics = DwarfGame.World.ChunkManager.Graphics;
+            Graphics = Manager.World.ChunkManager.Graphics;
         }
 
         public CharacterSprite()
@@ -128,19 +128,6 @@ namespace DwarfCorp
                 a.Reset();
             }
         }
-
-        public Animation GetAnimation(Creature.CharacterMode mode, Orientation orient)
-        {
-            if (HasAnimation(mode, orient))
-            {
-                return Animations[mode.ToString() + OrientationStrings[(int) orient]];
-            }
-            else
-            {
-                return null;
-            }
-        }
-
 
         public static Animation CreateAnimation(Creature.CharacterMode mode,
             Orientation orient,
@@ -227,10 +214,11 @@ namespace DwarfCorp
             blinkTrigger.Reset(blinkTime);
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if(isBlinking)
             {
+                blinkTimer.Update(gameTime);
                 blinkTrigger.Update(gameTime);
 
                 if(blinkTrigger.HasTriggered)
@@ -249,9 +237,6 @@ namespace DwarfCorp
                     isCoolingDown = false;
                 }
             }
-
-            blinkTimer.Update(gameTime);
-
 
             base.Update(gameTime, chunks, camera);
         }

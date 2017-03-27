@@ -1,4 +1,4 @@
-﻿// LookInterestingTask.cs
+// LookInterestingTask.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -90,10 +90,11 @@ namespace DwarfCorp
         /// Finds a voxel to stand on within a radius of N voxels using BFS.
         /// </summary>
         /// <param name="radius">The radius to search in.</param>
+        /// <param name="checkVoxel">The voxel to start the search from</param>
         /// <returns>The voxel within the radius which is over land if it exists, null otherwise.</returns>
         public Voxel FindLand(int radius, Voxel checkVoxel)
         {
-            return DwarfGame.World.ChunkManager.BreadthFirstSearch(checkVoxel, radius * radius, voxel => voxel != null && voxel.IsEmpty && voxel.WaterLevel == 0 && !voxel.IsBottomEmpty());
+            return checkVoxel.Chunk.Manager.BreadthFirstSearch(checkVoxel, radius * radius, voxel => voxel != null && voxel.IsEmpty && voxel.WaterLevel == 0 && !voxel.IsBottomEmpty());
         }
 
         /// <summary>
@@ -141,7 +142,8 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature creature)
         {
-            if (creature.Physics.CurrentVoxel.GetVoxelAbove().WaterLevel > 0 || creature.AI.Movement.CanFly)
+            Voxel above = creature.Physics.CurrentVoxel.GetVoxelAbove();
+            if ((above != null && above.WaterLevel > 0 )|| creature.AI.Movement.CanFly)
             {
                 return new Wrap(() => SwimUp(creature)) { Name = "Swim up"};
             }

@@ -153,7 +153,8 @@ namespace DwarfCorp
             libraryTemplates.Add(lamp);
             libraryTemplates.Add(book);
             Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
-            return new RoomData(LibraryRoomName, 4, "BlueTileFloor", roomResources, libraryTemplates, new ImageFrame(roomIcons, 16, 0, 1))
+            return new RoomData(LibraryRoomName, 4, "Blue Tile", roomResources, libraryTemplates,
+                new Gum.TileReference("rooms", 4))
             {
                 Description = "Wizards do magical research here. Also holds mana crystals to charge magic spells.",
                 CanBuildAboveGround = false
@@ -165,12 +166,12 @@ namespace DwarfCorp
             RoomData = LibraryRoomData;
         }
 
-        public LibraryRoom(bool designation, IEnumerable<Voxel> designations, ChunkManager chunks) :
+        public LibraryRoom(bool designation, IEnumerable<Voxel> designations, WorldManager chunks) :
             base(designation, designations, LibraryRoomData, chunks)
         {
         }
 
-        public LibraryRoom(IEnumerable<Voxel> voxels, ChunkManager chunks) :
+        public LibraryRoom(IEnumerable<Voxel> voxels, WorldManager chunks) :
             base(voxels, LibraryRoomData, chunks)
         {
             OnBuilt();

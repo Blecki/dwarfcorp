@@ -618,7 +618,7 @@ namespace DwarfCorp
             }
             MaxIndex = maxIndex;
             MaxVertex = maxVertex;
-            GenerateLightmap(DwarfGame.World.ChunkManager.ChunkData.Tilemap.Bounds);
+            GenerateLightmap(chunk.Manager.ChunkData.Tilemap.Bounds);
             isRebuilding = false;
 
             //chunk.PrimitiveMutex.WaitOne();

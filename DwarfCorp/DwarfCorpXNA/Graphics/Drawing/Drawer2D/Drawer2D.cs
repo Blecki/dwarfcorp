@@ -1,4 +1,4 @@
-﻿// Drawer2D.cs
+// Drawer2D.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -79,16 +79,16 @@ namespace DwarfCorp
             DrawCommands.Enqueue(new TextBoxDrawCommand(text, DefaultFont, position, Color.White, new Color(0, 0, 0, 200), new Color(50, 50, 50, 100), new Color(0, 0, 0, 200), 2.0f));
         }
 
-        public static void DrawLoadBar(Vector3 worldPos, Color backgroundColor, Color strokeColor, int width, int height, float progress)
+        public static void DrawLoadBar(Camera camera, Vector3 worldPos, Color backgroundColor, Color strokeColor, int width, int height, float progress)
         {
-            Drawer2D.DrawRect(worldPos, new Rectangle(0, 0, width + 1, height + 1), Color.Transparent, strokeColor, 1);
-            Drawer2D.DrawRect(worldPos, new Rectangle((int)(width * (progress))/2 - width /2, 0, (int)(width * (progress)), height), backgroundColor, Color.Transparent, 1);
+            Drawer2D.DrawRect(camera, worldPos, new Rectangle(0, 0, width + 1, height + 1), Color.Transparent, strokeColor, 1);
+            Drawer2D.DrawRect(camera, worldPos, new Rectangle((int)(width * (progress))/2 - width /2, 0, (int)(width * (progress)), height), backgroundColor, Color.Transparent, 1);
         }
 
-        public static void DrawRect(Vector3 worldPos, Rectangle screenRect, Color backgroundColor, Color strokeColor, float strokewidth)
+        public static void DrawRect(Camera camera, Vector3 worldPos, Rectangle screenRect, Color backgroundColor, Color strokeColor, float strokewidth)
         {
-            
-            Vector3 screenPos = GameState.Game.GraphicsDevice.Viewport.Project(worldPos, DwarfGame.World.Camera.ProjectionMatrix, DwarfGame.World.Camera.ViewMatrix, Matrix.Identity);
+
+            Vector3 screenPos = GameState.Game.GraphicsDevice.Viewport.Project(worldPos, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
 
             if (screenPos.Z < 0.999f)
             {
@@ -105,12 +105,12 @@ namespace DwarfCorp
             DrawCommands.Enqueue(new PolygonDrawCommand(points, closed, color, width));
         }
 
-        public static void DrawPolygon(List<Vector3> points, Color color, int width, bool closed)
+        public static void DrawPolygon(Camera camera, List<Vector3> points, Color color, int width, bool closed, Viewport viewport)
         {
-            DrawCommands.Enqueue(new PolygonDrawCommand(points, closed, color, width));
+            DrawCommands.Enqueue(new PolygonDrawCommand(camera, points, closed, color, width, viewport));
         }
 
-        public static void DrawZAlignedRect(Vector3 center, float xWidth, float zHeight, int width, Color color)
+        public static void DrawZAlignedRect(Camera camera, Vector3 center, float xWidth, float zHeight, int width, Color color)
         {
             List<Vector3> points = new List<Vector3>
             {
@@ -120,7 +120,7 @@ namespace DwarfCorp
                 center + new Vector3(xWidth, 0, -zHeight)
             };
 
-            DrawPolygon(points, color, width, true);
+            DrawPolygon(camera, points, color, width, true, GameState.Game.GraphicsDevice.Viewport);
 
         } 
 
