@@ -189,7 +189,7 @@
             [ 2, 12, 0 ]
          ],
          "Name" : "SwimmingFORWARD",
-         "Speed" : [0.3],
+         "Speed" : [0.3]
       },
       {
          "Frames" : [
