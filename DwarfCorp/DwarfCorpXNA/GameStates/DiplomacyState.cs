@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -316,8 +316,8 @@ namespace DwarfCorp
 
         void Initialize()
         {
-            Envoy.TradeMoney = Faction.TradeMoney + MathFunctions.Rand(-100.0f, 100.0f);
-            Envoy.TradeMoney = Math.Max(Envoy.TradeMoney, 0.0f);
+            Envoy.TradeMoney = Faction.TradeMoney + (decimal)MathFunctions.Rand(-100.0f, 100.0f);
+            Envoy.TradeMoney = Math.Max(Envoy.TradeMoney, 0.0m);
             TalkerName = TextGenerator.GenerateRandom(Datastructures.SelectRandom(Faction.Race.NameTemplates).ToArray());
             Tabs = new Dictionary<string, GUIComponent>();
             GUI = new DwarfGUI(Game, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default), 

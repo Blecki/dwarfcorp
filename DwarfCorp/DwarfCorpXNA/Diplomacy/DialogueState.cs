@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using LibNoise;
 using Microsoft.Xna.Framework;
@@ -45,8 +45,8 @@ namespace DwarfCorp.Dialogue
             {
                 Rect = new Rectangle(200, 0, GuiRoot.VirtualScreen.Width - 200, 200),
                 Border = "speech-bubble-reverse",
-                Font = "outline-font",
-                TextColor = new Vector4(1,1,1,1)
+                Font = "font-hires",
+                TextColor = Color.Black.ToVector4()
             });
 
             DialogueContext.ChoicePanel = GuiRoot.RootItem.AddChild(new Gum.Widget

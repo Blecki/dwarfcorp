@@ -82,6 +82,24 @@ namespace DwarfCorp
 
                 public static string gui_window_close = ProgramData.CreatePath("Audio", "oscar", "sfx_gui_window_close");
                 public static string gui_window_open = ProgramData.CreatePath("Audio", "oscar", "sfx_gui_window_open");
+
+                public static string dwarf_pleased = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_pleased");
+
+                public static string dwarf_stash_item = ProgramData.CreatePath("Audio", "oscar",
+                    "sfx_ic_dwarf_stash_item");
+
+                public static string dwarf_stash_money = ProgramData.CreatePath("Audio", "oscar",
+                    "sfx_ic_dwarf_stash_money");
+
+                public static string dwarf_stockpile = ProgramData.CreatePath("Audio", "oscar",
+                    "sfx_ic_dwarf_stockpile");
+
+                public static string dwarf_tantrum_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_tantrum_1");
+                public static string dwarf_tantrum_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_tantrum_2");
+                public static string dwarf_tantrum_3 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_tantrum_3");
+                public static string dwarf_ok_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_ok_1");
+                public static string dwarf_ok_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_ok_2");
+                public static string dwarf_ok_3 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_ok_3");
             }
             public static string chew = ProgramData.CreatePath("Audio", "chew");
             public static string explode = ProgramData.CreatePath("Audio", "explode");

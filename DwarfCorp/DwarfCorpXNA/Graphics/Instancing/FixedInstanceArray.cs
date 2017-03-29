@@ -46,6 +46,7 @@ namespace DwarfCorp
 
         private DynamicVertexBuffer instanceBuffer;
         private InstancedVertex[] instanceVertexes;
+        private static bool HardwareInstancingSupported = true;
 
         public void Clear()
         {
@@ -167,31 +168,80 @@ namespace DwarfCorp
             if (Additions.Count + Removals.Count > 0)
                 AddRemove();
 
-
-            if (instanceVertexes == null)
+            if (HardwareInstancingSupported)
             {
-                instanceVertexes = new InstancedVertex[numInstances];
-            }
-            int j = 0;
-            foreach (InstanceData t in SortedData.Data)
-            {
-                if (t.ShouldDraw)
+                if (instanceVertexes == null)
                 {
-                    instanceVertexes[j].Transform = t.Transform;
-                    instanceVertexes[j].Color = t.Color;
-                    instanceVertexes[j].SelectionBufferColor = t.SelectionBufferColor;
-                    j++;
+                    instanceVertexes = new InstancedVertex[numInstances];
                 }
+                int j = 0;
+                foreach (InstanceData t in SortedData.Data)
+                {
+                    if (t.ShouldDraw)
+                    {
+                        instanceVertexes[j].Transform = t.Transform;
+                        instanceVertexes[j].Color = t.Color;
+                        instanceVertexes[j].SelectionBufferColor = t.SelectionBufferColor;
+                        j++;
+                    }
+                }
+                numActiveInstances = j;
             }
-            numActiveInstances = j;
+            else
+            {
+                instanceVertexes = null;
+                numActiveInstances = SortedData.Data.Count(data => data.ShouldDraw);
+            }
         }
 
+
+        private void DrawInstanced(GraphicsDevice graphics, Shader effect, Camera cam)
+        {
+            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                graphics.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0,
+                    Model.MaxVertex, 0,
+                    Model.Indexes.Length / 3,
+                    numActiveInstances);
+            }
+        }
+
+        private void DrawNonInstanced(GraphicsDevice graphics, Shader effect, Camera cam)
+        {
+            bool hasIndex = Model.IndexBuffer != null;
+            graphics.SetVertexBuffer(Model.VertexBuffer);
+
+            int i = 0;
+            foreach (InstanceData instance in SortedData.Data)
+            {
+                if (!instance.ShouldDraw || i > numActiveInstances) continue;
+                i++;
+                effect.World = instance.Transform;
+                effect.LightRampTint = instance.Color;
+                effect.SelectionBufferColor = instance.SelectionBufferColor.ToVector4();
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+
+                    if (!hasIndex)
+                    {
+                        graphics.DrawPrimitives(PrimitiveType.TriangleList, 0, Model.VertexBuffer.VertexCount / 3);
+                    }
+                    else
+                    {
+                        graphics.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0,
+                            Model.VertexBuffer.VertexCount, 0, Model.IndexBuffer.IndexCount / 3);
+                    }
+                }
+            }
+        }
 
         public void Render(GraphicsDevice graphics, Shader effect, Camera cam, bool rebuildVertices, string mode)
         {
             Camera = cam;
 
-            if (instanceBuffer == null)
+            if (HardwareInstancingSupported && instanceBuffer == null)
             {
                 instanceBuffer = new DynamicVertexBuffer(graphics, InstancedVertex.VertexDeclaration, numInstances,
                     BufferUsage.None);
@@ -204,14 +254,11 @@ namespace DwarfCorp
                 effect.CurrentTechnique = effect.Techniques[mode];
                 effect.EnableLighting = true;
                 effect.VertexColorTint = Color.White;
+
                 if (Model.VertexBuffer == null || Model.IndexBuffer == null)
                 {
                     Model.ResetBuffer(graphics);
                 }
-
-                instanceBuffer.SetData(instanceVertexes, 0, SortedData.Data.Count, SetDataOptions.Discard);
-
-                graphics.SetVertexBuffers(Model.VertexBuffer, new VertexBufferBinding(instanceBuffer, 0, 1));
 
                 bool hasIndex = Model.IndexBuffer != null;
                 graphics.Indices = Model.IndexBuffer;
@@ -221,29 +268,27 @@ namespace DwarfCorp
 
                 effect.MainTexture = Texture;
                 effect.LightRampTint = Color.White;
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-                    graphics.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0,
-                        Model.MaxVertex, 0,
-                        Model.Indexes.Length/3,
-                        numActiveInstances);
-                    /*
-                    foreach (InstanceData instance in SortedData.Data)
-                    {
-                        if (!instance.ShouldDraw) continue;
 
-                        if (!hasIndex)
-                        {
-                            graphics.DrawPrimitives(PrimitiveType.TriangleList, 0, Model.VertexBuffer.VertexCount/3);
-                        }
-                        else
-                        {
-                            graphics.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0,
-                                Model.VertexBuffer.VertexCount, 0, Model.IndexBuffer.IndexCount/3);
-                        }
+                if (HardwareInstancingSupported)
+                {
+                    instanceBuffer.SetData(instanceVertexes, 0, SortedData.Data.Count, SetDataOptions.Discard);
+
+                    graphics.SetVertexBuffers(Model.VertexBuffer, new VertexBufferBinding(instanceBuffer, 0, 1));
+
+                    try
+                    {
+                        DrawInstanced(graphics, effect, cam);
                     }
-                     */
+                    catch (NoSuitableGraphicsDeviceException exception)
+                    {
+                        HardwareInstancingSupported = false;
+                    }
+                }
+                else
+                {
+                    // Fallback case when hardware instancing is not supported
+                    effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
+                    DrawNonInstanced(graphics, effect, cam);
                 }
 
                 effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
@@ -268,34 +313,30 @@ namespace DwarfCorp
             effect.MainTexture = Texture;
             effect.LightRampTint = Color.White;
             effect.VertexColorTint = Color.White;
-            effect.CurrentTechnique = effect.Techniques[Shader.Technique.SelectionBufferInstanced];
-
-            graphics.SetVertexBuffers(Model.VertexBuffer, new VertexBufferBinding(instanceBuffer, 0, 1));
             graphics.Indices = Model.IndexBuffer;
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                graphics.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0,
-                    Model.MaxVertex, 0,
-                    Model.Indexes.Length / 3,
-                    numActiveInstances);
-                /*
-                foreach (InstanceData instance in SortedData.Data)
-                {
-                    if (!instance.ShouldDraw) continue;
 
-                    if (!hasIndex)
-                    {
-                        graphics.DrawPrimitives(PrimitiveType.TriangleList, 0, Model.VertexBuffer.VertexCount/3);
-                    }
-                    else
-                    {
-                        graphics.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0,
-                            Model.VertexBuffer.VertexCount, 0, Model.IndexBuffer.IndexCount/3);
-                    }
+            if (HardwareInstancingSupported)
+            {
+                effect.CurrentTechnique = effect.Techniques[Shader.Technique.SelectionBufferInstanced];
+
+                graphics.SetVertexBuffers(Model.VertexBuffer, new VertexBufferBinding(instanceBuffer, 0, 1));
+                try
+                {
+                    DrawInstanced(graphics, effect, cam);
                 }
-                 */
+                catch (NoSuitableGraphicsDeviceException exception)
+                {
+                    HardwareInstancingSupported = false;
+                }
             }
+            else
+            {
+                // Fallback case when hardware instancing is not supported
+                effect.CurrentTechnique = effect.Techniques[Shader.Technique.SelectionBuffer];
+                DrawNonInstanced(graphics, effect, cam);
+            }
+
+
         }
 
         public void Add(InstanceData data)

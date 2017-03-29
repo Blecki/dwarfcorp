@@ -789,7 +789,7 @@ namespace DwarfCorp
         }
 
         /// <summary> Pay the creature this amount of money. The money goes into the creature's wallet. </summary>
-        public void AddMoney(float pay)
+        public void AddMoney(DwarfBux pay)
         {
             Status.Money += pay;
             bool good = pay > 0;

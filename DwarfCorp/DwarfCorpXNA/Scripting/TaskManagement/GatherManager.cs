@@ -1,4 +1,4 @@
-﻿// GatherManager.cs
+// GatherManager.cs
 // 
 //  Modified MIT License (MIT)
 //  

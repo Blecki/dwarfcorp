@@ -51,6 +51,17 @@ namespace DwarfCorp
         private static DynamicVertexBuffer StripBuffer;
         private static VertexPositionColor[] StripVertices = null;
         private static int MaxStripVertex = -1;
+        private static VoxelHighlighter Highlighter = new VoxelHighlighter();
+
+        public static void UnHighlightVoxel(Voxel voxel)
+        {
+            Highlighter.Remove(voxel);
+        }
+
+        public static void HighlightVoxel(Voxel voxel, Color color)
+        {
+            Highlighter.Highlight(voxel, color);   
+        }
 
         public static void DrawLine(Vector3 p1, Vector3 p2, Color color, float thickness)
         {
@@ -97,6 +108,7 @@ namespace DwarfCorp
             effect.CurrentTechnique = effect.Techniques[Shader.Technique.Untextured];
             effect.World = Matrix.Identity;
 
+            Highlighter.Render(device, effect);
 
             DrawCommand3D.LineStrip strips = new DrawCommand3D.LineStrip()
             {
@@ -132,7 +144,7 @@ namespace DwarfCorp
                     }
                 }
             }
-        
+
             effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
 
             foreach (DrawCommand3D command in Commands)
@@ -142,6 +154,7 @@ namespace DwarfCorp
                     command.Render(device, effect);
                 }
             }
+
 
             if(oldState != null)
             {
@@ -212,6 +225,140 @@ namespace DwarfCorp
             DrawLine(p, p + t.Right * length, Color.Red, 0.01f);
             DrawLine(p, p + t.Up * length, Color.Green, 0.01f);
             DrawLine(p, p + t.Forward * length, Color.Blue, 0.01f);
+        }
+    }
+
+    public class VoxelHighlighter
+    {
+        public class VoxelHighlightGroup
+        {
+            public Color Color;
+            private float Thickness;
+            private List<Voxel> Voxels;
+            private bool Valid;
+            private VertexBuffer VertBuffer;
+            private DrawCommand3D.LineStrip Strip;
+
+            public VoxelHighlightGroup()
+            {
+                Color = Color.White;
+                Thickness = 0.05f;
+                Voxels = new List<Voxel>();
+                Valid = false;
+            }
+
+            public void AddVoxel(Voxel voxel)
+            {
+                if (Voxels.Any(v => v.Equals(voxel)))
+                {
+                    return;
+                }
+
+                Voxels.Add(new Voxel(voxel));
+                Valid = false;
+            }
+             
+            public void RemoveVoxel(Voxel voxel)
+            {
+                int before = Voxels.Count;
+                Voxels.RemoveAll(v => v.Equals(voxel));
+
+                if (Voxels.Count != before)
+                    Valid = false;
+            }
+
+            public void Rebuild(GraphicsDevice device)
+            {
+                if (Strip == null)
+                {
+                    Strip = new DrawCommand3D.LineStrip {Vertices = new List<VertexPositionColor>(), NumTriangles = 0};
+                }
+                Strip.Vertices.Clear();
+                Strip.NumTriangles = 0;
+                foreach (Voxel vox in Voxels)
+                {
+                    BoxDrawCommand3D boxDraw = new BoxDrawCommand3D(vox.GetBoundingBox(), Color.White, Thickness, true);
+                    boxDraw.AccumulateStrips(Strip);
+                }
+                
+                VertBuffer = new VertexBuffer(device, VertexPositionColor.VertexDeclaration, Strip.Vertices.Count, BufferUsage.WriteOnly);
+                VertBuffer.SetData(Strip.Vertices.ToArray());
+                Valid = true;
+            }
+
+            public void Render(GraphicsDevice device, Shader shader)
+            {
+                if (Voxels == null || Voxels.Count == 0)
+                {
+                    return;
+                }
+
+                if (!Valid)
+                {
+                    Rebuild(device);    
+                }
+
+                shader.CurrentTechnique = shader.Techniques[Shader.Technique.Untextured];
+                Color drawColor = Color;
+                drawColor.R = (byte)(drawColor.R * Math.Abs(Math.Sin(DwarfTime.LastTime.TotalGameTime.TotalSeconds * 2.0f)) + 50);
+                drawColor.G = (byte)(drawColor.G * Math.Abs(Math.Sin(DwarfTime.LastTime.TotalGameTime.TotalSeconds * 2.0f)) + 50);
+                drawColor.B = (byte)(drawColor.B * Math.Abs(Math.Sin(DwarfTime.LastTime.TotalGameTime.TotalSeconds * 2.0f)) + 50);
+                shader.VertexColorTint = drawColor;
+                shader.LightRampTint = drawColor;
+                device.SetVertexBuffer(VertBuffer);
+                shader.World = Matrix.Identity;
+                
+                foreach (var pass in shader.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, Strip.Vertices.Count - 2);
+                }
+                shader.LightRampTint = Color.White;
+                shader.VertexColorTint = Color.White;
+            }
+        }
+
+        public Dictionary<Color, VoxelHighlightGroup> HighlightGroups { get; set; }
+
+
+        public VoxelHighlighter()
+        {
+            HighlightGroups = new Dictionary<Color, VoxelHighlightGroup>();
+        }
+
+        public void Remove(Voxel voxel)
+        {
+            foreach (var pair in HighlightGroups)
+            {
+                pair.Value.RemoveVoxel(voxel);
+            }
+        }
+
+        public void Highlight(Voxel voxel, Color color)
+        {
+            foreach (var pair in HighlightGroups.Where(v => v.Key != color))
+            {
+                pair.Value.RemoveVoxel(voxel);
+            }
+
+            VoxelHighlightGroup group;
+            if (!HighlightGroups.TryGetValue(color, out group))
+            {
+                group = new VoxelHighlightGroup()
+                {
+                    Color = color
+                };
+                HighlightGroups[color] = group;
+            }
+            group.AddVoxel(voxel);
+        }
+
+        public void Render(GraphicsDevice device, Shader shader)
+        {
+            foreach (var pair in HighlightGroups)
+            {
+                pair.Value.Render(device, shader);
+            }
         }
     }
 

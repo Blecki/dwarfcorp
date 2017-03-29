@@ -398,10 +398,11 @@ namespace DwarfCorp
 
                 SetLoadingMessage("Generating Initial Terrain Chunks ...");
                 GenerateInitialChunks();
+                SetLoadingMessage("Loading Components...");
+                LoadComponents();
 
                 SetLoadingMessage("Creating GameMaster ...");
                 CreateGameMaster();
-
                 SetLoadingMessage("Embarking ...");
                 CreateInitialEmbarkment();
 
@@ -493,7 +494,7 @@ namespace DwarfCorp
             Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
             Vector3 extents = new Vector3(1500, 1500, 1500);
             ComponentManager.CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
-            ComponentManager.Diplomacy = new Diplomacy(ComponentManager.Factions, this);
+            ComponentManager.Diplomacy = new Diplomacy(this);
             ComponentManager.Diplomacy.Initialize(Time.CurrentDate);
 
             CompositeLibrary.Initialize();
@@ -759,7 +760,7 @@ namespace DwarfCorp
                 Content.Load<Effect>(ContentPaths.Shaders.SkySphere));
         }
 
-        public void CreateGameMaster()
+        public void LoadComponents()
         {
             // if we are loading reinitialize a bunch of stuff to make sure the game master is created correctly
             if (!string.IsNullOrEmpty(ExistingFile))
@@ -776,7 +777,10 @@ namespace DwarfCorp
                 GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
                 GameSettings.Default.ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
             }
-            
+        }
+
+        public void CreateGameMaster()
+        {
             Master = new GameMaster(ComponentManager.Factions.Factions["Player"], Game, ComponentManager, ChunkManager,
                 Camera, GraphicsDevice, GUI);
         }
@@ -1649,6 +1653,8 @@ namespace DwarfCorp
 
             //ComponentManager.CollisionManager.DebugDraw();
 
+            DefaultShader.View = Camera.ViewMatrix;
+            DefaultShader.Projection = Camera.ProjectionMatrix;
             // Render simple geometry (boxes, etc.)
             Drawer3D.Render(GraphicsDevice, DefaultShader, true);
 

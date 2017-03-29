@@ -515,6 +515,7 @@
     <Compile Include="Scripting\Player\Building\WallBuilder.cs" />
     <Compile Include="Scripting\Player\Economy\Company.cs" />
     <Compile Include="Scripting\Player\Economy\Economy.cs" />
+    <Compile Include="Scripting\Player\Economy\Money.cs" />
     <Compile Include="Scripting\Player\Economy\Resource.cs" />
     <Compile Include="Scripting\Player\Economy\ResourceAmount.cs" />
     <Compile Include="Scripting\Player\Economy\ResourceContainer.cs" />

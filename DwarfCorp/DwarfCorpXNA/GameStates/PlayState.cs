@@ -147,7 +147,7 @@ namespace DwarfCorp.GameStates
                 World.ShowToolPopup += text => GuiRoot.ShowPopup(new NewGui.ToolPopup
                 {
                     Text = text,
-                    Rect = new Rectangle(GuiRoot.MousePosition.X, GuiRoot.MousePosition.Y, 1, 1)
+                    Rect = new Rectangle(GuiRoot.MousePosition.X + 32, GuiRoot.MousePosition.Y + 32, 1, 1)
                 }, Gum.Root.PopupExclusivity.DestroyExistingPopups);
 
                 World.gameState = this;
@@ -331,9 +331,9 @@ namespace DwarfCorp.GameStates
         /// <param name="gameTime">The current time</param>
         public override void Render(DwarfTime gameTime)
         {
+            Game.Graphics.GraphicsDevice.SetRenderTarget(null);
+            Game.Graphics.GraphicsDevice.Clear(Color.Black);
             EnableScreensaver = !World.ShowingWorld;
-
-            MinimapRenderer.PreRender(gameTime, DwarfGame.SpriteBatch);
 
             if (World.ShowingWorld)
             {
@@ -342,7 +342,7 @@ namespace DwarfCorp.GameStates
                 //Game.GraphicsDevice.SetRenderTarget(null);
                 //tex.SaveAsPng(new FileStream("voxels.png", FileMode.Create),  256, 256);
                 //Game.Exit();
-
+                MinimapRenderer.PreRender(gameTime, DwarfGame.SpriteBatch);
                 GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
                 World.Render(gameTime);
 
@@ -619,9 +619,9 @@ namespace DwarfCorp.GameStates
                         Message = message,
                         OnClick = (sender, args) => { if (clickAction != null) clickAction(); },
                         Rect = new Rectangle(
-                            GameSpeedControls.Rect.X - 64,
+                            GameSpeedControls.Rect.X - 128,
                             GameSpeedControls.Rect.Y - 128,
-                            GameSpeedControls.Rect.Width + 64,
+                            GameSpeedControls.Rect.Width + 128,
                             128)
                     });
 

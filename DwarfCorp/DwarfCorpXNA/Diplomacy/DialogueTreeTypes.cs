@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -47,10 +47,10 @@ namespace DwarfCorp.Dialogue
                 Text = Prompt,
                 OnClick = (sender, args) => Transition(Action),
                 AutoLayout = Gum.AutoLayout.DockTop,
-                Font = "outline-font",
-                TextColor = new Vector4(1,1,1,1),
+                Font = "font-hires",
+                TextColor = Color.Black.ToVector4(),
                 ChangeColorOnHover = true,
-                HoverTextColor = new Vector4(1,0,0,1)
+                HoverTextColor = Color.DarkRed.ToVector4()
             });
 
             ChoicePanel.Layout();

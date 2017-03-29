@@ -316,7 +316,7 @@ namespace DwarfCorp.GameStates
 
             Resolution = leftPanel.AddChild(LabelAndDockWidget("Resolution", new Gum.Widgets.ComboBox
                 {
-                    Items = DisplayModes/*.Where(dm => dm.Value.Width >= 1024 && dm.Value.Height >= 768)*/.Select(dm => dm.Key).ToList(),
+                    Items = DisplayModes.Where(dm => dm.Value.Width >= 1024).Select(dm => dm.Key).ToList(),
                     OnSelectedIndexChanged = OnItemChanged,
                     Border = "border-thin"
                 })).GetChild(1) as Gum.Widgets.ComboBox;

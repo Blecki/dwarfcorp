@@ -93,6 +93,14 @@ namespace DwarfCorp
             Vector3 extents = new Vector3(1500, 1500, 1500);
             CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents)); GameObjectCaching.Reset();
             RootComponent.RefreshCacheTypesRecursive();
+            World.Natives.Clear();
+            foreach (Faction faction in Factions.Factions.Values)
+            {
+                if (faction.Race.IsNative && faction.Race.IsIntelligent && !faction.IsRaceFaction)
+                {
+                    World.Natives.Add(faction);
+                }
+            }
         }
 
         public ComponentManager()

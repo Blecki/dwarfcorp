@@ -27,11 +27,13 @@ namespace DwarfCorp.NewGui
                 Children[i].OnMouseEnter += (widget, args) =>
                 {
                     (widget as FramedIcon).Tint = HoverTint;
+                    widget.Invalidate();
                 };
 
                 Children[i].OnMouseLeave += (widget, args) =>
                 {
                     (widget as FramedIcon).Tint = i1 == SelectedChild ? ToggledTint : OffTint;
+                    widget.Invalidate();
                 };
 
                 Children[i].OnClick += (widget, args) =>
@@ -43,6 +45,7 @@ namespace DwarfCorp.NewGui
                     {
                         if (i1 == j) continue;
                         (Children[j] as FramedIcon).Tint = OffTint;
+                        Children[j].Invalidate();
                     }
                 };
             }

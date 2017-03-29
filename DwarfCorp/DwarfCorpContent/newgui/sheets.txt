@@ -18,6 +18,11 @@
 			"Type": "VariableWidthFont"
 		},
 		{
+			"Name": "font-hires",
+			"Texture": "newgui/font1-hires",
+			"Type": "VariableWidthFont"
+		},
+		{
 			"Name": "font2x",
 			"Texture": "newgui/font1-w-2x",
 			"Type": "VariableWidthFont"
@@ -80,6 +85,12 @@
 			"Texture": "newgui/thin",
 			"TileWidth": 2,
 			"TileHeight": 2
+		},
+		{
+			"Name": "brown-frame",
+			"Texture": "newgui/brown-frame",
+			"TileWidth": 8,
+			"TileHeight": 8
 		},
 		{
 			"Name": "border-thin-transparent",
@@ -175,6 +186,12 @@
 		{
 			"Name": "resources",
 			"Texture": "newgui/resources",
+			"TileWidth": 32,
+			"TileHeight": 32
+		},
+		{
+			"Name": "coins",
+			"Texture": "Entities/DwarfObjects/coinpiles",
 			"TileWidth": 32,
 			"TileHeight": 32
 		},

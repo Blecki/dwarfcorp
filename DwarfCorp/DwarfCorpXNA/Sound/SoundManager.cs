@@ -251,13 +251,13 @@ namespace DwarfCorp
                     {
                         instance.Position = Vector3.Zero;
                     }
-                    Emitter.Position = instance.Position;
+                    instance.EffectInstance.Volume *= (GameSettings.Default.MasterVolume * GameSettings.Default.SoundEffectVolume * instance.VolumeMultiplier);
                     instance.EffectInstance.Apply3D(Listener, Emitter);
+                    instance.EffectInstance.Play();
+                    Emitter.Position = instance.Position;
+                    //instance.EffectInstance.Apply3D(Listener, Emitter);
 
                     //instance.EffectInstance.Volume = Math.Max(Math.Min(400.0f / (camera.Position - instance.Position).LengthSquared(), 0.999f), 0.001f);
-                    instance.EffectInstance.Volume *= (GameSettings.Default.MasterVolume * GameSettings.Default.SoundEffectVolume * instance.VolumeMultiplier);
-
-                    instance.EffectInstance.Play();
                     instance.HasStarted = true;
                 }
             }
