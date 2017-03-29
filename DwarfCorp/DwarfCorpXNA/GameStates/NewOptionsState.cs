@@ -584,7 +584,7 @@ namespace DwarfCorp.GameStates
             // Audio settings
             GameSettings.Default.MasterVolume = this.MasterVolume.ScrollPosition;
             GameSettings.Default.SoundEffectVolume = this.SFXVolume.ScrollPosition;
-            GameSettings.Default.MusicVolume = this.SFXVolume.ScrollPosition;
+            GameSettings.Default.MusicVolume = this.MusicVolume.ScrollPosition;
 
             // Graphics settings
             var preResolutionX = GameSettings.Default.ResolutionX;

@@ -18,6 +18,7 @@ namespace Gum.Input
         public System.Threading.Mutex QueueLock = new System.Threading.Mutex();
         public List<QueuedInput> Queued = new List<QueuedInput>();
         private MouseState OldMouseState = Mouse.GetState();
+        private KeyboardState OldKeyboardState = Keyboard.GetState();
         
         public List<QueuedInput> GetInputQueue()
         {
@@ -73,6 +74,39 @@ namespace Gum.Input
             }
 
             OldMouseState = newMouseState;
+
+
+            var newKeyboardState = Keyboard.GetState();
+
+            foreach (var key in newKeyboardState.GetPressedKeys())
+                if (!OldKeyboardState.IsKeyDown(key))
+                    r.Add(new QueuedInput
+                        {
+                            Message = InputEvents.KeyDown,
+                            Args = new InputEventArgs
+                            {
+                                KeyValue = (int)key,
+                                Alt = newKeyboardState.IsKeyDown(Keys.LeftAlt) || newKeyboardState.IsKeyDown(Keys.RightAlt),
+                                Shift = newKeyboardState.IsKeyDown(Keys.LeftShift) || newKeyboardState.IsKeyDown(Keys.RightShift),
+                                Control = newKeyboardState.IsKeyDown(Keys.LeftControl) || newKeyboardState.IsKeyDown(Keys.RightControl)
+                            }
+                        });
+
+            foreach (var key in OldKeyboardState.GetPressedKeys())
+                if (!newKeyboardState.IsKeyDown(key))
+                    r.Add(new QueuedInput
+                        {
+                            Message = InputEvents.KeyUp,
+                            Args = new InputEventArgs
+                            {
+                                KeyValue = (int)key,
+                                Alt = newKeyboardState.IsKeyDown(Keys.LeftAlt) || newKeyboardState.IsKeyDown(Keys.RightAlt),
+                                Shift = newKeyboardState.IsKeyDown(Keys.LeftShift) || newKeyboardState.IsKeyDown(Keys.RightShift),
+                                Control = newKeyboardState.IsKeyDown(Keys.LeftControl) || newKeyboardState.IsKeyDown(Keys.RightControl)
+                            }
+                        });
+
+            OldKeyboardState = newKeyboardState;
             
             QueueLock.ReleaseMutex();
             return r;

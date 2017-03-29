@@ -61,7 +61,14 @@ namespace Gum.Input
             if (realCode == System.Windows.Forms.Keys.ControlKey)
                 realCode = extended ? System.Windows.Forms.Keys.RControlKey : System.Windows.Forms.Keys.LControlKey;
             if (realCode == System.Windows.Forms.Keys.ShiftKey)
-                realCode = extended ? System.Windows.Forms.Keys.RShiftKey : System.Windows.Forms.Keys.LShiftKey;
+            {
+                //Grab the scan code from LParam... Who would have thought just telling 
+                // left and right shift apart would be such a PITA?
+                var scanCode = ((int)LParam & 0xff0000) >> 16;
+                if (scanCode == 42) return System.Windows.Forms.Keys.LShiftKey;
+                if (scanCode == 54) return System.Windows.Forms.Keys.RShiftKey;
+                throw new InvalidOperationException();
+            }
             return realCode;
         }
 

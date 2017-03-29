@@ -11,10 +11,26 @@ namespace DwarfCorp.NewGui
     public class KeyEditor : Widget
     {
         public KeyManager KeyManager;
+        private List<Keys> ReservedKeys;
 
         public override void Construct()
         {
             base.Construct();
+
+            ReservedKeys = new Keys[]
+            {
+                Keys.Up,
+                Keys.Left,
+                Keys.Right,
+                Keys.Down,
+                Keys.LeftControl,
+                //Keys.LeftShift,
+                //Keys.RightShift,
+                Keys.LeftAlt,
+                Keys.RightAlt,
+                Keys.RightControl,
+                Keys.Escape
+            }.ToList();
 
             foreach (var binding in KeyManager.Buttons)
             {
@@ -43,6 +59,12 @@ namespace DwarfCorp.NewGui
                             args.Cancelled = true;
                             Root.ShowTooltip(new Point(sender.Rect.X, sender.Rect.Y + 20),
                                 String.Format("Key {0} is already assigned.", args.NewKey));
+                        }
+                        else if (ReservedKeys.Contains(args.NewKey))
+                        {
+                            args.Cancelled = true;
+                            Root.ShowTooltip(new Point(sender.Rect.X, sender.Rect.Y + 20),
+                                String.Format("Key {0} is reserved.", args.NewKey));
                         }
                     },
                     OnKeyChange = (sender, newKey) =>
