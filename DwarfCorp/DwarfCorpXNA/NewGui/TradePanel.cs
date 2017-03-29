@@ -110,7 +110,7 @@ namespace DwarfCorp.NewGui
                 TextColor = new Vector4(0, 0, 0, 1),
                 Text = "Cancel",
                 AutoLayout = AutoLayout.DockRight,
-                Padding = new Margin(0,0,0,16),
+                OnLayout = (sender) => sender.Rect.X -= 16,
                 OnClick = (sender, args) =>
                 {
                     Result = TradeDialogResult.Cancel;

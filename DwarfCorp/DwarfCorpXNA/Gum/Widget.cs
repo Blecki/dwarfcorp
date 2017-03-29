@@ -113,7 +113,7 @@ namespace Gum
             }
         }
 
-        public Vector4 HoverTextColor = Vector4.One;
+        public Vector4 HoverTextColor = new Vector4(1,0,0,1);
         public bool ChangeColorOnHover = false;
 
         #endregion

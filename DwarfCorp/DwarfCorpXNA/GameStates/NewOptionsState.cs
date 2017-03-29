@@ -199,6 +199,35 @@ namespace DwarfCorp.GameStates
                     Padding = new Margin(4,4,0,0)
                 });
 
+
+            panel.AddChild(new Widget
+            {
+                Text = "Restore default settings",
+                MinimumSize = new Point(0, 20),
+                AutoLayout = AutoLayout.DockTop,
+                Padding = new Margin(0, 0, 4, 4),
+                Border = "border-button",
+                ChangeColorOnHover = true,
+                OnClick = (sender, args) =>
+                {
+                    var prompt = GuiRoot.ConstructWidget(new NewGui.Confirm
+                    {
+                        Text = "Set all settings to their default?",
+                        OnClose = (confirm) =>
+                        {
+                            if ((confirm as NewGui.Confirm).DialogResult == NewGui.Confirm.Result.OKAY)
+                            {
+                                GameSettings.Default = new GameSettings.Settings();
+                                RebuildGui();
+                                ApplySettings();
+                            }
+                        }
+                    });
+
+                    GuiRoot.ShowDialog(prompt);
+                }
+            });
+
             // Todo: Display actual value beside slider.
             MoveSpeed = panel.AddChild(LabelAndDockWidget("Camera Move Speed", new HorizontalFloatSlider
                 {
@@ -316,7 +345,14 @@ namespace DwarfCorp.GameStates
 
             Resolution = leftPanel.AddChild(LabelAndDockWidget("Resolution", new Gum.Widgets.ComboBox
                 {
-                    Items = DisplayModes.Where(dm => dm.Value.Width >= 1024).Select(dm => dm.Key).ToList(),
+
+// Allow debugging at lower resolutions.
+#if DEBUG
+                Items = DisplayModes.Select(dm => dm.Key).ToList(),
+#else
+                Items = DisplayModes.Where(dm => dm.Value.Width >= 1024).Select(dm => dm.Key).ToList(),
+#endif
+
                     OnSelectedIndexChanged = OnItemChanged,
                     Border = "border-thin"
                 })).GetChild(1) as Gum.Widgets.ComboBox;
@@ -465,108 +501,119 @@ namespace DwarfCorp.GameStates
             // This handler can be called while building the GUI, resulting in an infinite loop.
             if (BuildingGUI) return;
 
-            var comboBox = Sender as Gum.Widgets.ComboBox;
-            var selection = comboBox.SelectedItem;
-
-            switch (selection)
+            GuiRoot.ShowDialog(GuiRoot.ConstructWidget(new NewGui.Confirm
             {
-                case "Custom":
-                    break;
-                case "Lowest":
-                    GameSettings.Default.AmbientOcclusion = false;
-                    GameSettings.Default.AntiAliasing = 0;
-                    GameSettings.Default.CalculateRamps = false;
-                    GameSettings.Default.CalculateSunlight = false;
-                    GameSettings.Default.CursorLightEnabled = false;
-                    GameSettings.Default.DrawChunksReflected = false;
-                    GameSettings.Default.DrawEntityReflected = false;
-                    GameSettings.Default.DrawSkyReflected = false;
-                    GameSettings.Default.UseLightmaps = false;
-                    GameSettings.Default.UseDynamicShadows = false;
-                    GameSettings.Default.EntityLighting = false;
-                    GameSettings.Default.EnableGlow = false;
-                    GameSettings.Default.SelfIlluminationEnabled = false;
-                    GameSettings.Default.NumMotes = 100;
-                    GameSettings.Default.GrassMotes = false;
-                    GameSettings.Default.ParticlePhysics = false;
-                    break;
-                case "Low":
-                    GameSettings.Default.AmbientOcclusion = false;
-                    GameSettings.Default.AntiAliasing = 0;
-                    GameSettings.Default.CalculateRamps = true;
-                    GameSettings.Default.CalculateSunlight = true;
-                    GameSettings.Default.CursorLightEnabled = false;
-                    GameSettings.Default.DrawChunksReflected = false;
-                    GameSettings.Default.DrawEntityReflected = false;
-                    GameSettings.Default.DrawSkyReflected = true;
-                    GameSettings.Default.UseLightmaps = false;
-                    GameSettings.Default.UseDynamicShadows = false;
-                    GameSettings.Default.EntityLighting = true;
-                    GameSettings.Default.EnableGlow = false;
-                    GameSettings.Default.SelfIlluminationEnabled = false;
-                    GameSettings.Default.NumMotes = 300;
-                    GameSettings.Default.GrassMotes = false;
-                    GameSettings.Default.ParticlePhysics = false;
-                    break;
-                case "Medium":
-                    GameSettings.Default.AmbientOcclusion = true;
-                    GameSettings.Default.AntiAliasing = 4;
-                    GameSettings.Default.CalculateRamps = true;
-                    GameSettings.Default.CalculateSunlight = true;
-                    GameSettings.Default.CursorLightEnabled = true;
-                    GameSettings.Default.DrawChunksReflected = true;
-                    GameSettings.Default.DrawEntityReflected = false;
-                    GameSettings.Default.DrawSkyReflected = true;
-                    GameSettings.Default.UseLightmaps = false;
-                    GameSettings.Default.UseDynamicShadows = false;
-                    GameSettings.Default.EntityLighting = true;
-                    GameSettings.Default.EnableGlow = false;
-                    GameSettings.Default.SelfIlluminationEnabled = true;
-                    GameSettings.Default.NumMotes = 500;
-                    GameSettings.Default.GrassMotes = true;
-                    GameSettings.Default.ParticlePhysics = true;
-                    break;
-                case "High":
-                    GameSettings.Default.AmbientOcclusion = true;
-                    GameSettings.Default.AntiAliasing = 16;
-                    GameSettings.Default.CalculateRamps = true;
-                    GameSettings.Default.CalculateSunlight = true;
-                    GameSettings.Default.CursorLightEnabled = true;
-                    GameSettings.Default.DrawChunksReflected = true;
-                    GameSettings.Default.DrawEntityReflected = true;
-                    GameSettings.Default.DrawSkyReflected = true;
-                    GameSettings.Default.UseLightmaps = true;
-                    GameSettings.Default.UseDynamicShadows = false;
-                    GameSettings.Default.EntityLighting = true;
-                    GameSettings.Default.EnableGlow = true;
-                    GameSettings.Default.SelfIlluminationEnabled = true;
-                    GameSettings.Default.NumMotes = 1500;
-                    GameSettings.Default.GrassMotes = true;
-                    GameSettings.Default.ParticlePhysics = true;
-                    break;
-                case "Highest":
-                    GameSettings.Default.AmbientOcclusion = true;
-                    GameSettings.Default.AntiAliasing = -1;
-                    GameSettings.Default.CalculateRamps = true;
-                    GameSettings.Default.CalculateSunlight = true;
-                    GameSettings.Default.CursorLightEnabled = true;
-                    GameSettings.Default.DrawChunksReflected = true;
-                    GameSettings.Default.DrawEntityReflected = false;
-                    GameSettings.Default.DrawSkyReflected = true;
-                    GameSettings.Default.UseLightmaps = true;
-                    GameSettings.Default.UseDynamicShadows = true;
-                    GameSettings.Default.EntityLighting = true;
-                    GameSettings.Default.EnableGlow = true;
-                    GameSettings.Default.SelfIlluminationEnabled = true;
-                    GameSettings.Default.NumMotes = 2048;
-                    GameSettings.Default.GrassMotes = true;
-                    GameSettings.Default.ParticlePhysics = true;
-                    break;
-            }
+                Text = "This will automatically apply changes",
+                OnClose = (confirm) =>
+                {
+                    if ((confirm as NewGui.Confirm).DialogResult == NewGui.Confirm.Result.OKAY)
+                    {
+                        var comboBox = Sender as Gum.Widgets.ComboBox;
+                        var selection = comboBox.SelectedItem;
 
-            HasChanges = true;
-            RebuildGui();
-            TabPanel.SelectedTab = 3;
+                        switch (selection)
+                        {
+                            case "Custom":
+                                break;
+                            case "Lowest":
+                                GameSettings.Default.AmbientOcclusion = false;
+                                GameSettings.Default.AntiAliasing = 0;
+                                GameSettings.Default.CalculateRamps = false;
+                                GameSettings.Default.CalculateSunlight = false;
+                                GameSettings.Default.CursorLightEnabled = false;
+                                GameSettings.Default.DrawChunksReflected = false;
+                                GameSettings.Default.DrawEntityReflected = false;
+                                GameSettings.Default.DrawSkyReflected = false;
+                                GameSettings.Default.UseLightmaps = false;
+                                GameSettings.Default.UseDynamicShadows = false;
+                                GameSettings.Default.EntityLighting = false;
+                                GameSettings.Default.EnableGlow = false;
+                                GameSettings.Default.SelfIlluminationEnabled = false;
+                                GameSettings.Default.NumMotes = 100;
+                                GameSettings.Default.GrassMotes = false;
+                                GameSettings.Default.ParticlePhysics = false;
+                                break;
+                            case "Low":
+                                GameSettings.Default.AmbientOcclusion = false;
+                                GameSettings.Default.AntiAliasing = 0;
+                                GameSettings.Default.CalculateRamps = true;
+                                GameSettings.Default.CalculateSunlight = true;
+                                GameSettings.Default.CursorLightEnabled = false;
+                                GameSettings.Default.DrawChunksReflected = false;
+                                GameSettings.Default.DrawEntityReflected = false;
+                                GameSettings.Default.DrawSkyReflected = true;
+                                GameSettings.Default.UseLightmaps = false;
+                                GameSettings.Default.UseDynamicShadows = false;
+                                GameSettings.Default.EntityLighting = true;
+                                GameSettings.Default.EnableGlow = false;
+                                GameSettings.Default.SelfIlluminationEnabled = false;
+                                GameSettings.Default.NumMotes = 300;
+                                GameSettings.Default.GrassMotes = false;
+                                GameSettings.Default.ParticlePhysics = false;
+                                break;
+                            case "Medium":
+                                GameSettings.Default.AmbientOcclusion = true;
+                                GameSettings.Default.AntiAliasing = 4;
+                                GameSettings.Default.CalculateRamps = true;
+                                GameSettings.Default.CalculateSunlight = true;
+                                GameSettings.Default.CursorLightEnabled = true;
+                                GameSettings.Default.DrawChunksReflected = true;
+                                GameSettings.Default.DrawEntityReflected = false;
+                                GameSettings.Default.DrawSkyReflected = true;
+                                GameSettings.Default.UseLightmaps = false;
+                                GameSettings.Default.UseDynamicShadows = false;
+                                GameSettings.Default.EntityLighting = true;
+                                GameSettings.Default.EnableGlow = false;
+                                GameSettings.Default.SelfIlluminationEnabled = true;
+                                GameSettings.Default.NumMotes = 500;
+                                GameSettings.Default.GrassMotes = true;
+                                GameSettings.Default.ParticlePhysics = true;
+                                break;
+                            case "High":
+                                GameSettings.Default.AmbientOcclusion = true;
+                                GameSettings.Default.AntiAliasing = 16;
+                                GameSettings.Default.CalculateRamps = true;
+                                GameSettings.Default.CalculateSunlight = true;
+                                GameSettings.Default.CursorLightEnabled = true;
+                                GameSettings.Default.DrawChunksReflected = true;
+                                GameSettings.Default.DrawEntityReflected = true;
+                                GameSettings.Default.DrawSkyReflected = true;
+                                GameSettings.Default.UseLightmaps = true;
+                                GameSettings.Default.UseDynamicShadows = false;
+                                GameSettings.Default.EntityLighting = true;
+                                GameSettings.Default.EnableGlow = true;
+                                GameSettings.Default.SelfIlluminationEnabled = true;
+                                GameSettings.Default.NumMotes = 1500;
+                                GameSettings.Default.GrassMotes = true;
+                                GameSettings.Default.ParticlePhysics = true;
+                                break;
+                            case "Highest":
+                                GameSettings.Default.AmbientOcclusion = true;
+                                GameSettings.Default.AntiAliasing = -1;
+                                GameSettings.Default.CalculateRamps = true;
+                                GameSettings.Default.CalculateSunlight = true;
+                                GameSettings.Default.CursorLightEnabled = true;
+                                GameSettings.Default.DrawChunksReflected = true;
+                                GameSettings.Default.DrawEntityReflected = false;
+                                GameSettings.Default.DrawSkyReflected = true;
+                                GameSettings.Default.UseLightmaps = true;
+                                GameSettings.Default.UseDynamicShadows = true;
+                                GameSettings.Default.EntityLighting = true;
+                                GameSettings.Default.EnableGlow = true;
+                                GameSettings.Default.SelfIlluminationEnabled = true;
+                                GameSettings.Default.NumMotes = 2048;
+                                GameSettings.Default.GrassMotes = true;
+                                GameSettings.Default.ParticlePhysics = true;
+                                break;
+                        }
+
+                        HasChanges = true;
+                        RebuildGui();
+                        ApplySettings();
+                        TabPanel.SelectedTab = 3;
+                    }
+                }
+            }));
         }
 
         private void ApplySettings()
