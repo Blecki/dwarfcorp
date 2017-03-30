@@ -71,6 +71,7 @@ namespace DwarfCorp.GameStates
         public override void OnEnter()
         {
             IsInitialized = true;
+            DwarfTime.LastTime.Speed = 1.0f;
 
             IndicatorManager.SetupStandards();
 

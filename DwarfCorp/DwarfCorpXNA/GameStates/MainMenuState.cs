@@ -123,6 +123,8 @@ namespace DwarfCorp.GameStates
             MakeMenu();
             IsInitialized = true;
 
+            DwarfTime.LastTime.Speed = 1.0f;
+
             base.OnEnter();
         }
 
