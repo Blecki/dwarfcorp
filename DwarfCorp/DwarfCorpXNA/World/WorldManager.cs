@@ -1301,7 +1301,7 @@ namespace DwarfCorp
             //GamePerformance.Instance.StopTrackPerformance("Instance Manager");
 
             //GamePerformance.Instance.StartTrackPerformance("Sound Manager");
-            SoundManager.Update(gameTime, Camera);
+            SoundManager.Update(gameTime, Camera, Time.GetTimeOfDay());
             //GamePerformance.Instance.StopTrackPerformance("Sound Manager");
 
             //GamePerformance.Instance.StartTrackPerformance("Weather");

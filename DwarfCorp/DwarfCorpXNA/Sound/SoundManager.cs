@@ -83,6 +83,9 @@ namespace DwarfCorp
     /// </summary>
     public class SoundManager
     {
+        public static AudioEngine AudioEngine { get; set; }
+        public static SoundBank SoundBank { get; set; }
+        public static WaveBank WaveBank { get; set; }
         public static List<Song> ActiveSongs = new List<Song>();
         public static List<Sound3D> ActiveSounds = new List<Sound3D>();
         public static AudioListener Listener = new AudioListener();
@@ -91,7 +94,7 @@ namespace DwarfCorp
         public static int MaxSounds = 5;
         public static Dictionary<string, int> SoundCounts = new Dictionary<string, int>();
         public static Dictionary<string, SoundEffect> EffectLibrary = new Dictionary<string, SoundEffect>();
-
+        public static Dictionary<string, Cue> ActiveCues = new Dictionary<string, Cue>();
         public static void LoadDefaultSounds()
         {
             string[] defaultSounds =
@@ -111,6 +114,23 @@ namespace DwarfCorp
             }
             SoundEffect.DistanceScale = 0.01f;
             SoundEffect.DopplerScale = 0.1f;
+            AudioEngine = new AudioEngine("Content\\Audio\\XACT\\Sounds.xgs");
+            SoundBank = new SoundBank(AudioEngine, "Content\\Audio\\XACT\\SoundBank.xsb");
+            WaveBank = new WaveBank(AudioEngine, "Content\\Audio\\XACT\\WaveBank.xwb");
+
+        }
+
+        public static void PlayAmbience(string sound)
+        {
+            Cue cue;
+            if (!ActiveCues.TryGetValue(sound, out cue))
+            {
+                cue = SoundBank.GetCue(sound);
+            }
+            if (!cue.IsPlaying)
+            {
+                cue.Play();
+            }
         }
 
         public static void SetActiveSongs(params string[] songs)
@@ -223,8 +243,13 @@ namespace DwarfCorp
 
 
         private static bool once = true;
-        public static void Update(DwarfTime time, Camera camera)
+        public static void Update(DwarfTime time, Camera camera, float timeOfDay)
         {
+            AudioEngine.Update();
+            AudioEngine.SetGlobalVariable("TimeofDay", timeOfDay);
+            PlayAmbience("grassland_ambience_day");
+            PlayAmbience("grassland_ambience_night");
+            AudioEngine.GetCategory("Ambience").SetVolume(GameSettings.Default.SoundEffectVolume * 0.01f);
             List<Sound3D> toRemove = new List<Sound3D>();
 
             Matrix viewInverse = Matrix.Invert(camera.ViewMatrix);

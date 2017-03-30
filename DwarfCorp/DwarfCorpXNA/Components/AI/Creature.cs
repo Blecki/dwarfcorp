@@ -167,7 +167,8 @@ namespace DwarfCorp
             Sleeping,
             Swimming,
             Flying,
-            Sitting
+            Sitting,
+            Climbing
         }
 
         /// <summary> Describes the way in which a creature can move from one location to another </summary>
@@ -938,6 +939,11 @@ namespace DwarfCorp
             public Vector3 Diff { get; set; }
             /// <summary> And object to interact with to get between the start and destination </summary>
             public GameComponent InteractObject { get; set; }
+
+            /// <summary>
+            /// For climbing, this is the voxel the dwarf climbed on.
+            /// </summary>
+            public Voxel TargetVoxel { get; set; }
         }
 
         /// <summary>

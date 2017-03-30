@@ -1,4 +1,4 @@
-﻿// WorldTime.cs
+// WorldTime.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -64,7 +64,7 @@ namespace DwarfCorp
         public WorldTime()
         {
             CurrentDate = new DateTime(1432, 4, 1, 8, 0, 0);
-            Speed = 100.0f;
+            Speed = 1000.0f;
         }
 
         public void Update(DwarfTime t)
@@ -87,6 +87,11 @@ namespace DwarfCorp
         public float GetTotalHours()
         {
             return (GetTotalSeconds() / 60.0f) / 60.0f;
+        }
+
+        public float GetTimeOfDay()
+        {
+            return GetTotalHours()/24.0f;
         }
 
         public float GetSkyLightness()
