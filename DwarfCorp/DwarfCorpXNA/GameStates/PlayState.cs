@@ -20,6 +20,10 @@ namespace DwarfCorp.GameStates
         private bool IsShuttingDown { get; set; }
         private bool QuitOnNextUpdate { get; set; }
         public bool ShouldReset { get; set; }
+        private DateTime EnterTime;
+
+        // Amount of time to wait when play begins, before accepting input,
+        private float EnterInputDelaySeconds = 1.0f;
 
         public WorldManager World { get; set; }
 
@@ -27,7 +31,9 @@ namespace DwarfCorp.GameStates
         {
             get { return World.Master; }
             set { World.Master = value; }
-        }        public bool Paused
+        }
+
+        public bool Paused
         {
             get { return World.Paused; }
             set { World.Paused = value; }
@@ -120,6 +126,12 @@ namespace DwarfCorp.GameStates
 
             if (!IsInitialized)
             {
+                EnterTime = DateTime.Now;
+
+                // Ensure game is not paused.
+                Paused = false;
+                DwarfTime.LastTime.Speed = 1.0f;
+
                 // Setup new gui. Double rendering the mouse?
                 GuiRoot = new Gum.Root(Gum.Root.MinimumSize, DwarfGame.GumSkin);
                 GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
@@ -153,6 +165,7 @@ namespace DwarfCorp.GameStates
                 World.gameState = this;
                 World.OnLoseEvent += World_OnLoseEvent;
                 CreateGUIComponents();
+                InputManager.KeyReleasedCallback += TemporaryKeyPressHandler;
                 IsInitialized = true;
             }
 
@@ -607,8 +620,6 @@ namespace DwarfCorp.GameStates
 
             #endregion
 
-            InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
-
             #region Announcer and info tray
 
             World.OnAnnouncement = (title, message, clickAction) =>
@@ -640,6 +651,7 @@ namespace DwarfCorp.GameStates
             }) as NewGui.InfoTray;
 
             #endregion
+
             #region Setup brush
 
             BrushTray = GuiRoot.RootItem.AddChild(new NewGui.ToggleTray
@@ -1247,7 +1259,17 @@ namespace DwarfCorp.GameStates
         /// Called when the user releases a key
         /// </summary>
         /// <param name="key">The keyboard key released</param>
-        private void InputManager_KeyReleasedCallback(Keys key)
+        private void TemporaryKeyPressHandler(Keys key)
+        {
+            if ((DateTime.Now - EnterTime).TotalSeconds >= EnterInputDelaySeconds)
+            {
+                InputManager.KeyReleasedCallback -= TemporaryKeyPressHandler;
+                InputManager.KeyReleasedCallback += HandleKeyPress;
+                HandleKeyPress(key);
+            }
+        }
+
+        private void HandleKeyPress(Keys key)
         {
             if (key == ControlSettings.Mappings.Map)
             {
@@ -1311,7 +1333,6 @@ namespace DwarfCorp.GameStates
             }
             else if (key == ControlSettings.Mappings.ToggleGUI)
             {
-                // Todo: Reimplement.
                 GuiRoot.RootItem.Hidden = !GuiRoot.RootItem.Hidden;
                 GuiRoot.RootItem.Invalidate();
                 GUI.RootComponent.IsVisible = !GUI.RootComponent.IsVisible;
@@ -1406,7 +1427,7 @@ namespace DwarfCorp.GameStates
       
         public void Destroy()
         {
-            InputManager.KeyReleasedCallback -= InputManager_KeyReleasedCallback;
+            InputManager.KeyReleasedCallback -= TemporaryKeyPressHandler;
             Input.Destroy();
         }
 
