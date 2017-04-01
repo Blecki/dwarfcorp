@@ -391,6 +391,7 @@
     <Compile Include="NewGui\ToggleTray.cs" />
     <Compile Include="NewGui\MoneyEditor.cs" />
     <Compile Include="NewGui\KeyEditor.cs" />
+    <Compile Include="NewGui\ResourcePanel.cs" />
     <Compile Include="NewGui\TwoColumns.cs" />
     <Compile Include="NewGui\TradePanel.cs" />
     <Compile Include="NewGui\ResourceColumns.cs" />
