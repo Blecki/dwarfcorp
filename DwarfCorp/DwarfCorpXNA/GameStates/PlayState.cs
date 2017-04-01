@@ -53,11 +53,8 @@ namespace DwarfCorp.GameStates
         private NewGui.MinimapFrame MinimapFrame;
         private NewGui.MinimapRenderer MinimapRenderer;
         private NewGui.GameSpeedControls GameSpeedControls;
-<<<<<<< HEAD
         private Widget PausedWidget;
         private Gum.Widget ResourcePanel;
-=======
->>>>>>> 7457ef7c737f95505e0d5aa773e3ed7b4d64b943
         private NewGui.InfoTray InfoTray;
         private NewGui.ToggleTray BrushTray;
 
