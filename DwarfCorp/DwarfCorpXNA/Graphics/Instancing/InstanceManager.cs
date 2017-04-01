@@ -33,7 +33,8 @@ namespace DwarfCorp
         {
             FixedInstanceArray arr = new FixedInstanceArray(name, PrimitiveLibrary.BatchBillboardPrimitives[name], PrimitiveLibrary.BatchBillboardPrimitives[name].Texture, count, BlendState.NonPremultiplied)
             {
-                ShouldRebuild = true
+                ShouldRebuild = true,
+                EnableWind = true
             };
             AddInstances(name, arr);
         }
@@ -42,19 +43,22 @@ namespace DwarfCorp
         {
             FixedInstanceArray pinetree = new FixedInstanceArray("pine", PrimitiveLibrary.BatchBillboardPrimitives["pine"], TextureManager.GetTexture(ContentPaths.Entities.Plants.pine), (int)(50 * GameSettings.Default.NumMotes), BlendState.NonPremultiplied)
             {
-                ShouldRebuild = true
+                ShouldRebuild = true,
+                EnableWind = true
             };
             AddInstances("pine", pinetree);
 
             FixedInstanceArray palmTree = new FixedInstanceArray("palm", PrimitiveLibrary.BatchBillboardPrimitives["palm"], TextureManager.GetTexture(ContentPaths.Entities.Plants.palm), (int)(50 * GameSettings.Default.NumMotes), BlendState.NonPremultiplied)
             {
-                ShouldRebuild = true
+                ShouldRebuild = true,
+                EnableWind = true
             };
             AddInstances("palm", palmTree);
 
             FixedInstanceArray snowPine = new FixedInstanceArray("snowpine", PrimitiveLibrary.BatchBillboardPrimitives["snowpine"], TextureManager.GetTexture(ContentPaths.Entities.Plants.snowpine), (int)(50 * GameSettings.Default.NumMotes), BlendState.NonPremultiplied)
             {
-                ShouldRebuild = true
+                ShouldRebuild = true,
+                EnableWind = true
             };
             AddInstances("snowpine", snowPine);
 

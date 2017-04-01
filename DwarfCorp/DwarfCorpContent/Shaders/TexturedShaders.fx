@@ -19,6 +19,7 @@ float4x4 xProjection;
 float4x4 xWorld;
 int xEnableLighting;
 int xEnableShadows;
+int xEnableWind;
 
 Texture xWaterBumpMap;
 
@@ -55,6 +56,16 @@ float4 GetNoise(float4 pos)
 	float sm = sin(mag + 0.1);
 	float cm = cos(mag);
 	return float4(cm * 0.2 + sm * 0.1, sm * 0.5 + cm * 0.1, sm * 0.2 + cm * 0.1, 0);
+}
+
+float4 GetWind(float4 pos, float2 uv)
+{
+	pos.w = 0;
+	float windPower = 0.5 + sin(pos.x / 10.0f + pos.y / 10.0f + xTime * (1.2f + xWindForce / 10.0f));
+	if (windPower < 0.0f)
+		windPower = windPower*0.05f;
+	else windPower = windPower*0.08f;
+	return float4(xWindDirection * windPower * (1.0 - uv.y), 0);
 }
 
 
@@ -299,6 +310,11 @@ TVertexToPixel TexturedVS(float4 inPos : POSITION,
 
 	float4 worldPosition = mul(inPos, world);
 	worldPosition += GetNoise(worldPosition);
+
+	if (xEnableWind)
+	{
+		worldPosition += GetWind(worldPosition, inTexCoords);
+	}
 
 	Output.WorldPosition = worldPosition;
     

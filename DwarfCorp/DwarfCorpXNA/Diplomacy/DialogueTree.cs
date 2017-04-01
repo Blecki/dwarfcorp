@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -37,13 +37,24 @@ namespace DwarfCorp.Dialogue
                     Context.AddOption("Declare war", DeclareWar);
                     Context.AddOption("What is your opinion of us?", (context) =>
                     {
-                        var prompt = String.Format("So far, our relationship has been {0}", context.Politics.GetCurrentRelationship());
+                        var prompt = "";
                         if (context.Politics.RecentEvents.Count > 0)
                         {
-                            prompt += ", because ";
-                            prompt += TextGenerator.GetListString(context.Politics.RecentEvents.Select(e => e.Description).ToList());
+                            prompt = String.Format("So far, our relationship has been {0}",
+                                context.Politics.GetCurrentRelationship());
+                            if (context.Politics.RecentEvents.Count > 0)
+                            {
+                                prompt += ", because ";
+                                prompt +=
+                                    TextGenerator.GetListString(
+                                        context.Politics.RecentEvents.Select(e => e.Description).ToList());
+                            }
+                            prompt += ".";
                         }
-                        prompt += ".";
+                        else
+                        {
+                            prompt = "We know nothing about you.";
+                        }
                         Context.Transition(RootWithPrompt(prompt));
                     });
                     Context.AddOption("What is something you have many of?", (context) =>
@@ -53,18 +64,39 @@ namespace DwarfCorp.Dialogue
                     });
                     Context.AddOption("What is something you have few of?", (context) =>
                     {
-                        Context.Transition(RootWithPrompt(String.Format("We have few {0}.",
-                            GetPluralForm(Datastructures.SelectRandom(context.Envoy.OwnerFaction.Race.RareResources)))));
+                        if (context.Envoy.OwnerFaction.Race.RareResources.Count > 0)
+                        {
+                            Context.Transition(RootWithPrompt(String.Format("We have few {0}.",
+                                GetPluralForm(Datastructures.SelectRandom(context.Envoy.OwnerFaction.Race.RareResources)))));
+                        }
+                        else
+                        {
+                            Context.Transition(RootWithPrompt("Nothing in particular."));
+                        }
                     });
                     Context.AddOption("What is something you hate?", (context) =>
                     {
-                        Context.Transition(RootWithPrompt(String.Format("We hate {0}.",
-                            GetPluralForm(Datastructures.SelectRandom(context.Envoy.OwnerFaction.Race.HatedResources)))));
+                        if (context.Envoy.OwnerFaction.Race.HatedResources.Count > 0)
+                        {
+                            Context.Transition(RootWithPrompt(String.Format("We hate {0}.",
+                                GetPluralForm(Datastructures.SelectRandom(context.Envoy.OwnerFaction.Race.HatedResources)))));
+                        }
+                        else
+                        {
+                            Context.Transition(RootWithPrompt("We don't hate anything in particular."));   
+                        }
                     });
                     Context.AddOption("What is something you like?", (context) =>
                     {
-                        Context.Transition(RootWithPrompt(String.Format("We like {0}.",
-                            GetPluralForm(Datastructures.SelectRandom(context.Envoy.OwnerFaction.Race.LikedResources)))));
+                        if (context.Envoy.OwnerFaction.Race.LikedResources.Count > 0)
+                        {
+                            Context.Transition(RootWithPrompt(String.Format("We like {0}.",
+                                GetPluralForm(Datastructures.SelectRandom(context.Envoy.OwnerFaction.Race.LikedResources)))));
+                        }
+                        else
+                        {
+                            Context.Transition(RootWithPrompt("We don't like anything in particular."));
+                        }
                     });
                     Context.AddOption("Leave", (context) =>
                      {

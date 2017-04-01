@@ -48,6 +48,20 @@ namespace DwarfCorp
     {
         public delegate void DayPassed(DateTime time);
         public event DayPassed NewDay;
+        public event DayPassed NewNight;
+        public event DayPassed Dawn;
+
+        protected virtual void OnDawn(DateTime time)
+        {
+            DayPassed handler = Dawn;
+            if (handler != null) handler(time);
+        }
+
+        protected virtual void OnNewNight(DateTime time)
+        {
+            DayPassed handler = NewNight;
+            if (handler != null) handler(time);
+        }
 
         protected virtual void OnNewDay(DateTime time)
         {
@@ -64,17 +78,28 @@ namespace DwarfCorp
         public WorldTime()
         {
             CurrentDate = new DateTime(1432, 4, 1, 8, 0, 0);
-            Speed = 1000.0f;
+            Speed = 100.0f;
         }
 
         public void Update(DwarfTime t)
         {
             bool beforeMidnight = CurrentDate.Hour > 0;
+            bool wasDay = IsDay();
             CurrentDate = CurrentDate.Add(new TimeSpan(0, 0, 0, 0, (int)(t.ElapsedGameTime.Milliseconds * Speed)));
 
             if (CurrentDate.Hour == 0 && beforeMidnight)
             {
                 OnNewDay(CurrentDate);
+            }
+
+            if (wasDay && IsNight())
+            {
+                OnNewNight(CurrentDate);
+            }
+
+            if (!wasDay && IsDay())
+            {
+                OnDawn(CurrentDate);
             }
         }
 
@@ -101,7 +126,7 @@ namespace DwarfCorp
 
         public bool IsNight()
         {
-            return CurrentDate.Hour < 6 || CurrentDate.Hour > 18;
+            return CurrentDate.Hour < 6 || CurrentDate.Hour >= 18;
         }
 
         public bool IsDay()

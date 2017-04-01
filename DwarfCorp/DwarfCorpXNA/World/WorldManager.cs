@@ -1301,7 +1301,7 @@ namespace DwarfCorp
             //GamePerformance.Instance.StopTrackPerformance("Instance Manager");
 
             //GamePerformance.Instance.StartTrackPerformance("Sound Manager");
-            SoundManager.Update(gameTime, Camera, Time.GetTimeOfDay());
+            SoundManager.Update(gameTime, Camera, Time);
             //GamePerformance.Instance.StopTrackPerformance("Sound Manager");
 
             //GamePerformance.Instance.StartTrackPerformance("Weather");
@@ -1639,7 +1639,7 @@ namespace DwarfCorp
             SlicePlane = SlicePlane * 0.5f + level * 0.5f;
 
             Plane slicePlane = WaterRenderer.CreatePlane(SlicePlane, new Vector3(0, -1, 0), Camera.ViewMatrix, false);
-
+            DefaultShader.WindDirection = Weather.CurrentWind;
             // Draw the whole world, and make sure to handle slicing
             DefaultShader.ClipPlane = new Vector4(slicePlane.Normal, slicePlane.D);
             DefaultShader.ClippingEnabled = true;

@@ -48,6 +48,8 @@ namespace DwarfCorp
         private InstancedVertex[] instanceVertexes;
         private static bool HardwareInstancingSupported = true;
 
+        public bool EnableWind = false;
+
         public void Clear()
         {
             Data.Clear();
@@ -239,6 +241,7 @@ namespace DwarfCorp
 
         public void Render(GraphicsDevice graphics, Shader effect, Camera cam, bool rebuildVertices, string mode)
         {
+            effect.EnableWind = EnableWind;
             Camera = cam;
 
             if (HardwareInstancingSupported && instanceBuffer == null)
@@ -295,6 +298,7 @@ namespace DwarfCorp
                 effect.World = Matrix.Identity;
                 graphics.BlendState = blendState;
             }
+            effect.EnableWind = false;
         }
 
 

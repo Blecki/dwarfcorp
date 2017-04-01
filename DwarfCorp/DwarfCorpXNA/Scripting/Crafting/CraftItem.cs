@@ -1,4 +1,4 @@
-﻿// CraftItem.cs
+// CraftItem.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -63,6 +63,9 @@ namespace DwarfCorp
         public ResourceLibrary.ResourceType ResourceCreated { get; set; }
         public List<ResourceAmount> SelectedResources { get; set; }
         public string CraftLocation { get; set; }
+        public string Verb { get; set; }
+        public string PastTeseVerb { get; set; }
+        public string CurrentVerb { get; set; }
         public CraftItem()
         {
             Name = "";
@@ -74,6 +77,9 @@ namespace DwarfCorp
             ResourceCreated = "";
             SelectedResources = new List<ResourceAmount>();
             CraftLocation = "Anvil";
+            Verb = "Build";
+            PastTeseVerb = "Built";
+            CurrentVerb = "Building";
         }
     }
 }

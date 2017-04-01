@@ -1,4 +1,5 @@
 using System.IO;
+using System.Windows.Forms.VisualStyles;
 using DwarfCorp.NewGui;
 using Gum;
 using Gum.Input;
@@ -46,6 +47,7 @@ namespace DwarfCorp.GameStates
         private NewGui.MinimapFrame MinimapFrame;
         private NewGui.MinimapRenderer MinimapRenderer;
         private NewGui.GameSpeedControls GameSpeedControls;
+        private Widget PausedWidget;
         private Gum.Widget ResourcePanel;
         private NewGui.InfoTray InfoTray;
         private NewGui.ToggleTray BrushTray;
@@ -107,7 +109,7 @@ namespace DwarfCorp.GameStates
         private void World_OnLoseEvent()
         {
             //Paused = true;
-            //StateManager.PushState("LoseState");
+            //StateManager.PushState("LoseState");a
         }
 
         /// <summary>
@@ -154,9 +156,13 @@ namespace DwarfCorp.GameStates
                 World.OnLoseEvent += World_OnLoseEvent;
                 CreateGUIComponents();
                 IsInitialized = true;
+                SoundManager.CurrentMusic.PlayTrack("main_theme_day");
+                World.Time.Dawn += time => SoundManager.CurrentMusic.PlayTrack("main_theme_day");
+                World.Time.NewNight += time => SoundManager.CurrentMusic.PlayTrack("main_theme_night");
             }
 
             World.Unpause();
+
             base.OnEnter();
         }
 
@@ -192,9 +198,15 @@ namespace DwarfCorp.GameStates
 
             // If this playstate is not supposed to be running,
             // just exit.
-            if (!Game.IsActive || !IsActiveState || IsShuttingDown)
+            if (!IsActiveState || IsShuttingDown)
             {
                 return;
+            }
+
+            if (!Game.IsActive)
+            {
+                Paused = true;
+                GameSpeedControls.CurrentSpeed = 0;
             }
 
             if (QuitOnNextUpdate)
@@ -602,8 +614,20 @@ namespace DwarfCorp.GameStates
                 {
                     DwarfTime.LastTime.Speed = (float)speed;
                     Paused = speed == 0;
+                    PausedWidget.Hidden = !Paused;
+                    PausedWidget.Invalidate();
                 }
             }) as NewGui.GameSpeedControls;
+
+            PausedWidget = GuiRoot.RootItem.AddChild(new Widget()
+            {
+                Text = "\n\nPaused",
+                AutoLayout = Gum.AutoLayout.FloatCenter,
+                Tooltip = "(push " + ControlSettings.Mappings.Pause.ToString() + " to unpause)",
+                Font = "outline-font",
+                TextColor = Color.White.ToVector4(),
+                Hidden = true
+            });
 
             #endregion
 
@@ -842,7 +866,7 @@ namespace DwarfCorp.GameStates
                                         Master.Faction.CraftBuilder.IsEnabled = true;
                                         Master.Faction.CraftBuilder.CurrentCraftType = data;
                                         ChangeTool(GameMaster.ToolMode.Build);
-                                        World.ShowToolPopup("Click and drag to build " + data.Name);
+                                        World.ShowToolPopup("Click and drag to " + data.Verb + " " + data.Name);
                                     },
                                     OnConstruct = (sender) =>
                                     {
@@ -862,7 +886,9 @@ namespace DwarfCorp.GameStates
                         ExpansionChild = new NewGui.ToolTray.Tray
                         {
                             Tooltip = "Craft resource",
-                            ItemSource = CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Resource && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated) && !ResourceLibrary.Resources[item.ResourceCreated].Tags.Contains(Resource.ResourceTags.Edible))
+                            ItemSource = CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Resource 
+                                && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated) &&
+                                !ResourceLibrary.Resources[item.ResourceCreated].Tags.Contains(Resource.ResourceTags.Edible))
                                 .Select(data => new NewGui.ToolTray.Icon
                                 {
                                     // Todo: Need to get all the icons into one sheet.
@@ -881,13 +907,14 @@ namespace DwarfCorp.GameStates
                                         var buildInfo = (sender as NewGui.ToolTray.Icon).ExpansionChild as NewGui.BuildCraftInfo;
                                         data.SelectedResources = buildInfo.GetSelectedResources();
 
-                                        Master.Faction.RoomBuilder.CurrentRoomData = null;
-                                        Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                                        Master.Faction.WallBuilder.CurrentVoxelType = null;
-                                        Master.Faction.CraftBuilder.IsEnabled = true;
-                                        Master.Faction.CraftBuilder.CurrentCraftType = data;
-                                        ChangeTool(GameMaster.ToolMode.Build);
-                                        World.ShowToolPopup("Click and drag to build " + data.Name);
+                                        List<Task> assignments = new List<Task> {new CraftResourceTask(data)};
+                                        var minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions,
+                                            GameMaster.ToolMode.Craft);
+                                        if (minions.Count > 0)
+                                        {
+                                            TaskManager.AssignTasks(assignments, minions);
+                                            World.ShowToolPopup(data.CurrentVerb + " one " + data.Name);
+                                        }
                                     },
                                     OnConstruct = (sender) =>
                                     {
@@ -914,12 +941,14 @@ namespace DwarfCorp.GameStates
                         {
                             ToolbarItems.Add(new ToolbarItem(sender, () =>
                             Master.Faction.SelectedMinions.Any(minion =>
-                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Build))));
-                            AddToolSelectIcon(GameMaster.ToolMode.Build, sender);
+                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Cook))));
+                            AddToolSelectIcon(GameMaster.ToolMode.Cook, sender);
                         },
                         ExpansionChild = new NewGui.ToolTray.Tray
                         {
-                            ItemSource = CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Resource && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated) && ResourceLibrary.Resources[item.ResourceCreated].Tags.Contains(Resource.ResourceTags.Edible))
+                            ItemSource = CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Resource 
+                                && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated) 
+                                && ResourceLibrary.Resources[item.ResourceCreated].Tags.Contains(Resource.ResourceTags.Edible))
                                 .Select(data => new NewGui.ToolTray.Icon
                                 {
                                     Icon = data.Icon,
@@ -936,13 +965,14 @@ namespace DwarfCorp.GameStates
                                         var buildInfo = (sender as NewGui.ToolTray.Icon).ExpansionChild as NewGui.BuildCraftInfo;
                                         data.SelectedResources = buildInfo.GetSelectedResources();
 
-                                        Master.Faction.RoomBuilder.CurrentRoomData = null;
-                                        Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                                        Master.Faction.WallBuilder.CurrentVoxelType = null;
-                                        Master.Faction.CraftBuilder.IsEnabled = true;
-                                        Master.Faction.CraftBuilder.CurrentCraftType = data;
-                                        ChangeTool(GameMaster.ToolMode.Build);
-                                        World.ShowToolPopup("Click and drag to build " + data.Name);
+                                        List<Task> assignments = new List<Task> {new CraftResourceTask(data)};
+                                        var minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions,
+                                            GameMaster.ToolMode.Cook);
+                                        if (minions.Count > 0)
+                                        {
+                                            TaskManager.AssignTasks(assignments, minions);
+                                            World.ShowToolPopup(data.CurrentVerb + " one " + data.Name);
+                                        }
                                     },
                                     OnConstruct = (sender) =>
                                     {

@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
+using Gum;
 using LibNoise.Modifiers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -34,7 +35,8 @@ namespace DwarfCorp.NewGui
         private Gum.Widget TimeLabel;
         private Gum.Widget PlayPauseButton;
         public Action<Gum.Widget, int> OnSpeedChanged;
-
+        private Gum.Widget FastButton;
+        private Gum.Widget SlowButton;
         public void Pause()
         {
             PlaySpeed = Math.Max(CurrentSpeed, 1);
@@ -56,59 +58,66 @@ namespace DwarfCorp.NewGui
             Font = "font2x";
 
             TimeLabel = AddChild(new Gum.Widget
-                {
-                    AutoLayout = Gum.AutoLayout.DockLeft,
-                    MinimumSize = new Point(16, 0),
-                    Text = "1x",
-                    Tooltip = "Current Game Speed",
-                    TextVerticalAlign = Gum.VerticalAlign.Center,
-                    TextColor = new Vector4(1,1,1,1)
-                });
-
-            PlayPauseButton = AddChild(new Gum.Widget
             {
                 AutoLayout = Gum.AutoLayout.DockLeft,
-                Border = "border-thin",
-                Text = "||",
-                Tooltip = "Pause",
+                MinimumSize = new Point(16, 0),
+                Text = "1x",
+                Tooltip = "Current Game Speed",
+                TextVerticalAlign = Gum.VerticalAlign.Center,
+                TextColor = new Vector4(1, 1, 1, 1)
+            });
+
+            SlowButton = AddChild(new Widget()
+            {
+                AutoLayout = Gum.AutoLayout.DockLeft,
+                Text = "<<",
+                TextColor = Color.White.ToVector4(),
+                Tooltip = "Decrease Speed",
+                HoverTextColor = Color.DarkRed.ToVector4(),
+                ChangeColorOnHover = true,
                 OnClick = (sender, args) =>
-                    {
-                        if (CurrentSpeed == 0)
-                        {
-                            if (PlaySpeed == 0) PlaySpeed = 1;
-                            CurrentSpeed = PlaySpeed;
-                        }
-                        else
-                        {
-                            PlaySpeed = CurrentSpeed;
-                            CurrentSpeed = 0;
-                        }
-                    },
+                {
+                    CurrentSpeed -= 1;
+                },
                 TextVerticalAlign = Gum.VerticalAlign.Center
             });
             
-            AddChild(new Gum.Widget
+
+            PlayPauseButton = AddChild(new Widget()
             {
                 AutoLayout = Gum.AutoLayout.DockLeft,
-                Text = ">>",
-                Border = "border-thin",
-                Tooltip = "Increase Speed",
+                TextColor = Color.White.ToVector4(),
+                Text = "||",
+                Tooltip = "Pause",
+                HoverTextColor = Color.DarkRed.ToVector4(),
+                ChangeColorOnHover = true,
                 OnClick = (sender, args) =>
                 {
-                    CurrentSpeed += 1;
+                    if (CurrentSpeed == 0)
+                    {
+                        if (PlaySpeed == 0) PlaySpeed = 1;
+                        CurrentSpeed = PlaySpeed;
+                    }
+                    else
+                    {
+                        PlaySpeed = CurrentSpeed;
+                        CurrentSpeed = 0;
+                    }
                 },
                 TextVerticalAlign = Gum.VerticalAlign.Center
             });
 
-            AddChild(new Gum.Widget
+            FastButton = AddChild(new Widget()
             {
                 AutoLayout = Gum.AutoLayout.DockLeft,
-                Text = "<<",
-                Border = "border-thin",
-                Tooltip = "Decrease Speed",
+                Text = ">>",
+                TextColor = Color.White.ToVector4(),
+                Tooltip = "Increase Speed",
+                HoverTextColor = Color.DarkRed.ToVector4(),
+                ChangeColorOnHover = true,
                 OnClick = (sender, args) =>
                 {
-                    CurrentSpeed -= 1;
+                    CurrentSpeed += 1;
                 },
                 TextVerticalAlign = Gum.VerticalAlign.Center
             });
@@ -125,6 +134,28 @@ namespace DwarfCorp.NewGui
             PlayPauseButton.Text = (_currentSpeed == 0 ? ">" : "||");
             PlayPauseButton.Tooltip = (_currentSpeed == 0 ? "Resume" : "Pause");
             PlayPauseButton.Invalidate();
+
+            if (_currentSpeed <= 0)
+            {
+                SlowButton.Hidden = true;
+                SlowButton.Invalidate();
+            }
+            else
+            {
+                SlowButton.Hidden = false;
+                SlowButton.Invalidate();;
+            }
+
+            if (_currentSpeed >= 3)
+            {
+                FastButton.Hidden = true;
+                FastButton.Invalidate();
+            }
+            else
+            {
+                FastButton.Hidden = false;
+                FastButton.Invalidate();
+            }
         }
     }
 }

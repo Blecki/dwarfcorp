@@ -318,17 +318,6 @@ namespace DwarfCorp
             }
         }
 
-        public static void CreateIntersectingBillboard(GameComponent component, SpriteSheet spriteSheet, float xSize, float ySize, Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
-        {
-            BatchedSprite billboard = new BatchedSprite(componentManager, "BatchedSprite", component, Matrix.Identity, spriteSheet, 2, graphics)
-            {
-                Primitive = PrimitiveLibrary.BatchBillboardPrimitives["tree"],
-                LightsWithVoxels = true,
-                CullDistance = 70 * 70,
-                LocalTransform = Matrix.CreateScale(xSize * 4, ySize * 4, xSize * 4)
-            };
-        }
-
 
         public static Body GenerateElf(WorldManager worldManger, Vector3 position, Faction faction, string allies)
         {

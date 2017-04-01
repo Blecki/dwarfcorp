@@ -1,4 +1,4 @@
-﻿// Flammable.cs
+// Flammable.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -128,7 +128,7 @@ namespace DwarfCorp
                     Health.Damage(Damage, Health.DamageType.Fire);
 
                 if(SoundTimer.HasTriggered)
-                    SoundManager.PlaySound(ContentPaths.Audio.fire, LocParent.Position, true, 0.5f);
+                    SoundManager.PlaySound(ContentPaths.Audio.fire, LocParent.Position, true, 1.0f);
                 double totalSize = (LocParent.BoundingBox.Max - LocParent.BoundingBox.Min).Length();
                 int numFlames = (int) (totalSize / 4.0f) + 1;
 
