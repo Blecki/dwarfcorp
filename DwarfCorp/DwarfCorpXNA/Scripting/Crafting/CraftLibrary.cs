@@ -1,4 +1,4 @@
-﻿// CraftLibrary.cs
+// CraftLibrary.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -193,7 +193,10 @@ namespace DwarfCorp
                         Icon = new Gum.TileReference("crafts", 0),
                         BaseCraftTime = 15,
                         Type = CraftItem.CraftType.Resource,
-                        ResourceCreated = "Trinket"
+                        ResourceCreated = "Trinket",
+                        Verb = "Craft",
+                        CurrentVerb = "Crafting",
+                        PastTeseVerb = "Crafted"
                     }
                 },
                 {
@@ -210,7 +213,10 @@ namespace DwarfCorp
                         Icon = new Gum.TileReference("crafts", 1),
                         BaseCraftTime = 15,
                         Type = CraftItem.CraftType.Resource,
-                        ResourceCreated = "Gem-set Trinket"
+                        ResourceCreated = "Gem-set Trinket",
+                        Verb = "Craft",
+                        CurrentVerb = "Crafting",
+                        PastTeseVerb = "Crafted"
                     }
                 },
                 {
@@ -228,7 +234,10 @@ namespace DwarfCorp
                         BaseCraftTime = 15,
                         Type = CraftItem.CraftType.Resource,
                         ResourceCreated = "Meal",
-                        CraftLocation = "Cutting Board"
+                        CraftLocation = "Cutting Board",
+                        Verb = "Cook",
+                        PastTeseVerb = "Cooked",
+                        CurrentVerb = "Cooking"
                     }
                 },
                 {
@@ -245,7 +254,10 @@ namespace DwarfCorp
                         BaseCraftTime = 15,
                         Type = CraftItem.CraftType.Resource,
                         ResourceCreated = "Bread",
-                        CraftLocation = "Stove"
+                        CraftLocation = "Stove",
+                        Verb = "Bake",
+                        PastTeseVerb = "Baked",
+                        CurrentVerb = "Baking"
                     }
                 },
                 {
@@ -262,7 +274,10 @@ namespace DwarfCorp
                         BaseCraftTime = 15,
                         Type = CraftItem.CraftType.Resource,
                         ResourceCreated = "Ale",
-                        CraftLocation = "Barrel"
+                        CraftLocation = "Barrel",
+                        Verb = "Brew",
+                        PastTeseVerb = "Brewed",
+                        CurrentVerb = "Brewing"
                     }
                 },
                 {

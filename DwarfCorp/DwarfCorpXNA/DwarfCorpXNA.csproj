@@ -95,6 +95,7 @@
     <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <Private>False</Private>
     </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Xact, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="mscorlib">
       <Private>False</Private>
     </Reference>
@@ -366,6 +367,7 @@
     <Compile Include="Gum\Widgets\Button.cs" />
     <Compile Include="Gum\Widgets\CheckBox.cs" />
     <Compile Include="Gum\Widgets\ComboBox.cs" />
+    <Compile Include="Gum\Widgets\KeyField.cs" />
     <Compile Include="Gum\Widgets\EditableTextField.cs" />
     <Compile Include="Gum\Widgets\HorizontalFloatSlider.cs" />
     <Compile Include="Gum\Widgets\HorizontalSlider.cs" />
@@ -389,6 +391,8 @@
     <Compile Include="NewGui\SpellInfo.cs" />
     <Compile Include="NewGui\ToggleTray.cs" />
     <Compile Include="NewGui\MoneyEditor.cs" />
+    <Compile Include="NewGui\KeyEditor.cs" />
+    <Compile Include="NewGui\ResourcePanel.cs" />
     <Compile Include="NewGui\TwoColumns.cs" />
     <Compile Include="NewGui\TradePanel.cs" />
     <Compile Include="NewGui\ResourceColumns.cs" />
@@ -513,6 +517,7 @@
     <Compile Include="Scripting\Player\Building\WallBuilder.cs" />
     <Compile Include="Scripting\Player\Economy\Company.cs" />
     <Compile Include="Scripting\Player\Economy\Economy.cs" />
+    <Compile Include="Scripting\Player\Economy\Money.cs" />
     <Compile Include="Scripting\Player\Economy\Resource.cs" />
     <Compile Include="Scripting\Player\Economy\ResourceAmount.cs" />
     <Compile Include="Scripting\Player\Economy\ResourceContainer.cs" />

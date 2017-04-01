@@ -134,6 +134,9 @@ namespace DwarfCorp
             Stats.FullName = TextGenerator.GenerateRandom("$elfname");
             //Stats.LastName = TextGenerator.GenerateRandom("$elffamily");
             Stats.Size = 4;
+            AI.Movement.CanClimbWalls = true;
+            AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
+            AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
 
         }
     }

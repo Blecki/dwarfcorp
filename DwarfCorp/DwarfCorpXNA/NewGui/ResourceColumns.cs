@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,8 +17,9 @@ namespace DwarfCorp.NewGui
         public String LeftHeader;
         public String RightHeader;
         private MoneyEditor MoneyField;
+        public String MoneyLabel;
 
-        public int TradeMoney { get { return MoneyField.CurrentValue; } }
+        public DwarfBux TradeMoney { get { return (decimal)MoneyField.CurrentValue; } }
         public bool Valid { get { return MoneyField.Valid; } }
         
         public int TotalSelectedItems
@@ -47,8 +48,8 @@ namespace DwarfCorp.NewGui
             leftPanel.AddChild(new Gum.Widget
             {
                 Text = LeftHeader,
-                Font = "outline-font",
-                TextColor = new Vector4(1, 1, 1, 1),
+                Font = "font-hires",
+                TextColor = new Vector4(0,  0, 0, 1),
                 AutoLayout = AutoLayout.DockTop
             });
 
@@ -56,10 +57,10 @@ namespace DwarfCorp.NewGui
             {
                 MinimumSize = new Point(0, 32),
                 AutoLayout = AutoLayout.DockBottom,
-                Font = "outline-font",
-                TextColor = new Vector4(1, 1, 1, 1),
-                Text = String.Format("${0}", TradeEntity.Money.ToString()),
-                TextHorizontalAlign = ReverseColumnOrder ? HorizontalAlign.Left : HorizontalAlign.Right,
+                Font = "font",
+                TextColor = new Vector4(0, 0, 0, 1),
+                Text = String.Format(MoneyLabel + ": {0}", TradeEntity.Money.ToString()),
+                TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center
             });
 
@@ -74,17 +75,18 @@ namespace DwarfCorp.NewGui
             rightPanel.AddChild(new Gum.Widget
             {
                 Text = RightHeader,
-                Font = "outline-font",
-                TextColor = new Vector4(1,1,1,1),
+                Font = "font-hires",
+                TextColor = new Vector4(0,0,0,1),
                 AutoLayout = AutoLayout.DockTop
             });
 
             MoneyField = rightPanel.AddChild(new MoneyEditor
             {
-                MaximumValue = TradeEntity.Money,
-                MinimumSize = new Point(0, 32),
+                MaximumValue = (int)TradeEntity.Money,
+                MinimumSize = new Point(0, 33),
                 AutoLayout = AutoLayout.DockBottom,
-                OnValueChanged = (sender) => Root.SafeCall(OnTotalSelectedChanged, this)
+                OnValueChanged = (sender) => Root.SafeCall(OnTotalSelectedChanged, this),
+                Tooltip = "Money to trade."
             }) as MoneyEditor;
 
             var rightList = rightPanel.AddChild(new Gum.Widgets.WidgetListView
@@ -103,7 +105,10 @@ namespace DwarfCorp.NewGui
                 {
                     if (lambdaResource.NumResources == 0) return;
 
-                    lambdaResource.NumResources -= 1;
+                    var toMove = 1;
+                    if (args.Control) toMove = lambdaResource.NumResources;
+                    if (args.Shift) toMove = Math.Min(5, lambdaResource.NumResources);
+                    lambdaResource.NumResources -= toMove;
 
                     var existingEntry = SelectedResources.FirstOrDefault(r => r.ResourceType == lambdaResource.ResourceType);
                     if (existingEntry == null)
@@ -116,7 +121,10 @@ namespace DwarfCorp.NewGui
                         rightLineItem.TriggerOnChildClick = true;
                         rightLineItem.OnClick = (_sender, _args) =>
                         {
-                            existingEntry.NumResources -= 1;
+                            var _toMove = 1;
+                            if (args.Control) _toMove = lambdaResource.NumResources;
+                            if (args.Shift) _toMove = Math.Min(5, lambdaResource.NumResources);
+                            existingEntry.NumResources -= _toMove;
 
                             if (existingEntry.NumResources == 0)
                             {
@@ -129,7 +137,7 @@ namespace DwarfCorp.NewGui
 
                             var sourceEntry = SourceResources.FirstOrDefault(
                                 r => r.ResourceType == existingEntry.ResourceType);
-                            sourceEntry.NumResources += 1;
+                            sourceEntry.NumResources += _toMove;
                             UpdateLineItemText(
                                 leftList.GetChild(SourceResources.IndexOf(sourceEntry) + 1), 
                                 sourceEntry);
@@ -137,7 +145,7 @@ namespace DwarfCorp.NewGui
                             Root.SafeCall(OnTotalSelectedChanged, this);
                         };
                     }
-                    existingEntry.NumResources += 1;
+                    existingEntry.NumResources += toMove;
 
                     UpdateRightColumn(rightList);
                     UpdateLineItemText(lineItem, lambdaResource);
@@ -172,7 +180,7 @@ namespace DwarfCorp.NewGui
                 MaximumSize = new Point(32, 32),
                 Background = new TileReference("resources", resourceInfo.NewGuiSprite),
                 AutoLayout = AutoLayout.DockLeft,
-                BackgroundColor = resourceInfo.Tint.ToVector4()
+                BackgroundColor = resourceInfo.Tint.ToVector4(),
             });
 
             r.AddChild(new Gum.Widget
@@ -181,7 +189,9 @@ namespace DwarfCorp.NewGui
                 //Text = String.Format("{0} at ${1}e", Resource.NumResources, resourceInfo.MoneyValue),
                 //Font = "outline-font",
                 //TextColor = new Vector4(1,1,1,1),
-                TextVerticalAlign = VerticalAlign.Center
+                TextVerticalAlign = VerticalAlign.Center,
+                HoverTextColor = Color.DarkRed.ToVector4(),
+                ChangeColorOnHover = true
             });
 
             UpdateLineItemText(r, Resource);
@@ -191,9 +201,18 @@ namespace DwarfCorp.NewGui
 
         private void UpdateLineItemText(Widget LineItem, ResourceAmount Resource)
         {
-            LineItem.GetChild(1).Text = String.Format("{0} at ${1}e",
+            var resourceInfo = ResourceLibrary.GetResourceByName(Resource.ResourceType);
+
+            LineItem.GetChild(1).Text = String.Format("{0} at {1}",
                 Resource.NumResources,
                 ValueSourceEntity.ComputeValue(Resource.ResourceType));
+            LineItem.Tooltip = resourceInfo.ResourceName + "\n" + resourceInfo.Description;
+
+            if (resourceInfo.Tags.Contains(DwarfCorp.Resource.ResourceTags.Craft))
+                LineItem.GetChild(0).Background = new TileReference("crafts", resourceInfo.NewGuiSprite);
+            else
+                LineItem.GetChild(0).Background = new TileReference("resources", resourceInfo.NewGuiSprite);
+
             LineItem.GetChild(1).Invalidate();
         }
     }

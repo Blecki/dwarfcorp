@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -83,13 +83,15 @@ namespace Gum.Widgets
                 .Texture(tiles.TileMatrix(1));
 
             var scrollSize = Rect.Height - tiles.TileHeight - tiles.TileHeight;
+            var barTop = (_scrollArea == 0 ? 0.0f : ((float)_scrollPosition / (float)_scrollArea)) * scrollSize;
+            var barBottom = (_scrollArea == 0 ? 0.0f : ((float)(_scrollPosition + 1) / (float)_scrollArea)) * scrollSize;
             var barPosition = ScrollPercentage * scrollSize;
             var pixelPosition = Rect.Y + tiles.TileHeight + (int)barPosition;
 
-            var bar = Mesh.Quad()
-                .Scale(tiles.TileWidth, tiles.TileHeight)
-                .Translate(Rect.X, pixelPosition - (tiles.TileHeight / 2))
-                .Texture(tiles.TileMatrix(2));
+            var bar = Mesh.CreateScale9Background(
+                new Rectangle(Rect.X, Rect.Y + tiles.TileHeight + (int)barTop, Rect.Width, Math.Max(16, (int)(barBottom - barTop))),
+                Root.GetTileSheet("brown-frame"),
+                Scale9Corners.Top | Scale9Corners.Bottom | Scale9Corners.Left | Scale9Corners.Right);
 
             return Mesh.Merge(topButton, bottomButton, background, bar);
         }

@@ -55,6 +55,7 @@ namespace DwarfCorp
         private Point Frame;
         private int Width = 32;
         private int Height = 32;
+        public bool EnableWind = false;
 
         private static RasterizerState rasterState = new RasterizerState()
         {
@@ -143,6 +144,7 @@ namespace DwarfCorp
             GraphicsDevice graphicsDevice,
             Shader effect, bool renderingForWater)
         {
+            effect.EnableWind = EnableWind;
             if(Primitive == null)
             {
                 Primitive = new BatchBillboardPrimitive(graphicsDevice, SpriteSheet.GetTexture(), Width, Height, Frame, 1.0f, 1.0f, false, LocalTransforms, Tints, Colors);
@@ -190,6 +192,7 @@ namespace DwarfCorp
                     graphicsDevice.RasterizerState = r;
                 }
             }
+            effect.EnableWind = false;
         }
     }
 

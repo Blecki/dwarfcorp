@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,40 +12,48 @@ namespace DwarfCorp.Dialogue
     public class DialogueContext
     {
         private Action<DialogueContext> NextAction = null;
-        public Gum.Widget Panel;
+        public Gum.Widget ChoicePanel;
+        public Gum.Widget SpeechBubble;
         public NewGui.TradePanel TradePanel;
         public Animation SpeakerAnimation;
-        private Timer SpeechTimer = new Timer();
+        private Timer SpeechTimer = new Timer(0.0f, true);
 
         public Faction.TradeEnvoy Envoy;
         public String EnvoyName = "TODO";
 
         public Faction PlayerFaction;
 
+        public Diplomacy.Politics Politics;
+        public WorldManager World;
+
         public void Say(String Text)
         {
-            Panel.Text = Text;
-            Panel.Layout();
+            SpeechBubble.Text = Text;
+            SpeechBubble.Invalidate();
 
             SpeakerAnimation.Loop();
-            SpeechTimer.Reset(100.0f);
+            SpeechTimer.Reset(Text.Length * 0.1f);
         }
 
         public void ClearOptions()
         {
-            Panel.Clear();
+            ChoicePanel.Clear();
         }
 
         public void AddOption(String Prompt, Action<DialogueContext> Action)
         {
-            Panel.AddChild(new Gum.Widget
+            ChoicePanel.AddChild(new Gum.Widget
             {
                 Text = Prompt,
                 OnClick = (sender, args) => Transition(Action),
-                AutoLayout = Gum.AutoLayout.DockTop
+                AutoLayout = Gum.AutoLayout.DockTop,
+                Font = "font-hires",
+                TextColor = Color.Black.ToVector4(),
+                ChangeColorOnHover = true,
+                HoverTextColor = Color.DarkRed.ToVector4()
             });
 
-            Panel.Layout();
+            ChoicePanel.Layout();
         }
 
         public void Transition(Action<DialogueContext> NextAction)
@@ -58,6 +66,8 @@ namespace DwarfCorp.Dialogue
             SpeechTimer.Update(Time);
             if (SpeechTimer.HasTriggered)
                 SpeakerAnimation.Stop();
+            else
+                SpeakerAnimation.Update(Time);
 
             var next = NextAction;
             NextAction = null;

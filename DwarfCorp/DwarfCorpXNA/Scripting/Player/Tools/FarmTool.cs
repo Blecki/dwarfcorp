@@ -157,7 +157,7 @@ namespace DwarfCorp
                         else
                         {
                             if (!HasTile(voxel) || HasPlant(voxel)) continue;
-
+                            Drawer3D.UnHighlightVoxel(voxel);
                             foreach (FarmTile tile in FarmTiles)
                             {
                                 if (tile.Vox.Equals(voxel))
@@ -306,6 +306,10 @@ namespace DwarfCorp
         public override void OnEnd()
         {
             //FarmPanel.TweenOut(Drawer2D.Alignment.Right, 0.25f);
+            foreach (FarmTile tile in FarmTiles)
+            {
+                Drawer3D.UnHighlightVoxel(tile.Vox);
+            }
         }
 
 
@@ -356,26 +360,31 @@ namespace DwarfCorp
                     drawColor.G = (byte) (Math.Min(drawColor.G*alpha + 50, 255));
                     drawColor.B = (byte) (Math.Min(drawColor.B*alpha + 50, 255));
 
-                    foreach (BoundingBox box in FarmTiles.Where(tile => !tile.IsTilled()).Select(tile => tile.Vox.GetBoundingBox()))
+                    foreach (var tile in FarmTiles)
                     {
-                        Drawer3D.DrawBox(box, drawColor, 0.05f*alpha + 0.05f, true);
+                        if (!tile.IsTilled())
+                        {
+                            Drawer3D.HighlightVoxel(tile.Vox, Color.LimeGreen);
+                        }
+                        else
+                        {
+                            Drawer3D.UnHighlightVoxel(tile.Vox);
+                        }
                     }
-
                     break;
                 }
                 case FarmMode.Planting:
                 {
-                    Color drawColor = Color.LimeGreen;
-
-                    float alpha = (float)Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * 2.0f));
-                    drawColor.R = (byte)(Math.Min(drawColor.R * alpha + 50, 255));
-                    drawColor.G = (byte)(Math.Min(drawColor.G * alpha + 50, 255));
-                    drawColor.B = (byte)(Math.Min(drawColor.B * alpha + 50, 255));
-
-
-                    foreach (BoundingBox box in FarmTiles.Where(tile => tile.IsTilled() && !tile.PlantExists() && tile.Farmer == null).Select(tile => tile.Vox.GetBoundingBox()))
+                    foreach (var tile in FarmTiles)
                     {
-                        Drawer3D.DrawBox(box, drawColor, 0.05f * alpha + 0.05f, true);
+                        if (tile.IsTilled() && !tile.PlantExists() && tile.Farmer == null)
+                        {
+                            Drawer3D.HighlightVoxel(tile.Vox, Color.LimeGreen);
+                        }
+                        else
+                        {
+                            Drawer3D.UnHighlightVoxel(tile.Vox);
+                        }
                     }
 
                     break;

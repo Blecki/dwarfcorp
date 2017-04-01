@@ -295,6 +295,7 @@ namespace DwarfCorp
             {
                 return GUI.IsMouseOver() ||
                     NewGui.HoverItem != null;
+                // Don't detect tooltips and tool popups.
             }
         }
 
@@ -397,10 +398,11 @@ namespace DwarfCorp
 
                 SetLoadingMessage("Generating Initial Terrain Chunks ...");
                 GenerateInitialChunks();
+                SetLoadingMessage("Loading Components...");
+                LoadComponents();
 
                 SetLoadingMessage("Creating GameMaster ...");
                 CreateGameMaster();
-
                 SetLoadingMessage("Embarking ...");
                 CreateInitialEmbarkment();
 
@@ -492,7 +494,7 @@ namespace DwarfCorp
             Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
             Vector3 extents = new Vector3(1500, 1500, 1500);
             ComponentManager.CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
-            ComponentManager.Diplomacy = new Diplomacy(ComponentManager.Factions, this);
+            ComponentManager.Diplomacy = new Diplomacy(this);
             ComponentManager.Diplomacy.Initialize(Time.CurrentDate);
 
             CompositeLibrary.Initialize();
@@ -758,7 +760,7 @@ namespace DwarfCorp
                 Content.Load<Effect>(ContentPaths.Shaders.SkySphere));
         }
 
-        public void CreateGameMaster()
+        public void LoadComponents()
         {
             // if we are loading reinitialize a bunch of stuff to make sure the game master is created correctly
             if (!string.IsNullOrEmpty(ExistingFile))
@@ -775,7 +777,10 @@ namespace DwarfCorp
                 GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
                 GameSettings.Default.ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
             }
-            
+        }
+
+        public void CreateGameMaster()
+        {
             Master = new GameMaster(ComponentManager.Factions.Factions["Player"], Game, ComponentManager, ChunkManager,
                 Camera, GraphicsDevice, GUI);
         }
@@ -1296,7 +1301,7 @@ namespace DwarfCorp
             //GamePerformance.Instance.StopTrackPerformance("Instance Manager");
 
             //GamePerformance.Instance.StartTrackPerformance("Sound Manager");
-            SoundManager.Update(gameTime, Camera);
+            SoundManager.Update(gameTime, Camera, Time);
             //GamePerformance.Instance.StopTrackPerformance("Sound Manager");
 
             //GamePerformance.Instance.StartTrackPerformance("Weather");
@@ -1634,7 +1639,7 @@ namespace DwarfCorp
             SlicePlane = SlicePlane * 0.5f + level * 0.5f;
 
             Plane slicePlane = WaterRenderer.CreatePlane(SlicePlane, new Vector3(0, -1, 0), Camera.ViewMatrix, false);
-
+            DefaultShader.WindDirection = Weather.CurrentWind;
             // Draw the whole world, and make sure to handle slicing
             DefaultShader.ClipPlane = new Vector4(slicePlane.Normal, slicePlane.D);
             DefaultShader.ClippingEnabled = true;
@@ -1648,6 +1653,8 @@ namespace DwarfCorp
 
             //ComponentManager.CollisionManager.DebugDraw();
 
+            DefaultShader.View = Camera.ViewMatrix;
+            DefaultShader.Projection = Camera.ProjectionMatrix;
             // Render simple geometry (boxes, etc.)
             Drawer3D.Render(GraphicsDevice, DefaultShader, true);
 

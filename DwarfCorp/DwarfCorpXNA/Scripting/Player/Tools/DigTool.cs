@@ -1,4 +1,4 @@
-﻿// DigTool.cs
+// DigTool.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -54,12 +54,15 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
-
+           
         }
 
         public override void OnEnd()
         {
-
+            foreach (var des in Player.Faction.DigDesignations)
+            {
+                Drawer3D.UnHighlightVoxel(des.Value.Vox);
+            }
         }
 
 
@@ -124,6 +127,11 @@ namespace DwarfCorp
 
             Player.VoxSelector.Enabled = true;
 
+            if (Player.VoxSelector.VoxelUnderMouse != null && Player.VoxSelector.VoxelUnderMouse.IsExplored)
+            {
+                Player.World.ShowTooltip(Player.VoxSelector.VoxelUnderMouse.TypeName);
+            }
+
             if (Player.World.IsMouseOverGui)
                 Player.World.SetMouse(Player.World.MousePointer);
             else
@@ -149,10 +157,13 @@ namespace DwarfCorp
                     drawColor = UnreachableColor;
                 }
 
+                /*
                 drawColor.R = (byte)(drawColor.R * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * DigDesignationGlowRate)) + 50);
                 drawColor.G = (byte)(drawColor.G * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * DigDesignationGlowRate)) + 50);
                 drawColor.B = (byte)(drawColor.B * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * DigDesignationGlowRate)) + 50);
                 Drawer3D.DrawBox(box, drawColor, 0.05f, true);
+                 */
+                Drawer3D.HighlightVoxel(v, drawColor);
             }
         }
 

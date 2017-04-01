@@ -22,6 +22,7 @@ namespace Gum
         public Widget HoverItem { get; private set; }
         public Widget FocusItem { get; private set; }
 
+        public static Point MinimumSize = new Point(1024, 768);
         public Rectangle VirtualScreen { get; private set; }
         public Rectangle RealScreen { get; private set; }
         public Point ResolutionAtCreation { get; private set; }
@@ -93,9 +94,9 @@ namespace Gum
             ScaleRatio = 1;
 
             // How many times can we multiply the ideal size and still fit on the screen?
-            while (((VirtualSize.X * (ScaleRatio + 1)) <= screenSize.X) &&
-                ((VirtualSize.Y * (ScaleRatio + 1)) <= screenSize.Y))
-                ScaleRatio += 1;
+            //while (((VirtualSize.X * (ScaleRatio + 1)) <= screenSize.X) &&
+            //    ((VirtualSize.Y * (ScaleRatio + 1)) <= screenSize.Y))
+            //    ScaleRatio += 1;
 
             // How much space did we leave to the left and right? 
             var horizontalExpansion = ((screenSize.X - (VirtualSize.X * ScaleRatio)) / 2) / ScaleRatio;
@@ -213,13 +214,15 @@ namespace Gum
                 Border = "border-dark",
                 Font = TooltipFont,
                 TextSize = TooltipTextSize,
-                TextColor = new Vector4(1, 1, 1, 1)
+                TextColor = new Vector4(1, 1, 1, 1),
+                IsFloater = true,
             });
 
             var bestSize = item.GetBestSize();
             Rectangle rect = new Rectangle(
+                // ?? Why are we assuming the tooltip is being opened at the mouse position?
                 Where.X + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2,
-                Where.Y, bestSize.X, bestSize.Y);
+                Where.Y + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2, bestSize.X, bestSize.Y);
 
             rect = MathFunctions.SnapRect(rect, RealScreen);
             item.Rect = rect;
@@ -347,7 +350,14 @@ namespace Gum
                 case InputEvents.MouseClick:
                     {
                         MousePosition = ScreenPointToGuiPoint(new Point(Args.X, Args.Y));
-                        var newArgs = new InputEventArgs { X = MousePosition.X, Y = MousePosition.Y };
+                        var newArgs = new InputEventArgs
+                        {
+                            Alt = Args.Alt,
+                            Control = Args.Control,
+                            Shift = Args.Shift,
+                            X = MousePosition.X,
+                            Y = MousePosition.Y
+                        };
 
                         if (PopupStack.Count != 0)
                         {

@@ -36,6 +36,10 @@ namespace Gum.Input
         public System.Threading.Mutex QueueLock = new System.Threading.Mutex();
         public List<QueuedInput> Queued = new List<QueuedInput>();
 
+        private bool CtrlDown = false;
+        private bool AltDown = false;
+        private bool ShiftDown = false;
+
         public List<QueuedInput> GetInputQueue()
         {
             QueueLock.WaitOne();
@@ -48,6 +52,24 @@ namespace Gum.Input
         public GumInputMapper(IntPtr WindowHandle)
         {
             MessageFilter.AddMessageFilter((c) => HandleEvent(c));
+        }
+
+        private System.Windows.Forms.Keys TranslateKey(IntPtr LParam, System.Windows.Forms.Keys Key)
+        {
+            var extended = ((int)LParam & 0x01000000) != 0;
+            var realCode = Key;
+            if (realCode == System.Windows.Forms.Keys.ControlKey)
+                realCode = extended ? System.Windows.Forms.Keys.RControlKey : System.Windows.Forms.Keys.LControlKey;
+            if (realCode == System.Windows.Forms.Keys.ShiftKey)
+            {
+                //Grab the scan code from LParam... Who would have thought just telling 
+                // left and right shift apart would be such a PITA?
+                var scanCode = ((int)LParam & 0xff0000) >> 16;
+                if (scanCode == 42) return System.Windows.Forms.Keys.LShiftKey;
+                if (scanCode == 54) return System.Windows.Forms.Keys.RShiftKey;
+                throw new InvalidOperationException();
+            }
+            return realCode;
         }
 
         private bool HandleEvent(System.Windows.Forms.Message Msg)
@@ -68,7 +90,7 @@ namespace Gum.Input
                                 KeyValue = args.KeyChar,
                                 Alt = false,
                                 Control = false,
-                                Shift = false
+                                Shift = false,
                             }
                         });
                         handled = true;
@@ -77,6 +99,16 @@ namespace Gum.Input
                 case WindowMessage.WM_KEYDOWN:
                     {
                         var args = new System.Windows.Forms.KeyEventArgs((System.Windows.Forms.Keys)Msg.WParam);
+                        
+                        if (args.KeyData == System.Windows.Forms.Keys.Alt)
+                            AltDown = true;
+                        if (args.KeyData == System.Windows.Forms.Keys.ControlKey)
+                            CtrlDown = true;
+                        if (args.KeyData == System.Windows.Forms.Keys.ShiftKey)
+                            ShiftDown = true;
+
+                        var realCode = TranslateKey(Msg.LParam, args.KeyCode);
+
                         Queued.Add(new QueuedInput
                         {
                             Message = Gum.InputEvents.KeyDown,
@@ -85,7 +117,7 @@ namespace Gum.Input
                                 Alt = args.Alt,
                                 Control = args.Control,
                                 Shift = args.Shift,
-                                KeyValue = (int)args.KeyCode
+                                KeyValue = (int)realCode,
                             }
                         });
                         handled = true;
@@ -94,6 +126,16 @@ namespace Gum.Input
                 case WindowMessage.WM_KEYUP:
                     {
                         var args = new System.Windows.Forms.KeyEventArgs((System.Windows.Forms.Keys)Msg.WParam);
+
+                        if (args.KeyData == System.Windows.Forms.Keys.Alt)
+                            AltDown = false;
+                        if (args.KeyData == System.Windows.Forms.Keys.ControlKey)
+                            CtrlDown = false;
+                        if (args.KeyData == System.Windows.Forms.Keys.ShiftKey)
+                            ShiftDown = false;
+                        
+                        var realCode = TranslateKey(Msg.LParam, args.KeyCode);
+
                         Queued.Add(new QueuedInput
                         {
                             Message = Gum.InputEvents.KeyUp,
@@ -115,6 +157,9 @@ namespace Gum.Input
                             Message = Gum.InputEvents.MouseDown,
                             Args = new Gum.InputEventArgs
                             {
+                                Alt = AltDown,
+                                Control = CtrlDown,
+                                Shift = ShiftDown,
                                 X = (int)((int)Msg.LParam & 0x0000FFFFu),
                                 Y = (int)((int)Msg.LParam & 0xFFFF0000u) >> 16
                             }
@@ -129,6 +174,9 @@ namespace Gum.Input
                             Message = Gum.InputEvents.MouseUp,
                             Args = new Gum.InputEventArgs
                             {
+                                Alt = AltDown,
+                                Control = CtrlDown,
+                                Shift = ShiftDown,
                                 X = (int)((int)Msg.LParam & 0x0000FFFFu),
                                 Y = (int)((int)Msg.LParam & 0xFFFF0000u) >> 16
                             }
@@ -138,6 +186,9 @@ namespace Gum.Input
                             Message = Gum.InputEvents.MouseClick,
                             Args = new Gum.InputEventArgs
                             {
+                                Alt = AltDown,
+                                Control = CtrlDown,
+                                Shift = ShiftDown,
                                 X = (int)((int)Msg.LParam & 0x0000FFFFu),
                                 Y = (int)((int)Msg.LParam & 0xFFFF0000u) >> 16
                             }
@@ -152,6 +203,9 @@ namespace Gum.Input
                             Message = Gum.InputEvents.MouseMove,
                             Args = new Gum.InputEventArgs
                             {
+                                Alt = AltDown,
+                                Control = CtrlDown,
+                                Shift = ShiftDown,
                                 X = (int)((int)Msg.LParam & 0x0000FFFFu),
                                 Y = (int)((int)Msg.LParam & 0xFFFF0000u) >> 16
                             }

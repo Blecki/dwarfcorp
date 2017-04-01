@@ -161,6 +161,7 @@ namespace DwarfCorp
                 game.DrawSky(gameTime, reflectionViewMatrix, 0.25f);
             }
 
+            effect.View = reflectionViewMatrix;
             Drawer3D.Render(device, effect, false);
 
             if(DrawComponentsReflected)

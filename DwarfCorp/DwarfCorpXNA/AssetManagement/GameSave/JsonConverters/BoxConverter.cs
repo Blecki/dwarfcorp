@@ -1,4 +1,4 @@
-﻿// BoxConverter.cs
+// BoxConverter.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -75,6 +75,37 @@ namespace DwarfCorp
         public override bool CanConvert(Type objectType)
         {
             return objectType == typeof(Vector3);
+        }
+    }
+
+    public class MoneyConverter : JsonConverter
+    {
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            try
+            {
+                JValue jObject = serializer.Deserialize<JValue>(reader);
+                return new DwarfBux(decimal.Parse(jObject.Value.ToString()));
+            }
+            catch (InvalidCastException exception)
+            {
+                return new DwarfBux(0);
+            }
+        }
+
+        public override bool CanWrite
+        {
+            get { return false; }
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(DwarfBux);
         }
     }
 

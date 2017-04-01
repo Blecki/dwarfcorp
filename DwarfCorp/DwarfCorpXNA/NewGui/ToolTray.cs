@@ -26,20 +26,52 @@ namespace DwarfCorp.NewGui
 
             public void CollapseTrays()
             {
-                if (IsRootTray)
+                foreach (var child in Children)
+                    if (child is Icon)
+                        (child as Icon).Unexpand();
+                
+                if (!IsRootTray && Parent != null && Parent is Icon)
                 {
-                    foreach (var child in Children)
-                        if (child is Icon)
-                            (child as Icon).Unexpand();
-                    return;
-                }
-
-                Hidden = true;
-
-                if (Parent != null && Parent is Icon)
-                {
+                    Hidden = true;
                     (Parent as Icon).CollapseTrays();
                 }
+            }
+
+            public Tray FindTopTray()
+            {
+                foreach (var child in Children)
+                {
+                    var icon = child as Icon;
+                    if (icon == null) continue;
+                    var nestedTray = icon.ExpansionChild as Tray;
+                    if (nestedTray != null && nestedTray.Hidden == false)
+                        return nestedTray.FindTopTray();
+                }
+
+                return this;
+            }
+
+            public void Hotkey(int Key)
+            {
+                if (Key < 0 || Key >= Children.Count) return;
+                var icon = GetChild(Key) as Icon;
+                if (icon == null) return;
+
+                if (icon.ExpansionChild is Tray)
+                    Root.SafeCall(icon.OnMouseEnter, icon, new InputEventArgs
+                    {
+                        X = icon.Rect.X,
+                        Y = icon.Rect.Y
+                    });
+                else
+                {
+                    Root.SafeCall(icon.OnClick, icon, new InputEventArgs
+                    {
+                        X = icon.Rect.X,
+                        Y = icon.Rect.Y
+                    });
+                    CollapseTrays();
+                }                
             }
         }
 
@@ -71,10 +103,7 @@ namespace DwarfCorp.NewGui
                 OnMouseLeave = (sender, args) =>
                 {
                     if (!KeepChildVisible && ExpansionChild != null)
-                    {
-                        ExpansionChild.Hidden = true;
-                        ExpansionChild.Invalidate();
-                    }
+                        Unexpand();
                 };
 
                 OnDisable = (sender) =>
@@ -138,6 +167,15 @@ namespace DwarfCorp.NewGui
                 if (ExpansionChild != null)
                 {
                     ExpansionChild.Hidden = true;
+                    ExpansionChild.Invalidate();
+                }
+            }
+
+            public void Expand()
+            {
+                if (ExpansionChild != null)
+                {
+                    ExpansionChild.Hidden = false;
                     ExpansionChild.Invalidate();
                 }
             }

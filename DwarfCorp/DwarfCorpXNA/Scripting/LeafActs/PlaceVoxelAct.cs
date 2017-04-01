@@ -64,7 +64,7 @@ namespace DwarfCorp
                 yield break;
             }
 
-            foreach (Status status in Creature.HitAndWait(1.0f, true, Voxel.Position))
+            foreach (Status status in Creature.HitAndWait(1.0f, true, () => Voxel.Position))
             {
                 if (status == Status.Running)
                 {

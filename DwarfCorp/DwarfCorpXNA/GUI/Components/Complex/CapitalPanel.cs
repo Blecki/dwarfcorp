@@ -1,4 +1,4 @@
-﻿// CapitalPanel.cs
+// CapitalPanel.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -62,11 +62,11 @@ namespace DwarfCorp
 
         void CurrentMoneyLabel_OnUpdate()
         {
-            CurrentMoneyLabel.Text = "Treasury: " + Faction.Economy.CurrentMoney.ToString("C");
+            CurrentMoneyLabel.Text = "Treasury: " + Faction.Economy.CurrentMoney;
 
-            float totalPay = Faction.Minions.Sum(minion => minion.Stats.CurrentLevel.Pay);
+            DwarfBux totalPay = Faction.Minions.Sum(minion => minion.Stats.CurrentLevel.Pay);
 
-            TotalPayLabel.Text = "Employee pay: " + totalPay.ToString("C") + " per day";
+            TotalPayLabel.Text = "Employee pay: " + totalPay + " per day";
         }
     }
 }

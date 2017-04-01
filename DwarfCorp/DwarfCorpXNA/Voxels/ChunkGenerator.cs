@@ -31,6 +31,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -620,7 +621,7 @@ namespace DwarfCorp
                     Vector2 pos = new Vector2(x + origin.X, z + origin.Z) / WorldScale;
                     float hNorm = Overworld.LinearInterpolate(pos, Overworld.Map, Overworld.ScalarFieldType.Height);
                     float h = MathFunctions.Clamp(hNorm * chunkSizeY, 0.0f, chunkSizeY - 2);
-                    int stoneHeight = (int) Math.Max(h - biomeData.SoilLayer.Depth, 1);
+                    int stoneHeight = (int)(MathFunctions.Clamp((int)(h - (biomeData.SoilLayer.Depth + (Math.Sin(v.X) + Math.Cos(v.Y)))), 1, h));
 
                     int currentGrassLayer = 0;
                     int currentSoilLayer = 0;

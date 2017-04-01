@@ -1,4 +1,4 @@
-﻿// StashAct.cs
+// StashAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -111,7 +111,7 @@ namespace DwarfCorp
                             if(Creature.Inventory.Pickup(Target))
                             {
                                 Agent.Blackboard.SetData(StashedItemOut, new ResourceAmount(Target));
-                                SoundManager.PlaySound(ContentPaths.Audio.dig, Agent.Position);
+                                Agent.Creature.NoiseMaker.MakeNoise("Stash", Agent.Position);
                                 yield return Status.Success;
                             }
                             else
@@ -145,7 +145,7 @@ namespace DwarfCorp
                         ResourceAmount resource = new ResourceAmount(Target);
                         Agent.Blackboard.SetData(StashedItemOut, resource);
                         //Creature.DrawIndicator(resource.ResourceType.Image, resource.ResourceType.Tint);
-                        SoundManager.PlaySound(ContentPaths.Audio.dig, Agent.Position);
+                        Agent.Creature.NoiseMaker.MakeNoise("Stash", Agent.Position);
                         yield return Status.Success;
                         break;
                     }

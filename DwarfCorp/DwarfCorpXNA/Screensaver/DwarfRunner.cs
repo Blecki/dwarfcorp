@@ -85,6 +85,11 @@ namespace DwarfCorp
             return null;
         }
 
+        private float PenetrationDepth()
+        {
+            return (DwarfPosition.X + 0.55f) - (float)Math.Floor(DwarfPosition.X + 0.55f);
+        }
+
         public void Jump()
         {
             if (GetTileUnderFoot(0.05f) != null)
@@ -130,7 +135,7 @@ namespace DwarfCorp
                 DwarfPosition.X += (float)Time.ElapsedGameTime.TotalSeconds * 6.0f;
 
             if (GetTileAhead() != null)
-                DwarfPosition.X -= (float)Time.ElapsedGameTime.TotalSeconds * ScrollSpeed;
+                DwarfPosition.X -= /*Math.Max(PenetrationDepth(), */(float)Time.ElapsedGameTime.TotalSeconds * ScrollSpeed;//);
 
             if (DwarfPosition.X < -0.5f)
                 DwarfPosition = new Vector2(-0.6f, 6.0f);

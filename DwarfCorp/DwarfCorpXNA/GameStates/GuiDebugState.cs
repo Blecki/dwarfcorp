@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -150,16 +150,16 @@ namespace DwarfCorp.GameStates
 
         private class MockTradeEntity : Trade.ITradeEntity
         {
-            public int Money { get; set; }
+            public DwarfBux Money { get; set; }
             public List<ResourceAmount> Resources { get; set; }
             public int AvailableSpace { get; set; }
 
-            public float ComputeValue(List<ResourceAmount> Resources)
+            public DwarfBux ComputeValue(List<ResourceAmount> Resources)
             {
-                return Resources.Sum(r => r.NumResources * ComputeValue(r.ResourceType));
+                return Resources.Sum(r => (decimal)r.NumResources * ComputeValue(r.ResourceType));
             }
 
-            public float ComputeValue(ResourceLibrary.ResourceType ResourceType)
+            public DwarfBux ComputeValue(ResourceLibrary.ResourceType ResourceType)
             {
                 return ResourceLibrary.GetResourceByName(ResourceType).MoneyValue;
             }
@@ -174,7 +174,7 @@ namespace DwarfCorp.GameStates
                 throw new NotImplementedException();
             }
 
-            public void AddMoney(float Money)
+            public void AddMoney(DwarfBux Money)
             {
                 throw new NotImplementedException();
             }
@@ -199,7 +199,7 @@ namespace DwarfCorp.GameStates
             {
                 var playerFaction = new MockTradeEntity();
                 playerFaction.Resources = new List<ResourceAmount>(new ResourceAmount[] { (new ResourceAmount(ResourceLibrary.ResourceType.Ale, 10)) });
-                playerFaction.Money = 1000;
+                playerFaction.Money = 1000m;
                 playerFaction.AvailableSpace = 100;
 
                 var envoyFaction = new MockTradeEntity();
@@ -208,7 +208,11 @@ namespace DwarfCorp.GameStates
                 envoyFaction.Resources.Add(new ResourceAmount(ResourceLibrary.ResourceType.Berry, 10));
                 envoyFaction.Resources.Add(new ResourceAmount(ResourceLibrary.ResourceType.Bones, 10));
                 envoyFaction.Resources.Add(new ResourceAmount("Ruby", 10));
-                envoyFaction.Money = 1000;
+                for (int i = 0; i < 20; i++)
+                {
+                    envoyFaction.Resources.Add(new ResourceAmount(ResourceLibrary.GenerateTrinket(ResourceLibrary.ResourceType.Bones, 1.0f)));
+                }
+                envoyFaction.Money = 1000m;
 
                 var pane = GuiRoot.ConstructWidget(new NewGui.TradePanel
                 {
@@ -281,7 +285,7 @@ namespace DwarfCorp.GameStates
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
 
-            GuiRoot = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
+            GuiRoot = new Gum.Root(Gum.Root.MinimumSize, DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
             MakeMenu();
 

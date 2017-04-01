@@ -1,4 +1,4 @@
-﻿// ApplicationPanel.cs
+// ApplicationPanel.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -93,8 +93,8 @@ namespace DwarfCorp
         {
             NameLabel.Text = applicant.Name;
             PositionLabel.Text = applicant.Class.Name;
-            PayLabel.Text = "Wage: " + applicant.Level.Pay.ToString("C") + " / day";
-            BonusLabel.Text = "Signing Bonus: " + (applicant.Level.Pay*4).ToString("C");
+            PayLabel.Text = "Wage: " + applicant.Level.Pay + " / day";
+            BonusLabel.Text = "Signing Bonus: " + new DwarfBux(applicant.Level.Pay*4.0m);
             LetterLabel.Text = applicant.CoverLetter;
             HomeTownLabel.Text = "Hometown: " + applicant.HomeTown;
             FormerPositionLabel.Text = "Last Job: " + applicant.FormerProfession;

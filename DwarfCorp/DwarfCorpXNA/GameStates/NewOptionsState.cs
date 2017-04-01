@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using LibNoise;
 using Microsoft.Xna.Framework;
@@ -14,6 +14,7 @@ namespace DwarfCorp.GameStates
         private Gum.Root GuiRoot;
         private bool HasChanges = false;
         public Action OnClosed = null;
+        private bool BuildingGUI = false;
 
         private Dictionary<string, int> AntialiasingOptions;
         private Dictionary<string, DisplayMode> DisplayModes;
@@ -50,6 +51,7 @@ namespace DwarfCorp.GameStates
         private HorizontalFloatSlider NumMotes;
         private CheckBox LightMap;
         private CheckBox DynamicShadows;
+        private Gum.Widgets.ComboBox EasyGraphicsSetting;
 
         public NewOptionsState(DwarfGame Game, GameStateManager StateManager) :
             base(Game, "NewOptionsState", StateManager)
@@ -61,12 +63,14 @@ namespace DwarfCorp.GameStates
             DwarfGame.GumInputMapper.GetInputQueue();
 
             // Setup antialiasing options.
-            AntialiasingOptions = new Dictionary<string, int>();
-            AntialiasingOptions.Add("NONE", 0);
-            AntialiasingOptions.Add("FXAA", -1);
-            AntialiasingOptions.Add("2x MSAA", 2);
-            AntialiasingOptions.Add("4x MSAA", 4);
-            AntialiasingOptions.Add("16x MSAA", 16);
+            AntialiasingOptions = new Dictionary<string, int>
+            {
+                {"NONE", 0},
+                {"FXAA", -1},
+                {"2x MSAA", 2},
+                {"4x MSAA", 4},
+                {"16x MSAA", 16}
+            };
 
             DisplayModes = new Dictionary<string, DisplayMode>();
             foreach (var displayMode in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.Where(dm =>
@@ -83,8 +87,10 @@ namespace DwarfCorp.GameStates
 
         private void RebuildGui()
         {
+            BuildingGUI = true;
+
             // Create and initialize GUI framework.
-            GuiRoot = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
+            GuiRoot = new Gum.Root(Gum.Root.MinimumSize, DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
 
             // CONSTRUCT GUI HERE...
@@ -95,9 +101,10 @@ namespace DwarfCorp.GameStates
                     Transparent = true
                 });
 
-            MainPanel.AddChild(new Widget
+            MainPanel.AddChild(new Gum.Widgets.Button
             {
-                Text = "CLOSE",
+                Text = "Close",
+                Font = "font-hires",
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 Border = "border-button",
@@ -109,8 +116,8 @@ namespace DwarfCorp.GameStates
                         var confirm = new NewGui.Confirm
                             {
                                 Text = "Apply changes?",
-                                OkayText = "YES",
-                                CancelText = "NO",
+                                OkayText = "Yes",
+                                CancelText = "No",
                                 OnClose = (s2) =>
                                     {
                                         if ((s2 as NewGui.Confirm).DialogResult == NewGui.Confirm.Result.OKAY)
@@ -130,9 +137,10 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.FloatBottomRight
             });
 
-            MainPanel.AddChild(new Widget
+            MainPanel.AddChild(new Gum.Widgets.Button
             {
-                Text = "APPLY",
+                Text = "Apply",
+                Font = "font-hires",
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 Border = "border-button",
@@ -147,7 +155,7 @@ namespace DwarfCorp.GameStates
             TabPanel = MainPanel.AddChild(new Gum.Widgets.TabPanel
             {
                 AutoLayout = AutoLayout.DockFill,
-                TextSize = 2,
+                TextSize = 1,
                 SelectedTabColor = new Vector4(1,0,0,1),
                 OnLayout = (sender) => sender.Rect.Height -= 36 // Keep it from overlapping bottom buttons.
             }) as Gum.Widgets.TabPanel;
@@ -162,6 +170,8 @@ namespace DwarfCorp.GameStates
             GuiRoot.RootItem.Layout();
 
             LoadSettings();
+
+            BuildingGUI = false;
         }
 
         private Widget LabelAndDockWidget(string Label, Widget Widget)
@@ -170,18 +180,32 @@ namespace DwarfCorp.GameStates
             {
                 MinimumSize = new Point(0, 20),
                 AutoLayout = AutoLayout.DockTop,
-                Padding = new Margin(0,0,4,4)
+                Padding = new Margin(0,0,4,4),
+                ChangeColorOnHover = true,
+                HoverTextColor = new Vector4(0.5f, 0, 0, 1.0f)
             });
 
-            r.AddChild(new Widget
+            var label = new Widget
             {
                 Text = Label,
-                AutoLayout = AutoLayout.DockLeft
-            });
+                AutoLayout = AutoLayout.DockLeft,
+            };
+
+            r.AddChild(label);
 
             Widget.AutoLayout = AutoLayout.DockFill;
             r.AddChild(Widget);
+            Widget.OnMouseEnter += (sender, args) =>
+            {
+                label.TextColor = Color.DarkRed.ToVector4();
+                label.Invalidate();
+            };
 
+            Widget.OnMouseLeave += (sender, args) =>
+            {
+                label.TextColor = Color.Black.ToVector4();
+                label.Invalidate();
+            };
             return r;
         }
 
@@ -193,22 +217,54 @@ namespace DwarfCorp.GameStates
                     Padding = new Margin(4,4,0,0)
                 });
 
+
+            panel.AddChild(new Widget
+            {
+                Text = "Restore default settings",
+                MinimumSize = new Point(0, 20),
+                AutoLayout = AutoLayout.DockTop,
+                Padding = new Margin(0, 0, 4, 4),
+                Border = "border-button",
+                ChangeColorOnHover = true,
+                OnClick = (sender, args) =>
+                {
+                    var prompt = GuiRoot.ConstructWidget(new NewGui.Confirm
+                    {
+                        Text = "Set all settings to their default?",
+                        OnClose = (confirm) =>
+                        {
+                            if ((confirm as NewGui.Confirm).DialogResult == NewGui.Confirm.Result.OKAY)
+                            {
+                                GameSettings.Default = new GameSettings.Settings();
+                                RebuildGui();
+                                ApplySettings();
+                            }
+                        }
+                    });
+
+                    GuiRoot.ShowDialog(prompt);
+                }
+            });
+
             // Todo: Display actual value beside slider.
             MoveSpeed = panel.AddChild(LabelAndDockWidget("Camera Move Speed", new HorizontalFloatSlider
                 {
                     ScrollArea = 20,
-                    OnScroll = OnItemChanged
+                    OnScroll = OnItemChanged,
+                    Tooltip = "Sensitivity of the camera to the movement keys"
                 })).GetChild(1) as HorizontalFloatSlider;
 
             ZoomSpeed = panel.AddChild(LabelAndDockWidget("Camera Zoom Speed", new HorizontalFloatSlider
             {
                 ScrollArea = 2,
-                OnScroll = OnItemChanged
+                OnScroll = OnItemChanged,
+                Tooltip = "Sensitivity of the camera to zooming"
             })).GetChild(1) as HorizontalFloatSlider;
 
             InvertZoom = panel.AddChild(new CheckBox
                 {
                     Text = "Invert Zoom",
+                    Tooltip = "When checked, zooming in/out with the scroll wheel will be inverted",
                     OnCheckStateChange = OnItemChanged,
                     AutoLayout = AutoLayout.DockTop
                 }) as CheckBox;
@@ -216,6 +272,7 @@ namespace DwarfCorp.GameStates
             EdgeScrolling = panel.AddChild(new CheckBox
             {
                 Text = "Edge Scrolling",
+                Tooltip = "When checked, moving the cursor to the edge of the screen will move the camera.",
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
@@ -223,6 +280,7 @@ namespace DwarfCorp.GameStates
             PlayIntro = panel.AddChild(new CheckBox
             {
                 Text = "Play Intro",
+                Tooltip = "When checked, the intro animation will play at the beginning of the game.",
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
@@ -230,6 +288,7 @@ namespace DwarfCorp.GameStates
             FogOfWar = panel.AddChild(new CheckBox
             {
                 Text = "Fog Of War",
+                Tooltip = "When checked, unexplored tiles underground will be invisible.",
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
@@ -246,19 +305,22 @@ namespace DwarfCorp.GameStates
             MasterVolume = panel.AddChild(LabelAndDockWidget("Master Volume", new HorizontalFloatSlider
             {
                 ScrollArea = 1.0f,
-                OnScroll = OnItemChanged
+                OnScroll = OnItemChanged,
+                Tooltip = "Volume of all sounds in the game.",
             })).GetChild(1) as HorizontalFloatSlider;
 
             SFXVolume = panel.AddChild(LabelAndDockWidget("SFX Volume", new HorizontalFloatSlider
             {
                 ScrollArea = 1.0f,
-                OnScroll = OnItemChanged
+                OnScroll = OnItemChanged,
+                Tooltip = "Volume of sound effects."
             })).GetChild(1) as HorizontalFloatSlider;
 
             MusicVolume = panel.AddChild(LabelAndDockWidget("Music Volume", new HorizontalFloatSlider
             {
                 ScrollArea = 1.0f,
-                OnScroll = OnItemChanged
+                OnScroll = OnItemChanged,
+                Tooltip = "Volume of background music."
             })).GetChild(1) as HorizontalFloatSlider;
         }
 
@@ -271,31 +333,11 @@ namespace DwarfCorp.GameStates
                 Padding = new Margin(4, 4, 0, 0)
             });
 
-            panel.AddChild(new Widget
-                {
-                    Text = "NON-FUNCTIONAL UNTIL INPUT SYSTEM REDONE",
-                    AutoLayout = AutoLayout.DockTop
-                });
-
-            foreach (var binding in DwarfGame.GumInput.EnumerateBindableActions())
+            panel.AddChild(new NewGui.KeyEditor
             {
-                // Todo: Columns?
-
-                var entryPanel = panel.AddChild(new Widget
-                    {
-                        MinimumSize = new Point(0, 20),
-                        AutoLayout = AutoLayout.DockTop
-                    });
-
-                entryPanel.AddChild(new Widget
-                    {
-                        Text = binding.Key,
-                        AutoLayout = AutoLayout.DockLeft
-                    });
-
-                // Todo: Editable key field.
-
-            }
+                KeyManager = new KeyManager(),
+                AutoLayout = AutoLayout.DockFill
+            });
         }
 
         private void CreateGraphicsTab()
@@ -306,156 +348,194 @@ namespace DwarfCorp.GameStates
                 Padding = new Margin(4,4,4,4)
             });
 
-            var leftPanel = panel.AddChild(new Widget
+            var split = panel.AddChild(new NewGui.TwoColumns
             {
-                MinimumSize = new Point(GuiRoot.VirtualScreen.Width / 2 - 4, 0),
-                AutoLayout = AutoLayout.DockLeft,
+                AutoLayout = AutoLayout.DockFill
+            }) as NewGui.TwoColumns;
+
+            var leftPanel = split.AddChild(new Widget
+            {
                 Padding = new Margin(2,2,2,2)
             });
 
-            var rightPanel = panel.AddChild(new Widget
+            var rightPanel = split.AddChild(new Widget
             {
-                AutoLayout = AutoLayout.DockFill,
                 Padding = new Margin(2,2,2,2)
             });
+
+            EasyGraphicsSetting = leftPanel.AddChild(LabelAndDockWidget("Easy Settings", new Gum.Widgets.ComboBox
+            {
+                Items = new String[] { "Lowest", "Low", "Medium", "High", "Highest", "Custom" }.ToList(),
+                OnSelectedIndexChanged = OnEasySettingChanged,
+                Border = "border-thin"
+            })).GetChild(1) as Gum.Widgets.ComboBox;
 
             Resolution = leftPanel.AddChild(LabelAndDockWidget("Resolution", new Gum.Widgets.ComboBox
                 {
-                    Items = DisplayModes.Select(dm => dm.Key).ToList(),
+
+// Allow debugging at lower resolutions.
+#if DEBUG
+                Items = DisplayModes.Select(dm => dm.Key).ToList(),
+#else
+                Items = DisplayModes.Where(dm => dm.Value.Width >= 1024).Select(dm => dm.Key).ToList(),
+#endif
+
                     OnSelectedIndexChanged = OnItemChanged,
-                    Border = "border-thin"
+                    Border = "border-thin",
+                    Tooltip = "Game screen size",
                 })).GetChild(1) as Gum.Widgets.ComboBox;
 
             Fullscreen = leftPanel.AddChild(new CheckBox
                 {
                     Text = "Fullscreen",
                     OnCheckStateChange = OnItemChanged,
-                    AutoLayout = AutoLayout.DockTop
+                    AutoLayout = AutoLayout.DockTop,
+                    Tooltip = "When checked, game will take up the whole screen."
                 }) as CheckBox;
 
-            ChunkDrawDistance = leftPanel.AddChild(LabelAndDockWidget("Chunk Draw Distance", new HorizontalFloatSlider
+            ChunkDrawDistance = leftPanel.AddChild(LabelAndDockWidget("Terrain Draw Distance", new HorizontalFloatSlider
             {
                 ScrollArea = 1000f,
-                OnScroll = OnItemChanged
+                OnScroll = OnItemChanged,
+                Tooltip = "Higher values allow you to see more terrain. Lower values will make the game run faster."
             })).GetChild(1) as HorizontalFloatSlider;
 
-            VertexCullDistance = leftPanel.AddChild(LabelAndDockWidget("Vertex Cull Distance",
+            VertexCullDistance = leftPanel.AddChild(LabelAndDockWidget("Geometry Draw Distance",
                 new HorizontalFloatSlider
             {
                 ScrollArea = 1000f,
-                OnScroll = OnItemChanged
+                OnScroll = OnItemChanged,
+                Tooltip = "Higher values allow you to see more terrain. Lower values will make the game run faster."
             })).GetChild(1) as HorizontalFloatSlider;
 
+            /*
             GenerateDistance = leftPanel.AddChild(LabelAndDockWidget("Generate Distance",
                 new HorizontalFloatSlider
                 {
                     ScrollArea = 1000f,
                     OnScroll = OnItemChanged
                 })).GetChild(1) as HorizontalFloatSlider;
+             */
 
             Glow = leftPanel.AddChild(new CheckBox
             {
                 Text = "Glow",
                 OnCheckStateChange = OnItemChanged,
-                AutoLayout = AutoLayout.DockTop
+                AutoLayout = AutoLayout.DockTop,
+                Tooltip = "When checked, bright parts of the screen will have a glow effect. Turn off to make the game run faster."
             }) as CheckBox;
 
             Antialiasing = rightPanel.AddChild(LabelAndDockWidget("Antialiasing", new Gum.Widgets.ComboBox
             {
                 Items = AntialiasingOptions.Select(o => o.Key).ToList(),
                 OnSelectedIndexChanged = OnItemChanged,
-                Border = "border-thin"
+                Border = "border-thin",
+                Tooltip = "Higher values mean fewer jagged pixels. For best quality use FXAA. Fastest is no antialiasing."
             })).GetChild(1) as Gum.Widgets.ComboBox;
 
             ReflectTerrain = rightPanel.AddChild(new CheckBox
             {
-                Text = "Reflect Terrain",
+                Text = "Water Reflects Terrain",
                 OnCheckStateChange = OnItemChanged,
-                AutoLayout = AutoLayout.DockTop
+                AutoLayout = AutoLayout.DockTop,
+                Tooltip = "When checked, water will reflect the terrain. Turn off to increase game performance."
             }) as CheckBox;
 
             ReflectEntities = rightPanel.AddChild(new CheckBox
             {
-                Text = "Reflect Entities",
+                Text = "Water Reflects Entities",
                 OnCheckStateChange = OnItemChanged,
-                AutoLayout = AutoLayout.DockTop
+                AutoLayout = AutoLayout.DockTop,
+                Tooltip = "When checked, water will reflect entities. Turn off to increase game performance."
             }) as CheckBox;
 
             Sunlight = rightPanel.AddChild(new CheckBox
             {
                 Text = "Sunlight",
                 OnCheckStateChange = OnItemChanged,
-                AutoLayout = AutoLayout.DockTop
+                AutoLayout = AutoLayout.DockTop,
+                Tooltip = "When checked, caves will be darker than sunlit areas. Turn off to increase game performance."
             }) as CheckBox;
 
             AmbientOcclusion = rightPanel.AddChild(new CheckBox
             {
                 Text = "Ambient Occlusion",
                 OnCheckStateChange = OnItemChanged,
-                AutoLayout = AutoLayout.DockTop
+                AutoLayout = AutoLayout.DockTop,
+                Tooltip = "Enables smooth lighting effects on terrain. Turn off to increase game performance."
             }) as CheckBox;
 
             Ramps = leftPanel.AddChild(new CheckBox
             {
-                Text = "Ramps",
+                Text = "Terrain Slopes",
                 OnCheckStateChange = OnItemChanged,
-                AutoLayout = AutoLayout.DockTop
+                AutoLayout = AutoLayout.DockTop,
+                Tooltip = "Causes dirt/sand to have slopes. Turn off to increase game performance."
             }) as CheckBox;
 
             CursorLight = rightPanel.AddChild(new CheckBox
             {
                 Text = "Cursor Light",
                 OnCheckStateChange = OnItemChanged,
-                AutoLayout = AutoLayout.DockTop
+                AutoLayout = AutoLayout.DockTop,
+                Tooltip = "When checked, the cursor casts light. Turn off to increase game performance."
             }) as CheckBox;
 
             EntityLight = rightPanel.AddChild(new CheckBox
             {
-                Text = "Entity Light",
+                Text = "Dynamic Entity Lighting",
                 OnCheckStateChange = OnItemChanged,
-                AutoLayout = AutoLayout.DockTop
+                AutoLayout = AutoLayout.DockTop,
+                Tooltip = "When checked, creatures underground will be in shadow. Turn off to increase game performance."
             }) as CheckBox;
 
             SelfIllumination = rightPanel.AddChild(new CheckBox
             {
                 Text = "Ore Glow",
                 OnCheckStateChange = OnItemChanged,
-                AutoLayout = AutoLayout.DockTop
+                AutoLayout = AutoLayout.DockTop,
+                Tooltip = "When checked certain ores will glow underground. Turn off to increase game performance."
             }) as CheckBox;
 
             ParticlePhysics = leftPanel.AddChild(new CheckBox
             {
                 Text = "Particle Physics",
                 OnCheckStateChange = OnItemChanged,
-                AutoLayout = AutoLayout.DockTop
+                AutoLayout = AutoLayout.DockTop,
+                Tooltip = "When checked, certain particles will bounce off of terrain. Turn off to increase game performance."
             }) as CheckBox;
 
             Motes = leftPanel.AddChild(new CheckBox
             {
                 Text = "Motes",
                 OnCheckStateChange = OnItemChanged,
-                AutoLayout = AutoLayout.DockTop
+                AutoLayout = AutoLayout.DockTop,
+                Tooltip = "When checked, detail grass motes will spawn. Turn off to increase game performance."
             }) as CheckBox;
 
-            NumMotes = leftPanel.AddChild(LabelAndDockWidget("Number of Motes",
+            NumMotes = leftPanel.AddChild(LabelAndDockWidget("Max Number of Entities",
                  new HorizontalFloatSlider
                  {
                      ScrollArea = 2048 - 100,
-                     OnScroll = OnItemChanged
+                     OnScroll = OnItemChanged,
+                     Tooltip = "Controls how many of each type of entity will get drawn to the screen. Higher values mean more detail. Lower values mean better performance."
+
                  })).GetChild(1) as HorizontalFloatSlider;
 
             LightMap = leftPanel.AddChild(new CheckBox
             {
                 Text = "Light Maps",
                 OnCheckStateChange = OnItemChanged,
-                AutoLayout = AutoLayout.DockTop
+                AutoLayout = AutoLayout.DockTop,
+                Tooltip = "When checked, light maps will be used for pixelated terrain lighting. Turning this off increases performance."
             }) as CheckBox;
 
             DynamicShadows = leftPanel.AddChild(new CheckBox
             {
                 Text = "Dynamic Shadows",
                 OnCheckStateChange = OnItemChanged,
-                AutoLayout = AutoLayout.DockTop
+                AutoLayout = AutoLayout.DockTop,
+                Tooltip = "When checked, the sun will cast shadows on terrain and entities. Turning this off increases performance."
             }) as CheckBox;
 
         }
@@ -463,6 +543,126 @@ namespace DwarfCorp.GameStates
         private void OnItemChanged(Gum.Widget Sender)
         {
             HasChanges = true;
+        }
+
+        private void OnEasySettingChanged(Gum.Widget Sender)
+        {
+            // This handler can be called while building the GUI, resulting in an infinite loop.
+            if (BuildingGUI) return;
+
+            GuiRoot.ShowDialog(GuiRoot.ConstructWidget(new NewGui.Confirm
+            {
+                Text = "This will automatically apply changes",
+                OnClose = (confirm) =>
+                {
+                    if ((confirm as NewGui.Confirm).DialogResult == NewGui.Confirm.Result.OKAY)
+                    {
+                        var comboBox = Sender as Gum.Widgets.ComboBox;
+                        var selection = comboBox.SelectedItem;
+
+                        switch (selection)
+                        {
+                            case "Custom":
+                                break;
+                            case "Lowest":
+                                GameSettings.Default.AmbientOcclusion = false;
+                                GameSettings.Default.AntiAliasing = 0;
+                                GameSettings.Default.CalculateRamps = false;
+                                GameSettings.Default.CalculateSunlight = false;
+                                GameSettings.Default.CursorLightEnabled = false;
+                                GameSettings.Default.DrawChunksReflected = false;
+                                GameSettings.Default.DrawEntityReflected = false;
+                                GameSettings.Default.DrawSkyReflected = false;
+                                GameSettings.Default.UseLightmaps = false;
+                                GameSettings.Default.UseDynamicShadows = false;
+                                GameSettings.Default.EntityLighting = false;
+                                GameSettings.Default.EnableGlow = false;
+                                GameSettings.Default.SelfIlluminationEnabled = false;
+                                GameSettings.Default.NumMotes = 100;
+                                GameSettings.Default.GrassMotes = false;
+                                GameSettings.Default.ParticlePhysics = false;
+                                break;
+                            case "Low":
+                                GameSettings.Default.AmbientOcclusion = false;
+                                GameSettings.Default.AntiAliasing = 0;
+                                GameSettings.Default.CalculateRamps = true;
+                                GameSettings.Default.CalculateSunlight = true;
+                                GameSettings.Default.CursorLightEnabled = false;
+                                GameSettings.Default.DrawChunksReflected = false;
+                                GameSettings.Default.DrawEntityReflected = false;
+                                GameSettings.Default.DrawSkyReflected = true;
+                                GameSettings.Default.UseLightmaps = false;
+                                GameSettings.Default.UseDynamicShadows = false;
+                                GameSettings.Default.EntityLighting = true;
+                                GameSettings.Default.EnableGlow = false;
+                                GameSettings.Default.SelfIlluminationEnabled = false;
+                                GameSettings.Default.NumMotes = 300;
+                                GameSettings.Default.GrassMotes = false;
+                                GameSettings.Default.ParticlePhysics = false;
+                                break;
+                            case "Medium":
+                                GameSettings.Default.AmbientOcclusion = true;
+                                GameSettings.Default.AntiAliasing = 4;
+                                GameSettings.Default.CalculateRamps = true;
+                                GameSettings.Default.CalculateSunlight = true;
+                                GameSettings.Default.CursorLightEnabled = true;
+                                GameSettings.Default.DrawChunksReflected = true;
+                                GameSettings.Default.DrawEntityReflected = false;
+                                GameSettings.Default.DrawSkyReflected = true;
+                                GameSettings.Default.UseLightmaps = false;
+                                GameSettings.Default.UseDynamicShadows = false;
+                                GameSettings.Default.EntityLighting = true;
+                                GameSettings.Default.EnableGlow = false;
+                                GameSettings.Default.SelfIlluminationEnabled = true;
+                                GameSettings.Default.NumMotes = 500;
+                                GameSettings.Default.GrassMotes = true;
+                                GameSettings.Default.ParticlePhysics = true;
+                                break;
+                            case "High":
+                                GameSettings.Default.AmbientOcclusion = true;
+                                GameSettings.Default.AntiAliasing = 16;
+                                GameSettings.Default.CalculateRamps = true;
+                                GameSettings.Default.CalculateSunlight = true;
+                                GameSettings.Default.CursorLightEnabled = true;
+                                GameSettings.Default.DrawChunksReflected = true;
+                                GameSettings.Default.DrawEntityReflected = true;
+                                GameSettings.Default.DrawSkyReflected = true;
+                                GameSettings.Default.UseLightmaps = true;
+                                GameSettings.Default.UseDynamicShadows = false;
+                                GameSettings.Default.EntityLighting = true;
+                                GameSettings.Default.EnableGlow = true;
+                                GameSettings.Default.SelfIlluminationEnabled = true;
+                                GameSettings.Default.NumMotes = 1500;
+                                GameSettings.Default.GrassMotes = true;
+                                GameSettings.Default.ParticlePhysics = true;
+                                break;
+                            case "Highest":
+                                GameSettings.Default.AmbientOcclusion = true;
+                                GameSettings.Default.AntiAliasing = -1;
+                                GameSettings.Default.CalculateRamps = true;
+                                GameSettings.Default.CalculateSunlight = true;
+                                GameSettings.Default.CursorLightEnabled = true;
+                                GameSettings.Default.DrawChunksReflected = true;
+                                GameSettings.Default.DrawEntityReflected = false;
+                                GameSettings.Default.DrawSkyReflected = true;
+                                GameSettings.Default.UseLightmaps = true;
+                                GameSettings.Default.UseDynamicShadows = true;
+                                GameSettings.Default.EntityLighting = true;
+                                GameSettings.Default.EnableGlow = true;
+                                GameSettings.Default.SelfIlluminationEnabled = true;
+                                GameSettings.Default.NumMotes = 2048;
+                                GameSettings.Default.GrassMotes = true;
+                                GameSettings.Default.ParticlePhysics = true;
+                                break;
+                        }
+
+                        HasChanges = true;
+                        RebuildGui();
+                        ApplySettings();
+                        TabPanel.SelectedTab = 3;
+                    }
+                }
+            }));
         }
 
         private void ApplySettings()
@@ -480,7 +680,7 @@ namespace DwarfCorp.GameStates
             // Audio settings
             GameSettings.Default.MasterVolume = this.MasterVolume.ScrollPosition;
             GameSettings.Default.SoundEffectVolume = this.SFXVolume.ScrollPosition;
-            GameSettings.Default.MusicVolume = this.SFXVolume.ScrollPosition;
+            GameSettings.Default.MusicVolume = this.MusicVolume.ScrollPosition;
 
             // Graphics settings
             var preResolutionX = GameSettings.Default.ResolutionX;
@@ -494,7 +694,7 @@ namespace DwarfCorp.GameStates
             GameSettings.Default.Fullscreen = this.Fullscreen.CheckState;
             GameSettings.Default.ChunkDrawDistance = this.ChunkDrawDistance.ScrollPosition + 1.0f;
             GameSettings.Default.VertexCullDistance = this.VertexCullDistance.ScrollPosition + 0.1f;
-            GameSettings.Default.ChunkGenerateDistance = this.GenerateDistance.ScrollPosition + 1.0f;
+            //GameSettings.Default.ChunkGenerateDistance = this.GenerateDistance.ScrollPosition + 1.0f;
             GameSettings.Default.EnableGlow = this.Glow.CheckState;
             GameSettings.Default.AntiAliasing = AntialiasingOptions[this.Antialiasing.SelectedItem];
             GameSettings.Default.DrawChunksReflected = this.ReflectTerrain.CheckState;
@@ -532,10 +732,11 @@ namespace DwarfCorp.GameStates
                     this.Resolution.SelectedIndex = this.Resolution.Items.IndexOf(string.Format("{0} x {1}",
                         GameSettings.Default.ResolutionX, GameSettings.Default.ResolutionY));
                     this.Fullscreen.CheckState = GameSettings.Default.Fullscreen;
+                    RebuildGui();
                     GuiRoot.ShowPopup(new NewGui.Popup
                         {
                             Text = "Could not change display mode. Previous settings restored.",
-                            TextSize = 2,
+                            TextSize = 1,
                             PopupDestructionType = PopupDestructionType.DestroyOnOffClick
                         });
                 }
@@ -564,12 +765,13 @@ namespace DwarfCorp.GameStates
             this.MusicVolume.ScrollPosition = GameSettings.Default.MusicVolume;
 
             // Graphics settings
+            this.EasyGraphicsSetting.SelectedIndex = 5;
             this.Resolution.SelectedIndex = this.Resolution.Items.IndexOf(string.Format("{0} x {1}",
                 GameSettings.Default.ResolutionX, GameSettings.Default.ResolutionY));
             this.Fullscreen.CheckState = GameSettings.Default.Fullscreen;
             this.ChunkDrawDistance.ScrollPosition = GameSettings.Default.ChunkDrawDistance - 1.0f;
             this.VertexCullDistance.ScrollPosition = GameSettings.Default.VertexCullDistance - 0.1f;
-            this.GenerateDistance.ScrollPosition = GameSettings.Default.ChunkGenerateDistance - 1.0f;
+            //this.GenerateDistance.ScrollPosition = GameSettings.Default.ChunkGenerateDistance - 1.0f;
             this.Glow.CheckState = GameSettings.Default.EnableGlow;
             
             var antialiasingIndex = 0;

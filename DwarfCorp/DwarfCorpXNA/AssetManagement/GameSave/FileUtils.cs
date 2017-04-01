@@ -117,7 +117,8 @@ namespace DwarfCorp
                         new Vector3Converter(),
                         new MatrixConverter(),
                         new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap),
-                        new RectangleConverter()
+                        new RectangleConverter(),
+                        new MoneyConverter()
                     }
             });
         }
@@ -146,7 +147,8 @@ namespace DwarfCorp
                         new Vector3Converter(),
                         new MatrixConverter(),
                         new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap),
-                        new RectangleConverter()
+                        new RectangleConverter(),
+                        new MoneyConverter()
                     }
             });
         }
@@ -174,6 +176,7 @@ namespace DwarfCorp
             serializer.Converters.Add(new MatrixConverter());
             serializer.Converters.Add(new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap));
             serializer.Converters.Add(new RectangleConverter());
+            serializer.Converters.Add(new MoneyConverter());
 
             return Save(serializer, obj, filePath, false);
 
@@ -203,7 +206,7 @@ namespace DwarfCorp
             serializer.Converters.Add(new MatrixConverter());
             serializer.Converters.Add(new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap));
             serializer.Converters.Add(new RectangleConverter());
-
+            serializer.Converters.Add(new MoneyConverter());
             return Save(serializer, obj, filePath, compress);
 
         }

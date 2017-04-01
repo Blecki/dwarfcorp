@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Gum;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -23,9 +24,12 @@ namespace DwarfCorp.NewGui
                         this.Close();
                 };
 
+            Tooltip = Message;
+
             Root.RegisterForUpdate(this);
             base.Construct();
         }
+
 
         protected override Gum.Mesh Redraw()
         {
@@ -38,21 +42,19 @@ namespace DwarfCorp.NewGui
 
             var bubbleRect = new Rectangle(Rect.Left, Rect.Top,
                 Rect.Width - speakerTiles.TileWidth, Rect.Height - (speakerTiles.TileHeight / 2));
-
+            var innerRect = new Rectangle(bubbleRect.X + 20, bubbleRect.Y, bubbleRect.Width - 20, bubbleRect.Height);
             meshes.Add(Gum.Mesh.CreateScale9Background(bubbleRect, Root.GetTileSheet("speech-bubble")));
 
             Rectangle ignore;
+            var font = Root.GetTileSheet(Font);
             // Todo: Word wrap.
-            meshes.Add(Gum.Mesh.CreateStringMesh(Text, Root.GetTileSheet(Font),
+            var text = (font is VariableWidthFont) ? (font as VariableWidthFont).WordWrapString(
+                    Text, TextSize, innerRect.Width) : Text;
+            int numLines = text.Split('\n').Length;
+            meshes.Add(Gum.Mesh.CreateStringMesh(text, Root.GetTileSheet(Font),
                 new Vector2(TextSize, TextSize), out ignore)
-                .Translate(bubbleRect.X + 20, bubbleRect.Y + 10)
+                .Translate(innerRect.X, innerRect.Y + innerRect.Height / 2 - (font.TileHeight) * numLines)
                 .Colorize(TextColor));
-
-            if (!String.IsNullOrEmpty(Message))
-                meshes.Add(Gum.Mesh.CreateStringMesh(Text, Root.GetTileSheet(Font),
-                    new Vector2(TextSize, TextSize), out ignore)
-                    .Translate(bubbleRect.X + 20, bubbleRect.Y + 30)
-                    .Colorize(TextColor));
             
             return Gum.Mesh.Merge(meshes.ToArray());
         }

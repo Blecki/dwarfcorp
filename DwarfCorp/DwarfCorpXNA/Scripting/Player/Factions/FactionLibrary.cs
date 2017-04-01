@@ -46,7 +46,7 @@ namespace DwarfCorp
         public static Dictionary<string, Embarkment> EmbarkmentLibrary { get; set; } 
         public List<string> Party;
         public Dictionary<ResourceLibrary.ResourceType, int> Resources;
-        public float Money;
+        public DwarfBux Money;
         public static Embarkment DefaultEmbarkment = null;
         public static void Initialize()
         {
@@ -74,7 +74,7 @@ namespace DwarfCorp
                 Name = TextGenerator.GenerateRandom(Datastructures.SelectRandom(race.FactionNameTemplates).ToArray()),
                 PrimaryColor = new HSLColor(idx * (255.0f / n), 255.0, MathFunctions.Rand(100.0f, 200.0f)),
                 SecondaryColor = new HSLColor(MathFunctions.Rand(0, 255.0f), 255.0, MathFunctions.Rand(100.0f, 200.0f)),
-                TradeMoney = MathFunctions.Rand(250.0f, 20000.0f),
+                TradeMoney = (decimal)MathFunctions.Rand(250.0f, 20000.0f),
                 Center = new Point(MathFunctions.RandInt(0, Overworld.Map.GetLength(0)), MathFunctions.RandInt(0, Overworld.Map.GetLength(1)))
             };
         }
@@ -161,7 +161,7 @@ namespace DwarfCorp
                 IsRaceFaction = true
             };
             
-            Factions["Player"].Economy = new Economy(Factions["Player"], 300.0f, state, CompanyInformation);
+            Factions["Player"].Economy = new Economy(Factions["Player"], 300.0m, state, CompanyInformation);
         }
 
 

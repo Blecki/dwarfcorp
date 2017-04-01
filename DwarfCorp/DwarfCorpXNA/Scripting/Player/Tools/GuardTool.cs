@@ -1,4 +1,4 @@
-﻿// GuardTool.cs
+// GuardTool.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -84,6 +84,7 @@ namespace DwarfCorp
                     }
 
                     Player.Faction.GuardDesignations.Remove(Player.Faction.GetGuardDesignation(v));
+                    Drawer3D.UnHighlightVoxel(v);
 
                 }
             }
@@ -139,10 +140,6 @@ namespace DwarfCorp
                 {
                     continue;
                 }
-
-                BoundingBox box = v.GetBoundingBox();
-
-
                 Color drawColor = GuardDesignationColor;
 
                 if (d.NumCreaturesAssigned == 0)
@@ -150,10 +147,13 @@ namespace DwarfCorp
                     drawColor = UnreachableColor;
                 }
 
+                /*
                 drawColor.R = (byte)(Math.Min(drawColor.R * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * GuardDesignationGlowRate)) + 50, 255));
                 drawColor.G = (byte)(Math.Min(drawColor.G * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * GuardDesignationGlowRate)) + 50, 255));
                 drawColor.B = (byte)(Math.Min(drawColor.B * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * GuardDesignationGlowRate)) + 50, 255));
                 Drawer3D.DrawBox(box, drawColor, 0.05f, true);
+                */
+                Drawer3D.HighlightVoxel(v, drawColor);
             }
         }
 

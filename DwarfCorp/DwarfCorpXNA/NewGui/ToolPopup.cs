@@ -19,6 +19,7 @@ namespace DwarfCorp.NewGui
             var bestSize = GetBestSize();
             Rect.Width = bestSize.X;
             Rect.Height = bestSize.Y;
+            IsFloater = true;
 
             TextColor = Vector4.One;
             Rect = MathFunctions.SnapRect(Rect, Root.VirtualScreen);

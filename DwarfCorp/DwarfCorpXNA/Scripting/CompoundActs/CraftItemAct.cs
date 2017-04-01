@@ -167,7 +167,7 @@ namespace DwarfCorp
                             TeleportOffset = new Vector3(1, 0, 0),
                             ObjectName = ItemType.CraftLocation
                         },
-                        new Wrap(() => Creature.HitAndWait(time, true, Creature.AI.Position)),
+                        new Wrap(() => Creature.HitAndWait(time, true, () => Creature.AI.Position)),
                         new Wrap(DestroyResources),
                         unreserveAct,
                         new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
@@ -189,7 +189,7 @@ namespace DwarfCorp
                             TeleportOffset = new Vector3(1, 0, 0),
                             ObjectName = ItemType.CraftLocation
                         },
-                        new Wrap(() => Creature.HitAndWait(time, true, Agent.Position)),
+                        new Wrap(() => Creature.HitAndWait(time, true, () => Agent.Blackboard.GetData<Body>(ItemType.CraftLocation).Position)),
                         new Wrap(DestroyResources),
                         unreserveAct,
                         new Wrap(CreateResources),

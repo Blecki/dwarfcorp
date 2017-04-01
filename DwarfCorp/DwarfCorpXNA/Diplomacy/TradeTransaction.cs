@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,12 +9,12 @@ namespace DwarfCorp.Trade
     {
         public ITradeEntity EnvoyEntity;
         public List<ResourceAmount> EnvoyItems;
-        public int EnvoyMoney;
+        public DwarfBux EnvoyMoney;
         public ITradeEntity PlayerEntity;
         public List<ResourceAmount> PlayerItems;
-        public int PlayerMoney;
+        public DwarfBux PlayerMoney;
 
-        public float ValueForPlayer
+        public DwarfBux ValueForPlayer
         {
             get
             {

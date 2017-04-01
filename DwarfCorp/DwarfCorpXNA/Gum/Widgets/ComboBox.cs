@@ -110,6 +110,8 @@ namespace Gum.Widgets
                 widget.TextColor = color;
                 widget.Invalidate();
             };
+
+            Border = "border-thin";
         }
 
         public override Point GetBestSize()

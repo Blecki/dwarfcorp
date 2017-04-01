@@ -1188,6 +1188,18 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Content Include="Audio\XACT\Win\SoundBank.xsb">
+      <Name>SoundBank</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Audio\XACT\Win\Sounds.xgs">
+      <Name>Sounds</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Audio\XACT\Win\WaveBank.xwb">
+      <Name>WaveBank</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Entities\Animals\chicken_animation.json">
       <Name>chicken_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1883,8 +1895,11 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="newgui\speech-bubble-reverse.png">
+      <Name>speech-bubble-reverse</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Compile Include="Audio\oscar\sfx_env_voxel_dirt_destroy.wav">
       <Name>sfx_env_voxel_dirt_destroy</Name>
       <Importer>WavImporter</Importer>
@@ -1994,6 +2009,87 @@
       <Name>sfx_ic_dwarf_pick_wood_3</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_angered.wav">
+      <Name>sfx_ic_dwarf_angered</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_ok_1.wav">
+      <Name>sfx_ic_dwarf_ok_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_ok_2.wav">
+      <Name>sfx_ic_dwarf_ok_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_ok_3.wav">
+      <Name>sfx_ic_dwarf_ok_3</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_pleased.wav">
+      <Name>sfx_ic_dwarf_pleased</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_stash_item.wav">
+      <Name>sfx_ic_dwarf_stash_item</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_stash_money.wav">
+      <Name>sfx_ic_dwarf_stash_money</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_stockpile.wav">
+      <Name>sfx_ic_dwarf_stockpile</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_tantrum_1.wav">
+      <Name>sfx_ic_dwarf_tantrum_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_tantrum_2.wav">
+      <Name>sfx_ic_dwarf_tantrum_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_tantrum_3.wav">
+      <Name>sfx_ic_dwarf_tantrum_3</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="newgui\font1-hires.bmp">
+      <Name>font1-hires</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyEnabled>False</ProcessorParameters_ColorKeyEnabled>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="newgui\brown-frame.png">
+      <Name>brown-frame</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Audio\XACT\Sounds.xap">
+      <Name>Sounds</Name>
+      <Importer>XactImporter</Importer>
+      <Processor>XactProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

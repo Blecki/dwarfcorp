@@ -42,20 +42,6 @@ namespace Gum
         // If Hidden, widget is not drawn and does not interact.
         public bool Hidden = false;
 
-        // If has an icon, tint it to this color
-        private Vector4? _tint = null;
-
-        public Vector4 Tint
-        {
-            get
-            {
-                if (_tint.HasValue) return _tint.Value;
-                else if (Parent != null) return Parent.Tint;
-                else return Vector4.One;
-            }
-            set { _tint = value; Invalidate(); }
-        }
-
         private Vector4? _backgroundColor = null;
         public Vector4 BackgroundColor
         {
@@ -112,7 +98,23 @@ namespace Gum
 
         public int TextSize = 1; 
 
-        public String Tooltip = null;
+        public String _tooltip = null;
+        public String Tooltip
+        {
+            get
+            {
+                if (_tooltip != null) return _tooltip;
+                else if (Parent != null) return Parent.Tooltip;
+                else return null;
+            }
+            set
+            {
+                _tooltip = value;
+            }
+        }
+
+        public Vector4 HoverTextColor = new Vector4(1,0,0,1);
+        public bool ChangeColorOnHover = false;
 
         #endregion
 
@@ -147,9 +149,14 @@ namespace Gum
         public Widget Parent { get; private set; }
         public Root Root { get; internal set; }
 
+        public bool IsFloater = false;
+
         internal bool Constructed = false;
 
-        public Widget() { }
+        public Widget()
+        {
+
+        }
 
         internal void _Construct(Root Root)
         {
@@ -162,11 +169,31 @@ namespace Gum
             }
         }
 
-        public virtual void Construct() { }
+        public virtual void Construct()
+        {
+            if (ChangeColorOnHover)
+            {
+                OnMouseEnter += (sender, args) =>
+                {
+                    var t = TextColor;
+                    TextColor = HoverTextColor;
+                    HoverTextColor = t;
+                    Invalidate();
+                };
+
+                OnMouseLeave += (sender, args) =>
+                {
+                    var t = TextColor;
+                    TextColor = HoverTextColor;
+                    HoverTextColor = t;
+                    Invalidate();
+                };
+            }
+        }
 
         public Widget FindWidgetAt(int x, int y)
         {
-            foreach (var child in Children.Reverse<Widget>().Where(c => !c.Hidden))
+            foreach (var child in Children.Reverse<Widget>().Where(c => !c.Hidden && !c.IsFloater))
             {
                 var item = child.FindWidgetAt(x, y);
                 if (item != null) return item;

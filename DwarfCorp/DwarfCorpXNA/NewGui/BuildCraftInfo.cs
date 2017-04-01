@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,7 +21,6 @@ namespace DwarfCorp.NewGui
         {
             Border = "border-fancy";
             Font = "font";
-
             OnShown = (sender) =>
             {
                 Clear();
@@ -43,20 +42,34 @@ namespace DwarfCorp.NewGui
                 {
                     AddChild(new Gum.Widget
                     {
-                        Text = String.Format("Needs {0} to build!", Data.CraftLocation),
+                        Text = String.Format("Needs {0} to {1}!", Data.CraftLocation, Data.Verb),
                         TextColor = new Vector4(1, 0, 0, 1),
-                        AutoLayout = Gum.AutoLayout.DockTop
+                        AutoLayout = Gum.AutoLayout.DockBottom
                     });
                 }
                 else
                 {
                     foreach (var resourceAmount in Data.RequiredResources)
                     {
-                        var resourceSelector = AddChild(new Gum.Widgets.ComboBox
+
+                        var child = AddChild(new Widget()
                         {
-                            Font = "outline-font",
+                            AutoLayout = AutoLayout.DockTop,
+                            MinimumSize = new Point(100, 16)
+                        });
+                        child.AddChild(new Gum.Widget()
+                        {
+                            Font = "font",
+                            Text = String.Format("{0} {1}: ",resourceAmount.NumResources, resourceAmount.ResourceType),
+                            AutoLayout = AutoLayout.DockLeft
+                        })
+                        ;
+                        var resourceSelector = child.AddChild(new Gum.Widgets.ComboBox
+                        {
+                            Font = "font",
                             Items = Master.Faction.ListResourcesWithTag(resourceAmount.ResourceType).Select(r => r.ResourceType.ToString()).ToList(),
-                            AutoLayout = AutoLayout.DockTop
+                            AutoLayout = AutoLayout.DockLeft,
+                            MinimumSize = new Point(100, 16)
                         }) as Gum.Widgets.ComboBox;
 
                         if (resourceSelector.Items.Count == 0)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,8 +16,8 @@ namespace DwarfCorp.NewGui
         }
 
         public Result DialogResult = Result.CANCEL;
-        public string OkayText = "OKAY";
-        public string CancelText = "CANCEL";
+        public string OkayText = "Okay";
+        public string CancelText = "Cancel";
 
         public override void Construct()
         {
@@ -28,7 +28,7 @@ namespace DwarfCorp.NewGui
 
             Border = "border-fancy";
 
-            AddChild(new Widget
+            AddChild(new Gum.Widgets.Button
             {
                 Text = OkayText,
                 TextHorizontalAlign = HorizontalAlign.Center,
@@ -42,7 +42,7 @@ namespace DwarfCorp.NewGui
                 AutoLayout = AutoLayout.FloatBottomRight
             });
 
-            AddChild(new Widget
+            AddChild(new Gum.Widgets.Button
             {
                 Text = CancelText,
                 TextHorizontalAlign = HorizontalAlign.Center,
