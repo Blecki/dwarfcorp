@@ -953,6 +953,7 @@ namespace DwarfCorp.GameStates
                                 {
                                     Icon = data.Icon,
                                     KeepChildVisible = true, // So the player can interact with the popup.
+                                    Tooltip = data.Verb + " " + data.Name,
                                     ExpansionChild = new NewGui.BuildCraftInfo
                                     {
                                         Data = data,
@@ -1092,6 +1093,12 @@ namespace DwarfCorp.GameStates
                                         World.ShowToolPopup("Click and drag to till soil.");
                                         ChangeTool(GameMaster.ToolMode.Farm);
                                         ((FarmTool)(Master.Tools[GameMaster.ToolMode.Farm])).Mode = FarmTool.FarmMode.Tilling;
+                                    },
+                                    ExpansionChild = new Widget()
+                                    {
+                                        Border = "border-fancy",
+                                        Text = "Till Soil.\n Click and drag to till soil for planting.",
+                                        Rect = new Rectangle(0, 0, 256, 128)
                                     }
                                 },
                                 new NewGui.ToolTray.Icon
@@ -1149,6 +1156,12 @@ namespace DwarfCorp.GameStates
                                     Icon = new Gum.TileReference("tool-icons", 13),
                                     Tooltip = "Harvest",
                                     KeepChildVisible = true,
+                                    ExpansionChild = new Widget()
+                                    {
+                                        Border = "border-fancy",
+                                        Text = "Harvest Plants.\n Click and drag to harvest plants.",
+                                        Rect = new Rectangle(0, 0, 256, 128)
+                                    }
                                 },
 
                             }
