@@ -74,10 +74,10 @@ namespace DwarfCorp.NewGui
                             + PlayerColumns.TradeMoney)
                             -(Envoy.ComputeValue(EnvoyColumns.SelectedResources) 
                             + EnvoyColumns.TradeMoney);
-                        var player = Envoy.ComputeValue(PlayerColumns.SelectedResources) + PlayerColumns.TradeMoney;
-                        var tradeTarget = player * 0.25;
+                        var envoyOut = Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney;
+                        var tradeTarget = envoyOut * 0.25;
 
-                        if (net > tradeTarget)
+                        if (net >= tradeTarget)
                         {
                             Result = TradeDialogResult.Propose;
                             Transaction = new TradeTransaction
@@ -110,7 +110,7 @@ namespace DwarfCorp.NewGui
                 TextColor = new Vector4(0, 0, 0, 1),
                 Text = "Cancel",
                 AutoLayout = AutoLayout.DockRight,
-                Padding = new Margin(0,0,0,16),
+                OnLayout = (sender) => sender.Rect.X -= 16,
                 OnClick = (sender, args) =>
                 {
                     Result = TradeDialogResult.Cancel;
@@ -151,15 +151,16 @@ namespace DwarfCorp.NewGui
 
         private void UpdateBottomDisplays()
         {
+            // Todo: Satisfactory trade threshold calculated in two different spots.
             var net = (Envoy.ComputeValue(PlayerColumns.SelectedResources) + PlayerColumns.TradeMoney)
                 - (Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney);
-            var player = Envoy.ComputeValue(PlayerColumns.SelectedResources) + PlayerColumns.TradeMoney;
-            var tradeTarget = player * 0.25;
+            var envoyOut = Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney;
+            var tradeTarget = envoyOut * 0.25;
             TotalDisplay.Text = String.Format("{0} [{1}]", net, tradeTarget);
             TotalDisplay.Text = String.Format("Their {2} {0}\n[need {1}]", net, tradeTarget, net >= 0 ? "Profit" : "Loss");
             TotalDisplay.Tooltip = String.Format("They are {1} with this trade.\nTheir {0} is " + net + ".\nThey need at least " + tradeTarget + " to be happy.", net >= 0 ? "profit" : "loss",
                 net >= 0 ? "happy" : "unhappy");
-            if (net > tradeTarget)
+            if (net >= tradeTarget)
                 TotalDisplay.TextColor = new Vector4(0, 0, 0, 1);
             else
                 TotalDisplay.TextColor = Color.DarkRed.ToVector4();

@@ -29,9 +29,7 @@ namespace DwarfCorp.NewGui
         }
 
         public bool Valid = true;
-
         private Gum.Widgets.EditableTextField TextField;
-
         public Action<Widget> OnValueChanged;
         
         public override void Construct()
@@ -43,6 +41,7 @@ namespace DwarfCorp.NewGui
                 MinimumSize = new Point(32, 32),
                 MaximumSize = new Point(32, 32),
             });
+
             AddChild(new Widget()
             {
                 AutoLayout = AutoLayout.DockLeft,
@@ -53,11 +52,13 @@ namespace DwarfCorp.NewGui
                 MinimumSize = new Point(16, 32),
                 MaximumSize = new Point(16, 32)
             });
-            Widget buttons = AddChild(new Widget
+
+            var buttons = AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockRight,
                 MinimumSize = new Point(16, 32)
             });
+
             buttons.AddChild(new Gum.Widget
             {
                 Background = new TileReference("round-buttons", 7),
@@ -110,7 +111,6 @@ namespace DwarfCorp.NewGui
                 Font = "font-hires",
                 TextColor = new Vector4(0, 0, 0, 1),
                 Text = "0",
-                HiliteOnMouseOver = false,
                 BeforeTextChange = (sender, args) =>
                 {
                     Valid = false;
@@ -123,7 +123,6 @@ namespace DwarfCorp.NewGui
                         if (newValue < 0) newValue = 0;
                         if (newValue > MaximumValue) newValue = MaximumValue;
                         _currentValue = newValue;
-                        sender.TextColor = new Vector4(0, 0, 0, 1);
                         Valid = true;
                         args.NewText = newValue.ToString();
                     }

@@ -15,6 +15,7 @@ namespace DwarfCorp.GameStates
         public InputManager Input = new InputManager();
         public static DwarfGUI GUI = null;
         private DwarfRunner Runner;
+        private bool DoneLoading = false;
 
         private Gum.Root GuiRoot;
         private Gum.Widget Tip;
@@ -51,26 +52,10 @@ namespace DwarfCorp.GameStates
             Runner = new DwarfRunner(game);
         }
 
-        private void World_OnLoadedEvent()
-        {
-            // Todo: Decouple gui/input from world.
-            // Copy important bits to PlayState - This is a hack; decouple world from gui and input instead.
-            PlayState.Input = Input;
-            PlayState.GUI = GUI;
-
-            // Hack: So that saved games still load.
-            if (World.PlayerCompany.Information == null)
-                World.PlayerCompany.Information = new CompanyInformation();
-
-            StateManager.PopState();
-            StateManager.PushState(new PlayState(Game, StateManager, World));
-
-            World.OnSetLoadingMessage = null;         
-        }
-
         public override void OnEnter()
         {
             IsInitialized = true;
+            DwarfTime.LastTime.Speed = 1.0f;
 
             IndicatorManager.SetupStandards();
 
@@ -89,7 +74,7 @@ namespace DwarfCorp.GameStates
             World.WorldScale = Settings.WorldScale;
             World.WorldGenerationOrigin = Settings.WorldGenerationOrigin;
 
-            World.OnLoadedEvent += World_OnLoadedEvent;
+            World.OnLoadedEvent += () => DoneLoading = true;
 
             // Todo - Save gui creation for play state. We're only creating it here so we can give it to
             //      the world class. The world doesn't need it until after loading.
@@ -132,12 +117,32 @@ namespace DwarfCorp.GameStates
 
         public override void Update(DwarfTime gameTime)
         {
-            foreach (var item in DwarfGame.GumInputMapper.GetInputQueue())
-                if (item.Message == Gum.InputEvents.KeyPress)
-                    Runner.Jump();
+            if (DoneLoading)
+            {
+                // Todo: Decouple gui/input from world.
+                // Copy important bits to PlayState - This is a hack; decouple world from gui and input instead.
+                PlayState.Input = Input;
+                PlayState.GUI = GUI;
 
-            GuiRoot.Update(gameTime.ToGameTime());
-            Runner.Update(gameTime);
+                // Hack: So that saved games still load.
+                if (World.PlayerCompany.Information == null)
+                    World.PlayerCompany.Information = new CompanyInformation();
+
+                StateManager.PopState();
+                StateManager.PushState(new PlayState(Game, StateManager, World));
+
+                World.OnSetLoadingMessage = null;
+            }
+            else
+            {
+                foreach (var item in DwarfGame.GumInputMapper.GetInputQueue())
+                    if (item.Message == Gum.InputEvents.KeyPress)
+                        Runner.Jump();
+
+                GuiRoot.Update(gameTime.ToGameTime());
+                Runner.Update(gameTime);
+            }
+
             base.Update(gameTime);
         }
 

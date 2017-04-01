@@ -220,6 +220,7 @@ namespace Gum
 
             var bestSize = item.GetBestSize();
             Rectangle rect = new Rectangle(
+                // ?? Why are we assuming the tooltip is being opened at the mouse position?
                 Where.X + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2,
                 Where.Y + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2, bestSize.X, bestSize.Y);
 

@@ -14,6 +14,7 @@ namespace DwarfCorp.GameStates
         private Gum.Root GuiRoot;
         private bool HasChanges = false;
         public Action OnClosed = null;
+        private bool BuildingGUI = false;
 
         private Dictionary<string, int> AntialiasingOptions;
         private Dictionary<string, DisplayMode> DisplayModes;
@@ -50,6 +51,7 @@ namespace DwarfCorp.GameStates
         private HorizontalFloatSlider NumMotes;
         private CheckBox LightMap;
         private CheckBox DynamicShadows;
+        private Gum.Widgets.ComboBox EasyGraphicsSetting;
 
         public NewOptionsState(DwarfGame Game, GameStateManager StateManager) :
             base(Game, "NewOptionsState", StateManager)
@@ -85,6 +87,8 @@ namespace DwarfCorp.GameStates
 
         private void RebuildGui()
         {
+            BuildingGUI = true;
+
             // Create and initialize GUI framework.
             GuiRoot = new Gum.Root(Gum.Root.MinimumSize, DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
@@ -166,6 +170,8 @@ namespace DwarfCorp.GameStates
             GuiRoot.RootItem.Layout();
 
             LoadSettings();
+
+            BuildingGUI = false;
         }
 
         private Widget LabelAndDockWidget(string Label, Widget Widget)
@@ -210,6 +216,35 @@ namespace DwarfCorp.GameStates
                     Border = "border-thin",
                     Padding = new Margin(4,4,0,0)
                 });
+
+
+            panel.AddChild(new Widget
+            {
+                Text = "Restore default settings",
+                MinimumSize = new Point(0, 20),
+                AutoLayout = AutoLayout.DockTop,
+                Padding = new Margin(0, 0, 4, 4),
+                Border = "border-button",
+                ChangeColorOnHover = true,
+                OnClick = (sender, args) =>
+                {
+                    var prompt = GuiRoot.ConstructWidget(new NewGui.Confirm
+                    {
+                        Text = "Set all settings to their default?",
+                        OnClose = (confirm) =>
+                        {
+                            if ((confirm as NewGui.Confirm).DialogResult == NewGui.Confirm.Result.OKAY)
+                            {
+                                GameSettings.Default = new GameSettings.Settings();
+                                RebuildGui();
+                                ApplySettings();
+                            }
+                        }
+                    });
+
+                    GuiRoot.ShowDialog(prompt);
+                }
+            });
 
             // Todo: Display actual value beside slider.
             MoveSpeed = panel.AddChild(LabelAndDockWidget("Camera Move Speed", new HorizontalFloatSlider
@@ -313,22 +348,38 @@ namespace DwarfCorp.GameStates
                 Padding = new Margin(4,4,4,4)
             });
 
-            var leftPanel = panel.AddChild(new Widget
+            var split = panel.AddChild(new NewGui.TwoColumns
             {
-                MinimumSize = new Point(GuiRoot.VirtualScreen.Width / 2 - 4, 0),
-                AutoLayout = AutoLayout.DockLeft,
+                AutoLayout = AutoLayout.DockFill
+            }) as NewGui.TwoColumns;
+
+            var leftPanel = split.AddChild(new Widget
+            {
                 Padding = new Margin(2,2,2,2)
             });
 
-            var rightPanel = panel.AddChild(new Widget
+            var rightPanel = split.AddChild(new Widget
             {
-                AutoLayout = AutoLayout.DockFill,
                 Padding = new Margin(2,2,2,2)
             });
+
+            EasyGraphicsSetting = leftPanel.AddChild(LabelAndDockWidget("Easy Settings", new Gum.Widgets.ComboBox
+            {
+                Items = new String[] { "Lowest", "Low", "Medium", "High", "Highest", "Custom" }.ToList(),
+                OnSelectedIndexChanged = OnEasySettingChanged,
+                Border = "border-thin"
+            })).GetChild(1) as Gum.Widgets.ComboBox;
 
             Resolution = leftPanel.AddChild(LabelAndDockWidget("Resolution", new Gum.Widgets.ComboBox
                 {
-                    Items = DisplayModes.Where(dm => dm.Value.Width >= 1024).Select(dm => dm.Key).ToList(),
+
+// Allow debugging at lower resolutions.
+#if DEBUG
+                Items = DisplayModes.Select(dm => dm.Key).ToList(),
+#else
+                Items = DisplayModes.Where(dm => dm.Value.Width >= 1024).Select(dm => dm.Key).ToList(),
+#endif
+
                     OnSelectedIndexChanged = OnItemChanged,
                     Border = "border-thin",
                     Tooltip = "Game screen size",
@@ -494,6 +545,126 @@ namespace DwarfCorp.GameStates
             HasChanges = true;
         }
 
+        private void OnEasySettingChanged(Gum.Widget Sender)
+        {
+            // This handler can be called while building the GUI, resulting in an infinite loop.
+            if (BuildingGUI) return;
+
+            GuiRoot.ShowDialog(GuiRoot.ConstructWidget(new NewGui.Confirm
+            {
+                Text = "This will automatically apply changes",
+                OnClose = (confirm) =>
+                {
+                    if ((confirm as NewGui.Confirm).DialogResult == NewGui.Confirm.Result.OKAY)
+                    {
+                        var comboBox = Sender as Gum.Widgets.ComboBox;
+                        var selection = comboBox.SelectedItem;
+
+                        switch (selection)
+                        {
+                            case "Custom":
+                                break;
+                            case "Lowest":
+                                GameSettings.Default.AmbientOcclusion = false;
+                                GameSettings.Default.AntiAliasing = 0;
+                                GameSettings.Default.CalculateRamps = false;
+                                GameSettings.Default.CalculateSunlight = false;
+                                GameSettings.Default.CursorLightEnabled = false;
+                                GameSettings.Default.DrawChunksReflected = false;
+                                GameSettings.Default.DrawEntityReflected = false;
+                                GameSettings.Default.DrawSkyReflected = false;
+                                GameSettings.Default.UseLightmaps = false;
+                                GameSettings.Default.UseDynamicShadows = false;
+                                GameSettings.Default.EntityLighting = false;
+                                GameSettings.Default.EnableGlow = false;
+                                GameSettings.Default.SelfIlluminationEnabled = false;
+                                GameSettings.Default.NumMotes = 100;
+                                GameSettings.Default.GrassMotes = false;
+                                GameSettings.Default.ParticlePhysics = false;
+                                break;
+                            case "Low":
+                                GameSettings.Default.AmbientOcclusion = false;
+                                GameSettings.Default.AntiAliasing = 0;
+                                GameSettings.Default.CalculateRamps = true;
+                                GameSettings.Default.CalculateSunlight = true;
+                                GameSettings.Default.CursorLightEnabled = false;
+                                GameSettings.Default.DrawChunksReflected = false;
+                                GameSettings.Default.DrawEntityReflected = false;
+                                GameSettings.Default.DrawSkyReflected = true;
+                                GameSettings.Default.UseLightmaps = false;
+                                GameSettings.Default.UseDynamicShadows = false;
+                                GameSettings.Default.EntityLighting = true;
+                                GameSettings.Default.EnableGlow = false;
+                                GameSettings.Default.SelfIlluminationEnabled = false;
+                                GameSettings.Default.NumMotes = 300;
+                                GameSettings.Default.GrassMotes = false;
+                                GameSettings.Default.ParticlePhysics = false;
+                                break;
+                            case "Medium":
+                                GameSettings.Default.AmbientOcclusion = true;
+                                GameSettings.Default.AntiAliasing = 4;
+                                GameSettings.Default.CalculateRamps = true;
+                                GameSettings.Default.CalculateSunlight = true;
+                                GameSettings.Default.CursorLightEnabled = true;
+                                GameSettings.Default.DrawChunksReflected = true;
+                                GameSettings.Default.DrawEntityReflected = false;
+                                GameSettings.Default.DrawSkyReflected = true;
+                                GameSettings.Default.UseLightmaps = false;
+                                GameSettings.Default.UseDynamicShadows = false;
+                                GameSettings.Default.EntityLighting = true;
+                                GameSettings.Default.EnableGlow = false;
+                                GameSettings.Default.SelfIlluminationEnabled = true;
+                                GameSettings.Default.NumMotes = 500;
+                                GameSettings.Default.GrassMotes = true;
+                                GameSettings.Default.ParticlePhysics = true;
+                                break;
+                            case "High":
+                                GameSettings.Default.AmbientOcclusion = true;
+                                GameSettings.Default.AntiAliasing = 16;
+                                GameSettings.Default.CalculateRamps = true;
+                                GameSettings.Default.CalculateSunlight = true;
+                                GameSettings.Default.CursorLightEnabled = true;
+                                GameSettings.Default.DrawChunksReflected = true;
+                                GameSettings.Default.DrawEntityReflected = true;
+                                GameSettings.Default.DrawSkyReflected = true;
+                                GameSettings.Default.UseLightmaps = true;
+                                GameSettings.Default.UseDynamicShadows = false;
+                                GameSettings.Default.EntityLighting = true;
+                                GameSettings.Default.EnableGlow = true;
+                                GameSettings.Default.SelfIlluminationEnabled = true;
+                                GameSettings.Default.NumMotes = 1500;
+                                GameSettings.Default.GrassMotes = true;
+                                GameSettings.Default.ParticlePhysics = true;
+                                break;
+                            case "Highest":
+                                GameSettings.Default.AmbientOcclusion = true;
+                                GameSettings.Default.AntiAliasing = -1;
+                                GameSettings.Default.CalculateRamps = true;
+                                GameSettings.Default.CalculateSunlight = true;
+                                GameSettings.Default.CursorLightEnabled = true;
+                                GameSettings.Default.DrawChunksReflected = true;
+                                GameSettings.Default.DrawEntityReflected = false;
+                                GameSettings.Default.DrawSkyReflected = true;
+                                GameSettings.Default.UseLightmaps = true;
+                                GameSettings.Default.UseDynamicShadows = true;
+                                GameSettings.Default.EntityLighting = true;
+                                GameSettings.Default.EnableGlow = true;
+                                GameSettings.Default.SelfIlluminationEnabled = true;
+                                GameSettings.Default.NumMotes = 2048;
+                                GameSettings.Default.GrassMotes = true;
+                                GameSettings.Default.ParticlePhysics = true;
+                                break;
+                        }
+
+                        HasChanges = true;
+                        RebuildGui();
+                        ApplySettings();
+                        TabPanel.SelectedTab = 3;
+                    }
+                }
+            }));
+        }
+
         private void ApplySettings()
         {
             // Copy all the states from widgets to game settings.
@@ -509,7 +680,7 @@ namespace DwarfCorp.GameStates
             // Audio settings
             GameSettings.Default.MasterVolume = this.MasterVolume.ScrollPosition;
             GameSettings.Default.SoundEffectVolume = this.SFXVolume.ScrollPosition;
-            GameSettings.Default.MusicVolume = this.SFXVolume.ScrollPosition;
+            GameSettings.Default.MusicVolume = this.MusicVolume.ScrollPosition;
 
             // Graphics settings
             var preResolutionX = GameSettings.Default.ResolutionX;
@@ -561,6 +732,7 @@ namespace DwarfCorp.GameStates
                     this.Resolution.SelectedIndex = this.Resolution.Items.IndexOf(string.Format("{0} x {1}",
                         GameSettings.Default.ResolutionX, GameSettings.Default.ResolutionY));
                     this.Fullscreen.CheckState = GameSettings.Default.Fullscreen;
+                    RebuildGui();
                     GuiRoot.ShowPopup(new NewGui.Popup
                         {
                             Text = "Could not change display mode. Previous settings restored.",
@@ -593,6 +765,7 @@ namespace DwarfCorp.GameStates
             this.MusicVolume.ScrollPosition = GameSettings.Default.MusicVolume;
 
             // Graphics settings
+            this.EasyGraphicsSetting.SelectedIndex = 5;
             this.Resolution.SelectedIndex = this.Resolution.Items.IndexOf(string.Format("{0} x {1}",
                 GameSettings.Default.ResolutionX, GameSettings.Default.ResolutionY));
             this.Fullscreen.CheckState = GameSettings.Default.Fullscreen;
