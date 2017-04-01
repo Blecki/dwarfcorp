@@ -474,7 +474,7 @@ namespace DwarfCorp.GameStates
             GuiRoot.RootItem.AddChild(new NewGui.ResourcePanel
             {
                 AutoLayout = AutoLayout.FloatTop,
-                MinimumSize = new Point(256, 128),
+                MinimumSize = new Point(496, 128),
                 Master = Master
             });
 
