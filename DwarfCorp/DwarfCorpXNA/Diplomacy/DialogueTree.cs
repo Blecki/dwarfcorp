@@ -34,7 +34,7 @@ namespace DwarfCorp.Dialogue
                     Context.Say(Prompt);
                     Context.ClearOptions();
                     Context.AddOption("Trade", Trade);
-                    Context.AddOption("Declare war", DeclareWar);
+                    Context.AddOption("Declare war", ConfirmDeclareWar);
                     Context.AddOption("What is your opinion of us?", (context) =>
                     {
                         var prompt = "";
@@ -126,6 +126,13 @@ namespace DwarfCorp.Dialogue
             }
 
             ConversationRoot(Context);
+        }
+
+        public static void ConfirmDeclareWar(DialogueContext Context)
+        {
+            Context.Say("You really want to declare war on us?");
+            Context.AddOption("Yes!", DeclareWar);
+            Context.AddOption("No.", ConversationRoot);
         }
 
         public static void DeclareWar(DialogueContext Context)
