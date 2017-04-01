@@ -1228,7 +1228,8 @@ namespace DwarfCorp
                         successors.Add(new Creature.MoveAction
                         {
                             Diff = new Vector3(1, 2, 1),
-                            MoveType = Creature.MoveType.Climb
+                            MoveType = Creature.MoveType.Climb,
+                            InteractObject = enumerable.FirstOrDefault(component => component.Tags.Contains("Climbable"))
                         });
 
                         isClimbing = true;
@@ -1238,7 +1239,8 @@ namespace DwarfCorp
                             successors.Add(new Creature.MoveAction
                             {
                                 Diff = new Vector3(1, 0, 1),
-                                MoveType = Creature.MoveType.Climb
+                                MoveType = Creature.MoveType.Climb,
+                                InteractObject = enumerable.FirstOrDefault(component => component.Tags.Contains("Climbable"))
                             });
                         }
 
@@ -1250,6 +1252,11 @@ namespace DwarfCorp
             // If the creature can climb walls and is not blocked by a voxl above.
             if (CanClimbWalls && !topCovered)
             {
+                Voxel[] walls =
+                {
+                    neighborHood[2, 1, 1], neighborHood[0, 1, 1], neighborHood[1, 1, 2],
+                    neighborHood[1, 1, 0]
+                };
                 // Determine if the creature is adjacent to a wall.
                 bool nearWall = (neighborHood[2, 1, 1] != null && !neighborHood[2, 1, 1].IsEmpty) ||
                                 (neighborHood[0, 1, 1] != null && !neighborHood[0, 1, 1].IsEmpty) ||
@@ -1263,7 +1270,8 @@ namespace DwarfCorp
                     successors.Add(new Creature.MoveAction
                     {
                         Diff = new Vector3(1, 2, 1),
-                        MoveType = Creature.MoveType.ClimbWalls
+                        MoveType = Creature.MoveType.ClimbWalls,
+                        TargetVoxel = walls.FirstOrDefault(v => v != null && !v.IsEmpty)
                     });
                 }
                 // If we're near a wall and not blocked from below, we can climb downward.
@@ -1272,7 +1280,8 @@ namespace DwarfCorp
                     successors.Add(new Creature.MoveAction
                     {
                         Diff = new Vector3(1, 0, 1),
-                        MoveType = Creature.MoveType.ClimbWalls
+                        MoveType = Creature.MoveType.ClimbWalls,
+                        TargetVoxel = walls.FirstOrDefault(v => v != null && !v.IsEmpty)
                     });
                 }
             }

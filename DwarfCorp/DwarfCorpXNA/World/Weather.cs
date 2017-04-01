@@ -17,19 +17,28 @@ namespace DwarfCorp
         }
 
         public List<Storm> Forecast { get; set; }
+        public Vector3 CurrentWind { get; set; }
 
         public Weather()
         {
             Forecast= new List<Storm>();
+            CurrentWind = new Vector3(0, 0, 0);
         }
 
         public void Update(DateTime currentDate, WorldManager world)
         {
+            CurrentWind = new Vector3((float)Math.Sin(world.Time.GetTotalSeconds() * 0.001f), 0, (float)Math.Cos(world.Time.GetTotalSeconds() * 0.01f));
+            CurrentWind.Normalize();
             foreach (Storm storm in Forecast)
             {
                 if (!storm.IsInitialized && currentDate > storm.Date)
                 {
                     storm.Start();
+                }
+
+                if (storm.IsInitialized && !storm.IsDone() && currentDate > storm.Date)
+                {
+                    CurrentWind += storm.WindSpeed;
                 }
             }
 

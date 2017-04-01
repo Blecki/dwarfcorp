@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,7 +21,7 @@ namespace DwarfCorp
 
         public List<Matrix> RelativeTransforms;
         public List<Color> Tints;
-        public List<Color> VertColors; 
+        public List<Color> VertColors;
 
         public BatchBillboardPrimitive(GraphicsDevice device,
             Texture2D spriteSheet,
@@ -39,8 +39,6 @@ namespace DwarfCorp
             CreateVerticies(Color.White);
             Texture = spriteSheet;
         }
-
-
         private void CreateVerticies(Color color)
         {
             Vertices = new ExtendedVertex[RelativeTransforms.Count * 4];

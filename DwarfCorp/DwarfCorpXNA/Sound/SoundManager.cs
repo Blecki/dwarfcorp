@@ -78,11 +78,122 @@ namespace DwarfCorp
         }
     }
 
+
+    public class MusicTrack
+    {
+        public string Intro;
+        public string Loop;
+        public string Outro;
+        public bool PlayLoopOverIntro = false;
+        private Cue IntroCue;
+        private Cue LoopCue;
+        private Cue OutroCue;
+        private SoundBank sounds;
+
+        public MusicTrack(SoundBank soundbank)
+        {
+            sounds = soundbank;
+        }
+
+        public void Start()
+        {
+            if (!string.IsNullOrEmpty(Intro))
+            {
+                IntroCue = sounds.GetCue(Intro);
+                IntroCue.Play();
+
+                if (PlayLoopOverIntro && !string.IsNullOrEmpty(Loop))
+                {
+                    LoopCue = sounds.GetCue(Loop);
+                    LoopCue.Play();
+                }
+            }
+        }
+
+        public void Update()
+        {
+            if (IntroCue != null && IntroCue.IsStopped && !string.IsNullOrEmpty(Loop))
+            {
+                if (!PlayLoopOverIntro)
+                {
+                    LoopCue = sounds.GetCue(Loop);
+                    LoopCue.Play();
+                }
+                IntroCue = null;
+            }
+        }
+
+        public void Stop()
+        {
+            if (IntroCue != null && IntroCue.IsPlaying)
+            {
+                IntroCue.Stop(AudioStopOptions.AsAuthored);
+            }
+
+            if (OutroCue == null && !string.IsNullOrEmpty(Outro))
+            {
+                OutroCue = sounds.GetCue(Outro);
+                OutroCue.Play();
+            }
+
+            if (LoopCue != null)
+            {
+                LoopCue.Stop(AudioStopOptions.AsAuthored);
+            }
+        }
+
+    }
+
+    public class FancyMusic
+    {
+        public Dictionary<string, MusicTrack> Tracks = new Dictionary<string, MusicTrack>();
+        private string currentTrack = null;
+
+        public FancyMusic()
+        {
+            
+        }
+
+        public void AddTrack(string name, MusicTrack track)
+        {
+            Tracks[name] = track;
+        }
+
+        public void PlayTrack(string name)
+        {
+            if (currentTrack == name)
+            {
+                return;
+            }
+
+            if (currentTrack != null)
+            {
+                Tracks[currentTrack].Stop();
+                currentTrack = null;
+            }
+
+            currentTrack = name;
+            Tracks[currentTrack].Start();
+        }
+
+        public void Update()
+        {
+            if (currentTrack != null)
+            {
+                Tracks[currentTrack].Update();
+            }
+        }
+
+    }
+
     /// <summary>
     /// Manages and creates 3D sounds.
     /// </summary>
     public class SoundManager
     {
+        public static AudioEngine AudioEngine { get; set; }
+        public static SoundBank SoundBank { get; set; }
+        public static WaveBank WaveBank { get; set; }
         public static List<Song> ActiveSongs = new List<Song>();
         public static List<Sound3D> ActiveSounds = new List<Sound3D>();
         public static AudioListener Listener = new AudioListener();
@@ -91,6 +202,8 @@ namespace DwarfCorp
         public static int MaxSounds = 5;
         public static Dictionary<string, int> SoundCounts = new Dictionary<string, int>();
         public static Dictionary<string, SoundEffect> EffectLibrary = new Dictionary<string, SoundEffect>();
+        public static Dictionary<string, Cue> ActiveCues = new Dictionary<string, Cue>();
+        public static FancyMusic CurrentMusic = null;
 
         public static void LoadDefaultSounds()
         {
@@ -109,8 +222,37 @@ namespace DwarfCorp
                 SoundEffect effect = Content.Load<SoundEffect>(name);
                 EffectLibrary[name] = effect;
             }
-            SoundEffect.DistanceScale = 0.01f;
-            SoundEffect.DopplerScale = 0.1f;
+            //SoundEffect.DistanceScale = 0.1f;
+            //SoundEffect.DopplerScale = 0.1f;
+            AudioEngine = new AudioEngine("Content\\Audio\\XACT\\Win\\Sounds.xgs");
+            SoundBank = new SoundBank(AudioEngine, "Content\\Audio\\XACT\\Win\\SoundBank.xsb");
+            WaveBank = new WaveBank(AudioEngine, "Content\\Audio\\XACT\\Win\\WaveBank.xwb");
+
+            CurrentMusic = new FancyMusic();
+            CurrentMusic.AddTrack("main_theme_day", new MusicTrack(SoundBank)
+            {
+                Intro = "music_1_intro",
+                Loop = "music_1_loop"
+            });
+            CurrentMusic.AddTrack("main_theme_night", new MusicTrack(SoundBank)
+            {
+                Intro = "music_1_night_intro",
+                Loop = "music_1_night",
+                PlayLoopOverIntro = true
+            });
+        }
+
+        public static void PlayAmbience(string sound)
+        {
+            Cue cue;
+            if (!ActiveCues.TryGetValue(sound, out cue))
+            {
+                cue = SoundBank.GetCue(sound);
+            }
+            if (!cue.IsPlaying)
+            {
+                cue.Play();
+            }
         }
 
         public static void SetActiveSongs(params string[] songs)
@@ -125,6 +267,7 @@ namespace DwarfCorp
 
         public static void PlayMusic(string name)
         {
+            /*
             if(GameSettings.Default.MasterVolume < 0.001f || GameSettings.Default.MusicVolume < 0.001f)
             {
                 return;
@@ -132,6 +275,7 @@ namespace DwarfCorp
             Song song = Content.Load<Song>(name);
             MediaPlayer.Play(song);
             MediaPlayer.Volume = GameSettings.Default.MasterVolume * GameSettings.Default.MusicVolume;
+             * */
         }
 
         public static Sound3D PlaySound(string name, Vector3 location, bool randomPitch, float volume = 1.0f, float pitch = 0.0f)
@@ -223,8 +367,15 @@ namespace DwarfCorp
 
 
         private static bool once = true;
-        public static void Update(DwarfTime time, Camera camera)
+        public static void Update(DwarfTime time, Camera camera, WorldTime worldTime)
         {
+            AudioEngine.Update();
+            AudioEngine.SetGlobalVariable("TimeofDay", worldTime.GetTimeOfDay());
+            PlayAmbience("grassland_ambience_day");
+            PlayAmbience("grassland_ambience_night");
+            AudioEngine.GetCategory("Ambience").SetVolume(GameSettings.Default.SoundEffectVolume * 0.1f);
+            AudioEngine.GetCategory("Music").SetVolume(GameSettings.Default.MusicVolume);
+            CurrentMusic.Update();
             List<Sound3D> toRemove = new List<Sound3D>();
 
             Matrix viewInverse = Matrix.Invert(camera.ViewMatrix);
@@ -262,6 +413,8 @@ namespace DwarfCorp
                 }
             }
 
+
+            /*
             MediaPlayer.Volume = GameSettings.Default.MasterVolume*GameSettings.Default.MusicVolume * 0.1f;
             if (MediaPlayer.State == MediaState.Stopped)
             {
@@ -275,6 +428,7 @@ namespace DwarfCorp
             {
                 once = true;
             }
+             */
 
             foreach(Sound3D r in toRemove)
             {

@@ -293,12 +293,21 @@ namespace DwarfCorp
                 case Creature.MoveType.Climb:
                 case Creature.MoveType.ClimbWalls:
                     Creature.OverrideCharacterMode = false;
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+                    Creature.CurrentCharacterMode = Creature.CharacterMode.Climbing;
                     Creature.OverrideCharacterMode = true;
                     if (hasNextAction)
                     {
                         transform.Translation = diff * t + currPosition;
                         Agent.Physics.Velocity = diff;
+
+                        if (action.TargetVoxel != null)
+                        {
+                            Agent.Physics.Velocity = (action.Voxel.Position + Vector3.One*0.5f) - currPosition;
+                        }
+                        else if (action.InteractObject != null)
+                        {
+                            Agent.Physics.Velocity = (action.InteractObject.GetComponent<Body>().Position) - currPosition;
+                        }
                     }
                     else
                     {

@@ -42,8 +42,17 @@ namespace Gum.Widgets
                         Root.SetFocus(this);
                 };
 
-            OnGainFocus += (sender) => this.Invalidate();
-            OnLoseFocus += (sender) => this.Invalidate();
+            OnGainFocus += (sender) =>
+            {
+                TextColor = new Vector4(0.5f, 0, 0, 1.0f);
+                this.Invalidate();
+            };
+            OnLoseFocus += (sender) =>
+            {
+                TextColor = new Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+                this.Invalidate();
+            };
+
 
             OnKeyDown += (sender, args) =>
                 {

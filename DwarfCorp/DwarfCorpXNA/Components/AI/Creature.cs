@@ -167,7 +167,8 @@ namespace DwarfCorp
             Sleeping,
             Swimming,
             Flying,
-            Sitting
+            Sitting,
+            Climbing
         }
 
         /// <summary> Describes the way in which a creature can move from one location to another </summary>
@@ -724,7 +725,7 @@ namespace DwarfCorp
         /// Basic Act that causes the creature to wait for the specified time.
         /// Also draws a loading bar above the creature's head when relevant.
         /// </summary>
-        public IEnumerable<Act.Status> HitAndWait(float f, bool loadBar, Vector3 pos)
+        public IEnumerable<Act.Status> HitAndWait(float f, bool loadBar, Func<Vector3> pos)
         {
             var waitTimer = new Timer(f, true);
 
@@ -744,7 +745,7 @@ namespace DwarfCorp
                         waitTimer.CurrentTimeSeconds / waitTimer.TargetTimeSeconds);
                 }
 
-                Attacks[0].PerformNoDamage(this, DwarfTime.LastTime, pos);
+                Attacks[0].PerformNoDamage(this, DwarfTime.LastTime, pos());
                 Physics.Velocity = Vector3.Zero;
                 Sprite.ReloopAnimations(CharacterMode.Attacking);
                 yield return Act.Status.Running;
@@ -938,6 +939,11 @@ namespace DwarfCorp
             public Vector3 Diff { get; set; }
             /// <summary> And object to interact with to get between the start and destination </summary>
             public GameComponent InteractObject { get; set; }
+
+            /// <summary>
+            /// For climbing, this is the voxel the dwarf climbed on.
+            /// </summary>
+            public Voxel TargetVoxel { get; set; }
         }
 
         /// <summary>

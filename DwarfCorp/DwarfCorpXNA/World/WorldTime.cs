@@ -1,4 +1,4 @@
-﻿// WorldTime.cs
+// WorldTime.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -48,6 +48,20 @@ namespace DwarfCorp
     {
         public delegate void DayPassed(DateTime time);
         public event DayPassed NewDay;
+        public event DayPassed NewNight;
+        public event DayPassed Dawn;
+
+        protected virtual void OnDawn(DateTime time)
+        {
+            DayPassed handler = Dawn;
+            if (handler != null) handler(time);
+        }
+
+        protected virtual void OnNewNight(DateTime time)
+        {
+            DayPassed handler = NewNight;
+            if (handler != null) handler(time);
+        }
 
         protected virtual void OnNewDay(DateTime time)
         {
@@ -70,11 +84,22 @@ namespace DwarfCorp
         public void Update(DwarfTime t)
         {
             bool beforeMidnight = CurrentDate.Hour > 0;
+            bool wasDay = IsDay();
             CurrentDate = CurrentDate.Add(new TimeSpan(0, 0, 0, 0, (int)(t.ElapsedGameTime.Milliseconds * Speed)));
 
             if (CurrentDate.Hour == 0 && beforeMidnight)
             {
                 OnNewDay(CurrentDate);
+            }
+
+            if (wasDay && IsNight())
+            {
+                OnNewNight(CurrentDate);
+            }
+
+            if (!wasDay && IsDay())
+            {
+                OnDawn(CurrentDate);
             }
         }
 
@@ -89,6 +114,11 @@ namespace DwarfCorp
             return (GetTotalSeconds() / 60.0f) / 60.0f;
         }
 
+        public float GetTimeOfDay()
+        {
+            return GetTotalHours()/24.0f;
+        }
+
         public float GetSkyLightness()
         {
             return  (float)Math.Cos(GetTotalHours() * 2 * Math.PI / 24.0f ) * 0.5f + 0.5f;
@@ -96,7 +126,7 @@ namespace DwarfCorp
 
         public bool IsNight()
         {
-            return CurrentDate.Hour < 6 || CurrentDate.Hour > 18;
+            return CurrentDate.Hour < 6 || CurrentDate.Hour >= 18;
         }
 
         public bool IsDay()

@@ -17,8 +17,7 @@ namespace DwarfCorp.NewGui
 
         public override void Construct()
         {
-            Border = "border-dark";
-
+            Border = "border-fancy";
             var builder = new StringBuilder();
             builder.AppendLine(String.Format("Place {0}", Data.Name));
             builder.AppendLine(String.Format("Strength: {0}", Data.StartingHealth));
@@ -27,7 +26,6 @@ namespace DwarfCorp.NewGui
             
             Font = "font";
             Text = builder.ToString();
-            TextColor = new Vector4(1, 1, 1, 1);
         }
 
         public bool CanBuild()

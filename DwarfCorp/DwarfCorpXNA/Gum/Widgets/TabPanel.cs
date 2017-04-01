@@ -13,6 +13,12 @@ namespace Gum.Widgets
     {
         private class TabButton : Widget
         {
+            public override void Construct()
+            {
+                Font = "font-hires";
+                base.Construct();
+            }
+
             protected override Mesh Redraw()
             {
                 Rectangle drop;

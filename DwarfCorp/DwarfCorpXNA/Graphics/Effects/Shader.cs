@@ -269,6 +269,12 @@ namespace DwarfCorp
             set { Parameters["xShadowMap"].SetValue(value);}
         }
 
+        public bool EnableWind
+        {
+            get { return Parameters["xEnableWind"].GetValueInt32() > 0; }
+            set { Parameters["xEnableWind"].SetValue(value ? 1 : 0); }
+        }
+
         public class Technique
         {
             public static string Water = "Water";
@@ -313,6 +319,7 @@ namespace DwarfCorp
             FogEnd = 80.0f;
             LightView = Matrix.Identity;
             LightProjection = Matrix.Identity;
+            EnableWind = false;
         }
     }
 }

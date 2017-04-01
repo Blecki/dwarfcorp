@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +18,6 @@ namespace DwarfCorp.NewGui
         public override void Construct()
         {
             Border = "border-fancy";
-
             var builder = new StringBuilder();
             builder.AppendLine(Data.Description);
                 if (!Data.CanBuildAboveGround)
