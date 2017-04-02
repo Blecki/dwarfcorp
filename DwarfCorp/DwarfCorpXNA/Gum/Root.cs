@@ -350,6 +350,7 @@ namespace Gum
                 case InputEvents.MouseClick:
                     {
                         MousePosition = ScreenPointToGuiPoint(new Point(Args.X, Args.Y));
+
                         var newArgs = new InputEventArgs
                         {
                             Alt = Args.Alt,

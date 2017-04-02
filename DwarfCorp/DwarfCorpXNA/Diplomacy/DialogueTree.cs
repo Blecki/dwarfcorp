@@ -34,7 +34,6 @@ namespace DwarfCorp.Dialogue
                     Context.Say(Prompt);
                     Context.ClearOptions();
                     Context.AddOption("Trade", Trade);
-                    Context.AddOption("Declare war", ConfirmDeclareWar);
                     Context.AddOption("What is your opinion of us?", (context) =>
                     {
                         var prompt = "";
@@ -98,6 +97,7 @@ namespace DwarfCorp.Dialogue
                             Context.Transition(RootWithPrompt("We don't like anything in particular."));
                         }
                     });
+                    Context.AddOption("Declare war", ConfirmDeclareWar);
                     Context.AddOption("Leave", (context) =>
                      {
                          Context.Say(Datastructures.SelectRandom(context.Envoy.OwnerFaction.Race.Speech.Farewells));
