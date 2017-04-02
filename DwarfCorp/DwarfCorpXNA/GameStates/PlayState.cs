@@ -1,5 +1,4 @@
 using System.IO;
-using System.Windows.Forms.VisualStyles;
 using DwarfCorp.NewGui;
 using Gum;
 using Gum.Input;
@@ -55,6 +54,7 @@ namespace DwarfCorp.GameStates
         private NewGui.GameSpeedControls GameSpeedControls;
         private Widget PausedWidget;
         private Gum.Widget ResourcePanel;
+<<<<<<< Temporary merge branch 1
         private NewGui.InfoTray InfoTray;
         private NewGui.ToggleTray BrushTray;
 
@@ -235,7 +235,7 @@ namespace DwarfCorp.GameStates
             {
                 // Let old input handle mouse interaction for now. Will eventually need to be replaced.
 
-                if (@event == Gum.InputEvents.MouseDown) // Mouse down but not handled by GUI? Collapse menu.
+                if (@event == Gum.InputEvents.MouseClick) // Mouse down but not handled by GUI? Collapse menu.
                     BottomRightTray.CollapseTrays();
             });
 
