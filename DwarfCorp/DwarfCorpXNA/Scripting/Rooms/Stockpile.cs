@@ -121,14 +121,9 @@ namespace DwarfCorp
 
         public void HandleBoxes()
         {
-            if (Voxels == null)
+            if (Voxels == null || Boxes == null)
             {
-               Voxels = new List<Voxel>();
-            }
-
-            if (Boxes == null)
-            {
-                Boxes = new List<Body>();
+                return;
             }
 
             if(Voxels.Count == 0)

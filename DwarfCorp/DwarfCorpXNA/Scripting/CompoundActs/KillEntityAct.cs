@@ -1,4 +1,4 @@
-﻿// KillEntityAct.cs
+// KillEntityAct.cs
 // 
 //  Modified MIT License (MIT)
 //  

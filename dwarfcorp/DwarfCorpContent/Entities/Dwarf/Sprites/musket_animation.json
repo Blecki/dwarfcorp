@@ -305,6 +305,46 @@
          ],
          "Name" : "SittingBACKWARD",
          "Speed" : [1]
+      },
+      {
+         "Frames" : [
+            [ 4, 4, 0 ],
+            [ 5, 4, 0 ],
+            [ 6, 4, 0 ],
+            [ 5, 4, 0 ]
+         ],
+         "Name" : "ClimbingFORWARD",
+         "Speed" : [0.15]
+      },
+      {
+         "Frames" : [
+            [ 4, 5, 0 ],
+            [ 5, 5, 0 ],
+            [ 6, 5, 0 ],
+            [ 5, 5, 0 ]
+         ],
+         "Name" : "ClimbingLEFT",
+         "Speed" : [0.15]
+      },
+      {
+         "Frames" : [
+            [ 4, 6, 0 ],
+            [ 5, 6, 0 ],
+            [ 6, 6, 0 ],
+            [ 5, 6, 0 ]
+         ],
+         "Name" : "ClimbingRIGHT",
+         "Speed" : [0.15]
+      },
+      {
+         "Frames" : [
+            [ 4, 7, 0 ],
+            [ 5, 7, 0 ],
+            [ 6, 7, 0 ],
+            [ 5, 7, 0 ]
+         ],
+         "Name" : "ClimbingBACKWARD",
+         "Speed" : [0.15]
       }
    ],
    "Layers" : [

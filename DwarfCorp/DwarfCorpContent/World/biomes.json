@@ -74,7 +74,7 @@
     },
     "SoilLayer": {
         "VoxelType" :  "Dirt",
-        "Depth" :  5
+        "Depth" :  3
     },
     "SubsurfaceLayers": [ 
     {
@@ -163,7 +163,7 @@
     },
     "SoilLayer": {
         "VoxelType" :  "Dirt",
-        "Depth" :  5
+        "Depth" :  3
     },
     "SubsurfaceLayers": [ 
     {
@@ -220,7 +220,7 @@
     },
     "SoilLayer": {
         "VoxelType" :  "Dirt",
-        "Depth" :  5
+        "Depth" :  3
     },
     "SubsurfaceLayers": [ 
     {
@@ -252,11 +252,11 @@
     "Fauna": [],
     "GrassLayer": {
         "VoxelType" :  "Snow",
-        "Depth" :  1
+        "Depth" :  3
     },
     "SoilLayer": {
         "VoxelType" :  "Ice",
-        "Depth" :  5
+        "Depth" :  2
     },
     "SubsurfaceLayers": [ 
     {
@@ -335,7 +335,7 @@
     },
     "SoilLayer": {
         "VoxelType" :  "Sand",
-        "Depth" :  5
+        "Depth" :  4
     },
     "SubsurfaceLayers": [ 
     {
@@ -416,7 +416,7 @@
     },
     "SoilLayer": {
         "VoxelType" :  "Dirt",
-        "Depth" :  5
+        "Depth" :  2
     },
     "SubsurfaceLayers": [ 
     {

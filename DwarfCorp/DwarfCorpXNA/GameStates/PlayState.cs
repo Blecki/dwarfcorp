@@ -53,6 +53,7 @@ namespace DwarfCorp.GameStates
         private NewGui.MinimapRenderer MinimapRenderer;
         private NewGui.GameSpeedControls GameSpeedControls;
         private Widget PausedWidget;
+        private Gum.Widget ResourcePanel;
         private NewGui.InfoTray InfoTray;
         private NewGui.ToggleTray BrushTray;
 
@@ -472,7 +473,7 @@ namespace DwarfCorp.GameStates
             GuiRoot.RootItem.AddChild(new NewGui.ResourcePanel
             {
                 AutoLayout = AutoLayout.FloatTop,
-                MinimumSize = new Point(256, 128),
+                MinimumSize = new Point(496, 128),
                 Master = Master
             });
 

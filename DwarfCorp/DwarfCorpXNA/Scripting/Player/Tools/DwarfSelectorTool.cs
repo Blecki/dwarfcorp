@@ -1,4 +1,4 @@
-﻿// DwarfSelectorTool.cs
+// DwarfSelectorTool.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -99,7 +99,7 @@ namespace DwarfCorp
                 }
                 minion.Blackboard.SetData("MoveTarget", vox);
                 minion.CurrentTask = new GoToVoxelAct("MoveTarget", PlanAct.PlanType.Adjacent, minion).AsTask();
-                minion.CurrentTask.AutoRetry = false;
+                minion.CurrentTask.AutoRetry = true;
             }
             OnConfirm(Player.SelectedMinions);
 

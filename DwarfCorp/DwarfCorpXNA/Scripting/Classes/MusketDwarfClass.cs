@@ -229,7 +229,7 @@ namespace DwarfCorp
         {
             Attacks = new List<Attack>
             {
-                new Attack("Musket", 20.0f, 2.0f, 20.0f, ContentPaths.Audio.hit, ContentPaths.Effects.explode)
+                new Attack("Musket", 20.0f, 2.0f, 5.0f, ContentPaths.Audio.hit, ContentPaths.Effects.explode)
                 {
                     Mode = Attack.AttackMode.Ranged,
                     LaunchSpeed = 30.0f,

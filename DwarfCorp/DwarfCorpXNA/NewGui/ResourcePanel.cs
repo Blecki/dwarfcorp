@@ -27,7 +27,7 @@ namespace DwarfCorp.NewGui
                 {
                     var resourceTemplate = ResourceLibrary.GetResourceByName(resource.Key);
 
-                    var icon = existingResourceEntries.FirstOrDefault(w => (w.Tag as String) == resource.Key);
+                    var icon = existingResourceEntries.FirstOrDefault(w => (w.Background.Tile) == resourceTemplate.NewGuiSprite);
                     if (icon == null)
                     {
                         icon = AddChild(new Gum.Widget
@@ -44,8 +44,10 @@ namespace DwarfCorp.NewGui
                             TextColor = new Vector4(1,1,1,1)
                         });                        
                     }
-                    else
+                    else if (!Children.Contains(icon))
+                    {
                         AddChild(icon);
+                    }
 
                     icon.Text = resource.Value.NumResources.ToString();
                     icon.Invalidate();                    
