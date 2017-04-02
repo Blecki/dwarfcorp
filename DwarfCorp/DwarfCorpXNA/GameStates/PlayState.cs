@@ -54,7 +54,6 @@ namespace DwarfCorp.GameStates
         private NewGui.GameSpeedControls GameSpeedControls;
         private Widget PausedWidget;
         private Gum.Widget ResourcePanel;
-<<<<<<< Temporary merge branch 1
         private NewGui.InfoTray InfoTray;
         private NewGui.ToggleTray BrushTray;
 
