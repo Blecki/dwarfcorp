@@ -284,6 +284,7 @@ namespace DwarfCorp
                     }
                     catch (NoSuitableGraphicsDeviceException exception)
                     {
+                        System.Console.WriteLine(exception.ToString());
                         HardwareInstancingSupported = false;
                     }
                 }
@@ -330,6 +331,7 @@ namespace DwarfCorp
                 }
                 catch (NoSuitableGraphicsDeviceException exception)
                 {
+                    System.Console.WriteLine(exception.ToString());
                     HardwareInstancingSupported = false;
                 }
             }

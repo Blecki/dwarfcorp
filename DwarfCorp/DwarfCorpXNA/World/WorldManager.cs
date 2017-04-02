@@ -1253,7 +1253,7 @@ namespace DwarfCorp
 
             Master.Update(Game, gameTime);
             // If not paused, we want to just update the rest of the game.
-            if (!Paused)
+            //if (!Paused)
             {
                 Time.Update(gameTime);
 

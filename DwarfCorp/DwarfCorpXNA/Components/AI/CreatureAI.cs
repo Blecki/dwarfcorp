@@ -71,7 +71,6 @@ namespace DwarfCorp
             Blackboard = new Blackboard();
             Creature = creature;
             CurrentPath = null;
-            DrawPath = false;
             PlannerTimer = new Timer(0.1f, false);
             LocalControlTimeout = new Timer(5, false, Timer.TimerMode.Real);
             WanderTimer = new Timer(1, false);
@@ -95,7 +94,7 @@ namespace DwarfCorp
         /// <summary> The current path of voxels the AI is following </summary>
         public List<Voxel> CurrentPath { get; set; }
         /// <summary> If this is set to true, the creature will draw the path it is following </summary>
-        public bool DrawPath { get; set; }
+        public bool DrawPath { get { return GameSettings.Default.DrawPaths; }}
         /// <summary> The gather manager handles gathering/building tasks </summary>
         public GatherManager GatherManager { get; set; }
         /// <summary> When this timer times out, the creature will awake from Idle mode and attempt to find something to do </summary>

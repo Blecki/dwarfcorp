@@ -1,4 +1,4 @@
-﻿// Easing.cs
+// Easing.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -414,6 +414,7 @@ namespace DwarfCorp
             }
 
         }
+
 
         /// <summary>
         /// Easing equation function for a cubic (t^3) easing in/out: 

@@ -48,7 +48,7 @@ namespace DwarfCorp.GameStates
         private Gum.Widget StockLabel;
         private Gum.Widget LevelLabel;
         private NewGui.ToolTray.Tray BottomRightTray;
-        //private Gum.Widget TimeLabel;
+        private Gum.Widget TimeLabel;
         private Gum.Widget PausePanel;
         private NewGui.MinimapFrame MinimapFrame;
         private NewGui.MinimapRenderer MinimapRenderer;
@@ -243,14 +243,14 @@ namespace DwarfCorp.GameStates
             GUI.Update(gameTime);
             Input.Update();
 
-            /*
+            
             #region Update time label
             TimeLabel.Text = String.Format("{0} {1}",
                 World.Time.CurrentDate.ToShortDateString(),
                 World.Time.CurrentDate.ToShortTimeString());
             TimeLabel.Invalidate();
             #endregion
-            */
+            
 
             #region Update top left panel
             MoneyLabel.Text = Master.Faction.Economy.CurrentMoney.ToString();
@@ -478,18 +478,23 @@ namespace DwarfCorp.GameStates
                 Master = Master
             });
 
-            /*
+            
             #region Setup time display
             TimeLabel = GuiRoot.RootItem.AddChild(new Gum.Widget
                 {
-                    AutoLayout = global::Gum.AutoLayout.FloatTop,
+                    AutoLayout = global::Gum.AutoLayout.FloatBottomRight,
                     TextHorizontalAlign = global::Gum.HorizontalAlign.Center,
                     MinimumSize = new Point(128, 20),
-                    Font = "outline-font",
-                    TextColor = new Vector4(1,1,1,1)
+                    Font = "font",
+                    TextColor = new Vector4(1,1,1,1),
+                    OnLayout = (sender) =>
+                    {
+                        sender.Rect.X -= 8;
+                        sender.Rect.Y += 8;
+                    },
                 });
             #endregion
-            */
+            
 
             #region Minimap
 
@@ -548,7 +553,7 @@ namespace DwarfCorp.GameStates
                 OnLayout = (sender) =>
                 {
                     sender.Rect.X -= 8;
-                    sender.Rect.Y -= 8;
+                    sender.Rect.Y -= 16;
                 },
                 OnSpeedChanged = (sender, speed) =>
                 {
@@ -1398,6 +1403,8 @@ namespace DwarfCorp.GameStates
         public void Destroy()
         {
             InputManager.KeyReleasedCallback -= TemporaryKeyPressHandler;
+            InputManager.KeyReleasedCallback -= HandleKeyPress;
+
             Input.Destroy();
         }
 

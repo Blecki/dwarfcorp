@@ -378,11 +378,11 @@ namespace DwarfCorp
             CurrentMusic.Update();
             List<Sound3D> toRemove = new List<Sound3D>();
 
-            Matrix viewInverse = Matrix.Invert(camera.ViewMatrix);
             Listener.Position = camera.Position;
-            Listener.Up = viewInverse.Up;
+            Listener.Up = Vector3.Up;
             Listener.Velocity = camera.Velocity;
-            Listener.Forward = viewInverse.Forward;
+            Listener.Forward = (camera.Target - camera.Position);
+            Listener.Forward.Normalize();
           
 
             foreach(Sound3D instance in ActiveSounds)
