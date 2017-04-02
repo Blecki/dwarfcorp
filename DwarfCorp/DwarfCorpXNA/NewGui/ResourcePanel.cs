@@ -32,7 +32,10 @@ namespace DwarfCorp.NewGui
                     {
                         icon = AddChild(new Gum.Widget
                         {
-                            Background = new Gum.TileReference("resources", resourceTemplate.NewGuiSprite),
+                            Background = 
+                                resourceTemplate.Tags.Contains(DwarfCorp.Resource.ResourceTags.Craft) ?
+                                new TileReference("crafts", resourceTemplate.NewGuiSprite) :
+                                new TileReference("resources", resourceTemplate.NewGuiSprite),
                             Tooltip = string.Format("{0} - {1}",
                                     resourceTemplate.ResourceName,
                                     resourceTemplate.Description),
