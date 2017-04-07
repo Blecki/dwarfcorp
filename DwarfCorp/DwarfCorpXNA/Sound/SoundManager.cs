@@ -273,6 +273,7 @@ namespace DwarfCorp
 
         public static void PlayMusic(string name)
         {
+            AudioEngine.GetCategory("Music").SetVolume(GameSettings.Default.MusicVolume * GameSettings.Default.MasterVolume);
             CurrentMusic.PlayTrack(name);
             /*
             if(GameSettings.Default.MasterVolume < 0.001f || GameSettings.Default.MusicVolume < 0.001f)
@@ -382,7 +383,7 @@ namespace DwarfCorp
                 AudioEngine.SetGlobalVariable("TimeofDay", worldTime.GetTimeOfDay());
             }
             AudioEngine.GetCategory("Ambience").SetVolume(GameSettings.Default.SoundEffectVolume * 0.1f);
-            AudioEngine.GetCategory("Music").SetVolume(GameSettings.Default.MusicVolume);
+            AudioEngine.GetCategory("Music").SetVolume(GameSettings.Default.MusicVolume * GameSettings.Default.MasterVolume);
             CurrentMusic.Update();
             List<Sound3D> toRemove = new List<Sound3D>();
 

@@ -168,8 +168,8 @@ namespace DwarfCorp.GameStates
                 InputManager.KeyReleasedCallback += TemporaryKeyPressHandler;
                 IsInitialized = true;
                 SoundManager.CurrentMusic.PlayTrack("main_theme_day");
-                World.Time.Dawn += time => SoundManager.CurrentMusic.PlayTrack("main_theme_day");
-                World.Time.NewNight += time => SoundManager.CurrentMusic.PlayTrack("main_theme_night");
+                World.Time.Dawn += time => SoundManager.PlayMusic("main_theme_day");
+                World.Time.NewNight += time => SoundManager.PlayMusic("main_theme_night");
             }
 
             World.Unpause();
@@ -1350,14 +1350,16 @@ namespace DwarfCorp.GameStates
         {
             Menu.AddChild(new Gum.Widget
             {
-                AutoLayout = global::Gum.AutoLayout.DockTop,
+                AutoLayout = global::Gum.AutoLayout.DockBottom,
                 Border = "border-thin",
+                Font = "font-hires",
                 Text = Name,
                 OnClick = OnClick,
                 Tooltip = Tooltip,
                 TextHorizontalAlign = global::Gum.HorizontalAlign.Center,
                 TextVerticalAlign = global::Gum.VerticalAlign.Center,
-                TextSize = 2
+                HoverTextColor = Color.DarkRed.ToVector4(),
+                ChangeColorOnHover = true
             });
         }
 
@@ -1375,7 +1377,8 @@ namespace DwarfCorp.GameStates
                 Text = "- Paused -",
                 InteriorMargin = new Gum.Margin(12, 0, 0, 0),
                 Padding = new Gum.Margin(2, 2, 2, 2),
-                OnClose = (sender) => PausePanel = null
+                OnClose = (sender) => PausePanel = null,
+                Font = "font-hires"
             };
 
             GuiRoot.ConstructWidget(PausePanel);
@@ -1387,9 +1390,7 @@ namespace DwarfCorp.GameStates
                 PausePanel = null;
             });
 
-            MakeMenuItem(PausePanel, "Options", "", (sender, args) => StateManager.PushState(new OptionsState(Game, StateManager)));
-
-            MakeMenuItem(PausePanel, "New Options", "", (sender, args) =>
+            MakeMenuItem(PausePanel, "Options", "", (sender, args) =>
             {
                 var state = new NewOptionsState(Game, StateManager)
                 {

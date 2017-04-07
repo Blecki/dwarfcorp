@@ -127,7 +127,7 @@ namespace DwarfCorp
 
             Player.VoxSelector.Enabled = true;
 
-            if (Player.VoxSelector.VoxelUnderMouse != null)
+            if (Player.VoxSelector.VoxelUnderMouse != null && !Player.World.IsMouseOverGui)
             {
                 Player.World.ShowTooltip(Player.VoxSelector.VoxelUnderMouse.IsExplored ? Player.VoxSelector.VoxelUnderMouse.TypeName : "???");
             }
