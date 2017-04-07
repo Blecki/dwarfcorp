@@ -440,7 +440,7 @@ namespace Gum
                 MousePointer.Update((float)Time.ElapsedGameTime.TotalSeconds);
 
             // Check to see if tooltip should be displayed.
-            if (HoverItem != null && !String.IsNullOrEmpty(HoverItem.Tooltip))
+            if (TooltipItem == null && HoverItem != null && !String.IsNullOrEmpty(HoverItem.Tooltip))
             {
                 var hoverTime = DateTime.Now - MouseMotionTime;
                 if (hoverTime.TotalSeconds > SecondsBeforeTooltip)

@@ -88,11 +88,14 @@ namespace DwarfCorp.NewGui
                     foreach (var child in sender.Parent.EnumerateChildren().Where(c => c is FramedIcon)
                     .SelectMany(c => c.EnumerateChildren()))
                     {
-                        child.Hidden = true;
-                        child.Invalidate();
+                        if (!Object.ReferenceEquals(child, ExpansionChild))
+                        {
+                            child.Hidden = true;
+                            child.Invalidate();
+                        }
                     }
 
-                    if (ExpansionChild != null && (ExpandChildWhenDisabled || (sender as FramedIcon).Enabled))
+                    if (ExpansionChild != null && (ExpandChildWhenDisabled || (sender as FramedIcon).Enabled) && ExpansionChild.Hidden)
                     {
                         ExpansionChild.Hidden = false;
                         Root.SafeCall(ExpansionChild.OnShown, ExpansionChild);

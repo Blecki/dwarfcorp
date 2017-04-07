@@ -122,8 +122,8 @@ namespace DwarfCorp.NewGui
                         rightLineItem.OnClick = (_sender, _args) =>
                         {
                             var _toMove = 1;
-                            if (args.Control) _toMove = lambdaResource.NumResources;
-                            if (args.Shift) _toMove = Math.Min(5, lambdaResource.NumResources);
+                            if (_args.Control) _toMove = existingEntry.NumResources;
+                            if (_args.Shift) _toMove = Math.Min(5, existingEntry.NumResources);
                             existingEntry.NumResources -= _toMove;
 
                             if (existingEntry.NumResources == 0)
