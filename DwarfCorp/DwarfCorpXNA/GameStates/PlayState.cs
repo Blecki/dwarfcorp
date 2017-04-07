@@ -1094,6 +1094,10 @@ namespace DwarfCorp.GameStates
                                                             new TileReference("resources",
                                                                 resource.ResourceType.GetResource().NewGuiSprite),
                                                         Tooltip = "Plant " + resource.ResourceType,
+                                                        Text = resource.NumResources.ToString(),
+                                                        TextHorizontalAlign = HorizontalAlign.Right,
+                                                        TextVerticalAlign = VerticalAlign.Bottom,
+                                                        TextColor = Color.White.ToVector4(),
                                                         OnClick = (sender, args) =>
                                                         {
                                                             World.ShowToolPopup("Click and drag to plant " +

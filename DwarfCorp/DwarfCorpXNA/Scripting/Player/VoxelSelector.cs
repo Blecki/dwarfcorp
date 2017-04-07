@@ -588,28 +588,13 @@ namespace DwarfCorp
                     yield return new Vector3(maxX + 0.5f, y + 0.5f, z + 0.5f);
                 }
                 // yz planes
-                for (int x = minX; x <= maxX; x++)
+                for (int x = minX + 1; x < maxX; x++)
                 {
                     yield return new Vector3(x + 0.5f, y + 0.5f, minZ + 0.5f);
                     yield return new Vector3(x + 0.5f, y + 0.5f, maxZ + 0.5f);
                 }
             }
 
-
-            /*
-            if (maxY - minY > 1)
-            {
-                for (int x = minX; x < maxX; x++)
-                {
-                    // xz planes
-                    for (int z = minZ; z < maxZ; z++)
-                    {
-                        yield return new Vector3(x + 0.5f, minY + 0.5f, z + 0.5f);
-                        yield return new Vector3(x + 0.5f, maxY + 0.5f, z + 0.5f);
-                    }
-                }
-            }
-             */
         }
 
         public void DraggedCallback(List<Voxel> voxels, InputManager.MouseButton button)

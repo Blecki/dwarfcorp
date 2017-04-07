@@ -208,6 +208,23 @@ namespace Gum
 
         public void ShowTooltip(Point Where, String Tip)
         {
+            if (TooltipItem != null && TooltipItem.Text == Tip)
+            {
+                //TODO (Mklingen): handle the case where the tooltip is the same,
+                // but the widget has moved.
+
+                var myBestSize = TooltipItem.GetBestSize();
+                Rectangle myRect = new Rectangle(
+                    // ?? Why are we assuming the tooltip is being opened at the mouse position?
+                    Where.X + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2,
+                    Where.Y + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2, myBestSize.X, myBestSize.Y);
+
+                if (myRect == TooltipItem.Rect)
+                {
+                    return;
+                }
+            }
+
             var item = ConstructWidget(new Widget
             {
                 Text = Tip,
