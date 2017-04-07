@@ -31,7 +31,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.IO;
 using System.Threading;
+using ContentGenerator;
 using DwarfCorp.GameStates;
 using Gum;
 using Microsoft.Xna.Framework;
@@ -56,6 +58,8 @@ namespace DwarfCorp
         public static Gum.RenderData GumSkin;
         public DwarfGame()
         {
+            //string code = ContentPathGenerator.GenerateCode();
+            //Console.Out.Write(code);
             GameState.Game = this;
             Content.RootDirectory = "Content";
             StateManager = new GameStateManager(this);

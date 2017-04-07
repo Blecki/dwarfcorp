@@ -504,7 +504,7 @@ namespace DwarfCorp
                             Stats.FullName, Stats.CurrentLevel.Name),
                         String.Format("{0} can now be promoted to {1}.",
                             Stats.FullName, Stats.CurrentClass.Levels[Stats.LevelIndex + 1].Name),
-                        () => EconomyState.PushEconomyState(Manager.World), ContentPaths.Audio.Oscar.gui_positive_generic);
+                        () => EconomyState.PushEconomyState(Manager.World), ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
                 }
             }
             XPEvents.Clear();
@@ -664,7 +664,17 @@ namespace DwarfCorp
         {
             if (!HasThought(type))
             {
-                AddThought(Thought.CreateStandardThought(type, Manager.World.Time.CurrentDate), true);
+                var thought = Thought.CreateStandardThought(type, Manager.World.Time.CurrentDate);
+                AddThought(thought, true);
+
+                if (thought.HappinessModifier > 0.01)
+                {
+                    Creature.NoiseMaker.MakeNoise("Pleased", Position, true);
+                }
+                else
+                {
+                    Creature.NoiseMaker.MakeNoise("Tantrum", Position, true);
+                }
             }
         }
 
@@ -1010,7 +1020,7 @@ namespace DwarfCorp
                     new ActionStats
                     {
                         CanMove = true,
-                        Cost = 5.0f,
+                        Cost = 30.0f,
                         Speed = 1.0f
                     }
                 },

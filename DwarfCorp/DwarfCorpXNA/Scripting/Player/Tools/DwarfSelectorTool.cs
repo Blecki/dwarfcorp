@@ -99,7 +99,7 @@ namespace DwarfCorp
                 }
                 minion.Blackboard.SetData("MoveTarget", vox);
                 minion.CurrentTask = new GoToVoxelAct("MoveTarget", PlanAct.PlanType.Adjacent, minion).AsTask();
-                minion.CurrentTask.AutoRetry = true;
+                minion.CurrentTask.AutoRetry = false;
             }
             OnConfirm(Player.SelectedMinions);
 

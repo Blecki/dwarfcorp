@@ -124,7 +124,7 @@ namespace DwarfCorp.GameStates
             IsInitialized = true;
 
             DwarfTime.LastTime.Speed = 1.0f;
-
+            SoundManager.PlayMusic("menu_music");
             base.OnEnter();
         }
 
@@ -140,7 +140,7 @@ namespace DwarfCorp.GameStates
             }
 
             GuiRoot.Update(gameTime.ToGameTime());
-
+            SoundManager.Update(gameTime, null, null);
             base.Update(gameTime);
         }
 

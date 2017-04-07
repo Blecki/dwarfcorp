@@ -265,6 +265,7 @@ namespace DwarfCorp
                     }
                     break;
                 case Creature.MoveType.Swim:
+                    Creature.NoiseMaker.MakeNoise("Swim", Agent.Position, true);
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Swimming;
                     if (hasNextAction)
@@ -278,6 +279,10 @@ namespace DwarfCorp
                     }
                     break;
                 case Creature.MoveType.Jump:
+                    if (t < 0.5f)
+                    { 
+                        Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
+                    }
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = Creature.Physics.Velocity.Y > 0
                         ? Creature.CharacterMode.Jumping
@@ -312,6 +317,10 @@ namespace DwarfCorp
                     break;
                 case Creature.MoveType.Climb:
                 case Creature.MoveType.ClimbWalls:
+                    if ((int) (t*100)%25 == 0)
+                    {
+                        Creature.NoiseMaker.MakeNoise("Climb", Agent.Position, false);
+                    }
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Climbing;
                     Creature.OverrideCharacterMode = true;

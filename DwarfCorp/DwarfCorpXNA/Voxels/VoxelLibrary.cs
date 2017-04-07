@@ -126,14 +126,14 @@ namespace DwarfCorp
                 IsBuildable = false
             };
 
-            SoundSource dirtPicks = SoundSource.Create(ContentPaths.Audio.Oscar.pick_dirt_1,
-                ContentPaths.Audio.Oscar.pick_dirt_2, ContentPaths.Audio.Oscar.pick_dirt_3);
+            SoundSource dirtPicks = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_ic_dwarf_pick_dirt_1,
+                ContentPaths.Audio.Oscar.sfx_ic_dwarf_pick_dirt_2, ContentPaths.Audio.Oscar.sfx_ic_dwarf_pick_dirt_3);
 
-            SoundSource stonePicks = SoundSource.Create(ContentPaths.Audio.Oscar.pick_stone_1,
-                ContentPaths.Audio.Oscar.pick_stone_2, ContentPaths.Audio.Oscar.pick_stone_3);
+            SoundSource stonePicks = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_ic_dwarf_pick_stone_1,
+                ContentPaths.Audio.Oscar.sfx_ic_dwarf_pick_stone_2, ContentPaths.Audio.Oscar.sfx_ic_dwarf_pick_stone_3);
 
-            SoundSource woodPicks = SoundSource.Create(ContentPaths.Audio.Oscar.pick_wood_1,
-                ContentPaths.Audio.Oscar.pick_wood_2, ContentPaths.Audio.Oscar.pick_wood_3);
+            SoundSource woodPicks = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_ic_dwarf_pick_wood_1,
+                ContentPaths.Audio.Oscar.sfx_ic_dwarf_pick_wood_2, ContentPaths.Audio.Oscar.sfx_ic_dwarf_pick_wood_3);
 
             VoxelType tilledSoil = new VoxelType
             {
@@ -145,7 +145,7 @@ namespace DwarfCorp
                 ParticleType = "dirt_particle",
                 IsSoil = true,
                 IsSurface = true,
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_dirt_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_dirt_destroy),
                 HitSound = dirtPicks
             };
             RegisterType(tilledSoil, tilledSoilCube);
@@ -159,7 +159,7 @@ namespace DwarfCorp
                 StartingHealth = 20,
                 CanRamp = false,
                 ParticleType = "stone_particle",
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_stone_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_stone_destroy),
                 HitSound = stonePicks
             };
             RegisterType(brownTile, brownTileCube);
@@ -173,7 +173,7 @@ namespace DwarfCorp
                 StartingHealth = 20,
                 CanRamp = false,
                 ParticleType = "stone_particle",
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_stone_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_stone_destroy),
                 HitSound = stonePicks
             };
             RegisterType(blueTileFloor, blueTileCube);
@@ -188,7 +188,7 @@ namespace DwarfCorp
                 CanRamp = false,
                 ParticleType = "stone_particle",
                 HasTransitionTextures = true,
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_stone_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_stone_destroy),
                 HitSound = stonePicks
             };
             RegisterType(cobblestoneFloor, cobblestoneCube);
@@ -203,7 +203,7 @@ namespace DwarfCorp
                 IsBuildable = false,
                 ParticleType = "stone_particle",
                 HasTransitionTextures = true,
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_wood_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_wood_destroy),
                 HitSound = woodPicks
             };
             RegisterType(stockpileType, plankCube);
@@ -222,7 +222,7 @@ namespace DwarfCorp
                 IsBuildable = true,
                 ParticleType = "stone_particle",
                 HasTransitionTextures = true,
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_wood_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_wood_destroy),
                 HitSound = woodPicks
             };
 
@@ -259,7 +259,7 @@ namespace DwarfCorp
                 RampSize = 0.5f,
                 IsBuildable = true,
                 ParticleType = "stone_particle",
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_wood_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_wood_destroy),
                 HitSound = woodPicks
             };
 
@@ -277,7 +277,7 @@ namespace DwarfCorp
                 HasTransitionTextures = true,
                 IsSoil = true,
                 IsSurface = true,
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_dirt_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_dirt_destroy),
                 HitSound = dirtPicks
             };
 
@@ -298,7 +298,7 @@ namespace DwarfCorp
                 ParticleType = "dirt_particle",
                 HasTransitionTextures = true,
                 IsSurface = true,
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_dirt_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_dirt_destroy),
                 HitSound = dirtPicks
             };
 
@@ -316,7 +316,7 @@ namespace DwarfCorp
                 HasTransitionTextures = false,
                 IsSurface = true,
                 IsSoil = false,
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_snow_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_snow_destroy),
                 HitSound = dirtPicks
             };
             RegisterType(snowType, snowCube);
@@ -332,7 +332,7 @@ namespace DwarfCorp
                 HasTransitionTextures = false,
                 IsSurface = true,
                 IsSoil = false,
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_snow_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_snow_destroy),
                 HitSound = dirtPicks
             };
             RegisterType(iceType, iceCube);
@@ -352,7 +352,7 @@ namespace DwarfCorp
                 HasTransitionTextures = true,
                 IsSurface = true,
                 IsSoil = true,
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_dirt_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_dirt_destroy),
                 HitSound = dirtPicks
             };
 
@@ -372,7 +372,7 @@ namespace DwarfCorp
                 HasTransitionTextures = true,
                 IsSurface = true,
                 IsSoil = true,
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_dirt_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_dirt_destroy),
                 HitSound = dirtPicks
             };
 
@@ -393,7 +393,7 @@ namespace DwarfCorp
                 HasTransitionTextures = true,
                 IsSurface = false,
                 IsSoil = true,
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_dirt_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_dirt_destroy),
                 HitSound = dirtPicks
             };
 
@@ -412,7 +412,7 @@ namespace DwarfCorp
                 IsBuildable = true,
                 ParticleType = "dirt_particle",
                 IsSoil = true,
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_dirt_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_dirt_destroy),
                 HitSound = dirtPicks
             };
 
@@ -425,7 +425,7 @@ namespace DwarfCorp
                 StartingHealth = 40,
                 IsBuildable = true,
                 ParticleType = "stone_particle",
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_stone_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_stone_destroy),
                 HitSound = stonePicks
             };
 
@@ -435,7 +435,7 @@ namespace DwarfCorp
                 StartingHealth = 255,
                 IsBuildable = false,
                 IsInvincible = true,
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_stone_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_stone_destroy),
                 HitSound = stonePicks
             };
 
@@ -459,7 +459,7 @@ namespace DwarfCorp
                 IsSurface = true,
                 ResourceToRelease = ResourceLibrary.ResourceType.Sand,
                 ProbabilityOfRelease = 0.5f,
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_sand_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_sand_destroy),
                 HitSound = dirtPicks
             };
 
@@ -480,7 +480,7 @@ namespace DwarfCorp
                 MinSpawnHeight = 8,
                 MaxSpawnHeight = 40,
                 SpawnProbability = 0.99f,
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_metal_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_metal_destroy),
                 HitSound = stonePicks
             };
 
@@ -501,7 +501,7 @@ namespace DwarfCorp
                 SpawnProbability = 0.3f,
                 Rarity = 0.05f,
                 SpawnOnSurface = true,
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_metal_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_metal_destroy),
                 HitSound = stonePicks
             };
 
@@ -521,7 +521,7 @@ namespace DwarfCorp
                 MinSpawnHeight = 0,
                 MaxSpawnHeight = 20,
                 SpawnProbability = 0.99f,
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_metal_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_metal_destroy),
                 HitSound = stonePicks
             };
 
@@ -540,7 +540,7 @@ namespace DwarfCorp
                 MaxSpawnHeight = 18,
                 SpawnProbability = 0.8f,
                 Rarity = 0.9f,
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_metal_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_metal_destroy),
                 HitSound = stonePicks
             };
 
@@ -559,7 +559,7 @@ namespace DwarfCorp
                 MaxSpawnHeight = 18,
                 SpawnProbability = 0.8f,
                 Rarity = 0.9f,
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_metal_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_metal_destroy),
                 HitSound = stonePicks
             };
 
@@ -579,7 +579,7 @@ namespace DwarfCorp
                 MaxSpawnHeight = 18,
                 SpawnProbability = 0.8f,
                 Rarity = 0.9f,
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_metal_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_metal_destroy),
                 HitSound = stonePicks
             };
 
@@ -598,7 +598,7 @@ namespace DwarfCorp
                 MaxSpawnHeight = 18,
                 SpawnProbability = 0.8f,
                 Rarity = 0.9f,
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_metal_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_metal_destroy),
                 HitSound = stonePicks
             };
 
@@ -617,7 +617,7 @@ namespace DwarfCorp
                 MaxSpawnHeight = 18,
                 SpawnProbability = 0.8f,
                 Rarity = 0.9f,
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_metal_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_metal_destroy),
                 HitSound = stonePicks
             };
 
@@ -636,7 +636,7 @@ namespace DwarfCorp
                 MaxSpawnHeight = 18,
                 SpawnProbability = 0.8f,
                 Rarity = 0.9f,
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_metal_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_metal_destroy),
                 HitSound = stonePicks
             };
 
@@ -656,7 +656,7 @@ namespace DwarfCorp
                 MinSpawnHeight = 0,
                 MaxSpawnHeight = 14,
                 SpawnProbability = 0.99f,
-                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.voxel_metal_destroy),
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_metal_destroy),
                 HitSound = stonePicks
             };
 

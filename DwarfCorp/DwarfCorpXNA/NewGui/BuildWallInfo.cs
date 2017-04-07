@@ -26,6 +26,7 @@ namespace DwarfCorp.NewGui
             
             Font = "font";
             Text = builder.ToString();
+            TextColor = Color.Black.ToVector4();
         }
 
         public bool CanBuild()

@@ -120,16 +120,6 @@ namespace DwarfCorp
 
 
 
-            NoiseMaker.Noises["Chew"] = new List<string>
-            {
-                ContentPaths.Audio.chew
-            };
-
-            NoiseMaker.Noises["Jump"] = new List<string>
-            {
-                ContentPaths.Audio.jump
-            };
-
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
             //Stats.LastName = TextGenerator.GenerateRandom("$goblinfamily");
             Stats.Size = 4;

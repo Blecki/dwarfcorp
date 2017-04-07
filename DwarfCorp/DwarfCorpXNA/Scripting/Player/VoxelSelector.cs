@@ -141,11 +141,11 @@ namespace DwarfCorp
             DeleteColor = Color.Red;
             BoxYOffset = 0;
             LastMouseWheel = 0;
-            ClickSound = SoundSource.Create(ContentPaths.Audio.Oscar.gui_change_selection);
+            ClickSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_gui_change_selection);
             ClickSound.RandomPitch = false;
-            DragSound = SoundSource.Create(ContentPaths.Audio.Oscar.gui_click_voxel);
+            DragSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_gui_click_voxel);
             DragSound.RandomPitch = false;
-            ReleaseSound = SoundSource.Create(ContentPaths.Audio.Oscar.gui_confirm_selection);
+            ReleaseSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection);
             ReleaseSound.RandomPitch = false;
         }
 
@@ -681,18 +681,6 @@ namespace DwarfCorp
             if (v == null || v.Chunk == null)
             {
                 return null;
-            }
-
-            if (!v.IsEmpty)
-            {
-                if (Keyboard.GetState().IsKeyDown(ControlSettings.Mappings.SliceSelected))
-                {
-                    Chunks.ChunkData.SetMaxViewingLevel(v.Position.Y, ChunkManager.SliceMode.Y);
-                }
-                else if (Keyboard.GetState().IsKeyDown(ControlSettings.Mappings.Unslice))
-                {
-                    Chunks.ChunkData.SetMaxViewingLevel(Chunks.ChunkData.ChunkSizeY, ChunkManager.SliceMode.Y);
-                }
             }
 
             switch (SelectionType)

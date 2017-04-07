@@ -168,7 +168,7 @@ namespace DwarfCorp
 
             if (!silent)
             {
-                World.MakeAnnouncement("Built room!", String.Format("{0} was built", ToBuild.ID), null,  ContentPaths.Audio.Oscar.gui_positive_generic);
+                World.MakeAnnouncement("Built room!", String.Format("{0} was built", ToBuild.ID), null,  ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
             }
 
             foreach (GameComponent fence in WorkObjects)

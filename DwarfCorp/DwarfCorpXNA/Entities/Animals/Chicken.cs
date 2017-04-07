@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -163,7 +163,7 @@ namespace DwarfCorp
             };
 
 
-            NoiseMaker.Noises.Add("Hurt", new List<string>() { ContentPaths.Audio.bunny });
+            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.bunny };
 
         }
     }

@@ -228,6 +228,8 @@ namespace DwarfCorp.GameStates
                 return;
             }
 
+            SoundManager.PlayAmbience("grassland_ambience_day");
+            SoundManager.PlayAmbience("grassland_ambience_night");
             // Needs to run before old input so tools work
             // Update new input system.
             DwarfGame.GumInput.FireActions(GuiRoot, (@event, args) =>
@@ -697,8 +699,11 @@ namespace DwarfCorp.GameStates
                     #region Build room tool
                     new NewGui.ToolTray.Icon
                     {
-                        Icon = new Gum.TileReference("tool-icons", 2),
+                        TextColor = Vector4.One,
+                        Text = "Room",
                         Tooltip = "Build rooms",
+                        TextHorizontalAlign = HorizontalAlign.Center,
+                        TextVerticalAlign = VerticalAlign.Center,
                         KeepChildVisible = true,
                         ExpansionChild = new NewGui.ToolTray.Tray
                         {
@@ -735,10 +740,15 @@ namespace DwarfCorp.GameStates
                     #region Build wall tool
                     new NewGui.ToolTray.Icon
                     {
-                        Icon = new Gum.TileReference("tool-icons", 2),
+                        Icon = null,
+                        Font = "font",
                         KeepChildVisible = true,
                         ExpandChildWhenDisabled = true,
+                        TextHorizontalAlign = HorizontalAlign.Center,
+                        TextVerticalAlign = VerticalAlign.Center,
                         Tooltip = "Place blocks",
+                        Text = "Block",
+                        TextColor = Color.White.ToVector4(),
                         ExpansionChild = new NewGui.ToolTray.Tray
                         {
                                 ItemSource =  new List<Gum.Widget>(),
@@ -751,10 +761,16 @@ namespace DwarfCorp.GameStates
                                         {
                                             Tooltip = "Build " + data.Name,
                                             Icon = new Gum.TileReference("voxels", data.ID),
+                                            TextHorizontalAlign = HorizontalAlign.Right,
+                                            TextVerticalAlign = VerticalAlign.Bottom,
+                                            Text = Master.Faction.ListResources()[data.ResourceToRelease].NumResources.ToString(),
+                                            TextColor = Color.White.ToVector4(),
+          
                                             ExpansionChild = new NewGui.BuildWallInfo
                                             {
                                                 Data = data,
-                                                Rect = new Rectangle(0, 0, 256, 128)
+                                                Rect = new Rectangle(0, 0, 256, 128),
+                                                Master = Master
                                             },
                                             OnClick = (sender, args) =>
                                             {
@@ -779,8 +795,12 @@ namespace DwarfCorp.GameStates
                     #region Build craft
                     new NewGui.ToolTray.Icon
                     {
-                        Icon = new Gum.TileReference("tool-icons", 2),
-                        Tooltip = "Craft items",
+                        Icon = null,
+                        Text = "Obj.",
+                        TextColor = Vector4.One,
+                        Tooltip = "Craft objects",
+                        TextHorizontalAlign = HorizontalAlign.Center,
+                        TextVerticalAlign = VerticalAlign.Center,
                         KeepChildVisible = true,
                         ExpansionChild = new NewGui.ToolTray.Tray
                         {
@@ -824,7 +844,10 @@ namespace DwarfCorp.GameStates
                     #region Build Resource
                     new NewGui.ToolTray.Icon
                     {
-                        Icon = new Gum.TileReference("tool-icons", 2),
+                        Text = "Res.",
+                        TextColor = Vector4.One,
+                        TextHorizontalAlign = HorizontalAlign.Center,
+                        TextVerticalAlign = VerticalAlign.Center,
                         KeepChildVisible = true,
                         ExpansionChild = new NewGui.ToolTray.Tray
                         {
@@ -1028,9 +1051,12 @@ namespace DwarfCorp.GameStates
                             {
                                 new NewGui.ToolTray.Icon
                                 {
-                                    Icon = new Gum.TileReference("tool-icons", 13),
+                                    Text = "Till",
                                     Tooltip = "Till soil",
+                                    TextColor = new Vector4(1, 1, 1, 1),
                                     KeepChildVisible = true,
+                                    TextHorizontalAlign = HorizontalAlign.Center,
+                                    TextVerticalAlign = VerticalAlign.Center,
                                     OnClick = (sender, args) =>
                                     {
                                         World.ShowToolPopup("Click and drag to till soil.");
@@ -1041,13 +1067,17 @@ namespace DwarfCorp.GameStates
                                     {
                                         Border = "border-fancy",
                                         Text = "Till Soil.\n Click and drag to till soil for planting.",
-                                        Rect = new Rectangle(0, 0, 256, 128)
+                                        Rect = new Rectangle(0, 0, 256, 128),
+                                        TextColor = Color.Black.ToVector4(),
                                     }
                                 },
                                 new NewGui.ToolTray.Icon
                                 {
-                                    Icon = new Gum.TileReference("tool-icons", 13),
+                                    Text = "Plant",
                                     Tooltip = "Plant",
+                                    TextColor = new Vector4(1, 1, 1, 1),
+                                    TextHorizontalAlign = HorizontalAlign.Center,
+                                    TextVerticalAlign = VerticalAlign.Center,
                                     KeepChildVisible = true,
                                     ExpansionChild = new NewGui.ToolTray.Tray
                                     {
@@ -1084,7 +1114,8 @@ namespace DwarfCorp.GameStates
                                                         {
                                                             Type = resource.ResourceType,
                                                             Rect = new Rectangle(0, 0, 256, 128),
-                                                            Master = Master
+                                                            Master = Master,
+                                                            TextColor = Color.Black.ToVector4()
                                                         },
                                                     }
                                                 );
@@ -1096,14 +1127,18 @@ namespace DwarfCorp.GameStates
                                 },
                                 new NewGui.ToolTray.Icon
                                 {
-                                    Icon = new Gum.TileReference("tool-icons", 13),
+                                    Text = "Harv.",
+                                    TextColor = new Vector4(1, 1, 1, 1),
                                     Tooltip = "Harvest",
+                                    TextHorizontalAlign = HorizontalAlign.Center,
+                                    TextVerticalAlign = VerticalAlign.Center,
                                     KeepChildVisible = true,
                                     ExpansionChild = new Widget()
                                     {
                                         Border = "border-fancy",
                                         Text = "Harvest Plants.\n Click and drag to harvest plants.",
-                                        Rect = new Rectangle(0, 0, 256, 128)
+                                        Rect = new Rectangle(0, 0, 256, 128),
+                                        TextColor = Color.Black.ToVector4()
                                     }
                                 },
 
@@ -1245,32 +1280,8 @@ namespace DwarfCorp.GameStates
 
         private void HandleKeyPress(Keys key)
         {
-            if (key == ControlSettings.Mappings.Map)
-            {
-                World.DrawMap = !World.DrawMap;
-                MinimapFrame.Hidden = true;
-                MinimapFrame.Invalidate();
-            }
-
-            if (key == Keys.Escape)
-            {
-                if (Master.CurrentToolMode != GameMaster.ToolMode.SelectUnits)
-                {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
-                }
-                else if (PausePanel != null)
-                {
-                    PausePanel.Close();
-                    Paused = false;
-                }
-                else
-                {
-                    OpenPauseMenu();
-                }
-            }
-
             // Special case: number keys reserved for changing tool mode
-            else if (InputManager.IsNumKey(key))
+            if (InputManager.IsNumKey(key))
             {
                 int index = InputManager.GetNum(key) - 1;
 
@@ -1289,6 +1300,22 @@ namespace DwarfCorp.GameStates
                 if (index == 0 || Master.SelectedMinions.Count > 0)
                 {
                     BottomRightTray.FindTopTray().Hotkey(index);
+                }
+            }
+            else if (key == Keys.Escape)
+            {
+                if (Master.CurrentToolMode != GameMaster.ToolMode.SelectUnits)
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
+                else if (PausePanel != null)
+                {
+                    PausePanel.Close();
+                    Paused = false;
+                }
+                else
+                {
+                    OpenPauseMenu();
                 }
             }
             else if (key == ControlSettings.Mappings.Pause)
@@ -1310,6 +1337,12 @@ namespace DwarfCorp.GameStates
                 GuiRoot.RootItem.Hidden = !GuiRoot.RootItem.Hidden;
                 GuiRoot.RootItem.Invalidate();
                 GUI.RootComponent.IsVisible = !GUI.RootComponent.IsVisible;
+            }
+            else if (key == ControlSettings.Mappings.Map)
+            {
+                World.DrawMap = !World.DrawMap;
+                MinimapFrame.Hidden = true;
+                MinimapFrame.Invalidate();
             }
         }
 

@@ -21,6 +21,7 @@ namespace DwarfCorp.NewGui
         {
             Border = "border-fancy";
             Font = "font";
+            TextColor = new Vector4(0, 0, 0, 1);
             OnShown = (sender) =>
             {
                 Clear();
