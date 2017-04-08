@@ -1,4 +1,4 @@
-﻿// DwarfGame.cs
+// DwarfGame.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -50,7 +50,7 @@ namespace DwarfCorp
 #if WINDOWS || XBOX
     internal static class Program
     {
-        public static string Version = "16.11.12";
+        public static string Version = "17.04.08_FNA";
         public static char DirChar = Path.DirectorySeparatorChar;
         
         /// <summary>
