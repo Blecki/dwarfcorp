@@ -76,7 +76,7 @@ namespace DwarfCorp
 
         public BiomeData()
         {
-            
+            ShoreVoxel = "Sand";
         }
 
         public BiomeData(Overworld.Biome biome)
