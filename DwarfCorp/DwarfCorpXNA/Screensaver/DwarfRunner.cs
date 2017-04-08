@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -98,7 +98,7 @@ namespace DwarfCorp
 
         public void Update(DwarfTime Time)
         {
-            HorizontalOffset -= (float)Time.ElapsedGameTime.TotalSeconds * ScrollSpeed;
+            HorizontalOffset -= (float)Time.ElapsedRealTime.TotalSeconds * ScrollSpeed;
             if (HorizontalOffset <= -2.0f)
             {
                 HorizontalOffset += 1.0f;
@@ -122,9 +122,9 @@ namespace DwarfCorp
                 }
             }
 
-            DwarfVelocity -= (float)Time.ElapsedGameTime.TotalSeconds * 30.0f;
+            DwarfVelocity -= (float)Time.ElapsedRealTime.TotalSeconds * 30.0f;
             
-            DwarfPosition.Y += DwarfVelocity * (float)Time.ElapsedGameTime.TotalSeconds;
+            DwarfPosition.Y += DwarfVelocity * (float)Time.ElapsedRealTime.TotalSeconds;
             if (GetTileUnderFoot(0.05f) != null)
             {
                 DwarfPosition.Y = (float)Math.Round(DwarfPosition.Y);
@@ -132,10 +132,10 @@ namespace DwarfCorp
             }
 
             if (DwarfPosition.X < 3.0f && GetTileAhead() == null)
-                DwarfPosition.X += (float)Time.ElapsedGameTime.TotalSeconds * 6.0f;
+                DwarfPosition.X += (float)Time.ElapsedRealTime.TotalSeconds * 6.0f;
 
             if (GetTileAhead() != null)
-                DwarfPosition.X -= /*Math.Max(PenetrationDepth(), */(float)Time.ElapsedGameTime.TotalSeconds * ScrollSpeed;//);
+                DwarfPosition.X -= /*Math.Max(PenetrationDepth(), */(float)Time.ElapsedRealTime.TotalSeconds * ScrollSpeed;//);
 
             if (DwarfPosition.X < -0.5f)
                 DwarfPosition = new Vector2(-0.6f, 6.0f);
@@ -153,9 +153,9 @@ namespace DwarfCorp
                         sprites.Draw(World[x, y].Image.Image, new Rectangle((int)((x * TileSize.X) + (HorizontalOffset * TileSize.X)), graphics.Viewport.Height - ((y + 1) * TileSize.Y), TileSize.X, TileSize.Y), World[x, y].Image.SourceRect, Color.White);
 
             sprites.Draw(Balloon, new Vector2(graphics.Viewport.Width * 0.75f,
-                (float)Math.Sin(time.TotalGameTime.TotalSeconds) * 64), Color.White);
+                (float)Math.Sin(time.TotalRealTime.TotalSeconds) * 64), Color.White);
 
-            var dwarfFrame = (int)(time.TotalGameTime.TotalSeconds * 16) % 4;
+            var dwarfFrame = (int)(time.TotalRealTime.TotalSeconds * 16) % 4;
             sprites.Draw(Dwarf, 
                 new Rectangle(
                     (int)(DwarfPosition.X * TileSize.X) - (TileSize.X / 2), 

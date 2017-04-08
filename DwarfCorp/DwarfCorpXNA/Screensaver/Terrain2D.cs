@@ -1,4 +1,4 @@
-﻿// Terrain2D.cs
+// Terrain2D.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -173,7 +173,7 @@ namespace DwarfCorp
 
             
 
-            float t = (float)time.TotalGameTime.TotalSeconds;
+            float t = (float)time.TotalRealTime.TotalSeconds;
 
             float offsetX = t * 2.0f;
             float offsetY = 0.0f;

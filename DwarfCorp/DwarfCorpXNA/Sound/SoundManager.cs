@@ -248,12 +248,21 @@ namespace DwarfCorp
             });
         }
 
+        public static void StopAmbience()
+        {
+            foreach (var cue in ActiveCues)
+            {
+                cue.Value.Stop(AudioStopOptions.Immediate);
+            }
+        }
+
         public static void PlayAmbience(string sound)
         {
             Cue cue;
             if (!ActiveCues.TryGetValue(sound, out cue))
             {
                 cue = SoundBank.GetCue(sound);
+                ActiveCues[sound] = cue;
             }
             if (!cue.IsPlaying)
             {

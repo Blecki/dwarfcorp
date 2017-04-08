@@ -1,4 +1,4 @@
-﻿// FaunaData.cs
+// FaunaData.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -45,6 +45,11 @@ namespace DwarfCorp
     {
         public string Name { get; set; }
         public float SpawnProbability { get; set; }
+
+        public FaunaData()
+        {
+            
+        }
 
         public FaunaData(string name, float spawnProbability)
         {

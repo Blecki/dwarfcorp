@@ -51,11 +51,24 @@ namespace DwarfCorp
         public SelectionBuffer(int scale, GraphicsDevice device)
         {
             Scale = scale;
-            Buffer = new RenderTarget2D(device, device.Viewport.Width / scale, device.Viewport.Height / scale, false, SurfaceFormat.Color, DepthFormat.Depth16, 0, RenderTargetUsage.PreserveContents);
+        }
+
+        public void ValidateBuffer(GraphicsDevice device)
+        {
+            PresentationParameters pp = device.PresentationParameters;
+
+            int width = pp.BackBufferWidth / Scale;
+            int height = pp.BackBufferHeight / Scale;
+            if (Buffer == null || Buffer.Width != width ||
+                Buffer.Height != height)
+            {
+                Buffer = new RenderTarget2D(device, width, height, false, SurfaceFormat.Color, DepthFormat.Depth16, 0, RenderTargetUsage.PreserveContents);
+            }
         }
 
         public void Begin(GraphicsDevice device)
         {
+            ValidateBuffer(device);
             device.SetRenderTarget(Buffer);
             device.Clear(Color.Black);
         }

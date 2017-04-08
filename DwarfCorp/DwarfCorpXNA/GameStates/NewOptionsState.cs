@@ -372,14 +372,7 @@ namespace DwarfCorp.GameStates
 
             Resolution = leftPanel.AddChild(LabelAndDockWidget("Resolution", new Gum.Widgets.ComboBox
                 {
-
-// Allow debugging at lower resolutions.
-#if DEBUG
-                Items = DisplayModes.Select(dm => dm.Key).ToList(),
-#else
-                Items = DisplayModes.Where(dm => dm.Value.Width >= 1024).Select(dm => dm.Key).ToList(),
-#endif
-
+                    Items = DisplayModes.Select(dm => dm.Key).ToList(),
                     OnSelectedIndexChanged = OnItemChanged,
                     Border = "border-thin",
                     Tooltip = "Game screen size",

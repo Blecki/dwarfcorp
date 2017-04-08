@@ -125,6 +125,7 @@ namespace DwarfCorp.GameStates
 
             DwarfTime.LastTime.Speed = 1.0f;
             SoundManager.PlayMusic("menu_music");
+            SoundManager.StopAmbience();
             base.OnEnter();
         }
 

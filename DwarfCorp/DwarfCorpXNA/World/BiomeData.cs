@@ -74,6 +74,11 @@ namespace DwarfCorp
         public float Temp { get; set; }
         public float Rain { get; set; }
 
+        public BiomeData()
+        {
+            
+        }
+
         public BiomeData(Overworld.Biome biome)
         {
             Biome = biome;
@@ -86,6 +91,7 @@ namespace DwarfCorp
             ClumpTreshold = 0.75f;
             MapColor = Color.White;
             Underground = false;
+            ShoreVoxel = "Sand";
         }
     }
 
