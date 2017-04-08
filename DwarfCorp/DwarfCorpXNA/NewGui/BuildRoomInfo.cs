@@ -18,6 +18,7 @@ namespace DwarfCorp.NewGui
         public override void Construct()
         {
             Border = "border-fancy";
+            TextColor = new Vector4(0, 0, 0, 1);
             var builder = new StringBuilder();
             builder.AppendLine(Data.Description);
                 if (!Data.CanBuildAboveGround)

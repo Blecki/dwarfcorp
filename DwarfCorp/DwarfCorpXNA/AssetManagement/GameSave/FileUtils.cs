@@ -118,7 +118,8 @@ namespace DwarfCorp
                         new MatrixConverter(),
                         new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap),
                         new RectangleConverter(),
-                        new MoneyConverter()
+                        new MoneyConverter(),
+                        new ColorConverter()
                     }
             });
         }
@@ -148,7 +149,8 @@ namespace DwarfCorp
                         new MatrixConverter(),
                         new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap),
                         new RectangleConverter(),
-                        new MoneyConverter()
+                        new MoneyConverter(),
+                        new ColorConverter()
                     }
             });
         }
@@ -182,6 +184,30 @@ namespace DwarfCorp
 
         }
 
+        public static string SerializeBasicJSON<T>(T obj)
+        {
+            JsonSerializer serializer = new JsonSerializer
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                TypeNameHandling = TypeNameHandling.Auto,
+                TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple,
+                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+                Formatting = Formatting.Indented
+            };
+
+            serializer.Converters.Add(new BoxConverter());
+            serializer.Converters.Add(new Vector3Converter());
+            serializer.Converters.Add(new MatrixConverter());
+            //serializer.Converters.Add(new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap));
+            serializer.Converters.Add(new RectangleConverter());
+            serializer.Converters.Add(new MoneyConverter());
+            serializer.Converters.Add(new ColorConverter());
+            return JsonConvert.SerializeObject(obj, Formatting.Indented, serializer.Converters.ToArray());
+
+        }
+
+
+
         /// <summary>
         /// Saves an object of type T to JSON using the full serialization method (most robust).
         /// </summary>
@@ -207,6 +233,7 @@ namespace DwarfCorp
             serializer.Converters.Add(new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap));
             serializer.Converters.Add(new RectangleConverter());
             serializer.Converters.Add(new MoneyConverter());
+            serializer.Converters.Add(new ColorConverter());
             return Save(serializer, obj, filePath, compress);
 
         }

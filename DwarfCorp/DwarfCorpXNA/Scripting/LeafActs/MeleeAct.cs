@@ -253,12 +253,8 @@ namespace DwarfCorp
                 // If we're out of attack range, run toward the target.
                 if(!Creature.AI.Movement.IsSessile && !intersectsbounds && diff.Length() > CurrentAttack.Range)
                 {
-                    if (Creature.AI.Raycast(Target.Position))
-                    {
-                        yield return Status.Fail;
-                        yield break;
-                    }
                     Creature.CurrentCharacterMode = defaultCharachterMode;
+                    /*
                     Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, targetPos, Creature.Physics.GlobalTransform.Translation) * 0.9f;
                     output.Y = 0.0f;
                     if (Creature.AI.Movement.CanFly)
@@ -271,6 +267,18 @@ namespace DwarfCorp
                     }
                     Creature.Physics.ApplyForce(output, DwarfTime.Dt);
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
+                     */
+                    GreedyPathAct greedyPath = new GreedyPathAct(Creature.AI, Target, CurrentAttack.Range * 0.75f) {PathLength = 5};
+                    greedyPath.Initialize();
+
+                    foreach (Act.Status stat in greedyPath.Run())
+                    {
+                        if (stat == Act.Status.Running)
+                        {
+                            yield return Status.Running;
+                        }
+                        else break;
+                    }
                 }
                 // If we have a ranged weapon, try avoiding the target for a few seconds to get within range.
                 else if (!Creature.AI.Movement.IsSessile && !intersectsbounds && !avoided && (CurrentAttack.Mode == Attack.AttackMode.Ranged &&
@@ -389,6 +397,82 @@ namespace DwarfCorp
             {
                 Agent.Creature.Gather(item);
             }
+        }
+    }
+
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    public class GreedyPathAct : CompoundCreatureAct
+    {
+        public int PathLength { get; set; }
+        public bool Is2D { get; set; }
+        public Body Target { get; set; }
+        public float Threshold { get; set; }
+        public GreedyPathAct()
+        {
+
+        }
+
+        public GreedyPathAct(CreatureAI creature, Body target, float threshold)
+            : base(creature)
+        {
+            Target = target;
+            Threshold = threshold;
+        }
+
+        public IEnumerable<Status> FindGreedyPath()
+        {
+            Vector3 target = Target.Position;
+            //Drawer3D.DrawLine(Agent.Position, target, Color.Green, 0.1f);
+            if (Is2D) target.Y = Creature.AI.Position.Y;
+            List<Creature.MoveAction> path = new List<Creature.MoveAction>();
+            Voxel curr = Creature.Physics.CurrentVoxel;
+            for (int i = 0; i < PathLength; i++)
+            {
+                List<Creature.MoveAction> actions =
+                    Creature.AI.Movement.GetMoveActions(curr);
+
+                Creature.MoveAction? bestAction = null;
+                float bestDist = float.MaxValue;
+          
+                foreach (Creature.MoveAction action in actions)
+                {
+                    float dist = (action.Voxel.Position - target).LengthSquared();
+
+                    if (dist < bestDist)
+                    {
+                        bestDist = dist;
+                        bestAction = action;
+                    }
+                }
+
+                Vector3 half = Vector3.One*0.5f;
+                if (bestAction.HasValue && !path.Any(p => p.Voxel.Equals(bestAction.Value.Voxel) && p.MoveType == bestAction.Value.MoveType))
+                {
+                    path.Add(bestAction.Value);
+                    curr = bestAction.Value.Voxel;
+
+                    if (((bestAction.Value.Voxel.Position + half) - target).Length() < Threshold)
+                    {
+                        break;
+                    }
+                }
+
+            }
+            if (path.Count > 0)
+            {
+                Creature.AI.Blackboard.SetData("RandomPath", path);
+                yield return Status.Success;
+            }
+            else
+            {
+                yield return Status.Fail;
+            }
+        }
+
+        public override void Initialize()
+        {
+            Tree = new Sequence(new Wrap(FindGreedyPath), new FollowPathAct(Creature.AI, "RandomPath"));
+            base.Initialize();
         }
     }
 

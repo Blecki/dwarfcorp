@@ -120,7 +120,12 @@ namespace DwarfCorp.NewGui
                         Rect.Y + (Rect.Height / 2) - (iconSheet.TileHeight / 2))
                     .Colorize(Enabled ? Tint : new Vector4(0.15f * Tint.X, 0.15f * Tint.Y, 0.15f * Tint.Z, 1 * Tint.W)));
             }
-            
+
+            if (!string.IsNullOrEmpty(Text))
+            {
+                base.GetTextMesh(meshes);
+            }
+
             return Gum.Mesh.Merge(meshes.ToArray());
         }
     }

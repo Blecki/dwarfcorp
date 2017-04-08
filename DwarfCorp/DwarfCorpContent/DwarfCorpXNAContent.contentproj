@@ -1188,6 +1188,371 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="Audio\oscar\sfx_amb_grassland_day_1.wav">
+      <Name>sfx_amb_grassland_day_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_amb_grassland_day_2.wav">
+      <Name>sfx_amb_grassland_day_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_amb_grassland_night_1.wav">
+      <Name>sfx_amb_grassland_night_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_amb_grassland_night_2.wav">
+      <Name>sfx_amb_grassland_night_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_env_water_splash.wav">
+      <Name>sfx_env_water_splash</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_demon_angered.wav">
+      <Name>sfx_ic_demon_angered</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_demon_mumble_1.wav">
+      <Name>sfx_ic_demon_mumble_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_demon_mumble_2.wav">
+      <Name>sfx_ic_demon_mumble_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_demon_mumble_3.wav">
+      <Name>sfx_ic_demon_mumble_3</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_demon_mumble_4.wav">
+      <Name>sfx_ic_demon_mumble_4</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_demon_mumble_5.wav">
+      <Name>sfx_ic_demon_mumble_5</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_demon_mumble_6.wav">
+      <Name>sfx_ic_demon_mumble_6</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_demon_pleased.wav">
+      <Name>sfx_ic_demon_pleased</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_attack_pick.wav">
+      <Name>sfx_ic_dwarf_attack_pick</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_attack_sword_1.wav">
+      <Name>sfx_ic_dwarf_attack_sword_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_attack_sword_2.wav">
+      <Name>sfx_ic_dwarf_attack_sword_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_attack_sword_3.wav">
+      <Name>sfx_ic_dwarf_attack_sword_3</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_climb_1.wav">
+      <Name>sfx_ic_dwarf_climb_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_climb_2.wav">
+      <Name>sfx_ic_dwarf_climb_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_climb_3.wav">
+      <Name>sfx_ic_dwarf_climb_3</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_cook_meal.wav">
+      <Name>sfx_ic_dwarf_cook_meal</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_craft.wav">
+      <Name>sfx_ic_dwarf_craft</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_death.wav">
+      <Name>sfx_ic_dwarf_death</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_eat_1.wav">
+      <Name>sfx_ic_dwarf_eat_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_eat_2.wav">
+      <Name>sfx_ic_dwarf_eat_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_eat_3.wav">
+      <Name>sfx_ic_dwarf_eat_3</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_hurt_1.wav">
+      <Name>sfx_ic_dwarf_hurt_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_hurt_2.wav">
+      <Name>sfx_ic_dwarf_hurt_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_jump.wav">
+      <Name>sfx_ic_dwarf_jump</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_mumble_1.wav">
+      <Name>sfx_ic_dwarf_mumble_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_mumble_2.wav">
+      <Name>sfx_ic_dwarf_mumble_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_mumble_3.wav">
+      <Name>sfx_ic_dwarf_mumble_3</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_mumble_4.wav">
+      <Name>sfx_ic_dwarf_mumble_4</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_mumble_5.wav">
+      <Name>sfx_ic_dwarf_mumble_5</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_mumble_6.wav">
+      <Name>sfx_ic_dwarf_mumble_6</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_sleep_1.wav">
+      <Name>sfx_ic_dwarf_sleep_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_sleep_2.wav">
+      <Name>sfx_ic_dwarf_sleep_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_sleep_3.wav">
+      <Name>sfx_ic_dwarf_sleep_3</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_elf_angered.wav">
+      <Name>sfx_ic_elf_angered</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_elf_mumble_1.wav">
+      <Name>sfx_ic_elf_mumble_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_elf_mumble_2.wav">
+      <Name>sfx_ic_elf_mumble_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_elf_mumble_3.wav">
+      <Name>sfx_ic_elf_mumble_3</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_elf_mumble_4.wav">
+      <Name>sfx_ic_elf_mumble_4</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_elf_mumble_5.wav">
+      <Name>sfx_ic_elf_mumble_5</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_elf_mumble_6.wav">
+      <Name>sfx_ic_elf_mumble_6</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_elf_pleased.wav">
+      <Name>sfx_ic_elf_pleased</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_generic_hurt_1.wav">
+      <Name>sfx_ic_generic_hurt_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_generic_hurt_2.wav">
+      <Name>sfx_ic_generic_hurt_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_generic_hurt_3.wav">
+      <Name>sfx_ic_generic_hurt_3</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_goblin_angered.wav">
+      <Name>sfx_ic_goblin_angered</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_goblin_mumble_1.wav">
+      <Name>sfx_ic_goblin_mumble_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_goblin_mumble_2.wav">
+      <Name>sfx_ic_goblin_mumble_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_goblin_mumble_3.wav">
+      <Name>sfx_ic_goblin_mumble_3</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_goblin_mumble_4.wav">
+      <Name>sfx_ic_goblin_mumble_4</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_goblin_mumble_5.wav">
+      <Name>sfx_ic_goblin_mumble_5</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_goblin_mumble_6.wav">
+      <Name>sfx_ic_goblin_mumble_6</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_goblin_pleased.wav">
+      <Name>sfx_ic_goblin_pleased</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_moleman_angered.wav">
+      <Name>sfx_ic_moleman_angered</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_moleman_mumble_1.wav">
+      <Name>sfx_ic_moleman_mumble_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_moleman_mumble_2.wav">
+      <Name>sfx_ic_moleman_mumble_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_moleman_mumble_3.wav">
+      <Name>sfx_ic_moleman_mumble_3</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_moleman_mumble_4.wav">
+      <Name>sfx_ic_moleman_mumble_4</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_moleman_mumble_5.wav">
+      <Name>sfx_ic_moleman_mumble_5</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_moleman_mumble_6.wav">
+      <Name>sfx_ic_moleman_mumble_6</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_moleman_pleased.wav">
+      <Name>sfx_ic_moleman_pleased</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_necromancer_angered.wav">
+      <Name>sfx_ic_necromancer_angered</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_necromancer_mumble_1.wav">
+      <Name>sfx_ic_necromancer_mumble_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_necromancer_mumble_2.wav">
+      <Name>sfx_ic_necromancer_mumble_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_necromancer_mumble_3.wav">
+      <Name>sfx_ic_necromancer_mumble_3</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_necromancer_mumble_4.wav">
+      <Name>sfx_ic_necromancer_mumble_4</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_necromancer_mumble_5.wav">
+      <Name>sfx_ic_necromancer_mumble_5</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_necromancer_mumble_6.wav">
+      <Name>sfx_ic_necromancer_mumble_6</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_necromancer_pleased.wav">
+      <Name>sfx_ic_necromancer_pleased</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
     <Content Include="Audio\XACT\Win\SoundBank.xsb">
       <Name>SoundBank</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -1200,6 +1565,11 @@
       <Name>WaveBank</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Compile Include="Music\mx_menu_loop_v2.wav">
+      <Name>mx_menu_loop_v2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
     <None Include="Entities\Animals\chicken_animation.json">
       <Name>chicken_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

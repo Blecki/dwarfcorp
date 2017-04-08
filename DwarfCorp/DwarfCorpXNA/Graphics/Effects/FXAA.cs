@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -84,8 +84,52 @@ namespace DwarfCorp
         //   then start at zero and increase until aliasing is a problem.
         private float consoleEdgeThresholdMin = 0f;
 
+        public void ValidateBuffer()
+        {
+            PresentationParameters pp = GameState.Game.GraphicsDevice.PresentationParameters;
+
+            if (RenderTarget == null || RenderTarget.Width != pp.BackBufferWidth ||
+                RenderTarget.Height != pp.BackBufferHeight)
+            {
+                RenderTarget = new RenderTarget2D(GameState.Game.GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight, false, pp.BackBufferFormat, DepthFormat.None);
+
+                Viewport viewport = GameState.Game.GraphicsDevice.Viewport;
+                Matrix projection = Matrix.CreateOrthographicOffCenter(0, viewport.Width, viewport.Height, 0, 0, 1);
+                Matrix halfPixelOffset = Matrix.CreateTranslation(-0.5f, -0.5f, 0);
+                Shader.Parameters["World"].SetValue(Matrix.Identity);
+                Shader.Parameters["View"].SetValue(Matrix.Identity);
+                Shader.Parameters["Projection"].SetValue(halfPixelOffset * projection);
+                Shader.Parameters["InverseViewportSize"].SetValue(new Vector2(1f / viewport.Width, 1f / viewport.Height));
+                Shader.Parameters["ConsoleSharpness"].SetValue(new Vector4(
+                    -N / viewport.Width,
+                    -N / viewport.Height,
+                    N / viewport.Width,
+                    N / viewport.Height
+                    ));
+                Shader.Parameters["ConsoleOpt1"].SetValue(new Vector4(
+                    -2.0f / viewport.Width,
+                    -2.0f / viewport.Height,
+                    2.0f / viewport.Width,
+                    2.0f / viewport.Height
+                    ));
+                Shader.Parameters["ConsoleOpt2"].SetValue(new Vector4(
+                    8.0f / viewport.Width,
+                    8.0f / viewport.Height,
+                    -4.0f / viewport.Width,
+                    -4.0f / viewport.Height
+                    ));
+                Shader.Parameters["SubPixelAliasingRemoval"].SetValue(subPixelAliasingRemoval);
+                Shader.Parameters["EdgeThreshold"].SetValue(edgeTheshold);
+                Shader.Parameters["EdgeThresholdMin"].SetValue(edgeThesholdMin);
+                Shader.Parameters["ConsoleEdgeSharpness"].SetValue(consoleEdgeSharpness);
+                Shader.Parameters["ConsoleEdgeThreshold"].SetValue(consoleEdgeThreshold);
+                Shader.Parameters["ConsoleEdgeThresholdMin"].SetValue(consoleEdgeThresholdMin);
+            }
+        }
+
         public void Begin(DwarfTime lastTime, RenderTarget2D renderTarget)
         {
+           ValidateBuffer();
            GameState.Game.GraphicsDevice.SetRenderTarget(renderTarget);
         }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -163,7 +163,7 @@ namespace DwarfCorp
                 Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Spider" } }
             };
 
-            NoiseMaker.Noises.Add("Hurt", new List<string>() { ContentPaths.Audio.hiss });
+            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.hiss };
             AI.Movement.CanClimbWalls = true;
             AI.Movement.CanSwim = false;
 

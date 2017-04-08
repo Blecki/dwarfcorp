@@ -1,4 +1,4 @@
-﻿// GoToEntityAct.cs
+// GoToEntityAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -118,7 +118,7 @@ namespace DwarfCorp
 
                 Voxel last = path.Last();
 
-                if ((last.Position - entity.LocalTransform.Translation).Length() > 5)
+                if ((last.Position - entity.LocalTransform.Translation).Length() > Radius)
                 {
                     yield return Status.Fail;
                     yield break;
@@ -148,6 +148,9 @@ namespace DwarfCorp
                 {
                     yield return Act.Status.Running;
                 }
+                List<Creature.MoveAction> existingPath =
+                    Creature.AI.Blackboard.GetData<List<Creature.MoveAction>>("PathToEntity");
+
                 Creature.AI.Blackboard.Erase("PathToEntity");
 
                 PlanAct planAct = new PlanAct(Creature.AI, "PathToEntity", "EntityVoxel", PlanType) { Radius = Radius};
@@ -192,8 +195,11 @@ namespace DwarfCorp
                     continue;
                 }
 
-
-                FollowPathAct followPath = new FollowPathAct(Creature.AI, "PathToEntity");
+                FollowPathAct followPath = new FollowPathAct(Creature.AI, "PathToEntity")
+                {
+                    BlendEnd = true,
+                    BlendStart = existingPath == null
+                };
                 followPath.Initialize();
 
                 while (true)

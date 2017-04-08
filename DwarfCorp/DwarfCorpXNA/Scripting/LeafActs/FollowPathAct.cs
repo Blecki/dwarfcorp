@@ -52,6 +52,8 @@ namespace DwarfCorp
             PathName = pathName;
             ValidPathTimer = new Timer(.75f, false);
             RandomTimeOffset = MathFunctions.Rand(0.0f, 0.1f);
+            BlendStart = true;
+            BlendEnd = true;
         }
 
         private string PathName { get; set; }
@@ -62,6 +64,8 @@ namespace DwarfCorp
         public float RandomTimeOffset { get; set; }
         public List<Vector3> RandomPositionOffsets { get; set; }
         public List<float> ActionTimes { get; set; }
+        public bool BlendStart { get; set; }
+        public bool BlendEnd { get; set; }
 
         public List<Creature.MoveAction> GetPath()
         {
@@ -177,8 +181,24 @@ namespace DwarfCorp
 
         public bool GetCurrentAction(ref Creature.MoveAction action, ref float time, ref int index)
         {
-            float currentTime = Easing.LinearQuadBlends(TrajectoryTimer.CurrentTimeSeconds,
-                TrajectoryTimer.TargetTimeSeconds, 0.5f);
+            float currentTime = 0;
+
+            if (BlendStart && BlendEnd)
+            {
+                currentTime = Easing.LinearQuadBlends(TrajectoryTimer.CurrentTimeSeconds,
+                    TrajectoryTimer.TargetTimeSeconds, 0.5f);
+            }
+            else if (BlendStart)
+            {
+                currentTime = Easing.CubicEaseIn(TrajectoryTimer.CurrentTimeSeconds, 0, 
+                    TrajectoryTimer.TargetTimeSeconds, 
+                    TrajectoryTimer.TargetTimeSeconds);
+            }
+            else if (BlendEnd)
+            {
+                currentTime = Easing.Linear(TrajectoryTimer.CurrentTimeSeconds, 0, TrajectoryTimer.TargetTimeSeconds,
+                    TrajectoryTimer.TargetTimeSeconds);
+            }
             float sumTime = 0.001f;
             for (int i = 0; i < ActionTimes.Count; i++)
             {
@@ -245,6 +265,7 @@ namespace DwarfCorp
                     }
                     break;
                 case Creature.MoveType.Swim:
+                    Creature.NoiseMaker.MakeNoise("Swim", Agent.Position, true);
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Swimming;
                     if (hasNextAction)
@@ -258,6 +279,10 @@ namespace DwarfCorp
                     }
                     break;
                 case Creature.MoveType.Jump:
+                    if (t < 0.5f)
+                    { 
+                        Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
+                    }
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = Creature.Physics.Velocity.Y > 0
                         ? Creature.CharacterMode.Jumping
@@ -292,6 +317,10 @@ namespace DwarfCorp
                     break;
                 case Creature.MoveType.Climb:
                 case Creature.MoveType.ClimbWalls:
+                    if ((int) (t*100)%25 == 0)
+                    {
+                        Creature.NoiseMaker.MakeNoise("Climb", Agent.Position, false);
+                    }
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Climbing;
                     Creature.OverrideCharacterMode = true;

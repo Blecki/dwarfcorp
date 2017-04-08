@@ -141,11 +141,11 @@ namespace DwarfCorp
             DeleteColor = Color.Red;
             BoxYOffset = 0;
             LastMouseWheel = 0;
-            ClickSound = SoundSource.Create(ContentPaths.Audio.Oscar.gui_change_selection);
+            ClickSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_gui_change_selection);
             ClickSound.RandomPitch = false;
-            DragSound = SoundSource.Create(ContentPaths.Audio.Oscar.gui_click_voxel);
+            DragSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_gui_click_voxel);
             DragSound.RandomPitch = false;
-            ReleaseSound = SoundSource.Create(ContentPaths.Audio.Oscar.gui_confirm_selection);
+            ReleaseSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection);
             ReleaseSound.RandomPitch = false;
         }
 
@@ -588,28 +588,13 @@ namespace DwarfCorp
                     yield return new Vector3(maxX + 0.5f, y + 0.5f, z + 0.5f);
                 }
                 // yz planes
-                for (int x = minX; x <= maxX; x++)
+                for (int x = minX + 1; x < maxX; x++)
                 {
                     yield return new Vector3(x + 0.5f, y + 0.5f, minZ + 0.5f);
                     yield return new Vector3(x + 0.5f, y + 0.5f, maxZ + 0.5f);
                 }
             }
 
-
-            /*
-            if (maxY - minY > 1)
-            {
-                for (int x = minX; x < maxX; x++)
-                {
-                    // xz planes
-                    for (int z = minZ; z < maxZ; z++)
-                    {
-                        yield return new Vector3(x + 0.5f, minY + 0.5f, z + 0.5f);
-                        yield return new Vector3(x + 0.5f, maxY + 0.5f, z + 0.5f);
-                    }
-                }
-            }
-             */
         }
 
         public void DraggedCallback(List<Voxel> voxels, InputManager.MouseButton button)
@@ -681,18 +666,6 @@ namespace DwarfCorp
             if (v == null || v.Chunk == null)
             {
                 return null;
-            }
-
-            if (!v.IsEmpty)
-            {
-                if (Keyboard.GetState().IsKeyDown(ControlSettings.Mappings.SliceSelected))
-                {
-                    Chunks.ChunkData.SetMaxViewingLevel(v.Position.Y, ChunkManager.SliceMode.Y);
-                }
-                else if (Keyboard.GetState().IsKeyDown(ControlSettings.Mappings.Unslice))
-                {
-                    Chunks.ChunkData.SetMaxViewingLevel(Chunks.ChunkData.ChunkSizeY, ChunkManager.SliceMode.Y);
-                }
             }
 
             switch (SelectionType)

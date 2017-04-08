@@ -1,4 +1,4 @@
-﻿// DetailMoteData.cs
+// DetailMoteData.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -43,6 +43,11 @@ namespace DwarfCorp
         public float SpawnThreshold { get; set; }
         public float MoteScale { get; set; }
         public string Asset { get; set; }
+
+        public DetailMoteData()
+        {
+            
+        }
 
         public DetailMoteData(string name, string asset, float regionScale, float spawnThresh, float moteScale)
         {

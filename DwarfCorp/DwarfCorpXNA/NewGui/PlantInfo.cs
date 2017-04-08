@@ -30,6 +30,7 @@ namespace DwarfCorp.NewGui
             builder.AppendLine("* Grows in soil");
             Font = "font";
             Text = builder.ToString();
+            TextColor = Color.Black.ToVector4();
         }
     }
 }

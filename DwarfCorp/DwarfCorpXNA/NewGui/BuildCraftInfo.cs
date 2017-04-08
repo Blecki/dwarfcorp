@@ -21,6 +21,7 @@ namespace DwarfCorp.NewGui
         {
             Border = "border-fancy";
             Font = "font";
+            TextColor = new Vector4(0, 0, 0, 1);
             OnShown = (sender) =>
             {
                 Clear();
@@ -57,13 +58,14 @@ namespace DwarfCorp.NewGui
                             AutoLayout = AutoLayout.DockTop,
                             MinimumSize = new Point(100, 16)
                         });
+
                         child.AddChild(new Gum.Widget()
                         {
                             Font = "font",
                             Text = String.Format("{0} {1}: ",resourceAmount.NumResources, resourceAmount.ResourceType),
                             AutoLayout = AutoLayout.DockLeft
-                        })
-                        ;
+                        });
+
                         var resourceSelector = child.AddChild(new Gum.Widgets.ComboBox
                         {
                             Font = "font",

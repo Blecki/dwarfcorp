@@ -84,6 +84,7 @@ namespace DwarfCorp
             public bool FogofWar = true;
             public bool UseDynamicShadows = false;
             public bool UseLightmaps = false;
+            public bool DrawPaths = false;
         }
 
         public static Settings Default { get; set; }

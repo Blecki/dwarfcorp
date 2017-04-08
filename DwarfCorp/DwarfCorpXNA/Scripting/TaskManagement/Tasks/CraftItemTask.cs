@@ -1,4 +1,4 @@
-﻿// CraftItemTask.cs
+// CraftItemTask.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -87,16 +87,24 @@ namespace DwarfCorp
     class CraftResourceTask : Task
     {
         public CraftItem Item { get; set; }
+        private string noise;
         public CraftResourceTask(CraftItem selectedResource)
         {
             Item = selectedResource;
             Name = "Craft " + Item.Name;
             Priority = PriorityType.Low;
+
+            noise = ResourceLibrary.GetResourceByName(Item.ResourceCreated).Tags.Contains(Resource.ResourceTags.Edible)
+                ? "Cook"
+                : "Craft";
         }
 
         public override Act CreateScript(Creature creature)
         {
-            return new CraftItemAct(creature.AI, Item);
+            return new CraftItemAct(creature.AI, Item)
+            {
+                Noise = noise
+            };
         }
 
         public override Task Clone()

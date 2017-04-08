@@ -118,6 +118,23 @@ namespace BloomPostprocess
         }
 
 
+        public void ValidateBuffers()
+        {
+            // Look up the resolution and format of our main backbuffer.
+            PresentationParameters pp = GraphicsDevice.PresentationParameters;
+            SurfaceFormat format = pp.BackBufferFormat;
+
+            int width = pp.BackBufferWidth / 4;
+            int height = pp.BackBufferHeight / 4;
+            if (renderTarget1 == null || renderTarget2 == null ||
+                renderTarget1.Width != width || renderTarget1.Height != height
+                || renderTarget2.Width != width || renderTarget2.Height != height)
+            {
+                renderTarget1 = new RenderTarget2D(GraphicsDevice, width, height, false, format, DepthFormat.None);
+                renderTarget2 = new RenderTarget2D(GraphicsDevice, width, height, false, format, DepthFormat.None);
+            }
+        }
+
         /// <summary>
         /// Unload your graphics content.
         /// </summary>
@@ -139,6 +156,7 @@ namespace BloomPostprocess
         /// </summary>
         public void BeginDraw()
         {
+            ValidateBuffers();
             if(Visible)
             {
                 GraphicsDevice.SetRenderTarget(sceneRenderTarget);
