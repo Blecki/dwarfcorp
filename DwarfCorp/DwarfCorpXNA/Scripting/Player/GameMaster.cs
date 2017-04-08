@@ -430,13 +430,24 @@ namespace DwarfCorp
                 World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
             }
 
-            if(key == ControlSettings.Mappings.SliceDown)
+            else if(key == ControlSettings.Mappings.SliceDown)
             {
                 World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
             }
-
-
-            if(key == ControlSettings.Mappings.GodMode)
+            else if (key == ControlSettings.Mappings.SliceSelected)
+            {
+                if (VoxSelector.VoxelUnderMouse != null)
+                {
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Position.Y,
+                        ChunkManager.SliceMode.Y);
+                    Drawer3D.DrawBox(VoxSelector.VoxelUnderMouse.GetBoundingBox(), Color.White, 0.15f, true);
+                }
+            }
+            else if (key == ControlSettings.Mappings.Unslice)
+            {
+                World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkHeight, ChunkManager.SliceMode.Y);
+            }
+            else if(key == ControlSettings.Mappings.GodMode)
             {
                 if(CurrentToolMode == ToolMode.God)
                 {

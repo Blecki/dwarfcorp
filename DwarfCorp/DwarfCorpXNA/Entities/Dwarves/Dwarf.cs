@@ -119,45 +119,37 @@ namespace DwarfCorp
 
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
-                ContentPaths.Entities.Dwarf.Audio.dwarfhurt1,
-                ContentPaths.Entities.Dwarf.Audio.dwarfhurt2,
-                ContentPaths.Entities.Dwarf.Audio.dwarfhurt3,
-                ContentPaths.Entities.Dwarf.Audio.dwarfhurt4,
+                ContentPaths.Audio.Oscar.sfx_ic_dwarf_hurt_1,
+                ContentPaths.Audio.Oscar.sfx_ic_dwarf_hurt_2,
             };
 
             NoiseMaker.Noises["Ok"] = new List<string>()
             {
-                ContentPaths.Audio.Oscar.dwarf_ok_1,
-                ContentPaths.Audio.Oscar.dwarf_ok_2,
-                ContentPaths.Audio.Oscar.dwarf_ok_3
+                ContentPaths.Audio.Oscar.sfx_ic_dwarf_ok_1,
+                ContentPaths.Audio.Oscar.sfx_ic_dwarf_ok_2,
+                ContentPaths.Audio.Oscar.sfx_ic_dwarf_ok_3
             };
 
-
-            NoiseMaker.Noises["Chew"] = new List<string> 
+            NoiseMaker.Noises["Die"] = new List<string>()
             {
-                ContentPaths.Audio.chew
+                ContentPaths.Audio.Oscar.sfx_ic_dwarf_death
             };
 
-            NoiseMaker.Noises["Jump"] = new List<string>
+            NoiseMaker.Noises["Pleased"] = new List<string>()
             {
-                ContentPaths.Audio.jump
+                ContentPaths.Audio.Oscar.sfx_ic_dwarf_pleased
             };
 
-            NoiseMaker.Noises["Stash"] = new List<string>()
+            NoiseMaker.Noises["Tantrum"] = new List<string>()
             {
-                ContentPaths.Audio.Oscar.dwarf_stash_item
+                ContentPaths.Audio.Oscar.sfx_ic_dwarf_tantrum_1,
+                ContentPaths.Audio.Oscar.sfx_ic_dwarf_tantrum_2,
+                ContentPaths.Audio.Oscar.sfx_ic_dwarf_tantrum_3,
             };
-
-            NoiseMaker.Noises["StashMoney"] = new List<string>()
+            NoiseMaker.Noises["Jump"] = new List<string>()
             {
-                ContentPaths.Audio.Oscar.dwarf_stash_money
+                ContentPaths.Audio.Oscar.sfx_ic_dwarf_jump
             };
-
-            NoiseMaker.Noises["Stockpile"] = new List<string>()
-            {
-                ContentPaths.Audio.Oscar.dwarf_stockpile
-            };
-
             MinimapIcon minimapIcon = new MinimapIcon(Physics, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 0));
 
             Stats.FullName = TextGenerator.GenerateRandom("$firstname", " ", "$lastname");

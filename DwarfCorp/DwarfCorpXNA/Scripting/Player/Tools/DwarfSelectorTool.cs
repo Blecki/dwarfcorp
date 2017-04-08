@@ -1,4 +1,4 @@
-﻿// DwarfSelectorTool.cs
+// DwarfSelectorTool.cs
 // 
 //  Modified MIT License (MIT)
 //  

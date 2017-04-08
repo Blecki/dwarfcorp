@@ -1,4 +1,4 @@
-﻿// Bird.cs
+// Bird.cs
 // 
 //  Modified MIT License (MIT)
 //  

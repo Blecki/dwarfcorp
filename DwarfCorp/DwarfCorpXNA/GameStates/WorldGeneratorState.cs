@@ -94,7 +94,7 @@ namespace DwarfCorp.GameStates
             GenerationComplete = false;
             ImageMutex = new Mutex();
             Input = new InputManager();
-            Seed = MathFunctions.Random.Next();
+            Seed = DwarfTime.LastTime.TotalRealTime.Milliseconds;
             Settings = new WorldSettings()
             {
                 Width = 512,
@@ -489,13 +489,6 @@ namespace DwarfCorp.GameStates
             }
         }
 
-
-
-        private void seedEdit_OnTextModified(string arg)
-        {
-            Seed = arg.GetHashCode();
-            MathFunctions.Random = new ThreadSafeRandom(Seed);
-        }
 
         public override void OnExit()
         {

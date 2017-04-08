@@ -583,6 +583,11 @@ namespace DwarfCorp
             if (Status.IsAsleep)
             {
                 CurrentCharacterMode = CharacterMode.Sleeping;
+
+                if (MathFunctions.RandEvent(0.01f))
+                {
+                    NoiseMaker.MakeNoise("Sleep", AI.Position, true);
+                }
             }
             else if (currentCharacterMode == CharacterMode.Sleeping)
             {
@@ -602,10 +607,11 @@ namespace DwarfCorp
         public override void Die()
         {
             // This is just a silly hack to make sure that creatures
-            // carrying resources to a trade depot release their resources
+            // carrying resources to a trade depot release tcheir resources
             // when they die.
             Inventory.Resources.MaxResources = 99999;
             CreateMeatAndBones();
+            NoiseMaker.MakeNoise("Die", Physics.Position, true);
             base.Die();
         }
 
@@ -725,7 +731,7 @@ namespace DwarfCorp
         /// Basic Act that causes the creature to wait for the specified time.
         /// Also draws a loading bar above the creature's head when relevant.
         /// </summary>
-        public IEnumerable<Act.Status> HitAndWait(float f, bool loadBar, Func<Vector3> pos)
+        public IEnumerable<Act.Status> HitAndWait(float f, bool loadBar, Func<Vector3> pos, string playSound = "")
         {
             var waitTimer = new Timer(f, true);
 
@@ -748,6 +754,12 @@ namespace DwarfCorp
                 Attacks[0].PerformNoDamage(this, DwarfTime.LastTime, pos());
                 Physics.Velocity = Vector3.Zero;
                 Sprite.ReloopAnimations(CharacterMode.Attacking);
+
+                if (!String.IsNullOrEmpty(playSound))
+                {
+                    NoiseMaker.MakeNoise(playSound, AI.Position, true);
+                }
+
                 yield return Act.Status.Running;
             }
             Sprite.PauseAnimations(CharacterMode.Attacking);

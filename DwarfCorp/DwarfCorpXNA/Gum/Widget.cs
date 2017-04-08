@@ -353,52 +353,59 @@ namespace Gum
             // Add text label
             if (!String.IsNullOrEmpty(Text))
             {
-                var drawableArea = GetDrawableInterior();
-                var stringMeshSize = new Rectangle();
-                var font = Root.GetTileSheet(Font);
-                var text = (font is VariableWidthFont) ? (font as VariableWidthFont).WordWrapString(
-                    Text, TextSize, drawableArea.Width) : Text;
-                var stringMesh = Mesh.CreateStringMesh(
-                    text,
-                    font,
-                    new Vector2(TextSize, TextSize),
-                    out stringMeshSize)
-                    .Colorize(TextColor);
-
-
-                var textDrawPos = Vector2.Zero;
-
-                switch (TextHorizontalAlign)
-                {
-                    case HorizontalAlign.Left:
-                        textDrawPos.X = drawableArea.X;
-                        break;
-                    case HorizontalAlign.Right:
-                        textDrawPos.X = drawableArea.X + drawableArea.Width - stringMeshSize.Width;
-                        break;
-                    case HorizontalAlign.Center:
-                        textDrawPos.X = drawableArea.X + ((drawableArea.Width - stringMeshSize.Width) / 2);
-                        break;
-                }
-
-                switch (TextVerticalAlign)
-                {
-                    case VerticalAlign.Top:
-                        textDrawPos.Y = drawableArea.Y;
-                        break;
-                    case VerticalAlign.Bottom:
-                        textDrawPos.Y = drawableArea.Y + drawableArea.Height - stringMeshSize.Height;
-                        break;
-                    case VerticalAlign.Center:
-                        textDrawPos.Y = drawableArea.Y + ((drawableArea.Height - stringMeshSize.Height) / 2);
-                        break;
-                }
-
-                stringMesh.Translate(textDrawPos.X, textDrawPos.Y);
-                result.Add(stringMesh);
+                GetTextMesh(result);
             }
 
             return Mesh.Merge(result.ToArray());
+        }
+
+        public void GetTextMesh(List<Mesh> result)
+        {
+            var drawableArea = GetDrawableInterior();
+            var stringMeshSize = new Rectangle();
+            var font = Root.GetTileSheet(Font);
+            var text = (font is VariableWidthFont)
+                ? (font as VariableWidthFont).WordWrapString(
+                    Text, TextSize, drawableArea.Width)
+                : Text;
+            var stringMesh = Mesh.CreateStringMesh(
+                text,
+                font,
+                new Vector2(TextSize, TextSize),
+                out stringMeshSize)
+                .Colorize(TextColor);
+
+
+            var textDrawPos = Vector2.Zero;
+
+            switch (TextHorizontalAlign)
+            {
+                case HorizontalAlign.Left:
+                    textDrawPos.X = drawableArea.X;
+                    break;
+                case HorizontalAlign.Right:
+                    textDrawPos.X = drawableArea.X + drawableArea.Width - stringMeshSize.Width;
+                    break;
+                case HorizontalAlign.Center:
+                    textDrawPos.X = drawableArea.X + ((drawableArea.Width - stringMeshSize.Width)/2);
+                    break;
+            }
+
+            switch (TextVerticalAlign)
+            {
+                case VerticalAlign.Top:
+                    textDrawPos.Y = drawableArea.Y;
+                    break;
+                case VerticalAlign.Bottom:
+                    textDrawPos.Y = drawableArea.Y + drawableArea.Height - stringMeshSize.Height;
+                    break;
+                case VerticalAlign.Center:
+                    textDrawPos.Y = drawableArea.Y + ((drawableArea.Height - stringMeshSize.Height)/2);
+                    break;
+            }
+
+            stringMesh.Translate(textDrawPos.X, textDrawPos.Y);
+            result.Add(stringMesh);
         }
 
         /// <summary>

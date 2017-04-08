@@ -1,4 +1,4 @@
-﻿// ContentPathGenerator.cs
+// ContentPathGenerator.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -46,8 +46,8 @@ namespace ContentGenerator
     /// </summary>
     public class ContentPathGenerator
     {
-        private static string contentRootDirectory = "C:\\Users\\Mklingen\\Documents\\Visual Studio 2010\\Projects\\VoxelTest\\VoxelTest\\VoxelTestContent";
-        private static string contentDirName = "VoxelTestContent";
+        private static string contentRootDirectory = @"C:\Users\matth_000\Documents\github\dwarfcorp\DwarfCorp\DwarfCorpContent";
+        private static string contentDirName = "DwarfCorpContent";
 
         public class ContentDir
         {

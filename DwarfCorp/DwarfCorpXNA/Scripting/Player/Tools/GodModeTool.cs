@@ -173,6 +173,16 @@ namespace DwarfCorp
                 Player.World.ComponentManager.Diplomacy.SendTradeEnvoy(toSend, Player.World);
             };
 
+            Checkbox drawPaths = new Checkbox(GUI, SelectorPanel, "Draw Paths", GUI.DefaultFont,
+                GameSettings.Default.DrawPaths)
+            {
+                LocalBounds = new Rectangle(200, 32, 100, 50)
+            };
+            drawPaths.OnCheckModified += (bool value) =>
+            {
+                GameSettings.Default.DrawPaths = value;
+            };
+
             SelectorPanel.IsVisible = false;
         }
 

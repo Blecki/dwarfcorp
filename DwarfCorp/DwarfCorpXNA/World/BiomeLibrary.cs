@@ -1,4 +1,4 @@
-﻿// BiomeLibrary.cs
+// BiomeLibrary.cs
 // 
 //  Modified MIT License (MIT)
 //  

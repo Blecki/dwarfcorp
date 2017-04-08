@@ -31,6 +31,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -117,33 +118,93 @@ namespace DwarfCorp
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            throw new NotImplementedException();
+            var box = (BoundingBox)value;
+            writer.WriteStartObject();
+            writer.WritePropertyName("MaxX");
+            serializer.Serialize(writer, box.Max.X);
+            writer.WritePropertyName("MaxY");
+            serializer.Serialize(writer, box.Max.Y);
+            writer.WritePropertyName("MaxZ");
+            serializer.Serialize(writer, box.Max.Z);
+            writer.WritePropertyName("MinX");
+            serializer.Serialize(writer, box.Min.X);
+            writer.WritePropertyName("MinY");
+            serializer.Serialize(writer, box.Min.Y);
+            writer.WritePropertyName("MinZ");
+            serializer.Serialize(writer, box.Min.Z);
+            writer.WriteEndObject();
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            JValue jObject = serializer.Deserialize<JValue>(reader);
-            string[] tokens = jObject.Value.ToString().Split(':', ' ', '{', '}');
-            // {Min: {X: vx, Y: vy, Z:vz}, Max: { X:vx, Y: vy, Z:vz} 4, 6, 8, 13, 15, 17
+            JObject jsonObject = JObject.Load(reader);
+            var properties = jsonObject.Properties().ToList();
+            return new BoundingBox()
+            {
+                Max = new Vector3(float.Parse((string)properties[0]),
+                    float.Parse((string)properties[1]),
+                    float.Parse((string)properties[2])),
+                Min = new Vector3(float.Parse((string)properties[3]),
+                    float.Parse((string)properties[4]),
+                    float.Parse((string)properties[5])) 
+            };
 
-            string minX = tokens[4];
-            string minY = tokens[6];
-            string minZ = tokens[8];
-            string maxX = tokens[13];
-            string maxY = tokens[15];
-            string maxZ = tokens[17];
-
-            return new BoundingBox(new Vector3(float.Parse(minX), float.Parse(minY), float.Parse(minZ)), new Vector3(float.Parse(maxX), float.Parse(maxY), float.Parse(maxZ)));
         }
 
         public override bool CanWrite
         {
-            get { return false; }
+            get { return true; }
         }
 
         public override bool CanConvert(Type objectType)
         {
             return objectType == typeof(BoundingBox);
+        }
+    }
+
+    /// <summary>
+    /// Serializes and deserializes BoundingBox objects to JSON.
+    /// </summary>
+    public class ColorConverter : JsonConverter
+    {
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            var color = (Color)value;
+            writer.WriteStartArray();
+            writer.WriteValue(color.R);
+            writer.WriteValue(color.G);
+            writer.WriteValue(color.B);
+            writer.WriteValue(color.A);
+            writer.WriteEndArray();
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.StartArray)
+            { 
+                // [R, G, B, A]
+                JArray jsonObject = JArray.Load(reader);
+                return new Color(jsonObject[0].Value<int>(), jsonObject[1].Value<int>(), jsonObject[2].Value<int>(),
+                    jsonObject[3].Value<int>());
+            }
+            else
+            {
+                //"R, G, B, A";
+                string value = reader.Value.ToString();
+                string[] toks = value.Split(',');
+                return new Color(int.Parse(toks[0]), int.Parse(toks[1]), int.Parse(toks[2]), int.Parse(toks[3]));
+            }
+
+        }
+
+        public override bool CanWrite
+        {
+            get { return true; }
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(Color);
         }
     }
 

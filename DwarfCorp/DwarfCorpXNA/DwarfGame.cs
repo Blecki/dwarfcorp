@@ -31,12 +31,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.IO;
 using System.Threading;
+using ContentGenerator;
 using DwarfCorp.GameStates;
 using Gum;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
+using Newtonsoft.Json;
 
 
 namespace DwarfCorp
@@ -56,6 +59,11 @@ namespace DwarfCorp
         public static Gum.RenderData GumSkin;
         public DwarfGame()
         {
+            //BoundingBox foo = new BoundingBox(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
+            //string serialized = FileUtils.SerializeBasicJSON(foo);
+            //BoundingBox deserialized = Newtonsoft.Json.JsonConvert.DeserializeObject<BoundingBox>(serialized, new BoxConverter());
+            //string code = ContentPathGenerator.GenerateCode();
+            //Console.Out.Write(code);
             GameState.Game = this;
             Content.RootDirectory = "Content";
             StateManager = new GameStateManager(this);

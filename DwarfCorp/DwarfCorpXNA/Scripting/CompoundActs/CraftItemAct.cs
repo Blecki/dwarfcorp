@@ -47,6 +47,7 @@ namespace DwarfCorp
     {
         public CraftItem ItemType { get; set; }
         public Voxel Voxel { get; set; }
+        public string Noise { get; set; }
         public CraftItemAct()
         {
 
@@ -189,7 +190,7 @@ namespace DwarfCorp
                             TeleportOffset = new Vector3(1, 0, 0),
                             ObjectName = ItemType.CraftLocation
                         },
-                        new Wrap(() => Creature.HitAndWait(time, true, () => Agent.Blackboard.GetData<Body>(ItemType.CraftLocation).Position)),
+                        new Wrap(() => Creature.HitAndWait(time, true, () => Agent.Blackboard.GetData<Body>(ItemType.CraftLocation).Position, Noise)),
                         new Wrap(DestroyResources),
                         unreserveAct,
                         new Wrap(CreateResources),
