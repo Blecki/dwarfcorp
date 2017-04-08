@@ -1252,11 +1252,12 @@ namespace DwarfCorp
                     Game.GraphicsDevice.Viewport.Height / 2);
 
             Master.Update(Game, gameTime);
-            // If not paused, we want to just update the rest of the game.
-            //if (!Paused)
-            {
-                Time.Update(gameTime);
+            Time.Update(gameTime);
 
+
+            // If not paused, we want to just update the rest of the game.
+            if (!Paused)
+            {
                 //GamePerformance.Instance.StartTrackPerformance("Diplomacy");
                 ComponentManager.Diplomacy.Update(gameTime, Time.CurrentDate, this);
                 //GamePerformance.Instance.StopTrackPerformance("Diplomacy");

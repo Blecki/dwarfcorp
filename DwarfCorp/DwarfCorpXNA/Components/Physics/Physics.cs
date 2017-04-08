@@ -247,6 +247,11 @@ namespace DwarfCorp
         new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (!IsActive) return;
+            if (gameTime.Speed < 0.01)
+            {
+                base.Update(gameTime, chunks, camera);
+                return;
+            }
 
             // How would this get a NaN anyway?
             if (MathFunctions.HasNan(Velocity))
