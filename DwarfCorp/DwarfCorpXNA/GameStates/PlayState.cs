@@ -561,6 +561,7 @@ namespace DwarfCorp.GameStates
                     DwarfTime.LastTime.Speed = (float)speed;
                     Paused = speed == 0;
                     PausedWidget.Hidden = !Paused;
+                    PausedWidget.Tooltip = "(push " + ControlSettings.Mappings.Pause.ToString() + " to unpause)";
                     PausedWidget.Invalidate();
                 }
             }) as NewGui.GameSpeedControls;
