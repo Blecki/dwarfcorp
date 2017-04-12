@@ -224,6 +224,24 @@
 			"Texture": "newgui/beartrap",
 			"TileWidth": 32,
 			"TileHeight": 32
+		},
+		{
+			"Name": "progress-sides",
+			"Texture": "newgui/progress-sides",
+			"TileWidth": 16,
+			"TileHeight": 32
+		},
+		{
+			"Name": "progress-middle",
+			"Texture": "newgui/progress-middle",
+			"TileWidth": 32,
+			"TileHeight": 32
+		},
+		{
+			"Name": "progress-fill",
+			"Texture": "newgui/progress-fill",
+			"TileWidth": 8,
+			"TileHeight": 32
 		}
 	]
 }

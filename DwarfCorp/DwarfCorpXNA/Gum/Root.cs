@@ -539,14 +539,20 @@ namespace Gum
 #endif
 
             RenderData.Effect.Parameters["Texture"].SetValue(RenderData.Texture);
-
             RenderData.Effect.CurrentTechnique.Passes[0].Apply();
 
             var mesh = RootItem.GetRenderMesh();
             mesh.Render(RenderData.Device);
 
+            DrawMouse();
+        }
+
+        public void DrawMouse()
+        {
             if (MousePointer != null)
             {
+                RenderData.Effect.Parameters["Texture"].SetValue(RenderData.Texture);
+                RenderData.Effect.CurrentTechnique.Passes[0].Apply();
                 var tileSheet = GetTileSheet(MousePointer.Sheet);
                 var mouseMesh = Mesh.Quad()
                     .Scale(tileSheet.TileWidth, tileSheet.TileHeight)

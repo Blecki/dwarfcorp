@@ -77,12 +77,12 @@ namespace DwarfCorp.GameStates
 
         public WorldLoadDescriptor SelectedDescriptor { get; set; }
 
-        public WorldSettings Settings { get; set; }
+        public WorldGenerationSettings Settings { get; set; }
 
         public WorldLoaderState(DwarfGame game, GameStateManager stateManager) :
             base(game, "WorldLoaderState", stateManager)
         {
-            Settings = new WorldSettings();
+            Settings = new WorldGenerationSettings();
             IsInitialized = false;
             Worlds = new List<WorldLoadDescriptor>();
             ExitThreads = false;
@@ -296,7 +296,7 @@ namespace DwarfCorp.GameStates
             back.OnClicked += back_OnClicked;
         }
 
-        public void LoadDescriptor(WorldLoadDescriptor descriptor, WorldSettings settings)
+        public void LoadDescriptor(WorldLoadDescriptor descriptor, WorldGenerationSettings settings)
         {
             try
             {
@@ -319,17 +319,15 @@ namespace DwarfCorp.GameStates
 
                     JoinThreads();
                     StateManager.PopState();
-                    StateManager.PushState(new WorldGeneratorState(Game, Game.StateManager)
+
+                    Settings.Name = descriptor.WorldName;
+                    var nextState = new WorldGeneratorState(Game, Game.StateManager)
                     {
                         Settings = Settings
-                    });
-                    WorldGeneratorState state = StateManager.GetState<WorldGeneratorState>();
-                    state.Progress.Value = 1.0f;
-                    state.GenerationComplete = true;
-                    state.DoneGenerating = true;
-                    state.Settings.Name = descriptor.WorldName;
-                    state.worldData = new Color[Overworld.Map.GetLength(0) * Overworld.Map.GetLength(1)];
-                    state.CreateMesh();
+                    };
+                    StateManager.PushState(nextState);
+                    nextState.LoadDummyGenerator(new Color[Overworld.Map.GetLength(0) * Overworld.Map.GetLength(1)], Game.GraphicsDevice);
+
                     Worlds.Clear();
                 }
             }

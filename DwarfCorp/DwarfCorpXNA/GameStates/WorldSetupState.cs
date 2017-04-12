@@ -55,7 +55,7 @@ namespace DwarfCorp
         public FormLayout OptionsLayout { get; set; }
         public Button BackButton { get; set; }
         public Button AcceptButton { get; set; }
-        public WorldSettings Settings { get; set; }
+        public WorldGenerationSettings Settings { get; set; }
         public DwarfGUI GUI { get; set; }
         public InputManager Input { get; set; }
         private const string VeryLow = "Very Low";
@@ -64,14 +64,14 @@ namespace DwarfCorp
         private const string High = "High";
         private const string VeryHigh = "Very High"; 
 
-        public WorldSetupState(DwarfGame game, GameStateManager stateManager, WorldSettings settings) :
+        public WorldSetupState(DwarfGame game, GameStateManager stateManager, WorldGenerationSettings settings) :
             base(game, "WorldSetupState", stateManager)
         {
             Settings = settings;
             IsInitialized = false;
             if (settings == null)
             {
-                Settings = new WorldSettings();
+                Settings = new WorldGenerationSettings();
             }
         }
 

@@ -49,20 +49,15 @@ namespace DwarfCorp.GameStates
     /// </summary>
     public class WorldGeneratorState : GameState, IDisposable
     {
-        public WorldSettings Settings { get; set; }
-        public VertexBuffer LandMesh { get; set; }
-        public IndexBuffer LandIndex { get; set; }
+        public WorldGenerator Generator;
+        public WorldGenerationSettings Settings { get; set; }
         public static Texture2D	 worldMap;
         public static BasicEffect simpleEffect;
-        public Color[] worldData;
         public DwarfGUI GUI { get; set; }
         public Matrix ViewMatrix { get; set; }
         public Matrix ProjMatrix { get; set; }
         public SpriteFont DefaultFont { get; set; }
-        public bool GenerationComplete { get; set; }
-        public string LoadingMessage = "";
         public Mutex ImageMutex;
-        private Thread genThread;
         public Panel MainWindow { get; set; }
         public int EdgePadding = 16;
         private RenderPanel MapPanel { get; set; }
@@ -85,17 +80,15 @@ namespace DwarfCorp.GameStates
         public string OverworldDirectory = "Worlds";
         public ComboBox WorldSizeBox { get; set; }
 
-        public List<Faction> NativeCivilizations = new List<Faction>();
         public ComboBox ViewSelectionBox;
 
         public WorldGeneratorState(DwarfGame game, GameStateManager stateManager) :
             base(game, "WorldGeneratorState", stateManager)
         {
-            GenerationComplete = false;
             ImageMutex = new Mutex();
             Input = new InputManager();
             Seed = DwarfTime.LastTime.TotalRealTime.Milliseconds;
-            Settings = new WorldSettings()
+            Settings = new WorldGenerationSettings()
             {
                 Width = 512,
                 Height = 512,
@@ -108,66 +101,17 @@ namespace DwarfCorp.GameStates
                 SeaLevel = 0.17f,
                 TemperatureScale = 1.0f
             };
-        }
+            Generator = new WorldGenerator(Settings);
+            Generator.Generate(game.GraphicsDevice);
 
-        private int[] SetUpTerrainIndices(int width, int height)
-        {
-            int[] indices = new int[(width - 1) * (height - 1) * 6];
-            int counter = 0;
-            for (int y = 0; y < height - 1; y++)
-            {
-                for (int x = 0; x < width - 1; x++)
-                {
-                    int lowerLeft = x + y * width;
-                    int lowerRight = (x + 1) + y * width;
-                    int topLeft = x + (y + 1) * width;
-                    int topRight = (x + 1) + (y + 1) * width;
-
-                    indices[counter++] = topLeft;
-                    indices[counter++] = lowerRight;
-                    indices[counter++] = lowerLeft;
-
-                    indices[counter++] = topLeft;
-                    indices[counter++] = topRight;
-                    indices[counter++] = lowerRight;
-                }
-            }
-
-            return indices;
-        }
-
-        public void CreateMesh()
-        {
-            simpleEffect = new BasicEffect(GUI.Graphics);
+            simpleEffect = new BasicEffect(game.GraphicsDevice);
             simpleEffect.EnableDefaultLighting();
             simpleEffect.LightingEnabled = false;
             simpleEffect.AmbientLightColor = new Vector3(1, 1, 1);
             simpleEffect.FogEnabled = false;
-            
-
-           int resolution = 4;
-           int width = Overworld.Map.GetLength(0);
-           int height = Overworld.Map.GetLength(1);
-           int numVerts = (width * height) / resolution;
-           LandMesh = new VertexBuffer(GUI.Graphics, VertexPositionTexture.VertexDeclaration, numVerts, BufferUsage.None);
-           VertexPositionTexture[] verts = new VertexPositionTexture[numVerts];
-
-            int i = 0;
-            for (int x = 0; x < width; x += resolution)
-            {
-                for (int y = 0; y < height; y += resolution)
-                {
-                    float landHeight = Overworld.Map[x, y].Height;
-                    verts[i].Position = new Vector3((float)x / width, landHeight * 0.05f, (float)y / height);
-                    verts[i].TextureCoordinate = new Vector2(((float)x) / width, ((float)y) / height);
-                    i++;
-                }
-            }
-            LandMesh.SetData(verts);
-            int[] indices = SetUpTerrainIndices(width / resolution, height / resolution);
-            LandIndex = new IndexBuffer(GUI.Graphics, typeof(int), indices.Length, BufferUsage.None);
-            LandIndex.SetData(indices);
         }
+
+
 
         public Point ScreenToWorld(Vector2 screenCoord)
         {
@@ -205,10 +149,9 @@ namespace DwarfCorp.GameStates
             return new Point((int)screenSpace.X, (int)screenSpace.Y);
         }
 
-
         public void DrawMesh(GameTime time)
         {
-            if (simpleEffect != null && DoneGenerating && !IsGenerating)
+            if (simpleEffect != null && Generator.CurrentState == WorldGenerator.GenerationState.Finished)
             {
                 GUI.Graphics.SetRenderTarget(MapPanel.Image);
                 simpleEffect.World = Matrix.Identity;
@@ -225,10 +168,10 @@ namespace DwarfCorp.GameStates
                 foreach (EffectPass pass in simpleEffect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    GUI.Graphics.SetVertexBuffer(LandMesh);
-                    GUI.Graphics.Indices = LandIndex;
-                    GUI.Graphics.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, LandMesh.VertexCount, 0,
-                        LandIndex.IndexCount/3);
+                    GUI.Graphics.SetVertexBuffer(Generator.LandMesh);
+                    GUI.Graphics.Indices = Generator.LandIndex;
+                    GUI.Graphics.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, Generator.LandMesh.VertexCount, 0,
+                        Generator.LandIndex.IndexCount/3);
                 }
                 GUI.Graphics.SetRenderTarget(null);
                 GUI.Graphics.Textures[0] = null;
@@ -239,8 +182,6 @@ namespace DwarfCorp.GameStates
 
         public override void OnEnter()
         {
-            IsGenerating = false;
-            DoneGenerating = false;
             MathFunctions.Random = new ThreadSafeRandom(Seed);
 
             Overworld.Volcanoes = new List<Vector2>();
@@ -248,7 +189,6 @@ namespace DwarfCorp.GameStates
             DefaultFont = Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
             GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Title), Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
             IsInitialized = true;
-            GenerationComplete = false;
             MainWindow = new Panel(GUI, GUI.RootComponent)
             {
                 Mode = Panel.PanelMode.Fancy,
@@ -405,11 +345,20 @@ namespace DwarfCorp.GameStates
             base.OnEnter();
         }
 
+        internal void LoadDummyGenerator(Color[] color, GraphicsDevice Device)
+        {
+            Generator.Abort();
+            Generator = new WorldGenerator(Settings);
+            Generator.LoadDummy(color, Device);
+           
+        }
+
         void regenButton_OnClicked()
         {
-            IsGenerating = false;
-            DoneGenerating = false;
             Seed = MathFunctions.Random.Next();
+            Generator.Abort();
+            Generator = new WorldGenerator(Settings);
+            Generator.Generate(Game.GraphicsDevice);
         }
 
         void advancedButton_OnClicked()
@@ -479,7 +428,7 @@ namespace DwarfCorp.GameStates
 
         private void saveButton_OnClicked()
         {
-            if(GenerationComplete)
+            if(Generator.CurrentState == WorldGenerator.GenerationState.Finished)
             {
                 System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetGameDirectory() + ProgramData.DirChar + "Worlds" + ProgramData.DirChar + Settings.Name);
                 OverworldFile file = new OverworldFile(Game.GraphicsDevice, Overworld.Map, Settings.Name, Settings.SeaLevel);
@@ -492,16 +441,12 @@ namespace DwarfCorp.GameStates
 
         public override void OnExit()
         {
-            if(genThread != null && genThread.IsAlive)
-            {
-                genThread.Join();
-            }
+            Generator.Abort();
 
             if (worldMap != null && !worldMap.IsDisposed)
             {
                 worldMap.Dispose();
                 worldMap = null;
-                worldData = null;
             }
             if (GUI != null)
             {
@@ -509,15 +454,14 @@ namespace DwarfCorp.GameStates
                 GUI = null;
             }
 
-
-            LoadingMessage = "";
             base.OnExit();
         }
 
         public void StartButtonOnClick()
         {
-            if(GenerationComplete)
-            {
+            if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
+                return;
+
                 Overworld.Name = Settings.Name;
                 GUI.MouseMode = GUISkin.MousePointer.Wait;
                 StateManager.ClearState();
@@ -525,33 +469,7 @@ namespace DwarfCorp.GameStates
                 Settings.WorldOrigin = Settings.WorldGenerationOrigin;
                 StateManager.PushState(new LoadState(Game, StateManager, Settings));
 
-                Settings.Natives = NativeCivilizations;
-            }
-        }
-
-        public List<Faction> GetFactionsInSpawn()
-        {
-            Rectangle spawnRect = GetSpawnRectangle();
-            List<Faction> toReturn = new List<Faction>();
-            for (int x = spawnRect.X; x < spawnRect.X + spawnRect.Width; x++)
-            {
-                for (int y = spawnRect.Y; y < spawnRect.Y + spawnRect.Height; y++)
-                {
-                    byte factionIdx = Overworld.Map[x, y].Faction;
-
-                    if (factionIdx > 0)
-                    {
-                        Faction faction = NativeCivilizations[factionIdx - 1];
-
-                        if (!toReturn.Contains(faction))
-                        {
-                            toReturn.Add(faction);
-                        }
-                        
-                    }
-                }
-            }
-            return toReturn;
+                Settings.Natives = Generator.NativeCivilizations;
         }
 
         public void ExitButtonOnClick()
@@ -559,20 +477,6 @@ namespace DwarfCorp.GameStates
             StateManager.PopState();
         }
 
-        public void Generate()
-        {
-            DoneGenerating = false;
-            if(!IsGenerating && !DoneGenerating)
-            {
-                Settings.WorldGenerationOrigin = new Vector2(Settings.Width / 2, Settings.Height / 2);
-                genThread = new Thread(unused => GenerateWorld(Seed, (int) Settings.Width, (int) Settings.Height));
-                genThread.Name = "GenerateWorld";
-                genThread.Start();
-                IsGenerating = true;
-            }
-        }
-
-        public bool IsGenerating { get; set; }
 
         public void OnMapClick()
         {
@@ -595,678 +499,42 @@ namespace DwarfCorp.GameStates
             Settings.WorldGenerationOrigin = new Vector2((int)(clickX), (int)(clickY));
         }
 
-        public Dictionary<string, Color> GenerateFactionColors()
-        {
-            Dictionary<string, Color> toReturn = new Dictionary<string, Color>();
-            toReturn["Unclaimed"] = Color.Gray;
-            foreach (Faction faction in NativeCivilizations)
-            {
-                toReturn[faction.Name + " (" + faction.Race.Name + ")"] = faction.PrimaryColor;
-            }
-            return toReturn;
-        }
-
-
         public void DisplayModeModified(string type)
         {
-            if(!GenerationComplete)
-            {
+            if(Generator.CurrentState == WorldGenerator.GenerationState.Generating)
                 return;
-            }
-
+            
             switch (type)
             {
                 case "Height":
                     ColorKeys.ColorEntries = Overworld.HeightColors;
-                    Overworld.TextureFromHeightMap(type, Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap, Settings.SeaLevel);
+                    Overworld.TextureFromHeightMap(type, Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, Generator.worldData, worldMap, Settings.SeaLevel);
                     break;
                 case "Biomes":
                     ColorKeys.ColorEntries = BiomeLibrary.CreateBiomeColors();
-                    Overworld.TextureFromHeightMap(type, Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap, Settings.SeaLevel);
+                    Overworld.TextureFromHeightMap(type, Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, Generator.worldData, worldMap, Settings.SeaLevel);
                     break;
                 case "Temp.":
                     ColorKeys.ColorEntries = Overworld.JetColors;
-                    Overworld.TextureFromHeightMap("Gray", Overworld.Map, Overworld.ScalarFieldType.Temperature, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap, Settings.SeaLevel);
+                    Overworld.TextureFromHeightMap("Gray", Overworld.Map, Overworld.ScalarFieldType.Temperature, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, Generator.worldData, worldMap, Settings.SeaLevel);
                     break;
                 case "Rain":
                     ColorKeys.ColorEntries = Overworld.JetColors;
-                    Overworld.TextureFromHeightMap("Gray", Overworld.Map, Overworld.ScalarFieldType.Rainfall, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap, Settings.SeaLevel);
+                    Overworld.TextureFromHeightMap("Gray", Overworld.Map, Overworld.ScalarFieldType.Rainfall, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, Generator.worldData, worldMap, Settings.SeaLevel);
                     break;
                 case "Erosion":
                     ColorKeys.ColorEntries = Overworld.JetColors;
-                    Overworld.TextureFromHeightMap("Gray", Overworld.Map, Overworld.ScalarFieldType.Erosion, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap, Settings.SeaLevel);
+                    Overworld.TextureFromHeightMap("Gray", Overworld.Map, Overworld.ScalarFieldType.Erosion, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, Generator.worldData, worldMap, Settings.SeaLevel);
                     break;
                 case "Faults":
                     ColorKeys.ColorEntries = Overworld.JetColors;
-                    Overworld.TextureFromHeightMap("Gray", Overworld.Map, Overworld.ScalarFieldType.Faults, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap, Settings.SeaLevel);
+                    Overworld.TextureFromHeightMap("Gray", Overworld.Map, Overworld.ScalarFieldType.Faults, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, Generator.worldData, worldMap, Settings.SeaLevel);
                     break;
                 case "Factions":
-                    ColorKeys.ColorEntries = GenerateFactionColors();
-                    Overworld.NativeFactions = NativeCivilizations;
-                    Overworld.TextureFromHeightMap(type, Overworld.Map, Overworld.ScalarFieldType.Factions, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap, Settings.SeaLevel);
+                    ColorKeys.ColorEntries = Generator.GenerateFactionColors();
+                    Overworld.NativeFactions = Generator.NativeCivilizations;
+                    Overworld.TextureFromHeightMap(type, Overworld.Map, Overworld.ScalarFieldType.Factions, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, Generator.worldData, worldMap, Settings.SeaLevel);
                     break;
-            }
-        }
-
-        public void GenerateVolcanoes(int width, int height)
-        {
-            int volcanoSamples = 4;
-            float volcanoSize = 11;
-            for(int i = 0; i < (int) Settings.NumVolcanoes; i++)
-            {
-                Vector2 randomPos = new Vector2((float) (MathFunctions.Random.NextDouble() * width), (float) (MathFunctions.Random.NextDouble() * height));
-                float maxFaults = Overworld.Map[(int) randomPos.X, (int) randomPos.Y].Height;
-                for(int j = 0; j < volcanoSamples; j++)
-                {
-                    Vector2 randomPos2 = new Vector2((float) (MathFunctions.Random.NextDouble() * width), (float) (MathFunctions.Random.NextDouble() * height));
-                    float faults = Overworld.Map[(int) randomPos2.X, (int) randomPos2.Y].Height;
-
-                    if(faults > maxFaults)
-                    {
-                        randomPos = randomPos2;
-                        maxFaults = faults;
-                    }
-                }
-
-                Overworld.Volcanoes.Add(randomPos);
-
-
-                for(int dx = -(int) volcanoSize; dx <= (int) volcanoSize; dx++)
-                {
-                    for(int dy = -(int) volcanoSize; dy <= (int) volcanoSize; dy++)
-                    {
-                        int x = (int) MathFunctions.Clamp(randomPos.X + dx, 0, width - 1);
-                        int y = (int) MathFunctions.Clamp(randomPos.Y + dy, 0, height - 1);
-
-                        float dist = (float) Math.Sqrt(dx * dx + dy * dy);
-                        float fDist = (float) Math.Sqrt((dx / 3.0f) * (dx / 3.0f) + (dy / 3.0f) * (dy / 3.0f));
-
-                        //Overworld.Map[x, y].Erosion = MathFunctions.Clamp(dist, 0.0f, 0.5f);
-                        float f = (float) (Math.Pow(Math.Sin(fDist), 3.0f) + 1.0f) * 0.2f;
-                        Overworld.Map[x, y].Height += f;
-
-                        if(dist <= 2)
-                        {
-                            Overworld.Map[x, y].Water = Overworld.WaterType.Volcano;
-                        }
-
-                        if(dist < volcanoSize)
-                        {
-                            Overworld.Map[x, y].Biome = Overworld.Biome.Waste;
-                        }
-                    }
-                }
-            }
-        }
-
-        public void GenerateWorld(int seed, int width, int height)
-        {
-#if CREATE_CRASH_LOGS
-           try
-#endif
-            {
-                GUI.MouseMode = GUISkin.MousePointer.Wait;
-               
-                MathFunctions.Random = new ThreadSafeRandom(Seed);
-                GenerationComplete = false;
-
-                LoadingMessage = "Init..";
-                Overworld.heightNoise.Seed = Seed;
-                worldMap = new Texture2D(Game.GraphicsDevice, width, height);
-                worldData = new Color[width * height];
-                Overworld.Map = new Overworld.MapData[width, height];
-
-                Progress.Value = 0.01f;
-
-                LoadingMessage = "Height Map ...";
-                float[,] heightMapLookup = null;
-                heightMapLookup = Overworld.GenerateHeightMapLookup(width, height);
-                Overworld.GenerateHeightMapFromLookup(heightMapLookup, width, height, 1.0f, false);
-
-                Progress.Value = 0.05f;
-
-                int numRains = (int)Settings.NumRains;
-                int rainLength = 250;
-                int numRainSamples = 3;
-
-                for (int x = 0; x < width; x++)
-                {
-                    for (int y = 0; y < height; y++)
-                    {
-                        Overworld.Map[x, y].Erosion = 1.0f;
-                        Overworld.Map[x, y].Weathering = 0;
-                        Overworld.Map[x, y].Faults = 1.0f;
-                    }
-                }
-
-                LoadingMessage = "Climate";
-                for (int x = 0; x < width; x++)
-                {
-                    for (int y = 0; y < height; y++)
-                    {
-                        Overworld.Map[x, y].Temperature = ((float)(y) / (float)(height)) * Settings.TemperatureScale;
-                        //Overworld.Map[x, y].Rainfall = Math.Max(Math.Min(Overworld.noise(x, y, 1000.0f, 0.01f) + Overworld.noise(x, y, 100.0f, 0.1f) * 0.05f, 1.0f), 0.0f) * RainfallScale;
-                    }
-                }
-
-                //Overworld.Distort(width, height, 60.0f, 0.005f, Overworld.ScalarFieldType.Rainfall);
-                Overworld.Distort(width, height, 30.0f, 0.005f, Overworld.ScalarFieldType.Temperature);
-                for (int x = 0; x < width; x++)
-                {
-                    for (int y = 0; y < height; y++)
-                    {
-                        Overworld.Map[x, y].Temperature = Math.Max(Math.Min(Overworld.Map[x, y].Temperature, 1.0f), 0.0f);
-                    }
-                }
-        
-                Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, width, height, MapPanel.Lock, worldData, worldMap, Settings.SeaLevel);
-
-                int numVoronoiPoints = (int)Settings.NumFaults;
-
-
-                Progress.Value = 0.1f;
-                LoadingMessage = "Faults ...";
-
-                #region voronoi
-
-                Voronoi(width, height, numVoronoiPoints);
-
-                #endregion
-
-                Overworld.GenerateHeightMapFromLookup(heightMapLookup, width, height, 1.0f, true);
-
-                Progress.Value = 0.2f;
-
-                Overworld.GenerateHeightMapFromLookup(heightMapLookup, width, height, 1.0f, true);
-
-                Progress.Value = 0.25f;
-                Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, width, height, MapPanel.Lock, worldData, worldMap, Settings.SeaLevel);
-                LoadingMessage = "Erosion...";
-
-                #region erosion
-
-                float[,] buffer = new float[width, height];
-                Erode(width, height, Settings.SeaLevel, Overworld.Map, numRains, rainLength, numRainSamples, buffer);
-                Overworld.GenerateHeightMapFromLookup(heightMapLookup, width, height, 1.0f, true);
-
-                #endregion
-
-                Progress.Value = 0.9f;
-
-
-                LoadingMessage = "Blur.";
-                Overworld.Blur(Overworld.Map, width, height, Overworld.ScalarFieldType.Erosion);
-
-                LoadingMessage = "Generate height.";
-                Overworld.GenerateHeightMapFromLookup(heightMapLookup, width, height, 1.0f, true);
-
-
-                LoadingMessage = "Rain";
-                CalculateRain(width, height);
-
-                LoadingMessage = "Biome";
-                for (int x = 0; x < width; x++)
-                {
-                    for (int y = 0; y < height; y++)
-                    {
-                        Overworld.Map[x, y].Biome = Overworld.GetBiome(Overworld.Map[x, y].Temperature, Overworld.Map[x, y].Rainfall, Overworld.Map[x, y].Height);
-                    }
-                }
-
-                LoadingMessage = "Volcanoes";
-
-                GenerateVolcanoes(width, height);
-
-                Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, width, height, MapPanel.Lock, worldData, worldMap, Settings.SeaLevel);
-
-                LoadingMessage = "Factions";
-                NativeCivilizations = new List<Faction>();
-                FactionLibrary library = new FactionLibrary();
-                library.Initialize(null, new CompanyInformation());
-                for (int i = 0; i < Settings.NumCivilizations; i++)
-                {
-                    NativeCivilizations.Add(library.GenerateFaction(null, i, Settings.NumCivilizations));
-                }
-                SeedCivs(Overworld.Map, Settings.NumCivilizations, NativeCivilizations);
-                GrowCivs(Overworld.Map, 200, NativeCivilizations);
-
-
-                for (int x = 0; x < width; x++)
-                {
-                    Overworld.Map[x, 0] = Overworld.Map[x, 1];
-                    Overworld.Map[x, height - 1] = Overworld.Map[x, height - 2];
-                }
-
-                for (int y = 0; y < height; y++)
-                {
-                    Overworld.Map[0, y] = Overworld.Map[1, y];
-                    Overworld.Map[width - 1, y] = Overworld.Map[width - 2, y];
-                }
-
-                GenerationComplete = true;
-
-                MapPanel.LocalBounds = new Rectangle(300, 30, worldMap.Width, worldMap.Height);
-
-
-                Progress.Value = 1.0f;
-                GUI.MouseMode = GUISkin.MousePointer.Pointer;
-                CreateMesh();
-                IsGenerating = false;
-                DoneGenerating = true;
-
-            }
-#if CREATE_CRASH_LOGS
-            catch (Exception exception)
-            {
-                ProgramData.WriteExceptionLog(exception);
-                throw;
-            }
-#endif
-        }
-
-        public void CalculateRain(int width, int height)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                float currentMoisture = Settings.RainfallScale * 10;
-                for (int x = 0; x < width; x++)
-                {
-                    float h = Overworld.Map[x, y].Height;
-                    bool isWater = h < Settings.SeaLevel;
-
-                    if (isWater)
-                    {
-                        currentMoisture += MathFunctions.Rand(0.1f, 0.3f);
-                        currentMoisture = Math.Min(currentMoisture, Settings.RainfallScale * 20);
-                        Overworld.Map[x, y].Rainfall = 0.5f;
-                    }
-                    else
-                    {
-                        float rainAmount = currentMoisture * 0.017f * h + currentMoisture * 0.0006f;
-                        currentMoisture -= rainAmount;
-                        float evapAmount = MathFunctions.Rand(0.01f, 0.02f);
-                        currentMoisture += evapAmount;
-                        Overworld.Map[x, y].Rainfall = rainAmount * Settings.RainfallScale * Settings.Width * 0.015f;
-                    }
-                }
-            }
-
-            Overworld.Distort(width, height, 5.0f, 0.03f, Overworld.ScalarFieldType.Rainfall);
-
-        }
-
-        private void Voronoi(int width, int height, int numVoronoiPoints)
-        {
-            List<List<Vector2>> vPoints = new List<List<Vector2>>();
-            List<float> rands = new List<float>();
-
-            /*
-            List<Vector2> edge = new List<Vector2>
-            {
-                new Vector2(0, 0),
-                new Vector2(width, 0),
-                new Vector2(width, height),
-                new Vector2(0, height),
-                new Vector2(0, 0)
-            };
-
-            List<Vector2> randEdge = new List<Vector2>();
-            for (int i = 1; i < edge.Count; i++)
-            {
-                if (MathFunctions.RandEvent(0.5f))
-                {
-                    randEdge.Add(edge[i]);
-                    randEdge.Add(edge[i - 1]);
-                }
-            }
-
-            vPoints.Add(randEdge);
-             */
-            for(int i = 0; i < numVoronoiPoints; i++)
-            {
-                Vector2 v = GetEdgePoint(width, height);
-
-                for(int j = 0; j < 4; j++)
-                {
-                    List<Vector2> line = new List<Vector2>();
-                    rands.Add(1.0f);
-
-                    line.Add(v);
-                    v += new Vector2(MathFunctions.Rand() - 0.5f, MathFunctions.Rand() - 0.5f) * Settings.Width * 0.5f;
-                    line.Add(v);
-                    vPoints.Add(line);
-                }
-            }
-
-
-            List<VoronoiNode> nodes = new List<VoronoiNode>();
-            foreach (List<Vector2> pts in vPoints)
-            {
-                for(int j = 0; j < pts.Count - 1; j++)
-                {
-                    VoronoiNode node = new VoronoiNode
-                    {
-                        pointA = pts[j], 
-                        pointB = pts[j + 1]
-                    };
-                    nodes.Add(node);
-                }
-            }
-
-            for(int x = 0; x < width; x++)
-            {
-                for(int y = 0; y < height; y++)
-                {
-                    Overworld.Map[x, y].Faults = GetVoronoiValue(nodes, x, y);
-                }
-            }
-
-            ScaleMap(Overworld.Map, width, height, Overworld.ScalarFieldType.Faults);
-            Overworld.Distort(width, height, 20, 0.01f, Overworld.ScalarFieldType.Faults);
-        }
-
-        private void Erode(int width, int height, float seaLevel, Overworld.MapData[,] heightMap, int numRains, int rainLength, int numRainSamples, float[,] buffer)
-        {
-            float remaining = 1.0f - Progress.Value - 0.2f;
-            float orig = Progress.Value;
-            for(int x = 0; x < width; x++)
-            {
-                for(int y = 0; y < height; y++)
-                {
-                    buffer[x, y] = heightMap[x, y].Height;
-                }
-            }
-
-            for(int i = 0; i < numRains; i++)
-            {
-                LoadingMessage = "Erosion " + i + "/" + numRains;
-                Progress.Value = orig + remaining * ((float) i / (float) numRains);
-                Vector2 currentPos = new Vector2(0, 0);
-                Vector2 bestPos = currentPos;
-                float bestHeight = 0.0f;
-                for(int k = 0; k < numRainSamples; k++)
-                {
-                    int randX = MathFunctions.Random.Next(1, width - 1);
-                    int randY = MathFunctions.Random.Next(1, height - 1);
-
-                    currentPos = new Vector2(randX, randY);
-                    float h = Overworld.GetHeight(buffer, currentPos);
-
-                    if(h > bestHeight)
-                    {
-                        bestHeight = h;
-                        bestPos = currentPos;
-                    }
-                }
-
-                currentPos = bestPos;
-
-                const float erosionRate = 0.9f;
-                Vector2 velocity = Vector2.Zero;
-                for(int j = 0; j < rainLength; j++)
-                {
-                    Vector2 g = Overworld.GetMinNeighbor(buffer, currentPos);
-
-                    float h = Overworld.GetHeight(buffer, currentPos);
-
-                    if(h < seaLevel|| g.LengthSquared() < 1e-12)
-                    {
-                        break;
-                    }
-
-                    Overworld.MinBlend(Overworld.Map, currentPos, erosionRate * Overworld.GetValue(Overworld.Map, currentPos, Overworld.ScalarFieldType.Erosion), Overworld.ScalarFieldType.Erosion);
-
-                    velocity = 0.1f * g + 0.7f * velocity + 0.2f * MathFunctions.RandVector2Circle();
-                    currentPos += velocity;
-                }
-            }
-        }
-
-        private void Weather(int width, int height, float T, Vector2[] neighbs, float[,] buffer)
-        {
-            for(int x = 0; x < width; x++)
-            {
-                for(int y = 0; y < height; y++)
-                {
-                    buffer[x, y] = Overworld.Map[x, y].Height * Overworld.Map[x, y].Faults;
-                }
-            }
-
-            int weatheringIters = 10;
-
-            for(int iter = 0; iter < weatheringIters; iter++)
-            {
-                for(int x = 0; x < width; x++)
-                {
-                    for(int y = 0; y < height; y++)
-                    {
-                        Vector2 p = new Vector2(x, y);
-                        Vector2 maxDiffNeigh = Vector2.Zero;
-                        float maxDiff = 0;
-                        float totalDiff = 0;
-                        float h = Overworld.GetHeight(buffer, p);
-                        float lowestNeighbor = 0.0f;
-                        for(int i = 0; i < 4; i++)
-                        {
-                            float nh = Overworld.GetHeight(buffer, p + neighbs[i]);
-                            float diff = h - nh;
-                            totalDiff += diff;
-                            if(diff > maxDiff)
-                            {
-                                maxDiffNeigh = neighbs[i];
-                                maxDiff = diff;
-                                lowestNeighbor = nh;
-                            }
-                        }
-
-                        if(maxDiff > T)
-                        {
-                            Overworld.AddValue(Overworld.Map, p + maxDiffNeigh, Overworld.ScalarFieldType.Weathering, (float)(maxDiff * 0.4f));
-                            Overworld.AddValue(Overworld.Map, p, Overworld.ScalarFieldType.Weathering, (float)(-maxDiff * 0.4f));
-                        }
-                    }
-                }
-
-                for(int x = 0; x < width; x++)
-                {
-                    for(int y = 0; y < height; y++)
-                    {
-                        Vector2 p = new Vector2(x, y);
-                        float w = Overworld.GetValue(Overworld.Map, p, Overworld.ScalarFieldType.Weathering);
-                        Overworld.AddHeight(buffer, p, w);
-                        Overworld.Map[x, y].Weathering = 0.0f;
-                    }
-                }
-            }
-
-            for(int x = 0; x < width; x++)
-            {
-                for(int y = 0; y < height; y++)
-                {
-                    Overworld.Map[x, y].Weathering = buffer[x, y] - Overworld.Map[x, y].Height * Overworld.Map[x, y].Faults;
-                }
-            }
-        }
-
-        private static Vector2 GetEdgePoint(int width, int height)
-        {
-            return new Vector2(MathFunctions.Random.Next(0, width), MathFunctions.Random.Next(0, height));
-        }
-
-        private static void ScaleMap(Overworld.MapData[,] map, int width, int height, Overworld.ScalarFieldType fieldType)
-        {
-            float min = 99999;
-            float max = -99999;
-            float average = 0;
-
-            for(int x = 0; x < width; x++)
-            {
-                for(int y = 0; y < height; y++)
-                {
-                    float v = map[x, y].GetValue(fieldType);
-                    average += v;
-                    if(v < min)
-                    {
-                        min = v;
-                    }
-
-                    if(v > max)
-                    {
-                        max = v;
-                    }
-                }
-            }
-            average /= (width*height);
-            average = ((average - min)/(max - min));
-            bool tooLow = average < 0.5f;
-            for(int x = 0; x < width; x++)
-            {
-                for(int y = 0; y < height; y++)
-                {
-                    float v = map[x, y].GetValue(fieldType);
-                    float newVal = ((v - min)/(max - min)) + 0.001f;
-                    if (tooLow)
-                        newVal = 1.0f - newVal;
-                    map[x, y].SetValue(fieldType, newVal);
-                }
-            }
-        }
-
-        private class VoronoiNode
-        {
-            public Vector2 pointA;
-            public Vector2 pointB;
-            public float dist;
-        }
-
-        private float GetVoronoiValue(List<VoronoiNode> points, int x, int y)
-        {
-            Vector2 xVec = new Vector2(x, y);
-
-            float minDist = float.MaxValue;
-            VoronoiNode maxNode = null;
-            for(int i = 0; i < points.Count; i++)
-            {
-                VoronoiNode vor = points[i];
-                vor.dist = MathFunctions.PointLineDistance2D(vor.pointA, vor.pointB, xVec);
-
-                if(vor.dist < minDist)
-                {
-                    minDist = vor.dist;
-                    maxNode = vor;
-                }
-            }
-
-            if(maxNode == null)
-            {
-                return 1.0f;
-            }
-
-            return (float) (1e-2*(maxNode.dist / Settings.Width));
-        }
-
-
-        public  Point? GetRandomLandPoint(Overworld.MapData[,] map)
-        {
-            const int maxIters = 1000;
-            int i = 0;
-            int width = map.GetLength(0);
-            int height = map.GetLength(1);
-            while (i < maxIters)
-            {
-                int x = MathFunctions.Random.Next(0, width);
-                int y = MathFunctions.Random.Next(0, height);
-
-                if (map[x, y].Height > Settings.SeaLevel)
-                {
-                    return new Point(x, y);
-                }
-
-                i++;
-            }
-
-            return null;
-        }
-
-        public  void SeedCivs(Overworld.MapData[,] map, int numCivs, List<Faction> civs )
-        {
-            for (int i = 0; i < numCivs; i++)
-            {
-                Point? randomPoint = GetRandomLandPoint(map);
-
-                if (randomPoint == null) continue;
-                else
-                {
-                    map[randomPoint.Value.X, randomPoint.Value.Y].Faction = (byte)(i + 1);
-                    civs[i].StartingPlace = randomPoint.Value;
-                }
-            }
-        }
-
-        public  void GrowCivs(Overworld.MapData[,] map, int iters, List<Faction> civs)
-        {
-            int width = map.GetLength(0);
-            int height = map.GetLength(1);
-            byte[] neighbors = new byte[] {0, 0, 0, 0};
-            float[] neighborheights = new float[] { 0, 0, 0, 0};
-            Point[] deltas = new Point[] { new Point(1, 0), new Point(0, 1), new Point(-1, 0), new Point(1, -1) };
-            for (int i = 0; i < iters; i++)
-            {
-                for (int x = 1; x < width - 1; x++)
-                {
-                    for (int y = 1; y < height - 1; y++)
-                    {
-                        bool isUnclaimed = map[x, y].Faction == 0;
-                        bool isWater = map[x, y].Height < Settings.SeaLevel;
-                        if (!isUnclaimed && !isWater)
-                        {
-                            neighbors[0] = map[x + 1, y].Faction;
-                            neighbors[1] = map[x, y + 1].Faction;
-                            neighbors[2] = map[x - 1, y].Faction;
-                            neighbors[3] = map[x, y - 1].Faction;
-                            neighborheights[0] = map[x + 1, y].Height;
-                            neighborheights[1] = map[x, y + 1].Height;
-                            neighborheights[2] = map[x - 1, y].Height;
-                            neighborheights[3] = map[x, y - 1].Height;
-
-                            int minNeighbor = -1;
-                            float minHeight = float.MaxValue;
-
-                            for (int k = 0; k < 4; k++)
-                            {
-                                if (neighbors[k] == 0 && neighborheights[k] < minHeight && neighborheights[k] > Settings.SeaLevel)
-                                {
-                                    minHeight = neighborheights[k];
-                                    minNeighbor = k;
-                                }
-                            }
-
-                            if (minNeighbor >= 0 && MathFunctions.RandEvent(0.25f / (neighborheights[minNeighbor] + 1e-2f)))
-                            {
-                                map[x + deltas[minNeighbor].X, y + deltas[minNeighbor].Y].Faction = map[x, y].Faction;
-                            }
-                        }
-                    }
-                }
-            }
-
-            for (int x = 1; x < width - 1; x++)
-            {
-                for (int y = 1; y < height - 1; y++)
-                {
-                    byte f = map[x, y].Faction;
-                    if (f> 0)
-                    {
-                        civs[f - 1].Center = new Point(x + civs[f - 1].Center.X, y + civs[f - 1].Center.Y);
-                        civs[f - 1].TerritorySize++;
-                    }
-                }
-            }
-
-            foreach (Faction f in civs)
-            {
-                if(f.TerritorySize > 0)
-                    f.Center = new Point(f.Center.X / f.TerritorySize, f.Center.Y / f.TerritorySize);
             }
         }
 
@@ -1277,12 +545,8 @@ namespace DwarfCorp.GameStates
                 GUI.Update(gameTime);
                 Input.Update();
 
-                GUI.EnableMouseEvents = !IsGenerating;
-
-                if (!IsGenerating && !DoneGenerating)
-                {
-                    Generate();
-                }
+                GUI.EnableMouseEvents = Generator.CurrentState == WorldGenerator.GenerationState.Finished;
+                Progress.Value = Generator.Progress;
             }
 
             if (!GUI.Graphics.IsDisposed)
@@ -1293,8 +557,6 @@ namespace DwarfCorp.GameStates
             }
             base.Update(gameTime);
         }
-
-        public bool DoneGenerating { get; set; }
 
         public Rectangle GetSpawnRectangle()
         {
@@ -1331,9 +593,9 @@ namespace DwarfCorp.GameStates
             Drawer2D.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(0, dx));
 
-            Progress.Message = !GenerationComplete ? LoadingMessage : "";
+            Progress.Message = Generator.CurrentState == WorldGenerator.GenerationState.Finished ? "" : Generator.LoadingMessage;
 
-            if(GenerationComplete)
+            if(Generator.CurrentState == WorldGenerator.GenerationState.Finished)
             {
                 Rectangle imageBounds = MapPanel.GetImageBounds();
                 float scaleX = ((float)imageBounds.Width / (float)Settings.Width);
@@ -1369,7 +631,7 @@ namespace DwarfCorp.GameStates
 
                 if (ViewSelectionBox.CurrentValue == "Factions")
                 {
-                    foreach (Faction civ in NativeCivilizations)
+                    foreach (Faction civ in Generator.NativeCivilizations)
                     {
                         bool validProj = false;
                         Point start = WorldToScreen(civ.Center, ref validProj);
@@ -1406,54 +668,6 @@ namespace DwarfCorp.GameStates
                 ImageMutex.Dispose();   
             if (!worldMap.IsDisposed)
                 worldMap.Dispose();
-        }
-    }
-
-    public class WorldSettings
-    {
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public string Name { get; set; }
-        public int NumCivilizations { get; set; }
-        public int NumRains { get; set; }
-        public int NumVolcanoes { get; set; }
-        public float RainfallScale { get; set; }
-        public int NumFaults { get; set; }
-        public float SeaLevel { get; set; }
-        public float TemperatureScale { get; set; }
-        public Point3 ColonySize { get; set; }
-        public Vector2 WorldGenerationOrigin { get; set; }
-        public float WorldScale { get; set; }
-        public Embarkment InitalEmbarkment { get; set; }
-        public Vector2 WorldOrigin { get; set; }
-        public string ExistingFile { get; set; }
-        public List<Faction> Natives { get; set; }
-
-
-
-        public static string GetRandomWorldName()
-        {
-            List<List<string>> templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.worlds);
-            return TextGenerator.GenerateRandom(templates);
-        }
-
-        public WorldSettings()
-        {
-            Width = 512;
-            Height = 512;
-            Name = GetRandomWorldName();
-            NumCivilizations = 5;
-            NumFaults = 3;
-            NumRains = 1000;
-            NumVolcanoes = 3;
-            RainfallScale = 1.0f;
-            SeaLevel = 0.17f;
-            TemperatureScale = 1.0f;
-            ColonySize = new Point3(8, 1, 8);
-            WorldScale = 2.0f;
-            InitalEmbarkment = Embarkment.DefaultEmbarkment;
-            WorldOrigin = new Vector2(Width / WorldScale, Height / WorldScale) * 0.5f;
-            ExistingFile = null;
         }
     }
 }

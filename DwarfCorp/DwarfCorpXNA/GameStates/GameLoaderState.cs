@@ -274,7 +274,7 @@ namespace DwarfCorp.GameStates
             
                 JoinThreads();
                 StateManager.ClearState();
-                StateManager.PushState(new LoadState(Game, Game.StateManager, new WorldSettings() { ExistingFile = descriptor.FileName, Name =  descriptor.FileName}));
+                StateManager.PushState(new LoadState(Game, Game.StateManager, new WorldGenerationSettings() { ExistingFile = descriptor.FileName, Name =  descriptor.FileName}));
                 Games.Clear();
             }
         }

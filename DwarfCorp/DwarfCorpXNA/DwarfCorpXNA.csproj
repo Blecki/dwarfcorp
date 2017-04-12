@@ -229,6 +229,8 @@
     <Compile Include="GameStates\GameLoaderState.cs" />
     <Compile Include="GameStates\GameState.cs" />
     <Compile Include="GameStates\GameStateManager.cs" />
+    <Compile Include="GameStates\WorldGeneratorPreview.cs" />
+    <Compile Include="GameStates\NewWorldGeneratorState.cs" />
     <Compile Include="GameStates\IntroState.cs" />
     <Compile Include="GameStates\LoadState.cs" />
     <Compile Include="GameStates\LoseState.cs" />
@@ -240,6 +242,8 @@
     <Compile Include="GameStates\GuiStateTemplate.cs" />
     <Compile Include="GameStates\OptionsState.cs" />
     <Compile Include="GameStates\PlayState.cs" />
+    <Compile Include="GameStates\WorldGenerator.cs" />
+    <Compile Include="GameStates\WorldGenerationSettings.cs" />
     <Compile Include="GameStates\WorldGeneratorState.cs" />
     <Compile Include="GameStates\WorldLoaderState.cs" />
     <Compile Include="GameStates\WorldSetupState.cs" />
@@ -367,6 +371,7 @@
     <Compile Include="Gum\Widgets\Button.cs" />
     <Compile Include="Gum\Widgets\CheckBox.cs" />
     <Compile Include="Gum\Widgets\ComboBox.cs" />
+    <Compile Include="Gum\Widgets\ProgressBar.cs" />
     <Compile Include="Gum\Widgets\KeyField.cs" />
     <Compile Include="Gum\Widgets\EditableTextField.cs" />
     <Compile Include="Gum\Widgets\HorizontalFloatSlider.cs" />
