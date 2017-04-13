@@ -277,18 +277,25 @@ namespace DwarfCorp.GameStates
                     Generator.worldData, PreviewTexture, Generator.Settings.SeaLevel);
 
                 var colorKeyEntries = style.GetColorKeys(Generator);
-                var font = Root.GetTileSheet("font");
+                var font = Root.GetTileSheet("outline-font");
                 var stringMeshes = new List<Gum.Mesh>();
                 var y = PreviewPanel.Rect.Y;
+                var maxWidth = 0;
                 foreach (var color in colorKeyEntries)
                 {
                     Rectangle bounds;
-                    var mesh = Gum.Mesh.CreateStringMesh(color.Key, font, Vector2.One, out bounds);
-                    stringMeshes.Add(mesh.Translate(PreviewPanel.Rect.X, y).Colorize(
+                    var mesh = Gum.Mesh.CreateStringMesh(color.Key, font, new Vector2(1,1), out bounds);
+                    stringMeshes.Add(mesh.Translate(PreviewPanel.Rect.Right - bounds.Width, y).Colorize(
                         color.Value.ToVector4()));
                     y += bounds.Height;
+                    if (bounds.Width > maxWidth) maxWidth = bounds.Width;
                 }
                 KeyMesh = Gum.Mesh.Merge(stringMeshes.ToArray());
+                var bgMesh = Gum.Mesh.Quad()
+                    .Scale(maxWidth, y - PreviewPanel.Rect.Y)
+                    .Translate(PreviewPanel.Rect.Right - maxWidth, PreviewPanel.Rect.Y)
+                    .Texture(Root.GetTileSheet("basic").TileMatrix(0));
+                KeyMesh = Gum.Mesh.Merge(bgMesh, KeyMesh);
             }
 
             Device.SetRenderTarget(PreviewRenderTarget);

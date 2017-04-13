@@ -759,8 +759,10 @@ namespace DwarfCorp.GameStates
 
             // Graphics settings
             this.EasyGraphicsSetting.SelectedIndex = 5;
-            this.Resolution.SelectedIndex = this.Resolution.Items.IndexOf(string.Format("{0} x {1}",
+            var existingResolutionSetting = this.Resolution.Items.IndexOf(string.Format("{0} x {1}",
                 GameSettings.Default.ResolutionX, GameSettings.Default.ResolutionY));
+            if (existingResolutionSetting == -1) existingResolutionSetting = 0;
+            this.Resolution.SelectedIndex = existingResolutionSetting;
             this.Fullscreen.CheckState = GameSettings.Default.Fullscreen;
             this.ChunkDrawDistance.ScrollPosition = GameSettings.Default.ChunkDrawDistance - 1.0f;
             this.VertexCullDistance.ScrollPosition = GameSettings.Default.VertexCullDistance - 0.1f;
