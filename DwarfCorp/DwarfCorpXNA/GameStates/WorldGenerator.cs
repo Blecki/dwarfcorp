@@ -361,6 +361,7 @@ namespace DwarfCorp.GameStates
                 CreateMesh(Device);
 
                 CurrentState = GenerationState.Finished;
+                LoadingMessage = "";
                 Progress = 1.0f;
             }
 #if CREATE_CRASH_LOGS

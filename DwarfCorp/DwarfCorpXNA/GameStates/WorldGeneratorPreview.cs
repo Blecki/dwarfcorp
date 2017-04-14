@@ -16,9 +16,9 @@ namespace DwarfCorp.GameStates
         private Gum.Widget PreviewPanel;
 
         private bool UpdatePreview = false;
-        private static Texture2D PreviewTexture;
-        private static BasicEffect PreviewEffect;
-        private static RenderTarget2D PreviewRenderTarget;
+        public Texture2D PreviewTexture { get; private set; }
+        private BasicEffect PreviewEffect;
+        private RenderTarget2D PreviewRenderTarget;
         private List<Vector2> SpawnRectanglePoints = new List<Vector2>(new Vector2[]
         {
             Vector2.Zero, Vector2.Zero, Vector2.Zero, Vector2.Zero
@@ -32,6 +32,20 @@ namespace DwarfCorp.GameStates
         private Vector3 cameraTarget = new Vector3(0.5f, 0.0f, 0.5f);
         private Vector3 newTarget = new Vector3(0.5f, 0, 0.5f);
         private Point PreviousMousePosition;
+
+        public Matrix ZoomedPreviewMatrix
+        {
+            get
+            {
+                var previewRect = GetSpawnRectangleInWorldSpace();
+                var worldRect = new Rectangle(0, 0, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1));
+                float vScale = 1.0f / worldRect.Width;
+                float uScale = 1.0f / worldRect.Height;
+
+                return Matrix.CreateScale(vScale * previewRect.Width, uScale * previewRect.Height, 1.0f) *
+                    Matrix.CreateTranslation(vScale * previewRect.X, uScale * previewRect.Y, 0.0f);
+            }
+        }
 
         private Matrix CameraRotation
         {
@@ -53,8 +67,8 @@ namespace DwarfCorp.GameStates
         {
             get
             {
-                return Matrix.CreatePerspectiveFieldOfView(1.5f, (float)PreviewRenderTarget.Width /
-                    (float)PreviewRenderTarget.Height, 0.01f, 3.0f);
+                return Matrix.CreatePerspectiveFieldOfView(1.5f, (float)PreviewPanel.Rect.Width /
+                    (float)PreviewPanel.Rect.Height, 0.01f, 3.0f);
             }
         }
 
@@ -123,6 +137,8 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gum.AutoLayout.FloatTopLeft,
                 MinimumSize = new Point(128, 0),
                 OnSelectedIndexChanged = (sender) => UpdatePreview = true,
+                Font = "font",
+                TextColor = new Vector4(0, 0, 0, 1)
             }) as Gum.Widgets.ComboBox;
 
             PreviewSelector.SelectedIndex = 0;
@@ -139,21 +155,31 @@ namespace DwarfCorp.GameStates
                     var worldSize = Generator.Settings.ColonySize.ToVector3() * Generator.Settings.WorldScale;
                     var clickPoint = ScreenToWorld(new Vector2(args.X, args.Y));
                     Generator.Settings.WorldGenerationOrigin = new Vector2(
-                        (int)System.Math.Max(System.Math.Min(clickPoint.X, Generator.Settings.Width - worldSize.X - 1), worldSize.X + 1),
-                        (int)System.Math.Max(System.Math.Min(clickPoint.Y, Generator.Settings.Height - worldSize.Y - 1), worldSize.Y + 1));
+                        System.Math.Max(System.Math.Min(clickPoint.X, Generator.Settings.Width - worldSize.X - 1), worldSize.X + 1),
+                        System.Math.Max(System.Math.Min(clickPoint.Y, Generator.Settings.Height - worldSize.Z - 1), worldSize.Z + 1));
                 },
                 OnMouseMove = (sender, args) =>
                 {
                     // Todo: Status of mouse buttons should be passed in args to event handlers.
                     // Todo: Uh, Gum doesn't call mouse move unless you LEFT click??
-                    if (Microsoft.Xna.Framework.Input.Mouse.GetState().LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+                    if (Microsoft.Xna.Framework.Input.Mouse.GetState().RightButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
                     {
                         var delta = new Vector2(args.X, args.Y) - new Vector2(PreviousMousePosition.X,
-                            PreviousMousePosition.Y);
-                        phi += delta.Y * 0.01f;
-                        theta -= delta.X * 0.01f;
-                        phi = System.Math.Max(phi, 0.5f);
-                        phi = System.Math.Min(phi, 1.5f);
+                             PreviousMousePosition.Y);
+
+                        var keyboard = Microsoft.Xna.Framework.Input.Keyboard.GetState();
+                        if (keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift) ||
+                            keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightShift))
+                        {
+                            zoom = System.Math.Min((float)System.Math.Max(zoom + delta.Y * 0.001f, 0.1f), 1.5f);
+                        }
+                        else
+                        {
+                            phi += delta.Y * 0.01f;
+                            theta -= delta.X * 0.01f;
+                            phi = System.Math.Max(phi, 0.5f);
+                            phi = System.Math.Min(phi, 1.5f);
+                        }
                     }
                 }
             });
@@ -260,7 +286,11 @@ namespace DwarfCorp.GameStates
         {
             if (PreviewEffect == null) return;
             if (PreviewTexture == null) return;
-            if (Generator.CurrentState != WorldGenerator.GenerationState.Finished) return;
+            if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
+            {
+                KeyMesh = null;
+                return;
+            }
 
             if (PreviewRenderTarget == null)
                 PreviewRenderTarget = new RenderTarget2D(Device, PreviewPanel.Rect.Width, PreviewPanel.Rect.Height);
@@ -277,10 +307,11 @@ namespace DwarfCorp.GameStates
                     Generator.worldData, PreviewTexture, Generator.Settings.SeaLevel);
 
                 var colorKeyEntries = style.GetColorKeys(Generator);
-                var font = Root.GetTileSheet("outline-font");
+                var font = Root.GetTileSheet("font");
                 var stringMeshes = new List<Gum.Mesh>();
-                var y = PreviewPanel.Rect.Y;
+                var y = Rect.Y;
                 var maxWidth = 0;
+
                 foreach (var color in colorKeyEntries)
                 {
                     Rectangle bounds;
@@ -290,11 +321,14 @@ namespace DwarfCorp.GameStates
                     y += bounds.Height;
                     if (bounds.Width > maxWidth) maxWidth = bounds.Width;
                 }
+
+
                 KeyMesh = Gum.Mesh.Merge(stringMeshes.ToArray());
-                var bgMesh = Gum.Mesh.Quad()
-                    .Scale(maxWidth, y - PreviewPanel.Rect.Y)
-                    .Translate(PreviewPanel.Rect.Right - maxWidth, PreviewPanel.Rect.Y)
-                    .Texture(Root.GetTileSheet("basic").TileMatrix(0));
+                var thinBorder = Root.GetTileSheet("border-thin");
+                var bgMesh = Gum.Mesh.CreateScale9Background(
+                    new Rectangle(Rect.Right - thinBorder.TileWidth - maxWidth - 4,
+                    Rect.Y, maxWidth + thinBorder.TileWidth + 4, y - Rect.Y + thinBorder.TileHeight),
+                    thinBorder, Scale9Corners.Bottom | Scale9Corners.Left);
                 KeyMesh = Gum.Mesh.Merge(bgMesh, KeyMesh);
             }
 

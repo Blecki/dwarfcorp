@@ -338,6 +338,10 @@ namespace Gum
                         if (MouseDownItem != null)
                             SafeCall(MouseDownItem.OnMouseMove, MouseDownItem,
                                 new InputEventArgs { X = MousePosition.X, Y = MousePosition.Y });
+
+                        if (HoverItem != null && !Object.ReferenceEquals(HoverItem, MouseDownItem))
+                            SafeCall(HoverItem.OnMouseMove, HoverItem,
+                                new InputEventArgs { X = MousePosition.X, Y = MousePosition.Y });
                         
                         if (HoverItem != null && 
                             !IsHoverPartOfPopup() && 
@@ -545,6 +549,40 @@ namespace Gum
             mesh.Render(RenderData.Device);
 
             DrawMouse();
+        }
+
+        public void RedrawPopups()
+        {
+            RenderData.Device.DepthStencilState = DepthStencilState.None;
+
+            RenderData.Effect.CurrentTechnique = RenderData.Effect.Techniques[0];
+
+            RenderData.Effect.Parameters["View"].SetValue(Matrix.Identity);
+
+            RenderData.Effect.Parameters["Projection"].SetValue(
+                Matrix.CreateOrthographicOffCenter(0, RenderData.Device.Viewport.Width,
+                RenderData.Device.Viewport.Height, 0, -32, 32));
+
+            var scale = RealScreen.Width / VirtualScreen.Width;
+
+            // Need to offset by the subpixel portion to avoid screen artifacts.
+            // Remove this offset is porting to Monogame, monogame does it correctly.
+            RenderData.Effect.Parameters["World"].SetValue(
+                Matrix.CreateTranslation(RealScreen.X, RealScreen.Y, 1.0f)
+                * Matrix.CreateScale(scale)
+#if GEMXNA
+                * Matrix.CreateTranslation(-0.5f, -0.5f, 0.0f));
+#elif GEMMONO
+                );
+#elif GEMFNA
+                );
+#endif
+
+            RenderData.Effect.Parameters["Texture"].SetValue(RenderData.Texture);
+            RenderData.Effect.CurrentTechnique.Passes[0].Apply();
+
+            foreach (var item in PopupStack)
+                item.GetRenderMesh().Render(RenderData.Device);
         }
 
         public void DrawMouse()

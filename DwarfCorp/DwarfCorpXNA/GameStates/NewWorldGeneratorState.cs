@@ -11,6 +11,7 @@ namespace DwarfCorp.GameStates
     {
         private Gum.Root GuiRoot;
         private Gum.Widgets.ProgressBar GenerationProgress;
+        private Gum.Widget ZoomedPreview;
         private WorldGeneratorPreview Preview;
         private Gum.Widget StartButton;
         private WorldGenerator Generator;
@@ -31,17 +32,30 @@ namespace DwarfCorp.GameStates
                 RainfallScale = 1.0f,
                 SeaLevel = 0.17f,
                 TemperatureScale = 1.0f
-            };
-            Generator = new WorldGenerator(Settings);
-            Generator.Generate(Game.GraphicsDevice);
+            };           
         }       
+
+        private void RestartGeneration()
+        {
+            if (Generator != null)
+                Generator.Abort();
+            Generator = new WorldGenerator(Settings);
+            if (Preview != null) Preview.SetGenerator(Generator);
+            Generator.Generate(Game.GraphicsDevice);
+            GuiRoot.RootItem.GetChild(0).Text = Settings.Name;
+            GuiRoot.RootItem.GetChild(0).Invalidate();
+        }
 
         public override void OnEnter()
         {
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
 
-            if (IsInitialized) return;
+            if (IsInitialized) // Must have come here from advanced settings editor.
+            {
+                RestartGeneration();
+                return;
+            }
 
             GuiRoot = new Gum.Root(Gum.Root.MinimumSize, DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
@@ -50,16 +64,18 @@ namespace DwarfCorp.GameStates
             {
                 Rect = GuiRoot.VirtualScreen,
                 Border = "border-fancy",
-                Text = "World Name Here",
+                Text = Settings.Name,
+                Font = "outline-font",
+                TextColor = new Vector4(1,1,1,1),
                 Padding = new Gum.Margin(4, 4, 4, 4),
                 InteriorMargin = new Gum.Margin(24, 0, 0, 0),
-                TextSize = 2
             });
 
             var rightPanel = mainPanel.AddChild(new Gum.Widget
             {
                 AutoLayout = Gum.AutoLayout.DockRight,
-                MinimumSize = new Point(256, 0)
+                MinimumSize = new Point(256, 0),
+                Padding = new Gum.Margin(2,2,2,2)
             });
 
             rightPanel.AddChild(new Gum.Widget
@@ -67,9 +83,10 @@ namespace DwarfCorp.GameStates
                 Text = "Regenerate",
                 Border = "border-button",
                 ChangeColorOnHover = true,
-                TextColor = new Vector4(0, 0, 0, 1),
+                TextColor = new Vector4(1, 1, 1, 1),
                 Font = "outline-font",
-                AutoLayout = Gum.AutoLayout.DockTop
+                AutoLayout = Gum.AutoLayout.DockTop,
+                OnClick = (sender, args) => RestartGeneration()
             });
 
             rightPanel.AddChild(new Gum.Widget
@@ -77,9 +94,25 @@ namespace DwarfCorp.GameStates
                 Text = "Save World",
                 Border = "border-button",
                 ChangeColorOnHover = true,
-                TextColor = new Vector4(0, 0, 0, 1),
+                TextColor = new Vector4(1, 1, 1, 1),
                 Font = "outline-font",
-                AutoLayout = Gum.AutoLayout.DockTop
+                AutoLayout = Gum.AutoLayout.DockTop,
+                OnClick = (sender, args) =>
+                {
+                    if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
+                        GuiRoot.ShowTooltip(GuiRoot.MousePosition, "Generator is not finished.");
+                    else
+                    {
+                        System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetGameDirectory() + ProgramData.DirChar + "Worlds" + ProgramData.DirChar + Settings.Name);
+                        OverworldFile file = new OverworldFile(Game.GraphicsDevice, Overworld.Map, Settings.Name, Settings.SeaLevel);
+                        file.WriteFile(worldDirectory.FullName + ProgramData.DirChar + "world." + OverworldFile.CompressedExtension, true, true);
+                        file.SaveScreenshot(worldDirectory.FullName + ProgramData.DirChar + "screenshot.png");
+                        GuiRoot.ShowPopup(GuiRoot.ConstructWidget(new NewGui.Popup
+                        {
+                            Text = "File saved."
+                        }));
+                    }
+                }
             });
 
             rightPanel.AddChild(new Gum.Widget
@@ -87,9 +120,29 @@ namespace DwarfCorp.GameStates
                 Text = "Advanced",
                 Border = "border-button",
                 ChangeColorOnHover = true,
-                TextColor = new Vector4(0, 0, 0, 1),
+                TextColor = new Vector4(1, 1, 1, 1),
                 Font = "outline-font",
-                AutoLayout = Gum.AutoLayout.DockTop
+                AutoLayout = Gum.AutoLayout.DockTop,
+                OnClick = (sender, args) =>
+                {
+                    var advancedSettingsEditor = new WorldSetupState(Game, StateManager, Settings);
+                    StateManager.PushState(advancedSettingsEditor);
+                }
+            });
+
+            rightPanel.AddChild(new Gum.Widget
+            {
+                Text = "Back",
+                Border = "border-button",
+                ChangeColorOnHover = true,
+                TextColor = new Vector4(1, 1, 1, 1),
+                Font = "outline-font",
+                AutoLayout = Gum.AutoLayout.DockTop,
+                OnClick = (sender, args) =>
+                {
+                    Generator.Abort();
+                    StateManager.PopState();
+                }
             });
 
             StartButton = rightPanel.AddChild(new Gum.Widget
@@ -97,36 +150,94 @@ namespace DwarfCorp.GameStates
                 Text = "Start Game",
                 Border = "border-button",
                 ChangeColorOnHover = true,
-                TextColor = new Vector4(0, 0, 0, 1),
+                TextColor = new Vector4(1, 1, 1, 1),
                 Font = "outline-font",
-                AutoLayout = Gum.AutoLayout.DockBottom
+                AutoLayout = Gum.AutoLayout.DockBottom,
+                OnClick = (sender, args) =>
+                {
+                    if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
+                        GuiRoot.ShowTooltip(GuiRoot.MousePosition, "World generation is not finished.");
+                    else
+                    {
+                        Overworld.Name = Settings.Name;
+                        Settings.ExistingFile = null;
+                        Settings.WorldOrigin = Settings.WorldGenerationOrigin;
+                        Settings.Natives = Generator.NativeCivilizations;
+
+                        StateManager.ClearState();
+                        StateManager.PushState(new LoadState(Game, StateManager, Settings));
+                    }
+                }
             });
 
             rightPanel.AddChild(new Gum.Widget
             {
                 Text = "Colony size",
-                Font = "outline-font",
-                AutoLayout = Gum.AutoLayout.DockTop
+                AutoLayout = Gum.AutoLayout.DockTop,
+                Font = "font",
+                TextColor = new Vector4(0, 0, 0, 1)
             });
 
-            rightPanel.AddChild(new Gum.Widgets.ComboBox
+            var colonySizeCombo = rightPanel.AddChild(new Gum.Widgets.ComboBox
             {
                 AutoLayout = Gum.AutoLayout.DockTop,
-                Items = new List<string>(new string[] { "Small", "Medium", "Large" })
-            });
+                Items = new List<string>(new string[] { "Tiny", "Small", "Medium", "Large", "Huge" }),
+                Font = "font",
+                TextColor = new Vector4(0, 0, 0, 1),
+                OnSelectedIndexChanged = (sender) =>
+                {
+                    switch ((sender as Gum.Widgets.ComboBox).SelectedItem)
+                    {
+                        case "Tiny": Settings.ColonySize = new Point3(4, 1, 4); break;
+                        case "Small": Settings.ColonySize = new Point3(8, 1, 8); break;
+                        case "Medium": Settings.ColonySize = new Point3(10, 1, 10); break;
+                        case "Large": Settings.ColonySize = new Point3(16, 1, 16); break;
+                        case "Huge": Settings.ColonySize = new Point3(24, 1, 24); break;
+                    }
+
+                    float w = Settings.ColonySize.X * Settings.WorldScale;
+                    float h = Settings.ColonySize.Z * Settings.WorldScale;
+                    float clickX = System.Math.Max(System.Math.Min(Settings.WorldGenerationOrigin.X, Settings.Width - w - 1), w + 1);
+                    float clickY = System.Math.Max(System.Math.Min(Settings.WorldGenerationOrigin.Y, Settings.Height - h - 1), h + 1);
+
+                    Settings.WorldGenerationOrigin = new Vector2((int)(clickX), (int)(clickY));
+                }
+            }) as Gum.Widgets.ComboBox;
 
             rightPanel.AddChild(new Gum.Widget
             {
                 Text = "Difficulty",
-                Font = "outline-font",
-                AutoLayout = Gum.AutoLayout.DockTop
+                AutoLayout = Gum.AutoLayout.DockTop,
+                Font = "font",
+                TextColor = new Vector4(0,0,0,1)
             });
 
-            rightPanel.AddChild(new Gum.Widgets.ComboBox
+            var difficultySelectorCombo = rightPanel.AddChild(new Gum.Widgets.ComboBox
             {
                 AutoLayout = Gum.AutoLayout.DockTop,
-                Items = new List<string>(new string[] { "Small", "Medium", "Large" })
+                Items = Embarkment.EmbarkmentLibrary.Select(e => e.Key).ToList(),
+                TextColor = new Vector4(0, 0, 0, 1),
+                Font = "font",
+                OnSelectedIndexChanged = (sender) =>
+                {
+                    Settings.InitalEmbarkment = Embarkment.EmbarkmentLibrary[(sender as Gum.Widgets.ComboBox).SelectedItem];
+                }
+            }) as Gum.Widgets.ComboBox;
+
+            ZoomedPreview = rightPanel.AddChild(new Gum.Widget
+            {
+                AutoLayout = Gum.AutoLayout.DockBottom,
+                OnLayout = (sender) =>
+                {
+                    var space = System.Math.Min(difficultySelectorCombo.Rect.Width, StartButton.Rect.Top - difficultySelectorCombo.Rect.Bottom - 4);
+                    sender.Rect.Height = space;
+                    sender.Rect.Width = space;
+                    sender.Rect.Y = difficultySelectorCombo.Rect.Bottom + 2;
+                    sender.Rect.X = difficultySelectorCombo.Rect.X + 
+                        ((difficultySelectorCombo.Rect.Width - space) / 2);
+                }
             });
+
 
             GenerationProgress = mainPanel.AddChild(new Gum.Widgets.ProgressBar
             {
@@ -134,7 +245,7 @@ namespace DwarfCorp.GameStates
                 TextHorizontalAlign = Gum.HorizontalAlign.Center,
                 TextVerticalAlign = Gum.VerticalAlign.Center,
                 Font = "outline-font",
-                TextColor = new Vector4(1,1,1,1)
+                TextColor = new Vector4(1,0,0,1)
             }) as Gum.Widgets.ProgressBar;
 
             Preview = mainPanel.AddChild(new WorldGeneratorPreview(Game.GraphicsDevice)
@@ -143,11 +254,14 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gum.AutoLayout.DockFill
             }) as WorldGeneratorPreview;
 
-            Preview.SetGenerator(Generator);
-
             GuiRoot.RootItem.Layout();
 
+            difficultySelectorCombo.SelectedIndex = difficultySelectorCombo.Items.IndexOf("Normal");
+            colonySizeCombo.SelectedIndex = colonySizeCombo.Items.IndexOf("Medium");
+
             IsInitialized = true;
+
+            RestartGeneration();
 
             base.OnEnter();
         }
@@ -169,7 +283,8 @@ namespace DwarfCorp.GameStates
             // Enable or disable start button based on Generator state.
 
             GuiRoot.Update(gameTime.ToGameTime());
-            Preview.Update();
+            if (Generator.CurrentState == WorldGenerator.GenerationState.Finished)
+                Preview.Update();
             base.Update(gameTime);
 
             Preview.PreparePreview();
@@ -180,7 +295,21 @@ namespace DwarfCorp.GameStates
             var mouse = GuiRoot.MousePointer;
             GuiRoot.MousePointer = null;
             GuiRoot.Draw();
-            Preview.DrawPreview();
+
+            if (Generator.CurrentState == WorldGenerator.GenerationState.Finished)
+            {
+                Preview.DrawPreview();
+                GuiRoot.DrawMesh(
+                        Gum.Mesh.Quad()
+                        .Scale(ZoomedPreview.Rect.Width, ZoomedPreview.Rect.Height)
+                        .Translate(ZoomedPreview.Rect.X, ZoomedPreview.Rect.Y)
+                        .Texture(Preview.ZoomedPreviewMatrix),
+                        Preview.PreviewTexture);
+            }
+
+            // This is a serious hack.
+            GuiRoot.RedrawPopups();
+
             GuiRoot.MousePointer = mouse;
             GuiRoot.DrawMouse();
             base.Render(gameTime);

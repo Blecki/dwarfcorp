@@ -48,7 +48,11 @@ namespace Gum.Widgets
             if (String.IsNullOrEmpty(Graphics)) Graphics = "horizontal-slider";
 
             OnClick += (sender, args) => UpdateFromMousePosition(args.X);
-            OnMouseMove += (sender, args) => UpdateFromMousePosition(args.X);
+            OnMouseMove += (sender, args) =>
+            {
+                if (Object.ReferenceEquals(Root.MouseDownItem, this))
+                    UpdateFromMousePosition(args.X);
+            };
         }
 
         private void UpdateFromMousePosition(int X)
