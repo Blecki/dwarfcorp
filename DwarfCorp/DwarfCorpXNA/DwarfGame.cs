@@ -75,6 +75,7 @@ namespace DwarfCorp
             Graphics.IsFullScreen = GameSettings.Default.Fullscreen;
             Graphics.PreferredBackBufferWidth = GameSettings.Default.ResolutionX;
             Graphics.PreferredBackBufferHeight = GameSettings.Default.ResolutionY;
+            MathFunctions.Random = new ThreadSafeRandom(new Random().Next());
             try
             {
                 Graphics.ApplyChanges();

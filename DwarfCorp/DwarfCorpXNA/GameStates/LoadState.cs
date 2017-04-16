@@ -42,8 +42,8 @@ namespace DwarfCorp.GameStates
         };
 
         private Timer TipTimer = new Timer(5, false);
-        public WorldSettings Settings { get; set; }
-        public LoadState(DwarfGame game, GameStateManager stateManager, WorldSettings settings) :
+        public WorldGenerationSettings Settings { get; set; }
+        public LoadState(DwarfGame game, GameStateManager stateManager, WorldGenerationSettings settings) :
             base(game, "LoadState", stateManager)
         {
             Settings = settings;

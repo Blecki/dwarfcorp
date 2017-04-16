@@ -1523,6 +1523,21 @@
       <Name>WaveBank</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Compile Include="newgui\progress-fill.png">
+      <Name>progress-fill</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="newgui\progress-middle.png">
+      <Name>progress-middle</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="newgui\progress-sides.png">
+      <Name>progress-sides</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <None Include="Entities\Animals\chicken_animation.json">
       <Name>chicken_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
