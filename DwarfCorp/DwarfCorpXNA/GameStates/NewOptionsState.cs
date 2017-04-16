@@ -658,6 +658,30 @@ namespace DwarfCorp.GameStates
             }));
         }
 
+        public void SetBestResolution()
+        {
+            this.Resolution.SelectedIndex = this.Resolution.Items.IndexOf(string.Format("{0} x {1}",
+                GameSettings.Default.ResolutionX, GameSettings.Default.ResolutionY));
+
+            if (this.Resolution.SelectedIndex != -1) return;
+
+            string bestMode = null;
+            int bestScore = int.MaxValue;
+            foreach (var mode in DisplayModes)
+            {
+                int score = System.Math.Abs(mode.Value.Width - GameSettings.Default.ResolutionX) +
+                            System.Math.Abs(mode.Value.Height - GameSettings.Default.ResolutionY);
+
+                if (score < bestScore)
+                {
+                    bestScore = score;
+                    bestMode = mode.Key;
+                }
+            }
+
+            this.Resolution.SelectedIndex = this.Resolution.Items.IndexOf(bestMode);
+        }
+
         private void ApplySettings()
         {
             // Copy all the states from widgets to game settings.
@@ -722,8 +746,7 @@ namespace DwarfCorp.GameStates
                     GameSettings.Default.ResolutionX = preResolutionX;
                     GameSettings.Default.ResolutionY = preResolutionY;
                     GameSettings.Default.Fullscreen = preFullscreen;
-                    this.Resolution.SelectedIndex = this.Resolution.Items.IndexOf(string.Format("{0} x {1}",
-                        GameSettings.Default.ResolutionX, GameSettings.Default.ResolutionY));
+                    SetBestResolution();
                     this.Fullscreen.CheckState = GameSettings.Default.Fullscreen;
                     RebuildGui();
                     GuiRoot.ShowPopup(new NewGui.Popup
@@ -759,8 +782,7 @@ namespace DwarfCorp.GameStates
 
             // Graphics settings
             this.EasyGraphicsSetting.SelectedIndex = 5;
-            this.Resolution.SelectedIndex = this.Resolution.Items.IndexOf(string.Format("{0} x {1}",
-                GameSettings.Default.ResolutionX, GameSettings.Default.ResolutionY));
+            SetBestResolution();
             this.Fullscreen.CheckState = GameSettings.Default.Fullscreen;
             this.ChunkDrawDistance.ScrollPosition = GameSettings.Default.ChunkDrawDistance - 1.0f;
             this.VertexCullDistance.ScrollPosition = GameSettings.Default.VertexCullDistance - 0.1f;
