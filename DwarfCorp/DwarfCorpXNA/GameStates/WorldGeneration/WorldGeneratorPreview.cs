@@ -199,7 +199,7 @@ namespace DwarfCorp.GameStates
         public void SetGenerator(WorldGenerator Generator)
         {
             this.Generator = Generator;
-            PreviewTexture = new Texture2D(Device, Generator.Settings.Width, Generator.Settings.Height);
+            //PreviewTexture = new Texture2D(Device, Generator.Settings.Width, Generator.Settings.Height);
             Generator.UpdatePreview += () => UpdatePreview = true;
         }
 
@@ -278,14 +278,29 @@ namespace DwarfCorp.GameStates
             //    Color.White, Color.Black);
             DwarfGame.SpriteBatch.End();
 
+            if (PreviewSelector.SelectedItem == "Factions") // Draw dots for capitals.
+            {
+                var font = Root.GetTileSheet("font");
+
+                foreach (var civ in Generator.NativeCivilizations)
+                {
+                    var civLocation = WorldToScreen(new Vector2(civ.Center.X, civ.Center.Y));
+                    Rectangle nameBounds;
+                    var mesh = Gum.Mesh.CreateStringMesh(civ.Name, font, Vector2.One, out nameBounds);
+                    nameBounds.X = (int)civLocation.X - (nameBounds.Width / 2);
+                    nameBounds.Y = (int)civLocation.Y - (nameBounds.Height / 2);
+                    nameBounds = MathFunctions.SnapRect(nameBounds, PreviewPanel.Rect);
+                    mesh.Translate(nameBounds.X, nameBounds.Y);
+                    Root.DrawMesh(mesh, Root.RenderData.Texture);
+                }
+            }
+
             if (KeyMesh != null)
                 Root.DrawMesh(KeyMesh, Root.RenderData.Texture);
         }
 
         public void PreparePreview()
         {
-            if (PreviewEffect == null) return;
-            if (PreviewTexture == null) return;
             if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
             {
                 KeyMesh = null;
@@ -295,11 +310,17 @@ namespace DwarfCorp.GameStates
             if (PreviewRenderTarget == null)
                 PreviewRenderTarget = new RenderTarget2D(Device, PreviewPanel.Rect.Width, PreviewPanel.Rect.Height);
 
-            if (UpdatePreview)
+            if (PreviewTexture == null || UpdatePreview)
             {
                 UpdatePreview = false;
                 InitializePreviewRenderTypes();
+
+                if (PreviewTexture == null || PreviewTexture.Width != Overworld.Map.GetLength(0) ||
+                    PreviewTexture.Height != Overworld.Map.GetLength(1))
+                    PreviewTexture = new Texture2D(Device, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1));
+
                 // Check combo box for style of preview to draw.
+                Overworld.NativeFactions = Generator.NativeCivilizations;
 
                 var style = PreviewRenderTypes[PreviewSelector.SelectedItem];
                 Overworld.TextureFromHeightMap(style.DisplayType, Overworld.Map,
@@ -316,18 +337,21 @@ namespace DwarfCorp.GameStates
                 {
                     Rectangle bounds;
                     var mesh = Gum.Mesh.CreateStringMesh(color.Key, font, new Vector2(1,1), out bounds);
-                    stringMeshes.Add(mesh.Translate(PreviewPanel.Rect.Right - bounds.Width, y).Colorize(
-                        color.Value.ToVector4()));
-                    y += bounds.Height;
+                    stringMeshes.Add(mesh.Translate(PreviewPanel.Rect.Right - bounds.Width - (font.TileHeight + 4), y).Colorize(new Vector4(0,0,0,1)));
                     if (bounds.Width > maxWidth) maxWidth = bounds.Width;
+                    stringMeshes.Add(Gum.Mesh.Quad().Scale(font.TileHeight, font.TileHeight)
+                        .Translate(PreviewPanel.Rect.Right - font.TileHeight + 2, y)
+                        .Texture(Root.GetTileSheet("basic").TileMatrix(1))
+                        .Colorize(color.Value.ToVector4()));
+                    y += bounds.Height;
                 }
 
 
                 KeyMesh = Gum.Mesh.Merge(stringMeshes.ToArray());
                 var thinBorder = Root.GetTileSheet("border-thin");
                 var bgMesh = Gum.Mesh.CreateScale9Background(
-                    new Rectangle(Rect.Right - thinBorder.TileWidth - maxWidth - 4,
-                    Rect.Y, maxWidth + thinBorder.TileWidth + 4, y - Rect.Y + thinBorder.TileHeight),
+                    new Rectangle(Rect.Right - thinBorder.TileWidth - maxWidth - 8 - font.TileHeight,
+                    Rect.Y, maxWidth + thinBorder.TileWidth + 8 + font.TileHeight, y - Rect.Y + thinBorder.TileHeight),
                     thinBorder, Scale9Corners.Bottom | Scale9Corners.Left);
                 KeyMesh = Gum.Mesh.Merge(bgMesh, KeyMesh);
             }

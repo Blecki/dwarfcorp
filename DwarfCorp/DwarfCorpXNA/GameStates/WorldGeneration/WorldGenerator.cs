@@ -145,7 +145,6 @@ namespace DwarfCorp.GameStates
         {
             if (CurrentState == GenerationState.NotStarted)
             {
-                WorldGeneratorState.worldMap = new Texture2D(Device, Settings.Width, Settings.Height);
                 Settings.WorldGenerationOrigin = new Vector2(Settings.Width / 2, Settings.Height / 2);
                 genThread = new Thread(unused => GenerateWorld(Device, Seed, (int) Settings.Width, (int) Settings.Height));
                 genThread.Name = "GenerateWorld";

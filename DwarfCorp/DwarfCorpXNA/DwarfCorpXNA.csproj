@@ -229,8 +229,8 @@
     <Compile Include="GameStates\GameLoaderState.cs" />
     <Compile Include="GameStates\GameState.cs" />
     <Compile Include="GameStates\GameStateManager.cs" />
-    <Compile Include="GameStates\WorldGeneratorPreview.cs" />
-    <Compile Include="GameStates\NewWorldGeneratorState.cs" />
+    <Compile Include="GameStates\WorldGeneration\WorldGeneratorPreview.cs" />
+    <Compile Include="GameStates\WorldGeneration\WorldGeneratorState.cs" />
     <Compile Include="GameStates\IntroState.cs" />
     <Compile Include="GameStates\LoadState.cs" />
     <Compile Include="GameStates\LoseState.cs" />
@@ -242,9 +242,8 @@
     <Compile Include="GameStates\GuiStateTemplate.cs" />
     <Compile Include="GameStates\OptionsState.cs" />
     <Compile Include="GameStates\PlayState.cs" />
-    <Compile Include="GameStates\WorldGenerator.cs" />
-    <Compile Include="GameStates\WorldGenerationSettings.cs" />
-    <Compile Include="GameStates\WorldGeneratorState.cs" />
+    <Compile Include="GameStates\WorldGeneration\WorldGenerator.cs" />
+    <Compile Include="GameStates\WorldGeneration\WorldGenerationSettings.cs" />
     <Compile Include="GameStates\WorldLoaderState.cs" />
     <Compile Include="GameStates\WorldSetupState.cs" />
     <Compile Include="Graphics\Cameras\Camera.cs" />

@@ -356,12 +356,6 @@ namespace DwarfCorp
 
         void AcceptButton_OnClicked()
         {
-            WorldGeneratorState state = StateManager.GetState<WorldGeneratorState>();
-
-            if (state != null)
-            {
-                state.Settings = Settings;
-            }
             StateManager.PopState();
         }
 

@@ -7,7 +7,7 @@ using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace DwarfCorp.GameStates
 {
-    public class NewWorldGeneratorState : GameState
+    public class WorldGeneratorState : GameState
     {
         private Gum.Root GuiRoot;
         private Gum.Widgets.ProgressBar GenerationProgress;
@@ -16,23 +16,27 @@ namespace DwarfCorp.GameStates
         private Gum.Widget StartButton;
         private WorldGenerator Generator;
         private WorldGenerationSettings Settings;
+        private bool AutoGenerate;
         
-        public NewWorldGeneratorState(DwarfGame Game, GameStateManager StateManager) :
+        public WorldGeneratorState(DwarfGame Game, GameStateManager StateManager, WorldGenerationSettings Settings, bool AutoGenerate) :
             base(Game, "NewWorldGeneratorState", StateManager)
         {
-            Settings = new WorldGenerationSettings()
-            {
-                Width = 512,
-                Height = 512,
-                Name = WorldSetupState.GetRandomWorldName(),
-                NumCivilizations = 5,
-                NumFaults = 3,
-                NumRains = 1000,
-                NumVolcanoes = 3,
-                RainfallScale = 1.0f,
-                SeaLevel = 0.17f,
-                TemperatureScale = 1.0f
-            };           
+            this.AutoGenerate = AutoGenerate;
+            this.Settings = Settings;
+            if (this.Settings == null)
+                this.Settings = new WorldGenerationSettings()
+                {
+                    Width = 512,
+                    Height = 512,
+                    Name = WorldSetupState.GetRandomWorldName(),
+                    NumCivilizations = 5,
+                    NumFaults = 3,
+                    NumRains = 1000,
+                    NumVolcanoes = 3,
+                    RainfallScale = 1.0f,
+                    SeaLevel = 0.17f,
+                    TemperatureScale = 1.0f
+                };           
         }       
 
         private void RestartGeneration()
@@ -261,7 +265,15 @@ namespace DwarfCorp.GameStates
 
             IsInitialized = true;
 
-            RestartGeneration();
+            if (AutoGenerate)
+                RestartGeneration();
+            else // Setup a dummy generator for now.
+            {
+                Generator = new WorldGenerator(Settings);
+                Generator.LoadDummy(
+                    new Color[Overworld.Map.GetLength(0) * Overworld.Map.GetLength(1)], 
+                    Game.GraphicsDevice);
+            }
 
             base.OnEnter();
         }
@@ -315,5 +327,4 @@ namespace DwarfCorp.GameStates
             base.Render(gameTime);
         }
     }
-
 }

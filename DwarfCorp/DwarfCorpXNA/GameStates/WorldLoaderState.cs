@@ -315,18 +315,12 @@ namespace DwarfCorp.GameStates
                     settings.Width = Overworld.Map.GetLength(1);
                     settings.Height = Overworld.Map.GetLength(0);
 
-                    WorldGeneratorState.worldMap = descriptor.File.Data.CreateTexture(Game.GraphicsDevice, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), descriptor.File.Data.SeaLevel);
-
                     JoinThreads();
                     StateManager.PopState();
 
                     Settings.Name = descriptor.WorldName;
-                    var nextState = new WorldGeneratorState(Game, Game.StateManager)
-                    {
-                        Settings = Settings
-                    };
+                    var nextState = new WorldGeneratorState(Game, Game.StateManager, Settings, false);
                     StateManager.PushState(nextState);
-                    nextState.LoadDummyGenerator(new Color[Overworld.Map.GetLength(0) * Overworld.Map.GetLength(1)], Game.GraphicsDevice);
 
                     Worlds.Clear();
                 }
