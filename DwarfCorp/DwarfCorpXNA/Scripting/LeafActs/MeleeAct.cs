@@ -422,7 +422,7 @@ namespace DwarfCorp
         public IEnumerable<Status> FindGreedyPath()
         {
             Vector3 target = Target.Position;
-            //Drawer3D.DrawLine(Agent.Position, target, Color.Green, 0.1f);
+
             if (Is2D) target.Y = Creature.AI.Position.Y;
             List<Creature.MoveAction> path = new List<Creature.MoveAction>();
             Voxel curr = Creature.Physics.CurrentVoxel;

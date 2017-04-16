@@ -73,6 +73,12 @@ namespace DwarfCorp
             Commands.Add(new LineListCommand3D(points.ToArray(), color, thickness));
         }
 
+
+        public static void DrawLineList(List<Vector3> points, List<Color> color, float thickness)
+        {
+            Commands.Add(new LineListCommand3D(points.ToArray(), color, thickness));
+        }
+
         public static void DrawBoxList(List<BoundingBox> boxes, Color color, float thickness)
         {
             foreach(BoundingBox box in boxes)
@@ -218,6 +224,47 @@ namespace DwarfCorp
 
             return list;
         }
+
+        public static List<VertexPositionColor> GetTriangleStrip(Vector3[] points, float thickness, Color[] color, ref int triangleCount, Matrix worldMatrix)
+        {
+            Vector3 lastPoint = Vector3.Zero;
+            List<VertexPositionColor> list = new List<VertexPositionColor>();
+
+
+            for (int i = 0; i < points.Length; i++)
+            {
+                if (i == 0)
+                {
+                    lastPoint = points[i];
+                    continue;
+                }
+                Vector3 t1 = Vector3.Transform(lastPoint, worldMatrix);
+                Vector3 t2 = Vector3.Transform(points[i], worldMatrix);
+                Vector3 direction = t1 - t2;
+                Vector3 normal = Vector3.Cross(direction,
+                    MathFunctions.GetClosestPointOnLineSegment(t1, t2, Camera.Position) - Camera.Position);
+                direction.Normalize();
+                normal.Normalize();
+
+
+                Vector3 p1 = t1 + normal * thickness;
+                Vector3 p2 = t1 - normal * thickness;
+                Vector3 p3 = t2 + normal * thickness;
+                Vector3 p4 = t2 - normal * thickness;
+
+                list.Add(new VertexPositionColor(p1, color[i - 1]));
+                list.Add(new VertexPositionColor(p2, color[i - 1]));
+                list.Add(new VertexPositionColor(p3, color[i - 1]));
+                list.Add(new VertexPositionColor(p4, color[i - 1]));
+
+                triangleCount += 2;
+
+                lastPoint = points[i];
+            }
+
+            return list;
+        }
+
 
         public static void DrawAxes(Matrix t, float length)
         {
