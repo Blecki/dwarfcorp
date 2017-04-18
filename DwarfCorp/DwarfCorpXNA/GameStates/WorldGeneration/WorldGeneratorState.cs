@@ -7,6 +7,7 @@ using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace DwarfCorp.GameStates
 {
+    // Todo: Make this use wait cursor while generating.
     public class WorldGeneratorState : GameState
     {
         private Gum.Root GuiRoot;
