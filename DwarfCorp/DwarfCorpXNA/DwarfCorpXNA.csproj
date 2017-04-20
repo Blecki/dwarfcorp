@@ -229,6 +229,7 @@
     <Compile Include="GameStates\GameLoaderState.cs" />
     <Compile Include="GameStates\GameState.cs" />
     <Compile Include="GameStates\GameStateManager.cs" />
+    <Compile Include="GameStates\NewEconomyState.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGeneratorPreview.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGeneratorState.cs" />
     <Compile Include="GameStates\IntroState.cs" />
@@ -389,6 +390,8 @@
     <Compile Include="NewGui\BuildMenu.cs" />
     <Compile Include="NewGui\BuildWallInfo.cs" />
     <Compile Include="NewGui\BuildRoomInfo.cs" />
+    <Compile Include="NewGui\EmployeePanel.cs" />
+    <Compile Include="NewGui\EmployeeInfo.cs" />
     <Compile Include="NewGui\FramedIcon.cs" />
     <Compile Include="NewGui\CompanyLogo.cs" />
     <Compile Include="NewGui\PlantInfo.cs" />

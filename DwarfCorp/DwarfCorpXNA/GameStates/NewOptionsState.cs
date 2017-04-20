@@ -35,7 +35,6 @@ namespace DwarfCorp.GameStates
         private CheckBox Fullscreen;
         private HorizontalFloatSlider ChunkDrawDistance;
         private HorizontalFloatSlider VertexCullDistance;
-        private HorizontalFloatSlider GenerateDistance;
         private CheckBox Glow;
         private Gum.Widgets.ComboBox Antialiasing;
         private CheckBox ReflectTerrain;
@@ -216,7 +215,6 @@ namespace DwarfCorp.GameStates
                     Border = "border-thin",
                     Padding = new Margin(4,4,0,0)
                 });
-
 
             panel.AddChild(new Widget
             {

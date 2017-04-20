@@ -64,11 +64,18 @@ namespace Gum
         /// Tilesheet to use as a border for this widget. If null, no border is drawn.
         /// </summary>
         public String Border = null;
-        
+
+        public String _text = null;
+
         /// <summary>
         /// Text to draw on this widget.
         /// </summary>
-        public String Text = null;
+        public String Text
+        {
+            get { return _text; }
+            set { _text = value; Invalidate(); }
+        }
+
         public HorizontalAlign TextHorizontalAlign = HorizontalAlign.Left;
         public VerticalAlign TextVerticalAlign = VerticalAlign.Top;
 
