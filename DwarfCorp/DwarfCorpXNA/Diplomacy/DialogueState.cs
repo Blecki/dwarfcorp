@@ -58,6 +58,7 @@ namespace DwarfCorp.Dialogue
 
             SpeakerAnimation = new Animation(DialogueContext.Envoy.OwnerFaction.Race.TalkAnimation);
             DialogueContext.SpeakerAnimation = SpeakerAnimation;
+            DialogueContext.SpeakerAnimation.Loops = false;
 
             DialogueContext.Politics = World.ComponentManager.Diplomacy.GetPolitics(
                 DialogueContext.PlayerFaction, DialogueContext.Envoy.OwnerFaction);
@@ -97,6 +98,7 @@ namespace DwarfCorp.Dialogue
 
             DialogueContext.Update(gameTime);
             GuiRoot.Update(gameTime.ToGameTime());
+
             base.Update(gameTime);
         }
 

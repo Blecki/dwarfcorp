@@ -350,15 +350,15 @@ namespace DwarfCorp
 
         }
 
-        public static void PlaySound(string name)
+        public static SoundEffectInstance PlaySound(string name)
         {
-            PlaySound(name, 1.0f);
+            return PlaySound(name, 1.0f);
         }
 
-        public static void PlaySound(string name, float volume)
+        public static SoundEffectInstance PlaySound(string name, float volume)
         {
             // TODO: Remove this block once the SoundManager is initialized in a better location.
-            if (Content == null) return;
+            if (Content == null) return null;
 
             SoundEffect effect = null;
 
@@ -371,10 +371,10 @@ namespace DwarfCorp
             {
                 effect = EffectLibrary[name];
             }
-
-            effect.Play(GameSettings.Default.MasterVolume * GameSettings.Default.SoundEffectVolume * volume, 0.0f, 0.0f);
-
-
+            SoundEffectInstance instance = effect.CreateInstance();
+            instance.Volume = GameSettings.Default.MasterVolume*GameSettings.Default.SoundEffectVolume*volume; 
+            instance.Play();
+            return instance;
         }
 
         public static Sound3D PlaySound(string name, Vector3 location, float volume = 1.0f)

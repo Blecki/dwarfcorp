@@ -1511,6 +1511,66 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
+    <Compile Include="Audio\oscar\sfx_env_door_close_generic.wav">
+      <Name>sfx_env_door_close_generic</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_env_door_open_generic.wav">
+      <Name>sfx_env_door_open_generic</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_gui_daytime.wav">
+      <Name>sfx_gui_daytime</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_gui_negative_generic.wav">
+      <Name>sfx_gui_negative_generic</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_gui_nighttime.wav">
+      <Name>sfx_gui_nighttime</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_gui_rain_storm_alert.wav">
+      <Name>sfx_gui_rain_storm_alert</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_gui_snow_storm_alert.wav">
+      <Name>sfx_gui_snow_storm_alert</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_attack_musket_1.wav">
+      <Name>sfx_ic_dwarf_attack_musket_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_attack_musket_2.wav">
+      <Name>sfx_ic_dwarf_attack_musket_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_attack_musket_3.wav">
+      <Name>sfx_ic_dwarf_attack_musket_3</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_magic_research.wav">
+      <Name>sfx_ic_dwarf_magic_research</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_magic_research_stereo.wav">
+      <Name>sfx_ic_dwarf_magic_research_stereo</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
     <Content Include="Audio\XACT\Win\SoundBank.xsb">
       <Name>SoundBank</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

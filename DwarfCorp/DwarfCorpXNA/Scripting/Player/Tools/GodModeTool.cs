@@ -153,23 +153,17 @@ namespace DwarfCorp
             SelectorBox.OnSelectionModified += SelectorBox_OnSelectionModified;
 
 
-            Button tradeButton = new Button(GUI, SelectorPanel, "Send Trade Envoy", GUI.DefaultFont,
-                Button.ButtonMode.PushButton, null)
+            ComboBox tradeButton = new ComboBox(GUI, SelectorPanel)
             {
                 LocalBounds = new Rectangle(10, 128, 200, 50)
             };
-            tradeButton.OnClicked += () =>
+            foreach (var faction in Player.World.ComponentManager.Factions.Factions)
             {
-                Faction toSend = null;
-                foreach (var faction in Player.World.ComponentManager.Factions.Factions)
-                {
-                    if (faction.Value.Race.IsIntelligent && faction.Value.Race.IsNative)
-                    {
-                        toSend = faction.Value;
-                        break;
-                    }
-                }
-                if (toSend == null) return;
+                tradeButton.AddValue(faction.Key);
+            }
+            tradeButton.OnSelectionModified += (string val) =>
+            {
+                var toSend = Player.World.ComponentManager.Factions.Factions[val];
                 Player.World.ComponentManager.Diplomacy.SendTradeEnvoy(toSend, Player.World);
             };
 
