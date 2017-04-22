@@ -52,6 +52,17 @@ namespace DwarfCorp
         public float Volume;
         public bool RandomPitch;
 
+
+        public static implicit operator SoundSource(string sound)
+        {
+            return SoundSource.Create(sound);
+        }
+
+        public static implicit operator SoundSource(string[] sounds)
+        {
+            return SoundSource.Create(sounds);
+        }
+
         public static SoundSource Create(string sound)
         {
             return new SoundSource()

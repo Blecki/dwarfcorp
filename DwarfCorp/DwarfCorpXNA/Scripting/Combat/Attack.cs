@@ -72,7 +72,7 @@ namespace DwarfCorp
         } }
         public string Name { get; set; }
         public float Range { get; set; }
-        public string HitNoise { get; set; }
+        public SoundSource HitNoise { get; set; }
         public Color HitColor { get; set; }
         public AttackMode Mode { get; set; }
         public Timer RechargeTimer { get; set; }
@@ -130,7 +130,7 @@ namespace DwarfCorp
             HitAnimation = new Animation(AnimationAsset, text.Height, text.Height, frames.ToArray());
         }
 
-        public Attack(string name, float damage, float time, float range, string noise, string animation)
+        public Attack(string name, float damage, float time, float range, SoundSource noise, string animation)
         {
             Name = name;
             DamageAmount = damage;
@@ -304,6 +304,11 @@ namespace DwarfCorp
                         if (health != null)
                         {
                             health.Damage(DamageAmount + bonus);
+                            Vector3 knock = other.Position - performer.Physics.Position;
+                            knock.Normalize();
+                            knock *= 0.2f;
+                            if (other.AnimationQueue.Count == 0)
+                                other.AnimationQueue.Add(new KnockbackAnimation(0.15f, other.LocalTransform, knock));
                         }
 
                         PlayNoise(other.GlobalTransform.Translation);
@@ -347,7 +352,7 @@ namespace DwarfCorp
 
         public void PlayNoise(Vector3 position)
         {
-            SoundManager.PlaySound(HitNoise, position, true);
+            HitNoise.Play(position);
         }
     }
 

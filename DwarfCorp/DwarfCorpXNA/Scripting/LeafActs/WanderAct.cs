@@ -1,4 +1,4 @@
-﻿// WanderAct.cs
+// WanderAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -88,7 +88,7 @@ namespace DwarfCorp
 
                 if (!Creature.IsOnGround)
                 {
-                    yield return Status.Fail;
+                    yield return Status.Success;
                     yield break;
                 }
                 if(TurnTime.Update(DwarfTime.LastTime) || TurnTime.HasTriggered || firstIter)

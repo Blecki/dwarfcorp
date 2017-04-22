@@ -497,7 +497,7 @@ namespace DwarfCorp
 
                 IndicatorManager.DrawIndicator(sign + xp + " XP",
                     Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, xp > 0 ? Color.Green : Color.Red);
-                if (Stats.IsOverQualified && lastXPAnnouncement != Stats.XP)
+                if (Stats.IsOverQualified && lastXPAnnouncement != Stats.XP && Faction == Manager.World.PlayerFaction)
                 {
                     lastXPAnnouncement = Stats.XP;
                     Manager.World.MakeAnnouncement(String.Format("{0} ({1}) wants a promotion!",
