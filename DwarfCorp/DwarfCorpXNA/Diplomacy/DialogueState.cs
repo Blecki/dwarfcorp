@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Gum;
 using LibNoise;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -49,11 +50,14 @@ namespace DwarfCorp.Dialogue
                 TextColor = Color.Black.ToVector4()
             });
 
+            int w = System.Math.Min(GuiRoot.VirtualScreen.Width - 200, 600);
+            int h = System.Math.Min(GuiRoot.VirtualScreen.Height - 200, 400);
+            int x = GuiRoot.VirtualScreen.Width/2 - w/2;
+            int y = System.Math.Max(GuiRoot.VirtualScreen.Height/2 - h/2, 230);
             DialogueContext.ChoicePanel = GuiRoot.RootItem.AddChild(new Gum.Widget
             {
-                Rect = new Rectangle(200, 200, GuiRoot.VirtualScreen.Width - 200, 
-                GuiRoot.VirtualScreen.Height - 200),
-                Border = "border-fancy",
+                Rect = new Rectangle(x, y, w, h),
+                Border = "border-fancy"
             });
 
             SpeakerAnimation = new Animation(DialogueContext.Envoy.OwnerFaction.Race.TalkAnimation);

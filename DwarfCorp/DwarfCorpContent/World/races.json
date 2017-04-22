@@ -42,6 +42,16 @@
                     "Audio/oscar/sfx_ic_dwarf_mumble_4",
                     "Audio/oscar/sfx_ic_dwarf_mumble_5",
                     "Audio/oscar/sfx_ic_dwarf_mumble_6"
+                ],
+                "Yays": 
+                [
+                    "Audio/oscar/sfx_ic_dwarf_pleased"
+                ],
+                "Boos": 
+                [
+                    "Audio/oscar/sfx_ic_dwarf_tantrum_1",
+                    "Audio/oscar/sfx_ic_dwarf_tantrum_2",
+                    "Audio/oscar/sfx_ic_dwarf_tantrum_3",
                 ]
             }
         },
@@ -104,6 +114,14 @@
                     "Audio/oscar/sfx_ic_goblin_mumble_4",
                     "Audio/oscar/sfx_ic_goblin_mumble_5",
                     "Audio/oscar/sfx_ic_goblin_mumble_6"
+                ],
+                "Yays": 
+                [
+                    "Audio/oscar/sfx_ic_goblin_pleased"
+                ],
+                "Boos": 
+                [
+                    "Audio/oscar/sfx_ic_goblin_angered"
                 ]
             }
       },
@@ -159,6 +177,14 @@
                     "Audio/oscar/sfx_ic_moleman_mumble_4",
                     "Audio/oscar/sfx_ic_moleman_mumble_5",
                     "Audio/oscar/sfx_ic_moleman_mumble_6"
+                ],
+                "Yays": 
+                [
+                    "Audio/oscar/sfx_ic_moleman_pleased"
+                ],
+                "Boos": 
+                [
+                    "Audio/oscar/sfx_ic_moleman_angered"
                 ]
             }
        },
@@ -217,6 +243,14 @@
                     "Audio/oscar/sfx_ic_elf_mumble_4",
                     "Audio/oscar/sfx_ic_elf_mumble_5",
                     "Audio/oscar/sfx_ic_elf_mumble_6"
+                ],
+                "Yays": 
+                [
+                    "Audio/oscar/sfx_ic_elf_pleased"
+                ],
+                "Boos": 
+                [
+                    "Audio/oscar/sfx_ic_elf_angered"
                 ]
             }
        },
@@ -276,6 +310,14 @@
                     "Audio/oscar/sfx_ic_necromancer_mumble_4",
                     "Audio/oscar/sfx_ic_necromancer_mumble_5",
                     "Audio/oscar/sfx_ic_necromancer_mumble_6"
+                ],
+                "Yays": 
+                [
+                    "Audio/oscar/sfx_ic_necromancer_pleased"
+                ],
+                "Boos": 
+                [
+                    "Audio/oscar/sfx_ic_necromancer_angered"
                 ]
             }
        },

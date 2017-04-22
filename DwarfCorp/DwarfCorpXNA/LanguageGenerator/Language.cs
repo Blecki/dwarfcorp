@@ -55,12 +55,14 @@ namespace DwarfCorp
     }
 
     /// <summary>
-    /// This is a weird (probably deprecated) system for making "talky" noises.
+    /// This is a system for making "talky" noises.
     /// </summary>
     public class Language
     {
         public List<string> Syllables { get; set; }
-
+        public List<string> Yays { get; set; }
+        public List<string> Boos { get; set; }
+ 
         public Language()
         {
             
@@ -71,6 +73,21 @@ namespace DwarfCorp
             Syllables = syllables;
         }
 
+        public void SayYay()
+        {
+            if (Yays != null && Yays.Count > 0)
+            {
+                SoundManager.PlaySound(Datastructures.SelectRandom(Yays));
+            }
+        }
+
+        public void SayBoo()
+        {
+            if (Boos != null && Boos.Count > 0)
+            {
+                SoundManager.PlaySound(Datastructures.SelectRandom(Boos));
+            }
+        }
 
         public IEnumerable<Utterance> Say(string sentence)
         {

@@ -138,6 +138,7 @@ namespace DwarfCorp.Dialogue
 
         public static void DeclareWar(DialogueContext Context)
         {
+            Context.Envoy.OwnerFaction.Race.Speech.Language.SayBoo();
             if (!Context.Politics.HasEvent("you declared war on us"))
             {
                 Context.Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
@@ -212,6 +213,7 @@ namespace DwarfCorp.Dialogue
 
                 if (containsHatedItem)
                 {
+                    Context.Envoy.OwnerFaction.Race.Speech.Language.SayBoo();
                     Context.Transition(GoodbyeWithPrompt(Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.BadTrades)));
 
                     if (!Context.Politics.HasEvent("you tried to give us something offensive"))
@@ -254,10 +256,12 @@ namespace DwarfCorp.Dialogue
                             Time = Context.World.Time.CurrentDate
                         });
                     }
+                    Context.Envoy.OwnerFaction.Race.Speech.Language.SayYay();
                 }
             } 
             else if (Context.TradePanel.Result == NewGui.TradeDialogResult.Reject)
             {
+                Context.Envoy.OwnerFaction.Race.Speech.Language.SayBoo();
                 Context.Transition(RootWithPrompt(Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.BadTrades)));
             }
             else

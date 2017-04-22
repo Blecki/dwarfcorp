@@ -204,7 +204,8 @@ namespace DwarfCorp
         public static Dictionary<string, SoundEffect> EffectLibrary = new Dictionary<string, SoundEffect>();
         public static Dictionary<string, Cue> ActiveCues = new Dictionary<string, Cue>();
         public static FancyMusic CurrentMusic = null;
-
+        public static List<SoundEffectInstance> ActiveSounds2D = new List<SoundEffectInstance>();
+ 
         public static void LoadDefaultSounds()
         {
             string[] defaultSounds =
@@ -374,6 +375,7 @@ namespace DwarfCorp
             SoundEffectInstance instance = effect.CreateInstance();
             instance.Volume = GameSettings.Default.MasterVolume*GameSettings.Default.SoundEffectVolume*volume; 
             instance.Play();
+            ActiveSounds2D.Add(instance);
             return instance;
         }
 
@@ -433,6 +435,7 @@ namespace DwarfCorp
                 }
             }
 
+            ActiveSounds2D.RemoveAll(sound => sound.State == SoundState.Stopped);
 
             /*
             MediaPlayer.Volume = GameSettings.Default.MasterVolume*GameSettings.Default.MusicVolume * 0.1f;
