@@ -145,7 +145,7 @@ namespace DwarfCorp
         {
             if (Recharges && !RechargeTimer.HasTriggered)
             {
-                Drawer2D.DrawLoadBar(World.Camera, World.CursorLightPos - Vector3.Up, Color.White, Color.Black, 150, 20, RechargeTimer.CurrentTimeSeconds / RechargeTimer.TargetTimeSeconds);
+                Drawer2D.DrawLoadBar(World.Camera, World.CursorLightPos - Vector3.Up, Color.Cyan, Color.Black, 64, 4, RechargeTimer.CurrentTimeSeconds / RechargeTimer.TargetTimeSeconds);
                 Drawer2D.DrawTextBox("Charging...", World.CursorLightPos + Vector3.Up * 2);
             }
         }

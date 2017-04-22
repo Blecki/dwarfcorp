@@ -216,6 +216,7 @@ namespace DwarfCorp
             Buffs = new List<Buff>();
             HasMeat = true;
             HasBones = true;
+            DrawLifeTimer.HasTriggered = true;
         }
 
         public Creature(ComponentManager manager, Vector3 pos, CreatureDef def, string creatureClass, int creatureLevel, string faction) :
@@ -231,6 +232,7 @@ namespace DwarfCorp
                 GameState.Game.Content,
                 def.Name)
         {
+            DrawLifeTimer.HasTriggered = true;
             HasMeat = true;
             HasBones = true;
             EmployeeClass employeeClass = EmployeeClass.Classes[creatureClass];
@@ -324,6 +326,7 @@ namespace DwarfCorp
             string name) :
             base(parent.Manager, name, parent, stats.MaxHealth, 0.0f, stats.MaxHealth)
         {
+            DrawLifeTimer.HasTriggered = true;
             HasMeat = true;
             HasBones = true;
             Buffs = new List<Buff>();
@@ -447,6 +450,8 @@ namespace DwarfCorp
             }
         }
 
+        public Timer DrawLifeTimer = new Timer(0.25f, true);
+
         /// <summary> Convenience wrapper around Status.IsAsleep </summary>
         public bool IsAsleep
         {
@@ -499,7 +504,14 @@ namespace DwarfCorp
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (!IsActive) return;
+            DrawLifeTimer.Update(gameTime);
 
+            if (!DrawLifeTimer.HasTriggered)
+            {
+                float val = Hp/MaxHealth;
+                Color color = val < 0.5f ? (val < 0.25f ? Color.Red : Color.Yellow) : Color.Green;
+                Drawer2D.DrawLoadBar(Manager.World.Camera, AI.Position - Vector3.Up, color, Color.Black, 32, 2, Hp / MaxHealth);
+            }
             CheckNeighborhood(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
             UpdateAnimation(gameTime, chunks, camera);
             Status.Update(this, gameTime, chunks, camera);
@@ -747,7 +759,7 @@ namespace DwarfCorp
 
                 if (loadBar)
                 {
-                    Drawer2D.DrawLoadBar(Manager.World.Camera, AI.Position + Vector3.Up, Color.White, Color.Black, 100, 16,
+                    Drawer2D.DrawLoadBar(Manager.World.Camera, AI.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4,
                         waitTimer.CurrentTimeSeconds / waitTimer.TargetTimeSeconds);
                 }
 
@@ -788,6 +800,7 @@ namespace DwarfCorp
                 Sprite.Blink(0.5f);
                 AI.AddThought(Thought.ThoughtType.TookDamage);
                 Manager.World.ParticleManager.Trigger(DeathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
+                DrawLifeTimer.Reset();
             }
 
             return damage;
