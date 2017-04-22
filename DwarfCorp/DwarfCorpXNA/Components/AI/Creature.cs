@@ -509,8 +509,8 @@ namespace DwarfCorp
             if (!DrawLifeTimer.HasTriggered)
             {
                 float val = Hp/MaxHealth;
-                Color color = val < 0.5f ? (val < 0.25f ? Color.Red : Color.Yellow) : Color.Green;
-                Drawer2D.DrawLoadBar(Manager.World.Camera, AI.Position - Vector3.Up, color, Color.Black, 32, 2, Hp / MaxHealth);
+                Color color = val < 0.75f ? (val < 0.5f ? Color.Red : Color.Orange) : Color.LightGreen;
+                Drawer2D.DrawLoadBar(Manager.World.Camera, AI.Position - Vector3.Up * 0.5f, color, Color.Black, 32, 2, Hp / MaxHealth);
             }
             CheckNeighborhood(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
             UpdateAnimation(gameTime, chunks, camera);

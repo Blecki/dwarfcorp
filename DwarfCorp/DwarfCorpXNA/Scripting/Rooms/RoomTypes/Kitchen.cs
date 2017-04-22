@@ -1,4 +1,4 @@
-﻿// WorkshopRoom.cs
+// WorkshopRoom.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -60,19 +60,13 @@ namespace DwarfCorp
             RoomTile[,] template =
             {
                 {
-                    RoomTile.None,
-                    RoomTile.None,
-                    RoomTile.None
+                    RoomTile.None, RoomTile.Open, RoomTile.None
                 },
                 {
-                    RoomTile.Wall | RoomTile.Edge,
-                    RoomTile.KitchenTable,
-                    RoomTile.None
+                    RoomTile.Wall | RoomTile.Edge, RoomTile.KitchenTable,  RoomTile.None
                 },
                 {
-                    RoomTile.None,
-                    RoomTile.None,
-                    RoomTile.None
+                    RoomTile.None, RoomTile.Open, RoomTile.None
                 }
             };
 

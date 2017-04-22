@@ -1,4 +1,4 @@
-﻿// LibraryRoom.cs
+// LibraryRoom.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -59,12 +59,9 @@ namespace DwarfCorp
             RoomTile[,] lampTemplate =
             {
                 {
-                    RoomTile.None,
-                    RoomTile.Wall | RoomTile.Edge
-                },
+                    RoomTile.None, RoomTile.Wall | RoomTile.Edge },
                 {
-                    RoomTile.Wall | RoomTile.Edge,
-                    RoomTile.Lamp
+                    RoomTile.Wall | RoomTile.Edge, RoomTile.Lamp
                 }
             };
 
@@ -83,22 +80,27 @@ namespace DwarfCorp
             RoomTile[,]  bookshlf =
             {
                 {
-                    RoomTile.Open,
-                    RoomTile.Wall | RoomTile.Edge
+                    RoomTile.Edge | RoomTile.Wall, RoomTile.Edge | RoomTile.Wall, RoomTile.Edge | RoomTile.Wall,
                 },
-                {
-                    RoomTile.Open,
-                    RoomTile.BookShelf
-                }
+                {  
+                    RoomTile.Open, RoomTile.BookShelf, RoomTile.Open
+                },
             };
 
             RoomTile[,] bookshlfAcc =
             {
                 {
                     RoomTile.None,
+                    RoomTile.None,
                     RoomTile.None
                 },
                 {
+                    RoomTile.None,
+                    RoomTile.None,
+                    RoomTile.None
+                },
+                {
+                    RoomTile.None,
                     RoomTile.None,
                     RoomTile.None
                 }
@@ -149,8 +151,8 @@ namespace DwarfCorp
             };
 
 
-            libraryTemplates.Add(new RoomTemplate(PlacementType.Random, bookshlf, bookshlfAcc) { Probability = 0.15f});
             libraryTemplates.Add(lamp);
+            libraryTemplates.Add(new RoomTemplate(PlacementType.Random, bookshlf, bookshlfAcc) { Probability = 0.15f });
             libraryTemplates.Add(book);
             Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
             return new RoomData(LibraryRoomName, 4, "Blue Tile", roomResources, libraryTemplates,
