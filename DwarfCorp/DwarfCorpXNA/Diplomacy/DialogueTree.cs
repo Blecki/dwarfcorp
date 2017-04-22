@@ -130,6 +130,7 @@ namespace DwarfCorp.Dialogue
 
         public static void ConfirmDeclareWar(DialogueContext Context)
         {
+            Context.ClearOptions();
             Context.Say("You really want to declare war on us?");
             Context.AddOption("Yes!", DeclareWar);
             Context.AddOption("No.", ConversationRoot);
@@ -213,38 +214,51 @@ namespace DwarfCorp.Dialogue
                 {
                     Context.Transition(GoodbyeWithPrompt(Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.BadTrades)));
 
-                    Context.Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                    if (!Context.Politics.HasEvent("you tried to give us something offensive"))
                     {
-                        Change = -0.25f,
-                        Description = "you tried to give us something offensive",
-                        Duration = new TimeSpan(4, 0, 0, 0),
-                        Time = Context.World.Time.CurrentDate
-                    });
+                        Context.Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                        {
+                            Change = -0.25f,
+                            Description = "you tried to give us something offensive",
+                            Duration = new TimeSpan(4, 0, 0, 0),
+                            Time = Context.World.Time.CurrentDate
+                        });
+                    }
                 }
                 else
                 {
                     if (containsLikedItem)
                     {
-                        Context.Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                        if (!Context.Politics.HasEvent("you gave us something we liked"))
                         {
-                            Change = 0.25f,
-                            Description = "you gave us something we liked",
-                            Duration = new TimeSpan(4, 0, 0, 0),
-                            Time = Context.World.Time.CurrentDate
-                        });
+                            Context.Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                            {
+                                Change = 0.25f,
+                                Description = "you gave us something we liked",
+                                Duration = new TimeSpan(4, 0, 0, 0),
+                                Time = Context.World.Time.CurrentDate
+                            });
+                        }
                     }
 
                     Context.TradePanel.Transaction.Apply();
                     Context.Transition(RootWithPrompt(Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.GoodTrades)));
 
-                    Context.Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                    if (!Context.Politics.HasEvent("we had profitable trade"))
                     {
-                        Change = 0.25f,
-                        Description = "we had profitable trade",
-                        Duration = new TimeSpan(2, 0, 0, 0),
-                        Time = Context.World.Time.CurrentDate
-                    });
+                        Context.Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                        {
+                            Change = 0.25f,
+                            Description = "we had profitable trade",
+                            Duration = new TimeSpan(2, 0, 0, 0),
+                            Time = Context.World.Time.CurrentDate
+                        });
+                    }
                 }
+            } 
+            else if (Context.TradePanel.Result == NewGui.TradeDialogResult.Reject)
+            {
+                Context.Transition(RootWithPrompt(Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.BadTrades)));
             }
             else
             {
@@ -258,37 +272,38 @@ namespace DwarfCorp.Dialogue
         {
             if (PluralMap == null)
             {
-                PluralMap = new Dictionary<Resource.ResourceTags, string>();
-
-                PluralMap.Add(Resource.ResourceTags.Edible, "edibles");
-                PluralMap.Add(Resource.ResourceTags.Material, "materials");
-                PluralMap.Add(Resource.ResourceTags.HardMaterial, "hard materials");
-                PluralMap.Add(Resource.ResourceTags.Precious, "precious things");
-                PluralMap.Add(Resource.ResourceTags.Flammable, "flammable things");
-                PluralMap.Add(Resource.ResourceTags.SelfIlluminating, "self illuminating things");
-                PluralMap.Add(Resource.ResourceTags.Wood, "wood");
-                PluralMap.Add(Resource.ResourceTags.Metal, "metal");
-                PluralMap.Add(Resource.ResourceTags.Stone, "stone");
-                PluralMap.Add(Resource.ResourceTags.Fuel, "fuel");
-                PluralMap.Add(Resource.ResourceTags.Magical, "magical items");
-                PluralMap.Add(Resource.ResourceTags.Soil, "soil");
-                PluralMap.Add(Resource.ResourceTags.Grain, "grain");
-                PluralMap.Add(Resource.ResourceTags.Fungus, "fungi");
-                PluralMap.Add(Resource.ResourceTags.None, "WUT");
-                PluralMap.Add(Resource.ResourceTags.AnimalProduct, "animal products");
-                PluralMap.Add(Resource.ResourceTags.Meat, "meat");
-                PluralMap.Add(Resource.ResourceTags.Gem, "gems");
-                PluralMap.Add(Resource.ResourceTags.Craft, "crafts");
-                PluralMap.Add(Resource.ResourceTags.Encrustable, "encrustable items");
-                PluralMap.Add(Resource.ResourceTags.Alcohol, "alcoholic drinks");
-                PluralMap.Add(Resource.ResourceTags.Brewable, "brewed drinks");
-                PluralMap.Add(Resource.ResourceTags.Bakeable, "baked goods");
-                PluralMap.Add(Resource.ResourceTags.RawFood, "raw food");
-                PluralMap.Add(Resource.ResourceTags.PreparedFood, "prepared food");
-                PluralMap.Add(Resource.ResourceTags.Plantable, "seeds");
-                PluralMap.Add(Resource.ResourceTags.AboveGroundPlant, "plants");
-                PluralMap.Add(Resource.ResourceTags.BelowGroundPlant, "cave plants");
-                PluralMap.Add(Resource.ResourceTags.Bone, "bones");
+                PluralMap = new Dictionary<Resource.ResourceTags, string>
+                {
+                    {Resource.ResourceTags.Edible, "edibles"},
+                    {Resource.ResourceTags.Material, "materials"},
+                    {Resource.ResourceTags.HardMaterial, "hard materials"},
+                    {Resource.ResourceTags.Precious, "precious things"},
+                    {Resource.ResourceTags.Flammable, "flammable things"},
+                    {Resource.ResourceTags.SelfIlluminating, "self illuminating things"},
+                    {Resource.ResourceTags.Wood, "wooden things"},
+                    {Resource.ResourceTags.Metal, "metal things"},
+                    {Resource.ResourceTags.Stone, "stone things"},
+                    {Resource.ResourceTags.Fuel, "fuel"},
+                    {Resource.ResourceTags.Magical, "magical items"},
+                    {Resource.ResourceTags.Soil, "soil"},
+                    {Resource.ResourceTags.Grain, "grains"},
+                    {Resource.ResourceTags.Fungus, "fungi"},
+                    {Resource.ResourceTags.None, "WUT"},
+                    {Resource.ResourceTags.AnimalProduct, "animal products"},
+                    {Resource.ResourceTags.Meat, "meats"},
+                    {Resource.ResourceTags.Gem, "gems"},
+                    {Resource.ResourceTags.Craft, "crafts"},
+                    {Resource.ResourceTags.Encrustable, "encrustable items"},
+                    {Resource.ResourceTags.Alcohol, "alcoholic drinks"},
+                    {Resource.ResourceTags.Brewable, "brewed drinks"},
+                    {Resource.ResourceTags.Bakeable, "baked goods"},
+                    {Resource.ResourceTags.RawFood, "raw foods"},
+                    {Resource.ResourceTags.PreparedFood, "prepared foods"},
+                    {Resource.ResourceTags.Plantable, "seeds"},
+                    {Resource.ResourceTags.AboveGroundPlant, "plants"},
+                    {Resource.ResourceTags.BelowGroundPlant, "cave plants"},
+                    {Resource.ResourceTags.Bone, "bones"}
+                };
             }
 
             return PluralMap[Tag];

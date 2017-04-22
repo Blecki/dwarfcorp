@@ -12,7 +12,8 @@ namespace DwarfCorp.NewGui
     {
         Pending,
         Cancel,
-        Propose
+        Propose,
+        Reject
     }
 
     public class TradePanel : Widget
@@ -77,7 +78,13 @@ namespace DwarfCorp.NewGui
                         var envoyOut = Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney;
                         var tradeTarget = envoyOut * 0.25;
 
-                        if (net >= tradeTarget)
+                        if (PlayerColumns.SelectedResources.Count == 0 && EnvoyColumns.SelectedResources.Count == 0
+                            && EnvoyColumns.TradeMoney == 0 && PlayerColumns.TradeMoney == 0)
+                        {
+                            Result = TradeDialogResult.Cancel;
+                            this.Close();
+                        }
+                        else if (net >= tradeTarget)
                         {
                             Result = TradeDialogResult.Propose;
                             Transaction = new TradeTransaction
@@ -93,7 +100,8 @@ namespace DwarfCorp.NewGui
                         }
                         else
                         {
-                            Root.ShowTooltip(Root.MousePosition, "Make us a better offer.");
+                            Result = TradeDialogResult.Reject;
+                            this.Close();
                         }
                     }
                     else
