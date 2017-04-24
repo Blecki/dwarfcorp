@@ -13,17 +13,19 @@ namespace DwarfCorp.NewGui
         
         public override void Layout()
         {
+            var inside = GetDrawableInterior();
+
             if (!ReverseColumnOrder)
             {
                 if (Children.Count > 0)
                 {
-                    Children[0].Rect = new Rectangle(Rect.X, Rect.Y, Rect.Width / 2, Rect.Height);
+                    Children[0].Rect = new Rectangle(inside.X, inside.Y, inside.Width / 2, inside.Height);
                     Children[0].Layout();
                 }
 
                 if (Children.Count > 1)
                 {
-                    Children[1].Rect = new Rectangle(Rect.X + Rect.Width / 2, Rect.Y, Rect.Width / 2, Rect.Height);
+                    Children[1].Rect = new Rectangle(inside.X + inside.Width / 2, inside.Y, inside.Width / 2, inside.Height);
                     Children[1].Layout();
                 }
             }
@@ -31,13 +33,13 @@ namespace DwarfCorp.NewGui
             {
                 if (Children.Count > 1)
                 {
-                    Children[1].Rect = new Rectangle(Rect.X, Rect.Y, Rect.Width / 2, Rect.Height);
+                    Children[1].Rect = new Rectangle(inside.X, inside.Y, inside.Width / 2, inside.Height);
                     Children[1].Layout();
                 }
 
                 if (Children.Count > 0)
                 {
-                    Children[0].Rect = new Rectangle(Rect.X + Rect.Width / 2, Rect.Y, Rect.Width / 2, Rect.Height);
+                    Children[0].Rect = new Rectangle(inside.X + inside.Width / 2, inside.Y, inside.Width / 2, inside.Height);
                     Children[0].Layout();
                 }
             }

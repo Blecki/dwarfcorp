@@ -46,11 +46,13 @@ namespace DwarfCorp
     {
         public enum Sector
         {
-            Exploration,
-            Military,
-            Manufacturing,
-            Magic,
-            Finance
+            None = 0,
+            Exploration = 1,
+            Military = 2,
+            Manufacturing = 4,
+            Magic = 8,
+            Finance = 16,
+            All = Exploration | Military | Manufacturing | Magic | Finance
         };
 
         public Sector Industry { get; set; }

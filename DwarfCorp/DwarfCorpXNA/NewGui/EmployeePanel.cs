@@ -60,6 +60,7 @@ namespace DwarfCorp.NewGui
             {
                 AutoLayout = AutoLayout.DockFill,
                 Items = Faction.Minions.Select(m => m.Stats.FullName).ToList(),
+                Font = "font-hires",
                 OnSelectedIndexChanged = (sender) =>
                 {
                     if ((sender as Gum.Widgets.ListView).SelectedIndex >= 0 &&
@@ -77,13 +78,23 @@ namespace DwarfCorp.NewGui
 
             bottomBar.AddChild(new Widget
             {
-                Text = "Hire",
+                Text = "Hire New Employee",
                 Border = "border-button",
                 AutoLayout = AutoLayout.DockLeft,
                 OnClick = (sender, args) =>
                 {
                     // Show hire dialog.
-                    // Recreate employee list.
+                    var dialog = Root.ConstructWidget(
+                        new HireEmployeeDialog(Faction.World.PlayerCompany.Information)
+                        {
+                            Faction = Faction,
+                            OnClose = (_s) =>
+                            {
+                                EmployeeList.Items = Faction.Minions.Select(m => m.Stats.FullName).ToList();
+                                EmployeeList.SelectedIndex = 0;
+                            }
+                        });
+                    Root.ShowDialog(dialog);
                 }
             });
         }

@@ -64,10 +64,11 @@ namespace DwarfCorp.GameStates
             });
             
 
-            var financePanel = tabPanel.AddTab("Finance", new Widget
+            var financePanel = tabPanel.AddTab("Finance", new NewGui.FinancePanel
             {
                 Border = "border-thin",
-                Padding = new Margin(4, 4, 0, 0)
+                Padding = new Margin(4, 4, 0, 0),
+                Economy = World.PlayerEconomy
             });
 
             tabPanel.SelectedTab = 0;
