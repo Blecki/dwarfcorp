@@ -71,6 +71,7 @@ namespace DwarfCorp.NewGui
         {
             foreach (var company in Economy.Market.Where(c => (c.Industry & Sector) == c.Industry))
                 yield return company;
+            yield return Economy.Company;
         }
 
         private IEnumerable<Vector3> EnumerateStockValue(Company Company, int Start, int End)

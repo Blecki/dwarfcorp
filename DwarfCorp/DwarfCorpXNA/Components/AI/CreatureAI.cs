@@ -504,7 +504,8 @@ namespace DwarfCorp
                             Stats.FullName, Stats.CurrentLevel.Name),
                         String.Format("{0} can now be promoted to {1}.",
                             Stats.FullName, Stats.CurrentClass.Levels[Stats.LevelIndex + 1].Name),
-                        () => EconomyState.PushEconomyState(Manager.World), ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
+                        () => Manager.World.Game.StateManager.PushState(new NewEconomyState(Manager.World.Game, Manager.World.Game.StateManager, Manager.World)),
+                    ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
                 }
             }
             XPEvents.Clear();

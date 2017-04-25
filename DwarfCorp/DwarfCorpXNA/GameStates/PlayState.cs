@@ -529,7 +529,7 @@ namespace DwarfCorp.GameStates
             {
                 Corners = global::Gum.Scale9Corners.Left | global::Gum.Scale9Corners.Bottom,
                 AutoLayout = global::Gum.AutoLayout.FloatTopRight,
-                SizeToGrid = new Point(3, 1),
+                SizeToGrid = new Point(2, 1),
                 ItemSource = new Gum.Widget[] 
                         {
                             new NewGui.FramedIcon
@@ -537,11 +537,7 @@ namespace DwarfCorp.GameStates
                                 Icon = new Gum.TileReference("tool-icons", 10),
                                 OnClick = (sender, args) => StateManager.PushState(new NewEconomyState(Game, StateManager, World))
                         },
-                            new NewGui.FramedIcon
-                            {
-                                Icon = new Gum.TileReference("tool-icons", 10),
-                                OnClick = (sender, args) => StateManager.PushState(new EconomyState(Game, StateManager, World))
-                        },
+                           
                         new NewGui.FramedIcon
                         {
                             Icon = new Gum.TileReference("tool-icons", 12),
