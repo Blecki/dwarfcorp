@@ -531,12 +531,13 @@ namespace DwarfCorp.GameStates
                 AutoLayout = global::Gum.AutoLayout.FloatTopRight,
                 SizeToGrid = new Point(2, 1),
                 ItemSource = new Gum.Widget[] 
-                        { 
+                        {
                             new NewGui.FramedIcon
                             {
                                 Icon = new Gum.TileReference("tool-icons", 10),
-                                OnClick = (sender, args) => StateManager.PushState(new EconomyState(Game, StateManager, World))
+                                OnClick = (sender, args) => StateManager.PushState(new NewEconomyState(Game, StateManager, World))
                         },
+                           
                         new NewGui.FramedIcon
                         {
                             Icon = new Gum.TileReference("tool-icons", 12),

@@ -22,22 +22,11 @@ namespace Gum.Widgets
         {
             OnClick += (sender, args) => { CheckState = !CheckState; };
             TextVerticalAlign = VerticalAlign.Center;
+            ChangeColorOnHover = true;
+            HoverTextColor = new Vector4(0.5f, 0, 0, 1.0f);
 
             if (String.IsNullOrEmpty(Graphics))
                 Graphics = "checkbox";
-
-            var color = TextColor;
-            OnMouseEnter += (widget, action) =>
-            {
-                widget.TextColor = new Vector4(0.5f, 0, 0, 1.0f);
-                widget.Invalidate();
-            };
-
-            OnMouseLeave += (widget, action) =>
-            {
-                widget.TextColor = color;
-                widget.Invalidate();
-            };
         }
 
         public override Rectangle GetDrawableInterior()
