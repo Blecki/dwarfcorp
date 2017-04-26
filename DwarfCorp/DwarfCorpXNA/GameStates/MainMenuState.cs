@@ -94,7 +94,7 @@ namespace DwarfCorp.GameStates
 
             MakeMenuItem(frame, "New Game", "Start a new game of DwarfCorp.", (sender, args) => StateManager.PushState(new CompanyMakerState(Game, Game.StateManager)));
 
-            MakeMenuItem(frame, "Load Game", "Load DwarfCorp game from a file.", (sender, args) => StateManager.PushState(new GameLoaderState(Game, StateManager)));
+            MakeMenuItem(frame, "Load Game", "Load DwarfCorp game from a file.", (sender, args) => StateManager.PushState(new NewGameLoaderState(Game, StateManager)));
 
             MakeMenuItem(frame, "Options", "Change game settings.", (sender, args) => StateManager.PushState(new NewOptionsState(Game, StateManager)));
 

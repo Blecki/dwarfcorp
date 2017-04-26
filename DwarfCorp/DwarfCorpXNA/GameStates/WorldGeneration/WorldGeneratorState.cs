@@ -29,7 +29,7 @@ namespace DwarfCorp.GameStates
                 {
                     Width = 512,
                     Height = 512,
-                    Name = WorldSetupState.GetRandomWorldName(),
+                    Name = "Dwarfland",
                     NumCivilizations = 5,
                     NumFaults = 3,
                     NumRains = 1000,
@@ -130,8 +130,13 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gum.AutoLayout.DockTop,
                 OnClick = (sender, args) =>
                 {
-                    var advancedSettingsEditor = new WorldSetupState(Game, StateManager, Settings);
-                    StateManager.PushState(advancedSettingsEditor);
+                    var advancedSettingsEditor = GuiRoot.ConstructWidget(new NewGui.WorldGenerationSettingsDialog
+                    {
+                        Settings = Settings,
+                        OnClose = (s) => RestartGeneration()
+                    });
+
+                    GuiRoot.ShowPopup(advancedSettingsEditor, Gum.Root.PopupExclusivity.AddToStack);
                 }
             });
 

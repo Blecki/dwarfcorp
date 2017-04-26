@@ -228,6 +228,7 @@
     <Compile Include="GameStates\GameLoaderState.cs" />
     <Compile Include="GameStates\GameState.cs" />
     <Compile Include="GameStates\GameStateManager.cs" />
+    <Compile Include="GameStates\NewGameLoaderState.cs" />
     <Compile Include="GameStates\NewEconomyState.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGeneratorPreview.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGeneratorState.cs" />
@@ -240,12 +241,10 @@
     <Compile Include="GameStates\NewGameCreateDebugWorldState.cs" />
     <Compile Include="GameStates\NewOptionsState.cs" />
     <Compile Include="GameStates\GuiStateTemplate.cs" />
-    <Compile Include="GameStates\OptionsState.cs" />
     <Compile Include="GameStates\PlayState.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGenerator.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGenerationSettings.cs" />
     <Compile Include="GameStates\WorldLoaderState.cs" />
-    <Compile Include="GameStates\WorldSetupState.cs" />
     <Compile Include="Graphics\Cameras\Camera.cs" />
     <Compile Include="Graphics\Cameras\OrbitCamera.cs" />
     <Compile Include="Graphics\Drawing\Drawer2D\DrawCommand2D.cs" />
@@ -313,16 +312,12 @@
     <Compile Include="GUI\Components\Basic\Window.cs" />
     <Compile Include="GUI\Components\Complex\ActDisplay.cs" />
     <Compile Include="GUI\Components\Complex\AIDebugger.cs" />
-    <Compile Include="GUI\Components\Complex\ApplicationPanel.cs" />
     <Compile Include="GUI\Components\Complex\ColorDialog.cs" />
     <Compile Include="GUI\Components\Complex\ColorSelector.cs" />
-    <Compile Include="GUI\Components\Complex\FarmingPanel.cs" />
     <Compile Include="GUI\Components\Complex\GoodsPanel.cs" />
     <Compile Include="GUI\Components\Complex\ImageFrameLoadDialog.cs" />
     <Compile Include="GUI\Components\Complex\ItemSelector.cs" />
-    <Compile Include="GUI\Components\Complex\KeyEditor.cs" />
     <Compile Include="GUI\Components\Complex\MagicMenu.cs" />
-    <Compile Include="GUI\Components\Complex\MinionPanel.cs" />
     <Compile Include="GUI\Components\Complex\SpellTreeDisplay.cs" />
     <Compile Include="GUI\Components\Complex\TabSelector.cs" />
     <Compile Include="GUI\Components\Complex\TextureLoadDialog.cs" />
@@ -386,6 +381,7 @@
     <Compile Include="NewGui\BuildWallInfo.cs" />
     <Compile Include="NewGui\BuildRoomInfo.cs" />
     <Compile Include="NewGui\ApplicantInfo.cs" />
+    <Compile Include="NewGui\WorldGenerationSettingsDialog.cs" />
     <Compile Include="NewGui\FinancePanel.cs" />
     <Compile Include="NewGui\StockTicker.cs" />
     <Compile Include="NewGui\HireEmployeeDialog.cs" />
