@@ -16,7 +16,7 @@ namespace DwarfCorp.NewGui
         {
             // TODO: Center items better.
             Root.SafeCall(this.OnLayout, this);
-            var area = GetDrawableInterior();
+            var area = GetDrawableInterior().Interior(InteriorMargin);
             var pos = new Point(area.X, area.Y);
             foreach (var child in EnumerateChildren())
             {

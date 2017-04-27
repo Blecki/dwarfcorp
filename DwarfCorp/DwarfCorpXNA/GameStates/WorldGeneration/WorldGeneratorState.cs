@@ -56,12 +56,6 @@ namespace DwarfCorp.GameStates
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
 
-            if (IsInitialized) // Must have come here from advanced settings editor.
-            {
-                RestartGeneration();
-                return;
-            }
-
             GuiRoot = new Gum.Root(Gum.Root.MinimumSize, DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
 
@@ -279,6 +273,7 @@ namespace DwarfCorp.GameStates
                 Generator.LoadDummy(
                     new Color[Overworld.Map.GetLength(0) * Overworld.Map.GetLength(1)], 
                     Game.GraphicsDevice);
+                Preview.SetGenerator(Generator);
             }
 
             base.OnEnter();
