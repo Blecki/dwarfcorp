@@ -14,6 +14,7 @@ namespace DwarfCorp.NewGui
 
         public override void Layout()
         {
+            // TODO: Center items better.
             Root.SafeCall(this.OnLayout, this);
             var area = GetDrawableInterior();
             var pos = new Point(area.X, area.Y);
@@ -23,6 +24,9 @@ namespace DwarfCorp.NewGui
                 pos.X += ItemSize.X + ItemSpacing.X;
                 if (pos.X > area.Right - ItemSize.X)
                 {
+                    var leftOver = area.Right - pos.X;
+                    leftOver += ItemSize.X + ItemSpacing.X;
+
                     pos.X = area.X;
                     pos.Y += ItemSize.Y + ItemSpacing.Y;
                 }
@@ -31,12 +35,12 @@ namespace DwarfCorp.NewGui
             Invalidate();
         }
 
-        public Point ItemsThatFit
+        public int ItemsThatFit
         {
             get
             {
-                return new Point(GetDrawableInterior().Width / (ItemSize.X + ItemSpacing.X),
-                    GetDrawableInterior().Height / (ItemSize.Y + ItemSpacing.Y));
+                return (GetDrawableInterior().Width / (ItemSize.X + ItemSpacing.X)) *
+                    (GetDrawableInterior().Height / (ItemSize.Y + ItemSpacing.Y));
             }
         }
     }
