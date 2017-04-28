@@ -114,6 +114,33 @@ namespace DwarfCorp.GameStates
                         }
                     }
                 });
+
+                BottomBar.AddChild(new Gum.Widget
+                {
+                    AutoLayout = AutoLayout.FloatBottom,
+                    Border = "border-button",
+                    Text = "Delete",
+                    OnClick = (sender, args) =>
+                    {
+                        var confirm = GuiRoot.ConstructWidget(new NewGui.Confirm
+                        {
+                            OkayText = "Delete",
+                            CancelText = "Keep",
+                            Text = "Are you sure you want to delete this?",
+                            OnClose = (s) =>
+                            {
+                                if ((s as NewGui.Confirm).DialogResult == NewGui.Confirm.Result.OKAY)
+                                {
+                                    var selectedItem = Items[PreviewOffset + ItemSelected];
+                                    Items.Remove(selectedItem);
+                                    System.IO.Directory.Delete(selectedItem.Path, true);
+                                    NeedsRefresh = true;
+                                }
+                            }
+                        });
+                        GuiRoot.ShowPopup(confirm, Root.PopupExclusivity.AddToStack);
+                    }
+                });
             }
 
             BottomBar.AddChild(new Gum.Widget
@@ -184,13 +211,16 @@ namespace DwarfCorp.GameStates
             {
                 NeedsRefresh = false;
 
-                var totalPages = (int)System.Math.Ceiling((float)Items.Count / (float)Grid.ItemsThatFit);
-                Grid.Text = String.Format("Page {0} of {1}", (PreviewOffset / Grid.ItemsThatFit) + 1, totalPages);
+                if (PreviewOffset >= Items.Count && Items.Count > 0) // We're looking at an empty last page...
+                    PreviewOffset -= Grid.ItemsThatFit;
 
                 // Keep from selecting empty squares on final, incomplete page.
                 var pageSize = System.Math.Min(Items.Count - PreviewOffset, Grid.ItemsThatFit);
                 if (ItemSelected >= pageSize)
                     ItemSelected = pageSize - 1;
+
+                var totalPages = (int)System.Math.Ceiling((float)Items.Count / (float)Grid.ItemsThatFit);
+                Grid.Text = String.Format("Page {0} of {1}", (int)System.Math.Ceiling((float)PreviewOffset / (float)Grid.ItemsThatFit), totalPages);
 
                 BottomBar.Text = Items[PreviewOffset + ItemSelected].Path;
 
@@ -233,6 +263,7 @@ namespace DwarfCorp.GameStates
                     GuiRoot.DrawQuad(Grid.GetChild(i - PreviewOffset).Rect.Interior(7,7,7,7), item.Screenshot);
             }
 
+            GuiRoot.RedrawPopups(); // This hack sucks.
             GuiRoot.MousePointer = mouse;
             GuiRoot.DrawMouse();
             base.Render(gameTime);
