@@ -40,7 +40,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
 using Newtonsoft.Json;
-
+using System;
+using System.IO;
+using SDL2;
 
 namespace DwarfCorp
 {
@@ -57,6 +59,9 @@ namespace DwarfCorp
         public static Gum.Input.GumInputMapper GumInputMapper;
         public static Gum.Input.Input GumInput;
         public static Gum.RenderData GumSkin;
+
+        public const string GameName = "DwarfCorp";
+
         public DwarfGame()
         {
             //BoundingBox foo = new BoundingBox(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
@@ -86,10 +91,54 @@ namespace DwarfCorp
             }
         }
 
+#if !XNA_BUILD
         public static string GetGameDirectory()
         {
-            return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + ProgramData.DirChar + "DwarfCorp";
+            string platform = SDL.SDL_GetPlatform();
+            if (platform.Equals("Windows"))
+            {
+                return Path.Combine(
+                    Environment.GetFolderPath(
+                        Environment.SpecialFolder.MyDocuments
+                    ),
+                    "SavedGames",
+                    GameName
+                );
+            }
+            else if (platform.Equals("Mac OS X"))
+            {
+                string osConfigDir = Environment.GetEnvironmentVariable("HOME");
+                if (String.IsNullOrEmpty(osConfigDir))
+                {
+                    return "."; // Oh well.
+                }
+                osConfigDir += "/Library/Application Support";
+                return Path.Combine(osConfigDir, GameName);
+            }
+            else if (platform.Equals("Linux"))
+            {
+                string osConfigDir = Environment.GetEnvironmentVariable("XDG_DATA_HOME");
+                if (String.IsNullOrEmpty(osConfigDir))
+                {
+                    osConfigDir = Environment.GetEnvironmentVariable("HOME");
+                    if (String.IsNullOrEmpty(osConfigDir))
+                    {
+                        return "."; // Oh well.
+                    }
+                    osConfigDir += "/.local/share";
+                }
+                return Path.Combine(osConfigDir, GameName);
+            }
+            throw new Exception("SDL platform unhandled: " + platform);
         }
+#endif
+
+#if XNA_BUILD
+        public static string GetGameDirectory()
+        {
+            return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + ProgramData.DirChar + GameName;
+        }
+#endif
 
         protected override void Initialize()
         {
