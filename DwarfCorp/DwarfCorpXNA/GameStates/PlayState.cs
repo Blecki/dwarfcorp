@@ -1267,6 +1267,8 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.FloatLeft
             }) as NewGui.GodMenu;
 
+            GodMenu.Hidden = true;
+
             #endregion
 
             GuiRoot.RootItem.Layout();
@@ -1360,6 +1362,11 @@ namespace DwarfCorp.GameStates
                 World.DrawMap = !World.DrawMap;
                 MinimapFrame.Hidden = true;
                 MinimapFrame.Invalidate();
+            }
+            else if (key == ControlSettings.Mappings.GodMode)
+            {
+                GodMenu.Hidden = !GodMenu.Hidden;
+                GodMenu.Invalidate();
             }
         }
 

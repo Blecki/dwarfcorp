@@ -224,7 +224,6 @@
     <Compile Include="GameSettings.cs" />
     <Compile Include="GameStates\CompanyMakerState.cs" />
     <Compile Include="GameStates\CreditsState.cs" />
-    <Compile Include="GameStates\DiplomacyState.cs" />
     <Compile Include="GameStates\GameState.cs" />
     <Compile Include="GameStates\GameStateManager.cs" />
     <Compile Include="GameStates\WorldLoaderState.cs" />
@@ -287,7 +286,6 @@
     <Compile Include="Graphics\Primitives\PrimitiveLibrary.cs" />
     <Compile Include="Graphics\Primitives\VoxelListPrimitive.cs" />
     <Compile Include="Graphics\SelectionBuffer.cs" />
-    <Compile Include="GUI\Components\Basic\AnimatedImagePanel.cs" />
     <Compile Include="GUI\Components\Basic\Button.cs" />
     <Compile Include="GUI\Components\Basic\Checkbox.cs" />
     <Compile Include="GUI\Components\Basic\ColorKey.cs" />
@@ -312,15 +310,11 @@
     <Compile Include="GUI\Components\Basic\Window.cs" />
     <Compile Include="GUI\Components\Complex\ActDisplay.cs" />
     <Compile Include="GUI\Components\Complex\AIDebugger.cs" />
-    <Compile Include="GUI\Components\Complex\ColorDialog.cs" />
-    <Compile Include="GUI\Components\Complex\ColorSelector.cs" />
-    <Compile Include="GUI\Components\Complex\GoodsPanel.cs" />
     <Compile Include="GUI\Components\Complex\ImageFrameLoadDialog.cs" />
     <Compile Include="GUI\Components\Complex\ItemSelector.cs" />
     <Compile Include="GUI\Components\Complex\MagicMenu.cs" />
     <Compile Include="GUI\Components\Complex\SpellTreeDisplay.cs" />
     <Compile Include="GUI\Components\Complex\TabSelector.cs" />
-    <Compile Include="GUI\Components\Complex\TextureLoadDialog.cs" />
     <Compile Include="GUI\DragManager.cs" />
     <Compile Include="GUI\DwarfGUI.cs" />
     <Compile Include="GUI\GItem.cs" />
