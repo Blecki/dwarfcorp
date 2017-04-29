@@ -35,7 +35,7 @@ namespace DwarfCorp
         }
 
 
-        public Camera CameraController { get; set; }
+        public OrbitCamera CameraController { get; set; }
 
         [JsonIgnore]
         public DwarfGUI GUI { get; set; }
@@ -92,7 +92,7 @@ namespace DwarfCorp
         {
         }
 
-        public GameMaster(Faction faction, DwarfGame game, ComponentManager components, ChunkManager chunks, Camera camera, GraphicsDevice graphics, DwarfGUI gui)
+        public GameMaster(Faction faction, DwarfGame game, ComponentManager components, ChunkManager chunks, OrbitCamera camera, GraphicsDevice graphics, DwarfGUI gui)
         {
             World = components.World;
             Faction = faction;
@@ -104,7 +104,7 @@ namespace DwarfCorp
             World.Time.NewDay += Time_NewDay;
         }
 
-        public void Initialize(DwarfGame game, ComponentManager components, ChunkManager chunks, Camera camera, GraphicsDevice graphics, DwarfGUI gui)
+        public void Initialize(DwarfGame game, ComponentManager components, ChunkManager chunks, OrbitCamera camera, GraphicsDevice graphics, DwarfGUI gui)
         {
             RoomLibrary.InitializeStatics();
 
@@ -381,15 +381,70 @@ namespace DwarfCorp
             UpdateRooms();
 
             Faction.CraftBuilder.Update(time, this);
+
+            HandlePosessedDwarf();
         }
 
+
+        public void HandlePosessedDwarf()
+        {
+            KeyboardState keyState = Keyboard.GetState();
+            if (SelectedMinions.Count != 1)
+            {
+                CameraController.FollowAutoTarget = false;
+                CameraController.EnableControl = true;
+                return;
+            }
+
+            var dwarf = SelectedMinions[0];
+
+            CameraController.EnableControl = false;
+            CameraController.AutoTarget = dwarf.Position;
+            CameraController.FollowAutoTarget = true;
+
+            if (dwarf.Velocity.Length() > 0.1)
+            {
+                Voxel above = new Voxel();
+                if (World.ChunkManager.ChunkData.GetFirstVoxelAbove(dwarf.Position, ref above, false))
+                {
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(above.GridPosition.Y - 1, ChunkManager.SliceMode.Y);
+                }
+                else
+                {
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.ChunkSizeY - 1, ChunkManager.SliceMode.Y);
+                }
+            }
+
+            Vector3 forward = CameraController.GetForwardVector();
+            Vector3 right = CameraController.GetRightVector();
+
+            if (keyState.IsKeyDown(ControlSettings.Mappings.Forward))
+            {
+                dwarf.Physics.ApplyForce(forward * 10, DwarfTime.Dt);
+            }
+
+            if (keyState.IsKeyDown(ControlSettings.Mappings.Back))
+            {
+                dwarf.Physics.ApplyForce(-forward * 10, DwarfTime.Dt);
+            }
+
+            if (keyState.IsKeyDown(ControlSettings.Mappings.Right))
+            {
+                dwarf.Physics.ApplyForce(right * 10, DwarfTime.Dt);
+            }
+
+            if (keyState.IsKeyDown(ControlSettings.Mappings.Left))
+            {
+                dwarf.Physics.ApplyForce(-right * 10, DwarfTime.Dt);
+            }
+
+        }
 
         #region input
 
 
         public bool IsCameraRotationModeActive()
         {
-            KeyboardState keyState = Keyboard.GetState();
             return KeyManager.RotationEnabled();
 
         }

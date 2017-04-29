@@ -31,6 +31,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using ContentGenerator;
@@ -61,7 +62,7 @@ namespace DwarfCorp
         public static Gum.RenderData GumSkin;
 
         public const string GameName = "DwarfCorp";
-
+        private static StreamWriter _logwriter;
         public DwarfGame()
         {
             //BoundingBox foo = new BoundingBox(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
@@ -140,8 +141,30 @@ namespace DwarfCorp
         }
 #endif
 
+        public static void InitializeLogger()
+        {
+            Trace.Listeners.Clear();
+            var dir = GetGameDirectory();
+            if (!System.IO.Directory.Exists(dir))
+            {
+                System.IO.Directory.CreateDirectory(dir);
+            }
+            var path = ProgramData.CreatePath(dir, "log.txt");
+            if (!File.Exists(path))
+            {
+                File.Create(path).Close();
+            }
+
+            FileStream writerOutput = new FileStream(ProgramData.CreatePath(dir, "log.txt"), FileMode.Append, FileAccess.Write);
+            _logwriter = new StreamWriter(writerOutput) {AutoFlush = true};
+            Console.SetOut(_logwriter);
+            Console.SetError(_logwriter);
+            Console.Out.WriteLine("Game started at " + DateTime.Now.ToShortDateString() + " : " + DateTime.Now.ToShortTimeString()); 
+        }
+
         protected override void Initialize()
         {
+            InitializeLogger();
             Thread.CurrentThread.Name = "Main";
             // Goes before anything else so we can track from the very start.
             GamePerformance.Initialize(this);
@@ -222,7 +245,8 @@ namespace DwarfCorp
             ControlSettings.Load();
             Drawer2D.Initialize(Content, GraphicsDevice);
             ResourceLibrary.Initialize();
-
+            //string foo = null;
+            //foo.Clone();
             base.LoadContent();
         }
 
@@ -243,10 +267,12 @@ namespace DwarfCorp
             base.Draw(time);
             GamePerformance.Instance.PostRender();
             GamePerformance.Instance.Render(SpriteBatch);
+            
         }
 
         protected override void OnExiting(object sender, EventArgs args)
         {
+            _logwriter.Dispose();
             ExitGame = true;
             Program.SignalShutdown();
             base.OnExiting(sender, args);

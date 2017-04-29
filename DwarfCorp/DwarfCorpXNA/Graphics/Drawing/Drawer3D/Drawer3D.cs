@@ -230,6 +230,14 @@ namespace DwarfCorp
             Vector3 lastPoint = Vector3.Zero;
             List<VertexPositionColor> list = new List<VertexPositionColor>();
 
+            if (color == null)
+            {
+                color = new Color[points.Length];
+                for (int i = 0; i < points.Length; i++)
+                {
+                    color[i] = Color.White;
+                }
+            }
 
             for (int i = 0; i < points.Length; i++)
             {

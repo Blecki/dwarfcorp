@@ -114,6 +114,11 @@ namespace DwarfCorp
 
         public void SetMaxViewingLevel(float level, ChunkManager.SliceMode slice)
         {
+            if (Math.Abs(level - MaxViewingLevel) < 0.1f && slice != Slice)
+            {
+                return;
+            }
+
             Slice = slice;
             MaxViewingLevel = Math.Max(Math.Min(level, ChunkSizeY), 1);
 
@@ -329,6 +334,32 @@ namespace DwarfCorp
 
                 if (success && atPos.IsVisible)
                 {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool GetFirstVoxelAbove(Vector3 position, ref Voxel under, bool considerWater = false)
+        {
+            VoxelChunk startChunk = GetVoxelChunkAtWorldLocation(position);
+
+            if (startChunk == null)
+            {
+                return false;
+            }
+
+            Point3 point = new Point3(startChunk.WorldToGrid(position));
+
+            for (int y = point.Y; y < ChunkSizeY; y++)
+            {
+                int index = startChunk.Data.IndexAt(point.X, y, point.Z);
+
+                if (startChunk.Data.Types[index] != 0 || (considerWater && startChunk.Data.Water[index].WaterLevel > 0))
+                {
+                    under.Chunk = startChunk;
+                    under.GridPosition = new Vector3(point.X, y, point.Z);
                     return true;
                 }
             }
@@ -689,6 +720,8 @@ namespace DwarfCorp
             chunkManager.UpdateRebuildList();
             chunkManager.CreateGraphics(SetLoadingMessage, this);
         }
+
+
     }
 
 }
