@@ -623,14 +623,6 @@ namespace DwarfCorp
             }
         }
 
-        public static void PlaceType(VoxelType type, Voxel voxel)
-        {
-            voxel.Type = type;
-            voxel.Water = new WaterCell();
-            voxel.Health = voxel.Type.StartingHealth;
-        }
-
-
         public static bool IsSolid(Voxel v)
         {
             return (!v.IsEmpty);
@@ -650,6 +642,11 @@ namespace DwarfCorp
         public static VoxelType GetVoxelType(string name)
         {
             return Types[name];
+        }
+
+        public static bool HasPrimitive(VoxelType type)
+        {
+            return PrimitiveMap.ContainsKey(type);
         }
 
         public static BoxPrimitive GetPrimitive(string name)

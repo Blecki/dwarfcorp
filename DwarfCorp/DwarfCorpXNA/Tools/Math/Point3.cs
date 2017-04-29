@@ -89,6 +89,19 @@ namespace DwarfCorp
             return other.X == X && other.Y == Y && other.Z == Z;
         }
 
+
+        /// <summary>
+        /// Determines if the Point3 has the specified values.
+        /// </summary>
+        /// <param name="x">The x value to check against.</param>
+        /// <param name="y">The y value to check against.</param>
+        /// <param name="z">The z value to check against.</param>
+        /// <returns></returns>
+        public bool Is(int x, int y, int z)
+        {
+            return (x == X && y == Y && z == Z);
+        }
+
         public static Point3 operator +(Point3 toAdd1, Point3 toAdd2)
         {
             return new Point3(toAdd1.X + toAdd2.X, toAdd1.Y + toAdd2.Y, toAdd1.Z + toAdd2.Z);

@@ -211,22 +211,14 @@ namespace DwarfCorp
 
         public virtual void AddVoxel(Voxel voxel)
         {
-            if(ContainsVoxel(voxel))
-            {
-                return;
-            }
+            if (ContainsVoxel(voxel)) return;
 
             Voxels.Add(voxel);
 
-            if(ReplaceVoxelTypes)
-            {
-                Voxel v = voxel;
-                v.Type = ReplacementType;
-                v.Chunk.ShouldRebuild = true;
-            }
+            if (ReplaceVoxelTypes) voxel.Place(ReplacementType);
 
             RecalculateMaxResources();
-          
+
         }
 
         public Voxel GetNearestVoxel(Vector3 position)

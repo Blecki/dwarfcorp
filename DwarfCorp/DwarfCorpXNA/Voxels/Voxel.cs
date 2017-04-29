@@ -32,18 +32,13 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using System.Diagnostics;
 
 namespace DwarfCorp
 {
-
     /// <summary>
     /// Specifies the location of a vertex on a voxel.
     /// </summary>
@@ -78,7 +73,6 @@ namespace DwarfCorp
         All = TopFrontLeft | TopFrontRight | TopBackLeft | TopBackRight
     }
 
-
     /// <summary> Determines a transition texture type. Each phrase
     /// (front, left, back, right) defines whether or not a tile of the same type is
     /// on the given face</summary>
@@ -103,148 +97,211 @@ namespace DwarfCorp
         All = 15
     }
 
-
-
     /// <summary>
     /// An atomic cube in the world which represents a bit of terrain. 
     /// </summary>
     [JsonObject(IsReference = true)]
     public class Voxel : IBoundedObject
     {
-        protected bool Equals(Voxel other)
+        #region Static methods and fields
+        public static bool HasFlag(RampType ramp, RampType flag)
         {
-            return Equals(Chunk, other.Chunk) && Index == other.Index;
+            return (ramp & flag) == flag;
+        }
+        #endregion
+
+        #region Serializable Fields and their Properties
+        private Point3 _chunkID = new Point3(0, 0, 0);
+        public Point3 ChunkID
+        {
+            get { return _chunkID; }
+            set { _chunkID = value; RegenerateQuickCompare(); }
         }
 
-        public bool IsSameAs(Voxel other)
-        {
-            if (quickCompare == other.quickCompare) return true;
-            return false;
-        }
+        private Vector3 _gridpos = Vector3.Zero;
 
-        public override int GetHashCode()
+        /// <summary>
+        /// The current position of this Voxel in VoxelChunk space.
+        /// </summary>
+        public Vector3 GridPosition
         {
-            unchecked
+            get { return _gridpos; }
+            set
             {
-                return ((Chunk != null ? Chunk.GetHashCode() : 0)*397) ^ GridPosition.GetHashCode();
+                _gridpos = value;
+
+                if (Chunk != null)
+                {
+                    _position = _gridpos + Chunk.Origin;
+                    _index = _data.IndexAt((int)_gridpos.X, (int)_gridpos.Y, (int)_gridpos.Z);
+                    RegenerateQuickCompare();
+                }
             }
         }
+        #endregion
+
+        #region Nonserializable fields and their Properties
+        [JsonIgnore]
+        private int _index;
+
+        /// <summary>
+        /// The index into the VoxelData stucture.
+        /// </summary>
+        [JsonIgnore]
+        public int Index
+        {
+            get { return _index; }
+        }
 
         [JsonIgnore]
-        private VoxelChunk _chunk = null;
+        private VoxelChunk _chunk;
 
-
+        /// <summary>
+        /// Reference to the VoxelData structure on the current chunk.  Only used internally.
+        /// </summary>
         [JsonIgnore]
-        public VoxelChunk Chunk 
+        private VoxelChunk.VoxelData _data;
+
+        /// <summary>
+        /// The VoxelChunk this Voxel belongs to.
+        /// </summary>
+        [JsonIgnore]
+        public VoxelChunk Chunk
         {
             get { return _chunk; }
-            set 
-            { 
+            set
+            {
                 _chunk = value;
-                if (_chunk != null) ChunkID = value.ID;
+                if (_chunk != null)
+                {
+                    _data = _chunk.Data;
+                    ChunkID = value.ID;
+                }
+                else
+                {
+                    _data = null;
+                }
             }
         }
 
+        /// <summary>
+        /// World position.  Recalulated when GridPosition changes to avoid having to calculate on each call.
+        /// </summary>
         [JsonIgnore]
-        public Vector3 Position 
+        private Vector3 _position;
+
+        /// <summary>
+        /// The position of the voxel in World Space
+        /// </summary>
+        [JsonIgnore]
+        public Vector3 Position
         {
             get
             {
-                return GridPosition + Chunk.Origin;
+                return _position;
             }
         }
 
+        [JsonIgnore]
+        private ulong _quickCompare;
+        private const ulong invalidCompareValue = 0xFFFFFFFFFFFFFFFFUL;
 
+        [JsonIgnore]
+        public ulong QuickCompare
+        {
+            get
+            {
+                Debug.Assert(_quickCompare != invalidCompareValue, "Voxel was generated without Quick Compare.  Set using GridPosition instead.");
+                return _quickCompare;
+            }
+        }
+        #endregion
+
+        #region VoxelData backed Properties
+        [JsonIgnore]
+        public int SunColor { get { return _data.SunColors[Index]; } }
+
+        [JsonIgnore]
+        public WaterCell Water
+        {
+            get { return _data.Water[Index]; }
+            set { _data.Water[Index] = value; }
+        }
+
+        [JsonIgnore]
+        public byte WaterLevel
+        {
+            get { return Water.WaterLevel; }
+            set
+            {
+                WaterCell cell = Water;
+                cell.WaterLevel = value;
+                _data.Water[Index] = cell;
+            }
+        }
+
+        /// <summary>
+        /// The type of voxel found in this location.
+        /// </summary>
         [JsonIgnore]
         public VoxelType Type
         {
             get
             {
-                return VoxelType.TypeList[Chunk.Data.Types[Index]];
+                return VoxelType.TypeList[_data.Types[Index]];
             }
             set
             {
-                Chunk.Data.Types[Index] = (byte) value.ID;
-                Chunk.Data.Health[Index] = (byte) value.StartingHealth;
+                if (_data.Types[Index] == 0)
+                {
+                    if (value.ID != 0)
+                        _data.SetFlag(Index, VoxelFlags.IsEmpty, false);
+                }
+                else
+                {
+                    if (value.ID == 0)
+                        _data.SetFlag(Index, VoxelFlags.IsEmpty, true);
+                }
+                _data.Types[Index] = (byte)value.ID;
+                _data.Health[Index] = (byte)value.StartingHealth;
+                _data.Water[Index] = new WaterCell();
             }
         }
 
         [JsonIgnore]
+        public bool IsEmpty
+        {
+            get { return _data.GetFlag(_index, VoxelFlags.IsEmpty); }
+        }
+
+        /// <summary>
+        /// The name of the VoxelType found in this location.
+        /// </summary>
+        [JsonIgnore]
         public string TypeName
         {
-            get { return this.Type.Name; }
+            get { return Type.Name; }
         }
 
-        private int index = 0;
+        /// <summary>
+        /// The BoxPrimitive object for the current VoxelType in this location.
+        /// </summary>
         [JsonIgnore]
-        public int Index
-        {
-            get { return index; }
-        }
-
-        [JsonIgnore]
-        public BoxPrimitive Primitive 
+        private BoxPrimitive Primitive
         {
             get { return VoxelLibrary.GetPrimitive(Type); }
         }
 
-        [JsonIgnore]
-        public bool IsVisible 
-        {
-            get { return  GridPosition.Y <= Chunk.Manager.ChunkData.MaxViewingLevel; }
-        }
-
+        /// <summary>
+        /// Whether this Voxel has been explored yet or not.
+        /// </summary>
         [JsonIgnore]
         public bool IsExplored
         {
             //get { return true; }
-            get { return !GameSettings.Default.FogofWar || Chunk.Data.IsExplored[Index]; }
-            set { Chunk.Data.IsExplored[Index] = value; }
+            get { return !GameSettings.Default.FogofWar || _data.GetFlag(Index, VoxelFlags.IsExplored); }
+            set { _data.SetFlag(Index, VoxelFlags.IsExplored, value); }
         }
-
-        private Vector3 gridpos = Vector3.Zero;
-
-        public Vector3 GridPosition
-        {
-            get { return gridpos; }
-            set 
-            { 
-                gridpos = value;
-
-                if (Chunk != null)
-                {
-                    index = Chunk.Data.IndexAt((int)gridpos.X, (int)gridpos.Y, (int)gridpos.Z);
-                    RegenerateQuickCompare();
-                }
-            }
-        }
-
-        // This function does the same as setting Chunk then GridPosition except avoids regenerating the quick compare
-        // more than once.  Only set generateQuickCompare to false if you intend the voxel to be a throwaway
-        // during a time sensitive loop.
-        public void ChangeVoxel(VoxelChunk chunk, Vector3 gridPosition, bool generateQuickCompare)
-        {
-            ChangeVoxel(chunk, new Point3(gridPosition), generateQuickCompare);
-        }
-
-        // This function does the same as setting Chunk then GridPosition except avoids regenerating the quick compare
-        // more than once.  Only set generateQuickCompare to false if you intend the voxel to be a throwaway
-        // during a time sensitive loop.
-        public void ChangeVoxel(VoxelChunk chunk, Point3 gridPosition, bool generateQuickCompare = true)
-        {
-            System.Diagnostics.Debug.Assert(chunk != null, "ChangeVoxel was passed a null chunk.");
-            _chunk = chunk;
-            chunkID = _chunk.ID;
-            gridpos = gridPosition.ToVector3();
-            index = Chunk.Data.IndexAt((int)gridpos.X, (int)gridpos.Y, (int)gridpos.Z);
-            if (generateQuickCompare) RegenerateQuickCompare();
-            else quickCompare = invalidCompareValue;
-        }
-
-
-        [JsonIgnore]
-        public static List<VoxelVertex> VoxelVertexList { get; set; }
-        private static bool staticsCreated;
 
         [JsonIgnore]
         public bool IsDead
@@ -255,82 +312,239 @@ namespace DwarfCorp
         [JsonIgnore]
         public RampType RampType
         {
-            get { return Chunk.Data.RampTypes[Index]; }
-            set { Chunk.Data.RampTypes[Index] = value; }
-        }
-
-        [JsonIgnore]
-        public bool IsInterior
-        {
-            get { return Chunk.IsInterior((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z); }
-        }
-        private static readonly Color BlankColor = new Color(0, 255, 0);
-
-        private Point3 chunkID = new Point3(0, 0, 0);
-        public Point3 ChunkID
-        {
-            get { return chunkID; }
-            set { chunkID = value; RegenerateQuickCompare(); }
-        }
-
-        [JsonIgnore]
-        private ulong quickCompare;
-        private const ulong invalidCompareValue = 0xFFFFFFFFFFFFFFFFUL;
-
-        [JsonIgnore]
-        public ulong QuickCompare
-        {
-            get {
-                System.Diagnostics.Debug.Assert(quickCompare == invalidCompareValue, "Voxel was generated without Quick Compare.  Set using GridPosition instead.");
-                return quickCompare;
-            }
-        }
-
-        private void RegenerateQuickCompare()
-        {
-            // long build of the ulong.
-            ulong q = 0;
-            q |= (((ulong)chunkID.X & 0xFFFF) << 48);
-            q |= (((ulong)chunkID.Y & 0xFFFF) << 32);
-            q |= (((ulong)chunkID.Z & 0xFFFF) << 16);
-            q |= ((ulong)index & 0xFFFF);
-            quickCompare = q;
-            //quickCompare = (ulong) (((chunkID.X & 0xFFFF) << 48) | ((chunkID.Y & 0xFFFF) << 32) | ((chunkID.Y & 0xFFFF) << 16) | (index & 0xFFFF));
-        }
-
-        public Voxel(Voxel other)
-        {
-            Chunk = other.Chunk;
-            GridPosition = other.GridPosition;
+            get { return _data.RampTypes[Index]; }
+            set { _data.RampTypes[Index] = value; }
         }
 
         [JsonIgnore]
         public float Health
         {
-            get { return (float) Chunk.Data.Health[Index]; }
+            get { return _data.Health[Index]; }
             set
             {
                 if (Type.IsInvincible) return;
-                Chunk.Data.Health[Index] = (byte)(Math.Max(Math.Min(value, 255.0f), 0.0f));
+                _data.Health[Index] = (byte)(Math.Max(Math.Min(value, 255.0f), 0.0f));
+            }
+        }
+        #endregion
+
+        #region Constructors & Deserializers
+        public Voxel()
+        {
+        }
+
+        public Voxel(Voxel other)
+        {
+            ChangeVoxel(other);
+        }
+
+        public Voxel(Point3 gridPosition, VoxelChunk chunk)
+        {
+            Chunk = chunk;
+            if (chunk != null)
+                _chunkID = chunk.ID;
+            GridPosition = new Vector3(gridPosition.X, gridPosition.Y, gridPosition.Z);
+        }
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            WorldManager world = ((WorldManager)context.Context);
+            if (world.ChunkManager.ChunkData.ChunkMap.ContainsKey(_chunkID))
+            {
+                ChangeVoxel(world.ChunkManager.ChunkData.ChunkMap[_chunkID], _gridpos);
+            }
+        }
+        #endregion
+
+        #region Quick voxel changing functions
+        /// <summary>
+        /// This function does the same as setting Chunk then GridPosition except avoids regenerating the quick compare
+        /// more than once.  Only set generateQuickCompare to false if you intend the voxel to be a throwaway
+        /// during a time sensitive loop.
+        /// </summary>
+        /// <param name="chunk">The VoxelChunk this voxel is found in.</param>
+        /// <param name="gridPosition">The point in VoxelChunk space where the voxel is found.</param>
+        /// <param name="generateQuickCompare">Whether to calculate the QuickCompare field.</param>
+        public void ChangeVoxel(VoxelChunk chunk, Vector3 gridPosition, bool generateQuickCompare = true)
+        {
+            ChangeVoxel(chunk, new Point3(gridPosition), generateQuickCompare);
+        }
+
+        /// <summary>
+        /// This function does the same as setting Chunk then GridPosition except avoids regenerating the quick compare
+        /// more than once.  Only set generateQuickCompare to false if you intend the voxel to be a throwaway
+        /// during a time sensitive loop.
+        /// </summary>
+        /// <param name="chunk">The VoxelChunk this voxel is found in.</param>
+        /// <param name="gridPosition">The point in VoxelChunk space where the voxel is found.</param>
+        /// <param name="generateQuickCompare">Whether to calculate the QuickCompare field.</param>
+        public void ChangeVoxel(VoxelChunk chunk, Point3 gridPosition, bool generateQuickCompare = true)
+        {
+            Debug.Assert(chunk != null, "ChangeVoxel was passed a null chunk.");
+            _chunk = chunk;
+            _data = chunk.Data;
+            _chunkID = _chunk.ID;
+            _gridpos = gridPosition.ToVector3();
+            _position = _gridpos + _chunk.Origin;
+            _index = _data.IndexAt(gridPosition.X, gridPosition.Y, gridPosition.Z);
+            if (generateQuickCompare) RegenerateQuickCompare();
+            else _quickCompare = invalidCompareValue;
+        }
+
+        /// <summary>
+        /// This function is the equivient of just setting the GridPosition except avoids regenerating the quick compare
+        /// if requested.  Only set generateQuickCompare to false if you intend the voxel to be a throwaway
+        /// during a time sensitive loop.
+        /// </summary>
+        /// <param name="gridPosition">The point in VoxelChunk space where the voxel is found.</param>
+        /// <param name="generateQuickCompare">Whether to calculate the QuickCompare field.</param>
+        public void ChangeVoxel(Vector3 gridPosition, bool generateQuickCompare = true)
+        {
+            _gridpos = gridPosition;
+            _position = _gridpos + _chunk.Origin;
+            _index = _data.IndexAt((int)gridPosition.X, (int)gridPosition.Y, (int)gridPosition.Z);
+            if (generateQuickCompare) RegenerateQuickCompare();
+            else _quickCompare = invalidCompareValue;
+        }
+
+        /// <summary>
+        /// This function is the equivient of just setting the GridPosition except avoids regenerating the quick compare
+        /// if requested.  Only set generateQuickCompare to false if you intend the voxel to be a throwaway
+        /// during a time sensitive loop.
+        /// </summary>
+        /// <param name="x">The X position of the point  in VoxelChunk space.</param>
+        /// <param name="y">The Y position of the point  in VoxelChunk space.</param>
+        /// <param name="z">The Z position of the point  in VoxelChunk space.</param>
+        /// <param name="generateQuickCompare">Whether to calculate the QuickCompare field.</param>
+        public void ChangeVoxel(int x, int y, int z, bool generateQuickCompare = true)
+        {
+            _gridpos = new Vector3(x, y, z);
+            _position = _gridpos + _chunk.Origin;
+            _index = _data.IndexAt(x, y, z);
+            if (generateQuickCompare) RegenerateQuickCompare();
+            else _quickCompare = invalidCompareValue;
+        }
+
+        /// <summary>
+        /// Directly copies the data from another Voxel object.
+        /// </summary>
+        /// <param name="v"></param>
+        public void ChangeVoxel(Voxel v)
+        {
+            Debug.Assert(v != null, "ChangeVoxel was passed a null chunk.");
+            _chunk = v._chunk;
+            _data = v._data;
+            _chunkID = _chunk.ID;
+            _gridpos = v._gridpos;
+            _position = v._position;
+            _index = v._index;
+            _quickCompare = v._quickCompare;
+        }
+        #endregion
+
+        #region Comparison Functions and Object Overrides
+        public override bool Equals(object o)
+        {
+            if (ReferenceEquals(null, o)) return false;
+            if (ReferenceEquals(this, o)) return true;
+            if (o.GetType() != GetType()) return false;
+            return Equals((Voxel)o);
+        }
+
+        private bool Equals(Voxel other)
+        {
+            return Equals(Chunk, other.Chunk) && Index == other.Index;
+        }
+
+        /// <summary>
+        /// Compares two voxels using the QuickCompare value.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool IsSameAs(Voxel other)
+        {
+            if (_quickCompare == other._quickCompare) return true;
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((Chunk != null ? Chunk.GetHashCode() : 0) * 397) ^ GridPosition.GetHashCode();
             }
         }
 
-      
-        public uint GetID()
+        public override string ToString()
         {
-            return (uint) GetHashCode();
+            return string.Format("ChunkID {0} Position {{{1}, {2}, {3}}}", _chunkID, _gridpos.X, _gridpos.Y, _gridpos.Z);
+        }
+        #endregion
+
+        #region Helper Properties
+        /// <summary>
+        /// Whether this Voxel is visible at the current slice level.
+        /// </summary>
+        [JsonIgnore]
+        public bool IsVisible
+        {
+            get { return GridPosition.Y <= Chunk.Manager.ChunkData.MaxViewingLevel; }
         }
 
+        [JsonIgnore]
+        public bool IsInterior
+        {
+            get { return _chunk.Data.GetFlag(_index, VoxelFlags.IsInterior); }
+        }
+        #endregion
+
+        #region IBoundedObject implementations
+        public uint GetID()
+        {
+            return (uint)GetHashCode();
+        }
+
+        public BoundingBox GetBoundingBox()
+        {
+            var pos = Position;
+            return new BoundingBox(pos, pos + Vector3.One);
+        }
+
+        #endregion
+
+        private void RegenerateQuickCompare()
+        {
+            // long build of the ulong.
+            ulong q = 0;
+            q |= (((ulong)_chunkID.X & 0xFFFF) << 48);
+            q |= (((ulong)_chunkID.Y & 0xFFFF) << 32);
+            q |= (((ulong)_chunkID.Z & 0xFFFF) << 16);
+            q |= ((ulong)_index & 0xFFFF);
+            _quickCompare = q;
+            //quickCompare = (ulong) (((chunkID.X & 0xFFFF) << 48) | ((chunkID.Y & 0xFFFF) << 32) | ((chunkID.Y & 0xFFFF) << 16) | (index & 0xFFFF));
+        }
 
         public bool IsTopEmpty()
         {
-            if(GridPosition.Y >= Chunk.SizeY)
+            if (GridPosition.Y >= Chunk.SizeY)
             {
                 return true;
             }
             return
-                Chunk.Data.Types[
-                    Chunk.Data.IndexAt((int) GridPosition.X, (int) GridPosition.Y + 1, (int) GridPosition.Z)] == 0;
+                _data.Types[
+                    _data.IndexAt((int)GridPosition.X, (int)GridPosition.Y + 1, (int)GridPosition.Z)] == 0;
+        }
+
+        public bool IsBottomEmpty()
+        {
+            if (GridPosition.Y <= 0)
+            {
+                return true;
+            }
+            return
+                _data.Types[
+                    _data.IndexAt((int)GridPosition.X, (int)GridPosition.Y - 1, (int)GridPosition.Z)] == 0;
         }
 
         public Voxel GetVoxelAbove()
@@ -340,12 +554,12 @@ namespace DwarfCorp
                 return null;
             }
             return
-                Chunk.MakeVoxel((int) GridPosition.X, (int) GridPosition.Y + 1, (int) GridPosition.Z);
+                Chunk.MakeVoxel((int)GridPosition.X, (int)GridPosition.Y + 1, (int)GridPosition.Z);
         }
 
         public Voxel GetVoxelBelow()
         {
-            if (GridPosition.Y <=0)
+            if (GridPosition.Y <= 0)
             {
                 return null;
             }
@@ -358,7 +572,7 @@ namespace DwarfCorp
             Debug.Assert(neighbor != null, "Null reference passed");
             Debug.Assert(_chunk != null, "Voxel has no valid chunk reference");
 
-            Vector3 newPos = gridpos + succ;
+            Vector3 newPos = _gridpos + succ;
             Point3 chunkSuccessor = Point3.Zero;
             bool useSuccessor = false;
 
@@ -406,79 +620,13 @@ namespace DwarfCorp
             {
                 useChunk = _chunk.EuclidianNeighbors[VoxelChunk.SuccessorToEuclidianLookupKey(chunkSuccessor)];
                 if (useChunk == null) return false;
-            } else
+            }
+            else
             {
                 useChunk = _chunk;
             }
             neighbor.ChangeVoxel(useChunk, newPos, requireQuickCompare);
             return true;
-        }
-
-        public bool IsBottomEmpty()
-        {
-            if (GridPosition.Y <= 0)
-            {
-                return true;
-            }
-            return
-                Chunk.Data.Types[
-                    Chunk.Data.IndexAt((int)GridPosition.X, (int)GridPosition.Y - 1, (int)GridPosition.Z)] == 0;
-        }
-
-        public static bool IsInteriorPoint(Point3 gridPosition, VoxelChunk chunk)
-        {
-            return chunk.IsInterior(gridPosition.X, gridPosition.Y, gridPosition.Z);
-        }
-
-        public static bool HasFlag(RampType ramp, RampType flag)
-        {
-            return (ramp & flag) == flag;
-        }
-       
-        [JsonIgnore]
-        public bool IsEmpty
-        {
-            get { return Type.ID == 0; }
-        }
-
-        [JsonIgnore]
-        public int SunColor { get { return Chunk.Data.SunColors[Index]; }}
-
-        public void SetFromData(VoxelChunk chunk, Vector3 gridPosition)
-        {
-            Chunk = chunk;
-            GridPosition = gridPosition;
-            index = Chunk.Data.IndexAt((int) gridPosition.X, (int) gridPosition.Y, (int) gridPosition.Z);
-            RegenerateQuickCompare();
-        }
-
-        public override bool Equals(object o)
-        {
-            if (ReferenceEquals(null, o)) return false;
-            if (ReferenceEquals(this, o)) return true;
-            if (o.GetType() != this.GetType()) return false;
-            return Equals((Voxel) o);
-        }
-
-        public void UpdateStatics()
-        {
-            if(staticsCreated)
-            {
-                return;
-            }
-
-            VoxelVertexList = new List<VoxelVertex>
-            {
-                VoxelVertex.BackBottomLeft,
-                VoxelVertex.BackBottomRight,
-                VoxelVertex.BackTopLeft,
-                VoxelVertex.BackTopRight,
-                VoxelVertex.FrontBottomRight,
-                VoxelVertex.FrontBottomLeft,
-                VoxelVertex.FrontTopRight,
-                VoxelVertex.FrontTopLeft
-            };
-            staticsCreated = true;
         }
 
         public List<Body> Kill()
@@ -488,15 +636,10 @@ namespace DwarfCorp
                 return null;
             }
 
-            if(Chunk.Manager.World.ParticleManager != null)
+            if (Chunk.Manager.World.ParticleManager != null)
             {
                 Chunk.Manager.World.ParticleManager.Trigger(Type.ParticleType, Position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
                 Chunk.Manager.World.ParticleManager.Trigger("puff", Position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
-            }
-
-            if(Chunk.Manager.World.Master != null)
-            {
-                Chunk.Manager.World.Master.Faction.OnVoxelDestroyed(this);
             }
 
             SoundManager.PlaySound(Type.ExplosionSound, Position);
@@ -516,97 +659,64 @@ namespace DwarfCorp
                 }
             }
 
-            Chunk.Manager.KilledVoxels.Add(this);
-            Chunk.Data.Types[Index] = 0;
+            Destroy(true);
             return emittedResources;
         }
 
-        public BoundingSphere GetBoundingSphere()
+        /// <summary>
+        /// Changes a voxel to an empty type but does not play a sound or throw items.
+        /// </summary>
+        /// <param name="justDestroy">Only removes the voxel.  Does not trigger a rebuild or any event handlers.</param>
+        public void Destroy(bool justDestroy = false)
         {
-            return new BoundingSphere(Position, 1);
-        }
-
-        public BoundingBox GetBoundingBox()
-        {
-            var pos = Position;
-            return new BoundingBox(pos, pos + Vector3.One);
-        }
-
-        public Voxel()
-        {
-            
-        }
-
-        public Voxel(Point3 gridPosition, VoxelChunk chunk)
-        {
-            UpdateStatics();
-            Chunk = chunk;
-            if (chunk != null)
-                chunkID = chunk.ID;
-            GridPosition = new Vector3(gridPosition.X, gridPosition.Y, gridPosition.Z);
-        }
-
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
-        {
-            WorldManager world = ((WorldManager) context.Context);
-            if (world.ChunkManager.ChunkData.ChunkMap.ContainsKey(chunkID))
+            if (!justDestroy)
             {
-                Chunk = world.ChunkManager.ChunkData.ChunkMap[chunkID];
-                index = Chunk.Data.IndexAt((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z);
-                RegenerateQuickCompare();
+                Chunk.Manager.KilledVoxels.Enqueue(this);
             }
+            Type = VoxelLibrary.GetVoxelType(0);
         }
 
-        public TransitionTexture ComputeTransitionValue(Voxel[] manhattanNeighbors)
+        /// <summary>
+        /// Changes the voxel to the new type.
+        /// </summary>
+        /// <param name="typeID">Type identifier in numeric form.</param>
+        /// <param name="justPlace">Only changes type.  Does not trigger a rebuild or any event handlers.</param>
+        public void Place(short typeID, bool justPlace = false)
         {
-            return Chunk.ComputeTransitionValue((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z, manhattanNeighbors);
+            Place(VoxelLibrary.GetVoxelType(typeID), justPlace);
+        }
+
+        /// <summary>
+        /// Changes the voxel to the new type.
+        /// </summary>
+        /// <param name="voxelType">Type identifier in string form.</param>
+        /// <param name="justPlace">Only changes type.  Does not trigger a rebuild or any event handlers.</param>
+        public void Place(string voxelType, bool justPlace = false)
+        {
+            Place(VoxelLibrary.GetVoxelType(voxelType), justPlace);
+        }
+
+        /// <summary>
+        /// Changes the voxel to the new type.
+        /// </summary>
+        /// <param name="newType">Type identifier in VoxelType form.</param>
+        /// <param name="justPlace">Only changes type.  Does not trigger a rebuild or any event handlers.</param>
+        public void Place(VoxelType newType, bool justPlace = false)
+        {
+            Type = newType;
+            if (!justPlace) Chunk.Manager.PlacedVoxels.Enqueue(this);
+        }
+
+        private TransitionTexture ComputeTransitionValue(Voxel[] manhattanNeighbors)
+        {
+            return Chunk.ComputeTransitionValue((int)GridPosition.X, (int)GridPosition.Y, (int)GridPosition.Z, manhattanNeighbors);
         }
 
         public BoxPrimitive.BoxTextureCoords ComputeTransitionTexture(Voxel[] manhattanNeighbors)
         {
-            if(!Type.HasTransitionTextures && Primitive != null)
-            {
-                return Primitive.UVs;
-            }
-            else if(Primitive == null)
-            {
-                return null;
-            }
-            else
-            {
-                return Type.TransitionTextures[ComputeTransitionValue(manhattanNeighbors)];
-            }
-        }
-
-        [JsonIgnore]
-        public WaterCell Water
-        {
-            get { return Chunk.Data.Water[Index]; }
-            set { Chunk.Data.Water[Index] = value; }
-        }
-
-        [JsonIgnore]
-        public byte WaterLevel
-        {
-            get { return Water.WaterLevel; }
-            set
-            {
-                WaterCell cell = Water;
-                cell.WaterLevel = value;
-                Chunk.Data.Water[Index] = cell;
-            }
-        }
-
-        public bool GetNeighbor(Vector3 dir, ref Voxel vox)
-        {
-            return Chunk.Manager.ChunkData.GetVoxel(Position + dir, ref vox);
-        }
-
-        public override string ToString()
-        {
-            return String.Format("Voxel {{{0}, {1}, {2}}}", gridpos.X, gridpos.Y, gridpos.Z);
+            if (!Type.HasTransitionTextures && Primitive != null) return Primitive.UVs;
+            if (Primitive == null) return null;
+            return Type.TransitionTextures[ComputeTransitionValue(manhattanNeighbors)];
         }
     }
-
 }

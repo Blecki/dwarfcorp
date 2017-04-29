@@ -150,6 +150,11 @@ namespace DwarfCorp
             SelectorBox.AddValue("Fill Water");
             SelectorBox.AddValue("Fill Lava");
             SelectorBox.AddValue("Fire");
+            SelectorBox.AddValue("Inspect Above");
+            SelectorBox.AddValue("Toggle Chunk Render");
+            SelectorBox.AddValue("Force Chunk Rebuild");
+            SelectorBox.AddValue("Dump Vertices & Lightmap");
+            SelectorBox.AddValue("Show Voxel Coordinates");
             SelectorBox.OnSelectionModified += SelectorBox_OnSelectionModified;
 
 
@@ -232,6 +237,55 @@ namespace DwarfCorp
                         EntityFactory.CreateEntity<Body>(type, vox.Position + new Vector3(0.5f, 0.5f, 0.5f));
                     }
                 }
+            } else if (command.Contains("Inspect"))
+            {
+                int waterTotal = 0;
+                foreach (Voxel vox in refs.Where(vox => vox != null))
+                {
+                    waterTotal += vox.WaterLevel;
+                }
+                GamePerformance.Instance.TrackValueType("waterLevel", waterTotal);
+            }
+            else if (command.Contains("Toggle"))
+            {
+                foreach(Voxel vox in refs)
+                {
+                    if (vox == null) continue;
+                    vox.Chunk.noRender = !vox.Chunk.noRender;
+                    break;
+                }
+            }
+            else if (command.Contains("Force"))
+            {
+                foreach(Voxel vox in refs)
+                {
+                    if (vox == null) continue;
+                    vox.Chunk.NotifyTotalRebuild(false);
+                    break;
+                }
+            }
+            else if (command.Contains("Dump"))
+            {
+                foreach (Voxel vox in refs)
+                {
+                    if (vox == null) continue;
+                    FileUtils.SaveJSon(vox.Chunk.Primitive, "VertexDump.txt", false);
+                    using (System.IO.FileStream stream = new System.IO.FileStream("Lightmap.png", System.IO.FileMode.Create))
+                    {
+                        RenderTarget2D lm = vox.Chunk.Primitive.Lightmap;
+                        lm.SaveAsPng(stream, lm.Width, lm.Height);
+                    }
+                    break;
+                }
+            }
+            else if (command.Contains("Show Voxel"))
+            {
+                foreach(Voxel vox in refs)
+                {
+                    if (vox == null) continue;
+                    GamePerformance.Instance.TrackReferenceType("Voxel Coord", vox);
+                    break;
+                }
             }
             else
             {
@@ -240,9 +294,7 @@ namespace DwarfCorp
                     if(command.Contains("Place/"))
                     {
                         string type = command.Substring(6);
-                        vox.Type = VoxelLibrary.GetVoxelType(type);
-                        vox.Water = new WaterCell();
-                        vox.Health = vox.Type.StartingHealth;
+                        vox.Place(type);
 
                         if (type == "Magic")
                         {
@@ -261,23 +313,11 @@ namespace DwarfCorp
                     {
                         case "Delete Block":
                         {
-                            Player.World.Master.Faction.OnVoxelDestroyed(vox);
-                            vox.Chunk.NotifyDestroyed(new Point3(vox.GridPosition));
-                            vox.Type = VoxelType.TypeList[0];
-                            vox.Water = new WaterCell();
-
-                            vox.Chunk.Manager.KilledVoxels.Add(vox);
+                            vox.Destroy();
                         }
-                            break;
+                        break;
                         case "Kill Block":
-                            foreach(Voxel selected in refs)
-                            {
-
-                                if (!selected.IsEmpty)
-                                {
-                                    selected.Kill();
-                                }
-                            }
+                            if (!vox.IsEmpty) vox.Kill();
                             break;
                         case "Fill Water":
                         {
@@ -291,7 +331,6 @@ namespace DwarfCorp
                             break;
                         case "Fill Lava":
                         {
-                            Vector3 gridPos = vox.GridPosition;
                             if (vox.IsEmpty)
                             {
                                 vox.WaterLevel = WaterManager.maxWaterLevel;

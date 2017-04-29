@@ -316,10 +316,7 @@ namespace DwarfCorp
                     }
                     else if (stormProperties.CreatesVoxel && above.IsEmpty && above.WaterLevel == 0)
                     {
-                        above.Type = stormProperties.VoxelToCreate;
-                        above.Water = new WaterCell();
-                        above.Health = above.Type.StartingHealth;
-                        above.Chunk.NotifyTotalRebuild(!above.IsInterior);
+                        above.Place(stormProperties.VoxelToCreate);
                     }
 
                 }

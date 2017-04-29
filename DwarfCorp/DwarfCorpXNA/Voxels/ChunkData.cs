@@ -115,10 +115,24 @@ namespace DwarfCorp
         public void SetMaxViewingLevel(float level, ChunkManager.SliceMode slice)
         {
             Slice = slice;
-            MaxViewingLevel = Math.Max(Math.Min(level, ChunkSizeY), 1);
+            int prevMax = (int)MaxViewingLevel;
+            int newMax = (int)Math.Max(Math.Min(level, ChunkSizeY), 1);
+
+            // If the level didn't change don't do anything more.
+            if (newMax == prevMax) return;
+            MaxViewingLevel = newMax;
 
             foreach (VoxelChunk c in ChunkMap.Select(chunks => chunks.Value))
             {
+                int chunkMax = (c.TopVoxelHeight == -1) ? c.SizeY : c.TopVoxelHeight;
+
+                // Ok so we need to decide if we can skip the recalculations.
+                // If our max viewing level is greater than or equal to the max voxel height in that chunk then we can skip it.
+                // Except this might fail when our old max was below the max and the new is equal to it so we need to check for that.
+                if (newMax > chunkMax && prevMax > chunkMax) continue;
+
+                if (newMax == chunkMax && prevMax >= newMax) continue;
+
                 c.ShouldRecalculateLighting = false;
                 c.ShouldRebuild = true;
             }
@@ -129,7 +143,7 @@ namespace DwarfCorp
             Reveal(new List<Voxel>() {voxel});
         }
 
-        public void Reveal(IEnumerable<Voxel> voxels)
+        public void Reveal(IEnumerable<Voxel> voxels, HashSet<Vector3> exploredVoxels = null)
         {
             if (!GameSettings.Default.FogofWar) return;
             HashSet<Point3> affectedChunks = new HashSet<Point3>();
@@ -137,45 +151,32 @@ namespace DwarfCorp
 
             foreach (Voxel voxel in voxels)
             {
-                if (voxel != null)
-                    q.Enqueue(voxel);
+                if (voxel != null) q.Enqueue(voxel);
             }
-            List<Voxel> neighbors = new List<Voxel>();
+            Voxel nextVoxel = new Voxel();
             while (q.Count > 0)
             {
                 Voxel v = q.Dequeue();
-                if (v == null) continue;
 
-                if (!affectedChunks.Contains(v.ChunkID))
+                if (exploredVoxels == null) affectedChunks.Add(v.ChunkID);
+                else exploredVoxels.Add(v.Position);
+
+                for (int i = 0; i < VoxelChunk.ManhattanSuccessors.Count; i++)
                 {
-                    affectedChunks.Add(v.ChunkID);
-                }
-                v.Chunk.GetNeighborsManhattan(v, neighbors);
-                foreach (Voxel nextVoxel in neighbors)
-                {
-                    if (nextVoxel == null) continue;
+                    if (!v.GetNeighborBySuccessor(VoxelChunk.ManhattanSuccessors[i], ref nextVoxel, false)) continue;
 
                     if (nextVoxel.IsExplored) continue;
 
                     nextVoxel.Chunk.NotifyExplored(new Point3(nextVoxel.GridPosition));
 
-                    {
-                        if (!nextVoxel.IsExplored)
-                        {
-                            nextVoxel.IsExplored = true;
-                            if (!affectedChunks.Contains(nextVoxel.ChunkID))
-                            {
-                                affectedChunks.Add(nextVoxel.ChunkID);
-                            }
-                            if (nextVoxel.IsEmpty)
-                                q.Enqueue(new Voxel(new Point3(nextVoxel.GridPosition), nextVoxel.Chunk));
-                        }
-                    }
+                    nextVoxel.IsExplored = true;
+                    if (exploredVoxels == null) affectedChunks.Add(nextVoxel.ChunkID);
+                    else exploredVoxels.Add(nextVoxel.Position);
 
+                    if (nextVoxel.IsEmpty) q.Enqueue(new Voxel(nextVoxel));
                 }
 
                 v.IsExplored = true;
-
             }
 
             foreach (Point3 chunkID in affectedChunks)
@@ -649,7 +650,6 @@ namespace DwarfCorp
             RecomputeNeighbors();
             chunkManager.UpdateBounds();
             chunkManager.UpdateRebuildList();
-            chunkManager.CreateGraphics(SetLoadingMessage, this);
         }
     }
 

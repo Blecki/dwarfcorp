@@ -147,7 +147,11 @@ namespace DwarfCorp
             get { return chunkData; }
         }
 
-        public List<Voxel> KilledVoxels { get; set; }
+        public Queue<Voxel> PlacedVoxels { get; set; }
+
+        public Queue<Voxel> KilledVoxels { get; set; }
+
+        public HashSet<Vector3> ExploredVoxels { get; set; }
 
         public ChunkManager(ContentManager content, 
             WorldManager world,
@@ -156,7 +160,10 @@ namespace DwarfCorp
             ChunkGenerator chunkGen, int maxChunksX, int maxChunksY, int maxChunksZ)
         {
             World = world;
-            KilledVoxels = new List<Voxel>();
+            PlacedVoxels = new Queue<Voxel>();
+            KilledVoxels = new Queue<Voxel>();
+            ExploredVoxels = new HashSet<Vector3>();
+
             ExitThreads = false;
             drawDistSq = DrawDistance * DrawDistance;
             Content = content;
@@ -286,17 +293,15 @@ namespace DwarfCorp
                     }
 
                     GamePerformance.Instance.PreThreadLoop(GamePerformance.ThreadIdentifier.RebuildWater);
+                    GamePerformance.Instance.EnterZone("RebuildWater");
                     while (!PauseThreads && RebuildLiquidsList.Count > 0)
                     {
                         VoxelChunk chunk = null;
 
-                        //LiquidLock.WaitOne();
                         if (!RebuildLiquidsList.TryDequeue(out chunk))
                         {
-                            //LiquidLock.ReleaseMutex();
                             break;
                         }
-                        //LiquidLock.ReleaseMutex();
 
                         if (chunk == null)
                         {
@@ -305,7 +310,9 @@ namespace DwarfCorp
 
                         try
                         {
+                            GamePerformance.Instance.StartTrackPerformance("rebuildLiquids");
                             chunk.RebuildLiquids();
+                            GamePerformance.Instance.StopTrackPerformance("rebuildLiquids");
                             chunk.RebuildLiquidPending = false;
                             chunk.ShouldRebuildWater = false;
                         }
@@ -317,6 +324,7 @@ namespace DwarfCorp
                         }
                     }
                     GamePerformance.Instance.PostThreadLoop(GamePerformance.ThreadIdentifier.RebuildWater);
+                    GamePerformance.Instance.ExitZone("RebuildWater");
                 }
             }
 #if CREATE_CRASH_LOGS
@@ -533,12 +541,10 @@ namespace DwarfCorp
             {
                 toRebuildLiquids.Sort(CompareChunkDistance);
 
-                //LiquidLock.WaitOne();
                 foreach(VoxelChunk chunk in toRebuildLiquids.Where(chunk => !RebuildLiquidsList.Contains(chunk)))
                 {
                     RebuildLiquidsList.Enqueue(chunk);
                 }
-                //LiquidLock.ReleaseMutex();
             }
 
 
@@ -614,7 +620,22 @@ namespace DwarfCorp
            
         }
 
-
+        /// <summary>
+        /// Calls through the VoxelListPrimitive and LiquidPrimitive collections to reset all updated VertexBuffers.
+        /// </summary>
+        /// <param name="device"></param>
+        public void UpdateVertexBuffers(GraphicsDevice device)
+        {
+            // We need to see if any VertexBuffers need a reset and do it.
+            foreach (KeyValuePair<Point3, VoxelChunk> kvp in ChunkData.ChunkMap)
+            {
+                kvp.Value.Primitive.ResetBufferIfNeeded(device);
+                foreach(KeyValuePair<LiquidType, LiquidPrimitive> kvp2 in kvp.Value.Liquids)
+                {
+                    kvp2.Value.ResetBufferIfNeeded(device);
+                }
+            }
+        }
 
         public void SimpleRender(GraphicsDevice graphicsDevice, Shader effect, Texture2D tilemap)
         {
@@ -910,8 +931,6 @@ namespace DwarfCorp
                     break;
                 }
             }
-
-            ChunkData.ChunkManager.CreateGraphics(SetLoadingMessage, ChunkData);
         }
 
         private void RecalculateBounds()
@@ -1017,11 +1036,58 @@ namespace DwarfCorp
             Water.HandleTransfers(gameTime);
 
             HashSet<VoxelChunk> affectedChunks = new HashSet<VoxelChunk>();
-            
-            foreach (Voxel voxel in KilledVoxels)
+            HashSet<Vector3> voxelsToRecalculate = new HashSet<Vector3>();
+
+            if (GameSettings.Default.FogofWar && KilledVoxels.Count > 0)
             {
+                ChunkData.Reveal(KilledVoxels, ExploredVoxels);
+                if (ExploredVoxels.Count > 0)
+                {
+                    foreach (Vector3 voxelPosition in ExploredVoxels)
+                    {
+                        voxelsToRecalculate.Add(voxelPosition);
+                        for (int i = 0; i < VoxelChunk.ManhattanSuccessors.Count; i++)
+                        {
+                            voxelsToRecalculate.Add(voxelPosition + VoxelChunk.ManhattanSuccessors[i]);
+                        }
+                    }
+                    ExploredVoxels.Clear();
+                }
+            }
+
+            while (KilledVoxels.Count > 0 || PlacedVoxels.Count > 0 || ExploredVoxels.Count > 0)
+            {
+                Voxel voxel = null;
+
+                if (KilledVoxels.Count > 0)
+                {
+                    voxel = KilledVoxels.Dequeue();
+                    VoxelChunk chunk = voxel.Chunk;
+                    //if (chunk.Manager.World.Master != null)
+                    //{
+                    chunk.Manager.World.Master.Faction.OnVoxelDestroyed(voxel);
+                    //}
+                    chunk.NotifyDestroyed(new Point3(voxel.GridPosition));
+                }
+                else if (PlacedVoxels.Count > 0)
+                {
+                    voxel = PlacedVoxels.Dequeue();
+                    // Add placement specific code here.
+                    voxel.Chunk.OnVoxelPlace(voxel);
+                }
+
+                if (voxel == null) break;
+
+                voxelsToRecalculate.Add(voxel.Position);
+                for (int i = 0; i < VoxelChunk.ManhattanSuccessors.Count; i++)
+                {
+                    voxelsToRecalculate.Add(voxel.Position + VoxelChunk.ManhattanSuccessors[i]);
+                }
+
+                /*
+                // This might need to move out of this spot and into a "RequiresRecalculation" section.
+                // Have to think it through more.
                 affectedChunks.Add(voxel.Chunk);
-                voxel.Chunk.NotifyDestroyed(new Point3(voxel.GridPosition));
                 List<Point3> neighbors = voxel.Chunk.GetEuclidianSuccessorByVoxel(voxel);
                 Point3 gridPos = voxel.ChunkID;
                 for (int i = 0; i < neighbors.Count; i++)
@@ -1030,12 +1096,27 @@ namespace DwarfCorp
                     if (chunkData.ChunkMap.TryGetValue(gridPos + neighbors[i], out chunk))
                         affectedChunks.Add(chunk);
                 }
+                */
             }
 
-            if (GameSettings.Default.FogofWar)
+            if (voxelsToRecalculate.Count > 0)
             {
-                ChunkData.Reveal(KilledVoxels);
+                Voxel toRecalculate = new Voxel();
+                foreach (Vector3 worldPos in voxelsToRecalculate)
+                {
+                    if (worldPos == new Vector3(512, 63, 512))
+                    {
+                        var wp = worldPos;
+                    }
+                    if (!ChunkData.GetVoxel(worldPos, ref toRecalculate)) continue;
+                    toRecalculate.Chunk.CalculateVoxelFlags(toRecalculate);
+
+                    affectedChunks.Add(toRecalculate.Chunk);
+                }
             }
+
+            if (affectedChunks.Count != 0)
+                GamePerformance.Instance.TrackValueType("affectedChunks", affectedChunks.Count);
 
             lock (RebuildList)
             {
@@ -1044,7 +1125,11 @@ namespace DwarfCorp
                     affected.NotifyTotalRebuild(false);
                 }
             }
-            KilledVoxels.Clear();
+
+            // Neither of these should be possible right now as all helper threads do is process, not place/kill voxels.
+            // Even the water system queues up lava/stone changes and does it in the main thread.
+            System.Diagnostics.Debug.Assert(KilledVoxels.Count == 0);
+            System.Diagnostics.Debug.Assert(PlacedVoxels.Count == 0);
         }
 
         public List<Voxel> GetVoxelsIntersecting(BoundingBox box)
@@ -1083,14 +1168,32 @@ namespace DwarfCorp
                 toRebuild.Add(chunk);
             }
 
+            SetLoadingMessage("Scanning World");
+
+            int j = 0;
+            foreach(VoxelChunk chunk in toRebuild)
+            {
+                j++;
+                SetLoadingMessage("Finding empty voxels " + j + "/" + toRebuild.Count);
+                chunk.CalculateEmptyFlags();
+            }
+
             SetLoadingMessage("Updating Ramps");
             foreach(VoxelChunk chunk in toRebuild.Where(chunk => GameSettings.Default.CalculateRamps))
             {
                 chunk.UpdateRamps();
             }
 
+            j = 0;
+            foreach(VoxelChunk chunk in toRebuild)
+            {
+                j++;
+                SetLoadingMessage("Calculating voxel flags " + j + "/" + toRebuild.Count);
+                chunk.CalculateAllVoxelFlags();
+            }
+
             SetLoadingMessage("Calculating lighting ");
-            int j = 0;
+            j = 0;
             foreach(VoxelChunk chunk in toRebuild)
             {
                 j++;
@@ -1129,9 +1232,27 @@ namespace DwarfCorp
             }
 
             SetLoadingMessage("Cleaning Up.");
+
+            // Finally, the chunk manager's threads are started to allow it to 
+            // dynamically rebuild terrain
+            while (RebuildList.Count > 0)
+            {
+                VoxelChunk chunk = null;
+                if (!RebuildList.TryDequeue(out chunk))
+                {
+                    break;
+                }
+
+                if (chunk == null)
+                {
+                    continue;
+                }
+            }
+
+            StartThreads();
         }
 
-       
+
 
         public void UpdateBounds()
         {

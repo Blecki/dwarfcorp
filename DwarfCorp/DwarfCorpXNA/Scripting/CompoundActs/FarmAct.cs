@@ -115,15 +115,14 @@ namespace DwarfCorp
                     if (tile.Progress >= 100.0f && !Satisfied())
                     {
                         tile.Progress = 0.0f;
-                        if (Mode == FarmAct.FarmMode.Plant)
+                        if (Mode == FarmMode.Plant)
                         {
                             FarmToWork.CreatePlant(PlantToCreate, Creature.Manager.World);
                             DestroyResources();
                         }
                         else
                         {
-                            FarmToWork.Vox.Type = VoxelLibrary.GetVoxelType("TilledSoil");
-                            FarmToWork.Vox.Chunk.NotifyTotalRebuild(true);
+                            FarmToWork.Vox.Place("TilledSoil");
                         }
                     }
                     if (MathFunctions.RandEvent(0.01f))

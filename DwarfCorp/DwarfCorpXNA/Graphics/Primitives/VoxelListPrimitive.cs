@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Threading;
-using System.Collections.Concurrent;
 
 namespace DwarfCorp
 {
@@ -16,17 +13,17 @@ namespace DwarfCorp
     /// </summary>
     public class VoxelListPrimitive : GeometricPrimitive, IDisposable
     {
-        public static Vector3[] FaceDeltas = new Vector3[6];
-        public static List<Vector3>[] VertexNeighbors2D = new List<Vector3>[8];
+        public static readonly Vector3[] FaceDeltas = new Vector3[6];
+        private static readonly List<Vector3>[] VertexNeighbors2D = new List<Vector3>[8];
         private readonly bool[] faceExists = new bool[6];
         private readonly bool[] drawFace = new bool[6];
-        private bool isRebuilding = false;
+        private bool isRebuilding;
         private readonly Mutex rebuildMutex = new Mutex();
-        public static bool StaticInitialized = false;
+        private static bool StaticInitialized;
 
-        public void InitializeStatics()
+        private void InitializeStatics()
         {
-            if(!StaticInitialized)
+            if (!StaticInitialized)
             {
                 FaceDeltas[(int)BoxFace.Back] = new Vector3(0, 0, 1);
                 FaceDeltas[(int)BoxFace.Front] = new Vector3(0, 0, -1);
@@ -63,39 +60,31 @@ namespace DwarfCorp
             }
         }
 
-
-        public VoxelListPrimitive() :
-            base()
+        public VoxelListPrimitive() 
         {
             InitializeStatics();
         }
 
-
-        public static bool IsTopVertex(VoxelVertex v)
-        {
-            return v == VoxelVertex.BackTopLeft || v == VoxelVertex.FrontTopLeft || v == VoxelVertex.FrontTopRight || v == VoxelVertex.BackTopRight;
-        }
-
-        public static bool ShouldRamp(VoxelVertex vertex, RampType rampType)
+        private static bool ShouldRamp(VoxelVertex vertex, RampType rampType)
         {
             bool toReturn = false;
 
-            if(Voxel.HasFlag(rampType, RampType.TopFrontRight))
+            if (Voxel.HasFlag(rampType, RampType.TopFrontRight))
             {
                 toReturn = (vertex == VoxelVertex.BackTopRight);
             }
 
-            if(Voxel.HasFlag(rampType, RampType.TopBackRight))
+            if (Voxel.HasFlag(rampType, RampType.TopBackRight))
             {
                 toReturn = toReturn || (vertex == VoxelVertex.FrontTopRight);
             }
 
-            if(Voxel.HasFlag(rampType, RampType.TopFrontLeft))
+            if (Voxel.HasFlag(rampType, RampType.TopFrontLeft))
             {
                 toReturn = toReturn || (vertex == VoxelVertex.BackTopLeft);
             }
 
-            if(Voxel.HasFlag(rampType, RampType.TopBackLeft))
+            if (Voxel.HasFlag(rampType, RampType.TopBackLeft))
             {
                 toReturn = toReturn || (vertex == VoxelVertex.FrontTopLeft);
             }
@@ -104,39 +93,10 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public static RampType UpdateRampType(BoxFace face)
-        {
-            switch(face)
-            {
-                case BoxFace.Back:
-                    return RampType.Back;
-
-                case BoxFace.Front:
-                    return RampType.Front;
-
-                case BoxFace.Left:
-                    return RampType.Left;
-
-                case BoxFace.Right:
-                    return RampType.Right;
-
-                default:
-                    return RampType.None;
-            }
-        }
-
-        public static bool RampIsDegenerate(RampType rampType)
-        {
-            return rampType == RampType.All
-                   || (Voxel.HasFlag(rampType, RampType.Left) && Voxel.HasFlag(rampType, RampType.Right))
-                   || (Voxel.HasFlag(rampType, RampType.Front) && Voxel.HasFlag(rampType, RampType.Back));
-        }
-
         public static bool IsSideFace(BoxFace face)
         {
             return face != BoxFace.Top && face != BoxFace.Bottom;
         }
-
 
         public static void UpdateCornerRamps(VoxelChunk chunk)
         {
@@ -151,24 +111,24 @@ namespace DwarfCorp
                 VoxelVertex.BackTopRight
             };
 
-            for(int x = 0; x < chunk.SizeX; x++)
+            for (int x = 0; x < chunk.SizeX; x++)
             {
-                for(int y = 0; y < chunk.SizeY; y++)
+                for (int y = 0; y < chunk.SizeY; y++)
                 {
-                    for(int z = 0; z < chunk.SizeZ; z++)
+                    for (int z = 0; z < chunk.SizeZ; z++)
                     {
                         v.GridPosition = new Vector3(x, y, z);
                         bool isTop = false;
 
 
-                        if(y < chunk.SizeY - 1)
+                        if (y < chunk.SizeY - 1)
                         {
-                            vAbove.GridPosition =  new Vector3(x, y + 1, z); 
+                            vAbove.GridPosition = new Vector3(x, y + 1, z);
 
                             isTop = vAbove.IsEmpty;
                         }
 
-                        if(v.IsEmpty || !v.IsVisible || !isTop || !v.Type.CanRamp)
+                        if (v.IsEmpty || !v.IsVisible || !isTop || !v.Type.CanRamp)
                         {
                             v.RampType = RampType.None;
                             continue;
@@ -179,15 +139,15 @@ namespace DwarfCorp
                         {
                             List<Vector3> neighbors = VertexNeighbors2D[(int)bestKey];
                             chunk.GetNeighborsSuccessors(neighbors, (int)v.GridPosition.X, (int)v.GridPosition.Y, (int)v.GridPosition.Z, diagNeighbors);
-                        
+
                             bool emptyFound = diagNeighbors.Any(vox => vox == null || vox.IsEmpty);
 
-                            if(!emptyFound)
+                            if (!emptyFound)
                             {
                                 continue;
                             }
 
-                            switch(bestKey)
+                            switch (bestKey)
                             {
                                 case VoxelVertex.FrontTopLeft:
                                     v.RampType |= RampType.TopBackLeft;
@@ -208,7 +168,7 @@ namespace DwarfCorp
             }
         }
 
-        private static readonly bool[,,] FaceDrawMap = new bool[6, (int) RampType.All + 1, (int) RampType.All + 1];
+        private static readonly bool[,,] FaceDrawMap = new bool[6, (int)RampType.All + 1, (int)RampType.All + 1];
 
         private static void SetTop(RampType rampType, Dictionary<VoxelVertex, float> top)
         {
@@ -240,7 +200,7 @@ namespace DwarfCorp
 
         private static void CreateFaceDrawMap()
         {
-            BoxFace[] faces = (BoxFace[]) Enum.GetValues(typeof (BoxFace));
+            BoxFace[] faces = (BoxFace[])Enum.GetValues(typeof(BoxFace));
 
             List<RampType> ramps = new List<RampType>()
             {
@@ -305,7 +265,7 @@ namespace DwarfCorp
 
                         if (neighborFace == BoxFace.Bottom || neighborFace == BoxFace.Top)
                         {
-                            FaceDrawMap[(int) neighborFace, (int) myRamp, (int) neighborRamp] = false;
+                            FaceDrawMap[(int)neighborFace, (int)myRamp, (int)neighborRamp] = false;
                             continue;
                         }
 
@@ -340,119 +300,27 @@ namespace DwarfCorp
                                 their1 = theirTop[VoxelVertex.FrontTopLeft];
                                 their2 = theirTop[VoxelVertex.BackTopLeft];
                                 break;
-                            default:
-                                break;
                         }
 
-                        FaceDrawMap[(int)neighborFace, (int)myRamp, (int)neighborRamp] = (their1 < my1 || their2 < my2 );
+                        FaceDrawMap[(int)neighborFace, (int)myRamp, (int)neighborRamp] = (their1 < my1 || their2 < my2);
                     }
                 }
             }
 
-   
+
         }
 
         public static bool ShouldDrawFace(BoxFace face, RampType neighborRamp, RampType myRamp)
         {
-            if(face == BoxFace.Top || face == BoxFace.Bottom)
+            if (face == BoxFace.Top || face == BoxFace.Bottom)
             {
                 return true;
             }
 
-
-            return FaceDrawMap[(int) face, (int) myRamp, (int) neighborRamp];
+            return FaceDrawMap[(int)face, (int)myRamp, (int)neighborRamp];
         }
 
-        public static void UpdateRamps(VoxelChunk chunk)
-        {
-            Dictionary<BoxFace, bool> faceExists = new Dictionary<BoxFace, bool>();
-            Dictionary<BoxFace, bool> faceVisible = new Dictionary<BoxFace, bool>();
-            Voxel v = chunk.MakeVoxel(0, 0, 0);
-            Voxel vAbove = chunk.MakeVoxel(0, 0, 0);
-            Voxel voxelOnFace = chunk.MakeVoxel(0, 0, 0);
-            Voxel worldVoxel = new Voxel();
-
-            for(int x = 0; x < chunk.SizeX; x++)
-            {
-                for(int y = 0; y < Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, chunk.SizeY); y++)
-                {
-                    for(int z = 0; z < chunk.SizeZ; z++)
-                    {
-                        v.GridPosition = new Vector3(x, y, z);
-                        bool isTop = false;
-
-
-                        if(y < chunk.SizeY - 1)
-                        {
-                            vAbove.GridPosition = new Vector3(x, y + 1, z);
-
-                            isTop = vAbove.IsEmpty;
-                        }
-
-
-                        if(isTop && !v.IsEmpty && v.IsVisible && v.Type.CanRamp)
-                        {
-
-                            for(int i = 0; i < 6; i++)
-                            {
-                                BoxFace face = (BoxFace) i;
-                                if(!IsSideFace(face))
-                                {
-                                    continue;
-                                }
-
-                                Vector3 delta = FaceDeltas[(int)face];
-                                faceExists[face] = chunk.IsCellValid(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z);
-                                faceVisible[face] = true;
-
-                                if(faceExists[face])
-                                {
-                                    voxelOnFace.GridPosition = new Vector3(x + (int) delta.X, y + (int) delta.Y,
-                                        z + (int) delta.Z);
-
-                                    if(voxelOnFace.IsEmpty || !voxelOnFace.IsVisible)
-                                    {
-                                        faceVisible[face] = true;
-                                    }
-                                    else
-                                    {
-                                        faceVisible[face] = false;
-                                    }
-                                }
-                                else
-                                {
-                                    if (!chunk.Manager.ChunkData.GetNonEmptyVoxelAtWorldLocation(new Vector3(x + (int)delta.X + 0.5f, y + (int)delta.Y + 0.5f, z + (int)delta.Z + 0.5f) + chunk.Origin, ref worldVoxel) || !worldVoxel.IsVisible)
-                                    {
-                                        faceVisible[face] = true;
-                                    }
-                                    else
-                                    {
-                                        faceVisible[face] = false;
-                                    }
-                                }
-
-
-                                if(faceVisible[face])
-                                {
-                                    v.RampType = v.RampType | UpdateRampType(face);
-                                }
-                            }
-
-                            if(RampIsDegenerate(v.RampType))
-                            {
-                                v.RampType = RampType.None;
-                            }
-                        }
-                        else if(!v.IsEmpty && v.IsVisible && v.Type.CanRamp)
-                        {
-                            v.RampType = RampType.None;
-                        }
-                    }
-                }
-            }
-        }
-
-        public void InitializeFromChunk(VoxelChunk chunk, GraphicsDevice graphics)
+        public void InitializeFromChunk(VoxelChunk chunk)
         {
             if (chunk == null)
             {
@@ -460,7 +328,7 @@ namespace DwarfCorp
             }
 
             rebuildMutex.WaitOne();
-            if(isRebuilding)
+            if (isRebuilding)
             {
                 rebuildMutex.ReleaseMutex();
                 return;
@@ -489,18 +357,20 @@ namespace DwarfCorp
 
             for (int y = 0; y < Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, chunk.SizeY); y++)
             {
-                for(int x = 0; x < chunk.SizeX; x++)
+                for (int x = 0; x < chunk.SizeX; x++)
                 {
-                    for(int z = 0; z < chunk.SizeZ; z++)
+                    for (int z = 0; z < chunk.SizeZ; z++)
                     {
-                        v.GridPosition = new Vector3(x, y, z); 
+                        //GamePerformance.Instance.StartTrackPerformance("VC.Rebuild.GetVoxel_A");
+                        v.GridPosition = new Vector3(x, y, z);
+                        //GamePerformance.Instance.StopTrackPerformance("VC.Rebuild.GetVoxel_A");
 
-
-                        if((v.IsExplored && v.IsEmpty) || !v.IsVisible)
+                        if ((v.IsExplored && v.IsEmpty) || !v.IsVisible)
                         {
                             continue;
                         }
 
+                        //GamePerformance.Instance.StartTrackPerformance("VC.Rebuild.AllButEmpty_A");
                         BoxPrimitive primitive = VoxelLibrary.GetPrimitive(v.Type);
                         if (v.IsExplored && primitive == null) continue;
                         if (!v.IsExplored)
@@ -516,45 +386,57 @@ namespace DwarfCorp
                             uvs = v.ComputeTransitionTexture(manhattanNeighbors);
                         }
 
-                        for(int i = 0; i < 6; i++)
+                        //GamePerformance.Instance.StartTrackPerformance("VC.Rebuild.CalculateFaces_A");
+                        for (int i = 0; i < 6; i++)
                         {
-                            BoxFace face = (BoxFace) i;
+                            BoxFace face = (BoxFace)i;
                             Vector3 delta = FaceDeltas[(int)face];
-                            faceExists[(int)face] = chunk.IsCellValid(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z);
+                            faceExists[(int)face] = chunk.IsCellValid(x + (int)delta.X, y + (int)delta.Y, z + (int)delta.Z);
                             drawFace[(int)face] = true;
 
-                            if(faceExists[(int)face])
+                            if (faceExists[(int)face])
                             {
-                                voxelOnFace.GridPosition = new Vector3(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z);
-                                drawFace[(int)face] =  (voxelOnFace.IsExplored && voxelOnFace.IsEmpty) || !voxelOnFace.IsVisible || 
-                                    (voxelOnFace.Type.CanRamp && voxelOnFace.RampType != RampType.None && IsSideFace(face) && 
+                                //GamePerformance.Instance.StartTrackPerformance("VC.Rebuild.GetVoxel_A");
+                                voxelOnFace.GridPosition = new Vector3(x + (int)delta.X, y + (int)delta.Y, z + (int)delta.Z);
+                                //GamePerformance.Instance.StopTrackPerformance("VC.Rebuild.GetVoxel_A");
+                                drawFace[(int)face] = (voxelOnFace.IsExplored && voxelOnFace.IsEmpty) || !voxelOnFace.IsVisible ||
+                                    (voxelOnFace.Type.CanRamp && voxelOnFace.RampType != RampType.None && IsSideFace(face) &&
                                     ShouldDrawFace(face, voxelOnFace.RampType, v.RampType));
-
                             }
                             else
                             {
-                                bool success = chunk.Manager.ChunkData.GetNonEmptyVoxelAtWorldLocation(new Vector3(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z) + chunk.Origin, ref worldVoxel);
-                                    drawFace[(int)face] = !success || (worldVoxel.IsExplored && worldVoxel.IsEmpty) || !worldVoxel.IsVisible ||
-                                                     (worldVoxel.Type.CanRamp && worldVoxel.RampType != RampType.None &&
-                                                      IsSideFace(face) &&
-                                                      ShouldDrawFace(face, worldVoxel.RampType, v.RampType));
+                                //GamePerformance.Instance.StartTrackPerformance("VC.Rebuild.GetVoxel_A");
+                                bool success = chunk.Manager.ChunkData.GetNonEmptyVoxelAtWorldLocation(new Vector3(x + (int)delta.X, y + (int)delta.Y, z + (int)delta.Z) + chunk.Origin, ref worldVoxel);
+                                //GamePerformance.Instance.StopTrackPerformance("VC.Rebuild.GetVoxel_A");
+                                if (success)
+                                {
+                                    drawFace[(int)face] = (worldVoxel.IsExplored && worldVoxel.IsEmpty) || !worldVoxel.IsVisible ||
+                                                         (worldVoxel.Type.CanRamp && worldVoxel.RampType != RampType.None &&
+                                                          IsSideFace(face) &&
+                                                          ShouldDrawFace(face, worldVoxel.RampType, v.RampType));
+                                }
+                                else
+                                {
+                                    drawFace[(int)face] = false;
+                                }
                             }
                         }
+                        //GamePerformance.Instance.StopTrackPerformance("VC.Rebuild.CalculateFaces_A");
 
-
-                        for(int i = 0; i < 6; i++)
+                        //GamePerformance.Instance.StartTrackPerformance("VC.Rebuild.PlaceVertices_A");
+                        for (int i = 0; i < 6; i++)
                         {
-                            BoxFace face = (BoxFace) i;
-                            if(!drawFace[(int)face])
+                            BoxFace face = (BoxFace)i;
+                            if (!drawFace[(int)face])
                             {
                                 continue;
                             }
 
-                          
-                            int faceIndex = 0;
-                            int faceCount = 0;
-                            int vertexIndex = 0;
-                            int vertexCount = 0;
+
+                            int faceIndex;
+                            int faceCount;
+                            int vertexIndex;
+                            int vertexCount;
                             primitive.GetFace(face, uvs, out faceIndex, out faceCount, out vertexIndex, out vertexCount);
                             Vector2 texScale = uvs.Scales[i];
 
@@ -568,11 +450,11 @@ namespace DwarfCorp
                                 Vector3 offset = Vector3.Zero;
                                 Vector2 texOffset = Vector2.Zero;
 
-                                if(v.Type.CanRamp && ShouldRamp(bestKey, v.RampType))
+                                if (v.Type.CanRamp && ShouldRamp(bestKey, v.RampType))
                                 {
                                     offset = new Vector3(0, -v.Type.RampSize, 0);
 
-                                    if(face != BoxFace.Top && face != BoxFace.Bottom)
+                                    if (face != BoxFace.Top && face != BoxFace.Bottom)
                                     {
                                         texOffset = new Vector2(0, v.Type.RampSize * (texScale.Y));
                                     }
@@ -595,7 +477,7 @@ namespace DwarfCorp
                                 maxVertex++;
                             }
 
-                            bool flippedQuad = ambientValues[0] + ambientValues[2] > 
+                            bool flippedQuad = ambientValues[0] + ambientValues[2] >
                                                ambientValues[1] + ambientValues[3];
                             for (int idx = faceIndex; idx < faceCount + faceIndex; idx++)
                             {
@@ -607,32 +489,230 @@ namespace DwarfCorp
                                 }
 
                                 ushort vertexOffset = flippedQuad ? primitive.FlippedIndexes[idx] : primitive.Indexes[idx];
-                                ushort vertexOffset0 = flippedQuad? primitive.FlippedIndexes[faceIndex] : primitive.Indexes[faceIndex];
+                                ushort vertexOffset0 = flippedQuad ? primitive.FlippedIndexes[faceIndex] : primitive.Indexes[faceIndex];
                                 Indexes[maxIndex] =
-                                    (ushort) ((int)indexOffset + (int)((int)vertexOffset - (int)vertexOffset0));
+                                    (ushort)(indexOffset + (vertexOffset - vertexOffset0));
                                 maxIndex++;
                             }
                         }
+                        //GamePerformance.Instance.StopTrackPerformance("VC.Rebuild.AllButEmpty_A");
+                        //GamePerformance.Instance.StopTrackPerformance("VC.Rebuild.PlaceVertices_A");
                     }
                 }
             }
             MaxIndex = maxIndex;
             MaxVertex = maxVertex;
+            GamePerformance.Instance.TrackReferenceType("Lightmap reference", (Lightmap == null) ? "False" : "True");
             GenerateLightmap(chunk.Manager.ChunkData.Tilemap.Bounds);
+            lock(VertexLock)
+            {
+                ResetVertexBuffer = true;
+            }
             isRebuilding = false;
-
-            //chunk.PrimitiveMutex.WaitOne();
-            chunk.NewPrimitive = this;
-            chunk.NewPrimitiveReceived = true;
-            //chunk.PrimitiveMutex.ReleaseMutex();
         }
 
-
-        public bool ContainsNearVertex(Vector3 vertexPos1, List<VertexPositionColorTexture> accumulated)
+        public int InitializeFromChunkNew(VoxelChunk chunk, int highestVoxel)
         {
-            const float epsilon = 0.001f;
+            if (chunk == null) return highestVoxel;
 
-            return accumulated.Select(vert => (vertexPos1 - (vert.Position)).LengthSquared()).Any(dist => dist < epsilon);
+            rebuildMutex.WaitOne();
+            if (isRebuilding)
+            {
+                rebuildMutex.ReleaseMutex();
+                return highestVoxel;
+            }
+
+            isRebuilding = true;
+            rebuildMutex.ReleaseMutex();
+            int[] ambientValues = new int[4];
+            int maxIndex = 0;
+            int maxVertex = 0;
+            Voxel[] manhattanNeighbors = new Voxel[4];
+            BoxPrimitive bedrockModel = VoxelLibrary.GetPrimitive("Bedrock");
+
+            if (Vertices == null)
+            {
+                Vertices = new ExtendedVertex[1024];
+            }
+
+            if (Indexes == null)
+            {
+                Indexes = new ushort[512];
+            }
+
+            int maxFloor = Math.Min((int)chunk.Manager.ChunkData.MaxViewingLevel + 1, chunk.SizeY);
+
+            int newMaxFloor = Math.Min(maxFloor, highestVoxel + 1);
+
+            // We'll use this to track the highest floor we found a non-empty voxel on for the return value.
+            int highestFloor = -1;
+            int voxelCount = 0;
+            int voxelFaceDrawCount = 0;
+
+            for (int y = 0; y < newMaxFloor; y++)
+            {
+                bool topFloor = (y == (newMaxFloor - 1));
+                bool voxelFound = false;
+                for (int x = 0; x < chunk.SizeX; x++)
+                {
+                    for (int z = 0; z < chunk.SizeZ; z++)
+                    {
+                        voxelCount++;
+                        //if (chunk.ID.Is(37, 0, 17) && (x == 10 && y == 23 && z == 12))
+                        //    System.Diagnostics.Debugger.Break();
+                        int index = chunk.Data.IndexAt(x, y, z);
+
+                        VoxelFlagHelper flags = chunk.Data.GetFlagHelper(index);
+                        if (!flags.GetFlag(VoxelFlags.IsEmpty)) voxelFound = true;
+
+                        // If we don't have a voxel that has faces to render
+                        if (!flags.GetFlag(VoxelFlags.FacesToRender)) continue;
+
+                        // We can put a check here where if we aren't on the top floor and all face flags are empty
+                        // we can just skip that thing instead of checking all six faces.  If we are on the top floor
+                        // any voxel with FacesToRender being true must draw it's top face at least.
+                        if (!topFloor)
+                        {
+                            // Otherwise check the actual flag.
+                            if (!flags.GetAnyFlag(VoxelFlags.AllFaces)) continue;
+                        }
+
+
+                        BoxPrimitive primitive;
+                        if (!flags.GetFlag(VoxelFlags.IsExplored))
+                        {
+                            primitive = bedrockModel;
+                        }
+                        else
+                        {
+                            primitive = chunk.Data.GetPrimitiveByTypeIndex(index);
+                        }
+
+                        VoxelType vType = chunk.Data.GetVoxelType(index);
+
+                        Color tint = vType.Tint;
+                        BoxPrimitive.BoxTextureCoords uvs;
+
+                        // Instead of getting IsExplored again we're going to compare the primitive to the bedrock.
+                        if (vType.HasTransitionTextures && primitive != bedrockModel)
+                        {
+                            uvs = vType.TransitionTextures[chunk.ComputeTransitionValue(x, y, z, manhattanNeighbors)];
+                        }
+                        else
+                        {
+                            uvs = primitive.UVs;
+                        }
+
+                        Vector3 vPosition = new Vector3(x, y, z) + chunk.Origin;
+
+                        voxelFaceDrawCount++;
+                        //GamePerformance.Instance.StartTrackPerformance("VC.Rebuild.PlaceVertices_B");
+                        for (int i = 0; i < 6; i++)
+                        {
+                            BoxFace face = (BoxFace)i;
+
+                            // If we've made it this far it means we have a valid voxel.
+                            // If we are on the top face and are on the top floor we have a face to draw.
+                            if (face != BoxFace.Top || !topFloor)
+                            {
+                                // Otherwise check the actual flag.
+                                if (!flags.GetFlag(VoxelChunk.BoxFaceToVoxelFlag(face))) continue;
+                            }
+
+                            int faceIndex;
+                            int faceCount;
+                            int vertexIndex;
+                            int vertexCount;
+                            primitive.GetFace(face, uvs, out faceIndex, out faceCount, out vertexIndex, out vertexCount);
+                            Vector2 texScale = uvs.Scales[i];
+
+                            int indexOffset = maxVertex;
+                            for (int vertOffset = 0; vertOffset < vertexCount; vertOffset++)
+                            {
+                                ExtendedVertex vert = primitive.Vertices[vertOffset + vertexIndex];
+                                VoxelVertex bestKey = primitive.Deltas[vertOffset + vertexIndex];
+                                Color color = chunk.Data.GetColor(x, y, z, bestKey);
+                                ambientValues[vertOffset] = color.G;
+                                Vector3 offset = Vector3.Zero;
+                                Vector2 texOffset = Vector2.Zero;
+
+                                if (vType.CanRamp && ShouldRamp(bestKey, chunk.Data.RampTypes[index]))
+                                {
+                                    offset = new Vector3(0, -vType.RampSize, 0);
+
+                                    if (face != BoxFace.Top && face != BoxFace.Bottom)
+                                    {
+                                        texOffset = new Vector2(0, vType.RampSize * (texScale.Y));
+                                    }
+                                }
+
+                                if (maxVertex >= Vertices.Length)
+                                {
+                                    ExtendedVertex[] newVertices = new ExtendedVertex[Vertices.Length * 2];
+                                    Vertices.CopyTo(newVertices, 0);
+                                    Vertices = newVertices;
+                                }
+
+                                Vertices[maxVertex] = new ExtendedVertex(vert.Position + vPosition +
+                                                                   VertexNoise.GetNoiseVectorFromRepeatingTexture(
+                                                                       vert.Position + vPosition) + offset,
+                                    color,
+                                    tint,
+                                    uvs.Uvs[vertOffset + vertexIndex] + texOffset,
+                                    uvs.Bounds[faceIndex / 6]);
+                                maxVertex++;
+                            }
+
+                            bool flippedQuad = ambientValues[0] + ambientValues[2] >
+                                               ambientValues[1] + ambientValues[3];
+                            for (int idx = faceIndex; idx < faceCount + faceIndex; idx++)
+                            {
+                                if (maxIndex >= Indexes.Length)
+                                {
+                                    ushort[] indexes = new ushort[Indexes.Length * 2];
+                                    Indexes.CopyTo(indexes, 0);
+                                    Indexes = indexes;
+                                }
+
+                                ushort vertexOffset = flippedQuad ? primitive.FlippedIndexes[idx] : primitive.Indexes[idx];
+                                ushort vertexOffset0 = flippedQuad ? primitive.FlippedIndexes[faceIndex] : primitive.Indexes[faceIndex];
+                                Indexes[maxIndex] =
+                                    (ushort)(indexOffset + (vertexOffset - vertexOffset0));
+                                maxIndex++;
+                            }
+                        }
+                        //GamePerformance.Instance.StopTrackPerformance("VC.Rebuild.PlaceVertices_B");
+                    }
+                }
+                if (voxelFound) highestFloor = y;
+            }
+
+            GamePerformance.Instance.TrackReferenceType("VoxelCounts", voxelCount + "/" + voxelFaceDrawCount);
+            MaxIndex = maxIndex;
+            MaxVertex = maxVertex;
+            GamePerformance.Instance.StartTrackPerformance("VertexLock");
+            GamePerformance.Instance.StopTrackPerformance("VertexLock");
+
+            GamePerformance.Instance.TrackReferenceType("Lightmap reference", (Lightmap == null) ? "False" : "True");
+            GamePerformance.Instance.StartTrackPerformance("LightMap");
+            GenerateLightmap(chunk.Manager.ChunkData.Tilemap.Bounds);
+            GamePerformance.Instance.StopTrackPerformance("LightMap");
+            lock (VertexLock)
+            {
+                ResetVertexBuffer = true;
+            }
+            isRebuilding = false;
+
+            // At the end here we are going to return the highest floor we found during the scan.
+            // However this is going to cause issues if we didn't scan all the way to the floor where
+            // the highest passed in was found.
+            // So if our highest floor passed is higher than the top floor we scanned to we will
+            // return the value passed in.  Once unsliced we will be able to scan properly again.
+
+            if (highestFloor < maxFloor - 1) return highestFloor;
+
+            if (highestVoxel >= maxFloor) return highestVoxel;
+            else return highestFloor;
         }
 
         public void Dispose()

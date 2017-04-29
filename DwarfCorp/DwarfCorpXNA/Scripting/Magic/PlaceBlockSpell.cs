@@ -79,7 +79,6 @@ namespace DwarfCorp
 
         public override void OnVoxelsSelected(SpellTree tree, List<Voxel> voxels)
         {
-            HashSet<Point3> chunksToRebuild = new HashSet<Point3>();
             bool placed = false;
             foreach (Voxel selected in voxels)
             {
@@ -89,7 +88,7 @@ namespace DwarfCorp
                     Vector3 p = selected.Position + Vector3.One*0.5f;
                     IndicatorManager.DrawIndicator("-" + ManaCost + " M",p, 1.0f, Color.Red);
                     World.ParticleManager.Trigger("star_particle", p, Color.White, 4);
-                    VoxelLibrary.PlaceType(VoxelLibrary.GetVoxelType(VoxelType), selected);
+                    selected.Place(VoxelType);
 
                     if (VoxelType == "Magic")
                     {
@@ -100,15 +99,7 @@ namespace DwarfCorp
                         };
                     }
                     placed = true;
-                    chunksToRebuild.Add(selected.ChunkID);
                 }
-            }
-
-            foreach (Point3 point in chunksToRebuild)
-            {
-                VoxelChunk chunk = World.ChunkManager.ChunkData.ChunkMap[point];
-                chunk.ShouldRebuild = true;
-                chunk.NotifyTotalRebuild(true);
             }
 
             if (placed)

@@ -395,6 +395,9 @@ namespace DwarfCorp
                 SetLoadingMessage("Embarking ...");
                 CreateInitialEmbarkment();
 
+                // All set is done so generate the chunk graphics.
+                ChunkManager.CreateGraphics(SetLoadingMessage, ChunkManager.ChunkData);
+
                 SetLoadingMessage("Presimulating ...");
                 ShowingWorld = false;
                 if (string.IsNullOrEmpty(ExistingFile))
@@ -636,12 +639,6 @@ namespace DwarfCorp
                 SetLoadingMessage("Loading Chunks from Game File");
                 ChunkManager.ChunkData.LoadFromFile(gameFile, SetLoadingMessage);
             }
-
-
-            // Finally, the chunk manager's threads are started to allow it to 
-            // dynamically rebuild terrain
-            ChunkManager.RebuildList = new ConcurrentQueue<VoxelChunk>();
-            ChunkManager.StartThreads();
         }
 
         public float SeaLevel { get; set; }
@@ -879,12 +876,13 @@ namespace DwarfCorp
                         continue;
                     }
 
+                    Voxel v = chunk.MakeVoxel((int)gridPos.X, (int)gridPos.Y, (int)gridPos.Z);
+
                     for (int y = averageHeight; y < h; y++)
                     {
-                        Voxel v = chunk.MakeVoxel((int)gridPos.X, y, (int)gridPos.Z);
-                        v.Type = VoxelLibrary.GetVoxelType(0);
-                        chunk.Manager.ChunkData.Reveal(v);
-                        chunk.Data.Water[v.Index].WaterLevel = 0;
+                        v.ChangeVoxel((int)gridPos.X, y, (int)gridPos.Z);
+                        v.Destroy(true);
+                        ChunkManager.ChunkData.Reveal(v);
                     }
 
                     if (averageHeight < h)
@@ -923,11 +921,8 @@ namespace DwarfCorp
                     // Fill from the top height down to the bottom.
                     for (int y = h - 1; y < averageHeight; y++)
                     {
-                        Voxel v = chunk.MakeVoxel((int)gridPos.X, y, (int)gridPos.Z);
-                        v.Type = VoxelLibrary.GetVoxelType("Scaffold");
-                        chunk.Data.Water[v.Index].WaterLevel = 0;
-                        v.Chunk = chunk;
-                        v.Chunk.NotifyTotalRebuild(!v.IsInterior);
+                        v.ChangeVoxel((int)gridPos.X, y, (int)gridPos.Z);
+                        v.Place("Scaffold", true);
 
                         if (y == averageHeight - 1)
                         {
@@ -1573,6 +1568,8 @@ namespace DwarfCorp
                 RenderScreenSaverMessages(gameTime);
                 return;
             }
+
+            ChunkManager.UpdateVertexBuffers(GraphicsDevice);
 
             // Controls the sky fog
             float x = (1.0f - Sky.TimeOfDay);

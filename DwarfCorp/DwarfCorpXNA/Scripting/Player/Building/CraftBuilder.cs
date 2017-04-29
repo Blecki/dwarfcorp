@@ -238,7 +238,7 @@ namespace DwarfCorp
                     case CraftItem.CraftPrereq.OnGround:
                     {
                         Voxel below = new Voxel();
-                        designation.Location.GetNeighbor(Vector3.Down, ref below);
+                        designation.Location.GetNeighborBySuccessor(Vector3.Down, ref below);
 
                         if (below.IsEmpty)
                         {

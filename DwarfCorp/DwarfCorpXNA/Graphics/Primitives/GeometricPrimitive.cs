@@ -34,7 +34,11 @@ namespace DwarfCorp
         [JsonIgnore]
         protected object VertexLock = new object();
 
-        [JsonIgnore] public RenderTarget2D Lightmap = null;
+        [JsonIgnore]
+        public RenderTarget2D Lightmap = null;
+
+        [JsonIgnore]
+        public bool ResetVertexBuffer = false;
 
         [OnDeserialized]
         protected void OnDeserialized(StreamingContext context)
@@ -42,7 +46,11 @@ namespace DwarfCorp
             ResetBuffer(GameState.Game.GraphicsDevice);
         }
 
-
+        public void ResetBufferIfNeeded(GraphicsDevice device)
+        {
+            if (!ResetVertexBuffer) return;
+            ResetBuffer(device);
+        }
 
         /// <summary>
         /// Draws the primitive to the screen.
@@ -111,8 +119,13 @@ namespace DwarfCorp
 
         public virtual void GenerateLightmap(Rectangle textureBounds)
         {
+            GamePerformance.Instance.StartTrackPerformance("LightmapUVs");
             BoundingBox box = GenerateLightmapUVs();
+            GamePerformance.Instance.StopTrackPerformance("LightmapUVs");
+            GamePerformance.Instance.TrackReferenceType("LightmapUVs.Box", box.ToString());
+            GamePerformance.Instance.StartTrackPerformance("CreateLightmapTexture");
             CreateLightMapTexture(box, textureBounds);
+            GamePerformance.Instance.StopTrackPerformance("CreateLightmapTexture");
         }
 
         /// <summary>
@@ -152,6 +165,7 @@ namespace DwarfCorp
             int newHeight = (int)Math.Ceiling((heightScale) * textureBounds.Height);
 
 
+            GamePerformance.Instance.StartTrackPerformance("CreateLightmapTexture.RenderTarget2d");
             if (Lightmap == null || Lightmap.Width < newWidth || Lightmap.Height < newHeight)
             {
                 Lightmap = new RenderTarget2D(GameState.Game.GraphicsDevice, newWidth, newHeight, false,
@@ -162,8 +176,10 @@ namespace DwarfCorp
                 newWidth = Lightmap.Width;
                 newHeight = Lightmap.Height;
             }
+            GamePerformance.Instance.StopTrackPerformance("CreateLightmapTexture.RenderTarget2d");
             widthScale = newWidth / ((float)textureBounds.Width);
             heightScale = newHeight / ((float)textureBounds.Height);
+            GamePerformance.Instance.StartTrackPerformance("CreateLightmapTexture.Vertices");
             for (int i = 0; i < Vertices.Length; i++)
             {
                 Vector2 lmc = Vertices[i].LightmapCoordinate;
@@ -178,6 +194,7 @@ namespace DwarfCorp
                 lmb.W /= heightScale;
                 Vertices[i].LightmapBounds = lmb;
             }
+            GamePerformance.Instance.StopTrackPerformance("CreateLightmapTexture.Vertices");
         }
 
         /// <summary>
@@ -290,8 +307,6 @@ namespace DwarfCorp
                     MaxVertex = Vertices.Length;
                 }
 
-
-
                 if (Vertices != null)
                 {
                     VertexBuffer newBuff = new VertexBuffer(device, ExtendedVertex.VertexDeclaration, Vertices.Length,
@@ -306,10 +321,8 @@ namespace DwarfCorp
                     newIndexBuff.SetData(Indexes);
                     IndexBuffer = newIndexBuff;
                 }
-
+                ResetVertexBuffer = false;
             }
-
         }
     }
-
 }

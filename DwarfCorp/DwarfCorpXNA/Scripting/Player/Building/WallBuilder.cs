@@ -67,15 +67,9 @@ namespace DwarfCorp
 
         public void Put(ChunkManager manager)
         {
-            VoxelChunk chunk = manager.ChunkData.ChunkMap[Vox.ChunkID];
+            Vox.Place(Type);
 
-            Voxel v = chunk.MakeVoxel((int) Vox.GridPosition.X, (int) Vox.GridPosition.Y, (int) Vox.GridPosition.Z);
-            v.Type = Type;
-            v.Water = new WaterCell();
-            v.Health = Type.StartingHealth;
-            chunk.NotifyTotalRebuild(!v.IsInterior);
-
-            World.ParticleManager.Trigger("puff", v.Position, Color.White, 20);
+            World.ParticleManager.Trigger("puff", Vox.Position, Color.White, 20);
 
             List<Body> components = new List<Body>();
             manager.Components.GetBodiesIntersecting(Vox.GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic);
@@ -83,7 +77,7 @@ namespace DwarfCorp
             foreach(Physics phys in components.OfType<Physics>())
             {
                 phys.ApplyForce((phys.GlobalTransform.Translation - (Vox.Position + new Vector3(0.5f, 0.5f, 0.5f))) * 100, 0.01f);
-                BoundingBox box = v.GetBoundingBox();
+                BoundingBox box = Vox.GetBoundingBox();
                 Physics.Contact contact = new Physics.Contact();
                 Physics.TestStaticAABBAABB(box, phys.GetBoundingBox(), ref contact);
 

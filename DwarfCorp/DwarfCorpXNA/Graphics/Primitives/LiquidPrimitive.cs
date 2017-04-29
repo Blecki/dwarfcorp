@@ -108,7 +108,7 @@ namespace DwarfCorp
 
 
         // This will loop through the whole world and draw out all liquid primatives that are handed to the function.
-        public static void InitializePrimativesFromChunk(VoxelChunk chunk, List<LiquidPrimitive> primitivesToInit)
+        public static void InitializePrimitivesFromChunk(VoxelChunk chunk, List<LiquidPrimitive> primitivesToInit)
         {
             LiquidPrimitive[] lps = new LiquidPrimitive[(int)LiquidType.Count];
 
@@ -170,7 +170,7 @@ namespace DwarfCorp
                     for (int z = 0; z < chunk.SizeZ; z++)
                     {
                         int index = chunk.Data.IndexAt(x, y, z);
-                        if (fogOfWar && !chunk.Data.IsExplored[index]) continue;
+                        if (fogOfWar && !chunk.Data.GetFlag(index, VoxelFlags.IsExplored)) continue;
 
                         if (chunk.Data.Water[index].WaterLevel > 0)
                         {
@@ -263,18 +263,18 @@ namespace DwarfCorp
             // Now actually force the VertexBuffer to be recreated in each primative we worked with.
             for (int i = 0; i < lps.Length; i++)
             {
-                LiquidPrimitive updatedPrimative = lps[i];
-                if (updatedPrimative == null) continue;
+                LiquidPrimitive updatedPrimitive = lps[i];
+                if (updatedPrimitive == null) continue;
 
                 maxVertex = maxVertices[i];
                 if (maxVertex > 0)
                 {
                     try
                     {
-                        lock (updatedPrimative.VertexLock)
+                        lock (updatedPrimitive.VertexLock)
                         {
-                            updatedPrimative.MaxVertex = maxVertex;
-                            updatedPrimative.VertexBuffer = null;
+                            updatedPrimitive.MaxVertex = maxVertex;
+                            updatedPrimitive.ResetVertexBuffer = true;
                         }
                     }
                     catch (System.Threading.AbandonedMutexException e)
@@ -286,13 +286,13 @@ namespace DwarfCorp
                 {
                     try
                     {
-                        lock (updatedPrimative.VertexLock)
+                        lock (updatedPrimitive.VertexLock)
                         {
-                            updatedPrimative.VertexBuffer = null;
-                            updatedPrimative.Vertices = null;
-                            updatedPrimative.Indexes = null;
-                            updatedPrimative.MaxVertex = 0;
-                            updatedPrimative.MaxIndex = 0;
+                            updatedPrimitive.ResetVertexBuffer = true;
+                            updatedPrimitive.Vertices = null;
+                            updatedPrimitive.Indexes = null;
+                            updatedPrimitive.MaxVertex = 0;
+                            updatedPrimitive.MaxIndex = 0;
                         }
                     }
                     catch (System.Threading.AbandonedMutexException e)
@@ -300,7 +300,7 @@ namespace DwarfCorp
                         Console.Error.WriteLine(e.Message);
                     }
                 }
-                updatedPrimative.IsBuilding = false;
+                updatedPrimitive.IsBuilding = false;
             }
 
             cache.inUse = false;

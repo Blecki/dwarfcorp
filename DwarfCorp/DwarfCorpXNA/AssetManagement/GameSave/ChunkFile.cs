@@ -156,7 +156,7 @@ namespace DwarfCorp
                             c.Data.Types[index] = Types[x, y, z];
                             c.Data.Health[index] = (byte) VoxelLibrary.GetVoxelType(Types[x, y, z]).StartingHealth;
                         }
-                        c.Data.IsExplored[index] = Explored[x, y, z];
+                        c.Data.SetIsExplored(index, Explored[x, y, z]);
                         c.Data.Water[index].WaterLevel = Liquid[x, y, z];
                         c.Data.Water[index].Type = (LiquidType)LiquidTypes[x, y, z];
                     }
@@ -179,7 +179,7 @@ namespace DwarfCorp
                         int index = data.IndexAt(x, y, z);
                         WaterCell water = data.Water[index];
                         Types[x, y, z] = data.Types[index];
-                        Explored[x, y, z] = data.IsExplored[index];
+                        Explored[x, y, z] = data.GetIsExplored(index);
 
                         if(water.WaterLevel > 0)
                         {

@@ -41,6 +41,64 @@ using System.Diagnostics;
 
 namespace DwarfCorp
 {
+    [Flags]
+    public enum VoxelFlags : ushort
+    {
+        None = 0x0000,
+        IsExplored = 0x0001,
+        FaceTop = 0x0002,
+        FaceBottom = 0x0004,
+        FaceLeft = 0x0008,
+        FaceRight = 0x0010,
+        FaceFront = 0x0020,
+        FaceBack = 0x0040,
+        FacesToRender = 0x0080,
+        IsSurrounded = 0x0100,
+        IsSurroundedRamps = 0x0200,
+        IsEmpty = 0x0400,
+        IsInterior = 0x800,
+        AllFaces = FaceTop | FaceBottom | FaceLeft | FaceRight | FaceFront | FaceBack,
+        AllFacesAndRender = FaceTop | FaceBottom | FaceLeft | FaceRight | FaceFront | FaceBack | FacesToRender,
+    }
+
+    public struct VoxelFlagHelper
+    {
+        public ushort flags;
+
+        public VoxelFlagHelper(ushort flag)
+        {
+            this.flags = flag;
+        }
+
+        public bool GetAnyFlag(VoxelFlags flag)
+        {
+            return ((flags & (ushort)flag) != 0);
+        }
+
+        public bool GetFlag(VoxelFlags flag)
+        {
+            return ((flags & (ushort)flag) == (ushort)flag);
+        }
+
+        public void SetFlag(VoxelFlags flag, bool value)
+        {
+            if (value)
+            {
+                flags |= (ushort)flag;
+            }
+            else
+            {
+                flags &= (ushort)(~(ushort)flag);
+            }
+        }
+
+        public override string ToString()
+        {
+            return ((VoxelFlags) flags).ToString();
+        }
+
+    }
+
     /// <summary>
     /// A 3D grid of voxels, water, and light.
     /// </summary>
@@ -55,16 +113,96 @@ namespace DwarfCorp
 
         public class VoxelData
         {
-            public bool[] IsExplored;
+            // Requires serialization
             public byte[] Health;
             public byte[] Types;
-            public byte[] SunColors;
             public WaterCell[] Water;
             public int SizeX;
             public int SizeY;
             public int SizeZ;
+
+            // Mixed serialization
+            public ushort[] Flags;
+
+            // Recalculated on load
+            public byte[] SunColors;
             public RampType[] RampTypes;
             public Color[] VertexColors;
+            public int MaxIndex;
+
+            #region Index-argument functions
+            /// <summary>
+            /// Used to calculate the IsEmpty flag for use in other locations.
+            /// </summary>
+            /// <param name="index"></param>
+            /// <returns></returns>
+            public bool IsEmpty(int index)
+            {
+                Debug.Assert(index >= 0 && index < MaxIndex, "Out of range index argument");
+                return VoxelType.TypeList[Types[index]].ID == 0;
+            }
+
+            public bool GetIsExplored(int index)
+            {
+                Debug.Assert(index >= 0 && index < MaxIndex, "Out of range index argument");
+                return GetFlag(index, VoxelFlags.IsExplored);
+            }
+
+            public void SetIsExplored(int index, bool value)
+            {
+                Debug.Assert(index >= 0 && index < MaxIndex, "Out of range index argument");
+                SetFlag(index, VoxelFlags.IsExplored, value);
+            }
+
+            public BoxPrimitive GetPrimitiveByTypeIndex(int index)
+            {
+                Debug.Assert(index >= 0 && index < MaxIndex, "Out of range index argument");
+                return VoxelLibrary.GetPrimitive(Types[index]);
+            }
+
+            public VoxelType GetVoxelType(int index)
+            {
+                Debug.Assert(index >= 0 && index < MaxIndex, "Out of range index argument");
+                return VoxelType.TypeList[Types[index]];
+            }
+
+            #endregion
+
+            #region Flag functions
+            public VoxelFlagHelper GetFlagHelper(int index)
+            {
+                Debug.Assert(index >= 0 && index < MaxIndex, "Out of range index argument");
+                return new VoxelFlagHelper(Flags[index]);
+            }
+
+            public bool GetFlag(int index, VoxelFlags flag)
+            {
+                Debug.Assert(index >= 0 && index < MaxIndex, "Out of range index argument");
+                return ((Flags[index] & (ushort)flag) == (ushort)flag);
+            }
+
+            public void SetFlag(int index, VoxelFlags flag, bool value)
+            {
+                Debug.Assert(index >= 0 && index < MaxIndex, "Out of range index argument");
+                if (value)
+                {
+                    Flags[index] |= (ushort)flag;
+                }
+                else
+                {
+                    Flags[index] &= (ushort)(~(ushort)flag);
+                }
+            }
+
+            public void SetFaceFlags(int index, VoxelFlags faceFlags)
+            {
+                Debug.Assert(index >= 0 && index < MaxIndex, "Out of range index argument");
+                unchecked
+                {
+                    Flags[index] = (ushort)(Flags[index] & (ushort)(~((ushort)VoxelFlags.AllFacesAndRender)) | (ushort)faceFlags);
+                }
+            }
+            #endregion
 
             public void SetColor(int x, int y, int z, VoxelVertex v, Color color)
             {
@@ -170,10 +308,7 @@ namespace DwarfCorp
 
         public Dictionary<string, List<InstanceData>> Motes { get; set; }
         public VoxelListPrimitive Primitive { get; set; }
-        public VoxelListPrimitive NewPrimitive = null;
         public Dictionary<LiquidType, LiquidPrimitive> Liquids { get; set; }
-        public bool NewPrimitiveReceived = false;
-        public bool NewLiquidReceived = false;
 
 
         public VoxelData Data { get; set; }
@@ -193,6 +328,9 @@ namespace DwarfCorp
         {
             get { return sizeZ; }
         }
+
+        // TODO: Debug only, remove in a release build.
+        public bool noRender;
 
         public bool IsVisible { get; set; }
         public bool ShouldRebuild { get; set; }
@@ -237,6 +375,13 @@ namespace DwarfCorp
         private int sizeY = -1;
         private int sizeZ = -1;
         private int tileSize = -1;
+
+        // Used to keep track of the heighest voxel in the chunk to make it easier to skip rebuilds when needed.
+        private int highestVoxelPosition = -1;
+        public int TopVoxelHeight
+        {
+            get { return highestVoxelPosition; }
+        }
 
 
         public bool RebuildPending { get; set; }
@@ -576,8 +721,8 @@ namespace DwarfCorp
             int numVoxels = sx * sy * sz;
             VoxelData toReturn = new VoxelData()
             {
+                Flags = new ushort[numVoxels],
                 Health = new byte[numVoxels],
-                IsExplored = new bool[numVoxels],
                 SunColors = new byte[numVoxels],
                 Types = new byte[numVoxels],
                 Water = new WaterCell[numVoxels],
@@ -585,11 +730,21 @@ namespace DwarfCorp
                 VertexColors = new Color[(sx + 1) * (sy + 1) * (sz + 1)],
                 SizeX = sx,
                 SizeY = sy,
-                SizeZ = sz
+                SizeZ = sz,
+                MaxIndex = numVoxels
             };
+
+            for (int x = 1; x < sx - 1; x++)
+                for (int y = 1; y < sy - 1; y++)
+                    for (int z = 1; z < sz - 1; z++)
+                    {
+                        int index = toReturn.IndexAt(x, y, z);
+                        toReturn.SetFlag(index, VoxelFlags.IsInterior, true);
+                    }
 
             for (int i = 0; i < numVoxels; i++)
             {
+                toReturn.SetFlag(i, VoxelFlags.IsEmpty, true);
                 toReturn.Water[i] = new WaterCell();
             }
 
@@ -780,18 +935,14 @@ namespace DwarfCorp
 
         public void Update(DwarfTime t)
         {
-            PrimitiveMutex.WaitOne();
-            if (NewPrimitiveReceived)
-            {
-                Primitive = NewPrimitive;
-                NewPrimitive = null;
-                NewPrimitiveReceived = false;
-            }
-            PrimitiveMutex.ReleaseMutex();
+            // Used to be the VoxelListPrimitive switching here.
+            // I'm leaving this in as it costs next to nothing each frame and it might be useful down the line.
         }
 
         public void Render(GraphicsDevice device)
         {
+            if (noRender) return;
+            RenderWireframe = GamePerformance.DebugToggle2;
             if (!RenderWireframe)
             {
                 Primitive.Render(device);
@@ -811,8 +962,35 @@ namespace DwarfCorp
             {
                 toInit.Add(primitive.Value);
             }
-            LiquidPrimitive.InitializePrimativesFromChunk(this, toInit);
+            LiquidPrimitive.InitializePrimitivesFromChunk(this, toInit);
             ShouldRebuildWater = false;
+        }
+
+        // Retrieves all Voxel objects in the VoxelChunk.
+        // Reuses the same reference 
+        public IEnumerable<Voxel> GetAllVoxels()
+        {
+            Voxel v = new Voxel(new Point3(0, 0, 0), this);
+
+            VoxelData data = Data;
+            for (int i = 0; i < data.Types.Length; i++)
+            {
+                v.GridPosition = data.CoordsAt(i);
+                yield return v;
+            }
+        }
+
+        public IEnumerable<Voxel> GetAllVoxelsWithWater()
+        {
+            Voxel v = new Voxel(new Point3(0, 0, 0), this);
+
+            VoxelData data = Data;
+            for (int i = 0; i < data.Types.Length; i++)
+            {
+                if (data.Water[i].WaterLevel == 0) continue;
+                v.GridPosition = data.CoordsAt(i);
+                yield return v;
+            }
         }
 
         private byte getMax(byte[] values)
@@ -865,68 +1043,140 @@ namespace DwarfCorp
         {
             BiomeData biomeData = BiomeLibrary.Biomes[biome];
 
+            // TODO: Change this over to an ID number to avoid string comparisons.
             string grassType = biomeData.GrassLayer.VoxelType;
 
-            for (int i = 0; i < biomeData.Motes.Count; i++)
+            if (GamePerformance.DebugToggle1)
             {
-                List<Vector3> grassPositions = new List<Vector3>();
-                List<Color> grassColors = new List<Color>();
-                List<float> grassScales = new List<float>();
-                DetailMoteData moteData = biomeData.Motes[i];
-                Voxel v = MakeVoxel(0, 0, 0);
-                Voxel voxelBelow = MakeVoxel(0, 0, 0);
-                for (int x = 0; x < SizeX; x++)
+                for (int i = 0; i < biomeData.Motes.Count; i++)
                 {
-                    for (int y = 1; y < Math.Min(Manager.ChunkData.MaxViewingLevel + 1, SizeY - 1); y++)
+                    List<Vector3> grassPositions = new List<Vector3>();
+                    List<Color> grassColors = new List<Color>();
+                    List<float> grassScales = new List<float>();
+                    DetailMoteData moteData = biomeData.Motes[i];
+                    Voxel v = MakeVoxel(0, 0, 0);
+                    Voxel voxelBelow = MakeVoxel(0, 0, 0);
+                    for (int x = 0; x < SizeX; x++)
                     {
-                        for (int z = 0; z < SizeZ; z++)
+                        for (int y = 1; y < Math.Min(Manager.ChunkData.MaxViewingLevel + 1, SizeY - 1); y++)
                         {
-                            v.GridPosition = new Vector3(x, y, z);
-                            voxelBelow.GridPosition = new Vector3(x, y - 1, z);
-
-                            if (v.IsEmpty || voxelBelow.IsEmpty
-                                || v.Type.Name != grassType || !v.IsVisible
-                                || voxelBelow.WaterLevel != 0)
+                            for (int z = 0; z < SizeZ; z++)
                             {
-                                continue;
+                                v.ChangeVoxel(x, y, z, false);
+                                voxelBelow.ChangeVoxel(x, y, z, false);
+
+                                if (v.IsEmpty || voxelBelow.IsEmpty
+                                    || v.Type.Name != grassType || !v.IsVisible
+                                    || voxelBelow.WaterLevel != 0)
+                                {
+                                    continue;
+                                }
+
+                                float vOffset = 0.0f;
+
+                                if (v.RampType != RampType.None)
+                                {
+                                    vOffset = -0.5f;
+                                }
+
+                                float value = MoteNoise.Noise(v.Position.X * moteData.RegionScale, v.Position.Y * moteData.RegionScale, v.Position.Z * moteData.RegionScale);
+                                float s = MoteScaleNoise.Noise(v.Position.X * moteData.RegionScale, v.Position.Y * moteData.RegionScale, v.Position.Z * moteData.RegionScale) * moteData.MoteScale;
+
+                                if (!(Math.Abs(value) > moteData.SpawnThreshold))
+                                {
+                                    continue;
+                                }
+
+                                Vector3 smallNoise = ClampVector(VertexNoise.GetRandomNoiseVector(v.Position * moteData.RegionScale * 20.0f) * 20.0f, 0.4f);
+                                smallNoise.Y = 0.0f;
+                                grassPositions.Add(v.Position + new Vector3(0.5f, 1.0f + s * 0.5f + vOffset, 0.5f) + smallNoise);
+                                grassScales.Add(s);
+                                grassColors.Add(new Color(v.SunColor, 128, 0));
                             }
-
-                            float vOffset = 0.0f;
-
-                            if (v.RampType != RampType.None)
-                            {
-                                vOffset = -0.5f;
-                            }
-
-                            float value = MoteNoise.Noise(v.Position.X * moteData.RegionScale, v.Position.Y * moteData.RegionScale, v.Position.Z * moteData.RegionScale);
-                            float s = MoteScaleNoise.Noise(v.Position.X * moteData.RegionScale, v.Position.Y * moteData.RegionScale, v.Position.Z * moteData.RegionScale) * moteData.MoteScale;
-
-                            if (!(Math.Abs(value) > moteData.SpawnThreshold))
-                            {
-                                continue;
-                            }
-
-                            Vector3 smallNoise = ClampVector(VertexNoise.GetRandomNoiseVector(v.Position * moteData.RegionScale * 20.0f) * 20.0f, 0.4f);
-                            smallNoise.Y = 0.0f;
-                            grassPositions.Add(v.Position + new Vector3(0.5f, 1.0f + s * 0.5f + vOffset, 0.5f) + smallNoise);
-                            grassScales.Add(s);
-                            grassColors.Add(new Color(v.SunColor, 128, 0));
                         }
                     }
+
+                    if (Motes == null)
+                    {
+                        Motes = new Dictionary<string, List<InstanceData>>();
+                    }
+
+                    if (Motes.Count < i + 1)
+                    {
+                        Motes[moteData.Name] = new List<InstanceData>();
+                    }
+
+                    Motes[moteData.Name] = EntityFactory.GenerateGrassMotes(grassPositions,
+                        grassColors, grassScales, Manager.Components, Manager.Content, Manager.Graphics, Motes[moteData.Name], moteData.Asset, moteData.Name);
                 }
 
-                if (Motes == null)
+            }
+            else
+            {
+                for (int i = 0; i < biomeData.Motes.Count; i++)
                 {
-                    Motes = new Dictionary<string, List<InstanceData>>();
-                }
+                    List<Vector3> grassPositions = new List<Vector3>();
+                    List<Color> grassColors = new List<Color>();
+                    List<float> grassScales = new List<float>();
+                    DetailMoteData moteData = biomeData.Motes[i];
+                    Voxel v = MakeVoxel(0, 0, 0);
+                    Voxel voxelBelow = MakeVoxel(0, 0, 0);
+                    for (int x = 0; x < SizeX; x++)
+                    {
+                        for (int y = 1; y < Math.Min(Manager.ChunkData.MaxViewingLevel + 1, SizeY - 1); y++)
+                        {
+                            for (int z = 0; z < SizeZ; z++)
+                            {
+                                v.GridPosition = new Vector3(x, y, z);
+                                voxelBelow.GridPosition = new Vector3(x, y - 1, z);
 
-                if (Motes.Count < i + 1)
-                {
-                    Motes[moteData.Name] = new List<InstanceData>();
-                }
+                                if (v.IsEmpty || voxelBelow.IsEmpty
+                                    || v.Type.Name != grassType || !v.IsVisible
+                                    || voxelBelow.WaterLevel != 0)
+                                {
+                                    continue;
+                                }
 
-                Motes[moteData.Name] = EntityFactory.GenerateGrassMotes(grassPositions,
-                    grassColors, grassScales, Manager.Components, Manager.Content, Manager.Graphics, Motes[moteData.Name], moteData.Asset, moteData.Name);
+                                float vOffset = 0.0f;
+
+                                if (v.RampType != RampType.None)
+                                {
+                                    vOffset = -0.5f;
+                                }
+
+                                float value = MoteNoise.Noise(v.Position.X * moteData.RegionScale, v.Position.Y * moteData.RegionScale, v.Position.Z * moteData.RegionScale);
+                                float s = MoteScaleNoise.Noise(v.Position.X * moteData.RegionScale, v.Position.Y * moteData.RegionScale, v.Position.Z * moteData.RegionScale) * moteData.MoteScale;
+
+                                if (!(Math.Abs(value) > moteData.SpawnThreshold))
+                                {
+                                    continue;
+                                }
+
+                                Vector3 smallNoise = ClampVector(VertexNoise.GetRandomNoiseVector(v.Position * moteData.RegionScale * 20.0f) * 20.0f, 0.4f);
+                                smallNoise.Y = 0.0f;
+                                grassPositions.Add(v.Position + new Vector3(0.5f, 1.0f + s * 0.5f + vOffset, 0.5f) + smallNoise);
+                                grassScales.Add(s);
+                                grassColors.Add(new Color(v.SunColor, 128, 0));
+                            }
+                        }
+                    }
+
+                    if (Motes == null)
+                    {
+                        Motes = new Dictionary<string, List<InstanceData>>();
+                    }
+
+                    if (Motes.Count < i + 1)
+                    {
+                        Motes[moteData.Name] = new List<InstanceData>();
+                    }
+
+                    GamePerformance.Instance.StartTrackPerformance("GenerateGrassMotes");
+
+                    Motes[moteData.Name] = EntityFactory.GenerateGrassMotes(grassPositions,
+                        grassColors, grassScales, Manager.Components, Manager.Content, Manager.Graphics, Motes[moteData.Name], moteData.Asset, moteData.Name);
+                    GamePerformance.Instance.StopTrackPerformance("GenerateGrassMotes");
+                }
             }
         }
 
@@ -934,7 +1184,6 @@ namespace DwarfCorp
         {
             if (ReconstructRamps || firstRebuild)
             {
-                //VoxelListPrimitive.UpdateRamps(this);
                 VoxelListPrimitive.UpdateCornerRamps(this);
                 ReconstructRamps = false;
             }
@@ -950,7 +1199,7 @@ namespace DwarfCorp
 
         public void Rebuild(GraphicsDevice g)
         {
-            //Drawer3D.DrawBox(GetBoundingBox(), Color.White, 0.1f);
+            Drawer3D.DrawBox(GetBoundingBox(), Color.White, 0.1f);
 
             if (g == null || g.IsDisposed)
             {
@@ -958,7 +1207,21 @@ namespace DwarfCorp
             }
             IsRebuilding = true;
 
-            BuildPrimitive(g);
+            if (GamePerformance.DebugToggle1)
+            {
+                GamePerformance.Instance.StartTrackPerformance("VC.Rebuild.CalculateVoxelFlags");
+                //CalculateAllVoxelFlags();
+                GamePerformance.Instance.StopTrackPerformance("VC.Rebuild.CalculateVoxelFlags");
+                GamePerformance.Instance.StartTrackPerformance("VC.Rebuild(" + ID + ").BuildPrimitive_B");
+                BuildPrimitiveNew();
+                GamePerformance.Instance.StopTrackPerformance("VC.Rebuild(" + ID + ").BuildPrimitive_B");
+            }
+            else
+            {
+                GamePerformance.Instance.StartTrackPerformance("VC.Rebuild(" + ID + ").BuildPrimitive_A");
+                BuildPrimitive();
+                GamePerformance.Instance.StopTrackPerformance("VC.Rebuild(" + ID + ").BuildPrimitive_A");
+            }
             BuildGrassMotes();
             if (firstRebuild)
             {
@@ -974,11 +1237,139 @@ namespace DwarfCorp
             ShouldRebuild = false;
         }
 
-        public void BuildPrimitive(GraphicsDevice g)
+        public void BuildPrimitive()
         {
-            //Primitive.InitializeFromChunk(this, g);
-            VoxelListPrimitive primitive = new VoxelListPrimitive();
-            primitive.InitializeFromChunk(this, g);
+            if (Primitive == null)
+                Primitive = new VoxelListPrimitive();
+
+            Primitive.InitializeFromChunk(this);
+        }
+
+        public void BuildPrimitiveNew()
+        {
+            if (Primitive == null)
+                Primitive = new VoxelListPrimitive();
+
+            int maxFloor = (highestVoxelPosition == -1) ? SizeY : highestVoxelPosition;
+            highestVoxelPosition = Primitive.InitializeFromChunkNew(this, maxFloor);
+            GamePerformance.Instance.TrackValueType("topVoxelPosition", highestVoxelPosition);
+        }
+
+        public static VoxelFlags BoxFaceToVoxelFlag(BoxFace face)
+        {
+            switch (face)
+            {
+                case BoxFace.Top: return VoxelFlags.FaceTop;
+                case BoxFace.Bottom: return VoxelFlags.FaceBottom;
+                case BoxFace.Left: return VoxelFlags.FaceLeft;
+                case BoxFace.Right: return VoxelFlags.FaceRight;
+                case BoxFace.Front: return VoxelFlags.FaceFront;
+                case BoxFace.Back: return VoxelFlags.FaceBack;
+                default: return VoxelFlags.FaceTop;
+            }
+        }
+
+        public void CalculateAllVoxelFlags()
+        {
+            Voxel toCalculate = MakeVoxel(0, 0, 0);
+            for (int y = 0; y < SizeY; y++)
+            {
+                for (int x = 0; x < SizeX; x++)
+                {
+                    for (int z = 0; z < SizeZ; z++)
+                    {
+                        //if (ID.Is(37, 0, 17) && (x == 10 && y == 23 && z == 12))
+                        //    Debugger.Break();
+                        toCalculate.ChangeVoxel(x, y, z, false);
+                        CalculateVoxelFlags(toCalculate);
+                    }
+                }
+            }
+        }
+
+        public void CalculateEmptyFlags()
+        {
+            Voxel toCalculate = MakeVoxel(0, 0, 0);
+            for (int y = 0; y < SizeY; y++)
+            {
+                for (int x = 0; x < SizeX; x++)
+                {
+                    for (int z = 0; z < SizeZ; z++)
+                    {
+                        toCalculate.ChangeVoxel(x, y, z, false);
+                        Data.SetFlag(toCalculate.Index, VoxelFlags.IsEmpty, Data.IsEmpty(toCalculate.Index));
+                    }
+                }
+            }
+        }
+
+        public void CalculateVoxelFlags(Voxel v)
+        {
+            Debug.Assert(v.Chunk == this, "Voxel does not come from this VoxelChunk");
+
+            VoxelFlags faceFlags = VoxelFlags.None;
+
+            bool isEmpty = Data.IsEmpty(v.Index);
+            Data.SetFlag(v.Index, VoxelFlags.IsEmpty, isEmpty);
+
+            bool isExplored = v.IsExplored;
+
+            // We're going to do the next two checks in reverse so each one can bypass the face checking and fall through to set the flags.
+            // This avoids us having to have multiple copies of the "Clear all flags and return" code.
+            if (!isExplored || !isEmpty)
+            {
+                if (!isExplored || VoxelLibrary.HasPrimitive(v.Type))
+                {
+                    // We've passed all tests to show there is at least something to draw.
+                    faceFlags |= VoxelFlags.FacesToRender;
+
+                    Voxel voxelOnFace = MakeVoxel(0, 0, 0);
+                    Voxel worldVoxel = new Voxel();
+
+                    for (int i = 0; i < 6; i++)
+                    {
+                        BoxFace face = (BoxFace)i;
+                        VoxelFlags faceFlag = BoxFaceToVoxelFlag(face);
+                        Vector3 delta = VoxelListPrimitive.FaceDeltas[(int)face];
+
+                        Vector3 neighborPos = v.GridPosition + delta;
+
+                        bool drawFace = false;
+                        if (IsCellValid((int)neighborPos.X, (int)neighborPos.Y, (int)neighborPos.Z))
+                        {
+                            voxelOnFace.ChangeVoxel(neighborPos, false);
+                            drawFace = (voxelOnFace.IsExplored && voxelOnFace.IsEmpty) ||
+                                (voxelOnFace.Type.CanRamp && voxelOnFace.RampType != RampType.None && 
+                                VoxelListPrimitive.IsSideFace(face) && VoxelListPrimitive.ShouldDrawFace(face, voxelOnFace.RampType, v.RampType));
+                        }
+                        else
+                        {
+                            bool success = v.GetNeighborBySuccessor(delta, ref worldVoxel, false);
+                            if (success)
+                            {
+                                drawFace = (worldVoxel.IsExplored && worldVoxel.IsEmpty) ||
+                                                        (worldVoxel.Type.CanRamp && worldVoxel.RampType != RampType.None &&
+                                                        VoxelListPrimitive.IsSideFace(face) && VoxelListPrimitive.ShouldDrawFace(face, worldVoxel.RampType, v.RampType));
+                            }
+                        }
+
+                        if (drawFace) faceFlags |= faceFlag;
+                    }
+                }
+            }
+
+            Data.SetFaceFlags(v.Index, faceFlags);
+        }
+
+        /// <summary>
+        /// Fires when a voxel is placed.  Currently updates the position of the highest voxel in the chunk, if needed.
+        /// </summary>
+        /// <param name="v">The voxel that is being placed.</param>
+        public void OnVoxelPlace(Voxel v)
+        {
+            if (v == null) return;
+            int voxelY = (int)v.GridPosition.Y;
+            if (voxelY > highestVoxelPosition) highestVoxelPosition = voxelY;
         }
 
         public void NotifyChangedComponents()
@@ -1730,7 +2121,7 @@ namespace DwarfCorp
                 else
                 {
                     Point3 chunkID = ID;
-                    if (nx >= SizeZ)
+                    if (nx >= SizeX)
                     {
                         chunkID.X += 1;
                         nx = 0;
@@ -1864,6 +2255,7 @@ namespace DwarfCorp
             {
                 foreach (VoxelChunk chunk in Neighbors.Values)
                 {
+                    if (chunk == null) continue;
                     chunk.ShouldRebuild = true;
                     chunk.ShouldRecalculateLighting = true;
                     chunk.ShouldRebuildWater = true;
@@ -1884,12 +2276,10 @@ namespace DwarfCorp
             }
 
             Vector3 pos = v.Position;
-            VoxelChunk chunk = Manager.ChunkData.ChunkMap[v.ChunkID];
+            VoxelChunk chunk = v.Chunk;
             Point3 gridPoint = new Point3(v.GridPosition);
-            bool interior = Voxel.IsInteriorPoint(gridPoint, chunk);
 
-
-            if (interior)
+            if (v.IsInterior)
             {
                 for (int i = 0; i < 6; i++)
                 {
