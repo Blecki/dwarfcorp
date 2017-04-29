@@ -36,6 +36,7 @@ using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using System;
 
 namespace DwarfCorp
 {
@@ -45,54 +46,17 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class GodModeTool : PlayerTool
     {
-        [JsonIgnore]
-        public DwarfGUI GUI { get; set; }
+        public String Command;
 
-        [JsonIgnore]
-        public Window SelectorPanel { get; set; }
-        [JsonIgnore]
-        public ComboBox SelectorBox { get; set; }
-
-        public bool IsActive
-        {
-            get { return isActive; }
-            set
-            {
-                isActive = value;
-                if(value)
-                {
-                    orignalSelection = Player.VoxSelector.SelectionType;
-                }
-
-                Player.VoxSelector.SelectionType = GetSelectionType(value);
-                SelectorPanel.IsVisible = value;
-
-                if (!value)
-                {
-                    SelectorBox.Kill();
-                }
-            }
-        }
-
-        private bool isActive = false;
         public ChunkManager Chunks { get; set; }
-
-        private VoxelSelectionType orignalSelection = VoxelSelectionType.SelectEmpty;
-
-        private VoxelSelectionType GetSelectionType(bool active)
-        {
-            return active ? GetSelectionTypeBySelectionBoxValue(SelectorBox.CurrentValue) : orignalSelection;
-        }
-
 
         public override void OnBegin()
         {
-
+            Player.VoxSelector.SelectionType = GetSelectionTypeBySelectionBoxValue(Command);
         }
 
         public override void OnEnd()
         {
-            IsActive = false;
         }
 
         public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
@@ -100,96 +64,10 @@ namespace DwarfCorp
 
         }
 
-
         public GodModeTool(DwarfGUI gui, GameMaster master)
         {
-            GUI = gui;
             Player = master;
-            
-            SelectorPanel = new Window(GUI, gui.RootComponent)
-            {
-                LocalBounds = new Rectangle(5, 5, 300, 200)
-            };
-
-            Label label = new Label(GUI, SelectorPanel, "Cheat Mode!", GUI.DefaultFont)
-            {
-                LocalBounds = new Rectangle(10, 10, 250, 32)
-            };
-
-            SelectorBox = new ComboBox(GUI, SelectorPanel)
-            {
-                LocalBounds = new Rectangle(10, 64, 250, 32),
-                WidthSizeMode = GUIComponent.SizeMode.Fit
-            };
-
-            IsActive = false;
             Chunks = Player.World.ChunkManager;
-
-
-            foreach(string s in RoomLibrary.GetRoomTypes())
-            {
-                SelectorBox.AddValue("Build/" + s);
-            }
-
-            List<string> strings = EntityFactory.EntityFuncs.Keys.ToList();
-            strings.Sort();
-            foreach (string s in strings)
-            {
-                SelectorBox.AddValue("Spawn/" + s);
-            }
-
-            foreach(VoxelType type in VoxelLibrary.PrimitiveMap.Keys.Where(type => type.Name != "empty" && type.Name != "water"))
-            {
-                SelectorBox.AddValue("Place/" + type.Name);
-            }
-
-
-            SelectorBox.AddValue("Delete Block");
-            SelectorBox.AddValue("Kill Block");
-            SelectorBox.AddValue("Kill Things");
-            SelectorBox.AddValue("Fill Water");
-            SelectorBox.AddValue("Fill Lava");
-            SelectorBox.AddValue("Fire");
-            SelectorBox.OnSelectionModified += SelectorBox_OnSelectionModified;
-
-
-            Button tradeButton = new Button(GUI, SelectorPanel, "Send Trade Envoy", GUI.DefaultFont,
-                Button.ButtonMode.PushButton, null)
-            {
-                LocalBounds = new Rectangle(10, 128, 200, 50)
-            };
-            tradeButton.OnClicked += () =>
-            {
-                Faction toSend = null;
-                foreach (var faction in Player.World.ComponentManager.Factions.Factions)
-                {
-                    if (faction.Value.Race.IsIntelligent && faction.Value.Race.IsNative)
-                    {
-                        toSend = faction.Value;
-                        break;
-                    }
-                }
-                if (toSend == null) return;
-                Player.World.ComponentManager.Diplomacy.SendTradeEnvoy(toSend, Player.World);
-            };
-
-            Checkbox drawPaths = new Checkbox(GUI, SelectorPanel, "Draw Paths", GUI.DefaultFont,
-                GameSettings.Default.DrawPaths)
-            {
-                LocalBounds = new Rectangle(200, 32, 100, 50)
-            };
-            drawPaths.OnCheckModified += (bool value) =>
-            {
-                GameSettings.Default.DrawPaths = value;
-            };
-
-            SelectorPanel.IsVisible = false;
-        }
-
-        public override void Destroy()
-        {
-            SelectorBox.OnSelectionModified -= SelectorBox_OnSelectionModified;
-            SelectorBox.CleanUp();
         }
 
         private VoxelSelectionType GetSelectionTypeBySelectionBoxValue(string arg)
@@ -211,30 +89,20 @@ namespace DwarfCorp
 
         public override void OnVoxelsSelected(List<Voxel> refs, InputManager.MouseButton button)
         {
-            if(!IsActive)
-            {
-                return;
-            }
-
-            string command = SelectorBox.CurrentValue;
-            if(command == "")
-            {
-                return;
-            }
-
+           
             HashSet<Point3> chunksToRebuild = new HashSet<Point3>();
 
-            if(command.Contains("Build/"))
+            if(Command.Contains("Build/"))
             {
-                string type = command.Substring(6);
+                string type = Command.Substring(6);
                 BuildRoomOrder des = new BuildRoomOrder(RoomLibrary.CreateRoom(Player.Faction, type, refs, false, Player.World), Player.Faction, Player.World);
                 Player.Faction.RoomBuilder.BuildDesignations.Add(des);
                 Player.Faction.RoomBuilder.DesignatedRooms.Add(des.ToBuild);
                 des.Build();
             }
-            else if (command.Contains("Spawn/"))
+            else if (Command.Contains("Spawn/"))
             {
-                string type = command.Substring(6);
+                string type = Command.Substring(6);
                 foreach (Voxel vox in refs.Where(vox => vox != null))
                 {
                     if (vox.IsEmpty)
@@ -247,9 +115,9 @@ namespace DwarfCorp
             {
                 foreach(Voxel vox in refs.Where(vox => vox != null))
                 {
-                    if(command.Contains("Place/"))
+                    if(Command.Contains("Place/"))
                     {
-                        string type = command.Substring(6);
+                        string type = Command.Substring(6);
                         vox.Type = VoxelLibrary.GetVoxelType(type);
                         vox.Water = new WaterCell();
                         vox.Health = vox.Type.StartingHealth;
@@ -267,7 +135,7 @@ namespace DwarfCorp
 
                         chunksToRebuild.Add(vox.ChunkID);
                     }
-                    else switch(command)
+                    else switch(Command)
                     {
                         case "Delete Block":
                         {

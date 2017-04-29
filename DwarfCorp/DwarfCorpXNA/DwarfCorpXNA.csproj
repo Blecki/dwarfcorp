@@ -225,10 +225,9 @@
     <Compile Include="GameStates\CompanyMakerState.cs" />
     <Compile Include="GameStates\CreditsState.cs" />
     <Compile Include="GameStates\DiplomacyState.cs" />
-    <Compile Include="GameStates\GameLoaderState.cs" />
     <Compile Include="GameStates\GameState.cs" />
     <Compile Include="GameStates\GameStateManager.cs" />
-    <Compile Include="GameStates\NewWorldLoaderState.cs" />
+    <Compile Include="GameStates\WorldLoaderState.cs" />
     <Compile Include="GameStates\PaginatedChooserState.cs" />
     <Compile Include="GameStates\NewGameLoaderState.cs" />
     <Compile Include="GameStates\NewEconomyState.cs" />
@@ -246,7 +245,6 @@
     <Compile Include="GameStates\PlayState.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGenerator.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGenerationSettings.cs" />
-    <Compile Include="GameStates\WorldLoaderState.cs" />
     <Compile Include="Graphics\Cameras\Camera.cs" />
     <Compile Include="Graphics\Cameras\OrbitCamera.cs" />
     <Compile Include="Graphics\Drawing\Drawer2D\DrawCommand2D.cs" />
@@ -383,6 +381,8 @@
     <Compile Include="NewGui\BuildWallInfo.cs" />
     <Compile Include="NewGui\BuildRoomInfo.cs" />
     <Compile Include="NewGui\ApplicantInfo.cs" />
+    <Compile Include="NewGui\HorizontalMenuTray.cs" />
+    <Compile Include="NewGui\GodMenu.cs" />
     <Compile Include="NewGui\WorldGenerationSettingsDialog.cs" />
     <Compile Include="NewGui\FinancePanel.cs" />
     <Compile Include="NewGui\StockTicker.cs" />

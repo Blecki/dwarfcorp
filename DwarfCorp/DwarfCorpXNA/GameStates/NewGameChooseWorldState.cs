@@ -62,7 +62,7 @@ namespace DwarfCorp.GameStates
                 StateManager.PushState(new WorldGeneratorState(Game, StateManager, null, true)));
 
             MakeMenuItem(frame, "Load World", "Load a continent from an existing file.", (sender, args) =>
-                StateManager.PushState(new NewWorldLoaderState(Game, StateManager)));
+                StateManager.PushState(new WorldLoaderState(Game, StateManager)));
 
             MakeMenuItem(frame, "Debug World", "Create a debug world.", (sender, args) => 
                 StateManager.PushState(new NewGameCreateDebugWorldState(Game, StateManager)));
