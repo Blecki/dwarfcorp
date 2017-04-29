@@ -45,9 +45,7 @@ namespace DwarfCorp
     public class MagicTool : PlayerTool
     {
         public Spell CurrentSpell { get; set; }
-        public MagicMenu MagicMenu { get; set; }
         public ProgressBar MagicBar { get; set; }
-
 
         public MagicTool()
         {
@@ -56,11 +54,6 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
-            if (MagicMenu != null)
-            {
-                MagicMenu.Destroy();
-            }
-
             // Todo: Reimplement
             //MagicMenu = new MagicMenu(Player.World.GUI, Player.World.GUI.RootComponent, Player)
             //{
@@ -96,21 +89,16 @@ namespace DwarfCorp
         {
             if (MagicBar.IsVisible)
             {
-                MagicBar.Value = MagicMenu.Master.Spells.Mana/MagicMenu.Master.Spells.MaxMana;
-                MagicBar.ToolTip = "Remaining Mana Pool " + (int) MagicMenu.Master.Spells.Mana;
+                MagicBar.Value = Player.Spells.Mana/Player.Spells.MaxMana;
+                MagicBar.ToolTip = "Remaining Mana Pool " + (int) Player.Spells.Mana;
             }
         }
 
         public override void OnEnd()
         {
-            if (MagicMenu != null)
-            {
-                MagicMenu.TweenOut(Drawer2D.Alignment.Right);
-                MagicBar.TweenOut(Drawer2D.Alignment.Right);
-            }
+            MagicBar.TweenOut(Drawer2D.Alignment.Right);
         }
-
-
+        
         public MagicTool(GameMaster master)
         {
             Player = master;

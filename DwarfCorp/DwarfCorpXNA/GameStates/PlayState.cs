@@ -55,6 +55,7 @@ namespace DwarfCorp.GameStates
         private Widget PausedWidget;
         private NewGui.InfoTray InfoTray;
         private NewGui.ToggleTray BrushTray;
+        private NewGui.GodMenu GodMenu;
 
         private class ToolbarItem
         {
@@ -235,8 +236,12 @@ namespace DwarfCorp.GameStates
             {
                 // Let old input handle mouse interaction for now. Will eventually need to be replaced.
 
-                if (@event == Gum.InputEvents.MouseClick) // Mouse down but not handled by GUI? Collapse menu.
+                // Mouse down but not handled by GUI? Collapse menu.
+                if (@event == Gum.InputEvents.MouseClick) 
+                {
                     BottomRightTray.CollapseTrays();
+                    GodMenu.CollapseTrays();
+                }
             });
 
             World.Update(gameTime);
@@ -474,8 +479,9 @@ namespace DwarfCorp.GameStates
             GuiRoot.RootItem.AddChild(new NewGui.ResourcePanel
             {
                 AutoLayout = AutoLayout.FloatTop,
-                MinimumSize = new Point(256, 128),
-                Master = Master
+                MinimumSize = new Point(256, 0),
+                Master = Master,
+                Transparent = true
             });
 
 
@@ -656,7 +662,7 @@ namespace DwarfCorp.GameStates
 
 
             #endregion
-
+            
             #region Setup tool tray
 
             BottomRightTray = GuiRoot.RootItem.AddChild(new NewGui.ToolTray.Tray
@@ -1253,6 +1259,18 @@ namespace DwarfCorp.GameStates
 
             #endregion
 
+            #region GOD MODE
+
+            GodMenu = GuiRoot.RootItem.AddChild(new NewGui.GodMenu
+            {
+                Master = Master,
+                AutoLayout = AutoLayout.FloatLeft
+            }) as NewGui.GodMenu;
+
+            GodMenu.Hidden = true;
+
+            #endregion
+
             GuiRoot.RootItem.Layout();
         }
 
@@ -1344,6 +1362,11 @@ namespace DwarfCorp.GameStates
                 World.DrawMap = !World.DrawMap;
                 MinimapFrame.Hidden = true;
                 MinimapFrame.Invalidate();
+            }
+            else if (key == ControlSettings.Mappings.GodMode)
+            {
+                GodMenu.Hidden = !GodMenu.Hidden;
+                GodMenu.Invalidate();
             }
         }
 

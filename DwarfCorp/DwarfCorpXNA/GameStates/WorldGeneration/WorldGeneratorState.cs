@@ -29,7 +29,7 @@ namespace DwarfCorp.GameStates
                 {
                     Width = 512,
                     Height = 512,
-                    Name = WorldSetupState.GetRandomWorldName(),
+                    Name = "Dwarfland",
                     NumCivilizations = 5,
                     NumFaults = 3,
                     NumRains = 1000,
@@ -55,12 +55,6 @@ namespace DwarfCorp.GameStates
         {
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
-
-            if (IsInitialized) // Must have come here from advanced settings editor.
-            {
-                RestartGeneration();
-                return;
-            }
 
             GuiRoot = new Gum.Root(Gum.Root.MinimumSize, DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
@@ -130,8 +124,13 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gum.AutoLayout.DockTop,
                 OnClick = (sender, args) =>
                 {
-                    var advancedSettingsEditor = new WorldSetupState(Game, StateManager, Settings);
-                    StateManager.PushState(advancedSettingsEditor);
+                    var advancedSettingsEditor = GuiRoot.ConstructWidget(new NewGui.WorldGenerationSettingsDialog
+                    {
+                        Settings = Settings,
+                        OnClose = (s) => RestartGeneration()
+                    });
+
+                    GuiRoot.ShowPopup(advancedSettingsEditor, Gum.Root.PopupExclusivity.AddToStack);
                 }
             });
 
@@ -274,6 +273,7 @@ namespace DwarfCorp.GameStates
                 Generator.LoadDummy(
                     new Color[Overworld.Map.GetLength(0) * Overworld.Map.GetLength(1)], 
                     Game.GraphicsDevice);
+                Preview.SetGenerator(Generator);
             }
 
             base.OnEnter();

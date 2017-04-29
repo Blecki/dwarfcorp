@@ -81,6 +81,14 @@ namespace DwarfCorp.NewGui
             public bool KeepChildVisible = false;
             public bool ExpandChildWhenDisabled = false;
 
+            public enum ExpansionDirections
+            {
+                Up,
+                Left
+            }
+
+            public ExpansionDirections ExpansionDirection = ExpansionDirections.Up;
+
             public Icon()
             {
                 OnMouseEnter = (sender, args) =>
@@ -125,15 +133,25 @@ namespace DwarfCorp.NewGui
                 {
                     if (ExpansionChild != null)
                     {
-                        var midPoint = sender.Rect.X + (sender.Rect.Width / 2);
-                        ExpansionChild.Rect.X = midPoint - (ExpansionChild.Rect.Width / 2);
-                        ExpansionChild.Rect.Y = sender.Rect.Y - ExpansionChild.Rect.Height;
+                        if (ExpansionDirection == ExpansionDirections.Up)
+                        {
+                            var midPoint = sender.Rect.X + (sender.Rect.Width / 2);
+                            ExpansionChild.Rect.X = midPoint - (ExpansionChild.Rect.Width / 2);
+                            ExpansionChild.Rect.Y = sender.Rect.Y - ExpansionChild.Rect.Height;
 
-                        if (ExpansionChild.Rect.X < Parent.Rect.X)
-                            ExpansionChild.Rect.X = Parent.Rect.X;
+                            if (ExpansionChild.Rect.X < Parent.Rect.X)
+                                ExpansionChild.Rect.X = Parent.Rect.X;
 
-                        if (ExpansionChild.Rect.Right > Root.VirtualScreen.Right)
-                            ExpansionChild.Rect.X = Root.VirtualScreen.Right - ExpansionChild.Rect.Width;
+                            if (ExpansionChild.Rect.Right > Root.VirtualScreen.Right)
+                                ExpansionChild.Rect.X = Root.VirtualScreen.Right - ExpansionChild.Rect.Width;
+                        }
+                        else if (ExpansionDirection == ExpansionDirections.Left)
+                        {
+                            // Position child to left.
+
+
+
+                        }
                     }
                 };
             }

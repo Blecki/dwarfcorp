@@ -447,21 +447,21 @@ namespace DwarfCorp
             {
                 World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkHeight, ChunkManager.SliceMode.Y);
             }
-            else if(key == ControlSettings.Mappings.GodMode)
-            {
-                if(CurrentToolMode == ToolMode.God)
-                {
-                    CurrentToolMode = ToolMode.SelectUnits;
-                    GodModeTool godMode = (GodModeTool) Tools[ToolMode.God];
-                    godMode.IsActive = false;
-                }
-                else
-                {
-                    CurrentToolMode = ToolMode.God;
-                    GodModeTool godMode = (GodModeTool)Tools[ToolMode.God];
-                    godMode.IsActive = true;
-                }
-            }
+            //else if(key == ControlSettings.Mappings.GodMode)
+            //{
+            //    if(CurrentToolMode == ToolMode.God)
+            //    {
+            //        CurrentToolMode = ToolMode.SelectUnits;
+            //        GodModeTool godMode = (GodModeTool) Tools[ToolMode.God];
+            //        godMode.IsActive = false;
+            //    }
+            //    else
+            //    {
+            //        CurrentToolMode = ToolMode.God;
+            //        GodModeTool godMode = (GodModeTool)Tools[ToolMode.God];
+            //        godMode.IsActive = true;
+            //    }
+            //}
         }
 
         // Todo: Delete this.
