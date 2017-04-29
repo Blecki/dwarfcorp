@@ -75,13 +75,6 @@ namespace DwarfCorp
             {
                 ContentPaths.Audio.Oscar.sfx_env_water_splash
             };
-            Noises["Climb"] = new List<string>()
-            {
-                ContentPaths.Audio.Oscar.sfx_ic_dwarf_climb_1,
-                ContentPaths.Audio.Oscar.sfx_ic_dwarf_climb_2,
-                ContentPaths.Audio.Oscar.sfx_ic_dwarf_climb_3
-            };
-
             Noises["Stash"] = new List<string>()
             {
                 ContentPaths.Audio.Oscar.sfx_ic_dwarf_stash_item

@@ -1,4 +1,4 @@
-﻿// Door.cs
+// Door.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -48,6 +48,7 @@ namespace DwarfCorp
         public Timer OpenTimer { get; set; }
         bool IsOpen { get; set; }
         bool IsMoving { get; set; }
+
         public Door()
         {
             IsOpen = false;
@@ -91,6 +92,7 @@ namespace DwarfCorp
             {
                 IsMoving = true;
                 OpenTimer.Reset();
+                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_door_open_generic, Position, true, 0.5f);
             }
 
             IsOpen = true;
@@ -102,6 +104,7 @@ namespace DwarfCorp
             {
                 IsMoving = true;
                 OpenTimer.Reset();
+                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_door_close_generic, Position, true, 0.5f);
             }
             IsOpen = false;
         }

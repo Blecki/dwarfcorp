@@ -150,6 +150,14 @@ namespace DwarfCorp
             {
                 ContentPaths.Audio.Oscar.sfx_ic_dwarf_jump
             };
+
+            NoiseMaker.Noises["Climb"] = new List<string>()
+            {
+                ContentPaths.Audio.Oscar.sfx_ic_dwarf_climb_1,
+                ContentPaths.Audio.Oscar.sfx_ic_dwarf_climb_2,
+                ContentPaths.Audio.Oscar.sfx_ic_dwarf_climb_3
+            };
+
             MinimapIcon minimapIcon = new MinimapIcon(Physics, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 0));
 
             Stats.FullName = TextGenerator.GenerateRandom("$firstname", " ", "$lastname");

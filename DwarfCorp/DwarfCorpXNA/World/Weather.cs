@@ -129,6 +129,17 @@ namespace DwarfCorp
             public void Start()
             {
                 World.MakeAnnouncement("A storm is coming!", null);
+
+                switch (TypeofStorm)
+                {
+                        case StormType.RainStorm:
+                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_rain_storm_alert, 0.5f);
+                            break;
+                        case StormType.SnowStorm:
+                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_snow_storm_alert, 0.5f);
+                            break;
+                }
+
                 BoundingBox bounds = World.ChunkManager.Bounds;
                 Vector3 extents = bounds.Extents();
                 Vector3 center = bounds.Center();
