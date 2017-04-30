@@ -58,6 +58,65 @@ namespace DwarfCorp
 
         public static IEnumerable<Act.Status> EatStockedFood(this Creature agent)
         {
+            List<ResourceAmount> foods =
+                agent.Inventory.Resources.GetResources(new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Edible));
+
+            if (foods.Count == 0 && agent.Allies == "Dwarf")
+            {
+
+                agent.Manager.World.MakeAnnouncement("We're out of food!", "Our stockpiles don't have any food. Our employees will starve!");
+                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
+                yield return Act.Status.Fail;
+                yield break;
+            }
+
+            Body foodBody = null;
+            Timer eatTimer = new Timer(3.0f, true);
+
+            foreach (ResourceAmount resourceAmount in foods)
+            {
+                if (resourceAmount.NumResources > 0)
+                {
+                    List<Body> bodies = agent.Inventory.RemoveAndCreate(new ResourceAmount(resourceAmount.ResourceType, 1));
+                    var resource = ResourceLibrary.GetResourceByName(resourceAmount.ResourceType);
+                    agent.Status.Hunger.CurrentValue += resource.FoodContent;
+                    agent.NoiseMaker.MakeNoise("Chew", agent.AI.Position);
+                    if (bodies.Count == 0)
+                    {
+                        agent.Manager.World.MakeAnnouncement("We're out of food!", "Our stockpiles don't have any food. Our employees will starve!");
+                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
+                        yield return Act.Status.Fail;
+                    }
+                    else
+                    {
+                        foodBody = bodies[0];
+
+                        while (!eatTimer.HasTriggered)
+                        {
+                            eatTimer.Update(DwarfTime.LastTime);
+                            foodBody.LocalTransform = agent.Physics.LocalTransform;
+                            foodBody.LocalPosition = agent.Physics.Position + Vector3.Up * 0.1f + Vector3.Forward * 0.25f;
+                            foodBody.IsActive = false;
+                            agent.Physics.Velocity = Vector3.Zero;
+                            agent.CurrentCharacterMode = Creature.CharacterMode.Sitting;
+                            if (MathFunctions.RandEvent(0.01f))
+                            {
+                                agent.World.ParticleManager.Trigger("dirt_particle", agent.Physics.Position, Color.White,
+                                    1);
+                            }
+                            yield return Act.Status.Running;
+                        }
+
+
+                        agent.AI.AddThought(Thought.ThoughtType.AteFood);
+                        foodBody.Delete();
+                        yield return Act.Status.Success;
+                    }
+                    yield break;
+                }
+            }
+
+            /*
             List<ResourceAmount> foods = agent.Faction.ListResourcesWithTag(Resource.ResourceTags.Edible);
 
             if (foods.Count == 0)
@@ -104,6 +163,7 @@ namespace DwarfCorp
                 yield return Act.Status.Fail;
                 yield break;
             }
+             */
         }
 
         public static IEnumerable<Act.Status> FindAndReserve(this Creature agent, string tag, string thing)

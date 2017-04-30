@@ -1,4 +1,4 @@
-﻿// GetResourcesAct.cs
+// GetResourcesAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -63,6 +63,14 @@ namespace DwarfCorp
         {
             Name = "Get Resources";
             Resources = resources;
+
+        }
+
+        public GetResourcesAct(CreatureAI agent, Resource.ResourceTags resources) :
+            base(agent)
+        {
+            Name = "Get Resources";
+            Resources = new List<Quantitiy<Resource.ResourceTags>>(){new Quantitiy<Resource.ResourceTags>(resources)};
 
         }
 
