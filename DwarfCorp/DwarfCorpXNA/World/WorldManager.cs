@@ -280,7 +280,6 @@ namespace DwarfCorp
 
         public GameState gameState;
 
-        public DwarfGUI GUI;
         public Gum.Root NewGui;
 
         public Action<String> ShowTooltip = null;
@@ -293,8 +292,7 @@ namespace DwarfCorp
         {
             get
             {
-                return GUI.IsMouseOver() ||
-                    NewGui.HoverItem != null;
+                return NewGui.HoverItem != null;
                 // Don't detect tooltips and tool popups.
             }
         }
@@ -324,9 +322,8 @@ namespace DwarfCorp
             Time = new WorldTime();
         }
 
-        public void Setup(DwarfGUI outerGUI)
+        public void Setup()
         {
-            GUI = outerGUI;
             Screenshots = new List<Screenshot>();
 
             // In this code block we load some stuff that can't be done in a thread
@@ -782,7 +779,7 @@ namespace DwarfCorp
         public void CreateGameMaster()
         {
             Master = new GameMaster(ComponentManager.Factions.Factions["Player"], Game, ComponentManager, ChunkManager,
-                Camera, GraphicsDevice, GUI);
+                Camera, GraphicsDevice);
         }
 
         /// <summary>
@@ -1279,10 +1276,19 @@ namespace DwarfCorp
                 bool allAsleep = Master.AreAllEmployeesAsleep();
                 if (SleepPrompt && allAsleep && !FastForwardToDay && Time.IsNight())
                 {
-                    Dialog sleepingPrompt = Dialog.Popup(GUI, "Employees Asleep",
-                        "All of your employees are asleep. Skip to daytime?", Dialog.ButtonType.OkAndCancel);
+                    var sleepingPrompt = NewGui.ConstructWidget(new NewGui.Confirm
+                    {
+                        Text = "All of your employees are asleep. Skip to daytime?",
+                        OkayText = "Skip to Daytime",
+                        CancelText = "Don't Skip",
+                        OnClose = (sender) =>
+                        {
+                            if ((sender as NewGui.Confirm).DialogResult == DwarfCorp.NewGui.Confirm.Result.OKAY)
+                                FastForwardToDay = true;
+                        }
+                    });
+                    NewGui.ShowPopup(sleepingPrompt, Gum.Root.PopupExclusivity.AddToStack);
                     SleepPrompt = false;
-                    sleepingPrompt.OnClosed += sleepingPrompt_OnClosed;
                 }
                 else if (!allAsleep)
                 {
@@ -1316,14 +1322,6 @@ namespace DwarfCorp
             }
         }
 
-        private void sleepingPrompt_OnClosed(Dialog.ReturnStatus status)
-        {
-            if (status == Dialog.ReturnStatus.Ok)
-            {
-                FastForwardToDay = true;
-            }
-        }
-
         public bool FastForwardToDay { get; set; }
         public Embarkment InitialEmbark { get; set; }
 
@@ -1350,7 +1348,7 @@ namespace DwarfCorp
         {
             Paused = true;
             WaitState waitforsave = new WaitState(Game, "SaveWait", gameState.StateManager,
-                () => SaveThreadRoutine(filename), GUI);
+                () => SaveThreadRoutine(filename));
             if (callback != null)
                 waitforsave.OnFinished += (bool b, WaitStateException e) => callback(b, e);
             gameState.StateManager.PushState(waitforsave);
