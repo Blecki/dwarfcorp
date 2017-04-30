@@ -1598,6 +1598,10 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Content Include="Particles\particles.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>particles</Name>
+    </Content>
     <None Include="Entities\Animals\chicken_animation.json">
       <Name>chicken_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

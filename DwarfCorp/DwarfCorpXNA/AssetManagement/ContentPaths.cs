@@ -236,6 +236,7 @@ namespace DwarfCorp
             public static string raindrop = ProgramData.CreatePath("Particles", "raindrop");
             public static string stormclouds = ProgramData.CreatePath("Sky", "stormclouds");
             public static string snow_particle = ProgramData.CreatePath("Particles", "snow_particle");
+            public static string particles = ProgramData.CreatePath("Particles", "particles.json");
         }
         public class Effects
         {
@@ -251,6 +252,7 @@ namespace DwarfCorp
             public static string pierce = ProgramData.CreatePath("Effects", "pierce");
             public static string hit = ProgramData.CreatePath("Effects", "hit");
             public static string explode = ProgramData.CreatePath("Effects", "explode");
+            public static string particles = ProgramData.CreatePath("Effects", "particles.json");
         }
 
         public class World

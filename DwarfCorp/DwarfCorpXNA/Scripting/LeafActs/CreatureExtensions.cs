@@ -94,15 +94,18 @@ namespace DwarfCorp
                         while (!eatTimer.HasTriggered)
                         {
                             eatTimer.Update(DwarfTime.LastTime);
+                            Matrix rot = agent.Physics.LocalTransform;
+                            rot.Translation = Vector3.Zero;
                             foodBody.LocalTransform = agent.Physics.LocalTransform;
-                            foodBody.LocalPosition = agent.Physics.Position + Vector3.Up * 0.1f + Vector3.Forward * 0.25f;
+                            Vector3 foodPosition = agent.Physics.Position + Vector3.Up * 0.05f + Vector3.Transform(Vector3.Forward, rot) * 0.5f;
+                            foodBody.LocalPosition = foodPosition;
                             foodBody.IsActive = false;
                             agent.Physics.Velocity = Vector3.Zero;
                             agent.CurrentCharacterMode = Creature.CharacterMode.Sitting;
-                            if (MathFunctions.RandEvent(0.01f))
+                            if (MathFunctions.RandEvent(0.05f))
                             {
-                                agent.World.ParticleManager.Trigger("dirt_particle", agent.Physics.Position, Color.White,
-                                    1);
+                                agent.World.ParticleManager.Trigger("crumbs", foodPosition, Color.White,
+                                    3);
                             }
                             yield return Act.Status.Running;
                         }

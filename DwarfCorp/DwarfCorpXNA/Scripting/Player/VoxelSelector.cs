@@ -254,6 +254,7 @@ namespace DwarfCorp
             // If there is a voxel under the mouse...
             if (underMouse != null)
             {
+                //World.ParticleManager.Trigger("crumbs", underMouse.Position + Vector3.Up, Color.White, 1);
                 VoxelUnderMouse = underMouse;
                 // Update the cursor light.
                 World.CursorLightPos = underMouse.Position + new Vector3(0.5f, 0.5f, 0.5f);
