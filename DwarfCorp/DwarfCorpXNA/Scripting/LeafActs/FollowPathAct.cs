@@ -232,12 +232,6 @@ namespace DwarfCorp
             half.Y = Creature.Physics.BoundingBox.Extents().Y * 2;
             Vector3 nextPosition = Vector3.Zero;
             Vector3 currPosition = action.Voxel.Position + half;
-            Vector3 prevPosition = currPosition;
-
-            if (currentIndex > 0 && Path.Count > 0)
-            {
-                prevPosition = Path.ElementAt(currentIndex - 1).Voxel.Position + half;
-            }
 
             currPosition += RandomPositionOffsets[currentIndex];
             if (nextID < Path.Count)

@@ -1,4 +1,4 @@
-﻿// CreatureExtensions.cs
+// CreatureExtensions.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -66,6 +66,7 @@ namespace DwarfCorp
                 if (agent.Allies == "Dwarf")
                 {
                     agent.Manager.World.MakeAnnouncement("We're out of food!", "Our stockpiles don't have any food. Our employees will starve!");
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
                 }
                 yield return Act.Status.Fail;
                 yield break;
@@ -97,6 +98,7 @@ namespace DwarfCorp
                 if (agent.Allies == "Dwarf")
                 {
                     agent.Manager.World.MakeAnnouncement("We're out of food!", "Our stockpiles don't have any food. Our employees will starve!");
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
                 }
 
                 yield return Act.Status.Fail;

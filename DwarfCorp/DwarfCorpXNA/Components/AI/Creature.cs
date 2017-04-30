@@ -732,11 +732,7 @@ namespace DwarfCorp
                 return;
             }
 
-            float veloNorm = Physics.Velocity.Length();
-            if (veloNorm > Stats.MaxSpeed)
-            {
-                Physics.Velocity = (Physics.Velocity / veloNorm) * Stats.MaxSpeed;
-            }
+            Physics.Velocity = MathFunctions.ClampXZ(Physics.Velocity, Stats.MaxSpeed);
         }
 
         /// <summary>

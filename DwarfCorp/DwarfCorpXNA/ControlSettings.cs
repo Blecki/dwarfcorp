@@ -1,4 +1,4 @@
-﻿// ControlSettings.cs
+// ControlSettings.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -58,6 +58,7 @@ namespace DwarfCorp
             public Keys SliceSelected = Keys.Q;
             public Keys Unslice = Keys.E;
             public Keys ToggleGUI = Keys.B;
+            public Keys Jump = Keys.C;
 
             // Toggles a variable in GamePerformance that can be used with if-blocks to quickly change between old and new code for comparison purposes.
             // Likely should be removed for a true release as there should be no toggles left in.

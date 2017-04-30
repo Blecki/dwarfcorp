@@ -45,8 +45,8 @@ namespace DwarfCorp
     /// </summary>
     public class ContentPaths
     {
-        public static string controls = ProgramData.CreatePath("controls.json");
-        public static string settings = ProgramData.CreatePath("settings.json");
+        public static string controls = ProgramData.CreatePath(DwarfGame.GetGameDirectory(), "controls.json");
+        public static string settings = ProgramData.CreatePath(DwarfGame.GetGameDirectory(), "settings.json");
     public class Audio
     {
             public class Oscar

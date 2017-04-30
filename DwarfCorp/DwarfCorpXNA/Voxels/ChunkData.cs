@@ -114,7 +114,7 @@ namespace DwarfCorp
 
         public void SetMaxViewingLevel(float level, ChunkManager.SliceMode slice)
         {
-            if (Math.Abs(level - MaxViewingLevel) < 0.1f && slice != Slice)
+            if (Math.Abs(level - MaxViewingLevel) < 0.1f && slice == Slice)
             {
                 return;
             }

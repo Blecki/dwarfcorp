@@ -1,4 +1,4 @@
-﻿// TextureManager.cs
+// TextureManager.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -32,6 +32,7 @@
 // THE SOFTWARE.
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -88,7 +89,11 @@ namespace DwarfCorp
 
         public Texture2D GetInstanceTexture(string asset)
         {
-            Texture2D toReturn =  Content.Load<Texture2D>(asset);
+            if (AssetMap.ContainsValue(asset))
+            {
+                return AssetMap.FirstOrDefault(pair => pair.Value == asset).Key;
+            }
+            Texture2D toReturn = Content.Load<Texture2D>(asset);
             AssetMap[toReturn] = asset;
             return toReturn;
         }

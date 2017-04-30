@@ -168,8 +168,17 @@ namespace DwarfCorp.GameStates
                 InputManager.KeyReleasedCallback += TemporaryKeyPressHandler;
                 IsInitialized = true;
                 SoundManager.CurrentMusic.PlayTrack("main_theme_day");
-                World.Time.Dawn += time => SoundManager.PlayMusic("main_theme_day");
-                World.Time.NewNight += time => SoundManager.PlayMusic("main_theme_night");
+                World.Time.Dawn += time =>
+                {
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_daytime);
+                    SoundManager.PlayMusic("main_theme_day");
+                };
+
+                World.Time.NewNight += time =>
+                {
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_nighttime);
+                    SoundManager.PlayMusic("main_theme_night");
+                };
             }
 
             World.Unpause();
