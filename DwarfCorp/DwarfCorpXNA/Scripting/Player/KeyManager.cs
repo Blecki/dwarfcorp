@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,6 +33,7 @@ namespace DwarfCorp
             ControlSettings.Mappings.ToggleGUI = this["Toggle GUI"];
             ControlSettings.Mappings.Map = this["Toggle Map"];
             ControlSettings.Mappings.Pause = this["Pause"];
+            ControlSettings.Mappings.Jump = this["Jump"];
             ControlSettings.Save();
         }
 
@@ -58,6 +59,7 @@ namespace DwarfCorp
             this["Toggle GUI"] = ControlSettings.Mappings.ToggleGUI;
             this["Toggle Map"] = ControlSettings.Mappings.Map;
             this["Pause"] = ControlSettings.Mappings.Pause;
+            this["Jump"] = ControlSettings.Mappings.Jump;
         }
 
         public KeyManager()
