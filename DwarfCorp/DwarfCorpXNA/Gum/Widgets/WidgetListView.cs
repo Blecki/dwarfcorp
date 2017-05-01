@@ -70,6 +70,12 @@ namespace Gum.Widgets
             AddChild(Item);
         }
 
+        public void ClearItems()
+        {
+            Children.Clear();
+            Children.Add(ScrollBar);
+        }
+
         public override Point GetBestSize()
         {
             if (Rect.Width == 0 || Rect.Height == 0) return new Point(128, 128); // Arbitrary!

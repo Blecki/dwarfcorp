@@ -1585,6 +1585,11 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="newgui\dwarves.png">
+      <Name>dwarves</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <None Include="Entities\Animals\chicken_animation.json">
       <Name>chicken_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
