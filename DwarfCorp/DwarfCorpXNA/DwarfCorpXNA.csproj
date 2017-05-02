@@ -284,7 +284,7 @@
     <Compile Include="Graphics\Primitives\PrimitiveLibrary.cs" />
     <Compile Include="Graphics\Primitives\VoxelListPrimitive.cs" />
     <Compile Include="Graphics\SelectionBuffer.cs" />
-    <Compile Include="GUI\Indicators\IndicatorManager.cs" />
+    <Compile Include="World\IndicatorManager.cs" />
     <Compile Include="Gum\Enums.cs" />
     <Compile Include="Gum\Geo\Basics.cs" />
     <Compile Include="Gum\Geo\CreateQuad.cs" />
