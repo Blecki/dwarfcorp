@@ -208,6 +208,61 @@ namespace DwarfCorp
         /// <summary> This is what the character is currently doing (used for animation) </summary>
         protected CharacterMode currentCharacterMode = CharacterMode.Idle;
 
+        public enum CreatureGender
+        {
+            Male,
+            Female,
+            Nonbinary
+        }
+
+        public CreatureGender Gender { get; set; }
+
+        public static string Pronoun(CreatureGender gender)
+        {
+            switch (gender)
+            {
+                case CreatureGender.Male:
+                    return "he";
+                case CreatureGender.Female:
+                    return "she";
+                case CreatureGender.Nonbinary:
+                    return "they";
+            }
+            return "?";
+        }
+
+        public static string Posessive(CreatureGender gender)
+        {
+            switch (gender)
+            {
+                case CreatureGender.Male:
+                    return "his";
+                case CreatureGender.Female:
+                    return "her";
+                case CreatureGender.Nonbinary:
+                    return "their";
+            }
+
+            return "?";
+        }
+
+        public static CreatureGender RandomGender()
+        {
+            float num = MathFunctions.Rand(0.0f, 1.0f);
+            if (num < 0.01f)
+            {
+                return CreatureGender.Nonbinary;
+            }
+            else if (num < 0.505f)
+            {
+                return CreatureGender.Male;
+            }
+            else
+            {
+                return CreatureGender.Female;
+            }
+        }
+
         public Creature()
         {
             CurrentCharacterMode = CharacterMode.Idle;
@@ -217,6 +272,7 @@ namespace DwarfCorp
             HasMeat = true;
             HasBones = true;
             DrawLifeTimer.HasTriggered = true;
+            Gender = RandomGender();
         }
 
         public Creature(ComponentManager manager, Vector3 pos, CreatureDef def, string creatureClass, int creatureLevel, string faction) :

@@ -1012,5 +1012,11 @@ namespace DwarfCorp
             }
             return new Vector3(xz.X, velocity.Y, xz.Y);
         }
+
+        public static T RandEnum<T>()
+        {
+            Array values = Enum.GetValues(typeof(T));
+            return (T)values.GetValue(MathFunctions.RandInt(0, values.Length));
+        }
     }
 }

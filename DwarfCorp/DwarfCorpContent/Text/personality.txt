@@ -27,7 +27,7 @@ Perfectionist
 Loud
 Quiet
 Evil
-Goody-twoshoes
+Good
 Uninteresting
 Noteworthy
 Boring
@@ -38,3 +38,18 @@ Well-traveled
 Well-read
 Ignorant
 Bull-headed
+Lawful
+Chaotic
+Beautiful
+Lovely
+Confusing
+Straightforward
+No-nonsense
+Flighty
+Depressed
+Manic
+Edgy
+Artistic
+Careful
+Caring
+Cautious

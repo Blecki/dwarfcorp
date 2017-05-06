@@ -1,8 +1,5 @@
 Juggle <noun>s
 Read about <noun>s
-Ride <animal>s
-Fight <animal>s
-Hunt <animal>s
 Dig <adverb>
 Study <noun>s
 Explore <noun>s
@@ -17,7 +14,7 @@ Carve <material> <noun>s
 Daydream <adverb>
 Dream of <noun>s
 <verb> <noun>s
-Think about <noun>
+Think about <noun>s
 Grow <noun>s
 Draw <noun>s
 Paint <noun>s
@@ -27,3 +24,8 @@ Destroy <adjective> Things
 Buy <adjective> Things
 <verb> and <verb>
 <verb> <adverb>
+Meet  <adjective> Dwarves
+<verb>
+Make <noun>s
+Drink <adverb>
+Drink with <adjective> Dwarves

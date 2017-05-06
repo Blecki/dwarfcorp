@@ -49,7 +49,7 @@ namespace DwarfCorp
         public string FormerProfession { get; set; }
         public string HomeTown { get; set; }
         public string Biography { get; set; }
-
+        public Creature.CreatureGender Gender { get; set; }
         public Applicant()
         {
             
@@ -59,7 +59,7 @@ namespace DwarfCorp
         {
             Class = employeeClass;
             Level = Class.Levels[level];
-
+            Gender = Creature.RandomGender();
             Name = TextGenerator.GenerateRandom("$firstname", " ", "$lastname");
             List<string> justifications = new List<string>()
             {
@@ -88,17 +88,18 @@ namespace DwarfCorp
                 FormerProfession = TextGenerator.GenerateRandom("$profession");
             }
 
-            /*
+            
             var templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.location);
              HomeTown = TextGenerator.GenerateRandom(new List<string>(),
                  templates[MathFunctions.Random.Next(templates.Count)].ToArray());
-             */
+             
             var hobbyTemplates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.hobby);
             var hobby = TextGenerator.GenerateRandom(new List<string>(),
                     hobbyTemplates[MathFunctions.Random.Next(hobbyTemplates.Count)].ToArray());
-            var templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.biography);
-            HomeTown = TextGenerator.GenerateRandom(new List<string> {Name, "Male", hobby},
-                templates[MathFunctions.Random.Next(templates.Count)].ToArray());
+            var biographyTemplates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.biography);
+            Biography = TextGenerator.ToSentenceCase(TextGenerator.GenerateRandom(
+                new List<string> {Name, Gender.ToString(), hobby, Creature.Pronoun(Gender), Creature.Posessive(Gender)},
+                biographyTemplates[MathFunctions.Random.Next(biographyTemplates.Count)].ToArray()));
         }
     }
 }
