@@ -33,7 +33,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Runtime.Serialization;
 //using System.Windows.Forms;

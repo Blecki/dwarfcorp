@@ -299,7 +299,7 @@ namespace DwarfCorp.GameStates
                 Root.DrawMesh(KeyMesh, Root.RenderData.Texture);
         }
 
-        public void PreparePreview()
+        public void PreparePreview(GraphicsDevice device)
         {
             if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
             {
@@ -364,6 +364,12 @@ namespace DwarfCorp.GameStates
             cameraTarget = newTarget * 0.1f + cameraTarget * 0.9f;
             PreviewEffect.TextureEnabled = true;
             PreviewEffect.Texture = PreviewTexture;
+
+            if (Generator.LandMesh == null)
+            {
+                Generator.CreateMesh(Device);
+            }
+
             Device.Clear(ClearOptions.Target, Color.Transparent, 3.0f, 0);
 
             foreach (EffectPass pass in PreviewEffect.CurrentTechnique.Passes)

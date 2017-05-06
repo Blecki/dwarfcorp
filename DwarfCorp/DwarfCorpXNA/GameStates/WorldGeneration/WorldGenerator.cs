@@ -48,6 +48,8 @@ namespace DwarfCorp.GameStates
             this.Settings = Settings;
             MathFunctions.Random = new ThreadSafeRandom(Seed);
             Overworld.Volcanoes = new List<Vector2>();
+            LandMesh = null;
+            LandIndex = null;
         }
 
         private int[] SetUpTerrainIndices(int width, int height)
@@ -141,13 +143,17 @@ namespace DwarfCorp.GameStates
             return toReturn;
         }
                 
-        public void Generate(GraphicsDevice Device)
+        public void Generate()
         {
+            LandMesh = null;
+            LandIndex = null;
             if (CurrentState == GenerationState.NotStarted)
             {
-                Settings.WorldGenerationOrigin = new Vector2(Settings.Width / 2, Settings.Height / 2);
-                genThread = new Thread(unused => GenerateWorld(Device, Seed, (int) Settings.Width, (int) Settings.Height));
-                genThread.Name = "GenerateWorld";
+                Settings.WorldGenerationOrigin = new Vector2(Settings.Width / 2.0f, Settings.Height / 2.0f);
+                genThread = new Thread(unused => GenerateWorld(Seed, (int) Settings.Width, (int) Settings.Height))
+                {
+                    Name = "GenerateWorld"
+                };
                 genThread.Start();
             }
         }
@@ -215,7 +221,7 @@ namespace DwarfCorp.GameStates
             }
         }
 
-        public void GenerateWorld(GraphicsDevice Device, int seed, int width, int height)
+        public void GenerateWorld(int seed, int width, int height)
         {
 #if CREATE_CRASH_LOGS
            try
@@ -356,8 +362,6 @@ namespace DwarfCorp.GameStates
                     Overworld.Map[0, y] = Overworld.Map[1, y];
                     Overworld.Map[width - 1, y] = Overworld.Map[width - 2, y];
                 }
-
-                CreateMesh(Device);
 
                 CurrentState = GenerationState.Finished;
                 LoadingMessage = "";

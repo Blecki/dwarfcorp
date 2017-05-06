@@ -29,7 +29,7 @@ namespace DwarfCorp.GameStates
                 {
                     Width = 512,
                     Height = 512,
-                    Name = "Dwarfland",
+                    Name = TextGenerator.GenerateRandom(TextGenerator.GetAtoms(ContentPaths.Text.Templates.worlds)),
                     NumCivilizations = 5,
                     NumFaults = 3,
                     NumRains = 1000,
@@ -46,7 +46,7 @@ namespace DwarfCorp.GameStates
                 Generator.Abort();
             Generator = new WorldGenerator(Settings);
             if (Preview != null) Preview.SetGenerator(Generator);
-            Generator.Generate(Game.GraphicsDevice);
+            Generator.Generate();
             GuiRoot.RootItem.GetChild(0).Text = Settings.Name;
             GuiRoot.RootItem.GetChild(0).Invalidate();
         }
@@ -300,7 +300,7 @@ namespace DwarfCorp.GameStates
                 Preview.Update();
             base.Update(gameTime);
 
-            Preview.PreparePreview();
+            Preview.PreparePreview(StateManager.Game.GraphicsDevice);
         }
 
         public override void Render(DwarfTime gameTime)

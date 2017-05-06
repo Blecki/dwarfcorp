@@ -1,0 +1,29 @@
+Juggle <noun>s
+Read about <noun>s
+Ride <animal>s
+Fight <animal>s
+Hunt <animal>s
+Dig <adverb>
+Study <noun>s
+Explore <noun>s
+Eat <noun>s
+Cook <noun>s
+Play Musical <noun>s
+Clean <noun>s
+Organize <noun>s
+Collect <noun>s
+Travel <adverb>
+Carve <material> <noun>s
+Daydream <adverb>
+Dream of <noun>s
+<verb> <noun>s
+Think about <noun>
+Grow <noun>s
+Draw <noun>s
+Paint <noun>s
+Make <adjective> Things
+Think about <adjective> Things
+Destroy <adjective> Things
+Buy <adjective> Things
+<verb> and <verb>
+<verb> <adverb>

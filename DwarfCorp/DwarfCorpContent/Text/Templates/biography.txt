@@ -1,0 +1,5 @@
+#1 is a <personality> #2 Dwarf who loves to #3.
+#1 is <personality>. Favorite activity: to   #3. Gender: #2.
+#1 is a rather <personality> #2 Dwarf. #1 would rather #3. 
+#1's favorite thing is to #3. #1 is <personality>. #1 is #2.
+Even though #1 is <personality>, the #2 Dwarf is also <personality> and likes to #3.

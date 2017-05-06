@@ -16,3 +16,8 @@ Marsh
 Vale
 Valley
 Republic
+Township
+Town
+Hovel
+County
+Country

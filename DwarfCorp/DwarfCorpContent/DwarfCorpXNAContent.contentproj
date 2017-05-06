@@ -1602,6 +1602,22 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>particles</Name>
     </Content>
+    <Content Include="Text\personality.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>personality</Name>
+    </Content>
+    <Content Include="Text\Templates\hobby.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>hobby</Name>
+    </Content>
+    <Content Include="Text\Templates\location.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>location</Name>
+    </Content>
+    <Content Include="Text\Templates\biography.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>biography</Name>
+    </Content>
     <None Include="Entities\Animals\chicken_animation.json">
       <Name>chicken_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
