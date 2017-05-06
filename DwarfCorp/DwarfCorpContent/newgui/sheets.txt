@@ -45,6 +45,12 @@
 			"TileHeight": 8
 		},
 		{
+			"Name": "dwarves",
+			"Texture": "newgui/dwarves",
+			"TileWidth": 32,
+			"TileHeight": 48
+		},
+		{
 			"Name": "border-one",
 			"Texture": "newgui/border",
 			"TileWidth": 16,

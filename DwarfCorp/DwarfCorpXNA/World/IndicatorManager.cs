@@ -48,11 +48,6 @@ namespace DwarfCorp
 
     public class Indicator
     {
-        public enum IndicatorMode
-        {
-            Indicator2D,
-            Indicator3D
-        }
         public ImageFrame Image;
         public Vector3 Position;
         public Timer CurrentTime;
@@ -62,14 +57,12 @@ namespace DwarfCorp
         public bool Grow = true;
         public bool Flip = false;
         public float Scale { get; set; }
-        public IndicatorMode Mode { get; set; }
 
         public bool ShouldDelete { get; set; }
 
         public Indicator()
         {
             ShouldDelete = false;
-            Mode = IndicatorMode.Indicator3D;
         }
 
         public virtual void Update(DwarfTime time)
@@ -95,16 +88,7 @@ namespace DwarfCorp
 
         public virtual void Render()
         {
-            switch (Mode)
-            {
-                case IndicatorMode.Indicator3D:
-                    Drawer2D.DrawSprite(Image, Position, new Vector2(Scale, Scale), Offset, Tint, Flip);
-                    break;
-                case IndicatorMode.Indicator2D:
-                   DwarfGame.SpriteBatch.Draw(Image.Image, new Vector2(Position.X, Position.Y), Image.SourceRect, Tint, 0.0f, Offset, new Vector2(Scale, Scale), Flip ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0.0f);
-                    break;
-            }
-            
+            Drawer2D.DrawSprite(Image, Position, new Vector2(Scale, Scale), Offset, Tint, Flip);
         }
     }
 
@@ -120,31 +104,14 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime time)
         {
-            switch (Mode)
-            {
-                    case IndicatorMode.Indicator3D:
-                        Position += Vector3.Up * (float)time.ElapsedGameTime.TotalSeconds;
-                         break;
-                    case IndicatorMode.Indicator2D:
-                        Position += Vector3.Up * (float)time.ElapsedGameTime.TotalSeconds * 50;
-                         break;
-            }
-           
+            Position += Vector3.Up * (float)time.ElapsedGameTime.TotalSeconds;
             Tint = new Color(Tint.R, Tint.G, Tint.B, (byte)(255*(1.0f - CurrentTime.CurrentTimeSeconds/CurrentTime.TargetTimeSeconds)));
             CurrentTime.Update(time);
         }
 
         public override void Render()
         {
-            switch (Mode)
-            {
-                case IndicatorMode.Indicator2D:
-                    Drawer2D.DrawAlignedText(DwarfGame.SpriteBatch, Text, Font, Tint, Drawer2D.Alignment.Center,  new Rectangle((int)Position.X, (int)Position.Y, 32, 32));
-                    break;
-                case IndicatorMode.Indicator3D:
-                    Drawer2D.DrawText(Text, Position, Tint, Color.Transparent);
-                    break;
-            }
+            Drawer2D.DrawText(Text, Position, Tint, Color.Transparent);
         }
        
     }
@@ -152,8 +119,7 @@ namespace DwarfCorp
     public class AnimatedIndicator : Indicator
     {
         public Animation Animation;
-
-
+        
         public override void Update(DwarfTime time)
         {
             base.Update(time);
@@ -294,7 +260,7 @@ namespace DwarfCorp
             }
         }
 
-        public static void DrawIndicator(string indicator, Vector3 position, float time, Color color, Indicator.IndicatorMode mode = Indicator.IndicatorMode.Indicator3D)
+        public static void DrawIndicator(string indicator, Vector3 position, float time, Color color)
         {
             lock (IndicatorLock)
             {
@@ -306,7 +272,6 @@ namespace DwarfCorp
                     Image = null,
                     Position = position,
                     Grow = false,
-                    Mode = mode
                 });
             }
         }

@@ -64,7 +64,7 @@ namespace DwarfCorp
 
         }
 
-        public GodModeTool(DwarfGUI gui, GameMaster master)
+        public GodModeTool(GameMaster master)
         {
             Player = master;
             Chunks = Player.World.ChunkManager;

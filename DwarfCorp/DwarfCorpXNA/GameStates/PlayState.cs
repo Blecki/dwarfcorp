@@ -39,10 +39,6 @@ namespace DwarfCorp.GameStates
             set { World.Paused = value; }
         }
 
-        // ------GUI--------
-        // Draws and manages the user interface 
-        public static DwarfGUI GUI = null;
-
         private Gum.Widget MoneyLabel;
         private Gum.Widget StockLabel;
         private Gum.Widget LevelLabel;
@@ -254,7 +250,6 @@ namespace DwarfCorp.GameStates
             });
 
             World.Update(gameTime);
-            GUI.Update(gameTime);
             Input.Update();
 
 
@@ -315,7 +310,6 @@ namespace DwarfCorp.GameStates
                 //tex.SaveAsPng(new FileStream("voxels.png", FileMode.Create),  256, 256);
                 //Game.Exit();
                 MinimapRenderer.PreRender(gameTime, DwarfGame.SpriteBatch);
-                GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
                 World.Render(gameTime);
 
                 if (Game.StateManager.CurrentState == this)
@@ -324,18 +318,6 @@ namespace DwarfCorp.GameStates
                         MinimapRenderer.Render(new Rectangle(0, GuiRoot.VirtualScreen.Bottom - 192, 192, 192), GuiRoot);
                     GuiRoot.Draw();
                 }
-
-                // SpriteBatch Begin and End must be called again. Hopefully we can factor this out with the new gui
-                RasterizerState rasterizerState = new RasterizerState()
-                {
-                    ScissorTestEnable = true
-                };
-                DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp,
-                    null, rasterizerState);
-                GUI.Render(gameTime, DwarfGame.SpriteBatch, Vector2.Zero);
-                GUI.PostRender(gameTime);
-                DwarfGame.SpriteBatch.End();
-                //WorldManager.SelectionBuffer.DebugDraw(0, 0);
             }
 
             base.Render(gameTime);
@@ -357,10 +339,6 @@ namespace DwarfCorp.GameStates
         /// </summary>
         public void CreateGUIComponents()
         {
-            GUI.RootComponent.ClearChildren();
-
-            GUI.RootComponent.AddChild(Master.Debugger.MainPanel);
-
             #region Setup company information section
             GuiRoot.RootItem.AddChild(new NewGui.CompanyLogo
             {
@@ -1364,7 +1342,6 @@ namespace DwarfCorp.GameStates
             {
                 GuiRoot.RootItem.Hidden = !GuiRoot.RootItem.Hidden;
                 GuiRoot.RootItem.Invalidate();
-                GUI.RootComponent.IsVisible = !GUI.RootComponent.IsVisible;
             }
             else if (key == ControlSettings.Mappings.Map)
             {

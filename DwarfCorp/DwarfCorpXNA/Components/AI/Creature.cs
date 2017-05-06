@@ -843,8 +843,7 @@ namespace DwarfCorp
             Color color = damage > 0 ? Color.Red : Color.Green;
 
             IndicatorManager.DrawIndicator(prefix + (int)amount + " HP",
-                AI.Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, color,
-                Indicator.IndicatorMode.Indicator3D);
+                AI.Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, color);
 
             if (damage > 0)
             {

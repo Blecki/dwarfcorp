@@ -106,7 +106,6 @@ namespace DwarfCorp.GameStates
     public class WaitState : GameState
     {
         public Thread WaitThread { get; set; }
-        public DwarfGUI GUI { get; set; }
 
         public event Finished OnFinished;
 
@@ -127,11 +126,10 @@ namespace DwarfCorp.GameStates
         public WaitStateException exception;
         public bool success = false;
 
-        public WaitState(DwarfGame game, string name, GameStateManager stateManager, WaitThreadRoutine routine, DwarfGUI gui)
+        public WaitState(DwarfGame game, string name, GameStateManager stateManager, WaitThreadRoutine routine)
             : base(game, name, stateManager)
         {
             WaitThread = new Thread(() => runRoutine(routine));
-            GUI = gui;
             OnFinished = (Boolean, Exception) => { };
             Done = false;
         }
@@ -162,8 +160,6 @@ namespace DwarfCorp.GameStates
 
         public override void Update(DwarfTime gameTime)
         {
-            GUI.MouseMode = GUISkin.MousePointer.Wait;
-
             if (!WaitThread.IsAlive && Object.ReferenceEquals(StateManager.CurrentState, this) && !Done)
             {
                 StateManager.PopState();

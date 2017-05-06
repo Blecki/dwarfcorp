@@ -243,7 +243,7 @@ namespace DwarfCorp
 
         protected override sealed void InitializeStatics()
         {
-            Name = "Miner";
+            Name = "Musket";
             InitializeLevels();
             InitializeAnimations();
             InitializeWeapons();

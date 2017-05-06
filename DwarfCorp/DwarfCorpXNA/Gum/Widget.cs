@@ -372,8 +372,7 @@ namespace Gum
             var stringMeshSize = new Rectangle();
             var font = Root.GetTileSheet(Font);
             var text = (font is VariableWidthFont)
-                ? (font as VariableWidthFont).WordWrapString(
-                    Text, TextSize, drawableArea.Width)
+                ? (font as VariableWidthFont).WordWrapString(Text, TextSize, drawableArea.Width)
                 : Text;
             var stringMesh = Mesh.CreateStringMesh(
                 text,

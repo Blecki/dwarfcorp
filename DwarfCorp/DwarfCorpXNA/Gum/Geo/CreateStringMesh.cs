@@ -17,11 +17,13 @@ namespace Gum
         {
             var glyphMeshes = new List<Mesh>();
             var pos = Vector2.Zero;
+            var maxX = 0.0f;
 
             foreach (var c in String)
             {
                 if (c == '\n')
                 {
+                    if (pos.X > maxX) maxX = pos.X;
                     pos.X = 0;
                     pos.Y += FontSheet.TileHeight * GlyphScale.Y;
                 }
@@ -37,7 +39,7 @@ namespace Gum
                 }
             }
 
-            Bounds = new Rectangle(0, 0, (int)pos.X, (int)(FontSheet.TileHeight * GlyphScale.Y));
+            Bounds = new Rectangle(0, 0, (int)System.Math.Max(maxX, pos.X), (int)(pos.Y + ((FontSheet.TileHeight * GlyphScale.Y))));
 
             return Merge(glyphMeshes.ToArray());
         }

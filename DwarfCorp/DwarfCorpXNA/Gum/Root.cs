@@ -32,6 +32,7 @@ namespace Gum
         private List<Widget> UpdateItems = new List<Widget>();
         public Widget MouseDownItem { get; private set; }
 
+        public bool MouseVisible = true;
         public MousePointer MousePointer = null;
         public Point MousePosition = new Point(0, 0);
         private DateTime MouseMotionTime = DateTime.Now;
@@ -587,7 +588,7 @@ namespace Gum
 
         public void DrawMouse()
         {
-            if (MousePointer != null)
+            if (MouseVisible && MousePointer != null)
             {
                 RenderData.Effect.Parameters["Texture"].SetValue(RenderData.Texture);
                 RenderData.Effect.CurrentTechnique.Passes[0].Apply();

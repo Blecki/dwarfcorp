@@ -55,8 +55,6 @@ namespace DwarfCorp
         private static int Counter = 0;
 
         public bool wasDeserialized = false;
-        [JsonIgnore]
-        public WorldGUIObject GUIObject { get; set; }
 
         public Room() : base()
         {
@@ -101,12 +99,6 @@ namespace DwarfCorp
         public void OnBuilt()
         {
             
-        }
-
-
-        public void CreateGUIObjects()
-        {
-         
         }
 
         public List<Body> GetComponentsInRoom()

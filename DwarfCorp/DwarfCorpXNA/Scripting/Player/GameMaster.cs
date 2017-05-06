@@ -38,16 +38,10 @@ namespace DwarfCorp
         public OrbitCamera CameraController { get; set; }
 
         [JsonIgnore]
-        public DwarfGUI GUI { get; set; }
-
-        [JsonIgnore]
         public VoxelSelector VoxSelector { get; set; }
 
         [JsonIgnore]
         public BodySelector BodySelector { get; set; }
-
-        [JsonIgnore]
-        public AIDebugger Debugger { get; set; }
 
         public Faction Faction { get; set; }
 
@@ -84,7 +78,7 @@ namespace DwarfCorp
         protected void OnDeserialized(StreamingContext context)
         {
             World = (WorldManager) (context.Context);
-            Initialize(GameState.Game, World.ComponentManager, World.ChunkManager, World.Camera, World.ChunkManager.Graphics, World.GUI);
+            Initialize(GameState.Game, World.ComponentManager, World.ChunkManager, World.Camera, World.ChunkManager.Graphics);
             World.Master = this;
         }
 
@@ -92,11 +86,11 @@ namespace DwarfCorp
         {
         }
 
-        public GameMaster(Faction faction, DwarfGame game, ComponentManager components, ChunkManager chunks, OrbitCamera camera, GraphicsDevice graphics, DwarfGUI gui)
+        public GameMaster(Faction faction, DwarfGame game, ComponentManager components, ChunkManager chunks, Camera camera, GraphicsDevice graphics)
         {
             World = components.World;
             Faction = faction;
-            Initialize(game, components, chunks, camera, graphics, gui);
+            Initialize(game, components, chunks, camera, graphics);
             VoxSelector.Selected += OnSelected;
             VoxSelector.Dragged += OnDrag;
             BodySelector.Selected += OnBodiesSelected;
@@ -104,22 +98,18 @@ namespace DwarfCorp
             World.Time.NewDay += Time_NewDay;
         }
 
-        public void Initialize(DwarfGame game, ComponentManager components, ChunkManager chunks, OrbitCamera camera, GraphicsDevice graphics, DwarfGUI gui)
+        public void Initialize(DwarfGame game, ComponentManager components, ChunkManager chunks, OrbitCamera camera, GraphicsDevice graphics)
         {
             RoomLibrary.InitializeStatics();
 
             CameraController = camera;
             VoxSelector = new VoxelSelector(World, CameraController, chunks.Graphics, chunks);
             BodySelector = new BodySelector(CameraController, chunks.Graphics, components);
-            GUI = gui;
             SelectedMinions = new List<CreatureAI>();
             Spells = SpellLibrary.CreateSpellTree(components.World);
             CreateTools();
 
             InputManager.KeyReleasedCallback += OnKeyReleased;
-
-            Debugger = new AIDebugger(GUI, this);
-
         }
 
         public void Destroy()
@@ -132,8 +122,6 @@ namespace DwarfCorp
             Tools[ToolMode.God].Destroy();
             Tools[ToolMode.SelectUnits].Destroy();
             Tools.Clear();
-            Debugger.Destroy();
-            Debugger = null;
             Faction = null;
             VoxSelector = null;
             BodySelector = null;
@@ -142,7 +130,7 @@ namespace DwarfCorp
         private void CreateTools()
         {
             Tools = new Dictionary<ToolMode, PlayerTool>();
-            Tools[ToolMode.God] = new GodModeTool(GUI, this);
+            Tools[ToolMode.God] = new GodModeTool(this);
 
             Tools[ToolMode.SelectUnits] = new DwarfSelectorTool(this);
 
@@ -306,27 +294,6 @@ namespace DwarfCorp
         public void UpdateRooms()
         {
             bool hasAnyMinions = SelectedMinions.Count > 0;
-
-
-            foreach (Room room in Faction.GetRooms())
-            {
-                if (room.wasDeserialized)
-                {
-                    room.CreateGUIObjects();
-                    room.wasDeserialized = false;
-                }
-                if (room.GUIObject != null && hasAnyMinions)
-                {
-                    room.GUIObject.IsVisible = true;
-                    room.GUIObject.Enabled = true;
-                }
-                else if (!hasAnyMinions && room.GUIObject != null)
-                {
-                    room.GUIObject.IsVisible = false;
-                    room.GUIObject.GUIObject.IsVisible = false;
-                    room.GUIObject.Enabled = false;
-                }
-            }
         }
 
         public void Update(DwarfGame game, DwarfTime time)
@@ -337,13 +304,6 @@ namespace DwarfCorp
             //}
 
             CurrentTool.Update(game, time);
-            if(GameSettings.Default.EnableAIDebugger)
-            {
-                if(Debugger != null)
-                {
-                    Debugger.Update(time);
-                }
-            }
 
             if (!World.Paused)
             {
