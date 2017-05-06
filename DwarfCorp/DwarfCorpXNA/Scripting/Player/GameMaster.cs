@@ -86,7 +86,7 @@ namespace DwarfCorp
         {
         }
 
-        public GameMaster(Faction faction, DwarfGame game, ComponentManager components, ChunkManager chunks, Camera camera, GraphicsDevice graphics)
+        public GameMaster(Faction faction, DwarfGame game, ComponentManager components, ChunkManager chunks, OrbitCamera camera, GraphicsDevice graphics)
         {
             World = components.World;
             Faction = faction;
