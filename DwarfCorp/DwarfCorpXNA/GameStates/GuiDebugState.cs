@@ -23,7 +23,7 @@ namespace DwarfCorp.GameStates
                 BackgroundColor = new Vector4(1, 1, 1, 1);
 
                 var imageSize = new Point(Root.RenderData.Texture.Width, Root.RenderData.Texture.Height);
-                var availableArea = new Point(Root.VirtualScreen.Width, Root.VirtualScreen.Height - 32);
+                var availableArea = new Point(Root.RenderData.VirtualScreen.Width, Root.RenderData.VirtualScreen.Height - 32);
 
                 if (imageSize.X > availableArea.X)
                 {
@@ -39,8 +39,8 @@ namespace DwarfCorp.GameStates
                     imageSize.X = (int)(imageSize.X * ratio);
                 }
 
-                ImagePosition = new Rectangle((Root.VirtualScreen.Width / 2) - (imageSize.X / 2),
-                    ((Root.VirtualScreen.Height - 32) / 2) - (imageSize.Y / 2),
+                ImagePosition = new Rectangle((Root.RenderData.VirtualScreen.Width / 2) - (imageSize.X / 2),
+                    ((Root.RenderData.VirtualScreen.Height - 32) / 2) - (imageSize.Y / 2),
                     imageSize.X, imageSize.Y);
 
                 var bottomBar = AddChild(new Widget
@@ -219,7 +219,7 @@ namespace DwarfCorp.GameStates
                 {
                     Player = playerFaction,
                     Envoy = envoyFaction,
-                    Rect = GuiRoot.VirtualScreen
+                    Rect = GuiRoot.RenderData.VirtualScreen
                 });
 
                 GuiRoot.ShowDialog(pane);
@@ -286,13 +286,13 @@ namespace DwarfCorp.GameStates
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
 
-            GuiRoot = new Gum.Root(Gum.Root.MinimumSize, DwarfGame.GumSkin);
+            GuiRoot = new Gum.Root(DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
             MakeMenu();
 
             Progress = GuiRoot.RootItem.AddChild(new Gum.Widgets.ProgressBar
             {
-                Rect = new Rectangle(0, 0, GuiRoot.VirtualScreen.Width, 32)
+                Rect = new Rectangle(0, 0, GuiRoot.RenderData.VirtualScreen.Width, 32)
             }) as Gum.Widgets.ProgressBar;
 
            Dictionary<GameMaster.ToolMode, Gum.Widget> ToolbarItems = new Dictionary<GameMaster.ToolMode, Gum.Widget>();

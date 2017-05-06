@@ -34,7 +34,7 @@ namespace DwarfCorp.NewGui
         public override void Construct()
         {
             Border = "border-fancy";
-            Rect = Root.VirtualScreen;
+            Rect = Root.RenderData.VirtualScreen;
 
             var left = AddChild(new Widget());
             var right = AddChild(new Widget());

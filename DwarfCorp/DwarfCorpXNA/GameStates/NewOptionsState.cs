@@ -28,6 +28,7 @@ namespace DwarfCorp.GameStates
         private CheckBox EdgeScrolling;
         private CheckBox FogOfWar;
         private CheckBox PlayIntro;
+        private ComboBox GuiScale;
         private HorizontalFloatSlider MasterVolume;
         private HorizontalFloatSlider SFXVolume;
         private HorizontalFloatSlider MusicVolume;
@@ -89,13 +90,13 @@ namespace DwarfCorp.GameStates
             BuildingGUI = true;
 
             // Create and initialize GUI framework.
-            GuiRoot = new Gum.Root(Gum.Root.MinimumSize, DwarfGame.GumSkin);
+            GuiRoot = new Gum.Root(DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
 
             // CONSTRUCT GUI HERE...
             MainPanel = GuiRoot.RootItem.AddChild(new Gum.Widget
                 {
-                    Rect = GuiRoot.VirtualScreen,
+                    Rect = GuiRoot.RenderData.VirtualScreen,
                     Padding = new Margin(4,4,4,4),
                     Transparent = true
                 });
@@ -290,6 +291,11 @@ namespace DwarfCorp.GameStates
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
+
+            GuiScale = panel.AddChild(LabelAndDockWidget("Gui Scale", new ComboBox
+            {
+                Items = new List<string>(new String[] { "1", "2", "3", "4", "5" }),
+            })).GetChild(1) as ComboBox;
         }
 
         private void CreateAudioTab()
@@ -667,7 +673,7 @@ namespace DwarfCorp.GameStates
             GameSettings.Default.FogofWar = this.FogOfWar.CheckState;
             GameSettings.Default.InvertZoom = this.InvertZoom.CheckState;
             GameSettings.Default.DisplayIntro = this.PlayIntro.CheckState;
-
+          
             // Audio settings
             GameSettings.Default.MasterVolume = this.MasterVolume.ScrollPosition;
             GameSettings.Default.SoundEffectVolume = this.SFXVolume.ScrollPosition;
@@ -677,6 +683,7 @@ namespace DwarfCorp.GameStates
             var preResolutionX = GameSettings.Default.ResolutionX;
             var preResolutionY = GameSettings.Default.ResolutionY;
             var preFullscreen = GameSettings.Default.Fullscreen;
+            var preGuiScale = GameSettings.Default.GuiScale;
 
             var newDisplayMode = DisplayModes[this.Resolution.SelectedItem];
             GameSettings.Default.ResolutionX = newDisplayMode.Width;
@@ -701,6 +708,8 @@ namespace DwarfCorp.GameStates
             GameSettings.Default.NumMotes = (int)this.NumMotes.ScrollPosition + 100;
             GameSettings.Default.UseLightmaps = this.LightMap.CheckState;
             GameSettings.Default.UseDynamicShadows = this.DynamicShadows.CheckState;
+
+            GameSettings.Default.GuiScale = GuiScale.SelectedIndex + 1;
             
             if (preResolutionX != GameSettings.Default.ResolutionX || 
                 preResolutionY != GameSettings.Default.ResolutionY ||
@@ -713,7 +722,6 @@ namespace DwarfCorp.GameStates
                 try
                 {
                     StateManager.Game.Graphics.ApplyChanges();
-                    RebuildGui();
                 }
                 catch (NoSuitableGraphicsDeviceException)
                 {
@@ -723,14 +731,21 @@ namespace DwarfCorp.GameStates
                     this.Resolution.SelectedIndex = this.Resolution.Items.IndexOf(string.Format("{0} x {1}",
                         GameSettings.Default.ResolutionX, GameSettings.Default.ResolutionY));
                     this.Fullscreen.CheckState = GameSettings.Default.Fullscreen;
-                    RebuildGui();
                     GuiRoot.ShowPopup(new NewGui.Popup
                         {
                             Text = "Could not change display mode. Previous settings restored.",
                             TextSize = 1,
                             PopupDestructionType = PopupDestructionType.DestroyOnOffClick
                         });
-                }
+                }               
+            }
+
+            if (preResolutionX != GameSettings.Default.ResolutionX ||
+                preResolutionY != GameSettings.Default.ResolutionY ||
+                preGuiScale != GameSettings.Default.GuiScale)
+            {
+                GuiRoot.RenderData.CalculateScreenSize();
+                RebuildGui();
             }
 
             HasChanges = false;
@@ -788,7 +803,9 @@ namespace DwarfCorp.GameStates
             this.NumMotes.ScrollPosition = GameSettings.Default.NumMotes - 100;
             this.LightMap.CheckState = GameSettings.Default.UseLightmaps;
             this.DynamicShadows.CheckState = GameSettings.Default.UseDynamicShadows;
-            
+
+            GuiScale.SelectedIndex = GameSettings.Default.GuiScale - 1;
+
             HasChanges = false;
         }
 

@@ -51,10 +51,10 @@ namespace Gum.Widgets
 
             OnClick += (sender, args) =>
                 {
-                    var interior = GetDrawableInterior();
-                    var clickX = args.X - interior.X - interior.Width;
-                    if (clickX >= 0) // Clicked the button.
-                    {
+                    //var interior = GetDrawableInterior();
+                    //var clickX = args.X - interior.X - interior.Width;
+                    //if (clickX >= 0) // Clicked the button.
+                    //{
                         if (SelectorPopup != null)
                             Root.DestroyWidget(SelectorPopup);
                         else
@@ -95,7 +95,7 @@ namespace Gum.Widgets
                             SelectorPopup.PopupDestructionType = PopupDestructionType.DestroyOnOffClick;
                             Root.ShowPopup(SelectorPopup);
                         }
-                    }
+                    //}
                 };
 
             var color = TextColor;

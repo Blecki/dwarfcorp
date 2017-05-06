@@ -64,8 +64,8 @@ namespace DwarfCorp.NewGui
             Padding = new Margin(2, 2, 2, 2);
             //Set size and center on screen.
             Rect = new Rectangle(0, 0, 400, 400);
-            Rect.X = (Root.VirtualScreen.Width / 2) - 200;
-            Rect.Y = (Root.VirtualScreen.Height / 2) - 200;
+            Rect.X = (Root.RenderData.VirtualScreen.Width / 2) - 200;
+            Rect.Y = (Root.RenderData.VirtualScreen.Height / 2) - 200;
 
             Border = "border-fancy";
 
@@ -123,7 +123,7 @@ namespace DwarfCorp.NewGui
                 }, () => Settings.Width));
 
             AddChild(CreateCombo<int>("Natives", "Number of native civilizations",
-                new int[] { 0, 2, 4, 8, 16 }, (i) => Settings.NumCivilizations = 1,
+                new int[] { 0, 2, 4, 8, 16 }, (i) => Settings.NumCivilizations = i,
                 () => Settings.NumCivilizations));
 
 

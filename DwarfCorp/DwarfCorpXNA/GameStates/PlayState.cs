@@ -129,7 +129,7 @@ namespace DwarfCorp.GameStates
                 DwarfTime.LastTime.Speed = 1.0f;
 
                 // Setup new gui. Double rendering the mouse?
-                GuiRoot = new Gum.Root(Gum.Root.MinimumSize, DwarfGame.GumSkin);
+                GuiRoot = new Gum.Root(DwarfGame.GumSkin);
                 GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
                 World.NewGui = GuiRoot;
 
@@ -188,21 +188,6 @@ namespace DwarfCorp.GameStates
         /// <param name="gameTime">The current time</param>
         public override void Update(DwarfTime gameTime)
         {
-            //WorldManager.GUI.IsMouseVisible = false;
-
-            if (GuiRoot.ResolutionChanged())
-            {
-                GuiRoot.ResizeVirtualScreen(new Point(1024, 768));
-                GuiRoot.ResetGui();
-                CreateGUIComponents();
-
-                if (PausePanel != null)
-                {
-                    PausePanel = null;
-                    OpenPauseMenu();
-                }
-            }
-
             // If this playstate is not supposed to be running,
             // just exit.
             if (!IsActiveState || IsShuttingDown)
@@ -306,7 +291,7 @@ namespace DwarfCorp.GameStates
                 if (Game.StateManager.CurrentState == this)
                 {
                     if (!MinimapFrame.Hidden)
-                        MinimapRenderer.Render(new Rectangle(0, GuiRoot.VirtualScreen.Bottom - 192, 192, 192), GuiRoot);
+                        MinimapRenderer.Render(new Rectangle(0, GuiRoot.RenderData.VirtualScreen.Bottom - 192, 192, 192), GuiRoot);
                     GuiRoot.Draw();
                 }
             }
@@ -1371,8 +1356,8 @@ namespace DwarfCorp.GameStates
 
             PausePanel = new Gum.Widget
             {
-                Rect = new Rectangle(GuiRoot.VirtualScreen.Center.X - 128,
-                    GuiRoot.VirtualScreen.Center.Y - 100, 256, 200),
+                Rect = new Rectangle(GuiRoot.RenderData.VirtualScreen.Center.X - 128,
+                    GuiRoot.RenderData.VirtualScreen.Center.Y - 100, 256, 200),
                 Border = "border-fancy",
                 TextHorizontalAlign = global::Gum.HorizontalAlign.Center,
                 Text = "- Paused -",
@@ -1397,6 +1382,9 @@ namespace DwarfCorp.GameStates
                 {
                     OnClosed = () =>
                     {
+                        GuiRoot.RenderData.CalculateScreenSize();
+                        GuiRoot.ResetGui();
+                        CreateGUIComponents();
                         OpenPauseMenu();
                     }
                 };

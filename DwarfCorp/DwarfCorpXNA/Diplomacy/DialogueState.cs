@@ -38,12 +38,12 @@ namespace DwarfCorp.Dialogue
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
 
-            GuiRoot = new Gum.Root(Gum.Root.MinimumSize, DwarfGame.GumSkin);
+            GuiRoot = new Gum.Root(DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
 
             DialogueContext.SpeechBubble = GuiRoot.RootItem.AddChild(new Gum.Widget
             {
-                Rect = new Rectangle(200, 0, GuiRoot.VirtualScreen.Width - 200, 200),
+                Rect = new Rectangle(200, 0, GuiRoot.RenderData.VirtualScreen.Width - 200, 200),
                 Border = "speech-bubble-reverse",
                 Font = "font-hires",
                 TextColor = Color.Black.ToVector4()
@@ -51,8 +51,8 @@ namespace DwarfCorp.Dialogue
 
             DialogueContext.ChoicePanel = GuiRoot.RootItem.AddChild(new Gum.Widget
             {
-                Rect = new Rectangle(200, 200, GuiRoot.VirtualScreen.Width - 200, 
-                GuiRoot.VirtualScreen.Height - 200),
+                Rect = new Rectangle(200, 200, GuiRoot.RenderData.VirtualScreen.Width - 200, 
+                GuiRoot.RenderData.VirtualScreen.Height - 200),
                 Border = "border-fancy",
             });
 

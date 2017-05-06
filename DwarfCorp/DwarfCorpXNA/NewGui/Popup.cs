@@ -15,8 +15,8 @@ namespace DwarfCorp.NewGui
         {
             //Set size and center on screen.
             Rect = new Rectangle(0, 0, 256, 128);
-            Rect.X = (Root.VirtualScreen.Width / 2) - 128;
-            Rect.Y = (Root.VirtualScreen.Height / 2) - 32;
+            Rect.X = (Root.RenderData.VirtualScreen.Width / 2) - 128;
+            Rect.Y = (Root.RenderData.VirtualScreen.Height / 2) - 32;
 
             Border = "border-fancy";
 
