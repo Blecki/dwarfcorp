@@ -482,7 +482,18 @@ namespace DwarfCorp
             foreach (Faction faction in natives)
             {
                 faction.World = this;
+              
+                if (faction.WallBuilder == null)
+                    faction.WallBuilder = new PutDesignator(faction, this);
+                
+                if (faction.RoomBuilder == null)
+                    faction.RoomBuilder = new RoomBuilder(faction, this);
+
+                if (faction.CraftBuilder == null)
+                    faction.CraftBuilder = new CraftBuilder(faction, this);
+              
                 faction.WallBuilder.World = this;
+              
             }
 
             ComponentManager = new ComponentManager(this, CompanyInformation, natives);

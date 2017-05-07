@@ -185,6 +185,29 @@ namespace DwarfCorp
             TradeMoney = 0.0m;
         }
 
+        public Faction(OverworldFile.OverworldData.FactionDescriptor descriptor, Dictionary<string, Race> races )
+        {
+            Threats = new List<Creature>();
+            Minions = new List<CreatureAI>();
+            SelectedMinions = new List<CreatureAI>();
+            TaskManager = new TaskManager();
+            Stockpiles = new List<Stockpile>();
+            DigDesignations = new Dictionary<ulong, BuildOrder>();
+            GuardDesignations = new List<BuildOrder>();
+            ChopDesignations = new List<Body>();
+            AttackDesignations = new List<Body>();
+            GatherDesignations = new List<Body>();
+            TradeEnvoys = new List<TradeEnvoy>();
+            WarParties = new List<WarParty>();
+            IsRaceFaction = false;
+            TradeMoney = 0.0m;
+            PrimaryColor = descriptor.PrimaryColory;
+            SecondaryColor = descriptor.SecondaryColor;
+            Name = descriptor.Name;
+            Race = races[descriptor.Race];
+            Center = new Point(descriptor.CenterX, descriptor.CenterY);
+        }
+
         public class Expidition
         {
             public enum State

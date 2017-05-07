@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System;
 using LibNoise;
@@ -40,13 +40,20 @@ namespace DwarfCorp.GameStates
                 var file = new OverworldFile(path + ProgramData.DirChar + "world." + OverworldFile.CompressedExtension, true, true);
                 Overworld.Map = file.Data.CreateMap();
                 Overworld.Name = file.Data.Name;
-
+                Overworld.NativeFactions = new List<Faction>();
+                var races = ContentPaths.LoadFromJson<Dictionary<string, Race>>(ContentPaths.World.races);
+                foreach (var faction in file.Data.FactionList)
+                {
+                    Overworld.NativeFactions.Add(new Faction(faction, races));
+                }
                 var settings = new WorldGenerationSettings();
                 settings.Width = Overworld.Map.GetLength(1);
                 settings.Height = Overworld.Map.GetLength(0);
                 settings.Name = System.IO.Path.GetFileName(path);
                 StateManager.PopState();
-                StateManager.PushState(new WorldGeneratorState(Game, Game.StateManager, settings, false));
+                settings.Natives = Overworld.NativeFactions;
+                var genState = new WorldGeneratorState(Game, Game.StateManager, settings, false);
+                StateManager.PushState(genState);
             };
         }
         
