@@ -7,7 +7,7 @@ namespace DwarfCorp.Goals.Goals
 {
     public class TestGoal : Goal
     {
-        public override void OnCreation()
+        public TestGoal(String SystemName, GoalMemory Memory) : base(SystemName, Memory)
         {
             Name = "Test Goal";
             Description = "This goal exists to test the goal system.";
