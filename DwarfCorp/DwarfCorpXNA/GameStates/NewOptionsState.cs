@@ -91,7 +91,7 @@ namespace DwarfCorp.GameStates
             // Create and initialize GUI framework.
             GuiRoot = new Gum.Root(Gum.Root.MinimumSize, DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
-
+            GuiRoot.SetMouseOverlay(null, 0);
             // CONSTRUCT GUI HERE...
             MainPanel = GuiRoot.RootItem.AddChild(new Gum.Widget
                 {

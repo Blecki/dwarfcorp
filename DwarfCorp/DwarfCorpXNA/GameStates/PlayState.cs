@@ -152,6 +152,8 @@ namespace DwarfCorp.GameStates
                     GuiRoot.MousePointer = mouse;
                 };
 
+                World.SetMouseOverlay += (mouse, frame) => GuiRoot.SetMouseOverlay(mouse, frame);
+
                 World.ShowToolPopup += text => GuiRoot.ShowPopup(new NewGui.ToolPopup
                 {
                     Text = text,
@@ -622,6 +624,7 @@ namespace DwarfCorp.GameStates
                                 OnClick = (widget, args) =>
                                 {
                                     Master.VoxSelector.Brush = VoxelBrush.Box;
+                                    World.SetMouseOverlay("tool-icons", 29);
                                 }
                             },
                             new NewGui.FramedIcon
@@ -632,6 +635,7 @@ namespace DwarfCorp.GameStates
                                 OnClick = (widget, args) =>
                                 {
                                     Master.VoxSelector.Brush = VoxelBrush.Shell;
+                                    World.SetMouseOverlay("tool-icons", 30);
                                 }
                             },
                             new NewGui.FramedIcon
@@ -642,6 +646,7 @@ namespace DwarfCorp.GameStates
                                 OnClick = (widget, args) =>
                                 {
                                     Master.VoxSelector.Brush = VoxelBrush.Stairs;
+                                    World.SetMouseOverlay("tool-icons", 31);
                                 }
                             }
                         }

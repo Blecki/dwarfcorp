@@ -164,7 +164,7 @@ namespace DwarfCorp.GameStates
             DwarfGame.GumInputMapper.GetInputQueue();
                 GuiRoot = new Gum.Root(Gum.Root.MinimumSize, DwarfGame.GumSkin);
                 GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
-
+                GuiRoot.SetMouseOverlay(null, 0);
                 MakeDebugWorldMenu();
 
                 // Must be true or Render will not be called.

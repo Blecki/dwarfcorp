@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using LibNoise;
 using Microsoft.Xna.Framework;
@@ -26,7 +26,7 @@ namespace DwarfCorp.GameStates
 
             GuiRoot = new Gum.Root(Gum.Root.MinimumSize, DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
-
+            GuiRoot.SetMouseOverlay(null, 0);
             var mainPanel = GuiRoot.RootItem.AddChild(new Gum.Widget
             {
                 Rect = GuiRoot.VirtualScreen,
