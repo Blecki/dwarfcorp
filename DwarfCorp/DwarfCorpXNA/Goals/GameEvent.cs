@@ -7,7 +7,6 @@ namespace DwarfCorp.Goals
 {
     public class GameEvent
     {
-        public DwarfTime Time;
         public String EventDescription;
     }
 }

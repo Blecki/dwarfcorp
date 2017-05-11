@@ -75,6 +75,15 @@ namespace DwarfCorp
         [JsonIgnore]
         public WorldManager World { get; set; }
 
+        #region Goals
+
+        [JsonIgnore]
+        public Goals.GoalManager GoalManager;
+
+        public Goals.GoalMemory GoalMemory;
+
+        #endregion
+
         protected void OnDeserialized(StreamingContext context)
         {
             World = (WorldManager) (context.Context);
@@ -84,12 +93,16 @@ namespace DwarfCorp
 
         public GameMaster()
         {
+            GoalMemory = new Goals.GoalMemory();
+            GoalManager = new Goals.GoalManager();
         }
 
         public GameMaster(Faction faction, DwarfGame game, ComponentManager components, ChunkManager chunks, Camera camera, GraphicsDevice graphics)
         {
             World = components.World;
             Faction = faction;
+            GoalMemory = new Goals.GoalMemory();
+            GoalManager = new Goals.GoalManager();
             Initialize(game, components, chunks, camera, graphics);
             VoxSelector.Selected += OnSelected;
             VoxSelector.Dragged += OnDrag;
@@ -100,6 +113,8 @@ namespace DwarfCorp
 
         public void Initialize(DwarfGame game, ComponentManager components, ChunkManager chunks, Camera camera, GraphicsDevice graphics)
         {
+            GoalManager.Initialize(GoalMemory);
+
             RoomLibrary.InitializeStatics();
 
             CameraController = camera;
@@ -245,8 +260,7 @@ namespace DwarfCorp
                 {
                     if (!noMoney)
                     {
-                        World.MakeAnnouncement("We're bankrupt!",
-                            "If we don't make a profit by tomorrow, our stock will crash!");
+                        World.MakeAnnouncement("If we don't make a profit by tomorrow, our stock will crash!");
                     }
                     noMoney = true;
                 }
@@ -256,7 +270,7 @@ namespace DwarfCorp
                 }
             }
 
-            World.MakeAnnouncement("Pay day!", String.Format("We paid our employees {0} today.",
+            World.MakeAnnouncement(String.Format("We paid our employees {0} today.",
                 total), null, ContentPaths.Audio.change);
         }
 
@@ -297,11 +311,6 @@ namespace DwarfCorp
 
         public void Update(DwarfGame game, DwarfTime time)
         {
-            //if (CurrentToolMode != ToolMode.God)
-            //{
-            //    CurrentToolMode = ToolBar.CurrentMode;
-            //}
-
             CurrentTool.Update(game, time);
 
             if (!World.Paused)
@@ -312,6 +321,7 @@ namespace DwarfCorp
             {
                 CameraController.LastWheel = Mouse.GetState().ScrollWheelValue;
             }
+
             UpdateInput(game, time);
 
             if (Faction.Minions.Any(m => m.IsDead && m.TriggersMourning))
@@ -330,8 +340,7 @@ namespace DwarfCorp
                 if (deadMinion != null)
                 {
                     World.MakeAnnouncement(
-                        String.Format("{0} ({1}) died!", deadMinion.Stats.FullName, deadMinion.Stats.CurrentLevel.Name),
-                        "One of our employees has died!");
+                        String.Format("{0} ({1}) died!", deadMinion.Stats.FullName, deadMinion.Stats.CurrentLevel.Name));
                     Faction.Economy.Company.StockPrice -= MathFunctions.Rand(0, 0.5f);
                 }
             }
@@ -341,6 +350,8 @@ namespace DwarfCorp
             UpdateRooms();
 
             Faction.CraftBuilder.Update(time, this);
+
+            GoalManager.Update(World);
         }
 
 

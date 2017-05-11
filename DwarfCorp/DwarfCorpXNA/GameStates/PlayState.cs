@@ -52,6 +52,7 @@ namespace DwarfCorp.GameStates
         private NewGui.InfoTray InfoTray;
         private NewGui.ToggleTray BrushTray;
         private NewGui.GodMenu GodMenu;
+        private AnnouncementPopup Announcer;
 
         private class ToolbarItem
         {
@@ -549,22 +550,18 @@ namespace DwarfCorp.GameStates
 
             #region Announcer and info tray
 
-            World.OnAnnouncement = (title, message, clickAction) =>
+            Announcer = GuiRoot.RootItem.AddChild(new AnnouncementPopup
             {
-                var announcer = GuiRoot.RootItem.AddChild(new NewGui.AnnouncementPopup
+                OnLayout = (sender) =>
                 {
-                    Text = title,
-                    Message = message,
-                    OnClick = (sender, args) => { if (clickAction != null) clickAction(); },
-                    Rect = new Rectangle(
-                        GameSpeedControls.Rect.X - 128,
-                        GameSpeedControls.Rect.Y - 128,
-                        GameSpeedControls.Rect.Width + 128,
-                        128)
-                });
+                    sender.Rect = new Rectangle(GameSpeedControls.Rect.X - 128,
+                        GameSpeedControls.Rect.Y - 128, GameSpeedControls.Rect.Width + 128, 128);
+                }
+            }) as AnnouncementPopup;
 
-                // Make the announcer stay behind other controls.
-                GuiRoot.RootItem.SendToBack(announcer);
+            World.OnAnnouncement = (message, clickAction) =>
+            {
+                Announcer.QueueAnnouncement(message, clickAction);
             };
 
             InfoTray = GuiRoot.RootItem.AddChild(new NewGui.InfoTray

@@ -279,7 +279,7 @@ namespace DwarfCorp
 
                     natives.TradeEnvoys.Add(envoy);
                     world.MakeAnnouncement(String.Format("Trade envoy from {0} has arrived!", natives.Name),
-                        "Click to zoom to location.", creatures.First().ZoomToMe, ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
+                       creatures.First().ZoomToMe, ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
                 }
             }
             else
@@ -317,7 +317,7 @@ namespace DwarfCorp
                     envoy.DistributeGoods();
                     natives.TradeEnvoys.Add(envoy);
                     world.MakeAnnouncement(String.Format("Trade envoy from {0} has arrived!",
-                        natives.Name), "Click to zoom to location.", creatures.First().ZoomToMe, ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
+                        natives.Name), creatures.First().ZoomToMe, ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
                 }
             }
 
@@ -453,7 +453,7 @@ namespace DwarfCorp
 
                         if (tradePort == null)
                         {
-                            World.MakeAnnouncement("No trade port!", "We need a balloon trade port to trade.");
+                            World.MakeAnnouncement("We need a balloon trade port to trade.");
                             RecallEnvoy(envoy);
                             break;
                         }

@@ -7,8 +7,8 @@ namespace DwarfCorp.Goals
 {
     public class Goal
     {
-        private GoalMemory Memory;
-        private String SystemName;
+        public GoalMemory Memory;
+        public String SystemName;
         
         public String Name = "Generic Goal";
         public String Description = "This goal was not properly configured.";
@@ -21,12 +21,6 @@ namespace DwarfCorp.Goals
             set { Memory.SetState(SystemName, value); }
         }
         
-        public Goal(String SystemName, GoalMemory Memory)
-        {
-            this.SystemName = SystemName;
-            this.Memory = Memory;
-        }
-
         /// <summary>
         /// Called when the player selects a goal and activates it. Will NOT be called for
         /// achievement type goals.

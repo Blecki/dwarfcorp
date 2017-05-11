@@ -12,25 +12,44 @@ namespace DwarfCorp.Goals
         private List<GameEvent> Events = new List<GameEvent>();
         private List<Goal> PendingActivation = new List<Goal>();
 
-        public GoalManager(GoalMemory Memory)
+        public GoalManager()
         {
             // Discover all possible goals.
             foreach (var type in System.Reflection.Assembly.GetExecutingAssembly().GetTypes())
                 if (type.IsSubclassOf(typeof(Goal)))
                 {
-                    var newGoal = Activator.CreateInstance(type, type.FullName, Memory) as Goal;
+                    var newGoal = Activator.CreateInstance(type) as Goal;
+                    newGoal.SystemName = type.FullName;
                     AllGoals.Add(type.FullName, newGoal);
-                    if (newGoal.GoalType == GoalTypes.Achievement)
-                    {
-                        newGoal.State = GoalState.Active;
-                        ActiveGoals.Add(newGoal);
-                    }
                 }
+        }
+
+        public void Initialize(GoalMemory Memory)
+        {
+            foreach (var goal in AllGoals)
+            {
+                goal.Value.Memory = Memory;
+
+                if (goal.Value.State == GoalState.Active)
+                    ActiveGoals.Add(goal.Value);
+
+                if (goal.Value.GoalType == GoalTypes.Achievement &&
+                    goal.Value.State == GoalState.Unavailable)
+                {
+                    ActiveGoals.Add(goal.Value);
+                    goal.Value.State = GoalState.Active;
+                }
+            }
         }
 
         public void OnGameEvent(GameEvent Event)
         {
             Events.Add(Event);
+        }
+
+        public void OnGameEvent(String Event)
+        {
+            Events.Add(new GameEvent { EventDescription = Event });
         }
 
         public void Update(WorldManager World)
