@@ -51,6 +51,8 @@ namespace DwarfCorp
         public float LifeRemaining;
         public Color Tint;
         public InstanceData InstanceData;
+        public float TimeAlive;
+        public int Frame;
     }
 
     [JsonObject(IsReference = true)]
@@ -137,7 +139,7 @@ namespace DwarfCorp
     public class ParticleEmitter : Tinter, IUpdateableComponent, IRenderableComponent
     {
         [JsonIgnore]
-        public FixedInstanceArray Sprites { get; set; }
+        public List<FixedInstanceArray> Sprites { get; set; }
         private int maxParticles = 0;
 
         public int MaxParticles
@@ -145,7 +147,7 @@ namespace DwarfCorp
             get { return maxParticles; }
             set
             {
-                if(Sprites != null) {Sprites.SetNumInstances(MaxParticles);}
+                if(Sprites != null) {foreach(var sprites in Sprites) {sprites.SetNumInstances(MaxParticles);}}
                 maxParticles = value;
             }
         }
@@ -163,8 +165,13 @@ namespace DwarfCorp
             {
                 Data.Animation.CreatePrimitives(GameState.Game.GraphicsDevice);
             }
-            Sprites = new FixedInstanceArray(Name, Data.Animation.Primitives[0], Data.Animation.SpriteSheet.GetTexture(), 
-                Data.MaxParticles, Data.BlendMode);
+            Sprites = new List<FixedInstanceArray>();
+            foreach (BillboardPrimitive t in Data.Animation.Primitives)
+            {
+                Sprites.Add(new FixedInstanceArray(Name, t,
+                    Data.Animation.SpriteSheet.GetTexture(),
+                    Data.MaxParticles, Data.BlendMode));
+            }
             Data.Animation.Play();
         }
 
@@ -196,8 +203,13 @@ namespace DwarfCorp
             }
             Data = emitterData;
             maxParticles = Data.MaxParticles;
-            Sprites = new FixedInstanceArray(name, Data.Animation.Primitives[0], Data.Animation.SpriteSheet.GetTexture(),
-                Data.MaxParticles, Data.BlendMode);
+            Sprites = new List<FixedInstanceArray>();
+            foreach (BillboardPrimitive t in Data.Animation.Primitives)
+            {
+                Sprites.Add(new FixedInstanceArray(Name, t,
+                    Data.Animation.SpriteSheet.GetTexture(),
+                    Data.MaxParticles, Data.BlendMode));
+            }
             Data.Animation.Play();
 
             TriggerTimer = new Timer(Data.EmissionFrequency, Data.ReleaseOnce);
@@ -263,7 +275,10 @@ namespace DwarfCorp
         public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             ApplyTintingToEffect(effect);
-            Sprites.Render(graphicsDevice, effect, camera, !renderingForWater);
+            foreach (var sprites in Sprites)
+            {
+                sprites.Render(graphicsDevice, effect, camera, !renderingForWater);
+            }
         }
 
         public Particle CreateParticle(Vector3 pos, Vector3 velocity, Color tint)
@@ -276,7 +291,8 @@ namespace DwarfCorp
                 AngularVelocity = Rand(Data.MinAngular, Data.MaxAngular),
                 LifeRemaining = 1.0f,
                 Tint = tint,
-                Position = pos
+                Position = pos,
+                TimeAlive = 0.0f
             };
             toAdd.InstanceData = new InstanceData(Matrix.Identity, toAdd.Tint, true);
 
@@ -284,7 +300,7 @@ namespace DwarfCorp
 
             if (toAdd.InstanceData != null)
             {
-                Sprites.Add(toAdd.InstanceData);
+                Sprites[0].Add(toAdd.InstanceData);
             }
             return toAdd;
         }
@@ -389,7 +405,7 @@ namespace DwarfCorp
                     {
                         p.InstanceData.ShouldDraw = false;
                         p.InstanceData.Transform = Matrix.CreateTranslation(camera.Position + new Vector3(-1000, -1000, -1000));
-                        Sprites.Remove(p.InstanceData);
+                        Sprites[p.Frame].Remove(p.InstanceData);
                     }
 
                     toRemove.Add(p);
@@ -397,6 +413,22 @@ namespace DwarfCorp
 
                 else if(p.InstanceData != null)
                 {
+                    p.TimeAlive += (float)gameTime.ElapsedGameTime.TotalSeconds + MathFunctions.Rand() * 0.01f;
+                    int prevFrame = p.Frame;
+                    int newFrame = Data.Animation.GetFrame(p.TimeAlive);
+                    if (newFrame != prevFrame)
+                    {
+                        p.Frame = newFrame;
+                        if (Sprites.Count > 0)
+                        {
+                            Sprites[prevFrame].Remove(p.InstanceData);
+                            Sprites[newFrame].Add(p.InstanceData);
+                        }
+                        if (!Data.Animation.Loops && p.Frame == Data.Animation.Frames.Count - 1)
+                        {
+                            p.LifeRemaining *= 0.1f;
+                        }
+                    }
                     p.InstanceData.ShouldDraw = true;
                     p.InstanceData.Transform = MatrixFromParticle(p);
                     p.InstanceData.Color = p.Tint;
@@ -409,7 +441,10 @@ namespace DwarfCorp
             }
 
 
-            Sprites.Update(gameTime, camera, chunks.Graphics);
+            foreach (var sprites in Sprites)
+            {
+                sprites.Update(gameTime, camera, chunks.Graphics);
+            }
             if (Particles.Count > 0)
                 base.Update(gameTime, chunks, camera);
         }
