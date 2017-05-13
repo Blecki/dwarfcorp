@@ -1076,12 +1076,12 @@ namespace DwarfCorp
             for (int i = 0; i < numCreatures; i++)
             {
                 string creature = Race.CreatureTypes[MathFunctions.Random.Next(Race.CreatureTypes.Count)];
-                Vector3 offset = MathFunctions.RandVector3Cube() * 5;
+                Vector3 offset = MathFunctions.RandVector3Cube() * 2;
                 Voxel voxel = new Voxel();
                 
                 if (World.ChunkManager.ChunkData.GetFirstVoxelUnder(position + offset, ref voxel, true))
                 {
-                    Body body = EntityFactory.CreateEntity<Body>(creature, position + offset);
+                    Body body = EntityFactory.CreateEntity<Body>(creature, voxel.Position + new Vector3(0.5f, 1, 0.5f));
                     CreatureAI ai = body.GetChildrenOfType<CreatureAI>().FirstOrDefault();
                     
                     if (ai != null)
