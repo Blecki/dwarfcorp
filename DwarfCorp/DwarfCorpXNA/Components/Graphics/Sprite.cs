@@ -68,6 +68,7 @@ namespace DwarfCorp
         }
 
         public float BillboardRotation { get; set; }
+        public bool EnableWind { get; set; }
 
         public Sprite(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, SpriteSheet spriteSheet, bool addToCollisionManager) :
             base(name, parent, localTransform, Vector3.Zero, Vector3.Zero, addToCollisionManager)
@@ -79,6 +80,7 @@ namespace DwarfCorp
             DistortPosition = true;
             DrawSilhouette = false;
             SilhouetteColor = new Color(0.0f, 1.0f, 1.0f, 0.5f);
+            EnableWind = false;
         }
 
         public Sprite()
@@ -256,11 +258,18 @@ namespace DwarfCorp
                     effect.CurrentTechnique = oldTechnique;
                 }
 
+                if (EnableWind)
+                {
+                    effect.EnableWind = true;
+                }
+
                 foreach(EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
                     CurrentAnimation.Primitives[CurrentAnimation.CurrentFrame].Render(graphicsDevice);
                 }
+
+                effect.EnableWind = false;
             }
         }
     }

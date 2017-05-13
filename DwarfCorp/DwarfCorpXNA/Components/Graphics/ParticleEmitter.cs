@@ -56,6 +56,13 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class EmitterData : ICloneable
     {
+        public enum ParticleBlend
+        {
+            NonPremultiplied,
+            Additive,
+            AlphaBlend,
+            Opaque
+        }
         public int MaxParticles;
         public int ParticlesPerFrame;
         public bool ReleaseOnce;
@@ -71,7 +78,6 @@ namespace DwarfCorp
         public float MaxAngular;
         public float AngularDamping;
         public float LinearDamping;
-        public Texture2D Texture;
         public Animation Animation;
         public float EmissionRadius;
         public float EmissionSpeed;
@@ -80,8 +86,27 @@ namespace DwarfCorp
         public bool Sleeps = false;
         public bool HasLighting = true;
         public bool RotatesWithVelocity = false;
+        public ParticleBlend Blend = ParticleBlend.NonPremultiplied;
+
         [JsonIgnore]
-        public BlendState Blend = BlendState.NonPremultiplied;
+        public BlendState BlendMode
+        {
+            get
+            {
+                switch (Blend)
+                {
+                    case ParticleBlend.Additive:
+                        return BlendState.Additive;
+                    case ParticleBlend.NonPremultiplied:
+                        return BlendState.NonPremultiplied;
+                    case ParticleBlend.Opaque:
+                        return BlendState.Opaque;
+                    case ParticleBlend.AlphaBlend:
+                        return BlendState.AlphaBlend;
+                }
+                return BlendState.Opaque;
+            }
+        }
 
         public bool EmitsLight = false;
         public bool UseManualControl = false;
@@ -138,7 +163,8 @@ namespace DwarfCorp
             {
                 Data.Animation.CreatePrimitives(GameState.Game.GraphicsDevice);
             }
-            Sprites = new FixedInstanceArray(Name, Data.Animation.Primitives[0], Data.Texture, Data.MaxParticles, Data.Blend);
+            Sprites = new FixedInstanceArray(Name, Data.Animation.Primitives[0], Data.Animation.SpriteSheet.GetTexture(), 
+                Data.MaxParticles, Data.BlendMode);
             Data.Animation.Play();
         }
 
@@ -170,7 +196,8 @@ namespace DwarfCorp
             }
             Data = emitterData;
             maxParticles = Data.MaxParticles;
-            Sprites = new FixedInstanceArray(name, Data.Animation.Primitives[0], emitterData.Texture, Data.MaxParticles, Data.Blend);
+            Sprites = new FixedInstanceArray(name, Data.Animation.Primitives[0], Data.Animation.SpriteSheet.GetTexture(),
+                Data.MaxParticles, Data.BlendMode);
             Data.Animation.Play();
 
             TriggerTimer = new Timer(Data.EmissionFrequency, Data.ReleaseOnce);

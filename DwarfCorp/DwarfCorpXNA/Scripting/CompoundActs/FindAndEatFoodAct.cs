@@ -1,4 +1,4 @@
-﻿// FindAndEatFoodAct.cs
+// FindAndEatFoodAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -58,24 +58,26 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
-            
             if(Agent.Status.Hunger.IsUnhappy())
             {
+                Tree = new Sequence(new GetResourcesAct(Agent, Resource.ResourceTags.Edible), 
+                                    new Select(new GoToChairAndSitAct(Agent), true),
+                                    new Wrap(Creature.EatStockedFood));
+                /*
+                Stockpile stockRoom = Creature.Faction.GetNearestStockpile(Agent.Position);
+
+                if (stockRoom != null && stockRoom.IsBuilt)
+                {
+                    Tree = new GoToZoneAct(Agent, stockRoom) & new Wrap(Creature.EatStockedFood);
+                }
+
                 Room commonRoom = Creature.Faction.GetNearestRoomOfType("CommonRoom", Agent.Position);
 
                 if (commonRoom != null && commonRoom.IsBuilt)
                 {
                     Tree =  (new GoToZoneAct(Agent, commonRoom) & new GoToChairAndSitAct(Agent) & new Wrap(Creature.EatStockedFood));
                 }
-                else
-                {
-                    Stockpile stockRoom = Creature.Faction.GetNearestStockpile(Agent.Position);
-
-                    if (stockRoom != null && stockRoom.IsBuilt)
-                    {
-                        Tree = new GoToZoneAct(Agent, stockRoom) & new Wrap(Creature.EatStockedFood);
-                    }
-                }
+                 */
             }
             else
             {

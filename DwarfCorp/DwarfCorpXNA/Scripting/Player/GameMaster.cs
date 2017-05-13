@@ -35,19 +35,13 @@ namespace DwarfCorp
         }
 
 
-        public Camera CameraController { get; set; }
-
-        [JsonIgnore]
-        public DwarfGUI GUI { get; set; }
+        public OrbitCamera CameraController { get; set; }
 
         [JsonIgnore]
         public VoxelSelector VoxSelector { get; set; }
 
         [JsonIgnore]
         public BodySelector BodySelector { get; set; }
-
-        [JsonIgnore]
-        public AIDebugger Debugger { get; set; }
 
         public Faction Faction { get; set; }
 
@@ -84,7 +78,7 @@ namespace DwarfCorp
         protected void OnDeserialized(StreamingContext context)
         {
             World = (WorldManager) (context.Context);
-            Initialize(GameState.Game, World.ComponentManager, World.ChunkManager, World.Camera, World.ChunkManager.Graphics, World.GUI);
+            Initialize(GameState.Game, World.ComponentManager, World.ChunkManager, World.Camera, World.ChunkManager.Graphics);
             World.Master = this;
         }
 
@@ -92,11 +86,11 @@ namespace DwarfCorp
         {
         }
 
-        public GameMaster(Faction faction, DwarfGame game, ComponentManager components, ChunkManager chunks, Camera camera, GraphicsDevice graphics, DwarfGUI gui)
+        public GameMaster(Faction faction, DwarfGame game, ComponentManager components, ChunkManager chunks, OrbitCamera camera, GraphicsDevice graphics)
         {
             World = components.World;
             Faction = faction;
-            Initialize(game, components, chunks, camera, graphics, gui);
+            Initialize(game, components, chunks, camera, graphics);
             VoxSelector.Selected += OnSelected;
             VoxSelector.Dragged += OnDrag;
             BodySelector.Selected += OnBodiesSelected;
@@ -104,22 +98,18 @@ namespace DwarfCorp
             World.Time.NewDay += Time_NewDay;
         }
 
-        public void Initialize(DwarfGame game, ComponentManager components, ChunkManager chunks, Camera camera, GraphicsDevice graphics, DwarfGUI gui)
+        public void Initialize(DwarfGame game, ComponentManager components, ChunkManager chunks, OrbitCamera camera, GraphicsDevice graphics)
         {
             RoomLibrary.InitializeStatics();
 
             CameraController = camera;
             VoxSelector = new VoxelSelector(World, CameraController, chunks.Graphics, chunks);
             BodySelector = new BodySelector(CameraController, chunks.Graphics, components);
-            GUI = gui;
             SelectedMinions = new List<CreatureAI>();
             Spells = SpellLibrary.CreateSpellTree(components.World);
             CreateTools();
 
             InputManager.KeyReleasedCallback += OnKeyReleased;
-
-            Debugger = new AIDebugger(GUI, this);
-
         }
 
         public void Destroy()
@@ -132,8 +122,6 @@ namespace DwarfCorp
             Tools[ToolMode.God].Destroy();
             Tools[ToolMode.SelectUnits].Destroy();
             Tools.Clear();
-            Debugger.Destroy();
-            Debugger = null;
             Faction = null;
             VoxSelector = null;
             BodySelector = null;
@@ -142,7 +130,7 @@ namespace DwarfCorp
         private void CreateTools()
         {
             Tools = new Dictionary<ToolMode, PlayerTool>();
-            Tools[ToolMode.God] = new GodModeTool(GUI, this);
+            Tools[ToolMode.God] = new GodModeTool(this);
 
             Tools[ToolMode.SelectUnits] = new DwarfSelectorTool(this);
 
@@ -259,6 +247,7 @@ namespace DwarfCorp
                     {
                         World.MakeAnnouncement("We're bankrupt!",
                             "If we don't make a profit by tomorrow, our stock will crash!");
+                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
                     }
                     noMoney = true;
                 }
@@ -305,27 +294,6 @@ namespace DwarfCorp
         public void UpdateRooms()
         {
             bool hasAnyMinions = SelectedMinions.Count > 0;
-
-
-            foreach (Room room in Faction.GetRooms())
-            {
-                if (room.wasDeserialized)
-                {
-                    room.CreateGUIObjects();
-                    room.wasDeserialized = false;
-                }
-                if (room.GUIObject != null && hasAnyMinions)
-                {
-                    room.GUIObject.IsVisible = true;
-                    room.GUIObject.Enabled = true;
-                }
-                else if (!hasAnyMinions && room.GUIObject != null)
-                {
-                    room.GUIObject.IsVisible = false;
-                    room.GUIObject.GUIObject.IsVisible = false;
-                    room.GUIObject.Enabled = false;
-                }
-            }
         }
 
         public void Update(DwarfGame game, DwarfTime time)
@@ -336,13 +304,6 @@ namespace DwarfCorp
             //}
 
             CurrentTool.Update(game, time);
-            if(GameSettings.Default.EnableAIDebugger)
-            {
-                if(Debugger != null)
-                {
-                    Debugger.Update(time);
-                }
-            }
 
             if (!World.Paused)
             {
@@ -372,6 +333,7 @@ namespace DwarfCorp
                     World.MakeAnnouncement(
                         String.Format("{0} ({1}) died!", deadMinion.Stats.FullName, deadMinion.Stats.CurrentLevel.Name),
                         "One of our employees has died!");
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
                     Faction.Economy.Company.StockPrice -= MathFunctions.Rand(0, 0.5f);
                 }
             }
@@ -381,15 +343,106 @@ namespace DwarfCorp
             UpdateRooms();
 
             Faction.CraftBuilder.Update(time, this);
+
+            HandlePosessedDwarf();
         }
 
+
+        public void HandlePosessedDwarf()
+        {
+            foreach (var creature in Faction.Minions)
+            {
+                creature.IsPosessed = false;
+            }
+            KeyboardState keyState = Keyboard.GetState();
+            if (SelectedMinions.Count != 1)
+            {
+                CameraController.FollowAutoTarget = false;
+                CameraController.EnableControl = true;
+                return;
+            }
+
+            var dwarf = SelectedMinions[0];
+            dwarf.IsPosessed = true;
+            CameraController.EnableControl = false;
+            CameraController.AutoTarget = dwarf.Position;
+            CameraController.FollowAutoTarget = true;
+
+            if (dwarf.Velocity.Length() > 0.1)
+            {
+                Voxel above = new Voxel();
+                if (World.ChunkManager.ChunkData.GetFirstVoxelAbove(dwarf.Position, ref above, false))
+                {
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(above.GridPosition.Y - 1, ChunkManager.SliceMode.Y);
+                }
+                else
+                {
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.ChunkSizeY, ChunkManager.SliceMode.Y);
+                }
+            }
+
+            Vector3 forward = CameraController.GetForwardVector();
+            Vector3 right = CameraController.GetRightVector();
+            Vector3 desiredVelocity = Vector3.Zero;
+            bool hadCommand = false;
+            bool jumpCommand = false;
+            if (keyState.IsKeyDown(ControlSettings.Mappings.Forward))
+            {
+                hadCommand = true;
+                desiredVelocity += forward*10;
+            }
+
+            if (keyState.IsKeyDown(ControlSettings.Mappings.Back))
+            {
+                hadCommand = true;
+                desiredVelocity -= forward*10;
+            }
+
+            if (keyState.IsKeyDown(ControlSettings.Mappings.Right))
+            {
+                hadCommand = true;
+                desiredVelocity += right*10;
+            }
+
+            if (keyState.IsKeyDown(ControlSettings.Mappings.Left))
+            {
+                hadCommand = true;
+                desiredVelocity -= right*10;
+            }
+
+            if (keyState.IsKeyDown(ControlSettings.Mappings.Jump))
+            {
+                jumpCommand = true;
+                hadCommand = true;
+            }
+
+            if (hadCommand)
+            {
+                if (dwarf.CurrentTask != null)
+                    dwarf.CurrentTask.Cancel();
+                dwarf.CurrentTask = null;
+                dwarf.TryMoveVelocity(desiredVelocity, jumpCommand);
+            }
+            else if (dwarf.CurrentTask == null)
+            {
+                if (dwarf.Creature.IsOnGround)
+                {
+                    if (dwarf.Physics.Velocity.LengthSquared() < 1)
+                    {
+                        dwarf.Creature.CurrentCharacterMode = DwarfCorp.Creature.CharacterMode.Idle;
+                    }
+                    dwarf.Physics.Velocity = new Vector3(dwarf.Physics.Velocity.X*0.9f, dwarf.Physics.Velocity.Y,
+                        dwarf.Physics.Velocity.Z*0.9f);
+                }
+            }
+
+        }
 
         #region input
 
 
         public bool IsCameraRotationModeActive()
         {
-            KeyboardState keyState = Keyboard.GetState();
             return KeyManager.RotationEnabled();
 
         }
@@ -447,21 +500,21 @@ namespace DwarfCorp
             {
                 World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkHeight, ChunkManager.SliceMode.Y);
             }
-            else if(key == ControlSettings.Mappings.GodMode)
-            {
-                if(CurrentToolMode == ToolMode.God)
-                {
-                    CurrentToolMode = ToolMode.SelectUnits;
-                    GodModeTool godMode = (GodModeTool) Tools[ToolMode.God];
-                    godMode.IsActive = false;
-                }
-                else
-                {
-                    CurrentToolMode = ToolMode.God;
-                    GodModeTool godMode = (GodModeTool)Tools[ToolMode.God];
-                    godMode.IsActive = true;
-                }
-            }
+            //else if(key == ControlSettings.Mappings.GodMode)
+            //{
+            //    if(CurrentToolMode == ToolMode.God)
+            //    {
+            //        CurrentToolMode = ToolMode.SelectUnits;
+            //        GodModeTool godMode = (GodModeTool) Tools[ToolMode.God];
+            //        godMode.IsActive = false;
+            //    }
+            //    else
+            //    {
+            //        CurrentToolMode = ToolMode.God;
+            //        GodModeTool godMode = (GodModeTool)Tools[ToolMode.God];
+            //        godMode.IsActive = true;
+            //    }
+            //}
         }
 
         // Todo: Delete this.

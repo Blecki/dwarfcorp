@@ -202,6 +202,24 @@ namespace DwarfCorp
                                Clamp(value.Z, bounds.Min.Z, bounds.Max.Z));
         }
 
+        /// <summary>
+        /// Clamps the specified vector to the given magnitude.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="magnitude">The magnitude.</param>
+        /// <returns></returns>
+        public static Vector3 Clamp(Vector3 value, float magnitude)
+        {
+            float norm = value.Length();
+            if (norm > magnitude)
+            {
+                value.Normalize();
+                value *= magnitude;
+                return value;
+            }
+            return value;
+        }
+
 
         /// <summary>
         /// Clamps the specified vector to a rectangle.
@@ -982,6 +1000,23 @@ namespace DwarfCorp
         {
             Vector3 p = position - target;
             return new Vector2((float)Math.Atan2(p.Y, p.X), (float)Math.Acos(p.Z / radius));
+        }
+
+        public static Vector3 ClampXZ(Vector3 velocity, float f)
+        {
+            Vector2 xz = new Vector2(velocity.X, velocity.Z);
+            if (xz.LengthSquared() > f*f)
+            {
+                xz.Normalize();
+                xz *= f;
+            }
+            return new Vector3(xz.X, velocity.Y, xz.Y);
+        }
+
+        public static T RandEnum<T>()
+        {
+            Array values = Enum.GetValues(typeof(T));
+            return (T)values.GetValue(MathFunctions.RandInt(0, values.Length));
         }
     }
 }

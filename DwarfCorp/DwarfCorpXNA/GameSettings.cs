@@ -74,7 +74,6 @@ namespace DwarfCorp
             public bool GrassMotes = true;
             public int NumMotes = 512;
             public bool InvertZoom = false;
-            public bool EnableAIDebugger = false;
             public float ChunkGenerateDistance = 80.0f;
             public float ChunkRebuildTime = 0.5f;
             public float ChunkUnloadDistance = 250.0f;
@@ -85,6 +84,11 @@ namespace DwarfCorp
             public bool UseDynamicShadows = false;
             public bool UseLightmaps = false;
             public bool DrawPaths = false;
+
+            public override string ToString()
+            {
+                return FileUtils.SerializeBasicJSON(this);
+            }
         }
 
         public static Settings Default { get; set; }
@@ -109,6 +113,7 @@ namespace DwarfCorp
             try
             {
                 FileUtils.SaveBasicJson(Default, file);
+                Console.Out.WriteLine("Saving settings to {0} : {1}", file, GameSettings.Default.ToString());
             }
             catch (Exception exception)
             {
@@ -125,10 +130,11 @@ namespace DwarfCorp
             try
             {
                 Default = FileUtils.LoadJson<Settings>(file, false);
+                Console.Out.WriteLine("Loaded settings {1} \n {0}", file, Default.ToString());
             }
             catch (FileNotFoundException)
             {
-				Console.Error.WriteLine("Settings file does not exist. Using default settings.");
+				Console.Error.WriteLine("Settings file {0} does not exist. Using default settings.", file);
                 Default = new Settings();
                 Save();
             }

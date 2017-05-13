@@ -89,6 +89,8 @@ namespace DwarfCorp
             SpeakTimer = new Timer(5.0f, true);
             XPEvents = new List<int>();
         }
+
+        private bool jumpHeld = false;
         /// <summary> The creature this AI is controlling </summary>
         public Creature Creature { get; set; }
         /// <summary> The current path of voxels the AI is following </summary>
@@ -138,6 +140,15 @@ namespace DwarfCorp
         public EnemySensor Sensor { get; set; }
         /// <summary> This defines how the creature can move from voxel to voxel. </summary>
         public CreatureMovement Movement { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is posessed. If a creature is posessed,
+        /// it is being controlled by the player, so it shouldn't attempt to move unless it has to.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this instance is posessed; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsPosessed { get; set; }
 
         /// <summary> Wrapper around Creature.Hands </summary>
         [JsonIgnore]
@@ -378,6 +389,13 @@ namespace DwarfCorp
                     Tasks.Add(toReturn);
             }
 
+            /*
+            if (CurrentAct != null && CurrentAct.IsCanceled)
+            {
+                CurrentTask.Script = null;
+                CurrentTask = null;
+            }
+             */
 
             // Update the current task.
             if (CurrentTask != null && CurrentAct != null)
@@ -424,7 +442,7 @@ namespace DwarfCorp
                 }
             }
             // Otherwise, we don't have any tasks at the moment.
-            else
+            else if (CurrentTask == null)
             {
                 // Throw a tantrum if we're unhappy.
                 bool tantrum = false;
@@ -442,9 +460,10 @@ namespace DwarfCorp
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Sad);
                         if (Creature.Allies == "Dwarf")
                         {
-                            Manager.World.MakeAnnouncement(String.Format("{0} ({1}) refuses to workd!",
+                            Manager.World.MakeAnnouncement(String.Format("{0} ({1}) refuses to work!",
                                 Stats.FullName, Stats.CurrentLevel.Name),
                                 "Our employee is unhappy, and would rather not work!", ZoomToMe);
+                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
                         }
                         CurrentTask = null;
                     }
@@ -497,14 +516,15 @@ namespace DwarfCorp
 
                 IndicatorManager.DrawIndicator(sign + xp + " XP",
                     Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, xp > 0 ? Color.Green : Color.Red);
-                if (Stats.IsOverQualified && lastXPAnnouncement != Stats.XP)
+                if (Stats.IsOverQualified && lastXPAnnouncement != Stats.XP && Faction == Manager.World.PlayerFaction)
                 {
                     lastXPAnnouncement = Stats.XP;
                     Manager.World.MakeAnnouncement(String.Format("{0} ({1}) wants a promotion!",
                             Stats.FullName, Stats.CurrentLevel.Name),
                         String.Format("{0} can now be promoted to {1}.",
                             Stats.FullName, Stats.CurrentClass.Levels[Stats.LevelIndex + 1].Name),
-                        () => EconomyState.PushEconomyState(Manager.World), ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
+                        () => Manager.World.Game.StateManager.PushState(new NewEconomyState(Manager.World.Game, Manager.World.Game.StateManager, Manager.World)),
+                    ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
                 }
             }
             XPEvents.Clear();
@@ -568,17 +588,17 @@ namespace DwarfCorp
         /// </summary>
         public virtual Task ActOnIdle()
         {
-            if (!Creature.IsOnGround && !Movement.CanFly && !Creature.Physics.IsInLiquid)
+            if (!IsPosessed && !Creature.IsOnGround && !Movement.CanFly && !Creature.Physics.IsInLiquid)
             {
                 return new ActWrapperTask(new Wrap(AvoidFalling));
             }
 
-            if (Creature.Physics.IsInLiquid && MathFunctions.RandEvent(0.01f))
+            if (!IsPosessed && Creature.Physics.IsInLiquid && MathFunctions.RandEvent(0.01f))
             {
                 return new FindLandTask();
             }
 
-            if (GatherManager.VoxelOrders.Count == 0 &&
+            if (!IsPosessed && GatherManager.VoxelOrders.Count == 0 &&
                 (GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile()))
             {
                 // Find a room to train in
@@ -613,7 +633,7 @@ namespace DwarfCorp
                 return null;
             }
             // If we have no more build orders, look for gather orders
-            if (GatherManager.VoxelOrders.Count == 0)
+            if (GatherManager.VoxelOrders.Count == 0 && GatherManager.StockOrders.Count > 0)
             {
                 GatherManager.StockOrder order = GatherManager.StockOrders[0];
                 GatherManager.StockOrders.RemoveAt(0);
@@ -622,21 +642,27 @@ namespace DwarfCorp
                     Priority = Task.PriorityType.Low
                 };
             }
-            // Otherwise handle build orders.
-            var voxels = new List<Voxel>();
-            var types = new List<VoxelType>();
-            foreach (GatherManager.BuildVoxelOrder order in GatherManager.VoxelOrders)
+            else if (GatherManager.VoxelOrders.Count > 0)
             {
-                voxels.Add(order.Voxel);
-                types.Add(order.Type);
+
+                // Otherwise handle build orders.
+                var voxels = new List<Voxel>();
+                var types = new List<VoxelType>();
+                foreach (GatherManager.BuildVoxelOrder order in GatherManager.VoxelOrders)
+                {
+                    voxels.Add(order.Voxel);
+                    types.Add(order.Type);
+                }
+
+                GatherManager.VoxelOrders.Clear();
+                return new ActWrapperTask(new BuildVoxelsAct(this, voxels, types))
+                {
+                    Priority = Task.PriorityType.Low,
+                    AutoRetry = true
+                };
             }
 
-            GatherManager.VoxelOrders.Clear();
-            return new ActWrapperTask(new BuildVoxelsAct(this, voxels, types))
-            {
-                Priority = Task.PriorityType.Low,
-                AutoRetry = true
-            };
+            return null;
         }
 
 
@@ -764,6 +790,12 @@ namespace DwarfCorp
                 Creature.Physics.Face(other.Position);
                 SpeakTimer.Reset(SpeakTimer.TargetTimeSeconds);
             }
+        }
+
+        /// <summary> Returns whether or not the creature has a task with the same name as another </summary>
+        public bool HasTaskWithName(string other)
+        {
+            return Tasks.Any(task => task.Name == other);
         }
 
         /// <summary> Returns whether or not the creature has a task with the same name as another </summary>
@@ -959,6 +991,60 @@ namespace DwarfCorp
                 }
             }
 
+        }
+
+        public void TryMoveVelocity(Vector3 desiredDirection, bool jumpCommand)
+        {
+
+            Creature.OverrideCharacterMode = false;
+            Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+
+            float currSpeed = Creature.Physics.Velocity.Length();
+
+            if (currSpeed < 1)
+            {
+                Creature.CurrentCharacterMode = DwarfCorp.Creature.CharacterMode.Idle;
+            }
+
+            float force = Creature.Stats.MaxAcceleration * 10;
+            if (!Creature.IsOnGround)
+            {
+                force = Creature.Stats.MaxAcceleration;
+                Creature.CurrentCharacterMode = Creature.Physics.Velocity.Y > 0
+                    ? DwarfCorp.Creature.CharacterMode.Jumping
+                    : DwarfCorp.Creature.CharacterMode.Falling;
+            }
+
+
+            if (Creature.Physics.IsInLiquid)
+            {
+                Creature.CurrentCharacterMode = Creature.CharacterMode.Swimming;
+                Creature.Physics.ApplyForce(Vector3.Up * 10, DwarfTime.Dt);
+                force = Creature.Stats.MaxAcceleration*5;
+                Creature.NoiseMaker.MakeNoise("Swim", Position);
+            }
+
+            Vector3 projectedForce = new Vector3(desiredDirection.X, 0, desiredDirection.Z);
+
+            if (jumpCommand && !jumpHeld && (Creature.IsOnGround || Creature.Physics.IsInLiquid) && Creature.IsHeadClear)
+            {
+                projectedForce = new Vector3(projectedForce.X, 1, projectedForce.Z);
+                Creature.NoiseMaker.MakeNoise("Jump", Position);
+                Creature.Physics.LocalTransform *= Matrix.CreateTranslation(Vector3.Up*0.01f);
+                Creature.Physics.Velocity += Vector3.Up * 4.0f;
+            }
+            
+
+            jumpHeld = jumpCommand;
+
+            if (projectedForce.LengthSquared() > 0.001f)
+            {
+                projectedForce.Normalize();
+                Creature.Physics.ApplyForce(projectedForce * force, DwarfTime.Dt);
+                Creature.Physics.Velocity = 
+                    MathFunctions.ClampXZ(Creature.Physics.Velocity, Creature.Physics.IsInLiquid ? Stats.MaxSpeed * 0.5f: Stats.MaxSpeed);
+            }
+          
         }
     }
 

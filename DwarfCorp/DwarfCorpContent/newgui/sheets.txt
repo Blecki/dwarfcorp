@@ -45,6 +45,12 @@
 			"TileHeight": 8
 		},
 		{
+			"Name": "dwarves",
+			"Texture": "newgui/dwarves",
+			"TileWidth": 32,
+			"TileHeight": 48
+		},
+		{
 			"Name": "border-one",
 			"Texture": "newgui/border",
 			"TileWidth": 16,
@@ -223,6 +229,24 @@
 			"Name": "beartrap",
 			"Texture": "newgui/beartrap",
 			"TileWidth": 32,
+			"TileHeight": 32
+		},
+		{
+			"Name": "progress-sides",
+			"Texture": "newgui/progress-sides",
+			"TileWidth": 16,
+			"TileHeight": 32
+		},
+		{
+			"Name": "progress-middle",
+			"Texture": "newgui/progress-middle",
+			"TileWidth": 32,
+			"TileHeight": 32
+		},
+		{
+			"Name": "progress-fill",
+			"Texture": "newgui/progress-fill",
+			"TileWidth": 8,
 			"TileHeight": 32
 		}
 	]

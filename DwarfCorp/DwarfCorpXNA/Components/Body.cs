@@ -324,6 +324,7 @@ namespace DwarfCorp
 
             if(AnimationQueue.Count > 0)
             {
+                HasMoved = true;
                 MotionAnimation anim = AnimationQueue[0];
                 anim.Update(gameTime);
 

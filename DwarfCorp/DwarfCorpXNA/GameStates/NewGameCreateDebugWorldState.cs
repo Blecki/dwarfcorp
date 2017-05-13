@@ -82,7 +82,7 @@ namespace DwarfCorp.GameStates
                 {
                     Overworld.CreateHillsLand(Game.GraphicsDevice);
                     StateManager.ClearState();
-                    WorldSettings settings = new WorldSettings()
+                    WorldGenerationSettings settings = new WorldGenerationSettings()
                     {
                         ExistingFile = null,
                         ColonySize = new Point3(8, 1, 8),
@@ -97,7 +97,7 @@ namespace DwarfCorp.GameStates
                 {
                     Overworld.CreateCliffsLand(Game.GraphicsDevice);
                     StateManager.ClearState();
-                    WorldSettings settings = new WorldSettings()
+                    WorldGenerationSettings settings = new WorldGenerationSettings()
                     {
                         ExistingFile = null,
                         ColonySize = new Point3(8, 1, 8),
@@ -112,7 +112,7 @@ namespace DwarfCorp.GameStates
                 {
                     Overworld.CreateUniformLand(Game.GraphicsDevice);
                     StateManager.ClearState();
-                    WorldSettings settings = new WorldSettings()
+                    WorldGenerationSettings settings = new WorldGenerationSettings()
                     {
                         ExistingFile = null,
                         ColonySize = new Point3(8, 1, 8),
@@ -127,7 +127,7 @@ namespace DwarfCorp.GameStates
                 {
                     Overworld.CreateOceanLand(Game.GraphicsDevice, 0.17f);
                     StateManager.ClearState();
-                    WorldSettings settings = new WorldSettings()
+                    WorldGenerationSettings settings = new WorldGenerationSettings()
                     {
                         ExistingFile = null,
                         ColonySize = new Point3(8, 1, 8),

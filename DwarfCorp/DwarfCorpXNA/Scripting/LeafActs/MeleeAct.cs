@@ -407,6 +407,7 @@ namespace DwarfCorp
         public bool Is2D { get; set; }
         public Body Target { get; set; }
         public float Threshold { get; set; }
+
         public GreedyPathAct()
         {
 
@@ -422,7 +423,7 @@ namespace DwarfCorp
         public IEnumerable<Status> FindGreedyPath()
         {
             Vector3 target = Target.Position;
-            //Drawer3D.DrawLine(Agent.Position, target, Color.Green, 0.1f);
+
             if (Is2D) target.Y = Creature.AI.Position.Y;
             List<Creature.MoveAction> path = new List<Creature.MoveAction>();
             Voxel curr = Creature.Physics.CurrentVoxel;
@@ -433,7 +434,7 @@ namespace DwarfCorp
 
                 Creature.MoveAction? bestAction = null;
                 float bestDist = float.MaxValue;
-          
+
                 foreach (Creature.MoveAction action in actions)
                 {
                     float dist = (action.Voxel.Position - target).LengthSquared();
@@ -446,10 +447,14 @@ namespace DwarfCorp
                 }
 
                 Vector3 half = Vector3.One*0.5f;
-                if (bestAction.HasValue && !path.Any(p => p.Voxel.Equals(bestAction.Value.Voxel) && p.MoveType == bestAction.Value.MoveType))
+                if (bestAction.HasValue &&
+                    !path.Any(p => p.Voxel.Equals(bestAction.Value.Voxel) && p.MoveType == bestAction.Value.MoveType))
                 {
                     path.Add(bestAction.Value);
+                    Creature.MoveAction action = bestAction.Value;
+                    action.Voxel = new Voxel(curr);
                     curr = bestAction.Value.Voxel;
+                    bestAction = action;
 
                     if (((bestAction.Value.Voxel.Position + half) - target).Length() < Threshold)
                     {
@@ -460,6 +465,13 @@ namespace DwarfCorp
             }
             if (path.Count > 0)
             {
+                path.Insert(0,
+                    new Creature.MoveAction()
+                    {
+                        Diff = Vector3.Zero,
+                        Voxel = new Voxel(Creature.Physics.CurrentVoxel),
+                        MoveType = Creature.MoveType.Walk
+                    });
                 Creature.AI.Blackboard.SetData("RandomPath", path);
                 yield return Status.Success;
             }
@@ -475,5 +487,4 @@ namespace DwarfCorp
             base.Initialize();
         }
     }
-
 }

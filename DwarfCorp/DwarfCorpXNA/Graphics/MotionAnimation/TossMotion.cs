@@ -39,4 +39,37 @@ namespace DwarfCorp
             return toReturn;
         }
     }
+
+    [JsonObject(IsReference = true)]
+    public class KnockbackAnimation : MotionAnimation
+    {
+        public Matrix Start { get; set; }
+        public Vector3 Knock { get; set; }
+
+        public KnockbackAnimation()
+        {
+            
+        }
+
+        public KnockbackAnimation(float animTime,  Matrix start, Vector3 knock) :
+            base(animTime, false)
+        {
+            Start = start;
+            knock.Y *= 0.001f;
+            Knock = knock;
+        }
+
+        public override Matrix GetTransform()
+        {
+            float len = Knock.Length();
+            float z = Easing.Ballistic(Time.CurrentTimeSeconds, Time.TargetTimeSeconds, len);
+            Vector3 dir = Knock;
+            dir /= len;
+
+            Vector3 dx = Start.Translation + dir*z;
+            Matrix toReturn = Start;
+            toReturn.Translation = dx;
+            return toReturn;
+        }
+    }
 }

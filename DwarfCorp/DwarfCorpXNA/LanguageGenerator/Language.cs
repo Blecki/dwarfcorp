@@ -1,4 +1,4 @@
-﻿// Language.cs
+// Language.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -50,71 +50,140 @@ namespace DwarfCorp
     public struct Utterance
     {
         public UtteranceType Type;
-        public SoundEffect Syllable;
+        public string Syllable;
+        public string SubSentence;
     }
 
     /// <summary>
-    /// This is a weird (probably deprecated) system for making "talky" noises.
+    /// This is a system for making "talky" noises.
     /// </summary>
     public class Language
     {
-        public List<SoundEffect> Syllables { get; set; }
+        public List<string> Syllables { get; set; }
+        public List<string> Yays { get; set; }
+        public List<string> Boos { get; set; }
+ 
+        public Language()
+        {
+            
+        }
 
-        public Language(List<SoundEffect> syllables)
+        public Language(List<string> syllables)
         {
             Syllables = syllables;
         }
 
-
-        public void Say(string sentence)
+        public void SayYay()
         {
-            SayUtterance(ConvertSentence(sentence));
+            if (Yays != null && Yays.Count > 0)
+            {
+                SoundManager.PlaySound(Datastructures.SelectRandom(Yays));
+            }
         }
 
-        public List<Utterance> ConvertSentence(string sentence)
+        public void SayBoo()
         {
-            List<Utterance> toReturn = new List<Utterance>();
-            string[] words = sentence.Split(' ');
-            foreach(string word in words)
+            if (Boos != null && Boos.Count > 0)
             {
-                if(word != "." && word != ",")
+                SoundManager.PlaySound(Datastructures.SelectRandom(Boos));
+            }
+        }
+
+        public IEnumerable<Utterance> Say(string sentence)
+        {
+            return SayUtterance(ConvertSentence(sentence));
+        }
+
+        private IEnumerable<Utterance> ConvertSentence(string sentence)
+        {
+            string[] words = sentence.Split(' ');
+            for(int i = 0; i < words.Length; i++)
+            {
+                words[i] += " ";
+            }
+            
+            List<string> syls = new List<string>();
+            int chunkSize = 5;
+            foreach (var word in words)
+            {
+                int i = 0;
+                for (i = 0; i < word.Length - chunkSize; i += chunkSize)
+                {
+                    syls.Add(word.Substring(i, chunkSize));
+                }
+
+                if (i < word.Length)
+                {
+                    syls.Add(word.Substring(i));
+                }
+            }
+
+
+            if (syls.Count == 0)
+            {
+                syls.Add(sentence);
+            }
+            int utterances = 0;
+            string lastUtterance = null;
+            string builtSentence = "";
+            foreach(string word in syls)
+            {
+                builtSentence += word;
+                string subSentence = new string(builtSentence.ToCharArray());
+                if(!(word.Contains(".") || word.Contains(",")))
                 {
                     Utterance utter = new Utterance();
                     utter.Type = UtteranceType.Syllable;
-                    utter.Syllable = Syllables[Math.Abs(word.GetHashCode()) % Syllables.Count];
+                    utter.SubSentence = subSentence;
+                    utter.Syllable = Syllables[(int)word[0] % Syllables.Count];
 
-                    if(toReturn.Count == 0 || utter.Syllable != toReturn.Last().Syllable)
+                    if(utterances == 0 || utter.Syllable != lastUtterance)
                     {
-                        toReturn.Add(utter);
+                        lastUtterance = utter.Syllable;
+                        yield return utter;
                     }
                 }
                 else
                 {
-                    Utterance pause = new Utterance();
-                    pause.Type = UtteranceType.Pause;
-                    toReturn.Add(pause);
+                    Utterance utter = new Utterance();
+                    utter.Type = UtteranceType.Syllable;
+                    utter.SubSentence = subSentence;
+                    utter.Syllable = Syllables[(int)word[0] % Syllables.Count];
+
+                    if (utterances == 0 || utter.Syllable != lastUtterance)
+                    {
+                        lastUtterance = utter.Syllable;
+                        yield return utter;
+                    }
+                    Utterance pause = new Utterance {Type = UtteranceType.Pause, SubSentence = subSentence};
+                    yield return pause;
                 }
             }
-
-            return toReturn;
         }
 
-        public void SayUtterance(List<Utterance> utterances)
+        private IEnumerable<Utterance> SayUtterance(IEnumerable<Utterance> utterances)
         {
             foreach(Utterance utter in utterances)
             {
                 if(utter.Type == UtteranceType.Pause)
                 {
-                    System.Threading.Thread.Sleep(1000);
+                    Timer pauseTimer = new Timer(0.25f, true, Timer.TimerMode.Real);
+
+                    while (!pauseTimer.HasTriggered)
+                    {
+                        pauseTimer.Update(DwarfTime.LastTime);
+                        yield return utter;
+                    }
                 }
                 else
                 {
-                    SoundEffectInstance inst = utter.Syllable.CreateInstance();
+                    SoundEffectInstance inst = SoundManager.PlaySound(utter.Syllable, MathFunctions.Rand(0.1f, 0.25f));
+                    inst.Pitch = MathFunctions.Rand(-0.4f, 0.4f);
                     inst.Play();
 
                     while(inst.State == SoundState.Playing)
                     {
-                        System.Threading.Thread.Sleep(5);
+                        yield return utter;
                     }
                 }
             }

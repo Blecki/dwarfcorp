@@ -45,13 +45,29 @@ namespace DwarfCorp
         public Vector3[] Points;
         private readonly VertexPositionColor[] triangles;
         private readonly int triangleCount = 0;
+        public Color[] Colors;
+
+        public LineListCommand3D(Vector3[] points, IEnumerable<Color> color, float thickness) :
+            base(Color.Black)
+        {
+            Colors = color.ToArray();
+            this.Points = points;
+            Matrix worldMatrix = Matrix.Identity;
+            List<VertexPositionColor> vertices = Drawer3D.GetTriangleStrip(points, thickness, Colors, ref triangleCount, worldMatrix);
+            triangles = new VertexPositionColor[vertices.Count];
+            vertices.CopyTo(triangles);
+        }
+
 
         public LineListCommand3D(Vector3[] points, Color color, float thickness) :
             base(color)
         {
             this.Points = points;
             Matrix worldMatrix = Matrix.Identity;
-            List<VertexPositionColor> vertices = Drawer3D.GetTriangleStrip(points, thickness, color, ref triangleCount, worldMatrix);
+            List<VertexPositionColor> vertices =
+                Colors == null ? Drawer3D.GetTriangleStrip(points, thickness, Colors, ref triangleCount, worldMatrix) :
+                Drawer3D.GetTriangleStrip(points, thickness, color, ref triangleCount, worldMatrix);
+
             triangles = new VertexPositionColor[vertices.Count];
             vertices.CopyTo(triangles);
         }

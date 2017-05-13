@@ -47,7 +47,11 @@ namespace Gum.Widgets
             if (String.IsNullOrEmpty(Graphics)) Graphics = "vertical-scrollbar";
 
             OnClick += (sender, args) => SetFromMousePosition(args.Y);
-            OnMouseMove += (sender, args) => SetFromMousePosition(args.Y);
+            OnMouseMove += (sender, args) =>
+            {
+                if (Object.ReferenceEquals(Root.MouseDownItem, this))
+                    SetFromMousePosition(args.Y);
+            };
         }
 
         private void SetFromMousePosition(int Y)

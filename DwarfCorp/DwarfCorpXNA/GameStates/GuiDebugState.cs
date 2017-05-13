@@ -10,6 +10,7 @@ namespace DwarfCorp.GameStates
     public class GuiDebugState : GameState
     {
         private Gum.Root GuiRoot;
+        private Gum.Widgets.ProgressBar Progress;
 
         public class ShowTextureDialog : Gum.Widget
         {
@@ -289,6 +290,11 @@ namespace DwarfCorp.GameStates
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
             MakeMenu();
 
+            Progress = GuiRoot.RootItem.AddChild(new Gum.Widgets.ProgressBar
+            {
+                Rect = new Rectangle(0, 0, GuiRoot.VirtualScreen.Width, 32)
+            }) as Gum.Widgets.ProgressBar;
+
            Dictionary<GameMaster.ToolMode, Gum.Widget> ToolbarItems = new Dictionary<GameMaster.ToolMode, Gum.Widget>();
 
             //ToolbarItems[GameMaster.ToolMode.SelectUnits] = CreateIcon(5, GameMaster.ToolMode.SelectUnits);
@@ -377,6 +383,9 @@ namespace DwarfCorp.GameStates
                     // Pass event to game...
                 }
             }
+
+            Progress.Percentage = (float)gameTime.TotalGameTime.TotalSeconds / 10.0f;
+            Progress.Percentage = Progress.Percentage - (float)Math.Floor(Progress.Percentage);
 
             GuiRoot.Update(gameTime.ToGameTime());
 

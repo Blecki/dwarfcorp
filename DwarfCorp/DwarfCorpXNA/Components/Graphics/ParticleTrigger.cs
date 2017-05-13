@@ -1,4 +1,4 @@
-﻿// ParticleTrigger.cs
+// ParticleTrigger.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -76,6 +76,11 @@ namespace DwarfCorp
 
         public void Trigger(int num)
         {
+            if (string.IsNullOrEmpty(EmitterName))
+            {
+                return;
+            }
+
             Vector3 p = GlobalTransform.Translation;
             if(TriggerInBox)
             {

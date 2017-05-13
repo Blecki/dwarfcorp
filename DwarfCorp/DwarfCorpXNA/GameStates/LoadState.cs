@@ -13,7 +13,6 @@ namespace DwarfCorp.GameStates
     {
         public WorldManager World { get; set; }
         public InputManager Input = new InputManager();
-        public static DwarfGUI GUI = null;
         private DwarfRunner Runner;
         private bool DoneLoading = false;
 
@@ -42,8 +41,8 @@ namespace DwarfCorp.GameStates
         };
 
         private Timer TipTimer = new Timer(5, false);
-        public WorldSettings Settings { get; set; }
-        public LoadState(DwarfGame game, GameStateManager stateManager, WorldSettings settings) :
+        public WorldGenerationSettings Settings { get; set; }
+        public LoadState(DwarfGame game, GameStateManager stateManager, WorldGenerationSettings settings) :
             base(game, "LoadState", stateManager)
         {
             Settings = settings;
@@ -78,14 +77,8 @@ namespace DwarfCorp.GameStates
 
             // Todo - Save gui creation for play state. We're only creating it here so we can give it to
             //      the world class. The world doesn't need it until after loading.
-            GUI = new DwarfGUI(Game, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default),
-                Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Title),
-                Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
 
-            GUI.ToolTipManager.InfoLocation = new Point(Game.GraphicsDevice.Viewport.Width / 2, Game.GraphicsDevice.Viewport.Height);
-            GUI.MouseMode = GUISkin.MousePointer.Pointer;
-
-            World.Setup(GUI);
+            World.Setup();
 
             DwarfGame.GumInputMapper.GetInputQueue();
             GuiRoot = new Gum.Root(Gum.Root.MinimumSize, DwarfGame.GumSkin);
@@ -122,7 +115,6 @@ namespace DwarfCorp.GameStates
                 // Todo: Decouple gui/input from world.
                 // Copy important bits to PlayState - This is a hack; decouple world from gui and input instead.
                 PlayState.Input = Input;
-                PlayState.GUI = GUI;
 
                 // Hack: So that saved games still load.
                 if (World.PlayerCompany.Information == null)

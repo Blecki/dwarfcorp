@@ -1,4 +1,4 @@
-﻿// FarmAct.cs
+// FarmAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -109,7 +109,7 @@ namespace DwarfCorp
                     Creature.Physics.Velocity *= 0.1f;
                     tile.Progress += Creature.Stats.BaseFarmSpeed*DwarfTime.Dt;
 
-                    Drawer2D.DrawLoadBar(Agent.Manager.World.Camera, Agent.Position + Vector3.Up, Color.White, Color.Black, 100, 16,
+                    Drawer2D.DrawLoadBar(Agent.Manager.World.Camera, Agent.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4,
                         tile.Progress/100.0f);
 
                     if (tile.Progress >= 100.0f && !Satisfied())

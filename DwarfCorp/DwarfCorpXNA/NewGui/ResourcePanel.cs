@@ -9,8 +9,6 @@ namespace DwarfCorp.NewGui
 {
     public class ResourcePanel : GridPanel
     {
-        private Widget TopPanel;
-        private Widget HoverDisplay;
         public GameMaster Master;
         
         public override void Construct()

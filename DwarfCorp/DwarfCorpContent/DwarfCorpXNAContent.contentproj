@@ -451,13 +451,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Music\dwarfcorp.mp3">
-      <Name>dwarfcorp</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SongProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Logos\grebeardlogo.png">
       <Name>grebeardlogo</Name>
       <Importer>TextureImporter</Importer>
@@ -953,21 +946,6 @@
       <Processor>TextureProcessor</Processor>
       <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
     </Compile>
-    <Compile Include="Music\dwarfcorp_2.mp3">
-      <Name>dwarfcorp_2</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SongProcessor</Processor>
-    </Compile>
-    <Compile Include="Music\dwarfcorp_3.mp3">
-      <Name>dwarfcorp_3</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SongProcessor</Processor>
-    </Compile>
-    <Compile Include="Music\dwarfcorp_4.mp3">
-      <Name>dwarfcorp_4</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SongProcessor</Processor>
-    </Compile>
     <Compile Include="Entities\Furniture\bookshelf.png">
       <Name>bookshelf</Name>
       <Importer>TextureImporter</Importer>
@@ -1187,26 +1165,6 @@
       <Name>explode</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Audio\oscar\sfx_amb_grassland_day_1.wav">
-      <Name>sfx_amb_grassland_day_1</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Audio\oscar\sfx_amb_grassland_day_2.wav">
-      <Name>sfx_amb_grassland_day_2</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Audio\oscar\sfx_amb_grassland_night_1.wav">
-      <Name>sfx_amb_grassland_night_1</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Audio\oscar\sfx_amb_grassland_night_2.wav">
-      <Name>sfx_amb_grassland_night_2</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
     </Compile>
     <Compile Include="Audio\oscar\sfx_env_water_splash.wav">
       <Name>sfx_env_water_splash</Name>
@@ -1553,6 +1511,66 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
+    <Compile Include="Audio\oscar\sfx_env_door_close_generic.wav">
+      <Name>sfx_env_door_close_generic</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_env_door_open_generic.wav">
+      <Name>sfx_env_door_open_generic</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_gui_daytime.wav">
+      <Name>sfx_gui_daytime</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_gui_negative_generic.wav">
+      <Name>sfx_gui_negative_generic</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_gui_nighttime.wav">
+      <Name>sfx_gui_nighttime</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_gui_rain_storm_alert.wav">
+      <Name>sfx_gui_rain_storm_alert</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_gui_snow_storm_alert.wav">
+      <Name>sfx_gui_snow_storm_alert</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_attack_musket_1.wav">
+      <Name>sfx_ic_dwarf_attack_musket_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_attack_musket_2.wav">
+      <Name>sfx_ic_dwarf_attack_musket_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_attack_musket_3.wav">
+      <Name>sfx_ic_dwarf_attack_musket_3</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_magic_research.wav">
+      <Name>sfx_ic_dwarf_magic_research</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_dwarf_magic_research_stereo.wav">
+      <Name>sfx_ic_dwarf_magic_research_stereo</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
     <Content Include="Audio\XACT\Win\SoundBank.xsb">
       <Name>SoundBank</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -1565,10 +1583,45 @@
       <Name>WaveBank</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Compile Include="Music\mx_menu_loop_v2.wav">
-      <Name>mx_menu_loop_v2</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
+    <Compile Include="newgui\progress-fill.png">
+      <Name>progress-fill</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="newgui\progress-middle.png">
+      <Name>progress-middle</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="newgui\progress-sides.png">
+      <Name>progress-sides</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Content Include="Particles\particles.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>particles</Name>
+    </Content>
+    <Content Include="Text\personality.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>personality</Name>
+    </Content>
+    <Content Include="Text\Templates\hobby.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>hobby</Name>
+    </Content>
+    <Content Include="Text\Templates\location.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>location</Name>
+    </Content>
+    <Content Include="Text\Templates\biography.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>biography</Name>
+    </Content>
+    <Compile Include="newgui\dwarves.png">
+      <Name>dwarves</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
     </Compile>
     <None Include="Entities\Animals\chicken_animation.json">
       <Name>chicken_animation</Name>
@@ -1747,11 +1800,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
-    </Compile>
-    <Compile Include="Music\dwarfcorp_5.mp3">
-      <Name>dwarfcorp_5</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SongProcessor</Processor>
     </Compile>
     <Compile Include="GUI\diplo-moleman.png">
       <Name>diplo-moleman</Name>
@@ -2005,10 +2053,6 @@
     <None Include="Entities\Dwarf\Sprites\fairy_animation.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>fairy_animation</Name>
-    </None>
-    <None Include="Music\dwarfcorp_ogg.ogg">
-      <Name>dwarfcorp_ogg</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="World\biomes.json">
       <Name>biomes</Name>
@@ -2461,6 +2505,9 @@
       <Importer>XactImporter</Importer>
       <Processor>XactProcessor</Processor>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Music\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <PropertyGroup>

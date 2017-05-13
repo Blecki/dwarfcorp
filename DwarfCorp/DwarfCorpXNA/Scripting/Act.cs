@@ -1,4 +1,4 @@
-﻿// Act.cs
+// Act.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -67,6 +67,8 @@ namespace DwarfCorp
 
         [JsonIgnore]
         public Act LastTickedChild { get; set; }
+
+        public bool IsCanceled { get; set; }
 
         public Act()
         {
@@ -147,6 +149,7 @@ namespace DwarfCorp
 
         public virtual void OnCanceled()
         {
+            IsCanceled = true;
             if(Children != null)
                 foreach (Act child in Children)
                 {

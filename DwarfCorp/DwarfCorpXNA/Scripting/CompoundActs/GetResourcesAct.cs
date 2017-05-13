@@ -1,4 +1,4 @@
-﻿// GetResourcesAct.cs
+// GetResourcesAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -66,6 +66,14 @@ namespace DwarfCorp
 
         }
 
+        public GetResourcesAct(CreatureAI agent, Resource.ResourceTags resources) :
+            base(agent)
+        {
+            Name = "Get Resources";
+            Resources = new List<Quantitiy<Resource.ResourceTags>>(){new Quantitiy<Resource.ResourceTags>(resources)};
+
+        }
+
 
         public IEnumerable<Status> AlwaysTrue()
         {
@@ -111,6 +119,12 @@ namespace DwarfCorp
 
                 if(nearestStockpile == null || ResourcesToStash.Count == 0)
                 {
+                    if (Resources.Any(r => r.ResourceType == Resource.ResourceTags.Edible) && Agent.Faction == Agent.World.PlayerFaction)
+                    {
+
+                        Agent.Manager.World.MakeAnnouncement("We're out of food!", "Our stockpiles don't have any food. Our employees will starve!");
+                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
+                    }
                     Tree = null;
                     return;
                 }

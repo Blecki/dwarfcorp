@@ -1,4 +1,4 @@
-﻿// AxeDwarfClass.cs
+// AxeDwarfClass.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -227,7 +227,8 @@ namespace DwarfCorp
         {
             Attacks = new List<Attack>()
             {
-                new Attack("Axe", 4.0f, 0.5f, 2.0f, ContentPaths.Audio.sword, ContentPaths.Effects.slash)
+                new Attack("Axe", 4.0f, 0.5f, 2.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_ic_dwarf_attack_sword_1, 
+                    ContentPaths.Audio.Oscar.sfx_ic_dwarf_attack_sword_2, ContentPaths.Audio.Oscar.sfx_ic_dwarf_attack_sword_3), ContentPaths.Effects.slash)
                 {
                     Knockback = 10.0f,
                     TriggerMode = Attack.AttackTrigger.Animation,

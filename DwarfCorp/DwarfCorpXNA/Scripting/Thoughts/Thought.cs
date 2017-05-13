@@ -1,4 +1,4 @@
-﻿// Thought.cs
+// Thought.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -174,7 +174,7 @@ namespace DwarfCorp
                     break;
                 case ThoughtType.KilledThing:
                     description = "I killed somehing!";
-                    happiness = 0.0f;
+                    happiness = 1.0f;
                     limit = new TimeSpan(0, 8, 0, 0);
                     break;
                 case ThoughtType.Crafted:

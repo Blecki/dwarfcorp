@@ -45,10 +45,19 @@ namespace DwarfCorp
 
         public ParticleManager()
         {
-            
+          
         }
 
+        public void Load(Dictionary<string, List<EmitterData>> data)
+        {
+            Effects.Clear();
+            foreach (var effect in data)
+            {
+                RegisterEffect(effect.Key, effect.Value.ToArray());
+            }
+        }
 
+         
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
@@ -62,6 +71,7 @@ namespace DwarfCorp
             Components = components;
             Effects = new Dictionary<string, ParticleEffect>();
             components.ParticleManager = this;
+            Load(ContentPaths.LoadFromJson<Dictionary<string, List<EmitterData>>>(ContentPaths.Particles.particles));
         }
 
         public void Trigger(string emitter, Vector3 position, Color tint, int num)
@@ -122,7 +132,6 @@ namespace DwarfCorp
                 ParticleDecay = 0.5f,
                 ParticlesPerFrame = 0,
                 ReleaseOnce = true,
-                Texture = tex,
                 CollidesWorld = true,
                 Sleeps = true
             };
@@ -154,7 +163,6 @@ namespace DwarfCorp
                 ParticleDecay = 0.5f,
                 ParticlesPerFrame = 0,
                 ReleaseOnce = true,
-                Texture = tex,
                 CollidesWorld = true,
                 Sleeps = true,
                 Damping = 0.1f
@@ -166,7 +174,7 @@ namespace DwarfCorp
         /// <summary>
         /// Creates a generic particle effect which is like a "puff" (cloudy particles which float)
         /// </summary>
-        public static EmitterData CreatePuffLike(string name, SpriteSheet sheet, Point frame, BlendState state)
+        public static EmitterData CreatePuffLike(string name, SpriteSheet sheet, Point frame, EmitterData.ParticleBlend state)
         {
             Texture2D tex = TextureManager.GetTexture(sheet.AssetName);
             EmitterData data = new EmitterData
@@ -189,7 +197,6 @@ namespace DwarfCorp
                 ParticleDecay = 0.8f,
                 ParticlesPerFrame = 0,
                 ReleaseOnce = true,
-                Texture = TextureManager.GetTexture(sheet.AssetName),
                 Blend = state
             };
 

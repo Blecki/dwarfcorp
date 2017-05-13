@@ -1,4 +1,4 @@
-﻿// GoToChairAndSitAct.cs
+// GoToChairAndSitAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -73,21 +73,9 @@ namespace DwarfCorp
             }
         }
 
-        public IEnumerable<Status> EatFood()
-        {
-            if (Creature.Status.Hunger.IsSatisfied()) yield break;
-
-            foreach (Status status in Creature.EatStockedFood())
-            {
-                yield return status;
-            }
-
-        }
-
         public IEnumerable<Status> WaitUntilBored()
         {
             Timer waitTimer = new Timer(SitTime, false);
-            Timer eatTimer = new Timer(10.0f + MathFunctions.Rand(0, 1), false);
             Vector3 snapPosition = Agent.Position + new Vector3(0, 0.2f, 0);
             Body body = Creature.AI.Blackboard.GetData<Body>("Chair");
 
@@ -134,20 +122,10 @@ namespace DwarfCorp
 
                 ConverseFriends();
 
-                eatTimer.Update(DwarfTime.LastTime);
-
-                if(eatTimer.HasTriggered)
-                    foreach (Act.Status status in EatFood())
-                    {
-                        if (status == Act.Status.Running)
-                        {
-                            Creature.OverrideCharacterMode = false;
-                            yield return Act.Status.Running;
-                        }
-                    }
 
                 Agent.Position = snapPosition;
                 Agent.Physics.IsSleeping = true;
+                Agent.Physics.Velocity = Vector3.Zero;
                 Creature.CurrentCharacterMode = Creature.CharacterMode.Sitting;
                 Creature.OverrideCharacterMode = true;
                 yield return Status.Running;

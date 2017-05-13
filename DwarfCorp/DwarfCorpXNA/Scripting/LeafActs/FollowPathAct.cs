@@ -32,6 +32,7 @@
 // THE SOFTWARE.
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -231,12 +232,6 @@ namespace DwarfCorp
             half.Y = Creature.Physics.BoundingBox.Extents().Y * 2;
             Vector3 nextPosition = Vector3.Zero;
             Vector3 currPosition = action.Voxel.Position + half;
-            Vector3 prevPosition = currPosition;
-
-            if (currentIndex > 0 && Path.Count > 0)
-            {
-                prevPosition = Path.ElementAt(currentIndex - 1).Voxel.Position + half;
-            }
 
             currPosition += RandomPositionOffsets[currentIndex];
             if (nextID < Path.Count)
@@ -358,36 +353,10 @@ namespace DwarfCorp
                     }
                     break;
                 case Creature.MoveType.DestroyObject:
-
-                    if (action.InteractObject.IsDead)
-                    {
-                        Creature.OverrideCharacterMode = false;
-                        Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
-                        if (hasNextAction)
-                        {
-                            transform.Translation = diff * t + currPosition;
-                            Agent.Physics.Velocity = diff;
-                        }
-                        else
-                        {
-                            transform.Translation = currPosition;
-                        }
-                    }
-                    float current = (TrajectoryTimer.CurrentTimeSeconds);
-                    Matrix transformMatrix = Agent.Physics.LocalTransform;
-                    transformMatrix.Translation = prevPosition;
-                    var act = new MeleeAct(Creature.AI,
-                        action.InteractObject.GetEntityRootComponent().GetChildrenOfType<Body>(true).FirstOrDefault());
-                    act.Initialize();
-
-                    foreach (Status status in act.Run())
-                    {
-                        Agent.Physics.LocalTransform = transformMatrix;
-                        TrajectoryTimer.StartTimeSeconds = (float)DwarfTime.LastTime.TotalGameTime.TotalSeconds -
-                                                           current;
-                        yield return status;
-                    }
-                    break;
+                    Creature.AI.Tasks.Add(new KillEntityTask((Body)(action.InteractObject), 
+                        KillEntityTask.KillType.Auto) {Priority = Task.PriorityType.Urgent});
+                    yield return Act.Status.Fail;
+                    yield break;
             }
 
             Agent.Physics.LocalTransform = transform;
@@ -420,7 +389,32 @@ namespace DwarfCorp
                         Path.Select(
                             (v, i) => v.Voxel.Position + new Vector3(0.5f, 0.5f, 0.5f) + RandomPositionOffsets[i])
                             .ToList();
-                    Drawer3D.DrawLineList(points, Color.Red, 0.1f);
+                    List<Color> colors =
+                            Path.Select((v, i) =>
+                            {
+                                switch (v.MoveType)
+                                {
+                                    case Creature.MoveType.Climb:
+                                        return Color.Cyan;
+                                    case Creature.MoveType.ClimbWalls:
+                                        return Color.DarkCyan;
+                                    case Creature.MoveType.DestroyObject:
+                                        return Color.Orange;
+                                    case Creature.MoveType.Fall:
+                                        return Color.LightBlue;
+                                    case Creature.MoveType.Fly:
+                                        return Color.Green;
+                                    case Creature.MoveType.Jump:
+                                        return Color.Yellow;
+                                    case Creature.MoveType.Swim:
+                                        return Color.Blue;
+                                    case Creature.MoveType.Walk:
+                                        return Color.Red;
+                                }
+                                return Color.White;
+                            })
+                            .ToList();
+                    Drawer3D.DrawLineList(points, colors, 0.1f);
                 }
 
 

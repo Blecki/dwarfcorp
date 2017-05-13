@@ -45,75 +45,25 @@ namespace DwarfCorp
     public class MagicTool : PlayerTool
     {
         public Spell CurrentSpell { get; set; }
-        public MagicMenu MagicMenu { get; set; }
-        public ProgressBar MagicBar { get; set; }
-
 
         public MagicTool()
         {
             
         }
 
-        public override void OnBegin()
+        public MagicTool(GameMaster master)
         {
-            if (MagicMenu != null)
-            {
-                MagicMenu.Destroy();
-            }
-
-            // Todo: Reimplement
-            //MagicMenu = new MagicMenu(Player.World.GUI, Player.World.GUI.RootComponent, Player)
-            //{
-            //    LocalBounds = new Rectangle(PlayState.Game.GraphicsDevice.Viewport.Width - 750, PlayState.Game.GraphicsDevice.Viewport.Height - 512, 700, 350),
-            //    DrawOrder = 3
-            //};
-            //MagicMenu.SpellTriggered += MagicMenu_SpellTriggered;
-
-            //MagicMenu.IsVisible = true;
-            //MagicMenu.LocalBounds = new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width - 750,
-            //    GameState.Game.GraphicsDevice.Viewport.Height - 512, 700, 350);
-
-            //if (MagicBar != null)
-            //{
-            //    MagicBar.Destroy();
-            //}
-
-            //MagicBar = new ProgressBar(Player.World.GUI, Player.World.GUI.RootComponent, MagicMenu.Master.Spells.Mana / MagicMenu.Master.Spells.MaxMana)
-            //{
-            //    ToolTip = "Remaining Mana Pool",
-            //    LocalBounds = new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width - 200, 68, 180, 32),
-            //    Tint = Color.Cyan,
-            //    DrawOrder = 4
-            //};
-            //MagicBar.OnUpdate += MagicBar_OnUpdate;
-
-            //MagicBar.IsVisible = true;
-            //MagicMenu.TweenIn(Drawer2D.Alignment.Right, 0.25f);
-            //MagicBar.TweenIn(Drawer2D.Alignment.Right, 0.25f);
+            Player = master;
         }
 
-        void MagicBar_OnUpdate()
+        public override void OnBegin()
         {
-            if (MagicBar.IsVisible)
-            {
-                MagicBar.Value = MagicMenu.Master.Spells.Mana/MagicMenu.Master.Spells.MaxMana;
-                MagicBar.ToolTip = "Remaining Mana Pool " + (int) MagicMenu.Master.Spells.Mana;
-            }
+            
         }
 
         public override void OnEnd()
         {
-            if (MagicMenu != null)
-            {
-                MagicMenu.TweenOut(Drawer2D.Alignment.Right);
-                MagicBar.TweenOut(Drawer2D.Alignment.Right);
-            }
-        }
 
-
-        public MagicTool(GameMaster master)
-        {
-            Player = master;
         }
 
         void MagicMenu_SpellTriggered(Spell spell)

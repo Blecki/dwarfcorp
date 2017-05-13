@@ -39,10 +39,6 @@ namespace DwarfCorp.GameStates
             set { World.Paused = value; }
         }
 
-        // ------GUI--------
-        // Draws and manages the user interface 
-        public static DwarfGUI GUI = null;
-
         private Gum.Widget MoneyLabel;
         private Gum.Widget StockLabel;
         private Gum.Widget LevelLabel;
@@ -53,9 +49,9 @@ namespace DwarfCorp.GameStates
         private NewGui.MinimapRenderer MinimapRenderer;
         private NewGui.GameSpeedControls GameSpeedControls;
         private Widget PausedWidget;
-        private Gum.Widget ResourcePanel;
         private NewGui.InfoTray InfoTray;
         private NewGui.ToggleTray BrushTray;
+        private NewGui.GodMenu GodMenu;
 
         private class ToolbarItem
         {
@@ -168,8 +164,17 @@ namespace DwarfCorp.GameStates
                 InputManager.KeyReleasedCallback += TemporaryKeyPressHandler;
                 IsInitialized = true;
                 SoundManager.CurrentMusic.PlayTrack("main_theme_day");
-                World.Time.Dawn += time => SoundManager.PlayMusic("main_theme_day");
-                World.Time.NewNight += time => SoundManager.PlayMusic("main_theme_night");
+                World.Time.Dawn += time =>
+                {
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_daytime);
+                    SoundManager.PlayMusic("main_theme_day");
+                };
+
+                World.Time.NewNight += time =>
+                {
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_nighttime);
+                    SoundManager.PlayMusic("main_theme_night");
+                };
             }
 
             World.Unpause();
@@ -236,12 +241,15 @@ namespace DwarfCorp.GameStates
             {
                 // Let old input handle mouse interaction for now. Will eventually need to be replaced.
 
-                if (@event == Gum.InputEvents.MouseClick) // Mouse down but not handled by GUI? Collapse menu.
+                // Mouse down but not handled by GUI? Collapse menu.
+                if (@event == Gum.InputEvents.MouseClick) 
+                {
                     BottomRightTray.CollapseTrays();
+                    GodMenu.CollapseTrays();
+                }
             });
 
             World.Update(gameTime);
-            GUI.Update(gameTime);
             Input.Update();
 
 
@@ -302,7 +310,6 @@ namespace DwarfCorp.GameStates
                 //tex.SaveAsPng(new FileStream("voxels.png", FileMode.Create),  256, 256);
                 //Game.Exit();
                 MinimapRenderer.PreRender(gameTime, DwarfGame.SpriteBatch);
-                GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
                 World.Render(gameTime);
 
                 if (Game.StateManager.CurrentState == this)
@@ -311,18 +318,6 @@ namespace DwarfCorp.GameStates
                         MinimapRenderer.Render(new Rectangle(0, GuiRoot.VirtualScreen.Bottom - 192, 192, 192), GuiRoot);
                     GuiRoot.Draw();
                 }
-
-                // SpriteBatch Begin and End must be called again. Hopefully we can factor this out with the new gui
-                RasterizerState rasterizerState = new RasterizerState()
-                {
-                    ScissorTestEnable = true
-                };
-                DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp,
-                    null, rasterizerState);
-                GUI.Render(gameTime, DwarfGame.SpriteBatch, Vector2.Zero);
-                GUI.PostRender(gameTime);
-                DwarfGame.SpriteBatch.End();
-                //WorldManager.SelectionBuffer.DebugDraw(0, 0);
             }
 
             base.Render(gameTime);
@@ -344,10 +339,6 @@ namespace DwarfCorp.GameStates
         /// </summary>
         public void CreateGUIComponents()
         {
-            GUI.RootComponent.ClearChildren();
-
-            GUI.RootComponent.AddChild(Master.Debugger.MainPanel);
-
             #region Setup company information section
             GuiRoot.RootItem.AddChild(new NewGui.CompanyLogo
             {
@@ -475,8 +466,9 @@ namespace DwarfCorp.GameStates
             GuiRoot.RootItem.AddChild(new NewGui.ResourcePanel
             {
                 AutoLayout = AutoLayout.FloatTop,
-                MinimumSize = new Point(496, 128),
-                Master = Master
+                MinimumSize = new Point(256, 0),
+                Master = Master,
+                Transparent = true
             });
 
 
@@ -532,12 +524,13 @@ namespace DwarfCorp.GameStates
                 AutoLayout = global::Gum.AutoLayout.FloatTopRight,
                 SizeToGrid = new Point(2, 1),
                 ItemSource = new Gum.Widget[] 
-                        { 
+                        {
                             new NewGui.FramedIcon
                             {
                                 Icon = new Gum.TileReference("tool-icons", 10),
-                                OnClick = (sender, args) => StateManager.PushState(new EconomyState(Game, StateManager, World))
+                                OnClick = (sender, args) => StateManager.PushState(new NewEconomyState(Game, StateManager, World))
                         },
+                           
                         new NewGui.FramedIcon
                         {
                             Icon = new Gum.TileReference("tool-icons", 12),
@@ -656,7 +649,7 @@ namespace DwarfCorp.GameStates
 
 
             #endregion
-
+            
             #region Setup tool tray
 
             BottomRightTray = GuiRoot.RootItem.AddChild(new NewGui.ToolTray.Tray
@@ -1253,6 +1246,18 @@ namespace DwarfCorp.GameStates
 
             #endregion
 
+            #region GOD MODE
+
+            GodMenu = GuiRoot.RootItem.AddChild(new NewGui.GodMenu
+            {
+                Master = Master,
+                AutoLayout = AutoLayout.FloatLeft
+            }) as NewGui.GodMenu;
+
+            GodMenu.Hidden = true;
+
+            #endregion
+
             GuiRoot.RootItem.Layout();
         }
 
@@ -1337,13 +1342,17 @@ namespace DwarfCorp.GameStates
             {
                 GuiRoot.RootItem.Hidden = !GuiRoot.RootItem.Hidden;
                 GuiRoot.RootItem.Invalidate();
-                GUI.RootComponent.IsVisible = !GUI.RootComponent.IsVisible;
             }
             else if (key == ControlSettings.Mappings.Map)
             {
                 World.DrawMap = !World.DrawMap;
                 MinimapFrame.Hidden = true;
                 MinimapFrame.Invalidate();
+            }
+            else if (key == ControlSettings.Mappings.GodMode)
+            {
+                GodMenu.Hidden = !GodMenu.Hidden;
+                GodMenu.Invalidate();
             }
         }
 

@@ -208,6 +208,61 @@ namespace DwarfCorp
         /// <summary> This is what the character is currently doing (used for animation) </summary>
         protected CharacterMode currentCharacterMode = CharacterMode.Idle;
 
+        public enum CreatureGender
+        {
+            Male,
+            Female,
+            Nonbinary
+        }
+
+        public CreatureGender Gender { get; set; }
+
+        public static string Pronoun(CreatureGender gender)
+        {
+            switch (gender)
+            {
+                case CreatureGender.Male:
+                    return "he";
+                case CreatureGender.Female:
+                    return "she";
+                case CreatureGender.Nonbinary:
+                    return "they";
+            }
+            return "?";
+        }
+
+        public static string Posessive(CreatureGender gender)
+        {
+            switch (gender)
+            {
+                case CreatureGender.Male:
+                    return "his";
+                case CreatureGender.Female:
+                    return "her";
+                case CreatureGender.Nonbinary:
+                    return "their";
+            }
+
+            return "?";
+        }
+
+        public static CreatureGender RandomGender()
+        {
+            float num = MathFunctions.Rand(0.0f, 1.0f);
+            if (num < 0.01f)
+            {
+                return CreatureGender.Nonbinary;
+            }
+            else if (num < 0.505f)
+            {
+                return CreatureGender.Male;
+            }
+            else
+            {
+                return CreatureGender.Female;
+            }
+        }
+
         public Creature()
         {
             CurrentCharacterMode = CharacterMode.Idle;
@@ -216,6 +271,8 @@ namespace DwarfCorp
             Buffs = new List<Buff>();
             HasMeat = true;
             HasBones = true;
+            DrawLifeTimer.HasTriggered = true;
+            Gender = RandomGender();
         }
 
         public Creature(ComponentManager manager, Vector3 pos, CreatureDef def, string creatureClass, int creatureLevel, string faction) :
@@ -231,6 +288,7 @@ namespace DwarfCorp
                 GameState.Game.Content,
                 def.Name)
         {
+            DrawLifeTimer.HasTriggered = true;
             HasMeat = true;
             HasBones = true;
             EmployeeClass employeeClass = EmployeeClass.Classes[creatureClass];
@@ -324,6 +382,7 @@ namespace DwarfCorp
             string name) :
             base(parent.Manager, name, parent, stats.MaxHealth, 0.0f, stats.MaxHealth)
         {
+            DrawLifeTimer.HasTriggered = true;
             HasMeat = true;
             HasBones = true;
             Buffs = new List<Buff>();
@@ -447,6 +506,8 @@ namespace DwarfCorp
             }
         }
 
+        public Timer DrawLifeTimer = new Timer(0.25f, true);
+
         /// <summary> Convenience wrapper around Status.IsAsleep </summary>
         public bool IsAsleep
         {
@@ -499,7 +560,14 @@ namespace DwarfCorp
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (!IsActive) return;
+            DrawLifeTimer.Update(gameTime);
 
+            if (!DrawLifeTimer.HasTriggered)
+            {
+                float val = Hp/MaxHealth;
+                Color color = val < 0.75f ? (val < 0.5f ? Color.Red : Color.Orange) : Color.LightGreen;
+                Drawer2D.DrawLoadBar(Manager.World.Camera, AI.Position - Vector3.Up * 0.5f, color, Color.Black, 32, 2, Hp / MaxHealth);
+            }
             CheckNeighborhood(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
             UpdateAnimation(gameTime, chunks, camera);
             Status.Update(this, gameTime, chunks, camera);
@@ -720,11 +788,7 @@ namespace DwarfCorp
                 return;
             }
 
-            float veloNorm = Physics.Velocity.Length();
-            if (veloNorm > Stats.MaxSpeed)
-            {
-                Physics.Velocity = (Physics.Velocity / veloNorm) * Stats.MaxSpeed;
-            }
+            Physics.Velocity = MathFunctions.ClampXZ(Physics.Velocity, Stats.MaxSpeed);
         }
 
         /// <summary>
@@ -747,7 +811,7 @@ namespace DwarfCorp
 
                 if (loadBar)
                 {
-                    Drawer2D.DrawLoadBar(Manager.World.Camera, AI.Position + Vector3.Up, Color.White, Color.Black, 100, 16,
+                    Drawer2D.DrawLoadBar(Manager.World.Camera, AI.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4,
                         waitTimer.CurrentTimeSeconds / waitTimer.TargetTimeSeconds);
                 }
 
@@ -779,8 +843,7 @@ namespace DwarfCorp
             Color color = damage > 0 ? Color.Red : Color.Green;
 
             IndicatorManager.DrawIndicator(prefix + (int)amount + " HP",
-                AI.Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, color,
-                Indicator.IndicatorMode.Indicator3D);
+                AI.Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, color);
 
             if (damage > 0)
             {
@@ -788,6 +851,7 @@ namespace DwarfCorp
                 Sprite.Blink(0.5f);
                 AI.AddThought(Thought.ThoughtType.TookDamage);
                 Manager.World.ParticleManager.Trigger(DeathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
+                DrawLifeTimer.Reset();
             }
 
             return damage;
