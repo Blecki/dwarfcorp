@@ -46,7 +46,29 @@ namespace DwarfCorp
         public TileReference LogoSymbol = new TileReference("company-logo-symbol", 0);
         public Vector4 LogoSymbolColor = Vector4.One;
         public string Name = "Graybeard & Sons";
-        public string Motto = "My beard is in the workd!";
+        public string Motto = "My beard is in the work!";
+
+        public CompanyInformation()
+        {
+            Name = GenerateRandomName();
+            Motto = GenerateRandomMotto();
+            LogoSymbolColor = new Vector4(MathFunctions.Rand(0, 1), MathFunctions.Rand(0, 1), MathFunctions.Rand(0, 1), 1);
+            LogoBackgroundColor = new Vector4(MathFunctions.Rand(0, 1), MathFunctions.Rand(0, 1), MathFunctions.Rand(0, 1), 1);
+            LogoBackground.Tile = MathFunctions.RandInt(0, 16);
+            LogoSymbol.Tile = MathFunctions.RandInt(0, 9);
+        }
+
+        public static string GenerateRandomMotto()
+        {
+            var templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.mottos);
+            return TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
+        }
+
+        public static string GenerateRandomName()
+        {
+            var templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.company_exploration);
+            return TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
+        }
     }
 }
 
@@ -87,15 +109,16 @@ namespace DwarfCorp.GameStates
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
             GuiRoot.SetMouseOverlay(null, 0);
 
+            Rectangle rect = GuiRoot.RenderData.VirtualScreen;
+            rect.Inflate(-rect.Width / 3, -rect.Height / 3);
             // CONSTRUCT GUI HERE...
             var mainPanel = GuiRoot.RootItem.AddChild(new Gum.Widget
             {
-                Rect = GuiRoot.RenderData.VirtualScreen,
+                Rect = rect,
                 Border = "border-fancy",
-                Text = "Create a Company",
                 Padding = new Margin(4, 4, 4, 4),
-                InteriorMargin = new Margin(24,0,0,0),
-                TextSize = 2
+                InteriorMargin = new Margin(2,0,0,0),
+                TextSize = 1
             });
 
             mainPanel.AddChild(new Gum.Widgets.Button
@@ -131,6 +154,14 @@ namespace DwarfCorp.GameStates
             });
 
             #region Name 
+
+            mainPanel.AddChild(new Widget()
+            {
+                Text = "Create a Company",
+                Font = "font-hires",
+                AutoLayout = AutoLayout.DockTop,
+            });
+
             var nameRow = mainPanel.AddChild(new Widget
             {
                 MinimumSize = new Point(0, 24),
@@ -186,7 +217,7 @@ namespace DwarfCorp.GameStates
                 TextVerticalAlign = VerticalAlign.Center
             });
 
-            mottoRow.AddChild(new Widget
+            mottoRow.AddChild(new Button
             {
                 Text = "Randomize",
                 AutoLayout = AutoLayout.DockRight,

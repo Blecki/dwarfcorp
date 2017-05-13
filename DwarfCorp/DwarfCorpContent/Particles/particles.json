@@ -2,7 +2,7 @@
   "puff": [
     {
       
-      "MaxParticles": 1000,
+      "MaxParticles": 200,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
       "EmissionFrequency": 20.0,
@@ -67,7 +67,7 @@
  "explode": [
     {
       
-      "MaxParticles": 1000,
+      "MaxParticles": 100,
       "ParticlesPerFrame": 0,
       "ReleaseOnce": true,
       "EmissionFrequency": 20.0,
