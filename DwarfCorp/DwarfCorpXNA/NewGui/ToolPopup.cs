@@ -22,7 +22,7 @@ namespace DwarfCorp.NewGui
             IsFloater = true;
 
             TextColor = Vector4.One;
-            Rect = MathFunctions.SnapRect(Rect, Root.VirtualScreen);
+            Rect = MathFunctions.SnapRect(Rect, Root.RenderData.VirtualScreen);
 
             OnUpdate = (sender, time) =>
             {

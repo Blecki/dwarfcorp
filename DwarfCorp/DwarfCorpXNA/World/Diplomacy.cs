@@ -327,7 +327,7 @@ namespace DwarfCorp
         {
             // todo
             natives.World.MakeAnnouncement(String.Format("War party from {0} has arrived!", natives.Name), null);
-            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
             Politics politics = GetPolitics(natives, natives.World.PlayerFaction);
             politics.WasAtWar = true;
             List<CreatureAI> creatures = natives.World.MonsterSpawner.Spawn(natives.World.MonsterSpawner.GenerateSpawnEvent(natives, natives.World.PlayerFaction, MathFunctions.Random.Next(5) + 1, true));
@@ -455,7 +455,7 @@ namespace DwarfCorp
                         if (tradePort == null)
                         {
                             World.MakeAnnouncement("No trade port!", "We need a balloon trade port to trade.");
-                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
+                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                             RecallEnvoy(envoy);
                             break;
                         }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Xna.Framework.Input;
@@ -1032,7 +1032,7 @@ namespace DwarfCorp
             {
                 if (overlayKeyPressed)
                 {
-                    SoundManager.PlaySound(ContentPaths.Audio.pick, .25f);
+                    SoundManager.PlaySound(ContentPaths.Audio.pick, .15f);
                     GameSettings.Default.DrawDebugData = !GameSettings.Default.DrawDebugData;
                     overlayKeyPressed = false;
                 }
@@ -1046,7 +1046,7 @@ namespace DwarfCorp
             {
                 if (debug1ToggleKeyPressed)
                 {
-                    SoundManager.PlaySound(ContentPaths.Audio.pick, .25f);
+                    SoundManager.PlaySound(ContentPaths.Audio.pick, .15f);
                     DebugToggle1 = !DebugToggle1;
                     debug1ToggleKeyPressed = false;
                 }
@@ -1060,7 +1060,7 @@ namespace DwarfCorp
             {
                 if (debug2ToggleKeyPressed)
                 {
-                    SoundManager.PlaySound(ContentPaths.Audio.pick, .25f);
+                    SoundManager.PlaySound(ContentPaths.Audio.pick, .15f);
                     DebugToggle2 = !DebugToggle2;
                     debug2ToggleKeyPressed = false;
                 }

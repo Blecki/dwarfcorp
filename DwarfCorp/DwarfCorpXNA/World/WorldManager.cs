@@ -237,7 +237,7 @@ namespace DwarfCorp
 
             if (!string.IsNullOrEmpty(sound))
             {
-                SoundManager.PlaySound(sound, 0.01f);
+                SoundManager.PlaySound(sound, 0.5f);
             }
         }
 

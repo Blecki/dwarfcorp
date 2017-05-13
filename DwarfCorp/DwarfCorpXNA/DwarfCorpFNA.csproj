@@ -241,6 +241,7 @@
     <Compile Include="Gum\Widgets\CheckBox.cs" />
     <Compile Include="Gum\Widgets\ComboBox.cs" />
     <Compile Include="Gum\Widgets\EditableTextField.cs" />
+    <Compile Include="Gum\Widgets\TextProgressBar.cs" />
     <Compile Include="NewGui\ApplicantInfo.cs" />
     <Compile Include="NewGui\EmployeeInfo.cs" />
     <Compile Include="NewGui\EmployeePanel.cs" />

@@ -45,6 +45,7 @@ namespace DwarfCorp
         {
             public int ResolutionX = 1280;
             public int ResolutionY = 720;
+            public int GuiScale = 1;
             public float ChunkDrawDistance = 100;
             public float VertexCullDistance = 80;
             public int MaxChunks = 1000;

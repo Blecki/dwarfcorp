@@ -463,7 +463,7 @@ namespace DwarfCorp
                             Manager.World.MakeAnnouncement(String.Format("{0} ({1}) refuses to work!",
                                 Stats.FullName, Stats.CurrentLevel.Name),
                                 "Our employee is unhappy, and would rather not work!", ZoomToMe);
-                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
+                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                         }
                         CurrentTask = null;
                     }

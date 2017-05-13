@@ -50,8 +50,8 @@ namespace DwarfCorp.NewGui
             }
 
             //Center on screen.
-            Rect.X = (Root.VirtualScreen.Width / 2) - (Rect.Width / 2);
-            Rect.Y = (Root.VirtualScreen.Height / 2) - (Rect.Height / 2);
+            Rect.X = (Root.RenderData.VirtualScreen.Width / 2) - (Rect.Width / 2);
+            Rect.Y = (Root.RenderData.VirtualScreen.Height / 2) - (Rect.Height / 2);
 
             Border = "border-one";
 

@@ -16,6 +16,7 @@ namespace DwarfCorp.NewGui
             set { _employee = value;  Invalidate(); }
         }
 
+        private Widget Icon;
         private Widget NameLabel;
 
         private Widget StatDexterity;
@@ -25,14 +26,12 @@ namespace DwarfCorp.NewGui
         private Widget StatIntelligence;
         private Widget StatSize;
 
-        private Gum.Widgets.ProgressBar Hunger;
-        private Gum.Widgets.ProgressBar Energy;
-        private Gum.Widgets.ProgressBar Happiness;
-        private Gum.Widgets.ProgressBar Health;
+        private Gum.Widgets.TextProgressBar Hunger;
+        private Gum.Widgets.TextProgressBar Energy;
+        private Gum.Widgets.TextProgressBar Happiness;
+        private Gum.Widgets.TextProgressBar Health;
 
         private Widget LevelLabel;
-        private Widget TitleLabel;
-        private Widget ExperienceLabel;
         private Widget PayLabel;
         private Widget LevelButton;
 
@@ -40,15 +39,39 @@ namespace DwarfCorp.NewGui
 
         public override void Construct()
         {
-            NameLabel = AddChild(new Gum.Widget
+            var top = AddChild(new Gum.Widget
+            {
+                AutoLayout = AutoLayout.DockTop,
+                MinimumSize = new Point(0, 96)
+            });
+
+
+
+            Icon = top.AddChild(new Widget
+            {
+                AutoLayout = AutoLayout.DockLeft,
+                MinimumSize = new Point(64, 96),
+            });
+
+        
+
+            NameLabel = top.AddChild(new Gum.Widget
+            {
+                AutoLayout = AutoLayout.DockTop,
+                MinimumSize = new Point(0, 30),
+                Font = "font-hires"
+            });
+
+            LevelLabel = top.AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 30)
             });
-
+            
             var columns = AddChild(new NewGui.TwoColumns
             {
-                AutoLayout = AutoLayout.DockFill
+                AutoLayout = AutoLayout.DockTop,
+                MinimumSize = new Point(0, 120)
             });
             
             var left = columns.AddChild(new Gum.Widget());
@@ -102,41 +125,25 @@ namespace DwarfCorp.NewGui
             #endregion
 
             #region status bars
-            Hunger = CreateStatusBar(left, "Hunger");
-            Energy = CreateStatusBar(left, "Energy");
-            Happiness = CreateStatusBar(left, "Happiness");
-            Health = CreateStatusBar(left, "Health");
+            Hunger = CreateStatusBar(right, "Hunger", "Starving", "Hungry", "Peckish", "Okay");
+            Energy = CreateStatusBar(right, "Energy", "Exhausted", "Tired", "Okay", "Energetic");
+            Happiness = CreateStatusBar(right, "Happiness", "Miserable", "Unhappy", "So So", "Happy", "Euphoric");
+            Health = CreateStatusBar(right, "Health", "Near Death", "Critical", "Hurt", "Uncomfortable", "Fine", "Perfect");
             #endregion
 
-            LevelLabel = right.AddChild(new Widget
+           
+
+            PayLabel = AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 30)
             });
 
-            TitleLabel = right.AddChild(new Widget
-            {
-                AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 30)
-            });
-
-            ExperienceLabel = right.AddChild(new Widget
-            {
-                AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 30)
-            });
-
-            PayLabel = right.AddChild(new Widget
-            {
-                AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 30)
-            });
-
-            left.AddChild(new Widget
+            AddChild(new Widget
             {
                 Text = "Fire",
                 Border = "border-button",
-                AutoLayout = AutoLayout.DockBottom,
+                AutoLayout = AutoLayout.FloatBottomRight,
                 OnClick = (sender, args) =>
                 {
                     Root.SafeCall(OnFireClicked, this);
@@ -147,11 +154,11 @@ namespace DwarfCorp.NewGui
             {
                 Text = "Level Up!",
                 Border = "border-button",
-                AutoLayout = AutoLayout.DockBottom,
+                AutoLayout = AutoLayout.FloatBottomLeft,
                 OnClick = (sender, args) =>
                 {
                     Employee.Stats.LevelUp();
-                    SoundManager.PlaySound(ContentPaths.Audio.change);
+                    SoundManager.PlaySound(ContentPaths.Audio.change, 0.5f);
                     Invalidate();
                     Employee.AddThought(Thought.ThoughtType.GotPromoted);
                 }
@@ -160,25 +167,16 @@ namespace DwarfCorp.NewGui
             base.Construct();
         }
 
-        private Gum.Widgets.ProgressBar CreateStatusBar(Widget AddTo, String Label)
+        private Gum.Widgets.TextProgressBar CreateStatusBar(Widget AddTo, String Label, params String[] PercentageLabels)
         {
-            var row = AddTo.AddChild(new Widget
+            return AddTo.AddChild(new Gum.Widgets.TextProgressBar
             {
                 AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 30)
-            });
-
-            row.AddChild(new Widget
-            {
-                Text = Label,
-                AutoLayout = AutoLayout.DockLeft,
-                MinimumSize = new Point(100, 30)
-            });
-
-            return row.AddChild(new Gum.Widgets.ProgressBar
-            {
-                AutoLayout = AutoLayout.DockFill
-            }) as Gum.Widgets.ProgressBar;
+                Label = Label,
+                SegmentCount = 10,
+                PercentageLabels = PercentageLabels,
+                Font = "font-hires"
+            }) as Gum.Widgets.TextProgressBar;
         }
 
         protected override Gum.Mesh Redraw()
@@ -186,6 +184,9 @@ namespace DwarfCorp.NewGui
             // Set values from CreatureAI
             if (Employee != null)
             {
+                Icon.Background = new TileReference("dwarves", EmployeePanel.GetIconIndex(Employee.Stats.CurrentClass.Name));
+                Icon.Invalidate();
+                
                 NameLabel.Text = Employee.Stats.FullName;
                 StatDexterity.Text = String.Format("Dex: {0}", Employee.Stats.BuffedDex);
                 StatStrength.Text = String.Format("Str: {0}", Employee.Stats.BuffedStr);
@@ -199,9 +200,10 @@ namespace DwarfCorp.NewGui
                 SetStatusBar(Happiness, Employee.Status.Happiness);
                 SetStatusBar(Health, Employee.Status.Health);
 
-                LevelLabel.Text = String.Format("Level {0} {1}", Employee.Stats.LevelIndex,
-                    Employee.Stats.CurrentClass.Name);
-                TitleLabel.Text = Employee.Stats.CurrentLevel.Name;
+                LevelLabel.Text = String.Format("{0}: Level {1} {2} ({3} xp)", Employee.Stats.CurrentLevel.Name,
+                    Employee.Stats.LevelIndex,
+                    Employee.Stats.CurrentClass.Name,
+                    Employee.Stats.XP);
 
                 if (Employee.Stats.CurrentClass.Levels.Count > Employee.Stats.LevelIndex + 1)
                 {
@@ -210,21 +212,21 @@ namespace DwarfCorp.NewGui
 
                     if (diff > 0)
                     {
-                        ExperienceLabel.Text = String.Format("XP: {0}\n({1} to next level)",
-                            Employee.Stats.XP, diff);
+                        //ExperienceLabel.Text = String.Format("XP: {0}\n({1} to next level)",
+                        //    Employee.Stats.XP, diff);
                         LevelButton.Hidden = true;
                     }
                     else
                     {
-                        ExperienceLabel.Text = String.Format("XP: {0}\n({1} to next level)",
-                            Employee.Stats.XP, "(Overqualified)");
+                        //ExperienceLabel.Text = String.Format("XP: {0}\n({1} to next level)",
+                        //    Employee.Stats.XP, "(Overqualified)");
                         LevelButton.Hidden = false;
                         LevelButton.Tooltip = "Promote to " + nextLevel.Name;
                     }
                 }
                 else
                 {
-                    ExperienceLabel.Text = String.Format("XP: {0}", Employee.Stats.XP);
+                    //ExperienceLabel.Text = String.Format("XP: {0}", Employee.Stats.XP);
                 }
 
                 PayLabel.Text = String.Format("Pay: {0}/day\nWealth: {1}", Employee.Stats.CurrentLevel.Pay,
@@ -237,7 +239,7 @@ namespace DwarfCorp.NewGui
             return base.Redraw();
         }
 
-        private void SetStatusBar(Gum.Widgets.ProgressBar Bar, CreatureStatus.Status Status)
+        private void SetStatusBar(Gum.Widgets.TextProgressBar Bar, CreatureStatus.Status Status)
         {
             Bar.Percentage = (float)Status.Percentage / 100.0f;
         }

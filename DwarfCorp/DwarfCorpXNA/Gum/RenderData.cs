@@ -20,11 +20,16 @@ namespace Gum
         public Effect Effect { get; private set; }
         public Texture2D Texture { get; private set; }
         public Dictionary<String, ITileSheet> TileSheets { get; private set; }
+        public Rectangle VirtualScreen { get; private set; }
+        public Rectangle RealScreen { get; private set; }
+        public int ScaleRatio { get { return DwarfCorp.GameSettings.Default.GuiScale; } }
 
         public RenderData(GraphicsDevice Device, ContentManager Content, String Effect, String Skin)
         {
             this.Device = Device;
             this.Effect = Content.Load<Effect>(Effect);
+
+            CalculateScreenSize();
 
             // Load skin from disc. The skin is a set of tilesheets.
             var skin = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonTileSheetSet>(
@@ -77,6 +82,19 @@ namespace Gum
                 Texture.SetData(0, texture.Rect, textureData, 0, realTexture.Width * realTexture.Height);
 
             }
+        }
+
+        public void CalculateScreenSize()
+        {
+            var screenSize = ActualScreenBounds;
+            VirtualScreen = new Rectangle(0, 0,
+                screenSize.X / ScaleRatio,
+                screenSize.Y / ScaleRatio);
+            
+            RealScreen = new Rectangle(0, 0, VirtualScreen.Width * ScaleRatio, VirtualScreen.Height * ScaleRatio);
+            RealScreen = new Rectangle((screenSize.X - RealScreen.Width) / 2,
+                (screenSize.Y - RealScreen.Height) / 2,
+                RealScreen.Width, RealScreen.Height);
         }
     }
 }

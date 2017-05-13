@@ -362,12 +362,7 @@ namespace DwarfCorp
 
         }
 
-        public static SoundEffectInstance PlaySound(string name)
-        {
-            return PlaySound(name, 1.0f);
-        }
-
-        public static SoundEffectInstance PlaySound(string name, float volume)
+        public static SoundEffectInstance PlaySound(string name, float volume = 1.0f)
         {
             // TODO: Remove this block once the SoundManager is initialized in a better location.
             if (Content == null) return null;

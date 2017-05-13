@@ -77,7 +77,7 @@ namespace DwarfCorp
         {
             if (Yays != null && Yays.Count > 0)
             {
-                SoundManager.PlaySound(Datastructures.SelectRandom(Yays));
+                SoundManager.PlaySound(Datastructures.SelectRandom(Yays), 0.5f);
             }
         }
 
@@ -85,7 +85,7 @@ namespace DwarfCorp
         {
             if (Boos != null && Boos.Count > 0)
             {
-                SoundManager.PlaySound(Datastructures.SelectRandom(Boos));
+                SoundManager.PlaySound(Datastructures.SelectRandom(Boos), 0.5f);
             }
         }
 

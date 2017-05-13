@@ -65,7 +65,7 @@ namespace DwarfCorp
             {
 
                 agent.Manager.World.MakeAnnouncement("We're out of food!", "Our stockpiles don't have any food. Our employees will starve!");
-                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
+                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                 yield return Act.Status.Fail;
                 yield break;
             }
@@ -84,7 +84,7 @@ namespace DwarfCorp
                     if (bodies.Count == 0)
                     {
                         agent.Manager.World.MakeAnnouncement("We're out of food!", "Our stockpiles don't have any food. Our employees will starve!");
-                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
+                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                         yield return Act.Status.Fail;
                     }
                     else
