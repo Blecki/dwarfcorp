@@ -10,7 +10,6 @@ namespace DwarfCorp.Goals
         private Dictionary<String, Goal> AllGoals = new Dictionary<string, Goal>();
         private List<Goal> ActiveGoals = new List<Goal>();
         private List<GameEvent> Events = new List<GameEvent>();
-        private List<Goal> PendingActivation = new List<Goal>();
 
         public GoalManager()
         {
@@ -22,6 +21,12 @@ namespace DwarfCorp.Goals
                     newGoal.SystemName = type.FullName;
                     AllGoals.Add(type.FullName, newGoal);
                 }
+        }
+
+        public IEnumerable<Goal> EnumerateGoals()
+        {
+            foreach (var goal in AllGoals)
+                yield return goal.Value;
         }
 
         public void Initialize(GoalMemory Memory)
@@ -39,17 +44,16 @@ namespace DwarfCorp.Goals
                     ActiveGoals.Add(goal.Value);
                     goal.Value.State = GoalState.Active;
                 }
+
+                if (goal.Value.GoalType == GoalTypes.AvailableAtStartup &&
+                    goal.Value.State == GoalState.Unavailable)
+                    goal.Value.State = GoalState.Available;
             }
         }
 
         public void OnGameEvent(GameEvent Event)
         {
             Events.Add(Event);
-        }
-
-        public void OnGameEvent(String Event)
-        {
-            Events.Add(new GameEvent { EventDescription = Event });
         }
 
         public void Update(WorldManager World)
@@ -62,16 +66,6 @@ namespace DwarfCorp.Goals
                     goal.OnGameEvent(World, @event);
 
             ActiveGoals.RemoveAll(g => g.State != GoalState.Active);
-
-            var activation = PendingActivation;
-            PendingActivation = new List<Goal>();
-
-            foreach (var goal in activation)
-            {
-                goal.OnActivated(World);
-                if (goal.State == GoalState.Active)
-                    ActiveGoals.Add(goal);
-            }
         }
 
         public Goal FindGoal(String Name)
@@ -79,16 +73,21 @@ namespace DwarfCorp.Goals
             return AllGoals[Name];
         }
 
-        public void ActivateGoal(String Name)
+        public Goal.ActivationResult ActivateGoal(WorldManager World, Goal Goal)
         {
-            PendingActivation.Add(AllGoals[Name]);
+            var activationResult = Goal.Activate(World);
+            if (activationResult.Succeeded)
+            {
+                Goal.State = GoalState.Active;
+                ActiveGoals.Add(Goal);
+            }
+            return activationResult;
         }
 
-        public void UnlockGoal(String Name)
+        public void UnlockGoal(Goal Goal)
         {
-            var goal = FindGoal(Name);
-            if (goal.State == GoalState.Unavailable)
-                goal.State = GoalState.Available;
+            if (Goal.State == GoalState.Unavailable)
+                Goal.State = GoalState.Available;
         }
     }
 }

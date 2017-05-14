@@ -82,6 +82,8 @@ namespace DwarfCorp
 
         public Goals.GoalMemory GoalMemory;
 
+
+
         #endregion
 
         protected void OnDeserialized(StreamingContext context)

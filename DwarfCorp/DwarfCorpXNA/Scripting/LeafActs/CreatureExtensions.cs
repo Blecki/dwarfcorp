@@ -180,17 +180,15 @@ namespace DwarfCorp
             while(true)
             {
                 // Get the voxel stored in the agent's blackboard.
-                Voxel blackBoardVoxel = agent.AI.Blackboard.GetData<Voxel>(voxel);
+                var vox = agent.AI.Blackboard.GetData<Voxel>(voxel);
 
                 // Somehow, there wasn't a voxel to mine.
-                if(blackBoardVoxel == null)
+                if(vox == null)
                 {
                     agent.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                     yield return Act.Status.Fail;
                     break;
                 }
-
-                Voxel vox = blackBoardVoxel;
 
                 // If the voxel has already been destroyed, just ignore it and return.
                 if(vox.Health <= 0.0f || !agent.Faction.IsDigDesignation(vox))
@@ -232,6 +230,11 @@ namespace DwarfCorp
                 // If the voxel has been destroyed by you, gather it.
                 if (vox.Health <= 0.0f)
                 {
+                    var voxelType = VoxelLibrary.GetVoxelType(vox.TypeName);
+                    agent.AI.AddXP(Math.Max((int)(voxelType.StartingHealth / 4), 1));
+                    agent.Stats.NumBlocksDestroyed++;
+                    agent.World.Master.GoalManager.OnGameEvent(new Goals.Events.DigBlock(voxelType, agent));
+
                     List<Body> items = vox.Kill();
 
                     if (items != null)
@@ -240,9 +243,7 @@ namespace DwarfCorp
                         {
                             agent.Gather(item);
                         }
-                    }
-                    agent.AI.AddXP(Math.Max((int)(VoxelLibrary.GetVoxelType(blackBoardVoxel.TypeName).StartingHealth / 4), 1));
-                    agent.Stats.NumBlocksDestroyed++;
+                    }                   
                 }
 
                 // Wait until the animation is done playing before continuing.

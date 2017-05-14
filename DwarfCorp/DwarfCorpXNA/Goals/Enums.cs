@@ -8,7 +8,8 @@ namespace DwarfCorp.Goals
     public enum GoalTypes
     {
         Achievement,
-        Active
+        UnavailableAtStartup,
+        AvailableAtStartup
     }
 
     public enum GoalState

@@ -281,7 +281,7 @@ namespace DwarfCorp
         public ulong QuickCompare
         {
             get {
-                System.Diagnostics.Debug.Assert(quickCompare == invalidCompareValue, "Voxel was generated without Quick Compare.  Set using GridPosition instead.");
+                //System.Diagnostics.Debug.Assert(quickCompare == invalidCompareValue, "Voxel was generated without Quick Compare.  Set using GridPosition instead.");
                 return quickCompare;
             }
         }
