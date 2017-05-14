@@ -91,6 +91,7 @@ namespace DwarfCorp.NewGui
                     {
                         OkayText = "Fire this dwarf!",
                         CancelText = "Keep this dwarf.",
+                        Padding = new Margin(32, 10, 10, 10),
                         OnClose = (confirm) =>
                         {
                             if ((confirm as NewGui.Confirm).DialogResult == NewGui.Confirm.Result.OKAY)

@@ -1,4 +1,4 @@
-﻿// Shadow.cs
+// Shadow.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -54,6 +54,22 @@ namespace DwarfCorp
             
         }
 
+        public Shadow(GameComponent parent) :
+            this(parent.Manager, "Shadow", parent, Matrix.CreateRotationX((float)Math.PI * 0.5f), new SpriteSheet(ContentPaths.Effects.shadowcircle))
+        {
+            GlobalScale = 1.0f;
+            var shP = new List<Point>
+                {
+                    new Point(0, 0)
+                };
+            var shadowAnimation = new Animation(parent.Manager.World.GraphicsDevice, 
+                new SpriteSheet(ContentPaths.Effects.shadowcircle),
+                "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
+            AddAnimation(shadowAnimation);
+            shadowAnimation.Play();
+            SetCurrentAnimation("sh");
+        }
+
         public Shadow(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, SpriteSheet spriteSheet) :
             base(manager, name, parent, localTransform, spriteSheet, false)
         {
@@ -89,7 +105,9 @@ namespace DwarfCorp
                         newTrans *= Matrix.CreateScale(scaleFactor);
                         newTrans.Translation = (pos - p.GlobalTransform.Translation) + new Vector3(0.0f, 0.1f, 0.0f);
                         Tint = new Color(Tint.R, Tint.G, Tint.B, (int)(scaleFactor * 255));
-                        LocalTransform = newTrans;
+                        Matrix globalRotation = p.GlobalTransform;
+                        globalRotation.Translation = Vector3.Zero;
+                        LocalTransform = newTrans * Matrix.Invert(globalRotation);
                     }
                 }
                 UpdateTimer.HasTriggered = false;

@@ -55,6 +55,18 @@ namespace DwarfCorp
             
         }
 
+        public static string GenerateBiography(string Name, Creature.CreatureGender Gender)
+        {
+            var hobbyTemplates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.hobby);
+            var hobby = TextGenerator.GenerateRandom(new List<string>(),
+                    hobbyTemplates[MathFunctions.Random.Next(hobbyTemplates.Count)].ToArray());
+            var biographyTemplates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.biography);
+            return TextGenerator.ToSentenceCase(TextGenerator.GenerateRandom(
+            new List<string> { Name, Gender.ToString(), hobby, Creature.Pronoun(Gender), Creature.Posessive(Gender) },
+            biographyTemplates[MathFunctions.Random.Next(biographyTemplates.Count)].ToArray()));
+
+        }
+
         public void GenerateRandom(EmployeeClass employeeClass, int level, CompanyInformation info)
         {
             Class = employeeClass;
@@ -92,14 +104,8 @@ namespace DwarfCorp
             var templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.location);
              HomeTown = TextGenerator.GenerateRandom(new List<string>(),
                  templates[MathFunctions.Random.Next(templates.Count)].ToArray());
-             
-            var hobbyTemplates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.hobby);
-            var hobby = TextGenerator.GenerateRandom(new List<string>(),
-                    hobbyTemplates[MathFunctions.Random.Next(hobbyTemplates.Count)].ToArray());
-            var biographyTemplates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.biography);
-            Biography = TextGenerator.ToSentenceCase(TextGenerator.GenerateRandom(
-                new List<string> {Name, Gender.ToString(), hobby, Creature.Pronoun(Gender), Creature.Posessive(Gender)},
-                biographyTemplates[MathFunctions.Random.Next(biographyTemplates.Count)].ToArray()));
+
+            Biography = GenerateBiography(Name, Gender);
         }
     }
 }

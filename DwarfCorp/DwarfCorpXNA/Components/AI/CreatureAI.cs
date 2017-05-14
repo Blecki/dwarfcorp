@@ -239,6 +239,8 @@ namespace DwarfCorp
         /// <summary> List of changes to the creatures XP over time.</summary>
         public List<int> XPEvents { get; set; }
 
+        public string Biography = "";
+        
         /// <summary> Add exprience points to the creature. It will level up from time to time </summary>
         public void AddXP(int amount)
         {
