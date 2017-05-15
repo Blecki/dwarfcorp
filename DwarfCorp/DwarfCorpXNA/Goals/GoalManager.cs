@@ -7,47 +7,52 @@ namespace DwarfCorp.Goals
 {
     public class GoalManager
     {
-        private Dictionary<String, Goal> AllGoals = new Dictionary<string, Goal>();
+        private List<Goal> AllGoals = new List<Goal>();
         private List<Goal> ActiveGoals = new List<Goal>();
         private List<GameEvent> Events = new List<GameEvent>();
 
         public GoalManager()
         {
-            // Discover all possible goals.
-            foreach (var type in System.Reflection.Assembly.GetExecutingAssembly().GetTypes())
-                if (type.IsSubclassOf(typeof(Goal)))
-                {
-                    var newGoal = Activator.CreateInstance(type) as Goal;
-                    newGoal.SystemName = type.FullName;
-                    AllGoals.Add(type.FullName, newGoal);
-                }
+            
         }
 
         public IEnumerable<Goal> EnumerateGoals()
         {
             foreach (var goal in AllGoals)
-                yield return goal.Value;
+                yield return goal;
         }
 
-        public void Initialize(GoalMemory Memory)
+        public void Initialize(List<Goal> SerializedGoals)
         {
+            // Discover all possible goals.
+            // If loading a save game, half of these will be thrown away. :(
+            foreach (var type in System.Reflection.Assembly.GetExecutingAssembly().GetTypes())
+            {
+                if (type.IsSubclassOf(typeof(Goal)))
+                {
+                    var serializedGoal = SerializedGoals.FirstOrDefault(g => g.GetType() == type);
+                    if (serializedGoal == null)
+                        AllGoals.Add(Activator.CreateInstance(type) as Goal);
+                    else
+                        AllGoals.Add(serializedGoal);
+                }
+            }
+
             foreach (var goal in AllGoals)
             {
-                goal.Value.Memory = Memory;
+                if (goal.State == GoalState.Active)
+                    ActiveGoals.Add(goal);
 
-                if (goal.Value.State == GoalState.Active)
-                    ActiveGoals.Add(goal.Value);
-
-                if (goal.Value.GoalType == GoalTypes.Achievement &&
-                    goal.Value.State == GoalState.Unavailable)
+                if (goal.GoalType == GoalTypes.Achievement &&
+                    goal.State == GoalState.Unavailable)
                 {
-                    ActiveGoals.Add(goal.Value);
-                    goal.Value.State = GoalState.Active;
+                    ActiveGoals.Add(goal);
+                    goal.State = GoalState.Active;
                 }
 
-                if (goal.Value.GoalType == GoalTypes.AvailableAtStartup &&
-                    goal.Value.State == GoalState.Unavailable)
-                    goal.Value.State = GoalState.Available;
+                if (goal.GoalType == GoalTypes.AvailableAtStartup &&
+                    goal.State == GoalState.Unavailable)
+                    goal.State = GoalState.Available;
             }
         }
 
@@ -67,13 +72,8 @@ namespace DwarfCorp.Goals
 
             ActiveGoals.RemoveAll(g => g.State != GoalState.Active);
         }
-
-        public Goal FindGoal(String Name)
-        {
-            return AllGoals[Name];
-        }
-
-        public Goal.ActivationResult ActivateGoal(WorldManager World, Goal Goal)
+               
+        public Goal.ActivationResult TryActivateGoal(WorldManager World, Goal Goal)
         {
             var activationResult = Goal.Activate(World);
             if (activationResult.Succeeded)

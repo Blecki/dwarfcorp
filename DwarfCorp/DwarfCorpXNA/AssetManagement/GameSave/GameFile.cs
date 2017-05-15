@@ -57,6 +57,8 @@ namespace DwarfCorp
 
             public ComponentManager Components { get; set; }
 
+            public List<Goals.Goal> Goals { get; set; }
+
             public int GameID { get; set; }
 
             public GameData()
@@ -81,6 +83,9 @@ namespace DwarfCorp
 
                 FileUtils.SaveJSon(Components, directory + ProgramData.DirChar + "Components." 
                     + (DwarfGame.COMPRESSED_BINARY_SAVES ? GameFile.CompressedExtension : GameFile.Extension), DwarfGame.COMPRESSED_BINARY_SAVES);
+
+                FileUtils.SaveJSon(Goals, directory + ProgramData.DirChar + "Goals."
+                     + (DwarfGame.COMPRESSED_BINARY_SAVES ? GameFile.CompressedExtension : GameFile.Extension), DwarfGame.COMPRESSED_BINARY_SAVES);
             }
         }
 
@@ -107,6 +112,7 @@ namespace DwarfCorp
                 Camera = world.Camera,
                 Components = world.ComponentManager,
                 ChunkData = new List<ChunkFile>(),
+                Goals = world.Master.GoalManager.EnumerateGoals().ToList(),
                 GameID = id,
             };
 

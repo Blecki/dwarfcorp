@@ -2,24 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace DwarfCorp.Goals
 {
     public class Goal
     {
-        public GoalMemory Memory;
-        public String SystemName;
-        
+        [JsonIgnore]
         public String Name = "Generic Goal";
-        public String Description = "This goal was not properly configured.";
-        public GoalTypes GoalType = GoalTypes.UnavailableAtStartup;
-        public int StockWagerCost = 0;
 
-        public GoalState State
-        {
-            get { return Memory.GetState(SystemName); }
-            set { Memory.SetState(SystemName, value); }
-        }
+        [JsonIgnore]
+        public String Description = "This goal was not properly configured.";
+
+        [JsonIgnore]
+        public GoalTypes GoalType = GoalTypes.UnavailableAtStartup;
+
+        public GoalState State = GoalState.Unavailable;
         
         public struct ActivationResult
         {

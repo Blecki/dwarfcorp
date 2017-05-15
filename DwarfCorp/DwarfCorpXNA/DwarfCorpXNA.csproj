@@ -248,7 +248,6 @@
     <Compile Include="Goals\GameEvent.cs" />
     <Compile Include="Goals\Goal.cs" />
     <Compile Include="Goals\GoalManager.cs" />
-    <Compile Include="Goals\GoalMemory.cs" />
     <Compile Include="Goals\Goals\BuildRoomAchievements.cs" />
     <Compile Include="Goals\Goals\MineSand.cs" />
     <Compile Include="Graphics\Cameras\Camera.cs" />

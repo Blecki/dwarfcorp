@@ -33,7 +33,7 @@ namespace DwarfCorp.NewGui
                 OnActivateClicked = (sender) => 
                 {
                     if ((sender as GoalInfo).Goal != null)
-                        World.Master.GoalManager.ActivateGoal(World, (sender as GoalInfo).Goal);
+                        World.Master.GoalManager.TryActivateGoal(World, (sender as GoalInfo).Goal);
                     Invalidate();
                 }
             }) as NewGui.GoalInfo;
