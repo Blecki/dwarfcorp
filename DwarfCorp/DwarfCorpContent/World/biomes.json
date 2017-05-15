@@ -282,12 +282,12 @@
       {
         "Name": "Snow Pine Tree",
         "ClumpSize": 25.0,
-        "ClumpThreshold": 0.9,
+        "ClumpThreshold": 0.6,
         "MeanSize": 1.0,
         "SizeVariance": 0.5,
         "VerticalOffset": 1.7,
         "NoiseOffset": 164.433014,
-        "SpawnProbability": 0.01
+        "SpawnProbability": 0.03
       }
     ],
     "Motes": [
@@ -336,13 +336,6 @@
     "Name": "Tundra",
     "Vegetation": [],
     "Motes": [
-      {
-        "Name": "frostgrass",
-        "RegionScale": 0.1,
-        "SpawnThreshold": 0.6,
-        "MoteScale": 1.0,
-        "Asset": "Entities\\Plants\\frostgrass"
-      }
     ],
     "Fauna": [],
     "GrassLayer": {
@@ -351,7 +344,7 @@
     },
     "SoilLayer": {
         "VoxelType" :  "Ice",
-        "Depth" :  2
+        "Depth" :  5
     },
     "SubsurfaceLayers": [ 
     {
