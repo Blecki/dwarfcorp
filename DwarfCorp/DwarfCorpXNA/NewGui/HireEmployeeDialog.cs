@@ -34,7 +34,7 @@ namespace DwarfCorp.NewGui
         public override void Construct()
         {
             Border = "border-fancy";
-            Rect = Root.VirtualScreen;
+            Rect = Root.RenderData.VirtualScreen;
 
             var left = AddChild(new Widget());
             var right = AddChild(new Widget());
@@ -115,7 +115,7 @@ namespace DwarfCorp.NewGui
                         {
                             Applicants.Remove(applicant);
                             Faction.Hire(applicant);
-                            SoundManager.PlaySound(ContentPaths.Audio.cash);
+                            SoundManager.PlaySound(ContentPaths.Audio.cash, 0.5f);
                             ApplicantList.Items = Applicants.Select(a => a.Name).ToList();
                             ApplicantList.SelectedIndex = 0;
                         }

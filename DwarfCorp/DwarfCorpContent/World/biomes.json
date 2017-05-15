@@ -328,7 +328,16 @@
       {
         "Name": "Brown Rabbit",
         "SpawnProbability": 0.0005
-      }],
+      },
+      {
+        "Name": "Snake",
+        "SpawnProbability": 0.00001
+      },
+      {
+        "Name": "Scorpion",
+        "SpawnProbability": 0.00001
+      },
+    ],
     "GrassLayer": {
         "VoxelType" :  "DesertGrass",
         "Depth" :  1

@@ -179,7 +179,7 @@ namespace DwarfCorp.Dialogue
         {
             Context.TradePanel = Context.ChoicePanel.Root.ConstructWidget(new NewGui.TradePanel
             {
-                Rect = Context.ChoicePanel.Root.VirtualScreen,
+                Rect = Context.ChoicePanel.Root.RenderData.VirtualScreen,
                 Envoy = new Trade.EnvoyTradeEntity(Context.Envoy),
                 Player = new Trade.PlayerTradeEntity(Context.PlayerFaction)
             }) as NewGui.TradePanel;

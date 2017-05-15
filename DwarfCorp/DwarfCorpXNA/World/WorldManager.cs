@@ -237,7 +237,7 @@ namespace DwarfCorp
 
             if (!string.IsNullOrEmpty(sound))
             {
-                SoundManager.PlaySound(sound, 0.01f);
+                SoundManager.PlaySound(sound, 0.5f);
             }
         }
 
@@ -286,6 +286,7 @@ namespace DwarfCorp
         public Action<String> ShowInfo = null;
         public Action<String> ShowToolPopup = null;
         public Action<Gum.MousePointer> SetMouse = null;
+        public Action<String, int> SetMouseOverlay = null;
         public Gum.MousePointer MousePointer = new Gum.MousePointer("mouse", 1, 0);
         
         public bool IsMouseOverGui
@@ -482,7 +483,18 @@ namespace DwarfCorp
             foreach (Faction faction in natives)
             {
                 faction.World = this;
+              
+                if (faction.WallBuilder == null)
+                    faction.WallBuilder = new PutDesignator(faction, this);
+                
+                if (faction.RoomBuilder == null)
+                    faction.RoomBuilder = new RoomBuilder(faction, this);
+
+                if (faction.CraftBuilder == null)
+                    faction.CraftBuilder = new CraftBuilder(faction, this);
+              
                 faction.WallBuilder.World = this;
+              
             }
 
             ComponentManager = new ComponentManager(this, CompanyInformation, natives);

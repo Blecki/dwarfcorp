@@ -239,6 +239,8 @@ namespace DwarfCorp
         /// <summary> List of changes to the creatures XP over time.</summary>
         public List<int> XPEvents { get; set; }
 
+        public string Biography = "";
+        
         /// <summary> Add exprience points to the creature. It will level up from time to time </summary>
         public void AddXP(int amount)
         {
@@ -463,7 +465,7 @@ namespace DwarfCorp
                             Manager.World.MakeAnnouncement(String.Format("{0} ({1}) refuses to work!",
                                 Stats.FullName, Stats.CurrentLevel.Name),
                                 "Our employee is unhappy, and would rather not work!", ZoomToMe);
-                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
+                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                         }
                         CurrentTask = null;
                     }

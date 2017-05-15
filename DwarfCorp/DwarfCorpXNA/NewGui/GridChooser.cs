@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Gum;
+using Gum.Widgets;
 using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.NewGui
@@ -35,6 +36,17 @@ namespace DwarfCorp.NewGui
             }
         }
 
+        private int _hover = -1;
+        public int HoverItem
+        {
+            get { return _hover; }
+            set
+            {
+                _hover = value;
+                Invalidate();
+            }
+        }
+
         public Widget SelectedItem = null;
         
         private GridPanel Panel = null;
@@ -50,12 +62,12 @@ namespace DwarfCorp.NewGui
             }
 
             //Center on screen.
-            Rect.X = (Root.VirtualScreen.Width / 2) - (Rect.Width / 2);
-            Rect.Y = (Root.VirtualScreen.Height / 2) - (Rect.Height / 2);
+            Rect.X = (Root.RenderData.VirtualScreen.Width / 2) - (Rect.Width / 2);
+            Rect.Y = (Root.RenderData.VirtualScreen.Height / 2) - (Rect.Height / 2);
 
             Border = "border-one";
 
-            AddChild(new Widget
+            AddChild(new Button
             {
                 Text = OkayText,
                 TextHorizontalAlign = HorizontalAlign.Center,
@@ -69,7 +81,7 @@ namespace DwarfCorp.NewGui
                 AutoLayout = AutoLayout.FloatBottomRight
             });
 
-            AddChild(new Widget
+            AddChild(new Button
             {
                 Text = CancelText,
                 TextHorizontalAlign = HorizontalAlign.Center,
@@ -101,6 +113,20 @@ namespace DwarfCorp.NewGui
                         Selection = lambdaIndex;
                         SelectedItem = item;
                     };
+                item.OnMouseEnter += (sender, args) =>
+                {
+                    if (HoverItem != lambdaIndex)
+                    {
+                        HoverItem = lambdaIndex;
+                    }
+                };
+                item.OnMouseLeave += (sender, args) =>
+                {
+                    if (HoverItem == lambdaIndex)
+                    {
+                        HoverItem = -1;
+                    }
+                };
                 index += 1;
                 Panel.AddChild(item);
             }
@@ -110,14 +136,21 @@ namespace DwarfCorp.NewGui
 
         protected override Gum.Mesh Redraw()
         {
+            Gum.Mesh mesh = base.Redraw();
             if (Selection != -1)
             {
                 var border = Root.GetTileSheet(SelectionBorder);
                 var rect = Panel.GetChild(Selection).Rect.Interior(-border.TileWidth, -border.TileHeight, -border.TileWidth, -border.TileHeight);
-                return Gum.Mesh.Merge(base.Redraw(), Gum.Mesh.CreateScale9Background(rect, border));
+                mesh = Gum.Mesh.Merge(mesh, Gum.Mesh.CreateScale9Background(rect, border));
             }
-            else
-                return base.Redraw();
+
+            if (HoverItem != -1)
+            {
+                var border = Root.GetTileSheet(SelectionBorder);
+                var rect = Panel.GetChild(HoverItem).Rect.Interior(-border.TileWidth, -border.TileHeight, -border.TileWidth, -border.TileHeight);
+                mesh =  Gum.Mesh.Merge(mesh, Gum.Mesh.CreateScale9Background(rect, border).Colorize(new Vector4(0.5f, 0, 0, 1.0f)));
+            }
+            return mesh;
         }
     }
 }

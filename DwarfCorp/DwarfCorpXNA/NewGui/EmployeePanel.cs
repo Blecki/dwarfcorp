@@ -11,7 +11,7 @@ namespace DwarfCorp.NewGui
     {
         public Faction Faction;
         private Gum.Widgets.WidgetListView EmployeeList;
-        private Dictionary<String, int> IconIndex;
+        private static Dictionary<String, int> IconIndex;
 
         private void RebuildEmployeeList()
         {
@@ -28,7 +28,7 @@ namespace DwarfCorp.NewGui
                 {
                     AutoLayout = AutoLayout.DockLeft,
                     MinimumSize = new Point(32, 48),
-                    Background = new TileReference("dwarves", IconIndex[employee.Stats.CurrentClass.Name])
+                    Background = new TileReference("dwarves", GetIconIndex(employee.Stats.CurrentClass.Name))
                 });
 
                 bar.AddChild(new Widget
@@ -63,14 +63,24 @@ namespace DwarfCorp.NewGui
             EmployeeList.SelectedIndex = 0;
         }
 
+        public static int GetIconIndex(String Class)
+        {
+            if (IconIndex == null)
+            {
+                IconIndex = new Dictionary<string, int>();
+                IconIndex.Add("Craftdwarf", 0);
+                IconIndex.Add("Musket", 1);
+                IconIndex.Add("Miner", 2);
+                IconIndex.Add("AxeDwarf", 3);
+                IconIndex.Add("Wizard", 4);
+            }
+
+            return IconIndex[Class];
+        }
+
         public override void Construct()
         {
-            IconIndex = new Dictionary<string, int>();
-            IconIndex.Add("Craftdwarf", 0);
-            IconIndex.Add("Musket", 1);
-            IconIndex.Add("Miner", 2);
-            IconIndex.Add("AxeDwarf", 3);
-            IconIndex.Add("Wizard", 4);
+            
 
             var left = AddChild(new Widget());
             var right = AddChild(new EmployeeInfo
@@ -81,11 +91,12 @@ namespace DwarfCorp.NewGui
                     {
                         OkayText = "Fire this dwarf!",
                         CancelText = "Keep this dwarf.",
+                        Padding = new Margin(32, 10, 10, 10),
                         OnClose = (confirm) =>
                         {
                             if ((confirm as NewGui.Confirm).DialogResult == NewGui.Confirm.Result.OKAY)
                             {
-                                SoundManager.PlaySound(ContentPaths.Audio.change);
+                                SoundManager.PlaySound(ContentPaths.Audio.change, 0.5f);
                                 var selectedEmployee = (sender as EmployeeInfo).Employee;
                                 selectedEmployee.GetEntityRootComponent().Delete();
 

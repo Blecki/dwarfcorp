@@ -185,6 +185,29 @@ namespace DwarfCorp
             TradeMoney = 0.0m;
         }
 
+        public Faction(OverworldFile.OverworldData.FactionDescriptor descriptor, Dictionary<string, Race> races )
+        {
+            Threats = new List<Creature>();
+            Minions = new List<CreatureAI>();
+            SelectedMinions = new List<CreatureAI>();
+            TaskManager = new TaskManager();
+            Stockpiles = new List<Stockpile>();
+            DigDesignations = new Dictionary<ulong, BuildOrder>();
+            GuardDesignations = new List<BuildOrder>();
+            ChopDesignations = new List<Body>();
+            AttackDesignations = new List<Body>();
+            GatherDesignations = new List<Body>();
+            TradeEnvoys = new List<TradeEnvoy>();
+            WarParties = new List<WarParty>();
+            IsRaceFaction = false;
+            TradeMoney = 0.0m;
+            PrimaryColor = descriptor.PrimaryColory;
+            SecondaryColor = descriptor.SecondaryColor;
+            Name = descriptor.Name;
+            Race = races[descriptor.Race];
+            Center = new Point(descriptor.CenterX, descriptor.CenterY);
+        }
+
         public class Expidition
         {
             public enum State
@@ -1024,6 +1047,7 @@ namespace DwarfCorp
             newMinion.Stats.LevelUp();
             newMinion.Stats.FullName = currentApplicant.Name;
             newMinion.AI.AddMoney(currentApplicant.Level.Pay * 4m);
+            newMinion.AI.Biography = currentApplicant.Biography;
 
             World.MakeAnnouncement("New hire!", String.Format("{0} was hired as a {1}.",
                 currentApplicant.Name, currentApplicant.Level.Name), newMinion.AI.ZoomToMe,  ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
@@ -1053,12 +1077,12 @@ namespace DwarfCorp
             for (int i = 0; i < numCreatures; i++)
             {
                 string creature = Race.CreatureTypes[MathFunctions.Random.Next(Race.CreatureTypes.Count)];
-                Vector3 offset = MathFunctions.RandVector3Cube() * 5;
+                Vector3 offset = MathFunctions.RandVector3Cube() * 2;
                 Voxel voxel = new Voxel();
                 
                 if (World.ChunkManager.ChunkData.GetFirstVoxelUnder(position + offset, ref voxel, true))
                 {
-                    Body body = EntityFactory.CreateEntity<Body>(creature, position + offset);
+                    Body body = EntityFactory.CreateEntity<Body>(creature, voxel.Position + new Vector3(0.5f, 1, 0.5f));
                     CreatureAI ai = body.GetChildrenOfType<CreatureAI>().FirstOrDefault();
                     
                     if (ai != null)

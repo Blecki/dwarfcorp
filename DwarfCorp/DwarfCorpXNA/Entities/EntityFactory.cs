@@ -150,6 +150,8 @@ namespace DwarfCorp
                     ? (Body)(new Strawman(world.ComponentManager, position))
                     : (value < 0.66 ? (Body)(new WeightRack(world.ComponentManager,position)) : (Body)(new PunchingBag(world.ComponentManager, position)));
             });
+            RegisterEntity("Snake", (position, data) => GenerateSnake(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice,
+                world.ChunkManager));
             RegisterEntity("Bookshelf", (position, data) => new Bookshelf(world.ComponentManager, position));
             RegisterEntity("Wooden Door", (position, data) => new Door(world.ComponentManager, position, world.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 1), 50));
             RegisterEntity("Metal Door", (position, data) => new Door(world.ComponentManager, position, world.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 8), 100));
@@ -392,7 +394,8 @@ namespace DwarfCorp
             GraphicsDevice graphics,
             ChunkManager chunks)
         {
-            return new Snake(ContentPaths.Entities.Animals.Snake.snake, position, componentManager, chunks, graphics, content, "Snake").Physics;
+            return new Snake(new SpriteSheet(ContentPaths.Entities.Animals.Snake.snake, 32), 
+                position, componentManager, chunks, graphics, content, "Snake").Physics;
         }
 
         /*

@@ -247,22 +247,22 @@ namespace DwarfCorp
 
 
         public Voxel GetFirstVisibleBlockHitByMouse(MouseState mouse, Camera camera, Viewport viewPort,
-            bool selectEmpty = false)
+            bool selectEmpty = false, Func<Voxel, bool> acceptFn = null)
         {
             Voxel vox = GetFirstVisibleBlockHitByScreenCoord(mouse.X, mouse.Y, camera, viewPort, 150.0f, false,
-                selectEmpty);
+                selectEmpty, acceptFn);
             return vox;
         }
 
         public Voxel GetFirstVisibleBlockHitByScreenCoord(int x, int y, Camera camera, Viewport viewPort, float dist,
-            bool draw = false, bool selectEmpty = false)
+            bool draw = false, bool selectEmpty = false, Func<Voxel, bool> acceptFn = null)
         {
             Vector3 pos1 = viewPort.Unproject(new Vector3(x, y, 0), camera.ProjectionMatrix, camera.ViewMatrix,
                 Matrix.Identity);
             Vector3 pos2 = viewPort.Unproject(new Vector3(x, y, 1), camera.ProjectionMatrix, camera.ViewMatrix,
                 Matrix.Identity);
             Vector3 dir = Vector3.Normalize(pos2 - pos1);
-            Voxel vox = GetFirstVisibleBlockHitByRay(pos1, pos1 + dir*dist, draw, selectEmpty);
+            Voxel vox = GetFirstVisibleBlockHitByRay(pos1, pos1 + dir*dist, draw, selectEmpty, acceptFn);
 
             return vox;
         }
@@ -398,14 +398,18 @@ namespace DwarfCorp
             return GetFirstVisibleBlockHitByRay(rayStart, rayEnd, null, false);
         }
 
-        public Voxel GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd, bool draw, bool selectEmpty)
+        public Voxel GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd, bool draw, bool selectEmpty, Func<Voxel, bool> acceptFn = null)
         {
-            return GetFirstVisibleBlockHitByRay(rayStart, rayEnd, null, draw, selectEmpty);
+            return GetFirstVisibleBlockHitByRay(rayStart, rayEnd, null, draw, selectEmpty, acceptFn);
         }
 
 
-        public Voxel GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd, Voxel ignore,  bool draw, bool selectEmpty = false)
+        public Voxel GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd, Voxel ignore,  bool draw, bool selectEmpty = false, Func<Voxel, bool> acceptFn = null)
         {
+            if (acceptFn == null)
+            {
+                acceptFn = v => v != null && !v.IsEmpty;
+            }
             Vector3 delta = rayEnd - rayStart;
             float length = delta.Length();
             delta.Normalize();
@@ -416,7 +420,7 @@ namespace DwarfCorp
             {
                 Vector3 pos = new Vector3(coord.X, coord.Y, coord.Z);
 
-                bool success = GetNonNullVoxelAtWorldLocationCheckFirst(null, pos, ref atPos);
+                bool success = GetVoxel(pos, ref atPos) && acceptFn(atPos);
                 if (draw)
                 {
                     Drawer3D.DrawBox(new BoundingBox(pos, pos + new Vector3(1f, 1f, 1f)), Color.White, 0.01f);
