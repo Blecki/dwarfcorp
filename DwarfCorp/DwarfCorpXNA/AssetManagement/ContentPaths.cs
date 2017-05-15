@@ -506,7 +506,7 @@ namespace DwarfCorp
                 public static string snowpine = ProgramData.CreatePath("Entities", "Plants", "snowpine");
                 public static string vine = ProgramData.CreatePath("Entities", "Plants", "vine");
                 public static string wheat = ProgramData.CreatePath("Entities", "Plants", "wheat");
-
+                public static string appletree = ProgramData.CreatePath("Entities", "Plants", "appletree");
             }
             public class Resources
             {

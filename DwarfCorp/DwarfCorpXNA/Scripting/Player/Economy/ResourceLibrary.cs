@@ -78,6 +78,7 @@ namespace DwarfCorp
             public static ResourceType Coconut = "Coconut";
             public static ResourceType Cactus = "Cactus";
             public static ResourceType Egg = "Egg";
+            public static ResourceType Apple = "Apple";
 
             public static implicit operator ResourceType(string value)
             {
@@ -162,6 +163,12 @@ namespace DwarfCorp
                  Resource.ResourceTags.Flammable, Resource.ResourceTags.AboveGroundPlant, Resource.ResourceTags.Edible)
             {
                 PlantToGenerate = "Palm Tree"
+            });
+            Add(new Resource(ResourceType.Apple, 1.0m, "Grows apple trees.",
+                new NamedImageFrame(tileSheet, GetRect(4, 3)), 28, Color.White, Resource.ResourceTags.Plantable,
+                Resource.ResourceTags.Flammable, Resource.ResourceTags.AboveGroundPlant, Resource.ResourceTags.Edible)
+            {
+                PlantToGenerate = "Apple Tree"
             });
             Add(new Resource(ResourceType.Cactus, 0.9m, "Grows cacti.",
                 new NamedImageFrame(tileSheet, GetRect(7, 1)), 15, Color.White, Resource.ResourceTags.Plantable,
