@@ -143,6 +143,16 @@ namespace DwarfCorp
             Physics.Tags.Add("Animal");
             AI.Movement.SetCan(MoveType.ClimbWalls, true);
             AI.Stats.FullName = "Giant Snake";
+            DeathParticleTrigger = new ParticleTrigger("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 1,
+                BoxTriggerTimes = 10,
+                SoundToPlay = ContentPaths.Entities.Dwarf.Audio.dwarfhurt1,
+            };
+            Flames = new Flammable(Manager, "Flames", Physics, this);
+            HasBones = true;
+            HasMeat = true;
         }
 
         public override void Die()
