@@ -62,6 +62,13 @@ namespace DwarfCorp
             };
             AddInstances("snowpine", snowPine);
 
+            FixedInstanceArray appleTree = new FixedInstanceArray("appletree", PrimitiveLibrary.BatchBillboardPrimitives["appletree"], TextureManager.GetTexture(ContentPaths.Entities.Plants.appletree), (int)(50 * GameSettings.Default.NumMotes), BlendState.NonPremultiplied)
+            {
+                ShouldRebuild = true,
+                EnableWind = true
+            };
+            AddInstances("appletree", appleTree);
+
 
             CreateBillboard("berrybush", content, (int)( GameSettings.Default.NumMotes));
             CreateBillboard("cactus", content, (int)(GameSettings.Default.NumMotes));

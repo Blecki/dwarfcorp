@@ -374,7 +374,7 @@ namespace DwarfCorp
                                     offset -= 0.25f;
                                 }
                                 float treeSize = MathFunctions.Rand()*veg.SizeVariance + veg.MeanSize;
-                                EntityFactory.CreateEntity<Body>(veg.Name, chunk.Origin + new Vector3(x, y, z) + new Vector3(0, treeSize * offset, 0), Blackboard.Create("Scale", treeSize));
+                                EntityFactory.CreateEntity<Body>(veg.Name, chunk.Origin + new Vector3(x, y, z) + new Vector3(0.0f, treeSize * offset, 0.0f), Blackboard.Create("Scale", treeSize));
                             }
 
                         }
