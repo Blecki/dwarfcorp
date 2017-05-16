@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using LibNoise;
 using Microsoft.Xna.Framework;
@@ -29,7 +29,7 @@ namespace DwarfCorp.GameStates
                 {
                     Width = 512,
                     Height = 512,
-                    Name = "Dwarfland",
+                    Name = TextGenerator.GenerateRandom(TextGenerator.GetAtoms(ContentPaths.Text.Templates.worlds)),
                     NumCivilizations = 5,
                     NumFaults = 3,
                     NumRains = 1000,
@@ -46,7 +46,7 @@ namespace DwarfCorp.GameStates
                 Generator.Abort();
             Generator = new WorldGenerator(Settings);
             if (Preview != null) Preview.SetGenerator(Generator);
-            Generator.Generate(Game.GraphicsDevice);
+            Generator.Generate();
             GuiRoot.RootItem.GetChild(0).Text = Settings.Name;
             GuiRoot.RootItem.GetChild(0).Invalidate();
         }
@@ -64,8 +64,8 @@ namespace DwarfCorp.GameStates
                 Rect = GuiRoot.RenderData.VirtualScreen,
                 Border = "border-fancy",
                 Text = Settings.Name,
-                Font = "outline-font",
-                TextColor = new Vector4(1,1,1,1),
+                Font = "font-hires",
+                TextColor = new Vector4(0, 0, 0, 1),
                 Padding = new Gum.Margin(4, 4, 4, 4),
                 InteriorMargin = new Gum.Margin(24, 0, 0, 0),
             });
@@ -82,8 +82,8 @@ namespace DwarfCorp.GameStates
                 Text = "Regenerate",
                 Border = "border-button",
                 ChangeColorOnHover = true,
-                TextColor = new Vector4(1, 1, 1, 1),
-                Font = "outline-font",
+                TextColor = new Vector4(0, 0, 0, 1),
+                Font = "font-hires",
                 AutoLayout = Gum.AutoLayout.DockTop,
                 OnClick = (sender, args) => RestartGeneration()
             });
@@ -93,8 +93,8 @@ namespace DwarfCorp.GameStates
                 Text = "Save World",
                 Border = "border-button",
                 ChangeColorOnHover = true,
-                TextColor = new Vector4(1, 1, 1, 1),
-                Font = "outline-font",
+                TextColor = new Vector4(0, 0, 0, 1),
+                Font = "font-hires",
                 AutoLayout = Gum.AutoLayout.DockTop,
                 OnClick = (sender, args) =>
                 {
@@ -119,8 +119,8 @@ namespace DwarfCorp.GameStates
                 Text = "Advanced",
                 Border = "border-button",
                 ChangeColorOnHover = true,
-                TextColor = new Vector4(1, 1, 1, 1),
-                Font = "outline-font",
+                TextColor = new Vector4(0, 0, 0, 1),
+                Font = "font-hires",
                 AutoLayout = Gum.AutoLayout.DockTop,
                 OnClick = (sender, args) =>
                 {
@@ -139,8 +139,8 @@ namespace DwarfCorp.GameStates
                 Text = "Back",
                 Border = "border-button",
                 ChangeColorOnHover = true,
-                TextColor = new Vector4(1, 1, 1, 1),
-                Font = "outline-font",
+                TextColor = new Vector4(0, 0, 0, 1),
+                Font = "font-hires",
                 AutoLayout = Gum.AutoLayout.DockTop,
                 OnClick = (sender, args) =>
                 {
@@ -154,8 +154,8 @@ namespace DwarfCorp.GameStates
                 Text = "Start Game",
                 Border = "border-button",
                 ChangeColorOnHover = true,
-                TextColor = new Vector4(1, 1, 1, 1),
-                Font = "outline-font",
+                TextColor = new Vector4(0, 0, 0, 1),
+                Font = "font-hires",
                 AutoLayout = Gum.AutoLayout.DockBottom,
                 OnClick = (sender, args) =>
                 {
@@ -166,7 +166,8 @@ namespace DwarfCorp.GameStates
                         Overworld.Name = Settings.Name;
                         Settings.ExistingFile = null;
                         Settings.WorldOrigin = Settings.WorldGenerationOrigin;
-                        Settings.Natives = Generator.NativeCivilizations;
+                        if (Settings.Natives == null || Settings.Natives.Count == 0)
+                            Settings.Natives = Generator.NativeCivilizations;
 
                         StateManager.ClearState();
                         StateManager.PushState(new LoadState(Game, StateManager, Settings));
@@ -249,7 +250,7 @@ namespace DwarfCorp.GameStates
                 TextHorizontalAlign = Gum.HorizontalAlign.Center,
                 TextVerticalAlign = Gum.VerticalAlign.Center,
                 Font = "outline-font",
-                TextColor = new Vector4(1,0,0,1)
+                TextColor = new Vector4(1,1,1,1)
             }) as Gum.Widgets.ProgressBar;
 
             Preview = mainPanel.AddChild(new WorldGeneratorPreview(Game.GraphicsDevice)
@@ -300,7 +301,7 @@ namespace DwarfCorp.GameStates
                 Preview.Update();
             base.Update(gameTime);
 
-            Preview.PreparePreview();
+            Preview.PreparePreview(StateManager.Game.GraphicsDevice);
         }
 
         public override void Render(DwarfTime gameTime)

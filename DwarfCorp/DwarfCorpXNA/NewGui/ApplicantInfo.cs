@@ -23,7 +23,8 @@ namespace DwarfCorp.NewGui
         private Widget Resume;
         private Widget LastJobLabel;
         private Widget LastJobLocation;
-        
+        private Widget Biography;
+
         public override void Construct()
         {
             NameLabel = AddChild(new Gum.Widget
@@ -62,10 +63,16 @@ namespace DwarfCorp.NewGui
                 MinimumSize = new Point(0, 30)
             });
 
+            Biography = AddChild(new Gum.Widget
+            {
+                AutoLayout = AutoLayout.DockTop,
+                MinimumSize = new Point(30, 30)
+            });
+
             Resume = AddChild(new Gum.Widget
             {
                 AutoLayout = AutoLayout.DockFill,
-                MinimumSize = new Point(0, 30)
+                MinimumSize = new Point(30, 30)
             });
 
             base.Construct();
@@ -81,6 +88,7 @@ namespace DwarfCorp.NewGui
                 SigningBonusLabel.Text = String.Format("${0} signing bonus", Applicant.Level.Pay * 4);
                 LastJobLabel.Text = String.Format("Last job - {0}", Applicant.FormerProfession);
                 LastJobLocation.Text = String.Format("Home town - {0}", Applicant.HomeTown);
+                Biography.Text = Applicant.Biography;
                 Resume.Text = Applicant.CoverLetter;
             }
 

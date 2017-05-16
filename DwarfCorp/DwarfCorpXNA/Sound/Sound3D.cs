@@ -49,6 +49,14 @@ namespace DwarfCorp
         public bool HasStarted;
         public string Name;
         public float VolumeMultiplier { get; set; }
+
+        public void Stop()
+        {
+            if (EffectInstance != null && !EffectInstance.IsDisposed)
+            {
+                EffectInstance.Stop();
+            }
+        }
     }
 
 }

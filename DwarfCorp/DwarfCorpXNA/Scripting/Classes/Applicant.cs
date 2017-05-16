@@ -1,4 +1,4 @@
-﻿// Applicant.cs
+// Applicant.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -48,17 +48,30 @@ namespace DwarfCorp
         public string CoverLetter { get; set; }
         public string FormerProfession { get; set; }
         public string HomeTown { get; set; }
-
+        public string Biography { get; set; }
+        public Creature.CreatureGender Gender { get; set; }
         public Applicant()
         {
             
+        }
+
+        public static string GenerateBiography(string Name, Creature.CreatureGender Gender)
+        {
+            var hobbyTemplates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.hobby);
+            var hobby = TextGenerator.GenerateRandom(new List<string>(),
+                    hobbyTemplates[MathFunctions.Random.Next(hobbyTemplates.Count)].ToArray());
+            var biographyTemplates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.biography);
+            return TextGenerator.ToSentenceCase(TextGenerator.GenerateRandom(
+            new List<string> { Name, Gender.ToString(), hobby, Creature.Pronoun(Gender), Creature.Posessive(Gender) },
+            biographyTemplates[MathFunctions.Random.Next(biographyTemplates.Count)].ToArray()));
+
         }
 
         public void GenerateRandom(EmployeeClass employeeClass, int level, CompanyInformation info)
         {
             Class = employeeClass;
             Level = Class.Levels[level];
-
+            Gender = Creature.RandomGender();
             Name = TextGenerator.GenerateRandom("$firstname", " ", "$lastname");
             List<string> justifications = new List<string>()
             {
@@ -72,9 +85,11 @@ namespace DwarfCorp
                 "I am an adventurous soul!"
             };
            CoverLetter =
-                TextGenerator.GenerateRandom("Dear " + info.Name + ",\n",
-                "${Please,Do}"," consider ", "${my,this}"," application for the position of " + Level.Name +
-                                             ". " + justifications[MathFunctions.Random.Next(justifications.Count)] +"\n", "${Thanks,Sincerely,Yours}", ",\n    " ,Name);
+                TextGenerator.GenerateRandom("${Dear,Hey,Hi,Hello,Sup,Yo}", " " , info.Name , ",\n    ",
+                "${Please,Do}", " ", "${consider,check out,look at,see,view}", " ", "${my,this}", " ",
+                "${application for the position of, resume for, request to be a,offer as}", " " 
+                + Level.Name + ". " + justifications[MathFunctions.Random.Next(justifications.Count)] +" \n",
+                                             "${Thanks,Sincerely,Yours,--,Always}", ",\n    " ,Name);
 
             if (level > 0)
             {
@@ -85,70 +100,12 @@ namespace DwarfCorp
                 FormerProfession = TextGenerator.GenerateRandom("$profession");
             }
 
-            List<string[]> templates = new List<string[]>
-            {
-                new[]
-                {
-                    "place",
-                    " of the ",
-                    "$color",
-                    " ",
-                    "$noun"
-                },
-                new[]
-                {
-                    "$place",
-                    " of the ",
-                    "$adjective",
-                    " ",
-                    "$noun"
-                },
-                new[]
-                {
-                    "$place",
-                    " of the ",
-                    "$material",
-                    " ",
-                    "$noun"
-                },
-                new[]
-                {
-                    "$place",
-                    " of ",
-                    "$noun"
-                },
-                new[]
-                {
-                    "$color",
-                    " ",
-                    "$material",
-                    " ",
-                    "$place"
-                },
-                new[]
-                {
-                    "$adjective",
-                    " ",
-                    "$place"
-                },
-                new []
-                {
-                    "$adjective",
-                    "ville"
-                },
-                new []
-                {
-                    "$adjective",
-                    "burg"
-                },
-                new []
-                {
-                    "$lastname",
-                    "ton"
-                }
-               
-            };
-             HomeTown = TextGenerator.GenerateRandom(templates[MathFunctions.Random.Next(templates.Count)]); 
+            
+            var templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.location);
+             HomeTown = TextGenerator.GenerateRandom(new List<string>(),
+                 templates[MathFunctions.Random.Next(templates.Count)].ToArray());
+
+            Biography = GenerateBiography(Name, Gender);
         }
     }
 }

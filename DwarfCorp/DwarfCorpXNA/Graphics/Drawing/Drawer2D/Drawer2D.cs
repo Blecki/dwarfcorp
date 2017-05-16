@@ -81,7 +81,7 @@ namespace DwarfCorp
 
         public static void DrawLoadBar(Camera camera, Vector3 worldPos, Color backgroundColor, Color strokeColor, int width, int height, float progress)
         {
-            Drawer2D.DrawRect(camera, worldPos, new Rectangle(0, 0, width + 1, height + 1), Color.Transparent, strokeColor, 1);
+            Drawer2D.DrawRect(camera, worldPos, new Rectangle(0, 0, width, height), strokeColor, strokeColor, 1);
             Drawer2D.DrawRect(camera, worldPos, new Rectangle((int)(width * (progress))/2 - width /2, 0, (int)(width * (progress)), height), backgroundColor, Color.Transparent, 1);
         }
 

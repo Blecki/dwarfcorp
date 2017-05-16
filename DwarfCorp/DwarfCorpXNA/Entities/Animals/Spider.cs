@@ -109,8 +109,8 @@ namespace DwarfCorp
             AI = new PacingCreatureAI(this, "Spider AI", Sensors, PlanService);
 
             // The bird can peck at its enemies (0.1 damage)
-            Attacks = new List<Attack> { new Attack("Sting", 0.01f, 1.0f, 3.0f, ContentPaths.Audio.hiss, ContentPaths.Effects.bite),
-                new Attack("Web", 0.0f, 1.0f, 5.0f, ContentPaths.Audio.hiss, ContentPaths.Effects.claws) {Mode = Attack.AttackMode.Ranged, LaunchSpeed = 10, ProjectileType = "Web"} };
+            Attacks = new List<Attack> { new Attack("Sting", 0.01f, 1.0f, 3.0f, SoundSource.Create(ContentPaths.Audio.hiss), ContentPaths.Effects.bite),
+                new Attack("Web", 0.0f, 1.0f, 5.0f, SoundSource.Create(ContentPaths.Audio.hiss), ContentPaths.Effects.claws) {Mode = Attack.AttackMode.Ranged, LaunchSpeed = 10, ProjectileType = "Web"} };
 
 
             // The bird can hold one item at a time in its inventory

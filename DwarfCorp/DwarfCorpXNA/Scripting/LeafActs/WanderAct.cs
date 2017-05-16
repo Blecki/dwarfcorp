@@ -1,4 +1,4 @@
-﻿// WanderAct.cs
+// WanderAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -88,7 +88,7 @@ namespace DwarfCorp
 
                 if (!Creature.IsOnGround)
                 {
-                    yield return Status.Fail;
+                    yield return Status.Success;
                     yield break;
                 }
                 if(TurnTime.Update(DwarfTime.LastTime) || TurnTime.HasTriggered || firstIter)
@@ -171,8 +171,14 @@ namespace DwarfCorp
 
                 if (bestAction.HasValue && !path.Any(p => p.Voxel.Equals(bestAction.Value.Voxel) && p.MoveType == bestAction.Value.MoveType))
                 {
-                    path.Add(bestAction.Value);
+                    Creature.MoveAction action = bestAction.Value;
+                    action.Voxel = new Voxel(curr);
+                    path.Add(action);
                     curr = bestAction.Value.Voxel;
+                }
+                else
+                {
+                    break;
                 }
             }
             if (path.Count > 0)

@@ -1,0 +1,8 @@
+#1 is a <personality> #2 Dwarf who loves to #3.
+#1 is <personality>. #5 favorite activity: to #3.
+#1 is a <personality> #2 Dwarf. #4 would rather #3. 
+#1's favorite thing is to #3. #4 is <personality>.
+#1 is <personality> and <personality> and #4 likes to #3.
+#1 is <personality>. #4 hates <noun>s.
+#1, a <personality> #2 Dwarf, loves to #3.
+Someday #1 is going to #3 (#4 is <personality>).

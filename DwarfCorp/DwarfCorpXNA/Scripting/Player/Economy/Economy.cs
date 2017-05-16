@@ -139,6 +139,7 @@ namespace DwarfCorp
             if (Company.Assets <= 0m)
             {
                 WorldManager.MakeAnnouncement("If we don't make a profit by tomorrow, our stock will crash!");
+                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
             }
 
             string symbol = diff > 0m ? "+" : "";

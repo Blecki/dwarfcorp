@@ -65,6 +65,7 @@ namespace DwarfCorp
         
         public void Initialize(EmployeeClass dwarfClass)
         {
+            Gender = Creature.RandomGender();
             Physics.Orientation = Physics.OrientMode.RotateY;
             Sprite = new CharacterSprite(Graphics, Manager, "Dwarf Sprite", Physics, Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)));
             foreach (Animation animation in dwarfClass.Animations)
@@ -79,7 +80,7 @@ namespace DwarfCorp
             Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero);
 
             AI = new CreatureAI(this, "Dwarf AI", Sensors, PlanService);
-
+         
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
             Inventory = new Inventory("Inventory", Physics)
@@ -150,6 +151,14 @@ namespace DwarfCorp
             {
                 ContentPaths.Audio.Oscar.sfx_ic_dwarf_jump
             };
+
+            NoiseMaker.Noises["Climb"] = new List<string>()
+            {
+                ContentPaths.Audio.Oscar.sfx_ic_dwarf_climb_1,
+                ContentPaths.Audio.Oscar.sfx_ic_dwarf_climb_2,
+                ContentPaths.Audio.Oscar.sfx_ic_dwarf_climb_3
+            };
+
             MinimapIcon minimapIcon = new MinimapIcon(Physics, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 0));
 
             Stats.FullName = TextGenerator.GenerateRandom("$firstname", " ", "$lastname");
@@ -160,6 +169,7 @@ namespace DwarfCorp
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
             AI.TriggersMourning = true;
+            AI.Biography = Applicant.GenerateBiography(AI.Stats.FullName, Gender);
         }
     }
 

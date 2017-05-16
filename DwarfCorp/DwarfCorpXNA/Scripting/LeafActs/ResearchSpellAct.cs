@@ -37,6 +37,7 @@ using System.Text;
 using DwarfCorp;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 
 namespace DwarfCorp
 {
@@ -68,17 +69,26 @@ namespace DwarfCorp
             }
             Timer starParitcle = new Timer(0.5f, false);
             float totalResearch = 0.0f;
+            Sound3D sound = null;
             while (!Spell.IsResearched)
             {
                 Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
                 Creature.OverrideCharacterMode = true;
+                Creature.Sprite.ReloopAnimations(Creature.CharacterMode.Attacking);
                 float research = Creature.Stats.BuffedInt * 0.25f * DwarfTime.Dt;
                 Spell.ResearchProgress += research;
                 totalResearch += research;
                 Creature.Physics.Velocity *= 0;
+                Drawer2D.DrawLoadBar(Creature.World.Camera, Creature.Physics.Position, Color.Cyan, Color.Black, 64, 4, Spell.ResearchProgress / Spell.ResearchTime);
                 if ((int) totalResearch > 0)
                 {
-                    SoundManager.PlaySound(ContentPaths.Audio.tinkle, Creature.AI.Position, true);
+                    if (sound == null || sound.EffectInstance.IsDisposed ||  sound.EffectInstance.State == SoundState.Stopped)
+                    {
+                        sound = SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_ic_dwarf_magic_research,
+                            Creature.AI.Position,
+                            true);
+                    }
+                    //SoundManager.PlaySound(ContentPaths.Audio.tinkle, Creature.AI.Position, true);
                     Creature.AI.AddXP((int)(totalResearch));
                     totalResearch = 0.0f;
                 }
@@ -95,6 +105,11 @@ namespace DwarfCorp
                 if(starParitcle.HasTriggered)
                    Creature.Manager.World.ParticleManager.Trigger("star_particle", Creature.AI.Position, Color.White, 3);
                 yield return Status.Running;
+            }
+
+            if (sound != null)
+            {
+                sound.Stop();
             }
             Creature.AI.AddThought(Thought.ThoughtType.Researched);
             Creature.OverrideCharacterMode = false;

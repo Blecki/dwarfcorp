@@ -1,4 +1,4 @@
-﻿// ResourceContainer.cs
+// ResourceContainer.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -245,6 +245,11 @@ namespace DwarfCorp
                 if (amountLeft <= 0)
                 {
                     break;
+                }
+
+                if (resourceAmount.NumResources == 0)
+                {
+                    continue;
                 }
 
                 if (ResourceLibrary.GetResourceByName(resourceAmount.ResourceType).Tags.Contains(tags.ResourceType))

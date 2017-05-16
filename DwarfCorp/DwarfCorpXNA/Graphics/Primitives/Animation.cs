@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -288,6 +288,18 @@ namespace DwarfCorp
         public virtual bool IsDone()
         {
             return CurrentFrame >= Frames.Count - 1;
+        }
+
+        public int GetFrame(float time)
+        {
+            if (Loops)
+            {
+                return (int) (time*FrameHZ)%Frames.Count;
+            }
+            else
+            {
+                return Math.Min((int) (time*FrameHZ), Frames.Count - 1);
+            }
         }
     }
 

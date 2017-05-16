@@ -58,6 +58,21 @@ namespace DwarfCorp
             public int[,] Water { get; set; }
             public float[,] Weathering { get; set; }
             public float SeaLevel { get; set; }
+            public byte[,] Factions { get; set; }
+
+            [Serializable]
+            public struct FactionDescriptor
+            {
+                public string Name { get; set; }
+                public byte Id { get; set; }
+                public string Race { get; set; }
+                public Color PrimaryColory { get; set; }
+                public Color SecondaryColor { get; set; }
+                public int CenterX { get; set; }
+                public int CenterY { get; set; }
+            }
+
+            public List<FactionDescriptor> FactionList { get; set; }
 
             [Newtonsoft.Json.JsonIgnore] [NonSerialized] public Texture2D Screenshot;
 
@@ -81,7 +96,8 @@ namespace DwarfCorp
                             Rainfall = Rainfall[x, y],
                             Temperature = Temperature[x, y],
                             Water = (Overworld.WaterType) (Water[x, y]),
-                            Weathering =  Weathering[x, y]
+                            Weathering =  Weathering[x, y],
+                            Faction = Factions[x, y]
                         };
                     }
                 }
@@ -117,6 +133,7 @@ namespace DwarfCorp
                 Water = new int[sizeX, sizeY];
                 Weathering = new float[sizeX, sizeY];
                 Height = new float[sizeX, sizeY];
+                Factions = new byte[sizeX, sizeY];
                 Name = name;
                 SeaLevel = seaLevel;
 
@@ -133,10 +150,27 @@ namespace DwarfCorp
                         Temperature[x, y] = (data.Temperature);
                         Water[x, y] = (int)(data.Water);
                         Weathering[x, y] =  (data.Weathering);
+                        Factions[x, y] = data.Faction;
                     }
                 }
 
                 Screenshot = CreateTexture(device, sizeX, sizeY, seaLevel);
+                FactionList = new List<FactionDescriptor>();
+                byte id = 0;
+                foreach (Faction f in Overworld.NativeFactions)
+                {
+                    FactionList.Add(new FactionDescriptor()
+                    {
+                        Name = f.Name,
+                        PrimaryColory = f.PrimaryColor,
+                        SecondaryColor = f.SecondaryColor,
+                        Id = id,
+                        Race = f.Race.Name,
+                        CenterX = f.Center.X,
+                        CenterY = f.Center.Y, 
+                    });
+                    id++;
+                }
             }
         }
 

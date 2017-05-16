@@ -241,6 +241,12 @@ namespace DwarfCorp
             return strNewString;
         }
 
+        public static string ToSentenceCase(string input)
+        {
+            var regex = new Regex(@"(^[a-z])|[?!.:,;]\s+(.)", RegexOptions.ExplicitCapture);
+            return regex.Replace(input, s => s.Value.ToUpper());
+        }
+
         public static string GenerateRandom(List<List<string>> templates)
         {
             return GenerateRandom(Datastructures.SelectRandom(templates).ToArray());

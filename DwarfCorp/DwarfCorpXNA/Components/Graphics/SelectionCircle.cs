@@ -1,4 +1,4 @@
-﻿// SelectionCircle.cs
+// SelectionCircle.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -74,7 +74,6 @@ namespace DwarfCorp
 
         }
 
-      
     }
 
 }

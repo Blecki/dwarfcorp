@@ -114,6 +114,11 @@ namespace DwarfCorp
 
         public void SetMaxViewingLevel(float level, ChunkManager.SliceMode slice)
         {
+            if (Math.Abs(level - MaxViewingLevel) < 0.1f && slice == Slice)
+            {
+                return;
+            }
+
             Slice = slice;
             MaxViewingLevel = Math.Max(Math.Min(level, ChunkSizeY), 1);
 
@@ -242,22 +247,22 @@ namespace DwarfCorp
 
 
         public Voxel GetFirstVisibleBlockHitByMouse(MouseState mouse, Camera camera, Viewport viewPort,
-            bool selectEmpty = false)
+            bool selectEmpty = false, Func<Voxel, bool> acceptFn = null)
         {
             Voxel vox = GetFirstVisibleBlockHitByScreenCoord(mouse.X, mouse.Y, camera, viewPort, 150.0f, false,
-                selectEmpty);
+                selectEmpty, acceptFn);
             return vox;
         }
 
         public Voxel GetFirstVisibleBlockHitByScreenCoord(int x, int y, Camera camera, Viewport viewPort, float dist,
-            bool draw = false, bool selectEmpty = false)
+            bool draw = false, bool selectEmpty = false, Func<Voxel, bool> acceptFn = null)
         {
             Vector3 pos1 = viewPort.Unproject(new Vector3(x, y, 0), camera.ProjectionMatrix, camera.ViewMatrix,
                 Matrix.Identity);
             Vector3 pos2 = viewPort.Unproject(new Vector3(x, y, 1), camera.ProjectionMatrix, camera.ViewMatrix,
                 Matrix.Identity);
             Vector3 dir = Vector3.Normalize(pos2 - pos1);
-            Voxel vox = GetFirstVisibleBlockHitByRay(pos1, pos1 + dir*dist, draw, selectEmpty);
+            Voxel vox = GetFirstVisibleBlockHitByRay(pos1, pos1 + dir*dist, draw, selectEmpty, acceptFn);
 
             return vox;
         }
@@ -336,6 +341,32 @@ namespace DwarfCorp
             return false;
         }
 
+        public bool GetFirstVoxelAbove(Vector3 position, ref Voxel under, bool considerWater = false)
+        {
+            VoxelChunk startChunk = GetVoxelChunkAtWorldLocation(position);
+
+            if (startChunk == null)
+            {
+                return false;
+            }
+
+            Point3 point = new Point3(startChunk.WorldToGrid(position));
+
+            for (int y = point.Y; y < ChunkSizeY; y++)
+            {
+                int index = startChunk.Data.IndexAt(point.X, y, point.Z);
+
+                if (startChunk.Data.Types[index] != 0 || (considerWater && startChunk.Data.Water[index].WaterLevel > 0))
+                {
+                    under.Chunk = startChunk;
+                    under.GridPosition = new Vector3(point.X, y, point.Z);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public bool GetFirstVoxelUnder(Vector3 rayStart, ref Voxel under, bool considerWater = false)
         {
             VoxelChunk startChunk = GetVoxelChunkAtWorldLocation(rayStart);
@@ -367,14 +398,18 @@ namespace DwarfCorp
             return GetFirstVisibleBlockHitByRay(rayStart, rayEnd, null, false);
         }
 
-        public Voxel GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd, bool draw, bool selectEmpty)
+        public Voxel GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd, bool draw, bool selectEmpty, Func<Voxel, bool> acceptFn = null)
         {
-            return GetFirstVisibleBlockHitByRay(rayStart, rayEnd, null, draw, selectEmpty);
+            return GetFirstVisibleBlockHitByRay(rayStart, rayEnd, null, draw, selectEmpty, acceptFn);
         }
 
 
-        public Voxel GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd, Voxel ignore,  bool draw, bool selectEmpty = false)
+        public Voxel GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd, Voxel ignore,  bool draw, bool selectEmpty = false, Func<Voxel, bool> acceptFn = null)
         {
+            if (acceptFn == null)
+            {
+                acceptFn = v => v != null && !v.IsEmpty;
+            }
             Vector3 delta = rayEnd - rayStart;
             float length = delta.Length();
             delta.Normalize();
@@ -385,7 +420,7 @@ namespace DwarfCorp
             {
                 Vector3 pos = new Vector3(coord.X, coord.Y, coord.Z);
 
-                bool success = GetNonNullVoxelAtWorldLocationCheckFirst(null, pos, ref atPos);
+                bool success = GetVoxel(pos, ref atPos) && acceptFn(atPos);
                 if (draw)
                 {
                     Drawer3D.DrawBox(new BoundingBox(pos, pos + new Vector3(1f, 1f, 1f)), Color.White, 0.01f);
@@ -689,6 +724,8 @@ namespace DwarfCorp
             chunkManager.UpdateRebuildList();
             chunkManager.CreateGraphics(SetLoadingMessage, this);
         }
+
+
     }
 
 }

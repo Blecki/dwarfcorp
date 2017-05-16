@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Gum;
+using Gum.Widgets;
 using Microsoft.Xna.Framework;
 using DwarfCorp.Trade;
 
@@ -12,7 +13,8 @@ namespace DwarfCorp.NewGui
     {
         Pending,
         Cancel,
-        Propose
+        Propose,
+        Reject
     }
 
     public class TradePanel : Widget
@@ -26,6 +28,119 @@ namespace DwarfCorp.NewGui
 
         public TradeDialogResult Result { get; private set; }
         public TradeTransaction Transaction { get; private set; }
+
+
+        private DwarfBux ComputeNetValue(List<ResourceAmount> playerResources, DwarfBux playerTradeMoney,
+            List<ResourceAmount> envoyResources, DwarfBux envoyMoney)
+        {
+            return (Envoy.ComputeValue(playerResources) + playerTradeMoney) - (Envoy.ComputeValue(envoyResources) + envoyMoney);   
+        }
+
+        private DwarfBux ComputeNetValue()
+        {
+            return ComputeNetValue(PlayerColumns.SelectedResources,
+                PlayerColumns.TradeMoney, EnvoyColumns.SelectedResources, EnvoyColumns.TradeMoney);
+        }
+
+        private void MoveRandomValue(IEnumerable<ResourceAmount> source, List<ResourceAmount> destination,
+            ITradeEntity trader)
+        {
+            foreach (var amount in source)
+            {
+                Resource r = ResourceLibrary.GetResourceByName(amount.ResourceType);
+                if (trader.TraderRace.HatedResources.Any(tag => r.Tags.Contains(tag)))
+                {
+                    continue;
+                }
+                if (amount.NumResources == 0) continue;
+                ResourceAmount destAmount =
+                    destination.FirstOrDefault(resource => resource.ResourceType == amount.ResourceType);
+                if (destAmount == null)
+                {
+                    destAmount = new ResourceAmount(amount.ResourceType, 0);
+                    destination.Add(destAmount);
+                }
+
+                int numToMove = MathFunctions.RandInt(1, amount.NumResources + 1);
+                amount.NumResources -= numToMove;
+                destAmount.NumResources += numToMove;
+                break;
+            }
+        }
+
+        private void EqualizeColumns()
+        {
+            if (EnvoyColumns.Valid && PlayerColumns.Valid)
+            {
+                var net = ComputeNetValue();
+                var envoyOut = Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney;
+                var tradeTarget = envoyOut*0.25;
+
+                if (net >= tradeTarget)
+                {
+                    Root.ShowTooltip(Root.MousePosition, "This works fine.");
+                    return;
+                }
+
+                List<ResourceAmount> sourceResourcesEnvoy = EnvoyColumns.SourceResources;
+                List<ResourceAmount> selectedResourcesEnvoy = EnvoyColumns.SelectedResources;
+                DwarfBux selectedMoneyEnvoy = EnvoyColumns.TradeMoney;
+                DwarfBux remainingMoneyEnvoy = Envoy.Money - selectedMoneyEnvoy;
+                List<ResourceAmount> sourceResourcesPlayer = PlayerColumns.SourceResources;
+                List<ResourceAmount> selectedResourcesPlayer = PlayerColumns.SelectedResources;
+                DwarfBux selectedMoneyPlayer = PlayerColumns.TradeMoney;
+                DwarfBux remainingMoneyPlayer = Player.Money - selectedMoneyPlayer;
+
+                int maxIters = 1000;
+                int iter = 0;
+                while (net < tradeTarget && iter < maxIters)
+                {
+                    float t = MathFunctions.Rand();
+                    if (t < 0.05f && selectedMoneyEnvoy > 1)
+                    {
+                        DwarfBux movement = Math.Min((decimal)MathFunctions.RandInt(1, 5), selectedMoneyEnvoy);
+                        selectedMoneyEnvoy -= movement;
+                        remainingMoneyEnvoy += movement;
+                    }
+                    else if (t < 0.1f)
+                    {
+                        MoveRandomValue(selectedResourcesEnvoy, sourceResourcesEnvoy, Player);
+                    }
+                    else if (t < 0.15f && remainingMoneyPlayer > 1)
+                    {
+                        DwarfBux movement = Math.Min((decimal)MathFunctions.RandInt(1, 5), remainingMoneyPlayer);
+                        selectedMoneyPlayer += movement;
+                        remainingMoneyPlayer -= movement;
+                    }
+                    else
+                    {
+                        MoveRandomValue(sourceResourcesPlayer, selectedResourcesPlayer, Envoy);
+                    }
+
+                    envoyOut = Envoy.ComputeValue(selectedResourcesEnvoy) + selectedMoneyEnvoy;
+                    tradeTarget = envoyOut * 0.25;
+                    net = ComputeNetValue(selectedResourcesPlayer, selectedMoneyPlayer, selectedResourcesEnvoy,
+                        selectedMoneyEnvoy);
+                }
+
+                if (net >= tradeTarget)
+                {
+                    Root.ShowTooltip(Root.MousePosition, "How does this work?");
+                    PlayerColumns.Reconstruct(sourceResourcesPlayer, selectedResourcesPlayer, (int)selectedMoneyPlayer);
+                    PlayerColumns.TradeMoney = (int) selectedMoneyPlayer;
+                    EnvoyColumns.Reconstruct(sourceResourcesEnvoy, selectedResourcesEnvoy, (int)selectedMoneyEnvoy);
+                    EnvoyColumns.TradeMoney = (int) selectedMoneyEnvoy;
+                    Layout();
+                    return;
+                }
+                else
+                {
+                    Root.ShowTooltip(Root.MousePosition, "We don't see how this could work.");
+                    return;
+                }
+                
+            }
+        }
 
         public override void Construct()
         {
@@ -58,6 +173,7 @@ namespace DwarfCorp.NewGui
                 TextVerticalAlign = VerticalAlign.Center
             });
 
+
             bottomRow.AddChild(new Gum.Widgets.Button
             {
                 Font = "font",
@@ -69,15 +185,17 @@ namespace DwarfCorp.NewGui
                 {
                     if (EnvoyColumns.Valid && PlayerColumns.Valid)
                     {
-                        var net =
-                            (Envoy.ComputeValue(PlayerColumns.SelectedResources)
-                            + PlayerColumns.TradeMoney)
-                            -(Envoy.ComputeValue(EnvoyColumns.SelectedResources) 
-                            + EnvoyColumns.TradeMoney);
+                        var net = ComputeNetValue();
                         var envoyOut = Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney;
                         var tradeTarget = envoyOut * 0.25;
 
-                        if (net >= tradeTarget)
+                        if (PlayerColumns.SelectedResources.Count == 0 && EnvoyColumns.SelectedResources.Count == 0
+                            && EnvoyColumns.TradeMoney == 0 && PlayerColumns.TradeMoney == 0)
+                        {
+                            Result = TradeDialogResult.Cancel;
+                            this.Close();
+                        }
+                        else if (net >= tradeTarget)
                         {
                             Result = TradeDialogResult.Propose;
                             Transaction = new TradeTransaction
@@ -93,7 +211,8 @@ namespace DwarfCorp.NewGui
                         }
                         else
                         {
-                            Root.ShowTooltip(Root.MousePosition, "Make us a better offer.");
+                            Result = TradeDialogResult.Reject;
+                            this.Close();
                         }
                     }
                     else
@@ -101,6 +220,16 @@ namespace DwarfCorp.NewGui
                         Root.ShowTooltip(Root.MousePosition, "Trade is invalid");
                     }
                 }
+            });
+
+            bottomRow.AddChild(new Gum.Widgets.Button
+            {
+                Font = "font",
+                Border = "border-button",
+                TextColor = new Vector4(0, 0, 0, 1),
+                Text = "What will make this work?",
+                AutoLayout = AutoLayout.DockRight,
+                OnClick = (sender, args) => EqualizeColumns()
             });
 
             bottomRow.AddChild(new Gum.Widgets.Button

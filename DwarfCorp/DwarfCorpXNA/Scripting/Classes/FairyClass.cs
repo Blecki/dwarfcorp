@@ -1,4 +1,4 @@
-﻿// FairyClass.cs
+// FairyClass.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -86,7 +86,7 @@ namespace DwarfCorp
         {
             Attacks = new List<Attack>()
             {
-                new Attack("Fairy Dust", 10.0f, 0.2f, 2.0f, ContentPaths.Audio.tinkle, ContentPaths.Effects.hit)
+                new Attack("Fairy Dust", 10.0f, 0.2f, 2.0f, SoundSource.Create(ContentPaths.Audio.tinkle), ContentPaths.Effects.hit)
                 {
                     Knockback = 0.5f,
                     HitParticles = "star_particle",

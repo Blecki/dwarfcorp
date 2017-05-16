@@ -35,7 +35,7 @@ namespace DwarfCorp
         }
 
 
-        public Camera CameraController { get; set; }
+        public OrbitCamera CameraController { get; set; }
 
         [JsonIgnore]
         public VoxelSelector VoxSelector { get; set; }
@@ -87,7 +87,7 @@ namespace DwarfCorp
         {
         }
 
-        public GameMaster(Faction faction, DwarfGame game, ComponentManager components, ChunkManager chunks, Camera camera, GraphicsDevice graphics)
+        public GameMaster(Faction faction, DwarfGame game, ComponentManager components, ChunkManager chunks, OrbitCamera camera, GraphicsDevice graphics)
         {
             World = components.World;
             Faction = faction;
@@ -99,7 +99,7 @@ namespace DwarfCorp
             World.Time.NewDay += Time_NewDay;
         }
 
-        public void Initialize(DwarfGame game, ComponentManager components, ChunkManager chunks, Camera camera, GraphicsDevice graphics)
+        public void Initialize(DwarfGame game, ComponentManager components, ChunkManager chunks, OrbitCamera camera, GraphicsDevice graphics)
         {
             RoomLibrary.InitializeStatics();
 
@@ -247,6 +247,7 @@ namespace DwarfCorp
                     if (!noMoney)
                     {
                         World.MakeAnnouncement("If we don't make a profit by tomorrow, our stock will crash!");
+                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                     }
                     noMoney = true;
                 }
@@ -327,6 +328,7 @@ namespace DwarfCorp
                 {
                     World.MakeAnnouncement(
                         String.Format("{0} ({1}) died!", deadMinion.Stats.FullName, deadMinion.Stats.CurrentLevel.Name));
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
                     Faction.Economy.Company.StockPrice -= MathFunctions.Rand(0, 0.5f);
                 }
             }
@@ -337,15 +339,105 @@ namespace DwarfCorp
 
             Faction.CraftBuilder.Update(time, this);
 
+            HandlePosessedDwarf();
         }
 
+
+        public void HandlePosessedDwarf()
+        {
+            foreach (var creature in Faction.Minions)
+            {
+                creature.IsPosessed = false;
+            }
+            KeyboardState keyState = Keyboard.GetState();
+            if (SelectedMinions.Count != 1)
+            {
+                CameraController.FollowAutoTarget = false;
+                CameraController.EnableControl = true;
+                return;
+            }
+
+            var dwarf = SelectedMinions[0];
+            dwarf.IsPosessed = true;
+            CameraController.EnableControl = false;
+            CameraController.AutoTarget = dwarf.Position;
+            CameraController.FollowAutoTarget = true;
+
+            if (dwarf.Velocity.Length() > 0.1)
+            {
+                Voxel above = new Voxel();
+                if (World.ChunkManager.ChunkData.GetFirstVoxelAbove(dwarf.Position, ref above, false))
+                {
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(above.GridPosition.Y - 1, ChunkManager.SliceMode.Y);
+                }
+                else
+                {
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.ChunkSizeY, ChunkManager.SliceMode.Y);
+                }
+            }
+
+            Vector3 forward = CameraController.GetForwardVector();
+            Vector3 right = CameraController.GetRightVector();
+            Vector3 desiredVelocity = Vector3.Zero;
+            bool hadCommand = false;
+            bool jumpCommand = false;
+            if (keyState.IsKeyDown(ControlSettings.Mappings.Forward))
+            {
+                hadCommand = true;
+                desiredVelocity += forward*10;
+            }
+
+            if (keyState.IsKeyDown(ControlSettings.Mappings.Back))
+            {
+                hadCommand = true;
+                desiredVelocity -= forward*10;
+            }
+
+            if (keyState.IsKeyDown(ControlSettings.Mappings.Right))
+            {
+                hadCommand = true;
+                desiredVelocity += right*10;
+            }
+
+            if (keyState.IsKeyDown(ControlSettings.Mappings.Left))
+            {
+                hadCommand = true;
+                desiredVelocity -= right*10;
+            }
+
+            if (keyState.IsKeyDown(ControlSettings.Mappings.Jump))
+            {
+                jumpCommand = true;
+                hadCommand = true;
+            }
+
+            if (hadCommand)
+            {
+                if (dwarf.CurrentTask != null)
+                    dwarf.CurrentTask.Cancel();
+                dwarf.CurrentTask = null;
+                dwarf.TryMoveVelocity(desiredVelocity, jumpCommand);
+            }
+            else if (dwarf.CurrentTask == null)
+            {
+                if (dwarf.Creature.IsOnGround)
+                {
+                    if (dwarf.Physics.Velocity.LengthSquared() < 1)
+                    {
+                        dwarf.Creature.CurrentCharacterMode = DwarfCorp.Creature.CharacterMode.Idle;
+                    }
+                    dwarf.Physics.Velocity = new Vector3(dwarf.Physics.Velocity.X*0.9f, dwarf.Physics.Velocity.Y,
+                        dwarf.Physics.Velocity.Z*0.9f);
+                }
+            }
+
+        }
 
         #region input
 
 
         public bool IsCameraRotationModeActive()
         {
-            KeyboardState keyState = Keyboard.GetState();
             return KeyManager.RotationEnabled();
 
         }

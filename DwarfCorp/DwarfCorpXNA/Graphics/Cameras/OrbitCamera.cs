@@ -1,4 +1,4 @@
-﻿// OrbitCamera.cs
+// OrbitCamera.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -81,6 +81,10 @@ namespace DwarfCorp
 
         public List<Vector3> ZoomTargets { get; set; }
 
+
+        public bool EnableControl { get; set; }
+        public Vector3 AutoTarget { get; set; }
+        public bool FollowAutoTarget { get; set; }
 
         public OrbitCamera() : base()
         {
@@ -228,36 +232,46 @@ namespace DwarfCorp
 
             bool goingBackward = false;
             Vector3 velocityToSet = Vector3.Zero;
-            if (keys.IsKeyDown(ControlSettings.Mappings.Forward) || keys.IsKeyDown(Keys.Up))
-            {
-                Vector3 mov = forward;
-                mov.Y = 0;
-                mov.Normalize();
-                velocityToSet += mov * CameraMoveSpeed * dt;
-            }
-            else if (keys.IsKeyDown(ControlSettings.Mappings.Back) || keys.IsKeyDown(Keys.Down))
-            {
-                goingBackward = true;
 
-                Vector3 mov = forward;
-                mov.Y = 0;
-                mov.Normalize();
-                velocityToSet += -mov * CameraMoveSpeed * dt;
-            }
+            if (EnableControl)
+            {
+                if (keys.IsKeyDown(ControlSettings.Mappings.Forward) || keys.IsKeyDown(Keys.Up))
+                {
+                    Vector3 mov = forward;
+                    mov.Y = 0;
+                    mov.Normalize();
+                    velocityToSet += mov*CameraMoveSpeed*dt;
+                }
+                else if (keys.IsKeyDown(ControlSettings.Mappings.Back) || keys.IsKeyDown(Keys.Down))
+                {
+                    goingBackward = true;
 
-            if (keys.IsKeyDown(ControlSettings.Mappings.Left) || keys.IsKeyDown(Keys.Left))
-            {
-                Vector3 mov = right;
-                mov.Y = 0;
-                mov.Normalize();
-                velocityToSet += -mov * CameraMoveSpeed * dt;
+                    Vector3 mov = forward;
+                    mov.Y = 0;
+                    mov.Normalize();
+                    velocityToSet += -mov*CameraMoveSpeed*dt;
+                }
+
+                if (keys.IsKeyDown(ControlSettings.Mappings.Left) || keys.IsKeyDown(Keys.Left))
+                {
+                    Vector3 mov = right;
+                    mov.Y = 0;
+                    mov.Normalize();
+                    velocityToSet += -mov*CameraMoveSpeed*dt;
+                }
+                else if (keys.IsKeyDown(ControlSettings.Mappings.Right) || keys.IsKeyDown(Keys.Right))
+                {
+                    Vector3 mov = right;
+                    mov.Y = 0;
+                    mov.Normalize();
+                    velocityToSet += mov*CameraMoveSpeed*dt;
+                }
             }
-            else if (keys.IsKeyDown(ControlSettings.Mappings.Right) || keys.IsKeyDown(Keys.Right))
+            else if (FollowAutoTarget)
             {
-                Vector3 mov = right;
-                mov.Y = 0;
-                mov.Normalize();
-                velocityToSet += mov * CameraMoveSpeed * dt;
+                Vector3 prevTarget = Target;
+                Target = AutoTarget*0.1f + Target*0.9f;
+                Position += (Target - prevTarget);
             }
 
             if (velocityToSet.LengthSquared() > 0)
@@ -354,7 +368,7 @@ namespace DwarfCorp
 
                         diffRadius = delta * CameraZoomSpeed * dt;
 
-                        if (diffRadius < 0)
+                        if (diffRadius < 0 && !FollowAutoTarget)
                         {
                             float diffxy =
                                 (new Vector3(Target.X, 0, Target.Z) -
@@ -500,6 +514,22 @@ namespace DwarfCorp
             }
 
             return gotCollision;
+        }
+
+        public Vector3 GetForwardVector()
+        {
+            Vector3 forward = (Target - Position);
+            forward.Normalize();
+            return forward;
+        }
+
+        public Vector3 GetRightVector()
+        {
+            Vector3 forward = (Target - Position);
+            forward.Normalize();
+            Vector3 right = Vector3.Cross(forward, UpVector);
+            right.Normalize();
+            return right;
         }
     }
 

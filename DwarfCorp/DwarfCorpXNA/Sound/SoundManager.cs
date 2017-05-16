@@ -52,6 +52,17 @@ namespace DwarfCorp
         public float Volume;
         public bool RandomPitch;
 
+
+        public static implicit operator SoundSource(string sound)
+        {
+            return SoundSource.Create(sound);
+        }
+
+        public static implicit operator SoundSource(string[] sounds)
+        {
+            return SoundSource.Create(sounds);
+        }
+
         public static SoundSource Create(string sound)
         {
             return new SoundSource()
@@ -204,7 +215,8 @@ namespace DwarfCorp
         public static Dictionary<string, SoundEffect> EffectLibrary = new Dictionary<string, SoundEffect>();
         public static Dictionary<string, Cue> ActiveCues = new Dictionary<string, Cue>();
         public static FancyMusic CurrentMusic = null;
-
+        public static List<SoundEffectInstance> ActiveSounds2D = new List<SoundEffectInstance>();
+ 
         public static void LoadDefaultSounds()
         {
             string[] defaultSounds =
@@ -350,15 +362,10 @@ namespace DwarfCorp
 
         }
 
-        public static void PlaySound(string name)
-        {
-            PlaySound(name, 1.0f);
-        }
-
-        public static void PlaySound(string name, float volume)
+        public static SoundEffectInstance PlaySound(string name, float volume = 1.0f)
         {
             // TODO: Remove this block once the SoundManager is initialized in a better location.
-            if (Content == null) return;
+            if (Content == null) return null;
 
             SoundEffect effect = null;
 
@@ -371,10 +378,11 @@ namespace DwarfCorp
             {
                 effect = EffectLibrary[name];
             }
-
-            effect.Play(GameSettings.Default.MasterVolume * GameSettings.Default.SoundEffectVolume * volume, 0.0f, 0.0f);
-
-
+            SoundEffectInstance instance = effect.CreateInstance();
+            instance.Volume = GameSettings.Default.MasterVolume*GameSettings.Default.SoundEffectVolume*volume; 
+            instance.Play();
+            ActiveSounds2D.Add(instance);
+            return instance;
         }
 
         public static Sound3D PlaySound(string name, Vector3 location, float volume = 1.0f)
@@ -433,6 +441,7 @@ namespace DwarfCorp
                 }
             }
 
+            ActiveSounds2D.RemoveAll(sound => sound.State == SoundState.Stopped);
 
             /*
             MediaPlayer.Volume = GameSettings.Default.MasterVolume*GameSettings.Default.MusicVolume * 0.1f;

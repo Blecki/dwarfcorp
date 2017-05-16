@@ -1,4 +1,4 @@
-﻿// Projectile.cs
+// Projectile.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -133,6 +133,11 @@ namespace DwarfCorp
                 if (health != null)
                 {
                     health.Damage(Damage.Amount, Damage.DamageType);
+                    Vector3 knock = (Target.Position - Position);
+                    knock.Normalize();
+                    knock *= 0.2f;
+                    if (Target.AnimationQueue.Count == 0)
+                        Target.AnimationQueue.Add(new KnockbackAnimation(0.15f, Target.LocalTransform, knock));
                 }
 
                 if (Damage.DamageType == Health.DamageType.Fire)
@@ -247,7 +252,7 @@ namespace DwarfCorp
         }
 
         public BulletProjectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Body target) :
-            base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 30.0f, DamageType = Health.DamageType.Normal }, 0.25f, ContentPaths.Particles.stone_particle, "puff", ContentPaths.Audio.explode, target)
+            base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 30.0f, DamageType = Health.DamageType.Normal }, 0.25f, ContentPaths.Particles.stone_particle, null, null, target)
         {
             HitAnimation = new Animation(ContentPaths.Effects.explode, 32, 32, 0, 1, 2, 3, 4);
         }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -26,13 +27,15 @@ namespace DwarfCorp.Dialogue
         public Diplomacy.Politics Politics;
         public WorldManager World;
 
+        private IEnumerator<Utterance> speech; 
+
         public void Say(String Text)
         {
-            SpeechBubble.Text = Text;
+            SpeechBubble.Text = "";
             SpeechBubble.Invalidate();
-
-            SpeakerAnimation.Loop();
             SpeechTimer.Reset(Text.Length * 0.1f);
+
+            speech = Envoy.OwnerFaction.Race.Speech.Language.Say(Text).GetEnumerator();
         }
 
         public void ClearOptions()
@@ -63,11 +66,20 @@ namespace DwarfCorp.Dialogue
 
         public void Update(DwarfTime Time)
         {
-            SpeechTimer.Update(Time);
-            if (SpeechTimer.HasTriggered)
-                SpeakerAnimation.Stop();
-            else
-                SpeakerAnimation.Update(Time);
+            if (speech != null)
+            {
+                Utterance utter = speech.Current;
+                if (utter.SubSentence != null && utter.SubSentence != SpeechBubble.Text)
+                {
+                    if (SpeakerAnimation.IsDone())
+                        SpeakerAnimation.Reset();
+                    SpeakerAnimation.Play();
+                    SpeechBubble.Text = utter.SubSentence;
+                    SpeechBubble.Invalidate();
+                }
+                speech.MoveNext();
+            }
+            SpeakerAnimation.Update(Time);
 
             var next = NextAction;
             NextAction = null;

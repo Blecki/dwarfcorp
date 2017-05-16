@@ -153,6 +153,8 @@ namespace DwarfCorp.GameStates
                     GuiRoot.MousePointer = mouse;
                 };
 
+                World.SetMouseOverlay += (mouse, frame) => GuiRoot.SetMouseOverlay(mouse, frame);
+
                 World.ShowToolPopup += text => GuiRoot.ShowPopup(new NewGui.ToolPopup
                 {
                     Text = text,
@@ -165,8 +167,17 @@ namespace DwarfCorp.GameStates
                 InputManager.KeyReleasedCallback += TemporaryKeyPressHandler;
                 IsInitialized = true;
                 SoundManager.CurrentMusic.PlayTrack("main_theme_day");
-                World.Time.Dawn += time => SoundManager.PlayMusic("main_theme_day");
-                World.Time.NewNight += time => SoundManager.PlayMusic("main_theme_night");
+                World.Time.Dawn += time =>
+                {
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_daytime, 0.5f);
+                    SoundManager.PlayMusic("main_theme_day");
+                };
+
+                World.Time.NewNight += time =>
+                {
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_nighttime, 0.5f);
+                    SoundManager.PlayMusic("main_theme_night");
+                };
             }
 
             World.Unpause();
@@ -600,6 +611,7 @@ namespace DwarfCorp.GameStates
                                 OnClick = (widget, args) =>
                                 {
                                     Master.VoxSelector.Brush = VoxelBrush.Box;
+                                    World.SetMouseOverlay("tool-icons", 29);
                                 }
                             },
                             new NewGui.FramedIcon
@@ -610,6 +622,7 @@ namespace DwarfCorp.GameStates
                                 OnClick = (widget, args) =>
                                 {
                                     Master.VoxSelector.Brush = VoxelBrush.Shell;
+                                    World.SetMouseOverlay("tool-icons", 30);
                                 }
                             },
                             new NewGui.FramedIcon
@@ -620,6 +633,7 @@ namespace DwarfCorp.GameStates
                                 OnClick = (widget, args) =>
                                 {
                                     Master.VoxSelector.Brush = VoxelBrush.Stairs;
+                                    World.SetMouseOverlay("tool-icons", 31);
                                 }
                             }
                         }

@@ -80,6 +80,7 @@ namespace DwarfCorp
                 Texture2D treeSheet = TextureManager.GetTexture(ContentPaths.Entities.Plants.pine);
                 Texture2D snowpineSheet = TextureManager.GetTexture(ContentPaths.Entities.Plants.snowpine);
                 Texture2D palmSheet = TextureManager.GetTexture(ContentPaths.Entities.Plants.palm);
+                Texture2D appleTreeSheet = TextureManager.GetTexture(ContentPaths.Entities.Plants.appletree);
                 List<Matrix> treeTransforms = new List<Matrix>();
                 List<Color> treeTints = new List<Color>();
                 treeTransforms.Add(Matrix.Identity);
@@ -90,6 +91,7 @@ namespace DwarfCorp
                 BatchBillboardPrimitives["pine"] = new BatchBillboardPrimitive(graphics, treeSheet, treeSheet.Width, treeSheet.Height, new Point(0, 0), treeSheet.Width / 32.0f, treeSheet.Height / 32.0f, false, treeTransforms, treeTints, treeTints);
                 BatchBillboardPrimitives["snowpine"] = new BatchBillboardPrimitive(graphics, snowpineSheet, snowpineSheet.Width, snowpineSheet.Height, new Point(0, 0), snowpineSheet.Width / 32.0f, snowpineSheet.Height / 32.0f, false, treeTransforms, treeTints, treeTints);
                 BatchBillboardPrimitives["palm"] = new BatchBillboardPrimitive(graphics, palmSheet, palmSheet.Width, palmSheet.Height, new Point(0, 0), palmSheet.Width / 32.0f, palmSheet.Height / 32.0f, false, treeTransforms, treeTints, treeTints);
+                BatchBillboardPrimitives["appletree"] = new BatchBillboardPrimitive(graphics, appleTreeSheet, appleTreeSheet.Width, appleTreeSheet.Height, new Point(0, 0), appleTreeSheet.Width / 32.0f, appleTreeSheet.Height / 32.0f, false, treeTransforms, treeTints, treeTints);
 
 
 

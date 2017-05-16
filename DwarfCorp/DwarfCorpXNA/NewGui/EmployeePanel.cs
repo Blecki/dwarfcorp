@@ -91,11 +91,12 @@ namespace DwarfCorp.NewGui
                     {
                         OkayText = "Fire this dwarf!",
                         CancelText = "Keep this dwarf.",
+                        Padding = new Margin(32, 10, 10, 10),
                         OnClose = (confirm) =>
                         {
                             if ((confirm as NewGui.Confirm).DialogResult == NewGui.Confirm.Result.OKAY)
                             {
-                                SoundManager.PlaySound(ContentPaths.Audio.change);
+                                SoundManager.PlaySound(ContentPaths.Audio.change, 0.5f);
                                 var selectedEmployee = (sender as EmployeeInfo).Employee;
                                 selectedEmployee.GetEntityRootComponent().Delete();
 

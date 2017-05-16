@@ -29,6 +29,8 @@ namespace Gum
 
         public bool MouseVisible = true;
         public MousePointer MousePointer = null;
+        public string MouseOverlaySheet = null;
+        public int MouseOverlayFrame = 0;
         public Point MousePosition = new Point(0, 0);
         private DateTime MouseMotionTime = DateTime.Now;
         public float SecondsBeforeTooltip = 0.5f;
@@ -541,6 +543,12 @@ namespace Gum
                 item.GetRenderMesh().Render(RenderData.Device);
         }
 
+        public void SetMouseOverlay(string sheet, int frame)
+        {
+            MouseOverlaySheet = sheet;
+            MouseOverlayFrame = frame;
+        }
+
         public void DrawMouse()
         {
             if (MouseVisible && MousePointer != null)
@@ -553,6 +561,16 @@ namespace Gum
                     .Translate(MousePosition.X, MousePosition.Y)
                     .Texture(tileSheet.TileMatrix(MousePointer.AnimationFrame));
                 mouseMesh.Render(RenderData.Device);
+
+                if (MouseOverlaySheet != null)
+                {
+                    var overlaySheet = GetTileSheet(MouseOverlaySheet);
+                    var overlayMesh = Mesh.Quad()
+                        .Scale(overlaySheet.TileWidth, overlaySheet.TileHeight)
+                        .Translate(MousePosition.X + overlaySheet.TileWidth / 2, MousePosition.Y + overlaySheet.TileHeight / 2)
+                        .Texture(overlaySheet.TileMatrix(MouseOverlayFrame));
+                    overlayMesh.Render(RenderData.Device);
+                }
             }
         }
     }

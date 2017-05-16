@@ -372,6 +372,11 @@ namespace DwarfCorp
                 Data.Remove(t);
             }
 
+            if (Removals.Count > 0 || Additions.Count > 0)
+            {
+                SortDistances();
+            }
+
             Additions.Clear();
             Removals.Clear();
             DataLock.ReleaseMutex();

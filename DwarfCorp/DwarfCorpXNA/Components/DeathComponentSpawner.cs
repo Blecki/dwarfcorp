@@ -1,4 +1,4 @@
-﻿// DeathComponentSpawner.cs
+// DeathComponentSpawner.cs
 // 
 //  Modified MIT License (MIT)
 //  

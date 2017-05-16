@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Gum;
 using LibNoise;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -49,6 +50,10 @@ namespace DwarfCorp.Dialogue
                 TextColor = Color.Black.ToVector4()
             });
 
+            int w = System.Math.Min(GuiRoot.RenderData.VirtualScreen.Width - 200, 600);
+            int h = System.Math.Min(GuiRoot.RenderData.VirtualScreen.Height - 200, 400);
+            int x = GuiRoot.RenderData.VirtualScreen.Width / 2 - w / 2;
+            int y = System.Math.Max(GuiRoot.RenderData.VirtualScreen.Height / 2 - h / 2, 230);
             DialogueContext.ChoicePanel = GuiRoot.RootItem.AddChild(new Gum.Widget
             {
                 Rect = new Rectangle(200, 200, GuiRoot.RenderData.VirtualScreen.Width - 200, 
@@ -58,6 +63,7 @@ namespace DwarfCorp.Dialogue
 
             SpeakerAnimation = new Animation(DialogueContext.Envoy.OwnerFaction.Race.TalkAnimation);
             DialogueContext.SpeakerAnimation = SpeakerAnimation;
+            DialogueContext.SpeakerAnimation.Loops = false;
 
             DialogueContext.Politics = World.ComponentManager.Diplomacy.GetPolitics(
                 DialogueContext.PlayerFaction, DialogueContext.Envoy.OwnerFaction);
@@ -97,6 +103,7 @@ namespace DwarfCorp.Dialogue
 
             DialogueContext.Update(gameTime);
             GuiRoot.Update(gameTime.ToGameTime());
+
             base.Update(gameTime);
         }
 

@@ -238,9 +238,8 @@ namespace DwarfCorp
                 OnAnnouncement(Message, ClickAction);
 
             if (!string.IsNullOrEmpty(sound))
-                SoundManager.PlaySound(sound, 0.01f);
+                SoundManager.PlaySound(sound, 0.5f);
         }
-
 
         public MonsterSpawner MonsterSpawner { get; set; }
 
@@ -286,6 +285,7 @@ namespace DwarfCorp
         public Action<String> ShowInfo = null;
         public Action<String> ShowToolPopup = null;
         public Action<Gum.MousePointer> SetMouse = null;
+        public Action<String, int> SetMouseOverlay = null;
         public Gum.MousePointer MousePointer = new Gum.MousePointer("mouse", 1, 0);
         
         public bool IsMouseOverGui
@@ -482,7 +482,18 @@ namespace DwarfCorp
             foreach (Faction faction in natives)
             {
                 faction.World = this;
+              
+                if (faction.WallBuilder == null)
+                    faction.WallBuilder = new PutDesignator(faction, this);
+                
+                if (faction.RoomBuilder == null)
+                    faction.RoomBuilder = new RoomBuilder(faction, this);
+
+                if (faction.CraftBuilder == null)
+                    faction.CraftBuilder = new CraftBuilder(faction, this);
+              
                 faction.WallBuilder.World = this;
+              
             }
 
             ComponentManager = new ComponentManager(this, CompanyInformation, natives);
@@ -997,13 +1008,14 @@ namespace DwarfCorp
         {
             ParticleManager = new ParticleManager(ComponentManager);
 
+            /*
             // Smoke
             EmitterData puff = ParticleManager.CreatePuffLike("puff", new SpriteSheet(ContentPaths.Particles.puff),
-                Point.Zero, BlendState.NonPremultiplied);
+                Point.Zero, EmitterData.ParticleBlend.NonPremultiplied);
             ParticleManager.RegisterEffect("puff", puff);
 
             EmitterData smoke = ParticleManager.CreatePuffLike("smoke", new SpriteSheet(ContentPaths.Particles.puff),
-                Point.Zero, BlendState.NonPremultiplied);
+                Point.Zero, EmitterData.ParticleBlend.NonPremultiplied);
             smoke.ConstantAccel = Vector3.Up * 2;
             smoke.GrowthSpeed = -0.1f;
             smoke.MaxAngular = 0.01f;
@@ -1019,7 +1031,7 @@ namespace DwarfCorp
 
             // Bubbles
             EmitterData bubble = ParticleManager.CreatePuffLike("splash2",
-                new SpriteSheet(ContentPaths.Particles.splash2), Point.Zero, BlendState.NonPremultiplied);
+                new SpriteSheet(ContentPaths.Particles.splash2), Point.Zero, EmitterData.ParticleBlend.NonPremultiplied);
             bubble.ConstantAccel = new Vector3(0, 5, 0);
             bubble.EmissionSpeed = 3;
             bubble.LinearDamping = 0.9f;
@@ -1031,7 +1043,7 @@ namespace DwarfCorp
             ParticleManager.RegisterEffect("splash2", bubble);
 
             EmitterData splat = ParticleManager.CreatePuffLike("splat", new SpriteSheet(ContentPaths.Particles.splat),
-                Point.Zero, BlendState.NonPremultiplied);
+                Point.Zero, EmitterData.ParticleBlend.NonPremultiplied);
             splat.ConstantAccel = Vector3.Zero;
             splat.EmissionRadius = 0.01f;
             splat.EmissionSpeed = 0.0f;
@@ -1049,7 +1061,7 @@ namespace DwarfCorp
             ParticleManager.RegisterEffect("splat", splat);
 
             EmitterData heart = ParticleManager.CreatePuffLike("heart", new SpriteSheet(ContentPaths.Particles.heart),
-                Point.Zero, BlendState.NonPremultiplied);
+                Point.Zero, EmitterData.ParticleBlend.NonPremultiplied);
             heart.MinAngle = 0.01f;
             heart.MaxAngle = 0.01f;
             heart.MinAngular = 0.0f;
@@ -1059,7 +1071,7 @@ namespace DwarfCorp
 
             // Fire
             SpriteSheet fireSheet = new SpriteSheet(ContentPaths.Particles.more_flames, 32, 32);
-            EmitterData flame = ParticleManager.CreatePuffLike("flame", fireSheet, Point.Zero, BlendState.NonPremultiplied);
+            EmitterData flame = ParticleManager.CreatePuffLike("flame", fireSheet, Point.Zero, EmitterData.ParticleBlend.Additive);
             flame.ConstantAccel = Vector3.Up * 20;
             flame.EmissionSpeed = 2;
             flame.GrowthSpeed = -1.9f;
@@ -1072,18 +1084,12 @@ namespace DwarfCorp
             flame.HasLighting = false;
             flame.MaxScale = 2.0f;
             flame.EmitsLight = true;
-            flame.Blend = new BlendState()
-            {
-                AlphaSourceBlend = Blend.One,
-                AlphaDestinationBlend = Blend.InverseSourceAlpha,
-                ColorDestinationBlend = Blend.InverseSourceAlpha,
-                ColorSourceBlend = Blend.One
-            };
+            flame.Blend = EmitterData.ParticleBlend.Additive;
             ParticleManager.RegisterEffect("flame", flame, flame.Clone(fireSheet, new Point(1, 0)),
                 flame.Clone(fireSheet, new Point(2, 0)), flame.Clone(fireSheet, new Point(3, 0)));
 
             EmitterData greenFlame = ParticleManager.CreatePuffLike("green_flame",
-                new SpriteSheet(ContentPaths.Particles.green_flame), new Point(0, 0), BlendState.Additive);
+                new SpriteSheet(ContentPaths.Particles.green_flame), new Point(0, 0), EmitterData.ParticleBlend.Additive);
             greenFlame.ConstantAccel = Vector3.Up * 20;
             greenFlame.EmissionSpeed = 2;
             greenFlame.GrowthSpeed = -1.9f;
@@ -1125,7 +1131,6 @@ namespace DwarfCorp
                 Sleeps = true,
                 ReleaseOnce = true,
                 CollidesWorld = true,
-                Texture = TextureManager.GetTexture(ContentPaths.Particles.leaf)
             };
 
             ParticleManager.RegisterEffect("Leaves", testData2);
@@ -1133,7 +1138,7 @@ namespace DwarfCorp
             // Various resource explosions
             ParticleManager.CreateGenericExplosion(ContentPaths.Particles.dirt_particle, "dirt_particle");
             EmitterData stars = ParticleManager.CreatePuffLike("star_particle",
-                new SpriteSheet(ContentPaths.Particles.star_particle), new Point(0, 0), BlendState.Additive);
+                new SpriteSheet(ContentPaths.Particles.star_particle), new Point(0, 0), EmitterData.ParticleBlend.Additive);
             stars.MinAngle = -0.1f;
             stars.MaxAngle = 0.1f;
             stars.MinScale = 0.2f;
@@ -1171,9 +1176,8 @@ namespace DwarfCorp
             {
                 AngularDamping = 1.0f,
                 Animation = new Animation(ContentPaths.Particles.raindrop, 16, 16, 0, 0),
-                Texture = Content.Load<Texture2D>(ContentPaths.Particles.raindrop),
                 ParticleDecay = 9.0f,
-                Blend = BlendState.NonPremultiplied,
+                Blend = EmitterData.ParticleBlend.NonPremultiplied,
                 CollidesWorld = false,
                 ConstantAccel = Vector3.Zero,
                 Damping = 1.0f,
@@ -1198,9 +1202,8 @@ namespace DwarfCorp
             {
                 AngularDamping = 1.0f,
                 Animation = new Animation(ContentPaths.Particles.snow_particle, 8, 8, 0, 0),
-                Texture = Content.Load<Texture2D>(ContentPaths.Particles.snow_particle),
                 ParticleDecay = 9.0f,
-                Blend = BlendState.NonPremultiplied,
+                Blend = EmitterData.ParticleBlend.NonPremultiplied,
                 CollidesWorld = false,
                 ConstantAccel = Vector3.Zero,
                 Damping = 1.0f,
@@ -1220,6 +1223,20 @@ namespace DwarfCorp
                 HasLighting = true,
                 UseManualControl = true
             });
+
+            Dictionary<string, List<EmitterData>> data = new Dictionary<string, List<EmitterData>>();
+            foreach (var effect in ParticleManager.Effects)
+            {
+                data[effect.Key] = new List<EmitterData>();
+                foreach (var emitter in effect.Value.Emitters)
+                {
+                    data[effect.Key].Add(emitter.Data);
+                }
+            }
+
+            string foo = FileUtils.SerializeBasicJSON(data);
+            Console.Out.WriteLine(foo);
+             */
         }
 
         /// <summary>

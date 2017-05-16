@@ -1,4 +1,4 @@
-﻿// Flag.cs
+// Flag.cs
 // 
 //  Modified MIT License (MIT)
 //  

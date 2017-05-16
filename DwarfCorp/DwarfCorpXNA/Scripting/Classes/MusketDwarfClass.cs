@@ -229,7 +229,8 @@ namespace DwarfCorp
         {
             Attacks = new List<Attack>
             {
-                new Attack("Musket", 20.0f, 2.0f, 5.0f, ContentPaths.Audio.hit, ContentPaths.Effects.explode)
+                new Attack("Musket", 20.0f, 2.0f, 5.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_ic_dwarf_attack_musket_1,
+                    ContentPaths.Audio.Oscar.sfx_ic_dwarf_attack_musket_2, ContentPaths.Audio.Oscar.sfx_ic_dwarf_attack_musket_3), ContentPaths.Effects.explode)
                 {
                     Mode = Attack.AttackMode.Ranged,
                     LaunchSpeed = 30.0f,

@@ -143,7 +143,7 @@ namespace DwarfCorp
         public override Act CreateScript(Creature creature)
         {
             Voxel above = creature.Physics.CurrentVoxel.GetVoxelAbove();
-            if ((above != null && above.WaterLevel > 0 )|| creature.AI.Movement.CanFly)
+            if ((above != null && above.WaterLevel > 0 ) || creature.AI.Movement.CanFly)
             {
                 return new Wrap(() => SwimUp(creature)) { Name = "Swim up"};
             }

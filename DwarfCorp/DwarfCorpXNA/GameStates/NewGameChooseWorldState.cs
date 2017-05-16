@@ -79,6 +79,7 @@ namespace DwarfCorp.GameStates
             DwarfGame.GumInputMapper.GetInputQueue();
             GuiRoot = new Gum.Root(DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
+            GuiRoot.SetMouseOverlay(null, 0);
             MakeMenu();
             IsInitialized = true;
             

@@ -1,4 +1,4 @@
-﻿// RoomTemplate.cs
+// RoomTemplate.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -204,7 +204,7 @@ namespace DwarfCorp
                     bool meetsWallRequirements = !hasWall || (curent == RoomTile.Wall);
                     bool meetsEdgeRequirements = (!hasEdge && !hasWall) || (hasEdge && curent == RoomTile.Edge);
                     bool meetsOpenRequriments = !hasOpen || (curent == RoomTile.Open);
-                    bool doesntIntersect = hasEdge || hasWall || curent == RoomTile.Open;
+                    bool doesntIntersect = curent == RoomTile.Open || curent == RoomTile.Edge || curent == RoomTile.Wall;
 
                     // Tiles conflict when walls exist in the BuildRoom already, or other objects
                     // block the template.

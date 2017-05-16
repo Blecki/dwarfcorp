@@ -154,7 +154,7 @@ namespace DwarfCorp.GameStates
             public DwarfBux Money { get; set; }
             public List<ResourceAmount> Resources { get; set; }
             public int AvailableSpace { get; set; }
-
+            public Race TraderRace { get { return null; } }
             public DwarfBux ComputeValue(List<ResourceAmount> Resources)
             {
                 return Resources.Sum(r => (decimal)r.NumResources * ComputeValue(r.ResourceType));
@@ -288,6 +288,7 @@ namespace DwarfCorp.GameStates
 
             GuiRoot = new Gum.Root(DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
+            GuiRoot.SetMouseOverlay(null, 0);
             MakeMenu();
 
             Progress = GuiRoot.RootItem.AddChild(new Gum.Widgets.ProgressBar

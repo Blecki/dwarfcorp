@@ -44,10 +44,13 @@ namespace DwarfCorp.GameStates
         public WorldGenerator(WorldGenerationSettings Settings)
         {
             CurrentState = GenerationState.NotStarted;
-            Seed = DwarfTime.LastTime.TotalRealTime.Milliseconds;
+            Seed = new Random().Next();
             this.Settings = Settings;
             MathFunctions.Random = new ThreadSafeRandom(Seed);
             Overworld.Volcanoes = new List<Vector2>();
+            LandMesh = null;
+            LandIndex = null;
+            NativeCivilizations = Settings.Natives;
         }
 
         private int[] SetUpTerrainIndices(int width, int height)
@@ -141,13 +144,17 @@ namespace DwarfCorp.GameStates
             return toReturn;
         }
                 
-        public void Generate(GraphicsDevice Device)
+        public void Generate()
         {
+            LandMesh = null;
+            LandIndex = null;
             if (CurrentState == GenerationState.NotStarted)
             {
-                Settings.WorldGenerationOrigin = new Vector2(Settings.Width / 2, Settings.Height / 2);
-                genThread = new Thread(unused => GenerateWorld(Device, Seed, (int) Settings.Width, (int) Settings.Height));
-                genThread.Name = "GenerateWorld";
+                Settings.WorldGenerationOrigin = new Vector2(Settings.Width / 2.0f, Settings.Height / 2.0f);
+                genThread = new Thread(unused => GenerateWorld(Seed, (int) Settings.Width, (int) Settings.Height))
+                {
+                    Name = "GenerateWorld"
+                };
                 genThread.Start();
             }
         }
@@ -215,7 +222,7 @@ namespace DwarfCorp.GameStates
             }
         }
 
-        public void GenerateWorld(GraphicsDevice Device, int seed, int width, int height)
+        public void GenerateWorld(int seed, int width, int height)
         {
 #if CREATE_CRASH_LOGS
            try
@@ -334,12 +341,20 @@ namespace DwarfCorp.GameStates
 
 
                 LoadingMessage = "Factions";
-                NativeCivilizations = new List<Faction>();
                 FactionLibrary library = new FactionLibrary();
                 library.Initialize(null, new CompanyInformation());
-                for (int i = 0; i < Settings.NumCivilizations; i++)
+
+                if (Settings.Natives == null || Settings.Natives.Count == 0)
                 {
-                    NativeCivilizations.Add(library.GenerateFaction(null, i, Settings.NumCivilizations));
+                    NativeCivilizations = new List<Faction>();
+                    for (int i = 0; i < Settings.NumCivilizations; i++)
+                    {
+                        NativeCivilizations.Add(library.GenerateFaction(null, i, Settings.NumCivilizations));
+                    }
+                }
+                else
+                {
+                    NativeCivilizations = Settings.Natives;
                 }
                 SeedCivs(Overworld.Map, Settings.NumCivilizations, NativeCivilizations);
                 GrowCivs(Overworld.Map, 200, NativeCivilizations);
@@ -356,8 +371,6 @@ namespace DwarfCorp.GameStates
                     Overworld.Map[0, y] = Overworld.Map[1, y];
                     Overworld.Map[width - 1, y] = Overworld.Map[width - 2, y];
                 }
-
-                CreateMesh(Device);
 
                 CurrentState = GenerationState.Finished;
                 LoadingMessage = "";
