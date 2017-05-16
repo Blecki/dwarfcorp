@@ -112,7 +112,7 @@ namespace DwarfCorp
                 Camera = world.Camera,
                 Components = world.ComponentManager,
                 ChunkData = new List<ChunkFile>(),
-                Goals = world.Master.GoalManager.EnumerateGoals().ToList(),
+                Goals = world.GoalManager.EnumerateGoals().ToList(),
                 GameID = id,
             };
 
@@ -148,6 +148,22 @@ namespace DwarfCorp
         public void CopyFrom(GameFile file)
         {
             Data = file.Data;
+        }
+
+        public void LoadGoals(String FilePath, WorldManager World)
+        {
+            try
+            {
+                var goalFiles = SaveData.GetFilesInDirectory(FilePath, DwarfGame.COMPRESSED_BINARY_SAVES, "Goals", GameFile.CompressedExtension, GameFile.Extension);
+                if (goalFiles.Length > 0)
+                    Data.Goals = FileUtils.LoadJson<List<Goals.Goal>>(goalFiles[0], DwarfGame.COMPRESSED_BINARY_SAVES, World);
+                else
+                    Data.Goals = new List<Goals.Goal>();
+            } catch (Exception)
+            {
+                // Todo: Report error.
+                Data.Goals = new List<Goals.Goal>();
+            }
         }
 
         public bool LoadComponents(string filePath, WorldManager world)

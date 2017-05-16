@@ -16,6 +16,7 @@ namespace DwarfCorp.NewGui
     {
         public String Frame = "minimap-frame";
         public MinimapRenderer Renderer;
+        public Widget RestoreButton;
 
         public override Point GetBestSize()
         {
@@ -79,6 +80,8 @@ namespace DwarfCorp.NewGui
                 AutoLayout = Gum.AutoLayout.DockLeft,
                 OnClick = (sender, args) =>
                     {
+                        RestoreButton.Hidden = false;
+                        RestoreButton.Invalidate();
                         this.Hidden = true;
                         this.Invalidate();
                     }

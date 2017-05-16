@@ -7,16 +7,14 @@ namespace DwarfCorp.Goals.Goals
 {
     public class MineSand : Goal
     {
-        private int Counter = 0;
+        public int Counter = 0;
 
         public MineSand()
         {
             Name = "Mine Sand";
             Description = "Mine 10 Sand";
             GoalType = GoalTypes.AvailableAtStartup;
-        }
-
-       
+        }       
 
         public override void OnGameEvent(WorldManager World, GameEvent Event)
         {

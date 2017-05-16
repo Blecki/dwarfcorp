@@ -286,12 +286,16 @@ namespace DwarfCorp.GameStates
                 //Game.GraphicsDevice.SetRenderTarget(null);
                 //tex.SaveAsPng(new FileStream("voxels.png", FileMode.Create),  256, 256);
                 //Game.Exit();
-                MinimapRenderer.PreRender(gameTime, DwarfGame.SpriteBatch);
+
+
+                if (!MinimapFrame.Hidden && !GuiRoot.RootItem.Hidden)
+                    MinimapRenderer.PreRender(gameTime, DwarfGame.SpriteBatch);
+
                 World.Render(gameTime);
 
                 if (Game.StateManager.CurrentState == this)
                 {
-                    if (!MinimapFrame.Hidden)
+                    if (!MinimapFrame.Hidden && !GuiRoot.RootItem.Hidden)
                         MinimapRenderer.Render(new Rectangle(0, GuiRoot.RenderData.VirtualScreen.Bottom - 192, 192, 192), GuiRoot);
                     GuiRoot.Draw();
                 }
@@ -468,17 +472,17 @@ namespace DwarfCorp.GameStates
 
             #region Minimap
 
-            // Little hack here - Normally this button his hidden by the minimap. Hide the minimap and it 
-            // becomes visible! 
-            // Todo: Doh, doesn't actually work.
-            GuiRoot.RootItem.AddChild(new Gum.Widget
+            var minimapRestoreButton = GuiRoot.RootItem.AddChild(new Gum.Widget
             {
                 AutoLayout = global::Gum.AutoLayout.FloatBottomLeft,
                 Background = new Gum.TileReference("round-buttons", 3),
                 MinimumSize = new Point(16, 16),
                 MaximumSize = new Point(16, 16),
+                Hidden = true,
                 OnClick = (sender, args) =>
                 {
+                    sender.Hidden = true;
+                    sender.Invalidate();
                     MinimapFrame.Hidden = false;
                     MinimapFrame.Invalidate();
                 }
@@ -490,7 +494,8 @@ namespace DwarfCorp.GameStates
             MinimapFrame = GuiRoot.RootItem.AddChild(new NewGui.MinimapFrame
             {
                 AutoLayout = global::Gum.AutoLayout.FloatBottomLeft,
-                Renderer = MinimapRenderer
+                Renderer = MinimapRenderer,
+                RestoreButton = minimapRestoreButton
             }) as NewGui.MinimapFrame;
             #endregion
 

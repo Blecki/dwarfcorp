@@ -73,20 +73,20 @@ namespace DwarfCorp.GameStates
 
             tabPanel.AddTab("Available Goals", new NewGui.GoalPanel
             {
-                GoalSource = World.Master.GoalManager.EnumerateGoals().Where(g =>
+                GoalSource = World.GoalManager.EnumerateGoals().Where(g =>
                     g.State == Goals.GoalState.Available),
                 World = World
             });
 
             tabPanel.AddTab("Active Goals", new NewGui.GoalPanel
             {
-                GoalSource = World.Master.GoalManager.EnumerateGoals().Where(g =>
+                GoalSource = World.GoalManager.EnumerateGoals().Where(g =>
                     g.State == Goals.GoalState.Active && g.GoalType != Goals.GoalTypes.Achievement)
             });
 
             tabPanel.AddTab("Completed Goals", new NewGui.GoalPanel
             {
-                GoalSource = World.Master.GoalManager.EnumerateGoals().Where(g =>
+                GoalSource = World.GoalManager.EnumerateGoals().Where(g =>
                     g.State == Goals.GoalState.Complete)
             });
             

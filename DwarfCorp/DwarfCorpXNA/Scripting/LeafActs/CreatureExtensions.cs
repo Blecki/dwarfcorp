@@ -233,7 +233,7 @@ namespace DwarfCorp
                     var voxelType = VoxelLibrary.GetVoxelType(vox.TypeName);
                     agent.AI.AddXP(Math.Max((int)(voxelType.StartingHealth / 4), 1));
                     agent.Stats.NumBlocksDestroyed++;
-                    agent.World.Master.GoalManager.OnGameEvent(new Goals.Events.DigBlock(voxelType, agent));
+                    agent.World.GoalManager.OnGameEvent(new Goals.Events.DigBlock(voxelType, agent));
 
                     List<Body> items = vox.Kill();
 

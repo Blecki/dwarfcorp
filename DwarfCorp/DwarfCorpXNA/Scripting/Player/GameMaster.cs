@@ -75,12 +75,6 @@ namespace DwarfCorp
         [JsonIgnore]
         public WorldManager World { get; set; }
 
-        #region Goals
-
-        [JsonIgnore]
-        public Goals.GoalManager GoalManager;
-
-        #endregion
 
         protected void OnDeserialized(StreamingContext context)
         {
@@ -91,14 +85,12 @@ namespace DwarfCorp
 
         public GameMaster()
         {
-            GoalManager = new Goals.GoalManager();
         }
 
         public GameMaster(Faction faction, DwarfGame game, ComponentManager components, ChunkManager chunks, Camera camera, GraphicsDevice graphics)
         {
             World = components.World;
             Faction = faction;
-            GoalManager = new Goals.GoalManager();
             Initialize(game, components, chunks, camera, graphics);
             VoxSelector.Selected += OnSelected;
             VoxSelector.Dragged += OnDrag;
@@ -109,9 +101,6 @@ namespace DwarfCorp
 
         public void Initialize(DwarfGame game, ComponentManager components, ChunkManager chunks, Camera camera, GraphicsDevice graphics)
         {
-            // Need to get this from serialized game somehow.
-            GoalManager.Initialize(new List<Goals.Goal>());
-
             RoomLibrary.InitializeStatics();
 
             CameraController = camera;
@@ -348,7 +337,6 @@ namespace DwarfCorp
 
             Faction.CraftBuilder.Update(time, this);
 
-            GoalManager.Update(World);
         }
 
 

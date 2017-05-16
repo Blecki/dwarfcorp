@@ -139,6 +139,8 @@ namespace DwarfCorp
         // Handles interfacing with the player and sending commands to dwarves
         public GameMaster Master = null;
 
+        public Goals.GoalManager GoalManager;
+
         // If the game was loaded from a file, this contains the name of that file.
         public string ExistingFile = "";
 
@@ -771,6 +773,17 @@ namespace DwarfCorp
                 WorldScale = gameFile.Data.Metadata.WorldScale;
                 GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
                 GameSettings.Default.ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
+
+                // Load saved goals from file here.
+                GoalManager = new Goals.GoalManager();
+                gameFile.LoadGoals(ExistingFile, this);
+                GoalManager.Initialize(gameFile.Data.Goals);
+            }
+            else
+            {
+                // Initialize goal manager here.
+                GoalManager = new Goals.GoalManager();
+                GoalManager.Initialize(new List<Goals.Goal>());
             }
         }
 
@@ -1247,6 +1260,7 @@ namespace DwarfCorp
                     Game.GraphicsDevice.Viewport.Height / 2);
 
             Master.Update(Game, gameTime);
+            GoalManager.Update(this);
             Time.Update(gameTime);
 
 
