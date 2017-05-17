@@ -386,25 +386,25 @@ namespace DwarfCorp
             Vector3 desiredVelocity = Vector3.Zero;
             bool hadCommand = false;
             bool jumpCommand = false;
-            if (keyState.IsKeyDown(ControlSettings.Mappings.Forward))
+            if (keyState.IsKeyDown(ControlSettings.Mappings.Forward) || keyState.IsKeyDown(Keys.Up))
             {
                 hadCommand = true;
                 desiredVelocity += forward*10;
             }
 
-            if (keyState.IsKeyDown(ControlSettings.Mappings.Back))
+            if (keyState.IsKeyDown(ControlSettings.Mappings.Back) || keyState.IsKeyDown(Keys.Down))
             {
                 hadCommand = true;
                 desiredVelocity -= forward*10;
             }
 
-            if (keyState.IsKeyDown(ControlSettings.Mappings.Right))
+            if (keyState.IsKeyDown(ControlSettings.Mappings.Right) || keyState.IsKeyDown(Keys.Right))
             {
                 hadCommand = true;
                 desiredVelocity += right*10;
             }
 
-            if (keyState.IsKeyDown(ControlSettings.Mappings.Left))
+            if (keyState.IsKeyDown(ControlSettings.Mappings.Left) || keyState.IsKeyDown(Keys.Left))
             {
                 hadCommand = true;
                 desiredVelocity -= right*10;

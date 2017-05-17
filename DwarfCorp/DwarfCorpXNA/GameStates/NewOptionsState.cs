@@ -306,6 +306,17 @@ namespace DwarfCorp.GameStates
                 Padding = new Margin(4, 4, 0, 0)
             });
 
+            if (!SoundManager.HasAudioDevice)
+            {
+                panel.AddChild(new Widget()
+                {
+                    Text = "ERROR. NO SUITABLE AUDIO HARDWARE FOUND. SOUND IS DISABLED :(",
+                    TextColor = Color.DarkRed.ToVector4(),
+                    Font = "font-hires",
+                    AutoLayout = AutoLayout.DockTop
+                });
+            }
+
             MasterVolume = panel.AddChild(LabelAndDockWidget("Master Volume", new HorizontalFloatSlider
             {
                 ScrollArea = 1.0f,
