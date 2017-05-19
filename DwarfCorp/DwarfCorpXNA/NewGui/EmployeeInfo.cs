@@ -192,6 +192,7 @@ namespace DwarfCorp.NewGui
             AddChild(new Widget
             {
                 Text = "Fire",
+                Font = "font-hires",
                 Border = "border-button",
                 AutoLayout = AutoLayout.FloatBottomRight,
                 OnClick = (sender, args) =>
@@ -203,6 +204,7 @@ namespace DwarfCorp.NewGui
             LevelButton = right.AddChild(new Widget
             {
                 Text = "Level Up!",
+                Font = "font-hires",
                 Border = "border-button",
                 AutoLayout = AutoLayout.FloatBottomLeft,
                 OnClick = (sender, args) =>

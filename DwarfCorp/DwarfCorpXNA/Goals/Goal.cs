@@ -41,5 +41,16 @@ namespace DwarfCorp.Goals
         /// <param name="World"></param>
         /// <param name="Event"></param>
         public virtual void OnGameEvent(WorldManager World, GameEvent Event) { }
+
+        /// <summary>
+        /// Called to create a custom GUI for the goal.
+        /// </summary>
+        /// <param name="World"></param>
+        /// <param name="Widget"></param>
+        public virtual void BuildCustomGUI(Gum.Widget Widget)
+        {
+            Widget.Text = Description;
+            Widget.Font = "font-hires";
+        }
     }
 }

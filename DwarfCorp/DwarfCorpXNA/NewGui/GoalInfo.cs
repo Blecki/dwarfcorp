@@ -13,7 +13,7 @@ namespace DwarfCorp.NewGui
         public Goals.Goal Goal
         {
             get { return _goal; }
-            set { _goal = value;  Invalidate(); }
+            set { _goal = value; _goal.BuildCustomGUI(this); Invalidate(); }
         }
 
         private Widget Description;
@@ -29,7 +29,8 @@ namespace DwarfCorp.NewGui
 
             ActivateButton = AddChild(new Widget
             {
-                Text = "Fire",
+                Text = "Activate!",
+                Font = "font-hires",
                 Border = "border-button",
                 AutoLayout = AutoLayout.FloatBottomRight,
                 OnClick = (sender, args) =>
@@ -45,7 +46,6 @@ namespace DwarfCorp.NewGui
         {
             if (Goal != null)
             {
-                Description.Text = Goal.Description;
                 ActivateButton.Hidden = !(Goal.State == Goals.GoalState.Available);
             } 
             
