@@ -141,6 +141,8 @@ namespace DwarfCorp
 
         public Goals.GoalManager GoalManager;
 
+        public Tutorial.TutorialManager TutorialManager;
+
         // If the game was loaded from a file, this contains the name of that file.
         public string ExistingFile = "";
 
@@ -789,12 +791,19 @@ namespace DwarfCorp
                 GoalManager = new Goals.GoalManager();
                 gameFile.LoadGoals(ExistingFile, this);
                 GoalManager.Initialize(gameFile.Data.Goals);
+
+                TutorialManager = new Tutorial.TutorialManager("tutorial");
+                gameFile.LoadTutorial(ExistingFile, this);
+                TutorialManager.SetFromSaveData(gameFile.Data.TutorialSaveData);
+                
             }
             else
             {
                 // Initialize goal manager here.
                 GoalManager = new Goals.GoalManager();
                 GoalManager.Initialize(new List<Goals.Goal>());
+
+                TutorialManager = new Tutorial.TutorialManager("tutorial");
             }
         }
 

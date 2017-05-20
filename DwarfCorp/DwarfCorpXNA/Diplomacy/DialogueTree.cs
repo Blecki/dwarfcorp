@@ -243,7 +243,7 @@ namespace DwarfCorp.Dialogue
                         }
                     }
 
-                    Context.TradePanel.Transaction.Apply();
+                    Context.TradePanel.Transaction.Apply(Context.World);
                     Context.Transition(RootWithPrompt(Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.GoodTrades)));
 
                     if (!Context.Politics.HasEvent("we had profitable trade"))

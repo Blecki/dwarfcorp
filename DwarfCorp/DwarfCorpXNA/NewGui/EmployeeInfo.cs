@@ -320,6 +320,7 @@ namespace DwarfCorp.NewGui
                 }
 
             }
+
             foreach (var child in Children)
                 child.Invalidate();
 

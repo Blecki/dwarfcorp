@@ -59,6 +59,8 @@ namespace DwarfCorp
 
             public List<Goals.Goal> Goals { get; set; }
 
+            public Tutorial.TutorialSaveData TutorialSaveData { get; set; }
+
             public int GameID { get; set; }
 
             public GameData()
@@ -86,6 +88,9 @@ namespace DwarfCorp
 
                 FileUtils.SaveJSon(Goals, directory + ProgramData.DirChar + "Goals."
                      + (DwarfGame.COMPRESSED_BINARY_SAVES ? GameFile.CompressedExtension : GameFile.Extension), DwarfGame.COMPRESSED_BINARY_SAVES);
+
+                FileUtils.SaveJSon(TutorialSaveData, directory + ProgramData.DirChar + "Tutorial." 
+                    + (DwarfGame.COMPRESSED_BINARY_SAVES ? GameFile.CompressedExtension : GameFile.Extension), DwarfGame.COMPRESSED_BINARY_SAVES);
             }
         }
 
@@ -113,6 +118,7 @@ namespace DwarfCorp
                 Components = world.ComponentManager,
                 ChunkData = new List<ChunkFile>(),
                 Goals = world.GoalManager.EnumerateGoals().ToList(),
+                TutorialSaveData = world.TutorialManager.GetSaveData(),
                 GameID = id,
             };
 
@@ -163,6 +169,23 @@ namespace DwarfCorp
             {
                 // Todo: Report error.
                 Data.Goals = new List<Goals.Goal>();
+            }
+        }
+
+        public void LoadTutorial(String FilePath, WorldManager World)
+        {
+            try
+            {
+                var tutFiles = SaveData.GetFilesInDirectory(FilePath, DwarfGame.COMPRESSED_BINARY_SAVES,
+                    "Tutorial", GameFile.CompressedExtension, GameFile.Extension);
+                if (tutFiles.Length > 0)
+                    Data.TutorialSaveData = FileUtils.LoadJson<Tutorial.TutorialSaveData>(tutFiles[0],
+                        DwarfGame.COMPRESSED_BINARY_SAVES, World);
+                else
+                    Data.TutorialSaveData = new Tutorial.TutorialSaveData();
+            } catch (Exception)
+            {
+                Data.TutorialSaveData = new Tutorial.TutorialSaveData();
             }
         }
 

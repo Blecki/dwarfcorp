@@ -245,6 +245,7 @@
     <Compile Include="Goals\Enums.cs" />
     <Compile Include="Goals\Events\DigBlock.cs" />
     <Compile Include="Goals\Events\BuiltRoom.cs" />
+    <Compile Include="Goals\Events\Trade.cs" />
     <Compile Include="Goals\GameEvent.cs" />
     <Compile Include="Goals\Goal.cs" />
     <Compile Include="Goals\GoalManager.cs" />
@@ -295,6 +296,9 @@
     <Compile Include="Gum\Widgets\TextProgressBar.cs" />
     <Compile Include="NewGui\GoalInfo.cs" />
     <Compile Include="NewGui\GoalPanel.cs" />
+    <Compile Include="Tutorial\TutorialManager.cs" />
+    <Compile Include="Tutorial\JsonTutorialSet.cs" />
+    <Compile Include="Tutorial\TutorialSaveData.cs" />
     <Compile Include="World\IndicatorManager.cs" />
     <Compile Include="Gum\Enums.cs" />
     <Compile Include="Gum\Geo\Basics.cs" />
