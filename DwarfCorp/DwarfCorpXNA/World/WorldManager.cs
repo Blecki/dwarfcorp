@@ -144,7 +144,7 @@ namespace DwarfCorp
         #region Tutorial Hooks
 
         public Tutorial.TutorialManager TutorialManager;
-        public Func<String, bool> GuiHook_ShowTutorialPopup;
+        public Action<String, Action<bool>> GuiHook_ShowTutorialPopup;
         
         public void Tutorial(String Name)
         {
@@ -803,7 +803,7 @@ namespace DwarfCorp
                 gameFile.LoadGoals(ExistingFile, this);
                 GoalManager.Initialize(gameFile.Data.Goals);
 
-                TutorialManager = new Tutorial.TutorialManager("tutorial.txt");
+                TutorialManager = new Tutorial.TutorialManager("Content/tutorial.txt");
                 gameFile.LoadTutorial(ExistingFile, this);
                 TutorialManager.SetFromSaveData(gameFile.Data.TutorialSaveData);
                 
@@ -814,7 +814,7 @@ namespace DwarfCorp
                 GoalManager = new Goals.GoalManager();
                 GoalManager.Initialize(new List<Goals.Goal>());
 
-                TutorialManager = new Tutorial.TutorialManager("tutorial.txt");
+                TutorialManager = new Tutorial.TutorialManager("Content/tutorial.txt");
                 Tutorial("Test");
             }
         }

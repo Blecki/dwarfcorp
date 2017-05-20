@@ -1,8 +1,8 @@
 {
-	"Tutorial": [
+	"Tutorials": [
 		{ 
 			"Name": "Test",
-			"Text": "This is a demonstration of the tutorial system."
+			"Text": "It looks like you're trying to run an evil capitalistic monopoly. Can I help you sieze the means of production?"
 		}
 	]
 }

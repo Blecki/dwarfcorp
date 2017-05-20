@@ -34,12 +34,13 @@ namespace DwarfCorp.Tutorial
                 PendingTutorial = Name;
         }
 
-        public void Update(Func<String, bool> GuiHook)
+        public void Update(Action<String, Action<bool>> GuiHook)
         {
-            if (!String.IsNullOrEmpty(PendingTutorial) && GuiHook != null)
+            if (!String.IsNullOrEmpty(PendingTutorial) && GuiHook != null &&!Entries[PendingTutorial].Shown)
             { 
                 Entries[PendingTutorial].Shown = true;
-                TutorialEnabled = !GuiHook(Entries[PendingTutorial].Text);
+                GuiHook(Entries[PendingTutorial].Text, (b) => TutorialEnabled = !b);
+                PendingTutorial = null;
             }
         }
 

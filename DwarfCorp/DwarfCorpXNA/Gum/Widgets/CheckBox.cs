@@ -58,7 +58,7 @@ namespace Gum.Widgets
             }
 
             var gfx = Root.GetTileSheet(Graphics);
-            return new Point(gfx.TileWidth + size.X, Math.Max(gfx.TileHeight, size.Y));
+            return new Point(gfx.TileWidth + size.X + 2, Math.Max(gfx.TileHeight, size.Y));
         }
     }
 }
