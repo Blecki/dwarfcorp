@@ -65,8 +65,20 @@ float4 GetWind(float4 pos, float2 uv, float4 bounds)
 	if (windPower < 0.0f)
 		windPower = windPower*0.05f;
 	else windPower = windPower*0.08f;
-	float windTemp = (1.0 - (uv.y - bounds.y) / bounds.z);
+	float windTemp = (1.0 - (uv.y - bounds.y) / bounds.w);
 	return float4(xWindDirection * windPower * windTemp, 0);
+}
+
+
+float4 GetFlagWind(float4 pos, float2 uv, float4 bounds)
+{
+	pos.w = 0;
+	float3 waver = cross(xWindDirection, float3(0, 1, 0)) + xWindDirection * 0.25;
+	float windPower = 0.5 + sin(uv.x * 10 + uv.y * 10 + xTime * (12.0 + xWindForce * 1000));
+	windPower *= 0.05;
+	float windTemp = ((uv.x - bounds.x) / bounds.z);
+	return float4(waver * windPower * windTemp - float3(0, 0.5, 0) * windTemp * (saturate(1.0 -  xWindForce * 1000))
+		+ xWindDirection * windTemp * saturate(xWindForce * 1000), 0);
 }
 
 
@@ -296,6 +308,56 @@ SelectionBufferToPixel SelectionVS(float4 inPos: POSITION, float2 inTexCoords : 
 	Output.TextureCoords = inTexCoords;
 	Output.ClipDistance = dot(worldPosition, ClipPlane0);
 	Output.SelectionColor = selection;
+	return Output;
+}
+
+TVertexToPixel TexturedVS_Flag(float4 inPos : POSITION, 
+							float2 inTexCoords : TEXCOORD0, 
+							float4 inColor : COLOR0, 
+							float4 inTexSource : TEXCOORD1, 
+							float3 vertColor : COLOR1)
+{
+	TVertexToPixel Output = (TVertexToPixel)0;
+
+	float4 worldPosition = mul(inPos, xWorld);
+		worldPosition += GetNoise(worldPosition);
+
+	worldPosition += GetFlagWind(worldPosition, inTexCoords, inTexSource);
+
+	Output.WorldPosition = worldPosition;
+
+	float4 viewPosition = mul(worldPosition, xView);
+		Output.Position = mul(viewPosition, xProjection);
+
+	Output.TextureCoords = inTexCoords;
+	Output.ClipDistance = dot(worldPosition, ClipPlane0);
+	Output.Color = inColor * xTint;
+	Output.Color.a = xTint.a;
+	Output.ColorTint = vertColor * xColorTint;
+	Output.Color.a *= xColorTint.a;
+	if (xEnableLighting)
+	{
+		for (int i = 0; i < MAX_LIGHTS; i++)
+		{
+			float dx = worldPosition.x - xLightPositions[i].x;
+			float dy = worldPosition.y - xLightPositions[i].y;
+			float dz = worldPosition.z - xLightPositions[i].z;
+			float dist = pow(dx, 2) + pow(dy, 2) + pow(dz, 2) + 0.001f;
+			Output.Color = saturate(Output.Color + LIGHT_COLOR / dist);
+		}
+	}
+
+	if (!xEnableLighting)
+	{
+		Output.Color = saturate(Output.Color + LIGHT_COLOR / 999.0f);
+	}
+
+	if (xEnableFog)
+	{
+		Output.Fog = saturate((Output.Position.z - xFogStart) / (xFogEnd - xFogStart));
+	}
+
+	Output.TextureBounds = inTexSource;
 	return Output;
 }
 
@@ -686,6 +748,15 @@ technique Textured
     }
 }
 
+technique Textured_Flag
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_2_0 TexturedVS_Flag();
+		PixelShader = compile ps_2_0 TexturedPS_Alphatest();
+	}
+}
+
 technique Silhouette
 {
 	pass Pass0
@@ -779,7 +850,7 @@ WVertexToPixel WaterVS(float4 inPos_ : POSITION, float2 inTex: TEXCOORD0, float4
 	Output.Position3D = mul(inPos, xWorld);
 	Output.BumpMapSamplingPos = inTex/xWaveLength;
 
-	float2 moveVector = xWindDirection.xz * xWindForce * xTime * 1000;
+	float2 moveVector = xWindDirection.xz * xWindForce * xTime * 100;
 	moveVector.x += sin(xTime * 0.2 + inTex.y * 0.1);
 	moveVector.y += cos(xTime * 0.2 + inTex.x * 0.1);
 	Output.BumpMapSamplingPos = moveVector + inTex;   

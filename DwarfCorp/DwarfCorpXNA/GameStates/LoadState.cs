@@ -108,6 +108,7 @@ namespace DwarfCorp.GameStates
                 SeaLevel = Settings.SeaLevel,
                 Natives = Settings.Natives
             };
+
             World.WorldScale = Settings.WorldScale;
             World.WorldGenerationOrigin = Settings.WorldGenerationOrigin;
 
@@ -127,11 +128,6 @@ namespace DwarfCorp.GameStates
                 // Todo: Decouple gui/input from world.
                 // Copy important bits to PlayState - This is a hack; decouple world from gui and input instead.
                 PlayState.Input = Input;
-
-                // Hack: So that saved games still load.
-                if (World.PlayerCompany.Information == null)
-                    World.PlayerCompany.Information = new CompanyInformation();
-
                 StateManager.PopState();
                 StateManager.PushState(new PlayState(Game, StateManager, World));
 

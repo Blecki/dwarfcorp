@@ -285,6 +285,7 @@ namespace DwarfCorp
             public static string ShadowMapInstanced = "ShadowInstanced";
             public static string SelectionBuffer = "Selection";
             public static string Textured = "Textured";
+            public static string TexturedFlag = "Textured_Flag";
             public static string TexturedWithLightmap = "Textured_From_Lightmap";
             public static string Lightmap = "Lightmap";
             public static string TexturedWithColorScale = "Textured_colorscale";

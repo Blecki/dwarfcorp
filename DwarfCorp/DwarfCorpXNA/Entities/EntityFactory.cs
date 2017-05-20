@@ -126,7 +126,7 @@ namespace DwarfCorp
             RegisterEntity("Lamp", (position, data) => new Lamp(world.ComponentManager, position));
             RegisterEntity("Table", (position, data) => new Table(world.ComponentManager, position));
             RegisterEntity("Chair", (position, data) => new Chair(world.ComponentManager, position));
-            RegisterEntity("Flag", (position, data) => new Flag(world.ComponentManager, position));
+            RegisterEntity("Flag", (position, data) => new Flag(world.ComponentManager, position, world.PlayerCompany.Information));
             RegisterEntity("Mushroom", (position, data) => new Mushroom(world.ComponentManager, position, ContentPaths.Entities.Plants.mushroom, ResourceLibrary.ResourceType.Mushroom, 2, false));
             RegisterEntity("Cave Mushroom", (position, data) => new Mushroom(world.ComponentManager, position, ContentPaths.Entities.Plants.cavemushroom, ResourceLibrary.ResourceType.CaveMushroom, 4, true));
             RegisterEntity("Wheat", (position, data) => new Wheat(world.ComponentManager, position));

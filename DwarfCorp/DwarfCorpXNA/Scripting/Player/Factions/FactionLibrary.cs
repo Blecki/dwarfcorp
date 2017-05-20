@@ -68,7 +68,7 @@ namespace DwarfCorp
         {
             Race race = Datastructures.SelectRandom(Races.Values.Where(r => r.IsIntelligent && r.IsNative));
 
-            return new Faction(world)
+            var fact = new Faction(world)
             {
                 Race = race,
                 Name = TextGenerator.GenerateRandom(Datastructures.SelectRandom(race.FactionNameTemplates).ToArray()),
@@ -76,7 +76,10 @@ namespace DwarfCorp
                 SecondaryColor = new HSLColor(MathFunctions.Rand(0, 255.0f), 255.0, MathFunctions.Rand(100.0f, 200.0f)),
                 TradeMoney = (decimal)MathFunctions.Rand(250.0f, 20000.0f),
                 Center = new Point(MathFunctions.RandInt(0, Overworld.Map.GetLength(0)), MathFunctions.RandInt(0, Overworld.Map.GetLength(1)))
+                
             };
+            fact.Economy = new Economy(fact, fact.TradeMoney, world, new CompanyInformation() {LogoBackgroundColor = fact.SecondaryColor.ToVector4(), LogoSymbolColor = fact.PrimaryColor.ToVector4(), Name = fact.Name});
+            return fact;
         }
 
         public void InitializeRaces()

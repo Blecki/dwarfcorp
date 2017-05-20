@@ -87,6 +87,11 @@ namespace DwarfCorp.GameStates
 
         private Gum.Root GuiRoot;
 
+        public Gum.Root GetGUI()
+        {
+            return GuiRoot;
+        }
+
         /// <summary>
         /// Creates a new play state
         /// </summary>

@@ -38,6 +38,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using BloomPostprocess;
+using DwarfCorp.NewGui;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -792,6 +793,11 @@ namespace DwarfCorp
         {
             Master = new GameMaster(ComponentManager.Factions.Factions["Player"], Game, ComponentManager, ChunkManager,
                 Camera, GraphicsDevice);
+
+            if (Master.Faction.Economy.Company.Information == null)
+            {
+                Master.Faction.Economy.Company.Information = new CompanyInformation();
+            }
         }
 
         /// <summary>
@@ -1657,6 +1663,7 @@ namespace DwarfCorp
 
             Plane slicePlane = WaterRenderer.CreatePlane(SlicePlane, new Vector3(0, -1, 0), Camera.ViewMatrix, false);
             DefaultShader.WindDirection = Weather.CurrentWind;
+            DefaultShader.WindForce = 0.0005f * (1.0f + (float)Math.Sin(Time.GetTotalSeconds()*0.001f));
             // Draw the whole world, and make sure to handle slicing
             DefaultShader.ClipPlane = new Vector4(slicePlane.Normal, slicePlane.D);
             DefaultShader.ClippingEnabled = true;

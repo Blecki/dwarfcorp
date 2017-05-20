@@ -274,6 +274,11 @@ namespace DwarfCorp
                     foreach (CreatureAI creature in envoy.Creatures)
                     {
                         ResourcePack resources = new ResourcePack(creature.Physics);
+                        if (natives.Economy.Company.Information == null)
+                        {
+                            natives.Economy.Company.Information = new CompanyInformation();
+                        }
+                        Flag flag = new Flag(creature.Physics, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, natives.Economy.Company.Information);
                     }
                     envoy.DistributeGoods();
 
@@ -338,6 +343,15 @@ namespace DwarfCorp
                 OtherFaction = natives.World.PlayerFaction,
                 ShouldRemove = false
             });
+
+            foreach (var creature in creatures)
+            {
+                if (natives.Economy.Company.Information == null)
+                {
+                    natives.Economy.Company.Information = new CompanyInformation();
+                }
+                Flag flag = new Flag(creature.Physics, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, natives.Economy.Company.Information);
+            }
 
         }
 

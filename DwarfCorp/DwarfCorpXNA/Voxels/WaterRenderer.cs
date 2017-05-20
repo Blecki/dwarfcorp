@@ -258,7 +258,6 @@ namespace DwarfCorp
                 
                 effect.WaveLength = asset.Value.WaveLength;
                 effect.WaveHeight = asset.Value.WaveHeight;
-                effect.WindForce = asset.Value.WindForce;
                 if (DrawReflections)
                 {
                     effect.WaterBumpMap = asset.Value.BumpTexture;

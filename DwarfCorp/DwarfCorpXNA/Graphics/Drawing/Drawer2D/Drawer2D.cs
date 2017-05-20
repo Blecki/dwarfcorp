@@ -186,7 +186,7 @@ namespace DwarfCorp
             batch.Draw(Pixel, new Rectangle((int) (rect.Left - width), (int) (rect.Top - width), (int) width, (int) (rect.Height + width)), borderColor);
             batch.Draw(Pixel, new Rectangle((int) (rect.Left - width), (int) (rect.Top - width), rect.Width, (int) width), borderColor);
             batch.Draw(Pixel, new Rectangle((int) (rect.Left - width), (int) (rect.Top + rect.Height), rect.Width, (int) width), borderColor);
-            batch.Draw(Pixel, new Rectangle((int) (rect.Left + rect.Width - width), (int) (rect.Top - width), (int) width, (int) (rect.Height + width)), borderColor);
+            batch.Draw(Pixel, new Rectangle((int) (rect.Left + rect.Width - width), (int) (rect.Top - width), (int) width, (int) (rect.Height + width * 2)), borderColor);
         }
 
         /// <summary>

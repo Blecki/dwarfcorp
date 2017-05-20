@@ -27,7 +27,7 @@ namespace DwarfCorp
 
         public void Update(DateTime currentDate, WorldManager world)
         {
-            CurrentWind = new Vector3((float)Math.Sin(world.Time.GetTotalSeconds() * 0.001f), 0, (float)Math.Cos(world.Time.GetTotalSeconds() * 0.01f));
+            CurrentWind = new Vector3((float)Math.Sin(world.Time.GetTotalSeconds() * 0.001f), 0, (float)Math.Cos(world.Time.GetTotalSeconds() * 0.0015f));
             CurrentWind.Normalize();
             foreach (Storm storm in Forecast)
             {
