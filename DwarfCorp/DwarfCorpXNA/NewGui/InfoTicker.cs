@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -79,6 +79,11 @@ namespace DwarfCorp.NewGui
             MessageLock.ReleaseMutex();
 
             return Gum.Mesh.Merge(meshes.ToArray());
+        }
+
+        public bool HasMesssage(string loadingMessage)
+        {
+            return Messages.Contains(loadingMessage);
         }
     }
 }

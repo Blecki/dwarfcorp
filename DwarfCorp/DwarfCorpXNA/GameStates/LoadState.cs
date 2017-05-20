@@ -1,3 +1,4 @@
+using System.CodeDom.Compiler;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -19,7 +20,7 @@ namespace DwarfCorp.GameStates
         private Gum.Root GuiRoot;
         private Gum.Widget Tip;
         private NewGui.InfoTicker LoadTicker;
-
+        private WorldGenerator Generator;
         // Displays tips when the game is loading.
         public List<string> LoadingTips = new List<string>()
         {
@@ -58,27 +59,15 @@ namespace DwarfCorp.GameStates
 
             IndicatorManager.SetupStandards();
 
-            // TODO: Had to copy static state over from DwarfGame here. Shouldn't be necessary.
-            // instead these functions should be instantiated inside LoadState.
-            World = new WorldManager(Game)
+            if (Settings.GenerateFromScratch)
             {
-                WorldOrigin = Settings.WorldOrigin,
-                WorldScale = Settings.WorldScale,
-                WorldSize = Settings.ColonySize,
-                InitialEmbark = Settings.InitalEmbarkment,
-                ExistingFile = Settings.ExistingFile,
-                SeaLevel = Settings.SeaLevel,
-                Natives = Settings.Natives
-            };
-            World.WorldScale = Settings.WorldScale;
-            World.WorldGenerationOrigin = Settings.WorldGenerationOrigin;
-
-            World.OnLoadedEvent += () => DoneLoading = true;
-
-            // Todo - Save gui creation for play state. We're only creating it here so we can give it to
-            //      the world class. The world doesn't need it until after loading.
-
-            World.Setup();
+                Generator = new WorldGenerator(Settings) {Seed = MathFunctions.Random.Next()};
+                Generator.Generate();
+            }
+            else
+            {
+                CreateWorld();
+            }
 
             DwarfGame.GumInputMapper.GetInputQueue();
             GuiRoot = new Gum.Root(DwarfGame.GumSkin);
@@ -101,11 +90,34 @@ namespace DwarfCorp.GameStates
                 TextColor = new Vector4(1,1,1,1)
             }) as NewGui.InfoTicker;
 
-            World.OnSetLoadingMessage = (s) => LoadTicker.AddMessage(s);
-
             GuiRoot.RootItem.Layout();
 
             base.OnEnter();
+        }
+
+        private void CreateWorld()
+        {
+
+            World = new WorldManager(Game)
+            {
+                WorldOrigin = Settings.WorldOrigin,
+                WorldScale = Settings.WorldScale,
+                WorldSize = Settings.ColonySize,
+                InitialEmbark = Settings.InitalEmbarkment,
+                ExistingFile = Settings.ExistingFile,
+                SeaLevel = Settings.SeaLevel,
+                Natives = Settings.Natives
+            };
+            World.WorldScale = Settings.WorldScale;
+            World.WorldGenerationOrigin = Settings.WorldGenerationOrigin;
+
+            World.OnLoadedEvent += () => DoneLoading = true;
+            // Todo - Save gui creation for play state. We're only creating it here so we can give it to
+            //      the world class. The world doesn't need it until after loading.
+
+            World.Setup();
+            World.OnSetLoadingMessage = (s) => LoadTicker.AddMessage(s);
+
         }
 
         public override void Update(DwarfTime gameTime)
@@ -127,6 +139,15 @@ namespace DwarfCorp.GameStates
             }
             else
             {
+                if (Settings.GenerateFromScratch && Generator.CurrentState == WorldGenerator.GenerationState.Finished && World == null)
+                {
+                    Settings = Generator.Settings;
+                    CreateWorld();
+                } else if (Settings.GenerateFromScratch)
+                {
+                    if (!LoadTicker.HasMesssage(Generator.LoadingMessage))
+                        LoadTicker.AddMessage(Generator.LoadingMessage);
+                }
                 foreach (var item in DwarfGame.GumInputMapper.GetInputQueue())
                     if (item.Message == Gum.InputEvents.KeyPress)
                         Runner.Jump();
@@ -149,7 +170,8 @@ namespace DwarfCorp.GameStates
             }
 
             EnableScreensaver = true;
-            World.Render(gameTime);
+            if (World != null)
+                World.Render(gameTime);
             base.Render(gameTime);
 
             Runner.Render(Game.GraphicsDevice, DwarfGame.SpriteBatch, gameTime);
