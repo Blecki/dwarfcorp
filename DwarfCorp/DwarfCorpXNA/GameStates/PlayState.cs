@@ -161,6 +161,11 @@ namespace DwarfCorp.GameStates
                     Rect = new Rectangle(GuiRoot.MousePosition.X + 32, GuiRoot.MousePosition.Y + 32, 1, 1)
                 }, Gum.Root.PopupExclusivity.DestroyExistingPopups);
 
+                World.GuiHook_ShowTutorialPopup += (text) =>
+                {
+                    return false;
+                };
+
                 World.gameState = this;
                 World.OnLoseEvent += World_OnLoseEvent;
                 CreateGUIComponents();

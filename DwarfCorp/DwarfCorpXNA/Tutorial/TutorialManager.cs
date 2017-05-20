@@ -14,8 +14,8 @@ namespace DwarfCorp.Tutorial
         }
 
         private Dictionary<String, TutorialEntry> Entries;
-
         private bool TutorialEnabled = true;
+        private String PendingTutorial = null;
 
         public TutorialManager(String TutorialFile)
         {
@@ -25,6 +25,22 @@ namespace DwarfCorp.Tutorial
             Entries = new Dictionary<string, TutorialEntry>();
             foreach (var entry in entries.Tutorials)
                 Entries.Add(entry.Name, new TutorialEntry { Text = entry.Text, Shown = false });
+        }
+
+        public void ShowTutorial(String Name)
+        {
+            // Queue this and show on next frame in an update func.
+            if (TutorialEnabled && Entries.ContainsKey(Name) && !Entries[Name].Shown)
+                PendingTutorial = Name;
+        }
+
+        public void Update(Func<String, bool> GuiHook)
+        {
+            if (!String.IsNullOrEmpty(PendingTutorial) && GuiHook != null)
+            { 
+                Entries[PendingTutorial].Shown = true;
+                TutorialEnabled = !GuiHook(Entries[PendingTutorial].Text);
+            }
         }
 
         public TutorialSaveData GetSaveData()

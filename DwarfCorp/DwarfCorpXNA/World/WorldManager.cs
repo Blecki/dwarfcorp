@@ -141,7 +141,18 @@ namespace DwarfCorp
 
         public Goals.GoalManager GoalManager;
 
+        #region Tutorial Hooks
+
         public Tutorial.TutorialManager TutorialManager;
+        public Func<String, bool> GuiHook_ShowTutorialPopup;
+        
+        public void Tutorial(String Name)
+        {
+            if (TutorialManager != null)
+                TutorialManager.ShowTutorial(Name);
+        }
+
+        #endregion
 
         // If the game was loaded from a file, this contains the name of that file.
         public string ExistingFile = "";
@@ -792,7 +803,7 @@ namespace DwarfCorp
                 gameFile.LoadGoals(ExistingFile, this);
                 GoalManager.Initialize(gameFile.Data.Goals);
 
-                TutorialManager = new Tutorial.TutorialManager("tutorial");
+                TutorialManager = new Tutorial.TutorialManager("tutorial.txt");
                 gameFile.LoadTutorial(ExistingFile, this);
                 TutorialManager.SetFromSaveData(gameFile.Data.TutorialSaveData);
                 
@@ -803,7 +814,8 @@ namespace DwarfCorp
                 GoalManager = new Goals.GoalManager();
                 GoalManager.Initialize(new List<Goals.Goal>());
 
-                TutorialManager = new Tutorial.TutorialManager("tutorial");
+                TutorialManager = new Tutorial.TutorialManager("tutorial.txt");
+                Tutorial("Test");
             }
         }
 
@@ -1287,6 +1299,7 @@ namespace DwarfCorp
 
             Master.Update(Game, gameTime);
             GoalManager.Update(this);
+            TutorialManager.Update(GuiHook_ShowTutorialPopup);
             Time.Update(gameTime);
 
 
