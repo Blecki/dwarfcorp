@@ -177,7 +177,7 @@ namespace DwarfCorp.GameStates
                         }
                     });                   
 
-                    GuiRoot.ShowPopup(popup);
+                    GuiRoot.ShowDialog(popup);
                 };
 
                 World.gameState = this;
@@ -1312,6 +1312,7 @@ namespace DwarfCorp.GameStates
                 if (index == 0 && Master.SelectedMinions.Count == 0)
                 {
                     Master.SelectedMinions.AddRange(Master.Faction.Minions);
+                    World.Tutorial("dwarf selected");
                 }
 
                 if (index == 0 || Master.SelectedMinions.Count > 0)
@@ -1421,7 +1422,8 @@ namespace DwarfCorp.GameStates
                         GuiRoot.ResetGui();
                         CreateGUIComponents();
                         OpenPauseMenu();
-                    }
+                    },
+                    World = World
                 };
 
                 StateManager.PushState(state);

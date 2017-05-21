@@ -53,6 +53,9 @@ namespace DwarfCorp.GameStates
         private CheckBox DynamicShadows;
         private Gum.Widgets.ComboBox EasyGraphicsSetting;
 
+        public WorldManager World = null;
+        private CheckBox EnableTutorial;
+        
         public NewOptionsState(DwarfGame Game, GameStateManager StateManager) :
             base(Game, "NewOptionsState", StateManager)
         { }
@@ -296,6 +299,28 @@ namespace DwarfCorp.GameStates
             {
                 Items = new List<string>(new String[] { "1", "2", "3", "4", "5" }),
             })).GetChild(1) as ComboBox;
+
+            if (World != null)
+            {
+                EnableTutorial = panel.AddChild(new CheckBox
+                {
+                    Text = "Enable Tutorial",
+                    Tooltip = "When checked, tutorial will be displayed.",
+                    OnCheckStateChange = OnItemChanged,
+                    AutoLayout = AutoLayout.DockTop
+                }) as CheckBox;
+
+                panel.AddChild(new Widget
+                {
+                    Text = "Reset tutorial",
+                    MinimumSize = new Point(0, 20),
+                    AutoLayout = AutoLayout.DockTop,
+                    Padding = new Margin(0, 0, 4, 4),
+                    Border = "border-button",
+                    ChangeColorOnHover = true,
+                    OnClick = (sender, args) => World.TutorialManager.ResetTutorials()
+                });
+            }
         }
 
         private void CreateAudioTab()
@@ -773,6 +798,9 @@ namespace DwarfCorp.GameStates
 
             HasChanges = false;
 
+            if (World != null && EnableTutorial != null)
+                World.TutorialManager.TutorialEnabled = EnableTutorial.CheckState;
+
             GameSettings.Save();
         }
 
@@ -825,6 +853,9 @@ namespace DwarfCorp.GameStates
             this.DynamicShadows.CheckState = GameSettings.Default.UseDynamicShadows;
 
             GuiScale.SelectedIndex = GameSettings.Default.GuiScale - 1;
+
+            if (World != null && EnableTutorial != null)
+                EnableTutorial.CheckState = World.TutorialManager.TutorialEnabled;
 
             HasChanges = false;
         }

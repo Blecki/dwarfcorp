@@ -815,7 +815,7 @@ namespace DwarfCorp
                 GoalManager.Initialize(new List<Goals.Goal>());
 
                 TutorialManager = new Tutorial.TutorialManager("Content/tutorial.txt");
-                Tutorial("Test");
+                Tutorial("new game start");
             }
         }
 

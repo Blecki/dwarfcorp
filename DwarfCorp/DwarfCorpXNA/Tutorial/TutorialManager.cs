@@ -14,7 +14,7 @@ namespace DwarfCorp.Tutorial
         }
 
         private Dictionary<String, TutorialEntry> Entries;
-        private bool TutorialEnabled = true;
+        public bool TutorialEnabled = true;
         private String PendingTutorial = null;
 
         public TutorialManager(String TutorialFile)
@@ -25,6 +25,12 @@ namespace DwarfCorp.Tutorial
             Entries = new Dictionary<string, TutorialEntry>();
             foreach (var entry in entries.Tutorials)
                 Entries.Add(entry.Name, new TutorialEntry { Text = entry.Text, Shown = false });
+        }
+
+        public void ResetTutorials()
+        {
+            foreach (var entry in Entries)
+                entry.Value.Shown = false;
         }
 
         public void ShowTutorial(String Name)
