@@ -121,6 +121,8 @@ namespace DwarfCorp.GameStates
 
         public void AutoSelectSpawnRegion()
         {
+            LoadingMessage = "Selecting spawn.";
+            Settings.WorldOrigin = Settings.WorldGenerationOrigin;
             bool inWater = true;
             do
             {
@@ -129,7 +131,8 @@ namespace DwarfCorp.GameStates
                 inWater = Overworld.Map[center.X, center.Y].Height < Settings.SeaLevel;
                 if (inWater)
                 {
-                    Settings.WorldGenerationOrigin = new Vector2(MathFunctions.Rand(0, Settings.Width), MathFunctions.Rand(0, Settings.Height));
+                    Settings.WorldGenerationOrigin = new Vector2(MathFunctions.Rand(rect.Width + 1, Settings.Width - rect.Width), MathFunctions.Rand(rect.Height + 1, Settings.Height));
+                    Settings.WorldOrigin = Settings.WorldGenerationOrigin;
                 }
             } while (inWater);
         }
