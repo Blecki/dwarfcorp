@@ -118,7 +118,22 @@ namespace DwarfCorp.GameStates
             if (genThread != null && genThread.IsAlive)
                 genThread.Abort();
         }
-                
+
+        public void AutoSelectSpawnRegion()
+        {
+            bool inWater = true;
+            do
+            {
+                Rectangle rect = GetSpawnRectangle();
+                var center = rect.Center;
+                inWater = Overworld.Map[center.X, center.Y].Height < Settings.SeaLevel;
+                if (inWater)
+                {
+                    Settings.WorldGenerationOrigin = new Vector2(MathFunctions.Rand(0, Settings.Width), MathFunctions.Rand(0, Settings.Height));
+                }
+            } while (inWater);
+        }
+
         public List<Faction> GetFactionsInSpawn()
         {
             Rectangle spawnRect = GetSpawnRectangle();
@@ -371,6 +386,9 @@ namespace DwarfCorp.GameStates
                     Overworld.Map[0, y] = Overworld.Map[1, y];
                     Overworld.Map[width - 1, y] = Overworld.Map[width - 2, y];
                 }
+
+                LoadingMessage = "Selecting Spawn Point";
+                AutoSelectSpawnRegion();
 
                 CurrentState = GenerationState.Finished;
                 LoadingMessage = "";
