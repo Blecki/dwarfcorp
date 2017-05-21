@@ -463,8 +463,7 @@ namespace DwarfCorp
                         if (Creature.Allies == "Dwarf")
                         {
                             Manager.World.MakeAnnouncement(String.Format("{0} ({1}) refuses to work!",
-                                Stats.FullName, Stats.CurrentLevel.Name),
-                                "Our employee is unhappy, and would rather not work!", ZoomToMe);
+                                Stats.FullName, Stats.CurrentLevel.Name), ZoomToMe);
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                         }
                         CurrentTask = null;
@@ -523,8 +522,6 @@ namespace DwarfCorp
                     lastXPAnnouncement = Stats.XP;
                     Manager.World.MakeAnnouncement(String.Format("{0} ({1}) wants a promotion!",
                             Stats.FullName, Stats.CurrentLevel.Name),
-                        String.Format("{0} can now be promoted to {1}.",
-                            Stats.FullName, Stats.CurrentClass.Levels[Stats.LevelIndex + 1].Name),
                         () => Manager.World.Game.StateManager.PushState(new NewEconomyState(Manager.World.Game, Manager.World.Game.StateManager, Manager.World)),
                     ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
                 }
@@ -819,8 +816,6 @@ namespace DwarfCorp
                     if (Faction == Manager.World.PlayerFaction)
                     {
                         Manager.World.MakeAnnouncement(
-                            String.Format("{0} is fighting {1}!", Stats.FullName,
-                                TextGenerator.IndefiniteArticle(enemy.Creature.Name)),
                             String.Format("{0} the {1} is fighting {2} {3}", Stats.FullName,
                                 Stats.CurrentLevel.Name,
                                 TextGenerator.IndefiniteArticle(enemy.Stats.CurrentLevel.Name),

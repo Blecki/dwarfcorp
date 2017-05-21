@@ -75,6 +75,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public WorldManager World { get; set; }
 
+
         protected void OnDeserialized(StreamingContext context)
         {
             World = (WorldManager) (context.Context);
@@ -245,8 +246,7 @@ namespace DwarfCorp
                 {
                     if (!noMoney)
                     {
-                        World.MakeAnnouncement("We're bankrupt!",
-                            "If we don't make a profit by tomorrow, our stock will crash!");
+                        World.MakeAnnouncement("If we don't make a profit by tomorrow, our stock will crash!");
                         SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                     }
                     noMoney = true;
@@ -257,7 +257,7 @@ namespace DwarfCorp
                 }
             }
 
-            World.MakeAnnouncement("Pay day!", String.Format("We paid our employees {0} today.",
+            World.MakeAnnouncement(String.Format("We paid our employees {0} today.",
                 total), null, ContentPaths.Audio.change);
         }
 
@@ -298,11 +298,6 @@ namespace DwarfCorp
 
         public void Update(DwarfGame game, DwarfTime time)
         {
-            //if (CurrentToolMode != ToolMode.God)
-            //{
-            //    CurrentToolMode = ToolBar.CurrentMode;
-            //}
-
             CurrentTool.Update(game, time);
 
             if (!World.Paused)
@@ -313,6 +308,7 @@ namespace DwarfCorp
             {
                 CameraController.LastWheel = Mouse.GetState().ScrollWheelValue;
             }
+
             UpdateInput(game, time);
 
             if (Faction.Minions.Any(m => m.IsDead && m.TriggersMourning))
@@ -331,8 +327,7 @@ namespace DwarfCorp
                 if (deadMinion != null)
                 {
                     World.MakeAnnouncement(
-                        String.Format("{0} ({1}) died!", deadMinion.Stats.FullName, deadMinion.Stats.CurrentLevel.Name),
-                        "One of our employees has died!");
+                        String.Format("{0} ({1}) died!", deadMinion.Stats.FullName, deadMinion.Stats.CurrentLevel.Name));
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
                     Faction.Economy.Company.StockPrice -= MathFunctions.Rand(0, 0.5f);
                 }

@@ -1,0 +1,12 @@
+{
+	"Tutorials": [
+		{ 
+			"Name": "new game start",
+			"Text": "Welcome to Dwarf Corp! I'll show you information about new things you encounter. You can turn this tutorial off at any time and I won't bother you again. You can also control this tutorial from the settings menu. Why don't you try selecting a dwarf? The selector tool is at the left end of the tray at the bottom."
+		},
+		{
+			"Name": "dwarf selected",
+			"Text": "It looks like you've selected a dwarf! You can order your employee to do something using the tools in the tray at the bottom of the screen."
+		}
+	]
+}

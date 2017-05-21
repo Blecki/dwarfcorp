@@ -140,6 +140,21 @@ namespace DwarfCorp
         // Handles interfacing with the player and sending commands to dwarves
         public GameMaster Master = null;
 
+        public Goals.GoalManager GoalManager;
+
+        #region Tutorial Hooks
+
+        public Tutorial.TutorialManager TutorialManager;
+        public Action<String, Action<bool>> GuiHook_ShowTutorialPopup;
+        
+        public void Tutorial(String Name)
+        {
+            if (TutorialManager != null)
+                TutorialManager.ShowTutorial(Name);
+        }
+
+        #endregion
+
         // If the game was loaded from a file, this contains the name of that file.
         public string ExistingFile = "";
 
@@ -229,19 +244,16 @@ namespace DwarfCorp
         public Point3 WorldSize { get; set; }
 
         // More statics. Hate this.
-        public Action<String, String, Action> OnAnnouncement;
+        public Action<String, Action> OnAnnouncement;
 
-        public void MakeAnnouncement(String Title, String Message, Action ClickAction = null, string sound = null)
+        public void MakeAnnouncement(String Message, Action ClickAction = null, string sound = null)
         {
             if (OnAnnouncement != null)
-                OnAnnouncement(Title, Message, ClickAction);
+                OnAnnouncement(Message, ClickAction);
 
             if (!string.IsNullOrEmpty(sound))
-            {
                 SoundManager.PlaySound(sound, 0.5f);
-            }
         }
-
 
         public MonsterSpawner MonsterSpawner { get; set; }
 
@@ -786,6 +798,25 @@ namespace DwarfCorp
                 WorldScale = gameFile.Data.Metadata.WorldScale;
                 GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
                 GameSettings.Default.ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
+
+                // Load saved goals from file here.
+                GoalManager = new Goals.GoalManager();
+                gameFile.LoadGoals(ExistingFile, this);
+                GoalManager.Initialize(gameFile.Data.Goals);
+
+                TutorialManager = new Tutorial.TutorialManager("Content/tutorial.txt");
+                gameFile.LoadTutorial(ExistingFile, this);
+                TutorialManager.SetFromSaveData(gameFile.Data.TutorialSaveData);
+                
+            }
+            else
+            {
+                // Initialize goal manager here.
+                GoalManager = new Goals.GoalManager();
+                GoalManager.Initialize(new List<Goals.Goal>());
+
+                TutorialManager = new Tutorial.TutorialManager("Content/tutorial.txt");
+                Tutorial("new game start");
             }
         }
 
@@ -1273,6 +1304,8 @@ namespace DwarfCorp
                     Game.GraphicsDevice.Viewport.Height / 2);
 
             Master.Update(Game, gameTime);
+            GoalManager.Update(this);
+            TutorialManager.Update(GuiHook_ShowTutorialPopup);
             Time.Update(gameTime);
 
 

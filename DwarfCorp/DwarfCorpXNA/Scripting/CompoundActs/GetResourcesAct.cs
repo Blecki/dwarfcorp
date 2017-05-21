@@ -122,7 +122,7 @@ namespace DwarfCorp
                     if (Resources.Any(r => r.ResourceType == Resource.ResourceTags.Edible) && Agent.Faction == Agent.World.PlayerFaction)
                     {
 
-                        Agent.Manager.World.MakeAnnouncement("We're out of food!", "Our stockpiles don't have any food. Our employees will starve!");
+                        Agent.Manager.World.MakeAnnouncement("We're out of food!");
                         SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                     }
                     Tree = null;

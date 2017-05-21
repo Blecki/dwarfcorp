@@ -64,13 +64,32 @@ namespace DwarfCorp.GameStates
             });
             
 
-            var financePanel = tabPanel.AddTab("Finance", new NewGui.FinancePanel
+            //var financePanel = tabPanel.AddTab("Finance", new NewGui.FinancePanel
+            //{
+            //    Border = "border-thin",
+            //    Padding = new Margin(4, 4, 0, 0),
+            //    Economy = World.PlayerEconomy
+            //});
+
+            tabPanel.AddTab("Available Goals", new NewGui.GoalPanel
             {
-                Border = "border-thin",
-                Padding = new Margin(4, 4, 0, 0),
-                Economy = World.PlayerEconomy
+                GoalSource = World.GoalManager.EnumerateGoals().Where(g =>
+                    g.State == Goals.GoalState.Available),
+                World = World
             });
 
+            tabPanel.AddTab("Active Goals", new NewGui.GoalPanel
+            {
+                GoalSource = World.GoalManager.EnumerateGoals().Where(g =>
+                    g.State == Goals.GoalState.Active && g.GoalType != Goals.GoalTypes.Achievement)
+            });
+
+            tabPanel.AddTab("Completed Goals", new NewGui.GoalPanel
+            {
+                GoalSource = World.GoalManager.EnumerateGoals().Where(g =>
+                    g.State == Goals.GoalState.Complete)
+            });
+            
             tabPanel.SelectedTab = 0;
             
             GuiRoot.RootItem.Layout();

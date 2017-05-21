@@ -149,38 +149,6 @@ namespace DwarfCorp.GameStates
             });
         }
 
-        private class MockTradeEntity : Trade.ITradeEntity
-        {
-            public DwarfBux Money { get; set; }
-            public List<ResourceAmount> Resources { get; set; }
-            public int AvailableSpace { get; set; }
-            public Race TraderRace { get { return null; } }
-            public DwarfBux ComputeValue(List<ResourceAmount> Resources)
-            {
-                return Resources.Sum(r => (decimal)r.NumResources * ComputeValue(r.ResourceType));
-            }
-
-            public DwarfBux ComputeValue(ResourceLibrary.ResourceType ResourceType)
-            {
-                return ResourceLibrary.GetResourceByName(ResourceType).MoneyValue;
-            }
-
-            public void RemoveResources(List<ResourceAmount> Resources)
-            {
-                throw new NotImplementedException();
-            }
-
-            public void AddResources(List<ResourceAmount> Resources)
-            {
-                throw new NotImplementedException();
-            }
-
-            public void AddMoney(DwarfBux Money)
-            {
-                throw new NotImplementedException();
-            }
-        }
-
         public void MakeMenu()
         {
             GuiRoot.RootItem.Clear();
@@ -192,41 +160,9 @@ namespace DwarfCorp.GameStates
                     var pane = GuiRoot.ConstructWidget(new ShowTextureDialog());
                     GuiRoot.ShowDialog(pane);
                     GuiRoot.RootItem.Layout();
-                });   
-
-            MakeMenuItem(frame, "BACK", "Goodbye.", (sender, args) => StateManager.PopState());
-
-            MakeMenuItem(frame, "DIPLOMACY", "FUCK", (sender, args) =>
-            {
-                var playerFaction = new MockTradeEntity();
-                playerFaction.Resources = new List<ResourceAmount>(new ResourceAmount[] { (new ResourceAmount(ResourceLibrary.ResourceType.Ale, 10)) });
-                playerFaction.Money = 1000m;
-                playerFaction.AvailableSpace = 100;
-
-                var envoyFaction = new MockTradeEntity();
-                envoyFaction.Resources = new List<ResourceAmount>();
-                envoyFaction.Resources.Add(new ResourceAmount(ResourceLibrary.ResourceType.Ale, 10));
-                envoyFaction.Resources.Add(new ResourceAmount(ResourceLibrary.ResourceType.Berry, 10));
-                envoyFaction.Resources.Add(new ResourceAmount(ResourceLibrary.ResourceType.Bones, 10));
-                envoyFaction.Resources.Add(new ResourceAmount("Ruby", 10));
-                for (int i = 0; i < 20; i++)
-                {
-                    envoyFaction.Resources.Add(new ResourceAmount(ResourceLibrary.GenerateTrinket(ResourceLibrary.ResourceType.Bones, 1.0f)));
-                }
-                envoyFaction.Money = 1000m;
-
-                var pane = GuiRoot.ConstructWidget(new NewGui.TradePanel
-                {
-                    Player = playerFaction,
-                    Envoy = envoyFaction,
-                    Rect = GuiRoot.RenderData.VirtualScreen
                 });
 
-                GuiRoot.ShowDialog(pane);
-                GuiRoot.RootItem.Layout();
-            });
-
-            GuiRoot.RootItem.Layout();
+            MakeMenuItem(frame, "BACK", "Goodbye.", (sender, args) => StateManager.PopState());
         }
 
         private Gum.Widget CreateTray(IEnumerable<Widget> Icons)

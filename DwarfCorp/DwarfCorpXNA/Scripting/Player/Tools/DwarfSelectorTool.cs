@@ -147,6 +147,8 @@ namespace DwarfCorp
                 {
                     Player.SelectedMinions.Add(body.GetComponent<CreatureAI>());
                     newDwarves.Add(body.GetComponent<CreatureAI>());
+
+                    Player.World.Tutorial("dwarf selected");
                 }
             }
             OnConfirm(newDwarves);

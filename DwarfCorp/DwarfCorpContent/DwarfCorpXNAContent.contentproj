@@ -1607,6 +1607,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>particles</Name>
     </Content>
+    <None Include="tutorial.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>tutorial</Name>
+    </None>
     <Content Include="Text\personality.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>personality</Name>

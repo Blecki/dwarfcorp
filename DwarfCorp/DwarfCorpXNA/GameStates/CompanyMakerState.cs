@@ -115,6 +115,8 @@ namespace DwarfCorp.GameStates
             var mainPanel = GuiRoot.RootItem.AddChild(new Gum.Widget
             {
                 Rect = rect,
+                MinimumSize = new Point(512, 256),
+                AutoLayout = AutoLayout.FloatCenter,
                 Border = "border-fancy",
                 Padding = new Margin(4, 4, 4, 4),
                 InteriorMargin = new Margin(2,0,0,0),

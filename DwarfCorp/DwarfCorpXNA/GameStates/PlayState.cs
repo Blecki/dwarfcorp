@@ -52,6 +52,7 @@ namespace DwarfCorp.GameStates
         private NewGui.InfoTray InfoTray;
         private NewGui.ToggleTray BrushTray;
         private NewGui.GodMenu GodMenu;
+        private AnnouncementPopup Announcer;
 
         private class ToolbarItem
         {
@@ -164,6 +165,25 @@ namespace DwarfCorp.GameStates
                     Text = text,
                     Rect = new Rectangle(GuiRoot.MousePosition.X + 32, GuiRoot.MousePosition.Y + 32, 1, 1)
                 }, Gum.Root.PopupExclusivity.DestroyExistingPopups);
+
+                World.GuiHook_ShowTutorialPopup += (text, callback) =>
+                {
+                    var popup = GuiRoot.ConstructWidget(new NewGui.TutorialPopup
+                    {
+                        Message = text,
+                        OnClose = (sender) =>
+                        {
+                            callback((sender as TutorialPopup).DisableChecked);
+                        },
+                        OnLayout = (sender) =>
+                        {
+                            sender.Rect.X = GuiRoot.RenderData.VirtualScreen.Width - sender.Rect.Width;
+                            sender.Rect.Y = 64;
+                        }
+                    });                   
+
+                    GuiRoot.ShowDialog(popup);
+                };
 
                 World.gameState = this;
                 World.OnLoseEvent += World_OnLoseEvent;
@@ -301,12 +321,16 @@ namespace DwarfCorp.GameStates
                 //Game.GraphicsDevice.SetRenderTarget(null);
                 //tex.SaveAsPng(new FileStream("voxels.png", FileMode.Create),  256, 256);
                 //Game.Exit();
-                MinimapRenderer.PreRender(gameTime, DwarfGame.SpriteBatch);
+
+
+                if (!MinimapFrame.Hidden && !GuiRoot.RootItem.Hidden)
+                    MinimapRenderer.PreRender(gameTime, DwarfGame.SpriteBatch);
+
                 World.Render(gameTime);
 
                 if (Game.StateManager.CurrentState == this)
                 {
-                    if (!MinimapFrame.Hidden)
+                    if (!MinimapFrame.Hidden && !GuiRoot.RootItem.Hidden)
                         MinimapRenderer.Render(new Rectangle(0, GuiRoot.RenderData.VirtualScreen.Bottom - 192, 192, 192), GuiRoot);
                     GuiRoot.Draw();
                 }
@@ -483,17 +507,17 @@ namespace DwarfCorp.GameStates
 
             #region Minimap
 
-            // Little hack here - Normally this button his hidden by the minimap. Hide the minimap and it 
-            // becomes visible! 
-            // Todo: Doh, doesn't actually work.
-            GuiRoot.RootItem.AddChild(new Gum.Widget
+            var minimapRestoreButton = GuiRoot.RootItem.AddChild(new Gum.Widget
             {
                 AutoLayout = global::Gum.AutoLayout.FloatBottomLeft,
                 Background = new Gum.TileReference("round-buttons", 3),
                 MinimumSize = new Point(16, 16),
                 MaximumSize = new Point(16, 16),
+                Hidden = true,
                 OnClick = (sender, args) =>
                 {
+                    sender.Hidden = true;
+                    sender.Invalidate();
                     MinimapFrame.Hidden = false;
                     MinimapFrame.Invalidate();
                 }
@@ -505,7 +529,8 @@ namespace DwarfCorp.GameStates
             MinimapFrame = GuiRoot.RootItem.AddChild(new NewGui.MinimapFrame
             {
                 AutoLayout = global::Gum.AutoLayout.FloatBottomLeft,
-                Renderer = MinimapRenderer
+                Renderer = MinimapRenderer,
+                RestoreButton = minimapRestoreButton
             }) as NewGui.MinimapFrame;
             #endregion
 
@@ -565,22 +590,18 @@ namespace DwarfCorp.GameStates
 
             #region Announcer and info tray
 
-            World.OnAnnouncement = (title, message, clickAction) =>
+            Announcer = GuiRoot.RootItem.AddChild(new AnnouncementPopup
             {
-                var announcer = GuiRoot.RootItem.AddChild(new NewGui.AnnouncementPopup
+                OnLayout = (sender) =>
                 {
-                    Text = title,
-                    Message = message,
-                    OnClick = (sender, args) => { if (clickAction != null) clickAction(); },
-                    Rect = new Rectangle(
-                        GameSpeedControls.Rect.X - 128,
-                        GameSpeedControls.Rect.Y - 128,
-                        GameSpeedControls.Rect.Width + 128,
-                        128)
-                });
+                    sender.Rect = new Rectangle(GameSpeedControls.Rect.X - 128,
+                        GameSpeedControls.Rect.Y - 128, GameSpeedControls.Rect.Width + 128, 128);
+                }
+            }) as AnnouncementPopup;
 
-                // Make the announcer stay behind other controls.
-                GuiRoot.RootItem.SendToBack(announcer);
+            World.OnAnnouncement = (message, clickAction) =>
+            {
+                Announcer.QueueAnnouncement(message, clickAction);
             };
 
             InfoTray = GuiRoot.RootItem.AddChild(new NewGui.InfoTray
@@ -1296,6 +1317,7 @@ namespace DwarfCorp.GameStates
                 if (index == 0 && Master.SelectedMinions.Count == 0)
                 {
                     Master.SelectedMinions.AddRange(Master.Faction.Minions);
+                    World.Tutorial("dwarf selected");
                 }
 
                 if (index == 0 || Master.SelectedMinions.Count > 0)
@@ -1405,7 +1427,8 @@ namespace DwarfCorp.GameStates
                         GuiRoot.ResetGui();
                         CreateGUIComponents();
                         OpenPauseMenu();
-                    }
+                    },
+                    World = World
                 };
 
                 StateManager.PushState(state);

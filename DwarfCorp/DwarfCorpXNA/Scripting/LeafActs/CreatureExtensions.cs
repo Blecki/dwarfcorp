@@ -64,7 +64,7 @@ namespace DwarfCorp
             if (foods.Count == 0 && agent.Allies == "Dwarf")
             {
 
-                agent.Manager.World.MakeAnnouncement("We're out of food!", "Our stockpiles don't have any food. Our employees will starve!");
+                agent.Manager.World.MakeAnnouncement("We're out of food!");
                 SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                 yield return Act.Status.Fail;
                 yield break;
@@ -83,7 +83,7 @@ namespace DwarfCorp
                     agent.NoiseMaker.MakeNoise("Chew", agent.AI.Position);
                     if (bodies.Count == 0)
                     {
-                        agent.Manager.World.MakeAnnouncement("We're out of food!", "Our stockpiles don't have any food. Our employees will starve!");
+                        agent.Manager.World.MakeAnnouncement("We're out of food!");
                         SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                         yield return Act.Status.Fail;
                     }
@@ -127,8 +127,12 @@ namespace DwarfCorp
 
                 if (agent.Allies == "Dwarf")
                 {
+<<<<<<< HEAD
+                    agent.Manager.World.MakeAnnouncement("Our stockpiles don't have any food. Our employees will starve!");
+=======
                     agent.Manager.World.MakeAnnouncement("We're out of food!", "Our stockpiles don't have any food. Our employees will starve!");
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
+>>>>>>> d00c96c811e5559197158a0b31e018c5ccc324e3
                 }
                 yield return Act.Status.Fail;
                 yield break;
@@ -159,8 +163,12 @@ namespace DwarfCorp
 
                 if (agent.Allies == "Dwarf")
                 {
+<<<<<<< HEAD
+                    agent.Manager.World.MakeAnnouncement("Our stockpiles don't have any food. Our employees will starve!");
+=======
                     agent.Manager.World.MakeAnnouncement("We're out of food!", "Our stockpiles don't have any food. Our employees will starve!");
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
+>>>>>>> d00c96c811e5559197158a0b31e018c5ccc324e3
                 }
 
                 yield return Act.Status.Fail;
@@ -245,17 +253,15 @@ namespace DwarfCorp
             while(true)
             {
                 // Get the voxel stored in the agent's blackboard.
-                Voxel blackBoardVoxel = agent.AI.Blackboard.GetData<Voxel>(voxel);
+                var vox = agent.AI.Blackboard.GetData<Voxel>(voxel);
 
                 // Somehow, there wasn't a voxel to mine.
-                if(blackBoardVoxel == null)
+                if(vox == null)
                 {
                     agent.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                     yield return Act.Status.Fail;
                     break;
                 }
-
-                Voxel vox = blackBoardVoxel;
 
                 // If the voxel has already been destroyed, just ignore it and return.
                 if(vox.Health <= 0.0f || !agent.Faction.IsDigDesignation(vox))
@@ -297,6 +303,11 @@ namespace DwarfCorp
                 // If the voxel has been destroyed by you, gather it.
                 if (vox.Health <= 0.0f)
                 {
+                    var voxelType = VoxelLibrary.GetVoxelType(vox.TypeName);
+                    agent.AI.AddXP(Math.Max((int)(voxelType.StartingHealth / 4), 1));
+                    agent.Stats.NumBlocksDestroyed++;
+                    agent.World.GoalManager.OnGameEvent(new Goals.Events.DigBlock(voxelType, agent));
+
                     List<Body> items = vox.Kill();
 
                     if (items != null)
@@ -305,9 +316,7 @@ namespace DwarfCorp
                         {
                             agent.Gather(item);
                         }
-                    }
-                    agent.AI.AddXP(Math.Max((int)(VoxelLibrary.GetVoxelType(blackBoardVoxel.TypeName).StartingHealth / 4), 1));
-                    agent.Stats.NumBlocksDestroyed++;
+                    }                   
                 }
 
                 // Wait until the animation is done playing before continuing.
