@@ -362,7 +362,8 @@ namespace DwarfCorp.GameStates
                 MinimumSize = new Point(32, 32),
                 MaximumSize = new Point(32, 32),
                 AutoLayout = Gum.AutoLayout.None,
-                CompanyInformation = World.PlayerCompany.Information
+                CompanyInformation = World.PlayerCompany.Information,
+                Tooltip = "Company information"
             });
 
             GuiRoot.RootItem.AddChild(new Gum.Widget
@@ -400,13 +401,15 @@ namespace DwarfCorp.GameStates
                 AutoLayout = global::Gum.AutoLayout.DockFill,
                 Font = "outline-font",
                 TextVerticalAlign = global::Gum.VerticalAlign.Center,
-                TextColor = new Vector4(1, 1, 1, 1)
+                TextColor = new Vector4(1, 1, 1, 1),
+                Tooltip = "Amount of money in our treasury"
             });
 
             var stockRow = infoPanel.AddChild(new Gum.Widget
             {
                 MinimumSize = new Point(0, 34),
-                AutoLayout = global::Gum.AutoLayout.DockTop
+                AutoLayout = global::Gum.AutoLayout.DockTop,
+                Tooltip = "Current stock price."
             });
 
             stockRow.AddChild(new Gum.Widget
@@ -414,7 +417,8 @@ namespace DwarfCorp.GameStates
                 Background = new Gum.TileReference("resources", 41),
                 MinimumSize = new Point(32, 32),
                 MaximumSize = new Point(32, 32),
-                AutoLayout = global::Gum.AutoLayout.DockLeft
+                AutoLayout = global::Gum.AutoLayout.DockLeft,
+                Tooltip = "Current stock price."
             });
 
             StockLabel = stockRow.AddChild(new Gum.Widget
@@ -423,7 +427,8 @@ namespace DwarfCorp.GameStates
                 AutoLayout = global::Gum.AutoLayout.DockFill,
                 Font = "outline-font",
                 TextVerticalAlign = global::Gum.VerticalAlign.Center,
-                TextColor = new Vector4(1, 1, 1, 1)
+                TextColor = new Vector4(1, 1, 1, 1),
+                Tooltip = ""
             });
 
             var levelRow = infoPanel.AddChild(new Gum.Widget
@@ -437,10 +442,11 @@ namespace DwarfCorp.GameStates
                 Background = new Gum.TileReference("resources", 42),
                 MinimumSize = new Point(32, 32),
                 MaximumSize = new Point(32, 32),
-                AutoLayout = global::Gum.AutoLayout.DockLeft
+                AutoLayout = global::Gum.AutoLayout.DockLeft,
+                Tooltip = "Current viewing level."
             });
 
-            levelRow.AddChild(new Gum.Widget
+            levelRow.AddChild(new Gum.Widgets.ImageButton
             {
                 Background = new Gum.TileReference("round-buttons", 7),
                 MinimumSize = new Point(16, 16),
@@ -452,10 +458,11 @@ namespace DwarfCorp.GameStates
                     World.ChunkManager.ChunkData.SetMaxViewingLevel(
                         World.ChunkManager.ChunkData.MaxViewingLevel - 1,
                         ChunkManager.SliceMode.Y);
-                }
+                },
+                Tooltip = "Go up down one viewing level."
             });
 
-            levelRow.AddChild(new Gum.Widget
+            levelRow.AddChild(new Gum.Widgets.ImageButton
             {
                 Background = new Gum.TileReference("round-buttons", 3),
                 MinimumSize = new Point(16, 16),
@@ -466,7 +473,8 @@ namespace DwarfCorp.GameStates
                     World.ChunkManager.ChunkData.SetMaxViewingLevel(
                         World.ChunkManager.ChunkData.MaxViewingLevel + 1,
                         ChunkManager.SliceMode.Y);
-                }
+                },
+                Tooltip = "Go down up one viewing level."
             });
 
             LevelLabel = levelRow.AddChild(new Gum.Widget
@@ -475,7 +483,8 @@ namespace DwarfCorp.GameStates
                 Font = "outline-font",
                 OnLayout = (sender) => sender.Rect.X += 36,
                 TextVerticalAlign = global::Gum.VerticalAlign.Center,
-                TextColor = new Vector4(1, 1, 1, 1)
+                TextColor = new Vector4(1, 1, 1, 1),
+                Tooltip = "Current viewing level."
             });
             #endregion
 
@@ -501,13 +510,14 @@ namespace DwarfCorp.GameStates
                     sender.Rect.X -= 8;
                     sender.Rect.Y += 8;
                 },
+                Tooltip = "Current time/date."
             });
             #endregion
 
 
             #region Minimap
 
-            var minimapRestoreButton = GuiRoot.RootItem.AddChild(new Gum.Widget
+            var minimapRestoreButton = GuiRoot.RootItem.AddChild(new Gum.Widgets.ImageButton
             {
                 AutoLayout = global::Gum.AutoLayout.FloatBottomLeft,
                 Background = new Gum.TileReference("round-buttons", 3),
@@ -520,7 +530,8 @@ namespace DwarfCorp.GameStates
                     sender.Invalidate();
                     MinimapFrame.Hidden = false;
                     MinimapFrame.Invalidate();
-                }
+                },
+                Tooltip = "Restore minimap"
             });
 
             MinimapRenderer = new NewGui.MinimapRenderer(192, 192, World,
@@ -545,15 +556,17 @@ namespace DwarfCorp.GameStates
                             new NewGui.FramedIcon
                             {
                                 Icon = new Gum.TileReference("tool-icons", 10),
-                                OnClick = (sender, args) => StateManager.PushState(new NewEconomyState(Game, StateManager, World))
-                        },
+                                OnClick = (sender, args) => StateManager.PushState(new NewEconomyState(Game, StateManager, World)),
+                                Tooltip = "Click to open the Economy screen."
+                            },
                            
                         new NewGui.FramedIcon
                         {
                             Icon = new Gum.TileReference("tool-icons", 12),
-                            OnClick = (sender, args) => { OpenPauseMenu(); }
+                            OnClick = (sender, args) => { OpenPauseMenu(); },
+                            Tooltip = "Click to open the Settings screen."
                         }
-                        }
+                        },
             });
             #endregion
 
@@ -573,7 +586,8 @@ namespace DwarfCorp.GameStates
                     PausedWidget.Hidden = !Paused;
                     PausedWidget.Tooltip = "(push " + ControlSettings.Mappings.Pause.ToString() + " to unpause)";
                     PausedWidget.Invalidate();
-                }
+                },
+                Tooltip = "Game speed controls."
             }) as NewGui.GameSpeedControls;
 
             PausedWidget = GuiRoot.RootItem.AddChild(new Widget()
@@ -583,7 +597,7 @@ namespace DwarfCorp.GameStates
                 Tooltip = "(push " + ControlSettings.Mappings.Pause.ToString() + " to unpause)",
                 Font = "outline-font",
                 TextColor = Color.White.ToVector4(),
-                Hidden = true
+                Hidden = true,
             });
 
             #endregion
