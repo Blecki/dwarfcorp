@@ -55,7 +55,8 @@ namespace DwarfCorp
         }
 
         public Shadow(GameComponent parent) :
-            this(parent.Manager, "Shadow", parent, Matrix.CreateRotationX((float)Math.PI * 0.5f) * Matrix.CreateTranslation(Vector3.Down * 0.5f), new SpriteSheet(ContentPaths.Effects.shadowcircle))
+            this(parent.Manager, "Shadow", parent, Matrix.CreateRotationX((float)Math.PI * 0.5f) * 
+            Matrix.CreateTranslation(Vector3.Down * 0.5f), new SpriteSheet(ContentPaths.Effects.shadowcircle))
         {
             GlobalScale = 1.0f;
             var shP = new List<Point>

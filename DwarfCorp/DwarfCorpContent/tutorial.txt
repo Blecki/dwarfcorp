@@ -2,11 +2,51 @@
 	"Tutorials": [
 		{ 
 			"Name": "new game start",
-			"Text": "Welcome to Dwarf Corp! I'll show you information about new things you encounter. You can turn this tutorial off at any time and I won't bother you again. You can also control this tutorial from the settings menu. Why don't you try selecting a dwarf? The selector tool is at the left end of the tray at the bottom."
+			"Text": "Welcome to DwarfCorp! I'll show you information about new things you encounter. You can turn this tutorial off at any time and I won't bother you again. You can also control this tutorial from the settings menu. Why don't you try selecting a dwarf? The selector tool is at the left end of the tray at the bottom."
 		},
 		{
 			"Name": "dwarf selected",
-			"Text": "It looks like you've selected a dwarf! You can order your employee to do something using the tools in the tray at the bottom of the screen."
+			"Text": "You selected a dwarf! You can order your employee to do something using the tools in the tray at the bottom of the screen. When you only have one dwarf selected, you can control it using the movement and jump keys (by default, W.A.S.D and C). You can tell a dwarf to go somewhere by right clicking. Left click anywhere to unselect all dwarves. Select all dwarves again by pushing the \"1\" key. Selecting dwarves reveals the actions they can take on the tool tray at the bottom of the screen."
+		},
+		{
+			"Name": "mine",
+			"Text": "Left click and drag to tell dwarves to mine blocks. Mining sometimes produces resources for trading and building. Tip: hold ALT and use the mouse wheel to dig pits. Right click and drag to cancel mine designations. When your employee collects resources, the dwarf will take them to a stockpile to store them."
+		},
+		{
+			"Name": "slice",
+			"Text": "You can view slices of blocks beneath the earth. The most valuable resources are underground, and dwarves prefer living in the dark. Push the Slice key (by default Q) to slice the terrain at the mouse cursor. You can also slice terrain using the slice buttons in the top left of the screen, or by controlling a single dwarf and going underground. While controlling a single dwarf, slicing is automatic and can't be controlled directly."
+		},
+		{
+			"Name" : "unslice",
+			"Text": "Push the Unslice key (by default, E) to reveal all the terrain."
+		},
+		{
+			"Name" : "build blocks",
+			"Text" : "Left click and drag to tell dwarves to place blocks. You can only build blocks that you have resources for. When there aren't enough resources, the blocks will turn red. You can cancel placing blocks by right clicking and dragging."
+		},
+		{
+			"Name" : "build items",
+			"Text" : "Left click and drag to tell dwarves to build items. You can only build items you have resources for. When there aren't enough resources, the item will turn red. Once you click, a work pile will be created. The dwarf will gather the resources and build the item at the work pile."
+		},
+		{
+			"Name" : "build crafts",
+			"Text" : "You told one of your employees to craft an item. The dwarf will now attempt to gather the resources for the item and will build it in the workshop. The item will appear in the stockpile once the dwarf is finished."
+		},
+		{
+			"Name" : "cook",
+			"Text" : "Dwarves can cook meals, bake bread or brew ale in the kitchen. You can select which food items you want to use for the dwarf to cook with. Meals provide more happiness and relieve hunger more than raw foods. Dwarves must eat to survive and stay happy. Once you select a food, the dwarf will gather the resources from your stockpiles and go cook it in the kitchen."
+		},
+		{
+			"Name" : "till",
+			"Text" : "Left click and drag to tell dwarves to till soil or grass. Dwarves cannot till sand, stone or permafrost. Once soil has been tilled, you can plant seeds in the soil. Some seeds only grow underground. Others grow above ground. Right click and drag to cancel soil tilling."
+		},
+		{
+			"Name" : "plant",
+			"Text" : "Left click and drag on any tilled soil to plant seeds. Seeds will eventually grow into plants that can be harvested."
+		},
+		{
+			"Name" : "harvest",
+			"Text" : "Left Click and drag over any plant that is growing in tilled soil to harvest it. You can also do this using the Chop tool."
 		}
 	]
 }

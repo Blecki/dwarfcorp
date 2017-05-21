@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
+using DwarfCorp.NewGui;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -59,22 +60,6 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
-            /*if (BuildPanel != null && BuildPanel.Root != null)
-                BuildPanel.Close();
-
-            BuildPanel = Player.World.NewGui.ConstructWidget(new NewGui.BuildMenu
-                {
-                    Master = Player,
-                    BuildType = BuildType
-                }) as NewGui.BuildMenu;
-
-            Player.World.NewGui.ShowDialog(BuildPanel);
-            
-            Player.Faction.CraftBuilder.IsEnabled = false;
-
-            Player.World.Paused = true;
-            */
-
             Player.Faction.RoomBuilder.OnEnter();
         }
 

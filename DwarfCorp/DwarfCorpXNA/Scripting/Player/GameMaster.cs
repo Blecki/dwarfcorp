@@ -475,17 +475,20 @@ namespace DwarfCorp
         {
             if(key == ControlSettings.Mappings.SliceUp)
             {
+                World.Tutorial("unslice");
                 World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
             }
 
             else if(key == ControlSettings.Mappings.SliceDown)
             {
+                World.Tutorial("unslice");
                 World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
             }
             else if (key == ControlSettings.Mappings.SliceSelected)
             {
                 if (VoxSelector.VoxelUnderMouse != null)
                 {
+                    World.Tutorial("unslice");
                     World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Position.Y,
                         ChunkManager.SliceMode.Y);
                     Drawer3D.DrawBox(VoxSelector.VoxelUnderMouse.GetBoundingBox(), Color.White, 0.15f, true);

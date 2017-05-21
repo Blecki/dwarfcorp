@@ -750,6 +750,7 @@ namespace DwarfCorp.GameStates
                                         Master.Faction.CraftBuilder.IsEnabled = false;
                                         ChangeTool(GameMaster.ToolMode.Build);
                                         World.ShowToolPopup("Click and drag to build " + data.Name);
+                                        World.Tutorial("build items");
                                     },
                                     OnConstruct = (sender) =>
                                     {
@@ -804,6 +805,7 @@ namespace DwarfCorp.GameStates
                                                 Master.Faction.CraftBuilder.IsEnabled = false;
                                                 ChangeTool(GameMaster.ToolMode.Build);
                                                 World.ShowToolPopup("Click and drag to build " + data.Name + " wall.");
+                                                World.Tutorial("build blocks");
                                             },
                                             Hidden = false
                                         });
@@ -905,6 +907,7 @@ namespace DwarfCorp.GameStates
                                             TaskManager.AssignTasks(assignments, minions);
                                             World.ShowToolPopup(data.CurrentVerb + " one " + data.Name);
                                         }
+                                        World.Tutorial("build crafts");
                                     },
                                     OnConstruct = (sender) =>
                                     {
@@ -964,6 +967,7 @@ namespace DwarfCorp.GameStates
                                             TaskManager.AssignTasks(assignments, minions);
                                             World.ShowToolPopup(data.CurrentVerb + " one " + data.Name);
                                         }
+                                        World.Tutorial("cook");
                                     },
                                     OnConstruct = (sender) =>
                                     {
@@ -1003,6 +1007,7 @@ namespace DwarfCorp.GameStates
                             Master.Faction.SelectedMinions.Any(minion =>
                                 minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Gather))));
                             AddToolSelectIcon(GameMaster.ToolMode.Gather, sender);
+                            World.Tutorial("gather");
                         }
                     },
                     #endregion
@@ -1019,6 +1024,7 @@ namespace DwarfCorp.GameStates
                             Master.Faction.SelectedMinions.Any(minion =>
                                 minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Chop))));
                             AddToolSelectIcon(GameMaster.ToolMode.Chop, sender);
+                            World.Tutorial("chop");
                         }
                     },
                     #endregion
@@ -1035,6 +1041,7 @@ namespace DwarfCorp.GameStates
                             Master.Faction.SelectedMinions.Any(minion =>
                                 minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Guard))));
                             AddToolSelectIcon(GameMaster.ToolMode.Guard, sender);
+                            World.Tutorial("guard");
                         }
                     },
                     #endregion
@@ -1051,6 +1058,7 @@ namespace DwarfCorp.GameStates
                             Master.Faction.SelectedMinions.Any(minion =>
                                 minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack))));
                             AddToolSelectIcon(GameMaster.ToolMode.Attack, sender);
+                            World.Tutorial("attack");
                         }
                     },
                     #endregion
@@ -1086,6 +1094,7 @@ namespace DwarfCorp.GameStates
                                         World.ShowToolPopup("Click and drag to till soil.");
                                         ChangeTool(GameMaster.ToolMode.Farm);
                                         ((FarmTool)(Master.Tools[GameMaster.ToolMode.Farm])).Mode = FarmTool.FarmMode.Tilling;
+                                        World.Tutorial("till");
                                     },
                                     ExpansionChild = new Widget()
                                     {
@@ -1133,6 +1142,7 @@ namespace DwarfCorp.GameStates
                                                                     new
                                                                         ResourceAmount(resource.ResourceType)
                                                                 };
+                                                            World.Tutorial("plant");
                                                         },
                                                         ExpansionChild = new NewGui.PlantInfo()
                                                         {
@@ -1162,7 +1172,14 @@ namespace DwarfCorp.GameStates
                                         Border = "border-fancy",
                                         Text = "Harvest Plants.\n Click and drag to harvest plants.",
                                         Rect = new Rectangle(0, 0, 256, 128),
-                                        TextColor = Color.Black.ToVector4()
+                                        TextColor = Color.Black.ToVector4(),
+                                        OnClick = (sender, args) =>
+                                        {
+                                             ChangeTool(GameMaster.ToolMode.Farm);
+                                                            ((FarmTool) (Master.Tools[GameMaster.ToolMode.Farm])).Mode =
+                                                                FarmTool.FarmMode.Harvesting;
+                                            World.Tutorial("harvest");
+                                        }
                                     }
                                 },
 

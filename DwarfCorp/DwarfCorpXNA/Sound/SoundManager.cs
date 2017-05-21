@@ -260,6 +260,12 @@ namespace DwarfCorp
                         Loop = "music_menu",
                         PlayLoopOverIntro = true
                     });
+
+                foreach (var cue in ActiveCues)
+                {
+                    cue.Value.Stop(AudioStopOptions.Immediate);
+                }
+                ActiveCues.Clear();
             }
             catch (NoAudioHardwareException exception)
             {
@@ -286,9 +292,15 @@ namespace DwarfCorp
                 cue = SoundBank.GetCue(sound);
                 ActiveCues[sound] = cue;
             }
-            if (!cue.IsPlaying)
+            if (!cue.IsPlaying && !cue.IsStopped)
             {
                 cue.Play();
+            }
+            else if (cue.IsStopped)
+            {
+                Cue newCue = SoundBank.GetCue(sound);
+                newCue.Play();
+                ActiveCues[sound] = newCue;
             }
         }
 
