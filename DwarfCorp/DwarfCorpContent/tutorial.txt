@@ -26,15 +26,15 @@
 		},
 		{
 			"Name" : "build items",
-			"Text" : "Left click and drag to tell dwarves to build items. You can only build items you have resources for. When there aren't enough resources, the item will turn red. Once you click, a work pile will be created. The dwarf will gather the resources and build the item at the work pile."
+			"Text" : "Left click and drag to tell dwarves to build items. You can only build items you have resources for. When there aren't enough resources, the item will turn red. Once you click, a work pile will be created. The dwarf will gather the resources and build the item at the work pile. NOTE: A workshop is required to build items."
 		},
 		{
 			"Name" : "build crafts",
-			"Text" : "You told one of your employees to craft an item. The dwarf will now attempt to gather the resources for the item and will build it in the workshop. The item will appear in the stockpile once the dwarf is finished."
+			"Text" : "You told one of your employees to craft an item. The dwarf will now attempt to gather the resources for the item and will build it in the workshop. The item will appear in the stockpile once the dwarf is finished. NOTE: a workshop is required to build crafts."
 		},
 		{
 			"Name" : "cook",
-			"Text" : "Dwarves can cook meals, bake bread or brew ale in the kitchen. You can select which food items you want to use for the dwarf to cook with. Meals provide more happiness and relieve hunger more than raw foods. Dwarves must eat to survive and stay happy. Once you select a food, the dwarf will gather the resources from your stockpiles and go cook it in the kitchen."
+			"Text" : "Dwarves can cook meals, bake bread or brew ale in the kitchen. You can select which food items you want to use for the dwarf to cook with. Meals provide more happiness and relieve hunger more than raw foods. Dwarves must eat to survive and stay happy. Once you select a food, the dwarf will gather the resources from your stockpiles and go cook it in the kitchen. NOTE: a kitchen is required to cook."
 		},
 		{
 			"Name" : "till",
@@ -47,6 +47,62 @@
 		{
 			"Name" : "harvest",
 			"Text" : "Left Click and drag over any plant that is growing in tilled soil to harvest it. You can also do this using the Chop tool."
+		},
+		{
+			"Name" : "gather",
+			"Text" : "Left click and drag to tell dwarves to gather loose resources on the ground. Dwarves auto-gather stuff that they mine or harvest from plants. Right click and drag to cancel a gather designation."
+		},
+		{
+			"Name" : "guard",
+			"Text" : "Left click to tell dwarves to guard a block. They will stay around that block until you right click it to cancel the guard designation."
+		},
+		{
+			"Name" : "attack",
+			"Text" : "Left click and drag on creatures to tell dwarves to attack them. Right click and drag to cancel attack designations."
+		},
+		{
+			"Name" : "chop",
+			"Text" : "Left click and drag over plants to tell dwarves to chop them down and harvest them. Plants release wood, seeds, and other resources."
+		},
+		{
+			"Name" : "research spells",
+			"Text" : "Wizards can research magical spells for you to cast in the library. Researching spells unlocks more powerful spells, which can be used to heal your dwarves, convert stone into gold, and more. NOTE: Researching spells requires a library."
+		},
+		{
+			"Name" : "cast spells",
+			"Text" : "To cast a spell, select it and then left click on an object or block. Casting spells uses Mana. Mana gets recharged in the library automatically."
+		},
+		{
+			"Name" : "build Stockpile",
+			"Text" : "Left click and drag a set of blocks to build a stockpile. Stockpiles are free and increase the number of goods your dwarf corporation can have in storage. Dwarves carry resources to stockpiles to store them, and grab resources from stockpiles when they\'re needed. Stockpiles automatically redistribute goods when necessary. You can see what is in your stockpiles at the top of the screen. The larger the stockpile, the more goods that can be stored there."
+		},
+		{
+			"Name" : "build BedRoom",
+			"Text" : "Left click and drag to build a bed room. Bed rooms must be built underground. Dwarves choose a bed of their own automatically and sleep safely in bed rooms at night. The larger the bed room, the more dwarves can sleep in it."
+		},
+		{
+			"Name" : "build CommonRoom",
+			"Text" : "Left click and drag to build a common room. Dwarves eat and drink in common rooms while on break. They make a natural gathering place for your employees. The larger the common room, the more employees can sit there."
+		},
+		{
+			"Name" : "build Kitchen",
+			"Text" : "Left click and drag to build a kitchen. Dwarves can cook meals, bake bread and brew alcohol in the kitchen. Prepared foods heal your dwarves and make them happier. The larger the kitchen, the more meals dwarves can cook at once."
+		},
+		{
+			"Name" : "build LibraryRoom",
+			"Text" : "Left click and drag to build a library. Wizard dwarves can research spells in the library, and Mana rocks are stored here to produce Mana Points for casting spells. The larger the library, the more Mana Points that can be recharged there."
+		},
+		{
+			"Name" : "build TrainingRoom",
+			"Text" : "Left click and drag to build a training room. Dwarves come to the training room to practice their combat skills and earn experience points for doing so. The larger the training room, the more dwarves can train in it."
+		},
+		{
+			"Name" : "build WorkshopRoom",
+			"Text" : "Left click and drag to build a workshop. Dwarves can use the workshop to craft items. The larger the workshop room, the more items that can be crafted at once."
+		},
+		{
+			"Name" : "build BalloonPort",
+			"Text" : "Left click and drag to build a balloon port. Balloon ports are necessary for trade. They must be built above ground. They also act as stockpiles. The larger the balloon port, the more it can store in its stockpile."
 		}
 	]
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Gum;
+using Gum.Widgets;
 using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.NewGui
@@ -24,15 +25,15 @@ namespace DwarfCorp.NewGui
             Font = "font-hires";
             InteriorMargin = new Margin(20, 0, 0, 0);
 
-            AddChild(new Widget
+            AddChild(new Button
             {
                 Text = "Dismiss",
                 Font = "font",
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 Border = "border-button",
-                OnClick = (sender, args) => this.Close(),
-                AutoLayout = AutoLayout.FloatBottomRight
+                OnClick = (sender, args) => { this.Close(); SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_window_close, 0.25f); },
+                AutoLayout = AutoLayout.FloatBottomRight,
             });
 
             DisableBox = AddChild(new Gum.Widgets.CheckBox

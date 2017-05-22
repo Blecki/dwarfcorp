@@ -345,6 +345,7 @@ namespace DwarfCorp
 
             if (button == InputManager.MouseButton.Left)
             {
+                World.Tutorial("build " + CurrentRoomData.Name);
                 if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Build).Count == 0)
                 {
                     World.ShowToolPopup("None of the selected units can build rooms.");

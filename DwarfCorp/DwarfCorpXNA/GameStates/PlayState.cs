@@ -168,6 +168,7 @@ namespace DwarfCorp.GameStates
 
                 World.GuiHook_ShowTutorialPopup += (text, callback) =>
                 {
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_window_open, 0.25f);
                     var popup = GuiRoot.ConstructWidget(new NewGui.TutorialPopup
                     {
                         Message = text,
@@ -750,7 +751,7 @@ namespace DwarfCorp.GameStates
                                         Master.Faction.CraftBuilder.IsEnabled = false;
                                         ChangeTool(GameMaster.ToolMode.Build);
                                         World.ShowToolPopup("Click and drag to build " + data.Name);
-                                        World.Tutorial("build items");
+                                        World.Tutorial("build rooms");
                                     },
                                     OnConstruct = (sender) =>
                                     {
@@ -1000,14 +1001,13 @@ namespace DwarfCorp.GameStates
                     {
                         Icon = new Gum.TileReference("tool-icons", 6),
                         Tooltip = "Gather",
-                        OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Gather),
+                        OnClick = (sender, args) => { ChangeTool(GameMaster.ToolMode.Gather); World.Tutorial("gather"); },
                         OnConstruct = (sender) =>
                         {
                             ToolbarItems.Add(new ToolbarItem(sender, () =>
                             Master.Faction.SelectedMinions.Any(minion =>
                                 minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Gather))));
                             AddToolSelectIcon(GameMaster.ToolMode.Gather, sender);
-                            World.Tutorial("gather");
                         }
                     },
                     #endregion
@@ -1017,14 +1017,13 @@ namespace DwarfCorp.GameStates
                     {
                         Icon = new Gum.TileReference("tool-icons", 1),
                         Tooltip = "Chop trees",
-                        OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Chop),
+                        OnClick = (sender, args) => { ChangeTool(GameMaster.ToolMode.Chop);  World.Tutorial("chop"); },
                         OnConstruct = (sender) =>
                         {
                             ToolbarItems.Add(new ToolbarItem(sender, () =>
                             Master.Faction.SelectedMinions.Any(minion =>
                                 minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Chop))));
                             AddToolSelectIcon(GameMaster.ToolMode.Chop, sender);
-                            World.Tutorial("chop");
                         }
                     },
                     #endregion
@@ -1034,14 +1033,13 @@ namespace DwarfCorp.GameStates
                     {
                         Icon = new Gum.TileReference("tool-icons", 4),
                         Tooltip = "Guard",
-                        OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Guard),
+                        OnClick = (sender, args) => { ChangeTool(GameMaster.ToolMode.Guard);  World.Tutorial("guard"); },
                         OnConstruct = (sender) =>
                         {
                             ToolbarItems.Add(new ToolbarItem(sender, () =>
                             Master.Faction.SelectedMinions.Any(minion =>
                                 minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Guard))));
                             AddToolSelectIcon(GameMaster.ToolMode.Guard, sender);
-                            World.Tutorial("guard");
                         }
                     },
                     #endregion
@@ -1051,14 +1049,13 @@ namespace DwarfCorp.GameStates
                     {
                         Icon = new Gum.TileReference("tool-icons", 3),
                         Tooltip = "Attack",
-                        OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Attack),
+                        OnClick = (sender, args) => { ChangeTool(GameMaster.ToolMode.Attack); World.Tutorial("attack"); },
                         OnConstruct = (sender) =>
                         {
                             ToolbarItems.Add(new ToolbarItem(sender, () =>
                             Master.Faction.SelectedMinions.Any(minion =>
                                 minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack))));
                             AddToolSelectIcon(GameMaster.ToolMode.Attack, sender);
-                            World.Tutorial("attack");
                         }
                     },
                     #endregion
@@ -1235,6 +1232,7 @@ namespace DwarfCorp.GameStates
                                                             ((MagicTool) Master.Tools[GameMaster.ToolMode.Magic])
                                                                 .CurrentSpell =
                                                                 spell.Spell;
+                                                            World.Tutorial("cast spells");
                                                         }
                                                     });
                                             widget.Construct();
@@ -1271,9 +1269,11 @@ namespace DwarfCorp.GameStates
                                                         },
                                                         OnClick =
                                                             (button, args2) =>
+                                                            {
                                                                 ((MagicTool) Master.Tools[GameMaster.ToolMode.Magic])
-                                                                    .Research(spell)
-                                                    });
+                                                                    .Research(spell);
+                                                                World.Tutorial("research spells");
+                                                            }});
                                             widget.Construct();
                                             widget.Hidden = false;
                                             widget.Layout();
