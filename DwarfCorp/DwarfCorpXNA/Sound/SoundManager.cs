@@ -216,52 +216,61 @@ namespace DwarfCorp
         public static Dictionary<string, Cue> ActiveCues = new Dictionary<string, Cue>();
         public static FancyMusic CurrentMusic = null;
         public static List<SoundEffectInstance> ActiveSounds2D = new List<SoundEffectInstance>();
- 
+        public static bool HasAudioDevice = true;
         public static void LoadDefaultSounds()
         {
-            string[] defaultSounds =
+            try
             {
-                ContentPaths.Audio.pick,
-                ContentPaths.Audio.hit,
-                ContentPaths.Audio.jump,
-                ContentPaths.Audio.ouch,
-                ContentPaths.Audio.gravel,
-                ContentPaths.Audio.river
-            };
+                string[] defaultSounds =
+                {
+                    ContentPaths.Audio.pick,
+                    ContentPaths.Audio.hit,
+                    ContentPaths.Audio.jump,
+                    ContentPaths.Audio.ouch,
+                    ContentPaths.Audio.gravel,
+                    ContentPaths.Audio.river
+                };
 
-            foreach (string name in defaultSounds)
-            {
-                SoundEffect effect = Content.Load<SoundEffect>(name);
-                EffectLibrary[name] = effect;
+                    foreach (string name in defaultSounds)
+                    {
+                        SoundEffect effect = Content.Load<SoundEffect>(name);
+                        EffectLibrary[name] = effect;
+                    }
+                    SoundEffect.DistanceScale = 0.5f;
+                    //SoundEffect.DopplerScale = 0.1f;
+                    AudioEngine = new AudioEngine("Content\\Audio\\XACT\\Win\\Sounds.xgs");
+                    SoundBank = new SoundBank(AudioEngine, "Content\\Audio\\XACT\\Win\\SoundBank.xsb");
+                    WaveBank = new WaveBank(AudioEngine, "Content\\Audio\\XACT\\Win\\WaveBank.xwb");
+
+                    CurrentMusic = new FancyMusic();
+                    CurrentMusic.AddTrack("main_theme_day", new MusicTrack(SoundBank)
+                    {
+                        Intro = "music_1_intro",
+                        Loop = "music_1_loop",
+                        PlayLoopOverIntro = false
+                    });
+                    CurrentMusic.AddTrack("main_theme_night", new MusicTrack(SoundBank)
+                    {
+                        Intro = "music_1_night_intro",
+                        Loop = "music_1_night",
+                        PlayLoopOverIntro = true
+                    });
+                    CurrentMusic.AddTrack("menu_music", new MusicTrack(SoundBank)
+                    {
+                        Loop = "music_menu",
+                        PlayLoopOverIntro = true
+                    });
             }
-            SoundEffect.DistanceScale = 0.5f;
-            //SoundEffect.DopplerScale = 0.1f;
-            AudioEngine = new AudioEngine("Content\\Audio\\XACT\\Win\\Sounds.xgs");
-            SoundBank = new SoundBank(AudioEngine, "Content\\Audio\\XACT\\Win\\SoundBank.xsb");
-            WaveBank = new WaveBank(AudioEngine, "Content\\Audio\\XACT\\Win\\WaveBank.xwb");
-
-            CurrentMusic = new FancyMusic();
-            CurrentMusic.AddTrack("main_theme_day", new MusicTrack(SoundBank)
+            catch (NoAudioHardwareException exception)
             {
-                Intro = "music_1_intro",
-                Loop = "music_1_loop",
-                PlayLoopOverIntro = false
-            });
-            CurrentMusic.AddTrack("main_theme_night", new MusicTrack(SoundBank)
-            {
-                Intro = "music_1_night_intro",
-                Loop = "music_1_night",
-                PlayLoopOverIntro = true
-            });
-            CurrentMusic.AddTrack("menu_music", new MusicTrack(SoundBank)
-            {
-                Loop = "music_menu",
-                PlayLoopOverIntro = true
-            });
+                Console.Error.WriteLine(exception);
+                HasAudioDevice = false;
+            }
         }
 
         public static void StopAmbience()
         {
+            if (!HasAudioDevice) return;
             foreach (var cue in ActiveCues)
             {
                 cue.Value.Stop(AudioStopOptions.Immediate);
@@ -270,6 +279,7 @@ namespace DwarfCorp
 
         public static void PlayAmbience(string sound)
         {
+            if (!HasAudioDevice) return;
             Cue cue;
             if (!ActiveCues.TryGetValue(sound, out cue))
             {
@@ -284,6 +294,7 @@ namespace DwarfCorp
 
         public static void SetActiveSongs(params string[] songs)
         {
+            if (!HasAudioDevice) return;
             ActiveSongs = new List<Song>();
 
             foreach (string song in songs)
@@ -294,6 +305,7 @@ namespace DwarfCorp
 
         public static void PlayMusic(string name)
         {
+            if (!HasAudioDevice) return;
             AudioEngine.GetCategory("Music").SetVolume(GameSettings.Default.MusicVolume * GameSettings.Default.MasterVolume);
             CurrentMusic.PlayTrack(name);
             /*
@@ -309,6 +321,7 @@ namespace DwarfCorp
 
         public static Sound3D PlaySound(string name, Vector3 location, bool randomPitch, float volume = 1.0f, float pitch = 0.0f)
         {
+            if (!HasAudioDevice) return null;
             if(Content == null)
             {
                 return null;
@@ -364,6 +377,7 @@ namespace DwarfCorp
 
         public static SoundEffectInstance PlaySound(string name, float volume = 1.0f)
         {
+            if (!HasAudioDevice) return null;
             // TODO: Remove this block once the SoundManager is initialized in a better location.
             if (Content == null) return null;
 
@@ -387,6 +401,7 @@ namespace DwarfCorp
 
         public static Sound3D PlaySound(string name, Vector3 location, float volume = 1.0f)
         {
+            if (!HasAudioDevice) return null;
             return PlaySound(name, location, false, volume);
         }
 
@@ -394,6 +409,7 @@ namespace DwarfCorp
         private static bool once = true;
         public static void Update(DwarfTime time, Camera camera, WorldTime worldTime)
         {
+            if (!HasAudioDevice) return;
             AudioEngine.Update();
             if (worldTime != null)
             {
