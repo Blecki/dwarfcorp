@@ -256,7 +256,7 @@ namespace DwarfCorp
 
         public void SendTradeEnvoy(Faction natives, WorldManager world)
         {
-            if (!world.gameState.IsActiveState) return;
+            //if (!world.gameState.IsActiveState) return;
             Faction.TradeEnvoy envoy = null;
             if (natives.Race.IsNative)
             {
