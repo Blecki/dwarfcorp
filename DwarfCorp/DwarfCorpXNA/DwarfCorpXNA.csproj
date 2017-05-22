@@ -251,6 +251,7 @@
     <Compile Include="Goals\GoalManager.cs" />
     <Compile Include="Goals\Goals\BuildRoomAchievements.cs" />
     <Compile Include="Goals\Goals\MineSand.cs" />
+    <Compile Include="Goals\Goals\NecromancerRelations.cs" />
     <Compile Include="Graphics\Cameras\Camera.cs" />
     <Compile Include="Graphics\Cameras\OrbitCamera.cs" />
     <Compile Include="Graphics\Drawing\Drawer2D\DrawCommand2D.cs" />

@@ -7,12 +7,12 @@ namespace DwarfCorp.Goals.Events
 {
     public class Trade : GameEvent
     {
-        public Faction A;
-        public DwarfBux AGold;
-        public List<ResourceAmount> AGoods;
+        public Faction PlayerFaction;
+        public DwarfBux PlayerGold;
+        public List<ResourceAmount> PlayerGoods;
 
-        public Faction B;
-        public DwarfBux BGold;
-        public List<ResourceAmount> BGoods;
+        public Faction OtherFaction;
+        public DwarfBux OtherGold;
+        public List<ResourceAmount> OtherGoods;
     }
 }

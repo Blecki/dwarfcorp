@@ -89,5 +89,10 @@ namespace DwarfCorp.Goals
             if (Goal.State == GoalState.Unavailable)
                 Goal.State = GoalState.Available;
         }
+
+        public Goal FindGoal(String Name)
+        {
+            return AllGoals.FirstOrDefault(g => g.Name == Name);
+        }
     }
 }

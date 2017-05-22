@@ -37,12 +37,12 @@ namespace DwarfCorp.Trade
 
             World.GoalManager.OnGameEvent(new Goals.Events.Trade
             {
-                A = PlayerEntity.TraderFaction,
-                AGold = PlayerMoney,
-                AGoods = PlayerItems,
-                B = EnvoyEntity.TraderFaction,
-                BGold = EnvoyMoney,
-                BGoods = EnvoyItems
+                PlayerFaction = PlayerEntity.TraderFaction,
+                PlayerGold = PlayerMoney,
+                PlayerGoods = PlayerItems,
+                OtherFaction = EnvoyEntity.TraderFaction,
+                OtherGold = EnvoyMoney,
+                OtherGoods = EnvoyItems
             });
         }
     }
