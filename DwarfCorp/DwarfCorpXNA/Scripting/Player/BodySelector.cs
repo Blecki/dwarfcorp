@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -32,6 +33,13 @@ namespace DwarfCorp
         public delegate void OnSelected(List<Body> bodies, InputManager.MouseButton button);
 
         /// <summary>
+        /// Called whenever the mouse hovers over some bodies.
+        /// </summary>
+        /// <param name="bodies">The bodies that the mouse was hovering over.</param>
+        public delegate void OnMouseOverEvent(IEnumerable<Body> bodies);
+
+
+        /// <summary>
         ///     True whenever the left mouse button is down.
         /// </summary>
         private bool isLeftPressed;
@@ -60,11 +68,12 @@ namespace DwarfCorp
             CurrentBodies = new List<Body>();
             LeftReleased = LeftReleasedCallback;
             RightReleased = RightReleasedCallback;
+            MouseOver = bodies => { };
             Selected += SelectedCallback;
             Enabled = true;
             DeleteColor = Color.Red;
             SelectionRectangle = new Rectangle(0, 0, 0, 0);
-            MouseOverTimer = new Timer(0.5f, false, Timer.TimerMode.Real);
+            MouseOverTimer = new Timer(1.0f / 30.0f, false, Timer.TimerMode.Real);
         }
 
         /// <summary>
@@ -156,6 +165,11 @@ namespace DwarfCorp
         /// </summary>
         public event OnRightReleased RightReleased;
 
+        /// <summary>
+        /// Occurs when the mouse hovers over a body.
+        /// </summary>
+        public event OnMouseOverEvent MouseOver;
+
         public WorldManager World;
 
         /// <summary>
@@ -174,6 +188,7 @@ namespace DwarfCorp
         /// <param name="entities">A list of bodies that were underneath the mouse.</param>
         public void OnMouseOver(IEnumerable<Body> entities)
         {
+            MouseOver.Invoke(entities);
             string desc = "";
             bool first = true;
             foreach (Body body in entities)
@@ -203,11 +218,15 @@ namespace DwarfCorp
             MouseOverTimer.Update(DwarfTime.LastTime);
             if (MouseOverTimer.HasTriggered)
             {
-                List<Body> selected = SelectBodies(new Rectangle(mouse.X - 10, mouse.Y - 10, 20, 20));
+                List<Body> selected = SelectBodies(new Rectangle(mouse.X - 2, mouse.Y - 2, 4, 4));
 
                 if (selected.Count > 0)
                 {
                     OnMouseOver(selected);
+                }
+                else
+                {
+                    OnMouseOver(new List<Body>());
                 }
             }
 

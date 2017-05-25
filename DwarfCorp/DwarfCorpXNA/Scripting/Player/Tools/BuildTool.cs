@@ -72,6 +72,11 @@ namespace DwarfCorp
             Player.Faction.RoomBuilder.OnExit();
         }
 
+        public override void OnMouseOver(IEnumerable<Body> bodies)
+        {
+            
+        }
+
         public override void Update(DwarfGame game, DwarfTime time)
         {
             if (Player.IsCameraRotationModeActive())

@@ -1,4 +1,4 @@
-﻿// PlayerTool.cs
+// PlayerTool.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -50,6 +50,7 @@ namespace DwarfCorp
         public abstract void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button);
         public abstract void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button);
         public abstract void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button);
+        public abstract void OnMouseOver(IEnumerable<Body> bodies);
         public abstract void Update(DwarfGame game, DwarfTime time);
         public abstract void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time);
         public abstract void OnBegin();
@@ -69,10 +70,25 @@ namespace DwarfCorp
             }
         }
 
+        public virtual void DefaultOnMouseOver(IEnumerable<Body> bodies)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            List<Body> bodyList = bodies.ToList();
+            for (int i = 0; i < bodyList.Count; i++)
+            {
+                sb.Append(bodyList[i].Name);
+                if (i < bodyList.Count - 1)
+                {
+                    sb.Append("\n");
+                }
+            }
+            Player.World.ShowTooltip(sb.ToString());
+        }
+
         public virtual void Destroy()
         {
 
         }
-
     }
 }

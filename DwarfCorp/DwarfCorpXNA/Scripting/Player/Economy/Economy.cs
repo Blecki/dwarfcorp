@@ -142,10 +142,12 @@ namespace DwarfCorp
                 SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
             }
 
+            /*
             string symbol = diff > 0m ? "+" : "";
 
             WorldManager.MakeAnnouncement(String.Format("{0} {1} {2}{3}",
                 Company.TickerName, Company.StockPrice, symbol, diff));
+             */
         }
 
         void Time_NewDay(DateTime time)

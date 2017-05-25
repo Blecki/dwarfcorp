@@ -299,8 +299,12 @@ namespace DwarfCorp.GameStates
 
             #endregion
 
+            if (GameSpeedControls.CurrentSpeed != (int) DwarfTime.LastTime.Speed)
+            {
+                World.Tutorial("time");
+            }
             GameSpeedControls.CurrentSpeed = (int)DwarfTime.LastTime.Speed;
-
+           
             // Really just handles mouse pointer animation.
             GuiRoot.Update(gameTime.ToGameTime());
         }

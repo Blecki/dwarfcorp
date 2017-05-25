@@ -103,6 +103,42 @@
 		{
 			"Name" : "build BalloonPort",
 			"Text" : "Left click and drag to build a balloon port. Balloon ports are necessary for trade. They must be built above ground. They also act as stockpiles. The larger the balloon port, the more it can store in its stockpile."
+		},
+		{
+			"Name" : "level up",
+			"Text" : "One of your employees has gained enough experience points (XP) to get a promotion! Employees earn XP from working, digging, fighting and training.  Promoting employees makes them work harder, but they also demand higher wages. Go to the economy menu (by pushing the economy button on the top right of the screen), select an employee, and promote them. If you choose not to promote your employees, they may become unhappy."
+		},
+		{
+			"Name" : "happiness",
+			"Text" : "Dwarves get happy or unhappy thoughts depending on the circumstances. You can view their unhappy or happy thoughts by clicking on the economy menu at the top right of the screen. Unhappy employees may refuse to work, or might even quit. Make your employees happy by ensuring they are paid fairly, have access to food and ale, and beds to sleep in."
+		},
+		{
+			"Name" : "money",
+			"Text" : "Your colony needs money to survive. Earn Dwarfbux ($) by trading with the motherland or natives as they arrive. Being bankrupt for too long might cause all of your employees to quit, and your stock may crash!"
+		},
+		{
+			"Name" : "combat",
+			"Text" : "Your employees are in combat! All kinds of monsters want to eat them, and some of the natives might be hostile. Dwarves regain their health points (HP) while sleeping or eating. Make sure you hire plenty of military dwarves to keep your colony defended. (By clicking on the Economy button on the top right of the screen)" 
+		},
+		{
+			"Name" : "death",
+			"Text" : "One of your employees died! That\'s bad news. When employees die, their coworkers may become depressed. Employee death may also result in your stock crashing."
+		},
+		{
+			"Name" : "pay",
+			"Text" : "You have just paid your employees. Employees are paid every night at midnight from the treasury. Your colony needs money to survive. Earn Dwarfbux ($) by trading with the motherland or natives as they arrive. Being bankrupt for too long might cause all of your employees to quit, and your stock may crash!"
+		},
+		{
+			"Name" : "war",
+			"Text" : "We are at war! Natives will send war bands to our colony each day until they grow tired of war. War is bad for business, so make sure not to offend the natives too much."
+		},
+		{
+			"Name" : "trade",
+			"Text" : "Someone has arrived to trade with us! Native creatures and expeditions from the motherland will occasionally arrive to trade with us. We must have an accessible balloon port to trade with the trade envoy. Each group has a different set of items they find common, rare, offensive or precious. Make sure to ask them about their customs before trading."
+		},
+		{
+			"Name" : "time",
+			"Text" : "You can speed up the time by pressing the >> button using the time controls on the bottom right of the screen. Time can also be sped up or slowed down using the time forward and backward keys (by default X and C). Time can be paused using the pause key (by default, Space). You can still issue commands while time is paused."
 		}
 	]
 }

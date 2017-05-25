@@ -95,6 +95,7 @@ namespace DwarfCorp
             VoxSelector.Selected += OnSelected;
             VoxSelector.Dragged += OnDrag;
             BodySelector.Selected += OnBodiesSelected;
+            BodySelector.MouseOver += OnMouseOver;
             World.Master = this;
             World.Time.NewDay += Time_NewDay;
         }
@@ -118,6 +119,7 @@ namespace DwarfCorp
             VoxSelector.Selected -= OnSelected;
             VoxSelector.Dragged -= OnDrag;
             BodySelector.Selected -= OnBodiesSelected;
+            BodySelector.MouseOver -= OnMouseOver;
             World.Time.NewDay -= Time_NewDay;
             InputManager.KeyReleasedCallback -= OnKeyReleased;
             Tools[ToolMode.God].Destroy();
@@ -199,6 +201,11 @@ namespace DwarfCorp
             PayEmployees();
         }
 
+        public void OnMouseOver(IEnumerable<Body> bodies)
+        {
+            CurrentTool.OnMouseOver(bodies);
+        }
+
         public void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
             CurrentTool.OnBodiesSelected(bodies, button);
@@ -247,6 +254,7 @@ namespace DwarfCorp
                     if (!noMoney)
                     {
                         World.MakeAnnouncement("If we don't make a profit by tomorrow, our stock will crash!");
+                        World.Tutorial("money");
                         SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                     }
                     noMoney = true;
@@ -259,6 +267,7 @@ namespace DwarfCorp
 
             World.MakeAnnouncement(String.Format("We paid our employees {0} today.",
                 total), null, ContentPaths.Audio.change);
+            World.Tutorial("pay");
         }
 
 
@@ -329,6 +338,7 @@ namespace DwarfCorp
                     World.MakeAnnouncement(
                         String.Format("{0} ({1}) died!", deadMinion.Stats.FullName, deadMinion.Stats.CurrentLevel.Name));
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
+                    World.Tutorial("death");
                     Faction.Economy.Company.StockPrice -= MathFunctions.Rand(0, 0.5f);
                 }
             }
@@ -428,6 +438,7 @@ namespace DwarfCorp
                     }
                     dwarf.Physics.Velocity = new Vector3(dwarf.Physics.Velocity.X*0.9f, dwarf.Physics.Velocity.Y,
                         dwarf.Physics.Velocity.Z*0.9f);
+                    dwarf.TryMoveVelocity(Vector3.Zero, false);
                 }
             }
 

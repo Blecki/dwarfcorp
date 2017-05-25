@@ -166,6 +166,13 @@ namespace Gum
 
         public void ShowTooltip(Point Where, String Tip)
         {
+            if (String.IsNullOrEmpty(Tip))
+            {
+                if (TooltipItem != null)
+                    DestroyWidget(TooltipItem);
+                return;
+            }
+
             if (TooltipItem != null && TooltipItem.Text == Tip)
             {
                 //TODO (Mklingen): handle the case where the tooltip is the same,

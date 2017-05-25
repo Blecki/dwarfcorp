@@ -87,6 +87,11 @@ namespace DwarfCorp
             }
         }
 
+        public override void OnMouseOver(IEnumerable<Body> bodies)
+        {
+            
+        }
+
         public void Research(SpellTree.Node spell)
         {
             List<CreatureAI> wizards = Faction.FilterMinionsWithCapability(Player.SelectedMinions, GameMaster.ToolMode.Magic);
