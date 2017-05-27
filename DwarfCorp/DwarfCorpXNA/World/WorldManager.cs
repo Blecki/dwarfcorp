@@ -39,6 +39,7 @@ using System.Linq;
 using System.Threading;
 using BloomPostprocess;
 using DwarfCorp.NewGui;
+using DwarfCorp.Tutorial;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -145,7 +146,7 @@ namespace DwarfCorp
         #region Tutorial Hooks
 
         public Tutorial.TutorialManager TutorialManager;
-        public Action<String, Action<bool>> GuiHook_ShowTutorialPopup;
+        public Action<TutorialManager.TutorialEntry, Action<bool>> GuiHook_ShowTutorialPopup;
         
         public void Tutorial(String Name)
         {

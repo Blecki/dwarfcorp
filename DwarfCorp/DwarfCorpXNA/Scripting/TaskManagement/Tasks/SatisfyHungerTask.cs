@@ -1,4 +1,4 @@
-﻿// SatisfyHungerTask.cs
+// SatisfyHungerTask.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -45,7 +45,7 @@ namespace DwarfCorp
         public SatisfyHungerTask()
         {
             Name = "Satisfy Hunger";
-            Priority = PriorityType.High;
+            Priority = PriorityType.Medium;
         }
 
         public override Task Clone()

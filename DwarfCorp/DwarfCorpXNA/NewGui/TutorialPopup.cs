@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.Tutorial;
 using Gum;
 using Gum.Widgets;
 using Microsoft.Xna.Framework;
@@ -10,7 +11,7 @@ namespace DwarfCorp.NewGui
 {
     public class TutorialPopup : Widget
     {
-        public String Message = "";
+        public TutorialManager.TutorialEntry Message = null;
         private Gum.Widgets.CheckBox DisableBox;
         public bool DisableChecked { get { return DisableBox.CheckState; } }
 
@@ -21,7 +22,7 @@ namespace DwarfCorp.NewGui
 
             Border = "border-fancy";
 
-            Text = "Tutorial";
+            Text = Message == null || String.IsNullOrEmpty(Message.Title) ? "Tutorial" : Message.Title;
             Font = "font-hires";
             InteriorMargin = new Margin(20, 0, 0, 0);
 
@@ -45,7 +46,7 @@ namespace DwarfCorp.NewGui
 
             AddChild(new Widget
             {
-                Text = Message,
+                Text = Message == null ? "" : Message.Text,
                 Font = "font",
                 AutoLayout = AutoLayout.DockFill,
                 OnLayout = (sender) => sender.Rect.Height -= 20

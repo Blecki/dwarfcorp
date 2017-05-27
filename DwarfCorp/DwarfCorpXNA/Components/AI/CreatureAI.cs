@@ -332,7 +332,7 @@ namespace DwarfCorp
             if (newTask != null)
             {
                 CurrentTask.Cancel();
-                if (CurrentTask.ShouldRetry(Creature))
+                //if (CurrentTask.ShouldRetry(Creature))
                 {
                     Tasks.Add(CurrentTask);
                     CurrentTask.SetupScript(Creature);

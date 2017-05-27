@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +9,7 @@ namespace DwarfCorp.Tutorial
     {
         public string Name;
         public string Text;
+        public string Title;
     }
 
     public class JsonTutorialSet

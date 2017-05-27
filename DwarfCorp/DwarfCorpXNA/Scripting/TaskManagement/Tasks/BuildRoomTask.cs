@@ -1,4 +1,4 @@
-﻿// BuildRoomTask.cs
+// BuildRoomTask.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -49,14 +49,14 @@ namespace DwarfCorp
 
         public BuildRoomTask()
         {
-            Priority = PriorityType.Low;
+            Priority = PriorityType.Medium;
         }
 
         public BuildRoomTask(BuildRoomOrder zone)
         {
-            Name = "Build BuildRoom " + zone.ToBuild.RoomData.Name + zone.ToBuild.ID;
+            Name = "Build Room " + zone.ToBuild.RoomData.Name + zone.ToBuild.ID;
             Zone = zone;
-            Priority = PriorityType.Low;
+            Priority = PriorityType.Medium;
         }
 
         public override Task Clone()
@@ -73,6 +73,7 @@ namespace DwarfCorp
         {
             return (Zone == null) ? 1000 : 1.0f;
         }
+
     }
 
 }

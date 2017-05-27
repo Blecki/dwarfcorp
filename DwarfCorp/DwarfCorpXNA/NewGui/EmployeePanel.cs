@@ -35,7 +35,7 @@ namespace DwarfCorp.NewGui
                 {
                     AutoLayout = AutoLayout.DockFill,
                     TextVerticalAlign = VerticalAlign.Center,
-                    Text = employee.Stats.FullName
+                    Text = employee.Stats.IsOverQualified ? employee.Stats.FullName + "*" : employee.Stats.FullName
                 });
 
                 EmployeeList.AddItem(bar);

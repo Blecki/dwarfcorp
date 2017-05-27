@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,8 +7,9 @@ namespace DwarfCorp.Tutorial
 {
     public class TutorialManager
     {
-        private class TutorialEntry
+        public class TutorialEntry
         {
+            public String Title;
             public String Text;
             public bool Shown;
         }
@@ -24,7 +25,7 @@ namespace DwarfCorp.Tutorial
 
             Entries = new Dictionary<string, TutorialEntry>();
             foreach (var entry in entries.Tutorials)
-                Entries.Add(entry.Name, new TutorialEntry { Text = entry.Text, Shown = false });
+                Entries.Add(entry.Name, new TutorialEntry { Text = entry.Text, Shown = false, Title = entry.Title});
         }
 
         public void ResetTutorials()
@@ -40,12 +41,12 @@ namespace DwarfCorp.Tutorial
                 PendingTutorial = Name;
         }
 
-        public void Update(Action<String, Action<bool>> GuiHook)
+        public void Update(Action<TutorialEntry, Action<bool>> GuiHook)
         {
             if (!String.IsNullOrEmpty(PendingTutorial) && GuiHook != null &&!Entries[PendingTutorial].Shown)
             { 
                 Entries[PendingTutorial].Shown = true;
-                GuiHook(Entries[PendingTutorial].Text, (b) => TutorialEnabled = !b);
+                GuiHook(Entries[PendingTutorial], (b) => TutorialEnabled = !b);
                 PendingTutorial = null;
             }
         }

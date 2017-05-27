@@ -586,6 +586,10 @@ namespace DwarfCorp.GameStates
                 },
                 OnSpeedChanged = (sender, speed) =>
                 {
+                    if ((int) DwarfTime.LastTime.Speed != speed)
+                    {
+                        World.Tutorial("time");
+                    }
                     DwarfTime.LastTime.Speed = (float)speed;
                     Paused = speed == 0;
                     PausedWidget.Hidden = !Paused;
@@ -655,6 +659,7 @@ namespace DwarfCorp.GameStates
                                 {
                                     Master.VoxSelector.Brush = VoxelBrush.Box;
                                     World.SetMouseOverlay("tool-icons", 29);
+                                    World.Tutorial("brush");
                                 }
                             },
                             new NewGui.FramedIcon
@@ -666,6 +671,7 @@ namespace DwarfCorp.GameStates
                                 {
                                     Master.VoxSelector.Brush = VoxelBrush.Shell;
                                     World.SetMouseOverlay("tool-icons", 30);
+                                    World.Tutorial("brush");
                                 }
                             },
                             new NewGui.FramedIcon
@@ -677,6 +683,7 @@ namespace DwarfCorp.GameStates
                                 {
                                     Master.VoxSelector.Brush = VoxelBrush.Stairs;
                                     World.SetMouseOverlay("tool-icons", 31);
+                                    World.Tutorial("brush");
                                 }
                             }
                         }
