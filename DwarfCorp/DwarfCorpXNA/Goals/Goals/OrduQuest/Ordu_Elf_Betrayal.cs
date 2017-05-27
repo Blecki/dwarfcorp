@@ -6,26 +6,25 @@ using Gum;
 
 namespace DwarfCorp.Goals.Goals
 {
-    public class Ordu_Necro_Invasion : Goal
+    public class Ordu_Elf_Betrayal : Goal
     {
-        public Ordu_Necro_Invasion()
+        public Ordu_Elf_Betrayal()
         {
-            Name = "Ordu: Siding with the Elves";
-            Description = "Uzzikal is enraged by your betrayal. Now you will feel his wrath.";
+            Name = "Ordu: Blinny's revenge";
+            Description = @"Blinny, chief of the Fel'al'fe, sent a dove with the following message attached: ""Did you think we would forgive you so easily? Now that the necromancers are no more, we have no use for you.""";
             GoalType = GoalTypes.UnavailableAtStartup;
         }
 
         public override ActivationResult Activate(WorldManager World)
         {
-            // Spawn multiple war parties from Ordu
+            // Spawn multiple war parties from Fel'al'fe
 
             return new ActivationResult { Succeeded = true };
         }
 
         public override void OnGameEvent(WorldManager World, GameEvent Event)
         {
-            // If all war parties are killed..
-            World.GoalManager.UnlockGoal(typeof(Ordu_Elf_Betrayal));
+            // If all war parties are killed
         }
     }
 }

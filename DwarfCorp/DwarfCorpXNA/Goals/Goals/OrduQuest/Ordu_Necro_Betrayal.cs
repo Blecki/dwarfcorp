@@ -6,12 +6,12 @@ using Gum;
 
 namespace DwarfCorp.Goals.Goals
 {
-    public class Ordu_Necro_Invasion : Goal
+    public class Ordu_Necro_Betrayal : Goal
     {
-        public Ordu_Necro_Invasion()
+        public Ordu_Necro_Betrayal()
         {
-            Name = "Ordu: Siding with the Elves";
-            Description = "Uzzikal is enraged by your betrayal. Now you will feel his wrath.";
+            Name = "Ordu: Uzzikal's true nature";
+            Description = @"Uzzikal writes, ""I cannot thank you enough for your addition to our ranks. Now I have enough undead minions to finally remove you pathetic dwarves from my land.""";
             GoalType = GoalTypes.UnavailableAtStartup;
         }
 
@@ -25,7 +25,6 @@ namespace DwarfCorp.Goals.Goals
         public override void OnGameEvent(WorldManager World, GameEvent Event)
         {
             // If all war parties are killed..
-            World.GoalManager.UnlockGoal(typeof(Ordu_Elf_Betrayal));
         }
     }
 }

@@ -252,8 +252,11 @@
     <Compile Include="Goals\GoalManager.cs" />
     <Compile Include="Goals\Goals\BuildRoomAchievements.cs" />
     <Compile Include="Goals\Goals\MineSand.cs" />
+    <Compile Include="Goals\Goals\OrduQuest\Ordu_Elf_Betrayal.cs" />
+    <Compile Include="Goals\Goals\OrduQuest\Ordu_Necro_Envoy.cs" />
     <Compile Include="Goals\Goals\OrduQuest\Ordu_Elf_Envoy.cs" />
     <Compile Include="Goals\Goals\OrduQuest\Ordu_Elf_Invasion.cs" />
+    <Compile Include="Goals\Goals\OrduQuest\Ordu_Necro_Betrayal.cs" />
     <Compile Include="Goals\Goals\OrduQuest\Ordu_Necro_Invasion.cs" />
     <Compile Include="Goals\Goals\OrduQuest\Ordu_Trigger.cs" />
     <Compile Include="Goals\Goals\OrduQuest\Ordu_Start.cs" />

@@ -54,7 +54,7 @@ namespace DwarfCorp.Goals.Goals
             {
                 State = GoalState.Complete;
                 World.MakeAnnouncement("Uzzikal approves of your actions against the elves.");
-                World.GoalManager.UnlockGoal(typeof(Ordu_Necro_Invasion));
+                World.GoalManager.UnlockGoal(typeof(Ordu_Necro_Envoy));
                 World.GoalManager.UnlockGoal(typeof(Ordu_Elf_Invasion));
             }
         }

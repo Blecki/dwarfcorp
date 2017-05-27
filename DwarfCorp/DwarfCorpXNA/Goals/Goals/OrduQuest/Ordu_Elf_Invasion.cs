@@ -17,6 +17,9 @@ namespace DwarfCorp.Goals.Goals
 
         public override ActivationResult Activate(WorldManager World)
         {
+            var otherChoice = World.GoalManager.FindGoal(typeof(Ordu_Necro_Envoy));
+            otherChoice.State = GoalState.Unavailable;
+
             // Spawn multiple war parties from Fel'al'fe
 
             return new ActivationResult { Succeeded = true };
@@ -25,6 +28,7 @@ namespace DwarfCorp.Goals.Goals
         public override void OnGameEvent(WorldManager World, GameEvent Event)
         {
             // If all war parties are killed
+            World.GoalManager.UnlockGoal(typeof(Ordu_Necro_Betrayal));
         }
     }
 }
