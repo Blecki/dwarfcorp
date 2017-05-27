@@ -93,9 +93,14 @@ namespace DwarfCorp.Goals
                 Goal.State = GoalState.Available;
         }
 
-        public Goal FindGoal(String Name)
+        public void UnlockGoal(Type Type)
         {
-            return AllGoals.FirstOrDefault(g => g.Name == Name);
+            UnlockGoal(FindGoal(Type));
+        }
+
+        public Goal FindGoal(Type Type)
+        {
+            return AllGoals.FirstOrDefault(g => g.GetType() == Type);
         }
     }
 }

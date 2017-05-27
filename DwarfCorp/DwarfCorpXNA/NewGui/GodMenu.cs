@@ -117,6 +117,15 @@ namespace DwarfCorp.NewGui
                     }
                 },
 
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "DWARF BUX",
+                    OnClick = (sender, args) =>
+                    {
+                        Master.World.PlayerCompany.Assets += 1000.0f;
+                    }
+                },
+
                 // Shouldn't this go into some kind of 'debug' menu?
                 new HorizontalMenuTray.MenuItem
                 {
