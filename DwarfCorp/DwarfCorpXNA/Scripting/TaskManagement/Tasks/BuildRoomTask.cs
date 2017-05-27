@@ -74,6 +74,11 @@ namespace DwarfCorp
             return (Zone == null) ? 1000 : 1.0f;
         }
 
+        public override bool ShouldDelete(Creature agent)
+        {
+            return Zone != null && !Zone.IsBuilt;
+        }
+
     }
 
 }

@@ -418,6 +418,13 @@ namespace DwarfCorp
         }
 
 
+        IEnumerable<Act.Status> RecallEnvoyOnFail(Faction.TradeEnvoy envoy)
+        {
+            RecallEnvoy(envoy);
+            World.MakeAnnouncement("Envoy from " + envoy.OwnerFaction.Name + " left. Trade port inaccessible.");
+            yield return Act.Status.Success;
+        }
+
         public void UpdateTradeEnvoys(Faction faction)
         {
             foreach (Faction.TradeEnvoy envoy in faction.TradeEnvoys)
@@ -480,7 +487,8 @@ namespace DwarfCorp
 
                         if (creature.Tasks.Count == 0)
                         {
-                            creature.Tasks.Add(new ActWrapperTask(new GoToZoneAct(creature, tradePort)) { Name = "Go to trade port.", Priority = Task.PriorityType.Urgent});
+                            Faction.TradeEnvoy envoy1 = envoy;
+                            creature.Tasks.Add(new ActWrapperTask(new GoToZoneAct(creature, tradePort) | new Wrap(() => RecallEnvoyOnFail(envoy1))));
                         }
 
                         if (!tradePort.IsRestingOnZone(creature.Position)) continue;

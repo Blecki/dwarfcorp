@@ -544,10 +544,21 @@ namespace DwarfCorp
         /// <returns>Success if the jump has succeeded, Fail if it failed, and Running otherwise.</returns>
         public IEnumerable<Act.Status> AvoidFalling()
         {
+            var above = Physics.CurrentVoxel.GetVoxelAbove();
             foreach (Voxel vox in Physics.Neighbors)
             {
                 if (vox == null) continue;
                 if (vox.IsEmpty) continue;
+
+                // Avoid teleporting through the block above. Never jump up through the
+                // block above you.
+                if (above != null && !above.IsEmpty)
+                {
+                    if ((int)vox.Position.Y >= (int)above.Position.Y)
+                    {
+                        continue;
+                    }
+                }
                 Voxel voxAbove = vox.GetVoxelAbove();
                 if (!voxAbove.IsEmpty) continue;
                 Vector3 target = voxAbove.Position + new Vector3(0.5f, 0.5f, 0.5f);
