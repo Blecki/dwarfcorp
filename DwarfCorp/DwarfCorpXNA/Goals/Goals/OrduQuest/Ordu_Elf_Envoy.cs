@@ -8,9 +8,6 @@ namespace DwarfCorp.Goals.Goals
 {
     public class Ordu_Elf_Envoy : Goal
     {
-        public bool WarDeclared = false;
-        public bool ElfKilled = false;
-
         public Ordu_Elf_Envoy()
         {
             Name = "Ordu: The Fel'al'fe Envoy";
@@ -43,15 +40,9 @@ namespace DwarfCorp.Goals.Goals
 
         public override void OnGameEvent(WorldManager World, GameEvent Event)
         {
-            // If event is 'declare war', and other faction is fel, set flag.
-            var warDeclared = Event as Events.DeclareWar;
-            if (warDeclared != null && warDeclared.OtherFaction.Name == "Fel'al'fe")
-                WarDeclared = true;
-
-            // If event is 'kill enemy', and other faction is fel, set flag.
-
-            if (WarDeclared && ElfKilled)
-            {
+            var tradeEnvoyKilled = Event as Events.TradeEnvoyKilled;
+            if (tradeEnvoyKilled != null && tradeEnvoyKilled.OtherFaction.Name == "Fel'al'fe")
+            { 
                 State = GoalState.Complete;
                 World.MakeAnnouncement("Uzzikal approves of your actions against the elves.");
                 World.GoalManager.UnlockGoal(typeof(Ordu_Necro_Envoy));

@@ -243,6 +243,9 @@
     <Compile Include="GameStates\WorldGeneration\WorldGenerator.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGenerationSettings.cs" />
     <Compile Include="Goals\Enums.cs" />
+    <Compile Include="Goals\Events\CreatureKilled.cs" />
+    <Compile Include="Goals\Events\TradeEnvoyKilled.cs" />
+    <Compile Include="Goals\Events\WarPartyDefeated.cs" />
     <Compile Include="Goals\Events\DigBlock.cs" />
     <Compile Include="Goals\Events\BuiltRoom.cs" />
     <Compile Include="Goals\Events\DeclareWar.cs" />

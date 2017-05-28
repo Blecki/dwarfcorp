@@ -93,8 +93,27 @@ namespace DwarfCorp.GameStates
             tabPanel.SelectedTab = 0;
             
             GuiRoot.RootItem.Layout();
-            IsInitialized = true;
 
+            World.GuiHook_ShowTutorialPopup = (text, callback) =>
+            {
+                var popup = GuiRoot.ConstructWidget(new NewGui.TutorialPopup
+                {
+                    Message = text,
+                    OnClose = (sender) =>
+                    {
+                        callback((sender as NewGui.TutorialPopup).DisableChecked);
+                    },
+                    OnLayout = (sender) =>
+                    {
+                        sender.Rect.X = GuiRoot.RenderData.VirtualScreen.Width - sender.Rect.Width;
+                        sender.Rect.Y = 64;
+                    }
+                });
+
+                GuiRoot.ShowPopup(popup, Root.PopupExclusivity.AddToStack);
+            };
+
+            IsInitialized = true;
             base.OnEnter();
         }
 

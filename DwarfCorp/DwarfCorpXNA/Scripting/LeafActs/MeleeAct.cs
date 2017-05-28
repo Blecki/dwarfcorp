@@ -371,6 +371,12 @@ namespace DwarfCorp
                             Creature.Faction.AttackDesignations.Remove(Target);
                         }
 
+                        //Creature.World.GoalManager.OnGameEvent(new Goals.Events.CreatyreKilled
+                        //{
+                        //    Agressor = Creature.AI,
+                        //    Victim = Target.
+                        //})
+
                         Target = null;
                         Agent.AddXP(10);
                         Creature.Physics.Face(Creature.Physics.Velocity + Creature.Physics.GlobalTransform.Translation);

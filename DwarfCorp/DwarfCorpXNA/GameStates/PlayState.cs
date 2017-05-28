@@ -161,25 +161,6 @@ namespace DwarfCorp.GameStates
                     Rect = new Rectangle(GuiRoot.MousePosition.X + 32, GuiRoot.MousePosition.Y + 32, 1, 1)
                 }, Gum.Root.PopupExclusivity.DestroyExistingPopups);
 
-                World.GuiHook_ShowTutorialPopup += (text, callback) =>
-                {
-                    var popup = GuiRoot.ConstructWidget(new NewGui.TutorialPopup
-                    {
-                        Message = text,
-                        OnClose = (sender) =>
-                        {
-                            callback((sender as TutorialPopup).DisableChecked);
-                        },
-                        OnLayout = (sender) =>
-                        {
-                            sender.Rect.X = GuiRoot.RenderData.VirtualScreen.Width - sender.Rect.Width;
-                            sender.Rect.Y = 64;
-                        }
-                    });                   
-
-                    GuiRoot.ShowDialog(popup);
-                };
-
                 World.gameState = this;
                 World.OnLoseEvent += World_OnLoseEvent;
                 CreateGUIComponents();
@@ -198,6 +179,25 @@ namespace DwarfCorp.GameStates
                     SoundManager.PlayMusic("main_theme_night");
                 };
             }
+
+            World.GuiHook_ShowTutorialPopup = (text, callback) =>
+            {
+                var popup = GuiRoot.ConstructWidget(new NewGui.TutorialPopup
+                {
+                    Message = text,
+                    OnClose = (sender) =>
+                    {
+                        callback((sender as TutorialPopup).DisableChecked);
+                    },
+                    OnLayout = (sender) =>
+                    {
+                        sender.Rect.X = GuiRoot.RenderData.VirtualScreen.Width - sender.Rect.Width;
+                        sender.Rect.Y = 64;
+                    }
+                });
+
+                GuiRoot.ShowPopup(popup, Root.PopupExclusivity.AddToStack);
+            };
 
             World.Unpause();
 

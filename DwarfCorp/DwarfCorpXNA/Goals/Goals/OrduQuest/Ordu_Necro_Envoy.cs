@@ -8,9 +8,6 @@ namespace DwarfCorp.Goals.Goals
 {
     public class Ordu_Necro_Envoy : Goal
     {
-        public bool WarDeclared = false;
-        public bool ElfKilled = false;
-
         public Ordu_Necro_Envoy()
         {
             Name = "Ordu: Siding with the Elves";
@@ -31,14 +28,8 @@ namespace DwarfCorp.Goals.Goals
 
         public override void OnGameEvent(WorldManager World, GameEvent Event)
         {
-            // If event is 'declare war', and other faction is fel, set flag.
-            var warDeclared = Event as Events.DeclareWar;
-            if (warDeclared != null && warDeclared.OtherFaction.Name == "Ordu")
-                WarDeclared = true;
-
-            // If event is 'kill enemy', and other faction is fel, set flag.
-
-            if (WarDeclared && ElfKilled)
+            var tradeEnvoyKilled = Event as Events.TradeEnvoyKilled;
+            if (tradeEnvoyKilled != null && tradeEnvoyKilled.OtherFaction.Name == "Fel'al'fe")
             {
                 State = GoalState.Complete;
                 World.MakeAnnouncement("Blinny is pleased that you reconsidered.");

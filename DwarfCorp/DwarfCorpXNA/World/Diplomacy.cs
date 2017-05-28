@@ -515,6 +515,12 @@ namespace DwarfCorp
                 if (envoy.Creatures.All(creature => creature.IsDead))
                 {
                     envoy.ShouldRemove = true;
+
+                    World.GoalManager.OnGameEvent(new Goals.Events.TradeEnvoyKilled
+                    {
+                        PlayerFaction = envoy.OtherFaction,
+                        OtherFaction = envoy.OwnerFaction
+                    });
                 }
 
                
@@ -541,6 +547,13 @@ namespace DwarfCorp
                 if (party.Creatures.All(creature => creature.IsDead))
                 {
                     party.ShouldRemove = true;
+
+                    // Killed entire war party. Wonderful!
+                    World.GoalManager.OnGameEvent(new Goals.Events.WarPartyDefeated
+                    {
+                        PlayerFaction = party.OtherFaction,
+                        OtherFaction = party.OwnerFaction
+                    });
                 }
             }
 
