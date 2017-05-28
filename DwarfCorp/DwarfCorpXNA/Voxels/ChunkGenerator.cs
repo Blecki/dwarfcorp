@@ -446,91 +446,110 @@ namespace DwarfCorp
                             (y + origin.Y) * NoiseScale * 3.0f, (z + origin.Z) * NoiseScale * CaveFrequencies[i]);
 
                         int caveHeight = Math.Min(Math.Max((int) (heightnoise*5), 1), 3);
-                        
-                        if (caveNoise > CaveSize)
+
+                        if (!(caveNoise > CaveSize)) continue;
+
+                        bool waterFound = false;
+                        for (int dy = 0; dy < caveHeight; dy++)
                         {
-                            bool waterFound = false;
-                            for (int dy = 0; dy < caveHeight; dy++)
+                            int index = chunk.Data.IndexAt(x, y - dy, z);
+                            chunk.GetNeighborsManhattan(x, y - dy, z, neighbors);
+
+                            if (neighbors.Any(v => v != null &&  v.WaterLevel > 0))
                             {
-                                int index = chunk.Data.IndexAt(x, y - dy, z);
-                                chunk.GetNeighborsManhattan(x, y - dy, z, neighbors);
-
-                                if (neighbors.Any(v => v != null &&  v.WaterLevel > 0))
-                                {
-                                    waterFound = true;
-                                }
-
-                                if (waterFound)
-                                    break;
-
-                                chunk.Data.Types[index] = 0;
+                                waterFound = true;
                             }
 
-                            if (!waterFound && caveNoise > CaveSize*1.8f && y - caveHeight > 0)
-                            {
-                                int indexunder = chunk.Data.IndexAt(x, y - caveHeight, z);
-                                chunk.Data.Types[indexunder] = (byte)VoxelLibrary.GetVoxelType(biome.GrassLayer.VoxelType).ID;
-                                chunk.Data.Health[indexunder] = (byte)VoxelLibrary.GetVoxelType(biome.GrassLayer.VoxelType).StartingHealth;
-                                chunk.Data.IsExplored[indexunder] = false;
-                                foreach (VegetationData veg in biome.Vegetation)
-                                {
-                                    if (!MathFunctions.RandEvent(veg.SpawnProbability))
-                                    {
-                                        continue;
-                                    }
-
-                                    if (NoiseGenerator.Noise(vec.X / veg.ClumpSize, veg.NoiseOffset, vec.Y / veg.ClumpSize) < veg.ClumpThreshold)
-                                    {
-                                        continue;
-                                    }
-
-
-                                    vUnder.GridPosition = new Vector3(x, y - 1, z);
-                                    if (!vUnder.IsEmpty && vUnder.TypeName == biome.GrassLayer.VoxelType)
-                                    {
-                                        vUnder.Type = VoxelLibrary.GetVoxelType(biome.SoilLayer.VoxelType);
-                                        float offset = veg.VerticalOffset;
-                                        if (vUnder.RampType != RampType.None)
-                                        {
-                                            offset -= 0.25f;
-                                        }
-                                        float treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
-                                        GameComponent entity = EntityFactory.CreateEntity<GameComponent>(veg.Name, chunk.Origin + new Vector3(x, y, z) + new Vector3(0, treeSize * offset, 0), Blackboard.Create("Scale", treeSize));
-                                        entity.GetEntityRootComponent().SetActiveRecursive(false);
-                                        entity.GetEntityRootComponent().SetVisibleRecursive(false);
-                                        if (GameSettings.Default.FogofWar)
-                                        {
-                                            ExploredListener listener = new ExploredListener(
-                                                world.ComponentManager, entity, world.ChunkManager, vUnder);
-                                        }
-                                    }
-                                }
-                            }
-
-                            foreach (FaunaData animal in biome.Fauna)
-                            {
-                                if (y <= 0 || !(MathFunctions.Random.NextDouble() < animal.SpawnProbability))
-                                {
-                                    continue;
-                                }
-
-
-                                var entity = EntityFactory.CreateEntity<GameComponent>(animal.Name, chunk.Origin + new Vector3(x, y, z) + Vector3.Up * 1.0f);
-
-                                if (GameSettings.Default.FogofWar)
-                                {
-                                    entity.GetEntityRootComponent().SetActiveRecursive(false);
-                                    entity.GetEntityRootComponent().SetVisibleRecursive(false);
-
-                                    ExploredListener listener = new ExploredListener
-                                        (world.ComponentManager,
-                                        entity,
-                                        world.ChunkManager, chunk.MakeVoxel(x, y, z));
-                                }
+                            if (waterFound)
                                 break;
-                            }
+
+                            chunk.Data.Types[index] = 0;
                         }
+
+                        if (!waterFound && caveNoise > CaveSize*1.8f && y - caveHeight > 0)
+                        {
+                            GenerateCaveVegetation(chunk, x, y, z, caveHeight, biome, vec, world, NoiseGenerator);
+                        }
+
+                        GenerateCaveFauna(chunk, world, biome, y, x, z);
                     }
+                }
+            }
+        }
+
+        private static void GenerateCaveFauna(VoxelChunk chunk, WorldManager world, BiomeData biome, int y, int x, int z)
+        {
+            foreach (FaunaData animal in biome.Fauna)
+            {
+                if (y <= 0 || !(MathFunctions.Random.NextDouble() < animal.SpawnProbability))
+                {
+                    continue;
+                }
+
+                EntityFactory.DoLazy(() =>
+                {
+                    var entity = EntityFactory.CreateEntity<GameComponent>(animal.Name,
+                        chunk.Origin + new Vector3(x, y, z) + Vector3.Up*1.0f);
+
+                    if (GameSettings.Default.FogofWar)
+                    {
+                        entity.GetEntityRootComponent().SetActiveRecursive(false);
+                        entity.GetEntityRootComponent().SetVisibleRecursive(false);
+
+                        ExploredListener listener = new ExploredListener
+                            (world.ComponentManager,
+                                entity,
+                                world.ChunkManager, chunk.MakeVoxel(x, y, z));
+                    }
+                });
+                break;
+            }
+        }
+
+        public static void GenerateCaveVegetation(VoxelChunk chunk, int x, int y, int z, int caveHeight, BiomeData biome, Vector3 vec, WorldManager world, Perlin NoiseGenerator)
+        {
+            Voxel vUnder = chunk.MakeVoxel(x, y - 1, z);
+            int indexunder = chunk.Data.IndexAt(x, y - caveHeight, z);
+            chunk.Data.Types[indexunder] = (byte)VoxelLibrary.GetVoxelType(biome.GrassLayer.VoxelType).ID;
+            chunk.Data.Health[indexunder] = (byte)VoxelLibrary.GetVoxelType(biome.GrassLayer.VoxelType).StartingHealth;
+            chunk.Data.IsExplored[indexunder] = false;
+            foreach (VegetationData veg in biome.Vegetation)
+            {
+                if (!MathFunctions.RandEvent(veg.SpawnProbability))
+                {
+                    continue;
+                }
+
+                if (NoiseGenerator.Noise(vec.X / veg.ClumpSize, veg.NoiseOffset, vec.Y / veg.ClumpSize) < veg.ClumpThreshold)
+                {
+                    continue;
+                }
+
+
+                vUnder.GridPosition = new Vector3(x, y - 1, z);
+                if (!vUnder.IsEmpty && vUnder.TypeName == biome.GrassLayer.VoxelType)
+                {
+                    vUnder.Type = VoxelLibrary.GetVoxelType(biome.SoilLayer.VoxelType);
+                    float offset = veg.VerticalOffset;
+                    if (vUnder.RampType != RampType.None)
+                    {
+                        offset -= 0.25f;
+                    }
+                    float treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
+
+                    EntityFactory.DoLazy(() =>
+                    {
+                        GameComponent entity = EntityFactory.CreateEntity<GameComponent>(veg.Name,
+                            chunk.Origin + new Vector3(x, y, z) + new Vector3(0, treeSize*offset, 0),
+                            Blackboard.Create("Scale", treeSize));
+                        entity.GetEntityRootComponent().SetActiveRecursive(false);
+                        entity.GetEntityRootComponent().SetVisibleRecursive(false);
+                        if (GameSettings.Default.FogofWar)
+                        {
+                            ExploredListener listener = new ExploredListener(
+                                world.ComponentManager, entity, world.ChunkManager, vUnder);
+                        }
+                    });
                 }
             }
         }

@@ -50,8 +50,20 @@ namespace DwarfCorp
         public static WorldManager World = null;
         private static ComponentManager Components { get { return World.ComponentManager; } }
         public static InstanceManager InstanceManager = null;
+        private static List<Action> LazyActions = new List<Action>(); 
 
         public static Dictionary<string, Func<Vector3, Blackboard, GameComponent>> EntityFuncs { get; set; }
+
+        // This exists in case we want to call the entity factory from  a thread, allowing us
+        // to lazy-load entities later.
+        public static void DoLazyActions()
+        {
+            foreach (var func in LazyActions)
+            {
+                func.Invoke();
+            }
+            LazyActions.Clear();
+        }
 
         public static Body GenerateTestDwarf(WorldManager world, Vector3 position)
         {
@@ -219,6 +231,25 @@ namespace DwarfCorp
                 string err = id ?? "null";
                 throw new KeyNotFoundException("Unable to create entity of type " + err);   
             }
+        }
+
+        public static void CreateEntityLazy<T>(string id, Vector3 location, Blackboard data = null) where T : GameComponent
+        {
+            if (data == null) data = new Blackboard();
+            if (EntityFuncs.ContainsKey(id))
+            {
+                LazyActions.Add(() => EntityFuncs[id].Invoke(location, data));
+            }
+            else
+            {
+                string err = id ?? "null";
+                throw new KeyNotFoundException("Unable to create entity of type " + err);
+            }
+        }
+
+        public static void DoLazy(Action action)
+        {
+            LazyActions.Add(action);
         }
 
         public static Func<Vector3, T> GetFunc<T>(string id) where T : GameComponent

@@ -961,8 +961,6 @@ namespace DwarfCorp
                     if(!ChunkData.ChunkMap.ContainsKey(chunk.ID))
                     {
                         ChunkData.AddChunk(chunk);
-                        ChunkGen.GenerateVegetation(chunk, Components, Content, Graphics);
-                        ChunkGen.GenerateFauna(chunk, Components, Content, Graphics, World.ComponentManager.Factions);
                         List<VoxelChunk> adjacents = ChunkData.GetAdjacentChunks(chunk);
                         foreach(VoxelChunk c in adjacents)
                         {

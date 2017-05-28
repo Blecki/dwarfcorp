@@ -1,4 +1,4 @@
-﻿// Zone.cs
+// Zone.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -102,6 +102,24 @@ namespace DwarfCorp
                 }
             }
             return toReturn;
+        }
+
+        public void SetTint(Color color)
+        {
+            foreach (var obj in ZoneBodies)
+            {
+                SetDisplayColor(obj, color);
+            }
+        }
+
+        private void SetDisplayColor(GameComponent body, Color color)
+        {
+            List<Tinter> sprites = body.GetChildrenOfTypeRecursive<Tinter>();
+
+            foreach (Tinter sprite in sprites)
+            {
+                sprite.VertexColorTint = color;
+            }
         }
 
         public Body GetNearestBodyWithTag(Vector3 location, string tag, bool filterReserved)

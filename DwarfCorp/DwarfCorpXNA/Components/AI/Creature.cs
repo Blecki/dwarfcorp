@@ -795,7 +795,7 @@ namespace DwarfCorp
         /// Basic Act that causes the creature to wait for the specified time.
         /// Also draws a loading bar above the creature's head when relevant.
         /// </summary>
-        public IEnumerable<Act.Status> HitAndWait(float f, bool loadBar, Func<Vector3> pos, string playSound = "")
+        public IEnumerable<Act.Status> HitAndWait(float f, bool loadBar, Func<Vector3> pos, string playSound = "", Func<bool> continueHitting = null )
         {
             var waitTimer = new Timer(f, true);
 
@@ -808,6 +808,11 @@ namespace DwarfCorp
             while (!waitTimer.HasTriggered)
             {
                 waitTimer.Update(DwarfTime.LastTime);
+
+                if (continueHitting != null && !continueHitting())
+                {
+                    yield break;
+                }
 
                 if (loadBar)
                 {

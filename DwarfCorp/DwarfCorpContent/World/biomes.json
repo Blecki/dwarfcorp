@@ -103,7 +103,7 @@
         "SizeVariance": 0.5,
         "VerticalOffset": 1.7,
         "NoiseOffset": 57.248703,
-        "SpawnProbability": 0.04
+        "SpawnProbability": 0.08
       },
       {
         "Name": "Mushroom",
@@ -113,7 +113,7 @@
         "SizeVariance": 1.0,
         "VerticalOffset": 0.45,
         "NoiseOffset": 290.818359,
-        "SpawnProbability": 0.02
+        "SpawnProbability": 0.04
       },
       {
         "Name": "Berry Bush",
@@ -123,7 +123,7 @@
         "SizeVariance": 0.1,
         "VerticalOffset": 0.6,
         "NoiseOffset": 66.57408,
-        "SpawnProbability": 0.01
+        "SpawnProbability": 0.03
       }
     ],
     "Motes": [
@@ -188,7 +188,7 @@
         "SizeVariance": 0.5,
         "VerticalOffset": 1.7,
         "NoiseOffset": 47.248703,
-        "SpawnProbability": 0.01
+        "SpawnProbability": 0.03
       },
       {
         "Name": "Apple Tree",
@@ -198,7 +198,7 @@
         "SizeVariance": 0.5,
         "VerticalOffset": 1.0,
         "NoiseOffset": 57.248703,
-        "SpawnProbability": 0.01
+        "SpawnProbability": 0.04
       },
       {
         "Name": "Mushroom",
@@ -208,7 +208,7 @@
         "SizeVariance": 1.0,
         "VerticalOffset": 0.45,
         "NoiseOffset": 290.818359,
-        "SpawnProbability": 0.02
+        "SpawnProbability": 0.03
       },
       {
         "Name": "Berry Bush",
@@ -218,7 +218,7 @@
         "SizeVariance": 0.1,
         "VerticalOffset": 0.6,
         "NoiseOffset": 66.57408,
-        "SpawnProbability": 0.01
+        "SpawnProbability": 0.03
       }
     ],
     "Motes": [
@@ -287,7 +287,7 @@
         "SizeVariance": 0.5,
         "VerticalOffset": 1.7,
         "NoiseOffset": 164.433014,
-        "SpawnProbability": 0.03
+        "SpawnProbability": 0.04
       }
     ],
     "Motes": [
@@ -373,7 +373,7 @@
         "SizeVariance": 0.1,
         "VerticalOffset": 0.7,
         "NoiseOffset": 51.2956276,
-        "SpawnProbability": 0.02
+        "SpawnProbability": 0.04
       },
       {
         "Name": "Cactus",
@@ -383,7 +383,7 @@
         "SizeVariance": 0.1,
         "VerticalOffset": 0.8,
         "NoiseOffset": 99.2956276,
-        "SpawnProbability": 0.06
+        "SpawnProbability": 0.12
       },
       {
         "Name": "Palm Tree",
@@ -393,7 +393,7 @@
         "SizeVariance": 0.5,
         "VerticalOffset": 1.7,
         "NoiseOffset": 84.2078247,
-        "SpawnProbability": 0.01
+        "SpawnProbability": 0.02
       }
     ],
     "Motes": [
@@ -461,7 +461,7 @@
         "SizeVariance": 1.0,
         "VerticalOffset": 0.45,
         "NoiseOffset": 265.476837,
-        "SpawnProbability": 0.01
+        "SpawnProbability": 0.02
       },
       {
         "Name": "Palm Tree",
@@ -471,7 +471,7 @@
         "SizeVariance": 1.0,
         "VerticalOffset": 1.7,
         "NoiseOffset": 108.457794,
-        "SpawnProbability": 0.03
+        "SpawnProbability": 0.06
       },
       {
         "Name": "Berry Bush",
@@ -481,7 +481,7 @@
         "SizeVariance": 0.1,
         "VerticalOffset": 0.6,
         "NoiseOffset": 280.887939,
-        "SpawnProbability": 0.02
+        "SpawnProbability": 0.04
       }
     ],
     "Motes": [
@@ -584,7 +584,7 @@
         "SizeVariance": 1.0,
         "VerticalOffset": 0.5,
         "NoiseOffset": 265.476837,
-        "SpawnProbability": 0.2
+        "SpawnProbability": 0.4
       }],
     "Motes": [
       {

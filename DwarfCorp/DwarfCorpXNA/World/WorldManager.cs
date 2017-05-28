@@ -319,7 +319,7 @@ namespace DwarfCorp
         // event that is called when the player loses in the world
         public delegate void OnLose();
         public event OnLose OnLoseEvent;
-
+        private bool firstIter = true;
         #endregion
 
         /// <summary>
@@ -415,15 +415,9 @@ namespace DwarfCorp
 
                 SetLoadingMessage("Creating GameMaster ...");
                 CreateGameMaster();
-                SetLoadingMessage("Embarking ...");
-                CreateInitialEmbarkment();
 
                 SetLoadingMessage("Presimulating ...");
                 ShowingWorld = false;
-                if (string.IsNullOrEmpty(ExistingFile))
-                {
-                    GenerateInitialObjects();
-                }
                 OnLoadedEvent();
 
                 Thread.Sleep(1000);
@@ -1273,6 +1267,15 @@ namespace DwarfCorp
         /// <param name="gameTime">The current time</param>
         public void Update(DwarfTime gameTime)
         {
+            // Can't do this in the loading thread because threaded generation
+            // of entities is bad -- it leads to GPU calls for texture loading.
+            if (firstIter && string.IsNullOrEmpty(ExistingFile))
+            {
+                GenerateInitialObjects();
+                CreateInitialEmbarkment();
+            }
+            firstIter = false;
+            EntityFactory.DoLazyActions();
             if (FastForwardToDay)
             {
                 if (Time.IsDay())

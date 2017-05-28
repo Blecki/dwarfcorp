@@ -49,14 +49,14 @@ namespace DwarfCorp
 
         public BuildRoomTask()
         {
-            Priority = PriorityType.Medium;
+            Priority = PriorityType.High;
         }
 
         public BuildRoomTask(BuildRoomOrder zone)
         {
             Name = "Build Room " + zone.ToBuild.RoomData.Name + zone.ToBuild.ID;
             Zone = zone;
-            Priority = PriorityType.Medium;
+            Priority = PriorityType.High;
         }
 
         public override Task Clone()
@@ -71,14 +71,18 @@ namespace DwarfCorp
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            return (Zone == null) ? 1000 : 1.0f;
+            return (Zone == null || Zone.IsBuilt || Zone.IsDestroyed) ? 1000 : 1.0f;
         }
 
         public override bool ShouldDelete(Creature agent)
         {
-            return Zone != null && !Zone.IsBuilt;
+            return Zone == null || Zone.IsBuilt || Zone.IsDestroyed;
         }
 
+        public override bool ShouldRetry(Creature agent)
+        {
+            return Zone != null && !Zone.IsBuilt && !Zone.IsDestroyed;
+        }
     }
 
 }

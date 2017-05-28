@@ -101,7 +101,7 @@ namespace DwarfCorp
                     new Wrap(() => IsRoomBuildOrder(buildRoom)),
                     new GoToVoxelAct("TargetVoxel", PlanAct.PlanType.Adjacent, Agent),
                     new Wrap(() => IsRoomBuildOrder(buildRoom)),
-                    new Wrap(() => Creature.HitAndWait(buildRoom.VoxelOrders.Count * 0.5f / agent.Stats.BuildSpeed, true, () => buildRoom.GetBoundingBox().Center())),
+                    new Wrap(() => Creature.HitAndWait(buildRoom.VoxelOrders.Count * 0.5f / agent.Stats.BuildSpeed, true, () => buildRoom.GetBoundingBox().Center(), ContentPaths.Audio.Oscar.sfx_ic_dwarf_craft, () => !buildRoom.IsBuilt && !buildRoom.IsDestroyed)),
                     new Wrap(() => IsRoomBuildOrder(buildRoom)),
                     new PlaceRoomResourcesAct(Agent, buildRoom, Resources)
                     , new Wrap(Creature.RestockAll)) | new Wrap(Creature.RestockAll)
