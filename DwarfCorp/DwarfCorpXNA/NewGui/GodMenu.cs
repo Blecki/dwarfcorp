@@ -111,7 +111,9 @@ namespace DwarfCorp.NewGui
                     Text = "TRADE ENVOY",
                     OnClick = (sender, args) =>
                     {
-                        var factionToSend = Master.World.ComponentManager.Factions.Factions.Values.FirstOrDefault(f => f.Race.IsIntelligent && f.Race.IsNative);
+                        var factionToSend = Datastructures.SelectRandom(
+                            Master.World.ComponentManager.Factions.Factions.Values.Where(f =>
+                            f.Race.IsIntelligent && f.Race.IsNative));
                         if (factionToSend != null)
                             Master.World.ComponentManager.Diplomacy.SendTradeEnvoy(factionToSend, Master.World);
                     }

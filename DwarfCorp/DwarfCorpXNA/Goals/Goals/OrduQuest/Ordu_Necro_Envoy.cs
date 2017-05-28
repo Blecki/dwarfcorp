@@ -29,7 +29,7 @@ namespace DwarfCorp.Goals.Goals
         public override void OnGameEvent(WorldManager World, GameEvent Event)
         {
             var tradeEnvoyKilled = Event as Events.TradeEnvoyKilled;
-            if (tradeEnvoyKilled != null && tradeEnvoyKilled.OtherFaction.Name == "Fel'al'fe")
+            if (tradeEnvoyKilled != null && tradeEnvoyKilled.OtherFaction.Name == "Ordu")
             {
                 State = GoalState.Complete;
                 World.MakeAnnouncement("Blinny is pleased that you reconsidered.");
