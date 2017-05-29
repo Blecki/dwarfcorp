@@ -577,7 +577,7 @@ namespace DwarfCorp
         }
 
 
-        public static float ComputeHeight(float wx, float wy, float worldWidth, float worldHeight, float globalScale, bool erode)
+        public static float ComputeHeight(float wx, float wy, float worldWidth, float worldHeight, float globalScale, bool erode, bool cliffs = false)
         {
             float x = (wx) / globalScale;
             float y = (wy) / globalScale;
@@ -595,6 +595,13 @@ namespace DwarfCorp
             h += smallnoise;
             h += 0.4f;
 
+            if (cliffs)
+            {
+                float cliffiness = noise(x, y, 200, 0.01f);
+                float hCliff = (int) (h/0.1f)*0.01f;
+
+                h = (1.0f - cliffiness)*h + hCliff*cliffiness;
+            }
             if(erode)
             {
                 Vector2 vec = new Vector2(x, y);
@@ -616,6 +623,8 @@ namespace DwarfCorp
             const float continentSize = 0.03f;
             const float hillSize = 0.1f;
             const float smallNoiseSize = 0.15f;
+            const float cliffHeight = 0.1f;
+            const float invCliffHeight = 1.0f/cliffHeight;
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
@@ -624,10 +633,11 @@ namespace DwarfCorp
                     float continent = noise(x, y, 10, continentSize);
                     float hill = noise(x, y, 20, hillSize) * 0.02f;
                     float smallnoise = noise(x, y, 100, smallNoiseSize) * 0.01f;
-
+                    float cliffs = noise(x, y, 200, continentSize) + 0.5f;
                     float h = pow(clamp((continent * mountain) + hill, 0, 1), 1);
                     h += smallnoise;
                     h += 0.4f;
+                    h = ((int)(h * invCliffHeight)) * cliffHeight;
                     toReturn[x, y] = h;
                 }
             }
@@ -660,17 +670,6 @@ namespace DwarfCorp
                         h *= LinearInterpolate(vec, Map, ScalarFieldType.Erosion);
                         Map[x, y].Height = clamp(h, 0, 1);
                     }
-                }
-            }
-        }
-
-        public static void GenerateHeightMap(int width, int height, float globalScale, bool erode)
-        {
-            for(int x = 0; x < width; x++)
-            {
-                for(int y = 0; y < height; y++)
-                {
-                    Map[x, y].Height = ComputeHeight(x, y, width, height, globalScale, erode);
                 }
             }
         }

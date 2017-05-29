@@ -1,4 +1,4 @@
-﻿// Lamp.cs
+// Lamp.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -49,8 +49,7 @@ namespace DwarfCorp
 
         }
 
-        public Lamp(ComponentManager componentManager, Vector3 position) :
-            base(componentManager, "Lamp",componentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+        private void CreateSpriteStanding()
         {
             SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture);
 
@@ -63,18 +62,68 @@ namespace DwarfCorp
             };
             Animation lampAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture), "Lamp", 32, 32, frames, true, Color.White, 3.0f, 1f, 1.0f, false);
 
-            Sprite sprite = new Sprite(componentManager, "sprite", this, Matrix.Identity, spriteSheet, false)
+            Sprite sprite = new Sprite(Manager, "sprite", this, Matrix.Identity, spriteSheet, false)
             {
                 LightsWithVoxels = false,
                 OrientationType = Sprite.OrientMode.YAxis
             };
             sprite.AddAnimation(lampAnimation);
-
-
             lampAnimation.Play();
+        }
+
+        private void CreateSpriteWall(Vector3 diff)
+        {
+            Vector3 offset = diff * 0.2f + Vector3.Up*0.2f;
+            SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture);
+
+            List<Point> frames = new List<Point>
+            {
+                new Point(5, 0),
+            };
+            Animation lampAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture), "Lamp", 32, 32, frames, true, Color.White, 3.0f, 1f, 1.0f, false);
+
+            Sprite sprite = new Sprite(Manager, "sprite", this, Matrix.CreateTranslation(offset), spriteSheet, false)
+            {
+                LightsWithVoxels = false,
+                OrientationType = Sprite.OrientMode.YAxis
+            };
+            sprite.AddAnimation(lampAnimation);
+            lampAnimation.Play();
+        }
+
+        private void CreateSprite()
+        {
+            Voxel voxel = new Voxel();
+            if (!Manager.World.ChunkManager.ChunkData.GetVoxel(LocalPosition, ref voxel))
+            {
+                CreateSpriteStanding();
+                return;
+            }
+
+            Voxel neighbor = new Voxel();
+            for (int dx = -1; dx < 2; dx ++)
+            {
+                for (int dz = -1; dz < 2; dz++)
+                {
+                    if (Math.Abs(dx) + Math.Abs(dz) != 1)
+                        continue;
+                    Vector3 diff = new Vector3(dx, 0, dz);
+                    if (voxel.GetNeighbor(diff, ref neighbor) && !neighbor.IsEmpty)
+                    {
+                        CreateSpriteWall(diff);
+                        return;
+                    }
+                }
+            }
+            CreateSpriteStanding();
+            return;
+        }
+
+        public Lamp(ComponentManager componentManager, Vector3 position) :
+            base(componentManager, "Lamp",componentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+        {
+            CreateSprite();
             Tags.Add("Lamp");
-
-
 
             Voxel voxelUnder = new Voxel();
 
