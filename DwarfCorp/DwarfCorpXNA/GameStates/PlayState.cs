@@ -201,8 +201,8 @@ namespace DwarfCorp.GameStates
                         sender.Rect.Y = 64;
                     }
                 });
-
-                GuiRoot.ShowPopup(popup, Root.PopupExclusivity.AddToStack);
+                GuiRoot.RootItem.AddChild(popup);
+                //GuiRoot.ShowPopup(popup, Root.PopupExclusivity.AddToStack);
             };
 
             World.Unpause();

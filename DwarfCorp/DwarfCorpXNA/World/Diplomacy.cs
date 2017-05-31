@@ -233,7 +233,7 @@ namespace DwarfCorp
                         {
                             politics.RecentEvents.Add(new PoliticalEvent()
                             {
-                                Change = 0.0f, // Make this negative and we get an instant war party rush.
+                                Change = -10.0f, // Make this negative and we get an instant war party rush.
                                 Description = "we are taught to hate your kind",
                                 Duration = forever,
                                 Time = Now
@@ -278,6 +278,13 @@ namespace DwarfCorp
                     foreach (CreatureAI creature in envoy.Creatures)
                     {
                         ResourcePack resources = new ResourcePack(creature.Physics);
+                        if (natives.Economy == null)
+                        {
+                            natives.Economy = new Economy(natives, 1000.0m, World, new CompanyInformation()
+                            {
+                                Name = natives.Name
+                            });
+                        }
                         if (natives.Economy.Company.Information == null)
                         {
                             natives.Economy.Company.Information = new CompanyInformation();

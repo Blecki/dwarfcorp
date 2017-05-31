@@ -38,7 +38,7 @@ namespace Gum
         public int TooltipTextSize = 1;
         public float CursorBlinkTime = 0.3f;
         internal double RunTime = 0.0f;
-
+        private Widget ScreenDarkener = null;
         private List<Widget> PopupStack = new List<Widget>();
 
         public Root(RenderData RenderData)
@@ -157,6 +157,17 @@ namespace Gum
         /// <param name="Popup"></param>
         public void ShowPopup(Widget Popup, PopupExclusivity Exclusivity = PopupExclusivity.AddToStack)
         {
+            if (ScreenDarkener == null)
+            {
+                ScreenDarkener = new Widget()
+                {
+                    Background = new TileReference("basic", 0),
+                    BackgroundColor = new Vector4(0, 0, 0, 0.5f),
+                    AutoLayout = AutoLayout.FloatCenter,
+                    Rect = RootItem.Rect
+                };
+                RootItem.AddChild(ScreenDarkener);
+            }
             if (Exclusivity == PopupExclusivity.DestroyExistingPopups)
                 CleanupPopupStack();
 
@@ -425,6 +436,12 @@ namespace Gum
                 SafeCall(item.OnUpdate, item, Time);
 
             if (HoverItem != null) SafeCall(HoverItem.OnHover, HoverItem);
+
+            if (PopupStack.Count == 0 && ScreenDarkener != null)
+            {
+                RootItem.RemoveChild(ScreenDarkener);
+                ScreenDarkener = null;
+            }
         }
 
         public void Draw()
