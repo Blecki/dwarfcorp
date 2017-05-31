@@ -33,17 +33,7 @@ namespace DwarfCorp.Trade
             PlayerEntity.AddMoney(-PlayerMoney);
             PlayerEntity.AddMoney(EnvoyMoney);
             PlayerEntity.RemoveResources(PlayerItems);
-            PlayerEntity.AddResources(EnvoyItems);
-
-            World.GoalManager.OnGameEvent(new Goals.Events.Trade
-            {
-                A = PlayerEntity.TraderFaction,
-                AGold = PlayerMoney,
-                AGoods = PlayerItems,
-                B = EnvoyEntity.TraderFaction,
-                BGold = EnvoyMoney,
-                BGoods = EnvoyItems
-            });
+            PlayerEntity.AddResources(EnvoyItems);           
         }
     }
 }

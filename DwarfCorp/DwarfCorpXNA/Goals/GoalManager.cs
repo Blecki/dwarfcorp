@@ -10,6 +10,7 @@ namespace DwarfCorp.Goals
         private List<Goal> AllGoals = new List<Goal>();
         private List<Goal> ActiveGoals = new List<Goal>();
         private List<GameEvent> Events = new List<GameEvent>();
+        private List<Goal> NewlyActivatedGoals = new List<Goal>();
 
         public GoalManager()
         {
@@ -71,6 +72,8 @@ namespace DwarfCorp.Goals
                     goal.OnGameEvent(World, @event);
 
             ActiveGoals.RemoveAll(g => g.State != GoalState.Active);
+            ActiveGoals.AddRange(NewlyActivatedGoals);
+            NewlyActivatedGoals.Clear();
         }
                
         public Goal.ActivationResult TryActivateGoal(WorldManager World, Goal Goal)
@@ -79,7 +82,7 @@ namespace DwarfCorp.Goals
             if (activationResult.Succeeded)
             {
                 Goal.State = GoalState.Active;
-                ActiveGoals.Add(Goal);
+                NewlyActivatedGoals.Add(Goal);
             }
             return activationResult;
         }
@@ -88,6 +91,16 @@ namespace DwarfCorp.Goals
         {
             if (Goal.State == GoalState.Unavailable)
                 Goal.State = GoalState.Available;
+        }
+
+        public void UnlockGoal(Type Type)
+        {
+            UnlockGoal(FindGoal(Type));
+        }
+
+        public Goal FindGoal(Type Type)
+        {
+            return AllGoals.FirstOrDefault(g => g.GetType() == Type);
         }
     }
 }
