@@ -27,6 +27,24 @@ namespace DwarfCorp.GameStates
             GuiRoot = new Gum.Root(DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
             GuiRoot.SetMouseOverlay(null, 0);
+            World.GuiHook_ShowTutorialPopup = (text, callback) =>
+            {
+                var popup = GuiRoot.ConstructWidget(new NewGui.TutorialPopup
+                {
+                    Message = text,
+                    OnClose = (sender) =>
+                    {
+                        callback((sender as NewGui.TutorialPopup).DisableChecked);
+                    },
+                    OnLayout = (sender) =>
+                    {
+                        sender.Rect.X = GuiRoot.RenderData.VirtualScreen.Width - sender.Rect.Width;
+                        sender.Rect.Y = 64;
+                    }
+                });
+
+                GuiRoot.ShowPopup(popup, Root.PopupExclusivity.AddToStack);
+            };
             var mainPanel = GuiRoot.RootItem.AddChild(new Gum.Widget
             {
                 Rect = GuiRoot.RenderData.VirtualScreen,
@@ -60,10 +78,9 @@ namespace DwarfCorp.GameStates
             {
                 Border = "border-thin",
                 Padding = new Margin(4, 4, 0, 0),
-                Faction = World.PlayerFaction
+                Faction = World.PlayerFaction,
             });
             
-
             //var financePanel = tabPanel.AddTab("Finance", new NewGui.FinancePanel
             //{
             //    Border = "border-thin",
@@ -94,24 +111,9 @@ namespace DwarfCorp.GameStates
             
             GuiRoot.RootItem.Layout();
 
-            World.GuiHook_ShowTutorialPopup = (text, callback) =>
-            {
-                var popup = GuiRoot.ConstructWidget(new NewGui.TutorialPopup
-                {
-                    Message = text,
-                    OnClose = (sender) =>
-                    {
-                        callback((sender as NewGui.TutorialPopup).DisableChecked);
-                    },
-                    OnLayout = (sender) =>
-                    {
-                        sender.Rect.X = GuiRoot.RenderData.VirtualScreen.Width - sender.Rect.Width;
-                        sender.Rect.Y = 64;
-                    }
-                });
 
-                GuiRoot.ShowPopup(popup, Root.PopupExclusivity.AddToStack);
-            };
+            World.Tutorial("economy");
+
 
             IsInitialized = true;
             base.OnEnter();

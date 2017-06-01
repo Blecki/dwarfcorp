@@ -184,6 +184,31 @@
 			"Name" : "brush",
 			"Title" : "Brushes",
 			"Text" : "By clicking one of the brush buttons on the right of the screen, you activated a brush. The available brushes are Block, Shell and Stair brushes. The block brush selects a rectangular region of the world as you click and drag. The shell brush selects a single-block shell around a rectangular region. The stair brush selects stairs down into the earth when mining, or stairs up into the air when building."
-		}
+		},
+		{
+			"Name" : "hire",
+			"Title" : "Hiring Dwarves",
+			"Text" : "Here, you can hire new dwarves to be employees of your company. Click on the employee type to view a new resume, and click \"Hire\" if you want to hire them. Hiring dwarves requires a balloon port and enough Dwarfbux to cover their signing bonus."
+		},
+		{
+			"Name" : "economy",
+			"Title" : "Economy",
+			"Text" : "This is the economy screen, where you can view your employees, finances, and active goals. You can also hire new employees, fire employees, and manage employee tasks."
+		},
+		{
+			"Name" : "goals",
+			"Title" : "Goals",
+			"Text" : "TODO"
+		},
+		{
+			"Name" : "active goals",
+			"Title" : "Active Goals",
+			"Text" : "TODO"
+		},
+		{
+			"Name" : "completed goals",
+			"Title" : "Completed Goals",
+			"Text" : "TODO"
+		},
 	]
 }

@@ -56,7 +56,8 @@ namespace DwarfCorp.NewGui
                                 RebuildEmployeeList();
                             }
                         });
-                    Root.ShowDialog(dialog);
+                    Root.ShowPopup(dialog);
+                    Faction.World.Tutorial("hire");
                 }
             });
 
