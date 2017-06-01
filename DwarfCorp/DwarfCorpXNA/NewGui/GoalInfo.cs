@@ -13,7 +13,7 @@ namespace DwarfCorp.NewGui
         public Goals.Goal Goal
         {
             get { return _goal; }
-            set { _goal = value; _goal.BuildCustomGUI(this); Invalidate(); }
+            set { _goal = value; _goal.CreateGUI(Description); Invalidate(); }
         }
 
         private Widget Description;
@@ -24,7 +24,7 @@ namespace DwarfCorp.NewGui
         {
             Description = AddChild(new Gum.Widget
             {
-                AutoLayout = AutoLayout.DockTop
+                AutoLayout = AutoLayout.DockFill
             });
 
             ActivateButton = AddChild(new Widget
@@ -39,6 +39,8 @@ namespace DwarfCorp.NewGui
                 }
             });
 
+            Font = "font-hires";
+
             base.Construct();
         }
 
@@ -47,6 +49,7 @@ namespace DwarfCorp.NewGui
             if (Goal != null)
             {
                 ActivateButton.Hidden = !(Goal.State == Goals.GoalState.Available);
+                Goal.CreateGUI(Description);
             } 
             
             return base.Redraw();

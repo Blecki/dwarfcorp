@@ -45,12 +45,10 @@ namespace DwarfCorp.Goals
         /// <summary>
         /// Called to create a custom GUI for the goal.
         /// </summary>
-        /// <param name="World"></param>
         /// <param name="Widget"></param>
-        public virtual void BuildCustomGUI(Gum.Widget Widget)
+        public virtual void CreateGUI(Gum.Widget Widget)
         {
             Widget.Text = Description;
-            Widget.Font = "font-hires";
         }
     }
 }
