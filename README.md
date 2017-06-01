@@ -11,7 +11,7 @@ To develop DwarfCorp, you need the following libraries. If you just want to play
 * Note: If you are running Windows 8 or higher, you will need to download [MXA](https://mxa.codeplex.com/) instead.
 * [XNA-FNA](https://github.com/FNA-XNA/FNA) for cross-platform development (forked)
 * [LibNoise.NET](https://libnoisedotnet.codeplex.com/) (source code included)
-* [JSON.NET](https://github.com/JamesNK/Newtonsoft.Json) (source code included)
+* [JSON.NET](https://github.com/JamesNK/Newtonsoft.Json) (source code not included)
 
 ## Cross Platform Development
 It is not possible to develop the game on anything other than a Windows machine at the moment. The game is developed using XNA/FNA, which only supports a windows development environment. That said, the game can be cross compiled for windows/mac using FNA, but only in windows in a Visual Studio environment.
@@ -63,12 +63,10 @@ To build and run in the game on a windows PC, you must do the following:
 ## Project Structure
 There are several projects under the main folder:
 
-* **DwarfCorpCore** contains the core source code of the game, and is intended to be more-or-less platform independent. This is **not to be compiled.**
-* **DwarfCorpXNA** contains source code for XNA builds of the game. Most source files here should just be symbolic links to **DwarfCorpCore**.
-* **DwarfCorpFNA** Contains source code for the FNA build. Most of the files in here are symbolic links to **DwarfCorpCore** in a flat directory structure.
-* **DwarfCorpContent** Contains images, sounds, music, and content configuration files for DwarfCorp. Most assets in this content project may not be redistributed.
+* **DwarfCorpXNA** contains source code for XNA builds of the game.
+* **DwarfCorpFNA** Contains source code for the FNA build. Most of the files in here are just cross-included from DwarfCorpXNA, but using different linked libraries and compile flags.
+* **DwarfCorpContent** Contains images, sounds, music, and content configuration files for DwarfCorp. Most assets in this content project may not be redistributed without the consent of Completely Fair Games Ltd.
 * **LibNoise** Is a fork of LibNosie.NET noise generation library.
-* **JSON.NET** Is a fork of the JSON.NET data serialization library.
 * **FNA** is a fork of XNA-FNA.
 
 ## Licensing
