@@ -463,7 +463,7 @@ namespace DwarfCorp
                         if (Creature.Allies == "Dwarf")
                         {
                             Manager.World.MakeAnnouncement(String.Format("{0} ({1}) refuses to work!",
-                                Stats.FullName, Stats.CurrentLevel.Name), ZoomToMe);
+                                Stats.FullName, Stats.CurrentClass.Name), ZoomToMe);
                             Manager.World.Tutorial("happiness");
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                         }
@@ -522,7 +522,7 @@ namespace DwarfCorp
                 {
                     lastXPAnnouncement = Stats.LevelIndex;
                     Manager.World.MakeAnnouncement(String.Format("{0} ({1}) wants a promotion!",
-                            Stats.FullName, Stats.CurrentLevel.Name),
+                            Stats.FullName, Stats.CurrentClass.Name),
                         () => Manager.World.Game.StateManager.PushState(new NewEconomyState(Manager.World.Game, Manager.World.Game.StateManager, Manager.World)),
                     ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
                     Manager.World.Tutorial("level up");
@@ -829,9 +829,9 @@ namespace DwarfCorp
                     if (Faction == Manager.World.PlayerFaction)
                     {
                         Manager.World.MakeAnnouncement(
-                            String.Format("{0} the {1} is fighting {2} {3}", Stats.FullName,
-                                Stats.CurrentLevel.Name,
-                                TextGenerator.IndefiniteArticle(enemy.Stats.CurrentLevel.Name),
+                            String.Format("{0} the {1} is fighting {2} ({3})", Stats.FullName,
+                                Stats.CurrentClass.Name,
+                                TextGenerator.IndefiniteArticle(enemy.Stats.CurrentClass.Name),
                                 enemy.Faction.Race.Name),
                             ZoomToMe);
                         Manager.World.Tutorial("combat");

@@ -12,6 +12,7 @@ namespace DwarfCorp.NewGui
     {
         public Faction Faction;
         public CompanyInformation Company;
+        private Button HireButton;
         public Applicant GenerateApplicant(CompanyInformation info, JobLibrary.JobType type)
         {
             Applicant applicant = new Applicant();
@@ -84,6 +85,8 @@ namespace DwarfCorp.NewGui
                     OnClick = (sender, args) =>
                     {
                         applicantInfo.Hidden = false;
+                        HireButton.Hidden = false;
+                        HireButton.Invalidate();
                         applicantInfo.Applicant = GenerateApplicant(Company, newJob);
                     },
                     Background = new TileReference("dwarves", EmployeePanel.GetIconIndex(job.Value.Name)),
@@ -112,7 +115,7 @@ namespace DwarfCorp.NewGui
                 }
             });
 
-            buttonRow.AddChild(new Widget
+            HireButton = buttonRow.AddChild(new Button
             {
                 Text = "Hire",
                 Border = "border-button",
@@ -141,10 +144,21 @@ namespace DwarfCorp.NewGui
                             Faction.Hire(applicant);
                             SoundManager.PlaySound(ContentPaths.Audio.cash, 0.5f);
                             applicantInfo.Hidden = true;
+                            HireButton.Hidden = true;
+                            Root.ShowPopup(new NewGui.Confirm()
+                            {
+                                Text = String.Format("We hired {0}, paying a signing bonus of {1}.",
+                                applicant.Name,
+                                applicant.Class.Levels[0].Pay * 4),
+                                OkayText = "OK",
+                                CancelText = ""
+                            });
+ 
                         }
                     }
-                }
-            });
+                },
+                Hidden = true
+            }) as Button;
             this.Layout();
         }
     }

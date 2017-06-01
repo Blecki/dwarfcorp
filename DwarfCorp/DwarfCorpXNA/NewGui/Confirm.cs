@@ -28,33 +28,39 @@ namespace DwarfCorp.NewGui
 
             Border = "border-fancy";
 
-            AddChild(new Gum.Widgets.Button
+            if (!String.IsNullOrEmpty(OkayText))
             {
-                Text = OkayText,
-                TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Center,
-                Border = "border-button",
-                OnClick = (sender, args) => 
+                AddChild(new Gum.Widgets.Button
+                {
+                    Text = OkayText,
+                    TextHorizontalAlign = HorizontalAlign.Center,
+                    TextVerticalAlign = VerticalAlign.Center,
+                    Border = "border-button",
+                    OnClick = (sender, args) =>
                     {
                         DialogResult = Result.OKAY;
                         this.Close();
                     },
-                AutoLayout = AutoLayout.FloatBottomRight
-            });
+                    AutoLayout = AutoLayout.FloatBottomRight
+                });
+            }
 
-            AddChild(new Gum.Widgets.Button
+            if (!String.IsNullOrEmpty(CancelText))
             {
-                Text = CancelText,
-                TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Center,
-                Border = "border-button",
-                OnClick = (sender, args) => 
+                AddChild(new Gum.Widgets.Button
+                {
+                    Text = CancelText,
+                    TextHorizontalAlign = HorizontalAlign.Center,
+                    TextVerticalAlign = VerticalAlign.Center,
+                    Border = "border-button",
+                    OnClick = (sender, args) =>
                     {
                         DialogResult = Result.CANCEL;
                         this.Close();
                     },
-                AutoLayout = AutoLayout.FloatBottomLeft
-            });
+                    AutoLayout = AutoLayout.FloatBottomLeft
+                });
+            }
 
             Layout();
         }

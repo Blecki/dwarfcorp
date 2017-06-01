@@ -121,6 +121,7 @@ namespace DwarfCorp.GameStates
 
         public override void Update(DwarfTime gameTime)
         {
+            World.TutorialManager.Update(World.GuiHook_ShowTutorialPopup);
             foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
             {
                 GuiRoot.HandleInput(@event.Message, @event.Args);
