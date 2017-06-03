@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using LibNoise;
 using Microsoft.Xna.Framework;
@@ -20,9 +20,9 @@ namespace DwarfCorp.GameStates
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
 
-            GuiRoot = new Gum.Root(Gum.Root.MinimumSize, DwarfGame.GumSkin);
+            GuiRoot = new Gum.Root(DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
-
+            GuiRoot.SetMouseOverlay(null, 0);
             // CONSTRUCT GUI HERE...
 
             // Must be true or Render will not be called.

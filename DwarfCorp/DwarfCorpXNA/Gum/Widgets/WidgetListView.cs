@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,7 +28,7 @@ namespace Gum.Widgets
         }
 
         public Action<Widget> OnSelectedIndexChanged = null;
-        public Vector4 SelectedItemBackgroundColor = new Vector4(1, 0, 0, 1);
+        public Vector4 SelectedItemBackgroundColor = new Vector4(0.5f, 0, 0, 1);
 
         public Widget SelectedItem
         {
@@ -110,6 +110,7 @@ namespace Gum.Widgets
             {
                 Children[i].Hidden = true;
                 Children[i].BackgroundColor = new Vector4(1, 1, 1, 1);
+                Children[i].TextColor = new Vector4(0, 0, 0, 1);
                 Children[i].Invalidate();
             }
 
@@ -123,7 +124,10 @@ namespace Gum.Widgets
             }
 
             if (SelectedItem != null)
+            {
                 SelectedItem.BackgroundColor = SelectedItemBackgroundColor;
+                SelectedItem.TextColor = new Vector4(1, 1, 1, 1);
+            }
 
             return base.Redraw();
         }

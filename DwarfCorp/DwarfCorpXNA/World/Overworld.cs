@@ -238,14 +238,15 @@ namespace DwarfCorp
 
         public enum Biome
         {
-            Desert,
-            Grassland,
-            Forest,
-            Tundra,
-            Taiga,
-            Jungle,
-            Waste,
-            Cave
+            Desert = 0,
+            Grassland = 1,
+            BorealForest = 2,
+            DeciduousForest = 3,
+            Tundra = 4,
+            Taiga = 5,
+            Jungle = 6,
+            Waste = 7,
+            Cave = 8
         }
 
 
@@ -876,7 +877,7 @@ namespace DwarfCorp
 
 
                     Map[x, y].Height = level;
-                    Map[x, y].Biome = Biome.Forest;
+                    Map[x, y].Biome = Biome.DeciduousForest;
                     Map[x, y].Erosion = 1.0f;
                     Map[x, y].Weathering = 0;
                     Map[x, y].Faults = 1.0f;

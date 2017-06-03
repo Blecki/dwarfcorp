@@ -22,11 +22,6 @@ namespace Gum
         public Widget HoverItem { get; private set; }
         public Widget FocusItem { get; private set; }
 
-        public static Point MinimumSize = new Point(1024, 768);
-        public Rectangle VirtualScreen { get; private set; }
-        public Rectangle RealScreen { get; private set; }
-        public Point ResolutionAtCreation { get; private set; }
-        public int ScaleRatio { get; private set; }
         public Widget RootItem { get; private set; }
         public Widget TooltipItem { get; private set; }
         private List<Widget> UpdateItems = new List<Widget>();
@@ -34,6 +29,8 @@ namespace Gum
 
         public bool MouseVisible = true;
         public MousePointer MousePointer = null;
+        public string MouseOverlaySheet = null;
+        public int MouseOverlayFrame = 0;
         public Point MousePosition = new Point(0, 0);
         private DateTime MouseMotionTime = DateTime.Now;
         public float SecondsBeforeTooltip = 0.5f;
@@ -44,11 +41,10 @@ namespace Gum
 
         private List<Widget> PopupStack = new List<Widget>();
 
-        public Root(Point IdealSize, RenderData RenderData)
+        public Root(RenderData RenderData)
         {
             this.RenderData = RenderData;
                     
-            ResizeVirtualScreen(IdealSize);
             ResetGui();
 
             // Grab initial mouse position.
@@ -56,13 +52,6 @@ namespace Gum
             MousePosition = ScreenPointToGuiPoint(new Point(mouse.X, mouse.Y));
         }
 
-        public bool ResolutionChanged()
-        {
-            if (ResolutionAtCreation.X != RenderData.ActualScreenBounds.X) return true;
-            if (ResolutionAtCreation.Y != RenderData.ActualScreenBounds.Y) return true;
-            return false;
-        }
-               
         /// <summary>
         /// Reset the gui, clearing out all existing widgets.
         /// </summary>
@@ -74,42 +63,10 @@ namespace Gum
             TooltipItem = null;
             RootItem = ConstructWidget(new Widget
                 {
-                    Rect = VirtualScreen,
+                    Rect = RenderData.VirtualScreen,
                     Transparent = true
                 });
 
-        }
-
-        /// <summary>
-        /// Resize the virtual screen and find the ideal size and positioning.
-        /// </summary>
-        /// <param name="VirtualSize"></param>
-        public void ResizeVirtualScreen(Point VirtualSize)
-        {
-            this.VirtualScreen = new Rectangle(0, 0, VirtualSize.X, VirtualSize.Y);
-            this.ResolutionAtCreation = RenderData.ActualScreenBounds;
-
-            // Calculate ideal on screen size.
-            // Size should never be smaller than the size of the virtual screen supplied.
-            var screenSize = RenderData.ActualScreenBounds;
-            ScaleRatio = 1;
-
-            // How many times can we multiply the ideal size and still fit on the screen?
-            //while (((VirtualSize.X * (ScaleRatio + 1)) <= screenSize.X) &&
-            //    ((VirtualSize.Y * (ScaleRatio + 1)) <= screenSize.Y))
-            //    ScaleRatio += 1;
-
-            // How much space did we leave to the left and right? 
-            var horizontalExpansion = ((screenSize.X - (VirtualSize.X * ScaleRatio)) / 2) / ScaleRatio;
-            var verticalExpansion = ((screenSize.Y - (VirtualSize.Y * ScaleRatio)) / 2) / ScaleRatio;
-
-            VirtualScreen = new Rectangle(0, 0, VirtualSize.X + horizontalExpansion + horizontalExpansion,
-                VirtualSize.Y + verticalExpansion + verticalExpansion);
-
-            RealScreen = new Rectangle(0, 0, VirtualScreen.Width * ScaleRatio, VirtualScreen.Height * ScaleRatio);
-            RealScreen = new Rectangle((screenSize.X - RealScreen.Width) / 2,
-                (screenSize.Y - RealScreen.Height) / 2,
-                RealScreen.Width, RealScreen.Height);
         }
 
         /// <summary>
@@ -150,7 +107,7 @@ namespace Gum
             if (Object.ReferenceEquals(HoverItem, Widget)) HoverItem = null;
             if (Object.ReferenceEquals(TooltipItem, Widget)) TooltipItem = null;
             UpdateItems.RemoveAll(p => Object.ReferenceEquals(p, Widget));
-            if (PopupStack.Contains(Widget)) PopupStack = new List<Widget>();
+            if (PopupStack.Contains(Widget)) PopupStack = PopupStack.Take(PopupStack.IndexOf(Widget)).ToList();
         }
 
         private void CleanupPopupStack()
@@ -242,7 +199,7 @@ namespace Gum
                 Where.X + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2,
                 Where.Y + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2, bestSize.X, bestSize.Y);
 
-            rect = MathFunctions.SnapRect(rect, RealScreen);
+            rect = MathFunctions.SnapRect(rect, RenderData.VirtualScreen);
             item.Rect = rect;
             RootItem.AddChild(item);
             
@@ -291,10 +248,10 @@ namespace Gum
         public Point ScreenPointToGuiPoint(Point P)
         {
             // Transform mouse from screen space to virtual gui space.
-            float mouseX = P.X - RealScreen.X;
-            float mouseY = P.Y - RealScreen.Y;
-            mouseX /= ScaleRatio;
-            mouseY /= ScaleRatio;
+            float mouseX = P.X - RenderData.RealScreen.X;
+            float mouseY = P.Y - RenderData.RealScreen.Y;
+            mouseX /= RenderData.ScaleRatio;
+            mouseY /= RenderData.ScaleRatio;
             return new Point((int)mouseX, (int)mouseY);
         }
 
@@ -480,12 +437,12 @@ namespace Gum
                 Matrix.CreateOrthographicOffCenter(0, RenderData.Device.Viewport.Width,
                 RenderData.Device.Viewport.Height, 0, -32, 32));
 
-            var scale = RealScreen.Width / VirtualScreen.Width;
+            var scale = RenderData.RealScreen.Width / RenderData.VirtualScreen.Width;
 
             // Need to offset by the subpixel portion to avoid screen artifacts.
             // Remove this offset is porting to Monogame, monogame does it correctly.
             RenderData.Effect.Parameters["World"].SetValue(
-                Matrix.CreateTranslation(RealScreen.X, RealScreen.Y, 1.0f)
+                Matrix.CreateTranslation(RenderData.RealScreen.X, RenderData.RealScreen.Y, 1.0f)
                 * Matrix.CreateScale(scale)
 #if GEMXNA
                 * Matrix.CreateTranslation(-0.5f, -0.5f, 0.0f));
@@ -528,12 +485,12 @@ namespace Gum
                 Matrix.CreateOrthographicOffCenter(Offset.X, Offset.X + RenderData.Device.Viewport.Width,
                 Offset.Y + RenderData.Device.Viewport.Height, Offset.Y, -32, 32));
 
-            var scale = RealScreen.Width / VirtualScreen.Width;
+            var scale = RenderData.RealScreen.Width / RenderData.VirtualScreen.Width;
 
             // Need to offset by the subpixel portion to avoid screen artifacts.
             // Remove this offset is porting to Monogame, monogame does it correctly.
             RenderData.Effect.Parameters["World"].SetValue(
-                Matrix.CreateTranslation(RealScreen.X, RealScreen.Y, 1.0f)
+                Matrix.CreateTranslation(RenderData.RealScreen.X, RenderData.RealScreen.Y, 1.0f)
                 * Matrix.CreateScale(scale)
 #if GEMXNA
                 * Matrix.CreateTranslation(-0.5f, -0.5f, 0.0f));
@@ -564,12 +521,12 @@ namespace Gum
                 Matrix.CreateOrthographicOffCenter(0, RenderData.Device.Viewport.Width,
                 RenderData.Device.Viewport.Height, 0, -32, 32));
 
-            var scale = RealScreen.Width / VirtualScreen.Width;
+            var scale = RenderData.RealScreen.Width / RenderData.VirtualScreen.Width;
 
             // Need to offset by the subpixel portion to avoid screen artifacts.
             // Remove this offset is porting to Monogame, monogame does it correctly.
             RenderData.Effect.Parameters["World"].SetValue(
-                Matrix.CreateTranslation(RealScreen.X, RealScreen.Y, 1.0f)
+                Matrix.CreateTranslation(RenderData.RealScreen.X, RenderData.RealScreen.Y, 1.0f)
                 * Matrix.CreateScale(scale)
 #if GEMXNA
                 * Matrix.CreateTranslation(-0.5f, -0.5f, 0.0f));
@@ -586,6 +543,12 @@ namespace Gum
                 item.GetRenderMesh().Render(RenderData.Device);
         }
 
+        public void SetMouseOverlay(string sheet, int frame)
+        {
+            MouseOverlaySheet = sheet;
+            MouseOverlayFrame = frame;
+        }
+
         public void DrawMouse()
         {
             if (MouseVisible && MousePointer != null)
@@ -598,6 +561,16 @@ namespace Gum
                     .Translate(MousePosition.X, MousePosition.Y)
                     .Texture(tileSheet.TileMatrix(MousePointer.AnimationFrame));
                 mouseMesh.Render(RenderData.Device);
+
+                if (MouseOverlaySheet != null)
+                {
+                    var overlaySheet = GetTileSheet(MouseOverlaySheet);
+                    var overlayMesh = Mesh.Quad()
+                        .Scale(overlaySheet.TileWidth, overlaySheet.TileHeight)
+                        .Translate(MousePosition.X + overlaySheet.TileWidth / 2, MousePosition.Y + overlaySheet.TileHeight / 2)
+                        .Texture(overlaySheet.TileMatrix(MouseOverlayFrame));
+                    overlayMesh.Render(RenderData.Device);
+                }
             }
         }
     }

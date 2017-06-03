@@ -50,6 +50,7 @@ namespace DwarfCorp.GameStates
             Overworld.Volcanoes = new List<Vector2>();
             LandMesh = null;
             LandIndex = null;
+            NativeCivilizations = Settings.Natives;
         }
 
         private int[] SetUpTerrainIndices(int width, int height)
@@ -340,12 +341,20 @@ namespace DwarfCorp.GameStates
 
 
                 LoadingMessage = "Factions";
-                NativeCivilizations = new List<Faction>();
                 FactionLibrary library = new FactionLibrary();
                 library.Initialize(null, new CompanyInformation());
-                for (int i = 0; i < Settings.NumCivilizations; i++)
+
+                if (Settings.Natives == null || Settings.Natives.Count == 0)
                 {
-                    NativeCivilizations.Add(library.GenerateFaction(null, i, Settings.NumCivilizations));
+                    NativeCivilizations = new List<Faction>();
+                    for (int i = 0; i < Settings.NumCivilizations; i++)
+                    {
+                        NativeCivilizations.Add(library.GenerateFaction(null, i, Settings.NumCivilizations));
+                    }
+                }
+                else
+                {
+                    NativeCivilizations = Settings.Natives;
                 }
                 SeedCivs(Overworld.Map, Settings.NumCivilizations, NativeCivilizations);
                 GrowCivs(Overworld.Map, 200, NativeCivilizations);

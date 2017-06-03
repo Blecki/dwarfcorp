@@ -396,7 +396,7 @@ namespace DwarfCorp
 
         public void UpdateBoundingBox()
         {
-            Vector3 extents = (BoundingBox.Max - BoundingBox.Min) / 2.0f;
+            Vector3 extents = (BoundingBox.Max - BoundingBox.Min) * 0.5f;
             Vector3 translation = GlobalTransform.Translation;
             BoundingBox.Min = translation - extents + BoundingBoxPos;
             BoundingBox.Max = translation + extents + BoundingBoxPos;

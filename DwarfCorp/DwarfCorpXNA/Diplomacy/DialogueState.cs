@@ -39,25 +39,26 @@ namespace DwarfCorp.Dialogue
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
 
-            GuiRoot = new Gum.Root(Gum.Root.MinimumSize, DwarfGame.GumSkin);
+            GuiRoot = new Gum.Root(DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
 
             DialogueContext.SpeechBubble = GuiRoot.RootItem.AddChild(new Gum.Widget
             {
-                Rect = new Rectangle(200, 0, GuiRoot.VirtualScreen.Width - 200, 200),
+                Rect = new Rectangle(200, 0, GuiRoot.RenderData.VirtualScreen.Width - 200, 200),
                 Border = "speech-bubble-reverse",
                 Font = "font-hires",
                 TextColor = Color.Black.ToVector4()
             });
 
-            int w = System.Math.Min(GuiRoot.VirtualScreen.Width - 200, 600);
-            int h = System.Math.Min(GuiRoot.VirtualScreen.Height - 200, 400);
-            int x = GuiRoot.VirtualScreen.Width/2 - w/2;
-            int y = System.Math.Max(GuiRoot.VirtualScreen.Height/2 - h/2, 230);
+            int w = System.Math.Min(GuiRoot.RenderData.VirtualScreen.Width - 200, 600);
+            int h = System.Math.Min(GuiRoot.RenderData.VirtualScreen.Height - 200, 400);
+            int x = GuiRoot.RenderData.VirtualScreen.Width / 2 - w / 2;
+            int y = System.Math.Max(GuiRoot.RenderData.VirtualScreen.Height / 2 - h / 2, 230);
             DialogueContext.ChoicePanel = GuiRoot.RootItem.AddChild(new Gum.Widget
             {
-                Rect = new Rectangle(x, y, w, h),
-                Border = "border-fancy"
+                Rect = new Rectangle(200, 200, GuiRoot.RenderData.VirtualScreen.Width - 200, 
+                GuiRoot.RenderData.VirtualScreen.Height - 200),
+                Border = "border-fancy",
             });
 
             SpeakerAnimation = new Animation(DialogueContext.Envoy.OwnerFaction.Race.TalkAnimation);
