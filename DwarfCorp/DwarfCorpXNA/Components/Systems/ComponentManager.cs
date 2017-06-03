@@ -128,7 +128,7 @@ namespace DwarfCorp
             Point playerOrigin = new Point((int)(World.WorldOrigin.X), (int)(World.WorldOrigin.Y));
 
             Factions.Factions["Player"].Center = playerOrigin;
-            Factions.Factions["Motherland"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
+            Factions.Factions["The Motherland"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
         }
 
         #region picking

@@ -143,7 +143,8 @@
 		{
 			"Name" : "money",
 			"Title" : "Money",
-			"Text" : "Your colony needs money to survive. Earn Dwarfbux ($) by trading with the motherland or natives as they arrive. Being bankrupt for too long might cause all of your employees to quit, and your stock may crash!"
+			"Text" : "Your colony needs money to survive. Earn Dwarfbux ($) by trading with the 
+			 or natives as they arrive. Being bankrupt for too long might cause all of your employees to quit, and your stock may crash!"
 		},
 		{
 			"Name" : "combat",
