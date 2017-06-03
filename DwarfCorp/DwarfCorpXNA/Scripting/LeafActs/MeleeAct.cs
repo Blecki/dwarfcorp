@@ -315,7 +315,7 @@ namespace DwarfCorp
                         Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
                         if (Creature.AI.Movement.CanFly)
                         {
-                            Creature.Physics.ApplyForce(-Creature.Physics.Gravity, DwarfTime.Dt);
+                            Creature.Physics.ApplyForce(-Creature.Physics.Gravity * 0.1f, DwarfTime.Dt);
                         }
                         yield return Status.Running;
                     }
@@ -370,6 +370,12 @@ namespace DwarfCorp
                         {
                             Creature.Faction.AttackDesignations.Remove(Target);
                         }
+
+                        //Creature.World.GoalManager.OnGameEvent(new Goals.Events.CreatyreKilled
+                        //{
+                        //    Agressor = Creature.AI,
+                        //    Victim = Target.
+                        //})
 
                         Target = null;
                         Agent.AddXP(10);

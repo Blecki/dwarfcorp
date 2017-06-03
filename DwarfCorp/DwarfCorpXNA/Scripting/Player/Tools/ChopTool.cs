@@ -66,6 +66,11 @@ namespace DwarfCorp
 
         }
 
+        public override void OnMouseOver(IEnumerable<Body> bodies)
+        {
+            DefaultOnMouseOver(bodies);
+        }
+
         public override void Update(DwarfGame game, DwarfTime time)
         {
             if (Player.IsCameraRotationModeActive())

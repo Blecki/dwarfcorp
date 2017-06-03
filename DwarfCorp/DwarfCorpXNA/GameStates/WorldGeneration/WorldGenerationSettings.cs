@@ -30,7 +30,8 @@ namespace DwarfCorp.GameStates
         public Vector2 WorldOrigin { get; set; }
         public string ExistingFile { get; set; }
         public List<Faction> Natives { get; set; }
-        
+        public bool GenerateFromScratch { get; set; }
+
         public static string GetRandomWorldName()
         {
             List<List<string>> templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.worlds);
@@ -54,6 +55,7 @@ namespace DwarfCorp.GameStates
             InitalEmbarkment = Embarkment.DefaultEmbarkment;
             WorldOrigin = new Vector2(Width / WorldScale, Height / WorldScale) * 0.5f;
             ExistingFile = null;
+            GenerateFromScratch = false;
         }
     }
 }

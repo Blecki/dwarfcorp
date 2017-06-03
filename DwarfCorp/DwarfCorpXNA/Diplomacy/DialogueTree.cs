@@ -159,6 +159,12 @@ namespace DwarfCorp.Dialogue
                 Diplomacy.RecallEnvoy(context.Envoy);
                 GameState.Game.StateManager.PopState();
             });
+
+            Context.World.GoalManager.OnGameEvent(new Goals.Events.DeclareWar
+            {
+                PlayerFaction = Context.PlayerFaction,
+                OtherFaction = Context.Envoy.OwnerFaction
+            });
         }
 
         public static Action<DialogueContext> GoodbyeWithPrompt(String Prompt)
@@ -243,8 +249,18 @@ namespace DwarfCorp.Dialogue
                         }
                     }
 
-                    Context.TradePanel.Transaction.Apply();
+                    Context.TradePanel.Transaction.Apply(Context.World);
                     Context.Transition(RootWithPrompt(Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.GoodTrades)));
+
+                    Context.World.GoalManager.OnGameEvent(new Goals.Events.Trade
+                    {
+                        PlayerFaction = Context.PlayerFaction,
+                        PlayerGold = Context.TradePanel.Transaction.PlayerMoney,
+                        PlayerGoods = Context.TradePanel.Transaction.PlayerItems,
+                        OtherFaction = Context.Envoy.OwnerFaction,
+                        OtherGold = Context.TradePanel.Transaction.EnvoyMoney,
+                        OtherGoods = Context.TradePanel.Transaction.EnvoyItems
+                    });
 
                     if (!Context.Politics.HasEvent("we had profitable trade"))
                     {

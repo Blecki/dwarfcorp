@@ -168,91 +168,95 @@ namespace DwarfCorp
             return FactionPolitics[new Pair<string>(factionA.Name, factionB.Name)];
         }
 
-        public void Initialize(DateTime now)
+        public void InitializeFactionPolitics(Faction New, DateTime Now)
         {
             TimeSpan forever = new TimeSpan(999999, 0, 0, 0);
+
             foreach (var faction in Factions.Factions)
             {
-                foreach (var otherFaction in Factions.Factions)
+                Pair<string> pair = new Pair<string>(faction.Value.Name, New.Name);
+
+                if (FactionPolitics.ContainsKey(pair))
+                    continue;
+
+                if (faction.Key == New.Name)
                 {
-                    Pair<string> pair = new Pair<string>(faction.Value.Name, otherFaction.Value.Name);
-
-                    if (FactionPolitics.ContainsKey(pair)) 
-                        continue;
-
-                    if (faction.Key == otherFaction.Key)
+                    FactionPolitics[pair] = new Politics(Now)
                     {
-                        FactionPolitics[pair] = new Politics(now)
-                        {
-                            Faction = faction.Value,
-                            HasMet = true,
-                            RecentEvents = new List<PoliticalEvent>()
+                        Faction = faction.Value,
+                        HasMet = true,
+                        RecentEvents = new List<PoliticalEvent>()
                             {
                                 new PoliticalEvent()
                                 {
                                     Change = 1.0f,
-                                    Description = "we are of the same faction", 
+                                    Description = "we are of the same faction",
                                     Duration = forever,
-                                    Time = now
+                                    Time = Now
                                 }
                             }
-                        };
-                    }
-                    else
+                    };
+                }
+                else
+                {
+                    Point c1 = faction.Value.Center;
+                    Point c2 = New.Center;
+                    double dist = Math.Sqrt(Math.Pow(c1.X - c2.X, 2) + Math.Pow(c1.Y - c2.Y, 2));
+                    // Time always takes between 1 and 4 days of travel.
+                    double timeInMinutes = Math.Min(Math.Max(dist * 16.0f, 1440), 1440 * 4);
+
+                    Politics politics = new Politics(Now)
                     {
-                        Point c1 = faction.Value.Center;
-                        Point c2 = otherFaction.Value.Center;
-                        double dist = Math.Sqrt(Math.Pow(c1.X - c2.X, 2) + Math.Pow(c1.Y - c2.Y, 2));
-                        // Time always takes between 1 and 4 days of travel.
-                        double timeInMinutes = Math.Min(Math.Max(dist * 16.0f, 1440), 1440 * 4);
+                        Faction = New,
+                        HasMet = false,
+                        RecentEvents = new List<PoliticalEvent>(),
+                        DistanceToCapital = new TimeSpan(0, (int)(timeInMinutes), 0)
+                    };
 
-                        Politics politics = new Politics(now)
+                    politics.DispatchNewTradeEnvoy(Now);
+
+                    if (faction.Value.Race == New.Race)
+                    {
+                        politics.RecentEvents.Add(new PoliticalEvent()
                         {
-                            Faction = otherFaction.Value,
-                            HasMet = false,
-                            RecentEvents = new List<PoliticalEvent>(),
-                            DistanceToCapital = new TimeSpan(0, (int)(timeInMinutes), 0)
-                        };
+                            Change = 0.5f,
+                            Description = "we are of the same people",
+                            Duration = forever,
+                            Time = Now
+                        });
 
-                        politics.DispatchNewTradeEnvoy(now);
+                    }
 
-                        if (faction.Value.Race == otherFaction.Value.Race)
+                    if (faction.Value.Race.NaturalEnemies.Any(name => name == New.Race.Name))
+                    {
+                        if (!politics.HasEvent("we are taught to hate your kind"))
                         {
                             politics.RecentEvents.Add(new PoliticalEvent()
                             {
-                                Change = 0.5f,
-                                Description = "we are of the same people",
+                                Change = -10.0f, // Make this negative and we get an instant war party rush.
+                                Description = "we are taught to hate your kind",
                                 Duration = forever,
-                                Time = now
+                                Time = Now
                             });
-
                         }
-
-                        if (faction.Value.Race.NaturalEnemies.Any(name => name == otherFaction.Value.Race.Name))
-                        {
-                            if (!politics.HasEvent("we are taught to hate your kind"))
-                            {
-                                politics.RecentEvents.Add(new PoliticalEvent()
-                                {
-                                    Change = -2.0f,
-                                    Description = "we are taught to hate your kind",
-                                    Duration = forever,
-                                    Time = now
-                                });
-                            }
-                        }
-
-                        FactionPolitics[pair] = politics;
                     }
 
+                    FactionPolitics[pair] = politics;
                 }
+
             }
-            
+        }
+
+        public void Initialize(DateTime now)
+        {
+            TimeSpan forever = new TimeSpan(999999, 0, 0, 0);
+            foreach (var faction in Factions.Factions)
+                InitializeFactionPolitics(faction.Value, now);
         }
 
         public void SendTradeEnvoy(Faction natives, WorldManager world)
         {
-            if (!world.gameState.IsActiveState) return;
+            //if (!world.gameState.IsActiveState) return;
             Faction.TradeEnvoy envoy = null;
             if (natives.Race.IsNative)
             {
@@ -274,12 +278,25 @@ namespace DwarfCorp
                     foreach (CreatureAI creature in envoy.Creatures)
                     {
                         ResourcePack resources = new ResourcePack(creature.Physics);
+                        if (natives.Economy == null)
+                        {
+                            natives.Economy = new Economy(natives, 1000.0m, World, new CompanyInformation()
+                            {
+                                Name = natives.Name
+                            });
+                        }
+                        if (natives.Economy.Company.Information == null)
+                        {
+                            natives.Economy.Company.Information = new CompanyInformation();
+                        }
+                        Flag flag = new Flag(creature.Physics, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, natives.Economy.Company.Information);
                     }
                     envoy.DistributeGoods();
 
                     natives.TradeEnvoys.Add(envoy);
                     world.MakeAnnouncement(String.Format("Trade envoy from {0} has arrived!", natives.Name),
-                        "Click to zoom to location.", creatures.First().ZoomToMe, ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
+                       creatures.First().ZoomToMe, ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
+                    world.Tutorial("trade");
                 }
             }
             else
@@ -317,7 +334,8 @@ namespace DwarfCorp
                     envoy.DistributeGoods();
                     natives.TradeEnvoys.Add(envoy);
                     world.MakeAnnouncement(String.Format("Trade envoy from {0} has arrived!",
-                        natives.Name), "Click to zoom to location.", creatures.First().ZoomToMe, ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
+                        natives.Name), creatures.First().ZoomToMe, ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
+                    world.Tutorial("trade");
                 }
             }
 
@@ -327,6 +345,7 @@ namespace DwarfCorp
         {
             // todo
             natives.World.MakeAnnouncement(String.Format("War party from {0} has arrived!", natives.Name), null);
+            natives.World.Tutorial("war");
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
             Politics politics = GetPolitics(natives, natives.World.PlayerFaction);
             politics.WasAtWar = true;
@@ -338,6 +357,15 @@ namespace DwarfCorp
                 OtherFaction = natives.World.PlayerFaction,
                 ShouldRemove = false
             });
+
+            foreach (var creature in creatures)
+            {
+                if (natives.Economy.Company.Information == null)
+                {
+                    natives.Economy.Company.Information = new CompanyInformation();
+                }
+                Flag flag = new Flag(creature.Physics, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, natives.Economy.Company.Information);
+            }
 
         }
 
@@ -401,6 +429,13 @@ namespace DwarfCorp
         }
 
 
+        IEnumerable<Act.Status> RecallEnvoyOnFail(Faction.TradeEnvoy envoy)
+        {
+            RecallEnvoy(envoy);
+            World.MakeAnnouncement("Envoy from " + envoy.OwnerFaction.Name + " left. Trade port inaccessible.");
+            yield return Act.Status.Success;
+        }
+
         public void UpdateTradeEnvoys(Faction faction)
         {
             foreach (Faction.TradeEnvoy envoy in faction.TradeEnvoys)
@@ -454,7 +489,8 @@ namespace DwarfCorp
 
                         if (tradePort == null)
                         {
-                            World.MakeAnnouncement("No trade port!", "We need a balloon trade port to trade.");
+                            World.MakeAnnouncement("We need a balloon trade port to trade.");
+                            World.Tutorial("trade");
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                             RecallEnvoy(envoy);
                             break;
@@ -462,7 +498,8 @@ namespace DwarfCorp
 
                         if (creature.Tasks.Count == 0)
                         {
-                            creature.Tasks.Add(new ActWrapperTask(new GoToZoneAct(creature, tradePort)) { Name = "Go to trade port.", Priority = Task.PriorityType.Urgent});
+                            Faction.TradeEnvoy envoy1 = envoy;
+                            creature.Tasks.Add(new ActWrapperTask(new GoToZoneAct(creature, tradePort) | new Wrap(() => RecallEnvoyOnFail(envoy1))));
                         }
 
                         if (!tradePort.IsRestingOnZone(creature.Position)) continue;
@@ -511,6 +548,12 @@ namespace DwarfCorp
                 if (envoy.Creatures.All(creature => creature.IsDead))
                 {
                     envoy.ShouldRemove = true;
+
+                    World.GoalManager.OnGameEvent(new Goals.Events.TradeEnvoyKilled
+                    {
+                        PlayerFaction = envoy.OtherFaction,
+                        OtherFaction = envoy.OwnerFaction
+                    });
                 }
 
                
@@ -537,6 +580,13 @@ namespace DwarfCorp
                 if (party.Creatures.All(creature => creature.IsDead))
                 {
                     party.ShouldRemove = true;
+
+                    // Killed entire war party. Wonderful!
+                    World.GoalManager.OnGameEvent(new Goals.Events.WarPartyDefeated
+                    {
+                        PlayerFaction = party.OtherFaction,
+                        OtherFaction = party.OwnerFaction
+                    });
                 }
             }
 

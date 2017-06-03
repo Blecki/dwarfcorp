@@ -53,6 +53,8 @@ namespace DwarfCorp
         public List<GameComponent> WorkObjects = new List<GameComponent>(); 
         public bool IsBuilt { get; set; }
         private WorldManager World { get; set; }
+        public bool IsDestroyed { get; set; }
+
         public BuildRoomOrder(Room toBuild, Faction faction, WorldManager world)
         {
             World = world;
@@ -61,6 +63,7 @@ namespace DwarfCorp
             VoxelOrders = new List<BuildVoxelOrder>();
             IsBuilt = false;
             Faction = faction;
+            IsDestroyed = false;
         }
 
 
@@ -168,12 +171,41 @@ namespace DwarfCorp
 
             if (!silent)
             {
-                World.MakeAnnouncement("Built room!", String.Format("{0} was built", ToBuild.ID), null,  ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
+                World.MakeAnnouncement(String.Format("{0} was built", ToBuild.ID), null,  ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
+                World.GoalManager.OnGameEvent(new Goals.Events.BuiltRoom(ToBuild.ID));
             }
 
             foreach (GameComponent fence in WorkObjects)
             {
                 fence.Die();
+            }
+        }
+
+        public void Destroy()
+        {
+            ToBuild.Destroy();
+            foreach (GameComponent fence in WorkObjects)
+            {
+                fence.Die();
+            }
+            IsDestroyed = true;
+        }
+
+        public void SetTint(Color color)
+        {
+            foreach (var fence in WorkObjects)
+            {
+                SetDisplayColor(fence, color);
+            }
+        }
+
+        private void SetDisplayColor(GameComponent body, Color color)
+        {
+            List<Tinter> sprites = body.GetChildrenOfTypeRecursive<Tinter>();
+
+            foreach (Tinter sprite in sprites)
+            {
+                sprite.VertexColorTint = color;
             }
         }
 

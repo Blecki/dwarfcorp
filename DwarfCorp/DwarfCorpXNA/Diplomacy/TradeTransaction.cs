@@ -23,7 +23,7 @@ namespace DwarfCorp.Trade
             }
         }
 
-        public void Apply()
+        public void Apply(WorldManager World)
         {
             EnvoyEntity.AddMoney(-EnvoyMoney);
             EnvoyEntity.AddMoney(PlayerMoney);
@@ -33,7 +33,7 @@ namespace DwarfCorp.Trade
             PlayerEntity.AddMoney(-PlayerMoney);
             PlayerEntity.AddMoney(EnvoyMoney);
             PlayerEntity.RemoveResources(PlayerItems);
-            PlayerEntity.AddResources(EnvoyItems);
+            PlayerEntity.AddResources(EnvoyItems);           
         }
     }
 }

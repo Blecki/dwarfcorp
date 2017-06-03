@@ -14,6 +14,7 @@ namespace DwarfCorp.Trade
         DwarfBux ComputeValue(List<ResourceAmount> Resources);
         DwarfBux ComputeValue(ResourceLibrary.ResourceType Resource);
         Race TraderRace { get; }
+        Faction TraderFaction { get; }
         void RemoveResources(List<ResourceAmount> Resources);
         void AddResources(List<ResourceAmount> Resources);
         void AddMoney(DwarfBux Money);
@@ -34,6 +35,7 @@ namespace DwarfCorp.Trade
         public void AddMoney(DwarfBux Money) { }
         public void AddResources(List<ResourceAmount> Resources) { }
         public Race TraderRace { get { return SourceEnvoy.OwnerFaction.Race; } }
+        public Faction TraderFaction { get { return SourceEnvoy.OwnerFaction; } }
         public DwarfBux ComputeValue(ResourceLibrary.ResourceType Resource)
         {
             var resource = ResourceLibrary.GetResourceByName(Resource);
@@ -62,6 +64,7 @@ namespace DwarfCorp.Trade
         }
 
         public Race TraderRace { get { return Faction.Race; } }
+        public Faction TraderFaction { get { return Faction; } }
         public int AvailableSpace { get { return Faction.ComputeStockpileSpace(); } }
         public DwarfBux Money { get { return Faction.Economy.CurrentMoney; } }
         public List<ResourceAmount> Resources { get { return Faction.ListResources().Select(r => r.Value).ToList(); } }

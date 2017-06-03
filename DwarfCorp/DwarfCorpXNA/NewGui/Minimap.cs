@@ -16,6 +16,7 @@ namespace DwarfCorp.NewGui
     {
         public String Frame = "minimap-frame";
         public MinimapRenderer Renderer;
+        public Widget RestoreButton;
 
         public override Point GetBestSize()
         {
@@ -44,34 +45,37 @@ namespace DwarfCorp.NewGui
                 Padding = new Gum.Margin(2, 2, 2, 2)
             });
 
-            buttonRow.AddChild(new Gum.Widget
+            buttonRow.AddChild(new Gum.Widgets.ImageButton
                 {
                     Background = new Gum.TileReference("round-buttons", 0),
                     MinimumSize = new Point(16, 16),
                     MaximumSize = new Point(16, 16),
                     AutoLayout = Gum.AutoLayout.DockLeft,
-                    OnClick = (sender, args) => Renderer.ZoomIn()
+                    OnClick = (sender, args) => Renderer.ZoomIn(),
+                    Tooltip = "Zoom in"
                 });
 
-            buttonRow.AddChild(new Gum.Widget
+            buttonRow.AddChild(new Gum.Widgets.ImageButton
             {
                 Background = new Gum.TileReference("round-buttons", 1),
                 MinimumSize = new Point(16, 16),
                 MaximumSize = new Point(16, 16),
                 AutoLayout = Gum.AutoLayout.DockLeft,
-                OnClick = (sender, args) => Renderer.ZoomOut()
+                OnClick = (sender, args) => Renderer.ZoomOut(),
+                Tooltip = "Zoom out"
             });
 
-            buttonRow.AddChild(new Gum.Widget
+            buttonRow.AddChild(new Gum.Widgets.ImageButton
             {
                 Background = new Gum.TileReference("round-buttons", 2),
                 MinimumSize = new Point(16, 16),
                 MaximumSize = new Point(16, 16),
                 AutoLayout = Gum.AutoLayout.DockLeft,
-                OnClick = (sender, args) => Renderer.ZoomHome()
+                OnClick = (sender, args) => Renderer.ZoomHome(),
+                Tooltip = "Zoom to home base"
             });
 
-            buttonRow.AddChild(new Gum.Widget
+            buttonRow.AddChild(new Gum.Widgets.ImageButton
             {
                 Background = new Gum.TileReference("round-buttons", 7),
                 MinimumSize = new Point(16, 16),
@@ -79,9 +83,12 @@ namespace DwarfCorp.NewGui
                 AutoLayout = Gum.AutoLayout.DockLeft,
                 OnClick = (sender, args) =>
                     {
+                        RestoreButton.Hidden = false;
+                        RestoreButton.Invalidate();
                         this.Hidden = true;
                         this.Invalidate();
-                    }
+                    },
+                Tooltip = "Minimize the map"
             });
 
             base.Construct();

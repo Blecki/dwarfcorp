@@ -50,8 +50,20 @@ namespace DwarfCorp
         public static WorldManager World = null;
         private static ComponentManager Components { get { return World.ComponentManager; } }
         public static InstanceManager InstanceManager = null;
+        private static List<Action> LazyActions = new List<Action>(); 
 
         public static Dictionary<string, Func<Vector3, Blackboard, GameComponent>> EntityFuncs { get; set; }
+
+        // This exists in case we want to call the entity factory from  a thread, allowing us
+        // to lazy-load entities later.
+        public static void DoLazyActions()
+        {
+            foreach (var func in LazyActions)
+            {
+                func.Invoke();
+            }
+            LazyActions.Clear();
+        }
 
         public static Body GenerateTestDwarf(WorldManager world, Vector3 position)
         {
@@ -92,10 +104,10 @@ namespace DwarfCorp
             RegisterEntity("Crate", (position, data) => new Crate(world.ComponentManager, position));
             RegisterEntity("Balloon", (position, data) => CreateBalloon(position + new Vector3(0, 1000, 0), position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, null, world.PlayerFaction));
             RegisterEntity("Work Pile", (position, data) => new WorkPile(world.ComponentManager, position));
-            RegisterEntity("Pine Tree", (position, data) => new Tree(world.ComponentManager, position, "pine", ResourceLibrary.ResourceType.PineCone, data.GetData("Scale", 1.0f)));
-            RegisterEntity("Snow Pine Tree", (position, data) => new Tree(world.ComponentManager, position, "snowpine", ResourceLibrary.ResourceType.PineCone, data.GetData("Scale", 1.0f)));
-            RegisterEntity("Palm Tree", (position, data) => new Tree(world.ComponentManager, position, "palm", ResourceLibrary.ResourceType.Coconut, data.GetData("Scale", 1.0f)));
-            RegisterEntity("Apple Tree", (position, data) => new Tree(world.ComponentManager, position, "appletree", ResourceLibrary.ResourceType.Apple, data.GetData("Scale", 1.0f)));
+            RegisterEntity("Pine Tree", (position, data) => new Tree("Pine Tree", world.ComponentManager, position, "pine", ResourceLibrary.ResourceType.PineCone, data.GetData("Scale", 1.0f)));
+            RegisterEntity("Snow Pine Tree", (position, data) => new Tree("Pine Tree", world.ComponentManager, position, "snowpine", ResourceLibrary.ResourceType.PineCone, data.GetData("Scale", 1.0f)));
+            RegisterEntity("Palm Tree", (position, data) => new Tree("Palm Tree", world.ComponentManager, position, "palm", ResourceLibrary.ResourceType.Coconut, data.GetData("Scale", 1.0f)));
+            RegisterEntity("Apple Tree", (position, data) => new Tree("Apple Tree", world.ComponentManager, position, "appletree", ResourceLibrary.ResourceType.Apple, data.GetData("Scale", 1.0f)));
             RegisterEntity("Cactus", (position, data) => new Cactus(world.ComponentManager, position, "cactus", data.GetData("Scale", 1.0f)));
             RegisterEntity("Berry Bush", (position, data) => new Bush(world.ComponentManager, position, "berrybush", data.GetData("Scale", 1.0f)));
             RegisterEntity("Bird", (position, data) => new Bird(ContentPaths.Entities.Animals.Birds.GetRandomBird(), position, world.ComponentManager, world.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Bird"));
@@ -126,7 +138,7 @@ namespace DwarfCorp
             RegisterEntity("Lamp", (position, data) => new Lamp(world.ComponentManager, position));
             RegisterEntity("Table", (position, data) => new Table(world.ComponentManager, position));
             RegisterEntity("Chair", (position, data) => new Chair(world.ComponentManager, position));
-            RegisterEntity("Flag", (position, data) => new Flag(world.ComponentManager, position));
+            RegisterEntity("Flag", (position, data) => new Flag(world.ComponentManager, position, world.PlayerCompany.Information));
             RegisterEntity("Mushroom", (position, data) => new Mushroom(world.ComponentManager, position, ContentPaths.Entities.Plants.mushroom, ResourceLibrary.ResourceType.Mushroom, 2, false));
             RegisterEntity("Cave Mushroom", (position, data) => new Mushroom(world.ComponentManager, position, ContentPaths.Entities.Plants.cavemushroom, ResourceLibrary.ResourceType.CaveMushroom, 4, true));
             RegisterEntity("Wheat", (position, data) => new Wheat(world.ComponentManager, position));
@@ -219,6 +231,25 @@ namespace DwarfCorp
                 string err = id ?? "null";
                 throw new KeyNotFoundException("Unable to create entity of type " + err);   
             }
+        }
+
+        public static void CreateEntityLazy<T>(string id, Vector3 location, Blackboard data = null) where T : GameComponent
+        {
+            if (data == null) data = new Blackboard();
+            if (EntityFuncs.ContainsKey(id))
+            {
+                LazyActions.Add(() => EntityFuncs[id].Invoke(location, data));
+            }
+            else
+            {
+                string err = id ?? "null";
+                throw new KeyNotFoundException("Unable to create entity of type " + err);
+            }
+        }
+
+        public static void DoLazy(Action action)
+        {
+            LazyActions.Add(action);
         }
 
         public static Func<Vector3, T> GetFunc<T>(string id) where T : GameComponent

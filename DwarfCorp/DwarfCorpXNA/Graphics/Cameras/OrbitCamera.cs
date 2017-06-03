@@ -276,6 +276,7 @@ namespace DwarfCorp
 
             if (velocityToSet.LengthSquared() > 0)
             {
+                World.Tutorial("camera");
                 Velocity = velocityToSet;
             }
 

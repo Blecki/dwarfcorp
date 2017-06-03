@@ -38,6 +38,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using BloomPostprocess;
+using DwarfCorp.NewGui;
+using DwarfCorp.Tutorial;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -139,6 +141,21 @@ namespace DwarfCorp
         // Handles interfacing with the player and sending commands to dwarves
         public GameMaster Master = null;
 
+        public Goals.GoalManager GoalManager;
+
+        #region Tutorial Hooks
+
+        public Tutorial.TutorialManager TutorialManager;
+        public Action<TutorialManager.TutorialEntry, Action<bool>> GuiHook_ShowTutorialPopup;
+        
+        public void Tutorial(String Name)
+        {
+            if (TutorialManager != null)
+                TutorialManager.ShowTutorial(Name);
+        }
+
+        #endregion
+
         // If the game was loaded from a file, this contains the name of that file.
         public string ExistingFile = "";
 
@@ -228,19 +245,16 @@ namespace DwarfCorp
         public Point3 WorldSize { get; set; }
 
         // More statics. Hate this.
-        public Action<String, String, Action> OnAnnouncement;
+        public Action<String, Action> OnAnnouncement;
 
-        public void MakeAnnouncement(String Title, String Message, Action ClickAction = null, string sound = null)
+        public void MakeAnnouncement(String Message, Action ClickAction = null, string sound = null)
         {
             if (OnAnnouncement != null)
-                OnAnnouncement(Title, Message, ClickAction);
+                OnAnnouncement(Message, ClickAction);
 
             if (!string.IsNullOrEmpty(sound))
-            {
                 SoundManager.PlaySound(sound, 0.5f);
-            }
         }
-
 
         public MonsterSpawner MonsterSpawner { get; set; }
 
@@ -305,7 +319,7 @@ namespace DwarfCorp
         // event that is called when the player loses in the world
         public delegate void OnLose();
         public event OnLose OnLoseEvent;
-
+        private bool firstIter = true;
         #endregion
 
         /// <summary>
@@ -401,15 +415,9 @@ namespace DwarfCorp
 
                 SetLoadingMessage("Creating GameMaster ...");
                 CreateGameMaster();
-                SetLoadingMessage("Embarking ...");
-                CreateInitialEmbarkment();
 
                 SetLoadingMessage("Presimulating ...");
                 ShowingWorld = false;
-                if (string.IsNullOrEmpty(ExistingFile))
-                {
-                    GenerateInitialObjects();
-                }
                 OnLoadedEvent();
 
                 Thread.Sleep(1000);
@@ -785,6 +793,25 @@ namespace DwarfCorp
                 WorldScale = gameFile.Data.Metadata.WorldScale;
                 GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
                 GameSettings.Default.ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
+
+                // Load saved goals from file here.
+                GoalManager = new Goals.GoalManager();
+                gameFile.LoadGoals(ExistingFile, this);
+                GoalManager.Initialize(gameFile.Data.Goals);
+
+                TutorialManager = new Tutorial.TutorialManager("Content/tutorial.txt");
+                gameFile.LoadTutorial(ExistingFile, this);
+                TutorialManager.SetFromSaveData(gameFile.Data.TutorialSaveData);
+                
+            }
+            else
+            {
+                // Initialize goal manager here.
+                GoalManager = new Goals.GoalManager();
+                GoalManager.Initialize(new List<Goals.Goal>());
+
+                TutorialManager = new Tutorial.TutorialManager("Content/tutorial.txt");
+                Tutorial("new game start");
             }
         }
 
@@ -792,6 +819,11 @@ namespace DwarfCorp
         {
             Master = new GameMaster(ComponentManager.Factions.Factions["Player"], Game, ComponentManager, ChunkManager,
                 Camera, GraphicsDevice);
+
+            if (Master.Faction.Economy.Company.Information == null)
+            {
+                Master.Faction.Economy.Company.Information = new CompanyInformation();
+            }
         }
 
         /// <summary>
@@ -800,27 +832,26 @@ namespace DwarfCorp
         public void CreateInitialEmbarkment()
         {
             // If no file exists, we have to create the balloon and balloon port.
-            if (string.IsNullOrEmpty(ExistingFile))
+            if (!string.IsNullOrEmpty(ExistingFile)) return;
+
+            VoxelChunk c = ChunkManager.ChunkData.GetVoxelChunkAtWorldLocation(Camera.Position);
+            BalloonPort port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager,
+                Camera.Position.X, Camera.Position.Z, 3);
+            CreateInitialDwarves(c);
+            PlayerFaction.Economy.CurrentMoney = InitialEmbark.Money;
+
+            foreach (var res in InitialEmbark.Resources)
             {
-                VoxelChunk c = ChunkManager.ChunkData.GetVoxelChunkAtWorldLocation(Camera.Position);
-                BalloonPort port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager,
-                    Camera.Position.X, Camera.Position.Z, 3);
-                CreateInitialDwarves(c);
-                PlayerFaction.Economy.CurrentMoney = InitialEmbark.Money;
-
-                foreach (var res in InitialEmbark.Resources)
-                {
-                    PlayerFaction.AddResources(new ResourceAmount(res.Key, res.Value));
-                }
-                var portBox = port.GetBoundingBox();
-                EntityFactory.CreateBalloon(
-                    portBox.Center() + new Vector3(0, 100, 0),
-                    portBox.Center() + new Vector3(0, 10, 0), ComponentManager, Content,
-                    GraphicsDevice, new ShipmentOrder(0, null), Master.Faction);
-
-                Camera.Target = portBox.Center();
-                Camera.Position = Camera.Target + new Vector3(0, 15, -15);
+                PlayerFaction.AddResources(new ResourceAmount(res.Key, res.Value));
             }
+            var portBox = port.GetBoundingBox();
+            EntityFactory.CreateBalloon(
+                portBox.Center() + new Vector3(0, 100, 0),
+                portBox.Center() + new Vector3(0, 10, 0), ComponentManager, Content,
+                GraphicsDevice, new ShipmentOrder(0, null), Master.Faction);
+
+            Camera.Target = portBox.Center();
+            Camera.Position = Camera.Target + new Vector3(0, 15, -15);
         }
 
         public void WaitForGraphicsDevice()
@@ -1235,6 +1266,15 @@ namespace DwarfCorp
         /// <param name="gameTime">The current time</param>
         public void Update(DwarfTime gameTime)
         {
+            // Can't do this in the loading thread because threaded generation
+            // of entities is bad -- it leads to GPU calls for texture loading.
+            if (firstIter && string.IsNullOrEmpty(ExistingFile))
+            {
+                CreateInitialEmbarkment();
+                GenerateInitialObjects();
+            }
+            firstIter = false;
+            EntityFactory.DoLazyActions();
             if (FastForwardToDay)
             {
                 if (Time.IsDay())
@@ -1267,6 +1307,8 @@ namespace DwarfCorp
                     Game.GraphicsDevice.Viewport.Height / 2);
 
             Master.Update(Game, gameTime);
+            GoalManager.Update(this);
+            TutorialManager.Update(GuiHook_ShowTutorialPopup);
             Time.Update(gameTime);
 
 
@@ -1657,6 +1699,7 @@ namespace DwarfCorp
 
             Plane slicePlane = WaterRenderer.CreatePlane(SlicePlane, new Vector3(0, -1, 0), Camera.ViewMatrix, false);
             DefaultShader.WindDirection = Weather.CurrentWind;
+            DefaultShader.WindForce = 0.0005f * (1.0f + (float)Math.Sin(Time.GetTotalSeconds()*0.001f));
             // Draw the whole world, and make sure to handle slicing
             DefaultShader.ClipPlane = new Vector4(slicePlane.Normal, slicePlane.D);
             DefaultShader.ClippingEnabled = true;

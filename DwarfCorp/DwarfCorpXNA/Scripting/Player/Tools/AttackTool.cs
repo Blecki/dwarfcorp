@@ -1,4 +1,4 @@
-﻿// AttackTool.cs
+// AttackTool.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -68,6 +68,11 @@ namespace DwarfCorp
         public override void OnEnd()
         {
             
+        }
+
+        public override void OnMouseOver(IEnumerable<Body> bodies)
+        {
+            DefaultOnMouseOver(bodies);
         }
 
         public override void Update(DwarfGame game, DwarfTime time)

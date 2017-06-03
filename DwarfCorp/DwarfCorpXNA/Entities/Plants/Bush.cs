@@ -1,4 +1,4 @@
-﻿// Bush.cs
+// Bush.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -98,7 +98,7 @@ namespace DwarfCorp
         public Bush() { }
 
         public Bush(ComponentManager componentManager, Vector3 position, string asset, float bushSize) :
-            base("Bush", componentManager.RootComponent, Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), Vector3.Zero)
+            base("Berry Bush", componentManager.RootComponent, Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), Vector3.Zero)
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
             SeedlingFrame = new Point(0, 0);

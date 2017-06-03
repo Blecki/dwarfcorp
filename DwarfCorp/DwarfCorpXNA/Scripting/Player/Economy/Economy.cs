@@ -138,15 +138,16 @@ namespace DwarfCorp
 
             if (Company.Assets <= 0m)
             {
-                WorldManager.MakeAnnouncement("We're bankrupt!", "If we don't make a profit by tomorrow, our stock will crash!");
+                WorldManager.MakeAnnouncement("If we don't make a profit by tomorrow, our stock will crash!");
                 SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
             }
 
+            /*
             string symbol = diff > 0m ? "+" : "";
 
             WorldManager.MakeAnnouncement(String.Format("{0} {1} {2}{3}",
-                Company.TickerName, Company.StockPrice, symbol, diff),
-                String.Format("Our stock price changed by {0}{1} today.", symbol, diff));
+                Company.TickerName, Company.StockPrice, symbol, diff));
+             */
         }
 
         void Time_NewDay(DateTime time)

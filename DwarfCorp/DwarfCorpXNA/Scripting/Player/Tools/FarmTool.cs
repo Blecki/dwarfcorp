@@ -259,6 +259,11 @@ namespace DwarfCorp
             }
         }
 
+        public override void OnMouseOver(IEnumerable<Body> bodies)
+        {
+            
+        }
+
 
         public override void OnBegin()
         {

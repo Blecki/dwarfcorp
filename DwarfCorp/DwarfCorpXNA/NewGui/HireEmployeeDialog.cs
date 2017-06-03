@@ -3,41 +3,48 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Gum;
+using Gum.Widgets;
 using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.NewGui
 {
-    public class HireEmployeeDialog : TwoColumns
+    public class HireEmployeeDialog : Widget
     {
         public Faction Faction;
-        private Gum.Widgets.ListView ApplicantList;
-        private List<Applicant> Applicants;
-
-        public IEnumerable<Applicant> GenerateApplicants(CompanyInformation info)
+        public CompanyInformation Company;
+        private Button HireButton;
+        public Applicant GenerateApplicant(CompanyInformation info, JobLibrary.JobType type)
         {
-            foreach (KeyValuePair<JobLibrary.JobType, EmployeeClass> employeeType in JobLibrary.Classes)
-            {
-                for (int i = 0; i < 5; i++)
-                {
-                    Applicant applicant = new Applicant();
-                    applicant.GenerateRandom(employeeType.Value, 0, info);
-                    yield return applicant;
-                }
-            }
+            Applicant applicant = new Applicant();
+            applicant.GenerateRandom(JobLibrary.Classes[type], 0, info);
+            return applicant;
         }
 
-        public HireEmployeeDialog(CompanyInformation Company)
+        public HireEmployeeDialog(CompanyInformation _Company)
         {
-            Applicants = GenerateApplicants(Company).ToList();
+            Company = _Company;
         }
 
         public override void Construct()
         {
             Border = "border-fancy";
-            Rect = Root.RenderData.VirtualScreen;
 
-            var left = AddChild(new Widget());
-            var right = AddChild(new Widget());
+            int w = Math.Min(Math.Max(2*(Root.RenderData.VirtualScreen.Width/3), 400), 600);
+            int h = Math.Min(Math.Max(2*(Root.RenderData.VirtualScreen.Height/3), 600), 700);
+            Rect = new Rectangle(Root.RenderData.VirtualScreen.Center.X - w / 2, Root.RenderData.VirtualScreen.Center.Y - h/2, w, h);
+
+            var left = AddChild(new Widget()
+            {
+                AutoLayout = AutoLayout.DockTop,
+                Padding = new Margin(5, 5, 32, 32),
+                MinimumSize = new Point(32 * 2 * JobLibrary.Classes.Count, 48 * 2 + 40)
+            });
+
+            var right = AddChild(new Widget()
+            {
+                AutoLayout = AutoLayout.DockFill
+            });
+
 
             var buttonRow = right.AddChild(new Widget
             {
@@ -49,32 +56,53 @@ namespace DwarfCorp.NewGui
             {
                 AutoLayout = AutoLayout.DockFill
             }) as ApplicantInfo;
-            
+
+
+            applicantInfo.Hidden = true;
             left.AddChild(new Widget
             {
                 Text = "Applicants",
                 AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 30)
+                MinimumSize = new Point(0, 20),
+                Font = "font-hires"
             });
-            
-            ApplicantList = left.AddChild(new Gum.Widgets.ListView
+
+
+            foreach (var job in JobLibrary.Classes)
             {
-                AutoLayout = AutoLayout.DockFill,
-                Items = Applicants.Select(a => a.Name).ToList(),
-                OnSelectedIndexChanged = (sender) =>
+                var newJob = job.Key;
+                var frame = left.AddChild(new Widget()
                 {
-                    if ((sender as Gum.Widgets.ListView).SelectedIndex >= 0 &&
-                        (sender as Gum.Widgets.ListView).SelectedIndex < Applicants.Count)
+                    MinimumSize = new Point(32*2, 48*2 + 15),
+                    AutoLayout = AutoLayout.DockLeft
+                });
+                frame.AddChild(new ImageButton()
+                {
+                    Tooltip = "Click to review applications for " + job.Value.Name,
+                    AutoLayout = AutoLayout.DockTop,
+                    TextHorizontalAlign = HorizontalAlign.Center,
+                    TextVerticalAlign = VerticalAlign.Bottom,
+                    OnClick = (sender, args) =>
                     {
                         applicantInfo.Hidden = false;
-                        applicantInfo.Applicant = Applicants[(sender as Gum.Widgets.ListView).SelectedIndex];
-                    }
-                    else
-                        applicantInfo.Hidden = true;
-                }
-            }) as Gum.Widgets.ListView;
-
-            ApplicantList.SelectedIndex = 0;
+                        HireButton.Hidden = false;
+                        HireButton.Invalidate();
+                        applicantInfo.Applicant = GenerateApplicant(Company, newJob);
+                    },
+                    Background = new TileReference("dwarves", EmployeePanel.GetIconIndex(job.Value.Name)),
+                    MinimumSize = new Point(32 * 2, 48 * 2),
+                    MaximumSize = new Point(32 * 2, 48 * 2)
+                });
+                frame.AddChild(new Widget()
+                {
+                    Text = job.Value.Name,
+                    MinimumSize = new Point(0, 15),
+                    TextColor = Color.Black.ToVector4(),
+                    Font = "font",
+                    AutoLayout = AutoLayout.DockTop,
+                    TextHorizontalAlign = HorizontalAlign.Center
+                });
+            }
 
             buttonRow.AddChild(new Widget
             {
@@ -87,7 +115,7 @@ namespace DwarfCorp.NewGui
                 }
             });
 
-            buttonRow.AddChild(new Widget
+            HireButton = buttonRow.AddChild(new Button
             {
                 Text = "Hire",
                 Border = "border-button",
@@ -113,16 +141,24 @@ namespace DwarfCorp.NewGui
                         }
                         else
                         {
-                            Applicants.Remove(applicant);
                             Faction.Hire(applicant);
                             SoundManager.PlaySound(ContentPaths.Audio.cash, 0.5f);
-                            ApplicantList.Items = Applicants.Select(a => a.Name).ToList();
-                            ApplicantList.SelectedIndex = 0;
+                            applicantInfo.Hidden = true;
+                            HireButton.Hidden = true;
+                            Root.ShowPopup(new NewGui.Confirm()
+                            {
+                                Text = String.Format("We hired {0}, paying a signing bonus of {1}.",
+                                applicant.Name,
+                                applicant.Class.Levels[0].Pay * 4),
+                                OkayText = "OK",
+                                CancelText = ""
+                            });
+ 
                         }
                     }
-                }
-            });
-
+                },
+                Hidden = true
+            }) as Button;
             this.Layout();
         }
     }

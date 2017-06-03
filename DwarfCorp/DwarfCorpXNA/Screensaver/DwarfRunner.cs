@@ -143,29 +143,40 @@ namespace DwarfCorp
 
         public void Render(GraphicsDevice graphics, SpriteBatch sprites, DwarfTime time)
         {
-            sprites.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp,
-                DepthStencilState.Default, RasterizerState.CullNone);
-            
-            // Draw ground.
-            for (var x = 0; x < WorldSize.X; ++x)
-                for (var y = 0; y < WorldSize.Y; ++y)
-                    if (World[x,y] != null && World[x, y].Solid)
-                        sprites.Draw(World[x, y].Image.Image, new Rectangle((int)((x * TileSize.X) + (HorizontalOffset * TileSize.X)), graphics.Viewport.Height - ((y + 1) * TileSize.Y), TileSize.X, TileSize.Y), World[x, y].Image.SourceRect, Color.White);
+            try
+            {
+                sprites.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp,
+                    DepthStencilState.Default, RasterizerState.CullNone);
 
-            sprites.Draw(Balloon, new Vector2(graphics.Viewport.Width * 0.75f,
-                (float)Math.Sin(time.TotalRealTime.TotalSeconds) * 64), Color.White);
+                // Draw ground.
+                for (var x = 0; x < WorldSize.X; ++x)
+                    for (var y = 0; y < WorldSize.Y; ++y)
+                        if (World[x, y] != null && World[x, y].Solid)
+                            sprites.Draw(World[x, y].Image.Image,
+                                new Rectangle((int) ((x*TileSize.X) + (HorizontalOffset*TileSize.X)),
+                                    graphics.Viewport.Height - ((y + 1)*TileSize.Y), TileSize.X, TileSize.Y),
+                                World[x, y].Image.SourceRect, Color.White);
 
-            var dwarfFrame = (int)(time.TotalRealTime.TotalSeconds * 16) % 4;
-            sprites.Draw(Dwarf, 
-                new Rectangle(
-                    (int)(DwarfPosition.X * TileSize.X) - (TileSize.X / 2), 
-                    graphics.Viewport.Height - (int)(DwarfPosition.Y * TileSize.Y) - (int)(TileSize.Y * 1.25f), 
-                    TileSize.X, 
-                    (int)(TileSize.Y * 1.25f)), 
-                DwarfFrames[dwarfFrame].SourceRect, Color.White);
-                     
-            sprites.End();
-          
+                sprites.Draw(Balloon, new Vector2(graphics.Viewport.Width*0.75f,
+                    (float) Math.Sin(time.TotalRealTime.TotalSeconds)*64), Color.White);
+
+                var dwarfFrame = (int) (time.TotalRealTime.TotalSeconds*16)%4;
+                sprites.Draw(Dwarf,
+                    new Rectangle(
+                        (int) (DwarfPosition.X*TileSize.X) - (TileSize.X/2),
+                        graphics.Viewport.Height - (int) (DwarfPosition.Y*TileSize.Y) - (int) (TileSize.Y*1.25f),
+                        TileSize.X,
+                        (int) (TileSize.Y*1.25f)),
+                    DwarfFrames[dwarfFrame].SourceRect, Color.White);
+
+                sprites.End();
+            }
+            catch (InvalidOperationException exception)
+            {
+
+                Console.Error.WriteLine(exception.ToString());
+            }
+
         }
     }
 }

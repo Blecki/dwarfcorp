@@ -75,6 +75,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public WorldManager World { get; set; }
 
+
         protected void OnDeserialized(StreamingContext context)
         {
             World = (WorldManager) (context.Context);
@@ -94,6 +95,7 @@ namespace DwarfCorp
             VoxSelector.Selected += OnSelected;
             VoxSelector.Dragged += OnDrag;
             BodySelector.Selected += OnBodiesSelected;
+            BodySelector.MouseOver += OnMouseOver;
             World.Master = this;
             World.Time.NewDay += Time_NewDay;
         }
@@ -117,6 +119,7 @@ namespace DwarfCorp
             VoxSelector.Selected -= OnSelected;
             VoxSelector.Dragged -= OnDrag;
             BodySelector.Selected -= OnBodiesSelected;
+            BodySelector.MouseOver -= OnMouseOver;
             World.Time.NewDay -= Time_NewDay;
             InputManager.KeyReleasedCallback -= OnKeyReleased;
             Tools[ToolMode.God].Destroy();
@@ -198,6 +201,11 @@ namespace DwarfCorp
             PayEmployees();
         }
 
+        public void OnMouseOver(IEnumerable<Body> bodies)
+        {
+            CurrentTool.OnMouseOver(bodies);
+        }
+
         public void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
             CurrentTool.OnBodiesSelected(bodies, button);
@@ -245,8 +253,8 @@ namespace DwarfCorp
                 {
                     if (!noMoney)
                     {
-                        World.MakeAnnouncement("We're bankrupt!",
-                            "If we don't make a profit by tomorrow, our stock will crash!");
+                        World.MakeAnnouncement("If we don't make a profit by tomorrow, our stock will crash!");
+                        World.Tutorial("money");
                         SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                     }
                     noMoney = true;
@@ -257,8 +265,9 @@ namespace DwarfCorp
                 }
             }
 
-            World.MakeAnnouncement("Pay day!", String.Format("We paid our employees {0} today.",
+            World.MakeAnnouncement(String.Format("We paid our employees {0} today.",
                 total), null, ContentPaths.Audio.change);
+            World.Tutorial("pay");
         }
 
 
@@ -298,11 +307,6 @@ namespace DwarfCorp
 
         public void Update(DwarfGame game, DwarfTime time)
         {
-            //if (CurrentToolMode != ToolMode.God)
-            //{
-            //    CurrentToolMode = ToolBar.CurrentMode;
-            //}
-
             CurrentTool.Update(game, time);
 
             if (!World.Paused)
@@ -313,6 +317,7 @@ namespace DwarfCorp
             {
                 CameraController.LastWheel = Mouse.GetState().ScrollWheelValue;
             }
+
             UpdateInput(game, time);
 
             if (Faction.Minions.Any(m => m.IsDead && m.TriggersMourning))
@@ -331,9 +336,9 @@ namespace DwarfCorp
                 if (deadMinion != null)
                 {
                     World.MakeAnnouncement(
-                        String.Format("{0} ({1}) died!", deadMinion.Stats.FullName, deadMinion.Stats.CurrentLevel.Name),
-                        "One of our employees has died!");
+                        String.Format("{0} ({1}) died!", deadMinion.Stats.FullName, deadMinion.Stats.CurrentClass.Name));
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
+                    World.Tutorial("death");
                     Faction.Economy.Company.StockPrice -= MathFunctions.Rand(0, 0.5f);
                 }
             }
@@ -433,6 +438,7 @@ namespace DwarfCorp
                     }
                     dwarf.Physics.Velocity = new Vector3(dwarf.Physics.Velocity.X*0.9f, dwarf.Physics.Velocity.Y,
                         dwarf.Physics.Velocity.Z*0.9f);
+                    dwarf.TryMoveVelocity(Vector3.Zero, false);
                 }
             }
 
@@ -480,17 +486,20 @@ namespace DwarfCorp
         {
             if(key == ControlSettings.Mappings.SliceUp)
             {
+                World.Tutorial("unslice");
                 World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
             }
 
             else if(key == ControlSettings.Mappings.SliceDown)
             {
+                World.Tutorial("unslice");
                 World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
             }
             else if (key == ControlSettings.Mappings.SliceSelected)
             {
                 if (VoxSelector.VoxelUnderMouse != null)
                 {
+                    World.Tutorial("unslice");
                     World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Position.Y,
                         ChunkManager.SliceMode.Y);
                     Drawer3D.DrawBox(VoxSelector.VoxelUnderMouse.GetBoundingBox(), Color.White, 0.15f, true);
