@@ -300,5 +300,20 @@ namespace DwarfCorp
 
             staticsInitialized = true;
         }
+
+        public static CraftItem GetRandomApplicableCraftItem(Faction faction)
+        {
+            const int maxIters = 100;
+            for (int i = 0; i < maxIters; i++)
+            {
+                var item = Datastructures.SelectRandom(CraftItems.Where(k => k.Value.Type == CraftItem.CraftType.Resource));
+                if (!faction.HasResources(item.Value.RequiredResources))
+                {
+                    continue;
+                }
+                return item.Value.Clone();
+            }
+            return null;
+        }
     }
 }

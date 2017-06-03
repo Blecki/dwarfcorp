@@ -613,8 +613,33 @@ namespace DwarfCorp
             if (!IsPosessed && GatherManager.VoxelOrders.Count == 0 &&
                 (GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile()))
             {
-                // Find a room to train in
-                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack) && MathFunctions.RandEvent(0.01f))
+
+                // Craft random items for fun.
+                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Craft) && MathFunctions.RandEvent(0.001f))
+                {
+                    var item = CraftLibrary.GetRandomApplicableCraftItem(Faction);
+                    if (item != null)
+                    {
+                        bool gotAny = true;
+                        foreach (var resource in item.RequiredResources)
+                        {
+                            var amount = Faction.GetResourcesWithTags(new List<Quantitiy<Resource.ResourceTags>>() { resource });
+                            if (amount == null || amount.Count == 0)
+                            {
+                                gotAny = false;
+                                break;
+                            }
+                            item.SelectedResources.Add(Datastructures.SelectRandom(amount));
+                        }
+                        if (gotAny)
+                        {
+                            return new CraftResourceTask(item);
+                        }
+                    }
+                }
+
+                // Find a room to train in, if applicable.
+                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack) && MathFunctions.RandEvent(0.001f))
                 {
                     Body closestTraining = Faction.FindNearestItemWithTags("Train", Position, true);
 
@@ -654,9 +679,9 @@ namespace DwarfCorp
                     Priority = Task.PriorityType.Low
                 };
             }
-            else if (GatherManager.VoxelOrders.Count > 0)
-            {
 
+            if (GatherManager.VoxelOrders.Count > 0)
+            {
                 // Otherwise handle build orders.
                 var voxels = new List<Voxel>();
                 var types = new List<VoxelType>();

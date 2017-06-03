@@ -868,9 +868,11 @@ namespace DwarfCorp
                 tagsGot[quantity.ResourceType] = 0;
             }
 
+            Random r = new Random();
+
             foreach (Stockpile stockpile in Stockpiles)
             {
-                foreach (ResourceAmount resource in stockpile.Resources)
+                foreach (ResourceAmount resource in stockpile.Resources.OrderBy(x => r.Next()))
                 {
                     foreach (var requirement in tagsRequired)
                     {
