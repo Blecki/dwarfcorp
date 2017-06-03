@@ -159,7 +159,14 @@ namespace DwarfCorp.GameStates
                 };
 
                 World.SetMouseOverlay += (mouse, frame) => GuiRoot.SetMouseOverlay(mouse, frame);
-                World.ShowToolPopup += text => GuiRoot.ShowTooltip(GuiRoot.MousePosition + new Point(32, 32), text);
+
+                
+                World.ShowToolPopup += text => GuiRoot.ShowTooltip(new Point(4, -16),
+                    new NewGui.ToolPopup
+                {
+                    Text = text,
+                });
+                 
 
                 World.gameState = this;
                 World.OnLoseEvent += World_OnLoseEvent;

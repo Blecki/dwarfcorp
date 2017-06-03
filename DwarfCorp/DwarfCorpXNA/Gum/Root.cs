@@ -183,24 +183,6 @@ namespace Gum
                     DestroyWidget(TooltipItem);
                 return;
             }
-
-            if (TooltipItem != null && TooltipItem.Text == Tip)
-            {
-                //TODO (Mklingen): handle the case where the tooltip is the same,
-                // but the widget has moved.
-
-                var myBestSize = TooltipItem.GetBestSize();
-                Rectangle myRect = new Rectangle(
-                    // ?? Why are we assuming the tooltip is being opened at the mouse position?
-                    Where.X + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2,
-                    Where.Y + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2, myBestSize.X, myBestSize.Y);
-
-                if (myRect == TooltipItem.Rect)
-                {
-                    return;
-                }
-            }
-
             var item = ConstructWidget(new Widget
             {
                 Text = Tip,
@@ -219,12 +201,43 @@ namespace Gum
 
             rect = MathFunctions.SnapRect(rect, RenderData.VirtualScreen);
             item.Rect = rect;
-            RootItem.AddChild(item);
-            
+            ShowTooltip(Where, item);
+        }
+
+        public void ShowTooltip(Point Where, Widget Tip)
+        {
+            if (TooltipItem != null && TooltipItem.Text == Tip.Text)
+            {
+                //TODO (Mklingen): handle the case where the tooltip is the same,
+                // but the widget has moved.
+
+                var myBestSize = TooltipItem.GetBestSize();
+                Rectangle myRect = new Rectangle(
+                    // ?? Why are we assuming the tooltip is being opened at the mouse position?
+                    Where.X + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2,
+                    Where.Y + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2, myBestSize.X, myBestSize.Y);
+
+                if (myRect == TooltipItem.Rect)
+                {
+                    return;
+                }
+            }
+
+            RootItem.AddChild(Tip);
+
+            var bestSize = Tip.GetBestSize();
+            Rectangle rect = new Rectangle(
+                // ?? Why are we assuming the tooltip is being opened at the mouse position?
+                Where.X + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2,
+                Where.Y + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2, bestSize.X, bestSize.Y);
+
+            rect = MathFunctions.SnapRect(rect, RenderData.VirtualScreen);
+            Tip.Rect = rect;
+
             if (TooltipItem != null)
                 DestroyWidget(TooltipItem);
 
-            TooltipItem = item;
+            TooltipItem = Tip;
         }
 
         /// <summary>
