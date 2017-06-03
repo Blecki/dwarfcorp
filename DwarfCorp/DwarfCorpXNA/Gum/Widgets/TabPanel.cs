@@ -87,6 +87,7 @@ namespace Gum.Widgets
                 foreach (var child in TabPanels)
                     child.Hidden = true;
                 TabPanels[_selectedTab].Hidden = false;
+                Root.SafeCall(TabPanels[_selectedTab].OnShown, TabPanels[_selectedTab]);
 
                 foreach (var tab in TabButtons) tab.Invalidate();
 

@@ -22,12 +22,18 @@ namespace DwarfCorp.NewGui
 
         public override void Construct()
         {
+            var bottomBar = AddChild(new Gum.Widget
+            {
+                MinimumSize = new Point(0, 32),
+                AutoLayout = AutoLayout.DockBottom
+            });
+
             Description = AddChild(new Gum.Widget
             {
                 AutoLayout = AutoLayout.DockFill
             });
 
-            ActivateButton = AddChild(new Widget
+            ActivateButton = bottomBar.AddChild(new Widget
             {
                 Text = "Activate!",
                 Font = "font-hires",

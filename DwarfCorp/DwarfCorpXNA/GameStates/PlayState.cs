@@ -53,6 +53,7 @@ namespace DwarfCorp.GameStates
         private NewGui.ToggleTray BrushTray;
         private NewGui.GodMenu GodMenu;
         private AnnouncementPopup Announcer;
+        private FramedIcon EconomyIcon;
 
         private class ToolbarItem
         {
@@ -293,6 +294,13 @@ namespace DwarfCorp.GameStates
 
             #endregion
 
+            #region Update Economy Indicator
+
+            EconomyIcon.IndicatorValue = World.GoalManager.NewAvailableGoals + World.GoalManager.NewCompletedGoals;
+
+            #endregion
+
+
             GameSpeedControls.CurrentSpeed = (int)DwarfTime.LastTime.Speed;
 
             // Really just handles mouse pointer animation.
@@ -530,6 +538,14 @@ namespace DwarfCorp.GameStates
             #endregion
 
             #region Setup top right tray
+
+            EconomyIcon = new NewGui.FramedIcon
+            {
+                Icon = new Gum.TileReference("tool-icons", 10),
+                OnClick = (sender, args) => StateManager.PushState(new NewEconomyState(Game, StateManager, World)),
+                DrawIndicator = true,
+            };
+
             var topRightTray = GuiRoot.RootItem.AddChild(new NewGui.IconTray
             {
                 Corners = global::Gum.Scale9Corners.Left | global::Gum.Scale9Corners.Bottom,
@@ -537,17 +553,13 @@ namespace DwarfCorp.GameStates
                 SizeToGrid = new Point(2, 1),
                 ItemSource = new Gum.Widget[] 
                         {
+                            EconomyIcon,
+                                                       
                             new NewGui.FramedIcon
                             {
-                                Icon = new Gum.TileReference("tool-icons", 10),
-                                OnClick = (sender, args) => StateManager.PushState(new NewEconomyState(Game, StateManager, World))
-                        },
-                           
-                        new NewGui.FramedIcon
-                        {
-                            Icon = new Gum.TileReference("tool-icons", 12),
-                            OnClick = (sender, args) => { OpenPauseMenu(); }
-                        }
+                                Icon = new Gum.TileReference("tool-icons", 12),
+                                OnClick = (sender, args) => { OpenPauseMenu(); }
+                            }
                         }
             });
             #endregion

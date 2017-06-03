@@ -94,7 +94,22 @@ namespace DwarfCorp.GameStates
             
             GuiRoot.RootItem.Layout();
 
-            World.GuiHook_ShowTutorialPopup = (text, callback) =>
+            IsInitialized = true;
+            base.OnEnter();
+        }
+
+        public override void Update(DwarfTime gameTime)
+        {
+            foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
+            {
+                GuiRoot.HandleInput(@event.Message, @event.Args);
+                if (!@event.Args.Handled)
+                {
+                    // Pass event to game...
+                }
+            }
+
+            World.TutorialManager.Update((text, callback) =>
             {
                 var popup = GuiRoot.ConstructWidget(new NewGui.TutorialPopup
                 {
@@ -111,23 +126,7 @@ namespace DwarfCorp.GameStates
                 });
 
                 GuiRoot.ShowPopup(popup, Root.PopupExclusivity.AddToStack);
-            };
-
-            IsInitialized = true;
-            base.OnEnter();
-        }
-
-        public override void Update(DwarfTime gameTime)
-        {
-            foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
-            {
-                GuiRoot.HandleInput(@event.Message, @event.Args);
-                if (!@event.Args.Handled)
-                {
-                    // Pass event to game...
-                }
-            }
-
+            });
             GuiRoot.Update(gameTime.ToGameTime());
             base.Update(gameTime);
         }
