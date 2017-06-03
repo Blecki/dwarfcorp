@@ -615,7 +615,7 @@ namespace DwarfCorp
             {
 
                 // Craft random items for fun.
-                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Craft) && MathFunctions.RandEvent(0.005f))
+                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Craft) && MathFunctions.RandEvent(0.0005f))
                 {
                     var item = CraftLibrary.GetRandomApplicableCraftItem(Faction);
                     if (item != null)
@@ -651,7 +651,7 @@ namespace DwarfCorp
                 }
 
                 // Find a room to train in, if applicable.
-                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack) && MathFunctions.RandEvent(0.005f))
+                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack) && MathFunctions.RandEvent(0.0005f))
                 {
                     Body closestTraining = Faction.FindNearestItemWithTags("Train", Position, true);
 
