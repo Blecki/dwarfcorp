@@ -138,7 +138,7 @@ namespace DwarfCorp.GameStates
                                 }
                             }
                         });
-                        GuiRoot.ShowPopup(confirm, Root.PopupExclusivity.AddToStack);
+                        GuiRoot.ShowModalPopup(confirm);
                     }
                 });
             }

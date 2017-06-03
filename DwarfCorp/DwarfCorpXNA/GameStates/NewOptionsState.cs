@@ -129,7 +129,7 @@ namespace DwarfCorp.GameStates
                                         StateManager.PopState();
                                     }
                             };
-                        GuiRoot.ShowPopup(confirm);
+                        GuiRoot.ShowModalPopup(confirm);
                     }
                     else
                     {
@@ -790,7 +790,7 @@ namespace DwarfCorp.GameStates
                     GameSettings.Default.Fullscreen = preFullscreen;
                     SetBestResolution();
                     this.Fullscreen.CheckState = GameSettings.Default.Fullscreen;
-                    GuiRoot.ShowPopup(new NewGui.Popup
+                    GuiRoot.ShowModalPopup(new NewGui.Popup
                         {
                             Text = "Could not change display mode. Previous settings restored.",
                             TextSize = 1,

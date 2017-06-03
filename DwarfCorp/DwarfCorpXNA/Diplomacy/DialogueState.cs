@@ -118,7 +118,7 @@ namespace DwarfCorp.Dialogue
                     }
                 });
 
-                GuiRoot.ShowPopup(popup, Root.PopupExclusivity.AddToStack);
+                GuiRoot.ShowModalPopup(popup);
             });
             GuiRoot.Update(gameTime.ToGameTime());
 

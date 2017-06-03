@@ -42,17 +42,7 @@ namespace Gum
         // If Hidden, widget is not drawn and does not interact.
         public bool Hidden = false;
 
-        private Vector4? _backgroundColor = null;
-        public Vector4 BackgroundColor
-        {
-            get
-            {
-                if (_backgroundColor.HasValue) return _backgroundColor.Value;
-                else if (Parent != null) return Parent.BackgroundColor;
-                else return Vector4.One;
-            }
-            set { _backgroundColor = value; }
-        }
+        public Vector4 BackgroundColor = Vector4.One;
 
         /// <summary>
         /// Tile to use as a background for this widget. If null, not background is drawn.
@@ -137,7 +127,6 @@ namespace Gum
         public Action<Widget, InputEventArgs> OnKeyPress = null;
         public Action<Widget, InputEventArgs> OnKeyDown = null;
         public Action<Widget, InputEventArgs> OnKeyUp = null;
-        public Action<Widget> OnPopupClose = null;
         public Action<Widget> OnUpdateWhileFocus = null;
         public Action<Widget, GameTime> OnUpdate = null;
         public Action<Widget> OnConstruct = null;

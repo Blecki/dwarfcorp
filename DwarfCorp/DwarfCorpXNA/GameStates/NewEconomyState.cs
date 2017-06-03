@@ -28,25 +28,7 @@ namespace DwarfCorp.GameStates
             GuiRoot = new Gum.Root(DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
             GuiRoot.SetMouseOverlay(null, 0);
-            World.GuiHook_ShowTutorialPopup = (text, callback) =>
-            {
-                var popup = GuiRoot.ConstructWidget(new NewGui.TutorialPopup
-                {
-                    Message = text,
-                    OnClose = (sender) =>
-                    {
-                        callback((sender as NewGui.TutorialPopup).DisableChecked);
-                    },
-                    OnLayout = (sender) =>
-                    {
-                        sender.Rect.X = GuiRoot.RenderData.VirtualScreen.Width - sender.Rect.Width;
-                        sender.Rect.Y = 64;
-                    }
-                });
-
-                GuiRoot.ShowPopup(popup, Root.PopupExclusivity.AddToStack);
-            };
-
+            
             var mainPanel = GuiRoot.RootItem.AddChild(new Gum.Widget
             {
                 Rect = GuiRoot.RenderData.VirtualScreen,
@@ -118,13 +100,14 @@ namespace DwarfCorp.GameStates
             
             GuiRoot.RootItem.Layout();
 
-            World.Tutorial("economy");
             IsInitialized = true;
             base.OnEnter();
         }
 
         public override void Update(DwarfTime gameTime)
         {
+            World.Tutorial("economy");
+
             foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
             {
                 GuiRoot.HandleInput(@event.Message, @event.Args);
@@ -150,7 +133,7 @@ namespace DwarfCorp.GameStates
                     }
                 });
 
-                GuiRoot.ShowPopup(popup, Root.PopupExclusivity.AddToStack);
+                GuiRoot.ShowModalPopup(popup);
             });
 
             TabPanel.GetTabButton(1).IndicatorValue = World.GoalManager.NewAvailableGoals;

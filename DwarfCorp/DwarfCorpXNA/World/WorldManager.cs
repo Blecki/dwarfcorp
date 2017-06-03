@@ -1347,7 +1347,7 @@ namespace DwarfCorp
                                 FastForwardToDay = true;
                         }
                     });
-                    NewGui.ShowPopup(sleepingPrompt, Gum.Root.PopupExclusivity.AddToStack);
+                    NewGui.ShowModalPopup(sleepingPrompt);
                     SleepPrompt = false;
                 }
                 else if (!allAsleep)

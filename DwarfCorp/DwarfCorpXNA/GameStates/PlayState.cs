@@ -1460,7 +1460,10 @@ namespace DwarfCorp.GameStates
                 Text = "- Paused -",
                 InteriorMargin = new Gum.Margin(12, 0, 0, 0),
                 Padding = new Gum.Margin(2, 2, 2, 2),
-                OnClose = (sender) => PausePanel = null,
+                OnClose = (sender) =>
+                {
+                    PausePanel = null;
+                },
                 Font = "font-hires"
             };
 
@@ -1479,6 +1482,7 @@ namespace DwarfCorp.GameStates
                 {
                     OnClosed = () =>
                     {
+                        PausePanel = null;
                         GuiRoot.RenderData.CalculateScreenSize();
                         GuiRoot.ResetGui();
                         CreateGUIComponents();
@@ -1493,7 +1497,7 @@ namespace DwarfCorp.GameStates
             MakeMenuItem(PausePanel, "Save", "",
                 (sender, args) =>
                 {
-                    GuiRoot.ShowPopup(new NewGui.Confirm
+                    GuiRoot.ShowModalPopup(new NewGui.Confirm
                     {
                         Text = "Warning: Saving is still an unstable feature. Are you sure you want to continue?",
                         OnClose = (s) =>
@@ -1503,7 +1507,7 @@ namespace DwarfCorp.GameStates
                                     String.Format("{0}_{1}", Overworld.Name, World.GameID),
                                     (success, exception) =>
                                     {
-                                        GuiRoot.ShowPopup(new NewGui.Popup
+                                        GuiRoot.ShowModalPopup(new NewGui.Popup
                                         {
                                             Text = success ? "File saved." : "Save failed - " + exception.Message,
                                             OnClose = (s2) => OpenPauseMenu()
@@ -1517,7 +1521,7 @@ namespace DwarfCorp.GameStates
 
             PausePanel.Layout();
 
-            GuiRoot.ShowPopup(PausePanel);
+            GuiRoot.ShowModalPopup(PausePanel);
         }
 
         public void Destroy()
