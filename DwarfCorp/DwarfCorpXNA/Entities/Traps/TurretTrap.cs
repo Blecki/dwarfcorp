@@ -33,7 +33,7 @@ namespace DwarfCorp
                 Mode = Attack.AttackMode.Ranged,
                 LaunchSpeed = 15
             };
-            ParticleTrigger deathParticles = new ParticleTrigger("puff", Manager, "DeathParticles", this,
+            ParticleTrigger deathParticles = new ParticleTrigger("explode", Manager, "DeathParticles", this,
             Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
             {
                 SoundToPlay = ""
@@ -50,6 +50,7 @@ namespace DwarfCorp
             TurretSprite = new Fixture(Vector3.Up * 0.25f, spriteSheet, new Point(1, 7), this);
             TurretSprite.Sprite.OrientationType = Sprite.OrientMode.Fixed;
             SetTurretAngle(0.0f);
+            new Shadow(this);
         }
 
         void Sensor_OnEnemySensed(List<CreatureAI> enemies)

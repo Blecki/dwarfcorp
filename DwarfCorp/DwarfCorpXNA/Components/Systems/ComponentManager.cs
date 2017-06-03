@@ -161,7 +161,7 @@ namespace DwarfCorp
             {
                 return new List<Body>();
             }
-            List<Body> toReturn = new List<Body>();
+            HashSet<Body> toReturn = new HashSet<Body>();
             foreach (uint id in World.SelectionBuffer.GetIDsSelected(selectionRectangle))
             {
                 GameComponent component;
@@ -170,9 +170,11 @@ namespace DwarfCorp
                     continue;
                 }
                 if (!component.IsVisible) continue;
-                toReturn.Add(component.GetEntityRootComponent().GetComponent<Body>());
+                var toAdd = component.GetEntityRootComponent().GetComponent<Body>();
+                if (!toReturn.Contains(toAdd))
+                    toReturn.Add(component.GetEntityRootComponent().GetComponent<Body>());
             }
-            return toReturn;
+            return toReturn.ToList();
         }
 
         #endregion

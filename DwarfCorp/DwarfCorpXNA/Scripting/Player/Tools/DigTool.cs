@@ -54,7 +54,7 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
-           
+           Player.World.Tutorial("mine");
         }
 
         public override void OnEnd()
@@ -71,6 +71,7 @@ namespace DwarfCorp
 
             if (button == InputManager.MouseButton.Left)
             {
+                Player.World.Tutorial("slice");
                 List<Task> assignments = new List<Task>();
                 foreach (Voxel r in refs)
                 {
@@ -113,6 +114,11 @@ namespace DwarfCorp
                     Player.Faction.RemoveDigDesignation(r);
                 }
             }
+        }
+
+        public override void OnMouseOver(IEnumerable<Body> bodies)
+        {
+            throw new NotImplementedException();
         }
 
         public override void Update(DwarfGame game, DwarfTime time)

@@ -1,4 +1,4 @@
-﻿// BearTrap.cs
+// BearTrap.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -71,7 +71,7 @@ namespace DwarfCorp
             };
             Sensor.OnSensed += Sensor_OnSensed;
             DeathTimer = new Timer(0.6f, true);
-            DeathParticles = new ParticleTrigger("puff", Manager, "DeathParticles", this,
+            DeathParticles = new ParticleTrigger("explode", Manager, "DeathParticles", this,
                 Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
             {
                 SoundToPlay = ""
@@ -84,7 +84,7 @@ namespace DwarfCorp
             Sprite = new Sprite(Manager, "Sprite", this, Matrix.Identity, new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap), false);
             Sprite.AddAnimation(new Animation(0, ContentPaths.Entities.DwarfObjects.beartrap, 32, 32,  0) {Name = IdleAnimation});
             Sprite.AddAnimation(new Animation(1, ContentPaths.Entities.DwarfObjects.beartrap, 32, 32,  0, 1, 2, 3) {Name = TriggerAnimation, Speeds =  new List<float>() {6.6f}, Loops = true});
-
+            new Shadow(this);
         }
 
         void Sensor_OnSensed(List<Body> sensed)

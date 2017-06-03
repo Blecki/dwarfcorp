@@ -338,6 +338,16 @@ namespace DwarfCorp
                 }
             }
 
+            foreach (BuildRoomOrder order in BuildDesignations)
+            {
+                order.SetTint(Color.White);
+            }
+
+            foreach (Room room in Faction.GetRooms())
+            {
+                room.SetTint(Color.White);
+            }
+
             if (CurrentRoomData == null)
             {
                 return;
@@ -345,6 +355,7 @@ namespace DwarfCorp
 
             if (button == InputManager.MouseButton.Left)
             {
+                World.Tutorial("build " + CurrentRoomData.Name);
                 if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Build).Count == 0)
                 {
                     World.ShowToolPopup("None of the selected units can build rooms.");
@@ -383,10 +394,49 @@ namespace DwarfCorp
                     }
                 }
             }
+            else
+            {
+                foreach (Voxel v in refs.Where(v => !v.IsEmpty))
+                {
+                    if (IsBuildDesignation(v))
+                    {
+                        var order = GetBuildDesignation(v);
+                        if (!order.Order.IsBuilt)
+                        {
+                            order.Order.SetTint(Color.Red);
+                        }
+                        else
+                        {
+                            order.ToBuild.SetTint(Color.Red);
+                        }
+                        break;
+                    }
+                    else if (IsInRoom(v))
+                    {
+                        Room existingRoom = GetMostLikelyRoom(v);
+                        if (existingRoom == null)
+                        {
+                            continue;
+                        }
+                        existingRoom.SetTint(Color.Red);
+                        break;
+                    }
+                }
+            }
         }
 
         public void VoxelsSelected(List<Voxel> refs, InputManager.MouseButton button)
         {
+            foreach (BuildRoomOrder order in BuildDesignations)
+            {
+                order.SetTint(Color.White);
+            }
+
+            foreach (Room room in Faction.GetRooms())
+            {
+                room.SetTint(Color.White);
+            }
+
             if(CurrentRoomData == null)
             {
                 return;
@@ -424,7 +474,7 @@ namespace DwarfCorp
                 if(IsBuildDesignation(v))
                 {
                     BuildVoxelOrder vox = GetBuildDesignation(v);
-                    vox.ToBuild.Destroy();
+                    vox.Order.Destroy();
                     BuildDesignations.Remove(vox.Order);
                 }
                 else if(IsInRoom(v))

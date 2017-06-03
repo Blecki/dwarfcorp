@@ -100,6 +100,11 @@ namespace DwarfCorp
             OnConfirm(minions);
         }
 
+        public override void OnMouseOver(IEnumerable<Body> bodies)
+        {
+            DefaultOnMouseOver(bodies);
+        }
+
         public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
         {
 

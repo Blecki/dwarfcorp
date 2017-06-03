@@ -154,19 +154,19 @@ namespace DwarfCorp.NewGui
                 meshes.Add(Gum.Mesh.Quad()
                     .Scale(32, 32)
                     .Texture(indicatorTile.TileMatrix(0))
-                    .Translate(Rect.Right - 16,
-                        Rect.Bottom - 16));
+                    .Translate(Rect.Right - 32,
+                        Rect.Bottom - 32));
                 var numberSize = new Rectangle();
-                var font = Root.GetTileSheet(Font);
+                var font = Root.GetTileSheet("font-hires");
                 var stringMesh = Gum.Mesh.CreateStringMesh(
                     IndicatorValue.ToString(),
                     font,
-                    new Vector2(1, 1),
+                    new Vector2(1,1),
                     out numberSize)
                     .Colorize(new Vector4(1,1,1,1));
                 meshes.Add(stringMesh.
-                    Translate(Rect.Right - 8 - (numberSize.Width / 2),
-                    Rect.Bottom - 8 - (numberSize.Height / 2)));
+                    Translate(Rect.Right - 16 - (numberSize.Width / 2),
+                    Rect.Bottom - 16 - (numberSize.Height / 2)));
             }
 
             return Gum.Mesh.Merge(meshes.ToArray());

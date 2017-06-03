@@ -1,4 +1,4 @@
-﻿// SpriteSheet.cs
+// SpriteSheet.cs
 // 
 //  Modified MIT License (MIT)
 //  

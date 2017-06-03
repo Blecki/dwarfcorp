@@ -266,7 +266,7 @@ namespace DwarfCorp
             VoxelType grassType = new VoxelType
             {
                 Name = "Grass",
-                ProbabilityOfRelease = 0.1f,
+                ProbabilityOfRelease = 1.0f,
                 ResourceToRelease = ResourceLibrary.ResourceType.Dirt,
                 StartingHealth = 10,
                 ReleasesResource = true,
@@ -288,7 +288,7 @@ namespace DwarfCorp
             VoxelType frostType = new VoxelType
             {
                 Name = "Frost",
-                ProbabilityOfRelease = 0.1f,
+                ProbabilityOfRelease = 1.0f,
                 ResourceToRelease = ResourceLibrary.ResourceType.Dirt,
                 StartingHealth = 10,
                 ReleasesResource = true,
@@ -341,7 +341,7 @@ namespace DwarfCorp
             VoxelType desertGrass = new VoxelType
             {
                 Name = "DesertGrass",
-                ProbabilityOfRelease = 0.1f,
+                ProbabilityOfRelease = 1.0f,
                 ResourceToRelease = ResourceLibrary.ResourceType.Sand,
                 StartingHealth = 20,
                 ReleasesResource = true,
@@ -361,7 +361,7 @@ namespace DwarfCorp
             VoxelType jungleGrass = new VoxelType
             {
                 Name = "JungleGrass",
-                ProbabilityOfRelease = 0.1f,
+                ProbabilityOfRelease = 1.0f,
                 ResourceToRelease = ResourceLibrary.ResourceType.Dirt,
                 StartingHealth = 30,
                 ReleasesResource = true,
@@ -382,7 +382,7 @@ namespace DwarfCorp
             VoxelType caveFungus = new VoxelType
             {
                 Name = "CaveFungus",
-                ProbabilityOfRelease = 0.25f,
+                ProbabilityOfRelease = 1.0f,
                 ResourceToRelease = ResourceLibrary.ResourceType.Stone,
                 StartingHealth = 30,
                 ReleasesResource = true,
@@ -405,7 +405,7 @@ namespace DwarfCorp
                 Name = "Dirt",
                 ReleasesResource = true,
                 ResourceToRelease = ResourceLibrary.ResourceType.Dirt,
-                ProbabilityOfRelease = 0.3f,
+                ProbabilityOfRelease = 1.0f,
                 StartingHealth = 10,
                 RampSize = 0.5f,
                 CanRamp = true,
@@ -419,7 +419,7 @@ namespace DwarfCorp
             VoxelType stoneType = new VoxelType
             {
                 Name = "Stone",
-                ProbabilityOfRelease = 0.5f,
+                ProbabilityOfRelease = 1.0f,
                 ReleasesResource = true,
                 ResourceToRelease = ResourceLibrary.ResourceType.Stone,
                 StartingHealth = 40,
@@ -458,7 +458,7 @@ namespace DwarfCorp
                 ParticleType = "sand_particle",
                 IsSurface = true,
                 ResourceToRelease = ResourceLibrary.ResourceType.Sand,
-                ProbabilityOfRelease = 0.5f,
+                ProbabilityOfRelease = 1.0f,
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_sand_destroy),
                 HitSound = dirtPicks
             };
@@ -466,7 +466,7 @@ namespace DwarfCorp
             VoxelType ironType = new VoxelType
             {
                 Name = "Iron",
-                ProbabilityOfRelease = 0.99f,
+                ProbabilityOfRelease = 1.0f,
                 ReleasesResource = true,
                 ResourceToRelease = ResourceLibrary.ResourceType.Iron,
                 StartingHealth = 80,
@@ -479,7 +479,7 @@ namespace DwarfCorp
                 Rarity = 0.0f,
                 MinSpawnHeight = 8,
                 MaxSpawnHeight = 40,
-                SpawnProbability = 0.99f,
+                SpawnProbability = 1.0f,
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_metal_destroy),
                 HitSound = stonePicks
             };
@@ -488,7 +488,7 @@ namespace DwarfCorp
             VoxelType coalType = new VoxelType
             {
                 Name = "Coal",
-                ProbabilityOfRelease = 0.99f,
+                ProbabilityOfRelease = 1.0f,
                 ReleasesResource = true,
                 ResourceToRelease = ResourceLibrary.ResourceType.Coal,
                 StartingHealth = 75,

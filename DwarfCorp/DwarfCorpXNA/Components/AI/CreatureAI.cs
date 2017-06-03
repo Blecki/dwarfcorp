@@ -463,7 +463,8 @@ namespace DwarfCorp
                         if (Creature.Allies == "Dwarf")
                         {
                             Manager.World.MakeAnnouncement(String.Format("{0} ({1}) refuses to work!",
-                                Stats.FullName, Stats.CurrentLevel.Name), ZoomToMe);
+                                Stats.FullName, Stats.CurrentClass.Name), ZoomToMe);
+                            Manager.World.Tutorial("happiness");
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                         }
                         CurrentTask = null;
@@ -517,13 +518,14 @@ namespace DwarfCorp
 
                 IndicatorManager.DrawIndicator(sign + xp + " XP",
                     Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, xp > 0 ? Color.Green : Color.Red);
-                if (Stats.IsOverQualified && lastXPAnnouncement != Stats.XP && Faction == Manager.World.PlayerFaction)
+                if (Stats.IsOverQualified && lastXPAnnouncement != Stats.LevelIndex && Faction == Manager.World.PlayerFaction)
                 {
-                    lastXPAnnouncement = Stats.XP;
+                    lastXPAnnouncement = Stats.LevelIndex;
                     Manager.World.MakeAnnouncement(String.Format("{0} ({1}) wants a promotion!",
-                            Stats.FullName, Stats.CurrentLevel.Name),
+                            Stats.FullName, Stats.CurrentClass.Name),
                         () => Manager.World.Game.StateManager.PushState(new NewEconomyState(Manager.World.Game, Manager.World.Game.StateManager, Manager.World)),
                     ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
+                    Manager.World.Tutorial("level up");
                 }
             }
             XPEvents.Clear();
@@ -542,10 +544,21 @@ namespace DwarfCorp
         /// <returns>Success if the jump has succeeded, Fail if it failed, and Running otherwise.</returns>
         public IEnumerable<Act.Status> AvoidFalling()
         {
+            var above = Physics.CurrentVoxel.GetVoxelAbove();
             foreach (Voxel vox in Physics.Neighbors)
             {
                 if (vox == null) continue;
                 if (vox.IsEmpty) continue;
+
+                // Avoid teleporting through the block above. Never jump up through the
+                // block above you.
+                if (above != null && !above.IsEmpty)
+                {
+                    if ((int)vox.Position.Y >= (int)above.Position.Y)
+                    {
+                        continue;
+                    }
+                }
                 Voxel voxAbove = vox.GetVoxelAbove();
                 if (!voxAbove.IsEmpty) continue;
                 Vector3 target = voxAbove.Position + new Vector3(0.5f, 0.5f, 0.5f);
@@ -816,11 +829,12 @@ namespace DwarfCorp
                     if (Faction == Manager.World.PlayerFaction)
                     {
                         Manager.World.MakeAnnouncement(
-                            String.Format("{0} the {1} is fighting {2} {3}", Stats.FullName,
-                                Stats.CurrentLevel.Name,
-                                TextGenerator.IndefiniteArticle(enemy.Stats.CurrentLevel.Name),
+                            String.Format("{0} the {1} is fighting {2} ({3})", Stats.FullName,
+                                Stats.CurrentClass.Name,
+                                TextGenerator.IndefiniteArticle(enemy.Stats.CurrentClass.Name),
                                 enemy.Faction.Race.Name),
                             ZoomToMe);
+                        Manager.World.Tutorial("combat");
                     }
                 }
             }
@@ -1025,10 +1039,11 @@ namespace DwarfCorp
 
             if (jumpCommand && !jumpHeld && (Creature.IsOnGround || Creature.Physics.IsInLiquid) && Creature.IsHeadClear)
             {
-                projectedForce = new Vector3(projectedForce.X, 1, projectedForce.Z);
                 Creature.NoiseMaker.MakeNoise("Jump", Position);
                 Creature.Physics.LocalTransform *= Matrix.CreateTranslation(Vector3.Up*0.01f);
-                Creature.Physics.Velocity += Vector3.Up * 4.0f;
+                Creature.Physics.Velocity += Vector3.Up*5;
+                Creature.IsOnGround = false;
+                Creature.Physics.IsInLiquid = false;
             }
             
 

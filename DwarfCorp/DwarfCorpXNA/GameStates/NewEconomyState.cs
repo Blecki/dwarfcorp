@@ -12,6 +12,7 @@ namespace DwarfCorp.GameStates
     {
         private Gum.Root GuiRoot;
         private WorldManager World;
+        private Gum.Widgets.TabPanel TabPanel;
 
         public NewEconomyState(DwarfGame Game, GameStateManager StateManager, WorldManager World) :
             base(Game, "GuiStateTemplate", StateManager)
@@ -27,6 +28,25 @@ namespace DwarfCorp.GameStates
             GuiRoot = new Gum.Root(DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
             GuiRoot.SetMouseOverlay(null, 0);
+            World.GuiHook_ShowTutorialPopup = (text, callback) =>
+            {
+                var popup = GuiRoot.ConstructWidget(new NewGui.TutorialPopup
+                {
+                    Message = text,
+                    OnClose = (sender) =>
+                    {
+                        callback((sender as NewGui.TutorialPopup).DisableChecked);
+                    },
+                    OnLayout = (sender) =>
+                    {
+                        sender.Rect.X = GuiRoot.RenderData.VirtualScreen.Width - sender.Rect.Width;
+                        sender.Rect.Y = 64;
+                    }
+                });
+
+                GuiRoot.ShowPopup(popup, Root.PopupExclusivity.AddToStack);
+            };
+
             var mainPanel = GuiRoot.RootItem.AddChild(new Gum.Widget
             {
                 Rect = GuiRoot.RenderData.VirtualScreen,
@@ -48,7 +68,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.FloatBottomRight
             });
 
-            var tabPanel = mainPanel.AddChild(new Gum.Widgets.TabPanel
+            TabPanel = mainPanel.AddChild(new Gum.Widgets.TabPanel
             {
                 AutoLayout = AutoLayout.DockFill,
                 TextSize = 1,
@@ -56,13 +76,12 @@ namespace DwarfCorp.GameStates
                 OnLayout = (sender) => sender.Rect.Height -= 36 // Keep it from overlapping bottom buttons.
             }) as Gum.Widgets.TabPanel;
 
-            var employeePanel = tabPanel.AddTab("Employees", new NewGui.EmployeePanel
+            var employeePanel = TabPanel.AddTab("Employees", new NewGui.EmployeePanel
             {
                 Border = "border-thin",
                 Padding = new Margin(4, 4, 0, 0),
-                Faction = World.PlayerFaction
+                Faction = World.PlayerFaction,
             });
-            
 
             //var financePanel = tabPanel.AddTab("Finance", new NewGui.FinancePanel
             //{
@@ -71,29 +90,35 @@ namespace DwarfCorp.GameStates
             //    Economy = World.PlayerEconomy
             //});
 
-            tabPanel.AddTab("Available Goals", new NewGui.GoalPanel
+            TabPanel.AddTab("Available Goals", new NewGui.GoalPanel
             {
                 GoalSource = World.GoalManager.EnumerateGoals().Where(g =>
                     g.State == Goals.GoalState.Available),
-                World = World
+                World = World,
+                OnShown = (sender) => World.GoalManager.ResetNewAvailableGoals()
             });
 
-            tabPanel.AddTab("Active Goals", new NewGui.GoalPanel
+            TabPanel.AddTab("Active Goals", new NewGui.GoalPanel
             {
                 GoalSource = World.GoalManager.EnumerateGoals().Where(g =>
                     g.State == Goals.GoalState.Active && g.GoalType != Goals.GoalTypes.Achievement)
             });
 
-            tabPanel.AddTab("Completed Goals", new NewGui.GoalPanel
+            TabPanel.AddTab("Completed Goals", new NewGui.GoalPanel
             {
                 GoalSource = World.GoalManager.EnumerateGoals().Where(g =>
-                    g.State == Goals.GoalState.Complete)
+                    g.State == Goals.GoalState.Complete),
+                OnShown = (sender) => World.GoalManager.ResetNewCompletedGoals()
             });
-            
-            tabPanel.SelectedTab = 0;
+
+            TabPanel.GetTabButton(1).DrawIndicator = true;
+            TabPanel.GetTabButton(3).DrawIndicator = true;
+
+            TabPanel.SelectedTab = 0;
             
             GuiRoot.RootItem.Layout();
 
+            World.Tutorial("economy");
             IsInitialized = true;
             base.OnEnter();
         }
@@ -127,6 +152,10 @@ namespace DwarfCorp.GameStates
 
                 GuiRoot.ShowPopup(popup, Root.PopupExclusivity.AddToStack);
             });
+
+            TabPanel.GetTabButton(1).IndicatorValue = World.GoalManager.NewAvailableGoals;
+            TabPanel.GetTabButton(3).IndicatorValue = World.GoalManager.NewCompletedGoals;
+
             GuiRoot.Update(gameTime.ToGameTime());
             base.Update(gameTime);
         }

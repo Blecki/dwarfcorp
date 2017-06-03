@@ -143,6 +143,31 @@ namespace DwarfCorp
             Physics.Tags.Add("Animal");
             AI.Movement.SetCan(MoveType.ClimbWalls, true);
             AI.Stats.FullName = "Giant Snake";
+            AI.Stats.CurrentClass = new EmployeeClass()
+            {
+                Name = "Giant Snake",
+                Levels = new List<EmployeeClass.Level>()
+                {
+                    new EmployeeClass.Level()
+                    {
+                        BaseStats = new CreatureStats.StatNums()
+                        {
+                            Charisma = AI.Stats.Charisma,
+                            Constitution = AI.Stats.Constitution,
+                            Dexterity = AI.Stats.Dexterity,
+                            Intelligence = AI.Stats.Intelligence,
+                            Size = AI.Stats.Size,
+                            Strength = AI.Stats.Strength,
+                            Wisdom = AI.Stats.Wisdom
+                        },
+                        Name = "Giant Snake",
+                        Index = 0
+                    },
+                  
+                }
+            };
+            AI.Stats.LevelIndex = 0;
+
             DeathParticleTrigger = new ParticleTrigger("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,

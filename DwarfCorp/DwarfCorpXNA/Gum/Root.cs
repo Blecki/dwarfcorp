@@ -38,7 +38,7 @@ namespace Gum
         public int TooltipTextSize = 1;
         public float CursorBlinkTime = 0.3f;
         internal double RunTime = 0.0f;
-
+        private Widget ScreenDarkener = null;
         private List<Widget> PopupStack = new List<Widget>();
 
         public Root(RenderData RenderData)
@@ -157,6 +157,18 @@ namespace Gum
         /// <param name="Popup"></param>
         public void ShowPopup(Widget Popup, PopupExclusivity Exclusivity = PopupExclusivity.AddToStack)
         {
+            if (ScreenDarkener == null)
+            {
+                ScreenDarkener = new Widget()
+                {
+                    Background = new TileReference("basic", 0),
+                    BackgroundColor = new Vector4(0, 0, 0, 0.5f),
+                    AutoLayout = AutoLayout.FloatCenter,
+                    Rect = RootItem.Rect
+                };
+                RootItem.AddChild(ScreenDarkener);
+            }
+
             if (Exclusivity == PopupExclusivity.DestroyExistingPopups)
                 CleanupPopupStack();
 
@@ -166,23 +178,12 @@ namespace Gum
 
         public void ShowTooltip(Point Where, String Tip)
         {
-            if (TooltipItem != null && TooltipItem.Text == Tip)
+            if (String.IsNullOrEmpty(Tip))
             {
-                //TODO (Mklingen): handle the case where the tooltip is the same,
-                // but the widget has moved.
-
-                var myBestSize = TooltipItem.GetBestSize();
-                Rectangle myRect = new Rectangle(
-                    // ?? Why are we assuming the tooltip is being opened at the mouse position?
-                    Where.X + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2,
-                    Where.Y + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2, myBestSize.X, myBestSize.Y);
-
-                if (myRect == TooltipItem.Rect)
-                {
-                    return;
-                }
+                if (TooltipItem != null)
+                    DestroyWidget(TooltipItem);
+                return;
             }
-
             var item = ConstructWidget(new Widget
             {
                 Text = Tip,
@@ -201,12 +202,43 @@ namespace Gum
 
             rect = MathFunctions.SnapRect(rect, RenderData.VirtualScreen);
             item.Rect = rect;
-            RootItem.AddChild(item);
-            
+            ShowTooltip(Where, item);
+        }
+
+        public void ShowTooltip(Point Where, Widget Tip)
+        {
+            if (TooltipItem != null && TooltipItem.Text == Tip.Text)
+            {
+                //TODO (Mklingen): handle the case where the tooltip is the same,
+                // but the widget has moved.
+
+                var myBestSize = TooltipItem.GetBestSize();
+                Rectangle myRect = new Rectangle(
+                    // ?? Why are we assuming the tooltip is being opened at the mouse position?
+                    Where.X + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2,
+                    Where.Y + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2, myBestSize.X, myBestSize.Y);
+
+                if (myRect == TooltipItem.Rect)
+                {
+                    return;
+                }
+            }
+
+            RootItem.AddChild(Tip);
+
+            var bestSize = Tip.GetBestSize();
+            Rectangle rect = new Rectangle(
+                // ?? Why are we assuming the tooltip is being opened at the mouse position?
+                Where.X + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2,
+                Where.Y + (MousePointer == null ? 0 : GetTileSheet(MousePointer.Sheet).TileWidth) + 2, bestSize.X, bestSize.Y);
+
+            rect = MathFunctions.SnapRect(rect, RenderData.VirtualScreen);
+            Tip.Rect = rect;
+
             if (TooltipItem != null)
                 DestroyWidget(TooltipItem);
 
-            TooltipItem = item;
+            TooltipItem = Tip;
         }
 
         /// <summary>
@@ -418,6 +450,12 @@ namespace Gum
                 SafeCall(item.OnUpdate, item, Time);
 
             if (HoverItem != null) SafeCall(HoverItem.OnHover, HoverItem);
+
+            if (PopupStack.Count == 0 && ScreenDarkener != null)
+            {
+                RootItem.RemoveChild(ScreenDarkener);
+                ScreenDarkener = null;
+            }
         }
 
         public void Draw()

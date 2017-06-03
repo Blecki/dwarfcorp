@@ -32,4 +32,23 @@ namespace Gum.Widgets
             };
         }
     }
+
+    public class ImageButton : Widget
+    {
+        public override void Construct()
+        {
+            var color = BackgroundColor;
+            OnMouseEnter += (widget, action) =>
+            {
+                widget.BackgroundColor = new Vector4(0.5f, 0, 0, 1.0f);
+                widget.Invalidate();
+            };
+
+            OnMouseLeave += (widget, action) =>
+            {
+                widget.BackgroundColor = color;
+                widget.Invalidate();
+            };
+        }
+    }
 }

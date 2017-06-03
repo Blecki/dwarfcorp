@@ -47,8 +47,8 @@
 		{
 			"Name": "indicator-circle",
 			"Texture": "newgui/indicator-circle",
-			"TileWidth": 64,
-			"TileHeight": 64
+			"TileWidth": 32,
+			"TileHeight": 32
 		},
 		{
 			"Name": "dwarves",

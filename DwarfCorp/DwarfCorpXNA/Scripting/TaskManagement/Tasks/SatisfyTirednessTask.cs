@@ -1,4 +1,4 @@
-﻿// SatisfyTirednessTask.cs
+// SatisfyTirednessTask.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -44,8 +44,8 @@ namespace DwarfCorp
     {
         public SatisfyTirednessTask()
         {
-            Name = "Satisfy Tiredness";
-            Priority = PriorityType.High;
+            Name = "Go to sleep";
+            Priority = PriorityType.Medium;
         }
 
         public override Task Clone()

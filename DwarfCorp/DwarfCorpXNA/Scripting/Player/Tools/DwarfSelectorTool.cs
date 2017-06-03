@@ -118,7 +118,7 @@ namespace DwarfCorp
           
         }
 
-        bool IsDwarf(Body body)
+        bool IsNotSelectedDwarf(Body body)
         {
             List<Creature> dwarves = body.GetChildrenOfType<Creature>();
 
@@ -129,6 +129,19 @@ namespace DwarfCorp
 
             Creature dwarf = dwarves[0];
             return dwarf.Faction == Player.Faction && !Player.SelectedMinions.Contains(dwarf.AI);
+        }
+
+        bool IsDwarf(Body body)
+        {
+            List<Creature> dwarves = body.GetChildrenOfType<Creature>();
+
+            if (dwarves.Count <= 0)
+            {
+                return false;
+            }
+
+            Creature dwarf = dwarves[0];
+            return dwarf.Faction == Player.Faction;
         }
 
         protected void SelectDwarves(List<Body> bodies)
@@ -143,7 +156,7 @@ namespace DwarfCorp
             List<CreatureAI> newDwarves = new List<CreatureAI>();
             foreach(Body body in bodies)
             {
-                if (IsDwarf(body))
+                if (IsNotSelectedDwarf(body))
                 {
                     Player.SelectedMinions.Add(body.GetComponent<CreatureAI>());
                     newDwarves.Add(body.GetComponent<CreatureAI>());
@@ -162,6 +175,28 @@ namespace DwarfCorp
                     SelectDwarves(bodies);
                     break;
             }
+        }
+
+        public override void DefaultOnMouseOver(IEnumerable<Body> bodies)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            List<Body> bodyList = bodies.Where(IsDwarf).ToList();
+            for (int i = 0; i < bodyList.Count; i++)
+            {
+                Dwarf dwarf = bodyList[i].GetComponent<Dwarf>();
+                sb.Append(dwarf.Stats.FullName + " (" + dwarf.Stats.CurrentClass.Name + ")");
+                if (i < bodyList.Count - 1)
+                {
+                    sb.Append("\n");
+                }
+            }
+            Player.World.ShowTooltip(sb.ToString());
+        }
+
+        public override void OnMouseOver(IEnumerable<Body> bodies)
+        {
+            DefaultOnMouseOver(bodies);
         }
 
         public override void Update(DwarfGame game, DwarfTime time)

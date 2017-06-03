@@ -233,7 +233,7 @@ namespace DwarfCorp
                         {
                             politics.RecentEvents.Add(new PoliticalEvent()
                             {
-                                Change = 0.0f, // Make this negative and we get an instant war party rush.
+                                Change = -10.0f, // Make this negative and we get an instant war party rush.
                                 Description = "we are taught to hate your kind",
                                 Duration = forever,
                                 Time = Now
@@ -278,12 +278,25 @@ namespace DwarfCorp
                     foreach (CreatureAI creature in envoy.Creatures)
                     {
                         ResourcePack resources = new ResourcePack(creature.Physics);
+                        if (natives.Economy == null)
+                        {
+                            natives.Economy = new Economy(natives, 1000.0m, World, new CompanyInformation()
+                            {
+                                Name = natives.Name
+                            });
+                        }
+                        if (natives.Economy.Company.Information == null)
+                        {
+                            natives.Economy.Company.Information = new CompanyInformation();
+                        }
+                        Flag flag = new Flag(creature.Physics, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, natives.Economy.Company.Information);
                     }
                     envoy.DistributeGoods();
 
                     natives.TradeEnvoys.Add(envoy);
                     world.MakeAnnouncement(String.Format("Trade envoy from {0} has arrived!", natives.Name),
                        creatures.First().ZoomToMe, ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
+                    world.Tutorial("trade");
                 }
             }
             else
@@ -322,6 +335,7 @@ namespace DwarfCorp
                     natives.TradeEnvoys.Add(envoy);
                     world.MakeAnnouncement(String.Format("Trade envoy from {0} has arrived!",
                         natives.Name), creatures.First().ZoomToMe, ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
+                    world.Tutorial("trade");
                 }
             }
 
@@ -331,6 +345,7 @@ namespace DwarfCorp
         {
             // todo
             natives.World.MakeAnnouncement(String.Format("War party from {0} has arrived!", natives.Name), null);
+            natives.World.Tutorial("war");
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
             Politics politics = GetPolitics(natives, natives.World.PlayerFaction);
             politics.WasAtWar = true;
@@ -342,6 +357,15 @@ namespace DwarfCorp
                 OtherFaction = natives.World.PlayerFaction,
                 ShouldRemove = false
             });
+
+            foreach (var creature in creatures)
+            {
+                if (natives.Economy.Company.Information == null)
+                {
+                    natives.Economy.Company.Information = new CompanyInformation();
+                }
+                Flag flag = new Flag(creature.Physics, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, natives.Economy.Company.Information);
+            }
 
         }
 
@@ -405,6 +429,13 @@ namespace DwarfCorp
         }
 
 
+        IEnumerable<Act.Status> RecallEnvoyOnFail(Faction.TradeEnvoy envoy)
+        {
+            RecallEnvoy(envoy);
+            World.MakeAnnouncement("Envoy from " + envoy.OwnerFaction.Name + " left. Trade port inaccessible.");
+            yield return Act.Status.Success;
+        }
+
         public void UpdateTradeEnvoys(Faction faction)
         {
             foreach (Faction.TradeEnvoy envoy in faction.TradeEnvoys)
@@ -459,6 +490,7 @@ namespace DwarfCorp
                         if (tradePort == null)
                         {
                             World.MakeAnnouncement("We need a balloon trade port to trade.");
+                            World.Tutorial("trade");
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                             RecallEnvoy(envoy);
                             break;
@@ -466,7 +498,8 @@ namespace DwarfCorp
 
                         if (creature.Tasks.Count == 0)
                         {
-                            creature.Tasks.Add(new ActWrapperTask(new GoToZoneAct(creature, tradePort)) { Name = "Go to trade port.", Priority = Task.PriorityType.Urgent});
+                            Faction.TradeEnvoy envoy1 = envoy;
+                            creature.Tasks.Add(new ActWrapperTask(new GoToZoneAct(creature, tradePort) | new Wrap(() => RecallEnvoyOnFail(envoy1))));
                         }
 
                         if (!tradePort.IsRestingOnZone(creature.Position)) continue;
