@@ -832,27 +832,26 @@ namespace DwarfCorp
         public void CreateInitialEmbarkment()
         {
             // If no file exists, we have to create the balloon and balloon port.
-            if (string.IsNullOrEmpty(ExistingFile))
+            if (!string.IsNullOrEmpty(ExistingFile)) return;
+
+            VoxelChunk c = ChunkManager.ChunkData.GetVoxelChunkAtWorldLocation(Camera.Position);
+            BalloonPort port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager,
+                Camera.Position.X, Camera.Position.Z, 3);
+            CreateInitialDwarves(c);
+            PlayerFaction.Economy.CurrentMoney = InitialEmbark.Money;
+
+            foreach (var res in InitialEmbark.Resources)
             {
-                VoxelChunk c = ChunkManager.ChunkData.GetVoxelChunkAtWorldLocation(Camera.Position);
-                BalloonPort port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager,
-                    Camera.Position.X, Camera.Position.Z, 3);
-                CreateInitialDwarves(c);
-                PlayerFaction.Economy.CurrentMoney = InitialEmbark.Money;
-
-                foreach (var res in InitialEmbark.Resources)
-                {
-                    PlayerFaction.AddResources(new ResourceAmount(res.Key, res.Value));
-                }
-                var portBox = port.GetBoundingBox();
-                EntityFactory.CreateBalloon(
-                    portBox.Center() + new Vector3(0, 100, 0),
-                    portBox.Center() + new Vector3(0, 10, 0), ComponentManager, Content,
-                    GraphicsDevice, new ShipmentOrder(0, null), Master.Faction);
-
-                Camera.Target = portBox.Center();
-                Camera.Position = Camera.Target + new Vector3(0, 15, -15);
+                PlayerFaction.AddResources(new ResourceAmount(res.Key, res.Value));
             }
+            var portBox = port.GetBoundingBox();
+            EntityFactory.CreateBalloon(
+                portBox.Center() + new Vector3(0, 100, 0),
+                portBox.Center() + new Vector3(0, 10, 0), ComponentManager, Content,
+                GraphicsDevice, new ShipmentOrder(0, null), Master.Faction);
+
+            Camera.Target = portBox.Center();
+            Camera.Position = Camera.Target + new Vector3(0, 15, -15);
         }
 
         public void WaitForGraphicsDevice()
@@ -1271,8 +1270,8 @@ namespace DwarfCorp
             // of entities is bad -- it leads to GPU calls for texture loading.
             if (firstIter && string.IsNullOrEmpty(ExistingFile))
             {
-                GenerateInitialObjects();
                 CreateInitialEmbarkment();
+                GenerateInitialObjects();
             }
             firstIter = false;
             EntityFactory.DoLazyActions();
