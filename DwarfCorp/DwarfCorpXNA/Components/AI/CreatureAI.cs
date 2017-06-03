@@ -615,7 +615,7 @@ namespace DwarfCorp
             {
 
                 // Craft random items for fun.
-                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Craft) && MathFunctions.RandEvent(0.001f))
+                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Craft) && MathFunctions.RandEvent(0.005f))
                 {
                     var item = CraftLibrary.GetRandomApplicableCraftItem(Faction);
                     if (item != null)
@@ -638,8 +638,20 @@ namespace DwarfCorp
                     }
                 }
 
+                // Farm stuff if applicable
+                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm) && MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction)
+                {
+                    var task = (World.Master.Tools[GameMaster.ToolMode.Farm] as FarmTool).AutoFarm();
+
+                    if (task != null)
+                    {
+                        Faction.ChopDesignations.Add(task.EntityToKill);
+                        return task;
+                    }
+                }
+
                 // Find a room to train in, if applicable.
-                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack) && MathFunctions.RandEvent(0.001f))
+                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack) && MathFunctions.RandEvent(0.005f))
                 {
                     Body closestTraining = Faction.FindNearestItemWithTags("Train", Position, true);
 

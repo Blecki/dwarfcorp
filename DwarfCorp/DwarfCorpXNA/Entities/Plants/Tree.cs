@@ -48,14 +48,14 @@ namespace DwarfCorp
     {
         public DateTime FullyGrownDay { get; set; }
         public DateTime Birthday { get; set; }
-        public Body Adult { get; set; }
+        public Plant Adult { get; set; }
         public bool IsGrown { get; set; }
         public Seedling()
         {
             IsGrown = false;
         }
 
-        public Seedling(Body adult, Vector3 position, SpriteSheet asset, Point frame) :
+        public Seedling(Plant adult, Vector3 position, SpriteSheet asset, Point frame) :
             base(position, asset, frame, adult.Manager.World.ComponentManager.RootComponent)
         {
             IsGrown = false;
@@ -101,6 +101,7 @@ namespace DwarfCorp
         public void CreateAdult()
         {
             IsGrown = true;
+            Adult.IsGrown = true;
             Adult.SetVisibleRecursive(true);
             Adult.SetActiveRecursive(true);
             Die();
@@ -114,11 +115,13 @@ namespace DwarfCorp
         public Point SeedlingFrame { get; set; }
         public int GrowthDays { get; set; }
         public int GrowthHours { get; set; }
+        public bool IsGrown { get; set; }
 
         public Plant()
         {
             GrowthDays = 0;
             GrowthHours = 12;
+            IsGrown = false;
         }
 
         public Plant(string name, GameComponent parent, Matrix localTransform, Vector3 bboxSize,
@@ -127,6 +130,7 @@ namespace DwarfCorp
         {
             GrowthDays = 0;
             GrowthHours = 12;
+            IsGrown = false;
         }
 
         public virtual Seedling BecomeSeedling()

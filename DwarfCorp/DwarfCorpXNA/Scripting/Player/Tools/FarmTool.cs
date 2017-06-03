@@ -412,5 +412,9 @@ namespace DwarfCorp
             }
         }
 
+        public KillEntityTask AutoFarm()
+        {
+            return (from tile in FarmTiles where tile.PlantExists() && tile.Plant.IsGrown && !tile.IsCanceled select new KillEntityTask(tile.Plant, KillEntityTask.KillType.Chop)).FirstOrDefault();
+        }
     }
 }
