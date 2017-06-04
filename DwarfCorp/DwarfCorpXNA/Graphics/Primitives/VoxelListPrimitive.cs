@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -238,6 +238,11 @@ namespace DwarfCorp
             }
         }
 
+        // This insanity creates a map from voxel faces to ramp types, determining
+        // whether or not the voxel on a face should draw that face given that its neighbor
+        // has a certain ramp type.
+        // This allows faces to be drawn next to ramps (for example, if dirt is next to stone,
+        // the dirt ramps, revealing part of the stone face that needs to be drawn).
         private static void CreateFaceDrawMap()
         {
             BoxFace[] faces = (BoxFace[]) Enum.GetValues(typeof (BoxFace));

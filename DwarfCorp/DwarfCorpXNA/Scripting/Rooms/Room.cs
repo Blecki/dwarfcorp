@@ -96,7 +96,7 @@ namespace DwarfCorp
         }
 
 
-        public void OnBuilt()
+        public virtual void OnBuilt()
         {
             
         }

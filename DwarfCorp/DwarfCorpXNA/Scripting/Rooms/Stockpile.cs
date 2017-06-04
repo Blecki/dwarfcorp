@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using System.Threading;
 using DwarfCorp.GameStates;
@@ -57,7 +58,17 @@ namespace DwarfCorp
         private static uint maxID = 0;
         public List<Body> Boxes { get; set; }
         public static string StockpileName = "Stockpile";
+        public string BoxType = "Crate";
         public Faction Faction { get; set; }
+        public Vector3 BoxOffset = Vector3.Zero;
+
+        // If this is empty, all resources are allowed if and only if whitelist is empty. Otherwise,
+        // all but these resources are allowed.
+        public List<Resource.ResourceTags> BlacklistResources = new List<Resource.ResourceTags>();
+        // If this is empty, all resources are allowed if and only if blacklist is empty. Otherwise,
+        // only these resources are allowed.
+        public List<Resource.ResourceTags> WhitelistResources = new List<Resource.ResourceTags>(); 
+
         public static uint NextID()
         {
             maxID++;
@@ -69,6 +80,10 @@ namespace DwarfCorp
             Boxes = new List<Body>();
             ReplacementType = VoxelLibrary.GetVoxelType("Stockpile");
             Faction = null;
+            BlacklistResources = new List<Resource.ResourceTags>()
+            {
+                Resource.ResourceTags.Corpse
+            };
         }
 
 
@@ -79,6 +94,10 @@ namespace DwarfCorp
             ReplacementType = VoxelLibrary.GetVoxelType("Stockpile");
             faction.Stockpiles.Add(this);
             Faction = faction;
+            BlacklistResources = new List<Resource.ResourceTags>()
+            {
+                Resource.ResourceTags.Corpse
+            };
         }
 
         public Stockpile(Faction faction, IEnumerable<Voxel> voxels, RoomData data, WorldManager world) :
@@ -87,6 +106,10 @@ namespace DwarfCorp
             Boxes = new List<Body>();
             faction.Stockpiles.Add(this);
             Faction = faction;
+            BlacklistResources = new List<Resource.ResourceTags>()
+            {
+                Resource.ResourceTags.Corpse
+            };
         }
 
         public Stockpile(Faction faction, bool designation, IEnumerable<Voxel> designations, RoomData data, WorldManager world) :
@@ -95,6 +118,27 @@ namespace DwarfCorp
             Boxes = new List<Body>();
             faction.Stockpiles.Add(this);
             Faction = faction;
+            BlacklistResources = new List<Resource.ResourceTags>()
+            {
+                Resource.ResourceTags.Corpse
+            };
+        }
+
+        public bool IsAllowed(ResourceLibrary.ResourceType type)
+        {
+            Resource resource = ResourceLibrary.GetResourceByName(type);
+            if (WhitelistResources.Count == 0)
+            {
+                if (BlacklistResources.Count == 0)
+                {
+                    return true;
+                }
+
+                return !BlacklistResources.Any(tag => resource.Tags.Any(otherTag => otherTag == tag));
+            }
+
+            if (BlacklistResources.Count != 0) return true;
+            return WhitelistResources.Count == 0 || WhitelistResources.Any(tag => resource.Tags.Any(otherTag => otherTag == tag));
         }
 
         public void KillBox(Body component)
@@ -109,10 +153,10 @@ namespace DwarfCorp
 
         public void CreateBox(Vector3 pos)
         {
-            Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f);
-            Vector3 endPos = pos + new Vector3(0.0f, 0.9f, 0.0f);
+            Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f) + BoxOffset;
+            Vector3 endPos = pos + new Vector3(0.0f, 0.9f, 0.0f) + BoxOffset;
 
-            Body crate = EntityFactory.CreateEntity<Body>("Crate", startPos);
+            Body crate = EntityFactory.CreateEntity<Body>(BoxType, startPos);
             crate.AnimationQueue.Add(new EaseMotion(0.8f, crate.LocalTransform, endPos));
             Boxes.Add(crate);
             ZoneBodies.Add(crate);

@@ -140,7 +140,7 @@ namespace DwarfCorp
                 Name = "TilledSoil",
                 ReleasesResource = false,
                 StartingHealth = 20,
-                CanRamp = true,
+                CanRamp = false,
                 IsBuildable = false,
                 ParticleType = "dirt_particle",
                 IsSoil = true,

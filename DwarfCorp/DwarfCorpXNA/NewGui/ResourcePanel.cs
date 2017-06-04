@@ -25,6 +25,11 @@ namespace DwarfCorp.NewGui
                 {
                     var resourceTemplate = ResourceLibrary.GetResourceByName(resource.Key);
 
+                    // Don't display resources with no value (a hack, yes!). This is to prevent "special" resources from getting traded.
+                    if (resourceTemplate.MoneyValue == 0.0m)
+                    {
+                        continue;
+                    }
                     var icon = existingResourceEntries.FirstOrDefault(w => (w.Background.Tile) == resourceTemplate.NewGuiSprite);
                     if (icon == null)
                     {

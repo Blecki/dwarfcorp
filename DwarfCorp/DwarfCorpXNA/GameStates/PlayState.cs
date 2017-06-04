@@ -161,7 +161,7 @@ namespace DwarfCorp.GameStates
                 World.SetMouseOverlay += (mouse, frame) => GuiRoot.SetMouseOverlay(mouse, frame);
 
                 
-                World.ShowToolPopup += text => GuiRoot.ShowTooltip(new Point(4, -16),
+                World.ShowToolPopup += text => GuiRoot.ShowTooltip(new Point(GuiRoot.MousePosition.X + 4, GuiRoot.MousePosition.Y - 16),
                     new NewGui.ToolPopup
                 {
                     Text = text,
@@ -745,7 +745,7 @@ namespace DwarfCorp.GameStates
                         KeepChildVisible = true,
                         ExpansionChild = new NewGui.ToolTray.Tray
                         {
-                            ItemSource = RoomLibrary.GetRoomTypes().Select(name => RoomLibrary.GetData(name))
+                            ItemSource = RoomLibrary.GetRoomTypes().Select(RoomLibrary.GetData)
                                 .Select(data => new NewGui.ToolTray.Icon
                                 {
                                     Icon = data.NewIcon,
@@ -753,7 +753,7 @@ namespace DwarfCorp.GameStates
                                     ExpansionChild = new NewGui.BuildRoomInfo
                                     {
                                         Data = data,
-                                        Rect = new Rectangle(0,0,256,128),
+                                        Rect = new Rectangle(0,0,256,164),
                                         Master = Master
                                     },
                                     OnClick = (sender, args) =>

@@ -271,6 +271,7 @@ namespace DwarfCorp
             Buffs = new List<Buff>();
             HasMeat = true;
             HasBones = true;
+            HasCorpse = false;
             DrawLifeTimer.HasTriggered = true;
             Gender = RandomGender();
         }
@@ -291,6 +292,7 @@ namespace DwarfCorp
             DrawLifeTimer.HasTriggered = true;
             HasMeat = true;
             HasBones = true;
+            HasCorpse = false;
             EmployeeClass employeeClass = EmployeeClass.Classes[creatureClass];
             Physics.Orientation = Physics.OrientMode.RotateY;
             Sprite = new CharacterSprite(Graphics, Manager, "Sprite", Physics,
@@ -385,6 +387,7 @@ namespace DwarfCorp
             DrawLifeTimer.HasTriggered = true;
             HasMeat = true;
             HasBones = true;
+            HasCorpse = false;
             Buffs = new List<Buff>();
             IsOnGround = true;
             Physics = parent;
@@ -434,6 +437,10 @@ namespace DwarfCorp
         public bool HasMeat { get; set; }
         /// <summary> If true, the creature will generate bones when it dies. </summary>
         public bool HasBones { get; set; }
+        /// <summary>
+        /// If true, the creature will generate a corpse.
+        /// </summary>
+        public bool HasCorpse { get; set; }
         /// <summary> Used to make sounds for the creature </summary>
         public NoiseMaker NoiseMaker { get; set; }
         /// <summary> The creature can hold objects in its inventory </summary>
@@ -712,6 +719,22 @@ namespace DwarfCorp
                 if (!ResourceLibrary.Resources.ContainsKey(type))
                 {
                     ResourceLibrary.Add(new Resource(ResourceLibrary.Resources[ResourceLibrary.ResourceType.Bones])
+                    {
+                        Type = type,
+                        ShortName = type
+                    });
+                }
+
+                Inventory.Resources.AddResource(new ResourceAmount(type, 1));
+            }
+
+            if (HasCorpse)
+            {
+                ResourceLibrary.ResourceType type = AI.Stats.FullName + "'s " + "Corpse";
+
+                if (!ResourceLibrary.Resources.ContainsKey(type))
+                {
+                    ResourceLibrary.Add(new Resource(ResourceLibrary.Resources["Corpse"])
                     {
                         Type = type,
                         ShortName = type

@@ -72,6 +72,7 @@ namespace DwarfCorp
             RegisterType(TrainingRoom.InitializeData());
             RegisterType(WorkshopRoom.InitializeData());
             RegisterType(Kitchen.InitializeData());
+            RegisterType(Graveyard.InitializeData());
             staticIntialized = true;
         }
 
@@ -146,6 +147,12 @@ namespace DwarfCorp
                     toBuild.AddVoxel(voxel);
                 }
                 return toBuild;
+            }
+            else if (name == Graveyard.GraveyardName)
+            {
+                return blueprint
+                    ? new Graveyard(faction, true, designations, world)
+                    : new Graveyard(faction, designations, world);
             }
             else
             {

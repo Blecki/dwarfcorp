@@ -60,6 +60,7 @@ namespace DwarfCorp
         {
             HasMeat = false;
             HasBones = false;
+            HasCorpse = true;
             Initialize(workerClass);
         }
         

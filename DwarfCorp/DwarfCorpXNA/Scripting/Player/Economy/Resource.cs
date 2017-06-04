@@ -96,7 +96,9 @@ namespace DwarfCorp
             Plantable,
             AboveGroundPlant,
             BelowGroundPlant,
-            Bone
+            Bone,
+            Corpse,
+            Money
         }
 
         public Resource(Resource other)
