@@ -82,8 +82,9 @@ namespace DwarfCorp
             TextureManager = new TextureManager(Content, GraphicsDevice);
             GameSettings.Load();
             Graphics.IsFullScreen = GameSettings.Default.Fullscreen;
-            Graphics.PreferredBackBufferWidth = GameSettings.Default.ResolutionX;
-            Graphics.PreferredBackBufferHeight = GameSettings.Default.ResolutionY;
+            Graphics.PreferredBackBufferWidth = GameSettings.Default.Fullscreen ? GameSettings.Default.ResolutionX : Math.Min(GameSettings.Default.ResolutionX, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width);
+            Graphics.PreferredBackBufferHeight = GameSettings.Default.Fullscreen ? GameSettings.Default.ResolutionY : Math.Min(GameSettings.Default.ResolutionY,
+                GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
             MathFunctions.Random = new ThreadSafeRandom(new Random().Next());
             try
             {
