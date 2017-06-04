@@ -535,7 +535,6 @@ namespace DwarfCorp
                         envoy.ExpiditionState = Faction.Expidition.State.Trading;
 
                         World.Paused = true;
-
                         GameState.Game.StateManager.PushState(new Dialogue.DialogueState(
                             GameState.Game,
                             GameState.Game.StateManager,

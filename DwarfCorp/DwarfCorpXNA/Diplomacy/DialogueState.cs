@@ -64,6 +64,7 @@ namespace DwarfCorp.Dialogue
             SpeakerAnimation = new Animation(DialogueContext.Envoy.OwnerFaction.Race.TalkAnimation);
             DialogueContext.SpeakerAnimation = SpeakerAnimation;
             DialogueContext.SpeakerAnimation.Loops = false;
+            
 
             DialogueContext.Politics = World.ComponentManager.Diplomacy.GetPolitics(
                 DialogueContext.PlayerFaction, DialogueContext.Envoy.OwnerFaction);
@@ -105,13 +106,14 @@ namespace DwarfCorp.Dialogue
 
                 GuiRoot.ShowPopup(popup, Root.PopupExclusivity.AddToStack);
             };
-
+            World.Paused = true;
             IsInitialized = true;
             base.OnEnter();
         }
 
         public override void Update(DwarfTime gameTime)
         {
+            World.Paused = true;
             foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
             {
                 GuiRoot.HandleInput(@event.Message, @event.Args);
