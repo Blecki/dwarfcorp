@@ -256,6 +256,12 @@ namespace DwarfCorp
                 SoundManager.PlaySound(sound, 0.5f);
         }
 
+        public void AwardStock(int Stock)
+        {
+            PlayerCompany.Stock += Stock;
+            MakeAnnouncement(String.Format("Gained {0} stock", Stock));
+        }
+
         public MonsterSpawner MonsterSpawner { get; set; }
 
         public Company PlayerCompany

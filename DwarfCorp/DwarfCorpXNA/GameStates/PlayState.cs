@@ -281,7 +281,7 @@ namespace DwarfCorp.GameStates
             MoneyLabel.Text = Master.Faction.Economy.CurrentMoney.ToString();
             MoneyLabel.Invalidate();
 
-            StockLabel.Text = Master.Faction.Economy.Company.StockPrice.ToString();
+            StockLabel.Text = Master.Faction.Economy.Company.Stock.ToString();
             StockLabel.Invalidate();
 
             LevelLabel.Text = String.Format("{0}/{1}",

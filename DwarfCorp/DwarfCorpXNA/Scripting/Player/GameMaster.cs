@@ -339,7 +339,6 @@ namespace DwarfCorp
                         String.Format("{0} ({1}) died!", deadMinion.Stats.FullName, deadMinion.Stats.CurrentClass.Name));
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
                     World.Tutorial("death");
-                    Faction.Economy.Company.StockPrice -= MathFunctions.Rand(0, 0.5f);
                 }
             }
 

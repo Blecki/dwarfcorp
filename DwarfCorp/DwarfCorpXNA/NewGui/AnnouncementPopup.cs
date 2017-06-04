@@ -9,16 +9,28 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp.NewGui
 {
+    public class QueuedAnnouncement
+    {
+        public String Text;
+        public Action ClickAction;
+        public double SecondsVisible;
+        public Widget Widget = null;
+    }
+
     public class AnnouncementPopup : Gum.Widget
     {
-        public double SecondsVisible = 0.0f;
+        public List<QueuedAnnouncement> Announcements = new List<QueuedAnnouncement>();
         public String Speaker = "dwarf";
-        public List<Tuple<String,Action>> QueuedAnnouncements = new List<Tuple<string, Action>>();
         public double MessageLingerSeconds = 5.0f;
 
         public void QueueAnnouncement(String Announcement, Action ClickAction)
         {
-            QueuedAnnouncements.Add(Tuple.Create(Announcement, ClickAction));
+            Announcements.Add(new QueuedAnnouncement
+            {
+                Text = Announcement,
+                ClickAction = ClickAction,
+                SecondsVisible = 0
+            });
         }
 
         public override void Construct()
@@ -27,29 +39,28 @@ namespace DwarfCorp.NewGui
 
             OnUpdate += (sender, time) =>
                 {
-                    SecondsVisible -= time.ElapsedGameTime.TotalSeconds;
-                    if (SecondsVisible <= 0.0)
+                    foreach (var announcement in Announcements)
                     {
-                        if (QueuedAnnouncements.Count == 0)
-                        {
-                            Hidden = true;
-                            OnClick = null;
-                            Invalidate();
-                        }
-                        else
-                        {
-                            Hidden = false;
-                            Text = QueuedAnnouncements[0].Item1;
-                            var lambdaAction = QueuedAnnouncements[0].Item2;
-                            if (lambdaAction != null)
-                                OnClick = (s, a) => lambdaAction();
-                            else
-                                OnClick = null;
-                            QueuedAnnouncements.RemoveAt(0);
-                            SecondsVisible = MessageLingerSeconds;
-                            Invalidate();
-                        }
+                        announcement.SecondsVisible += time.ElapsedGameTime.TotalSeconds;
+
+                        if (announcement.Widget == null)
+                            announcement.Widget = AddChild(new Widget
+                            {
+                                Text = announcement.Text,
+                                OnClick = (_s, _a) =>
+                                {
+                                    if (announcement.ClickAction != null)
+                                        announcement.ClickAction();
+                                }
+                            });
                     }
+
+                    Announcements.RemoveAll(a => a.SecondsVisible > MessageLingerSeconds);
+
+                    Children = Announcements.Select(a => a.Widget).ToList();
+
+                    Hidden = (Announcements.Count == 0);
+                    Invalidate();
                 };
 
             Root.RegisterForUpdate(this);
@@ -66,21 +77,32 @@ namespace DwarfCorp.NewGui
                 .TileScaleAndTexture(speakerTiles, 0)
                 .Translate(Rect.Right - speakerTiles.TileWidth, Rect.Bottom - speakerTiles.TileHeight));
 
+            var font = Root.GetTileSheet("font") as VariableWidthFont;
+
+            foreach (var announcement in Announcements)
+            {
+                announcement.Widget.Text = font.WordWrapString(announcement.Text, 1.0f, Rect.Width - (speakerTiles.TileWidth * 2));
+                var size = font.MeasureString(announcement.Widget.Text);
+                announcement.Widget.Rect = new Rectangle(0, 0, size.X, size.Y);
+            }
+
+            // Resize widget.
+            var totalSize = Announcements.Select(a => a.Widget.Rect.Height + 2).Sum() - 2;
+            var newParentSize = totalSize + (speakerTiles.TileHeight / 2) + 40;
+            Rect = new Rectangle(Rect.X, Rect.Bottom - newParentSize, Rect.Width, newParentSize);
+
+            var childPos = Rect.Y + 20;
+            foreach (var announcement in Announcements)
+            {
+                announcement.Widget.Rect = new Rectangle(Rect.X + 20, childPos, announcement.Widget.Rect.Width,
+                    announcement.Widget.Rect.Height);
+                childPos += announcement.Widget.Rect.Height + 2;
+            }
+
             var bubbleRect = new Rectangle(Rect.Left, Rect.Top,
                 Rect.Width - speakerTiles.TileWidth, Rect.Height - (speakerTiles.TileHeight / 2));
-            var innerRect = bubbleRect.Interior(20, 20, 20, 0);
             meshes.Add(Gum.Mesh.CreateScale9Background(bubbleRect, Root.GetTileSheet("speech-bubble")));
 
-            Rectangle ignore;
-            var font = Root.GetTileSheet(Font);
-            var text = (font is VariableWidthFont) ? (font as VariableWidthFont).WordWrapString(
-                    Text, TextSize, innerRect.Width) : Text;
-            int numLines = text.Split('\n').Length;
-            meshes.Add(Gum.Mesh.CreateStringMesh(text, Root.GetTileSheet(Font),
-                new Vector2(TextSize, TextSize), out ignore)
-                .Translate(innerRect.X, innerRect.Y)
-                .Colorize(TextColor));
-            
             return Gum.Mesh.Merge(meshes.ToArray());
         }
     }
