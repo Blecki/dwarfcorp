@@ -181,7 +181,7 @@ namespace DwarfCorp
                 Boxes.Clear();
             }
 
-            int numBoxes = Math.Min(Math.Max(Resources.CurrentResourceCount / ResourcesPerVoxel, 1), Voxels.Count);
+            int numBoxes = Math.Min(Math.Max(Resources.CurrentResourceCount / ResourcesPerVoxel, 0), Voxels.Count);
 
             if (Boxes.Count > numBoxes)
             {

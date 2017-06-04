@@ -55,6 +55,9 @@ namespace DwarfCorp
             Name = "Grave";
             Tags.Add("Grave");
             Sprite.OrientationType = Sprite.OrientMode.Fixed;
+            Matrix transform = Matrix.CreateRotationY(1.57f);
+            transform.Translation = LocalTransform.Translation;
+            LocalTransform = transform;
         }
     }
 

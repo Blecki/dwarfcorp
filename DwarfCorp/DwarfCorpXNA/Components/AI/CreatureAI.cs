@@ -661,6 +661,15 @@ namespace DwarfCorp
                     }
                 }
 
+                if (IdleTimer.HasTriggered && MathFunctions.RandEvent(0.005f))
+                {
+                    return new ActWrapperTask(new MournGraves(this))
+                    {
+                        Priority = Task.PriorityType.Eventually,
+                        AutoRetry = false
+                    };
+                }
+
                 // Otherwise, try to find a chair to sit in
                 if (IdleTimer.HasTriggered && MathFunctions.RandEvent(0.25f))
                 {
