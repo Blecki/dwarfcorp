@@ -61,7 +61,7 @@ namespace DwarfCorp
             Body closestItem = Agent.Faction.FindNearestItemWithTags("Bed", Agent.Position, true);
 
             
-            if (Agent.Status.Energy.IsUnhappy() && closestItem != null)
+            if (Agent.Status.Energy.IsDissatisfied() && closestItem != null)
             {
                 closestItem.ReservedFor = Agent;
                 Creature.AI.Blackboard.SetData("Bed", closestItem);
@@ -75,7 +75,7 @@ namespace DwarfCorp
                         unreserveAct
                     ) | unreserveAct;
             }
-            else if(Agent.Status.Energy.IsUnhappy() && closestItem == null)
+            else if(Agent.Status.Energy.IsDissatisfied() && closestItem == null)
             {
                 Creature.AI.AddThought(Thought.ThoughtType.SleptOnGround);
 

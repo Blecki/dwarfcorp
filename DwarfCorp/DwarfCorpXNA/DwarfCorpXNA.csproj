@@ -310,6 +310,10 @@
     <Compile Include="NewGui\GoalInfo.cs" />
     <Compile Include="NewGui\GoalPanel.cs" />
     <Compile Include="NewGui\TutorialPopup.cs" />
+    <Compile Include="Scripting\Data\Status.cs" />
+    <Compile Include="Scripting\Factions\Expedition.cs" />
+    <Compile Include="Scripting\Factions\TradeEnvoy.cs" />
+    <Compile Include="Scripting\Factions\Race.cs" />
     <Compile Include="Tutorial\TutorialManager.cs" />
     <Compile Include="Tutorial\JsonTutorialSet.cs" />
     <Compile Include="Tutorial\TutorialSaveData.cs" />
@@ -510,8 +514,8 @@
     <Compile Include="Scripting\Player\Economy\ResourceLibrary.cs" />
     <Compile Include="Scripting\Player\Economy\ShipmentOrder.cs" />
     <Compile Include="Scripting\Player\Economy\ShipOrder.cs" />
-    <Compile Include="Scripting\Player\Factions\Faction.cs" />
-    <Compile Include="Scripting\Player\Factions\FactionLibrary.cs" />
+    <Compile Include="Scripting\Factions\Faction.cs" />
+    <Compile Include="Scripting\Factions\FactionLibrary.cs" />
     <Compile Include="Scripting\Player\GameMaster.cs" />
     <Compile Include="Scripting\Player\InputManager.cs" />
     <Compile Include="Scripting\Player\KeyManager.cs" />

@@ -19,7 +19,7 @@ namespace DwarfCorp.Dialogue
         public Animation SpeakerAnimation;
         private Timer SpeechTimer = new Timer(0.0f, true);
 
-        public Faction.TradeEnvoy Envoy;
+        public TradeEnvoy Envoy;
         public String EnvoyName = "TODO";
 
         public Faction PlayerFaction;

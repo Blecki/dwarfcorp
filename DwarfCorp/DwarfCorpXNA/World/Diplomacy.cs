@@ -257,7 +257,7 @@ namespace DwarfCorp
         public void SendTradeEnvoy(Faction natives, WorldManager world)
         {
             //if (!world.gameState.IsActiveState) return;
-            Faction.TradeEnvoy envoy = null;
+            TradeEnvoy envoy = null;
             if (natives.Race.IsNative)
             {
                 List<CreatureAI> creatures =
@@ -265,7 +265,7 @@ namespace DwarfCorp
                         world.PlayerFaction, MathFunctions.Random.Next(4) + 1, false));
                 if (creatures.Count > 0)
                 {
-                    envoy = new Faction.TradeEnvoy(world.Time.CurrentDate)
+                    envoy = new TradeEnvoy(world.Time.CurrentDate)
                     {
                         Creatures = creatures,
                         OtherFaction = world.PlayerFaction,
@@ -318,7 +318,7 @@ namespace DwarfCorp
                         creature.Physics.LocalTransform = tf;
                     }
 
-                    envoy = new Faction.TradeEnvoy(world.Time.CurrentDate)
+                    envoy = new TradeEnvoy(world.Time.CurrentDate)
                     {
                         Creatures = creatures,
                         OtherFaction = world.PlayerFaction,
@@ -429,7 +429,7 @@ namespace DwarfCorp
         }
 
 
-        IEnumerable<Act.Status> RecallEnvoyOnFail(Faction.TradeEnvoy envoy)
+        IEnumerable<Act.Status> RecallEnvoyOnFail(TradeEnvoy envoy)
         {
             RecallEnvoy(envoy);
             World.MakeAnnouncement("Envoy from " + envoy.OwnerFaction.Name + " left. Trade port inaccessible.");
@@ -438,7 +438,7 @@ namespace DwarfCorp
 
         public void UpdateTradeEnvoys(Faction faction)
         {
-            foreach (Faction.TradeEnvoy envoy in faction.TradeEnvoys)
+            foreach (TradeEnvoy envoy in faction.TradeEnvoys)
             {
                 if (envoy.DeathTimer.Update(faction.World.Time.CurrentDate))
                 {
@@ -479,7 +479,7 @@ namespace DwarfCorp
                     }
                 }
 
-                if (!envoy.ShouldRemove && envoy.ExpiditionState == Faction.Expidition.State.Arriving)
+                if (!envoy.ShouldRemove && envoy.ExpiditionState == Expedition.State.Arriving)
                 {
                     foreach (CreatureAI creature in envoy.Creatures)
                     {
@@ -498,13 +498,13 @@ namespace DwarfCorp
 
                         if (creature.Tasks.Count == 0)
                         {
-                            Faction.TradeEnvoy envoy1 = envoy;
+                            TradeEnvoy envoy1 = envoy;
                             creature.Tasks.Add(new ActWrapperTask(new GoToZoneAct(creature, tradePort) | new Wrap(() => RecallEnvoyOnFail(envoy1))));
                         }
 
                         if (!tradePort.IsRestingOnZone(creature.Position)) continue;
 
-                        envoy.ExpiditionState = Faction.Expidition.State.Trading;
+                        envoy.ExpiditionState = Expedition.State.Trading;
 
                         World.Paused = true;
 
@@ -524,7 +524,7 @@ namespace DwarfCorp
                         break;
                     }
                 }
-                else if (envoy.ExpiditionState == Faction.Expidition.State.Leaving)
+                else if (envoy.ExpiditionState == Expedition.State.Leaving)
                 {
                     BoundingBox worldBBox = faction.World.ChunkManager.Bounds;
 
@@ -593,10 +593,10 @@ namespace DwarfCorp
             faction.WarParties.RemoveAll(w => w.ShouldRemove);
         }
 
-        public static void RecallEnvoy(Faction.TradeEnvoy envoy)
+        public static void RecallEnvoy(TradeEnvoy envoy)
         {
             // TODO: do ths more naturally
-            envoy.ExpiditionState = Faction.Expidition.State.Leaving;
+            envoy.ExpiditionState = Expedition.State.Leaving;
             foreach (CreatureAI creature in envoy.Creatures)
             {
                 creature.LeaveWorld();
@@ -606,7 +606,7 @@ namespace DwarfCorp
         public static void RecallWarParty(Faction.WarParty party)
         {
             // TODO: do ths more naturally
-            party.ExpiditionState = Faction.Expidition.State.Leaving;
+            party.ExpiditionState = Expedition.State.Leaving;
             foreach (CreatureAI creature in party.Creatures)
             {
                 creature.LeaveWorld();

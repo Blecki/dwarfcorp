@@ -327,7 +327,7 @@ namespace DwarfCorp.NewGui
             return base.Redraw();
         }
 
-        private void SetStatusBar(Gum.Widgets.TextProgressBar Bar, CreatureStatus.Status Status)
+        private void SetStatusBar(Gum.Widgets.TextProgressBar Bar, Status Status)
         {
             Bar.Percentage = (float)Status.Percentage / 100.0f;
         }

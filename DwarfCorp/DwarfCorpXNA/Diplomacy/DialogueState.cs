@@ -20,7 +20,7 @@ namespace DwarfCorp.Dialogue
         public DialogueState(
             DwarfGame Game, 
             GameStateManager StateManager,
-            Faction.TradeEnvoy Envoy, 
+            TradeEnvoy Envoy, 
             Faction PlayerFaction,
             WorldManager World) :
             base(Game, "GuiStateTemplate", StateManager)
