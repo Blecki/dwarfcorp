@@ -48,14 +48,15 @@ namespace DwarfCorp
 
         public Grave(ComponentManager manager, Vector3 position) :
             base(
-            position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(MathFunctions.RandInt(4, 8), 1), 
+            position + MathFunctions.RandVector3Box(-0.05f, 0.05f, -0.001f, 0.001f, -0.05f, 0.05f), 
+            new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(MathFunctions.RandInt(4, 8), 1), 
             manager.RootComponent)
         {
             AddToCollisionManager = false;
             Name = "Grave";
             Tags.Add("Grave");
             Sprite.OrientationType = Sprite.OrientMode.Fixed;
-            Matrix transform = Matrix.CreateRotationY(1.57f);
+            Matrix transform = Matrix.CreateRotationY(1.57f + MathFunctions.Rand(-0.1f, 0.1f));
             transform.Translation = LocalTransform.Translation;
             LocalTransform = transform;
         }
