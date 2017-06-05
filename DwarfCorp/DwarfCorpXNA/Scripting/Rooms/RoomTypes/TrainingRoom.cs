@@ -1,4 +1,4 @@
-﻿// TrainingRoom.cs
+// TrainingRoom.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -117,7 +117,8 @@ namespace DwarfCorp
             trainingTemplates.Add(straw);
             Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>()
             {
-                {Resource.ResourceTags.Stone, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Stone)},
+                {Resource.ResourceTags.Soil, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Soil, 1)},
+                {Resource.ResourceTags.Stone, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Stone, 1)},
             };
 
             return new RoomData(TrainingRoomName, 3, "Cobble", roomResources, trainingTemplates, 

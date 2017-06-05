@@ -55,7 +55,7 @@ namespace DwarfCorp
             resources[Resource.ResourceTags.Soil] = new Quantitiy<Resource.ResourceTags>()
             {
                 ResourceType = Resource.ResourceTags.Soil,
-                NumResources = 1
+                NumResources = 4
             };
 
 

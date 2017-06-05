@@ -1,4 +1,4 @@
-﻿// CommonRoom.cs
+// CommonRoom.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -74,8 +74,8 @@ namespace DwarfCorp
             RoomTemplate lamp = new RoomTemplate(PlacementType.All, lampTemplate, lampAccessories);
             Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>()
             {
-                {Resource.ResourceTags.Wood, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Wood)},
-                {Resource.ResourceTags.Stone, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Stone)},
+                {Resource.ResourceTags.Wood, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Wood, 1)},
+                {Resource.ResourceTags.Stone, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Stone, 2)},
             };
 
 
