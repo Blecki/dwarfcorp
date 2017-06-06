@@ -262,6 +262,12 @@ namespace DwarfCorp
             MakeAnnouncement(String.Format("Gained {0} stock", Stock));
         }
 
+        public void LoseStock(int Stock)
+        {
+            PlayerCompany.Stock -= Stock;
+            MakeAnnouncement(String.Format("Lost {0} stock", Stock));
+        }
+
         public MonsterSpawner MonsterSpawner { get; set; }
 
         public Company PlayerCompany

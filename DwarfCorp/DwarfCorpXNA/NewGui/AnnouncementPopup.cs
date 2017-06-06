@@ -88,7 +88,7 @@ namespace DwarfCorp.NewGui
 
             // Resize widget.
             var totalSize = Announcements.Select(a => a.Widget.Rect.Height + 2).Sum() - 2;
-            var newParentSize = totalSize + (speakerTiles.TileHeight / 2) + 40;
+            var newParentSize = totalSize + (speakerTiles.TileHeight / 2) + 60;
             Rect = new Rectangle(Rect.X, Rect.Bottom - newParentSize, Rect.Width, newParentSize);
 
             var childPos = Rect.Y + 20;
