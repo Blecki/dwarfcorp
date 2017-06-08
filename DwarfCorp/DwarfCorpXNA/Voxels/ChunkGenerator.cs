@@ -512,7 +512,7 @@ namespace DwarfCorp
             int indexunder = chunk.Data.IndexAt(x, y - caveHeight, z);
             chunk.Data.Types[indexunder] = (byte)VoxelLibrary.GetVoxelType(biome.GrassLayer.VoxelType).ID;
             chunk.Data.Health[indexunder] = (byte)VoxelLibrary.GetVoxelType(biome.GrassLayer.VoxelType).StartingHealth;
-            chunk.Data.IsExplored[indexunder] = false;
+            //chunk.Data.IsExplored[indexunder] = false;
             foreach (VegetationData veg in biome.Vegetation)
             {
                 if (!MathFunctions.RandEvent(veg.SpawnProbability))
