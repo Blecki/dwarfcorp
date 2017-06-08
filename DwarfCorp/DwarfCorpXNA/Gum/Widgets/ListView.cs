@@ -13,7 +13,7 @@ namespace Gum.Widgets
     {
         public List<String> Items = new List<String>();
 
-        private int _selectedIndex = 1;
+        private int _selectedIndex = 0;
         public int SelectedIndex
         {
             get { return _selectedIndex; }

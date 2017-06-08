@@ -42,7 +42,6 @@ namespace Gum
     {
         Keep,
         DestroyOnOffClick,
-        DestroyOnMouseLeave
     }
 
 }

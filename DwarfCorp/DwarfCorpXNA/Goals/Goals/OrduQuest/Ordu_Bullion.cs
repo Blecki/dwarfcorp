@@ -9,7 +9,6 @@ namespace DwarfCorp.Goals.Goals
     public class Ordu_Bullion : Goal
     {
         private DwarfBux Gold;
-        private Gum.Widget CustomGUI;
 
         public Ordu_Bullion()
         {
@@ -18,11 +17,13 @@ namespace DwarfCorp.Goals.Goals
             GoalType = GoalTypes.UnavailableAtStartup;
         }
 
-        public override void BuildCustomGUI(Widget Widget)
+        public override void CreateGUI(Widget Widget)
         {
-            base.BuildCustomGUI(Widget);
-
-            CustomGUI = Widget;
+            if (State == GoalState.Complete)
+                Widget.Text = "You received a letter from Uzzikal the Necromancer asking for your aid in his battle against the elves. You donated $500 to the cause.";
+            else 
+                Widget.Text = Description + "\n" + ((Gold >= 500) ? "Goal met!" :
+                        String.Format("{0}/500", Gold));
         }
 
         public override void OnGameEvent(WorldManager World, GameEvent Event)
@@ -38,9 +39,6 @@ namespace DwarfCorp.Goals.Goals
                     World.MakeAnnouncement("Goal met. You have traded 500 gold to Uzzikal.");
                     World.GoalManager.UnlockGoal(typeof(Ordu_Elf_Envoy));
                 }
-
-                if (CustomGUI != null) CustomGUI.Text = Description + "\n" + ((Gold >= 500) ? "Goal met!" :
-                        String.Format("{0}/500", Gold));
             }
         }
     }

@@ -292,7 +292,7 @@ namespace DwarfCorp.GameStates
                                     },
                                 PopupDestructionType = PopupDestructionType.DestroyOnOffClick
                             };
-                            GuiRoot.ShowPopup(chooser);
+                            GuiRoot.ShowModalPopup(chooser);
                         }
                 });
 
@@ -329,7 +329,7 @@ namespace DwarfCorp.GameStates
                         },
                         PopupDestructionType = PopupDestructionType.DestroyOnOffClick
                     };
-                    GuiRoot.ShowPopup(chooser);
+                    GuiRoot.ShowModalPopup(chooser);
                 }
             });
 
@@ -369,7 +369,7 @@ namespace DwarfCorp.GameStates
                         },
                         PopupDestructionType = PopupDestructionType.DestroyOnOffClick
                     };
-                    GuiRoot.ShowPopup(chooser);
+                    GuiRoot.ShowModalPopup(chooser);
                 }
             });
 
@@ -406,7 +406,7 @@ namespace DwarfCorp.GameStates
                         },
                         PopupDestructionType = PopupDestructionType.DestroyOnOffClick
                     };
-                    GuiRoot.ShowPopup(chooser);
+                    GuiRoot.ShowModalPopup(chooser);
                 }
             });
 

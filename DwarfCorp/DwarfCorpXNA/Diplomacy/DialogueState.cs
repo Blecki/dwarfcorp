@@ -20,7 +20,7 @@ namespace DwarfCorp.Dialogue
         public DialogueState(
             DwarfGame Game, 
             GameStateManager StateManager,
-            Faction.TradeEnvoy Envoy, 
+            TradeEnvoy Envoy, 
             Faction PlayerFaction,
             WorldManager World) :
             base(Game, "GuiStateTemplate", StateManager)
@@ -87,8 +87,23 @@ namespace DwarfCorp.Dialogue
             
             DialogueContext.Transition(DialogueTree.ConversationRoot);
 
+            IsInitialized = true;
+            base.OnEnter();
+        }
 
-            World.GuiHook_ShowTutorialPopup = (text, callback) =>
+        public override void Update(DwarfTime gameTime)
+        {
+            foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
+            {
+                GuiRoot.HandleInput(@event.Message, @event.Args);
+                if (!@event.Args.Handled)
+                {
+                    // Pass event to game...
+                }
+            }
+
+            DialogueContext.Update(gameTime);
+            World.TutorialManager.Update((text, callback) =>
             {
                 var popup = GuiRoot.ConstructWidget(new NewGui.TutorialPopup
                 {
@@ -104,8 +119,8 @@ namespace DwarfCorp.Dialogue
                     }
                 });
 
-                GuiRoot.ShowPopup(popup, Root.PopupExclusivity.AddToStack);
-            };
+                GuiRoot.ShowModalPopup(popup);
+            });
             World.Paused = true;
             IsInitialized = true;
             base.OnEnter();

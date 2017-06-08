@@ -21,6 +21,8 @@ namespace DwarfCorp.Goals.Goals
             {
                 State = GoalState.Complete;
                 World.GoalManager.UnlockGoal(typeof(Ordu_Start));
+                World.MakeAnnouncement("New goal available.");
+                World.AwardStock(1);
             }
         }
     }

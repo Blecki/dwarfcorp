@@ -374,7 +374,7 @@ namespace DwarfCorp
             PreEmptTasks();
 
             // Try to go to sleep if we are low on energy and it is night time.
-            if (Status.Energy.IsUnhappy() && Manager.World.Time.IsNight())
+            if (Status.Energy.IsDissatisfied() && Manager.World.Time.IsNight())
             {
                 Task toReturn = new SatisfyTirednessTask();
                 toReturn.SetupScript(Creature);
@@ -383,7 +383,7 @@ namespace DwarfCorp
             }
 
             // Try to find food if we are hungry.
-            if (Status.Hunger.IsUnhappy() && Faction.CountResourcesWithTag(Resource.ResourceTags.Edible) > 0)
+            if (Status.Hunger.IsDissatisfied() && Faction.CountResourcesWithTag(Resource.ResourceTags.Edible) > 0)
             {
                 Task toReturn = new SatisfyHungerTask();
                 toReturn.SetupScript(Creature);
@@ -448,7 +448,7 @@ namespace DwarfCorp
             {
                 // Throw a tantrum if we're unhappy.
                 bool tantrum = false;
-                if (Status.Happiness.IsUnhappy())
+                if (Status.Happiness.IsDissatisfied())
                 {
                     tantrum = MathFunctions.Rand(0, 1) < 0.25f;
                 }
@@ -827,12 +827,12 @@ namespace DwarfCorp
             {
                 AddThought(Thought.ThoughtType.Slept);
             }
-            else if (Status.Energy.IsUnhappy())
+            else if (Status.Energy.IsDissatisfied())
             {
                 AddThought(Thought.ThoughtType.FeltSleepy);
             }
 
-            if (Status.Hunger.IsUnhappy())
+            if (Status.Hunger.IsDissatisfied())
             {
                 AddThought(Thought.ThoughtType.FeltHungry);
             }
@@ -897,13 +897,27 @@ namespace DwarfCorp
                 Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 1.0f, textColor);
         }
 
+        private string GetHappinessDescription(Status Happiness)
+        {
+            if (Happiness.CurrentValue >= Happiness.MaxValue)
+                return "VERY HAPPY";
+            else if (Happiness.CurrentValue <= Happiness.MinValue)
+                return "LIVID";
+            else if (Happiness.IsSatisfied())
+                return "SATISFIED";
+            else if (Happiness.IsDissatisfied())
+                return "UNHAPPY";
+            else
+                return "OK";
+        }
+
         /// <summary> gets a description of the creature to display to the player </summary>
         public override string GetDescription()
         {
             string desc = Stats.FullName + ", level " + Stats.CurrentLevel.Index +
                           " " +
                           Stats.CurrentClass.Name + "\n    " +
-                          "Happiness: " + Status.Happiness.GetDescription() + ". Health: " + Status.Health.Percentage +
+                          "Happiness: " + GetHappinessDescription(Status.Happiness) + ". Health: " + Status.Health.Percentage +
                           ". Hunger: " + (100 - Status.Hunger.Percentage) + ". Energy: " + Status.Energy.Percentage +
                           "\n";
             if (CurrentTask != null)

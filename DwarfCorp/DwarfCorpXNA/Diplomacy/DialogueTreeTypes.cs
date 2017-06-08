@@ -17,8 +17,8 @@ namespace DwarfCorp.Dialogue
         public Gum.Widget SpeechBubble;
         public NewGui.TradePanel TradePanel;
         public Animation SpeakerAnimation;
- 
-        public Faction.TradeEnvoy Envoy;
+
+        public TradeEnvoy Envoy;
         public String EnvoyName = "TODO";
 
         public Faction PlayerFaction;

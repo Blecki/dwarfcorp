@@ -53,6 +53,7 @@ namespace DwarfCorp.GameStates
         private NewGui.ToggleTray BrushTray;
         private NewGui.GodMenu GodMenu;
         private AnnouncementPopup Announcer;
+        private FramedIcon EconomyIcon;
 
         private class ToolbarItem
         {
@@ -280,7 +281,7 @@ namespace DwarfCorp.GameStates
             MoneyLabel.Text = Master.Faction.Economy.CurrentMoney.ToString();
             MoneyLabel.Invalidate();
 
-            StockLabel.Text = Master.Faction.Economy.Company.StockPrice.ToString();
+            StockLabel.Text = Master.Faction.Economy.Company.Stock.ToString();
             StockLabel.Invalidate();
 
             LevelLabel.Text = String.Format("{0}/{1}",
@@ -301,10 +302,17 @@ namespace DwarfCorp.GameStates
 
             #endregion
 
+            #region Update Economy Indicator
+
+            EconomyIcon.IndicatorValue = World.GoalManager.NewAvailableGoals + World.GoalManager.NewCompletedGoals;
+
+            #endregion
+
             if (GameSpeedControls.CurrentSpeed != (int) DwarfTime.LastTime.Speed)
             {
                 World.Tutorial("time");
             }
+
             GameSpeedControls.CurrentSpeed = (int)DwarfTime.LastTime.Speed;
            
             // Really just handles mouse pointer animation.
@@ -553,6 +561,15 @@ namespace DwarfCorp.GameStates
             #endregion
 
             #region Setup top right tray
+
+            EconomyIcon = new NewGui.FramedIcon
+            {
+                Icon = new Gum.TileReference("tool-icons", 10),
+                OnClick = (sender, args) => StateManager.PushState(new NewEconomyState(Game, StateManager, World)),
+                DrawIndicator = true,
+                Tooltip = "Click to open the Economy screen"
+            };
+
             var topRightTray = GuiRoot.RootItem.AddChild(new NewGui.IconTray
             {
                 Corners = global::Gum.Scale9Corners.Left | global::Gum.Scale9Corners.Bottom,
@@ -560,19 +577,14 @@ namespace DwarfCorp.GameStates
                 SizeToGrid = new Point(2, 1),
                 ItemSource = new Gum.Widget[] 
                         {
+                            EconomyIcon,
+                                                                   
                             new NewGui.FramedIcon
                             {
-                                Icon = new Gum.TileReference("tool-icons", 10),
-                                OnClick = (sender, args) => StateManager.PushState(new NewEconomyState(Game, StateManager, World)),
-                                Tooltip = "Click to open the Economy screen."
-                            },
-                           
-                        new NewGui.FramedIcon
-                        {
-                            Icon = new Gum.TileReference("tool-icons", 12),
-                            OnClick = (sender, args) => { OpenPauseMenu(); },
-                            Tooltip = "Click to open the Settings screen."
-                        }
+                                Icon = new Gum.TileReference("tool-icons", 12),
+                                OnClick = (sender, args) => { OpenPauseMenu(); },
+                                Tooltip = "Click to open the Settings screen."
+                            }
                         },
             });
             #endregion
@@ -1448,7 +1460,10 @@ namespace DwarfCorp.GameStates
                 Text = "- Paused -",
                 InteriorMargin = new Gum.Margin(12, 0, 0, 0),
                 Padding = new Gum.Margin(2, 2, 2, 2),
-                OnClose = (sender) => PausePanel = null,
+                OnClose = (sender) =>
+                {
+                    PausePanel = null;
+                },
                 Font = "font-hires"
             };
 
@@ -1467,6 +1482,7 @@ namespace DwarfCorp.GameStates
                 {
                     OnClosed = () =>
                     {
+                        PausePanel = null;
                         GuiRoot.RenderData.CalculateScreenSize();
                         GuiRoot.ResetGui();
                         CreateGUIComponents();
@@ -1481,7 +1497,7 @@ namespace DwarfCorp.GameStates
             MakeMenuItem(PausePanel, "Save", "",
                 (sender, args) =>
                 {
-                    GuiRoot.ShowPopup(new NewGui.Confirm
+                    GuiRoot.ShowModalPopup(new NewGui.Confirm
                     {
                         Text = "Warning: Saving is still an unstable feature. Are you sure you want to continue?",
                         OnClose = (s) =>
@@ -1491,7 +1507,7 @@ namespace DwarfCorp.GameStates
                                     String.Format("{0}_{1}", Overworld.Name, World.GameID),
                                     (success, exception) =>
                                     {
-                                        GuiRoot.ShowPopup(new NewGui.Popup
+                                        GuiRoot.ShowModalPopup(new NewGui.Popup
                                         {
                                             Text = success ? "File saved." : "Save failed - " + exception.Message,
                                             OnClose = (s2) => OpenPauseMenu()
@@ -1505,7 +1521,7 @@ namespace DwarfCorp.GameStates
 
             PausePanel.Layout();
 
-            GuiRoot.ShowPopup(PausePanel);
+            GuiRoot.ShowModalPopup(PausePanel);
         }
 
         public void Destroy()

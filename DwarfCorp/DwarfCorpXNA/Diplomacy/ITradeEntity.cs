@@ -22,9 +22,9 @@ namespace DwarfCorp.Trade
 
     public class EnvoyTradeEntity : ITradeEntity
     {
-        private Faction.TradeEnvoy SourceEnvoy;
+        private TradeEnvoy SourceEnvoy;
 
-        public EnvoyTradeEntity(Faction.TradeEnvoy SourceEnvoy)
+        public EnvoyTradeEntity(TradeEnvoy SourceEnvoy)
         {
             this.SourceEnvoy = SourceEnvoy;
         }

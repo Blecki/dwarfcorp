@@ -44,73 +44,6 @@ namespace DwarfCorp
     /// </summary>
     public class CreatureStatus
     {
-        /// <summary>
-        /// A creature status is a named value which has minimum and maximum thresholds for satisfaction.
-        /// </summary>
-        public class Status
-        {
-            private float currentValue;
-
-            public string Name { get; set; }
-
-            public float CurrentValue
-            {
-                get { return currentValue; }
-                set { SetValue(value); }
-            }
-
-            public float MinValue { get; set; }
-            public float MaxValue { get; set; }
-            public float UnhappyThreshold { get; set; }
-            public float SatisfiedThreshold { get; set; }
-
-            public int Percentage
-            {
-                get { return (int)((CurrentValue - MinValue)/(MaxValue - MinValue)*100); }
-            }
-
-            public bool IsSatisfied()
-            {
-                return CurrentValue >= SatisfiedThreshold;
-            }
-
-            public bool IsUnhappy()
-            {
-                return CurrentValue <= UnhappyThreshold;
-            }
-
-            public void SetValue(float v)
-            {
-                currentValue = Math.Max(Math.Min(v, MaxValue), MinValue);
-            }
-
-            public string GetDescription()
-            {
-                if (CurrentValue >= MaxValue)
-                {
-                    return "VERY HAPPY";
-                }
-                else if (CurrentValue <= MinValue)
-                {
-                    return "LIVID";
-                }
-                else if (IsSatisfied())
-                {
-                    return "SATISFIED";
-                }
-                else if (IsUnhappy())
-                {
-                    return "UNHAPPY";
-                }
-                else
-                {
-                    return "OK";
-                }
-                
-            }
-
-        }
-
         public Dictionary<string, Status> Statuses { get; set; }
 
         public bool IsAsleep { get; set; }
@@ -134,7 +67,7 @@ namespace DwarfCorp
                 MinValue = 0.0f,
                 Name = "Hunger",
                 SatisfiedThreshold = 95.0f,
-                UnhappyThreshold = 15.0f,
+                DissatisfiedThreshold = 15.0f,
                 CurrentValue = 100.0f
             };
 
@@ -144,7 +77,7 @@ namespace DwarfCorp
                 MinValue = 0.0f,
                 Name = "Energy",
                 SatisfiedThreshold = 99.0f,
-                UnhappyThreshold = 15.0f,
+                DissatisfiedThreshold = 15.0f,
                 CurrentValue = 100.0f
             };
 
@@ -154,7 +87,7 @@ namespace DwarfCorp
                 MinValue = 0.0f,
                 Name = "Happiness",
                 SatisfiedThreshold = 80.0f,
-                UnhappyThreshold = 20.0f,
+                DissatisfiedThreshold = 20.0f,
                 CurrentValue = 50.0f
             };
 
@@ -164,7 +97,7 @@ namespace DwarfCorp
                 MinValue = 0.0f,
                 Name = "Health",
                 SatisfiedThreshold = 0.8f,
-                UnhappyThreshold = 0.15f,
+                DissatisfiedThreshold = 0.15f,
                 CurrentValue = 1.0f
             };
         }
@@ -191,12 +124,12 @@ namespace DwarfCorp
                 Energy.CurrentValue = 100.0f;
             }
 
-            if(Energy.IsUnhappy())
+            if(Energy.IsDissatisfied())
             {
                 creature.DrawIndicator(IndicatorManager.StandardIndicators.Sleepy);
             }
 
-            if(creature.Stats.CanEat && Hunger.IsUnhappy() && !creature.IsAsleep)
+            if(creature.Stats.CanEat && Hunger.IsDissatisfied() && !creature.IsAsleep)
             {
                 creature.DrawIndicator(IndicatorManager.StandardIndicators.Hungry);
 

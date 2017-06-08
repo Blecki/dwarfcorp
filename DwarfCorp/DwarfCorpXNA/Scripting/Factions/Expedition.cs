@@ -1,4 +1,4 @@
-﻿// GuardVoxelAct.cs
+// Faction.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -30,67 +30,45 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Runtime.Serialization;
+using System.Security.Cryptography.X509Certificates;
+using DwarfCorp.GameStates;
+using LibNoise;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// A creature goes to a voxel, and then waits there until cancelled.
-    /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
-    public class GuardVoxelAct : CompoundCreatureAct
+    public class Expedition
     {
-        public Voxel Voxel { get; set; }
-
-
-        public GuardVoxelAct()
+        public enum State
         {
-
+            Leaving,
+            Arriving,
+            Fighting,
+            Trading
         }
 
-        public bool LoopCondition()
+        public DateTimer DeathTimer { get; set; }
+        public List<CreatureAI> Creatures { get; set; }
+        public Faction OwnerFaction { get; set; }
+        public Faction OtherFaction { get; set; }
+        public State ExpiditionState { get; set; }
+        public bool ShouldRemove { get; set; }
+
+        public Expedition(DateTime date)
         {
-            return Agent.Faction.IsGuardDesignation(Voxel) && !EnemiesNearby() && !Creature.Status.Energy.IsDissatisfied() && !Creature.Status.Hunger.IsDissatisfied();
-        }
-
-        public bool GuardDesignationExists()
-        {
-            return Agent.Faction.IsGuardDesignation(Voxel);
-        }
-
-        public bool ExitCondition()
-        {
-            if (EnemiesNearby())
-            {
-                Creature.AI.OrderEnemyAttack();
-            }
-
-            return !GuardDesignationExists();
-        }
-
-
-        public bool EnemiesNearby()
-        {
-            return (Agent.Sensor.Enemies.Count > 0);
-        }
-
-        public GuardVoxelAct(CreatureAI agent, Voxel voxel) :
-            base(agent)
-        {
-            Voxel = voxel;
-            Name = "Guard Voxel " + voxel;
-
-            Tree = new Sequence
-                (
-                    new GoToVoxelAct(voxel, PlanAct.PlanType.Adjacent, agent),
-                    new StopAct(Agent),
-                    new WhileLoop(new WanderAct(Agent, 1.0f, 0.5f, 0.1f), new Condition(LoopCondition)),
-                    new Condition(ExitCondition)
-                );
+            ExpiditionState = State.Arriving;
+            ShouldRemove = false;
+            Creatures = new List<CreatureAI>();
+            DeathTimer = new DateTimer(date, new TimeSpan(1, 12, 0, 0));
         }
     }
-
 }

@@ -127,17 +127,17 @@ namespace DwarfCorp.NewGui
                     {
                         if (applicant.Level.Pay * 4 > Faction.Economy.CurrentMoney)
                         {
-                            Root.ShowPopup(Root.ConstructWidget(new NewGui.Popup
+                            Root.ShowModalPopup(Root.ConstructWidget(new NewGui.Popup
                             {
                                 Text = "We can't afford the signing bonus!",
-                            }), Root.PopupExclusivity.DestroyExistingPopups);
+                            }));
                         }
                         else if (!Faction.GetRooms().Any(r => r.RoomData.Name == "BalloonPort"))
                         {
-                            Root.ShowPopup(Root.ConstructWidget(new NewGui.Popup
+                            Root.ShowModalPopup(Root.ConstructWidget(new NewGui.Popup
                             {
                                 Text = "We need a balloon port to hire someone.",
-                            }), Root.PopupExclusivity.DestroyExistingPopups);
+                            }));
                         }
                         else
                         {
@@ -145,13 +145,11 @@ namespace DwarfCorp.NewGui
                             SoundManager.PlaySound(ContentPaths.Audio.cash, 0.5f);
                             applicantInfo.Hidden = true;
                             HireButton.Hidden = true;
-                            Root.ShowPopup(new NewGui.Confirm()
+                            Root.ShowModalPopup(new NewGui.Popup()
                             {
                                 Text = String.Format("We hired {0}, paying a signing bonus of {1}.",
                                 applicant.Name,
                                 applicant.Class.Levels[0].Pay * 4),
-                                OkayText = "OK",
-                                CancelText = ""
                             });
  
                         }

@@ -1,4 +1,4 @@
-﻿// GuardVoxelAct.cs
+// Faction.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -30,67 +30,49 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Runtime.Serialization;
+using System.Security.Cryptography.X509Certificates;
+using DwarfCorp.GameStates;
+using LibNoise;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// A creature goes to a voxel, and then waits there until cancelled.
-    /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
-    public class GuardVoxelAct : CompoundCreatureAct
+    public class TradeEnvoy : Expedition
     {
-        public Voxel Voxel { get; set; }
-
-
-        public GuardVoxelAct()
+        public TradeEnvoy(DateTime date) : base(date)
         {
-
         }
 
-        public bool LoopCondition()
-        {
-            return Agent.Faction.IsGuardDesignation(Voxel) && !EnemiesNearby() && !Creature.Status.Energy.IsDissatisfied() && !Creature.Status.Hunger.IsDissatisfied();
-        }
+        public DwarfBux TradeMoney { get; set; }
+        public List<ResourceAmount> TradeGoods { get; set; }
 
-        public bool GuardDesignationExists()
+        public void DistributeGoods()
         {
-            return Agent.Faction.IsGuardDesignation(Voxel);
-        }
-
-        public bool ExitCondition()
-        {
-            if (EnemiesNearby())
+            if (Creatures.Count == 0) return;
+            int goodsPerCreature = TradeGoods.Count / Creatures.Count;
+            int currentGood = 0;
+            foreach (CreatureAI creature in Creatures)
             {
-                Creature.AI.OrderEnemyAttack();
+                ResourcePack pack = creature.GetComponent<ResourcePack>();
+                if (pack != null)
+                {
+                    pack.Contents.Resources.Clear();
+                    for (int i = currentGood; i < System.Math.Min(currentGood + goodsPerCreature, TradeGoods.Count); i++)
+                    {
+                        pack.Contents.Resources.AddResource(TradeGoods[i]);
+                    }
+                    currentGood += goodsPerCreature;
+                }
             }
-
-            return !GuardDesignationExists();
-        }
-
-
-        public bool EnemiesNearby()
-        {
-            return (Agent.Sensor.Enemies.Count > 0);
-        }
-
-        public GuardVoxelAct(CreatureAI agent, Voxel voxel) :
-            base(agent)
-        {
-            Voxel = voxel;
-            Name = "Guard Voxel " + voxel;
-
-            Tree = new Sequence
-                (
-                    new GoToVoxelAct(voxel, PlanAct.PlanType.Adjacent, agent),
-                    new StopAct(Agent),
-                    new WhileLoop(new WanderAct(Agent, 1.0f, 0.5f, 0.1f), new Condition(LoopCondition)),
-                    new Condition(ExitCondition)
-                );
         }
     }
-
 }

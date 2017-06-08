@@ -105,9 +105,6 @@ namespace DwarfCorp.GameStates
             if(ScreenSaver == null)
                 ScreenSaver = new Terrain2D(Game);
 
-            if(CurrentState != null && CurrentState.IsInitialized)
-                CurrentState.Update(time);
-
             if (NextState != null && NextState.IsInitialized)
             {
                 if (CurrentState != null)
@@ -120,6 +117,8 @@ namespace DwarfCorp.GameStates
                 NextState = null;
             }
 
+            if (CurrentState != null && CurrentState.IsInitialized)
+                CurrentState.Update(time);
         }
 
         public void Render(DwarfTime time)

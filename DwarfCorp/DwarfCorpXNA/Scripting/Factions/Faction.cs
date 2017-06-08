@@ -46,110 +46,6 @@ using Newtonsoft.Json.Converters;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
-    public class Race
-    {
-        public class RaceSpeech
-        {
-            public List<string> Greetings { get; set; }
-            public List<string> Farewells { get; set; }
-            public List<string> GoodTrades { get; set; }
-            public List<string> BadTrades { get; set; }
-            public List<string> WarDeclarations { get; set; }
-            public List<string> PeaceDeclarations { get; set; }
-            public Language Language { get; set; }
-        }
-
-
-        public string Name { get; set; }
-        public List<string> CreatureTypes { get; set; }
-        public List<List<string>> WarParties { get; set; }
-        public List<List<string>> TradeEnvoys { get; set; } 
-        public List<string> NaturalEnemies { get; set; } 
-        public bool IsIntelligent { get; set; }
-        public bool IsNative { get; set; }
-        public string FactionNameFile { get; set; }
-        public string NameFile { get; set; }
-        public Animation.SimpleDescriptor TalkAnimation { get; set; }
-        public RaceSpeech Speech  { get; set; }
-        [JsonIgnore]
-        public List<List<string>> FactionNameTemplates { get; set; }
-        [JsonIgnore]
-        public List<List<string>> NameTemplates { get; set; }
-
-        public List<Resource.ResourceTags> LikedResources { get; set; }
-        public List<Resource.ResourceTags> HatedResources { get; set; }
-        public List<Resource.ResourceTags> CommonResources { get; set; }
-        public List<Resource.ResourceTags> RareResources { get; set; } 
-
-        public Dictionary<Resource.ResourceTags, int> TradeGoods { get; set; }
-        public List<Resource.ResourceTags> Crafts { get; set; }
-        public List<Resource.ResourceTags> Encrustings { get; set; } 
- 
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
-        {
-            FactionNameTemplates = TextGenerator.GetAtoms(FactionNameFile);
-            NameTemplates = TextGenerator.GetAtoms(NameFile);
-        }
-
-        public List<ResourceAmount> GenerateResources()
-        {
-            Dictionary<ResourceLibrary.ResourceType, ResourceAmount> toReturn =
-                new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
-
-            foreach (var tags in TradeGoods)
-            {
-                int num = MathFunctions.RandInt(tags.Value - 5, tags.Value + 5);
-
-
-                List<Resource> resources = ResourceLibrary.GetResourcesByTag(tags.Key);
-
-                if (resources.Count <= 0) continue;
-
-                for (int i = 0; i < num; i++)
-                {
-                    Resource randResource = Datastructures.SelectRandom(resources);
-
-                    if (randResource.Type == ResourceLibrary.ResourceType.Trinket ||
-                        randResource.Type == ResourceLibrary.ResourceType.GemTrinket ||
-                        tags.Key == Resource.ResourceTags.Craft)
-                    {
-                        Resource.ResourceTags craftTag = Datastructures.SelectRandom(Crafts);
-                        List<Resource> availableCrafts = ResourceLibrary.GetResourcesByTag(craftTag);
-
-                        Resource trinket = ResourceLibrary.GenerateTrinket(
-                            Datastructures.SelectRandom(availableCrafts).Type, MathFunctions.Rand(0.1f, 3.0f));
-
-                        if (MathFunctions.RandEvent(0.3f) && Encrustings.Count > 0)
-                        {
-                            List<Resource> availableGems =
-                                ResourceLibrary.GetResourcesByTag(Datastructures.SelectRandom(Encrustings));
-                            randResource = ResourceLibrary.EncrustTrinket(trinket.Type,
-                                Datastructures.SelectRandom(availableGems).Type);
-                        }
-                        else
-                        {
-                            randResource = trinket;
-                        }
-                    }
-
-                    if (!toReturn.ContainsKey(randResource.Type))
-                    {
-                        toReturn[randResource.Type] = new ResourceAmount(randResource.Type, 1);
-                    }
-                    else
-                    {
-                        toReturn[randResource.Type].NumResources += 1;
-                    }
-                }
-            }
-
-            List<ResourceAmount> resList = toReturn.Select(amount => amount.Value).ToList();
-            return resList;
-        }
-       
-    }
     /// <summary>
     /// A faction is an independent collection of creatures, tied to an economy, rooms, and designations.
     /// Examples might be the player's dwarves, or the faction of goblins.
@@ -208,63 +104,7 @@ namespace DwarfCorp
             Center = new Point(descriptor.CenterX, descriptor.CenterY);
         }
 
-        public class Expidition
-        {
-            public enum State
-            {
-                Leaving,
-                Arriving,
-                Fighting,
-                Trading
-            }
-
-            public DateTimer DeathTimer { get; set; }
-            public List<CreatureAI> Creatures { get; set; }
-            public Faction OwnerFaction { get; set; }
-            public Faction OtherFaction { get; set; }
-            public State ExpiditionState { get; set; }
-            public bool ShouldRemove { get; set; }
-
-            public Expidition(DateTime date)
-            {
-                ExpiditionState = State.Arriving;
-                ShouldRemove = false;
-                Creatures = new List<CreatureAI>();
-                DeathTimer = new DateTimer(date, new TimeSpan(1, 12, 0, 0));
-            }
-        }
-
-        public class TradeEnvoy : Expidition
-        {
-            public TradeEnvoy(DateTime date) : base(date)
-            {
-            }
-
-            public DwarfBux TradeMoney { get; set; }
-            public List<ResourceAmount> TradeGoods { get; set; }
-
-            public void DistributeGoods()
-            {
-                if (Creatures.Count == 0) return;
-                int goodsPerCreature = TradeGoods.Count / Creatures.Count;
-                int currentGood = 0;
-                foreach (CreatureAI creature in Creatures)
-                {
-                    ResourcePack pack = creature.GetComponent<ResourcePack>();
-                    if (pack != null)
-                    {
-                        pack.Contents.Resources.Clear();
-                        for (int i = currentGood; i < System.Math.Min(currentGood + goodsPerCreature, TradeGoods.Count); i++)
-                        {
-                            pack.Contents.Resources.AddResource(TradeGoods[i]);
-                        }
-                        currentGood += goodsPerCreature;
-                    }
-                }
-            }
-        }
-
-        public class WarParty : Expidition
+        public class WarParty : Expedition
         {
             public WarParty(DateTime date) : base(date)
             {
@@ -903,12 +743,6 @@ namespace DwarfCorp
             return amounts.Values.ToList();
         }
 
-        public bool HasResources(Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> resources)
-        {
-            return HasResources(resources.Values);
-        }
-
-
         public bool HasResources(IEnumerable<Quantitiy<Resource.ResourceTags>> resources)
         {
             foreach (Quantitiy<Resource.ResourceTags> resource in resources)
@@ -922,11 +756,6 @@ namespace DwarfCorp
             }
 
             return true;
-        }
-
-        public bool HasResources(Dictionary<ResourceLibrary.ResourceType, ResourceAmount> resources)
-        {
-            return HasResources(resources.Values);
         }
 
         public bool HasResources(IEnumerable<ResourceAmount> resources)
@@ -965,7 +794,7 @@ namespace DwarfCorp
                 }
             }
 
-            if (!HasResources(amounts))
+            if (!HasResources(amounts.Values))
             {
                 return false;
             }

@@ -1,4 +1,4 @@
-﻿// GuardVoxelAct.cs
+// CreatureStatus.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -32,65 +32,49 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A creature goes to a voxel, and then waits there until cancelled.
+    /// A creature status is a named value which has minimum and maximum thresholds for satisfaction.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
-    public class GuardVoxelAct : CompoundCreatureAct
+    public class Status
     {
-        public Voxel Voxel { get; set; }
+        private float currentValue;
 
+        public string Name { get; set; }
 
-        public GuardVoxelAct()
+        public float CurrentValue
         {
-
+            get { return currentValue; }
+            set { SetValue(value); }
         }
 
-        public bool LoopCondition()
+        public float MinValue { get; set; }
+        public float MaxValue { get; set; }
+        public float DissatisfiedThreshold { get; set; }
+        public float SatisfiedThreshold { get; set; }
+
+        public int Percentage
         {
-            return Agent.Faction.IsGuardDesignation(Voxel) && !EnemiesNearby() && !Creature.Status.Energy.IsDissatisfied() && !Creature.Status.Hunger.IsDissatisfied();
+            get { return (int)((CurrentValue - MinValue) / (MaxValue - MinValue) * 100); }
         }
 
-        public bool GuardDesignationExists()
+        public bool IsSatisfied()
         {
-            return Agent.Faction.IsGuardDesignation(Voxel);
+            return CurrentValue >= SatisfiedThreshold;
         }
 
-        public bool ExitCondition()
+        public bool IsDissatisfied()
         {
-            if (EnemiesNearby())
-            {
-                Creature.AI.OrderEnemyAttack();
-            }
-
-            return !GuardDesignationExists();
+            return CurrentValue <= DissatisfiedThreshold;
         }
 
-
-        public bool EnemiesNearby()
+        public void SetValue(float v)
         {
-            return (Agent.Sensor.Enemies.Count > 0);
-        }
-
-        public GuardVoxelAct(CreatureAI agent, Voxel voxel) :
-            base(agent)
-        {
-            Voxel = voxel;
-            Name = "Guard Voxel " + voxel;
-
-            Tree = new Sequence
-                (
-                    new GoToVoxelAct(voxel, PlanAct.PlanType.Adjacent, agent),
-                    new StopAct(Agent),
-                    new WhileLoop(new WanderAct(Agent, 1.0f, 0.5f, 0.1f), new Condition(LoopCondition)),
-                    new Condition(ExitCondition)
-                );
+            currentValue = Math.Max(Math.Min(v, MaxValue), MinValue);
         }
     }
-
 }

@@ -59,16 +59,6 @@ namespace DwarfCorp.GameStates
 
             IndicatorManager.SetupStandards();
 
-            if (Settings.GenerateFromScratch)
-            {
-                Generator = new WorldGenerator(Settings) {Seed = MathFunctions.Random.Next()};
-                Generator.Generate();
-            }
-            else
-            {
-                CreateWorld();
-            }
-
             DwarfGame.GumInputMapper.GetInputQueue();
             GuiRoot = new Gum.Root(DwarfGame.GumSkin);
 
@@ -91,6 +81,16 @@ namespace DwarfCorp.GameStates
             }) as NewGui.InfoTicker;
 
             GuiRoot.RootItem.Layout();
+
+            if (Settings.GenerateFromScratch)
+            {
+                Generator = new WorldGenerator(Settings) { Seed = MathFunctions.Random.Next() };
+                Generator.Generate();
+            }
+            else
+            {
+                CreateWorld();
+            }
 
             base.OnEnter();
         }
