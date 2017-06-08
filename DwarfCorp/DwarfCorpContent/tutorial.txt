@@ -106,6 +106,11 @@
 			"Text" : "Left click and drag to build a common room. Dwarves eat and drink in common rooms while on break. They make a natural gathering place for your employees. The larger the common room, the more employees can sit there."
 		},
 		{
+			"Name" : "build Graveyard",
+			"Title" : "Common Room",
+			"Text" : "Left click and drag to build a graveyard. When dwarves die, they produce corpses. Corpses can only be stored in the graveyard. Dwarves will come to the graveyard to mourn the dead."
+		},
+		{
 			"Name" : "build Kitchen",
 			"Title" : "Kitchen",
 			"Text" : "Left click and drag to build a kitchen. Dwarves can cook meals, bake bread and brew alcohol in the kitchen. Prepared foods heal your dwarves and make them happier. The larger the kitchen, the more meals dwarves can cook at once."

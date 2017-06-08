@@ -126,24 +126,6 @@ namespace DwarfCorp.Dialogue
             base.OnEnter();
         }
 
-        public override void Update(DwarfTime gameTime)
-        {
-            World.Paused = true;
-            foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
-            {
-                GuiRoot.HandleInput(@event.Message, @event.Args);
-                if (!@event.Args.Handled)
-                {
-                    // Pass event to game...
-                }
-            }
-
-            DialogueContext.Update(gameTime);
-            GuiRoot.Update(gameTime.ToGameTime());
-
-            base.Update(gameTime);
-        }
-
         public override void Render(DwarfTime gameTime)
         {
             // Draw speaker anim;

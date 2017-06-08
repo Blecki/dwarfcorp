@@ -152,7 +152,7 @@ namespace DwarfCorp
             World = ((WorldManager)ctx.Context);
         }
 
-        private Faction.TradeEnvoy CurrentTradeEnvoy = null;
+        private TradeEnvoy CurrentTradeEnvoy = null;
         private Faction.WarParty CurrentWarParty = null;
 
         public Diplomacy()
@@ -257,7 +257,7 @@ namespace DwarfCorp
                 InitializeFactionPolitics(faction.Value, now);
         }
 
-        public Faction.TradeEnvoy SendTradeEnvoy(Faction natives, WorldManager world)
+        public TradeEnvoy SendTradeEnvoy(Faction natives, WorldManager world)
         {
             //if (!world.gameState.IsActiveState) return;
             TradeEnvoy envoy = null;

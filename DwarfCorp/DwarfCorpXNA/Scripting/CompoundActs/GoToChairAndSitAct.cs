@@ -203,13 +203,13 @@ namespace DwarfCorp
                     yield return Status.Success;
                 }
 
-                if (Creature.AI.Status.Energy.IsUnhappy())
+                if (Creature.AI.Status.Energy.IsDissatisfied())
                 {
                     Creature.OverrideCharacterMode = false;
                     yield return Status.Success;
                 }
 
-                if (Creature.AI.Status.Hunger.IsUnhappy())
+                if (Creature.AI.Status.Hunger.IsDissatisfied())
                 {
                     Creature.OverrideCharacterMode = false;
                     yield return Status.Success;
