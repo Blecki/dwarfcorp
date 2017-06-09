@@ -15,7 +15,7 @@ namespace DwarfCorp.Goals.Goals
             GoalType = GoalTypes.UnavailableAtStartup;
         }
 
-        public override ActivationResult Activate(WorldManager World)
+        public override void Activate(WorldManager World)
         {
             // Create Ordu faction, add to FactionLibrary and World.Natives
             var orduFaction = new Faction(World)
@@ -34,8 +34,6 @@ namespace DwarfCorp.Goals.Goals
 
             // Spawn trade convoy from Ordu
             World.ComponentManager.Diplomacy.SendTradeEnvoy(orduFaction, World);
-
-            return new ActivationResult { Succeeded = true };
         }
 
         public override void OnGameEvent(WorldManager World, GameEvent Event)

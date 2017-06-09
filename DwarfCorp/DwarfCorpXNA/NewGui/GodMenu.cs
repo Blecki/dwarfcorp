@@ -128,15 +128,6 @@ namespace DwarfCorp.NewGui
                     }
                 },
 
-                new HorizontalMenuTray.MenuItem
-                {
-                    Text = "STOCK",
-                    OnClick = (sender, args) =>
-                    {
-                        Master.World.PlayerCompany.Stock += 100;
-                    }
-                },
-
                 // Shouldn't this go into some kind of 'debug' menu?
                 new HorizontalMenuTray.MenuItem
                 {

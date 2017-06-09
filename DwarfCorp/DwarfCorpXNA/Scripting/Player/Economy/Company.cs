@@ -57,7 +57,6 @@ namespace DwarfCorp
         };
 
         public Sector Industry { get; set; }
-        public int Stock { get; set; }
         public DwarfBux Assets { get; set; }
         public DwarfBux LastAssets { get; set; }
         public string TickerName { get { return GenerateTickerName(Information.Name); } }

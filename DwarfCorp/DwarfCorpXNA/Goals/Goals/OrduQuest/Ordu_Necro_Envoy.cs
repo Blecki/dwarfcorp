@@ -15,15 +15,13 @@ namespace DwarfCorp.Goals.Goals
             GoalType = GoalTypes.UnavailableAtStartup;
         }
 
-        public override ActivationResult Activate(WorldManager World)
+        public override void Activate(WorldManager World)
         {
             var otherChoice = World.GoalManager.FindGoal(typeof(Ordu_Elf_Invasion));
             otherChoice.State = GoalState.Unavailable;
 
             var orduFaction = World.ComponentManager.Factions.Factions.FirstOrDefault(f => f.Key == "Ordu").Value;
             World.ComponentManager.Diplomacy.SendTradeEnvoy(orduFaction, World);
-
-            return new ActivationResult { Succeeded = true };
         }
 
         public override void OnGameEvent(WorldManager World, GameEvent Event)

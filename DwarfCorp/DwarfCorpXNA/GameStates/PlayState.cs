@@ -40,7 +40,6 @@ namespace DwarfCorp.GameStates
         }
 
         private Gum.Widget MoneyLabel;
-        private Gum.Widget StockLabel;
         private Gum.Widget LevelLabel;
         private NewGui.ToolTray.Tray BottomRightTray;
         private Gum.Widget TimeLabel;
@@ -281,9 +280,6 @@ namespace DwarfCorp.GameStates
             MoneyLabel.Text = Master.Faction.Economy.CurrentMoney.ToString();
             MoneyLabel.Invalidate();
 
-            StockLabel.Text = Master.Faction.Economy.Company.Stock.ToString();
-            StockLabel.Invalidate();
-
             LevelLabel.Text = String.Format("{0}/{1}",
                 World.ChunkManager.ChunkData.MaxViewingLevel,
                 World.ChunkHeight);
@@ -418,32 +414,6 @@ namespace DwarfCorp.GameStates
                 TextVerticalAlign = global::Gum.VerticalAlign.Center,
                 TextColor = new Vector4(1, 1, 1, 1),
                 Tooltip = "Amount of money in our treasury"
-            });
-
-            var stockRow = infoPanel.AddChild(new Gum.Widget
-            {
-                MinimumSize = new Point(0, 34),
-                AutoLayout = global::Gum.AutoLayout.DockTop,
-                Tooltip = "Current stock price."
-            });
-
-            stockRow.AddChild(new Gum.Widget
-            {
-                Background = new Gum.TileReference("resources", 41),
-                MinimumSize = new Point(32, 32),
-                MaximumSize = new Point(32, 32),
-                AutoLayout = global::Gum.AutoLayout.DockLeft,
-                Tooltip = "Current stock price."
-            });
-
-            StockLabel = stockRow.AddChild(new Gum.Widget
-            {
-                Rect = new Rectangle(48, 32, 128, 20),
-                AutoLayout = global::Gum.AutoLayout.DockFill,
-                Font = "outline-font",
-                TextVerticalAlign = global::Gum.VerticalAlign.Center,
-                TextColor = new Vector4(1, 1, 1, 1),
-                Tooltip = ""
             });
 
             var levelRow = infoPanel.AddChild(new Gum.Widget

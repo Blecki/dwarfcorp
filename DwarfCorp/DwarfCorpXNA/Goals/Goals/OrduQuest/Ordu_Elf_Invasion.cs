@@ -17,7 +17,7 @@ namespace DwarfCorp.Goals.Goals
             GoalType = GoalTypes.UnavailableAtStartup;
         }
 
-        public override ActivationResult Activate(WorldManager World)
+        public override void Activate(WorldManager World)
         {
             var otherChoice = World.GoalManager.FindGoal(typeof(Ordu_Necro_Envoy));
             otherChoice.State = GoalState.Unavailable;
@@ -35,8 +35,6 @@ namespace DwarfCorp.Goals.Goals
 
             for (var i = 0; i < 5; ++i)
                 World.ComponentManager.Diplomacy.SendWarParty(felFaction);
-
-            return new ActivationResult { Succeeded = true };
         }
 
         public override void OnGameEvent(WorldManager World, GameEvent Event)

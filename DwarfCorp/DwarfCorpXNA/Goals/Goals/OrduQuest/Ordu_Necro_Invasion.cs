@@ -17,7 +17,7 @@ namespace DwarfCorp.Goals.Goals
             GoalType = GoalTypes.UnavailableAtStartup;
         }
 
-        public override ActivationResult Activate(WorldManager World)
+        public override void Activate(WorldManager World)
         {
             // Spawn multiple war parties from Ordu
             var orduFaction = World.ComponentManager.Factions.Factions.FirstOrDefault(f => f.Key == "Ordu").Value;
@@ -32,8 +32,6 @@ namespace DwarfCorp.Goals.Goals
 
             for (var i = 0; i < 5; ++i)
                 World.ComponentManager.Diplomacy.SendWarParty(orduFaction);
-
-            return new ActivationResult { Succeeded = true };
         }
 
         public override void OnGameEvent(WorldManager World, GameEvent Event)

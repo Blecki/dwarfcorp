@@ -25,12 +25,11 @@ namespace DwarfCorp.Goals
             public String ErrorMessage;
         }
 
-        /// <summary>
-        /// Called when the player selects a goal and activates it. Will NOT be called for
-        /// achievement type goals.
-        /// </summary>
-        /// <param name="World"></param>
-        public virtual ActivationResult Activate(WorldManager World)
+        public virtual void Activate(WorldManager World)
+        {
+        }
+
+        public virtual ActivationResult CanActivate(WorldManager World)
         {
             return new ActivationResult { Succeeded = true };
         }

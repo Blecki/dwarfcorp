@@ -96,9 +96,10 @@ namespace DwarfCorp.Goals
                
         public Goal.ActivationResult TryActivateGoal(WorldManager World, Goal Goal)
         {
-            var activationResult = Goal.Activate(World);
+            var activationResult = Goal.CanActivate(World);
             if (activationResult.Succeeded)
             {
+                Goal.Activate(World);
                 Goal.State = GoalState.Active;
                 NewlyActivatedGoals.Add(Goal);
             }

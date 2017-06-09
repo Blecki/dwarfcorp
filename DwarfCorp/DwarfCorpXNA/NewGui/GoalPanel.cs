@@ -36,7 +36,8 @@ namespace DwarfCorp.NewGui
                     if ((sender as GoalInfo).Goal != null)
                         World.GoalManager.TryActivateGoal(World, (sender as GoalInfo).Goal);
                     Invalidate();
-                }
+                },
+                World = World
             }) as NewGui.GoalInfo;
 
             GoalList = left.AddChild(new Gum.Widgets.ListView

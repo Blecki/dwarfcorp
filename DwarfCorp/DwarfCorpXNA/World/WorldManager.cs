@@ -256,16 +256,16 @@ namespace DwarfCorp
                 SoundManager.PlaySound(sound, 0.5f);
         }
 
-        public void AwardStock(int Stock)
+        public void AwardBux(DwarfBux Bux)
         {
-            PlayerCompany.Stock += Stock;
-            MakeAnnouncement(String.Format("Gained {0} stock", Stock));
+            PlayerCompany.Assets += Bux;
+            MakeAnnouncement(String.Format("Gained {0}", Bux));
         }
 
-        public void LoseStock(int Stock)
+        public void LoseBux(DwarfBux Bux)
         {
-            PlayerCompany.Stock -= Stock;
-            MakeAnnouncement(String.Format("Lost {0} stock", Stock));
+            PlayerCompany.Assets -= Bux;
+            MakeAnnouncement(String.Format("Lost {0}", Bux));
         }
 
         public MonsterSpawner MonsterSpawner { get; set; }

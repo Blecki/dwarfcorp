@@ -17,35 +17,38 @@ namespace DwarfCorp.NewGui
         }
 
         private Widget Description;
-        private Widget ActivateButton;        
+        private Widget ActivateButton;
+        private Widget BottomBar;
         public Action<Widget> OnActivateClicked;
+        public WorldManager World;
 
         public override void Construct()
         {
-            var bottomBar = AddChild(new Gum.Widget
+            BottomBar = AddChild(new Gum.Widget
             {
                 MinimumSize = new Point(0, 32),
-                AutoLayout = AutoLayout.DockBottom
+                AutoLayout = AutoLayout.DockBottom,
+                Font = "font-hires"
             });
 
             Description = AddChild(new Gum.Widget
             {
-                AutoLayout = AutoLayout.DockFill
+                AutoLayout = AutoLayout.DockFill,
+                Font = "font-hires"
             });
 
-            ActivateButton = bottomBar.AddChild(new Widget
+            ActivateButton = BottomBar.AddChild(new Widget
             {
                 Text = "Activate!",
                 Font = "font-hires",
                 Border = "border-button",
                 AutoLayout = AutoLayout.FloatBottomRight,
+                ChangeColorOnHover = true,
                 OnClick = (sender, args) =>
                 {
                     Root.SafeCall(OnActivateClicked, this);
                 }
             });
-
-            Font = "font-hires";
 
             base.Construct();
         }
@@ -54,7 +57,27 @@ namespace DwarfCorp.NewGui
         {
             if (Goal != null)
             {
-                ActivateButton.Hidden = !(Goal.State == Goals.GoalState.Available);
+                if (Goal.State != Goals.GoalState.Available)
+                {
+                    ActivateButton.Hidden = true;
+                    BottomBar.Hidden = true;
+                }
+                else
+                {
+                    BottomBar.Hidden = false;
+                    var checkActivate = Goal.CanActivate(World);
+                    if (checkActivate.Succeeded == false)
+                    {
+                        ActivateButton.Hidden = true;
+                        BottomBar.Text = checkActivate.ErrorMessage;
+                    }
+                    else
+                    {
+                        ActivateButton.Hidden = false;
+                        BottomBar.Text = "";
+                    }
+                }
+
                 Goal.CreateGUI(Description);
             } 
             
