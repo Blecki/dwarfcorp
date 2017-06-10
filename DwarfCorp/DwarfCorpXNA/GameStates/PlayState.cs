@@ -332,10 +332,12 @@ namespace DwarfCorp.GameStates
             if (World.ShowingWorld)
             {
                 /*For regenerating the voxel icon image! Do not delete!*/
-                //Texture2D tex = VoxelLibrary.RenderIcons(Game.GraphicsDevice, World.DefaultShader, World.ChunkManager, 256, 256, 32);
-                //Game.GraphicsDevice.SetRenderTarget(null);
-                //tex.SaveAsPng(new FileStream("voxels.png", FileMode.Create),  256, 256);
-                //Game.Exit();
+                /*
+                Texture2D tex = VoxelLibrary.RenderIcons(Game.GraphicsDevice, World.DefaultShader, World.ChunkManager, 256, 256, 32);
+                Game.GraphicsDevice.SetRenderTarget(null);
+                tex.SaveAsPng(new FileStream("voxels.png", FileMode.Create),  256, 256);
+                Game.Exit();
+                 */
 
 
                 if (!MinimapFrame.Hidden && !GuiRoot.RootItem.Hidden)

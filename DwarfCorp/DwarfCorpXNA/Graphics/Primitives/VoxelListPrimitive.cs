@@ -531,7 +531,7 @@ namespace DwarfCorp
                             if(faceExists[(int)face])
                             {
                                 voxelOnFace.GridPosition = new Vector3(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z);
-                                drawFace[(int)face] =  (voxelOnFace.IsExplored && voxelOnFace.IsEmpty) || !voxelOnFace.IsVisible || 
+                                drawFace[(int)face] =  (voxelOnFace.IsExplored && voxelOnFace.IsEmpty) || voxelOnFace.Type.IsTransparent || !voxelOnFace.IsVisible || 
                                     (voxelOnFace.Type.CanRamp && voxelOnFace.RampType != RampType.None && IsSideFace(face) && 
                                     ShouldDrawFace(face, voxelOnFace.RampType, v.RampType));
 
@@ -539,7 +539,7 @@ namespace DwarfCorp
                             else
                             {
                                 bool success = chunk.Manager.ChunkData.GetNonNullVoxelAtWorldLocation(new Vector3(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z) + chunk.Origin, ref worldVoxel);
-                                    drawFace[(int)face] = !success || (worldVoxel.IsExplored && worldVoxel.IsEmpty) || !worldVoxel.IsVisible ||
+                                    drawFace[(int)face] = !success || (worldVoxel.IsExplored && worldVoxel.IsEmpty) || worldVoxel.Type.IsTransparent || !worldVoxel.IsVisible ||
                                                      (worldVoxel.Type.CanRamp && worldVoxel.RampType != RampType.None &&
                                                       IsSideFace(face) &&
                                                       ShouldDrawFace(face, worldVoxel.RampType, v.RampType));

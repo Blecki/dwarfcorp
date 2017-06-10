@@ -79,6 +79,8 @@ namespace DwarfCorp
             public static ResourceType Cactus = "Cactus";
             public static ResourceType Egg = "Egg";
             public static ResourceType Apple = "Apple";
+            public static ResourceType Glass = "Glass";
+            public static ResourceType Brick = "Brick";
 
             public static implicit operator ResourceType(string value)
             {
@@ -134,10 +136,10 @@ namespace DwarfCorp
             Resources = new Dictionary<ResourceType, Resource>();
             Add(new Resource(ResourceType.Wood, 1.0m, "Sometimes hard to come by! Comes from trees.", new NamedImageFrame(tileSheet, GetRect(3, 1)), 11, Color.White, Resource.ResourceTags.Wood, Resource.ResourceTags.Material, Resource.ResourceTags.Flammable, Resource.ResourceTags.HardMaterial));
             Add(new Resource(ResourceType.Stone, 0.5m, "Dwarf's favorite material! Comes from the earth.", new NamedImageFrame(tileSheet, GetRect(3, 0)), 3, Color.White, Resource.ResourceTags.Stone, Resource.ResourceTags.Material, Resource.ResourceTags.HardMaterial));
-            Add(new Resource(ResourceType.Dirt, 0.1m, "Can't get rid of it! Comes from the earth.",
+            Add(new Resource(ResourceType.Dirt, 0.1m, "Can be used to make bricks.",
                 new NamedImageFrame(tileSheet, GetRect(0, 1)), 8, Color.White, Resource.ResourceTags.Soil,
                 Resource.ResourceTags.Material));
-            Add(new Resource(ResourceType.Sand,  0.2m, "Can't get rid of it! Comes from the earth.", new NamedImageFrame(tileSheet, GetRect(1, 1)), 9, Color.White, Resource.ResourceTags.Soil, Resource.ResourceTags.Material));
+            Add(new Resource(ResourceType.Sand,  0.2m, "Can be used to make glass.", new NamedImageFrame(tileSheet, GetRect(1, 1)), 9, Color.White, Resource.ResourceTags.Material, Resource.ResourceTags.Sand));
             Add(new Resource(ResourceType.Mana, 40.0m, "Mysterious properties!",
                 new NamedImageFrame(tileSheet, GetRect(1, 0)), 1, Color.White, Resource.ResourceTags.Magical, Resource.ResourceTags.Precious, Resource.ResourceTags.SelfIlluminating));
             Add(new Resource(ResourceType.Gold, 50.0m, "Shiny!", new NamedImageFrame(tileSheet, GetRect(0, 0)), 0, Color.White, Resource.ResourceTags.Material, Resource.ResourceTags.Metal, Resource.ResourceTags.Precious, Resource.ResourceTags.HardMaterial));
@@ -239,8 +241,10 @@ namespace DwarfCorp
             // Images are in crafts.png - combine into single sprite sheet.
             Add((new Resource(ResourceType.Trinket, 100.0m, "A crafted item.",
                     new NamedImageFrame(ContentPaths.Entities.DwarfObjects.crafts, 32, 0, 0), 0, Color.White, Resource.ResourceTags.Craft, Resource.ResourceTags.Encrustable)));
-        
 
+            Add(new Resource(ResourceType.Glass, 8.0m, "Made from sand. Allows light to pass through.", new NamedImageFrame(tileSheet, GetRect(4, 0)), 4, Color.White, Resource.ResourceTags.Material, Resource.ResourceTags.HardMaterial, Resource.ResourceTags.Craft) { CanCraft = true, CraftPrereqs = new List<Quantitiy<Resource.ResourceTags>>() { new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Sand) } });
+
+            Add(new Resource(ResourceType.Brick, 4.0m, "Made from dirt. Building material.", new NamedImageFrame(tileSheet, GetRect(5, 0)), 5, Color.White, Resource.ResourceTags.Stone, Resource.ResourceTags.Material, Resource.ResourceTags.HardMaterial, Resource.ResourceTags.Craft) {CanCraft = true, CraftPrereqs = new List<Quantitiy<Resource.ResourceTags>>() {new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Soil)}});
 
 
             //GenerateAnimalProducts();
