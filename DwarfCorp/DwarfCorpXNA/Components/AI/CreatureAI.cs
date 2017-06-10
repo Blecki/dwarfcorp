@@ -74,7 +74,7 @@ namespace DwarfCorp
             PlannerTimer = new Timer(0.1f, false);
             LocalControlTimeout = new Timer(5, false, Timer.TimerMode.Real);
             WanderTimer = new Timer(1, false);
-            Creature.Faction.Minions.Add(this);
+            Creature.Faction.AddMinion(this);
             DrawAIPlan = false;
             WaitingOnResponse = false;
             PlanSubscriber = new PlanSubscriber(planService);
@@ -694,11 +694,14 @@ namespace DwarfCorp
             if (GatherManager.VoxelOrders.Count == 0 && GatherManager.StockOrders.Count > 0)
             {
                 GatherManager.StockOrder order = GatherManager.StockOrders[0];
-                GatherManager.StockOrders.RemoveAt(0);
-                return new ActWrapperTask(new StockResourceAct(this, order.Resource))
+                if (Faction.HasFreeStockpile(order.Resource))
                 {
-                    Priority = Task.PriorityType.Low
-                };
+                    GatherManager.StockOrders.RemoveAt(0);
+                    return new ActWrapperTask(new StockResourceAct(this, order.Resource))
+                    {
+                        Priority = Task.PriorityType.Low
+                    };
+                }
             }
 
             if (GatherManager.VoxelOrders.Count > 0)

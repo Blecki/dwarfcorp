@@ -306,6 +306,13 @@ namespace DwarfCorp
             Hands = new Grabber("hands", Physics, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero);
 
             Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, def.SenseRange, Vector3.Zero);
+            Inventory = new Inventory("Inventory", Physics)
+            {
+                Resources = new ResourceContainer
+                {
+                    MaxResources = def.InventorySize
+                }
+            };
 
             AI = new CreatureAI(this, "AI", Sensors, PlanService);
 
@@ -315,15 +322,6 @@ namespace DwarfCorp
             {
                 Attacks.Add(new Attack(attack));
             }
-
-
-            Inventory = new Inventory("Inventory", Physics)
-            {
-                Resources = new ResourceContainer
-                {
-                    MaxResources = def.InventorySize
-                }
-            };
 
             if (def.HasShadow)
             {
@@ -407,6 +405,13 @@ namespace DwarfCorp
             SelectionCircle = new SelectionCircle(Manager, Physics)
             {
                 IsVisible = false
+            };
+            Inventory = new Inventory("Inventory", Physics)
+            {
+                Resources = new ResourceContainer()
+                {
+                    MaxResources = 128
+                }
             };
         }
 

@@ -1,4 +1,4 @@
-﻿// TaskManager.cs
+// TaskManager.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -229,7 +229,7 @@ namespace DwarfCorp
                 {
                     int assignment = assignments[i];
 
-                    if (assignment >= unassignedGoals.Count)
+                    if (assignment >= unassignedGoals.Count || creatures[i].IsDead)
                     {
                         continue;
                     }
@@ -275,7 +275,7 @@ namespace DwarfCorp
                         cost += 99999;
                     }
 
-                    if (agent.Creature.Status.IsAsleep)
+                    if (agent.Creature.Status.IsAsleep || agent.IsDead || agent.GetEntityRootComponent().IsDead)
                     {
                         cost += 99999;
                     }

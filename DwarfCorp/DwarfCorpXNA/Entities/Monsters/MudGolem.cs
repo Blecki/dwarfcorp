@@ -79,14 +79,6 @@ namespace DwarfCorp
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
-            Inventory = new Inventory("Inventory", Physics)
-            {
-                Resources = new ResourceContainer
-                {
-                    MaxResources = 16
-                }
-            };
-
             var gems = ResourceLibrary.GetResourcesByTag(Resource.ResourceTags.Gem);
             for (int i = 0; i < 16;  i++)
             {

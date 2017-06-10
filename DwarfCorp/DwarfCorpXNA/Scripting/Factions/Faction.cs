@@ -343,6 +343,15 @@ namespace DwarfCorp
             TaskManager.AssignTasks(tasks, Minions);
         }
 
+        public void AssignGather(IEnumerable<Body> items)
+        {
+            List<Task> tasks = (from item in items where AddGatherDesignation(item) select new GatherItemTask(item) as Task).ToList();
+            foreach (CreatureAI creature in Minions)
+            {
+                creature.Tasks.AddRange(tasks);
+            }
+        }
+
         public List<Room> GetRooms()
         {
             return RoomBuilder.DesignatedRooms;
@@ -398,17 +407,16 @@ namespace DwarfCorp
             return Stockpiles.Sum(pile => pile.Resources.MaxResources - pile.Resources.CurrentResourceCount);
         }
 
-        public void AddGatherDesignation(Body resource)
+        public bool AddGatherDesignation(Body resource)
         {
             if (resource.Parent != Components.RootComponent || resource.IsDead)
             {
-                return;
+                return false;
             }
 
-            if (!GatherDesignations.Contains(resource))
-            {
-                GatherDesignations.Add(resource);
-            }
+            if (GatherDesignations.Contains(resource)) return false;
+            GatherDesignations.Add(resource);
+            return true;
         }
 
         public BuildOrder GetClosestDigDesignationTo(Vector3 position)
@@ -615,6 +623,11 @@ namespace DwarfCorp
         public bool HasFreeStockpile()
         {
             return Stockpiles.Any(s => !s.IsFull());
+        }
+
+        public bool HasFreeStockpile(ResourceAmount toPut)
+        {
+            return Stockpiles.Any(s => !s.IsFull() && s.IsAllowed(toPut.ResourceType));
         }
 
         public Body FindNearestItemWithTags(string tag, Vector3 location, bool filterReserved)
@@ -972,6 +985,21 @@ namespace DwarfCorp
 
 
             return desiredRoom;
+        }
+
+        public void AddMinion(CreatureAI minion)
+        {
+            Minions.Add(minion);
+            Inventory targetInventory = minion.GetComponent<Inventory>();
+
+            if (targetInventory != null)
+            {
+                targetInventory.OnDeath += resources =>
+                {
+                    if (resources == null) return;
+                    AssignGather(resources);
+                };
+            }
         }
     }
 
