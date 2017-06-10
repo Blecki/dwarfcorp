@@ -65,12 +65,12 @@ namespace Gum.Widgets
                     meshes.Add(r);
                     var indicatorTile = Root.GetTileSheet("indicator-circle");
                     meshes.Add(Gum.Mesh.Quad()
-                        .Scale(32, 32)
+                        .Scale(16, 16)
                         .Texture(indicatorTile.TileMatrix(0))
-                        .Translate(Rect.Right - 32,
-                            Rect.Bottom - 32));
+                        .Translate(Rect.Right - 16,
+                            Rect.Bottom - 16).Colorize(Color.OrangeRed.ToVector4()));
                     var numberSize = new Rectangle();
-                    var font = Root.GetTileSheet("font-hires");
+                    var font = Root.GetTileSheet("font");
                     var stringMesh = Gum.Mesh.CreateStringMesh(
                         IndicatorValue.ToString(),
                         font,
@@ -78,8 +78,8 @@ namespace Gum.Widgets
                         out numberSize)
                         .Colorize(new Vector4(1, 1, 1, 1));
                     meshes.Add(stringMesh.
-                        Translate(Rect.Right - 16 - (numberSize.Width / 2),
-                        Rect.Bottom - 16 - (numberSize.Height / 2)));
+                        Translate(Rect.Right - 8 - (numberSize.Width / 2),
+                        Rect.Bottom - 8 - (numberSize.Height / 2)));
                     r = Mesh.Merge(meshes.ToArray());
                 }
 
