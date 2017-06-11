@@ -457,6 +457,7 @@
     <Compile Include="Scripting\Rooms\RoomData.cs" />
     <Compile Include="Scripting\Rooms\RoomLibrary.cs" />
     <Compile Include="Scripting\Rooms\RoomTemplate.cs" />
+    <Compile Include="Scripting\Rooms\RoomTypes\AnimalPen.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\BalloonPort.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\BedRoom.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\CommonRoom.cs" />
