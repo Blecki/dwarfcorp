@@ -1197,14 +1197,37 @@ namespace DwarfCorp.GameStates
                                         Text = "Harvest Plants.\n Click and drag to harvest plants.",
                                         Rect = new Rectangle(0, 0, 256, 128),
                                         TextColor = Color.Black.ToVector4(),
-                                        OnClick = (sender, args) =>
+                                    },
+                                    OnClick = (sender, args) =>
                                         {
                                              ChangeTool(GameMaster.ToolMode.Farm);
                                                             ((FarmTool) (Master.Tools[GameMaster.ToolMode.Farm])).Mode =
                                                                 FarmTool.FarmMode.Harvesting;
                                             World.Tutorial("harvest");
                                         }
-                                    }
+                                },
+                                new NewGui.ToolTray.Icon
+                                {
+                                    Text = "Wrng.",
+                                    TextColor = new Vector4(1, 1, 1, 1),
+                                    Tooltip = "Wrangle Animals",
+                                    TextHorizontalAlign = HorizontalAlign.Center,
+                                    TextVerticalAlign = VerticalAlign.Center,
+                                    KeepChildVisible = true,
+                                    ExpansionChild = new Widget()
+                                    {
+                                        Border = "border-fancy",
+                                        Text = "Wrangle Animals.\n Click and drag to wrangle animals.",
+                                        Rect = new Rectangle(0, 0, 256, 128),
+                                        TextColor = Color.Black.ToVector4()
+                                    },
+                                        OnClick = (sender, args) =>
+                                        {
+                                             ChangeTool(GameMaster.ToolMode.Farm);
+                                                            ((FarmTool) (Master.Tools[GameMaster.ToolMode.Farm])).Mode =
+                                                                FarmTool.FarmMode.WranglingAnimals;
+                                            World.Tutorial("wrangle");
+                                        }
                                 },
 
                             }

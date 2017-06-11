@@ -240,7 +240,9 @@ namespace DwarfCorp
         public List<int> XPEvents { get; set; }
 
         public string Biography = "";
-        
+
+        public BoundingBox? PositionConstraint = null;
+
         /// <summary> Add exprience points to the creature. It will level up from time to time </summary>
         public void AddXP(int amount)
         {
@@ -530,6 +532,11 @@ namespace DwarfCorp
             foreach (var history in History)
             {
                 history.Value.Update();
+            }
+
+            if (PositionConstraint.HasValue)
+            {
+                Physics.LocalPosition = MathFunctions.Clamp(Physics.Position, PositionConstraint.Value);
             }
         }
 

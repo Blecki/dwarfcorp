@@ -110,14 +110,16 @@ namespace DwarfCorp
         public string Adult { get; set; }
         public DateTime Birthday { get; set; }
         public Body ParentBody { get; set; }
+        public BoundingBox? PositionConstrain { get; set; }
         public Egg()
         {
             
         }
 
-        public Egg(string adult, ComponentManager manager, Vector3 position) :
+        public Egg(string adult, ComponentManager manager, Vector3 position, BoundingBox? positionConstraint) :
             base(false, manager)
         {
+            PositionConstrain = positionConstraint;
             Adult = adult;
             Birthday = Manager.World.Time.CurrentDate + new TimeSpan(0, 12, 0, 0);
 
@@ -143,7 +145,11 @@ namespace DwarfCorp
 
         public void Hatch()
         {
-            EntityFactory.CreateEntity<Body>(Adult, ParentBody.Position);
+            var adult = EntityFactory.CreateEntity<Body>(Adult, ParentBody.Position);
+            if (PositionConstrain.HasValue)
+            {
+                adult.GetComponent<CreatureAI>().PositionConstraint = PositionConstrain.Value;
+            }
             GetEntityRootComponent().Die();
         }
     }
@@ -471,7 +477,7 @@ namespace DwarfCorp
 
         public void LayEgg()
         {
-            new Egg(this.Name, Manager, Physics.Position);
+            new Egg(this.Name, Manager, Physics.Position, AI.PositionConstraint);
         }
 
         /// <summary> The creature's AI determines how it will behave. </summary>
@@ -657,7 +663,9 @@ namespace DwarfCorp
 
             if (IsPregnant && World.Time.CurrentDate > CurrentPregnancy.EndDate)
             {
-                EntityFactory.CreateEntity<GameComponent>(BabyType, Physics.Position);
+                var baby = EntityFactory.CreateEntity<GameComponent>(BabyType, Physics.Position);
+                if (AI.PositionConstraint.HasValue)
+                    baby.GetComponent<CreatureAI>().PositionConstraint = AI.PositionConstraint.Value;
                 CurrentPregnancy = null;
             }
         }

@@ -74,6 +74,7 @@ namespace DwarfCorp
             GatherDesignations = new List<Body>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
+            WrangleDesignations = new List<Body>();
             RoomBuilder = new RoomBuilder(this, world);
             WallBuilder = new PutDesignator(this, world);
             CraftBuilder = new CraftBuilder(this, world);
@@ -93,6 +94,7 @@ namespace DwarfCorp
             ChopDesignations = new List<Body>();
             AttackDesignations = new List<Body>();
             GatherDesignations = new List<Body>();
+            WrangleDesignations = new List<Body>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
             IsRaceFaction = false;
@@ -146,6 +148,8 @@ namespace DwarfCorp
 
         [JsonIgnore]
         public WorldManager World { get; set; }
+
+        public List<Body> WrangleDesignations { get; set; }
 
         [OnDeserialized]
         public void OnDeserialized(StreamingContext ctx)
@@ -273,20 +277,13 @@ namespace DwarfCorp
                 GuardDesignations.Remove(v);
             }
 
-            List<Body> treesToRemove = ChopDesignations.Where(tree => tree.IsDead).ToList();
-
-            foreach (Body tree in treesToRemove)
+            ChopDesignations.RemoveAll(tree => tree.IsDead);
+            AttackDesignations.RemoveAll(body => body.IsDead);
+            WrangleDesignations.RemoveAll(body => body.IsDead);
+            foreach (var zone in RoomBuilder.DesignatedRooms)
             {
-                ChopDesignations.Remove(tree);
+                zone.Update();
             }
-
-            List<Body> attacksToRemove = AttackDesignations.Where(body => body.IsDead).ToList();
-
-            foreach (Body body in attacksToRemove)
-            {
-                AttackDesignations.Remove(body);
-            }
-
             HandleThreats();
         }
 

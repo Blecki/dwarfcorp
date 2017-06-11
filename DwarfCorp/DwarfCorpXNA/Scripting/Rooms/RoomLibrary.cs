@@ -73,6 +73,7 @@ namespace DwarfCorp
             RegisterType(WorkshopRoom.InitializeData());
             RegisterType(Kitchen.InitializeData());
             RegisterType(Graveyard.InitializeData());
+            RegisterType(AnimalPen.InitializeData());
             staticIntialized = true;
         }
 
@@ -111,6 +112,7 @@ namespace DwarfCorp
       
         public static Room CreateRoom(Faction faction, string name, List<Voxel> designations, bool blueprint, WorldManager world)
         {
+            // TODO(mklingen): omg get rid of this horrible legacy function!
             if (name == BalloonPort.BalloonPortName)
             {
                 return blueprint ? new BalloonPort(faction, true, designations, world) : new BalloonPort(faction, designations, world);
@@ -153,6 +155,12 @@ namespace DwarfCorp
                 return blueprint
                     ? new Graveyard(faction, true, designations, world)
                     : new Graveyard(faction, designations, world);
+            }
+            else if (name == AnimalPen.AnimalPenName)
+            {
+                return blueprint
+                    ? new AnimalPen(true, designations, world) : 
+                      new AnimalPen(designations, world);
             }
             else
             {

@@ -141,6 +141,11 @@ namespace DwarfCorp
 
             return closestIndex;
         }
+
+        public virtual void Update()
+        {
+            
+        }
     }
 
 }
