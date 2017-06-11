@@ -163,7 +163,9 @@ namespace DwarfCorp
 
             NoiseMaker.Noises["Idle"] = new List<string>() { ContentPaths.Audio.frog };
             NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.frog };
-
+            Species = "Frog";
+            CanReproduce = true;
+            BabyType = "Frog";
         }
     }
 }

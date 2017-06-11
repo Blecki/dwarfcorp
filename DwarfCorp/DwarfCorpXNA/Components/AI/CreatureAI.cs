@@ -356,6 +356,31 @@ namespace DwarfCorp
             Manager.World.ChunkManager.ChunkData.SetMaxViewingLevel((int)Position.Y, ChunkManager.SliceMode.Y);
         }
 
+        public void HandleReproduction()
+        {
+            if (!Creature.CanReproduce) return;
+            if (Creature.IsPregnant) return;
+            if (!MathFunctions.RandEvent(0.0001f)) return;
+            if (CurrentTask != null) return;
+            IEnumerable<CreatureAI> potentialMates =
+                Faction.Minions.Where(minion => minion != this && minion.Creature.CanMate(this.Creature));
+            CreatureAI closestMate = null;
+            float closestDist = float.MaxValue;
+
+            foreach (var ai in potentialMates)
+            {
+                var dist = (ai.Position - Position).LengthSquared();
+                if (!(dist < closestDist)) continue;
+                closestDist = dist;
+                closestMate = ai;
+            }
+
+            if (closestMate != null && closestDist < 30)
+            {
+                Tasks.Add(new MateTask(closestMate));
+            }
+        }
+
         /// <summary> Update this creature </summary>
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
@@ -372,6 +397,7 @@ namespace DwarfCorp
             OrderEnemyAttack();
             DeleteBadTasks();
             PreEmptTasks();
+            HandleReproduction();
 
             // Try to go to sleep if we are low on energy and it is night time.
             if (Status.Energy.IsDissatisfied() && Manager.World.Time.IsNight())
@@ -1120,6 +1146,64 @@ namespace DwarfCorp
                     MathFunctions.ClampXZ(Creature.Physics.Velocity, Creature.Physics.IsInLiquid ? Stats.MaxSpeed * 0.5f: Stats.MaxSpeed);
             }
           
+        }
+    }
+
+    [JsonObject(IsReference = true)]
+    public class MateTask : Task
+    {
+        public CreatureAI Them;
+
+        public MateTask()
+        {
+            
+        }
+        public MateTask(CreatureAI closestMate)
+        {
+            Them = closestMate;
+            Name = "Mate with " + closestMate.GlobalID;
+        }
+
+        public override Task Clone()
+        {
+            return new MateTask(Them);
+        }
+
+        public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
+        {
+            return (Them.Position - agent.AI.Position).LengthSquared();
+        }
+
+        public override bool IsFeasible(Creature agent)
+        {
+            return agent.CanMate(Them.Creature);
+        }
+
+        public IEnumerable<Act.Status> Mate(Creature me)
+        {
+            Timer mateTimer = new Timer(5.0f, true);
+            while (!mateTimer.HasTriggered)
+            {
+                me.Physics.Velocity = Vector3.Zero;
+                Them.Physics.Velocity = Vector3.Zero;
+                Them.Physics.LocalPosition = me.Physics.Position*0.1f + Them.Physics.Position*0.9f;
+                if (MathFunctions.RandEvent(0.01f))
+                {
+                    me.NoiseMaker.MakeNoise("Hurt", me.AI.Position, true, 0.1f);
+                    me.World.ParticleManager.Trigger("puff", me.AI.Position, Color.White, 1);
+                }
+                mateTimer.Update(DwarfTime.LastTime);
+                yield return Act.Status.Running;
+            }
+
+            me.Mate(Them.Creature, me.World.Time);
+            yield return Act.Status.Success;
+        }
+
+        public override Act CreateScript(Creature agent)
+        {
+            return new Sequence(new GoToEntityAct(Them.Physics, agent.AI),
+                                new Wrap(() => Mate(agent)));
         }
     }
 

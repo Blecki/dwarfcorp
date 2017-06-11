@@ -217,6 +217,58 @@ namespace DwarfCorp
 
         public CreatureGender Gender { get; set; }
 
+        public bool CanReproduce = false;
+
+        public bool IsPregnant
+        {
+            get { return CurrentPregnancy != null; }
+        }
+
+        public int PregnancyLengthHours = 24;
+        public string Species = "";
+        public string BabyType = "";
+        public class Pregnancy
+        {
+            public DateTime EndDate;
+        }
+
+        public Pregnancy CurrentPregnancy = null;
+
+        public bool CanMate(Creature other)
+        {
+            bool genderWorks = false;
+            switch (Gender)
+            {
+                case CreatureGender.Male:
+                    genderWorks = other.Gender == CreatureGender.Female || other.Gender == CreatureGender.Nonbinary;
+                    break;
+                case CreatureGender.Female:
+                    genderWorks = other.Gender == CreatureGender.Male || other.Gender == CreatureGender.Nonbinary;
+                    break;
+                case CreatureGender.Nonbinary:
+                    genderWorks = Gender != CreatureGender.Nonbinary;
+                    break;
+            }
+
+            return genderWorks && !IsPregnant && other.CanReproduce && other.Species == Species && !other.IsPregnant;
+        }
+
+        public void Mate(Creature other, WorldTime time)
+        {
+            if (IsPregnant || other.IsPregnant) return;
+            if (Gender == CreatureGender.Nonbinary) return;
+            if (Gender != CreatureGender.Female)
+            {
+                other.Mate(this, time);
+                return;
+            }
+
+            CurrentPregnancy = new Pregnancy()
+            {
+                EndDate = time.CurrentDate + new TimeSpan(0, PregnancyLengthHours, 0, 0)
+            };
+        }
+
         public static string Pronoun(CreatureGender gender)
         {
             switch (gender)
@@ -289,6 +341,7 @@ namespace DwarfCorp
                 GameState.Game.Content,
                 def.Name)
         {
+            Gender = RandomGender();
             DrawLifeTimer.HasTriggered = true;
             HasMeat = true;
             HasBones = true;
@@ -382,6 +435,7 @@ namespace DwarfCorp
             string name) :
             base(parent.Manager, name, parent, stats.MaxHealth, 0.0f, stats.MaxHealth)
         {
+            Gender = RandomGender();
             DrawLifeTimer.HasTriggered = true;
             HasMeat = true;
             HasBones = true;
@@ -599,6 +653,12 @@ namespace DwarfCorp
                     LayEgg();
                     EggTimer = new Timer(1200.0f + MathFunctions.Rand(-30.0f, 30.0f), false);
                 }
+            }
+
+            if (IsPregnant && World.Time.CurrentDate > CurrentPregnancy.EndDate)
+            {
+                EntityFactory.CreateEntity<GameComponent>(BabyType, Physics.Position);
+                CurrentPregnancy = null;
             }
         }
 

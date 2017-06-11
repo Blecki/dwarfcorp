@@ -120,7 +120,7 @@ namespace DwarfCorp
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
             //Stats.LastName = TextGenerator.GenerateRandom("$elffamily");
             Stats.Size = 4;
-
+            Species = "Demon";
         }
     }
 

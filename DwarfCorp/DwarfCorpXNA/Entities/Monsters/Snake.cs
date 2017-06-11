@@ -172,6 +172,7 @@ namespace DwarfCorp
             Flames = new Flammable(Manager, "Flames", Physics, this);
             HasBones = true;
             HasMeat = true;
+            Species = "Snake";
         }
 
         public override void Die()

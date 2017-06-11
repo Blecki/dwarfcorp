@@ -164,7 +164,7 @@ namespace DwarfCorp
 
 
             NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.bunny };
-
+            Species = "Chicken";
         }
     }
 }
