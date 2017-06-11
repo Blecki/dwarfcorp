@@ -210,12 +210,16 @@ namespace DwarfCorp
                 m.Creature.SelectionCircle.IsVisible = false;
                 m.Creature.Sprite.DrawSilhouette = false;
             });
-            SelectedMinions.ForEach(m => {
-                                             m.Creature.SelectionCircle.IsVisible = true;
-                                             m.Creature.Sprite.DrawSilhouette = true;
-            }
+            SelectedMinions.ForEach(m =>
+            {
+                m.Creature.SelectionCircle.IsVisible = true;
+                m.Creature.Sprite.DrawSilhouette = true;
+            });
 
-    );
+            foreach (Room zone in GetRooms())
+            {
+                zone.ZoneBodies.RemoveAll(body => body.IsDead);
+            }
             
             // Turned off until a non-O(n^2) collision method is create.
             //CollideMinions(time);

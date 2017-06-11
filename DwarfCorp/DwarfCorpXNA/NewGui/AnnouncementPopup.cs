@@ -25,12 +25,15 @@ namespace DwarfCorp.NewGui
 
         public void QueueAnnouncement(String Announcement, Action ClickAction)
         {
-            Announcements.Add(new QueuedAnnouncement
+            if (Announcements.All(msg => msg.Text != Announcement))
             {
-                Text = Announcement,
-                ClickAction = ClickAction,
-                SecondsVisible = 0
-            });
+                Announcements.Add(new QueuedAnnouncement
+                {
+                    Text = Announcement,
+                    ClickAction = ClickAction,
+                    SecondsVisible = 0
+                });
+            }
         }
 
         public override void Construct()

@@ -248,6 +248,14 @@ namespace DwarfCorp
                 }
 
             }
+
+            FactionPolitics[new Pair<string>("Undead", "Player")].RecentEvents.Add(new PoliticalEvent()
+            {
+                Change = -10.0f,
+                Description = "Test hate",
+                Duration = forever,
+                Time = Now
+            });
         }
 
         public void Initialize(DateTime now)
