@@ -230,7 +230,6 @@ namespace DwarfCorp
                 shiftPressed = false;
             }
 
-            bool goingBackward = false;
             Vector3 velocityToSet = Vector3.Zero;
 
             if (EnableControl)
@@ -244,8 +243,6 @@ namespace DwarfCorp
                 }
                 else if (keys.IsKeyDown(ControlSettings.Mappings.Back) || keys.IsKeyDown(Keys.Down))
                 {
-                    goingBackward = true;
-
                     Vector3 mov = forward;
                     mov.Y = 0;
                     mov.Normalize();

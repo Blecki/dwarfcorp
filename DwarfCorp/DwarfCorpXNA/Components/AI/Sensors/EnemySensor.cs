@@ -68,8 +68,8 @@ namespace DwarfCorp
             SenseRadius = 15 * 15;
         }
 
-        public EnemySensor(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
-            base(manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
+        public EnemySensor(ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
+            base(manager, name, localTransform, boundingBoxExtents, boundingBoxPos)
         {
             Enemies = new List<CreatureAI>();
             OnEnemySensed += EnemySensor_OnEnemySensed;

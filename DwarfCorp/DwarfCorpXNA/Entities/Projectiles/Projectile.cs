@@ -58,7 +58,7 @@ namespace DwarfCorp
         }
 
         public Projectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Health.DamageAmount damage, float size, string asset, string hitParticles, string hitNoise, Body target, bool animated = false, bool singleSprite = false) :
-            base("Projectile", manager.RootComponent, Matrix.CreateTranslation(position), new Vector3(size, size, size), Vector3.One, 1.0f, 1.0f, 1.0f, 1.0f, new Vector3(0, -10, 0))
+            base(manager, "Projectile", Matrix.CreateTranslation(position), new Vector3(size, size, size), Vector3.One, 1.0f, 1.0f, 1.0f, 1.0f, new Vector3(0, -10, 0))
         {
             Target = target;
             HitAnimation = null;
@@ -75,11 +75,12 @@ namespace DwarfCorp
                 spriteSheet.FrameHeight = spriteSheet.FrameWidth;
             }
 
-            Sprite = new Sprite(manager, "Sprite", this, Matrix.CreateRotationY((float)Math.PI * 0.5f),
+            Sprite = AddChild(new Sprite(Manager, "Sprite", Matrix.CreateRotationY((float)Math.PI * 0.5f),
                 spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Fixed
-            };
+            }) as Sprite;
+
             if (animated)
             {
                Sprite.SetSimpleAnimation();
@@ -97,12 +98,12 @@ namespace DwarfCorp
 
             if (!singleSprite)
             {
-                Sprite2 = new Sprite(manager, "Sprite2", Sprite,
-                    Matrix.CreateRotationX((float) Math.PI*0.5f),
+                Sprite2 = Sprite.AddChild(new Sprite(Manager, "Sprite2",
+                    Matrix.CreateRotationX((float)Math.PI * 0.5f),
                     spriteSheet, false)
                 {
                     OrientationType = Sprite.OrientMode.Fixed
-                };
+                }) as Sprite;
 
                 if (animated)
                 {
@@ -114,13 +115,13 @@ namespace DwarfCorp
                 }
             }
             Damage = damage;
-            HitParticles = new ParticleTrigger(hitParticles, manager, "Hit Particles", this,
+            HitParticles = AddChild(new ParticleTrigger(hitParticles, manager, "Hit Particles",
                 Matrix.Identity, new Vector3(size * 0.5f, size * 0.5f, size * 0.5f), Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 SoundToPlay = hitNoise,
                 BoxTriggerTimes = 2
-            };
+            }) as ParticleTrigger;
             DamageRadius = (float)Math.Pow(size*4, 2);
         }
 

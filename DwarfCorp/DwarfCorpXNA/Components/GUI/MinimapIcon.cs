@@ -50,8 +50,8 @@ namespace DwarfCorp
 
         }
 
-        public MinimapIcon(Body parent, NamedImageFrame icon) :
-            base(parent.Manager, "Icon", parent, Matrix.Identity, Vector3.One, Vector3.Zero)
+        public MinimapIcon(ComponentManager Manager, NamedImageFrame icon) :
+            base(Manager, "Icon", Matrix.Identity, Vector3.One, Vector3.Zero)
         {
             Icon = icon;
             IconScale = 1.0f;

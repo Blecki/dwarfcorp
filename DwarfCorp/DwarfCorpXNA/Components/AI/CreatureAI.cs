@@ -63,7 +63,7 @@ namespace DwarfCorp
             string name,
             EnemySensor sensor,
             PlanService planService) :
-            base(name, creature.Physics, creature.Manager)
+            base(name, creature.Manager)
         {
             History = new Dictionary<string, TaskHistory>();
             Movement = new CreatureMovement(creature);

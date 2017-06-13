@@ -184,6 +184,9 @@
     <Compile Include="Entities\BalloonAI.cs" />
     <Compile Include="Entities\Dwarves\Dwarf.cs" />
     <Compile Include="Entities\EntityFactory.cs" />
+    <Compile Include="Entities\Fixtures\Bookshelf.cs" />
+    <Compile Include="Entities\Fixtures\Stove.cs" />
+    <Compile Include="Entities\Fixtures\Barrel.cs" />
     <Compile Include="Entities\Fixtures\Anvil.cs" />
     <Compile Include="Entities\Fixtures\Bed.cs" />
     <Compile Include="Entities\Fixtures\Chair.cs" />

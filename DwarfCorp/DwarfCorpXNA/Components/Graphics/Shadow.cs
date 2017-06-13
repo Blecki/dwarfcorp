@@ -55,7 +55,7 @@ namespace DwarfCorp
         }
 
         public Shadow(GameComponent parent) :
-            this(parent.Manager, "Shadow", parent, Matrix.CreateRotationX((float)Math.PI * 0.5f) * 
+            this(parent.Manager, "Shadow", Matrix.CreateRotationX((float)Math.PI * 0.5f) * 
             Matrix.CreateTranslation(Vector3.Down * 0.5f), new SpriteSheet(ContentPaths.Effects.shadowcircle))
         {
             GlobalScale = 1.0f;
@@ -71,8 +71,8 @@ namespace DwarfCorp
             SetCurrentAnimation("sh");
         }
 
-        public Shadow(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, SpriteSheet spriteSheet) :
-            base(manager, name, parent, localTransform, spriteSheet, false)
+        public Shadow(ComponentManager manager, string name, Matrix localTransform, SpriteSheet spriteSheet) :
+            base(manager, name, localTransform, spriteSheet, false)
         {
             OrientationType = OrientMode.Fixed;
             GlobalScale = LocalTransform.Left.Length();

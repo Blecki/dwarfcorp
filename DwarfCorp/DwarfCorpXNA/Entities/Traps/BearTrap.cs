@@ -61,27 +61,27 @@ namespace DwarfCorp
 
         public BearTrap(ComponentManager manager, Vector3 pos) :
             base(manager,
-            "BearTrap", manager.RootComponent, Matrix.CreateTranslation(pos),
+            "BearTrap", Matrix.CreateTranslation(pos),
             new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, true)
         {
             Allies = manager.World.PlayerFaction;
-            Sensor = new Sensor("Sensor", this, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
+            Sensor = AddChild(new Sensor(manager, "Sensor", Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
             {
                 FireTimer = new Timer(0.5f, false)
-            };
+            }) as Sensor;
             Sensor.OnSensed += Sensor_OnSensed;
             DeathTimer = new Timer(0.6f, true);
-            DeathParticles = new ParticleTrigger("explode", Manager, "DeathParticles", this,
+            DeathParticles = AddChild(new ParticleTrigger("explode", Manager, "DeathParticles", 
                 Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
             {
                 SoundToPlay = ""
-            };
+            }) as ParticleTrigger;
 
             DamageAmount = 200;
             Voxel voxUnder = new Voxel();
             Manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(pos, ref voxUnder);
-            VoxListener = new VoxelListener(Manager, this, Manager.World.ChunkManager, voxUnder);
-            Sprite = new Sprite(Manager, "Sprite", this, Matrix.Identity, new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap), false);
+            VoxListener = AddChild(new VoxelListener(Manager, Manager.World.ChunkManager, voxUnder)) as VoxelListener;
+            Sprite = AddChild(new Sprite(Manager, "Sprite", Matrix.Identity, new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap), false)) as Sprite;
             Sprite.AddAnimation(new Animation(0, ContentPaths.Entities.DwarfObjects.beartrap, 32, 32,  0) {Name = IdleAnimation});
             Sprite.AddAnimation(new Animation(1, ContentPaths.Entities.DwarfObjects.beartrap, 32, 32,  0, 1, 2, 3) {Name = TriggerAnimation, Speeds =  new List<float>() {6.6f}, Loops = true});
             new Shadow(this);

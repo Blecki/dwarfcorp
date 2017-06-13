@@ -233,20 +233,10 @@ namespace DwarfCorp
         /// <param name="name">The name of the component.</param>
         /// <param name="parent">The parent component.</param>
         /// <param name="manager">The component manager.</param>
-        public GameComponent(string name, GameComponent parent, ComponentManager manager) :
+        public GameComponent(string name, ComponentManager manager) :
             this(true, manager)
         {
             Name = name;
-            RemoveFromParent();
-
-            if(parent != null)
-            {
-                parent.AddChild(this);
-            }
-            else
-            {
-                Parent = null;
-            }
         }
 
         /// <summary>
@@ -377,24 +367,20 @@ namespace DwarfCorp
             }
         }
 
+        // Todo: Can these two functions be unified?
         /// <summary> This is intended to be used like Die(), but is garunteed only
         /// to clean up memory, without doing things like animations.</summary>
         public virtual void Delete()
         {
             if (IsDead)
-            {
                 return;
-            }
 
             IsDead = true;
-            List<GameComponent> children = GetAllChildrenRecursive();
 
-            foreach (GameComponent child in children)
-            {
+            foreach (GameComponent child in GetAllChildrenRecursive())
                 child.Delete();
-            }
 
-            RemoveFromParent();
+            if (Parent != null) Parent.RemoveChild(this);
 
             IsActive = false;
             IsVisible = false;
@@ -407,19 +393,14 @@ namespace DwarfCorp
         public virtual void Die()
         {
             if(IsDead)
-            {
                 return;
-            }
 
             IsDead = true;
-            List<GameComponent> children = GetAllChildrenRecursive();
 
-            foreach (GameComponent child in children)
-            {
+            foreach (GameComponent child in GetAllChildrenRecursive())
                 child.Die();
-            }
 
-            RemoveFromParent();
+            if (Parent != null) Parent.RemoveChild(this);
 
             IsActive = false;
             IsVisible = false;
@@ -510,18 +491,6 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        /// Determines whether this component has a child with [the specified identifier].
-        /// </summary>
-        /// <param name="id">The identifier.</param>
-        /// <returns>
-        ///   <c>true</c> if [has child with global identifier] [the specified identifier]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasChildWithGlobalID(uint id)
-        {
-            return Children.Any(child => child.GlobalID == id);
-        }
-
-        /// <summary>
         /// Gets the child with the given global identifier.
         /// </summary>
         /// <param name="id">The identifier.</param>
@@ -532,33 +501,22 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        /// Removes this component from its parent if it exists.
-        /// </summary>
-        public void RemoveFromParent()
-        {
-            if(Parent != null)
-            {
-                Parent.RemoveChild(this);
-            }
-        }
-
-        /// <summary>
         /// Adds the child if it has not been added already.
         /// </summary>
         /// <param name="child">The child.</param>
-        public void AddChild(GameComponent child)
+        public GameComponent AddChild(GameComponent child)
         {
-            if(HasChildWithGlobalID(child.GlobalID))
-            {
-                return;
-            }
-
             lock (Children)
             {
+                if (GetChildWithGlobalID(child.GlobalID) != null)
+                    return child;
+
                 Children.Add(child);
                 child.Parent = this;
                 child.AddToCache(child);
             }
+
+            return child;
         }
 
         /// <summary>
@@ -567,13 +525,11 @@ namespace DwarfCorp
         /// <param name="child">The child.</param>
         public void RemoveChild(GameComponent child)
         {
-            if(!HasChildWithGlobalID(child.GlobalID))
-            {
-                return;
-            }
-
             lock (Children)
             {
+                if (GetChildWithGlobalID(child.GlobalID) == null)
+                    return;
+
                 Children.Remove(child);
                 child.RemoveFromCache(child);
             }

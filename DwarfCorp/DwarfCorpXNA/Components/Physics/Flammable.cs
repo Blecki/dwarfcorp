@@ -48,7 +48,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Flammable : GameComponent, IUpdateableComponent
     {
-        public Body LocParent { get; set; }
         public Health Health { get; set; }
 
         public float Heat { get; set; }
@@ -64,10 +63,10 @@ namespace DwarfCorp
             
         }
 
-        public Flammable(ComponentManager manager, string name, Body parent, Health health) :
-            base(name, parent, manager)
+        // Todo: Discover health component rather than passing it in.
+        public Flammable(ComponentManager manager, string name, Health health) :
+            base(name, manager)
         {
-            LocParent = parent;
             Heat = 0.0f;
             Flashpoint = 100.0f;
             Damage = 5.0f;
@@ -78,10 +77,9 @@ namespace DwarfCorp
         }
 
 
-        public void CheckForLavaAndWater(DwarfTime gameTime, ChunkManager chunks)
+        public void CheckForLavaAndWater(Body Body, DwarfTime gameTime, ChunkManager chunks)
         {
-
-            BoundingBox expandedBoundingBox = LocParent.BoundingBox.Expand(0.5f);
+            BoundingBox expandedBoundingBox = Body.BoundingBox.Expand(0.5f);
 
             List<Voxel> voxels = chunks.GetVoxelsIntersecting(expandedBoundingBox);
 
@@ -102,23 +100,27 @@ namespace DwarfCorp
             }
         }
 
-        public int GetNumTrigger()
+        public int GetNumTrigger(Body Body)
         {
             return
                 (int)
-                    MathFunctions.Clamp((int) (Math.Abs(1*LocParent.BoundingBox.Max.Y - LocParent.BoundingBox.Min.Y)), 1,
+                    MathFunctions.Clamp((int) (Math.Abs(1*Body.BoundingBox.Max.Y - Body.BoundingBox.Min.Y)), 1,
                         3);
         }
 
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (!IsActive) return;
+
+            var body = Parent as Body;
+            System.Diagnostics.Debug.Assert(body != null);
+
             DamageTimer.Update(gameTime);
             CheckLavaTimer.Update(gameTime);
             SoundTimer.Update(gameTime);
             if(CheckLavaTimer.HasTriggered)
             {
-                CheckForLavaAndWater(gameTime, chunks);
+                CheckForLavaAndWater(body, gameTime, chunks);
             }
             Heat *= 0.999f;
 
@@ -128,15 +130,15 @@ namespace DwarfCorp
                     Health.Damage(Damage, Health.DamageType.Fire);
 
                 if(SoundTimer.HasTriggered)
-                    SoundManager.PlaySound(ContentPaths.Audio.fire, LocParent.Position, true, 1.0f);
-                double totalSize = (LocParent.BoundingBox.Max - LocParent.BoundingBox.Min).Length();
+                    SoundManager.PlaySound(ContentPaths.Audio.fire, body.Position, true, 1.0f);
+                double totalSize = (body.BoundingBox.Max - body.BoundingBox.Min).Length();
                 int numFlames = (int) (totalSize / 4.0f) + 1;
 
                 for(int i = 0; i < numFlames; i++)
                 {
-                    Vector3 extents = (LocParent.BoundingBox.Max - LocParent.BoundingBox.Min);
-                    Vector3 randomPoint = LocParent.BoundingBox.Min + new Vector3(extents.X * MathFunctions.Rand(), extents.Y * MathFunctions.Rand(), extents.Z * MathFunctions.Rand());
-                    Manager.World.ParticleManager.Trigger("flame", randomPoint, Color.White, GetNumTrigger());
+                    Vector3 extents = (body.BoundingBox.Max - body.BoundingBox.Min);
+                    Vector3 randomPoint = body.BoundingBox.Min + new Vector3(extents.X * MathFunctions.Rand(), extents.Y * MathFunctions.Rand(), extents.Z * MathFunctions.Rand());
+                    Manager.World.ParticleManager.Trigger("flame", randomPoint, Color.White, GetNumTrigger(body));
                 }
             }
         }

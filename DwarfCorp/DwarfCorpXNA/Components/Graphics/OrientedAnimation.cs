@@ -103,7 +103,7 @@ namespace DwarfCorp
 
         public OrientedAnimation(ComponentManager manager, string name,
             GameComponent parent, Matrix localTransform) :
-                base(manager, name, parent, localTransform, null, false)
+                base(manager, name, localTransform, null, false)
         {
         }
 

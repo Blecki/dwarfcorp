@@ -51,7 +51,7 @@ namespace DwarfCorp
         }
 
         public Wheat(ComponentManager componentManager, Vector3 position) :
-            base("Wheat", componentManager.RootComponent, Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+            base(componentManager, "Wheat", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.gnarled, 32, 32);
             SeedlingFrame = new Point(0, 0);
@@ -67,27 +67,25 @@ namespace DwarfCorp
             };
             Animation tableAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Entities.Plants.wheat), "Wheat", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
 
-            Sprite sprite = new Sprite(componentManager, "sprite", this, Matrix.Identity, spriteSheet, false)
+            Sprite sprite = AddChild(new Sprite(componentManager, "sprite", Matrix.Identity, spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Fixed
-            };
+            }) as Sprite;
             sprite.AddAnimation(tableAnimation);
 
-            Sprite sprite2 = new Sprite(componentManager, "sprite2", this, Matrix.CreateRotationY((float)Math.PI * 0.5f), spriteSheet, false)
+            Sprite sprite2 = AddChild(new Sprite(componentManager, "sprite2", Matrix.CreateRotationY((float)Math.PI * 0.5f), spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Fixed
-            };
+            }) as Sprite;
             sprite2.AddAnimation(tableAnimation);
 
             Voxel voxelUnder = new Voxel();
             bool success = componentManager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder);
 
             if (success)
-            {
-                VoxelListener listener = new VoxelListener(componentManager, this, componentManager.World.ChunkManager, voxelUnder);
-            }
-
-            Inventory inventory = new Inventory("Inventory", this)
+                AddChild(new VoxelListener(componentManager, componentManager.World.ChunkManager, voxelUnder));
+            
+            Inventory inventory = AddChild(new Inventory(componentManager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)
             {
                 Resources = new ResourceContainer()
                 {
@@ -100,10 +98,10 @@ namespace DwarfCorp
                         }
                     }
                 }
-            };
+            }) as Inventory;
 
-            Health health = new Health(componentManager, "HP", this, 30, 0.0f, 30);
-            new Flammable(componentManager, "Flames", this, health);
+            var health = AddChild(new Health(componentManager, "HP", 30, 0.0f, 30)) as Health;
+            AddChild(new Flammable(componentManager, "Flames", health));
 
             tableAnimation.Play();
             Tags.Add("Wheat");

@@ -85,13 +85,13 @@ namespace DwarfCorp
 
             foreach (EmitterData emitter in data)
             {
-                emitters.Add(new ParticleEmitter(Components, name, Components.RootComponent, Matrix.Identity, emitter)
+                emitters.Add(Components.RootComponent.AddChild(new ParticleEmitter(Components, name, Matrix.Identity, emitter)
                 {
                     LightsWithVoxels = false,
                     DepthSort = false,
                     Tint = Color.White,
                     FrustrumCull = false
-                });
+                }) as ParticleEmitter);
             }
             Effects[name] = new ParticleEffect()
             {

@@ -518,7 +518,7 @@ namespace DwarfCorp
             }
 
             ComponentManager = new ComponentManager(this, CompanyInformation, natives);
-            ComponentManager.RootComponent = new Body(ComponentManager, "root", null, Matrix.Identity, Vector3.Zero,
+            ComponentManager.RootComponent = new Body(ComponentManager, "root", Matrix.Identity, Vector3.Zero,
                 Vector3.Zero, false);
             Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
             Vector3 extents = new Vector3(1500, 1500, 1500);

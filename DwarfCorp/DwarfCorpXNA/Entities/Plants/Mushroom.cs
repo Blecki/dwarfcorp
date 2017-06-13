@@ -55,7 +55,7 @@ namespace DwarfCorp
                         string asset, 
                         ResourceLibrary.ResourceType resource, 
                         int numRelease, bool selfIlluminate) :
-            base("Mushroom", componentManager.RootComponent, Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+            base(componentManager, "Mushroom", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.deadbush, 32, 32);
             SeedlingFrame = new Point(0, 0);
@@ -71,29 +71,27 @@ namespace DwarfCorp
             };
             Animation animation = new Animation(GameState.Game.GraphicsDevice, spriteSheet, "Mushroom", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
 
-            Sprite sprite = new Sprite(componentManager, "sprite", this, Matrix.Identity, spriteSheet, false)
+            var sprite = AddChild(new Sprite(Manager, "sprite", Matrix.Identity, spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Fixed,
                 LightsWithVoxels = !selfIlluminate
-            };
+            }) as Sprite;
             sprite.AddAnimation(animation);
 
-            Sprite sprite2 = new Sprite(componentManager, "sprite2", this, Matrix.CreateRotationY((float)Math.PI * 0.5f), spriteSheet, false)
+            var sprite2 = AddChild(new Sprite(Manager, "sprite2", Matrix.CreateRotationY((float)Math.PI * 0.5f), spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Fixed,
                 LightsWithVoxels = !selfIlluminate
-            };
+            }) as Sprite;
             sprite2.AddAnimation(animation);
 
             Voxel voxelUnder = new Voxel();
             bool success = componentManager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder);
 
             if (success)
-            {
-                VoxelListener listener = new VoxelListener(componentManager.World.ComponentManager, this, componentManager.World.ChunkManager, voxelUnder);
-            }
+                AddChild(new VoxelListener(componentManager.World.ComponentManager, componentManager.World.ChunkManager, voxelUnder));
 
-            Inventory inventory = new Inventory("Inventory", this)
+            Inventory inventory = AddChild(new Inventory(componentManager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)
             {
                 Resources = new ResourceContainer()
                 {
@@ -106,10 +104,10 @@ namespace DwarfCorp
                         }
                     }
                 }
-            };
+            }) as Inventory;
 
-            Health health = new Health(componentManager.World.ComponentManager, "HP", this, 30, 0.0f, 30);
-            new Flammable(componentManager.World.ComponentManager, "Flames", this, health);
+            var health = AddChild(new Health(componentManager.World.ComponentManager, "HP", 30, 0.0f, 30)) as Health;
+            AddChild(new Flammable(componentManager.World.ComponentManager, "Flames", health));
 
             animation.Play();
             Tags.Add("Mushroom");

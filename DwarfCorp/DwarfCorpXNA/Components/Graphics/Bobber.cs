@@ -46,7 +46,6 @@ namespace DwarfCorp
     /// </summary>
     public class Bobber : GameComponent, IUpdateableComponent
     {
-        public Body Component { get; set; }
         public float Magnitude { get; set; }
         public float Rate { get; set; }
         public float Offset { get; set; }
@@ -57,30 +56,31 @@ namespace DwarfCorp
             
         }
 
-        public Bobber(float mag, float rate, float offset, Body component) :
-            base("Sinmover", component, component.Manager)
+        public Bobber(ComponentManager Manager, float mag, float rate, float offset, float OrigY) :
+            base("Sinmover", Manager)
         {
             Magnitude = mag;
             Rate = rate;
             Offset = offset;
-            Component = component;
-            OrigY = component.LocalTransform.Translation.Y;
+            this.OrigY = OrigY;
+            //OrigY = component.LocalTransform.Translation.Y;
         }
 
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            var body = Parent as Body;
+            System.Diagnostics.Debug.Assert(body != null);
+
             float x = (float)Math.Sin((gameTime.TotalGameTime.TotalSeconds + Offset) * Rate) * Magnitude;
-            Matrix trans = Component.LocalTransform;
+            Matrix trans = body.LocalTransform;
 
             trans.Translation = new Vector3(trans.Translation.X, OrigY + x, trans.Translation.Z);
-            Component.LocalTransform = trans;
+            body.LocalTransform = trans;
 
-            Component.HasMoved = true;
+            body.HasMoved = true;
 
-            if(Component.Parent is Body)
-            {
-                (Component.Parent as Body).HasMoved = true;
-            }
+            if (Parent.Parent is Body)
+                (Parent.Parent as Body).HasMoved = true;
         }
     }
 }

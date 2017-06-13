@@ -54,9 +54,13 @@ namespace DwarfCorp
         }
 
         public MudGolem(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, Vector3 position) :
-            base(stats, allies, planService, faction, new Physics("MudGolem", manager.RootComponent, Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0)),
+            base(manager, stats, allies, planService, faction, 
                  chunks, graphics, content, name)
         {
+            Physics = new Physics(Manager, "MudGolem", Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
+
+            Physics.AddChild(this);
+
             Initialize();
         }
 
@@ -71,21 +75,21 @@ namespace DwarfCorp
                 Sprite.AddAnimation(animation.Clone());
             }
 
-            Hands = new Grabber("hands", Physics, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero);
+            Hands = Physics.AddChild(new Grabber("hands", Manager, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero)) as Grabber;
 
-            Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero);
+            Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
             AI = new MudGolemAI(this, Sensors, Manager.World.PlanService) { Movement = { IsSessile = true, CanFly = false, CanSwim = false, CanWalk = false, CanClimb = false, CanClimbWalls = false} };
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
-            Inventory = new Inventory("Inventory", Physics)
+            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.BoundingBoxPos)
             {
                 Resources = new ResourceContainer
                 {
                     MaxResources = 16
                 }
-            };
+            }) as Inventory;
 
             var gems = ResourceLibrary.GetResourcesByTag(Resource.ResourceTags.Gem);
             for (int i = 0; i < 16;  i++)
@@ -101,12 +105,12 @@ namespace DwarfCorp
        
             Physics.Tags.Add("MudGolem");
             Physics.Mass = 100;
-            DeathParticleTrigger = new ParticleTrigger("dirt_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
+            DeathParticleTrigger = Physics.AddChild(new ParticleTrigger("dirt_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 5,
                 SoundToPlay = ContentPaths.Audio.gravel
-            };
+            }) as ParticleTrigger;
 
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
@@ -115,7 +119,7 @@ namespace DwarfCorp
             };
 
 
-            MinimapIcon minimapIcon = new MinimapIcon(Physics, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 3, 0));
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 3, 0)));
 
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
             //Stats.LastName = TextGenerator.GenerateRandom("$elffamily");

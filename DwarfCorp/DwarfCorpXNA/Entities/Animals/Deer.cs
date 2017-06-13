@@ -56,6 +56,7 @@ namespace DwarfCorp
         public Deer(string sprites, Vector3 position, ComponentManager manager, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, string name):
             base
             (
+                manager,
                 new CreatureStats
                 {
                     Dexterity = 12,
@@ -69,19 +70,22 @@ namespace DwarfCorp
                 "Herbivore",
                 manager.World.PlanService,
                 manager.Factions.Factions["Herbivore"],
-                new Physics
+                
+                chunks, graphics, content, name
+            )
+        {
+            Physics = new Physics
                 (
+                    manager,
                     "A Deer",
-                    manager.RootComponent,
                     Matrix.CreateTranslation(position),
                     new Vector3(0.3f, 0.3f, 0.3f),
                     new Vector3(0, 0, 0),
                     1.0f, 1.0f, 0.999f, 0.999f,
                     new Vector3(0, -10, 0)
-                ),
-                chunks, graphics, content, name
-            )
-        {
+                );
+
+            Physics.AddChild(this);
             Initialize(new SpriteSheet(sprites));
         }
 
@@ -120,29 +124,29 @@ namespace DwarfCorp
             Sprite.AddAnimation(CharacterMode.Jumping, OrientedAnimation.Orientation.Backward, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 11, 0, 1);
 
             // Add hands
-            Hands = new Grabber("hands", Physics, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero);
+            Hands = Physics.AddChild(new Grabber("hands", Manager, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero)) as Grabber;
 
             // Add sensor
-            Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero);
+            Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
             // Add AI
             AI = new PacingCreatureAI(this, "Deer AI", Sensors, PlanService);
 
             Attacks = new List<Attack>{new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.pick, ContentPaths.Effects.hit)};
 
-            Inventory = new Inventory("Inventory", Physics)
+            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.BoundingBoxPos)
             {
                 Resources = new ResourceContainer
                 {
                     MaxResources = 1
                 }
-            };
+            }) as Inventory;
 
             // Shadow
             Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
             shadowTransform.Translation = new Vector3(0.0f, -.25f, 0.0f);
             SpriteSheet shadowTexture = new SpriteSheet(ContentPaths.Effects.shadowcircle);
-            Shadow = new Shadow(Manager, "Shadow", Physics, shadowTransform, shadowTexture);
+            Shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform, shadowTexture)) as Shadow;
 
             List<Point> shP = new List<Point>
             {
@@ -154,15 +158,15 @@ namespace DwarfCorp
             Shadow.SetCurrentAnimation("sh");
 
             // The bird will emit a shower of blood when it dies
-            DeathParticleTrigger = new ParticleTrigger("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
+            DeathParticleTrigger = Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 1,
                 BoxTriggerTimes = 10
-            };
+            }) as ParticleTrigger;
 
             // The bird is flammable, and can die when exposed to fire.
-            Flames = new Flammable(Manager, "Flames", Physics, this);
+            Flames = Physics.AddChild(new Flammable(Manager, "Flames", this)) as Flammable;
 
             // Tag the physics component with some information 
             // that can be used later

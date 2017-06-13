@@ -55,20 +55,18 @@ namespace DwarfCorp
             IsGrown = false;
         }
 
-        public Seedling(Body adult, Vector3 position, SpriteSheet asset, Point frame) :
-            base(position, asset, frame, adult.Manager.World.ComponentManager.RootComponent)
+        public Seedling(ComponentManager Manager, Body adult, Vector3 position, SpriteSheet asset, Point frame) :
+            base(Manager, position, asset, frame)
         {
             IsGrown = false;
             Adult = adult;
             Name = adult.Name + " seedling";
-            Health health = new Health(adult.Manager.World.ComponentManager, "HP", this, 1.0f, 0.0f, 1.0f);
-            new Flammable(adult.Manager.World.ComponentManager, "Flames", this, health);
+            var health = AddChild(new Health(Manager, "HP", 1.0f, 0.0f, 1.0f)) as Health;
+            AddChild(new Flammable(Manager, "Flames", health));
             Voxel voxelUnder = new Voxel();
 
             if (Manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
-            {
-                VoxelListener listener = new VoxelListener(Manager.World.ComponentManager, this, Manager.World.ChunkManager, voxelUnder);
-            }
+                AddChild(new VoxelListener(Manager, Manager.World.ChunkManager, voxelUnder));
         }
 
         public override void Delete()
@@ -121,9 +119,9 @@ namespace DwarfCorp
             GrowthHours = 12;
         }
 
-        public Plant(string name, GameComponent parent, Matrix localTransform, Vector3 bboxSize,
+        public Plant(ComponentManager Manager, string name, Matrix localTransform, Vector3 bboxSize,
             Vector3 bboxLocation) :
-            base(parent.Manager, name, parent, localTransform, bboxSize, bboxLocation)
+            base(Manager, name, localTransform, bboxSize, bboxLocation)
         {
             GrowthDays = 0;
             GrowthHours = 12;
@@ -135,10 +133,10 @@ namespace DwarfCorp
             SetActiveRecursive(false);
             SetVisibleRecursive(false);
 
-            return new Seedling(this, LocalTransform.Translation, Seedlingsheet, SeedlingFrame)
+            return AddChild(new Seedling(Manager, this, LocalTransform.Translation, Seedlingsheet, SeedlingFrame)
             {
                 FullyGrownDay = Manager.World.Time.CurrentDate.AddHours(GrowthHours).AddDays(GrowthDays)
-            };
+            }) as Seedling;
         }
     }
 
@@ -150,7 +148,7 @@ namespace DwarfCorp
         public Tree() { }
 
         public Tree(string name, ComponentManager manager, Vector3 position, string asset, ResourceLibrary.ResourceType seed, float treeSize) :
-            base(name, manager.World.ComponentManager.RootComponent, Matrix.Identity, new Vector3(treeSize * 2, treeSize * 3, treeSize * 2), new Vector3(treeSize * 0.5f, treeSize * 0.25f, treeSize * 0.5f))
+            base(manager, name, Matrix.Identity, new Vector3(treeSize * 2, treeSize * 3, treeSize * 2), new Vector3(treeSize * 0.5f, treeSize * 0.25f, treeSize * 0.5f))
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
             SeedlingFrame = new Point(0, 0);
@@ -160,11 +158,11 @@ namespace DwarfCorp
             matrix.Translation = position;
             LocalTransform = matrix;
 
-            new Mesh("Model", this, Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(treeSize, treeSize, treeSize) * Matrix.CreateTranslation(new Vector3(0.7f, 0.0f, 0.7f)), asset, false);
+            AddChild(new Mesh(manager, "Model", Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(treeSize, treeSize, treeSize) * Matrix.CreateTranslation(new Vector3(0.7f, 0.0f, 0.7f)), asset, false));
 
-            Health health = new Health(componentManager, "HP", this, 100.0f * treeSize, 0.0f, 100.0f * treeSize);
-            
-            new Flammable(componentManager, "Flames", this, health);
+            var health = AddChild(new Health(componentManager, "HP", 100.0f * treeSize, 0.0f, 100.0f * treeSize)) as Health;
+
+            AddChild(new Flammable(componentManager, "Flames", health));
 
 
             Tags.Add("Vegetation");
@@ -174,17 +172,15 @@ namespace DwarfCorp
             Voxel voxelUnder = new Voxel();
 
             if (Manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
-            {
-                new VoxelListener(componentManager, this, componentManager.World.ChunkManager, voxelUnder);
-            }
+                AddChild(new VoxelListener(componentManager, componentManager.World.ChunkManager, voxelUnder));
 
-            Inventory inventory = new Inventory("Inventory", this)
+            Inventory inventory = AddChild(new Inventory(componentManager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)
             {
                 Resources = new ResourceContainer
                 {
                     MaxResources = 500
                 }
-            };
+            }) as Inventory;
 
             inventory.Resources.AddResource(new ResourceAmount()
             {
@@ -200,11 +196,11 @@ namespace DwarfCorp
             });
 
 
-            Particles = new ParticleTrigger("Leaves", componentManager, "LeafEmitter", this,
+            Particles = AddChild(new ParticleTrigger("Leaves", componentManager, "LeafEmitter",
                 Matrix.Identity, new Vector3(treeSize * 2, treeSize * 3, treeSize * 2), new Vector3(treeSize * 0.5f, treeSize * 0.25f, treeSize * 0.5f))
             {
                 SoundToPlay = ContentPaths.Audio.vegetation_break
-            };
+            }) as ParticleTrigger;
 
 
             AddToCollisionManager = true;

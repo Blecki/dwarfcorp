@@ -40,6 +40,8 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
+// TODO: Split file
+
 namespace DwarfCorp
 {
     ///<summary>
@@ -275,119 +277,23 @@ namespace DwarfCorp
             Gender = RandomGender();
         }
 
-        public Creature(ComponentManager manager, Vector3 pos, CreatureDef def, string creatureClass, int creatureLevel, string faction) :
-            this(new CreatureStats(EmployeeClass.Classes[creatureClass], creatureLevel),
-                faction,
-                manager.World.PlanService,
-                manager.World.ComponentManager.Factions.Factions[faction],
-                new Physics(def.Name, manager.RootComponent, Matrix.CreateTranslation(pos), def.Size,
-                    new Vector3(0, -def.Size.Y * 0.5f, 0), def.Mass, 1.0f, 0.999f, 0.999f, Vector3.UnitY * -10,
-                    Physics.OrientMode.RotateY),
-                manager.World.ChunkManager,
-                GameState.Game.GraphicsDevice,
-                GameState.Game.Content,
-                def.Name)
-        {
-            DrawLifeTimer.HasTriggered = true;
-            HasMeat = true;
-            HasBones = true;
-            EmployeeClass employeeClass = EmployeeClass.Classes[creatureClass];
-            Physics.Orientation = Physics.OrientMode.RotateY;
-            Sprite = new CharacterSprite(Graphics, Manager, "Sprite", Physics,
-                Matrix.CreateTranslation(def.SpriteOffset));
-
-            foreach (Animation animation in employeeClass.Animations)
-            {
-                Sprite.AddAnimation(animation.Clone());
-            }
-
-            Hands = new Grabber("hands", Physics, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero);
-
-            Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, def.SenseRange, Vector3.Zero);
-
-            AI = new CreatureAI(this, "AI", Sensors, PlanService);
-
-            Attacks = new List<Attack>();
-
-            foreach (Attack attack in employeeClass.Attacks)
-            {
-                Attacks.Add(new Attack(attack));
-            }
-
-
-            Inventory = new Inventory("Inventory", Physics)
-            {
-                Resources = new ResourceContainer
-                {
-                    MaxResources = def.InventorySize
-                }
-            };
-
-            if (def.HasShadow)
-            {
-                Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
-                shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
-
-                Shadow = new Shadow(Manager, "Shadow", Physics, shadowTransform,
-                    new SpriteSheet(ContentPaths.Effects.shadowcircle))
-                {
-                    GlobalScale = def.ShadowScale
-                };
-                var shP = new List<Point>
-                {
-                    new Point(0, 0)
-                };
-                var shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle),
-                    "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
-                Shadow.AddAnimation(shadowAnimation);
-                shadowAnimation.Play();
-                Shadow.SetCurrentAnimation("sh");
-            }
-            Physics.Tags.AddRange(def.Tags);
-
-            DeathParticleTrigger = new ParticleTrigger(def.BloodParticle, Manager, "Death Gibs", Physics,
-                Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 1,
-                BoxTriggerTimes = 10,
-                SoundToPlay = ContentPaths.Entities.Dwarf.Audio.dwarfhurt1,
-            };
-
-            if (def.IsFlammable)
-            {
-                Flames = new Flammable(Manager, "Flames", Physics, this);
-            }
-
-            NoiseMaker.Noises["Hurt"] = def.HurtSounds;
-            NoiseMaker.Noises["Chew"] = new List<string> { def.ChewSound };
-            NoiseMaker.Noises["Jump"] = new List<string> { def.JumpSound };
-
-            var minimapIcon = new MinimapIcon(Physics, def.MinimapIcon);
-            Stats.FullName =
-                TextGenerator.GenerateRandom(Manager.World.ComponentManager.Factions.Races[def.Race].NameTemplates);
-            Stats.CanSleep = def.CanSleep;
-            Stats.CanEat = def.CanEat;
-            AI.TriggersMourning = def.TriggersMourning;
-        }
-
-        public Creature(CreatureStats stats,
+        public Creature(
+            ComponentManager Manager,
+            CreatureStats stats,
             string allies,
             PlanService planService,
             Faction faction,
-            Physics parent,
             ChunkManager chunks,
             GraphicsDevice graphics,
             ContentManager content,
             string name) :
-            base(parent.Manager, name, parent, stats.MaxHealth, 0.0f, stats.MaxHealth)
+            base(Manager, name, stats.MaxHealth, 0.0f, stats.MaxHealth)
         {
             DrawLifeTimer.HasTriggered = true;
             HasMeat = true;
             HasBones = true;
             Buffs = new List<Buff>();
             IsOnGround = true;
-            Physics = parent;
             Stats = stats;
             Chunks = chunks;
             Graphics = graphics;
@@ -401,10 +307,10 @@ namespace DwarfCorp
             IsHeadClear = true;
             NoiseMaker = new NoiseMaker();
             OverrideCharacterMode = false;
-            SelectionCircle = new SelectionCircle(Manager, Physics)
+            SelectionCircle = AddChild(new SelectionCircle(Manager)
             {
                 IsVisible = false
-            };
+            }) as SelectionCircle;
         }
 
         public void LayEgg()

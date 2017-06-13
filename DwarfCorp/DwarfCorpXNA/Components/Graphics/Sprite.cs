@@ -70,8 +70,8 @@ namespace DwarfCorp
         public float BillboardRotation { get; set; }
         public bool EnableWind { get; set; }
 
-        public Sprite(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, SpriteSheet spriteSheet, bool addToCollisionManager) :
-            base(name, parent, localTransform, Vector3.Zero, Vector3.Zero, addToCollisionManager)
+        public Sprite(ComponentManager Manager, string name, Matrix localTransform, SpriteSheet spriteSheet, bool addToCollisionManager) :
+            base(Manager, name, localTransform, Vector3.Zero, Vector3.Zero, addToCollisionManager)
         {
             SpriteSheet = spriteSheet;
             Animations = new Dictionary<string, Animation>();

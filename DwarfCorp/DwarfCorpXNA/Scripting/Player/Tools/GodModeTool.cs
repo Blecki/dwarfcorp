@@ -124,12 +124,12 @@ namespace DwarfCorp
 
                         if (type == "Magic")
                         {
-                            new VoxelListener(Player.World.ComponentManager, Player.World.ComponentManager.RootComponent,
-                                Player.World.ChunkManager, vox)
-                            {
-                                DestroyOnTimer = true,
-                                DestroyTimer = new Timer(5.0f + MathFunctions.Rand(-0.5f, 0.5f), true)
-                            };
+                            Player.World.ComponentManager.RootComponent.AddChild(
+                                new VoxelListener(Player.World.ComponentManager, Player.World.ChunkManager, vox)
+                                {
+                                    DestroyOnTimer = true,
+                                    DestroyTimer = new Timer(5.0f + MathFunctions.Rand(-0.5f, 0.5f), true)
+                                });
                         }
 
 
