@@ -57,8 +57,8 @@ namespace DwarfCorp
 
             AddChild(new Mesh(componentManager, "Model", Matrix.CreateScale(bushSize, bushSize, bushSize), asset, false));
 
-            var health = AddChild(new Health(componentManager, "HP", 30 * bushSize, 0.0f, 30 * bushSize)) as Health;
-            AddChild(new Flammable(componentManager, "Flames", health));
+            AddChild(new Health(componentManager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
+            AddChild(new Flammable(componentManager, "Flames"));
 
             Voxel voxelUnder = new Voxel();
 
@@ -103,8 +103,8 @@ namespace DwarfCorp
 
             AddChild(new Mesh(componentManager, "Model", Matrix.CreateScale(bushSize, bushSize, bushSize), asset, false));
 
-            var health = AddChild(new Health(componentManager, "HP", 30 * bushSize, 0.0f, 30 * bushSize)) as Health;
-            AddChild(new Flammable(componentManager, "Flames", health));
+            AddChild(new Health(componentManager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
+            AddChild(new Flammable(componentManager, "Flames"));
 
             Voxel voxelUnder = new Voxel();
 

@@ -100,8 +100,8 @@ namespace DwarfCorp
                 }
             }) as Inventory;
 
-            var health = AddChild(new Health(componentManager, "HP", 30, 0.0f, 30)) as Health;
-            AddChild(new Flammable(componentManager, "Flames", health));
+            AddChild(new Health(componentManager, "HP", 30, 0.0f, 30));
+            AddChild(new Flammable(componentManager, "Flames"));
 
             tableAnimation.Play();
             Tags.Add("Wheat");

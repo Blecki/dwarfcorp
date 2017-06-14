@@ -108,7 +108,7 @@ namespace DwarfCorp
                 TriggerAmount = 5,
                 SoundToPlay = ContentPaths.Audio.gravel
             }) as ParticleTrigger;
-            Flames = Physics.AddChild(new Flammable(Manager, "Flames", this)) as Flammable;
+            Physics.AddChild(new Flammable(Manager, "Flames"));
 
 
             NoiseMaker.Noises["Hurt"] = new List<string>

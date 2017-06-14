@@ -329,8 +329,6 @@ namespace DwarfCorp
         public SelectionCircle SelectionCircle { get; set; }
         /// <summary> Finds enemies nearby and triggers when it sees them </summary>
         public EnemySensor Sensors { get; set; }
-        /// <summary> Spawns fire and kills the creature when it is damaged </summary>
-        public Flammable Flames { get; set; }
         /// <summary> Creates particles when the creature dies. </summary>
         public ParticleTrigger DeathParticleTrigger { get; set; }
         /// <summary> Allows the creature to grab other objects </summary>

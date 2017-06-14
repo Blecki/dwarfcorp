@@ -177,7 +177,7 @@ namespace DwarfCorp
                 BoxTriggerTimes = 10,
                 SoundToPlay = ContentPaths.Entities.Dwarf.Audio.dwarfhurt1,
             }) as ParticleTrigger;
-            Flames = Physics.AddChild(new Flammable(Manager, "Flames", this)) as Flammable;
+            Physics.AddChild(new Flammable(Manager, "Flames"));
             HasBones = true;
             HasMeat = true;
         }

@@ -106,8 +106,8 @@ namespace DwarfCorp
                 }
             }) as Inventory;
 
-            var health = AddChild(new Health(componentManager.World.ComponentManager, "HP", 30, 0.0f, 30)) as Health;
-            AddChild(new Flammable(componentManager.World.ComponentManager, "Flames", health));
+            AddChild(new Health(componentManager.World.ComponentManager, "HP", 30, 0.0f, 30));
+            AddChild(new Flammable(componentManager.World.ComponentManager, "Flames"));
 
             animation.Play();
             Tags.Add("Mushroom");

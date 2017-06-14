@@ -84,9 +84,8 @@ namespace DwarfCorp
 
             if (type.IsFlammable)
             {
-                var health = AddChild(new Health(Manager, "health", 10.0f, 0.0f, 10.0f)) as Health;
-                AddChild(new Flammable(Manager, "Flames", health));
-
+                AddChild(new Health(Manager, "health", 10.0f, 0.0f, 10.0f));
+                AddChild(new Flammable(Manager, "Flames"));
             }
         }
     }

@@ -61,8 +61,8 @@ namespace DwarfCorp
             IsGrown = false;
             Adult = adult;
             Name = adult.Name + " seedling";
-            var health = AddChild(new Health(Manager, "HP", 1.0f, 0.0f, 1.0f)) as Health;
-            AddChild(new Flammable(Manager, "Flames", health));
+            AddChild(new Health(Manager, "HP", 1.0f, 0.0f, 1.0f));
+            AddChild(new Flammable(Manager, "Flames"));
             Voxel voxelUnder = new Voxel();
 
             if (Manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
@@ -160,9 +160,9 @@ namespace DwarfCorp
 
             AddChild(new Mesh(manager, "Model", Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(treeSize, treeSize, treeSize) * Matrix.CreateTranslation(new Vector3(0.7f, 0.0f, 0.7f)), asset, false));
 
-            var health = AddChild(new Health(componentManager, "HP", 100.0f * treeSize, 0.0f, 100.0f * treeSize)) as Health;
+            AddChild(new Health(componentManager, "HP", 100.0f * treeSize, 0.0f, 100.0f * treeSize));
 
-            AddChild(new Flammable(componentManager, "Flames", health));
+            AddChild(new Flammable(componentManager, "Flames"));
 
 
             Tags.Add("Vegetation");

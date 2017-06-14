@@ -165,7 +165,7 @@ namespace DwarfCorp
             }) as ParticleTrigger;
 
             // The bird is flammable, and can die when exposed to fire.
-            Flames = Physics.AddChild(new Flammable(Manager, "Flames", this)) as Flammable;
+            Physics.AddChild(new Flammable(Manager, "Flames"));
 
             // Tag the physics component with some information 
             // that can be used later

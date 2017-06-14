@@ -1,35 +1,3 @@
-// Flammable.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,7 +16,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Flammable : GameComponent, IUpdateableComponent
     {
-        public Health Health { get; set; }
+        public Health Health { get; private set; }
 
         public float Heat { get; set; }
         public float Flashpoint { get; set; }
@@ -64,13 +32,13 @@ namespace DwarfCorp
         }
 
         // Todo: Discover health component rather than passing it in.
-        public Flammable(ComponentManager manager, string name, Health health) :
+        public Flammable(ComponentManager manager, string name) :
             base(name, manager)
         {
+            Health = null;
             Heat = 0.0f;
             Flashpoint = 100.0f;
             Damage = 5.0f;
-            Health = health;
             CheckLavaTimer = new Timer(1.0f, false);
             SoundTimer = new Timer(1.0f, false);
             DamageTimer = new Timer(1.0f, false);
@@ -110,6 +78,10 @@ namespace DwarfCorp
 
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            if (Health == null)
+                Health = Parent.EnumerateAll().Where(c => c is Health).FirstOrDefault() as Health;
+            System.Diagnostics.Debug.Assert(Health != null, "Flammable could not find a Health component.");
+
             if (!IsActive) return;
 
             var body = Parent as Body;

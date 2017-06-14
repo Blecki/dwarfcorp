@@ -109,7 +109,7 @@ namespace DwarfCorp
                 SoundToPlay = ContentPaths.Entities.Goblin.Audio.goblinhurt1
             }) as ParticleTrigger;
 
-            Flames = Physics.AddChild(new Flammable(Manager, "Flames", this)) as Flammable;
+            Physics.AddChild(new Flammable(Manager, "Flames"));
 
 
             NoiseMaker.Noises["Hurt"] = new List<string>
