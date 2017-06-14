@@ -69,7 +69,7 @@ namespace DwarfCorp
             HasMeat = false;
             HasBones = false;
             Physics.Orientation = Physics.OrientMode.RotateY;
-            Sprite = new CharacterSprite(Graphics, Manager, "MudGolem Sprite", Physics, Matrix.CreateTranslation(new Vector3(0, 0.35f, 0)));
+            Sprite = Physics.AddChild(new CharacterSprite(Graphics, Manager, "MudGolem Sprite", Matrix.CreateTranslation(new Vector3(0, 0.35f, 0)))) as CharacterSprite;
             foreach (Animation animation in Stats.CurrentClass.Animations)
             {
                 Sprite.AddAnimation(animation.Clone());
@@ -79,7 +79,7 @@ namespace DwarfCorp
 
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
-            AI = new MudGolemAI(this, Sensors, Manager.World.PlanService) { Movement = { IsSessile = true, CanFly = false, CanSwim = false, CanWalk = false, CanClimb = false, CanClimbWalls = false} };
+            AI = AddChild(new MudGolemAI(Manager, Sensors, Manager.World.PlanService) { Movement = { IsSessile = true, CanFly = false, CanSwim = false, CanWalk = false, CanClimb = false, CanClimbWalls = false } }) as CreatureAI;
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
@@ -138,8 +138,8 @@ namespace DwarfCorp
             
         }
 
-        public MudGolemAI(Creature creature, EnemySensor enemySensor, PlanService planService) :
-            base(creature, "MudGolemAI", enemySensor, planService)
+        public MudGolemAI(ComponentManager Manager, EnemySensor enemySensor, PlanService planService) :
+            base(Manager, "MudGolemAI", enemySensor, planService)
         {
             
         }

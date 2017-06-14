@@ -87,9 +87,9 @@ namespace DwarfCorp
             currentMode = "Idle";
         }
 
-        public CharacterSprite(GraphicsDevice graphics, ComponentManager manager, string name, GameComponent parent,
+        public CharacterSprite(GraphicsDevice graphics, ComponentManager manager, string name, 
             Matrix localTransform) :
-                base(manager, name, parent, localTransform)
+                base(manager, name, localTransform)
         {
             Graphics = graphics;
             currentMode = "Idle";

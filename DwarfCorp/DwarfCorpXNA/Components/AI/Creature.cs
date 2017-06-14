@@ -311,6 +311,7 @@ namespace DwarfCorp
             {
                 IsVisible = false
             }) as SelectionCircle;
+
         }
 
         public void LayEgg()
@@ -384,6 +385,8 @@ namespace DwarfCorp
         /// This is used to make the character animate in a certain way without interference.
         /// </summary> 
         public bool OverrideCharacterMode { get; set; }
+
+        public bool FirstUpdate = true;
 
         /// <summary>
         /// Gets or sets the current character mode for animations.
@@ -465,6 +468,12 @@ namespace DwarfCorp
         /// <summary> Updates the creature </summary>
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            if (FirstUpdate)
+            {
+                FirstUpdate = false;
+                Faction.Minions.Add(AI);
+            }
+
             if (!IsActive) return;
             DrawLifeTimer.Update(gameTime);
 

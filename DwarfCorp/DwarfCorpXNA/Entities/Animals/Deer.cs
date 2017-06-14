@@ -97,13 +97,12 @@ namespace DwarfCorp
             const int frameWidth = 48;
             const int frameHeight = 40;
 
-            Sprite = new CharacterSprite
+            Sprite = Physics.AddChild(new CharacterSprite
                 (Graphics,
                 Manager,
                 "Deer Sprite",
-                Physics,
                 Matrix.CreateTranslation(Vector3.Up * 0.6f)
-                );
+                )) as CharacterSprite;
 
             // Add the idle animation
             Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Forward, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 0, 0);
@@ -130,7 +129,7 @@ namespace DwarfCorp
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
             // Add AI
-            AI = new PacingCreatureAI(this, "Deer AI", Sensors, PlanService);
+            AI = AddChild(new PacingCreatureAI(Manager, "Deer AI", Sensors, PlanService)) as CreatureAI;
 
             Attacks = new List<Attack>{new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.pick, ContentPaths.Effects.hit)};
 

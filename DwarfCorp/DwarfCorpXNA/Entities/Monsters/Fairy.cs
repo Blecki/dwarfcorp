@@ -59,7 +59,7 @@ namespace DwarfCorp
         public void Initialize(EmployeeClass dwarfClass)
         {
             Physics.Orientation = Physics.OrientMode.RotateY;
-            Sprite = new CharacterSprite(Graphics, Manager, "Fairy Sprite", Physics, Matrix.CreateTranslation(new Vector3(0, 0.5f, 0)));
+            Sprite = Physics.AddChild(new CharacterSprite(Graphics, Manager, "Fairy Sprite", Matrix.CreateTranslation(new Vector3(0, 0.5f, 0)))) as CharacterSprite;
             foreach (Animation animation in dwarfClass.Animations)
             {
                 Sprite.AddAnimation(animation.Clone());
@@ -70,7 +70,7 @@ namespace DwarfCorp
 
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
-            AI = new CreatureAI(this, "Fairy AI", Sensors, PlanService);
+            AI = AddChild(new CreatureAI(Manager, "Fairy AI", Sensors, PlanService)) as CreatureAI;
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 

@@ -82,13 +82,12 @@ namespace DwarfCorp
 
 
             // Create the sprite component for the bird.
-            Sprite = new CharacterSprite
+            Sprite = Physics.AddChild(new CharacterSprite
                                   (Graphics,
                                   Manager,
                                   "Bat Sprite",
-                                  Physics,
                                   Matrix.CreateTranslation(0, 0.5f, 0)
-                                  );
+                                  )) as CharacterSprite;
 
             CompositeAnimation.Descriptor descriptor =
                 FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
@@ -108,7 +107,7 @@ namespace DwarfCorp
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
             // Controls the behavior of the creature
-            AI = new BatAI(this, "Bat AI", Sensors, PlanService);
+            AI = AddChild(new BatAI(Manager, "Bat AI", Sensors, PlanService)) as BatAI;
             AI.Movement.CanFly = true;
             AI.Movement.CanSwim = false;
             AI.Movement.CanClimb = false;
@@ -186,8 +185,8 @@ namespace DwarfCorp
 
         }
 
-        public BatAI(Creature creature, string name, EnemySensor sensor, PlanService planService) :
-            base(creature, name, sensor, planService)
+        public BatAI(ComponentManager Manager, string name, EnemySensor sensor, PlanService planService) :
+            base(Manager, name, sensor, planService)
         {
 
         }

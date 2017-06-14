@@ -100,13 +100,12 @@ namespace DwarfCorp
             const int frameWidth = 32;
             const int frameHeight = 32;
 
-            Sprite = new CharacterSprite
+            Sprite = Physics.AddChild(new CharacterSprite
                 (Graphics,
                 Manager,
                 "snake Sprite",
-                Physics,
                 Matrix.Identity
-                );
+                )) as CharacterSprite;
 
             // Add the idle animation
             Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Forward, spriteSheet, 1, frameWidth, frameHeight, 0, 0);
@@ -131,7 +130,7 @@ namespace DwarfCorp
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
             // Add AI
-            AI = new PacingCreatureAI(this, "snake AI", Sensors, PlanService);
+            AI = AddChild(new PacingCreatureAI(Manager, "snake AI", Sensors, PlanService)) as CreatureAI;
 
 
             Attacks = new List<Attack>() {new Attack("Bite", 50.0f, 1.0f, 3.0f, ContentPaths.Audio.hiss, ContentPaths.Effects.claws)};

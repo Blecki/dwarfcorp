@@ -86,13 +86,12 @@ namespace DwarfCorp
             const int frameHeight = 16;
 
             // Create the sprite component for the bird.
-            Sprite = new CharacterSprite
-                                  (Graphics, 
+            Sprite = Physics.AddChild(new CharacterSprite
+                                  (Graphics,
                                   Manager,
-                                  "Bird Sprite", 
-                                  Physics, 
+                                  "Bird Sprite",
                                   Matrix.CreateTranslation(0, 0.25f, 0)
-                                  );
+                                  )) as CharacterSprite;
 
             // Flying animation (rows 4 5 6 and 7)
             Sprite.AddAnimation(CharacterMode.Flying, 
@@ -144,9 +143,9 @@ namespace DwarfCorp
 
             // Used to sense hostile creatures
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
-            
+
             // Controls the behavior of the creature
-            AI = new BirdAI(this, "Bird AI", Sensors, PlanService);
+            AI = AddChild(new BirdAI(Manager, "Bird AI", Sensors, PlanService)) as BirdAI;
             
             // The bird can peck at its enemies (0.1 damage)
             Attacks = new List<Attack> { new Attack("Peck", 0.1f, 2.0f, 1.0f, ContentPaths.Audio.bird, ContentPaths.Effects.pierce) { Mode = Attack.AttackMode.Dogfight } };

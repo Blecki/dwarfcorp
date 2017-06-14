@@ -82,13 +82,12 @@ namespace DwarfCorp
 
 
             // Create the sprite component for the bird.
-            Sprite = new CharacterSprite
+            Sprite = Physics.AddChild(new CharacterSprite
                                   (Graphics,
                                   Manager,
                                   "Frog Sprite",
-                                  Physics,
                                   Matrix.CreateTranslation(0, 0.5f, 0)
-                                  );
+                                  )) as CharacterSprite;
 
             CompositeAnimation.Descriptor descriptor =
                 FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
@@ -108,7 +107,7 @@ namespace DwarfCorp
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
             // Controls the behavior of the creature
-            AI = new PacingCreatureAI(this, "Rabbit AI", Sensors, PlanService);
+            AI = AddChild(new PacingCreatureAI(Manager, "Rabbit AI", Sensors, PlanService)) as CreatureAI;
 
             // The bird can peck at its enemies (0.1 damage)
             Attacks = new List<Attack> { new Attack("Bite", 0.01f, 2.0f, 1.0f, SoundSource.Create(ContentPaths.Audio.frog), ContentPaths.Effects.bite) };
