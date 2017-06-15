@@ -124,13 +124,12 @@ namespace DwarfCorp
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
-
-            List<Body> treesPickedByMouse = ComponentManager.FilterComponentsWithTag("Vegetation", bodies);
+            var treesPicked = bodies.Where(c => c.Tags.Contains("Vegetation"));
 
             List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.Faction.SelectedMinions,
                 GameMaster.ToolMode.Chop);
             List<Task> tasks = new List<Task>();
-            foreach (Body tree in treesPickedByMouse)
+            foreach (Body tree in treesPicked)
             {
                 if (!tree.IsVisible || tree.IsAboveCullPlane) continue;
 

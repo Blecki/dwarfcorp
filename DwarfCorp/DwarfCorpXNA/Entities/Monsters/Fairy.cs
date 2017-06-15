@@ -30,6 +30,11 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
+            SelectionCircle = Physics.AddChild(new SelectionCircle(Manager)
+            {
+                IsVisible = false
+            }) as SelectionCircle;
+
             HasMeat = false;
             HasBones = false;
             ParticleTimer = new Timer(0.2f, false);
@@ -70,7 +75,7 @@ namespace DwarfCorp
 
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
-            AI = AddChild(new CreatureAI(Manager, "Fairy AI", Sensors, PlanService)) as CreatureAI;
+            AI = Physics.AddChild(new CreatureAI(Manager, "Fairy AI", Sensors, PlanService)) as CreatureAI;
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 

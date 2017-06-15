@@ -54,7 +54,7 @@ namespace DwarfCorp
             TurretSprite = AddChild(new Fixture(Manager, Vector3.Up * 0.25f, spriteSheet, new Point(1, 7))) as Fixture;
             TurretSprite.Sprite.OrientationType = Sprite.OrientMode.Fixed;
             SetTurretAngle(0.0f);
-            new Shadow(this);
+            AddChild(new Shadow(Manager));
         }
 
         void Sensor_OnEnemySensed(List<CreatureAI> enemies)

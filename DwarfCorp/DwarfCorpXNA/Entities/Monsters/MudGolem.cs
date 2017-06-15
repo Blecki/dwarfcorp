@@ -61,6 +61,11 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
+            SelectionCircle = Physics.AddChild(new SelectionCircle(Manager)
+            {
+                IsVisible = false
+            }) as SelectionCircle;
+
             Initialize();
         }
 
@@ -79,7 +84,7 @@ namespace DwarfCorp
 
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
-            AI = AddChild(new MudGolemAI(Manager, Sensors, Manager.World.PlanService) { Movement = { IsSessile = true, CanFly = false, CanSwim = false, CanWalk = false, CanClimb = false, CanClimbWalls = false } }) as CreatureAI;
+            AI = Physics.AddChild(new MudGolemAI(Manager, Sensors, Manager.World.PlanService) { Movement = { IsSessile = true, CanFly = false, CanSwim = false, CanWalk = false, CanClimb = false, CanClimbWalls = false } }) as CreatureAI;
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 

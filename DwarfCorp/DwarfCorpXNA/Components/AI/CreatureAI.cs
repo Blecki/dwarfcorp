@@ -89,7 +89,17 @@ namespace DwarfCorp
         /// <summary> The current path of voxels the AI is following </summary>
         public List<Voxel> CurrentPath { get; set; }
 
-        public Creature Creature { get { return Parent as Creature; } }
+        private Creature _cachedCreature = null;
+        public Creature Creature
+        {
+            get
+            {
+                if (_cachedCreature == null)
+                    _cachedCreature = Parent.GetChildrenOfType<Creature>().FirstOrDefault();
+                System.Diagnostics.Debug.Assert(_cachedCreature != null, "AI Could not find creature");
+                return _cachedCreature;
+            }
+        }
         /// <summary> If this is set to true, the creature will draw the path it is following </summary>
         public bool DrawPath { get { return GameSettings.Default.DrawPaths; }}
         /// <summary> The gather manager handles gathering/building tasks </summary>

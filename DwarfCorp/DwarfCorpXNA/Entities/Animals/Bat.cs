@@ -68,6 +68,11 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
+            SelectionCircle = Physics.AddChild(new SelectionCircle(Manager)
+            {
+                IsVisible = false
+            }) as SelectionCircle;
+
             // Called from constructor with appropriate sprite asset as a string
             Initialize();
         }
@@ -107,7 +112,7 @@ namespace DwarfCorp
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
             // Controls the behavior of the creature
-            AI = AddChild(new BatAI(Manager, "Bat AI", Sensors, PlanService)) as BatAI;
+            AI = Physics.AddChild(new BatAI(Manager, "Bat AI", Sensors, PlanService)) as BatAI;
             AI.Movement.CanFly = true;
             AI.Movement.CanSwim = false;
             AI.Movement.CanClimb = false;

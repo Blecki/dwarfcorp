@@ -89,7 +89,14 @@ namespace DwarfCorp
                     1.0f, 1.0f, 0.999f, 0.999f,
                     new Vector3(0, -10, 0)
                 );
+
             Physics.AddChild(this);
+
+            SelectionCircle = Physics.AddChild(new SelectionCircle(Manager)
+            {
+                IsVisible = false
+            }) as SelectionCircle;
+
             Initialize(sprites);
         }
 
@@ -114,7 +121,7 @@ namespace DwarfCorp
             Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Backward, spriteSheet, 1, frameWidth, frameHeight, 0, 0);
 
             Tail = new List<TailSegment>();
-            new Shadow(Physics);
+            Physics.AddChild(new Shadow(Manager));
             for (int i = 0; i < 10; ++i)
             {
                 Tail.Add(
@@ -123,14 +130,14 @@ namespace DwarfCorp
                         Sprite = Manager.RootComponent.AddChild(new Fixture(Manager, Physics.LocalPosition, spriteSheet, new Point(1, 0))) as Fixture,
                         Target = Physics.LocalTransform.Translation
                     });
-                new Shadow(Tail[i].Sprite);
+                Tail[i].Sprite.AddChild(new Shadow(Manager));
             }
 
             // Add sensor
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
             // Add AI
-            AI = AddChild(new PacingCreatureAI(Manager, "snake AI", Sensors, PlanService)) as CreatureAI;
+            AI = Physics.AddChild(new PacingCreatureAI(Manager, "snake AI", Sensors, PlanService)) as CreatureAI;
 
 
             Attacks = new List<Attack>() {new Attack("Bite", 50.0f, 1.0f, 3.0f, ContentPaths.Audio.hiss, ContentPaths.Effects.claws)};

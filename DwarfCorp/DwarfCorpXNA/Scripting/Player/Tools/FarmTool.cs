@@ -234,9 +234,7 @@ namespace DwarfCorp
         {
             if (Mode == FarmMode.Harvesting)
             {
-                List<Body> treesPickedByMouse = ComponentManager.FilterComponentsWithTag("Vegetation", bodies);
-
-                foreach (Body tree in treesPickedByMouse)
+                foreach (Body tree in bodies.Where(c => c.Tags.Contains("Vegetation")))
                 {
                     if (!tree.IsVisible || tree.IsAboveCullPlane) continue;
 

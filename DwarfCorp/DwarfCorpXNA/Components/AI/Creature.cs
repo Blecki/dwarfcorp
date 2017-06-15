@@ -307,11 +307,6 @@ namespace DwarfCorp
             IsHeadClear = true;
             NoiseMaker = new NoiseMaker();
             OverrideCharacterMode = false;
-            SelectionCircle = AddChild(new SelectionCircle(Manager)
-            {
-                IsVisible = false
-            }) as SelectionCircle;
-
         }
 
         public void LayEgg()

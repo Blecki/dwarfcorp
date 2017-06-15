@@ -161,6 +161,7 @@
     <Compile Include="Components\IRenderableComponent.cs" />
     <Compile Include="Components\Physics\Flammable.cs" />
     <Compile Include="Components\Physics\Physics.cs" />
+    <Compile Include="Components\Systems\ComponentRenderer.cs" />
     <Compile Include="Components\Systems\ComponentManager.cs" />
     <Compile Include="Components\Systems\Message.cs" />
     <Compile Include="Components\IUpdateableComponent.cs" />

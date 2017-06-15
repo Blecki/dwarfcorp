@@ -55,7 +55,7 @@ namespace DwarfCorp
             FireTimer = new Timer(0.5f, false);
         }
 
-        private void TrapSensor_OnSensed(List<Body> sensed)
+        private void TrapSensor_OnSensed(IEnumerable<Body> sensed)
         {
             foreach (Body lc in sensed)
             {

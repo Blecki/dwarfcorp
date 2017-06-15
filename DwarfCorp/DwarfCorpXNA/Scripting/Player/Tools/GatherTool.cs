@@ -69,9 +69,13 @@ namespace DwarfCorp
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
-            List<Body> resourcesPickedByMouse = ComponentManager.FilterComponentsWithTag("Resource", bodies);
             List<Task> assignments = new List<Task>();
-            foreach(Body resource in resourcesPickedByMouse.Where(resource => resource.IsActive && resource.IsVisible && resource.Parent == Player.World.ComponentManager.RootComponent))
+
+            foreach (Body resource in bodies.Where(c => 
+                c.Tags.Contains("Resource") && 
+                c.IsActive && 
+                c.IsVisible && 
+                c.Parent == Player.World.ComponentManager.RootComponent))
             {
                 if (!resource.IsVisible || resource.IsAboveCullPlane) continue;
                 Drawer3D.DrawBox(resource.BoundingBox, Color.LightGoldenrodYellow, 0.05f, true);

@@ -705,8 +705,13 @@ namespace DwarfCorp
                     GraphicsDevice.SetRenderTarget(renderTarget);
                     DrawSky(new DwarfTime(), Camera.ViewMatrix, 1.0f);
                     Draw3DThings(new DwarfTime(), DefaultShader, Camera.ViewMatrix);
-                    DrawComponents(new DwarfTime(), DefaultShader, Camera.ViewMatrix,
-                        ComponentManager.WaterRenderType.None, 0);
+
+                    DefaultShader.View = Camera.ViewMatrix;
+                    InstanceManager.Render(GraphicsDevice, DefaultShader, Camera, true);
+                    ComponentRenderer.Render(ComponentManager.Renderables, new DwarfTime(), ChunkManager, Camera,
+                        DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader,
+                        ComponentRenderer.WaterRenderType.None, 0);
+
                     GraphicsDevice.SetRenderTarget(null);
                     renderTarget.SaveAsPng(new FileStream(filename, FileMode.Create), resolution.X, resolution.Y);
                     GraphicsDevice.Textures[0] = null;
@@ -1486,40 +1491,6 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        /// Draws components to a selection buffer for per-pixel selection accuracy
-        /// </summary>
-        /// <param name="gameTime">The game time.</param>
-        /// <param name="effect">The effect.</param>
-        /// <param name="view">The view.</param>
-        public void DrawSelectionBuffer(DwarfTime gameTime, Shader effect, Matrix view)
-        {
-            if (SelectionBuffer == null)
-            {
-                SelectionBuffer = new SelectionBuffer(8, GraphicsDevice);
-            }
-            GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            GraphicsDevice.BlendState = BlendState.Opaque;
-
-            SelectionBuffer.Begin(GraphicsDevice);
-
-            Plane slicePlane = WaterRenderer.CreatePlane(SlicePlane, new Vector3(0, -1, 0), Camera.ViewMatrix, false);
-
-            // Draw the whole world, and make sure to handle slicing
-            effect.ClipPlane = new Vector4(slicePlane.Normal, slicePlane.D);
-            effect.ClippingEnabled = true;
-            effect.View = view;
-            effect.Projection = Camera.ProjectionMatrix;
-            effect.World = Matrix.Identity;
-            ChunkManager.RenderSelectionBuffer(effect, GraphicsDevice, Camera.ViewMatrix);
-            ComponentManager.RenderSelectionBuffer(gameTime, ChunkManager, Camera, DwarfGame.SpriteBatch, GraphicsDevice, effect);
-            InstanceManager.RenderSelectionBuffer(GraphicsDevice, effect, Camera, false);
-            SelectionBuffer.End(GraphicsDevice);
-
-        }
-
-
-        /// <summary>
         /// Draws all the 3D terrain and entities
         /// </summary>
         /// <param name="gameTime">The current time</param>
@@ -1539,27 +1510,6 @@ namespace DwarfCorp
             ChunkManager.Render(Camera, gameTime, GraphicsDevice, effect, Matrix.Identity);
             Camera.ViewMatrix = viewMatrix;
             effect.ClippingEnabled = true;
-        }
-
-
-        /// <summary>
-        /// Draws all of the game entities
-        /// </summary>
-        /// <param name="gameTime">The current time</param>
-        /// <param name="effect">The shader</param>
-        /// <param name="view">The view matrix</param>
-        /// <param name="waterRenderType">Whether we are rendering for reflection/refraction or nothing</param>
-        /// <param name="waterLevel">The estimated height of water</param>
-        public void DrawComponents(DwarfTime gameTime, Shader effect, Matrix view,
-            ComponentManager.WaterRenderType waterRenderType, float waterLevel)
-        {
-            if (!WaterRenderer.DrawComponentsReflected && waterRenderType == ComponentManager.WaterRenderType.Reflective)
-                return;
-            effect.View = view;
-            bool reset = waterRenderType == ComponentManager.WaterRenderType.None;
-            InstanceManager.Render(GraphicsDevice, effect, Camera, reset);
-            ComponentManager.Render(gameTime, ChunkManager, Camera, DwarfGame.SpriteBatch, GraphicsDevice, effect,
-                waterRenderType, waterLevel);
         }
 
         /// <summary>
@@ -1653,6 +1603,10 @@ namespace DwarfCorp
                 return;
             }
 
+            var renderables = ComponentRenderer.EnumerateVisibleRenderables(ComponentManager.Renderables,
+                ChunkManager,
+                Camera);
+
             // Controls the sky fog
             float x = (1.0f - Sky.TimeOfDay);
             x = x * x;
@@ -1680,11 +1634,37 @@ namespace DwarfCorp
             lastWaterHeight = wHeight;
 
             // Draw reflection/refraction images
-            WaterRenderer.DrawReflectionMap(gameTime, this, wHeight - 0.1f, GetReflectedCameraMatrix(wHeight),
+            WaterRenderer.DrawReflectionMap(renderables, gameTime, this, wHeight - 0.1f, 
+                GetReflectedCameraMatrix(wHeight),
                 DefaultShader, GraphicsDevice);
 
 
-            DrawSelectionBuffer(gameTime, DefaultShader, Camera.ViewMatrix);
+            #region Draw Selection Buffer.
+
+            if (SelectionBuffer == null)
+                SelectionBuffer = new SelectionBuffer(8, GraphicsDevice);
+
+            GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.BlendState = BlendState.Opaque;
+
+            SelectionBuffer.Begin(GraphicsDevice);
+
+            Plane slicePlane = WaterRenderer.CreatePlane(SlicePlane, new Vector3(0, -1, 0), Camera.ViewMatrix, false);
+
+            // Draw the whole world, and make sure to handle slicing
+            DefaultShader.ClipPlane = new Vector4(slicePlane.Normal, slicePlane.D);
+            DefaultShader.ClippingEnabled = true;
+            DefaultShader.View = Camera.ViewMatrix;
+            DefaultShader.Projection = Camera.ProjectionMatrix;
+            DefaultShader.World = Matrix.Identity;
+            ChunkManager.RenderSelectionBuffer(DefaultShader, GraphicsDevice, Camera.ViewMatrix);
+            ComponentRenderer.RenderSelectionBuffer(renderables, gameTime, ChunkManager, Camera, 
+                DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader);
+            InstanceManager.RenderSelectionBuffer(GraphicsDevice, DefaultShader, Camera, false);
+            SelectionBuffer.End(GraphicsDevice);
+
+            #endregion
 
             // Start drawing the bloom effect
             if (GameSettings.Default.EnableGlow)
@@ -1709,7 +1689,6 @@ namespace DwarfCorp
 
             SlicePlane = SlicePlane * 0.5f + level * 0.5f;
 
-            Plane slicePlane = WaterRenderer.CreatePlane(SlicePlane, new Vector3(0, -1, 0), Camera.ViewMatrix, false);
             DefaultShader.WindDirection = Weather.CurrentWind;
             DefaultShader.WindForce = 0.0005f * (1.0f + (float)Math.Sin(Time.GetTotalSeconds()*0.001f));
             // Draw the whole world, and make sure to handle slicing
@@ -1741,8 +1720,12 @@ namespace DwarfCorp
                 Shadows.BindShadowmapEffect(DefaultShader);
             }
 
-            DrawComponents(gameTime, DefaultShader, Camera.ViewMatrix, ComponentManager.WaterRenderType.None,
-                lastWaterHeight);
+            DefaultShader.View = Camera.ViewMatrix;
+            InstanceManager.Render(GraphicsDevice, DefaultShader, Camera, true);
+            ComponentRenderer.Render(renderables, gameTime, ChunkManager,
+                Camera,
+                DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader,
+                ComponentRenderer.WaterRenderType.None, lastWaterHeight);
 
 
             if (Master.CurrentToolMode == GameMaster.ToolMode.Build)

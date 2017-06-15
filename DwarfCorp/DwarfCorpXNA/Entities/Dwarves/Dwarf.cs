@@ -60,6 +60,12 @@ namespace DwarfCorp
                         new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             Physics.AddChild(this);
+
+            SelectionCircle = Physics.AddChild(new SelectionCircle(Manager)
+            {
+                IsVisible = false
+            }) as SelectionCircle;
+
             HasMeat = false;
             HasBones = false;
             Initialize(workerClass);
@@ -81,7 +87,7 @@ namespace DwarfCorp
 
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
-            AI = AddChild(new CreatureAI(Manager, "Dwarf AI", Sensors, PlanService)) as CreatureAI;
+            AI = Physics.AddChild(new CreatureAI(Manager, "Dwarf AI", Sensors, PlanService)) as CreatureAI;
          
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 

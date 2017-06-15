@@ -68,7 +68,12 @@ namespace DwarfCorp
                 );
 
             Physics.AddChild(this);
-            // Called from constructor with appropriate sprite asset as a string
+
+            SelectionCircle = Physics.AddChild(new SelectionCircle(Manager)
+            {
+                IsVisible = false
+            }) as SelectionCircle;
+
             Initialize(new SpriteSheet(sprites));
         }
 
@@ -145,7 +150,7 @@ namespace DwarfCorp
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
             // Controls the behavior of the creature
-            AI = AddChild(new BirdAI(Manager, "Bird AI", Sensors, PlanService)) as BirdAI;
+            AI = Physics.AddChild(new BirdAI(Manager, "Bird AI", Sensors, PlanService)) as BirdAI;
             
             // The bird can peck at its enemies (0.1 damage)
             Attacks = new List<Attack> { new Attack("Peck", 0.1f, 2.0f, 1.0f, ContentPaths.Audio.bird, ContentPaths.Effects.pierce) { Mode = Attack.AttackMode.Dogfight } };

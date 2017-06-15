@@ -23,11 +23,13 @@ namespace DwarfCorp
     public class ComponentManager
     {
         public Dictionary<uint, GameComponent> Components { get; set; }
-        public Dictionary<System.Type, List<IUpdateableComponent>> UpdateableComponents { get; set; }
-        public List<IRenderableComponent> RenderableComponents { get; set; }
+
+        private Dictionary<System.Type, List<IUpdateableComponent>> UpdateableComponents { get; set; }
+
+        [JsonIgnore]
+        public List<IRenderableComponent> Renderables { get; private set; }
 
         private List<GameComponent> Removals { get; set; }
-
         private List<GameComponent> Additions { get; set; }
 
         public Body RootComponent { get; set; }
@@ -69,6 +71,20 @@ namespace DwarfCorp
                     World.Natives.Add(faction);
                 }
             }
+
+            foreach (var component in Components)
+            {
+                if (component.Value is IUpdateableComponent)
+                {
+                    var type = component.Value.GetType();
+                    if (!UpdateableComponents.ContainsKey(type))
+                        UpdateableComponents.Add(type, new List<IUpdateableComponent>());
+                    UpdateableComponents[type].Add(component.Value as IUpdateableComponent);
+                }
+
+                if (component.Value is IRenderableComponent)
+                    Renderables.Add(component.Value as IRenderableComponent);
+            }
         }
 
         public ComponentManager()
@@ -81,7 +97,7 @@ namespace DwarfCorp
             World = state;
             Components = new Dictionary<uint, GameComponent>();
             UpdateableComponents = new Dictionary<Type, List<IUpdateableComponent>>();
-            RenderableComponents = new List<IRenderableComponent>();
+            Renderables = new List<IRenderableComponent>();
             Removals = new List<GameComponent>();
             Additions = new List<GameComponent>();
             Camera = null;
@@ -100,19 +116,6 @@ namespace DwarfCorp
         }
 
         #region picking
-
-        public static List<T> FilterComponentsWithTag<T>(string tag, List<T> toFilter) where T : GameComponent
-        {
-            return toFilter.Where(component => component.Tags.Contains(tag)).ToList();
-        }
-
-        public void GetBodiesIntersecting(BoundingBox box, List<Body> components, CollisionManager.CollisionType type)
-        {
-            HashSet<IBoundedObject> set = new HashSet<IBoundedObject>();
-            CollisionManager.GetObjectsIntersecting(box, set, type);
-
-            components.AddRange(set.Where(o => o is Body).Select(o => o as Body));
-        }
 
         public List<Body> SelectRootBodiesOnScreen(Rectangle selectionRectangle, Camera camera)
         {
@@ -178,7 +181,7 @@ namespace DwarfCorp
             }
             if (component is IRenderableComponent)
             {
-                RenderableComponents.Remove(component as IRenderableComponent);
+                Renderables.Remove(component as IRenderableComponent);
             }
 
             foreach (var child in component.GetAllChildrenRecursive())
@@ -203,7 +206,7 @@ namespace DwarfCorp
                 }
                 if (component is IRenderableComponent)
                 {
-                    RenderableComponents.Add(component as IRenderableComponent);
+                    Renderables.Add(component as IRenderableComponent);
                 }
             }
         }
@@ -223,7 +226,7 @@ namespace DwarfCorp
 
             GamePerformance.Instance.TrackValueType("Component Count", Components.Count);
             GamePerformance.Instance.TrackValueType("Updateable Count", UpdateableComponents.Count);
-            GamePerformance.Instance.TrackValueType("Renderable Count", RenderableComponents.Count);
+            GamePerformance.Instance.TrackValueType("Renderable Count", Renderables.Count);
 
             GamePerformance.Instance.StartTrackPerformance("Update Components");
             foreach (var componentType in UpdateableComponents)
@@ -263,87 +266,6 @@ namespace DwarfCorp
 
             Removals.Clear();
             RemovalMutex.ReleaseMutex();
-        }
-
-
-        private List<IRenderableComponent> visibleComponents = new List<IRenderableComponent>();
-
-        public enum WaterRenderType
-        {
-            Reflective,
-            None
-        }
-
-        public void RenderSelectionBuffer(DwarfTime time, ChunkManager chunks, Camera camera,
-            SpriteBatch spriteBatch, GraphicsDevice graphics, Shader effect)
-        {
-            effect.CurrentTechnique = effect.Techniques["Selection"];
-            foreach (Body bodyToDraw in visibleComponents)
-            {
-                if (bodyToDraw.IsVisible)
-                    bodyToDraw.RenderSelectionBuffer(time, chunks, camera, spriteBatch, graphics, effect);
-            }
-        }
-
-        public void Render(DwarfTime gameTime,
-            ChunkManager chunks,
-            Camera camera,
-            SpriteBatch spriteBatch,
-            GraphicsDevice graphicsDevice,
-            Shader effect,
-            WaterRenderType waterRenderMode, float waterLevel)
-        {
-            bool renderForWater = (waterRenderMode != WaterRenderType.None);
-
-            if (!renderForWater)
-            {
-                visibleComponents.Clear();
-
-                BoundingFrustum frustrum = camera.GetFrustrum();
-
-                foreach (IRenderableComponent b in RenderableComponents)
-                {
-                    if (!b.IsVisible) continue;
-                    if (b.IsAboveCullPlane) continue;
-
-                    if (b.FrustrumCull)
-                    {
-                        if ((b.GlobalTransform.Translation - camera.Position).LengthSquared() >= chunks.DrawDistanceSquared) continue;
-                        if (!(b.GetBoundingBox().Intersects(frustrum))) continue;
-                    }
-
-                    System.Diagnostics.Debug.Assert(!visibleComponents.Contains(b));
-                    visibleComponents.Add(b);
-                }
-
-                Camera = camera;
-            }
-
-            effect.EnableLighting = GameSettings.Default.CursorLightEnabled;
-            graphicsDevice.RasterizerState = RasterizerState.CullNone;
-
-            visibleComponents.Sort(CompareZDepth);
-            foreach (IRenderableComponent bodyToDraw in visibleComponents)
-            {
-                if (waterRenderMode == WaterRenderType.Reflective &&
-                   !(bodyToDraw.GetBoundingBox().Min.Y > waterLevel - 2))
-                {
-                    continue;
-                }
-                bodyToDraw.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderForWater);
-            }
-            effect.EnableLighting = false;
-        }
-
-        public static int CompareZDepth(IRenderableComponent A, IRenderableComponent B)
-        {
-            if (A == B)
-            {
-                return 0;
-            }
-            return
-                -(Camera.Position - A.GlobalTransform.Translation).LengthSquared()
-                    .CompareTo((Camera.Position - B.GlobalTransform.Translation).LengthSquared());
         }
 
         public uint GetMaxComponentID()

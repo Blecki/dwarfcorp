@@ -86,6 +86,12 @@ namespace DwarfCorp
                 );
 
             Physics.AddChild(this);
+
+            SelectionCircle = Physics.AddChild(new SelectionCircle(Manager)
+            {
+                IsVisible = false
+            }) as SelectionCircle;
+
             Initialize(new SpriteSheet(sprites));
         }
 
@@ -129,7 +135,7 @@ namespace DwarfCorp
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
             // Add AI
-            AI = AddChild(new PacingCreatureAI(Manager, "Deer AI", Sensors, PlanService)) as CreatureAI;
+            AI = Physics.AddChild(new PacingCreatureAI(Manager, "Deer AI", Sensors, PlanService)) as CreatureAI;
 
             Attacks = new List<Attack>{new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.pick, ContentPaths.Effects.hit)};
 

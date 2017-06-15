@@ -84,10 +84,10 @@ namespace DwarfCorp
             Sprite = AddChild(new Sprite(Manager, "Sprite", Matrix.Identity, new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap), false)) as Sprite;
             Sprite.AddAnimation(new Animation(0, ContentPaths.Entities.DwarfObjects.beartrap, 32, 32,  0) {Name = IdleAnimation});
             Sprite.AddAnimation(new Animation(1, ContentPaths.Entities.DwarfObjects.beartrap, 32, 32,  0, 1, 2, 3) {Name = TriggerAnimation, Speeds =  new List<float>() {6.6f}, Loops = true});
-            new Shadow(this);
+            AddChild(new Shadow(Manager));
         }
 
-        void Sensor_OnSensed(List<Body> sensed)
+        void Sensor_OnSensed(IEnumerable<Body> sensed)
         {
             if (ShouldDie)
             {
