@@ -13,21 +13,23 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     /// <summary>
-    /// This class is responsible for handling components. "Components" are one of the most important parts of the 
-    /// DwarfCorp engine. Everything in the game is a collection of components. A collection of components is called an "entity".
-    /// Components live in a tree-like structure, they have parents and children. Most components (called Locatable components)
-    /// also have a position and orientation.
-    /// By adding and removing components to an entity, functionality can be changed.
+    /// Handles components. All game objects (dwarves, trees, lamps, ravenous wolverines) are just a 
+    /// collection of components. Together, the collection is called an 'entity'. Components form a 
+    /// tree. Each component has a parent and 0 to N children.
     /// </summary>
     [JsonObject(IsReference = true)]
     public class ComponentManager
     {
-        public Dictionary<uint, GameComponent> Components { get; set; }
+        [JsonProperty]
+        private Dictionary<uint, GameComponent> Components;
 
-        private Dictionary<System.Type, List<IUpdateableComponent>> UpdateableComponents { get; set; }
+        private Dictionary<System.Type, List<IUpdateableComponent>> UpdateableComponents;
+        private List<IRenderableComponent> Renderables;
 
-        [JsonIgnore]
-        public List<IRenderableComponent> Renderables { get; private set; }
+        public IEnumerable<IRenderableComponent> GetRenderables()
+        {
+            return Renderables;
+        }
 
         private List<GameComponent> Removals { get; set; }
         private List<GameComponent> Additions { get; set; }
@@ -46,7 +48,7 @@ namespace DwarfCorp
         public CollisionManager CollisionManager { get; set; }
 
         public FactionLibrary Factions { get; set; }
-        public Diplomacy Diplomacy { get; set; }
+        //public Diplomacy Diplomacy { get; set; }
 
         [JsonIgnore]
         public WorldManager World { get; set; }

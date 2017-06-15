@@ -444,7 +444,7 @@ namespace DwarfCorp
                     envoy.Creatures.ForEach((creature) => creature.GetEntityRootComponent().Die());
                 }
 
-                Diplomacy.Politics politics = faction.World.ComponentManager.Diplomacy.GetPolitics(faction, envoy.OtherFaction);
+                Diplomacy.Politics politics = faction.World.Diplomacy.GetPolitics(faction, envoy.OtherFaction);
                 if (politics.GetCurrentRelationship() == Relationship.Hateful)
                 {
                     RecallEnvoy(envoy);
@@ -570,7 +570,7 @@ namespace DwarfCorp
                     party.Creatures.ForEach((creature) => creature.Die());
                 }
 
-                Diplomacy.Politics politics =  faction.World.ComponentManager.Diplomacy.GetPolitics(faction, party.OtherFaction);
+                Diplomacy.Politics politics =  faction.World.Diplomacy.GetPolitics(faction, party.OtherFaction);
                 if (politics.GetCurrentRelationship() != Relationship.Hateful)
                 {
                     RecallWarParty(party);

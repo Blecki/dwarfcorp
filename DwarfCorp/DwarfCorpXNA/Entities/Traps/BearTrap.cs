@@ -99,7 +99,7 @@ namespace DwarfCorp
                 CreatureAI creature = body.GetChildrenOfTypeRecursive<CreatureAI>().FirstOrDefault();
 
                 if (creature == null) continue;
-                if (Manager.Diplomacy.GetPolitics(creature.Creature.Faction, Allies).GetCurrentRelationship() == Relationship.Loving) continue;
+                if (World.Diplomacy.GetPolitics(creature.Creature.Faction, Allies).GetCurrentRelationship() == Relationship.Loving) continue;
 
                 creature.Creature.Damage(DamageAmount);
                 creature.Creature.Physics.Velocity *= 0.0f;

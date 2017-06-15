@@ -115,7 +115,7 @@ namespace DwarfCorp.NewGui
                             Master.World.ComponentManager.Factions.Factions.Values.Where(f =>
                             f.Race.IsIntelligent && f.Race.IsNative));
                         if (factionToSend != null)
-                            Master.World.ComponentManager.Diplomacy.SendTradeEnvoy(factionToSend, Master.World);
+                            Master.World.Diplomacy.SendTradeEnvoy(factionToSend, Master.World);
                     }
                 },
 

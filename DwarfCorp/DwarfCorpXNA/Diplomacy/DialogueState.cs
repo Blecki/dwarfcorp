@@ -65,7 +65,7 @@ namespace DwarfCorp.Dialogue
             DialogueContext.SpeakerAnimation = SpeakerAnimation;
             DialogueContext.SpeakerAnimation.Loops = false;
 
-            DialogueContext.Politics = World.ComponentManager.Diplomacy.GetPolitics(
+            DialogueContext.Politics = World.Diplomacy.GetPolitics(
                 DialogueContext.PlayerFaction, DialogueContext.Envoy.OwnerFaction);
             DialogueContext.World = World;
 

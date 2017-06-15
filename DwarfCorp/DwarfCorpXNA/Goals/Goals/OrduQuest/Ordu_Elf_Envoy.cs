@@ -30,10 +30,10 @@ namespace DwarfCorp.Goals.Goals
 
             World.ComponentManager.Factions.Factions.Add("Fel'al'fe", felFaction);
             World.Natives.Add(felFaction);
-            World.ComponentManager.Diplomacy.InitializeFactionPolitics(felFaction, World.Time.CurrentDate);
+            World.Diplomacy.InitializeFactionPolitics(felFaction, World.Time.CurrentDate);
 
             // Spawn trade convoy from Fel
-            World.ComponentManager.Diplomacy.SendTradeEnvoy(felFaction, World);
+            World.Diplomacy.SendTradeEnvoy(felFaction, World);
         }
 
         public override void OnGameEvent(WorldManager World, GameEvent Event)

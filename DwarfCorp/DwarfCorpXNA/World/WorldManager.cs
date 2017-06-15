@@ -156,6 +156,8 @@ namespace DwarfCorp
 
         #endregion
 
+        public Diplomacy Diplomacy;
+
         // If the game was loaded from a file, this contains the name of that file.
         public string ExistingFile = "";
 
@@ -523,8 +525,8 @@ namespace DwarfCorp
             Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
             Vector3 extents = new Vector3(1500, 1500, 1500);
             ComponentManager.CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
-            ComponentManager.Diplomacy = new Diplomacy(this);
-            ComponentManager.Diplomacy.Initialize(Time.CurrentDate);
+            Diplomacy = new Diplomacy(this);
+            Diplomacy.Initialize(Time.CurrentDate);
 
             CompositeLibrary.Initialize();
             CraftLibrary = new CraftLibrary();
@@ -708,7 +710,7 @@ namespace DwarfCorp
 
                     DefaultShader.View = Camera.ViewMatrix;
                     InstanceManager.Render(GraphicsDevice, DefaultShader, Camera, true);
-                    ComponentRenderer.Render(ComponentManager.Renderables, new DwarfTime(), ChunkManager, Camera,
+                    ComponentRenderer.Render(ComponentManager.GetRenderables(), new DwarfTime(), ChunkManager, Camera,
                         DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader,
                         ComponentRenderer.WaterRenderType.None, 0);
 
@@ -810,6 +812,9 @@ namespace DwarfCorp
                 WorldScale = gameFile.Data.Metadata.WorldScale;
                 GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
                 GameSettings.Default.ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
+
+                gameFile.LoadDiplomacy(ExistingFile, this);
+                Diplomacy = gameFile.Data.Diplomacy;
 
                 // Load saved goals from file here.
                 GoalManager = new Goals.GoalManager();
@@ -1333,7 +1338,7 @@ namespace DwarfCorp
             if (!Paused)
             {
                 //GamePerformance.Instance.StartTrackPerformance("Diplomacy");
-                ComponentManager.Diplomacy.Update(gameTime, Time.CurrentDate, this);
+                Diplomacy.Update(gameTime, Time.CurrentDate, this);
                 //GamePerformance.Instance.StopTrackPerformance("Diplomacy");
 
                 //GamePerformance.Instance.StartTrackPerformance("Components");
@@ -1603,7 +1608,7 @@ namespace DwarfCorp
                 return;
             }
 
-            var renderables = ComponentRenderer.EnumerateVisibleRenderables(ComponentManager.Renderables,
+            var renderables = ComponentRenderer.EnumerateVisibleRenderables(ComponentManager.GetRenderables(),
                 ChunkManager,
                 Camera);
 

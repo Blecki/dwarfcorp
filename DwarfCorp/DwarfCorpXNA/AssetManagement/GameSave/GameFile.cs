@@ -56,10 +56,9 @@ namespace DwarfCorp
             public OrbitCamera Camera { get; set; }
 
             public ComponentManager Components { get; set; }
-
             public List<Goals.Goal> Goals { get; set; }
-
             public Tutorial.TutorialSaveData TutorialSaveData { get; set; }
+            public Diplomacy Diplomacy { get; set; }
 
             public int GameID { get; set; }
 
@@ -91,6 +90,9 @@ namespace DwarfCorp
 
                 FileUtils.SaveJSon(TutorialSaveData, directory + ProgramData.DirChar + "Tutorial." 
                     + (DwarfGame.COMPRESSED_BINARY_SAVES ? GameFile.CompressedExtension : GameFile.Extension), DwarfGame.COMPRESSED_BINARY_SAVES);
+
+                FileUtils.SaveJSon(Diplomacy, directory + ProgramData.DirChar + "Diplomacy."
+                     + (DwarfGame.COMPRESSED_BINARY_SAVES ? GameFile.CompressedExtension : GameFile.Extension), DwarfGame.COMPRESSED_BINARY_SAVES);
             }
         }
 
@@ -119,6 +121,7 @@ namespace DwarfCorp
                 ChunkData = new List<ChunkFile>(),
                 Goals = world.GoalManager.EnumerateGoals().ToList(),
                 TutorialSaveData = world.TutorialManager.GetSaveData(),
+                Diplomacy = world.Diplomacy,
                 GameID = id,
             };
 
@@ -186,6 +189,24 @@ namespace DwarfCorp
             } catch (Exception)
             {
                 Data.TutorialSaveData = new Tutorial.TutorialSaveData();
+            }
+        }
+
+        public void LoadDiplomacy(String FilePath, WorldManager World)
+        {
+            try
+            {
+                var dipFiles = SaveData.GetFilesInDirectory(FilePath, DwarfGame.COMPRESSED_BINARY_SAVES,
+                    "Diplomacy", GameFile.CompressedExtension, GameFile.Extension);
+                if (dipFiles.Length > 0)
+                    Data.Diplomacy = FileUtils.LoadJson<Diplomacy>(dipFiles[0],
+                        DwarfGame.COMPRESSED_BINARY_SAVES, World);
+                else
+                    throw new InvalidOperationException("No diplomacy save data");
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException("No diplomacy save data", e);
             }
         }
 

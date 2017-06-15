@@ -30,10 +30,10 @@ namespace DwarfCorp.Goals.Goals
 
             World.ComponentManager.Factions.Factions.Add("Ordu", orduFaction);
             World.Natives.Add(orduFaction);
-            World.ComponentManager.Diplomacy.InitializeFactionPolitics(orduFaction, World.Time.CurrentDate);
+            World.Diplomacy.InitializeFactionPolitics(orduFaction, World.Time.CurrentDate);
 
             // Spawn trade convoy from Ordu
-            World.ComponentManager.Diplomacy.SendTradeEnvoy(orduFaction, World);
+            World.Diplomacy.SendTradeEnvoy(orduFaction, World);
         }
 
         public override void OnGameEvent(WorldManager World, GameEvent Event)

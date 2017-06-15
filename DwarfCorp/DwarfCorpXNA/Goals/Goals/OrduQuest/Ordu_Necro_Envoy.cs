@@ -21,7 +21,7 @@ namespace DwarfCorp.Goals.Goals
             otherChoice.State = GoalState.Unavailable;
 
             var orduFaction = World.ComponentManager.Factions.Factions.FirstOrDefault(f => f.Key == "Ordu").Value;
-            World.ComponentManager.Diplomacy.SendTradeEnvoy(orduFaction, World);
+            World.Diplomacy.SendTradeEnvoy(orduFaction, World);
         }
 
         public override void OnGameEvent(WorldManager World, GameEvent Event)
