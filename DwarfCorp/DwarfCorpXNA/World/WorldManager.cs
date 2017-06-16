@@ -396,6 +396,7 @@ namespace DwarfCorp
                 {
                     LoadExistingFile();
                 }
+
                 if (Natives == null)
                 {
                     FactionLibrary library = new FactionLibrary();
@@ -802,7 +803,8 @@ namespace DwarfCorp
             if (!string.IsNullOrEmpty(ExistingFile))
             {
                 InstanceManager.Clear();
-                gameFile.LoadComponents(ExistingFile, this);
+                
+                //gameFile.LoadComponents(ExistingFile, this);
                 ComponentManager = gameFile.Data.Components;
                 ComponentManager.World = this;
                 GameComponent.ResetMaxGlobalId(ComponentManager.GetMaxComponentID() + 1);
@@ -813,16 +815,16 @@ namespace DwarfCorp
                 GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
                 GameSettings.Default.ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
 
-                gameFile.LoadDiplomacy(ExistingFile, this);
+                //gameFile.LoadDiplomacy(ExistingFile, this);
                 Diplomacy = gameFile.Data.Diplomacy;
 
                 // Load saved goals from file here.
                 GoalManager = new Goals.GoalManager();
-                gameFile.LoadGoals(ExistingFile, this);
+                //gameFile.LoadGoals(ExistingFile, this);
                 GoalManager.Initialize(gameFile.Data.Goals);
 
                 TutorialManager = new Tutorial.TutorialManager("Content/tutorial.txt");
-                gameFile.LoadTutorial(ExistingFile, this);
+                //gameFile.LoadTutorial(ExistingFile, this);
                 TutorialManager.SetFromSaveData(gameFile.Data.TutorialSaveData);
                 
             }
@@ -1445,6 +1447,8 @@ namespace DwarfCorp
                     Directory.CreateDirectory(DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Worlds" +
                                               Path.DirectorySeparatorChar + Overworld.Name);
 
+                // This is a hack. Why does the overworld have this as a static field??
+                Overworld.NativeFactions = this.Natives;
                 OverworldFile file = new OverworldFile(Game.GraphicsDevice, Overworld.Map, Overworld.Name, SeaLevel);
                 file.WriteFile(
                     worldDirectory.FullName + Path.DirectorySeparatorChar + "world." + OverworldFile.CompressedExtension,
@@ -1455,8 +1459,6 @@ namespace DwarfCorp
                 gameFile.WriteFile(
                     DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves" + Path.DirectorySeparatorChar +
                     filename, DwarfGame.COMPRESSED_BINARY_SAVES);
-                // GameFile instance is no longer needed.
-                gameFile = null;
 
                 lock (ScreenshotLock)
                 {
