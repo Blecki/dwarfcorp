@@ -568,12 +568,12 @@ namespace DwarfCorp
         }
 
 
-        public Stockpile GetNearestStockpile(Vector3 position)
+        public Stockpile GetNearestStockpile(Vector3 position, Func<Stockpile, bool> predicate )
         {
             Stockpile nearest = null;
 
             float closestDist = float.MaxValue;
-            foreach(Stockpile stockpile in Stockpiles)
+            foreach(Stockpile stockpile in Stockpiles.Where(predicate))
             {
                 float dist = (stockpile.GetBoundingBox().Center() - position).LengthSquared();
 

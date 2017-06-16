@@ -181,8 +181,11 @@ namespace DwarfCorp
                 Boxes.Clear();
             }
 
-            int numBoxes = Math.Min(Math.Max(Resources.CurrentResourceCount / ResourcesPerVoxel, 0), Voxels.Count);
-
+            int numBoxes = Math.Min(Math.Max(Resources.CurrentResourceCount / ResourcesPerVoxel, 1), Voxels.Count);
+            if (Resources.CurrentResourceCount == 0)
+            {
+                numBoxes = 0;
+            }
             if (Boxes.Count > numBoxes)
             {
                 for (int i = Boxes.Count - 1; i >= numBoxes; i--)
@@ -207,10 +210,18 @@ namespace DwarfCorp
             bool worked =  base.AddItem(component);
             HandleBoxes();
 
-            TossMotion toss = new TossMotion(1.0f, 2.5f, component.LocalTransform, Boxes[Boxes.Count - 1].LocalTransform.Translation + new Vector3(0.5f, 0.5f, 0.5f));
-            component.GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
-            component.AnimationQueue.Add(toss);
-            toss.OnComplete += component.Die;
+            if (Boxes.Count > 0)
+            {
+                TossMotion toss = new TossMotion(1.0f, 2.5f, component.LocalTransform,
+                    Boxes[Boxes.Count - 1].LocalTransform.Translation + new Vector3(0.5f, 0.5f, 0.5f));
+                component.GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
+                component.AnimationQueue.Add(toss);
+                toss.OnComplete += component.Die;
+            }
+            else
+            {
+                component.Die();
+            }
 
             return worked;
         }
