@@ -62,6 +62,28 @@ namespace DwarfCorp.NewGui
             }
         }
 
+        private bool _drawIndicator = false;
+        public bool DrawIndicator
+        {
+            get { return _drawIndicator; }
+            set
+            {
+                _drawIndicator = value;
+                Invalidate();
+            }
+        }
+
+        private int _indicatorValue = 0;
+        public int IndicatorValue
+        {
+            get { return _indicatorValue; }
+            set
+            {
+                _indicatorValue = value;
+                Invalidate();
+            }
+        }
+
         public override void Construct()
         {
             Background = new TileReference("icon-frame", 0);
@@ -124,6 +146,27 @@ namespace DwarfCorp.NewGui
             if (!string.IsNullOrEmpty(Text))
             {
                 base.GetTextMesh(meshes);
+            }
+
+            if (DrawIndicator && IndicatorValue != 0)
+            {
+                var indicatorTile = Root.GetTileSheet("indicator-circle");
+                meshes.Add(Gum.Mesh.Quad()
+                    .Scale(16, 16)
+                    .Texture(indicatorTile.TileMatrix(0))
+                    .Translate(Rect.Right - 16,
+                        Rect.Bottom - 16).Colorize(Color.OrangeRed.ToVector4()));
+                var numberSize = new Rectangle();
+                var font = Root.GetTileSheet("font");
+                var stringMesh = Gum.Mesh.CreateStringMesh(
+                    IndicatorValue.ToString(),
+                    font,
+                    new Vector2(1,1),
+                    out numberSize)
+                    .Colorize(new Vector4(1,1,1,1));
+                meshes.Add(stringMesh.
+                    Translate(Rect.Right - 8 - (numberSize.Width / 2),
+                    Rect.Bottom - 8 - (numberSize.Height / 2)));
             }
 
             return Gum.Mesh.Merge(meshes.ToArray());

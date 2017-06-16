@@ -55,7 +55,8 @@ namespace DwarfCorp
         {
             Tilling,
             Planting,
-            Harvesting
+            Harvesting,
+            WranglingAnimals
         }
 
         public FarmMode Mode { get; set; }
@@ -235,7 +236,7 @@ namespace DwarfCorp
             if (Mode == FarmMode.Harvesting)
             {
                 List<Body> treesPickedByMouse = ComponentManager.FilterComponentsWithTag("Vegetation", bodies);
-
+                List<Task> tasks = new List<Task>();
                 foreach (Body tree in treesPickedByMouse)
                 {
                     if (!tree.IsVisible || tree.IsAboveCullPlane) continue;
@@ -246,6 +247,7 @@ namespace DwarfCorp
                         if (!Player.Faction.ChopDesignations.Contains(tree))
                         {
                             Player.Faction.ChopDesignations.Add(tree);
+                            tasks.Add(new KillEntityTask(tree, KillEntityTask.KillType.Chop) { Priority = Task.PriorityType.Low });
                         }
                     }
                     else if (button == InputManager.MouseButton.Right)
@@ -255,6 +257,40 @@ namespace DwarfCorp
                             Player.Faction.ChopDesignations.Remove(tree);
                         }
                     }
+                }
+                if (tasks.Count > 0 && Player.SelectedMinions.Count > 0)
+                {
+                    TaskManager.AssignTasks(tasks, Player.SelectedMinions);
+                    OnConfirm(Player.SelectedMinions);
+                }
+            }
+            else if (Mode == FarmMode.WranglingAnimals)
+            {
+                List<Body> wrangleableAnimals = ComponentManager.FilterComponentsWithTag("DomesticAnimal", bodies);
+                List<Task> tasks = new List<Task>();
+                foreach (Body animal in wrangleableAnimals)
+                {
+                    Drawer3D.DrawBox(animal.BoundingBox, Color.Tomato, 0.1f, false);
+                    if (button == InputManager.MouseButton.Left)
+                    {
+                        if (!Player.Faction.WrangleDesignations.Contains(animal))
+                        {
+                            Player.Faction.WrangleDesignations.Add(animal);
+                            tasks.Add(new WrangleAnimalTask(animal.GetComponent<Creature>()));
+                        }
+                    }
+                    else if (button == InputManager.MouseButton.Right)
+                    {
+                        if (Player.Faction.WrangleDesignations.Contains(animal))
+                        {
+                            Player.Faction.WrangleDesignations.Remove(animal);
+                        }
+                    }
+                }
+                if (tasks.Count > 0 && Player.SelectedMinions.Count > 0)
+                {
+                    TaskManager.AssignTasks(tasks, Player.SelectedMinions);
+                    OnConfirm(Player.SelectedMinions);
                 }
             }
         }
@@ -343,6 +379,10 @@ namespace DwarfCorp
                     Player.VoxSelector.Enabled = false;
                     Player.BodySelector.Enabled = true;
                     break;
+                case FarmMode.WranglingAnimals:
+                    Player.VoxSelector.Enabled = false;
+                    Player.BodySelector.Enabled = true;
+                    break;
             }
 
             if (Player.World.IsMouseOverGui)
@@ -409,8 +449,91 @@ namespace DwarfCorp
                     }
                     break;
                 }
+
+                case FarmMode.WranglingAnimals:
+                {
+                    Color drawColor = Color.Tomato;
+                    float alpha = (float)Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * 2.0f));
+                    drawColor.R = (byte)(Math.Min(drawColor.R * alpha + 50, 255));
+                    drawColor.G = (byte)(Math.Min(drawColor.G * alpha + 50, 255));
+                    drawColor.B = (byte)(Math.Min(drawColor.B * alpha + 50, 255));
+                    foreach (BoundingBox box in Player.Faction.WrangleDesignations.Select(d => d.GetBoundingBox()))
+                    {
+                        Drawer3D.DrawBox(box, drawColor, 0.05f * alpha + 0.05f, true);
+                    }
+                    break;
+                }
             }
         }
 
+        public KillEntityTask AutoFarm()
+        {
+            return (from tile in FarmTiles where tile.PlantExists() && tile.Plant.IsGrown && !tile.IsCanceled select new KillEntityTask(tile.Plant, KillEntityTask.KillType.Chop)).FirstOrDefault();
+        }
+    }
+
+    public class WrangleAnimalTask : Task
+    {
+        public Creature Animal { get; set; }
+
+        public WrangleAnimalTask()
+        {
+            
+        }
+        public WrangleAnimalTask(Creature animal)
+        {
+            Animal = animal;
+            Name = "Wrangle " + animal.GlobalID;
+        }
+
+        public IEnumerable<Act.Status> WrangleAnimal(CreatureAI agent, CreatureAI creature, AnimalPen animalPen)
+        {
+            Animal.GetComponent<CreatureAI>().Tasks.Add(new ActWrapperTask(new GoToZoneAct(creature, animalPen) &
+                new Wrap(() => animalPen.AddAnimal(Animal.Physics, agent.Faction))));
+            yield return Act.Status.Success;
+        }
+
+        public override Act CreateScript(Creature agent)
+        {
+            var pens = agent.Faction.GetRooms().Where(room => room is AnimalPen).Cast<AnimalPen>().Where(pen => pen.Species == "" || pen.Species == Animal.Species);
+            AnimalPen closestPen = null;
+            float closestDist = float.MaxValue;
+
+            foreach (var pen in pens)
+            {
+                var dist = (pen.GetBoundingBox().Center() - agent.Physics.Position).LengthSquared();
+                if (dist < closestDist)
+                {
+                    closestDist = dist;
+                    closestPen = pen;
+                }
+            }
+            if (closestPen == null)
+            {
+                agent.World.MakeAnnouncement("Can't wrangle " + Animal.Species + "s. Need more animal pens.");
+                return null;
+            }
+
+            closestPen.Species = Animal.Species;
+
+            return new Sequence(new GoToEntityAct(Animal.Physics, agent.AI),
+                new Wrap(() => WrangleAnimal(agent.AI, Animal.AI, closestPen)),
+                new GoToZoneAct(agent.AI, closestPen));
+        }
+
+        public override Task Clone()
+        {
+            return new WrangleAnimalTask(Animal);
+        }
+
+        public override bool IsFeasible(Creature agent)
+        {
+            return agent.Faction.WrangleDesignations.Contains(Animal.GetComponent<Physics>());
+        }
+
+        public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
+        {
+            return (agent.AI.Position - Animal.Physics.Position).LengthSquared();
+        }
     }
 }

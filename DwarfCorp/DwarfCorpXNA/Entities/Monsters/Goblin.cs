@@ -74,14 +74,6 @@ namespace DwarfCorp
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
-            Inventory = new Inventory("Inventory", Physics)
-            {
-                Resources = new ResourceContainer
-                {
-                    MaxResources = 16
-                }
-            };
-
             Matrix shadowTransform = Matrix.CreateRotationX((float) Math.PI * 0.5f);
             shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
 
@@ -126,7 +118,7 @@ namespace DwarfCorp
             AI.Movement.CanClimbWalls = true;
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
-
+            Species = "Goblin";
         }
     }
 

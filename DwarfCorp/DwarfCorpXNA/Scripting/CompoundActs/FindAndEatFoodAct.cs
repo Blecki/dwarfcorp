@@ -58,7 +58,7 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
-            if(Agent.Status.Hunger.IsUnhappy())
+            if(Agent.Status.Hunger.IsDissatisfied())
             {
                 Tree = new Sequence(new GetResourcesAct(Agent, Resource.ResourceTags.Edible), 
                                     new Select(new GoToChairAndSitAct(Agent), true),

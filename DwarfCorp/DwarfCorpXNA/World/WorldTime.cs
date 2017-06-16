@@ -83,6 +83,11 @@ namespace DwarfCorp
 
         public void Update(DwarfTime t)
         {
+            if (t.IsPaused)
+            {
+                return;
+            }
+
             bool beforeMidnight = CurrentDate.Hour > 0;
             bool wasDay = IsDay();
             CurrentDate = CurrentDate.Add(new TimeSpan(0, 0, 0, 0, (int)(t.ElapsedGameTime.Milliseconds * Speed)));

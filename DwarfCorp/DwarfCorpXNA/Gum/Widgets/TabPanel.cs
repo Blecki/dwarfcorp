@@ -11,8 +11,30 @@ namespace Gum.Widgets
     /// </summary>
     public class TabPanel : Widget
     {
-        private class TabButton : Widget
+        public class TabButton : Widget
         {
+            private bool _drawIndicator = false;
+            public bool DrawIndicator
+            {
+                get { return _drawIndicator; }
+                set
+                {
+                    _drawIndicator = value;
+                    Invalidate();
+                }
+            }
+
+            private int _indicatorValue = 0;
+            public int IndicatorValue
+            {
+                get { return _indicatorValue; }
+                set
+                {
+                    _indicatorValue = value;
+                    Invalidate();
+                }
+            }
+
             public override void Construct()
             {
                 Font = "font-hires";
@@ -33,7 +55,35 @@ namespace Gum.Widgets
                 var labelMesh = Mesh.CreateStringMesh(Text, Root.GetTileSheet(Font), new Vector2(TextSize, TextSize), out drop)
                     .Translate(Rect.X + border.TileWidth, Rect.Y + border.TileHeight)
                     .Colorize(TextColor);
-                return Mesh.Merge(bgMesh, labelMesh);                
+
+
+                var r = Mesh.Merge(bgMesh, labelMesh);
+
+                if (DrawIndicator && IndicatorValue != 0)
+                {
+                    var meshes = new List<Gum.Mesh>();
+                    meshes.Add(r);
+                    var indicatorTile = Root.GetTileSheet("indicator-circle");
+                    meshes.Add(Gum.Mesh.Quad()
+                        .Scale(16, 16)
+                        .Texture(indicatorTile.TileMatrix(0))
+                        .Translate(Rect.Right - 16,
+                            Rect.Bottom - 16).Colorize(Color.OrangeRed.ToVector4()));
+                    var numberSize = new Rectangle();
+                    var font = Root.GetTileSheet("font");
+                    var stringMesh = Gum.Mesh.CreateStringMesh(
+                        IndicatorValue.ToString(),
+                        font,
+                        new Vector2(1, 1),
+                        out numberSize)
+                        .Colorize(new Vector4(1, 1, 1, 1));
+                    meshes.Add(stringMesh.
+                        Translate(Rect.Right - 8 - (numberSize.Width / 2),
+                        Rect.Bottom - 8 - (numberSize.Height / 2)));
+                    r = Mesh.Merge(meshes.ToArray());
+                }
+
+                return r;
             }
 
             public override Point GetBestSize()
@@ -71,9 +121,9 @@ namespace Gum.Widgets
         private List<Widget> TabButtons = new List<Widget>();
         public int TabPadding = 4;
 
-        internal Widget GetTabButton(int Index)
+        internal TabButton GetTabButton(int Index)
         {
-            return TabButtons[Index];
+            return TabButtons[Index] as TabButton;
         }
 
         private int _selectedTab = 0;
@@ -87,6 +137,7 @@ namespace Gum.Widgets
                 foreach (var child in TabPanels)
                     child.Hidden = true;
                 TabPanels[_selectedTab].Hidden = false;
+                Root.SafeCall(TabPanels[_selectedTab].GetChild(0).OnShown, TabPanels[_selectedTab].GetChild(0));
 
                 foreach (var tab in TabButtons) tab.Invalidate();
 

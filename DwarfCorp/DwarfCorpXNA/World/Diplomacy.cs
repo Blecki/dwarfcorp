@@ -152,6 +152,9 @@ namespace DwarfCorp
             World = ((WorldManager)ctx.Context);
         }
 
+        private TradeEnvoy CurrentTradeEnvoy = null;
+        private Faction.WarParty CurrentWarParty = null;
+
         public Diplomacy()
         {
             
@@ -203,7 +206,7 @@ namespace DwarfCorp
                     Point c2 = New.Center;
                     double dist = Math.Sqrt(Math.Pow(c1.X - c2.X, 2) + Math.Pow(c1.Y - c2.Y, 2));
                     // Time always takes between 1 and 4 days of travel.
-                    double timeInMinutes = Math.Min(Math.Max(dist * 16.0f, 1440), 1440 * 4);
+                    double timeInMinutes = Math.Min(Math.Max(dist * 16.0f, 1440), 1440 * 4) + MathFunctions.RandInt(0, 250);
 
                     Politics politics = new Politics(Now)
                     {
@@ -245,6 +248,14 @@ namespace DwarfCorp
                 }
 
             }
+
+            FactionPolitics[new Pair<string>("Undead", "Player")].RecentEvents.Add(new PoliticalEvent()
+            {
+                Change = -10.0f,
+                Description = "Test hate",
+                Duration = forever,
+                Time = Now
+            });
         }
 
         public void Initialize(DateTime now)
@@ -254,10 +265,10 @@ namespace DwarfCorp
                 InitializeFactionPolitics(faction.Value, now);
         }
 
-        public void SendTradeEnvoy(Faction natives, WorldManager world)
+        public TradeEnvoy SendTradeEnvoy(Faction natives, WorldManager world)
         {
             //if (!world.gameState.IsActiveState) return;
-            Faction.TradeEnvoy envoy = null;
+            TradeEnvoy envoy = null;
             if (natives.Race.IsNative)
             {
                 List<CreatureAI> creatures =
@@ -265,7 +276,7 @@ namespace DwarfCorp
                         world.PlayerFaction, MathFunctions.Random.Next(4) + 1, false));
                 if (creatures.Count > 0)
                 {
-                    envoy = new Faction.TradeEnvoy(world.Time.CurrentDate)
+                    envoy = new TradeEnvoy(world.Time.CurrentDate)
                     {
                         Creatures = creatures,
                         OtherFaction = world.PlayerFaction,
@@ -318,7 +329,7 @@ namespace DwarfCorp
                         creature.Physics.LocalTransform = tf;
                     }
 
-                    envoy = new Faction.TradeEnvoy(world.Time.CurrentDate)
+                    envoy = new TradeEnvoy(world.Time.CurrentDate)
                     {
                         Creatures = creatures,
                         OtherFaction = world.PlayerFaction,
@@ -338,25 +349,24 @@ namespace DwarfCorp
                     world.Tutorial("trade");
                 }
             }
-
+            return envoy;
         }
 
-        public void SendWarParty(Faction natives)
+        public Faction.WarParty SendWarParty(Faction natives)
         {
-            // todo
             natives.World.MakeAnnouncement(String.Format("War party from {0} has arrived!", natives.Name), null);
             natives.World.Tutorial("war");
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
             Politics politics = GetPolitics(natives, natives.World.PlayerFaction);
             politics.WasAtWar = true;
             List<CreatureAI> creatures = natives.World.MonsterSpawner.Spawn(natives.World.MonsterSpawner.GenerateSpawnEvent(natives, natives.World.PlayerFaction, MathFunctions.Random.Next(5) + 1, true));
-
-            natives.WarParties.Add(new Faction.WarParty(natives.World.Time.CurrentDate)
+            var party = new Faction.WarParty(natives.World.Time.CurrentDate)
             {
                 Creatures = creatures,
                 OtherFaction = natives.World.PlayerFaction,
                 ShouldRemove = false
-            });
+            };
+            natives.WarParties.Add(party);
 
             foreach (var creature in creatures)
             {
@@ -366,7 +376,7 @@ namespace DwarfCorp
                 }
                 Flag flag = new Flag(creature.Physics, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, natives.Economy.Company.Information);
             }
-
+            return party;
         }
 
 
@@ -387,8 +397,33 @@ namespace DwarfCorp
                     Race race = otherFaction.Race;
                     Politics relation = mypolitics.Value;
 
+                    bool needsNewTradeEnvoy = true;
+
+                    if (CurrentTradeEnvoy != null)
+                    {
+                        needsNewTradeEnvoy = CurrentTradeEnvoy.Creatures.Count == 0 || 
+                            CurrentTradeEnvoy.Creatures.All(creature => creature.IsDead);
+                    }
+
+                    if (needsNewTradeEnvoy)
+                    {
+                        CurrentTradeEnvoy = null;
+                    }
+
+                    bool needsNewWarparty = true;
+
+                    if (CurrentWarParty != null)
+                    {
+                        needsNewWarparty = CurrentWarParty.Creatures.Count == 0 ||
+                            CurrentWarParty.Creatures.All(creature => creature.IsDead);
+                    }
+
+                    if (needsNewWarparty)
+                    {
+                        CurrentWarParty = null;
+                    }
                     
-                    if (race.IsIntelligent  && !otherFaction.IsRaceFaction && 
+                    if (needsNewTradeEnvoy && race.IsIntelligent  && !otherFaction.IsRaceFaction && 
                         relation.GetCurrentRelationship() != Relationship.Hateful)
                     {
                         if (otherFaction.TradeEnvoys.Count == 0 && !relation.TradePartyTimer.HasTriggered)
@@ -397,7 +432,7 @@ namespace DwarfCorp
 
                             if (relation.TradePartyTimer.HasTriggered)
                             {
-                                SendTradeEnvoy(otherFaction, world);
+                                CurrentTradeEnvoy = SendTradeEnvoy(otherFaction, world);
                             }
                         }
                         else if (otherFaction.TradeEnvoys.Count == 0)
@@ -406,7 +441,8 @@ namespace DwarfCorp
                         }
 
                     }
-                    else if (race.IsIntelligent && !otherFaction.IsRaceFaction &&
+                    else if (needsNewWarparty &&
+                             race.IsIntelligent && !otherFaction.IsRaceFaction &&
                              relation.GetCurrentRelationship() == Relationship.Hateful)
                     {
                         if (otherFaction.WarParties.Count == 0 && !relation.WarPartyTimer.HasTriggered)
@@ -415,7 +451,7 @@ namespace DwarfCorp
 
                             if (relation.WarPartyTimer.HasTriggered)
                             {
-                                SendWarParty(otherFaction);
+                                CurrentWarParty = SendWarParty(otherFaction);
                             }
                         }
                         else if (otherFaction.WarParties.Count == 0)
@@ -429,7 +465,7 @@ namespace DwarfCorp
         }
 
 
-        IEnumerable<Act.Status> RecallEnvoyOnFail(Faction.TradeEnvoy envoy)
+        IEnumerable<Act.Status> RecallEnvoyOnFail(TradeEnvoy envoy)
         {
             RecallEnvoy(envoy);
             World.MakeAnnouncement("Envoy from " + envoy.OwnerFaction.Name + " left. Trade port inaccessible.");
@@ -438,7 +474,7 @@ namespace DwarfCorp
 
         public void UpdateTradeEnvoys(Faction faction)
         {
-            foreach (Faction.TradeEnvoy envoy in faction.TradeEnvoys)
+            foreach (TradeEnvoy envoy in faction.TradeEnvoys)
             {
                 if (envoy.DeathTimer.Update(faction.World.Time.CurrentDate))
                 {
@@ -479,7 +515,7 @@ namespace DwarfCorp
                     }
                 }
 
-                if (!envoy.ShouldRemove && envoy.ExpiditionState == Faction.Expidition.State.Arriving)
+                if (!envoy.ShouldRemove && envoy.ExpiditionState == Expedition.State.Arriving)
                 {
                     foreach (CreatureAI creature in envoy.Creatures)
                     {
@@ -498,16 +534,15 @@ namespace DwarfCorp
 
                         if (creature.Tasks.Count == 0)
                         {
-                            Faction.TradeEnvoy envoy1 = envoy;
+                            TradeEnvoy envoy1 = envoy;
                             creature.Tasks.Add(new ActWrapperTask(new GoToZoneAct(creature, tradePort) | new Wrap(() => RecallEnvoyOnFail(envoy1))));
                         }
 
                         if (!tradePort.IsRestingOnZone(creature.Position)) continue;
 
-                        envoy.ExpiditionState = Faction.Expidition.State.Trading;
+                        envoy.ExpiditionState = Expedition.State.Trading;
 
                         World.Paused = true;
-
                         GameState.Game.StateManager.PushState(new Dialogue.DialogueState(
                             GameState.Game,
                             GameState.Game.StateManager,
@@ -524,7 +559,7 @@ namespace DwarfCorp
                         break;
                     }
                 }
-                else if (envoy.ExpiditionState == Faction.Expidition.State.Leaving)
+                else if (envoy.ExpiditionState == Expedition.State.Leaving)
                 {
                     BoundingBox worldBBox = faction.World.ChunkManager.Bounds;
 
@@ -593,10 +628,10 @@ namespace DwarfCorp
             faction.WarParties.RemoveAll(w => w.ShouldRemove);
         }
 
-        public static void RecallEnvoy(Faction.TradeEnvoy envoy)
+        public static void RecallEnvoy(TradeEnvoy envoy)
         {
             // TODO: do ths more naturally
-            envoy.ExpiditionState = Faction.Expidition.State.Leaving;
+            envoy.ExpiditionState = Expedition.State.Leaving;
             foreach (CreatureAI creature in envoy.Creatures)
             {
                 creature.LeaveWorld();
@@ -606,7 +641,7 @@ namespace DwarfCorp
         public static void RecallWarParty(Faction.WarParty party)
         {
             // TODO: do ths more naturally
-            party.ExpiditionState = Faction.Expidition.State.Leaving;
+            party.ExpiditionState = Expedition.State.Leaving;
             foreach (CreatureAI creature in party.Creatures)
             {
                 creature.LeaveWorld();

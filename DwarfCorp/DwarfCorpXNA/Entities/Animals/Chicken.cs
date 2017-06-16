@@ -154,7 +154,7 @@ namespace DwarfCorp
             // that can be used later
             Physics.Tags.Add("Chicken");
             Physics.Tags.Add("Animal");
-
+            Physics.Tags.Add("DomesticAnimal");
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the chicken";
             Stats.CurrentClass = new EmployeeClass()
             {
@@ -164,7 +164,7 @@ namespace DwarfCorp
 
 
             NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.bunny };
-
+            Species = "Chicken";
         }
     }
 }

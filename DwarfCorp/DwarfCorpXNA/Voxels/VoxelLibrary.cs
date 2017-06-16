@@ -103,6 +103,8 @@ namespace DwarfCorp
             BoxPrimitive snowCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(3, 7), new Point(3, 7), new Point(3, 7));
             BoxPrimitive iceCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(2, 7), new Point(2, 7), new Point(2, 7));
             BoxPrimitive scaffoldCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(7, 0), new Point(7, 0), new Point(7, 0));
+            BoxPrimitive glassCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(10, 0), new Point(10, 0), new Point(10, 0));
+            BoxPrimitive brickCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(11, 0), new Point(11, 0), new Point(11, 0));
             BoxPrimitive plankCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 0), new Point(4, 0), new Point(4, 0));
             BoxPrimitive waterCube = CreatePrimitive(graphics, cubeTexture, cubeTexture.Width, cubeTexture.Height, new Point(0, 0), new Point(0, 0), new Point(0, 0));
             BoxPrimitive cobblestoneCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 2), new Point(5, 2), new Point(5, 2));
@@ -140,7 +142,7 @@ namespace DwarfCorp
                 Name = "TilledSoil",
                 ReleasesResource = false,
                 StartingHealth = 20,
-                CanRamp = true,
+                CanRamp = false,
                 IsBuildable = false,
                 ParticleType = "dirt_particle",
                 IsSoil = true,
@@ -660,6 +662,33 @@ namespace DwarfCorp
                 HitSound = stonePicks
             };
 
+            VoxelType glassType = new VoxelType
+            {
+                Name = "Glass",
+                ProbabilityOfRelease = 1.0f,
+                ReleasesResource = true,
+                ResourceToRelease = ResourceLibrary.ResourceType.Glass,
+                StartingHealth = 1,
+                IsBuildable = true,
+                ParticleType = "stone_particle",
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_metal_destroy),
+                HitSound = stonePicks,
+                IsTransparent =  true
+            };
+
+            VoxelType brickType = new VoxelType
+            {
+                Name = "Brick",
+                ProbabilityOfRelease = 1.0f,
+                ReleasesResource = true,
+                ResourceToRelease = ResourceLibrary.ResourceType.Brick,
+                StartingHealth = 30,
+                IsBuildable = true,
+                ParticleType = "stone_particle",
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_stone_destroy),
+                HitSound = stonePicks
+            };
+
             RegisterType(greenGem, greenGemCube);
             RegisterType(redGem, redGemCube);
             RegisterType(purpleGem, purpleGemCube);
@@ -685,6 +714,8 @@ namespace DwarfCorp
             RegisterType(bedrockType, bedrockCube);
             RegisterType(coalType, coalCube);
             RegisterType(magicType, magicCube);
+            RegisterType(glassType, glassCube);
+            RegisterType(brickType, brickCube);
 
             foreach (VoxelType type in VoxelType.TypeList)
             {
@@ -764,7 +795,11 @@ namespace DwarfCorp
             shader.EnableLighting = false;
             shader.ClippingEnabled = false;
             shader.CameraPosition = new Vector3(-0.5f, 0.5f, 0.5f);
-
+            shader.VertexColorTint = Color.White;
+            shader.LightRampTint = Color.White;
+            shader.SunlightGradient = chunks.ChunkData.SunMap;
+            shader.AmbientOcclusionGradient = chunks.ChunkData.AmbientMap;
+            shader.TorchlightGradient = chunks.ChunkData.TorchMap;
             Viewport oldview = device.Viewport;
             List<VoxelType> voxelsByType = Types.Select(type => type.Value).ToList();
             voxelsByType.Sort((a, b) => a.ID < b.ID ? -1 : 1);
@@ -772,6 +807,7 @@ namespace DwarfCorp
             int cols = height/tileSize;
             device.ScissorRectangle = new Rectangle(0, 0, tileSize, tileSize);
             device.RasterizerState = RasterizerState.CullNone;
+            device.DepthStencilState = DepthStencilState.Default;
             Vector3 half = Vector3.One*0.5f;
             half = new Vector3(half.X, half.Y + 0.3f, half.Z);
             foreach (EffectPass pass in shader.CurrentTechnique.Passes)
@@ -790,8 +826,6 @@ namespace DwarfCorp
                     device.Viewport = new Viewport(col * tileSize, row * tileSize, tileSize, tileSize);
                     Matrix viewMatrix = Matrix.CreateLookAt(new Vector3(-1.5f, 1.3f, -1.5f), Vector3.Zero, Vector3.Up);
                     Matrix projectionMatrix = Matrix.CreateOrthographic(1.75f, 1.75f, 0, 5);
-                    //Matrix projectionMatrix = Matrix.CreatePerspectiveFieldOfView(1.5f, 1.0f, 0.01f, 25.0f);
-                    Matrix worldMatrix = Matrix.Identity;
                     shader.View = viewMatrix;
                     shader.Projection = projectionMatrix;
                     shader.World = Matrix.CreateTranslation(-half);

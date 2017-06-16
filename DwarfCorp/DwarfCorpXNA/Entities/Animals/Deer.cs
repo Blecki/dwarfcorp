@@ -1,4 +1,4 @@
-﻿// Deer.cs
+// Deer.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -168,14 +168,16 @@ namespace DwarfCorp
             // that can be used later
             Physics.Tags.Add("Deer");
             Physics.Tags.Add("Animal");
-
+            Physics.Tags.Add("DomesticAnimal");
             Stats.FullName = TextGenerator.GenerateRandom("$firstname");
             Stats.CurrentClass = new EmployeeClass()
             {
                 Name = "Deer",
                 Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Deer"} }
             };
-
+            Species = "Deer";
+            CanReproduce = true;
+            BabyType = "Deer";
         }
 
     }

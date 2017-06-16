@@ -48,14 +48,14 @@ namespace DwarfCorp
     {
         public DateTime FullyGrownDay { get; set; }
         public DateTime Birthday { get; set; }
-        public Body Adult { get; set; }
+        public Plant Adult { get; set; }
         public bool IsGrown { get; set; }
         public Seedling()
         {
             IsGrown = false;
         }
 
-        public Seedling(Body adult, Vector3 position, SpriteSheet asset, Point frame) :
+        public Seedling(Plant adult, Vector3 position, SpriteSheet asset, Point frame) :
             base(position, asset, frame, adult.Manager.World.ComponentManager.RootComponent)
         {
             IsGrown = false;
@@ -101,6 +101,7 @@ namespace DwarfCorp
         public void CreateAdult()
         {
             IsGrown = true;
+            Adult.IsGrown = true;
             Adult.SetVisibleRecursive(true);
             Adult.SetActiveRecursive(true);
             Die();
@@ -114,11 +115,13 @@ namespace DwarfCorp
         public Point SeedlingFrame { get; set; }
         public int GrowthDays { get; set; }
         public int GrowthHours { get; set; }
+        public bool IsGrown { get; set; }
 
         public Plant()
         {
             GrowthDays = 0;
             GrowthHours = 12;
+            IsGrown = false;
         }
 
         public Plant(string name, GameComponent parent, Matrix localTransform, Vector3 bboxSize,
@@ -127,6 +130,7 @@ namespace DwarfCorp
         {
             GrowthDays = 0;
             GrowthHours = 12;
+            IsGrown = false;
         }
 
         public virtual Seedling BecomeSeedling()
@@ -150,7 +154,8 @@ namespace DwarfCorp
         public Tree() { }
 
         public Tree(string name, ComponentManager manager, Vector3 position, string asset, ResourceLibrary.ResourceType seed, float treeSize) :
-            base(name, manager.World.ComponentManager.RootComponent, Matrix.Identity, new Vector3(treeSize * 2, treeSize * 3, treeSize * 2), new Vector3(treeSize * 0.5f, treeSize * 0.25f, treeSize * 0.5f))
+            base(name, manager.World.ComponentManager.RootComponent, Matrix.Identity, new Vector3(PrimitiveLibrary.BatchBillboardPrimitives[asset].Width, PrimitiveLibrary.BatchBillboardPrimitives[asset].Height , PrimitiveLibrary.BatchBillboardPrimitives[asset].Width) * 0.75f * treeSize,
+            new Vector3(0, 0, 0))
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
             SeedlingFrame = new Point(0, 0);
@@ -160,8 +165,8 @@ namespace DwarfCorp
             matrix.Translation = position;
             LocalTransform = matrix;
 
-            new Mesh("Model", this, Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(treeSize, treeSize, treeSize) * Matrix.CreateTranslation(new Vector3(0.7f, 0.0f, 0.7f)), asset, false);
-
+            new Mesh("Model", this, Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * 
+                Matrix.CreateScale(treeSize, treeSize, treeSize) * Matrix.CreateTranslation(0.5f, 0, 0.5f), asset, false);
             Health health = new Health(componentManager, "HP", this, 100.0f * treeSize, 0.0f, 100.0f * treeSize);
             
             new Flammable(componentManager, "Flames", this, health);
@@ -201,7 +206,7 @@ namespace DwarfCorp
 
 
             Particles = new ParticleTrigger("Leaves", componentManager, "LeafEmitter", this,
-                Matrix.Identity, new Vector3(treeSize * 2, treeSize * 3, treeSize * 2), new Vector3(treeSize * 0.5f, treeSize * 0.25f, treeSize * 0.5f))
+                Matrix.Identity, BoundingBoxPos, GetBoundingBox().Extents())
             {
                 SoundToPlay = ContentPaths.Audio.vegetation_break
             };

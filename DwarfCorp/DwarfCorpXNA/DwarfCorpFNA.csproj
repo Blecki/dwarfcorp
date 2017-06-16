@@ -119,6 +119,7 @@
     <Compile Include="Entities\Fixtures\Fixture.cs" />
     <Compile Include="Entities\Fixtures\Flag.cs" />
     <Compile Include="Entities\Fixtures\Forge.cs" />
+    <Compile Include="Entities\Fixtures\Grave.cs" />
     <Compile Include="Entities\Fixtures\Ladder.cs" />
     <Compile Include="Entities\Fixtures\Lamp.cs" />
     <Compile Include="Entities\Fixtures\PunchingBag.cs" />
@@ -376,6 +377,12 @@
     <Compile Include="Scripting\Data\Blackboard.cs" />
     <Compile Include="Scripting\Data\CreatureStats.cs" />
     <Compile Include="Scripting\Data\CreatureStatus.cs" />
+    <Compile Include="Scripting\Data\Status.cs" />
+    <Compile Include="Scripting\Factions\Expedition.cs" />
+    <Compile Include="Scripting\Factions\Faction.cs" />
+    <Compile Include="Scripting\Factions\FactionLibrary.cs" />
+    <Compile Include="Scripting\Factions\Race.cs" />
+    <Compile Include="Scripting\Factions\TradeEnvoy.cs" />
     <Compile Include="Scripting\Items\Item.cs" />
     <Compile Include="Scripting\Items\TagList.cs" />
     <Compile Include="Scripting\LeafActs\ClearBlackboardData.cs" />
@@ -430,8 +437,6 @@
     <Compile Include="Scripting\Player\Economy\ResourceLibrary.cs" />
     <Compile Include="Scripting\Player\Economy\ShipmentOrder.cs" />
     <Compile Include="Scripting\Player\Economy\ShipOrder.cs" />
-    <Compile Include="Scripting\Player\Factions\Faction.cs" />
-    <Compile Include="Scripting\Player\Factions\FactionLibrary.cs" />
     <Compile Include="Scripting\Player\GameMaster.cs" />
     <Compile Include="Scripting\Player\InputManager.cs" />
     <Compile Include="Scripting\Player\KeyManager.cs" />
@@ -452,9 +457,11 @@
     <Compile Include="Scripting\Rooms\RoomData.cs" />
     <Compile Include="Scripting\Rooms\RoomLibrary.cs" />
     <Compile Include="Scripting\Rooms\RoomTemplate.cs" />
+    <Compile Include="Scripting\Rooms\RoomTypes\AnimalPen.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\BalloonPort.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\BedRoom.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\CommonRoom.cs" />
+    <Compile Include="Scripting\Rooms\RoomTypes\Graveyard.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\Kitchen.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\LibraryRoom.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\MushroomFarm.cs" />

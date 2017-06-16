@@ -1,4 +1,4 @@
-﻿// SleepAct.cs
+// SleepAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -81,6 +81,9 @@ namespace DwarfCorp
                 if(Teleport)
                 {
                     Creature.AI.Position = TeleportLocation;
+                    Creature.Physics.Velocity = Vector3.Zero;
+                    Creature.Physics.LocalPosition = TeleportLocation;
+                    Creature.Physics.IsSleeping = true;
                 }
                 Creature.CurrentCharacterMode = Creature.CharacterMode.Sleeping;
                 Creature.Status.Energy.CurrentValue += DwarfTime.Dt * RechargeRate;

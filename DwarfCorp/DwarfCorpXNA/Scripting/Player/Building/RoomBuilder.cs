@@ -31,6 +31,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
@@ -305,7 +306,10 @@ namespace DwarfCorp
 
             if(order != null)
             {
-                order.CreateFences(World.ComponentManager);
+                order.WorkObjects.AddRange(Fence.CreateFences(World.ComponentManager, 
+                    ContentPaths.Entities.DwarfObjects.constructiontape,  
+                    from o in order.VoxelOrders select o.Voxel, 
+                    true));
                 TaskManager.AssignTasks(new List<Task>()
                 {
                     new BuildRoomTask(order)

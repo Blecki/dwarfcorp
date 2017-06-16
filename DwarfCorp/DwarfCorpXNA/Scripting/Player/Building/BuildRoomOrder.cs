@@ -67,46 +67,6 @@ namespace DwarfCorp
         }
 
 
-        public void CreateFences(ComponentManager components)
-        {
-            Voxel neighbor = new Voxel();
-
-            Vector3 half = Vector3.One*0.5f;
-            Vector3 off = half + Vector3.Up;
-            foreach (BuildVoxelOrder order in VoxelOrders)
-            {
-                Voxel voxel = order.Voxel;
-                if (voxel.GetNeighbor(new Vector3(0, 0, 1), ref neighbor) &&
-                    !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
-                {
-                    WorkObjects.Add(new WorkFence(components, voxel.Position + off + new Vector3(0, 0, 0.45f),
-                        (float) Math.Atan2(0, 1)));
-                }
-
-                if (voxel.GetNeighbor(new Vector3(0, 0, -1), ref neighbor) && !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
-                {
-                    WorkObjects.Add(new WorkFence(components, voxel.Position + off + new Vector3(0, 0, -0.45f), (float)Math.Atan2(0, -1)));
-                }
-
-
-                if (voxel.GetNeighbor(new Vector3(1, 0, 0), ref neighbor) && !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
-                {
-                    WorkObjects.Add(new WorkFence(components, voxel.Position + off + new Vector3(0.45f, 0, 0.0f), (float)Math.Atan2(1, 0)));
-                }
-
-
-                if (voxel.GetNeighbor(new Vector3(-1, 0, 0), ref neighbor) && !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
-                {
-                    WorkObjects.Add(new WorkFence(components, voxel.Position + off + new Vector3(-0.45f, 0, 0.0f), (float)Math.Atan2(-1, 0)));
-                }
-
-                if (MathFunctions.RandEvent(0.1f))
-                {
-                    WorkObjects.Add(new WorkPile(components, voxel.Position + off));
-                }
-            }
-        }
-
         public void AddResources(List<Quantitiy<Resource.ResourceTags>> resources)
         {
             foreach (Quantitiy<Resource.ResourceTags> resource in resources)

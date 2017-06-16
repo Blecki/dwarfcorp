@@ -1,4 +1,4 @@
-﻿// BalloonPort.cs
+// BalloonPort.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -53,7 +53,7 @@ namespace DwarfCorp
             balloonPortResources[Resource.ResourceTags.Stone] = new Quantitiy<Resource.ResourceTags>()
             {
                 ResourceType = Resource.ResourceTags.Stone,
-                NumResources = 1
+                NumResources = 4
             };
 
             RoomTile[,] flagTemplate =

@@ -31,6 +31,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System.Collections.Generic;
+using System.Security.AccessControl;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 
@@ -65,6 +66,9 @@ namespace DwarfCorp
 
         public string PlantToGenerate { get; set; }
 
+        public bool CanCraft { get; set; }
+        public List<Quantitiy<ResourceTags>> CraftPrereqs { get; set; }  
+
         public Color Tint { get; set; }
         public enum ResourceTags
         {
@@ -96,7 +100,10 @@ namespace DwarfCorp
             Plantable,
             AboveGroundPlant,
             BelowGroundPlant,
-            Bone
+            Bone,
+            Corpse,
+            Money,
+            Sand
         }
 
         public Resource(Resource other)
@@ -112,6 +119,9 @@ namespace DwarfCorp
             FoodContent = other.FoodContent;
             ShortName = other.ShortName;
             PlantToGenerate = other.PlantToGenerate;
+            CanCraft = other.CanCraft;
+            CraftPrereqs = new List<Quantitiy<Resource.ResourceTags>>();
+            CraftPrereqs.AddRange(other.CraftPrereqs);
         }
 
         public Resource(ResourceLibrary.ResourceType type,  DwarfBux money, string description, NamedImageFrame image, int NewGuiSprite, Color tint, params ResourceTags[] tags)
@@ -125,6 +135,8 @@ namespace DwarfCorp
             Tags = new List<ResourceTags>();
             Tags.AddRange(tags);
             FoodContent = 0;
+            CanCraft = false;
+            CraftPrereqs = new List<Quantitiy<Resource.ResourceTags>>();
         }
 
         public string GetTagDescription(string delimiter)

@@ -132,13 +132,7 @@ namespace DwarfCorp
 
 
             Attacks = new List<Attack>() {new Attack("Bite", 50.0f, 1.0f, 3.0f, ContentPaths.Audio.hiss, ContentPaths.Effects.claws)};
-            Inventory = new Inventory("Inventory", Physics)
-            {
-                Resources = new ResourceContainer()
-                {
-                    MaxResources = 1
-                }
-            };
+
             Physics.Tags.Add("Snake");
             Physics.Tags.Add("Animal");
             AI.Movement.SetCan(MoveType.ClimbWalls, true);
@@ -178,6 +172,7 @@ namespace DwarfCorp
             Flames = new Flammable(Manager, "Flames", Physics, this);
             HasBones = true;
             HasMeat = true;
+            Species = "Snake";
         }
 
         public override void Die()

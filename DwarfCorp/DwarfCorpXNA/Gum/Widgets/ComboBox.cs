@@ -86,14 +86,11 @@ namespace Gum.Widgets
                                     }
                                 };
 
-                            listView.OnPopupClose += (_sender) =>
-                                {
-                                    SelectorPopup = null;
-                                };
-
+                        listView.OnClose = (s) => SelectorPopup = null;
+                        
                             SelectorPopup = listView;
                             SelectorPopup.PopupDestructionType = PopupDestructionType.DestroyOnOffClick;
-                            Root.ShowPopup(SelectorPopup);
+                            Root.ShowMinorPopup(SelectorPopup);
                         }
                     //}
                 };
@@ -112,6 +109,11 @@ namespace Gum.Widgets
             };
 
             Border = "border-thin";
+
+            OnClose += (sender) =>
+            {
+                if (SelectorPopup != null) SelectorPopup.Close();
+            };
         }
 
         public override Point GetBestSize()

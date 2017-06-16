@@ -16,10 +16,11 @@ namespace DwarfCorp.NewGui
 
         private void RebuildGoalList()
         {
+            var index = Math.Max(GoalList.SelectedIndex, 0);
             GoalList.Items.Clear();
             Goals = GoalSource.ToList();
             GoalList.Items = Goals.Select(g => g.Name).ToList();
-            GoalList.SelectedIndex = 0;
+            GoalList.SelectedIndex = index;
         }
 
         public override void Construct()
@@ -58,9 +59,7 @@ namespace DwarfCorp.NewGui
 
         protected override Gum.Mesh Redraw()
         {
-            var index = GoalList.SelectedIndex;
             RebuildGoalList();
-            GoalList.SelectedIndex = index;
             return base.Redraw();
         }
     }

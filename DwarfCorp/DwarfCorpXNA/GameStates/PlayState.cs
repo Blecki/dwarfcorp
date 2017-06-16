@@ -53,6 +53,7 @@ namespace DwarfCorp.GameStates
         private NewGui.ToggleTray BrushTray;
         private NewGui.GodMenu GodMenu;
         private AnnouncementPopup Announcer;
+        private FramedIcon EconomyIcon;
 
         private class ToolbarItem
         {
@@ -161,7 +162,7 @@ namespace DwarfCorp.GameStates
                 World.SetMouseOverlay += (mouse, frame) => GuiRoot.SetMouseOverlay(mouse, frame);
 
                 
-                World.ShowToolPopup += text => GuiRoot.ShowTooltip(new Point(4, -16),
+                World.ShowToolPopup += text => GuiRoot.ShowTooltip(new Point(GuiRoot.MousePosition.X + 4, GuiRoot.MousePosition.Y - 16),
                     new NewGui.ToolPopup
                 {
                     Text = text,
@@ -280,7 +281,7 @@ namespace DwarfCorp.GameStates
             MoneyLabel.Text = Master.Faction.Economy.CurrentMoney.ToString();
             MoneyLabel.Invalidate();
 
-            StockLabel.Text = Master.Faction.Economy.Company.StockPrice.ToString();
+            StockLabel.Text = Master.Faction.Economy.Company.Stock.ToString();
             StockLabel.Invalidate();
 
             LevelLabel.Text = String.Format("{0}/{1}",
@@ -301,10 +302,17 @@ namespace DwarfCorp.GameStates
 
             #endregion
 
+            #region Update Economy Indicator
+
+            EconomyIcon.IndicatorValue = World.GoalManager.NewAvailableGoals + World.GoalManager.NewCompletedGoals;
+
+            #endregion
+
             if (GameSpeedControls.CurrentSpeed != (int) DwarfTime.LastTime.Speed)
             {
                 World.Tutorial("time");
             }
+
             GameSpeedControls.CurrentSpeed = (int)DwarfTime.LastTime.Speed;
            
             // Really just handles mouse pointer animation.
@@ -324,10 +332,12 @@ namespace DwarfCorp.GameStates
             if (World.ShowingWorld)
             {
                 /*For regenerating the voxel icon image! Do not delete!*/
-                //Texture2D tex = VoxelLibrary.RenderIcons(Game.GraphicsDevice, World.DefaultShader, World.ChunkManager, 256, 256, 32);
-                //Game.GraphicsDevice.SetRenderTarget(null);
-                //tex.SaveAsPng(new FileStream("voxels.png", FileMode.Create),  256, 256);
-                //Game.Exit();
+                /*
+                Texture2D tex = VoxelLibrary.RenderIcons(Game.GraphicsDevice, World.DefaultShader, World.ChunkManager, 256, 256, 32);
+                Game.GraphicsDevice.SetRenderTarget(null);
+                tex.SaveAsPng(new FileStream("voxels.png", FileMode.Create),  256, 256);
+                Game.Exit();
+                 */
 
 
                 if (!MinimapFrame.Hidden && !GuiRoot.RootItem.Hidden)
@@ -553,6 +563,15 @@ namespace DwarfCorp.GameStates
             #endregion
 
             #region Setup top right tray
+
+            EconomyIcon = new NewGui.FramedIcon
+            {
+                Icon = new Gum.TileReference("tool-icons", 10),
+                OnClick = (sender, args) => StateManager.PushState(new NewEconomyState(Game, StateManager, World)),
+                DrawIndicator = true,
+                Tooltip = "Click to open the Economy screen"
+            };
+
             var topRightTray = GuiRoot.RootItem.AddChild(new NewGui.IconTray
             {
                 Corners = global::Gum.Scale9Corners.Left | global::Gum.Scale9Corners.Bottom,
@@ -560,19 +579,14 @@ namespace DwarfCorp.GameStates
                 SizeToGrid = new Point(2, 1),
                 ItemSource = new Gum.Widget[] 
                         {
+                            EconomyIcon,
+                                                                   
                             new NewGui.FramedIcon
                             {
-                                Icon = new Gum.TileReference("tool-icons", 10),
-                                OnClick = (sender, args) => StateManager.PushState(new NewEconomyState(Game, StateManager, World)),
-                                Tooltip = "Click to open the Economy screen."
-                            },
-                           
-                        new NewGui.FramedIcon
-                        {
-                            Icon = new Gum.TileReference("tool-icons", 12),
-                            OnClick = (sender, args) => { OpenPauseMenu(); },
-                            Tooltip = "Click to open the Settings screen."
-                        }
+                                Icon = new Gum.TileReference("tool-icons", 12),
+                                OnClick = (sender, args) => { OpenPauseMenu(); },
+                                Tooltip = "Click to open the Settings screen."
+                            }
                         },
             });
             #endregion
@@ -745,7 +759,7 @@ namespace DwarfCorp.GameStates
                         KeepChildVisible = true,
                         ExpansionChild = new NewGui.ToolTray.Tray
                         {
-                            ItemSource = RoomLibrary.GetRoomTypes().Select(name => RoomLibrary.GetData(name))
+                            ItemSource = RoomLibrary.GetRoomTypes().Select(RoomLibrary.GetData)
                                 .Select(data => new NewGui.ToolTray.Icon
                                 {
                                     Icon = data.NewIcon,
@@ -753,7 +767,7 @@ namespace DwarfCorp.GameStates
                                     ExpansionChild = new NewGui.BuildRoomInfo
                                     {
                                         Data = data,
-                                        Rect = new Rectangle(0,0,256,128),
+                                        Rect = new Rectangle(0,0,256,164),
                                         Master = Master
                                     },
                                     OnClick = (sender, args) =>
@@ -1183,14 +1197,37 @@ namespace DwarfCorp.GameStates
                                         Text = "Harvest Plants.\n Click and drag to harvest plants.",
                                         Rect = new Rectangle(0, 0, 256, 128),
                                         TextColor = Color.Black.ToVector4(),
-                                        OnClick = (sender, args) =>
+                                    },
+                                    OnClick = (sender, args) =>
                                         {
                                              ChangeTool(GameMaster.ToolMode.Farm);
                                                             ((FarmTool) (Master.Tools[GameMaster.ToolMode.Farm])).Mode =
                                                                 FarmTool.FarmMode.Harvesting;
                                             World.Tutorial("harvest");
                                         }
-                                    }
+                                },
+                                new NewGui.ToolTray.Icon
+                                {
+                                    Text = "Wrng.",
+                                    TextColor = new Vector4(1, 1, 1, 1),
+                                    Tooltip = "Wrangle Animals",
+                                    TextHorizontalAlign = HorizontalAlign.Center,
+                                    TextVerticalAlign = VerticalAlign.Center,
+                                    KeepChildVisible = true,
+                                    ExpansionChild = new Widget()
+                                    {
+                                        Border = "border-fancy",
+                                        Text = "Wrangle Animals.\n Click and drag to wrangle animals.",
+                                        Rect = new Rectangle(0, 0, 256, 128),
+                                        TextColor = Color.Black.ToVector4()
+                                    },
+                                        OnClick = (sender, args) =>
+                                        {
+                                             ChangeTool(GameMaster.ToolMode.Farm);
+                                                            ((FarmTool) (Master.Tools[GameMaster.ToolMode.Farm])).Mode =
+                                                                FarmTool.FarmMode.WranglingAnimals;
+                                            World.Tutorial("wrangle");
+                                        }
                                 },
 
                             }
@@ -1448,7 +1485,10 @@ namespace DwarfCorp.GameStates
                 Text = "- Paused -",
                 InteriorMargin = new Gum.Margin(12, 0, 0, 0),
                 Padding = new Gum.Margin(2, 2, 2, 2),
-                OnClose = (sender) => PausePanel = null,
+                OnClose = (sender) =>
+                {
+                    PausePanel = null;
+                },
                 Font = "font-hires"
             };
 
@@ -1467,6 +1507,7 @@ namespace DwarfCorp.GameStates
                 {
                     OnClosed = () =>
                     {
+                        PausePanel = null;
                         GuiRoot.RenderData.CalculateScreenSize();
                         GuiRoot.ResetGui();
                         CreateGUIComponents();
@@ -1481,7 +1522,7 @@ namespace DwarfCorp.GameStates
             MakeMenuItem(PausePanel, "Save", "",
                 (sender, args) =>
                 {
-                    GuiRoot.ShowPopup(new NewGui.Confirm
+                    GuiRoot.ShowModalPopup(new NewGui.Confirm
                     {
                         Text = "Warning: Saving is still an unstable feature. Are you sure you want to continue?",
                         OnClose = (s) =>
@@ -1491,7 +1532,7 @@ namespace DwarfCorp.GameStates
                                     String.Format("{0}_{1}", Overworld.Name, World.GameID),
                                     (success, exception) =>
                                     {
-                                        GuiRoot.ShowPopup(new NewGui.Popup
+                                        GuiRoot.ShowModalPopup(new NewGui.Popup
                                         {
                                             Text = success ? "File saved." : "Save failed - " + exception.Message,
                                             OnClose = (s2) => OpenPauseMenu()
@@ -1505,7 +1546,7 @@ namespace DwarfCorp.GameStates
 
             PausePanel.Layout();
 
-            GuiRoot.ShowPopup(PausePanel);
+            GuiRoot.ShowModalPopup(PausePanel);
         }
 
         public void Destroy()

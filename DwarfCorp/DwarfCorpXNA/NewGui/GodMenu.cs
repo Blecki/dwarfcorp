@@ -128,6 +128,15 @@ namespace DwarfCorp.NewGui
                     }
                 },
 
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "STOCK",
+                    OnClick = (sender, args) =>
+                    {
+                        Master.World.PlayerCompany.Stock += 100;
+                    }
+                },
+
                 // Shouldn't this go into some kind of 'debug' menu?
                 new HorizontalMenuTray.MenuItem
                 {
@@ -135,6 +144,14 @@ namespace DwarfCorp.NewGui
                     OnClick = (sender, args) =>
                     {
                         GameSettings.Default.DrawPaths = !GameSettings.Default.DrawPaths;
+                    }
+                },
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "+1 HOUR",
+                    OnClick = (sender, args) =>
+                    {
+                        Master.World.Time.CurrentDate += new TimeSpan(1, 0, 0);
                     }
                 }
             };

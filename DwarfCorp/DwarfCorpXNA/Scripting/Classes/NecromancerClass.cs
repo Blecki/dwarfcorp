@@ -1,4 +1,4 @@
-﻿// NecromancerClass.cs
+// NecromancerClass.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -258,6 +258,7 @@ namespace DwarfCorp
                 new Attack("Spark", 2.0f, 1.0f, 2.0f, ContentPaths.Audio.tinkle, ContentPaths.Effects.hit)
                 {
                     Knockback = 2.5f,
+                    HitParticles = "green_flame"
                 }
             };
         }

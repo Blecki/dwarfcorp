@@ -60,6 +60,7 @@ namespace DwarfCorp
         {
             HasMeat = false;
             HasBones = false;
+            HasCorpse = true;
             Initialize(workerClass);
         }
         
@@ -82,14 +83,6 @@ namespace DwarfCorp
             AI = new CreatureAI(this, "Dwarf AI", Sensors, PlanService);
          
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
-
-            Inventory = new Inventory("Inventory", Physics)
-            {
-                Resources = new ResourceContainer
-                {
-                    MaxResources = 128
-                }
-            };
 
             Matrix shadowTransform = Matrix.CreateRotationX((float) Math.PI * 0.5f);
             shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
@@ -170,6 +163,7 @@ namespace DwarfCorp
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
             AI.TriggersMourning = true;
             AI.Biography = Applicant.GenerateBiography(AI.Stats.FullName, Gender);
+            Species = "Dwarf";
         }
     }
 

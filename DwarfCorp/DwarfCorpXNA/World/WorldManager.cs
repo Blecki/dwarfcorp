@@ -256,6 +256,18 @@ namespace DwarfCorp
                 SoundManager.PlaySound(sound, 0.5f);
         }
 
+        public void AwardStock(int Stock)
+        {
+            PlayerCompany.Stock += Stock;
+            MakeAnnouncement(String.Format("Gained {0} stock", Stock));
+        }
+
+        public void LoseStock(int Stock)
+        {
+            PlayerCompany.Stock -= Stock;
+            MakeAnnouncement(String.Format("Lost {0} stock", Stock));
+        }
+
         public MonsterSpawner MonsterSpawner { get; set; }
 
         public Company PlayerCompany
@@ -1347,7 +1359,7 @@ namespace DwarfCorp
                                 FastForwardToDay = true;
                         }
                     });
-                    NewGui.ShowPopup(sleepingPrompt, Gum.Root.PopupExclusivity.AddToStack);
+                    NewGui.ShowModalPopup(sleepingPrompt);
                     SleepPrompt = false;
                 }
                 else if (!allAsleep)

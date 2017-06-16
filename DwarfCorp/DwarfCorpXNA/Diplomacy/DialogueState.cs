@@ -20,7 +20,7 @@ namespace DwarfCorp.Dialogue
         public DialogueState(
             DwarfGame Game, 
             GameStateManager StateManager,
-            Faction.TradeEnvoy Envoy, 
+            TradeEnvoy Envoy, 
             Faction PlayerFaction,
             WorldManager World) :
             base(Game, "GuiStateTemplate", StateManager)
@@ -64,6 +64,7 @@ namespace DwarfCorp.Dialogue
             SpeakerAnimation = new Animation(DialogueContext.Envoy.OwnerFaction.Race.TalkAnimation);
             DialogueContext.SpeakerAnimation = SpeakerAnimation;
             DialogueContext.SpeakerAnimation.Loops = false;
+            
 
             DialogueContext.Politics = World.ComponentManager.Diplomacy.GetPolitics(
                 DialogueContext.PlayerFaction, DialogueContext.Envoy.OwnerFaction);
@@ -86,26 +87,6 @@ namespace DwarfCorp.Dialogue
             
             DialogueContext.Transition(DialogueTree.ConversationRoot);
 
-
-            World.GuiHook_ShowTutorialPopup = (text, callback) =>
-            {
-                var popup = GuiRoot.ConstructWidget(new NewGui.TutorialPopup
-                {
-                    Message = text,
-                    OnClose = (sender) =>
-                    {
-                        callback((sender as NewGui.TutorialPopup).DisableChecked);
-                    },
-                    OnLayout = (sender) =>
-                    {
-                        sender.Rect.X = GuiRoot.RenderData.VirtualScreen.Width - sender.Rect.Width;
-                        sender.Rect.Y = 64;
-                    }
-                });
-
-                GuiRoot.ShowPopup(popup, Root.PopupExclusivity.AddToStack);
-            };
-
             IsInitialized = true;
             base.OnEnter();
         }
@@ -122,9 +103,27 @@ namespace DwarfCorp.Dialogue
             }
 
             DialogueContext.Update(gameTime);
-            GuiRoot.Update(gameTime.ToGameTime());
+            World.TutorialManager.Update((text, callback) =>
+            {
+                var popup = GuiRoot.ConstructWidget(new NewGui.TutorialPopup
+                {
+                    Message = text,
+                    OnClose = (sender) =>
+                    {
+                        callback((sender as NewGui.TutorialPopup).DisableChecked);
+                    },
+                    OnLayout = (sender) =>
+                    {
+                        sender.Rect.X = GuiRoot.RenderData.VirtualScreen.Width - sender.Rect.Width;
+                        sender.Rect.Y = 64;
+                    }
+                });
 
-            base.Update(gameTime);
+                GuiRoot.ShowModalPopup(popup);
+            });
+            World.Paused = true;
+            IsInitialized = true;
+            base.OnEnter();
         }
 
         public override void Render(DwarfTime gameTime)

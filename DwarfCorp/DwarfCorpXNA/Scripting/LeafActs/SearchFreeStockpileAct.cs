@@ -1,4 +1,4 @@
-﻿// SearchFreeStockpileAct.cs
+// SearchFreeStockpileAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -51,12 +51,15 @@ namespace DwarfCorp
 
         public Voxel Voxel { get { return GetVoxel(); } set { SetVoxel(value);} }
 
-        public SearchFreeStockpileAct(CreatureAI creature, string stockName, string voxName) :
+        public ResourceAmount Item { get; set; }
+
+        public SearchFreeStockpileAct(CreatureAI creature, string stockName, string voxName, ResourceAmount itemToStock) :
             base(creature)
         {
             Name = "Search Stockpile " + stockName;
             StockpileName = stockName;
             VoxelName = voxName;
+            Item = itemToStock;
         }
 
         public Voxel GetVoxel()
@@ -111,7 +114,7 @@ namespace DwarfCorp
         {
             bool validTargetFound = false;
 
-            List<Stockpile> sortedPiles = new List<Stockpile>(Creature.Faction.Stockpiles);
+            List<Stockpile> sortedPiles = new List<Stockpile>(Creature.Faction.Stockpiles.Where(pile => pile.IsAllowed(Item.ResourceType)));
 
             sortedPiles.Sort(CompareStockpiles);
 

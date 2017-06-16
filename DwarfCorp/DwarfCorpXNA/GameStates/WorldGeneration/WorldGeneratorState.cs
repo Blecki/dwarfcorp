@@ -106,7 +106,7 @@ namespace DwarfCorp.GameStates
                         OverworldFile file = new OverworldFile(Game.GraphicsDevice, Overworld.Map, Settings.Name, Settings.SeaLevel);
                         file.WriteFile(worldDirectory.FullName + ProgramData.DirChar + "world." + OverworldFile.CompressedExtension, true, true);
                         file.SaveScreenshot(worldDirectory.FullName + ProgramData.DirChar + "screenshot.png");
-                        GuiRoot.ShowPopup(GuiRoot.ConstructWidget(new NewGui.Popup
+                        GuiRoot.ShowModalPopup(GuiRoot.ConstructWidget(new NewGui.Popup
                         {
                             Text = "File saved."
                         }));
@@ -130,7 +130,7 @@ namespace DwarfCorp.GameStates
                         OnClose = (s) => RestartGeneration()
                     });
 
-                    GuiRoot.ShowPopup(advancedSettingsEditor, Gum.Root.PopupExclusivity.AddToStack);
+                    GuiRoot.ShowModalPopup(advancedSettingsEditor);
                 }
             });
 

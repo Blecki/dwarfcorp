@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -61,7 +61,7 @@ namespace fbDeprofiler
             if (!GraphicsAdapter.DefaultAdapter.IsProfileSupported(GraphicsProfile.HiDef))
             {
                 DialogResult result = MessageBox.Show(
-                    "Your graphics adapter has been detected to not support the HiDef profile. XNA Framework will most likely tell you you cannot run this game. Should I tell XNA to go fuck itself and just try and run this damn thing?",
+                    "Your graphics adapter does not support the HiDef profile. That means not all of the features of the game are supported on by graphics card. Would you like to continue anyway? (WARNING: this may lead to crashes/instability).",
                     "HIDEF Not Supported!",
                     MessageBoxButtons.OKCancel,
                     MessageBoxIcon.Warning

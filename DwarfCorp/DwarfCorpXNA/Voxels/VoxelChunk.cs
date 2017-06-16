@@ -1220,7 +1220,7 @@ namespace DwarfCorp
                         }
                         reference.GridPosition = new Vector3(x, y, z);
                         int index = Data.IndexAt(x, y, z);
-                        if (Data.Types[index] == 0)
+                        if (Data.Types[index] == 0 || VoxelLibrary.GetVoxelType(Data.Types[index]).IsTransparent)
                         {
                             Data.SunColors[index] = sunColor;
                             continue;
@@ -1836,6 +1836,7 @@ namespace DwarfCorp
             }
             return toReturn;
         }
+
 
         public List<Voxel> AllocateVoxels(int num)
         {

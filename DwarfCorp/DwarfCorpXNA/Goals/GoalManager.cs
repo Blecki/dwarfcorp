@@ -12,9 +12,23 @@ namespace DwarfCorp.Goals
         private List<GameEvent> Events = new List<GameEvent>();
         private List<Goal> NewlyActivatedGoals = new List<Goal>();
 
+        public int NewAvailableGoals { get; private set; }
+        public int NewCompletedGoals { get; private set; }
+
         public GoalManager()
         {
-            
+            NewAvailableGoals = 0;
+            NewCompletedGoals = 0;
+        }
+
+        public void ResetNewAvailableGoals()
+        {
+            NewAvailableGoals = 0;
+        }
+
+        public void ResetNewCompletedGoals()
+        {
+            NewCompletedGoals = 0;
         }
 
         public IEnumerable<Goal> EnumerateGoals()
@@ -69,7 +83,11 @@ namespace DwarfCorp.Goals
 
             foreach (var goal in ActiveGoals)
                 foreach (var @event in events)
+                {
                     goal.OnGameEvent(World, @event);
+                    if (goal.State == GoalState.Complete)
+                        NewCompletedGoals += 1;
+                }
 
             ActiveGoals.RemoveAll(g => g.State != GoalState.Active);
             ActiveGoals.AddRange(NewlyActivatedGoals);
@@ -90,7 +108,10 @@ namespace DwarfCorp.Goals
         public void UnlockGoal(Goal Goal)
         {
             if (Goal.State == GoalState.Unavailable)
+            {
                 Goal.State = GoalState.Available;
+                NewAvailableGoals += 1;
+            }
         }
 
         public void UnlockGoal(Type Type)

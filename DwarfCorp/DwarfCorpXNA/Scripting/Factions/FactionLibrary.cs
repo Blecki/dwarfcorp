@@ -104,9 +104,9 @@ namespace DwarfCorp
                     Race = Races["Dwarf"]
                 };
 
-                Factions["Motherland"] = new Faction(state)
+                Factions["The Motherland"] = new Faction(state)
                 {
-                    Name = "Motherland",
+                    Name = "The Motherland",
                     Race = Races["Dwarf"],
                     IsRaceFaction = false,
                     TradeMoney = 10000
@@ -199,9 +199,9 @@ namespace DwarfCorp
                     Race = Races["Dwarf"]
                 };
 
-                Factions["Motherland"] = new Faction(world)
+                Factions["The Motherland"] = new Faction(world)
                 {
-                    Name = "Motherland",
+                    Name = "The Motherland",
                     Race = Races["Dwarf"],
                     IsRaceFaction = false,
                     TradeMoney = 10000

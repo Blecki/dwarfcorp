@@ -221,7 +221,7 @@ namespace DwarfCorp
                         yield return Act.Status.Running;
 
                         List<Creature.MoveAction> path = Agent.Blackboard.GetData<List<Creature.MoveAction>>("PathToEntity");
-                        if (MovingTarget && (path.Count > 0 && (path.Last().Voxel.Position - entity.LocalTransform.Translation).Length() > 4))
+                        if (MovingTarget && path != null && (path.Count > 0 && (path.Last().Voxel.Position - entity.LocalTransform.Translation).Length() > 4))
                         {
                             break;
                         }

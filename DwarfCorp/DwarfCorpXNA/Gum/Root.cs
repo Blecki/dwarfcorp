@@ -38,7 +38,6 @@ namespace Gum
         public int TooltipTextSize = 1;
         public float CursorBlinkTime = 0.3f;
         internal double RunTime = 0.0f;
-        private Widget ScreenDarkener = null;
         private List<Widget> PopupStack = new List<Widget>();
 
         public Root(RenderData RenderData)
@@ -107,25 +106,17 @@ namespace Gum
             if (Object.ReferenceEquals(HoverItem, Widget)) HoverItem = null;
             if (Object.ReferenceEquals(TooltipItem, Widget)) TooltipItem = null;
             UpdateItems.RemoveAll(p => Object.ReferenceEquals(p, Widget));
+
+            // If the widget is in the popup stack, remove it and any later popups from stack.
             if (PopupStack.Contains(Widget)) PopupStack = PopupStack.Take(PopupStack.IndexOf(Widget)).ToList();
-        }
 
-        private void CleanupPopupStack()
-        {
-            foreach (var item in PopupStack)
-            {
-                SafeCall(item.OnPopupClose, item);
-                DestroyWidget(item);
-            }
-
-            PopupStack.Clear();
+            SafeCall(Widget.OnClose, Widget);
         }
 
         public void DestroyWidget(Widget Widget)
         {
             CleanupWidget(Widget);
-            if (Widget.Parent != null) Widget.Parent.RemoveChild(Widget);
-            SafeCall(Widget.OnClose, Widget);
+            if (Widget.Parent != null) Widget.Parent.RemoveChild(Widget);            
         }            
 
         public Widget RegisterForUpdate(Widget Widget)
@@ -145,32 +136,41 @@ namespace Gum
             RootItem.AddChild(Dialog);
         }
 
-        public enum PopupExclusivity
-        {
-            DestroyExistingPopups,
-            AddToStack
-        }
-        
         /// <summary>
         /// Show a widget as a popup. Replaces any existing popup widget already displayed.
         /// </summary>
         /// <param name="Popup"></param>
-        public void ShowPopup(Widget Popup, PopupExclusivity Exclusivity = PopupExclusivity.AddToStack)
+        public void ShowModalPopup(Widget Popup)
         {
-            if (ScreenDarkener == null)
+            var screenDarkener = new Widget()
             {
-                ScreenDarkener = new Widget()
-                {
-                    Background = new TileReference("basic", 0),
-                    BackgroundColor = new Vector4(0, 0, 0, 0.5f),
-                    AutoLayout = AutoLayout.FloatCenter,
-                    Rect = RootItem.Rect
-                };
-                RootItem.AddChild(ScreenDarkener);
-            }
-            if (Exclusivity == PopupExclusivity.DestroyExistingPopups)
-                CleanupPopupStack();
+                Background = new TileReference("basic", 0),
+                BackgroundColor = new Vector4(0, 0, 0, 0.5f),
+                Rect = RootItem.Rect
+            };
 
+            RootItem.AddChild(screenDarkener);
+            PopupStack.Add(screenDarkener);
+
+            screenDarkener.AddChild(Popup);
+
+            // Need to hook the popup's OnClose to also remove the darkener.
+            var lambdaOnClose = Popup.OnClose;
+            Popup.OnClose = (sender) =>
+            {
+                this.SafeCall(lambdaOnClose, sender);
+                screenDarkener.Children.Clear(); // Avoid recursing back into popup's OnClose.
+                DestroyWidget(screenDarkener);
+            };
+        }
+
+
+        /// <summary>
+        /// Show a widget as a popup. Replaces any existing popup widget already displayed.
+        /// </summary>
+        /// <param name="Popup"></param>
+        public void ShowMinorPopup(Widget Popup)
+        {
             PopupStack.Add(Popup);
             RootItem.AddChild(Popup);
         }
@@ -290,11 +290,10 @@ namespace Gum
         {
             if (PopupStack.Count == 0 || HoverItem == null) return false;
 
-            foreach (var item in PopupStack)
-            {
+            var item = PopupStack[PopupStack.Count - 1];
                 if (Object.ReferenceEquals(item, HoverItem)) return true;
                 if (HoverItem.IsChildOf(item)) return true;
-            }
+            
             return false;
         }
 
@@ -331,12 +330,7 @@ namespace Gum
                         if (HoverItem != null && !Object.ReferenceEquals(HoverItem, MouseDownItem))
                             SafeCall(HoverItem.OnMouseMove, HoverItem,
                                 new InputEventArgs { X = MousePosition.X, Y = MousePosition.Y });
-                        
-                        if (HoverItem != null && 
-                            !IsHoverPartOfPopup() && 
-                            PopupStack.Count > 0 && 
-                            PopupStack[PopupStack.Count - 1].PopupDestructionType == PopupDestructionType.DestroyOnMouseLeave)
-                            CleanupPopupStack();
+                                                
                     }
                     break;
                 case InputEvents.MouseDown:
@@ -375,7 +369,7 @@ namespace Gum
                             if (HoverItem == null || !IsHoverPartOfPopup())
                             {
                                 if (PopupStack[PopupStack.Count - 1].PopupDestructionType == PopupDestructionType.DestroyOnOffClick)
-                                    CleanupPopupStack();
+                                    DestroyWidget(PopupStack[PopupStack.Count - 1]);
 
                                 MouseDownItem = null;
                                 return;
@@ -449,12 +443,6 @@ namespace Gum
                 SafeCall(item.OnUpdate, item, Time);
 
             if (HoverItem != null) SafeCall(HoverItem.OnHover, HoverItem);
-
-            if (PopupStack.Count == 0 && ScreenDarkener != null)
-            {
-                RootItem.RemoveChild(ScreenDarkener);
-                ScreenDarkener = null;
-            }
         }
 
         public void Draw()

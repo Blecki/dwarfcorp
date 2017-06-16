@@ -110,14 +110,16 @@ namespace DwarfCorp
         public string Adult { get; set; }
         public DateTime Birthday { get; set; }
         public Body ParentBody { get; set; }
+        public BoundingBox? PositionConstrain { get; set; }
         public Egg()
         {
             
         }
 
-        public Egg(string adult, ComponentManager manager, Vector3 position) :
+        public Egg(string adult, ComponentManager manager, Vector3 position, BoundingBox? positionConstraint) :
             base(false, manager)
         {
+            PositionConstrain = positionConstraint;
             Adult = adult;
             Birthday = Manager.World.Time.CurrentDate + new TimeSpan(0, 12, 0, 0);
 
@@ -143,7 +145,11 @@ namespace DwarfCorp
 
         public void Hatch()
         {
-            EntityFactory.CreateEntity<Body>(Adult, ParentBody.Position);
+            var adult = EntityFactory.CreateEntity<Body>(Adult, ParentBody.Position);
+            if (PositionConstrain.HasValue)
+            {
+                adult.GetComponent<CreatureAI>().PositionConstraint = PositionConstrain.Value;
+            }
             GetEntityRootComponent().Die();
         }
     }
@@ -217,6 +223,58 @@ namespace DwarfCorp
 
         public CreatureGender Gender { get; set; }
 
+        public bool CanReproduce = false;
+
+        public bool IsPregnant
+        {
+            get { return CurrentPregnancy != null; }
+        }
+
+        public int PregnancyLengthHours = 24;
+        public string Species = "";
+        public string BabyType = "";
+        public class Pregnancy
+        {
+            public DateTime EndDate;
+        }
+
+        public Pregnancy CurrentPregnancy = null;
+
+        public bool CanMate(Creature other)
+        {
+            bool genderWorks = false;
+            switch (Gender)
+            {
+                case CreatureGender.Male:
+                    genderWorks = other.Gender == CreatureGender.Female || other.Gender == CreatureGender.Nonbinary;
+                    break;
+                case CreatureGender.Female:
+                    genderWorks = other.Gender == CreatureGender.Male || other.Gender == CreatureGender.Nonbinary;
+                    break;
+                case CreatureGender.Nonbinary:
+                    genderWorks = Gender != CreatureGender.Nonbinary;
+                    break;
+            }
+
+            return genderWorks && !IsPregnant && other.CanReproduce && other.Species == Species && !other.IsPregnant;
+        }
+
+        public void Mate(Creature other, WorldTime time)
+        {
+            if (IsPregnant || other.IsPregnant) return;
+            if (Gender == CreatureGender.Nonbinary) return;
+            if (Gender != CreatureGender.Female)
+            {
+                other.Mate(this, time);
+                return;
+            }
+
+            CurrentPregnancy = new Pregnancy()
+            {
+                EndDate = time.CurrentDate + new TimeSpan(0, PregnancyLengthHours, 0, 0)
+            };
+        }
+
         public static string Pronoun(CreatureGender gender)
         {
             switch (gender)
@@ -271,6 +329,7 @@ namespace DwarfCorp
             Buffs = new List<Buff>();
             HasMeat = true;
             HasBones = true;
+            HasCorpse = false;
             DrawLifeTimer.HasTriggered = true;
             Gender = RandomGender();
         }
@@ -288,9 +347,11 @@ namespace DwarfCorp
                 GameState.Game.Content,
                 def.Name)
         {
+            Gender = RandomGender();
             DrawLifeTimer.HasTriggered = true;
             HasMeat = true;
             HasBones = true;
+            HasCorpse = false;
             EmployeeClass employeeClass = EmployeeClass.Classes[creatureClass];
             Physics.Orientation = Physics.OrientMode.RotateY;
             Sprite = new CharacterSprite(Graphics, Manager, "Sprite", Physics,
@@ -304,6 +365,13 @@ namespace DwarfCorp
             Hands = new Grabber("hands", Physics, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero);
 
             Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, def.SenseRange, Vector3.Zero);
+            Inventory = new Inventory("Inventory", Physics)
+            {
+                Resources = new ResourceContainer
+                {
+                    MaxResources = def.InventorySize
+                }
+            };
 
             AI = new CreatureAI(this, "AI", Sensors, PlanService);
 
@@ -313,15 +381,6 @@ namespace DwarfCorp
             {
                 Attacks.Add(new Attack(attack));
             }
-
-
-            Inventory = new Inventory("Inventory", Physics)
-            {
-                Resources = new ResourceContainer
-                {
-                    MaxResources = def.InventorySize
-                }
-            };
 
             if (def.HasShadow)
             {
@@ -382,9 +441,11 @@ namespace DwarfCorp
             string name) :
             base(parent.Manager, name, parent, stats.MaxHealth, 0.0f, stats.MaxHealth)
         {
+            Gender = RandomGender();
             DrawLifeTimer.HasTriggered = true;
             HasMeat = true;
             HasBones = true;
+            HasCorpse = false;
             Buffs = new List<Buff>();
             IsOnGround = true;
             Physics = parent;
@@ -405,11 +466,18 @@ namespace DwarfCorp
             {
                 IsVisible = false
             };
+            Inventory = new Inventory("Inventory", Physics)
+            {
+                Resources = new ResourceContainer()
+                {
+                    MaxResources = 128
+                }
+            };
         }
 
         public void LayEgg()
         {
-            new Egg(this.Name, Manager, Physics.Position);
+            new Egg(this.Name, Manager, Physics.Position, AI.PositionConstraint);
         }
 
         /// <summary> The creature's AI determines how it will behave. </summary>
@@ -434,6 +502,10 @@ namespace DwarfCorp
         public bool HasMeat { get; set; }
         /// <summary> If true, the creature will generate bones when it dies. </summary>
         public bool HasBones { get; set; }
+        /// <summary>
+        /// If true, the creature will generate a corpse.
+        /// </summary>
+        public bool HasCorpse { get; set; }
         /// <summary> Used to make sounds for the creature </summary>
         public NoiseMaker NoiseMaker { get; set; }
         /// <summary> The creature can hold objects in its inventory </summary>
@@ -588,6 +660,14 @@ namespace DwarfCorp
                     EggTimer = new Timer(1200.0f + MathFunctions.Rand(-30.0f, 30.0f), false);
                 }
             }
+
+            if (IsPregnant && World.Time.CurrentDate > CurrentPregnancy.EndDate)
+            {
+                var baby = EntityFactory.CreateEntity<GameComponent>(BabyType, Physics.Position);
+                if (AI.PositionConstraint.HasValue)
+                    baby.GetComponent<CreatureAI>().PositionConstraint = AI.PositionConstraint.Value;
+                CurrentPregnancy = null;
+            }
         }
 
         /// <summary> 
@@ -662,7 +742,7 @@ namespace DwarfCorp
                 CurrentCharacterMode = CharacterMode.Idle;
             }
 
-            if (!Status.Energy.IsUnhappy())
+            if (!Status.Energy.IsDissatisfied())
             {
                 Status.IsAsleep = false;
             }
@@ -712,6 +792,22 @@ namespace DwarfCorp
                 if (!ResourceLibrary.Resources.ContainsKey(type))
                 {
                     ResourceLibrary.Add(new Resource(ResourceLibrary.Resources[ResourceLibrary.ResourceType.Bones])
+                    {
+                        Type = type,
+                        ShortName = type
+                    });
+                }
+
+                Inventory.Resources.AddResource(new ResourceAmount(type, 1));
+            }
+
+            if (HasCorpse)
+            {
+                ResourceLibrary.ResourceType type = AI.Stats.FullName + "'s " + "Corpse";
+
+                if (!ResourceLibrary.Resources.ContainsKey(type))
+                {
+                    ResourceLibrary.Add(new Resource(ResourceLibrary.Resources["Corpse"])
                     {
                         Type = type,
                         ShortName = type

@@ -1,4 +1,4 @@
-﻿// NecromancerAI.cs
+// NecromancerAI.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -72,7 +72,7 @@ namespace DwarfCorp
         
         public override Task ActOnIdle()
         {
-            return new ActWrapperTask(new Wrap(SummonSkeletons))
+            return new ActWrapperTask(SummonFromGraves())
             {
                 Priority = Task.PriorityType.High
             };
@@ -80,10 +80,15 @@ namespace DwarfCorp
 
         public void SummonSkeleton()
         {
-            Vector3 pos = Position + MathFunctions.RandVector3Box(-1.0f, 1.0f, 0.0f, 0.0f, -1.0f, 1.0f);
+            SummonSkeleton(Position + MathFunctions.RandVector3Box(-1.0f, 1.0f, 0.0f, 0.0f, -1.0f, 1.0f));
+        }
+
+
+        public void SummonSkeleton(Vector3 pos)
+        {
             Skeleton skeleton = EntityFactory.GenerateSkeleton(pos, Manager, GameState.Game.Content,
                 GameState.Game.GraphicsDevice, Chunks, Manager.World.Camera, Faction, Manager.World.PlanService,
-                this.Creature.Allies).GetChildrenOfType<Skeleton>().FirstOrDefault();
+                this.Creature.Allies).GetComponent<Skeleton>();
 
             Skeletons.Add(skeleton);
             Matrix animatePosition = skeleton.Sprite.LocalTransform;
@@ -91,6 +96,17 @@ namespace DwarfCorp
             skeleton.Sprite.AnimationQueue.Add(new EaseMotion(1.0f, animatePosition, skeleton.Sprite.LocalTransform.Translation));
             Manager.World.ParticleManager.Trigger("green_flame", pos, Color.White, 10);
             SoundManager.PlaySound(ContentPaths.Audio.tinkle, pos, true);
+        }
+
+        public IEnumerable<Act.Status> SummonSkeleton(Body grave)
+        {
+            if (grave.IsDead)
+            {
+                yield return Act.Status.Fail;
+            }
+            SummonSkeleton(grave.Position);
+            grave.Die();
+            yield return Act.Status.Success;
         }
 
         public void GatherSkeletons()
@@ -115,12 +131,14 @@ namespace DwarfCorp
 
         public void OrderSkeletonsToAttack()
         {
-            List<CreatureAI> enemies = (from faction in Creature.Manager.Factions.Factions
-                                        where Manager.World.ComponentManager.Diplomacy.GetPolitics(Creature.Faction, faction.Value).GetCurrentRelationship() == Relationship.Hateful 
-                                        from minion in faction.Value.Minions 
-                                        let dist = (minion.Position - Creature.AI.Position).Length() 
-                                        where dist < AttackRange 
-                                        select minion).ToList();
+            IEnumerable<CreatureAI> enemies = (from faction in Creature.Manager.Factions.Factions
+                where
+                    Manager.World.ComponentManager.Diplomacy.GetPolitics(Creature.Faction, faction.Value)
+                        .GetCurrentRelationship() == Relationship.Hateful
+                from minion in faction.Value.Minions
+                let dist = (minion.Position - Creature.AI.Position).Length()
+                where dist < AttackRange
+                select minion);
 
             List<Task> attackTasks = enemies.Select(enemy => new KillEntityTask(enemy.Physics, KillEntityTask.KillType.Auto)).Cast<Task>().ToList();
             List<CreatureAI> skeletonAis = Skeletons.Select(skeleton => skeleton.AI).ToList();
@@ -130,10 +148,34 @@ namespace DwarfCorp
             }
         }
 
+        public Act SummonFromGraves()
+        {
+            List<Body> graves = (from faction in Creature.Manager.Factions.Factions
+                where
+                    Manager.World.ComponentManager.Diplomacy.GetPolitics(Creature.Faction, faction.Value)
+                        .GetCurrentRelationship() == Relationship.Hateful
+                from zone in faction.Value.GetRooms()
+                from body in zone.ZoneBodies
+                where body.Tags.Contains("Grave")
+                select body).ToList();
+
+            if (graves.Count > 0)
+            {
+                var grave = graves.FirstOrDefault();
+                if (grave != null && !grave.IsDead)
+                {
+                    return new Sequence(new GoToEntityAct(grave, this),
+                        new Wrap(() => SummonSkeleton(grave)));
+                }
+            }
+            return new Wrap(SummonSkeletons);
+        }
+
         public IEnumerable<Act.Status> SummonSkeletons()
         {
             while (true)
             {
+                WanderAct wander = new WanderAct(this, WanderTimer.TargetTimeSeconds, 1.0f, 1.0f);
                 Skeletons.RemoveAll(skeleton => skeleton.IsDead);
                 if (SummonTimer.HasTriggered && Skeletons.Count < MaxSkeletons)
                 {
@@ -152,8 +194,11 @@ namespace DwarfCorp
 
                 if (WanderTimer.HasTriggered)
                 {
-                    Physics.ApplyForce(MathFunctions.RandVector3Box(-5f, 5f, 0.01f, 0.01f, -5f, 5f), 1f);
-                    GatherSkeletons();
+                    foreach (Act.Status status in wander.Run())
+                    {
+                        GatherSkeletons();
+                        yield return Act.Status.Running;
+                    }
                 }
                 WanderTimer.Update(DwarfTime.LastTime);
 

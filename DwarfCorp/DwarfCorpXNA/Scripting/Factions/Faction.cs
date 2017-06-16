@@ -46,110 +46,6 @@ using Newtonsoft.Json.Converters;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
-    public class Race
-    {
-        public class RaceSpeech
-        {
-            public List<string> Greetings { get; set; }
-            public List<string> Farewells { get; set; }
-            public List<string> GoodTrades { get; set; }
-            public List<string> BadTrades { get; set; }
-            public List<string> WarDeclarations { get; set; }
-            public List<string> PeaceDeclarations { get; set; }
-            public Language Language { get; set; }
-        }
-
-
-        public string Name { get; set; }
-        public List<string> CreatureTypes { get; set; }
-        public List<List<string>> WarParties { get; set; }
-        public List<List<string>> TradeEnvoys { get; set; } 
-        public List<string> NaturalEnemies { get; set; } 
-        public bool IsIntelligent { get; set; }
-        public bool IsNative { get; set; }
-        public string FactionNameFile { get; set; }
-        public string NameFile { get; set; }
-        public Animation.SimpleDescriptor TalkAnimation { get; set; }
-        public RaceSpeech Speech  { get; set; }
-        [JsonIgnore]
-        public List<List<string>> FactionNameTemplates { get; set; }
-        [JsonIgnore]
-        public List<List<string>> NameTemplates { get; set; }
-
-        public List<Resource.ResourceTags> LikedResources { get; set; }
-        public List<Resource.ResourceTags> HatedResources { get; set; }
-        public List<Resource.ResourceTags> CommonResources { get; set; }
-        public List<Resource.ResourceTags> RareResources { get; set; } 
-
-        public Dictionary<Resource.ResourceTags, int> TradeGoods { get; set; }
-        public List<Resource.ResourceTags> Crafts { get; set; }
-        public List<Resource.ResourceTags> Encrustings { get; set; } 
- 
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
-        {
-            FactionNameTemplates = TextGenerator.GetAtoms(FactionNameFile);
-            NameTemplates = TextGenerator.GetAtoms(NameFile);
-        }
-
-        public List<ResourceAmount> GenerateResources()
-        {
-            Dictionary<ResourceLibrary.ResourceType, ResourceAmount> toReturn =
-                new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
-
-            foreach (var tags in TradeGoods)
-            {
-                int num = MathFunctions.RandInt(tags.Value - 5, tags.Value + 5);
-
-
-                List<Resource> resources = ResourceLibrary.GetResourcesByTag(tags.Key);
-
-                if (resources.Count <= 0) continue;
-
-                for (int i = 0; i < num; i++)
-                {
-                    Resource randResource = Datastructures.SelectRandom(resources);
-
-                    if (randResource.Type == ResourceLibrary.ResourceType.Trinket ||
-                        randResource.Type == ResourceLibrary.ResourceType.GemTrinket ||
-                        tags.Key == Resource.ResourceTags.Craft)
-                    {
-                        Resource.ResourceTags craftTag = Datastructures.SelectRandom(Crafts);
-                        List<Resource> availableCrafts = ResourceLibrary.GetResourcesByTag(craftTag);
-
-                        Resource trinket = ResourceLibrary.GenerateTrinket(
-                            Datastructures.SelectRandom(availableCrafts).Type, MathFunctions.Rand(0.1f, 3.0f));
-
-                        if (MathFunctions.RandEvent(0.3f) && Encrustings.Count > 0)
-                        {
-                            List<Resource> availableGems =
-                                ResourceLibrary.GetResourcesByTag(Datastructures.SelectRandom(Encrustings));
-                            randResource = ResourceLibrary.EncrustTrinket(trinket.Type,
-                                Datastructures.SelectRandom(availableGems).Type);
-                        }
-                        else
-                        {
-                            randResource = trinket;
-                        }
-                    }
-
-                    if (!toReturn.ContainsKey(randResource.Type))
-                    {
-                        toReturn[randResource.Type] = new ResourceAmount(randResource.Type, 1);
-                    }
-                    else
-                    {
-                        toReturn[randResource.Type].NumResources += 1;
-                    }
-                }
-            }
-
-            List<ResourceAmount> resList = toReturn.Select(amount => amount.Value).ToList();
-            return resList;
-        }
-       
-    }
     /// <summary>
     /// A faction is an independent collection of creatures, tied to an economy, rooms, and designations.
     /// Examples might be the player's dwarves, or the faction of goblins.
@@ -178,6 +74,7 @@ namespace DwarfCorp
             GatherDesignations = new List<Body>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
+            WrangleDesignations = new List<Body>();
             RoomBuilder = new RoomBuilder(this, world);
             WallBuilder = new PutDesignator(this, world);
             CraftBuilder = new CraftBuilder(this, world);
@@ -197,6 +94,7 @@ namespace DwarfCorp
             ChopDesignations = new List<Body>();
             AttackDesignations = new List<Body>();
             GatherDesignations = new List<Body>();
+            WrangleDesignations = new List<Body>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
             IsRaceFaction = false;
@@ -208,63 +106,7 @@ namespace DwarfCorp
             Center = new Point(descriptor.CenterX, descriptor.CenterY);
         }
 
-        public class Expidition
-        {
-            public enum State
-            {
-                Leaving,
-                Arriving,
-                Fighting,
-                Trading
-            }
-
-            public DateTimer DeathTimer { get; set; }
-            public List<CreatureAI> Creatures { get; set; }
-            public Faction OwnerFaction { get; set; }
-            public Faction OtherFaction { get; set; }
-            public State ExpiditionState { get; set; }
-            public bool ShouldRemove { get; set; }
-
-            public Expidition(DateTime date)
-            {
-                ExpiditionState = State.Arriving;
-                ShouldRemove = false;
-                Creatures = new List<CreatureAI>();
-                DeathTimer = new DateTimer(date, new TimeSpan(1, 12, 0, 0));
-            }
-        }
-
-        public class TradeEnvoy : Expidition
-        {
-            public TradeEnvoy(DateTime date) : base(date)
-            {
-            }
-
-            public DwarfBux TradeMoney { get; set; }
-            public List<ResourceAmount> TradeGoods { get; set; }
-
-            public void DistributeGoods()
-            {
-                if (Creatures.Count == 0) return;
-                int goodsPerCreature = TradeGoods.Count / Creatures.Count;
-                int currentGood = 0;
-                foreach (CreatureAI creature in Creatures)
-                {
-                    ResourcePack pack = creature.GetComponent<ResourcePack>();
-                    if (pack != null)
-                    {
-                        pack.Contents.Resources.Clear();
-                        for (int i = currentGood; i < System.Math.Min(currentGood + goodsPerCreature, TradeGoods.Count); i++)
-                        {
-                            pack.Contents.Resources.AddResource(TradeGoods[i]);
-                        }
-                        currentGood += goodsPerCreature;
-                    }
-                }
-            }
-        }
-
-        public class WarParty : Expidition
+        public class WarParty : Expedition
         {
             public WarParty(DateTime date) : base(date)
             {
@@ -306,6 +148,8 @@ namespace DwarfCorp
 
         [JsonIgnore]
         public WorldManager World { get; set; }
+
+        public List<Body> WrangleDesignations { get; set; }
 
         [OnDeserialized]
         public void OnDeserialized(StreamingContext ctx)
@@ -370,12 +214,16 @@ namespace DwarfCorp
                 m.Creature.SelectionCircle.IsVisible = false;
                 m.Creature.Sprite.DrawSilhouette = false;
             });
-            SelectedMinions.ForEach(m => {
-                                             m.Creature.SelectionCircle.IsVisible = true;
-                                             m.Creature.Sprite.DrawSilhouette = true;
-            }
+            SelectedMinions.ForEach(m =>
+            {
+                m.Creature.SelectionCircle.IsVisible = true;
+                m.Creature.Sprite.DrawSilhouette = true;
+            });
 
-    );
+            foreach (Room zone in GetRooms())
+            {
+                zone.ZoneBodies.RemoveAll(body => body.IsDead);
+            }
             
             // Turned off until a non-O(n^2) collision method is create.
             //CollideMinions(time);
@@ -429,20 +277,13 @@ namespace DwarfCorp
                 GuardDesignations.Remove(v);
             }
 
-            List<Body> treesToRemove = ChopDesignations.Where(tree => tree.IsDead).ToList();
-
-            foreach (Body tree in treesToRemove)
+            ChopDesignations.RemoveAll(tree => tree.IsDead);
+            AttackDesignations.RemoveAll(body => body.IsDead);
+            WrangleDesignations.RemoveAll(body => body.IsDead);
+            foreach (var zone in RoomBuilder.DesignatedRooms)
             {
-                ChopDesignations.Remove(tree);
+                zone.Update();
             }
-
-            List<Body> attacksToRemove = AttackDesignations.Where(body => body.IsDead).ToList();
-
-            foreach (Body body in attacksToRemove)
-            {
-                AttackDesignations.Remove(body);
-            }
-
             HandleThreats();
         }
 
@@ -503,6 +344,15 @@ namespace DwarfCorp
             TaskManager.AssignTasks(tasks, Minions);
         }
 
+        public void AssignGather(IEnumerable<Body> items)
+        {
+            List<Task> tasks = (from item in items where AddGatherDesignation(item) select new GatherItemTask(item) as Task).ToList();
+            foreach (CreatureAI creature in Minions)
+            {
+                creature.Tasks.AddRange(tasks);
+            }
+        }
+
         public List<Room> GetRooms()
         {
             return RoomBuilder.DesignatedRooms;
@@ -558,17 +408,16 @@ namespace DwarfCorp
             return Stockpiles.Sum(pile => pile.Resources.MaxResources - pile.Resources.CurrentResourceCount);
         }
 
-        public void AddGatherDesignation(Body resource)
+        public bool AddGatherDesignation(Body resource)
         {
             if (resource.Parent != Components.RootComponent || resource.IsDead)
             {
-                return;
+                return false;
             }
 
-            if (!GatherDesignations.Contains(resource))
-            {
-                GatherDesignations.Add(resource);
-            }
+            if (GatherDesignations.Contains(resource)) return false;
+            GatherDesignations.Add(resource);
+            return true;
         }
 
         public BuildOrder GetClosestDigDesignationTo(Vector3 position)
@@ -719,12 +568,12 @@ namespace DwarfCorp
         }
 
 
-        public Stockpile GetNearestStockpile(Vector3 position)
+        public Stockpile GetNearestStockpile(Vector3 position, Func<Stockpile, bool> predicate )
         {
             Stockpile nearest = null;
 
             float closestDist = float.MaxValue;
-            foreach(Stockpile stockpile in Stockpiles)
+            foreach(Stockpile stockpile in Stockpiles.Where(predicate))
             {
                 float dist = (stockpile.GetBoundingBox().Center() - position).LengthSquared();
 
@@ -775,6 +624,11 @@ namespace DwarfCorp
         public bool HasFreeStockpile()
         {
             return Stockpiles.Any(s => !s.IsFull());
+        }
+
+        public bool HasFreeStockpile(ResourceAmount toPut)
+        {
+            return Stockpiles.Any(s => !s.IsFull() && s.IsAllowed(toPut.ResourceType));
         }
 
         public Body FindNearestItemWithTags(string tag, Vector3 location, bool filterReserved)
@@ -868,9 +722,11 @@ namespace DwarfCorp
                 tagsGot[quantity.ResourceType] = 0;
             }
 
+            Random r = new Random();
+
             foreach (Stockpile stockpile in Stockpiles)
             {
-                foreach (ResourceAmount resource in stockpile.Resources)
+                foreach (ResourceAmount resource in stockpile.Resources.OrderBy(x => r.Next()))
                 {
                     foreach (var requirement in tagsRequired)
                     {
@@ -901,12 +757,6 @@ namespace DwarfCorp
             return amounts.Values.ToList();
         }
 
-        public bool HasResources(Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> resources)
-        {
-            return HasResources(resources.Values);
-        }
-
-
         public bool HasResources(IEnumerable<Quantitiy<Resource.ResourceTags>> resources)
         {
             foreach (Quantitiy<Resource.ResourceTags> resource in resources)
@@ -920,11 +770,6 @@ namespace DwarfCorp
             }
 
             return true;
-        }
-
-        public bool HasResources(Dictionary<ResourceLibrary.ResourceType, ResourceAmount> resources)
-        {
-            return HasResources(resources.Values);
         }
 
         public bool HasResources(IEnumerable<ResourceAmount> resources)
@@ -963,7 +808,7 @@ namespace DwarfCorp
                 }
             }
 
-            if (!HasResources(amounts))
+            if (!HasResources(amounts.Values))
             {
                 return false;
             }
@@ -1141,6 +986,21 @@ namespace DwarfCorp
 
 
             return desiredRoom;
+        }
+
+        public void AddMinion(CreatureAI minion)
+        {
+            Minions.Add(minion);
+            Inventory targetInventory = minion.GetComponent<Inventory>();
+
+            if (targetInventory != null)
+            {
+                targetInventory.OnDeath += resources =>
+                {
+                    if (resources == null) return;
+                    AssignGather(resources);
+                };
+            }
         }
     }
 

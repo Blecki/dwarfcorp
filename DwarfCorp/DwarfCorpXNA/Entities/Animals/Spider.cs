@@ -166,7 +166,9 @@ namespace DwarfCorp
             NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.hiss };
             AI.Movement.CanClimbWalls = true;
             AI.Movement.CanSwim = false;
-
+            Species = "Spider";
+            CanReproduce = true;
+            BabyType = "Spider";
         }
 
     }

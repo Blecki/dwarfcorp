@@ -53,7 +53,7 @@ namespace DwarfCorp
 
         public bool LoopCondition()
         {
-            return Agent.Faction.IsGuardDesignation(Voxel) && !EnemiesNearby() && !Creature.Status.Energy.IsUnhappy() && !Creature.Status.Hunger.IsUnhappy();
+            return Agent.Faction.IsGuardDesignation(Voxel) && !EnemiesNearby() && !Creature.Status.Energy.IsDissatisfied() && !Creature.Status.Hunger.IsDissatisfied();
         }
 
         public bool GuardDesignationExists()

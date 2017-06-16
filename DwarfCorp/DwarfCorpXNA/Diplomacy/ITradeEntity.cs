@@ -22,9 +22,9 @@ namespace DwarfCorp.Trade
 
     public class EnvoyTradeEntity : ITradeEntity
     {
-        private Faction.TradeEnvoy SourceEnvoy;
+        private TradeEnvoy SourceEnvoy;
 
-        public EnvoyTradeEntity(Faction.TradeEnvoy SourceEnvoy)
+        public EnvoyTradeEntity(TradeEnvoy SourceEnvoy)
         {
             this.SourceEnvoy = SourceEnvoy;
         }
@@ -67,7 +67,8 @@ namespace DwarfCorp.Trade
         public Faction TraderFaction { get { return Faction; } }
         public int AvailableSpace { get { return Faction.ComputeStockpileSpace(); } }
         public DwarfBux Money { get { return Faction.Economy.CurrentMoney; } }
-        public List<ResourceAmount> Resources { get { return Faction.ListResources().Select(r => r.Value).ToList(); } }
+        public List<ResourceAmount> Resources { get { return Faction.ListResources().Where(r => 
+            ResourceLibrary.GetResourceByName(r.Value.ResourceType).MoneyValue > 0).Select(r => r.Value).ToList(); } }
         public void AddMoney(DwarfBux Money) { Faction.Economy.CurrentMoney += Money; }
 
         public void AddResources(List<ResourceAmount> Resources)
