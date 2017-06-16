@@ -132,6 +132,7 @@ namespace DwarfCorp.GameStates
                 StateManager.PushState(new PlayState(Game, StateManager, World));
 
                 World.OnSetLoadingMessage = null;
+                Overworld.NativeFactions = World.Natives;
             }
             else
             {
