@@ -121,7 +121,7 @@ namespace DwarfCorp
             };
 
             return new RoomData(TrainingRoomName, 3, "Cobble", roomResources, trainingTemplates, 
-                new Gum.TileReference("rooms", 3))
+                new Gui.TileReference("rooms", 3))
             {
                 Description = "Military dwarves train here",
                 MinimumSideLength = 4,

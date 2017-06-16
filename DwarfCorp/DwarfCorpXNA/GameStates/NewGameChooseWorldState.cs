@@ -7,45 +7,45 @@ namespace DwarfCorp.GameStates
 {
     public class NewGameChooseWorldState : GameState
     {
-        private Gum.Root GuiRoot;
+        private Gui.Root GuiRoot;
 
         public NewGameChooseWorldState(DwarfGame game, GameStateManager stateManager) :
             base(game, "MainMenuState", stateManager)
         {
         }
 
-        private Gum.Widget MakeMenuFrame(String Name)
+        private Gui.Widget MakeMenuFrame(String Name)
         {
-            GuiRoot.RootItem.AddChild(new Gum.Widget
+            GuiRoot.RootItem.AddChild(new Gui.Widget
             {
                 MinimumSize = new Point(600, 348),
-                Background = new Gum.TileReference("logo", 0),
-                AutoLayout = Gum.AutoLayout.FloatTop,
+                Background = new Gui.TileReference("logo", 0),
+                AutoLayout = Gui.AutoLayout.FloatTop,
             });
 
-            return GuiRoot.RootItem.AddChild(new Gum.Widget
+            return GuiRoot.RootItem.AddChild(new Gui.Widget
             {
                 MinimumSize = new Point(256, 200),
                 Border = "border-fancy",
-                AutoLayout = Gum.AutoLayout.FloatBottom,
-                TextHorizontalAlign = Gum.HorizontalAlign.Center,
+                AutoLayout = Gui.AutoLayout.FloatBottom,
+                TextHorizontalAlign = Gui.HorizontalAlign.Center,
                 Text = Name,
-                InteriorMargin = new Gum.Margin(12,0,0,0),
-                Padding = new Gum.Margin(2, 2, 2, 2)
+                InteriorMargin = new Gui.Margin(12,0,0,0),
+                Padding = new Gui.Margin(2, 2, 2, 2)
             });
         }
 
-        private void MakeMenuItem(Gum.Widget Menu, string Name, string Tooltip, Action<Gum.Widget, Gum.InputEventArgs> OnClick)
+        private void MakeMenuItem(Gui.Widget Menu, string Name, string Tooltip, Action<Gui.Widget, Gui.InputEventArgs> OnClick)
         {
-            Menu.AddChild(new Gum.Widgets.Button
+            Menu.AddChild(new Gui.Widgets.Button
             {
-                AutoLayout = Gum.AutoLayout.DockTop,
+                AutoLayout = Gui.AutoLayout.DockTop,
                 Border = "border-thin",
                 Text = Name,
                 OnClick = OnClick,
                 Tooltip = Tooltip,
-                TextHorizontalAlign = Gum.HorizontalAlign.Center,
-                TextVerticalAlign = Gum.VerticalAlign.Center
+                TextHorizontalAlign = Gui.HorizontalAlign.Center,
+                TextVerticalAlign = Gui.VerticalAlign.Center
             });
         }
 
@@ -77,8 +77,8 @@ namespace DwarfCorp.GameStates
         {
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
-            GuiRoot = new Gum.Root(DwarfGame.GumSkin);
-            GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
+            GuiRoot = new Gui.Root(DwarfGame.GumSkin);
+            GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
             GuiRoot.SetMouseOverlay(null, 0);
             MakeMenu();
             IsInitialized = true;

@@ -45,7 +45,7 @@ namespace DwarfCorp.Goals
         /// Called to create a custom GUI for the goal.
         /// </summary>
         /// <param name="Widget"></param>
-        public virtual void CreateGUI(Gum.Widget Widget)
+        public virtual void CreateGUI(Gui.Widget Widget)
         {
             Widget.Text = Description;
         }

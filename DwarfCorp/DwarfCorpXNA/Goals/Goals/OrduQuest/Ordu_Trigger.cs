@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Gum;
+using DwarfCorp.Gui;
 
 namespace DwarfCorp.Goals.Goals
 {

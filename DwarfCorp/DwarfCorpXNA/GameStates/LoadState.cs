@@ -17,9 +17,9 @@ namespace DwarfCorp.GameStates
         private DwarfRunner Runner;
         private bool DoneLoading = false;
 
-        private Gum.Root GuiRoot;
-        private Gum.Widget Tip;
-        private NewGui.InfoTicker LoadTicker;
+        private Gui.Root GuiRoot;
+        private Gui.Widget Tip;
+        private Gui.Widgets.InfoTicker LoadTicker;
         private WorldGenerator Generator;
         // Displays tips when the game is loading.
         public List<string> LoadingTips = new List<string>()
@@ -60,25 +60,25 @@ namespace DwarfCorp.GameStates
             IndicatorManager.SetupStandards();
 
             DwarfGame.GumInputMapper.GetInputQueue();
-            GuiRoot = new Gum.Root(DwarfGame.GumSkin);
+            GuiRoot = new Gui.Root(DwarfGame.GumSkin);
 
-            Tip = GuiRoot.RootItem.AddChild(new Gum.Widget
+            Tip = GuiRoot.RootItem.AddChild(new Gui.Widget
             {
                 Font = "outline-font",
                 TextColor = new Vector4(1, 1, 1, 1),
                 MinimumSize = new Point(0, 128),
-                TextHorizontalAlign = Gum.HorizontalAlign.Center,
-                TextVerticalAlign = Gum.VerticalAlign.Center,
+                TextHorizontalAlign = Gui.HorizontalAlign.Center,
+                TextVerticalAlign = Gui.VerticalAlign.Center,
                 Text = "Press any key to jump!",
-                AutoLayout = Gum.AutoLayout.DockBottom
+                AutoLayout = Gui.AutoLayout.DockBottom
             });
 
-            LoadTicker = GuiRoot.RootItem.AddChild(new NewGui.InfoTicker
+            LoadTicker = GuiRoot.RootItem.AddChild(new Gui.Widgets.InfoTicker
             {
                 Font = "outline-font",
-                AutoLayout = Gum.AutoLayout.DockFill,
+                AutoLayout = Gui.AutoLayout.DockFill,
                 TextColor = new Vector4(1,1,1,1)
-            }) as NewGui.InfoTicker;
+            }) as Gui.Widgets.InfoTicker;
 
             GuiRoot.RootItem.Layout();
 
@@ -145,7 +145,7 @@ namespace DwarfCorp.GameStates
                         LoadTicker.AddMessage(Generator.LoadingMessage);
                 }
                 foreach (var item in DwarfGame.GumInputMapper.GetInputQueue())
-                    if (item.Message == Gum.InputEvents.KeyPress)
+                    if (item.Message == Gui.InputEvents.KeyPress)
                         Runner.Jump();
 
                 GuiRoot.Update(gameTime.ToGameTime());

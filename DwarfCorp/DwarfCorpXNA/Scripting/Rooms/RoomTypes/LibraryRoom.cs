@@ -156,7 +156,7 @@ namespace DwarfCorp
             libraryTemplates.Add(book);
             Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
             return new RoomData(LibraryRoomName, 4, "Blue Tile", roomResources, libraryTemplates,
-                new Gum.TileReference("rooms", 4))
+                new Gui.TileReference("rooms", 4))
             {
                 Description = "Wizards do magical research here. Also holds mana crystals to charge magic spells.",
                 CanBuildAboveGround = false

@@ -38,7 +38,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using BloomPostprocess;
-using DwarfCorp.NewGui;
+using DwarfCorp.Gui.Widgets;
 using DwarfCorp.Tutorial;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -308,20 +308,20 @@ namespace DwarfCorp
 
         public GameState gameState;
 
-        public Gum.Root NewGui;
+        public Gui.Root Gui;
 
         public Action<String> ShowTooltip = null;
         public Action<String> ShowInfo = null;
         public Action<String> ShowToolPopup = null;
-        public Action<Gum.MousePointer> SetMouse = null;
+        public Action<Gui.MousePointer> SetMouse = null;
         public Action<String, int> SetMouseOverlay = null;
-        public Gum.MousePointer MousePointer = new Gum.MousePointer("mouse", 1, 0);
+        public Gui.MousePointer MousePointer = new Gui.MousePointer("mouse", 1, 0);
         
         public bool IsMouseOverGui
         {
             get
             {
-                return NewGui.HoverItem != null;
+                return Gui.HoverItem != null;
                 // Don't detect tooltips and tool popups.
             }
         }
@@ -1360,18 +1360,18 @@ namespace DwarfCorp
                 bool allAsleep = Master.AreAllEmployeesAsleep();
                 if (SleepPrompt && allAsleep && !FastForwardToDay && Time.IsNight())
                 {
-                    var sleepingPrompt = NewGui.ConstructWidget(new NewGui.Confirm
+                    var sleepingPrompt = Gui.ConstructWidget(new Gui.Widgets.Confirm
                     {
                         Text = "All of your employees are asleep. Skip to daytime?",
                         OkayText = "Skip to Daytime",
                         CancelText = "Don't Skip",
                         OnClose = (sender) =>
                         {
-                            if ((sender as NewGui.Confirm).DialogResult == DwarfCorp.NewGui.Confirm.Result.OKAY)
+                            if ((sender as Gui.Widgets.Confirm).DialogResult == DwarfCorp.Gui.Widgets.Confirm.Result.OKAY)
                                 FastForwardToDay = true;
                         }
                     });
-                    NewGui.ShowModalPopup(sleepingPrompt);
+                    Gui.ShowModalPopup(sleepingPrompt);
                     SleepPrompt = false;
                 }
                 else if (!allAsleep)

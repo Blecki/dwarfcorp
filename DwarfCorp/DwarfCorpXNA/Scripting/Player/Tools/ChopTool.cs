@@ -85,12 +85,12 @@ namespace DwarfCorp
             Player.BodySelector.Enabled = true;
             Player.BodySelector.AllowRightClickSelection = true;
 
-            Player.World.SetMouse(new Gum.MousePointer("mouse", 1, 0));
+            Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 0));
 
             if (Player.World.IsMouseOverGui)
-                Player.World.SetMouse(new Gum.MousePointer("mouse", 1, 0));
+                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 0));
             else
-                Player.World.SetMouse(new Gum.MousePointer("mouse", 1, 5));
+                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 5));
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)

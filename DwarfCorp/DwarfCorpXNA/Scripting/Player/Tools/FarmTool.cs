@@ -48,7 +48,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class FarmTool : PlayerTool
     {
-        public NewGui.BuildMenu.BuildTypes BuildType { get; set; }
+        public Gui.Widgets.BuildMenu.BuildTypes BuildType { get; set; }
         public string PlantType { get; set; }
         public List<ResourceAmount> RequiredResources { get; set; } 
         public enum FarmMode
@@ -346,7 +346,7 @@ namespace DwarfCorp
             if (Player.World.IsMouseOverGui)
                 Player.World.SetMouse(Player.World.MousePointer);
             else
-                Player.World.SetMouse(new Gum.MousePointer("mouse", 1, 12));
+                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 12));
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)

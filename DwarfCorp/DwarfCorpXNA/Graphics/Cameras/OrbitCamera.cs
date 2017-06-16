@@ -280,7 +280,7 @@ namespace DwarfCorp
 
             if (!KeyManager.RotationEnabled())
             {
-                World.NewGui.MouseVisible = true;
+                World.Gui.MouseVisible = true;
 
                 if (!World.IsMouseOverGui)
                 {
@@ -339,7 +339,7 @@ namespace DwarfCorp
             }
             else
             {
-                World.NewGui.MouseVisible = false;
+                World.Gui.MouseVisible = false;
             }
 
             int scroll = mouse.ScrollWheelValue;

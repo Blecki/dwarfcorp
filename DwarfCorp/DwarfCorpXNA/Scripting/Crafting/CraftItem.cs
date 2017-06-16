@@ -55,7 +55,7 @@ namespace DwarfCorp
 
         public string Name { get; set; }
         public List<Quantitiy<Resource.ResourceTags>> RequiredResources { get; set; }
-        public Gum.TileReference Icon { get; set; }
+        public Gui.TileReference Icon { get; set; }
         public float BaseCraftTime { get; set; }
         public string Description { get; set; }
         public CraftType Type { get; set; }

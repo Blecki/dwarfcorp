@@ -32,12 +32,7 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
 using DwarfCorp.GameStates;
-using DwarfCorp.NewGui;
-using Gum.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -52,12 +47,9 @@ namespace DwarfCorp
 
         }
 
-
-
         public Flag(ComponentManager Manager, Vector3 position, CompanyInformation logo) :
             base(Manager, "Flag", Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
         {
-
             SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture);
             List<Point> frames = new List<Point>
             {
@@ -166,8 +158,8 @@ namespace DwarfCorp
             data.Indices.SetData(data.Idx);
             device.SetRenderTarget(data.Texture);
             device.Clear(new Color(Logo.LogoBackgroundColor * 0.5f + Logo.LogoSymbolColor * 0.5f));
-            Texture2D logoBg = TextureManager.GetTexture("newgui/logo-bg");
-            Texture2D logoFg = TextureManager.GetTexture("newgui/logo-fg");
+            Texture2D logoBg = TextureManager.GetTexture("Gui.Widgets/logo-bg");
+            Texture2D logoFg = TextureManager.GetTexture("Gui.Widgets/logo-fg");
             int bgIdx = Logo.LogoBackground.Tile;
             int bgX = (bgIdx%(logoBg.Width / 32)) * 32;
             int bgY = (bgIdx/(logoBg.Width / 32)) * 32; 

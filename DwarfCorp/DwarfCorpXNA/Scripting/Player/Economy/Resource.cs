@@ -47,7 +47,7 @@ namespace DwarfCorp
         public DwarfBux MoneyValue { get; set; }
         public string Description { get; set; }
         public NamedImageFrame Image { get; set; }
-        public int NewGuiSprite = 0;
+        public int GuiSprite = 0;
         public List<ResourceTags> Tags { get; set; }
         public float FoodContent { get; set; }
         public bool SelfIlluminating { get { return Tags.Contains(ResourceTags.SelfIlluminating); }}
@@ -105,7 +105,7 @@ namespace DwarfCorp
             MoneyValue = other.MoneyValue;
             Description = new string(other.Description.ToCharArray());
             Image = other.Image;
-            NewGuiSprite = other.NewGuiSprite;
+            GuiSprite = other.GuiSprite;
             Tint = other.Tint;
             Tags = new List<ResourceTags>();
             Tags.AddRange(other.Tags);
@@ -114,13 +114,13 @@ namespace DwarfCorp
             PlantToGenerate = other.PlantToGenerate;
         }
 
-        public Resource(ResourceLibrary.ResourceType type,  DwarfBux money, string description, NamedImageFrame image, int NewGuiSprite, Color tint, params ResourceTags[] tags)
+        public Resource(ResourceLibrary.ResourceType type,  DwarfBux money, string description, NamedImageFrame image, int WidgetsSprite, Color tint, params ResourceTags[] tags)
         {
             Type = type;
             MoneyValue = money;
             Description = description;
             Image = image;
-            this.NewGuiSprite = NewGuiSprite;
+            this.GuiSprite = WidgetsSprite;
             Tint = tint;
             Tags = new List<ResourceTags>();
             Tags.AddRange(tags);
