@@ -150,6 +150,7 @@ namespace DwarfCorp
         public WorldManager World { get; set; }
 
         public List<Body> WrangleDesignations { get; set; }
+        public List<Treasury> Treasurys = new List<Treasury>();
 
         [OnDeserialized]
         public void OnDeserialized(StreamingContext ctx)
@@ -626,9 +627,19 @@ namespace DwarfCorp
             return Stockpiles.Any(s => !s.IsFull());
         }
 
+        public bool HasFreeTreasury()
+        {
+            return Treasurys.Any(s => !s.IsFull());
+        }
+
         public bool HasFreeStockpile(ResourceAmount toPut)
         {
             return Stockpiles.Any(s => !s.IsFull() && s.IsAllowed(toPut.ResourceType));
+        }
+
+        public bool HasFreeTreasury(DwarfBux toPut)
+        {
+            return Treasurys.Any(s => !s.IsFull());
         }
 
         public Body FindNearestItemWithTags(string tag, Vector3 location, bool filterReserved)

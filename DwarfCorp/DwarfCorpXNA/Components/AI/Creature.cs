@@ -760,6 +760,12 @@ namespace DwarfCorp
             Inventory.Resources.MaxResources = 99999;
             CreateMeatAndBones();
             NoiseMaker.MakeNoise("Die", Physics.Position, true);
+
+            if (AI.Status.Money > 0)
+            {
+                EntityFactory.CreateEntity<CoinPile>("Coins Resource", AI.Position, Blackboard.Create("Money", AI.Status.Money));
+            }
+
             base.Die();
         }
 

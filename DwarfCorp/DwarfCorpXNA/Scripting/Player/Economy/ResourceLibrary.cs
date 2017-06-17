@@ -81,6 +81,7 @@ namespace DwarfCorp
             public static ResourceType Apple = "Apple";
             public static ResourceType Glass = "Glass";
             public static ResourceType Brick = "Brick";
+            public static ResourceType Coins = "Coins";
 
             public static implicit operator ResourceType(string value)
             {
@@ -126,8 +127,17 @@ namespace DwarfCorp
         public static void Add(Resource resource)
         {
             Resources[resource.ResourceName] = resource;
-
-            EntityFactory.RegisterEntity(resource.ResourceName + " Resource", (position, data) => new ResourceEntity(EntityFactory.World.ComponentManager, resource.Type, position));
+            if (resource.Tags.Contains(Resource.ResourceTags.Money))
+            {
+                EntityFactory.RegisterEntity(resource.ResourceName + " Resource", (position, data) => new CoinPile(EntityFactory.World.ComponentManager, position)
+                {
+                    Money = data.Has("Money") ? data.GetData<DwarfBux>("Money") : (DwarfBux)64m
+                });
+            }
+            else
+            {
+                EntityFactory.RegisterEntity(resource.ResourceName + " Resource", (position, data) => new ResourceEntity(EntityFactory.World.ComponentManager, resource.Type, position));   
+            }
         }
 
         public static void Initialize()
@@ -245,6 +255,11 @@ namespace DwarfCorp
             Add(new Resource(ResourceType.Glass, 8.0m, "Made from sand. Allows light to pass through.", new NamedImageFrame(tileSheet, GetRect(4, 0)), 4, Color.White, Resource.ResourceTags.Material, Resource.ResourceTags.HardMaterial, Resource.ResourceTags.Craft) { CanCraft = true, CraftPrereqs = new List<Quantitiy<Resource.ResourceTags>>() { new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Sand) } });
 
             Add(new Resource(ResourceType.Brick, 4.0m, "Made from dirt. Building material.", new NamedImageFrame(tileSheet, GetRect(5, 0)), 5, Color.White, Resource.ResourceTags.Stone, Resource.ResourceTags.Material, Resource.ResourceTags.HardMaterial, Resource.ResourceTags.Craft) {CanCraft = true, CraftPrereqs = new List<Quantitiy<Resource.ResourceTags>>() {new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Soil)}});
+
+            Add(new Resource(ResourceType.Coins, 4.0m, "Dwarfbux container.",
+                new NamedImageFrame(tileSheet, GetRect(6, 0)), 6, Color.White, Resource.ResourceTags.Precious,
+                Resource.ResourceTags.Money));
+
 
 
             //GenerateAnimalProducts();
