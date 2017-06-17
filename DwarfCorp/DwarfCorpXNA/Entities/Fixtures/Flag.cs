@@ -158,8 +158,8 @@ namespace DwarfCorp
             data.Indices.SetData(data.Idx);
             device.SetRenderTarget(data.Texture);
             device.Clear(new Color(Logo.LogoBackgroundColor * 0.5f + Logo.LogoSymbolColor * 0.5f));
-            Texture2D logoBg = TextureManager.GetTexture("Gui.Widgets/logo-bg");
-            Texture2D logoFg = TextureManager.GetTexture("Gui.Widgets/logo-fg");
+            Texture2D logoBg = TextureManager.GetTexture("newgui/logo-bg");
+            Texture2D logoFg = TextureManager.GetTexture("newgui/logo-fg");
             int bgIdx = Logo.LogoBackground.Tile;
             int bgX = (bgIdx%(logoBg.Width / 32)) * 32;
             int bgY = (bgIdx/(logoBg.Width / 32)) * 32; 

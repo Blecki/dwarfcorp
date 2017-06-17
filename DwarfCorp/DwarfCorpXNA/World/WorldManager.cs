@@ -533,7 +533,7 @@ namespace DwarfCorp
             Point playerOrigin = new Point((int)(WorldOrigin.X), (int)(WorldOrigin.Y));
 
             Factions.Factions["Player"].Center = playerOrigin;
-            Factions.Factions["Motherland"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
+            Factions.Factions["The Motherland"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
 
             ComponentManager.RootComponent = new Body(ComponentManager, "root", Matrix.Identity, Vector3.Zero,
                 Vector3.Zero, false);

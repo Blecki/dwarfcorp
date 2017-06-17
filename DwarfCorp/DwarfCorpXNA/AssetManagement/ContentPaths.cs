@@ -512,7 +512,7 @@ namespace DwarfCorp
             public class Resources
             {
                 //public static string resources = ProgramData.CreatePath("Entities", "Resources", "resources");
-                public static string resources = ProgramData.CreatePath("Gui.Widgets", "resources");
+                public static string resources = ProgramData.CreatePath("newgui", "resources");
             }
 
             public class Moleman

@@ -48,7 +48,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public static RoomData AnimalPenData { get { return RoomLibrary.GetData(AnimalPenName); } }
 
-        public new static RoomData InitializeData()
+        public static RoomData InitializeData()
         {
             Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> resources =
                 new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>();
