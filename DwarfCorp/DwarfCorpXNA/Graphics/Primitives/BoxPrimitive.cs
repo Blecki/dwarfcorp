@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -361,25 +361,18 @@ namespace DwarfCorp
         public class FaceData
         {
             public Rectangle Rect { get; set; }
-            public bool FlipXY { get; set; }
 
             public FaceData(int x, int y, int tileSize)
             {
                 Rect = new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize);
-                FlipXY = false;
             }
 
             public FaceData(Rectangle rect)
             {
                 Rect = rect;
-                FlipXY = false;
             }
 
-            public FaceData(Rectangle rect, bool flip)
-            {
-                Rect = rect;
-                FlipXY = flip;
-            }
+
         }
 
         public class BoxTextureCoords
@@ -420,13 +413,6 @@ namespace DwarfCorp
                     left,
                     right
                 };
-
-                int i = 0;
-                foreach (FaceData face in cells)
-                {
-                    Scales[i] = new Vector2(face.Rect.Width / (float)totalTextureWidth, face.Rect.Height / (float)totalTextureHeight);
-                    i++;
-                }
 
                 List<Vector2> baseCoords = new List<Vector2>
                 {
@@ -480,15 +466,7 @@ namespace DwarfCorp
                     for(int vert = 0; vert < 4; vert++)
                     {
                         int index = vert + face * 4;
-      
-                        if(cells[face].FlipXY)
-                        {
-                            Uvs[index] = new Vector2(normalizedCoords.X + baseCoords[index].Y * normalizeX, normalizedCoords.Y + baseCoords[index].X * normalizeY);
-                        }
-                        else
-                        {
-                            Uvs[index] = new Vector2(normalizedCoords.X + baseCoords[index].X * normalizeX, normalizedCoords.Y + baseCoords[index].Y * normalizeY);
-                        }
+                        Uvs[index] = new Vector2(normalizedCoords.X + baseCoords[index].X * normalizeX, normalizedCoords.Y + baseCoords[index].Y * normalizeY);
                     }
                 }
             }
@@ -616,10 +594,10 @@ namespace DwarfCorp
             FlippedIndexes[5] = 2;
 
             // Add the vertices for the BACK face.
-            Vertices[4] = new ExtendedVertex(btmLeftBack, Color.White, Color.White, UVs.Uvs[4], UVs.Bounds[1]);
-            Vertices[5] = new ExtendedVertex(topLeftBack, Color.White, Color.White, UVs.Uvs[5], UVs.Bounds[1]);
-            Vertices[6] = new ExtendedVertex(topRightBack, Color.White, Color.White, UVs.Uvs[6], UVs.Bounds[1]);
-            Vertices[7] = new ExtendedVertex(btmRightBack, Color.White, Color.White, UVs.Uvs[7], UVs.Bounds[1]);
+            Vertices[4] = new ExtendedVertex(topRightBack, Color.White, Color.White, UVs.Uvs[4], UVs.Bounds[1]);
+            Vertices[5] = new ExtendedVertex(btmRightBack, Color.White, Color.White, UVs.Uvs[5], UVs.Bounds[1]);
+            Vertices[6] = new ExtendedVertex(btmLeftBack, Color.White, Color.White, UVs.Uvs[6], UVs.Bounds[1]);
+            Vertices[7] = new ExtendedVertex(topLeftBack, Color.White, Color.White, UVs.Uvs[7], UVs.Bounds[1]);
 
 
             /*  
@@ -724,10 +702,10 @@ namespace DwarfCorp
             FlippedIndexes[23] = 14;
 
             // Add the vertices for the LEFT face.
-            Vertices[16] = new ExtendedVertex(btmLeftFront, Color.White,Color.White, UVs.Uvs[16], UVs.Bounds[4]);
-            Vertices[17] = new ExtendedVertex(topLeftFront, Color.White, Color.White, UVs.Uvs[17], UVs.Bounds[4]);
-            Vertices[18] = new ExtendedVertex(topLeftBack, Color.White,Color.White, UVs.Uvs[18], UVs.Bounds[4]);
-            Vertices[19] = new ExtendedVertex(btmLeftBack, Color.White,Color.White, UVs.Uvs[19], UVs.Bounds[4]);
+            Vertices[16] = new ExtendedVertex(topLeftBack, Color.White,Color.White, UVs.Uvs[16], UVs.Bounds[4]);
+            Vertices[17] = new ExtendedVertex(btmLeftBack, Color.White, Color.White, UVs.Uvs[17], UVs.Bounds[4]);
+            Vertices[18] = new ExtendedVertex(btmLeftFront, Color.White,Color.White, UVs.Uvs[18], UVs.Bounds[4]);
+            Vertices[19] = new ExtendedVertex(topLeftFront, Color.White,Color.White, UVs.Uvs[19], UVs.Bounds[4]);
 
             /* 
              *  16. . .19

@@ -1,4 +1,4 @@
-﻿// Blackboard.cs
+// Blackboard.cs
 // 
 //  Modified MIT License (MIT)
 //  

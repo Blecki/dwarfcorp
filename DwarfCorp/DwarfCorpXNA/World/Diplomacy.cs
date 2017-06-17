@@ -370,6 +370,10 @@ namespace DwarfCorp
 
             foreach (var creature in creatures)
             {
+                if (natives.Economy == null)
+                {
+                    natives.Economy = new Economy(natives, (decimal)MathFunctions.Rand(1000, 9999), World, null);
+                }
                 if (natives.Economy.Company.Information == null)
                     natives.Economy.Company.Information = new CompanyInformation();
 
@@ -605,7 +609,19 @@ namespace DwarfCorp
                     party.Creatures.ForEach((creature) => creature.Die());
                 }
 
+                foreach (var creature in party.Creatures)
+                {
+                    if (MathFunctions.RandEvent(0.001f))
+                    {
+                        creature.Tasks.Add(new ActWrapperTask(new GetMoneyAct(creature, (decimal)MathFunctions.Rand(0, 64.0f), party.OtherFaction))
+                        {
+                            Priority = Task.PriorityType.Medium
+                        });
+                    }
+                }
+
                 Diplomacy.Politics politics =  faction.World.Diplomacy.GetPolitics(faction, party.OtherFaction);
+
                 if (politics.GetCurrentRelationship() != Relationship.Hateful)
                 {
                     RecallWarParty(party);

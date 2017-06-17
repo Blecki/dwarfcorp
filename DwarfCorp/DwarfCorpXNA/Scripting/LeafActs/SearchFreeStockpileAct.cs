@@ -47,7 +47,7 @@ namespace DwarfCorp
         public string StockpileName { get; set; }
         public string VoxelName { get; set; }
 
-        public Stockpile Stockpile { get { return GetStockpile(); } set { SetStockpile(value);} }
+        public Zone Stockpile { get { return GetStockpile(); } set { SetStockpile(value);} }
 
         public Voxel Voxel { get { return GetVoxel(); } set { SetVoxel(value);} }
 
@@ -73,17 +73,17 @@ namespace DwarfCorp
             Agent.Blackboard.SetData(VoxelName, value);
         }
 
-        public Stockpile GetStockpile()
+        public Zone GetStockpile()
         {
             return Agent.Blackboard.GetData<Stockpile>(StockpileName);
         }
 
-        public void SetStockpile(Stockpile value)
+        public void SetStockpile(Zone value)
         {
             Agent.Blackboard.SetData(StockpileName, value);
         }
 
-        public int CompareStockpiles(Stockpile A, Stockpile B)
+        public int CompareStockpiles(Zone A, Zone B)
         {
             if(A == B)
             {
@@ -110,15 +110,52 @@ namespace DwarfCorp
             }
         }
 
+        public int CompareTreasurys(Zone A, Zone B)
+        {
+            if (A == B)
+            {
+                return 0;
+            }
+            else
+            {
+                BoundingBox boxA = A.GetBoundingBox();
+                Vector3 centerA = (boxA.Min + boxA.Max) * 0.5f;
+                float costA = (Creature.Physics.GlobalTransform.Translation - centerA).LengthSquared() * (float)(decimal)(A as Treasury).Money;
+
+                BoundingBox boxB = B.GetBoundingBox();
+                Vector3 centerB = (boxB.Min + boxB.Max) * 0.5f;
+                float costB = (Creature.Physics.GlobalTransform.Translation - centerB).LengthSquared() * (float)(decimal)(B as Treasury).Money;
+
+                if (costA < costB)
+                {
+                    return -1;
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+        }
+
         public override IEnumerable<Status> Run()
         {
             bool validTargetFound = false;
 
-            List<Stockpile> sortedPiles = new List<Stockpile>(Creature.Faction.Stockpiles.Where(pile => pile.IsAllowed(Item.ResourceType)));
+            List<Zone> sortedPiles;
 
-            sortedPiles.Sort(CompareStockpiles);
+            if (ResourceLibrary.GetResourceByName(this.Item.ResourceType).Tags.Contains(Resource.ResourceTags.Money))
+            {
+                sortedPiles = new List<Zone>(Creature.Faction.Treasurys);
+                sortedPiles.Sort(CompareTreasurys);
+            }
+            else
+            {
+                sortedPiles =
+                    new List<Zone>(Creature.Faction.Stockpiles.Where(pile => pile.IsAllowed(Item.ResourceType)));
+                sortedPiles.Sort(CompareStockpiles);
+            }
 
-            foreach(Stockpile s in sortedPiles)
+            foreach (Zone s in sortedPiles)
             {
                 if(s.IsFull())
                 {

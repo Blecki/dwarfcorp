@@ -649,7 +649,8 @@ namespace DwarfCorp
             }
 
             if (!IsPosessed && GatherManager.VoxelOrders.Count == 0 &&
-                (GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile()))
+                (GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile()) &&
+                (GatherManager.StockMoneyOrders.Count == 0 || !Faction.HasFreeTreasury()))
             {
 
                 // Craft random items for fun.
@@ -736,6 +737,18 @@ namespace DwarfCorp
                 {
                     GatherManager.StockOrders.RemoveAt(0);
                     return new ActWrapperTask(new StockResourceAct(this, order.Resource))
+                    {
+                        Priority = Task.PriorityType.Low
+                    };
+                }
+            }
+            else if (GatherManager.VoxelOrders.Count == 0 && GatherManager.StockMoneyOrders.Count > 0)
+            {
+                var order = GatherManager.StockMoneyOrders[0];
+                if (Faction.HasFreeTreasury(order.Money))
+                {
+                    GatherManager.StockMoneyOrders.RemoveAt(0);
+                    return new ActWrapperTask(new StockMoneyAct(this, order.Money))
                     {
                         Priority = Task.PriorityType.Low
                     };
@@ -934,7 +947,7 @@ namespace DwarfCorp
             bool good = pay > 0;
             Color textColor = good ? Color.Green : Color.Red;
             string prefix = good ? "+" : "";
-            IndicatorManager.DrawIndicator(prefix + "$" + pay,
+            IndicatorManager.DrawIndicator(prefix + pay,
                 Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 1.0f, textColor);
         }
 

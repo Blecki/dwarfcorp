@@ -103,6 +103,36 @@ namespace DwarfCorp
         All = 15
     }
 
+    public struct BoxTransition
+    {
+        public TransitionTexture Front;
+        public TransitionTexture Right;
+        public TransitionTexture Left;
+        public TransitionTexture Back;
+        public TransitionTexture Top;
+        public TransitionTexture Bottom;
+
+        public TransitionTexture GetTexture(BoxFace face)
+        {
+            switch (face)
+            {
+                case BoxFace.Top:
+                    return Top;
+                case BoxFace.Bottom:
+                    return Bottom;
+                case BoxFace.Back:
+                    return Back;
+                case BoxFace.Left:
+                    return Left;
+                case BoxFace.Right:
+                    return Right;
+                case BoxFace.Front:
+                    return Front;
+            }
+            return TransitionTexture.None;
+        }
+    }
+
 
 
     /// <summary>
@@ -558,9 +588,9 @@ namespace DwarfCorp
             }
         }
 
-        public TransitionTexture ComputeTransitionValue(Voxel[] manhattanNeighbors)
+        public BoxTransition ComputeTransitionValue(Voxel[] manhattanNeighbors)
         {
-            return Chunk.ComputeTransitionValue((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z, manhattanNeighbors);
+            return Chunk.ComputeTransitionValue(Type.Transitions, (int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z, manhattanNeighbors);
         }
 
         public BoxPrimitive.BoxTextureCoords ComputeTransitionTexture(Voxel[] manhattanNeighbors)

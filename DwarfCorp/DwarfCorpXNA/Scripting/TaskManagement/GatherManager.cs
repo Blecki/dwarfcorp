@@ -47,6 +47,12 @@ namespace DwarfCorp
             public Zone Destination;
         }
 
+        public struct StockMoneyOrder
+        {
+            public DwarfBux Money;
+            public Zone Destination;
+        }
+
         public struct BuildVoxelOrder 
         {
             public Voxel Voxel { get; set; }
@@ -62,6 +68,7 @@ namespace DwarfCorp
 
         public List<Body> ItemsToGather { get; set; }
         public List<StockOrder> StockOrders { get; set; }
+        public List<StockMoneyOrder> StockMoneyOrders { get; set; } 
         public List<BuildVoxelOrder> VoxelOrders { get; set; } 
 
         public GatherManager(CreatureAI creature)
@@ -70,6 +77,7 @@ namespace DwarfCorp
             ItemsToGather = new List<Body>();
             StockOrders = new List<StockOrder>();
             VoxelOrders = new List<BuildVoxelOrder>();
+            StockMoneyOrders = new List<StockMoneyOrder>();
         }
 
 

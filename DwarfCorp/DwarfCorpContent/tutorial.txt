@@ -136,6 +136,11 @@
 			"Text" : "Left click and drag to build a balloon port. Balloon ports are necessary for trade. They must be built above ground. They also act as stockpiles. The larger the balloon port, the more it can store in its stockpile."
 		},
 		{
+			"Name" : "build Treasury",
+			"Title" : "Treasury",
+			"Text" : "Our money is stored in a treasury. Each tile can hold some number of Dwarfbux ($). When the treasury gets full, we will have to build a larger one. Beware of evil creatures stealing money from the treasury."
+		},
+		{
 			"Name" : "level up",
 			"Title" : "Promoting Dwarves",
 			"Text" : "One of your employees has gained enough experience points (XP) to get a promotion! Employees earn XP from working, digging, fighting and training.  Promoting employees makes them work harder, but they also demand higher wages. Go to the economy menu (by pushing the economy button on the top right of the screen), select an employee, and promote them. If you choose not to promote your employees, they may become unhappy."
@@ -149,7 +154,7 @@
 			"Name" : "money",
 			"Title" : "Money",
 			"Text" : "Your colony needs money to survive. Earn Dwarfbux ($) by trading with the 
-			 or natives as they arrive. Being bankrupt for too long might cause all of your employees to quit, and your stock may crash!"
+			 or natives as they arrive. Being bankrupt for too long might cause all of your employees to quit, and your stock may crash! Money is stored in the treasury."
 		},
 		{
 			"Name" : "combat",
