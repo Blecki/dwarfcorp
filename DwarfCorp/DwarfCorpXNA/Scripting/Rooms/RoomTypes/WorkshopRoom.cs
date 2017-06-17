@@ -1,4 +1,4 @@
-﻿// WorkshopRoom.cs
+// WorkshopRoom.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -51,8 +51,8 @@ namespace DwarfCorp
         {
             Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>()
             {
-                {Resource.ResourceTags.Metal, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Metal)},
-                {Resource.ResourceTags.Fuel, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Fuel)},
+                {Resource.ResourceTags.Metal, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Metal, 2)},
+                {Resource.ResourceTags.Fuel, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Fuel, 1)},
             };
 
             List<RoomTemplate> workshopTemplates = new List<RoomTemplate>();

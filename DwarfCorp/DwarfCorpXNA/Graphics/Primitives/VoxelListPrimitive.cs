@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -238,6 +238,11 @@ namespace DwarfCorp
             }
         }
 
+        // This insanity creates a map from voxel faces to ramp types, determining
+        // whether or not the voxel on a face should draw that face given that its neighbor
+        // has a certain ramp type.
+        // This allows faces to be drawn next to ramps (for example, if dirt is next to stone,
+        // the dirt ramps, revealing part of the stone face that needs to be drawn).
         private static void CreateFaceDrawMap()
         {
             BoxFace[] faces = (BoxFace[]) Enum.GetValues(typeof (BoxFace));
@@ -526,7 +531,7 @@ namespace DwarfCorp
                             if(faceExists[(int)face])
                             {
                                 voxelOnFace.GridPosition = new Vector3(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z);
-                                drawFace[(int)face] =  (voxelOnFace.IsExplored && voxelOnFace.IsEmpty) || !voxelOnFace.IsVisible || 
+                                drawFace[(int)face] =  (voxelOnFace.IsExplored && voxelOnFace.IsEmpty) || voxelOnFace.Type.IsTransparent || !voxelOnFace.IsVisible || 
                                     (voxelOnFace.Type.CanRamp && voxelOnFace.RampType != RampType.None && IsSideFace(face) && 
                                     ShouldDrawFace(face, voxelOnFace.RampType, v.RampType));
 
@@ -534,7 +539,7 @@ namespace DwarfCorp
                             else
                             {
                                 bool success = chunk.Manager.ChunkData.GetNonNullVoxelAtWorldLocation(new Vector3(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z) + chunk.Origin, ref worldVoxel);
-                                    drawFace[(int)face] = !success || (worldVoxel.IsExplored && worldVoxel.IsEmpty) || !worldVoxel.IsVisible ||
+                                    drawFace[(int)face] = !success || (worldVoxel.IsExplored && worldVoxel.IsEmpty) || worldVoxel.Type.IsTransparent || !worldVoxel.IsVisible ||
                                                      (worldVoxel.Type.CanRamp && worldVoxel.RampType != RampType.None &&
                                                       IsSideFace(face) &&
                                                       ShouldDrawFace(face, worldVoxel.RampType, v.RampType));

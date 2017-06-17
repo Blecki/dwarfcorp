@@ -16,8 +16,8 @@ Global Settings
     Header File = Sounds.h;
     Exclude Category Names = 0;
     Exclude Variable Names = 0;
-    Last Modified Low = 676724064;
-    Last Modified High = 30583792;
+    Last Modified Low = 1410529629;
+    Last Modified High = 30596430;
 
     Category
     {
@@ -264,7 +264,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = Sound::a5be6d20-13f4-420a-817f-bee295beac4f;
+            Name = Sound::0d156a55-eca9-428f-b842-302033ac37d5;
             Property = 0;
             Sound = 1;
             Line Color = 4281237832;
@@ -325,7 +325,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = Sound::79bdae00-9c1b-4ac1-afae-cbf08d30649f;
+            Name = Sound::016ca896-9c6d-4288-bc3b-584cbded1f68;
             Property = 0;
             Sound = 1;
             Line Color = 4281571480;
@@ -372,7 +372,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::55bca077-87d6-4a40-a009-dc674ab7e9d1;
+            Name = 1::1e85e79f-f15b-4d97-b5c4-0070c6849c0f;
             Property = 0;
             Sound = 0;
             Line Color = 4290610889;
@@ -405,7 +405,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::df74e01f-6f64-4df3-a7aa-d0ba19174866;
+            Name = 1::9c3cad29-4dda-411a-9223-955e6ffa2385;
             Property = 0;
             Sound = 0;
             Line Color = 4289091284;
@@ -438,7 +438,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::3dba0b31-f053-48a4-ae56-6dea3c26229a;
+            Name = 1::596b5b95-2517-4b54-a954-25fa02133ded;
             Property = 0;
             Sound = 0;
             Line Color = 4286991177;
@@ -490,10 +490,10 @@ Wave Bank
     Compression Preset Name = Compressed;
     Xbox Bank Last Modified Low = 0;
     Xbox Bank Last Modified High = 0;
-    PC Bank Last Modified Low = 619390288;
-    PC Bank Last Modified High = 30584405;
-    Bank Last Revised Low = 37375770;
-    Bank Last Revised High = 30584405;
+    PC Bank Last Modified Low = 1411863306;
+    PC Bank Last Modified High = 30596430;
+    Bank Last Revised Low = 1039082826;
+    Bank Last Revised High = 30596430;
 
     Wave
     {
@@ -513,8 +513,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 80580977;
-            Last Modified High = 30583793;
+            Last Modified Low = 2368728821;
+            Last Modified High = 30590608;
         }
     }
 
@@ -536,8 +536,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 67096109;
-            Last Modified High = 30583793;
+            Last Modified Low = 2364951282;
+            Last Modified High = 30590608;
         }
     }
 
@@ -559,8 +559,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 75047041;
-            Last Modified High = 30583793;
+            Last Modified Low = 2367337837;
+            Last Modified High = 30590608;
         }
     }
 
@@ -582,54 +582,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 60701571;
-            Last Modified High = 30583793;
-        }
-    }
-
-    Wave
-    {
-        Name = mx_day_intro_v1;
-        File = ..\..\Music\mx_day_intro_v1.wav;
-        Build Settings Last Modified Low = 4287223960;
-        Build Settings Last Modified High = 30583788;
-
-        Cache
-        {
-            Format Tag = 0;
-            Channels = 2;
-            Sampling Rate = 44100;
-            Bits Per Sample = 1;
-            Play Region Offset = 44;
-            Play Region Length = 2095632;
-            Loop Region Offset = 0;
-            Loop Region Length = 0;
-            File Type = 1;
-            Last Modified Low = 2667854086;
-            Last Modified High = 30583788;
-        }
-    }
-
-    Wave
-    {
-        Name = mx_day_loop_v1;
-        File = ..\..\Music\mx_day_loop_v1.wav;
-        Build Settings Last Modified Low = 4287228985;
-        Build Settings Last Modified High = 30583788;
-
-        Cache
-        {
-            Format Tag = 0;
-            Channels = 2;
-            Sampling Rate = 44100;
-            Bits Per Sample = 1;
-            Play Region Offset = 80;
-            Play Region Length = 32816648;
-            Loop Region Offset = 0;
-            Loop Region Length = 0;
-            File Type = 1;
-            Last Modified Low = 2676150276;
-            Last Modified High = 30583788;
+            Last Modified Low = 2363895407;
+            Last Modified High = 30590608;
         }
     }
 
@@ -651,31 +605,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 2703728217;
-            Last Modified High = 30583788;
-        }
-    }
-
-    Wave
-    {
-        Name = mx_night_loop_v1;
-        File = ..\..\Music\mx_night_loop_v1.wav;
-        Build Settings Last Modified Low = 4287243996;
-        Build Settings Last Modified High = 30583788;
-
-        Cache
-        {
-            Format Tag = 0;
-            Channels = 2;
-            Sampling Rate = 44100;
-            Bits Per Sample = 1;
-            Play Region Offset = 44;
-            Play Region Length = 7408800;
-            Loop Region Offset = 0;
-            Loop Region Length = 0;
-            File Type = 1;
-            Last Modified Low = 2707382303;
-            Last Modified High = 30583788;
+            Last Modified Low = 3265912834;
+            Last Modified High = 30596429;
         }
     }
 
@@ -697,8 +628,77 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3910119301;
-            Last Modified High = 30584404;
+            Last Modified Low = 3280020923;
+            Last Modified High = 30596429;
+        }
+    }
+
+    Wave
+    {
+        Name = mx_day_intro_v4;
+        File = ..\..\Music\mx_day_intro_v1.wav;
+        Build Settings Last Modified Low = 3724518452;
+        Build Settings Last Modified High = 30596429;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 2100416;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 3230243712;
+            Last Modified High = 30596429;
+        }
+    }
+
+    Wave
+    {
+        Name = mx_day_loop_v4;
+        File = ..\..\Music\mx_day_loop_v1.wav;
+        Build Settings Last Modified Low = 3724538471;
+        Build Settings Last Modified High = 30596429;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 1024;
+            Play Region Length = 32810400;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 3223751424;
+            Last Modified High = 30596429;
+        }
+    }
+
+    Wave
+    {
+        Name = mx_night_loop_v2;
+        File = ..\..\Music\mx_night_loop_v1.wav;
+        Build Settings Last Modified Low = 3744379431;
+        Build Settings Last Modified High = 30596429;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 1024;
+            Play Region Length = 21168000;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 3228260936;
+            Last Modified High = 30596429;
         }
     }
 }
@@ -710,8 +710,8 @@ Sound Bank
     Windows File = Win\SoundBank.xsb;
     Xbox Bank Path Edited = 0;
     Windows Bank Path Edited = 0;
-    Bank Last Modified Low = 1352727751;
-    Bank Last Modified High = 30584407;
+    Bank Last Modified Low = 1574499175;
+    Bank Last Modified High = 30596430;
     Header Last Modified High = 0;
     Header Last Modified Low = 0;
 
@@ -929,8 +929,8 @@ Sound Bank
                 {
                     Bank Name = WaveBank;
                     Bank Index = 0;
-                    Entry Name = mx_day_intro_v1;
-                    Entry Index = 4;
+                    Entry Name = mx_day_intro_v4;
+                    Entry Index = 6;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -987,8 +987,8 @@ Sound Bank
                 {
                     Bank Name = WaveBank;
                     Bank Index = 0;
-                    Entry Name = mx_day_loop_v1;
-                    Entry Index = 5;
+                    Entry Name = mx_day_loop_v4;
+                    Entry Index = 7;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -997,13 +997,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = FadeOut;
-                RPC Curve Name = 1::55bca077-87d6-4a40-a009-dc674ab7e9d1;
+                RPC Curve Name = 1::1e85e79f-f15b-4d97-b5c4-0070c6849c0f;
             }
 
             RPC Curve Entry
             {
                 RPC Name = ShortFadeIn;
-                RPC Curve Name = 1::3dba0b31-f053-48a4-ae56-6dea3c26229a;
+                RPC Curve Name = 1::596b5b95-2517-4b54-a954-25fa02133ded;
             }
         }
     }
@@ -1047,7 +1047,7 @@ Sound Bank
                     Bank Name = WaveBank;
                     Bank Index = 0;
                     Entry Name = mx_dayToNight_trans_v1;
-                    Entry Index = 6;
+                    Entry Index = 4;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -1104,8 +1104,8 @@ Sound Bank
                 {
                     Bank Name = WaveBank;
                     Bank Index = 0;
-                    Entry Name = mx_night_loop_v1;
-                    Entry Index = 7;
+                    Entry Name = mx_night_loop_v2;
+                    Entry Index = 8;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -1114,13 +1114,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = FadeOut;
-                RPC Curve Name = 1::55bca077-87d6-4a40-a009-dc674ab7e9d1;
+                RPC Curve Name = 1::1e85e79f-f15b-4d97-b5c4-0070c6849c0f;
             }
 
             RPC Curve Entry
             {
                 RPC Name = FadeIn;
-                RPC Curve Name = 1::df74e01f-6f64-4df3-a7aa-d0ba19174866;
+                RPC Curve Name = 1::9c3cad29-4dda-411a-9223-955e6ffa2385;
             }
         }
     }
@@ -1165,7 +1165,7 @@ Sound Bank
                     Bank Name = WaveBank;
                     Bank Index = 0;
                     Entry Name = mx_menu_loop_v2;
-                    Entry Index = 8;
+                    Entry Index = 5;
                     Weight = 255;
                     Weight Min = 0;
                 }

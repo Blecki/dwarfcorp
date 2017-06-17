@@ -146,6 +146,7 @@ namespace DwarfCorp
                     q.Enqueue(voxel);
             }
             List<Voxel> neighbors = new List<Voxel>();
+            Voxel currNeighbor = new Voxel();
             while (q.Count > 0)
             {
                 Voxel v = q.Dequeue();
@@ -164,18 +165,13 @@ namespace DwarfCorp
 
                     nextVoxel.Chunk.NotifyExplored(new Point3(nextVoxel.GridPosition));
 
+                    nextVoxel.IsExplored = true;
+                    if (!affectedChunks.Contains(nextVoxel.ChunkID))
                     {
-                        if (!nextVoxel.IsExplored)
-                        {
-                            nextVoxel.IsExplored = true;
-                            if (!affectedChunks.Contains(nextVoxel.ChunkID))
-                            {
-                                affectedChunks.Add(nextVoxel.ChunkID);
-                            }
-                            if (nextVoxel.IsEmpty)
-                                q.Enqueue(new Voxel(new Point3(nextVoxel.GridPosition), nextVoxel.Chunk));
-                        }
+                        affectedChunks.Add(nextVoxel.ChunkID);
                     }
+                    if (nextVoxel.IsEmpty)
+                        q.Enqueue(new Voxel(new Point3(nextVoxel.GridPosition), nextVoxel.Chunk));
 
                 }
 

@@ -112,7 +112,7 @@ namespace DwarfCorp
 
             if(!hasAllResources)
             { 
-                Stockpile nearestStockpile = Agent.Faction.GetNearestStockpile(Agent.Position);
+                Stockpile nearestStockpile =  Agent.Faction.GetNearestStockpile(Agent.Position, (pile) => !(pile is Graveyard));
 
                 if(ResourcesToStash == null && Resources != null)
                     ResourcesToStash = Agent.Faction.GetResourcesWithTags(Resources);

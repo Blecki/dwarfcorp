@@ -96,7 +96,7 @@ namespace DwarfCorp
         }
 
 
-        public void OnBuilt()
+        public virtual void OnBuilt()
         {
             
         }
@@ -140,6 +140,11 @@ namespace DwarfCorp
             }
 
             return closestIndex;
+        }
+
+        public virtual void Update()
+        {
+            
         }
     }
 

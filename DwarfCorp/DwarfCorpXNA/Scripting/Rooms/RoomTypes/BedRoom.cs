@@ -1,4 +1,4 @@
-﻿// BedRoom.cs
+// BedRoom.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -49,7 +49,7 @@ namespace DwarfCorp
         {
             Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>()
             {
-                {Resource.ResourceTags.Wood, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Wood)},
+                {Resource.ResourceTags.Wood, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Wood, 4)},
             };
 
 

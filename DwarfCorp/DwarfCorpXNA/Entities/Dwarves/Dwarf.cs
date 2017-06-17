@@ -68,6 +68,7 @@ namespace DwarfCorp
 
             HasMeat = false;
             HasBones = false;
+            HasCorpse = true;
             Initialize(workerClass);
         }
         
@@ -178,6 +179,7 @@ namespace DwarfCorp
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
             AI.TriggersMourning = true;
             AI.Biography = Applicant.GenerateBiography(AI.Stats.FullName, Gender);
+            Species = "Dwarf";
         }
     }
 

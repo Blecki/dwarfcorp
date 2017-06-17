@@ -136,6 +136,14 @@ namespace DwarfCorp.Gui.Widgets
                     {
                         GameSettings.Default.DrawPaths = !GameSettings.Default.DrawPaths;
                     }
+                },
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "+1 HOUR",
+                    OnClick = (sender, args) =>
+                    {
+                        Master.World.Time.CurrentDate += new TimeSpan(1, 0, 0);
+                    }
                 }
             };
 

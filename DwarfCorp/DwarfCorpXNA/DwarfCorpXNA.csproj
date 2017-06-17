@@ -196,6 +196,7 @@
     <Compile Include="Entities\Fixtures\Fixture.cs" />
     <Compile Include="Entities\Fixtures\Flag.cs" />
     <Compile Include="Entities\Fixtures\Forge.cs" />
+    <Compile Include="Entities\Fixtures\Grave.cs" />
     <Compile Include="Entities\Fixtures\Ladder.cs" />
     <Compile Include="Entities\Fixtures\Lamp.cs" />
     <Compile Include="Entities\Fixtures\PunchingBag.cs" />
@@ -314,6 +315,8 @@
     <Compile Include="Gui\Widgets\GoalInfo.cs" />
     <Compile Include="Gui\Widgets\GoalPanel.cs" />
     <Compile Include="Gui\Widgets\TutorialPopup.cs" />
+    <Compile Include="Scripting\Rooms\RoomTypes\AnimalPen.cs" />
+    <Compile Include="Scripting\Rooms\RoomTypes\Graveyard.cs" />
     <Compile Include="Scripting\Data\Status.cs" />
     <Compile Include="Scripting\Factions\Expedition.cs" />
     <Compile Include="Scripting\Factions\TradeEnvoy.cs" />
@@ -667,7 +670,10 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Gum\Widgets\" />
+    <Folder Include="NewGui\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <PropertyGroup>

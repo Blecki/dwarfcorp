@@ -20,6 +20,7 @@ namespace DwarfCorp.Gui.Widgets
             Border = "border-fancy";
             TextColor = new Vector4(0, 0, 0, 1);
             var builder = new StringBuilder();
+            builder.AppendLine(Data.Name);
             builder.AppendLine(Data.Description);
                 if (!Data.CanBuildAboveGround)
                     builder.AppendLine("* Must be built below ground.");

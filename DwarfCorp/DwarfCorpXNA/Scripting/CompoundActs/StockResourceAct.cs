@@ -103,7 +103,7 @@ namespace DwarfCorp
 
                     Tree = new Sequence(
                         new SetBlackboardData<ResourceAmount>(Agent, "GatheredResource", ItemToStock.CloneResource()),
-                        new SearchFreeStockpileAct(Agent, "TargetStockpile", "FreeVoxel"),
+                        new SearchFreeStockpileAct(Agent, "TargetStockpile", "FreeVoxel", ItemToStock),
                         
                                         new Select(
                                                     new Sequence(

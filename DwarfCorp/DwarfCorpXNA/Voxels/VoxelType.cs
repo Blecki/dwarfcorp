@@ -73,7 +73,7 @@ namespace DwarfCorp
         private static short maxID = 0;
         public SoundSource HitSound { get; set; }
         public static List<VoxelType> TypeList = new List<VoxelType>();
-
+        public bool IsTransparent { get; set; }
         public VoxelType(VoxelType parent, string subtype)
         {
             ID = maxID;
@@ -95,6 +95,7 @@ namespace DwarfCorp
             EmitsLight = parent.EmitsLight;
             Tint = parent.Tint;
             IsSurface = parent.IsSurface;
+            IsTransparent = parent.IsTransparent;
             if (!TypeList.Contains(this))
             {
                 TypeList.Add(this);
@@ -146,6 +147,7 @@ namespace DwarfCorp
             SpawnVeins = false;
             Rarity = 1.0f;
             SpawnOnSurface = false;
+            IsTransparent = false;
             HitSound = SoundSource.Create(ContentPaths.Audio.pick);
         }
     }

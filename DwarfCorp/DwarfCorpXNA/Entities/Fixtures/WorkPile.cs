@@ -1,4 +1,4 @@
-﻿// WorkPile.cs
+// WorkPile.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -55,18 +55,58 @@ namespace DwarfCorp
     }
 
     [JsonObject(IsReference = true)]
-    public class WorkFence : Fixture
+    public class Fence : Fixture
     {
-        public WorkFence()
+        public Fence()
         {
             
         }
 
-        public WorkFence(ComponentManager componentManager, Vector3 position, float orientation) :
-            base(componentManager, position, new SpriteSheet(ContentPaths.Entities.DwarfObjects.constructiontape, 32, 32), new Point(0, 0))
+        public Fence(ComponentManager componentManager, Vector3 position, float orientation, string asset) :
+            base(componentManager, position, new SpriteSheet(asset, 32, 32), new Point(0, 0))
         {
             this.Sprite.OrientationType = Sprite.OrientMode.Fixed;
             this.Sprite.LocalTransform = Matrix.CreateRotationY(orientation);
+        }
+
+        public static IEnumerable<Body> CreateFences(ComponentManager components, string asset, IEnumerable<Voxel> voxels, bool createWorkPiles)
+        {
+            Voxel neighbor = new Voxel();
+
+            Vector3 half = Vector3.One * 0.5f;
+            Vector3 off = half + Vector3.Up;
+            var enumerable = voxels as IList<Voxel> ?? voxels.ToList();
+            foreach (Voxel voxel in enumerable)
+            {
+                if (voxel.GetNeighbor(new Vector3(0, 0, 1), ref neighbor) &&
+                    !enumerable.Any(o => o.Equals(neighbor)))
+                {
+                    yield return new Fence(components, voxel.Position + off + new Vector3(0, 0, 0.45f),
+                        (float)Math.Atan2(0, 1), asset);
+                }
+
+                if (voxel.GetNeighbor(new Vector3(0, 0, -1), ref neighbor) && !enumerable.Any(o => o.Equals(neighbor)))
+                {
+                    yield return new Fence(components, voxel.Position + off + new Vector3(0, 0, -0.45f), (float)Math.Atan2(0, -1), asset);
+                }
+
+
+                if (voxel.GetNeighbor(new Vector3(1, 0, 0), ref neighbor) && !enumerable.Any(o => o.Equals(neighbor)))
+                {
+                    yield return new Fence(components, voxel.Position + off + new Vector3(0.45f, 0, 0.0f), (float)Math.Atan2(1, 0), asset);
+                }
+
+
+                if (voxel.GetNeighbor(new Vector3(-1, 0, 0), ref neighbor) && !enumerable.Any(o => o.Equals(neighbor)))
+                {
+                    yield return new Fence(components, voxel.Position + off + new Vector3(-0.45f, 0, 0.0f), (float)Math.Atan2(-1, 0), asset);
+                }
+
+                if (createWorkPiles && MathFunctions.RandEvent(0.1f))
+                {
+                    yield return new WorkPile(components, voxel.Position + off);
+                }
+            }
         }
     }
 }

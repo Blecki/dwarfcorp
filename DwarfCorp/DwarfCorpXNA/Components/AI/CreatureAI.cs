@@ -245,7 +245,9 @@ namespace DwarfCorp
         public List<int> XPEvents { get; set; }
 
         public string Biography = "";
-        
+
+        public BoundingBox? PositionConstraint = null;
+
         /// <summary> Add exprience points to the creature. It will level up from time to time </summary>
         public void AddXP(int amount)
         {
@@ -361,6 +363,31 @@ namespace DwarfCorp
             Manager.World.ChunkManager.ChunkData.SetMaxViewingLevel((int)Position.Y, ChunkManager.SliceMode.Y);
         }
 
+        public void HandleReproduction()
+        {
+            if (!Creature.CanReproduce) return;
+            if (Creature.IsPregnant) return;
+            if (!MathFunctions.RandEvent(0.0001f)) return;
+            if (CurrentTask != null) return;
+            IEnumerable<CreatureAI> potentialMates =
+                Faction.Minions.Where(minion => minion != this && minion.Creature.CanMate(this.Creature));
+            CreatureAI closestMate = null;
+            float closestDist = float.MaxValue;
+
+            foreach (var ai in potentialMates)
+            {
+                var dist = (ai.Position - Position).LengthSquared();
+                if (!(dist < closestDist)) continue;
+                closestDist = dist;
+                closestMate = ai;
+            }
+
+            if (closestMate != null && closestDist < 30)
+            {
+                Tasks.Add(new MateTask(closestMate));
+            }
+        }
+
         /// <summary> Update this creature </summary>
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
@@ -377,6 +404,7 @@ namespace DwarfCorp
             OrderEnemyAttack();
             DeleteBadTasks();
             PreEmptTasks();
+            HandleReproduction();
 
             // Try to go to sleep if we are low on energy and it is night time.
             if (Status.Energy.IsDissatisfied() && Manager.World.Time.IsNight())
@@ -510,6 +538,11 @@ namespace DwarfCorp
             {
                 history.Value.Update();
             }
+
+            if (PositionConstraint.HasValue)
+            {
+                Physics.LocalPosition = MathFunctions.Clamp(Physics.Position, PositionConstraint.Value);
+            }
         }
 
         private int lastXPAnnouncement = 0;
@@ -618,8 +651,45 @@ namespace DwarfCorp
             if (!IsPosessed && GatherManager.VoxelOrders.Count == 0 &&
                 (GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile()))
             {
-                // Find a room to train in
-                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack) && MathFunctions.RandEvent(0.01f))
+
+                // Craft random items for fun.
+                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Craft) && MathFunctions.RandEvent(0.0005f))
+                {
+                    var item = CraftLibrary.GetRandomApplicableCraftItem(Faction);
+                    if (item != null)
+                    {
+                        bool gotAny = true;
+                        foreach (var resource in item.RequiredResources)
+                        {
+                            var amount = Faction.GetResourcesWithTags(new List<Quantitiy<Resource.ResourceTags>>() { resource });
+                            if (amount == null || amount.Count == 0)
+                            {
+                                gotAny = false;
+                                break;
+                            }
+                            item.SelectedResources.Add(Datastructures.SelectRandom(amount));
+                        }
+                        if (gotAny)
+                        {
+                            return new CraftResourceTask(item);
+                        }
+                    }
+                }
+
+                // Farm stuff if applicable
+                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm) && MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction)
+                {
+                    var task = (World.Master.Tools[GameMaster.ToolMode.Farm] as FarmTool).AutoFarm();
+
+                    if (task != null)
+                    {
+                        Faction.ChopDesignations.Add(task.EntityToKill);
+                        return task;
+                    }
+                }
+
+                // Find a room to train in, if applicable.
+                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack) && MathFunctions.RandEvent(0.0005f))
                 {
                     Body closestTraining = Faction.FindNearestItemWithTags("Train", Position, true);
 
@@ -627,6 +697,15 @@ namespace DwarfCorp
                     {
                         return new ActWrapperTask(new GoTrainAct(this));
                     }
+                }
+
+                if (IdleTimer.HasTriggered && MathFunctions.RandEvent(0.005f))
+                {
+                    return new ActWrapperTask(new MournGraves(this))
+                    {
+                        Priority = Task.PriorityType.Eventually,
+                        AutoRetry = false
+                    };
                 }
 
                 // Otherwise, try to find a chair to sit in
@@ -653,15 +732,18 @@ namespace DwarfCorp
             if (GatherManager.VoxelOrders.Count == 0 && GatherManager.StockOrders.Count > 0)
             {
                 GatherManager.StockOrder order = GatherManager.StockOrders[0];
-                GatherManager.StockOrders.RemoveAt(0);
-                return new ActWrapperTask(new StockResourceAct(this, order.Resource))
+                if (Faction.HasFreeStockpile(order.Resource))
                 {
-                    Priority = Task.PriorityType.Low
-                };
+                    GatherManager.StockOrders.RemoveAt(0);
+                    return new ActWrapperTask(new StockResourceAct(this, order.Resource))
+                    {
+                        Priority = Task.PriorityType.Low
+                    };
+                }
             }
-            else if (GatherManager.VoxelOrders.Count > 0)
-            {
 
+            if (GatherManager.VoxelOrders.Count > 0)
+            {
                 // Otherwise handle build orders.
                 var voxels = new List<Voxel>();
                 var types = new List<VoxelType>();
@@ -1076,6 +1158,64 @@ namespace DwarfCorp
                     MathFunctions.ClampXZ(Creature.Physics.Velocity, Creature.Physics.IsInLiquid ? Stats.MaxSpeed * 0.5f: Stats.MaxSpeed);
             }
           
+        }
+    }
+
+    [JsonObject(IsReference = true)]
+    public class MateTask : Task
+    {
+        public CreatureAI Them;
+
+        public MateTask()
+        {
+            
+        }
+        public MateTask(CreatureAI closestMate)
+        {
+            Them = closestMate;
+            Name = "Mate with " + closestMate.GlobalID;
+        }
+
+        public override Task Clone()
+        {
+            return new MateTask(Them);
+        }
+
+        public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
+        {
+            return (Them.Position - agent.AI.Position).LengthSquared();
+        }
+
+        public override bool IsFeasible(Creature agent)
+        {
+            return agent.CanMate(Them.Creature);
+        }
+
+        public IEnumerable<Act.Status> Mate(Creature me)
+        {
+            Timer mateTimer = new Timer(5.0f, true);
+            while (!mateTimer.HasTriggered)
+            {
+                me.Physics.Velocity = Vector3.Zero;
+                Them.Physics.Velocity = Vector3.Zero;
+                Them.Physics.LocalPosition = me.Physics.Position*0.1f + Them.Physics.Position*0.9f;
+                if (MathFunctions.RandEvent(0.01f))
+                {
+                    me.NoiseMaker.MakeNoise("Hurt", me.AI.Position, true, 0.1f);
+                    me.World.ParticleManager.Trigger("puff", me.AI.Position, Color.White, 1);
+                }
+                mateTimer.Update(DwarfTime.LastTime);
+                yield return Act.Status.Running;
+            }
+
+            me.Mate(Them.Creature, me.World.Time);
+            yield return Act.Status.Success;
+        }
+
+        public override Act CreateScript(Creature agent)
+        {
+            return new Sequence(new GoToEntityAct(Them.Physics, agent.AI),
+                                new Wrap(() => Mate(agent)));
         }
     }
 

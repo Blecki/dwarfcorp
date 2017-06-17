@@ -81,5 +81,25 @@ namespace DwarfCorp
             PastTeseVerb = "Built";
             CurrentVerb = "Building";
         }
+
+        public CraftItem Clone()
+        {
+            var item = new CraftItem()
+            {
+                Name = this.Name,
+                BaseCraftTime = this.BaseCraftTime,
+                Description = this.Description,
+                Type = this.Type,
+                ResourceCreated = this.ResourceCreated,
+                CraftLocation = this.CraftLocation,
+                Verb = this.Verb,
+                PastTeseVerb = this.PastTeseVerb,
+                CurrentVerb = this.CurrentVerb
+            };
+            item.Prerequisites.AddRange(this.Prerequisites);
+            item.SelectedResources.AddRange(this.SelectedResources);
+            item.RequiredResources.AddRange(this.RequiredResources);
+            return item;
+        }
     }
 }

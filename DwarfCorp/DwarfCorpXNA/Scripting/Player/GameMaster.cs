@@ -302,7 +302,7 @@ namespace DwarfCorp
 
         public void UpdateRooms()
         {
-            bool hasAnyMinions = SelectedMinions.Count > 0;
+
         }
 
         public void Update(DwarfGame game, DwarfTime time)
@@ -322,24 +322,17 @@ namespace DwarfCorp
 
             if (Faction.Minions.Any(m => m.IsDead && m.TriggersMourning))
             {
-                CreatureAI deadMinion = null;
                 foreach (CreatureAI minion in Faction.Minions)
                 {
                     minion.AddThought(Thought.ThoughtType.FriendDied);
 
-                    if (minion.IsDead)
-                    {
-                        deadMinion = minion;
-                    }
-                }
-
-                if (deadMinion != null)
-                {
+                    if (!minion.IsDead) continue;
                     World.MakeAnnouncement(
-                        String.Format("{0} ({1}) died!", deadMinion.Stats.FullName, deadMinion.Stats.CurrentClass.Name));
+                        String.Format("{0} ({1}) died!", minion.Stats.FullName, minion.Stats.CurrentClass.Name));
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
                     World.Tutorial("death");
                 }
+
             }
 
             Faction.Minions.RemoveAll(m => m.IsDead);

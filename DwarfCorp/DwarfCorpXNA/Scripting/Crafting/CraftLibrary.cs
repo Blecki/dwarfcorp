@@ -298,7 +298,43 @@ namespace DwarfCorp
                 }
             };
 
+            foreach (var res in ResourceLibrary.Resources.Where(res => res.Value.CanCraft))
+            {
+                CraftItems[res.Key] = ResourceToCraftItem(res.Key);
+            }
+
             staticsInitialized = true;
+        }
+
+        public static CraftItem ResourceToCraftItem(ResourceLibrary.ResourceType resource)
+        {
+            Resource res = ResourceLibrary.GetResourceByName(resource);
+            return new CraftItem()
+            {
+                Name = resource,
+                BaseCraftTime = 30,
+                CraftLocation = "Forge",
+                Description = res.Description,
+                Icon = new Gui.TileReference("resources", res.GuiSprite),
+                RequiredResources = res.CraftPrereqs,
+                ResourceCreated = resource,
+                Type = CraftItem.CraftType.Resource
+            };
+        }
+
+        public static CraftItem GetRandomApplicableCraftItem(Faction faction)
+        {
+            const int maxIters = 100;
+            for (int i = 0; i < maxIters; i++)
+            {
+                var item = Datastructures.SelectRandom(CraftItems.Where(k => k.Value.Type == CraftItem.CraftType.Resource));
+                if (!faction.HasResources(item.Value.RequiredResources))
+                {
+                    continue;
+                }
+                return item.Value.Clone();
+            }
+            return null;
         }
     }
 }

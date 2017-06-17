@@ -198,7 +198,7 @@ namespace DwarfCorp
             // that can be used later
             Physics.Tags.Add("Bird");
             Physics.Tags.Add("Animal");
-
+            Physics.Tags.Add("DomesticAnimal");
             NoiseMaker.Noises.Add("chirp", new List<string>(){ContentPaths.Audio.bird});
 
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the bird";
@@ -211,6 +211,7 @@ namespace DwarfCorp
             AI.Movement.CanFly = true;
             AI.Movement.CanWalk = false;
             AI.Movement.CanClimb = false;
+            Species = "Bird";
         }
     }
 }

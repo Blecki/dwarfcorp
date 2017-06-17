@@ -1,4 +1,4 @@
-﻿// Inventory.cs
+// Inventory.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -61,13 +61,13 @@ namespace DwarfCorp
 
         public Inventory()
         {
-            DropRate = 0.75f;
+            DropRate = 1.0f;
         }
 
         public Inventory(ComponentManager Manager, string name, Vector3 BoundingBoxExtents, Vector3 BoundingBoxPos) :
             base(Manager, name, Matrix.Identity, BoundingBoxExtents, BoundingBoxPos)
         {
-            DropRate = 0.75f;
+            DropRate = 1.0f;
         }
 
         public bool Pickup(ResourceAmount resourceAmount)

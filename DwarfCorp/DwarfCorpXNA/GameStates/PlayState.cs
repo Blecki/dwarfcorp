@@ -161,7 +161,7 @@ namespace DwarfCorp.GameStates
                 World.SetMouseOverlay += (mouse, frame) => GuiRoot.SetMouseOverlay(mouse, frame);
 
                 
-                World.ShowToolPopup += text => GuiRoot.ShowTooltip(new Point(4, -16),
+                World.ShowToolPopup += text => GuiRoot.ShowTooltip(new Point(GuiRoot.MousePosition.X + 4, GuiRoot.MousePosition.Y - 16),
                     new Gui.Widgets.ToolPopup
                 {
                     Text = text,
@@ -328,10 +328,12 @@ namespace DwarfCorp.GameStates
             if (World.ShowingWorld)
             {
                 /*For regenerating the voxel icon image! Do not delete!*/
-                //Texture2D tex = VoxelLibrary.RenderIcons(Game.GraphicsDevice, World.DefaultShader, World.ChunkManager, 256, 256, 32);
-                //Game.GraphicsDevice.SetRenderTarget(null);
-                //tex.SaveAsPng(new FileStream("voxels.png", FileMode.Create),  256, 256);
-                //Game.Exit();
+                /*
+                Texture2D tex = VoxelLibrary.RenderIcons(Game.GraphicsDevice, World.DefaultShader, World.ChunkManager, 256, 256, 32);
+                Game.GraphicsDevice.SetRenderTarget(null);
+                tex.SaveAsPng(new FileStream("voxels.png", FileMode.Create),  256, 256);
+                Game.Exit();
+                 */
 
 
                 if (!MinimapFrame.Hidden && !GuiRoot.RootItem.Hidden)
@@ -727,7 +729,7 @@ namespace DwarfCorp.GameStates
                         KeepChildVisible = true,
                         ExpansionChild = new Gui.Widgets.ToolTray.Tray
                         {
-                            ItemSource = RoomLibrary.GetRoomTypes().Select(name => RoomLibrary.GetData(name))
+                            ItemSource = RoomLibrary.GetRoomTypes().Select(RoomLibrary.GetData)
                                 .Select(data => new Gui.Widgets.ToolTray.Icon
                                 {
                                     Icon = data.NewIcon,
@@ -735,7 +737,7 @@ namespace DwarfCorp.GameStates
                                     ExpansionChild = new Gui.Widgets.BuildRoomInfo
                                     {
                                         Data = data,
-                                        Rect = new Rectangle(0,0,256,128),
+                                        Rect = new Rectangle(0,0,256,164),
                                         Master = Master
                                     },
                                     OnClick = (sender, args) =>
@@ -1165,14 +1167,37 @@ namespace DwarfCorp.GameStates
                                         Text = "Harvest Plants.\n Click and drag to harvest plants.",
                                         Rect = new Rectangle(0, 0, 256, 128),
                                         TextColor = Color.Black.ToVector4(),
-                                        OnClick = (sender, args) =>
+                                    },
+                                    OnClick = (sender, args) =>
                                         {
                                              ChangeTool(GameMaster.ToolMode.Farm);
                                                             ((FarmTool) (Master.Tools[GameMaster.ToolMode.Farm])).Mode =
                                                                 FarmTool.FarmMode.Harvesting;
                                             World.Tutorial("harvest");
                                         }
-                                    }
+                                },
+                                new Gui.Widgets.ToolTray.Icon
+                                {
+                                    Text = "Wrng.",
+                                    TextColor = new Vector4(1, 1, 1, 1),
+                                    Tooltip = "Wrangle Animals",
+                                    TextHorizontalAlign = HorizontalAlign.Center,
+                                    TextVerticalAlign = VerticalAlign.Center,
+                                    KeepChildVisible = true,
+                                    ExpansionChild = new Widget()
+                                    {
+                                        Border = "border-fancy",
+                                        Text = "Wrangle Animals.\n Click and drag to wrangle animals.",
+                                        Rect = new Rectangle(0, 0, 256, 128),
+                                        TextColor = Color.Black.ToVector4()
+                                    },
+                                        OnClick = (sender, args) =>
+                                        {
+                                             ChangeTool(GameMaster.ToolMode.Farm);
+                                                            ((FarmTool) (Master.Tools[GameMaster.ToolMode.Farm])).Mode =
+                                                                FarmTool.FarmMode.WranglingAnimals;
+                                            World.Tutorial("wrangle");
+                                        }
                                 },
 
                             }

@@ -74,6 +74,7 @@ namespace DwarfCorp
             GatherDesignations = new List<Body>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
+            WrangleDesignations = new List<Body>();
             RoomBuilder = new RoomBuilder(this, world);
             WallBuilder = new PutDesignator(this, world);
             CraftBuilder = new CraftBuilder(this, world);
@@ -93,6 +94,7 @@ namespace DwarfCorp
             ChopDesignations = new List<Body>();
             AttackDesignations = new List<Body>();
             GatherDesignations = new List<Body>();
+            WrangleDesignations = new List<Body>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
             IsRaceFaction = false;
@@ -146,6 +148,8 @@ namespace DwarfCorp
 
         [JsonIgnore]
         public WorldManager World { get; set; }
+
+        public List<Body> WrangleDesignations { get; set; }
 
         [OnDeserialized]
         public void OnDeserialized(StreamingContext ctx)
@@ -210,12 +214,16 @@ namespace DwarfCorp
                 m.Creature.SelectionCircle.IsVisible = false;
                 m.Creature.Sprite.DrawSilhouette = false;
             });
-            SelectedMinions.ForEach(m => {
-                                             m.Creature.SelectionCircle.IsVisible = true;
-                                             m.Creature.Sprite.DrawSilhouette = true;
-            }
+            SelectedMinions.ForEach(m =>
+            {
+                m.Creature.SelectionCircle.IsVisible = true;
+                m.Creature.Sprite.DrawSilhouette = true;
+            });
 
-    );
+            foreach (Room zone in GetRooms())
+            {
+                zone.ZoneBodies.RemoveAll(body => body.IsDead);
+            }
             
             // Turned off until a non-O(n^2) collision method is create.
             //CollideMinions(time);
@@ -269,20 +277,13 @@ namespace DwarfCorp
                 GuardDesignations.Remove(v);
             }
 
-            List<Body> treesToRemove = ChopDesignations.Where(tree => tree.IsDead).ToList();
-
-            foreach (Body tree in treesToRemove)
+            ChopDesignations.RemoveAll(tree => tree.IsDead);
+            AttackDesignations.RemoveAll(body => body.IsDead);
+            WrangleDesignations.RemoveAll(body => body.IsDead);
+            foreach (var zone in RoomBuilder.DesignatedRooms)
             {
-                ChopDesignations.Remove(tree);
+                zone.Update();
             }
-
-            List<Body> attacksToRemove = AttackDesignations.Where(body => body.IsDead).ToList();
-
-            foreach (Body body in attacksToRemove)
-            {
-                AttackDesignations.Remove(body);
-            }
-
             HandleThreats();
         }
 
@@ -343,6 +344,15 @@ namespace DwarfCorp
             TaskManager.AssignTasks(tasks, Minions);
         }
 
+        public void AssignGather(IEnumerable<Body> items)
+        {
+            List<Task> tasks = (from item in items where AddGatherDesignation(item) select new GatherItemTask(item) as Task).ToList();
+            foreach (CreatureAI creature in Minions)
+            {
+                creature.Tasks.AddRange(tasks);
+            }
+        }
+
         public List<Room> GetRooms()
         {
             return RoomBuilder.DesignatedRooms;
@@ -398,17 +408,16 @@ namespace DwarfCorp
             return Stockpiles.Sum(pile => pile.Resources.MaxResources - pile.Resources.CurrentResourceCount);
         }
 
-        public void AddGatherDesignation(Body resource)
+        public bool AddGatherDesignation(Body resource)
         {
             if (resource.Parent != Components.RootComponent || resource.IsDead)
             {
-                return;
+                return false;
             }
 
-            if (!GatherDesignations.Contains(resource))
-            {
-                GatherDesignations.Add(resource);
-            }
+            if (GatherDesignations.Contains(resource)) return false;
+            GatherDesignations.Add(resource);
+            return true;
         }
 
         public BuildOrder GetClosestDigDesignationTo(Vector3 position)
@@ -559,12 +568,12 @@ namespace DwarfCorp
         }
 
 
-        public Stockpile GetNearestStockpile(Vector3 position)
+        public Stockpile GetNearestStockpile(Vector3 position, Func<Stockpile, bool> predicate )
         {
             Stockpile nearest = null;
 
             float closestDist = float.MaxValue;
-            foreach(Stockpile stockpile in Stockpiles)
+            foreach(Stockpile stockpile in Stockpiles.Where(predicate))
             {
                 float dist = (stockpile.GetBoundingBox().Center() - position).LengthSquared();
 
@@ -615,6 +624,11 @@ namespace DwarfCorp
         public bool HasFreeStockpile()
         {
             return Stockpiles.Any(s => !s.IsFull());
+        }
+
+        public bool HasFreeStockpile(ResourceAmount toPut)
+        {
+            return Stockpiles.Any(s => !s.IsFull() && s.IsAllowed(toPut.ResourceType));
         }
 
         public Body FindNearestItemWithTags(string tag, Vector3 location, bool filterReserved)
@@ -708,9 +722,11 @@ namespace DwarfCorp
                 tagsGot[quantity.ResourceType] = 0;
             }
 
+            Random r = new Random();
+
             foreach (Stockpile stockpile in Stockpiles)
             {
-                foreach (ResourceAmount resource in stockpile.Resources)
+                foreach (ResourceAmount resource in stockpile.Resources.OrderBy(x => r.Next()))
                 {
                     foreach (var requirement in tagsRequired)
                     {
@@ -970,6 +986,21 @@ namespace DwarfCorp
 
 
             return desiredRoom;
+        }
+
+        public void AddMinion(CreatureAI minion)
+        {
+            Minions.Add(minion);
+            Inventory targetInventory = minion.GetComponent<Inventory>();
+
+            if (targetInventory != null)
+            {
+                targetInventory.OnDeath += resources =>
+                {
+                    if (resources == null) return;
+                    AssignGather(resources);
+                };
+            }
         }
     }
 

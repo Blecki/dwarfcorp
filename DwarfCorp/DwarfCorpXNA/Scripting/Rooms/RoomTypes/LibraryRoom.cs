@@ -50,8 +50,8 @@ namespace DwarfCorp
         {
             Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>()
             {
-                {Resource.ResourceTags.Magical, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Magical)},
-                {Resource.ResourceTags.Stone, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Stone)},
+                {Resource.ResourceTags.Magical, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Magical, 2)},
+                {Resource.ResourceTags.Precious, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Precious, 1)},
             };
 
 

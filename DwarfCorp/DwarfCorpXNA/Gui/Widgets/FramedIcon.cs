@@ -152,12 +152,12 @@ namespace DwarfCorp.Gui.Widgets
             {
                 var indicatorTile = Root.GetTileSheet("indicator-circle");
                 meshes.Add(Gui.Mesh.Quad()
-                    .Scale(32, 32)
+                    .Scale(16, 16)
                     .Texture(indicatorTile.TileMatrix(0))
-                    .Translate(Rect.Right - 32,
-                        Rect.Bottom - 32));
+                    .Translate(Rect.Right - 16,
+                        Rect.Bottom - 16).Colorize(Color.OrangeRed.ToVector4()));
                 var numberSize = new Rectangle();
-                var font = Root.GetTileSheet("font-hires");
+                var font = Root.GetTileSheet("font");
                 var stringMesh = Gui.Mesh.CreateStringMesh(
                     IndicatorValue.ToString(),
                     font,
@@ -165,8 +165,8 @@ namespace DwarfCorp.Gui.Widgets
                     out numberSize)
                     .Colorize(new Vector4(1,1,1,1));
                 meshes.Add(stringMesh.
-                    Translate(Rect.Right - 16 - (numberSize.Width / 2),
-                    Rect.Bottom - 16 - (numberSize.Height / 2)));
+                    Translate(Rect.Right - 8 - (numberSize.Width / 2),
+                    Rect.Bottom - 8 - (numberSize.Height / 2)));
             }
 
             return Gui.Mesh.Merge(meshes.ToArray());

@@ -160,7 +160,7 @@ namespace DwarfCorp
             // that can be used later
             Physics.Tags.Add("Frog");
             Physics.Tags.Add("Animal");
-
+            Physics.Tags.Add("DomesticAnimal");
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the frog";
             Stats.CurrentClass = new EmployeeClass()
             {
@@ -171,7 +171,9 @@ namespace DwarfCorp
 
             NoiseMaker.Noises["Idle"] = new List<string>() { ContentPaths.Audio.frog };
             NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.frog };
-
+            Species = "Frog";
+            CanReproduce = true;
+            BabyType = "Frog";
         }
     }
 }
