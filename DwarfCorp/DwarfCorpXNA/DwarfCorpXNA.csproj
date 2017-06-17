@@ -312,6 +312,7 @@
     <Compile Include="NewGui\GoalInfo.cs" />
     <Compile Include="NewGui\GoalPanel.cs" />
     <Compile Include="NewGui\TutorialPopup.cs" />
+    <Compile Include="Scripting\CompoundActs\GetMoneyAct.cs" />
     <Compile Include="Scripting\CompoundActs\StockMoneyAct.cs" />
     <Compile Include="Scripting\LeafActs\PutMoneyInZoneAct.cs" />
     <Compile Include="Scripting\LeafActs\StashMoneyAct.cs" />

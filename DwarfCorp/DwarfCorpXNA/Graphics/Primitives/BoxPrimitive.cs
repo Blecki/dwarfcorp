@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -421,12 +421,6 @@ namespace DwarfCorp
                     right
                 };
 
-                int i = 0;
-                foreach (FaceData face in cells)
-                {
-                    Scales[i] = new Vector2(face.Rect.Width / (float)totalTextureWidth, face.Rect.Height / (float)totalTextureHeight);
-                    i++;
-                }
 
                 List<Vector2> baseCoords = new List<Vector2>
                 {

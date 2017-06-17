@@ -561,8 +561,6 @@ namespace DwarfCorp
                             int vertexIndex = 0;
                             int vertexCount = 0;
                             primitive.GetFace(face, uvs, out faceIndex, out faceCount, out vertexIndex, out vertexCount);
-                            Vector2 texScale = uvs.Scales[i];
-
                             int indexOffset = maxVertex;
                             for (int vertOffset = 0; vertOffset < vertexCount; vertOffset++)
                             {
@@ -576,11 +574,6 @@ namespace DwarfCorp
                                 if(v.Type.CanRamp && ShouldRamp(bestKey, v.RampType))
                                 {
                                     offset = new Vector3(0, -v.Type.RampSize, 0);
-
-                                    if(face != BoxFace.Top && face != BoxFace.Bottom)
-                                    {
-                                        texOffset = new Vector2(0, v.Type.RampSize * (texScale.Y));
-                                    }
                                 }
 
                                 if (maxVertex >= Vertices.Length)

@@ -165,11 +165,7 @@ namespace DwarfCorp
             }
             else if (name == Treasury.TreasuryName)
             {
-                Treasury toBuild = new Treasury(faction, world);
-                foreach (Voxel voxel in designations)
-                {
-                    toBuild.AddVoxel(voxel);
-                }
+                Treasury toBuild = new Treasury(faction, designations, world);
                 return toBuild;
             }
             else

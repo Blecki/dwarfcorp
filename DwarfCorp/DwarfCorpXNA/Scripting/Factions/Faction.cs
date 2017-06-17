@@ -1013,6 +1013,77 @@ namespace DwarfCorp
                 };
             }
         }
+
+        public void AddMoney(DwarfBux money)
+        {
+            // In this case, we need to remove money from the economy.
+            // This means that we first take money from treasuries. If there is any left,
+            // we subtract it from the current money count.
+            if (money < 0)
+            {
+                DwarfBux amountLeft = money;
+                foreach (Treasury treasury in Treasurys)
+                {
+                    DwarfBux amountToTake = System.Math.Min(treasury.Money, amountLeft);
+                    treasury.Money -= amountToTake;
+                    amountLeft -= amountToTake;
+                    Economy.CurrentMoney -= amountToTake;
+                }
+                Economy.CurrentMoney -= amountLeft;
+                Economy.CurrentMoney = System.Math.Max(Economy.CurrentMoney, 0m);
+                return;
+            }
+
+
+            // If there are no minions, we add money to treasuries first, then generate random coin piles.
+            if (Minions.Count == 0)
+            {
+                DwarfBux amountRemaining = money;
+                foreach (Treasury treasury in Treasurys)
+                {
+                    if (amountRemaining <= 0)
+                        break;
+
+                    DwarfBux maxInTreasury = treasury.Money - treasury.Voxels.Count*Treasury.MoneyPerPile;
+                    DwarfBux amountToTake = System.Math.Min(maxInTreasury, amountRemaining);
+
+                    amountRemaining -= amountToTake;
+                    treasury.Money += amountToTake;
+                    Economy.CurrentMoney += amountToTake;
+                }
+                if (amountRemaining > 0 && RoomBuilder.DesignatedRooms.Count > 0)
+                {
+                    // Generate a number of coin piles.
+                    for (DwarfBux total = 0m; total < amountRemaining; total += 64m)
+                    {
+                        Zone randomZone = Datastructures.SelectRandom(RoomBuilder.DesignatedRooms);
+                        Vector3 point = MathFunctions.RandVector3Box(randomZone.GetBoundingBox()) +
+                                        new Vector3(0, 1.0f, 0);
+                        CoinPile pile = EntityFactory.CreateEntity<CoinPile>("Coins Resource", point);
+                        pile.Money = 64m;
+
+                        // Special case where we just need to add a little bit of money (less than 64 coins)
+                        if (money - total < 64m)
+                        {
+                            pile.Money = money - total;
+                        }
+                    }
+                }
+            }
+            // In this case, add money to the wallet of each minion and tell him/her to stock the money.
+            else
+            {
+                DwarfBux amountPerMinion = money / (decimal)Minions.Count;
+                foreach (var minion in Minions)
+                {
+                    minion.Status.Money += amountPerMinion;
+                    minion.GatherManager.StockMoneyOrders.Add(new GatherManager.StockMoneyOrder()
+                    {
+                        Money = amountPerMinion
+                    });
+                }
+            }
+        }
     }
 
 }

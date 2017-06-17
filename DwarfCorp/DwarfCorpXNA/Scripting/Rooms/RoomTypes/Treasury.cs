@@ -81,36 +81,35 @@ namespace DwarfCorp
             Coins = new List<Body>();
             ReplacementType = VoxelLibrary.GetVoxelType("Blue Tile");
             Faction = null;
-            Money = 300m;
         }
 
 
-        public Treasury(Faction faction, WorldManager world) :
-            base(false, new List<Voxel>(), RoomLibrary.GetData(TreasuryName), world)
+        public Treasury(Faction faction, IEnumerable<Voxel> voxels, WorldManager world) :
+            base(voxels, RoomLibrary.GetData(TreasuryName), world)
         {
             Coins = new List<Body>();
             ReplacementType = VoxelLibrary.GetVoxelType("Blue Tile");
+            if (faction.Treasurys.Count == 0)
+            {
+                DwarfBux factionmoney = faction.Economy.CurrentMoney;
+                Money = Math.Min(factionmoney, Voxels.Count*MoneyPerPile);
+            }
             faction.Treasurys.Add(this);
             Faction = faction;
-            Money = 300m;
-        }
-
-        public Treasury(Faction faction, IEnumerable<Voxel> voxels, RoomData data, WorldManager world) :
-            base(voxels, data, world)
-        {
-            Coins = new List<Body>();
-            faction.Treasurys.Add(this);
-            Faction = faction;
-            Money = 300m;
         }
 
         public Treasury(Faction faction, bool designation, IEnumerable<Voxel> designations, RoomData data, WorldManager world) :
             base(designation, designations, data, world)
         {
             Coins = new List<Body>();
+            if (faction.Treasurys.Count == 0)
+            {
+                Money = Faction.Economy.CurrentMoney;
+                DwarfBux factionmoney = faction.Economy.CurrentMoney;
+                Money = Math.Min(factionmoney, Voxels.Count*MoneyPerPile);
+            }
             faction.Treasurys.Add(this);
             Faction = faction;
-            Money = 300m;
         }
 
 
@@ -222,9 +221,10 @@ namespace DwarfCorp
                 moneyToPut = remainder;
             }
 
+            Vector3 targetToss = Coins.Count == 0 ? Voxels[0].Position + new Vector3(0.5f, 0.5f, 0.5f) : Coins[Coins.Count - 1].LocalTransform.Translation + new Vector3(0.5f, 0.5f, 0.5f);
             Body component = EntityFactory.CreateEntity<Body>("Coins", dwarfPos);
             TossMotion toss = new TossMotion(1.0f, 2.5f, component.LocalTransform,
-                Coins[Coins.Count - 1].LocalTransform.Translation + new Vector3(0.5f, 0.5f, 0.5f));
+               targetToss);
             component.AnimationQueue.Add(toss);
             toss.OnComplete += component.Die;
 
@@ -265,8 +265,8 @@ namespace DwarfCorp
             {
             };
 
-            return new RoomData(TreasuryName, 0, "Blue Tile", roomResources, TreasuryTemplates,
-                new Gum.TileReference("rooms", 0))
+            return new RoomData(TreasuryName, 12, "Blue Tile", roomResources, TreasuryTemplates,
+                new Gum.TileReference("rooms", 14))
             {
                 Description = "Money is stored here. Can store " + MoneyPerPile + " per tile.",
             };

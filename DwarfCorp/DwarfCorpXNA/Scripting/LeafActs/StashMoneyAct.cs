@@ -53,7 +53,7 @@ namespace DwarfCorp
             return Agent.Blackboard.GetData<Treasury>(StockpileName);
         }
 
-        public string StockpileName { get; set; }
+        public string StockpileName = "Treasury";
         public void SetZone(Treasury pile)
         {
             Agent.Blackboard.SetData(StockpileName, pile);
