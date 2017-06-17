@@ -368,7 +368,7 @@ namespace DwarfCorp
 
             if (Faction == null && !string.IsNullOrEmpty(Creature.Allies))
             {
-                Faction = Manager.Factions.Factions[Creature.Allies];
+                Faction = Manager.World.Factions.Factions[Creature.Allies];
             }
 
             IdleTimer.Update(gameTime);

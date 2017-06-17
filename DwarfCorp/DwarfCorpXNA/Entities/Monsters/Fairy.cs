@@ -21,7 +21,7 @@ namespace DwarfCorp
 
         }
         public Fairy(ComponentManager manager, string allies, Vector3 position) :
-            base(manager, new CreatureStats(new FairyClass(), 0), "Player", manager.World.PlanService, manager.World.ComponentManager.Factions.Factions[allies],
+            base(manager, new CreatureStats(new FairyClass(), 0), "Player", manager.World.PlanService, manager.World.Factions.Factions[allies],
            
               manager.World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Fairy")
         {

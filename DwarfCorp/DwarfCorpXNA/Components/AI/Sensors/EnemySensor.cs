@@ -88,7 +88,7 @@ namespace DwarfCorp
 
             List<CreatureAI> sensed = new List<CreatureAI>();
             List<CreatureAI> collide = new List<CreatureAI>();
-            foreach (KeyValuePair<string, Faction> faction in Manager.Factions.Factions)
+            foreach (KeyValuePair<string, Faction> faction in Manager.World.Factions.Factions)
             {
                 if (World.Diplomacy.GetPolitics(Allies, faction.Value).GetCurrentRelationship() !=
                     Relationship.Hateful) continue;

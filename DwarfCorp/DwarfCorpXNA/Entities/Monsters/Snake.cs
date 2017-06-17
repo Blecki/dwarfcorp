@@ -74,7 +74,7 @@ namespace DwarfCorp
                 },
                 "Carnivore",
                 manager.World.PlanService,
-                manager.Factions.Factions["Carnivore"],
+                manager.World.Factions.Factions["Carnivore"],
                 
                 chunks, graphics, content, name
             )

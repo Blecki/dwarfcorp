@@ -20,7 +20,7 @@ namespace DwarfCorp.Goals.Goals
             var otherChoice = World.GoalManager.FindGoal(typeof(Ordu_Elf_Invasion));
             otherChoice.State = GoalState.Unavailable;
 
-            var orduFaction = World.ComponentManager.Factions.Factions.FirstOrDefault(f => f.Key == "Ordu").Value;
+            var orduFaction = World.Factions.Factions.FirstOrDefault(f => f.Key == "Ordu").Value;
             World.Diplomacy.SendTradeEnvoy(orduFaction, World);
         }
 

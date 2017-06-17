@@ -20,7 +20,7 @@ namespace DwarfCorp.Goals.Goals
         public override void Activate(WorldManager World)
         {
             // Spawn multiple war parties from Ordu
-            var orduFaction = World.ComponentManager.Factions.Factions.FirstOrDefault(f => f.Key == "Ordu").Value;
+            var orduFaction = World.Factions.Factions.FirstOrDefault(f => f.Key == "Ordu").Value;
             var politics = World.Diplomacy.GetPolitics(World.PlayerFaction, orduFaction);
             politics.RecentEvents.Add(new Diplomacy.PoliticalEvent
             {

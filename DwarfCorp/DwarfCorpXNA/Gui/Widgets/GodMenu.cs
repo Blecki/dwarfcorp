@@ -112,7 +112,7 @@ namespace DwarfCorp.Gui.Widgets
                     OnClick = (sender, args) =>
                     {
                         var factionToSend = Datastructures.SelectRandom(
-                            Master.World.ComponentManager.Factions.Factions.Values.Where(f =>
+                            Master.World.Factions.Factions.Values.Where(f =>
                             f.Race.IsIntelligent && f.Race.IsNative));
                         if (factionToSend != null)
                             Master.World.Diplomacy.SendTradeEnvoy(factionToSend, Master.World);

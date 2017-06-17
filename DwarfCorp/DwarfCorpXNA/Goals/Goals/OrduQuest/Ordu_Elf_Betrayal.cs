@@ -20,7 +20,7 @@ namespace DwarfCorp.Goals.Goals
         public override void Activate(WorldManager World)
         {
             // Spawn multiple war parties from Fel'al'fe
-            var felFaction = World.ComponentManager.Factions.Factions.FirstOrDefault(f => f.Key == "Fel'al'fe").Value;
+            var felFaction = World.Factions.Factions.FirstOrDefault(f => f.Key == "Fel'al'fe").Value;
             var politics = World.Diplomacy.GetPolitics(World.PlayerFaction, felFaction);
             politics.RecentEvents.Add(new Diplomacy.PoliticalEvent
             {

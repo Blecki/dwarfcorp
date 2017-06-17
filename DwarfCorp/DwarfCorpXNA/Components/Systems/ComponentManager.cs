@@ -44,11 +44,9 @@ namespace DwarfCorp
         public Mutex RemovalMutex { get; set; }
 
         public ParticleManager ParticleManager { get; set; }
+
         [JsonIgnore]
         public CollisionManager CollisionManager { get; set; }
-
-        public FactionLibrary Factions { get; set; }
-        //public Diplomacy Diplomacy { get; set; }
 
         [JsonIgnore]
         public WorldManager World { get; set; }
@@ -66,13 +64,6 @@ namespace DwarfCorp
             CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents)); GameObjectCaching.Reset();
             RootComponent.RefreshCacheTypesRecursive();
             World.Natives.Clear();
-            foreach (Faction faction in Factions.Factions.Values)
-            {
-                if (faction.Race.IsNative && faction.Race.IsIntelligent && !faction.IsRaceFaction)
-                {
-                    World.Natives.Add(faction);
-                }
-            }
 
             foreach (var component in Components)
             {
@@ -105,16 +96,6 @@ namespace DwarfCorp
             Camera = null;
             AdditionMutex = new Mutex();
             RemovalMutex = new Mutex();
-            Factions = new FactionLibrary();
-            if (natives != null && natives.Count > 0)
-            {
-                Factions.AddFactions(state, natives);
-            }
-            Factions.Initialize(state, CompanyInformation);
-            Point playerOrigin = new Point((int)(World.WorldOrigin.X), (int)(World.WorldOrigin.Y));
-
-            Factions.Factions["Player"].Center = playerOrigin;
-            Factions.Factions["Motherland"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
         }
 
         #region picking
@@ -223,7 +204,6 @@ namespace DwarfCorp
             GamePerformance.Instance.StopTrackPerformance("Update Transforms");
 
             GamePerformance.Instance.StartTrackPerformance("Factions");
-            Factions.Update(gameTime);
             GamePerformance.Instance.StopTrackPerformance("Factions");
 
             GamePerformance.Instance.TrackValueType("Component Count", Components.Count);

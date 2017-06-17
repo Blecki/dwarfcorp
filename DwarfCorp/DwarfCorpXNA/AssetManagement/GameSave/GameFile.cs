@@ -62,6 +62,7 @@ namespace DwarfCorp
             public List<Goals.Goal> Goals { get; set; }
             public Tutorial.TutorialSaveData TutorialSaveData { get; set; }
             public Diplomacy Diplomacy { get; set; }
+            public FactionLibrary Factions;
 
             public int GameID { get; set; }
 
@@ -130,6 +131,7 @@ namespace DwarfCorp
                 Goals = world.GoalManager.EnumerateGoals().ToList(),
                 TutorialSaveData = world.TutorialManager.GetSaveData(),
                 Diplomacy = world.Diplomacy,
+                Factions = world.Factions,
                 GameID = id,
             };
 

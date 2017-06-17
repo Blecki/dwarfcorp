@@ -95,10 +95,10 @@ namespace DwarfCorp
             RegisterEntity("CraftsDwarf", (position, data) => GenerateDwarf(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, world.PlayerFaction, world.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.CraftsDwarf], 0));
             RegisterEntity("Wizard", (position, data) => GenerateDwarf(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, world.PlayerFaction, world.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.Wizard], 0));
             RegisterEntity("MusketDwarf", (position, data) => GenerateDwarf(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, world.PlayerFaction, world.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.MusketDwarf], 0));
-            RegisterEntity("Moleman", (position, data) => GenerateMoleman(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, world.ComponentManager.Factions.Factions["Molemen"], world.PlanService, "Molemen"));
-            RegisterEntity("Goblin", (position, data) => GenerateGoblin(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, world.ComponentManager.Factions.Factions["Goblins"], world.PlanService, "Goblins"));
-            RegisterEntity("Skeleton", (position, data) => GenerateSkeleton(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, world.ComponentManager.Factions.Factions["Undead"], world.PlanService, "Undead"));
-            RegisterEntity("Necromancer", (position, data) => GenerateNecromancer(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, world.ComponentManager.Factions.Factions["Undead"], world.PlanService, "Undead"));
+            RegisterEntity("Moleman", (position, data) => GenerateMoleman(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, World.Factions.Factions["Molemen"], world.PlanService, "Molemen"));
+            RegisterEntity("Goblin", (position, data) => GenerateGoblin(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, World.Factions.Factions["Goblins"], world.PlanService, "Goblins"));
+            RegisterEntity("Skeleton", (position, data) => GenerateSkeleton(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, World.Factions.Factions["Undead"], world.PlanService, "Undead"));
+            RegisterEntity("Necromancer", (position, data) => GenerateNecromancer(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, World.Factions.Factions["Undead"], world.PlanService, "Undead"));
             RegisterEntity("Bed", (position, data) => new Bed(world.ComponentManager, position));
             RegisterEntity("Barrel", (position, data) => new Barrel(world.ComponentManager, position));
             RegisterEntity("Bear Trap", (position, data) => new BearTrap(world.ComponentManager, position));
@@ -114,8 +114,8 @@ namespace DwarfCorp
             RegisterEntity("Potions", (position, data) => new Table(world.ComponentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(1, 4)) { Tags = new List<string>() { "Research" }, Battery = new Table.ManaBattery() { Charge = 0.0f, MaxCharge = 100.0f } });
             RegisterEntity("Anvil", (position, data) => new Anvil(world.ComponentManager, position));
             RegisterEntity("Forge", (position, data) => new Forge(world.ComponentManager, position));
-            RegisterEntity("Elf", (position, data) => GenerateElf(world, position, world.ComponentManager.Factions.Factions["Elf"], "Elf"));
-            RegisterEntity("Demon", (position, data) => GenerateDemon(world, position, world.ComponentManager.Factions.Factions["Demon"], "Demon"));
+            RegisterEntity("Elf", (position, data) => GenerateElf(world, position, World.Factions.Factions["Elf"], "Elf"));
+            RegisterEntity("Demon", (position, data) => GenerateDemon(world, position, World.Factions.Factions["Demon"], "Demon"));
             RegisterEntity("Arrow", (position, data) => new ArrowProjectile(world.ComponentManager, position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
             RegisterEntity("Bullet", (position, data) => new BulletProjectile(world.ComponentManager, position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
             RegisterEntity("Web", (position, data) => new WebProjectile(world.ComponentManager, position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
@@ -151,7 +151,7 @@ namespace DwarfCorp
                 return new Weather.Cloud(world.ComponentManager, 0.1f, 50, 40, position);
             });
             RegisterEntity("Chicken", (position, data) => new Chicken(position, world.ComponentManager, world.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Chicken"));
-            RegisterEntity("MudGolem", (position, data) => new MudGolem(new CreatureStats(new MudGolemClass(), 0), "Carnivore", world.PlanService, world.ComponentManager.Factions.Factions["Carnivore"], world.ComponentManager, "Mud Golem", world.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, position));
+            RegisterEntity("MudGolem", (position, data) => new MudGolem(new CreatureStats(new MudGolemClass(), 0), "Carnivore", world.PlanService, World.Factions.Factions["Carnivore"], world.ComponentManager, "Mud Golem", world.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, position));
             RegisterEntity("Mud", (position, data) => new MudProjectile(world.ComponentManager, position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
         }
 

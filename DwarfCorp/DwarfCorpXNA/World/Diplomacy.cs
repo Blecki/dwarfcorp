@@ -133,7 +133,7 @@ namespace DwarfCorp
         }
 
         [JsonIgnore]
-        public FactionLibrary Factions { get { return World.ComponentManager.Factions; }}
+        public FactionLibrary Factions { get { return World.Factions; }}
 
 
         [JsonArrayAttribute]

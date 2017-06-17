@@ -138,6 +138,8 @@ namespace DwarfCorp
         // Responsible for managing game entities
         public ComponentManager ComponentManager = null;
 
+        public FactionLibrary Factions = null;
+
         // Handles interfacing with the player and sending commands to dwarves
         public GameMaster Master = null;
 
@@ -521,6 +523,18 @@ namespace DwarfCorp
             }
 
             ComponentManager = new ComponentManager(this, CompanyInformation, natives);
+
+            Factions = new FactionLibrary();
+            if (natives != null && natives.Count > 0)
+            {
+                Factions.AddFactions(this, natives);
+            }
+            Factions.Initialize(this, CompanyInformation);
+            Point playerOrigin = new Point((int)(WorldOrigin.X), (int)(WorldOrigin.Y));
+
+            Factions.Factions["Player"].Center = playerOrigin;
+            Factions.Factions["Motherland"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
+
             ComponentManager.RootComponent = new Body(ComponentManager, "root", Matrix.Identity, Vector3.Zero,
                 Vector3.Zero, false);
             Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
@@ -806,6 +820,7 @@ namespace DwarfCorp
                 
                 //gameFile.LoadComponents(ExistingFile, this);
                 ComponentManager = gameFile.Data.Components;
+                Factions = gameFile.Data.Factions;
                 ComponentManager.World = this;
                 GameComponent.ResetMaxGlobalId(ComponentManager.GetMaxComponentID() + 1);
                 Sky.TimeOfDay = gameFile.Data.Metadata.TimeOfDay;
@@ -814,6 +829,16 @@ namespace DwarfCorp
                 WorldScale = gameFile.Data.Metadata.WorldScale;
                 GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
                 GameSettings.Default.ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
+
+                // Restore native factions from deserialized data.
+                Natives.Clear();
+                foreach (Faction faction in Factions.Factions.Values)
+                {
+                    if (faction.Race.IsNative && faction.Race.IsIntelligent && !faction.IsRaceFaction)
+                    {
+                        Natives.Add(faction);
+                    }
+                }
 
                 //gameFile.LoadDiplomacy(ExistingFile, this);
                 Diplomacy = gameFile.Data.Diplomacy;
@@ -841,7 +866,7 @@ namespace DwarfCorp
 
         public void CreateGameMaster()
         {
-            Master = new GameMaster(ComponentManager.Factions.Factions["Player"], Game, ComponentManager, ChunkManager,
+            Master = new GameMaster(Factions.Factions["Player"], Game, ComponentManager, ChunkManager,
                 Camera, GraphicsDevice);
 
             if (Master.Faction.Economy.Company.Information == null)
@@ -893,7 +918,7 @@ namespace DwarfCorp
             {
                 ChunkManager.ChunkGen.GenerateVegetation(chunk.Value, ComponentManager, Content, GraphicsDevice);
                 ChunkManager.ChunkGen.GenerateFauna(chunk.Value, ComponentManager, Content, GraphicsDevice,
-                    ComponentManager.Factions);
+                    Factions);
             }
         }
 
@@ -1344,6 +1369,7 @@ namespace DwarfCorp
                 //GamePerformance.Instance.StopTrackPerformance("Diplomacy");
 
                 //GamePerformance.Instance.StartTrackPerformance("Components");
+                Factions.Update(gameTime);
                 ComponentManager.Update(gameTime, ChunkManager, Camera);
                 //GamePerformance.Instance.StopTrackPerformance("Components");
 
