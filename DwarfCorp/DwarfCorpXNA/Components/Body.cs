@@ -185,8 +185,8 @@ namespace DwarfCorp
         }
 
 
-        public Body(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
-            this(manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos, true)
+        public Body(ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
+            this(manager, name, localTransform, boundingBoxExtents, boundingBoxPos, true)
         {
             DrawReservation = false;
             AnimationQueue = new List<MotionAnimation>();
@@ -200,8 +200,8 @@ namespace DwarfCorp
             lastBounds = GetBoundingBox();
         }
 
-        public Body(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool addToCollisionManager) :
-            base(name, parent, manager)
+        public Body(ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool addToCollisionManager) :
+            base(name, manager)
         {
             DrawReservation = false;
             AnimationQueue = new List<MotionAnimation>();

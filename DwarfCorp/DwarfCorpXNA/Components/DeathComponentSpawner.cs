@@ -51,8 +51,8 @@ namespace DwarfCorp
         public List<Body> Spawns { get; set; }
         public float ThrowSpeed { get; set; }
 
-        public DeathComponentSpawner(string name, GameComponent parent, Matrix localTransform, Vector3 boundingExtents, Vector3 boundingBoxPos, List<Body> spawns) :
-            base(parent.Manager, name, parent, localTransform, boundingExtents, boundingBoxPos, false)
+        public DeathComponentSpawner(ComponentManager Manager, string name, Matrix localTransform, Vector3 boundingExtents, Vector3 boundingBoxPos, List<Body> spawns) :
+            base(Manager, name, localTransform, boundingExtents, boundingBoxPos, false)
         {
             Spawns = spawns;
             ThrowSpeed = 5.0f;

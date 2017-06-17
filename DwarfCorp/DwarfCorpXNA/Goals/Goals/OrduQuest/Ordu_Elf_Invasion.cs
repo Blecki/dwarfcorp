@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Gum;
+using DwarfCorp.Gui;
 
 namespace DwarfCorp.Goals.Goals
 {
@@ -17,14 +17,14 @@ namespace DwarfCorp.Goals.Goals
             GoalType = GoalTypes.UnavailableAtStartup;
         }
 
-        public override ActivationResult Activate(WorldManager World)
+        public override void Activate(WorldManager World)
         {
             var otherChoice = World.GoalManager.FindGoal(typeof(Ordu_Necro_Envoy));
             otherChoice.State = GoalState.Unavailable;
 
             // Spawn multiple war parties from Fel'al'fe
-            var felFaction = World.ComponentManager.Factions.Factions.FirstOrDefault(f => f.Key == "Fel'al'fe").Value;
-            var politics = World.ComponentManager.Diplomacy.GetPolitics(World.PlayerFaction, felFaction);
+            var felFaction = World.Factions.Factions.FirstOrDefault(f => f.Key == "Fel'al'fe").Value;
+            var politics = World.Diplomacy.GetPolitics(World.PlayerFaction, felFaction);
             politics.RecentEvents.Add(new Diplomacy.PoliticalEvent
             {
                 Change = -100.0f,
@@ -34,9 +34,7 @@ namespace DwarfCorp.Goals.Goals
             });
 
             for (var i = 0; i < 5; ++i)
-                World.ComponentManager.Diplomacy.SendWarParty(felFaction);
-
-            return new ActivationResult { Succeeded = true };
+                World.Diplomacy.SendWarParty(felFaction);
         }
 
         public override void OnGameEvent(WorldManager World, GameEvent Event)

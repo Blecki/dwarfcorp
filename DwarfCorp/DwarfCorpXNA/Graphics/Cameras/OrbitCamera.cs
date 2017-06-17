@@ -230,7 +230,6 @@ namespace DwarfCorp
                 shiftPressed = false;
             }
 
-            bool goingBackward = false;
             Vector3 velocityToSet = Vector3.Zero;
 
             if (EnableControl)
@@ -244,8 +243,6 @@ namespace DwarfCorp
                 }
                 else if (keys.IsKeyDown(ControlSettings.Mappings.Back) || keys.IsKeyDown(Keys.Down))
                 {
-                    goingBackward = true;
-
                     Vector3 mov = forward;
                     mov.Y = 0;
                     mov.Normalize();
@@ -283,7 +280,7 @@ namespace DwarfCorp
 
             if (!KeyManager.RotationEnabled())
             {
-                World.NewGui.MouseVisible = true;
+                World.Gui.MouseVisible = true;
 
                 if (!World.IsMouseOverGui)
                 {
@@ -342,7 +339,7 @@ namespace DwarfCorp
             }
             else
             {
-                World.NewGui.MouseVisible = false;
+                World.Gui.MouseVisible = false;
             }
 
             int scroll = mouse.ScrollWheelValue;

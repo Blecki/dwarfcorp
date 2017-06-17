@@ -135,7 +135,7 @@ namespace DwarfCorp
             }
         }
 
-        public void DrawReflectionMap(DwarfTime gameTime, WorldManager game, float waterHeight, Matrix reflectionViewMatrix, Shader effect, GraphicsDevice device)
+        public void DrawReflectionMap(IEnumerable<IRenderableComponent> Renderables, DwarfTime gameTime, WorldManager game, float waterHeight, Matrix reflectionViewMatrix, Shader effect, GraphicsDevice device)
         {
             if (!DrawReflections) return;
             Plane reflectionPlane = CreatePlane(waterHeight, new Vector3(0, -1, 0), reflectionViewMatrix, true);
@@ -167,7 +167,10 @@ namespace DwarfCorp
             if(DrawComponentsReflected)
             {
                 effect.View = reflectionViewMatrix;
-                game.DrawComponents(gameTime, effect, reflectionViewMatrix, ComponentManager.WaterRenderType.Reflective, waterHeight);
+                game.InstanceManager.Render(game.GraphicsDevice, effect, game.Camera, false);
+                ComponentRenderer.Render(Renderables, gameTime, game.ChunkManager, game.Camera,
+                    DwarfGame.SpriteBatch, game.GraphicsDevice, effect,
+                    ComponentRenderer.WaterRenderType.Reflective, waterHeight);
             }
 
             effect.ClippingEnabled = false;

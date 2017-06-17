@@ -22,7 +22,7 @@ namespace DwarfCorp
         }
 
         public TurretTrap(ComponentManager manager, Vector3 position, Faction faction) :
-            base(manager, "TurretTrap", manager.RootComponent, Matrix.CreateTranslation(position),
+            base(manager, "TurretTrap", Matrix.CreateTranslation(position),
             new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, true)
         {
             Allies = faction;
@@ -33,24 +33,28 @@ namespace DwarfCorp
                 Mode = Attack.AttackMode.Ranged,
                 LaunchSpeed = 15
             };
-            ParticleTrigger deathParticles = new ParticleTrigger("explode", Manager, "DeathParticles", this,
+
+            AddChild(new ParticleTrigger("explode", Manager, "DeathParticles",
             Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
             {
                 SoundToPlay = ""
-            };
-            Health health = new Health(Manager, "health", this, 50.0f, 0.0f, 50.0f);
-            Sensor = new EnemySensor(Manager, "sensor", this, Matrix.Identity, new Vector3(8, 8, 8),
+            });
+
+            AddChild(new Health(Manager, "health", 50.0f, 0.0f, 50.0f));
+
+            Sensor = AddChild(new EnemySensor(Manager, "sensor", Matrix.Identity, new Vector3(8, 8, 8),
                 Vector3.Zero)
             {
                 Allies = faction
-            };
+            }) as EnemySensor;
+
             Sensor.OnEnemySensed += Sensor_OnEnemySensed;
-            BaseSprite = new Fixture(Vector3.Zero, spriteSheet, new Point(2, 7), this);
+            BaseSprite = AddChild(new Fixture(Manager, Vector3.Zero, spriteSheet, new Point(2, 7))) as Fixture;
             BaseSprite.Sprite.OrientationType = Sprite.OrientMode.YAxis;
-            TurretSprite = new Fixture(Vector3.Up * 0.25f, spriteSheet, new Point(1, 7), this);
+            TurretSprite = AddChild(new Fixture(Manager, Vector3.Up * 0.25f, spriteSheet, new Point(1, 7))) as Fixture;
             TurretSprite.Sprite.OrientationType = Sprite.OrientMode.Fixed;
             SetTurretAngle(0.0f);
-            new Shadow(this);
+            AddChild(new Shadow(Manager));
         }
 
         void Sensor_OnEnemySensed(List<CreatureAI> enemies)

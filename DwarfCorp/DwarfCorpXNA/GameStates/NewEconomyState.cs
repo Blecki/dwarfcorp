@@ -4,15 +4,15 @@ using LibNoise;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
-using Gum;
+using DwarfCorp.Gui;
 
 namespace DwarfCorp.GameStates
 {
     public class NewEconomyState : GameState
     {
-        private Gum.Root GuiRoot;
+        private Gui.Root GuiRoot;
         private WorldManager World;
-        private Gum.Widgets.TabPanel TabPanel;
+        private Gui.Widgets.TabPanel TabPanel;
 
         public NewEconomyState(DwarfGame Game, GameStateManager StateManager, WorldManager World) :
             base(Game, "GuiStateTemplate", StateManager)
@@ -25,18 +25,18 @@ namespace DwarfCorp.GameStates
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
 
-            GuiRoot = new Gum.Root(DwarfGame.GumSkin);
-            GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
+            GuiRoot = new Gui.Root(DwarfGame.GumSkin);
+            GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
             GuiRoot.SetMouseOverlay(null, 0);
             
-            var mainPanel = GuiRoot.RootItem.AddChild(new Gum.Widget
+            var mainPanel = GuiRoot.RootItem.AddChild(new Gui.Widget
             {
                 Rect = GuiRoot.RenderData.VirtualScreen,
                 Padding = new Margin(4, 4, 4, 4),
                 Transparent = true
             });
 
-            mainPanel.AddChild(new Gum.Widgets.Button
+            mainPanel.AddChild(new Gui.Widgets.Button
             {
                 Text = "Close",
                 Font = "font-hires",
@@ -50,29 +50,29 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.FloatBottomRight
             });
 
-            TabPanel = mainPanel.AddChild(new Gum.Widgets.TabPanel
+            TabPanel = mainPanel.AddChild(new Gui.Widgets.TabPanel
             {
                 AutoLayout = AutoLayout.DockFill,
                 TextSize = 1,
                 SelectedTabColor = new Vector4(1, 0, 0, 1),
                 OnLayout = (sender) => sender.Rect.Height -= 36 // Keep it from overlapping bottom buttons.
-            }) as Gum.Widgets.TabPanel;
+            }) as Gui.Widgets.TabPanel;
 
-            var employeePanel = TabPanel.AddTab("Employees", new NewGui.EmployeePanel
+            var employeePanel = TabPanel.AddTab("Employees", new Gui.Widgets.EmployeePanel
             {
                 Border = "border-thin",
                 Padding = new Margin(4, 4, 0, 0),
                 Faction = World.PlayerFaction,
             });
 
-            //var financePanel = tabPanel.AddTab("Finance", new NewGui.FinancePanel
+            //var financePanel = tabPanel.AddTab("Finance", new Gui.Widgets.FinancePanel
             //{
             //    Border = "border-thin",
             //    Padding = new Margin(4, 4, 0, 0),
             //    Economy = World.PlayerEconomy
             //});
 
-            TabPanel.AddTab("Available Goals", new NewGui.GoalPanel
+            TabPanel.AddTab("Available Goals", new Gui.Widgets.GoalPanel
             {
                 GoalSource = World.GoalManager.EnumerateGoals().Where(g =>
                     g.State == Goals.GoalState.Available),
@@ -80,13 +80,13 @@ namespace DwarfCorp.GameStates
                 OnShown = (sender) => World.GoalManager.ResetNewAvailableGoals()
             });
 
-            TabPanel.AddTab("Active Goals", new NewGui.GoalPanel
+            TabPanel.AddTab("Active Goals", new Gui.Widgets.GoalPanel
             {
                 GoalSource = World.GoalManager.EnumerateGoals().Where(g =>
                     g.State == Goals.GoalState.Active && g.GoalType != Goals.GoalTypes.Achievement)
             });
 
-            TabPanel.AddTab("Completed Goals", new NewGui.GoalPanel
+            TabPanel.AddTab("Completed Goals", new Gui.Widgets.GoalPanel
             {
                 GoalSource = World.GoalManager.EnumerateGoals().Where(g =>
                     g.State == Goals.GoalState.Complete),
@@ -119,12 +119,12 @@ namespace DwarfCorp.GameStates
 
             World.TutorialManager.Update((text, callback) =>
             {
-                var popup = GuiRoot.ConstructWidget(new NewGui.TutorialPopup
+                var popup = GuiRoot.ConstructWidget(new Gui.Widgets.TutorialPopup
                 {
                     Message = text,
                     OnClose = (sender) =>
                     {
-                        callback((sender as NewGui.TutorialPopup).DisableChecked);
+                        callback((sender as Gui.Widgets.TutorialPopup).DisableChecked);
                     },
                     OnLayout = (sender) =>
                     {

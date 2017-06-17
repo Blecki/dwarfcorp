@@ -125,12 +125,12 @@ namespace DwarfCorp
 
                         if (type == "Magic")
                         {
-                            new VoxelListener(Player.World.ComponentManager, Player.World.ComponentManager.RootComponent,
-                                Player.World.ChunkManager, vox)
-                            {
-                                DestroyOnTimer = true,
-                                DestroyTimer = new Timer(5.0f + MathFunctions.Rand(-0.5f, 0.5f), true)
-                            };
+                            Player.World.ComponentManager.RootComponent.AddChild(
+                                new VoxelListener(Player.World.ComponentManager, Player.World.ChunkManager, vox)
+                                {
+                                    DestroyOnTimer = true,
+                                    DestroyTimer = new Timer(5.0f + MathFunctions.Rand(-0.5f, 0.5f), true)
+                                });
                         }
 
 
@@ -181,10 +181,8 @@ namespace DwarfCorp
                             break;
                         case "Fire":
                         {
-                            List<Body> components = new List<Body>();
-                            Player.Faction.Components.GetBodiesIntersecting(vox.GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
-
-                            foreach(Flammable flam2 in components.Select(comp => comp.GetChildrenOfTypeRecursive<Flammable>()).Where(flam => flam.Count > 0).SelectMany(flam => flam))
+                            foreach(var flam2 in 
+                                Player.World.ComponentManager.CollisionManager.EnumerateIntersectingObjects(vox.GetBoundingBox(), CollisionManager.CollisionType.Both).OfType<GameComponent>().SelectMany(c => c.EnumerateAll()).OfType<Flammable>())
                             {
                                 flam2.Heat = flam2.Flashpoint + 1;
                             }
@@ -192,10 +190,8 @@ namespace DwarfCorp
                             break;
                         case "Kill Things":
                         {
-                            List<Body> components = new List<Body>();
-                            Player.Faction.Components.GetBodiesIntersecting(vox.GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
-
-                            foreach(Body comp in components)
+                            foreach(var comp in Player.Faction.Components.CollisionManager.EnumerateIntersectingObjects(
+                                vox.GetBoundingBox(), CollisionManager.CollisionType.Both).OfType<Body>())
                             {
                                 comp.Die();
                             }

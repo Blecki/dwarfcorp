@@ -142,7 +142,8 @@ namespace DwarfCorp
         {
             None = 0,
             Static = 2,
-            Dynamic = 4
+            Dynamic = 4,
+            Both = Static | Dynamic
         }
 
         public Dictionary<CollisionType, IntegerOctTreeNode<IBoundedObject>> Hashes { get; set; }
@@ -213,6 +214,13 @@ namespace DwarfCorp
                     Hashes[CollisionType.Dynamic].FindItemsInBox(new IntegerBoundingBox(box), set);
                     break;
             }
+        }
+
+        public IEnumerable<IBoundedObject> EnumerateIntersectingObjects(BoundingBox Box, CollisionType CollisionType)
+        {
+            var hashSet = new HashSet<IBoundedObject>();
+            GetObjectsIntersecting(Box, hashSet, CollisionType);
+            return hashSet;
         }
      
     }

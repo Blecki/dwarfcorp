@@ -55,9 +55,8 @@ namespace DwarfCorp
         }
 
         public Door(ComponentManager manager, Vector3 position, Faction team, SpriteSheet sheet, Point frame, float hp) :
-            base(
-            position, sheet, frame,
-            manager.RootComponent)
+            base(manager,
+            position, sheet, frame)
         {
             IsMoving = false;
             IsOpen = false;
@@ -72,7 +71,7 @@ namespace DwarfCorp
             ClosedTransform = LocalTransform;
             AddToCollisionManager = true;
             CollisionType = CollisionManager.CollisionType.Static;
-            Health health = new Health(manager, "Health", this, hp, 0.0f, hp);
+            AddChild(new Health(manager, "Health", hp, 0.0f, hp));
             
         }
 

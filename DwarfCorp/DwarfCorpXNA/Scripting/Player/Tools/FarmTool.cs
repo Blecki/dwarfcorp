@@ -48,7 +48,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class FarmTool : PlayerTool
     {
-        public NewGui.BuildMenu.BuildTypes BuildType { get; set; }
+        public Gui.Widgets.BuildMenu.BuildTypes BuildType { get; set; }
         public string PlantType { get; set; }
         public List<ResourceAmount> RequiredResources { get; set; } 
         public enum FarmMode
@@ -235,9 +235,8 @@ namespace DwarfCorp
         {
             if (Mode == FarmMode.Harvesting)
             {
-                List<Body> treesPickedByMouse = ComponentManager.FilterComponentsWithTag("Vegetation", bodies);
                 List<Task> tasks = new List<Task>();
-                foreach (Body tree in treesPickedByMouse)
+                foreach (Body tree in bodies.Where(c => c.Tags.Contains("Vegetation")))
                 {
                     if (!tree.IsVisible || tree.IsAboveCullPlane) continue;
 
@@ -266,9 +265,8 @@ namespace DwarfCorp
             }
             else if (Mode == FarmMode.WranglingAnimals)
             {
-                List<Body> wrangleableAnimals = ComponentManager.FilterComponentsWithTag("DomesticAnimal", bodies);
                 List<Task> tasks = new List<Task>();
-                foreach (Body animal in wrangleableAnimals)
+                foreach (Body animal in bodies.Where(c => c.Tags.Contains("DomesticAnimal")))
                 {
                     Drawer3D.DrawBox(animal.BoundingBox, Color.Tomato, 0.1f, false);
                     if (button == InputManager.MouseButton.Left)
@@ -388,7 +386,7 @@ namespace DwarfCorp
             if (Player.World.IsMouseOverGui)
                 Player.World.SetMouse(Player.World.MousePointer);
             else
-                Player.World.SetMouse(new Gum.MousePointer("mouse", 1, 12));
+                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 12));
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)

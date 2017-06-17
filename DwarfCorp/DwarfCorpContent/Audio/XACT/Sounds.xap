@@ -636,7 +636,7 @@ Wave Bank
     Wave
     {
         Name = mx_day_intro_v4;
-        File = ..\..\Music\mx_day_intro_v4.wav;
+        File = ..\..\Music\mx_day_intro_v1.wav;
         Build Settings Last Modified Low = 3724518452;
         Build Settings Last Modified High = 30596429;
 
@@ -659,7 +659,7 @@ Wave Bank
     Wave
     {
         Name = mx_day_loop_v4;
-        File = ..\..\Music\mx_day_loop_v4.wav;
+        File = ..\..\Music\mx_day_loop_v1.wav;
         Build Settings Last Modified Low = 3724538471;
         Build Settings Last Modified High = 30596429;
 
@@ -682,7 +682,7 @@ Wave Bank
     Wave
     {
         Name = mx_night_loop_v2;
-        File = ..\..\Music\mx_night_loop_v2.wav;
+        File = ..\..\Music\mx_night_loop_v1.wav;
         Build Settings Last Modified Low = 3744379431;
         Build Settings Last Modified High = 30596429;
 

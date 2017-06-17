@@ -47,10 +47,9 @@ namespace DwarfCorp
         }
 
         public Grave(ComponentManager manager, Vector3 position) :
-            base(
+            base(manager,
             position + MathFunctions.RandVector3Box(-0.05f, 0.05f, -0.001f, 0.001f, -0.05f, 0.05f), 
-            new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(MathFunctions.RandInt(4, 8), 1), 
-            manager.RootComponent)
+            new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(MathFunctions.RandInt(4, 8), 1))
         {
             AddToCollisionManager = false;
             Name = "Grave";

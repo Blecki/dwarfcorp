@@ -51,7 +51,7 @@ namespace DwarfCorp
         }
 
         public ResourceEntity(ComponentManager manager, ResourceLibrary.ResourceType resourceType, Vector3 position) :
-            base(ResourceLibrary.Resources[resourceType].ResourceName, manager.RootComponent, Matrix.CreateTranslation(position), new Vector3(0.25f, 0.25f, 0.25f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0))
+            base(manager, ResourceLibrary.Resources[resourceType].ResourceName, Matrix.CreateTranslation(position), new Vector3(0.25f, 0.25f, 0.25f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0))
         {
             Restitution = 0.1f;
             Friction = 0.1f;
@@ -67,11 +67,11 @@ namespace DwarfCorp
             };
             Animation animation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(type.Image.AssetName), "Animation", 32, 32, frames, false, type.Tint, 0.01f, 0.75f, 0.75f, false);
 
-            Sprite sprite = new Sprite(Manager, "Sprite", this, Matrix.CreateTranslation(Vector3.UnitY * 0.25f), spriteSheet, false)
+            var sprite = AddChild(new Sprite(Manager, "Sprite", Matrix.CreateTranslation(Vector3.UnitY * 0.25f), spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Spherical,
                 LightsWithVoxels = !type.SelfIlluminating
-            };
+            }) as Sprite;
             sprite.AddAnimation(animation);
 
 
@@ -79,14 +79,13 @@ namespace DwarfCorp
 
             Tags.Add(type.ResourceName);
             Tags.Add("Resource");
-            Bobber bobber = new Bobber(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
+            var bobber = sprite.AddChild(new Bobber(Manager, 0.05f, 2.0f, MathFunctions.Rand() * 3.0f, localTransform.Translation.Y));
 
 
             if (type.IsFlammable)
             {
-                Health health = new Health(Manager, "health", this, 10.0f, 0.0f, 10.0f);
-                new Flammable(Manager, "Flames", this, health);
-
+                AddChild(new Health(Manager, "health", 10.0f, 0.0f, 10.0f));
+                AddChild(new Flammable(Manager, "Flames"));
             }
         }
     }

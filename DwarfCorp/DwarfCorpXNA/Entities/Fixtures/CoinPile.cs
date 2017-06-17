@@ -17,7 +17,7 @@ namespace DwarfCorp
         }
 
         public CoinPileFixture(ComponentManager manager, Vector3 position) :
-            base(position, new SpriteSheet(ContentPaths.Entities.DwarfObjects.coinpiles, 32, 32), new Point(MathFunctions.RandInt(0, 3), 0), manager.RootComponent)
+            base(manager, position, new SpriteSheet(ContentPaths.Entities.DwarfObjects.coinpiles, 32, 32), new Point(MathFunctions.RandInt(0, 3), 0))
         {
             Name = "Coins";
             Tags.Add("Coins");

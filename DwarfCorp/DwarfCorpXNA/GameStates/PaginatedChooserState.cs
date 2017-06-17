@@ -5,7 +5,7 @@ using LibNoise;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
-using Gum;
+using DwarfCorp.Gui;
 
 namespace DwarfCorp.GameStates
 {
@@ -26,13 +26,13 @@ namespace DwarfCorp.GameStates
             public ScreenshotStatusEnum ScreenshotStatus = ScreenshotStatusEnum.Unloaded;
         }
 
-        private Gum.Root GuiRoot;
+        private Gui.Root GuiRoot;
         private List<ChooserItem> Items = new List<ChooserItem>();
-        private NewGui.GridPanel Grid;
+        private Gui.Widgets.GridPanel Grid;
         private int PreviewOffset = 0;
         private bool NeedsRefresh = true;
         private int ItemSelected = 0;
-        private Gum.Widget BottomBar;
+        private Gui.Widget BottomBar;
 
         public Func<List<String>> ItemSource;
         public String NoItemsText = "Nothing to display.";
@@ -53,19 +53,19 @@ namespace DwarfCorp.GameStates
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
 
-            GuiRoot = new Gum.Root(DwarfGame.GumSkin);
-            GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
+            GuiRoot = new Gui.Root(DwarfGame.GumSkin);
+            GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
             GuiRoot.SetMouseOverlay(null, 0);
             GuiRoot.RootItem.Transparent = false;
-            GuiRoot.RootItem.Background = new Gum.TileReference("basic", 0);
-            GuiRoot.RootItem.InteriorMargin = new Gum.Margin(16, 16, 16, 16);
+            GuiRoot.RootItem.Background = new Gui.TileReference("basic", 0);
+            GuiRoot.RootItem.InteriorMargin = new Gui.Margin(16, 16, 16, 16);
 
             // CONSTRUCT GUI HERE...
-            BottomBar = GuiRoot.RootItem.AddChild(new Gum.Widget
+            BottomBar = GuiRoot.RootItem.AddChild(new Gui.Widget
             {
-                AutoLayout = Gum.AutoLayout.DockBottom,
+                AutoLayout = Gui.AutoLayout.DockBottom,
                 MinimumSize = new Point(0, 60),
-                TextHorizontalAlign = Gum.HorizontalAlign.Center
+                TextHorizontalAlign = Gui.HorizontalAlign.Center
             });
 
             if (Items.Count == 0)
@@ -73,9 +73,9 @@ namespace DwarfCorp.GameStates
 
             if (Items.Count > 0)
             {
-                BottomBar.AddChild(new Gum.Widget
+                BottomBar.AddChild(new Gui.Widget
                 {
-                    AutoLayout = Gum.AutoLayout.FloatBottomRight,
+                    AutoLayout = Gui.AutoLayout.FloatBottomRight,
                     Border = "border-button",
                     Text = ProceedButtonText,
                     OnClick = (sender, args) =>
@@ -85,9 +85,9 @@ namespace DwarfCorp.GameStates
                     }
                 });
 
-                BottomBar.AddChild(new Gum.Widget
+                BottomBar.AddChild(new Gui.Widget
                 {
-                    AutoLayout = Gum.AutoLayout.FloatTopRight,
+                    AutoLayout = Gui.AutoLayout.FloatTopRight,
                     Border = "border-button",
                     Text = "Next",
                     OnClick = (sender, args) =>
@@ -100,9 +100,9 @@ namespace DwarfCorp.GameStates
                     }
                 });
 
-                BottomBar.AddChild(new Gum.Widget
+                BottomBar.AddChild(new Gui.Widget
                 {
-                    AutoLayout = Gum.AutoLayout.FloatTopLeft,
+                    AutoLayout = Gui.AutoLayout.FloatTopLeft,
                     Border = "border-button",
                     Text = "Prev",
                     OnClick = (sender, args) =>
@@ -115,21 +115,21 @@ namespace DwarfCorp.GameStates
                     }
                 });
 
-                BottomBar.AddChild(new Gum.Widget
+                BottomBar.AddChild(new Gui.Widget
                 {
                     AutoLayout = AutoLayout.FloatBottom,
                     Border = "border-button",
                     Text = "Delete",
                     OnClick = (sender, args) =>
                     {
-                        var confirm = GuiRoot.ConstructWidget(new NewGui.Confirm
+                        var confirm = GuiRoot.ConstructWidget(new Gui.Widgets.Confirm
                         {
                             OkayText = "Delete",
                             CancelText = "Keep",
                             Text = "Are you sure you want to delete this?",
                             OnClose = (s) =>
                             {
-                                if ((s as NewGui.Confirm).DialogResult == NewGui.Confirm.Result.OKAY)
+                                if ((s as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
                                 {
                                     var selectedItem = Items[PreviewOffset + ItemSelected];
                                     Items.Remove(selectedItem);
@@ -143,9 +143,9 @@ namespace DwarfCorp.GameStates
                 });
             }
 
-            BottomBar.AddChild(new Gum.Widget
+            BottomBar.AddChild(new Gui.Widget
             {
-                AutoLayout = Gum.AutoLayout.FloatBottomLeft,
+                AutoLayout = Gui.AutoLayout.FloatBottomLeft,
                 Border = "border-button",
                 Text = "Back",
                 OnClick = (sender, args) =>
@@ -154,16 +154,16 @@ namespace DwarfCorp.GameStates
                 }
             });
 
-            Grid = GuiRoot.RootItem.AddChild(new NewGui.GridPanel
+            Grid = GuiRoot.RootItem.AddChild(new Gui.Widgets.GridPanel
             {
                 ItemSize = new Point(128, 128),
                 ItemSpacing = new Point(8, 8),
-                AutoLayout = Gum.AutoLayout.DockFill,
+                AutoLayout = Gui.AutoLayout.DockFill,
                 Border = "border-one",
-                InteriorMargin = new Gum.Margin(32, 0, 0, 0),
+                InteriorMargin = new Gui.Margin(32, 0, 0, 0),
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Top
-            }) as NewGui.GridPanel;
+            }) as Gui.Widgets.GridPanel;
 
             GuiRoot.RootItem.Layout();
 
@@ -173,7 +173,7 @@ namespace DwarfCorp.GameStates
                 for (var i = 0; i < gridSpaces; ++i)
                 {
                     var lambda_index = i;
-                    Grid.AddChild(new Gum.Widget
+                    Grid.AddChild(new Gui.Widget
                     {
                         Border = "border-one",
                         Text = "No Image",

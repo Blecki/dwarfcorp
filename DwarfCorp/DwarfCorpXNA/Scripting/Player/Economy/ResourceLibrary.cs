@@ -209,7 +209,7 @@ namespace DwarfCorp
                 Type = "Emerald",
                 ShortName = "Emerald",
                 Image = new NamedImageFrame(tileSheet, GetRect(0, 4)),
-                NewGuiSprite = 32
+                GuiSprite = 32
             });
 
             Add(new Resource(Resources["Ruby"])
@@ -217,7 +217,7 @@ namespace DwarfCorp
                 Type = "Amethyst",
                 ShortName = "Amethyst",
                 Image = new NamedImageFrame(tileSheet, GetRect(2, 4)),
-                NewGuiSprite = 34
+                GuiSprite = 34
 
             });
 
@@ -226,7 +226,7 @@ namespace DwarfCorp
                 Type = "Garnet",
                 ShortName = "Garnet",
                 Image = new NamedImageFrame(tileSheet, GetRect(1, 3)),
-                NewGuiSprite = 25
+                GuiSprite = 25
             });
 
             Add(new Resource(Resources["Ruby"])
@@ -234,7 +234,7 @@ namespace DwarfCorp
                 Type = "Citrine",
                 ShortName = "Citrine",
                 Image = new NamedImageFrame(tileSheet, GetRect(2, 3)),
-                NewGuiSprite = 26
+                GuiSprite = 26
             });
 
             Add(new Resource(Resources["Ruby"])
@@ -242,7 +242,7 @@ namespace DwarfCorp
                 Type = "Sapphire",
                 ShortName = "Sapphire",
                 Image = new NamedImageFrame(tileSheet, GetRect(1, 4)),
-                NewGuiSprite = 33
+                GuiSprite = 33
             });
 
             Add(new Resource(ResourceType.Egg, 0.5m, "An egg", new NamedImageFrame(tileSheet, GetRect(7, 2)), 23, Color.White, Resource.ResourceTags.Edible, Resource.ResourceTags.AnimalProduct, Resource.ResourceTags.Brewable));
@@ -465,7 +465,7 @@ namespace DwarfCorp
             }
             toReturn.Tint = Resources[baseMaterial].Tint;
             toReturn.Image = new NamedImageFrame(ContentPaths.Entities.DwarfObjects.crafts, 32, tile.X, tile.Y);
-            toReturn.NewGuiSprite = (tile.Y * 4) + tile.X;
+            toReturn.GuiSprite = (tile.Y * 4) + tile.X;
             Add(toReturn);
             toReturn.ShortName = baseMaterial + " " + names[item];
             return toReturn;

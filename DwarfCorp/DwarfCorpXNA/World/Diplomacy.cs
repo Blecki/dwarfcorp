@@ -133,7 +133,7 @@ namespace DwarfCorp
         }
 
         [JsonIgnore]
-        public FactionLibrary Factions { get { return World.ComponentManager.Factions; }}
+        public FactionLibrary Factions { get { return World.Factions; }}
 
 
         [JsonArrayAttribute]
@@ -288,7 +288,7 @@ namespace DwarfCorp
 
                     foreach (CreatureAI creature in envoy.Creatures)
                     {
-                        ResourcePack resources = new ResourcePack(creature.Physics);
+                        creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
                         if (natives.Economy == null)
                         {
                             natives.Economy = new Economy(natives, 1000.0m, World, new CompanyInformation()
@@ -296,11 +296,11 @@ namespace DwarfCorp
                                 Name = natives.Name
                             });
                         }
+
                         if (natives.Economy.Company.Information == null)
-                        {
                             natives.Economy.Company.Information = new CompanyInformation();
-                        }
-                        Flag flag = new Flag(creature.Physics, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, natives.Economy.Company.Information);
+
+                        creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, natives.Economy.Company.Information));
                     }
                     envoy.DistributeGoods();
 
@@ -338,10 +338,10 @@ namespace DwarfCorp
                         TradeGoods = natives.Race.GenerateResources(),
                         TradeMoney = natives.TradeMoney
                     };
+
                     foreach (CreatureAI creature in envoy.Creatures)
-                    {
-                        ResourcePack resources = new ResourcePack(creature.Physics);
-                    }
+                        creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
+
                     envoy.DistributeGoods();
                     natives.TradeEnvoys.Add(envoy);
                     world.MakeAnnouncement(String.Format("Trade envoy from {0} has arrived!",
@@ -375,10 +375,9 @@ namespace DwarfCorp
                     natives.Economy = new Economy(natives, (decimal)MathFunctions.Rand(1000, 9999), World, null);
                 }
                 if (natives.Economy.Company.Information == null)
-                {
                     natives.Economy.Company.Information = new CompanyInformation();
-                }
-                Flag flag = new Flag(creature.Physics, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, natives.Economy.Company.Information);
+
+                creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, natives.Economy.Company.Information));
             }
             return party;
         }
@@ -485,7 +484,7 @@ namespace DwarfCorp
                     envoy.Creatures.ForEach((creature) => creature.GetEntityRootComponent().Die());
                 }
 
-                Diplomacy.Politics politics = faction.World.ComponentManager.Diplomacy.GetPolitics(faction, envoy.OtherFaction);
+                Diplomacy.Politics politics = faction.World.Diplomacy.GetPolitics(faction, envoy.OtherFaction);
                 if (politics.GetCurrentRelationship() == Relationship.Hateful)
                 {
                     RecallEnvoy(envoy);
@@ -621,7 +620,8 @@ namespace DwarfCorp
                     }
                 }
 
-                Diplomacy.Politics politics =  faction.World.ComponentManager.Diplomacy.GetPolitics(faction, party.OtherFaction);
+                Diplomacy.Politics politics =  faction.World.Diplomacy.GetPolitics(faction, party.OtherFaction);
+
                 if (politics.GetCurrentRelationship() != Relationship.Hateful)
                 {
                     RecallWarParty(party);

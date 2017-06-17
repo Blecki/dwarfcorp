@@ -47,27 +47,28 @@ namespace DwarfCorp
     /// </summary>
     public class Follower : Body, IUpdateableComponent
     {
-        public Body ParentBody { get; set; }
         public float FollowRadius { get; set;  }
         public Vector3 TargetPos { get; set; }
         public float FollowRate { get; set; }
+
         public Follower()
         {
 
         }
 
-        public Follower(Body parentBody) :
-            base(parentBody.Manager, "Follower", parentBody, Matrix.Identity, Vector3.One, Vector3.Zero, false)
+        public Follower(ComponentManager Manager) :
+            base(Manager, "Follower", Matrix.Identity, Vector3.One, Vector3.Zero, false)
         {
-            ParentBody = parentBody;
             FollowRadius = 1.5f;
-            TargetPos = ParentBody.Position;
             FollowRate = 0.1f;
         }
 
         new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            Vector3 parentCurrentPos = ParentBody.Position;
+            var body = Parent as Body;
+            System.Diagnostics.Debug.Assert(body != null);
+
+            Vector3 parentCurrentPos = body.Position;
             if ((parentCurrentPos - TargetPos).Length() > FollowRadius)
             {
                 TargetPos = parentCurrentPos;
@@ -75,7 +76,7 @@ namespace DwarfCorp
             Vector3 newPos = (Position*(1.0f - FollowRate) + TargetPos*(FollowRate));
             Matrix newTransform = GlobalTransform;
             newTransform.Translation = newPos;
-            newTransform = newTransform * Matrix.Invert(ParentBody.GlobalTransform);
+            newTransform = newTransform * Matrix.Invert(body.GlobalTransform);
             LocalTransform = newTransform;
             base.Update(gameTime, chunks, camera);
         }

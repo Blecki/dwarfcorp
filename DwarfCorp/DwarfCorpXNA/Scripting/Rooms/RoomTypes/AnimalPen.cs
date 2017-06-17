@@ -48,7 +48,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public static RoomData AnimalPenData { get { return RoomLibrary.GetData(AnimalPenName); } }
 
-        public new static RoomData InitializeData()
+        public static RoomData InitializeData()
         {
             Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> resources =
                 new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>();
@@ -59,7 +59,7 @@ namespace DwarfCorp
             };
 
 
-            return new RoomData(AnimalPenName, 12, "Dirt", resources, new List<RoomTemplate>(), new Gum.TileReference("rooms", 13))
+            return new RoomData(AnimalPenName, 12, "Dirt", resources, new List<RoomTemplate>(), new Gui.TileReference("rooms", 13))
             {
                 Description = "Animals can be wrangled and stored here."
             };

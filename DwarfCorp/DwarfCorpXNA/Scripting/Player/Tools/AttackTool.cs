@@ -93,7 +93,7 @@ namespace DwarfCorp
             if (Player.World.IsMouseOverGui)
                 Player.World.SetMouse(Player.World.MousePointer);
             else
-                Player.World.SetMouse(new Gum.MousePointer("mouse", 1, 2));
+                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 2));
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
@@ -123,7 +123,7 @@ namespace DwarfCorp
                     continue;
                 }
 
-                if (Player.World.ComponentManager.Diplomacy.GetPolitics(creature.Faction, Player.Faction).GetCurrentRelationship() == Relationship.Loving)
+                if (Player.World.Diplomacy.GetPolitics(creature.Faction, Player.Faction).GetCurrentRelationship() == Relationship.Loving)
                 {
                     continue;
                 }

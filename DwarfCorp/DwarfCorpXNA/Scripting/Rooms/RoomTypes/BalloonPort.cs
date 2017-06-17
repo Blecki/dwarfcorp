@@ -88,7 +88,7 @@ namespace DwarfCorp
                 flag
             };
 
-            return new RoomData(BalloonPortName, 0, "Stockpile", balloonPortResources, balloonTemplates, new Gum.TileReference("rooms", 1))
+            return new RoomData(BalloonPortName, 0, "Stockpile", balloonPortResources, balloonTemplates, new Gui.TileReference("rooms", 1))
             {
                 Description = "Balloons pick up / drop off resources here.",
                 CanBuildBelowGround = false

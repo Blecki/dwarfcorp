@@ -24,6 +24,7 @@ namespace DwarfCorp
             // Creature base constructor
             base
             (
+                manager,
                 // Default stats
                 new CreatureStats
                 {
@@ -41,30 +42,38 @@ namespace DwarfCorp
                 // Uses the default plan service
                 manager.World.PlanService,
                 // Belongs to the herbivore team
-                manager.Factions.Factions["Carnivore"],
+                manager.World.Factions.Factions["Carnivore"],
                 // The physics component this creature belongs to
-                new Physics
-                (
-                // It is called "bird"
-                    "Scorpion",
-                // It's attached to the root component of the component manager
-                    manager.RootComponent,
-                // It is located at a position passed in as an argument
-                    Matrix.CreateTranslation(position),
-                // It has a size of 0.25 blocks
-                    new Vector3(0.375f, 0.375f, 0.375f),
-                // Its bounding box is located in its center
-                    new Vector3(0.0f, 0.0f, 0.0f),
-                //It has a mass of 1, a moment of intertia of 1, and very small friction/restitution
-                    1.0f, 1.0f, 0.999f, 0.999f,
-                // It has a gravity of 10 blocks per second downward
-                    new Vector3(0, -10, 0)
-                ),
+                
                 // All the rest of the arguments are passed in directly
                 chunks, graphics, content, name
             )
         {
-            // Called from constructor with appropriate sprite asset as a string
+            Physics = new Physics
+                (
+                manager,
+                    // It is called "bird"
+                    "Scorpion",
+                    // It's attached to the root component of the component manager
+                    // It is located at a position passed in as an argument
+                    Matrix.CreateTranslation(position),
+                    // It has a size of 0.25 blocks
+                    new Vector3(0.375f, 0.375f, 0.375f),
+                    // Its bounding box is located in its center
+                    new Vector3(0.0f, 0.0f, 0.0f),
+                    //It has a mass of 1, a moment of intertia of 1, and very small friction/restitution
+                    1.0f, 1.0f, 0.999f, 0.999f,
+                    // It has a gravity of 10 blocks per second downward
+                    new Vector3(0, -10, 0)
+                );
+
+            Physics.AddChild(this);
+
+            SelectionCircle = Physics.AddChild(new SelectionCircle(Manager)
+            {
+                IsVisible = false
+            }) as SelectionCircle;
+
             Initialize(sprites);
         }
 
@@ -80,13 +89,12 @@ namespace DwarfCorp
 
 
             // Create the sprite component for the bird.
-            Sprite = new CharacterSprite
+            Sprite = Physics.AddChild(new CharacterSprite
                                   (Graphics,
                                   Manager,
                                   "Scorpion Sprite",
-                                  Physics,
                                   Matrix.CreateTranslation(0, 0.5f, 0)
-                                  );
+                                  )) as CharacterSprite;
 
             CompositeAnimation.Descriptor descriptor =
                 FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
@@ -100,26 +108,26 @@ namespace DwarfCorp
             }
 
             // Used to grab other components
-            Hands = new Grabber("hands", Physics, Matrix.Identity, new Vector3(0.2f, 0.2f, 0.2f), Vector3.Zero);
+            Hands = Physics.AddChild(new Grabber("hands", Manager, Matrix.Identity, new Vector3(0.2f, 0.2f, 0.2f), Vector3.Zero)) as Grabber;
 
             // Used to sense hostile creatures
-            Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero);
+            Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
             // Controls the behavior of the creature
-            AI = new PacingCreatureAI(this, "Scorpion AI", Sensors, PlanService);
+            AI = Physics.AddChild(new PacingCreatureAI(Manager, "Scorpion AI", Sensors, PlanService)) as CreatureAI;
 
             // The bird can peck at its enemies (0.1 damage)
             Attacks = new List<Attack> { new Attack("Sting", 4.0f, 2.0f, 1.0f, SoundSource.Create(ContentPaths.Audio.hiss), ContentPaths.Effects.pierce) };
 
 
             // The bird can hold one item at a time in its inventory
-            Inventory = new Inventory("Inventory", Physics)
+            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.BoundingBoxPos)
             {
                 Resources = new ResourceContainer
                 {
                     MaxResources = 1
                 }
-            };
+            }) as Inventory;
 
             // The shadow is rotated 90 degrees along X, and is 0.25 blocks beneath the creature
             Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
@@ -127,7 +135,7 @@ namespace DwarfCorp
             shadowTransform *= Matrix.CreateScale(0.75f);
 
             SpriteSheet shadowTexture = new SpriteSheet(ContentPaths.Effects.shadowcircle);
-            Shadow = new Shadow(Manager, "Shadow", Physics, shadowTransform, shadowTexture);
+            Shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform, shadowTexture)) as Shadow;
 
             // We set up the shadow's animation so that it's just a static black circle
             // TODO: Make the shadow set this up automatically
@@ -141,14 +149,14 @@ namespace DwarfCorp
             Shadow.SetCurrentAnimation("sh");
 
             // The bird will emit a shower of blood when it dies
-            DeathParticleTrigger = new ParticleTrigger("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
+            DeathParticleTrigger = Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 1
-            };
+            }) as ParticleTrigger;
 
             // The bird is flammable, and can die when exposed to fire.
-            Flames = new Flammable(Manager, "Flames", Physics, this);
+            Physics.AddChild(new Flammable(Manager, "Flames"));
 
             // Tag the physics component with some information 
             // that can be used later

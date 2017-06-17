@@ -55,8 +55,8 @@ namespace DwarfCorp
             
         }
 
-        public LightEmitter(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, float intensity, float range) :
-            base(parent.Manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
+        public LightEmitter(ComponentManager Manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, float intensity, float range) :
+            base(Manager, name, localTransform, boundingBoxExtents, boundingBoxPos)
         {
             Light = new DynamicLight(intensity, range);
         }

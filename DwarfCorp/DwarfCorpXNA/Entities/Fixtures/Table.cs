@@ -149,7 +149,7 @@ namespace DwarfCorp
         }
 
         public Table(ComponentManager manager, Vector3 position, SpriteSheet fixtureAsset, Point fixtureFrame) :
-            base(manager, "Table", manager.RootComponent, Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+            base(manager, "Table", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
         {
             Matrix matrix = Matrix.CreateRotationY((float)Math.PI * 0.5f);
             matrix.Translation = position;
@@ -172,30 +172,28 @@ namespace DwarfCorp
             Animation tableTop = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture), "tableTop", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
             Animation tableAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture), "tableTop", 32, 32, sideframes, false, Color.White, 0.01f, 1.0f, 1.0f, false);
 
-            Sprite tabletopSprite = new Sprite(manager, "sprite1", this, Matrix.CreateRotationX((float)Math.PI * 0.5f), spriteSheet, false)
+            var tabletopSprite = AddChild(new Sprite(Manager, "sprite1", Matrix.CreateRotationX((float)Math.PI * 0.5f), spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Fixed
-            };
+            }) as Sprite;
             tabletopSprite.AddAnimation(tableTop);
 
-            Sprite sprite = new Sprite(manager, "sprite", this, Matrix.CreateTranslation(0.0f, -0.05f, -0.0f) * Matrix.Identity, spriteSheet, false)
+            var sprite = AddChild(new Sprite(Manager, "sprite", Matrix.CreateTranslation(0.0f, -0.05f, -0.0f) * Matrix.Identity, spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Fixed
-            };
+            }) as Sprite;
             sprite.AddAnimation(tableAnimation);
 
-            Sprite sprite2 = new Sprite(manager, "sprite2", this, Matrix.CreateTranslation(0.0f, -0.05f, -0.0f) * Matrix.CreateRotationY((float)Math.PI * 0.5f), spriteSheet, false)
+            var sprite2 = AddChild(new Sprite(Manager, "sprite2", Matrix.CreateTranslation(0.0f, -0.05f, -0.0f) * Matrix.CreateRotationY((float)Math.PI * 0.5f), spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Fixed
-            };
+            }) as Sprite;
             sprite2.AddAnimation(tableAnimation);
 
             Voxel voxelUnder = new Voxel();
 
             if (manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
-            {
-                VoxelListener listener = new VoxelListener(manager, this, manager.World.ChunkManager, voxelUnder);
-            }
+                AddChild(new VoxelListener(manager, manager.World.ChunkManager, voxelUnder));
 
 
             tableAnimation.Play();
@@ -203,9 +201,7 @@ namespace DwarfCorp
             CollisionType = CollisionManager.CollisionType.Static;
 
             if (fixtureAsset != null)
-            {
-                new Fixture(new Vector3(0, 0.3f, 0), fixtureAsset, fixtureFrame, this);
-            }
+                AddChild(new Fixture(Manager, new Vector3(0, 0.3f, 0), fixtureAsset, fixtureFrame));
         }
     }
 }

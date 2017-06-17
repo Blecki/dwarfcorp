@@ -10,20 +10,21 @@ namespace DwarfCorp
     public class ResourcePack : Follower
     {
         public Inventory Contents { get; set; }
+
         public ResourcePack()
         {
             
         }
 
-        public ResourcePack(Body parent) :
-            base(parent)
+        public ResourcePack(ComponentManager Manager) :
+            base(Manager)
         {
-            Fixture sprite = new Fixture(Vector3.Zero, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 0) , this);
-            Contents = new Inventory("Contents", this)
+            AddChild(new Fixture(Manager, Vector3.Zero, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 0)));
+            Contents = AddChild(new Inventory(Manager, "Contents", BoundingBox.Extents(), BoundingBoxPos)
             {
-                Resources = new ResourceContainer() {MaxResources = 999999},
+                Resources = new ResourceContainer() { MaxResources = 999999 },
                 DropRate = 0.1f
-            };
+            }) as Inventory;
         }
     }
 }

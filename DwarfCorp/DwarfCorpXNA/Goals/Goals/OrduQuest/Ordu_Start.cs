@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Gum;
+using DwarfCorp.Gui;
 
 namespace DwarfCorp.Goals.Goals
 {
@@ -15,12 +15,12 @@ namespace DwarfCorp.Goals.Goals
             GoalType = GoalTypes.UnavailableAtStartup;
         }
 
-        public override ActivationResult Activate(WorldManager World)
+        public override void Activate(WorldManager World)
         {
             // Create Ordu faction, add to FactionLibrary and World.Natives
             var orduFaction = new Faction(World)
             {
-                Race = World.ComponentManager.Factions.Races["Undead"],
+                Race = World.Factions.Races["Undead"],
                 Name = "Ordu",
                 PrimaryColor = new HSLColor(300.0, 100.0, 100.0),
                 SecondaryColor = new HSLColor(300.0, 50.0, 50.0),
@@ -28,14 +28,12 @@ namespace DwarfCorp.Goals.Goals
                 Center = new Microsoft.Xna.Framework.Point(MathFunctions.RandInt(0, Overworld.Map.GetLength(0)), MathFunctions.RandInt(0, Overworld.Map.GetLength(1)))
             };
 
-            World.ComponentManager.Factions.Factions.Add("Ordu", orduFaction);
+            World.Factions.Factions.Add("Ordu", orduFaction);
             World.Natives.Add(orduFaction);
-            World.ComponentManager.Diplomacy.InitializeFactionPolitics(orduFaction, World.Time.CurrentDate);
+            World.Diplomacy.InitializeFactionPolitics(orduFaction, World.Time.CurrentDate);
 
             // Spawn trade convoy from Ordu
-            World.ComponentManager.Diplomacy.SendTradeEnvoy(orduFaction, World);
-
-            return new ActivationResult { Succeeded = true };
+            World.Diplomacy.SendTradeEnvoy(orduFaction, World);
         }
 
         public override void OnGameEvent(WorldManager World, GameEvent Event)

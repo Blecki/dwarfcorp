@@ -266,7 +266,7 @@ namespace DwarfCorp
             };
 
             return new RoomData(TreasuryName, 12, "Blue Tile", roomResources, TreasuryTemplates,
-                new Gum.TileReference("rooms", 14))
+                new Gui.TileReference("rooms", 14))
             {
                 Description = "Money is stored here. Can store " + MoneyPerPile + " per tile.",
             };

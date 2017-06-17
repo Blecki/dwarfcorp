@@ -33,8 +33,8 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Gum;
-using Gum.Widgets;
+using DwarfCorp.Gui;
+using DwarfCorp.Gui.Widgets;
 using System.Linq;
 
 namespace DwarfCorp
@@ -79,10 +79,10 @@ namespace DwarfCorp.GameStates
     /// </summary>
     public class CompanyMakerState : GameState
     {
-        private Gum.Root GuiRoot;
-        private Gum.Widgets.EditableTextField NameField;
-        private Gum.Widgets.EditableTextField MottoField;
-        private NewGui.CompanyLogo CompanyLogoDisplay;
+        private Gui.Root GuiRoot;
+        private Gui.Widgets.EditableTextField NameField;
+        private Gui.Widgets.EditableTextField MottoField;
+        private Gui.Widgets.CompanyLogo CompanyLogoDisplay;
 
         // Todo: This should be passed to the next screen when create is clicked, and so on. Instead
         //  of being static... there should be a state object that is slowly built by each screen until
@@ -105,14 +105,14 @@ namespace DwarfCorp.GameStates
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
 
-            GuiRoot = new Gum.Root(DwarfGame.GumSkin);
-            GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
+            GuiRoot = new Gui.Root(DwarfGame.GumSkin);
+            GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
             GuiRoot.SetMouseOverlay(null, 0);
 
             Rectangle rect = GuiRoot.RenderData.VirtualScreen;
             rect.Inflate(-rect.Width / 3, -rect.Height / 3);
             // CONSTRUCT GUI HERE...
-            var mainPanel = GuiRoot.RootItem.AddChild(new Gum.Widget
+            var mainPanel = GuiRoot.RootItem.AddChild(new Gui.Widget
             {
                 Rect = rect,
                 MinimumSize = new Point(512, 256),
@@ -123,7 +123,7 @@ namespace DwarfCorp.GameStates
                 TextSize = 1
             });
 
-            mainPanel.AddChild(new Gum.Widgets.Button
+            mainPanel.AddChild(new Gui.Widgets.Button
             {
                 Text = "CREATE!",
                 TextHorizontalAlign = HorizontalAlign.Center,
@@ -141,7 +141,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.FloatBottomRight
             });
 
-            mainPanel.AddChild(new Gum.Widgets.Button
+            mainPanel.AddChild(new Gui.Widgets.Button
             {
                 Text = "BACK",
                 TextHorizontalAlign = HorizontalAlign.Center,
@@ -171,7 +171,7 @@ namespace DwarfCorp.GameStates
                 Padding = new Margin(0,0,2,2)
             });
 
-            nameRow.AddChild(new Gum.Widget
+            nameRow.AddChild(new Gui.Widget
             {
                 MinimumSize = new Point(64, 0),
                 Text = "Name",
@@ -180,7 +180,7 @@ namespace DwarfCorp.GameStates
                 TextVerticalAlign = VerticalAlign.Center
             });
 
-            nameRow.AddChild(new Gum.Widgets.Button
+            nameRow.AddChild(new Gui.Widgets.Button
             {
                 Text = "Randomize",
                 AutoLayout = AutoLayout.DockRight,
@@ -249,13 +249,13 @@ namespace DwarfCorp.GameStates
                 Padding = new Margin(0, 0, 2, 2)
             });
 
-            CompanyLogoDisplay = logoRow.AddChild(new NewGui.CompanyLogo
+            CompanyLogoDisplay = logoRow.AddChild(new Gui.Widgets.CompanyLogo
                 {
                     AutoLayout = AutoLayout.DockLeft,
                     MinimumSize = new Point(64,64),
                     MaximumSize = new Point(64,64),
                     CompanyInformation = CompanyInformation
-                }) as NewGui.CompanyLogo;
+                }) as Gui.Widgets.CompanyLogo;
 
             logoRow.AddChild(new Widget
             {
@@ -271,8 +271,8 @@ namespace DwarfCorp.GameStates
                     AutoLayout = AutoLayout.DockLeft,
                     OnClick = (sender, args) =>
                         {
-                            var source = GuiRoot.GetTileSheet("company-logo-background") as Gum.TileSheet;
-                            var chooser = new NewGui.GridChooser
+                            var source = GuiRoot.GetTileSheet("company-logo-background") as Gui.TileSheet;
+                            var chooser = new Gui.Widgets.GridChooser
                             {
                                 ItemSource = Enumerable.Range(0, source.Columns * source.Rows)
                                     .Select(i => new Widget {
@@ -280,8 +280,8 @@ namespace DwarfCorp.GameStates
                                     }),
                                 OnClose = (s2) =>
                                     {
-                                        var gc = s2 as NewGui.GridChooser;
-                                        if (gc.DialogResult == NewGui.GridChooser.Result.OKAY &&
+                                        var gc = s2 as Gui.Widgets.GridChooser;
+                                        if (gc.DialogResult == Gui.Widgets.GridChooser.Result.OKAY &&
                                             gc.SelectedItem != null)
                                         {
                                             sender.Background = gc.SelectedItem.Background;
@@ -305,7 +305,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockLeft,
                 OnClick = (sender, args) =>
                 {
-                    var chooser = new NewGui.GridChooser
+                    var chooser = new Gui.Widgets.GridChooser
                     {
                         ItemSize = new Point(16,16),
                         ItemSpacing = new Point(4, 4),
@@ -317,8 +317,8 @@ namespace DwarfCorp.GameStates
                             }),
                         OnClose = (s2) =>
                         {
-                            var gc = s2 as NewGui.GridChooser;
-                            if (gc.DialogResult == NewGui.GridChooser.Result.OKAY &&
+                            var gc = s2 as Gui.Widgets.GridChooser;
+                            if (gc.DialogResult == Gui.Widgets.GridChooser.Result.OKAY &&
                                 gc.SelectedItem != null)
                             {
                                 sender.BackgroundColor = gc.SelectedItem.BackgroundColor;
@@ -347,8 +347,8 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockLeft,
                 OnClick = (sender, args) =>
                 {
-                    var source = GuiRoot.GetTileSheet("company-logo-symbol") as Gum.TileSheet;
-                    var chooser = new NewGui.GridChooser
+                    var source = GuiRoot.GetTileSheet("company-logo-symbol") as Gui.TileSheet;
+                    var chooser = new Gui.Widgets.GridChooser
                     {
                         ItemSource = Enumerable.Range(0, source.Columns * source.Rows)
                             .Select(i => new Widget
@@ -357,8 +357,8 @@ namespace DwarfCorp.GameStates
                             }),
                         OnClose = (s2) =>
                         {
-                            var gc = s2 as NewGui.GridChooser;
-                            if (gc.DialogResult == NewGui.GridChooser.Result.OKAY &&
+                            var gc = s2 as Gui.Widgets.GridChooser;
+                            if (gc.DialogResult == Gui.Widgets.GridChooser.Result.OKAY &&
                                 gc.SelectedItem != null)
                             {
                                 sender.Background = gc.SelectedItem.Background;
@@ -382,7 +382,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockLeft,
                 OnClick = (sender, args) =>
                 {
-                    var chooser = new NewGui.GridChooser
+                    var chooser = new Gui.Widgets.GridChooser
                     {
                         ItemSize = new Point(16, 16),
                         ItemSpacing = new Point(4, 4),
@@ -394,8 +394,8 @@ namespace DwarfCorp.GameStates
                             }),
                         OnClose = (s2) =>
                         {
-                            var gc = s2 as NewGui.GridChooser;
-                            if (gc.DialogResult == NewGui.GridChooser.Result.OKAY &&
+                            var gc = s2 as Gui.Widgets.GridChooser;
+                            if (gc.DialogResult == Gui.Widgets.GridChooser.Result.OKAY &&
                                 gc.SelectedItem != null)
                             {
                                 sender.BackgroundColor = gc.SelectedItem.BackgroundColor;

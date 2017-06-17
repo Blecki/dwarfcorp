@@ -10,11 +10,11 @@ namespace DwarfCorp.GameStates
     // Todo: Make this use wait cursor while generating.
     public class WorldGeneratorState : GameState
     {
-        private Gum.Root GuiRoot;
-        private Gum.Widgets.ProgressBar GenerationProgress;
-        private Gum.Widget ZoomedPreview;
+        private Gui.Root GuiRoot;
+        private Gui.Widgets.ProgressBar GenerationProgress;
+        private Gui.Widget ZoomedPreview;
         private WorldGeneratorPreview Preview;
-        private Gum.Widget StartButton;
+        private Gui.Widget StartButton;
         private WorldGenerator Generator;
         private WorldGenerationSettings Settings;
         private bool AutoGenerate;
@@ -56,46 +56,46 @@ namespace DwarfCorp.GameStates
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
 
-            GuiRoot = new Gum.Root(DwarfGame.GumSkin);
-            GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
+            GuiRoot = new Gui.Root(DwarfGame.GumSkin);
+            GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
 
-            var mainPanel = GuiRoot.RootItem.AddChild(new Gum.Widget
+            var mainPanel = GuiRoot.RootItem.AddChild(new Gui.Widget
             {
                 Rect = GuiRoot.RenderData.VirtualScreen,
                 Border = "border-fancy",
                 Text = Settings.Name,
                 Font = "font-hires",
                 TextColor = new Vector4(0, 0, 0, 1),
-                Padding = new Gum.Margin(4, 4, 4, 4),
-                InteriorMargin = new Gum.Margin(24, 0, 0, 0),
+                Padding = new Gui.Margin(4, 4, 4, 4),
+                InteriorMargin = new Gui.Margin(24, 0, 0, 0),
             });
 
-            var rightPanel = mainPanel.AddChild(new Gum.Widget
+            var rightPanel = mainPanel.AddChild(new Gui.Widget
             {
-                AutoLayout = Gum.AutoLayout.DockRight,
+                AutoLayout = Gui.AutoLayout.DockRight,
                 MinimumSize = new Point(256, 0),
-                Padding = new Gum.Margin(2,2,2,2)
+                Padding = new Gui.Margin(2,2,2,2)
             });
 
-            rightPanel.AddChild(new Gum.Widget
+            rightPanel.AddChild(new Gui.Widget
             {
                 Text = "Regenerate",
                 Border = "border-button",
                 ChangeColorOnHover = true,
                 TextColor = new Vector4(0, 0, 0, 1),
                 Font = "font-hires",
-                AutoLayout = Gum.AutoLayout.DockTop,
+                AutoLayout = Gui.AutoLayout.DockTop,
                 OnClick = (sender, args) => RestartGeneration()
             });
 
-            rightPanel.AddChild(new Gum.Widget
+            rightPanel.AddChild(new Gui.Widget
             {
                 Text = "Save World",
                 Border = "border-button",
                 ChangeColorOnHover = true,
                 TextColor = new Vector4(0, 0, 0, 1),
                 Font = "font-hires",
-                AutoLayout = Gum.AutoLayout.DockTop,
+                AutoLayout = Gui.AutoLayout.DockTop,
                 OnClick = (sender, args) =>
                 {
                     if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
@@ -106,7 +106,7 @@ namespace DwarfCorp.GameStates
                         OverworldFile file = new OverworldFile(Game.GraphicsDevice, Overworld.Map, Settings.Name, Settings.SeaLevel);
                         file.WriteFile(worldDirectory.FullName + ProgramData.DirChar + "world." + OverworldFile.CompressedExtension, true, true);
                         file.SaveScreenshot(worldDirectory.FullName + ProgramData.DirChar + "screenshot.png");
-                        GuiRoot.ShowModalPopup(GuiRoot.ConstructWidget(new NewGui.Popup
+                        GuiRoot.ShowModalPopup(GuiRoot.ConstructWidget(new Gui.Widgets.Popup
                         {
                             Text = "File saved."
                         }));
@@ -114,17 +114,17 @@ namespace DwarfCorp.GameStates
                 }
             });
 
-            rightPanel.AddChild(new Gum.Widget
+            rightPanel.AddChild(new Gui.Widget
             {
                 Text = "Advanced",
                 Border = "border-button",
                 ChangeColorOnHover = true,
                 TextColor = new Vector4(0, 0, 0, 1),
                 Font = "font-hires",
-                AutoLayout = Gum.AutoLayout.DockTop,
+                AutoLayout = Gui.AutoLayout.DockTop,
                 OnClick = (sender, args) =>
                 {
-                    var advancedSettingsEditor = GuiRoot.ConstructWidget(new NewGui.WorldGenerationSettingsDialog
+                    var advancedSettingsEditor = GuiRoot.ConstructWidget(new Gui.Widgets.WorldGenerationSettingsDialog
                     {
                         Settings = Settings,
                         OnClose = (s) => RestartGeneration()
@@ -134,14 +134,14 @@ namespace DwarfCorp.GameStates
                 }
             });
 
-            rightPanel.AddChild(new Gum.Widget
+            rightPanel.AddChild(new Gui.Widget
             {
                 Text = "Back",
                 Border = "border-button",
                 ChangeColorOnHover = true,
                 TextColor = new Vector4(0, 0, 0, 1),
                 Font = "font-hires",
-                AutoLayout = Gum.AutoLayout.DockTop,
+                AutoLayout = Gui.AutoLayout.DockTop,
                 OnClick = (sender, args) =>
                 {
                     Generator.Abort();
@@ -149,14 +149,14 @@ namespace DwarfCorp.GameStates
                 }
             });
 
-            StartButton = rightPanel.AddChild(new Gum.Widget
+            StartButton = rightPanel.AddChild(new Gui.Widget
             {
                 Text = "Start Game",
                 Border = "border-button",
                 ChangeColorOnHover = true,
                 TextColor = new Vector4(0, 0, 0, 1),
                 Font = "font-hires",
-                AutoLayout = Gum.AutoLayout.DockBottom,
+                AutoLayout = Gui.AutoLayout.DockBottom,
                 OnClick = (sender, args) =>
                 {
                     if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
@@ -175,23 +175,23 @@ namespace DwarfCorp.GameStates
                 }
             });
 
-            rightPanel.AddChild(new Gum.Widget
+            rightPanel.AddChild(new Gui.Widget
             {
                 Text = "Colony size",
-                AutoLayout = Gum.AutoLayout.DockTop,
+                AutoLayout = Gui.AutoLayout.DockTop,
                 Font = "font",
                 TextColor = new Vector4(0, 0, 0, 1)
             });
 
-            var colonySizeCombo = rightPanel.AddChild(new Gum.Widgets.ComboBox
+            var colonySizeCombo = rightPanel.AddChild(new Gui.Widgets.ComboBox
             {
-                AutoLayout = Gum.AutoLayout.DockTop,
+                AutoLayout = Gui.AutoLayout.DockTop,
                 Items = new List<string>(new string[] { "Tiny", "Small", "Medium", "Large", "Huge" }),
                 Font = "font",
                 TextColor = new Vector4(0, 0, 0, 1),
                 OnSelectedIndexChanged = (sender) =>
                 {
-                    switch ((sender as Gum.Widgets.ComboBox).SelectedItem)
+                    switch ((sender as Gui.Widgets.ComboBox).SelectedItem)
                     {
                         case "Tiny": Settings.ColonySize = new Point3(4, 1, 4); break;
                         case "Small": Settings.ColonySize = new Point3(8, 1, 8); break;
@@ -207,31 +207,31 @@ namespace DwarfCorp.GameStates
 
                     Settings.WorldGenerationOrigin = new Vector2((int)(clickX), (int)(clickY));
                 }
-            }) as Gum.Widgets.ComboBox;
+            }) as Gui.Widgets.ComboBox;
 
-            rightPanel.AddChild(new Gum.Widget
+            rightPanel.AddChild(new Gui.Widget
             {
                 Text = "Difficulty",
-                AutoLayout = Gum.AutoLayout.DockTop,
+                AutoLayout = Gui.AutoLayout.DockTop,
                 Font = "font",
                 TextColor = new Vector4(0,0,0,1)
             });
 
-            var difficultySelectorCombo = rightPanel.AddChild(new Gum.Widgets.ComboBox
+            var difficultySelectorCombo = rightPanel.AddChild(new Gui.Widgets.ComboBox
             {
-                AutoLayout = Gum.AutoLayout.DockTop,
+                AutoLayout = Gui.AutoLayout.DockTop,
                 Items = Embarkment.EmbarkmentLibrary.Select(e => e.Key).ToList(),
                 TextColor = new Vector4(0, 0, 0, 1),
                 Font = "font",
                 OnSelectedIndexChanged = (sender) =>
                 {
-                    Settings.InitalEmbarkment = Embarkment.EmbarkmentLibrary[(sender as Gum.Widgets.ComboBox).SelectedItem];
+                    Settings.InitalEmbarkment = Embarkment.EmbarkmentLibrary[(sender as Gui.Widgets.ComboBox).SelectedItem];
                 }
-            }) as Gum.Widgets.ComboBox;
+            }) as Gui.Widgets.ComboBox;
 
-            ZoomedPreview = rightPanel.AddChild(new Gum.Widget
+            ZoomedPreview = rightPanel.AddChild(new Gui.Widget
             {
-                AutoLayout = Gum.AutoLayout.DockBottom,
+                AutoLayout = Gui.AutoLayout.DockBottom,
                 OnLayout = (sender) =>
                 {
                     var space = System.Math.Min(difficultySelectorCombo.Rect.Width, StartButton.Rect.Top - difficultySelectorCombo.Rect.Bottom - 4);
@@ -244,19 +244,19 @@ namespace DwarfCorp.GameStates
             });
 
 
-            GenerationProgress = mainPanel.AddChild(new Gum.Widgets.ProgressBar
+            GenerationProgress = mainPanel.AddChild(new Gui.Widgets.ProgressBar
             {
-                AutoLayout = Gum.AutoLayout.DockBottom,
-                TextHorizontalAlign = Gum.HorizontalAlign.Center,
-                TextVerticalAlign = Gum.VerticalAlign.Center,
+                AutoLayout = Gui.AutoLayout.DockBottom,
+                TextHorizontalAlign = Gui.HorizontalAlign.Center,
+                TextVerticalAlign = Gui.VerticalAlign.Center,
                 Font = "outline-font",
                 TextColor = new Vector4(1,1,1,1)
-            }) as Gum.Widgets.ProgressBar;
+            }) as Gui.Widgets.ProgressBar;
 
             Preview = mainPanel.AddChild(new WorldGeneratorPreview(Game.GraphicsDevice)
             {
                 Border = "border-thin",
-                AutoLayout = Gum.AutoLayout.DockFill
+                AutoLayout = Gui.AutoLayout.DockFill
             }) as WorldGeneratorPreview;
 
             GuiRoot.RootItem.Layout();
@@ -314,7 +314,7 @@ namespace DwarfCorp.GameStates
             {
                 Preview.DrawPreview();
                 GuiRoot.DrawMesh(
-                        Gum.Mesh.Quad()
+                        Gui.Mesh.Quad()
                         .Scale(ZoomedPreview.Rect.Width, ZoomedPreview.Rect.Height)
                         .Translate(ZoomedPreview.Rect.X, ZoomedPreview.Rect.Y)
                         .Texture(Preview.ZoomedPreviewMatrix),

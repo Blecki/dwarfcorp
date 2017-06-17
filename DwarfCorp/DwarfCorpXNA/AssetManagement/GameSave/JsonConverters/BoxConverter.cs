@@ -93,7 +93,7 @@ namespace DwarfCorp
                 JValue jObject = serializer.Deserialize<JValue>(reader);
                 return new DwarfBux(decimal.Parse(jObject.Value.ToString()));
             }
-            catch (InvalidCastException exception)
+            catch (InvalidCastException)
             {
                 return new DwarfBux(0);
             }

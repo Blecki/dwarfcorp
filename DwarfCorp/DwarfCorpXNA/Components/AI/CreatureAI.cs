@@ -48,33 +48,28 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class CreatureAI : GameComponent, IUpdateableComponent
     {
-        /// <summary> maximum number of messages the creature has in its mind </summary>
         public int MaxMessages = 10;
-        /// <summary> As a way of debugging creature AI, creatures can say arbitrary strings which are stored in this buffer </summary>
         public List<string> MessageBuffer = new List<string>();
 
         public CreatureAI()
         {
-            Movement = new CreatureMovement(Creature);
-            History = new Dictionary<string, TaskHistory>();
         }
 
-        public CreatureAI(Creature creature,
+        public CreatureAI(
+            ComponentManager Manager,
             string name,
             EnemySensor sensor,
             PlanService planService) :
-            base(name, creature.Physics, creature.Manager)
+            base(name, Manager)
         {
             History = new Dictionary<string, TaskHistory>();
-            Movement = new CreatureMovement(creature);
+            Movement = new CreatureMovement(this);
             GatherManager = new GatherManager(this);
             Blackboard = new Blackboard();
-            Creature = creature;
             CurrentPath = null;
             PlannerTimer = new Timer(0.1f, false);
             LocalControlTimeout = new Timer(5, false, Timer.TimerMode.Real);
             WanderTimer = new Timer(1, false);
-            Creature.Faction.AddMinion(this);
             DrawAIPlan = false;
             WaitingOnResponse = false;
             PlanSubscriber = new PlanSubscriber(planService);
@@ -91,10 +86,20 @@ namespace DwarfCorp
         }
 
         private bool jumpHeld = false;
-        /// <summary> The creature this AI is controlling </summary>
-        public Creature Creature { get; set; }
         /// <summary> The current path of voxels the AI is following </summary>
         public List<Voxel> CurrentPath { get; set; }
+
+        private Creature _cachedCreature = null;
+        public Creature Creature
+        {
+            get
+            {
+                if (_cachedCreature == null)
+                    _cachedCreature = Parent.GetChildrenOfType<Creature>().FirstOrDefault();
+                System.Diagnostics.Debug.Assert(_cachedCreature != null, "AI Could not find creature");
+                return _cachedCreature;
+            }
+        }
         /// <summary> If this is set to true, the creature will draw the path it is following </summary>
         public bool DrawPath { get { return GameSettings.Default.DrawPaths; }}
         /// <summary> The gather manager handles gathering/building tasks </summary>
@@ -390,7 +395,7 @@ namespace DwarfCorp
 
             if (Faction == null && !string.IsNullOrEmpty(Creature.Allies))
             {
-                Faction = Manager.Factions.Factions[Creature.Allies];
+                Faction = Manager.World.Factions.Factions[Creature.Allies];
             }
 
             IdleTimer.Update(gameTime);
@@ -1230,9 +1235,9 @@ namespace DwarfCorp
     /// <summary> defines how a creature moves from voxel to voxel </summary>
     public class CreatureMovement
     {
-        public CreatureMovement(Creature creature)
+        public CreatureMovement(CreatureAI Parent)
         {
-            Creature = creature;
+            this.Parent = Parent;
             Actions = new Dictionary<Creature.MoveType, ActionStats>
             {
                 {
@@ -1310,8 +1315,9 @@ namespace DwarfCorp
             };
         }
 
+        public CreatureAI Parent;
         /// <summary> The creature associated with this AI </summary>
-        public Creature Creature { get; set; }
+        public Creature Creature { get { return Parent.Creature; } }
 
         /// <summary> Wrapper around the creature's fly movement </summary>
         [JsonIgnore]
@@ -1716,7 +1722,7 @@ namespace DwarfCorp
                             if (door != null)
                             {
                                 if (
-                                    Creature.Manager.Diplomacy.GetPolitics(door.TeamFaction, Creature.Faction)
+                                    Creature.World.Diplomacy.GetPolitics(door.TeamFaction, Creature.Faction)
                                         .GetCurrentRelationship() !=
                                     Relationship.Loving)
                                 {

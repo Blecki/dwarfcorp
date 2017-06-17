@@ -74,8 +74,8 @@ namespace DwarfCorp
         }
 
 
-        public VoxelListener(ComponentManager manager, GameComponent parent, ChunkManager chunkManager, Voxel vref) :
-            base("VoxelListener", parent, manager)
+        public VoxelListener(ComponentManager manager, ChunkManager chunkManager, Voxel vref) :
+            base("VoxelListener", manager)
         {
             Chunk = vref.Chunk;
             VoxelID = new Point3(vref.GridPosition);
@@ -152,8 +152,8 @@ namespace DwarfCorp
         }
 
 
-        public ExploredListener(ComponentManager manager, GameComponent parent, ChunkManager chunkManager, Voxel vref) :
-            base("ExploredListener", parent, manager)
+        public ExploredListener(ComponentManager manager, ChunkManager chunkManager, Voxel vref) :
+            base("ExploredListener", manager)
         {
             Chunk = vref.Chunk;
             VoxelID = new Point3(vref.GridPosition);

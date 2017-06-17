@@ -58,7 +58,7 @@ namespace DwarfCorp
             // Use new input system so event is not captured by both GUIs.
             foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
             {
-                if (@event.Message == Gum.InputEvents.KeyPress || @event.Message == Gum.InputEvents.MouseClick)
+                if (@event.Message == Gui.InputEvents.KeyPress || @event.Message == Gui.InputEvents.MouseClick)
                 {
                     IsDone = true;
                     StateManager.PopState();

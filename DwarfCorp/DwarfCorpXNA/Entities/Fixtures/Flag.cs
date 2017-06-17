@@ -32,12 +32,7 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
 using DwarfCorp.GameStates;
-using DwarfCorp.NewGui;
-using Gum.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -52,12 +47,9 @@ namespace DwarfCorp
 
         }
 
-
-
-        public Flag(GameComponent parent, Vector3 position, CompanyInformation logo) :
-            base(parent.Manager, "Flag", parent, Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+        public Flag(ComponentManager Manager, Vector3 position, CompanyInformation logo) :
+            base(Manager, "Flag", Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
         {
-
             SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture);
             List<Point> frames = new List<Point>
             {
@@ -65,32 +57,24 @@ namespace DwarfCorp
             };
             Animation lampAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture), "Flag", 32, 32, frames, true, Color.White, 5.0f + MathFunctions.Rand(), 1f, 1.0f, false);
 
-            Sprite sprite = new Sprite(parent.Manager, "sprite", this, Matrix.Identity, spriteSheet, false)
+            Sprite sprite = AddChild(new Sprite(Manager, "sprite", Matrix.Identity, spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.YAxis
-            };
+            }) as Sprite;
             sprite.AddAnimation(lampAnimation);
 
 
-            new Banner(this)
+            AddChild(new Banner(Manager)
             {
                 Logo = logo
-            };
+            });
             Tags.Add("Flag");
-
-       
-        }
-
-        public Flag(ComponentManager componentManager, Vector3 position, CompanyInformation logo) :
-           this(componentManager.RootComponent, position, logo)
-        {
 
             Voxel voxelUnder = new Voxel();
 
             if (Manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
-            {
-                VoxelListener listener = new VoxelListener(componentManager, this, Manager.World.ChunkManager, voxelUnder);
-            }
+                AddChild(new VoxelListener(Manager, Manager.World.ChunkManager, voxelUnder));
+
             CollisionType = CollisionManager.CollisionType.Static;
         }
     }
@@ -110,7 +94,6 @@ namespace DwarfCorp
             public ushort[] Idx;
             public float SizeX;
             public float SizeY;
-            public float Resolution;
         }
         private static Dictionary<CompanyInformation, BannerData> banners = new Dictionary<CompanyInformation, BannerData>();
 
@@ -119,8 +102,8 @@ namespace DwarfCorp
             LightsWithVoxels = true;
         }
 
-        public Banner(Body parent) :
-            base("Banner", parent, Matrix.Identity, new Vector3(1, 1, 1), Vector3.Zero, false)
+        public Banner(ComponentManager Manager) :
+            base(Manager, "Banner", Matrix.Identity, new Vector3(1, 1, 1), Vector3.Zero, false)
         {
             
         }

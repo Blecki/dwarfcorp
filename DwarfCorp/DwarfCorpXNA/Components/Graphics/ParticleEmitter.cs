@@ -192,8 +192,8 @@ namespace DwarfCorp
 
         }
 
-        public ParticleEmitter(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, EmitterData emitterData) :
-            base(name, parent, localTransform, Vector3.Zero, Vector3.Zero, false)
+        public ParticleEmitter(ComponentManager manager, string name, Matrix localTransform, EmitterData emitterData) :
+            base(manager, name, localTransform, Vector3.Zero, Vector3.Zero, false)
         {
             Particles = new List<Particle>();
 

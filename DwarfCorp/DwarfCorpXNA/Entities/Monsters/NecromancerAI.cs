@@ -58,8 +58,8 @@ namespace DwarfCorp
             AttackRange = 10;
         }
 
-        public NecromancerAI(Creature creature, string name, EnemySensor sensor, PlanService planService) :
-            base(creature, name, sensor, planService)
+        public NecromancerAI(ComponentManager Manager, string name, EnemySensor sensor, PlanService planService) :
+            base(Manager, name, sensor, planService)
         {
             Skeletons = new List<Skeleton>();
             MaxSkeletons = 5;
@@ -131,9 +131,9 @@ namespace DwarfCorp
 
         public void OrderSkeletonsToAttack()
         {
-            IEnumerable<CreatureAI> enemies = (from faction in Creature.Manager.Factions.Factions
+            IEnumerable<CreatureAI> enemies = (from faction in Creature.Manager.World.Factions.Factions
                 where
-                    Manager.World.ComponentManager.Diplomacy.GetPolitics(Creature.Faction, faction.Value)
+                    Manager.World.Diplomacy.GetPolitics(Creature.Faction, faction.Value)
                         .GetCurrentRelationship() == Relationship.Hateful
                 from minion in faction.Value.Minions
                 let dist = (minion.Position - Creature.AI.Position).Length()
@@ -150,9 +150,9 @@ namespace DwarfCorp
 
         public Act SummonFromGraves()
         {
-            List<Body> graves = (from faction in Creature.Manager.Factions.Factions
+            List<Body> graves = (from faction in Creature.Manager.World.Factions.Factions
                 where
-                    Manager.World.ComponentManager.Diplomacy.GetPolitics(Creature.Faction, faction.Value)
+                    Manager.World.Diplomacy.GetPolitics(Creature.Faction, faction.Value)
                         .GetCurrentRelationship() == Relationship.Hateful
                 from zone in faction.Value.GetRooms()
                 from body in zone.ZoneBodies

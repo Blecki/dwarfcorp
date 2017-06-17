@@ -1,35 +1,3 @@
-// GameComponent.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -233,20 +201,10 @@ namespace DwarfCorp
         /// <param name="name">The name of the component.</param>
         /// <param name="parent">The parent component.</param>
         /// <param name="manager">The component manager.</param>
-        public GameComponent(string name, GameComponent parent, ComponentManager manager) :
+        public GameComponent(string name, ComponentManager manager) :
             this(true, manager)
         {
             Name = name;
-            RemoveFromParent();
-
-            if(parent != null)
-            {
-                parent.AddChild(this);
-            }
-            else
-            {
-                Parent = null;
-            }
         }
 
         /// <summary>
@@ -377,24 +335,20 @@ namespace DwarfCorp
             }
         }
 
+        // Todo: Can these two functions be unified?
         /// <summary> This is intended to be used like Die(), but is garunteed only
         /// to clean up memory, without doing things like animations.</summary>
         public virtual void Delete()
         {
             if (IsDead)
-            {
                 return;
-            }
 
             IsDead = true;
-            List<GameComponent> children = GetAllChildrenRecursive();
 
-            foreach (GameComponent child in children)
-            {
+            foreach (GameComponent child in GetAllChildrenRecursive())
                 child.Delete();
-            }
 
-            RemoveFromParent();
+            if (Parent != null) Parent.RemoveChild(this);
 
             IsActive = false;
             IsVisible = false;
@@ -407,19 +361,14 @@ namespace DwarfCorp
         public virtual void Die()
         {
             if(IsDead)
-            {
                 return;
-            }
 
             IsDead = true;
-            List<GameComponent> children = GetAllChildrenRecursive();
 
-            foreach (GameComponent child in children)
-            {
+            foreach (GameComponent child in GetAllChildrenRecursive())
                 child.Die();
-            }
 
-            RemoveFromParent();
+            if (Parent != null) Parent.RemoveChild(this);
 
             IsActive = false;
             IsVisible = false;
@@ -510,18 +459,6 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        /// Determines whether this component has a child with [the specified identifier].
-        /// </summary>
-        /// <param name="id">The identifier.</param>
-        /// <returns>
-        ///   <c>true</c> if [has child with global identifier] [the specified identifier]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasChildWithGlobalID(uint id)
-        {
-            return Children.Any(child => child.GlobalID == id);
-        }
-
-        /// <summary>
         /// Gets the child with the given global identifier.
         /// </summary>
         /// <param name="id">The identifier.</param>
@@ -532,33 +469,22 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        /// Removes this component from its parent if it exists.
-        /// </summary>
-        public void RemoveFromParent()
-        {
-            if(Parent != null)
-            {
-                Parent.RemoveChild(this);
-            }
-        }
-
-        /// <summary>
         /// Adds the child if it has not been added already.
         /// </summary>
         /// <param name="child">The child.</param>
-        public void AddChild(GameComponent child)
+        public GameComponent AddChild(GameComponent child)
         {
-            if(HasChildWithGlobalID(child.GlobalID))
-            {
-                return;
-            }
-
             lock (Children)
             {
+                if (GetChildWithGlobalID(child.GlobalID) != null)
+                    return child;
+
                 Children.Add(child);
                 child.Parent = this;
                 child.AddToCache(child);
             }
+
+            return child;
         }
 
         /// <summary>
@@ -567,13 +493,11 @@ namespace DwarfCorp
         /// <param name="child">The child.</param>
         public void RemoveChild(GameComponent child)
         {
-            if(!HasChildWithGlobalID(child.GlobalID))
-            {
-                return;
-            }
-
             lock (Children)
             {
+                if (GetChildWithGlobalID(child.GlobalID) == null)
+                    return;
+
                 Children.Remove(child);
                 child.RemoveFromCache(child);
             }
@@ -699,6 +623,17 @@ namespace DwarfCorp
                 toReturn.AddRange(child.GetChildrenOfType<T>());
             }
             return toReturn;
+        }
+
+        public IEnumerable<GameComponent> EnumerateAll()
+        {
+            yield return this;
+            foreach (var child in Children)
+            {
+                yield return child;
+                foreach (var grandChild in child.EnumerateAll())
+                    yield return grandChild;
+            }
         }
 
         #endregion

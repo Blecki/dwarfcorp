@@ -9,7 +9,7 @@ namespace DwarfCorp.GameStates
 {
     public class GuiStateTemplate : GameState
     {
-        private Gum.Root GuiRoot;
+        private Gui.Root GuiRoot;
 
         public GuiStateTemplate(DwarfGame Game, GameStateManager StateManager) :
             base(Game, "GuiStateTemplate", StateManager)
@@ -20,8 +20,8 @@ namespace DwarfCorp.GameStates
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
 
-            GuiRoot = new Gum.Root(DwarfGame.GumSkin);
-            GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
+            GuiRoot = new Gui.Root(DwarfGame.GumSkin);
+            GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
             GuiRoot.SetMouseOverlay(null, 0);
             // CONSTRUCT GUI HERE...
 

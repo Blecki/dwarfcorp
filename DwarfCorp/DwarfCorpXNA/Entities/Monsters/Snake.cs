@@ -61,6 +61,7 @@ namespace DwarfCorp
         public Snake(SpriteSheet sprites, Vector3 position, ComponentManager manager, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, string name):
             base
             (
+                manager,
                 new CreatureStats
                 {
                     Dexterity = 4,
@@ -73,20 +74,29 @@ namespace DwarfCorp
                 },
                 "Carnivore",
                 manager.World.PlanService,
-                manager.Factions.Factions["Carnivore"],
-                new Physics
+                manager.World.Factions.Factions["Carnivore"],
+                
+                chunks, graphics, content, name
+            )
+        {
+            Physics = new Physics
                 (
+                    manager,
                     "Giant Snake",
-                    manager.RootComponent,
                     Matrix.CreateTranslation(position),
                     new Vector3(0.5f, 0.5f, 0.5f),
                     new Vector3(0, 0, 0),
                     1.0f, 1.0f, 0.999f, 0.999f,
                     new Vector3(0, -10, 0)
-                ),
-                chunks, graphics, content, name
-            )
-        {
+                );
+
+            Physics.AddChild(this);
+
+            SelectionCircle = Physics.AddChild(new SelectionCircle(Manager)
+            {
+                IsVisible = false
+            }) as SelectionCircle;
+
             Initialize(sprites);
         }
 
@@ -97,13 +107,12 @@ namespace DwarfCorp
             const int frameWidth = 32;
             const int frameHeight = 32;
 
-            Sprite = new CharacterSprite
+            Sprite = Physics.AddChild(new CharacterSprite
                 (Graphics,
                 Manager,
                 "snake Sprite",
-                Physics,
                 Matrix.Identity
-                );
+                )) as CharacterSprite;
 
             // Add the idle animation
             Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Forward, spriteSheet, 1, frameWidth, frameHeight, 0, 0);
@@ -112,26 +121,34 @@ namespace DwarfCorp
             Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Backward, spriteSheet, 1, frameWidth, frameHeight, 0, 0);
 
             Tail = new List<TailSegment>();
-            new Shadow(Physics);
+            Physics.AddChild(new Shadow(Manager));
             for (int i = 0; i < 10; ++i)
             {
                 Tail.Add(
                     new TailSegment()
                     {
-                        Sprite = new Fixture(Physics.LocalPosition, spriteSheet, new Point(1, 0), Manager.RootComponent),
+                        Sprite = Manager.RootComponent.AddChild(new Fixture(Manager, Physics.LocalPosition, spriteSheet, new Point(1, 0))) as Fixture,
                         Target = Physics.LocalTransform.Translation
                     });
-                new Shadow(Tail[i].Sprite);
+                Tail[i].Sprite.AddChild(new Shadow(Manager));
             }
 
             // Add sensor
-            Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero);
+            Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
             // Add AI
-            AI = new PacingCreatureAI(this, "snake AI", Sensors, PlanService);
+            AI = Physics.AddChild(new PacingCreatureAI(Manager, "snake AI", Sensors, PlanService)) as CreatureAI;
 
 
             Attacks = new List<Attack>() {new Attack("Bite", 50.0f, 1.0f, 3.0f, ContentPaths.Audio.hiss, ContentPaths.Effects.claws)};
+
+            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.BoundingBoxPos)
+            {
+                Resources = new ResourceContainer()
+                {
+                    MaxResources = 1
+                }
+            }) as Inventory;
 
             Physics.Tags.Add("Snake");
             Physics.Tags.Add("Animal");
@@ -162,14 +179,14 @@ namespace DwarfCorp
             };
             AI.Stats.LevelIndex = 0;
 
-            DeathParticleTrigger = new ParticleTrigger("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
+            DeathParticleTrigger = Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 1,
                 BoxTriggerTimes = 10,
                 SoundToPlay = ContentPaths.Entities.Dwarf.Audio.dwarfhurt1,
-            };
-            Flames = new Flammable(Manager, "Flames", Physics, this);
+            }) as ParticleTrigger;
+            Physics.AddChild(new Flammable(Manager, "Flames"));
             HasBones = true;
             HasMeat = true;
             Species = "Snake";

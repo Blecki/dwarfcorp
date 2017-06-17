@@ -55,7 +55,7 @@ namespace DwarfCorp
         private Point Frame;
         private int Width = 32;
         private int Height = 32;
-        public bool EnableWind = false;
+        //public bool EnableWind = false;
 
         private static RasterizerState rasterState = new RasterizerState()
         {
@@ -71,11 +71,10 @@ namespace DwarfCorp
 
         public BatchedSprite(ComponentManager manager,
             string name,
-            GameComponent parent,
             Matrix localTransform,
             SpriteSheet spriteSheet,
             int numBillboards, GraphicsDevice graphi) :
-                base(manager, name, parent, localTransform, spriteSheet, false)
+                base(manager, name, localTransform, spriteSheet, false)
         {
             LocalTransforms = new List<Matrix>(numBillboards);
             Rotations = new List<float>(numBillboards);

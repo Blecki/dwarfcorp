@@ -1,35 +1,3 @@
-// Fairy.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,11 +21,20 @@ namespace DwarfCorp
 
         }
         public Fairy(ComponentManager manager, string allies, Vector3 position) :
-            base(new CreatureStats(new FairyClass(), 0), "Player", manager.World.PlanService, manager.World.ComponentManager.Factions.Factions[allies],
-           new Physics("Fairy", manager.World.ComponentManager.RootComponent, Matrix.CreateTranslation(position),
-                       new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, 0, 0)),
+            base(manager, new CreatureStats(new FairyClass(), 0), "Player", manager.World.PlanService, manager.World.Factions.Factions[allies],
+           
               manager.World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Fairy")
         {
+            Physics = new Physics(manager, "Fairy", Matrix.CreateTranslation(position),
+                       new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, 0, 0));
+
+            Physics.AddChild(this);
+
+            SelectionCircle = Physics.AddChild(new SelectionCircle(Manager)
+            {
+                IsVisible = false
+            }) as SelectionCircle;
+
             HasMeat = false;
             HasBones = false;
             ParticleTimer = new Timer(0.2f, false);
@@ -87,25 +64,33 @@ namespace DwarfCorp
         public void Initialize(EmployeeClass dwarfClass)
         {
             Physics.Orientation = Physics.OrientMode.RotateY;
-            Sprite = new CharacterSprite(Graphics, Manager, "Fairy Sprite", Physics, Matrix.CreateTranslation(new Vector3(0, 0.5f, 0)));
+            Sprite = Physics.AddChild(new CharacterSprite(Graphics, Manager, "Fairy Sprite", Matrix.CreateTranslation(new Vector3(0, 0.5f, 0)))) as CharacterSprite;
             foreach (Animation animation in dwarfClass.Animations)
             {
                 Sprite.AddAnimation(animation.Clone());
             }
             Sprite.LightsWithVoxels = false;
 
-            Hands = new Grabber("hands", Physics, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero);
+            Hands = Physics.AddChild(new Grabber("hands", Manager, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero)) as Grabber;
 
-            Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero);
+            Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
-            AI = new CreatureAI(this, "Fairy AI", Sensors, PlanService);
+            AI = Physics.AddChild(new CreatureAI(Manager, "Fairy AI", Sensors, PlanService)) as CreatureAI;
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
+
+            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.BoundingBoxPos)
+            {
+                Resources = new ResourceContainer
+                {
+                    MaxResources = 128
+                }
+            }) as Inventory;
 
             Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
             shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
 
-            Shadow = new Shadow(Manager, "Shadow", Physics, shadowTransform, new SpriteSheet(ContentPaths.Effects.shadowcircle));
+            Shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform, new SpriteSheet(ContentPaths.Effects.shadowcircle))) as Shadow;
             List<Point> shP = new List<Point>
             {
                 new Point(0, 0)
@@ -118,12 +103,12 @@ namespace DwarfCorp
 
 
 
-            DeathParticleTrigger = new ParticleTrigger("star_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
+            DeathParticleTrigger = Physics.AddChild(new ParticleTrigger("star_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 5,
                 SoundToPlay = ContentPaths.Audio.wurp,
-            };
+            }) as ParticleTrigger;
           
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
@@ -141,10 +126,10 @@ namespace DwarfCorp
                 ContentPaths.Audio.tinkle
             };
 
-            MinimapIcon minimapIcon = new MinimapIcon(Physics, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 0));
+            MinimapIcon minimapIcon = Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 0))) as MinimapIcon;
 
             //new LightEmitter("Light Emitter", Sprite, Matrix.Identity, Vector3.One, Vector3.One, 255, 150);
-            new Bobber(0.25f, 3.0f, MathFunctions.Rand(), Sprite);
+            Physics.AddChild(new Bobber(Manager, 0.25f, 3.0f, MathFunctions.Rand(), Physics.LocalTransform.Translation.Y));
           
             Stats.FullName = TextGenerator.GenerateRandom("$firstname");
             //Stats.LastName = "The Fairy";
