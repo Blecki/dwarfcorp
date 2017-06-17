@@ -39,9 +39,9 @@ namespace DwarfCorp
         private static Camera Camera { get; set; }
 
         [JsonIgnore]
-        public Mutex AdditionMutex { get; set; }
+        private Mutex AdditionMutex { get; set; }
         [JsonIgnore]
-        public Mutex RemovalMutex { get; set; }
+        private Mutex RemovalMutex { get; set; }
 
         public ParticleManager ParticleManager { get; set; }
 
@@ -98,8 +98,6 @@ namespace DwarfCorp
             RemovalMutex = new Mutex();
         }
 
-        #region picking
-
         public List<Body> SelectRootBodiesOnScreen(Rectangle selectionRectangle, Camera camera)
         {
             /*
@@ -130,9 +128,6 @@ namespace DwarfCorp
             }
             return toReturn.ToList();
         }
-
-        #endregion
-
 
         public void AddComponent(GameComponent component)
         {
@@ -196,55 +191,24 @@ namespace DwarfCorp
 
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            GamePerformance.Instance.StartTrackPerformance("Update Transforms");
             if (RootComponent != null)
-            {
                 RootComponent.UpdateTransformsRecursive(null);
-            }
-            GamePerformance.Instance.StopTrackPerformance("Update Transforms");
 
-            GamePerformance.Instance.StartTrackPerformance("Factions");
-            GamePerformance.Instance.StopTrackPerformance("Factions");
-
-            GamePerformance.Instance.TrackValueType("Component Count", Components.Count);
-            GamePerformance.Instance.TrackValueType("Updateable Count", UpdateableComponents.Count);
-            GamePerformance.Instance.TrackValueType("Renderable Count", Renderables.Count);
-
-            GamePerformance.Instance.StartTrackPerformance("Update Components");
             foreach (var componentType in UpdateableComponents)
                 foreach (var component in componentType.Value)
-                {
-                    //component.Manager = this;
-
                     if (component.IsActive)
-                    {
-                        //GamePerformance.Instance.StartTrackPerformance("Component Update " + component.GetType().Name);
                         component.Update(gameTime, chunks, camera);
-                        //GamePerformance.Instance.StopTrackPerformance("Component Update " + component.GetType().Name);
-                    }
-                }
-
-            GamePerformance.Instance.StopTrackPerformance("Update Components");
-
-            HandleAddRemoves();
-        }
-
-        public void HandleAddRemoves()
-        {
+            
             AdditionMutex.WaitOne();
             foreach (GameComponent component in Additions)
-            {
                 AddComponentImmediate(component);
-            }
 
             Additions.Clear();
             AdditionMutex.ReleaseMutex();
 
             RemovalMutex.WaitOne();
             foreach (GameComponent component in Removals)
-            {
                 RemoveComponentImmediate(component);
-            }
 
             Removals.Clear();
             RemovalMutex.ReleaseMutex();
