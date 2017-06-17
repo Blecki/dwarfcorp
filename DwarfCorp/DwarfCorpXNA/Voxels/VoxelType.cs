@@ -43,6 +43,12 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class VoxelType
     {
+        public enum TransitionType
+        {
+            None,
+            Horizontal,
+            Vertical
+        }
         public short ID { get; set; }
         public string Name { get; set; }
         public bool ReleasesResource { get; set; }
@@ -54,6 +60,7 @@ namespace DwarfCorp
         public bool IsBuildable { get; set; }
         public string ParticleType { get; set; }
         public SoundSource ExplosionSound { get; set; }
+        public TransitionType Transitions = TransitionType.None;
         public bool HasTransitionTextures { get; set; }
         public bool EmitsLight { get; set; }
         public float MinSpawnHeight { get; set; }
@@ -64,7 +71,7 @@ namespace DwarfCorp
         public bool SpawnClusters { get; set; }
         public float ClusterSize { get; set; }
         public float VeinLength { get; set; }
-        public Dictionary<TransitionTexture, BoxPrimitive.BoxTextureCoords> TransitionTextures { get; set; }
+        public Dictionary<BoxTransition, BoxPrimitive.BoxTextureCoords> TransitionTextures { get; set; }
         public bool IsSoil { get; set; }
         public bool IsSurface { get; set; }
         public bool IsInvincible { get; set; }
@@ -130,7 +137,7 @@ namespace DwarfCorp
             IsInvincible = false;
             ExplosionSound = SoundSource.Create(ContentPaths.Audio.gravel);
             HasTransitionTextures = false;
-            TransitionTextures = new Dictionary<TransitionTexture, BoxPrimitive.BoxTextureCoords>();
+            TransitionTextures = new Dictionary<BoxTransition, BoxPrimitive.BoxTextureCoords>();
             IsSoil = false;
             EmitsLight = false;
             Tint = Color.White;
@@ -149,6 +156,7 @@ namespace DwarfCorp
             SpawnOnSurface = false;
             IsTransparent = false;
             HitSound = SoundSource.Create(ContentPaths.Audio.pick);
+            Transitions = TransitionType.Horizontal;
         }
     }
 

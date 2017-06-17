@@ -241,15 +241,14 @@ namespace DwarfCorp
                 {
                     DwarfBux pay = creature.Stats.CurrentLevel.Pay;
                     total += pay;
-                    Faction.Economy.CurrentMoney = Math.Max(Faction.Economy.CurrentMoney - pay, 0m);
-                    creature.AddMoney(pay);
+                    creature.Tasks.Add(new ActWrapperTask(new GetMoneyAct(creature, pay)) {AutoRetry = true, Name = "Get paid."});
                 }
                 else
                 {
                     creature.AddThought(Thought.ThoughtType.NotPaid);
                 }
 
-                if (!(Faction.Economy.CurrentMoney > 0m))
+                if (total >= Faction.Economy.CurrentMoney)
                 {
                     if (!noMoney)
                     {

@@ -187,6 +187,7 @@ namespace DwarfCorp
             RegisterEntity("MudGolem", (position, data) => new MudGolem(new CreatureStats(new MudGolemClass(), 0), "Carnivore", world.PlanService,  world.ComponentManager.Factions.Factions["Carnivore"], world.ComponentManager, "Mud Golem", world.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, position));
             RegisterEntity("Mud", (position, data) => new MudProjectile(world.ComponentManager, position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
             RegisterEntity("Grave", (position, data) => new Grave(world.ComponentManager, position));
+            RegisterEntity("Coins", (position, data) => new CoinPileFixture(world.ComponentManager, position));
         }
 
         private static GameComponent CreateRandomFood(WorldManager world, Vector3 position)

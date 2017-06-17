@@ -928,7 +928,8 @@ namespace DwarfCorp
 
 
             // Next, create the balloon port by deciding which voxels to fill.
-            List<Voxel> designations = new List<Voxel>();
+            List<Voxel> balloonPortDesignations = new List<Voxel>();
+            List<Voxel> treasuryDesignations = new List<Voxel>();
             for (int dx = -size; dx <= size; dx++)
             {
                 for (int dz = -size; dz <= size; dz++)
@@ -1001,7 +1002,14 @@ namespace DwarfCorp
 
                         if (y == averageHeight - 1)
                         {
-                            designations.Add(v);
+                            if (dz >= 0)
+                            {
+                                balloonPortDesignations.Add(v);
+                            }
+                            else
+                            {
+                                treasuryDesignations.Add(v);
+                            }
                         }
 
                         if (isSide)
@@ -1018,12 +1026,16 @@ namespace DwarfCorp
                 }
             }
 
-
             // Actually create the BuildRoom.
-            BalloonPort toBuild = new BalloonPort(PlayerFaction, designations, this);
+            BalloonPort toBuild = new BalloonPort(PlayerFaction, balloonPortDesignations, this);
             BuildRoomOrder buildDes = new BuildRoomOrder(toBuild, roomDes.Faction, this);
             buildDes.Build(true);
             roomDes.DesignatedRooms.Add(toBuild);
+
+            // Also add a treasury
+            Treasury treasury = new Treasury(PlayerFaction, treasuryDesignations, this);
+            treasury.OnBuilt();
+            roomDes.DesignatedRooms.Add(treasury);
             return toBuild;
         }
 

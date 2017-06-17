@@ -74,6 +74,7 @@ namespace DwarfCorp
             RegisterType(Kitchen.InitializeData());
             RegisterType(Graveyard.InitializeData());
             RegisterType(AnimalPen.InitializeData());
+            RegisterType(Treasury.InitializeData());
             staticIntialized = true;
         }
 
@@ -161,6 +162,11 @@ namespace DwarfCorp
                 return blueprint
                     ? new AnimalPen(true, designations, world) : 
                       new AnimalPen(designations, world);
+            }
+            else if (name == Treasury.TreasuryName)
+            {
+                Treasury toBuild = new Treasury(faction, designations, world);
+                return toBuild;
             }
             else
             {

@@ -70,12 +70,38 @@ namespace DwarfCorp
         {
         }
 
-        public static void CreateTransitionUVs(GraphicsDevice graphics, Texture2D textureMap, int width, int height, Point top, Point sides, Point bottom, Dictionary<TransitionTexture, BoxPrimitive.BoxTextureCoords> transitionTextures)
+        public static void CreateTransitionUVs(GraphicsDevice graphics, Texture2D textureMap, int width, int height, Point top, Point sides, Point bottom, Dictionary<BoxTransition, BoxPrimitive.BoxTextureCoords> transitionTextures, VoxelType.TransitionType transitionType = VoxelType.TransitionType.Horizontal)
         {
             for(int i = 0; i < 16; i++)
             {
                 Point topPoint = new Point(top.X + i, top.Y);
-                transitionTextures[(TransitionTexture)i] = new BoxPrimitive.BoxTextureCoords(textureMap.Width, textureMap.Height, width, height, sides, sides, topPoint, bottom, sides, sides);
+
+                if (transitionType == VoxelType.TransitionType.Horizontal)
+                {
+                    BoxTransition transition = new BoxTransition()
+                    {
+                        Top = (TransitionTexture) i
+                    };
+                    transitionTextures[transition] = new BoxPrimitive.BoxTextureCoords(textureMap.Width,
+                        textureMap.Height, width, height, sides, sides, topPoint, bottom, sides, sides);
+                }
+                else
+                {
+                    for (int j = 0; j < 16; j++)
+                    { 
+                         Point sidePoint = new Point(top.X + j, top.Y);
+                        // TODO: create every iteration of frontback vs. left right. There should be 16 of these.
+                        BoxTransition transition = new BoxTransition()
+                        {
+                            Left = (TransitionTexture)i,
+                            Right = (TransitionTexture)i,
+                            Front = (TransitionTexture)j,
+                            Back = (TransitionTexture)j
+                        };
+                        transitionTextures[transition] = new BoxPrimitive.BoxTextureCoords(textureMap.Width,
+                            textureMap.Height, width, height, sidePoint, sidePoint, sides, bottom, topPoint, topPoint);
+                    }
+                }
             }
         }
 
@@ -673,8 +699,14 @@ namespace DwarfCorp
                 ParticleType = "stone_particle",
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_metal_destroy),
                 HitSound = stonePicks,
-                IsTransparent =  true
+                IsTransparent =  true,
+                HasTransitionTextures = true,
+                Transitions = VoxelType.TransitionType.Vertical
             };
+
+            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 14), new Point(0, 14), new Point(0, 14), glassType.TransitionTextures,
+                VoxelType.TransitionType.Vertical);
+
 
             VoxelType brickType = new VoxelType
             {
@@ -821,7 +853,7 @@ namespace DwarfCorp
                         continue;
 
                     if (type.HasTransitionTextures)
-                        primitive = new BoxPrimitive(device, 1, 1, 1, type.TransitionTextures[TransitionTexture.None]);
+                        primitive = new BoxPrimitive(device, 1, 1, 1, type.TransitionTextures[new BoxTransition()]);
 
                     device.Viewport = new Viewport(col * tileSize, row * tileSize, tileSize, tileSize);
                     Matrix viewMatrix = Matrix.CreateLookAt(new Vector3(-1.5f, 1.3f, -1.5f), Vector3.Zero, Vector3.Up);

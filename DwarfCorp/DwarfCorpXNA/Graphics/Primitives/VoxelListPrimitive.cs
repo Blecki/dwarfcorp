@@ -531,7 +531,8 @@ namespace DwarfCorp
                             if(faceExists[(int)face])
                             {
                                 voxelOnFace.GridPosition = new Vector3(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z);
-                                drawFace[(int)face] =  (voxelOnFace.IsExplored && voxelOnFace.IsEmpty) || voxelOnFace.Type.IsTransparent || !voxelOnFace.IsVisible || 
+                                drawFace[(int)face] =  (voxelOnFace.IsExplored && voxelOnFace.IsEmpty) || (voxelOnFace.Type.IsTransparent && !v.Type.IsTransparent) || 
+                                    !voxelOnFace.IsVisible || 
                                     (voxelOnFace.Type.CanRamp && voxelOnFace.RampType != RampType.None && IsSideFace(face) && 
                                     ShouldDrawFace(face, voxelOnFace.RampType, v.RampType));
 
@@ -539,7 +540,7 @@ namespace DwarfCorp
                             else
                             {
                                 bool success = chunk.Manager.ChunkData.GetNonNullVoxelAtWorldLocation(new Vector3(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z) + chunk.Origin, ref worldVoxel);
-                                    drawFace[(int)face] = !success || (worldVoxel.IsExplored && worldVoxel.IsEmpty) || worldVoxel.Type.IsTransparent || !worldVoxel.IsVisible ||
+                                    drawFace[(int)face] = !success || (worldVoxel.IsExplored && worldVoxel.IsEmpty) || (worldVoxel.Type.IsTransparent && !v.Type.IsTransparent) || !worldVoxel.IsVisible ||
                                                      (worldVoxel.Type.CanRamp && worldVoxel.RampType != RampType.None &&
                                                       IsSideFace(face) &&
                                                       ShouldDrawFace(face, worldVoxel.RampType, v.RampType));
@@ -561,8 +562,6 @@ namespace DwarfCorp
                             int vertexIndex = 0;
                             int vertexCount = 0;
                             primitive.GetFace(face, uvs, out faceIndex, out faceCount, out vertexIndex, out vertexCount);
-                            Vector2 texScale = uvs.Scales[i];
-
                             int indexOffset = maxVertex;
                             for (int vertOffset = 0; vertOffset < vertexCount; vertOffset++)
                             {
@@ -576,11 +575,6 @@ namespace DwarfCorp
                                 if(v.Type.CanRamp && ShouldRamp(bestKey, v.RampType))
                                 {
                                     offset = new Vector3(0, -v.Type.RampSize, 0);
-
-                                    if(face != BoxFace.Top && face != BoxFace.Bottom)
-                                    {
-                                        texOffset = new Vector2(0, v.Type.RampSize * (texScale.Y));
-                                    }
                                 }
 
                                 if (maxVertex >= Vertices.Length)
