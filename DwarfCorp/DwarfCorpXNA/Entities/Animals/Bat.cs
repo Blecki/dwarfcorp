@@ -60,10 +60,10 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
-            SelectionCircle = Physics.AddChild(new SelectionCircle(Manager)
+            Physics.AddChild(new SelectionCircle(Manager)
             {
                 IsVisible = false
-            }) as SelectionCircle;
+            });
 
             // Called from constructor with appropriate sprite asset as a string
             Initialize();

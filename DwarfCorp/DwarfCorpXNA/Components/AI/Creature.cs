@@ -132,8 +132,20 @@ namespace DwarfCorp
         public Physics Physics { get; set; }
         /// <summary> The sprite draws the character and handles animations </summary>
         public CharacterSprite Sprite { get; set; }
+
         /// <summary> The selection circle is drawn when the character is selected </summary>
-        public SelectionCircle SelectionCircle { get; set; }
+        private SelectionCircle _selectionCircle = null;
+        [JsonIgnore] public SelectionCircle SelectionCircle
+        {
+            get
+            {
+                if (_selectionCircle == null)
+                    _selectionCircle = Parent.EnumerateAll().OfType<SelectionCircle>().FirstOrDefault();
+                System.Diagnostics.Debug.Assert(_selectionCircle != null, "No selection circle created on creature.");
+                return _selectionCircle;
+            }
+        }
+
         /// <summary> Finds enemies nearby and triggers when it sees them </summary>
         public EnemySensor Sensors { get; set; }
         /// <summary> Allows the creature to grab other objects </summary>

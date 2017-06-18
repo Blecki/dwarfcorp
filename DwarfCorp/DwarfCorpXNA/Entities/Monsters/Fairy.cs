@@ -28,10 +28,10 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
-            SelectionCircle = Physics.AddChild(new SelectionCircle(Manager)
+            Physics.AddChild(new SelectionCircle(Manager)
             {
                 IsVisible = false
-            }) as SelectionCircle;
+            });
 
             HasMeat = false;
             HasBones = false;

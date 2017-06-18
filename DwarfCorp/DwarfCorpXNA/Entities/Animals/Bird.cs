@@ -61,20 +61,13 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
-            SelectionCircle = Physics.AddChild(new SelectionCircle(Manager)
+            Physics.AddChild(new SelectionCircle(Manager)
             {
                 IsVisible = false
-            }) as SelectionCircle;
+            });
 
-            Initialize(new SpriteSheet(sprites));
-        }
+            var spriteSheet = new SpriteSheet(sprites);
 
-        /// <summary>
-        /// Initialize function creates all the required components for the bird.
-        /// </summary>
-        /// <param name="spriteSheet">The sprite sheet to use for the bird</param>
-        public void Initialize(SpriteSheet spriteSheet)
-        {
             // When true, causes the bird to face the direction its moving in
             Physics.Orientation = Physics.OrientMode.RotateY;
 
