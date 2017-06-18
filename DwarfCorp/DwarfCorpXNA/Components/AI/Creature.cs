@@ -229,9 +229,6 @@ namespace DwarfCorp
             string allies,
             PlanService planService,
             Faction faction,
-            ChunkManager chunks,
-            GraphicsDevice graphics,
-            ContentManager content,
             string name) :
             base(Manager, name, stats.MaxHealth, 0.0f, stats.MaxHealth)
         {
@@ -243,9 +240,6 @@ namespace DwarfCorp
             Buffs = new List<Buff>();
             IsOnGround = true;
             Stats = stats;
-            Chunks = chunks;
-            Graphics = graphics;
-            Content = content;
             Faction = faction;
             PlanService = planService;
             Allies = allies;
@@ -292,18 +286,10 @@ namespace DwarfCorp
         public Timer EggTimer { get; set; }
         /// <summary> Reference to the graphics device. </summary>
         [JsonIgnore]
-        public GraphicsDevice Graphics { get; set; }
-
-        /// <summary> Reference to the chunk manager. </summary>
-        [JsonIgnore]
-        public ChunkManager Chunks { get; set; }
+        public GraphicsDevice Graphics { get { return Manager.World.GraphicsDevice; } }
 
         /// <summary> List of attacks the creature can perform. </summary>
         public List<Attack> Attacks { get; set; }
-
-        /// <summary> Reference to the content manager </summary>
-        [JsonIgnore]
-        public ContentManager Content { get; set; }
 
         /// <summary> Faction that the creature belongs to </summary>
         public Faction Faction { get; set; }
@@ -375,15 +361,6 @@ namespace DwarfCorp
 
         /// <summary> List of ongoing effects the creature is sustaining </summary>
         public List<Buff> Buffs { get; set; }
-
-        /// <summary> Called when the creature is deserialized from JSON </summary>
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
-        {
-            Graphics = Manager.World.ChunkManager.Graphics;
-            Content = Manager.World.ChunkManager.Content;
-            Chunks = Manager.World.ChunkManager;
-        }
 
         /// <summary> Adds the specified ongoing effect. </summary>
         /// <param name="buff"> The onging effect to add </param>
@@ -542,9 +519,10 @@ namespace DwarfCorp
         public override void Die()
         {
             // This is just a silly hack to make sure that creatures
-            // carrying resources to a trade depot release tcheir resources
+            // carrying resources to a trade depot release their resources
             // when they die.
             Inventory.Resources.MaxResources = 99999;
+
             CreateMeatAndBones();
             NoiseMaker.MakeNoise("Die", Physics.Position, true);
 
