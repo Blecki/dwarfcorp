@@ -109,12 +109,13 @@ namespace DwarfCorp
        
             Physics.Tags.Add("MudGolem");
             Physics.Mass = 100;
-            DeathParticleTrigger = Physics.AddChild(new ParticleTrigger("dirt_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+
+            Physics.AddChild(new ParticleTrigger("dirt_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 5,
                 SoundToPlay = ContentPaths.Audio.gravel
-            }) as ParticleTrigger;
+            });
 
             NoiseMaker.Noises["Hurt"] = new List<string>
             {

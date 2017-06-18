@@ -104,12 +104,12 @@ namespace DwarfCorp
 
             Physics.Tags.Add("Demon");
 
-            DeathParticleTrigger = Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 5,
                 SoundToPlay = ContentPaths.Entities.Goblin.Audio.goblinhurt1
-            }) as ParticleTrigger;
+            });
 
             NoiseMaker.Noises["Hurt"] = new List<string>
             {

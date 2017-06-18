@@ -33,12 +33,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace DwarfCorp
 {
@@ -65,14 +63,8 @@ namespace DwarfCorp
         /// <summary> This is what the character is currently doing (used for animation) </summary>
         protected CharacterMode currentCharacterMode = CharacterMode.Idle;
 
-        public enum CreatureGender
-        {
-            Male,
-            Female,
-            Nonbinary
-        }
 
-        public CreatureGender Gender { get; set; }
+        public Gender Gender { get; set; }
 
         public bool CanReproduce = false;
 
@@ -84,95 +76,9 @@ namespace DwarfCorp
         public int PregnancyLengthHours = 24;
         public string Species = "";
         public string BabyType = "";
-
-        public class Pregnancy
-        {
-            public DateTime EndDate;
-        }
-
+        
         public Pregnancy CurrentPregnancy = null;
-
-        public bool CanMate(Creature other)
-        {
-            bool genderWorks = false;
-            switch (Gender)
-            {
-                case CreatureGender.Male:
-                    genderWorks = other.Gender == CreatureGender.Female || other.Gender == CreatureGender.Nonbinary;
-                    break;
-                case CreatureGender.Female:
-                    genderWorks = other.Gender == CreatureGender.Male || other.Gender == CreatureGender.Nonbinary;
-                    break;
-                case CreatureGender.Nonbinary:
-                    genderWorks = Gender != CreatureGender.Nonbinary;
-                    break;
-            }
-
-            return genderWorks && !IsPregnant && other.CanReproduce && other.Species == Species && !other.IsPregnant;
-        }
-
-        public void Mate(Creature other, WorldTime time)
-        {
-            if (IsPregnant || other.IsPregnant) return;
-            if (Gender == CreatureGender.Nonbinary) return;
-            if (Gender != CreatureGender.Female)
-            {
-                other.Mate(this, time);
-                return;
-            }
-
-            CurrentPregnancy = new Pregnancy()
-            {
-                EndDate = time.CurrentDate + new TimeSpan(0, PregnancyLengthHours, 0, 0)
-            };
-        }
-
-        public static string Pronoun(CreatureGender gender)
-        {
-            switch (gender)
-            {
-                case CreatureGender.Male:
-                    return "he";
-                case CreatureGender.Female:
-                    return "she";
-                case CreatureGender.Nonbinary:
-                    return "they";
-            }
-            return "?";
-        }
-
-        public static string Posessive(CreatureGender gender)
-        {
-            switch (gender)
-            {
-                case CreatureGender.Male:
-                    return "his";
-                case CreatureGender.Female:
-                    return "her";
-                case CreatureGender.Nonbinary:
-                    return "their";
-            }
-
-            return "?";
-        }
-
-        public static CreatureGender RandomGender()
-        {
-            float num = MathFunctions.Rand(0.0f, 1.0f);
-            if (num < 0.01f)
-            {
-                return CreatureGender.Nonbinary;
-            }
-            else if (num < 0.505f)
-            {
-                return CreatureGender.Male;
-            }
-            else
-            {
-                return CreatureGender.Female;
-            }
-        }
-
+        
         public Creature()
         {
             CurrentCharacterMode = CharacterMode.Idle;
@@ -183,7 +89,7 @@ namespace DwarfCorp
             HasBones = true;
             HasCorpse = false;
             DrawLifeTimer.HasTriggered = true;
-            Gender = RandomGender();
+            Gender = Mating.RandomGender();
         }
 
         public Creature(
@@ -195,7 +101,7 @@ namespace DwarfCorp
             string name) :
             base(Manager, name, stats.MaxHealth, 0.0f, stats.MaxHealth)
         {
-            Gender = RandomGender();
+            Gender = Mating.RandomGender();
             DrawLifeTimer.HasTriggered = true;
             HasMeat = true;
             HasBones = true;
@@ -230,8 +136,6 @@ namespace DwarfCorp
         public SelectionCircle SelectionCircle { get; set; }
         /// <summary> Finds enemies nearby and triggers when it sees them </summary>
         public EnemySensor Sensors { get; set; }
-        /// <summary> Creates particles when the creature dies. </summary>
-        public ParticleTrigger DeathParticleTrigger { get; set; }
         /// <summary> Allows the creature to grab other objects </summary>
         public Grabber Hands { get; set; }
         /// <summary> If true, the creature will generate meat when it dies. </summary>
@@ -600,7 +504,11 @@ namespace DwarfCorp
                     NoiseMaker.MakeNoise("Hurt", AI.Position);
                     Sprite.Blink(0.5f);
                     AI.AddThought(Thought.ThoughtType.TookDamage);
-                    Manager.World.ParticleManager.Trigger(DeathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
+
+                    var deathParticleTrigger = Parent.EnumerateAll().OfType<ParticleTrigger>().Where(p => p.Name == "Death Gibs").FirstOrDefault();
+
+                    if (deathParticleTrigger != null)
+                        Manager.World.ParticleManager.Trigger(deathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
                     break;
             }
 
@@ -685,7 +593,11 @@ namespace DwarfCorp
                 NoiseMaker.MakeNoise("Hurt", AI.Position);
                 Sprite.Blink(0.5f);
                 AI.AddThought(Thought.ThoughtType.TookDamage);
-                Manager.World.ParticleManager.Trigger(DeathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
+
+                var deathParticleTrigger = Parent.EnumerateAll().OfType<ParticleTrigger>().Where(p => p.Name == "Death Gibs").FirstOrDefault();
+
+                if (deathParticleTrigger != null)
+                    Manager.World.ParticleManager.Trigger(deathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
                 DrawLifeTimer.Reset();
             }
 

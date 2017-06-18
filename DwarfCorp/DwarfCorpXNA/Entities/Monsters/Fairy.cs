@@ -100,14 +100,12 @@ namespace DwarfCorp
 
             Physics.Tags.Add("Dwarf");
 
-
-
-            DeathParticleTrigger = Physics.AddChild(new ParticleTrigger("star_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            Physics.AddChild(new ParticleTrigger("star_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 5,
                 SoundToPlay = ContentPaths.Audio.wurp,
-            }) as ParticleTrigger;
+            });
           
             NoiseMaker.Noises["Hurt"] = new List<string>
             {

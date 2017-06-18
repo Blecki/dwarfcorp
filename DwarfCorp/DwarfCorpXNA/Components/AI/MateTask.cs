@@ -69,7 +69,7 @@ namespace DwarfCorp
 
         public override bool IsFeasible(Creature agent)
         {
-            return agent.CanMate(Them.Creature);
+            return Mating.CanMate(agent, Them.Creature);
         }
 
         public IEnumerable<Act.Status> Mate(Creature me)
@@ -89,7 +89,14 @@ namespace DwarfCorp
                 yield return Act.Status.Running;
             }
 
-            me.Mate(Them.Creature, me.World.Time);
+            if (Mating.CanMate(me, Them.Creature))
+                Mating.Mate(me, Them.Creature, me.World.Time);
+            else
+            {
+                AutoRetry = false;
+                yield return Act.Status.Fail;
+            }
+
             yield return Act.Status.Success;
         }
 

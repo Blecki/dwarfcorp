@@ -370,7 +370,7 @@ namespace DwarfCorp
             if (!MathFunctions.RandEvent(0.0001f)) return;
             if (CurrentTask != null) return;
             IEnumerable<CreatureAI> potentialMates =
-                Faction.Minions.Where(minion => minion != this && minion.Creature.CanMate(this.Creature));
+                Faction.Minions.Where(minion => minion != this && Mating.CanMate(minion.Creature, this.Creature));
             CreatureAI closestMate = null;
             float closestDist = float.MaxValue;
 

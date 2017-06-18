@@ -133,6 +133,7 @@
     <Compile Include="AssetManagement\TextureManager.cs" />
     <Compile Include="Components\AI\Buff.cs" />
     <Compile Include="Components\AI\CharacterMode.cs" />
+    <Compile Include="Components\AI\Gender.cs" />
     <Compile Include="Components\AI\MateTask.cs" />
     <Compile Include="Components\AI\CreatureMovement.cs" />
     <Compile Include="Components\AI\DamageResistBuff.cs" />
@@ -142,10 +143,12 @@
     <Compile Include="Components\AI\Grabber.cs" />
     <Compile Include="Components\AI\Health.cs" />
     <Compile Include="Components\AI\Inventory.cs" />
+    <Compile Include="Components\AI\Mating.cs" />
     <Compile Include="Components\AI\MoveAction.cs" />
     <Compile Include="Components\AI\MoveType.cs" />
     <Compile Include="Components\AI\OngoingDamageBuff.cs" />
     <Compile Include="Components\AI\OngoingHealBuff.cs" />
+    <Compile Include="Components\AI\Pregnancy.cs" />
     <Compile Include="Components\AI\Sensors\EnemySensor.cs" />
     <Compile Include="Components\AI\Sensors\Sensor.cs" />
     <Compile Include="Components\AI\Sensors\TrapSensor.cs" />

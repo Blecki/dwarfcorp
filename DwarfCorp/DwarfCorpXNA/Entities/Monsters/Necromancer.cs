@@ -106,15 +106,15 @@ namespace DwarfCorp
             shadow.SetCurrentAnimation("sh");
             Physics.Tags.Add("Necromancer");
 
-            DeathParticleTrigger = Physics.AddChild(new ParticleTrigger("sand_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            Physics.AddChild(new ParticleTrigger("sand_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 5,
                 SoundToPlay = ContentPaths.Audio.gravel
-            }) as ParticleTrigger;
+            });
+
             Physics.AddChild(new Flammable(Manager, "Flames"));
-
-
+            
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
                 ContentPaths.Audio.skel0,

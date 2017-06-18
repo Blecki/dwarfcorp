@@ -73,7 +73,7 @@ namespace DwarfCorp
         
         public void Initialize(EmployeeClass dwarfClass)
         {
-            Gender = Creature.RandomGender();
+            Gender = Mating.RandomGender();
             Physics.Orientation = Physics.OrientMode.RotateY;
             Sprite = Physics.AddChild(new CharacterSprite(Graphics, Manager, "Dwarf Sprite", Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)))) as CharacterSprite;
             foreach (Animation animation in dwarfClass.Animations)
@@ -118,13 +118,14 @@ namespace DwarfCorp
 
             Physics.Tags.Add("Dwarf");
 
-            DeathParticleTrigger = Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 1,
                 BoxTriggerTimes = 10, 
                 SoundToPlay = ContentPaths.Entities.Dwarf.Audio.dwarfhurt1,
-            }) as ParticleTrigger;
+            });
+
             Physics.AddChild(new Flammable(Manager, "Flames"));
 
             NoiseMaker.Noises["Hurt"] = new List<string>

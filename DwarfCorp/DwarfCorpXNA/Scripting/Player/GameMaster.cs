@@ -275,12 +275,18 @@ namespace DwarfCorp
             CurrentTool.Render(game, g, time);
             VoxSelector.Render();
 
+            foreach (var m in Faction.Minions)
+            { 
+                m.Creature.SelectionCircle.IsVisible = false;
+                m.Creature.Sprite.DrawSilhouette = false;
+            };
+
             foreach (CreatureAI creature in Faction.SelectedMinions)
             {
-                //Drawer2D.DrawZAlignedRect(creature.Position + Vector3.Down * 0.5f, 0.25f, 0.25f, 2, new Color(255, 255, 255, 50));
                 creature.Creature.SelectionCircle.IsVisible = true;
                 creature.Creature.Sprite.DrawSilhouette = true;
-                foreach(Task task in creature.Tasks)
+
+                foreach (Task task in creature.Tasks)
                 {
                     if (task.IsFeasible(creature.Creature))
                         task.Render(time);
@@ -290,9 +296,7 @@ namespace DwarfCorp
                 {
                     creature.CurrentTask.Render(time);
                 }
-            
             }
-
 
             DwarfGame.SpriteBatch.Begin();
             BodySelector.Render(DwarfGame.SpriteBatch);

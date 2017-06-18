@@ -178,13 +178,14 @@ namespace DwarfCorp
             };
             AI.Stats.LevelIndex = 0;
 
-            DeathParticleTrigger = Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 1,
                 BoxTriggerTimes = 10,
                 SoundToPlay = ContentPaths.Entities.Dwarf.Audio.dwarfhurt1,
-            }) as ParticleTrigger;
+            });
+
             Physics.AddChild(new Flammable(Manager, "Flames"));
             HasBones = true;
             HasMeat = true;
