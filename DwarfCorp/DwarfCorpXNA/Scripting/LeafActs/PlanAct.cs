@@ -53,7 +53,7 @@ namespace DwarfCorp
 
         public string TargetName { get; set; }
 
-        public List<Creature.MoveAction> Path { get { return GetPath(); } set {  SetPath(value);} }
+        public List<MoveAction> Path { get { return GetPath(); } set {  SetPath(value);} }
         public Voxel Target { get { return GetTarget(); } set {  SetTarget(value);} }
 
         public PlanSubscriber PlanSubscriber { get; set; }
@@ -111,12 +111,12 @@ namespace DwarfCorp
             Agent.Blackboard.SetData(TargetName, target);
         }
 
-        public List<Creature.MoveAction> GetPath()
+        public List<MoveAction> GetPath()
         {
-            return Agent.Blackboard.GetData<List<Creature.MoveAction>>(PathOut);
+            return Agent.Blackboard.GetData<List<MoveAction>>(PathOut);
         }
 
-        public void SetPath(List<Creature.MoveAction> path)
+        public void SetPath(List<MoveAction> path)
         {
             Agent.Blackboard.SetData(PathOut, path);
         }

@@ -21,19 +21,17 @@ namespace DwarfCorp
 
         }
         public Fairy(ComponentManager manager, string allies, Vector3 position) :
-            base(manager, new CreatureStats(new FairyClass(), 0), "Player", manager.World.PlanService, manager.World.Factions.Factions[allies],
-           
-              manager.World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Fairy")
+            base(manager, new CreatureStats(new FairyClass(), 0), "Player", manager.World.PlanService, manager.World.Factions.Factions[allies], "Fairy")
         {
             Physics = new Physics(manager, "Fairy", Matrix.CreateTranslation(position),
                        new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, 0, 0));
 
             Physics.AddChild(this);
 
-            SelectionCircle = Physics.AddChild(new SelectionCircle(Manager)
+            Physics.AddChild(new SelectionCircle(Manager)
             {
                 IsVisible = false
-            }) as SelectionCircle;
+            });
 
             HasMeat = false;
             HasBones = false;
@@ -90,25 +88,24 @@ namespace DwarfCorp
             Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
             shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
 
-            Shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform, new SpriteSheet(ContentPaths.Effects.shadowcircle))) as Shadow;
+            var shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform, new SpriteSheet(ContentPaths.Effects.shadowcircle))) as Shadow;
             List<Point> shP = new List<Point>
             {
                 new Point(0, 0)
             };
             Animation shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle), "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
-            Shadow.AddAnimation(shadowAnimation);
+            shadow.AddAnimation(shadowAnimation);
             shadowAnimation.Play();
-            Shadow.SetCurrentAnimation("sh");
+            shadow.SetCurrentAnimation("sh");
+
             Physics.Tags.Add("Dwarf");
 
-
-
-            DeathParticleTrigger = Physics.AddChild(new ParticleTrigger("star_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            Physics.AddChild(new ParticleTrigger("star_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 5,
                 SoundToPlay = ContentPaths.Audio.wurp,
-            }) as ParticleTrigger;
+            });
           
             NoiseMaker.Noises["Hurt"] = new List<string>
             {

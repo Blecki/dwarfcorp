@@ -20,12 +20,10 @@ namespace DwarfCorp
 
         }
 
-        public Scorpion(string sprites, Vector3 position, ComponentManager manager, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, string name) :
-            // Creature base constructor
+        public Scorpion(string sprites, Vector3 position, ComponentManager manager, string name) :
             base
             (
                 manager,
-                // Default stats
                 new CreatureStats
                 {
                     Dexterity = 2,
@@ -37,16 +35,10 @@ namespace DwarfCorp
                     Size = 0.25f,
                     CanSleep = false
                 },
-                // Belongs to herbivore team
                 "Carnivore",
-                // Uses the default plan service
                 manager.World.PlanService,
-                // Belongs to the herbivore team
                 manager.World.Factions.Factions["Carnivore"],
-                // The physics component this creature belongs to
-                
-                // All the rest of the arguments are passed in directly
-                chunks, graphics, content, name
+                name
             )
         {
             Physics = new Physics
@@ -69,10 +61,10 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
-            SelectionCircle = Physics.AddChild(new SelectionCircle(Manager)
+            Physics.AddChild(new SelectionCircle(Manager)
             {
                 IsVisible = false
-            }) as SelectionCircle;
+            });
 
             Initialize(sprites);
         }
@@ -135,7 +127,7 @@ namespace DwarfCorp
             shadowTransform *= Matrix.CreateScale(0.75f);
 
             SpriteSheet shadowTexture = new SpriteSheet(ContentPaths.Effects.shadowcircle);
-            Shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform, shadowTexture)) as Shadow;
+            var shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform, shadowTexture)) as Shadow;
 
             // We set up the shadow's animation so that it's just a static black circle
             // TODO: Make the shadow set this up automatically
@@ -144,16 +136,16 @@ namespace DwarfCorp
                 new Point(0, 0)
             };
             Animation shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle), "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
-            Shadow.AddAnimation(shadowAnimation);
+            shadow.AddAnimation(shadowAnimation);
             shadowAnimation.Play();
-            Shadow.SetCurrentAnimation("sh");
+            shadow.SetCurrentAnimation("sh");
 
             // The bird will emit a shower of blood when it dies
-            DeathParticleTrigger = Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 1
-            }) as ParticleTrigger;
+            });
 
             // The bird is flammable, and can die when exposed to fire.
             Physics.AddChild(new Flammable(Manager, "Flames"));

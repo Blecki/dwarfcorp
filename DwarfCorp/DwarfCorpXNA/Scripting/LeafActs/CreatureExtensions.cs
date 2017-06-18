@@ -101,7 +101,7 @@ namespace DwarfCorp
                             foodBody.LocalPosition = foodPosition;
                             foodBody.IsActive = false;
                             agent.Physics.Velocity = Vector3.Zero;
-                            agent.CurrentCharacterMode = Creature.CharacterMode.Sitting;
+                            agent.CurrentCharacterMode = CharacterMode.Sitting;
                             if (MathFunctions.RandEvent(0.05f))
                             {
                                 agent.World.ParticleManager.Trigger("crumbs", foodPosition, Color.White,
@@ -247,7 +247,7 @@ namespace DwarfCorp
         /// <returns>Success when the block is mined, fail if it fails to be mined, and running otherwise.</returns>
         public static IEnumerable<Act.Status> Dig(this Creature agent, string voxel, float energyLoss)
         {
-            agent.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
+            agent.Sprite.ResetAnimations(CharacterMode.Attacking);
 
             // Block since we're in a coroutine.
             while(true)
@@ -266,7 +266,7 @@ namespace DwarfCorp
                 // If the voxel has already been destroyed, just ignore it and return.
                 if(vox.Health <= 0.0f || !agent.Faction.IsDigDesignation(vox))
                 {
-                    agent.CurrentCharacterMode = Creature.CharacterMode.Idle;
+                    agent.CurrentCharacterMode = CharacterMode.Idle;
                     yield return Act.Status.Success;
                     break;
                 }
@@ -276,7 +276,7 @@ namespace DwarfCorp
                 agent.Physics.Velocity *= 0.9f;
 
                 // Play the attack animations.
-                agent.CurrentCharacterMode = Creature.CharacterMode.Attacking;
+                agent.CurrentCharacterMode = CharacterMode.Attacking;
                 agent.Sprite.ResetAnimations(agent.CurrentCharacterMode);
                 agent.Sprite.PlayAnimations(agent.CurrentCharacterMode);
 
@@ -341,7 +341,7 @@ namespace DwarfCorp
                     yield return Act.Status.Running;
                 }
 
-                agent.CurrentCharacterMode = Creature.CharacterMode.Idle;
+                agent.CurrentCharacterMode = CharacterMode.Idle;
 
                 yield return Act.Status.Running;
             }

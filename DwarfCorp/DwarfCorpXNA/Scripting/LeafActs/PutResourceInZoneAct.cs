@@ -128,9 +128,9 @@ namespace DwarfCorp
                     Creature.NoiseMaker.MakeNoise("Stockpile", Creature.AI.Position);
                     Creature.Stats.NumItemsGathered++;
                     Creature.AI.AddXP(1);
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
-                    Creature.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
-                    Creature.Sprite.PlayAnimations(Creature.CharacterMode.Attacking);
+                    Creature.CurrentCharacterMode = CharacterMode.Attacking;
+                    Creature.Sprite.ResetAnimations(CharacterMode.Attacking);
+                    Creature.Sprite.PlayAnimations(CharacterMode.Attacking);
 
                     while (!Creature.Sprite.CurrentAnimation.IsDone())
                     {
@@ -142,11 +142,11 @@ namespace DwarfCorp
                 else
                 {
                     Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+                    Creature.CurrentCharacterMode = CharacterMode.Idle;
                     yield return Status.Fail;
                 }   
             }
-            Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+            Creature.CurrentCharacterMode = CharacterMode.Idle;
             yield return Status.Success;
         }
     }

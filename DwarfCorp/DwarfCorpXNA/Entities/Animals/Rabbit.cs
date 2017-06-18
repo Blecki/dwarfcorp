@@ -20,12 +20,10 @@ namespace DwarfCorp
 
         }
 
-        public Rabbit(string sprites, Vector3 position, ComponentManager manager, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, string name) :
-            // Creature base constructor
+        public Rabbit(string sprites, Vector3 position, ComponentManager manager, string name) :
             base
             (
                 manager,
-                // Default stats
                 new CreatureStats
                 {
                     Dexterity = 6,
@@ -37,42 +35,29 @@ namespace DwarfCorp
                     Size = 0.25f,
                     CanSleep = false
                 },
-                // Belongs to herbivore team
                 "Herbivore",
-                // Uses the default plan service
                 manager.World.PlanService,
-                // Belongs to the herbivore team
                 manager.World.Factions.Factions["Herbivore"],
-                // The physics component this creature belongs to
-               
-                // All the rest of the arguments are passed in directly
-                chunks, graphics, content, name
+                name
             )
         {
             Physics = new Physics
                 (
                 Manager,
-                    // It is called "bird"
                     "A Rabbit",
-                    // It's attached to the root component of the component manager
-                    // It is located at a position passed in as an argument
                     Matrix.CreateTranslation(position),
-                    // It has a size of 0.25 blocks
                     new Vector3(0.375f, 0.375f, 0.375f),
-                    // Its bounding box is located in its center
                     new Vector3(0.0f, 0.0f, 0.0f),
-                    //It has a mass of 1, a moment of intertia of 1, and very small friction/restitution
                     1.0f, 1.0f, 0.999f, 0.999f,
-                    // It has a gravity of 10 blocks per second downward
                     new Vector3(0, -10, 0)
                 );
 
             Physics.AddChild(this);
 
-            SelectionCircle = Physics.AddChild(new SelectionCircle(Manager)
+            Physics.AddChild(new SelectionCircle(Manager)
             {
                 IsVisible = false
-            }) as SelectionCircle;
+            });
 
             Initialize(sprites);
         }
@@ -134,7 +119,7 @@ namespace DwarfCorp
             shadowTransform *= Matrix.CreateScale(0.75f);
 
             SpriteSheet shadowTexture = new SpriteSheet(ContentPaths.Effects.shadowcircle);
-            Shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform, shadowTexture)) as Shadow;
+            var shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform, shadowTexture)) as Shadow;
 
             // We set up the shadow's animation so that it's just a static black circle
             // TODO: Make the shadow set this up automatically
@@ -143,16 +128,16 @@ namespace DwarfCorp
                 new Point(0, 0)
             };
             Animation shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle), "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
-            Shadow.AddAnimation(shadowAnimation);
+            shadow.AddAnimation(shadowAnimation);
             shadowAnimation.Play();
-            Shadow.SetCurrentAnimation("sh");
+            shadow.SetCurrentAnimation("sh");
 
             // The bird will emit a shower of blood when it dies
-            DeathParticleTrigger = Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 1
-            }) as ParticleTrigger;
+            });
 
             // The bird is flammable, and can die when exposed to fire.
             Physics.AddChild(new Flammable(Manager, "Flames"));

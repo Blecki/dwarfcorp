@@ -62,7 +62,7 @@ namespace DwarfCorp
             {
                 Voxel voxel = new Voxel();
 
-                if (!creature.Chunks.ChunkData.GetFirstVoxelUnder(target.BoundingBox.Center(), ref voxel, true))
+                if (!creature.World.ChunkManager.ChunkData.GetFirstVoxelUnder(target.BoundingBox.Center(), ref voxel, true))
                 {
                     return Status.Fail;
                 }

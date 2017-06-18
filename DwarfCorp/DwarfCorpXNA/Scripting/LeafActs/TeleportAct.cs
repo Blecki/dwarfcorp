@@ -75,7 +75,7 @@ namespace DwarfCorp
                         Creature.Physics.IsSleeping = true;
                         motion.Update(DwarfTime.LastTime);
                         Creature.AI.Position = motion.GetTransform().Translation;
-                        Creature.CurrentCharacterMode = Creature.CharacterMode.Falling;
+                        Creature.CurrentCharacterMode = CharacterMode.Falling;
                         yield return Status.Running;
                     }
                     break;

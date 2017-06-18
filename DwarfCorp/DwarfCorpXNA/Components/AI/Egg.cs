@@ -1,4 +1,4 @@
-// BuffSpell.cs
+// Creature.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -30,62 +30,65 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Runtime.Serialization;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class BuffSpell : Spell
+    public class Egg : GameComponent, IUpdateableComponent
     {
-        public List<Buff> Buffs { get; set; } 
-        
-        public BuffSpell(WorldManager world) :
-            base(world)
+        public string Adult { get; set; }
+        public DateTime Birthday { get; set; }
+        public Body ParentBody { get; set; }
+        public BoundingBox? PositionConstrain { get; set; }
+        public Egg()
         {
             
         }
 
-        public BuffSpell(WorldManager world, params Buff[] buffs) :
-            base(world)
+        public Egg(string adult, ComponentManager manager, Vector3 position, BoundingBox? positionConstraint) :
+            base(false, manager)
         {
-            Buffs = buffs.ToList();
-            Mode = SpellMode.SelectEntities;
-            Name = "Buff spell";
-            Description = "Apply buffs to selected creatures";
-            Hint = "Click and drag to select creatures";
-            ManaCost = 20;
-            Image = new NamedImageFrame(ContentPaths.GUI.icons, 32, 0, 2);
-            TileRef = 16;
+            PositionConstrain = positionConstraint;
+            Adult = adult;
+            Birthday = Manager.World.Time.CurrentDate + new TimeSpan(0, 12, 0, 0);
+
+            if (ResourceLibrary.GetResourceByName(adult + " Egg") == null)
+            {
+                Resource newEggResource =
+                    new Resource(ResourceLibrary.GetResourceByName(ResourceLibrary.ResourceType.Egg));
+                newEggResource.Type = adult + " Egg";
+                ResourceLibrary.Add(newEggResource);
+            }
+            ParentBody = EntityFactory.CreateEntity<Body>(adult + " Egg Resource", position);
+            ParentBody.AddChild(this);
+            manager.AddComponent(this);
         }
 
-
-        public override void OnEntitiesSelected(SpellTree tree, List<Body> entities)
+        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            foreach (Body body in entities)
+            if (Manager.World.Time.CurrentDate > Birthday)
             {
-                Creature creature = body.GetChildrenOfType<Creature>().FirstOrDefault();
-
-                if (creature == null) continue;
-                else
-                {
-                    foreach (var buff in Buffs)
-                    {
-                        if (OnCast(tree))
-                        {
-                            Vector3 p = creature.AI.Position + Vector3.Up;
-                            IndicatorManager.DrawIndicator("-" + ManaCost + " M", p, 1.0f, Color.Red);
-                            creature.AddBuff(buff.Clone());
-                        }
-                    }
-                }
+                Hatch();
             }
-            base.OnEntitiesSelected(tree, entities);
+        }
+
+        public void Hatch()
+        {
+            var adult = EntityFactory.CreateEntity<Body>(Adult, ParentBody.Position);
+            if (PositionConstrain.HasValue)
+            {
+                adult.GetComponent<CreatureAI>().PositionConstraint = PositionConstrain.Value;
+            }
+            GetEntityRootComponent().Die();
         }
     }
 }

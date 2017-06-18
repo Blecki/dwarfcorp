@@ -33,129 +33,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
-
-// TODO: Split file
+using System.Linq;
 
 namespace DwarfCorp
 {
-    ///<summary>
-    /// CreatureDef defines a creature to be loaded from JSON files. When
-    /// deserialized, it can be converted into a creature directly.
-    /// </summary>
-    [JsonObject(IsReference = true)]
-    public class CreatureDef
-    {
-        /// <summary> Name of the creature used for spawning </summary>
-        public string Name { get; set; }
-        /// <summary> Description of the creature displayed when the player mouses over it </summary>
-        public string Description { get; set; }
-        /// <summary> Race that the creature belongs to </summary>
-        public string Race { get; set; }
-        /// <summary> Size of the creature's bounding box in voxels </summary>
-        public Vector3 Size { get; set; }
-        /// <summary> If true, a shadow will be rendered under the creature </summary>
-        public bool HasShadow { get; set; }
-        /// <summary> If true, the creature takes fire damage and lights on fire from lava </summary>
-        public bool IsFlammable { get; set; }
-        /// <summary> Name of the particle effect to trigger when the creature gets hurt </summary>
-        public string BloodParticle { get; set; }
-        /// <summary> Sound the creature makes when it dies </summary>
-        public string DeathSound { get; set; }
-        /// <summary> Sounds the creature makes when hurt </summary>
-        public List<string> HurtSounds { get; set; }
-        /// <summary> Sound the creature makes when chewing food </summary>
-        public string ChewSound { get; set; }
-        /// <summary> Sound the creature makes when jumping </summary>
-        public string JumpSound { get; set; }
-        /// <summary> If true, when the creature dies, all of the other members of its race will mourn </summary>
-        public bool TriggersMourning { get; set; }
-        /// <summary> The size of the creature's shadow in voxels </summary>
-        public float ShadowScale { get; set; }
-        /// <summary> How much the creature resists external forces </summary>
-        public float Mass { get; set; }
-        /// <summary> The number of objects in the creature's inventory </summary>
-        public int InventorySize { get; set; }
-        /// <summary> Offset between the creature's origin and its sprite </summary>
-        public Vector3 SpriteOffset { get; set; }
-        /// <summary> The icon to draw on the minimap for the creature </summary>
-        public NamedImageFrame MinimapIcon { get; set; }
-        /// <summary> Bounding box in which the creature can see </summary>
-        public Vector3 SenseRange { get; set; }
-        /// <summary> Identifier path to a JSON file containing all the creature's classes </summary>
-        public string Classes { get; set; }
-        /// <summary> If true, the creature will sleep when tired. </summary>
-        public bool CanSleep { get; set; }
-        /// <summary> If true, the creature will eat when hungry </summary>
-        public bool CanEat { get; set; }
-        /// <summary> Arbitrary tags assigned to the creature </summary>
-        public List<string> Tags { get; set; }
-
-        /// <summary>
-        /// Called when the creature definition is deserialized from JSON.
-        /// </summary>
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
-        {
-            EmployeeClass.AddClasses(Classes);
-        }
-    }
-
-    [JsonObject(IsReference = true)]
-    public class Egg : GameComponent, IUpdateableComponent
-    {
-        public string Adult { get; set; }
-        public DateTime Birthday { get; set; }
-        public Body ParentBody { get; set; }
-        public BoundingBox? PositionConstrain { get; set; }
-        public Egg()
-        {
-            
-        }
-
-        public Egg(string adult, ComponentManager manager, Vector3 position, BoundingBox? positionConstraint) :
-            base(false, manager)
-        {
-            PositionConstrain = positionConstraint;
-            Adult = adult;
-            Birthday = Manager.World.Time.CurrentDate + new TimeSpan(0, 12, 0, 0);
-
-            if (ResourceLibrary.GetResourceByName(adult + " Egg") == null)
-            {
-                Resource newEggResource =
-                    new Resource(ResourceLibrary.GetResourceByName(ResourceLibrary.ResourceType.Egg));
-                newEggResource.Type = adult + " Egg";
-                ResourceLibrary.Add(newEggResource);
-            }
-            ParentBody = EntityFactory.CreateEntity<Body>(adult + " Egg Resource", position);
-            ParentBody.AddChild(this);
-            manager.AddComponent(this);
-        }
-
-        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
-        {
-            if (Manager.World.Time.CurrentDate > Birthday)
-            {
-                Hatch();
-            }
-        }
-
-        public void Hatch()
-        {
-            var adult = EntityFactory.CreateEntity<Body>(Adult, ParentBody.Position);
-            if (PositionConstrain.HasValue)
-            {
-                adult.GetComponent<CreatureAI>().PositionConstraint = PositionConstrain.Value;
-            }
-            GetEntityRootComponent().Die();
-        }
-    }
-
     /// <summary>
     ///     Component which keeps track of a large number of other components (AI, physics, sprites, etc.)
     ///     related to creatures (such as dwarves and goblins).
@@ -163,43 +47,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Creature : Health, IUpdateableComponent
     {
-        /// <summary> Enum describing the character's current action (used for animation) </summary>
-        public enum CharacterMode
-        {
-            Walking,
-            Idle,
-            Falling,
-            Jumping,
-            Attacking,
-            Hurt,
-            Sleeping,
-            Swimming,
-            Flying,
-            Sitting,
-            Climbing
-        }
-
-        /// <summary> Describes the way in which a creature can move from one location to another </summary>
-        public enum MoveType
-        {
-            /// <summary> Move along a horizontal surface </summary>
-            Walk,
-            /// <summary> Jump from one voxel to another. </summary>
-            Jump,
-            /// <summary> Climb up a climbable object </summary>
-            Climb,
-            /// <summary> Move through water </summary>
-            Swim,
-            /// <summary> Fall vertically through space </summary>
-            Fall,
-            /// <summary> Move from one empty voxel to another </summary>
-            Fly,
-            /// <summary> Attack a blocking object until it is destroyed </summary>
-            DestroyObject,
-            /// <summary> Move along a vertical surface. </summary>
-            ClimbWalls
-        }
-
         /// <summary> 
         /// Creatures can draw indicators showing the user what they're thinking.
         /// This is the minimum time in seconds between which indicators will be drawn.
@@ -216,14 +63,8 @@ namespace DwarfCorp
         /// <summary> This is what the character is currently doing (used for animation) </summary>
         protected CharacterMode currentCharacterMode = CharacterMode.Idle;
 
-        public enum CreatureGender
-        {
-            Male,
-            Female,
-            Nonbinary
-        }
 
-        public CreatureGender Gender { get; set; }
+        public Gender Gender { get; set; }
 
         public bool CanReproduce = false;
 
@@ -235,94 +76,9 @@ namespace DwarfCorp
         public int PregnancyLengthHours = 24;
         public string Species = "";
         public string BabyType = "";
-        public class Pregnancy
-        {
-            public DateTime EndDate;
-        }
-
+        
         public Pregnancy CurrentPregnancy = null;
-
-        public bool CanMate(Creature other)
-        {
-            bool genderWorks = false;
-            switch (Gender)
-            {
-                case CreatureGender.Male:
-                    genderWorks = other.Gender == CreatureGender.Female || other.Gender == CreatureGender.Nonbinary;
-                    break;
-                case CreatureGender.Female:
-                    genderWorks = other.Gender == CreatureGender.Male || other.Gender == CreatureGender.Nonbinary;
-                    break;
-                case CreatureGender.Nonbinary:
-                    genderWorks = Gender != CreatureGender.Nonbinary;
-                    break;
-            }
-
-            return genderWorks && !IsPregnant && other.CanReproduce && other.Species == Species && !other.IsPregnant;
-        }
-
-        public void Mate(Creature other, WorldTime time)
-        {
-            if (IsPregnant || other.IsPregnant) return;
-            if (Gender == CreatureGender.Nonbinary) return;
-            if (Gender != CreatureGender.Female)
-            {
-                other.Mate(this, time);
-                return;
-            }
-
-            CurrentPregnancy = new Pregnancy()
-            {
-                EndDate = time.CurrentDate + new TimeSpan(0, PregnancyLengthHours, 0, 0)
-            };
-        }
-
-        public static string Pronoun(CreatureGender gender)
-        {
-            switch (gender)
-            {
-                case CreatureGender.Male:
-                    return "he";
-                case CreatureGender.Female:
-                    return "she";
-                case CreatureGender.Nonbinary:
-                    return "they";
-            }
-            return "?";
-        }
-
-        public static string Posessive(CreatureGender gender)
-        {
-            switch (gender)
-            {
-                case CreatureGender.Male:
-                    return "his";
-                case CreatureGender.Female:
-                    return "her";
-                case CreatureGender.Nonbinary:
-                    return "their";
-            }
-
-            return "?";
-        }
-
-        public static CreatureGender RandomGender()
-        {
-            float num = MathFunctions.Rand(0.0f, 1.0f);
-            if (num < 0.01f)
-            {
-                return CreatureGender.Nonbinary;
-            }
-            else if (num < 0.505f)
-            {
-                return CreatureGender.Male;
-            }
-            else
-            {
-                return CreatureGender.Female;
-            }
-        }
-
+        
         public Creature()
         {
             CurrentCharacterMode = CharacterMode.Idle;
@@ -333,22 +89,19 @@ namespace DwarfCorp
             HasBones = true;
             HasCorpse = false;
             DrawLifeTimer.HasTriggered = true;
-            Gender = RandomGender();
+            Gender = Mating.RandomGender();
         }
-        
+
         public Creature(
             ComponentManager Manager,
             CreatureStats stats,
             string allies,
             PlanService planService,
             Faction faction,
-            ChunkManager chunks,
-            GraphicsDevice graphics,
-            ContentManager content,
             string name) :
             base(Manager, name, stats.MaxHealth, 0.0f, stats.MaxHealth)
         {
-            Gender = RandomGender();
+            Gender = Mating.RandomGender();
             DrawLifeTimer.HasTriggered = true;
             HasMeat = true;
             HasBones = true;
@@ -356,9 +109,6 @@ namespace DwarfCorp
             Buffs = new List<Buff>();
             IsOnGround = true;
             Stats = stats;
-            Chunks = chunks;
-            Graphics = graphics;
-            Content = content;
             Faction = faction;
             PlanService = planService;
             Allies = allies;
@@ -382,16 +132,24 @@ namespace DwarfCorp
         public Physics Physics { get; set; }
         /// <summary> The sprite draws the character and handles animations </summary>
         public CharacterSprite Sprite { get; set; }
+
         /// <summary> The selection circle is drawn when the character is selected </summary>
-        public SelectionCircle SelectionCircle { get; set; }
+        private SelectionCircle _selectionCircle = null;
+        [JsonIgnore] public SelectionCircle SelectionCircle
+        {
+            get
+            {
+                if (_selectionCircle == null)
+                    _selectionCircle = Parent.EnumerateAll().OfType<SelectionCircle>().FirstOrDefault();
+                System.Diagnostics.Debug.Assert(_selectionCircle != null, "No selection circle created on creature.");
+                return _selectionCircle;
+            }
+        }
+
         /// <summary> Finds enemies nearby and triggers when it sees them </summary>
         public EnemySensor Sensors { get; set; }
-        /// <summary> Creates particles when the creature dies. </summary>
-        public ParticleTrigger DeathParticleTrigger { get; set; }
         /// <summary> Allows the creature to grab other objects </summary>
         public Grabber Hands { get; set; }
-        /// <summary> Drawn beneath the creature </summary>
-        public Shadow Shadow { get; set; }
         /// <summary> If true, the creature will generate meat when it dies. </summary>
         public bool HasMeat { get; set; }
         /// <summary> If true, the creature will generate bones when it dies. </summary>
@@ -407,18 +165,10 @@ namespace DwarfCorp
         public Timer EggTimer { get; set; }
         /// <summary> Reference to the graphics device. </summary>
         [JsonIgnore]
-        public GraphicsDevice Graphics { get; set; }
-
-        /// <summary> Reference to the chunk manager. </summary>
-        [JsonIgnore]
-        public ChunkManager Chunks { get; set; }
+        public GraphicsDevice Graphics { get { return Manager.World.GraphicsDevice; } }
 
         /// <summary> List of attacks the creature can perform. </summary>
         public List<Attack> Attacks { get; set; }
-
-        /// <summary> Reference to the content manager </summary>
-        [JsonIgnore]
-        public ContentManager Content { get; set; }
 
         /// <summary> Faction that the creature belongs to </summary>
         public Faction Faction { get; set; }
@@ -461,7 +211,7 @@ namespace DwarfCorp
                 if (Sprite != null)
                 {
                     if (Sprite.HasAnimation(currentCharacterMode, OrientedAnimation.Orientation.Forward))
-                    { 
+                    {
                         Sprite.SetCurrentAnimation(value.ToString());
                     }
                     else
@@ -490,15 +240,6 @@ namespace DwarfCorp
 
         /// <summary> List of ongoing effects the creature is sustaining </summary>
         public List<Buff> Buffs { get; set; }
-
-        /// <summary> Called when the creature is deserialized from JSON </summary>
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
-        {
-            Graphics = Manager.World.ChunkManager.Graphics;
-            Content = Manager.World.ChunkManager.Content;
-            Chunks = Manager.World.ChunkManager;
-        }
 
         /// <summary> Adds the specified ongoing effect. </summary>
         /// <param name="buff"> The onging effect to add </param>
@@ -538,7 +279,7 @@ namespace DwarfCorp
 
             if (!DrawLifeTimer.HasTriggered)
             {
-                float val = Hp/MaxHealth;
+                float val = Hp / MaxHealth;
                 Color color = val < 0.75f ? (val < 0.5f ? Color.Red : Color.Orange) : Color.LightGreen;
                 Drawer2D.DrawLoadBar(Manager.World.Camera, AI.Position - Vector3.Up * 0.5f, color, Color.Black, 32, 2, Hp / MaxHealth);
             }
@@ -657,9 +398,10 @@ namespace DwarfCorp
         public override void Die()
         {
             // This is just a silly hack to make sure that creatures
-            // carrying resources to a trade depot release tcheir resources
+            // carrying resources to a trade depot release their resources
             // when they die.
             Inventory.Resources.MaxResources = 99999;
+
             CreateMeatAndBones();
             NoiseMaker.MakeNoise("Die", Physics.Position, true);
 
@@ -774,7 +516,11 @@ namespace DwarfCorp
                     NoiseMaker.MakeNoise("Hurt", AI.Position);
                     Sprite.Blink(0.5f);
                     AI.AddThought(Thought.ThoughtType.TookDamage);
-                    Manager.World.ParticleManager.Trigger(DeathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
+
+                    var deathParticleTrigger = Parent.EnumerateAll().OfType<ParticleTrigger>().Where(p => p.Name == "Death Gibs").FirstOrDefault();
+
+                    if (deathParticleTrigger != null)
+                        Manager.World.ParticleManager.Trigger(deathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
                     break;
             }
 
@@ -799,7 +545,7 @@ namespace DwarfCorp
         /// Basic Act that causes the creature to wait for the specified time.
         /// Also draws a loading bar above the creature's head when relevant.
         /// </summary>
-        public IEnumerable<Act.Status> HitAndWait(float f, bool loadBar, Func<Vector3> pos, string playSound = "", Func<bool> continueHitting = null )
+        public IEnumerable<Act.Status> HitAndWait(float f, bool loadBar, Func<Vector3> pos, string playSound = "", Func<bool> continueHitting = null)
         {
             var waitTimer = new Timer(f, true);
 
@@ -859,7 +605,11 @@ namespace DwarfCorp
                 NoiseMaker.MakeNoise("Hurt", AI.Position);
                 Sprite.Blink(0.5f);
                 AI.AddThought(Thought.ThoughtType.TookDamage);
-                Manager.World.ParticleManager.Trigger(DeathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
+
+                var deathParticleTrigger = Parent.EnumerateAll().OfType<ParticleTrigger>().Where(p => p.Name == "Death Gibs").FirstOrDefault();
+
+                if (deathParticleTrigger != null)
+                    Manager.World.ParticleManager.Trigger(deathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
                 DrawLifeTimer.Reset();
             }
 
@@ -883,317 +633,6 @@ namespace DwarfCorp
                     AI.Faction.GatherDesignations.Add(item);
                 }
                 AI.Tasks.Add(gatherTask);
-            }
-        }
-
-        /// <summary>
-        /// A buff is an ongoing effect applied to a creature. This can heal the creature,
-        /// damage it, or apply any other kind of effect.
-        /// </summary>
-        public class Buff
-        {
-            public Buff()
-            {
-            }
-
-            /// <summary>
-            /// Create a buff which persists for the specified time.
-            /// </summary>
-            public Buff(float time)
-            {
-                EffectTime = new Timer(time, true);
-                ParticleTimer = new Timer(0.25f, false);
-            }
-
-            /// <summary> Time that the effect persists for </summary>
-            public Timer EffectTime { get; set; }
-
-            /// <summary> If true, the buff is active. </summary>
-            public bool IsInEffect
-            {
-                get { return !EffectTime.HasTriggered; }
-            }
-
-            /// <summary> Particles to generate during the buff. </summary>
-            public string Particles { get; set; }
-            /// <summary> Every time this triggers, a particle gets released </summary>
-            public Timer ParticleTimer { get; set; }
-            /// <summary> Sound to play when the buff starts </summary>
-            public string SoundOnStart { get; set; }
-            /// <summary> Sound to play when the buff ends </summary>
-            public string SoundOnEnd { get; set; }
-
-
-            /// <summary> Called when the Buff is added to a Creature </summary>
-            public virtual void OnApply(Creature creature)
-            {
-                if (!string.IsNullOrEmpty(SoundOnStart))
-                {
-                    SoundManager.PlaySound(SoundOnStart, creature.Physics.Position, true, 1.0f);
-                }
-            }
-
-            /// <summary> Called when the Buff is removed from a Creature </summary>
-            public virtual void OnEnd(Creature creature)
-            {
-                if (!string.IsNullOrEmpty(SoundOnEnd))
-                {
-                    SoundManager.PlaySound(SoundOnEnd, creature.Physics.Position, true, 1.0f);
-                }
-            }
-
-            /// <summary> Updates the Buff </summary>
-            public virtual void Update(DwarfTime time, Creature creature)
-            {
-                EffectTime.Update(time);
-                ParticleTimer.Update(time);
-
-                if (ParticleTimer.HasTriggered && !string.IsNullOrEmpty(Particles))
-                {
-                    creature.Manager.World.ParticleManager.Trigger(Particles, creature.Physics.Position, Color.White, 1);
-                }
-            }
-
-            /// <summary> Creates a new Buff that is a deep copy of this one. </summary>
-            public virtual Buff Clone()
-            {
-                return new Buff
-                {
-                    EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
-                    Particles = Particles,
-                    ParticleTimer =
-                        new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
-                    SoundOnEnd = SoundOnEnd,
-                    SoundOnStart = SoundOnStart
-                };
-            }
-        }
-        ///<summary> A Buff which allows the creature to resist some amount of damage of a specific kind </summary>
-        public class DamageResistBuff : Buff
-        {
-            public DamageResistBuff()
-            {
-                DamageType = DamageType.Normal;
-                Bonus = 0.0f;
-            }
-
-            /// <summary> The kind of damage to ignore </summary>
-            public DamageType DamageType { get; set; }
-            /// <summary> The amount of damage to ignore. </summary>
-            public float Bonus { get; set; }
-
-            public override Buff Clone()
-            {
-                return new DamageResistBuff
-                {
-                    EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
-                    Particles = Particles,
-                    ParticleTimer =
-                        new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
-                    SoundOnEnd = SoundOnEnd,
-                    SoundOnStart = SoundOnStart,
-                    DamageType = DamageType,
-                    Bonus = Bonus
-                };
-            }
-
-            public override void OnApply(Creature creature)
-            {
-                creature.Resistances[DamageType] += Bonus;
-                base.OnApply(creature);
-            }
-
-            public override void OnEnd(Creature creature)
-            {
-                creature.Resistances[DamageType] -= Bonus;
-                base.OnEnd(creature);
-            }
-        }
-
-        /// <summary>
-        /// A move action is a link between two voxels and a type of motion
-        /// used to get between them.
-        /// </summary>
-        public struct MoveAction
-        {
-            /// <summary> The destination voxel of the motion </summary>
-            public Voxel Voxel { get; set; }
-            /// <summary> The type of motion applied to get to the voxel </summary>
-            public MoveType MoveType { get; set; }
-            /// <summary> The offset between the start and destination </summary>
-            public Vector3 Diff { get; set; }
-            /// <summary> And object to interact with to get between the start and destination </summary>
-            public GameComponent InteractObject { get; set; }
-
-            /// <summary>
-            /// For climbing, this is the voxel the dwarf climbed on.
-            /// </summary>
-            public Voxel TargetVoxel { get; set; }
-        }
-
-        /// <summary>
-        /// Applies damage to the creature over time.
-        /// </summary>
-        public class OngoingDamageBuff : Buff
-        {
-            /// <summary> The type of damage to apply </summary>
-            public DamageType DamageType { get; set; }
-            /// <summary> The amount of damage to take in HP per second </summary>
-            public float DamagePerSecond { get; set; }
-
-            public override void Update(DwarfTime time, Creature creature)
-            {
-                var dt = (float)time.ElapsedGameTime.TotalSeconds;
-                creature.Damage(DamagePerSecond * dt, DamageType);
-                base.Update(time, creature);
-            }
-
-            public override Buff Clone()
-            {
-                return new OngoingDamageBuff
-                {
-                    EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
-                    Particles = Particles,
-                    ParticleTimer =
-                        new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
-                    SoundOnEnd = SoundOnEnd,
-                    SoundOnStart = SoundOnStart,
-                    DamageType = DamageType,
-                    DamagePerSecond = DamagePerSecond
-                };
-            }
-        }
-
-        /// <summary>
-        /// Heals the creature continuously over time.
-        /// </summary>
-        public class OngoingHealBuff : Buff
-        {
-            public OngoingHealBuff()
-            {
-            }
-
-            public OngoingHealBuff(float dps, float time) :
-                base(time)
-            {
-                DamagePerSecond = dps;
-            }
-
-            /// <summary> Amount to heal the creature in HP per second </summary>
-            public float DamagePerSecond { get; set; }
-
-            public override void Update(DwarfTime time, Creature creature)
-            {
-                var dt = (float)time.ElapsedGameTime.TotalSeconds;
-                creature.Heal(dt * DamagePerSecond);
-
-                base.Update(time, creature);
-            }
-
-            public override Buff Clone()
-            {
-                return new OngoingHealBuff
-                {
-                    EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
-                    Particles = Particles,
-                    ParticleTimer =
-                        new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
-                    SoundOnEnd = SoundOnEnd,
-                    SoundOnStart = SoundOnStart,
-                    DamagePerSecond = DamagePerSecond
-                };
-            }
-        }
-
-        /// <summary> Increases the creature's stats for a time </summary>
-        public class StatBuff : Buff
-        {
-            public StatBuff()
-            {
-                Buffs = new CreatureStats.StatNums();
-            }
-
-            public StatBuff(float time, CreatureStats.StatNums buffs) :
-                base(time)
-            {
-                Buffs = buffs;
-            }
-
-            /// <summary> The amount to add to the creature's stats </summary>
-            public CreatureStats.StatNums Buffs { get; set; }
-
-            public override Buff Clone()
-            {
-                return new StatBuff
-                {
-                    EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
-                    Particles = Particles,
-                    ParticleTimer =
-                        new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
-                    SoundOnEnd = SoundOnEnd,
-                    SoundOnStart = SoundOnStart,
-                    Buffs = Buffs
-                };
-            }
-
-            public override void Update(DwarfTime time, Creature creature)
-            {
-                base.Update(time, creature);
-            }
-
-            public override void OnApply(Creature creature)
-            {
-                creature.Stats.StatBuffs += Buffs;
-                base.OnApply(creature);
-            }
-
-            public override void OnEnd(Creature creature)
-            {
-                creature.Stats.StatBuffs -= Buffs;
-                base.OnEnd(creature);
-            }
-        }
-
-        /// <summary> Causes the creature to have a Thought for a specified time </summary>
-        public class ThoughtBuff : Buff
-        {
-            public ThoughtBuff()
-            {
-            }
-
-            public ThoughtBuff(float time, Thought.ThoughtType type) :
-                base(time)
-            {
-                ThoughtType = type;
-            }
-
-            /// <summary> The Thought the creature has during the buff </summary>
-            public Thought.ThoughtType ThoughtType { get; set; }
-
-            public override void OnApply(Creature creature)
-            {
-                creature.AI.AddThought(ThoughtType);
-                base.OnApply(creature);
-            }
-
-            public override void OnEnd(Creature creature)
-            {
-                creature.AI.RemoveThought(ThoughtType);
-                base.OnApply(creature);
-            }
-
-            public override Buff Clone()
-            {
-                return new ThoughtBuff
-                {
-                    EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
-                    Particles = Particles,
-                    ParticleTimer =
-                        new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
-                    SoundOnEnd = SoundOnEnd,
-                    SoundOnStart = SoundOnStart,
-                    ThoughtType = ThoughtType
-                };
             }
         }
     }

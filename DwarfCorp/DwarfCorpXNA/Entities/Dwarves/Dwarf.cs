@@ -52,19 +52,18 @@ namespace DwarfCorp
         {
             
         }
-        public Dwarf(ComponentManager manager, CreatureStats stats, string allies, PlanService planService, Faction faction,  string name, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, EmployeeClass workerClass, Vector3 position) :
-            base(manager, stats, allies, planService, faction,
-               chunks, graphics, content, name)
+        public Dwarf(ComponentManager manager, CreatureStats stats, string allies, PlanService planService, Faction faction,  string name, EmployeeClass workerClass, Vector3 position) :
+            base(manager, stats, allies, planService, faction, name)
         {
             Physics = new Physics(manager, "Dwarf", Matrix.CreateTranslation(position),
                         new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             Physics.AddChild(this);
 
-            SelectionCircle = Physics.AddChild(new SelectionCircle(Manager)
+            Physics.AddChild(new SelectionCircle(Manager)
             {
                 IsVisible = false
-            }) as SelectionCircle;
+            });
 
             HasMeat = false;
             HasBones = false;
@@ -74,7 +73,7 @@ namespace DwarfCorp
         
         public void Initialize(EmployeeClass dwarfClass)
         {
-            Gender = Creature.RandomGender();
+            Gender = Mating.RandomGender();
             Physics.Orientation = Physics.OrientMode.RotateY;
             Sprite = Physics.AddChild(new CharacterSprite(Graphics, Manager, "Dwarf Sprite", Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)))) as CharacterSprite;
             foreach (Animation animation in dwarfClass.Animations)
@@ -103,7 +102,7 @@ namespace DwarfCorp
             Matrix shadowTransform = Matrix.CreateRotationX((float) Math.PI * 0.5f);
             shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
 
-            Shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform,
+            var shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform,
                 new SpriteSheet(ContentPaths.Effects.shadowcircle))
             {
                 GlobalScale = 1.25f
@@ -113,18 +112,20 @@ namespace DwarfCorp
                 new Point(0, 0)
             };
             Animation shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle), "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
-            Shadow.AddAnimation(shadowAnimation);
+            shadow.AddAnimation(shadowAnimation);
             shadowAnimation.Play();
-            Shadow.SetCurrentAnimation("sh");
+            shadow.SetCurrentAnimation("sh");
+
             Physics.Tags.Add("Dwarf");
 
-            DeathParticleTrigger = Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 1,
                 BoxTriggerTimes = 10, 
                 SoundToPlay = ContentPaths.Entities.Dwarf.Audio.dwarfhurt1,
-            }) as ParticleTrigger;
+            });
+
             Physics.AddChild(new Flammable(Manager, "Flames"));
 
             NoiseMaker.Noises["Hurt"] = new List<string>

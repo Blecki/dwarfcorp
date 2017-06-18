@@ -148,8 +148,8 @@ namespace DwarfCorp
                 {
                     yield return Act.Status.Running;
                 }
-                List<Creature.MoveAction> existingPath =
-                    Creature.AI.Blackboard.GetData<List<Creature.MoveAction>>("PathToEntity");
+                List<MoveAction> existingPath =
+                    Creature.AI.Blackboard.GetData<List<MoveAction>>("PathToEntity");
 
                 Creature.AI.Blackboard.Erase("PathToEntity");
 
@@ -184,7 +184,7 @@ namespace DwarfCorp
                 {
                     currentFailures++;
                     yield return Act.Status.Running;
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+                    Creature.CurrentCharacterMode = CharacterMode.Idle;
                     Creature.Physics.Velocity = Vector3.Zero;
                     if (currentFailures > maxFailures)
                     {
@@ -220,7 +220,7 @@ namespace DwarfCorp
                     {
                         yield return Act.Status.Running;
 
-                        List<Creature.MoveAction> path = Agent.Blackboard.GetData<List<Creature.MoveAction>>("PathToEntity");
+                        List<MoveAction> path = Agent.Blackboard.GetData<List<MoveAction>>("PathToEntity");
                         bool targetMoved = (path.Last().Voxel.Position - entity.LocalTransform.Translation).Length() > Math.Max(Radius, 2) * 2
                         ;
                         if (MovingTarget && path != null && (path.Count > 0 && targetMoved))
