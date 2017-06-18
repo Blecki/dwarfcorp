@@ -1,4 +1,4 @@
-﻿// ResourceEntity.cs
+// ResourceEntity.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -79,7 +79,7 @@ namespace DwarfCorp
 
             Tags.Add(type.ResourceName);
             Tags.Add("Resource");
-            var bobber = sprite.AddChild(new Bobber(Manager, 0.05f, 2.0f, MathFunctions.Rand() * 3.0f, localTransform.Translation.Y));
+            var bobber = sprite.AddChild(new Bobber(Manager, 0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite.LocalTransform.Translation.Y));
 
 
             if (type.IsFlammable)
@@ -88,5 +88,6 @@ namespace DwarfCorp
                 AddChild(new Flammable(Manager, "Flames"));
             }
         }
+
     }
 }
