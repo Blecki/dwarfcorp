@@ -90,15 +90,16 @@ namespace DwarfCorp
             Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
             shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
 
-            Shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform, new SpriteSheet(ContentPaths.Effects.shadowcircle))) as Shadow;
+            var shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform, new SpriteSheet(ContentPaths.Effects.shadowcircle))) as Shadow;
             List<Point> shP = new List<Point>
             {
                 new Point(0, 0)
             };
             Animation shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle), "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
-            Shadow.AddAnimation(shadowAnimation);
+            shadow.AddAnimation(shadowAnimation);
             shadowAnimation.Play();
-            Shadow.SetCurrentAnimation("sh");
+            shadow.SetCurrentAnimation("sh");
+
             Physics.Tags.Add("Dwarf");
 
 

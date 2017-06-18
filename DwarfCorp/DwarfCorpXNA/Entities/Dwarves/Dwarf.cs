@@ -103,7 +103,7 @@ namespace DwarfCorp
             Matrix shadowTransform = Matrix.CreateRotationX((float) Math.PI * 0.5f);
             shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
 
-            Shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform,
+            var shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform,
                 new SpriteSheet(ContentPaths.Effects.shadowcircle))
             {
                 GlobalScale = 1.25f
@@ -113,9 +113,10 @@ namespace DwarfCorp
                 new Point(0, 0)
             };
             Animation shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle), "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
-            Shadow.AddAnimation(shadowAnimation);
+            shadow.AddAnimation(shadowAnimation);
             shadowAnimation.Play();
-            Shadow.SetCurrentAnimation("sh");
+            shadow.SetCurrentAnimation("sh");
+
             Physics.Tags.Add("Dwarf");
 
             DeathParticleTrigger = Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)

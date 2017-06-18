@@ -1407,7 +1407,7 @@ namespace DwarfCorp
         private Voxel[, ,] GetNeighborhood(Voxel voxel)
         {
             var neighborHood = new Voxel[3, 3, 3];
-            CollisionManager objectHash = Creature.Manager.World.ComponentManager.CollisionManager;
+            CollisionManager objectHash = Creature.Manager.World.CollisionManager;
 
             VoxelChunk startChunk = voxel.Chunk;
             var x = (int)voxel.GridPosition.X;
@@ -1477,7 +1477,7 @@ namespace DwarfCorp
         {
             var toReturn = new List<Creature.MoveAction>();
 
-            CollisionManager objectHash = Creature.Manager.World.ComponentManager.CollisionManager;
+            CollisionManager objectHash = Creature.Manager.World.CollisionManager;
 
             Voxel[, ,] neighborHood = GetNeighborhood(voxel);
             var x = (int)voxel.GridPosition.X;
@@ -1706,7 +1706,7 @@ namespace DwarfCorp
                 {
                     // Do one final check to see if there is an object blocking the motion.
                     bool blockedByObject = false;
-                    List<IBoundedObject> objectsAtNeighbor = Creature.Manager.CollisionManager.GetObjectsAt(
+                    List<IBoundedObject> objectsAtNeighbor = Creature.Manager.World.CollisionManager.GetObjectsAt(
                         n, CollisionManager.CollisionType.Static);
 
                     // If there is an object blocking the motion, determine if it can be passed through.

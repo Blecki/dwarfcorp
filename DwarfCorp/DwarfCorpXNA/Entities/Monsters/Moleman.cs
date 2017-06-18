@@ -95,15 +95,15 @@ namespace DwarfCorp
 
             SpriteSheet shadowTexture = new SpriteSheet(ContentPaths.Effects.shadowcircle);
 
-            Shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform, shadowTexture)) as Shadow;
+            var shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform, shadowTexture)) as Shadow;
             List<Point> shP = new List<Point>
             {
                 new Point(0, 0)
             };
             Animation shadowAnimation = new Animation(Graphics, shadowTexture, "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
-            Shadow.AddAnimation(shadowAnimation);
+            shadow.AddAnimation(shadowAnimation);
             shadowAnimation.Play();
-            Shadow.SetCurrentAnimation("sh");
+            shadow.SetCurrentAnimation("sh");
             Physics.Tags.Add("Necromancer");
 
             DeathParticleTrigger = Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)

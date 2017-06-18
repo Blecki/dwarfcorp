@@ -131,6 +131,7 @@
     <Compile Include="AssetManagement\GameSave\SaveData.cs" />
     <Compile Include="AssetManagement\TextureLoader.cs" />
     <Compile Include="AssetManagement\TextureManager.cs" />
+    <Compile Include="Components\AI\Egg.cs" />
     <Compile Include="Components\AI\Creature.cs" />
     <Compile Include="Components\AI\CreatureAI.cs" />
     <Compile Include="Components\AI\Grabber.cs" />

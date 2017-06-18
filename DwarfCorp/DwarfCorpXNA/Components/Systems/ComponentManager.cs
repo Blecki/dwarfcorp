@@ -45,8 +45,6 @@ namespace DwarfCorp
 
         public ParticleManager ParticleManager { get; set; }
 
-        [JsonIgnore]
-        public CollisionManager CollisionManager { get; set; }
 
         [JsonIgnore]
         public WorldManager World { get; set; }
@@ -59,9 +57,7 @@ namespace DwarfCorp
             Removals = new List<GameComponent>();
             Additions = new List<GameComponent>();
             World = (WorldManager)context.Context;
-            Vector3 origin = new Vector3(World.WorldOrigin.X, 0, World.WorldOrigin.Y);
-            Vector3 extents = new Vector3(1500, 1500, 1500);
-            CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents)); GameObjectCaching.Reset();
+            GameObjectCaching.Reset();
             RootComponent.RefreshCacheTypesRecursive();
             World.Natives.Clear();
 

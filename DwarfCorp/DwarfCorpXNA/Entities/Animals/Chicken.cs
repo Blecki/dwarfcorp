@@ -135,7 +135,7 @@ namespace DwarfCorp
             shadowTransform *= Matrix.CreateScale(0.75f);
 
             SpriteSheet shadowTexture = new SpriteSheet(ContentPaths.Effects.shadowcircle);
-            Shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform, shadowTexture)) as Shadow;
+            var shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform, shadowTexture)) as Shadow;
 
             // We set up the shadow's animation so that it's just a static black circle
             // TODO: Make the shadow set this up automatically
@@ -144,9 +144,9 @@ namespace DwarfCorp
                 new Point(0, 0)
             };
             Animation shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle), "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
-            Shadow.AddAnimation(shadowAnimation);
+            shadow.AddAnimation(shadowAnimation);
             shadowAnimation.Play();
-            Shadow.SetCurrentAnimation("sh");
+            shadow.SetCurrentAnimation("sh");
 
             // The bird will emit a shower of blood when it dies
             DeathParticleTrigger = Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)

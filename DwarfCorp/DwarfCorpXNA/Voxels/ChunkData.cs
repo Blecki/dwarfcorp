@@ -459,7 +459,7 @@ namespace DwarfCorp
 
             HashSet<IBoundedObject> locatables = new HashSet<IBoundedObject>();
 
-            chunkManager.Components.CollisionManager.GetObjectsIntersecting(chunk.GetBoundingBox(), locatables, CollisionManager.CollisionType.Static | CollisionManager.CollisionType.Dynamic);
+            chunkManager.World.CollisionManager.GetObjectsIntersecting(chunk.GetBoundingBox(), locatables, CollisionManager.CollisionType.Static | CollisionManager.CollisionType.Dynamic);
 
             foreach(var component in locatables.Where(o => o is Body).Select(o => o as Body))
             {

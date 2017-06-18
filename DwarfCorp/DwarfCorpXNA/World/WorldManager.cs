@@ -139,6 +139,7 @@ namespace DwarfCorp
         public ComponentManager ComponentManager = null;
 
         public FactionLibrary Factions = null;
+        public CollisionManager CollisionManager = null;
 
         // Handles interfacing with the player and sending commands to dwarves
         public GameMaster Master = null;
@@ -539,7 +540,7 @@ namespace DwarfCorp
                 Vector3.Zero, false);
             Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
             Vector3 extents = new Vector3(1500, 1500, 1500);
-            ComponentManager.CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
+            CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
             Diplomacy = new Diplomacy(this);
             Diplomacy.Initialize(Time.CurrentDate);
 
@@ -817,8 +818,14 @@ namespace DwarfCorp
             if (!string.IsNullOrEmpty(ExistingFile))
             {
                 InstanceManager.Clear();
-                
+
                 //gameFile.LoadComponents(ExistingFile, this);
+
+
+                Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
+                Vector3 extents = new Vector3(1500, 1500, 1500);
+                CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
+
                 ComponentManager = gameFile.Data.Components;
                 Factions = gameFile.Data.Factions;
                 ComponentManager.World = this;

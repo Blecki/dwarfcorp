@@ -40,122 +40,8 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
-// TODO: Split file
-
 namespace DwarfCorp
 {
-    ///<summary>
-    /// CreatureDef defines a creature to be loaded from JSON files. When
-    /// deserialized, it can be converted into a creature directly.
-    /// </summary>
-    [JsonObject(IsReference = true)]
-    public class CreatureDef
-    {
-        /// <summary> Name of the creature used for spawning </summary>
-        public string Name { get; set; }
-        /// <summary> Description of the creature displayed when the player mouses over it </summary>
-        public string Description { get; set; }
-        /// <summary> Race that the creature belongs to </summary>
-        public string Race { get; set; }
-        /// <summary> Size of the creature's bounding box in voxels </summary>
-        public Vector3 Size { get; set; }
-        /// <summary> If true, a shadow will be rendered under the creature </summary>
-        public bool HasShadow { get; set; }
-        /// <summary> If true, the creature takes fire damage and lights on fire from lava </summary>
-        public bool IsFlammable { get; set; }
-        /// <summary> Name of the particle effect to trigger when the creature gets hurt </summary>
-        public string BloodParticle { get; set; }
-        /// <summary> Sound the creature makes when it dies </summary>
-        public string DeathSound { get; set; }
-        /// <summary> Sounds the creature makes when hurt </summary>
-        public List<string> HurtSounds { get; set; }
-        /// <summary> Sound the creature makes when chewing food </summary>
-        public string ChewSound { get; set; }
-        /// <summary> Sound the creature makes when jumping </summary>
-        public string JumpSound { get; set; }
-        /// <summary> If true, when the creature dies, all of the other members of its race will mourn </summary>
-        public bool TriggersMourning { get; set; }
-        /// <summary> The size of the creature's shadow in voxels </summary>
-        public float ShadowScale { get; set; }
-        /// <summary> How much the creature resists external forces </summary>
-        public float Mass { get; set; }
-        /// <summary> The number of objects in the creature's inventory </summary>
-        public int InventorySize { get; set; }
-        /// <summary> Offset between the creature's origin and its sprite </summary>
-        public Vector3 SpriteOffset { get; set; }
-        /// <summary> The icon to draw on the minimap for the creature </summary>
-        public NamedImageFrame MinimapIcon { get; set; }
-        /// <summary> Bounding box in which the creature can see </summary>
-        public Vector3 SenseRange { get; set; }
-        /// <summary> Identifier path to a JSON file containing all the creature's classes </summary>
-        public string Classes { get; set; }
-        /// <summary> If true, the creature will sleep when tired. </summary>
-        public bool CanSleep { get; set; }
-        /// <summary> If true, the creature will eat when hungry </summary>
-        public bool CanEat { get; set; }
-        /// <summary> Arbitrary tags assigned to the creature </summary>
-        public List<string> Tags { get; set; }
-
-        /// <summary>
-        /// Called when the creature definition is deserialized from JSON.
-        /// </summary>
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
-        {
-            EmployeeClass.AddClasses(Classes);
-        }
-    }
-
-    [JsonObject(IsReference = true)]
-    public class Egg : GameComponent, IUpdateableComponent
-    {
-        public string Adult { get; set; }
-        public DateTime Birthday { get; set; }
-        public Body ParentBody { get; set; }
-        public BoundingBox? PositionConstrain { get; set; }
-        public Egg()
-        {
-            
-        }
-
-        public Egg(string adult, ComponentManager manager, Vector3 position, BoundingBox? positionConstraint) :
-            base(false, manager)
-        {
-            PositionConstrain = positionConstraint;
-            Adult = adult;
-            Birthday = Manager.World.Time.CurrentDate + new TimeSpan(0, 12, 0, 0);
-
-            if (ResourceLibrary.GetResourceByName(adult + " Egg") == null)
-            {
-                Resource newEggResource =
-                    new Resource(ResourceLibrary.GetResourceByName(ResourceLibrary.ResourceType.Egg));
-                newEggResource.Type = adult + " Egg";
-                ResourceLibrary.Add(newEggResource);
-            }
-            ParentBody = EntityFactory.CreateEntity<Body>(adult + " Egg Resource", position);
-            ParentBody.AddChild(this);
-            manager.AddComponent(this);
-        }
-
-        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
-        {
-            if (Manager.World.Time.CurrentDate > Birthday)
-            {
-                Hatch();
-            }
-        }
-
-        public void Hatch()
-        {
-            var adult = EntityFactory.CreateEntity<Body>(Adult, ParentBody.Position);
-            if (PositionConstrain.HasValue)
-            {
-                adult.GetComponent<CreatureAI>().PositionConstraint = PositionConstrain.Value;
-            }
-            GetEntityRootComponent().Die();
-        }
-    }
-
     /// <summary>
     ///     Component which keeps track of a large number of other components (AI, physics, sprites, etc.)
     ///     related to creatures (such as dwarves and goblins).
@@ -235,6 +121,7 @@ namespace DwarfCorp
         public int PregnancyLengthHours = 24;
         public string Species = "";
         public string BabyType = "";
+
         public class Pregnancy
         {
             public DateTime EndDate;
@@ -390,8 +277,6 @@ namespace DwarfCorp
         public ParticleTrigger DeathParticleTrigger { get; set; }
         /// <summary> Allows the creature to grab other objects </summary>
         public Grabber Hands { get; set; }
-        /// <summary> Drawn beneath the creature </summary>
-        public Shadow Shadow { get; set; }
         /// <summary> If true, the creature will generate meat when it dies. </summary>
         public bool HasMeat { get; set; }
         /// <summary> If true, the creature will generate bones when it dies. </summary>

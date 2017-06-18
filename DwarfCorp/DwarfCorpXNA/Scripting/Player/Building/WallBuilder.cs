@@ -78,7 +78,7 @@ namespace DwarfCorp
 
             World.ParticleManager.Trigger("puff", v.Position, Color.White, 20);
 
-            foreach(Physics phys in manager.Components.CollisionManager.EnumerateIntersectingObjects(Vox.GetBoundingBox(), CollisionManager.CollisionType.Dynamic).OfType<Physics>())
+            foreach(Physics phys in manager.World.CollisionManager.EnumerateIntersectingObjects(Vox.GetBoundingBox(), CollisionManager.CollisionType.Dynamic).OfType<Physics>())
             {
                 phys.ApplyForce((phys.GlobalTransform.Translation - (Vox.Position + new Vector3(0.5f, 0.5f, 0.5f))) * 100, 0.01f);
                 BoundingBox box = v.GetBoundingBox();

@@ -68,7 +68,7 @@ namespace DwarfCorp
         {
             FireTimer.Update(gameTime);
             if (FireTimer.HasTriggered && OnSensed != null)
-                OnSensed(Manager.CollisionManager.EnumerateIntersectingObjects(BoundingBox,
+                OnSensed(Manager.World.CollisionManager.EnumerateIntersectingObjects(BoundingBox,
                     CollisionManager.CollisionType.Dynamic).OfType<Body>());
 
             base.Update(gameTime, chunks, camera);
