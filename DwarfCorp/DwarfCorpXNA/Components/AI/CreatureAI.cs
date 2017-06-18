@@ -1122,13 +1122,13 @@ namespace DwarfCorp
         {
 
             Creature.OverrideCharacterMode = false;
-            Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+            Creature.CurrentCharacterMode = CharacterMode.Walking;
 
             float currSpeed = Creature.Physics.Velocity.Length();
 
             if (currSpeed < 1)
             {
-                Creature.CurrentCharacterMode = DwarfCorp.Creature.CharacterMode.Idle;
+                Creature.CurrentCharacterMode = DwarfCorp.CharacterMode.Idle;
             }
 
             float force = Creature.Stats.MaxAcceleration * 10;
@@ -1136,14 +1136,14 @@ namespace DwarfCorp
             {
                 force = Creature.Stats.MaxAcceleration;
                 Creature.CurrentCharacterMode = Creature.Physics.Velocity.Y > 0
-                    ? DwarfCorp.Creature.CharacterMode.Jumping
-                    : DwarfCorp.Creature.CharacterMode.Falling;
+                    ? DwarfCorp.CharacterMode.Jumping
+                    : DwarfCorp.CharacterMode.Falling;
             }
 
 
             if (Creature.Physics.IsInLiquid)
             {
-                Creature.CurrentCharacterMode = Creature.CharacterMode.Swimming;
+                Creature.CurrentCharacterMode = CharacterMode.Swimming;
                 Creature.Physics.ApplyForce(Vector3.Up * 10, DwarfTime.Dt);
                 force = Creature.Stats.MaxAcceleration*5;
                 Creature.NoiseMaker.MakeNoise("Swim", Position);

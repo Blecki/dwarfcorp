@@ -132,6 +132,7 @@
     <Compile Include="AssetManagement\TextureLoader.cs" />
     <Compile Include="AssetManagement\TextureManager.cs" />
     <Compile Include="Components\AI\Buff.cs" />
+    <Compile Include="Components\AI\CharacterMode.cs" />
     <Compile Include="Components\AI\DamageResistBuff.cs" />
     <Compile Include="Components\AI\Egg.cs" />
     <Compile Include="Components\AI\Creature.cs" />

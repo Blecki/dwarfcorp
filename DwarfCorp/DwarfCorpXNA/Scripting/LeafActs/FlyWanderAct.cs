@@ -106,7 +106,7 @@ namespace DwarfCorp
         public override void OnCanceled()
         {
             Agent.Creature.Physics.Gravity = OriginalGravity;
-            Agent.Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+            Agent.Creature.CurrentCharacterMode = CharacterMode.Idle;
             base.OnCanceled();
         }
 
@@ -123,12 +123,12 @@ namespace DwarfCorp
                     while (!PerchTime.HasTriggered)
                     {
                         Agent.Creature.Physics.Velocity = Vector3.Zero;
-                        Agent.Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+                        Agent.Creature.CurrentCharacterMode = CharacterMode.Idle;
                         PerchTime.Update(DwarfTime.LastTime);
                         yield return Act.Status.Running;
                     }
                     // When we're done flying, go back to walking and just fall.
-                    Agent.Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+                    Agent.Creature.CurrentCharacterMode = CharacterMode.Walking;
                     Agent.Creature.Physics.Gravity = OriginalGravity;
                     yield return Act.Status.Success;
                 }
@@ -142,7 +142,7 @@ namespace DwarfCorp
                     oldPosition.Z);
 
                 // Immediately start flying.
-                Agent.Creature.CurrentCharacterMode = Creature.CharacterMode.Flying;
+                Agent.Creature.CurrentCharacterMode = CharacterMode.Flying;
 
                 // Use this to determine when to start turning.
                 float currentDistance = 999;
@@ -162,7 +162,7 @@ namespace DwarfCorp
                 while ((!WanderTime.HasTriggered && State == FlyState.Wandering) || (State == FlyState.SearchingForPerch))
                 {
                     // If we hit the ground, switch to walking, otherwise switch to flying.
-                    Agent.Creature.CurrentCharacterMode = Creature.CharacterMode.Flying;
+                    Agent.Creature.CurrentCharacterMode = CharacterMode.Flying;
 
                     WanderTime.Update(DwarfTime.LastTime);
 

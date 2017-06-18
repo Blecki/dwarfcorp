@@ -126,7 +126,7 @@ namespace DwarfCorp
                 Agent.Position = snapPosition;
                 Agent.Physics.IsSleeping = true;
                 Agent.Physics.Velocity = Vector3.Zero;
-                Creature.CurrentCharacterMode = Creature.CharacterMode.Sitting;
+                Creature.CurrentCharacterMode = CharacterMode.Sitting;
                 Creature.OverrideCharacterMode = true;
                 yield return Status.Running;
             }
@@ -235,7 +235,7 @@ namespace DwarfCorp
                 Agent.Position = snapPosition;
                 Agent.Physics.IsSleeping = true;
                 Agent.Physics.Velocity = Vector3.Zero;
-                Creature.CurrentCharacterMode = Creature.CharacterMode.Sitting;
+                Creature.CurrentCharacterMode = CharacterMode.Sitting;
                 Creature.OverrideCharacterMode = true;
                 yield return Status.Running;
             }

@@ -49,22 +49,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Creature : Health, IUpdateableComponent
     {
-        /// <summary> Enum describing the character's current action (used for animation) </summary>
-        public enum CharacterMode
-        {
-            Walking,
-            Idle,
-            Falling,
-            Jumping,
-            Attacking,
-            Hurt,
-            Sleeping,
-            Swimming,
-            Flying,
-            Sitting,
-            Climbing
-        }
-
         /// <summary> Describes the way in which a creature can move from one location to another </summary>
         public enum MoveType
         {

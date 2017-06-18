@@ -95,12 +95,12 @@ namespace DwarfCorp
             currentMode = "Idle";
         }
 
-        public bool HasAnimation(Creature.CharacterMode mode, Orientation orient)
+        public bool HasAnimation(CharacterMode mode, Orientation orient)
         {
             return Animations.ContainsKey(mode.ToString() + OrientationStrings[(int) orient]);
         }
 
-        public List<Animation> GetAnimations(Creature.CharacterMode mode)
+        public List<Animation> GetAnimations(CharacterMode mode)
         {
             return
                 OrientationStrings.Where((t, i) => HasAnimation(mode, (Orientation) i))
@@ -108,7 +108,7 @@ namespace DwarfCorp
                     .ToList();
         }
 
-        public void ReloopAnimations(Creature.CharacterMode mode)
+        public void ReloopAnimations(CharacterMode mode)
         {
             List<Animation> animations = GetAnimations(mode);
             foreach (Animation a in animations)
@@ -120,7 +120,7 @@ namespace DwarfCorp
             }
         }
 
-        public void ResetAnimations(Creature.CharacterMode mode)
+        public void ResetAnimations(CharacterMode mode)
         {
             List<Animation> animations = GetAnimations(mode);
             foreach (Animation a in animations)
@@ -129,7 +129,7 @@ namespace DwarfCorp
             }
         }
 
-        public static Animation CreateAnimation(Creature.CharacterMode mode,
+        public static Animation CreateAnimation(CharacterMode mode,
             Orientation orient,
             SpriteSheet texture,
             float frameHz,
@@ -142,7 +142,7 @@ namespace DwarfCorp
         }
 
 
-        public static CompositeAnimation CreateCompositeAnimation(Creature.CharacterMode mode,
+        public static CompositeAnimation CreateCompositeAnimation(CharacterMode mode,
             Orientation orient,
             string composite,
             float frameHz,
@@ -160,7 +160,7 @@ namespace DwarfCorp
             };
         }
 
-        public static Animation CreateAnimation(Creature.CharacterMode mode,
+        public static Animation CreateAnimation(CharacterMode mode,
             Orientation orient,
             SpriteSheet texture,
             float frameHz,
@@ -187,7 +187,7 @@ namespace DwarfCorp
             return new Animation(GameState.Game.GraphicsDevice, texture, mode.ToString() + OrientationStrings[(int)orient], frameWidth, frameHeight, frames, true, Color.White, frameHz, (float)frameWidth / 35.0f, (float)frameHeight / 35.0f, false);
         }
 
-        public void AddAnimation(Creature.CharacterMode mode,
+        public void AddAnimation(CharacterMode mode,
             Orientation orient,
             SpriteSheet texture,
             float frameHz,
@@ -241,7 +241,7 @@ namespace DwarfCorp
             base.Update(gameTime, chunks, camera);
         }
 
-        public void PauseAnimations(Creature.CharacterMode mode)
+        public void PauseAnimations(CharacterMode mode)
         {
             List<Animation> animations = GetAnimations(mode);
             foreach (Animation a in animations)
@@ -251,7 +251,7 @@ namespace DwarfCorp
 
         }
 
-        public void PlayAnimations(Creature.CharacterMode mode)
+        public void PlayAnimations(CharacterMode mode)
         {
             List<Animation> animations = GetAnimations(mode);
             foreach (Animation a in animations)

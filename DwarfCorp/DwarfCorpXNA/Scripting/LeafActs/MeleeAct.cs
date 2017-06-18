@@ -80,7 +80,7 @@ namespace DwarfCorp
         {
             Creature.Physics.Orientation = Physics.OrientMode.RotateY;
             Creature.OverrideCharacterMode = false;
-            Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+            Creature.CurrentCharacterMode = CharacterMode.Walking;
             base.OnCanceled();
         }
 
@@ -150,7 +150,7 @@ namespace DwarfCorp
                     {
                         reachedTarget = true;
                     }
-                    Agent.Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+                    Agent.Creature.CurrentCharacterMode = CharacterMode.Walking;
                 }
             yield return Status.Success;
                 yield break;
@@ -185,9 +185,9 @@ namespace DwarfCorp
                 targetInventory.OnDeath += targetInventory_OnDeath;
             }
 
-            Creature.CharacterMode defaultCharachterMode = Creature.AI.Movement.CanFly
-                ? Creature.CharacterMode.Flying
-                : Creature.CharacterMode.Walking;
+            CharacterMode defaultCharachterMode = Creature.AI.Movement.CanFly
+                ? CharacterMode.Flying
+                : CharacterMode.Walking;
 
             bool avoided = false;
             while(true)
@@ -305,9 +305,9 @@ namespace DwarfCorp
                     Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
                     CurrentAttack.RechargeTimer.Reset(CurrentAttack.RechargeRate);
 
-                    Creature.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
-                    Creature.Sprite.PlayAnimations(Creature.CharacterMode.Attacking);
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
+                    Creature.Sprite.ResetAnimations(CharacterMode.Attacking);
+                    Creature.Sprite.PlayAnimations(CharacterMode.Attacking);
+                    Creature.CurrentCharacterMode = CharacterMode.Attacking;
 
                     while (!CurrentAttack.Perform(Creature, Target, DwarfTime.LastTime, Creature.Stats.BuffedStr + Creature.Stats.BuffedSiz,
                             Creature.AI.Position, Creature.Faction.Name))
@@ -329,8 +329,8 @@ namespace DwarfCorp
                         yield return Status.Running;
                     }
 
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
-                    Creature.Sprite.PauseAnimations(Creature.CharacterMode.Attacking);
+                    Creature.CurrentCharacterMode = CharacterMode.Attacking;
+                    Creature.Sprite.PauseAnimations(CharacterMode.Attacking);
 
                     CurrentAttack.RechargeTimer.Reset(CurrentAttack.RechargeRate);
 
@@ -340,14 +340,14 @@ namespace DwarfCorp
                         CurrentAttack.RechargeTimer.Update(DwarfTime.LastTime);
                         if (CurrentAttack.Mode == Attack.AttackMode.Dogfight)
                         {
-                            Creature.CurrentCharacterMode = Creature.CharacterMode.Flying;
+                            Creature.CurrentCharacterMode = CharacterMode.Flying;
                             dogfightTarget += MathFunctions.RandVector3Cube()*0.1f;
                             Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, dogfightTarget + Target.Position, Creature.Physics.GlobalTransform.Translation) * 0.9f;
                             Creature.Physics.ApplyForce(output - Creature.Physics.Gravity, DwarfTime.Dt);
                         }
                         else
                         {
-                            Creature.Sprite.PauseAnimations(Creature.CharacterMode.Attacking);
+                            Creature.Sprite.PauseAnimations(CharacterMode.Attacking);
                             Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
                             if (Creature.AI.Movement.CanFly)
                             {

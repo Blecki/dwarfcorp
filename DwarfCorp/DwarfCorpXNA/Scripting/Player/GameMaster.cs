@@ -425,7 +425,7 @@ namespace DwarfCorp
                 {
                     if (dwarf.Physics.Velocity.LengthSquared() < 1)
                     {
-                        dwarf.Creature.CurrentCharacterMode = DwarfCorp.Creature.CharacterMode.Idle;
+                        dwarf.Creature.CurrentCharacterMode = DwarfCorp.CharacterMode.Idle;
                     }
                     dwarf.Physics.Velocity = new Vector3(dwarf.Physics.Velocity.X*0.9f, dwarf.Physics.Velocity.Y,
                         dwarf.Physics.Velocity.Z*0.9f);

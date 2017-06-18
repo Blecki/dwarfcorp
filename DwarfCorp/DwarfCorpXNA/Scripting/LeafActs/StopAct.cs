@@ -56,7 +56,7 @@ namespace DwarfCorp
         public override IEnumerable<Status> Run()
         {
             Agent.Velocity = Vector3.Zero;
-            Agent.Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+            Agent.Creature.CurrentCharacterMode = CharacterMode.Idle;
             yield return Status.Success;
         }
     }

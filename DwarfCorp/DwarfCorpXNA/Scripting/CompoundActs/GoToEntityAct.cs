@@ -184,7 +184,7 @@ namespace DwarfCorp
                 {
                     currentFailures++;
                     yield return Act.Status.Running;
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+                    Creature.CurrentCharacterMode = CharacterMode.Idle;
                     Creature.Physics.Velocity = Vector3.Zero;
                     if (currentFailures > maxFailures)
                     {

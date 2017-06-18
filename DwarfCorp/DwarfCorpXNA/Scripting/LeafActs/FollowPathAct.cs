@@ -131,7 +131,7 @@ namespace DwarfCorp
         public bool InitializePath()
         {
             // ERROR CHECKS / INITIALIZING
-            Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+            Creature.CurrentCharacterMode = CharacterMode.Walking;
             Creature.OverrideCharacterMode = false;
             Agent.Physics.Orientation = Physics.OrientMode.RotateY;
             ActionTimes = new List<float>();
@@ -248,7 +248,7 @@ namespace DwarfCorp
             {
                 case Creature.MoveType.Walk:
                     Creature.OverrideCharacterMode = false;
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+                    Creature.CurrentCharacterMode = CharacterMode.Walking;
                     if (hasNextAction)
                     {
                         transform.Translation = diff * t + currPosition;
@@ -262,7 +262,7 @@ namespace DwarfCorp
                 case Creature.MoveType.Swim:
                     Creature.NoiseMaker.MakeNoise("Swim", Agent.Position, true);
                     Creature.OverrideCharacterMode = false;
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Swimming;
+                    Creature.CurrentCharacterMode = CharacterMode.Swimming;
                     if (hasNextAction)
                     {
                         transform.Translation = diff * t + currPosition + new Vector3(0, 0.5f, 0);
@@ -280,8 +280,8 @@ namespace DwarfCorp
                     }
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = Creature.Physics.Velocity.Y > 0
-                        ? Creature.CharacterMode.Jumping
-                        : Creature.CharacterMode.Falling;
+                        ? CharacterMode.Jumping
+                        : CharacterMode.Falling;
                     if (hasNextAction)
                     {
                         float z = Easing.Ballistic(t, 1.0f, 1.0f);
@@ -299,7 +299,7 @@ namespace DwarfCorp
                     break;
                 case Creature.MoveType.Fall:
                     Creature.OverrideCharacterMode = false;
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Falling;
+                    Creature.CurrentCharacterMode = CharacterMode.Falling;
                     if (hasNextAction)
                     {
                         transform.Translation = diff * t + currPosition;
@@ -317,7 +317,7 @@ namespace DwarfCorp
                         Creature.NoiseMaker.MakeNoise("Climb", Agent.Position, false);
                     }
                     Creature.OverrideCharacterMode = false;
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Climbing;
+                    Creature.CurrentCharacterMode = CharacterMode.Climbing;
                     Creature.OverrideCharacterMode = true;
                     if (hasNextAction)
                     {
@@ -340,7 +340,7 @@ namespace DwarfCorp
                     break;
                 case Creature.MoveType.Fly:
                     Creature.OverrideCharacterMode = false;
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Flying;
+                    Creature.CurrentCharacterMode = CharacterMode.Flying;
                     Creature.OverrideCharacterMode = true;
                     if (hasNextAction)
                     {

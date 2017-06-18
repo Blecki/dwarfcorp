@@ -83,7 +83,7 @@ namespace DwarfCorp
             {
                 Creature.OverrideCharacterMode = false;
                 Creature.Physics.Orientation = Physics.OrientMode.RotateY;
-                Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+                Creature.CurrentCharacterMode = CharacterMode.Walking;
                 WanderTime.Update(DwarfTime.LastTime);
 
                 if (!Creature.IsOnGround)
@@ -105,7 +105,7 @@ namespace DwarfCorp
                 if (dist < 0.5f)
                 {
                     Creature.Physics.Velocity *= 0.0f;
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+                    Creature.CurrentCharacterMode = CharacterMode.Idle;
                     yield return Status.Running;
                     break;
                 }
@@ -118,12 +118,12 @@ namespace DwarfCorp
                     output.Y = 0.0f;
 
                     Creature.Physics.ApplyForce(output * 0.5f, (float) DwarfTime.LastTime.ElapsedGameTime.TotalSeconds);
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+                    Creature.CurrentCharacterMode = CharacterMode.Walking;
                 }
 
                 yield return Status.Running;
             }
-            Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+            Creature.CurrentCharacterMode = CharacterMode.Idle;
             yield return Status.Success;
         }
     }

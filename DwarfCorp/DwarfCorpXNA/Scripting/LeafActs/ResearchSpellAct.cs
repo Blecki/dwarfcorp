@@ -62,7 +62,7 @@ namespace DwarfCorp
         {
             if (Spell.IsResearched)
             {
-                Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+                Creature.CurrentCharacterMode = CharacterMode.Idle;
                 Creature.OverrideCharacterMode = false;
                 yield return Status.Success;
                 yield break;
@@ -72,9 +72,9 @@ namespace DwarfCorp
             Sound3D sound = null;
             while (!Spell.IsResearched)
             {
-                Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
+                Creature.CurrentCharacterMode = CharacterMode.Attacking;
                 Creature.OverrideCharacterMode = true;
-                Creature.Sprite.ReloopAnimations(Creature.CharacterMode.Attacking);
+                Creature.Sprite.ReloopAnimations(CharacterMode.Attacking);
                 float research = Creature.Stats.BuffedInt * 0.25f * DwarfTime.Dt;
                 Spell.ResearchProgress += research;
                 totalResearch += research;
@@ -113,7 +113,7 @@ namespace DwarfCorp
             }
             Creature.AI.AddThought(Thought.ThoughtType.Researched);
             Creature.OverrideCharacterMode = false;
-            Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+            Creature.CurrentCharacterMode = CharacterMode.Idle;
             yield return Status.Success;
             yield break;
         }
