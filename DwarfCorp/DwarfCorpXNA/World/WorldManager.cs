@@ -262,13 +262,13 @@ namespace DwarfCorp
 
         public void AwardBux(DwarfBux Bux)
         {
-            PlayerCompany.Assets += Bux;
+            PlayerFaction.AddMoney(Bux);
             MakeAnnouncement(String.Format("Gained {0}", Bux));
         }
 
         public void LoseBux(DwarfBux Bux)
         {
-            PlayerCompany.Assets -= Bux;
+            PlayerFaction.AddMoney(-Bux);
             MakeAnnouncement(String.Format("Lost {0}", Bux));
         }
 
