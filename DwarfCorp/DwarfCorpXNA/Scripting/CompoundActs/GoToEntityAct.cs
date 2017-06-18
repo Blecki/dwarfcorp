@@ -148,8 +148,8 @@ namespace DwarfCorp
                 {
                     yield return Act.Status.Running;
                 }
-                List<Creature.MoveAction> existingPath =
-                    Creature.AI.Blackboard.GetData<List<Creature.MoveAction>>("PathToEntity");
+                List<MoveAction> existingPath =
+                    Creature.AI.Blackboard.GetData<List<MoveAction>>("PathToEntity");
 
                 Creature.AI.Blackboard.Erase("PathToEntity");
 
@@ -220,7 +220,7 @@ namespace DwarfCorp
                     {
                         yield return Act.Status.Running;
 
-                        List<Creature.MoveAction> path = Agent.Blackboard.GetData<List<Creature.MoveAction>>("PathToEntity");
+                        List<MoveAction> path = Agent.Blackboard.GetData<List<MoveAction>>("PathToEntity");
                         bool targetMoved = (path.Last().Voxel.Position - entity.LocalTransform.Translation).Length() > Math.Max(Radius, 2) * 2
                         ;
                         if (MovingTarget && path != null && (path.Count > 0 && targetMoved))

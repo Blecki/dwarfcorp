@@ -149,16 +149,16 @@ namespace DwarfCorp
         {
             Vector3 target = MathFunctions.RandVector3Cube()*Radius + Creature.AI.Position;
             if (Is2D) target.Y = Creature.AI.Position.Y;
-            List<Creature.MoveAction> path = new List<Creature.MoveAction>();
+            List<MoveAction> path = new List<MoveAction>();
             Voxel curr = Creature.Physics.CurrentVoxel;
             for (int i = 0; i < PathLength; i++)
             {
-                List<Creature.MoveAction> actions = 
+                List<MoveAction> actions = 
                     Creature.AI.Movement.GetMoveActions(curr);
 
-                Creature.MoveAction? bestAction = null;
+                MoveAction? bestAction = null;
                 float bestDist = float.MaxValue;
-                foreach (Creature.MoveAction action in actions)
+                foreach (MoveAction action in actions)
                 {
                     float dist = (action.Voxel.Position - target).LengthSquared();
 
@@ -171,7 +171,7 @@ namespace DwarfCorp
 
                 if (bestAction.HasValue && !path.Any(p => p.Voxel.Equals(bestAction.Value.Voxel) && p.MoveType == bestAction.Value.MoveType))
                 {
-                    Creature.MoveAction action = bestAction.Value;
+                    MoveAction action = bestAction.Value;
                     action.Voxel = new Voxel(curr);
                     path.Add(action);
                     curr = bestAction.Value.Voxel;

@@ -222,7 +222,7 @@ namespace DwarfCorp
             DrawLifeTimer.HasTriggered = true;
             Gender = RandomGender();
         }
-        
+
         public Creature(
             ComponentManager Manager,
             CreatureStats stats,
@@ -346,7 +346,7 @@ namespace DwarfCorp
                 if (Sprite != null)
                 {
                     if (Sprite.HasAnimation(currentCharacterMode, OrientedAnimation.Orientation.Forward))
-                    { 
+                    {
                         Sprite.SetCurrentAnimation(value.ToString());
                     }
                     else
@@ -423,7 +423,7 @@ namespace DwarfCorp
 
             if (!DrawLifeTimer.HasTriggered)
             {
-                float val = Hp/MaxHealth;
+                float val = Hp / MaxHealth;
                 Color color = val < 0.75f ? (val < 0.5f ? Color.Red : Color.Orange) : Color.LightGreen;
                 Drawer2D.DrawLoadBar(Manager.World.Camera, AI.Position - Vector3.Up * 0.5f, color, Color.Black, 32, 2, Hp / MaxHealth);
             }
@@ -684,7 +684,7 @@ namespace DwarfCorp
         /// Basic Act that causes the creature to wait for the specified time.
         /// Also draws a loading bar above the creature's head when relevant.
         /// </summary>
-        public IEnumerable<Act.Status> HitAndWait(float f, bool loadBar, Func<Vector3> pos, string playSound = "", Func<bool> continueHitting = null )
+        public IEnumerable<Act.Status> HitAndWait(float f, bool loadBar, Func<Vector3> pos, string playSound = "", Func<bool> continueHitting = null)
         {
             var waitTimer = new Timer(f, true);
 
@@ -768,317 +768,6 @@ namespace DwarfCorp
                     AI.Faction.GatherDesignations.Add(item);
                 }
                 AI.Tasks.Add(gatherTask);
-            }
-        }
-
-        /// <summary>
-        /// A buff is an ongoing effect applied to a creature. This can heal the creature,
-        /// damage it, or apply any other kind of effect.
-        /// </summary>
-        public class Buff
-        {
-            public Buff()
-            {
-            }
-
-            /// <summary>
-            /// Create a buff which persists for the specified time.
-            /// </summary>
-            public Buff(float time)
-            {
-                EffectTime = new Timer(time, true);
-                ParticleTimer = new Timer(0.25f, false);
-            }
-
-            /// <summary> Time that the effect persists for </summary>
-            public Timer EffectTime { get; set; }
-
-            /// <summary> If true, the buff is active. </summary>
-            public bool IsInEffect
-            {
-                get { return !EffectTime.HasTriggered; }
-            }
-
-            /// <summary> Particles to generate during the buff. </summary>
-            public string Particles { get; set; }
-            /// <summary> Every time this triggers, a particle gets released </summary>
-            public Timer ParticleTimer { get; set; }
-            /// <summary> Sound to play when the buff starts </summary>
-            public string SoundOnStart { get; set; }
-            /// <summary> Sound to play when the buff ends </summary>
-            public string SoundOnEnd { get; set; }
-
-
-            /// <summary> Called when the Buff is added to a Creature </summary>
-            public virtual void OnApply(Creature creature)
-            {
-                if (!string.IsNullOrEmpty(SoundOnStart))
-                {
-                    SoundManager.PlaySound(SoundOnStart, creature.Physics.Position, true, 1.0f);
-                }
-            }
-
-            /// <summary> Called when the Buff is removed from a Creature </summary>
-            public virtual void OnEnd(Creature creature)
-            {
-                if (!string.IsNullOrEmpty(SoundOnEnd))
-                {
-                    SoundManager.PlaySound(SoundOnEnd, creature.Physics.Position, true, 1.0f);
-                }
-            }
-
-            /// <summary> Updates the Buff </summary>
-            public virtual void Update(DwarfTime time, Creature creature)
-            {
-                EffectTime.Update(time);
-                ParticleTimer.Update(time);
-
-                if (ParticleTimer.HasTriggered && !string.IsNullOrEmpty(Particles))
-                {
-                    creature.Manager.World.ParticleManager.Trigger(Particles, creature.Physics.Position, Color.White, 1);
-                }
-            }
-
-            /// <summary> Creates a new Buff that is a deep copy of this one. </summary>
-            public virtual Buff Clone()
-            {
-                return new Buff
-                {
-                    EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
-                    Particles = Particles,
-                    ParticleTimer =
-                        new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
-                    SoundOnEnd = SoundOnEnd,
-                    SoundOnStart = SoundOnStart
-                };
-            }
-        }
-        ///<summary> A Buff which allows the creature to resist some amount of damage of a specific kind </summary>
-        public class DamageResistBuff : Buff
-        {
-            public DamageResistBuff()
-            {
-                DamageType = DamageType.Normal;
-                Bonus = 0.0f;
-            }
-
-            /// <summary> The kind of damage to ignore </summary>
-            public DamageType DamageType { get; set; }
-            /// <summary> The amount of damage to ignore. </summary>
-            public float Bonus { get; set; }
-
-            public override Buff Clone()
-            {
-                return new DamageResistBuff
-                {
-                    EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
-                    Particles = Particles,
-                    ParticleTimer =
-                        new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
-                    SoundOnEnd = SoundOnEnd,
-                    SoundOnStart = SoundOnStart,
-                    DamageType = DamageType,
-                    Bonus = Bonus
-                };
-            }
-
-            public override void OnApply(Creature creature)
-            {
-                creature.Resistances[DamageType] += Bonus;
-                base.OnApply(creature);
-            }
-
-            public override void OnEnd(Creature creature)
-            {
-                creature.Resistances[DamageType] -= Bonus;
-                base.OnEnd(creature);
-            }
-        }
-
-        /// <summary>
-        /// A move action is a link between two voxels and a type of motion
-        /// used to get between them.
-        /// </summary>
-        public struct MoveAction
-        {
-            /// <summary> The destination voxel of the motion </summary>
-            public Voxel Voxel { get; set; }
-            /// <summary> The type of motion applied to get to the voxel </summary>
-            public MoveType MoveType { get; set; }
-            /// <summary> The offset between the start and destination </summary>
-            public Vector3 Diff { get; set; }
-            /// <summary> And object to interact with to get between the start and destination </summary>
-            public GameComponent InteractObject { get; set; }
-
-            /// <summary>
-            /// For climbing, this is the voxel the dwarf climbed on.
-            /// </summary>
-            public Voxel TargetVoxel { get; set; }
-        }
-
-        /// <summary>
-        /// Applies damage to the creature over time.
-        /// </summary>
-        public class OngoingDamageBuff : Buff
-        {
-            /// <summary> The type of damage to apply </summary>
-            public DamageType DamageType { get; set; }
-            /// <summary> The amount of damage to take in HP per second </summary>
-            public float DamagePerSecond { get; set; }
-
-            public override void Update(DwarfTime time, Creature creature)
-            {
-                var dt = (float)time.ElapsedGameTime.TotalSeconds;
-                creature.Damage(DamagePerSecond * dt, DamageType);
-                base.Update(time, creature);
-            }
-
-            public override Buff Clone()
-            {
-                return new OngoingDamageBuff
-                {
-                    EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
-                    Particles = Particles,
-                    ParticleTimer =
-                        new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
-                    SoundOnEnd = SoundOnEnd,
-                    SoundOnStart = SoundOnStart,
-                    DamageType = DamageType,
-                    DamagePerSecond = DamagePerSecond
-                };
-            }
-        }
-
-        /// <summary>
-        /// Heals the creature continuously over time.
-        /// </summary>
-        public class OngoingHealBuff : Buff
-        {
-            public OngoingHealBuff()
-            {
-            }
-
-            public OngoingHealBuff(float dps, float time) :
-                base(time)
-            {
-                DamagePerSecond = dps;
-            }
-
-            /// <summary> Amount to heal the creature in HP per second </summary>
-            public float DamagePerSecond { get; set; }
-
-            public override void Update(DwarfTime time, Creature creature)
-            {
-                var dt = (float)time.ElapsedGameTime.TotalSeconds;
-                creature.Heal(dt * DamagePerSecond);
-
-                base.Update(time, creature);
-            }
-
-            public override Buff Clone()
-            {
-                return new OngoingHealBuff
-                {
-                    EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
-                    Particles = Particles,
-                    ParticleTimer =
-                        new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
-                    SoundOnEnd = SoundOnEnd,
-                    SoundOnStart = SoundOnStart,
-                    DamagePerSecond = DamagePerSecond
-                };
-            }
-        }
-
-        /// <summary> Increases the creature's stats for a time </summary>
-        public class StatBuff : Buff
-        {
-            public StatBuff()
-            {
-                Buffs = new CreatureStats.StatNums();
-            }
-
-            public StatBuff(float time, CreatureStats.StatNums buffs) :
-                base(time)
-            {
-                Buffs = buffs;
-            }
-
-            /// <summary> The amount to add to the creature's stats </summary>
-            public CreatureStats.StatNums Buffs { get; set; }
-
-            public override Buff Clone()
-            {
-                return new StatBuff
-                {
-                    EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
-                    Particles = Particles,
-                    ParticleTimer =
-                        new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
-                    SoundOnEnd = SoundOnEnd,
-                    SoundOnStart = SoundOnStart,
-                    Buffs = Buffs
-                };
-            }
-
-            public override void Update(DwarfTime time, Creature creature)
-            {
-                base.Update(time, creature);
-            }
-
-            public override void OnApply(Creature creature)
-            {
-                creature.Stats.StatBuffs += Buffs;
-                base.OnApply(creature);
-            }
-
-            public override void OnEnd(Creature creature)
-            {
-                creature.Stats.StatBuffs -= Buffs;
-                base.OnEnd(creature);
-            }
-        }
-
-        /// <summary> Causes the creature to have a Thought for a specified time </summary>
-        public class ThoughtBuff : Buff
-        {
-            public ThoughtBuff()
-            {
-            }
-
-            public ThoughtBuff(float time, Thought.ThoughtType type) :
-                base(time)
-            {
-                ThoughtType = type;
-            }
-
-            /// <summary> The Thought the creature has during the buff </summary>
-            public Thought.ThoughtType ThoughtType { get; set; }
-
-            public override void OnApply(Creature creature)
-            {
-                creature.AI.AddThought(ThoughtType);
-                base.OnApply(creature);
-            }
-
-            public override void OnEnd(Creature creature)
-            {
-                creature.AI.RemoveThought(ThoughtType);
-                base.OnApply(creature);
-            }
-
-            public override Buff Clone()
-            {
-                return new ThoughtBuff
-                {
-                    EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
-                    Particles = Particles,
-                    ParticleTimer =
-                        new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
-                    SoundOnEnd = SoundOnEnd,
-                    SoundOnStart = SoundOnStart,
-                    ThoughtType = ThoughtType
-                };
             }
         }
     }

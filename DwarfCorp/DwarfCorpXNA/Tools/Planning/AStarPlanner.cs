@@ -63,10 +63,10 @@ namespace DwarfCorp
         /// <param name="cameFrom">A dictionary of Voxels to the movement that was taken to get there.</param>
         /// <param name="currentNode">The very last movement in the path.</param>
         /// <returns>The path of movements. from the start to the current node</returns>
-        public static List<Creature.MoveAction> ReconstructPath(Dictionary<Voxel, Creature.MoveAction> cameFrom,
-            Creature.MoveAction currentNode)
+        public static List<MoveAction> ReconstructPath(Dictionary<Voxel, MoveAction> cameFrom,
+            MoveAction currentNode)
         {
-            var toReturn = new List<Creature.MoveAction>();
+            var toReturn = new List<MoveAction>();
             // If there is a dictionary entry for the current voxel, add it to the path recursively.
             if (cameFrom.ContainsKey(currentNode.Voxel))
             {
@@ -96,7 +96,7 @@ namespace DwarfCorp
         /// </param>
         /// <returns>True if a path could be found, or false otherwise.</returns>
         private static bool Path(CreatureMovement mover, Voxel start, GoalRegion goal, ChunkManager chunks,
-            int maxExpansions, ref List<Creature.MoveAction> toReturn, float weight)
+            int maxExpansions, ref List<MoveAction> toReturn, float weight)
         {
             // Sometimes a goal may not even be achievable a.priori. If this is true, we know there can't be a path 
             // which satisifies that goal.
@@ -116,7 +116,7 @@ namespace DwarfCorp
             };
 
             // Dictionary of voxels to the optimal action that got the mover to that voxel.
-            var cameFrom = new Dictionary<Voxel, Creature.MoveAction>();
+            var cameFrom = new Dictionary<Voxel, MoveAction>();
 
             // Optimal score of a voxel based on the path it took to get there.
             var gScore = new Dictionary<Voxel, float>();
@@ -158,7 +158,7 @@ namespace DwarfCorp
                 if (goal.IsInGoalRegion(current))
                 {
                     // Assume that the last action in the path involves walking to the goal.
-                    var first = new Creature.MoveAction
+                    var first = new MoveAction
                     {
                         Voxel = current,
                         MoveType = Creature.MoveType.Walk
@@ -173,7 +173,7 @@ namespace DwarfCorp
 
                 VoxelChunk currentChunk = chunks.ChunkData.ChunkMap[current.ChunkID];
 
-                List<Creature.MoveAction> neighbors = null;
+                List<MoveAction> neighbors = null;
 
                 // Get the voxels that can be moved to from the current voxel.
                 neighbors = mover.GetMoveActions(current);
@@ -183,17 +183,17 @@ namespace DwarfCorp
                 // that we can just walk to it.
                 if (manhattanNeighbors.Contains(goal.GetVoxel()))
                 {
-                    var first = new Creature.MoveAction
+                    var first = new MoveAction
                     {
                         Voxel = current,
                         MoveType = Creature.MoveType.Walk
                     };
-                    var last = new Creature.MoveAction
+                    var last = new MoveAction
                     {
                         Voxel = goal.GetVoxel(),
                         MoveType = Creature.MoveType.Walk
                     };
-                    List<Creature.MoveAction> subPath = ReconstructPath(cameFrom, first);
+                    List<MoveAction> subPath = ReconstructPath(cameFrom, first);
                     subPath.Add(last);
                     toReturn = subPath;
                     return true;
@@ -201,7 +201,7 @@ namespace DwarfCorp
 
                 // Otherwise, consider all of the neighbors of the current voxel that can be moved to,
                 // and determine how to add them to the list of expansions.
-                foreach (Creature.MoveAction n in neighbors)
+                foreach (MoveAction n in neighbors)
                 {
                     // If we've already explored that voxel, don't explore it again.
                     if (closedSet.Contains(n.Voxel))
@@ -222,7 +222,7 @@ namespace DwarfCorp
                     openSet.Add(n.Voxel);
 
                     // Add an edge to the voxel from the current voxel.
-                    Creature.MoveAction cameAction = n;
+                    var cameAction = n;
                     cameAction.Voxel = current;
                     cameFrom[n.Voxel] = cameAction;
 
@@ -257,10 +257,10 @@ namespace DwarfCorp
         ///     Higher values result in suboptimal paths, but the search may be faster.
         /// </param>
         /// <returns>The path of movements the creature must take to reach the goal. Returns null if no such path exists.</returns>
-        public static List<Creature.MoveAction> FindPath(CreatureMovement mover, Voxel start, GoalRegion goal,
+        public static List<MoveAction> FindPath(CreatureMovement mover, Voxel start, GoalRegion goal,
             ChunkManager chunks, int maxExpansions, float weight)
         {
-            var p = new List<Creature.MoveAction>();
+            var p = new List<MoveAction>();
             bool success = Path(mover, start, goal, chunks, maxExpansions, ref p, weight);
 
             if (success)

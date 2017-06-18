@@ -109,7 +109,7 @@ namespace DwarfCorp
                     yield break;
                 }
 
-                List<Creature.MoveAction> neighbors = Agent.Movement.GetMoveActions(Agent.Position);
+                List<MoveAction> neighbors = Agent.Movement.GetMoveActions(Agent.Position);
                 neighbors.Sort((a, b) =>
                 {
                     if (a.Equals(b)) return 0;
@@ -129,7 +129,7 @@ namespace DwarfCorp
                     yield break;
                 }
 
-                Creature.MoveAction furthest = neighbors.Last();
+                MoveAction furthest = neighbors.Last();
                 bool reachedTarget = false;
                 Timer timeout = new Timer(2.0f, true);
                 while (!reachedTarget)
@@ -431,17 +431,17 @@ namespace DwarfCorp
             Vector3 target = Target.Position;
 
             if (Is2D) target.Y = Creature.AI.Position.Y;
-            List<Creature.MoveAction> path = new List<Creature.MoveAction>();
+            List<MoveAction> path = new List<MoveAction>();
             Voxel curr = Creature.Physics.CurrentVoxel;
             for (int i = 0; i < PathLength; i++)
             {
-                List<Creature.MoveAction> actions =
+                List<MoveAction> actions =
                     Creature.AI.Movement.GetMoveActions(curr);
 
-                Creature.MoveAction? bestAction = null;
+                MoveAction? bestAction = null;
                 float bestDist = float.MaxValue;
 
-                foreach (Creature.MoveAction action in actions)
+                foreach (MoveAction action in actions)
                 {
                     float dist = (action.Voxel.Position - target).LengthSquared();
 
@@ -457,7 +457,7 @@ namespace DwarfCorp
                     !path.Any(p => p.Voxel.Equals(bestAction.Value.Voxel) && p.MoveType == bestAction.Value.MoveType))
                 {
                     path.Add(bestAction.Value);
-                    Creature.MoveAction action = bestAction.Value;
+                    MoveAction action = bestAction.Value;
                     action.Voxel = new Voxel(curr);
                     curr = bestAction.Value.Voxel;
                     bestAction = action;
@@ -472,7 +472,7 @@ namespace DwarfCorp
             if (path.Count > 0)
             {
                 path.Insert(0,
-                    new Creature.MoveAction()
+                    new MoveAction()
                     {
                         Diff = Vector3.Zero,
                         Voxel = new Voxel(Creature.Physics.CurrentVoxel),

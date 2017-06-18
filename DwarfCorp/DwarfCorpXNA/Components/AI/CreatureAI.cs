@@ -1021,12 +1021,12 @@ namespace DwarfCorp
                         yield break;
                     }
 
-                    List<Creature.MoveAction> actions = agent.AI.Movement.GetMoveActions(creatureVoxel);
+                    List<MoveAction> actions = agent.AI.Movement.GetMoveActions(creatureVoxel);
 
                     float minCost = float.MaxValue;
-                    var minAction = new Creature.MoveAction();
+                    var minAction = new MoveAction();
                     bool hasMinAction = false;
-                    foreach (Creature.MoveAction action in actions)
+                    foreach (var action in actions)
                     {
                         Voxel vox = action.Voxel;
 
@@ -1042,14 +1042,14 @@ namespace DwarfCorp
 
                     if (hasMinAction)
                     {
-                        var nullAction = new Creature.MoveAction
+                        var nullAction = new MoveAction
                         {
                             Diff = minAction.Diff,
                             MoveType = Creature.MoveType.Walk,
                             Voxel = creatureVoxel
                         };
 
-                        agent.AI.Blackboard.SetData("GreedyPath", new List<Creature.MoveAction> { nullAction, minAction });
+                        agent.AI.Blackboard.SetData("GreedyPath", new List<MoveAction> { nullAction, minAction });
                         var pathAct = new FollowPathAct(agent.AI, "GreedyPath");
                         pathAct.Initialize();
 
@@ -1465,7 +1465,7 @@ namespace DwarfCorp
         }
 
         /// <summary> gets a list of actions that the creature can take from the given position </summary>
-        public List<Creature.MoveAction> GetMoveActions(Vector3 pos)
+        public List<MoveAction> GetMoveActions(Vector3 pos)
         {
             var vox = new Voxel();
             Creature.Manager.World.ChunkManager.ChunkData.GetVoxel(pos, ref vox);
@@ -1473,9 +1473,9 @@ namespace DwarfCorp
         }
 
         /// <summary> gets the list of actions that the creature can take from a given voxel. </summary>
-        public List<Creature.MoveAction> GetMoveActions(Voxel voxel)
+        public List<MoveAction> GetMoveActions(Voxel voxel)
         {
-            var toReturn = new List<Creature.MoveAction>();
+            var toReturn = new List<MoveAction>();
 
             CollisionManager objectHash = Creature.Manager.World.CollisionManager;
 
@@ -1489,7 +1489,7 @@ namespace DwarfCorp
             bool hasNeighbors = HasNeighbors(neighborHood);
             bool isClimbing = false;
 
-            var successors = new List<Creature.MoveAction>();
+            var successors = new List<MoveAction>();
 
             //Climbing ladders.
             IEnumerable<IBoundedObject> objectsInside = objectHash.GetObjectsAt(voxel,
@@ -1505,7 +1505,7 @@ namespace DwarfCorp
                     // then add a climb action.
                     if (hasLadder)
                     {
-                        successors.Add(new Creature.MoveAction
+                        successors.Add(new MoveAction
                         {
                             Diff = new Vector3(1, 2, 1),
                             MoveType = Creature.MoveType.Climb,
@@ -1516,7 +1516,7 @@ namespace DwarfCorp
 
                         if (!standingOnGround)
                         {
-                            successors.Add(new Creature.MoveAction
+                            successors.Add(new MoveAction
                             {
                                 Diff = new Vector3(1, 0, 1),
                                 MoveType = Creature.MoveType.Climb,
@@ -1547,7 +1547,7 @@ namespace DwarfCorp
                 if (nearWall)
                 {
                     isClimbing = true;
-                    successors.Add(new Creature.MoveAction
+                    successors.Add(new MoveAction
                     {
                         Diff = new Vector3(1, 2, 1),
                         MoveType = Creature.MoveType.ClimbWalls,
@@ -1557,7 +1557,7 @@ namespace DwarfCorp
                 // If we're near a wall and not blocked from below, we can climb downward.
                 if (nearWall && !standingOnGround)
                 {
-                    successors.Add(new Creature.MoveAction
+                    successors.Add(new MoveAction
                     {
                         Diff = new Vector3(1, 0, 1),
                         MoveType = Creature.MoveType.ClimbWalls,
@@ -1574,14 +1574,14 @@ namespace DwarfCorp
                 Creature.MoveType moveType = inWater ? Creature.MoveType.Swim : Creature.MoveType.Walk;
                 if (IsEmpty(neighborHood[0, 1, 1]))
                     // +- x
-                    successors.Add(new Creature.MoveAction
+                    successors.Add(new MoveAction
                     {
                         Diff = new Vector3(0, 1, 1),
                         MoveType = moveType
                     });
 
                 if (IsEmpty(neighborHood[2, 1, 1]))
-                    successors.Add(new Creature.MoveAction
+                    successors.Add(new MoveAction
                     {
                         Diff = new Vector3(2, 1, 1),
                         MoveType = moveType
@@ -1589,14 +1589,14 @@ namespace DwarfCorp
 
                 if (IsEmpty(neighborHood[1, 1, 0]))
                     // +- z
-                    successors.Add(new Creature.MoveAction
+                    successors.Add(new MoveAction
                     {
                         Diff = new Vector3(1, 1, 0),
                         MoveType = moveType
                     });
 
                 if (IsEmpty(neighborHood[1, 1, 2]))
-                    successors.Add(new Creature.MoveAction
+                    successors.Add(new MoveAction
                     {
                         Diff = new Vector3(1, 1, 2),
                         MoveType = moveType
@@ -1608,14 +1608,14 @@ namespace DwarfCorp
                 {
                     if (IsEmpty(neighborHood[2, 1, 2]))
                         // +x + z
-                        successors.Add(new Creature.MoveAction
+                        successors.Add(new MoveAction
                         {
                             Diff = new Vector3(2, 1, 2),
                             MoveType = moveType
                         });
 
                     if (IsEmpty(neighborHood[2, 1, 0]))
-                        successors.Add(new Creature.MoveAction
+                        successors.Add(new MoveAction
                         {
                             Diff = new Vector3(2, 1, 0),
                             MoveType = moveType
@@ -1623,14 +1623,14 @@ namespace DwarfCorp
 
                     if (IsEmpty(neighborHood[0, 1, 2]))
                         // -x -z
-                        successors.Add(new Creature.MoveAction
+                        successors.Add(new MoveAction
                         {
                             Diff = new Vector3(0, 1, 2),
                             MoveType = moveType
                         });
 
                     if (IsEmpty(neighborHood[0, 1, 0]))
-                        successors.Add(new Creature.MoveAction
+                        successors.Add(new MoveAction
                         {
                             Diff = new Vector3(0, 1, 0),
                             MoveType = moveType
@@ -1651,7 +1651,7 @@ namespace DwarfCorp
 
                         if (!IsEmpty(neighborHood[dx, 1, dz]))
                         {
-                            successors.Add(new Creature.MoveAction
+                            successors.Add(new MoveAction
                             {
                                 Diff = new Vector3(dx, 2, dz),
                                 MoveType = Creature.MoveType.Jump
@@ -1666,7 +1666,7 @@ namespace DwarfCorp
             // it can fall one voxel downward in free space.
             if (!inWater && !standingOnGround)
             {
-                successors.Add(new Creature.MoveAction
+                successors.Add(new MoveAction
                 {
                     Diff = new Vector3(1, 0, 1),
                     MoveType = Creature.MoveType.Fall
@@ -1687,7 +1687,7 @@ namespace DwarfCorp
 
                             if (IsEmpty(neighborHood[dx, 1, dz]))
                             {
-                                successors.Add(new Creature.MoveAction
+                                successors.Add(new MoveAction
                                 {
                                     Diff = new Vector3(dx, dy, dz),
                                     MoveType = Creature.MoveType.Fly
@@ -1699,7 +1699,7 @@ namespace DwarfCorp
             }
 
             // Now, validate each move action that the creature might take.
-            foreach (Creature.MoveAction v in successors)
+            foreach (MoveAction v in successors)
             {
                 Voxel n = neighborHood[(int)v.Diff.X, (int)v.Diff.Y, (int)v.Diff.Z];
                 if (n != null && (n.IsEmpty || n.WaterLevel > 0))
@@ -1727,7 +1727,7 @@ namespace DwarfCorp
                                     Relationship.Loving)
                                 {
                                     if (Can(Creature.MoveType.DestroyObject))
-                                        toReturn.Add(new Creature.MoveAction
+                                        toReturn.Add(new MoveAction
                                         {
                                             Diff = v.Diff,
                                             MoveType = Creature.MoveType.DestroyObject,
@@ -1742,7 +1742,7 @@ namespace DwarfCorp
                     // If no object blocked us, we can move freely as normal.
                     if (!blockedByObject)
                     {
-                        Creature.MoveAction newAction = v;
+                        MoveAction newAction = v;
                         newAction.Voxel = n;
                         toReturn.Add(newAction);
                     }

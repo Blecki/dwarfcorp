@@ -43,7 +43,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class BuffSpell : Spell
     {
-        public List<Creature.Buff> Buffs { get; set; } 
+        public List<Buff> Buffs { get; set; } 
         
         public BuffSpell(WorldManager world) :
             base(world)
@@ -51,7 +51,7 @@ namespace DwarfCorp
             
         }
 
-        public BuffSpell(WorldManager world, params Creature.Buff[] buffs) :
+        public BuffSpell(WorldManager world, params Buff[] buffs) :
             base(world)
         {
             Buffs = buffs.ToList();
@@ -74,7 +74,7 @@ namespace DwarfCorp
                 if (creature == null) continue;
                 else
                 {
-                    foreach (Creature.Buff buff in Buffs)
+                    foreach (var buff in Buffs)
                     {
                         if (OnCast(tree))
                         {
