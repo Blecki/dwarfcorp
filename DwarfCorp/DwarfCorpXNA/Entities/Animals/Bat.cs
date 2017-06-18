@@ -21,11 +21,9 @@ namespace DwarfCorp
         }
 
         public Bat(ComponentManager manager, Vector3 position) :
-            // Creature base constructor
             base
             (
                 manager,
-                // Default stats
                 new CreatureStats
                 {
                     Dexterity = 6,
@@ -37,16 +35,10 @@ namespace DwarfCorp
                     Size = 0.25f,
                     CanSleep = false
                 },
-                // Belongs to herbivore team
                 "Carnivore",
-                // Uses the default plan service
                 manager.World.PlanService,
-                // Belongs to the herbivore team
                 manager.World.Factions.Factions["Carnivore"],
-                // The physics component this creature belongs to
-                
-                // All the rest of the arguments are passed in directly
-                manager.World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Bat"
+                "Bat"
             )
         {
             Physics = new Physics

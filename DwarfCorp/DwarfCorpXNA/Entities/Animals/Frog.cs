@@ -19,12 +19,11 @@ namespace DwarfCorp
 
         }
 
-        public Frog(string sprites, Vector3 position, ComponentManager manager, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, string name) :
+        public Frog(string sprites, Vector3 position, ComponentManager manager, string name) :
             // Creature base constructor
             base
             (
                 manager,
-                // Default stats
                 new CreatureStats
                 {
                     Dexterity = 6,
@@ -36,16 +35,10 @@ namespace DwarfCorp
                     Size = 0.25f,
                     CanSleep = false
                 },
-                // Belongs to herbivore team
                 "Herbivore",
-                // Uses the default plan service
                 manager.World.PlanService,
-                // Belongs to the herbivore team
                 manager.World.Factions.Factions["Herbivore"],
-                // The physics component this creature belongs to
-                
-                // All the rest of the arguments are passed in directly
-                chunks, graphics, content, name
+                name
             )
         {
             Physics = new Physics

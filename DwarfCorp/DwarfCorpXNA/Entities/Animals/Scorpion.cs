@@ -20,12 +20,10 @@ namespace DwarfCorp
 
         }
 
-        public Scorpion(string sprites, Vector3 position, ComponentManager manager, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, string name) :
-            // Creature base constructor
+        public Scorpion(string sprites, Vector3 position, ComponentManager manager, string name) :
             base
             (
                 manager,
-                // Default stats
                 new CreatureStats
                 {
                     Dexterity = 2,
@@ -37,16 +35,10 @@ namespace DwarfCorp
                     Size = 0.25f,
                     CanSleep = false
                 },
-                // Belongs to herbivore team
                 "Carnivore",
-                // Uses the default plan service
                 manager.World.PlanService,
-                // Belongs to the herbivore team
                 manager.World.Factions.Factions["Carnivore"],
-                // The physics component this creature belongs to
-                
-                // All the rest of the arguments are passed in directly
-                chunks, graphics, content, name
+                name
             )
         {
             Physics = new Physics

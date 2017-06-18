@@ -58,7 +58,7 @@ namespace DwarfCorp
             
         }
 
-        public Snake(SpriteSheet sprites, Vector3 position, ComponentManager manager, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, string name):
+        public Snake(SpriteSheet sprites, Vector3 position, ComponentManager manager, string name):
             base
             (
                 manager,
@@ -75,8 +75,7 @@ namespace DwarfCorp
                 "Carnivore",
                 manager.World.PlanService,
                 manager.World.Factions.Factions["Carnivore"],
-                
-                chunks, graphics, content, name
+                name
             )
         {
             Physics = new Physics

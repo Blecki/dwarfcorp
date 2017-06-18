@@ -53,7 +53,7 @@ namespace DwarfCorp
             
         }
 
-        public Deer(string sprites, Vector3 position, ComponentManager manager, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, string name):
+        public Deer(string sprites, Vector3 position, ComponentManager manager, string name):
             base
             (
                 manager,
@@ -70,8 +70,7 @@ namespace DwarfCorp
                 "Herbivore",
                 manager.World.PlanService,
                 manager.World.Factions.Factions["Herbivore"],
-                
-                chunks, graphics, content, name
+                name
             )
         {
             Physics = new Physics
