@@ -161,7 +161,7 @@ namespace DwarfCorp
                     var first = new MoveAction
                     {
                         Voxel = current,
-                        MoveType = Creature.MoveType.Walk
+                        MoveType = MoveType.Walk
                     };
                     toReturn = ReconstructPath(cameFrom, first);
                     return true;
@@ -186,12 +186,12 @@ namespace DwarfCorp
                     var first = new MoveAction
                     {
                         Voxel = current,
-                        MoveType = Creature.MoveType.Walk
+                        MoveType = MoveType.Walk
                     };
                     var last = new MoveAction
                     {
                         Voxel = goal.GetVoxel(),
-                        MoveType = Creature.MoveType.Walk
+                        MoveType = MoveType.Walk
                     };
                     List<MoveAction> subPath = ReconstructPath(cameFrom, first);
                     subPath.Add(last);
@@ -279,7 +279,7 @@ namespace DwarfCorp
         /// <param name="action">The action taken to get between voxels.</param>
         /// <param name="movement">The creature making the movement.</param>
         /// <returns>The cost of going from a to b using the given action.</returns>
-        public static float GetDistance(Voxel a, Voxel b, Creature.MoveType action, CreatureMovement movement)
+        public static float GetDistance(Voxel a, Voxel b, MoveType action, CreatureMovement movement)
         {
             // If trying to move through a non-empty voxel, the cost is  just a big number.
             if (!b.IsEmpty)
@@ -296,7 +296,7 @@ namespace DwarfCorp
         /// <summary>
         ///     Returns the intrinsic cost of an action.
         /// </summary>
-        private static float ActionCost(CreatureMovement movement, Creature.MoveType action)
+        private static float ActionCost(CreatureMovement movement, MoveType action)
         {
             return movement.Cost(action);
         }

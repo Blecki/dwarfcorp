@@ -246,7 +246,7 @@ namespace DwarfCorp
 
             switch (action.MoveType)
             {
-                case Creature.MoveType.Walk:
+                case MoveType.Walk:
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = CharacterMode.Walking;
                     if (hasNextAction)
@@ -259,7 +259,7 @@ namespace DwarfCorp
                         transform.Translation = currPosition;
                     }
                     break;
-                case Creature.MoveType.Swim:
+                case MoveType.Swim:
                     Creature.NoiseMaker.MakeNoise("Swim", Agent.Position, true);
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = CharacterMode.Swimming;
@@ -273,7 +273,7 @@ namespace DwarfCorp
                         transform.Translation = currPosition;
                     }
                     break;
-                case Creature.MoveType.Jump:
+                case MoveType.Jump:
                     if (t < 0.5f)
                     { 
                         Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
@@ -297,7 +297,7 @@ namespace DwarfCorp
                         transform.Translation = currPosition;
                     }
                     break;
-                case Creature.MoveType.Fall:
+                case MoveType.Fall:
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = CharacterMode.Falling;
                     if (hasNextAction)
@@ -310,8 +310,8 @@ namespace DwarfCorp
                         transform.Translation = currPosition;
                     }
                     break;
-                case Creature.MoveType.Climb:
-                case Creature.MoveType.ClimbWalls:
+                case MoveType.Climb:
+                case MoveType.ClimbWalls:
                     if ((int) (t*100)%25 == 0)
                     {
                         Creature.NoiseMaker.MakeNoise("Climb", Agent.Position, false);
@@ -338,7 +338,7 @@ namespace DwarfCorp
                         transform.Translation = currPosition;
                     }
                     break;
-                case Creature.MoveType.Fly:
+                case MoveType.Fly:
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = CharacterMode.Flying;
                     Creature.OverrideCharacterMode = true;
@@ -352,7 +352,7 @@ namespace DwarfCorp
                         transform.Translation = currPosition;
                     }
                     break;
-                case Creature.MoveType.DestroyObject:
+                case MoveType.DestroyObject:
                     Creature.AI.Tasks.Add(new KillEntityTask((Body)(action.InteractObject), 
                         KillEntityTask.KillType.Auto) {Priority = Task.PriorityType.Urgent});
                     yield return Act.Status.Fail;
@@ -394,21 +394,21 @@ namespace DwarfCorp
                             {
                                 switch (v.MoveType)
                                 {
-                                    case Creature.MoveType.Climb:
+                                    case MoveType.Climb:
                                         return Color.Cyan;
-                                    case Creature.MoveType.ClimbWalls:
+                                    case MoveType.ClimbWalls:
                                         return Color.DarkCyan;
-                                    case Creature.MoveType.DestroyObject:
+                                    case MoveType.DestroyObject:
                                         return Color.Orange;
-                                    case Creature.MoveType.Fall:
+                                    case MoveType.Fall:
                                         return Color.LightBlue;
-                                    case Creature.MoveType.Fly:
+                                    case MoveType.Fly:
                                         return Color.Green;
-                                    case Creature.MoveType.Jump:
+                                    case MoveType.Jump:
                                         return Color.Yellow;
-                                    case Creature.MoveType.Swim:
+                                    case MoveType.Swim:
                                         return Color.Blue;
-                                    case Creature.MoveType.Walk:
+                                    case MoveType.Walk:
                                         return Color.Red;
                                 }
                                 return Color.White;

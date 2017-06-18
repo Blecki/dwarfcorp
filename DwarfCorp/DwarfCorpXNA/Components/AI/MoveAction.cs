@@ -15,7 +15,7 @@ namespace DwarfCorp
         /// <summary> The destination voxel of the motion </summary>
         public Voxel Voxel { get; set; }
         /// <summary> The type of motion applied to get to the voxel </summary>
-        public Creature.MoveType MoveType { get; set; }
+        public MoveType MoveType { get; set; }
         /// <summary> The offset between the start and destination </summary>
         public Vector3 Diff { get; set; }
         /// <summary> And object to interact with to get between the start and destination </summary>

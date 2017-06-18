@@ -121,7 +121,7 @@ namespace DwarfCorp
                 });
 
                 neighbors.RemoveAll(
-                    a => a.MoveType == Creature.MoveType.Jump || a.MoveType == Creature.MoveType.Climb);
+                    a => a.MoveType == MoveType.Jump || a.MoveType == MoveType.Climb);
 
                 if (neighbors.Count == 0)
                 {
@@ -476,7 +476,7 @@ namespace DwarfCorp
                     {
                         Diff = Vector3.Zero,
                         Voxel = new Voxel(Creature.Physics.CurrentVoxel),
-                        MoveType = Creature.MoveType.Walk
+                        MoveType = MoveType.Walk
                     });
                 Creature.AI.Blackboard.SetData("RandomPath", path);
                 yield return Status.Success;
