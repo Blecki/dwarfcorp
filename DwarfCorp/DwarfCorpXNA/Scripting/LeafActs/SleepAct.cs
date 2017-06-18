@@ -68,7 +68,7 @@ namespace DwarfCorp
         public override void OnCanceled()
         {
             Creature.Status.IsAsleep = false;
-            Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+            Creature.CurrentCharacterMode = CharacterMode.Idle;
             Creature.OverrideCharacterMode = false;
             base.OnCanceled();
         }
@@ -85,12 +85,12 @@ namespace DwarfCorp
                     Creature.Physics.LocalPosition = TeleportLocation;
                     Creature.Physics.IsSleeping = true;
                 }
-                Creature.CurrentCharacterMode = Creature.CharacterMode.Sleeping;
+                Creature.CurrentCharacterMode = CharacterMode.Sleeping;
                 Creature.Status.Energy.CurrentValue += DwarfTime.Dt * RechargeRate;
                 if (Creature.Status.Health.CurrentValue < startingHealth)
                 {
                     Creature.Status.IsAsleep = false;
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+                    Creature.CurrentCharacterMode = CharacterMode.Idle;
                     Creature.OverrideCharacterMode = false;
                     yield return Status.Fail;
                 }

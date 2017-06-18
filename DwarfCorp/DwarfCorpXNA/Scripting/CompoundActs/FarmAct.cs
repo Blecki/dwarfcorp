@@ -96,9 +96,9 @@ namespace DwarfCorp
             else
             {
                 if (tile.Plant != null && tile.Plant.IsDead) tile.Plant = null;
-                Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
-                Creature.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
-                Creature.Sprite.PlayAnimations(Creature.CharacterMode.Attacking);
+                Creature.CurrentCharacterMode = CharacterMode.Attacking;
+                Creature.Sprite.ResetAnimations(CharacterMode.Attacking);
+                Creature.Sprite.PlayAnimations(CharacterMode.Attacking);
                 while (tile.Progress < 100.0f && !Satisfied())
                 {
                     if (tile.IsCanceled)
@@ -129,13 +129,13 @@ namespace DwarfCorp
                     if (MathFunctions.RandEvent(0.01f))
                         Creature.Manager.World.ParticleManager.Trigger("dirt_particle", Creature.AI.Position, Color.White, 1);
                     yield return Status.Running;
-                    Creature.Sprite.ReloopAnimations(Creature.CharacterMode.Attacking);
+                    Creature.Sprite.ReloopAnimations(CharacterMode.Attacking);
                 }
-                Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+                Creature.CurrentCharacterMode = CharacterMode.Idle;
                 Creature.AI.AddThought(Thought.ThoughtType.Farmed);
                 Creature.AI.AddXP(1);
                 tile.Farmer = null;
-                Creature.Sprite.PauseAnimations(Creature.CharacterMode.Attacking);
+                Creature.Sprite.PauseAnimations(CharacterMode.Attacking);
                 yield return Status.Success;
             }
         }

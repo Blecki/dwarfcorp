@@ -53,18 +53,17 @@ namespace DwarfCorp
             
         }
 
-        public MudGolem(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, Vector3 position) :
-            base(manager, stats, allies, planService, faction, 
-                 chunks, graphics, content, name)
+        public MudGolem(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
+            base(manager, stats, allies, planService, faction, name)
         {
             Physics = new Physics(Manager, "MudGolem", Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             Physics.AddChild(this);
 
-            SelectionCircle = Physics.AddChild(new SelectionCircle(Manager)
+            Physics.AddChild(new SelectionCircle(Manager)
             {
                 IsVisible = false
-            }) as SelectionCircle;
+            });
 
             Initialize();
         }
@@ -110,12 +109,13 @@ namespace DwarfCorp
        
             Physics.Tags.Add("MudGolem");
             Physics.Mass = 100;
-            DeathParticleTrigger = Physics.AddChild(new ParticleTrigger("dirt_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+
+            Physics.AddChild(new ParticleTrigger("dirt_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 5,
                 SoundToPlay = ContentPaths.Audio.gravel
-            }) as ParticleTrigger;
+            });
 
             NoiseMaker.Noises["Hurt"] = new List<string>
             {

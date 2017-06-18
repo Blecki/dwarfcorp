@@ -984,7 +984,7 @@ namespace DwarfCorp
         public void NotifyChangedComponents()
         {
             HashSet<IBoundedObject> componentsInside = new HashSet<IBoundedObject>();
-            Manager.Components.CollisionManager.GetObjectsIntersecting(GetBoundingBox(), componentsInside, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
+            Manager.World.CollisionManager.GetObjectsIntersecting(GetBoundingBox(), componentsInside, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
 
             Message changedMessage = new Message(Message.MessageType.OnChunkModified, "Chunk Modified");
 

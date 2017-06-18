@@ -91,8 +91,8 @@ namespace DwarfCorp
                     return;
 
                 UpdateBoundingBox();
-                Manager.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
-                Manager.CollisionManager.AddObject(this, CollisionType);
+                Manager.World.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
+                Manager.World.CollisionManager.AddObject(this, CollisionType);
 
                 lastBounds = GetBoundingBox();
                 wasEverAddedToOctree = true;
@@ -407,7 +407,7 @@ namespace DwarfCorp
             UpdateBoundingBox();
             if(AddToCollisionManager)
             {
-                Manager.CollisionManager.RemoveObject(this, GetBoundingBox(), CollisionType);
+                Manager.World.CollisionManager.RemoveObject(this, GetBoundingBox(), CollisionType);
             }
             IsActive = false;
             IsVisible = false;

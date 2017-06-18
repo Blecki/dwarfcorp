@@ -210,18 +210,20 @@ namespace DwarfCorp
 
             Minions.RemoveAll(m => m.IsDead);
             SelectedMinions.RemoveAll(m => m.IsDead);
-            Minions.ForEach(m =>
+
+            foreach (var m in Minions)
             {
                 m.Creature.SelectionCircle.IsVisible = false;
                 m.Creature.Sprite.DrawSilhouette = false;
-            });
-            SelectedMinions.ForEach(m =>
-            {
-                m.Creature.SelectionCircle.IsVisible = true;
-                m.Creature.Sprite.DrawSilhouette = true;
-            });
+            };
 
-            foreach (Room zone in GetRooms())
+            foreach (CreatureAI creature in SelectedMinions)
+            {
+                creature.Creature.SelectionCircle.IsVisible = true;
+                creature.Creature.Sprite.DrawSilhouette = true;
+            }
+
+                foreach (Room zone in GetRooms())
             {
                 zone.ZoneBodies.RemoveAll(body => body.IsDead);
             }

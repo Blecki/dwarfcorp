@@ -182,7 +182,7 @@ namespace DwarfCorp
                         case "Fire":
                         {
                             foreach(var flam2 in 
-                                Player.World.ComponentManager.CollisionManager.EnumerateIntersectingObjects(vox.GetBoundingBox(), CollisionManager.CollisionType.Both).OfType<GameComponent>().SelectMany(c => c.EnumerateAll()).OfType<Flammable>())
+                                Player.World.CollisionManager.EnumerateIntersectingObjects(vox.GetBoundingBox(), CollisionManager.CollisionType.Both).OfType<GameComponent>().SelectMany(c => c.EnumerateAll()).OfType<Flammable>())
                             {
                                 flam2.Heat = flam2.Flashpoint + 1;
                             }
@@ -190,7 +190,7 @@ namespace DwarfCorp
                             break;
                         case "Kill Things":
                         {
-                            foreach(var comp in Player.Faction.Components.CollisionManager.EnumerateIntersectingObjects(
+                            foreach(var comp in Player.World.CollisionManager.EnumerateIntersectingObjects(
                                 vox.GetBoundingBox(), CollisionManager.CollisionType.Both).OfType<Body>())
                             {
                                 comp.Die();

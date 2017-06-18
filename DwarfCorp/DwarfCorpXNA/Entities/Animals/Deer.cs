@@ -53,7 +53,7 @@ namespace DwarfCorp
             
         }
 
-        public Deer(string sprites, Vector3 position, ComponentManager manager, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, string name):
+        public Deer(string sprites, Vector3 position, ComponentManager manager, string name):
             base
             (
                 manager,
@@ -70,8 +70,7 @@ namespace DwarfCorp
                 "Herbivore",
                 manager.World.PlanService,
                 manager.World.Factions.Factions["Herbivore"],
-                
-                chunks, graphics, content, name
+                name
             )
         {
             Physics = new Physics
@@ -87,10 +86,10 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
-            SelectionCircle = Physics.AddChild(new SelectionCircle(Manager)
+            Physics.AddChild(new SelectionCircle(Manager)
             {
                 IsVisible = false
-            }) as SelectionCircle;
+            });
 
             Initialize(new SpriteSheet(sprites));
         }
@@ -151,24 +150,24 @@ namespace DwarfCorp
             Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
             shadowTransform.Translation = new Vector3(0.0f, -.25f, 0.0f);
             SpriteSheet shadowTexture = new SpriteSheet(ContentPaths.Effects.shadowcircle);
-            Shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform, shadowTexture)) as Shadow;
+            var shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform, shadowTexture)) as Shadow;
 
             List<Point> shP = new List<Point>
             {
                 new Point(0,0)
             };
             Animation shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle), "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
-            Shadow.AddAnimation(shadowAnimation);
+            shadow.AddAnimation(shadowAnimation);
             shadowAnimation.Play();
-            Shadow.SetCurrentAnimation("sh");
+            shadow.SetCurrentAnimation("sh");
 
             // The bird will emit a shower of blood when it dies
-            DeathParticleTrigger = Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 1,
                 BoxTriggerTimes = 10
-            }) as ParticleTrigger;
+            });
 
             // The bird is flammable, and can die when exposed to fire.
             Physics.AddChild(new Flammable(Manager, "Flames"));
