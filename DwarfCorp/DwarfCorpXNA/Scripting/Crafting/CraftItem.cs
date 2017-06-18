@@ -62,6 +62,7 @@ namespace DwarfCorp
         public List<CraftPrereq> Prerequisites { get; set; }
         public ResourceLibrary.ResourceType ResourceCreated { get; set; }
         public List<ResourceAmount> SelectedResources { get; set; }
+        public int NumRepeats { get; set; }
         public string CraftLocation { get; set; }
         public string Verb { get; set; }
         public string PastTeseVerb { get; set; }
@@ -80,6 +81,7 @@ namespace DwarfCorp
             Verb = "Build";
             PastTeseVerb = "Built";
             CurrentVerb = "Building";
+            NumRepeats = 1;
         }
 
         public CraftItem Clone()
@@ -94,7 +96,8 @@ namespace DwarfCorp
                 CraftLocation = this.CraftLocation,
                 Verb = this.Verb,
                 PastTeseVerb = this.PastTeseVerb,
-                CurrentVerb = this.CurrentVerb
+                CurrentVerb = this.CurrentVerb,
+                NumRepeats = this.NumRepeats
             };
             item.Prerequisites.AddRange(this.Prerequisites);
             item.SelectedResources.AddRange(this.SelectedResources);

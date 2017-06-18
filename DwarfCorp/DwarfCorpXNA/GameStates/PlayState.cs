@@ -846,7 +846,7 @@ namespace DwarfCorp.GameStates
                                     {
                                         var buildInfo = (sender as Gui.Widgets.ToolTray.Icon).ExpansionChild as Gui.Widgets.BuildCraftInfo;
                                         data.SelectedResources = buildInfo.GetSelectedResources();
-
+                                        data.NumRepeats = buildInfo.GetNumRepeats();
                                         Master.Faction.RoomBuilder.CurrentRoomData = null;
                                         Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
                                         Master.Faction.WallBuilder.CurrentVoxelType = null;
@@ -896,14 +896,14 @@ namespace DwarfCorp.GameStates
                                     {
                                         var buildInfo = (sender as Gui.Widgets.ToolTray.Icon).ExpansionChild as Gui.Widgets.BuildCraftInfo;
                                         data.SelectedResources = buildInfo.GetSelectedResources();
-
+                                        data.NumRepeats = buildInfo.GetNumRepeats();
                                         List<Task> assignments = new List<Task> {new CraftResourceTask(data)};
                                         var minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions,
                                             GameMaster.ToolMode.Craft);
                                         if (minions.Count > 0)
                                         {
                                             TaskManager.AssignTasks(assignments, minions);
-                                            World.ShowToolPopup(data.CurrentVerb + " one " + data.Name);
+                                            World.ShowToolPopup(data.CurrentVerb + " " + data.NumRepeats + " " + data.Name);
                                         }
                                         World.Tutorial("build crafts");
                                     },
@@ -956,7 +956,7 @@ namespace DwarfCorp.GameStates
                                     {
                                         var buildInfo = (sender as Gui.Widgets.ToolTray.Icon).ExpansionChild as Gui.Widgets.BuildCraftInfo;
                                         data.SelectedResources = buildInfo.GetSelectedResources();
-
+                                        data.NumRepeats = buildInfo.GetNumRepeats();
                                         List<Task> assignments = new List<Task> {new CraftResourceTask(data)};
                                         var minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions,
                                             GameMaster.ToolMode.Cook);

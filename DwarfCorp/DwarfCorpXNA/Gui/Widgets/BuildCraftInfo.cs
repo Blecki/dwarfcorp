@@ -16,7 +16,7 @@ namespace DwarfCorp.Gui.Widgets
         public GameMaster Master;
         public WorldManager World;
         private List<Gui.Widgets.ComboBox> ResourceCombos = new List<Gui.Widgets.ComboBox>();
-
+        private Gui.Widgets.ComboBox NumCombo = new ComboBox();
         public override void Construct()
         {
             Border = "border-fancy";
@@ -56,7 +56,7 @@ namespace DwarfCorp.Gui.Widgets
                         var child = AddChild(new Widget()
                         {
                             AutoLayout = AutoLayout.DockTop,
-                            MinimumSize = new Point(100, 16)
+                            MinimumSize = new Point(100, 18)
                         });
 
                         child.AddChild(new Gui.Widget()
@@ -71,7 +71,7 @@ namespace DwarfCorp.Gui.Widgets
                             Font = "font",
                             Items = Master.Faction.ListResourcesWithTag(resourceAmount.ResourceType).Select(r => r.ResourceType.ToString()).ToList(),
                             AutoLayout = AutoLayout.DockLeft,
-                            MinimumSize = new Point(100, 16)
+                            MinimumSize = new Point(100, 18)
                         }) as Gui.Widgets.ComboBox;
 
                         if (resourceSelector.Items.Count == 0)
@@ -80,11 +80,57 @@ namespace DwarfCorp.Gui.Widgets
                         resourceSelector.SelectedIndex = 0;
 
                         ResourceCombos.Add(resourceSelector);
+
+
+                        var child2 = AddChild(new Widget()
+                        {
+                            AutoLayout = AutoLayout.DockTop,
+                            MinimumSize = new Point(100, 18)
+                        });
+
+                        child2.AddChild(new Gui.Widget()
+                        {
+                            Font = "font",
+                            Text = "Repeat ",
+                            AutoLayout = AutoLayout.DockLeft
+                        });
+                        NumCombo = child2.AddChild(new Gui.Widgets.ComboBox
+                        {
+                            Font = "font",
+                            Items = new List<string>()
+                            {
+                                "1x",
+                                "5x",
+                                "10x",
+                                "100x"
+                            },
+                            AutoLayout = AutoLayout.DockLeft,
+                            MinimumSize = new Point(64, 18),
+                            MaximumSize = new Point(64, 18)
+                        }) as Gui.Widgets.ComboBox ;
+                        NumCombo.SelectedIndex = 1;
+
                     }
                 }
 
                 Layout();
             };
+        }
+
+        public int GetNumRepeats()
+        {
+            switch (NumCombo.SelectedIndex)
+            {
+                case 0:
+                    return 1;
+                case 1:
+                    return 5;
+                case 2:
+                    return 10;
+                case 3:
+                    return 100;
+            }
+            return 1;
         }
 
         public bool CanBuild()
