@@ -58,7 +58,6 @@ namespace DwarfCorp
         public List<GameComponent> Children { get; set; }
 
         private static uint maxGlobalID = 0;
-        private uint maxLocalID = 0;
 
         /// <summary>
         /// Gets or sets a value indicating whether this instance is visible.
@@ -112,16 +111,6 @@ namespace DwarfCorp
         public ComponentManager Manager { get { return World.ComponentManager; } }
 
         /// <summary>
-        /// A list of the GameComponentCache type handlers this component subscribes to.
-        /// </summary>
-        [JsonIgnore]
-        public List<GameObjectCaching.GameComponentCache> cacheTypes;
-
-        public List<string> cacheTypeNames;
-
-        public bool HasOwnRender;
-
-        /// <summary>
         /// The global identifier lock. This is necessary to ensure that no two components
         /// have the same ID (they might be getting created in threads).
         /// </summary>
@@ -162,18 +151,19 @@ namespace DwarfCorp
             IsVisible = true;
             IsActive = true;
             Tags = new List<string>();
-            HasOwnRender = GameObjectCaching.HasOwnRender(this.GetType());
         }
 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameComponent"/> class, while adding it to the component manager.
         /// </summary>
-        /// <param name="createNew">if set to <c>true</c> adds this component to the manager..</param>
         /// <param name="manager">The component manager to add the component to</param>
-        public GameComponent(bool createNew, ComponentManager manager)
+        public GameComponent(ComponentManager Manager)
         {
-            World = manager.World;
+            System.Diagnostics.Debug.Assert(Manager != null, "Manager cannot be null");
+
+            World = Manager.World;
+
             lock (globalIdLock)
             {
                 GlobalID = maxGlobalID;
@@ -188,11 +178,9 @@ namespace DwarfCorp
             IsActive = true;
             IsDead = false;
 
-            if (createNew && Manager != null)
-                Manager.AddComponent(this);
+            Manager.AddComponent(this);
 
             Tags = new List<string>();
-            HasOwnRender = GameObjectCaching.HasOwnRender(this.GetType());
         }
 
         /// <summary>
@@ -202,19 +190,9 @@ namespace DwarfCorp
         /// <param name="parent">The parent component.</param>
         /// <param name="manager">The component manager.</param>
         public GameComponent(string name, ComponentManager manager) :
-            this(true, manager)
+            this(manager)
         {
             Name = name;
-        }
-
-        /// <summary>
-        /// Gets the next local identifier. These are relative to the siblings of the component.
-        /// Increments the local identifier.
-        /// </summary>
-        /// <returns>The next local identifier to use.</returns>
-        public uint GetNextLocalID()
-        {
-            return maxLocalID++;
         }
 
         /// <summary>
@@ -226,24 +204,6 @@ namespace DwarfCorp
         public T GetComponent<T>(bool self=true) where T : GameComponent
         {
             return GetEntityRootComponent().GetChildrenOfType<T>(self).FirstOrDefault();
-        }
-
-        /// <summary>
-        /// Gets all children and descendents of this component.
-        /// </summary>
-        /// <returns>A list of all the descendents of this component.</returns>
-        public List<GameComponent> GetAllChildrenRecursive()
-        {
-            List<GameComponent> toReturn = new List<GameComponent>();
-
-            toReturn.AddRange(Children);
-
-            foreach(GameComponent child in Children)
-            {
-                toReturn.AddRange(child.GetAllChildrenRecursive());
-            }
-
-            return toReturn;
         }
 
         /// <summary>
@@ -345,7 +305,8 @@ namespace DwarfCorp
 
             IsDead = true;
 
-            foreach (GameComponent child in GetAllChildrenRecursive())
+            var localList = new List<GameComponent>(Children);
+            foreach (var child in localList)
                 child.Delete();
 
             if (Parent != null) Parent.RemoveChild(this);
@@ -360,12 +321,14 @@ namespace DwarfCorp
         /// </summary>
         public virtual void Die()
         {
+            // Todo: Split into this and 'OnDie' event function.
             if(IsDead)
                 return;
 
             IsDead = true;
 
-            foreach (GameComponent child in GetAllChildrenRecursive())
+            var localList = new List<GameComponent>(Children);
+            foreach (var child in localList)
                 child.Die();
 
             if (Parent != null) Parent.RemoveChild(this);
@@ -404,18 +367,6 @@ namespace DwarfCorp
         #region child_operators
 
         /// <summary>
-        /// Determines whether any of the children of this component are of type T.
-        /// </summary>
-        /// <typeparam name="T">The type to check</typeparam>
-        /// <returns>
-        ///   <c>true</c> if [has child with type]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasChildWithType<T>() where T : GameComponent
-        {
-            return Children.OfType<T>().Any();
-        }
-
-        /// <summary>
         /// Gets the children of this component which are of type T.
         /// </summary>
         /// <typeparam name="T">The type to get</typeparam>
@@ -437,38 +388,6 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        /// Determines whether this component has a child with the given name.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns>
-        ///   <c>true</c> if [has child with name] [the specified name]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasChildWithName(string name)
-        {
-            return Children.Any(child => child.Name == name);
-        }
-
-        /// <summary>
-        /// Gets a list of children with the specified name.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns>The list of children with the specified name.</returns>
-        public List<GameComponent> GetChildrenWithName(string name)
-        {
-            return Children.Where(child => child.Name == name).ToList();
-        }
-
-        /// <summary>
-        /// Gets the child with the given global identifier.
-        /// </summary>
-        /// <param name="id">The identifier.</param>
-        /// <returns>The child with the given identifier, or null if it does not exist.</returns>
-        public GameComponent GetChildWithGlobalID(uint id)
-        {
-            return Children.FirstOrDefault(child => child.GlobalID == id);
-        }
-
-        /// <summary>
         /// Adds the child if it has not been added already.
         /// </summary>
         /// <param name="child">The child.</param>
@@ -476,12 +395,10 @@ namespace DwarfCorp
         {
             lock (Children)
             {
-                if (GetChildWithGlobalID(child.GlobalID) != null)
-                    return child;
+                System.Diagnostics.Debug.Assert(child.Parent == null, "Child was already added to another component.");
 
                 Children.Add(child);
                 child.Parent = this;
-                child.AddToCache(child);
             }
 
             return child;
@@ -495,29 +412,13 @@ namespace DwarfCorp
         {
             lock (Children)
             {
-                if (GetChildWithGlobalID(child.GlobalID) == null)
-                    return;
-
                 Children.Remove(child);
-                child.RemoveFromCache(child);
             }
         }
 
         #endregion
 
         #region recursive_child_operators
-
-        /// <summary>
-        /// Determines whether this component has any descendant with the specified name.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns>
-        ///   <c>true</c> if [has child with name recursive] [the specified name]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasChildWithNameRecursive(string name)
-        {
-            return Children.Any(child => child.Name == name || child.HasChildWithNameRecursive(name));
-        }
 
         /// <summary>
         /// Gets the anscestor of this component which has no parent.
@@ -531,78 +432,6 @@ namespace DwarfCorp
                 p = p.Parent;
 
             return p;
-        }
-
-        /// <summary>
-        /// Gets a list of children and descendents with the given name.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns>A list containing descendants of this instance with the given name.</returns>
-        public List<GameComponent> GetChildrenWithNameRecursive(string name)
-        {
-            List<GameComponent> toReturn = new List<GameComponent>();
-            foreach(GameComponent child in Children)
-            {
-                if(child.Name == name)
-                {
-                    toReturn.Add(child);
-                }
-
-                List<GameComponent> childList = child.GetChildrenWithNameRecursive(name);
-                toReturn.AddRange(childList);
-            }
-
-            return toReturn;
-        }
-
-        /// <summary>
-        /// Determines whether any descendant of this gamecomponent has the given global identifier.
-        /// </summary>
-        /// <param name="id">The identifier.</param>
-        /// <returns>
-        ///   <c>true</c> if [has child with global identifier recursive] [the specified identifier]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasChildWithGlobalIDRecursive(uint id)
-        {
-            return Children.Any(child => child.GlobalID == id || child.HasChildWithGlobalIDRecursive(id));
-        }
-
-        /// <summary>
-        /// Gets a child having the given global id from among the descendants of this component.
-        /// </summary>
-        /// <param name="id">The identifier.</param>
-        /// <returns>A component having the given identifier if it exists. Null otherwise.</returns>
-        public GameComponent GetChildWithGlobalIDRecursive(uint id)
-        {
-            foreach(GameComponent child in Children)
-            {
-                if(child.GlobalID == id)
-                {
-                    return child;
-                }
-
-                GameComponent grandChild = child.GetChildWithGlobalIDRecursive(id);
-
-                if(grandChild != null)
-                {
-                    return grandChild;
-                }
-            }
-
-            return null;
-        }
-
-
-        /// <summary>
-        /// Determines whether this component has any children or descendants of the given type.
-        /// </summary>
-        /// <typeparam name="T">The type to check</typeparam>
-        /// <returns>
-        ///   <c>true</c> if [has child with type recursive]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasChildWithTypeRecursive<T>() where T : GameComponent
-        {
-            return Children.Any(child => child is T || child.HasChildWithTypeRecursive<T>());
         }
 
         /// <summary>
@@ -625,93 +454,22 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public IEnumerable<GameComponent> EnumerateAll()
+        public enum IncludeSelfFlag
         {
-            yield return this;
+            IncludeSelf,
+            DoNotIncludeSelf
+        }
+
+        public IEnumerable<GameComponent> EnumerateAll(IncludeSelfFlag Flag = IncludeSelfFlag.IncludeSelf)
+        {
+            if (Flag == IncludeSelfFlag.IncludeSelf) yield return this;
             foreach (var child in Children)
-            {
-                yield return child;
-                foreach (var grandChild in child.EnumerateAll())
+                foreach (var grandChild in child.EnumerateAll(IncludeSelfFlag.IncludeSelf))
                     yield return grandChild;
-            }
         }
 
         #endregion
 
-        #region cacheType functions
-        public void AddCacheType(string cacheName)
-        {
-            GameObjectCaching.GameComponentCache cache = GameObjectCaching.GetCacheByName(cacheName);
-            if (cache == null) return;
-
-            if (cacheTypeNames == null)
-            {
-                cacheTypeNames = new List<string>();
-                cacheTypes = new List<GameObjectCaching.GameComponentCache>();
-            } else if (cacheTypeNames.Contains(cacheName)) return;
-
-            cacheTypeNames.Add(cacheName);
-            cacheTypes.Add(cache);
-
-            // Sadly, when we call this in the type constructor of a derived type we've already called AddChild for that type
-            // in the GameComponent constructor so we can't put AddToCache there.
-            cache.addFunction(this);
-        }
-        
-        public void AddToCache(GameComponent cachedObject)
-        {
-            if (cacheTypes == null) return;
-            for (int i = 0; i < cacheTypes.Count; i++)
-            {
-                cacheTypes[i].addFunction(cachedObject);
-            }
-        }
-
-        public void RemoveFromCache(GameComponent cachedObject)
-        {
-            if (cacheTypes == null) return;
-            for (int i = 0; i < cacheTypes.Count; i++)
-            {
-                cacheTypes[i].removeFunction(cachedObject);
-            }
-        }
-
-        public void RefreshCacheTypes()
-        {
-            if (cacheTypeNames == null) return;
-            cacheTypes = new List<GameObjectCaching.GameComponentCache>(cacheTypeNames.Count);
-            for (int i = 0; i < cacheTypeNames.Count; i++)
-            {
-                GameObjectCaching.GameComponentCache cache = GameObjectCaching.GetCacheByName(cacheTypeNames[i]);
-                if (cache == null) continue;
-                cacheTypes.Add(cache);
-                cache.addFunction(this);
-            }
-        }
-
-        public void RefreshCacheTypesRecursive()
-        {
-            Stack<IEnumerator<GameComponent>> eStack = new Stack<IEnumerator<GameComponent>>();
-
-            eStack.Push(Children.GetEnumerator());
-
-            while(eStack.Count > 0)
-            {
-                IEnumerator<GameComponent> e = eStack.Pop();
-                while (e.MoveNext())
-                {
-                    GameComponent current = e.Current;
-                    current.RefreshCacheTypes();
-
-                    if (current.Children.Count > 0)
-                    {
-                        eStack.Push(e);
-                        e = current.Children.GetEnumerator();
-                    }
-                }
-            }
-        }
-        #endregion
     }
 
 }

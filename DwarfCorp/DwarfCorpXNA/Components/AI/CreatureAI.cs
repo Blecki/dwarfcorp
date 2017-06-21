@@ -95,7 +95,7 @@ namespace DwarfCorp
             get
             {
                 if (_cachedCreature == null)
-                    _cachedCreature = Parent.GetChildrenOfType<Creature>().FirstOrDefault();
+                    _cachedCreature = Parent.EnumerateAll().OfType<Creature>().FirstOrDefault();
                 System.Diagnostics.Debug.Assert(_cachedCreature != null, "AI Could not find creature");
                 return _cachedCreature;
             }
@@ -252,16 +252,6 @@ namespace DwarfCorp
         public void AddXP(int amount)
         {
             XPEvents.Add(amount);
-        }
-
-        /// <summary> Get the creature to say a debug message. </summary>
-        public void Say(string message)
-        {
-            MessageBuffer.Add(message);
-            if (MessageBuffer.Count > MaxMessages)
-            {
-                MessageBuffer.RemoveAt(0);
-            }
         }
 
         /// <summary> Called whenever a list of enemies has been sensed by the creature </summary>

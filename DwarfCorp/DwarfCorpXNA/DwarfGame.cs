@@ -170,8 +170,6 @@ namespace DwarfCorp
             Thread.CurrentThread.Name = "Main";
             // Goes before anything else so we can track from the very start.
             GamePerformance.Initialize(this);
-            // TODO: Find a more appropriate spot for this.
-            GameObjectCaching.Initialize();
 
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             base.Initialize();

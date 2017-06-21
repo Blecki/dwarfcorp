@@ -524,6 +524,8 @@ namespace DwarfCorp
             }
 
             ComponentManager = new ComponentManager(this, CompanyInformation, natives);
+            ComponentManager.SetRootComponent(new Body(ComponentManager, "root", Matrix.Identity,
+                Vector3.Zero, Vector3.Zero, false));
 
             Factions = new FactionLibrary();
             if (natives != null && natives.Count > 0)
@@ -536,11 +538,10 @@ namespace DwarfCorp
             Factions.Factions["Player"].Center = playerOrigin;
             Factions.Factions["The Motherland"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
 
-            ComponentManager.RootComponent = new Body(ComponentManager, "root", Matrix.Identity, Vector3.Zero,
-                Vector3.Zero, false);
             Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
             Vector3 extents = new Vector3(1500, 1500, 1500);
             CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
+
             Diplomacy = new Diplomacy(this);
             Diplomacy.Initialize(Time.CurrentDate);
 
@@ -1459,7 +1460,6 @@ namespace DwarfCorp
             Game.Graphics.PreparingDeviceSettings -= GraphicsPreparingDeviceSettings;
 
             ChunkManager.Destroy();
-            ComponentManager.RootComponent.Delete();
             ComponentManager = null;
 
             Master.Destroy();

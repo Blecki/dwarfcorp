@@ -894,11 +894,15 @@ namespace DwarfCorp
             }
 
             Economy.CurrentMoney -= currentApplicant.Level.Pay*4m;
-            Dwarf newMinion =
+
+            var dwarfPhysics = 
                 EntityFactory.GenerateDwarf(
                     rooms.First().GetBoundingBox().Center() + Vector3.UnitY * 15,
                     Components, GameState.Game.Content, GameState.Game.GraphicsDevice, World.ChunkManager,
-                    World.Camera, this, World.PlanService, "Player", currentApplicant.Class, currentApplicant.Level.Index).GetChildrenOfType<Dwarf>().First();
+                    World.Camera, this, World.PlanService, "Player", currentApplicant.Class, currentApplicant.Level.Index);
+            World.ComponentManager.RootComponent.AddChild(dwarfPhysics);
+            var newMinion = dwarfPhysics.EnumerateAll().OfType<Dwarf>().FirstOrDefault();
+            System.Diagnostics.Debug.Assert(newMinion != null);
 
             newMinion.Stats.CurrentClass = currentApplicant.Class;
             newMinion.Stats.LevelIndex = currentApplicant.Level.Index - 1;

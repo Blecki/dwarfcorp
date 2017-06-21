@@ -206,12 +206,11 @@ namespace DwarfCorp.Gui.Widgets
 
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, null, RasterizerState.CullNone);
             Viewport viewPort = new Viewport(RenderTarget.Bounds);
-            foreach (MinimapIcon icon in GameObjectCaching.MinimapIcons)
+
+            foreach (var icon in World.ComponentManager.GetMinimapIcons())
             {
                 if (!icon.Parent.IsVisible)
-                {
                     continue;
-                }
 
                 Vector3 screenPos = viewPort.Project(icon.GlobalTransform.Translation, Camera.ProjectionMatrix, Camera.ViewMatrix, Matrix.Identity);
 

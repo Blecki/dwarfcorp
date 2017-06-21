@@ -24,6 +24,7 @@ namespace DwarfCorp
         private Dictionary<uint, GameComponent> Components;
 
         private Dictionary<System.Type, List<IUpdateableComponent>> UpdateableComponents;
+
         private List<IRenderableComponent> Renderables;
 
         public IEnumerable<IRenderableComponent> GetRenderables()
@@ -31,10 +32,19 @@ namespace DwarfCorp
             return Renderables;
         }
 
+        private List<MinimapIcon> MinimapIcons = new List<MinimapIcon>();
+        public IEnumerable<MinimapIcon> GetMinimapIcons() { return MinimapIcons; }
+
         private List<GameComponent> Removals { get; set; }
         private List<GameComponent> Additions { get; set; }
 
-        public Body RootComponent { get; set; }
+        public Body RootComponent { get; private set; }
+
+        public void SetRootComponent(Body Component)
+        {
+            Component.World = World;
+            RootComponent = Component;
+        }
 
         private static Camera Camera { get; set; }
 
@@ -57,8 +67,6 @@ namespace DwarfCorp
             Removals = new List<GameComponent>();
             Additions = new List<GameComponent>();
             World = (WorldManager)context.Context;
-            GameObjectCaching.Reset();
-            RootComponent.RefreshCacheTypesRecursive();
             World.Natives.Clear();
 
             foreach (var component in Components)
@@ -73,6 +81,9 @@ namespace DwarfCorp
 
                 if (component.Value is IRenderableComponent)
                     Renderables.Add(component.Value as IRenderableComponent);
+
+                if (component.Value is MinimapIcon)
+                    MinimapIcons.Add(component.Value as MinimapIcon);
             }
         }
 
@@ -96,28 +107,17 @@ namespace DwarfCorp
 
         public List<Body> SelectRootBodiesOnScreen(Rectangle selectionRectangle, Camera camera)
         {
-            /*
-            return (from component in RootComponent.Children.OfType<Body>()
-                    let screenPos = camera.Project(component.GlobalTransform.Translation)
-                    where   screenPos.Z > 0 
-                    && (selectionRectangle.Contains((int)screenPos.X, (int)screenPos.Y) || selectionRectangle.Intersects(component.GetScreenRect(camera))) 
-                    && camera.GetFrustrum().Contains(component.GlobalTransform.Translation) != ContainmentType.Disjoint
-                    && !World.ChunkManager.ChunkData.CheckOcclusionRay(camera.Position, component.Position)
-                    select component).ToList();
-             */
             if (World.SelectionBuffer == null)
-            {
                 return new List<Body>();
-            }
-            HashSet<Body> toReturn = new HashSet<Body>();
+
+            HashSet<Body> toReturn = new HashSet<Body>(); // Hashset ensures all bodies are unique.
             foreach (uint id in World.SelectionBuffer.GetIDsSelected(selectionRectangle))
             {
                 GameComponent component;
                 if (!Components.TryGetValue(id, out component))
-                {
                     continue;
-                }
-                if (!component.IsVisible) continue;
+
+                if (!component.IsVisible) continue; // Then why was it drawn in the selection buffer??
                 var toAdd = component.GetEntityRootComponent().GetComponent<Body>();
                 if (!toReturn.Contains(toAdd))
                     toReturn.Add(component.GetEntityRootComponent().GetComponent<Body>());
@@ -142,47 +142,53 @@ namespace DwarfCorp
         private void RemoveComponentImmediate(GameComponent component)
         {
             if (!Components.ContainsKey(component.GlobalID))
-            {
                 return;
-            }
-
+            
             Components.Remove(component.GlobalID);
+
             if (component is IUpdateableComponent)
             {
                 var type = component.GetType();
                 if (UpdateableComponents.ContainsKey(type))
                     UpdateableComponents[type].Remove(component as IUpdateableComponent);
             }
-            if (component is IRenderableComponent)
-            {
-                Renderables.Remove(component as IRenderableComponent);
-            }
 
-            foreach (var child in component.GetAllChildrenRecursive())
+            if (component is IRenderableComponent)
+                Renderables.Remove(component as IRenderableComponent);
+
+            if (component is MinimapIcon)
+                MinimapIcons.Remove(component as MinimapIcon);
+
+            foreach (var child in new List<GameComponent>(component.Children))
                 RemoveComponentImmediate(child);
+
+            if (component.Parent != null)
+                component.Parent.RemoveChild(component);
         }
 
         private void AddComponentImmediate(GameComponent component)
         {
-            if (Components.ContainsKey(component.GlobalID) && Components[component.GlobalID] != component)
+            if (Components.ContainsKey(component.GlobalID))
             {
-                throw new IndexOutOfRangeException("Component was added that already exists.");
+                if (Object.ReferenceEquals(Components[component.GlobalID], component)) return;
+                throw new InvalidOperationException("Attempted to add component with same ID as existing component.");
             }
-            else if (!Components.ContainsKey(component.GlobalID))
+
+            Components[component.GlobalID] = component;
+
+            if (component is IUpdateableComponent)
             {
-                Components[component.GlobalID] = component;
-                if (component is IUpdateableComponent)
-                {
-                    var type = component.GetType();
-                    if (!UpdateableComponents.ContainsKey(type))
-                        UpdateableComponents.Add(type, new List<IUpdateableComponent>());
-                    UpdateableComponents[type].Add(component as IUpdateableComponent);
-                }
-                if (component is IRenderableComponent)
-                {
-                    Renderables.Add(component as IRenderableComponent);
-                }
+                var type = component.GetType();
+                if (!UpdateableComponents.ContainsKey(type))
+                    UpdateableComponents.Add(type, new List<IUpdateableComponent>());
+                UpdateableComponents[type].Add(component as IUpdateableComponent);
             }
+
+            if (component is IRenderableComponent)
+                Renderables.Add(component as IRenderableComponent);
+
+            if (component is MinimapIcon)
+                MinimapIcons.Add(component as MinimapIcon);
         }
 
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
