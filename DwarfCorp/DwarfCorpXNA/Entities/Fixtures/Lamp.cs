@@ -62,11 +62,11 @@ namespace DwarfCorp
             };
             Animation lampAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture), "Lamp", 32, 32, frames, true, Color.White, 3.0f, 1f, 1.0f, false);
 
-            Sprite sprite = new Sprite(Manager, "sprite", this, Matrix.Identity, spriteSheet, false)
+            var sprite = AddChild(new Sprite(Manager, "sprite", Matrix.Identity, spriteSheet, false)
             {
                 LightsWithVoxels = false,
                 OrientationType = Sprite.OrientMode.YAxis
-            };
+            }) as Sprite;
             sprite.AddAnimation(lampAnimation);
             lampAnimation.Play();
         }
@@ -82,11 +82,11 @@ namespace DwarfCorp
             };
             Animation lampAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture), "Lamp", 32, 32, frames, true, Color.White, 3.0f, 1f, 1.0f, false);
 
-            Sprite sprite = new Sprite(Manager, "sprite", this, Matrix.CreateTranslation(offset), spriteSheet, false)
+            var sprite = AddChild(new Sprite(Manager, "sprite", Matrix.CreateTranslation(offset), spriteSheet, false)
             {
                 LightsWithVoxels = false,
                 OrientationType = Sprite.OrientMode.YAxis
-            };
+            }) as Sprite;
             sprite.AddAnimation(lampAnimation);
             lampAnimation.Play();
         }
@@ -120,7 +120,7 @@ namespace DwarfCorp
         }
 
         public Lamp(ComponentManager componentManager, Vector3 position) :
-            base(componentManager, "Lamp",componentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+            base(componentManager, "Lamp", Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
         {
             CreateSprite();
             Tags.Add("Lamp");
@@ -128,15 +128,13 @@ namespace DwarfCorp
             Voxel voxelUnder = new Voxel();
 
             if (componentManager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
-            {
-                new VoxelListener(componentManager, this, componentManager.World.ChunkManager, voxelUnder);
-            }
+                AddChild(new VoxelListener(componentManager, componentManager.World.ChunkManager, voxelUnder));
 
-
-            new LightEmitter("light", this, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero, 255, 8)
+            AddChild(new LightEmitter(Manager, "light", Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero, 255, 8)
             {
                 HasMoved = true
-            };
+            });
+
             CollisionType = CollisionManager.CollisionType.Static;
         }
     }

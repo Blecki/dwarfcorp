@@ -36,13 +36,11 @@ using System.IO;
 using System.Threading;
 using ContentGenerator;
 using DwarfCorp.GameStates;
-using Gum;
+using DwarfCorp.Gui;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
 using Newtonsoft.Json;
-using System;
-using System.IO;
 
 #if !XNA_BUILD
 using SDL2;
@@ -60,9 +58,9 @@ namespace DwarfCorp
         public TextureManager TextureManager { get; set; }
         public static SpriteBatch SpriteBatch { get; set; }
 
-        public static Gum.Input.GumInputMapper GumInputMapper;
-        public static Gum.Input.Input GumInput;
-        public static Gum.RenderData GumSkin;
+        public static Gui.Input.GumInputMapper GumInputMapper;
+        public static Gui.Input.Input GumInput;
+        public static Gui.RenderData GumSkin;
 
         public const string GameName = "DwarfCorp";
         private static StreamWriter _logwriter;
@@ -182,11 +180,11 @@ namespace DwarfCorp
         protected override void LoadContent()
         {
             // Prepare GemGui
-            GumInputMapper = new Gum.Input.GumInputMapper(Window.Handle);
-            GumInput = new Gum.Input.Input(GumInputMapper);
+            GumInputMapper = new Gui.Input.GumInputMapper(Window.Handle);
+            GumInput = new Gui.Input.Input(GumInputMapper);
 
             // Register all bindable actions with the input system.
-            GumInput.AddAction("TEST", Gum.Input.KeyBindingType.Pressed);
+            GumInput.AddAction("TEST", Gui.Input.KeyBindingType.Pressed);
 
             GumSkin = new RenderData(GraphicsDevice,  Content,
                     "newgui/xna_draw", "Content/newgui/sheets.txt");

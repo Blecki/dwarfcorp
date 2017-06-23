@@ -50,8 +50,8 @@ namespace DwarfCorp
             
         }
 
-        public SnakeAI(Creature creature, string name, EnemySensor sensor, PlanService planService) :
-            base(creature, name, sensor, planService)
+        public SnakeAI(ComponentManager Manager, string name, EnemySensor sensor, PlanService planService) :
+            base(Manager, name, sensor, planService)
         {
             
         }

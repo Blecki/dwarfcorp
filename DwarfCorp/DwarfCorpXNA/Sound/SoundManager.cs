@@ -418,7 +418,6 @@ namespace DwarfCorp
         }
 
 
-        private static bool once = true;
         public static void Update(DwarfTime time, Camera camera, WorldTime worldTime)
         {
             if (!HasAudioDevice) return;

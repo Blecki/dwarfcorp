@@ -47,9 +47,7 @@ namespace DwarfCorp
         }
 
         public Ladder(ComponentManager manager, Vector3 position, SpriteSheet sprites, Point frame) :
-            base(
-            position, sprites, frame,
-            manager.RootComponent)
+            base(manager, position, sprites, frame)
         {
             AddToCollisionManager = true;
             CollisionType = CollisionManager.CollisionType.Static;

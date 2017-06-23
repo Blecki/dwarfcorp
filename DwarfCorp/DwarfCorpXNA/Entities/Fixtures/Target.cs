@@ -49,7 +49,7 @@ namespace DwarfCorp
         }
 
         public Target(ComponentManager componentManager, Vector3 position) :
-            base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 5), componentManager.RootComponent)
+            base(componentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 5))
         {
             Name = "Target";
             Tags.Add("Target");

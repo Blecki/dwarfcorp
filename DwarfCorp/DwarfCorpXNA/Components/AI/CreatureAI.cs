@@ -48,33 +48,28 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class CreatureAI : GameComponent, IUpdateableComponent
     {
-        /// <summary> maximum number of messages the creature has in its mind </summary>
         public int MaxMessages = 10;
-        /// <summary> As a way of debugging creature AI, creatures can say arbitrary strings which are stored in this buffer </summary>
         public List<string> MessageBuffer = new List<string>();
 
         public CreatureAI()
         {
-            Movement = new CreatureMovement(Creature);
-            History = new Dictionary<string, TaskHistory>();
         }
 
-        public CreatureAI(Creature creature,
+        public CreatureAI(
+            ComponentManager Manager,
             string name,
             EnemySensor sensor,
             PlanService planService) :
-            base(name, creature.Physics, creature.Manager)
+            base(name, Manager)
         {
             History = new Dictionary<string, TaskHistory>();
-            Movement = new CreatureMovement(creature);
+            Movement = new CreatureMovement(this);
             GatherManager = new GatherManager(this);
             Blackboard = new Blackboard();
-            Creature = creature;
             CurrentPath = null;
             PlannerTimer = new Timer(0.1f, false);
             LocalControlTimeout = new Timer(5, false, Timer.TimerMode.Real);
             WanderTimer = new Timer(1, false);
-            Creature.Faction.AddMinion(this);
             DrawAIPlan = false;
             WaitingOnResponse = false;
             PlanSubscriber = new PlanSubscriber(planService);
@@ -91,10 +86,20 @@ namespace DwarfCorp
         }
 
         private bool jumpHeld = false;
-        /// <summary> The creature this AI is controlling </summary>
-        public Creature Creature { get; set; }
         /// <summary> The current path of voxels the AI is following </summary>
         public List<Voxel> CurrentPath { get; set; }
+
+        private Creature _cachedCreature = null;
+        public Creature Creature
+        {
+            get
+            {
+                if (_cachedCreature == null)
+                    _cachedCreature = Parent.GetChildrenOfType<Creature>().FirstOrDefault();
+                System.Diagnostics.Debug.Assert(_cachedCreature != null, "AI Could not find creature");
+                return _cachedCreature;
+            }
+        }
         /// <summary> If this is set to true, the creature will draw the path it is following </summary>
         public bool DrawPath { get { return GameSettings.Default.DrawPaths; }}
         /// <summary> The gather manager handles gathering/building tasks </summary>
@@ -365,7 +370,7 @@ namespace DwarfCorp
             if (!MathFunctions.RandEvent(0.0001f)) return;
             if (CurrentTask != null) return;
             IEnumerable<CreatureAI> potentialMates =
-                Faction.Minions.Where(minion => minion != this && minion.Creature.CanMate(this.Creature));
+                Faction.Minions.Where(minion => minion != this && Mating.CanMate(minion.Creature, this.Creature));
             CreatureAI closestMate = null;
             float closestDist = float.MaxValue;
 
@@ -390,7 +395,7 @@ namespace DwarfCorp
 
             if (Faction == null && !string.IsNullOrEmpty(Creature.Allies))
             {
-                Faction = Manager.Factions.Factions[Creature.Allies];
+                Faction = Manager.World.Factions.Factions[Creature.Allies];
             }
 
             IdleTimer.Update(gameTime);
@@ -644,7 +649,8 @@ namespace DwarfCorp
             }
 
             if (!IsPosessed && GatherManager.VoxelOrders.Count == 0 &&
-                (GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile()))
+                (GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile()) &&
+                (GatherManager.StockMoneyOrders.Count == 0 || !Faction.HasFreeTreasury()))
             {
 
                 // Craft random items for fun.
@@ -731,6 +737,18 @@ namespace DwarfCorp
                 {
                     GatherManager.StockOrders.RemoveAt(0);
                     return new ActWrapperTask(new StockResourceAct(this, order.Resource))
+                    {
+                        Priority = Task.PriorityType.Low
+                    };
+                }
+            }
+            else if (GatherManager.VoxelOrders.Count == 0 && GatherManager.StockMoneyOrders.Count > 0)
+            {
+                var order = GatherManager.StockMoneyOrders[0];
+                if (Faction.HasFreeTreasury(order.Money))
+                {
+                    GatherManager.StockMoneyOrders.RemoveAt(0);
+                    return new ActWrapperTask(new StockMoneyAct(this, order.Money))
                     {
                         Priority = Task.PriorityType.Low
                     };
@@ -929,7 +947,7 @@ namespace DwarfCorp
             bool good = pay > 0;
             Color textColor = good ? Color.Green : Color.Red;
             string prefix = good ? "+" : "";
-            IndicatorManager.DrawIndicator(prefix + "$" + pay,
+            IndicatorManager.DrawIndicator(prefix + pay,
                 Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 1.0f, textColor);
         }
 
@@ -1003,12 +1021,12 @@ namespace DwarfCorp
                         yield break;
                     }
 
-                    List<Creature.MoveAction> actions = agent.AI.Movement.GetMoveActions(creatureVoxel);
+                    List<MoveAction> actions = agent.AI.Movement.GetMoveActions(creatureVoxel);
 
                     float minCost = float.MaxValue;
-                    var minAction = new Creature.MoveAction();
+                    var minAction = new MoveAction();
                     bool hasMinAction = false;
-                    foreach (Creature.MoveAction action in actions)
+                    foreach (var action in actions)
                     {
                         Voxel vox = action.Voxel;
 
@@ -1024,14 +1042,14 @@ namespace DwarfCorp
 
                     if (hasMinAction)
                     {
-                        var nullAction = new Creature.MoveAction
+                        var nullAction = new MoveAction
                         {
                             Diff = minAction.Diff,
-                            MoveType = Creature.MoveType.Walk,
+                            MoveType = MoveType.Walk,
                             Voxel = creatureVoxel
                         };
 
-                        agent.AI.Blackboard.SetData("GreedyPath", new List<Creature.MoveAction> { nullAction, minAction });
+                        agent.AI.Blackboard.SetData("GreedyPath", new List<MoveAction> { nullAction, minAction });
                         var pathAct = new FollowPathAct(agent.AI, "GreedyPath");
                         pathAct.Initialize();
 
@@ -1104,13 +1122,13 @@ namespace DwarfCorp
         {
 
             Creature.OverrideCharacterMode = false;
-            Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+            Creature.CurrentCharacterMode = CharacterMode.Walking;
 
             float currSpeed = Creature.Physics.Velocity.Length();
 
             if (currSpeed < 1)
             {
-                Creature.CurrentCharacterMode = DwarfCorp.Creature.CharacterMode.Idle;
+                Creature.CurrentCharacterMode = DwarfCorp.CharacterMode.Idle;
             }
 
             float force = Creature.Stats.MaxAcceleration * 10;
@@ -1118,14 +1136,14 @@ namespace DwarfCorp
             {
                 force = Creature.Stats.MaxAcceleration;
                 Creature.CurrentCharacterMode = Creature.Physics.Velocity.Y > 0
-                    ? DwarfCorp.Creature.CharacterMode.Jumping
-                    : DwarfCorp.Creature.CharacterMode.Falling;
+                    ? DwarfCorp.CharacterMode.Jumping
+                    : DwarfCorp.CharacterMode.Falling;
             }
 
 
             if (Creature.Physics.IsInLiquid)
             {
-                Creature.CurrentCharacterMode = Creature.CharacterMode.Swimming;
+                Creature.CurrentCharacterMode = CharacterMode.Swimming;
                 Creature.Physics.ApplyForce(Vector3.Up * 10, DwarfTime.Dt);
                 force = Creature.Stats.MaxAcceleration*5;
                 Creature.NoiseMaker.MakeNoise("Swim", Position);
@@ -1153,592 +1171,6 @@ namespace DwarfCorp
                     MathFunctions.ClampXZ(Creature.Physics.Velocity, Creature.Physics.IsInLiquid ? Stats.MaxSpeed * 0.5f: Stats.MaxSpeed);
             }
           
-        }
-    }
-
-    [JsonObject(IsReference = true)]
-    public class MateTask : Task
-    {
-        public CreatureAI Them;
-
-        public MateTask()
-        {
-            
-        }
-        public MateTask(CreatureAI closestMate)
-        {
-            Them = closestMate;
-            Name = "Mate with " + closestMate.GlobalID;
-        }
-
-        public override Task Clone()
-        {
-            return new MateTask(Them);
-        }
-
-        public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
-        {
-            return (Them.Position - agent.AI.Position).LengthSquared();
-        }
-
-        public override bool IsFeasible(Creature agent)
-        {
-            return agent.CanMate(Them.Creature);
-        }
-
-        public IEnumerable<Act.Status> Mate(Creature me)
-        {
-            Timer mateTimer = new Timer(5.0f, true);
-            while (!mateTimer.HasTriggered)
-            {
-                me.Physics.Velocity = Vector3.Zero;
-                Them.Physics.Velocity = Vector3.Zero;
-                Them.Physics.LocalPosition = me.Physics.Position*0.1f + Them.Physics.Position*0.9f;
-                if (MathFunctions.RandEvent(0.01f))
-                {
-                    me.NoiseMaker.MakeNoise("Hurt", me.AI.Position, true, 0.1f);
-                    me.World.ParticleManager.Trigger("puff", me.AI.Position, Color.White, 1);
-                }
-                mateTimer.Update(DwarfTime.LastTime);
-                yield return Act.Status.Running;
-            }
-
-            me.Mate(Them.Creature, me.World.Time);
-            yield return Act.Status.Success;
-        }
-
-        public override Act CreateScript(Creature agent)
-        {
-            return new Sequence(new GoToEntityAct(Them.Physics, agent.AI),
-                                new Wrap(() => Mate(agent)));
-        }
-    }
-
-    /// <summary> defines how a creature moves from voxel to voxel </summary>
-    public class CreatureMovement
-    {
-        public CreatureMovement(Creature creature)
-        {
-            Creature = creature;
-            Actions = new Dictionary<Creature.MoveType, ActionStats>
-            {
-                {
-                    Creature.MoveType.Climb,
-                    new ActionStats
-                    {
-                        CanMove = true,
-                        Cost = 2.0f,
-                        Speed = 0.5f
-                    }
-                },
-                {
-                    Creature.MoveType.Walk,
-                    new ActionStats
-                    {
-                        CanMove = true,
-                        Cost = 1.0f,
-                        Speed = 1.0f
-                    }
-                },
-                {
-                    Creature.MoveType.Swim,
-                    new ActionStats
-                    {
-                        CanMove = true,
-                        Cost = 2.0f,
-                        Speed = 0.5f
-                    }
-                },
-                {
-                    Creature.MoveType.Jump,
-                    new ActionStats
-                    {
-                        CanMove = true,
-                        Cost = 1.0f,
-                        Speed = 1.0f
-                    }
-                },
-                {
-                    Creature.MoveType.Fly,
-                    new ActionStats
-                    {
-                        CanMove = false,
-                        Cost = 1.0f,
-                        Speed = 1.0f
-                    }
-                },
-                {
-                    Creature.MoveType.Fall,
-                    new ActionStats
-                    {
-                        CanMove = true,
-                        Cost = 30.0f,
-                        Speed = 1.0f
-                    }
-                },
-                {
-                    Creature.MoveType.DestroyObject,
-                    new ActionStats
-                    {
-                        CanMove = true,
-                        Cost = 30.0f,
-                        Speed = 1.0f
-                    }
-                },
-                {
-                    Creature.MoveType.ClimbWalls,
-                    new ActionStats
-                    {
-                        CanMove = false,
-                        Cost = 30.0f,
-                        Speed = 0.5f
-                    }
-                },
-            };
-        }
-
-        /// <summary> The creature associated with this AI </summary>
-        public Creature Creature { get; set; }
-
-        /// <summary> Wrapper around the creature's fly movement </summary>
-        [JsonIgnore]
-        public bool CanFly
-        {
-            get { return Can(Creature.MoveType.Fly); }
-            set { SetCan(Creature.MoveType.Fly, value); }
-        }
-
-        /// <summary> Wrapper aroound the creature's swim movement </summary>
-        [JsonIgnore]
-        public bool CanSwim
-        {
-            get { return Can(Creature.MoveType.Swim); }
-            set { SetCan(Creature.MoveType.Swim, value); }
-        }
-
-        /// <summary> wrapper around creature's climb movement </summary>
-        [JsonIgnore]
-        public bool CanClimb
-        {
-            get { return Can(Creature.MoveType.Climb); }
-            set { SetCan(Creature.MoveType.Climb, value); }
-        }
-
-        /// <summary> wrapper around creature's climb walls movement </summary>
-        [JsonIgnore]
-        public bool CanClimbWalls
-        {
-            get { return Can(Creature.MoveType.ClimbWalls); }
-            set { SetCan(Creature.MoveType.ClimbWalls, value); }
-        }
-
-        /// <summary> wrapper around creature's walk movement </summary>
-        [JsonIgnore]
-        public bool CanWalk
-        {
-            get { return Can(Creature.MoveType.Walk); }
-            set { SetCan(Creature.MoveType.Walk, value); }
-        }
-
-        /// <summary> List of move actions that the creature can take </summary>
-        public Dictionary<Creature.MoveType, ActionStats> Actions { get; set; }
-
-        /// <summary> determines whether the creature can move using the given move type. </summary>
-        public bool Can(Creature.MoveType type)
-        {
-            return Actions[type].CanMove;
-        }
-
-        /// <summary> gets the cost of a creature's movement for a particular type </summary>
-        public float Cost(Creature.MoveType type)
-        {
-            return Actions[type].Cost;
-        }
-
-        /// <summary> gets the speed multiplier of a creature's movement for a particular type </summary>
-        public float Speed(Creature.MoveType type)
-        {
-            return Actions[type].Speed;
-        }
-
-        /// <summary> Sets whether the creature can move using the given type </summary>
-        public void SetCan(Creature.MoveType type, bool value)
-        {
-            Actions[type].CanMove = value;
-        }
-
-        /// <summary> sets the cost of moving using a given movement type </summary>
-        public void SetCost(Creature.MoveType type, float value)
-        {
-            Actions[type].Cost = value;
-        }
-
-        /// <summary> Sets the movement speed of a particular move type </summary>
-        public void SetSpeed(Creature.MoveType type, float value)
-        {
-            Actions[type].Speed = value;
-        }
-
-        public bool IsSessile = false;
-
-        /// <summary> 
-        /// Returns a 3 x 3 x 3 voxel grid corresponding to the immediate neighborhood
-        /// around the given voxel..
-        /// </summary>
-        private Voxel[, ,] GetNeighborhood(Voxel voxel)
-        {
-            var neighborHood = new Voxel[3, 3, 3];
-            CollisionManager objectHash = Creature.Manager.World.ComponentManager.CollisionManager;
-
-            VoxelChunk startChunk = voxel.Chunk;
-            var x = (int)voxel.GridPosition.X;
-            var y = (int)voxel.GridPosition.Y;
-            var z = (int)voxel.GridPosition.Z;
-            for (int dx = -1; dx < 2; dx++)
-            {
-                for (int dy = -1; dy < 2; dy++)
-                {
-                    for (int dz = -1; dz < 2; dz++)
-                    {
-                        neighborHood[dx + 1, dy + 1, dz + 1] = new Voxel();
-                        int nx = dx + x;
-                        int ny = dy + y;
-                        int nz = dz + z;
-                        if (
-                            !Creature.Manager.World.ChunkManager.ChunkData.GetVoxel(startChunk,
-                                new Vector3(nx, ny, nz) + startChunk.Origin,
-                                ref neighborHood[dx + 1, dy + 1, dz + 1]))
-                        {
-                            neighborHood[dx + 1, dy + 1, dz + 1] = null;
-                        }
-                    }
-                }
-            }
-            return neighborHood;
-        }
-
-        /// <summary> Determines whether the voxel has any neighbors in X or Z directions </summary>
-        private bool HasNeighbors(Voxel[, ,] neighborHood)
-        {
-            bool hasNeighbors = false;
-            for (int dx = 0; dx < 3; dx++)
-            {
-                for (int dz = 0; dz < 3; dz++)
-                {
-                    if (dx == 1 && dz == 1)
-                    {
-                        continue;
-                    }
-
-                    hasNeighbors = hasNeighbors ||
-                                   (neighborHood[dx, 1, dz] != null && (!neighborHood[dx, 1, dz].IsEmpty));
-                }
-            }
-
-
-            return hasNeighbors;
-        }
-
-        /// <summary> Determines whether the given voxel is null or empty </summary>
-        private bool IsEmpty(Voxel v)
-        {
-            return v == null || v.IsEmpty;
-        }
-
-        /// <summary> gets a list of actions that the creature can take from the given position </summary>
-        public List<Creature.MoveAction> GetMoveActions(Vector3 pos)
-        {
-            var vox = new Voxel();
-            Creature.Manager.World.ChunkManager.ChunkData.GetVoxel(pos, ref vox);
-            return GetMoveActions(vox);
-        }
-
-        /// <summary> gets the list of actions that the creature can take from a given voxel. </summary>
-        public List<Creature.MoveAction> GetMoveActions(Voxel voxel)
-        {
-            var toReturn = new List<Creature.MoveAction>();
-
-            CollisionManager objectHash = Creature.Manager.World.ComponentManager.CollisionManager;
-
-            Voxel[, ,] neighborHood = GetNeighborhood(voxel);
-            var x = (int)voxel.GridPosition.X;
-            var y = (int)voxel.GridPosition.Y;
-            var z = (int)voxel.GridPosition.Z;
-            bool inWater = (neighborHood[1, 1, 1] != null && neighborHood[1, 1, 1].WaterLevel > WaterManager.inWaterThreshold);
-            bool standingOnGround = (neighborHood[1, 0, 1] != null && !neighborHood[1, 0, 1].IsEmpty);
-            bool topCovered = (neighborHood[1, 2, 1] != null && !neighborHood[1, 2, 1].IsEmpty);
-            bool hasNeighbors = HasNeighbors(neighborHood);
-            bool isClimbing = false;
-
-            var successors = new List<Creature.MoveAction>();
-
-            //Climbing ladders.
-            IEnumerable<IBoundedObject> objectsInside = objectHash.GetObjectsAt(voxel,
-                CollisionManager.CollisionType.Static);
-            if (objectsInside != null)
-            {
-                IEnumerable<GameComponent> bodies = objectsInside.OfType<GameComponent>();
-                IList<GameComponent> enumerable = bodies as IList<GameComponent> ?? bodies.ToList();
-                if (CanClimb)
-                {
-                    bool hasLadder = enumerable.Any(component => component.Tags.Contains("Climbable"));
-                    // if the creature can climb objects and a ladder is in this voxel,
-                    // then add a climb action.
-                    if (hasLadder)
-                    {
-                        successors.Add(new Creature.MoveAction
-                        {
-                            Diff = new Vector3(1, 2, 1),
-                            MoveType = Creature.MoveType.Climb,
-                            InteractObject = enumerable.FirstOrDefault(component => component.Tags.Contains("Climbable"))
-                        });
-
-                        isClimbing = true;
-
-                        if (!standingOnGround)
-                        {
-                            successors.Add(new Creature.MoveAction
-                            {
-                                Diff = new Vector3(1, 0, 1),
-                                MoveType = Creature.MoveType.Climb,
-                                InteractObject = enumerable.FirstOrDefault(component => component.Tags.Contains("Climbable"))
-                            });
-                        }
-
-                        standingOnGround = true;
-                    }
-                }
-            }
-
-            // If the creature can climb walls and is not blocked by a voxl above.
-            if (CanClimbWalls && !topCovered)
-            {
-                Voxel[] walls =
-                {
-                    neighborHood[2, 1, 1], neighborHood[0, 1, 1], neighborHood[1, 1, 2],
-                    neighborHood[1, 1, 0]
-                };
-                // Determine if the creature is adjacent to a wall.
-                bool nearWall = (neighborHood[2, 1, 1] != null && !neighborHood[2, 1, 1].IsEmpty) ||
-                                (neighborHood[0, 1, 1] != null && !neighborHood[0, 1, 1].IsEmpty) ||
-                                (neighborHood[1, 1, 2] != null && !neighborHood[1, 1, 2].IsEmpty) ||
-                                (neighborHood[1, 1, 0] != null && !neighborHood[1, 1, 0].IsEmpty);
-
-                // If we're near a wall, we can climb upwards.
-                if (nearWall)
-                {
-                    isClimbing = true;
-                    successors.Add(new Creature.MoveAction
-                    {
-                        Diff = new Vector3(1, 2, 1),
-                        MoveType = Creature.MoveType.ClimbWalls,
-                        TargetVoxel = walls.FirstOrDefault(v => v != null && !v.IsEmpty)
-                    });
-                }
-                // If we're near a wall and not blocked from below, we can climb downward.
-                if (nearWall && !standingOnGround)
-                {
-                    successors.Add(new Creature.MoveAction
-                    {
-                        Diff = new Vector3(1, 0, 1),
-                        MoveType = Creature.MoveType.ClimbWalls,
-                        TargetVoxel = walls.FirstOrDefault(v => v != null && !v.IsEmpty)
-                    });
-                }
-            }
-
-            // If the creature either can walk or is in water, add the 
-            // eight-connected free neighbors around the voxel.
-            if ((CanWalk && standingOnGround) || (CanSwim && inWater))
-            {
-                // If the creature is in water, it can swim. Otherwise, it will walk.
-                Creature.MoveType moveType = inWater ? Creature.MoveType.Swim : Creature.MoveType.Walk;
-                if (IsEmpty(neighborHood[0, 1, 1]))
-                    // +- x
-                    successors.Add(new Creature.MoveAction
-                    {
-                        Diff = new Vector3(0, 1, 1),
-                        MoveType = moveType
-                    });
-
-                if (IsEmpty(neighborHood[2, 1, 1]))
-                    successors.Add(new Creature.MoveAction
-                    {
-                        Diff = new Vector3(2, 1, 1),
-                        MoveType = moveType
-                    });
-
-                if (IsEmpty(neighborHood[1, 1, 0]))
-                    // +- z
-                    successors.Add(new Creature.MoveAction
-                    {
-                        Diff = new Vector3(1, 1, 0),
-                        MoveType = moveType
-                    });
-
-                if (IsEmpty(neighborHood[1, 1, 2]))
-                    successors.Add(new Creature.MoveAction
-                    {
-                        Diff = new Vector3(1, 1, 2),
-                        MoveType = moveType
-                    });
-
-                // Only bother worrying about 8-connected movement if there are
-                // no full neighbors around the voxel.
-                if (!hasNeighbors)
-                {
-                    if (IsEmpty(neighborHood[2, 1, 2]))
-                        // +x + z
-                        successors.Add(new Creature.MoveAction
-                        {
-                            Diff = new Vector3(2, 1, 2),
-                            MoveType = moveType
-                        });
-
-                    if (IsEmpty(neighborHood[2, 1, 0]))
-                        successors.Add(new Creature.MoveAction
-                        {
-                            Diff = new Vector3(2, 1, 0),
-                            MoveType = moveType
-                        });
-
-                    if (IsEmpty(neighborHood[0, 1, 2]))
-                        // -x -z
-                        successors.Add(new Creature.MoveAction
-                        {
-                            Diff = new Vector3(0, 1, 2),
-                            MoveType = moveType
-                        });
-
-                    if (IsEmpty(neighborHood[0, 1, 0]))
-                        successors.Add(new Creature.MoveAction
-                        {
-                            Diff = new Vector3(0, 1, 0),
-                            MoveType = moveType
-                        });
-                }
-            }
-
-            // If the creature's head is free, and it is standing on ground,
-            // or if it is in water, or if it is climbing, it can also jump
-            // to voxels that are 1 cell away and 1 cell up.
-            if (!topCovered && (standingOnGround || (CanSwim && inWater) || isClimbing))
-            {
-                for (int dx = 0; dx <= 2; dx++)
-                {
-                    for (int dz = 0; dz <= 2; dz++)
-                    {
-                        if (dx == 1 && dz == 1) continue;
-
-                        if (!IsEmpty(neighborHood[dx, 1, dz]))
-                        {
-                            successors.Add(new Creature.MoveAction
-                            {
-                                Diff = new Vector3(dx, 2, dz),
-                                MoveType = Creature.MoveType.Jump
-                            });
-                        }
-                    }
-                }
-            }
-
-
-            // If the creature is not in water and is not standing on ground,
-            // it can fall one voxel downward in free space.
-            if (!inWater && !standingOnGround)
-            {
-                successors.Add(new Creature.MoveAction
-                {
-                    Diff = new Vector3(1, 0, 1),
-                    MoveType = Creature.MoveType.Fall
-                });
-            }
-
-            // If the creature can fly and is not underwater, it can fly
-            // to any adjacent empty cell.
-            if (CanFly && !inWater)
-            {
-                for (int dx = 0; dx <= 2; dx++)
-                {
-                    for (int dz = 0; dz <= 2; dz++)
-                    {
-                        for (int dy = 0; dy <= 2; dy++)
-                        {
-                            if (dx == 1 && dz == 1 && dy == 1) continue;
-
-                            if (IsEmpty(neighborHood[dx, 1, dz]))
-                            {
-                                successors.Add(new Creature.MoveAction
-                                {
-                                    Diff = new Vector3(dx, dy, dz),
-                                    MoveType = Creature.MoveType.Fly
-                                });
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Now, validate each move action that the creature might take.
-            foreach (Creature.MoveAction v in successors)
-            {
-                Voxel n = neighborHood[(int)v.Diff.X, (int)v.Diff.Y, (int)v.Diff.Z];
-                if (n != null && (n.IsEmpty || n.WaterLevel > 0))
-                {
-                    // Do one final check to see if there is an object blocking the motion.
-                    bool blockedByObject = false;
-                    List<IBoundedObject> objectsAtNeighbor = Creature.Manager.CollisionManager.GetObjectsAt(
-                        n, CollisionManager.CollisionType.Static);
-
-                    // If there is an object blocking the motion, determine if it can be passed through.
-                    if (objectsAtNeighbor != null)
-                    {
-                        IEnumerable<GameComponent> bodies = objectsAtNeighbor.OfType<GameComponent>();
-                        IList<GameComponent> enumerable = bodies as IList<GameComponent> ?? bodies.ToList();
-
-                        foreach (GameComponent body in enumerable)
-                        {
-                            Door door = body.GetEntityRootComponent().GetChildrenOfType<Door>(true).FirstOrDefault();
-                            // If there is an enemy door blocking movement, we can destroy it to get through.
-                            if (door != null)
-                            {
-                                if (
-                                    Creature.Manager.Diplomacy.GetPolitics(door.TeamFaction, Creature.Faction)
-                                        .GetCurrentRelationship() !=
-                                    Relationship.Loving)
-                                {
-                                    if (Can(Creature.MoveType.DestroyObject))
-                                        toReturn.Add(new Creature.MoveAction
-                                        {
-                                            Diff = v.Diff,
-                                            MoveType = Creature.MoveType.DestroyObject,
-                                            InteractObject = door,
-                                            Voxel = n
-                                        });
-                                    blockedByObject = true;
-                                }
-                            }
-                        }
-                    }
-                    // If no object blocked us, we can move freely as normal.
-                    if (!blockedByObject)
-                    {
-                        Creature.MoveAction newAction = v;
-                        newAction.Voxel = n;
-                        toReturn.Add(newAction);
-                    }
-                }
-            }
-
-            // Return the list of all validated actions that the creature can take.
-            return toReturn;
-        }
-        /// <summary> Each action has a cost, a speed, and a validity check </summary>
-        public class ActionStats
-        {
-            public bool CanMove = false;
-            public float Cost = 1.0f;
-            public float Speed = 1.0f;
         }
     }
 }

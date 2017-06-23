@@ -50,10 +50,10 @@ namespace DwarfCorp
             
         }
 
-        public Fixture(Vector3 position, SpriteSheet asset, Point frame, GameComponent parent) :
-            base(parent.Manager, "Fixture", parent, Matrix.CreateTranslation(position), new Vector3(asset.FrameWidth * (1.0f / 32.0f), asset.Height * (1.0f / 32.0f), asset.FrameWidth * (1.0f / 32.0f)), Vector3.Zero, true)
+        public Fixture(ComponentManager Manager, Vector3 position, SpriteSheet asset, Point frame) :
+            base(Manager, "Fixture", Matrix.CreateTranslation(position), new Vector3(asset.FrameWidth * (1.0f / 32.0f), asset.Height * (1.0f / 32.0f), asset.FrameWidth * (1.0f / 32.0f)), Vector3.Zero, true)
         {
-            Sprite = new Sprite(Manager, "Sprite", this, Matrix.Identity, asset, false);
+            Sprite = AddChild(new Sprite(Manager, "Sprite", Matrix.Identity, asset, false)) as Sprite;
             Sprite.AddAnimation(new Animation(asset.GenerateFrame(frame)));
             AddToCollisionManager = false;
             CollisionType = CollisionManager.CollisionType.Static;

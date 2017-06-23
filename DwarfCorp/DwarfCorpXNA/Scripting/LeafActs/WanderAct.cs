@@ -83,7 +83,7 @@ namespace DwarfCorp
             {
                 Creature.OverrideCharacterMode = false;
                 Creature.Physics.Orientation = Physics.OrientMode.RotateY;
-                Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+                Creature.CurrentCharacterMode = CharacterMode.Walking;
                 WanderTime.Update(DwarfTime.LastTime);
 
                 if (!Creature.IsOnGround)
@@ -105,7 +105,7 @@ namespace DwarfCorp
                 if (dist < 0.5f)
                 {
                     Creature.Physics.Velocity *= 0.0f;
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+                    Creature.CurrentCharacterMode = CharacterMode.Idle;
                     yield return Status.Running;
                     break;
                 }
@@ -118,12 +118,12 @@ namespace DwarfCorp
                     output.Y = 0.0f;
 
                     Creature.Physics.ApplyForce(output * 0.5f, (float) DwarfTime.LastTime.ElapsedGameTime.TotalSeconds);
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+                    Creature.CurrentCharacterMode = CharacterMode.Walking;
                 }
 
                 yield return Status.Running;
             }
-            Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+            Creature.CurrentCharacterMode = CharacterMode.Idle;
             yield return Status.Success;
         }
     }
@@ -149,16 +149,16 @@ namespace DwarfCorp
         {
             Vector3 target = MathFunctions.RandVector3Cube()*Radius + Creature.AI.Position;
             if (Is2D) target.Y = Creature.AI.Position.Y;
-            List<Creature.MoveAction> path = new List<Creature.MoveAction>();
+            List<MoveAction> path = new List<MoveAction>();
             Voxel curr = Creature.Physics.CurrentVoxel;
             for (int i = 0; i < PathLength; i++)
             {
-                List<Creature.MoveAction> actions = 
+                List<MoveAction> actions = 
                     Creature.AI.Movement.GetMoveActions(curr);
 
-                Creature.MoveAction? bestAction = null;
+                MoveAction? bestAction = null;
                 float bestDist = float.MaxValue;
-                foreach (Creature.MoveAction action in actions)
+                foreach (MoveAction action in actions)
                 {
                     float dist = (action.Voxel.Position - target).LengthSquared();
 
@@ -171,7 +171,7 @@ namespace DwarfCorp
 
                 if (bestAction.HasValue && !path.Any(p => p.Voxel.Equals(bestAction.Value.Voxel) && p.MoveType == bestAction.Value.MoveType))
                 {
-                    Creature.MoveAction action = bestAction.Value;
+                    MoveAction action = bestAction.Value;
                     action.Voxel = new Voxel(curr);
                     path.Add(action);
                     curr = bestAction.Value.Voxel;

@@ -50,7 +50,7 @@ namespace DwarfCorp
         public static WorldManager World = null;
         private static ComponentManager Components { get { return World.ComponentManager; } }
         public static InstanceManager InstanceManager = null;
-        private static List<Action> LazyActions = new List<Action>(); 
+        private static List<Action> LazyActions = new List<Action>();
 
         public static Dictionary<string, Func<Vector3, Blackboard, GameComponent>> EntityFuncs { get; set; }
 
@@ -65,39 +65,6 @@ namespace DwarfCorp
             LazyActions.Clear();
         }
 
-        public static Body GenerateTestDwarf(WorldManager world, Vector3 position)
-        {
-            CreatureDef dwarfDef = ContentPaths.LoadFromJson<CreatureDef>(ContentPaths.Entities.Dwarf.dwarf);
-            Creature toReturn =  new Creature(world.ComponentManager, position, dwarfDef, "Wizard", 0, "Player");
-            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, world.Time.CurrentDate), false);
-            return toReturn.Physics;
-        }
-
-        public static Body GenerateTestGoblin(WorldManager world, Vector3 position)
-        {
-            CreatureDef dwarfDef = ContentPaths.LoadFromJson<CreatureDef>(ContentPaths.Entities.Goblin.goblin);
-            Creature toReturn = new Creature(world.ComponentManager, position, dwarfDef, "Sword Goblin", 0, "Goblins");
-            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, world.Time.CurrentDate), false);
-            return toReturn.Physics;
-        }
-
-        public static Body GenerateTestSeketon(WorldManager world, Vector3 position)
-        {
-            CreatureDef dwarfDef = ContentPaths.LoadFromJson<CreatureDef>(ContentPaths.Entities.Skeleton.skeleton);
-            Creature toReturn = new Creature(world.ComponentManager, position, dwarfDef, "Skeleton", 0, "Undead");
-            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, world.Time.CurrentDate), false);
-            return toReturn.Physics;
-        }
-
-
-        public static Body GenerateTestMoleman(WorldManager world, Vector3 position)
-        {
-            CreatureDef dwarfDef = ContentPaths.LoadFromJson<CreatureDef>(ContentPaths.Entities.Moleman.moleman);
-            Creature toReturn = new Creature(world.ComponentManager, position, dwarfDef, "Moleman Miner", 0, "Molemen");
-            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, world.Time.CurrentDate), false);
-            return toReturn.Physics;
-        }
-
         public static void Initialize(WorldManager world)
         {
             World = world;
@@ -110,15 +77,15 @@ namespace DwarfCorp
             RegisterEntity("Apple Tree", (position, data) => new Tree("Apple Tree", world.ComponentManager, position, "appletree", ResourceLibrary.ResourceType.Apple, data.GetData("Scale", 1.0f)));
             RegisterEntity("Cactus", (position, data) => new Cactus(world.ComponentManager, position, "cactus", data.GetData("Scale", 1.0f)));
             RegisterEntity("Berry Bush", (position, data) => new Bush(world.ComponentManager, position, "berrybush", data.GetData("Scale", 1.0f)));
-            RegisterEntity("Bird", (position, data) => new Bird(ContentPaths.Entities.Animals.Birds.GetRandomBird(), position, world.ComponentManager, world.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Bird"));
+            RegisterEntity("Bird", (position, data) => new Bird(ContentPaths.Entities.Animals.Birds.GetRandomBird(), position, world.ComponentManager, "Bird"));
             RegisterEntity("Bat", (position, data) => new Bat(world.ComponentManager, position));
-            RegisterEntity("Scorpion", (position, data) => new Scorpion(ContentPaths.Entities.Animals.Scorpion.scorption_animation, position, world.ComponentManager, world.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Scorpion"));
+            RegisterEntity("Scorpion", (position, data) => new Scorpion(ContentPaths.Entities.Animals.Scorpion.scorption_animation, position, world.ComponentManager, "Scorpion"));
             RegisterEntity("Spider", (position, data) => new Spider(world.ComponentManager, ContentPaths.Entities.Animals.Spider.spider_animation, position));
-            RegisterEntity("Frog", (position, data) => new Frog(ContentPaths.Entities.Animals.Frog.frog0_animation, position, world.ComponentManager, world.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Frog"));
-            RegisterEntity("Tree Frog", (position, data) => new Frog(ContentPaths.Entities.Animals.Frog.frog1_animation, position, world.ComponentManager, world.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Frog"));
-            RegisterEntity("Brown Rabbit", (position, data) => new Rabbit(ContentPaths.Entities.Animals.Rabbit.rabbit0_animation, position, world.ComponentManager, world.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Brown Rabbit"));
-            RegisterEntity("White Rabbit", (position, data) => new Rabbit(ContentPaths.Entities.Animals.Rabbit.rabbit1_animation, position, world.ComponentManager, world.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "White Rabbit"));
-            RegisterEntity("Deer", (position, data) => new Deer(ContentPaths.Entities.Animals.Deer.deer, position, world.ComponentManager, world.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Deer"));
+            RegisterEntity("Frog", (position, data) => new Frog(ContentPaths.Entities.Animals.Frog.frog0_animation, position, world.ComponentManager, "Frog"));
+            RegisterEntity("Tree Frog", (position, data) => new Frog(ContentPaths.Entities.Animals.Frog.frog1_animation, position, world.ComponentManager, "Frog"));
+            RegisterEntity("Brown Rabbit", (position, data) => new Rabbit(ContentPaths.Entities.Animals.Rabbit.rabbit0_animation, position, world.ComponentManager, "Brown Rabbit"));
+            RegisterEntity("White Rabbit", (position, data) => new Rabbit(ContentPaths.Entities.Animals.Rabbit.rabbit1_animation, position, world.ComponentManager, "White Rabbit"));
+            RegisterEntity("Deer", (position, data) => new Deer(ContentPaths.Entities.Animals.Deer.deer, position, world.ComponentManager, "Deer"));
             RegisterEntity("Dwarf", (position, data) => GenerateDwarf(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, world.PlayerFaction, world.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.Worker], 0));
             //RegisterEntity("TestDwarf", (position, data) => GenerateTestDwarf(position));
             //RegisterEntity("TestGoblin", (position, data) => GenerateTestGoblin(position));
@@ -128,10 +95,10 @@ namespace DwarfCorp
             RegisterEntity("CraftsDwarf", (position, data) => GenerateDwarf(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, world.PlayerFaction, world.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.CraftsDwarf], 0));
             RegisterEntity("Wizard", (position, data) => GenerateDwarf(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, world.PlayerFaction, world.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.Wizard], 0));
             RegisterEntity("MusketDwarf", (position, data) => GenerateDwarf(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, world.PlayerFaction, world.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.MusketDwarf], 0));
-            RegisterEntity("Moleman", (position, data) => GenerateMoleman(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, world.ComponentManager.Factions.Factions["Molemen"], world.PlanService, "Molemen"));
-            RegisterEntity("Goblin", (position, data) => GenerateGoblin(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, world.ComponentManager.Factions.Factions["Goblins"], world.PlanService, "Goblins"));
-            RegisterEntity("Skeleton", (position, data) => GenerateSkeleton(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, world.ComponentManager.Factions.Factions["Undead"], world.PlanService, "Undead"));
-            RegisterEntity("Necromancer", (position, data) => GenerateNecromancer(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, world.ComponentManager.Factions.Factions["Undead"], world.PlanService, "Undead"));
+            RegisterEntity("Moleman", (position, data) => GenerateMoleman(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, World.Factions.Factions["Molemen"], world.PlanService, "Molemen"));
+            RegisterEntity("Goblin", (position, data) => GenerateGoblin(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, World.Factions.Factions["Goblins"], world.PlanService, "Goblins"));
+            RegisterEntity("Skeleton", (position, data) => GenerateSkeleton(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, World.Factions.Factions["Undead"], world.PlanService, "Undead"));
+            RegisterEntity("Necromancer", (position, data) => GenerateNecromancer(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, World.Factions.Factions["Undead"], world.PlanService, "Undead"));
             RegisterEntity("Bed", (position, data) => new Bed(world.ComponentManager, position));
             RegisterEntity("Barrel", (position, data) => new Barrel(world.ComponentManager, position));
             RegisterEntity("Bear Trap", (position, data) => new BearTrap(world.ComponentManager, position));
@@ -147,8 +114,8 @@ namespace DwarfCorp
             RegisterEntity("Potions", (position, data) => new Table(world.ComponentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(1, 4)) { Tags = new List<string>() { "Research" }, Battery = new Table.ManaBattery() { Charge = 0.0f, MaxCharge = 100.0f } });
             RegisterEntity("Anvil", (position, data) => new Anvil(world.ComponentManager, position));
             RegisterEntity("Forge", (position, data) => new Forge(world.ComponentManager, position));
-            RegisterEntity("Elf", (position, data) => GenerateElf(world, position, world.ComponentManager.Factions.Factions["Elf"], "Elf"));
-            RegisterEntity("Demon", (position, data) => GenerateDemon(world, position, world.ComponentManager.Factions.Factions["Demon"], "Demon"));
+            RegisterEntity("Elf", (position, data) => GenerateElf(world, position, World.Factions.Factions["Elf"], "Elf"));
+            RegisterEntity("Demon", (position, data) => GenerateDemon(world, position, World.Factions.Factions["Demon"], "Demon"));
             RegisterEntity("Arrow", (position, data) => new ArrowProjectile(world.ComponentManager, position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
             RegisterEntity("Bullet", (position, data) => new BulletProjectile(world.ComponentManager, position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
             RegisterEntity("Web", (position, data) => new WebProjectile(world.ComponentManager, position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
@@ -161,7 +128,7 @@ namespace DwarfCorp
                 float value = (float)MathFunctions.Random.NextDouble();
                 return value < 0.33
                     ? (Body)(new Strawman(world.ComponentManager, position))
-                    : (value < 0.66 ? (Body)(new WeightRack(world.ComponentManager,position)) : (Body)(new PunchingBag(world.ComponentManager, position)));
+                    : (value < 0.66 ? (Body)(new WeightRack(world.ComponentManager, position)) : (Body)(new PunchingBag(world.ComponentManager, position)));
             });
             RegisterEntity("Snake", (position, data) => GenerateSnake(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice,
                 world.ChunkManager));
@@ -175,18 +142,19 @@ namespace DwarfCorp
             RegisterEntity("RandTrinket", (position, data) => CreateRandomTrinket(world, position));
             RegisterEntity("RandFood", (position, data) => CreateRandomFood(world, position));
             RegisterEntity("Turret", (position, data) => new TurretTrap(world.ComponentManager, position, world.PlayerFaction));
-            RegisterEntity("Snow Cloud", (position, data) => new Weather.Cloud(world.ComponentManager, 0.1f, 50, 40, position) {TypeofStorm = Weather.StormType.SnowStorm});
+            RegisterEntity("Snow Cloud", (position, data) => new Weather.Cloud(world.ComponentManager, 0.1f, 50, 40, position) { TypeofStorm = Weather.StormType.SnowStorm });
             RegisterEntity("Rain Cloud", (position, data) => new Weather.Cloud(world.ComponentManager, 0.1f, 50, 40, position) { TypeofStorm = Weather.StormType.RainStorm });
             RegisterEntity("Storm", (position, data) =>
             {
-                Weather.CreateForecast(world.Time.CurrentDate, world.ChunkManager.Bounds, world, 3); 
+                Weather.CreateForecast(world.Time.CurrentDate, world.ChunkManager.Bounds, world, 3);
                 Weather.CreateStorm(MathFunctions.RandVector3Cube() * 10, MathFunctions.Rand(0.05f, 1.0f), world);
-                                                            return new Weather.Cloud(world.ComponentManager, 0.1f, 50, 40, position);
+                return new Weather.Cloud(world.ComponentManager, 0.1f, 50, 40, position);
             });
-            RegisterEntity("Chicken", (position, data) => new Chicken(position, world.ComponentManager, world.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Chicken"));
-            RegisterEntity("MudGolem", (position, data) => new MudGolem(new CreatureStats(new MudGolemClass(), 0), "Carnivore", world.PlanService,  world.ComponentManager.Factions.Factions["Carnivore"], world.ComponentManager, "Mud Golem", world.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, position));
+            RegisterEntity("Chicken", (position, data) => new Chicken(position, world.ComponentManager, "Chicken"));
+            RegisterEntity("MudGolem", (position, data) => new MudGolem(new CreatureStats(new MudGolemClass(), 0), "Carnivore", world.PlanService, World.Factions.Factions["Carnivore"], world.ComponentManager, "Mud Golem", position));
             RegisterEntity("Mud", (position, data) => new MudProjectile(world.ComponentManager, position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
             RegisterEntity("Grave", (position, data) => new Grave(world.ComponentManager, position));
+            RegisterEntity("Coins", (position, data) => new CoinPileFixture(world.ComponentManager, position));
         }
 
         private static GameComponent CreateRandomFood(WorldManager world, Vector3 position)
@@ -222,24 +190,14 @@ namespace DwarfCorp
 
         public static T CreateEntity<T>(string id, Vector3 location, Blackboard data = null) where T : GameComponent
         {
-            if(data == null) data = new Blackboard();
-            if (EntityFuncs.ContainsKey(id))
-            {
-                return EntityFuncs[id].Invoke(location, data) as T;
-            }
-            else
-            {
-                string err = id ?? "null";
-                throw new KeyNotFoundException("Unable to create entity of type " + err);   
-            }
-        }
-
-        public static void CreateEntityLazy<T>(string id, Vector3 location, Blackboard data = null) where T : GameComponent
-        {
             if (data == null) data = new Blackboard();
             if (EntityFuncs.ContainsKey(id))
             {
-                LazyActions.Add(() => EntityFuncs[id].Invoke(location, data));
+                var r = EntityFuncs[id].Invoke(location, data);
+                // Todo: This is a hack. Creatures create a physics component and add themselves to it. 
+                // Instead heirarchy should be creature -> physics -> everything else.
+                Components.RootComponent.AddChild(r.Parent == null ? r : r.Parent);
+                return r as T;
             }
             else
             {
@@ -253,15 +211,10 @@ namespace DwarfCorp
             LazyActions.Add(action);
         }
 
-        public static Func<Vector3, T> GetFunc<T>(string id) where T : GameComponent
-        {
-            return EntityFuncs[id] as Func<Vector3, T>;
-        }
-
         public static Body CreateBalloon(Vector3 target, Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, ShipmentOrder order, Faction master)
         {
-            Body balloon = new Body(componentManager, "Balloon", componentManager.RootComponent,
-                Matrix.CreateTranslation(position), new Vector3(0.5f, 1, 0.5f), new Vector3(0, -2, 0));
+            var balloon = componentManager.RootComponent.AddChild(new Body(componentManager, "Balloon",
+                Matrix.CreateTranslation(position), new Vector3(0.5f, 1, 0.5f), new Vector3(0, -2, 0))) as Body;
 
             SpriteSheet tex = new SpriteSheet(ContentPaths.Entities.Balloon.Sprites.balloon);
             List<Point> points = new List<Point>
@@ -269,17 +222,16 @@ namespace DwarfCorp
                 new Point(0, 0)
             };
             Animation balloonAnimation = new Animation(graphics, new SpriteSheet(ContentPaths.Entities.Balloon.Sprites.balloon), "balloon", points, false, Color.White, 0.001f, false);
-            Sprite sprite = new Sprite(componentManager, "sprite", balloon, Matrix.Identity, tex, false)
+            Sprite sprite = balloon.AddChild(new Sprite(componentManager, "sprite", Matrix.Identity, tex, false)
             {
                 OrientationType = Sprite.OrientMode.Spherical
-            };
+            }) as Sprite;
             sprite.AddAnimation(balloonAnimation);
 
-            Matrix shadowTransform = Matrix.CreateRotationX((float) Math.PI * 0.5f);
-            Shadow shadow = new Shadow(componentManager, "shadow", balloon, shadowTransform, new SpriteSheet(ContentPaths.Effects.shadowcircle));
-            BalloonAI balloonAI = new BalloonAI(balloon, target, order, master);
-
-            MinimapIcon minimapIcon = new MinimapIcon(balloon, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 0));
+            Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
+            balloon.AddChild(new Shadow(componentManager, "shadow", shadowTransform, new SpriteSheet(ContentPaths.Effects.shadowcircle)));
+            balloon.AddChild(new BalloonAI(componentManager, target, order, master));
+            balloon.AddChild(new MinimapIcon(componentManager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 0)));
 
             return balloon;
         }
@@ -287,14 +239,14 @@ namespace DwarfCorp
         public static Body GenerateSkeleton(Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, ChunkManager chunks, Camera camera, Faction faction, PlanService planService, string allies)
         {
             CreatureStats stats = new CreatureStats(new SkeletonClass(), 0);
-            return new Skeleton(stats, allies, planService, faction, componentManager, "Skeleton", chunks, graphics, content, position).Physics;
+            return new Skeleton(stats, allies, planService, faction, componentManager, "Skeleton", position).Physics;
         }
 
 
         public static Body GenerateNecromancer(Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, ChunkManager chunks, Camera camera, Faction faction, PlanService planService, string allies)
         {
             CreatureStats stats = new CreatureStats(new NecromancerClass(), 0);
-            return new Necromancer(stats, allies, planService, faction, componentManager, "Necromancer", chunks, graphics, content, position).Physics;
+            return new Necromancer(stats, allies, planService, faction, componentManager, "Necromancer", position).Physics;
         }
 
         public static List<InstanceData> GenerateGrassMotes(List<Vector3> positions,
@@ -334,10 +286,10 @@ namespace DwarfCorp
 
                 for (int i = 0; i < positions.Count; i++)
                 {
-                    float rot = scales[i]*scales[i];
+                    float rot = scales[i] * scales[i];
                     Matrix trans = Matrix.CreateTranslation(positions[i]);
                     Matrix scale = Matrix.CreateScale(scales[i]);
-                    motes.Add(new InstanceData(scale*Matrix.CreateRotationY(rot)*trans, colors[i], true));
+                    motes.Add(new InstanceData(scale * Matrix.CreateRotationY(rot) * trans, colors[i], true));
                 }
 
                 foreach (InstanceData data in motes.Where(data => data != null))
@@ -357,14 +309,14 @@ namespace DwarfCorp
         public static Body GenerateElf(WorldManager worldManger, Vector3 position, Faction faction, string allies)
         {
             CreatureStats stats = new CreatureStats(new ElfClass(), 0);
-            return new Elf(stats, allies, worldManger.PlanService, faction, worldManger.ComponentManager, "Elf", worldManger.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, position).Physics;
+            return new Elf(stats, allies, worldManger.PlanService, faction, worldManger.ComponentManager, "Elf", position).Physics;
         }
 
 
         public static Body GenerateDemon(WorldManager worldManager, Vector3 position, Faction faction, string allies)
         {
             CreatureStats stats = new CreatureStats(new DemonClass(), 0);
-            return new Demon(stats, allies, worldManager.PlanService, faction, worldManager.ComponentManager, "Demon", worldManager.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, position).Physics;
+            return new Demon(stats, allies, worldManager.PlanService, faction, worldManager.ComponentManager, "Demon", position).Physics;
         }
 
         public static Body GenerateGoblin(Vector3 position,
@@ -375,7 +327,7 @@ namespace DwarfCorp
             Faction faction, PlanService planService, string allies)
         {
             CreatureStats stats = new CreatureStats(new SwordGoblinClass(), 0);
-            return new Goblin(stats, allies, planService, faction, componentManager, "Goblin", chunkManager, graphics, content, position).Physics;
+            return new Goblin(stats, allies, planService, faction, componentManager, "Goblin",  position).Physics;
         }
 
         public static Body GenerateMoleman(Vector3 position,
@@ -386,7 +338,7 @@ namespace DwarfCorp
             Faction faction, PlanService planService, string allies)
         {
             CreatureStats stats = new CreatureStats(new MolemanMinerClass(), 0);
-            return new Moleman(stats, allies, planService, faction, componentManager, "Moleman", chunkManager, graphics, content, position).Physics;
+            return new Moleman(stats, allies, planService, faction, componentManager, "Moleman", position).Physics;
         }
 
 
@@ -398,27 +350,9 @@ namespace DwarfCorp
             Faction faction, PlanService planService, string allies, EmployeeClass dwarfClass, int level)
         {
             CreatureStats stats = new CreatureStats(dwarfClass, level);
-            Dwarf toReturn =  new Dwarf(componentManager, stats, allies, planService, faction, "Dwarf", chunkManager, graphics, content, dwarfClass, position);
+            Dwarf toReturn = new Dwarf(componentManager, stats, allies, planService, faction, "Dwarf", dwarfClass, position);
             toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, componentManager.World.Time.CurrentDate), false);
             return toReturn.Physics;
-        }
-
-        public static GameComponent GenerateBird(Vector3 position,
-            ComponentManager componentManager,
-            ContentManager content,
-            GraphicsDevice graphics,
-            ChunkManager chunkManager)
-        {
-          return new Bird(ContentPaths.Entities.Animals.Birds.GetRandomBird(), position, componentManager, chunkManager, graphics, content, "Bird").Physics;
-        }
-
-        public static GameComponent GenerateDeer(Vector3 position,
-            ComponentManager componentManager,
-            ContentManager content,
-            GraphicsDevice graphics,
-            ChunkManager chunks)
-        {
-            return new Deer(ContentPaths.Entities.Animals.Deer.deer, position, componentManager, chunks, graphics, content, "Deer").Physics;
         }
 
         public static GameComponent GenerateSnake(Vector3 position,
@@ -427,24 +361,8 @@ namespace DwarfCorp
             GraphicsDevice graphics,
             ChunkManager chunks)
         {
-            return new Snake(new SpriteSheet(ContentPaths.Entities.Animals.Snake.snake, 32), 
-                position, componentManager, chunks, graphics, content, "Snake").Physics;
+            return new Snake(new SpriteSheet(ContentPaths.Entities.Animals.Snake.snake, 32),
+                position, componentManager, "Snake").Physics;
         }
-
-        /*
-        public static Body GenerateCraftItem(CraftLibrary.CraftItemType itemType, Vector3 position)
-        {
-            switch (itemType)
-            {
-                    case CraftLibrary.CraftItemType.BearTrap:
-                        return new BearTrap(position + new Vector3(0.5f, 0.5f, 0.5f));
-                    case CraftLibrary.CraftItemType.Lamp:
-                        return (Body) GenerateLamp(position + new Vector3(0.5f, 0.5f, 0.5f), PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice);
-            }
-
-            return null;
-        }
-         */
     }
-
 }

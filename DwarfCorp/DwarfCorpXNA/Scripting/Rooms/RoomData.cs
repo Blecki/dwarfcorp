@@ -52,7 +52,7 @@ namespace DwarfCorp
         public Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> RequiredResources { get; set; }
         public List<RoomTemplate> Templates { get; set; }
         //public ImageFrame Icon { get; set; }
-        public Gum.TileReference NewIcon { get; private set; }
+        public Gui.TileReference NewIcon { get; private set; }
         public string Description { get; set; }
         public bool CanBuildAboveGround = true;
         public bool CanBuildBelowGround = true;
@@ -61,7 +61,7 @@ namespace DwarfCorp
         public int MinimumSideLength = 3;
         public int MinimumSideWidth = 3;
 
-        public RoomData(string name, uint id, string floorTexture, Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> requiredResources, List<RoomTemplate> templates, Gum.TileReference icon)
+        public RoomData(string name, uint id, string floorTexture, Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> requiredResources, List<RoomTemplate> templates, Gui.TileReference icon)
         {
             Name = name;
             ID = id;

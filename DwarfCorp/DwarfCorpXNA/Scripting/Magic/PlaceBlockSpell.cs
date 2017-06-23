@@ -95,11 +95,11 @@ namespace DwarfCorp
 
                     if (VoxelType == "Magic")
                     {
-                        new VoxelListener(World.ComponentManager, World.ComponentManager.RootComponent, World.ChunkManager, selected)
+                        World.ComponentManager.RootComponent.AddChild(new VoxelListener(World.ComponentManager, World.ChunkManager, selected)
                         {
                             DestroyOnTimer = true,
                             DestroyTimer = new Timer(5.0f + MathFunctions.Rand(-0.5f, 0.5f), true)
-                        };
+                        });
                     }
                     placed = true;
                     chunksToRebuild.Add(selected.ChunkID);

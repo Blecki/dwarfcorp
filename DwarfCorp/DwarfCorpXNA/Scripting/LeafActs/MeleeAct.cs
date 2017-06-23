@@ -80,7 +80,7 @@ namespace DwarfCorp
         {
             Creature.Physics.Orientation = Physics.OrientMode.RotateY;
             Creature.OverrideCharacterMode = false;
-            Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+            Creature.CurrentCharacterMode = CharacterMode.Walking;
             base.OnCanceled();
         }
 
@@ -109,7 +109,7 @@ namespace DwarfCorp
                     yield break;
                 }
 
-                List<Creature.MoveAction> neighbors = Agent.Movement.GetMoveActions(Agent.Position);
+                List<MoveAction> neighbors = Agent.Movement.GetMoveActions(Agent.Position);
                 neighbors.Sort((a, b) =>
                 {
                     if (a.Equals(b)) return 0;
@@ -121,7 +121,7 @@ namespace DwarfCorp
                 });
 
                 neighbors.RemoveAll(
-                    a => a.MoveType == Creature.MoveType.Jump || a.MoveType == Creature.MoveType.Climb);
+                    a => a.MoveType == MoveType.Jump || a.MoveType == MoveType.Climb);
 
                 if (neighbors.Count == 0)
                 {
@@ -129,7 +129,7 @@ namespace DwarfCorp
                     yield break;
                 }
 
-                Creature.MoveAction furthest = neighbors.Last();
+                MoveAction furthest = neighbors.Last();
                 bool reachedTarget = false;
                 Timer timeout = new Timer(2.0f, true);
                 while (!reachedTarget)
@@ -150,7 +150,7 @@ namespace DwarfCorp
                     {
                         reachedTarget = true;
                     }
-                    Agent.Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+                    Agent.Creature.CurrentCharacterMode = CharacterMode.Walking;
                 }
             yield return Status.Success;
                 yield break;
@@ -185,9 +185,9 @@ namespace DwarfCorp
                 targetInventory.OnDeath += targetInventory_OnDeath;
             }
 
-            Creature.CharacterMode defaultCharachterMode = Creature.AI.Movement.CanFly
-                ? Creature.CharacterMode.Flying
-                : Creature.CharacterMode.Walking;
+            CharacterMode defaultCharachterMode = Creature.AI.Movement.CanFly
+                ? CharacterMode.Flying
+                : CharacterMode.Walking;
 
             bool avoided = false;
             while(true)
@@ -305,9 +305,9 @@ namespace DwarfCorp
                     Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
                     CurrentAttack.RechargeTimer.Reset(CurrentAttack.RechargeRate);
 
-                    Creature.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
-                    Creature.Sprite.PlayAnimations(Creature.CharacterMode.Attacking);
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
+                    Creature.Sprite.ResetAnimations(CharacterMode.Attacking);
+                    Creature.Sprite.PlayAnimations(CharacterMode.Attacking);
+                    Creature.CurrentCharacterMode = CharacterMode.Attacking;
 
                     while (!CurrentAttack.Perform(Creature, Target, DwarfTime.LastTime, Creature.Stats.BuffedStr + Creature.Stats.BuffedSiz,
                             Creature.AI.Position, Creature.Faction.Name))
@@ -329,8 +329,8 @@ namespace DwarfCorp
                         yield return Status.Running;
                     }
 
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
-                    Creature.Sprite.PauseAnimations(Creature.CharacterMode.Attacking);
+                    Creature.CurrentCharacterMode = CharacterMode.Attacking;
+                    Creature.Sprite.PauseAnimations(CharacterMode.Attacking);
 
                     CurrentAttack.RechargeTimer.Reset(CurrentAttack.RechargeRate);
 
@@ -340,14 +340,14 @@ namespace DwarfCorp
                         CurrentAttack.RechargeTimer.Update(DwarfTime.LastTime);
                         if (CurrentAttack.Mode == Attack.AttackMode.Dogfight)
                         {
-                            Creature.CurrentCharacterMode = Creature.CharacterMode.Flying;
+                            Creature.CurrentCharacterMode = CharacterMode.Flying;
                             dogfightTarget += MathFunctions.RandVector3Cube()*0.1f;
                             Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, dogfightTarget + Target.Position, Creature.Physics.GlobalTransform.Translation) * 0.9f;
                             Creature.Physics.ApplyForce(output - Creature.Physics.Gravity, DwarfTime.Dt);
                         }
                         else
                         {
-                            Creature.Sprite.PauseAnimations(Creature.CharacterMode.Attacking);
+                            Creature.Sprite.PauseAnimations(CharacterMode.Attacking);
                             Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
                             if (Creature.AI.Movement.CanFly)
                             {
@@ -431,17 +431,17 @@ namespace DwarfCorp
             Vector3 target = Target.Position;
 
             if (Is2D) target.Y = Creature.AI.Position.Y;
-            List<Creature.MoveAction> path = new List<Creature.MoveAction>();
+            List<MoveAction> path = new List<MoveAction>();
             Voxel curr = Creature.Physics.CurrentVoxel;
             for (int i = 0; i < PathLength; i++)
             {
-                List<Creature.MoveAction> actions =
+                List<MoveAction> actions =
                     Creature.AI.Movement.GetMoveActions(curr);
 
-                Creature.MoveAction? bestAction = null;
+                MoveAction? bestAction = null;
                 float bestDist = float.MaxValue;
 
-                foreach (Creature.MoveAction action in actions)
+                foreach (MoveAction action in actions)
                 {
                     float dist = (action.Voxel.Position - target).LengthSquared();
 
@@ -457,7 +457,7 @@ namespace DwarfCorp
                     !path.Any(p => p.Voxel.Equals(bestAction.Value.Voxel) && p.MoveType == bestAction.Value.MoveType))
                 {
                     path.Add(bestAction.Value);
-                    Creature.MoveAction action = bestAction.Value;
+                    MoveAction action = bestAction.Value;
                     action.Voxel = new Voxel(curr);
                     curr = bestAction.Value.Voxel;
                     bestAction = action;
@@ -472,11 +472,11 @@ namespace DwarfCorp
             if (path.Count > 0)
             {
                 path.Insert(0,
-                    new Creature.MoveAction()
+                    new MoveAction()
                     {
                         Diff = Vector3.Zero,
                         Voxel = new Voxel(Creature.Physics.CurrentVoxel),
-                        MoveType = Creature.MoveType.Walk
+                        MoveType = MoveType.Walk
                     });
                 Creature.AI.Blackboard.SetData("RandomPath", path);
                 yield return Status.Success;

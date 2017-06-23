@@ -49,20 +49,20 @@ namespace DwarfCorp
         public string FormerProfession { get; set; }
         public string HomeTown { get; set; }
         public string Biography { get; set; }
-        public Creature.CreatureGender Gender { get; set; }
+        public Gender Gender { get; set; }
         public Applicant()
         {
             
         }
 
-        public static string GenerateBiography(string Name, Creature.CreatureGender Gender)
+        public static string GenerateBiography(string Name, Gender Gender)
         {
             var hobbyTemplates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.hobby);
             var hobby = TextGenerator.GenerateRandom(new List<string>(),
                     hobbyTemplates[MathFunctions.Random.Next(hobbyTemplates.Count)].ToArray());
             var biographyTemplates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.biography);
             return TextGenerator.ToSentenceCase(TextGenerator.GenerateRandom(
-            new List<string> { Name, Gender.ToString(), hobby, Creature.Pronoun(Gender), Creature.Posessive(Gender) },
+            new List<string> { Name, Gender.ToString(), hobby, Mating.Pronoun(Gender), Mating.Posessive(Gender) },
             biographyTemplates[MathFunctions.Random.Next(biographyTemplates.Count)].ToArray()));
 
         }
@@ -71,7 +71,7 @@ namespace DwarfCorp
         {
             Class = employeeClass;
             Level = Class.Levels[level];
-            Gender = Creature.RandomGender();
+            Gender = Mating.RandomGender();
             Name = TextGenerator.GenerateRandom("$firstname", " ", "$lastname");
             List<string> justifications = new List<string>()
             {

@@ -1,4 +1,4 @@
-﻿// GatherItemAct.cs
+// GatherItemAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -78,11 +78,22 @@ namespace DwarfCorp
 
         public IEnumerable<Status> AddStockOrder()
         {
-            Agent.GatherManager.StockOrders.Add(new GatherManager.StockOrder()
+            if (ItemToGather is CoinPile)
             {
-                Destination = null,
-                Resource = new ResourceAmount(ItemToGather)
-            });
+                Agent.GatherManager.StockMoneyOrders.Add(new GatherManager.StockMoneyOrder()
+                {
+                    Destination = null,
+                    Money = (ItemToGather as CoinPile).Money
+                });   
+            }
+            else
+            {
+                Agent.GatherManager.StockOrders.Add(new GatherManager.StockOrder()
+                {
+                    Destination = null,
+                    Resource = new ResourceAmount(ItemToGather)
+                });   
+            }
 
             yield return Status.Success;
         }

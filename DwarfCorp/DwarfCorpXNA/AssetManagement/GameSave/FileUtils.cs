@@ -107,10 +107,11 @@ namespace DwarfCorp
             return JsonConvert.DeserializeObject<T>(jsonText, new JsonSerializerSettings()
             {
                 Context = new StreamingContext(StreamingContextStates.File, context),
-                ReferenceLoopHandling = ReferenceLoopHandling.Error,
+                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
                 TypeNameHandling = TypeNameHandling.All,
                 ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
                 TypeNameAssemblyFormat = FormatterAssemblyStyle.Full,
+                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
                 Converters = new List<JsonConverter>
                     {
                         new BoxConverter(),
@@ -138,10 +139,11 @@ namespace DwarfCorp
             return JsonConvert.DeserializeObject<T>(jsonText, new JsonSerializerSettings()
             {
                 Context = new StreamingContext(StreamingContextStates.File, context),
-                ReferenceLoopHandling = ReferenceLoopHandling.Error,
+                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
                 TypeNameHandling = TypeNameHandling.All,
                 ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
                 TypeNameAssemblyFormat = FormatterAssemblyStyle.Full,
+                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
                 Converters = new List<JsonConverter>
                     {
                         new BoxConverter(),
@@ -220,11 +222,12 @@ namespace DwarfCorp
         {
             JsonSerializer serializer = new JsonSerializer
             {
-                ReferenceLoopHandling = ReferenceLoopHandling.Error,
+                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
                 TypeNameHandling = TypeNameHandling.All,
                 TypeNameAssemblyFormat = FormatterAssemblyStyle.Full,
                 ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-                Formatting = Formatting.Indented
+                Formatting = Formatting.Indented,
+                PreserveReferencesHandling = PreserveReferencesHandling.Objects
             };
 
             serializer.Converters.Add(new BoxConverter());

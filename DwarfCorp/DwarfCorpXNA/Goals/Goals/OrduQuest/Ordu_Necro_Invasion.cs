@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Gum;
+using DwarfCorp.Gui;
 
 namespace DwarfCorp.Goals.Goals
 {
@@ -17,11 +17,11 @@ namespace DwarfCorp.Goals.Goals
             GoalType = GoalTypes.UnavailableAtStartup;
         }
 
-        public override ActivationResult Activate(WorldManager World)
+        public override void Activate(WorldManager World)
         {
             // Spawn multiple war parties from Ordu
-            var orduFaction = World.ComponentManager.Factions.Factions.FirstOrDefault(f => f.Key == "Ordu").Value;
-            var politics = World.ComponentManager.Diplomacy.GetPolitics(World.PlayerFaction, orduFaction);
+            var orduFaction = World.Factions.Factions.FirstOrDefault(f => f.Key == "Ordu").Value;
+            var politics = World.Diplomacy.GetPolitics(World.PlayerFaction, orduFaction);
             politics.RecentEvents.Add(new Diplomacy.PoliticalEvent
             {
                 Change = -100.0f,
@@ -31,9 +31,7 @@ namespace DwarfCorp.Goals.Goals
             });
 
             for (var i = 0; i < 5; ++i)
-                World.ComponentManager.Diplomacy.SendWarParty(orduFaction);
-
-            return new ActivationResult { Succeeded = true };
+                World.Diplomacy.SendWarParty(orduFaction);
         }
 
         public override void OnGameEvent(WorldManager World, GameEvent Event)

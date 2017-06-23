@@ -490,10 +490,10 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    World.NewGui.ShowDialog(new NewGui.Confirm
+                    World.Gui.ShowDialog(new Gui.Widgets.Confirm
                         {
                             Text = "Do you want to destroy this" + existingRoom.RoomData.Name + "?",
-                            OnClose = (sender) => destroyDialog_OnClosed((sender as NewGui.Confirm).DialogResult, existingRoom)
+                            OnClose = (sender) => destroyDialog_OnClosed((sender as Gui.Widgets.Confirm).DialogResult, existingRoom)
                         });
 
                     break;
@@ -501,9 +501,9 @@ namespace DwarfCorp
             }
         }
 
-        void destroyDialog_OnClosed(NewGui.Confirm.Result status, Room room)
+        void destroyDialog_OnClosed(Gui.Widgets.Confirm.Result status, Room room)
         {
-            if (status == NewGui.Confirm.Result.OKAY)
+            if (status == Gui.Widgets.Confirm.Result.OKAY)
             {
                 DesignatedRooms.Remove(room);
 

@@ -48,42 +48,28 @@ namespace DwarfCorp
     public class Sensor : Body, IUpdateableComponent
     {
 
-        public delegate void Sense(List<Body> sensed);
+        public delegate void Sense(IEnumerable<Body> sensed);
         public event Sense OnSensed;
         public Timer FireTimer { get; set; }
-        private readonly List<Body> sensedItems = new List<Body>();
 
-        public Sensor(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
-            base(parent.Manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
+        public Sensor(
+            ComponentManager Manager, 
+            String name, 
+            Matrix localTransform, 
+            Vector3 boundingBoxExtents, 
+            Vector3 boundingBoxPos) :
+            base(Manager, name, localTransform, boundingBoxExtents, boundingBoxPos)
         {
-            OnSensed += Sensor_OnSensed;
             Tags.Add("Sensor");
             FireTimer = new Timer(1.0f, false);
         }
-
-        public Sensor()
-        {
-            OnSensed += Sensor_OnSensed;
-        }
-
-        private void Sensor_OnSensed(List<Body> sensed)
-        {
-            ;
-        }
-
+        
         new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             FireTimer.Update(gameTime);
-            if(FireTimer.HasTriggered)
-            {
-                sensedItems.Clear();
-                Manager.GetBodiesIntersecting(BoundingBox, sensedItems, CollisionManager.CollisionType.Dynamic);
-
-                if(sensedItems.Count > 0)
-                {
-                    OnSensed.Invoke(sensedItems);
-                }
-            }
+            if (FireTimer.HasTriggered && OnSensed != null)
+                OnSensed(Manager.World.CollisionManager.EnumerateIntersectingObjects(BoundingBox,
+                    CollisionManager.CollisionType.Dynamic).OfType<Body>());
 
             base.Update(gameTime, chunks, camera);
         }

@@ -3,15 +3,15 @@ using System.Linq;
 using LibNoise;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Gum;
-using Gum.Widgets;
+using DwarfCorp.Gui;
+using DwarfCorp.Gui.Widgets;
 using System;
 
 namespace DwarfCorp.GameStates
 {
     public class NewOptionsState : GameState
     {
-        private Gum.Root GuiRoot;
+        private Gui.Root GuiRoot;
         private bool HasChanges = false;
         public Action OnClosed = null;
         private bool BuildingGUI = false;
@@ -19,8 +19,8 @@ namespace DwarfCorp.GameStates
         private Dictionary<string, int> AntialiasingOptions;
         private Dictionary<string, DisplayMode> DisplayModes;
         
-        private Gum.Widget MainPanel;
-        private Gum.Widgets.TabPanel TabPanel;
+        private Gui.Widget MainPanel;
+        private Gui.Widgets.TabPanel TabPanel;
 
         private HorizontalFloatSlider MoveSpeed;
         private HorizontalFloatSlider ZoomSpeed;
@@ -32,12 +32,12 @@ namespace DwarfCorp.GameStates
         private HorizontalFloatSlider MasterVolume;
         private HorizontalFloatSlider SFXVolume;
         private HorizontalFloatSlider MusicVolume;
-        private Gum.Widgets.ComboBox Resolution;
+        private Gui.Widgets.ComboBox Resolution;
         private CheckBox Fullscreen;
         private HorizontalFloatSlider ChunkDrawDistance;
         private HorizontalFloatSlider VertexCullDistance;
         private CheckBox Glow;
-        private Gum.Widgets.ComboBox Antialiasing;
+        private Gui.Widgets.ComboBox Antialiasing;
         private CheckBox ReflectTerrain;
         private CheckBox ReflectEntities;
         private CheckBox Sunlight;
@@ -51,7 +51,7 @@ namespace DwarfCorp.GameStates
         private HorizontalFloatSlider NumMotes;
         private CheckBox LightMap;
         private CheckBox DynamicShadows;
-        private Gum.Widgets.ComboBox EasyGraphicsSetting;
+        private Gui.Widgets.ComboBox EasyGraphicsSetting;
 
         public WorldManager World = null;
         private CheckBox EnableTutorial;
@@ -93,18 +93,18 @@ namespace DwarfCorp.GameStates
             BuildingGUI = true;
 
             // Create and initialize GUI framework.
-            GuiRoot = new Gum.Root(DwarfGame.GumSkin);
-            GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
+            GuiRoot = new Gui.Root(DwarfGame.GumSkin);
+            GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
             GuiRoot.SetMouseOverlay(null, 0);
             // CONSTRUCT GUI HERE...
-            MainPanel = GuiRoot.RootItem.AddChild(new Gum.Widget
+            MainPanel = GuiRoot.RootItem.AddChild(new Gui.Widget
                 {
                     Rect = GuiRoot.RenderData.VirtualScreen,
                     Padding = new Margin(4,4,4,4),
                     Transparent = true
                 });
 
-            MainPanel.AddChild(new Gum.Widgets.Button
+            MainPanel.AddChild(new Gui.Widgets.Button
             {
                 Text = "Close",
                 Font = "font-hires",
@@ -116,14 +116,14 @@ namespace DwarfCorp.GameStates
                     // If changes, prompt before closing.
                     if (HasChanges)
                     {
-                        var confirm = new NewGui.Confirm
+                        var confirm = new Gui.Widgets.Confirm
                             {
                                 Text = "Apply changes?",
                                 OkayText = "Yes",
                                 CancelText = "No",
                                 OnClose = (s2) =>
                                     {
-                                        if ((s2 as NewGui.Confirm).DialogResult == NewGui.Confirm.Result.OKAY)
+                                        if ((s2 as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
                                             ApplySettings();
                                         if (OnClosed != null) OnClosed();
                                         StateManager.PopState();
@@ -140,7 +140,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.FloatBottomRight
             });
 
-            MainPanel.AddChild(new Gum.Widgets.Button
+            MainPanel.AddChild(new Gui.Widgets.Button
             {
                 Text = "Apply",
                 Font = "font-hires",
@@ -155,13 +155,13 @@ namespace DwarfCorp.GameStates
                 OnLayout = s => s.Rect.X -= 128 // Hack to keep it from floating over the other button.
             });
 
-            TabPanel = MainPanel.AddChild(new Gum.Widgets.TabPanel
+            TabPanel = MainPanel.AddChild(new Gui.Widgets.TabPanel
             {
                 AutoLayout = AutoLayout.DockFill,
                 TextSize = 1,
                 SelectedTabColor = new Vector4(1,0,0,1),
                 OnLayout = (sender) => sender.Rect.Height -= 36 // Keep it from overlapping bottom buttons.
-            }) as Gum.Widgets.TabPanel;
+            }) as Gui.Widgets.TabPanel;
 
             CreateGameplayTab();
             CreateAudioTab();
@@ -230,12 +230,12 @@ namespace DwarfCorp.GameStates
                 ChangeColorOnHover = true,
                 OnClick = (sender, args) =>
                 {
-                    var prompt = GuiRoot.ConstructWidget(new NewGui.Confirm
+                    var prompt = GuiRoot.ConstructWidget(new Gui.Widgets.Confirm
                     {
                         Text = "Set all settings to their default?",
                         OnClose = (confirm) =>
                         {
-                            if ((confirm as NewGui.Confirm).DialogResult == NewGui.Confirm.Result.OKAY)
+                            if ((confirm as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
                             {
                                 GameSettings.Default = new GameSettings.Settings();
                                 RebuildGui();
@@ -373,7 +373,7 @@ namespace DwarfCorp.GameStates
                 Padding = new Margin(4, 4, 0, 0)
             });
 
-            panel.AddChild(new NewGui.KeyEditor
+            panel.AddChild(new Gui.Widgets.KeyEditor
             {
                 KeyManager = new KeyManager(),
                 AutoLayout = AutoLayout.DockFill
@@ -388,10 +388,10 @@ namespace DwarfCorp.GameStates
                 Padding = new Margin(4,4,4,4)
             });
 
-            var split = panel.AddChild(new NewGui.TwoColumns
+            var split = panel.AddChild(new Gui.Widgets.TwoColumns
             {
                 AutoLayout = AutoLayout.DockFill
-            }) as NewGui.TwoColumns;
+            }) as Gui.Widgets.TwoColumns;
 
             var leftPanel = split.AddChild(new Widget
             {
@@ -403,20 +403,20 @@ namespace DwarfCorp.GameStates
                 Padding = new Margin(2,2,2,2)
             });
 
-            EasyGraphicsSetting = leftPanel.AddChild(LabelAndDockWidget("Easy Settings", new Gum.Widgets.ComboBox
+            EasyGraphicsSetting = leftPanel.AddChild(LabelAndDockWidget("Easy Settings", new Gui.Widgets.ComboBox
             {
                 Items = new String[] { "Lowest", "Low", "Medium", "High", "Highest", "Custom" }.ToList(),
                 OnSelectedIndexChanged = OnEasySettingChanged,
                 Border = "border-thin"
-            })).GetChild(1) as Gum.Widgets.ComboBox;
+            })).GetChild(1) as Gui.Widgets.ComboBox;
 
-            Resolution = leftPanel.AddChild(LabelAndDockWidget("Resolution", new Gum.Widgets.ComboBox
+            Resolution = leftPanel.AddChild(LabelAndDockWidget("Resolution", new Gui.Widgets.ComboBox
                 {
                     Items = DisplayModes.Select(dm => dm.Key).ToList(),
                     OnSelectedIndexChanged = OnItemChanged,
                     Border = "border-thin",
                     Tooltip = "Game screen size",
-                })).GetChild(1) as Gum.Widgets.ComboBox;
+                })).GetChild(1) as Gui.Widgets.ComboBox;
 
             Fullscreen = leftPanel.AddChild(new CheckBox
                 {
@@ -458,13 +458,13 @@ namespace DwarfCorp.GameStates
                 Tooltip = "When checked, bright parts of the screen will have a glow effect. Turn off to make the game run faster."
             }) as CheckBox;
 
-            Antialiasing = rightPanel.AddChild(LabelAndDockWidget("Antialiasing", new Gum.Widgets.ComboBox
+            Antialiasing = rightPanel.AddChild(LabelAndDockWidget("Antialiasing", new Gui.Widgets.ComboBox
             {
                 Items = AntialiasingOptions.Select(o => o.Key).ToList(),
                 OnSelectedIndexChanged = OnItemChanged,
                 Border = "border-thin",
                 Tooltip = "Higher values mean fewer jagged pixels. For best quality use FXAA. Fastest is no antialiasing."
-            })).GetChild(1) as Gum.Widgets.ComboBox;
+            })).GetChild(1) as Gui.Widgets.ComboBox;
 
             ReflectTerrain = rightPanel.AddChild(new CheckBox
             {
@@ -573,24 +573,24 @@ namespace DwarfCorp.GameStates
 
         }
 
-        private void OnItemChanged(Gum.Widget Sender)
+        private void OnItemChanged(Gui.Widget Sender)
         {
             HasChanges = true;
         }
 
-        private void OnEasySettingChanged(Gum.Widget Sender)
+        private void OnEasySettingChanged(Gui.Widget Sender)
         {
             // This handler can be called while building the GUI, resulting in an infinite loop.
             if (BuildingGUI) return;
 
-            GuiRoot.ShowDialog(GuiRoot.ConstructWidget(new NewGui.Confirm
+            GuiRoot.ShowDialog(GuiRoot.ConstructWidget(new Gui.Widgets.Confirm
             {
                 Text = "This will automatically apply changes",
                 OnClose = (confirm) =>
                 {
-                    if ((confirm as NewGui.Confirm).DialogResult == NewGui.Confirm.Result.OKAY)
+                    if ((confirm as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
                     {
-                        var comboBox = Sender as Gum.Widgets.ComboBox;
+                        var comboBox = Sender as Gui.Widgets.ComboBox;
                         var selection = comboBox.SelectedItem;
 
                         switch (selection)
@@ -790,7 +790,7 @@ namespace DwarfCorp.GameStates
                     GameSettings.Default.Fullscreen = preFullscreen;
                     SetBestResolution();
                     this.Fullscreen.CheckState = GameSettings.Default.Fullscreen;
-                    GuiRoot.ShowModalPopup(new NewGui.Popup
+                    GuiRoot.ShowModalPopup(new Gui.Widgets.Popup
                         {
                             Text = "Could not change display mode. Previous settings restored.",
                             TextSize = 1,

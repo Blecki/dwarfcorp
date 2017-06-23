@@ -127,7 +127,13 @@ namespace DwarfCorp
                     }
                 case (PickUpType.None):
                     {
-                        if (!Creature.Inventory.Pickup(Target))
+                        if (Target is CoinPile)
+                        {
+                            DwarfBux money = (Target as CoinPile).Money;
+                            Creature.AI.AddMoney(money);
+                            Target.Die();
+                        }
+                        else if (!Creature.Inventory.Pickup(Target))
                         {
                             yield return Status.Fail;
                         }

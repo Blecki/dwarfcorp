@@ -984,7 +984,7 @@ namespace DwarfCorp
         public void NotifyChangedComponents()
         {
             HashSet<IBoundedObject> componentsInside = new HashSet<IBoundedObject>();
-            Manager.Components.CollisionManager.GetObjectsIntersecting(GetBoundingBox(), componentsInside, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
+            Manager.World.CollisionManager.GetObjectsIntersecting(GetBoundingBox(), componentsInside, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
 
             Message changedMessage = new Message(Message.MessageType.OnChunkModified, "Chunk Modified");
 
@@ -1595,11 +1595,39 @@ namespace DwarfCorp
         }
         */
 
-        public TransitionTexture ComputeTransitionValue(int x, int y, int z, Voxel[] neighbors)
+        public BoxTransition ComputeTransitionValue(VoxelType.TransitionType transitionType, int x, int y, int z, Voxel[] neighbors)
         {
             VoxelType type = VoxelLibrary.GetVoxelType(Data.Types[Data.IndexAt(x, y, z)]);
-            Get2DManhattanNeighbors(neighbors, x, y, z);
 
+            if (transitionType == VoxelType.TransitionType.Horizontal)
+            {
+                Get2DManhattanNeighbors(neighbors, x, y, z);
+
+                var value = ComputeTransitionValue(neighbors, type);
+                TransitionTexture toReturn = (TransitionTexture)value;
+                return new BoxTransition()
+                {
+                    Top = toReturn
+                };
+            }
+            else
+            {
+                Get2DManhattanNeighbors(ChunkManager.SliceMode.Z, neighbors, x, y, z);
+                var transitionFrontBack = ComputeTransitionValue(neighbors, type);
+                Get2DManhattanNeighbors(ChunkManager.SliceMode.X, neighbors, x, y, z);
+                var transitionLeftRight = ComputeTransitionValue(neighbors, type);
+                return new BoxTransition()
+                {
+                    Front = (TransitionTexture) transitionFrontBack,
+                    Back = (TransitionTexture) transitionFrontBack,
+                    Left = (TransitionTexture) transitionLeftRight,
+                    Right = (TransitionTexture) transitionLeftRight
+                };
+            }
+        }
+
+        private static int ComputeTransitionValue(Voxel[] neighbors, VoxelType type)
+        {
             int value = 0;
             for (int i = 0; i < neighbors.Length; i++)
             {
@@ -1608,8 +1636,7 @@ namespace DwarfCorp
                     value += manhattan2DMultipliers[i];
                 }
             }
-            TransitionTexture toReturn = (TransitionTexture)value;
-            return toReturn;
+            return value;
         }
 
         public void Get2DManhattanNeighbors(Voxel[] neighbors, int x, int y, int z)
@@ -1620,6 +1647,105 @@ namespace DwarfCorp
             for (int i = 0; i < count; i++)
             {
                 Vector3 successor = succ[i];
+                int nx = (int)successor.X + x;
+                int ny = (int)successor.Y + y;
+                int nz = (int)successor.Z + z;
+
+                if (isInterior || IsCellValid(nx, ny, nz))
+                {
+                    if (neighbors[i] == null)
+                    {
+                        neighbors[i] = MakeVoxel(nx, ny, nz);
+                    }
+                    else
+                    {
+                        neighbors[i].Chunk = this;
+                        neighbors[i].GridPosition = new Vector3(nx, ny, nz);
+
+                    }
+                }
+                else
+                {
+                    Point3 chunkID = ID;
+                    if (nx >= SizeZ)
+                    {
+                        chunkID.X += 1;
+                        nx = 0;
+                    }
+                    else if (nx < 0)
+                    {
+                        chunkID.X -= 1;
+                        nx = SizeX - 1;
+                    }
+
+                    if (ny >= SizeY)
+                    {
+                        chunkID.Y += 1;
+                        ny = 0;
+                    }
+                    else if (ny < 0)
+                    {
+                        chunkID.Y -= 1;
+                        ny = SizeY - 1;
+                    }
+
+                    if (nz >= SizeZ)
+                    {
+                        chunkID.Z += 1;
+                        nz = 0;
+                    }
+                    else if (nz < 0)
+                    {
+                        chunkID.Z -= 1;
+                        nz = SizeZ - 1;
+                    }
+
+
+                    if (!Manager.ChunkData.ChunkMap.ContainsKey(chunkID))
+                    {
+                        continue;
+                    }
+
+                    VoxelChunk chunk = Manager.ChunkData.ChunkMap[chunkID];
+
+                    if (neighbors[i] == null)
+                    {
+                        neighbors[i] = chunk.MakeVoxel(nx, ny, nz);
+                    }
+                    else
+                    {
+                        neighbors[i].Chunk = chunk;
+                        neighbors[i].GridPosition = new Vector3(nx, ny, nz);
+                    }
+                }
+            }
+
+        }
+
+        public void Get2DManhattanNeighbors(ChunkManager.SliceMode slice, Voxel[] neighbors, int x, int y, int z)
+        {
+            List<Vector3> succ = Manhattan2DSuccessors;
+            int count = succ.Count;
+            bool isInterior = IsInterior(x, y, z);
+            for (int i = 0; i < count; i++)
+            {
+                Vector3 successor = succ[i];
+
+                switch (slice)
+                {
+                    // X held constant, so we're looking at the ZY plane
+                    case ChunkManager.SliceMode.X:
+                            successor = new Vector3(0, succ[i].Z, succ[i].X);
+                        break;
+                     //Y held constant. Just do what we did before.
+                    case ChunkManager.SliceMode.Y:
+                        break;
+
+                    // Z held constant, so we're looking at the XY plane
+                    case ChunkManager.SliceMode.Z:
+                        successor = new Vector3(succ[i].X, succ[i].Z, 0);
+                        break;
+                }
                 int nx = (int)successor.X + x;
                 int ny = (int)successor.Y + y;
                 int nz = (int)successor.Z + z;

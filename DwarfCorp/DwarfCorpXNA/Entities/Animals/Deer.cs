@@ -53,9 +53,10 @@ namespace DwarfCorp
             
         }
 
-        public Deer(string sprites, Vector3 position, ComponentManager manager, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, string name):
+        public Deer(string sprites, Vector3 position, ComponentManager manager, string name):
             base
             (
+                manager,
                 new CreatureStats
                 {
                     Dexterity = 12,
@@ -68,20 +69,28 @@ namespace DwarfCorp
                 },
                 "Herbivore",
                 manager.World.PlanService,
-                manager.Factions.Factions["Herbivore"],
-                new Physics
+                manager.World.Factions.Factions["Herbivore"],
+                name
+            )
+        {
+            Physics = new Physics
                 (
+                    manager,
                     "A Deer",
-                    manager.RootComponent,
                     Matrix.CreateTranslation(position),
                     new Vector3(0.3f, 0.3f, 0.3f),
                     new Vector3(0, 0, 0),
                     1.0f, 1.0f, 0.999f, 0.999f,
                     new Vector3(0, -10, 0)
-                ),
-                chunks, graphics, content, name
-            )
-        {
+                );
+
+            Physics.AddChild(this);
+
+            Physics.AddChild(new SelectionCircle(Manager)
+            {
+                IsVisible = false
+            });
+
             Initialize(new SpriteSheet(sprites));
         }
 
@@ -93,13 +102,12 @@ namespace DwarfCorp
             const int frameWidth = 48;
             const int frameHeight = 40;
 
-            Sprite = new CharacterSprite
+            Sprite = Physics.AddChild(new CharacterSprite
                 (Graphics,
                 Manager,
                 "Deer Sprite",
-                Physics,
                 Matrix.CreateTranslation(Vector3.Up * 0.6f)
-                );
+                )) as CharacterSprite;
 
             // Add the idle animation
             Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Forward, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 0, 0);
@@ -120,49 +128,49 @@ namespace DwarfCorp
             Sprite.AddAnimation(CharacterMode.Jumping, OrientedAnimation.Orientation.Backward, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 11, 0, 1);
 
             // Add hands
-            Hands = new Grabber("hands", Physics, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero);
+            Hands = Physics.AddChild(new Grabber("hands", Manager, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero)) as Grabber;
 
             // Add sensor
-            Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero);
+            Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
             // Add AI
-            AI = new PacingCreatureAI(this, "Deer AI", Sensors, PlanService);
+            AI = Physics.AddChild(new PacingCreatureAI(Manager, "Deer AI", Sensors, PlanService)) as CreatureAI;
 
             Attacks = new List<Attack>{new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.pick, ContentPaths.Effects.hit)};
 
-            Inventory = new Inventory("Inventory", Physics)
+            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.BoundingBoxPos)
             {
                 Resources = new ResourceContainer
                 {
                     MaxResources = 1
                 }
-            };
+            }) as Inventory;
 
             // Shadow
             Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
             shadowTransform.Translation = new Vector3(0.0f, -.25f, 0.0f);
             SpriteSheet shadowTexture = new SpriteSheet(ContentPaths.Effects.shadowcircle);
-            Shadow = new Shadow(Manager, "Shadow", Physics, shadowTransform, shadowTexture);
+            var shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform, shadowTexture)) as Shadow;
 
             List<Point> shP = new List<Point>
             {
                 new Point(0,0)
             };
             Animation shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle), "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
-            Shadow.AddAnimation(shadowAnimation);
+            shadow.AddAnimation(shadowAnimation);
             shadowAnimation.Play();
-            Shadow.SetCurrentAnimation("sh");
+            shadow.SetCurrentAnimation("sh");
 
             // The bird will emit a shower of blood when it dies
-            DeathParticleTrigger = new ParticleTrigger("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 1,
                 BoxTriggerTimes = 10
-            };
+            });
 
             // The bird is flammable, and can die when exposed to fire.
-            Flames = new Flammable(Manager, "Flames", Physics, this);
+            Physics.AddChild(new Flammable(Manager, "Flames"));
 
             // Tag the physics component with some information 
             // that can be used later

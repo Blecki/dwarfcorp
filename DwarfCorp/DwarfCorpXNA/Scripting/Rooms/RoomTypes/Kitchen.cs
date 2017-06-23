@@ -142,7 +142,7 @@ namespace DwarfCorp
             workshopTemplates.Add(barrel);
 
             return new RoomData(KitchenName, 2, "Blue Tile", roomResources, workshopTemplates, 
-                new Gum.TileReference("rooms", 11))
+                new Gui.TileReference("rooms", 11))
             {
                 Description = "Cooking is done here",
                 CanBuildAboveGround = false

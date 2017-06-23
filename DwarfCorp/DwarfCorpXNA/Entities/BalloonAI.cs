@@ -48,7 +48,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class BalloonAI : GameComponent, IUpdateableComponent
     {
-        public Body Body { get; set; }
         public PIDController VelocityController { get; set; }
         public Vector3 TargetPosition { get; set; }
         public float MaxVelocity { get; set; }
@@ -73,10 +72,9 @@ namespace DwarfCorp
             
         }
 
-        public BalloonAI(Body body, Vector3 target, ShipmentOrder shipment, Faction faction) :
-            base("BalloonAI", body, body.Manager)
+        public BalloonAI(ComponentManager Manager, Vector3 target, ShipmentOrder shipment, Faction faction) :
+            base("BalloonAI", Manager)
         {
-            Body = body;
             VelocityController = new PIDController(0.9f, 0.5f, 0.0f);
             MaxVelocity = 2.0f;
             MaxForce = 15.0f;
@@ -97,7 +95,10 @@ namespace DwarfCorp
 
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            Vector3 targetVelocity = TargetPosition - Body.GlobalTransform.Translation;
+            var body = Parent as Body;
+            System.Diagnostics.Debug.Assert(body != null);
+
+            Vector3 targetVelocity = TargetPosition - body.GlobalTransform.Translation;
 
             if(targetVelocity.LengthSquared() > 0.0001f)
             {
@@ -105,24 +106,24 @@ namespace DwarfCorp
                 targetVelocity *= MaxVelocity;
             }
 
-            Matrix m = Body.LocalTransform;
+            Matrix m = body.LocalTransform;
             m.Translation += targetVelocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
-            Body.LocalTransform = m;
-            
-            Body.HasMoved = true;
+            body.LocalTransform = m;
+
+            body.HasMoved = true;
 
             switch(State)
             {
                 case BalloonState.DeliveringGoods:
-                    VoxelChunk chunk = chunks.ChunkData.GetVoxelChunkAtWorldLocation(Body.GlobalTransform.Translation);
+                    VoxelChunk chunk = chunks.ChunkData.GetVoxelChunkAtWorldLocation(body.GlobalTransform.Translation);
 
                     if(chunk != null)
                     {
-                        Vector3 gridPos = chunk.WorldToGrid(Body.GlobalTransform.Translation);
+                        Vector3 gridPos = chunk.WorldToGrid(body.GlobalTransform.Translation);
                         float height = chunk.GetFilledVoxelGridHeightAt((int) gridPos.X, (int) gridPos.Y, (int) gridPos.Z) + chunk.Origin.Y;
-                        TargetPosition = new Vector3(Body.GlobalTransform.Translation.X, height + 5, Body.GlobalTransform.Translation.Z);
+                        TargetPosition = new Vector3(body.GlobalTransform.Translation.X, height + 5, body.GlobalTransform.Translation.Z);
 
-                        Vector3 diff = Body.GlobalTransform.Translation - TargetPosition;
+                        Vector3 diff = body.GlobalTransform.Translation - TargetPosition;
 
                         if(diff.LengthSquared() < 2)
                         {
@@ -136,16 +137,16 @@ namespace DwarfCorp
 
                     break;
                 case BalloonState.Leaving:
-                    TargetPosition = Vector3.UnitY * 100 + Body.GlobalTransform.Translation;
+                    TargetPosition = Vector3.UnitY * 100 + body.GlobalTransform.Translation;
 
-                    if(Body.GlobalTransform.Translation.Y > 300)
+                    if(body.GlobalTransform.Translation.Y > 300)
                     {
                         Die();
                     }
 
                     break;
                 case BalloonState.Waiting:
-                    TargetPosition = Body.GlobalTransform.Translation;
+                    TargetPosition = body.GlobalTransform.Translation;
 
                     if(!shipmentGiven)
                     {

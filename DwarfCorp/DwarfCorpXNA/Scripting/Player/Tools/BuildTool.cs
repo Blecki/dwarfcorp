@@ -35,7 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
-using DwarfCorp.NewGui;
+using DwarfCorp.Gui.Widgets;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -49,7 +49,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class BuildTool : PlayerTool
     {
-        public NewGui.BuildMenu.BuildTypes BuildType;
+        public Gui.Widgets.BuildMenu.BuildTypes BuildType;
 
         public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
         {
@@ -87,7 +87,7 @@ namespace DwarfCorp
                 return;
             }
 
-            bool hasCook = BuildType.HasFlag(NewGui.BuildMenu.BuildTypes.Cook);
+            bool hasCook = BuildType.HasFlag(Gui.Widgets.BuildMenu.BuildTypes.Cook);
 
             if (!hasCook)
             {
@@ -97,7 +97,7 @@ namespace DwarfCorp
                 if (Player.World.IsMouseOverGui)
                     Player.World.SetMouse(Player.World.MousePointer);
                 else
-                    Player.World.SetMouse(new Gum.MousePointer("mouse", 1, 4));
+                    Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
             }
             else
             {
@@ -107,7 +107,7 @@ namespace DwarfCorp
                 if (Player.World.IsMouseOverGui)
                     Player.World.SetMouse(Player.World.MousePointer);
                 else
-                    Player.World.SetMouse(new Gum.MousePointer("mouse", 1, 11));
+                    Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 11));
             }
         }
 

@@ -52,8 +52,8 @@ namespace DwarfCorp
 
         }
 
-        public SelectionCircle(ComponentManager manager, Body parent) :
-            base(manager, "Selection", parent, Matrix.CreateRotationX((float)Math.PI), new SpriteSheet(ContentPaths.Effects.selection_circle), false)
+        public SelectionCircle(ComponentManager manager) :
+            base(manager, "Selection", Matrix.CreateRotationX((float)Math.PI), new SpriteSheet(ContentPaths.Effects.selection_circle), false)
         {
             LightsWithVoxels = false;
             AddToCollisionManager = false;

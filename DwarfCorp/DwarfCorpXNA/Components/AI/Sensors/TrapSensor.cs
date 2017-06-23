@@ -46,8 +46,8 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     class TrapSensor : Sensor, IUpdateableComponent
     {
-        public TrapSensor(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
-            base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
+        public TrapSensor(ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
+            base(manager, name, localTransform, boundingBoxExtents, boundingBoxPos)
         {
             OnSensed += TrapSensor_OnSensed;
             Tags.Add("Sensor");
@@ -55,7 +55,7 @@ namespace DwarfCorp
             FireTimer = new Timer(0.5f, false);
         }
 
-        private void TrapSensor_OnSensed(List<Body> sensed)
+        private void TrapSensor_OnSensed(IEnumerable<Body> sensed)
         {
             foreach (Body lc in sensed)
             {

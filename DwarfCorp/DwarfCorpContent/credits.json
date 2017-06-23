@@ -76,8 +76,15 @@
     "RandomFlash": false,
     "Divider": false
   },
-  {
+{
     "Name": "Jason Berg",
+    "Role": "Programming Contractor",
+    "Color": [ 255, 255, 255, 255 ],
+    "RandomFlash": false,
+    "Divider": false
+},
+  {
+    "Name": "Christian Cajas",
     "Role": "Programming Contractor",
     "Color": [255, 255, 255, 255],
     "RandomFlash": false,

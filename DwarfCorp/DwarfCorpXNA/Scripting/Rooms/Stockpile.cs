@@ -266,7 +266,7 @@ namespace DwarfCorp
             };
 
             return new RoomData(StockpileName, 0, "Stockpile", roomResources, stockpileTemplates, 
-                new Gum.TileReference("rooms", 0))
+                new Gui.TileReference("rooms", 0))
             {
                 Description = "Dwarves can stock resources here",
             };

@@ -63,7 +63,7 @@ namespace DwarfCorp
                             new SpellTree.Node()
                             {
                                 Spell = new BuffSpell(world,
-                                    new Creature.StatBuff(30.0f, new CreatureStats.StatNums()
+                                    new StatBuff(30.0f, new CreatureStats.StatNums()
                                     {
                                         Dexterity = 2.0f,
                                         Strength = 2.0f,
@@ -87,7 +87,7 @@ namespace DwarfCorp
                                       new SpellTree.Node()
                                       {
                                             Spell = new BuffSpell(world,
-                                                new Creature.StatBuff(60.0f, new CreatureStats.StatNums()
+                                                new StatBuff(60.0f, new CreatureStats.StatNums()
                                                 {
                                                     Dexterity = 5.0f,
                                                     Strength = 5.0f,
@@ -123,7 +123,7 @@ namespace DwarfCorp
                                         new SpellTree.Node()
                                         {
                                             Spell = new BuffSpell(world,
-                                                new Creature.ThoughtBuff(30.0f, Thought.ThoughtType.Magic) {SoundOnStart = ContentPaths.Audio.powerup})
+                                                new ThoughtBuff(30.0f, Thought.ThoughtType.Magic) {SoundOnStart = ContentPaths.Audio.powerup})
                                             {
                                                 Name = "Minor Happiness",
                                                 Description = "Makes the selected creatures happy for 30 seconds.",
@@ -138,7 +138,7 @@ namespace DwarfCorp
                                                 new SpellTree.Node()
                                                 {
                                                     Spell = new BuffSpell(world,
-                                                        new Creature.ThoughtBuff(60.0f, Thought.ThoughtType.Magic) {SoundOnStart = ContentPaths.Audio.powerup})
+                                                        new ThoughtBuff(60.0f, Thought.ThoughtType.Magic) {SoundOnStart = ContentPaths.Audio.powerup})
                                                     {
                                                         Name = "Major Happiness",
                                                         Description = "Makes the selected creatures happy for 60 seconds.",
@@ -223,7 +223,7 @@ namespace DwarfCorp
                     },
                     new SpellTree.Node()
                     {
-                        Spell = new BuffSpell(world, new Creature.OngoingHealBuff(2, 10) { Particles = "heart", SoundOnStart = ContentPaths.Audio.powerup, SoundOnEnd = ContentPaths.Audio.wurp}) 
+                        Spell = new BuffSpell(world, new OngoingHealBuff(2, 10) { Particles = "heart", SoundOnStart = ContentPaths.Audio.powerup, SoundOnEnd = ContentPaths.Audio.wurp}) 
                         {
                             Name = "Minor Heal",
                             Description = "Heals 2 damage per second for 10 seconds",
@@ -237,7 +237,7 @@ namespace DwarfCorp
                         {
                             new SpellTree.Node()
                             {
-                                Spell = new BuffSpell(world, new Creature.OngoingHealBuff(5, 10){Particles = "heart", SoundOnStart = ContentPaths.Audio.powerup, SoundOnEnd = ContentPaths.Audio.wurp})
+                                Spell = new BuffSpell(world, new OngoingHealBuff(5, 10){Particles = "heart", SoundOnStart = ContentPaths.Audio.powerup, SoundOnEnd = ContentPaths.Audio.wurp})
                                 {
                                     Name = "Major Heal",
                                     Description = "Heals 5 damage per second for 10 seconds",

@@ -35,7 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
-using DwarfCorp.NewGui;
+using DwarfCorp.Gui.Widgets;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -57,7 +57,6 @@ namespace DwarfCorp
         };
 
         public Sector Industry { get; set; }
-        public int Stock { get; set; }
         public DwarfBux Assets { get; set; }
         public DwarfBux LastAssets { get; set; }
         public string TickerName { get { return GenerateTickerName(Information.Name); } }

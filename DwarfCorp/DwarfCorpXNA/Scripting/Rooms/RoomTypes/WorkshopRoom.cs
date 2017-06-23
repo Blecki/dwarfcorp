@@ -99,7 +99,7 @@ namespace DwarfCorp
             workshopTemplates.Add(anvil);
 
             return new RoomData(WorkshopName, 2, "Cobble", roomResources, workshopTemplates,
-                new Gum.TileReference("rooms", 5))
+                new Gui.TileReference("rooms", 5))
             {
                 Description = "Craftsdwarves build mechanisms here",
                 CanBuildAboveGround = false

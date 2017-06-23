@@ -495,11 +495,9 @@ namespace DwarfCorp
                     {
                         entity.GetEntityRootComponent().SetActiveRecursive(false);
                         entity.GetEntityRootComponent().SetVisibleRecursive(false);
-
-                        ExploredListener listener = new ExploredListener
+                        entity.AddChild(new ExploredListener
                             (world.ComponentManager,
-                                entity,
-                                world.ChunkManager, chunk.MakeVoxel(x, y, z));
+                                world.ChunkManager, chunk.MakeVoxel(x, y, z)));
                     }
                 });
                 break;
@@ -545,10 +543,8 @@ namespace DwarfCorp
                         entity.GetEntityRootComponent().SetActiveRecursive(false);
                         entity.GetEntityRootComponent().SetVisibleRecursive(false);
                         if (GameSettings.Default.FogofWar)
-                        {
-                            ExploredListener listener = new ExploredListener(
-                                world.ComponentManager, entity, world.ChunkManager, vUnder);
-                        }
+                            entity.AddChild(new ExploredListener(
+                                world.ComponentManager, world.ChunkManager, vUnder));
                     });
                 }
             }
@@ -642,8 +638,6 @@ namespace DwarfCorp
                     float h = MathFunctions.Clamp(hNorm * chunkSizeY, 0.0f, chunkSizeY - 2);
                     int stoneHeight = (int)(MathFunctions.Clamp((int)(h - (biomeData.SoilLayer.Depth + (Math.Sin(v.X) + Math.Cos(v.Y)))), 1, h));
 
-                    int currentGrassLayer = 0;
-                    int currentSoilLayer = 0;
                     int currentSubsurfaceLayer = 0;
                     int depthWithinSubsurface = 0;
                     for(int y = chunkSizeY - 1; y >= 0; y--)

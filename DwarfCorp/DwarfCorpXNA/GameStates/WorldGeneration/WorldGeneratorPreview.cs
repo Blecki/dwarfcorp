@@ -5,15 +5,15 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
-using Gum;
+using DwarfCorp.Gui;
 
 namespace DwarfCorp.GameStates
 {
-    public class WorldGeneratorPreview : Gum.Widget
+    public class WorldGeneratorPreview : Gui.Widget
     {
         private WorldGenerator Generator;
         private GraphicsDevice Device;
-        private Gum.Widget PreviewPanel;
+        private Gui.Widget PreviewPanel;
 
         private bool UpdatePreview = false;
         public Texture2D PreviewTexture { get; private set; }
@@ -23,7 +23,7 @@ namespace DwarfCorp.GameStates
         {
             Vector2.Zero, Vector2.Zero, Vector2.Zero, Vector2.Zero
         });
-        private Gum.Mesh KeyMesh;
+        private Gui.Mesh KeyMesh;
 
         // Todo: This should be a camera class, or something.
         private float phi = 1.2f;
@@ -72,7 +72,7 @@ namespace DwarfCorp.GameStates
             }
         }
 
-        private Gum.Widgets.ComboBox PreviewSelector;
+        private Gui.Widgets.ComboBox PreviewSelector;
 
         class PreviewRenderType
         {
@@ -124,7 +124,7 @@ namespace DwarfCorp.GameStates
 
         public override void Construct()
         {
-            PreviewSelector = AddChild(new Gum.Widgets.ComboBox
+            PreviewSelector = AddChild(new Gui.Widgets.ComboBox
             {
                 Items = new List<string>(new string[] {
                     "Height",
@@ -134,18 +134,18 @@ namespace DwarfCorp.GameStates
                     "Erosion",
                     "Faults",
                     "Factions" }),
-                AutoLayout = Gum.AutoLayout.FloatTopLeft,
+                AutoLayout = Gui.AutoLayout.FloatTopLeft,
                 MinimumSize = new Point(128, 0),
                 OnSelectedIndexChanged = (sender) => UpdatePreview = true,
                 Font = "font",
                 TextColor = new Vector4(0, 0, 0, 1)
-            }) as Gum.Widgets.ComboBox;
+            }) as Gui.Widgets.ComboBox;
 
             PreviewSelector.SelectedIndex = 0;
 
-            PreviewPanel = AddChild(new Gum.Widget
+            PreviewPanel = AddChild(new Gui.Widget
             {
-                AutoLayout = Gum.AutoLayout.DockFill,
+                AutoLayout = Gui.AutoLayout.DockFill,
                 OnLayout = (sender) => 
                 {
                     sender.Rect = sender.Rect.Interior(0, PreviewSelector.Rect.Height + 2, 0, 0);
@@ -286,7 +286,7 @@ namespace DwarfCorp.GameStates
                 {
                     var civLocation = WorldToScreen(new Vector2(civ.Center.X, civ.Center.Y));
                     Rectangle nameBounds;
-                    var mesh = Gum.Mesh.CreateStringMesh(civ.Name, font, Vector2.One, out nameBounds);
+                    var mesh = Gui.Mesh.CreateStringMesh(civ.Name, font, Vector2.One, out nameBounds);
                     nameBounds.X = (int)civLocation.X - (nameBounds.Width / 2);
                     nameBounds.Y = (int)civLocation.Y - (nameBounds.Height / 2);
                     nameBounds = MathFunctions.SnapRect(nameBounds, PreviewPanel.Rect);
@@ -329,17 +329,17 @@ namespace DwarfCorp.GameStates
 
                 var colorKeyEntries = style.GetColorKeys(Generator);
                 var font = Root.GetTileSheet("font");
-                var stringMeshes = new List<Gum.Mesh>();
+                var stringMeshes = new List<Gui.Mesh>();
                 var y = Rect.Y;
                 var maxWidth = 0;
 
                 foreach (var color in colorKeyEntries)
                 {
                     Rectangle bounds;
-                    var mesh = Gum.Mesh.CreateStringMesh(color.Key, font, new Vector2(1,1), out bounds);
+                    var mesh = Gui.Mesh.CreateStringMesh(color.Key, font, new Vector2(1,1), out bounds);
                     stringMeshes.Add(mesh.Translate(PreviewPanel.Rect.Right - bounds.Width - (font.TileHeight + 4), y).Colorize(new Vector4(0,0,0,1)));
                     if (bounds.Width > maxWidth) maxWidth = bounds.Width;
-                    stringMeshes.Add(Gum.Mesh.Quad().Scale(font.TileHeight, font.TileHeight)
+                    stringMeshes.Add(Gui.Mesh.Quad().Scale(font.TileHeight, font.TileHeight)
                         .Translate(PreviewPanel.Rect.Right - font.TileHeight + 2, y)
                         .Texture(Root.GetTileSheet("basic").TileMatrix(1))
                         .Colorize(color.Value.ToVector4()));
@@ -347,13 +347,13 @@ namespace DwarfCorp.GameStates
                 }
 
 
-                KeyMesh = Gum.Mesh.Merge(stringMeshes.ToArray());
+                KeyMesh = Gui.Mesh.Merge(stringMeshes.ToArray());
                 var thinBorder = Root.GetTileSheet("border-thin");
-                var bgMesh = Gum.Mesh.CreateScale9Background(
+                var bgMesh = Gui.Mesh.CreateScale9Background(
                     new Rectangle(Rect.Right - thinBorder.TileWidth - maxWidth - 8 - font.TileHeight,
                     Rect.Y, maxWidth + thinBorder.TileWidth + 8 + font.TileHeight, y - Rect.Y + thinBorder.TileHeight),
                     thinBorder, Scale9Corners.Bottom | Scale9Corners.Left);
-                KeyMesh = Gum.Mesh.Merge(bgMesh, KeyMesh);
+                KeyMesh = Gui.Mesh.Merge(bgMesh, KeyMesh);
             }
 
             Device.SetRenderTarget(PreviewRenderTarget);

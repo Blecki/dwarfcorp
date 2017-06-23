@@ -184,7 +184,7 @@ namespace DwarfCorp
             Tools[ToolMode.Build] = new BuildTool
             {
                 Player = this,
-                BuildType = NewGui.BuildMenu.BuildTypes.AllButCook,
+                BuildType = Gui.Widgets.BuildMenu.BuildTypes.AllButCook,
             };
 
             Tools[ToolMode.Magic] = new MagicTool(this);
@@ -192,7 +192,7 @@ namespace DwarfCorp
             Tools[ToolMode.Cook] = new BuildTool
             {
                 Player = this,
-                BuildType = NewGui.BuildMenu.BuildTypes.Cook,
+                BuildType = Gui.Widgets.BuildMenu.BuildTypes.Cook,
             };
         }
 
@@ -241,15 +241,14 @@ namespace DwarfCorp
                 {
                     DwarfBux pay = creature.Stats.CurrentLevel.Pay;
                     total += pay;
-                    Faction.Economy.CurrentMoney = Math.Max(Faction.Economy.CurrentMoney - pay, 0m);
-                    creature.AddMoney(pay);
+                    creature.Tasks.Add(new ActWrapperTask(new GetMoneyAct(creature, pay)) {AutoRetry = true, Name = "Get paid."});
                 }
                 else
                 {
                     creature.AddThought(Thought.ThoughtType.NotPaid);
                 }
 
-                if (!(Faction.Economy.CurrentMoney > 0m))
+                if (total >= Faction.Economy.CurrentMoney)
                 {
                     if (!noMoney)
                     {
@@ -276,12 +275,18 @@ namespace DwarfCorp
             CurrentTool.Render(game, g, time);
             VoxSelector.Render();
 
+            foreach (var m in Faction.Minions)
+            { 
+                m.Creature.SelectionCircle.IsVisible = false;
+                m.Creature.Sprite.DrawSilhouette = false;
+            };
+
             foreach (CreatureAI creature in Faction.SelectedMinions)
             {
-                //Drawer2D.DrawZAlignedRect(creature.Position + Vector3.Down * 0.5f, 0.25f, 0.25f, 2, new Color(255, 255, 255, 50));
                 creature.Creature.SelectionCircle.IsVisible = true;
                 creature.Creature.Sprite.DrawSilhouette = true;
-                foreach(Task task in creature.Tasks)
+
+                foreach (Task task in creature.Tasks)
                 {
                     if (task.IsFeasible(creature.Creature))
                         task.Render(time);
@@ -291,9 +296,7 @@ namespace DwarfCorp
                 {
                     creature.CurrentTask.Render(time);
                 }
-            
             }
-
 
             DwarfGame.SpriteBatch.Begin();
             BodySelector.Render(DwarfGame.SpriteBatch);
@@ -426,7 +429,7 @@ namespace DwarfCorp
                 {
                     if (dwarf.Physics.Velocity.LengthSquared() < 1)
                     {
-                        dwarf.Creature.CurrentCharacterMode = DwarfCorp.Creature.CharacterMode.Idle;
+                        dwarf.Creature.CurrentCharacterMode = DwarfCorp.CharacterMode.Idle;
                     }
                     dwarf.Physics.Velocity = new Vector3(dwarf.Physics.Velocity.X*0.9f, dwarf.Physics.Velocity.Y,
                         dwarf.Physics.Velocity.Z*0.9f);

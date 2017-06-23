@@ -81,6 +81,7 @@ namespace DwarfCorp
             public static ResourceType Apple = "Apple";
             public static ResourceType Glass = "Glass";
             public static ResourceType Brick = "Brick";
+            public static ResourceType Coins = "Coins";
 
             public static implicit operator ResourceType(string value)
             {
@@ -126,8 +127,17 @@ namespace DwarfCorp
         public static void Add(Resource resource)
         {
             Resources[resource.ResourceName] = resource;
-
-            EntityFactory.RegisterEntity(resource.ResourceName + " Resource", (position, data) => new ResourceEntity(EntityFactory.World.ComponentManager, resource.Type, position));
+            if (resource.Tags.Contains(Resource.ResourceTags.Money))
+            {
+                EntityFactory.RegisterEntity(resource.ResourceName + " Resource", (position, data) => new CoinPile(EntityFactory.World.ComponentManager, position)
+                {
+                    Money = data.Has("Money") ? data.GetData<DwarfBux>("Money") : (DwarfBux)64m
+                });
+            }
+            else
+            {
+                EntityFactory.RegisterEntity(resource.ResourceName + " Resource", (position, data) => new ResourceEntity(EntityFactory.World.ComponentManager, resource.Type, position));   
+            }
         }
 
         public static void Initialize()
@@ -150,7 +160,7 @@ namespace DwarfCorp
             Add(new Resource(ResourceType.CaveMushroom, 0.35m, "Dwarves can eat these.", new NamedImageFrame(tileSheet, GetRect(4, 1)), 12, Color.White, Resource.ResourceTags.SelfIlluminating, Resource.ResourceTags.Edible, Resource.ResourceTags.Fungus, Resource.ResourceTags.Flammable, Resource.ResourceTags.RawFood, Resource.ResourceTags.Brewable, Resource.ResourceTags.Plantable, Resource.ResourceTags.BelowGroundPlant) { FoodContent = 30, PlantToGenerate = "Cave Mushroom" });
             Add(new Resource(ResourceType.Grain, 0.25m, "Dwarves can eat this.", new NamedImageFrame(tileSheet, GetRect(0, 2)), 16, Color.White, Resource.ResourceTags.Edible, Resource.ResourceTags.Grain, Resource.ResourceTags.Flammable, Resource.ResourceTags.RawFood, Resource.ResourceTags.Brewable, Resource.ResourceTags.Bakeable, Resource.ResourceTags.Plantable, Resource.ResourceTags.AboveGroundPlant) { FoodContent = 100, PlantToGenerate = "Wheat" });
             Add(new Resource(ResourceType.Bones,  15.0m, "Came from an animal.", new NamedImageFrame(tileSheet, GetRect(3, 3)), 27, Color.White, Resource.ResourceTags.Bone, Resource.ResourceTags.Material, Resource.ResourceTags.AnimalProduct, Resource.ResourceTags.HardMaterial));
-            Add(new Resource("Corpse", 0.0m, "Dead carcass. Should be buried.", new NamedImageFrame(tileSheet, GetRect(3, 3)), 27, Color.White, Resource.ResourceTags.Corpse));
+            Add(new Resource("Corpse", 0.0m, "Dead carcass. Should be buried.", new NamedImageFrame(tileSheet, GetRect(3, 4)), 35, Color.White, Resource.ResourceTags.Corpse));
             Add(new Resource(ResourceType.Meat,  25.0m, "Came from an animal.",
                 new NamedImageFrame(tileSheet, GetRect(3, 2)), 19, Color.White, Resource.ResourceTags.Edible,
                 Resource.ResourceTags.AnimalProduct, Resource.ResourceTags.Meat, Resource.ResourceTags.RawFood) {FoodContent = 250});
@@ -199,7 +209,7 @@ namespace DwarfCorp
                 Type = "Emerald",
                 ShortName = "Emerald",
                 Image = new NamedImageFrame(tileSheet, GetRect(0, 4)),
-                NewGuiSprite = 32
+                GuiSprite = 32
             });
 
             Add(new Resource(Resources["Ruby"])
@@ -207,7 +217,7 @@ namespace DwarfCorp
                 Type = "Amethyst",
                 ShortName = "Amethyst",
                 Image = new NamedImageFrame(tileSheet, GetRect(2, 4)),
-                NewGuiSprite = 34
+                GuiSprite = 34
 
             });
 
@@ -216,7 +226,7 @@ namespace DwarfCorp
                 Type = "Garnet",
                 ShortName = "Garnet",
                 Image = new NamedImageFrame(tileSheet, GetRect(1, 3)),
-                NewGuiSprite = 25
+                GuiSprite = 25
             });
 
             Add(new Resource(Resources["Ruby"])
@@ -224,7 +234,7 @@ namespace DwarfCorp
                 Type = "Citrine",
                 ShortName = "Citrine",
                 Image = new NamedImageFrame(tileSheet, GetRect(2, 3)),
-                NewGuiSprite = 26
+                GuiSprite = 26
             });
 
             Add(new Resource(Resources["Ruby"])
@@ -232,7 +242,7 @@ namespace DwarfCorp
                 Type = "Sapphire",
                 ShortName = "Sapphire",
                 Image = new NamedImageFrame(tileSheet, GetRect(1, 4)),
-                NewGuiSprite = 33
+                GuiSprite = 33
             });
 
             Add(new Resource(ResourceType.Egg, 0.5m, "An egg", new NamedImageFrame(tileSheet, GetRect(7, 2)), 23, Color.White, Resource.ResourceTags.Edible, Resource.ResourceTags.AnimalProduct, Resource.ResourceTags.Brewable));
@@ -245,6 +255,11 @@ namespace DwarfCorp
             Add(new Resource(ResourceType.Glass, 8.0m, "Made from sand. Allows light to pass through.", new NamedImageFrame(tileSheet, GetRect(4, 0)), 4, Color.White, Resource.ResourceTags.Material, Resource.ResourceTags.HardMaterial, Resource.ResourceTags.Craft) { CanCraft = true, CraftPrereqs = new List<Quantitiy<Resource.ResourceTags>>() { new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Sand) } });
 
             Add(new Resource(ResourceType.Brick, 4.0m, "Made from dirt. Building material.", new NamedImageFrame(tileSheet, GetRect(5, 0)), 5, Color.White, Resource.ResourceTags.Stone, Resource.ResourceTags.Material, Resource.ResourceTags.HardMaterial, Resource.ResourceTags.Craft) {CanCraft = true, CraftPrereqs = new List<Quantitiy<Resource.ResourceTags>>() {new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Soil)}});
+
+            Add(new Resource(ResourceType.Coins, 4.0m, "Dwarfbux container.",
+                new NamedImageFrame(tileSheet, GetRect(6, 0)), 6, Color.White, Resource.ResourceTags.Precious,
+                Resource.ResourceTags.Money));
+
 
 
             //GenerateAnimalProducts();
@@ -450,7 +465,7 @@ namespace DwarfCorp
             }
             toReturn.Tint = Resources[baseMaterial].Tint;
             toReturn.Image = new NamedImageFrame(ContentPaths.Entities.DwarfObjects.crafts, 32, tile.X, tile.Y);
-            toReturn.NewGuiSprite = (tile.Y * 4) + tile.X;
+            toReturn.GuiSprite = (tile.Y * 4) + tile.X;
             Add(toReturn);
             toReturn.ShortName = baseMaterial + " " + names[item];
             return toReturn;

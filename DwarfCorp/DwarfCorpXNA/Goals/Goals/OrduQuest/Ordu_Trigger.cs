@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Gum;
+using DwarfCorp.Gui;
 
 namespace DwarfCorp.Goals.Goals
 {
@@ -22,7 +22,7 @@ namespace DwarfCorp.Goals.Goals
                 State = GoalState.Complete;
                 World.GoalManager.UnlockGoal(typeof(Ordu_Start));
                 World.MakeAnnouncement("New goal available.");
-                World.AwardStock(1);
+                World.AwardBux(1);
             }
         }
     }

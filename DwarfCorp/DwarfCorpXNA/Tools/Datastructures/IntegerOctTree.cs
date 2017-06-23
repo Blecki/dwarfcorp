@@ -86,7 +86,7 @@ namespace DwarfCorp
         private void Subdivide()
         {
             var Min = Bounds.Min;
-            var Max = Bounds.Max;            
+            var Max = Bounds.Max;
 
             Children = new IntegerOctTreeNode<T>[8]
             {

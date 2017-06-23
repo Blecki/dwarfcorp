@@ -47,7 +47,7 @@ namespace DwarfCorp
         public Cactus() { }
 
         public Cactus(ComponentManager componentManager, Vector3 position, string asset, float bushSize) :
-            base("Cactus", componentManager.RootComponent, Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), Vector3.Zero)
+            base(componentManager, "Cactus", Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), Vector3.Zero)
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
             SeedlingFrame = new Point(0, 0);
@@ -55,34 +55,29 @@ namespace DwarfCorp
             matrix.Translation = position + new Vector3(0.5f, -0.2f, 0.5f);
             LocalTransform = matrix;
 
-            new Mesh("Model", this, Matrix.CreateScale(bushSize, bushSize, bushSize), asset, false);
+            AddChild(new Mesh(componentManager, "Model", Matrix.CreateScale(bushSize, bushSize, bushSize), asset, false));
 
-            Health health = new Health(componentManager, "HP", this, 30 * bushSize, 0.0f, 30 * bushSize);
-            new Flammable(componentManager, "Flames", this, health);
+            AddChild(new Health(componentManager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
+            AddChild(new Flammable(componentManager, "Flames"));
 
             Voxel voxelUnder = new Voxel();
 
             if (componentManager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
-            {
-                VoxelListener listener = new VoxelListener(componentManager, this, componentManager.World.ChunkManager, voxelUnder);
-            }
+                AddChild(new VoxelListener(componentManager, componentManager.World.ChunkManager, voxelUnder));
 
-
-            Inventory inventory = new Inventory("Inventory", this)
+            Inventory inventory = AddChild(new Inventory(componentManager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)
             {
                 Resources = new ResourceContainer
                 {
                     MaxResources = 2
                 }
-            };
+            }) as Inventory;
 
             inventory.Resources.AddResource(new ResourceAmount()
             {
                 NumResources = 2,
                 ResourceType = ResourceLibrary.ResourceType.Cactus
             });
-
-
 
             Tags.Add("Vegetation");
             Tags.Add("Cactus");
@@ -98,7 +93,7 @@ namespace DwarfCorp
         public Bush() { }
 
         public Bush(ComponentManager componentManager, Vector3 position, string asset, float bushSize) :
-            base("Berry Bush", componentManager.RootComponent, Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), Vector3.Zero)
+            base(componentManager, "Berry Bush", Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), Vector3.Zero)
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
             SeedlingFrame = new Point(0, 0);
@@ -106,28 +101,26 @@ namespace DwarfCorp
             matrix.Translation = position + new Vector3(0.5f, -0.2f, 0.5f);
             LocalTransform = matrix;
 
-            new Mesh("Model", this, Matrix.CreateScale(bushSize, bushSize, bushSize), asset, false);
+            AddChild(new Mesh(componentManager, "Model", Matrix.CreateScale(bushSize, bushSize, bushSize), asset, false));
 
-            Health health = new Health(componentManager, "HP", this, 30 * bushSize, 0.0f, 30 * bushSize);
-            new Flammable(componentManager, "Flames", this, health);
+            AddChild(new Health(componentManager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
+            AddChild(new Flammable(componentManager, "Flames"));
 
             Voxel voxelUnder = new Voxel();
 
             if (componentManager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
-            {
-                VoxelListener listener = new VoxelListener(componentManager, this, componentManager.World.ChunkManager, voxelUnder);
-            }
-
+                AddChild(new VoxelListener(componentManager, componentManager.World.ChunkManager, voxelUnder));
+            
             Tags.Add("Vegetation");
             Tags.Add("Bush");
             Tags.Add("EmitsFood");
-            Inventory inventory = new Inventory("Inventory", this)
+            Inventory inventory = AddChild(new Inventory(componentManager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)
             {
                 Resources = new ResourceContainer
                 {
                     MaxResources = 4
                 }
-            };
+            }) as Inventory;
 
             inventory.Resources.AddResource(new ResourceAmount()
             {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Gum;
+using DwarfCorp.Gui;
 
 namespace DwarfCorp.Goals.Goals
 {
@@ -20,30 +20,33 @@ namespace DwarfCorp.Goals.Goals
         public override void CreateGUI(Widget Widget)
         {
             if (State == GoalState.Available)
-                Widget.Text = Description + "\nActivation cost: 5 Stock.";
+                Widget.Text = Description + "\nActivation cost: $500.";
             else if (State == GoalState.Active)
                 Widget.Text = Description + String.Format("\n{0} of 10 mined.", Counter);
             else
-                Widget.Text = Description + "\nAwarded 10 Stock.";
+                Widget.Text = Description + "\nAwarded $1000.";
         }
 
-        public override ActivationResult Activate(WorldManager World)
+        public override ActivationResult CanActivate(WorldManager World)
         {
-            if (World.PlayerCompany.Stock < 5)
+            if (World.PlayerCompany.Assets < 500)
                 return new ActivationResult
                 {
-                    ErrorMessage = "You do not have enough stock.",
+                    ErrorMessage = "You do not have enough $.",
                     Succeeded = false
                 };
             else
             {
-                World.LoseStock(5);
                 return new ActivationResult
                 {
                     Succeeded = true
                 };
             }
-            
+        }
+
+        public override void Activate(WorldManager World)
+        {
+                World.LoseBux(5);
         }
 
         public override void OnGameEvent(WorldManager World, GameEvent Event)
@@ -55,7 +58,7 @@ namespace DwarfCorp.Goals.Goals
                 if (Counter == 10)
                 {
                     World.MakeAnnouncement(Description + "\nSuccessfully met sand mining goal!");
-                    World.AwardStock(10);
+                    World.AwardBux(1000);
                     State = GoalState.Complete;
                 }
             }

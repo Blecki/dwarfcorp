@@ -236,7 +236,7 @@ namespace DwarfCorp
             }
 
             public Cloud(ComponentManager manager, float raininess, int maxRain, float height, Vector3 pos) :
-                base(pos, new SpriteSheet(ContentPaths.Particles.stormclouds), new Point(0, 0), manager.RootComponent)
+                base(manager, pos, new SpriteSheet(ContentPaths.Particles.stormclouds), new Point(0, 0))
             {
                 Matrix tf = LocalTransform;
                 tf.Translation = new Vector3(pos.X, height, pos.Z);

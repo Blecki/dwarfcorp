@@ -59,7 +59,7 @@ namespace DwarfCorp
             };
 
 
-            return new RoomData(GraveyardName, 11, "TilledSoil", resources, new List<RoomTemplate>(), new Gum.TileReference("rooms", 12))
+            return new RoomData(GraveyardName, 11, "TilledSoil", resources, new List<RoomTemplate>(), new Gui.TileReference("rooms", 12))
             {
                 Description = "Dwarves bury the dead here."
             };
