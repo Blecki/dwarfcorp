@@ -152,6 +152,14 @@ namespace DwarfCorp
             Data = file.Data;
         }
 
+        public void LoadData(string filePath, WorldManager world)
+        {
+            string[] files = SaveData.GetFilesInDirectory(filePath, DwarfGame.COMPRESSED_BINARY_SAVES, "Data", GameFile.CompressedExtension, GameFile.Extension);
+            if (files.Length > 0)
+                Data = FileUtils.LoadJson<GameData>(files[0], DwarfGame.COMPRESSED_BINARY_SAVES, world);
+
+        }
+
         public  bool ReadFile(string filePath, bool isCompressed, WorldManager world)
         {
             if(!System.IO.Directory.Exists(filePath))
@@ -162,34 +170,7 @@ namespace DwarfCorp
             {
                 string[] screenshots = SaveData.GetFilesInDirectory(filePath, false, "png", "png");
 
-                string[] files = SaveData.GetFilesInDirectory(filePath, DwarfGame.COMPRESSED_BINARY_SAVES, "Data", GameFile.CompressedExtension, GameFile.Extension);
-                if (files.Length > 0)
-                    Data = FileUtils.LoadJson<GameData>(files[0], DwarfGame.COMPRESSED_BINARY_SAVES, world);
-
-                /*
-                string[] metaFiles = SaveData.GetFilesInDirectory(filePath, isCompressed, "MetaData", GameFile.MetaData.CompressedExtension, GameFile.MetaData.Extension);
-                string[] cameraFiles = SaveData.GetFilesInDirectory(filePath, false, "json", "json");
-
-                if(metaFiles.Length > 0)
-                {
-                    Data.Metadata = new MetaData(metaFiles[0], isCompressed);
-                    Data.GameID = Data.Metadata.GameID;
-                }
-                else
-                {
-                    return false;
-                }
-
-                if(cameraFiles.Length > 0)
-                {
-                    Data.Camera = FileUtils.LoadJson<OrbitCamera>(cameraFiles[0], false, world);
-                }
-                else
-                {
-                    return false;
-                }
-                */
-
+                
                 string[] chunkDirs = System.IO.Directory.GetDirectories(filePath, "Chunks");
 
                 if(chunkDirs.Length > 0)

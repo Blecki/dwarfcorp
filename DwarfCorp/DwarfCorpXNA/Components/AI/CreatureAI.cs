@@ -53,6 +53,7 @@ namespace DwarfCorp
 
         public CreatureAI()
         {
+            History = new Dictionary<string, TaskHistory>();
         }
 
         public CreatureAI(
@@ -90,7 +91,7 @@ namespace DwarfCorp
         public List<Voxel> CurrentPath { get; set; }
 
         private Creature _cachedCreature = null;
-        public Creature Creature
+        [JsonIgnore] public Creature Creature
         {
             get
             {
@@ -229,7 +230,6 @@ namespace DwarfCorp
         /// Tells us which tasks the creature has performed in the past. Maps task names to their histories.
         /// This is useful for determining how many times a task has failed or succeeded.
         /// </summary>
-        [JsonIgnore]
         public Dictionary<string, TaskHistory> History { get; set; }
 
         /// <summary>

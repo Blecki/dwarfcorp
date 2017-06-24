@@ -56,11 +56,13 @@ namespace DwarfCorp
         [JsonIgnore]
         public int ResourcesPerVoxel { get { return ResPerVoxel; } set { ResPerVoxel = value; RecalculateMaxResources(); } }
         
+        [JsonIgnore]
         public bool ReplaceVoxelTypes
         {
             get { return ReplacementType != null; }
         }
 
+        [JsonIgnore]
         public VoxelType ReplacementType { get; set; }
 
         [JsonIgnore]

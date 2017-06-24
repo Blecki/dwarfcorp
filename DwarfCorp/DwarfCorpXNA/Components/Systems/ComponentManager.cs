@@ -21,7 +21,7 @@ namespace DwarfCorp
     {
         public class ComponentSaveData
         {
-            public Dictionary<uint, GameComponent> SaveableComponents;
+            public List<GameComponent> SaveableComponents;
             public uint RootComponent;
         }
 
@@ -58,9 +58,7 @@ namespace DwarfCorp
             foreach (var component in Components)
                 component.Value.PrepareForSerialization();
 
-            var serializableComponents = new Dictionary<uint, GameComponent>();
-            foreach (var component in Components.Where(c => c.Value.IsFlagSet(GameComponent.Flag.ShouldSerialize)))
-                serializableComponents.Add(component.Key, component.Value);
+            var serializableComponents = Components.Where(c => c.Value.IsFlagSet(GameComponent.Flag.ShouldSerialize)).Select(c => c.Value).ToList();
 
             return new ComponentSaveData
             {
@@ -77,13 +75,12 @@ namespace DwarfCorp
 
         public ComponentManager(ComponentSaveData SaveData, WorldManager World)
         {
-            Components = SaveData.SaveableComponents;
+            Components = new Dictionary<uint, GameComponent>();
+            foreach (var component in SaveData.SaveableComponents)
+                Components.Add(component.GlobalID, component);
             RootComponent = Components[SaveData.RootComponent] as Body;
 
             this.World = World;
-
-            // Todo: Why is this here???
-            World.Natives.Clear();
 
             foreach (var component in Components)
             {
@@ -103,7 +100,7 @@ namespace DwarfCorp
             }
        
             foreach (var component in SaveData.SaveableComponents)
-                component.Value.PostSerialization();
+                component.PostSerialization();
         }
 
         public ComponentManager(WorldManager state, CompanyInformation CompanyInformation, List<Faction> natives)

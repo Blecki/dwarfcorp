@@ -392,18 +392,6 @@ namespace DwarfCorp
                 if (!string.IsNullOrEmpty(ExistingFile))
                     LoadExistingFile();
 
-                if (Natives == null)
-                {
-                    FactionLibrary library = new FactionLibrary();
-                    library.Initialize(this, CompanyMakerState.CompanyInformation);
-                    Natives = new List<Faction>();
-                    for (int i = 0; i < 10; i++)
-                    {
-                        Natives.Add(library.GenerateFaction(this, i, 10));
-                    }
-
-                }
-
                 InitializeStaticData(CompanyMakerState.CompanyInformation, Natives);
 
                 SetLoadingMessage("Creating Planner ...");
@@ -420,7 +408,8 @@ namespace DwarfCorp
 
                 SetLoadingMessage("Loading Components...");
                 LoadComponents(CompanyMakerState.CompanyInformation, Natives);
-
+                GenerateInitialChunksStep2();
+                              
                 SetLoadingMessage("Creating Particles ...");
                 ParticleManager = new ParticleManager(ComponentManager);
 
@@ -493,27 +482,23 @@ namespace DwarfCorp
             Camera.Position = new Vector3(Camera.Target.X, Camera.Target.Y + 20, Camera.Position.Z - 10);
         }
 
-        /// <summary>
-        /// Creates a bunch of stuff (such as the biome library, primitive library etc.) which won't change
-        /// from game to game.
-        /// </summary>
-        public void InitializeStaticData(CompanyInformation CompanyInformation, List<Faction> natives)
+        public void PrepareFactions(CompanyInformation CompanyInformation, List<Faction> natives)
         {
             foreach (Faction faction in natives)
             {
                 faction.World = this;
-              
+
                 if (faction.WallBuilder == null)
                     faction.WallBuilder = new PutDesignator(faction, this);
-                
+
                 if (faction.RoomBuilder == null)
                     faction.RoomBuilder = new RoomBuilder(faction, this);
 
                 if (faction.CraftBuilder == null)
                     faction.CraftBuilder = new CraftBuilder(faction, this);
-              
+
                 faction.WallBuilder.World = this;
-              
+
             }
 
             Factions = new FactionLibrary();
@@ -526,13 +511,18 @@ namespace DwarfCorp
 
             Factions.Factions["Player"].Center = playerOrigin;
             Factions.Factions["The Motherland"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
+        }
 
+        /// <summary>
+        /// Creates a bunch of stuff (such as the biome library, primitive library etc.) which won't change
+        /// from game to game.
+        /// </summary>
+        public void InitializeStaticData(CompanyInformation CompanyInformation, List<Faction> natives)
+        {
             Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
             Vector3 extents = new Vector3(1500, 1500, 1500);
             CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
 
-            Diplomacy = new Diplomacy(this);
-            Diplomacy.Initialize(Time.CurrentDate);
 
             CompositeLibrary.Initialize();
             CraftLibrary = new CraftLibrary();
@@ -618,13 +608,8 @@ namespace DwarfCorp
 
             // If we already have a file, we need to load all the chunks from it.
             // This is preliminary stuff that just makes sure the file exists and can be loaded.
-            if (fileExists)
-            {
-            }
-            else
-            {
+            if (!fileExists)
                 GameID = MathFunctions.Random.Next(0, 1024);
-            }
 
 
             ChunkGenerator = new ChunkGenerator(VoxelLibrary, Seed, 0.02f, ChunkHeight / 2.0f, this.WorldScale)
@@ -632,64 +617,19 @@ namespace DwarfCorp
                 SeaLevel = SeaLevel
             };
 
-            Vector3 globalOffset = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y) * WorldScale;
-
-            if (fileExists)
-            {
-                globalOffset /= WorldScale;
-            }
-
-
-            // If the file exists, we get the camera's pose from the file.
-            // Otherwise, we set it to a pose above the center of the world (0, 0, 0)
-            // facing down slightly.
-            Camera = fileExists
-                ? gameFile.Data.Camera
-                : new OrbitCamera(this, new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + globalOffset,
-                    new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + globalOffset + Vector3.Up  * 10.0f + Vector3.Backward * 10, 
-                    MathHelper.PiOver4, AspectRatio, 0.1f,
-                    GameSettings.Default.VertexCullDistance);
-            Camera.World = this;
-            Drawer3D.Camera = Camera;
-
             // Creates the terrain management system.
             ChunkManager = new ChunkManager(Content, this, (uint)ChunkWidth, (uint)ChunkHeight, (uint)ChunkWidth, Camera,
                 GraphicsDevice,
                 ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
+        }
 
-            // Trying to determine the global offset from overworld coordinates (pixels in the overworld) to
-            // voxel coordinates.
-            globalOffset = ChunkManager.ChunkData.RoundToChunkCoords(globalOffset);
-            globalOffset.X *= ChunkWidth;
-            globalOffset.Y *= ChunkHeight;
-            globalOffset.Z *= ChunkWidth;
-
-            // If there's no file, we have to offset the camera relative to the global offset.
-            if (!fileExists)
-            {
-                WorldOrigin = new Vector2(globalOffset.X, globalOffset.Z);
-                Camera.Position = new Vector3(0, 10, 0) + globalOffset;
-                Camera.Target = new Vector3(0, 10, 1) + globalOffset;
-            }
-
-
-            // If there's no file, we have to initialize the first chunk coordinate
-            if (gameFile == null)
-            {
-                ChunkManager.GenerateInitialChunks(
-                    ChunkManager.ChunkData.GetChunkID(new Vector3(0, 0, 0) + globalOffset), SetLoadingMessage);
-            }
-            // Otherwise, we just load all the chunks from the file.
-            else
-            {
-                SetLoadingMessage("Loading Chunks from Game File");
-                ChunkManager.ChunkData.LoadFromFile(gameFile, SetLoadingMessage);
-            }
-
-
+        private void GenerateInitialChunksStep2()
+        {
+            ChunkManager.camera = Camera;
             // Finally, the chunk manager's threads are started to allow it to 
             // dynamically rebuild terrain
             ChunkManager.RebuildList = new ConcurrentQueue<VoxelChunk>();
+            ChunkManager.UpdateRebuildList();
             ChunkManager.StartThreads();
         }
 
@@ -807,6 +747,11 @@ namespace DwarfCorp
             // if we are loading reinitialize a bunch of stuff to make sure the game master is created correctly
             if (!string.IsNullOrEmpty(ExistingFile))
             {
+                SetLoadingMessage("Loading Chunks from Game File");
+                ChunkManager.ChunkData.LoadFromFile(gameFile, SetLoadingMessage);
+
+                gameFile.LoadData(ExistingFile, this);
+
                 InstanceManager.Clear();
 
                 //gameFile.LoadComponents(ExistingFile, this);
@@ -827,7 +772,7 @@ namespace DwarfCorp
                 GameSettings.Default.ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
 
                 // Restore native factions from deserialized data.
-                Natives.Clear();
+                Natives = new List<Faction>();
                 foreach (Faction faction in Factions.Factions.Values)
                 {
                     if (faction.Race.IsNative && faction.Race.IsIntelligent && !faction.IsRaceFaction)
@@ -847,21 +792,68 @@ namespace DwarfCorp
                 TutorialManager = new Tutorial.TutorialManager("Content/tutorial.txt");
                 //gameFile.LoadTutorial(ExistingFile, this);
                 TutorialManager.SetFromSaveData(gameFile.Data.TutorialSaveData);
-                
+
+                Camera = gameFile.Data.Camera;
             }
             else
             {
+                Time = new WorldTime();
+
+                var globalOffset = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y) * WorldScale;
+
+                Camera = new OrbitCamera(this, new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + new Vector3(WorldOrigin.X, 0, WorldOrigin.Y) * WorldScale,
+                    new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + new Vector3(WorldOrigin.X, 0, WorldOrigin.Y) * WorldScale + Vector3.Up * 10.0f + Vector3.Backward * 10,
+                    MathHelper.PiOver4, AspectRatio, 0.1f,
+                    GameSettings.Default.VertexCullDistance);
+
+
+                globalOffset = ChunkManager.ChunkData.RoundToChunkCoords(globalOffset);
+                globalOffset.X *= ChunkWidth;
+                globalOffset.Y *= ChunkHeight;
+                globalOffset.Z *= ChunkWidth;
+
+                WorldOrigin = new Vector2(globalOffset.X, globalOffset.Z);
+                Camera.Position = new Vector3(0, 10, 0) + globalOffset;
+                Camera.Target = new Vector3(0, 10, 1) + globalOffset;
+
+                // If there's no file, we have to initialize the first chunk coordinate
+                if (gameFile == null)
+                {
+                    ChunkManager.GenerateInitialChunks(
+                        ChunkManager.ChunkData.GetChunkID(new Vector3(0, 0, 0) + globalOffset), SetLoadingMessage);
+                }
+                
                 ComponentManager = new ComponentManager(this, CompanyInformation, natives);
                 ComponentManager.SetRootComponent(new Body(ComponentManager, "root", Matrix.Identity,
                     Vector3.Zero, Vector3.Zero, false));
+
+                if (Natives == null)
+                {
+                    FactionLibrary library = new FactionLibrary();
+                    library.Initialize(this, CompanyMakerState.CompanyInformation);
+                    Natives = new List<Faction>();
+                    for (int i = 0; i < 10; i++)
+                    {
+                        Natives.Add(library.GenerateFaction(this, i, 10));
+                    }
+
+                }
+
+                PrepareFactions(CompanyInformation, Natives);
+
+                Diplomacy = new Diplomacy(this);
+                Diplomacy.Initialize(Time.CurrentDate);
 
                 // Initialize goal manager here.
                 GoalManager = new Goals.GoalManager();
                 GoalManager.Initialize(new List<Goals.Goal>());
 
                 TutorialManager = new Tutorial.TutorialManager("Content/tutorial.txt");
-                Tutorial("new game start");
+                Tutorial("new game start");                
             }
+
+            Camera.World = this;
+            Drawer3D.Camera = Camera;
         }
 
         public void CreateGameMaster()

@@ -45,6 +45,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Newtonsoft.Json;
+using System.Runtime.Serialization;
+
 
 namespace DwarfCorp
 {
@@ -59,7 +61,10 @@ namespace DwarfCorp
 
         public static DwarfBux MoneyPerPile = 64m;
 
+        [JsonProperty]
         private DwarfBux _money = 0m;
+
+        [JsonIgnore]
         public DwarfBux Money
         {
             get { return _money; }
@@ -111,7 +116,6 @@ namespace DwarfCorp
             faction.Treasurys.Add(this);
             Faction = faction;
         }
-
 
         public void KillCoins(Body component)
         {

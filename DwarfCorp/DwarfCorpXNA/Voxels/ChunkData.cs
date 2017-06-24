@@ -717,7 +717,6 @@ namespace DwarfCorp
             }
             RecomputeNeighbors();
             chunkManager.UpdateBounds();
-            chunkManager.UpdateRebuildList();
             chunkManager.CreateGraphics(SetLoadingMessage, this);
         }
 

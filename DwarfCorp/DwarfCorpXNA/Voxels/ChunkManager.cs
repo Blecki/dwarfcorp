@@ -115,7 +115,7 @@ namespace DwarfCorp
 
         public bool ExitThreads { get; set; }
 
-        private Camera camera = null;
+        public Camera camera = null;
         public WorldManager World { get; set; }
         public ComponentManager Components { get { return World.ComponentManager; }}
         public ContentManager Content { get; set; }
@@ -884,7 +884,7 @@ namespace DwarfCorp
             ChunkData.Reveal(GeneratedChunks.First().MakeVoxel(0, (int)ChunkData.ChunkSizeY - 1, 0));
             GameSettings.Default.FogofWar = fogOfWar;
 
-            UpdateRebuildList();
+            //UpdateRebuildList();
             GenerateDistance = origBuildRadius;
 
             while(GeneratedChunks.Count > 0)
