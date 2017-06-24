@@ -69,6 +69,12 @@ namespace DwarfCorp
             };
         }
 
+        public void CleanupSaveData()
+        {
+            foreach (var component in Components)
+                component.Value.SerializableChildren = null;
+        }
+
         public ComponentManager(ComponentSaveData SaveData, WorldManager World)
         {
             Components = SaveData.SaveableComponents;

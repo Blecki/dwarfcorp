@@ -69,7 +69,9 @@ namespace DwarfCorp
         public void PostSerialization()
         {
             Children = SerializableChildren;
+            SerializableChildren = null;
             CreateCosmeticChildren();
+            
         }
 
         protected virtual void CreateCosmeticChildren()

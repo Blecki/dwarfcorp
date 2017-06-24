@@ -1258,6 +1258,7 @@ namespace DwarfCorp
                 gameFile.WriteFile(
                     DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves" + Path.DirectorySeparatorChar +
                     filename, DwarfGame.COMPRESSED_BINARY_SAVES);
+                ComponentManager.CleanupSaveData();
 
                 lock (ScreenshotLock)
                 {
