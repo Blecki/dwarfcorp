@@ -55,34 +55,74 @@ namespace DwarfCorp
         /// <value>
         /// The children.
         /// </value>
+        [JsonIgnore]
         public List<GameComponent> Children { get; set; }
+
+        #region Serialization
+        public List<GameComponent> SerializableChildren;
+
+        public void PrepareForSerialization()
+        {
+            SerializableChildren = Children.Where(c => c.IsFlagSet(Flag.ShouldSerialize)).ToList();
+        }
+
+        public void PostSerialization()
+        {
+            Children = SerializableChildren;
+            CreateCosmeticChildren();
+        }
+
+        protected virtual void CreateCosmeticChildren()
+        {
+
+        }
+        #endregion
 
         private static uint maxGlobalID = 0;
 
-        /// <summary>
-        /// Gets or sets a value indicating whether this instance is visible.
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if this instance is visible; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsVisible { get; set; }
-        /// <summary>
-        /// Gets or sets a value indicating whether this instance is active.
-        /// If not active, the instance will not call Update
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if this instance is active; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsActive { get; set; }
-        /// <summary>
-        /// Gets or sets a value indicating whether this instance is dead. If dead,
-        /// it will be removed from the game in the next tick.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if this instance is dead; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsDead { get; private set; }
+        [Flags]
+        public enum Flag
+        {
+            IsVisible = 1,
+            IsActive = 2,
+            IsDead = 4,
+            ShouldSerialize = 8
+        }
 
+        public Flag Flags = 0;
+
+        public bool IsFlagSet(Flag F)
+        {
+            return (Flags & F) == F;
+        }
+
+        public void SetFlag(Flag F, bool Value)
+        {
+            if (Value)
+                Flags |= F;
+            else
+                Flags &= ~F;
+        }
+        
+        // Todo: Get rid of these helpers.
+        public bool IsVisible
+        {
+            get { return IsFlagSet(Flag.IsVisible); }
+            set { SetFlag(Flag.IsVisible, value); }
+        }
+
+        public bool IsActive
+        {
+            get { return IsFlagSet(Flag.IsActive); }
+            set { SetFlag(Flag.IsActive, value); }
+        }
+
+        public bool IsDead
+        {
+            get { return IsFlagSet(Flag.IsDead); }
+            set { SetFlag(Flag.IsDead, value); }
+        }
+        
         /// <summary>
         /// Gets or sets the tags. Tags are just arbitrary strings attached to objects.
         /// </summary>
@@ -147,10 +187,13 @@ namespace DwarfCorp
         {
             World = null;
             Children = new List<GameComponent>();
-            Name = "uninitialized";
-            IsVisible = true;
-            IsActive = true;
             Tags = new List<string>();
+            Name = "uninitialized";
+
+            SetFlag(Flag.IsActive, true);
+            SetFlag(Flag.IsVisible, true);
+            SetFlag(Flag.IsDead, false);
+            SetFlag(Flag.ShouldSerialize, true);
         }
 
 
@@ -158,7 +201,7 @@ namespace DwarfCorp
         /// Initializes a new instance of the <see cref="GameComponent"/> class, while adding it to the component manager.
         /// </summary>
         /// <param name="manager">The component manager to add the component to</param>
-        public GameComponent(ComponentManager Manager)
+        public GameComponent(ComponentManager Manager) : this()
         {
             System.Diagnostics.Debug.Assert(Manager != null, "Manager cannot be null");
 
@@ -171,16 +214,8 @@ namespace DwarfCorp
             }
 
             Parent = null;
-            Children = new List<GameComponent>();
-
-            Name = "uninitialized";
-            IsVisible = true;
-            IsActive = true;
-            IsDead = false;
 
             Manager.AddComponent(this);
-
-            Tags = new List<string>();
         }
 
         /// <summary>
@@ -201,9 +236,9 @@ namespace DwarfCorp
         /// <typeparam name="T">The type</typeparam>
         /// <param name="self">if set to <c>true</c> add this component to the list if it qualifies.</param>
         /// <returns>The first component of type T.</returns>
-        public T GetComponent<T>(bool self=true) where T : GameComponent
+        public T GetComponent<T>() where T : GameComponent
         {
-            return GetEntityRootComponent().GetChildrenOfType<T>(self).FirstOrDefault();
+            return EnumerateAll().OfType<T>().FirstOrDefault();
         }
 
         /// <summary>
@@ -324,7 +359,6 @@ namespace DwarfCorp
             // Todo: Split into this and 'OnDie' event function.
             if(IsDead)
                 return;
-
             IsDead = true;
 
             var localList = new List<GameComponent>(Children);
@@ -365,27 +399,6 @@ namespace DwarfCorp
         }
 
         #region child_operators
-
-        /// <summary>
-        /// Gets the children of this component which are of type T.
-        /// </summary>
-        /// <typeparam name="T">The type to get</typeparam>
-        /// <param name="includeSelf">if set to <c>true</c> include this component in the list.</param>
-        /// <returns>A list of components of type T</returns>
-        public List<T> GetChildrenOfType<T>(bool includeSelf = false) where T : GameComponent
-        {
-            List<T> toReturn = new List<T>();
-            if (includeSelf && this is T)
-            {
-                toReturn.Add((T)this);
-            }
-
-            toReturn.AddRange(from child in Children
-                where child is T
-                select (T) child);
-
-            return toReturn;
-        }
 
         /// <summary>
         /// Adds the child if it has not been added already.
@@ -434,37 +447,11 @@ namespace DwarfCorp
             return p;
         }
 
-        /// <summary>
-        /// Gets a list of children and descendants with the given type.
-        /// </summary>
-        /// <typeparam name="T">The type to check</typeparam>
-        /// <returns>A list of descendants with the given type.</returns>
-        public List<T> GetChildrenOfTypeRecursive<T>() where T : GameComponent
+        public IEnumerable<GameComponent> EnumerateAll()
         {
-            List<T> toReturn = new List<T>();
-            foreach (GameComponent child in Children)
-            {
-                if(child is T)
-                {
-                    toReturn.Add((T) child);
-                }
-
-                toReturn.AddRange(child.GetChildrenOfType<T>());
-            }
-            return toReturn;
-        }
-
-        public enum IncludeSelfFlag
-        {
-            IncludeSelf,
-            DoNotIncludeSelf
-        }
-
-        public IEnumerable<GameComponent> EnumerateAll(IncludeSelfFlag Flag = IncludeSelfFlag.IncludeSelf)
-        {
-            if (Flag == IncludeSelfFlag.IncludeSelf) yield return this;
+            yield return this;
             foreach (var child in Children)
-                foreach (var grandChild in child.EnumerateAll(IncludeSelfFlag.IncludeSelf))
+                foreach (var grandChild in child.EnumerateAll())
                     yield return grandChild;
         }
 

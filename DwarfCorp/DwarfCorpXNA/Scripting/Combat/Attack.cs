@@ -300,7 +300,7 @@ namespace DwarfCorp
                 case AttackMode.Melee:
                 case AttackMode.Dogfight:
                     {
-                        Health health = other.GetEntityRootComponent().GetChildrenOfType<Health>(true).FirstOrDefault();
+                        var health = other.GetEntityRootComponent().EnumerateAll().OfType<Health>().FirstOrDefault();
                         if (health != null)
                         {
                             health.Damage(DamageAmount + bonus);
@@ -314,7 +314,7 @@ namespace DwarfCorp
                         PlayNoise(other.GlobalTransform.Translation);
                         if (HitParticles != "")
                         {
-                            performer.Manager.ParticleManager.Trigger(HitParticles, other.LocalTransform.Translation, Color.White, 5);
+                            performer.Manager.World.ParticleManager.Trigger(HitParticles, other.LocalTransform.Translation, Color.White, 5);
                         }
 
                         if (HitAnimation != null)

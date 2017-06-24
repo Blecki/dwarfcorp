@@ -140,6 +140,7 @@ namespace DwarfCorp
 
         public FactionLibrary Factions = null;
         public CollisionManager CollisionManager = null;
+        public ParticleManager ParticleManager = null;
 
         // Handles interfacing with the player and sending commands to dwarves
         public GameMaster Master = null;
@@ -231,13 +232,6 @@ namespace DwarfCorp
 
         // Contains the storm forecast
         public Weather Weather = new Weather();
-
-        // Maintains a dictionary of particle emitters
-        public ParticleManager ParticleManager
-        {
-            get { return ComponentManager.ParticleManager; }
-            set { ComponentManager.ParticleManager = value; }
-        }
 
         // The current calendar date/time of the game.
         public WorldTime Time = new WorldTime();
@@ -396,9 +390,7 @@ namespace DwarfCorp
                 CreateSky();
 
                 if (!string.IsNullOrEmpty(ExistingFile))
-                {
                     LoadExistingFile();
-                }
 
                 if (Natives == null)
                 {
@@ -411,14 +403,11 @@ namespace DwarfCorp
                     }
 
                 }
-                // Todo: How is this initialized by save games?
+
                 InitializeStaticData(CompanyMakerState.CompanyInformation, Natives);
 
                 SetLoadingMessage("Creating Planner ...");
                 PlanService = new PlanService();
-
-                SetLoadingMessage("Creating Particles ...");
-                CreateParticles();
 
                 SetLoadingMessage("Creating Shadows...");
                 CreateShadows();
@@ -428,8 +417,12 @@ namespace DwarfCorp
 
                 SetLoadingMessage("Generating Initial Terrain Chunks ...");
                 GenerateInitialChunks();
+
                 SetLoadingMessage("Loading Components...");
-                LoadComponents();
+                LoadComponents(CompanyMakerState.CompanyInformation, Natives);
+
+                SetLoadingMessage("Creating Particles ...");
+                ParticleManager = new ParticleManager(ComponentManager);
 
                 SetLoadingMessage("Creating GameMaster ...");
                 CreateGameMaster();
@@ -522,10 +515,6 @@ namespace DwarfCorp
                 faction.WallBuilder.World = this;
               
             }
-
-            ComponentManager = new ComponentManager(this, CompanyInformation, natives);
-            ComponentManager.SetRootComponent(new Body(ComponentManager, "root", Matrix.Identity,
-                Vector3.Zero, Vector3.Zero, false));
 
             Factions = new FactionLibrary();
             if (natives != null && natives.Count > 0)
@@ -813,7 +802,7 @@ namespace DwarfCorp
                 Content.Load<Effect>(ContentPaths.Shaders.SkySphere));
         }
 
-        public void LoadComponents()
+        public void LoadComponents(CompanyInformation CompanyInformation, List<Faction> natives)
         {
             // if we are loading reinitialize a bunch of stuff to make sure the game master is created correctly
             if (!string.IsNullOrEmpty(ExistingFile))
@@ -821,13 +810,12 @@ namespace DwarfCorp
                 InstanceManager.Clear();
 
                 //gameFile.LoadComponents(ExistingFile, this);
-
-
+                
                 Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
                 Vector3 extents = new Vector3(1500, 1500, 1500);
                 CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
 
-                ComponentManager = gameFile.Data.Components;
+                ComponentManager = new ComponentManager(gameFile.Data.Components, this);
                 Factions = gameFile.Data.Factions;
                 ComponentManager.World = this;
                 GameComponent.ResetMaxGlobalId(ComponentManager.GetMaxComponentID() + 1);
@@ -863,6 +851,10 @@ namespace DwarfCorp
             }
             else
             {
+                ComponentManager = new ComponentManager(this, CompanyInformation, natives);
+                ComponentManager.SetRootComponent(new Body(ComponentManager, "root", Matrix.Identity,
+                    Vector3.Zero, Vector3.Zero, false));
+
                 // Initialize goal manager here.
                 GoalManager = new Goals.GoalManager();
                 GoalManager.Initialize(new List<Goals.Goal>());
@@ -1090,245 +1082,7 @@ namespace DwarfCorp
             WaterCell water = ChunkManager.ChunkData.GetWaterCellAtLocation(Camera.Position);
             return water.WaterLevel > 0;
         }
-
-        /// <summary>
-        /// Creates all the particle emitters used in the game.
-        /// </summary>
-        public void CreateParticles()
-        {
-            ParticleManager = new ParticleManager(ComponentManager);
-
-            /*
-            // Smoke
-            EmitterData puff = ParticleManager.CreatePuffLike("puff", new SpriteSheet(ContentPaths.Particles.puff),
-                Point.Zero, EmitterData.ParticleBlend.NonPremultiplied);
-            ParticleManager.RegisterEffect("puff", puff);
-
-            EmitterData smoke = ParticleManager.CreatePuffLike("smoke", new SpriteSheet(ContentPaths.Particles.puff),
-                Point.Zero, EmitterData.ParticleBlend.NonPremultiplied);
-            smoke.ConstantAccel = Vector3.Up * 2;
-            smoke.GrowthSpeed = -0.1f;
-            smoke.MaxAngular = 0.01f;
-            smoke.MinAngular = -0.01f;
-            smoke.MinScale = 0.2f;
-            smoke.MaxScale = 0.6f;
-            smoke.LinearDamping = 0.9999f;
-            smoke.EmissionRadius = 0.1f;
-            smoke.CollidesWorld = true;
-            smoke.EmissionSpeed = 0.2f;
-
-            ParticleManager.RegisterEffect("smoke", smoke);
-
-            // Bubbles
-            EmitterData bubble = ParticleManager.CreatePuffLike("splash2",
-                new SpriteSheet(ContentPaths.Particles.splash2), Point.Zero, EmitterData.ParticleBlend.NonPremultiplied);
-            bubble.ConstantAccel = new Vector3(0, 5, 0);
-            bubble.EmissionSpeed = 3;
-            bubble.LinearDamping = 0.9f;
-            bubble.GrowthSpeed = -2.5f;
-            bubble.MinScale = 1.5f;
-            bubble.MaxScale = 2.5f;
-            bubble.ParticleDecay = 1.5f;
-            bubble.HasLighting = false;
-            ParticleManager.RegisterEffect("splash2", bubble);
-
-            EmitterData splat = ParticleManager.CreatePuffLike("splat", new SpriteSheet(ContentPaths.Particles.splat),
-                Point.Zero, EmitterData.ParticleBlend.NonPremultiplied);
-            splat.ConstantAccel = Vector3.Zero;
-            splat.EmissionRadius = 0.01f;
-            splat.EmissionSpeed = 0.0f;
-            splat.GrowthSpeed = -1.75f;
-            splat.MinAngle = -0.0f;
-            splat.MaxAngle = 0.0f;
-            splat.MinAngular = -0.01f;
-            splat.MaxAngular = 0.01f;
-            splat.MaxParticles = 500;
-            splat.MinScale = 0.05f;
-            splat.ParticleDecay = 1.5f;
-            splat.HasLighting = false;
-            splat.MaxScale = 1.1f;
-            splat.EmitsLight = false;
-            ParticleManager.RegisterEffect("splat", splat);
-
-            EmitterData heart = ParticleManager.CreatePuffLike("heart", new SpriteSheet(ContentPaths.Particles.heart),
-                Point.Zero, EmitterData.ParticleBlend.NonPremultiplied);
-            heart.MinAngle = 0.01f;
-            heart.MaxAngle = 0.01f;
-            heart.MinAngular = 0.0f;
-            heart.MinAngular = 0.0f;
-            heart.ConstantAccel = Vector3.Up * 20;
-            ParticleManager.RegisterEffect("heart", heart);
-
-            // Fire
-            SpriteSheet fireSheet = new SpriteSheet(ContentPaths.Particles.more_flames, 32, 32);
-            EmitterData flame = ParticleManager.CreatePuffLike("flame", fireSheet, Point.Zero, EmitterData.ParticleBlend.Additive);
-            flame.ConstantAccel = Vector3.Up * 20;
-            flame.EmissionSpeed = 2;
-            flame.GrowthSpeed = -1.9f;
-            flame.MinAngle = -0.2f;
-            flame.MaxAngle = 0.2f;
-            flame.MinAngular = -0.01f;
-            flame.MaxAngular = 0.01f;
-            flame.MaxParticles = 500;
-            flame.MinScale = 0.2f;
-            flame.HasLighting = false;
-            flame.MaxScale = 2.0f;
-            flame.EmitsLight = true;
-            flame.Blend = EmitterData.ParticleBlend.Additive;
-            ParticleManager.RegisterEffect("flame", flame, flame.Clone(fireSheet, new Point(1, 0)),
-                flame.Clone(fireSheet, new Point(2, 0)), flame.Clone(fireSheet, new Point(3, 0)));
-
-            EmitterData greenFlame = ParticleManager.CreatePuffLike("green_flame",
-                new SpriteSheet(ContentPaths.Particles.green_flame), new Point(0, 0), EmitterData.ParticleBlend.Additive);
-            greenFlame.ConstantAccel = Vector3.Up * 20;
-            greenFlame.EmissionSpeed = 2;
-            greenFlame.GrowthSpeed = -1.9f;
-            greenFlame.MinAngle = -0.2f;
-            greenFlame.MaxAngle = 0.2f;
-            greenFlame.MinAngular = -0.01f;
-            greenFlame.MaxAngular = 0.01f;
-            greenFlame.HasLighting = false;
-
-            ParticleManager.RegisterEffect("green_flame", greenFlame);
-
-            List<Point> frm2 = new List<Point>
-            {
-                new Point(0, 0)
-            };
-
-            // Leaves
-            EmitterData testData2 = new EmitterData
-            {
-                Animation =
-                    new Animation(GraphicsDevice, new SpriteSheet(ContentPaths.Particles.leaf), "leaf", 32, 32, frm2,
-                        true, Color.White, 1.0f, 1.0f, 1.0f, false),
-                ConstantAccel = new Vector3(0, -10, 0),
-                LinearDamping = 0.95f,
-                AngularDamping = 0.99f,
-                EmissionFrequency = 1.0f,
-                EmissionRadius = 2.0f,
-                EmissionSpeed = 5.0f,
-                GrowthSpeed = -0.5f,
-                MaxAngle = 3.14159f,
-                MinAngle = 0.0f,
-                MaxParticles = 1000,
-                MaxScale = 0.5f,
-                MinScale = 0.1f,
-                MinAngular = -5.0f,
-                MaxAngular = 5.0f,
-                ParticleDecay = 0.5f,
-                ParticlesPerFrame = 0,
-                Sleeps = true,
-                ReleaseOnce = true,
-                CollidesWorld = true,
-            };
-
-            ParticleManager.RegisterEffect("Leaves", testData2);
-
-            // Various resource explosions
-            ParticleManager.CreateGenericExplosion(ContentPaths.Particles.dirt_particle, "dirt_particle");
-            EmitterData stars = ParticleManager.CreatePuffLike("star_particle",
-                new SpriteSheet(ContentPaths.Particles.star_particle), new Point(0, 0), EmitterData.ParticleBlend.Additive);
-            stars.MinAngle = -0.1f;
-            stars.MaxAngle = 0.1f;
-            stars.MinScale = 0.2f;
-            stars.MaxScale = 0.5f;
-            stars.AngularDamping = 0.99f;
-            stars.LinearDamping = 0.999f;
-            stars.GrowthSpeed = -0.8f;
-            stars.EmissionFrequency = 5;
-            stars.CollidesWorld = false;
-            stars.HasLighting = false;
-
-            ParticleManager.RegisterEffect("star_particle", stars);
-
-            ParticleManager.CreateGenericExplosion(ContentPaths.Particles.stone_particle, "stone_particle");
-            ParticleManager.CreateGenericExplosion(ContentPaths.Particles.sand_particle, "sand_particle");
-            ParticleManager.CreateGenericExplosion(ContentPaths.Particles.snow_particle, "snow_particle");
-            ParticleManager.CreateGenericExplosion(ContentPaths.Particles.dirt_particle, "dirt_particle");
-
-            SpriteSheet bloodSheet = new SpriteSheet(ContentPaths.Particles.gibs, 32, 32);
-            // Blood explosion
-            // ParticleEmitter b = ParticleManager.CreateGenericExplosion(ContentPaths.Particles.blood_particle, "blood_particle").Emitters[0];
-            EmitterData b = ParticleManager.CreateExplosionLike("blood_particle", bloodSheet, Point.Zero,
-                BlendState.NonPremultiplied);
-            b.MinScale = 0.75f;
-            b.MaxScale = 1.0f;
-            b.Damping = 0.1f;
-            b.GrowthSpeed = -0.8f;
-            b.RotatesWithVelocity = true;
-
-            ParticleManager.RegisterEffect("blood_particle", b);
-            ParticleManager.RegisterEffect("gibs", b.Clone(bloodSheet, new Point(1, 0)),
-                b.Clone(bloodSheet, new Point(2, 0)), b.Clone(bloodSheet, new Point(3, 0)));
-
-            ParticleManager.RegisterEffect("rain", new EmitterData()
-            {
-                AngularDamping = 1.0f,
-                Animation = new Animation(ContentPaths.Particles.raindrop, 16, 16, 0, 0),
-                ParticleDecay = 9.0f,
-                Blend = EmitterData.ParticleBlend.NonPremultiplied,
-                CollidesWorld = false,
-                ConstantAccel = Vector3.Zero,
-                Damping = 1.0f,
-                EmissionFrequency = 9999.0f,
-                EmissionRadius = 0.001f,
-                EmissionSpeed = 0.0f,
-                EmitsLight = false,
-                GrowthSpeed = 0.0f,
-                ReleaseOnce = false,
-                MinAngle = 0,
-                MaxAngle = 0,
-                MinAngular = 0,
-                MaxAngular = 0,
-                MinScale = 0.45f,
-                MaxScale = 0.5f,
-                MaxParticles = 500,
-                HasLighting = true,
-                UseManualControl = true
-            });
-
-            ParticleManager.RegisterEffect("snowflake", new EmitterData()
-            {
-                AngularDamping = 1.0f,
-                Animation = new Animation(ContentPaths.Particles.snow_particle, 8, 8, 0, 0),
-                ParticleDecay = 9.0f,
-                Blend = EmitterData.ParticleBlend.NonPremultiplied,
-                CollidesWorld = false,
-                ConstantAccel = Vector3.Zero,
-                Damping = 1.0f,
-                EmissionFrequency = 9999.0f,
-                EmissionRadius = 0.001f,
-                EmissionSpeed = 0.0f,
-                EmitsLight = false,
-                GrowthSpeed = 0.0f,
-                ReleaseOnce = false,
-                MinAngle = 0,
-                MaxAngle = 0,
-                MinAngular = 0,
-                MaxAngular = 0,
-                MinScale = 0.2f,
-                MaxScale = 0.25f,
-                MaxParticles = 500,
-                HasLighting = true,
-                UseManualControl = true
-            });
-
-            Dictionary<string, List<EmitterData>> data = new Dictionary<string, List<EmitterData>>();
-            foreach (var effect in ParticleManager.Effects)
-            {
-                data[effect.Key] = new List<EmitterData>();
-                foreach (var emitter in effect.Value.Emitters)
-                {
-                    data[effect.Key].Add(emitter.Data);
-                }
-            }
-
-            string foo = FileUtils.SerializeBasicJSON(data);
-            Console.Out.WriteLine(foo);
-             */
-        }
-
+        
         /// <summary>
         /// Called every frame
         /// </summary>

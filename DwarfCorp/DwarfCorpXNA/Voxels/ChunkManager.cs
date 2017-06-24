@@ -570,7 +570,7 @@ namespace DwarfCorp
                         if (!ChunkData.ChunkMap.ContainsKey(box))
                         {
                             Vector3 worldPos = new Vector3(box.X * ChunkData.ChunkSizeX, box.Y * ChunkData.ChunkSizeY, box.Z * ChunkData.ChunkSizeZ);
-                            VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, (int)ChunkData.ChunkSizeX, (int)ChunkData.ChunkSizeY, (int)ChunkData.ChunkSizeZ, Components, Content, Graphics);
+                            VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, (int)ChunkData.ChunkSizeX, (int)ChunkData.ChunkSizeY, (int)ChunkData.ChunkSizeZ, World, Content, Graphics);
                             Drawer3D.DrawBox(chunk.GetBoundingBox(), Color.Red, 0.1f);
                             chunk.ShouldRebuild = true;
                             chunk.ShouldRecalculateLighting = true;
@@ -852,7 +852,7 @@ namespace DwarfCorp
                         if (!ChunkData.ChunkMap.ContainsKey(box))
                         {
                             Vector3 worldPos = new Vector3(box.X * ChunkData.ChunkSizeX, box.Y * ChunkData.ChunkSizeY, box.Z * ChunkData.ChunkSizeZ);
-                            VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, (int)ChunkData.ChunkSizeX, (int)ChunkData.ChunkSizeY, (int)ChunkData.ChunkSizeZ, Components, Content, Graphics);
+                            VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, (int)ChunkData.ChunkSizeX, (int)ChunkData.ChunkSizeY, (int)ChunkData.ChunkSizeZ, World, Content, Graphics);
                             chunk.ShouldRebuild = true;
                             chunk.ShouldRecalculateLighting = true;
                             chunk.IsVisible = true;

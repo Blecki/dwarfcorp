@@ -612,7 +612,7 @@ namespace DwarfCorp
             return voxels;
         }
 
-        public VoxelChunk GenerateChunk(Vector3 origin, int chunkSizeX, int chunkSizeY, int chunkSizeZ, ComponentManager components, ContentManager content, GraphicsDevice graphics)
+        public VoxelChunk GenerateChunk(Vector3 origin, int chunkSizeX, int chunkSizeY, int chunkSizeZ, WorldManager World, ContentManager content, GraphicsDevice graphics)
         {
             float waterHeight = SeaLevel + 1.0f / chunkSizeY;
             VoxelChunk c = new VoxelChunk(Manager, origin, 1,
@@ -708,7 +708,7 @@ namespace DwarfCorp
 
             GenerateWater(c);
             GenerateLava(c);
-            GenerateCaves(c, components.World);
+            GenerateCaves(c, World);
             //GenerateAquifers(c);
             //GenerateLavaTubes(c);
 

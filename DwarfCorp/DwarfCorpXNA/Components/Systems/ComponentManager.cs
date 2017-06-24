@@ -17,26 +17,22 @@ namespace DwarfCorp
     /// collection of components. Together, the collection is called an 'entity'. Components form a 
     /// tree. Each component has a parent and 0 to N children.
     /// </summary>
-    [JsonObject(IsReference = true)]
     public class ComponentManager
     {
-        [JsonProperty]
-        private Dictionary<uint, GameComponent> Components;
-
-        private Dictionary<System.Type, List<IUpdateableComponent>> UpdateableComponents;
-
-        private List<IRenderableComponent> Renderables;
-
-        public IEnumerable<IRenderableComponent> GetRenderables()
+        public class ComponentSaveData
         {
-            return Renderables;
+            public Dictionary<uint, GameComponent> SaveableComponents;
+            public uint RootComponent;
         }
 
-        private List<MinimapIcon> MinimapIcons = new List<MinimapIcon>();
-        public IEnumerable<MinimapIcon> GetMinimapIcons() { return MinimapIcons; }
+        private Dictionary<uint, GameComponent> Components;
 
-        private List<GameComponent> Removals { get; set; }
-        private List<GameComponent> Additions { get; set; }
+        private Dictionary<System.Type, List<IUpdateableComponent>> UpdateableComponents =
+            new Dictionary<Type, List<IUpdateableComponent>>();
+        private List<IRenderableComponent> Renderables = new List<IRenderableComponent>();
+        private List<MinimapIcon> MinimapIcons = new List<MinimapIcon>();
+        private List<GameComponent> Removals = new List<GameComponent>();
+        private List<GameComponent> Additions = new List<GameComponent>();
 
         public Body RootComponent { get; private set; }
 
@@ -46,27 +42,41 @@ namespace DwarfCorp
             RootComponent = Component;
         }
 
-        private static Camera Camera { get; set; }
+        private Mutex AdditionMutex = new Mutex();
+        private Mutex RemovalMutex = new Mutex();
 
-        [JsonIgnore]
-        private Mutex AdditionMutex { get; set; }
-        [JsonIgnore]
-        private Mutex RemovalMutex { get; set; }
+        public IEnumerable<IRenderableComponent> GetRenderables() { return Renderables; }
+        public IEnumerable<MinimapIcon> GetMinimapIcons() { return MinimapIcons; }
 
-        public ParticleManager ParticleManager { get; set; }
-
-
-        [JsonIgnore]
         public WorldManager World { get; set; }
 
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
+        public ComponentSaveData GetSaveData()
         {
-            AdditionMutex = new Mutex();
-            RemovalMutex = new Mutex();
-            Removals = new List<GameComponent>();
-            Additions = new List<GameComponent>();
-            World = (WorldManager)context.Context;
+            // Just in case the root was tagged unserializable for whatever reason.
+            RootComponent.SetFlag(GameComponent.Flag.ShouldSerialize, true);
+
+            foreach (var component in Components)
+                component.Value.PrepareForSerialization();
+
+            var serializableComponents = new Dictionary<uint, GameComponent>();
+            foreach (var component in Components.Where(c => c.Value.IsFlagSet(GameComponent.Flag.ShouldSerialize)))
+                serializableComponents.Add(component.Key, component.Value);
+
+            return new ComponentSaveData
+            {
+                SaveableComponents = serializableComponents,
+                RootComponent = RootComponent.GlobalID
+            };
+        }
+
+        public ComponentManager(ComponentSaveData SaveData, WorldManager World)
+        {
+            Components = SaveData.SaveableComponents;
+            RootComponent = Components[SaveData.RootComponent] as Body;
+
+            this.World = World;
+
+            // Todo: Why is this here???
             World.Natives.Clear();
 
             foreach (var component in Components)
@@ -85,24 +95,15 @@ namespace DwarfCorp
                 if (component.Value is MinimapIcon)
                     MinimapIcons.Add(component.Value as MinimapIcon);
             }
-        }
-
-        public ComponentManager()
-        {
-
+       
+            foreach (var component in SaveData.SaveableComponents)
+                component.Value.PostSerialization();
         }
 
         public ComponentManager(WorldManager state, CompanyInformation CompanyInformation, List<Faction> natives)
         {
             World = state;
             Components = new Dictionary<uint, GameComponent>();
-            UpdateableComponents = new Dictionary<Type, List<IUpdateableComponent>>();
-            Renderables = new List<IRenderableComponent>();
-            Removals = new List<GameComponent>();
-            Additions = new List<GameComponent>();
-            Camera = null;
-            AdditionMutex = new Mutex();
-            RemovalMutex = new Mutex();
         }
 
         public List<Body> SelectRootBodiesOnScreen(Rectangle selectionRectangle, Camera camera)
@@ -161,9 +162,6 @@ namespace DwarfCorp
 
             foreach (var child in new List<GameComponent>(component.Children))
                 RemoveComponentImmediate(child);
-
-            if (component.Parent != null)
-                component.Parent.RemoveChild(component);
         }
 
         private void AddComponentImmediate(GameComponent component)

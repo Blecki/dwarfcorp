@@ -117,7 +117,7 @@ namespace DwarfCorp
 
             foreach (Body other in bodies)
             {
-                Creature creature = other.GetChildrenOfType<Creature>().FirstOrDefault();
+                var creature = other.EnumerateAll().OfType<Creature>().FirstOrDefault();
                 if (creature == null)
                 {
                     continue;

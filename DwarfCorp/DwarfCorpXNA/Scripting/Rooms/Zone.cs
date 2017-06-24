@@ -114,12 +114,8 @@ namespace DwarfCorp
 
         private void SetDisplayColor(GameComponent body, Color color)
         {
-            List<Tinter> sprites = body.GetChildrenOfTypeRecursive<Tinter>();
-
-            foreach (Tinter sprite in sprites)
-            {
+            foreach (var sprite in body.EnumerateAll().OfType<Tinter>())
                 sprite.VertexColorTint = color;
-            }
         }
 
         public Body GetNearestBodyWithTag(Vector3 location, string tag, bool filterReserved)

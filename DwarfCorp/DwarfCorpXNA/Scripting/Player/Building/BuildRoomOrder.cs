@@ -161,12 +161,8 @@ namespace DwarfCorp
 
         private void SetDisplayColor(GameComponent body, Color color)
         {
-            List<Tinter> sprites = body.GetChildrenOfTypeRecursive<Tinter>();
-
-            foreach (Tinter sprite in sprites)
-            {
+            foreach (var sprite in body.EnumerateAll().OfType<Tinter>().ToList())
                 sprite.VertexColorTint = color;
-            }
         }
 
         public BoundingBox GetBoundingBox()

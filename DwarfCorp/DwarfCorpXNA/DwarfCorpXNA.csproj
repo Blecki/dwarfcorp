@@ -156,7 +156,6 @@
     <Compile Include="Components\AI\StatBuff.cs" />
     <Compile Include="Components\AI\ThoughtBuff.cs" />
     <Compile Include="Components\Body.cs" />
-    <Compile Include="Components\DeathComponentSpawner.cs" />
     <Compile Include="Components\GameComponent.cs" />
     <Compile Include="Components\Graphics\BatchedSprite.cs" />
     <Compile Include="Components\Graphics\Bobber.cs" />
@@ -166,8 +165,8 @@
     <Compile Include="Components\Graphics\LightEmitter.cs" />
     <Compile Include="Components\Graphics\Mesh.cs" />
     <Compile Include="Components\Graphics\OrientedAnimation.cs" />
-    <Compile Include="Components\Graphics\ParticleEmitter.cs" />
-    <Compile Include="Components\Graphics\ParticleTrigger.cs" />
+    <Compile Include="ParticleEffects\ParticleEmitter.cs" />
+    <Compile Include="ParticleEffects\ParticleTrigger.cs" />
     <Compile Include="Components\Graphics\SelectionCircle.cs" />
     <Compile Include="Components\Graphics\Shadow.cs" />
     <Compile Include="Components\Graphics\Sprite.cs" />
@@ -304,7 +303,7 @@
     <Compile Include="Graphics\Effects\BloomComponent.cs" />
     <Compile Include="Graphics\Effects\BloomSettings.cs" />
     <Compile Include="Graphics\Effects\FXAA.cs" />
-    <Compile Include="Graphics\Effects\ParticleManager.cs" />
+    <Compile Include="ParticleEffects\ParticleManager.cs" />
     <Compile Include="Graphics\Effects\Shader.cs" />
     <Compile Include="Graphics\Effects\ShadowRenderer.cs" />
     <Compile Include="Graphics\Effects\SkyRenderer.cs" />

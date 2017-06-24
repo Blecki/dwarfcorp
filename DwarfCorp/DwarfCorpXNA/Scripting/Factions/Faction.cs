@@ -944,8 +944,8 @@ namespace DwarfCorp
                 
                 if (World.ChunkManager.ChunkData.GetFirstVoxelUnder(position + offset, ref voxel, true))
                 {
-                    Body body = EntityFactory.CreateEntity<Body>(creature, voxel.Position + new Vector3(0.5f, 1, 0.5f));
-                    CreatureAI ai = body.GetChildrenOfType<CreatureAI>().FirstOrDefault();
+                    var body = EntityFactory.CreateEntity<Body>(creature, voxel.Position + new Vector3(0.5f, 1, 0.5f));
+                    var ai = body.EnumerateAll().OfType<CreatureAI>().FirstOrDefault();
                     
                     if (ai != null)
                     {
