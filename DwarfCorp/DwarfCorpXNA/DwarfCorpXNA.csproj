@@ -641,6 +641,8 @@
     <Compile Include="World\Overworld.cs" />
     <Compile Include="World\VegetationData.cs" />
     <Compile Include="World\Weather.cs" />
+    <Compile Include="World\WorldManager-NewGameSetup.cs" />
+    <Compile Include="World\WorldManager-Loading.cs" />
     <Compile Include="World\WorldManager.cs" />
     <Compile Include="World\WorldTime.cs" />
   </ItemGroup>
