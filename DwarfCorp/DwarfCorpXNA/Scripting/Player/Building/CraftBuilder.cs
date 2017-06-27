@@ -287,7 +287,7 @@ namespace DwarfCorp
                                     Location = r,
                                     WorkPile = new WorkPile(World.ComponentManager, startPos)
                                 };
-
+                                World.ComponentManager.RootComponent.AddChild(newDesignation.WorkPile);
                                 newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));
                                 World.ParticleManager.Trigger("puff", pos, Color.White, 10);
                                 if (IsValid(newDesignation))

@@ -820,12 +820,14 @@ namespace DwarfCorp.GameStates
                     new Gui.Widgets.ToolTray.Icon
                     {
                         Icon = null,
-                        Text = "Obj.",
+                        Text = "Object",
                         TextColor = Vector4.One,
                         Tooltip = "Craft objects",
                         TextHorizontalAlign = HorizontalAlign.Center,
                         TextVerticalAlign = VerticalAlign.Center,
                         KeepChildVisible = true,
+                        MinimumSize = new Point(128, 32),
+                        ExpandOnClick = true,
                         ExpansionChild = new Gui.Widgets.ToolTray.Tray
                         {
                             ItemSource = CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Object)
@@ -838,22 +840,22 @@ namespace DwarfCorp.GameStates
                                     ExpansionChild = new Gui.Widgets.BuildCraftInfo
                                     {
                                         Data = data,
-                                        Rect = new Rectangle(0,0,256,128),
+                                        Rect = new Rectangle(0,0,256,150),
                                         Master = Master,
-                                        World = World
-                                    },
-                                    OnClick = (sender, args) =>
-                                    {
-                                        var buildInfo = (sender as Gui.Widgets.ToolTray.Icon).ExpansionChild as Gui.Widgets.BuildCraftInfo;
-                                        data.SelectedResources = buildInfo.GetSelectedResources();
-
-                                        Master.Faction.RoomBuilder.CurrentRoomData = null;
-                                        Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                                        Master.Faction.WallBuilder.CurrentVoxelType = null;
-                                        Master.Faction.CraftBuilder.IsEnabled = true;
-                                        Master.Faction.CraftBuilder.CurrentCraftType = data;
-                                        ChangeTool(GameMaster.ToolMode.Build);
-                                        World.ShowToolPopup("Click and drag to " + data.Verb + " " + data.Name);
+                                        World = World,
+                                        BuildAction =  (sender, args) =>
+                                        {
+                                            var buildInfo = sender.Parent as Gui.Widgets.BuildCraftInfo;
+                                            data.SelectedResources = buildInfo.GetSelectedResources();
+                                            data.NumRepeats = buildInfo.GetNumRepeats();
+                                            Master.Faction.RoomBuilder.CurrentRoomData = null;
+                                            Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+                                            Master.Faction.WallBuilder.CurrentVoxelType = null;
+                                            Master.Faction.CraftBuilder.IsEnabled = true;
+                                            Master.Faction.CraftBuilder.CurrentCraftType = data;
+                                            ChangeTool(GameMaster.ToolMode.Build);
+                                            World.ShowToolPopup("Click and drag to " + data.Verb + " " + data.Name);
+                                        },
                                     },
                                     OnConstruct = (sender) =>
                                     {
@@ -873,6 +875,7 @@ namespace DwarfCorp.GameStates
                         TextHorizontalAlign = HorizontalAlign.Center,
                         TextVerticalAlign = VerticalAlign.Center,
                         KeepChildVisible = true,
+                        ExpandOnClick = true,
                         ExpansionChild = new Gui.Widgets.ToolTray.Tray
                         {
                             Tooltip = "Craft resource",
@@ -885,27 +888,28 @@ namespace DwarfCorp.GameStates
                                     Icon = data.Icon,
                                     Tooltip = "Craft " + data.Name,
                                     KeepChildVisible = true, // So the player can interact with the popup.
+                                    
                                     ExpansionChild = new Gui.Widgets.BuildCraftInfo
                                     {
                                         Data = data,
-                                        Rect = new Rectangle(0,0,256,128),
+                                        Rect = new Rectangle(0,0,256,150),
                                         Master = Master,
-                                        World = World
-                                    },
-                                    OnClick = (sender, args) =>
-                                    {
-                                        var buildInfo = (sender as Gui.Widgets.ToolTray.Icon).ExpansionChild as Gui.Widgets.BuildCraftInfo;
-                                        data.SelectedResources = buildInfo.GetSelectedResources();
-
-                                        List<Task> assignments = new List<Task> {new CraftResourceTask(data)};
-                                        var minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions,
-                                            GameMaster.ToolMode.Craft);
-                                        if (minions.Count > 0)
+                                        World = World,
+                                        BuildAction = (sender, args) =>
                                         {
-                                            TaskManager.AssignTasks(assignments, minions);
-                                            World.ShowToolPopup(data.CurrentVerb + " one " + data.Name);
-                                        }
-                                        World.Tutorial("build crafts");
+                                            var buildInfo = (sender.Parent as Gui.Widgets.BuildCraftInfo);
+                                            data.SelectedResources = buildInfo.GetSelectedResources();
+                                            data.NumRepeats = buildInfo.GetNumRepeats();
+                                            List<Task> assignments = new List<Task> {new CraftResourceTask(data)};
+                                            var minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions,
+                                                GameMaster.ToolMode.Craft);
+                                            if (minions.Count > 0)
+                                            {
+                                                TaskManager.AssignTasks(assignments, minions);
+                                                World.ShowToolPopup(data.CurrentVerb + " " + data.NumRepeats + " " + data.Name);
+                                            }
+                                            World.Tutorial("build crafts");
+                                        },
                                     },
                                     OnConstruct = (sender) =>
                                     {
@@ -928,6 +932,7 @@ namespace DwarfCorp.GameStates
                         Icon = new Gui.TileReference("tool-icons", 27),
                         KeepChildVisible = true,
                         Tooltip = "Cook food",
+                        ExpandOnClick = true,
                         OnConstruct = (sender) =>
                         {
                             ToolbarItems.Add(new ToolbarItem(sender, () =>
@@ -950,22 +955,22 @@ namespace DwarfCorp.GameStates
                                         Data = data,
                                         Rect = new Rectangle(0,0,256,128),
                                         Master = Master,
-                                        World = World
-                                    },
-                                    OnClick = (sender, args) =>
-                                    {
-                                        var buildInfo = (sender as Gui.Widgets.ToolTray.Icon).ExpansionChild as Gui.Widgets.BuildCraftInfo;
-                                        data.SelectedResources = buildInfo.GetSelectedResources();
-
-                                        List<Task> assignments = new List<Task> {new CraftResourceTask(data)};
-                                        var minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions,
-                                            GameMaster.ToolMode.Cook);
-                                        if (minions.Count > 0)
+                                        World = World,
+                                        BuildAction = (sender, args) =>
                                         {
-                                            TaskManager.AssignTasks(assignments, minions);
-                                            World.ShowToolPopup(data.CurrentVerb + " one " + data.Name);
-                                        }
-                                        World.Tutorial("cook");
+                                            var buildInfo = sender.Parent as Gui.Widgets.BuildCraftInfo;
+                                            data.SelectedResources = buildInfo.GetSelectedResources();
+                                            data.NumRepeats = buildInfo.GetNumRepeats();
+                                            List<Task> assignments = new List<Task> {new CraftResourceTask(data)};
+                                            var minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions,
+                                                GameMaster.ToolMode.Cook);
+                                            if (minions.Count > 0)
+                                            {
+                                                TaskManager.AssignTasks(assignments, minions);
+                                                World.ShowToolPopup(data.CurrentVerb + " one " + data.Name);
+                                            }
+                                            World.Tutorial("cook");
+                                        },
                                     },
                                     OnConstruct = (sender) =>
                                     {

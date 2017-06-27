@@ -96,12 +96,18 @@ namespace DwarfCorp.GameStates
             GuiRoot = new Gui.Root(DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
             GuiRoot.SetMouseOverlay(null, 0);
+            var screen = GuiRoot.RenderData.VirtualScreen;
+            float scale = 0.75f;
+            float newWidth = System.Math.Max(screen.Width*scale, 640);
+            float newHeight = System.Math.Max(screen.Height*scale, 480);
+            Rectangle rect = new Rectangle((int)(newWidth * 0.25f), (int)(newHeight * 0.25f),(int)newWidth, (int)newHeight);
             // CONSTRUCT GUI HERE...
             MainPanel = GuiRoot.RootItem.AddChild(new Gui.Widget
                 {
-                    Rect = GuiRoot.RenderData.VirtualScreen,
+                    Rect = rect,
                     Padding = new Margin(4,4,4,4),
-                    Transparent = true
+                    Transparent = true,
+                    MinimumSize = new Point(640, 480)
                 });
 
             MainPanel.AddChild(new Gui.Widgets.Button

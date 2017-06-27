@@ -137,7 +137,7 @@ namespace DwarfCorp
             SetActiveRecursive(false);
             SetVisibleRecursive(false);
 
-            return AddChild(new Seedling(Manager, this, LocalTransform.Translation, Seedlingsheet, SeedlingFrame)
+            return Parent.AddChild(new Seedling(Manager, this, LocalTransform.Translation, Seedlingsheet, SeedlingFrame)
             {
                 FullyGrownDay = Manager.World.Time.CurrentDate.AddHours(GrowthHours).AddDays(GrowthDays)
             }) as Seedling;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DwarfCorp.Gui;
+using DwarfCorp.Gui.Input;
 using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Gui.Widgets
@@ -58,7 +59,7 @@ namespace DwarfCorp.Gui.Widgets
                 if (icon == null) return;
 
                 if (icon.ExpansionChild is Tray)
-                    Root.SafeCall(icon.OnMouseEnter, icon, new InputEventArgs
+                    Root.SafeCall(icon.ExpandOnClick ? icon.OnClick : icon.OnMouseEnter, icon, new InputEventArgs
                     {
                         X = icon.Rect.X,
                         Y = icon.Rect.Y
@@ -80,7 +81,7 @@ namespace DwarfCorp.Gui.Widgets
             public Widget ExpansionChild;
             public bool KeepChildVisible = false;
             public bool ExpandChildWhenDisabled = false;
-
+            public bool ExpandOnClick = true;
             public enum ExpansionDirections
             {
                 Up,
@@ -89,34 +90,48 @@ namespace DwarfCorp.Gui.Widgets
 
             public ExpansionDirections ExpansionDirection = ExpansionDirections.Up;
 
+            public void Expand(Widget sender, InputEventArgs args)
+            {
+                foreach (var child in sender.Parent.EnumerateChildren().Where(c => c is FramedIcon)
+.                       SelectMany(c => c.EnumerateChildren()))
+                {
+                    if (!Object.ReferenceEquals(child, ExpansionChild))
+                    {
+                        child.Hidden = true;
+                        child.Invalidate();
+                    }
+                }
+
+                if (ExpansionChild != null && (ExpandChildWhenDisabled || (sender as FramedIcon).Enabled) && ExpansionChild.Hidden)
+                {
+                    ExpansionChild.Hidden = false;
+                    Root.SafeCall(ExpansionChild.OnShown, ExpansionChild);
+                    ExpansionChild.Invalidate();
+                }
+            }
+
             public Icon()
             {
-                OnMouseEnter = (sender, args) =>
+  
+            }
+
+            public override void Construct()
+            {
+                if (ExpandOnClick && OnClick == null)
                 {
-                    foreach (var child in sender.Parent.EnumerateChildren().Where(c => c is FramedIcon)
-                    .SelectMany(c => c.EnumerateChildren()))
-                    {
-                        if (!Object.ReferenceEquals(child, ExpansionChild))
-                        {
-                            child.Hidden = true;
-                            child.Invalidate();
-                        }
-                    }
-
-                    if (ExpansionChild != null && (ExpandChildWhenDisabled || (sender as FramedIcon).Enabled) && ExpansionChild.Hidden)
-                    {
-                        ExpansionChild.Hidden = false;
-                        Root.SafeCall(ExpansionChild.OnShown, ExpansionChild);
-                        ExpansionChild.Invalidate();
-                    }
-                };
-
-                OnMouseLeave = (sender, args) =>
+                    OnClick = Expand;
+                }
+                else
                 {
-                    if (!KeepChildVisible && ExpansionChild != null)
-                        Unexpand();
-                };
+                    OnMouseEnter = Expand;
 
+                    OnMouseLeave = (sender, args) =>
+                    {
+                        if (!KeepChildVisible && ExpansionChild != null)
+                            Unexpand();
+                    };
+
+                }
                 OnDisable = (sender) =>
                 {
                     if (ExpansionChild != null)
@@ -154,10 +169,7 @@ namespace DwarfCorp.Gui.Widgets
                         }
                     }
                 };
-            }
 
-            public override void Construct()
-            {
                 base.Construct();
 
                 if (ExpansionChild != null)
@@ -172,7 +184,7 @@ namespace DwarfCorp.Gui.Widgets
                     OnClick = (sender, args) =>
                     {
                         Root.SafeCall(lambdaOnClick, sender, args);
-                        CollapseTrays();
+                        //CollapseTrays();
                     };
                 }
             }
@@ -189,6 +201,7 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     ExpansionChild.Hidden = true;
                     ExpansionChild.Invalidate();
+                    Hidden = false;
                 }
             }
 
@@ -198,6 +211,7 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     ExpansionChild.Hidden = false;
                     ExpansionChild.Invalidate();
+                    Hidden = true;
                 }
             }
         }
