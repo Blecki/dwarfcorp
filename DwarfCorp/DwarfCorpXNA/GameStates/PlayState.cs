@@ -41,7 +41,7 @@ namespace DwarfCorp.GameStates
 
         private Gui.Widget MoneyLabel;
         private Gui.Widget LevelLabel;
-        private Gui.Widgets.ToolTray.Tray BottomRightTray;
+        private Gui.Widgets.ToolTray.Tray BottomToolBar;
         private Gui.Widget TimeLabel;
         private Gui.Widget PausePanel;
         private Gui.Widgets.MinimapFrame MinimapFrame;
@@ -67,7 +67,15 @@ namespace DwarfCorp.GameStates
             }
         }
 
+        // These get enabled or disabled based on dwarf selection each frame.
         private List<ToolbarItem> ToolbarItems = new List<ToolbarItem>();
+
+        private void AddToolbarIcon(Widget Icon, Func<bool> Available)
+        {
+            ToolbarItems.Add(new ToolbarItem(Icon, Available));
+        }
+
+        // These widgets get hilited when the associated tool is active.
         private Dictionary<GameMaster.ToolMode, Gui.Widgets.FramedIcon> ToolHiliteItems = new Dictionary<GameMaster.ToolMode, Gui.Widgets.FramedIcon>();
 
         private void AddToolSelectIcon(GameMaster.ToolMode Mode, Gui.Widget Icon)
@@ -259,7 +267,7 @@ namespace DwarfCorp.GameStates
                 // Mouse down but not handled by GUI? Collapse menu.
                 if (@event == Gui.InputEvents.MouseClick) 
                 {
-                    BottomRightTray.CollapseTrays();
+                    BottomToolBar.CollapseTrays();
                     GodMenu.CollapseTrays();
                 }
             });
@@ -287,6 +295,7 @@ namespace DwarfCorp.GameStates
             #endregion
 
             #region Update toolbar tray
+
             if (Master.SelectedMinions.Count == 0)
             {
                 if (Master.CurrentToolMode != GameMaster.ToolMode.God)
@@ -677,254 +686,282 @@ namespace DwarfCorp.GameStates
 
 
             #endregion
-            
+
             #region Setup tool tray
 
-            BottomRightTray = GuiRoot.RootItem.AddChild(new Gui.Widgets.ToolTray.Tray
+            #region icon_SelectTool
+
+            var icon_SelectTool = new ToolTray.Icon
+            {
+                Icon = new Gui.TileReference("tool-icons", 5),
+                OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.SelectUnits),
+                Tooltip = "Select dwarves",
+                OnConstruct = (sender) =>
+                {
+                    // This could just be done after declaring icon_SelectTool, but is here for
+                    // consistency with other icons where this is not possible.
+                    AddToolbarIcon(sender, () => true);
+                    AddToolSelectIcon(GameMaster.ToolMode.SelectUnits, sender);
+                }
+            };            
+
+            #endregion
+
+            #region icon_BuildRoom
+
+            var menu_RoomTypes = new ToolTray.Tray
+            {
+                ItemSource = RoomLibrary.GetRoomTypes().Select(RoomLibrary.GetData)
+                    .Select(data => new Gui.Widgets.ToolTray.Icon
+                    {
+                        Icon = data.NewIcon,
+                        ExpandChildWhenDisabled = true,
+                        ExpansionChild = new Gui.Widgets.BuildRoomInfo
+                        {
+                            Data = data,
+                            Rect = new Rectangle(0, 0, 256, 164),
+                            Master = Master
+                        },
+                        OnClick = (sender, args) =>
+                        {
+                            Master.Faction.RoomBuilder.CurrentRoomData = data;
+                            Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+                            Master.Faction.WallBuilder.CurrentVoxelType = null;
+                            Master.Faction.CraftBuilder.IsEnabled = false;
+                            ChangeTool(GameMaster.ToolMode.Build);
+                            World.ShowToolPopup("Click and drag to build " + data.Name);
+                            World.Tutorial("build rooms");
+                        },
+                        OnConstruct = (sender) =>
+                        {
+                            AddToolbarIcon(sender, () =>
+                                ((sender as ToolTray.Icon).ExpansionChild as BuildRoomInfo).CanBuild());
+                        }
+                    })
+            };
+
+            var icon_BuildRoom = new Gui.Widgets.ToolTray.Icon
+            {
+                TextColor = Vector4.One,
+                Text = "Room",
+                Tooltip = "Build rooms",
+                TextHorizontalAlign = HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Center,
+                KeepChildVisible = true,
+                ExpansionChild = menu_RoomTypes
+            };
+
+            #endregion
+
+            #region icon_BuildWall
+
+            var menu_WallTypes = new ToolTray.Tray
+            {
+                ItemSource = new List<Gui.Widget>(),
+                OnShown = (widget) =>
+                {
+                    // Dynamically rebuild the tray
+                    widget.Clear();
+                    (widget as ToolTray.Tray).ItemSource = VoxelLibrary.GetTypes()
+                        .Where(voxel => voxel.IsBuildable && World.PlayerFaction.HasResources(voxel.ResourceToRelease))
+                        .Select(data => new ToolTray.Icon
+                        {
+                            Tooltip = "Build " + data.Name,
+                            Icon = new Gui.TileReference("voxels", data.ID),
+                            TextHorizontalAlign = HorizontalAlign.Right,
+                            TextVerticalAlign = VerticalAlign.Bottom,
+                            Text = Master.Faction.ListResources()[data.ResourceToRelease].NumResources.ToString(),
+                            TextColor = Color.White.ToVector4(),
+
+                            ExpansionChild = new BuildWallInfo
+                            {
+                                Data = data,
+                                Rect = new Rectangle(0, 0, 256, 128),
+                                Master = Master
+                            },
+                            OnClick = (sender, args) =>
+                            {
+                                Master.Faction.RoomBuilder.CurrentRoomData = null;
+                                Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+                                Master.Faction.WallBuilder.CurrentVoxelType = data;
+                                Master.Faction.CraftBuilder.IsEnabled = false;
+                                ChangeTool(GameMaster.ToolMode.Build);
+                                World.ShowToolPopup("Click and drag to build " + data.Name + " wall.");
+                                World.Tutorial("build blocks");
+                            },
+                            Hidden = false
+                        });
+                    widget.Construct();
+                    widget.Hidden = false;
+                    widget.Layout();
+                }
+            };
+
+            var icon_BuildWall = new ToolTray.Icon
+            {
+                Icon = null,
+                Font = "font",
+                KeepChildVisible = true,
+                ExpandChildWhenDisabled = true,
+                TextHorizontalAlign = HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Center,
+                Tooltip = "Place blocks",
+                Text = "Block",
+                TextColor = Color.White.ToVector4(),
+                ExpansionChild = menu_WallTypes
+            };
+
+            #endregion
+
+            #region icon_BuildCraft
+
+            var menu_CraftTypes = new Gui.Widgets.ToolTray.Tray
+            {
+                ItemSource = CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Object)
+                    .Select(data => new Gui.Widgets.ToolTray.Icon
+                    {
+                        Icon = data.Icon,
+                        Tooltip = "Craft " + data.Name,
+                        KeepChildVisible = true, // So the player can interact with the popup.
+                        ExpandChildWhenDisabled = true,
+                        ExpansionChild = new Gui.Widgets.BuildCraftInfo
+                        {
+                            Data = data,
+                            Rect = new Rectangle(0, 0, 256, 150),
+                            Master = Master,
+                            World = World,
+                            BuildAction = (sender, args) =>
+                            {
+                                var buildInfo = sender.Parent as Gui.Widgets.BuildCraftInfo;
+                                data.SelectedResources = buildInfo.GetSelectedResources();
+                                data.NumRepeats = buildInfo.GetNumRepeats();
+                                Master.Faction.RoomBuilder.CurrentRoomData = null;
+                                Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+                                Master.Faction.WallBuilder.CurrentVoxelType = null;
+                                Master.Faction.CraftBuilder.IsEnabled = true;
+                                Master.Faction.CraftBuilder.CurrentCraftType = data;
+                                ChangeTool(GameMaster.ToolMode.Build);
+                                World.ShowToolPopup("Click and drag to " + data.Verb + " " + data.Name);
+                            },
+                        },
+                        OnConstruct = (sender) =>
+                        {
+                            AddToolbarIcon(sender, () =>
+                                ((sender as Gui.Widgets.ToolTray.Icon).ExpansionChild as Gui.Widgets.BuildCraftInfo).CanBuild());
+                        }
+                    })
+            };
+
+            var icon_BuildCraft = new ToolTray.Icon
+            {
+                Icon = null,
+                Text = "Object",
+                TextColor = Vector4.One,
+                Tooltip = "Craft objects",
+                TextHorizontalAlign = HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Center,
+                KeepChildVisible = true,
+                MinimumSize = new Point(128, 32),
+                ExpandOnClick = true,
+                ExpansionChild = menu_CraftTypes
+            };
+
+            #endregion
+
+            #region icon_BuildResource
+
+            var menu_ResourceTypes = new ToolTray.Tray
+            {
+                Tooltip = "Craft resource",
+                ItemSource = CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Resource
+                    && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated) &&
+                    !ResourceLibrary.Resources[item.ResourceCreated].Tags.Contains(Resource.ResourceTags.Edible))
+                    .Select(data => new ToolTray.Icon
+                    {
+                        Icon = data.Icon,
+                        Tooltip = "Craft " + data.Name,
+                        KeepChildVisible = true, // So the player can interact with the popup.
+
+                        ExpansionChild = new Gui.Widgets.BuildCraftInfo
+                        {
+                            Data = data,
+                            Rect = new Rectangle(0, 0, 256, 150),
+                            Master = Master,
+                            World = World,
+                            BuildAction = (sender, args) =>
+                            {
+                                var buildInfo = (sender.Parent as Gui.Widgets.BuildCraftInfo);
+                                data.SelectedResources = buildInfo.GetSelectedResources();
+                                data.NumRepeats = buildInfo.GetNumRepeats();
+                                List<Task> assignments = new List<Task> { new CraftResourceTask(data) };
+                                var minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions,
+                                    GameMaster.ToolMode.Craft);
+                                if (minions.Count > 0)
+                                {
+                                    TaskManager.AssignTasks(assignments, minions);
+                                    World.ShowToolPopup(data.CurrentVerb + " " + data.NumRepeats + " " + data.Name);
+                                }
+                                World.Tutorial("build crafts");
+                            },
+                        },
+                        OnConstruct = (sender) =>
+                        {
+                            AddToolbarIcon(sender, () =>
+                                ((sender as Gui.Widgets.ToolTray.Icon).ExpansionChild as BuildCraftInfo).CanBuild());
+                        }
+                    })
+            };
+
+            var icon_BuildResource = new ToolTray.Icon
+            {
+                Text = "Res.",
+                TextColor = Vector4.One,
+                TextHorizontalAlign = HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Center,
+                KeepChildVisible = true,
+                ExpandOnClick = true,
+                ExpansionChild = menu_ResourceTypes
+            };
+
+            #endregion
+
+            #region icon_BuildTool
+
+            var menu_BuildTools = new ToolTray.Tray
+            {
+                ItemSource = new ToolTray.Icon[]
+                    {
+                        icon_BuildRoom,
+                        icon_BuildWall,
+                        icon_BuildCraft,
+                        icon_BuildResource
+                    }
+            };
+
+            var icon_BuildTool = new ToolTray.Icon
+            {
+                Icon = new Gui.TileReference("tool-icons", 2),
+                KeepChildVisible = true,
+                OnConstruct = (sender) =>
+                {
+                    AddToolbarIcon(sender, () => Master.Faction.SelectedMinions.Any(minion =>
+                        minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Build)));
+                    AddToolSelectIcon(GameMaster.ToolMode.Build, sender);
+                },
+                Tooltip = "Build",
+                ExpansionChild = menu_BuildTools
+            };
+
+            #endregion
+            
+            BottomToolBar = GuiRoot.RootItem.AddChild(new Gui.Widgets.ToolTray.Tray
             {
                 AutoLayout = Gui.AutoLayout.FloatBottom,
                 IsRootTray = true,
                 ItemSource = new Gui.Widget[]
                 {
-                    #region Select Tool
-                    new Gui.Widgets.ToolTray.Icon
-                    {
-                        Icon = new Gui.TileReference("tool-icons", 5),
-                        OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.SelectUnits),
-                        OnConstruct = (sender) =>
-                        {
-                            ToolbarItems.Add(new ToolbarItem(sender, () => true));
-                            AddToolSelectIcon(GameMaster.ToolMode.SelectUnits, sender);
-                        },
-                        Tooltip = "Select dwarves"
-                    },
-                    #endregion
-
-                    #region Build tools
-                    new Gui.Widgets.ToolTray.Icon
-                    {
-                        Icon = new Gui.TileReference("tool-icons", 2),
-                        KeepChildVisible = true,
-                        OnConstruct = (sender) =>
-                        {
-                            ToolbarItems.Add(new ToolbarItem(sender, () =>
-                            Master.Faction.SelectedMinions.Any(minion =>
-                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Build))));
-                            AddToolSelectIcon(GameMaster.ToolMode.Build, sender);
-                        },
-                        Tooltip = "Build",
-                        ExpansionChild = new Gui.Widgets.ToolTray.Tray
-                        {
-                            ItemSource = new Gui.Widgets.ToolTray.Icon[]
-                            {
-
-                    #region Build room tool
-                    new Gui.Widgets.ToolTray.Icon
-                    {
-                        TextColor = Vector4.One,
-                        Text = "Room",
-                        Tooltip = "Build rooms",
-                        TextHorizontalAlign = HorizontalAlign.Center,
-                        TextVerticalAlign = VerticalAlign.Center,
-                        KeepChildVisible = true,
-                        ExpansionChild = new Gui.Widgets.ToolTray.Tray
-                        {
-                            ItemSource = RoomLibrary.GetRoomTypes().Select(RoomLibrary.GetData)
-                                .Select(data => new Gui.Widgets.ToolTray.Icon
-                                {
-                                    Icon = data.NewIcon,
-                                    ExpandChildWhenDisabled = true,
-                                    ExpansionChild = new Gui.Widgets.BuildRoomInfo
-                                    {
-                                        Data = data,
-                                        Rect = new Rectangle(0,0,256,164),
-                                        Master = Master
-                                    },
-                                    OnClick = (sender, args) =>
-                                    {
-                                        Master.Faction.RoomBuilder.CurrentRoomData = data;
-                                        Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
-                                        Master.Faction.WallBuilder.CurrentVoxelType = null;
-                                        Master.Faction.CraftBuilder.IsEnabled = false;
-                                        ChangeTool(GameMaster.ToolMode.Build);
-                                        World.ShowToolPopup("Click and drag to build " + data.Name);
-                                        World.Tutorial("build rooms");
-                                    },
-                                    OnConstruct = (sender) =>
-                                    {
-                                        ToolbarItems.Add(new ToolbarItem(sender, () =>
-                                            ((sender as Gui.Widgets.ToolTray.Icon).ExpansionChild as Gui.Widgets.BuildRoomInfo).CanBuild()));
-                                    }
-                                })
-                        }
-                    },
-                    #endregion
-
-                    #region Build wall tool
-                    new Gui.Widgets.ToolTray.Icon
-                    {
-                        Icon = null,
-                        Font = "font",
-                        KeepChildVisible = true,
-                        ExpandChildWhenDisabled = true,
-                        TextHorizontalAlign = HorizontalAlign.Center,
-                        TextVerticalAlign = VerticalAlign.Center,
-                        Tooltip = "Place blocks",
-                        Text = "Block",
-                        TextColor = Color.White.ToVector4(),
-                        ExpansionChild = new Gui.Widgets.ToolTray.Tray
-                        {
-                                ItemSource =  new List<Gui.Widget>(),
-                                OnShown = (widget) =>
-                                {
-                                    widget.Clear();
-                                    ((Gui.Widgets.ToolTray.Tray) widget).ItemSource = VoxelLibrary.GetTypes()
-                                        .Where(voxel => voxel.IsBuildable && World.PlayerFaction.HasResources(voxel.ResourceToRelease))
-                                        .Select(data => new Gui.Widgets.ToolTray.Icon
-                                        {
-                                            Tooltip = "Build " + data.Name,
-                                            Icon = new Gui.TileReference("voxels", data.ID),
-                                            TextHorizontalAlign = HorizontalAlign.Right,
-                                            TextVerticalAlign = VerticalAlign.Bottom,
-                                            Text = Master.Faction.ListResources()[data.ResourceToRelease].NumResources.ToString(),
-                                            TextColor = Color.White.ToVector4(),
-          
-                                            ExpansionChild = new Gui.Widgets.BuildWallInfo
-                                            {
-                                                Data = data,
-                                                Rect = new Rectangle(0, 0, 256, 128),
-                                                Master = Master
-                                            },
-                                            OnClick = (sender, args) =>
-                                            {
-                                                Master.Faction.RoomBuilder.CurrentRoomData = null;
-                                                Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                                                Master.Faction.WallBuilder.CurrentVoxelType = data;
-                                                Master.Faction.CraftBuilder.IsEnabled = false;
-                                                ChangeTool(GameMaster.ToolMode.Build);
-                                                World.ShowToolPopup("Click and drag to build " + data.Name + " wall.");
-                                                World.Tutorial("build blocks");
-                                            },
-                                            Hidden = false
-                                        });
-                                    widget.Construct();
-                                    widget.Hidden = false;
-                                    widget.Layout();
-                                }
-                        
-                        }
-                    },
-                    #endregion
-
-                    #region Build craft
-                    new Gui.Widgets.ToolTray.Icon
-                    {
-                        Icon = null,
-                        Text = "Object",
-                        TextColor = Vector4.One,
-                        Tooltip = "Craft objects",
-                        TextHorizontalAlign = HorizontalAlign.Center,
-                        TextVerticalAlign = VerticalAlign.Center,
-                        KeepChildVisible = true,
-                        MinimumSize = new Point(128, 32),
-                        ExpandOnClick = true,
-                        ExpansionChild = new Gui.Widgets.ToolTray.Tray
-                        {
-                            ItemSource = CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Object)
-                                .Select(data => new Gui.Widgets.ToolTray.Icon
-                                {
-                                    Icon = data.Icon,
-                                    Tooltip = "Craft " + data.Name,
-                                    KeepChildVisible = true, // So the player can interact with the popup.
-                                    ExpandChildWhenDisabled = true,
-                                    ExpansionChild = new Gui.Widgets.BuildCraftInfo
-                                    {
-                                        Data = data,
-                                        Rect = new Rectangle(0,0,256,150),
-                                        Master = Master,
-                                        World = World,
-                                        BuildAction =  (sender, args) =>
-                                        {
-                                            var buildInfo = sender.Parent as Gui.Widgets.BuildCraftInfo;
-                                            data.SelectedResources = buildInfo.GetSelectedResources();
-                                            data.NumRepeats = buildInfo.GetNumRepeats();
-                                            Master.Faction.RoomBuilder.CurrentRoomData = null;
-                                            Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                                            Master.Faction.WallBuilder.CurrentVoxelType = null;
-                                            Master.Faction.CraftBuilder.IsEnabled = true;
-                                            Master.Faction.CraftBuilder.CurrentCraftType = data;
-                                            ChangeTool(GameMaster.ToolMode.Build);
-                                            World.ShowToolPopup("Click and drag to " + data.Verb + " " + data.Name);
-                                        },
-                                    },
-                                    OnConstruct = (sender) =>
-                                    {
-                                        ToolbarItems.Add(new ToolbarItem(sender, () =>
-                                            ((sender as Gui.Widgets.ToolTray.Icon).ExpansionChild as Gui.Widgets.BuildCraftInfo).CanBuild()));
-                                    }
-                                })
-                        }
-                    },
-                    #endregion
-
-                    #region Build Resource
-                    new Gui.Widgets.ToolTray.Icon
-                    {
-                        Text = "Res.",
-                        TextColor = Vector4.One,
-                        TextHorizontalAlign = HorizontalAlign.Center,
-                        TextVerticalAlign = VerticalAlign.Center,
-                        KeepChildVisible = true,
-                        ExpandOnClick = true,
-                        ExpansionChild = new Gui.Widgets.ToolTray.Tray
-                        {
-                            Tooltip = "Craft resource",
-                            ItemSource = CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Resource 
-                                && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated) &&
-                                !ResourceLibrary.Resources[item.ResourceCreated].Tags.Contains(Resource.ResourceTags.Edible))
-                                .Select(data => new Gui.Widgets.ToolTray.Icon
-                                {
-                                    // Todo: Need to get all the icons into one sheet.
-                                    Icon = data.Icon,
-                                    Tooltip = "Craft " + data.Name,
-                                    KeepChildVisible = true, // So the player can interact with the popup.
-                                    
-                                    ExpansionChild = new Gui.Widgets.BuildCraftInfo
-                                    {
-                                        Data = data,
-                                        Rect = new Rectangle(0,0,256,150),
-                                        Master = Master,
-                                        World = World,
-                                        BuildAction = (sender, args) =>
-                                        {
-                                            var buildInfo = (sender.Parent as Gui.Widgets.BuildCraftInfo);
-                                            data.SelectedResources = buildInfo.GetSelectedResources();
-                                            data.NumRepeats = buildInfo.GetNumRepeats();
-                                            List<Task> assignments = new List<Task> {new CraftResourceTask(data)};
-                                            var minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions,
-                                                GameMaster.ToolMode.Craft);
-                                            if (minions.Count > 0)
-                                            {
-                                                TaskManager.AssignTasks(assignments, minions);
-                                                World.ShowToolPopup(data.CurrentVerb + " " + data.NumRepeats + " " + data.Name);
-                                            }
-                                            World.Tutorial("build crafts");
-                                        },
-                                    },
-                                    OnConstruct = (sender) =>
-                                    {
-                                        ToolbarItems.Add(new ToolbarItem(sender, () =>
-                                            ((sender as Gui.Widgets.ToolTray.Icon).ExpansionChild as Gui.Widgets.BuildCraftInfo).CanBuild()));
-                                    }
-                                })
-                        }
-                    },
-                                #endregion
-
-                            }
-                        }
-                    },
-                    #endregion
+                    icon_SelectTool,
+                    icon_BuildTool,                    
 
                     #region Cook
                     new Gui.Widgets.ToolTray.Icon
@@ -1313,7 +1350,7 @@ namespace DwarfCorp.GameStates
                 }
             }) as Gui.Widgets.ToolTray.Tray;
 
-            BottomRightTray.Hidden = false;
+            BottomToolBar.Hidden = false;
             ChangeTool(GameMaster.ToolMode.SelectUnits);
 
             #endregion
@@ -1378,7 +1415,7 @@ namespace DwarfCorp.GameStates
 
                 if (index == 0 || Master.SelectedMinions.Count > 0)
                 {
-                    BottomRightTray.FindTopTray().Hotkey(index);
+                    BottomToolBar.FindTopTray().Hotkey(index);
                 }
             }
             else if (key == Keys.Escape)
