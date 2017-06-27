@@ -101,10 +101,10 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature creature)
         {
-            return new CraftItemAct(creature.AI, Item)
+            return new ForLoop(new CraftItemAct(creature.AI, Item)
             {
                 Noise = noise
-            };
+            }, this.Item.NumRepeats, false);
         }
 
         public override Task Clone()

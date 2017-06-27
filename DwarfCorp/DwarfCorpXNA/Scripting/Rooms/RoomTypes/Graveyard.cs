@@ -105,7 +105,14 @@ namespace DwarfCorp
 
         public override void OnBuilt()
         {
-            ZoneBodies.AddRange(Fence.CreateFences(Faction.World.ComponentManager, ContentPaths.Entities.DwarfObjects.fence, Designations, false));
+            foreach (
+                    var fence in
+                        Fence.CreateFences(World.ComponentManager, ContentPaths.Entities.DwarfObjects.fence, Designations,
+                            false))
+            {
+                ZoneBodies.Add(fence);
+                fence.Manager.RootComponent.AddChild(fence);
+            }
         }
 
     }
