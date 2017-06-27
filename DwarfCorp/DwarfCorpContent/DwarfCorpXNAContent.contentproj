@@ -1621,6 +1621,16 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>tutorial</Name>
     </None>
+    <Compile Include="Sky\cloud1.png">
+      <Name>cloud1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Sky\cloud2.png">
+      <Name>cloud2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Text\personality.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>personality</Name>

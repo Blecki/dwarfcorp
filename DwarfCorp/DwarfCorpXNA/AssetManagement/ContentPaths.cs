@@ -234,7 +234,8 @@ namespace DwarfCorp
             public static string heart = ProgramData.CreatePath("Particles", "heart");
             public static string fireball = ProgramData.CreatePath("Particles", "fireball");
             public static string raindrop = ProgramData.CreatePath("Particles", "raindrop");
-            public static string stormclouds = ProgramData.CreatePath("Sky", "stormclouds");
+            public static string cloud1 = ProgramData.CreatePath("Sky", "cloud1");
+            public static string cloud2 = ProgramData.CreatePath("Sky", "cloud2");
             public static string snow_particle = ProgramData.CreatePath("Particles", "snow_particle");
             public static string particles = ProgramData.CreatePath("Particles", "particles.json");
         }
