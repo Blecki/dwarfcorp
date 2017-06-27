@@ -88,7 +88,7 @@ namespace DwarfCorp
             {
                 Plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[plantToCreate].PlantToGenerate, Vox.Position + Vector3.Up * 1.5f);
                 Seedling seed = Plant.BecomeSeedling();
-                
+
                 Matrix original = Plant.LocalTransform;
                 original.Translation += Vector3.Down;
                 seed.AnimationQueue.Add(new EaseMotion(0.5f, original, Plant.LocalTransform.Translation));

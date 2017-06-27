@@ -17,6 +17,8 @@ namespace DwarfCorp.Gui.Widgets
         public WorldManager World;
         private List<Gui.Widgets.ComboBox> ResourceCombos = new List<Gui.Widgets.ComboBox>();
         private Gui.Widgets.ComboBox NumCombo = new ComboBox();
+        public Action<Gui.Widget, Gui.InputEventArgs> BuildAction = null;
+
         public override void Construct()
         {
             Border = "border-fancy";
@@ -82,34 +84,48 @@ namespace DwarfCorp.Gui.Widgets
                         ResourceCombos.Add(resourceSelector);
 
 
-                        var child2 = AddChild(new Widget()
+                        if (Data.Type == CraftItem.CraftType.Resource)
                         {
-                            AutoLayout = AutoLayout.DockTop,
-                            MinimumSize = new Point(100, 18)
-                        });
-
-                        child2.AddChild(new Gui.Widget()
-                        {
-                            Font = "font",
-                            Text = "Repeat ",
-                            AutoLayout = AutoLayout.DockLeft
-                        });
-                        NumCombo = child2.AddChild(new Gui.Widgets.ComboBox
-                        {
-                            Font = "font",
-                            Items = new List<string>()
+                            var child2 = AddChild(new Widget()
                             {
-                                "1x",
-                                "5x",
-                                "10x",
-                                "100x"
-                            },
-                            AutoLayout = AutoLayout.DockLeft,
-                            MinimumSize = new Point(64, 18),
-                            MaximumSize = new Point(64, 18)
-                        }) as Gui.Widgets.ComboBox ;
-                        NumCombo.SelectedIndex = 1;
+                                AutoLayout = AutoLayout.DockTop,
+                                MinimumSize = new Point(100, 18)
+                            });
 
+                            child2.AddChild(new Gui.Widget()
+                            {
+                                Font = "font",
+                                Text = "Repeat ",
+                                AutoLayout = AutoLayout.DockLeft
+                            });
+                            NumCombo = child2.AddChild(new Gui.Widgets.ComboBox
+                            {
+                                Font = "font",
+                                Items = new List<string>()
+                                {
+                                    "1x",
+                                    "5x",
+                                    "10x",
+                                    "100x"
+                                },
+                                AutoLayout = AutoLayout.DockLeft,
+                                MinimumSize = new Point(64, 18),
+                                MaximumSize = new Point(64, 18)
+                            }) as Gui.Widgets.ComboBox;
+                            NumCombo.SelectedIndex = 0;
+                        }
+
+                        if (BuildAction != null)
+                        {
+                            var buildButton = AddChild(new Button()
+                            {
+                                Text = "Craft",
+                                OnClick = BuildAction,
+                                AutoLayout = AutoLayout.DockTop,
+                                MinimumSize = new Point(64, 24),
+                                MaximumSize = new Point(64, 24)
+                            });
+                        }
                     }
                 }
 
@@ -119,6 +135,11 @@ namespace DwarfCorp.Gui.Widgets
 
         public int GetNumRepeats()
         {
+            if (NumCombo == null)
+            {
+                return 1;
+            }
+
             switch (NumCombo.SelectedIndex)
             {
                 case 0:

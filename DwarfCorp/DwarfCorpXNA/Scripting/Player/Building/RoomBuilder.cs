@@ -310,6 +310,10 @@ namespace DwarfCorp
                     ContentPaths.Entities.DwarfObjects.constructiontape,  
                     from o in order.VoxelOrders select o.Voxel, 
                     true));
+                foreach (var obj in order.WorkObjects)
+                {
+                    obj.Manager.RootComponent.AddChild(obj);
+                }
                 TaskManager.AssignTasks(new List<Task>()
                 {
                     new BuildRoomTask(order)
