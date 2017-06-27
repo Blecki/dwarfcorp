@@ -492,7 +492,6 @@ namespace DwarfCorp.GameStates
                 Transparent = true
             });
 
-
             #region Setup time display
             TimeLabel = GuiRoot.RootItem.AddChild(new Gui.Widget
             {
@@ -509,7 +508,6 @@ namespace DwarfCorp.GameStates
                 Tooltip = "Current time/date."
             });
             #endregion
-
 
             #region Minimap
 
