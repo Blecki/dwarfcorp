@@ -658,7 +658,7 @@ namespace DwarfCorp
         {
             Matrix oldView = Camera.ViewMatrix;
             Camera.ViewMatrix = view;
-            Sky.Render(time, GraphicsDevice, Camera, scale);
+            //Sky.Render(time, GraphicsDevice, Camera, scale);
             GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             Camera.ViewMatrix = oldView;
