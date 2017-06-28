@@ -233,7 +233,6 @@ namespace DwarfCorp
                     return 0.5f;
             }
 
-
             return 1.0f;
         }
 
@@ -250,7 +249,6 @@ namespace DwarfCorp
 
             foreach(VoxelChunk chunk in chunksToUpdate)
             {
-
                 if(!UpdateChunk(chunk) && !chunk.FirstWaterIter)
                 {
                     chunk.FirstWaterIter = false;
@@ -281,7 +279,7 @@ namespace DwarfCorp
             }
         }
 
-        public int CompareFlowVectors(Vector3 A, Vector3 B, Vector3 flow)
+        private int CompareFlowVectors(Vector3 A, Vector3 B, Vector3 flow)
         {
             if (A.Equals(B))
             {
@@ -328,6 +326,7 @@ namespace DwarfCorp
                 return false;
             }
             Voxel voxBelow = chunk.MakeVoxel(0, 0, 0);
+            Voxel neighbor = new Voxel();
 
             for (int i = 0; i < toUpdate; i++)
             {
@@ -354,12 +353,13 @@ namespace DwarfCorp
 
                 if (data.Water[idx].WaterLevel <= EvaporationLevel && MathFunctions.RandEvent(0.01f))
                 {
+                    /* Commented out as EvaporationLevel is already 1
                     if (data.Water[idx].WaterLevel > 1)
                     {
                         data.Water[idx].WaterLevel--;
                     }
                     else
-                    {
+                    {*/
                         data.Water[idx].WaterLevel = 0;
 
                         if (data.Water[idx].Type == LiquidType.Lava)
@@ -370,7 +370,7 @@ namespace DwarfCorp
                             chunk.ShouldRecalculateLighting = true;
                         }
                         data.Water[idx].Type = LiquidType.None;
-                    }
+                    //}
                     updateOccurred = true;
                 }
 
@@ -470,13 +470,26 @@ namespace DwarfCorp
                 // Now the only fluid left can spread.
                 // We spread to the manhattan neighbors
                 //Array.Sort(m_spreadNeighbors, (a, b) => CompareFlowVectors(a, b, data.Water[idx].FluidFlow));
-                m_spreadNeighbors.Shuffle();
+                //m_spreadNeighbors.Shuffle();
                 
-                Voxel neighbor = new Voxel();
-                foreach (Vector3 spread in m_spreadNeighbors)
+                for (int s = 0; s < m_spreadNeighbors.Length; s++)
                 {
-                    bool success = chunk.Manager.ChunkData.GetVoxel(chunk, worldPos + spread, ref neighbor);
+                    Vector3 spread = m_spreadNeighbors[s];
+                    Vector3 localPos = gridCoord + spread;
 
+                    // If neighbor is past chunk edge, use GetVoxel, otherwise, use GetVoxelLocal
+
+                    bool success = false;
+
+                    if (chunk.IsCellValid((int)Math.Floor(localPos.X), (int)Math.Floor(localPos.Y), (int)Math.Floor(localPos.Z)))
+                    {
+                        success = chunk.Manager.ChunkData.GetVoxelLocal(chunk, localPos, ref neighbor);
+                    }
+                    else
+                    {
+                        success = chunk.Manager.ChunkData.GetVoxel(chunk, worldPos + spread, ref neighbor);
+                    }
+                    
                     if (!success)
                     {
                         continue;
@@ -492,7 +505,9 @@ namespace DwarfCorp
                     if (neighborWater.WaterLevel >= data.Water[idx].WaterLevel)
                         continue;
 
-                    byte amountToMove = (byte)(Math.Min(maxWaterLevel - neighborWater.WaterLevel, data.Water[idx].WaterLevel) * GetSpreadRate(data.Water[idx].Type));
+                    byte amountToMove = (byte)(
+                        Math.Min(maxWaterLevel - neighborWater.WaterLevel, data.Water[idx].WaterLevel) * GetSpreadRate(data.Water[idx].Type)
+                    );
 
                     if (amountToMove == 0)
                     {
