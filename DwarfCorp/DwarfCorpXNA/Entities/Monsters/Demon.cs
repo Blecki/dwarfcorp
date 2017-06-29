@@ -120,7 +120,7 @@ namespace DwarfCorp
             };
 
 
-            MinimapIcon minimapIcon = Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 3, 0))) as MinimapIcon;
+            MinimapIcon minimapIcon = Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 3, 1))) as MinimapIcon;
 
 
 
