@@ -368,6 +368,18 @@ namespace DwarfCorp.GameStates
                 OnScroll = OnItemChanged,
                 Tooltip = "Volume of background music."
             })).GetChild(1) as HorizontalFloatSlider;
+
+            panel.AddChild(new Button()
+            {
+                Text = "Mixer...",
+                AutoLayout = AutoLayout.DockTop,
+                MaximumSize = new Point(128, 32),
+                OnClick = (sender, args) => panel.Root.ShowModalPopup(new AudioMixerWidget()
+                {
+                    Border = "border-fancy",
+                    Rect = GuiRoot.RenderData.VirtualScreen
+                })
+            });
         }
 
         private void CreateKeysTab()

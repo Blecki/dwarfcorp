@@ -136,7 +136,7 @@ namespace DwarfCorp
             // Add AI
             AI = Physics.AddChild(new PacingCreatureAI(Manager, "Deer AI", Sensors, PlanService)) as CreatureAI;
 
-            Attacks = new List<Attack>{new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.pick, ContentPaths.Effects.hit)};
+            Attacks = new List<Attack>{new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.Oscar.sfx_oc_deer_attack, ContentPaths.Effects.hit)};
 
             Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.BoundingBoxPos)
             {
@@ -166,8 +166,13 @@ namespace DwarfCorp
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 1,
-                BoxTriggerTimes = 10
+                BoxTriggerTimes = 10,
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_oc_deer_hurt_1
             });
+
+
+            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_deer_hurt_1 };
+            NoiseMaker.Noises["Chirp"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_deer_neutral_1, ContentPaths.Audio.Oscar.sfx_oc_deer_neutral_2 };
 
             // The bird is flammable, and can die when exposed to fire.
             Physics.AddChild(new Flammable(Manager, "Flames"));

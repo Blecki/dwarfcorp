@@ -56,7 +56,7 @@ namespace DwarfCorp
                     // It is located at a position passed in as an argument
                     Matrix.CreateTranslation(position),
                     // It has a size of 0.25 blocks
-                    new Vector3(0.375f, 0.375f, 0.375f),
+                    new Vector3(0.25f, 0.25f, 0.25f),
                     // Its bounding box is located in its center
                     new Vector3(0.0f, 0.0f, 0.0f),
                     //It has a mass of 1, a moment of intertia of 1, and very small friction/restitution
@@ -114,7 +114,7 @@ namespace DwarfCorp
             AI = Physics.AddChild(new PacingCreatureAI(Manager, "Chicken AI", Sensors, PlanService)) as CreatureAI;
 
             // The bird can peck at its enemies (0.1 damage)
-            Attacks = new List<Attack> { new Attack("Peck", 0.01f, 2.0f, 1.0f, SoundSource.Create(ContentPaths.Audio.bunny), ContentPaths.Effects.pierce) };
+            Attacks = new List<Attack> { new Attack("Peck", 0.01f, 2.0f, 1.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_chicken_attack), ContentPaths.Effects.pierce) {Mode = Attack.AttackMode.Dogfight} };
 
 
             // The bird can hold one item at a time in its inventory
@@ -168,8 +168,17 @@ namespace DwarfCorp
             };
 
 
-            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.bunny };
+            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_chicken_hurt_1, ContentPaths.Audio.Oscar.sfx_oc_chicken_hurt_2 };
+            NoiseMaker.Noises["Chirp"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_chicken_neutral_1, ContentPaths.Audio.Oscar.sfx_oc_chicken_neutral_2};
+            NoiseMaker.Noises["Lay Egg"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_chicken_lay_egg};
             Species = "Chicken";
+
+            var deathParticleTrigger = Parent.EnumerateAll().OfType<ParticleTrigger>().FirstOrDefault();
+            if (deathParticleTrigger != null)
+            {
+                deathParticleTrigger.SoundToPlay = NoiseMaker.Noises["Hurt"][0];
+            }
+
         }
     }
 }

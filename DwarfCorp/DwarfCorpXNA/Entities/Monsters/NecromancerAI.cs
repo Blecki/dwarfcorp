@@ -95,7 +95,7 @@ namespace DwarfCorp
             animatePosition.Translation = animatePosition.Translation - new Vector3(0, 1, 0);
             skeleton.Sprite.AnimationQueue.Add(new EaseMotion(1.0f, animatePosition, skeleton.Sprite.LocalTransform.Translation));
             Manager.World.ParticleManager.Trigger("green_flame", pos, Color.White, 10);
-            SoundManager.PlaySound(ContentPaths.Audio.tinkle, pos, true);
+            Manager.World.ParticleManager.Trigger("dirt_particle", pos, Color.White, 10);
         }
 
         public IEnumerable<Act.Status> SummonSkeleton(Body grave)
@@ -179,6 +179,7 @@ namespace DwarfCorp
                 Skeletons.RemoveAll(skeleton => skeleton.IsDead);
                 if (SummonTimer.HasTriggered && Skeletons.Count < MaxSkeletons)
                 {
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_ic_necromancer_summon, Position, true);
                     SummonTimer.Reset(SummonTimer.TargetTimeSeconds);
                     for (int i = Skeletons.Count; i < MaxSkeletons; i+=2)
                     {

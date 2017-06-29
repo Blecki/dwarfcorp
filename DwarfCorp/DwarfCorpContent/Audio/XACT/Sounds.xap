@@ -16,8 +16,8 @@ Global Settings
     Header File = Sounds.h;
     Exclude Category Names = 0;
     Exclude Variable Names = 0;
-    Last Modified Low = 1410529629;
-    Last Modified High = 30596430;
+    Last Modified Low = 4133027202;
+    Last Modified High = 30601511;
 
     Category
     {
@@ -264,7 +264,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = Sound::0d156a55-eca9-428f-b842-302033ac37d5;
+            Name = Sound::1357c8fd-7176-41b8-bca7-5bcaecc9f9a4;
             Property = 0;
             Sound = 1;
             Line Color = 4281237832;
@@ -325,7 +325,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = Sound::016ca896-9c6d-4288-bc3b-584cbded1f68;
+            Name = Sound::85ce96af-283a-420e-98ba-ba94269c52c2;
             Property = 0;
             Sound = 1;
             Line Color = 4281571480;
@@ -372,7 +372,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::1e85e79f-f15b-4d97-b5c4-0070c6849c0f;
+            Name = 1::c67791a0-191d-49c7-b041-0399559531f4;
             Property = 0;
             Sound = 0;
             Line Color = 4290610889;
@@ -405,7 +405,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::9c3cad29-4dda-411a-9223-955e6ffa2385;
+            Name = 1::6377adc9-e1e1-410d-bafe-7543bdc29233;
             Property = 0;
             Sound = 0;
             Line Color = 4289091284;
@@ -438,7 +438,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::596b5b95-2517-4b54-a954-25fa02133ded;
+            Name = 1::7091dbc0-dd75-4ab9-ae16-48ade0eb1e72;
             Property = 0;
             Sound = 0;
             Line Color = 4286991177;
@@ -461,6 +461,39 @@ Global Settings
                 X = 36.000000;
                 Y = 35.294117;
                 Curve = 0;
+            }
+        }
+    }
+
+    RPC
+    {
+        Name = MediumFadeIn;
+
+        RPC Curve
+        {
+            Name = 1::d79e9e03-3754-4d89-81aa-ce9e445599ee;
+            Property = 0;
+            Sound = 0;
+            Line Color = 4279643065;
+            Viewable = 1;
+
+            Variable Entry
+            {
+                Name = AttackTime;
+            }
+
+            RPC Point
+            {
+                X = 0.000000;
+                Y = -9600.000000;
+                Curve = 2;
+            }
+
+            RPC Point
+            {
+                X = 1071.000000;
+                Y = -35.294117;
+                Curve = 2;
             }
         }
     }
@@ -490,10 +523,10 @@ Wave Bank
     Compression Preset Name = Compressed;
     Xbox Bank Last Modified Low = 0;
     Xbox Bank Last Modified High = 0;
-    PC Bank Last Modified Low = 1411863306;
-    PC Bank Last Modified High = 30596430;
-    Bank Last Revised Low = 1039082826;
-    Bank Last Revised High = 30596430;
+    PC Bank Last Modified Low = 4133137271;
+    PC Bank Last Modified High = 30601511;
+    Bank Last Revised Low = 3447580484;
+    Bank Last Revised High = 30601511;
 
     Wave
     {
@@ -701,6 +734,75 @@ Wave Bank
             Last Modified High = 30596429;
         }
     }
+
+    Wave
+    {
+        Name = mx_molemen_loop_v1;
+        File = ..\..\Music\mx_molemen_loop_v1.wav;
+        Build Settings Last Modified Low = 2169282951;
+        Build Settings Last Modified High = 30601337;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 80;
+            Play Region Length = 19874400;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 1184277422;
+            Last Modified High = 30601337;
+        }
+    }
+
+    Wave
+    {
+        Name = mx_elves_loop_v1;
+        File = ..\..\Music\mx_elves_loop_v1.wav;
+        Build Settings Last Modified Low = 2204934719;
+        Build Settings Last Modified High = 30601337;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 80;
+            Play Region Length = 10054800;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 1166789537;
+            Last Modified High = 30601337;
+        }
+    }
+
+    Wave
+    {
+        Name = mx_undead_loop_v1;
+        File = ..\..\Music\mx_undead_loop_v1.wav;
+        Build Settings Last Modified Low = 3281403581;
+        Build Settings Last Modified High = 30601511;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 80;
+            Play Region Length = 13189292;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 2941748761;
+            Last Modified High = 30601511;
+        }
+    }
 }
 
 Sound Bank
@@ -710,8 +812,6 @@ Sound Bank
     Windows File = Win\SoundBank.xsb;
     Xbox Bank Path Edited = 0;
     Windows Bank Path Edited = 0;
-    Bank Last Modified Low = 1574499175;
-    Bank Last Modified High = 30596430;
     Header Last Modified High = 0;
     Header Last Modified Low = 0;
 
@@ -997,13 +1097,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = FadeOut;
-                RPC Curve Name = 1::1e85e79f-f15b-4d97-b5c4-0070c6849c0f;
+                RPC Curve Name = 1::c67791a0-191d-49c7-b041-0399559531f4;
             }
 
             RPC Curve Entry
             {
                 RPC Name = ShortFadeIn;
-                RPC Curve Name = 1::596b5b95-2517-4b54-a954-25fa02133ded;
+                RPC Curve Name = 1::7091dbc0-dd75-4ab9-ae16-48ade0eb1e72;
             }
         }
     }
@@ -1114,13 +1214,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = FadeOut;
-                RPC Curve Name = 1::1e85e79f-f15b-4d97-b5c4-0070c6849c0f;
+                RPC Curve Name = 1::c67791a0-191d-49c7-b041-0399559531f4;
             }
 
             RPC Curve Entry
             {
                 RPC Name = FadeIn;
-                RPC Curve Name = 1::9c3cad29-4dda-411a-9223-955e6ffa2385;
+                RPC Curve Name = 1::6377adc9-e1e1-410d-bafe-7543bdc29233;
             }
         }
     }
@@ -1169,6 +1269,205 @@ Sound Bank
                     Weight = 255;
                     Weight Min = 0;
                 }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = molemen;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Music;
+        }
+
+        RPC Entry
+        {
+            RPC Name = FadeOut;
+        }
+
+        RPC Entry
+        {
+            RPC Name = MediumFadeIn;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Loop Count = 255;
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = WaveBank;
+                    Bank Index = 0;
+                    Entry Name = mx_molemen_loop_v1;
+                    Entry Index = 9;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = FadeOut;
+                RPC Curve Name = 1::c67791a0-191d-49c7-b041-0399559531f4;
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = MediumFadeIn;
+                RPC Curve Name = 1::d79e9e03-3754-4d89-81aa-ce9e445599ee;
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = elf;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Music;
+        }
+
+        RPC Entry
+        {
+            RPC Name = FadeOut;
+        }
+
+        RPC Entry
+        {
+            RPC Name = MediumFadeIn;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Loop Count = 255;
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = WaveBank;
+                    Bank Index = 0;
+                    Entry Name = mx_elves_loop_v1;
+                    Entry Index = 10;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = FadeOut;
+                RPC Curve Name = 1::c67791a0-191d-49c7-b041-0399559531f4;
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = MediumFadeIn;
+                RPC Curve Name = 1::d79e9e03-3754-4d89-81aa-ce9e445599ee;
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = undead;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Music;
+        }
+
+        RPC Entry
+        {
+            RPC Name = MediumFadeIn;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Loop Count = 255;
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = WaveBank;
+                    Bank Index = 0;
+                    Entry Name = mx_undead_loop_v1;
+                    Entry Index = 11;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = MediumFadeIn;
+                RPC Curve Name = 1::d79e9e03-3754-4d89-81aa-ce9e445599ee;
             }
         }
     }
@@ -1401,6 +1700,92 @@ Sound Bank
                 Fade Out = 0;
                 Crossfade Type = 0;
             }
+        }
+    }
+
+    Cue
+    {
+        Name = molemen;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = molemen;
+            Index = 7;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 1;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Cue
+    {
+        Name = elf;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = elf;
+            Index = 8;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 1;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Cue
+    {
+        Name = undead;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = undead;
+            Index = 9;
+            Weight Min = 0;
+            Weight Max = 255;
         }
     }
 }

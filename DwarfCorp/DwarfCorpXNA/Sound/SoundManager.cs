@@ -32,6 +32,7 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
@@ -160,6 +161,8 @@ namespace DwarfCorp
         public Dictionary<string, MusicTrack> Tracks = new Dictionary<string, MusicTrack>();
         private string currentTrack = null;
 
+        public string CurrentTrack { get { return currentTrack; } }
+
         public FancyMusic()
         {
             
@@ -198,6 +201,38 @@ namespace DwarfCorp
     }
 
     /// <summary>
+    /// User controlled gains on volumes for SFX.
+    /// </summary>
+    public class SFXMixer
+    {
+        public struct Levels
+        {
+            public float Volume;
+            public float RandomPitch;
+        }
+        public Dictionary<string, Levels> Gains { get; set; }
+        public float SFXScale = 0.5f;
+        public float DopplerScale = 0.5f;
+        public Levels GetOrCreateLevels(string asset)
+        {
+            Levels levels;
+            if (!Gains.TryGetValue(asset, out levels))
+            {
+                levels.Volume = 1.0f;
+                levels.RandomPitch = 0.1f;
+                Gains.Add(asset, levels);
+            }
+
+            return levels;
+        }
+
+        public void SetLevels(string asset, Levels levels)
+        {
+            Gains[asset] = levels;
+        }
+    }
+
+    /// <summary>
     /// Manages and creates 3D sounds.
     /// </summary>
     public class SoundManager
@@ -217,6 +252,8 @@ namespace DwarfCorp
         public static FancyMusic CurrentMusic = null;
         public static List<SoundEffectInstance> ActiveSounds2D = new List<SoundEffectInstance>();
         public static bool HasAudioDevice = true;
+        public static SFXMixer Mixer = null;
+
         public static void LoadDefaultSounds()
         {
             try
@@ -231,41 +268,69 @@ namespace DwarfCorp
                     ContentPaths.Audio.river
                 };
 
-                    foreach (string name in defaultSounds)
-                    {
-                        SoundEffect effect = Content.Load<SoundEffect>(name);
-                        EffectLibrary[name] = effect;
-                    }
-                    SoundEffect.DistanceScale = 0.5f;
-                    //SoundEffect.DopplerScale = 0.1f;
-                    AudioEngine = new AudioEngine("Content\\Audio\\XACT\\Win\\Sounds.xgs");
-                    SoundBank = new SoundBank(AudioEngine, "Content\\Audio\\XACT\\Win\\SoundBank.xsb");
-                    WaveBank = new WaveBank(AudioEngine, "Content\\Audio\\XACT\\Win\\WaveBank.xwb");
-
-                    CurrentMusic = new FancyMusic();
-                    CurrentMusic.AddTrack("main_theme_day", new MusicTrack(SoundBank)
-                    {
-                        Intro = "music_1_intro",
-                        Loop = "music_1_loop",
-                        PlayLoopOverIntro = false
-                    });
-                    CurrentMusic.AddTrack("main_theme_night", new MusicTrack(SoundBank)
-                    {
-                        Intro = "music_1_night_intro",
-                        Loop = "music_1_night",
-                        PlayLoopOverIntro = true
-                    });
-                    CurrentMusic.AddTrack("menu_music", new MusicTrack(SoundBank)
-                    {
-                        Loop = "music_menu",
-                        PlayLoopOverIntro = true
-                    });
-
-                foreach (var cue in ActiveCues)
+                foreach (string name in defaultSounds)
                 {
-                    cue.Value.Stop(AudioStopOptions.Immediate);
+                    SoundEffect effect = Content.Load<SoundEffect>(name);
+                    EffectLibrary[name] = effect;
                 }
-                ActiveCues.Clear();
+                try
+                {
+                    Mixer = FileUtils.LoadJson<SFXMixer>(ContentPaths.mixer, false);
+                }
+                catch (FileNotFoundException exception)
+                {
+                    Console.Out.WriteLine("Mixer file didn't exist. Creating a new mixer.");
+                    Mixer = new SFXMixer()
+                    {
+                        Gains = new Dictionary<string, SFXMixer.Levels>()
+                    };
+                }
+                SoundEffect.DistanceScale = 0.5f;
+                //SoundEffect.DopplerScale = 0.1f;
+                AudioEngine = new AudioEngine("Content\\Audio\\XACT\\Win\\Sounds.xgs");
+                SoundBank = new SoundBank(AudioEngine, "Content\\Audio\\XACT\\Win\\SoundBank.xsb");
+                WaveBank = new WaveBank(AudioEngine, "Content\\Audio\\XACT\\Win\\WaveBank.xwb");
+
+                CurrentMusic = new FancyMusic();
+                CurrentMusic.AddTrack("main_theme_day", new MusicTrack(SoundBank)
+                {
+                    Intro = "music_1_intro",
+                    Loop = "music_1_loop",
+                    PlayLoopOverIntro = false
+                });
+                CurrentMusic.AddTrack("main_theme_night", new MusicTrack(SoundBank)
+                {
+                    Intro = "music_1_night_intro",
+                    Loop = "music_1_night",
+                    PlayLoopOverIntro = true
+                });
+                CurrentMusic.AddTrack("menu_music", new MusicTrack(SoundBank)
+                {
+                    Loop = "music_menu",
+                    PlayLoopOverIntro = true
+                });
+                CurrentMusic.AddTrack("molemen", new MusicTrack(SoundBank)
+                {
+                    Loop = "molemen",
+                    PlayLoopOverIntro = true
+                });
+                CurrentMusic.AddTrack("elf", new MusicTrack(SoundBank)
+                {
+                    Loop = "elf",
+                    PlayLoopOverIntro = true
+                });
+                CurrentMusic.AddTrack("undead", new MusicTrack(SoundBank)
+                {
+                    Loop = "undead",
+                    PlayLoopOverIntro = true
+                });
+
+            foreach (var cue in ActiveCues)
+            {
+                cue.Value.Stop(AudioStopOptions.Immediate);
+            }
+            ActiveCues.Clear();
+
             }
             catch (NoAudioHardwareException exception)
             {
@@ -369,13 +434,14 @@ namespace DwarfCorp
                     HasStarted = false,
                     Name = name
                 };
+                SFXMixer.Levels levels = Mixer.GetOrCreateLevels(name);
                 sound.EffectInstance.IsLooped = false;
-                sound.VolumeMultiplier = volume;
+                sound.VolumeMultiplier = volume * levels.Volume;
 
 
                 if (randomPitch)
                 {
-                    sound.EffectInstance.Pitch = MathFunctions.Clamp((float)(MathFunctions.Random.NextDouble() * 1.0f - 0.5f) + pitch, -1.0f, 1.0f);
+                    sound.EffectInstance.Pitch = MathFunctions.Clamp((float)(MathFunctions.Random.NextDouble() * 1.0f - 0.5f) * levels.RandomPitch + pitch, -1.0f, 1.0f);
                 }
                 ActiveSounds.Add(sound);
 
@@ -404,8 +470,9 @@ namespace DwarfCorp
             {
                 effect = EffectLibrary[name];
             }
+            SFXMixer.Levels levels = Mixer.GetOrCreateLevels(name);
             SoundEffectInstance instance = effect.CreateInstance();
-            instance.Volume = GameSettings.Default.MasterVolume*GameSettings.Default.SoundEffectVolume*volume; 
+            instance.Volume = GameSettings.Default.MasterVolume*GameSettings.Default.SoundEffectVolume*volume*levels.Volume; 
             instance.Play();
             ActiveSounds2D.Add(instance);
             return instance;

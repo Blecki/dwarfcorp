@@ -108,7 +108,7 @@ namespace DwarfCorp
             AI = Physics.AddChild(new PacingCreatureAI(Manager, "Rabbit AI", Sensors, PlanService)) as CreatureAI;
 
             // The bird can peck at its enemies (0.1 damage)
-            Attacks = new List<Attack> { new Attack("Bite", 0.01f, 2.0f, 1.0f, SoundSource.Create(ContentPaths.Audio.frog), ContentPaths.Effects.bite) };
+            Attacks = new List<Attack> { new Attack("Bite", 0.01f, 2.0f, 1.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_frog_attack), ContentPaths.Effects.bite) };
 
 
             // The bird can hold one item at a time in its inventory
@@ -143,7 +143,8 @@ namespace DwarfCorp
             Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
-                TriggerAmount = 1
+                TriggerAmount = 1,
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_oc_frog_hurt_1
             });
 
             // The bird is flammable, and can die when exposed to fire.
@@ -162,8 +163,9 @@ namespace DwarfCorp
             };
 
 
-            NoiseMaker.Noises["Idle"] = new List<string>() { ContentPaths.Audio.frog };
-            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.frog };
+            NoiseMaker.Noises["Idle"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_frog_neutral_1, ContentPaths.Audio.Oscar.sfx_oc_frog_neutral_2};
+            NoiseMaker.Noises["Chrip"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_frog_neutral_1, ContentPaths.Audio.Oscar.sfx_oc_frog_neutral_2 };
+            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_frog_hurt_1, ContentPaths.Audio.Oscar.sfx_oc_frog_hurt_2 };
             Species = "Frog";
             CanReproduce = true;
             BabyType = "Frog";

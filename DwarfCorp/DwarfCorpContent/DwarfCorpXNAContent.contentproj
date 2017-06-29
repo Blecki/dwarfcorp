@@ -1571,6 +1571,111 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
+    <Compile Include="Audio\oscar\sfx_oc_chicken_attack.wav">
+      <Name>sfx_oc_chicken_attack</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_oc_chicken_hurt_1.wav">
+      <Name>sfx_oc_chicken_hurt_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_oc_chicken_hurt_2.wav">
+      <Name>sfx_oc_chicken_hurt_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_oc_chicken_lay_egg.wav">
+      <Name>sfx_oc_chicken_lay_egg</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_oc_chicken_neutral_1.wav">
+      <Name>sfx_oc_chicken_neutral_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_oc_chicken_neutral_2.wav">
+      <Name>sfx_oc_chicken_neutral_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_oc_deer_attack.wav">
+      <Name>sfx_oc_deer_attack</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_oc_deer_hurt_1.wav">
+      <Name>sfx_oc_deer_hurt_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_oc_deer_neutral_1.wav">
+      <Name>sfx_oc_deer_neutral_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_oc_deer_neutral_2.wav">
+      <Name>sfx_oc_deer_neutral_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_oc_frog_attack.wav">
+      <Name>sfx_oc_frog_attack</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_oc_frog_hurt_1.wav">
+      <Name>sfx_oc_frog_hurt_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_oc_frog_hurt_2.wav">
+      <Name>sfx_oc_frog_hurt_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_oc_frog_neutral_1.wav">
+      <Name>sfx_oc_frog_neutral_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_oc_frog_neutral_2.wav">
+      <Name>sfx_oc_frog_neutral_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_oc_rabbit_attack.wav">
+      <Name>sfx_oc_rabbit_attack</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_oc_rabbit_hurt_1.wav">
+      <Name>sfx_oc_rabbit_hurt_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_oc_rabbit_hurt_2.wav">
+      <Name>sfx_oc_rabbit_hurt_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_oc_rabbit_neutral_1.wav">
+      <Name>sfx_oc_rabbit_neutral_1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_oc_rabbit_neutral_2.wav">
+      <Name>sfx_oc_rabbit_neutral_2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_ic_necromancer_summon.wav">
+      <Name>sfx_ic_necromancer_summon</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
     <Content Include="Audio\XACT\Win\SoundBank.xsb">
       <Name>SoundBank</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

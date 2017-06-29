@@ -307,7 +307,6 @@ namespace DwarfCorp
                     natives.TradeEnvoys.Add(envoy);
                     world.MakeAnnouncement(String.Format("Trade envoy from {0} has arrived!", natives.Name),
                        creatures.First().ZoomToMe, ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
-                    world.Tutorial("trade");
                 }
             }
             else
@@ -348,6 +347,12 @@ namespace DwarfCorp
                         natives.Name), creatures.First().ZoomToMe, ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
                     world.Tutorial("trade");
                 }
+            }
+
+            world.Tutorial("trade");
+            if (!String.IsNullOrEmpty(natives.Race.TradeMusic))
+            {
+                SoundManager.PlayMusic(natives.Race.TradeMusic);
             }
             return envoy;
         }
@@ -597,7 +602,13 @@ namespace DwarfCorp
                
             }
 
+            bool hadFactions = faction.TradeEnvoys.Count > 0;
             faction.TradeEnvoys.RemoveAll(t => t.ShouldRemove);
+
+            if (hadFactions && faction.TradeEnvoys.Count == 0)
+            {
+                SoundManager.PlayMusic("main_theme_day");
+            }
         }
 
         public void UpdateWarParties(Faction faction)
