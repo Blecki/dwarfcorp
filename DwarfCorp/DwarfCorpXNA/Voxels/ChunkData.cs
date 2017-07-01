@@ -572,13 +572,6 @@ namespace DwarfCorp
             return chunk.GetVoxelAtValidWorldLocation(worldLocation, ref newReference);
         }
 
-        public bool GetVoxelLocal(VoxelChunk chunk, Vector3 grid, ref Voxel newReference)
-        {
-            newReference.Chunk = chunk;
-            newReference.GridPosition = grid;
-            return true;
-        }
-
         public Point3 GetChunkID(Vector3 origin)
         {
             return RoundToChunkCoordsPoint3(origin);

@@ -353,24 +353,17 @@ namespace DwarfCorp
 
                 if (data.Water[idx].WaterLevel <= EvaporationLevel && MathFunctions.RandEvent(0.01f))
                 {
-                    /* Commented out as EvaporationLevel is already 1
-                    if (data.Water[idx].WaterLevel > 1)
-                    {
-                        data.Water[idx].WaterLevel--;
-                    }
-                    else
-                    {*/
-                        data.Water[idx].WaterLevel = 0;
+                    data.Water[idx].WaterLevel = 0;
 
-                        if (data.Water[idx].Type == LiquidType.Lava)
-                        {
-                            data.Types[idx] = (byte)VoxelLibrary.GetVoxelType("Stone").ID;
-                            data.Health[idx] = (byte)VoxelLibrary.GetVoxelType("Stone").StartingHealth;
-                            chunk.ShouldRebuild = true;
-                            chunk.ShouldRecalculateLighting = true;
-                        }
-                        data.Water[idx].Type = LiquidType.None;
-                    //}
+                    if (data.Water[idx].Type == LiquidType.Lava)
+                    {
+                        data.Types[idx] = (byte)VoxelLibrary.GetVoxelType("Stone").ID;
+                        data.Health[idx] = (byte)VoxelLibrary.GetVoxelType("Stone").StartingHealth;
+                        chunk.ShouldRebuild = true;
+                        chunk.ShouldRecalculateLighting = true;
+                    }
+                    data.Water[idx].Type = LiquidType.None;
+
                     updateOccurred = true;
                 }
 
@@ -414,6 +407,7 @@ namespace DwarfCorp
                     if (cellBelow.WaterLevel < 1)
                     {
                         CreateSplash(worldPos, data.Water[idx].Type);
+
                         cellBelow.WaterLevel = data.Water[idx].WaterLevel;
                         if (cellBelow.Type == LiquidType.None)
                         {
@@ -483,19 +477,16 @@ namespace DwarfCorp
 
                     if (chunk.IsCellValid((int)Math.Floor(localPos.X), (int)Math.Floor(localPos.Y), (int)Math.Floor(localPos.Z)))
                     {
-                        success = chunk.Manager.ChunkData.GetVoxelLocal(chunk, localPos, ref neighbor);
+                        neighbor.Chunk = chunk;
+                        neighbor.GridPosition = localPos;
+                        success = true;
                     }
                     else
                     {
                         success = chunk.Manager.ChunkData.GetVoxel(chunk, worldPos + spread, ref neighbor);
                     }
                     
-                    if (!success)
-                    {
-                        continue;
-                    }
-
-                    if (!neighbor.IsEmpty)
+                    if (!success || !neighbor.IsEmpty)
                     {
                         continue;
                     }
