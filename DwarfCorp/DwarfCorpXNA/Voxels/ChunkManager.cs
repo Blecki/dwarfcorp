@@ -79,7 +79,7 @@ namespace DwarfCorp
 
         private readonly Timer generateChunksTimer = new Timer(0.5f, false, Timer.TimerMode.Real);
         private readonly Timer visibilityChunksTimer = new Timer(0.03f, false, Timer.TimerMode.Real);
-        private readonly Timer waterUpdateTimer = new Timer(0.1f, false, Timer.TimerMode.Real);
+        private readonly Timer waterUpdateTimer = new Timer(0.15f, false, Timer.TimerMode.Real);
 
         public BoundingBox Bounds { get; set; }
 
@@ -192,7 +192,7 @@ namespace DwarfCorp
 
             WorldSize = new Point3(maxChunksX, maxChunksY, maxChunksZ);
 
-            Vector3 maxBounds = new Vector3(maxChunksX * chunkSizeX * 0.5f, maxChunksY * chunkSizeY * 0.5f, maxChunksZ * chunkSizeZ * 0.5f);
+            Vector3 maxBounds = new Vector3(maxChunksX * chunkSizeX / 2.0f, maxChunksY * chunkSizeY / 2.0f, maxChunksZ * chunkSizeZ / 2.0f);
             Vector3 minBounds = -maxBounds;
             Bounds = new BoundingBox(minBounds, maxBounds);
         }
@@ -378,33 +378,32 @@ namespace DwarfCorp
                             }
                         }
 
+                        foreach (
+                            VoxelChunk chunk in
+                                toRebuild.Select(chunkPair => chunkPair.Value)
+                                    .Where(chunk => chunk.ShouldRecalculateLighting))
+                        {
+                            chunk.CalculateGlobalLight();
+                        }
 
-                            foreach (
-                                VoxelChunk chunk in
-                                    toRebuild.Select(chunkPair => chunkPair.Value)
-                                        .Where(chunk => chunk.ShouldRecalculateLighting))
+                        foreach (VoxelChunk chunk in toRebuild.Select(chunkPair => chunkPair.Value))
+                        {
+                            if (chunk.RebuildPending && chunk.ShouldRebuild)
                             {
-                                chunk.CalculateGlobalLight();
+                                if (chunk.ShouldRecalculateLighting)
+                                {
+                                    chunk.CalculateVertexLighting();
+                                }
+                                chunk.Rebuild(Graphics);
+                                chunk.ShouldRebuild = false;
+                                chunk.RebuildPending = false;
+                                chunk.ShouldRecalculateLighting = false;
                             }
-
-                            foreach (VoxelChunk chunk in toRebuild.Select(chunkPair => chunkPair.Value))
+                            else
                             {
-                                if (chunk.RebuildPending && chunk.ShouldRebuild)
-                                {
-                                    if (chunk.ShouldRecalculateLighting)
-                                    {
-                                        chunk.CalculateVertexLighting();
-                                    }
-                                    chunk.Rebuild(Graphics);
-                                    chunk.ShouldRebuild = false;
-                                    chunk.RebuildPending = false;
-                                    chunk.ShouldRecalculateLighting = false;
-                                }
-                                else
-                                {
-                                    chunk.RebuildPending = false;
-                                }
+                                chunk.RebuildPending = false;
                             }
+                        }
                         
                     }
                     GamePerformance.Instance.PostThreadLoop(GamePerformance.ThreadIdentifier.RebuildVoxels);

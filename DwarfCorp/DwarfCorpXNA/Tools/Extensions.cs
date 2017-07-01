@@ -75,10 +75,29 @@ namespace DwarfCorp
         {
             Random rng = new Random();
             int n = list.Count;
+
             while (n > 1)
             {
                 n--;
                 int k = rng.Next(n + 1);
+                T value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
+        }
+
+        public static void ShuffleSeedRandom<T>(this IList<T> list, int count = -1)
+        {
+            int n = 0;
+            if (count < 0)
+                n = list.Count;
+            else
+                n = count;
+
+            while (n > 1)
+            {
+                n--;
+                int k = MathFunctions.Random.Next(n + 1);
                 T value = list[k];
                 list[k] = list[n];
                 list[n] = value;

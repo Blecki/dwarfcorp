@@ -38,8 +38,6 @@ using System.Collections.Concurrent;
 
 namespace DwarfCorp
 {
-
-
     public enum LiquidType
     {
         None = 0,
@@ -55,6 +53,8 @@ namespace DwarfCorp
     {
         private Dictionary<string, Timer> splashNoiseLimiter = new Dictionary<string, Timer>();
         private ChunkManager Chunks { get; set; }
+        private int[] updateList;
+        private int[] randomIndices;
         public byte EvaporationLevel { get; set; }
 
         public static byte maxWaterLevel = 8;
@@ -96,6 +96,13 @@ namespace DwarfCorp
         {
             Chunks = chunks;
             EvaporationLevel = 1;
+            ChunkData data = chunks.ChunkData;
+
+            // Create reusable arrays for randomized indices
+            uint maxSize = data.ChunkSizeX * data.ChunkSizeY * data.ChunkSizeZ;
+            updateList = new int[maxSize];
+            randomIndices = new int[maxSize];
+
             Splashes = new ConcurrentQueue<SplashType>();
             Transfers = new ConcurrentQueue<Transfer>();
             splashNoiseLimiter["splash2"] = new Timer(0.1f, false);
@@ -105,8 +112,7 @@ namespace DwarfCorp
 
         public void InitializeStatics()
         {
-            float max = maxWaterLevel;
-            float oneEighth = max / 8;
+            float oneEighth = maxWaterLevel / 8;
 
             threeQuarterWaterLevel = (byte)(Math.Round(oneEighth * 6));
             oneHalfWaterLevel = (byte)(Math.Round(oneEighth * 4));
@@ -115,6 +121,7 @@ namespace DwarfCorp
             inWaterThreshold = (byte)(Math.Round(oneEighth * 5));
             waterMoveThreshold = 1;
         }
+
         public void CreateTransfer(Vector3 worldPosition, WaterCell water1, WaterCell water2, byte amount)
         {
             Transfer transfer = new Transfer();
@@ -226,7 +233,6 @@ namespace DwarfCorp
                     return 0.5f;
             }
 
-
             return 1.0f;
         }
 
@@ -243,7 +249,6 @@ namespace DwarfCorp
 
             foreach(VoxelChunk chunk in chunksToUpdate)
             {
-
                 if(!UpdateChunk(chunk) && !chunk.FirstWaterIter)
                 {
                     chunk.FirstWaterIter = false;
@@ -274,7 +279,7 @@ namespace DwarfCorp
             }
         }
 
-        public int CompareFlowVectors(Vector3 A, Vector3 B, Vector3 flow)
+        private int CompareFlowVectors(Vector3 A, Vector3 B, Vector3 flow)
         {
             if (A.Equals(B))
             {
@@ -298,38 +303,41 @@ namespace DwarfCorp
 
         public bool DiscreteUpdate(VoxelChunk chunk)
         {
-            Vector3 gridCoord = new Vector3(0, 0, 0);
-
+            Vector3 gridCoord = Vector3.Zero;
             bool updateOccurred = false;
-
-            List<int> updateList = new List<int>();
             WaterCell cellBelow = new WaterCell();
+
             int maxSize = chunk.SizeX * chunk.SizeY * chunk.SizeZ;
+            int toUpdate = 0;
             VoxelChunk.VoxelData data = chunk.Data;
             for (int i = 0; i < maxSize; i++)
             {
-                WaterCell cell = data.Water[i];
                 // Don't check empty cells or cells we've already modified.
-                if (cell.WaterLevel < 1 || data.Types[i] != 0)
+                if (data.Water[i].WaterLevel < 1 || data.Types[i] != 0)
                 {
                     continue;
                 }
-                updateList.Add(i);
+                updateList[toUpdate] = i;
+                toUpdate++;
             }
 
-            if (updateList.Count == 0)
+            if (toUpdate == 0)
             {
                 return false;
             }
             Voxel voxBelow = chunk.MakeVoxel(0, 0, 0);
+            Voxel neighbor = new Voxel();
 
-            List<int> indices = Datastructures.RandomIndices(updateList.Count);
-
-            // Loop through each cell.
-            foreach (int t in indices)
+            for (int i = 0; i < toUpdate; i++)
             {
-                int idx = updateList[indices[t]];
+                randomIndices[i] = i;
+            }
+            randomIndices.ShuffleSeedRandom(toUpdate);
 
+            // Loop through each cell.                
+            for (int t = 0; t < toUpdate; t++)
+            {
+                int idx = updateList[randomIndices[t]];
 
                 // Don't check empty cells or cells we've already modified.
                 if (data.Water[idx].Type == LiquidType.None || data.Types[idx] != 0)
@@ -345,31 +353,21 @@ namespace DwarfCorp
 
                 if (data.Water[idx].WaterLevel <= EvaporationLevel && MathFunctions.RandEvent(0.01f))
                 {
-                    if (data.Water[idx].WaterLevel > 1)
-                    {
-                        data.Water[idx].WaterLevel--;
-                    }
-                    else
-                    {
-                        data.Water[idx].WaterLevel = 0;
+                    data.Water[idx].WaterLevel = 0;
 
-                        if (data.Water[idx].Type == LiquidType.Lava)
-                        {
-                            data.Types[idx] = (byte)VoxelLibrary.GetVoxelType("Stone").ID;
-                            data.Health[idx] = (byte)VoxelLibrary.GetVoxelType("Stone").StartingHealth;
-                            chunk.ShouldRebuild = true;
-                            chunk.ShouldRecalculateLighting = true;
-                        }
-                        data.Water[idx].Type = LiquidType.None;
+                    if (data.Water[idx].Type == LiquidType.Lava)
+                    {
+                        data.Types[idx] = (byte)VoxelLibrary.GetVoxelType("Stone").ID;
+                        data.Health[idx] = (byte)VoxelLibrary.GetVoxelType("Stone").StartingHealth;
+                        chunk.ShouldRebuild = true;
+                        chunk.ShouldRecalculateLighting = true;
                     }
+                    data.Water[idx].Type = LiquidType.None;
+
                     updateOccurred = true;
                 }
 
-
-
-
                 bool shouldFall = false;
-
 
                 // Now check the cell immediately below this one.
                 // There are two cases, either we are at the bottom of the chunk,
@@ -409,6 +407,7 @@ namespace DwarfCorp
                     if (cellBelow.WaterLevel < 1)
                     {
                         CreateSplash(worldPos, data.Water[idx].Type);
+
                         cellBelow.WaterLevel = data.Water[idx].WaterLevel;
                         if (cellBelow.Type == LiquidType.None)
                         {
@@ -465,34 +464,46 @@ namespace DwarfCorp
                 // Now the only fluid left can spread.
                 // We spread to the manhattan neighbors
                 //Array.Sort(m_spreadNeighbors, (a, b) => CompareFlowVectors(a, b, data.Water[idx].FluidFlow));
-                m_spreadNeighbors.Shuffle();
-
-                Voxel neighbor = new Voxel();
-                foreach (Vector3 spread in m_spreadNeighbors)
+                //m_spreadNeighbors.Shuffle();
+                
+                for (int s = 0; s < m_spreadNeighbors.Length; s++)
                 {
-                    bool success = chunk.Manager.ChunkData.GetVoxel(chunk, worldPos + spread, ref neighbor);
+                    Vector3 spread = m_spreadNeighbors[s];
+                    Vector3 localPos = gridCoord + spread;
 
-                    if (!success)
+                    // If neighbor is past chunk edge, use GetVoxel, otherwise, use GetVoxelLocal
+
+                    bool success = false;
+
+                    if (chunk.IsCellValid((int)Math.Floor(localPos.X), (int)Math.Floor(localPos.Y), (int)Math.Floor(localPos.Z)))
                     {
-                        continue;
+                        neighbor.Chunk = chunk;
+                        neighbor.GridPosition = localPos;
+                        success = true;
                     }
-
-                    if (!neighbor.IsEmpty)
+                    else
+                    {
+                        success = chunk.Manager.ChunkData.GetVoxel(chunk, worldPos + spread, ref neighbor);
+                    }
+                    
+                    if (!success || !neighbor.IsEmpty)
                     {
                         continue;
                     }
 
                     WaterCell neighborWater = neighbor.Water;
 
-                    if (neighborWater.WaterLevel >= data.Water[idx].WaterLevel) continue;
+                    if (neighborWater.WaterLevel >= data.Water[idx].WaterLevel)
+                        continue;
 
-                    byte amountToMove = (byte)(Math.Min(maxWaterLevel - neighborWater.WaterLevel, data.Water[idx].WaterLevel) * GetSpreadRate(data.Water[idx].Type));
+                    byte amountToMove = (byte)(
+                        Math.Min(maxWaterLevel - neighborWater.WaterLevel, data.Water[idx].WaterLevel) * GetSpreadRate(data.Water[idx].Type)
+                    );
 
-                    if(amountToMove == 0)
+                    if (amountToMove == 0)
                     {
                         continue;
                     }
-
 
                     if (neighborWater.WaterLevel < oneQuarterWaterLevel)
                     {
