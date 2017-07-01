@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -96,7 +96,8 @@ namespace DwarfCorp.Gui.Input
                     if (@event.Message == global::DwarfCorp.Gui.InputEvents.MouseClick ||
                         @event.Message == global::DwarfCorp.Gui.InputEvents.MouseMove ||
                         @event.Message == global::DwarfCorp.Gui.InputEvents.MouseDown ||
-                        @event.Message == global::DwarfCorp.Gui.InputEvents.MouseUp)
+                        @event.Message == global::DwarfCorp.Gui.InputEvents.MouseUp ||
+                        @event.Message == global::DwarfCorp.Gui.InputEvents.MouseWheel)
                     {
                         if (MouseHandler != null) MouseHandler(@event.Message, @event.Args);
                     }

@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Gui.Widgets
@@ -47,7 +48,7 @@ namespace DwarfCorp.Gui.Widgets
             if (String.IsNullOrEmpty(Border)) Border = "border-one";
             ScrollBar = new VerticalScrollBar
             {
-                OnScroll = (sender) => { this.Invalidate(); },
+                OnScrollValueChanged = (sender) => { this.Invalidate(); },
                 AutoLayout = AutoLayout.DockRight
             };
             AddChild(ScrollBar);
@@ -56,6 +57,17 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     SelectedIndex = ScrollBar.ScrollPosition + ((args.Y - GetDrawableInterior().Y) / ItemHeight);
                 };
+            OnScroll = (sender, args) =>
+            {
+                var scrollbar = (sender as ListView).ScrollBar;
+                scrollbar.ScrollPosition = MathFunctions.Clamp(args.ScrollValue > 0 ? scrollbar.ScrollPosition - 1 : scrollbar.ScrollPosition + 1, 0, scrollbar.ScrollArea);
+            };
+
+            ScrollBar.OnScroll += (sender, args) =>
+            {
+                var scrollbar = (sender as VerticalScrollBar);
+                scrollbar.ScrollPosition = MathFunctions.Clamp(args.ScrollValue > 0 ? scrollbar.ScrollPosition - 1 : scrollbar.ScrollPosition + 1, 0, scrollbar.ScrollArea);
+            };
         }
 
         public override Point GetBestSize()

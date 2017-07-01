@@ -108,15 +108,22 @@ namespace DwarfCorp
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 5,
-                SoundToPlay = ContentPaths.Entities.Goblin.Audio.goblinhurt1
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_demon_angered
             });
 
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
+                ContentPaths.Audio.Oscar.sfx_ic_demon_angered,
                 ContentPaths.Audio.demon0,
                 ContentPaths.Audio.demon1,
                 ContentPaths.Audio.demon2,
                 ContentPaths.Audio.demon3,
+                 ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_1,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_2,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_3,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_4,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_5,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_6,
             };
 
 
@@ -131,7 +138,22 @@ namespace DwarfCorp
 
             NoiseMaker.Noises["Jump"] = new List<string>
             {
-                ContentPaths.Audio.jump
+                ContentPaths.Audio.Oscar.sfx_ic_demon_angered,
+            };
+
+            NoiseMaker.Noises["Chirp"] = new List<string>
+            {
+                ContentPaths.Audio.demon0,
+                ContentPaths.Audio.demon1,
+                ContentPaths.Audio.demon2,
+                ContentPaths.Audio.demon3,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_1,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_2,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_3,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_4,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_5,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_6,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_pleased,
             };
 
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");

@@ -73,7 +73,7 @@ namespace DwarfCorp
                     ScrollPosition = level.Value.Volume,
                     MinimumSize = new Point(256, 24),
                     AutoLayout = AutoLayout.DockLeft,
-                    OnScroll = (sender) =>
+                    OnSliderChanged = (sender) =>
                     {
                         SFXMixer.Levels levels = SoundManager.Mixer.GetOrCreateLevels(level1.Key);
                         SoundManager.Mixer.SetLevels(level1.Key,

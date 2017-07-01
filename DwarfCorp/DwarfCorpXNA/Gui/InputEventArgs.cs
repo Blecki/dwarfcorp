@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +17,8 @@ namespace DwarfCorp.Gui
         MouseDown,
         MouseUp,
         MouseHover,
-        MouseClick
+        MouseClick,
+        MouseWheel
     }
 
     public class InputEventArgs
@@ -42,5 +43,15 @@ namespace DwarfCorp.Gui
         public int Y;
 
         public bool Handled;
+
+        /// <summary>
+        /// The scroll value of a mouse wheel event.
+        /// </summary>
+        public int ScrollValue;
+
+        /// <summary>
+        /// The mouse button that was pressed.
+        /// </summary>
+        public int MouseButton;
     }
 }
