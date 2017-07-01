@@ -16,8 +16,8 @@ Global Settings
     Header File = Sounds.h;
     Exclude Category Names = 0;
     Exclude Variable Names = 0;
-    Last Modified Low = 4133027202;
-    Last Modified High = 30601511;
+    Last Modified Low = 2337149957;
+    Last Modified High = 30601513;
 
     Category
     {
@@ -812,6 +812,8 @@ Sound Bank
     Windows File = Win\SoundBank.xsb;
     Xbox Bank Path Edited = 0;
     Windows Bank Path Edited = 0;
+    Bank Last Modified Low = 2337195010;
+    Bank Last Modified High = 30601513;
     Header Last Modified High = 0;
     Header Last Modified Low = 0;
 

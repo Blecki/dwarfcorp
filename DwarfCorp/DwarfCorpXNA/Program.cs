@@ -45,6 +45,8 @@ namespace DwarfCorpCore
     
 }
 
+#if XNA_BUILD
+
 namespace DwarfCorp
 {
 
@@ -138,3 +140,4 @@ namespace DwarfCorp
     }
 #endif
 }
+#endif

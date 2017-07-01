@@ -1,18 +1,19 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.Gui;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 
-namespace Gum.Input
+namespace DwarfCorp.Gui.Input
 {
     public class GumInputMapper
     {
         public class QueuedInput
         {
-            public Gum.InputEvents Message;
-            public Gum.InputEventArgs Args;
+            public InputEvents Message;
+            public InputEventArgs Args;
         }
 
         public System.Threading.Mutex QueueLock = new System.Threading.Mutex();
@@ -43,8 +44,8 @@ namespace Gum.Input
             if (newMouseState.LeftButton == ButtonState.Pressed && OldMouseState.LeftButton == ButtonState.Released)
                 r.Add(new QueuedInput
                 {
-                    Message = Gum.InputEvents.MouseDown,
-                    Args = new Gum.InputEventArgs
+                    Message = InputEvents.MouseDown,
+                    Args = new InputEventArgs
                     {
                         X = newMouseState.X,
                         Y = newMouseState.Y
@@ -55,8 +56,8 @@ namespace Gum.Input
             {
                 r.Add(new QueuedInput
                 {
-                    Message = Gum.InputEvents.MouseUp,
-                    Args = new Gum.InputEventArgs
+                    Message = InputEvents.MouseUp,
+                    Args = new InputEventArgs
                     {
                         X = newMouseState.X,
                         Y = newMouseState.Y
@@ -64,8 +65,8 @@ namespace Gum.Input
                 });
                 r.Add(new QueuedInput
                 {
-                    Message = Gum.InputEvents.MouseClick,
-                    Args = new Gum.InputEventArgs
+                    Message = InputEvents.MouseClick,
+                    Args = new InputEventArgs
                     {
                         X = newMouseState.X,
                         Y = newMouseState.Y
@@ -119,8 +120,8 @@ namespace Gum.Input
                     QueueLock.WaitOne();
                     Queued.Add(new QueuedInput
                         {
-                            Message = Gum.InputEvents.KeyPress,
-                            Args = new Gum.InputEventArgs
+                            Message = InputEvents.KeyPress,
+                            Args = new InputEventArgs
                             {
                                 KeyValue = c,
                                 Alt = false,

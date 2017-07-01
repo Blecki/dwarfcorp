@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 
+#if XNA_BUILD
 namespace DwarfCorp.Gui.Input
 {
     /// <summary>
@@ -224,3 +225,4 @@ namespace DwarfCorp.Gui.Input
 
     }
 }
+#endif
