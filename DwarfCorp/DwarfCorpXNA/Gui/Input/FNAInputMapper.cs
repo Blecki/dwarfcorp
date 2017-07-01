@@ -48,7 +48,8 @@ namespace DwarfCorp.Gui.Input
                     Args = new InputEventArgs
                     {
                         X = newMouseState.X,
-                        Y = newMouseState.Y
+                        Y = newMouseState.Y,
+                        MouseButton = 0
                     }
                 });
 
@@ -60,7 +61,8 @@ namespace DwarfCorp.Gui.Input
                     Args = new InputEventArgs
                     {
                         X = newMouseState.X,
-                        Y = newMouseState.Y
+                        Y = newMouseState.Y,
+                        MouseButton = 0
                     }
                 });
                 r.Add(new QueuedInput
@@ -69,7 +71,57 @@ namespace DwarfCorp.Gui.Input
                     Args = new InputEventArgs
                     {
                         X = newMouseState.X,
-                        Y = newMouseState.Y
+                        Y = newMouseState.Y,
+                        MouseButton = 0
+                    }
+                });
+            }
+
+
+            if (newMouseState.RightButton == ButtonState.Pressed && OldMouseState.RightButton == ButtonState.Released)
+                r.Add(new QueuedInput
+                {
+                    Message = InputEvents.MouseDown,
+                    Args = new InputEventArgs
+                    {
+                        X = newMouseState.X,
+                        Y = newMouseState.Y,
+                        MouseButton = 1
+                    }
+                });
+
+            if (newMouseState.RightButton == ButtonState.Released && OldMouseState.RightButton == ButtonState.Pressed)
+            {
+                r.Add(new QueuedInput
+                {
+                    Message = InputEvents.MouseUp,
+                    Args = new InputEventArgs
+                    {
+                        X = newMouseState.X,
+                        Y = newMouseState.Y,
+                        MouseButton = 1
+                    }
+                });
+                r.Add(new QueuedInput
+                {
+                    Message = InputEvents.MouseClick,
+                    Args = new InputEventArgs
+                    {
+                        X = newMouseState.X,
+                        Y = newMouseState.Y,
+                        MouseButton = 1
+                    }
+                });
+            }
+
+            if (newMouseState.ScrollWheelValue != OldMouseState.ScrollWheelValue)
+            {
+                r.Add(new QueuedInput()
+                {
+                    Message = InputEvents.MouseWheel,
+                    Args = new InputEventArgs()
+                    {
+                        ScrollValue = (newMouseState.ScrollWheelValue - OldMouseState.ScrollWheelValue)
                     }
                 });
             }
