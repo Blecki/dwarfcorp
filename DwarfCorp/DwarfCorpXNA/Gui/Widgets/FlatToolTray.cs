@@ -31,11 +31,14 @@ namespace DwarfCorp.Gui.Widgets
                 foreach (var child in Children)
                     child.Hidden = true;
                 NewTray.Hidden = false;
+                Root.SafeCall(NewTray.OnShown, NewTray);
                 Invalidate();
             }
 
             public override void Layout()
             {
+                Root.SafeCall(OnLayout, this);
+
                 foreach (var child in Children)
                 {
                     child.Rect.X = Rect.X;
