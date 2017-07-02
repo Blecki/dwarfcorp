@@ -578,8 +578,7 @@ namespace DwarfCorp
                                 chunk.ShouldRebuild = true;
                                 chunk.ShouldRecalculateLighting = true;
                                 GeneratedChunks.Enqueue(chunk);
-                            }
-
+                            }                        
                         });
                         ToGenerate.Clear();
                     }
@@ -870,7 +869,6 @@ namespace DwarfCorp
                         if (!ChunkData.ChunkMap.ContainsKey(chunk2.ID))
                         {
                             ChunkData.AddChunk(chunk2);
-                            RecalculateBounds();
                         }
                     }
                 }
