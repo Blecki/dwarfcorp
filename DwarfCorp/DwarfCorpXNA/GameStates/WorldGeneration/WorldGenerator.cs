@@ -249,9 +249,13 @@ namespace DwarfCorp.GameStates
            try
 #endif
             {
-              
                 MathFunctions.Random = new ThreadSafeRandom(Seed);
                 CurrentState = GenerationState.Generating;
+
+                if (Overworld.Name == null)
+                {
+                    Overworld.Name = WorldGenerationSettings.GetRandomWorldName();
+                }
 
                 LoadingMessage = "Init..";
                 Overworld.heightNoise.Seed = Seed;

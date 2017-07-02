@@ -66,15 +66,13 @@ namespace DwarfCorp
             SerializableChildren = Children.Where(c => c.IsFlagSet(Flag.ShouldSerialize)).ToList();
         }
 
-        public void PostSerialization()
+        public void PostSerialization(ComponentManager manager)
         {
             Children = SerializableChildren;
             SerializableChildren = null;
-            CreateCosmeticChildren();
-            
         }
 
-        protected virtual void CreateCosmeticChildren()
+        public virtual void CreateCosmeticChildren(ComponentManager manager)
         {
 
         }

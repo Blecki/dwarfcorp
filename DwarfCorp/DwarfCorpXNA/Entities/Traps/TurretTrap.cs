@@ -50,9 +50,9 @@ namespace DwarfCorp
 
             Sensor.OnEnemySensed += Sensor_OnEnemySensed;
             BaseSprite = AddChild(new Fixture(Manager, Vector3.Zero, spriteSheet, new Point(2, 7))) as Fixture;
-            BaseSprite.Sprite.OrientationType = Sprite.OrientMode.YAxis;
+            BaseSprite.GetComponent<Sprite>().OrientationType = Sprite.OrientMode.YAxis;
             TurretSprite = AddChild(new Fixture(Manager, Vector3.Up * 0.25f, spriteSheet, new Point(1, 7))) as Fixture;
-            TurretSprite.Sprite.OrientationType = Sprite.OrientMode.Fixed;
+            TurretSprite.GetComponent<Sprite>().OrientationType = Sprite.OrientMode.Fixed;
             SetTurretAngle(0.0f);
             AddChild(new Shadow(Manager));
         }

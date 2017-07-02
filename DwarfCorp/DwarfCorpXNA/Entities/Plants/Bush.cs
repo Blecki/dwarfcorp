@@ -47,16 +47,13 @@ namespace DwarfCorp
         public Cactus() { }
 
         public Cactus(ComponentManager componentManager, Vector3 position, string asset, float bushSize) :
-            base(componentManager, "Cactus", Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), Vector3.Zero)
+            base(componentManager, "Cactus", Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), Vector3.Zero, asset, bushSize)
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
             SeedlingFrame = new Point(0, 0);
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position + new Vector3(0.5f, -0.2f, 0.5f);
             LocalTransform = matrix;
-
-            AddChild(new Mesh(componentManager, "Model", Matrix.CreateScale(bushSize, bushSize, bushSize), asset, false));
-
             AddChild(new Health(componentManager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
             AddChild(new Flammable(componentManager, "Flames"));
 
@@ -93,16 +90,13 @@ namespace DwarfCorp
         public Bush() { }
 
         public Bush(ComponentManager componentManager, Vector3 position, string asset, float bushSize) :
-            base(componentManager, "Berry Bush", Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), Vector3.Zero)
+            base(componentManager, "Berry Bush", Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), Vector3.Zero, asset, bushSize)
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
             SeedlingFrame = new Point(0, 0);
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position + new Vector3(0.5f, -0.2f, 0.5f);
             LocalTransform = matrix;
-
-            AddChild(new Mesh(componentManager, "Model", Matrix.CreateScale(bushSize, bushSize, bushSize), asset, false));
-
             AddChild(new Health(componentManager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
             AddChild(new Flammable(componentManager, "Flames"));
 

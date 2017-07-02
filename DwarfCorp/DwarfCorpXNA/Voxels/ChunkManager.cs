@@ -567,28 +567,18 @@ namespace DwarfCorp
  
                         System.Threading.Tasks.Parallel.ForEach(ToGenerate, box =>
                         {
-<<<<<<< HEAD
                             if (!ChunkData.ChunkMap.ContainsKey(box))
                             {
                                 Vector3 worldPos = new Vector3(box.X*ChunkData.ChunkSizeX, box.Y*ChunkData.ChunkSizeY,
                                     box.Z*ChunkData.ChunkSizeZ);
                                 VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, (int) ChunkData.ChunkSizeX,
-                                    (int) ChunkData.ChunkSizeY, (int) ChunkData.ChunkSizeZ, Components, Content,
+                                    (int) ChunkData.ChunkSizeY, (int) ChunkData.ChunkSizeZ, World, Content,
                                     Graphics);
                                 Drawer3D.DrawBox(chunk.GetBoundingBox(), Color.Red, 0.1f);
                                 chunk.ShouldRebuild = true;
                                 chunk.ShouldRecalculateLighting = true;
                                 GeneratedChunks.Enqueue(chunk);
                             }
-=======
-                            Vector3 worldPos = new Vector3(box.X * ChunkData.ChunkSizeX, box.Y * ChunkData.ChunkSizeY, box.Z * ChunkData.ChunkSizeZ);
-                            VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, (int)ChunkData.ChunkSizeX, (int)ChunkData.ChunkSizeY, (int)ChunkData.ChunkSizeZ, World, Content, Graphics);
-                            Drawer3D.DrawBox(chunk.GetBoundingBox(), Color.Red, 0.1f);
-                            chunk.ShouldRebuild = true;
-                            chunk.ShouldRecalculateLighting = true;
-                            GeneratedChunks.Enqueue(chunk);
-                        }
->>>>>>> 48146a9d8e977145254fda92b06bb5a46db0b344
 
                         });
                         ToGenerate.Clear();
@@ -864,12 +854,12 @@ namespace DwarfCorp
 
             SetLoadingMessage("Generating Chunks...");
 
-            System.Threading.Tasks.Parallel.ForEach(boxes, box =>
+            foreach(var box in boxes)
             {
                 if (!ChunkData.ChunkMap.ContainsKey(box))
                 {
                     Vector3 worldPos = new Vector3(box.X * ChunkData.ChunkSizeX, box.Y * ChunkData.ChunkSizeY, box.Z * ChunkData.ChunkSizeZ);
-                    VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, (int)ChunkData.ChunkSizeX, (int)ChunkData.ChunkSizeY, (int)ChunkData.ChunkSizeZ, Components, Content, Graphics);
+                    VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, (int)ChunkData.ChunkSizeX, (int)ChunkData.ChunkSizeY, (int)ChunkData.ChunkSizeZ, World, Content, Graphics);
                     chunk.ShouldRebuild = true;
                     chunk.ShouldRecalculateLighting = true;
                     chunk.IsVisible = true;
@@ -879,30 +869,14 @@ namespace DwarfCorp
                     {
                         if (!ChunkData.ChunkMap.ContainsKey(chunk2.ID))
                         {
-<<<<<<< HEAD
                             ChunkData.AddChunk(chunk2);
                             RecalculateBounds();
-=======
-                            Vector3 worldPos = new Vector3(box.X * ChunkData.ChunkSizeX, box.Y * ChunkData.ChunkSizeY, box.Z * ChunkData.ChunkSizeZ);
-                            VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, (int)ChunkData.ChunkSizeX, (int)ChunkData.ChunkSizeY, (int)ChunkData.ChunkSizeZ, World, Content, Graphics);
-                            chunk.ShouldRebuild = true;
-                            chunk.ShouldRecalculateLighting = true;
-                            chunk.IsVisible = true;
-                            chunk.ResetSunlight(0);
-                            GeneratedChunks.Enqueue(chunk);
-                            foreach (VoxelChunk chunk2 in GeneratedChunks)
-                            {
-                                if (!ChunkData.ChunkMap.ContainsKey(chunk2.ID))
-                                {
-                                    ChunkData.AddChunk(chunk2);
-                                    RecalculateBounds();
-                                }
-                            }
->>>>>>> 48146a9d8e977145254fda92b06bb5a46db0b344
                         }
                     }
                 }
-            });
+            }
+
+
             RecalculateBounds();
             chunkData.RecomputeNeighbors();
             SetLoadingMessage("Generating Ores...");
@@ -1113,15 +1087,14 @@ namespace DwarfCorp
             }
 
             SetLoadingMessage("Updating Ramps");
-            System.Threading.Tasks.Parallel.ForEach(toRebuild.Where(chunk => GameSettings.Default.CalculateRamps),
-                chunk =>
-                {
-                    chunk.UpdateRamps();
-                });
+            foreach (var chunk in toRebuild.Where(chunk => GameSettings.Default.CalculateRamps))
+            {
+                  chunk.UpdateRamps();
+            }
 
             SetLoadingMessage("Calculating lighting ");
             int j = 0;
-            System.Threading.Tasks.Parallel.ForEach(toRebuild, chunk =>
+            foreach(var chunk in toRebuild)
             {
                 j++;
                 if (chunk.ShouldRecalculateLighting)
@@ -1129,7 +1102,7 @@ namespace DwarfCorp
                     chunk.CalculateGlobalLight();
                     chunk.ShouldRecalculateLighting = false;
                 }
-            });
+            }
 
             j = 0;
             SetLoadingMessage("Calculating vertex light ...");

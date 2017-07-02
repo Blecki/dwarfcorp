@@ -1,4 +1,4 @@
-﻿// Ladder.cs
+// Ladder.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -54,8 +54,8 @@ namespace DwarfCorp
             
             Name = "Ladder";
             Tags.Add("Climbable");
-            Sprite.OrientationType = Sprite.OrientMode.Fixed;
-            Sprite.LocalTransform = Matrix.CreateTranslation(new Vector3(0, 0, 0.45f)) * Matrix.CreateRotationY(0.0f);
+            GetComponent<Sprite>().OrientationType = Sprite.OrientMode.Fixed;
+            GetComponent<Sprite>().LocalTransform = Matrix.CreateTranslation(new Vector3(0, 0, 0.45f)) * Matrix.CreateRotationY(0.0f);
             OrientToWalls();
         }
     }

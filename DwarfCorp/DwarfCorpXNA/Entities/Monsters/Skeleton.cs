@@ -66,10 +66,10 @@ namespace DwarfCorp
         public void Initialize()
         {
             Physics.Orientation = Physics.OrientMode.RotateY;
-            Sprite = Physics.AddChild(new CharacterSprite(Graphics, Manager, "Skeleton Sprite", Matrix.CreateTranslation(new Vector3(0, 0.1f, 0)))) as CharacterSprite;
+            var sprite = Physics.AddChild(new CharacterSprite(Graphics, Manager, "Skeleton Sprite", Matrix.CreateTranslation(new Vector3(0, 0.1f, 0)))) as CharacterSprite;
             foreach (Animation animation in Stats.CurrentClass.Animations)
             {
-                Sprite.AddAnimation(animation.Clone());
+                sprite.AddAnimation(animation.Clone());
             }
 
 
@@ -95,15 +95,7 @@ namespace DwarfCorp
 
             SpriteSheet shadowTexture = new SpriteSheet(ContentPaths.Effects.shadowcircle);
 
-            var shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform, shadowTexture)) as Shadow;
-            List<Point> shP = new List<Point>
-            {
-                new Point(0, 0)
-            };
-            Animation shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle), "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
-            shadow.AddAnimation(shadowAnimation);
-            shadowAnimation.Play();
-            shadow.SetCurrentAnimation("sh");
+            Physics.AddChild(Shadow.Create(0.75f, Manager));
 
             Physics.Tags.Add("Skeleton");
 
@@ -135,6 +127,12 @@ namespace DwarfCorp
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
             Species = "Skeleton";
+        }
+
+        public override void CreateCosmeticChildren(ComponentManager manager)
+        {
+            Physics.AddChild(Shadow.Create(0.75f, manager));
+            base.CreateCosmeticChildren(manager);
         }
     }
 

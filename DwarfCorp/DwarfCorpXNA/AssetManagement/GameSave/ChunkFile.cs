@@ -1,4 +1,4 @@
-﻿// ChunkFile.cs
+// ChunkFile.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -47,8 +47,6 @@ namespace DwarfCorp
     /// <summary>
     ///     Minimal representation of a chunk.
     ///     Exists to write to and from files.
-    ///  Minimal representation of a chunk.
-    ///  Exists to write to and from files.
     /// </summary>
     [Serializable]
     public class ChunkFile 

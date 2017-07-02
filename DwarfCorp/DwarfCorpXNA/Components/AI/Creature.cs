@@ -131,8 +131,20 @@ namespace DwarfCorp
         public CreatureAI AI { get; set; }
         /// <summary> The crature's physics determines how it moves around </summary>
         public Physics Physics { get; set; }
-        /// <summary> The sprite draws the character and handles animations </summary>
-        public CharacterSprite Sprite { get; set; }
+        /// <summary> The selection circle is drawn when the character is selected </summary>
+        private CharacterSprite _characterSprite = null;
+        [JsonIgnore]
+        public CharacterSprite Sprite
+        {
+            get
+            {
+                if (_characterSprite == null)
+                    _characterSprite = Parent.EnumerateAll().OfType<CharacterSprite>().FirstOrDefault();
+                System.Diagnostics.Debug.Assert(_selectionCircle != null, "No selection circle created on creature.");
+                return _characterSprite;
+            }
+        }
+
 
         /// <summary> The selection circle is drawn when the character is selected </summary>
         private SelectionCircle _selectionCircle = null;
@@ -201,7 +213,7 @@ namespace DwarfCorp
         /// <summary>
         /// Gets or sets the current character mode for animations.
         /// </summary>
-        public CharacterMode CurrentCharacterMode
+        [JsonIgnore]public CharacterMode CurrentCharacterMode
         {
             get { return currentCharacterMode; }
             set
@@ -209,7 +221,7 @@ namespace DwarfCorp
                 if (OverrideCharacterMode) return;
 
                 currentCharacterMode = value;
-                if (Sprite != null)
+                if (Parent != null && Sprite != null)
                 {
                     if (Sprite.HasAnimation(currentCharacterMode, OrientedAnimation.Orientation.Forward))
                     {
@@ -641,5 +653,42 @@ namespace DwarfCorp
                 AI.Tasks.Add(gatherTask);
             }
         }
+
+        protected void CreateSprite(EmployeeClass employeeClass, ComponentManager manager)
+        {
+            var sprite = Physics.AddChild(new CharacterSprite(manager.World.GraphicsDevice, manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)))) as CharacterSprite;
+            foreach (Animation animation in employeeClass.Animations)
+            {
+                sprite.AddAnimation(animation.Clone());
+            }
+            sprite.SpriteSheet = Sprite.Animations.First().Value.SpriteSheet;
+            sprite.CurrentAnimation = Sprite.Animations.First().Value;
+            sprite.CurrentAnimation.NextFrame();
+            sprite.SetFlag(Flag.ShouldSerialize, false);
+        }
+
+        protected void CreateSprite(string animations, ComponentManager manager)
+        {
+            // Create the sprite component for the bird.
+            var sprite = Physics.AddChild(new CharacterSprite
+                                  (manager.World.GraphicsDevice,
+                                  manager,
+                                  "Sprite",
+                                  Matrix.CreateTranslation(0, 0.5f, 0)
+                                  )) as CharacterSprite;
+
+            CompositeAnimation.Descriptor descriptor =
+                FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
+                    ContentPaths.GetFileAsString(animations));
+
+            List<CompositeAnimation> animations_list = descriptor.GenerateAnimations(Name);
+
+            foreach (CompositeAnimation animation in animations_list)
+            {
+                sprite.AddAnimation(animation);
+            }
+            sprite.SetFlag(Flag.ShouldSerialize, false);
+        }
+
     }
 }

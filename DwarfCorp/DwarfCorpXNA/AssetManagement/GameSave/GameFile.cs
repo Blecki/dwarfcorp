@@ -57,12 +57,19 @@ namespace DwarfCorp
             public List<ChunkFile> ChunkData { get; set; }
 
             public MetaData Metadata { get; set; }
-            public OrbitCamera Camera { get; set; }
-            public ComponentManager.ComponentSaveData Components { get; set; }
-            public List<Goals.Goal> Goals { get; set; }
-            public Tutorial.TutorialSaveData TutorialSaveData { get; set; }
-            public Diplomacy Diplomacy { get; set; }
-            public FactionLibrary Factions;
+
+            public class WorldData
+            {
+                public static string Extension = "world";
+                public OrbitCamera Camera { get; set; }
+                public ComponentManager.ComponentSaveData Components { get; set; }
+                public List<Goals.Goal> Goals { get; set; }
+                public Tutorial.TutorialSaveData TutorialSaveData { get; set; }
+                public Diplomacy Diplomacy { get; set; }
+                public FactionLibrary Factions;
+            }
+
+            public WorldData Worlddata { get; set; }
 
             public int GameID { get; set; }
 
@@ -81,10 +88,13 @@ namespace DwarfCorp
                     chunk.WriteFile(directory + ProgramData.DirChar + "Chunks" + ProgramData.DirChar + chunk.ID.X + "_" + chunk.ID.Y + "_" + chunk.ID.Z + "." + (DwarfGame.COMPRESSED_BINARY_SAVES ? ChunkFile.CompressedExtension : ChunkFile.Extension), DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
                 }
 
+                FileUtils.SaveJSon(this.Metadata, directory + ProgramData.DirChar + "Metadata." + MetaData.Extension, false);
+                FileUtils.SaveJSon(this.Worlddata, directory + ProgramData.DirChar + "World." + WorldData.Extension, DwarfGame.COMPRESSED_BINARY_SAVES);
+                /*
                 FileUtils.SaveJSon(this, directory + ProgramData.DirChar + "Data." +
                     (DwarfGame.COMPRESSED_BINARY_SAVES ? GameFile.CompressedExtension : GameFile.Extension), DwarfGame.COMPRESSED_BINARY_SAVES);
+                */
 
-               
             }
         }
 
@@ -108,14 +118,16 @@ namespace DwarfCorp
                     GameID = id,
                     Time = world.Time
                 },
-                Camera = world.Camera,
-                Components = world.ComponentManager.GetSaveData(),
+                Worlddata =  new GameData.WorldData()
+                {
+                    Camera = world.Camera,
+                    Components = world.ComponentManager.GetSaveData(),
+                    Goals = world.GoalManager.EnumerateGoals().ToList(),
+                    TutorialSaveData = world.TutorialManager.GetSaveData(),
+                    Diplomacy = world.Diplomacy,
+                    Factions = world.Factions,
+                },
                 ChunkData = new List<ChunkFile>(),
-                Goals = world.GoalManager.EnumerateGoals().ToList(),
-                TutorialSaveData = world.TutorialManager.GetSaveData(),
-                Diplomacy = world.Diplomacy,
-                Factions = world.Factions,
-                GameID = id,
             };
 
 
@@ -139,7 +151,7 @@ namespace DwarfCorp
         public GameFile(string file, bool compressed, WorldManager world)
         {
             Data = new GameData();
-            ReadFile(file, compressed, world);
+            ReadMetadata(file, compressed, world);
         }
 
         public GameFile()
@@ -152,15 +164,50 @@ namespace DwarfCorp
             Data = file.Data;
         }
 
-        public void LoadData(string filePath, WorldManager world)
-        {
-            string[] files = SaveData.GetFilesInDirectory(filePath, DwarfGame.COMPRESSED_BINARY_SAVES, "Data", GameFile.CompressedExtension, GameFile.Extension);
-            if (files.Length > 0)
-                Data = FileUtils.LoadJson<GameData>(files[0], DwarfGame.COMPRESSED_BINARY_SAVES, world);
 
+        public bool ReadChunks(string filePath)
+        {
+            string[] chunkDirs = System.IO.Directory.GetDirectories(filePath, "Chunks");
+
+
+            if (chunkDirs.Length > 0)
+            {
+                string chunkDir = chunkDirs[0];
+
+                string[] chunks = SaveData.GetFilesInDirectory(chunkDir, DwarfGame.COMPRESSED_BINARY_SAVES, ChunkFile.CompressedExtension, ChunkFile.Extension);
+                Data.ChunkData = new List<ChunkFile>();
+                foreach (string chunk in chunks)
+                {
+                    Data.ChunkData.Add(new ChunkFile(chunk, DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES));
+                }
+            }
+            else
+            {
+                Console.Error.WriteLine("Can't load chunks {0}, no chunks found", filePath);
+                return false;
+            }
+            return true;
         }
 
-        public  bool ReadFile(string filePath, bool isCompressed, WorldManager world)
+        public bool ReadWorld(string filePath, WorldManager world)
+        {
+            string[] worldFiles = System.IO.Directory.GetFiles(filePath, "*." + GameData.WorldData.Extension);
+
+            if (worldFiles.Length > 0)
+            {
+                string worldFile = worldFiles[0];
+                Data.Worlddata = FileUtils.LoadJson<GameData.WorldData>(worldFile, DwarfGame.COMPRESSED_BINARY_SAVES,
+                    world);
+            }
+            else
+            {
+                Console.Error.WriteLine("Can't load world from {0}, no data file found.", filePath);
+                return false;
+            }
+            return true;
+        }
+
+        public  bool ReadMetadata(string filePath, bool isCompressed, WorldManager world)
         {
             if(!System.IO.Directory.Exists(filePath))
             {
@@ -171,21 +218,15 @@ namespace DwarfCorp
                 string[] screenshots = SaveData.GetFilesInDirectory(filePath, false, "png", "png");
 
                 
-                string[] chunkDirs = System.IO.Directory.GetDirectories(filePath, "Chunks");
+                string[] metaFiles = System.IO.Directory.GetFiles(filePath, "*." + MetaData.Extension);
 
-                if(chunkDirs.Length > 0)
+                if (metaFiles.Length > 0)
                 {
-                    string chunkDir = chunkDirs[0];
-
-                    string[] chunks = SaveData.GetFilesInDirectory(chunkDir, isCompressed, ChunkFile.CompressedExtension, ChunkFile.Extension);
-                    Data.ChunkData = new List<ChunkFile>();
-                    foreach(string chunk in chunks)
-                    {
-                        Data.ChunkData.Add(new ChunkFile(chunk, isCompressed, DwarfGame.COMPRESSED_BINARY_SAVES));
-                    }
+                    Data.Metadata = FileUtils.LoadJson<MetaData>(metaFiles[0], false, null);
                 }
                 else
                 {
+                    Console.Error.WriteLine("Can't load file {0}, no metadata found", filePath);
                     return false;
                 }
 

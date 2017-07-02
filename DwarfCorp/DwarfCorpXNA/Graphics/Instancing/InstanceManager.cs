@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
@@ -31,6 +32,10 @@ namespace DwarfCorp
 
         private void CreateBillboard(string name, ContentManager content, int count)
         {
+            if (!PrimitiveLibrary.BatchBillboardPrimitives.ContainsKey(name))
+            {
+                PrimitiveLibrary.CreateIntersecting(name, name, GameState.Game.GraphicsDevice, content);
+            }
             FixedInstanceArray arr = new FixedInstanceArray(name, PrimitiveLibrary.BatchBillboardPrimitives[name], PrimitiveLibrary.BatchBillboardPrimitives[name].Texture, count, BlendState.NonPremultiplied)
             {
                 ShouldRebuild = true,
@@ -79,6 +84,7 @@ namespace DwarfCorp
             CreateBillboard("vine", content, (int) (GameSettings.Default.NumMotes));
             CreateBillboard("gnarled", content, (int) (GameSettings.Default.NumMotes));
             CreateBillboard("mushroom", content, (int)(GameSettings.Default.NumMotes));
+            CreateBillboard("wheat", content, (int)(GameSettings.Default.NumMotes));
         }
 
         public FixedInstanceArray GetInstances(string name)
@@ -131,9 +137,10 @@ namespace DwarfCorp
         {
             if(!Instances.ContainsKey(name))
             {
-                return;
+                CreateBillboard(name, GameState.Game.Content, (int)(GameSettings.Default.NumMotes));
             }
-            else if(instance != null)
+            
+            if(instance != null)
             {
                 Instances[name].Add(instance);
             }
@@ -147,14 +154,13 @@ namespace DwarfCorp
         {
             if(!Instances.ContainsKey(name))
             {
-                return null;
+                CreateBillboard(name, GameState.Game.Content, (int)(GameSettings.Default.NumMotes));
             }
-            else
-            {
-                InstanceData toReturn = new InstanceData(transform, color, true);
-                Instances[name].Add(toReturn);
-                return toReturn;
-            }
+
+            InstanceData toReturn = new InstanceData(transform, color, true);
+            Instances[name].Add(toReturn);
+            return toReturn;
+            
         }
 
         public void Update(DwarfTime time, Camera cam, GraphicsDevice graphics)
