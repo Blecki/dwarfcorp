@@ -123,7 +123,8 @@ namespace DwarfCorp
 
         public void LayEgg()
         {
-            new Egg(this.Name, Manager, Physics.Position, AI.PositionConstraint);
+            NoiseMaker.MakeNoise("Lay Egg", AI.Position, true, 1.0f);
+            Manager.RootComponent.AddChild(new Egg(this.Name, Manager, Physics.Position, AI.PositionConstraint));
         }
 
         /// <summary> The creature's AI determines how it will behave. </summary>
@@ -310,6 +311,11 @@ namespace DwarfCorp
                 if (AI.PositionConstraint.HasValue)
                     baby.GetComponent<CreatureAI>().PositionConstraint = AI.PositionConstraint.Value;
                 CurrentPregnancy = null;
+            }
+
+            if (MathFunctions.RandEvent(0.0001f))
+            {
+                NoiseMaker.MakeNoise("Chirp", AI.Position, true, 0.25f);
             }
         }
 

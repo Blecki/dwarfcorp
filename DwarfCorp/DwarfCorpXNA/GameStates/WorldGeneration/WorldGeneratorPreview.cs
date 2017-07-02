@@ -152,16 +152,19 @@ namespace DwarfCorp.GameStates
                 },
                 OnClick = (sender, args) =>
                 {
-                    var worldSize = Generator.Settings.ColonySize.ToVector3() * Generator.Settings.WorldScale;
-                    var clickPoint = ScreenToWorld(new Vector2(args.X, args.Y));
-                    Generator.Settings.WorldGenerationOrigin = new Vector2(
-                        System.Math.Max(System.Math.Min(clickPoint.X, Generator.Settings.Width - worldSize.X - 1), worldSize.X + 1),
-                        System.Math.Max(System.Math.Min(clickPoint.Y, Generator.Settings.Height - worldSize.Z - 1), worldSize.Z + 1));
+                    if (args.MouseButton == 0)
+                    {
+                        var worldSize = Generator.Settings.ColonySize.ToVector3()*Generator.Settings.WorldScale;
+                        var clickPoint = ScreenToWorld(new Vector2(args.X, args.Y));
+                        Generator.Settings.WorldGenerationOrigin = new Vector2(
+                            System.Math.Max(System.Math.Min(clickPoint.X, Generator.Settings.Width - worldSize.X - 1),
+                                worldSize.X + 1),
+                            System.Math.Max(System.Math.Min(clickPoint.Y, Generator.Settings.Height - worldSize.Z - 1),
+                                worldSize.Z + 1));
+                    }
                 },
                 OnMouseMove = (sender, args) =>
                 {
-                    // Todo: Status of mouse buttons should be passed in args to event handlers.
-                    // Todo: Uh, Gum doesn't call mouse move unless you LEFT click??
                     if (Microsoft.Xna.Framework.Input.Mouse.GetState().RightButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
                     {
                         var delta = new Vector2(args.X, args.Y) - new Vector2(PreviousMousePosition.X,
@@ -181,6 +184,10 @@ namespace DwarfCorp.GameStates
                             phi = System.Math.Min(phi, 1.5f);
                         }
                     }
+                },
+                OnScroll = (sender, args) =>
+                {
+                    zoom = System.Math.Min((float)System.Math.Max(args.ScrollValue > 0 ? zoom - 0.1f : zoom + 0.1f, 0.1f), 1.5f);
                 }
             });
         }

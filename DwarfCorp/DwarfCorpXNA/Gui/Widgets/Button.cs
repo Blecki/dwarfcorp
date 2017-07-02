@@ -12,6 +12,8 @@ namespace DwarfCorp.Gui.Widgets
         public override void Construct()
         {
             TextVerticalAlign = VerticalAlign.Center;
+            TextHorizontalAlign = HorizontalAlign.Center;
+            
 
             if (string.IsNullOrEmpty(Border))
             {

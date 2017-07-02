@@ -157,6 +157,7 @@ namespace DwarfCorp
                         Velocity = WindSpeed,
                         TypeofStorm = TypeofStorm
                     };
+                    World.ComponentManager.RootComponent.AddChild(cloud);
                 }
                 IsInitialized = true;
             }
@@ -236,7 +237,7 @@ namespace DwarfCorp
             }
 
             public Cloud(ComponentManager manager, float raininess, int maxRain, float height, Vector3 pos) :
-                base(manager, pos, new SpriteSheet(ContentPaths.Particles.stormclouds), new Point(0, 0))
+                base(manager, pos, new SpriteSheet(MathFunctions.RandEvent(0.5f) ? ContentPaths.Particles.cloud1 : ContentPaths.Particles.cloud2), new Point(0, 0))
             {
                 Matrix tf = LocalTransform;
                 tf.Translation = new Vector3(pos.X, height, pos.Z);

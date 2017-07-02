@@ -46,7 +46,7 @@ namespace DwarfCorp
                 Manager,
                     "A Rabbit",
                     Matrix.CreateTranslation(position),
-                    new Vector3(0.375f, 0.375f, 0.375f),
+                    new Vector3(0.25f, 0.25f, 0.25f),
                     new Vector3(0.0f, 0.0f, 0.0f),
                     1.0f, 1.0f, 0.999f, 0.999f,
                     new Vector3(0, -10, 0)
@@ -101,7 +101,7 @@ namespace DwarfCorp
             AI = Physics.AddChild(new PacingCreatureAI(Manager, "Rabbit AI", Sensors, PlanService)) as CreatureAI;
 
             // The bird can peck at its enemies (0.1 damage)
-            Attacks = new List<Attack> { new Attack("Bite", 0.01f, 2.0f, 1.0f, SoundSource.Create(ContentPaths.Audio.bunny), ContentPaths.Effects.bite) };
+            Attacks = new List<Attack> { new Attack("Bite", 0.01f, 2.0f, 1.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_rabbit_attack), ContentPaths.Effects.bite) };
 
 
             // The bird can hold one item at a time in its inventory
@@ -155,10 +155,21 @@ namespace DwarfCorp
             };
 
 
-            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.bunny };
+            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_rabbit_hurt_1, ContentPaths.Audio.Oscar.sfx_oc_rabbit_hurt_2 };
+            NoiseMaker.Noises["Chirp"] = new List<string>()
+            {
+                ContentPaths.Audio.Oscar.sfx_oc_rabbit_neutral_1,
+                ContentPaths.Audio.Oscar.sfx_oc_rabbit_neutral_2
+            };
             Species = "Rabbit";
             CanReproduce = true;
             BabyType = Name;
+
+            var deathParticleTrigger = Parent.EnumerateAll().OfType<ParticleTrigger>().FirstOrDefault();
+            if (deathParticleTrigger != null)
+            {
+                deathParticleTrigger.SoundToPlay = NoiseMaker.Noises["Hurt"][0];
+            }
         }
     }
 }

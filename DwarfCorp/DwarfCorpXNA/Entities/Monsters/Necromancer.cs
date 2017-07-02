@@ -110,20 +110,20 @@ namespace DwarfCorp
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 5,
-                SoundToPlay = ContentPaths.Audio.gravel
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_necromancer_angered
             });
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
             
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
-                ContentPaths.Audio.skel0,
+                ContentPaths.Audio.Oscar.sfx_ic_necromancer_angered,
                 ContentPaths.Audio.skel1,
                 ContentPaths.Audio.skel2
             };
 
 
-            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 3, 0)));
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 1)));
 
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
             //Stats.LastName = TextGenerator.GenerateRandom("$goblinfamily");

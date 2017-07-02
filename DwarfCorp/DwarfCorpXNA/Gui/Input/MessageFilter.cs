@@ -1,10 +1,10 @@
-﻿using System;
+#if XNA_BUILD
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
-
 // http://romsteady.blogspot.com/2011/06/key-events-in-xna-40.html
 
 namespace DwarfCorp.Gui.Input
@@ -42,3 +42,4 @@ namespace DwarfCorp.Gui.Input
         }
     }
 }
+#endif

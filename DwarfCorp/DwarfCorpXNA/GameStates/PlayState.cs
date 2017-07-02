@@ -509,6 +509,37 @@ namespace DwarfCorp.GameStates
             });
             #endregion
 
+            #region Minimap
+
+            var minimapRestoreButton = GuiRoot.RootItem.AddChild(new Gui.Widgets.ImageButton
+            {
+                AutoLayout = Gui.AutoLayout.FloatBottomLeft,
+                Background = new Gui.TileReference("round-buttons", 3),
+                MinimumSize = new Point(16, 16),
+                MaximumSize = new Point(16, 16),
+                Hidden = true,
+                OnClick = (sender, args) =>
+                {
+                    sender.Hidden = true;
+                    sender.Invalidate();
+                    MinimapFrame.Hidden = false;
+                    MinimapFrame.Invalidate();
+                },
+                Tooltip = "Restore minimap"
+            });
+
+            MinimapRenderer = new Gui.Widgets.MinimapRenderer(192, 192, World,
+                TextureManager.GetTexture(ContentPaths.Terrain.terrain_colormap));
+
+            MinimapFrame = GuiRoot.RootItem.AddChild(new Gui.Widgets.MinimapFrame
+            {
+                AutoLayout = Gui.AutoLayout.FloatBottomLeft,
+                Renderer = MinimapRenderer,
+                RestoreButton = minimapRestoreButton
+            }) as Gui.Widgets.MinimapFrame;
+
+            #endregion
+
             #region Setup top right tray
 
             EconomyIcon = new Gui.Widgets.FramedIcon
@@ -1490,38 +1521,6 @@ namespace DwarfCorp.GameStates
             ChangeTool(GameMaster.ToolMode.SelectUnits);
 
             #endregion
-
-            #region Minimap
-
-            var minimapRestoreButton = GuiRoot.RootItem.AddChild(new Gui.Widgets.ImageButton
-            {
-                AutoLayout = Gui.AutoLayout.FloatBottomLeft,
-                Background = new Gui.TileReference("round-buttons", 3),
-                MinimumSize = new Point(16, 16),
-                MaximumSize = new Point(16, 16),
-                Hidden = true,
-                OnClick = (sender, args) =>
-                {
-                    sender.Hidden = true;
-                    sender.Invalidate();
-                    MinimapFrame.Hidden = false;
-                    MinimapFrame.Invalidate();
-                },
-                Tooltip = "Restore minimap"
-            });
-
-            MinimapRenderer = new Gui.Widgets.MinimapRenderer(192, 192, World,
-                TextureManager.GetTexture(ContentPaths.Terrain.terrain_colormap));
-
-            MinimapFrame = GuiRoot.RootItem.AddChild(new Gui.Widgets.MinimapFrame
-            {
-                AutoLayout = Gui.AutoLayout.FloatBottomLeft,
-                Renderer = MinimapRenderer,
-                RestoreButton = minimapRestoreButton
-            }) as Gui.Widgets.MinimapFrame;
-
-            #endregion
-
 
             #region GOD MODE
 

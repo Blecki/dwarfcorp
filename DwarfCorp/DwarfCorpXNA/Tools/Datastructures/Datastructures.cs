@@ -132,22 +132,20 @@ namespace DwarfCorp
             return null;
         }
 
+        // Shuffle<T> does the same thing, just with a IList<T> as argument, and a new Random each time.
+
         public static List<int> RandomIndices(int max)
-        {
+        {    
             List<int> toReturn = new List<int>(max);
-            List<int> indices = new List<int>(max);
-
-            for(int i = 0; i < max; i++)
+            toReturn.AddRange(Enumerable.Range(0, max));
+            
+            while (max > 1)
             {
-                indices.Add(i);
-            }
-
-            for(int i = 0; i < max; i++)
-            {
-                int r = MathFunctions.Random.Next(indices.Count);
-
-                toReturn.Add(indices[r]);
-                indices.RemoveAt(r);
+                max--;
+                int r = MathFunctions.Random.Next(max + 1);
+                int val = toReturn[r];
+                toReturn[r] = toReturn[max];
+                toReturn[max] = val;
             }
 
             return toReturn;

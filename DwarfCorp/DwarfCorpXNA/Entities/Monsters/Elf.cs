@@ -127,7 +127,7 @@ namespace DwarfCorp
             };
 
 
-            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 3, 0)));
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 1, 1)));
 
 
             Stats.FullName = TextGenerator.GenerateRandom("$elfname");

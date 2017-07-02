@@ -28,7 +28,7 @@ namespace DwarfCorp.Gui.Widgets
             set { _scrollPosition = (int)(_scrollArea * value); AfterScroll(); }
         }
 
-        public Action<Widget> OnScroll = null;
+        public Action<Widget> OnScrollValueChanged = null;
 
         private void AfterScroll()
         {
@@ -39,7 +39,7 @@ namespace DwarfCorp.Gui.Widgets
             Invalidate();
 
             // Could be called during construction - before Root is set.
-            if (Root != null) Root.SafeCall(OnScroll, this);
+            if (Root != null) Root.SafeCall(OnScrollValueChanged, this);
         }
 
         public override void Construct()

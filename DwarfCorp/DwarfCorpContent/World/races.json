@@ -201,7 +201,8 @@
             "Craft" :  2
         },
         "Crafts" :  ["Stone"],
-        "Encrustings":  ["Gem"]
+        "Encrustings":  ["Gem"],
+        "TradeMusic" :  "molemen"
     },
     "Elf": {
         "Name": "Elf",
@@ -267,7 +268,8 @@
             "Craft" :  16
         },
         "Crafts" :  ["Wood", "AboveGroundPlant"],
-        "Encrustings":  ["Precious"]
+        "Encrustings":  ["Precious"],
+        "TradeMusic" :  "elf"
     },
     "Undead": {
         "Name": "Undead",
@@ -333,7 +335,8 @@
             "Craft" :  16
         },
         "Crafts" :  ["Bone"],
-        "Encrustings":  ["Magical"]
+        "Encrustings":  ["Magical"],
+        "TradeMusic":  "undead"
     },
     "Demon": {
         "Name": "Demon",
