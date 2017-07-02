@@ -33,6 +33,9 @@ namespace DwarfCorp.GameStates
         private Vector3 newTarget = new Vector3(0.5f, 0, 0.5f);
         private Point PreviousMousePosition;
 
+        private List<Point3> Trees { get; set; }
+        private const float TreeProbability = 0.001f;
+
         public Matrix ZoomedPreviewMatrix
         {
             get
@@ -197,10 +200,11 @@ namespace DwarfCorp.GameStates
             this.Device = Device;
 
             PreviewEffect = new BasicEffect(Device);
-            PreviewEffect.EnableDefaultLighting();
             PreviewEffect.LightingEnabled = false;
-            PreviewEffect.AmbientLightColor = new Vector3(1, 1, 1);
             PreviewEffect.FogEnabled = false;
+            PreviewEffect.Alpha = 1.0f;
+            PreviewEffect.DiffuseColor = new Vector3(1.0f, 1.0f, 1.0f);
+            PreviewEffect.AmbientLightColor = new Vector3(1.0f, 1.0f, 1.0f);
         }
 
         public void SetGenerator(WorldGenerator Generator)
@@ -236,12 +240,17 @@ namespace DwarfCorp.GameStates
             }
         }
 
-        public Vector2 WorldToScreen(Vector2 worldCoord)
+        public Vector3 WorldToScreen(Vector2 worldCoord)
         {
             Viewport port = new Viewport(PreviewPanel.Rect);
-            Vector3 worldSpace = new Vector3(worldCoord.X / Overworld.Map.GetLength(0), 0, worldCoord.Y / Overworld.Map.GetLength(1));
-            Vector3 screenSpace = port.Project(worldSpace, ProjectionMatrix, ViewMatrix, Matrix.Identity);
-            return new Vector2(screenSpace.X, screenSpace.Y);
+            var height = 0.0f;
+            if ((int) worldCoord.X > 0 && (int) worldCoord.Y > 0 &&
+                (int) worldCoord.X < Overworld.Map.GetLength(0) && (int) worldCoord.Y < Overworld.Map.GetLength(1))
+            {
+                height = Overworld.Map[(int) worldCoord.X, (int) worldCoord.Y].Height * 0.05f;
+            }
+            Vector3 worldSpace = new Vector3(worldCoord.X / Overworld.Map.GetLength(0), height, worldCoord.Y / Overworld.Map.GetLength(1));
+            return port.Project(worldSpace, ProjectionMatrix, ViewMatrix, Matrix.Identity);
         }
 
         public Rectangle GetSpawnRectangleInWorldSpace()
@@ -260,7 +269,10 @@ namespace DwarfCorp.GameStates
             Points[3] = new Vector2(spawnRect.X, spawnRect.Height + spawnRect.Y);
             newTarget = new Vector3((Points[0].X + Points[2].X) / (float)Overworld.Map.GetLength(0), 0, (Points[0].Y + Points[2].Y) / (float)(Overworld.Map.GetLength(1))) * 0.5f;
             for (var i = 0; i < 4; ++i)
-                Points[i] = WorldToScreen(Points[i]);
+            {
+                var vec3 = WorldToScreen(Points[i]);  
+                Points[i] = new Vector2(vec3.X, vec3.Y);
+            }
         }
 
         public void Update()
@@ -285,21 +297,48 @@ namespace DwarfCorp.GameStates
             //    Color.White, Color.Black);
             DwarfGame.SpriteBatch.End();
 
-            if (PreviewSelector.SelectedItem == "Factions") // Draw dots for capitals.
-            {
-                var font = Root.GetTileSheet("font");
 
-                foreach (var civ in Generator.NativeCivilizations)
+            var font = Root.GetTileSheet("font");
+            var icon = Root.GetTileSheet("map-icons");
+            var bkg = Root.GetTileSheet("basic");
+
+            foreach (var tree in Trees)
+            {
+                var treeLocation = WorldToScreen(new Vector2(tree.X, tree.Y));
+                if (treeLocation.Z > 0.9999f)
+                    continue;
+                Rectangle nameBounds = new Rectangle(0, 0, 16, 16);
+                nameBounds.X = (int)treeLocation.X - (nameBounds.Width / 2);
+                nameBounds.Y = (int)treeLocation.Y - (nameBounds.Height / 2);
+                if (!PreviewPanel.Rect.Contains(nameBounds)) continue;
+                var mesh = Gui.Mesh.TiledSprite(new Rectangle(nameBounds.Center.X, nameBounds.Center.Y, 16, 16),
+                    icon, tree.Z);
+                Root.DrawMesh(mesh, Root.RenderData.Texture);
+            }
+
+            foreach (var civ in Generator.NativeCivilizations)
+            {
+                var civLocation = WorldToScreen(new Vector2(civ.Center.X, civ.Center.Y));
+                if (civLocation.Z > 0.9999f)
+                    continue;
+                Rectangle nameBounds;
+                var mesh = Gui.Mesh.CreateStringMesh(civ.Name, font, Vector2.One, out nameBounds);
+                nameBounds.X = (int)civLocation.X - (nameBounds.Width / 2);
+                nameBounds.Y = (int)civLocation.Y - (nameBounds.Height / 2);
+                nameBounds = MathFunctions.SnapRect(nameBounds, PreviewPanel.Rect);
+                mesh.Translate(nameBounds.X, nameBounds.Y);
+                if (!PreviewPanel.Rect.Contains(nameBounds)) continue;
+                if (PreviewSelector.SelectedItem == "Factions") // Draw dots for capitals.
                 {
-                    var civLocation = WorldToScreen(new Vector2(civ.Center.X, civ.Center.Y));
-                    Rectangle nameBounds;
-                    var mesh = Gui.Mesh.CreateStringMesh(civ.Name, font, Vector2.One, out nameBounds);
-                    nameBounds.X = (int)civLocation.X - (nameBounds.Width / 2);
-                    nameBounds.Y = (int)civLocation.Y - (nameBounds.Height / 2);
-                    nameBounds = MathFunctions.SnapRect(nameBounds, PreviewPanel.Rect);
-                    mesh.Translate(nameBounds.X, nameBounds.Y);
+                    var bkgmesh = Gui.Mesh.FittedSprite(nameBounds, bkg, 0)
+                        .Colorize(new Vector4(0.0f, 0.0f, 0.0f, 0.7f));
+                   
+                    Root.DrawMesh(bkgmesh, Root.RenderData.Texture);
                     Root.DrawMesh(mesh, Root.RenderData.Texture);
                 }
+                var iconMesh = Gui.Mesh.TiledSprite(new Rectangle(nameBounds.Center.X - 8, nameBounds.Center.Y + 8, 16, 16),
+                    icon, civ.Race.Icon);
+                Root.DrawMesh(iconMesh, Root.RenderData.Texture);
             }
 
             if (KeyMesh != null)
@@ -363,6 +402,8 @@ namespace DwarfCorp.GameStates
                 KeyMesh = Gui.Mesh.Merge(bgMesh, KeyMesh);
             }
 
+            Device.BlendState = BlendState.Opaque;
+            Device.DepthStencilState = DepthStencilState.Default;
             Device.SetRenderTarget(PreviewRenderTarget);
             PreviewEffect.World = Matrix.Identity;
 
@@ -371,14 +412,32 @@ namespace DwarfCorp.GameStates
             cameraTarget = newTarget * 0.1f + cameraTarget * 0.9f;
             PreviewEffect.TextureEnabled = true;
             PreviewEffect.Texture = PreviewTexture;
+            PreviewEffect.LightingEnabled = true;
 
             if (Generator.LandMesh == null)
             {
                 Generator.CreateMesh(Device);
+                Trees = new List<Point3>();
+                int width = Overworld.Map.GetLength(0);
+                int height = Overworld.Map.GetLength(1);
+                const int resolution = 1;
+
+                for (int x = 0; x < width; x += resolution)
+                {
+                    for (int y = 0; y < height; y += resolution)
+                    {
+                        if (!MathFunctions.RandEvent(TreeProbability)) continue;
+                        var h = Overworld.Map[x, y].Height;
+                        if (!(h > Generator.Settings.SeaLevel)) continue;
+                        var biome = BiomeLibrary.Biomes[Overworld.Map[x, y].Biome];
+                        Trees.Add(new Point3(x, y, biome.Icon));
+                    }
+                }
             }
 
-            Device.Clear(ClearOptions.Target, Color.Transparent, 3.0f, 0);
-
+            Device.Clear(ClearOptions.Target, Color.Black, 1024.0f, 0);
+            Device.DepthStencilState = DepthStencilState.Default;
+           
             foreach (EffectPass pass in PreviewEffect.CurrentTechnique.Passes)
             {
                 pass.Apply();

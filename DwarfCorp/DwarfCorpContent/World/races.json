@@ -72,7 +72,8 @@
             "Metal" :  64
         },
         "Crafts" :  ["Metal"],
-        "Encrustings":  ["Precious"]
+        "Encrustings":  ["Precious"],
+        "Icon":  1
     },
     "Goblins": {
         "Name": "Goblins",
@@ -135,7 +136,8 @@
             "Craft" :  3
         },
         "Crafts" :  ["Bone"],
-        "Encrustings":  []
+        "Encrustings":  [],
+        "Icon":  3
     },
     "Molemen": {
         "Name": "Molemen",
@@ -202,7 +204,8 @@
         },
         "Crafts" :  ["Stone"],
         "Encrustings":  ["Gem"],
-        "TradeMusic" :  "molemen"
+        "TradeMusic" :  "molemen",
+        "Icon":  4
     },
     "Elf": {
         "Name": "Elf",
@@ -269,7 +272,8 @@
         },
         "Crafts" :  ["Wood", "AboveGroundPlant"],
         "Encrustings":  ["Precious"],
-        "TradeMusic" :  "elf"
+        "TradeMusic" :  "elf",
+        "Icon":  "5"
     },
     "Undead": {
         "Name": "Undead",
@@ -336,7 +340,8 @@
         },
         "Crafts" :  ["Bone"],
         "Encrustings":  ["Magical"],
-        "TradeMusic":  "undead"
+        "TradeMusic":  "undead",
+        "Icon":  6
     },
     "Demon": {
         "Name": "Demon",

@@ -2,6 +2,7 @@
   "Grassland": {
     "Biome": 1,
     "Name": "Grassland",
+    "Icon":  13,
     "Vegetation": [
       {
         "Name": "Wheat",
@@ -94,6 +95,7 @@
   "BorealForest": {
     "Biome": 2,
     "Name": "Forest (Boreal)",
+    "Icon":  1,
     "Vegetation": [
       {
         "Name": "Pine Tree",
@@ -179,6 +181,7 @@
   "DeciduousForest": {
     "Biome": 3,
     "Name": "Forest (Deciduous)",
+    "Icon": 8,
     "Vegetation": [
       {
         "Name": "Pine Tree",
@@ -278,6 +281,7 @@
   "Taiga": {
     "Biome": 5,
     "Name": "Taiga",
+    "Icon":  10,
     "Vegetation": [
       {
         "Name": "Snow Pine Tree",
@@ -334,6 +338,7 @@
   "Tundra": {
     "Biome": 4,
     "Name": "Tundra",
+    "Icon":  13,
     "Vegetation": [],
     "Motes": [
     ],
@@ -364,6 +369,7 @@
   "Desert": {
     "Biome": 0,
     "Name": "Desert",
+    "Icon":  12,
     "Vegetation": [
       {
         "Name": "Wheat",
@@ -452,6 +458,7 @@
   "Jungle": {
     "Biome": 6,
     "Name": "Jungle",
+    "Icon":  9,
     "Vegetation": [
       {
         "Name": "Mushroom",
@@ -533,6 +540,7 @@
   "Waste": {
     "Biome": 7,
     "Name": "Waste",
+    "Icon": 11,
     "Vegetation": [],
     "Motes": [
       {
@@ -574,6 +582,7 @@
   "Cave": {
     "Biome": 8,
     "Name": "Cave",
+    "Icon":  11,
     "Underground": true,
     "Vegetation": [
       {

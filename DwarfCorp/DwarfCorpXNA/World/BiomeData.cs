@@ -73,6 +73,7 @@ namespace DwarfCorp
         public float Height { get; set; }
         public float Temp { get; set; }
         public float Rain { get; set; }
+        public int Icon { get; set; }
 
         public BiomeData()
         {
