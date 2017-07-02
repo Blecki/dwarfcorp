@@ -117,8 +117,7 @@ namespace DwarfCorp
             List<CreatureAI> toReturn = new List<CreatureAI>();
             foreach (Body body in bodies)
             {
-                List<CreatureAI> creatures = body.GetChildrenOfTypeRecursive<CreatureAI>();
-                foreach (CreatureAI creature in creatures)
+                foreach (CreatureAI creature in body.EnumerateAll().OfType<CreatureAI>().ToList())
                 {
                    
                     if (spawnEvent.Attack)

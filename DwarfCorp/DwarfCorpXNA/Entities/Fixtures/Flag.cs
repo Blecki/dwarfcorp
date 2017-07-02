@@ -153,10 +153,10 @@ namespace DwarfCorp
                 }
             }
             var oldView = device.Viewport;
-            device.Viewport = new Viewport(0, 0, width, height);
             data.Mesh.SetData(data.Verts);
             data.Indices.SetData(data.Idx);
             device.SetRenderTarget(data.Texture);
+            device.Viewport = new Viewport(0, 0, width, height); // Must set viewport after target bound.
             device.Clear(new Color(Logo.LogoBackgroundColor * 0.5f + Logo.LogoSymbolColor * 0.5f));
             Texture2D logoBg = TextureManager.GetTexture("newgui/logo-bg");
             Texture2D logoFg = TextureManager.GetTexture("newgui/logo-fg");

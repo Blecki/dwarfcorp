@@ -156,25 +156,7 @@ namespace DwarfCorp
         public EmitterData Data { get; set; }
         public Timer TriggerTimer { get; set; }
         private static Camera _camera = null;
-
-
-        [OnDeserialized]
-        protected void OnDeserialized(System.Runtime.Serialization.StreamingContext context)
-        {
-            if (Data.Animation.Primitives.Count == 0)
-            {
-                Data.Animation.CreatePrimitives(GameState.Game.GraphicsDevice);
-            }
-            Sprites = new List<FixedInstanceArray>();
-            foreach (BillboardPrimitive t in Data.Animation.Primitives)
-            {
-                Sprites.Add(new FixedInstanceArray(Name, t,
-                    Data.Animation.SpriteSheet.GetTexture(),
-                    Data.MaxParticles, Data.BlendMode));
-            }
-            Data.Animation.Play();
-        }
-
+        
         public static Matrix MatrixFromParticle(Particle particle)
         {
             Matrix rot = Matrix.CreateRotationZ(particle.Angle);
@@ -185,11 +167,6 @@ namespace DwarfCorp
             Matrix worldRot = Matrix.CreateScale(particle.Scale) * rot * noTransBill;
             worldRot.Translation = bill.Translation;
             return worldRot;
-        }
-
-        public ParticleEmitter() : base()
-        {
-
         }
 
         public ParticleEmitter(ComponentManager manager, string name, Matrix localTransform, EmitterData emitterData) :
@@ -213,6 +190,8 @@ namespace DwarfCorp
             Data.Animation.Play();
 
             TriggerTimer = new Timer(Data.EmissionFrequency, Data.ReleaseOnce);
+
+            SetFlag(Flag.ShouldSerialize, false);
         }
 
         public float Rand(float min, float max)

@@ -25,8 +25,6 @@ namespace DwarfCorp
             AddToCollisionManager = false;
             FrustrumCull = false;
             IsVisible = false;
-
-            AddCacheType(GameObjectCaching.MiniMapIconCache);
         }
 
         public override void Delete()

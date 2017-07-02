@@ -17,49 +17,70 @@ namespace DwarfCorp
     /// collection of components. Together, the collection is called an 'entity'. Components form a 
     /// tree. Each component has a parent and 0 to N children.
     /// </summary>
-    [JsonObject(IsReference = true)]
     public class ComponentManager
     {
-        [JsonProperty]
-        private Dictionary<uint, GameComponent> Components;
-
-        private Dictionary<System.Type, List<IUpdateableComponent>> UpdateableComponents;
-        private List<IRenderableComponent> Renderables;
-
-        public IEnumerable<IRenderableComponent> GetRenderables()
+        public class ComponentSaveData
         {
-            return Renderables;
+            public List<GameComponent> SaveableComponents;
+            public uint RootComponent;
         }
 
-        private List<GameComponent> Removals { get; set; }
-        private List<GameComponent> Additions { get; set; }
+        private Dictionary<uint, GameComponent> Components;
 
-        public Body RootComponent { get; set; }
+        private Dictionary<System.Type, List<IUpdateableComponent>> UpdateableComponents =
+            new Dictionary<Type, List<IUpdateableComponent>>();
+        private List<IRenderableComponent> Renderables = new List<IRenderableComponent>();
+        private List<MinimapIcon> MinimapIcons = new List<MinimapIcon>();
+        private List<GameComponent> Removals = new List<GameComponent>();
+        private List<GameComponent> Additions = new List<GameComponent>();
 
-        private static Camera Camera { get; set; }
+        public Body RootComponent { get; private set; }
 
-        [JsonIgnore]
-        private Mutex AdditionMutex { get; set; }
-        [JsonIgnore]
-        private Mutex RemovalMutex { get; set; }
+        public void SetRootComponent(Body Component)
+        {
+            Component.World = World;
+            RootComponent = Component;
+        }
 
-        public ParticleManager ParticleManager { get; set; }
+        private Mutex AdditionMutex = new Mutex();
+        private Mutex RemovalMutex = new Mutex();
 
+        public IEnumerable<IRenderableComponent> GetRenderables() { return Renderables; }
+        public IEnumerable<MinimapIcon> GetMinimapIcons() { return MinimapIcons; }
 
-        [JsonIgnore]
         public WorldManager World { get; set; }
 
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
+        public ComponentSaveData GetSaveData()
         {
-            AdditionMutex = new Mutex();
-            RemovalMutex = new Mutex();
-            Removals = new List<GameComponent>();
-            Additions = new List<GameComponent>();
-            World = (WorldManager)context.Context;
-            GameObjectCaching.Reset();
-            RootComponent.RefreshCacheTypesRecursive();
-            World.Natives.Clear();
+            // Just in case the root was tagged unserializable for whatever reason.
+            RootComponent.SetFlag(GameComponent.Flag.ShouldSerialize, true);
+
+            foreach (var component in Components)
+                component.Value.PrepareForSerialization();
+
+            var serializableComponents = Components.Where(c => c.Value.IsFlagSet(GameComponent.Flag.ShouldSerialize)).Select(c => c.Value).ToList();
+
+            return new ComponentSaveData
+            {
+                SaveableComponents = serializableComponents,
+                RootComponent = RootComponent.GlobalID
+            };
+        }
+
+        public void CleanupSaveData()
+        {
+            foreach (var component in Components)
+                component.Value.SerializableChildren = null;
+        }
+
+        public ComponentManager(ComponentSaveData SaveData, WorldManager World)
+        {
+            Components = new Dictionary<uint, GameComponent>();
+            foreach (var component in SaveData.SaveableComponents)
+                Components.Add(component.GlobalID, component);
+            RootComponent = Components[SaveData.RootComponent] as Body;
+
+            this.World = World;
 
             foreach (var component in Components)
             {
@@ -73,51 +94,34 @@ namespace DwarfCorp
 
                 if (component.Value is IRenderableComponent)
                     Renderables.Add(component.Value as IRenderableComponent);
+
+                if (component.Value is MinimapIcon)
+                    MinimapIcons.Add(component.Value as MinimapIcon);
             }
-        }
-
-        public ComponentManager()
-        {
-
+       
+            foreach (var component in SaveData.SaveableComponents)
+                component.PostSerialization();
         }
 
         public ComponentManager(WorldManager state, CompanyInformation CompanyInformation, List<Faction> natives)
         {
             World = state;
             Components = new Dictionary<uint, GameComponent>();
-            UpdateableComponents = new Dictionary<Type, List<IUpdateableComponent>>();
-            Renderables = new List<IRenderableComponent>();
-            Removals = new List<GameComponent>();
-            Additions = new List<GameComponent>();
-            Camera = null;
-            AdditionMutex = new Mutex();
-            RemovalMutex = new Mutex();
         }
 
         public List<Body> SelectRootBodiesOnScreen(Rectangle selectionRectangle, Camera camera)
         {
-            /*
-            return (from component in RootComponent.Children.OfType<Body>()
-                    let screenPos = camera.Project(component.GlobalTransform.Translation)
-                    where   screenPos.Z > 0 
-                    && (selectionRectangle.Contains((int)screenPos.X, (int)screenPos.Y) || selectionRectangle.Intersects(component.GetScreenRect(camera))) 
-                    && camera.GetFrustrum().Contains(component.GlobalTransform.Translation) != ContainmentType.Disjoint
-                    && !World.ChunkManager.ChunkData.CheckOcclusionRay(camera.Position, component.Position)
-                    select component).ToList();
-             */
             if (World.SelectionBuffer == null)
-            {
                 return new List<Body>();
-            }
-            HashSet<Body> toReturn = new HashSet<Body>();
+
+            HashSet<Body> toReturn = new HashSet<Body>(); // Hashset ensures all bodies are unique.
             foreach (uint id in World.SelectionBuffer.GetIDsSelected(selectionRectangle))
             {
                 GameComponent component;
                 if (!Components.TryGetValue(id, out component))
-                {
                     continue;
-                }
-                if (!component.IsVisible) continue;
+
+                if (!component.IsVisible) continue; // Then why was it drawn in the selection buffer??
                 var toAdd = component.GetEntityRootComponent().GetComponent<Body>();
                 if (!toReturn.Contains(toAdd))
                     toReturn.Add(component.GetEntityRootComponent().GetComponent<Body>());
@@ -142,47 +146,50 @@ namespace DwarfCorp
         private void RemoveComponentImmediate(GameComponent component)
         {
             if (!Components.ContainsKey(component.GlobalID))
-            {
                 return;
-            }
-
+            
             Components.Remove(component.GlobalID);
+
             if (component is IUpdateableComponent)
             {
                 var type = component.GetType();
                 if (UpdateableComponents.ContainsKey(type))
                     UpdateableComponents[type].Remove(component as IUpdateableComponent);
             }
-            if (component is IRenderableComponent)
-            {
-                Renderables.Remove(component as IRenderableComponent);
-            }
 
-            foreach (var child in component.GetAllChildrenRecursive())
+            if (component is IRenderableComponent)
+                Renderables.Remove(component as IRenderableComponent);
+
+            if (component is MinimapIcon)
+                MinimapIcons.Remove(component as MinimapIcon);
+
+            foreach (var child in new List<GameComponent>(component.Children))
                 RemoveComponentImmediate(child);
         }
 
         private void AddComponentImmediate(GameComponent component)
         {
-            if (Components.ContainsKey(component.GlobalID) && Components[component.GlobalID] != component)
+            if (Components.ContainsKey(component.GlobalID))
             {
-                throw new IndexOutOfRangeException("Component was added that already exists.");
+                if (Object.ReferenceEquals(Components[component.GlobalID], component)) return;
+                throw new InvalidOperationException("Attempted to add component with same ID as existing component.");
             }
-            else if (!Components.ContainsKey(component.GlobalID))
+
+            Components[component.GlobalID] = component;
+
+            if (component is IUpdateableComponent)
             {
-                Components[component.GlobalID] = component;
-                if (component is IUpdateableComponent)
-                {
-                    var type = component.GetType();
-                    if (!UpdateableComponents.ContainsKey(type))
-                        UpdateableComponents.Add(type, new List<IUpdateableComponent>());
-                    UpdateableComponents[type].Add(component as IUpdateableComponent);
-                }
-                if (component is IRenderableComponent)
-                {
-                    Renderables.Add(component as IRenderableComponent);
-                }
+                var type = component.GetType();
+                if (!UpdateableComponents.ContainsKey(type))
+                    UpdateableComponents.Add(type, new List<IUpdateableComponent>());
+                UpdateableComponents[type].Add(component as IUpdateableComponent);
             }
+
+            if (component is IRenderableComponent)
+                Renderables.Add(component as IRenderableComponent);
+
+            if (component is MinimapIcon)
+                MinimapIcons.Add(component as MinimapIcon);
         }
 
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)

@@ -93,6 +93,7 @@ namespace DwarfCorp
         private void OnDeserialized(StreamingContext context)
         {
             wasDeserialized = true;
+            ReplacementType = VoxelLibrary.GetVoxelType(RoomData.FloorType);
         }
 
 

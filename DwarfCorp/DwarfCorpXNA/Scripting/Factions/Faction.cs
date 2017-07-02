@@ -894,11 +894,15 @@ namespace DwarfCorp
             }
 
             Economy.CurrentMoney -= currentApplicant.Level.Pay*4m;
-            Dwarf newMinion =
+
+            var dwarfPhysics = 
                 EntityFactory.GenerateDwarf(
                     rooms.First().GetBoundingBox().Center() + Vector3.UnitY * 15,
                     Components, GameState.Game.Content, GameState.Game.GraphicsDevice, World.ChunkManager,
-                    World.Camera, this, World.PlanService, "Player", currentApplicant.Class, currentApplicant.Level.Index).GetChildrenOfType<Dwarf>().First();
+                    World.Camera, this, World.PlanService, "Player", currentApplicant.Class, currentApplicant.Level.Index);
+            World.ComponentManager.RootComponent.AddChild(dwarfPhysics);
+            var newMinion = dwarfPhysics.EnumerateAll().OfType<Dwarf>().FirstOrDefault();
+            System.Diagnostics.Debug.Assert(newMinion != null);
 
             newMinion.Stats.CurrentClass = currentApplicant.Class;
             newMinion.Stats.LevelIndex = currentApplicant.Level.Index - 1;
@@ -940,8 +944,8 @@ namespace DwarfCorp
                 
                 if (World.ChunkManager.ChunkData.GetFirstVoxelUnder(position + offset, ref voxel, true))
                 {
-                    Body body = EntityFactory.CreateEntity<Body>(creature, voxel.Position + new Vector3(0.5f, 1, 0.5f));
-                    CreatureAI ai = body.GetChildrenOfType<CreatureAI>().FirstOrDefault();
+                    var body = EntityFactory.CreateEntity<Body>(creature, voxel.Position + new Vector3(0.5f, 1, 0.5f));
+                    var ai = body.EnumerateAll().OfType<CreatureAI>().FirstOrDefault();
                     
                     if (ai != null)
                     {

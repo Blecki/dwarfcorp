@@ -115,7 +115,7 @@ namespace DwarfCorp
 
         public bool ExitThreads { get; set; }
 
-        private Camera camera = null;
+        public Camera camera = null;
         public WorldManager World { get; set; }
         public ComponentManager Components { get { return World.ComponentManager; }}
         public ContentManager Content { get; set; }
@@ -567,6 +567,7 @@ namespace DwarfCorp
  
                         System.Threading.Tasks.Parallel.ForEach(ToGenerate, box =>
                         {
+<<<<<<< HEAD
                             if (!ChunkData.ChunkMap.ContainsKey(box))
                             {
                                 Vector3 worldPos = new Vector3(box.X*ChunkData.ChunkSizeX, box.Y*ChunkData.ChunkSizeY,
@@ -579,6 +580,15 @@ namespace DwarfCorp
                                 chunk.ShouldRecalculateLighting = true;
                                 GeneratedChunks.Enqueue(chunk);
                             }
+=======
+                            Vector3 worldPos = new Vector3(box.X * ChunkData.ChunkSizeX, box.Y * ChunkData.ChunkSizeY, box.Z * ChunkData.ChunkSizeZ);
+                            VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, (int)ChunkData.ChunkSizeX, (int)ChunkData.ChunkSizeY, (int)ChunkData.ChunkSizeZ, World, Content, Graphics);
+                            Drawer3D.DrawBox(chunk.GetBoundingBox(), Color.Red, 0.1f);
+                            chunk.ShouldRebuild = true;
+                            chunk.ShouldRecalculateLighting = true;
+                            GeneratedChunks.Enqueue(chunk);
+                        }
+>>>>>>> 48146a9d8e977145254fda92b06bb5a46db0b344
 
                         });
                         ToGenerate.Clear();
@@ -869,8 +879,26 @@ namespace DwarfCorp
                     {
                         if (!ChunkData.ChunkMap.ContainsKey(chunk2.ID))
                         {
+<<<<<<< HEAD
                             ChunkData.AddChunk(chunk2);
                             RecalculateBounds();
+=======
+                            Vector3 worldPos = new Vector3(box.X * ChunkData.ChunkSizeX, box.Y * ChunkData.ChunkSizeY, box.Z * ChunkData.ChunkSizeZ);
+                            VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, (int)ChunkData.ChunkSizeX, (int)ChunkData.ChunkSizeY, (int)ChunkData.ChunkSizeZ, World, Content, Graphics);
+                            chunk.ShouldRebuild = true;
+                            chunk.ShouldRecalculateLighting = true;
+                            chunk.IsVisible = true;
+                            chunk.ResetSunlight(0);
+                            GeneratedChunks.Enqueue(chunk);
+                            foreach (VoxelChunk chunk2 in GeneratedChunks)
+                            {
+                                if (!ChunkData.ChunkMap.ContainsKey(chunk2.ID))
+                                {
+                                    ChunkData.AddChunk(chunk2);
+                                    RecalculateBounds();
+                                }
+                            }
+>>>>>>> 48146a9d8e977145254fda92b06bb5a46db0b344
                         }
                     }
                 }
@@ -889,7 +917,7 @@ namespace DwarfCorp
             ChunkData.Reveal(GeneratedChunks.First().MakeVoxel(0, (int)ChunkData.ChunkSizeY - 1, 0));
             GameSettings.Default.FogofWar = fogOfWar;
 
-            UpdateRebuildList();
+            //UpdateRebuildList();
             GenerateDistance = origBuildRadius;
 
             while(GeneratedChunks.Count > 0)

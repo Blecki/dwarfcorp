@@ -59,8 +59,7 @@ namespace DwarfCorp
         {
             foreach (Body lc in sensed)
             {
-                List<Health> hcList = lc.GetChildrenOfType<Health>();
-                foreach (Health hc in hcList)
+                foreach (Health hc in lc.EnumerateAll().OfType<Health>())
                 {
                     hc.Damage(1000000);
                 }

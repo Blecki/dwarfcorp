@@ -59,7 +59,7 @@ namespace DwarfCorp
         [OnDeserialized]
         protected void OnDeserialized(StreamingContext context)
         {
-            Instance = Manager.World.InstanceManager.AddInstance(ModelType, GlobalTransform, Tint);
+            Instance = (context.Context as WorldManager).InstanceManager.AddInstance(ModelType, GlobalTransform, Tint);
             Instance.SelectionBufferColor = GetGlobalIDColor();
             instanceVisible = true;
         }

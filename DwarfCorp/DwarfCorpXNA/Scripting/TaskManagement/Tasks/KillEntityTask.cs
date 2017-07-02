@@ -131,7 +131,8 @@ namespace DwarfCorp
             }
             else
             {
-                Creature ai = EntityToKill.GetChildrenOfTypeRecursive<Creature>().FirstOrDefault();
+                var ai = EntityToKill.EnumerateAll().OfType<Creature>().FirstOrDefault();
+
                 switch (Mode)
                 {
                     case KillType.Attack:
