@@ -1,4 +1,4 @@
-﻿// Wheat.cs
+// Wheat.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -51,33 +51,13 @@ namespace DwarfCorp
         }
 
         public Wheat(ComponentManager componentManager, Vector3 position) :
-            base(componentManager, "Wheat", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+            base(componentManager, "Wheat", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, "wheat", 1.0f)
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.gnarled, 32, 32);
             SeedlingFrame = new Point(0, 0);
             Matrix matrix = Matrix.CreateRotationY(MathFunctions.Rand(-0.1f, 0.1f));
             matrix.Translation = position + new Vector3(0.5f, -0.25f, 0.5f);
             LocalTransform = matrix;
-
-            SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Plants.wheat);
-
-            List<Point> frames = new List<Point>
-            {
-                new Point(0, 0)
-            };
-            Animation tableAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Entities.Plants.wheat), "Wheat", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
-
-            Sprite sprite = AddChild(new Sprite(componentManager, "sprite", Matrix.Identity, spriteSheet, false)
-            {
-                OrientationType = Sprite.OrientMode.Fixed
-            }) as Sprite;
-            sprite.AddAnimation(tableAnimation);
-
-            Sprite sprite2 = AddChild(new Sprite(componentManager, "sprite2", Matrix.CreateRotationY((float)Math.PI * 0.5f), spriteSheet, false)
-            {
-                OrientationType = Sprite.OrientMode.Fixed
-            }) as Sprite;
-            sprite2.AddAnimation(tableAnimation);
 
             Voxel voxelUnder = new Voxel();
             bool success = componentManager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder);
@@ -103,7 +83,6 @@ namespace DwarfCorp
             AddChild(new Health(componentManager, "HP", 30, 0.0f, 30));
             AddChild(new Flammable(componentManager, "Flames"));
 
-            tableAnimation.Play();
             Tags.Add("Wheat");
             Tags.Add("Vegetation");
             CollisionType = CollisionManager.CollisionType.Static;

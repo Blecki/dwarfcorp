@@ -246,29 +246,30 @@ namespace DwarfCorp
                     GraphicsDevice,
                     ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
             
-
-                SetLoadingMessage("Loading Components...");
                 #region Load Components
 
                 if (!string.IsNullOrEmpty(ExistingFile))
                 {
-                    SetLoadingMessage("Loading Chunks from Game File");
+                    SetLoadingMessage("Loading Terrain...");
+                    gameFile.ReadChunks(ExistingFile);
                     ChunkManager.ChunkData.LoadFromFile(gameFile, SetLoadingMessage);
 
-                    gameFile.LoadData(ExistingFile, this);
+                    //gameFile.LoadData(ExistingFile, this);
 
                     InstanceManager.Clear();
 
-                    //gameFile.LoadComponents(ExistingFile, this);
+
+                    SetLoadingMessage("Loading Entities...");
+                    gameFile.ReadWorld(ExistingFile, this);
 
                     Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
                     Vector3 extents = new Vector3(1500, 1500, 1500);
                     CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
 
-                    ComponentManager = new ComponentManager(gameFile.Data.Components, this);
-                    Factions = gameFile.Data.Factions;
+                    ComponentManager = new ComponentManager(gameFile.Data.Worlddata.Components, this);
+                    Factions = gameFile.Data.Worlddata.Factions;
                     ComponentManager.World = this;
-                    GameComponent.ResetMaxGlobalId(ComponentManager.GetMaxComponentID() + 1);
+                    
                     Sky.TimeOfDay = gameFile.Data.Metadata.TimeOfDay;
                     Time = gameFile.Data.Metadata.Time;
                     WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
@@ -287,18 +288,18 @@ namespace DwarfCorp
                     }
 
                     //gameFile.LoadDiplomacy(ExistingFile, this);
-                    Diplomacy = gameFile.Data.Diplomacy;
+                    Diplomacy = gameFile.Data.Worlddata.Diplomacy;
 
                     // Load saved goals from file here.
                     GoalManager = new Goals.GoalManager();
                     //gameFile.LoadGoals(ExistingFile, this);
-                    GoalManager.Initialize(gameFile.Data.Goals);
+                    GoalManager.Initialize(gameFile.Data.Worlddata.Goals);
 
                     TutorialManager = new Tutorial.TutorialManager("Content/tutorial.txt");
                     //gameFile.LoadTutorial(ExistingFile, this);
-                    TutorialManager.SetFromSaveData(gameFile.Data.TutorialSaveData);
+                    TutorialManager.SetFromSaveData(gameFile.Data.Worlddata.TutorialSaveData);
 
-                    Camera = gameFile.Data.Camera;
+                    Camera = gameFile.Data.Worlddata.Camera;
                 }
                 else
                 {

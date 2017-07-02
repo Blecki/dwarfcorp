@@ -60,7 +60,8 @@ namespace DwarfCorp
         {
             foreach (var func in LazyActions)
             {
-                func.Invoke();
+                if (func != null)
+                    func.Invoke();
             }
             LazyActions.Clear();
         }

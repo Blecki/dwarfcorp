@@ -85,8 +85,8 @@ namespace DwarfCorp.GameStates
            int width = Overworld.Map.GetLength(0);
            int height = Overworld.Map.GetLength(1);
            int numVerts = (width * height) / resolution;
-           LandMesh = new VertexBuffer(Device, VertexPositionTexture.VertexDeclaration, numVerts, BufferUsage.None);
-           VertexPositionTexture[] verts = new VertexPositionTexture[numVerts];
+           LandMesh = new VertexBuffer(Device, VertexPositionNormalTexture.VertexDeclaration, numVerts, BufferUsage.None);
+           VertexPositionNormalTexture[] verts = new VertexPositionNormalTexture[numVerts];
 
             int i = 0;
             for (int x = 0; x < width; x += resolution)
@@ -96,6 +96,9 @@ namespace DwarfCorp.GameStates
                     float landHeight = Overworld.Map[x, y].Height;
                     verts[i].Position = new Vector3((float)x / width, landHeight * 0.05f, (float)y / height);
                     verts[i].TextureCoordinate = new Vector2(((float)x) / width, ((float)y) / height);
+                    Vector3 normal = new Vector3(Overworld.Map[MathFunctions.Clamp(x + 1, 0, width - 1), y].Height - height,  1.0f, Overworld.Map[x, MathFunctions.Clamp(y + 1, 0, height - 1)].Height - height);
+                    normal.Normalize();
+                    verts[i].Normal = normal;
                     i++;
                 }
             }
@@ -246,9 +249,13 @@ namespace DwarfCorp.GameStates
            try
 #endif
             {
-              
                 MathFunctions.Random = new ThreadSafeRandom(Seed);
                 CurrentState = GenerationState.Generating;
+
+                if (Overworld.Name == null)
+                {
+                    Overworld.Name = WorldGenerationSettings.GetRandomWorldName();
+                }
 
                 LoadingMessage = "Init..";
                 Overworld.heightNoise.Seed = Seed;

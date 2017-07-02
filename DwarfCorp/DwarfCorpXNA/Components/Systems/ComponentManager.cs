@@ -98,9 +98,13 @@ namespace DwarfCorp
                 if (component.Value is MinimapIcon)
                     MinimapIcons.Add(component.Value as MinimapIcon);
             }
-       
+
+            GameComponent.ResetMaxGlobalId(GetMaxComponentID() + 1);
             foreach (var component in SaveData.SaveableComponents)
-                component.PostSerialization();
+                component.PostSerialization(this);
+
+            foreach (var component in SaveData.SaveableComponents)
+                component.CreateCosmeticChildren(this);
         }
 
         public ComponentManager(WorldManager state, CompanyInformation CompanyInformation, List<Faction> natives)

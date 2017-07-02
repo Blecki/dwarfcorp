@@ -64,9 +64,9 @@ namespace DwarfCorp
             TeamFaction = team;
             Name = "Door";
             Tags.Add("Door");
-            this.Sprite.OrientationType = Sprite.OrientMode.Fixed;
-            Sprite.OrientationType = Sprite.OrientMode.Fixed;
-            Sprite.LocalTransform = Matrix.CreateRotationY(0.5f * (float)Math.PI);
+            GetComponent<Sprite>().OrientationType = Sprite.OrientMode.Fixed;
+            GetComponent<Sprite>().OrientationType = Sprite.OrientMode.Fixed;
+            GetComponent<Sprite>().LocalTransform = Matrix.CreateRotationY(0.5f * (float)Math.PI);
             OrientToWalls();
             ClosedTransform = LocalTransform;
             AddToCollisionManager = true;

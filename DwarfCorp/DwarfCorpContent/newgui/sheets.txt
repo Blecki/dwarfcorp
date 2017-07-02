@@ -254,6 +254,12 @@
 			"Texture": "newgui/progress-fill",
 			"TileWidth": 8,
 			"TileHeight": 32
+		},
+		{
+			"Name": "map-icons",
+			"Texture": "GUI/map_icons",
+			"TileWidth" : 16,
+			"TileHeight" : 16
 		}
 	]
 }

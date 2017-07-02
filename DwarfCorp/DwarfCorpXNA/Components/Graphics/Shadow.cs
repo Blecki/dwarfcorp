@@ -49,9 +49,29 @@ namespace DwarfCorp
         public Timer UpdateTimer { get; set; }
         private Matrix OriginalTransform { get; set; }
 
+        public static Shadow Create(float scale, ComponentManager Manager)
+        {
+            Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
+            shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
+
+            var shadow = new Shadow(Manager, "Shadow", shadowTransform,
+                new SpriteSheet(ContentPaths.Effects.shadowcircle))
+            {
+                GlobalScale = scale
+            };
+            shadow.SetFlag(Flag.ShouldSerialize, false);
+            List<Point> shP = new List<Point>
+            {
+                new Point(0, 0)
+            };
+            var anim = new Animation(ContentPaths.Effects.shadowcircle, 32, 32, 0);
+            shadow.AddAnimation(anim);
+            anim.Play();
+            shadow.SetCurrentAnimation(anim.Name);
+            return shadow;
+        }
         public Shadow() : base()
         {
-            
         }
 
         public Shadow(ComponentManager Manager) :

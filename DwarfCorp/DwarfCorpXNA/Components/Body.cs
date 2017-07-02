@@ -70,7 +70,7 @@ namespace DwarfCorp
         private BoundingBox lastBounds = new BoundingBox();
         private Vector3 thresholdPos = new Vector3();
         
-        public Matrix GlobalTransform
+        [JsonIgnore]public Matrix GlobalTransform
         {
             get { return globalTransform; }
             set

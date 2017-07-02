@@ -86,6 +86,9 @@ namespace DwarfCorp
         public List<Resource.ResourceTags> Crafts { get; set; }
         public List<Resource.ResourceTags> Encrustings { get; set; }
         public string TradeMusic { get; set; }
+
+        public int Icon { get; set; }
+
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
