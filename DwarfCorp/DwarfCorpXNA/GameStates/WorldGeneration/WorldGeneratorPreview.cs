@@ -32,7 +32,7 @@ namespace DwarfCorp.GameStates
         private Vector3 cameraTarget = new Vector3(0.5f, 0.0f, 0.5f);
         private Vector3 newTarget = new Vector3(0.5f, 0, 0.5f);
         private Point PreviousMousePosition;
-
+        private Vector2 lastSpawnWorld = Vector2.Zero;
         private List<Point3> Trees { get; set; }
         private const float TreeProbability = 0.001f;
 
@@ -301,7 +301,6 @@ namespace DwarfCorp.GameStates
             var font = Root.GetTileSheet("font");
             var icon = Root.GetTileSheet("map-icons");
             var bkg = Root.GetTileSheet("basic");
-
             foreach (var tree in Trees)
             {
                 var treeLocation = WorldToScreen(new Vector2(tree.X, tree.Y));
@@ -341,6 +340,29 @@ namespace DwarfCorp.GameStates
                 Root.DrawMesh(iconMesh, Root.RenderData.Texture);
             }
 
+            Rectangle spawnWorld = GetSpawnRectangleInWorldSpace();
+            Vector2 newSpawn = new Vector2(spawnWorld.Center.X, spawnWorld.Center.Y);
+            Vector2 spawnCenter = newSpawn * 0.1f + lastSpawnWorld * 0.9f;
+            Vector3 newCenter = WorldToScreen(newSpawn);
+            Vector3 worldCenter = WorldToScreen(spawnCenter);
+            if (worldCenter.Z < 0.9999f)
+            {
+                Rectangle balloon = new Rectangle((int)worldCenter.X - 8, (int)(worldCenter.Y + 5 * System.Math.Sin(DwarfTime.LastTime.TotalRealTime.TotalSeconds * 2.0f)) - 8, 16, 16);
+                var balloonMesh = Gui.Mesh.TiledSprite(MathFunctions.SnapRect(balloon, PreviewPanel.Rect), icon, 2);
+                Root.DrawMesh(balloonMesh, Root.RenderData.Texture);
+
+                Rectangle nameBounds;
+                var mesh = Gui.Mesh.CreateStringMesh("Colony Location", font, Vector2.One, out nameBounds);
+                nameBounds.X = (int)newCenter.X - (nameBounds.Width / 2);
+                nameBounds.Y = (int)newCenter.Y - (nameBounds.Height / 2) + 16;
+                nameBounds = MathFunctions.SnapRect(nameBounds, PreviewPanel.Rect);
+                mesh.Translate(nameBounds.X, nameBounds.Y);
+                var bkgmesh = Gui.Mesh.FittedSprite(nameBounds, bkg, 0).Colorize(new Vector4(0.0f, 0.0f, 0.0f, 0.7f));
+
+                Root.DrawMesh(bkgmesh, Root.RenderData.Texture);
+                Root.DrawMesh(mesh, Root.RenderData.Texture);
+            }
+            lastSpawnWorld = spawnCenter;
             if (KeyMesh != null)
                 Root.DrawMesh(KeyMesh, Root.RenderData.Texture);
         }
