@@ -153,8 +153,8 @@
         "NaturalEnemies" :  ["Demon", "Carnivore"],
         "IsIntelligent": true,
         "IsNative": true,
-        "FactionNameFile": "Text\\Templates\\nations_dwarf.txt",
-        "NameFile": "Text\\Templates\\names_dwarf.txt",
+        "FactionNameFile": "Text\\Templates\\nations_molemen.txt",
+        "NameFile": "Text\\Templates\\names_moleman.txt",
         "TalkAnimation" : {
             "AssetName" : "GUI\\diplo-moleman",
             "Width" : 64,
