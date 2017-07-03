@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +14,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Chair : Body
     {
-        private void Initialize()
+        private void Initialize(ComponentManager manager)
         {
             SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture);
             Point topFrame = new Point(2, 6);
@@ -33,19 +33,19 @@ namespace DwarfCorp
             Animation tableTop = new Animation(GameState.Game.GraphicsDevice, spriteSheet, "tableTop", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
             Animation tableAnimation = new Animation(GameState.Game.GraphicsDevice, spriteSheet, "tableTop", 32, 32, sideframes, false, Color.White, 0.01f, 1.0f, 1.0f, false);
 
-            Sprite tabletopSprite = AddChild(new Sprite(Manager, "sprite1", Matrix.CreateRotationX((float)Math.PI * 0.5f), spriteSheet, false)
+            Sprite tabletopSprite = AddChild(new Sprite(manager, "sprite1", Matrix.CreateRotationX((float)Math.PI * 0.5f), spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Fixed
             }) as Sprite;
             tabletopSprite.AddAnimation(tableTop);
 
-            Sprite sprite = AddChild(new Sprite(Manager, "sprite", Matrix.CreateTranslation(0.0f, -0.05f, -0.0f) * Matrix.Identity, spriteSheet, false)
+            Sprite sprite = AddChild(new Sprite(manager, "sprite", Matrix.CreateTranslation(0.0f, -0.05f, -0.0f) * Matrix.Identity, spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Fixed
             }) as Sprite;
             sprite.AddAnimation(tableAnimation);
 
-            Sprite sprite2 = AddChild(new Sprite(Manager, "sprite2", Matrix.CreateTranslation(0.0f, -0.05f, -0.0f) * Matrix.CreateRotationY((float)Math.PI * 0.5f), spriteSheet, false)
+            Sprite sprite2 = AddChild(new Sprite(manager, "sprite2", Matrix.CreateTranslation(0.0f, -0.05f, -0.0f) * Matrix.CreateRotationY((float)Math.PI * 0.5f), spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Fixed
             }) as Sprite;
@@ -61,11 +61,6 @@ namespace DwarfCorp
 
         public Chair()
         {
-            var matrix = Matrix.CreateRotationY((float)Math.PI * 0.5f);
-            matrix.Translation = new Vector3(0, -0.22f, 0);
-            LocalTransform = matrix;
-
-            Initialize();
         }
 
         public Chair(ComponentManager manager, Vector3 position) :
@@ -75,12 +70,18 @@ namespace DwarfCorp
             matrix.Translation = position - new Vector3(0, 0.22f, 0);
             LocalTransform = matrix;
 
-            Initialize();
+            Initialize(Manager);
 
             var voxelUnder = new Voxel();
 
             if (manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
                 AddChild(new VoxelListener(manager, manager.World.ChunkManager, voxelUnder));
+        }
+
+        public override void CreateCosmeticChildren(ComponentManager manager)
+        {
+            //Initialize(manager);
+            base.CreateCosmeticChildren(manager);
         }
     }
 }

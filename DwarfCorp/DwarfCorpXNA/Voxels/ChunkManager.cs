@@ -1104,15 +1104,15 @@ namespace DwarfCorp
 
             j = 0;
             SetLoadingMessage("Calculating vertex light ...");
-            System.Threading.Tasks.Parallel.ForEach(toRebuild, chunk =>
+            foreach(VoxelChunk chunk in toRebuild)
             {
                 j++;
                 chunk.CalculateVertexLighting();
-            });
+            };
 
             SetLoadingMessage("Building Vertices...");
             j = 0;
-            System.Threading.Tasks.Parallel.ForEach(toRebuild, chunk =>
+            foreach(var  chunk in toRebuild)
             {
                 j++;
                 //SetLoadingMessage("Building Vertices " + j + "/" + toRebuild.Count);
@@ -1126,7 +1126,7 @@ namespace DwarfCorp
                 chunk.ShouldRebuild = false;
                 chunk.RebuildPending = false;
                 chunk.RebuildLiquidPending = false;
-            });
+            };
 
             SetLoadingMessage("Cleaning Up.");
         }
