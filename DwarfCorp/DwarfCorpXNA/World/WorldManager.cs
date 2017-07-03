@@ -38,6 +38,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using BloomPostprocess;
+using DwarfCorp.Gui;
 using DwarfCorp.Gui.Widgets;
 using DwarfCorp.Tutorial;
 using Microsoft.Xna.Framework;
@@ -559,7 +560,7 @@ namespace DwarfCorp
         public void Save(string filename, SaveCallback callback = null)
         {
             Paused = true;
-            WaitState waitforsave = new WaitState(Game, "SaveWait", gameState.StateManager,
+            WaitState waitforsave = new WaitState(Game, "Saving...", gameState.StateManager,
                 () => SaveThreadRoutine(filename));
             if (callback != null)
                 waitforsave.OnFinished += (bool b, WaitStateException e) => callback(b, e);

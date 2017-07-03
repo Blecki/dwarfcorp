@@ -104,6 +104,12 @@ namespace DwarfCorp
             Speed = 1.0f;
         }
 
+
+        public GameTime ToRealTime()
+        {
+            return new GameTime(TotalRealTime, ElapsedRealTime);
+        }
+
         public GameTime ToGameTime()
         {
             return new GameTime(TotalGameTime, ElapsedGameTime);

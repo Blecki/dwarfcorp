@@ -53,6 +53,7 @@ namespace DwarfCorp.GameStates
         private Gui.Widgets.GodMenu GodMenu;
         private AnnouncementPopup Announcer;
         private FramedIcon EconomyIcon;
+        private Timer AutoSaveTimer;
 
         private class ToolbarItem
         {
@@ -216,7 +217,7 @@ namespace DwarfCorp.GameStates
             };
 
             World.Unpause();
-
+            AutoSaveTimer = new Timer(GameSettings.Default.AutoSaveTimeMinutes * 60.0f, false, Timer.TimerMode.Real);
             base.OnEnter();
         }
 
@@ -321,7 +322,14 @@ namespace DwarfCorp.GameStates
             GameSpeedControls.CurrentSpeed = (int)DwarfTime.LastTime.Speed;
            
             // Really just handles mouse pointer animation.
-            GuiRoot.Update(gameTime.ToGameTime());
+            GuiRoot.Update(gameTime.ToRealTime());
+
+            AutoSaveTimer.Update(gameTime);
+
+            if (GameSettings.Default.AutoSave && AutoSaveTimer.HasTriggered)
+            {
+                AutoSave();   
+            }
         }
 
         /// <summary>
@@ -1740,6 +1748,16 @@ namespace DwarfCorp.GameStates
             //StateManager.States["PlayState"] = new PlayState(Game, StateManager);
 
             StateManager.PushState(new MainMenuState(Game, StateManager));
+        }
+
+        public void AutoSave()
+        {
+            World.Save(
+                    String.Format("{0}_{1}", Overworld.Name, World.GameID),
+                    (success, exception) =>
+                    {
+                        World.MakeAnnouncement(success ? "File autosaved." : "Autosave failed - " + exception.Message);
+                    });
         }
     }
 }
