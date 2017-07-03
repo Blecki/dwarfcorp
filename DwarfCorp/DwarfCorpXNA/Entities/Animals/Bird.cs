@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
@@ -13,6 +14,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Bird : Creature
     {
+        public string SpriteAsset { get; set; }
 
         public Bird()
         {
@@ -66,67 +68,8 @@ namespace DwarfCorp
                 IsVisible = false
             });
 
-            var spriteSheet = new SpriteSheet(sprites);
-
-            // When true, causes the bird to face the direction its moving in
-            Physics.Orientation = Physics.OrientMode.RotateY;
-
-            // The dimensions of each frame in the sprite sheet (in pixels), as given by the readme
-            const int frameWidth = 24;
-            const int frameHeight = 16;
-
-            // Create the sprite component for the bird.
-            Sprite = Physics.AddChild(new CharacterSprite
-                                  (Graphics,
-                                  Manager,
-                                  "Bird Sprite",
-                                  Matrix.CreateTranslation(0, 0.25f, 0)
-                                  )) as CharacterSprite;
-
-            // Flying animation (rows 4 5 6 and 7)
-            Sprite.AddAnimation(CharacterMode.Flying, 
-                                OrientedAnimation.Orientation.Forward, 
-                                spriteSheet, 
-                                // animation will play at 15 FPS
-                                15.0f, 
-                                frameWidth, frameHeight, 
-                                // animation begins at row 4
-                                4,
-                                // It consists of columns 0, 1 and 2 looped forever
-                                0, 1, 2);
-            Sprite.AddAnimation(CharacterMode.Flying,
-                                OrientedAnimation.Orientation.Left,
-                                spriteSheet,
-                                15.0f,
-                                frameWidth, frameHeight,
-                                5,
-                                0, 1, 2);
-            Sprite.AddAnimation(CharacterMode.Flying,
-                                OrientedAnimation.Orientation.Right,
-                                spriteSheet,
-                                15.0f,
-                                frameWidth, frameHeight,
-                                6,
-                                0, 1, 2);
-            Sprite.AddAnimation(CharacterMode.Flying,
-                                OrientedAnimation.Orientation.Backward,
-                                spriteSheet,
-                                15.0f,
-                                frameWidth, frameHeight,
-                                7,
-                                0, 1, 2);
-
-            // Hopping animation (rows 0 1 2 and 3)
-            Sprite.AddAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Forward, spriteSheet, 5.0f, frameWidth, frameHeight, 0, 0, 1);
-            Sprite.AddAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Left, spriteSheet, 5.0f, frameWidth, frameHeight, 1, 0, 1);
-            Sprite.AddAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Right, spriteSheet, 5.0f, frameWidth, frameHeight, 2, 0, 1);
-            Sprite.AddAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Backward, spriteSheet, 5.0f, frameWidth, frameHeight, 3, 0, 1);
-
-            // Idle animation (rows 0 1 2 and 3)
-            Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Forward, spriteSheet, 5.0f, frameWidth, frameHeight, 0, 0);
-            Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Left, spriteSheet, 5.0f, frameWidth, frameHeight, 1, 0);
-            Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Right, spriteSheet, 5.0f, frameWidth, frameHeight, 2, 0);
-            Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Backward, spriteSheet, 5.0f, frameWidth, frameHeight, 3, 0);
+            SpriteAsset = sprites;
+            CreateSpriteSheet(Manager);
 
             // Used to grab other components
             Hands = Physics.AddChild(new Grabber("hands", Manager, Matrix.Identity, new Vector3(0.2f, 0.2f, 0.2f), Vector3.Zero)) as Grabber;
@@ -150,24 +93,7 @@ namespace DwarfCorp
                 }
             }) as Inventory;
 
-            // The shadow is rotated 90 degrees along X, and is 0.25 blocks beneath the creature
-            Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
-            shadowTransform.Translation = new Vector3(0.0f, -0.25f, 0.0f);
-            shadowTransform *= Matrix.CreateScale(0.75f);
-
-            SpriteSheet shadowTexture = new SpriteSheet(ContentPaths.Effects.shadowcircle);
-            var shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform, shadowTexture)) as Shadow;
-
-            // We set up the shadow's animation so that it's just a static black circle
-            // TODO: Make the shadow set this up automatically
-            List<Point> shP = new List<Point>
-            {
-                new Point(0, 0)
-            };
-            Animation shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle), "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
-            shadow.AddAnimation(shadowAnimation);
-            shadowAnimation.Play();
-            shadow.SetCurrentAnimation("sh");
+            Physics.AddChild(Shadow.Create(0.25f, Manager));
 
             // The bird will emit a shower of blood when it dies
             Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
@@ -198,5 +124,82 @@ namespace DwarfCorp
             AI.Movement.CanClimb = false;
             Species = "Bird";
         }
+
+        public override void CreateCosmeticChildren(ComponentManager manager)
+        {
+            CreateSpriteSheet(manager);
+
+            Physics.AddChild(Shadow.Create(0.25f, manager));
+
+            base.CreateCosmeticChildren(manager);
+        }
+
+        void CreateSpriteSheet(ComponentManager manager)
+        {
+            var spriteSheet = new SpriteSheet(SpriteAsset);
+
+            // When true, causes the bird to face the direction its moving in
+            Physics.Orientation = Physics.OrientMode.RotateY;
+
+            // The dimensions of each frame in the sprite sheet (in pixels), as given by the readme
+            const int frameWidth = 24;
+            const int frameHeight = 16;
+
+            // Create the sprite component for the bird.
+            var sprite = Physics.AddChild(new CharacterSprite
+                                  (manager.World.GraphicsDevice,
+                                  manager,
+                                  "Bird Sprite",
+                                  Matrix.CreateTranslation(0, 0.25f, 0)
+                                  )) as CharacterSprite;
+
+            // Flying animation (rows 4 5 6 and 7)
+            sprite.AddAnimation(CharacterMode.Flying,
+                                OrientedAnimation.Orientation.Forward,
+                                spriteSheet,
+                // animation will play at 15 FPS
+                                15.0f,
+                                frameWidth, frameHeight,
+                // animation begins at row 4
+                                4,
+                // It consists of columns 0, 1 and 2 looped forever
+                                0, 1, 2);
+            sprite.AddAnimation(CharacterMode.Flying,
+                                OrientedAnimation.Orientation.Left,
+                                spriteSheet,
+                                15.0f,
+                                frameWidth, frameHeight,
+                                5,
+                                0, 1, 2);
+            sprite.AddAnimation(CharacterMode.Flying,
+                                OrientedAnimation.Orientation.Right,
+                                spriteSheet,
+                                15.0f,
+                                frameWidth, frameHeight,
+                                6,
+                                0, 1, 2);
+            sprite.AddAnimation(CharacterMode.Flying,
+                                OrientedAnimation.Orientation.Backward,
+                                spriteSheet,
+                                15.0f,
+                                frameWidth, frameHeight,
+                                7,
+                                0, 1, 2);
+
+            // Hopping animation (rows 0 1 2 and 3)
+            sprite.AddAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Forward, spriteSheet, 5.0f, frameWidth, frameHeight, 0, 0, 1);
+            sprite.AddAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Left, spriteSheet, 5.0f, frameWidth, frameHeight, 1, 0, 1);
+            sprite.AddAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Right, spriteSheet, 5.0f, frameWidth, frameHeight, 2, 0, 1);
+            sprite.AddAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Backward, spriteSheet, 5.0f, frameWidth, frameHeight, 3, 0, 1);
+
+            // Idle animation (rows 0 1 2 and 3)
+            sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Forward, spriteSheet, 5.0f, frameWidth, frameHeight, 0, 0);
+            sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Left, spriteSheet, 5.0f, frameWidth, frameHeight, 1, 0);
+            sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Right, spriteSheet, 5.0f, frameWidth, frameHeight, 2, 0);
+            sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Backward, spriteSheet, 5.0f, frameWidth, frameHeight, 3, 0);
+            Sprite.SetFlag(Flag.ShouldSerialize, false);
+
+        }
     }
+
 }

@@ -25,7 +25,7 @@ namespace DwarfCorp
             Initialize(graphics, content);
         }
 
-        private static void CreateIntersecting(string name, string assetName, GraphicsDevice graphics, ContentManager content)
+        public static void CreateIntersecting(string name, string assetName, GraphicsDevice graphics, ContentManager content)
         {
             Texture2D bushSheet = TextureManager.GetTexture(assetName);
             List<Matrix> bushTransforms = new List<Matrix>();
@@ -105,7 +105,8 @@ namespace DwarfCorp
                     "deadbush",
                     "mushroom",
                     "vine",
-                    "gnarled"
+                    "gnarled",
+                    "wheat"
                 };
 
                 foreach(string mote in motes)

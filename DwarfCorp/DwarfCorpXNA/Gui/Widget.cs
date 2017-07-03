@@ -122,6 +122,7 @@ namespace DwarfCorp.Gui
         public Action<Widget, InputEventArgs> OnMouseMove = null;
         public Action<Widget> OnHover = null;
         public Action<Widget, InputEventArgs> OnClick = null;
+        public Action<Widget, InputEventArgs> OnScroll = null;
         public Action<Widget> OnGainFocus = null;
         public Action<Widget> OnLoseFocus = null;
         public Action<Widget, InputEventArgs> OnKeyPress = null;

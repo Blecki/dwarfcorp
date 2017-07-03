@@ -120,7 +120,7 @@ namespace DwarfCorp
 
         bool IsNotSelectedDwarf(Body body)
         {
-            List<Creature> dwarves = body.GetChildrenOfType<Creature>();
+            var dwarves = body.EnumerateAll().OfType<Creature>().ToList();
 
             if (dwarves.Count <= 0)
             {
@@ -133,7 +133,7 @@ namespace DwarfCorp
 
         bool IsDwarf(Body body)
         {
-            List<Creature> dwarves = body.GetChildrenOfType<Creature>();
+            var dwarves = body.EnumerateAll().OfType<Creature>().ToList();
 
             if (dwarves.Count <= 0)
             {

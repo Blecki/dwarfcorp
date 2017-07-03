@@ -72,7 +72,8 @@
             "Metal" :  64
         },
         "Crafts" :  ["Metal"],
-        "Encrustings":  ["Precious"]
+        "Encrustings":  ["Precious"],
+        "Icon":  1
     },
     "Goblins": {
         "Name": "Goblins",
@@ -135,7 +136,8 @@
             "Craft" :  3
         },
         "Crafts" :  ["Bone"],
-        "Encrustings":  []
+        "Encrustings":  [],
+        "Icon":  3
     },
     "Molemen": {
         "Name": "Molemen",
@@ -151,8 +153,8 @@
         "NaturalEnemies" :  ["Demon", "Carnivore"],
         "IsIntelligent": true,
         "IsNative": true,
-        "FactionNameFile": "Text\\Templates\\nations_dwarf.txt",
-        "NameFile": "Text\\Templates\\names_dwarf.txt",
+        "FactionNameFile": "Text\\Templates\\nations_molemen.txt",
+        "NameFile": "Text\\Templates\\names_moleman.txt",
         "TalkAnimation" : {
             "AssetName" : "GUI\\diplo-moleman",
             "Width" : 64,
@@ -201,7 +203,9 @@
             "Craft" :  2
         },
         "Crafts" :  ["Stone"],
-        "Encrustings":  ["Gem"]
+        "Encrustings":  ["Gem"],
+        "TradeMusic" :  "molemen",
+        "Icon":  4
     },
     "Elf": {
         "Name": "Elf",
@@ -267,7 +271,9 @@
             "Craft" :  16
         },
         "Crafts" :  ["Wood", "AboveGroundPlant"],
-        "Encrustings":  ["Precious"]
+        "Encrustings":  ["Precious"],
+        "TradeMusic" :  "elf",
+        "Icon":  "5"
     },
     "Undead": {
         "Name": "Undead",
@@ -333,7 +339,9 @@
             "Craft" :  16
         },
         "Crafts" :  ["Bone"],
-        "Encrustings":  ["Magical"]
+        "Encrustings":  ["Magical"],
+        "TradeMusic":  "undead",
+        "Icon":  6
     },
     "Demon": {
         "Name": "Demon",

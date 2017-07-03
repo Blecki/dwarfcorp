@@ -77,25 +77,7 @@ namespace DwarfCorp
             // When true, causes the bird to face the direction its moving in
             Physics.Orientation = Physics.OrientMode.RotateY;
 
-
-            // Create the sprite component for the bird.
-            Sprite = Physics.AddChild(new CharacterSprite
-                                  (Graphics,
-                                  Manager,
-                                  "Bat Sprite",
-                                  Matrix.CreateTranslation(0, 0.5f, 0)
-                                  )) as CharacterSprite;
-
-            CompositeAnimation.Descriptor descriptor =
-                FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
-                    ContentPaths.GetFileAsString(ContentPaths.Entities.Animals.Bat.bat_animations));
-
-            List<CompositeAnimation> animations = descriptor.GenerateAnimations("Bat");
-
-            foreach (CompositeAnimation animation in animations)
-            {
-                Sprite.AddAnimation(animation);
-            }
+            CreateSprite(ContentPaths.Entities.Animals.Bat.bat_animations, Manager);
 
             // Used to grab other components
             Hands = Physics.AddChild(new Grabber("hands", Manager, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero)) as Grabber;
@@ -123,24 +105,7 @@ namespace DwarfCorp
                 }
             }) as Inventory;
 
-            // The shadow is rotated 90 degrees along X, and is 0.25 blocks beneath the creature
-            Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
-            shadowTransform.Translation = new Vector3(0.0f, -0.25f, 0.0f);
-            shadowTransform *= Matrix.CreateScale(0.75f);
-
-            SpriteSheet shadowTexture = new SpriteSheet(ContentPaths.Effects.shadowcircle);
-            var shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform, shadowTexture)) as Shadow;
-
-            // We set up the shadow's animation so that it's just a static black circle
-            // TODO: Make the shadow set this up automatically
-            List<Point> shP = new List<Point>
-            {
-                new Point(0, 0)
-            };
-            Animation shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle), "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
-            shadow.AddAnimation(shadowAnimation);
-            shadowAnimation.Play();
-            shadow.SetCurrentAnimation("sh");
+            Physics.AddChild(Shadow.Create(0.25f, Manager));
 
             // The bird will emit a shower of blood when it dies
             Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
@@ -161,7 +126,7 @@ namespace DwarfCorp
             Stats.CurrentClass = new EmployeeClass()
             {
                 Name = "Bat",
-                Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Bat" } }
+                Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Bat" } },
             };
 
 
@@ -169,6 +134,13 @@ namespace DwarfCorp
             Species = "Bat";
             CanReproduce = true;
             BabyType = "Bat";
+        }
+
+        public override void CreateCosmeticChildren(ComponentManager manager)
+        {
+            CreateSprite(ContentPaths.Entities.Animals.Bat.bat_animations, manager);
+            Physics.AddChild(Shadow.Create(0.25f, manager));
+            base.CreateCosmeticChildren(manager);
         }
     }
 

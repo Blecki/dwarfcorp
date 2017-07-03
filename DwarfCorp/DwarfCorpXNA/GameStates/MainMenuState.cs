@@ -92,6 +92,17 @@ namespace DwarfCorp.GameStates
 
             var frame = MakeMenuFrame("MAIN MENU");
 
+            string latestSave = GameFile.GetLatestSaveFile();
+
+            if (latestSave != null)
+            {
+                MakeMenuItem(frame, "Continue", "Continue last save " + latestSave, (sender, args) =>
+                    StateManager.PushState(new LoadState(Game, Game.StateManager, new WorldGenerationSettings()
+                    {
+                        ExistingFile = latestSave
+                    })));
+            }
+
             MakeMenuItem(frame, "New Game", "Start a new game of DwarfCorp.", (sender, args) => StateManager.PushState(new LoadState(Game, Game.StateManager, new WorldGenerationSettings() {GenerateFromScratch = true})));
 
             MakeMenuItem(frame, "New Game (Advanced)", "Start a new game of DwarfCorp.", (sender, args) => StateManager.PushState(new CompanyMakerState(Game, Game.StateManager)));

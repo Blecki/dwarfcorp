@@ -54,6 +54,9 @@ namespace DwarfCorp
 
         private void InitializeResources()
         {
+            Resources = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
+            
+            /*
             foreach(var pair in ResourceLibrary.Resources)
             {
                 if (Resources == null)
@@ -69,12 +72,13 @@ namespace DwarfCorp
                     };
                 }
             }
+             */
         }
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            InitializeResources();
+            //InitializeResources();
         }
        
 

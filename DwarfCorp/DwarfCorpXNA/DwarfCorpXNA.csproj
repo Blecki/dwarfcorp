@@ -156,7 +156,6 @@
     <Compile Include="Components\AI\StatBuff.cs" />
     <Compile Include="Components\AI\ThoughtBuff.cs" />
     <Compile Include="Components\Body.cs" />
-    <Compile Include="Components\DeathComponentSpawner.cs" />
     <Compile Include="Components\GameComponent.cs" />
     <Compile Include="Components\Graphics\BatchedSprite.cs" />
     <Compile Include="Components\Graphics\Bobber.cs" />
@@ -166,8 +165,9 @@
     <Compile Include="Components\Graphics\LightEmitter.cs" />
     <Compile Include="Components\Graphics\Mesh.cs" />
     <Compile Include="Components\Graphics\OrientedAnimation.cs" />
-    <Compile Include="Components\Graphics\ParticleEmitter.cs" />
-    <Compile Include="Components\Graphics\ParticleTrigger.cs" />
+    <Compile Include="Gui\Widgets\FlatToolTray.cs" />
+    <Compile Include="ParticleEffects\ParticleEmitter.cs" />
+    <Compile Include="ParticleEffects\ParticleTrigger.cs" />
     <Compile Include="Components\Graphics\SelectionCircle.cs" />
     <Compile Include="Components\Graphics\Shadow.cs" />
     <Compile Include="Components\Graphics\Sprite.cs" />
@@ -304,7 +304,7 @@
     <Compile Include="Graphics\Effects\BloomComponent.cs" />
     <Compile Include="Graphics\Effects\BloomSettings.cs" />
     <Compile Include="Graphics\Effects\FXAA.cs" />
-    <Compile Include="Graphics\Effects\ParticleManager.cs" />
+    <Compile Include="ParticleEffects\ParticleManager.cs" />
     <Compile Include="Graphics\Effects\Shader.cs" />
     <Compile Include="Graphics\Effects\ShadowRenderer.cs" />
     <Compile Include="Graphics\Effects\SkyRenderer.cs" />
@@ -327,6 +327,7 @@
     <Compile Include="Graphics\Primitives\PrimitiveLibrary.cs" />
     <Compile Include="Graphics\Primitives\VoxelListPrimitive.cs" />
     <Compile Include="Graphics\SelectionBuffer.cs" />
+    <Compile Include="Gui\Widgets\AudioMixerWidget.cs" />
     <Compile Include="Gui\Widgets\TextProgressBar.cs" />
     <Compile Include="Gui\Widgets\GoalInfo.cs" />
     <Compile Include="Gui\Widgets\GoalPanel.cs" />
@@ -607,7 +608,6 @@
     <Compile Include="Tools\Datastructures\PriorityQueue.cs" />
     <Compile Include="Tools\Datastructures\ThreadSafeRandom.cs" />
     <Compile Include="Tools\Extensions.cs" />
-    <Compile Include="Tools\GameObjectCaching.cs" />
     <Compile Include="Tools\GamePerformance.cs" />
     <Compile Include="Tools\Graphics\ColorGradient.cs" />
     <Compile Include="Tools\Graphics\VertexNoise.cs" />
@@ -643,6 +643,8 @@
     <Compile Include="World\Overworld.cs" />
     <Compile Include="World\VegetationData.cs" />
     <Compile Include="World\Weather.cs" />
+    <Compile Include="World\WorldManager-NewGameSetup.cs" />
+    <Compile Include="World\WorldManager-Loading.cs" />
     <Compile Include="World\WorldManager.cs" />
     <Compile Include="World\WorldTime.cs" />
   </ItemGroup>

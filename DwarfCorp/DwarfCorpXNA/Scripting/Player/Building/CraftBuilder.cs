@@ -126,17 +126,11 @@ namespace DwarfCorp
             }
         }
 
-
         private void SetDisplayColor(Color color)
         {
-            List<Tinter> sprites = CurrentCraftBody.GetChildrenOfTypeRecursive<Tinter>();
-
-            foreach (Tinter sprite in sprites)
-            {
+            foreach (var sprite in CurrentCraftBody.EnumerateAll().OfType<Tinter>())
                 sprite.VertexColorTint = color;
-            }
         }
-
 
         public void Update(DwarfTime gameTime, GameMaster player)
         {

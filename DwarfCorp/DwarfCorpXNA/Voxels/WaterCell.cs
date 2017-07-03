@@ -42,5 +42,4 @@ namespace DwarfCorp
         public byte WaterLevel;
         public LiquidType Type;
     }
-
 }

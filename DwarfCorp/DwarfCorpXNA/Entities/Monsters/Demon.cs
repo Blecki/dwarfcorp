@@ -65,12 +65,7 @@ namespace DwarfCorp
         public void Initialize()
         {
             Physics.Orientation = Physics.OrientMode.RotateY;
-            Sprite = Physics.AddChild(new CharacterSprite(Graphics, Manager, "Demon Sprite",  Matrix.CreateTranslation(new Vector3(0, 0.35f, 0)))) as CharacterSprite;
-            foreach (Animation animation in Stats.CurrentClass.Animations)
-            {
-                Sprite.AddAnimation(animation.Clone());
-            }
-
+            CreateSprite(Stats.CurrentClass, Manager);
             Hands = Physics.AddChild(new Grabber("hands", Manager, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero)) as Grabber;
 
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
@@ -87,20 +82,7 @@ namespace DwarfCorp
                 }
             }) as Inventory;
 
-            Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
-            shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
-
-            SpriteSheet shadowTexture = new SpriteSheet(ContentPaths.Effects.shadowcircle);
-
-            var shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform, shadowTexture)) as Shadow;
-            List<Point> shP = new List<Point>
-            {
-                new Point(0, 0)
-            };
-            Animation shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle), "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
-            shadow.AddAnimation(shadowAnimation);
-            shadowAnimation.Play();
-            shadow.SetCurrentAnimation("sh");
+            Physics.AddChild(Shadow.Create(0.75f, Manager));
 
             Physics.Tags.Add("Demon");
 
@@ -108,19 +90,26 @@ namespace DwarfCorp
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 5,
-                SoundToPlay = ContentPaths.Entities.Goblin.Audio.goblinhurt1
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_demon_angered
             });
 
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
+                ContentPaths.Audio.Oscar.sfx_ic_demon_angered,
                 ContentPaths.Audio.demon0,
                 ContentPaths.Audio.demon1,
                 ContentPaths.Audio.demon2,
                 ContentPaths.Audio.demon3,
+                 ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_1,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_2,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_3,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_4,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_5,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_6,
             };
 
 
-            MinimapIcon minimapIcon = Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 3, 0))) as MinimapIcon;
+            MinimapIcon minimapIcon = Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 3, 1))) as MinimapIcon;
 
 
 
@@ -131,13 +120,35 @@ namespace DwarfCorp
 
             NoiseMaker.Noises["Jump"] = new List<string>
             {
-                ContentPaths.Audio.jump
+                ContentPaths.Audio.Oscar.sfx_ic_demon_angered,
+            };
+
+            NoiseMaker.Noises["Chirp"] = new List<string>
+            {
+                ContentPaths.Audio.demon0,
+                ContentPaths.Audio.demon1,
+                ContentPaths.Audio.demon2,
+                ContentPaths.Audio.demon3,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_1,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_2,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_3,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_4,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_5,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_6,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_pleased,
             };
 
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
             //Stats.LastName = TextGenerator.GenerateRandom("$elffamily");
             Stats.Size = 4;
             Species = "Demon";
+        }
+
+        public override void CreateCosmeticChildren(ComponentManager manager)
+        {
+            CreateSprite(Stats.CurrentClass, manager);
+            Physics.AddChild(Shadow.Create(0.75f, manager));
+            base.CreateCosmeticChildren(manager);
         }
     }
 

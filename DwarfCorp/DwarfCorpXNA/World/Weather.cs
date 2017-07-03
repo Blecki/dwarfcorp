@@ -60,8 +60,8 @@ namespace DwarfCorp
 
             public struct StormProperties
             {
-                public ParticleEffect RainEffect { get; set; }
-                public ParticleEffect HitEffect { get; set; }
+                public string RainEffect { get; set; }
+                public string HitEffect { get; set; }
                 public float RainSpeed { get; set; }
                 public float RainRandom { get; set; }
                 public bool CreatesLiquid { get; set; }
@@ -73,7 +73,7 @@ namespace DwarfCorp
             public static Dictionary<StormType, StormProperties> Properties { get; set; }
             private static bool staticsInitialized = false;
 
-            public static void InitializeStatics(ParticleManager particles)
+            public static void InitializeStatics()
             {
                 if (staticsInitialized)
                 {
@@ -86,8 +86,8 @@ namespace DwarfCorp
                     {
                         StormType.RainStorm, new StormProperties()
                         {
-                            RainEffect = particles.Effects["rain"],
-                            HitEffect = particles.Effects["splat"],
+                            RainEffect = "rain",//particles.Effects["rain"],
+                            HitEffect = "splat",//particles.Effects["splat"],
                             RainSpeed = 30,
                             CreatesLiquid = true,
                             LiquidToCreate = LiquidType.Water
@@ -96,8 +96,8 @@ namespace DwarfCorp
                     {
                         StormType.SnowStorm, new StormProperties()
                         {
-                            RainEffect = particles.Effects["snowflake"],
-                            HitEffect = particles.Effects["snow_particle"],
+                            RainEffect = "snowflake",//particles.Effects["snowflake"],
+                            HitEffect = "snow_particle",//particles.Effects["snow_particle"],
                             RainSpeed = 10,
                             RainRandom = 10f,
                             CreatesVoxel = true,
@@ -109,7 +109,7 @@ namespace DwarfCorp
 
             public WorldManager World { get; set; }
 
-            public Storm(ParticleManager particles, WorldManager world)
+            public Storm(WorldManager world)
             {
                 World = world;
                 IsInitialized = false;
@@ -117,7 +117,7 @@ namespace DwarfCorp
 
                 if (!staticsInitialized)
                 {
-                    InitializeStatics(particles);
+                    InitializeStatics();
                 }
             }
 
@@ -157,6 +157,7 @@ namespace DwarfCorp
                         Velocity = WindSpeed,
                         TypeofStorm = TypeofStorm
                     };
+                    World.ComponentManager.RootComponent.AddChild(cloud);
                 }
                 IsInitialized = true;
             }
@@ -166,7 +167,7 @@ namespace DwarfCorp
         public static Storm CreateStorm(Vector3 windSpeed, float intensity, WorldManager world)
         {
             windSpeed.Y = 0;
-            Storm storm = new Storm(world.ParticleManager, world)
+            Storm storm = new Storm(world)
             {
                 WindSpeed = windSpeed,
                 Intensity = intensity,
@@ -193,7 +194,7 @@ namespace DwarfCorp
                 for (int j = 0; j < numStorms; j++)
                 {
                     bool isSnow = MathFunctions.RandEvent(1.0f - temperature);
-                    Storm storm = new Storm(world.ParticleManager, world)
+                    Storm storm = new Storm(world)
                     {
                         WindSpeed = MathFunctions.RandVector3Cube()*5,
                         Intensity = MathFunctions.Rand(rain, rain*2),
@@ -236,7 +237,7 @@ namespace DwarfCorp
             }
 
             public Cloud(ComponentManager manager, float raininess, int maxRain, float height, Vector3 pos) :
-                base(manager, pos, new SpriteSheet(ContentPaths.Particles.stormclouds), new Point(0, 0))
+                base(manager, pos, new SpriteSheet(MathFunctions.RandEvent(0.5f) ? ContentPaths.Particles.cloud1 : ContentPaths.Particles.cloud2), new Point(0, 0))
             {
                 Matrix tf = LocalTransform;
                 tf.Translation = new Vector3(pos.X, height, pos.Z);
@@ -250,7 +251,7 @@ namespace DwarfCorp
 
             new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
             {
-                Storm.InitializeStatics(chunks.World.ParticleManager);
+                Storm.InitializeStatics();
                 BoundingBox box = chunks.Bounds;
                 box.Expand(10.0f);
 
@@ -280,6 +281,8 @@ namespace DwarfCorp
 
                 Voxel test = new Voxel();
                 Storm.StormProperties stormProperties = Storm.Properties[TypeofStorm];
+                var rainEmitter = World.ParticleManager.Effects[stormProperties.RainEffect];
+                var hitEmitter = World.ParticleManager.Effects[stormProperties.HitEffect];
                 for (int i = 0; i < MaxRainDrops; i++)
                 {
                     if (!RainDrops[i].IsAlive) continue;
@@ -304,7 +307,7 @@ namespace DwarfCorp
                     }
                     else if (RainDrops[i].IsAlive && RainDrops[i].Particle == null)
                     {
-                        RainDrops[i].Particle = stormProperties.RainEffect.Emitters[0].CreateParticle(RainDrops[i].Pos,
+                        RainDrops[i].Particle = rainEmitter.Emitters[0].CreateParticle(RainDrops[i].Pos,
                             RainDrops[i].Vel, Color.White);
                     }
                     else if (RainDrops[i].IsAlive && RainDrops[i].Particle != null)
@@ -317,7 +320,7 @@ namespace DwarfCorp
                     if (test == null || test.IsEmpty || test.WaterLevel > 0) continue;
 
                     RainDrops[i].IsAlive = false;
-                    stormProperties.HitEffect.Trigger(1, RainDrops[i].Pos + Vector3.UnitY * 0.5f, Color.White);
+                    hitEmitter.Trigger(1, RainDrops[i].Pos + Vector3.UnitY * 0.5f, Color.White);
 
                     if (!MathFunctions.RandEvent(0.1f)) continue;
 

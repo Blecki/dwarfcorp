@@ -53,6 +53,7 @@ namespace DwarfCorp
 
         public CreatureAI()
         {
+            History = new Dictionary<string, TaskHistory>();
         }
 
         public CreatureAI(
@@ -90,12 +91,12 @@ namespace DwarfCorp
         public List<Voxel> CurrentPath { get; set; }
 
         private Creature _cachedCreature = null;
-        public Creature Creature
+        [JsonIgnore] public Creature Creature
         {
             get
             {
                 if (_cachedCreature == null)
-                    _cachedCreature = Parent.GetChildrenOfType<Creature>().FirstOrDefault();
+                    _cachedCreature = Parent.EnumerateAll().OfType<Creature>().FirstOrDefault();
                 System.Diagnostics.Debug.Assert(_cachedCreature != null, "AI Could not find creature");
                 return _cachedCreature;
             }
@@ -229,7 +230,6 @@ namespace DwarfCorp
         /// Tells us which tasks the creature has performed in the past. Maps task names to their histories.
         /// This is useful for determining how many times a task has failed or succeeded.
         /// </summary>
-        [JsonIgnore]
         public Dictionary<string, TaskHistory> History { get; set; }
 
         /// <summary>
@@ -252,16 +252,6 @@ namespace DwarfCorp
         public void AddXP(int amount)
         {
             XPEvents.Add(amount);
-        }
-
-        /// <summary> Get the creature to say a debug message. </summary>
-        public void Say(string message)
-        {
-            MessageBuffer.Add(message);
-            if (MessageBuffer.Count > MaxMessages)
-            {
-                MessageBuffer.RemoveAt(0);
-            }
         }
 
         /// <summary> Called whenever a list of enemies has been sensed by the creature </summary>

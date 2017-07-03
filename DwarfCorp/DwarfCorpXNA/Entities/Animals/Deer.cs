@@ -47,6 +47,8 @@ namespace DwarfCorp
     public class Deer : Creature
     {
         private float ANIM_SPEED = 5.0f;
+        public SpriteSheet SpriteAssets { get; set; }
+
 
         public Deer()
         {
@@ -99,34 +101,8 @@ namespace DwarfCorp
         {
             Physics.Orientation = Physics.OrientMode.RotateY;
 
-            const int frameWidth = 48;
-            const int frameHeight = 40;
-
-            Sprite = Physics.AddChild(new CharacterSprite
-                (Graphics,
-                Manager,
-                "Deer Sprite",
-                Matrix.CreateTranslation(Vector3.Up * 0.6f)
-                )) as CharacterSprite;
-
-            // Add the idle animation
-            Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Forward, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 0, 0);
-            Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Left, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 1, 0);
-            Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Right, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 2, 0);
-            Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Backward, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 3, 0);
-
-            // Add the running animation
-            Sprite.AddAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Forward, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 4, 0, 1, 2, 3);
-            Sprite.AddAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Left, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 5, 0, 1, 2, 3);
-            Sprite.AddAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Right, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 6, 0, 1, 2, 3);
-            Sprite.AddAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Backward, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 7, 0, 1, 2, 3);
-
-            // Add the jumping animation
-            Sprite.AddAnimation(CharacterMode.Jumping, OrientedAnimation.Orientation.Forward, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 8, 0, 1);
-            Sprite.AddAnimation(CharacterMode.Jumping, OrientedAnimation.Orientation.Left, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 9, 0, 1);
-            Sprite.AddAnimation(CharacterMode.Jumping, OrientedAnimation.Orientation.Right, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 10, 0, 1);
-            Sprite.AddAnimation(CharacterMode.Jumping, OrientedAnimation.Orientation.Backward, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 11, 0, 1);
-
+            SpriteAssets = spriteSheet;
+            CreateSprites(Manager);
             // Add hands
             Hands = Physics.AddChild(new Grabber("hands", Manager, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero)) as Grabber;
 
@@ -136,7 +112,7 @@ namespace DwarfCorp
             // Add AI
             AI = Physics.AddChild(new PacingCreatureAI(Manager, "Deer AI", Sensors, PlanService)) as CreatureAI;
 
-            Attacks = new List<Attack>{new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.pick, ContentPaths.Effects.hit)};
+            Attacks = new List<Attack>{new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.Oscar.sfx_oc_deer_attack, ContentPaths.Effects.hit)};
 
             Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.BoundingBoxPos)
             {
@@ -147,27 +123,20 @@ namespace DwarfCorp
             }) as Inventory;
 
             // Shadow
-            Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
-            shadowTransform.Translation = new Vector3(0.0f, -.25f, 0.0f);
-            SpriteSheet shadowTexture = new SpriteSheet(ContentPaths.Effects.shadowcircle);
-            var shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform, shadowTexture)) as Shadow;
-
-            List<Point> shP = new List<Point>
-            {
-                new Point(0,0)
-            };
-            Animation shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle), "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
-            shadow.AddAnimation(shadowAnimation);
-            shadowAnimation.Play();
-            shadow.SetCurrentAnimation("sh");
+            Physics.AddChild(Shadow.Create(0.75f, Manager));
 
             // The bird will emit a shower of blood when it dies
             Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 1,
-                BoxTriggerTimes = 10
+                BoxTriggerTimes = 10,
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_oc_deer_hurt_1
             });
+
+
+            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_deer_hurt_1 };
+            NoiseMaker.Noises["Chirp"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_deer_neutral_1, ContentPaths.Audio.Oscar.sfx_oc_deer_neutral_2 };
 
             // The bird is flammable, and can die when exposed to fire.
             Physics.AddChild(new Flammable(Manager, "Flames"));
@@ -186,6 +155,46 @@ namespace DwarfCorp
             Species = "Deer";
             CanReproduce = true;
             BabyType = "Deer";
+        }
+
+        private void CreateSprites(ComponentManager manager)
+        {
+            const int frameWidth = 48;
+            const int frameHeight = 40;
+
+            var sprite = Physics.AddChild(new CharacterSprite
+                (manager.World.GraphicsDevice,
+                manager,
+                "Deer Sprite",
+                Matrix.CreateTranslation(Vector3.Up * 0.6f)
+                )) as CharacterSprite;
+
+            // Add the idle animation
+            sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Forward, SpriteAssets, ANIM_SPEED, frameWidth, frameHeight, 0, 0);
+            sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Left, SpriteAssets, ANIM_SPEED, frameWidth, frameHeight, 1, 0);
+            sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Right, SpriteAssets, ANIM_SPEED, frameWidth, frameHeight, 2, 0);
+            sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Backward, SpriteAssets, ANIM_SPEED, frameWidth, frameHeight, 3, 0);
+
+            // Add the running animation
+            sprite.AddAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Forward, SpriteAssets, ANIM_SPEED, frameWidth, frameHeight, 4, 0, 1, 2, 3);
+            sprite.AddAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Left, SpriteAssets, ANIM_SPEED, frameWidth, frameHeight, 5, 0, 1, 2, 3);
+            sprite.AddAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Right, SpriteAssets, ANIM_SPEED, frameWidth, frameHeight, 6, 0, 1, 2, 3);
+            sprite.AddAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Backward, SpriteAssets, ANIM_SPEED, frameWidth, frameHeight, 7, 0, 1, 2, 3);
+
+            // Add the jumping animation
+            sprite.AddAnimation(CharacterMode.Jumping, OrientedAnimation.Orientation.Forward, SpriteAssets, ANIM_SPEED, frameWidth, frameHeight, 8, 0, 1);
+            sprite.AddAnimation(CharacterMode.Jumping, OrientedAnimation.Orientation.Left, SpriteAssets, ANIM_SPEED, frameWidth, frameHeight, 9, 0, 1);
+            sprite.AddAnimation(CharacterMode.Jumping, OrientedAnimation.Orientation.Right, SpriteAssets, ANIM_SPEED, frameWidth, frameHeight, 10, 0, 1);
+            sprite.AddAnimation(CharacterMode.Jumping, OrientedAnimation.Orientation.Backward, SpriteAssets, ANIM_SPEED, frameWidth, frameHeight, 11, 0, 1);
+            sprite.SetFlag(Flag.ShouldSerialize, false);
+        }
+
+
+        public override void CreateCosmeticChildren(ComponentManager manager)
+        {
+            CreateSprites(manager);
+            Physics.AddChild(Shadow.Create(0.75f, manager));
+            base.CreateCosmeticChildren(manager);
         }
 
     }

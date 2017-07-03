@@ -69,7 +69,7 @@ namespace DwarfCorp
         {
             foreach (Body body in entities)
             {
-                Creature creature = body.GetChildrenOfType<Creature>().FirstOrDefault();
+                var creature = body.EnumerateAll().OfType<Creature>().FirstOrDefault();
 
                 if (creature == null) continue;
                 else

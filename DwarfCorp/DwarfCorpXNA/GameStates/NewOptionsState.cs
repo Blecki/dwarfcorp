@@ -98,9 +98,9 @@ namespace DwarfCorp.GameStates
             GuiRoot.SetMouseOverlay(null, 0);
             var screen = GuiRoot.RenderData.VirtualScreen;
             float scale = 0.75f;
-            float newWidth = System.Math.Max(screen.Width*scale, 640);
-            float newHeight = System.Math.Max(screen.Height*scale, 480);
-            Rectangle rect = new Rectangle((int)(newWidth * 0.25f), (int)(newHeight * 0.25f),(int)newWidth, (int)newHeight);
+            float newWidth = System.Math.Min(System.Math.Max(screen.Width*scale, 640), screen.Width*scale);
+            float newHeight = System.Math.Min(System.Math.Max(screen.Height*scale, 480), screen.Height*scale);
+            Rectangle rect = new Rectangle((int)(screen.Width / 2 - newWidth / 2), (int)(screen.Height/2 - newHeight/2),(int)newWidth, (int)newHeight);
             // CONSTRUCT GUI HERE...
             MainPanel = GuiRoot.RootItem.AddChild(new Gui.Widget
                 {
@@ -258,14 +258,14 @@ namespace DwarfCorp.GameStates
             MoveSpeed = panel.AddChild(LabelAndDockWidget("Camera Move Speed", new HorizontalFloatSlider
                 {
                     ScrollArea = 20,
-                    OnScroll = OnItemChanged,
+                    OnSliderChanged = OnItemChanged,
                     Tooltip = "Sensitivity of the camera to the movement keys"
                 })).GetChild(1) as HorizontalFloatSlider;
 
             ZoomSpeed = panel.AddChild(LabelAndDockWidget("Camera Zoom Speed", new HorizontalFloatSlider
             {
                 ScrollArea = 2,
-                OnScroll = OnItemChanged,
+                OnSliderChanged = OnItemChanged,
                 Tooltip = "Sensitivity of the camera to zooming"
             })).GetChild(1) as HorizontalFloatSlider;
 
@@ -351,23 +351,35 @@ namespace DwarfCorp.GameStates
             MasterVolume = panel.AddChild(LabelAndDockWidget("Master Volume", new HorizontalFloatSlider
             {
                 ScrollArea = 1.0f,
-                OnScroll = OnItemChanged,
+                OnSliderChanged = OnItemChanged,
                 Tooltip = "Volume of all sounds in the game.",
             })).GetChild(1) as HorizontalFloatSlider;
 
             SFXVolume = panel.AddChild(LabelAndDockWidget("SFX Volume", new HorizontalFloatSlider
             {
                 ScrollArea = 1.0f,
-                OnScroll = OnItemChanged,
+                OnSliderChanged = OnItemChanged,
                 Tooltip = "Volume of sound effects."
             })).GetChild(1) as HorizontalFloatSlider;
 
             MusicVolume = panel.AddChild(LabelAndDockWidget("Music Volume", new HorizontalFloatSlider
             {
                 ScrollArea = 1.0f,
-                OnScroll = OnItemChanged,
+                OnSliderChanged = OnItemChanged,
                 Tooltip = "Volume of background music."
             })).GetChild(1) as HorizontalFloatSlider;
+
+            panel.AddChild(new Button()
+            {
+                Text = "Mixer...",
+                AutoLayout = AutoLayout.DockTop,
+                MaximumSize = new Point(128, 32),
+                OnClick = (sender, args) => panel.Root.ShowModalPopup(new AudioMixerWidget()
+                {
+                    Border = "border-fancy",
+                    Rect = GuiRoot.RenderData.VirtualScreen
+                })
+            });
         }
 
         private void CreateKeysTab()
@@ -435,7 +447,7 @@ namespace DwarfCorp.GameStates
             ChunkDrawDistance = leftPanel.AddChild(LabelAndDockWidget("Terrain Draw Distance", new HorizontalFloatSlider
             {
                 ScrollArea = 1000f,
-                OnScroll = OnItemChanged,
+                OnSliderChanged = OnItemChanged,
                 Tooltip = "Higher values allow you to see more terrain. Lower values will make the game run faster."
             })).GetChild(1) as HorizontalFloatSlider;
 
@@ -443,7 +455,7 @@ namespace DwarfCorp.GameStates
                 new HorizontalFloatSlider
             {
                 ScrollArea = 1000f,
-                OnScroll = OnItemChanged,
+                OnSliderChanged = OnItemChanged,
                 Tooltip = "Higher values allow you to see more terrain. Lower values will make the game run faster."
             })).GetChild(1) as HorizontalFloatSlider;
 
@@ -452,7 +464,7 @@ namespace DwarfCorp.GameStates
                 new HorizontalFloatSlider
                 {
                     ScrollArea = 1000f,
-                    OnScroll = OnItemChanged
+                    OnScrollValueChanged = OnItemChanged
                 })).GetChild(1) as HorizontalFloatSlider;
              */
 
@@ -556,7 +568,7 @@ namespace DwarfCorp.GameStates
                  new HorizontalFloatSlider
                  {
                      ScrollArea = 2048 - 100,
-                     OnScroll = OnItemChanged,
+                     OnSliderChanged = OnItemChanged,
                      Tooltip = "Controls how many of each type of entity will get drawn to the screen. Higher values mean more detail. Lower values mean better performance."
 
                  })).GetChild(1) as HorizontalFloatSlider;

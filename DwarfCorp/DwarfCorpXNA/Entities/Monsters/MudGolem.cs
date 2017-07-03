@@ -73,12 +73,7 @@ namespace DwarfCorp
             HasMeat = false;
             HasBones = false;
             Physics.Orientation = Physics.OrientMode.RotateY;
-            Sprite = Physics.AddChild(new CharacterSprite(Graphics, Manager, "MudGolem Sprite", Matrix.CreateTranslation(new Vector3(0, 0.35f, 0)))) as CharacterSprite;
-            foreach (Animation animation in Stats.CurrentClass.Animations)
-            {
-                Sprite.AddAnimation(animation.Clone());
-            }
-
+            CreateSprite(Stats.CurrentClass, Manager);
             Hands = Physics.AddChild(new Grabber("hands", Manager, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero)) as Grabber;
 
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
@@ -124,7 +119,7 @@ namespace DwarfCorp
             };
 
 
-            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 3, 0)));
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 1)));
 
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
             //Stats.LastName = TextGenerator.GenerateRandom("$elffamily");
@@ -133,6 +128,12 @@ namespace DwarfCorp
             Resistances[DamageType.Acid] = 5;
             Resistances[DamageType.Cold] = 5;
             Species = "Mud Golem";
+        }
+
+        public override void CreateCosmeticChildren(ComponentManager manager)
+        {
+            CreateSprite(Stats.CurrentClass, manager);
+            base.CreateCosmeticChildren(manager);
         }
     }
 

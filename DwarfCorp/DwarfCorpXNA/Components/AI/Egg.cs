@@ -55,7 +55,7 @@ namespace DwarfCorp
         }
 
         public Egg(string adult, ComponentManager manager, Vector3 position, BoundingBox? positionConstraint) :
-            base(false, manager)
+            base(manager)
         {
             PositionConstrain = positionConstraint;
             Adult = adult;
@@ -68,9 +68,9 @@ namespace DwarfCorp
                 newEggResource.Type = adult + " Egg";
                 ResourceLibrary.Add(newEggResource);
             }
+
             ParentBody = EntityFactory.CreateEntity<Body>(adult + " Egg Resource", position);
             ParentBody.AddChild(this);
-            manager.AddComponent(this);
         }
 
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)

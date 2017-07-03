@@ -106,7 +106,7 @@ namespace DwarfCorp
             const int frameWidth = 32;
             const int frameHeight = 32;
 
-            Sprite = Physics.AddChild(new CharacterSprite
+            var sprite = Physics.AddChild(new CharacterSprite
                 (Graphics,
                 Manager,
                 "snake Sprite",
@@ -114,10 +114,10 @@ namespace DwarfCorp
                 )) as CharacterSprite;
 
             // Add the idle animation
-            Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Forward, spriteSheet, 1, frameWidth, frameHeight, 0, 0);
-            Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Left, spriteSheet, 1, frameWidth, frameHeight, 0, 0);
-            Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Right, spriteSheet, 1, frameWidth, frameHeight, 0, 0);
-            Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Backward, spriteSheet, 1, frameWidth, frameHeight, 0, 0);
+            sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Forward, spriteSheet, 1, frameWidth, frameHeight, 0, 0);
+            sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Left, spriteSheet, 1, frameWidth, frameHeight, 0, 0);
+            sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Right, spriteSheet, 1, frameWidth, frameHeight, 0, 0);
+            sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Backward, spriteSheet, 1, frameWidth, frameHeight, 0, 0);
 
             Tail = new List<TailSegment>();
             Physics.AddChild(new Shadow(Manager));

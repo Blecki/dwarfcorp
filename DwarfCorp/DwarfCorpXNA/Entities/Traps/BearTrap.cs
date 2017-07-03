@@ -96,7 +96,7 @@ namespace DwarfCorp
 
             foreach (Body body in sensed)
             {
-                CreatureAI creature = body.GetChildrenOfTypeRecursive<CreatureAI>().FirstOrDefault();
+                var creature = body.EnumerateAll().OfType<CreatureAI>().FirstOrDefault();
 
                 if (creature == null) continue;
                 if (World.Diplomacy.GetPolitics(creature.Creature.Faction, Allies).GetCurrentRelationship() == Relationship.Loving) continue;

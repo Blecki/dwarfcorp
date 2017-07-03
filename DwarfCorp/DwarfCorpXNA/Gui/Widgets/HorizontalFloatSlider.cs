@@ -30,7 +30,7 @@ namespace DwarfCorp.Gui.Widgets
 
         public int EndBufferSize = 12;
 
-        public Action<Widget> OnScroll = null;
+        public Action<Widget> OnSliderChanged = null;
 
         private void AfterScroll()
         {
@@ -40,7 +40,7 @@ namespace DwarfCorp.Gui.Widgets
             Invalidate();
 
             // Could be called during construction - before Root is set.
-            if (Root != null) Root.SafeCall(OnScroll, this);
+            if (Root != null) Root.SafeCall(OnSliderChanged, this);
         }
 
         public override void Construct()
@@ -52,6 +52,12 @@ namespace DwarfCorp.Gui.Widgets
             {
                 if (Object.ReferenceEquals(Root.MouseDownItem, this))
                     SetFromMousePosition(args.X);
+            };
+
+            OnScroll += (sender, args) =>
+            {
+                float delta = ScrollArea/100.0f;
+                ScrollPosition = MathFunctions.Clamp(args.ScrollValue > 0 ? ScrollPosition + delta : ScrollPosition - delta, 0, ScrollArea);
             };
         }
 

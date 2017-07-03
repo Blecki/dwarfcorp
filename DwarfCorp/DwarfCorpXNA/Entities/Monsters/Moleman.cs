@@ -65,13 +65,7 @@ namespace DwarfCorp
         public void Initialize()
         {
             Physics.Orientation = Physics.OrientMode.RotateY;
-            Sprite = Physics.AddChild(new CharacterSprite(Graphics, Manager, "Moleman Sprite", Matrix.CreateTranslation(new Vector3(0, 0.1f, 0)))) as CharacterSprite;
-            foreach (Animation animation in Stats.CurrentClass.Animations)
-            {
-                Sprite.AddAnimation(animation.Clone());
-            }
-
-
+            CreateSprite(Stats.CurrentClass, Manager);
 
             Hands = Physics.AddChild(new Grabber("hands", Manager, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero)) as Grabber;
 
@@ -93,16 +87,7 @@ namespace DwarfCorp
             shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
 
             SpriteSheet shadowTexture = new SpriteSheet(ContentPaths.Effects.shadowcircle);
-
-            var shadow = Physics.AddChild(new Shadow(Manager, "Shadow", shadowTransform, shadowTexture)) as Shadow;
-            List<Point> shP = new List<Point>
-            {
-                new Point(0, 0)
-            };
-            Animation shadowAnimation = new Animation(Graphics, shadowTexture, "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
-            shadow.AddAnimation(shadowAnimation);
-            shadowAnimation.Play();
-            shadow.SetCurrentAnimation("sh");
+            Physics.AddChild(Shadow.Create(0.75f, Manager));
             Physics.Tags.Add("Necromancer");
 
             Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
@@ -122,7 +107,7 @@ namespace DwarfCorp
                 ContentPaths.Audio.mole2
             };
 
-            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 3, 0)));
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 1)));
 
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
             //Stats.LastName = TextGenerator.GenerateRandom("$goblinfamily");
@@ -133,6 +118,13 @@ namespace DwarfCorp
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
             Species = "Moleman";
+        }
+
+        public override void CreateCosmeticChildren(ComponentManager manager)
+        {
+            CreateSprite(Stats.CurrentClass, manager);
+            Physics.AddChild(Shadow.Create(0.75f, manager));
+            base.CreateCosmeticChildren(manager);
         }
     }
 

@@ -1,4 +1,4 @@
-﻿// Fixture.cs
+// Fixture.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -43,7 +43,11 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Fixture : Body
     {
-        public Sprite Sprite { get; set; }
+        /// <summary> The selection circle is drawn when the character is selected </summary>
+        private Sprite _sprite = null;
+
+        public SpriteSheet Asset { get; set; }
+        public Point Frame { get; set; }
 
         public Fixture()
         {
@@ -53,10 +57,21 @@ namespace DwarfCorp
         public Fixture(ComponentManager Manager, Vector3 position, SpriteSheet asset, Point frame) :
             base(Manager, "Fixture", Matrix.CreateTranslation(position), new Vector3(asset.FrameWidth * (1.0f / 32.0f), asset.Height * (1.0f / 32.0f), asset.FrameWidth * (1.0f / 32.0f)), Vector3.Zero, true)
         {
-            Sprite = AddChild(new Sprite(Manager, "Sprite", Matrix.Identity, asset, false)) as Sprite;
-            Sprite.AddAnimation(new Animation(asset.GenerateFrame(frame)));
+            Asset = asset;
+            Frame = frame;
+            var sprite = AddChild(new Sprite(Manager, "Sprite", Matrix.Identity, asset, false)) as Sprite;
+            sprite.AddAnimation(new Animation(asset.GenerateFrame(frame)));
+            sprite.SetFlag(Flag.ShouldSerialize, false);
             AddToCollisionManager = false;
             CollisionType = CollisionManager.CollisionType.Static;
+        }
+
+        public override void CreateCosmeticChildren(ComponentManager manager)
+        {
+            var sprite = AddChild(new Sprite(manager, "Sprite", Matrix.Identity, Asset, false)) as Sprite;
+            sprite.AddAnimation(new Animation(Asset.GenerateFrame(Frame)));
+            sprite.SetFlag(Flag.ShouldSerialize, false);
+            base.CreateCosmeticChildren(manager);
         }
     }
 }

@@ -361,7 +361,8 @@ namespace DwarfCorp.Gui
                             Control = Args.Control,
                             Shift = Args.Shift,
                             X = MousePosition.X,
-                            Y = MousePosition.Y
+                            Y = MousePosition.Y,
+                            MouseButton = Args.MouseButton
                         };
 
                         if (PopupStack.Count != 0)
@@ -396,6 +397,23 @@ namespace DwarfCorp.Gui
                         MouseDownItem = null;
                     }
                     break;
+                case InputEvents.MouseWheel:
+                   {
+                        var newArgs = new InputEventArgs
+                        {
+                            Alt = Args.Alt,
+                            Control = Args.Control,
+                            Shift = Args.Shift,
+                            ScrollValue = Args.ScrollValue
+                        };
+
+                        if (HoverItem != null)
+                        {
+                            Args.Handled = true;
+                            CallOnScroll(HoverItem, newArgs);
+                        }
+                    }
+                    break;
                 case InputEvents.KeyPress:
                     if (FocusItem != null) SafeCall(FocusItem.OnKeyPress, FocusItem, Args);
                     break;
@@ -416,6 +434,18 @@ namespace DwarfCorp.Gui
             {
                 if (parent.TriggerOnChildClick)
                     SafeCall(parent.OnClick, parent, Args);
+                parent = parent.Parent;
+            }
+        }
+
+        private void CallOnScroll(Widget Widget, InputEventArgs Args)
+        {
+            SafeCall(Widget.OnScroll, Widget, Args);
+            var parent = Widget.Parent;
+            while (parent != null)
+            {
+                if (parent.TriggerOnChildClick)
+                    SafeCall(parent.OnScroll, parent, Args);
                 parent = parent.Parent;
             }
         }

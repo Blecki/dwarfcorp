@@ -420,6 +420,19 @@ namespace DwarfCorp
             return toReturn;
         }
 
+        /// <summary>
+        /// Averages the specified vectors.
+        /// </summary>
+        /// <param Name="vectors">The vectors to average.</param>
+        /// <returns>Average of the vectors</returns>
+        public static Vector2 Average(List<Vector2> vectors)
+        {
+            Vector2 toReturn = vectors.Aggregate(Vector2.Zero, (current, vector) => current + vector);
+            toReturn /= vectors.Count;
+
+            return toReturn;
+        }
+
         ///<summary>
         ///Creates a rotation matrix so that the object faces another in 3D space.
         /// O is your object's position

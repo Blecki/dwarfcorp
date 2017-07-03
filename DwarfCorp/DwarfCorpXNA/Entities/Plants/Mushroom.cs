@@ -1,4 +1,4 @@
-﻿// Mushroom.cs
+// Mushroom.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -55,35 +55,13 @@ namespace DwarfCorp
                         string asset, 
                         ResourceLibrary.ResourceType resource, 
                         int numRelease, bool selfIlluminate) :
-            base(componentManager, "Mushroom", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+            base(componentManager, "Mushroom", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, asset, 1.0f)
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.deadbush, 32, 32);
             SeedlingFrame = new Point(0, 0);
             Matrix matrix = Matrix.CreateRotationY(MathFunctions.Rand(-0.1f, 0.1f));
             matrix.Translation = position + new Vector3(0.5f, -0.25f, 0.5f);
             LocalTransform = matrix;
-
-            SpriteSheet spriteSheet = new SpriteSheet(asset);
-
-            List<Point> frames = new List<Point>
-            {
-                new Point(0, 0)
-            };
-            Animation animation = new Animation(GameState.Game.GraphicsDevice, spriteSheet, "Mushroom", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
-
-            var sprite = AddChild(new Sprite(Manager, "sprite", Matrix.Identity, spriteSheet, false)
-            {
-                OrientationType = Sprite.OrientMode.Fixed,
-                LightsWithVoxels = !selfIlluminate
-            }) as Sprite;
-            sprite.AddAnimation(animation);
-
-            var sprite2 = AddChild(new Sprite(Manager, "sprite2", Matrix.CreateRotationY((float)Math.PI * 0.5f), spriteSheet, false)
-            {
-                OrientationType = Sprite.OrientMode.Fixed,
-                LightsWithVoxels = !selfIlluminate
-            }) as Sprite;
-            sprite2.AddAnimation(animation);
 
             Voxel voxelUnder = new Voxel();
             bool success = componentManager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder);
@@ -109,7 +87,6 @@ namespace DwarfCorp
             AddChild(new Health(componentManager.World.ComponentManager, "HP", 30, 0.0f, 30));
             AddChild(new Flammable(componentManager.World.ComponentManager, "Flames"));
 
-            animation.Play();
             Tags.Add("Mushroom");
             Tags.Add("Vegetation");
             CollisionType = CollisionManager.CollisionType.Static;

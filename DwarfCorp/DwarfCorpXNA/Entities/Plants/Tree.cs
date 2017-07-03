@@ -114,6 +114,8 @@ namespace DwarfCorp
         public int GrowthDays { get; set; }
         public int GrowthHours { get; set; }
         public bool IsGrown { get; set; }
+        public string MeshAsset { get; set; }
+        public float MeshScale { get; set; }
 
         public Plant()
         {
@@ -123,12 +125,15 @@ namespace DwarfCorp
         }
 
         public Plant(ComponentManager Manager, string name, Matrix localTransform, Vector3 bboxSize,
-            Vector3 bboxLocation) :
+            Vector3 bboxLocation, string meshAsset, float meshScale) :
             base(Manager, name, localTransform, bboxSize, bboxLocation)
         {
+            MeshAsset = meshAsset;
+            MeshScale = meshScale;
             GrowthDays = 0;
             GrowthHours = 12;
             IsGrown = false;
+            CreateMesh(Manager);
         }
 
         public virtual Seedling BecomeSeedling()
@@ -142,6 +147,18 @@ namespace DwarfCorp
                 FullyGrownDay = Manager.World.Time.CurrentDate.AddHours(GrowthHours).AddDays(GrowthDays)
             }) as Seedling;
         }
+
+        public void CreateMesh(ComponentManager manager)
+        {
+            var mesh = AddChild(new Mesh(manager, "Model", Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(MeshScale, MeshScale, MeshScale), MeshAsset, false));
+            mesh.SetFlag(Flag.ShouldSerialize, false);
+        }
+
+        public override void CreateCosmeticChildren(ComponentManager manager)
+        {
+            CreateMesh(manager);
+            base.CreateCosmeticChildren(manager);
+        }
     }
 
     [JsonObject(IsReference = true)]
@@ -153,7 +170,7 @@ namespace DwarfCorp
 
         public Tree(string name, ComponentManager manager, Vector3 position, string asset, ResourceLibrary.ResourceType seed, float treeSize) :
             base(manager, name, Matrix.Identity, new Vector3(PrimitiveLibrary.BatchBillboardPrimitives[asset].Width, PrimitiveLibrary.BatchBillboardPrimitives[asset].Height , PrimitiveLibrary.BatchBillboardPrimitives[asset].Width) * 0.75f * treeSize,
-            new Vector3(0, 0, 0))
+            new Vector3(0, 0, 0), asset, treeSize)
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
             SeedlingFrame = new Point(0, 0);
@@ -162,9 +179,9 @@ namespace DwarfCorp
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position;
             LocalTransform = matrix;
-            
-            AddChild(new Mesh(manager, "Model", Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(treeSize, treeSize, treeSize) * Matrix.CreateTranslation(new Vector3(0.5f, 0.0f, 0.5f)), asset, false));
-
+            var meshTransform = GetComponent<Mesh>().LocalTransform;
+            meshTransform = meshTransform*Matrix.CreateTranslation(0.5f, 0.0f, 0.5f);
+            GetComponent<Mesh>().LocalTransform = meshTransform;
             AddChild(new Health(componentManager, "HP", 100.0f * treeSize, 0.0f, 100.0f * treeSize));
 
             AddChild(new Flammable(componentManager, "Flames"));
@@ -222,6 +239,13 @@ namespace DwarfCorp
             base.ReceiveMessageRecursive(messageToReceive);
         }
 
-       
+
+        public override void CreateCosmeticChildren(ComponentManager manager)
+        {
+            base.CreateCosmeticChildren(manager);
+            var meshTransform = GetComponent<Mesh>().LocalTransform;
+            meshTransform = meshTransform * Matrix.CreateTranslation(0.5f, 0.0f, 0.5f);
+            GetComponent<Mesh>().LocalTransform = meshTransform;
+        }
     }
 }

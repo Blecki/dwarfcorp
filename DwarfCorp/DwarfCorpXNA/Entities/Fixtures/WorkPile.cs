@@ -57,6 +57,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Fence : Fixture
     {
+        public float FenceRotation { get; set; }
         public Fence()
         {
             
@@ -65,8 +66,9 @@ namespace DwarfCorp
         public Fence(ComponentManager componentManager, Vector3 position, float orientation, string asset) :
             base(componentManager, position, new SpriteSheet(asset, 32, 32), new Point(0, 0))
         {
-            this.Sprite.OrientationType = Sprite.OrientMode.Fixed;
-            this.Sprite.LocalTransform = Matrix.CreateRotationY(orientation);
+            FenceRotation = orientation;
+            GetComponent<Sprite>().OrientationType = Sprite.OrientMode.Fixed;
+            GetComponent<Sprite>().LocalTransform = Matrix.CreateRotationY(orientation);
         }
 
         public static IEnumerable<Body> CreateFences(ComponentManager components, string asset, IEnumerable<Voxel> voxels, bool createWorkPiles)
@@ -107,6 +109,13 @@ namespace DwarfCorp
                     yield return new WorkPile(components, voxel.Position + off);
                 }
             }
+        }
+
+        public override void CreateCosmeticChildren(ComponentManager manager)
+        {
+            base.CreateCosmeticChildren(manager);
+            GetComponent<Sprite>().OrientationType = Sprite.OrientMode.Fixed;
+            GetComponent<Sprite>().LocalTransform = Matrix.CreateRotationY(FenceRotation);
         }
     }
 }

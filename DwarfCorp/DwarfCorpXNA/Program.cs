@@ -34,6 +34,7 @@
 using System;
 using System.IO;
 using System.Threading;
+using ContentGenerator;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -43,6 +44,8 @@ namespace DwarfCorpCore
 {
     
 }
+
+#if XNA_BUILD
 
 namespace DwarfCorp
 {
@@ -137,3 +140,4 @@ namespace DwarfCorp
     }
 #endif
 }
+#endif

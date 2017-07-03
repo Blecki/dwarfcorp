@@ -323,12 +323,8 @@ namespace DwarfCorp
 
         private void SetDisplayColor(Body body, Color color)
         {
-            List<Tinter> sprites = body.GetChildrenOfTypeRecursive<Tinter>();
-
-            foreach (Tinter sprite in sprites)
-            {
+            foreach (var sprite in body.EnumerateAll().OfType<Tinter>())
                 sprite.VertexColorTint = color;
-            }
         }
 
         public void OnVoxelsDragged(List<Voxel> refs, InputManager.MouseButton button)

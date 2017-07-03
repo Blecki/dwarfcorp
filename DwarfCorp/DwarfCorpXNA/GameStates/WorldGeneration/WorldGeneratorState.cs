@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using DwarfCorp.Gui;
 using LibNoise;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -49,6 +50,7 @@ namespace DwarfCorp.GameStates
             Generator.Generate();
             GuiRoot.RootItem.GetChild(0).Text = Settings.Name;
             GuiRoot.RootItem.GetChild(0).Invalidate();
+            GuiRoot.MousePointer = new MousePointer("mouse", 15.0f, 16, 17, 18, 19, 20, 21, 22, 23);
         }
 
         public override void OnEnter()
@@ -57,7 +59,7 @@ namespace DwarfCorp.GameStates
             DwarfGame.GumInputMapper.GetInputQueue();
 
             GuiRoot = new Gui.Root(DwarfGame.GumSkin);
-            GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
+            GuiRoot.MousePointer = new MousePointer("mouse", 15.0f, 16, 17, 18, 19, 20, 21, 22, 23);
 
             var mainPanel = GuiRoot.RootItem.AddChild(new Gui.Widget
             {
@@ -306,8 +308,6 @@ namespace DwarfCorp.GameStates
 
         public override void Render(DwarfTime gameTime)
         {
-            var mouse = GuiRoot.MousePointer;
-            GuiRoot.MousePointer = null;
             GuiRoot.Draw();
 
             if (Generator.CurrentState == WorldGenerator.GenerationState.Finished)
@@ -319,12 +319,13 @@ namespace DwarfCorp.GameStates
                         .Translate(ZoomedPreview.Rect.X, ZoomedPreview.Rect.Y)
                         .Texture(Preview.ZoomedPreviewMatrix),
                         Preview.PreviewTexture);
+
+                GuiRoot.MousePointer = new MousePointer("mouse", 1, 0);
             }
 
             // This is a serious hack.
             GuiRoot.RedrawPopups();
-
-            GuiRoot.MousePointer = mouse;
+          
             GuiRoot.DrawMouse();
             base.Render(gameTime);
         }
