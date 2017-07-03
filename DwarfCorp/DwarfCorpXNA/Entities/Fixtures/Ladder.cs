@@ -58,6 +58,13 @@ namespace DwarfCorp
             GetComponent<Sprite>().LocalTransform = Matrix.CreateTranslation(new Vector3(0, 0, 0.45f)) * Matrix.CreateRotationY(0.0f);
             OrientToWalls();
         }
+
+        public override void CreateCosmeticChildren(ComponentManager manager)
+        {
+            base.CreateCosmeticChildren(manager);
+            GetComponent<Sprite>().OrientationType = Sprite.OrientMode.Fixed;
+            GetComponent<Sprite>().LocalTransform = Matrix.CreateTranslation(new Vector3(0, 0, 0.45f)) * Matrix.CreateRotationY(0.0f);
+        }
     }
 
 }

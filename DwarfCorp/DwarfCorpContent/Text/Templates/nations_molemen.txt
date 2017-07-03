@@ -1,0 +1,6 @@
+Under<noun>
+<molemanfamily> Burrow
+<molemanname>-House
+<molemanname> Cave
+<molemanfamily> Cave
+<molemanfamily> Hill

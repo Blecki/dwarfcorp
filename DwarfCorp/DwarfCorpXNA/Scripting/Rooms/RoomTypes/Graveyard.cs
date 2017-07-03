@@ -67,6 +67,7 @@ namespace DwarfCorp
 
         public Graveyard()
         {
+            Resources = new ResourceContainer();
             WhitelistResources = new List<Resource.ResourceTags>()
             {
                 Resource.ResourceTags.Corpse

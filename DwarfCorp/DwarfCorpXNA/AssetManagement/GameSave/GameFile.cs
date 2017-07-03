@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
@@ -300,6 +301,20 @@ namespace DwarfCorp
             {
                 return FileUtils.SaveJSon(this, filePath, compress);
             }
+        }
+
+        public static string GetLatestSaveFile()
+        {
+            DirectoryInfo saveDirectory = Directory.CreateDirectory(DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves");
+            DirectoryInfo newest = null;
+            foreach (var dir in saveDirectory.EnumerateDirectories())
+            {
+                if (newest == null || newest.CreationTime < dir.CreationTime)
+                {
+                    newest = dir;
+                }
+            }
+            return newest == null ? null : newest.FullName;
         }
     }
 

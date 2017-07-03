@@ -75,6 +75,14 @@ namespace DwarfCorp
             
         }
 
+        public override void CreateCosmeticChildren(ComponentManager manager)
+        {
+            base.CreateCosmeticChildren(manager);
+            GetComponent<Sprite>().OrientationType = Sprite.OrientMode.Fixed;
+            GetComponent<Sprite>().OrientationType = Sprite.OrientMode.Fixed;
+            GetComponent<Sprite>().LocalTransform = Matrix.CreateRotationY(0.5f * (float)Math.PI);
+        }
+
         public Matrix CreateHingeTransform(float angle)
         {
             Matrix toReturn = Matrix.Identity;

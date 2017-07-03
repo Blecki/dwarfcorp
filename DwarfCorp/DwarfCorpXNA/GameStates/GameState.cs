@@ -1,4 +1,4 @@
-﻿// GameState.cs
+// GameState.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -31,6 +31,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System.Threading;
+using DwarfCorp.Gui;
 using Microsoft.Xna.Framework;
 using System;
 
@@ -125,13 +126,27 @@ namespace DwarfCorp.GameStates
 
         public WaitStateException exception;
         public bool success = false;
-
+        private Gui.Root GuiRoot;
         public WaitState(DwarfGame game, string name, GameStateManager stateManager, WaitThreadRoutine routine)
             : base(game, name, stateManager)
         {
             WaitThread = new Thread(() => runRoutine(routine));
             OnFinished = (Boolean, Exception) => { };
             Done = false;
+            GuiRoot = new Gui.Root(DwarfGame.GumSkin)
+            {
+                MousePointer = new MousePointer("mouse", 15.0f, 16, 17, 18, 19, 20, 21, 22, 23)
+            };
+            GuiRoot.RootItem.AddChild(new Widget()
+            {
+                Text = name,
+                Font = "outline-font",
+                AutoLayout = AutoLayout.DockFill,
+                TextColor = Color.White.ToVector4(),
+                TextHorizontalAlign = HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Center,
+                Rect = GuiRoot.RenderData.VirtualScreen
+            });
         }
 
         protected void runRoutine(WaitThreadRoutine routine)
@@ -160,6 +175,8 @@ namespace DwarfCorp.GameStates
 
         public override void Update(DwarfTime gameTime)
         {
+            GuiRoot.Update(gameTime.ToRealTime());
+            DwarfGame.GumInput.FireActions(GuiRoot, null);
             if (!WaitThread.IsAlive && Object.ReferenceEquals(StateManager.CurrentState, this) && !Done)
             {
                 StateManager.PopState();
@@ -169,6 +186,11 @@ namespace DwarfCorp.GameStates
             base.Update(gameTime);
         }
 
+        public override void Render(DwarfTime gameTime)
+        {
+            GuiRoot.Draw();
+            base.Render(gameTime);
+        }
     }
 
 }

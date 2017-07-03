@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -67,7 +67,7 @@ namespace DwarfCorp
 
             if (!IsDone)
             {
-                CurrentScroll += ScrollSpeed*(float) gameTime.ElapsedGameTime.TotalSeconds;
+                CurrentScroll += ScrollSpeed*(float) gameTime.ElapsedRealTime.TotalSeconds;
              }
 
             base.Update(gameTime);

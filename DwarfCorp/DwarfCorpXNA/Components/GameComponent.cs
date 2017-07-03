@@ -105,18 +105,21 @@ namespace DwarfCorp
         }
         
         // Todo: Get rid of these helpers.
+        [JsonIgnore] 
         public bool IsVisible
         {
             get { return IsFlagSet(Flag.IsVisible); }
             set { SetFlag(Flag.IsVisible, value); }
         }
 
+        [JsonIgnore]
         public bool IsActive
         {
             get { return IsFlagSet(Flag.IsActive); }
             set { SetFlag(Flag.IsActive, value); }
         }
 
+        [JsonIgnore]
         public bool IsDead
         {
             get { return IsFlagSet(Flag.IsDead); }

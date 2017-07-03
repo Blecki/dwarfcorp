@@ -51,3 +51,11 @@ Shadowyell
 Stonehacker
 Tombarm
 Wyrmtongue
+Bootlicker
+Goodeater
+Evilmasher
+Fiendstasher
+Crash
+Buzz
+Rock
+Fist

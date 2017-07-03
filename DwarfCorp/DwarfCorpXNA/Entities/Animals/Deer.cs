@@ -192,6 +192,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
+            CreateSprites(manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
             base.CreateCosmeticChildren(manager);
         }

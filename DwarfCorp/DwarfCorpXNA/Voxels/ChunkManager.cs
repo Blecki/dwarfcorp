@@ -857,7 +857,6 @@ namespace DwarfCorp
             {
                 if (!ChunkData.ChunkMap.ContainsKey(box))
                 {
-
                     Vector3 worldPos = new Vector3(box.X * ChunkData.ChunkSizeX, box.Y * ChunkData.ChunkSizeY, box.Z * ChunkData.ChunkSizeZ);
                     VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, (int)ChunkData.ChunkSizeX, (int)ChunkData.ChunkSizeY, (int)ChunkData.ChunkSizeZ, World, Content, Graphics);
                     chunk.ShouldRebuild = true;
@@ -870,7 +869,6 @@ namespace DwarfCorp
                         if (!ChunkData.ChunkMap.ContainsKey(chunk2.ID))
                         {
                             ChunkData.AddChunk(chunk2);
-                            RecalculateBounds();
                         }
                     }
                 }
@@ -1106,15 +1104,15 @@ namespace DwarfCorp
 
             j = 0;
             SetLoadingMessage("Calculating vertex light ...");
-            System.Threading.Tasks.Parallel.ForEach(toRebuild, chunk =>
+            foreach(VoxelChunk chunk in toRebuild)
             {
                 j++;
                 chunk.CalculateVertexLighting();
-            });
+            };
 
             SetLoadingMessage("Building Vertices...");
             j = 0;
-            System.Threading.Tasks.Parallel.ForEach(toRebuild, chunk =>
+            foreach(var  chunk in toRebuild)
             {
                 j++;
                 //SetLoadingMessage("Building Vertices " + j + "/" + toRebuild.Count);
@@ -1128,7 +1126,7 @@ namespace DwarfCorp
                 chunk.ShouldRebuild = false;
                 chunk.RebuildPending = false;
                 chunk.RebuildLiquidPending = false;
-            });
+            };
 
             SetLoadingMessage("Cleaning Up.");
         }

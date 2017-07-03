@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,10 +23,21 @@ namespace DwarfCorp
         {
             Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles);
 
-            AddChild(new Box(manager, "Cratebox", Matrix.CreateRotationY(MathFunctions.Rand(-0.25f, 0.25f)), new Vector3(1.0f, 1.0f, 1.0f), new Vector3(0.5f, 0.5f, 0.5f), "crate", spriteSheet));
+            var box = AddChild(new Box(manager, "Cratebox", Matrix.CreateRotationY(MathFunctions.Rand(-0.25f, 0.25f)), new Vector3(1.0f, 1.0f, 1.0f), new Vector3(0.5f, 0.5f, 0.5f), "crate", spriteSheet));
+
+            box.SetFlag(Flag.ShouldSerialize, false);
 
             Tags.Add("Crate");
             CollisionType = CollisionManager.CollisionType.Static;
+        }
+
+        public override void CreateCosmeticChildren(ComponentManager manager)
+        {
+            Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles);
+            var box = AddChild(new Box(manager, "Cratebox", Matrix.CreateRotationY(MathFunctions.Rand(-0.25f, 0.25f)), new Vector3(1.0f, 1.0f, 1.0f), new Vector3(0.5f, 0.5f, 0.5f), "crate", spriteSheet));
+
+            box.SetFlag(Flag.ShouldSerialize, false);
+            base.CreateCosmeticChildren(manager);
         }
     }
 }

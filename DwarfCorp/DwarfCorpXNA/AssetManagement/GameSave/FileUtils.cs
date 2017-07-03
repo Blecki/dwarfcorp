@@ -125,6 +125,35 @@ namespace DwarfCorp
             });
         }
 
+        public static T LoadJson<T>(Stream stream, object context = null)
+        {
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                using (JsonReader json = new JsonTextReader(reader))
+                {
+                    JsonSerializer serializer = new JsonSerializer()
+                    {
+                        Context = new StreamingContext(StreamingContextStates.File, context),
+                        ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                        TypeNameHandling = TypeNameHandling.All,
+                        ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+                        TypeNameAssemblyFormat = FormatterAssemblyStyle.Full,
+                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                    };
+                    serializer.Converters.Add(new BoxConverter());
+                    serializer.Converters.Add(new Vector3Converter());
+                    serializer.Converters.Add(new MatrixConverter());
+                    serializer.Converters.Add(new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap));
+                    serializer.Converters.Add(new RectangleConverter());
+                    serializer.Converters.Add(new ColorConverter());
+                    {
+                        return serializer.Deserialize<T>(json);
+                    }
+                }
+            }
+            return default(T);
+        }
+
         /// <summary>
         /// Loads the json from a file.
         /// </summary>
@@ -135,26 +164,23 @@ namespace DwarfCorp
         /// <returns>An object of type T if it could be deserialized.</returns>
         public static T LoadJson<T>(string filePath, bool isCompressed, object context = null)
         {
-            string jsonText = Load(filePath, isCompressed);
-            return JsonConvert.DeserializeObject<T>(jsonText, new JsonSerializerSettings()
+            //string jsonText = Load(filePath, isCompressed);
+
+            if (isCompressed)
             {
-                Context = new StreamingContext(StreamingContextStates.File, context),
-                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                TypeNameHandling = TypeNameHandling.All,
-                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-                TypeNameAssemblyFormat = FormatterAssemblyStyle.Full,
-                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                Converters = new List<JsonConverter>
-                    {
-                        new BoxConverter(),
-                        new Vector3Converter(),
-                        new MatrixConverter(),
-                        new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap),
-                        new RectangleConverter(),
-                        new MoneyConverter(),
-                        new ColorConverter()
-                    }
-            });
+                using (FileStream fs = new FileStream(filePath, FileMode.Open))
+                using (GZipStream stream = new GZipStream(fs, CompressionMode.Decompress))
+                {
+                    return LoadJson<T>(stream, context);
+                }
+            }
+            else
+            {
+                using (var stream = new FileStream(filePath, FileMode.Open))
+                {
+                    return LoadJson<T>(stream, context);
+                }
+            }
         }
 
         /// <summary>
