@@ -60,17 +60,12 @@ namespace DwarfCorp.Gui.Widgets
                     if (ScrollBar.Hidden || args.X < ScrollBar.Rect.Left)
                         SelectedIndex = ScrollBar.ScrollPosition + ((args.Y - GetDrawableInterior().Y) / ItemHeight);
                 };
+
             OnScroll = (sender, args) =>
             {
-                var scrollbar = (sender as WidgetListView).ScrollBar;
-                scrollbar.ScrollPosition = MathFunctions.Clamp(args.ScrollValue > 0 ? scrollbar.ScrollPosition - 1 : scrollbar.ScrollPosition + 1, 0, scrollbar.ScrollArea);
+                Root.SafeCall(ScrollBar.OnScroll, ScrollBar, args);
             };
 
-            ScrollBar.OnScroll += (sender, args) =>
-            {
-                var scrollbar = (sender as VerticalScrollBar);
-                scrollbar.ScrollPosition = MathFunctions.Clamp(args.ScrollValue > 0 ? scrollbar.ScrollPosition - 1 : scrollbar.ScrollPosition + 1, 0, scrollbar.ScrollArea);
-            };
             TriggerOnChildClick = true;
         }
 

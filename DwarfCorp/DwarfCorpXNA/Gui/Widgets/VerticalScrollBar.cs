@@ -47,10 +47,16 @@ namespace DwarfCorp.Gui.Widgets
             if (String.IsNullOrEmpty(Graphics)) Graphics = "vertical-scrollbar";
 
             OnClick += (sender, args) => SetFromMousePosition(args.Y);
+
             OnMouseMove += (sender, args) =>
             {
                 if (Object.ReferenceEquals(Root.MouseDownItem, this))
                     SetFromMousePosition(args.Y);
+            };
+
+            OnScroll += (sender, args) =>
+            {
+                ScrollPosition = args.ScrollValue > 0 ? ScrollPosition - 1 : ScrollPosition + 1;
             };
         }
 
