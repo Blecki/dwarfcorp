@@ -157,12 +157,12 @@ namespace DwarfCorp
             sprite.AddAnimation(CharacterMode.Flying,
                                 OrientedAnimation.Orientation.Forward,
                                 spriteSheet,
-                // animation will play at 15 FPS
+                                // animation will play at 15 FPS
                                 15.0f,
                                 frameWidth, frameHeight,
-                // animation begins at row 4
+                                // animation begins at row 4
                                 4,
-                // It consists of columns 0, 1 and 2 looped forever
+                                // It consists of columns 0, 1 and 2 looped forever
                                 0, 1, 2);
             sprite.AddAnimation(CharacterMode.Flying,
                                 OrientedAnimation.Orientation.Left,
@@ -197,9 +197,8 @@ namespace DwarfCorp
             sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Left, spriteSheet, 5.0f, frameWidth, frameHeight, 1, 0);
             sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Right, spriteSheet, 5.0f, frameWidth, frameHeight, 2, 0);
             sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Backward, spriteSheet, 5.0f, frameWidth, frameHeight, 3, 0);
-            Sprite.SetFlag(Flag.ShouldSerialize, false);
 
+            Sprite.SetFlag(Flag.ShouldSerialize, false);
         }
     }
-
 }
