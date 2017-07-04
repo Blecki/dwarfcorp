@@ -390,10 +390,12 @@ namespace DwarfCorp
                         {
                             if (chunk.RebuildPending && chunk.ShouldRebuild)
                             {
+                                /*
                                 if (chunk.ShouldRecalculateLighting)
                                 {
                                     chunk.CalculateVertexLighting();
                                 }
+                                 */
                                 chunk.Rebuild(Graphics);
                                 chunk.ShouldRebuild = false;
                                 chunk.RebuildPending = false;
@@ -439,6 +441,17 @@ namespace DwarfCorp
 
             float dA = (a.Origin - camera.Position + new Vector3(a.SizeX / 2.0f, a.SizeY / 2.0f, a.SizeZ / 2.0f)).LengthSquared();
             float dB = (b.Origin - camera.Position + new Vector3(b.SizeX / 2.0f, b.SizeY / 2.0f, b.SizeZ / 2.0f)).LengthSquared();
+
+            if (!camera.GetFrustrum().Intersects(a.GetBoundingBox()))
+            {
+                dA *= 100;
+            }
+
+            if (!camera.GetFrustrum().Intersects(b.GetBoundingBox()))
+            {
+                dB *= 100;
+            }
+
 
             if(dA < dB)
             {
@@ -1107,7 +1120,7 @@ namespace DwarfCorp
             foreach(VoxelChunk chunk in toRebuild)
             {
                 j++;
-                chunk.CalculateVertexLighting();
+                //chunk.CalculateVertexLighting();
             };
 
             SetLoadingMessage("Building Vertices...");

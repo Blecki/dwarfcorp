@@ -36,7 +36,7 @@ namespace DwarfCorp
         public bool FirstIter = false;
         [JsonIgnore]
         public BillboardPrimitive Primitive { get; set; }
-
+        private Point lastOffset = new Point(-1, -1);
         private bool HasValidFrame = false;
 
         public struct Descriptor
@@ -168,7 +168,7 @@ namespace DwarfCorp
 
         public void UpdatePrimitive()
         {
-            if (HasValidFrame && CurrentFrame >= 0 && CurrentFrame < CompositeFrames.Count)
+            if (HasValidFrame && CurrentFrame >= 0 && CurrentFrame < CompositeFrames.Count && lastOffset != CurrentOffset)
             {
                 Primitive = Composite.CreatePrimitive(GameState.Game.GraphicsDevice, CurrentOffset);
                 Composite.ApplyBillboard(Primitive, CurrentOffset);
@@ -178,6 +178,7 @@ namespace DwarfCorp
                 {
                     Primitives.Add(Primitive);
                 }
+                lastOffset = CurrentOffset;
             }
         }
 

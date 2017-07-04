@@ -382,7 +382,7 @@ namespace DwarfCorp
                         SurfaceFormat.Color, DepthFormat.Depth24))
                 {
                     GraphicsDevice.SetRenderTarget(renderTarget);
-                    DrawSky(new DwarfTime(), Camera.ViewMatrix, 1.0f);
+                    DrawSky(new DwarfTime(), Camera.ViewMatrix, 1.0f, Color.CornflowerBlue);
                     Draw3DThings(new DwarfTime(), DefaultShader, Camera.ViewMatrix);
 
                     DefaultShader.View = Camera.ViewMatrix;
@@ -655,11 +655,11 @@ namespace DwarfCorp
         /// <param name="time">The current time</param>
         /// <param name="view">The camera view matrix</param>
 		/// <param name="scale">The scale for the sky drawing</param>
-        public void DrawSky(DwarfTime time, Matrix view, float scale)
+        public void DrawSky(DwarfTime time, Matrix view, float scale, Color fogColor)
         {
             Matrix oldView = Camera.ViewMatrix;
             Camera.ViewMatrix = view;
-            Sky.Render(time, GraphicsDevice, Camera, scale);
+            Sky.Render(time, GraphicsDevice, Camera, scale ,fogColor);
             GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             Camera.ViewMatrix = oldView;
@@ -814,7 +814,7 @@ namespace DwarfCorp
 
             // Draw the sky
             GraphicsDevice.Clear(DefaultShader.FogColor);
-            DrawSky(gameTime, Camera.ViewMatrix, 1.0f);
+            DrawSky(gameTime, Camera.ViewMatrix, 1.0f, DefaultShader.FogColor);
 
             // Defines the current slice for the GPU
             float level = ChunkManager.ChunkData.MaxViewingLevel + 2.0f;

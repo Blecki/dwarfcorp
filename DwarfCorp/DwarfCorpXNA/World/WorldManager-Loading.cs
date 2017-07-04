@@ -99,7 +99,8 @@ namespace DwarfCorp
                     Content.Load<TextureCube>(ContentPaths.Sky.night_sky),
                     TextureManager.GetTexture(ContentPaths.Gradients.skygradient),
                     Content.Load<Model>(ContentPaths.Models.sphereLowPoly),
-                    Content.Load<Effect>(ContentPaths.Shaders.SkySphere));
+                    Content.Load<Effect>(ContentPaths.Shaders.SkySphere),
+                    Content.Load<Effect>(ContentPaths.Shaders.Background));
 
                 if (!string.IsNullOrEmpty(ExistingFile))
                 {
