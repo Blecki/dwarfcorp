@@ -253,7 +253,7 @@ namespace DwarfCorp
                 OnAnnouncement(Message, ClickAction);
 
             if (!string.IsNullOrEmpty(sound))
-                SoundManager.PlaySound(sound, 0.5f);
+                SoundManager.PlaySound(sound, 0.15f);
         }
 
         public void AwardBux(DwarfBux Bux)
