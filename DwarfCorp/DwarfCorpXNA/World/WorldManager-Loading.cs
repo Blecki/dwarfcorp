@@ -254,6 +254,10 @@ namespace DwarfCorp
                     gameFile.ReadChunks(ExistingFile);
                     ChunkManager.ChunkData.LoadFromFile(gameFile, SetLoadingMessage);
 
+                    ChunkManager.ChunkData.SetMaxViewingLevel(gameFile.Data.Metadata.Slice > 0
+                    ? gameFile.Data.Metadata.Slice
+                    : ChunkManager.ChunkData.MaxViewingLevel, ChunkManager.SliceMode.Y);
+
                     //gameFile.LoadData(ExistingFile, this);
 
                     InstanceManager.Clear();
@@ -267,6 +271,14 @@ namespace DwarfCorp
                     CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
 
                     ComponentManager = new ComponentManager(gameFile.Data.Worlddata.Components, this);
+                    foreach (var resource in gameFile.Data.Worlddata.Resources)
+                    {
+                        if (!ResourceLibrary.Resources.ContainsKey(resource.Key))
+                        {
+                            ResourceLibrary.Resources.Add(resource.Key, resource.Value);
+                        }
+                    }
+
                     Factions = gameFile.Data.Worlddata.Factions;
                     ComponentManager.World = this;
                     

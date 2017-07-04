@@ -100,7 +100,7 @@ namespace DwarfCorp
         {
             Dictionary<ResourceLibrary.ResourceType, ResourceAmount> toReturn =
                 new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
-
+            Resource.ResourceTags[] blacklistTags = { Resource.ResourceTags.Money, Resource.ResourceTags.Corpse };
             foreach (var tags in TradeGoods)
             {
                 int num = MathFunctions.RandInt(tags.Value - 5, tags.Value + 5);
@@ -113,6 +113,9 @@ namespace DwarfCorp
                 for (int i = 0; i < num; i++)
                 {
                     Resource randResource = Datastructures.SelectRandom(resources);
+
+                    if (randResource.Tags.Any(blacklistTags.Contains))
+                        continue;
 
                     if (randResource.Type == ResourceLibrary.ResourceType.Trinket ||
                         randResource.Type == ResourceLibrary.ResourceType.GemTrinket ||

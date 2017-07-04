@@ -128,7 +128,7 @@ namespace DwarfCorp
                 if (!component.IsVisible) continue; // Then why was it drawn in the selection buffer??
                 var toAdd = component.GetEntityRootComponent().GetComponent<Body>();
                 if (!toReturn.Contains(toAdd))
-                    toReturn.Add(component.GetEntityRootComponent().GetComponent<Body>());
+                    toReturn.Add(toAdd);
             }
             return toReturn.ToList();
         }

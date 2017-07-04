@@ -106,6 +106,11 @@ namespace DwarfCorp
             Sand
         }
 
+        public Resource()
+        {
+            
+        }
+
         public Resource(Resource other)
         {
             Type = other.Type;

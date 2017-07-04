@@ -42,6 +42,8 @@ namespace DwarfCorp
         public Camera Camera;
 
         public BlendState BlendMode { get; set; }
+        public bool HasSelectionBuffer = true;
+
         public float CullDistance = 100 * 100;
 
         private DynamicVertexBuffer instanceBuffer;
@@ -310,7 +312,7 @@ namespace DwarfCorp
 
         public void RenderSelectionBuffer(GraphicsDevice graphics, Shader effect, Camera cam, bool rebuildVertices)
         {
-            if (Model == null || Model.MaxVertex < 3 || numActiveInstances < 1)
+            if (!HasSelectionBuffer || Model == null || Model.MaxVertex < 3 || numActiveInstances < 1)
             {
                 return;
             }

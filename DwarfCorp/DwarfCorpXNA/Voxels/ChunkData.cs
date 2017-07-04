@@ -124,7 +124,7 @@ namespace DwarfCorp
 
             foreach (VoxelChunk c in ChunkMap.Select(chunks => chunks.Value))
             {
-                c.ShouldRecalculateLighting = false;
+                c.ShouldRecalculateLighting = true;
                 c.ShouldRebuild = true;
             }
         }

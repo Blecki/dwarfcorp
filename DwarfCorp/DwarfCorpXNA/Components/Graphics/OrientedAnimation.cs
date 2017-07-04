@@ -111,15 +111,19 @@ namespace DwarfCorp
         {
             CalculateCurrentOrientation(camera);
 
-            //foreach (string orient in OrientationStrings)
-            //{
-            //    string animationName = currentMode + orient;
+            foreach (string orient in OrientationStrings)
+            {
+                string animationName = currentMode + orient;
 
-            //    if (!Animations.ContainsKey(animationName)) continue;
+                if (!Animations.ContainsKey(animationName)) continue;
 
-            //    Animation animation = Animations[animationName];
-            //    animation.Update(gameTime);
-            //}
+                Animation animation = Animations[animationName];
+
+                // Update all the animations! Why? Because we trigger things based on the FORWARD animation frame,
+                // not based on whatever is current.
+                if (animation != CurrentAnimation)
+                    animation.Update(gameTime);
+            }
 
             string s = currentMode + OrientationStrings[(int) CurrentOrientation];
             if(Animations.ContainsKey(s))

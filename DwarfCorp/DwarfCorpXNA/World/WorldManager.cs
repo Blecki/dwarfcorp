@@ -171,7 +171,7 @@ namespace DwarfCorp
 
         // A shader which draws fancy light blooming to the screen
         private BloomComponent bloom;
-
+        
         private FXAA fxaa;
 
         // Responsible for drawing liquids.
@@ -800,7 +800,6 @@ namespace DwarfCorp
                 DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader);
             InstanceManager.RenderSelectionBuffer(GraphicsDevice, DefaultShader, Camera, false);
             SelectionBuffer.End(GraphicsDevice);
-
             #endregion
 
             // Start drawing the bloom effect
@@ -905,9 +904,9 @@ namespace DwarfCorp
                 ScissorTestEnable = true
             };
 
+            //SelectionBuffer.DebugDraw(GraphicsDevice.Viewport.Bounds);
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp,
                 null, rasterizerState);
-
             //DwarfGame.SpriteBatch.Draw(Shadows.ShadowTexture, Vector2.Zero, Color.White);
 
             if (IsCameraUnderwater())

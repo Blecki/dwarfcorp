@@ -32,8 +32,10 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
@@ -57,6 +59,7 @@ namespace DwarfCorp
         public float DissatisfiedThreshold { get; set; }
         public float SatisfiedThreshold { get; set; }
 
+        [JsonIgnore]
         public int Percentage
         {
             get { return (int)((CurrentValue - MinValue) / (MaxValue - MinValue) * 100); }
@@ -74,7 +77,7 @@ namespace DwarfCorp
 
         public void SetValue(float v)
         {
-            currentValue = Math.Max(Math.Min(v, MaxValue), MinValue);
+            currentValue = Math.Abs(MaxValue - MinValue) < 1e-12 ? v : Math.Max(Math.Min(v, MaxValue), MinValue);
         }
     }
 }

@@ -294,7 +294,7 @@ namespace DwarfCorp
                 // Else, stop and attack
                 else
                 {
-                    if (Creature.AI.Raycast(Target.Position))
+                    if (CurrentAttack.Mode == Attack.AttackMode.Ranged && Creature.AI.Raycast(Target.Position))
                     {
                         yield return Status.Fail;
                         yield break;
