@@ -100,8 +100,8 @@ namespace DwarfCorp
         {
             IsGrown = true;
             Adult.IsGrown = true;
-            Adult.SetVisibleRecursive(true);
-            Adult.SetActiveRecursive(true);
+            Adult.SetFlagRecursive(Flag.Active, true);
+            Adult.SetFlagRecursive(Flag.Visible, true);
             Die();
         }
     }
@@ -139,8 +139,8 @@ namespace DwarfCorp
         public virtual Seedling BecomeSeedling()
         {
             UpdateTransformsRecursive(Parent as Body);
-            SetActiveRecursive(false);
-            SetVisibleRecursive(false);
+            SetFlagRecursive(Flag.Active, false);
+            SetFlagRecursive(Flag.Visible, false);
 
             return Parent.AddChild(new Seedling(Manager, this, LocalTransform.Translation, Seedlingsheet, SeedlingFrame)
             {

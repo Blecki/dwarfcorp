@@ -287,7 +287,7 @@ namespace DwarfCorp
                 Faction.Minions.Add(AI);
             }
 
-            if (!IsActive) return;
+            if (!Active) return;
             DrawLifeTimer.Update(gameTime);
 
             if (!DrawLifeTimer.HasTriggered)

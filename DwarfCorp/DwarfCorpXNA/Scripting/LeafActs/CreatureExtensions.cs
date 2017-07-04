@@ -99,7 +99,7 @@ namespace DwarfCorp
                             foodBody.LocalTransform = agent.Physics.LocalTransform;
                             Vector3 foodPosition = agent.Physics.Position + Vector3.Up * 0.05f + Vector3.Transform(Vector3.Forward, rot) * 0.5f;
                             foodBody.LocalPosition = foodPosition;
-                            foodBody.IsActive = false;
+                            foodBody.Active = false;
                             agent.Physics.Velocity = Vector3.Zero;
                             agent.CurrentCharacterMode = CharacterMode.Sitting;
                             if (MathFunctions.RandEvent(0.05f))

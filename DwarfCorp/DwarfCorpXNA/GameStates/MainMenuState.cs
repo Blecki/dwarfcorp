@@ -109,7 +109,7 @@ namespace DwarfCorp.GameStates
 
             MakeMenuItem(frame, "Load Game", "Load DwarfCorp game from a file.", (sender, args) => StateManager.PushState(new LoadSaveGameState(Game, StateManager)));
 
-            MakeMenuItem(frame, "Options", "Change game settings.", (sender, args) => StateManager.PushState(new NewOptionsState(Game, StateManager)));
+            MakeMenuItem(frame, "Options", "Change game settings.", (sender, args) => StateManager.PushState(new OptionsState(Game, StateManager)));
 
             MakeMenuItem(frame, "Credits", "View the credits.", (sender, args) => StateManager.PushState(new CreditsState(GameState.Game, StateManager)));
 

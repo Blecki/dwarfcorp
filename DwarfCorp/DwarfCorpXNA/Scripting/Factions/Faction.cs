@@ -170,7 +170,7 @@ namespace DwarfCorp
             {
                 CreatureAI minion = Minions[i];
 
-                if (!minion.IsActive) continue;
+                if (!minion.Active) continue;
 
                 if (minion.Physics.CollideMode == Physics.CollisionMode.None)
                     continue;
@@ -179,7 +179,7 @@ namespace DwarfCorp
                 {
                     CreatureAI other = Minions[j];
 
-                    if (!other.IsActive) continue;
+                    if (!other.Active) continue;
 
                     // Grab both positions now to avoid the double lookup.
                     Vector3 otherPosition = other.Position;

@@ -26,7 +26,7 @@ namespace DwarfCorp
         }
 
         private Dictionary<uint, GameComponent> Components;
-
+        private uint MaxGlobalID = 0;
         private Dictionary<System.Type, List<IUpdateableComponent>> UpdateableComponents =
             new Dictionary<Type, List<IUpdateableComponent>>();
         private List<IRenderableComponent> Renderables = new List<IRenderableComponent>();
@@ -67,6 +67,9 @@ namespace DwarfCorp
             };
         }
 
+        /// <summary>
+        /// Must be called after serialization to avoid leaking references to dead components.
+        /// </summary>
         public void CleanupSaveData()
         {
             foreach (var component in Components)
@@ -99,7 +102,7 @@ namespace DwarfCorp
                     MinimapIcons.Add(component.Value as MinimapIcon);
             }
 
-            GameComponent.ResetMaxGlobalId(GetMaxComponentID() + 1);
+            MaxGlobalID = Components.Aggregate<KeyValuePair<uint, GameComponent>, uint>(0, (current, component) => Math.Max(current, component.Value.GlobalID));
 
             foreach (var component in SaveData.SaveableComponents)
                 component.PostSerialization(this);
@@ -135,7 +138,7 @@ namespace DwarfCorp
                     continue;
 
                 if (!component.IsVisible) continue; // Then why was it drawn in the selection buffer??
-                var toAdd = component.GetEntityRootComponent().GetComponent<Body>();
+                var toAdd = component.GetRoot().GetComponent<Body>();
                 if (!toReturn.Contains(toAdd))
                     toReturn.Add(toAdd);
             }
@@ -145,7 +148,11 @@ namespace DwarfCorp
         public void AddComponent(GameComponent component)
         {
             AdditionMutex.WaitOne();
+
+            MaxGlobalID += 1;
+            component.GlobalID = MaxGlobalID;
             Additions.Add(component);
+
             AdditionMutex.ReleaseMutex();
         }
 
@@ -165,7 +172,7 @@ namespace DwarfCorp
         {
             if (!Components.ContainsKey(component.GlobalID))
                 return;
-            
+
             Components.Remove(component.GlobalID);
 
             if (component is IUpdateableComponent)
@@ -217,9 +224,9 @@ namespace DwarfCorp
 
             foreach (var componentType in UpdateableComponents)
                 foreach (var component in componentType.Value)
-                    if (component.IsActive)
+                    if (component.Active)
                         component.Update(gameTime, chunks, camera);
-            
+
             AdditionMutex.WaitOne();
             foreach (GameComponent component in Additions)
                 AddComponentImmediate(component);
@@ -234,11 +241,5 @@ namespace DwarfCorp
             Removals.Clear();
             RemovalMutex.ReleaseMutex();
         }
-
-        public uint GetMaxComponentID()
-        {
-            return Components.Aggregate<KeyValuePair<uint, GameComponent>, uint>(0, (current, component) => Math.Max(current, component.Value.GlobalID));
-        }
     }
-
 }

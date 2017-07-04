@@ -300,7 +300,7 @@ namespace DwarfCorp
                 case AttackMode.Melee:
                 case AttackMode.Dogfight:
                     {
-                        var health = other.GetEntityRootComponent().EnumerateAll().OfType<Health>().FirstOrDefault();
+                        var health = other.GetRoot().EnumerateAll().OfType<Health>().FirstOrDefault();
                         if (health != null)
                         {
                             health.Damage(DamageAmount + bonus);

@@ -82,7 +82,7 @@ namespace DwarfCorp
                 Health = Parent.EnumerateAll().Where(c => c is Health).FirstOrDefault() as Health;
             System.Diagnostics.Debug.Assert(Health != null, "Flammable could not find a Health component.");
 
-            if (!IsActive) return;
+            if (!Active) return;
 
             var body = Parent as Body;
             System.Diagnostics.Debug.Assert(body != null);

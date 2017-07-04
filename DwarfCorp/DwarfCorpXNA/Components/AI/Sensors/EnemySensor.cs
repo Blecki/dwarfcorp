@@ -95,7 +95,7 @@ namespace DwarfCorp
 
                 foreach (CreatureAI minion in faction.Value.Minions)
                 {
-                    if (!minion.IsActive) continue;
+                    if (!minion.Active) continue;
 
                     if (Creature != null && minion.Sensor.Enemies.Contains(Creature))
                     {

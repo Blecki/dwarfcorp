@@ -1682,7 +1682,7 @@ namespace DwarfCorp.GameStates
 
             MakeMenuItem(PausePanel, "Options", "", (sender, args) =>
             {
-                var state = new NewOptionsState(Game, StateManager)
+                var state = new OptionsState(Game, StateManager)
                 {
                     OnClosed = () =>
                     {

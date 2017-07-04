@@ -17,6 +17,6 @@ namespace DwarfCorp
     {
         void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera);
 
-        bool IsActive { get; }
+        bool Active { get; }
     }
 }

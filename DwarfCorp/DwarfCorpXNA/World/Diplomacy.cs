@@ -486,7 +486,7 @@ namespace DwarfCorp
             {
                 if (envoy.DeathTimer.Update(faction.World.Time.CurrentDate))
                 {
-                    envoy.Creatures.ForEach((creature) => creature.GetEntityRootComponent().Die());
+                    envoy.Creatures.ForEach((creature) => creature.GetRoot().Die());
                 }
 
                 Diplomacy.Politics politics = faction.World.Diplomacy.GetPolitics(faction, envoy.OtherFaction);
@@ -583,7 +583,7 @@ namespace DwarfCorp
                     {
                         if (MathFunctions.Dist2D(worldBBox, creature.Position) < 2.0f)
                         {
-                            creature.GetEntityRootComponent().Delete();
+                            creature.GetRoot().Delete();
                         }
                     }
                 }

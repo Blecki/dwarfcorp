@@ -258,7 +258,7 @@
     <Compile Include="GameStates\MainMenuState.cs" />
     <Compile Include="GameStates\NewGameChooseWorldState.cs" />
     <Compile Include="GameStates\NewGameCreateDebugWorldState.cs" />
-    <Compile Include="GameStates\NewOptionsState.cs" />
+    <Compile Include="GameStates\OptionsState.cs" />
     <Compile Include="GameStates\GuiStateTemplate.cs" />
     <Compile Include="GameStates\PlayState.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGenerator.cs" />
