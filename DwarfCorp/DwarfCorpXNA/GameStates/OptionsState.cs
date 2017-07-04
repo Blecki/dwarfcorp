@@ -9,7 +9,7 @@ using System;
 
 namespace DwarfCorp.GameStates
 {
-    public class NewOptionsState : GameState
+    public class OptionsState : GameState
     {
         private Gui.Root GuiRoot;
         private bool HasChanges = false;
@@ -58,7 +58,7 @@ namespace DwarfCorp.GameStates
         public WorldManager World = null;
         private CheckBox EnableTutorial;
         
-        public NewOptionsState(DwarfGame Game, GameStateManager StateManager) :
+        public OptionsState(DwarfGame Game, GameStateManager StateManager) :
             base(Game, "NewOptionsState", StateManager)
         { }
 
@@ -338,7 +338,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
-            AutoSaveFrequency = panel.AddChild(LabelAndDockWidget("Autosave Frequency        ", new HorizontalSlider
+            AutoSaveFrequency = panel.AddChild(LabelAndDockWidget("Autosave Frequency           ", new HorizontalSlider
             {
                 ScrollArea = 115,
                 OnSliderChanged = (widget) =>
