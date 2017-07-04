@@ -46,7 +46,7 @@ namespace DwarfCorp
         public SetTargetVoxelFromEntityAct(CreatureAI creature, string entityName, string voxelOut) :
             base(creature)
         {
-            Name = "Set Target Voxel";
+            Name = "Set Target DestinationVoxel";
             VoxelOutName = voxelOut;
             EntityName = entityName;
         }

@@ -48,7 +48,7 @@ namespace DwarfCorp
 
         public GuardVoxelTask(Voxel vox)
         {
-            Name = "Guard Voxel: " + vox.Position;
+            Name = "Guard DestinationVoxel: " + vox.Position;
             VoxelToGuard = vox;
             Priority = PriorityType.Medium;
         }

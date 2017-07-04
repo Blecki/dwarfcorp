@@ -81,7 +81,7 @@ namespace DwarfCorp
             base(agent)
         {
             Voxel = voxel;
-            Name = "Guard Voxel " + voxel;
+            Name = "Guard DestinationVoxel " + voxel;
 
             Tree = new Sequence
                 (

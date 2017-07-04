@@ -187,13 +187,13 @@ namespace DwarfCorp
                 List<BuildVoxelOrder> removals = new List<BuildVoxelOrder>();
                 foreach(BuildVoxelOrder des in roomDesignation.VoxelOrders)
                 {
-                    Drawer3D.DrawBox(des.Voxel.GetBoundingBox(), Color.LightBlue, 0.05f, true);
-                    BoundingBox centerBox = des.Voxel.GetBoundingBox();
+                    Drawer3D.DrawBox(des.DestinationVoxel.GetBoundingBox(), Color.LightBlue, 0.05f, true);
+                    BoundingBox centerBox = des.DestinationVoxel.GetBoundingBox();
                     centerBox.Min += new Vector3(0.7f, 1.1f, 0.7f);
                     centerBox.Max += new Vector3(-0.7f, 0.2f, -0.7f);
                     Drawer3D.DrawBox(centerBox, Color.LightBlue, 0.01f, true);
 
-                    if (des.Voxel.IsEmpty)
+                    if (des.DestinationVoxel.IsEmpty)
                     {
                         removals.Add(des);
                     }

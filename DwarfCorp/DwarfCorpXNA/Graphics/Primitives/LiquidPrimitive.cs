@@ -63,17 +63,17 @@ namespace DwarfCorp
             // Does not need to be cleared between sets of face drawing as retrievedNeighbors stops us from using a stale value.
             internal bool[] validNeighbors;
 
-            // A list of which neighbors in the neighbors list have been filled in with the current Voxel's neighbors.
-            // This does need to be cleared between drawing the faces on a Voxel.
+            // A list of which neighbors in the neighbors list have been filled in with the current DestinationVoxel's neighbors.
+            // This does need to be cleared between drawing the faces on a DestinationVoxel.
             internal bool[] retrievedNeighbors;
 
-            // Stored positions for the current Voxel's vertexes.  Lets us reuse the stored value when another face uses the same position.
+            // Stored positions for the current DestinationVoxel's vertexes.  Lets us reuse the stored value when another face uses the same position.
             internal Vector3[] vertexPositions;
 
-            // Stored foaminess value for the current Voxel's vertexes.
+            // Stored foaminess value for the current DestinationVoxel's vertexes.
             internal float[] vertexFoaminess;
 
-            // A flag to show if a particular vertex has already been calculated.  Must be cleared when drawing faces on a new Voxel position.
+            // A flag to show if a particular vertex has already been calculated.  Must be cleared when drawing faces on a new DestinationVoxel position.
             internal bool[] vertexCalculated;
 
             // A flag to show if the cache is in use at that moment.
@@ -202,7 +202,7 @@ namespace DwarfCorp
 
                                 Vector3 delta = faceDeltas[(int)face];
 
-                                // Pull the current neighbor Voxel based on the face it would be touching.
+                                // Pull the current neighbor DestinationVoxel based on the face it would be touching.
                                 bool success = myVoxel.GetNeighborBySuccessor(delta, ref vox, false);
 
                                 if (success)
@@ -361,7 +361,7 @@ namespace DwarfCorp
                             // We are going to use a lookup key so calculate it now.
                             int key = VoxelChunk.SuccessorToEuclidianLookupKey(succ);
 
-                            // If we haven't gotten this Voxel yet then retrieve it.
+                            // If we haven't gotten this DestinationVoxel yet then retrieve it.
                             // This allows us to only get a particular voxel once a function call instead of once per vertexCount/per face.
                             if (!cache.retrievedNeighbors[key])
                             {

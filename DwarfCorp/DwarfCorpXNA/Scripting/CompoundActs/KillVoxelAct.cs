@@ -103,7 +103,7 @@ namespace DwarfCorp
             base(creature)
         {
             Voxel = voxel;
-            Name = "Kill Voxel " + voxel.Position;
+            Name = "Kill DestinationVoxel " + voxel.Position;
             Tree = new Sequence(
                 new SetBlackboardData<Voxel>(creature, "DigVoxel", voxel),
                 new Sequence(

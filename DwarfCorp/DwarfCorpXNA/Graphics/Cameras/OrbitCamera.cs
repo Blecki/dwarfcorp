@@ -486,7 +486,7 @@ namespace DwarfCorp
 
             Vector3 grid = chunk.WorldToGrid(pos);
 
-            List<Voxel> adjacencies = chunk.GetNeighborsEuclidean((int)grid.X, (int)grid.Y, (int)grid.Z);
+            IEnumerable<Voxel> adjacencies = chunk.GetNeighborsEuclidean((int)grid.X, (int)grid.Y, (int)grid.Z);
             vs.AddRange(adjacencies);
 
             bool gotCollision = false;

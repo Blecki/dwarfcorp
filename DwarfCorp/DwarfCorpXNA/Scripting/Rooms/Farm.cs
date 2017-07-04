@@ -48,7 +48,7 @@ namespace DwarfCorp
     {
         public class FarmTile
         {
-            public Voxel Vox = null;
+            public DestinationVoxel Vox = null;
             public Body Plant = null;
             public float Progress = 0.0f;
             public CreatureAI Farmer = null;
@@ -69,13 +69,13 @@ namespace DwarfCorp
             return null;
         }
 
-        public override void AddVoxel(Voxel voxel)
+        public override void AddVoxel(DestinationVoxel voxel)
         {
             FarmTiles.Add(new FarmTile(){Vox = voxel, Plant = null}); 
             base.AddVoxel(voxel);
         }
 
-        public override void RemoveVoxel(Voxel voxel)
+        public override void RemoveVoxel(DestinationVoxel voxel)
         {
             FarmTile toRemove = FarmTiles.FirstOrDefault(tile => tile.Vox.Equals(voxel));
             if (toRemove != null)
@@ -95,13 +95,13 @@ namespace DwarfCorp
 
         }
 
-         public Farm(bool designation, IEnumerable<Voxel> designations, RoomData data, ChunkManager chunks) :
+         public Farm(bool designation, IEnumerable<DestinationVoxel> designations, RoomData data, ChunkManager chunks) :
             base(designation, designations, data, chunks)
         {
 
         }
 
-         public Farm(IEnumerable<Voxel> voxels, RoomData data, ChunkManager chunks) :
+         public Farm(IEnumerable<DestinationVoxel> voxels, RoomData data, ChunkManager chunks) :
             base(voxels, data, chunks)
         {
 

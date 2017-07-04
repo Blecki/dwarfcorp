@@ -274,7 +274,7 @@ namespace DwarfCorp
         }
 
         /// <summary> gets a list of actions that the creature can take from the given position </summary>
-        public List<MoveAction> GetMoveActions(Vector3 pos)
+        public IEnumerable<MoveAction> GetMoveActions(Vector3 pos)
         {
             var vox = new Voxel();
             Creature.Manager.World.ChunkManager.ChunkData.GetVoxel(pos, ref vox);
@@ -282,9 +282,12 @@ namespace DwarfCorp
         }
 
         /// <summary> gets the list of actions that the creature can take from a given voxel. </summary>
-        public List<MoveAction> GetMoveActions(Voxel voxel)
+        public IEnumerable<MoveAction> GetMoveActions(Voxel voxel)
         {
-            var toReturn = new List<MoveAction>();
+            if (!voxel.IsEmpty)
+            {
+                yield break;
+            }
 
             CollisionManager objectHash = Creature.Manager.World.CollisionManager;
 
@@ -360,7 +363,7 @@ namespace DwarfCorp
                     {
                         Diff = new Vector3(1, 2, 1),
                         MoveType = MoveType.ClimbWalls,
-                        TargetVoxel = walls.FirstOrDefault(v => v != null && !v.IsEmpty)
+                        ActionVoxel = walls.FirstOrDefault(v => v != null && !v.IsEmpty)
                     });
                 }
                 // If we're near a wall and not blocked from below, we can climb downward.
@@ -370,7 +373,7 @@ namespace DwarfCorp
                     {
                         Diff = new Vector3(1, 0, 1),
                         MoveType = MoveType.ClimbWalls,
-                        TargetVoxel = walls.FirstOrDefault(v => v != null && !v.IsEmpty)
+                        ActionVoxel = walls.FirstOrDefault(v => v != null && !v.IsEmpty)
                     });
                 }
             }
@@ -536,12 +539,13 @@ namespace DwarfCorp
                                     Relationship.Loving)
                                 {
                                     if (Can(MoveType.DestroyObject))
-                                        toReturn.Add(new MoveAction
+                                        yield return (new MoveAction
                                         {
                                             Diff = v.Diff,
                                             MoveType = MoveType.DestroyObject,
                                             InteractObject = door,
-                                            Voxel = n
+                                            DestinationVoxel = new Voxel(n),
+                                            SourceVoxel = new Voxel(voxel)
                                         });
                                     blockedByObject = true;
                                 }
@@ -552,14 +556,12 @@ namespace DwarfCorp
                     if (!blockedByObject)
                     {
                         MoveAction newAction = v;
-                        newAction.Voxel = n;
-                        toReturn.Add(newAction);
+                        newAction.SourceVoxel = new Voxel(voxel);
+                        newAction.DestinationVoxel = new Voxel(n);
+                       yield return newAction;
                     }
                 }
             }
-
-            // Return the list of all validated actions that the creature can take.
-            return toReturn;
         }
         /// <summary> Each action has a cost, a speed, and a validity check </summary>
         public class ActionStats
@@ -567,6 +569,25 @@ namespace DwarfCorp
             public bool CanMove = false;
             public float Cost = 1.0f;
             public float Speed = 1.0f;
+        }
+
+        // Inverts GetMoveActions. So, returns the list of move actions whose target is the current voxel.
+        // Very, very slow.
+        public IEnumerable<MoveAction> GetInverseMoveActions(Voxel current)
+        {
+            List<Voxel> n = current.Chunk.GetNeighborsEuclidean(current).ToList();
+            foreach (Voxel voxel in n)
+            {
+                var actions = GetMoveActions(voxel);
+                foreach (var action in actions)
+                {
+                    if (action.DestinationVoxel.Equals(current))
+                    {
+                        yield return action;
+                    }
+                }
+            }
+
         }
     }
 }

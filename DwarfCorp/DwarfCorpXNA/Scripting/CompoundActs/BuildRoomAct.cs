@@ -97,9 +97,9 @@ namespace DwarfCorp
             Tree = new Sequence(new GetResourcesAct(Agent, Resources),
                 new Sequence(
                     new Wrap(() => IsRoomBuildOrder(buildRoom)),
-                    SetTargetVoxelFromRoomAct(buildRoom, "TargetVoxel"),
+                    SetTargetVoxelFromRoomAct(buildRoom, "ActionVoxel"),
                     new Wrap(() => IsRoomBuildOrder(buildRoom)),
-                    new GoToVoxelAct("TargetVoxel", PlanAct.PlanType.Adjacent, Agent),
+                    new GoToVoxelAct("ActionVoxel", PlanAct.PlanType.Adjacent, Agent),
                     new Wrap(() => IsRoomBuildOrder(buildRoom)),
                     new Wrap(() => Creature.HitAndWait(buildRoom.VoxelOrders.Count * 0.5f / agent.Stats.BuildSpeed, true, () => buildRoom.GetBoundingBox().Center(), ContentPaths.Audio.Oscar.sfx_ic_dwarf_craft, () => !buildRoom.IsBuilt && !buildRoom.IsDestroyed)),
                     new Wrap(() => IsRoomBuildOrder(buildRoom)),

@@ -136,8 +136,8 @@ namespace DwarfCorp
 
         public override bool IsInGoalRegion(Voxel voxel)
         {
-            return Math.Abs(voxel.Position.X - Voxel.Position.X) <= 0.5f &&
-                   Math.Abs(voxel.Position.Z - Voxel.Position.Z) <= 0.5f &&
+            return (Math.Abs(voxel.Position.X - Voxel.Position.X) <= 0.5f &&
+                   Math.Abs(voxel.Position.Z - Voxel.Position.Z) <= 0.5f) &&
                    Math.Abs(voxel.Position.Y - Voxel.Position.Y) < 0.001f;
         }
 
