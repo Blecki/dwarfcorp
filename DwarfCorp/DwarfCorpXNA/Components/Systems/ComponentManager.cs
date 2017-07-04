@@ -106,6 +106,14 @@ namespace DwarfCorp
 
             foreach (var component in SaveData.SaveableComponents)
                 component.CreateCosmeticChildren(this);
+
+            foreach (var component in Components)
+            {
+                if (component.Value.Parent != null && (!HasComponent(component.Value.Parent.GlobalID) || !component.Value.Parent.Children.Contains(component.Value)))
+                {
+                    throw new InvalidOperationException("Component's parent is not in the list of components");
+                }
+            }
         }
 
         public ComponentManager(WorldManager state, CompanyInformation CompanyInformation, List<Faction> natives)
@@ -129,7 +137,7 @@ namespace DwarfCorp
                 if (!component.IsVisible) continue; // Then why was it drawn in the selection buffer??
                 var toAdd = component.GetEntityRootComponent().GetComponent<Body>();
                 if (!toReturn.Contains(toAdd))
-                    toReturn.Add(component.GetEntityRootComponent().GetComponent<Body>());
+                    toReturn.Add(toAdd);
             }
             return toReturn.ToList();
         }
@@ -146,6 +154,11 @@ namespace DwarfCorp
             RemovalMutex.WaitOne();
             Removals.Add(component);
             RemovalMutex.ReleaseMutex();
+        }
+
+        public bool HasComponent(uint id)
+        {
+            return Components.ContainsKey(id);
         }
 
         private void RemoveComponentImmediate(GameComponent component)

@@ -82,12 +82,12 @@ namespace DwarfCorp
         {
             for (int i = 0; i < path.Count - 1; i++)
             {
-                if (!path[i].Voxel.IsEmpty) return false;
-                List<MoveAction> neighbors = Agent.Movement.GetMoveActions(path[i].Voxel);
+                if (!path[i].DestinationVoxel.IsEmpty) return false;
+                var neighbors = Agent.Movement.GetMoveActions(path[i].DestinationVoxel);
                 bool valid = false;
                 foreach (MoveAction vr in neighbors)
                 {
-                    Vector3 dif = vr.Voxel.Position - path[i + 1].Voxel.Position;
+                    Vector3 dif = vr.DestinationVoxel.Position - path[i + 1].DestinationVoxel.Position;
                     if (dif.Length() < .1)
                     {
                         valid = true;
@@ -111,9 +111,9 @@ namespace DwarfCorp
             {
                 hasNextAction = true;
                 nextAction = Path[nextID];
-                if (nextAction.Voxel != null)
+                if (nextAction.DestinationVoxel != null)
                 {
-                    diff = (nextAction.Voxel.Position + half - (action.Voxel.Position + half));
+                    diff = (nextAction.DestinationVoxel.Position + half - (action.DestinationVoxel.Position + half));
                     diffNorm = diff.Length();
                 }
             }
@@ -156,7 +156,7 @@ namespace DwarfCorp
                     time += dt;
                     i++;
                 }
-                RandomPositionOffsets[0] = Agent.Position - (Path[0].Voxel.Position + Vector3.One * 0.5f);
+                RandomPositionOffsets[0] = Agent.Position - (Path[0].DestinationVoxel.Position + Vector3.One * 0.5f);
                 TrajectoryTimer = new Timer(time, true);
                 return true;
             }
@@ -168,9 +168,9 @@ namespace DwarfCorp
             Vector3 half = Vector3.One * 0.5f;
             half.Y = Creature.Physics.BoundingBox.Extents().Y * 2.0f;
 
-            if (Path[0].Voxel == null)
+            if (Path[0].DestinationVoxel == null)
                 yield break;
-            Vector3 target = Path[0].Voxel.Position + half + RandomPositionOffsets[0];
+            Vector3 target = Path[0].DestinationVoxel.Position + half + RandomPositionOffsets[0];
             Matrix transform = Agent.Physics.LocalTransform;
             do
             {
@@ -231,13 +231,13 @@ namespace DwarfCorp
             Vector3 half = Vector3.One * 0.5f;
             half.Y = Creature.Physics.BoundingBox.Extents().Y * 2;
             Vector3 nextPosition = Vector3.Zero;
-            Vector3 currPosition = action.Voxel.Position + half;
+            Vector3 currPosition = action.DestinationVoxel.Position + half;
 
             currPosition += RandomPositionOffsets[currentIndex];
             if (nextID < Path.Count)
             {
                 hasNextAction = true;
-                nextPosition = Path[nextID].Voxel.Position;
+                nextPosition = Path[nextID].DestinationVoxel.Position;
                 nextPosition += RandomPositionOffsets[nextID] + half;
             }
 
@@ -324,9 +324,9 @@ namespace DwarfCorp
                         transform.Translation = diff * t + currPosition;
                         Agent.Physics.Velocity = diff;
 
-                        if (action.TargetVoxel != null)
+                        if (action.ActionVoxel != null)
                         {
-                            Agent.Physics.Velocity = (action.Voxel.Position + Vector3.One*0.5f) - currPosition;
+                            Agent.Physics.Velocity = (action.DestinationVoxel.Position + Vector3.One*0.5f) - currPosition;
                         }
                         else if (action.InteractObject != null)
                         {
@@ -387,7 +387,7 @@ namespace DwarfCorp
                 {
                     List<Vector3> points =
                         Path.Select(
-                            (v, i) => v.Voxel.Position + new Vector3(0.5f, 0.5f, 0.5f) + RandomPositionOffsets[i])
+                            (v, i) => v.DestinationVoxel.Position + new Vector3(0.5f, 0.5f, 0.5f) + RandomPositionOffsets[i])
                             .ToList();
                     List<Color> colors =
                             Path.Select((v, i) =>

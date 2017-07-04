@@ -1,4 +1,4 @@
-// Voxel.cs
+// DestinationVoxel.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -311,7 +311,7 @@ namespace DwarfCorp
         public ulong QuickCompare
         {
             get {
-                //System.Diagnostics.Debug.Assert(quickCompare == invalidCompareValue, "Voxel was generated without Quick Compare.  Set using GridPosition instead.");
+                //System.Diagnostics.Debug.Assert(quickCompare == invalidCompareValue, "DestinationVoxel was generated without Quick Compare.  Set using GridPosition instead.");
                 return quickCompare;
             }
         }
@@ -386,7 +386,7 @@ namespace DwarfCorp
         public bool GetNeighborBySuccessor(Vector3 succ, ref Voxel neighbor, bool requireQuickCompare = true)
         {
             Debug.Assert(neighbor != null, "Null reference passed");
-            Debug.Assert(_chunk != null, "Voxel has no valid chunk reference");
+            Debug.Assert(_chunk != null, "DestinationVoxel has no valid chunk reference");
 
             Vector3 newPos = gridpos + succ;
             Point3 chunkSuccessor = Point3.Zero;
@@ -635,7 +635,7 @@ namespace DwarfCorp
 
         public override string ToString()
         {
-            return String.Format("Voxel {{{0}, {1}, {2}}}", gridpos.X, gridpos.Y, gridpos.Z);
+            return String.Format("DestinationVoxel {{{0}, {1}, {2}}}", gridpos.X, gridpos.Y, gridpos.Z);
         }
     }
 

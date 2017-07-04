@@ -47,6 +47,10 @@ namespace DwarfCorp
     /// </summary>
     public class Moleman : Creature
     {
+        public Moleman()
+        {
+            
+        }
         public Moleman(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
             base(manager, stats, allies, planService, faction, name)
         {

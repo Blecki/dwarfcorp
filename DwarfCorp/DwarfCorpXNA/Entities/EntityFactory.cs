@@ -265,7 +265,7 @@ namespace DwarfCorp
             {
 
                 InstanceManager.RemoveInstances(name, motes);
-
+                InstanceManager.Instances[name].HasSelectionBuffer = false;
                 motes.Clear();
 
 

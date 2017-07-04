@@ -108,7 +108,8 @@ namespace DwarfCorp
             Faction = faction;
             BlacklistResources = new List<Resource.ResourceTags>()
             {
-                Resource.ResourceTags.Corpse
+                Resource.ResourceTags.Corpse,
+                Resource.ResourceTags.Money
             };
         }
 
@@ -120,7 +121,8 @@ namespace DwarfCorp
             Faction = faction;
             BlacklistResources = new List<Resource.ResourceTags>()
             {
-                Resource.ResourceTags.Corpse
+                Resource.ResourceTags.Corpse,
+                Resource.ResourceTags.Money
             };
         }
 

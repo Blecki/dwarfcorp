@@ -34,6 +34,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -254,6 +255,10 @@ namespace DwarfCorp
                     gameFile.ReadChunks(ExistingFile);
                     ChunkManager.ChunkData.LoadFromFile(gameFile, SetLoadingMessage);
 
+                    ChunkManager.ChunkData.SetMaxViewingLevel(gameFile.Data.Metadata.Slice > 0
+                    ? gameFile.Data.Metadata.Slice
+                    : ChunkManager.ChunkData.MaxViewingLevel, ChunkManager.SliceMode.Y);
+
                     //gameFile.LoadData(ExistingFile, this);
 
                     InstanceManager.Clear();
@@ -267,6 +272,25 @@ namespace DwarfCorp
                     CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
 
                     ComponentManager = new ComponentManager(gameFile.Data.Worlddata.Components, this);
+
+                    foreach (var component in gameFile.Data.Worlddata.Components.SaveableComponents)
+                    {
+                        if (!ComponentManager.HasComponent(component.GlobalID) &&
+                            ComponentManager.HasComponent(component.Parent.GlobalID))
+                        {
+                            throw new InvalidOperationException("Component exists in save data but not in manager.");
+                        }
+                    }
+
+                    
+                    foreach (var resource in gameFile.Data.Worlddata.Resources)
+                    {
+                        if (!ResourceLibrary.Resources.ContainsKey(resource.Key))
+                        {
+                            ResourceLibrary.Resources.Add(resource.Key, resource.Value);
+                        }
+                    }
+
                     Factions = gameFile.Data.Worlddata.Factions;
                     ComponentManager.World = this;
                     

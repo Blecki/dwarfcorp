@@ -239,7 +239,7 @@ namespace DwarfCorp
                     break;
                 case AttackTrigger.Animation:
                     if (performer.Sprite.CurrentAnimation == null ||
-                        performer.Sprite.CurrentAnimation.CurrentFrame != TriggerFrame)
+                        performer.Sprite.GetAnimation("AttackingFORWARD").CurrentFrame != TriggerFrame)
                     {
                         HasTriggered = false;
                         return false;
@@ -281,7 +281,7 @@ namespace DwarfCorp
                     break;
                 case AttackTrigger.Animation:
                     if (performer.Sprite.CurrentAnimation == null ||
-                        performer.Sprite.CurrentAnimation.CurrentFrame != TriggerFrame)
+                        performer.Sprite.GetAnimation("AttackingFORWARD").CurrentFrame != TriggerFrame)
                     {
                         HasTriggered = false;
                         return false;

@@ -657,7 +657,7 @@ namespace DwarfCorp
         }
 
         /*
-        public VoxelChunk(Vector3 origin, ChunkManager manager, Voxel[][][] voxelGrid, Point3 id, int tileSize)
+        public VoxelChunk(Vector3 origin, ChunkManager manager, DestinationVoxel[][][] voxelGrid, Point3 id, int tileSize)
         {
             FirstWaterIter = true;
             Motes = new Dictionary<string, List<InstanceData>>();
@@ -687,7 +687,7 @@ namespace DwarfCorp
                 {
                     for(int z = 0; z < voxelGrid[x][y].Length; z++)
                     {
-                        Voxel v = voxelGrid[x][y][z];
+                        DestinationVoxel v = voxelGrid[x][y][z];
                         if(!v.IsEmpty)
                         {
                             v.Chunk = this;
@@ -704,7 +704,7 @@ namespace DwarfCorp
             PrimitiveMutex = new Mutex();
             ShouldRecalculateLighting = true;
             ShouldRebuildWater = true;
-            Springs = new ConcurrentDictionary<Voxel, byte>();
+            Springs = new ConcurrentDictionary<DestinationVoxel, byte>();
             IsRebuilding = false;
             InitializeWater();
             LightingCalculated = false;
@@ -1511,7 +1511,7 @@ namespace DwarfCorp
         }
 
         /*
-        public void GetNeighborsSuccessors(List<Vector3> succ, int x, int y, int z, List<Voxel> toReturn, bool considerEmpties)
+        public void GetNeighborsSuccessors(List<Vector3> succ, int x, int y, int z, List<DestinationVoxel> toReturn, bool considerEmpties)
         {
             toReturn.Clear();
 
@@ -1527,7 +1527,7 @@ namespace DwarfCorp
 
                 if(isInterior || IsCellValid(nx, ny, nz))
                 {
-                    Voxel v = MakeVoxel(nx, ny, nz);
+                    DestinationVoxel v = MakeVoxel(nx, ny, nz);
                     if(!v.IsEmpty)
                     {
                         toReturn.Add(v);
@@ -1580,7 +1580,7 @@ namespace DwarfCorp
                     }
 
                     VoxelChunk chunk = Manager.ChunkData.ChunkMap[chunkID];
-                    Voxel n = chunk.MakeVoxel(nx, ny, nz);
+                    DestinationVoxel n = chunk.MakeVoxel(nx, ny, nz);
 
                     if(n != null)
                     {
@@ -1920,15 +1920,14 @@ namespace DwarfCorp
             GetNeighborsSuccessors(VertexSuccessorsDiag[vertex], x, y, z, toReturn);
         }
 
-        public List<Voxel> GetNeighborsEuclidean(Voxel v)
+        public IEnumerable<Voxel> GetNeighborsEuclidean(Voxel v)
         {
             Vector3 gridCoord = v.GridPosition;
             return GetNeighborsEuclidean((int)gridCoord.X, (int)gridCoord.Y, (int)gridCoord.Z);
         }
 
-        public List<Voxel> GetNeighborsEuclidean(int x, int y, int z)
+        public IEnumerable<Voxel> GetNeighborsEuclidean(int x, int y, int z)
         {
-            List<Voxel> toReturn = new List<Voxel>();
             bool isInterior = (x > 0 && y > 0 && z > 0 && x < SizeX - 1 && y < SizeY - 1 && z < SizeZ - 1);
             for (int dx = -1; dx < 2; dx++)
             {
@@ -1941,26 +1940,26 @@ namespace DwarfCorp
                             continue;
                         }
 
-                        int nx = (int)dx + x;
-                        int ny = (int)dy + y;
-                        int nz = (int)dz + z;
+                        int nx = (int) dx + x;
+                        int ny = (int) dy + y;
+                        int nz = (int) dz + z;
 
                         if (isInterior || IsCellValid(nx, ny, nz))
                         {
-                            toReturn.Add(MakeVoxel(nx, ny, nz));
+                            yield return MakeVoxel(nx, ny, nz);
                         }
                         else
                         {
                             Voxel otherVox = new Voxel();
-                            if (Manager.ChunkData.GetVoxel(this, new Vector3(nx, ny, nz) + Origin, ref otherVox))
+                            if (Manager.ChunkData.GetVoxel(this, new Vector3(nx, ny, nz) + Origin + Vector3.One * 0.5f, ref otherVox))
                             {
-                                toReturn.Add(otherVox);
+                                yield return otherVox;
                             }
                         }
                     }
                 }
             }
-            return toReturn;
+            ;
         }
 
 

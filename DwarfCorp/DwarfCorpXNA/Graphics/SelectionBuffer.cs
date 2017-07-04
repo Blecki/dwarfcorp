@@ -70,7 +70,7 @@ namespace DwarfCorp
         {
             ValidateBuffer(device);
             device.SetRenderTarget(Buffer);
-            device.Clear(Color.Black);
+            device.Clear(Color.Transparent);
         }
 
         public void End(GraphicsDevice device)
@@ -116,7 +116,7 @@ namespace DwarfCorp
 
         public void DebugDraw(Rectangle rect)
         {
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone);
+            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone);
             DwarfGame.SpriteBatch.Draw((Texture2D)Buffer, rect, Color.White);
             DwarfGame.SpriteBatch.End();
         }

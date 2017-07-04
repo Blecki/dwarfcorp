@@ -47,6 +47,11 @@ namespace DwarfCorp
     /// </summary>
     public class Skeleton : Creature
     {
+        public Skeleton()
+        {
+            
+        }
+
         public Skeleton(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
             base(manager, stats, allies, planService, faction, name)
         {

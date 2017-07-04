@@ -79,12 +79,12 @@ namespace DwarfCorp
             RoomData = MushroomFarmData;
         }
 
-        public MushroomFarm(bool designation, IEnumerable<Voxel> designations, ChunkManager chunks) :
+        public MushroomFarm(bool designation, IEnumerable<DestinationVoxel> designations, ChunkManager chunks) :
             base(designation, designations, MushroomFarmData, chunks)
         {
         }
 
-        public MushroomFarm(IEnumerable<Voxel> voxels, ChunkManager chunks) :
+        public MushroomFarm(IEnumerable<DestinationVoxel> voxels, ChunkManager chunks) :
             base(voxels, MushroomFarmData, chunks)
         {
      

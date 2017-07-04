@@ -59,7 +59,7 @@ namespace DwarfCorp
             Radius = radius;
             PlanType = planType;
             VoxelName = voxel;
-            Name = "Go to Voxel " + voxel;
+            Name = "Go to DestinationVoxel " + voxel;
 
         }
 
@@ -68,7 +68,7 @@ namespace DwarfCorp
         {
             Radius = radius;
             Voxel = voxel;
-            Name = "Go to Voxel";
+            Name = "Go to DestinationVoxel";
             PlanType = planType;
 
         }
@@ -87,8 +87,8 @@ namespace DwarfCorp
             else if (Voxel != null)
             {
                 Tree = new Sequence(
-                      new SetBlackboardData<Voxel>(Agent, "TargetVoxel", Voxel),
-                      new PlanAct(Agent, "PathToVoxel", "TargetVoxel", PlanType) { Radius = Radius },
+                      new SetBlackboardData<Voxel>(Agent, "ActionVoxel", Voxel),
+                      new PlanAct(Agent, "PathToVoxel", "ActionVoxel", PlanType) { Radius = Radius },
                       new FollowPathAct(Agent, "PathToVoxel"),
                       new StopAct(Agent));
             }

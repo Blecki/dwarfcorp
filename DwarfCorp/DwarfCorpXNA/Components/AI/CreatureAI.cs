@@ -1011,14 +1011,14 @@ namespace DwarfCorp
                         yield break;
                     }
 
-                    List<MoveAction> actions = agent.AI.Movement.GetMoveActions(creatureVoxel);
+                    var actions = agent.AI.Movement.GetMoveActions(creatureVoxel);
 
                     float minCost = float.MaxValue;
                     var minAction = new MoveAction();
                     bool hasMinAction = false;
                     foreach (var action in actions)
                     {
-                        Voxel vox = action.Voxel;
+                        Voxel vox = action.DestinationVoxel;
 
                         float cost = edgeGoal.Heuristic(vox) + MathFunctions.Rand(0.0f, 5.0f);
 
@@ -1036,7 +1036,7 @@ namespace DwarfCorp
                         {
                             Diff = minAction.Diff,
                             MoveType = MoveType.Walk,
-                            Voxel = creatureVoxel
+                            DestinationVoxel = creatureVoxel
                         };
 
                         agent.AI.Blackboard.SetData("GreedyPath", new List<MoveAction> { nullAction, minAction });

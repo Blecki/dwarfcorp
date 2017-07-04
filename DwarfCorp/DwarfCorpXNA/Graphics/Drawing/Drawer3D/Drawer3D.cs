@@ -178,11 +178,13 @@ namespace DwarfCorp
                 return;
             }
 
+            
             while(Commands.Count > 0)
             {
                 DrawCommand3D result = null;
                 Commands.TryTake(out result);
             }
+             
         }
 
         public static List<VertexPositionColor> GetTriangleStrip(Vector3[] points, float thickness, Color color, ref int triangleCount, Matrix worldMatrix)

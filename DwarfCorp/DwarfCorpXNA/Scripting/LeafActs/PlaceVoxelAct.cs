@@ -52,7 +52,7 @@ namespace DwarfCorp
         {
             Agent = agent;
             Voxel = voxel;
-            Name = "Build Voxel " + voxel.ToString();
+            Name = "Build DestinationVoxel " + voxel.ToString();
             Resource = resource;
         }
 
@@ -86,7 +86,7 @@ namespace DwarfCorp
                     // If the creature intersects the box, find a voxel adjacent to it that is free, and jump there to avoid getting crushed.
                     if (Creature.Physics.BoundingBox.Intersects(Voxel.GetBoundingBox()))
                     {
-                        List<Voxel> neighbors = Voxel.Chunk.GetNeighborsEuclidean(Voxel);
+                        IEnumerable<Voxel> neighbors = Voxel.Chunk.GetNeighborsEuclidean(Voxel);
                         Voxel closest = null;
                         float closestDist = float.MaxValue;
                         foreach (Voxel voxel in neighbors)

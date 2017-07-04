@@ -56,7 +56,7 @@ namespace DwarfCorp
     //        else return null;
     //    }
 
-    //    public List<T> GetItems(Voxel voxel)
+    //    public List<T> GetItems(DestinationVoxel voxel)
     //    {
     //        return GetItems(new Point3(MathFunctions.FloorInt(voxel.Position.X),
     //                    MathFunctions.FloorInt(voxel.Position.Y),

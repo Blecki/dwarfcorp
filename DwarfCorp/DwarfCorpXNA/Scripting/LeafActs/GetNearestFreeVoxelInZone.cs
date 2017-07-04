@@ -51,7 +51,7 @@ namespace DwarfCorp
         public GetNearestFreeVoxelInZone(CreatureAI agent, Zone targetZone, string outputVoxel, bool reserve) :
             base(agent)
         {
-            Name = "Get Free Voxel";
+            Name = "Get Free DestinationVoxel";
             OutputVoxel = outputVoxel;
             TargetZone = targetZone;
             ReserveVoxel = reserve;

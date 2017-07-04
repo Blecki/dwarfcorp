@@ -387,7 +387,7 @@ namespace DwarfCorp
                 {
                     if(chunk.Manager.ChunkData.DoesWaterCellExist(worldPos))
                     {
-                        Voxel voxelsBelow = chunk.Manager.ChunkData.GetVoxel(chunk, worldPos + new Vector3(0, -1, 0));
+                        DestinationVoxel voxelsBelow = chunk.Manager.ChunkData.GetVoxel(chunk, worldPos + new Vector3(0, -1, 0));
 
                         if(voxelsBelow != null && voxelsBelow.IsEmpty)
                         {

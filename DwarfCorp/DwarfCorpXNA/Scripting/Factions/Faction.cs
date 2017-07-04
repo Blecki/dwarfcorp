@@ -555,7 +555,7 @@ namespace DwarfCorp
 
             foreach (Room room in rooms)
             {
-                if (room.RoomData.Name != typeName) continue;
+                if (room.RoomData.Name != typeName || !room.IsBuilt) continue;
                 float dist =
                     (room.GetNearestVoxel(position).Position - position).LengthSquared();
 
