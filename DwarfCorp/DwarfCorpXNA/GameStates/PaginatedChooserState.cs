@@ -222,7 +222,9 @@ namespace DwarfCorp.GameStates
                 var totalPages = (int)System.Math.Ceiling((float)Items.Count / (float)Grid.ItemsThatFit);
                 Grid.Text = String.Format("Page {0} of {1}", (int)System.Math.Ceiling((float)PreviewOffset / (float)Grid.ItemsThatFit), totalPages);
 
-                BottomBar.Text = Items[PreviewOffset + ItemSelected].Path;
+                var directoryTime = System.IO.Directory.GetLastWriteTime(Items[PreviewOffset + ItemSelected].Path);
+
+                BottomBar.Text = Items[PreviewOffset + ItemSelected].Path + "\n" + directoryTime.ToShortDateString() + " " + directoryTime.ToShortTimeString();
 
                 for (var i = 0; i < Grid.Children.Count; ++i)
                 {
