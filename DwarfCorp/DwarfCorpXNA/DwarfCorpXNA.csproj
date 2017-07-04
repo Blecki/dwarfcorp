@@ -248,7 +248,7 @@
     <Compile Include="GameStates\GameStateManager.cs" />
     <Compile Include="GameStates\WorldLoaderState.cs" />
     <Compile Include="GameStates\PaginatedChooserState.cs" />
-    <Compile Include="GameStates\NewGameLoaderState.cs" />
+    <Compile Include="GameStates\LoadSaveGameState.cs" />
     <Compile Include="GameStates\NewEconomyState.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGeneratorPreview.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGeneratorState.cs" />

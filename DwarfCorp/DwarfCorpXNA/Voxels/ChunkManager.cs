@@ -591,7 +591,7 @@ namespace DwarfCorp
                                 chunk.ShouldRebuild = true;
                                 chunk.ShouldRecalculateLighting = true;
                                 GeneratedChunks.Enqueue(chunk);
-                            }                        
+                            }
                         });
                         ToGenerate.Clear();
                     }

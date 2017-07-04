@@ -100,6 +100,7 @@ namespace DwarfCorp
             }
 
             GameComponent.ResetMaxGlobalId(GetMaxComponentID() + 1);
+
             foreach (var component in SaveData.SaveableComponents)
                 component.PostSerialization(this);
 

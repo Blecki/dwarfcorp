@@ -56,7 +56,7 @@ namespace DwarfCorp.Gui.Widgets
 
             OnScroll += (sender, args) =>
             {
-                ScrollPosition = MathFunctions.Clamp(args.ScrollValue > 0 ? ScrollPosition + 1 : ScrollPosition - 1, 0, ScrollArea);
+                ScrollPosition = args.ScrollValue > 0 ? ScrollPosition + 1 : ScrollPosition - 1;
             };
         }
 
