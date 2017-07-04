@@ -98,9 +98,11 @@ namespace DwarfCorp
             device.SetVertexBuffer(BackgroundMesh);
             device.Indices = BackgroundIndex;
             device.BlendState = BlendState.Opaque;
-            BackgroundEffect.Parameters["View"].SetValue(camera.ViewMatrix);
+            Matrix rotOnly = camera.ViewMatrix;
+            rotOnly.Translation = Vector3.Zero;
+            BackgroundEffect.Parameters["View"].SetValue(rotOnly);
             BackgroundEffect.Parameters["Projection"].SetValue(camera.ProjectionMatrix);
-            BackgroundEffect.Parameters["World"].SetValue(Matrix.CreateTranslation(camera.Position));
+            BackgroundEffect.Parameters["World"].SetValue(Matrix.Identity);
             BackgroundEffect.Parameters["Fog"].SetValue(fogColor.ToVector4());
             device.DepthStencilState = DepthStencilState.DepthRead;
             foreach (var pass in BackgroundEffect.CurrentTechnique.Passes)
