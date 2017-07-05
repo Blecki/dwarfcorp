@@ -184,7 +184,8 @@
 		{
 			"Name" : "time",
 			"Title" : "Time",
-			"Text" : "You can speed up the time by pressing the >> button using the time controls on the bottom right of the screen. Time can also be sped up or slowed down using the time forward and backward keys (by default X and C). Time can be paused using the pause key (by default, Space). You can still issue commands while time is paused."
+			"Text" : "You can speed up the time by pressing the >> button using the time controls on the bottom right of the screen. Time can also be sped up or slowed down using the time forward and backward keys (by default X and C). Time can be paused using the pause key (by default, Space). You can still issue commands while time is paused.",
+			"GuiHilite" : "speed controls"
 		},
 		{
 			"Name" : "camera",

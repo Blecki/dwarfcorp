@@ -151,7 +151,6 @@ namespace DwarfCorp
         #region Tutorial Hooks
 
         public Tutorial.TutorialManager TutorialManager;
-        public Action<TutorialManager.TutorialEntry, Action<bool>> GuiHook_ShowTutorialPopup;
         
         public void Tutorial(String Name)
         {
@@ -461,7 +460,7 @@ namespace DwarfCorp
 
             Master.Update(Game, gameTime);
             GoalManager.Update(this);
-            TutorialManager.Update(GuiHook_ShowTutorialPopup);
+            TutorialManager.Update(Gui);
             Time.Update(gameTime);
 
 

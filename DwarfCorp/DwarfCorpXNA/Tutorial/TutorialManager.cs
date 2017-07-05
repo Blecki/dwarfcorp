@@ -12,11 +12,13 @@ namespace DwarfCorp.Tutorial
             public String Title;
             public String Text;
             public bool Shown;
+            public String GuiHilite;
         }
 
         private Dictionary<String, TutorialEntry> Entries;
         public bool TutorialEnabled = true;
         private String PendingTutorial = null;
+        private bool TutorialVisible = false;
 
         public TutorialManager(String TutorialFile)
         {
@@ -25,7 +27,13 @@ namespace DwarfCorp.Tutorial
 
             Entries = new Dictionary<string, TutorialEntry>();
             foreach (var entry in entries.Tutorials)
-                Entries.Add(entry.Name, new TutorialEntry { Text = entry.Text, Shown = false, Title = entry.Title});
+                Entries.Add(entry.Name, new TutorialEntry
+                {
+                    Text = entry.Text,
+                    Shown = false,
+                    Title = entry.Title,
+                    GuiHilite = entry.GuiHilite
+                });
         }
 
         public void ResetTutorials()
@@ -41,13 +49,48 @@ namespace DwarfCorp.Tutorial
                 PendingTutorial = Name;
         }
 
-        public void Update(Action<TutorialEntry, Action<bool>> GuiHook)
+        public void Update(Gui.Root Gui)
         {
-            if (!String.IsNullOrEmpty(PendingTutorial) && GuiHook != null &&!Entries[PendingTutorial].Shown)
-            { 
-                Entries[PendingTutorial].Shown = true;
-                GuiHook(Entries[PendingTutorial], (b) => TutorialEnabled = !b);
+            if (TutorialVisible) return; 
+
+            if (!String.IsNullOrEmpty(PendingTutorial) && Gui != null &&!Entries[PendingTutorial].Shown)
+            {
+                var entry = Entries[PendingTutorial];
+                entry.Shown = true;
+                TutorialVisible = true;
+
+                var popup = Gui.ConstructWidget(new Gui.Widgets.TutorialPopup
+                {
+                    Message = entry,
+                    OnClose = (sender) =>
+                    {
+                        TutorialEnabled = !(sender as Gui.Widgets.TutorialPopup).DisableChecked;
+                        TutorialVisible = false;
+                        Gui.ClearSpecials();
+                    },
+                    OnLayout = (sender) =>
+                    {
+                        sender.Rect.X = Gui.RenderData.VirtualScreen.Width - sender.Rect.Width;
+                        sender.Rect.Y = 64;
+                    }
+                });
+
+                Gui.ShowModalPopup(popup);
                 PendingTutorial = null;
+
+                if (!String.IsNullOrEmpty(entry.GuiHilite))
+                {
+                    var widget = Gui.RootItem.EnumerateChildren().FirstOrDefault(w =>
+                        w.Tag is String && (w.Tag as String) == entry.GuiHilite);
+                    if (widget != null)
+                    {
+                        Gui.SpecialHiliteRegion = widget.Rect;
+                        Gui.SpecialHiliteSheet = "border-hilite";
+                        Gui.SpecialIndicatorPosition = new Microsoft.Xna.Framework.Point(
+                            widget.Rect.Right, widget.Rect.Height - 16);
+                        Gui.SpecialIndicator = new DwarfCorp.Gui.MousePointer("hand", 1, 8, 9, 10, 11);
+                    }
+                }
             }
         }
 
