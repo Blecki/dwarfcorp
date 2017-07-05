@@ -92,6 +92,7 @@ namespace DwarfCorp
                 bool fileExists = !string.IsNullOrEmpty(ExistingFile);
 
                 SetLoadingMessage("Creating Sky...");
+
                 Sky = new SkyRenderer(
                     TextureManager.GetTexture(ContentPaths.Sky.moon),
                     TextureManager.GetTexture(ContentPaths.Sky.sun),
@@ -101,7 +102,9 @@ namespace DwarfCorp
                     Content.Load<Model>(ContentPaths.Models.sphereLowPoly),
                     Content.Load<Effect>(ContentPaths.Shaders.SkySphere));
 
-                if (!string.IsNullOrEmpty(ExistingFile))
+                #region Reading game file
+
+                if (fileExists)
                 {
                     SetLoadingMessage("Loading " + ExistingFile);
                     gameFile = new GameFile(ExistingFile, DwarfGame.COMPRESSED_BINARY_SAVES, this);
@@ -135,6 +138,7 @@ namespace DwarfCorp
                     }
                 }
 
+                #endregion
 
                 #region Initialize static data
                 {
@@ -231,12 +235,9 @@ namespace DwarfCorp
 
                 SetLoadingMessage("Generating Initial Terrain Chunks ...");
             
-                // If we already have a file, we need to load all the chunks from it.
-                // This is preliminary stuff that just makes sure the file exists and can be loaded.
                 if (!fileExists)
                     GameID = MathFunctions.Random.Next(0, 1024);
-
-
+                
                 ChunkGenerator = new ChunkGenerator(VoxelLibrary, Seed, 0.02f, ChunkHeight / 2.0f, this.WorldScale)
                 {
                     SeaLevel = SeaLevel
@@ -249,7 +250,7 @@ namespace DwarfCorp
             
                 #region Load Components
 
-                if (!string.IsNullOrEmpty(ExistingFile))
+                if (fileExists)
                 {
                     SetLoadingMessage("Loading Terrain...");
                     gameFile.ReadChunks(ExistingFile);
@@ -259,10 +260,7 @@ namespace DwarfCorp
                     ? gameFile.Data.Metadata.Slice
                     : ChunkManager.ChunkData.MaxViewingLevel, ChunkManager.SliceMode.Y);
 
-                    //gameFile.LoadData(ExistingFile, this);
-
                     InstanceManager.Clear();
-
 
                     SetLoadingMessage("Loading Entities...");
                     gameFile.ReadWorld(ExistingFile, this);
@@ -278,10 +276,10 @@ namespace DwarfCorp
                         if (!ComponentManager.HasComponent(component.GlobalID) &&
                             ComponentManager.HasComponent(component.Parent.GlobalID))
                         {
+                            // Logically impossible.
                             throw new InvalidOperationException("Component exists in save data but not in manager.");
                         }
                     }
-
                     
                     foreach (var resource in gameFile.Data.Worlddata.Resources)
                     {
@@ -311,16 +309,12 @@ namespace DwarfCorp
                         }
                     }
 
-                    //gameFile.LoadDiplomacy(ExistingFile, this);
                     Diplomacy = gameFile.Data.Worlddata.Diplomacy;
 
-                    // Load saved goals from file here.
                     GoalManager = new Goals.GoalManager();
-                    //gameFile.LoadGoals(ExistingFile, this);
                     GoalManager.Initialize(gameFile.Data.Worlddata.Goals);
 
                     TutorialManager = new Tutorial.TutorialManager("Content/tutorial.txt");
-                    //gameFile.LoadTutorial(ExistingFile, this);
                     TutorialManager.SetFromSaveData(gameFile.Data.Worlddata.TutorialSaveData);
 
                     Camera = gameFile.Data.Worlddata.Camera;
@@ -336,7 +330,6 @@ namespace DwarfCorp
                         MathHelper.PiOver4, AspectRatio, 0.1f,
                         GameSettings.Default.VertexCullDistance);
 
-
                     globalOffset = ChunkManager.ChunkData.RoundToChunkCoords(globalOffset);
                     globalOffset.X *= ChunkWidth;
                     globalOffset.Y *= ChunkHeight;
@@ -347,7 +340,7 @@ namespace DwarfCorp
                     Camera.Target = new Vector3(0, 10, 1) + globalOffset;
 
                     // If there's no file, we have to initialize the first chunk coordinate
-                    if (gameFile == null)
+                    if (gameFile == null) // Todo: Always true?
                     {
                         ChunkManager.GenerateInitialChunks(
                             ChunkManager.ChunkData.GetChunkID(new Vector3(0, 0, 0) + globalOffset), SetLoadingMessage);
@@ -357,7 +350,7 @@ namespace DwarfCorp
                     ComponentManager.SetRootComponent(new Body(ComponentManager, "root", Matrix.Identity,
                         Vector3.Zero, Vector3.Zero, false));
 
-                    if (Natives == null)
+                    if (Natives == null) // Todo: Always true??
                     {
                         FactionLibrary library = new FactionLibrary();
                         library.Initialize(this, CompanyMakerState.CompanyInformation);
@@ -418,8 +411,7 @@ namespace DwarfCorp
 
 
                 #endregion
-
-
+                
                 ChunkManager.camera = Camera;
                 // Finally, the chunk manager's threads are started to allow it to 
                 // dynamically rebuild terrain
