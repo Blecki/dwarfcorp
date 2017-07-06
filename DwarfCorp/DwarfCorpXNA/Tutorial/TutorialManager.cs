@@ -75,7 +75,7 @@ namespace DwarfCorp.Tutorial
                     }
                 });
 
-                Gui.ShowModalPopup(popup);
+                Gui.ShowDialog(popup);
                 PendingTutorial = null;
 
                 if (!String.IsNullOrEmpty(entry.GuiHilite))
@@ -87,8 +87,8 @@ namespace DwarfCorp.Tutorial
                         Gui.SpecialHiliteRegion = widget.Rect;
                         Gui.SpecialHiliteSheet = "border-hilite";
                         Gui.SpecialIndicatorPosition = new Microsoft.Xna.Framework.Point(
-                            widget.Rect.Right, widget.Rect.Height - 16);
-                        Gui.SpecialIndicator = new DwarfCorp.Gui.MousePointer("hand", 1, 8, 9, 10, 11);
+                            widget.Rect.Left, widget.Rect.Top - 16);
+                        Gui.SpecialIndicator = new DwarfCorp.Gui.MousePointer("hand", 1, 10);
                     }
                 }
             }

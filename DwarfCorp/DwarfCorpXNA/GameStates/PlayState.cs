@@ -1501,8 +1501,8 @@ namespace DwarfCorp.GameStates
                 {
                     sender.Rect.Height = menu_MainMenu.MinimumSize.Y;
                     sender.Rect.Width = 256;
-                    sender.Rect.X = MinimapFrame.Rect.Right; // Position against minimap frame.
-                    sender.Rect.Y = MinimapFrame.Rect.Bottom - menu_MainMenu.MinimumSize.Y;
+                    sender.Rect.X = GuiRoot.RenderData.VirtualScreen.Center.X - 128; // Position against minimap frame.
+                    sender.Rect.Y = GuiRoot.RenderData.VirtualScreen.Bottom - menu_MainMenu.MinimumSize.Y;
                 }
             }) as FlatToolTray.RootTray;
 

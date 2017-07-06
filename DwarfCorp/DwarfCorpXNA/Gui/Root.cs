@@ -632,7 +632,7 @@ namespace DwarfCorp.Gui
                 var tileSheet = GetTileSheet(SpecialIndicator.Sheet);
                 var mouseMesh = Mesh.Quad()
                     .Scale(tileSheet.TileWidth, tileSheet.TileHeight)
-                    .Translate(SpecialIndicatorPosition.X, SpecialIndicatorPosition.Y)
+                    .Translate(SpecialIndicatorPosition.X + (float)Math.Sin(DwarfTime.LastTime.TotalRealTime.TotalSeconds * 4.0) * 8.0f, SpecialIndicatorPosition.Y)
                     .Texture(tileSheet.TileMatrix(SpecialIndicator.AnimationFrame));
                 mouseMesh.Render(RenderData.Device);
             }

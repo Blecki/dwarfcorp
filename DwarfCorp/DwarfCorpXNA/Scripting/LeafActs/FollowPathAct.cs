@@ -80,6 +80,10 @@ namespace DwarfCorp
 
         public bool IsPathValid(List<MoveAction> path)
         {
+            if (path.Count == 0)
+            {
+                return false;
+            }
             for (int i = 0; i < path.Count - 1; i++)
             {
                 if (!path[i].DestinationVoxel.IsEmpty) return false;
@@ -366,6 +370,8 @@ namespace DwarfCorp
         {
             InitializePath();
             if (TrajectoryTimer == null) yield break;
+            if (Path.Count == 0)
+                yield return Act.Status.Success;
             while (!TrajectoryTimer.HasTriggered)
             {
                 TrajectoryTimer.Update(DwarfTime.LastTime);
