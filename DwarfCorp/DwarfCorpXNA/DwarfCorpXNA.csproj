@@ -336,6 +336,7 @@
     <Compile Include="Scripting\CompoundActs\StockMoneyAct.cs" />
     <Compile Include="Scripting\LeafActs\PutMoneyInZoneAct.cs" />
     <Compile Include="Scripting\LeafActs\StashMoneyAct.cs" />
+    <Compile Include="Scripting\Player\Tools\BuiltTypes.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\AnimalPen.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\Graveyard.cs" />
     <Compile Include="Scripting\Data\Status.cs" />
@@ -393,7 +394,6 @@
     <Compile Include="NativeInjector.cs" />
     <Compile Include="Gui\Widgets\AnnouncementPopup.cs" />
     <Compile Include="Gui\Widgets\BuildCraftInfo.cs" />
-    <Compile Include="Gui\Widgets\BuildMenu.cs" />
     <Compile Include="Gui\Widgets\BuildWallInfo.cs" />
     <Compile Include="Gui\Widgets\BuildRoomInfo.cs" />
     <Compile Include="Gui\Widgets\ApplicantInfo.cs" />

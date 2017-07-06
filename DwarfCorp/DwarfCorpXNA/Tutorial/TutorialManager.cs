@@ -75,7 +75,7 @@ namespace DwarfCorp.Tutorial
                     }
                 });
 
-                Gui.ShowModalPopup(popup);
+                Gui.RootItem.AddChild(popup);
                 PendingTutorial = null;
 
                 if (!String.IsNullOrEmpty(entry.GuiHilite))

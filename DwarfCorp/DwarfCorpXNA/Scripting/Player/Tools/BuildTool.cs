@@ -49,7 +49,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class BuildTool : PlayerTool
     {
-        public Gui.Widgets.BuildMenu.BuildTypes BuildType;
+        public BuildTypes BuildType;
 
         public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
         {
@@ -87,7 +87,7 @@ namespace DwarfCorp
                 return;
             }
 
-            bool hasCook = BuildType.HasFlag(Gui.Widgets.BuildMenu.BuildTypes.Cook);
+            bool hasCook = BuildType.HasFlag(BuildTypes.Cook);
 
             if (!hasCook)
             {

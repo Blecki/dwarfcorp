@@ -48,7 +48,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class FarmTool : PlayerTool
     {
-        public Gui.Widgets.BuildMenu.BuildTypes BuildType { get; set; }
+        public BuildTypes BuildType { get; set; }
         public string PlantType { get; set; }
         public List<ResourceAmount> RequiredResources { get; set; } 
         public enum FarmMode
