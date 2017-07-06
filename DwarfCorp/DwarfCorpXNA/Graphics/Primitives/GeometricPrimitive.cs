@@ -154,7 +154,7 @@ namespace DwarfCorp
 
             if (Lightmap == null || Lightmap.Width < newWidth || Lightmap.Height < newHeight)
             {
-                Lightmap = new RenderTarget2D(GameState.Game.GraphicsDevice, newWidth, newHeight, false,
+               Lightmap = new RenderTarget2D(GameState.Game.GraphicsDevice, newWidth, newHeight, false,
                     SurfaceFormat.Color, DepthFormat.None);
             }
             else

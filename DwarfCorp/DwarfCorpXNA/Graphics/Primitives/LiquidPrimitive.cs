@@ -307,8 +307,7 @@ namespace DwarfCorp
             cache = null;
         }
 
-        private static void CreateWaterFaces(Voxel voxel,
-                                            VoxelChunk chunk,
+        private static void CreateWaterFaces(Voxel voxel, VoxelChunk chunk,
                                             int x, int y, int z,
                                             ExtendedVertex[] vertices,
                                             int startVertex)
@@ -371,23 +370,20 @@ namespace DwarfCorp
                             }
                             // Only continue if it's a valid (non-null) voxel.
                             if (!cache.validNeighbors[key]) continue;
+                            int t = 0;
 
                             // Now actually do the math.
                             Voxel vox = cache.neighbors[key];
-                            averageWaterLevel += vox.WaterLevel;
                             count++;
                             if (vox.WaterLevel < 1) emptyNeighbors++;
                         }
 
-                        averageWaterLevel = averageWaterLevel / count;
-
-                        float averageWaterHeight = averageWaterLevel / WaterManager.maxWaterLevel;
                         foaminess = emptyNeighbors / count;
 
                         if (foaminess <= 0.5f) foaminess = 0.0f;
 
                         pos = primitive.Vertices[primitiveIndex].Position;
-                        pos.Y *= averageWaterHeight;
+                        pos.Y -= 0.6f;// Minimum ramp position 
                         pos += origin;
 
                         // Store the vertex information for future use when we need it again on this or another face.
@@ -407,7 +403,7 @@ namespace DwarfCorp
                         case BoxFace.Back:
                         case BoxFace.Front:
                             vertices[i + startVertex].Set(pos,
-                                                          new Color(foaminess, 0.0f, 1.0f, 1.0f),
+                                                          new Color(foaminess * 0.5f, 0.0f, 1.0f, 1.0f),
                                                           Color.White,
                                                           new Vector2(pos.X, pos.Y),
                                                           new Vector4(0, 0, 1, 1));
@@ -415,7 +411,7 @@ namespace DwarfCorp
                         case BoxFace.Right:
                         case BoxFace.Left:
                             vertices[i + startVertex].Set(pos,
-                                                        new Color(foaminess, 0.0f, 1.0f, 1.0f),
+                                                        new Color(foaminess * 0.5f, 0.0f, 1.0f, 1.0f),
                                                         Color.White,
                                                         new Vector2(pos.Z, pos.Y),
                                                         new Vector4(0, 0, 1, 1));
@@ -431,6 +427,7 @@ namespace DwarfCorp
                 }
                 startVertex += 6;
             }
+            // End cache.drawFace loop
         }
     }
 

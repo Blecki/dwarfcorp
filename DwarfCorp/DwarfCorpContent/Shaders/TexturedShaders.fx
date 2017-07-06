@@ -846,8 +846,8 @@ WVertexToPixel WaterVS(float4 inPos_ : POSITION, float2 inTex: TEXCOORD0, float4
 	Output.Position = mul(inPos, preWorldViewProjection);
 
 	Output.ReflectionMapSamplingPos = mul(inPos, preWorldReflectionViewProjection);
-
 	Output.RefractionMapSamplingPos = mul(inPos, preWorldViewProjection);
+
 	Output.Position3D = mul(inPos, xWorld);
 	Output.BumpMapSamplingPos = inTex/xWaveLength;
 
@@ -891,7 +891,7 @@ WPixelToFrame WaterPS(WVertexToPixel PSIn)
 
 	Output.Color.rgba = float4(lerp(Output.Color.rgb, xFogColor, PSIn.Fog) * Output.Color.a, Output.Color.a);
 
-	float st = xTime * 0.1 + PSIn.Color.r;
+	float st = xTime * 0.1 + lerp(perturbation.r / xWaveHeight, PSIn.Color.r, 0.8);
 	Output.Color.rgb += (xRippleColor * (PSIn.Color.r * 1.5) * tex2D(ShoreSampler, st)).rgb;
 	Output.Color.a = lerp(xWaterMinOpacity, xWaterOpacity, 1.0 - fresnelTerm);
 	return Output;

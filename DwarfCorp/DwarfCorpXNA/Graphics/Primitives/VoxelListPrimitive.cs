@@ -500,7 +500,6 @@ namespace DwarfCorp
                     {
                         v.GridPosition = new Vector3(x, y, z); 
 
-
                         if((v.IsExplored && v.IsEmpty) || !v.IsVisible)
                         {
                             continue;
@@ -535,7 +534,6 @@ namespace DwarfCorp
                                     !voxelOnFace.IsVisible || 
                                     (voxelOnFace.Type.CanRamp && voxelOnFace.RampType != RampType.None && IsSideFace(face) && 
                                     ShouldDrawFace(face, voxelOnFace.RampType, v.RampType));
-
                             }
                             else
                             {
