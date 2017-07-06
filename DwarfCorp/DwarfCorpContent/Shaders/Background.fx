@@ -28,7 +28,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 
 	float4 worldPosition = mul(input.Position, World);
 	float4 viewPosition = mul(worldPosition, View);
-	output.Depth = length(input.Position.xz);
+	output.Depth = length(viewPosition);
     output.Position = mul(viewPosition, Projection);
 
     // TODO: add your vertex shader code here.
@@ -40,7 +40,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
     // TODO: add your pixel shader code here.
 
-    return lerp(Fog * 0.25, Fog, clamp(input.Depth * 0.01, 0, 1));
+    return lerp(Fog * 0.25, Fog * 0.95, clamp(input.Depth * 0.005, 0, 1));
 }
 
 technique Technique1
