@@ -86,9 +86,20 @@ namespace DwarfCorp.Tutorial
                     {
                         Gui.SpecialHiliteRegion = widget.Rect;
                         Gui.SpecialHiliteSheet = "border-hilite";
-                        Gui.SpecialIndicatorPosition = new Microsoft.Xna.Framework.Point(
-                            widget.Rect.Right, widget.Rect.Height - 16);
-                        Gui.SpecialIndicator = new DwarfCorp.Gui.MousePointer("hand", 1, 8, 9, 10, 11);
+
+                        if (widget.Rect.Right < Gui.RenderData.VirtualScreen.Width / 2 ||
+                            widget.Rect.Left < 64)
+                        {
+                            Gui.SpecialIndicatorPosition = new Microsoft.Xna.Framework.Point(
+                                widget.Rect.Right, widget.Rect.Top - 16);
+                            Gui.SpecialIndicator = new Gui.MousePointer("hand", 1, 8, 9, 10, 11);
+                        }
+                        else
+                        {
+                            Gui.SpecialIndicatorPosition = new Microsoft.Xna.Framework.Point(
+                                widget.Rect.Left - 32, widget.Rect.Top - 16);
+                            Gui.SpecialIndicator = new Gui.MousePointer("hand", 1, 12, 13, 14, 15);
+                        }
                     }
                 }
             }
