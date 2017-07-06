@@ -67,7 +67,7 @@ namespace DwarfCorp
 
 
         [JsonIgnore]
-        public List<CreatureAI> SelectedMinions { get { return Faction.SelectedMinions; }set { Faction.SelectedMinions = value; } }
+        public List<CreatureAI> SelectedMinions { get { return Faction.SelectedMinions; } set { Faction.SelectedMinions = value; } }
 
         [JsonIgnore]
         public SpellTree Spells { get; set; }
@@ -78,7 +78,7 @@ namespace DwarfCorp
 
         protected void OnDeserialized(StreamingContext context)
         {
-            World = (WorldManager) (context.Context);
+            World = (WorldManager)(context.Context);
             Initialize(GameState.Game, World.ComponentManager, World.ChunkManager, World.Camera, World.ChunkManager.Graphics);
             World.Master = this;
         }
@@ -142,7 +142,7 @@ namespace DwarfCorp
                 Player = this
             };
 
-            
+
             Tools[ToolMode.Dig] = new DigTool
             {
                 Player = this,
@@ -150,7 +150,7 @@ namespace DwarfCorp
                 UnreachableColor = new Color(205, 10, 10),
                 DigDesignationColor = new Color(205, 200, 10)
             };
-             
+
 
             Tools[ToolMode.Gather] = new GatherTool
             {
@@ -234,14 +234,14 @@ namespace DwarfCorp
             {
                 if (creature.Stats.IsOverQualified)
                 {
-                    creature.AddThought(Thought.ThoughtType.IsOverQualified);    
+                    creature.AddThought(Thought.ThoughtType.IsOverQualified);
                 }
 
                 if (!noMoney)
                 {
                     DwarfBux pay = creature.Stats.CurrentLevel.Pay;
                     total += pay;
-                    creature.Tasks.Add(new ActWrapperTask(new GetMoneyAct(creature, pay)) {AutoRetry = true, Name = "Get paid."});
+                    creature.Tasks.Add(new ActWrapperTask(new GetMoneyAct(creature, pay)) { AutoRetry = true, Name = "Get paid." });
                 }
                 else
                 {
@@ -276,7 +276,7 @@ namespace DwarfCorp
             VoxSelector.Render();
 
             foreach (var m in Faction.Minions)
-            { 
+            {
                 m.Creature.SelectionCircle.IsVisible = false;
                 m.Creature.Sprite.DrawSilhouette = false;
             };
@@ -292,7 +292,7 @@ namespace DwarfCorp
                         task.Render(time);
                 }
 
-                if(creature.CurrentTask != null)
+                if (creature.CurrentTask != null)
                 {
                     creature.CurrentTask.Render(time);
                 }
@@ -389,25 +389,25 @@ namespace DwarfCorp
             if (keyState.IsKeyDown(ControlSettings.Mappings.Forward) || keyState.IsKeyDown(Keys.Up))
             {
                 hadCommand = true;
-                desiredVelocity += forward*10;
+                desiredVelocity += forward * 10;
             }
 
             if (keyState.IsKeyDown(ControlSettings.Mappings.Back) || keyState.IsKeyDown(Keys.Down))
             {
                 hadCommand = true;
-                desiredVelocity -= forward*10;
+                desiredVelocity -= forward * 10;
             }
 
             if (keyState.IsKeyDown(ControlSettings.Mappings.Right) || keyState.IsKeyDown(Keys.Right))
             {
                 hadCommand = true;
-                desiredVelocity += right*10;
+                desiredVelocity += right * 10;
             }
 
             if (keyState.IsKeyDown(ControlSettings.Mappings.Left) || keyState.IsKeyDown(Keys.Left))
             {
                 hadCommand = true;
-                desiredVelocity -= right*10;
+                desiredVelocity -= right * 10;
             }
 
             if (keyState.IsKeyDown(ControlSettings.Mappings.Jump))
@@ -431,8 +431,8 @@ namespace DwarfCorp
                     {
                         dwarf.Creature.CurrentCharacterMode = DwarfCorp.CharacterMode.Idle;
                     }
-                    dwarf.Physics.Velocity = new Vector3(dwarf.Physics.Velocity.X*0.9f, dwarf.Physics.Velocity.Y,
-                        dwarf.Physics.Velocity.Z*0.9f);
+                    dwarf.Physics.Velocity = new Vector3(dwarf.Physics.Velocity.X * 0.9f, dwarf.Physics.Velocity.Y,
+                        dwarf.Physics.Velocity.Z * 0.9f);
                     dwarf.TryMoveVelocity(Vector3.Zero, false);
                 }
             }
@@ -451,11 +451,11 @@ namespace DwarfCorp
 
         public void UpdateMouse(MouseState mouseState, KeyboardState keyState, DwarfGame game, DwarfTime time)
         {
-            if(KeyManager.RotationEnabled())
+            if (KeyManager.RotationEnabled())
             {
                 World.SetMouse(null);
             }
-          
+
         }
 
         public void UpdateInput(DwarfGame game, DwarfTime time)
@@ -464,7 +464,7 @@ namespace DwarfCorp
             MouseState mouseState = Mouse.GetState();
 
 
-            if(!IsMouseOverGui())
+            if (!World.IsMouseOverGui)
             {
                 UpdateMouse(Mouse.GetState(), Keyboard.GetState(), game, time);
                 VoxSelector.Update();
@@ -479,13 +479,13 @@ namespace DwarfCorp
 
         public void OnKeyReleased(Keys key)
         {
-            if(key == ControlSettings.Mappings.SliceUp)
+            if (key == ControlSettings.Mappings.SliceUp)
             {
                 World.Tutorial("unslice");
                 World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
             }
 
-            else if(key == ControlSettings.Mappings.SliceDown)
+            else if (key == ControlSettings.Mappings.SliceDown)
             {
                 World.Tutorial("unslice");
                 World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
@@ -521,16 +521,6 @@ namespace DwarfCorp
             //}
         }
 
-        // Todo: Delete this.
-        public bool IsMouseOverGui()
-        {
-            return World.IsMouseOverGui;
-            //return GUI.IsMouseOver() || (GUI.FocusComponent != null);
-        }
-
         #endregion
-        
-
     }
-
 }

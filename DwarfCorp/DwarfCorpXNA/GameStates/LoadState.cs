@@ -156,7 +156,6 @@ namespace DwarfCorp.GameStates
 
         public override void Render(DwarfTime gameTime)
         {        
-            // Todo: This state should be rendering these, NOT the world manager.
             TipTimer.Update(gameTime);
             if (TipTimer.HasTriggered)
             {

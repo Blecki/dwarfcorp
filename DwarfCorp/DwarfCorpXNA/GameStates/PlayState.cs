@@ -1559,7 +1559,6 @@ namespace DwarfCorp.GameStates
                     World.Tutorial("dwarf selected");
                 }
 
-                // Todo: Reimplement number hotkeys
                 if (index == 0 || Master.SelectedMinions.Count > 0)
                 {
                     (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray)
