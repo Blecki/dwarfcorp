@@ -275,7 +275,7 @@ namespace DwarfCorp
                         cost += 99999;
                     }
 
-                    if (agent.Creature.Status.IsAsleep || agent.IsDead || agent.GetEntityRootComponent().IsDead)
+                    if (agent.Creature.Status.IsAsleep || agent.IsDead || agent.GetRoot().IsDead)
                     {
                         cost += 99999;
                     }

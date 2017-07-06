@@ -111,7 +111,7 @@ namespace DwarfCorp
         {
             if (voxelID.Equals(VoxelID))
             {
-                GetEntityRootComponent().Die();
+                GetRoot().Die();
             }
         }
 
@@ -166,8 +166,8 @@ namespace DwarfCorp
         {
             if (voxelID.Equals(VoxelID))
             {
-                GetEntityRootComponent().SetActiveRecursive(true);
-                GetEntityRootComponent().SetVisibleRecursive(true);
+                GetRoot().SetFlagRecursive(Flag.Active, true);
+                GetRoot().SetFlagRecursive(Flag.Visible, true);
                 Delete();
             }
         }

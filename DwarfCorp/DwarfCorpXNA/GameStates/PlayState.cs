@@ -167,7 +167,7 @@ namespace DwarfCorp.GameStates
                     GuiRoot.MousePointer = mouse;
                 };
 
-                World.SetMouseOverlay += (mouse, frame) => GuiRoot.SetMouseOverlay(mouse, frame);
+                World.SetMouseOverlay += (mouse, frame) => GuiRoot.MouseOverlaySheet = new TileReference(mouse, frame);
 
                 
                 World.ShowToolPopup += text => GuiRoot.ShowTooltip(new Point(GuiRoot.MousePosition.X + 4, GuiRoot.MousePosition.Y - 16),
@@ -195,26 +195,6 @@ namespace DwarfCorp.GameStates
                     SoundManager.PlayMusic("main_theme_night");
                 };
             }
-
-            World.GuiHook_ShowTutorialPopup = (text, callback) =>
-            {
-                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_window_open, 0.25f);
-                var popup = GuiRoot.ConstructWidget(new Gui.Widgets.TutorialPopup
-                {
-                    Message = text,
-                    OnClose = (sender) =>
-                    {
-                        callback((sender as TutorialPopup).DisableChecked);
-                    },
-                    OnLayout = (sender) =>
-                    {
-                        sender.Rect.X = GuiRoot.RenderData.VirtualScreen.Width - sender.Rect.Width;
-                        sender.Rect.Y = 64;
-                    }
-                });
-                GuiRoot.RootItem.AddChild(popup);
-                //GuiRoot.ShowPopup(popup, Root.PopupExclusivity.AddToStack);
-            };
 
             World.Unpause();
             AutoSaveTimer = new Timer(GameSettings.Default.AutoSaveTimeMinutes * 60.0f, false, Timer.TimerMode.Real);
@@ -578,8 +558,9 @@ namespace DwarfCorp.GameStates
             #endregion
 
             #region Setup game speed controls
-            GameSpeedControls = GuiRoot.RootItem.AddChild(new Gui.Widgets.GameSpeedControls
+            GameSpeedControls = GuiRoot.RootItem.AddChild(new GameSpeedControls
             {
+                Tag = "speed controls",
                 AutoLayout = Gui.AutoLayout.FloatBottomRight,
                 OnLayout = (sender) =>
                 {
@@ -599,7 +580,7 @@ namespace DwarfCorp.GameStates
                     PausedWidget.Invalidate();
                 },
                 Tooltip = "Game speed controls."
-            }) as Gui.Widgets.GameSpeedControls;
+            }) as GameSpeedControls;
 
             PausedWidget = GuiRoot.RootItem.AddChild(new Widget()
             {
@@ -1682,7 +1663,7 @@ namespace DwarfCorp.GameStates
 
             MakeMenuItem(PausePanel, "Options", "", (sender, args) =>
             {
-                var state = new NewOptionsState(Game, StateManager)
+                var state = new OptionsState(Game, StateManager)
                 {
                     OnClosed = () =>
                     {

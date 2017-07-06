@@ -27,7 +27,6 @@ namespace DwarfCorp.GameStates
 
             GuiRoot = new Gui.Root(DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
-            GuiRoot.SetMouseOverlay(null, 0);
             
             var mainPanel = GuiRoot.RootItem.AddChild(new Gui.Widget
             {
@@ -117,24 +116,7 @@ namespace DwarfCorp.GameStates
                 }
             }
 
-            World.TutorialManager.Update((text, callback) =>
-            {
-                var popup = GuiRoot.ConstructWidget(new Gui.Widgets.TutorialPopup
-                {
-                    Message = text,
-                    OnClose = (sender) =>
-                    {
-                        callback((sender as Gui.Widgets.TutorialPopup).DisableChecked);
-                    },
-                    OnLayout = (sender) =>
-                    {
-                        sender.Rect.X = GuiRoot.RenderData.VirtualScreen.Width - sender.Rect.Width;
-                        sender.Rect.Y = 64;
-                    }
-                });
-
-                GuiRoot.ShowModalPopup(popup);
-            });
+            World.TutorialManager.Update(GuiRoot);
 
             TabPanel.GetTabButton(1).IndicatorValue = World.GoalManager.NewAvailableGoals;
             TabPanel.GetTabButton(3).IndicatorValue = World.GoalManager.NewCompletedGoals;

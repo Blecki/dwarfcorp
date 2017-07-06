@@ -246,7 +246,7 @@ namespace DwarfCorp
 
         new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if (!IsActive) return;
+            if (!Active) return;
             if (gameTime.Speed < 0.01)
             {
                 base.Update(gameTime, chunks, camera);

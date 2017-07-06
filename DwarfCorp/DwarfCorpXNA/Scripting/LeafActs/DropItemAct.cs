@@ -68,7 +68,7 @@ namespace DwarfCorp
                 Agent.Blackboard.SetData<object>("HeldObject", null);
                 grabbed.LocalTransform = m;
                 grabbed.HasMoved = true;
-                grabbed.IsActive = true;
+                grabbed.Active = true;
 
                 yield return Status.Success;
             }

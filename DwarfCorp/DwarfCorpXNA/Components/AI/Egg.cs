@@ -88,7 +88,7 @@ namespace DwarfCorp
             {
                 adult.GetComponent<CreatureAI>().PositionConstraint = PositionConstrain.Value;
             }
-            GetEntityRootComponent().Die();
+            GetRoot().Die();
         }
     }
 }

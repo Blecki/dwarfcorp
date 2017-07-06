@@ -152,7 +152,7 @@ namespace DwarfCorp
             if (CurrentCraftType != null && CurrentCraftBody == null)
             {
                 CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.Name, player.VoxSelector.VoxelUnderMouse.Position);
-                CurrentCraftBody.SetActiveRecursive(false);
+                CurrentCraftBody.SetFlagRecursive(GameComponent.Flag.Active, false);
                 CurrentDesignation = new CraftDesignation()
                 {
                     ItemType = CurrentCraftType,

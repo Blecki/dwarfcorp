@@ -249,6 +249,14 @@ namespace DwarfCorp.Gui
             foreach (var child in Children) yield return child;
         }
 
+        public IEnumerable<Widget> EnumerateTree()
+        {
+            yield return this;
+            foreach (var child in Children)
+                foreach (var grandchild in child.EnumerateTree())
+                    yield return grandchild;
+        }
+
         public void Clear()
         {
             foreach (var child in Children)

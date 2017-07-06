@@ -9,7 +9,7 @@ using System;
 
 namespace DwarfCorp.GameStates
 {
-    public class NewOptionsState : GameState
+    public class OptionsState : GameState
     {
         private Gui.Root GuiRoot;
         private bool HasChanges = false;
@@ -58,7 +58,7 @@ namespace DwarfCorp.GameStates
         public WorldManager World = null;
         private CheckBox EnableTutorial;
         
-        public NewOptionsState(DwarfGame Game, GameStateManager StateManager) :
+        public OptionsState(DwarfGame Game, GameStateManager StateManager) :
             base(Game, "NewOptionsState", StateManager)
         { }
 
@@ -97,7 +97,6 @@ namespace DwarfCorp.GameStates
             // Create and initialize GUI framework.
             GuiRoot = new Gui.Root(DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
-            GuiRoot.SetMouseOverlay(null, 0);
             var screen = GuiRoot.RenderData.VirtualScreen;
             float scale = 0.75f;
             float newWidth = System.Math.Min(System.Math.Max(screen.Width*scale, 640), screen.Width*scale);
@@ -338,7 +337,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
-            AutoSaveFrequency = panel.AddChild(LabelAndDockWidget("Autosave Frequency        ", new HorizontalSlider
+            AutoSaveFrequency = panel.AddChild(LabelAndDockWidget("Autosave Frequency           ", new HorizontalSlider
             {
                 ScrollArea = 115,
                 OnSliderChanged = (widget) =>

@@ -44,17 +44,11 @@ namespace DwarfCorp
         /// <summary>
         /// Gets or sets the parent. If null, this is the root component.
         /// </summary>
-        /// <value>
-        /// The parent.
-        /// </value>
         public GameComponent Parent { get; set; }
 
         /// <summary>
         /// List of GameComponent children attached to this one.
         /// </summary>
-        /// <value>
-        /// The children.
-        /// </value>
         [JsonIgnore]
         public List<GameComponent> Children { get; set; }
 
@@ -78,14 +72,13 @@ namespace DwarfCorp
         }
         #endregion
 
-        private static uint maxGlobalID = 0;
 
         [Flags]
         public enum Flag
         {
-            IsVisible = 1,
-            IsActive = 2,
-            IsDead = 4,
+            Visible = 1,
+            Active = 2,
+            Dead = 4,
             ShouldSerialize = 8
         }
 
@@ -103,27 +96,34 @@ namespace DwarfCorp
             else
                 Flags &= ~F;
         }
-        
+
+        public void SetFlagRecursive(Flag F, bool Value)
+        {
+            SetFlag(F, Value);
+            foreach (var child in Children)
+                child.SetFlagRecursive(F, Value);
+        }
+
         // Todo: Get rid of these helpers.
         [JsonIgnore] 
         public bool IsVisible
         {
-            get { return IsFlagSet(Flag.IsVisible); }
-            set { SetFlag(Flag.IsVisible, value); }
+            get { return IsFlagSet(Flag.Visible); }
+            set { SetFlag(Flag.Visible, value); }
         }
 
         [JsonIgnore]
-        public bool IsActive
+        public bool Active
         {
-            get { return IsFlagSet(Flag.IsActive); }
-            set { SetFlag(Flag.IsActive, value); }
+            get { return IsFlagSet(Flag.Active); }
+            set { SetFlag(Flag.Active, value); }
         }
 
         [JsonIgnore]
         public bool IsDead
         {
-            get { return IsFlagSet(Flag.IsDead); }
-            set { SetFlag(Flag.IsDead, value); }
+            get { return IsFlagSet(Flag.Dead); }
+            set { SetFlag(Flag.Dead, value); }
         }
         
         /// <summary>
@@ -138,26 +138,14 @@ namespace DwarfCorp
         /// <summary>
         /// Gets or sets the world.
         /// </summary>
-        /// <value>
-        /// The world.
-        /// </value>
         [JsonIgnore]
         public WorldManager World { get; set; }
 
         /// <summary>
         /// Gets the component manager (from world)
         /// </summary>
-        /// <value>
-        /// The manager.
-        /// </value
         [JsonIgnore]
         public ComponentManager Manager { get { return World.ComponentManager; } }
-
-        /// <summary>
-        /// The global identifier lock. This is necessary to ensure that no two components
-        /// have the same ID (they might be getting created in threads).
-        /// </summary>
-        private static Object globalIdLock = new object();
 
         public virtual void ReceiveMessageRecursive(Message messageToReceive)
         {
@@ -165,15 +153,6 @@ namespace DwarfCorp
             {
                 child.ReceiveMessageRecursive(messageToReceive);
             }
-        }
-
-        /// <summary>
-        /// Resets the maximum global identifier. All new components will have an ID greate than this.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        public static void ResetMaxGlobalId(uint value)
-        {
-            maxGlobalID=value;
         }
 
         [OnDeserialized]
@@ -193,9 +172,9 @@ namespace DwarfCorp
             Tags = new List<string>();
             Name = "uninitialized";
 
-            SetFlag(Flag.IsActive, true);
-            SetFlag(Flag.IsVisible, true);
-            SetFlag(Flag.IsDead, false);
+            SetFlag(Flag.Active, true);
+            SetFlag(Flag.Visible, true);
+            SetFlag(Flag.Dead, false);
             SetFlag(Flag.ShouldSerialize, true);
         }
 
@@ -209,13 +188,6 @@ namespace DwarfCorp
             System.Diagnostics.Debug.Assert(Manager != null, "Manager cannot be null");
 
             World = Manager.World;
-
-            lock (globalIdLock)
-            {
-                GlobalID = maxGlobalID;
-                maxGlobalID++;
-            }
-
             Parent = null;
 
             Manager.AddComponent(this);
@@ -259,6 +231,7 @@ namespace DwarfCorp
             
         }
 
+        // Todo: Lift to utility class
         /// <summary>
         /// Converts the global identifier into a color for rendering to 
         /// the selection buffer.
@@ -305,34 +278,6 @@ namespace DwarfCorp
             return (int) GlobalID;
         }
 
-        /// <summary>
-        /// Sets this component and all of its descendents to be active.
-        /// </summary>
-        /// <param name="active">if set to <c>true</c> IsActive is also true..</param>
-        public void SetActiveRecursive(bool active)
-        {
-            IsActive = active;
-
-            foreach(GameComponent child in Children)
-            {
-                child.SetActiveRecursive(active);
-            }
-        }
-
-        /// <summary>
-        /// Sets this component and all of its descendents to be visible.
-        /// </summary>
-        /// <param name="visible">if set to <c>true</c> IsVisible will be true.</param>
-        public void SetVisibleRecursive(bool visible)
-        {
-            IsVisible = visible;
-
-            foreach(GameComponent child in Children)
-            {
-                child.SetVisibleRecursive(visible);
-            }
-        }
-
         // Todo: Can these two functions be unified?
         /// <summary> This is intended to be used like Die(), but is garunteed only
         /// to clean up memory, without doing things like animations.</summary>
@@ -349,7 +294,7 @@ namespace DwarfCorp
 
             if (Parent != null) Parent.RemoveChild(this);
 
-            IsActive = false;
+            Active = false;
             IsVisible = false;
             Manager.RemoveComponent(this);
         }
@@ -370,7 +315,7 @@ namespace DwarfCorp
 
             if (Parent != null) Parent.RemoveChild(this);
 
-            IsActive = false;
+            Active = false;
             IsVisible = false;
             Manager.RemoveComponent(this);
         }
@@ -434,13 +379,11 @@ namespace DwarfCorp
 
         #endregion
 
-        #region recursive_child_operators
-
         /// <summary>
         /// Gets the anscestor of this component which has no parent.
         /// </summary>
         /// <returns>The anscestor of this component with no parent.</returns>
-        public GameComponent GetEntityRootComponent()
+        public GameComponent GetRoot()
         {
             var p = this;
 
@@ -457,9 +400,5 @@ namespace DwarfCorp
                 foreach (var grandChild in child.EnumerateAll())
                     yield return grandChild;
         }
-
-        #endregion
-
     }
-
 }

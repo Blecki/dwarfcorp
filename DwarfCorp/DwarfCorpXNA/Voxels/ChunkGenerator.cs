@@ -493,8 +493,8 @@ namespace DwarfCorp
 
                     if (GameSettings.Default.FogofWar)
                     {
-                        entity.GetEntityRootComponent().SetActiveRecursive(false);
-                        entity.GetEntityRootComponent().SetVisibleRecursive(false);
+                        entity.GetRoot().SetFlagRecursive(GameComponent.Flag.Active, false);
+                        entity.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
                         entity.AddChild(new ExploredListener
                             (world.ComponentManager,
                                 world.ChunkManager, chunk.MakeVoxel(x, y, z)));
@@ -540,8 +540,8 @@ namespace DwarfCorp
                         GameComponent entity = EntityFactory.CreateEntity<GameComponent>(veg.Name,
                             chunk.Origin + new Vector3(x, y, z) + new Vector3(0, treeSize*offset, 0),
                             Blackboard.Create("Scale", treeSize));
-                        entity.GetEntityRootComponent().SetActiveRecursive(false);
-                        entity.GetEntityRootComponent().SetVisibleRecursive(false);
+                        entity.GetRoot().SetFlagRecursive(GameComponent.Flag.Active, false);
+                        entity.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
                         if (GameSettings.Default.FogofWar)
                             entity.AddChild(new ExploredListener(
                                 world.ComponentManager, world.ChunkManager, vUnder));

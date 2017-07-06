@@ -381,7 +381,7 @@ namespace DwarfCorp
         /// <summary> Update this creature </summary>
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if (!IsActive) return;
+            if (!Active) return;
 
             if (Faction == null && !string.IsNullOrEmpty(Creature.Allies))
             {

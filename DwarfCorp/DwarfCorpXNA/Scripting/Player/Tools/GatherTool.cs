@@ -73,7 +73,7 @@ namespace DwarfCorp
 
             foreach (Body resource in bodies.Where(c => 
                 c.Tags.Contains("Resource") && 
-                c.IsActive && 
+                c.Active && 
                 c.IsVisible && 
                 c.Parent == Player.World.ComponentManager.RootComponent))
             {

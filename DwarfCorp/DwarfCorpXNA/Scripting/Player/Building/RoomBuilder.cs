@@ -393,7 +393,7 @@ namespace DwarfCorp
 
                     foreach(Body thing in displayObjects)
                     {
-                        thing.SetActiveRecursive(false);
+                        thing.SetFlagRecursive(GameComponent.Flag.Active, false);
                         SetDisplayColor(thing, Color.Green);
                     }
                 }

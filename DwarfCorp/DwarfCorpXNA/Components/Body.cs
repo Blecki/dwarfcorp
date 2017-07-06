@@ -82,7 +82,7 @@ namespace DwarfCorp
                     return;
                 }
 
-                if(!IsActive || (!HasMoved && wasEverAddedToOctree) )
+                if(!Active || (!HasMoved && wasEverAddedToOctree) )
                 {
                     return;
                 }
@@ -409,7 +409,7 @@ namespace DwarfCorp
             {
                 Manager.World.CollisionManager.RemoveObject(this, GetBoundingBox(), CollisionType);
             }
-            IsActive = false;
+            Active = false;
             IsVisible = false;
             HasMoved = false;
             OnDestroyed.Invoke();

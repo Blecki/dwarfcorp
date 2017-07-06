@@ -107,7 +107,6 @@ namespace DwarfCorp.GameStates
 
             GuiRoot = new Gui.Root(DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
-            GuiRoot.SetMouseOverlay(null, 0);
 
             Rectangle rect = GuiRoot.RenderData.VirtualScreen;
             rect.Inflate(-rect.Width / 3, -rect.Height / 3);

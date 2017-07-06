@@ -529,7 +529,7 @@ namespace DwarfCorp
 
                         foreach (GameComponent body in enumerable)
                         {
-                            var door = body.GetEntityRootComponent().EnumerateAll().OfType<Door>().FirstOrDefault();
+                            var door = body.GetRoot().EnumerateAll().OfType<Door>().FirstOrDefault();
                             // If there is an enemy door blocking movement, we can destroy it to get through.
                             if (door != null)
                             {

@@ -99,7 +99,7 @@ namespace DwarfCorp.Gui.Widgets
                             {
                                 SoundManager.PlaySound(ContentPaths.Audio.change, 0.5f);
                                 var selectedEmployee = (sender as EmployeeInfo).Employee;
-                                selectedEmployee.GetEntityRootComponent().Delete();
+                                selectedEmployee.GetRoot().Delete();
 
                                 Faction.Minions.Remove(selectedEmployee);
                                 Faction.SelectedMinions.Remove(selectedEmployee);

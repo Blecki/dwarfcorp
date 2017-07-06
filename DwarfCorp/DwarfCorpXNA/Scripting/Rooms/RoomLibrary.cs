@@ -185,7 +185,7 @@ namespace DwarfCorp
                 createdComponent.AnimationQueue.Add(new EaseMotion(0.8f, offsetTransform, endPos));
                 room.AddBody(createdComponent);
                 particles.Trigger("puff", endPos + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 10);
-                createdComponent.SetActiveRecursive(true);
+                createdComponent.SetFlagRecursive(GameComponent.Flag.Active, true);
             }
         }
 
