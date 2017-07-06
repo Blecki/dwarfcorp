@@ -634,7 +634,7 @@
     <Compile Include="Voxels\VoxelType.cs" />
     <Compile Include="Voxels\WaterCell.cs" />
     <Compile Include="Voxels\WaterManager.cs" />
-    <Compile Include="Voxels\WaterRenderer.cs" />
+    <Compile Include="Graphics\Effects\WaterRenderer.cs" />
     <Compile Include="World\BiomeData.cs" />
     <Compile Include="World\BiomeLibrary.cs" />
     <Compile Include="World\DetailMoteData.cs" />
