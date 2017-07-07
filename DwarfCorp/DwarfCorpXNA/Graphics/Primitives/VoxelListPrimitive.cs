@@ -74,7 +74,7 @@ namespace DwarfCorp
         }
 
 
-        public void InitializeFromChunk(VoxelChunk chunk, GraphicsDevice graphics)
+        public void InitializeFromChunk(VoxelChunk chunk)
         {
             if (chunk == null)
             {
@@ -230,6 +230,7 @@ namespace DwarfCorp
                     }
                 }
             }
+
             MaxIndex = maxIndex;
             MaxVertex = maxVertex;
             GenerateLightmap(chunk.Manager.ChunkData.Tilemap.Bounds);

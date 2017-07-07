@@ -157,15 +157,15 @@ namespace DwarfCorp
             LiquidPrimitive curPrimative = null;
             ExtendedVertex[] curVertices = null;
             int[] maxVertices = new int[lps.Length];
-            int maxY = (int)Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, chunk.SizeY);
 
             Voxel myVoxel = chunk.MakeVoxel(0, 0, 0);
             Voxel vox = chunk.MakeVoxel(0, 0, 0);
             int maxVertex = 0;
             bool fogOfWar = GameSettings.Default.FogofWar;
-            for (int x = 0; x < chunk.SizeX; x++)
+
+            for (int y = 0; y < Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, chunk.SizeY); y++)
             {
-                for (int y = 0; y < maxY; y++)
+                for (int x = 0; x < chunk.SizeX; x++)
                 {
                     for (int z = 0; z < chunk.SizeZ; z++)
                     {

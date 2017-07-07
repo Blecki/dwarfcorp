@@ -471,6 +471,7 @@ namespace DwarfCorp
             {
                 Name = "water",
                 ReleasesResource = false,
+                CanRamp = true,
                 IsBuildable = false,
                 StartingHealth = 255
             };

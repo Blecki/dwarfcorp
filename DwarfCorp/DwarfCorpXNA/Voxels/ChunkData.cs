@@ -651,7 +651,7 @@ namespace DwarfCorp
                 return false;
             }
         }
-
+        /*
         public List<LiquidPrimitive> GetAllLiquidPrimitives()
         {
             List<LiquidPrimitive> toReturn = new List<LiquidPrimitive>();
@@ -662,7 +662,7 @@ namespace DwarfCorp
             }
 
             return toReturn;
-        }
+        }*/
 
         public bool DoesWaterCellExist(Vector3 worldLocation)
         {
