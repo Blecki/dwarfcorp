@@ -481,7 +481,7 @@ namespace DwarfCorp
             Voxel[] manhattanNeighbors = new Voxel[4];
             BoxPrimitive bedrockModel = VoxelLibrary.GetPrimitive("Bedrock");
             Voxel worldVoxel = new Voxel();
-
+            List<Voxel> lightingScratchSpace = new List<Voxel>(8);
             if (Vertices == null)
             {
                 Vertices = new ExtendedVertex[1024];
@@ -567,8 +567,11 @@ namespace DwarfCorp
                             {
                                 ExtendedVertex vert = primitive.Vertices[vertOffset + vertexIndex];
                                 VoxelVertex bestKey = primitive.Deltas[vertOffset + vertexIndex];
-                                Color color = v.Chunk.Data.GetColor(x, y, z, bestKey);
-                                ambientValues[vertOffset] = color.G;
+                                //Color color = v.Chunk.Data.GetColor(x, y, z, bestKey);
+                                Color color;
+                                VoxelChunk.VertexColorInfo colorInfo = new VoxelChunk.VertexColorInfo();
+                                VoxelChunk.CalculateVertexLight(v, bestKey, chunk.Manager, lightingScratchSpace, ref colorInfo);
+                                ambientValues[vertOffset] = colorInfo.AmbientColor;
                                 Vector3 offset = Vector3.Zero;
                                 Vector2 texOffset = Vector2.Zero;
 
@@ -587,7 +590,7 @@ namespace DwarfCorp
                                 Vertices[maxVertex] = new ExtendedVertex(vert.Position + v.Position +
                                                                    VertexNoise.GetNoiseVectorFromRepeatingTexture(
                                                                        vert.Position + v.Position) + offset,
-                                    color,
+                                    new Color(colorInfo.SunColor, colorInfo.AmbientColor, colorInfo.DynamicColor), 
                                     tint,
                                     uvs.Uvs[vertOffset + vertexIndex] + texOffset,
                                     uvs.Bounds[faceIndex / 6]);

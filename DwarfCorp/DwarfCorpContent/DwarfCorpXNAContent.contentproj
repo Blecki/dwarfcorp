@@ -1732,6 +1732,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>particles</Name>
     </Content>
+    <Compile Include="Shaders\Background.fx">
+      <Name>Background</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+    </Compile>
     <Content Include="Text\Templates\names_moleman.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>names_moleman</Name>

@@ -1,4 +1,4 @@
-﻿// GoToVoxelAct.cs
+// GoToVoxelAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -79,8 +79,8 @@ namespace DwarfCorp
             {
                 Tree = new Sequence(
             new Sequence(
-                          new PlanAct(Agent, "PathToVoxel", VoxelName, PlanType) { Radius = Radius },
-                          new FollowPathAct(Agent, "PathToVoxel")
+                          new PlanAct(Agent, "PathToVoxel", VoxelName, PlanType) { Radius = Radius},
+                          new FollowPathAct(Agent, "PathToVoxel") { Name = "Followto" + Name}
                          ),
                           new StopAct(Agent));
             }
@@ -89,7 +89,7 @@ namespace DwarfCorp
                 Tree = new Sequence(
                       new SetBlackboardData<Voxel>(Agent, "ActionVoxel", Voxel),
                       new PlanAct(Agent, "PathToVoxel", "ActionVoxel", PlanType) { Radius = Radius },
-                      new FollowPathAct(Agent, "PathToVoxel"),
+                      new FollowPathAct(Agent, "PathToVoxel") { Name = "Followto" + Name },
                       new StopAct(Agent));
             }
             base.Initialize();

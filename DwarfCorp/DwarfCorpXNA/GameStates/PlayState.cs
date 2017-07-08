@@ -368,6 +368,7 @@ namespace DwarfCorp.GameStates
             #region Setup company information section
             GuiRoot.RootItem.AddChild(new Gui.Widgets.CompanyLogo
             {
+                Tag = "company info",
                 Rect = new Rectangle(8, 8, 32, 32),
                 MinimumSize = new Point(32, 32),
                 MaximumSize = new Point(32, 32),
@@ -393,6 +394,7 @@ namespace DwarfCorp.GameStates
 
             var moneyRow = infoPanel.AddChild(new Gui.Widget
             {
+                Tag = "money",
                 MinimumSize = new Point(0, 34),
                 AutoLayout = Gui.AutoLayout.DockTop
             });
@@ -417,6 +419,7 @@ namespace DwarfCorp.GameStates
 
             var levelRow = infoPanel.AddChild(new Gui.Widget
             {
+                Tag = "slice",
                 MinimumSize = new Point(0, 34),
                 AutoLayout = Gui.AutoLayout.DockTop
             });
@@ -521,6 +524,7 @@ namespace DwarfCorp.GameStates
 
             MinimapFrame = GuiRoot.RootItem.AddChild(new Gui.Widgets.MinimapFrame
             {
+                Tag = "minimap",
                 AutoLayout = Gui.AutoLayout.FloatBottomLeft,
                 Renderer = MinimapRenderer,
                 RestoreButton = minimapRestoreButton
@@ -532,6 +536,7 @@ namespace DwarfCorp.GameStates
 
             EconomyIcon = new Gui.Widgets.FramedIcon
             {
+                Tag = "economy",
                 Icon = new Gui.TileReference("tool-icons", 10),
                 OnClick = (sender, args) => StateManager.PushState(new NewEconomyState(Game, StateManager, World)),
                 DrawIndicator = true,
@@ -626,6 +631,7 @@ namespace DwarfCorp.GameStates
 
             BrushTray = GuiRoot.RootItem.AddChild(new Gui.Widgets.ToggleTray
             {
+                Tag = "brushes",
                 AutoLayout = AutoLayout.FloatRight,
                 Rect = new Rectangle(256, 0, 32, 128),
                 SizeToGrid = new Point(1, 3),
@@ -681,6 +687,7 @@ namespace DwarfCorp.GameStates
 
             var icon_SelectTool = new FlatToolTray.Icon
             {
+                Tag = "select",
                 Icon = new Gui.TileReference("tool-icons", 5),
                 OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.SelectUnits),
                 Tooltip = "Select dwarves",
@@ -744,7 +751,8 @@ namespace DwarfCorp.GameStates
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 KeepChildVisible = true,
-                ReplacementMenu = menu_RoomTypes
+                ReplacementMenu = menu_RoomTypes,
+                Tag = "build room"
             };
 
             #endregion
@@ -759,6 +767,7 @@ namespace DwarfCorp.GameStates
 
             var menu_WallTypes = new FlatToolTray.Tray
             {
+                Tag = "build wall",
                 ItemSource = new List<Widget>(),
                 OnShown = (widget) =>
                 {
@@ -826,6 +835,7 @@ namespace DwarfCorp.GameStates
 
             var menu_CraftTypes = new FlatToolTray.Tray
             {
+                Tag = "craft item",
                 ItemSource = (new Widget[]{ icon_menu_CraftTypes_Return }).Concat(
                     CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Object)
                     .Select(data => new FlatToolTray.Icon
@@ -887,6 +897,7 @@ namespace DwarfCorp.GameStates
 
             var menu_ResourceTypes = new FlatToolTray.Tray
             {
+                Tag = "craft resource",
                 Tooltip = "Craft resource",
                 ItemSource = (new Widget[] { icon_menu_ResourceTypes_Return }).Concat(
                     CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Resource
@@ -967,6 +978,7 @@ namespace DwarfCorp.GameStates
 
             var icon_BuildTool = new FlatToolTray.Icon
             {
+                Tag = "build",
                 Icon = new TileReference("tool-icons", 2),
                 KeepChildVisible = true,
                 OnConstruct = (sender) =>
@@ -1031,6 +1043,7 @@ namespace DwarfCorp.GameStates
 
             var icon_CookTool = new FlatToolTray.Icon
             {
+                Tag = "cook",
                 Icon = new TileReference("tool-icons", 27),
                 KeepChildVisible = true,
                 Tooltip = "Cook food",
@@ -1050,6 +1063,7 @@ namespace DwarfCorp.GameStates
 
             var icon_DigTool = new FlatToolTray.Icon
             {
+                Tag = "dig",
                 Icon = new TileReference("tool-icons", 0),
                 Tooltip = "Dig",
                 OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Dig),
@@ -1068,6 +1082,7 @@ namespace DwarfCorp.GameStates
 
             var icon_GatherTool = new FlatToolTray.Icon
             {
+                Tag = "gather",
                 Icon = new TileReference("tool-icons", 6),
                 Tooltip = "Gather",
                 OnClick = (sender, args) => { ChangeTool(GameMaster.ToolMode.Gather); World.Tutorial("gather"); },
@@ -1086,6 +1101,7 @@ namespace DwarfCorp.GameStates
 
             var icon_ChopTool = new FlatToolTray.Icon
             {
+                Tag = "chop",
                 Icon = new TileReference("tool-icons", 1),
                 Tooltip = "Chop trees",
                 OnClick = (sender, args) => { ChangeTool(GameMaster.ToolMode.Chop); World.Tutorial("chop"); },
@@ -1104,6 +1120,7 @@ namespace DwarfCorp.GameStates
 
             var icon_GuardTool = new FlatToolTray.Icon
             {
+                Tag = "guard",
                 Icon = new TileReference("tool-icons", 4),
                 Tooltip = "Guard",
                 OnClick = (sender, args) => { ChangeTool(GameMaster.ToolMode.Guard); World.Tutorial("guard"); },
@@ -1122,6 +1139,7 @@ namespace DwarfCorp.GameStates
 
             var icon_AttackTool = new FlatToolTray.Icon
             {
+                Tag = "attack",
                 Icon = new TileReference("tool-icons", 3),
                 Tooltip = "Attack",
                 OnClick = (sender, args) => { ChangeTool(GameMaster.ToolMode.Attack); World.Tutorial("attack"); },
@@ -1147,6 +1165,7 @@ namespace DwarfCorp.GameStates
             #region icon_Till
             var icon_Till = new FlatToolTray.Icon
             {
+                Tag = "till",
                 Text = "Till",
                 Tooltip = "Till soil",
                 TextColor = new Vector4(1, 1, 1, 1),
@@ -1223,6 +1242,7 @@ namespace DwarfCorp.GameStates
 
             var icon_Plant = new FlatToolTray.Icon
             {
+                Tag = "plant",
                 Text = "Plant",
                 Tooltip = "Plant",
                 TextColor = new Vector4(1, 1, 1, 1),
@@ -1237,6 +1257,7 @@ namespace DwarfCorp.GameStates
             var icon_Harvest = new FlatToolTray.Icon
             {
                 Text = "Harv.",
+                Tag = "harvest",
                 TextColor = new Vector4(1, 1, 1, 1),
                 Tooltip = "Harvest",
                 TextHorizontalAlign = HorizontalAlign.Center,
@@ -1261,6 +1282,7 @@ namespace DwarfCorp.GameStates
             #region icon_Wrangle
             var icon_Wrangle = new FlatToolTray.Icon
             {
+                Tag = "wrangle",
                 Text = "Wrng.",
                 TextColor = new Vector4(1, 1, 1, 1),
                 Tooltip = "Wrangle Animals",
@@ -1501,8 +1523,8 @@ namespace DwarfCorp.GameStates
                 {
                     sender.Rect.Height = menu_MainMenu.MinimumSize.Y;
                     sender.Rect.Width = 256;
-                    sender.Rect.X = MinimapFrame.Rect.Right; // Position against minimap frame.
-                    sender.Rect.Y = MinimapFrame.Rect.Bottom - menu_MainMenu.MinimumSize.Y;
+                    sender.Rect.X = GuiRoot.RenderData.VirtualScreen.Center.X - 128; // Position against minimap frame.
+                    sender.Rect.Y = GuiRoot.RenderData.VirtualScreen.Bottom - menu_MainMenu.MinimumSize.Y;
                 }
             }) as FlatToolTray.RootTray;
 

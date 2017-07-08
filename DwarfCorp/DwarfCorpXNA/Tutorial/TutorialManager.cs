@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.Gui;
 
 namespace DwarfCorp.Tutorial
 {
@@ -18,6 +19,7 @@ namespace DwarfCorp.Tutorial
         private Dictionary<String, TutorialEntry> Entries;
         public bool TutorialEnabled = true;
         private String PendingTutorial = null;
+        private Widget ExistingTutorial = null;
         private bool TutorialVisible = false;
 
         public TutorialManager(String TutorialFile)
@@ -51,10 +53,15 @@ namespace DwarfCorp.Tutorial
 
         public void Update(Gui.Root Gui)
         {
-            if (TutorialVisible) return; 
 
             if (!String.IsNullOrEmpty(PendingTutorial) && Gui != null &&!Entries[PendingTutorial].Shown)
             {
+                if (TutorialVisible && ExistingTutorial != null)
+                {
+                    ExistingTutorial.Close();
+                    ExistingTutorial = null;
+                }
+
                 var entry = Entries[PendingTutorial];
                 entry.Shown = true;
                 TutorialVisible = true;
@@ -76,11 +83,12 @@ namespace DwarfCorp.Tutorial
                 });
 
                 Gui.RootItem.AddChild(popup);
+                ExistingTutorial = popup;
                 PendingTutorial = null;
 
                 if (!String.IsNullOrEmpty(entry.GuiHilite))
                 {
-                    var widget = Gui.RootItem.EnumerateChildren().FirstOrDefault(w =>
+                    var widget = Gui.RootItem.EnumerateTree().FirstOrDefault(w =>
                         w.Tag is String && (w.Tag as String) == entry.GuiHilite);
                     if (widget != null)
                     {
@@ -91,15 +99,23 @@ namespace DwarfCorp.Tutorial
                             widget.Rect.Left < 64)
                         {
                             Gui.SpecialIndicatorPosition = new Microsoft.Xna.Framework.Point(
-                                widget.Rect.Right, widget.Rect.Top - 16);
-                            Gui.SpecialIndicator = new Gui.MousePointer("hand", 1, 8, 9, 10, 11);
+                                widget.Rect.Right, widget.Rect.Center.Y- 16);
+                            Gui.SpecialIndicator = new Gui.MousePointer("hand", 1, 10);
                         }
                         else
                         {
                             Gui.SpecialIndicatorPosition = new Microsoft.Xna.Framework.Point(
-                                widget.Rect.Left - 32, widget.Rect.Top - 16);
-                            Gui.SpecialIndicator = new Gui.MousePointer("hand", 1, 12, 13, 14, 15);
+                                widget.Rect.Left - 32, widget.Rect.Center.Y - 16);
+                            Gui.SpecialIndicator = new Gui.MousePointer("hand", 4, 14);
                         }
+                        widget.OnClick += (sender, args) =>
+                        {
+                            popup.Close();
+                        };
+                    }
+                    else
+                    {
+                        Console.Error.WriteLine("GUI highlight {0} does not exist.", entry.GuiHilite);
                     }
                 }
             }

@@ -613,6 +613,7 @@ namespace DwarfCorp
             public static string SkySphere = ProgramData.CreatePath("Shaders", "SkySphere");
             public static string TexturedShaders = ProgramData.CreatePath("Shaders", "TexturedShaders");
             public static string FXAA = ProgramData.CreatePath("Shaders", "FXAA");
+            public static string Background = ProgramData.CreatePath("Shaders", "Background");
         }
         public class Sky
         {

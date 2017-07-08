@@ -64,8 +64,8 @@ namespace DwarfCorp
             public int SizeY;
             public int SizeZ;
             public RampType[] RampTypes;
-            public Color[] VertexColors;
-
+            //public Color[] VertexColors;
+            /*
             public void SetColor(int x, int y, int z, VoxelVertex v, Color color)
             {
                 VertexColors[VertIndex(x, y, z, v)] = color;
@@ -75,6 +75,7 @@ namespace DwarfCorp
             {
                 return VertexColors[VertIndex(x, y, z, v)];
             }
+             */
 
             public int VertIndex(int x, int y, int z, VoxelVertex v)
             {
@@ -582,7 +583,7 @@ namespace DwarfCorp
                 Types = new byte[numVoxels],
                 Water = new WaterCell[numVoxels],
                 RampTypes = new RampType[numVoxels],
-                VertexColors = new Color[(sx + 1) * (sy + 1) * (sz + 1)],
+                //VertexColors = new Color[(sx + 1) * (sy + 1) * (sz + 1)],
                 SizeX = sx,
                 SizeY = sy,
                 SizeZ = sz
@@ -1107,13 +1108,11 @@ namespace DwarfCorp
 
             foreach (Voxel v in neighbors)
             {
-                if (v == null || !chunks.ChunkData.ChunkMap.ContainsKey(v.Chunk.ID))
+                if (v == null)
                 {
                     continue;
                 }
-
-                VoxelChunk c = chunks.ChunkData.ChunkMap[v.Chunk.ID];
-                color.SunColor += c.Data.SunColors[v.Index];
+                color.SunColor += v.SunColor;
                 if (VoxelLibrary.IsSolid(v) || !v.IsExplored)
                 {
                     if (v.Type.EmitsLight) color.DynamicColor = 255;
@@ -1264,6 +1263,7 @@ namespace DwarfCorp
 
         public void CalculateVertexLighting()
         {
+            /*
             List<Voxel> neighbors = new List<Voxel>();
             VertexColorInfo colorInfo = new VertexColorInfo();
             bool ambientOcclusion = GameSettings.Default.AmbientOcclusion;
@@ -1335,6 +1335,7 @@ namespace DwarfCorp
             }
 
             LightingCalculated = true;
+             */
         }
 
         public void CalculateGlobalLight()

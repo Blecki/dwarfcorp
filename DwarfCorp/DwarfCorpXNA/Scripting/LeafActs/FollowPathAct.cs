@@ -31,6 +31,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -80,6 +81,10 @@ namespace DwarfCorp
 
         public bool IsPathValid(List<MoveAction> path)
         {
+            if (path.Count == 0)
+            {
+                return false;
+            }
             for (int i = 0; i < path.Count - 1; i++)
             {
                 if (!path[i].DestinationVoxel.IsEmpty) return false;
@@ -364,7 +369,13 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
+            if (Name == "FollowtoFoo")
+            {
+                Console.Out.WriteLine("There it is!");
+            }
             InitializePath();
+            if (Path.Count == 0)
+                yield return Act.Status.Success;
             if (TrajectoryTimer == null) yield break;
             while (!TrajectoryTimer.HasTriggered)
             {

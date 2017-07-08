@@ -7,11 +7,13 @@ float xTint;
 
 void SkyboxVertexShader( float3 pos : POSITION0,
                          out float4 SkyPos : POSITION0,
-                         out float3 SkyCoord : TEXCOORD0 )
+                         out float3 SkyCoord : TEXCOORD0,
+						 out float3 worldPos : TEXCOORD1)
 {
+	worldPos = mul(pos, xRot);
     // Calculate rotation. Using a float3 result, so translation is ignored
-    float3 rotatedPosition = mul(mul(pos, xRot), ViewMatrix);           
-    // Calculate projection, moving all vertices to the far clip plane 
+	float3 rotatedPosition = mul(worldPos, ViewMatrix);
+	// Calculate projection, moving all vertices to the far clip plane 
     // (w and z both 1.0)
     SkyPos = mul(float4(rotatedPosition, 1), ProjectionMatrix).xyww;    
 
@@ -44,7 +46,7 @@ sampler SkyboxS = sampler_state
 };
 
 
-float4 SkyboxPixelShader( float3 SkyCoord : TEXCOORD0 ) : COLOR
+float4 SkyboxPixelShader( float3 pos : TEXCOORD1, float3 SkyCoord : TEXCOORD0 ) : COLOR
 {
     // grab the pixel color value from the skybox cube map
 	float4 toReturn = texCUBE(SkyboxS, SkyCoord * 2) * tex2D(TintS, float2(xTint, 0.5f));
