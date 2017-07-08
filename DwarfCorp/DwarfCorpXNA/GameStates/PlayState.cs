@@ -55,6 +55,7 @@ namespace DwarfCorp.GameStates
         private AnnouncementPopup Announcer;
         private FramedIcon EconomyIcon;
         private Timer AutoSaveTimer;
+        private EmployeeInfo SelectedEmployeeInfo;
 
         private class ToolbarItem
         {
@@ -311,6 +312,58 @@ namespace DwarfCorp.GameStates
             {
                 AutoSave();   
             }
+
+#region select employee
+            if (Master.SelectedMinions.Count == 1 && SelectedEmployeeInfo == null)
+            {
+                SelectedEmployeeInfo = GuiRoot.RootItem.AddChild(new EmployeeInfo()
+                {
+                    AutoLayout = AutoLayout.FloatLeft,
+                    Rect = new Rectangle(0, GuiRoot.RenderData.VirtualScreen.Height/2 - 450/2, 400, 450),
+                    Employee = Master.SelectedMinions[0],
+                    Border = "border-button",
+                    OnFireClicked = (sender) =>
+                    {
+                        GuiRoot.ShowDialog(GuiRoot.ConstructWidget(new Gui.Widgets.Confirm
+                        {
+                            OkayText = "Fire this dwarf!",
+                            CancelText = "Keep this dwarf.",
+                            Padding = new Margin(32, 10, 10, 10),
+                            MinimumSize = new Point(512, 128),
+                            OnClose = (confirm) =>
+                            {
+                                if ((confirm as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
+                                {
+                                    SoundManager.PlaySound(ContentPaths.Audio.change, 0.5f);
+                                    var selectedEmployee = (sender as EmployeeInfo).Employee;
+                                    selectedEmployee.GetRoot().Delete();
+
+                                    Master.Faction.Minions.Remove(selectedEmployee);
+                                    Master.Faction.SelectedMinions.Remove(selectedEmployee);
+                                }
+                            }
+                        }));
+                    }
+                }) as EmployeeInfo;
+                SelectedEmployeeInfo.Layout();
+            }
+
+            if (Master.SelectedMinions.Count == 1 && SelectedEmployeeInfo != null)
+            {
+                // Lol this is evil just trying to reduce the update rate for speed
+                if (MathFunctions.RandEvent(0.1f))
+                {
+                    SelectedEmployeeInfo.Employee = Master.SelectedMinions[0];
+                    SelectedEmployeeInfo.Hidden = false;
+                    SelectedEmployeeInfo.Invalidate();
+                }
+            }
+
+            if (Master.SelectedMinions.Count != 1 && SelectedEmployeeInfo != null && !SelectedEmployeeInfo.Hidden)
+            {
+                SelectedEmployeeInfo.Hidden = true;
+            }
+#endregion
         }
 
         /// <summary>
@@ -744,6 +797,18 @@ namespace DwarfCorp.GameStates
                     }))
             };
 
+            var icon_moveObjects = new FlatToolTray.Icon()
+            {
+                Text = "",
+                Tooltip = "Move objects",
+                Icon = new TileReference("mouse", 9),
+                OnClick = (sender, args) =>
+                {
+                    World.ShowToolPopup("Click objects to move them");
+                    Master.ChangeTool(GameMaster.ToolMode.MoveObjects);
+                }
+            };
+
             var icon_BuildRoom = new FlatToolTray.Icon
             {
                 TextColor = Vector4.One,
@@ -975,6 +1040,7 @@ namespace DwarfCorp.GameStates
                 ItemSource = new FlatToolTray.Icon[]
                     {
                         icon_menu_BuildTools_Return,
+                        icon_moveObjects,
                         icon_BuildRoom,
                         icon_BuildWall,
                         icon_BuildCraft,

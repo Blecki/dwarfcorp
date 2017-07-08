@@ -160,7 +160,7 @@ namespace DwarfCorp
 
         private static GameComponent CreateRandomFood(WorldManager world, Vector3 position)
         {
-            List<Resource> foods = ResourceLibrary.GetResourcesByTag(Resource.ResourceTags.RawFood);
+            IEnumerable<Resource> foods = ResourceLibrary.GetResourcesByTag(Resource.ResourceTags.RawFood);
 
             Resource randresource = ResourceLibrary.CreateMeal(Datastructures.SelectRandom(foods).Type,
                 Datastructures.SelectRandom(foods).Type);

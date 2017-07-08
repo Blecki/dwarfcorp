@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class Bookshelf : Body
+    public class Bookshelf : Body, IRenderableComponent
     {
         public Bookshelf()
         {
@@ -31,6 +31,20 @@ namespace DwarfCorp
 
             if (manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
                 AddChild(new VoxelListener(manager.World.ComponentManager, manager.World.ChunkManager, voxelUnder));
+
+            OrientToWalls();
+        }
+
+        public override void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect)
+        {
+            effect.SelectionBufferColor = GetGlobalIDColor().ToVector4();
+            GetComponent<Box>().Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
+        }
+
+        public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
+            GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
+        {
+            // Only renders to selection buffer
         }
     }
 }

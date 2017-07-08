@@ -31,6 +31,7 @@ namespace DwarfCorp
             Attack,
             Farm,
             Craft,
+            MoveObjects,
             God
         }
 
@@ -193,6 +194,11 @@ namespace DwarfCorp
             {
                 Player = this,
                 BuildType = Gui.Widgets.BuildMenu.BuildTypes.Cook,
+            };
+
+            Tools[ToolMode.MoveObjects] = new MoveObjectTool()
+            {
+                Player = this
             };
         }
 

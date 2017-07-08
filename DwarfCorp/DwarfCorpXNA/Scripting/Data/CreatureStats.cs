@@ -163,6 +163,8 @@ namespace DwarfCorp
         public bool CanEat { get; set; }
         public float BuildSpeed { get { return (BuffedInt + BuffedDex)/10.0f; }}
 
+        public int Age { get; set; }
+
         /// <summary>
         /// If true, the creature will occasionally lay eggs.
         /// </summary>
@@ -186,6 +188,7 @@ namespace DwarfCorp
                 Strength = 0,
                 Wisdom = 0
             };
+            Age = (int)Math.Max(MathFunctions.RandNormalDist(30, 15), 10);
         }
 
         public CreatureStats(EmployeeClass creatureClass, int level)
@@ -212,6 +215,7 @@ namespace DwarfCorp
                 Strength = 0,
                 Wisdom = 0
             };
+            Age = (int)Math.Max(MathFunctions.RandNormalDist(30, 15), 10);
         }
 
         public void ResetBuffs()

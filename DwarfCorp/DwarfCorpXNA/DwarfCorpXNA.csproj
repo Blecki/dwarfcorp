@@ -336,6 +336,7 @@
     <Compile Include="Scripting\CompoundActs\StockMoneyAct.cs" />
     <Compile Include="Scripting\LeafActs\PutMoneyInZoneAct.cs" />
     <Compile Include="Scripting\LeafActs\StashMoneyAct.cs" />
+    <Compile Include="Scripting\Player\Tools\MoveObjectTool.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\AnimalPen.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\Graveyard.cs" />
     <Compile Include="Scripting\Data\Status.cs" />

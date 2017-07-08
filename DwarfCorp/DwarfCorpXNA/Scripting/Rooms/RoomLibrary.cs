@@ -315,6 +315,7 @@ namespace DwarfCorp
                     }
 
                     if (createdComponent == null) continue;
+                    createdComponent.Tags.Add("Moveable");
                     createdComponent.LocalTransform = Matrix.CreateRotationY(-(rotations[r, c] + (float)Math.PI * 0.5f)) * createdComponent.LocalTransform;
                     components.Add(createdComponent);
                 }

@@ -464,6 +464,7 @@ namespace DwarfCorp
                         "fairy_animation.json");
 
                     public static string musketdwarf_animations = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "musket_animation.json");
+                    public static string musket = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "musket");
                 }
 
             }

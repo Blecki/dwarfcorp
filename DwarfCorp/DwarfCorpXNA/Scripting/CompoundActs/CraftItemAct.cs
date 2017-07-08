@@ -170,7 +170,7 @@ namespace DwarfCorp
                                 TeleportOffset = new Vector3(1, 0, 0),
                                 ObjectName = ItemType.CraftLocation
                             },
-                            new Wrap(() => Creature.HitAndWait(time, true, () => Creature.AI.Position)),
+                            new Wrap(() => Creature.HitAndWait(time, true, () => Creature.AI.Position, "Craft")),
                             new Wrap(DestroyResources),
                             unreserveAct,
                             new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
@@ -183,7 +183,7 @@ namespace DwarfCorp
                     Tree = new Sequence(
                         getResources,
                         new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
-                        new Wrap(() => Creature.HitAndWait(time, true, () => Creature.AI.Position)),
+                        new Wrap(() => Creature.HitAndWait(time, true, () => Creature.AI.Position, "Craft")),
                         new Wrap(DestroyResources),
                         new CreateCraftItemAct(Voxel, Creature.AI, ItemType.Name)) |
                        new Wrap(Creature.RestockAll);

@@ -106,9 +106,24 @@ namespace DwarfCorp
 
         public static Dictionary<ResourceType, Resource> Resources = new Dictionary<ResourceType, Resource>();
 
-        public static List<Resource> GetResourcesByTag(Resource.ResourceTags tag)
+        public static IEnumerable<Resource> GetResourcesByTag(Resource.ResourceTags tag)
         {
             return Resources.Values.Where(resource => resource.Tags.Contains(tag)).ToList();
+        }
+
+        public static Resource GetLeastValuableWithTag(Resource.ResourceTags tag)
+        {
+            Resource min = null;
+            DwarfBux minValue = decimal.MaxValue;
+            foreach (var r in Resources.Values.Where(resource => resource.Tags.Contains(tag)))
+            {
+                if (r.MoneyValue < minValue)
+                {
+                    minValue = r.MoneyValue;
+                    min = r;
+                }
+            }
+            return min;
         }
 
         public static Resource GetResourceByName(string name)
