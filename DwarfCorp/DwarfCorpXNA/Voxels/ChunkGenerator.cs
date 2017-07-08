@@ -190,12 +190,6 @@ namespace DwarfCorp
             }
         }
 
-        public VoxelChunk GenerateEmptyChunk(Vector3 origin, int chunkSizeX, int chunkSizeY, int chunkSizeZ)
-        {
-            return new VoxelChunk(Manager, origin, 1,  Manager.ChunkData.GetChunkID(origin + new Vector3(0.5f, 0.5f, 0.5f)), chunkSizeX, chunkSizeY, chunkSizeZ); 
-        }
-
-
         public void GenerateWater(VoxelChunk chunk)
         {
             int waterHeight = (int) (SeaLevel*chunk.SizeY) + 1;

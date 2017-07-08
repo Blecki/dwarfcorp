@@ -348,6 +348,7 @@
     <Compile Include="Tutorial\TutorialManager.cs" />
     <Compile Include="Tutorial\JsonTutorialSet.cs" />
     <Compile Include="Tutorial\TutorialSaveData.cs" />
+    <Compile Include="Voxels\Coordinate.cs" />
     <Compile Include="World\IndicatorManager.cs" />
     <Compile Include="Gui\Enums.cs" />
     <Compile Include="Gui\Geo\Basics.cs" />
