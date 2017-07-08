@@ -428,7 +428,7 @@ namespace DwarfCorp
                         {
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Wood, 4),
                         },
-                        Icon = new Gui.TileReference("furniture", 1),
+                        Icon = new Gui.TileReference("furniture", 3),
                         BaseCraftTime = 50,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
                         CraftLocation = ""
