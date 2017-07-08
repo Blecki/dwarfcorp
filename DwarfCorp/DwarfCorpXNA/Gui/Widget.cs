@@ -283,7 +283,8 @@ namespace DwarfCorp.Gui
 
         public void Close()
         {
-            Root.DestroyWidget(this);
+            if (Root != null)
+                Root.DestroyWidget(this);
         }
 
         /// <summary>

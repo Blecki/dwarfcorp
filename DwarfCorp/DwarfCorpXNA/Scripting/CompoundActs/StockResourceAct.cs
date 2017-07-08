@@ -107,7 +107,7 @@ namespace DwarfCorp
                         
                                         new Select(
                                                     new Sequence(
-                                                                    new GoToVoxelAct("FreeVoxel", PlanAct.PlanType.Adjacent, Agent),
+                                                                    new GoToVoxelAct("FreeVoxel", PlanAct.PlanType.Adjacent, Agent) {Name = "Foo"},
                                                                     new PutResourceInZone(Agent, "TargetStockpile", "FreeVoxel", "GatheredResource")
                                                                 )
                                                   )

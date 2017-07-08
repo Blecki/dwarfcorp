@@ -3,7 +3,8 @@
 		{ 
 			"Name": "new game start",
 			"Title": "Tutorial",
-			"Text": "Welcome to DwarfCorp! I'll show you information about new things you encounter. You can turn this tutorial off at any time and I won't bother you again. You can also control this tutorial from the settings menu. Why don't you try selecting a dwarf? The selector tool is at the left end of the tray at the bottom."
+			"Text": "Welcome to DwarfCorp! I'll show you information about new things you encounter. You can turn this tutorial off at any time and I won't bother you again. You can also control this tutorial from the settings menu. Why don't you try selecting a dwarf? The selector tool is at the left end of the tray at the bottom.",
+			"GuiHilite" : "select"
 		},
 		{
 			"Name": "dwarf selected",
@@ -13,27 +14,32 @@
 		{
 			"Name": "mine",
 			"Title" : "Mining",
-			"Text": "Left click and drag to tell dwarves to mine blocks. Mining sometimes produces resources for trading and building. Tip: hold ALT and use the mouse wheel to dig pits. Right click and drag to cancel mine designations. When your employee collects resources, the dwarf will take them to a stockpile to store them."
+			"Text": "Left click and drag to tell dwarves to mine blocks. Mining sometimes produces resources for trading and building. Tip: hold ALT and use the mouse wheel to dig pits. Right click and drag to cancel mine designations. When your employee collects resources, the dwarf will take them to a stockpile to store them.",
+			"GuiHilite" : "dig"
 		},
 		{
 			"Name": "slice",
 			"Title" : "Slicing",
-			"Text": "You can view slices of blocks beneath the earth. The most valuable resources are underground, and dwarves prefer living in the dark. Push the Slice key (by default Q) to slice the terrain at the mouse cursor. You can also slice terrain using the slice buttons in the top left of the screen, or by controlling a single dwarf and going underground. While controlling a single dwarf, slicing is automatic and can't be controlled directly."
+			"Text": "You can view slices of blocks beneath the earth. The most valuable resources are underground, and dwarves prefer living in the dark. Push the Slice key (by default Q) to slice the terrain at the mouse cursor. You can also slice terrain using the slice buttons in the top left of the screen, or by controlling a single dwarf and going underground. While controlling a single dwarf, slicing is automatic and can't be controlled directly.",
+			"GuiHilite" : "slice"
 		},
 		{
 			"Name" : "unslice",
 			"Title" : "Unslicing",
-			"Text": "Push the Unslice key (by default, E) to reveal all the terrain."
+			"Text": "Push the Unslice key (by default, E) to reveal all the terrain.",
+			"GuiHilite" : "slice"
 		},
 		{
 			"Name" : "build blocks",
 			"Title" : "Placing Blocks",
-			"Text" : "Left click and drag to tell dwarves to place blocks. You can only build blocks that you have resources for. When there aren't enough resources, the blocks will turn red. You can cancel placing blocks by right clicking and dragging."
+			"Text" : "Left click and drag to tell dwarves to place blocks. You can only build blocks that you have resources for. When there aren't enough resources, the blocks will turn red. You can cancel placing blocks by right clicking and dragging.",
+			"GuiHilite" : "build wall"
 		},
 		{
 			"Name" : "build items",
 			"Title" : "Building Items",
-			"Text" : "Left click and drag to tell dwarves to build items. You can only build items you have resources for. When there aren't enough resources, the item will turn red. Once you click, a work pile will be created. The dwarf will gather the resources and build the item at the work pile. NOTE: A workshop is required to build items."
+			"Text" : "Left click and drag to tell dwarves to build items. You can only build items you have resources for. When there aren't enough resources, the item will turn red. Once you click, a work pile will be created. The dwarf will gather the resources and build the item at the work pile. NOTE: A workshop is required to build items.",
+			"GuiHilite" : "craft item"
 		},
 		{
 			"Name" : "build crafts",
@@ -43,7 +49,8 @@
 		{
 			"Name" : "cook",
 			"Title": "Cooking",
-			"Text" : "Dwarves can cook meals, bake bread or brew ale in the kitchen. You can select which food items you want to use for the dwarf to cook with. Meals provide more happiness and relieve hunger more than raw foods. Dwarves must eat to survive and stay happy. Once you select a food, the dwarf will gather the resources from your stockpiles and go cook it in the kitchen. NOTE: a kitchen is required to cook."
+			"Text" : "Dwarves can cook meals, bake bread or brew ale in the kitchen. You can select which food items you want to use for the dwarf to cook with. Meals provide more happiness and relieve hunger more than raw foods. Dwarves must eat to survive and stay happy. Once you select a food, the dwarf will gather the resources from your stockpiles and go cook it in the kitchen. NOTE: a kitchen is required to cook.",
+			"GuiHilite" : "cook"
 		},
 		{
 			"Name" : "till",
@@ -63,27 +70,32 @@
 		{
 			"Name" : "gather",
 			"Title" : "Gathering Resources",
-			"Text" : "Left click and drag to tell dwarves to gather loose resources on the ground. Dwarves auto-gather stuff that they mine or harvest from plants. Right click and drag to cancel a gather designation."
+			"Text" : "Left click and drag to tell dwarves to gather loose resources on the ground. Dwarves auto-gather stuff that they mine or harvest from plants. Right click and drag to cancel a gather designation.",
+			"GuiHilite" : "gather"
 		},
 		{
 			"Name" : "guard",
 			"Title" : "Guarding",
-			"Text" : "Left click to tell dwarves to guard a block. They will stay around that block until you right click it to cancel the guard designation."
+			"Text" : "Left click to tell dwarves to guard a block. They will stay around that block until you right click it to cancel the guard designation.",
+			"GuiHilite" : "guard"
 		},
 		{
 			"Name" : "attack",
 			"Title" : "Attacking",
-			"Text" : "Left click and drag on creatures to tell dwarves to attack them. Right click and drag to cancel attack designations."
+			"Text" : "Left click and drag on creatures to tell dwarves to attack them. Right click and drag to cancel attack designations.",
+			"GuiHilite" : "attack"
 		},
 		{
 			"Name" : "chop",
 			"Title" : "Gathering Plants",
-			"Text" : "Left click and drag over plants to tell dwarves to chop them down and harvest them. Plants release wood, seeds, and other resources."
+			"Text" : "Left click and drag over plants to tell dwarves to chop them down and harvest them. Plants release wood, seeds, and other resources.",
+			"GuiHilite" : "chop"
 		},
 		{
 			"Name" : "research spells",
 			"Title" : "Magical Research",
-			"Text" : "Wizards can research magical spells for you to cast in the library. Researching spells unlocks more powerful spells, which can be used to heal your dwarves, convert stone into gold, and more. NOTE: Researching spells requires a library."
+			"Text" : "Wizards can research magical spells for you to cast in the library. Researching spells unlocks more powerful spells, which can be used to heal your dwarves, convert stone into gold, and more. NOTE: Researching spells requires a library.",
+			"GuiHilite" : "magic"
 		},
 		{
 			"Name" : "cast spells",
@@ -154,7 +166,8 @@
 			"Name" : "money",
 			"Title" : "Money",
 			"Text" : "Your colony needs money to survive. Earn Dwarfbux ($) by trading with the 
-			 or natives as they arrive. Being bankrupt for too long might cause all of your employees to quit, and your stock may crash! Money is stored in the treasury."
+			 or natives as they arrive. Being bankrupt for too long might cause all of your employees to quit, and your stock may crash! Money is stored in the treasury.",
+			"GuiHilite" : "money"
 		},
 		{
 			"Name" : "combat",
@@ -190,12 +203,14 @@
 		{
 			"Name" : "camera",
 			"Title" : "The Camera",
-			"Text" : "Move the camera using the arrow keys, movement keys (by default, W.A.S.D) or by hovering the mouse at the side of the screen. Zoom the camera in and out using the mouse wheel or by right clicking and dragging while the shift key is pressed. Hold shift or middle mouse button and drag the mouse to rotate the camera. The camera can be re-centered on your balloon port by clicking on the Home button on the minimap (bottom left corner)."
+			"Text" : "Move the camera using the arrow keys, movement keys (by default, W.A.S.D) or by hovering the mouse at the side of the screen. Zoom the camera in and out using the mouse wheel or by right clicking and dragging while the shift key is pressed. Hold shift or middle mouse button and drag the mouse to rotate the camera. The camera can be re-centered on your balloon port by clicking on the Home button on the minimap (bottom left corner).",
+			"GuiHilite" : "minimap"
 		},
 		{
 			"Name" : "brush",
 			"Title" : "Brushes",
-			"Text" : "By clicking one of the brush buttons on the right of the screen, you activated a brush. The available brushes are Block, Shell and Stair brushes. The block brush selects a rectangular region of the world as you click and drag. The shell brush selects a single-block shell around a rectangular region. The stair brush selects stairs down into the earth when mining, or stairs up into the air when building."
+			"Text" : "By clicking one of the brush buttons on the right of the screen, you activated a brush. The available brushes are Block, Shell and Stair brushes. The block brush selects a rectangular region of the world as you click and drag. The shell brush selects a single-block shell around a rectangular region. The stair brush selects stairs down into the earth when mining, or stairs up into the air when building.",
+			"GuiHilite" : "brushes"
 		},
 		{
 			"Name" : "hire",
