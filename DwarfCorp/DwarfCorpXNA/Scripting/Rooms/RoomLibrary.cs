@@ -120,27 +120,27 @@ namespace DwarfCorp
             } 
             else if (name == BedRoom.BedRoomName)
             {
-                return blueprint ? new BedRoom(true, designations, world) : new BedRoom(designations, world);
+                return blueprint ? new BedRoom(true, designations, world, faction) : new BedRoom(designations, world, faction);
             }
             else if (name == CommonRoom.CommonRoomName)
             {
-                return blueprint ? new CommonRoom(true, designations, world) : new CommonRoom(designations, world);
+                return blueprint ? new CommonRoom(true, designations, world, faction) : new CommonRoom(designations, world, faction);
             }
             else if (name == LibraryRoom.LibraryRoomName)
             {
-                return blueprint ? new LibraryRoom(true, designations, world) : new LibraryRoom(designations, world);
+                return blueprint ? new LibraryRoom(true, designations, world, faction) : new LibraryRoom(designations, world, faction);
             }
             else if (name == TrainingRoom.TrainingRoomName)
             {
-                return blueprint ? new TrainingRoom(true, designations, world) : new TrainingRoom(designations, world); 
+                return blueprint ? new TrainingRoom(true, designations, world, faction) : new TrainingRoom(designations, world, faction); 
             }
             else if (name == WorkshopRoom.WorkshopName)
             {
-                return blueprint ? new WorkshopRoom(true, designations, world) : new WorkshopRoom(designations, world); 
+                return blueprint ? new WorkshopRoom(true, designations, world, faction) : new WorkshopRoom(designations, world, faction); 
             }
             else if (name == Kitchen.KitchenName)
             {
-                return blueprint ? new Kitchen(true, designations, world) : new Kitchen(designations, world); 
+                return blueprint ? new Kitchen(true, designations, world, faction) : new Kitchen(designations, world, faction); 
             }
             else if (name == Stockpile.StockpileName)
             {
@@ -160,8 +160,8 @@ namespace DwarfCorp
             else if (name == AnimalPen.AnimalPenName)
             {
                 return blueprint
-                    ? new AnimalPen(true, designations, world) : 
-                      new AnimalPen(designations, world);
+                    ? new AnimalPen(true, designations, world, faction) :
+                      new AnimalPen(designations, world, faction);
             }
             else if (name == Treasury.TreasuryName)
             {

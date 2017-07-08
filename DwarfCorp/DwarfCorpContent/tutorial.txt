@@ -9,7 +9,8 @@
 		{
 			"Name": "dwarf selected",
 			"Title" : "Selecting Dwarves",
-			"Text": "You selected a dwarf! You can order your employee to do something using the tools in the tray at the bottom of the screen. When you only have one dwarf selected, you can control it using the movement and jump keys (by default, W.A.S.D and C). You can tell a dwarf to go somewhere by right clicking. Left click anywhere to unselect all dwarves. Select all dwarves again by pushing the \"1\" key. Selecting dwarves reveals the actions they can take on the tool tray at the bottom of the screen."
+			"Text": "You selected a dwarf! You can order your employee to do something using the tools in the tray at the bottom of the screen. When you only have one dwarf selected, you can control it using the movement and jump keys (by default, W.A.S.D and C). You can tell a dwarf to go somewhere by right clicking. Left click anywhere to unselect all dwarves. Select all dwarves again by pushing the \"1\" key. Selecting dwarves reveals the actions they can take on the tool tray at the bottom of the screen.",
+			"GuiHilite" : "tools"
 		},
 		{
 			"Name": "mine",

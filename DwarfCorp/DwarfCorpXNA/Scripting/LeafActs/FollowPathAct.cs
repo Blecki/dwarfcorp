@@ -369,10 +369,6 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            if (Name == "FollowtoFoo")
-            {
-                Console.Out.WriteLine("There it is!");
-            }
             InitializePath();
             if (Path.Count == 0)
                 yield return Act.Status.Success;

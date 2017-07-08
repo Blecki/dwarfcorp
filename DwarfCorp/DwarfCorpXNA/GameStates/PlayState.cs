@@ -42,6 +42,7 @@ namespace DwarfCorp.GameStates
         private Gui.Widget MoneyLabel;
         private Gui.Widget LevelLabel;
         private Gui.Widgets.FlatToolTray.RootTray BottomToolBar;
+        private Gui.Widgets.FlatToolTray.Tray MainMenu;
         private Gui.Widget TimeLabel;
         private Gui.Widget PausePanel;
         private Gui.Widgets.MinimapFrame MinimapFrame;
@@ -853,6 +854,11 @@ namespace DwarfCorp.GameStates
                             BuildAction = (sender, args) =>
                             {
                                 var buildInfo = sender.Parent as Gui.Widgets.BuildCraftInfo;
+                                if (buildInfo == null)
+                                {
+                                    return;
+                                }
+
                                 data.SelectedResources = buildInfo.GetSelectedResources();
                                 data.NumRepeats = buildInfo.GetNumRepeats();
                                 Master.Faction.RoomBuilder.CurrentRoomData = null;
@@ -860,6 +866,11 @@ namespace DwarfCorp.GameStates
                                 Master.Faction.WallBuilder.CurrentVoxelType = null;
                                 Master.Faction.CraftBuilder.IsEnabled = true;
                                 Master.Faction.CraftBuilder.CurrentCraftType = data;
+                                if (Master.Faction.CraftBuilder.CurrentCraftBody != null)
+                                {
+                                    Master.Faction.CraftBuilder.CurrentCraftBody.Delete();
+                                    Master.Faction.CraftBuilder.CurrentCraftBody = null;
+                                }
                                 ChangeTool(GameMaster.ToolMode.Build);
                                 World.ShowToolPopup("Click and drag to " + data.Verb + " " + data.Name);
                             },
@@ -1480,7 +1491,7 @@ namespace DwarfCorp.GameStates
 
             #endregion
 
-            var menu_MainMenu = new FlatToolTray.Tray
+            MainMenu = new FlatToolTray.Tray
             {
                 ItemSource = new Gui.Widget[]
                 {
@@ -1494,13 +1505,14 @@ namespace DwarfCorp.GameStates
                     icon_AttackTool,
                     icon_FarmTool,
                     icon_MagicTool
-                }
+                },
+                OnShown = (sender) => ChangeTool(GameMaster.ToolMode.SelectUnits)
             };
 
-            icon_menu_BuildTools_Return.ReplacementMenu = menu_MainMenu;
-            icon_menu_Edibles_Return.ReplacementMenu = menu_MainMenu;
-            icon_menu_Farm_Return.ReplacementMenu = menu_MainMenu;
-            icon_menu_Magic_Return.ReplacementMenu = menu_MainMenu;
+            icon_menu_BuildTools_Return.ReplacementMenu = MainMenu;
+            icon_menu_Edibles_Return.ReplacementMenu = MainMenu;
+            icon_menu_Farm_Return.ReplacementMenu = MainMenu;
+            icon_menu_Magic_Return.ReplacementMenu = MainMenu;
 
             BottomToolBar = GuiRoot.RootItem.AddChild(new FlatToolTray.RootTray
             {
@@ -1512,7 +1524,7 @@ namespace DwarfCorp.GameStates
                     menu_Edibles,
                     menu_Farm,
                     menu_Magic,
-                    menu_MainMenu,
+                    MainMenu,
                     menu_Plant,
                     menu_ResearchSpells,
                     menu_ResourceTypes,
@@ -1521,14 +1533,14 @@ namespace DwarfCorp.GameStates
                 },
                 OnLayout = (sender) =>
                 {
-                    sender.Rect.Height = menu_MainMenu.MinimumSize.Y;
-                    sender.Rect.Width = 256;
+                    sender.Rect = sender.ComputeBoundingChildRect();
                     sender.Rect.X = GuiRoot.RenderData.VirtualScreen.Center.X - 128; // Position against minimap frame.
-                    sender.Rect.Y = GuiRoot.RenderData.VirtualScreen.Bottom - menu_MainMenu.MinimumSize.Y;
-                }
+                    sender.Rect.Y = GuiRoot.RenderData.VirtualScreen.Bottom - MainMenu.MinimumSize.Y;
+                },
+                Tag = "tools"
             }) as FlatToolTray.RootTray;
 
-            BottomToolBar.SwitchTray(menu_MainMenu);
+            BottomToolBar.SwitchTray(MainMenu);
             ChangeTool(GameMaster.ToolMode.SelectUnits);
 
             #endregion
@@ -1590,7 +1602,11 @@ namespace DwarfCorp.GameStates
             }
             else if (key == Keys.Escape)
             {
-                if (Master.CurrentToolMode != GameMaster.ToolMode.SelectUnits)
+                if (MainMenu.Hidden)
+                {
+                    (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(0);
+                }
+                else if (Master.CurrentToolMode != GameMaster.ToolMode.SelectUnits)
                 {
                     Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
                 }

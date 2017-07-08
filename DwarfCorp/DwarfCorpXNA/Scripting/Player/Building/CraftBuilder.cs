@@ -65,7 +65,7 @@ namespace DwarfCorp
         public List<CraftDesignation> Designations { get; set; }
         public CraftItem CurrentCraftType { get; set; }
         public bool IsEnabled { get; set; }
-        protected Body CurrentCraftBody { get; set; }
+        public Body CurrentCraftBody { get; set; }
         protected CraftDesignation CurrentDesignation { get; set; }
 
         [JsonIgnore]
@@ -189,9 +189,11 @@ namespace DwarfCorp
                 return false;
             }
 
-            if (Faction.GetNearestRoomOfType(WorkshopRoom.WorkshopName, designation.Location.Position) == null)
+            if (!String.IsNullOrEmpty(designation.ItemType.CraftLocation) &&
+                Faction.FindNearestItemWithTags(designation.ItemType.CraftLocation, designation.Location.Position, false) ==
+                null)
             {
-                World.ShowToolPopup("Can't build, no workshops!");
+                World.ShowToolPopup("Can't build, need " + designation.ItemType.CraftLocation);
                 return false;
             }
 

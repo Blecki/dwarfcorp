@@ -194,7 +194,7 @@ namespace DwarfCorp.Gui.Widgets
 
                         var nearestBuildLocation = World.PlayerFaction.FindNearestItemWithTags(data.CraftLocation, Vector3.Zero, false);
 
-                        if (nearestBuildLocation == null)
+                        if (!String.IsNullOrEmpty(data.CraftLocation) && nearestBuildLocation == null)
                         {
                             description.AddChild(new Gui.Widget
                                 {
