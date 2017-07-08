@@ -21,7 +21,7 @@ namespace DwarfCorp.Tutorial
         private String PendingTutorial = null;
         private Widget ExistingTutorial = null;
         private bool TutorialVisible = false;
-
+        private Widget HighlightWidget = null;
         public TutorialManager(String TutorialFile)
         {
             var entries = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonTutorialSet>(
@@ -53,7 +53,6 @@ namespace DwarfCorp.Tutorial
 
         public void Update(Gui.Root Gui)
         {
-
             if (!String.IsNullOrEmpty(PendingTutorial) && Gui != null &&!Entries[PendingTutorial].Shown)
             {
                 if (TutorialVisible && ExistingTutorial != null)
@@ -88,6 +87,7 @@ namespace DwarfCorp.Tutorial
                 {
                     var widget = Gui.RootItem.EnumerateTree().FirstOrDefault(w =>
                         w.Tag is String && (w.Tag as String) == entry.GuiHilite);
+                    HighlightWidget = widget;
                     if (widget != null)
                     {
                         Gui.SpecialHiliteRegion = widget.Rect;
@@ -116,6 +116,12 @@ namespace DwarfCorp.Tutorial
                         Console.Error.WriteLine("GUI highlight {0} does not exist.", entry.GuiHilite);
                     }
                 }
+            }
+
+            if (HighlightWidget != null && HighlightWidget.Hidden && TutorialVisible && ExistingTutorial != null)
+            {
+                Gui.SpecialHiliteRegion = null;
+                ExistingTutorial.Close();
             }
         }
 

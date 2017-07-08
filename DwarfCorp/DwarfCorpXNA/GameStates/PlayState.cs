@@ -186,13 +186,13 @@ namespace DwarfCorp.GameStates
                 SoundManager.CurrentMusic.PlayTrack("main_theme_day");
                 World.Time.Dawn += time =>
                 {
-                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_daytime, 0.5f);
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_daytime, 0.15f);
                     SoundManager.PlayMusic("main_theme_day");
                 };
 
                 World.Time.NewNight += time =>
                 {
-                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_nighttime, 0.5f);
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_nighttime, 0.15f);
                     SoundManager.PlayMusic("main_theme_night");
                 };
             }
