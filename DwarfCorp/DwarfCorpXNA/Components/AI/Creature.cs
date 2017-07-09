@@ -605,6 +605,21 @@ namespace DwarfCorp
             yield break;
         }
 
+        public void AcquireDisease(string disease)
+        {
+            bool hasDisease = false;
+            foreach (var buff in Buffs)
+            {
+                Disease diseaseBuff = buff as Disease;
+                if (diseaseBuff != null)
+                {
+                    hasDisease = hasDisease || diseaseBuff.Name == disease;
+                }
+            }
+            if (!hasDisease)
+                AddBuff(DiseaseLibrary.GetDisease(disease).Clone());
+        }
+
         /// <summary>
         /// Called whenever the creature takes damage.
         /// </summary>

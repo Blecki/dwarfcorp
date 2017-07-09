@@ -800,11 +800,11 @@ namespace DwarfCorp.GameStates
             var icon_moveObjects = new FlatToolTray.Icon()
             {
                 Text = "",
-                Tooltip = "Move objects",
+                Tooltip = "Move/Destroy objects",
                 Icon = new TileReference("mouse", 9),
                 OnClick = (sender, args) =>
                 {
-                    World.ShowToolPopup("Click objects to move them");
+                    World.ShowToolPopup("Left click objects to move them.\nRight click to destroy them.");
                     Master.ChangeTool(GameMaster.ToolMode.MoveObjects);
                 }
             };
