@@ -272,6 +272,15 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     thoughtsBuilder.Append(String.Format("{0} ({1})\n", thought.Description, thought.HappinessModifier));
                 }
+                var diseases = Employee.Creature.Buffs.OfType<Disease>();
+                if (diseases.Any())
+                {
+                    thoughtsBuilder.Append("Diseases: ");
+                }
+                foreach (var disease in diseases)
+                {
+                    thoughtsBuilder.Append(disease.Name + "\n");
+                }
                 Thoughts.Text = thoughtsBuilder.ToString();
 
                 if (Employee.Stats.CurrentClass.Levels.Count > Employee.Stats.LevelIndex + 1)

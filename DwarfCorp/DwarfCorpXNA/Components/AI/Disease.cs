@@ -17,12 +17,12 @@ namespace DwarfCorp
             {
                 new Disease()
                 {
-                    Type = Disease.HealType.Food,
+                    Type = Disease.HealType.Time,
                     Name = "Tuberculosis",
-                    Description = "The dwarf will move very slowly and get damaged until eating enough food",
+                    Description = "The dwarf will move very slowly and get damaged until healed.",
                     DamageEveryNSeconds = 20,
-                    DamagePerSecond = 1,
-                    EffectTime = new Timer(9999, true),
+                    DamagePerSecond = 0.1f,
+                    EffectTime = new Timer(120, true),
                     FoodValueUntilHealed = 100,
                     IsContagious = true,
                     LikelihoodOfSpread = 0.01f,
@@ -38,14 +38,56 @@ namespace DwarfCorp
                     },
                     Particles = "blood_particle",
                     ParticleTimer = new Timer(5.0f, false),
-                    SoundOnStart = ContentPaths.Audio.Oscar.sfx_ic_dwarf_tantrum_1
-                }
+                    SoundOnStart = ContentPaths.Audio.Oscar.sfx_ic_dwarf_tantrum_1,
+                    AcquiredRandomly = true,
+                    ChanceofRandomAcquisitionPerDay = 0.01f
+                },
+                new Disease()
+                {
+                    Type = Disease.HealType.Time,
+                    Name = "Rabies",
+                    Description = "The dwarf will move very slowly and get damaged until healed.",
+                    DamageEveryNSeconds = 20,
+                    DamagePerSecond = 0.1f,
+                    EffectTime = new Timer(120, true),
+                    FoodValueUntilHealed = 100,
+                    IsContagious = false,
+                    LikelihoodOfSpread = 0.1f,
+                    StatDamage = new CreatureStats.StatNums()
+                    {
+                        Charisma = -1,
+                        Constitution = -1,
+                        Dexterity = -3,
+                        Intelligence = -1,
+                        Size = 0,
+                        Strength = -3,
+                        Wisdom = -1
+                    },
+                    Particles = "blood_particle",
+                    ParticleTimer = new Timer(5.0f, false),
+                    SoundOnStart = ContentPaths.Audio.Oscar.sfx_ic_dwarf_tantrum_1,
+                    AcquiredRandomly = false,
+                },
             };
         }
 
         public static Disease GetDisease(string name)
         {
             return Diseases.Where(d => d.Name == name).FirstOrDefault();
+        }
+
+        public static void SpreadRandomDiseases(IEnumerable<CreatureAI> creatures)
+        {
+            foreach (Disease disease in Diseases.Where(disease => disease.AcquiredRandomly))
+            {
+                foreach (var creature in creatures)
+                {
+                    if (MathFunctions.RandEvent(disease.ChanceofRandomAcquisitionPerDay))
+                    {
+                        creature.Creature.AcquireDisease(disease.Name);
+                    }
+                }
+            }
         }
     }
     /// <summary>
@@ -61,6 +103,8 @@ namespace DwarfCorp
             Sleep
         }
 
+        public bool AcquiredRandomly { get; set; }
+        public float ChanceofRandomAcquisitionPerDay { get; set; }
         public HealType Type { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
@@ -76,7 +120,8 @@ namespace DwarfCorp
         public override void OnApply(Creature creature)
         {
             creature.Faction.World.Tutorial("disease");
-            creature.Faction.World.MakeAnnouncement(creature.Stats.FullName + " got " + Name + "!", creature.AI.ZoomToMe, ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
+            if (creature.Faction == creature.Faction.World.PlayerFaction)
+                creature.Faction.World.MakeAnnouncement(creature.Stats.FullName + " got " + Name + "!", creature.AI.ZoomToMe, ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
             creature.Stats.StatBuffs += StatDamage;
             base.OnApply(creature);
         }
@@ -84,7 +129,8 @@ namespace DwarfCorp
         public override void OnEnd(Creature creature)
         {
             creature.Stats.StatBuffs -= StatDamage;
-            creature.Faction.World.MakeAnnouncement(creature.Stats.FullName + " was cured of  " + Name + "!", creature.AI.ZoomToMe, ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
+            if (creature.Faction == creature.Faction.World.PlayerFaction)
+                creature.Faction.World.MakeAnnouncement(creature.Stats.FullName + " was cured of  " + Name + "!", creature.AI.ZoomToMe, ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
             base.OnEnd(creature);
         }
 
@@ -136,11 +182,11 @@ namespace DwarfCorp
 
         private void DoDamage(float dt, Creature creature)
         {
-            TotalDamage += dt*DamagePerSecond;
+            TotalDamage += dt;
 
             if (TotalDamage > DamageEveryNSeconds)
             {
-                creature.Damage(1, Health.DamageType.Poison);
+                creature.Damage(DamageEveryNSeconds * DamagePerSecond, Health.DamageType.Poison);
                 TotalDamage = 0;
             }
         }
@@ -164,7 +210,9 @@ namespace DwarfCorp
                 FoodValueUntilHealed = FoodValueUntilHealed,
                 Type = Type,
                 DamageEveryNSeconds = DamageEveryNSeconds,
-                Name = Name
+                Name = Name,
+                AcquiredRandomly = AcquiredRandomly,
+                ChanceofRandomAcquisitionPerDay = ChanceofRandomAcquisitionPerDay
             };
         }
     }

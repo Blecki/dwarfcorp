@@ -190,6 +190,7 @@ namespace DwarfCorp.GameStates
                 {
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_daytime, 0.15f);
                     SoundManager.PlayMusic("main_theme_day");
+                    DiseaseLibrary.SpreadRandomDiseases(World.PlayerFaction.Minions);
                 };
 
                 World.Time.NewNight += time =>
