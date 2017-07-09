@@ -96,13 +96,13 @@ namespace DwarfCorp
         public float Intelligence { get; set; }
         public float Size { get; set; }
 
-        public float BuffedDex { get { return Dexterity + StatBuffs.Dexterity; } }
-        public float BuffedCon { get { return Constitution + StatBuffs.Constitution; } }
-        public float BuffedStr { get { return Strength + StatBuffs.Strength; } }
-        public float BuffedWis { get { return Wisdom + StatBuffs.Wisdom; }}
-        public float BuffedChar { get { return Charisma + StatBuffs.Charisma; } }
-        public float BuffedInt { get { return Intelligence + StatBuffs.Intelligence; }}
-        public float BuffedSiz { get { return Size + StatBuffs.Size; } }
+        public float BuffedDex { get { return Math.Max(Dexterity + StatBuffs.Dexterity, 1); } }
+        public float BuffedCon { get { return Math.Max(Constitution + StatBuffs.Constitution, 1); } }
+        public float BuffedStr { get { return Math.Max(Strength + StatBuffs.Strength, 1); } }
+        public float BuffedWis { get { return Math.Max(Wisdom + StatBuffs.Wisdom, 1); }}
+        public float BuffedChar { get { return Math.Max(Charisma + StatBuffs.Charisma, 1); } }
+        public float BuffedInt { get { return Math.Max(Intelligence + StatBuffs.Intelligence, 1); }}
+        public float BuffedSiz { get { return Math.Max(Size + StatBuffs.Size, 1); } }
 
         public float MaxSpeed { get { return BuffedDex; } }
         public float MaxAcceleration { get { return MaxSpeed * 2.0f; }  }

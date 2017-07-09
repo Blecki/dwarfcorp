@@ -644,7 +644,14 @@ namespace DwarfCorp
                 if (deathParticleTrigger != null)
                     Manager.World.ParticleManager.Trigger(deathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
                 DrawLifeTimer.Reset();
+                var injury = DiseaseLibrary.GetRandomInjury();
+
+                if (MathFunctions.RandEvent(injury.LikelihoodOfSpread))
+                {
+                    AcquireDisease(injury.Name);
+                }
             }
+
 
             return damage;
         }

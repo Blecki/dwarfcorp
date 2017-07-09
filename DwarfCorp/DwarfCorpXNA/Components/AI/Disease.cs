@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -68,7 +69,75 @@ namespace DwarfCorp
                     SoundOnStart = ContentPaths.Audio.Oscar.sfx_ic_dwarf_tantrum_1,
                     AcquiredRandomly = false,
                 },
+                new Disease()
+                {
+                    Type = Disease.HealType.Time,
+                    Name = "Necrorot",
+                    Description = "The dwarf will move very slowly and get damaged until healed.",
+                    DamageEveryNSeconds = 20,
+                    DamagePerSecond = 0.5f,
+                    EffectTime = new Timer(120, true),
+                    FoodValueUntilHealed = 100,
+                    IsContagious = false,
+                    LikelihoodOfSpread = 0.1f,
+                    StatDamage = new CreatureStats.StatNums()
+                    {
+                        Charisma = -1,
+                        Constitution = -1,
+                        Dexterity = -3,
+                        Intelligence = -1,
+                        Size = 0,
+                        Strength = -3,
+                        Wisdom = -1
+                    },
+                    Particles = "blood_particle",
+                    ParticleTimer = new Timer(5.0f, false),
+                    SoundOnStart = ContentPaths.Audio.Oscar.sfx_ic_dwarf_tantrum_1,
+                    AcquiredRandomly = false,
+                },
             };
+
+            var bodyParts = TextGenerator.TextAtoms["$bodypart"];
+            string[] injuries =
+            {
+                "Blunt force trauma to the ", "A deep cut on the ", "A broken ", "A scraped ", "A dislocated ", "An injured ", "A bruised "
+            };
+            string[] locations =
+            {
+                "left ", "right "
+            };
+            foreach (var part in bodyParts.Terms)
+            {
+                foreach (var injury in injuries)
+                {
+                    foreach (var location in locations)
+                    {
+                        Diseases.Add(new Disease()
+                        {
+                            Name = injury + location + part,
+                            LikelihoodOfSpread = 0.05f,
+                            AcquiredRandomly = false,
+                            DamageEveryNSeconds = 99999,
+                            Description = "An injury.",
+                            StatDamage = new CreatureStats.StatNums()
+                            {
+                                Dexterity = -1,
+                                Constitution = -1
+                            },
+                            EffectTime = new Timer(240, false),
+                            Type = Disease.HealType.Time,
+                            Particles = "",
+                            ParticleTimer = new Timer(99999, false),
+                            IsInjury = true
+                        });   
+                    }
+                }
+            }
+        }
+
+        public static Disease GetRandomInjury()
+        {
+            return Datastructures.SelectRandom(Diseases.Where(disease => disease.IsInjury));
         }
 
         public static Disease GetDisease(string name)
@@ -117,6 +186,7 @@ namespace DwarfCorp
         private float LastHunger = 0.0f;
         private float TotalDamage = 0.0f;
         public int DamageEveryNSeconds { get; set; }
+        public bool IsInjury { get; set; }
         public override void OnApply(Creature creature)
         {
             creature.Faction.World.Tutorial("disease");
@@ -130,7 +200,7 @@ namespace DwarfCorp
         {
             creature.Stats.StatBuffs -= StatDamage;
             if (creature.Faction == creature.Faction.World.PlayerFaction)
-                creature.Faction.World.MakeAnnouncement(creature.Stats.FullName + " was cured of  " + Name + "!", creature.AI.ZoomToMe, ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
+                creature.Faction.World.MakeAnnouncement(creature.Stats.FullName + " recovered from  " + Name + "!", creature.AI.ZoomToMe, ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
             base.OnEnd(creature);
         }
 
@@ -212,7 +282,8 @@ namespace DwarfCorp
                 DamageEveryNSeconds = DamageEveryNSeconds,
                 Name = Name,
                 AcquiredRandomly = AcquiredRandomly,
-                ChanceofRandomAcquisitionPerDay = ChanceofRandomAcquisitionPerDay
+                ChanceofRandomAcquisitionPerDay = ChanceofRandomAcquisitionPerDay,
+                IsInjury = IsInjury
             };
         }
     }

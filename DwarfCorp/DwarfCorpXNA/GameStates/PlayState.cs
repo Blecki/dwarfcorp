@@ -199,7 +199,6 @@ namespace DwarfCorp.GameStates
                     SoundManager.PlayMusic("main_theme_night");
                 };
             }
-
             World.Unpause();
             AutoSaveTimer = new Timer(GameSettings.Default.AutoSaveTimeMinutes * 60.0f, false, Timer.TimerMode.Real);
             base.OnEnter();
