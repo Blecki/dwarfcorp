@@ -20,10 +20,10 @@ namespace DwarfCorp
 
         private static GlobalVoxelOffset[] ManhattanNeighbors2D = new GlobalVoxelOffset[]
         {
-            new GlobalVoxelOffset(1,0,0),
             new GlobalVoxelOffset(-1,0,0),
-            new GlobalVoxelOffset(0,0,1),
-            new GlobalVoxelOffset(0,0,-1)
+            new GlobalVoxelOffset(1,0,0),
+            new GlobalVoxelOffset(0,0,-1),
+            new GlobalVoxelOffset(0,0,1)
         };
 
         private static GlobalVoxelOffset[] AllNeighbors = new GlobalVoxelOffset[]
