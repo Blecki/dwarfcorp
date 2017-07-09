@@ -20,9 +20,9 @@ namespace DwarfCorp
 
         public GlobalVoxelCoordinate(GlobalChunkCoordinate C, LocalVoxelCoordinate L)
         {
-            X = (C.X * 16) + L.X;
-            Y = (C.Y * 64) + L.Y;
-            Z = (C.Z * 16) + L.Z;
+            X = (C.X * VoxelConstants.ChunkSizeX) + L.X;
+            Y = (C.Y * VoxelConstants.ChunkSizeY) + L.Y;
+            Z = (C.Z * VoxelConstants.ChunkSizeZ) + L.Z;
         }
 
         public static GlobalVoxelCoordinate operator +(GlobalVoxelCoordinate A, GlobalVoxelOffset B)
@@ -42,12 +42,18 @@ namespace DwarfCorp
 
         public GlobalChunkCoordinate GetGlobalChunkCoordinate()
         {
-            return new GlobalChunkCoordinate(X / 16, Y / 64, Z / 16);
+            return new GlobalChunkCoordinate(
+                X / VoxelConstants.ChunkSizeX, 
+                Y / VoxelConstants.ChunkSizeY, 
+                Z / VoxelConstants.ChunkSizeZ);
         }
 
         public LocalVoxelCoordinate GetLocalVoxelCoordinate()
         {
-            return new LocalVoxelCoordinate(X % 16, Y % 64, Z % 16);
+            return new LocalVoxelCoordinate(
+                X % VoxelConstants.ChunkSizeX, 
+                Y % VoxelConstants.ChunkSizeY, 
+                Z % VoxelConstants.ChunkSizeZ);
         }
 
         public static bool operator ==(GlobalVoxelCoordinate A, GlobalVoxelCoordinate B)
@@ -62,7 +68,7 @@ namespace DwarfCorp
 
         public override int GetHashCode()
         {
-            return (X << 16) + Z;
+            return (X << VoxelConstants.ChunkSizeX) + Z;
         }
 
         public override bool Equals(object obj)
@@ -107,7 +113,7 @@ namespace DwarfCorp
 
         public override int GetHashCode()
         {
-            return (X << 16) + Z;
+            return (X << VoxelConstants.ChunkSizeX) + Z;
         }
 
         public override bool Equals(object obj)
@@ -147,7 +153,7 @@ namespace DwarfCorp
 
         public override int GetHashCode()
         {
-            return (X << 16) + Z;
+            return (X << VoxelConstants.ChunkSizeX) + Z;
         }
 
         public override bool Equals(object obj)
@@ -187,7 +193,7 @@ namespace DwarfCorp
 
         public override int GetHashCode()
         {
-            return (X << 16) + Z;
+            return (X << VoxelConstants.ChunkSizeX) + Z;
         }
 
         public override bool Equals(object obj)
