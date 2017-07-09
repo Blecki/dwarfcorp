@@ -1,21 +1,22 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace DwarfCorp
 {
+/*
     public struct GlobalVoxelCoordinate : IEquatable<GlobalVoxelCoordinate>
     {
-        public Int32 X { get; }
-        public Int32 Y { get; }
-        public Int32 Z { get; }
+        public Int32 X { get; set; }
+        public Int32 Y { get; set; }
+        public Int32 Z { get; set; }
 
-        public GlobalVoxelCoordinate(Int32 X, Int32 Y, Int32 Z)
+        public GlobalVoxelCoordinate(Int32 x, Int32 y, Int32 z)
         {
-            this.X = X;
-            this.Y = Y;
-            this.Z = Z;
+            X = x;
+            Y = y;
+            Z = z;
         }
 
         public GlobalVoxelCoordinate(GlobalChunkCoordinate C, LocalVoxelCoordinate L)
@@ -85,9 +86,9 @@ namespace DwarfCorp
 
     public struct GlobalVoxelOffset : IEquatable<GlobalVoxelOffset>
     {
-        public Int32 X { get; }
-        public Int32 Y { get; }
-        public Int32 Z { get; }
+        public Int32 X { get; set; }
+        public Int32 Y { get; set; }
+        public Int32 Z { get; set; }
 
         public GlobalVoxelOffset(Int32 X, Int32 Y, Int32 Z)
         {
@@ -130,9 +131,9 @@ namespace DwarfCorp
 
     public struct GlobalChunkCoordinate : IEquatable<GlobalChunkCoordinate>
     {
-        public Int32 X { get; }
-        public Int32 Y { get; }
-        public Int32 Z { get; }
+        public Int32 X { get; set; }
+        public Int32 Y { get; set; }
+        public Int32 Z { get; set; }
 
         public GlobalChunkCoordinate(Int32 X, Int32 Y, Int32 Z)
         {
@@ -170,9 +171,9 @@ namespace DwarfCorp
 
     public struct LocalVoxelCoordinate : IEquatable<LocalVoxelCoordinate>
     {
-        public Int32 X { get; }
-        public Int32 Y { get; }
-        public Int32 Z { get; }
+        public Int32 X { get; set; }
+        public Int32 Y { get; set; }
+        public Int32 Z { get; set; }
 
         public LocalVoxelCoordinate(Int32 X, Int32 Y, Int32 Z)
         {
@@ -207,4 +208,5 @@ namespace DwarfCorp
             return this == other;
         }
     }
+ */
 }
