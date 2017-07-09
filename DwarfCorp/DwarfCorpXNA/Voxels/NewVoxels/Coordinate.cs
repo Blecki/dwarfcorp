@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     public struct GlobalVoxelCoordinate : IEquatable<GlobalVoxelCoordinate>
     {
-        public Int32 X { get; }
-        public Int32 Y { get; }
-        public Int32 Z { get; }
+        public readonly Int32 X;
+        public readonly Int32 Y;
+        public readonly Int32 Z;
 
+        [JsonConstructor]
         public GlobalVoxelCoordinate(Int32 X, Int32 Y, Int32 Z)
         {
             this.X = X;
@@ -85,10 +87,11 @@ namespace DwarfCorp
 
     public struct GlobalVoxelOffset : IEquatable<GlobalVoxelOffset>
     {
-        public Int32 X { get; }
-        public Int32 Y { get; }
-        public Int32 Z { get; }
+        public readonly Int32 X;
+        public readonly Int32 Y;
+        public readonly Int32 Z;
 
+        [JsonConstructor]
         public GlobalVoxelOffset(Int32 X, Int32 Y, Int32 Z)
         {
             this.X = X;
@@ -130,10 +133,11 @@ namespace DwarfCorp
 
     public struct GlobalChunkCoordinate : IEquatable<GlobalChunkCoordinate>
     {
-        public Int32 X { get; }
-        public Int32 Y { get; }
-        public Int32 Z { get; }
+        public readonly Int32 X;
+        public readonly Int32 Y;
+        public readonly Int32 Z;
 
+        [JsonConstructor]
         public GlobalChunkCoordinate(Int32 X, Int32 Y, Int32 Z)
         {
             this.X = X;
@@ -170,10 +174,11 @@ namespace DwarfCorp
 
     public struct LocalVoxelCoordinate : IEquatable<LocalVoxelCoordinate>
     {
-        public Int32 X { get; }
-        public Int32 Y { get; }
-        public Int32 Z { get; }
+        public readonly Int32 X;
+        public readonly Int32 Y;
+        public readonly Int32 Z;
 
+        [JsonConstructor]
         public LocalVoxelCoordinate(Int32 X, Int32 Y, Int32 Z)
         {
             this.X = X;
