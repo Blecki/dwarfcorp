@@ -227,15 +227,15 @@ namespace DwarfCorp
 
         public void OrientToWalls()
         {
-            Voxel curr = new Voxel();
-            Voxel[] neighbors = new Voxel[4];
+            VoxelHandle curr = new VoxelHandle();
+            VoxelHandle[] neighbors = new VoxelHandle[4];
             Vector3 pos = LocalTransform.Translation;
             if (Manager.World.ChunkManager.ChunkData.GetVoxel(pos, ref curr))
             {
                 
                 curr.Chunk.Get2DManhattanNeighbors(neighbors, (int)curr.GridPosition.X, (int)curr.GridPosition.Y, (int)curr.GridPosition.Z);
 
-                foreach (Voxel neighbor in neighbors)
+                foreach (VoxelHandle neighbor in neighbors)
                 {
                     if (neighbor != null && !neighbor.IsEmpty)
                     {

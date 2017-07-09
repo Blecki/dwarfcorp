@@ -49,7 +49,7 @@ namespace DwarfCorp
 
         public Zone Stockpile { get { return GetStockpile(); } set { SetStockpile(value);} }
 
-        public Voxel Voxel { get { return GetVoxel(); } set { SetVoxel(value);} }
+        public VoxelHandle Voxel { get { return GetVoxel(); } set { SetVoxel(value);} }
 
         public ResourceAmount Item { get; set; }
 
@@ -62,13 +62,13 @@ namespace DwarfCorp
             Item = itemToStock;
         }
 
-        public Voxel GetVoxel()
+        public VoxelHandle GetVoxel()
         {
-            return Agent.Blackboard.GetData<Voxel>(VoxelName);
+            return Agent.Blackboard.GetData<VoxelHandle>(VoxelName);
         }
 
 
-        public void SetVoxel(Voxel value)
+        public void SetVoxel(VoxelHandle value)
         {
             Agent.Blackboard.SetData(VoxelName, value);
         }
@@ -162,7 +162,7 @@ namespace DwarfCorp
                     continue;
                 }
 
-                Voxel v = s.GetNearestVoxel(Creature.Physics.GlobalTransform.Translation);
+                VoxelHandle v = s.GetNearestVoxel(Creature.Physics.GlobalTransform.Translation);
 
                 if(v.IsEmpty)
                 {

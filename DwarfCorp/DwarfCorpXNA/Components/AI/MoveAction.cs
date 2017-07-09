@@ -13,7 +13,7 @@ namespace DwarfCorp
     public struct MoveAction
     {
         /// <summary> The destination voxel of the motion </summary>
-        public Voxel DestinationVoxel { get; set; }
+        public VoxelHandle DestinationVoxel { get; set; }
         /// <summary> The type of motion applied to get to the voxel </summary>
         public MoveType MoveType { get; set; }
         /// <summary> The offset between the start and destination </summary>
@@ -24,8 +24,8 @@ namespace DwarfCorp
         /// <summary>
         /// For climbing, this is the voxel the dwarf climbed on.
         /// </summary>
-        public Voxel ActionVoxel { get; set; }
+        public VoxelHandle ActionVoxel { get; set; }
 
-        public Voxel SourceVoxel { get; set; }
+        public VoxelHandle SourceVoxel { get; set; }
     }
 }

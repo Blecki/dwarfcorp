@@ -136,12 +136,12 @@ namespace DwarfCorp
             RoomData = TrainingRoomData;
         }
 
-        public TrainingRoom(bool designation, IEnumerable<Voxel> designations, WorldManager chunks, Faction faction) :
+        public TrainingRoom(bool designation, IEnumerable<VoxelHandle> designations, WorldManager chunks, Faction faction) :
             base(designation, designations, TrainingRoomData, chunks, faction)
         {
         }
 
-        public TrainingRoom(IEnumerable<Voxel> voxels, WorldManager chunks, Faction faction) :
+        public TrainingRoom(IEnumerable<VoxelHandle> voxels, WorldManager chunks, Faction faction) :
             base(voxels, TrainingRoomData, chunks, faction)
         {
             OnBuilt();

@@ -42,9 +42,9 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class CreateCraftItemAct : CreatureAct
     {
-        public Voxel Voxel { get; set; }
+        public VoxelHandle Voxel { get; set; }
         public string ItemType { get; set; }
-        public CreateCraftItemAct(Voxel voxel, CreatureAI agent, string itemType) :
+        public CreateCraftItemAct(VoxelHandle voxel, CreatureAI agent, string itemType) :
             base(agent)
         {
             Agent = agent;

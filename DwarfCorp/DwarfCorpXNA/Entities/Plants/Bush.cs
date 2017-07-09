@@ -57,7 +57,7 @@ namespace DwarfCorp
             AddChild(new Health(componentManager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
             AddChild(new Flammable(componentManager, "Flames"));
 
-            Voxel voxelUnder = new Voxel();
+            VoxelHandle voxelUnder = new VoxelHandle();
 
             if (componentManager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
                 AddChild(new VoxelListener(componentManager, componentManager.World.ChunkManager, voxelUnder));
@@ -100,7 +100,7 @@ namespace DwarfCorp
             AddChild(new Health(componentManager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
             AddChild(new Flammable(componentManager, "Flames"));
 
-            Voxel voxelUnder = new Voxel();
+            VoxelHandle voxelUnder = new VoxelHandle();
 
             if (componentManager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
                 AddChild(new VoxelListener(componentManager, componentManager.World.ChunkManager, voxelUnder));

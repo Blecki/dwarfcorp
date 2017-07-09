@@ -78,7 +78,7 @@ namespace DwarfCorp
             }) as ParticleTrigger;
 
             DamageAmount = 200;
-            Voxel voxUnder = new Voxel();
+            VoxelHandle voxUnder = new VoxelHandle();
             Manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(pos, ref voxUnder);
             VoxListener = AddChild(new VoxelListener(Manager, Manager.World.ChunkManager, voxUnder)) as VoxelListener;
             Sprite = AddChild(new Sprite(Manager, "Sprite", Matrix.Identity, new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap), false)) as Sprite;

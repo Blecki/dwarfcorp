@@ -253,7 +253,7 @@ namespace DwarfCorp
             while(true)
             {
                 // Get the voxel stored in the agent's blackboard.
-                var vox = agent.AI.Blackboard.GetData<Voxel>(voxel);
+                var vox = agent.AI.Blackboard.GetData<VoxelHandle>(voxel);
 
                 // Somehow, there wasn't a voxel to mine.
                 if(vox == null)

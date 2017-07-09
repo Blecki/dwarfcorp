@@ -78,7 +78,7 @@ namespace DwarfCorp
             ResourcesPerVoxel = 1;
         }
 
-        public Graveyard(Faction faction, bool designation, IEnumerable<Voxel> designations, WorldManager world) :
+        public Graveyard(Faction faction, bool designation, IEnumerable<VoxelHandle> designations, WorldManager world) :
             base(faction, designation, designations, GraveyardData, world)
         {
             WhitelistResources = new List<Resource.ResourceTags>()
@@ -91,7 +91,7 @@ namespace DwarfCorp
             ResourcesPerVoxel = 1;
         }
 
-        public Graveyard(Faction faction, IEnumerable<Voxel> voxels, WorldManager world) :
+        public Graveyard(Faction faction, IEnumerable<VoxelHandle> voxels, WorldManager world) :
             base(faction, voxels, GraveyardData, world)
         {
             WhitelistResources = new List<Resource.ResourceTags>()

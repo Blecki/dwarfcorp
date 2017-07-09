@@ -119,12 +119,12 @@ namespace DwarfCorp
             }
         }
 
-        public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }
 
-        public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }
@@ -148,7 +148,7 @@ namespace DwarfCorp
 
             if (SelectedBody != null)
             {
-                Voxel voxelUnderMouse = Player.VoxSelector.VoxelUnderMouse;
+                var voxelUnderMouse = Player.VoxSelector.VoxelUnderMouse;
                 if (voxelUnderMouse != null && voxelUnderMouse.IsEmpty)
                 {
                     SelectedBody.LocalPosition = voxelUnderMouse.Position + Vector3.One * 0.5f;

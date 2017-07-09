@@ -98,7 +98,7 @@ namespace DwarfCorp
         {
             public Rectangle OccupiedSpace;
             public FurnitureRotation Rotation;
-            public Voxel Vox;
+            public VoxelHandle Vox;
         };
 
         public static bool FurnitureIntersects(PlacedFurniture a, PlacedFurniture B)
@@ -111,7 +111,7 @@ namespace DwarfCorp
             return b.Any(p => FurnitureIntersects(a, p));
         }
       
-        public static Room CreateRoom(Faction faction, string name, List<Voxel> designations, bool blueprint, WorldManager world)
+        public static Room CreateRoom(Faction faction, string name, List<VoxelHandle> designations, bool blueprint, WorldManager world)
         {
             // TODO(mklingen): omg get rid of this horrible legacy function!
             if (name == BalloonPort.BalloonPortName)
@@ -145,7 +145,7 @@ namespace DwarfCorp
             else if (name == Stockpile.StockpileName)
             {
                 Stockpile toBuild = new Stockpile(faction, world);
-                foreach (Voxel voxel in designations)
+                foreach (VoxelHandle voxel in designations)
                 {
                     toBuild.AddVoxel(voxel);
                 }
@@ -189,7 +189,7 @@ namespace DwarfCorp
             }
         }
 
-        public static List<Body> GenerateRoomComponentsTemplate(RoomData roomData, List<Voxel> voxels , ComponentManager componentManager, 
+        public static List<Body> GenerateRoomComponentsTemplate(RoomData roomData, List<VoxelHandle> voxels , ComponentManager componentManager, 
             Microsoft.Xna.Framework.Content.ContentManager content, GraphicsDevice graphics)
         {
             List<Body> components = new List<Body>();

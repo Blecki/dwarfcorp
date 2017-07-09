@@ -171,8 +171,8 @@ namespace DwarfCorp
 
             HashSet<VoxelChunk> affectedChunks = new HashSet<VoxelChunk>();
             // Next, create the balloon port by deciding which voxels to fill.
-            List<Voxel> balloonPortDesignations = new List<Voxel>();
-            List<Voxel> treasuryDesignations = new List<Voxel>();
+            List<VoxelHandle> balloonPortDesignations = new List<VoxelHandle>();
+            List<VoxelHandle> treasuryDesignations = new List<VoxelHandle>();
             for (int dx = -size; dx <= size; dx++)
             {
                 for (int dz = -size; dz <= size; dz++)
@@ -195,7 +195,7 @@ namespace DwarfCorp
 
                     for (int y = averageHeight; y < h; y++)
                     {
-                        Voxel v = chunk.MakeVoxel((int)gridPos.X, y, (int)gridPos.Z);
+                        VoxelHandle v = chunk.MakeVoxel((int)gridPos.X, y, (int)gridPos.Z);
                         v.Type = VoxelLibrary.GetVoxelType(0);
                         chunk.Manager.ChunkData.Reveal(v);
                         chunk.Data.Water[v.Index].WaterLevel = 0;
@@ -237,7 +237,7 @@ namespace DwarfCorp
                     // Fill from the top height down to the bottom.
                     for (int y = h - 1; y < averageHeight; y++)
                     {
-                        Voxel v = chunk.MakeVoxel((int)gridPos.X, y, (int)gridPos.Z);
+                        VoxelHandle v = chunk.MakeVoxel((int)gridPos.X, y, (int)gridPos.Z);
                         v.Type = VoxelLibrary.GetVoxelType("Scaffold");
                         chunk.Data.Water[v.Index].WaterLevel = 0;
                         v.Chunk = chunk;
@@ -257,7 +257,7 @@ namespace DwarfCorp
 
                         if (isSide)
                         {
-                            Voxel ladderVox = new Voxel();
+                            VoxelHandle ladderVox = new VoxelHandle();
 
                             Vector3 center = new Vector3(worldPos.X, y, worldPos.Z) + offset + Vector3.One * .5f;
                             if (chunk.Manager.ChunkData.GetVoxel(center, ref ladderVox) && ladderVox.IsEmpty)

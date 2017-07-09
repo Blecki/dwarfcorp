@@ -52,12 +52,12 @@ namespace DwarfCorp
         public float GuardDesignationGlowRate { get; set; }
         public Color UnreachableColor { get; set; }
 
-        public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
             List<Task> assignedTasks = new List<Task>();
 
 
-            foreach (Voxel v in from r in voxels
+            foreach (VoxelHandle v in from r in voxels
                                 where r != null
                                 select r)
             {
@@ -95,7 +95,7 @@ namespace DwarfCorp
 
         }
 
-        public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }
@@ -139,7 +139,7 @@ namespace DwarfCorp
         {
             foreach (BuildOrder d in Player.Faction.GuardDesignations)
             {
-                Voxel v = d.Vox;
+                VoxelHandle v = d.Vox;
 
                 if (v.IsEmpty)
                 {

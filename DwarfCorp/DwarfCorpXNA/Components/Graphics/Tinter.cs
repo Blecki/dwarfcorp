@@ -48,7 +48,7 @@ namespace DwarfCorp
         public Color Tint { get; set; }
         public float TintChangeRate { get; set; }
         //public Timer LightingTimer { get; set; }
-        public Voxel VoxelUnder = null;
+        public VoxelHandle VoxelUnder = null;
         public bool ColorAppplied = false;
         private bool entityLighting = GameSettings.Default.EntityLighting;
         public Color VertexColorTint { get; set; }
@@ -67,7 +67,7 @@ namespace DwarfCorp
             //LightingTimer = new Timer(0.2f, true);
             //StartTimer = new Timer(0.5f, true);
             TintChangeRate = 1.0f;
-            VoxelUnder = new Voxel();
+            VoxelUnder = new VoxelHandle();
             VertexColorTint = Color.White;
         }
 

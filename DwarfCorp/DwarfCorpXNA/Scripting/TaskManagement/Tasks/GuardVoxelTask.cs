@@ -44,9 +44,9 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class GuardVoxelTask : Task
     {
-        public Voxel VoxelToGuard = null;
+        public VoxelHandle VoxelToGuard = null;
 
-        public GuardVoxelTask(Voxel vox)
+        public GuardVoxelTask(VoxelHandle vox)
         {
             Name = "Guard DestinationVoxel: " + vox.Position;
             VoxelToGuard = vox;

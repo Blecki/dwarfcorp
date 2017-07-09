@@ -105,13 +105,13 @@ namespace DwarfCorp
         }
 
 
-        public bool IsInRoom(Voxel v)
+        public bool IsInRoom(VoxelHandle v)
         {
-            Voxel vRef = v;
+            VoxelHandle vRef = v;
             return DesignatedRooms.Any(r => r.ContainsVoxel(vRef)) || Faction.IsInStockpile(v);
         }
 
-        public bool IsBuildDesignation(Voxel v)
+        public bool IsBuildDesignation(VoxelHandle v)
         {
             return BuildDesignations.SelectMany(room => room.VoxelOrders).Any(buildDesignation => buildDesignation.Voxel.Equals(v));
         }
@@ -129,12 +129,12 @@ namespace DwarfCorp
                 select room.VoxelOrders[0]).FirstOrDefault();
         }
 
-        public BuildVoxelOrder GetBuildDesignation(Voxel v)
+        public BuildVoxelOrder GetBuildDesignation(VoxelHandle v)
         {
             return BuildDesignations.SelectMany(room => room.VoxelOrders).FirstOrDefault(buildDesignation => (buildDesignation.Voxel.Position - v.Position).LengthSquared() < 0.1f);
         }
 
-        public BuildRoomOrder GetMostLikelyDesignation(Voxel v)
+        public BuildRoomOrder GetMostLikelyDesignation(VoxelHandle v)
         {
             BoundingBox larger = new BoundingBox(v.GetBoundingBox().Min - new Vector3(0.5f, 0.5f, 0.5f), v.GetBoundingBox().Max + new Vector3(0.5f, 0.5f, 0.5f));
 
@@ -144,9 +144,9 @@ namespace DwarfCorp
                 select room).FirstOrDefault();
         }
 
-        public Room GetMostLikelyRoom(Voxel v)
+        public Room GetMostLikelyRoom(VoxelHandle v)
         {
-            Voxel vRef = v;
+            VoxelHandle vRef = v;
             foreach(Room r in DesignatedRooms.Where(r => r.ContainsVoxel(vRef)))
             {
                 return r;
@@ -220,10 +220,10 @@ namespace DwarfCorp
             }
         }
 
-        public void OnVoxelDestroyed(Voxel voxDestroyed)
+        public void OnVoxelDestroyed(VoxelHandle voxDestroyed)
         {
             List<Room> toDestroy = new List<Room>();
-            Voxel vRef = voxDestroyed;
+            VoxelHandle vRef = voxDestroyed;
 
             lock (DesignatedRooms)
             {
@@ -256,12 +256,12 @@ namespace DwarfCorp
             World.SetMouse(World.MousePointer);
         }
 
-        private void BuildNewVoxels(IEnumerable<Voxel> refs)
+        private void BuildNewVoxels(IEnumerable<VoxelHandle> refs)
         {
             BuildRoomOrder order = null;
-            IEnumerable<Voxel> designations = refs as IList<Voxel> ?? refs.ToList();
-            IEnumerable<Voxel> nonEmpty = designations.Select(r => r).Where(v => !v.IsEmpty);
-            foreach(Voxel v in nonEmpty)
+            IEnumerable<VoxelHandle> designations = refs as IList<VoxelHandle> ?? refs.ToList();
+            IEnumerable<VoxelHandle> nonEmpty = designations.Select(r => r).Where(v => !v.IsEmpty);
+            foreach(VoxelHandle v in nonEmpty)
             {
                 if(IsBuildDesignation(v) || IsInRoom(v))
                 {
@@ -327,7 +327,7 @@ namespace DwarfCorp
                 sprite.VertexColorTint = color;
         }
 
-        public void OnVoxelsDragged(List<Voxel> refs, InputManager.MouseButton button)
+        public void OnVoxelsDragged(List<VoxelHandle> refs, InputManager.MouseButton button)
         {
             if (Faction == null)
             {
@@ -400,7 +400,7 @@ namespace DwarfCorp
             }
             else
             {
-                foreach (Voxel v in refs.Where(v => !v.IsEmpty))
+                foreach (VoxelHandle v in refs.Where(v => !v.IsEmpty))
                 {
                     if (IsBuildDesignation(v))
                     {
@@ -429,7 +429,7 @@ namespace DwarfCorp
             }
         }
 
-        public void VoxelsSelected(List<Voxel> refs, InputManager.MouseButton button)
+        public void VoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
         {
             foreach (BuildRoomOrder order in BuildDesignations)
             {
@@ -471,9 +471,9 @@ namespace DwarfCorp
             }
         }
 
-        private void DeleteVoxels(IEnumerable<Voxel> refs )
+        private void DeleteVoxels(IEnumerable<VoxelHandle> refs )
         {
-            foreach(Voxel v in refs.Select(r => r).Where(v => !v.IsEmpty))
+            foreach(VoxelHandle v in refs.Select(r => r).Where(v => !v.IsEmpty))
             {
                 if(IsBuildDesignation(v))
                 {

@@ -1,4 +1,4 @@
-﻿// GoToZoneAct.cs
+// DestinationVoxel.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -33,62 +33,43 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
+using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// A creature takes an item to an open stockpile and leaves it there.
-    /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
-    public class GoToZoneAct : CompoundCreatureAct
+    public struct BoxTransition
     {
-        public Zone Destination { get; set; }
+        public TransitionTexture Front;
+        public TransitionTexture Right;
+        public TransitionTexture Left;
+        public TransitionTexture Back;
+        public TransitionTexture Top;
+        public TransitionTexture Bottom;
 
-        public GoToZoneAct()
+        public TransitionTexture GetTexture(BoxFace face)
         {
-
-        }
-
-        public GoToZoneAct(CreatureAI agent, Zone zone) :
-            base(agent)
-        {
-            Tree = null;
-            Name = "Goto zone : " + zone.ID;
-            Destination = zone;
-        }
-
-        public override void Initialize()
-        {
-            base.Initialize();
-        }
-
-
-
-
-        public override IEnumerable<Status> Run()
-        {
-            if (Tree == null)
+            switch (face)
             {
-                VoxelHandle voxel = Destination.GetNearestVoxel(Agent.Position);
-
-                Tree = new GoToVoxelAct(voxel, PlanAct.PlanType.Adjacent, Agent);
-
-                Tree.Initialize();
+                case BoxFace.Top:
+                    return Top;
+                case BoxFace.Bottom:
+                    return Bottom;
+                case BoxFace.Back:
+                    return Back;
+                case BoxFace.Left:
+                    return Left;
+                case BoxFace.Right:
+                    return Right;
+                case BoxFace.Front:
+                    return Front;
             }
-
-            if (Tree == null)
-            {
-                yield return Status.Fail;
-            }
-            else
-            {
-                foreach (Status s in base.Run())
-                {
-                    yield return s;
-                }
-            }
+            return TransitionTexture.None;
         }
     }
-
 }

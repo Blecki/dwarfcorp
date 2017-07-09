@@ -63,7 +63,7 @@ namespace DwarfCorp
             Name = adult.Name + " seedling";
             AddChild(new Health(Manager, "HP", 1.0f, 0.0f, 1.0f));
             AddChild(new Flammable(Manager, "Flames"));
-            Voxel voxelUnder = new Voxel();
+            VoxelHandle voxelUnder = new VoxelHandle();
 
             if (Manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
                 AddChild(new VoxelListener(Manager, Manager.World.ChunkManager, voxelUnder));
@@ -190,7 +190,7 @@ namespace DwarfCorp
             Tags.Add("EmitsWood");
 
             //new MinimapIcon(this, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 1, 0));
-            Voxel voxelUnder = new Voxel();
+            VoxelHandle voxelUnder = new VoxelHandle();
 
             if (Manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
                 AddChild(new VoxelListener(componentManager, componentManager.World.ChunkManager, voxelUnder));

@@ -337,10 +337,10 @@ namespace DwarfCorp
         /// </summary>
         public void CheckNeighborhood(ChunkManager chunks, float dt)
         {
-            var voxelBelow = new Voxel();
+            var voxelBelow = new VoxelHandle();
             bool belowExists = chunks.ChunkData.GetVoxel(Physics.GlobalTransform.Translation - Vector3.UnitY * 0.8f,
                 ref voxelBelow);
-            var voxelAbove = new Voxel();
+            var voxelAbove = new VoxelHandle();
             bool aboveExists = chunks.ChunkData.GetVoxel(Physics.GlobalTransform.Translation + Vector3.UnitY,
                 ref voxelAbove);
 

@@ -107,7 +107,7 @@ namespace DwarfCorp
         }
 
 
-        public bool Verify(List<Voxel> refs, Faction faction, WorldManager world)
+        public bool Verify(List<VoxelHandle> refs, Faction faction, WorldManager world)
         {
             if (refs.Count == 0)
             {
@@ -138,7 +138,7 @@ namespace DwarfCorp
 
             int height = -1;
             bool anyEmpty = false;
-            foreach (Voxel voxel in refs)
+            foreach (VoxelHandle voxel in refs)
             {
 
                 if (voxel.IsEmpty)

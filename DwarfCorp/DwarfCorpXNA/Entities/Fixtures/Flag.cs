@@ -70,7 +70,7 @@ namespace DwarfCorp
             });
             Tags.Add("Flag");
 
-            Voxel voxelUnder = new Voxel();
+            VoxelHandle voxelUnder = new VoxelHandle();
 
             if (Manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
                 AddChild(new VoxelListener(Manager, Manager.World.ChunkManager, voxelUnder));

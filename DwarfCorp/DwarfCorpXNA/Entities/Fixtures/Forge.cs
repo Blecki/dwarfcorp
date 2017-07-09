@@ -75,7 +75,7 @@ namespace DwarfCorp
             Tags.Add("Forge");
 
 
-            Voxel voxelUnder = new Voxel();
+            VoxelHandle voxelUnder = new VoxelHandle();
 
             if (manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
                 AddChild(new VoxelListener(manager, manager.World.ChunkManager, voxelUnder));

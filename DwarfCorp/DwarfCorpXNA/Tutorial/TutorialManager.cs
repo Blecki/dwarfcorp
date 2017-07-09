@@ -58,6 +58,7 @@ namespace DwarfCorp.Tutorial
                 if (TutorialVisible && ExistingTutorial != null)
                 {
                     ExistingTutorial.Close();
+                    ExistingTutorial = null;
                 }
 
                 var entry = Entries[PendingTutorial];
@@ -79,8 +80,9 @@ namespace DwarfCorp.Tutorial
                         sender.Rect.Y = 64;
                     }
                 });
+
+                Gui.RootItem.AddChild(popup);
                 ExistingTutorial = popup;
-                Gui.ShowDialog(popup);
                 PendingTutorial = null;
 
                 if (!String.IsNullOrEmpty(entry.GuiHilite))

@@ -74,7 +74,7 @@ namespace DwarfCorp
         }
 
 
-        public VoxelListener(ComponentManager manager, ChunkManager chunkManager, Voxel vref) :
+        public VoxelListener(ComponentManager manager, ChunkManager chunkManager, VoxelHandle vref) :
             base("VoxelListener", manager)
         {
             Chunk = vref.Chunk;
@@ -152,7 +152,7 @@ namespace DwarfCorp
         }
 
 
-        public ExploredListener(ComponentManager manager, ChunkManager chunkManager, Voxel vref) :
+        public ExploredListener(ComponentManager manager, ChunkManager chunkManager, VoxelHandle vref) :
             base("ExploredListener", manager)
         {
             Chunk = vref.Chunk;

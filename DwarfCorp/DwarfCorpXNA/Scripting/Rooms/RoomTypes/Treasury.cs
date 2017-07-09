@@ -88,8 +88,7 @@ namespace DwarfCorp
             Faction = null;
         }
 
-
-        public Treasury(Faction faction, IEnumerable<Voxel> voxels, WorldManager world) :
+        public Treasury(Faction faction, IEnumerable<VoxelHandle> voxels, WorldManager world) :
             base(voxels, RoomLibrary.GetData(TreasuryName), world, faction)
         {
             Coins = new List<Body>();
@@ -103,7 +102,7 @@ namespace DwarfCorp
             Faction = faction;
         }
 
-        public Treasury(Faction faction, bool designation, IEnumerable<Voxel> designations, RoomData data, WorldManager world) :
+        public Treasury(Faction faction, bool designation, IEnumerable<VoxelHandle> designations, RoomData data, WorldManager world) :
             base(designation, designations, data, world, faction)
         {
             Coins = new List<Body>();

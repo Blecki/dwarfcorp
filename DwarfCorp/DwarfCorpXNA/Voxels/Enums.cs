@@ -1,4 +1,4 @@
-﻿// GoToZoneAct.cs
+// DestinationVoxel.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -33,62 +33,73 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
+using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace DwarfCorp
 {
+
     /// <summary>
-    /// A creature takes an item to an open stockpile and leaves it there.
+    /// Specifies the location of a vertex on a voxel.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
-    public class GoToZoneAct : CompoundCreatureAct
+    public enum VoxelVertex
     {
-        public Zone Destination { get; set; }
-
-        public GoToZoneAct()
-        {
-
-        }
-
-        public GoToZoneAct(CreatureAI agent, Zone zone) :
-            base(agent)
-        {
-            Tree = null;
-            Name = "Goto zone : " + zone.ID;
-            Destination = zone;
-        }
-
-        public override void Initialize()
-        {
-            base.Initialize();
-        }
-
-
-
-
-        public override IEnumerable<Status> Run()
-        {
-            if (Tree == null)
-            {
-                VoxelHandle voxel = Destination.GetNearestVoxel(Agent.Position);
-
-                Tree = new GoToVoxelAct(voxel, PlanAct.PlanType.Adjacent, Agent);
-
-                Tree.Initialize();
-            }
-
-            if (Tree == null)
-            {
-                yield return Status.Fail;
-            }
-            else
-            {
-                foreach (Status s in base.Run())
-                {
-                    yield return s;
-                }
-            }
-        }
+        FrontTopLeft = 0,
+        FrontTopRight,
+        FrontBottomLeft,
+        FrontBottomRight,
+        BackTopLeft,
+        BackTopRight,
+        BackBottomLeft,
+        BackBottomRight,
+        Count
     }
 
+    /// <summary>
+    /// Specifies how a voxel is to be sloped.
+    /// </summary>
+    [Flags]
+    public enum RampType
+    {
+        None = 0x0,
+        TopFrontLeft = 0x1,
+        TopFrontRight = 0x2,
+        TopBackLeft = 0x4,
+        TopBackRight = 0x8,
+        Front = TopFrontLeft | TopFrontRight,
+        Back = TopBackLeft | TopBackRight,
+        Left = TopBackLeft | TopFrontLeft,
+        Right = TopBackRight | TopFrontRight,
+        All = TopFrontLeft | TopFrontRight | TopBackLeft | TopBackRight
+    }
+
+
+    /// <summary> Determines a transition texture type. Each phrase
+    /// (front, left, back, right) defines whether or not a tile of the same type is
+    /// on the given face</summary>
+    [Flags]
+    public enum TransitionTexture
+    {
+        None = 0,
+        Front = 1,
+        Right = 2,
+        FrontRight = 3,
+        Back = 4,
+        FrontBack = 5,
+        BackRight = 6,
+        FrontBackRight = 7,
+        Left = 8,
+        FrontLeft = 9,
+        LeftRight = 10,
+        LeftFrontRight = 11,
+        LeftBack = 12,
+        FrontBackLeft = 13,
+        LeftBackRight = 14,
+        All = 15
+    }
 }

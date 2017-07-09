@@ -88,7 +88,7 @@ namespace DwarfCorp
 
         private bool jumpHeld = false;
         /// <summary> The current path of voxels the AI is following </summary>
-        public List<Voxel> CurrentPath { get; set; }
+        public List<VoxelHandle> CurrentPath { get; set; }
 
         private Creature _cachedCreature = null;
         [JsonIgnore] public Creature Creature
@@ -516,7 +516,7 @@ namespace DwarfCorp
             // With a small probability, the creature will drown if its under water.
             if (MathFunctions.RandEvent(0.01f))
             {
-                Voxel above = Physics.CurrentVoxel.GetVoxelAbove();
+                VoxelHandle above = Physics.CurrentVoxel.GetVoxelAbove();
                 bool shouldDrown = above != null && (!above.IsEmpty || above.WaterLevel > 0);
                 if (Physics.IsInLiquid && (!Movement.CanSwim || shouldDrown))
                 {
@@ -573,7 +573,7 @@ namespace DwarfCorp
         public IEnumerable<Act.Status> AvoidFalling()
         {
             var above = Physics.CurrentVoxel.GetVoxelAbove();
-            foreach (Voxel vox in Physics.Neighbors)
+            foreach (VoxelHandle vox in Physics.Neighbors)
             {
                 if (vox == null) continue;
                 if (vox.IsEmpty) continue;
@@ -587,7 +587,7 @@ namespace DwarfCorp
                         continue;
                     }
                 }
-                Voxel voxAbove = vox.GetVoxelAbove();
+                VoxelHandle voxAbove = vox.GetVoxelAbove();
                 if (!voxAbove.IsEmpty) continue;
                 Vector3 target = voxAbove.Position + new Vector3(0.5f, 0.5f, 0.5f);
                 Physics.Face(target);
@@ -748,7 +748,7 @@ namespace DwarfCorp
             if (GatherManager.VoxelOrders.Count > 0)
             {
                 // Otherwise handle build orders.
-                var voxels = new List<Voxel>();
+                var voxels = new List<VoxelHandle>();
                 var types = new List<VoxelType>();
                 foreach (GatherManager.BuildVoxelOrder order in GatherManager.VoxelOrders)
                 {
@@ -1003,7 +1003,7 @@ namespace DwarfCorp
 
                 while (true)
                 {
-                    Voxel creatureVoxel = agent.Physics.CurrentVoxel;
+                    VoxelHandle creatureVoxel = agent.Physics.CurrentVoxel;
 
                     if (edgeGoal.IsInGoalRegion(creatureVoxel))
                     {
@@ -1018,7 +1018,7 @@ namespace DwarfCorp
                     bool hasMinAction = false;
                     foreach (var action in actions)
                     {
-                        Voxel vox = action.DestinationVoxel;
+                        VoxelHandle vox = action.DestinationVoxel;
 
                         float cost = edgeGoal.Heuristic(vox) + MathFunctions.Rand(0.0f, 5.0f);
 

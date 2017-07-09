@@ -55,9 +55,9 @@ namespace DwarfCorp
             EnergyLoss = 10.0f;
         }
 
-        public Voxel GetTargetVoxel()
+        public VoxelHandle GetTargetVoxel()
         {
-            return Agent.Blackboard.GetData<Voxel>(TargetVoxelName);
+            return Agent.Blackboard.GetData<VoxelHandle>(TargetVoxelName);
         }
 
         public override IEnumerable<Status> Run()

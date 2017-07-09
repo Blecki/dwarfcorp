@@ -71,14 +71,14 @@ namespace DwarfCorp
             GetComponent<Sprite>().LocalTransform = Matrix.CreateRotationY(orientation);
         }
 
-        public static IEnumerable<Body> CreateFences(ComponentManager components, string asset, IEnumerable<Voxel> voxels, bool createWorkPiles)
+        public static IEnumerable<Body> CreateFences(ComponentManager components, string asset, IEnumerable<VoxelHandle> voxels, bool createWorkPiles)
         {
-            Voxel neighbor = new Voxel();
+            VoxelHandle neighbor = new VoxelHandle();
 
             Vector3 half = Vector3.One * 0.5f;
             Vector3 off = half + Vector3.Up;
-            var enumerable = voxels as IList<Voxel> ?? voxels.ToList();
-            foreach (Voxel voxel in enumerable)
+            var enumerable = voxels as IList<VoxelHandle> ?? voxels.ToList();
+            foreach (VoxelHandle voxel in enumerable)
             {
                 if (voxel.GetNeighbor(new Vector3(0, 0, 1), ref neighbor) &&
                     !enumerable.Any(o => o.Equals(neighbor)))

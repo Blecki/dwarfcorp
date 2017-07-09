@@ -168,12 +168,12 @@ namespace DwarfCorp
             RoomData = LibraryRoomData;
         }
 
-        public LibraryRoom(bool designation, IEnumerable<Voxel> designations, WorldManager chunks, Faction faction) :
+        public LibraryRoom(bool designation, IEnumerable<VoxelHandle> designations, WorldManager chunks, Faction faction) :
             base(designation, designations, LibraryRoomData, chunks, faction)
         {
         }
 
-        public LibraryRoom(IEnumerable<Voxel> voxels, WorldManager chunks, Faction faction) :
+        public LibraryRoom(IEnumerable<VoxelHandle> voxels, WorldManager chunks, Faction faction) :
             base(voxels, LibraryRoomData, chunks, faction)
         {
             OnBuilt();

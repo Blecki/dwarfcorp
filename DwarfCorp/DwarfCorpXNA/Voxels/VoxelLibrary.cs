@@ -471,6 +471,7 @@ namespace DwarfCorp
             {
                 Name = "water",
                 ReleasesResource = false,
+                CanRamp = true,
                 IsBuildable = false,
                 StartingHealth = 255
             };
@@ -755,7 +756,7 @@ namespace DwarfCorp
             }
         }
 
-        public static void PlaceType(VoxelType type, Voxel voxel)
+        public static void PlaceType(VoxelType type, VoxelHandle voxel)
         {
             voxel.Type = type;
             voxel.Water = new WaterCell();
@@ -763,7 +764,7 @@ namespace DwarfCorp
         }
 
 
-        public static bool IsSolid(Voxel v)
+        public static bool IsSolid(VoxelHandle v)
         {
             return (!v.IsEmpty);
         }

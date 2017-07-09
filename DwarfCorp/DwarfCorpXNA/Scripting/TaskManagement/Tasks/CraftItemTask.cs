@@ -43,7 +43,7 @@ namespace DwarfCorp
     internal class CraftItemTask : Task
     {
         public CraftItem CraftType { get; set; }
-        public Voxel Voxel { get; set; }
+        public VoxelHandle Voxel { get; set; }
 
         public CraftItemTask()
         {
@@ -51,7 +51,7 @@ namespace DwarfCorp
             AutoRetry = true;
         }
 
-        public CraftItemTask(Voxel voxel, CraftItem type)
+        public CraftItemTask(VoxelHandle voxel, CraftItem type)
         {
             Name = "Craft item " + voxel.GridPosition + " " + voxel.ChunkID.X + " " + voxel.ChunkID.Y + " " + voxel.ChunkID.Z;
             Voxel = voxel;
@@ -62,7 +62,7 @@ namespace DwarfCorp
 
         public override Task Clone()
         {
-            Voxel v = new Voxel(new Point3(Voxel.GridPosition), Voxel.Chunk);
+            VoxelHandle v = new VoxelHandle(new Point3(Voxel.GridPosition), Voxel.Chunk);
             return new CraftItemTask(v, CraftType);
         }
 
