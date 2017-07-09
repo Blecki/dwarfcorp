@@ -331,10 +331,10 @@ namespace DwarfCorp
                         MathHelper.PiOver4, AspectRatio, 0.1f,
                         GameSettings.Default.VertexCullDistance);
 
-                    globalOffset = ChunkManager.ChunkData.RoundToChunkCoords(globalOffset);
-                    globalOffset.X *= ChunkWidth;
-                    globalOffset.Y *= ChunkHeight;
-                    globalOffset.Z *= ChunkWidth;
+                    var chunkOffset = ChunkManager.ChunkData.RoundToChunkCoords(globalOffset);
+                    globalOffset.X = chunkOffset.X * ChunkWidth;
+                    globalOffset.Y = chunkOffset.Y * ChunkHeight;
+                    globalOffset.Z = chunkOffset.Z * ChunkWidth;
 
                     WorldOrigin = new Vector2(globalOffset.X, globalOffset.Z);
                     Camera.Position = new Vector3(0, 10, 0) + globalOffset;
@@ -344,7 +344,7 @@ namespace DwarfCorp
                     if (gameFile == null) // Todo: Always true?
                     {
                         ChunkManager.GenerateInitialChunks(
-                            ChunkManager.ChunkData.GetChunkID(new Vector3(0, 0, 0) + globalOffset), SetLoadingMessage);
+                            ChunkManager.ChunkData.GetChunkID(globalOffset), SetLoadingMessage);
                     }
 
                     ComponentManager = new ComponentManager(this, CompanyMakerState.CompanyInformation, Natives);

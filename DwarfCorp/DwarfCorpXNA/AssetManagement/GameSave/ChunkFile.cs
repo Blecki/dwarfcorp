@@ -56,7 +56,7 @@ namespace DwarfCorp
 
         public bool[,,] Explored;
 
-        public Point3 ID;
+        public GlobalChunkCoordinate ID;
         public byte[,,] Liquid;
         public byte[,,] LiquidTypes;
 

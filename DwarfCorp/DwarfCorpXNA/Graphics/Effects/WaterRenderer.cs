@@ -195,7 +195,7 @@ namespace DwarfCorp
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    foreach (KeyValuePair<Point3, VoxelChunk> chunkpair in chunks.ChunkData.ChunkMap)
+                    foreach (var chunkpair in chunks.ChunkData.ChunkMap)
                     {
                         VoxelChunk chunk = chunkpair.Value;
                         if (chunk.IsVisible)
@@ -275,7 +275,7 @@ namespace DwarfCorp
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    foreach (KeyValuePair<Point3, VoxelChunk> chunkpair in chunks.ChunkData.ChunkMap)
+                    foreach (var chunkpair in chunks.ChunkData.ChunkMap)
                     {
                         VoxelChunk chunk = chunkpair.Value;
                         if (chunk.IsVisible)

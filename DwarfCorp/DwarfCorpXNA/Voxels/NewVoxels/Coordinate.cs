@@ -45,17 +45,17 @@ namespace DwarfCorp
         public GlobalChunkCoordinate GetGlobalChunkCoordinate()
         {
             return new GlobalChunkCoordinate(
-                X / VoxelConstants.ChunkSizeX, 
-                Y / VoxelConstants.ChunkSizeY, 
-                Z / VoxelConstants.ChunkSizeZ);
+                (Int32)((X / VoxelConstants.ChunkSizeX) - ((X & 0x80000000) >> 31)),
+                (Int32)((Y / VoxelConstants.ChunkSizeY) - ((Y & 0x80000000) >> 31)),
+                (Int32)((Z / VoxelConstants.ChunkSizeZ) - ((Z & 0x80000000) >> 31)));
         }
 
         public LocalVoxelCoordinate GetLocalVoxelCoordinate()
         {
             return new LocalVoxelCoordinate(
-                X % VoxelConstants.ChunkSizeX, 
-                Y % VoxelConstants.ChunkSizeY, 
-                Z % VoxelConstants.ChunkSizeZ);
+                (Int32)((((X & 0x80000000) >> 31) * VoxelConstants.ChunkSizeX) + (X % VoxelConstants.ChunkSizeX)),
+                (Int32)((((Y & 0x80000000) >> 31) * VoxelConstants.ChunkSizeY) + (Y % VoxelConstants.ChunkSizeY)),
+                (Int32)((((Z & 0x80000000) >> 31) * VoxelConstants.ChunkSizeZ) + (Z % VoxelConstants.ChunkSizeZ)));
         }
 
         public static bool operator ==(GlobalVoxelCoordinate A, GlobalVoxelCoordinate B)

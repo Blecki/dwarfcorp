@@ -49,6 +49,12 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class VoxelHandle : IBoundedObject
     {
+        [JsonIgnore]
+        private WorldManager World;
+
+        public GlobalVoxelCoordinate Coordinate { get; private set; }
+
+
         protected bool Equals(VoxelHandle other)
         {
             return Equals(Chunk, other.Chunk) && Index == other.Index;
@@ -204,8 +210,8 @@ namespace DwarfCorp
         }
         private static readonly Color BlankColor = new Color(0, 255, 0);
 
-        private Point3 chunkID = new Point3(0, 0, 0);
-        public Point3 ChunkID
+        private GlobalChunkCoordinate chunkID = new GlobalChunkCoordinate(0, 0, 0);
+        public GlobalChunkCoordinate ChunkID
         {
             get { return chunkID; }
             set { chunkID = value; RegenerateQuickCompare(); }

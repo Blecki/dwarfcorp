@@ -57,7 +57,6 @@ namespace DwarfCorp
         private static uint maxID = 0;
         public List<Body> Coins { get; set; }
         public static string TreasuryName = "Treasury";
-        public Faction Faction { get; set; }
 
         public static DwarfBux MoneyPerPile = 64m;
 

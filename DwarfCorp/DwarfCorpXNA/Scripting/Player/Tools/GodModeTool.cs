@@ -90,7 +90,7 @@ namespace DwarfCorp
         public override void OnVoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
         {
            
-            HashSet<Point3> chunksToRebuild = new HashSet<Point3>();
+            var chunksToRebuild = new HashSet<GlobalChunkCoordinate>();
 
             if(Command.Contains("Build/"))
             {
@@ -203,7 +203,7 @@ namespace DwarfCorp
                 }
             }
 
-            foreach(Point3 chunk in chunksToRebuild)
+            foreach(var chunk in chunksToRebuild)
             {
                 Chunks.ChunkData.ChunkMap[chunk].NotifyTotalRebuild(false);
             }

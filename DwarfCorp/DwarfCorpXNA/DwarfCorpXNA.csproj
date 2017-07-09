@@ -634,7 +634,7 @@
     <Compile Include="Voxels\ChunkManager.cs" />
     <Compile Include="Voxels\DynamicLight.cs" />
     <Compile Include="Voxels\LiquidAsset.cs" />
-    <Compile Include="Voxels\Voxel.cs" />
+    <Compile Include="Voxels\VoxelHandle.cs" />
     <Compile Include="Voxels\VoxelChunk.cs" />
     <Compile Include="Voxels\VoxelLibrary.cs" />
     <Compile Include="Voxels\VoxelType.cs" />

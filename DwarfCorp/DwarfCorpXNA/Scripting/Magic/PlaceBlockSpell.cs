@@ -81,7 +81,7 @@ namespace DwarfCorp
 
         public override void OnVoxelsSelected(SpellTree tree, List<VoxelHandle> voxels)
         {
-            HashSet<Point3> chunksToRebuild = new HashSet<Point3>();
+            var chunksToRebuild = new HashSet<GlobalChunkCoordinate>();
             bool placed = false;
             foreach (VoxelHandle selected in voxels)
             {
@@ -106,7 +106,7 @@ namespace DwarfCorp
                 }
             }
 
-            foreach (Point3 point in chunksToRebuild)
+            foreach (var point in chunksToRebuild)
             {
                 VoxelChunk chunk = World.ChunkManager.ChunkData.ChunkMap[point];
                 chunk.ShouldRebuild = true;
