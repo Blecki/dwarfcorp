@@ -157,15 +157,15 @@ namespace DwarfCorp
             LiquidPrimitive curPrimative = null;
             ExtendedVertex[] curVertices = null;
             int[] maxVertices = new int[lps.Length];
-            int maxY = (int)Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, chunk.SizeY);
 
             VoxelHandle myVoxel = chunk.MakeVoxel(0, 0, 0);
             VoxelHandle vox = chunk.MakeVoxel(0, 0, 0);
             int maxVertex = 0;
             bool fogOfWar = GameSettings.Default.FogofWar;
-            for (int x = 0; x < chunk.SizeX; x++)
+
+            for (int y = 0; y < Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, chunk.SizeY); y++)
             {
-                for (int y = 0; y < maxY; y++)
+                for (int x = 0; x < chunk.SizeX; x++)
                 {
                     for (int z = 0; z < chunk.SizeZ; z++)
                     {
@@ -307,8 +307,7 @@ namespace DwarfCorp
             cache = null;
         }
 
-        private static void CreateWaterFaces(VoxelHandle voxel,
-                                            VoxelChunk chunk,
+        private static void CreateWaterFaces(VoxelHandle voxel, VoxelChunk chunk,
                                             int x, int y, int z,
                                             ExtendedVertex[] vertices,
                                             int startVertex)
@@ -373,21 +372,17 @@ namespace DwarfCorp
                             if (!cache.validNeighbors[key]) continue;
 
                             // Now actually do the math.
-                            VoxelHandle vox = cache.neighbors[key];
-                            averageWaterLevel += vox.WaterLevel;
+                            var vox = cache.neighbors[key];
                             count++;
                             if (vox.WaterLevel < 1) emptyNeighbors++;
                         }
 
-                        averageWaterLevel = averageWaterLevel / count;
-
-                        float averageWaterHeight = averageWaterLevel / WaterManager.maxWaterLevel;
                         foaminess = emptyNeighbors / count;
 
                         if (foaminess <= 0.5f) foaminess = 0.0f;
 
                         pos = primitive.Vertices[primitiveIndex].Position;
-                        pos.Y *= averageWaterHeight;
+                        pos.Y -= 0.6f;// Minimum ramp position 
                         pos += origin;
 
                         // Store the vertex information for future use when we need it again on this or another face.
@@ -407,7 +402,7 @@ namespace DwarfCorp
                         case BoxFace.Back:
                         case BoxFace.Front:
                             vertices[i + startVertex].Set(pos,
-                                                          new Color(foaminess, 0.0f, 1.0f, 1.0f),
+                                                          new Color(foaminess * 0.5f, 0.0f, 1.0f, 1.0f),
                                                           Color.White,
                                                           new Vector2(pos.X, pos.Y),
                                                           new Vector4(0, 0, 1, 1));
@@ -415,7 +410,7 @@ namespace DwarfCorp
                         case BoxFace.Right:
                         case BoxFace.Left:
                             vertices[i + startVertex].Set(pos,
-                                                        new Color(foaminess, 0.0f, 1.0f, 1.0f),
+                                                        new Color(foaminess * 0.5f, 0.0f, 1.0f, 1.0f),
                                                         Color.White,
                                                         new Vector2(pos.Z, pos.Y),
                                                         new Vector4(0, 0, 1, 1));
@@ -431,6 +426,7 @@ namespace DwarfCorp
                 }
                 startVertex += 6;
             }
+            // End cache.drawFace loop
         }
     }
 

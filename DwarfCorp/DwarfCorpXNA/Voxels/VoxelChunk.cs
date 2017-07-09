@@ -656,63 +656,7 @@ namespace DwarfCorp
 
             return w;
         }
-
-        /*
-        public VoxelChunk(Vector3 origin, ChunkManager manager, DestinationVoxel[][][] voxelGrid, Point3 id, int tileSize)
-        {
-            FirstWaterIter = true;
-            Motes = new Dictionary<string, List<InstanceData>>();
-            VoxelGrid = voxelGrid;
-            sizeX = VoxelGrid.Length;
-            sizeY = VoxelGrid[0].Length;
-            sizeZ = VoxelGrid[0][0].Length;
-            ID = id;
-            IsVisible = true;
-            this.tileSize = tileSize;
-            HalfLength = new Vector3((float) this.tileSize / 2.0f, (float) this.tileSize / 2.0f, (float) this.tileSize / 2.0f);
-            Origin = origin;
-            Primitive = new VoxelListPrimitive();
-            RenderWireframe = false;
-            Manager = manager;
-            IsActive = true;
-
-            Neighbors = new ConcurrentDictionary<Point3, VoxelChunk>();
-            DynamicLights = new List<DynamicLight>();
-            Liquids = new Dictionary<LiquidType, LiquidPrimitive>();
-            Liquids[LiquidType.Water] = new LiquidPrimitive(LiquidType.Water);
-            Liquids[LiquidType.Lava] = new LiquidPrimitive(LiquidType.Lava);
-
-            for(int x = 0; x < voxelGrid.Length; x++)
-            {
-                for(int y = 0; y < voxelGrid[x].Length; y++)
-                {
-                    for(int z = 0; z < voxelGrid[x][y].Length; z++)
-                    {
-                        DestinationVoxel v = voxelGrid[x][y][z];
-                        if(!v.IsEmpty)
-                        {
-                            v.Chunk = this;
-                            v.GridPosition = v.Position - Origin;
-                        }
-                    }
-                }
-            }
-
-            Water = WaterAllocate(sizeX, sizeY, sizeZ);
-            SunColors = ChunkGenerator.Allocate<byte>(sizeX, sizeY, sizeZ);
-            DynamicColors = ChunkGenerator.Allocate<byte>(sizeX, sizeY, sizeZ);
-            InitializeStatics();
-            PrimitiveMutex = new Mutex();
-            ShouldRecalculateLighting = true;
-            ShouldRebuildWater = true;
-            Springs = new ConcurrentDictionary<DestinationVoxel, byte>();
-            IsRebuilding = false;
-            InitializeWater();
-            LightingCalculated = false;
-        }
-        */
-
-
+        
         public static VoxelVertex GetNearestDelta(Vector3 position)
         {
             float bestDist = float.MaxValue;
@@ -935,7 +879,6 @@ namespace DwarfCorp
         {
             if (ReconstructRamps || firstRebuild)
             {
-                //VoxelListPrimitive.UpdateRamps(this);
                 VoxelListPrimitive.UpdateCornerRamps(this);
                 ReconstructRamps = false;
             }
@@ -951,6 +894,7 @@ namespace DwarfCorp
 
         public void Rebuild(GraphicsDevice g)
         {
+            //debug
             //Drawer3D.DrawBox(GetBoundingBox(), Color.White, 0.1f);
 
             if (g == null || g.IsDisposed)
@@ -959,7 +903,7 @@ namespace DwarfCorp
             }
             IsRebuilding = true;
 
-            BuildPrimitive(g);
+            BuildPrimitive();
             BuildGrassMotes();
             if (firstRebuild)
             {
@@ -975,11 +919,10 @@ namespace DwarfCorp
             ShouldRebuild = false;
         }
 
-        public void BuildPrimitive(GraphicsDevice g)
+        public void BuildPrimitive()
         {
-            //Primitive.InitializeFromChunk(this, g);
             VoxelListPrimitive primitive = new VoxelListPrimitive();
-            primitive.InitializeFromChunk(this, g);
+            primitive.InitializeFromChunk(this);
         }
 
         public void NotifyChangedComponents()

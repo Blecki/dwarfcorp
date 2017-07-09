@@ -184,7 +184,8 @@ namespace DwarfCorp.GameStates
                 CreateGUIComponents();
                 InputManager.KeyReleasedCallback += TemporaryKeyPressHandler;
                 IsInitialized = true;
-                SoundManager.CurrentMusic.PlayTrack("main_theme_day");
+
+                SoundManager.PlayMusic("main_theme_day");
                 World.Time.Dawn += time =>
                 {
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_daytime, 0.15f);
