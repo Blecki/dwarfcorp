@@ -156,47 +156,75 @@ namespace DwarfCorp
 
             if (ItemType.Type == CraftItem.CraftType.Object)
             {
-                Tree = new Sequence(
-                    new Wrap(() => Creature.FindAndReserve(ItemType.CraftLocation, ItemType.CraftLocation)),
-                    getResources,
-                    new Sequence
-                        (
-                        new GoToTaggedObjectAct(Agent)
-                        {
-                            Tag = ItemType.CraftLocation,
-                            Teleport = false,
-                            TeleportOffset = new Vector3(1, 0, 0),
-                            ObjectName = ItemType.CraftLocation
-                        },
-                        new Wrap(() => Creature.HitAndWait(time, true, () => Creature.AI.Position)),
-                        new Wrap(DestroyResources),
-                        unreserveAct,
+                if (!String.IsNullOrEmpty(ItemType.CraftLocation))
+                {
+                    Tree = new Sequence(
+                        new Wrap(() => Creature.FindAndReserve(ItemType.CraftLocation, ItemType.CraftLocation)),
+                        getResources,
+                        new Sequence
+                            (
+                            new GoToTaggedObjectAct(Agent)
+                            {
+                                Tag = ItemType.CraftLocation,
+                                Teleport = false,
+                                TeleportOffset = new Vector3(1, 0, 0),
+                                ObjectName = ItemType.CraftLocation
+                            },
+                            new Wrap(() => Creature.HitAndWait(time, true, () => Creature.AI.Position, "Craft")),
+                            new Wrap(DestroyResources),
+                            unreserveAct,
+                            new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
+                            new CreateCraftItemAct(Voxel, Creature.AI, ItemType.Name)
+                            ) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false)
+                        ) | new Sequence(unreserveAct, false);
+                }
+                else
+                {
+                    Tree = new Sequence(
+                        getResources,
                         new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
-                        new CreateCraftItemAct(Voxel, Creature.AI, ItemType.Name)
-                        ) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false)
-                    ) | new Sequence(unreserveAct, false);
+                        new Wrap(() => Creature.HitAndWait(time, true, () => Creature.AI.Position, "Craft")),
+                        new Wrap(DestroyResources),
+                        new CreateCraftItemAct(Voxel, Creature.AI, ItemType.Name)) |
+                       new Wrap(Creature.RestockAll);
+                }
             }
             else
             {
-                Tree = new Sequence(
-                    new Wrap(() => Creature.FindAndReserve(ItemType.CraftLocation, ItemType.CraftLocation)),
-                    getResources,
-                    new Sequence
-                        (
-                        new GoToTaggedObjectAct(Agent)
-                        {
-                            Tag = ItemType.CraftLocation,
-                            Teleport = false,
-                            TeleportOffset = new Vector3(1, 0, 0),
-                            ObjectName = ItemType.CraftLocation
-                        },
-                        new Wrap(() => Creature.HitAndWait(time, true, () => Agent.Blackboard.GetData<Body>(ItemType.CraftLocation).Position, Noise)),
+                if (!String.IsNullOrEmpty(ItemType.CraftLocation))
+                {
+                    Tree = new Sequence(
+                        new Wrap(() => Creature.FindAndReserve(ItemType.CraftLocation, ItemType.CraftLocation)),
+                        getResources,
+                        new Sequence
+                            (
+                            new GoToTaggedObjectAct(Agent)
+                            {
+                                Tag = ItemType.CraftLocation,
+                                Teleport = false,
+                                TeleportOffset = new Vector3(1, 0, 0),
+                                ObjectName = ItemType.CraftLocation
+                            },
+                            new Wrap(
+                                () =>
+                                    Creature.HitAndWait(time, true,
+                                        () => Agent.Blackboard.GetData<Body>(ItemType.CraftLocation).Position, Noise)),
+                            new Wrap(DestroyResources),
+                            unreserveAct,
+                            new Wrap(CreateResources),
+                            new Wrap(Creature.RestockAll)
+                            ) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false)
+                        ) | new Sequence(unreserveAct, false);
+                }
+                else
+                {
+                    Tree = new Sequence(
+                        getResources,
+                        new Wrap(() => Creature.HitAndWait(time, true, () => Creature.AI.Position)),
                         new Wrap(DestroyResources),
-                        unreserveAct,
-                        new Wrap(CreateResources),
-                        new Wrap(Creature.RestockAll)
-                        ) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false)
-                    ) | new Sequence(unreserveAct, false);
+                        new Wrap(CreateResources)) |
+                       new Wrap(Creature.RestockAll);
+                }
             }
             base.Initialize();
         }

@@ -72,7 +72,9 @@ namespace DwarfCorp
 
         public ResourceContainer Resources { get; set; }
 
-        public Zone(string id, WorldManager world)
+        public Faction Faction { get; set; }
+
+        public Zone(string id, WorldManager world, Faction faction)
         {
             ID = id;
             ReplacementType = null;
@@ -81,6 +83,7 @@ namespace DwarfCorp
             {
                 MaxResources = 1
             };
+            Faction = faction;
 
         }
 
@@ -141,6 +144,7 @@ namespace DwarfCorp
 
         public void AddBody(Body body)
         {
+            this.Faction.OwnedObjects.Add(body);
             ZoneBodies.Add(body);
             body.OnDestroyed += () => body_onDestroyed(body);
         }

@@ -88,9 +88,8 @@ namespace DwarfCorp
             Faction = null;
         }
 
-
         public Treasury(Faction faction, IEnumerable<VoxelHandle> voxels, WorldManager world) :
-            base(voxels, RoomLibrary.GetData(TreasuryName), world)
+            base(voxels, RoomLibrary.GetData(TreasuryName), world, faction)
         {
             Coins = new List<Body>();
             ReplacementType = VoxelLibrary.GetVoxelType("Blue Tile");
@@ -104,7 +103,7 @@ namespace DwarfCorp
         }
 
         public Treasury(Faction faction, bool designation, IEnumerable<VoxelHandle> designations, RoomData data, WorldManager world) :
-            base(designation, designations, data, world)
+            base(designation, designations, data, world, faction)
         {
             Coins = new List<Body>();
             if (faction.Treasurys.Count == 0)
@@ -135,7 +134,7 @@ namespace DwarfCorp
             Body coins = EntityFactory.CreateEntity<Body>("Coins", startPos);
             coins.AnimationQueue.Add(new EaseMotion(0.8f, coins.LocalTransform, endPos));
             Coins.Add(coins);
-            ZoneBodies.Add(coins);
+            AddBody(coins);
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_ic_dwarf_stash_money, startPos);
             if (Faction != null)
                 Faction.World.ParticleManager.Trigger("puff", pos + new Vector3(0.5f, 1.5f, 0.5f), Color.White, 90);

@@ -41,7 +41,7 @@ namespace DwarfCorp.Gui.Widgets
 
                 var nearestBuildLocation = World.PlayerFaction.FindNearestItemWithTags(Data.CraftLocation, Vector3.Zero, false);
 
-                if (nearestBuildLocation == null)
+                if (!String.IsNullOrEmpty(Data.CraftLocation) && nearestBuildLocation == null)
                 {
                     AddChild(new Gui.Widget
                     {
@@ -114,18 +114,21 @@ namespace DwarfCorp.Gui.Widgets
                             }) as Gui.Widgets.ComboBox;
                             NumCombo.SelectedIndex = 0;
                         }
+                    }
 
-                        if (BuildAction != null)
+                    if (BuildAction != null)
+                    {
+                        var buildButton = AddChild(new Button()
                         {
-                            var buildButton = AddChild(new Button()
-                            {
-                                Text = "Craft",
-                                OnClick = BuildAction,
-                                AutoLayout = AutoLayout.DockTop,
-                                MinimumSize = new Point(64, 24),
-                                MaximumSize = new Point(64, 24)
-                            });
-                        }
+                            Text = "Craft",
+                            OnClick = (widget, args) => { BuildAction(widget, args);
+                                                            sender.Hidden = true; sender.Invalidate();
+                            },
+                            AutoLayout = AutoLayout.DockTop,
+                            MinimumSize = new Point(64, 24),
+                            MaximumSize = new Point(64, 24)
+                        });
+                        Parent.OnClick += (parent, args) => buildButton.OnClick(buildButton, args);
                     }
                 }
 
@@ -156,10 +159,13 @@ namespace DwarfCorp.Gui.Widgets
 
         public bool CanBuild()
         {
-            var nearestBuildLocation = World.PlayerFaction.FindNearestItemWithTags(Data.CraftLocation, Vector3.Zero, false);
+            if (!String.IsNullOrEmpty(Data.CraftLocation))
+            { 
+                var nearestBuildLocation = World.PlayerFaction.FindNearestItemWithTags(Data.CraftLocation, Vector3.Zero, false);
 
-            if (nearestBuildLocation == null)
-                return false;
+                if (nearestBuildLocation == null)
+                    return false;
+            }
 
             foreach (var resourceAmount in Data.RequiredResources)
                 if (Master.Faction.ListResourcesWithTag(resourceAmount.ResourceType).Count == 0)

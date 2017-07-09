@@ -133,7 +133,7 @@ namespace DwarfCorp
             });
             RegisterEntity("Snake", (position, data) => GenerateSnake(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice,
                 world.ChunkManager));
-            RegisterEntity("Bookshelf", (position, data) => new Bookshelf(world.ComponentManager, position));
+            RegisterEntity("Bookshelf", (position, data) => new Bookshelf(world.ComponentManager, position) { Tags = new List<string>() { "Research"}});
             RegisterEntity("Wooden Door", (position, data) => new Door(world.ComponentManager, position, world.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 1), 50));
             RegisterEntity("Metal Door", (position, data) => new Door(world.ComponentManager, position, world.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 8), 100));
             RegisterEntity("Stone Door", (position, data) => new Door(world.ComponentManager, position, world.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 8), 75));
@@ -160,7 +160,7 @@ namespace DwarfCorp
 
         private static GameComponent CreateRandomFood(WorldManager world, Vector3 position)
         {
-            List<Resource> foods = ResourceLibrary.GetResourcesByTag(Resource.ResourceTags.RawFood);
+            IEnumerable<Resource> foods = ResourceLibrary.GetResourcesByTag(Resource.ResourceTags.RawFood);
 
             Resource randresource = ResourceLibrary.CreateMeal(Datastructures.SelectRandom(foods).Type,
                 Datastructures.SelectRandom(foods).Type);

@@ -75,6 +75,7 @@ namespace DwarfCorp
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
             WrangleDesignations = new List<Body>();
+            OwnedObjects = new List<Body>();
             RoomBuilder = new RoomBuilder(this, world);
             WallBuilder = new PutDesignator(this, world);
             CraftBuilder = new CraftBuilder(this, world);
@@ -97,6 +98,7 @@ namespace DwarfCorp
             WrangleDesignations = new List<Body>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
+            OwnedObjects = new List<Body>();
             IsRaceFaction = false;
             TradeMoney = 0.0m;
             PrimaryColor = descriptor.PrimaryColory;
@@ -130,6 +132,7 @@ namespace DwarfCorp
         public List<Body> ChopDesignations { get; set; }
         public List<Body> AttackDesignations { get; set; }
         public List<Body> GatherDesignations { get; set; }
+        public List<Body> OwnedObjects { get; set; } 
         public List<Stockpile> Stockpiles { get; set; }
         public List<CreatureAI> Minions { get; set; }
         public RoomBuilder RoomBuilder { get; set; }
@@ -288,6 +291,8 @@ namespace DwarfCorp
                 zone.Update();
             }
             HandleThreats();
+
+            OwnedObjects.RemoveAll(obj => obj.IsDead);
         }
 
         public bool IsTaskAssigned(Task task)
@@ -648,27 +653,15 @@ namespace DwarfCorp
         {
             Body closestItem = null;
             float closestDist = float.MaxValue;
-            List<Zone> zones = new List<Zone>();
-            zones.AddRange(RoomBuilder.DesignatedRooms.Where(room => room != null && room.IsBuilt));
-            zones.AddRange(Stockpiles);
 
-            foreach (Zone s in zones)
+            foreach (Body i in OwnedObjects)
             {
-                
-                Body i = s.GetNearestBodyWithTag(location, tag, filterReserved);
-
-                if (i != null)
-                {
-                    float d = (i.GlobalTransform.Translation - location).LengthSquared();
-                    if (d < closestDist)
-                    {
-                        closestDist = d;
-                        closestItem = i;
-                    }
-                }
+                if (i == null || i.IsDead || (i.IsReserved && filterReserved) || !(i.Tags.Any(t => tag == t))) continue;
+                float d = (i.GlobalTransform.Translation - location).LengthSquared();
+                if (!(d < closestDist)) continue;
+                closestDist = d;
+                closestItem = i;
             }
-
-            
 
             return closestItem;
         }

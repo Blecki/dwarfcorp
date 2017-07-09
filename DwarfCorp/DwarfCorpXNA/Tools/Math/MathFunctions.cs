@@ -1031,5 +1031,14 @@ namespace DwarfCorp
             Array values = Enum.GetValues(typeof(T));
             return (T)values.GetValue(MathFunctions.RandInt(0, values.Length));
         }
+
+        public static float RandNormalDist(float mean, float stdDev)
+        {
+            // Box-mueller transform
+            double u1 = Rand(0, 1); 
+            double u2 = Rand(0, 1);
+            double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2);
+            return (float)(mean + stdDev * randStdNormal); 
+        }
     }
 }

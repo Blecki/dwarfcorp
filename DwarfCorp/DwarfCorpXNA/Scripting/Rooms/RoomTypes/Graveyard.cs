@@ -111,7 +111,7 @@ namespace DwarfCorp
                         Fence.CreateFences(World.ComponentManager, ContentPaths.Entities.DwarfObjects.fence, Designations,
                             false))
             {
-                ZoneBodies.Add(fence);
+                AddBody(fence);
                 fence.Manager.RootComponent.AddChild(fence);
             }
         }

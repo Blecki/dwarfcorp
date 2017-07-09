@@ -137,5 +137,7 @@ namespace DwarfCorp
 
             CollisionType = CollisionManager.CollisionType.Static;
         }
+
+
     }
 }

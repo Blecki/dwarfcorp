@@ -41,6 +41,7 @@ namespace DwarfCorp.Gui.Widgets
         private Widget Bio;
         private Widget TaskLabel;
         private Widget CancelTask;
+        private Widget AgeLabel;
 
         public Action<Widget> OnFireClicked;
 
@@ -65,14 +66,14 @@ namespace DwarfCorp.Gui.Widgets
             NameLabel = top.AddChild(new Gui.Widget
             {
                 AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 30),
+                MinimumSize = new Point(0, 32),
                 Font = "font-hires"
             });
 
             LevelLabel = top.AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 30)
+                MinimumSize = new Point(0, 24)
             });
             
             var columns = AddChild(new Gui.Widgets.TwoColumns
@@ -88,7 +89,7 @@ namespace DwarfCorp.Gui.Widgets
             var statParent = left.AddChild(new Gui.Widgets.TwoColumns
             {
                 AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 90)
+                MinimumSize = new Point(0, 60)
             });
 
             var statsLeft = statParent.AddChild(new Widget());
@@ -97,49 +98,49 @@ namespace DwarfCorp.Gui.Widgets
             StatDexterity = statsLeft.AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 30),
+                MinimumSize = new Point(0, 16),
                 Tooltip = "Dexterity (affects dwarf speed)"
             });
 
             StatStrength = statsLeft.AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 30),
+                MinimumSize = new Point(0, 16),
                 Tooltip = "Strength (affects dwarf attack power)"
             });
 
             StatWisdom = statsLeft.AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 30),
+                MinimumSize = new Point(0, 16),
                 Tooltip = "Wisdom (affects temprement and spell resistance)"
             });
 
             StatCharisma = statsLeft.AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 30),
+                MinimumSize = new Point(0, 16),
                 Tooltip = "Charisma (affects ability to make friends)"
             });
 
             StatConstitution = statsRight.AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 30),
+                MinimumSize = new Point(0, 16),
                 Tooltip = "Constitution (affects dwarf health and damage resistance)"
             });
 
             StatIntelligence = statsRight.AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 30),
+                MinimumSize = new Point(0, 16),
                 Tooltip = "Intelligence (affects crafting/farming)"
             });
 
             StatSize = statsRight.AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 30),
+                MinimumSize = new Point(0, 16),
                 Tooltip = "Size"
             });
             #endregion
@@ -156,19 +157,24 @@ namespace DwarfCorp.Gui.Widgets
             PayLabel = AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 30)
+                MinimumSize = new Point(0, 24)
+            });
+
+            AgeLabel = AddChild(new Widget() {
+                AutoLayout = AutoLayout.DockTop,
+                MinimumSize = new Point(0, 24)
             });
 
             Bio = AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 30)
+                MinimumSize = new Point(0, 24)
             });
 
             var task = AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(512, 30)
+                MinimumSize = new Point(1, 24)
             });
             CancelTask = task.AddChild(new Button
             {
@@ -178,7 +184,7 @@ namespace DwarfCorp.Gui.Widgets
             TaskLabel = task.AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockRight,
-                MinimumSize = new Point(256, 30),
+                MinimumSize = new Point(128, 24),
                 TextVerticalAlign = VerticalAlign.Center,
                 TextHorizontalAlign = HorizontalAlign.Right
             });
@@ -186,7 +192,7 @@ namespace DwarfCorp.Gui.Widgets
             Thoughts = AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 30)
+                MinimumSize = new Point(0, 24)
             });
 
             AddChild(new Widget
@@ -318,6 +324,8 @@ namespace DwarfCorp.Gui.Widgets
                     CancelTask.TextColor = new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
                     CancelTask.Invalidate();
                 }
+
+                AgeLabel.Text = String.Format("Age: {0}", Employee.Stats.Age);
 
             }
 

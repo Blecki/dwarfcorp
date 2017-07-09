@@ -141,6 +141,8 @@ namespace DwarfCorp
             Shader effect,
             bool renderingForWater)
         {
+
+            Color origTint = effect.VertexColorTint;  
             ApplyTintingToEffect(effect);
 
             if(!IsVisible)
@@ -205,13 +207,11 @@ namespace DwarfCorp
                 Matrix rotation = GlobalTransform;
                 rotation.Translation = DistortPosition ? rotation.Translation + VertexNoise.GetNoiseVectorFromRepeatingTexture(rotation.Translation) : rotation.Translation;
                 effect.World = rotation;
-            }
-
-                
+            } 
             effect.MainTexture = SpriteSheet.GetTexture();
             if (DrawSilhouette)
             {
-                Color oldTint = effect.VertexColorTint;
+                Color oldTint = effect.VertexColorTint; 
                 effect.VertexColorTint = SilhouetteColor;
                 graphicsDevice.DepthStencilState = DepthStencilState.None;
                 var oldTechnique = effect.CurrentTechnique;
@@ -237,7 +237,7 @@ namespace DwarfCorp
                 pass.Apply();
                 CurrentAnimation.Primitives[CurrentAnimation.CurrentFrame].Render(graphicsDevice);
             }
-
+            effect.VertexColorTint = origTint;
             effect.EnableWind = false;
         }
     }

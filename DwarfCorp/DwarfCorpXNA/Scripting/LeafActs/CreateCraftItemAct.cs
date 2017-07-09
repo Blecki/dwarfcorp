@@ -1,4 +1,4 @@
-﻿// CreateCraftItemAct.cs
+// CreateCraftItemAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -61,6 +61,8 @@ namespace DwarfCorp
             }
 
             Body item = EntityFactory.CreateEntity<Body>(CraftLibrary.CraftItems[ItemType].Name, Voxel.Position + Vector3.One * 0.5f);
+            item.Tags.Add("Moveable");
+            Creature.Faction.OwnedObjects.Add(item);
             Creature.Manager.World.ParticleManager.Trigger("puff", Voxel.Position + Vector3.One * 0.5f, Color.White, 10);
             if (item == null)
             {

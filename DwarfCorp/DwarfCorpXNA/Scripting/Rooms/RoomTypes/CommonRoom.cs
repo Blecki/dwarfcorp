@@ -137,13 +137,13 @@ namespace DwarfCorp
             RoomData = CommonRoomData;
         }
 
-        public CommonRoom(bool designation, IEnumerable<VoxelHandle> designations, WorldManager chunks) :
-            base(designation, designations, CommonRoomData, chunks)
+        public CommonRoom(bool designation, IEnumerable<VoxelHandle> designations, WorldManager chunks, Faction faction) :
+            base(designation, designations, CommonRoomData, chunks, faction)
         {
         }
 
-        public CommonRoom(IEnumerable<VoxelHandle> voxels, WorldManager chunks) :
-            base(voxels, CommonRoomData, chunks)
+        public CommonRoom(IEnumerable<VoxelHandle> voxels, WorldManager chunks, Faction faction) :
+            base(voxels, CommonRoomData, chunks, faction)
         {
             OnBuilt();
         }

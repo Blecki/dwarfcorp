@@ -71,14 +71,14 @@ namespace DwarfCorp
         {
 
         }
-
-        public AnimalPen(bool designation, IEnumerable<VoxelHandle> designations, WorldManager world) :
-            base(designation, designations, AnimalPenData, world)
+        
+        public AnimalPen(bool designation, IEnumerable<VoxelHandle> designations, WorldManager world, Faction faction) :
+            base(designation, designations, AnimalPenData, world, faction)
         {
         }
 
-        public AnimalPen(IEnumerable<VoxelHandle> voxels, WorldManager world) :
-            base(voxels, AnimalPenData, world)
+        public AnimalPen(IEnumerable<VoxelHandle> voxels, WorldManager world, Faction faction) :
+            base(voxels, AnimalPenData, world, faction)
         {
             OnBuilt();
         }
@@ -89,14 +89,14 @@ namespace DwarfCorp
                     Fence.CreateFences(World.ComponentManager, ContentPaths.Entities.DwarfObjects.fence, Designations,
                         false))
             {
-                ZoneBodies.Add(fence);
+                AddBody(fence);
                 fence.Manager.RootComponent.AddChild(fence);
             }
         }
 
         public IEnumerable<Act.Status> AddAnimal(Body animal, Faction faction)
         {
-            ZoneBodies.Add(animal);
+            AddBody(animal);
             BoundingBox animalBounds = GetBoundingBox();
             animalBounds = animalBounds.Expand(-0.25f);
             animalBounds.Max.Y += 2;

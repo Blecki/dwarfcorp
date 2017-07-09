@@ -61,8 +61,8 @@ namespace DwarfCorp
             
         }
 
-        public Room(bool designation, IEnumerable<VoxelHandle> designations, RoomData data, WorldManager world) :
-            base(data.Name + " " + Counter, world)
+        public Room(bool designation, IEnumerable<VoxelHandle> designations, RoomData data, WorldManager world, Faction faction) :
+            base(data.Name + " " + Counter, world, faction)
         {
             RoomData = data;
             ReplacementType = VoxelLibrary.GetVoxelType(RoomData.FloorType);
@@ -72,8 +72,8 @@ namespace DwarfCorp
         }
 
 
-        public Room(IEnumerable<VoxelHandle> voxels, RoomData data, WorldManager world) :
-            base(data.Name + " " + Counter, world)
+        public Room(IEnumerable<VoxelHandle> voxels, RoomData data, WorldManager world, Faction faction) :
+            base(data.Name + " " + Counter, world, faction)
         {
             RoomData = data;
             ReplacementType = VoxelLibrary.GetVoxelType(RoomData.FloorType);
