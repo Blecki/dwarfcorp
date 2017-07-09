@@ -178,7 +178,7 @@ namespace DwarfCorp
 
 
         public VoxelData Data { get; set; }
-        public ConcurrentDictionary<Voxel, byte> Springs { get; set; }
+        public ConcurrentDictionary<VoxelHandle, byte> Springs { get; set; }
 
         public int SizeX
         {
@@ -625,7 +625,7 @@ namespace DwarfCorp
             Liquids[LiquidType.Water] = new LiquidPrimitive(LiquidType.Water);
             Liquids[LiquidType.Lava] = new LiquidPrimitive(LiquidType.Lava);
             ShouldRebuildWater = true;
-            Springs = new ConcurrentDictionary<Voxel, byte>();
+            Springs = new ConcurrentDictionary<VoxelHandle, byte>();
 
             IsRebuilding = false;
             LightingCalculated = false;
@@ -857,9 +857,9 @@ namespace DwarfCorp
             return v;
         }
 
-        public Voxel MakeVoxel(int x, int y, int z)
+        public VoxelHandle MakeVoxel(int x, int y, int z)
         {
-            return new Voxel(new Point3(x, y, z), this);
+            return new VoxelHandle(new Point3(x, y, z), this);
         }
 
         public void BuildGrassMotes(Overworld.Biome biome)
@@ -874,8 +874,8 @@ namespace DwarfCorp
                 List<Color> grassColors = new List<Color>();
                 List<float> grassScales = new List<float>();
                 DetailMoteData moteData = biomeData.Motes[i];
-                Voxel v = MakeVoxel(0, 0, 0);
-                Voxel voxelBelow = MakeVoxel(0, 0, 0);
+                VoxelHandle v = MakeVoxel(0, 0, 0);
+                VoxelHandle voxelBelow = MakeVoxel(0, 0, 0);
                 for (int x = 0; x < SizeX; x++)
                 {
                     for (int y = 1; y < Math.Min(Manager.ChunkData.MaxViewingLevel + 1, SizeY - 1); y++)
@@ -1031,7 +1031,7 @@ namespace DwarfCorp
         }
 
 
-        public bool GetVoxelAtWorldLocation(Vector3 worldLocation, ref Voxel voxel)
+        public bool GetVoxelAtWorldLocation(Vector3 worldLocation, ref VoxelHandle voxel)
         {
             Vector3 grid = WorldToGrid(worldLocation);
 
@@ -1046,7 +1046,7 @@ namespace DwarfCorp
 
         // Same as GetVoxelAtWorldLocation except skips the part where it has to check to see if it is in range.
         // If you don't know for sure it is valid use the other function.
-        public bool GetVoxelAtValidWorldLocation(Vector3 worldLocation, ref Voxel voxel)
+        public bool GetVoxelAtValidWorldLocation(Vector3 worldLocation, ref VoxelHandle voxel)
         {
             Vector3 grid = WorldToGrid(worldLocation);
 
@@ -1085,7 +1085,7 @@ namespace DwarfCorp
 
 
 
-        public byte GetIntensity(DynamicLight light, byte lightIntensity, Voxel voxel)
+        public byte GetIntensity(DynamicLight light, byte lightIntensity, VoxelHandle voxel)
         {
             Vector3 vertexPos = voxel.Position;
             Vector3 diff = vertexPos - (light.Position + new Vector3(0.5f, 0.5f, 0.5f));
@@ -1095,8 +1095,8 @@ namespace DwarfCorp
         }
 
 
-        public static void CalculateVertexLight(Voxel vox, VoxelVertex face,
-            ChunkManager chunks, List<Voxel> neighbors, ref VertexColorInfo color)
+        public static void CalculateVertexLight(VoxelHandle vox, VoxelVertex face,
+            ChunkManager chunks, List<VoxelHandle> neighbors, ref VertexColorInfo color)
         {
             float numHit = 1;
             float numChecked = 1;
@@ -1106,7 +1106,7 @@ namespace DwarfCorp
             color.SunColor += vox.Chunk.Data.SunColors[index];
             vox.Chunk.GetNeighborsVertex(face, vox, neighbors);
 
-            foreach (Voxel v in neighbors)
+            foreach (VoxelHandle v in neighbors)
             {
                 if (v == null)
                 {
@@ -1156,7 +1156,7 @@ namespace DwarfCorp
             }
         }
 
-        public float GetTotalWaterHeight(Voxel voxRef)
+        public float GetTotalWaterHeight(VoxelHandle voxRef)
         {
             float tot = 0;
             int x = (int)voxRef.GridPosition.X;
@@ -1175,7 +1175,7 @@ namespace DwarfCorp
             return tot;
         }
 
-        public float GetTotalWaterHeightCells(Voxel voxRef)
+        public float GetTotalWaterHeightCells(VoxelHandle voxRef)
         {
             float tot = 0;
             int x = (int)voxRef.GridPosition.X;
@@ -1204,7 +1204,7 @@ namespace DwarfCorp
             }
 
             ResetSunlight(0);
-            Voxel reference = MakeVoxel(0, 0, 0);
+            VoxelHandle reference = MakeVoxel(0, 0, 0);
 
             for (int x = 0; x < SizeX; x++)
             {
@@ -1237,7 +1237,7 @@ namespace DwarfCorp
             }
         }
 
-        public void GetSharedVertices(Voxel v, VoxelVertex vertex, List<KeyValuePair<Voxel, List<VoxelVertex>>> vertices, List<Voxel> neighbors)
+        public void GetSharedVertices(VoxelHandle v, VoxelVertex vertex, List<KeyValuePair<VoxelHandle, List<VoxelVertex>>> vertices, List<VoxelHandle> neighbors)
         {
             vertices.Clear();
 
@@ -1245,7 +1245,7 @@ namespace DwarfCorp
             GetNeighborsVertex(vertex, v, neighbors);
 
             Vector3 myDelta = vertexDeltas[(int)vertex];
-            foreach (Voxel neighbor in neighbors)
+            foreach (VoxelHandle neighbor in neighbors)
             {
                 if (neighbor == null || neighbor.IsEmpty)
                 {
@@ -1257,7 +1257,7 @@ namespace DwarfCorp
                 vertsNeighbor.Add(GetNearestDelta(otherDelta));
 
 
-                vertices.Add(new KeyValuePair<Voxel, List<VoxelVertex>>(neighbor, vertsNeighbor));
+                vertices.Add(new KeyValuePair<VoxelHandle, List<VoxelVertex>>(neighbor, vertsNeighbor));
             }
         }
 
@@ -1403,7 +1403,7 @@ namespace DwarfCorp
             int mx = SizeX;
             int my = SizeY;
             int mz = SizeZ;
-            Voxel voxel = MakeVoxel(0, 0, 0);
+            VoxelHandle voxel = MakeVoxel(0, 0, 0);
             for (int y = 0; y < my; y++)
             {
                 for (int x = 0; x < mx; x++)
@@ -1446,7 +1446,7 @@ namespace DwarfCorp
         #region neighbors
 
         //-------------------------
-        public void GetNeighborsVertex(VoxelVertex vertex, Voxel v, List<Voxel> toReturn)
+        public void GetNeighborsVertex(VoxelVertex vertex, VoxelHandle v, List<VoxelHandle> toReturn)
         {
             Vector3 grid = v.GridPosition;
             GetNeighborsVertex(vertex, (int)grid.X, (int)grid.Y, (int)grid.Z, toReturn);
@@ -1489,7 +1489,7 @@ namespace DwarfCorp
             return (x + 1) + (y + 1) * 3 + (z + 1) * 9;
         }
 
-        public List<Point3> GetEuclidianSuccessorByVoxel(Voxel v)
+        public List<Point3> GetEuclidianSuccessorByVoxel(VoxelHandle v)
         {
             Vector3 gridPos;
             if (v == null)
@@ -1511,7 +1511,7 @@ namespace DwarfCorp
             return (x != 0 && y != 0 && z != 0 && x != SizeX - 1 && y != SizeY - 1 && z != SizeZ - 1);
         }
 
-        public BoxTransition ComputeTransitionValue(VoxelType.TransitionType transitionType, int x, int y, int z, Voxel[] neighbors)
+        public BoxTransition ComputeTransitionValue(VoxelType.TransitionType transitionType, int x, int y, int z, VoxelHandle[] neighbors)
         {
             VoxelType type = VoxelLibrary.GetVoxelType(Data.Types[Data.IndexAt(x, y, z)]);
 
@@ -1542,7 +1542,7 @@ namespace DwarfCorp
             }
         }
 
-        private static int ComputeTransitionValue(Voxel[] neighbors, VoxelType type)
+        private static int ComputeTransitionValue(VoxelHandle[] neighbors, VoxelType type)
         {
             int value = 0;
             for (int i = 0; i < neighbors.Length; i++)
@@ -1555,7 +1555,7 @@ namespace DwarfCorp
             return value;
         }
 
-        public void Get2DManhattanNeighbors(Voxel[] neighbors, int x, int y, int z)
+        public void Get2DManhattanNeighbors(VoxelHandle[] neighbors, int x, int y, int z)
         {
             List<Vector3> succ = Manhattan2DSuccessors;
             int count = succ.Count;
@@ -1638,7 +1638,7 @@ namespace DwarfCorp
 
         }
 
-        public void Get2DManhattanNeighbors(ChunkManager.SliceMode slice, Voxel[] neighbors, int x, int y, int z)
+        public void Get2DManhattanNeighbors(ChunkManager.SliceMode slice, VoxelHandle[] neighbors, int x, int y, int z)
         {
             List<Vector3> succ = Manhattan2DSuccessors;
             int count = succ.Count;
@@ -1737,7 +1737,7 @@ namespace DwarfCorp
 
         }
 
-        public void GetNeighborsSuccessors(List<Vector3> succ, int x, int y, int z, List<Voxel> toReturn)
+        public void GetNeighborsSuccessors(List<Vector3> succ, int x, int y, int z, List<VoxelHandle> toReturn)
         {
             if (succ.Count != toReturn.Count)
             {
@@ -1826,23 +1826,18 @@ namespace DwarfCorp
             }
         }
 
-        public void GetNeighborsVertex(VoxelVertex vertex, int x, int y, int z, List<Voxel> toReturn)
+        public void GetNeighborsVertex(VoxelVertex vertex, int x, int y, int z, List<VoxelHandle> toReturn)
         {
             GetNeighborsSuccessors(VertexSuccessors[vertex], x, y, z, toReturn);
         }
 
-        public void GetNeighborsVertexDiag(VoxelVertex vertex, int x, int y, int z, List<Voxel> toReturn)
-        {
-            GetNeighborsSuccessors(VertexSuccessorsDiag[vertex], x, y, z, toReturn);
-        }
-
-        public IEnumerable<Voxel> GetNeighborsEuclidean(Voxel v)
+        public IEnumerable<VoxelHandle> GetNeighborsEuclidean(VoxelHandle v)
         {
             Vector3 gridCoord = v.GridPosition;
             return GetNeighborsEuclidean((int)gridCoord.X, (int)gridCoord.Y, (int)gridCoord.Z);
         }
 
-        public IEnumerable<Voxel> GetNeighborsEuclidean(int x, int y, int z)
+        public IEnumerable<VoxelHandle> GetNeighborsEuclidean(int x, int y, int z)
         {
             bool isInterior = (x > 0 && y > 0 && z > 0 && x < SizeX - 1 && y < SizeY - 1 && z < SizeZ - 1);
             for (int dx = -1; dx < 2; dx++)
@@ -1866,7 +1861,7 @@ namespace DwarfCorp
                         }
                         else
                         {
-                            Voxel otherVox = new Voxel();
+                            VoxelHandle otherVox = new VoxelHandle();
                             if (Manager.ChunkData.GetVoxel(this, new Vector3(nx, ny, nz) + Origin + Vector3.One * 0.5f, ref otherVox))
                             {
                                 yield return otherVox;
@@ -1879,9 +1874,9 @@ namespace DwarfCorp
         }
 
 
-        public List<Voxel> AllocateVoxels(int num)
+        public List<VoxelHandle> AllocateVoxels(int num)
         {
-            List<Voxel> toReturn = new List<Voxel>();
+            List<VoxelHandle> toReturn = new List<VoxelHandle>();
             for (int i = 0; i < num; i++)
             {
                 toReturn.Add(MakeVoxel(0, 0, 0));
@@ -1890,7 +1885,7 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public void GetNeighborsManhattan(int x, int y, int z, List<Voxel> neighbors)
+        public void GetNeighborsManhattan(int x, int y, int z, List<VoxelHandle> neighbors)
         {
             GetNeighborsSuccessors(ManhattanSuccessors, x, y, z, neighbors);
         }
@@ -1913,12 +1908,12 @@ namespace DwarfCorp
             }
         }
 
-        private bool IsEmpty(Voxel v)
+        private bool IsEmpty(VoxelHandle v)
         {
             return v == null || v.IsEmpty;
         }
 
-        public bool HasNoNeighbors(Voxel v)
+        public bool HasNoNeighbors(VoxelHandle v)
         {
             Vector3 pos = v.Position;
             Vector3 gridPos = v.GridPosition;
@@ -1931,7 +1926,7 @@ namespace DwarfCorp
             VoxelChunk chunk = Manager.ChunkData.ChunkMap[v.ChunkID];
             Point3 gridPoint = new Point3(gridPos);
 
-            bool interior = Voxel.IsInteriorPoint(gridPoint, chunk);
+            bool interior = VoxelHandle.IsInteriorPoint(gridPoint, chunk);
 
 
             if (interior)
@@ -1950,7 +1945,7 @@ namespace DwarfCorp
             else
             {
 
-                Voxel atPos = new Voxel();
+                VoxelHandle atPos = new VoxelHandle();
                 for (int i = 0; i < 6; i++)
                 {
                     Vector3 neighbor = ManhattanSuccessors[i];
@@ -1978,7 +1973,7 @@ namespace DwarfCorp
         }
 
 
-        public bool IsCompletelySurrounded(Voxel v, bool ramps)
+        public bool IsCompletelySurrounded(VoxelHandle v, bool ramps)
         {
             if (!Manager.ChunkData.ChunkMap.ContainsKey(v.ChunkID))
             {
@@ -1988,7 +1983,7 @@ namespace DwarfCorp
             Vector3 pos = v.Position;
             VoxelChunk chunk = Manager.ChunkData.ChunkMap[v.ChunkID];
             Point3 gridPoint = new Point3(v.GridPosition);
-            bool interior = Voxel.IsInteriorPoint(gridPoint, chunk);
+            bool interior = VoxelHandle.IsInteriorPoint(gridPoint, chunk);
 
 
             if (interior)
@@ -2006,7 +2001,7 @@ namespace DwarfCorp
             }
             else
             {
-                Voxel atPos = new Voxel();
+                VoxelHandle atPos = new VoxelHandle();
                 for (int i = 0; i < 6; i++)
                 {
                     Vector3 neighbor = ManhattanSuccessors[i];
@@ -2021,12 +2016,12 @@ namespace DwarfCorp
             return true;
         }
 
-        public bool IsCompletelySurrounded(Voxel v)
+        public bool IsCompletelySurrounded(VoxelHandle v)
         {
             return IsCompletelySurrounded(v, false);
         }
 
-        public void GetNeighborsManhattan(Voxel v, List<Voxel> toReturn)
+        public void GetNeighborsManhattan(VoxelHandle v, List<VoxelHandle> toReturn)
         {
             GetNeighborsManhattan((int)v.GridPosition.X, (int)v.GridPosition.Y, (int)v.GridPosition.Z, toReturn);
         }
@@ -2039,16 +2034,16 @@ namespace DwarfCorp
 
         //-------------------------
 
-        public List<Voxel> GetVoxelsIntersecting(BoundingBox box)
+        public List<VoxelHandle> GetVoxelsIntersecting(BoundingBox box)
         {
             if (!GetBoundingBox().Intersects(box) && GetBoundingBox().Contains(box) != ContainmentType.Disjoint)
             {
-                return new List<Voxel>();
+                return new List<VoxelHandle>();
             }
             else
             {
                 BoundingBox myBox = GetBoundingBox();
-                List<Voxel> toReturn = new List<Voxel>();
+                List<VoxelHandle> toReturn = new List<VoxelHandle>();
                 for (float x = Math.Max(box.Min.X, myBox.Min.X); x < Math.Min(box.Max.X, myBox.Max.X); x++)
                 {
                     for (float y = Math.Max(box.Min.Y, myBox.Min.Y); y < Math.Min(box.Max.Y, myBox.Max.Y); y++)
@@ -2056,7 +2051,7 @@ namespace DwarfCorp
                         for (float z = Math.Max(box.Min.Z, myBox.Min.Z); z < Math.Min(box.Max.Z, myBox.Max.Z); z++)
                         {
                             Vector3 grid = new Vector3(x, y, z) - Origin;
-                            Voxel vox = MakeVoxel((int)grid.X, (int)grid.Y, (int)grid.Z);
+                            VoxelHandle vox = MakeVoxel((int)grid.X, (int)grid.Y, (int)grid.Z);
                             toReturn.Add(vox);
                         }
                     }

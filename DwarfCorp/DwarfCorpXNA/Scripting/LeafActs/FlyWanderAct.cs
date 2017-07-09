@@ -199,7 +199,7 @@ namespace DwarfCorp
 
                     if (State == FlyState.SearchingForPerch)
                     {
-                        Voxel vox = Creature.Physics.CurrentVoxel;
+                        VoxelHandle vox = Creature.Physics.CurrentVoxel;
 
                         if (vox.WaterLevel > 0)
                         {
@@ -210,7 +210,7 @@ namespace DwarfCorp
                         if (CanPerchOnGround)
                         {
                             Creature.Physics.ApplyForce(OriginalGravity, (float)DwarfTime.LastTime.ElapsedGameTime.TotalSeconds);
-                            Voxel below = vox.GetVoxelBelow();
+                            VoxelHandle below = vox.GetVoxelBelow();
 
                             if (below != null && !below.IsEmpty && below.WaterLevel == 0)
                             {
@@ -221,7 +221,7 @@ namespace DwarfCorp
 
                         if (CanPerchOnWalls)
                         {
-                            foreach (Voxel n in Creature.Physics.Neighbors)
+                            foreach (VoxelHandle n in Creature.Physics.Neighbors)
                             {
                                 if (n != null && n.GridPosition.Y >= vox.GridPosition.Y && !n.IsEmpty)
                                 {

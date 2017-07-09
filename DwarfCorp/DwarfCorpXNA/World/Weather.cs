@@ -279,7 +279,7 @@ namespace DwarfCorp
                         }
                     }
 
-                Voxel test = new Voxel();
+                VoxelHandle test = new VoxelHandle();
                 Storm.StormProperties stormProperties = Storm.Properties[TypeofStorm];
                 var rainEmitter = World.ParticleManager.Effects[stormProperties.RainEffect];
                 var hitEmitter = World.ParticleManager.Effects[stormProperties.HitEffect];
@@ -324,7 +324,7 @@ namespace DwarfCorp
 
                     if (!MathFunctions.RandEvent(0.1f)) continue;
 
-                    Voxel above = test.IsEmpty ? test : test.GetVoxelAbove();
+                    VoxelHandle above = test.IsEmpty ? test : test.GetVoxelAbove();
 
                     if (above == null) continue;
                     if (stormProperties.CreatesLiquid && 

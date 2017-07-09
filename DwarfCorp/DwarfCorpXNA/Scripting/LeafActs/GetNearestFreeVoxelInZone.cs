@@ -65,7 +65,7 @@ namespace DwarfCorp
             }
             else
             {
-                Voxel v = TargetZone.GetNearestVoxel(Agent.Position);
+                VoxelHandle v = TargetZone.GetNearestVoxel(Agent.Position);
 
                 if(!v.IsEmpty)
                 {

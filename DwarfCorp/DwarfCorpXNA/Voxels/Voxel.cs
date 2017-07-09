@@ -43,110 +43,18 @@ using System.Diagnostics;
 
 namespace DwarfCorp
 {
-
-    /// <summary>
-    /// Specifies the location of a vertex on a voxel.
-    /// </summary>
-    public enum VoxelVertex
-    {
-        FrontTopLeft = 0,
-        FrontTopRight,
-        FrontBottomLeft,
-        FrontBottomRight,
-        BackTopLeft,
-        BackTopRight,
-        BackBottomLeft,
-        BackBottomRight,
-        Count
-    }
-
-    /// <summary>
-    /// Specifies how a voxel is to be sloped.
-    /// </summary>
-    [Flags]
-    public enum RampType
-    {
-        None = 0x0,
-        TopFrontLeft = 0x1,
-        TopFrontRight = 0x2,
-        TopBackLeft = 0x4,
-        TopBackRight = 0x8,
-        Front = TopFrontLeft | TopFrontRight,
-        Back = TopBackLeft | TopBackRight,
-        Left = TopBackLeft | TopFrontLeft,
-        Right = TopBackRight | TopFrontRight,
-        All = TopFrontLeft | TopFrontRight | TopBackLeft | TopBackRight
-    }
-
-
-    /// <summary> Determines a transition texture type. Each phrase
-    /// (front, left, back, right) defines whether or not a tile of the same type is
-    /// on the given face</summary>
-    [Flags]
-    public enum TransitionTexture
-    {
-        None = 0,
-        Front = 1,
-        Right = 2,
-        FrontRight = 3,
-        Back = 4,
-        FrontBack = 5,
-        BackRight = 6,
-        FrontBackRight = 7,
-        Left = 8,
-        FrontLeft = 9,
-        LeftRight = 10,
-        LeftFrontRight = 11,
-        LeftBack = 12,
-        FrontBackLeft = 13,
-        LeftBackRight = 14,
-        All = 15
-    }
-
-    public struct BoxTransition
-    {
-        public TransitionTexture Front;
-        public TransitionTexture Right;
-        public TransitionTexture Left;
-        public TransitionTexture Back;
-        public TransitionTexture Top;
-        public TransitionTexture Bottom;
-
-        public TransitionTexture GetTexture(BoxFace face)
-        {
-            switch (face)
-            {
-                case BoxFace.Top:
-                    return Top;
-                case BoxFace.Bottom:
-                    return Bottom;
-                case BoxFace.Back:
-                    return Back;
-                case BoxFace.Left:
-                    return Left;
-                case BoxFace.Right:
-                    return Right;
-                case BoxFace.Front:
-                    return Front;
-            }
-            return TransitionTexture.None;
-        }
-    }
-
-
-
     /// <summary>
     /// An atomic cube in the world which represents a bit of terrain. 
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class Voxel : IBoundedObject
+    public class VoxelHandle : IBoundedObject
     {
-        protected bool Equals(Voxel other)
+        protected bool Equals(VoxelHandle other)
         {
             return Equals(Chunk, other.Chunk) && Index == other.Index;
         }
 
-        public bool IsSameAs(Voxel other)
+        public bool IsSameAs(VoxelHandle other)
         {
             if (quickCompare == other.quickCompare) return true;
             return false;
@@ -328,7 +236,7 @@ namespace DwarfCorp
             //quickCompare = (ulong) (((chunkID.X & 0xFFFF) << 48) | ((chunkID.Y & 0xFFFF) << 32) | ((chunkID.Y & 0xFFFF) << 16) | (index & 0xFFFF));
         }
 
-        public Voxel(Voxel other)
+        public VoxelHandle(VoxelHandle other)
         {
             Chunk = other.Chunk;
             GridPosition = other.GridPosition;
@@ -363,7 +271,7 @@ namespace DwarfCorp
                     Chunk.Data.IndexAt((int) GridPosition.X, (int) GridPosition.Y + 1, (int) GridPosition.Z)] == 0;
         }
 
-        public Voxel GetVoxelAbove()
+        public VoxelHandle GetVoxelAbove()
         {
             if (Chunk == null || GridPosition.Y >= Chunk.SizeY - 1)
             {
@@ -373,7 +281,7 @@ namespace DwarfCorp
                 Chunk.MakeVoxel((int) GridPosition.X, (int) GridPosition.Y + 1, (int) GridPosition.Z);
         }
 
-        public Voxel GetVoxelBelow()
+        public VoxelHandle GetVoxelBelow()
         {
             if (GridPosition.Y <=0)
             {
@@ -383,7 +291,7 @@ namespace DwarfCorp
                 Chunk.MakeVoxel((int)GridPosition.X, (int)GridPosition.Y - 1, (int)GridPosition.Z);
         }
 
-        public bool GetNeighborBySuccessor(Vector3 succ, ref Voxel neighbor, bool requireQuickCompare = true)
+        public bool GetNeighborBySuccessor(Vector3 succ, ref VoxelHandle neighbor, bool requireQuickCompare = true)
         {
             Debug.Assert(neighbor != null, "Null reference passed");
             Debug.Assert(_chunk != null, "DestinationVoxel has no valid chunk reference");
@@ -487,7 +395,7 @@ namespace DwarfCorp
             if (ReferenceEquals(null, o)) return false;
             if (ReferenceEquals(this, o)) return true;
             if (o.GetType() != this.GetType()) return false;
-            return Equals((Voxel) o);
+            return Equals((VoxelHandle) o);
         }
 
         public void UpdateStatics()
@@ -562,12 +470,12 @@ namespace DwarfCorp
             return new BoundingBox(pos, pos + Vector3.One);
         }
 
-        public Voxel()
+        public VoxelHandle()
         {
             
         }
 
-        public Voxel(Point3 gridPosition, VoxelChunk chunk)
+        public VoxelHandle(Point3 gridPosition, VoxelChunk chunk)
         {
             UpdateStatics();
             Chunk = chunk;
@@ -588,12 +496,12 @@ namespace DwarfCorp
             }
         }
 
-        public BoxTransition ComputeTransitionValue(Voxel[] manhattanNeighbors)
+        public BoxTransition ComputeTransitionValue(VoxelHandle[] manhattanNeighbors)
         {
             return Chunk.ComputeTransitionValue(Type.Transitions, (int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z, manhattanNeighbors);
         }
 
-        public BoxPrimitive.BoxTextureCoords ComputeTransitionTexture(Voxel[] manhattanNeighbors)
+        public BoxPrimitive.BoxTextureCoords ComputeTransitionTexture(VoxelHandle[] manhattanNeighbors)
         {
             if(!Type.HasTransitionTextures && Primitive != null)
             {
@@ -628,7 +536,7 @@ namespace DwarfCorp
             }
         }
 
-        public bool GetNeighbor(Vector3 dir, ref Voxel vox)
+        public bool GetNeighbor(Vector3 dir, ref VoxelHandle vox)
         {
             return Chunk.Manager.ChunkData.GetVoxel(Position + dir, ref vox);
         }

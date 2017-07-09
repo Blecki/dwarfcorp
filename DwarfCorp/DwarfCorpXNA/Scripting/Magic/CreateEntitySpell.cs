@@ -87,11 +87,11 @@ namespace DwarfCorp
             base.OnEntitiesSelected(tree, entities);
         }
 
-        public override void OnVoxelsSelected(SpellTree tree, List<Voxel> voxels)
+        public override void OnVoxelsSelected(SpellTree tree, List<VoxelHandle> voxels)
         {
             if (Transmute) return;
             bool got = false;
-            foreach (Voxel voxel in voxels)
+            foreach (VoxelHandle voxel in voxels)
             {
                 if (voxel.IsEmpty)
                 {

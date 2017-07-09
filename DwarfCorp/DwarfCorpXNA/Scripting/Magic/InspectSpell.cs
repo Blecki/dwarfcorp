@@ -107,10 +107,10 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    Voxel vox = new Voxel();
+                    VoxelHandle vox = new VoxelHandle();
                     World.ChunkManager.ChunkData.GetNonNullVoxelAtWorldLocation(World.CursorLightPos, ref vox);
 
-                    OnVoxelsSelected(World.Master.Spells, new List<Voxel>(){vox});
+                    OnVoxelsSelected(World.Master.Spells, new List<VoxelHandle>(){vox});
                 }
             }
             base.Update(time, voxSelector, bodySelector);
@@ -135,14 +135,14 @@ namespace DwarfCorp
             base.OnEntitiesSelected(tree, entities);
         }
 
-        public override void OnVoxelsSelected(SpellTree tree, List<Voxel> voxels)
+        public override void OnVoxelsSelected(SpellTree tree, List<VoxelHandle> voxels)
         {
             if (this.Type != InspectType.InspectBlock) return;
 
 
             string description = "";
             bool first = true;
-            foreach (Voxel selected in voxels)
+            foreach (VoxelHandle selected in voxels)
             {
                 if (!selected.IsEmpty)
                 {

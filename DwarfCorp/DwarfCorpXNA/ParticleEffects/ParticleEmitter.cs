@@ -303,7 +303,7 @@ namespace DwarfCorp
 
 
             bool particlePhysics = GameSettings.Default.ParticlePhysics;
-            Voxel v = new Voxel();
+            VoxelHandle v = new VoxelHandle();
             foreach(Particle p in Particles)
             {
                 float vel = p.Velocity.LengthSquared();

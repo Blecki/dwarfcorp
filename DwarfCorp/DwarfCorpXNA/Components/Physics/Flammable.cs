@@ -60,9 +60,9 @@ namespace DwarfCorp
         {
             BoundingBox expandedBoundingBox = Body.BoundingBox.Expand(0.5f);
 
-            List<Voxel> voxels = chunks.GetVoxelsIntersecting(expandedBoundingBox);
+            List<VoxelHandle> voxels = chunks.GetVoxelsIntersecting(expandedBoundingBox);
 
-            foreach(Voxel currentVoxel in voxels)
+            foreach(VoxelHandle currentVoxel in voxels)
             {
                 WaterCell cell = currentVoxel.Water;
 

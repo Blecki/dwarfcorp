@@ -211,12 +211,12 @@ namespace DwarfCorp
             CurrentTool.OnBodiesSelected(bodies, button);
         }
 
-        public void OnDrag(List<Voxel> voxels, InputManager.MouseButton button)
+        public void OnDrag(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
             CurrentTool.OnVoxelsDragged(voxels, button);
         }
 
-        public void OnSelected(List<Voxel> voxels, InputManager.MouseButton button)
+        public void OnSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
             CurrentTool.OnVoxelsSelected(voxels, button);
         }
@@ -370,7 +370,7 @@ namespace DwarfCorp
 
             if (dwarf.Velocity.Length() > 0.1)
             {
-                Voxel above = new Voxel();
+                VoxelHandle above = new VoxelHandle();
                 if (World.ChunkManager.ChunkData.GetFirstVoxelAbove(dwarf.Position, ref above, false))
                 {
                     World.ChunkManager.ChunkData.SetMaxViewingLevel(above.GridPosition.Y - 1, ChunkManager.SliceMode.Y);

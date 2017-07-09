@@ -129,27 +129,27 @@ namespace DwarfCorp
             }
         }
 
-        public void Reveal(Voxel voxel)
+        public void Reveal(VoxelHandle voxel)
         {
-            Reveal(new List<Voxel>() {voxel});
+            Reveal(new List<VoxelHandle>() {voxel});
         }
 
-        public void Reveal(IEnumerable<Voxel> voxels)
+        public void Reveal(IEnumerable<VoxelHandle> voxels)
         {
             if (!GameSettings.Default.FogofWar) return;
             List<Point3> affectedChunks = new List<Point3>();
-            Queue<Voxel> q = new Queue<Voxel>(128);
+            Queue<VoxelHandle> q = new Queue<VoxelHandle>(128);
 
-            foreach (Voxel voxel in voxels)
+            foreach (VoxelHandle voxel in voxels)
             {
                 if (voxel != null)
                     q.Enqueue(voxel);
             }
-            List<Voxel> neighbors = new List<Voxel>();
-            Voxel currNeighbor = new Voxel();
+            List<VoxelHandle> neighbors = new List<VoxelHandle>();
+            VoxelHandle currNeighbor = new VoxelHandle();
             while (q.Count > 0)
             {
-                Voxel v = q.Dequeue();
+                VoxelHandle v = q.Dequeue();
                 if (v == null) continue;
 
                 if (!affectedChunks.Contains(v.ChunkID))
@@ -157,7 +157,7 @@ namespace DwarfCorp
                     affectedChunks.Add(v.ChunkID);
                 }
                 v.Chunk.GetNeighborsManhattan(v, neighbors);
-                foreach (Voxel nextVoxel in neighbors)
+                foreach (VoxelHandle nextVoxel in neighbors)
                 {
                     if (nextVoxel == null) continue;
 
@@ -171,7 +171,7 @@ namespace DwarfCorp
                         affectedChunks.Add(nextVoxel.ChunkID);
                     }
                     if (nextVoxel.IsEmpty)
-                        q.Enqueue(new Voxel(new Point3(nextVoxel.GridPosition), nextVoxel.Chunk));
+                        q.Enqueue(new VoxelHandle(new Point3(nextVoxel.GridPosition), nextVoxel.Chunk));
 
                 }
 
@@ -193,7 +193,7 @@ namespace DwarfCorp
 
         }
 
-        public Voxel GetNearestFreeAdjacentVoxel(Voxel voxel, Vector3 referenceLocation)
+        public VoxelHandle GetNearestFreeAdjacentVoxel(VoxelHandle voxel, Vector3 referenceLocation)
         {
             if (voxel == null)
             {
@@ -205,15 +205,15 @@ namespace DwarfCorp
                 return voxel;
             }
 
-            List<Voxel> neighbors = voxel.Chunk.AllocateVoxels(6);
+            List<VoxelHandle> neighbors = voxel.Chunk.AllocateVoxels(6);
             voxel.Chunk.GetNeighborsManhattan((int) voxel.GridPosition.X, (int) voxel.GridPosition.Y,
                 (int) voxel.GridPosition.Z, neighbors);
 
-            Voxel closestNeighbor = null;
+            VoxelHandle closestNeighbor = null;
 
             float closestDist = 999;
 
-            foreach (Voxel neighbor in neighbors)
+            foreach (VoxelHandle neighbor in neighbors)
             {
                 float d = (neighbor.Position - referenceLocation).LengthSquared();
 
@@ -228,7 +228,7 @@ namespace DwarfCorp
 
         }
 
-        public bool GetNeighbors(Vector3 worldPosition, List<Vector3> succ, List<Voxel> toReturn)
+        public bool GetNeighbors(Vector3 worldPosition, List<Vector3> succ, List<VoxelHandle> toReturn)
         {
             toReturn.Clear();
             VoxelChunk chunk = GetVoxelChunkAtWorldLocation(worldPosition);
@@ -242,30 +242,30 @@ namespace DwarfCorp
         }
 
 
-        public Voxel GetFirstVisibleBlockHitByMouse(MouseState mouse, Camera camera, Viewport viewPort,
-            bool selectEmpty = false, Func<Voxel, bool> acceptFn = null)
+        public VoxelHandle GetFirstVisibleBlockHitByMouse(MouseState mouse, Camera camera, Viewport viewPort,
+            bool selectEmpty = false, Func<VoxelHandle, bool> acceptFn = null)
         {
-            Voxel vox = GetFirstVisibleBlockHitByScreenCoord(mouse.X, mouse.Y, camera, viewPort, 150.0f, false,
+            VoxelHandle vox = GetFirstVisibleBlockHitByScreenCoord(mouse.X, mouse.Y, camera, viewPort, 150.0f, false,
                 selectEmpty, acceptFn);
             return vox;
         }
 
-        public Voxel GetFirstVisibleBlockHitByScreenCoord(int x, int y, Camera camera, Viewport viewPort, float dist,
-            bool draw = false, bool selectEmpty = false, Func<Voxel, bool> acceptFn = null)
+        public VoxelHandle GetFirstVisibleBlockHitByScreenCoord(int x, int y, Camera camera, Viewport viewPort, float dist,
+            bool draw = false, bool selectEmpty = false, Func<VoxelHandle, bool> acceptFn = null)
         {
             Vector3 pos1 = viewPort.Unproject(new Vector3(x, y, 0), camera.ProjectionMatrix, camera.ViewMatrix,
                 Matrix.Identity);
             Vector3 pos2 = viewPort.Unproject(new Vector3(x, y, 1), camera.ProjectionMatrix, camera.ViewMatrix,
                 Matrix.Identity);
             Vector3 dir = Vector3.Normalize(pos2 - pos1);
-            Voxel vox = GetFirstVisibleBlockHitByRay(pos1, pos1 + dir*dist, draw, selectEmpty, acceptFn);
+            VoxelHandle vox = GetFirstVisibleBlockHitByRay(pos1, pos1 + dir*dist, draw, selectEmpty, acceptFn);
 
             return vox;
         }
 
         public bool CheckRaySolid(Vector3 rayStart, Vector3 rayEnd)
         {
-            Voxel atPos = new Voxel();
+            VoxelHandle atPos = new VoxelHandle();
             foreach (Point3 coord in MathFunctions.RasterizeLine(rayStart, rayEnd))
             {
                 Vector3 pos = new Vector3(coord.X, coord.Y, coord.Z);
@@ -281,16 +281,16 @@ namespace DwarfCorp
             return false;
         }
 
-        public bool IsVoxelVisibleSurface(Voxel voxel)
+        public bool IsVoxelVisibleSurface(VoxelHandle voxel)
         {
             if (voxel == null) return false;
 
             if (!voxel.IsVisible || voxel.IsEmpty) return false;
 
-            List<Voxel> neighbors = new List<Voxel>(6);
+            List<VoxelHandle> neighbors = new List<VoxelHandle>(6);
             voxel.Chunk.GetNeighborsManhattan(voxel, neighbors);
 
-            foreach (Voxel neighbor in neighbors)
+            foreach (VoxelHandle neighbor in neighbors)
             {
                 if (neighbor == null || (neighbor.IsEmpty && neighbor.IsExplored) || !(neighbor.IsVisible))
                 {
@@ -301,10 +301,10 @@ namespace DwarfCorp
             return false;
         }
 
-        public bool IsVoxelOccluded(Voxel voxel, Vector3 cameraPos)
+        public bool IsVoxelOccluded(VoxelHandle voxel, Vector3 cameraPos)
         {
             Vector3 voxelPoint = voxel.Position + Vector3.One * 0.5f;
-            Voxel atPos = new Voxel();
+            VoxelHandle atPos = new VoxelHandle();
             foreach (Point3 coord in MathFunctions.RasterizeLine(cameraPos, voxelPoint))
             {
                 Vector3 pos = new Vector3(coord.X, coord.Y, coord.Z);
@@ -321,7 +321,7 @@ namespace DwarfCorp
 
         public bool CheckOcclusionRay(Vector3 rayStart, Vector3 rayEnd)
         {
-            Voxel atPos = new Voxel();
+            VoxelHandle atPos = new VoxelHandle();
             foreach (Point3 coord in MathFunctions.RasterizeLine(rayStart, rayEnd))
             {
                 Vector3 pos = new Vector3(coord.X, coord.Y, coord.Z);
@@ -337,7 +337,7 @@ namespace DwarfCorp
             return false;
         }
 
-        public bool GetFirstVoxelAbove(Vector3 position, ref Voxel under, bool considerWater = false)
+        public bool GetFirstVoxelAbove(Vector3 position, ref VoxelHandle under, bool considerWater = false)
         {
             VoxelChunk startChunk = GetVoxelChunkAtWorldLocation(position);
 
@@ -363,7 +363,7 @@ namespace DwarfCorp
             return false;
         }
 
-        public bool GetFirstVoxelUnder(Vector3 rayStart, ref Voxel under, bool considerWater = false)
+        public bool GetFirstVoxelUnder(Vector3 rayStart, ref VoxelHandle under, bool considerWater = false)
         {
             VoxelChunk startChunk = GetVoxelChunkAtWorldLocation(rayStart);
 
@@ -389,18 +389,18 @@ namespace DwarfCorp
             return false;
         }
 
-        public Voxel GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd)
+        public VoxelHandle GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd)
         {
             return GetFirstVisibleBlockHitByRay(rayStart, rayEnd, null, false);
         }
 
-        public Voxel GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd, bool draw, bool selectEmpty, Func<Voxel, bool> acceptFn = null)
+        public VoxelHandle GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd, bool draw, bool selectEmpty, Func<VoxelHandle, bool> acceptFn = null)
         {
             return GetFirstVisibleBlockHitByRay(rayStart, rayEnd, null, draw, selectEmpty, acceptFn);
         }
 
 
-        public Voxel GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd, Voxel ignore,  bool draw, bool selectEmpty = false, Func<Voxel, bool> acceptFn = null)
+        public VoxelHandle GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd, VoxelHandle ignore,  bool draw, bool selectEmpty = false, Func<VoxelHandle, bool> acceptFn = null)
         {
             if (acceptFn == null)
             {
@@ -409,8 +409,8 @@ namespace DwarfCorp
             Vector3 delta = rayEnd - rayStart;
             float length = delta.Length();
             delta.Normalize();
-            Voxel atPos = new Voxel();
-            Voxel prev = new Voxel();
+            VoxelHandle atPos = new VoxelHandle();
+            VoxelHandle prev = new VoxelHandle();
             foreach (Point3 coord in MathFunctions.RasterizeLine(rayStart, rayEnd))
             //for(float dn = 0.0f; dn < length; dn += 0.2f)
             {
@@ -553,12 +553,12 @@ namespace DwarfCorp
             return returnChunk;
         }
 
-        public bool GetVoxel(Vector3 worldLocation, ref Voxel voxel)
+        public bool GetVoxel(Vector3 worldLocation, ref VoxelHandle voxel)
         {
             return GetVoxel(null, worldLocation, ref voxel);
         }
 
-        public bool GetVoxel(VoxelChunk checkFirst, Vector3 worldLocation, ref Voxel newReference)
+        public bool GetVoxel(VoxelChunk checkFirst, Vector3 worldLocation, ref VoxelHandle newReference)
         {
             if (checkFirst != null)
             {
@@ -584,7 +584,7 @@ namespace DwarfCorp
         /// <param Name="worldLocation">A floating point vector location in the world space</param>
         /// <param Name="depth">unused</param>
         /// <returns>The voxel at that location (as a list)</returns>
-        public bool GetNonNullVoxelAtWorldLocation(Vector3 worldLocation, ref Voxel voxel)
+        public bool GetNonNullVoxelAtWorldLocation(Vector3 worldLocation, ref VoxelHandle voxel)
         {
             return GetNonNullVoxelAtWorldLocationCheckFirst(null, worldLocation, ref voxel);
         }
@@ -611,7 +611,7 @@ namespace DwarfCorp
         /// <param Name="worldLocation">The point in the world to check</param>
         /// <param Name="toReturn">A list of voxels to get</param>
         /// <param Name="depth">The depth of the recursion</param>
-        public bool GetNonNullVoxelAtWorldLocationCheckFirst(VoxelChunk checkFirst, Vector3 worldLocation, ref Voxel toReturn)
+        public bool GetNonNullVoxelAtWorldLocationCheckFirst(VoxelChunk checkFirst, Vector3 worldLocation, ref VoxelHandle toReturn)
         {
 
             if(checkFirst != null)

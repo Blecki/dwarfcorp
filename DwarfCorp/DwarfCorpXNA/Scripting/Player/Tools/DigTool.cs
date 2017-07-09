@@ -66,21 +66,21 @@ namespace DwarfCorp
         }
 
 
-        public override void OnVoxelsSelected(List<Voxel> refs, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
         {
 
             if (button == InputManager.MouseButton.Left)
             {
                 Player.World.Tutorial("slice");
                 List<Task> assignments = new List<Task>();
-                foreach (Voxel r in refs)
+                foreach (VoxelHandle r in refs)
                 {
                     if (r == null)
                     {
                         continue;
                     }
 
-                    Voxel v = r;
+                    VoxelHandle v = r;
                     if (v.IsEmpty)
                     {
                         continue;
@@ -104,7 +104,7 @@ namespace DwarfCorp
             }
             else
             {
-                foreach (Voxel r in refs)
+                foreach (VoxelHandle r in refs)
                 {
                     if (r == null || r.IsEmpty)
                     {
@@ -151,7 +151,7 @@ namespace DwarfCorp
         {
             foreach (KeyValuePair<ulong, BuildOrder> kvp in Player.Faction.DigDesignations)
             {
-                Voxel v = kvp.Value.Vox;
+                VoxelHandle v = kvp.Value.Vox;
 
                 BoundingBox box = v.GetBoundingBox();
 
@@ -178,7 +178,7 @@ namespace DwarfCorp
             
         }
 
-        public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }

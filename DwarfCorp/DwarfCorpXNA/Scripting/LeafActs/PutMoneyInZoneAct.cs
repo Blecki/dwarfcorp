@@ -60,14 +60,14 @@ namespace DwarfCorp
 
 
         [JsonIgnore]
-        public Voxel Voxel { get { return GetVoxel(); } set { SetVoxel(value); } }
+        public VoxelHandle Voxel { get { return GetVoxel(); } set { SetVoxel(value); } }
 
-        public Voxel GetVoxel()
+        public VoxelHandle GetVoxel()
         {
-            return Agent.Blackboard.GetData<Voxel>(VoxelName);
+            return Agent.Blackboard.GetData<VoxelHandle>(VoxelName);
         }
 
-        public void SetVoxel(Voxel voxel)
+        public void SetVoxel(VoxelHandle voxel)
         {
             Agent.Blackboard.SetData(VoxelName, voxel);
         }

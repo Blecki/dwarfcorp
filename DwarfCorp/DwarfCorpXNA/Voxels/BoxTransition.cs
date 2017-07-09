@@ -1,4 +1,4 @@
-﻿// CreateCraftItemAct.cs
+// DestinationVoxel.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -33,46 +33,43 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace DwarfCorp
 {
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
-    public class CreateCraftItemAct : CreatureAct
+    public struct BoxTransition
     {
-        public VoxelHandle Voxel { get; set; }
-        public string ItemType { get; set; }
-        public CreateCraftItemAct(VoxelHandle voxel, CreatureAI agent, string itemType) :
-            base(agent)
-        {
-            Agent = agent;
-            Voxel = voxel;
-            Name = "Create craft item";
-            ItemType = itemType;
-        }
+        public TransitionTexture Front;
+        public TransitionTexture Right;
+        public TransitionTexture Left;
+        public TransitionTexture Back;
+        public TransitionTexture Top;
+        public TransitionTexture Bottom;
 
-        public override IEnumerable<Status> Run()
+        public TransitionTexture GetTexture(BoxFace face)
         {
-            if (!Creature.Faction.CraftBuilder.IsDesignation(Voxel))
+            switch (face)
             {
-                yield return Status.Fail;
+                case BoxFace.Top:
+                    return Top;
+                case BoxFace.Bottom:
+                    return Bottom;
+                case BoxFace.Back:
+                    return Back;
+                case BoxFace.Left:
+                    return Left;
+                case BoxFace.Right:
+                    return Right;
+                case BoxFace.Front:
+                    return Front;
             }
-
-            Body item = EntityFactory.CreateEntity<Body>(CraftLibrary.CraftItems[ItemType].Name, Voxel.Position + Vector3.One * 0.5f);
-            Creature.Manager.World.ParticleManager.Trigger("puff", Voxel.Position + Vector3.One * 0.5f, Color.White, 10);
-            if (item == null)
-            {
-                yield return Status.Fail;
-            }
-            else
-            {
-                Creature.Faction.CraftBuilder.RemoveDesignation(Voxel);
-                Creature.AI.AddXP(10);
-                yield return Status.Success;
-            }
+            return TransitionTexture.None;
         }
     }
-
 }

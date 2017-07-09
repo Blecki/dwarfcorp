@@ -133,7 +133,7 @@ namespace DwarfCorp
 
         public void GenerateCluster(OreCluster cluster, ChunkData chunks)
         {
-            Voxel vox = new Voxel();
+            VoxelHandle vox = new VoxelHandle();
             for (float x = -cluster.Size.X*0.5f; x < cluster.Size.X*0.5f; x += 1.0f)
             {
                 for (float y = -cluster.Size.Y*0.5f; y < cluster.Size.Y*0.5f; y += 1.0f)
@@ -167,7 +167,7 @@ namespace DwarfCorp
 
         public void GenerateVein(OreVein vein, ChunkData chunks)
         {
-            Voxel vox = new Voxel();
+            VoxelHandle vox = new VoxelHandle();
             Vector3 curr = vein.Start;
             Vector3 directionBias = MathFunctions.RandVector3Box(-1, 1, -0.1f, 0.1f, -1, 1);
             for (float t = 0; t < vein.Length; t++)
@@ -193,7 +193,7 @@ namespace DwarfCorp
         public void GenerateWater(VoxelChunk chunk)
         {
             int waterHeight = (int) (SeaLevel*chunk.SizeY) + 1;
-            Voxel voxel = chunk.MakeVoxel(0, 0, 0);
+            VoxelHandle voxel = chunk.MakeVoxel(0, 0, 0);
             for (int x = 0; x < chunk.SizeX; x++)
             {
                 for (int z = 0; z < chunk.SizeZ; z++)
@@ -235,7 +235,7 @@ namespace DwarfCorp
         public void GenerateLava(VoxelChunk chunk)
         {
             int lavaHeight = 2;
-            Voxel voxel = chunk.MakeVoxel(0, 0, 0);
+            VoxelHandle voxel = chunk.MakeVoxel(0, 0, 0);
             for (int x = 0; x < chunk.SizeX; x++)
             {
                 for (int z = 0; z < chunk.SizeZ; z++)
@@ -270,7 +270,7 @@ namespace DwarfCorp
         public void GenerateFauna(VoxelChunk chunk, ComponentManager components, ContentManager content, GraphicsDevice graphics, FactionLibrary factions)
         {
             int waterHeight = (int)(SeaLevel * chunk.SizeY);
-            Voxel v = chunk.MakeVoxel(0, 0, 0);
+            VoxelHandle v = chunk.MakeVoxel(0, 0, 0);
             for (int x = 0; x < chunk.SizeX; x++)
             {
                 for (int z = 0; z < chunk.SizeZ; z++)
@@ -312,8 +312,8 @@ namespace DwarfCorp
         {
             int waterHeight = (int) (SeaLevel * chunk.SizeY);
             bool updated = false;
-            Voxel v = chunk.MakeVoxel(0, 0, 0);
-            Voxel vUnder = chunk.MakeVoxel(0, 0, 0);
+            VoxelHandle v = chunk.MakeVoxel(0, 0, 0);
+            VoxelHandle vUnder = chunk.MakeVoxel(0, 0, 0);
             for(int x = 0; x < chunk.SizeX; x++)
             {
                 for(int z = 0; z < chunk.SizeZ; z++)
@@ -421,8 +421,8 @@ namespace DwarfCorp
             int chunkSizeY = chunk.SizeY;
             int chunkSizeZ = chunk.SizeZ;
             BiomeData biome = BiomeLibrary.Biomes[Overworld.Biome.Cave];
-            List<Voxel> neighbors = new List<Voxel>();
-            Voxel vUnder = chunk.MakeVoxel(0, 0, 0);
+            List<VoxelHandle> neighbors = new List<VoxelHandle>();
+            VoxelHandle vUnder = chunk.MakeVoxel(0, 0, 0);
             for (int x = 0; x < chunkSizeX; x++)
             {
                 for (int z = 0; z < chunkSizeZ; z++)
@@ -500,7 +500,7 @@ namespace DwarfCorp
 
         public static void GenerateCaveVegetation(VoxelChunk chunk, int x, int y, int z, int caveHeight, BiomeData biome, Vector3 vec, WorldManager world, Perlin NoiseGenerator)
         {
-            Voxel vUnder = chunk.MakeVoxel(x, y - 1, z);
+            VoxelHandle vUnder = chunk.MakeVoxel(x, y - 1, z);
             int indexunder = chunk.Data.IndexAt(x, y - caveHeight, z);
             chunk.Data.Types[indexunder] = (byte)VoxelLibrary.GetVoxelType(biome.GrassLayer.VoxelType).ID;
             chunk.Data.Health[indexunder] = (byte)VoxelLibrary.GetVoxelType(biome.GrassLayer.VoxelType).StartingHealth;
@@ -590,16 +590,16 @@ namespace DwarfCorp
             return voxels;
         }
 
-        public static Voxel[][][] Allocate(int chunkSizeX, int chunkSizeY, int chunkSizeZ)
+        public static VoxelHandle[][][] Allocate(int chunkSizeX, int chunkSizeY, int chunkSizeZ)
         {
-            Voxel[][][] voxels = new Voxel[chunkSizeX][][];
+            VoxelHandle[][][] voxels = new VoxelHandle[chunkSizeX][][];
 
             for(int x = 0; x < chunkSizeX; x++)
             {
-                voxels[x] = new Voxel[chunkSizeY][];
+                voxels[x] = new VoxelHandle[chunkSizeY][];
                 for(int y = 0; y < chunkSizeY; y++)
                 {
-                    voxels[x][y] = new Voxel[chunkSizeZ];
+                    voxels[x][y] = new VoxelHandle[chunkSizeZ];
                 }
             }
 
@@ -616,7 +616,7 @@ namespace DwarfCorp
                 ShouldRecalculateLighting = true
             };
 
-            Voxel voxel = c.MakeVoxel(0, 0, 0);
+            VoxelHandle voxel = c.MakeVoxel(0, 0, 0);
             for(int x = 0; x < chunkSizeX; x++)
             {
                 for(int z = 0; z < chunkSizeZ; z++)

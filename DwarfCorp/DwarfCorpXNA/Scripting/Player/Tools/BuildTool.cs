@@ -51,7 +51,7 @@ namespace DwarfCorp
     {
         public BuildTypes BuildType;
 
-        public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
             Player.Faction.RoomBuilder.VoxelsSelected(voxels, button);
             Player.Faction.WallBuilder.VoxelsSelected(voxels, button);
@@ -121,7 +121,7 @@ namespace DwarfCorp
             
         }
 
-        public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
             Player.Faction.RoomBuilder.OnVoxelsDragged(voxels, button);
             Player.Faction.WallBuilder.VoxelDragged(voxels);

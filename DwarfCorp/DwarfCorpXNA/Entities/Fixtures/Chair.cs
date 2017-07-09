@@ -72,7 +72,7 @@ namespace DwarfCorp
 
             Initialize(Manager);
 
-            var voxelUnder = new Voxel();
+            var voxelUnder = new VoxelHandle();
 
             if (manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
                 AddChild(new VoxelListener(manager, manager.World.ChunkManager, voxelUnder));

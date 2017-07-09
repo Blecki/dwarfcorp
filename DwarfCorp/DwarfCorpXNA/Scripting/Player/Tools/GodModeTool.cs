@@ -59,7 +59,7 @@ namespace DwarfCorp
         {
         }
 
-        public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }
@@ -87,7 +87,7 @@ namespace DwarfCorp
             Player.VoxSelector.SelectionType = GetSelectionTypeBySelectionBoxValue(arg);
         }
 
-        public override void OnVoxelsSelected(List<Voxel> refs, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
         {
            
             HashSet<Point3> chunksToRebuild = new HashSet<Point3>();
@@ -104,7 +104,7 @@ namespace DwarfCorp
             else if (Command.Contains("Spawn/"))
             {
                 string type = Command.Substring(6);
-                foreach (Voxel vox in refs.Where(vox => vox != null))
+                foreach (VoxelHandle vox in refs.Where(vox => vox != null))
                 {
                     if (vox.IsEmpty)
                     {
@@ -114,7 +114,7 @@ namespace DwarfCorp
             }
             else
             {
-                foreach(Voxel vox in refs.Where(vox => vox != null))
+                foreach(VoxelHandle vox in refs.Where(vox => vox != null))
                 {
                     if(Command.Contains("Place/"))
                     {
@@ -149,7 +149,7 @@ namespace DwarfCorp
                         }
                             break;
                         case "Kill Block":
-                            foreach(Voxel selected in refs)
+                            foreach(VoxelHandle selected in refs)
                             {
 
                                 if (!selected.IsEmpty)

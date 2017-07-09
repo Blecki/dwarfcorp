@@ -31,11 +31,11 @@ namespace DwarfCorp
             public LiquidRebuildCache()
             {
                 int euclidianNeighborCount = 27;
-                neighbors = new List<Voxel>(euclidianNeighborCount);
+                neighbors = new List<VoxelHandle>(euclidianNeighborCount);
                 validNeighbors = new bool[euclidianNeighborCount];
                 retrievedNeighbors = new bool[euclidianNeighborCount];
 
-                for (int i = 0; i < 27; i++) neighbors.Add(new Voxel());
+                for (int i = 0; i < 27; i++) neighbors.Add(new VoxelHandle());
 
                 int vertexCount = (int)VoxelVertex.Count;
                 vertexCalculated = new bool[vertexCount];
@@ -57,7 +57,7 @@ namespace DwarfCorp
             internal bool[] drawFace = new bool[6];
 
             // A list of unattached voxels we can change to the neighbors of the voxel who's faces we are drawing.
-            internal List<Voxel> neighbors;
+            internal List<VoxelHandle> neighbors;
 
             // A list of which voxels are valid in the neighbors list.  We can't just set a neighbor to null as we reuse them so we use this.
             // Does not need to be cleared between sets of face drawing as retrievedNeighbors stops us from using a stale value.
@@ -159,8 +159,8 @@ namespace DwarfCorp
             int[] maxVertices = new int[lps.Length];
             int maxY = (int)Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, chunk.SizeY);
 
-            Voxel myVoxel = chunk.MakeVoxel(0, 0, 0);
-            Voxel vox = chunk.MakeVoxel(0, 0, 0);
+            VoxelHandle myVoxel = chunk.MakeVoxel(0, 0, 0);
+            VoxelHandle vox = chunk.MakeVoxel(0, 0, 0);
             int maxVertex = 0;
             bool fogOfWar = GameSettings.Default.FogofWar;
             for (int x = 0; x < chunk.SizeX; x++)
@@ -307,7 +307,7 @@ namespace DwarfCorp
             cache = null;
         }
 
-        private static void CreateWaterFaces(Voxel voxel,
+        private static void CreateWaterFaces(VoxelHandle voxel,
                                             VoxelChunk chunk,
                                             int x, int y, int z,
                                             ExtendedVertex[] vertices,
@@ -365,7 +365,7 @@ namespace DwarfCorp
                             // This allows us to only get a particular voxel once a function call instead of once per vertexCount/per face.
                             if (!cache.retrievedNeighbors[key])
                             {
-                                Voxel neighbor = cache.neighbors[key];
+                                VoxelHandle neighbor = cache.neighbors[key];
                                 cache.validNeighbors[key] = voxel.GetNeighborBySuccessor(succ, ref neighbor, false);
                                 cache.retrievedNeighbors[key] = true;
                             }
@@ -373,7 +373,7 @@ namespace DwarfCorp
                             if (!cache.validNeighbors[key]) continue;
 
                             // Now actually do the math.
-                            Voxel vox = cache.neighbors[key];
+                            VoxelHandle vox = cache.neighbors[key];
                             averageWaterLevel += vox.WaterLevel;
                             count++;
                             if (vox.WaterLevel < 1) emptyNeighbors++;

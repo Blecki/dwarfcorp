@@ -79,11 +79,11 @@ namespace DwarfCorp
 
         }
 
-        public override void OnVoxelsSelected(SpellTree tree, List<Voxel> voxels)
+        public override void OnVoxelsSelected(SpellTree tree, List<VoxelHandle> voxels)
         {
             HashSet<Point3> chunksToRebuild = new HashSet<Point3>();
             bool placed = false;
-            foreach (Voxel selected in voxels)
+            foreach (VoxelHandle selected in voxels)
             {
 
                 if (selected != null && ((!Transmute && selected.IsEmpty) || Transmute && !selected.IsEmpty) && OnCast(tree))

@@ -72,12 +72,12 @@ namespace DwarfCorp
 
         }
 
-        public AnimalPen(bool designation, IEnumerable<Voxel> designations, WorldManager world) :
+        public AnimalPen(bool designation, IEnumerable<VoxelHandle> designations, WorldManager world) :
             base(designation, designations, AnimalPenData, world)
         {
         }
 
-        public AnimalPen(IEnumerable<Voxel> voxels, WorldManager world) :
+        public AnimalPen(IEnumerable<VoxelHandle> voxels, WorldManager world) :
             base(voxels, AnimalPenData, world)
         {
             OnBuilt();

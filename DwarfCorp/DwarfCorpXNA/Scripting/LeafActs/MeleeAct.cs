@@ -432,7 +432,7 @@ namespace DwarfCorp
 
             if (Is2D) target.Y = Creature.AI.Position.Y;
             List<MoveAction> path = new List<MoveAction>();
-            Voxel curr = Creature.Physics.CurrentVoxel;
+            VoxelHandle curr = Creature.Physics.CurrentVoxel;
             for (int i = 0; i < PathLength; i++)
             {
                 IEnumerable<MoveAction> actions =
@@ -458,7 +458,7 @@ namespace DwarfCorp
                 {
                     path.Add(bestAction.Value);
                     MoveAction action = bestAction.Value;
-                    action.DestinationVoxel = new Voxel(curr);
+                    action.DestinationVoxel = new VoxelHandle(curr);
                     curr = bestAction.Value.DestinationVoxel;
                     bestAction = action;
 
@@ -475,7 +475,7 @@ namespace DwarfCorp
                     new MoveAction()
                     {
                         Diff = Vector3.Zero,
-                        DestinationVoxel = new Voxel(Creature.Physics.CurrentVoxel),
+                        DestinationVoxel = new VoxelHandle(Creature.Physics.CurrentVoxel),
                         MoveType = MoveType.Walk
                     });
                 Creature.AI.Blackboard.SetData("RandomPath", path);

@@ -80,22 +80,22 @@ namespace DwarfCorp
         {
             bool toReturn = false;
 
-            if(Voxel.HasFlag(rampType, RampType.TopFrontRight))
+            if(VoxelHandle.HasFlag(rampType, RampType.TopFrontRight))
             {
                 toReturn = (vertex == VoxelVertex.BackTopRight);
             }
 
-            if(Voxel.HasFlag(rampType, RampType.TopBackRight))
+            if(VoxelHandle.HasFlag(rampType, RampType.TopBackRight))
             {
                 toReturn = toReturn || (vertex == VoxelVertex.FrontTopRight);
             }
 
-            if(Voxel.HasFlag(rampType, RampType.TopFrontLeft))
+            if(VoxelHandle.HasFlag(rampType, RampType.TopFrontLeft))
             {
                 toReturn = toReturn || (vertex == VoxelVertex.BackTopLeft);
             }
 
-            if(Voxel.HasFlag(rampType, RampType.TopBackLeft))
+            if(VoxelHandle.HasFlag(rampType, RampType.TopBackLeft))
             {
                 toReturn = toReturn || (vertex == VoxelVertex.FrontTopLeft);
             }
@@ -128,8 +128,8 @@ namespace DwarfCorp
         public static bool RampIsDegenerate(RampType rampType)
         {
             return rampType == RampType.All
-                   || (Voxel.HasFlag(rampType, RampType.Left) && Voxel.HasFlag(rampType, RampType.Right))
-                   || (Voxel.HasFlag(rampType, RampType.Front) && Voxel.HasFlag(rampType, RampType.Back));
+                   || (VoxelHandle.HasFlag(rampType, RampType.Left) && VoxelHandle.HasFlag(rampType, RampType.Right))
+                   || (VoxelHandle.HasFlag(rampType, RampType.Front) && VoxelHandle.HasFlag(rampType, RampType.Back));
         }
 
         public static bool IsSideFace(BoxFace face)
@@ -140,9 +140,9 @@ namespace DwarfCorp
 
         public static void UpdateCornerRamps(VoxelChunk chunk)
         {
-            Voxel v = chunk.MakeVoxel(0, 0, 0);
-            Voxel vAbove = chunk.MakeVoxel(0, 0, 0);
-            List<Voxel> diagNeighbors = chunk.AllocateVoxels(3);
+            VoxelHandle v = chunk.MakeVoxel(0, 0, 0);
+            VoxelHandle vAbove = chunk.MakeVoxel(0, 0, 0);
+            List<VoxelHandle> diagNeighbors = chunk.AllocateVoxels(3);
             List<VoxelVertex> top = new List<VoxelVertex>()
             {
                 VoxelVertex.FrontTopLeft,
@@ -372,10 +372,10 @@ namespace DwarfCorp
         {
             Dictionary<BoxFace, bool> faceExists = new Dictionary<BoxFace, bool>();
             Dictionary<BoxFace, bool> faceVisible = new Dictionary<BoxFace, bool>();
-            Voxel v = chunk.MakeVoxel(0, 0, 0);
-            Voxel vAbove = chunk.MakeVoxel(0, 0, 0);
-            Voxel voxelOnFace = chunk.MakeVoxel(0, 0, 0);
-            Voxel worldVoxel = new Voxel();
+            VoxelHandle v = chunk.MakeVoxel(0, 0, 0);
+            VoxelHandle vAbove = chunk.MakeVoxel(0, 0, 0);
+            VoxelHandle voxelOnFace = chunk.MakeVoxel(0, 0, 0);
+            VoxelHandle worldVoxel = new VoxelHandle();
 
             for(int x = 0; x < chunk.SizeX; x++)
             {
@@ -476,12 +476,12 @@ namespace DwarfCorp
             int[] ambientValues = new int[4];
             int maxIndex = 0;
             int maxVertex = 0;
-            Voxel v = chunk.MakeVoxel(0, 0, 0);
-            Voxel voxelOnFace = chunk.MakeVoxel(0, 0, 0);
-            Voxel[] manhattanNeighbors = new Voxel[4];
+            VoxelHandle v = chunk.MakeVoxel(0, 0, 0);
+            VoxelHandle voxelOnFace = chunk.MakeVoxel(0, 0, 0);
+            VoxelHandle[] manhattanNeighbors = new VoxelHandle[4];
             BoxPrimitive bedrockModel = VoxelLibrary.GetPrimitive("Bedrock");
-            Voxel worldVoxel = new Voxel();
-            List<Voxel> lightingScratchSpace = new List<Voxel>(8);
+            VoxelHandle worldVoxel = new VoxelHandle();
+            List<VoxelHandle> lightingScratchSpace = new List<VoxelHandle>(8);
             if (Vertices == null)
             {
                 Vertices = new ExtendedVertex[1024];

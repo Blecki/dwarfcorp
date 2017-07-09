@@ -58,10 +58,10 @@ namespace DwarfCorp
             Recharges = false;
             TileRef = 18;
         }
-        public override void OnVoxelsSelected(SpellTree tree, List<Voxel> voxels)
+        public override void OnVoxelsSelected(SpellTree tree, List<VoxelHandle> voxels)
         {
             bool destroyed = false;
-            foreach (Voxel selected in voxels)
+            foreach (VoxelHandle selected in voxels)
             {
                 if (!selected.IsEmpty && !selected.Type.IsInvincible)
                 {

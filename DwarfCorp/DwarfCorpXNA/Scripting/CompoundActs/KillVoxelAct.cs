@@ -46,7 +46,7 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class KillVoxelAct : CompoundCreatureAct
     {
-        public Voxel Voxel { get; set; }
+        public VoxelHandle Voxel { get; set; }
 
         public KillVoxelAct()
         {
@@ -56,7 +56,7 @@ namespace DwarfCorp
 
         public IEnumerable<Status> IncrementAssignment( CreatureAI creature, string designation, int amount)
         {
-            Voxel vref = creature.Blackboard.GetData<Voxel>(designation);
+            VoxelHandle vref = creature.Blackboard.GetData<VoxelHandle>(designation);
             if(vref != null)
             {
                 BuildOrder digBuildOrder = creature.Faction.GetDigDesignation(vref);
@@ -80,7 +80,7 @@ namespace DwarfCorp
 
         public IEnumerable<Status> CheckIsDigDesignation(CreatureAI creature, string designation)
         {
-            Voxel vref = creature.Blackboard.GetData<Voxel>(designation);
+            VoxelHandle vref = creature.Blackboard.GetData<VoxelHandle>(designation);
             if (vref != null)
             {
                 BuildOrder digBuildOrder = creature.Faction.GetDigDesignation(vref);
@@ -99,13 +99,13 @@ namespace DwarfCorp
             yield return Status.Fail;
         }
 
-        public KillVoxelAct(Voxel voxel, CreatureAI creature) :
+        public KillVoxelAct(VoxelHandle voxel, CreatureAI creature) :
             base(creature)
         {
             Voxel = voxel;
             Name = "Kill DestinationVoxel " + voxel.Position;
             Tree = new Sequence(
-                new SetBlackboardData<Voxel>(creature, "DigVoxel", voxel),
+                new SetBlackboardData<VoxelHandle>(creature, "DigVoxel", voxel),
                 new Sequence(
                               new Wrap(() => IncrementAssignment(creature, "DigVoxel", 1)),
                               new GoToVoxelAct(voxel, PlanAct.PlanType.Radius, creature) {Radius = 2.0f},

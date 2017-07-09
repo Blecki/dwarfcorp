@@ -93,14 +93,14 @@ namespace DwarfCorp
 
         private void CreateSprite()
         {
-            Voxel voxel = new Voxel();
+            VoxelHandle voxel = new VoxelHandle();
             if (!Manager.World.ChunkManager.ChunkData.GetVoxel(LocalPosition, ref voxel))
             {
                 CreateSpriteStanding();
                 return;
             }
 
-            Voxel neighbor = new Voxel();
+            VoxelHandle neighbor = new VoxelHandle();
             for (int dx = -1; dx < 2; dx ++)
             {
                 for (int dz = -1; dz < 2; dz++)
@@ -125,7 +125,7 @@ namespace DwarfCorp
             CreateSprite();
             Tags.Add("Lamp");
 
-            Voxel voxelUnder = new Voxel();
+            VoxelHandle voxelUnder = new VoxelHandle();
 
             if (componentManager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
                 AddChild(new VoxelListener(componentManager, componentManager.World.ChunkManager, voxelUnder));

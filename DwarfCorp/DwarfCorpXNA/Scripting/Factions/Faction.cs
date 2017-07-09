@@ -234,7 +234,7 @@ namespace DwarfCorp
             List<ulong> removalKeys = new List<ulong>();
             foreach (KeyValuePair<ulong, BuildOrder> kvp in DigDesignations)
             {
-                Voxel v = kvp.Value.Vox;;
+                VoxelHandle v = kvp.Value.Vox;;
                 if (v.IsEmpty || v.Health <= 0.0f || v.Type.Name == "empty" || v.Type.IsInvincible)
                 {
                     Drawer3D.UnHighlightVoxel(v);
@@ -260,7 +260,7 @@ namespace DwarfCorp
             List<BuildOrder> removals = new List<BuildOrder>();
             foreach (BuildOrder d in GuardDesignations)
             {
-                Voxel v = d.Vox;
+                VoxelHandle v = d.Vox;
 
                 if (!v.IsEmpty && !(v.Health <= 0.0f) && v.Type.Name != "empty")
                 {
@@ -361,14 +361,14 @@ namespace DwarfCorp
             return RoomBuilder.DesignatedRooms;
         }
 
-        public void OnVoxelDestroyed(Voxel v)
+        public void OnVoxelDestroyed(VoxelHandle v)
         {
             if(v.IsEmpty)
             {
                 return;
             }
 
-            Voxel Voxel = v;
+            VoxelHandle Voxel = v;
 
             RoomBuilder.OnVoxelDestroyed(v);
 
@@ -429,8 +429,8 @@ namespace DwarfCorp
             BuildOrder closestVoxel = null;
             foreach(KeyValuePair<ulong, BuildOrder> kvp in DigDesignations)
             {
-                Voxel vref = kvp.Value.Vox;
-                Voxel v = vref;
+                VoxelHandle vref = kvp.Value.Vox;
+                VoxelHandle v = vref;
 
                 float d = (v.Position - position).LengthSquared();
                 if(!(d < closestDist))
@@ -451,8 +451,8 @@ namespace DwarfCorp
             BuildOrder closestVoxel = null;
             foreach(BuildOrder designation in GuardDesignations)
             {
-                Voxel vref = designation.Vox;
-                Voxel v = vref;
+                VoxelHandle vref = designation.Vox;
+                VoxelHandle v = vref;
 
                 float d = (v.Position - position).LengthSquared();
                 if(!(d < closestDist))
@@ -467,7 +467,7 @@ namespace DwarfCorp
             return closestVoxel;
         }
 
-        public BuildOrder GetGuardDesignation(Voxel vox)
+        public BuildOrder GetGuardDesignation(VoxelHandle vox)
         {
             return (from d in GuardDesignations
                 let vref = d.Vox
@@ -476,7 +476,7 @@ namespace DwarfCorp
                 select d).FirstOrDefault();
         }
 
-        public BuildOrder GetDigDesignation(Voxel vox)
+        public BuildOrder GetDigDesignation(VoxelHandle vox)
         {
             BuildOrder returnOrder;
             if (DigDesignations.TryGetValue(vox.QuickCompare, out returnOrder))
@@ -490,7 +490,7 @@ namespace DwarfCorp
             DigDesignations.Add(order.Vox.QuickCompare, order);
         }
 
-        public void RemoveDigDesignation(Voxel vox)
+        public void RemoveDigDesignation(VoxelHandle vox)
         {
             if (DigDesignations.ContainsKey(vox.QuickCompare))
             {
@@ -499,7 +499,7 @@ namespace DwarfCorp
             }
         }
 
-        public bool IsDigDesignation(Voxel vox)
+        public bool IsDigDesignation(VoxelHandle vox)
         {
             GamePerformance.Instance.TrackValueType<int>("Dig Designations", DigDesignations.Count);
 
@@ -514,7 +514,7 @@ namespace DwarfCorp
         }
 
 
-        public bool IsGuardDesignation(Voxel vox)
+        public bool IsGuardDesignation(VoxelHandle vox)
         {
             return GuardDesignations.Select(d => d.Vox).Select(vref => vref).Any(vox.Equals);
         }
@@ -591,7 +591,7 @@ namespace DwarfCorp
         }
 
 
-        public Stockpile GetIntersectingStockpile(Voxel v)
+        public Stockpile GetIntersectingStockpile(VoxelHandle v)
         {
             return Stockpiles.FirstOrDefault(pile => pile.Intersects(v));
         }
@@ -611,9 +611,9 @@ namespace DwarfCorp
             return RoomBuilder.DesignatedRooms.Where(room => room.Intersects(v)).ToList();
         }
 
-        public bool IsInStockpile(Voxel v)
+        public bool IsInStockpile(VoxelHandle v)
         {
-            Voxel vRef = v;
+            VoxelHandle vRef = v;
             return Stockpiles.Any(s => s.ContainsVoxel(vRef));
         }
 
@@ -940,7 +940,7 @@ namespace DwarfCorp
             {
                 string creature = Race.CreatureTypes[MathFunctions.Random.Next(Race.CreatureTypes.Count)];
                 Vector3 offset = MathFunctions.RandVector3Cube() * 2;
-                Voxel voxel = new Voxel();
+                VoxelHandle voxel = new VoxelHandle();
                 
                 if (World.ChunkManager.ChunkData.GetFirstVoxelUnder(position + offset, ref voxel, true))
                 {
