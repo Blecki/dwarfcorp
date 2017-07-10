@@ -234,7 +234,7 @@ namespace DwarfCorp
                         int nz = dz + z;
                         if (
                             !Creature.Manager.World.ChunkManager.ChunkData.GetVoxel(startChunk,
-                                new Vector3(nx, ny, nz) + startChunk.Origin,
+                                startChunk.ID + new LocalVoxelCoordinate(nx, ny, nz),
                                 ref neighborHood[dx + 1, dy + 1, dz + 1]))
                         {
                             neighborHood[dx + 1, dy + 1, dz + 1] = null;

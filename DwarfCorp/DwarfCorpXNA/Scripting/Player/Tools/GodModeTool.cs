@@ -141,7 +141,7 @@ namespace DwarfCorp
                         case "Delete Block":
                         {
                             Player.World.Master.Faction.OnVoxelDestroyed(vox);
-                            vox.Chunk.NotifyDestroyed(new Point3(vox.GridPosition));
+                            vox.Chunk.NotifyDestroyed(vox.GridPosition);
                             vox.Type = VoxelType.TypeList[0];
                             vox.Water = new WaterCell();
 
@@ -170,7 +170,6 @@ namespace DwarfCorp
                             break;
                         case "Fill Lava":
                         {
-                            Vector3 gridPos = vox.GridPosition;
                             if (vox.IsEmpty)
                             {
                                 vox.WaterLevel = WaterManager.maxWaterLevel;

@@ -115,7 +115,7 @@ namespace DwarfCorp
             switch(State)
             {
                 case BalloonState.DeliveringGoods:
-                    VoxelChunk chunk = chunks.ChunkData.GetVoxelChunkAtWorldLocation(body.GlobalTransform.Translation);
+                    VoxelChunk chunk = chunks.ChunkData.GetChunk(body.GlobalTransform.Translation);
 
                     if(chunk != null)
                     {

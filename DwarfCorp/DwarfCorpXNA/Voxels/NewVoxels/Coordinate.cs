@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
@@ -82,6 +83,12 @@ namespace DwarfCorp
         public bool Equals(GlobalVoxelCoordinate other)
         {
             return this == other;
+        }
+
+        internal static GlobalVoxelCoordinate FromVector3(Vector3 V)
+        {
+            return new GlobalVoxelCoordinate(
+                (int)Math.Floor(V.X), (int)Math.Floor(V.Y), (int)Math.Floor(V.Z));
         }
     }
 

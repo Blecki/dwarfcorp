@@ -30,8 +30,8 @@ namespace DwarfCorp
         [JsonIgnore]
         public static Vector3[] FaceDeltas = new Vector3[6];
 
-        [JsonIgnore]
-        public static List<Vector3>[] VertexNeighbors2D = new List<Vector3>[8];
+        [JsonIgnore] //Todo: %KILL%
+        public static List<GlobalVoxelOffset>[] VertexNeighbors2D = new List<GlobalVoxelOffset>[8];
 
         [JsonIgnore]
         public VertexBuffer VertexBuffer = null;
@@ -168,13 +168,13 @@ namespace DwarfCorp
                 {
                     for (int z = 0; z < chunk.SizeZ; z++)
                     {
-                        v.GridPosition = new Vector3(x, y, z);
+                        v.GridPosition = new LocalVoxelCoordinate(x, y, z);
                         bool isTop = false;
 
 
                         if (y < chunk.SizeY - 1)
                         {
-                            vAbove.GridPosition = new Vector3(x, y + 1, z);
+                            vAbove.GridPosition = new LocalVoxelCoordinate(x, y + 1, z);
 
                             isTop = vAbove.IsEmpty;
                         }
@@ -188,7 +188,7 @@ namespace DwarfCorp
 
                         foreach (VoxelVertex bestKey in top)
                         {
-                            List<Vector3> neighbors = VertexNeighbors2D[(int)bestKey];
+                            var neighbors = VertexNeighbors2D[(int)bestKey];
                             chunk.GetNeighborsSuccessors(neighbors, (int)v.GridPosition.X, (int)v.GridPosition.Y, (int)v.GridPosition.Z, diagNeighbors);
 
                             bool emptyFound = diagNeighbors.Any(vox => vox == null || vox.IsEmpty);
@@ -351,13 +351,13 @@ namespace DwarfCorp
                 {
                     for (int z = 0; z < chunk.SizeZ; z++)
                     {
-                        v.GridPosition = new Vector3(x, y, z);
+                        v.GridPosition = new LocalVoxelCoordinate(x, y, z);
                         bool isTop = false;
 
 
                         if (y < chunk.SizeY - 1)
                         {
-                            vAbove.GridPosition = new Vector3(x, y + 1, z);
+                            vAbove.GridPosition = new LocalVoxelCoordinate(x, y + 1, z);
 
                             isTop = vAbove.IsEmpty;
                         }
@@ -380,7 +380,7 @@ namespace DwarfCorp
 
                                 if (faceExists[face])
                                 {
-                                    voxelOnFace.GridPosition = new Vector3(x + (int)delta.X, y + (int)delta.Y,
+                                    voxelOnFace.GridPosition = new LocalVoxelCoordinate(x + (int)delta.X, y + (int)delta.Y,
                                         z + (int)delta.Z);
 
                                     if (voxelOnFace.IsEmpty || !voxelOnFace.IsVisible)
