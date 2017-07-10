@@ -71,7 +71,7 @@ namespace DwarfCorp
 
             public bool IsTilled()
             {
-                return (Vox != null) && Vox.TypeName == "TilledSoil";
+                return (Vox != null) && Vox.Type.Name == "TilledSoil";
             }
 
             public bool IsFree()
@@ -134,7 +134,7 @@ namespace DwarfCorp
                                 Player.World.ShowToolPopup("Can only till soil!");
                                 continue;
                             }
-                            if (voxel.TypeName == "TilledSoil")
+                            if (voxel.Type.Name == "TilledSoil")
                             {
                                 Player.World.ShowToolPopup("Soil already tilled!");
                                 continue;
@@ -186,7 +186,7 @@ namespace DwarfCorp
                             Player.World.ShowToolPopup("Not enough " + PlantType + " in stocks!");
                             break;
                         }
-                        if (voxel.TypeName != "TilledSoil")
+                        if (voxel.Type.Name != "TilledSoil")
                         {
                             Player.World.ShowToolPopup("Can only plant on tilled soil!");
                             continue;

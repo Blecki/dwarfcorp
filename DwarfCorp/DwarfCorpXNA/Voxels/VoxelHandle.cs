@@ -49,21 +49,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class VoxelHandle : IBoundedObject
     {
-        [JsonIgnore]
-        private WorldManager World;
-
-        public GlobalVoxelCoordinate Coordinate { get { return Chunk.ID + new LocalVoxelCoordinate((int)GridPosition.X, (int)GridPosition.Y, (int)GridPosition.Z); } }
-
-
-        public VoxelHandle(WorldManager World, GlobalVoxelCoordinate Coordinate)
-        {
-            var chunkPart = Coordinate.GetGlobalChunkCoordinate();
-            var localPart = Coordinate.GetLocalVoxelCoordinate();
-            Chunk = World.ChunkManager.ChunkData.ChunkMap[chunkPart];
-            GridPosition = new Vector3(localPart.X, localPart.Y, localPart.Z);
-            RegenerateQuickCompare();
-        }
-
         protected bool Equals(VoxelHandle other)
         {
             return Equals(Chunk, other.Chunk) && Index == other.Index;
@@ -120,12 +105,6 @@ namespace DwarfCorp
                 Chunk.Data.Types[Index] = (byte) value.ID;
                 Chunk.Data.Health[Index] = (byte) value.StartingHealth;
             }
-        }
-
-        [JsonIgnore]
-        public string TypeName
-        {
-            get { return this.Type.Name; }
         }
 
         private int index = 0;
@@ -192,12 +171,6 @@ namespace DwarfCorp
             index = Chunk.Data.IndexAt((int)gridpos.X, (int)gridpos.Y, (int)gridpos.Z);
             if (generateQuickCompare) RegenerateQuickCompare();
             else quickCompare = invalidCompareValue;
-        }
-
-        [JsonIgnore]
-        public bool IsDead
-        {
-            get { return Health <= 0; }
         }
 
         [JsonIgnore]
