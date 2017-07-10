@@ -1,4 +1,4 @@
-﻿// SkeletonClass.cs
+// SkeletonClass.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -259,7 +259,8 @@ namespace DwarfCorp
                 {
                     Knockback = 0.5f,
                     TriggerMode = Attack.AttackTrigger.Animation,
-                    TriggerFrame = 2
+                    TriggerFrame = 2,
+                    DiseaseToSpread = "Necrorot"
                 }
             };
         }

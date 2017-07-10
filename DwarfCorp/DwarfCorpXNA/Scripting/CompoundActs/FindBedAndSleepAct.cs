@@ -1,4 +1,4 @@
-﻿// FindBedAndSleepAct.cs
+// FindBedAndSleepAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -83,6 +83,51 @@ namespace DwarfCorp
                 {
                     RechargeRate = 1.0f
                 };
+            }
+            else
+            {
+                Tree = null;
+            }
+            base.Initialize();
+        }
+    }
+
+    /// <summary>
+    /// A creature finds an item with the tag "bed", goes to it, and sleeps in it.
+    /// </summary>
+    public class GetHealedAct : CompoundCreatureAct
+    {
+
+        public GetHealedAct()
+        {
+            Name = "Heal thyself";
+        }
+
+        public GetHealedAct(CreatureAI agent) :
+            base(agent)
+        {
+            Name = "Heal thyself";
+        }
+
+
+        public override void Initialize()
+        {
+            Body closestItem = Agent.Faction.FindNearestItemWithTags("Bed", Agent.Position, true);
+
+
+            if (Agent.Status.Health.IsDissatisfied() && closestItem != null)
+            {
+                closestItem.ReservedFor = Agent;
+                Creature.AI.Blackboard.SetData("Bed", closestItem);
+                Act unreserveAct = new Wrap(() => Creature.Unreserve("Bed"));
+                Tree =
+                    new Sequence
+                    (
+                        new GoToEntityAct(closestItem, Creature.AI),
+                        new TeleportAct(Creature.AI) { Location = closestItem.GetRotatedBoundingBox().Center() + new Vector3(-0.0f, 0.75f, -0.0f) },
+                        new SleepAct(Creature.AI) { HealRate = 1.0f, RechargeRate = 1.0f, Teleport = true, TeleportLocation = closestItem.GetRotatedBoundingBox().Center() + new Vector3(-0.0f, 0.75f, -0.0f) , Type = SleepAct.SleepType.Heal},
+                        unreserveAct
+                    ) | unreserveAct;
             }
             else
             {

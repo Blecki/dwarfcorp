@@ -69,4 +69,37 @@ namespace DwarfCorp
         }
 
     }
+
+    /// <summary>
+    /// Tells a creature that it should find a bed and sleep (or else pass out).
+    /// </summary>
+    public class GetHealedTask : Task
+    {
+        public GetHealedTask()
+        {
+            Name = "Heal thyself";
+            Priority = PriorityType.Urgent;
+        }
+
+        public override Task Clone()
+        {
+            return new GetHealedTask();
+        }
+
+        public override Act CreateScript(Creature agent)
+        {
+            return new GetHealedAct(agent.AI);
+        }
+
+        public override bool IsFeasible(Creature agent)
+        {
+            return true;
+        }
+
+        public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
+        {
+            return 0.0f;
+        }
+
+    }
 }

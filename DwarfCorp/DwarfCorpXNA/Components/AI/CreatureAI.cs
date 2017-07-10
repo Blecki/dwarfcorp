@@ -396,6 +396,16 @@ namespace DwarfCorp
             PreEmptTasks();
             HandleReproduction();
 
+
+            // Heal thyself
+            if (Status.Health.IsDissatisfied())
+            {
+                Task toReturn = new GetHealedTask();
+                toReturn.SetupScript(Creature);
+                if (!Tasks.Contains(toReturn))
+                    Tasks.Add(toReturn);
+            }
+
             // Try to go to sleep if we are low on energy and it is night time.
             if (Status.Energy.IsDissatisfied() && Manager.World.Time.IsNight())
             {
@@ -1112,7 +1122,7 @@ namespace DwarfCorp
         {
 
             Creature.OverrideCharacterMode = false;
-            Creature.CurrentCharacterMode = CharacterMode.Walking;
+            Creature.CurrentCharacterMode = Creature.AI.Movement.CanFly ? CharacterMode.Flying : CharacterMode.Walking;
 
             float currSpeed = Creature.Physics.Velocity.Length();
 
