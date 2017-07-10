@@ -365,14 +365,11 @@ namespace DwarfCorp
                 hasMoved = false;
             }
             
-            //lock(Children)
+            for (int i = 0; i < Children.Count; ++i)
             {
-                for (int i = 0; i < Children.Count; ++i)
-                {
-                    var childBody = Children[i] as Body;
-                    if (childBody != null)
-                        childBody.UpdateTransformsRecursive(this);
-                }
+                var childBody = Children[i] as Body;
+                if (childBody != null)
+                    childBody.UpdateTransformsRecursive(this);
             }
 
             // Setting the global transform does this...
