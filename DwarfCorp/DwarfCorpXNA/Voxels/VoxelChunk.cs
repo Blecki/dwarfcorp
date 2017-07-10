@@ -1638,6 +1638,11 @@ namespace DwarfCorp
             return v == null || v.IsEmpty;
         }
 
+        public static bool IsInteriorPoint(Point3 gridPosition, VoxelChunk chunk)
+        {
+            return chunk.IsInterior(gridPosition.X, gridPosition.Y, gridPosition.Z);
+        }
+
         public bool HasNoNeighbors(VoxelHandle v)
         {
             Vector3 pos = v.Position;
@@ -1651,7 +1656,7 @@ namespace DwarfCorp
             VoxelChunk chunk = Manager.ChunkData.ChunkMap[v.ChunkID];
             Point3 gridPoint = new Point3(gridPos);
 
-            bool interior = VoxelHandle.IsInteriorPoint(gridPoint, chunk);
+            bool interior = IsInteriorPoint(gridPoint, chunk);
 
 
             if (interior)
@@ -1708,7 +1713,7 @@ namespace DwarfCorp
             Vector3 pos = v.Position;
             VoxelChunk chunk = Manager.ChunkData.ChunkMap[v.ChunkID];
             Point3 gridPoint = new Point3(v.GridPosition);
-            bool interior = VoxelHandle.IsInteriorPoint(gridPoint, chunk);
+            bool interior = IsInteriorPoint(gridPoint, chunk);
 
 
             if (interior)
