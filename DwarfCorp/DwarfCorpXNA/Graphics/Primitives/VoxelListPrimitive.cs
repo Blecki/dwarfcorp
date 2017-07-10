@@ -133,7 +133,7 @@ namespace DwarfCorp
 
                         if (v.Type.HasTransitionTextures && v.IsExplored)
                         {
-                            uvs = v.ComputeTransitionTexture(manhattanNeighbors);
+                            uvs = ComputeTransitionTexture(v, manhattanNeighbors);
                         }
 
                         for(int i = 0; i < 6; i++)
@@ -243,6 +243,21 @@ namespace DwarfCorp
             //chunk.PrimitiveMutex.ReleaseMutex();
         }
 
+        private BoxPrimitive.BoxTextureCoords ComputeTransitionTexture(VoxelHandle V, VoxelHandle[] manhattanNeighbors)
+        {
+            if (!V.Type.HasTransitionTextures && V.Primitive != null)
+            {
+                return V.Primitive.UVs;
+            }
+            else if (V.Primitive == null)
+            {
+                return null;
+            }
+            else
+            {
+                return V.Type.TransitionTextures[V.Chunk.ComputeTransitionValue(V.Type.Transitions, (int)V.GridPosition.X, (int)V.GridPosition.Y, (int)V.GridPosition.Z, manhattanNeighbors)];
+            }
+        }
 
         public bool ContainsNearVertex(Vector3 vertexPos1, List<VertexPositionColorTexture> accumulated)
         {

@@ -77,7 +77,7 @@ namespace DwarfCorp
 
         public override bool IsFeasible(Creature agent)
         {
-            if(VoxelToKill == null || VoxelToKill.IsEmpty || VoxelToKill.IsDead)
+            if(VoxelToKill == null || VoxelToKill.IsEmpty || VoxelToKill.Health <= 0)
             {
                 return false;
             }
@@ -87,7 +87,7 @@ namespace DwarfCorp
 
         public override bool ShouldDelete(Creature agent)
         {
-            return VoxelToKill == null || VoxelToKill.IsEmpty || VoxelToKill.IsDead ||
+            return VoxelToKill == null || VoxelToKill.IsEmpty || VoxelToKill.Health <= 0 ||
                    !agent.Faction.IsDigDesignation(VoxelToKill);
         }
 

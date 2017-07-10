@@ -358,7 +358,7 @@ namespace DwarfCorp
                         if(yh > 0)
                         {
                             vUnder.GridPosition = new Vector3(x, yh - 1, z);
-                            if (!vUnder.IsEmpty && vUnder.TypeName == biomeData.GrassLayer.VoxelType)
+                            if (!vUnder.IsEmpty && vUnder.Type.Name == biomeData.GrassLayer.VoxelType)
                             {
                                 vUnder.Type = VoxelLibrary.GetVoxelType(biomeData.SoilLayer.VoxelType);
                                 updated = true;
@@ -519,7 +519,7 @@ namespace DwarfCorp
 
 
                 vUnder.GridPosition = new Vector3(x, y - 1, z);
-                if (!vUnder.IsEmpty && vUnder.TypeName == biome.GrassLayer.VoxelType)
+                if (!vUnder.IsEmpty && vUnder.Type.Name == biome.GrassLayer.VoxelType)
                 {
                     vUnder.Type = VoxelLibrary.GetVoxelType(biome.SoilLayer.VoxelType);
                     float offset = veg.VerticalOffset;

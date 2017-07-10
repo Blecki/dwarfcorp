@@ -145,6 +145,11 @@ namespace DwarfCorp
             this.Z = Z;
         }
 
+        public static GlobalVoxelCoordinate operator +(GlobalChunkCoordinate A, LocalVoxelCoordinate B)
+        {
+            return new GlobalVoxelCoordinate(A, B);
+        }
+
         public static bool operator ==(GlobalChunkCoordinate A, GlobalChunkCoordinate B)
         {
             return A.X == B.X && A.Y == B.Y && A.Z == B.Z;

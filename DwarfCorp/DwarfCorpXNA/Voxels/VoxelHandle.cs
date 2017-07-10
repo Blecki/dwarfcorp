@@ -49,12 +49,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class VoxelHandle : IBoundedObject
     {
-        [JsonIgnore]
-        private WorldManager World;
-
-        public GlobalVoxelCoordinate Coordinate { get; private set; }
-
-
         protected bool Equals(VoxelHandle other)
         {
             return Equals(Chunk, other.Chunk) && Index == other.Index;
@@ -111,12 +105,6 @@ namespace DwarfCorp
                 Chunk.Data.Types[Index] = (byte) value.ID;
                 Chunk.Data.Health[Index] = (byte) value.StartingHealth;
             }
-        }
-
-        [JsonIgnore]
-        public string TypeName
-        {
-            get { return this.Type.Name; }
         }
 
         private int index = 0;
@@ -183,17 +171,6 @@ namespace DwarfCorp
             index = Chunk.Data.IndexAt((int)gridpos.X, (int)gridpos.Y, (int)gridpos.Z);
             if (generateQuickCompare) RegenerateQuickCompare();
             else quickCompare = invalidCompareValue;
-        }
-
-
-        [JsonIgnore]
-        public static List<VoxelVertex> VoxelVertexList { get; set; }
-        private static bool staticsCreated;
-
-        [JsonIgnore]
-        public bool IsDead
-        {
-            get { return Health <= 0; }
         }
 
         [JsonIgnore]
@@ -367,12 +344,7 @@ namespace DwarfCorp
             return
                 Chunk.Data.Types[
                     Chunk.Data.IndexAt((int)GridPosition.X, (int)GridPosition.Y - 1, (int)GridPosition.Z)] == 0;
-        }
-
-        public static bool IsInteriorPoint(Point3 gridPosition, VoxelChunk chunk)
-        {
-            return chunk.IsInterior(gridPosition.X, gridPosition.Y, gridPosition.Z);
-        }
+        }        
 
         public static bool HasFlag(RampType ramp, RampType flag)
         {
@@ -402,27 +374,6 @@ namespace DwarfCorp
             if (ReferenceEquals(this, o)) return true;
             if (o.GetType() != this.GetType()) return false;
             return Equals((VoxelHandle) o);
-        }
-
-        public void UpdateStatics()
-        {
-            if(staticsCreated)
-            {
-                return;
-            }
-
-            VoxelVertexList = new List<VoxelVertex>
-            {
-                VoxelVertex.BackBottomLeft,
-                VoxelVertex.BackBottomRight,
-                VoxelVertex.BackTopLeft,
-                VoxelVertex.BackTopRight,
-                VoxelVertex.FrontBottomRight,
-                VoxelVertex.FrontBottomLeft,
-                VoxelVertex.FrontTopRight,
-                VoxelVertex.FrontTopLeft
-            };
-            staticsCreated = true;
         }
 
         public List<Body> Kill()
@@ -483,7 +434,6 @@ namespace DwarfCorp
 
         public VoxelHandle(Point3 gridPosition, VoxelChunk chunk)
         {
-            UpdateStatics();
             Chunk = chunk;
             if (chunk != null)
                 chunkID = chunk.ID;
@@ -499,27 +449,6 @@ namespace DwarfCorp
                 Chunk = world.ChunkManager.ChunkData.ChunkMap[chunkID];
                 index = Chunk.Data.IndexAt((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z);
                 RegenerateQuickCompare();
-            }
-        }
-
-        public BoxTransition ComputeTransitionValue(VoxelHandle[] manhattanNeighbors)
-        {
-            return Chunk.ComputeTransitionValue(Type.Transitions, (int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z, manhattanNeighbors);
-        }
-
-        public BoxPrimitive.BoxTextureCoords ComputeTransitionTexture(VoxelHandle[] manhattanNeighbors)
-        {
-            if(!Type.HasTransitionTextures && Primitive != null)
-            {
-                return Primitive.UVs;
-            }
-            else if(Primitive == null)
-            {
-                return null;
-            }
-            else
-            {
-                return Type.TransitionTextures[ComputeTransitionValue(manhattanNeighbors)];
             }
         }
 

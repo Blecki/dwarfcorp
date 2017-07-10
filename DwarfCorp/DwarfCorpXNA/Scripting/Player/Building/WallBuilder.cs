@@ -312,7 +312,7 @@ namespace DwarfCorp
                 {
                     foreach(VoxelHandle r in refs)
                     {
-                        if(!IsDesignation(r) || r.TypeName != "empty")
+                        if(!IsDesignation(r) || r.Type.Name != "empty")
                         {
                             continue;
                         }
