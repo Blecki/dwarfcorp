@@ -75,12 +75,12 @@ namespace DwarfCorp
             RoomData = WheatFarmData;
         }
 
-        public WheatFarm(bool designation, IEnumerable<Voxel> designations, ChunkManager chunks) :
+        public WheatFarm(bool designation, IEnumerable<DestinationVoxel> designations, ChunkManager chunks) :
             base(designation, designations, WheatFarmData, chunks)
         {
         }
 
-        public WheatFarm(IEnumerable<Voxel> voxels, ChunkManager chunks) :
+        public WheatFarm(IEnumerable<DestinationVoxel> voxels, ChunkManager chunks) :
             base(voxels, WheatFarmData, chunks)
         {
           

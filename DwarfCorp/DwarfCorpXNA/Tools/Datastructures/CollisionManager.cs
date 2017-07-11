@@ -56,7 +56,7 @@ namespace DwarfCorp
     //        else return null;
     //    }
 
-    //    public List<T> GetItems(Voxel voxel)
+    //    public List<T> GetItems(DestinationVoxel voxel)
     //    {
     //        return GetItems(new Point3(MathFunctions.FloorInt(voxel.Position.X),
     //                    MathFunctions.FloorInt(voxel.Position.Y),
@@ -176,7 +176,7 @@ namespace DwarfCorp
             Hashes[type].RemoveItem(bounded, new IntegerBoundingBox(oldLocation));
         }
 
-        public List<IBoundedObject> GetObjectsAt(Voxel voxel, CollisionType queryType)
+        public List<IBoundedObject> GetObjectsAt(VoxelHandle voxel, CollisionType queryType)
         {
             return GetObjectsAt(new Point3(MathFunctions.FloorInt(voxel.Position.X),
                 MathFunctions.FloorInt(voxel.Position.Y), MathFunctions.FloorInt(voxel.Position.Z)), queryType);

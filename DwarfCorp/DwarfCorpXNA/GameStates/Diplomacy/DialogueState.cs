@@ -103,24 +103,7 @@ namespace DwarfCorp.Dialogue
             }
 
             DialogueContext.Update(gameTime);
-            World.TutorialManager.Update((text, callback) =>
-            {
-                var popup = GuiRoot.ConstructWidget(new Gui.Widgets.TutorialPopup
-                {
-                    Message = text,
-                    OnClose = (sender) =>
-                    {
-                        callback((sender as Gui.Widgets.TutorialPopup).DisableChecked);
-                    },
-                    OnLayout = (sender) =>
-                    {
-                        sender.Rect.X = GuiRoot.RenderData.VirtualScreen.Width - sender.Rect.Width;
-                        sender.Rect.Y = 64;
-                    }
-                });
-
-                GuiRoot.ShowModalPopup(popup);
-            });
+            World.TutorialManager.Update(GuiRoot);
             World.Paused = true;
             IsInitialized = true;
             base.OnEnter();

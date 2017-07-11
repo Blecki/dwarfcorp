@@ -1,4 +1,4 @@
-﻿// CreateCraftItemAct.cs
+// CreateCraftItemAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -42,9 +42,9 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class CreateCraftItemAct : CreatureAct
     {
-        public Voxel Voxel { get; set; }
+        public VoxelHandle Voxel { get; set; }
         public string ItemType { get; set; }
-        public CreateCraftItemAct(Voxel voxel, CreatureAI agent, string itemType) :
+        public CreateCraftItemAct(VoxelHandle voxel, CreatureAI agent, string itemType) :
             base(agent)
         {
             Agent = agent;
@@ -61,6 +61,8 @@ namespace DwarfCorp
             }
 
             Body item = EntityFactory.CreateEntity<Body>(CraftLibrary.CraftItems[ItemType].Name, Voxel.Position + Vector3.One * 0.5f);
+            item.Tags.Add("Moveable");
+            Creature.Faction.OwnedObjects.Add(item);
             Creature.Manager.World.ParticleManager.Trigger("puff", Voxel.Position + Vector3.One * 0.5f, Color.White, 10);
             if (item == null)
             {

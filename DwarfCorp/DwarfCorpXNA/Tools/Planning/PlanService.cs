@@ -56,18 +56,18 @@ namespace DwarfCorp
         /// <returns>
         ///   <c>true</c> if [is in goal region] [the specified voxel]; otherwise, <c>false</c>.
         /// </returns>
-        public abstract bool IsInGoalRegion(Voxel voxel);
+        public abstract bool IsInGoalRegion(VoxelHandle voxel);
         /// <summary>
         /// Gets a voxel associated with this goal region.
         /// </summary>
         /// <returns>The voxel associated with this goal region.</returns>
-        public abstract Voxel GetVoxel();
+        public abstract VoxelHandle GetVoxel();
         /// <summary>
         /// Returns an admissible heuristic for A* planning from the given voxel to this region.
         /// </summary>
         /// <param name="voxel">The voxel.</param>
         /// <returns>An admissible heuristic value.</returns>
-        public abstract float Heuristic(Voxel voxel);
+        public abstract float Heuristic(VoxelHandle voxel);
         /// <summary>
         /// Determines whether the goal is a.priori possible.
         /// </summary>
@@ -83,29 +83,29 @@ namespace DwarfCorp
     /// <seealso cref="GoalRegion" />
     public class VoxelGoalRegion : GoalRegion
     {
-        public Voxel Voxel { get; set; }
+        public VoxelHandle Voxel { get; set; }
 
         public override bool IsPossible()
         {
             return Voxel != null && !Voxel.Chunk.IsCompletelySurrounded(Voxel);
         }
 
-        public override float Heuristic(Voxel voxel)
+        public override float Heuristic(VoxelHandle voxel)
         {
             return (voxel.Position - Voxel.Position).LengthSquared();
         }
 
-        public VoxelGoalRegion(Voxel voxel)
+        public VoxelGoalRegion(VoxelHandle voxel)
         {
             Voxel = voxel;
         }
 
-        public override bool IsInGoalRegion(Voxel voxel)
+        public override bool IsInGoalRegion(VoxelHandle voxel)
         {
             return Voxel.Equals(voxel);
         }
 
-        public override Voxel GetVoxel()
+        public override VoxelHandle GetVoxel()
         {
             return Voxel;
         }
@@ -117,31 +117,31 @@ namespace DwarfCorp
     /// <seealso cref="GoalRegion" />
     public class AdjacentVoxelGoalRegion2D : GoalRegion
     {
-        public Voxel Voxel { get; set; }
+        public VoxelHandle Voxel { get; set; }
 
         public override bool IsPossible()
         {
             return Voxel != null && !Voxel.Chunk.IsCompletelySurrounded(Voxel);
         }
 
-        public override float Heuristic(Voxel voxel)
+        public override float Heuristic(VoxelHandle voxel)
         {
             return (voxel.Position - Voxel.Position).LengthSquared();
         }
 
-        public AdjacentVoxelGoalRegion2D(Voxel voxel)
+        public AdjacentVoxelGoalRegion2D(VoxelHandle voxel)
         {
             Voxel = voxel;
         }
 
-        public override bool IsInGoalRegion(Voxel voxel)
+        public override bool IsInGoalRegion(VoxelHandle voxel)
         {
-            return Math.Abs(voxel.Position.X - Voxel.Position.X) <= 0.5f &&
-                   Math.Abs(voxel.Position.Z - Voxel.Position.Z) <= 0.5f &&
-                   Math.Abs(voxel.Position.Y - Voxel.Position.Y) < 0.001f;
+            return (Math.Abs(voxel.Position.X - Voxel.Position.X) <= 0.5f &&
+                   Math.Abs(voxel.Position.Z - Voxel.Position.Z) <= 0.5f) &&
+                   Math.Abs(voxel.Position.Y - Voxel.Position.Y) <= 1.0f;
         }
 
-        public override Voxel GetVoxel()
+        public override VoxelHandle GetVoxel()
         {
             return Voxel;
         }
@@ -152,17 +152,17 @@ namespace DwarfCorp
     /// </summary>
     public class EdgeGoalRegion : GoalRegion
     {
-        public override bool IsInGoalRegion(Voxel voxel)
+        public override bool IsInGoalRegion(VoxelHandle voxel)
         {
             return Heuristic(voxel) < 2.0f;
         }
 
-        public override Voxel GetVoxel()
+        public override VoxelHandle GetVoxel()
         {
             return null;
         }
 
-        public override float Heuristic(Voxel voxel)
+        public override float Heuristic(VoxelHandle voxel)
         {
             BoundingBox worldBounds = voxel.Chunk.Manager.Bounds;
             Vector3 pos = voxel.Position;
@@ -184,7 +184,7 @@ namespace DwarfCorp
     public class SphereGoalRegion : GoalRegion
     {
         public Vector3 Position { get; set; }
-        public Voxel Voxel { get; set; }
+        public VoxelHandle Voxel { get; set; }
         private float r = 0.0f;
         public float Radius 
         {
@@ -201,19 +201,19 @@ namespace DwarfCorp
 
         private float RadiusSquared { get; set; }
 
-        public SphereGoalRegion(Voxel voxel, float radius)
+        public SphereGoalRegion(VoxelHandle voxel, float radius)
         {
             Radius = radius;
             Voxel = voxel;
             Position = voxel.Position;
         }
 
-        public override float Heuristic(Voxel voxel)
+        public override float Heuristic(VoxelHandle voxel)
         {
             return (voxel.Position - Voxel.Position).LengthSquared();
         }
 
-        public override bool IsInGoalRegion(Voxel voxel)
+        public override bool IsInGoalRegion(VoxelHandle voxel)
         {
             return (voxel.Position - Position).LengthSquared() < RadiusSquared;
         }
@@ -224,7 +224,7 @@ namespace DwarfCorp
         }
 
 
-        public override Voxel GetVoxel()
+        public override VoxelHandle GetVoxel()
         {
             return Voxel;
         }
@@ -238,7 +238,7 @@ namespace DwarfCorp
     {
         public PlanSubscriber Subscriber;
         public CreatureAI Sender;
-        public Voxel Start;
+        public VoxelHandle Start;
         public int MaxExpansions;
         public GoalRegion GoalRegion;
         public float HeuristicWeight = 1;

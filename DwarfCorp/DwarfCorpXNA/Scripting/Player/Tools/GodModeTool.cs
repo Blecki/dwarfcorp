@@ -31,6 +31,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -59,7 +60,7 @@ namespace DwarfCorp
         {
         }
 
-        public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }
@@ -87,7 +88,7 @@ namespace DwarfCorp
             Player.VoxSelector.SelectionType = GetSelectionTypeBySelectionBoxValue(arg);
         }
 
-        public override void OnVoxelsSelected(List<Voxel> refs, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
         {
            
             HashSet<Point3> chunksToRebuild = new HashSet<Point3>();
@@ -104,7 +105,7 @@ namespace DwarfCorp
             else if (Command.Contains("Spawn/"))
             {
                 string type = Command.Substring(6);
-                foreach (Voxel vox in refs.Where(vox => vox != null))
+                foreach (VoxelHandle vox in refs.Where(vox => vox != null))
                 {
                     if (vox.IsEmpty)
                     {
@@ -114,7 +115,7 @@ namespace DwarfCorp
             }
             else
             {
-                foreach(Voxel vox in refs.Where(vox => vox != null))
+                foreach(VoxelHandle vox in refs.Where(vox => vox != null))
                 {
                     if(Command.Contains("Place/"))
                     {
@@ -149,7 +150,7 @@ namespace DwarfCorp
                         }
                             break;
                         case "Kill Block":
-                            foreach(Voxel selected in refs)
+                            foreach(VoxelHandle selected in refs)
                             {
 
                                 if (!selected.IsEmpty)
@@ -197,6 +198,20 @@ namespace DwarfCorp
                             }
                         }
                             break;
+                        case "Disease":
+                        {
+                            foreach(var comp in Player.World.CollisionManager.EnumerateIntersectingObjects(
+                                vox.GetBoundingBox(), CollisionManager.CollisionType.Both).OfType<Body>())
+                            {
+                                var creature = comp.GetComponent<Creature>();
+                                if (creature != null)
+                                {
+                                    var disease = Datastructures.SelectRandom(DiseaseLibrary.Diseases);
+                                    creature.AcquireDisease(disease.Name);
+                                }
+                            }
+                            break;
+                        }
                         default:
                             break;
                     }

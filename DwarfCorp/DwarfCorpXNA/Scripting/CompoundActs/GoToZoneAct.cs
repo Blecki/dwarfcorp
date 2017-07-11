@@ -70,7 +70,7 @@ namespace DwarfCorp
         {
             if (Tree == null)
             {
-                Voxel voxel = Destination.GetNearestVoxel(Agent.Position);
+                VoxelHandle voxel = Destination.GetNearestVoxel(Agent.Position);
 
                 Tree = new GoToVoxelAct(voxel, PlanAct.PlanType.Adjacent, Agent);
 

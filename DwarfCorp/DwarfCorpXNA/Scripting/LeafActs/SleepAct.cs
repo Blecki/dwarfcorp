@@ -50,11 +50,22 @@ namespace DwarfCorp
 
         public Vector3 TeleportLocation { get; set; }
 
+        public enum SleepType
+        {
+            Sleep,
+            Heal
+        }
+
+        public float HealRate { get; set; }
+
+        public SleepType Type { get; set; }
+
         public SleepAct()
         {
             Name = "Sleep";
             RechargeRate = 1.0f;
             Teleport = false;
+            Type = SleepType.Sleep;
         }
 
         public SleepAct(CreatureAI creature) :
@@ -63,6 +74,7 @@ namespace DwarfCorp
             Name = "Sleep";
             RechargeRate = 1.0f;
             Teleport = false;
+            Type = SleepType.Heal;
         }
 
         public override void OnCanceled()
@@ -76,33 +88,58 @@ namespace DwarfCorp
         public override IEnumerable<Status> Run()
         {
             float startingHealth = Creature.Status.Health.CurrentValue;
-            while(!Creature.Status.Energy.IsSatisfied() && Creature.Manager.World.Time.IsNight())
-            {
-                if(Teleport)
-                {
-                    Creature.AI.Position = TeleportLocation;
-                    Creature.Physics.Velocity = Vector3.Zero;
-                    Creature.Physics.LocalPosition = TeleportLocation;
-                    Creature.Physics.IsSleeping = true;
-                }
-                Creature.CurrentCharacterMode = CharacterMode.Sleeping;
-                Creature.Status.Energy.CurrentValue += DwarfTime.Dt * RechargeRate;
-                if (Creature.Status.Health.CurrentValue < startingHealth)
-                {
-                    Creature.Status.IsAsleep = false;
-                    Creature.CurrentCharacterMode = CharacterMode.Idle;
-                    Creature.OverrideCharacterMode = false;
-                    yield return Status.Fail;
-                }
 
-                Creature.Status.Health.CurrentValue = Creature.Status.Health.MaxValue;
-                Creature.Status.IsAsleep = true;
-                Creature.OverrideCharacterMode = false;
-                yield return Status.Running;
+            if (Type == SleepType.Sleep)
+            {
+                while (!Creature.Status.Energy.IsSatisfied() && Creature.Manager.World.Time.IsNight())
+                {
+                    if (Teleport)
+                    {
+                        Creature.AI.Position = TeleportLocation;
+                        Creature.Physics.Velocity = Vector3.Zero;
+                        Creature.Physics.LocalPosition = TeleportLocation;
+                        Creature.Physics.IsSleeping = true;
+                    }
+                    Creature.CurrentCharacterMode = CharacterMode.Sleeping;
+                    Creature.Status.Energy.CurrentValue += DwarfTime.Dt*RechargeRate;
+                    if (Creature.Status.Health.CurrentValue < startingHealth)
+                    {
+                        Creature.Status.IsAsleep = false;
+                        Creature.CurrentCharacterMode = CharacterMode.Idle;
+                        Creature.OverrideCharacterMode = false;
+                        yield return Status.Fail;
+                    }
+
+                    Creature.Status.IsAsleep = true;
+                    Creature.OverrideCharacterMode = false;
+                    yield return Status.Running;
+                }
+                Creature.AI.AddThought(Thought.ThoughtType.Slept);
+                Creature.Status.IsAsleep = false;
+                yield return Status.Success;
             }
-            Creature.AI.AddThought(Thought.ThoughtType.Slept);
-            Creature.Status.IsAsleep = false;
-            yield return Status.Success;
+            else
+            {
+                while (!Creature.Status.Health.IsSatisfied() || Creature.Buffs.Any(buff => buff is Disease))
+                {
+                    if (Teleport)
+                    {
+                        Creature.AI.Position = TeleportLocation;
+                        Creature.Physics.Velocity = Vector3.Zero;
+                        Creature.Physics.LocalPosition = TeleportLocation;
+                        Creature.Physics.IsSleeping = true;
+                    }
+                    Creature.CurrentCharacterMode = CharacterMode.Sleeping;
+                    Creature.Status.Energy.CurrentValue += DwarfTime.Dt*RechargeRate;
+                    Creature.Heal(DwarfTime.Dt * HealRate);
+                    Creature.Status.IsAsleep = true;
+                    Creature.OverrideCharacterMode = false;
+                    yield return Status.Running;
+                }
+                Creature.AI.AddThought(Thought.ThoughtType.Slept);
+                Creature.Status.IsAsleep = false;
+                yield return Status.Success;
+            }
         }
     }
 }

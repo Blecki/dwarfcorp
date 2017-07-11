@@ -75,6 +75,12 @@
 			"TileHeight": 11
 		},
 		{
+			"Name": "border-hilite",
+			"Texture": "newgui/hilite-border",
+			"TileWidth": 32,
+			"TileHeight": 32
+		},
+		{
 			"Name": "border-button",
 			"Texture": "newgui/button",
 			"TileWidth": 8,
@@ -260,6 +266,12 @@
 			"Texture": "GUI/map_icons",
 			"TileWidth" : 16,
 			"TileHeight" : 16
+		},
+		{
+			"Name": "hand",
+			"Texture": "newgui/hand",
+			"TileWidth": 32,
+			"TileHeight": 32
 		}
 	]
 }

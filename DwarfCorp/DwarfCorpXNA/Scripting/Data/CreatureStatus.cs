@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
@@ -48,9 +49,13 @@ namespace DwarfCorp
 
         public bool IsAsleep { get; set; }
 
+        [JsonIgnore]
         public Status Hunger { get { return Statuses["Hunger"]; } set { Statuses["Hunger"] = value; } }
+        [JsonIgnore]
         public Status Energy { get { return Statuses["Energy"]; } set { Statuses["Energy"] = value; } }
+        [JsonIgnore]
         public Status Happiness { get { return Statuses["Happiness"]; } set { Statuses["Happiness"] = value; } }
+        [JsonIgnore]
         public Status Health { get { return Statuses["Health"]; } set { Statuses["Health"] = value; } }
         public DwarfBux Money { get; set; }
         private float HungerDamageRate = 10.0f;

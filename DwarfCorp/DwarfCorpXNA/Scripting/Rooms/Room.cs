@@ -48,7 +48,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Room : Zone
     {
-        public List<Voxel> Designations { get; set; }
+        public List<VoxelHandle> Designations { get; set; }
 
         public bool IsBuilt { get; set; }
         public RoomData RoomData { get; set; }
@@ -61,8 +61,8 @@ namespace DwarfCorp
             
         }
 
-        public Room(bool designation, IEnumerable<Voxel> designations, RoomData data, WorldManager world) :
-            base(data.Name + " " + Counter, world)
+        public Room(bool designation, IEnumerable<VoxelHandle> designations, RoomData data, WorldManager world, Faction faction) :
+            base(data.Name + " " + Counter, world, faction)
         {
             RoomData = data;
             ReplacementType = VoxelLibrary.GetVoxelType(RoomData.FloorType);
@@ -72,17 +72,17 @@ namespace DwarfCorp
         }
 
 
-        public Room(IEnumerable<Voxel> voxels, RoomData data, WorldManager world) :
-            base(data.Name + " " + Counter, world)
+        public Room(IEnumerable<VoxelHandle> voxels, RoomData data, WorldManager world, Faction faction) :
+            base(data.Name + " " + Counter, world, faction)
         {
             RoomData = data;
             ReplacementType = VoxelLibrary.GetVoxelType(RoomData.FloorType);
 
-            Designations = new List<Voxel>();
+            Designations = new List<VoxelHandle>();
             Counter++;
 
             IsBuilt = true;
-            foreach (Voxel voxel in voxels)
+            foreach (VoxelHandle voxel in voxels)
             {
                 AddVoxel(voxel);
             }
@@ -130,7 +130,7 @@ namespace DwarfCorp
 
             for(int i = 0; i < Designations.Count; i++)
             {
-                Voxel v = Designations[i];
+                VoxelHandle v = Designations[i];
                 float d = (v.Position - worldCoordinate).LengthSquared();
 
                 if(d < closestDist)

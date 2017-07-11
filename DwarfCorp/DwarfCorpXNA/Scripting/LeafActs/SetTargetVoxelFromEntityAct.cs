@@ -46,7 +46,7 @@ namespace DwarfCorp
         public SetTargetVoxelFromEntityAct(CreatureAI creature, string entityName, string voxelOut) :
             base(creature)
         {
-            Name = "Set Target Voxel";
+            Name = "Set Target DestinationVoxel";
             VoxelOutName = voxelOut;
             EntityName = entityName;
         }
@@ -60,7 +60,7 @@ namespace DwarfCorp
             }
             else
             {
-                Voxel voxel = new Voxel();
+                VoxelHandle voxel = new VoxelHandle();
 
                 if (!creature.World.ChunkManager.ChunkData.GetFirstVoxelUnder(target.BoundingBox.Center(), ref voxel, true))
                 {

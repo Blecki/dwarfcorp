@@ -117,7 +117,7 @@ namespace DwarfCorp
 
         public float GetVisibleWaterHeight(ChunkManager chunkManager, Camera camera, Viewport port, float defaultHeight)
         {
-            Voxel vox = chunkManager.ChunkData.GetFirstVisibleBlockHitByScreenCoord(port.Width / 2, port.Height / 2, camera, port, 100.0f);
+            VoxelHandle vox = chunkManager.ChunkData.GetFirstVisibleBlockHitByScreenCoord(port.Width / 2, port.Height / 2, camera, port, 100.0f);
 
             if(vox != null)
             {
@@ -153,12 +153,12 @@ namespace DwarfCorp
 
             if(DrawTerrainReflected)
             {
-                game.DrawSky(gameTime, reflectionViewMatrix, 0.25f);
+                game.DrawSky(gameTime, reflectionViewMatrix, 0.25f, effect.FogColor);
                 game.Draw3DThings(gameTime, effect, reflectionViewMatrix);
             }
             else
             {
-                game.DrawSky(gameTime, reflectionViewMatrix, 0.25f);
+                game.DrawSky(gameTime, reflectionViewMatrix, 0.25f, effect.FogColor);
             }
 
             effect.View = reflectionViewMatrix;

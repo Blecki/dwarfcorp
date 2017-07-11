@@ -88,7 +88,7 @@ namespace DwarfCorp
 
 
         public Stockpile(Faction faction, WorldManager world) :
-            base(false, new List<Voxel>(), RoomLibrary.GetData(StockpileName), world)
+            base(false, new List<VoxelHandle>(), RoomLibrary.GetData(StockpileName), world, faction)
         {
             Boxes = new List<Body>();
             ReplacementType = VoxelLibrary.GetVoxelType("Stockpile");
@@ -100,27 +100,29 @@ namespace DwarfCorp
             };
         }
 
-        public Stockpile(Faction faction, IEnumerable<Voxel> voxels, RoomData data, WorldManager world) :
-            base(voxels, data, world)
+        public Stockpile(Faction faction, IEnumerable<VoxelHandle> voxels, RoomData data, WorldManager world) :
+            base(voxels, data, world, faction)
         {
             Boxes = new List<Body>();
             faction.Stockpiles.Add(this);
             Faction = faction;
             BlacklistResources = new List<Resource.ResourceTags>()
             {
-                Resource.ResourceTags.Corpse
+                Resource.ResourceTags.Corpse,
+                Resource.ResourceTags.Money
             };
         }
 
-        public Stockpile(Faction faction, bool designation, IEnumerable<Voxel> designations, RoomData data, WorldManager world) :
-            base(designation, designations, data, world)
+        public Stockpile(Faction faction, bool designation, IEnumerable<VoxelHandle> designations, RoomData data, WorldManager world) :
+            base(designation, designations, data, world, faction)
         {
             Boxes = new List<Body>();
             faction.Stockpiles.Add(this);
             Faction = faction;
             BlacklistResources = new List<Resource.ResourceTags>()
             {
-                Resource.ResourceTags.Corpse
+                Resource.ResourceTags.Corpse,
+                Resource.ResourceTags.Money
             };
         }
 
@@ -159,7 +161,7 @@ namespace DwarfCorp
             Body crate = EntityFactory.CreateEntity<Body>(BoxType, startPos);
             crate.AnimationQueue.Add(new EaseMotion(0.8f, crate.LocalTransform, endPos));
             Boxes.Add(crate);
-            ZoneBodies.Add(crate);
+            AddBody(crate);
             SoundManager.PlaySound(ContentPaths.Audio.whoosh, startPos);
             if (Faction != null)
                 Faction.World.ParticleManager.Trigger("puff", pos + new Vector3(0.5f, 1.5f, 0.5f), Color.White, 90);

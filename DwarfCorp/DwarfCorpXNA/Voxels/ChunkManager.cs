@@ -131,7 +131,7 @@ namespace DwarfCorp
             get { return chunkData; }
         }
 
-        public List<Voxel> KilledVoxels { get; set; }
+        public List<VoxelHandle> KilledVoxels { get; set; }
 
         public ChunkManager(ContentManager content, 
             WorldManager world,
@@ -140,7 +140,7 @@ namespace DwarfCorp
             ChunkGenerator chunkGen, int maxChunksX, int maxChunksY, int maxChunksZ)
         {
             World = world;
-            KilledVoxels = new List<Voxel>();
+            KilledVoxels = new List<VoxelHandle>();
             ExitThreads = false;
             drawDistSq = DrawDistance * DrawDistance;
             Content = content;
@@ -390,10 +390,12 @@ namespace DwarfCorp
                         {
                             if (chunk.RebuildPending && chunk.ShouldRebuild)
                             {
+                                /*
                                 if (chunk.ShouldRecalculateLighting)
                                 {
                                     chunk.CalculateVertexLighting();
                                 }
+                                 */
                                 chunk.Rebuild(Graphics);
                                 chunk.ShouldRebuild = false;
                                 chunk.RebuildPending = false;
@@ -439,6 +441,17 @@ namespace DwarfCorp
 
             float dA = (a.Origin - camera.Position + new Vector3(a.SizeX / 2.0f, a.SizeY / 2.0f, a.SizeZ / 2.0f)).LengthSquared();
             float dB = (b.Origin - camera.Position + new Vector3(b.SizeX / 2.0f, b.SizeY / 2.0f, b.SizeZ / 2.0f)).LengthSquared();
+
+            if (!camera.GetFrustrum().Intersects(a.GetBoundingBox()))
+            {
+                dA *= 100;
+            }
+
+            if (!camera.GetFrustrum().Intersects(b.GetBoundingBox()))
+            {
+                dB *= 100;
+            }
+
 
             if(dA < dB)
             {
@@ -578,7 +591,7 @@ namespace DwarfCorp
                                 chunk.ShouldRebuild = true;
                                 chunk.ShouldRecalculateLighting = true;
                                 GeneratedChunks.Enqueue(chunk);
-                            }                        
+                            }
                         });
                         ToGenerate.Clear();
                     }
@@ -1006,7 +1019,7 @@ namespace DwarfCorp
 
             HashSet<VoxelChunk> affectedChunks = new HashSet<VoxelChunk>();
             
-            foreach (Voxel voxel in KilledVoxels)
+            foreach (VoxelHandle voxel in KilledVoxels)
             {
                 affectedChunks.Add(voxel.Chunk);
                 voxel.Chunk.NotifyDestroyed(new Point3(voxel.GridPosition));
@@ -1035,11 +1048,11 @@ namespace DwarfCorp
             KilledVoxels.Clear();
         }
 
-        public IEnumerable<Voxel> GetVoxelsIntersecting(IEnumerable<Vector3> positions)
+        public IEnumerable<VoxelHandle> GetVoxelsIntersecting(IEnumerable<Vector3> positions)
         {
             foreach (Vector3 vec in positions)
             {
-                Voxel vox = new Voxel();
+                VoxelHandle vox = new VoxelHandle();
                 bool success = ChunkData.GetVoxel(vec, ref vox);
                 if (success)
                 {
@@ -1048,12 +1061,12 @@ namespace DwarfCorp
             }
         }
 
-        public List<Voxel> GetVoxelsIntersecting(BoundingBox box)
+        public List<VoxelHandle> GetVoxelsIntersecting(BoundingBox box)
         {
             HashSet<VoxelChunk> intersects = new HashSet<VoxelChunk>();
             GetChunksIntersecting(box, intersects);
 
-            List<Voxel> toReturn = new List<Voxel>();
+            List<VoxelHandle> toReturn = new List<VoxelHandle>();
 
             foreach (VoxelChunk chunk in intersects)
             {
@@ -1107,7 +1120,7 @@ namespace DwarfCorp
             foreach(VoxelChunk chunk in toRebuild)
             {
                 j++;
-                chunk.CalculateVertexLighting();
+                //chunk.CalculateVertexLighting();
             };
 
             SetLoadingMessage("Building Vertices...");
@@ -1157,15 +1170,15 @@ namespace DwarfCorp
         /// <param name="radiusSquared">The squared number of voxels to search.</param>
         /// <param name="fn">The function. Returns the first voxel matching this function.</param>
         /// <returns>the first voxel matching fn.</returns>
-        public Voxel BreadthFirstSearch(Voxel seed, float radiusSquared, Func<Voxel, bool> fn)
+        public VoxelHandle BreadthFirstSearch(VoxelHandle seed, float radiusSquared, Func<VoxelHandle, bool> fn)
         {
-            Queue<Voxel> queue = new Queue<Voxel>();
+            Queue<VoxelHandle> queue = new Queue<VoxelHandle>();
             queue.Enqueue(seed);
-            HashSet<Voxel> visited = new HashSet<Voxel>();
-            List<Voxel> neighbors = new List<Voxel>(6);
+            HashSet<VoxelHandle> visited = new HashSet<VoxelHandle>();
+            List<VoxelHandle> neighbors = new List<VoxelHandle>(6);
             while (queue.Count > 0)
             {
-                Voxel curr = queue.Dequeue();
+                VoxelHandle curr = queue.Dequeue();
                 if (fn(curr))
                 {
                     return curr;
@@ -1175,11 +1188,11 @@ namespace DwarfCorp
                 {
                     curr.Chunk.GetNeighborsManhattan((int)curr.GridPosition.X, (int)curr.GridPosition.Y, (int)curr.GridPosition.Z, neighbors);
 
-                    foreach (Voxel voxel in neighbors)
+                    foreach (VoxelHandle voxel in neighbors)
                     {
                         if (voxel != null && !visited.Contains(voxel))
                         {
-                            queue.Enqueue(new Voxel(new Point3(voxel.GridPosition), voxel.Chunk));
+                            queue.Enqueue(new VoxelHandle(new Point3(voxel.GridPosition), voxel.Chunk));
                         }
                     }
                 }
@@ -1189,12 +1202,12 @@ namespace DwarfCorp
             return null;
         }
 
-        public List<Voxel> BreadthFirstSearch(Voxel seed, float radiusSquared, bool searchEmpty = true)
+        public List<VoxelHandle> BreadthFirstSearch(VoxelHandle seed, float radiusSquared, bool searchEmpty = true)
         {
-            Queue<Voxel> queue = new Queue<Voxel>();
+            Queue<VoxelHandle> queue = new Queue<VoxelHandle>();
             queue.Enqueue(seed);
-            List<Voxel> outList = new List<Voxel>();
-            Func<Voxel, bool> searchQuery = (Voxel v) => v.IsEmpty;
+            List<VoxelHandle> outList = new List<VoxelHandle>();
+            Func<VoxelHandle, bool> searchQuery = (VoxelHandle v) => v.IsEmpty;
             if (!searchEmpty)
             {
                 searchQuery = v => !v.IsEmpty;
@@ -1203,14 +1216,14 @@ namespace DwarfCorp
 
             while (queue.Count > 0)
             {
-                Voxel curr = queue.Dequeue();
+                VoxelHandle curr = queue.Dequeue();
                 if (curr != null && searchQuery(curr) && !outList.Contains(curr) && (curr.Position - seed.Position).LengthSquared() < radiusSquared)
                 {
                     outList.Add(curr);
-                    List<Voxel> neighbors = new List<Voxel>(6);
+                    List<VoxelHandle> neighbors = new List<VoxelHandle>(6);
                     curr.Chunk.GetNeighborsManhattan((int)curr.GridPosition.X, (int)curr.GridPosition.Y, (int)curr.GridPosition.Z, neighbors);
 
-                    foreach (Voxel voxel in neighbors)
+                    foreach (VoxelHandle voxel in neighbors)
                     {
                         if (voxel != null && !outList.Contains(voxel)  && searchQuery(voxel))
                         {

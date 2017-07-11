@@ -72,7 +72,8 @@ namespace DwarfCorp
                         },
                         Icon = new Gui.TileReference("beartrap", 0),
                         BaseCraftTime = 20,
-                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround}
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
+                        CraftLocation = ""
                     }
                 },
                 {
@@ -87,7 +88,8 @@ namespace DwarfCorp
                         },
                         Icon = new Gui.TileReference("furniture", 5),
                         BaseCraftTime = 10,
-                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround}
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
+                        CraftLocation = ""
                     }
                 },
                 {
@@ -102,7 +104,8 @@ namespace DwarfCorp
                         },
                         Icon = new Gui.TileReference("furniture", 2),
                         BaseCraftTime = 10,
-                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall}
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall},
+                        CraftLocation = ""
                     }
                 },
                 {
@@ -117,7 +120,8 @@ namespace DwarfCorp
                         },
                         Icon = new Gui.TileReference("furniture", 34),
                         BaseCraftTime = 10,
-                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall}
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall},
+                        CraftLocation = ""
                     }
                 },
                 {
@@ -132,7 +136,8 @@ namespace DwarfCorp
                         },
                         Icon = new Gui.TileReference("furniture", 35),
                         BaseCraftTime = 10,
-                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall}
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall},
+                        CraftLocation = ""
                     }
                 },
                 {
@@ -147,7 +152,8 @@ namespace DwarfCorp
                         },
                         Icon = new Gui.TileReference("furniture", 7),
                         BaseCraftTime = 10,
-                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall}
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall},
+                        CraftLocation = ""
                     }
                 },
                 {
@@ -162,7 +168,8 @@ namespace DwarfCorp
                         },
                         Icon = new Gui.TileReference("furniture", 32),
                         BaseCraftTime = 10,
-                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall}
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall},
+                        CraftLocation = ""
                     }
                 },
                 {
@@ -177,7 +184,8 @@ namespace DwarfCorp
                         },
                         Icon = new Gui.TileReference("furniture", 33),
                         BaseCraftTime = 10,
-                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall}
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall},
+                        CraftLocation = ""
                     }
                 },
                 {
@@ -293,9 +301,203 @@ namespace DwarfCorp
                         },
                         Icon = new Gui.TileReference("furniture", 29),
                         BaseCraftTime = 30,
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
+                        CraftLocation = ""
+                    }
+                },
+                {
+                    "Chair",
+                    new CraftItem()
+                    {
+                        Name = "Chair",
+                        Description = "Dwarves sit here and relax. Place next to tables for eating.",
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
+                        {
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Wood, 1),
+                        },
+                        Icon = new Gui.TileReference("furniture", 26),
+                        BaseCraftTime = 3,
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
+                        CraftLocation = ""
+                    }
+                },
+                {
+                    "Table",
+                    new CraftItem()
+                    {
+                        Name = "Table",
+                        Description = "Dwarves gather around tables to eat. Build chairs next to the table.",
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
+                        {
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Wood, 4),
+                        },
+                        Icon = new Gui.TileReference("furniture", 24),
+                        BaseCraftTime = 50,
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
+                        CraftLocation = ""
+                    }
+                },
+                {
+                    "Anvil",
+                    new CraftItem()
+                    {
+                        Name = "Anvil",
+                        Description = "Used to craft more complex items.",
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
+                        {
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Metal, 4),
+                        },
+                        Icon = new Gui.TileReference("furniture", 12),
+                        BaseCraftTime = 50,
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
+                        CraftLocation = ""
+                    }
+                },
+                {
+                    "Forge",
+                    new CraftItem()
+                    {
+                        Name = "Forge",
+                        Description = "Dwarves use the forge to refine materials.",
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
+                        {
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Fuel, 4),
+                        },
+                        Icon = new Gui.TileReference("furniture", 13),
+                        BaseCraftTime = 50,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround}
                     }
-                }
+                },
+                {
+                    "Stove",
+                    new CraftItem()
+                    {
+                        Name = "Stove",
+                        Description = "Dwarves use the stove to cook meals.",
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
+                        {
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Fuel, 2),
+                        },
+                        Icon = new Gui.TileReference("furniture", 19),
+                        BaseCraftTime = 50,
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
+                        CraftLocation = ""
+                    }
+                },
+                {
+                    "Kitchen Table",
+                    new CraftItem()
+                    {
+                        Name = "Kitchen Table",
+                        Description = "Dwarves use the cutting board to cook meals.",
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
+                        {
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Wood, 2),
+                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Metal, 2),
+                        },
+                        Icon = new Gui.TileReference("furniture", 28),
+                        BaseCraftTime = 50,
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
+                        CraftLocation = ""
+                    }
+                },
+                {
+                    "Barrel",
+                    new CraftItem()
+                    {
+                        Name = "Barrel",
+                        Description = "Dwarves use the still to brew ale.",
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
+                        {
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Wood, 2),
+                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Brewable, 4),
+                        },
+                        Icon = new Gui.TileReference("furniture", 1),
+                        BaseCraftTime = 50,
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
+                        CraftLocation = ""
+                    }
+                },
+                {
+                    "Bed",
+                    new CraftItem()
+                    {
+                        Name = "Bed",
+                        Description = "Dwarves use the bed to sleep.",
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
+                        {
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Wood, 4),
+                        },
+                        Icon = new Gui.TileReference("furniture", 3),
+                        BaseCraftTime = 50,
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
+                        CraftLocation = ""
+                    }
+                },
+                {
+                    "Strawman",
+                    new CraftItem()
+                    {
+                        Name = "Strawman",
+                        Description = "Dwarves can train by hitting the strawman.",
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
+                        {
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Grain, 4),
+                        },
+                        Icon = new Gui.TileReference("furniture", 21),
+                        BaseCraftTime = 50,
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
+                        CraftLocation = ""
+                    }
+                },
+                {
+                    "Potions",
+                    new CraftItem()
+                    {
+                        Name = "Potions",
+                        Description = "Dwarves can do magical research here.",
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
+                        {
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Magical, 2),
+                        },
+                        Icon = new Gui.TileReference("furniture", 17),
+                        BaseCraftTime = 50,
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
+                        CraftLocation = ""
+                    }
+                },
+                {
+                    "Books",
+                    new CraftItem()
+                    {
+                        Name = "Books",
+                        Description = "Dwarves can do magical research here.",
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
+                        {
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Magical, 2),
+                        },
+                        Icon = new Gui.TileReference("furniture", 16),
+                        BaseCraftTime = 50,
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
+                        CraftLocation = ""
+                    }
+                },
+                {
+                    "Bookshelf",
+                    new CraftItem()
+                    {
+                        Name = "Bookshelf",
+                        Description = "Dwarves can do magical research here.",
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
+                        {
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Magical, 4),
+                        },
+                        Icon = new Gui.TileReference("furniture", 16),
+                        BaseCraftTime = 50,
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
+                        CraftLocation = ""
+                    }
+                },
             };
 
             foreach (var res in ResourceLibrary.Resources.Where(res => res.Value.CanCraft))

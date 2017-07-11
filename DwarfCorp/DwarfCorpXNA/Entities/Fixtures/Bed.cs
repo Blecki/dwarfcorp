@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,11 +10,8 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class Bed : Body
+    public class Bed : Body, IRenderableComponent
     {
-        // Todo: Lifet out of class.
-        private Box Model;
-
         public Bed()
         {
             Tags.Add("Bed");
@@ -28,12 +25,26 @@ namespace DwarfCorp
             CollisionType = CollisionManager.CollisionType.Static;
 
             Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Entities.Furniture.bedtex);
-            Model = AddChild(new Box(manager, "bedbox", Matrix.CreateTranslation(-0.5f, -0.5f, -0.5f) * Matrix.CreateRotationY((float)Math.PI * 0.5f), new Vector3(1.0f, 1.0f, 2.0f), new Vector3(0.5f, 0.5f, 1.0f), "bed", spriteSheet)) as Box;
+             var model = AddChild(new Box(manager, "bedbox", Matrix.CreateTranslation(-0.5f, -0.5f, -0.5f) * Matrix.CreateRotationY((float)Math.PI * 0.5f), new Vector3(1.0f, 1.0f, 2.0f), new Vector3(0.5f, 0.5f, 1.0f), "bed", spriteSheet)) as Box;
 
-            var voxelUnder = new Voxel();
+            var voxelUnder = new VoxelHandle();
 
             if (manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
                 AddChild(new VoxelListener(manager, manager.World.ChunkManager, voxelUnder));
+
+            OrientToWalls();
+        }
+
+        public override void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect)
+        {
+            effect.SelectionBufferColor = GetGlobalIDColor().ToVector4();
+            GetComponent<Box>().Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
+        }
+
+        public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
+            GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
+        {
+            
         }
     }
 }

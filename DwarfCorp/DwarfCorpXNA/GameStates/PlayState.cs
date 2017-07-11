@@ -42,6 +42,7 @@ namespace DwarfCorp.GameStates
         private Gui.Widget MoneyLabel;
         private Gui.Widget LevelLabel;
         private Gui.Widgets.FlatToolTray.RootTray BottomToolBar;
+        private Gui.Widgets.FlatToolTray.Tray MainMenu;
         private Gui.Widget TimeLabel;
         private Gui.Widget PausePanel;
         private Gui.Widgets.MinimapFrame MinimapFrame;
@@ -54,6 +55,7 @@ namespace DwarfCorp.GameStates
         private AnnouncementPopup Announcer;
         private FramedIcon EconomyIcon;
         private Timer AutoSaveTimer;
+        private EmployeeInfo SelectedEmployeeInfo;
 
         private class ToolbarItem
         {
@@ -167,7 +169,7 @@ namespace DwarfCorp.GameStates
                     GuiRoot.MousePointer = mouse;
                 };
 
-                World.SetMouseOverlay += (mouse, frame) => GuiRoot.SetMouseOverlay(mouse, frame);
+                World.SetMouseOverlay += (mouse, frame) => GuiRoot.MouseOverlaySheet = new TileReference(mouse, frame);
 
                 
                 World.ShowToolPopup += text => GuiRoot.ShowTooltip(new Point(GuiRoot.MousePosition.X + 4, GuiRoot.MousePosition.Y - 16),
@@ -182,40 +184,21 @@ namespace DwarfCorp.GameStates
                 CreateGUIComponents();
                 InputManager.KeyReleasedCallback += TemporaryKeyPressHandler;
                 IsInitialized = true;
-                SoundManager.CurrentMusic.PlayTrack("main_theme_day");
+
+                SoundManager.PlayMusic("main_theme_day");
                 World.Time.Dawn += time =>
                 {
-                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_daytime, 0.5f);
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_daytime, 0.15f);
                     SoundManager.PlayMusic("main_theme_day");
+                    DiseaseLibrary.SpreadRandomDiseases(World.PlayerFaction.Minions);
                 };
 
                 World.Time.NewNight += time =>
                 {
-                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_nighttime, 0.5f);
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_nighttime, 0.15f);
                     SoundManager.PlayMusic("main_theme_night");
                 };
             }
-
-            World.GuiHook_ShowTutorialPopup = (text, callback) =>
-            {
-                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_window_open, 0.25f);
-                var popup = GuiRoot.ConstructWidget(new Gui.Widgets.TutorialPopup
-                {
-                    Message = text,
-                    OnClose = (sender) =>
-                    {
-                        callback((sender as TutorialPopup).DisableChecked);
-                    },
-                    OnLayout = (sender) =>
-                    {
-                        sender.Rect.X = GuiRoot.RenderData.VirtualScreen.Width - sender.Rect.Width;
-                        sender.Rect.Y = 64;
-                    }
-                });
-                GuiRoot.RootItem.AddChild(popup);
-                //GuiRoot.ShowPopup(popup, Root.PopupExclusivity.AddToStack);
-            };
-
             World.Unpause();
             AutoSaveTimer = new Timer(GameSettings.Default.AutoSaveTimeMinutes * 60.0f, false, Timer.TimerMode.Real);
             base.OnEnter();
@@ -330,6 +313,58 @@ namespace DwarfCorp.GameStates
             {
                 AutoSave();   
             }
+
+#region select employee
+            if (Master.SelectedMinions.Count == 1 && SelectedEmployeeInfo == null)
+            {
+                SelectedEmployeeInfo = GuiRoot.RootItem.AddChild(new EmployeeInfo()
+                {
+                    AutoLayout = AutoLayout.FloatLeft,
+                    Rect = new Rectangle(0, GuiRoot.RenderData.VirtualScreen.Height/2 - 450/2, 400, 450),
+                    Employee = Master.SelectedMinions[0],
+                    Border = "border-button",
+                    OnFireClicked = (sender) =>
+                    {
+                        GuiRoot.ShowDialog(GuiRoot.ConstructWidget(new Gui.Widgets.Confirm
+                        {
+                            OkayText = "Fire this dwarf!",
+                            CancelText = "Keep this dwarf.",
+                            Padding = new Margin(32, 10, 10, 10),
+                            MinimumSize = new Point(512, 128),
+                            OnClose = (confirm) =>
+                            {
+                                if ((confirm as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
+                                {
+                                    SoundManager.PlaySound(ContentPaths.Audio.change, 0.5f);
+                                    var selectedEmployee = (sender as EmployeeInfo).Employee;
+                                    selectedEmployee.GetRoot().Delete();
+
+                                    Master.Faction.Minions.Remove(selectedEmployee);
+                                    Master.Faction.SelectedMinions.Remove(selectedEmployee);
+                                }
+                            }
+                        }));
+                    }
+                }) as EmployeeInfo;
+                SelectedEmployeeInfo.Layout();
+            }
+
+            if (Master.SelectedMinions.Count == 1 && SelectedEmployeeInfo != null)
+            {
+                // Lol this is evil just trying to reduce the update rate for speed
+                if (MathFunctions.RandEvent(0.1f))
+                {
+                    SelectedEmployeeInfo.Employee = Master.SelectedMinions[0];
+                    SelectedEmployeeInfo.Hidden = false;
+                    SelectedEmployeeInfo.Invalidate();
+                }
+            }
+
+            if (Master.SelectedMinions.Count != 1 && SelectedEmployeeInfo != null && !SelectedEmployeeInfo.Hidden)
+            {
+                SelectedEmployeeInfo.Hidden = true;
+            }
+#endregion
         }
 
         /// <summary>
@@ -388,6 +423,7 @@ namespace DwarfCorp.GameStates
             #region Setup company information section
             GuiRoot.RootItem.AddChild(new Gui.Widgets.CompanyLogo
             {
+                Tag = "company info",
                 Rect = new Rectangle(8, 8, 32, 32),
                 MinimumSize = new Point(32, 32),
                 MaximumSize = new Point(32, 32),
@@ -413,6 +449,7 @@ namespace DwarfCorp.GameStates
 
             var moneyRow = infoPanel.AddChild(new Gui.Widget
             {
+                Tag = "money",
                 MinimumSize = new Point(0, 34),
                 AutoLayout = Gui.AutoLayout.DockTop
             });
@@ -437,6 +474,7 @@ namespace DwarfCorp.GameStates
 
             var levelRow = infoPanel.AddChild(new Gui.Widget
             {
+                Tag = "slice",
                 MinimumSize = new Point(0, 34),
                 AutoLayout = Gui.AutoLayout.DockTop
             });
@@ -541,6 +579,7 @@ namespace DwarfCorp.GameStates
 
             MinimapFrame = GuiRoot.RootItem.AddChild(new Gui.Widgets.MinimapFrame
             {
+                Tag = "minimap",
                 AutoLayout = Gui.AutoLayout.FloatBottomLeft,
                 Renderer = MinimapRenderer,
                 RestoreButton = minimapRestoreButton
@@ -552,6 +591,7 @@ namespace DwarfCorp.GameStates
 
             EconomyIcon = new Gui.Widgets.FramedIcon
             {
+                Tag = "economy",
                 Icon = new Gui.TileReference("tool-icons", 10),
                 OnClick = (sender, args) => StateManager.PushState(new NewEconomyState(Game, StateManager, World)),
                 DrawIndicator = true,
@@ -578,8 +618,9 @@ namespace DwarfCorp.GameStates
             #endregion
 
             #region Setup game speed controls
-            GameSpeedControls = GuiRoot.RootItem.AddChild(new Gui.Widgets.GameSpeedControls
+            GameSpeedControls = GuiRoot.RootItem.AddChild(new GameSpeedControls
             {
+                Tag = "speed controls",
                 AutoLayout = Gui.AutoLayout.FloatBottomRight,
                 OnLayout = (sender) =>
                 {
@@ -599,7 +640,7 @@ namespace DwarfCorp.GameStates
                     PausedWidget.Invalidate();
                 },
                 Tooltip = "Game speed controls."
-            }) as Gui.Widgets.GameSpeedControls;
+            }) as GameSpeedControls;
 
             PausedWidget = GuiRoot.RootItem.AddChild(new Widget()
             {
@@ -645,6 +686,7 @@ namespace DwarfCorp.GameStates
 
             BrushTray = GuiRoot.RootItem.AddChild(new Gui.Widgets.ToggleTray
             {
+                Tag = "brushes",
                 AutoLayout = AutoLayout.FloatRight,
                 Rect = new Rectangle(256, 0, 32, 128),
                 SizeToGrid = new Point(1, 3),
@@ -700,6 +742,7 @@ namespace DwarfCorp.GameStates
 
             var icon_SelectTool = new FlatToolTray.Icon
             {
+                Tag = "select",
                 Icon = new Gui.TileReference("tool-icons", 5),
                 OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.SelectUnits),
                 Tooltip = "Select dwarves",
@@ -755,6 +798,18 @@ namespace DwarfCorp.GameStates
                     }))
             };
 
+            var icon_moveObjects = new FlatToolTray.Icon()
+            {
+                Text = "",
+                Tooltip = "Move/Destroy objects",
+                Icon = new TileReference("mouse", 9),
+                OnClick = (sender, args) =>
+                {
+                    World.ShowToolPopup("Left click objects to move them.\nRight click to destroy them.");
+                    Master.ChangeTool(GameMaster.ToolMode.MoveObjects);
+                }
+            };
+
             var icon_BuildRoom = new FlatToolTray.Icon
             {
                 TextColor = Vector4.One,
@@ -763,7 +818,8 @@ namespace DwarfCorp.GameStates
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 KeepChildVisible = true,
-                ReplacementMenu = menu_RoomTypes
+                ReplacementMenu = menu_RoomTypes,
+                Tag = "build room"
             };
 
             #endregion
@@ -778,6 +834,7 @@ namespace DwarfCorp.GameStates
 
             var menu_WallTypes = new FlatToolTray.Tray
             {
+                Tag = "build wall",
                 ItemSource = new List<Widget>(),
                 OnShown = (widget) =>
                 {
@@ -845,6 +902,7 @@ namespace DwarfCorp.GameStates
 
             var menu_CraftTypes = new FlatToolTray.Tray
             {
+                Tag = "craft item",
                 ItemSource = (new Widget[]{ icon_menu_CraftTypes_Return }).Concat(
                     CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Object)
                     .Select(data => new FlatToolTray.Icon
@@ -862,6 +920,11 @@ namespace DwarfCorp.GameStates
                             BuildAction = (sender, args) =>
                             {
                                 var buildInfo = sender.Parent as Gui.Widgets.BuildCraftInfo;
+                                if (buildInfo == null)
+                                {
+                                    return;
+                                }
+
                                 data.SelectedResources = buildInfo.GetSelectedResources();
                                 data.NumRepeats = buildInfo.GetNumRepeats();
                                 Master.Faction.RoomBuilder.CurrentRoomData = null;
@@ -869,6 +932,11 @@ namespace DwarfCorp.GameStates
                                 Master.Faction.WallBuilder.CurrentVoxelType = null;
                                 Master.Faction.CraftBuilder.IsEnabled = true;
                                 Master.Faction.CraftBuilder.CurrentCraftType = data;
+                                if (Master.Faction.CraftBuilder.CurrentCraftBody != null)
+                                {
+                                    Master.Faction.CraftBuilder.CurrentCraftBody.Delete();
+                                    Master.Faction.CraftBuilder.CurrentCraftBody = null;
+                                }
                                 ChangeTool(GameMaster.ToolMode.Build);
                                 World.ShowToolPopup("Click and drag to " + data.Verb + " " + data.Name);
                             },
@@ -906,6 +974,7 @@ namespace DwarfCorp.GameStates
 
             var menu_ResourceTypes = new FlatToolTray.Tray
             {
+                Tag = "craft resource",
                 Tooltip = "Craft resource",
                 ItemSource = (new Widget[] { icon_menu_ResourceTypes_Return }).Concat(
                     CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Resource
@@ -972,6 +1041,7 @@ namespace DwarfCorp.GameStates
                 ItemSource = new FlatToolTray.Icon[]
                     {
                         icon_menu_BuildTools_Return,
+                        icon_moveObjects,
                         icon_BuildRoom,
                         icon_BuildWall,
                         icon_BuildCraft,
@@ -986,6 +1056,7 @@ namespace DwarfCorp.GameStates
 
             var icon_BuildTool = new FlatToolTray.Icon
             {
+                Tag = "build",
                 Icon = new TileReference("tool-icons", 2),
                 KeepChildVisible = true,
                 OnConstruct = (sender) =>
@@ -1050,6 +1121,7 @@ namespace DwarfCorp.GameStates
 
             var icon_CookTool = new FlatToolTray.Icon
             {
+                Tag = "cook",
                 Icon = new TileReference("tool-icons", 27),
                 KeepChildVisible = true,
                 Tooltip = "Cook food",
@@ -1069,6 +1141,7 @@ namespace DwarfCorp.GameStates
 
             var icon_DigTool = new FlatToolTray.Icon
             {
+                Tag = "dig",
                 Icon = new TileReference("tool-icons", 0),
                 Tooltip = "Dig",
                 OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Dig),
@@ -1087,6 +1160,7 @@ namespace DwarfCorp.GameStates
 
             var icon_GatherTool = new FlatToolTray.Icon
             {
+                Tag = "gather",
                 Icon = new TileReference("tool-icons", 6),
                 Tooltip = "Gather",
                 OnClick = (sender, args) => { ChangeTool(GameMaster.ToolMode.Gather); World.Tutorial("gather"); },
@@ -1105,6 +1179,7 @@ namespace DwarfCorp.GameStates
 
             var icon_ChopTool = new FlatToolTray.Icon
             {
+                Tag = "chop",
                 Icon = new TileReference("tool-icons", 1),
                 Tooltip = "Chop trees",
                 OnClick = (sender, args) => { ChangeTool(GameMaster.ToolMode.Chop); World.Tutorial("chop"); },
@@ -1123,6 +1198,7 @@ namespace DwarfCorp.GameStates
 
             var icon_GuardTool = new FlatToolTray.Icon
             {
+                Tag = "guard",
                 Icon = new TileReference("tool-icons", 4),
                 Tooltip = "Guard",
                 OnClick = (sender, args) => { ChangeTool(GameMaster.ToolMode.Guard); World.Tutorial("guard"); },
@@ -1141,6 +1217,7 @@ namespace DwarfCorp.GameStates
 
             var icon_AttackTool = new FlatToolTray.Icon
             {
+                Tag = "attack",
                 Icon = new TileReference("tool-icons", 3),
                 Tooltip = "Attack",
                 OnClick = (sender, args) => { ChangeTool(GameMaster.ToolMode.Attack); World.Tutorial("attack"); },
@@ -1166,6 +1243,7 @@ namespace DwarfCorp.GameStates
             #region icon_Till
             var icon_Till = new FlatToolTray.Icon
             {
+                Tag = "till",
                 Text = "Till",
                 Tooltip = "Till soil",
                 TextColor = new Vector4(1, 1, 1, 1),
@@ -1242,6 +1320,7 @@ namespace DwarfCorp.GameStates
 
             var icon_Plant = new FlatToolTray.Icon
             {
+                Tag = "plant",
                 Text = "Plant",
                 Tooltip = "Plant",
                 TextColor = new Vector4(1, 1, 1, 1),
@@ -1256,6 +1335,7 @@ namespace DwarfCorp.GameStates
             var icon_Harvest = new FlatToolTray.Icon
             {
                 Text = "Harv.",
+                Tag = "harvest",
                 TextColor = new Vector4(1, 1, 1, 1),
                 Tooltip = "Harvest",
                 TextHorizontalAlign = HorizontalAlign.Center,
@@ -1280,6 +1360,7 @@ namespace DwarfCorp.GameStates
             #region icon_Wrangle
             var icon_Wrangle = new FlatToolTray.Icon
             {
+                Tag = "wrangle",
                 Text = "Wrng.",
                 TextColor = new Vector4(1, 1, 1, 1),
                 Tooltip = "Wrangle Animals",
@@ -1477,7 +1558,7 @@ namespace DwarfCorp.GameStates
 
             #endregion
 
-            var menu_MainMenu = new FlatToolTray.Tray
+            MainMenu = new FlatToolTray.Tray
             {
                 ItemSource = new Gui.Widget[]
                 {
@@ -1491,13 +1572,14 @@ namespace DwarfCorp.GameStates
                     icon_AttackTool,
                     icon_FarmTool,
                     icon_MagicTool
-                }
+                },
+                OnShown = (sender) => ChangeTool(GameMaster.ToolMode.SelectUnits)
             };
 
-            icon_menu_BuildTools_Return.ReplacementMenu = menu_MainMenu;
-            icon_menu_Edibles_Return.ReplacementMenu = menu_MainMenu;
-            icon_menu_Farm_Return.ReplacementMenu = menu_MainMenu;
-            icon_menu_Magic_Return.ReplacementMenu = menu_MainMenu;
+            icon_menu_BuildTools_Return.ReplacementMenu = MainMenu;
+            icon_menu_Edibles_Return.ReplacementMenu = MainMenu;
+            icon_menu_Farm_Return.ReplacementMenu = MainMenu;
+            icon_menu_Magic_Return.ReplacementMenu = MainMenu;
 
             BottomToolBar = GuiRoot.RootItem.AddChild(new FlatToolTray.RootTray
             {
@@ -1509,7 +1591,7 @@ namespace DwarfCorp.GameStates
                     menu_Edibles,
                     menu_Farm,
                     menu_Magic,
-                    menu_MainMenu,
+                    MainMenu,
                     menu_Plant,
                     menu_ResearchSpells,
                     menu_ResourceTypes,
@@ -1518,14 +1600,14 @@ namespace DwarfCorp.GameStates
                 },
                 OnLayout = (sender) =>
                 {
-                    sender.Rect.Height = menu_MainMenu.MinimumSize.Y;
-                    sender.Rect.Width = 256;
-                    sender.Rect.X = MinimapFrame.Rect.Right; // Position against minimap frame.
-                    sender.Rect.Y = MinimapFrame.Rect.Bottom - menu_MainMenu.MinimumSize.Y;
-                }
+                    sender.Rect = sender.ComputeBoundingChildRect();
+                    sender.Rect.X = GuiRoot.RenderData.VirtualScreen.Center.X - 128; // Position against minimap frame.
+                    sender.Rect.Y = GuiRoot.RenderData.VirtualScreen.Bottom - MainMenu.MinimumSize.Y;
+                },
+                Tag = "tools"
             }) as FlatToolTray.RootTray;
 
-            BottomToolBar.SwitchTray(menu_MainMenu);
+            BottomToolBar.SwitchTray(MainMenu);
             ChangeTool(GameMaster.ToolMode.SelectUnits);
 
             #endregion
@@ -1578,7 +1660,6 @@ namespace DwarfCorp.GameStates
                     World.Tutorial("dwarf selected");
                 }
 
-                // Todo: Reimplement number hotkeys
                 if (index == 0 || Master.SelectedMinions.Count > 0)
                 {
                     (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray)
@@ -1587,7 +1668,11 @@ namespace DwarfCorp.GameStates
             }
             else if (key == Keys.Escape)
             {
-                if (Master.CurrentToolMode != GameMaster.ToolMode.SelectUnits)
+                if (MainMenu.Hidden)
+                {
+                    (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(0);
+                }
+                else if (Master.CurrentToolMode != GameMaster.ToolMode.SelectUnits)
                 {
                     Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
                 }
@@ -1682,7 +1767,7 @@ namespace DwarfCorp.GameStates
 
             MakeMenuItem(PausePanel, "Options", "", (sender, args) =>
             {
-                var state = new NewOptionsState(Game, StateManager)
+                var state = new OptionsState(Game, StateManager)
                 {
                     OnClosed = () =>
                     {

@@ -100,7 +100,7 @@ namespace DwarfCorp
 
         public IEnumerable<Status> TargetMoved(string pathName)
         {
-            List<Voxel> path = Agent.Blackboard.GetData<List<Voxel>>(pathName);
+            List<VoxelHandle> path = Agent.Blackboard.GetData<List<VoxelHandle>>(pathName);
             Body entity = Agent.Blackboard.GetData<Body>(EntityName);
             if (path == null || entity == null)
             {
@@ -116,7 +116,7 @@ namespace DwarfCorp
                     yield break;
                 }
 
-                Voxel last = path.Last();
+                VoxelHandle last = path.Last();
 
                 if ((last.Position - entity.LocalTransform.Translation).Length() > Radius * 2)
                 {
@@ -221,7 +221,12 @@ namespace DwarfCorp
                         yield return Act.Status.Running;
 
                         List<MoveAction> path = Agent.Blackboard.GetData<List<MoveAction>>("PathToEntity");
-                        bool targetMoved = (path.Last().Voxel.Position - entity.LocalTransform.Translation).Length() > Math.Max(Radius, 2) * 2
+                        if (path == null || path.Count == 0)
+                        {
+                            yield return Act.Status.Fail;
+                            yield break;
+                        }
+                        bool targetMoved = (path.Last().DestinationVoxel.Position - entity.LocalTransform.Translation).Length() > Math.Max(Radius, 2) * 2
                         ;
                         if (MovingTarget && path != null && (path.Count > 0 && targetMoved))
                         {

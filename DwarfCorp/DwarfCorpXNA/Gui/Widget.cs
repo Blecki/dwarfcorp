@@ -1,3 +1,4 @@
+using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System;
@@ -249,6 +250,14 @@ namespace DwarfCorp.Gui
             foreach (var child in Children) yield return child;
         }
 
+        public IEnumerable<Widget> EnumerateTree()
+        {
+            yield return this;
+            foreach (var child in Children)
+                foreach (var grandchild in child.EnumerateTree())
+                    yield return grandchild;
+        }
+
         public void Clear()
         {
             foreach (var child in Children)
@@ -275,7 +284,8 @@ namespace DwarfCorp.Gui
 
         public void Close()
         {
-            Root.DestroyWidget(this);
+            if (Root != null)
+                Root.DestroyWidget(this);
         }
 
         /// <summary>
@@ -422,6 +432,24 @@ namespace DwarfCorp.Gui
             }
 
             return CachedRenderMesh;
+        }
+
+        public Rectangle ComputeBoundingChildRect()
+        {
+            int minX = int.MaxValue;
+            int maxX = int.MinValue;
+            int minY = int.MaxValue;
+            int maxY = int.MinValue;
+
+            foreach (var child in EnumerateTree().Where(child => !child.Hidden))
+            {
+                minX = Math.Min(minX, child.Rect.Left);
+                maxX = Math.Max(maxX, child.Rect.Right);
+                minY = Math.Min(minY, child.Rect.Top);
+                maxY = Math.Max(maxY, child.Rect.Bottom);
+            }
+
+            return new Rectangle(minX, minY, maxX - minX, maxY - minY);
         }
     }
 }

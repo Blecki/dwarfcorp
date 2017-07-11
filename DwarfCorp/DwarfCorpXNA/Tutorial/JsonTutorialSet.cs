@@ -7,9 +7,10 @@ namespace DwarfCorp.Tutorial
 {
     public class JsonTutorialEntry
     {
-        public string Name;
-        public string Text;
-        public string Title;
+        public String Name;
+        public String Text;
+        public String Title;
+        public String GuiHilite;
     }
 
     public class JsonTutorialSet

@@ -98,7 +98,7 @@ namespace DwarfCorp
         {
             public Rectangle OccupiedSpace;
             public FurnitureRotation Rotation;
-            public Voxel Vox;
+            public VoxelHandle Vox;
         };
 
         public static bool FurnitureIntersects(PlacedFurniture a, PlacedFurniture B)
@@ -111,7 +111,7 @@ namespace DwarfCorp
             return b.Any(p => FurnitureIntersects(a, p));
         }
       
-        public static Room CreateRoom(Faction faction, string name, List<Voxel> designations, bool blueprint, WorldManager world)
+        public static Room CreateRoom(Faction faction, string name, List<VoxelHandle> designations, bool blueprint, WorldManager world)
         {
             // TODO(mklingen): omg get rid of this horrible legacy function!
             if (name == BalloonPort.BalloonPortName)
@@ -120,32 +120,32 @@ namespace DwarfCorp
             } 
             else if (name == BedRoom.BedRoomName)
             {
-                return blueprint ? new BedRoom(true, designations, world) : new BedRoom(designations, world);
+                return blueprint ? new BedRoom(true, designations, world, faction) : new BedRoom(designations, world, faction);
             }
             else if (name == CommonRoom.CommonRoomName)
             {
-                return blueprint ? new CommonRoom(true, designations, world) : new CommonRoom(designations, world);
+                return blueprint ? new CommonRoom(true, designations, world, faction) : new CommonRoom(designations, world, faction);
             }
             else if (name == LibraryRoom.LibraryRoomName)
             {
-                return blueprint ? new LibraryRoom(true, designations, world) : new LibraryRoom(designations, world);
+                return blueprint ? new LibraryRoom(true, designations, world, faction) : new LibraryRoom(designations, world, faction);
             }
             else if (name == TrainingRoom.TrainingRoomName)
             {
-                return blueprint ? new TrainingRoom(true, designations, world) : new TrainingRoom(designations, world); 
+                return blueprint ? new TrainingRoom(true, designations, world, faction) : new TrainingRoom(designations, world, faction); 
             }
             else if (name == WorkshopRoom.WorkshopName)
             {
-                return blueprint ? new WorkshopRoom(true, designations, world) : new WorkshopRoom(designations, world); 
+                return blueprint ? new WorkshopRoom(true, designations, world, faction) : new WorkshopRoom(designations, world, faction); 
             }
             else if (name == Kitchen.KitchenName)
             {
-                return blueprint ? new Kitchen(true, designations, world) : new Kitchen(designations, world); 
+                return blueprint ? new Kitchen(true, designations, world, faction) : new Kitchen(designations, world, faction); 
             }
             else if (name == Stockpile.StockpileName)
             {
                 Stockpile toBuild = new Stockpile(faction, world);
-                foreach (Voxel voxel in designations)
+                foreach (VoxelHandle voxel in designations)
                 {
                     toBuild.AddVoxel(voxel);
                 }
@@ -160,8 +160,8 @@ namespace DwarfCorp
             else if (name == AnimalPen.AnimalPenName)
             {
                 return blueprint
-                    ? new AnimalPen(true, designations, world) : 
-                      new AnimalPen(designations, world);
+                    ? new AnimalPen(true, designations, world, faction) :
+                      new AnimalPen(designations, world, faction);
             }
             else if (name == Treasury.TreasuryName)
             {
@@ -185,11 +185,11 @@ namespace DwarfCorp
                 createdComponent.AnimationQueue.Add(new EaseMotion(0.8f, offsetTransform, endPos));
                 room.AddBody(createdComponent);
                 particles.Trigger("puff", endPos + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 10);
-                createdComponent.SetActiveRecursive(true);
+                createdComponent.SetFlagRecursive(GameComponent.Flag.Active, true);
             }
         }
 
-        public static List<Body> GenerateRoomComponentsTemplate(RoomData roomData, List<Voxel> voxels , ComponentManager componentManager, 
+        public static List<Body> GenerateRoomComponentsTemplate(RoomData roomData, List<VoxelHandle> voxels , ComponentManager componentManager, 
             Microsoft.Xna.Framework.Content.ContentManager content, GraphicsDevice graphics)
         {
             List<Body> components = new List<Body>();
@@ -315,6 +315,7 @@ namespace DwarfCorp
                     }
 
                     if (createdComponent == null) continue;
+                    createdComponent.Tags.Add("Moveable");
                     createdComponent.LocalTransform = Matrix.CreateRotationY(-(rotations[r, c] + (float)Math.PI * 0.5f)) * createdComponent.LocalTransform;
                     components.Add(createdComponent);
                 }

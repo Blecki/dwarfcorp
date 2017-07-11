@@ -63,7 +63,7 @@ namespace DwarfCorp
             Name = adult.Name + " seedling";
             AddChild(new Health(Manager, "HP", 1.0f, 0.0f, 1.0f));
             AddChild(new Flammable(Manager, "Flames"));
-            Voxel voxelUnder = new Voxel();
+            VoxelHandle voxelUnder = new VoxelHandle();
 
             if (Manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
                 AddChild(new VoxelListener(Manager, Manager.World.ChunkManager, voxelUnder));
@@ -100,8 +100,8 @@ namespace DwarfCorp
         {
             IsGrown = true;
             Adult.IsGrown = true;
-            Adult.SetVisibleRecursive(true);
-            Adult.SetActiveRecursive(true);
+            Adult.SetFlagRecursive(Flag.Active, true);
+            Adult.SetFlagRecursive(Flag.Visible, true);
             Die();
         }
     }
@@ -139,8 +139,8 @@ namespace DwarfCorp
         public virtual Seedling BecomeSeedling()
         {
             UpdateTransformsRecursive(Parent as Body);
-            SetActiveRecursive(false);
-            SetVisibleRecursive(false);
+            SetFlagRecursive(Flag.Active, false);
+            SetFlagRecursive(Flag.Visible, false);
 
             return Parent.AddChild(new Seedling(Manager, this, LocalTransform.Translation, Seedlingsheet, SeedlingFrame)
             {
@@ -190,7 +190,7 @@ namespace DwarfCorp
             Tags.Add("EmitsWood");
 
             //new MinimapIcon(this, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 1, 0));
-            Voxel voxelUnder = new Voxel();
+            VoxelHandle voxelUnder = new VoxelHandle();
 
             if (Manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
                 AddChild(new VoxelListener(componentManager, componentManager.World.ChunkManager, voxelUnder));

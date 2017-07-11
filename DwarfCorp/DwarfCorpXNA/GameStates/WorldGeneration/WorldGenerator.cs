@@ -53,7 +53,7 @@ namespace DwarfCorp.GameStates
             NativeCivilizations = Settings.Natives;
         }
 
-        private int[] SetUpTerrainIndices(int width, int height)
+        public static int[] SetUpTerrainIndices(int width, int height)
         {
             int[] indices = new int[(width - 1) * (height - 1) * 6];
             int counter = 0;

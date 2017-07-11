@@ -109,13 +109,13 @@ namespace DwarfCorp
                     yield break;
                 }
 
-                List<MoveAction> neighbors = Agent.Movement.GetMoveActions(Agent.Position);
+                List<MoveAction> neighbors = Agent.Movement.GetMoveActions(Agent.Position).ToList();
                 neighbors.Sort((a, b) =>
                 {
                     if (a.Equals(b)) return 0;
 
-                    float da = (a.Voxel.Position - Target.Position).LengthSquared();
-                    float db = (b.Voxel.Position - Target.Position).LengthSquared();
+                    float da = (a.DestinationVoxel.Position - Target.Position).LengthSquared();
+                    float db = (b.DestinationVoxel.Position - Target.Position).LengthSquared();
 
                     return da.CompareTo(db);
                 });
@@ -134,7 +134,7 @@ namespace DwarfCorp
                 Timer timeout = new Timer(2.0f, true);
                 while (!reachedTarget)
                 {
-                    Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, furthest.Voxel.Position + Vector3.One*0.5f,
+                    Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, furthest.DestinationVoxel.Position + Vector3.One*0.5f,
                         Agent.Position);
                     Creature.Physics.ApplyForce(output, DwarfTime.Dt);
 
@@ -146,7 +146,7 @@ namespace DwarfCorp
                     timeout.Update(DwarfTime.LastTime);
 
                     yield return Status.Running;
-                    if (timeout.HasTriggered || (furthest.Voxel.Position - Agent.Position).Length() < 1)
+                    if (timeout.HasTriggered || (furthest.DestinationVoxel.Position - Agent.Position).Length() < 1)
                     {
                         reachedTarget = true;
                     }
@@ -294,7 +294,7 @@ namespace DwarfCorp
                 // Else, stop and attack
                 else
                 {
-                    if (Creature.AI.Raycast(Target.Position))
+                    if (CurrentAttack.Mode == Attack.AttackMode.Ranged && Creature.AI.Raycast(Target.Position))
                     {
                         yield return Status.Fail;
                         yield break;
@@ -308,7 +308,7 @@ namespace DwarfCorp
                     Creature.Sprite.ResetAnimations(CharacterMode.Attacking);
                     Creature.Sprite.PlayAnimations(CharacterMode.Attacking);
                     Creature.CurrentCharacterMode = CharacterMode.Attacking;
-
+                    Creature.OverrideCharacterMode = true;
                     while (!CurrentAttack.Perform(Creature, Target, DwarfTime.LastTime, Creature.Stats.BuffedStr + Creature.Stats.BuffedSiz,
                             Creature.AI.Position, Creature.Faction.Name))
                     {
@@ -328,9 +328,8 @@ namespace DwarfCorp
                         }
                         yield return Status.Running;
                     }
-
                     Creature.CurrentCharacterMode = CharacterMode.Attacking;
-                    Creature.Sprite.PauseAnimations(CharacterMode.Attacking);
+                    Creature.Sprite.ReloopAnimations(CharacterMode.Attacking);
 
                     CurrentAttack.RechargeTimer.Reset(CurrentAttack.RechargeRate);
 
@@ -340,7 +339,7 @@ namespace DwarfCorp
                         CurrentAttack.RechargeTimer.Update(DwarfTime.LastTime);
                         if (CurrentAttack.Mode == Attack.AttackMode.Dogfight)
                         {
-                            Creature.CurrentCharacterMode = CharacterMode.Flying;
+                            Creature.CurrentCharacterMode = CharacterMode.Attacking;
                             dogfightTarget += MathFunctions.RandVector3Cube()*0.1f;
                             Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, dogfightTarget + Target.Position, Creature.Physics.GlobalTransform.Translation) * 0.9f;
                             Creature.Physics.ApplyForce(output - Creature.Physics.Gravity, DwarfTime.Dt);
@@ -432,10 +431,10 @@ namespace DwarfCorp
 
             if (Is2D) target.Y = Creature.AI.Position.Y;
             List<MoveAction> path = new List<MoveAction>();
-            Voxel curr = Creature.Physics.CurrentVoxel;
+            VoxelHandle curr = Creature.Physics.CurrentVoxel;
             for (int i = 0; i < PathLength; i++)
             {
-                List<MoveAction> actions =
+                IEnumerable<MoveAction> actions =
                     Creature.AI.Movement.GetMoveActions(curr);
 
                 MoveAction? bestAction = null;
@@ -443,7 +442,7 @@ namespace DwarfCorp
 
                 foreach (MoveAction action in actions)
                 {
-                    float dist = (action.Voxel.Position - target).LengthSquared();
+                    float dist = (action.DestinationVoxel.Position - target).LengthSquared();
 
                     if (dist < bestDist)
                     {
@@ -454,15 +453,15 @@ namespace DwarfCorp
 
                 Vector3 half = Vector3.One*0.5f;
                 if (bestAction.HasValue &&
-                    !path.Any(p => p.Voxel.Equals(bestAction.Value.Voxel) && p.MoveType == bestAction.Value.MoveType))
+                    !path.Any(p => p.DestinationVoxel.Equals(bestAction.Value.DestinationVoxel) && p.MoveType == bestAction.Value.MoveType))
                 {
                     path.Add(bestAction.Value);
                     MoveAction action = bestAction.Value;
-                    action.Voxel = new Voxel(curr);
-                    curr = bestAction.Value.Voxel;
+                    action.DestinationVoxel = new VoxelHandle(curr);
+                    curr = bestAction.Value.DestinationVoxel;
                     bestAction = action;
 
-                    if (((bestAction.Value.Voxel.Position + half) - target).Length() < Threshold)
+                    if (((bestAction.Value.DestinationVoxel.Position + half) - target).Length() < Threshold)
                     {
                         break;
                     }
@@ -475,7 +474,7 @@ namespace DwarfCorp
                     new MoveAction()
                     {
                         Diff = Vector3.Zero,
-                        Voxel = new Voxel(Creature.Physics.CurrentVoxel),
+                        DestinationVoxel = new VoxelHandle(Creature.Physics.CurrentVoxel),
                         MoveType = MoveType.Walk
                     });
                 Creature.AI.Blackboard.SetData("RandomPath", path);

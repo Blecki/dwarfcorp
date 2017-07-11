@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
@@ -42,30 +43,32 @@ namespace DwarfCorp
     internal class CraftItemTask : Task
     {
         public CraftItem CraftType { get; set; }
-        public Voxel Voxel { get; set; }
+        public VoxelHandle Voxel { get; set; }
 
         public CraftItemTask()
         {
             Priority = PriorityType.Low;
+            AutoRetry = true;
         }
 
-        public CraftItemTask(Voxel voxel, CraftItem type)
+        public CraftItemTask(VoxelHandle voxel, CraftItem type)
         {
             Name = "Craft item " + voxel.GridPosition + " " + voxel.ChunkID.X + " " + voxel.ChunkID.Y + " " + voxel.ChunkID.Z;
             Voxel = voxel;
             CraftType = type;
             Priority = PriorityType.Low;
+            AutoRetry = true;
         }
 
         public override Task Clone()
         {
-            Voxel v = new Voxel(new Point3(Voxel.GridPosition), Voxel.Chunk);
+            VoxelHandle v = new VoxelHandle(new Point3(Voxel.GridPosition), Voxel.Chunk);
             return new CraftItemTask(v, CraftType);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            return Voxel == null ? 1000 : (agent.AI.Position - Voxel.Position).LengthSquared();
+            return Voxel == null || !CanBuild(agent) ? 1000 : (agent.AI.Position - Voxel.Position).LengthSquared();
         }
 
         public override Act CreateScript(Creature creature)
@@ -82,7 +85,35 @@ namespace DwarfCorp
 
             return true;
         }
+
+        public override bool IsFeasible(Creature agent)
+        {
+            return CanBuild(agent);
+        }
+
+        public bool CanBuild(Creature agent)
+        {
+            if (!agent.Faction.CraftBuilder.IsDesignation(Voxel))
+            {
+                return false;
+            }
+            if (!String.IsNullOrEmpty(CraftType.CraftLocation))
+            {
+                var nearestBuildLocation = agent.Faction.FindNearestItemWithTags(CraftType.CraftLocation, Vector3.Zero, false);
+
+                if (nearestBuildLocation == null)
+                    return false;
+            }
+
+            foreach (var resourceAmount in CraftType.RequiredResources)
+                if (agent.Faction.ListResourcesWithTag(resourceAmount.ResourceType).Count == 0)
+                    return false;
+
+            return true;
+        }
+
     }
+
 
     class CraftResourceTask : Task
     {
@@ -97,6 +128,7 @@ namespace DwarfCorp
             noise = ResourceLibrary.GetResourceByName(Item.ResourceCreated).Tags.Contains(Resource.ResourceTags.Edible)
                 ? "Cook"
                 : "Craft";
+            AutoRetry = true;
         }
 
         public override Act CreateScript(Creature creature)

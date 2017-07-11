@@ -59,7 +59,7 @@ namespace DwarfCorp
             matrix.Translation = position + new Vector3(0.5f, -0.25f, 0.5f);
             LocalTransform = matrix;
 
-            Voxel voxelUnder = new Voxel();
+            VoxelHandle voxelUnder = new VoxelHandle();
             bool success = componentManager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder);
 
             if (success)

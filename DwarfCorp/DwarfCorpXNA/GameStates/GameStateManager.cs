@@ -1,4 +1,4 @@
-﻿// GameStateManager.cs
+// GameStateManager.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -132,6 +132,7 @@ namespace DwarfCorp.GameStates
             if (CurrentState != null && CurrentState.EnableScreensaver)
                 ScreenSaver.Render(Game.GraphicsDevice, DwarfGame.SpriteBatch, time);
 
+            List<GameState> removals = new List<GameState>();
             for(int i = StateStack.Count - 1; i >= 0; i--)
             {
                 GameState state = StateStack[i];
@@ -143,13 +144,24 @@ namespace DwarfCorp.GameStates
                 {
                     if(state.IsInitialized)
                     {
-                        state.Render(time);
+                        try
+                        {
+                            state.Render(time);
+                        }
+                        catch (InvalidOperationException exception)
+                        {
+                            removals.Add(state);
+                        }
                     }
                     else if(!state.IsInitialized)
                     {
                         state.RenderUnitialized(time);
                     }
                 }
+            }
+            foreach (var state in removals)
+            {
+                StateStack.Remove(state);
             }
         }
     }

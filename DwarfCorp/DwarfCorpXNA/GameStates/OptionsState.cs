@@ -9,7 +9,7 @@ using System;
 
 namespace DwarfCorp.GameStates
 {
-    public class NewOptionsState : GameState
+    public class OptionsState : GameState
     {
         private Gui.Root GuiRoot;
         private bool HasChanges = false;
@@ -52,11 +52,13 @@ namespace DwarfCorp.GameStates
         private CheckBox LightMap;
         private CheckBox DynamicShadows;
         private Gui.Widgets.ComboBox EasyGraphicsSetting;
+        private CheckBox Autosave;
+        private Widget AutoSaveFrequency;
 
         public WorldManager World = null;
         private CheckBox EnableTutorial;
         
-        public NewOptionsState(DwarfGame Game, GameStateManager StateManager) :
+        public OptionsState(DwarfGame Game, GameStateManager StateManager) :
             base(Game, "NewOptionsState", StateManager)
         { }
 
@@ -95,7 +97,6 @@ namespace DwarfCorp.GameStates
             // Create and initialize GUI framework.
             GuiRoot = new Gui.Root(DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
-            GuiRoot.SetMouseOverlay(null, 0);
             var screen = GuiRoot.RenderData.VirtualScreen;
             float scale = 0.75f;
             float newWidth = System.Math.Min(System.Math.Max(screen.Width*scale, 640), screen.Width*scale);
@@ -221,10 +222,10 @@ namespace DwarfCorp.GameStates
         private void CreateGameplayTab()
         {
             var panel = TabPanel.AddTab("GAMEPLAY", new Widget
-                {
-                    Border = "border-thin",
-                    Padding = new Margin(4,4,0,0)
-                });
+            {
+                Border = "border-thin",
+                Padding = new Margin(4, 4, 0, 0)
+            });
 
             panel.AddChild(new Widget
             {
@@ -256,11 +257,11 @@ namespace DwarfCorp.GameStates
 
             // Todo: Display actual value beside slider.
             MoveSpeed = panel.AddChild(LabelAndDockWidget("Camera Move Speed", new HorizontalFloatSlider
-                {
-                    ScrollArea = 20,
-                    OnSliderChanged = OnItemChanged,
-                    Tooltip = "Sensitivity of the camera to the movement keys"
-                })).GetChild(1) as HorizontalFloatSlider;
+            {
+                ScrollArea = 20,
+                OnSliderChanged = OnItemChanged,
+                Tooltip = "Sensitivity of the camera to the movement keys"
+            })).GetChild(1) as HorizontalFloatSlider;
 
             ZoomSpeed = panel.AddChild(LabelAndDockWidget("Camera Zoom Speed", new HorizontalFloatSlider
             {
@@ -270,12 +271,12 @@ namespace DwarfCorp.GameStates
             })).GetChild(1) as HorizontalFloatSlider;
 
             InvertZoom = panel.AddChild(new CheckBox
-                {
-                    Text = "Invert Zoom",
-                    Tooltip = "When checked, zooming in/out with the scroll wheel will be inverted",
-                    OnCheckStateChange = OnItemChanged,
-                    AutoLayout = AutoLayout.DockTop
-                }) as CheckBox;
+            {
+                Text = "Invert Zoom",
+                Tooltip = "When checked, zooming in/out with the scroll wheel will be inverted",
+                OnCheckStateChange = OnItemChanged,
+                AutoLayout = AutoLayout.DockTop
+            }) as CheckBox;
 
             EdgeScrolling = panel.AddChild(new CheckBox
             {
@@ -327,6 +328,26 @@ namespace DwarfCorp.GameStates
                     OnClick = (sender, args) => World.TutorialManager.ResetTutorials()
                 });
             }
+
+            Autosave = panel.AddChild(new CheckBox
+            {
+                Text = "Enable Autosave",
+                Tooltip = "When checked, game will auto save.",
+                OnCheckStateChange = OnItemChanged,
+                AutoLayout = AutoLayout.DockTop
+            }) as CheckBox;
+
+            AutoSaveFrequency = panel.AddChild(LabelAndDockWidget("Autosave Frequency           ", new HorizontalSlider
+            {
+                ScrollArea = 115,
+                OnSliderChanged = (widget) =>
+                {
+                    AutoSaveFrequency.GetChild(0).Text = String.Format("Autosave Frequency ({0})",
+                        (widget as HorizontalSlider).ScrollPosition + 5);
+                    this.OnItemChanged(widget);
+                },
+                Tooltip = "Minutes between auto saves"
+            }));
         }
 
         private void CreateAudioTab()
@@ -751,6 +772,9 @@ namespace DwarfCorp.GameStates
             GameSettings.Default.FogofWar = this.FogOfWar.CheckState;
             GameSettings.Default.InvertZoom = this.InvertZoom.CheckState;
             GameSettings.Default.DisplayIntro = this.PlayIntro.CheckState;
+            GameSettings.Default.AutoSave = this.Autosave.CheckState;
+            GameSettings.Default.AutoSaveTimeMinutes = 
+                (this.AutoSaveFrequency.GetChild(1) as HorizontalSlider).ScrollPosition + 5.0f;
           
             // Audio settings
             GameSettings.Default.MasterVolume = this.MasterVolume.ScrollPosition;
@@ -844,6 +868,9 @@ namespace DwarfCorp.GameStates
             this.FogOfWar.CheckState = GameSettings.Default.FogofWar;
             this.InvertZoom.CheckState = GameSettings.Default.InvertZoom;
             this.PlayIntro.CheckState = GameSettings.Default.DisplayIntro;
+            this.Autosave.CheckState = GameSettings.Default.AutoSave;
+            (this.AutoSaveFrequency.GetChild(1) as HorizontalSlider).ScrollPosition =
+                (int)(GameSettings.Default.AutoSaveTimeMinutes - 5);
 
             // Audio settings
             this.MasterVolume.ScrollPosition = GameSettings.Default.MasterVolume;

@@ -9,9 +9,9 @@ using DwarfCorp.Gui;
 
 namespace DwarfCorp.GameStates
 {
-    public class NewGameLoaderState : PaginatedChooserState
+    public class LoadSaveGameState : PaginatedChooserState
     {
-        public NewGameLoaderState(DwarfGame Game, GameStateManager StateManager) :
+        public LoadSaveGameState(DwarfGame Game, GameStateManager StateManager) :
             base(Game, StateManager)
         {
             this.ProceedButtonText = "Load";

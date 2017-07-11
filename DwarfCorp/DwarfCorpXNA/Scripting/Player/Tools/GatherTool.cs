@@ -73,7 +73,7 @@ namespace DwarfCorp
 
             foreach (Body resource in bodies.Where(c => 
                 c.Tags.Contains("Resource") && 
-                c.IsActive && 
+                c.Active && 
                 c.IsVisible && 
                 c.Parent == Player.World.ComponentManager.RootComponent))
             {
@@ -109,12 +109,12 @@ namespace DwarfCorp
             DefaultOnMouseOver(bodies);
         }
 
-        public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }
 
-        public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }

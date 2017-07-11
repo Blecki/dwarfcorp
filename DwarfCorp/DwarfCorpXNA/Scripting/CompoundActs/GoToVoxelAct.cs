@@ -1,4 +1,4 @@
-﻿// GoToVoxelAct.cs
+// GoToVoxelAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -43,7 +43,7 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GoToVoxelAct : CompoundCreatureAct
     {
-        public Voxel Voxel { get; set; }
+        public VoxelHandle Voxel { get; set; }
         public string VoxelName { get; set; }
         public PlanAct.PlanType PlanType { get; set; }
         public float Radius { get; set; }
@@ -59,16 +59,16 @@ namespace DwarfCorp
             Radius = radius;
             PlanType = planType;
             VoxelName = voxel;
-            Name = "Go to Voxel " + voxel;
+            Name = "Go to DestinationVoxel " + voxel;
 
         }
 
-        public GoToVoxelAct(Voxel voxel, PlanAct.PlanType planType, CreatureAI creature, float radius = 0.0f) :
+        public GoToVoxelAct(VoxelHandle voxel, PlanAct.PlanType planType, CreatureAI creature, float radius = 0.0f) :
             base(creature)
         {
             Radius = radius;
             Voxel = voxel;
-            Name = "Go to Voxel";
+            Name = "Go to DestinationVoxel";
             PlanType = planType;
 
         }
@@ -79,7 +79,7 @@ namespace DwarfCorp
             {
                 Tree = new Sequence(
             new Sequence(
-                          new PlanAct(Agent, "PathToVoxel", VoxelName, PlanType) { Radius = Radius },
+                          new PlanAct(Agent, "PathToVoxel", VoxelName, PlanType) { Radius = Radius},
                           new FollowPathAct(Agent, "PathToVoxel")
                          ),
                           new StopAct(Agent));
@@ -87,8 +87,8 @@ namespace DwarfCorp
             else if (Voxel != null)
             {
                 Tree = new Sequence(
-                      new SetBlackboardData<Voxel>(Agent, "TargetVoxel", Voxel),
-                      new PlanAct(Agent, "PathToVoxel", "TargetVoxel", PlanType) { Radius = Radius },
+                      new SetBlackboardData<VoxelHandle>(Agent, "ActionVoxel", Voxel),
+                      new PlanAct(Agent, "PathToVoxel", "ActionVoxel", PlanType) { Radius = Radius },
                       new FollowPathAct(Agent, "PathToVoxel"),
                       new StopAct(Agent));
             }

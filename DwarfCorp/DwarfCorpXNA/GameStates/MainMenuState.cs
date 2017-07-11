@@ -107,9 +107,9 @@ namespace DwarfCorp.GameStates
 
             MakeMenuItem(frame, "New Game (Advanced)", "Start a new game of DwarfCorp.", (sender, args) => StateManager.PushState(new CompanyMakerState(Game, Game.StateManager)));
 
-            MakeMenuItem(frame, "Load Game", "Load DwarfCorp game from a file.", (sender, args) => StateManager.PushState(new NewGameLoaderState(Game, StateManager)));
+            MakeMenuItem(frame, "Load Game", "Load DwarfCorp game from a file.", (sender, args) => StateManager.PushState(new LoadSaveGameState(Game, StateManager)));
 
-            MakeMenuItem(frame, "Options", "Change game settings.", (sender, args) => StateManager.PushState(new NewOptionsState(Game, StateManager)));
+            MakeMenuItem(frame, "Options", "Change game settings.", (sender, args) => StateManager.PushState(new OptionsState(Game, StateManager)));
 
             MakeMenuItem(frame, "Credits", "View the credits.", (sender, args) => StateManager.PushState(new CreditsState(GameState.Game, StateManager)));
 
@@ -133,7 +133,6 @@ namespace DwarfCorp.GameStates
 
             GuiRoot = new Gui.Root(DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
-            GuiRoot.SetMouseOverlay(null, 0);
             MakeMenu();
             IsInitialized = true;
 

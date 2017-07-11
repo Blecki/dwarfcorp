@@ -55,7 +55,6 @@ namespace DwarfCorp.GameStates
 
             GuiRoot = new Gui.Root(DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
-            GuiRoot.SetMouseOverlay(null, 0);
             GuiRoot.RootItem.Transparent = false;
             GuiRoot.RootItem.Background = new Gui.TileReference("basic", 0);
             GuiRoot.RootItem.InteriorMargin = new Gui.Margin(16, 16, 16, 16);
@@ -222,7 +221,9 @@ namespace DwarfCorp.GameStates
                 var totalPages = (int)System.Math.Ceiling((float)Items.Count / (float)Grid.ItemsThatFit);
                 Grid.Text = String.Format("Page {0} of {1}", (int)System.Math.Ceiling((float)PreviewOffset / (float)Grid.ItemsThatFit), totalPages);
 
-                BottomBar.Text = Items[PreviewOffset + ItemSelected].Path;
+                var directoryTime = System.IO.Directory.GetLastWriteTime(Items[PreviewOffset + ItemSelected].Path);
+
+                BottomBar.Text = Items[PreviewOffset + ItemSelected].Path + "\n" + directoryTime.ToShortDateString() + " " + directoryTime.ToShortTimeString();
 
                 for (var i = 0; i < Grid.Children.Count; ++i)
                 {
@@ -248,7 +249,7 @@ namespace DwarfCorp.GameStates
         {
             var mouse = GuiRoot.MousePointer;
             GuiRoot.MousePointer = null;
-            GuiRoot.SetMouseOverlay(null, 0);
+            GuiRoot.MouseOverlaySheet = null;
 
             GuiRoot.Draw();
 
@@ -267,7 +268,6 @@ namespace DwarfCorp.GameStates
 
             GuiRoot.RedrawPopups(); // This hack sucks.
             GuiRoot.MousePointer = mouse;
-            GuiRoot.SetMouseOverlay(null, 0);
             GuiRoot.DrawMouse();
             base.Render(gameTime);
         }

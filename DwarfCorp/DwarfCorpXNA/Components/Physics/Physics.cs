@@ -170,11 +170,11 @@ namespace DwarfCorp
         /// <summary>
         /// The current voxel
         /// </summary>
-        public Voxel CurrentVoxel = null;
+        public VoxelHandle CurrentVoxel = null;
         /// <summary>
         /// The neighbors of this voxel.
         /// </summary>
-        public List<Voxel> Neighbors = new List<Voxel>();
+        public List<VoxelHandle> Neighbors = new List<VoxelHandle>();
         /// <summary>
         /// Fixed time to update physics at. This is to prevent instabilty on very slow
         /// or very fast machines, and to protect stability during fast forward.
@@ -233,7 +233,7 @@ namespace DwarfCorp
             CollideMode = CollisionMode.All;
             Orientation = orientation;
             SleepTimer = new Timer(5.0f, true);
-            CurrentVoxel = new Voxel();
+            CurrentVoxel = new VoxelHandle();
         }
 
         public void Move(float dt)
@@ -246,7 +246,7 @@ namespace DwarfCorp
 
         new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if (!IsActive) return;
+            if (!Active) return;
             if (gameTime.Speed < 0.01)
             {
                 base.Update(gameTime, chunks, camera);
@@ -426,7 +426,7 @@ namespace DwarfCorp
         public void CheckLiquids(ChunkManager chunks, float dt)
         {
             bool success = chunks.ChunkData.GetVoxel(GlobalTransform.Translation + Vector3.Up * 0.5f, ref CurrentVoxel);
-            Voxel belowVoxel = new Voxel();
+            VoxelHandle belowVoxel = new VoxelHandle();
             bool successBelow = chunks.ChunkData.GetVoxel(GlobalTransform.Translation + Vector3.Down * 0.25f, ref belowVoxel);
 
             if (success && CurrentVoxel.WaterLevel > WaterManager.inWaterThreshold)
@@ -450,7 +450,7 @@ namespace DwarfCorp
             }
         }
 
-        public virtual void OnTerrainCollision(Voxel vox)
+        public virtual void OnTerrainCollision(VoxelHandle vox)
         {
             //
         }
@@ -497,7 +497,7 @@ namespace DwarfCorp
             return true;
         }
 
-        private IEnumerable<Voxel> LocationPlusNeighbors()
+        private IEnumerable<VoxelHandle> LocationPlusNeighbors()
         {
             yield return CurrentVoxel;
             foreach (var neighbor in Neighbors)
@@ -510,7 +510,7 @@ namespace DwarfCorp
 
             int y = (int)Position.Y;
 
-            foreach (Voxel v in LocationPlusNeighbors())
+            foreach (VoxelHandle v in LocationPlusNeighbors())
             {
                 if (v == null || v.Chunk == null || v.IsEmpty)
                 {

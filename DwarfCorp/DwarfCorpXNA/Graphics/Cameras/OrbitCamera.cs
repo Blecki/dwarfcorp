@@ -123,7 +123,7 @@ namespace DwarfCorp
 
         private Vector3 ProjectToSurface(Vector3 pos)
         {
-            Voxel vox =  World.ChunkManager.ChunkData.GetFirstVisibleBlockHitByRay(new Vector3(pos.X, World.ChunkHeight - 1, pos.Z), new Vector3(pos.X, 0, pos.Z));
+            VoxelHandle vox =  World.ChunkManager.ChunkData.GetFirstVisibleBlockHitByRay(new Vector3(pos.X, World.ChunkHeight - 1, pos.Z), new Vector3(pos.X, 0, pos.Z));
             if (vox == null)
             {
                 return pos;
@@ -133,7 +133,7 @@ namespace DwarfCorp
 
         public void OverheadUpdate(DwarfTime time, ChunkManager chunks)
         {
-            Voxel currentVoxel = new Voxel();
+            VoxelHandle currentVoxel = new VoxelHandle();
             float diffPhi = 0;
             float diffTheta = 0;
             float diffRadius = 0;
@@ -468,10 +468,10 @@ namespace DwarfCorp
         public bool CollidesWithChunks(ChunkManager chunks, Vector3 pos, bool applyForce)
         {
             BoundingBox box = new BoundingBox(pos - new Vector3(0.5f, 0.5f, 0.5f), pos + new Vector3(0.5f, 0.5f, 0.5f));
-            Voxel currentVoxel = new Voxel();
+            VoxelHandle currentVoxel = new VoxelHandle();
             bool success = chunks.ChunkData.GetVoxel(null, pos, ref currentVoxel);
 
-            List<Voxel> vs = new List<Voxel>
+            List<VoxelHandle> vs = new List<VoxelHandle>
             {
                 currentVoxel
             };
@@ -486,11 +486,11 @@ namespace DwarfCorp
 
             Vector3 grid = chunk.WorldToGrid(pos);
 
-            List<Voxel> adjacencies = chunk.GetNeighborsEuclidean((int)grid.X, (int)grid.Y, (int)grid.Z);
+            IEnumerable<VoxelHandle> adjacencies = chunk.GetNeighborsEuclidean((int)grid.X, (int)grid.Y, (int)grid.Z);
             vs.AddRange(adjacencies);
 
             bool gotCollision = false;
-            foreach (Voxel v in vs)
+            foreach (VoxelHandle v in vs)
             {
                 if (v.IsEmpty || !v.IsVisible)
                 {

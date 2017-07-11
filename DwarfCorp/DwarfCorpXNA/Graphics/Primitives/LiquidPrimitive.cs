@@ -31,11 +31,11 @@ namespace DwarfCorp
             public LiquidRebuildCache()
             {
                 int euclidianNeighborCount = 27;
-                neighbors = new List<Voxel>(euclidianNeighborCount);
+                neighbors = new List<VoxelHandle>(euclidianNeighborCount);
                 validNeighbors = new bool[euclidianNeighborCount];
                 retrievedNeighbors = new bool[euclidianNeighborCount];
 
-                for (int i = 0; i < 27; i++) neighbors.Add(new Voxel());
+                for (int i = 0; i < 27; i++) neighbors.Add(new VoxelHandle());
 
                 int vertexCount = (int)VoxelVertex.Count;
                 vertexCalculated = new bool[vertexCount];
@@ -57,23 +57,23 @@ namespace DwarfCorp
             internal bool[] drawFace = new bool[6];
 
             // A list of unattached voxels we can change to the neighbors of the voxel who's faces we are drawing.
-            internal List<Voxel> neighbors;
+            internal List<VoxelHandle> neighbors;
 
             // A list of which voxels are valid in the neighbors list.  We can't just set a neighbor to null as we reuse them so we use this.
             // Does not need to be cleared between sets of face drawing as retrievedNeighbors stops us from using a stale value.
             internal bool[] validNeighbors;
 
-            // A list of which neighbors in the neighbors list have been filled in with the current Voxel's neighbors.
-            // This does need to be cleared between drawing the faces on a Voxel.
+            // A list of which neighbors in the neighbors list have been filled in with the current DestinationVoxel's neighbors.
+            // This does need to be cleared between drawing the faces on a DestinationVoxel.
             internal bool[] retrievedNeighbors;
 
-            // Stored positions for the current Voxel's vertexes.  Lets us reuse the stored value when another face uses the same position.
+            // Stored positions for the current DestinationVoxel's vertexes.  Lets us reuse the stored value when another face uses the same position.
             internal Vector3[] vertexPositions;
 
-            // Stored foaminess value for the current Voxel's vertexes.
+            // Stored foaminess value for the current DestinationVoxel's vertexes.
             internal float[] vertexFoaminess;
 
-            // A flag to show if a particular vertex has already been calculated.  Must be cleared when drawing faces on a new Voxel position.
+            // A flag to show if a particular vertex has already been calculated.  Must be cleared when drawing faces on a new DestinationVoxel position.
             internal bool[] vertexCalculated;
 
             // A flag to show if the cache is in use at that moment.
@@ -157,15 +157,15 @@ namespace DwarfCorp
             LiquidPrimitive curPrimative = null;
             ExtendedVertex[] curVertices = null;
             int[] maxVertices = new int[lps.Length];
-            int maxY = (int)Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, chunk.SizeY);
 
-            Voxel myVoxel = chunk.MakeVoxel(0, 0, 0);
-            Voxel vox = chunk.MakeVoxel(0, 0, 0);
+            VoxelHandle myVoxel = chunk.MakeVoxel(0, 0, 0);
+            VoxelHandle vox = chunk.MakeVoxel(0, 0, 0);
             int maxVertex = 0;
             bool fogOfWar = GameSettings.Default.FogofWar;
-            for (int x = 0; x < chunk.SizeX; x++)
+
+            for (int y = 0; y < Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, chunk.SizeY); y++)
             {
-                for (int y = 0; y < maxY; y++)
+                for (int x = 0; x < chunk.SizeX; x++)
                 {
                     for (int z = 0; z < chunk.SizeZ; z++)
                     {
@@ -202,7 +202,7 @@ namespace DwarfCorp
 
                                 Vector3 delta = faceDeltas[(int)face];
 
-                                // Pull the current neighbor Voxel based on the face it would be touching.
+                                // Pull the current neighbor DestinationVoxel based on the face it would be touching.
                                 bool success = myVoxel.GetNeighborBySuccessor(delta, ref vox, false);
 
                                 if (success)
@@ -307,8 +307,7 @@ namespace DwarfCorp
             cache = null;
         }
 
-        private static void CreateWaterFaces(Voxel voxel,
-                                            VoxelChunk chunk,
+        private static void CreateWaterFaces(VoxelHandle voxel, VoxelChunk chunk,
                                             int x, int y, int z,
                                             ExtendedVertex[] vertices,
                                             int startVertex)
@@ -361,11 +360,11 @@ namespace DwarfCorp
                             // We are going to use a lookup key so calculate it now.
                             int key = VoxelChunk.SuccessorToEuclidianLookupKey(succ);
 
-                            // If we haven't gotten this Voxel yet then retrieve it.
+                            // If we haven't gotten this DestinationVoxel yet then retrieve it.
                             // This allows us to only get a particular voxel once a function call instead of once per vertexCount/per face.
                             if (!cache.retrievedNeighbors[key])
                             {
-                                Voxel neighbor = cache.neighbors[key];
+                                VoxelHandle neighbor = cache.neighbors[key];
                                 cache.validNeighbors[key] = voxel.GetNeighborBySuccessor(succ, ref neighbor, false);
                                 cache.retrievedNeighbors[key] = true;
                             }
@@ -373,21 +372,17 @@ namespace DwarfCorp
                             if (!cache.validNeighbors[key]) continue;
 
                             // Now actually do the math.
-                            Voxel vox = cache.neighbors[key];
-                            averageWaterLevel += vox.WaterLevel;
+                            var vox = cache.neighbors[key];
                             count++;
                             if (vox.WaterLevel < 1) emptyNeighbors++;
                         }
 
-                        averageWaterLevel = averageWaterLevel / count;
-
-                        float averageWaterHeight = averageWaterLevel / WaterManager.maxWaterLevel;
                         foaminess = emptyNeighbors / count;
 
                         if (foaminess <= 0.5f) foaminess = 0.0f;
 
                         pos = primitive.Vertices[primitiveIndex].Position;
-                        pos.Y *= averageWaterHeight;
+                        pos.Y -= 0.6f;// Minimum ramp position 
                         pos += origin;
 
                         // Store the vertex information for future use when we need it again on this or another face.
@@ -407,7 +402,7 @@ namespace DwarfCorp
                         case BoxFace.Back:
                         case BoxFace.Front:
                             vertices[i + startVertex].Set(pos,
-                                                          new Color(foaminess, 0.0f, 1.0f, 1.0f),
+                                                          new Color(foaminess * 0.5f, 0.0f, 1.0f, 1.0f),
                                                           Color.White,
                                                           new Vector2(pos.X, pos.Y),
                                                           new Vector4(0, 0, 1, 1));
@@ -415,7 +410,7 @@ namespace DwarfCorp
                         case BoxFace.Right:
                         case BoxFace.Left:
                             vertices[i + startVertex].Set(pos,
-                                                        new Color(foaminess, 0.0f, 1.0f, 1.0f),
+                                                        new Color(foaminess * 0.5f, 0.0f, 1.0f, 1.0f),
                                                         Color.White,
                                                         new Vector2(pos.Z, pos.Y),
                                                         new Vector4(0, 0, 1, 1));
@@ -431,6 +426,7 @@ namespace DwarfCorp
                 }
                 startVertex += 6;
             }
+            // End cache.drawFace loop
         }
     }
 

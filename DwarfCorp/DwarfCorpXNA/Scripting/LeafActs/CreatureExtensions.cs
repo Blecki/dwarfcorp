@@ -99,7 +99,7 @@ namespace DwarfCorp
                             foodBody.LocalTransform = agent.Physics.LocalTransform;
                             Vector3 foodPosition = agent.Physics.Position + Vector3.Up * 0.05f + Vector3.Transform(Vector3.Forward, rot) * 0.5f;
                             foodBody.LocalPosition = foodPosition;
-                            foodBody.IsActive = false;
+                            foodBody.Active = false;
                             agent.Physics.Velocity = Vector3.Zero;
                             agent.CurrentCharacterMode = CharacterMode.Sitting;
                             if (MathFunctions.RandEvent(0.05f))
@@ -253,7 +253,7 @@ namespace DwarfCorp
             while(true)
             {
                 // Get the voxel stored in the agent's blackboard.
-                var vox = agent.AI.Blackboard.GetData<Voxel>(voxel);
+                var vox = agent.AI.Blackboard.GetData<VoxelHandle>(voxel);
 
                 // Somehow, there wasn't a voxel to mine.
                 if(vox == null)

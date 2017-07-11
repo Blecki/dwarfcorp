@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,6 +6,7 @@ using DwarfCorp.Gui;
 
 namespace DwarfCorp.Goals.Goals
 {
+    /*
     public class MineSand : Goal
     {
         public int Counter = 0;
@@ -64,4 +65,5 @@ namespace DwarfCorp.Goals.Goals
             }
         }
     }
+     */
 }

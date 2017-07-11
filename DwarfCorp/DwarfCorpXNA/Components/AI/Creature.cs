@@ -287,7 +287,7 @@ namespace DwarfCorp
                 Faction.Minions.Add(AI);
             }
 
-            if (!IsActive) return;
+            if (!Active) return;
             DrawLifeTimer.Update(gameTime);
 
             if (!DrawLifeTimer.HasTriggered)
@@ -337,10 +337,10 @@ namespace DwarfCorp
         /// </summary>
         public void CheckNeighborhood(ChunkManager chunks, float dt)
         {
-            var voxelBelow = new Voxel();
+            var voxelBelow = new VoxelHandle();
             bool belowExists = chunks.ChunkData.GetVoxel(Physics.GlobalTransform.Translation - Vector3.UnitY * 0.8f,
                 ref voxelBelow);
-            var voxelAbove = new Voxel();
+            var voxelAbove = new VoxelHandle();
             bool aboveExists = chunks.ChunkData.GetVoxel(Physics.GlobalTransform.Translation + Vector3.UnitY,
                 ref voxelAbove);
 
@@ -605,6 +605,21 @@ namespace DwarfCorp
             yield break;
         }
 
+        public void AcquireDisease(string disease)
+        {
+            bool hasDisease = false;
+            foreach (var buff in Buffs)
+            {
+                Disease diseaseBuff = buff as Disease;
+                if (diseaseBuff != null)
+                {
+                    hasDisease = hasDisease || diseaseBuff.Name == disease;
+                }
+            }
+            if (!hasDisease)
+                AddBuff(DiseaseLibrary.GetDisease(disease).Clone());
+        }
+
         /// <summary>
         /// Called whenever the creature takes damage.
         /// </summary>
@@ -629,7 +644,14 @@ namespace DwarfCorp
                 if (deathParticleTrigger != null)
                     Manager.World.ParticleManager.Trigger(deathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
                 DrawLifeTimer.Reset();
+                var injury = DiseaseLibrary.GetRandomInjury();
+
+                if (MathFunctions.RandEvent(injury.LikelihoodOfSpread))
+                {
+                    AcquireDisease(injury.Name);
+                }
             }
+
 
             return damage;
         }

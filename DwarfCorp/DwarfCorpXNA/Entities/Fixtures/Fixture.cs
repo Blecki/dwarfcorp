@@ -43,9 +43,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Fixture : Body
     {
-        /// <summary> The selection circle is drawn when the character is selected </summary>
-        private Sprite _sprite = null;
-
         public SpriteSheet Asset { get; set; }
         public Point Frame { get; set; }
 

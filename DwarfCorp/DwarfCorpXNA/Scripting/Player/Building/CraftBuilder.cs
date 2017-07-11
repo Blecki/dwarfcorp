@@ -57,7 +57,7 @@ namespace DwarfCorp
         public class CraftDesignation
         {
             public CraftItem ItemType { get; set; }
-            public Voxel Location { get; set; }
+            public VoxelHandle Location { get; set; }
             public Body WorkPile { get; set; }
         }
 
@@ -65,7 +65,7 @@ namespace DwarfCorp
         public List<CraftDesignation> Designations { get; set; }
         public CraftItem CurrentCraftType { get; set; }
         public bool IsEnabled { get; set; }
-        protected Body CurrentCraftBody { get; set; }
+        public Body CurrentCraftBody { get; set; }
         protected CraftDesignation CurrentDesignation { get; set; }
 
         [JsonIgnore]
@@ -90,14 +90,14 @@ namespace DwarfCorp
             IsEnabled = false;
         }
 
-        public bool IsDesignation(Voxel reference)
+        public bool IsDesignation(VoxelHandle reference)
         {
             if (reference == null) return false;
             return Designations.Any(put => (put.Location.Position - reference.Position).LengthSquared() < 0.1);
         }
 
 
-        public CraftDesignation GetDesignation(Voxel v)
+        public CraftDesignation GetDesignation(VoxelHandle v)
         {
             return Designations.FirstOrDefault(put => (put.Location.Position - v.Position).LengthSquared() < 0.1);
         }
@@ -116,7 +116,7 @@ namespace DwarfCorp
         }
 
 
-        public void RemoveDesignation(Voxel v)
+        public void RemoveDesignation(VoxelHandle v)
         {
             CraftDesignation des = GetDesignation(v);
 
@@ -152,11 +152,11 @@ namespace DwarfCorp
             if (CurrentCraftType != null && CurrentCraftBody == null)
             {
                 CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.Name, player.VoxSelector.VoxelUnderMouse.Position);
-                CurrentCraftBody.SetActiveRecursive(false);
+                CurrentCraftBody.SetFlagRecursive(GameComponent.Flag.Active, false);
                 CurrentDesignation = new CraftDesignation()
                 {
                     ItemType = CurrentCraftType,
-                    Location = new Voxel(new Point3(0, 0, 0), null)
+                    Location = new VoxelHandle(new Point3(0, 0, 0), null)
                 };
                 SetDisplayColor(Color.Green);
             }
@@ -171,7 +171,7 @@ namespace DwarfCorp
             if (CurrentDesignation.Location.IsSameAs(player.VoxSelector.VoxelUnderMouse)) 
                 return;
             
-            CurrentDesignation.Location = new Voxel(player.VoxSelector.VoxelUnderMouse);
+            CurrentDesignation.Location = new VoxelHandle(player.VoxSelector.VoxelUnderMouse);
 
             SetDisplayColor(IsValid(CurrentDesignation) ? Color.Green : Color.Red);
         }
@@ -189,9 +189,11 @@ namespace DwarfCorp
                 return false;
             }
 
-            if (Faction.GetNearestRoomOfType(WorkshopRoom.WorkshopName, designation.Location.Position) == null)
+            if (!String.IsNullOrEmpty(designation.ItemType.CraftLocation) &&
+                Faction.FindNearestItemWithTags(designation.ItemType.CraftLocation, designation.Location.Position, false) ==
+                null)
             {
-                World.ShowToolPopup("Can't build, no workshops!");
+                World.ShowToolPopup("Can't build, need " + designation.ItemType.CraftLocation);
                 return false;
             }
 
@@ -208,7 +210,7 @@ namespace DwarfCorp
                 return false;
             }
 
-            Voxel[] neighbors = new Voxel[4];
+            VoxelHandle[] neighbors = new VoxelHandle[4];
             foreach (CraftItem.CraftPrereq req in designation.ItemType.Prerequisites)
             {
                 switch (req)
@@ -231,7 +233,7 @@ namespace DwarfCorp
                     }
                     case CraftItem.CraftPrereq.OnGround:
                     {
-                        Voxel below = new Voxel();
+                        VoxelHandle below = new VoxelHandle();
                         designation.Location.GetNeighbor(Vector3.Down, ref below);
 
                         if (below.IsEmpty)
@@ -248,7 +250,7 @@ namespace DwarfCorp
 
         }
 
-        public void VoxelsSelected(List<Voxel> refs, InputManager.MouseButton button)
+        public void VoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
         {
             if (!IsEnabled)
             {
@@ -264,7 +266,7 @@ namespace DwarfCorp
                             return;
                         }
                         List<Task> assignments = new List<Task>();
-                        foreach (Voxel r in refs)
+                        foreach (VoxelHandle r in refs)
                         {
                             if (IsDesignation(r) ||r == null || !r.IsEmpty)
                             {
@@ -287,7 +289,7 @@ namespace DwarfCorp
                                 if (IsValid(newDesignation))
                                 {
                                     AddDesignation(newDesignation);
-                                    assignments.Add(new CraftItemTask(new Voxel(new Point3(r.GridPosition), r.Chunk),
+                                    assignments.Add(new CraftItemTask(new VoxelHandle(new Point3(r.GridPosition), r.Chunk),
                                         CurrentCraftType));
                                 }
                                 else
@@ -306,7 +308,7 @@ namespace DwarfCorp
                     }
                 case (InputManager.MouseButton.Right):
                     {
-                        foreach (Voxel r in refs)
+                        foreach (VoxelHandle r in refs)
                         {
                             if (!IsDesignation(r))
                             {

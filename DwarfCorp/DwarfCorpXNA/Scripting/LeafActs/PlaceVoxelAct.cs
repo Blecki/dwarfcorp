@@ -45,14 +45,14 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class PlaceVoxelAct : CreatureAct
     {
-        public Voxel Voxel { get; set; }
+        public VoxelHandle Voxel { get; set; }
         public ResourceAmount Resource { get; set; }
-        public PlaceVoxelAct(Voxel voxel, CreatureAI agent, ResourceAmount resource) :
+        public PlaceVoxelAct(VoxelHandle voxel, CreatureAI agent, ResourceAmount resource) :
             base(agent)
         {
             Agent = agent;
             Voxel = voxel;
-            Name = "Build Voxel " + voxel.ToString();
+            Name = "Build DestinationVoxel " + voxel.ToString();
             Resource = resource;
         }
 
@@ -86,10 +86,10 @@ namespace DwarfCorp
                     // If the creature intersects the box, find a voxel adjacent to it that is free, and jump there to avoid getting crushed.
                     if (Creature.Physics.BoundingBox.Intersects(Voxel.GetBoundingBox()))
                     {
-                        List<Voxel> neighbors = Voxel.Chunk.GetNeighborsEuclidean(Voxel);
-                        Voxel closest = null;
+                        IEnumerable<VoxelHandle> neighbors = Voxel.Chunk.GetNeighborsEuclidean(Voxel);
+                        VoxelHandle closest = null;
                         float closestDist = float.MaxValue;
-                        foreach (Voxel voxel in neighbors)
+                        foreach (VoxelHandle voxel in neighbors)
                         {
                             float dist = (voxel.Position - Creature.Physics.Position).LengthSquared();
                             if (dist < closestDist && voxel.IsEmpty)

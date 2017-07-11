@@ -151,7 +151,6 @@ namespace DwarfCorp
         #region Tutorial Hooks
 
         public Tutorial.TutorialManager TutorialManager;
-        public Action<TutorialManager.TutorialEntry, Action<bool>> GuiHook_ShowTutorialPopup;
         
         public void Tutorial(String Name)
         {
@@ -171,7 +170,7 @@ namespace DwarfCorp
 
         // A shader which draws fancy light blooming to the screen
         private BloomComponent bloom;
-
+        
         private FXAA fxaa;
 
         // Responsible for drawing liquids.
@@ -253,7 +252,7 @@ namespace DwarfCorp
                 OnAnnouncement(Message, ClickAction);
 
             if (!string.IsNullOrEmpty(sound))
-                SoundManager.PlaySound(sound, 0.5f);
+                SoundManager.PlaySound(sound, 0.15f);
         }
 
         public void AwardBux(DwarfBux Bux)
@@ -382,7 +381,7 @@ namespace DwarfCorp
                         SurfaceFormat.Color, DepthFormat.Depth24))
                 {
                     GraphicsDevice.SetRenderTarget(renderTarget);
-                    DrawSky(new DwarfTime(), Camera.ViewMatrix, 1.0f);
+                    DrawSky(new DwarfTime(), Camera.ViewMatrix, 1.0f, Color.CornflowerBlue);
                     Draw3DThings(new DwarfTime(), DefaultShader, Camera.ViewMatrix);
 
                     DefaultShader.View = Camera.ViewMatrix;
@@ -461,7 +460,7 @@ namespace DwarfCorp
 
             Master.Update(Game, gameTime);
             GoalManager.Update(this);
-            TutorialManager.Update(GuiHook_ShowTutorialPopup);
+            TutorialManager.Update(Gui);
             Time.Update(gameTime);
 
 
@@ -655,11 +654,11 @@ namespace DwarfCorp
         /// <param name="time">The current time</param>
         /// <param name="view">The camera view matrix</param>
 		/// <param name="scale">The scale for the sky drawing</param>
-        public void DrawSky(DwarfTime time, Matrix view, float scale)
+        public void DrawSky(DwarfTime time, Matrix view, float scale, Color fogColor)
         {
             Matrix oldView = Camera.ViewMatrix;
             Camera.ViewMatrix = view;
-            Sky.Render(time, GraphicsDevice, Camera, scale);
+            Sky.Render(time, GraphicsDevice, Camera, scale ,fogColor, ChunkManager.Bounds);
             GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             Camera.ViewMatrix = oldView;
@@ -800,7 +799,6 @@ namespace DwarfCorp
                 DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader);
             InstanceManager.RenderSelectionBuffer(GraphicsDevice, DefaultShader, Camera, false);
             SelectionBuffer.End(GraphicsDevice);
-
             #endregion
 
             // Start drawing the bloom effect
@@ -815,7 +813,7 @@ namespace DwarfCorp
 
             // Draw the sky
             GraphicsDevice.Clear(DefaultShader.FogColor);
-            DrawSky(gameTime, Camera.ViewMatrix, 1.0f);
+            DrawSky(gameTime, Camera.ViewMatrix, 1.0f, DefaultShader.FogColor);
 
             // Defines the current slice for the GPU
             float level = ChunkManager.ChunkData.MaxViewingLevel + 2.0f;
@@ -905,9 +903,9 @@ namespace DwarfCorp
                 ScissorTestEnable = true
             };
 
+            //SelectionBuffer.DebugDraw(GraphicsDevice.Viewport.Bounds);
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp,
                 null, rasterizerState);
-
             //DwarfGame.SpriteBatch.Draw(Shadows.ShadowTexture, Vector2.Zero, Color.White);
 
             if (IsCameraUnderwater())

@@ -152,7 +152,7 @@ namespace DwarfCorp
 
             RemoveComponent(other);
             RemoveChild(other);
-            other.IsActive = true;
+            other.Active = true;
             other.Parent = Manager.RootComponent;
             other.LocalTransform = other.GlobalTransform;
             return true;

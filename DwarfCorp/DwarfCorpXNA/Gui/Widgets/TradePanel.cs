@@ -68,6 +68,13 @@ namespace DwarfCorp.Gui.Widgets
             }
         }
 
+        private bool IsReasonableTrade(DwarfBux envoyOut, DwarfBux net)
+        {
+            var tradeMin = envoyOut*0.25;
+            var tradeMax = envoyOut*3.0;
+            return net >= tradeMin && net <= tradeMax;
+        }
+
         private void EqualizeColumns()
         {
             if (EnvoyColumns.Valid && PlayerColumns.Valid)
@@ -76,7 +83,7 @@ namespace DwarfCorp.Gui.Widgets
                 var envoyOut = Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney;
                 var tradeTarget = envoyOut*0.25;
 
-                if (net >= tradeTarget)
+                if (IsReasonableTrade(envoyOut, net))
                 {
                     Root.ShowTooltip(Root.MousePosition, "This works fine.");
                     return;
@@ -93,37 +100,62 @@ namespace DwarfCorp.Gui.Widgets
 
                 int maxIters = 1000;
                 int iter = 0;
-                while (net < tradeTarget && iter < maxIters)
+                while (!IsReasonableTrade(envoyOut, net) && iter < maxIters)
                 {
                     float t = MathFunctions.Rand();
-                    if (t < 0.05f && selectedMoneyEnvoy > 1)
+                    if (envoyOut > net)
                     {
-                        DwarfBux movement = Math.Min((decimal)MathFunctions.RandInt(1, 5), selectedMoneyEnvoy);
-                        selectedMoneyEnvoy -= movement;
-                        remainingMoneyEnvoy += movement;
-                    }
-                    else if (t < 0.1f)
-                    {
-                        MoveRandomValue(selectedResourcesEnvoy, sourceResourcesEnvoy, Player);
-                    }
-                    else if (t < 0.15f && remainingMoneyPlayer > 1)
-                    {
-                        DwarfBux movement = Math.Min((decimal)MathFunctions.RandInt(1, 5), remainingMoneyPlayer);
-                        selectedMoneyPlayer += movement;
-                        remainingMoneyPlayer -= movement;
+                        if (t < 0.05f && selectedMoneyEnvoy > 1)
+                        {
+                            DwarfBux movement = Math.Min((decimal) MathFunctions.RandInt(1, 5), selectedMoneyEnvoy);
+                            selectedMoneyEnvoy -= movement;
+                            remainingMoneyEnvoy += movement;
+                        }
+                        else if (t < 0.1f)
+                        {
+                            MoveRandomValue(selectedResourcesEnvoy, sourceResourcesEnvoy, Player);
+                        }
+                        else if (t < 0.15f && remainingMoneyPlayer > 1)
+                        {
+                            DwarfBux movement = Math.Min((decimal) MathFunctions.RandInt(1, (int)(envoyOut - net)), remainingMoneyPlayer);
+                            selectedMoneyPlayer += movement;
+                            remainingMoneyPlayer -= movement;
+                        }
+                        else
+                        {
+                            MoveRandomValue(sourceResourcesPlayer, selectedResourcesPlayer, Envoy);
+                        }
                     }
                     else
                     {
-                        MoveRandomValue(sourceResourcesPlayer, selectedResourcesPlayer, Envoy);
+                        if (t < 0.05f && selectedMoneyPlayer > 1)
+                        {
+                            DwarfBux movement = Math.Min((decimal)MathFunctions.RandInt(1, 5), selectedMoneyPlayer);
+                            selectedMoneyPlayer -= movement;
+                            remainingMoneyPlayer += movement;
+                        }
+                        else if (t < 0.1f)
+                        {
+                            MoveRandomValue(selectedResourcesPlayer, sourceResourcesPlayer, Envoy);
+                        }
+                        else if (t < 0.15f && remainingMoneyEnvoy > 1)
+                        {
+                            DwarfBux movement = Math.Min((decimal)MathFunctions.RandInt(1, (int)(net - envoyOut)), remainingMoneyEnvoy);
+                            selectedMoneyEnvoy += movement;
+                            remainingMoneyEnvoy -= movement;
+                        }
+                        else
+                        {
+                            MoveRandomValue(selectedResourcesEnvoy, sourceResourcesEnvoy, Player);
+                        }
                     }
-
                     envoyOut = Envoy.ComputeValue(selectedResourcesEnvoy) + selectedMoneyEnvoy;
                     tradeTarget = envoyOut * 0.25;
                     net = ComputeNetValue(selectedResourcesPlayer, selectedMoneyPlayer, selectedResourcesEnvoy,
                         selectedMoneyEnvoy);
                 }
 
-                if (net >= tradeTarget)
+                if (IsReasonableTrade(envoyOut, net))
                 {
                     Root.ShowTooltip(Root.MousePosition, "How does this work?");
                     PlayerColumns.Reconstruct(sourceResourcesPlayer, selectedResourcesPlayer, (int)selectedMoneyPlayer);

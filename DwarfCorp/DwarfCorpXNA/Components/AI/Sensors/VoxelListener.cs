@@ -74,7 +74,7 @@ namespace DwarfCorp
         }
 
 
-        public VoxelListener(ComponentManager manager, ChunkManager chunkManager, Voxel vref) :
+        public VoxelListener(ComponentManager manager, ChunkManager chunkManager, VoxelHandle vref) :
             base("VoxelListener", manager)
         {
             Chunk = vref.Chunk;
@@ -111,7 +111,7 @@ namespace DwarfCorp
         {
             if (voxelID.Equals(VoxelID))
             {
-                GetEntityRootComponent().Die();
+                GetRoot().Die();
             }
         }
 
@@ -152,7 +152,7 @@ namespace DwarfCorp
         }
 
 
-        public ExploredListener(ComponentManager manager, ChunkManager chunkManager, Voxel vref) :
+        public ExploredListener(ComponentManager manager, ChunkManager chunkManager, VoxelHandle vref) :
             base("ExploredListener", manager)
         {
             Chunk = vref.Chunk;
@@ -166,8 +166,8 @@ namespace DwarfCorp
         {
             if (voxelID.Equals(VoxelID))
             {
-                GetEntityRootComponent().SetActiveRecursive(true);
-                GetEntityRootComponent().SetVisibleRecursive(true);
+                GetRoot().SetFlagRecursive(Flag.Active, true);
+                GetRoot().SetFlagRecursive(Flag.Visible, true);
                 Delete();
             }
         }

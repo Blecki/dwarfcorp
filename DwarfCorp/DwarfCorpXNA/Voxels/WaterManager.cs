@@ -167,7 +167,7 @@ namespace DwarfCorp
 
         public void HandleTransfers(DwarfTime time)
         {
-            Voxel atPos = new Voxel();
+            VoxelHandle atPos = new VoxelHandle();
             while(Transfers.Count > 0)
             {
                 Transfer transfer;
@@ -185,7 +185,7 @@ namespace DwarfCorp
 
                     if(success)
                     {
-                        Voxel v = atPos;
+                        VoxelHandle v = atPos;
 
                         VoxelLibrary.PlaceType(VoxelLibrary.GetVoxelType("Stone"), v);
                         VoxelChunk chunk = Chunks.ChunkData.ChunkMap[v.ChunkID];
@@ -325,8 +325,8 @@ namespace DwarfCorp
             {
                 return false;
             }
-            Voxel voxBelow = chunk.MakeVoxel(0, 0, 0);
-            Voxel neighbor = new Voxel();
+            VoxelHandle voxBelow = chunk.MakeVoxel(0, 0, 0);
+            VoxelHandle neighbor = new VoxelHandle();
 
             for (int i = 0; i < toUpdate; i++)
             {
@@ -387,7 +387,7 @@ namespace DwarfCorp
                 {
                     if(chunk.Manager.ChunkData.DoesWaterCellExist(worldPos))
                     {
-                        Voxel voxelsBelow = chunk.Manager.ChunkData.GetVoxel(chunk, worldPos + new Vector3(0, -1, 0));
+                        DestinationVoxel voxelsBelow = chunk.Manager.ChunkData.GetVoxel(chunk, worldPos + new Vector3(0, -1, 0));
 
                         if(voxelsBelow != null && voxelsBelow.IsEmpty)
                         {

@@ -213,9 +213,9 @@ namespace DwarfCorp
         /// Returns a 3 x 3 x 3 voxel grid corresponding to the immediate neighborhood
         /// around the given voxel..
         /// </summary>
-        private Voxel[, ,] GetNeighborhood(Voxel voxel)
+        private VoxelHandle[, ,] GetNeighborhood(VoxelHandle voxel)
         {
-            var neighborHood = new Voxel[3, 3, 3];
+            var neighborHood = new VoxelHandle[3, 3, 3];
             CollisionManager objectHash = Creature.Manager.World.CollisionManager;
 
             VoxelChunk startChunk = voxel.Chunk;
@@ -228,7 +228,7 @@ namespace DwarfCorp
                 {
                     for (int dz = -1; dz < 2; dz++)
                     {
-                        neighborHood[dx + 1, dy + 1, dz + 1] = new Voxel();
+                        neighborHood[dx + 1, dy + 1, dz + 1] = new VoxelHandle();
                         int nx = dx + x;
                         int ny = dy + y;
                         int nz = dz + z;
@@ -246,7 +246,7 @@ namespace DwarfCorp
         }
 
         /// <summary> Determines whether the voxel has any neighbors in X or Z directions </summary>
-        private bool HasNeighbors(Voxel[, ,] neighborHood)
+        private bool HasNeighbors(VoxelHandle[, ,] neighborHood)
         {
             bool hasNeighbors = false;
             for (int dx = 0; dx < 3; dx++)
@@ -268,27 +268,30 @@ namespace DwarfCorp
         }
 
         /// <summary> Determines whether the given voxel is null or empty </summary>
-        private bool IsEmpty(Voxel v)
+        private bool IsEmpty(VoxelHandle v)
         {
             return v == null || v.IsEmpty;
         }
 
         /// <summary> gets a list of actions that the creature can take from the given position </summary>
-        public List<MoveAction> GetMoveActions(Vector3 pos)
+        public IEnumerable<MoveAction> GetMoveActions(Vector3 pos)
         {
-            var vox = new Voxel();
+            var vox = new VoxelHandle();
             Creature.Manager.World.ChunkManager.ChunkData.GetVoxel(pos, ref vox);
             return GetMoveActions(vox);
         }
 
         /// <summary> gets the list of actions that the creature can take from a given voxel. </summary>
-        public List<MoveAction> GetMoveActions(Voxel voxel)
+        public IEnumerable<MoveAction> GetMoveActions(VoxelHandle voxel)
         {
-            var toReturn = new List<MoveAction>();
+            if (!voxel.IsEmpty)
+            {
+                yield break;
+            }
 
             CollisionManager objectHash = Creature.Manager.World.CollisionManager;
 
-            Voxel[, ,] neighborHood = GetNeighborhood(voxel);
+            VoxelHandle[, ,] neighborHood = GetNeighborhood(voxel);
             var x = (int)voxel.GridPosition.X;
             var y = (int)voxel.GridPosition.Y;
             var z = (int)voxel.GridPosition.Z;
@@ -341,7 +344,7 @@ namespace DwarfCorp
             // If the creature can climb walls and is not blocked by a voxl above.
             if (CanClimbWalls && !topCovered)
             {
-                Voxel[] walls =
+                VoxelHandle[] walls =
                 {
                     neighborHood[2, 1, 1], neighborHood[0, 1, 1], neighborHood[1, 1, 2],
                     neighborHood[1, 1, 0]
@@ -360,7 +363,7 @@ namespace DwarfCorp
                     {
                         Diff = new Vector3(1, 2, 1),
                         MoveType = MoveType.ClimbWalls,
-                        TargetVoxel = walls.FirstOrDefault(v => v != null && !v.IsEmpty)
+                        ActionVoxel = walls.FirstOrDefault(v => v != null && !v.IsEmpty)
                     });
                 }
                 // If we're near a wall and not blocked from below, we can climb downward.
@@ -370,7 +373,7 @@ namespace DwarfCorp
                     {
                         Diff = new Vector3(1, 0, 1),
                         MoveType = MoveType.ClimbWalls,
-                        TargetVoxel = walls.FirstOrDefault(v => v != null && !v.IsEmpty)
+                        ActionVoxel = walls.FirstOrDefault(v => v != null && !v.IsEmpty)
                     });
                 }
             }
@@ -510,7 +513,7 @@ namespace DwarfCorp
             // Now, validate each move action that the creature might take.
             foreach (MoveAction v in successors)
             {
-                Voxel n = neighborHood[(int)v.Diff.X, (int)v.Diff.Y, (int)v.Diff.Z];
+                VoxelHandle n = neighborHood[(int)v.Diff.X, (int)v.Diff.Y, (int)v.Diff.Z];
                 if (n != null && (n.IsEmpty || n.WaterLevel > 0))
                 {
                     // Do one final check to see if there is an object blocking the motion.
@@ -526,7 +529,7 @@ namespace DwarfCorp
 
                         foreach (GameComponent body in enumerable)
                         {
-                            var door = body.GetEntityRootComponent().EnumerateAll().OfType<Door>().FirstOrDefault();
+                            var door = body.GetRoot().EnumerateAll().OfType<Door>().FirstOrDefault();
                             // If there is an enemy door blocking movement, we can destroy it to get through.
                             if (door != null)
                             {
@@ -536,12 +539,13 @@ namespace DwarfCorp
                                     Relationship.Loving)
                                 {
                                     if (Can(MoveType.DestroyObject))
-                                        toReturn.Add(new MoveAction
+                                        yield return (new MoveAction
                                         {
                                             Diff = v.Diff,
                                             MoveType = MoveType.DestroyObject,
                                             InteractObject = door,
-                                            Voxel = n
+                                            DestinationVoxel = new VoxelHandle(n),
+                                            SourceVoxel = new VoxelHandle(voxel)
                                         });
                                     blockedByObject = true;
                                 }
@@ -552,14 +556,12 @@ namespace DwarfCorp
                     if (!blockedByObject)
                     {
                         MoveAction newAction = v;
-                        newAction.Voxel = n;
-                        toReturn.Add(newAction);
+                        newAction.SourceVoxel = new VoxelHandle(voxel);
+                        newAction.DestinationVoxel = new VoxelHandle(n);
+                       yield return newAction;
                     }
                 }
             }
-
-            // Return the list of all validated actions that the creature can take.
-            return toReturn;
         }
         /// <summary> Each action has a cost, a speed, and a validity check </summary>
         public class ActionStats
@@ -567,6 +569,25 @@ namespace DwarfCorp
             public bool CanMove = false;
             public float Cost = 1.0f;
             public float Speed = 1.0f;
+        }
+
+        // Inverts GetMoveActions. So, returns the list of move actions whose target is the current voxel.
+        // Very, very slow.
+        public IEnumerable<MoveAction> GetInverseMoveActions(VoxelHandle current)
+        {
+            List<VoxelHandle> n = current.Chunk.GetNeighborsEuclidean(current).ToList();
+            foreach (VoxelHandle voxel in n)
+            {
+                var actions = GetMoveActions(voxel);
+                foreach (var action in actions)
+                {
+                    if (action.DestinationVoxel.Equals(current))
+                    {
+                        yield return action;
+                    }
+                }
+            }
+
         }
     }
 }

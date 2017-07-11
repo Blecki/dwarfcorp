@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -23,8 +24,10 @@ namespace DwarfCorp
         public Texture2D SunTexture { get; set; }
         public Vector3 SunPosition { get; set; }
         public Vector3 SunlightDir { get; set; }
-
-        public SkyRenderer(Texture2D moonTexture, Texture2D sunTexture, TextureCube skyTexture, TextureCube nightTexture, Texture2D skyGrad, Model skyMesh, Effect skyEffect)
+        public VertexBuffer BackgroundMesh { get; set; }
+        public IndexBuffer BackgroundIndex { get; set; }
+        public Effect BackgroundEffect { get; set; }
+        public SkyRenderer(Texture2D moonTexture, Texture2D sunTexture, TextureCube skyTexture, TextureCube nightTexture, Texture2D skyGrad, Model skyMesh, Effect skyEffect, Effect backgroundEffect)
         {
             SkyTexture = skyTexture;
             NightTexture = nightTexture;
@@ -37,7 +40,7 @@ namespace DwarfCorp
             SunTexture = sunTexture;
             TimeOfDay = 0.0f;
             CosTime = 0.0f;
-
+            BackgroundEffect = backgroundEffect;
             foreach(ModelMesh mesh in SkyMesh.Meshes)
             {
                 foreach(ModelMeshPart part in mesh.MeshParts)
@@ -47,11 +50,70 @@ namespace DwarfCorp
             }
         }
 
-        public void Render(DwarfTime time, GraphicsDevice device, Camera camera, float scale)
+        public void Render(DwarfTime time, GraphicsDevice device, Camera camera, float scale, Color fogColor, BoundingBox backgroundScale)
         {
             RenderNightSky(time, device, camera);
             RenderDaySky(time, device, camera);
             RenderSunMoon(time, device, camera, device.Viewport, scale);
+            RenderBackgroundMesh(device, camera, fogColor, backgroundScale);
+        }
+
+        private void CreateBackgroundMesh(GraphicsDevice Device, BoundingBox worldBounds)
+        {
+            int resolution = 4;
+            int width = 256;
+            int height = 256;
+            int numVerts = (width * height) / resolution;
+            BackgroundMesh = new VertexBuffer(Device, VertexPositionColor.VertexDeclaration, numVerts, BufferUsage.None);
+            VertexPositionColor[] verts = new VertexPositionColor[numVerts];
+            Perlin noise = new Perlin(MathFunctions.RandInt(0, 1000));
+            Vector2 posCenter = new Vector2(width, height) * 0.5f;
+            Vector3 extents = worldBounds.Extents();
+            float scale = 16;
+            Vector3 offset = new Vector3(extents.X, 0, extents.Z) * 0.5f * scale - new Vector3(worldBounds.Center().X, worldBounds.Min.Y, worldBounds.Center().Z);
+            int i = 0;
+            for (int x = 0; x < width; x += resolution)
+            {
+                for (int y = 0; y < height; y += resolution)
+                {
+                    float dist = MathFunctions.Clamp(
+                    (new Vector2(x, y) - posCenter).Length() * 0.1f, 0, 4);
+
+                    float landHeight = (noise.Generate(x*0.01f, y*0.01f))*8.0f*dist;
+                    verts[i].Position = new Vector3(((float)x)/width*extents.X * scale,
+                        ((int)(landHeight / 10.0f)) * 10.0f, ((float)y) / height * extents.Z * scale) - offset;
+                    if (worldBounds.Contains(verts[i].Position) == ContainmentType.Contains)
+                        verts[i].Position = new Vector3(verts[i].Position.X, Math.Min(verts[i].Position.Y, worldBounds.Min.Y), verts[i].Position.Z);
+                    i++;
+                }
+            }
+            BackgroundMesh.SetData(verts);
+            int[] indices = WorldGenerator.SetUpTerrainIndices(width / resolution, height / resolution);
+            BackgroundIndex = new IndexBuffer(Device, typeof(int), indices.Length, BufferUsage.None);
+            BackgroundIndex.SetData(indices);
+        }
+
+        public void RenderBackgroundMesh(GraphicsDevice device, Camera camera, Color fogColor, BoundingBox scale)
+        {
+            if (BackgroundMesh == null)
+            {
+                CreateBackgroundMesh(device, scale);
+            }
+            device.SetVertexBuffer(BackgroundMesh);
+            device.Indices = BackgroundIndex;
+            device.BlendState = BlendState.Opaque;
+            Matrix rotOnly = camera.ViewMatrix;
+            rotOnly.Translation = Vector3.Zero;
+            BackgroundEffect.Parameters["View"].SetValue(camera.ViewMatrix);
+            BackgroundEffect.Parameters["Projection"].SetValue(camera.ProjectionMatrix);
+            BackgroundEffect.Parameters["World"].SetValue(Matrix.Identity);
+            BackgroundEffect.Parameters["Fog"].SetValue(fogColor.ToVector4());
+            device.DepthStencilState = DepthStencilState.Default;
+            foreach (var pass in BackgroundEffect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, BackgroundMesh.VertexCount, 0, BackgroundIndex.IndexCount / 3);
+            }
         }
 
         public void RenderDaySky(DwarfTime time, GraphicsDevice device, Camera camera)

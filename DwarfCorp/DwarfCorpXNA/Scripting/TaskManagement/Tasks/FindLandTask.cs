@@ -63,7 +63,7 @@ namespace DwarfCorp
         /// <param name="radius">The radius to search in.</param>
         /// <param name="checkVoxel">The voxel to start the search from</param>
         /// <returns>The voxel within the radius which is over land if it exists, null otherwise.</returns>
-        public Voxel FindLand(int radius, Voxel checkVoxel)
+        public VoxelHandle FindLand(int radius, VoxelHandle checkVoxel)
         {
             return checkVoxel.Chunk.Manager.BreadthFirstSearch(checkVoxel, radius * radius, voxel => voxel != null && voxel.IsEmpty && voxel.WaterLevel == 0 && !voxel.IsBottomEmpty());
         }
@@ -73,13 +73,13 @@ namespace DwarfCorp
         /// </summary>
         /// <param name="creature">The creature.</param>
         /// <returns>A voxel containing air above the creature if it exists, or null otherwise</returns>
-        public Voxel FindAir(Creature creature)
+        public VoxelHandle FindAir(Creature creature)
         {
             int startHeight = (int) creature.AI.Position.Y;
             int x = (int)creature.Physics.CurrentVoxel.GridPosition.X;
             int z = (int)creature.Physics.CurrentVoxel.GridPosition.Z;
             VoxelChunk chunk = creature.Physics.CurrentVoxel.Chunk;
-            Voxel check = chunk.MakeVoxel(0, 0, 0);
+            VoxelHandle check = chunk.MakeVoxel(0, 0, 0);
             for (int y = startHeight; y < creature.World.ChunkManager.ChunkData.ChunkSizeY; y++)
             {
                 check.GridPosition = new Vector3(x, y, z);
@@ -113,13 +113,13 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature creature)
         {
-            Voxel above = creature.Physics.CurrentVoxel.GetVoxelAbove();
+            VoxelHandle above = creature.Physics.CurrentVoxel.GetVoxelAbove();
             if ((above != null && above.WaterLevel > 0 ) || creature.AI.Movement.CanFly)
             {
                 return new Wrap(() => SwimUp(creature)) { Name = "Swim up"};
             }
 
-            Voxel findLand = FindLand(3, creature.Physics.CurrentVoxel);
+            VoxelHandle findLand = FindLand(3, creature.Physics.CurrentVoxel);
             if (findLand == null)
             {
                 if (creature.Faction.GetRooms().Count == 0)

@@ -133,6 +133,7 @@
     <Compile Include="AssetManagement\TextureManager.cs" />
     <Compile Include="Components\AI\Buff.cs" />
     <Compile Include="Components\AI\CharacterMode.cs" />
+    <Compile Include="Components\AI\Disease.cs" />
     <Compile Include="Components\AI\Gender.cs" />
     <Compile Include="Components\AI\MateTask.cs" />
     <Compile Include="Components\AI\CreatureMovement.cs" />
@@ -248,7 +249,7 @@
     <Compile Include="GameStates\GameStateManager.cs" />
     <Compile Include="GameStates\WorldLoaderState.cs" />
     <Compile Include="GameStates\PaginatedChooserState.cs" />
-    <Compile Include="GameStates\NewGameLoaderState.cs" />
+    <Compile Include="GameStates\LoadSaveGameState.cs" />
     <Compile Include="GameStates\NewEconomyState.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGeneratorPreview.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGeneratorState.cs" />
@@ -258,7 +259,7 @@
     <Compile Include="GameStates\MainMenuState.cs" />
     <Compile Include="GameStates\NewGameChooseWorldState.cs" />
     <Compile Include="GameStates\NewGameCreateDebugWorldState.cs" />
-    <Compile Include="GameStates\NewOptionsState.cs" />
+    <Compile Include="GameStates\OptionsState.cs" />
     <Compile Include="GameStates\GuiStateTemplate.cs" />
     <Compile Include="GameStates\PlayState.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGenerator.cs" />
@@ -336,6 +337,8 @@
     <Compile Include="Scripting\CompoundActs\StockMoneyAct.cs" />
     <Compile Include="Scripting\LeafActs\PutMoneyInZoneAct.cs" />
     <Compile Include="Scripting\LeafActs\StashMoneyAct.cs" />
+    <Compile Include="Scripting\Player\Tools\BuiltTypes.cs" />
+    <Compile Include="Scripting\Player\Tools\MoveObjectTool.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\AnimalPen.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\Graveyard.cs" />
     <Compile Include="Scripting\Data\Status.cs" />
@@ -347,6 +350,11 @@
     <Compile Include="Tutorial\TutorialManager.cs" />
     <Compile Include="Tutorial\JsonTutorialSet.cs" />
     <Compile Include="Tutorial\TutorialSaveData.cs" />
+    <Compile Include="Voxels\NewVoxels\Coordinate.cs" />
+    <Compile Include="Voxels\NewVoxels\Neighbors.cs" />
+    <Compile Include="Voxels\NewVoxels\VoxelConstants.cs" />
+    <Compile Include="Voxels\Enums.cs" />
+    <Compile Include="Voxels\BoxTransition.cs" />
     <Compile Include="World\IndicatorManager.cs" />
     <Compile Include="Gui\Enums.cs" />
     <Compile Include="Gui\Geo\Basics.cs" />
@@ -393,7 +401,6 @@
     <Compile Include="NativeInjector.cs" />
     <Compile Include="Gui\Widgets\AnnouncementPopup.cs" />
     <Compile Include="Gui\Widgets\BuildCraftInfo.cs" />
-    <Compile Include="Gui\Widgets\BuildMenu.cs" />
     <Compile Include="Gui\Widgets\BuildWallInfo.cs" />
     <Compile Include="Gui\Widgets\BuildRoomInfo.cs" />
     <Compile Include="Gui\Widgets\ApplicantInfo.cs" />
@@ -634,7 +641,7 @@
     <Compile Include="Voxels\VoxelType.cs" />
     <Compile Include="Voxels\WaterCell.cs" />
     <Compile Include="Voxels\WaterManager.cs" />
-    <Compile Include="Voxels\WaterRenderer.cs" />
+    <Compile Include="Graphics\Effects\WaterRenderer.cs" />
     <Compile Include="World\BiomeData.cs" />
     <Compile Include="World\BiomeLibrary.cs" />
     <Compile Include="World\DetailMoteData.cs" />

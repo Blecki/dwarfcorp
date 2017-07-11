@@ -52,6 +52,7 @@ namespace DwarfCorp
         {
             
         }
+
         public Dwarf(ComponentManager manager, CreatureStats stats, string allies, PlanService planService, Faction faction,  string name, EmployeeClass workerClass, Vector3 position) :
             base(manager, stats, allies, planService, faction, name)
         {
@@ -69,8 +70,7 @@ namespace DwarfCorp
             HasBones = false;
             HasCorpse = true;
             Initialize(workerClass);
-        }
-        
+        }        
 
         public void Initialize(EmployeeClass dwarfClass)
         {

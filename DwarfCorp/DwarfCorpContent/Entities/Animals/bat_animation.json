@@ -30,33 +30,40 @@
       },
       {
          "Frames" : [
-            [ 0, 0, 0 ]
+            [ 0, 4, 0 ],
+            [ 1, 4, 0 ],
+            [ 2, 4, 0 ]
          ],
          "Name" : "WalkingFORWARD",
-         "Speed" : [0.15]
+         "Speed" : [0.1]
       },
       {
          "Frames" : [
-            [ 0, 1, 0 ]
+            [ 0, 5, 0 ],
+            [ 1, 5, 0 ],
+            [ 2, 5, 0 ]
          ],
          "Name" : "WalkingLEFT",
-         "Speed" : [0.15]
+         "Speed" : [0.1]
       },
       {
          "Frames" : [
-            [ 0, 2, 0 ]
+            [ 0, 6, 0 ],
+            [ 1, 6, 0 ],
+            [ 2, 6, 0 ]
          ],
          "Name" : "WalkingRIGHT",
-         "Speed" : [0.15]
+         "Speed" : [0.1]
       },
       {
          "Frames" : [
-            [ 0, 3, 0 ]
+            [ 0, 7, 0 ],
+            [ 1, 7, 0 ],
+            [ 2, 7, 0 ]
          ],
          "Name" : "WalkingBACKWARD",
-         "Speed" : [0.15]
+         "Speed" : [0.1]
       },
-
       {
          "Frames" : [
             [ 0, 8, 0 ],
@@ -65,7 +72,7 @@
          ],
          "Name" : "AttackingFORWARD",
          "Speed" : [0.1],
-         "PlayOnce" :  true
+         "PlayOnce" :  false
       },
       {
          "Frames" : [
@@ -75,7 +82,7 @@
          ],
          "Name" : "AttackingLEFT",
          "Speed" : [0.1],
-         "PlayOnce" :  true
+         "PlayOnce" :  false
       },
       {
          "Frames" : [
@@ -85,7 +92,7 @@
          ],
          "Name" : "AttackingRIGHT",
          "Speed" : [0.1],
-         "PlayOnce" :  true
+         "PlayOnce" :  false
       },
       {
          "Frames" : [
@@ -95,7 +102,7 @@
          ],
          "Name" : "AttackingBACKWARD",
          "Speed" : [0.1],
-         "PlayOnce" :  true
+         "PlayOnce" :  false
       },
       {
          "Frames" : [

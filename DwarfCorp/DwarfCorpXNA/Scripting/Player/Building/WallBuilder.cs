@@ -54,12 +54,12 @@ namespace DwarfCorp
     /// </summary>
     public class WallBuilder
     {
-        public Voxel Vox;
+        public VoxelHandle Vox;
         public VoxelType Type;
         public CreatureAI ReservedCreature = null;
         private WorldManager World { get; set; }
 
-        public WallBuilder(Voxel v, VoxelType t, WorldManager world)
+        public WallBuilder(VoxelHandle v, VoxelType t, WorldManager world)
         {
             World = world;
             Vox = v;
@@ -70,7 +70,7 @@ namespace DwarfCorp
         {
             VoxelChunk chunk = manager.ChunkData.ChunkMap[Vox.ChunkID];
 
-            Voxel v = chunk.MakeVoxel((int) Vox.GridPosition.X, (int) Vox.GridPosition.Y, (int) Vox.GridPosition.Z);
+            VoxelHandle v = chunk.MakeVoxel((int) Vox.GridPosition.X, (int) Vox.GridPosition.Y, (int) Vox.GridPosition.Z);
             v.Type = Type;
             v.Water = new WaterCell();
             v.Health = Type.StartingHealth;
@@ -104,7 +104,7 @@ namespace DwarfCorp
         public Faction Faction { get; set; }
         public List<WallBuilder> Designations { get; set; }
         public VoxelType CurrentVoxelType { get; set; }
-        private List<Voxel> Selected { get; set; }
+        private List<VoxelHandle> Selected { get; set; }
         private bool verified = false;
             [JsonIgnore]
         public WorldManager World { get; set; }
@@ -125,10 +125,10 @@ namespace DwarfCorp
             World = world;
             Faction = faction;
             Designations = new List<WallBuilder>();
-            Selected = new List<Voxel>();
+            Selected = new List<VoxelHandle>();
         }
 
-        public CreatureAI GetReservedCreature(Voxel reference)
+        public CreatureAI GetReservedCreature(VoxelHandle reference)
         {
             WallBuilder des = GetDesignation(reference);
 
@@ -140,7 +140,7 @@ namespace DwarfCorp
             return des.ReservedCreature;
         }
 
-        public bool IsDesignation(Voxel reference)
+        public bool IsDesignation(VoxelHandle reference)
         {
             foreach(WallBuilder put in Designations)
             {
@@ -154,7 +154,7 @@ namespace DwarfCorp
         }
 
 
-        public WallBuilder GetDesignation(Voxel v)
+        public WallBuilder GetDesignation(VoxelHandle v)
         {
             foreach(WallBuilder put in Designations)
             {
@@ -178,7 +178,7 @@ namespace DwarfCorp
         }
 
 
-        public void RemoveDesignation(Voxel v)
+        public void RemoveDesignation(VoxelHandle v)
         {
             WallBuilder des = GetDesignation(v);
 
@@ -213,7 +213,7 @@ namespace DwarfCorp
 
             if (Selected == null)
             {
-                Selected = new List<Voxel>();
+                Selected = new List<VoxelHandle>();
             }
 
             if (CurrentVoxelType == null)
@@ -222,7 +222,7 @@ namespace DwarfCorp
             }
 
             effect.VertexColorTint = verified ? new Color(0.0f, 1.0f, 0.0f, 0.5f * st + 0.45f) : new Color(1.0f, 0.0f, 0.0f, 0.5f * st + 0.45f);
-            foreach (Voxel voxel in Selected)
+            foreach (VoxelHandle voxel in Selected)
             {
                 effect.World = Matrix.CreateTranslation(voxel.Position);
 
@@ -239,7 +239,7 @@ namespace DwarfCorp
             graphics.DepthStencilState = state;
         }
 
-        public void VoxelDragged(List<Voxel> refs)
+        public void VoxelDragged(List<VoxelHandle> refs)
         {
             if (CurrentVoxelType == null)
                 return;
@@ -255,20 +255,20 @@ namespace DwarfCorp
             }
 
             Selected.Clear();
-            foreach (Voxel voxel in refs)
+            foreach (VoxelHandle voxel in refs)
             {
-                Selected.Add(new Voxel(voxel));
+                Selected.Add(new VoxelHandle(voxel));
             }
         }
 
-        public bool Verify(List<Voxel> refs, ResourceLibrary.ResourceType type)
+        public bool Verify(List<VoxelHandle> refs, ResourceLibrary.ResourceType type)
         {
             ResourceAmount requiredResources = new ResourceAmount(type, refs.Count);
             List<ResourceAmount> res = new List<ResourceAmount>() {requiredResources};
             return Faction.HasResources(res);
         }
 
-        public void VoxelsSelected(List<Voxel> refs, InputManager.MouseButton button)
+        public void VoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
         {
             if (Faction == null)
             {
@@ -290,7 +290,7 @@ namespace DwarfCorp
                         return;
                     }
                     List<Task> assignments = new List<Task>();
-                    List<Voxel> validRefs = refs.Where(r => !IsDesignation(r) && r.IsEmpty).ToList();
+                    List<VoxelHandle> validRefs = refs.Where(r => !IsDesignation(r) && r.IsEmpty).ToList();
 
                     if (!Verify(validRefs, CurrentVoxelType.ResourceToRelease))
                     {
@@ -298,7 +298,7 @@ namespace DwarfCorp
                         return;
                     }
 
-                    foreach (Voxel r in validRefs)
+                    foreach (VoxelHandle r in validRefs)
                     {
                         AddDesignation(new WallBuilder(r, CurrentVoxelType, World));
                         assignments.Add(new BuildVoxelTask(r, CurrentVoxelType));
@@ -310,7 +310,7 @@ namespace DwarfCorp
                 }
                 case (InputManager.MouseButton.Right):
                 {
-                    foreach(Voxel r in refs)
+                    foreach(VoxelHandle r in refs)
                     {
                         if(!IsDesignation(r) || r.TypeName != "empty")
                         {

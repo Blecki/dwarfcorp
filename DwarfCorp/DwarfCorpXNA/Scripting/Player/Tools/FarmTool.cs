@@ -48,7 +48,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class FarmTool : PlayerTool
     {
-        public Gui.Widgets.BuildMenu.BuildTypes BuildType { get; set; }
+        public BuildTypes BuildType { get; set; }
         public string PlantType { get; set; }
         public List<ResourceAmount> RequiredResources { get; set; } 
         public enum FarmMode
@@ -63,7 +63,7 @@ namespace DwarfCorp
 
         public class FarmTile
         {
-            public Voxel Vox = null;
+            public VoxelHandle Vox = null;
             public Plant Plant = null;
             public float Progress = 0.0f;
             public CreatureAI Farmer = null;
@@ -102,30 +102,30 @@ namespace DwarfCorp
 
         public List<FarmTile> FarmTiles = new List<FarmTile>();
 
-        public bool HasTile(Voxel vox)
+        public bool HasTile(VoxelHandle vox)
         {
             return FarmTiles.Any(f => f.Vox.Equals(vox));
         }
 
 
-        public bool HasPlant(Voxel vox)
+        public bool HasPlant(VoxelHandle vox)
         {
             return HasTile(vox) && FarmTiles.Any(f => f.Vox.Equals(vox) && f.PlantExists());
         }
 
-        public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }
 
-        public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
             List<CreatureAI> minions = Player.World.Master.SelectedMinions.Where(minion => minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm)).ToList();
             List<Task> goals = new List<Task>();
             switch (Mode)
             {
                 case FarmMode.Tilling:
-                    foreach (Voxel voxel in voxels)
+                    foreach (VoxelHandle voxel in voxels)
                     {
                         if (button == InputManager.MouseButton.Left)
                         {
@@ -178,7 +178,7 @@ namespace DwarfCorp
                     int currentAmount =
                         Player.Faction.ListResources()
                         .Sum(resource => resource.Key == PlantType && resource.Value.NumResources > 0 ? resource.Value.NumResources : 0);
-                    foreach (Voxel voxel in voxels)
+                    foreach (VoxelHandle voxel in voxels)
                     {
 
                         if (currentAmount == 0)

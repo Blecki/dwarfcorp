@@ -464,6 +464,7 @@ namespace DwarfCorp
                         "fairy_animation.json");
 
                     public static string musketdwarf_animations = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "musket_animation.json");
+                    public static string musket = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "musket");
                 }
 
             }
@@ -613,6 +614,7 @@ namespace DwarfCorp
             public static string SkySphere = ProgramData.CreatePath("Shaders", "SkySphere");
             public static string TexturedShaders = ProgramData.CreatePath("Shaders", "TexturedShaders");
             public static string FXAA = ProgramData.CreatePath("Shaders", "FXAA");
+            public static string Background = ProgramData.CreatePath("Shaders", "Background");
         }
         public class Sky
         {

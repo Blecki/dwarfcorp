@@ -200,10 +200,10 @@ namespace DwarfCorp
         public static void Initialize(DwarfGame game)
         {
             _instance = new GamePerformance(game);
-            microsecondMultiplier = (1.0f / Stopwatch.Frequency) * 1000000;
+            millisecondMultiplier = (1.0f / Stopwatch.Frequency) * 1000;
         }
 
-        public static float microsecondMultiplier;
+        public static float millisecondMultiplier;
 
         public static int ThreadID
         {
@@ -485,8 +485,8 @@ namespace DwarfCorp
                         if (data == null) continue;
 
                         float average = data.GetAverageResult();
-                        average *= microsecondMultiplier;
-                        _parent.DrawString(String.Format("{{{0}}}[{1}] {2}: {3}us {4}", data.ThreadName, data.ZoneName, _name, average, data.CallCount), Color.White);
+                        average *= millisecondMultiplier;
+                        _parent.DrawString(String.Format("{{{0}}}[{1}] {2}: {3} ms {4}", data.ThreadName, data.ZoneName, _name, average, data.CallCount), Color.White);
                     }
                 }
             }
@@ -596,8 +596,8 @@ namespace DwarfCorp
             {
                 float average = 0;
                 if (history.Count > 0) average = (float)total / history.Count;
-                average = average * microsecondMultiplier;
-                _parent.DrawString("Update time: " + average.ToString() + "us", Color.White);
+                average = average * millisecondMultiplier;
+                _parent.DrawString("Update time: " + average.ToString("F1") + " ms", Color.White);
                 base.Render();
             }
         }
@@ -640,8 +640,8 @@ namespace DwarfCorp
             {
                 float average = 0;
                 if (history.Count > 0) average = (float)total / history.Count;
-                average = average * microsecondMultiplier;
-                _parent.DrawString("Render time: " + average.ToString() + "us", Color.White);
+                average = average * millisecondMultiplier;
+                _parent.DrawString("Render time: " + average.ToString("F1") + " ms", Color.White);
                 base.Render();
             }
         }
@@ -767,9 +767,9 @@ namespace DwarfCorp
                 // Currently doesn't average.
                 lock (lockObject)
                 {
-                    average = finalTime * microsecondMultiplier;
+                    average = finalTime * millisecondMultiplier;
                 }
-                _parent.DrawString(String.Format("[{0}] {1}us", name, average), Color.White);
+                _parent.DrawString(String.Format("[{0}] {1} ms", name, average), Color.White);
                 base.Render();
             }
         }

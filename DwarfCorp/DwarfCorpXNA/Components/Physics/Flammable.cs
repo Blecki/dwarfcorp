@@ -16,7 +16,20 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Flammable : GameComponent, IUpdateableComponent
     {
-        public Health Health { get; private set; }
+        private Health _health = null;
+        public Health Health
+        {
+            get
+            {
+                if (_health == null)
+                {
+                    _health = Parent.EnumerateAll().Where(c => c is Health).FirstOrDefault() as Health;
+                    System.Diagnostics.Debug.Assert(_health != null, "Flammable could not find a Health component.");
+                }
+
+                return _health;
+            }
+        }
 
         public float Heat { get; set; }
         public float Flashpoint { get; set; }
@@ -31,11 +44,9 @@ namespace DwarfCorp
             
         }
 
-        // Todo: Discover health component rather than passing it in.
         public Flammable(ComponentManager manager, string name) :
             base(name, manager)
         {
-            Health = null;
             Heat = 0.0f;
             Flashpoint = 100.0f;
             Damage = 5.0f;
@@ -49,9 +60,9 @@ namespace DwarfCorp
         {
             BoundingBox expandedBoundingBox = Body.BoundingBox.Expand(0.5f);
 
-            List<Voxel> voxels = chunks.GetVoxelsIntersecting(expandedBoundingBox);
+            List<VoxelHandle> voxels = chunks.GetVoxelsIntersecting(expandedBoundingBox);
 
-            foreach(Voxel currentVoxel in voxels)
+            foreach(VoxelHandle currentVoxel in voxels)
             {
                 WaterCell cell = currentVoxel.Water;
 
@@ -78,11 +89,7 @@ namespace DwarfCorp
 
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if (Health == null)
-                Health = Parent.EnumerateAll().Where(c => c is Health).FirstOrDefault() as Health;
-            System.Diagnostics.Debug.Assert(Health != null, "Flammable could not find a Health component.");
-
-            if (!IsActive) return;
+            if (!Active) return;
 
             var body = Parent as Body;
             System.Diagnostics.Debug.Assert(body != null);

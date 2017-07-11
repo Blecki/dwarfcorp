@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms.VisualStyles;
 using BloomPostprocess;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -22,7 +23,8 @@ namespace DwarfCorp
         private Point TileSize = new Point(32, 32);
         private Random Random = new Random();
         private Point WorldSize = new Point(1, 1);
-
+        private ImageFrame UpFrame;
+        private ImageFrame DownFrame;
         private class Tile
         {
             public bool Solid = false;
@@ -39,9 +41,16 @@ namespace DwarfCorp
             WorldSize = new Point((game.GraphicsDevice.Viewport.Width / TileSize.X) + 4, 10);
             World = new Tile[WorldSize.X, WorldSize.Y];
 
+            String[] sheets =
+            {
+                ContentPaths.Entities.Dwarf.Sprites.soldier, ContentPaths.Entities.Dwarf.Sprites.worker,
+                ContentPaths.Entities.Dwarf.Sprites.crafter, ContentPaths.Entities.Dwarf.Sprites.wizard,
+                ContentPaths.Entities.Dwarf.Sprites.musket
+            };
+
             Texture2D tiles = TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles);
             Balloon = TextureManager.GetTexture(ContentPaths.Entities.Balloon.Sprites.balloon);
-            Dwarf = TextureManager.GetTexture(ContentPaths.Entities.Dwarf.Sprites.soldier);
+            Dwarf = TextureManager.GetTexture(Datastructures.SelectRandom(sheets));
             
             Soil = new ImageFrame(tiles, 32, 2, 0);
             Grass = new ImageFrame(tiles, 32, 3, 0);
@@ -54,6 +63,8 @@ namespace DwarfCorp
                 new ImageFrame(Dwarf, new Rectangle(96, 80, 32, 40)),
             });
 
+            UpFrame = new ImageFrame(Dwarf, new Rectangle(0, 239, 32, 40));
+            DownFrame = new ImageFrame(Dwarf, new Rectangle(32, 239, 32, 40));
             for (var x = 0; x < WorldSize.X; ++x)
                 World[x, 0] = new Tile
                 {
@@ -161,20 +172,32 @@ namespace DwarfCorp
                     (float) Math.Sin(time.TotalRealTime.TotalSeconds)*64), Color.White);
 
                 var dwarfFrame = (int) (time.TotalRealTime.TotalSeconds*16)%4;
+                var tile = DwarfFrames[dwarfFrame].SourceRect;
+                if (GetTileUnderFoot(0.05f) == null)
+                {
+                    if (DwarfVelocity > 0.5f)
+                    {
+                        tile = UpFrame.SourceRect;
+                    }
+                    else if (DwarfVelocity < -0.5f)
+                    {
+                        tile = DownFrame.SourceRect;
+                    }
+                }
                 sprites.Draw(Dwarf,
                     new Rectangle(
                         (int) (DwarfPosition.X*TileSize.X) - (TileSize.X/2),
                         graphics.Viewport.Height - (int) (DwarfPosition.Y*TileSize.Y) - (int) (TileSize.Y*1.25f),
                         TileSize.X,
                         (int) (TileSize.Y*1.25f)),
-                    DwarfFrames[dwarfFrame].SourceRect, Color.White);
+                    tile, Color.White);
 
                 sprites.End();
             }
             catch (InvalidOperationException exception)
             {
-
                 Console.Error.WriteLine(exception.ToString());
+                throw exception;
             }
 
         }

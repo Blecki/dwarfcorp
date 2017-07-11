@@ -1,4 +1,4 @@
-﻿// LightEmitter.cs
+// LightEmitter.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -77,6 +77,12 @@ namespace DwarfCorp
         {
             Light.Destroy();
             base.Die();
+        }
+
+        public override void Delete()
+        {
+            Light.Destroy();
+            base.Delete();
         }
     }
 

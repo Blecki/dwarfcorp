@@ -87,6 +87,7 @@ namespace DwarfCorp
         public AttackTrigger TriggerMode { get; set; }
         public int TriggerFrame { get; set; }
 
+        public string DiseaseToSpread { get; set; }
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
@@ -117,6 +118,7 @@ namespace DwarfCorp
             TriggerMode = other.TriggerMode;
             TriggerFrame = other.TriggerFrame;
             HasTriggered = false;
+            DiseaseToSpread = other.DiseaseToSpread;
         }
 
         public void CreateHitAnimation()
@@ -147,7 +149,7 @@ namespace DwarfCorp
             CreateHitAnimation();
         }
 
-        public IEnumerable<Act.Status> Perform(Creature performer, Vector3 pos, Voxel other, DwarfTime time, float bonus, string faction)
+        public IEnumerable<Act.Status> Perform(Creature performer, Vector3 pos, VoxelHandle other, DwarfTime time, float bonus, string faction)
         {
             while (true)
             {
@@ -239,7 +241,7 @@ namespace DwarfCorp
                     break;
                 case AttackTrigger.Animation:
                     if (performer.Sprite.CurrentAnimation == null ||
-                        performer.Sprite.CurrentAnimation.CurrentFrame != TriggerFrame)
+                        performer.Sprite.GetAnimation("AttackingFORWARD").CurrentFrame != TriggerFrame)
                     {
                         HasTriggered = false;
                         return false;
@@ -281,7 +283,7 @@ namespace DwarfCorp
                     break;
                 case AttackTrigger.Animation:
                     if (performer.Sprite.CurrentAnimation == null ||
-                        performer.Sprite.CurrentAnimation.CurrentFrame != TriggerFrame)
+                        performer.Sprite.GetAnimation("AttackingFORWARD").CurrentFrame != TriggerFrame)
                     {
                         HasTriggered = false;
                         return false;
@@ -299,52 +301,61 @@ namespace DwarfCorp
             {
                 case AttackMode.Melee:
                 case AttackMode.Dogfight:
+                {
+                    var otherCreature = other.GetComponent<Creature>();
+                    if (otherCreature != null && !String.IsNullOrEmpty(DiseaseToSpread))
                     {
-                        var health = other.GetEntityRootComponent().EnumerateAll().OfType<Health>().FirstOrDefault();
-                        if (health != null)
+                        var disease = DiseaseLibrary.GetDisease(DiseaseToSpread);
+                        if (MathFunctions.RandEvent(disease.LikelihoodOfSpread))
                         {
-                            health.Damage(DamageAmount + bonus);
-                            Vector3 knock = other.Position - performer.Physics.Position;
-                            knock.Normalize();
-                            knock *= 0.2f;
-                            if (other.AnimationQueue.Count == 0)
-                                other.AnimationQueue.Add(new KnockbackAnimation(0.15f, other.LocalTransform, knock));
+                            otherCreature.AcquireDisease(DiseaseToSpread);
                         }
-
-                        PlayNoise(other.GlobalTransform.Translation);
-                        if (HitParticles != "")
-                        {
-                            performer.Manager.World.ParticleManager.Trigger(HitParticles, other.LocalTransform.Translation, Color.White, 5);
-                        }
-
-                        if (HitAnimation != null)
-                        {
-                            HitAnimation.Reset();
-                            HitAnimation.Play();
-                            IndicatorManager.DrawIndicator(HitAnimation.Clone(), other.BoundingBox.Center(), 10.0f, 1.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
-                        }
-
-                        Physics physics = other as Physics;
-
-                        if (physics != null)
-                        {
-                            Vector3 force = other.Position - pos;
-
-                            if (force.LengthSquared() > 0.01f)
-                            {
-                                force.Normalize();
-                                physics.ApplyForce(force*Knockback, 1.0f);
-                            }
-                        }
-
-                        break;
                     }
+                    var health = other.GetRoot().EnumerateAll().OfType<Health>().FirstOrDefault();
+                    if (health != null)
+                    {
+                        health.Damage(DamageAmount + bonus);
+                        Vector3 knock = other.Position - performer.Physics.Position;
+                        knock.Normalize();
+                        knock *= 0.2f;
+                        if (other.AnimationQueue.Count == 0)
+                            other.AnimationQueue.Add(new KnockbackAnimation(0.15f, other.LocalTransform, knock));
+                    }
+
+                    PlayNoise(other.GlobalTransform.Translation);
+                    if (HitParticles != "")
+                    {
+                        performer.Manager.World.ParticleManager.Trigger(HitParticles, other.LocalTransform.Translation, Color.White, 5);
+                    }
+
+                    if (HitAnimation != null)
+                    {
+                        HitAnimation.Reset();
+                        HitAnimation.Play();
+                        IndicatorManager.DrawIndicator(HitAnimation.Clone(), other.BoundingBox.Center(), 10.0f, 1.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
+                    }
+
+                    Physics physics = other as Physics;
+
+                    if (physics != null)
+                    {
+                        Vector3 force = other.Position - pos;
+
+                        if (force.LengthSquared() > 0.01f)
+                        {
+                            force.Normalize();
+                            physics.ApplyForce(force*Knockback, 1.0f);
+                        }
+                    }
+
+                    break;
+                }
                 case AttackMode.Ranged:
-                    {
-                        PlayNoise(other.GlobalTransform.Translation);
-                        LaunchProjectile(pos, other.Position, other);
-                        break;
-                    }
+                {
+                    PlayNoise(other.GlobalTransform.Translation);
+                    LaunchProjectile(pos, other.Position, other);
+                    break;
+                }
             }
 
             return true;

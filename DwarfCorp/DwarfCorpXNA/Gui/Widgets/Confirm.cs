@@ -22,7 +22,7 @@ namespace DwarfCorp.Gui.Widgets
         public override void Construct()
         {
             //Set size and center on screen.
-            Rect = new Rectangle(0, 0, 256, 128);
+            Rect = new Rectangle(0, 0, 400, 100 + (String.IsNullOrEmpty(Text) ? 0 : 100));
             Rect.X = (Root.RenderData.VirtualScreen.Width / 2) - 128;
             Rect.Y = (Root.RenderData.VirtualScreen.Height / 2) - 32;
 

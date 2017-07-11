@@ -113,8 +113,6 @@ namespace DwarfCorp.GameStates
             World.WorldGenerationOrigin = Settings.WorldGenerationOrigin;
 
             World.OnLoadedEvent += () => DoneLoading = true;
-            // Todo - Save gui creation for play state. We're only creating it here so we can give it to
-            //      the world class. The world doesn't need it until after loading.
 
             World.Setup();
             World.OnSetLoadingMessage = (s) => LoadTicker.AddMessage(s);
@@ -158,7 +156,6 @@ namespace DwarfCorp.GameStates
 
         public override void Render(DwarfTime gameTime)
         {        
-            // Todo: This state should be rendering these, NOT the world manager.
             TipTimer.Update(gameTime);
             if (TipTimer.HasTriggered)
             {

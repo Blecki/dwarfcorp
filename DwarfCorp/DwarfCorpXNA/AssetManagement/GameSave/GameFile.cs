@@ -68,6 +68,7 @@ namespace DwarfCorp
                 public Tutorial.TutorialSaveData TutorialSaveData { get; set; }
                 public Diplomacy Diplomacy { get; set; }
                 public FactionLibrary Factions;
+                public Dictionary<ResourceLibrary.ResourceType, Resource> Resources { get; set; } 
             }
 
             public WorldData Worlddata { get; set; }
@@ -117,7 +118,8 @@ namespace DwarfCorp
                     ChunkHeight = world.ChunkHeight,
                     ChunkWidth = world.ChunkWidth,
                     GameID = id,
-                    Time = world.Time
+                    Time = world.Time,
+                    Slice = (int)world.ChunkManager.ChunkData.MaxViewingLevel
                 },
                 Worlddata =  new GameData.WorldData()
                 {
@@ -127,6 +129,7 @@ namespace DwarfCorp
                     TutorialSaveData = world.TutorialManager.GetSaveData(),
                     Diplomacy = world.Diplomacy,
                     Factions = world.Factions,
+                    Resources = ResourceLibrary.Resources
                 },
                 ChunkData = new List<ChunkFile>(),
             };
@@ -256,6 +259,7 @@ namespace DwarfCorp
             public int ChunkHeight { get; set; }
             public float TimeOfDay { get; set; }
             public int GameID { get; set; }
+            public int Slice { get; set; }
             public WorldTime Time { get; set; }
             public static string Extension = "meta";
             public static string CompressedExtension = "zmeta";
@@ -280,6 +284,7 @@ namespace DwarfCorp
                 GameID = file.GameID;
                 OverworldFile = file.OverworldFile;
                 Time = file.Time;
+                Slice = file.Slice;
             }
 
             public  bool ReadFile(string filePath, bool isCompressed)

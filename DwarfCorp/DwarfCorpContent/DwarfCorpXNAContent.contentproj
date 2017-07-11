@@ -1718,10 +1718,25 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="newgui\hand.png">
+      <Name>hand</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="newgui\hilite-border.png">
+      <Name>hilite-border</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Particles\particles.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>particles</Name>
     </Content>
+    <Compile Include="Shaders\Background.fx">
+      <Name>Background</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+    </Compile>
     <Content Include="Text\Templates\names_moleman.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>names_moleman</Name>

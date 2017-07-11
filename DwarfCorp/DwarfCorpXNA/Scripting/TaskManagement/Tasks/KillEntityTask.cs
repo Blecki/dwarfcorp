@@ -154,7 +154,7 @@ namespace DwarfCorp
                     }
                 }
 
-                Voxel target = new Voxel();
+                VoxelHandle target = new VoxelHandle();
                 bool voxExists = agent.Manager.World.ChunkManager.ChunkData.GetVoxel(EntityToKill.Position, ref target);
                 if (!voxExists || !PlanAct.PathExists(agent.Physics.CurrentVoxel, target, agent.AI))
                 {

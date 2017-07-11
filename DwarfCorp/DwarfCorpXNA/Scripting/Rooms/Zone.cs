@@ -48,7 +48,7 @@ namespace DwarfCorp
     public class Zone
     {
         public string ID = "";
-        public List<Voxel> Voxels = new List<Voxel>();
+        public List<VoxelHandle> Voxels = new List<VoxelHandle>();
         public List<Body> ZoneBodies = new List<Body>();
         
         [JsonProperty]
@@ -72,7 +72,9 @@ namespace DwarfCorp
 
         public ResourceContainer Resources { get; set; }
 
-        public Zone(string id, WorldManager world)
+        public Faction Faction { get; set; }
+
+        public Zone(string id, WorldManager world, Faction faction)
         {
             ID = id;
             ReplacementType = null;
@@ -81,6 +83,7 @@ namespace DwarfCorp
             {
                 MaxResources = 1
             };
+            Faction = faction;
 
         }
 
@@ -141,6 +144,7 @@ namespace DwarfCorp
 
         public void AddBody(Body body)
         {
+            this.Faction.OwnedObjects.Add(body);
             ZoneBodies.Add(body);
             body.OnDestroyed += () => body_onDestroyed(body);
         }
@@ -159,9 +163,9 @@ namespace DwarfCorp
                 body.Die();
             }
 
-            List<Voxel> voxelsToKill = new List<Voxel>();
+            List<VoxelHandle> voxelsToKill = new List<VoxelHandle>();
             voxelsToKill.AddRange(Voxels);
-            foreach (Voxel voxel in voxelsToKill)
+            foreach (VoxelHandle voxel in voxelsToKill)
             {
                 voxel.Kill();
             }
@@ -182,14 +186,14 @@ namespace DwarfCorp
         }
 
         
-        public bool ContainsVoxel(Voxel voxel)
+        public bool ContainsVoxel(VoxelHandle voxel)
         {
             return Voxels.Any(store => store.Equals(voxel));
         }
 
-        public virtual void RemoveVoxel(Voxel voxel)
+        public virtual void RemoveVoxel(VoxelHandle voxel)
         {
-            Voxel toRemove = Voxels.FirstOrDefault(store => store.Equals(voxel));
+            VoxelHandle toRemove = Voxels.FirstOrDefault(store => store.Equals(voxel));
 
             if(toRemove == null)
             {
@@ -225,7 +229,7 @@ namespace DwarfCorp
             }
         }
 
-        public virtual void AddVoxel(Voxel voxel)
+        public virtual void AddVoxel(VoxelHandle voxel)
         {
             if(ContainsVoxel(voxel))
             {
@@ -236,7 +240,7 @@ namespace DwarfCorp
 
             if(ReplaceVoxelTypes)
             {
-                Voxel v = voxel;
+                VoxelHandle v = voxel;
                 v.Type = ReplacementType;
                 v.Chunk.ShouldRebuild = true;
                 v.Chunk.ReconstructRamps = true;
@@ -246,13 +250,13 @@ namespace DwarfCorp
           
         }
 
-        public Voxel GetNearestVoxel(Vector3 position)
+        public VoxelHandle GetNearestVoxel(Vector3 position)
         {
-            Voxel closest = null;
+            VoxelHandle closest = null;
             Vector3 halfSize = new Vector3(0.5f, 0.5f, 0.5f);
             double closestDist = double.MaxValue;
 
-            foreach (Voxel v in Voxels)
+            foreach (VoxelHandle v in Voxels)
             {
                 double d = (v.Position - position + halfSize).LengthSquared();
 
@@ -280,7 +284,7 @@ namespace DwarfCorp
             return Voxels.Any(storage => storage.GetBoundingBox().Intersects(larger));
         }
 
-        public bool Intersects(Voxel v)
+        public bool Intersects(VoxelHandle v)
         {
             return Intersects(v.GetBoundingBox());
         }

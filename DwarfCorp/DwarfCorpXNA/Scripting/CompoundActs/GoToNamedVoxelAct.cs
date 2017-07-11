@@ -54,7 +54,7 @@ namespace DwarfCorp
             base(creature)
         {
             Voxel = voxel;
-            Name = "Go to Voxel " + voxel;
+            Name = "Go to DestinationVoxel " + voxel;
         }
 
         public override void Initialize()
