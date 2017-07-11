@@ -377,7 +377,8 @@ namespace DwarfCorp
             if (dwarf.Velocity.Length() > 0.1)
             {
                 VoxelHandle above = new VoxelHandle();
-                if (World.ChunkManager.ChunkData.GetFirstVoxelAbove(dwarf.Position, ref above, false))
+                if (World.ChunkManager.ChunkData.GetFirstVoxelAbove(
+                    GlobalVoxelCoordinate.FromVector3(dwarf.Position), ref above, false))
                 {
                     World.ChunkManager.ChunkData.SetMaxViewingLevel(above.GridPosition.Y - 1, ChunkManager.SliceMode.Y);
                 }

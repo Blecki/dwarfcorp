@@ -88,7 +88,8 @@ namespace DwarfCorp
         {
             get
             {
-                return GridPosition + Chunk.Origin;
+                var globalPosition = ChunkID + GridPosition;
+                return new Vector3(globalPosition.X, globalPosition.Y, globalPosition.Z);
             }
         }
 
@@ -105,12 +106,6 @@ namespace DwarfCorp
                 Chunk.Data.Types[Index] = (byte) value.ID;
                 Chunk.Data.Health[Index] = (byte) value.StartingHealth;
             }
-        }
-
-        [JsonIgnore]
-        public string TypeName
-        {
-            get { return this.Type.Name; }
         }
 
         private int index = 0;
@@ -140,9 +135,9 @@ namespace DwarfCorp
             set { Chunk.Data.IsExplored[Index] = value; }
         }
 
-        private Vector3 gridpos = Vector3.Zero;
+        private LocalVoxelCoordinate gridpos = new LocalVoxelCoordinate(0,0,0);
 
-        public Vector3 GridPosition
+        public LocalVoxelCoordinate GridPosition
         {
             get { return gridpos; }
             set 
@@ -151,7 +146,7 @@ namespace DwarfCorp
 
                 if (Chunk != null)
                 {
-                    index = Chunk.Data.IndexAt((int)gridpos.X, (int)gridpos.Y, (int)gridpos.Z);
+                    index = Chunk.Data.IndexAt(gridpos);
                     RegenerateQuickCompare();
                 }
             }
@@ -160,34 +155,15 @@ namespace DwarfCorp
         // This function does the same as setting Chunk then GridPosition except avoids regenerating the quick compare
         // more than once.  Only set generateQuickCompare to false if you intend the voxel to be a throwaway
         // during a time sensitive loop.
-        public void ChangeVoxel(VoxelChunk chunk, Vector3 gridPosition, bool generateQuickCompare)
-        {
-            ChangeVoxel(chunk, new Point3(gridPosition), generateQuickCompare);
-        }
-
-        // This function does the same as setting Chunk then GridPosition except avoids regenerating the quick compare
-        // more than once.  Only set generateQuickCompare to false if you intend the voxel to be a throwaway
-        // during a time sensitive loop.
-        public void ChangeVoxel(VoxelChunk chunk, Point3 gridPosition, bool generateQuickCompare = true)
+        public void ChangeVoxel(VoxelChunk chunk, LocalVoxelCoordinate gridPosition, bool generateQuickCompare = true)
         {
             System.Diagnostics.Debug.Assert(chunk != null, "ChangeVoxel was passed a null chunk.");
             _chunk = chunk;
             chunkID = _chunk.ID;
-            gridpos = gridPosition.ToVector3();
-            index = Chunk.Data.IndexAt((int)gridpos.X, (int)gridpos.Y, (int)gridpos.Z);
+            gridpos = gridPosition;
+            index = Chunk.Data.IndexAt(gridpos);
             if (generateQuickCompare) RegenerateQuickCompare();
             else quickCompare = invalidCompareValue;
-        }
-
-
-        [JsonIgnore]
-        public static List<VoxelVertex> VoxelVertexList { get; set; }
-        private static bool staticsCreated;
-
-        [JsonIgnore]
-        public bool IsDead
-        {
-            get { return Health <= 0; }
         }
 
         [JsonIgnore]
@@ -204,8 +180,8 @@ namespace DwarfCorp
         }
         private static readonly Color BlankColor = new Color(0, 255, 0);
 
-        private Point3 chunkID = new Point3(0, 0, 0);
-        public Point3 ChunkID
+        private GlobalChunkCoordinate chunkID = new GlobalChunkCoordinate(0, 0, 0);
+        public GlobalChunkCoordinate ChunkID
         {
             get { return chunkID; }
             set { chunkID = value; RegenerateQuickCompare(); }
@@ -268,7 +244,7 @@ namespace DwarfCorp
             }
             return
                 Chunk.Data.Types[
-                    Chunk.Data.IndexAt((int) GridPosition.X, (int) GridPosition.Y + 1, (int) GridPosition.Z)] == 0;
+                    Chunk.Data.IndexAt(new LocalVoxelCoordinate(GridPosition.X, GridPosition.Y + 1,  GridPosition.Z))] == 0;
         }
 
         public VoxelHandle GetVoxelAbove()
@@ -291,65 +267,21 @@ namespace DwarfCorp
                 Chunk.MakeVoxel((int)GridPosition.X, (int)GridPosition.Y - 1, (int)GridPosition.Z);
         }
 
-        public bool GetNeighborBySuccessor(Vector3 succ, ref VoxelHandle neighbor, bool requireQuickCompare = true)
+        public bool GetNeighborBySuccessor(GlobalVoxelOffset Offset, ref VoxelHandle neighbor, bool requireQuickCompare = true)
         {
             Debug.Assert(neighbor != null, "Null reference passed");
             Debug.Assert(_chunk != null, "DestinationVoxel has no valid chunk reference");
 
-            Vector3 newPos = gridpos + succ;
-            Point3 chunkSuccessor = Point3.Zero;
-            bool useSuccessor = false;
-
-            if (newPos.X >= _chunk.SizeX)
+            var globalPosition = ChunkID + GridPosition;
+            var neighborPosition = globalPosition + Offset;
+            var neighborChunkID = neighborPosition.GetGlobalChunkCoordinate();
+            VoxelChunk neighborChunk = null;
+            if (Chunk.Manager.ChunkData.ChunkMap.TryGetValue(neighborChunkID, out neighborChunk))
             {
-                chunkSuccessor.X = 1;
-                newPos.X = 0;
-                useSuccessor = true;
+                neighbor.ChangeVoxel(neighborChunk, neighborPosition.GetLocalVoxelCoordinate(), requireQuickCompare);
+                return true;
             }
-            else if (newPos.X < 0)
-            {
-                chunkSuccessor.X = -1;
-                newPos.X = _chunk.SizeX - 1;
-                useSuccessor = true;
-            }
-
-            if (newPos.Y >= _chunk.SizeY)
-            {
-                chunkSuccessor.Y = 1;
-                newPos.Y = 0;
-                useSuccessor = true;
-            }
-            else if (newPos.Y < 0)
-            {
-                chunkSuccessor.Y = -1;
-                newPos.Y = _chunk.SizeY - 1;
-                useSuccessor = true;
-            }
-
-            if (newPos.Z >= _chunk.SizeZ)
-            {
-                chunkSuccessor.Z = 1;
-                newPos.Z = 0;
-                useSuccessor = true;
-            }
-            else if (newPos.Z < 0)
-            {
-                chunkSuccessor.Z = -1;
-                newPos.Z = _chunk.SizeZ - 1;
-                useSuccessor = true;
-            }
-
-            VoxelChunk useChunk;
-            if (useSuccessor)
-            {
-                useChunk = _chunk.EuclidianNeighbors[VoxelChunk.SuccessorToEuclidianLookupKey(chunkSuccessor)];
-                if (useChunk == null) return false;
-            } else
-            {
-                useChunk = _chunk;
-            }
-            neighbor.ChangeVoxel(useChunk, newPos, requireQuickCompare);
-            return true;
+            return false;
         }
 
         public bool IsBottomEmpty()
@@ -360,13 +292,8 @@ namespace DwarfCorp
             }
             return
                 Chunk.Data.Types[
-                    Chunk.Data.IndexAt((int)GridPosition.X, (int)GridPosition.Y - 1, (int)GridPosition.Z)] == 0;
-        }
-
-        public static bool IsInteriorPoint(Point3 gridPosition, VoxelChunk chunk)
-        {
-            return chunk.IsInterior(gridPosition.X, gridPosition.Y, gridPosition.Z);
-        }
+                    Chunk.Data.IndexAt(new LocalVoxelCoordinate(GridPosition.X, GridPosition.Y - 1, GridPosition.Z))] == 0;
+        }        
 
         public static bool HasFlag(RampType ramp, RampType flag)
         {
@@ -382,11 +309,11 @@ namespace DwarfCorp
         [JsonIgnore]
         public int SunColor { get { return Chunk.Data.SunColors[Index]; }}
 
-        public void SetFromData(VoxelChunk chunk, Vector3 gridPosition)
+        public void SetFromData(VoxelChunk chunk, LocalVoxelCoordinate gridPosition)
         {
             Chunk = chunk;
             GridPosition = gridPosition;
-            index = Chunk.Data.IndexAt((int) gridPosition.X, (int) gridPosition.Y, (int) gridPosition.Z);
+            index = Chunk.Data.IndexAt(gridPosition);
             RegenerateQuickCompare();
         }
 
@@ -396,27 +323,6 @@ namespace DwarfCorp
             if (ReferenceEquals(this, o)) return true;
             if (o.GetType() != this.GetType()) return false;
             return Equals((VoxelHandle) o);
-        }
-
-        public void UpdateStatics()
-        {
-            if(staticsCreated)
-            {
-                return;
-            }
-
-            VoxelVertexList = new List<VoxelVertex>
-            {
-                VoxelVertex.BackBottomLeft,
-                VoxelVertex.BackBottomRight,
-                VoxelVertex.BackTopLeft,
-                VoxelVertex.BackTopRight,
-                VoxelVertex.FrontBottomRight,
-                VoxelVertex.FrontBottomLeft,
-                VoxelVertex.FrontTopRight,
-                VoxelVertex.FrontTopLeft
-            };
-            staticsCreated = true;
         }
 
         public List<Body> Kill()
@@ -475,13 +381,12 @@ namespace DwarfCorp
             
         }
 
-        public VoxelHandle(Point3 gridPosition, VoxelChunk chunk)
+        public VoxelHandle(LocalVoxelCoordinate gridPosition, VoxelChunk chunk)
         {
-            UpdateStatics();
             Chunk = chunk;
             if (chunk != null)
                 chunkID = chunk.ID;
-            GridPosition = new Vector3(gridPosition.X, gridPosition.Y, gridPosition.Z);
+            GridPosition = gridPosition;
         }
 
         [OnDeserialized]
@@ -491,29 +396,8 @@ namespace DwarfCorp
             if (world.ChunkManager.ChunkData.ChunkMap.ContainsKey(chunkID))
             {
                 Chunk = world.ChunkManager.ChunkData.ChunkMap[chunkID];
-                index = Chunk.Data.IndexAt((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z);
+                index = Chunk.Data.IndexAt(GridPosition);
                 RegenerateQuickCompare();
-            }
-        }
-
-        public BoxTransition ComputeTransitionValue(VoxelHandle[] manhattanNeighbors)
-        {
-            return Chunk.ComputeTransitionValue(Type.Transitions, (int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z, manhattanNeighbors);
-        }
-
-        public BoxPrimitive.BoxTextureCoords ComputeTransitionTexture(VoxelHandle[] manhattanNeighbors)
-        {
-            if(!Type.HasTransitionTextures && Primitive != null)
-            {
-                return Primitive.UVs;
-            }
-            else if(Primitive == null)
-            {
-                return null;
-            }
-            else
-            {
-                return Type.TransitionTextures[ComputeTransitionValue(manhattanNeighbors)];
             }
         }
 

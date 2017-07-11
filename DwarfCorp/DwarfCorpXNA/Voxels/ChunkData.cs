@@ -63,7 +63,7 @@ namespace DwarfCorp
             this.chunkManager = chunkManager;
         }
 
-        public ConcurrentDictionary<Point3, VoxelChunk> ChunkMap { get; set; }
+        public ConcurrentDictionary<GlobalChunkCoordinate, VoxelChunk> ChunkMap { get; set; }
 
         public Texture2D Tilemap
         {
@@ -137,7 +137,8 @@ namespace DwarfCorp
         public void Reveal(IEnumerable<VoxelHandle> voxels)
         {
             if (!GameSettings.Default.FogofWar) return;
-            List<Point3> affectedChunks = new List<Point3>();
+
+            var affectedChunks = new List<GlobalChunkCoordinate>();
             Queue<VoxelHandle> q = new Queue<VoxelHandle>(128);
 
             foreach (VoxelHandle voxel in voxels)
@@ -163,7 +164,7 @@ namespace DwarfCorp
 
                     if (nextVoxel.IsExplored) continue;
 
-                    nextVoxel.Chunk.NotifyExplored(new Point3(nextVoxel.GridPosition));
+                    nextVoxel.Chunk.NotifyExplored(nextVoxel.GridPosition);
 
                     nextVoxel.IsExplored = true;
                     if (!affectedChunks.Contains(nextVoxel.ChunkID))
@@ -171,7 +172,7 @@ namespace DwarfCorp
                         affectedChunks.Add(nextVoxel.ChunkID);
                     }
                     if (nextVoxel.IsEmpty)
-                        q.Enqueue(new VoxelHandle(new Point3(nextVoxel.GridPosition), nextVoxel.Chunk));
+                        q.Enqueue(new VoxelHandle(nextVoxel.GridPosition, nextVoxel.Chunk));
 
                 }
 
@@ -179,7 +180,7 @@ namespace DwarfCorp
 
             }
 
-            foreach (Point3 chunkID in affectedChunks)
+            foreach (var chunkID in affectedChunks)
             {
                 VoxelChunk chunk = ChunkMap[chunkID];
 
@@ -228,16 +229,15 @@ namespace DwarfCorp
 
         }
 
-        public bool GetNeighbors(Vector3 worldPosition, List<Vector3> succ, List<VoxelHandle> toReturn)
+        public bool GetNeighbors(GlobalVoxelCoordinate worldPosition, List<GlobalVoxelOffset> succ, List<VoxelHandle> toReturn)
         {
             toReturn.Clear();
             VoxelChunk chunk = GetVoxelChunkAtWorldLocation(worldPosition);
 
             if (chunk == null) return false;
 
-            Vector3 grid = chunk.WorldToGrid(worldPosition);
-
-            chunk.GetNeighborsSuccessors(succ, (int) grid.X, (int) grid.Y, (int) grid.Z, toReturn);
+            var grid = worldPosition.GetLocalVoxelCoordinate();
+            chunk.GetNeighborsSuccessors(succ, grid.X, grid.Y, grid.Z, toReturn);
             return true;
         }
 
@@ -337,7 +337,7 @@ namespace DwarfCorp
             return false;
         }
 
-        public bool GetFirstVoxelAbove(Vector3 position, ref VoxelHandle under, bool considerWater = false)
+        public bool GetFirstVoxelAbove(GlobalVoxelCoordinate position, ref VoxelHandle under, bool considerWater = false)
         {
             VoxelChunk startChunk = GetVoxelChunkAtWorldLocation(position);
 
@@ -346,16 +346,16 @@ namespace DwarfCorp
                 return false;
             }
 
-            Point3 point = new Point3(startChunk.WorldToGrid(position));
+            var point = position.GetLocalVoxelCoordinate();
 
             for (int y = point.Y; y < ChunkSizeY; y++)
             {
-                int index = startChunk.Data.IndexAt(point.X, y, point.Z);
+                int index = startChunk.Data.IndexAt(new LocalVoxelCoordinate(point.X, y, point.Z));
 
                 if (startChunk.Data.Types[index] != 0 || (considerWater && startChunk.Data.Water[index].WaterLevel > 0))
                 {
                     under.Chunk = startChunk;
-                    under.GridPosition = new Vector3(point.X, y, point.Z);
+                    under.GridPosition = new LocalVoxelCoordinate(point.X, y, point.Z);
                     return true;
                 }
             }
@@ -363,9 +363,11 @@ namespace DwarfCorp
             return false;
         }
 
+        // Todo: %KILL% Is raystart a real ray? Probably not.
         public bool GetFirstVoxelUnder(Vector3 rayStart, ref VoxelHandle under, bool considerWater = false)
         {
-            VoxelChunk startChunk = GetVoxelChunkAtWorldLocation(rayStart);
+            VoxelChunk startChunk = GetVoxelChunkAtWorldLocation(
+                new GlobalVoxelCoordinate((int)rayStart.X, (int)rayStart.Y, (int)rayStart.Z));
 
             if(startChunk == null)
             {
@@ -376,12 +378,12 @@ namespace DwarfCorp
 
             for(int y = point.Y; y >= 0; y--)
             {
-                int index = startChunk.Data.IndexAt(point.X, y, point.Z);
+                int index = startChunk.Data.IndexAt(new LocalVoxelCoordinate(point.X, y, point.Z));
               
                 if(startChunk.Data.Types[index] != 0 || (considerWater && startChunk.Data.Water[index].WaterLevel > 0))
                 {
                     under.Chunk = startChunk;
-                    under.GridPosition = new Vector3(point.X, y, point.Z);
+                    under.GridPosition = new LocalVoxelCoordinate(point.X, y, point.Z);
                     return true;
                 }
             }
@@ -478,7 +480,7 @@ namespace DwarfCorp
                 {
                     if(dx != 0 || dz != 0)
                     {
-                        Point3 key = new Point3(chunk.ID.X + dx, 0, chunk.ID.Z + dz);
+                        var key = new GlobalChunkCoordinate(chunk.ID.X + dx, 0, chunk.ID.Z + dz);
 
                         if(ChunkMap.ContainsKey(key))
                         {
@@ -499,7 +501,7 @@ namespace DwarfCorp
                 chunk.EuclidianNeighbors.Clear();
             }
 
-            foreach (KeyValuePair<Point3, VoxelChunk> chunks in ChunkMap)
+            foreach (var chunks in ChunkMap)
             {
                 VoxelChunk chunk = chunks.Value;
 
@@ -510,7 +512,10 @@ namespace DwarfCorp
                     {
                         for (successor.Y = -1; successor.Y < 2; successor.Y++)
                         {
-                            Point3 sideChunkID = chunk.ID + successor;
+                            var sideChunkID = new GlobalChunkCoordinate(
+                                chunk.ID.X + successor.X,
+                                chunk.ID.Y + successor.Y,
+                                chunk.ID.Z + successor.Z);
                             VoxelChunk sideChunk;
                             ChunkMap.TryGetValue(sideChunkID, out sideChunk);
                             if (successor.Y == 0 && sideChunk != null)
@@ -528,51 +533,58 @@ namespace DwarfCorp
 
 
 
-        public Vector3 RoundToChunkCoords(Vector3 location)
+        public GlobalChunkCoordinate RoundToChunkCoords(Vector3 location)
         {
             int x = MathFunctions.FloorInt(location.X * InvCSX);
             int y = MathFunctions.FloorInt(location.Y * InvCSY);
             int z = MathFunctions.FloorInt(location.Z * InvCSZ);
-            return new Vector3(x, y, z);
+            return new GlobalChunkCoordinate(x, y, z);
         }
 
-        public Point3 RoundToChunkCoordsPoint3(Vector3 location)
+        public GlobalChunkCoordinate RoundToChunkCoordsPoint3(Vector3 location)
         {
             int x = MathFunctions.FloorInt(location.X * InvCSX);
             int y = MathFunctions.FloorInt(location.Y * InvCSY);
             int z = MathFunctions.FloorInt(location.Z * InvCSZ);
-            return new Point3(x, y, z);
+            return new GlobalChunkCoordinate(x, y, z);
         }
 
-        public VoxelChunk GetVoxelChunkAtWorldLocation(Vector3 worldLocation)
+        public VoxelChunk GetVoxelChunkAtWorldLocation(GlobalVoxelCoordinate worldLocation)
         {
             VoxelChunk returnChunk = null;
-
-            ChunkMap.TryGetValue(GetChunkID(worldLocation), out returnChunk);
-
+            ChunkMap.TryGetValue(worldLocation.GetGlobalChunkCoordinate(), out returnChunk);
             return returnChunk;
         }
 
-        public bool GetVoxel(Vector3 worldLocation, ref VoxelHandle voxel)
+        public VoxelChunk GetChunk(Vector3 WorldLocation)
+        {
+            return GetVoxelChunkAtWorldLocation(new GlobalVoxelCoordinate(
+                (int)Math.Floor(WorldLocation.X),
+                (int)Math.Floor(WorldLocation.Y),
+                (int)Math.Floor(WorldLocation.Z)));
+        }
+
+        public bool GetVoxel(Vector3 WorldLocation, ref VoxelHandle Voxel)
+        {
+            return GetVoxel(null, new GlobalVoxelCoordinate(
+                (int)Math.Floor(WorldLocation.X),
+                (int)Math.Floor(WorldLocation.Y),
+                (int)Math.Floor(WorldLocation.Z)), ref Voxel);
+        }
+
+        public bool GetVoxel(GlobalVoxelCoordinate worldLocation, ref VoxelHandle voxel)
         {
             return GetVoxel(null, worldLocation, ref voxel);
         }
 
-        public bool GetVoxel(VoxelChunk checkFirst, Vector3 worldLocation, ref VoxelHandle newReference)
+        public bool GetVoxel(VoxelChunk checkFirst, GlobalVoxelCoordinate worldLocation, ref VoxelHandle newReference)
         {
-            if (checkFirst != null)
-            {
-                if (checkFirst.GetVoxelAtWorldLocation(worldLocation, ref newReference)) return true;
-            }
-
-            VoxelChunk chunk = GetVoxelChunkAtWorldLocation(worldLocation);
-
+            var chunk = GetVoxelChunkAtWorldLocation(worldLocation);
             if (chunk == null) return false;
-
             return chunk.GetVoxelAtValidWorldLocation(worldLocation, ref newReference);
         }
 
-        public Point3 GetChunkID(Vector3 origin)
+        public GlobalChunkCoordinate GetChunkID(Vector3 origin)
         {
             return RoundToChunkCoordsPoint3(origin);
         }
@@ -591,7 +603,7 @@ namespace DwarfCorp
 
         public float GetFilledVoxelGridHeightAt(float x, float y, float z)
         {
-            VoxelChunk chunk = GetVoxelChunkAtWorldLocation(new Vector3(x, y, z));
+            var chunk = GetChunk(new Vector3(x, y, z));
 
             if(chunk != null)
             {
@@ -630,7 +642,7 @@ namespace DwarfCorp
                 return GetNonNullVoxelAtWorldLocation(worldLocation, ref toReturn);
             }
 
-            VoxelChunk chunk = GetVoxelChunkAtWorldLocation(worldLocation);
+            var chunk = GetChunk(worldLocation);
 
             if(chunk == null)
             {
@@ -666,26 +678,26 @@ namespace DwarfCorp
 
         public bool DoesWaterCellExist(Vector3 worldLocation)
         {
-            VoxelChunk chunkAtLocation = GetVoxelChunkAtWorldLocation(worldLocation);
+            var chunkAtLocation = GetChunk(worldLocation);
             return chunkAtLocation != null && chunkAtLocation.IsWorldLocationValid(worldLocation);
         }
 
-        public WaterCell GetWaterCellAtLocation(Vector3 worldLocation)
+        //Todo: %KILL%
+        public WaterCell GetWaterCellAtLocation(GlobalVoxelCoordinate worldLocation)
         {
-            VoxelChunk chunkAtLocation = GetVoxelChunkAtWorldLocation(worldLocation);
+            var chunkAtLocation = GetVoxelChunkAtWorldLocation(worldLocation);
 
             if(chunkAtLocation == null)
             {
                 return new WaterCell();
             }
 
-            Vector3 gridPos = chunkAtLocation.WorldToGrid(worldLocation);
-            return chunkAtLocation.Data.Water[chunkAtLocation.Data.IndexAt((int) gridPos.X, (int) gridPos.Y, (int) gridPos.Z)];
+            return chunkAtLocation.Data.Water[chunkAtLocation.Data.IndexAt(worldLocation.GetLocalVoxelCoordinate())];
         }
 
         public bool SaveAllChunks(string directory, bool compress)
         {
-            foreach(KeyValuePair<Point3, VoxelChunk> pair in ChunkMap)
+            foreach(var pair in ChunkMap)
             {
                 ChunkFile chunkFile = new ChunkFile(pair.Value);
 

@@ -56,7 +56,7 @@ namespace DwarfCorp
 
         public bool[,,] Explored;
 
-        public Point3 ID;
+        public GlobalChunkCoordinate ID;
         public byte[,,] Liquid;
         public byte[,,] LiquidTypes;
 
@@ -148,7 +148,7 @@ namespace DwarfCorp
                 {
                     for(int y = 0; y < chunkSizeY; y++)
                     {
-                        int index = c.Data.IndexAt(x, y, z);
+                        int index = c.Data.IndexAt(new LocalVoxelCoordinate(x, y, z));
                         if(Types[x, y, z] > 0)
                         {
                             c.Data.Types[index] = Types[x, y, z];
@@ -174,7 +174,7 @@ namespace DwarfCorp
                 {
                     for(int z = 0; z < Size.Z; z++)
                     {
-                        int index = data.IndexAt(x, y, z);
+                        int index = data.IndexAt(new LocalVoxelCoordinate(x, y, z));
                         WaterCell water = data.Water[index];
                         Types[x, y, z] = data.Types[index];
                         Explored[x, y, z] = data.IsExplored[index];

@@ -91,7 +91,7 @@ namespace DwarfCorp
         public override void OnVoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
         {
            
-            HashSet<Point3> chunksToRebuild = new HashSet<Point3>();
+            var chunksToRebuild = new HashSet<GlobalChunkCoordinate>();
 
             if(Command.Contains("Build/"))
             {
@@ -142,7 +142,7 @@ namespace DwarfCorp
                         case "Delete Block":
                         {
                             Player.World.Master.Faction.OnVoxelDestroyed(vox);
-                            vox.Chunk.NotifyDestroyed(new Point3(vox.GridPosition));
+                            vox.Chunk.NotifyDestroyed(vox.GridPosition);
                             vox.Type = VoxelType.TypeList[0];
                             vox.Water = new WaterCell();
 
@@ -171,7 +171,6 @@ namespace DwarfCorp
                             break;
                         case "Fill Lava":
                         {
-                            Vector3 gridPos = vox.GridPosition;
                             if (vox.IsEmpty)
                             {
                                 vox.WaterLevel = WaterManager.maxWaterLevel;
@@ -218,7 +217,7 @@ namespace DwarfCorp
                 }
             }
 
-            foreach(Point3 chunk in chunksToRebuild)
+            foreach(var chunk in chunksToRebuild)
             {
                 Chunks.ChunkData.ChunkMap[chunk].NotifyTotalRebuild(false);
             }

@@ -32,29 +32,31 @@ namespace DwarfCorp
                 FaceDeltas[(int)BoxFace.Right] = new Vector3(1, 0, 0);
                 FaceDeltas[(int)BoxFace.Top] = new Vector3(0, 1, 0);
                 FaceDeltas[(int)BoxFace.Bottom] = new Vector3(0, -1, 0);
-                VertexNeighbors2D[(int)VoxelVertex.FrontTopLeft] = new List<Vector3>()
+
+                //Todo %KILL%
+                VertexNeighbors2D[(int)VoxelVertex.FrontTopLeft] = new List<GlobalVoxelOffset>()
                 {
-                    new Vector3(-1, 0, 0),
-                    new Vector3(-1, 0, 1),
-                    new Vector3(0, 0, 1)
+                    new GlobalVoxelOffset(-1, 0, 0),
+                    new GlobalVoxelOffset(-1, 0, 1),
+                    new GlobalVoxelOffset(0, 0, 1)
                 };
-                VertexNeighbors2D[(int)VoxelVertex.FrontTopRight] = new List<Vector3>()
+                VertexNeighbors2D[(int)VoxelVertex.FrontTopRight] = new List<GlobalVoxelOffset>()
                 {
-                    new Vector3(0, 0, 1),
-                    new Vector3(1, 0, 1),
-                    new Vector3(1, 0, 0)
+                    new GlobalVoxelOffset(0, 0, 1),
+                    new GlobalVoxelOffset(1, 0, 1),
+                    new GlobalVoxelOffset(1, 0, 0)
                 };
-                VertexNeighbors2D[(int)VoxelVertex.BackTopLeft] = new List<Vector3>()
+                VertexNeighbors2D[(int)VoxelVertex.BackTopLeft] = new List<GlobalVoxelOffset>()
                 {
-                    new Vector3(-1, 0, 0),
-                    new Vector3(-1, 0, -1),
-                    new Vector3(0, 0, -1)
+                    new GlobalVoxelOffset(-1, 0, 0),
+                    new GlobalVoxelOffset(-1, 0, -1),
+                    new GlobalVoxelOffset(0, 0, -1)
                 };
-                VertexNeighbors2D[(int)VoxelVertex.BackTopRight] = new List<Vector3>()
+                VertexNeighbors2D[(int)VoxelVertex.BackTopRight] = new List<GlobalVoxelOffset>()
                 {
-                    new Vector3(0, 0, -1),
-                    new Vector3(1, 0, -1),
-                    new Vector3(1, 0, 0)
+                    new GlobalVoxelOffset(0, 0, -1),
+                    new GlobalVoxelOffset(1, 0, -1),
+                    new GlobalVoxelOffset(1, 0, 0)
                 };
                 CreateFaceDrawMap();
                 StaticInitialized = true;
@@ -114,7 +116,7 @@ namespace DwarfCorp
                 {
                     for(int z = 0; z < chunk.SizeZ; z++)
                     {
-                        v.GridPosition = new Vector3(x, y, z); 
+                        v.GridPosition = new LocalVoxelCoordinate(x, y, z); 
 
                         if((v.IsExplored && v.IsEmpty) || !v.IsVisible)
                         {
@@ -133,7 +135,7 @@ namespace DwarfCorp
 
                         if (v.Type.HasTransitionTextures && v.IsExplored)
                         {
-                            uvs = v.ComputeTransitionTexture(manhattanNeighbors);
+                            uvs = ComputeTransitionTexture(v, manhattanNeighbors);
                         }
 
                         for(int i = 0; i < 6; i++)
@@ -145,7 +147,7 @@ namespace DwarfCorp
 
                             if(faceExists[(int)face])
                             {
-                                voxelOnFace.GridPosition = new Vector3(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z);
+                                voxelOnFace.GridPosition = new LocalVoxelCoordinate(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z);
                                 drawFace[(int)face] =  (voxelOnFace.IsExplored && voxelOnFace.IsEmpty) || (voxelOnFace.Type.IsTransparent && !v.Type.IsTransparent) || 
                                     !voxelOnFace.IsVisible || 
                                     (voxelOnFace.Type.CanRamp && voxelOnFace.RampType != RampType.None && IsSideFace(face) && 
@@ -244,6 +246,21 @@ namespace DwarfCorp
             //chunk.PrimitiveMutex.ReleaseMutex();
         }
 
+        private BoxPrimitive.BoxTextureCoords ComputeTransitionTexture(VoxelHandle V, VoxelHandle[] manhattanNeighbors)
+        {
+            if (!V.Type.HasTransitionTextures && V.Primitive != null)
+            {
+                return V.Primitive.UVs;
+            }
+            else if (V.Primitive == null)
+            {
+                return null;
+            }
+            else
+            {
+                return V.Type.TransitionTextures[V.Chunk.ComputeTransitionValue(V.Type.Transitions, (int)V.GridPosition.X, (int)V.GridPosition.Y, (int)V.GridPosition.Z, manhattanNeighbors)];
+            }
+        }
 
         public bool ContainsNearVertex(Vector3 vertexPos1, List<VertexPositionColorTexture> accumulated)
         {

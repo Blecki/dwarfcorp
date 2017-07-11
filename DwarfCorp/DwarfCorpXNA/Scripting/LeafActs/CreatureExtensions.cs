@@ -303,7 +303,7 @@ namespace DwarfCorp
                 // If the voxel has been destroyed by you, gather it.
                 if (vox.Health <= 0.0f)
                 {
-                    var voxelType = VoxelLibrary.GetVoxelType(vox.TypeName);
+                    var voxelType = VoxelLibrary.GetVoxelType(vox.Type.Name);
                     agent.AI.AddXP(Math.Max((int)(voxelType.StartingHealth / 4), 1));
                     agent.Stats.NumBlocksDestroyed++;
                     agent.World.GoalManager.OnGameEvent(new Goals.Events.DigBlock(voxelType, agent));

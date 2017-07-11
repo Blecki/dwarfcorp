@@ -408,7 +408,7 @@ namespace DwarfCorp
 
         public bool IsCameraUnderwater()
         {
-            WaterCell water = ChunkManager.ChunkData.GetWaterCellAtLocation(Camera.Position);
+            WaterCell water = ChunkManager.ChunkData.GetWaterCellAtLocation(GlobalVoxelCoordinate.FromVector3(Camera.Position));
             return water.WaterLevel > 0;
         }
         

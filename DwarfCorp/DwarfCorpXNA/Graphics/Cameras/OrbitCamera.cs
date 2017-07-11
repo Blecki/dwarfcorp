@@ -469,14 +469,14 @@ namespace DwarfCorp
         {
             BoundingBox box = new BoundingBox(pos - new Vector3(0.5f, 0.5f, 0.5f), pos + new Vector3(0.5f, 0.5f, 0.5f));
             VoxelHandle currentVoxel = new VoxelHandle();
-            bool success = chunks.ChunkData.GetVoxel(null, pos, ref currentVoxel);
+            bool success = chunks.ChunkData.GetVoxel(pos, ref currentVoxel);
 
             List<VoxelHandle> vs = new List<VoxelHandle>
             {
                 currentVoxel
             };
 
-            VoxelChunk chunk = chunks.ChunkData.GetVoxelChunkAtWorldLocation(pos);
+            VoxelChunk chunk = chunks.ChunkData.GetChunk(pos);
 
 
             if (!success || currentVoxel == null || chunk == null)

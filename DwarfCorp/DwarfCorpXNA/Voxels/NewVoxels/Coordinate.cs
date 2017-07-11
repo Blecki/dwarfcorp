@@ -1,22 +1,25 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-/*
+    [Serializable]
     public struct GlobalVoxelCoordinate : IEquatable<GlobalVoxelCoordinate>
     {
-        public Int32 X { get; set; }
-        public Int32 Y { get; set; }
-        public Int32 Z { get; set; }
+        public readonly Int32 X;
+        public readonly Int32 Y;
+        public readonly Int32 Z;
 
-        public GlobalVoxelCoordinate(Int32 x, Int32 y, Int32 z)
+        [JsonConstructor]
+        public GlobalVoxelCoordinate(Int32 X, Int32 Y, Int32 Z)
         {
-            X = x;
-            Y = y;
-            Z = z;
+            this.X = X;
+            this.Y = Y;
+            this.Z = Z;
         }
 
         public GlobalVoxelCoordinate(GlobalChunkCoordinate C, LocalVoxelCoordinate L)
@@ -44,17 +47,17 @@ namespace DwarfCorp
         public GlobalChunkCoordinate GetGlobalChunkCoordinate()
         {
             return new GlobalChunkCoordinate(
-                X / VoxelConstants.ChunkSizeX, 
-                Y / VoxelConstants.ChunkSizeY, 
-                Z / VoxelConstants.ChunkSizeZ);
+                (Int32)((X / VoxelConstants.ChunkSizeX) - ((X & 0x80000000) >> 31)),
+                (Int32)((Y / VoxelConstants.ChunkSizeY) - ((Y & 0x80000000) >> 31)),
+                (Int32)((Z / VoxelConstants.ChunkSizeZ) - ((Z & 0x80000000) >> 31)));
         }
 
         public LocalVoxelCoordinate GetLocalVoxelCoordinate()
         {
             return new LocalVoxelCoordinate(
-                X % VoxelConstants.ChunkSizeX, 
-                Y % VoxelConstants.ChunkSizeY, 
-                Z % VoxelConstants.ChunkSizeZ);
+                (Int32)((((X & 0x80000000) >> 31) * VoxelConstants.ChunkSizeX) + (X % VoxelConstants.ChunkSizeX)),
+                (Int32)((((Y & 0x80000000) >> 31) * VoxelConstants.ChunkSizeY) + (Y % VoxelConstants.ChunkSizeY)),
+                (Int32)((((Z & 0x80000000) >> 31) * VoxelConstants.ChunkSizeZ) + (Z % VoxelConstants.ChunkSizeZ)));
         }
 
         public static bool operator ==(GlobalVoxelCoordinate A, GlobalVoxelCoordinate B)
@@ -82,14 +85,22 @@ namespace DwarfCorp
         {
             return this == other;
         }
+
+        internal static GlobalVoxelCoordinate FromVector3(Vector3 V)
+        {
+            return new GlobalVoxelCoordinate(
+                (int)Math.Floor(V.X), (int)Math.Floor(V.Y), (int)Math.Floor(V.Z));
+        }
     }
 
+    [Serializable]
     public struct GlobalVoxelOffset : IEquatable<GlobalVoxelOffset>
     {
-        public Int32 X { get; set; }
-        public Int32 Y { get; set; }
-        public Int32 Z { get; set; }
+        public readonly Int32 X;
+        public readonly Int32 Y;
+        public readonly Int32 Z;
 
+        [JsonConstructor]
         public GlobalVoxelOffset(Int32 X, Int32 Y, Int32 Z)
         {
             this.X = X;
@@ -129,17 +140,24 @@ namespace DwarfCorp
         }
     }
 
+    [Serializable]
     public struct GlobalChunkCoordinate : IEquatable<GlobalChunkCoordinate>
     {
-        public Int32 X { get; set; }
-        public Int32 Y { get; set; }
-        public Int32 Z { get; set; }
+        public readonly Int32 X;
+        public readonly Int32 Y;
+        public readonly Int32 Z;
 
+        [JsonConstructor]
         public GlobalChunkCoordinate(Int32 X, Int32 Y, Int32 Z)
         {
             this.X = X;
             this.Y = Y;
             this.Z = Z;
+        }
+
+        public static GlobalVoxelCoordinate operator +(GlobalChunkCoordinate A, LocalVoxelCoordinate B)
+        {
+            return new GlobalVoxelCoordinate(A, B);
         }
 
         public static bool operator ==(GlobalChunkCoordinate A, GlobalChunkCoordinate B)
@@ -169,12 +187,14 @@ namespace DwarfCorp
         }
     }
 
+    [Serializable]
     public struct LocalVoxelCoordinate : IEquatable<LocalVoxelCoordinate>
     {
-        public Int32 X { get; set; }
-        public Int32 Y { get; set; }
-        public Int32 Z { get; set; }
+        public readonly Int32 X;
+        public readonly Int32 Y;
+        public readonly Int32 Z;
 
+        [JsonConstructor]
         public LocalVoxelCoordinate(Int32 X, Int32 Y, Int32 Z)
         {
             this.X = X;
@@ -208,5 +228,4 @@ namespace DwarfCorp
             return this == other;
         }
     }
- */
 }

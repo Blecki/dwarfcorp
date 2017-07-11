@@ -262,7 +262,7 @@ namespace DwarfCorp
                 // Get the type of the voxel and display it to the player.
                 if (Enabled && !underMouse.IsEmpty && underMouse.IsExplored)
                 {
-                    string info = underMouse.TypeName;
+                    string info = underMouse.Type.Name;
 
                     // If it belongs to a room, display that information.
                     if (World.PlayerFaction.RoomBuilder.IsInRoom(underMouse))

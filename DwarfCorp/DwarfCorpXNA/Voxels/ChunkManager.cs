@@ -62,7 +62,7 @@ namespace DwarfCorp
 
         public ChunkGenerator ChunkGen { get; set; }
         public ConcurrentQueue<VoxelChunk> GeneratedChunks { get; set; }
-        public List<Point3> ToGenerate { get; set; }
+        public List<GlobalChunkCoordinate> ToGenerate { get; set; }
 
         private Thread GeneratorThread { get; set; }
 
@@ -146,7 +146,7 @@ namespace DwarfCorp
             Content = content;
 
             chunkData = new ChunkData(chunkSizeX, chunkSizeY, chunkSizeZ, 1.0f / chunkSizeX, 1.0f / chunkSizeY, 1.0f / chunkSizeZ, this);
-            ChunkData.ChunkMap = new ConcurrentDictionary<Point3, VoxelChunk>();
+            ChunkData.ChunkMap = new ConcurrentDictionary<GlobalChunkCoordinate, VoxelChunk>();
             RenderList = new ConcurrentQueue<VoxelChunk>();
             RebuildList = new ConcurrentQueue<VoxelChunk>();
             RebuildLiquidsList = new ConcurrentQueue<VoxelChunk>();
@@ -165,7 +165,7 @@ namespace DwarfCorp
             WaterThread = new Thread(UpdateWaterThread);
             WaterThread.Name = "UpdateWater";
 
-            ToGenerate = new List<Point3>();
+            ToGenerate = new List<GlobalChunkCoordinate>();
             Graphics = graphics;
 
             chunkGen.Manager = this;
@@ -343,7 +343,7 @@ namespace DwarfCorp
                             continue;
                         }
 
-                        Dictionary<Point3, VoxelChunk> toRebuild = new Dictionary<Point3, VoxelChunk>();
+                        var toRebuild = new Dictionary<GlobalChunkCoordinate, VoxelChunk>();
                         bool calculateRamps = GameSettings.Default.CalculateRamps;
                         lock (RebuildList)
                         {
@@ -630,7 +630,7 @@ namespace DwarfCorp
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                foreach (KeyValuePair<Point3, VoxelChunk> chunk in ChunkData.ChunkMap)
+                foreach (var chunk in ChunkData.ChunkMap)
                 {
                     chunk.Value.Render(Graphics);
                 }
@@ -659,7 +659,7 @@ namespace DwarfCorp
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                foreach (KeyValuePair<Point3, VoxelChunk> chunk in ChunkData.ChunkMap)
+                foreach (var chunk in ChunkData.ChunkMap)
                 {
                     if (cameraFrustrum.Intersects(chunk.Value.GetBoundingBox()))
                     {
@@ -847,19 +847,19 @@ namespace DwarfCorp
             }
         }
 
-        public void GenerateInitialChunks(Point3 origin, Action<String> SetLoadingMessage)
+        public void GenerateInitialChunks(GlobalChunkCoordinate origin, Action<String> SetLoadingMessage)
         {
             float origBuildRadius = GenerateDistance;
             GenerateDistance = origBuildRadius * 2.0f;
 
-            List<Point3> boxes = new List<Point3>();
+            var boxes = new List<GlobalChunkCoordinate>();
             for (int dx = origin.X - WorldSize.X/2 + 1; dx < origin.X + WorldSize.X/2; dx++)
             {
                 for (int dy = origin.Y - WorldSize.Y/2; dy <= origin.Y + WorldSize.Y/2; dy++)
                 {
                     for (int dz = origin.Z - WorldSize.Z/2 + 1; dz < origin.Z + WorldSize.Z/2; dz++)
                     {
-                        boxes.Add(new Point3(dx, dy, dz));
+                        boxes.Add(new GlobalChunkCoordinate(dx, dy, dz));
                     }
                 }
             }
@@ -927,23 +927,17 @@ namespace DwarfCorp
         public void GetChunksIntersecting(BoundingBox box, HashSet<VoxelChunk> chunks)
         {
             chunks.Clear();
-            Point3 minChunk = ChunkData.GetChunkID(box.Min);
-            Point3 maxChunk = ChunkData.GetChunkID(box.Max);
-            Point3 key = new Point3(0, 0, 0);
-            for (key.X = minChunk.X; key.X <= maxChunk.X; key.X++) 
-            {
-                for (key.Y = minChunk.Y; key.Y <= maxChunk.Y; key.Y++)
-                {
-                    for (key.Z = minChunk.Z; key.Z <= maxChunk.Z; key.Z++)
+            var minChunk = ChunkData.GetChunkID(box.Min);
+            var maxChunk = ChunkData.GetChunkID(box.Max);
+            for (var x = minChunk.X; x <= maxChunk.X; ++x)
+                for (var y = minChunk.Y; y <= maxChunk.Y; ++y)
+                    for (var z = minChunk.Z; z <= maxChunk.Z; ++z)
                     {
-                        if (ChunkData.ChunkMap.ContainsKey(key))
-                        {
-                            chunks.Add(ChunkData.ChunkMap[key]);
-                        }
+                        VoxelChunk chunk;
+                        if (ChunkData.ChunkMap.TryGetValue(new GlobalChunkCoordinate(x, y, z), out chunk))
+                            chunks.Add(chunk);
                     }
-                }
-            }
-    }
+        }
 
         public void GetChunksIntersecting(BoundingFrustum frustum, HashSet<VoxelChunk> chunks)
         {
@@ -1022,13 +1016,12 @@ namespace DwarfCorp
             foreach (VoxelHandle voxel in KilledVoxels)
             {
                 affectedChunks.Add(voxel.Chunk);
-                voxel.Chunk.NotifyDestroyed(new Point3(voxel.GridPosition));
-                List<Point3> neighbors = voxel.Chunk.GetEuclidianSuccessorByVoxel(voxel);
-                Point3 gridPos = voxel.ChunkID;
-                for (int i = 0; i < neighbors.Count; i++)
+                voxel.Chunk.NotifyDestroyed(voxel.GridPosition);
+                foreach (var neighbor in Neighbors.EnumerateAllNeighbors(new GlobalVoxelCoordinate(
+                    voxel.ChunkID, new LocalVoxelCoordinate((int)voxel.GridPosition.X, (int)voxel.GridPosition.Y, (int)voxel.GridPosition.Z))))
                 {
                     VoxelChunk chunk;
-                    if (chunkData.ChunkMap.TryGetValue(gridPos + neighbors[i], out chunk))
+                    if (chunkData.ChunkMap.TryGetValue(neighbor.GetGlobalChunkCoordinate(), out chunk))
                         affectedChunks.Add(chunk);
                 }
             }
@@ -1192,7 +1185,7 @@ namespace DwarfCorp
                     {
                         if (voxel != null && !visited.Contains(voxel))
                         {
-                            queue.Enqueue(new VoxelHandle(new Point3(voxel.GridPosition), voxel.Chunk));
+                            queue.Enqueue(new VoxelHandle(voxel.GridPosition, voxel.Chunk));
                         }
                     }
                 }

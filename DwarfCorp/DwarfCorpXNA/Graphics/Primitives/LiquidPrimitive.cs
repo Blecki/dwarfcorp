@@ -19,7 +19,7 @@ namespace DwarfCorp
         private static readonly BoxPrimitive primitive = VoxelLibrary.GetPrimitive("water");
 
         // Easy successor lookup.
-        private static Vector3[] faceDeltas = new Vector3[6];
+        private static GlobalVoxelOffset[] faceDeltas = new GlobalVoxelOffset[6];
 
         // A flag to avoid reinitializing the static values.
         private static bool StaticsInitialized = false;
@@ -94,12 +94,12 @@ namespace DwarfCorp
         {
             if (StaticsInitialized) return;
 
-            faceDeltas[(int)BoxFace.Back] = new Vector3(0, 0, 1);
-            faceDeltas[(int)BoxFace.Front] = new Vector3(0, 0, -1);
-            faceDeltas[(int)BoxFace.Left] = new Vector3(-1, 0, 0);
-            faceDeltas[(int)BoxFace.Right] = new Vector3(1, 0, 0);
-            faceDeltas[(int)BoxFace.Top] = new Vector3(0, 1, 0);
-            faceDeltas[(int)BoxFace.Bottom] = new Vector3(0, -1, 0);
+            faceDeltas[(int)BoxFace.Back] = new GlobalVoxelOffset(0, 0, 1);
+            faceDeltas[(int)BoxFace.Front] = new GlobalVoxelOffset(0, 0, -1);
+            faceDeltas[(int)BoxFace.Left] = new GlobalVoxelOffset(-1, 0, 0);
+            faceDeltas[(int)BoxFace.Right] = new GlobalVoxelOffset(1, 0, 0);
+            faceDeltas[(int)BoxFace.Top] = new GlobalVoxelOffset(0, 1, 0);
+            faceDeltas[(int)BoxFace.Bottom] = new GlobalVoxelOffset(0, -1, 0);
 
             caches = new List<LiquidRebuildCache>();
 
@@ -169,7 +169,7 @@ namespace DwarfCorp
                 {
                     for (int z = 0; z < chunk.SizeZ; z++)
                     {
-                        int index = chunk.Data.IndexAt(x, y, z);
+                        int index = chunk.Data.IndexAt(new LocalVoxelCoordinate(x, y, z));
                         if (fogOfWar && !chunk.Data.IsExplored[index]) continue;
 
                         if (chunk.Data.Water[index].WaterLevel > 0)
@@ -191,7 +191,7 @@ namespace DwarfCorp
                                 maxVertex = maxVertices[(int)liqType];
                             }
 
-                            myVoxel.GridPosition = new Vector3(x, y, z);
+                            myVoxel.GridPosition = new LocalVoxelCoordinate(x, y, z);
 
                             int facesToDraw = 0;
                             for (int i = 0; i < 6; i++)
@@ -200,7 +200,7 @@ namespace DwarfCorp
                                 // We won't draw the bottom face.  This might be needed down the line if we add transparent tiles like glass.
                                 if (face == BoxFace.Bottom) continue;
 
-                                Vector3 delta = faceDeltas[(int)face];
+                                var delta = faceDeltas[(int)face];
 
                                 // Pull the current neighbor DestinationVoxel based on the face it would be touching.
                                 bool success = myVoxel.GetNeighborBySuccessor(delta, ref vox, false);
@@ -317,8 +317,8 @@ namespace DwarfCorp
 
             // These are reused for every face.
             Vector3 origin = chunk.Origin + new Vector3(x, y, z);
-            int index = chunk.Data.IndexAt(x, y, z);
-            float centerWaterlevel = chunk.Data.Water[chunk.Data.IndexAt(x, y, z)].WaterLevel;
+            int index = chunk.Data.IndexAt(new LocalVoxelCoordinate(x, y, z));
+            float centerWaterlevel = chunk.Data.Water[chunk.Data.IndexAt(new LocalVoxelCoordinate(x, y, z))].WaterLevel;
 
             for (int faces = 0; faces < cache.drawFace.Length; faces++)
             {
@@ -351,12 +351,12 @@ namespace DwarfCorp
                         float emptyNeighbors = 0.0f;
                         float averageWaterLevel = centerWaterlevel;
 
-                        List<Vector3> vertexSucc = VoxelChunk.VertexSuccessors[currentVertex];
+                        var vertexSucc = VoxelChunk.VertexSuccessors[currentVertex];
 
                         // Run through the successors and count up the water in each voxel.
                         for (int v = 0; v < vertexSucc.Count; v++)
                         {
-                            Vector3 succ = vertexSucc[v];
+                            var succ = vertexSucc[v];
                             // We are going to use a lookup key so calculate it now.
                             int key = VoxelChunk.SuccessorToEuclidianLookupKey(succ);
 
