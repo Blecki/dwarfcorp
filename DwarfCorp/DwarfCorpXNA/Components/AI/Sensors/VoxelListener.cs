@@ -52,7 +52,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public VoxelChunk Chunk;
 
-        public Point3 ChunkID { get; set; }
+        public GlobalChunkCoordinate ChunkID { get; set; }
 
         private bool firstIter = false;
 
@@ -136,7 +136,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public VoxelChunk Chunk;
 
-        public Point3 ChunkID { get; set; }
+        public GlobalChunkCoordinate ChunkID { get; set; }
 
 
         [OnDeserialized]

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,18 +6,27 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+/*
     public struct GlobalVoxelCoordinate : IEquatable<GlobalVoxelCoordinate>
     {
+<<<<<<< HEAD
         public readonly Int32 X;
         public readonly Int32 Y;
         public readonly Int32 Z;
 
         [JsonConstructor]
         public GlobalVoxelCoordinate(Int32 X, Int32 Y, Int32 Z)
+=======
+        public Int32 X { get; set; }
+        public Int32 Y { get; set; }
+        public Int32 Z { get; set; }
+
+        public GlobalVoxelCoordinate(Int32 x, Int32 y, Int32 z)
+>>>>>>> origin/mklingen_dev
         {
-            this.X = X;
-            this.Y = Y;
-            this.Z = Z;
+            X = x;
+            Y = y;
+            Z = z;
         }
 
         public GlobalVoxelCoordinate(GlobalChunkCoordinate C, LocalVoxelCoordinate L)
@@ -87,9 +96,15 @@ namespace DwarfCorp
 
     public struct GlobalVoxelOffset : IEquatable<GlobalVoxelOffset>
     {
+<<<<<<< HEAD
         public readonly Int32 X;
         public readonly Int32 Y;
         public readonly Int32 Z;
+=======
+        public Int32 X { get; set; }
+        public Int32 Y { get; set; }
+        public Int32 Z { get; set; }
+>>>>>>> origin/mklingen_dev
 
         [JsonConstructor]
         public GlobalVoxelOffset(Int32 X, Int32 Y, Int32 Z)
@@ -133,9 +148,15 @@ namespace DwarfCorp
 
     public struct GlobalChunkCoordinate : IEquatable<GlobalChunkCoordinate>
     {
+<<<<<<< HEAD
         public readonly Int32 X;
         public readonly Int32 Y;
         public readonly Int32 Z;
+=======
+        public Int32 X { get; set; }
+        public Int32 Y { get; set; }
+        public Int32 Z { get; set; }
+>>>>>>> origin/mklingen_dev
 
         [JsonConstructor]
         public GlobalChunkCoordinate(Int32 X, Int32 Y, Int32 Z)
@@ -179,9 +200,15 @@ namespace DwarfCorp
 
     public struct LocalVoxelCoordinate : IEquatable<LocalVoxelCoordinate>
     {
+<<<<<<< HEAD
         public readonly Int32 X;
         public readonly Int32 Y;
         public readonly Int32 Z;
+=======
+        public Int32 X { get; set; }
+        public Int32 Y { get; set; }
+        public Int32 Z { get; set; }
+>>>>>>> origin/mklingen_dev
 
         [JsonConstructor]
         public LocalVoxelCoordinate(Int32 X, Int32 Y, Int32 Z)
@@ -217,4 +244,5 @@ namespace DwarfCorp
             return this == other;
         }
     }
+ */
 }

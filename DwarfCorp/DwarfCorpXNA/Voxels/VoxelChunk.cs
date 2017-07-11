@@ -38,6 +38,7 @@ using System.Threading;
 using System.Collections.Concurrent;
 using Color = Microsoft.Xna.Framework.Color;
 using System.Diagnostics;
+using System.Linq;
 
 namespace DwarfCorp
 {
@@ -64,18 +65,6 @@ namespace DwarfCorp
             public int SizeY;
             public int SizeZ;
             public RampType[] RampTypes;
-            //public Color[] VertexColors;
-            /*
-            public void SetColor(int x, int y, int z, VoxelVertex v, Color color)
-            {
-                VertexColors[VertIndex(x, y, z, v)] = color;
-            }
-
-            public Color GetColor(int x, int y, int z, VoxelVertex v)
-            {
-                return VertexColors[VertIndex(x, y, z, v)];
-            }
-             */
 
             public int VertIndex(int x, int y, int z, VoxelVertex v)
             {
@@ -146,11 +135,6 @@ namespace DwarfCorp
                 return (z * SizeY + y) * SizeX + x;
             }
 
-            public int IndexAt(Point3 point)
-            {
-                return IndexAt(point.X, point.Y, point.Z);
-            }
-
             public Vector3 CoordsAt(int idx)
             {
                 int x = idx % (SizeX);
@@ -210,7 +194,7 @@ namespace DwarfCorp
         public bool ShouldRebuildWater { get; set; }
 
         public static byte m_fogOfWar = 1;
-        public ConcurrentDictionary<Point3, VoxelChunk> Neighbors { get; set; }
+        public ConcurrentDictionary<GlobalChunkCoordinate, VoxelChunk> Neighbors { get; set; }
         public ConcurrentDictionary<int, VoxelChunk> EuclidianNeighbors { get; set; }
         public List<DynamicLight> DynamicLights { get; set; }
 
@@ -242,7 +226,7 @@ namespace DwarfCorp
 
         public bool RebuildPending { get; set; }
         public bool RebuildLiquidPending { get; set; }
-        public Point3 ID { get; set; }
+        public GlobalChunkCoordinate ID { get; set; }
 
         public bool ReconstructRamps { get; set; }
 
@@ -597,7 +581,7 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public VoxelChunk(ChunkManager manager, Vector3 origin, int tileSize, Point3 id, int sizeX, int sizeY, int sizeZ)
+        public VoxelChunk(ChunkManager manager, Vector3 origin, int tileSize, GlobalChunkCoordinate id, int sizeX, int sizeY, int sizeZ)
         {
             FirstWaterIter = true;
             this.sizeX = sizeX;
@@ -618,7 +602,7 @@ namespace DwarfCorp
             InitializeStatics();
             PrimitiveMutex = new Mutex();
             ShouldRecalculateLighting = true;
-            Neighbors = new ConcurrentDictionary<Point3, VoxelChunk>();
+            Neighbors = new ConcurrentDictionary<GlobalChunkCoordinate, VoxelChunk>();
             EuclidianNeighbors = new ConcurrentDictionary<int, VoxelChunk>();
             DynamicLights = new List<DynamicLight>();
             Liquids = new Dictionary<LiquidType, LiquidPrimitive>();
@@ -1500,273 +1484,71 @@ namespace DwarfCorp
 
         public void Get2DManhattanNeighbors(VoxelHandle[] neighbors, int x, int y, int z)
         {
-            List<Vector3> succ = Manhattan2DSuccessors;
-            int count = succ.Count;
-            bool isInterior = IsInterior(x, y, z);
-            for (int i = 0; i < count; i++)
+            var index = 0;
+            foreach (var neighbor in DwarfCorp.Neighbors.EnumerateManhattanNeighbors2D(
+                new GlobalVoxelCoordinate(ID, new LocalVoxelCoordinate(x, y, z))))
             {
-                Vector3 successor = succ[i];
-                int nx = (int)successor.X + x;
-                int ny = (int)successor.Y + y;
-                int nz = (int)successor.Z + z;
+                if (index >= neighbors.Length) break;
 
-                if (isInterior || IsCellValid(nx, ny, nz))
-                {
-                    if (neighbors[i] == null)
-                    {
-                        neighbors[i] = MakeVoxel(nx, ny, nz);
-                    }
-                    else
-                    {
-                        neighbors[i].Chunk = this;
-                        neighbors[i].GridPosition = new Vector3(nx, ny, nz);
+                var localPart = neighbor.GetLocalVoxelCoordinate();
+                var chunkPart = neighbor.GetGlobalChunkCoordinate();
 
-                    }
-                }
+                if (!Manager.ChunkData.ChunkMap.ContainsKey(chunkPart))
+                    neighbors[index] = null;
                 else
-                {
-                    Point3 chunkID = ID;
-                    if (nx >= SizeZ)
-                    {
-                        chunkID.X += 1;
-                        nx = 0;
-                    }
-                    else if (nx < 0)
-                    {
-                        chunkID.X -= 1;
-                        nx = SizeX - 1;
-                    }
+                    neighbors[index] = new VoxelHandle(new Point3(localPart.X, localPart.Y, localPart.Z), Manager.ChunkData.ChunkMap[chunkPart]);
 
-                    if (ny >= SizeY)
-                    {
-                        chunkID.Y += 1;
-                        ny = 0;
-                    }
-                    else if (ny < 0)
-                    {
-                        chunkID.Y -= 1;
-                        ny = SizeY - 1;
-                    }
-
-                    if (nz >= SizeZ)
-                    {
-                        chunkID.Z += 1;
-                        nz = 0;
-                    }
-                    else if (nz < 0)
-                    {
-                        chunkID.Z -= 1;
-                        nz = SizeZ - 1;
-                    }
-
-
-                    if (!Manager.ChunkData.ChunkMap.ContainsKey(chunkID))
-                    {
-                        continue;
-                    }
-
-                    VoxelChunk chunk = Manager.ChunkData.ChunkMap[chunkID];
-
-                    if (neighbors[i] == null)
-                    {
-                        neighbors[i] = chunk.MakeVoxel(nx, ny, nz);
-                    }
-                    else
-                    {
-                        neighbors[i].Chunk = chunk;
-                        neighbors[i].GridPosition = new Vector3(nx, ny, nz);
-                    }
-                }
+                index += 1;
             }
-
+            
+            while (index < neighbors.Length)
+            {
+                neighbors[index] = null;
+                index += 1;
+            }
         }
 
         public void Get2DManhattanNeighbors(ChunkManager.SliceMode slice, VoxelHandle[] neighbors, int x, int y, int z)
         {
-            List<Vector3> succ = Manhattan2DSuccessors;
-            int count = succ.Count;
-            bool isInterior = IsInterior(x, y, z);
-            for (int i = 0; i < count; i++)
+            var index = 0;
+            foreach (var neighbor in DwarfCorp.Neighbors.EnumerateManhattanNeighbors2D(
+                new GlobalVoxelCoordinate(ID, new LocalVoxelCoordinate(x, y, z)), slice))
             {
-                Vector3 successor = succ[i];
+                if (index >= neighbors.Length) break;
 
-                switch (slice)
-                {
-                    // X held constant, so we're looking at the ZY plane
-                    case ChunkManager.SliceMode.X:
-                            successor = new Vector3(0, succ[i].Z, succ[i].X);
-                        break;
-                     //Y held constant. Just do what we did before.
-                    case ChunkManager.SliceMode.Y:
-                        break;
+                var localPart = neighbor.GetLocalVoxelCoordinate();
+                var chunkPart = neighbor.GetGlobalChunkCoordinate();
 
-                    // Z held constant, so we're looking at the XY plane
-                    case ChunkManager.SliceMode.Z:
-                        successor = new Vector3(succ[i].X, succ[i].Z, 0);
-                        break;
-                }
-                int nx = (int)successor.X + x;
-                int ny = (int)successor.Y + y;
-                int nz = (int)successor.Z + z;
-
-                if (isInterior || IsCellValid(nx, ny, nz))
-                {
-                    if (neighbors[i] == null)
-                    {
-                        neighbors[i] = MakeVoxel(nx, ny, nz);
-                    }
-                    else
-                    {
-                        neighbors[i].Chunk = this;
-                        neighbors[i].GridPosition = new Vector3(nx, ny, nz);
-
-                    }
-                }
+                if (!Manager.ChunkData.ChunkMap.ContainsKey(chunkPart))
+                    neighbors[index] = null;
                 else
-                {
-                    Point3 chunkID = ID;
-                    if (nx >= SizeZ)
-                    {
-                        chunkID.X += 1;
-                        nx = 0;
-                    }
-                    else if (nx < 0)
-                    {
-                        chunkID.X -= 1;
-                        nx = SizeX - 1;
-                    }
+                    neighbors[index] = new VoxelHandle(new Point3(localPart.X, localPart.Y, localPart.Z), Manager.ChunkData.ChunkMap[chunkPart]);
 
-                    if (ny >= SizeY)
-                    {
-                        chunkID.Y += 1;
-                        ny = 0;
-                    }
-                    else if (ny < 0)
-                    {
-                        chunkID.Y -= 1;
-                        ny = SizeY - 1;
-                    }
-
-                    if (nz >= SizeZ)
-                    {
-                        chunkID.Z += 1;
-                        nz = 0;
-                    }
-                    else if (nz < 0)
-                    {
-                        chunkID.Z -= 1;
-                        nz = SizeZ - 1;
-                    }
-
-
-                    if (!Manager.ChunkData.ChunkMap.ContainsKey(chunkID))
-                    {
-                        continue;
-                    }
-
-                    VoxelChunk chunk = Manager.ChunkData.ChunkMap[chunkID];
-
-                    if (neighbors[i] == null)
-                    {
-                        neighbors[i] = chunk.MakeVoxel(nx, ny, nz);
-                    }
-                    else
-                    {
-                        neighbors[i].Chunk = chunk;
-                        neighbors[i].GridPosition = new Vector3(nx, ny, nz);
-                    }
-                }
+                index += 1;
             }
 
+            while (index < neighbors.Length)
+            {
+                neighbors[index] = null;
+                index += 1;
+            }
         }
-
-        public void GetNeighborsSuccessors(List<Vector3> succ, int x, int y, int z, List<VoxelHandle> toReturn)
+        
+        public void GetNeighborsSuccessors(List<Vector3> succ, int x, int y, int z, List<VoxelHandle> ToFill)
         {
-            if (succ.Count != toReturn.Count)
+            ToFill.Clear();
+
+            foreach (var neighbor in DwarfCorp.Neighbors.EnumerateNeighbors(
+                succ.Select(v => new GlobalVoxelOffset((int)v.X, (int)v.Y, (int)v.Z)),
+                new GlobalVoxelCoordinate(ID, new LocalVoxelCoordinate(x, y, z))))
             {
-                toReturn.Clear();
-                for (int i = 0; i < succ.Count; i++)
-                {
-                    toReturn.Add(MakeVoxel(0, 0, 0));
-                }
-            }
 
-            bool isInterior = IsInterior(x, y, z);
-            int count = succ.Count;
-            for (int i = 0; i < count; i++)
-            {
-                Vector3 successor = succ[i];
-                int nx = (int)successor.X + x;
-                int ny = (int)successor.Y + y;
-                int nz = (int)successor.Z + z;
+                var localPart = neighbor.GetLocalVoxelCoordinate();
+                var chunkPart = neighbor.GetGlobalChunkCoordinate();
 
-                if (isInterior || IsCellValid(nx, ny, nz))
-                {
-                    if (toReturn[i] == null)
-                    {
-                        toReturn[i] = MakeVoxel(nx, ny, nz);
-                    }
-                    else
-                    {
-                        toReturn[i].Chunk = this;
-                        toReturn[i].GridPosition = new Vector3(nx, ny, nz);
-                    }
-                }
-                else
-                {
-                    Point3 chunkID = ID;
-                    if (nx >= SizeZ)
-                    {
-                        chunkID.X += 1;
-                        nx = 0;
-                    }
-                    else if (nx < 0)
-                    {
-                        chunkID.X -= 1;
-                        nx = SizeX - 1;
-                    }
-
-                    if (ny >= SizeY)
-                    {
-                        chunkID.Y += 1;
-                        ny = 0;
-                    }
-                    else if (ny < 0)
-                    {
-                        chunkID.Y -= 1;
-                        ny = SizeY - 1;
-                    }
-
-                    if (nz >= SizeZ)
-                    {
-                        chunkID.Z += 1;
-                        nz = 0;
-                    }
-                    else if (nz < 0)
-                    {
-                        chunkID.Z -= 1;
-                        nz = SizeZ - 1;
-                    }
-
-
-                    if (!Manager.ChunkData.ChunkMap.ContainsKey(chunkID))
-                    {
-                        toReturn[i] = null;
-                        continue;
-                    }
-
-                    VoxelChunk chunk = Manager.ChunkData.ChunkMap[chunkID];
-                    if (toReturn[i] == null)
-                    {
-                        toReturn[i] = chunk.MakeVoxel(nx, ny, nz);
-                    }
-                    else
-                    {
-                        toReturn[i].Chunk = chunk;
-                        toReturn[i].GridPosition = new Vector3(nx, ny, nz);
-                    }
-                }
-            }
+                if (Manager.ChunkData.ChunkMap.ContainsKey(chunkPart))
+                    ToFill.Add(new VoxelHandle(new Point3(localPart.X, localPart.Y, localPart.Z), Manager.ChunkData.ChunkMap[chunkPart]));
+            }            
         }
 
         public void GetNeighborsVertex(VoxelVertex vertex, int x, int y, int z, List<VoxelHandle> toReturn)
@@ -1856,6 +1638,11 @@ namespace DwarfCorp
             return v == null || v.IsEmpty;
         }
 
+        public static bool IsInteriorPoint(Point3 gridPosition, VoxelChunk chunk)
+        {
+            return chunk.IsInterior(gridPosition.X, gridPosition.Y, gridPosition.Z);
+        }
+
         public bool HasNoNeighbors(VoxelHandle v)
         {
             Vector3 pos = v.Position;
@@ -1869,7 +1656,7 @@ namespace DwarfCorp
             VoxelChunk chunk = Manager.ChunkData.ChunkMap[v.ChunkID];
             Point3 gridPoint = new Point3(gridPos);
 
-            bool interior = VoxelHandle.IsInteriorPoint(gridPoint, chunk);
+            bool interior = IsInteriorPoint(gridPoint, chunk);
 
 
             if (interior)
@@ -1926,7 +1713,7 @@ namespace DwarfCorp
             Vector3 pos = v.Position;
             VoxelChunk chunk = Manager.ChunkData.ChunkMap[v.ChunkID];
             Point3 gridPoint = new Point3(v.GridPosition);
-            bool interior = VoxelHandle.IsInteriorPoint(gridPoint, chunk);
+            bool interior = IsInteriorPoint(gridPoint, chunk);
 
 
             if (interior)

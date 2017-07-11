@@ -16,6 +16,7 @@ namespace DwarfCorp.GameStates
         private Gui.Widget PreviewPanel;
 
         private bool UpdatePreview = false;
+
         public Texture2D PreviewTexture { get; private set; }
         private BasicEffect PreviewEffect;
         private RenderTarget2D PreviewRenderTarget;
@@ -439,6 +440,11 @@ namespace DwarfCorp.GameStates
             if (Generator.LandMesh == null)
             {
                 Generator.CreateMesh(Device);
+                UpdatePreview = true;
+            }
+
+            if (UpdatePreview || Trees == null)
+            {
                 Trees = new List<Point3>();
                 int width = Overworld.Map.GetLength(0);
                 int height = Overworld.Map.GetLength(1);

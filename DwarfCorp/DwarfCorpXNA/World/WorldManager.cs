@@ -774,7 +774,6 @@ namespace DwarfCorp
                 GetReflectedCameraMatrix(wHeight),
                 DefaultShader, GraphicsDevice);
 
-
             #region Draw Selection Buffer.
 
             if (SelectionBuffer == null)

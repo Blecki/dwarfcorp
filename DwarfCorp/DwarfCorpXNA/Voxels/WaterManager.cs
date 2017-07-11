@@ -55,6 +55,7 @@ namespace DwarfCorp
         private ChunkManager Chunks { get; set; }
         private int[] updateList;
         private int[] randomIndices;
+        private int maxChunks;
         public byte EvaporationLevel { get; set; }
 
         public static byte maxWaterLevel = 8;
@@ -96,6 +97,7 @@ namespace DwarfCorp
         {
             Chunks = chunks;
             EvaporationLevel = 1;
+            maxChunks = 81;
             ChunkData data = chunks.ChunkData;
 
             // Create reusable arrays for randomized indices
@@ -246,9 +248,15 @@ namespace DwarfCorp
             List<VoxelChunk> chunksToUpdate = Chunks.ChunkData.ChunkMap.Select(chunks => chunks.Value).ToList();
 
             chunksToUpdate.Sort(Chunks.CompareChunkDistance);
+            int chunksUpdated = 0;
 
             foreach(VoxelChunk chunk in chunksToUpdate)
             {
+                if (chunksUpdated >= maxChunks)
+                    continue;
+
+                chunksUpdated++;
+
                 if(!UpdateChunk(chunk) && !chunk.FirstWaterIter)
                 {
                     chunk.FirstWaterIter = false;

@@ -154,7 +154,7 @@ namespace DwarfCorp
                     {
                         first = false;
                     }
-                    description +=  selected.TypeName + " at " + selected.GridPosition + ". Health: " + selected.Health;
+                    description +=  selected.Type.Name + " at " + selected.GridPosition + ". Health: " + selected.Health;
                 }
             }
 

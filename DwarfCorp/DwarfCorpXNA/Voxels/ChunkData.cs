@@ -63,7 +63,7 @@ namespace DwarfCorp
             this.chunkManager = chunkManager;
         }
 
-        public ConcurrentDictionary<Point3, VoxelChunk> ChunkMap { get; set; }
+        public ConcurrentDictionary<GlobalChunkCoordinate, VoxelChunk> ChunkMap { get; set; }
 
         public Texture2D Tilemap
         {
@@ -137,7 +137,8 @@ namespace DwarfCorp
         public void Reveal(IEnumerable<VoxelHandle> voxels)
         {
             if (!GameSettings.Default.FogofWar) return;
-            List<Point3> affectedChunks = new List<Point3>();
+
+            var affectedChunks = new List<GlobalChunkCoordinate>();
             Queue<VoxelHandle> q = new Queue<VoxelHandle>(128);
 
             foreach (VoxelHandle voxel in voxels)
@@ -179,7 +180,7 @@ namespace DwarfCorp
 
             }
 
-            foreach (Point3 chunkID in affectedChunks)
+            foreach (var chunkID in affectedChunks)
             {
                 VoxelChunk chunk = ChunkMap[chunkID];
 
@@ -478,7 +479,7 @@ namespace DwarfCorp
                 {
                     if(dx != 0 || dz != 0)
                     {
-                        Point3 key = new Point3(chunk.ID.X + dx, 0, chunk.ID.Z + dz);
+                        var key = new GlobalChunkCoordinate(chunk.ID.X + dx, 0, chunk.ID.Z + dz);
 
                         if(ChunkMap.ContainsKey(key))
                         {
@@ -499,7 +500,7 @@ namespace DwarfCorp
                 chunk.EuclidianNeighbors.Clear();
             }
 
-            foreach (KeyValuePair<Point3, VoxelChunk> chunks in ChunkMap)
+            foreach (var chunks in ChunkMap)
             {
                 VoxelChunk chunk = chunks.Value;
 
@@ -510,7 +511,10 @@ namespace DwarfCorp
                     {
                         for (successor.Y = -1; successor.Y < 2; successor.Y++)
                         {
-                            Point3 sideChunkID = chunk.ID + successor;
+                            var sideChunkID = new GlobalChunkCoordinate(
+                                chunk.ID.X + successor.X,
+                                chunk.ID.Y + successor.Y,
+                                chunk.ID.Z + successor.Z);
                             VoxelChunk sideChunk;
                             ChunkMap.TryGetValue(sideChunkID, out sideChunk);
                             if (successor.Y == 0 && sideChunk != null)
@@ -528,20 +532,20 @@ namespace DwarfCorp
 
 
 
-        public Vector3 RoundToChunkCoords(Vector3 location)
+        public GlobalChunkCoordinate RoundToChunkCoords(Vector3 location)
         {
             int x = MathFunctions.FloorInt(location.X * InvCSX);
             int y = MathFunctions.FloorInt(location.Y * InvCSY);
             int z = MathFunctions.FloorInt(location.Z * InvCSZ);
-            return new Vector3(x, y, z);
+            return new GlobalChunkCoordinate(x, y, z);
         }
 
-        public Point3 RoundToChunkCoordsPoint3(Vector3 location)
+        public GlobalChunkCoordinate RoundToChunkCoordsPoint3(Vector3 location)
         {
             int x = MathFunctions.FloorInt(location.X * InvCSX);
             int y = MathFunctions.FloorInt(location.Y * InvCSY);
             int z = MathFunctions.FloorInt(location.Z * InvCSZ);
-            return new Point3(x, y, z);
+            return new GlobalChunkCoordinate(x, y, z);
         }
 
         public VoxelChunk GetVoxelChunkAtWorldLocation(Vector3 worldLocation)
@@ -572,7 +576,7 @@ namespace DwarfCorp
             return chunk.GetVoxelAtValidWorldLocation(worldLocation, ref newReference);
         }
 
-        public Point3 GetChunkID(Vector3 origin)
+        public GlobalChunkCoordinate GetChunkID(Vector3 origin)
         {
             return RoundToChunkCoordsPoint3(origin);
         }
@@ -685,7 +689,7 @@ namespace DwarfCorp
 
         public bool SaveAllChunks(string directory, bool compress)
         {
-            foreach(KeyValuePair<Point3, VoxelChunk> pair in ChunkMap)
+            foreach(var pair in ChunkMap)
             {
                 ChunkFile chunkFile = new ChunkFile(pair.Value);
 
