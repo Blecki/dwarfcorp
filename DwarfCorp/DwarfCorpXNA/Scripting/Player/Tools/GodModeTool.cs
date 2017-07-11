@@ -31,6 +31,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -196,6 +197,20 @@ namespace DwarfCorp
                             }
                         }
                             break;
+                        case "Disease":
+                        {
+                            foreach(var comp in Player.World.CollisionManager.EnumerateIntersectingObjects(
+                                vox.GetBoundingBox(), CollisionManager.CollisionType.Both).OfType<Body>())
+                            {
+                                var creature = comp.GetComponent<Creature>();
+                                if (creature != null)
+                                {
+                                    var disease = Datastructures.SelectRandom(DiseaseLibrary.Diseases);
+                                    creature.AcquireDisease(disease.Name);
+                                }
+                            }
+                            break;
+                        }
                         default:
                             break;
                     }

@@ -84,7 +84,7 @@ namespace DwarfCorp
                             break;
                         }
                     }
-                    else if (Player.Faction.OwnedObjects.Contains(body) && body.Tags.Any(tag => tag == "Moveable"))
+                    else if (Player.Faction.OwnedObjects.Contains(body) && body.Tags.Any(tag => tag == "Moveable") && !body.IsReserved)
                     {
                         body.Delete();
                         if (CraftLibrary.CraftItems.ContainsKey(body.Name))

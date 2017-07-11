@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,7 +21,7 @@ namespace DwarfCorp.Goals.Goals
             {
                 State = GoalState.Complete;
                 World.GoalManager.UnlockGoal(typeof(Ordu_Start));
-                World.MakeAnnouncement("New goal available.");
+                World.MakeAnnouncement("New message available.");
                 World.AwardBux(1);
             }
         }

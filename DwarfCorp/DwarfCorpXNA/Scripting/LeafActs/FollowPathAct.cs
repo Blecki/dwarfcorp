@@ -122,7 +122,7 @@ namespace DwarfCorp
                     diffNorm = diff.Length();
                 }
             }
-            float unitTime = (1.25f / (Agent.Stats.Dexterity + 0.001f) + RandomTimeOffset) /
+            float unitTime = (1.25f / (Agent.Stats.BuffedDex + 0.001f) + RandomTimeOffset) /
                              Agent.Movement.Speed(action.MoveType);
             ;
             if (hasNextAction)

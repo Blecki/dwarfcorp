@@ -190,6 +190,7 @@ namespace DwarfCorp.GameStates
                 {
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_daytime, 0.15f);
                     SoundManager.PlayMusic("main_theme_day");
+                    DiseaseLibrary.SpreadRandomDiseases(World.PlayerFaction.Minions);
                 };
 
                 World.Time.NewNight += time =>
@@ -198,7 +199,6 @@ namespace DwarfCorp.GameStates
                     SoundManager.PlayMusic("main_theme_night");
                 };
             }
-
             World.Unpause();
             AutoSaveTimer = new Timer(GameSettings.Default.AutoSaveTimeMinutes * 60.0f, false, Timer.TimerMode.Real);
             base.OnEnter();
@@ -801,11 +801,11 @@ namespace DwarfCorp.GameStates
             var icon_moveObjects = new FlatToolTray.Icon()
             {
                 Text = "",
-                Tooltip = "Move objects",
+                Tooltip = "Move/Destroy objects",
                 Icon = new TileReference("mouse", 9),
                 OnClick = (sender, args) =>
                 {
-                    World.ShowToolPopup("Click objects to move them");
+                    World.ShowToolPopup("Left click objects to move them.\nRight click to destroy them.");
                     Master.ChangeTool(GameMaster.ToolMode.MoveObjects);
                 }
             };

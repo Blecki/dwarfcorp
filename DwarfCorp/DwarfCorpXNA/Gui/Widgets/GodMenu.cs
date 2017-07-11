@@ -87,7 +87,11 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "KILL THINGS",
                     OnClick = (sender, args) => ActivateGodTool("Kill Things")
                 },
-
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "DISEASE",
+                    OnClick = (sender, args) => ActivateGodTool("Disease")
+                },
                 new HorizontalMenuTray.MenuItem
                 {
                     Text = "FILL WATER",
