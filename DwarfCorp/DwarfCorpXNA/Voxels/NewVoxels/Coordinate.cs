@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    [Serializable]
     public struct GlobalVoxelCoordinate : IEquatable<GlobalVoxelCoordinate>
     {
         public readonly Int32 X;
@@ -85,6 +86,7 @@ namespace DwarfCorp
         }
     }
 
+    [Serializable]
     public struct GlobalVoxelOffset : IEquatable<GlobalVoxelOffset>
     {
         public readonly Int32 X;
@@ -131,6 +133,7 @@ namespace DwarfCorp
         }
     }
 
+    [Serializable]
     public struct GlobalChunkCoordinate : IEquatable<GlobalChunkCoordinate>
     {
         public readonly Int32 X;
@@ -177,6 +180,7 @@ namespace DwarfCorp
         }
     }
 
+    [Serializable]
     public struct LocalVoxelCoordinate : IEquatable<LocalVoxelCoordinate>
     {
         public readonly Int32 X;
