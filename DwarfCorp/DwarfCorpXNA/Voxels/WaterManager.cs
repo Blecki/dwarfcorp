@@ -90,6 +90,7 @@ namespace DwarfCorp
             set { flowCheck = value; }
         }
 
+        // Used to determine if this liquid is evaporating.
         public bool EvaporateCheck
         {
             get { return evaporateCheck; }
@@ -434,25 +435,35 @@ namespace DwarfCorp
             // We will count on other nearby water sources being marked unstable to fill if need be.
             WaterCell mainWaterCell = v.Water;
             if (mainWaterCell.WaterLevel == 0) return true;
+
+            // If we are past evaporation level it is not stable and needs to pass the check each round.
             if (mainWaterCell.WaterLevel <= EvaporationLevel) return false;
 
             LiquidType mainWaterType = mainWaterCell.Type;
             VoxelChunk chunk = v.Chunk;
             WaterCell comparisonWaterCell;
             Voxel neighbor = chunk.MakeVoxel(0, 0, 0);
+
+            // If we have a voxel below check it for missing water.
             if (v.GetNeighborBySuccessor(Vector3.Down, ref neighbor, false))
             {
                 if (neighbor.IsEmpty)
                 {
                     comparisonWaterCell = neighbor.Water;
+
+                    // If the current water level is less than max or the types are different it is unstable.
                     if (comparisonWaterCell.WaterLevel < maxWaterLevel || mainWaterType != comparisonWaterCell.Type) return false;
                 }
             }
             for (int i = 0; i < m_spreadNeighbors.Length; i++)
             {
+                // Make sure there is an empty voxel that exists first.
                 if (!v.GetNeighborBySuccessor(m_spreadNeighbors[i], ref neighbor, false)) continue;
                 if (!neighbor.IsEmpty) continue;
+
                 comparisonWaterCell = neighbor.Water;
+
+                // If the difference in the two water levels is over the threshold or the water types are different it is unstable.
                 if (Math.Abs(mainWaterCell.WaterLevel - comparisonWaterCell.WaterLevel) > waterMoveThreshold || mainWaterType != comparisonWaterCell.Type) return false;
             }
             return true;
@@ -516,6 +527,7 @@ namespace DwarfCorp
                 neighbors.Add(new Voxel());
             }
 
+            #region Setting up the local variables
             ChunkData chunkData = Chunks.World.ChunkManager.ChunkData;
 
             Voxel centerVoxel = new Voxel();
@@ -526,6 +538,7 @@ namespace DwarfCorp
 
             Voxel[] waterSpreadOrder = new Voxel[5];
             byte[] waterSpreadAmount = new byte[5];
+            #endregion
 
             GamePerformance.Instance.TrackValueType("unsettledLiquids.Count", unsettledLiquids.Count);
             foreach(KeyValuePair<Vector3, UnsettledLiquid> uLiquid in unsettledLiquids)
@@ -538,8 +551,10 @@ namespace DwarfCorp
 
                 WaterCell centerWaterCell = centerVoxel.Water;
 
+                #region Evaporation effect
                 if (centerWaterCell.WaterLevel > 0 && centerWaterCell.WaterLevel <= EvaporationLevel)
                 {
+                    // This voxel is considered to be evaporating water and stays in the list.
                     uLiquid.Value.EvaporateCheck = true;
                     if (MathFunctions.RandEvent(evaporationChance))
                     {
@@ -564,6 +579,7 @@ namespace DwarfCorp
                 }
                 else if (uLiquid.Value.EvaporateCheck)
                     uLiquid.Value.EvaporateCheck = false;
+                #endregion
 
                 // If we've evaporated the water we're done with this voxel.
                 if (centerWaterCell.WaterLevel == 0)
@@ -573,7 +589,7 @@ namespace DwarfCorp
                     continue;
                 }
 
-                // Check the cell below the current one.
+                #region Cell below check and movement
                 if (centerVoxel.GetNeighborBySuccessor(Vector3.Down, ref neighbor, false))
                 {
                     // Only bother to try if there is room in the tile.
@@ -665,6 +681,7 @@ namespace DwarfCorp
                         }
                     }
                 }
+                #endregion
 
                 // Now the only fluid left can spread.
                 // We spread to the manhattan neighbors
@@ -678,10 +695,12 @@ namespace DwarfCorp
                     waterSpreadAmount[i] = 0;
                 }
 
+                // Center voxel is valid.  Set first position and count increase.
                 waterSpreadOrder[validWaterCellCount] = centerVoxel;
                 waterSpreadAmount[validWaterCellCount] = centerWaterCell.WaterLevel;
                 validWaterCellCount++;
 
+                // Check each neighbor in order and increase count.
                 for (int i = 0; i < m_spreadNeighbors.Length; i++)
                 {
                     backupNeighbors[i] = new Voxel(neighbors[i]);
@@ -724,15 +743,18 @@ namespace DwarfCorp
                     }
                 } while (cellSwapCount > 0);
 
+                // Total up the water in every cell.
                 int waterLevel = 0;
                 for (int i = 0; i < validWaterCellCount; i++)
                 {
                     waterLevel += waterSpreadAmount[i];
                 }
 
+                // Set up split counts.
                 byte waterCellAve = (byte)(waterLevel / validWaterCellCount);
                 byte waterCellRemainder = (byte)(waterLevel % validWaterCellCount);
 
+                // Check to see if any movements have to be made to the liquid.
                 int perfectMatches = 0;
                 int oneUpMatches = 0;
                 bool unsettled = false;
@@ -743,6 +765,8 @@ namespace DwarfCorp
                     else if (water == waterCellAve + 1) oneUpMatches++;
                     else { unsettled = true; break; }
                 }
+
+                // If no movements needed to be made and our counts match it's as settled as it will be via flow shifting.
                 if (!unsettled)
                 {
                     if (perfectMatches == (validWaterCellCount - waterCellRemainder) &&
@@ -754,6 +778,7 @@ namespace DwarfCorp
                     }
                 }
 
+                // Sets the changed water tiles.
                 for (int i = 0; i < validWaterCellCount; i++)
                 {
                     byte water = waterSpreadAmount[i];
@@ -777,6 +802,7 @@ namespace DwarfCorp
 
                     neighbor = waterSpreadOrder[i];
 
+                    // If a big enough change happened force a water chunk rebuild on that chunk.
                     if (difference >= rebuildThreshold)
                     {
                         // neighbor == centerVoxel is a perfectly valid equals as we are comparing reference addresses.
@@ -785,6 +811,7 @@ namespace DwarfCorp
                             chunksToUpdate[neighbor.Chunk] = true;
                     }
 
+                    // Set water value, readd it to the list of unsettled cells and create a transfer object.
                     neighbor.Water = new WaterCell(waterToSet, centerWaterCell.Type);
                     AddUnsettledWater(neighbor);
                     CreateTransfer(neighbor.Position, neighbor.Water, centerWaterCell, difference);

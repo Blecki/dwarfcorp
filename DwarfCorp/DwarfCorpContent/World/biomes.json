@@ -228,6 +228,7 @@
         "Depth" :  128
     }
     ],
+	"ShoreVoxel": "Sand",
     "ClumpGrass": false,
     "ClumpSize": 30.0,
     "ClumpTreshold": 0.75,

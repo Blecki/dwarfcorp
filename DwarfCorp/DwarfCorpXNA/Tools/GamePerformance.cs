@@ -1112,10 +1112,10 @@ namespace DwarfCorp
                     debug3ToggleKeyPressed = false;
 
                     Instance.EnterZone("UnsettledWater");
-                    Instance.StartTrackPerformance("Whateverthefuck");
+                    Instance.StartTrackPerformance("UnsettledWater");
                     //DwarfGame.World.ChunkManager.Water.ConvertAllWater(127);
                     WaterManager.instance.FindAllUnsettledWater();
-                    Instance.StopTrackPerformance("Whateverthefuck");
+                    Instance.StopTrackPerformance("UnsettledWater");
                     Instance.ExitZone("UnsettledWater");
                 }
             }
@@ -1248,6 +1248,25 @@ namespace DwarfCorp
 
             lock (internalTrackerLockObject)
             {
+// True to sort the internal list before displaying.
+#if false
+                foreach (KeyValuePair<string, Tracker> kvp in internalTrackers.OrderByDescending(p =>
+                {
+                    if (p.Value is GamePerformance.PerformanceTracker)
+                    {
+                        return (p.Value as PerformanceTracker).GetTimeForSort();
+                    }
+                    else return float.PositiveInfinity;
+                }))
+                {
+                    if (kvp.Value != null) kvp.Value.Render();
+                }
+#else
+                foreach (KeyValuePair<string, Tracker> kvp in internalTrackers)
+                {
+                    if (kvp.Value != null) kvp.Value.Render();
+                }
+#endif
                 foreach (KeyValuePair<string, Tracker> kvp in internalTrackers.OrderByDescending(p =>
                 {
                     if (p.Value is GamePerformance.PerformanceTracker)
@@ -1289,9 +1308,9 @@ namespace DwarfCorp
                 throw new Exception("ThreadIdentifier." + Enum.GetName(typeof(ThreadIdentifier), identifier) + " used before RegisterThreadLoopTracker called for the type.");
             }
         }
-        #endregion
+#endregion
 
-        #region Drawing Functions
+#region Drawing Functions
         /// <summary>
         /// Function to draw a string from inside a Tracker.
         /// Uses the font size to automatically adjust downwards.
@@ -1351,7 +1370,7 @@ namespace DwarfCorp
             guiPosition.Y += height + guiPadding;
 
         }
-        #endregion
+#endregion
 
         public void Dispose()
         {
