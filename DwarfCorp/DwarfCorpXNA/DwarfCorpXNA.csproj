@@ -352,7 +352,7 @@
     <Compile Include="Tutorial\TutorialSaveData.cs" />
     <Compile Include="Voxels\NewVoxels\Coordinate.cs" />
     <Compile Include="Voxels\NewVoxels\Neighbors.cs" />
-    <Compile Include="Voxels\NewVoxels\NewVoxelHandle.cs" />
+    <Compile Include="Voxels\NewVoxels\TemporaryVoxelHandle.cs" />
     <Compile Include="Voxels\NewVoxels\VoxelConstants.cs" />
     <Compile Include="Voxels\Enums.cs" />
     <Compile Include="Voxels\BoxTransition.cs" />

@@ -32,32 +32,7 @@ namespace DwarfCorp
                 FaceDeltas[(int)BoxFace.Right] = new Vector3(1, 0, 0);
                 FaceDeltas[(int)BoxFace.Top] = new Vector3(0, 1, 0);
                 FaceDeltas[(int)BoxFace.Bottom] = new Vector3(0, -1, 0);
-
-                //Todo %KILL%
-                VertexNeighbors2D[(int)VoxelVertex.FrontTopLeft] = new List<GlobalVoxelOffset>()
-                {
-                    new GlobalVoxelOffset(-1, 0, 0),
-                    new GlobalVoxelOffset(-1, 0, 1),
-                    new GlobalVoxelOffset(0, 0, 1)
-                };
-                VertexNeighbors2D[(int)VoxelVertex.FrontTopRight] = new List<GlobalVoxelOffset>()
-                {
-                    new GlobalVoxelOffset(0, 0, 1),
-                    new GlobalVoxelOffset(1, 0, 1),
-                    new GlobalVoxelOffset(1, 0, 0)
-                };
-                VertexNeighbors2D[(int)VoxelVertex.BackTopLeft] = new List<GlobalVoxelOffset>()
-                {
-                    new GlobalVoxelOffset(-1, 0, 0),
-                    new GlobalVoxelOffset(-1, 0, -1),
-                    new GlobalVoxelOffset(0, 0, -1)
-                };
-                VertexNeighbors2D[(int)VoxelVertex.BackTopRight] = new List<GlobalVoxelOffset>()
-                {
-                    new GlobalVoxelOffset(0, 0, -1),
-                    new GlobalVoxelOffset(1, 0, -1),
-                    new GlobalVoxelOffset(1, 0, 0)
-                };
+                
                 CreateFaceDrawMap();
                 StaticInitialized = true;
             }

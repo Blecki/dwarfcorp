@@ -87,6 +87,11 @@ namespace DwarfCorp
             }
         }
 
+        [JsonIgnore]
+        public GlobalVoxelCoordinate Coordinate
+        {
+            get { return ChunkID + GridPosition; }
+        }
 
         [JsonIgnore]
         public VoxelType Type

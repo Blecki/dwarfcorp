@@ -30,9 +30,6 @@ namespace DwarfCorp
         [JsonIgnore]
         public static Vector3[] FaceDeltas = new Vector3[6];
 
-        [JsonIgnore] //Todo: %KILL%
-        public static List<GlobalVoxelOffset>[] VertexNeighbors2D = new List<GlobalVoxelOffset>[8];
-
         [JsonIgnore]
         public VertexBuffer VertexBuffer = null;
 
@@ -188,23 +185,14 @@ namespace DwarfCorp
 
                         foreach (VoxelVertex bestKey in top)
                         {
-                            // Todo: Need to be able to construct handle from global coordinate to kill VertexNeighbors2D here. However creating voxel handles in this loop is expensive. Reimplement using struct version of handle?
-
-                            var emptyFound = Neighbors.EnumerateVertexNeighbors2D(v.ChunkID + v.GridPosition, bestKey).Any(n =>
-                            {
-                                var handle = new NewVoxelHandle(chunk.Manager.ChunkData, n);
-                                return !handle.IsValid || handle.IsEmpty;
-                            });
-
-                            //var neighbors = VertexNeighbors2D[(int)bestKey];
-                            //chunk.GetNeighborsSuccessors(neighbors, (int)v.GridPosition.X, (int)v.GridPosition.Y, (int)v.GridPosition.Z, diagNeighbors);
-
-                            //bool emptyFound = diagNeighbors.Any(vox => vox == null || vox.IsEmpty);
-
-                            if (!emptyFound)
-                            {
+                            // If there are no empty neighbors, no slope.
+                            if (!Neighbors.EnumerateVertexNeighbors2D(v.Coordinate, bestKey)
+                                .Any(n =>
+                                {
+                                    var handle = new TemporaryVoxelHandle(chunk.Manager.ChunkData, n);
+                                    return !handle.IsValid || handle.IsEmpty;
+                                }))
                                 continue;
-                            }
 
                             switch (bestKey)
                             {
