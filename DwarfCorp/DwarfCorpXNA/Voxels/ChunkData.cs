@@ -216,7 +216,7 @@ namespace DwarfCorp
 
             foreach (VoxelHandle neighbor in neighbors)
             {
-                float d = (neighbor.Position - referenceLocation).LengthSquared();
+                float d = (neighbor.WorldPosition - referenceLocation).LengthSquared();
 
                 if (d < closestDist && neighbor.IsEmpty)
                 {
@@ -303,7 +303,7 @@ namespace DwarfCorp
 
         public bool IsVoxelOccluded(VoxelHandle voxel, Vector3 cameraPos)
         {
-            Vector3 voxelPoint = voxel.Position + Vector3.One * 0.5f;
+            Vector3 voxelPoint = voxel.WorldPosition + Vector3.One * 0.5f;
             VoxelHandle atPos = new VoxelHandle();
             foreach (Point3 coord in MathFunctions.RasterizeLine(cameraPos, voxelPoint))
             {

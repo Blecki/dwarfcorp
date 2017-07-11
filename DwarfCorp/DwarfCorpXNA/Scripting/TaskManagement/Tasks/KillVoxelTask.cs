@@ -54,7 +54,7 @@ namespace DwarfCorp
 
         public KillVoxelTask(VoxelHandle vox)
         {
-            Name = "Mine Block " + vox.Position;
+            Name = "Mine Block " + vox.WorldPosition;
             VoxelToKill = vox;
             Priority = PriorityType.Low;
         }
@@ -107,7 +107,7 @@ namespace DwarfCorp
                 }
             }
 
-            return (agent.AI.Position - VoxelToKill.Position).LengthSquared() + 100 * Math.Abs(agent.AI.Position.Y - VoxelToKill.Position.Y) + surroundedValue;
+            return (agent.AI.Position - VoxelToKill.WorldPosition).LengthSquared() + 100 * Math.Abs(agent.AI.Position.Y - VoxelToKill.WorldPosition.Y) + surroundedValue;
         }
     }
 

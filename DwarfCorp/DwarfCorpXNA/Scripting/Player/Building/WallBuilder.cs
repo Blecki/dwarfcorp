@@ -76,11 +76,11 @@ namespace DwarfCorp
             v.Health = Type.StartingHealth;
             chunk.NotifyTotalRebuild(!v.IsInterior);
 
-            World.ParticleManager.Trigger("puff", v.Position, Color.White, 20);
+            World.ParticleManager.Trigger("puff", v.WorldPosition, Color.White, 20);
 
             foreach(Physics phys in manager.World.CollisionManager.EnumerateIntersectingObjects(Vox.GetBoundingBox(), CollisionManager.CollisionType.Dynamic).OfType<Physics>())
             {
-                phys.ApplyForce((phys.GlobalTransform.Translation - (Vox.Position + new Vector3(0.5f, 0.5f, 0.5f))) * 100, 0.01f);
+                phys.ApplyForce((phys.GlobalTransform.Translation - (Vox.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f))) * 100, 0.01f);
                 BoundingBox box = v.GetBoundingBox();
                 Physics.Contact contact = new Physics.Contact();
                 Physics.TestStaticAABBAABB(box, phys.GetBoundingBox(), ref contact);
@@ -144,7 +144,7 @@ namespace DwarfCorp
         {
             foreach(WallBuilder put in Designations)
             {
-                if((put.Vox.Position - reference.Position).LengthSquared() < 0.1)
+                if((put.Vox.WorldPosition - reference.WorldPosition).LengthSquared() < 0.1)
                 {
                     return true;
                 }
@@ -158,7 +158,7 @@ namespace DwarfCorp
         {
             foreach(WallBuilder put in Designations)
             {
-                if ((put.Vox.Position - v.Position).LengthSquared() < 0.1)
+                if ((put.Vox.WorldPosition - v.WorldPosition).LengthSquared() < 0.1)
                 {
                     return put;
                 }
@@ -202,7 +202,7 @@ namespace DwarfCorp
             foreach(WallBuilder put in Designations)
             {
                 //Drawer3D.DrawBox(put.Vox.GetBoundingBox(), Color.LightBlue, st * 0.01f + 0.05f);
-                effect.World = Matrix.CreateTranslation(put.Vox.Position);
+                effect.World = Matrix.CreateTranslation(put.Vox.WorldPosition);
 
                 foreach(EffectPass pass in effect.CurrentTechnique.Passes)
                 {
@@ -224,7 +224,7 @@ namespace DwarfCorp
             effect.VertexColorTint = verified ? new Color(0.0f, 1.0f, 0.0f, 0.5f * st + 0.45f) : new Color(1.0f, 0.0f, 0.0f, 0.5f * st + 0.45f);
             foreach (VoxelHandle voxel in Selected)
             {
-                effect.World = Matrix.CreateTranslation(voxel.Position);
+                effect.World = Matrix.CreateTranslation(voxel.WorldPosition);
 
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {

@@ -592,14 +592,14 @@ namespace DwarfCorp
                 // block above you.
                 if (above != null && !above.IsEmpty)
                 {
-                    if ((int)vox.Position.Y >= (int)above.Position.Y)
+                    if ((int)vox.WorldPosition.Y >= (int)above.WorldPosition.Y)
                     {
                         continue;
                     }
                 }
                 VoxelHandle voxAbove = vox.GetVoxelAbove();
                 if (!voxAbove.IsEmpty) continue;
-                Vector3 target = voxAbove.Position + new Vector3(0.5f, 0.5f, 0.5f);
+                Vector3 target = voxAbove.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f);
                 Physics.Face(target);
                 foreach (Act.Status status in Hop(target))
                 {

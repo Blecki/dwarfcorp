@@ -59,6 +59,7 @@ namespace DwarfCorp
             new GlobalVoxelOffset(1,1,1),
         };
 
+        #region VertexNeighbors
         private static GlobalVoxelOffset[][] VertexNeighbors = new GlobalVoxelOffset[][]
         {
             new GlobalVoxelOffset[] // Front Top Left (-1, 1, 1)
@@ -159,6 +160,57 @@ namespace DwarfCorp
         };
         #endregion
 
+        #region Vertex Neighbors 2D
+        private static GlobalVoxelOffset[][] VertexNeighbors2D = new GlobalVoxelOffset[][]
+        {
+            // Front Top Left
+            new GlobalVoxelOffset[]
+            {
+                new GlobalVoxelOffset(-1, 0, 0),
+                new GlobalVoxelOffset(-1, 0, 1),
+                new GlobalVoxelOffset(0, 0, 1)
+            },
+
+            // Front Top Right
+            new GlobalVoxelOffset[]
+            {
+                new GlobalVoxelOffset(0, 0, 1),
+                new GlobalVoxelOffset(1, 0, 1),
+                new GlobalVoxelOffset(1, 0, 0)
+            },
+
+            // Front Bottom Left
+            new GlobalVoxelOffset[] { },
+
+            // Front Bottom Right
+            new GlobalVoxelOffset[] { },
+
+            // Back Top Left
+            new GlobalVoxelOffset[]
+            {
+                new GlobalVoxelOffset(-1, 0, 0),
+                new GlobalVoxelOffset(-1, 0, -1),
+                new GlobalVoxelOffset(0, 0, -1)
+            },
+            
+            // Back Top Right
+            new GlobalVoxelOffset[]
+            {
+                new GlobalVoxelOffset(0, 0, -1),
+                new GlobalVoxelOffset(1, 0, -1),
+                new GlobalVoxelOffset(1, 0, 0)
+            },
+
+            // Back Bottom Left
+            new GlobalVoxelOffset[] { },
+
+            // Back Bottom Right
+            new GlobalVoxelOffset[] { }
+        };
+        #endregion
+
+        #endregion
+
         public static IEnumerable<GlobalVoxelCoordinate> EnumerateNeighbors(
             IEnumerable<GlobalVoxelOffset> Neighbors,
             GlobalVoxelCoordinate Coordinate)
@@ -207,6 +259,12 @@ namespace DwarfCorp
             GlobalVoxelCoordinate Coordinate, VoxelVertex Vertex)
         {
             return EnumerateNeighbors(VertexNeighbors[(int)Vertex], Coordinate);
+        }
+
+        public static IEnumerable<GlobalVoxelCoordinate> EnumerateVertexNeighbors2D(
+            GlobalVoxelCoordinate Coordinate, VoxelVertex Vertex)
+        {
+            return EnumerateNeighbors(VertexNeighbors2D[(int)Vertex], Coordinate);
         }
     }
 }

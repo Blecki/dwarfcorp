@@ -131,7 +131,7 @@ namespace DwarfCorp
             for(int i = 0; i < Designations.Count; i++)
             {
                 VoxelHandle v = Designations[i];
-                float d = (v.Position - worldCoordinate).LengthSquared();
+                float d = (v.WorldPosition - worldCoordinate).LengthSquared();
 
                 if(d < closestDist)
                 {

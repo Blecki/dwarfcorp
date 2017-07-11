@@ -97,7 +97,7 @@ namespace DwarfCorp
                 {
                     if (OnCast(tree))
                     {
-                        CreateEntity(voxel.Position + Vector3.One*0.5f);
+                        CreateEntity(voxel.WorldPosition + Vector3.One*0.5f);
                         got = true;
                     }
                 }

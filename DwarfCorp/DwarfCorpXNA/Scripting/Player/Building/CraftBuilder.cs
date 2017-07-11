@@ -93,13 +93,13 @@ namespace DwarfCorp
         public bool IsDesignation(VoxelHandle reference)
         {
             if (reference == null) return false;
-            return Designations.Any(put => (put.Location.Position - reference.Position).LengthSquared() < 0.1);
+            return Designations.Any(put => (put.Location.WorldPosition - reference.WorldPosition).LengthSquared() < 0.1);
         }
 
 
         public CraftDesignation GetDesignation(VoxelHandle v)
         {
-            return Designations.FirstOrDefault(put => (put.Location.Position - v.Position).LengthSquared() < 0.1);
+            return Designations.FirstOrDefault(put => (put.Location.WorldPosition - v.WorldPosition).LengthSquared() < 0.1);
         }
 
         public void AddDesignation(CraftDesignation des)
@@ -151,7 +151,7 @@ namespace DwarfCorp
 
             if (CurrentCraftType != null && CurrentCraftBody == null)
             {
-                CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.Name, player.VoxSelector.VoxelUnderMouse.Position);
+                CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.Name, player.VoxSelector.VoxelUnderMouse.WorldPosition);
                 CurrentCraftBody.SetFlagRecursive(GameComponent.Flag.Active, false);
                 CurrentDesignation = new CraftDesignation()
                 {
@@ -164,11 +164,12 @@ namespace DwarfCorp
             if (CurrentCraftBody == null || player.VoxSelector.VoxelUnderMouse == null) 
                 return;
 
-            CurrentCraftBody.LocalPosition = player.VoxSelector.VoxelUnderMouse.Position + Vector3.One * 0.5f;
+            CurrentCraftBody.LocalPosition = player.VoxSelector.VoxelUnderMouse.WorldPosition + Vector3.One * 0.5f;
             CurrentCraftBody.GlobalTransform = CurrentCraftBody.LocalTransform;
             CurrentCraftBody.OrientToWalls();
 
-            if (CurrentDesignation.Location.IsSameAs(player.VoxSelector.VoxelUnderMouse)) 
+            //Todo: Operator == implemented correctly for voxel handles?
+            if (CurrentDesignation.Location.Equals(player.VoxSelector.VoxelUnderMouse)) 
                 return;
             
             CurrentDesignation.Location = new VoxelHandle(player.VoxSelector.VoxelUnderMouse);
@@ -190,7 +191,7 @@ namespace DwarfCorp
             }
 
             if (!String.IsNullOrEmpty(designation.ItemType.CraftLocation) &&
-                Faction.FindNearestItemWithTags(designation.ItemType.CraftLocation, designation.Location.Position, false) ==
+                Faction.FindNearestItemWithTags(designation.ItemType.CraftLocation, designation.Location.WorldPosition, false) ==
                 null)
             {
                 World.ShowToolPopup("Can't build, need " + designation.ItemType.CraftLocation);
@@ -274,7 +275,7 @@ namespace DwarfCorp
                             }
                             else
                             {
-                                Vector3 pos = r.Position + Vector3.One*0.5f;
+                                Vector3 pos = r.WorldPosition + Vector3.One*0.5f;
                                 Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f);
                                 Vector3 endPos = pos;
                                 CraftDesignation newDesignation = new CraftDesignation()

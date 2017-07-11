@@ -258,7 +258,7 @@ namespace DwarfCorp
 
             foreach (VoxelHandle v in Voxels)
             {
-                double d = (v.Position - position + halfSize).LengthSquared();
+                double d = (v.WorldPosition - position + halfSize).LengthSquared();
 
                 if(d < closestDist)
                 {

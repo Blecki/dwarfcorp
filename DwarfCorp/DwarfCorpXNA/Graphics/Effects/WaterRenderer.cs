@@ -127,7 +127,7 @@ namespace DwarfCorp
                     return defaultHeight;
                 }
 
-                return (h + vox.Position.Y + defaultHeight) / 2.0f + 0.5f;
+                return (h + vox.WorldPosition.Y + defaultHeight) / 2.0f + 0.5f;
             }
             else
             {

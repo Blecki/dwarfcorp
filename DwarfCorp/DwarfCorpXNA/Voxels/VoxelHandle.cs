@@ -54,12 +54,6 @@ namespace DwarfCorp
             return Equals(Chunk, other.Chunk) && Index == other.Index;
         }
 
-        public bool IsSameAs(VoxelHandle other)
-        {
-            if (quickCompare == other.quickCompare) return true;
-            return false;
-        }
-
         public override int GetHashCode()
         {
             unchecked
@@ -84,7 +78,7 @@ namespace DwarfCorp
         }
 
         [JsonIgnore]
-        public Vector3 Position 
+        public Vector3 WorldPosition 
         {
             get
             {
@@ -180,6 +174,7 @@ namespace DwarfCorp
         }
         private static readonly Color BlankColor = new Color(0, 255, 0);
 
+        // Todo: %KILL% - Can get from chunk. Verify proper serialization.
         private GlobalChunkCoordinate chunkID = new GlobalChunkCoordinate(0, 0, 0);
         public GlobalChunkCoordinate ChunkID
         {
@@ -200,6 +195,7 @@ namespace DwarfCorp
             }
         }
 
+        // Todo: %KILL% - Only used by Faction for storing dig designations?
         private void RegenerateQuickCompare()
         {
             // long build of the ulong.
@@ -334,8 +330,8 @@ namespace DwarfCorp
 
             if(Chunk.Manager.World.ParticleManager != null)
             {
-                Chunk.Manager.World.ParticleManager.Trigger(Type.ParticleType, Position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
-                Chunk.Manager.World.ParticleManager.Trigger("puff", Position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
+                Chunk.Manager.World.ParticleManager.Trigger(Type.ParticleType, WorldPosition + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
+                Chunk.Manager.World.ParticleManager.Trigger("puff", WorldPosition + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
             }
 
             if(Chunk.Manager.World.Master != null)
@@ -343,7 +339,7 @@ namespace DwarfCorp
                 Chunk.Manager.World.Master.Faction.OnVoxelDestroyed(this);
             }
 
-            Type.ExplosionSound.Play(Position);
+            Type.ExplosionSound.Play(WorldPosition);
 
             List<Body> emittedResources = null;
             if (Type.ReleasesResource)
@@ -355,7 +351,7 @@ namespace DwarfCorp
                     emittedResources = new List<Body>
                     {
                         EntityFactory.CreateEntity<Body>(Type.ResourceToRelease + " Resource",
-                            Position + new Vector3(0.5f, 0.5f, 0.5f))
+                            WorldPosition + new Vector3(0.5f, 0.5f, 0.5f))
                     };
                 }
             }
@@ -367,12 +363,12 @@ namespace DwarfCorp
 
         public BoundingSphere GetBoundingSphere()
         {
-            return new BoundingSphere(Position, 1);
+            return new BoundingSphere(WorldPosition, 1);
         }
 
         public BoundingBox GetBoundingBox()
         {
-            var pos = Position;
+            var pos = WorldPosition;
             return new BoundingBox(pos, pos + Vector3.One);
         }
 
@@ -387,6 +383,14 @@ namespace DwarfCorp
             if (chunk != null)
                 chunkID = chunk.ID;
             GridPosition = gridPosition;
+        }
+
+        public VoxelHandle(ChunkData Chunks, GlobalVoxelCoordinate Coordinate)
+        {
+            Chunks.ChunkMap.TryGetValue(Coordinate.GetGlobalChunkCoordinate(), out _chunk);
+            if (Chunk != null)
+                chunkID = Chunk.ID;
+            GridPosition = Coordinate.GetLocalVoxelCoordinate();
         }
 
         [OnDeserialized]
@@ -422,7 +426,7 @@ namespace DwarfCorp
 
         public bool GetNeighbor(Vector3 dir, ref VoxelHandle vox)
         {
-            return Chunk.Manager.ChunkData.GetVoxel(Position + dir, ref vox);
+            return Chunk.Manager.ChunkData.GetVoxel(WorldPosition + dir, ref vox);
         }
 
         public override string ToString()

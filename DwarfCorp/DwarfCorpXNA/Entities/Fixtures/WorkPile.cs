@@ -83,30 +83,30 @@ namespace DwarfCorp
                 if (voxel.GetNeighbor(new Vector3(0, 0, 1), ref neighbor) &&
                     !enumerable.Any(o => o.Equals(neighbor)))
                 {
-                    yield return new Fence(components, voxel.Position + off + new Vector3(0, 0, 0.45f),
+                    yield return new Fence(components, voxel.WorldPosition + off + new Vector3(0, 0, 0.45f),
                         (float)Math.Atan2(0, 1), asset);
                 }
 
                 if (voxel.GetNeighbor(new Vector3(0, 0, -1), ref neighbor) && !enumerable.Any(o => o.Equals(neighbor)))
                 {
-                    yield return new Fence(components, voxel.Position + off + new Vector3(0, 0, -0.45f), (float)Math.Atan2(0, -1), asset);
+                    yield return new Fence(components, voxel.WorldPosition + off + new Vector3(0, 0, -0.45f), (float)Math.Atan2(0, -1), asset);
                 }
 
 
                 if (voxel.GetNeighbor(new Vector3(1, 0, 0), ref neighbor) && !enumerable.Any(o => o.Equals(neighbor)))
                 {
-                    yield return new Fence(components, voxel.Position + off + new Vector3(0.45f, 0, 0.0f), (float)Math.Atan2(1, 0), asset);
+                    yield return new Fence(components, voxel.WorldPosition + off + new Vector3(0.45f, 0, 0.0f), (float)Math.Atan2(1, 0), asset);
                 }
 
 
                 if (voxel.GetNeighbor(new Vector3(-1, 0, 0), ref neighbor) && !enumerable.Any(o => o.Equals(neighbor)))
                 {
-                    yield return new Fence(components, voxel.Position + off + new Vector3(-0.45f, 0, 0.0f), (float)Math.Atan2(-1, 0), asset);
+                    yield return new Fence(components, voxel.WorldPosition + off + new Vector3(-0.45f, 0, 0.0f), (float)Math.Atan2(-1, 0), asset);
                 }
 
                 if (createWorkPiles && MathFunctions.RandEvent(0.1f))
                 {
-                    yield return new WorkPile(components, voxel.Position + off);
+                    yield return new WorkPile(components, voxel.WorldPosition + off);
                 }
             }
         }

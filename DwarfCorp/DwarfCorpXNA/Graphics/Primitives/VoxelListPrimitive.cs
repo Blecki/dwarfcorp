@@ -203,9 +203,9 @@ namespace DwarfCorp
                                     Vertices = newVertices;
                                 }
 
-                                Vertices[maxVertex] = new ExtendedVertex(vert.Position + v.Position +
+                                Vertices[maxVertex] = new ExtendedVertex(vert.Position + v.WorldPosition +
                                                                    VertexNoise.GetNoiseVectorFromRepeatingTexture(
-                                                                       vert.Position + v.Position) + offset,
+                                                                       vert.Position + v.WorldPosition) + offset,
                                     new Color(colorInfo.SunColor, colorInfo.AmbientColor, colorInfo.DynamicColor), 
                                     tint,
                                     uvs.Uvs[vertOffset + vertexIndex] + texOffset,

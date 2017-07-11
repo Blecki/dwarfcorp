@@ -188,10 +188,18 @@ namespace DwarfCorp
 
                         foreach (VoxelVertex bestKey in top)
                         {
-                            var neighbors = VertexNeighbors2D[(int)bestKey];
-                            chunk.GetNeighborsSuccessors(neighbors, (int)v.GridPosition.X, (int)v.GridPosition.Y, (int)v.GridPosition.Z, diagNeighbors);
+                            // Todo: Need to be able to construct handle from global coordinate to kill VertexNeighbors2D here. However creating voxel handles in this loop is expensive. Reimplement using struct version of handle?
 
-                            bool emptyFound = diagNeighbors.Any(vox => vox == null || vox.IsEmpty);
+                            var emptyFound = Neighbors.EnumerateVertexNeighbors2D(v.ChunkID + v.GridPosition, bestKey).Any(n =>
+                            {
+                                var handle = new NewVoxelHandle(chunk.Manager.ChunkData, n);
+                                return !handle.IsValid || handle.IsEmpty;
+                            });
+
+                            //var neighbors = VertexNeighbors2D[(int)bestKey];
+                            //chunk.GetNeighborsSuccessors(neighbors, (int)v.GridPosition.X, (int)v.GridPosition.Y, (int)v.GridPosition.Z, diagNeighbors);
+
+                            //bool emptyFound = diagNeighbors.Any(vox => vox == null || vox.IsEmpty);
 
                             if (!emptyFound)
                             {

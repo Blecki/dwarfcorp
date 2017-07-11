@@ -92,7 +92,7 @@ namespace DwarfCorp
 
         public override float Heuristic(VoxelHandle voxel)
         {
-            return (voxel.Position - Voxel.Position).LengthSquared();
+            return (voxel.WorldPosition - Voxel.WorldPosition).LengthSquared();
         }
 
         public VoxelGoalRegion(VoxelHandle voxel)
@@ -126,7 +126,7 @@ namespace DwarfCorp
 
         public override float Heuristic(VoxelHandle voxel)
         {
-            return (voxel.Position - Voxel.Position).LengthSquared();
+            return (voxel.WorldPosition - Voxel.WorldPosition).LengthSquared();
         }
 
         public AdjacentVoxelGoalRegion2D(VoxelHandle voxel)
@@ -136,9 +136,9 @@ namespace DwarfCorp
 
         public override bool IsInGoalRegion(VoxelHandle voxel)
         {
-            return (Math.Abs(voxel.Position.X - Voxel.Position.X) <= 0.5f &&
-                   Math.Abs(voxel.Position.Z - Voxel.Position.Z) <= 0.5f) &&
-                   Math.Abs(voxel.Position.Y - Voxel.Position.Y) <= 1.0f;
+            return (Math.Abs(voxel.WorldPosition.X - Voxel.WorldPosition.X) <= 0.5f &&
+                   Math.Abs(voxel.WorldPosition.Z - Voxel.WorldPosition.Z) <= 0.5f) &&
+                   Math.Abs(voxel.WorldPosition.Y - Voxel.WorldPosition.Y) <= 1.0f;
         }
 
         public override VoxelHandle GetVoxel()
@@ -165,7 +165,7 @@ namespace DwarfCorp
         public override float Heuristic(VoxelHandle voxel)
         {
             BoundingBox worldBounds = voxel.Chunk.Manager.Bounds;
-            Vector3 pos = voxel.Position;
+            Vector3 pos = voxel.WorldPosition;
             float value = MathFunctions.Dist2D(worldBounds, pos);
             return value;
         }
@@ -205,17 +205,17 @@ namespace DwarfCorp
         {
             Radius = radius;
             Voxel = voxel;
-            Position = voxel.Position;
+            Position = voxel.WorldPosition;
         }
 
         public override float Heuristic(VoxelHandle voxel)
         {
-            return (voxel.Position - Voxel.Position).LengthSquared();
+            return (voxel.WorldPosition - Voxel.WorldPosition).LengthSquared();
         }
 
         public override bool IsInGoalRegion(VoxelHandle voxel)
         {
-            return (voxel.Position - Position).LengthSquared() < RadiusSquared;
+            return (voxel.WorldPosition - Position).LengthSquared() < RadiusSquared;
         }
 
         public override bool IsPossible()

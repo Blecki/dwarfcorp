@@ -128,7 +128,7 @@ namespace DwarfCorp
             {
                 return pos;
             }
-            else return new Vector3(pos.X, vox.Position.Y + 0.5f, pos.Z);
+            else return new Vector3(pos.X, vox.WorldPosition.Y + 0.5f, pos.Z);
         }
 
         public void OverheadUpdate(DwarfTime time, ChunkManager chunks)

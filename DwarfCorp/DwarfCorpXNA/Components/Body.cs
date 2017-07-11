@@ -239,7 +239,7 @@ namespace DwarfCorp
                 {
                     if (neighbor != null && !neighbor.IsEmpty)
                     {
-                        Vector3 diff = neighbor.Position - curr.Position;
+                        Vector3 diff = neighbor.WorldPosition - curr.WorldPosition;
                         Matrix mat = Matrix.CreateRotationY((float)Math.Atan2(diff.X, diff.Z));
                         mat.Translation = pos;
                         LocalTransform = mat;

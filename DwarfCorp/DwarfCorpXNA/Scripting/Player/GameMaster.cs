@@ -502,7 +502,7 @@ namespace DwarfCorp
                 if (VoxSelector.VoxelUnderMouse != null)
                 {
                     World.Tutorial("unslice");
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Position.Y,
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.WorldPosition.Y,
                         ChunkManager.SliceMode.Y);
                     Drawer3D.DrawBox(VoxSelector.VoxelUnderMouse.GetBoundingBox(), Color.White, 0.15f, true);
                 }

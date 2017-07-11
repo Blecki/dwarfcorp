@@ -823,17 +823,17 @@ namespace DwarfCorp
                                 vOffset = -0.5f;
                             }
 
-                            float value = MoteNoise.Noise(v.Position.X * moteData.RegionScale, v.Position.Y * moteData.RegionScale, v.Position.Z * moteData.RegionScale);
-                            float s = MoteScaleNoise.Noise(v.Position.X * moteData.RegionScale, v.Position.Y * moteData.RegionScale, v.Position.Z * moteData.RegionScale) * moteData.MoteScale;
+                            float value = MoteNoise.Noise(v.WorldPosition.X * moteData.RegionScale, v.WorldPosition.Y * moteData.RegionScale, v.WorldPosition.Z * moteData.RegionScale);
+                            float s = MoteScaleNoise.Noise(v.WorldPosition.X * moteData.RegionScale, v.WorldPosition.Y * moteData.RegionScale, v.WorldPosition.Z * moteData.RegionScale) * moteData.MoteScale;
 
                             if (!(Math.Abs(value) > moteData.SpawnThreshold))
                             {
                                 continue;
                             }
 
-                            Vector3 smallNoise = ClampVector(VertexNoise.GetRandomNoiseVector(v.Position * moteData.RegionScale * 20.0f) * 20.0f, 0.4f);
+                            Vector3 smallNoise = ClampVector(VertexNoise.GetRandomNoiseVector(v.WorldPosition * moteData.RegionScale * 20.0f) * 20.0f, 0.4f);
                             smallNoise.Y = 0.0f;
-                            grassPositions.Add(v.Position + new Vector3(0.5f, 1.0f + s * 0.5f + vOffset, 0.5f) + smallNoise);
+                            grassPositions.Add(v.WorldPosition + new Vector3(0.5f, 1.0f + s * 0.5f + vOffset, 0.5f) + smallNoise);
                             grassScales.Add(s);
                             grassColors.Add(new Color(v.SunColor, 128, 0));
                         }
@@ -1008,7 +1008,7 @@ namespace DwarfCorp
 
         public byte GetIntensity(DynamicLight light, byte lightIntensity, VoxelHandle voxel)
         {
-            Vector3 vertexPos = voxel.Position;
+            Vector3 vertexPos = voxel.WorldPosition;
             Vector3 diff = vertexPos - (light.Position + new Vector3(0.5f, 0.5f, 0.5f));
             float dist = diff.LengthSquared() * 2;
 
@@ -1174,7 +1174,7 @@ namespace DwarfCorp
                 }
 
                 List<VoxelVertex> vertsNeighbor = new List<VoxelVertex>();
-                Vector3 otherDelta = v.Position - neighbor.Position + myDelta;
+                Vector3 otherDelta = v.WorldPosition - neighbor.WorldPosition + myDelta;
                 vertsNeighbor.Add(GetNearestDelta(otherDelta));
 
 
@@ -1512,6 +1512,7 @@ namespace DwarfCorp
             }
         }
         
+        // Todo: %KILL%
         public void GetNeighborsSuccessors(List<GlobalVoxelOffset> succ, int x, int y, int z, List<VoxelHandle> ToFill)
         {
             ToFill.Clear();
@@ -1664,8 +1665,8 @@ namespace DwarfCorp
                     if (!IsGridPositionValid(new LocalVoxelCoordinate((int)neighbor.X + gridPos.X, (int)neighbor.Y + gridPos.Y, (int)neighbor.Z + gridPos.Z)))
                     {
                         if (Manager.ChunkData.GetNonNullVoxelAtWorldLocation(
-                            new Vector3(v.Position.X + neighbor.X, v.Position.Y + neighbor.Y, 
-                            v.Position.Z + neighbor.Z), ref atPos) && !atPos.IsEmpty)
+                            new Vector3(v.WorldPosition.X + neighbor.X, v.WorldPosition.Y + neighbor.Y, 
+                            v.WorldPosition.Z + neighbor.Z), ref atPos) && !atPos.IsEmpty)
                         {
                             return false;
                         }
@@ -1693,7 +1694,7 @@ namespace DwarfCorp
                 return false;
             }
 
-            Vector3 pos = v.Position;
+            Vector3 pos = v.WorldPosition;
             VoxelChunk chunk = Manager.ChunkData.ChunkMap[v.ChunkID];
             var gridPoint = v.GridPosition;
             bool interior = IsInteriorPoint(gridPoint, chunk);

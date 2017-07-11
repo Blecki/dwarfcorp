@@ -118,7 +118,7 @@ namespace DwarfCorp
 
                 VoxelHandle last = path.Last();
 
-                if ((last.Position - entity.LocalTransform.Translation).Length() > Radius * 2)
+                if ((last.WorldPosition - entity.LocalTransform.Translation).Length() > Radius * 2)
                 {
                     yield return Status.Fail;
                     yield break;
@@ -226,7 +226,7 @@ namespace DwarfCorp
                             yield return Act.Status.Fail;
                             yield break;
                         }
-                        bool targetMoved = (path.Last().DestinationVoxel.Position - entity.LocalTransform.Translation).Length() > Math.Max(Radius, 2) * 2
+                        bool targetMoved = (path.Last().DestinationVoxel.WorldPosition - entity.LocalTransform.Translation).Length() > Math.Max(Radius, 2) * 2
                         ;
                         if (MovingTarget && path != null && (path.Count > 0 && targetMoved))
                         {

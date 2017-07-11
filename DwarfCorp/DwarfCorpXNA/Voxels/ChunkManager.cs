@@ -1177,7 +1177,7 @@ namespace DwarfCorp
                     return curr;
                 }
                 
-                if((curr.Position - seed.Position).LengthSquared() < radiusSquared)
+                if((curr.WorldPosition - seed.WorldPosition).LengthSquared() < radiusSquared)
                 {
                     curr.Chunk.GetNeighborsManhattan((int)curr.GridPosition.X, (int)curr.GridPosition.Y, (int)curr.GridPosition.Z, neighbors);
 
@@ -1210,7 +1210,7 @@ namespace DwarfCorp
             while (queue.Count > 0)
             {
                 VoxelHandle curr = queue.Dequeue();
-                if (curr != null && searchQuery(curr) && !outList.Contains(curr) && (curr.Position - seed.Position).LengthSquared() < radiusSquared)
+                if (curr != null && searchQuery(curr) && !outList.Contains(curr) && (curr.WorldPosition - seed.WorldPosition).LengthSquared() < radiusSquared)
                 {
                     outList.Add(curr);
                     List<VoxelHandle> neighbors = new List<VoxelHandle>(6);

@@ -160,7 +160,7 @@ namespace DwarfCorp
                 float bestDist = float.MaxValue;
                 foreach (MoveAction action in actions)
                 {
-                    float dist = (action.DestinationVoxel.Position - target).LengthSquared();
+                    float dist = (action.DestinationVoxel.WorldPosition - target).LengthSquared();
 
                     if (dist < bestDist)
                     {

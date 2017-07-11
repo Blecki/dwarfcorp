@@ -437,7 +437,7 @@ namespace DwarfCorp
                 VoxelHandle vref = kvp.Value.Vox;
                 VoxelHandle v = vref;
 
-                float d = (v.Position - position).LengthSquared();
+                float d = (v.WorldPosition - position).LengthSquared();
                 if(!(d < closestDist))
                 {
                     continue;
@@ -459,7 +459,7 @@ namespace DwarfCorp
                 VoxelHandle vref = designation.Vox;
                 VoxelHandle v = vref;
 
-                float d = (v.Position - position).LengthSquared();
+                float d = (v.WorldPosition - position).LengthSquared();
                 if(!(d < closestDist))
                 {
                     continue;
@@ -562,7 +562,7 @@ namespace DwarfCorp
             {
                 if (room.RoomData.Name != typeName || !room.IsBuilt) continue;
                 float dist =
-                    (room.GetNearestVoxel(position).Position - position).LengthSquared();
+                    (room.GetNearestVoxel(position).WorldPosition - position).LengthSquared();
 
                 if (dist < nearestDistance)
                 {
@@ -937,7 +937,7 @@ namespace DwarfCorp
                 
                 if (World.ChunkManager.ChunkData.GetFirstVoxelUnder(position + offset, ref voxel, true))
                 {
-                    var body = EntityFactory.CreateEntity<Body>(creature, voxel.Position + new Vector3(0.5f, 1, 0.5f));
+                    var body = EntityFactory.CreateEntity<Body>(creature, voxel.WorldPosition + new Vector3(0.5f, 1, 0.5f));
                     var ai = body.EnumerateAll().OfType<CreatureAI>().FirstOrDefault();
                     
                     if (ai != null)
@@ -985,7 +985,7 @@ namespace DwarfCorp
             {
                 if (room.Voxels.Count == 0) continue;
                 float dist =
-                    (room.GetNearestVoxel(position).Position - position).LengthSquared();
+                    (room.GetNearestVoxel(position).WorldPosition - position).LengthSquared();
 
                 if (dist < nearestDistance)
                 {

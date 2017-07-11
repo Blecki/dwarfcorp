@@ -88,7 +88,7 @@ namespace DwarfCorp
 
                 if (selected != null && ((!Transmute && selected.IsEmpty) || Transmute && !selected.IsEmpty) && OnCast(tree))
                 {
-                    Vector3 p = selected.Position + Vector3.One*0.5f;
+                    Vector3 p = selected.WorldPosition + Vector3.One*0.5f;
                     IndicatorManager.DrawIndicator("-" + ManaCost + " M",p, 1.0f, Color.Red);
                     World.ParticleManager.Trigger("star_particle", p, Color.White, 4);
                     VoxelLibrary.PlaceType(VoxelLibrary.GetVoxelType(VoxelType), selected);

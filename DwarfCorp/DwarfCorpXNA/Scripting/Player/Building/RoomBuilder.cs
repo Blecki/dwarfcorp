@@ -131,7 +131,7 @@ namespace DwarfCorp
 
         public BuildVoxelOrder GetBuildDesignation(VoxelHandle v)
         {
-            return BuildDesignations.SelectMany(room => room.VoxelOrders).FirstOrDefault(buildDesignation => (buildDesignation.Voxel.Position - v.Position).LengthSquared() < 0.1f);
+            return BuildDesignations.SelectMany(room => room.VoxelOrders).FirstOrDefault(buildDesignation => (buildDesignation.Voxel.WorldPosition - v.WorldPosition).LengthSquared() < 0.1f);
         }
 
         public BuildRoomOrder GetMostLikelyDesignation(VoxelHandle v)

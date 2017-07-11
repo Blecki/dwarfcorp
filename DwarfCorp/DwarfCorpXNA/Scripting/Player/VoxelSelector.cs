@@ -257,7 +257,7 @@ namespace DwarfCorp
                 //World.ParticleManager.Trigger("crumbs", underMouse.Position + Vector3.Up, Color.White, 1);
                 VoxelUnderMouse = underMouse;
                 // Update the cursor light.
-                World.CursorLightPos = underMouse.Position + new Vector3(0.5f, 0.5f, 0.5f);
+                World.CursorLightPos = underMouse.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f);
 
                 // Get the type of the voxel and display it to the player.
                 if (Enabled && !underMouse.IsEmpty && underMouse.IsExplored)
@@ -347,7 +347,7 @@ namespace DwarfCorp
                             buffer.Min.Y += BoxYOffset;
                         }
 
-                        SelectionBuffer = Select(buffer, FirstVoxel.Position, underMouse.Position).ToList();
+                        SelectionBuffer = Select(buffer, FirstVoxel.WorldPosition, underMouse.WorldPosition).ToList();
 
                         if (!altPressed && Brush != VoxelBrush.Stairs)
                         {
@@ -652,7 +652,7 @@ namespace DwarfCorp
                 if ((SelectionType == VoxelSelectionType.SelectFilled && !v.IsEmpty)
                     || (SelectionType == VoxelSelectionType.SelectEmpty && v.IsEmpty))
                 {
-                    Drawer2D.DrawRect(World.Camera, v.Position + half, screenRect, dotColor, Color.Transparent, 0.0f);
+                    Drawer2D.DrawRect(World.Camera, v.WorldPosition + half, screenRect, dotColor, Color.Transparent, 0.0f);
                 }
             }
         }

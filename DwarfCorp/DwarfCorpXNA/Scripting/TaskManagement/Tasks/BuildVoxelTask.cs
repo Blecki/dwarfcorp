@@ -55,7 +55,7 @@ namespace DwarfCorp
 
         public BuildVoxelTask(VoxelHandle voxel, VoxelType type)
         {
-            Name = "Put voxel of type: " + type.Name + " on voxel " + voxel.Position;
+            Name = "Put voxel of type: " + type.Name + " on voxel " + voxel.WorldPosition;
             Voxel = voxel;
             VoxType = type;
             Priority = PriorityType.Low;
@@ -83,7 +83,7 @@ namespace DwarfCorp
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            return Voxel == null ? 1000 : 0.01f * (agent.AI.Position - Voxel.Position).LengthSquared() + (Voxel.Position.Y);
+            return Voxel == null ? 1000 : 0.01f * (agent.AI.Position - Voxel.WorldPosition).LengthSquared() + (Voxel.WorldPosition.Y);
         }
 
         public IEnumerable<Act.Status> AddBuildOrder(Creature creature)

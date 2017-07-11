@@ -215,7 +215,7 @@ namespace DwarfCorp
                 else
                 {
                     if (Target != null && Creature.AI.DrawAIPlan)
-                        Drawer3D.DrawLine(Creature.AI.Position, Target.Position, Color.Blue, 0.25f);
+                        Drawer3D.DrawLine(Creature.AI.Position, Target.WorldPosition, Color.Blue, 0.25f);
                     Status statusResult = Status.Running;
 
                     while(PlanSubscriber.Responses.Count > 0)
