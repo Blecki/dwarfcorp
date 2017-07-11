@@ -346,6 +346,7 @@ namespace DwarfCorp
                     continue;
                 }
 
+                //Todo: %KILL% the CoordsAt bit.
                 gridCoord = data.CoordsAt(idx);
                 int x = (int)gridCoord.X;
                 int y = (int)gridCoord.Y;

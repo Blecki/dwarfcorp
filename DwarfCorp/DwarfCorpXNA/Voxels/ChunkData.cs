@@ -350,7 +350,7 @@ namespace DwarfCorp
 
             for (int y = point.Y; y < ChunkSizeY; y++)
             {
-                int index = startChunk.Data.IndexAt(new LocalVoxelCoordinate(point.X, y, point.Z));
+                int index = VoxelData.IndexAt(new LocalVoxelCoordinate(point.X, y, point.Z));
 
                 if (startChunk.Data.Types[index] != 0 || (considerWater && startChunk.Data.Water[index].WaterLevel > 0))
                 {
@@ -378,7 +378,7 @@ namespace DwarfCorp
 
             for(int y = point.Y; y >= 0; y--)
             {
-                int index = startChunk.Data.IndexAt(new LocalVoxelCoordinate(point.X, y, point.Z));
+                int index = VoxelData.IndexAt(new LocalVoxelCoordinate(point.X, y, point.Z));
               
                 if(startChunk.Data.Types[index] != 0 || (considerWater && startChunk.Data.Water[index].WaterLevel > 0))
                 {
@@ -692,7 +692,7 @@ namespace DwarfCorp
                 return new WaterCell();
             }
 
-            return chunkAtLocation.Data.Water[chunkAtLocation.Data.IndexAt(worldLocation.GetLocalVoxelCoordinate())];
+            return chunkAtLocation.Data.Water[VoxelData.IndexAt(worldLocation.GetLocalVoxelCoordinate())];
         }
 
         public bool SaveAllChunks(string directory, bool compress)

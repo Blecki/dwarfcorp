@@ -169,7 +169,7 @@ namespace DwarfCorp
                 {
                     for (int z = 0; z < chunk.SizeZ; z++)
                     {
-                        int index = chunk.Data.IndexAt(new LocalVoxelCoordinate(x, y, z));
+                        int index = VoxelData.IndexAt(new LocalVoxelCoordinate(x, y, z));
                         if (fogOfWar && !chunk.Data.IsExplored[index]) continue;
 
                         if (chunk.Data.Water[index].WaterLevel > 0)
@@ -317,8 +317,8 @@ namespace DwarfCorp
 
             // These are reused for every face.
             Vector3 origin = chunk.Origin + new Vector3(x, y, z);
-            int index = chunk.Data.IndexAt(new LocalVoxelCoordinate(x, y, z));
-            float centerWaterlevel = chunk.Data.Water[chunk.Data.IndexAt(new LocalVoxelCoordinate(x, y, z))].WaterLevel;
+            int index = VoxelData.IndexAt(new LocalVoxelCoordinate(x, y, z));
+            float centerWaterlevel = chunk.Data.Water[VoxelData.IndexAt(new LocalVoxelCoordinate(x, y, z))].WaterLevel;
 
             for (int faces = 0; faces < cache.drawFace.Length; faces++)
             {

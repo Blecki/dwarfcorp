@@ -6,6 +6,9 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// Stores actual data for voxels in SOA format.
+    /// </summary>
     public class VoxelData
     {
         public bool[] IsExplored;
@@ -13,27 +16,19 @@ namespace DwarfCorp
         public byte[] Types;
         public byte[] SunColors;
         public WaterCell[] Water;
-        public int SizeX;
-        public int SizeY;
-        public int SizeZ;
         public RampType[] RampTypes;
 
-        public int CornerIndexAt(int x, int y, int z)
+        public static int IndexAt(LocalVoxelCoordinate C)
         {
-            return (z * (SizeY + 1) + y) * (SizeX + 1) + x;
-        }
-
-        public int IndexAt(LocalVoxelCoordinate C)
-        {
-            return (C.Z * SizeY + C.Y) * SizeX + C.X;
+            return (C.Z * VoxelConstants.ChunkSizeY + C.Y) * VoxelConstants.ChunkSizeX + C.X;
         }
 
         public Vector3 CoordsAt(int idx)
         {
-            int x = idx % (SizeX);
-            idx /= (SizeX);
-            int y = idx % (SizeY);
-            idx /= (SizeY);
+            int x = idx % (VoxelConstants.ChunkSizeX);
+            idx /= (VoxelConstants.ChunkSizeX);
+            int y = idx % (VoxelConstants.ChunkSizeY);
+            idx /= (VoxelConstants.ChunkSizeY);
             int z = idx;
             return new Vector3(x, y, z);
         }

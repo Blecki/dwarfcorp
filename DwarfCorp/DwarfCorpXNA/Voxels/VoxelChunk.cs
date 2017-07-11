@@ -459,6 +459,7 @@ namespace DwarfCorp
             }
         }
 
+        // Todo: %KILL% -> Belongs inside VoxelData.
         public static VoxelData AllocateData(int sx, int sy, int sz)
         {
             int numVoxels = sx * sy * sz;
@@ -470,10 +471,6 @@ namespace DwarfCorp
                 Types = new byte[numVoxels],
                 Water = new WaterCell[numVoxels],
                 RampTypes = new RampType[numVoxels],
-                //VertexColors = new Color[(sx + 1) * (sy + 1) * (sz + 1)],
-                SizeX = sx,
-                SizeY = sy,
-                SizeZ = sz
             };
 
             for (int i = 0; i < numVoxels; i++)
@@ -969,7 +966,7 @@ namespace DwarfCorp
                 {
                     for (int y = 0; y < SizeY; y++)
                     {
-                        int index = Data.IndexAt(new LocalVoxelCoordinate(x, y, z));
+                        int index = VoxelData.IndexAt(new LocalVoxelCoordinate(x, y, z));
                         Data.SunColors[index] = sunColor;
                     }
                 }
@@ -992,7 +989,7 @@ namespace DwarfCorp
             int z = (int)voxRef.GridPosition.Z;
             for (int y = (int)voxRef.GridPosition.Y; y < SizeY; y++)
             {
-                int index = Data.IndexAt(new LocalVoxelCoordinate(x, y, z));
+                int index = VoxelData.IndexAt(new LocalVoxelCoordinate(x, y, z));
                 tot += Data.Water[index].WaterLevel;
 
                 if (Data.Water[index].WaterLevel == 0)
@@ -1011,7 +1008,7 @@ namespace DwarfCorp
             int z = (int)voxRef.GridPosition.Z;
             for (int y = (int)voxRef.GridPosition.Y; y < SizeY; y++)
             {
-                int index = Data.IndexAt(new LocalVoxelCoordinate(x, y, z));
+                int index = VoxelData.IndexAt(new LocalVoxelCoordinate(x, y, z));
                 tot += (Data.Water[index].WaterLevel) / (float)WaterManager.maxWaterLevel;
 
                 if (Data.Water[index].WaterLevel == 0 && y > (int)voxRef.GridPosition.Y)
@@ -1047,7 +1044,7 @@ namespace DwarfCorp
                             break;
                         }
                         reference.GridPosition = new LocalVoxelCoordinate(x, y, z);
-                        int index = Data.IndexAt(reference.GridPosition);
+                        int index = VoxelData.IndexAt(reference.GridPosition);
                         if (Data.Types[index] == 0 || VoxelLibrary.GetVoxelType(Data.Types[index]).IsTransparent)
                         {
                             Data.SunColors[index] = sunColor;
@@ -1195,7 +1192,7 @@ namespace DwarfCorp
             {
                 for (int h = y; h > 0; h--)
                 {
-                    if (Data.Types[Data.IndexAt(new LocalVoxelCoordinate(x, h, z))] != 0)
+                    if (Data.Types[VoxelData.IndexAt(new LocalVoxelCoordinate(x, h, z))] != 0)
                     {
                         return h + 1;
                     }
@@ -1215,8 +1212,8 @@ namespace DwarfCorp
             {
                 for (int h = y; h >= 0; h--)
                 {
-                    if (Data.Types[Data.IndexAt(new LocalVoxelCoordinate(x, h, z))] != 0 
-                        || Data.Water[Data.IndexAt(new LocalVoxelCoordinate(x, h, z))].WaterLevel > 1)
+                    if (Data.Types[VoxelData.IndexAt(new LocalVoxelCoordinate(x, h, z))] != 0 
+                        || Data.Water[VoxelData.IndexAt(new LocalVoxelCoordinate(x, h, z))].WaterLevel > 1)
                     {
                         return h + 1;
                     }
@@ -1310,6 +1307,7 @@ namespace DwarfCorp
             return SuccessorToEuclidianLookupKey(successor.X, successor.Y, successor.Z);
         }
 
+        // Todo: %KILL%
         public static int SuccessorToEuclidianLookupKey(int x, int y, int z)
         {
             Debug.Assert(x >= -1 && x <= 1, "X coordinate of successor must be between -1 and 1");
@@ -1326,7 +1324,7 @@ namespace DwarfCorp
 
         public BoxTransition ComputeTransitionValue(VoxelType.TransitionType transitionType, int x, int y, int z, VoxelHandle[] neighbors)
         {
-            VoxelType type = VoxelLibrary.GetVoxelType(Data.Types[Data.IndexAt(new LocalVoxelCoordinate(x, y, z))]);
+            VoxelType type = VoxelLibrary.GetVoxelType(Data.Types[VoxelData.IndexAt(new LocalVoxelCoordinate(x, y, z))]);
 
             if (transitionType == VoxelType.TransitionType.Horizontal)
             {
