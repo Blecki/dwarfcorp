@@ -26,7 +26,115 @@ namespace DwarfCorp
                     EffectTime = new Timer(120, true),
                     FoodValueUntilHealed = 100,
                     IsContagious = true,
+                    LikelihoodOfSpread = 0.001f,
+                    StatDamage = new CreatureStats.StatNums()
+                    {
+                        Charisma = -1,
+                        Constitution = -1,
+                        Dexterity = -3,
+                        Intelligence = -1,
+                        Size = 0,
+                        Strength = -3,
+                        Wisdom = -1
+                    },
+                    Particles = "blood_particle",
+                    ParticleTimer = new Timer(5.0f, false),
+                    SoundOnStart = ContentPaths.Audio.Oscar.sfx_ic_dwarf_tantrum_1,
+                    AcquiredRandomly = true,
+                    ChanceofRandomAcquisitionPerDay = 0.01f
+                },
+                new Disease()
+                {
+                    Type = Disease.HealType.Time,
+                    Name = "Scarlet Fever",
+                    Description = "The dwarf will move very slowly and get damaged until healed.",
+                    DamageEveryNSeconds = 20,
+                    DamagePerSecond = 0.2f,
+                    EffectTime = new Timer(120, true),
+                    FoodValueUntilHealed = 100,
+                    IsContagious = true,
                     LikelihoodOfSpread = 0.01f,
+                    StatDamage = new CreatureStats.StatNums()
+                    {
+                        Charisma = -1,
+                        Constitution = -1,
+                        Dexterity = -3,
+                        Intelligence = -1,
+                        Size = 0,
+                        Strength = -3,
+                        Wisdom = -1
+                    },
+                    Particles = "blood_particle",
+                    ParticleTimer = new Timer(5.0f, false),
+                    SoundOnStart = ContentPaths.Audio.Oscar.sfx_ic_dwarf_tantrum_1,
+                    AcquiredRandomly = true,
+                    ChanceofRandomAcquisitionPerDay = 0.001f
+                },
+                new Disease()
+                {
+                    Type = Disease.HealType.Time,
+                    Name = "Yellow Fever",
+                    Description = "The dwarf will move very slowly and get damaged until healed.",
+                    DamageEveryNSeconds = 20,
+                    DamagePerSecond = 0.2f,
+                    EffectTime = new Timer(120, true),
+                    FoodValueUntilHealed = 100,
+                    IsContagious = true,
+                    LikelihoodOfSpread = 0.1f,
+                    StatDamage = new CreatureStats.StatNums()
+                    {
+                        Charisma = -1,
+                        Constitution = -1,
+                        Dexterity = -3,
+                        Intelligence = -1,
+                        Size = 0,
+                        Strength = -3,
+                        Wisdom = -1
+                    },
+                    Particles = "blood_particle",
+                    ParticleTimer = new Timer(5.0f, false),
+                    SoundOnStart = ContentPaths.Audio.Oscar.sfx_ic_dwarf_tantrum_1,
+                    AcquiredRandomly = true,
+                    ChanceofRandomAcquisitionPerDay = 0.001f
+                },
+                new Disease()
+                {
+                    Type = Disease.HealType.Time,
+                    Name = "Cholera",
+                    Description = "The dwarf will move very slowly and get damaged until healed.",
+                    DamageEveryNSeconds = 20,
+                    DamagePerSecond = 0.2f,
+                    EffectTime = new Timer(120, true),
+                    FoodValueUntilHealed = 100,
+                    IsContagious = true,
+                    LikelihoodOfSpread = 0.1f,
+                    StatDamage = new CreatureStats.StatNums()
+                    {
+                        Charisma = -1,
+                        Constitution = -1,
+                        Dexterity = -3,
+                        Intelligence = -1,
+                        Size = 0,
+                        Strength = -3,
+                        Wisdom = -1
+                    },
+                    Particles = "blood_particle",
+                    ParticleTimer = new Timer(5.0f, false),
+                    SoundOnStart = ContentPaths.Audio.Oscar.sfx_ic_dwarf_tantrum_1,
+                    AcquiredRandomly = true,
+                    ChanceofRandomAcquisitionPerDay = 0.01f
+                },
+                new Disease()
+                {
+                    Type = Disease.HealType.Time,
+                    Name = "Dysentery",
+                    Description = "The dwarf will move very slowly and get damaged until healed.",
+                    DamageEveryNSeconds = 20,
+                    DamagePerSecond = 0.2f,
+                    EffectTime = new Timer(120, true),
+                    FoodValueUntilHealed = 100,
+                    IsContagious = true,
+                    LikelihoodOfSpread = 0.001f,
                     StatDamage = new CreatureStats.StatNums()
                     {
                         Charisma = -1,

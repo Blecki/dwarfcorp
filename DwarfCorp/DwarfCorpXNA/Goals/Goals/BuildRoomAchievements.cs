@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,7 +19,8 @@ namespace DwarfCorp.Goals.Goals
             var builtRoomEvent = Event as Events.BuiltRoom;
             if (builtRoomEvent != null && builtRoomEvent.RoomType.StartsWith("Stockpile"))
             {
-                World.MakeAnnouncement("Stock awarded for building a stockpile.");
+                World.PlayerFaction.AddMoney(20m);
+                World.MakeAnnouncement(String.Format("{0} awarded for building a stockpile.", new DwarfBux(20m)));
                 State = GoalState.Complete;
             }
         }
@@ -39,7 +40,8 @@ namespace DwarfCorp.Goals.Goals
             var builtRoomEvent = Event as Events.BuiltRoom;
             if (builtRoomEvent != null && builtRoomEvent.RoomType.StartsWith("BalloonPort"))
             {
-                World.MakeAnnouncement("Stock awarded for building a balloon port.");
+                World.PlayerFaction.AddMoney(20m);
+                World.MakeAnnouncement(String.Format("{0} awarded for building a balloon port.", new DwarfBux(20m)));
                 State = GoalState.Complete;
             }
         }
@@ -59,7 +61,8 @@ namespace DwarfCorp.Goals.Goals
             var builtRoomEvent = Event as Events.BuiltRoom;
             if (builtRoomEvent != null && builtRoomEvent.RoomType.StartsWith("BedRoom"))
             {
-                World.MakeAnnouncement("Stock awarded for building a bedroom.");
+                World.PlayerFaction.AddMoney(20m);
+                World.MakeAnnouncement(String.Format("{0} awarded for building a bed room.", new DwarfBux(20m)));
                 State = GoalState.Complete;
             }
         }
@@ -79,7 +82,8 @@ namespace DwarfCorp.Goals.Goals
             var builtRoomEvent = Event as Events.BuiltRoom;
             if (builtRoomEvent != null && builtRoomEvent.RoomType.StartsWith("CommonRoom"))
             {
-                World.MakeAnnouncement("Stock awarded for building a common room.");
+                World.PlayerFaction.AddMoney(20m);
+                World.MakeAnnouncement(String.Format("{0} awarded for building a common room.", new DwarfBux(20m)));
                 State = GoalState.Complete;
             }
         }
