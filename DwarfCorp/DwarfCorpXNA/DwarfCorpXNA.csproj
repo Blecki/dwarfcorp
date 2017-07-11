@@ -356,6 +356,7 @@
     <Compile Include="Voxels\NewVoxels\VoxelConstants.cs" />
     <Compile Include="Voxels\Enums.cs" />
     <Compile Include="Voxels\BoxTransition.cs" />
+    <Compile Include="Voxels\VoxelData.cs" />
     <Compile Include="World\IndicatorManager.cs" />
     <Compile Include="Gui\Enums.cs" />
     <Compile Include="Gui\Geo\Basics.cs" />

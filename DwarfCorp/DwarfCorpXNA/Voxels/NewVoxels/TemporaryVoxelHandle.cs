@@ -89,7 +89,17 @@ namespace DwarfCorp
         [JsonIgnore]
         public bool IsEmpty
         {
-            get { return Type.ID == 0; }
+            get { return TypeID == 0; }
+        }
+
+
+        [JsonIgnore]
+        public byte TypeID
+        {
+            get
+            {
+                return _cache_Chunk.Data.Types[_cache_Index];
+            }
         }
 
         [JsonIgnore]

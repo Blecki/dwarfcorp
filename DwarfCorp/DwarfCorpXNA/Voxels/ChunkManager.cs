@@ -1054,6 +1054,7 @@ namespace DwarfCorp
             }
         }
 
+        // Todo: Change to use enumeration
         public List<VoxelHandle> GetVoxelsIntersecting(BoundingBox box)
         {
             HashSet<VoxelChunk> intersects = new HashSet<VoxelChunk>();

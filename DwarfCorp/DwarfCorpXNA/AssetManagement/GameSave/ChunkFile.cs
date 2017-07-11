@@ -167,7 +167,7 @@ namespace DwarfCorp
 
         public void FillDataFromChunk(VoxelChunk chunk)
         {
-            VoxelChunk.VoxelData data = chunk.Data;
+            var data = chunk.Data;
             for(int x = 0; x < Size.X; x++)
             {
                 for(int y = 0; y < Size.Y; y++)

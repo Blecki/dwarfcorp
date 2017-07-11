@@ -310,7 +310,7 @@ namespace DwarfCorp
 
             int maxSize = chunk.SizeX * chunk.SizeY * chunk.SizeZ;
             int toUpdate = 0;
-            VoxelChunk.VoxelData data = chunk.Data;
+            var data = chunk.Data;
             for (int i = 0; i < maxSize; i++)
             {
                 // Don't check empty cells or cells we've already modified.
