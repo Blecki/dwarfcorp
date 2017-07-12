@@ -55,6 +55,13 @@ namespace DwarfCorp
             UpdateCache(((WorldManager)context.Context).ChunkManager.ChunkData);
         }
 
+        public TemporaryVoxelHandle(VoxelChunk Chunk, LocalVoxelCoordinate Coordinate)
+        {
+            this.Coordinate = Chunk.ID + Coordinate;
+            this._cache_Chunk = Chunk;
+            this._cache_Index = VoxelConstants.DataIndexOf(Coordinate);
+        }
+
         #region Equality
         public static bool operator ==(TemporaryVoxelHandle A, TemporaryVoxelHandle B)
         {

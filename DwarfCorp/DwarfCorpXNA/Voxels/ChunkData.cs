@@ -163,19 +163,6 @@ namespace DwarfCorp
             }
         }
 
-        public bool GetNeighbors(GlobalVoxelCoordinate worldPosition, List<GlobalVoxelOffset> succ, List<VoxelHandle> toReturn)
-        {
-            toReturn.Clear();
-            VoxelChunk chunk = GetVoxelChunkAtWorldLocation(worldPosition);
-
-            if (chunk == null) return false;
-
-            var grid = worldPosition.GetLocalVoxelCoordinate();
-            chunk.GetNeighborsSuccessors(succ, grid.X, grid.Y, grid.Z, toReturn);
-            return true;
-        }
-
-
         public VoxelHandle GetFirstVisibleBlockHitByMouse(MouseState mouse, Camera camera, Viewport viewPort,
             bool selectEmpty = false, Func<VoxelHandle, bool> acceptFn = null)
         {
@@ -425,44 +412,6 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public void RecomputeNeighbors()
-        {
-            foreach (VoxelChunk chunk in ChunkMap.Select(chunks => chunks.Value))
-            {
-                chunk.Neighbors.Clear();
-                chunk.EuclidianNeighbors.Clear();
-            }
-
-            foreach (var chunks in ChunkMap)
-            {
-                VoxelChunk chunk = chunks.Value;
-
-                Point3 successor = new Point3(0, 0, 0);
-                for (successor.X = -1; successor.X < 2; successor.X++)
-                {
-                    for (successor.Z = -1; successor.Z < 2; successor.Z++)
-                    {
-                        for (successor.Y = -1; successor.Y < 2; successor.Y++)
-                        {
-                            var sideChunkID = new GlobalChunkCoordinate(
-                                chunk.ID.X + successor.X,
-                                chunk.ID.Y + successor.Y,
-                                chunk.ID.Z + successor.Z);
-                            VoxelChunk sideChunk;
-                            ChunkMap.TryGetValue(sideChunkID, out sideChunk);
-                            if (successor.Y == 0 && sideChunk != null)
-                            {
-                                if (!sideChunk.Neighbors.ContainsKey(chunk.ID) && chunk != sideChunk)
-                                    chunk.Neighbors[chunk.ID] = chunk;
-                                chunk.Neighbors[sideChunkID] = sideChunk;
-                            }
-                            chunk.EuclidianNeighbors[VoxelChunk.SuccessorToEuclidianLookupKey(successor)] = sideChunk;
-                        }
-                    }
-                }
-            }
-        }
-
         public VoxelChunk GetVoxelChunkAtWorldLocation(GlobalVoxelCoordinate worldLocation)
         {
             VoxelChunk returnChunk = null;
@@ -591,7 +540,6 @@ namespace DwarfCorp
             {
                 AddChunk(chunk);
             }
-            RecomputeNeighbors();
             chunkManager.UpdateBounds();
             chunkManager.CreateGraphics(SetLoadingMessage, this);
         }

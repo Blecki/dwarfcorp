@@ -211,27 +211,24 @@ namespace DwarfCorp
                 return false;
             }
 
-            VoxelHandle[] neighbors = new VoxelHandle[4];
-            foreach (CraftItem.CraftPrereq req in designation.ItemType.Prerequisites)
+            foreach (var req in designation.ItemType.Prerequisites)
             {
                 switch (req)
                 {
                     case CraftItem.CraftPrereq.NearWall:
-                    {
-                        designation.Location.Chunk.Get2DManhattanNeighbors(neighbors,
-                            (int) designation.Location.GridPosition.X,
-                            (int) designation.Location.GridPosition.Y, (int) designation.Location.GridPosition.Z);
-
-                        bool neighborFound = neighbors.Any(voxel => voxel != null && !voxel.IsEmpty);
-
-                        if (!neighborFound)
                         {
-                            World.ShowToolPopup("Must be built next to wall!");
-                            return false;
-                        }
+                            var neighborFound = Neighbors.EnumerateManhattanNeighbors2D(designation.Location.Coordinate)
+                                    .Select(c => new TemporaryVoxelHandle(World.ChunkManager.ChunkData, c))
+                                    .Any(v => v.IsValid && !v.IsEmpty);
 
-                        break;
-                    }
+                            if (!neighborFound)
+                            {
+                                World.ShowToolPopup("Must be built next to wall!");
+                                return false;
+                            }
+
+                            break;
+                        }
                     case CraftItem.CraftPrereq.OnGround:
                     {
                         VoxelHandle below = new VoxelHandle();

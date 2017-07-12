@@ -87,8 +87,6 @@ namespace DwarfCorp
         public bool ShouldRebuildWater { get; set; }
 
         public static byte m_fogOfWar = 1;
-        public ConcurrentDictionary<GlobalChunkCoordinate, VoxelChunk> Neighbors { get; set; }
-        public ConcurrentDictionary<int, VoxelChunk> EuclidianNeighbors { get; set; }
         public List<DynamicLight> DynamicLights { get; set; }
 
 
@@ -420,8 +418,6 @@ namespace DwarfCorp
             InitializeStatics();
             PrimitiveMutex = new Mutex();
             ShouldRecalculateLighting = true;
-            Neighbors = new ConcurrentDictionary<GlobalChunkCoordinate, VoxelChunk>();
-            EuclidianNeighbors = new ConcurrentDictionary<int, VoxelChunk>();
             DynamicLights = new List<DynamicLight>();
             Liquids = new Dictionary<LiquidType, LiquidPrimitive>();
             Liquids[LiquidType.Water] = new LiquidPrimitive(LiquidType.Water);
@@ -870,67 +866,10 @@ namespace DwarfCorp
             color.SunColor = (int)Math.Min((float)color.SunColor / (float)numChecked, 255);
         }
 
-
-        public void ResetSunlightIgnoreEdges(byte sunColor)
-        {
-            for (int x = 1; x < VoxelConstants.ChunkSizeX - 1; x++)
-            {
-                for (int z = 1; z < VoxelConstants.ChunkSizeZ - 1; z++)
-                {
-                    for (int y = 0; y < VoxelConstants.ChunkSizeY; y++)
-                    {
-                        int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
-                        Data.SunColors[index] = sunColor;
-                    }
-                }
-            }
-        }
-
         public void ResetSunlight(byte sunColor)
         {
-            int numVoxels = VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeY * VoxelConstants.ChunkSizeZ;
-            for (int i = 0; i < numVoxels; i++)
-            {
+            for (int i = 0; i < VoxelConstants.ChunkVoxelCount; i++)
                 Data.SunColors[i] = sunColor;
-            }
-        }
-
-        public float GetTotalWaterHeight(VoxelHandle voxRef)
-        {
-            float tot = 0;
-            int x = (int)voxRef.GridPosition.X;
-            int z = (int)voxRef.GridPosition.Z;
-            for (int y = (int)voxRef.GridPosition.Y; y < VoxelConstants.ChunkSizeY; y++)
-            {
-                int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
-                tot += Data.Water[index].WaterLevel;
-
-                if (Data.Water[index].WaterLevel == 0)
-                {
-                    return tot;
-                }
-            }
-
-            return tot;
-        }
-
-        public float GetTotalWaterHeightCells(VoxelHandle voxRef)
-        {
-            float tot = 0;
-            int x = (int)voxRef.GridPosition.X;
-            int z = (int)voxRef.GridPosition.Z;
-            for (int y = (int)voxRef.GridPosition.Y; y < VoxelConstants.ChunkSizeY; y++)
-            {
-                int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
-                tot += (Data.Water[index].WaterLevel) / (float)WaterManager.maxWaterLevel;
-
-                if (Data.Water[index].WaterLevel == 0 && y > (int)voxRef.GridPosition.Y)
-                {
-                    return tot;
-                }
-            }
-
-            return tot;
         }
 
         public void UpdateSunlight(byte sunColor)
@@ -1115,79 +1054,6 @@ namespace DwarfCorp
                 && z != VoxelConstants.ChunkSizeZ - 1;
         }
 
-        
-
-        // Todo: %KILL%
-        public void Get2DManhattanNeighbors(VoxelHandle[] neighbors, int x, int y, int z)
-        {
-            var index = 0;
-            foreach (var neighbor in DwarfCorp.Neighbors.EnumerateManhattanNeighbors2D(
-                new GlobalVoxelCoordinate(ID, new LocalVoxelCoordinate(x, y, z))))
-            {
-                if (index >= neighbors.Length) break;
-
-                var localPart = neighbor.GetLocalVoxelCoordinate();
-                var chunkPart = neighbor.GetGlobalChunkCoordinate();
-
-                if (!Manager.ChunkData.ChunkMap.ContainsKey(chunkPart))
-                    neighbors[index] = null;
-                else
-                    neighbors[index] = new VoxelHandle(localPart, Manager.ChunkData.ChunkMap[chunkPart]);
-
-                index += 1;
-            }
-            
-            while (index < neighbors.Length)
-            {
-                neighbors[index] = null;
-                index += 1;
-            }
-        }
-
-        // todo: %KILL%
-        public void Get2DManhattanNeighbors(ChunkManager.SliceMode slice, VoxelHandle[] neighbors, int x, int y, int z)
-        {
-            var index = 0;
-            foreach (var neighbor in DwarfCorp.Neighbors.EnumerateManhattanNeighbors2D(
-                new GlobalVoxelCoordinate(ID, new LocalVoxelCoordinate(x, y, z)), slice))
-            {
-                if (index >= neighbors.Length) break;
-
-                var localPart = neighbor.GetLocalVoxelCoordinate();
-                var chunkPart = neighbor.GetGlobalChunkCoordinate();
-
-                if (!Manager.ChunkData.ChunkMap.ContainsKey(chunkPart))
-                    neighbors[index] = null;
-                else
-                    neighbors[index] = new VoxelHandle(localPart, Manager.ChunkData.ChunkMap[chunkPart]);
-
-                index += 1;
-            }
-
-            while (index < neighbors.Length)
-            {
-                neighbors[index] = null;
-                index += 1;
-            }
-        }
-        
-        // Todo: %KILL%
-        public void GetNeighborsSuccessors(List<GlobalVoxelOffset> succ, int x, int y, int z, List<VoxelHandle> ToFill)
-        {
-            ToFill.Clear();
-
-            foreach (var neighbor in DwarfCorp.Neighbors.EnumerateNeighbors(
-                succ,
-                new GlobalVoxelCoordinate(ID, new LocalVoxelCoordinate(x, y, z))))
-            {
-                var localPart = neighbor.GetLocalVoxelCoordinate();
-                var chunkPart = neighbor.GetGlobalChunkCoordinate();
-
-                if (Manager.ChunkData.ChunkMap.ContainsKey(chunkPart))
-                    ToFill.Add(new VoxelHandle(localPart, Manager.ChunkData.ChunkMap[chunkPart]));
-            }            
-        }
-
         public void NotifyTotalRebuild(bool neighbors)
         {
             ShouldRebuild = true;
@@ -1197,11 +1063,19 @@ namespace DwarfCorp
 
             if (neighbors)
             {
-                foreach (VoxelChunk chunk in Neighbors.Values)
+                // Enumerator works in world space - this is the ONLY place where we
+                //  enumerate neighbors in CHUNK space, so just hack it!
+                foreach (var n in DwarfCorp.Neighbors.EnumerateManhattanNeighbors(
+                    new GlobalVoxelCoordinate(ID.X, ID.Y, ID.Z)))
                 {
-                    chunk.ShouldRebuild = true;
-                    chunk.ShouldRecalculateLighting = true;
-                    chunk.ShouldRebuildWater = true;
+                    var chunkCoord = new GlobalChunkCoordinate(n.X, n.Y, n.Z);
+                    VoxelChunk chunk;
+                    if (Manager.ChunkData.ChunkMap.TryGetValue(chunkCoord, out chunk))
+                    {
+                        chunk.ShouldRebuild = true;
+                        chunk.ShouldRecalculateLighting = true;
+                        chunk.ShouldRebuildWater = true;
+                    }
                 }
             }
         }

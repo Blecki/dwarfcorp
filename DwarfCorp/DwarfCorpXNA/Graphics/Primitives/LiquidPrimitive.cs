@@ -316,8 +316,7 @@ namespace DwarfCorp
             cache.Reset();
 
             // These are reused for every face.
-            Vector3 origin = chunk.Origin + new Vector3(x, y, z);
-            int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
+            var origin = voxel.WorldPosition;
             float centerWaterlevel = chunk.Data.Water[VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z))].WaterLevel;
 
             for (int faces = 0; faces < cache.drawFace.Length; faces++)

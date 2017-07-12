@@ -891,9 +891,7 @@ namespace DwarfCorp
                 }
             }
 
-
             RecalculateBounds();
-            chunkData.RecomputeNeighbors();
             SetLoadingMessage("Generating Ores...");
 
             GenerateOres();
@@ -969,7 +967,6 @@ namespace DwarfCorp
                 if(ToGenerate.Count > 0)
                 {
                     NeedsGenerationEvent.Set();
-                    ChunkData.RecomputeNeighbors();
                 }
 
                 foreach(VoxelChunk chunk in GeneratedChunks)
