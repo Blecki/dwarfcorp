@@ -9,6 +9,7 @@ namespace DwarfCorp
     public struct TemporaryVoxelHandle : IEquatable<TemporaryVoxelHandle>
     {
         #region Cache
+
         [JsonIgnore]
         private VoxelChunk _cache_Chunk;
 
@@ -21,6 +22,10 @@ namespace DwarfCorp
             Chunks.ChunkMap.TryGetValue(Coordinate.GetGlobalChunkCoordinate(),
                 out _cache_Chunk);
         }
+
+        [JsonIgnore]
+        public VoxelChunk Chunk { get { return _cache_Chunk; } }
+
         #endregion
 
         public readonly GlobalVoxelCoordinate Coordinate;

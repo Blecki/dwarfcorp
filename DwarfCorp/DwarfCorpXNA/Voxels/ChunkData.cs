@@ -139,60 +139,39 @@ namespace DwarfCorp
         {
             if (!GameSettings.Default.FogofWar) return;
 
-            var affectedChunks = new List<GlobalChunkCoordinate>();
-            Queue<VoxelHandle> q = new Queue<VoxelHandle>(128);
+            var queue = new Queue<TemporaryVoxelHandle>(128);
 
             foreach (VoxelHandle voxel in voxels)
             {
                 if (voxel != null)
-                    q.Enqueue(voxel);
+                    queue.Enqueue(new TemporaryVoxelHandle(this, voxel.Coordinate));
             }
-            List<VoxelHandle> neighbors = new List<VoxelHandle>();
-            VoxelHandle currNeighbor = new VoxelHandle();
-            while (q.Count > 0)
+
+            while (queue.Count > 0)
             {
-                VoxelHandle v = q.Dequeue();
-                if (v == null) continue;
+                var v = queue.Dequeue();
+                if (!v.IsValid) continue;
 
-                if (!affectedChunks.Contains(v.ChunkID))
+                foreach (var neighborCoordinate in Neighbors.EnumerateManhattanNeighbors(v.Coordinate))
                 {
-                    affectedChunks.Add(v.ChunkID);
-                }
-                v.Chunk.GetNeighborsManhattan(v, neighbors);
-                foreach (VoxelHandle nextVoxel in neighbors)
-                {
-                    if (nextVoxel == null) continue;
+                    var neighbor = new TemporaryVoxelHandle(this, neighborCoordinate);
+                    if (!neighbor.IsValid) continue;
+                    if (neighbor.IsExplored) continue;
+                    neighbor.Chunk.NotifyExplored(neighbor.Coordinate.GetLocalVoxelCoordinate());
+                    neighbor.IsExplored = true;
+                    if (neighbor.IsEmpty)
+                        queue.Enqueue(neighbor);
 
-                    if (nextVoxel.IsExplored) continue;
-
-                    nextVoxel.Chunk.NotifyExplored(nextVoxel.GridPosition);
-
-                    nextVoxel.IsExplored = true;
-                    if (!affectedChunks.Contains(nextVoxel.ChunkID))
+                    if (!neighbor.Chunk.ShouldRebuild)
                     {
-                        affectedChunks.Add(nextVoxel.ChunkID);
+                        neighbor.Chunk.ShouldRebuild = true;
+                        neighbor.Chunk.ShouldRebuildWater = true;
+                        neighbor.Chunk.ShouldRecalculateLighting = true;
                     }
-                    if (nextVoxel.IsEmpty)
-                        q.Enqueue(new VoxelHandle(nextVoxel.GridPosition, nextVoxel.Chunk));
-
                 }
 
                 v.IsExplored = true;
-
             }
-
-            foreach (var chunkID in affectedChunks)
-            {
-                VoxelChunk chunk = ChunkMap[chunkID];
-
-                if (!chunk.ShouldRebuild)
-                {
-                    chunk.ShouldRecalculateLighting = true;
-                    chunk.ShouldRebuildWater = true;
-                    chunk.ShouldRebuild = true;
-                }
-            }
-
         }
 
         public bool GetNeighbors(GlobalVoxelCoordinate worldPosition, List<GlobalVoxelOffset> succ, List<VoxelHandle> toReturn)
@@ -249,7 +228,7 @@ namespace DwarfCorp
 
         public bool DoesVoxelHaveVisibleSurface(TemporaryVoxelHandle V)
         {
-            if (V.IsValid)
+            if (!V.IsValid)
                 return false;
 
             if (!V.IsVisible || V.IsEmpty) return false;

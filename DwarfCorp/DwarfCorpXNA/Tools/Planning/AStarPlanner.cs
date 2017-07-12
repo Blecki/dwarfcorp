@@ -162,11 +162,11 @@ namespace DwarfCorp
             int numExpansions = 0;
 
             // Check the voxels adjacent to the current voxel as a quick test of adjacency to the goal.
-            var manhattanNeighbors = new List<VoxelHandle>(6);
-            for (int i = 0; i < 6; i++)
-            {
-                manhattanNeighbors.Add(new VoxelHandle());
-            }
+            //var manhattanNeighbors = new List<VoxelHandle>(6);
+            //for (int i = 0; i < 6; i++)
+            //{
+            //    manhattanNeighbors.Add(new VoxelHandle());
+            //}
 
             // Loop until we've either checked every possible voxel, or we've exceeded the maximum number of
             // expansions.
@@ -207,11 +207,14 @@ namespace DwarfCorp
 
                 // Get the voxels that can be moved to from the current voxel.
                 neighbors = mover.GetMoveActions(current);
-                currentChunk.GetNeighborsManhattan(current, manhattanNeighbors);
+                //currentChunk.GetNeighborsManhattan(current, manhattanNeighbors);
+
+                var foundGoalAdjacent = Neighbors.EnumerateManhattanNeighbors(current.Coordinate)
+                    .Contains(goal.GetVoxel().Coordinate);
 
                 // A quick test to see if we're already adjacent to the goal. If we are, assume
                 // that we can just walk to it.
-                if (manhattanNeighbors.Contains(goal.GetVoxel()))
+                if (foundGoalAdjacent)
                 {
                     var first = new MoveAction
                     {
