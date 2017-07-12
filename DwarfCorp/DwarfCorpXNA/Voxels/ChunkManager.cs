@@ -346,6 +346,7 @@ namespace DwarfCorp
 
                         var toRebuild = new Dictionary<GlobalChunkCoordinate, VoxelChunk>();
                         bool calculateRamps = GameSettings.Default.CalculateRamps;
+
                         lock (RebuildList)
                         {
                             while (RebuildList.Count > 0)

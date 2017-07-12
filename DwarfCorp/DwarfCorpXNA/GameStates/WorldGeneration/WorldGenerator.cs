@@ -380,6 +380,15 @@ namespace DwarfCorp.GameStates
                 else
                 {
                     NativeCivilizations = Settings.Natives;
+
+                    if (Settings.NumCivilizations > Settings.Natives.Count)
+                    {
+                        int count = Settings.Natives.Count;
+                        for (int i = count; i < Settings.NumCivilizations; i++)
+                        {
+                            NativeCivilizations.Add(library.GenerateFaction(null, i, Settings.NumCivilizations));
+                        }
+                    }
                 }
                 SeedCivs(Overworld.Map, Settings.NumCivilizations, NativeCivilizations);
                 GrowCivs(Overworld.Map, 200, NativeCivilizations);
@@ -723,7 +732,7 @@ namespace DwarfCorp.GameStates
         }
 
 
-        public  Point? GetRandomLandPoint(Overworld.MapData[,] map)
+        public Point? GetRandomLandPoint(Overworld.MapData[,] map)
         {
             const int maxIters = 1000;
             int i = 0;
@@ -745,7 +754,7 @@ namespace DwarfCorp.GameStates
             return null;
         }
 
-        public  void SeedCivs(Overworld.MapData[,] map, int numCivs, List<Faction> civs )
+        public void SeedCivs(Overworld.MapData[,] map, int numCivs, List<Faction> civs )
         {
             for (int i = 0; i < numCivs; i++)
             {
@@ -760,7 +769,7 @@ namespace DwarfCorp.GameStates
             }
         }
 
-        public  void GrowCivs(Overworld.MapData[,] map, int iters, List<Faction> civs)
+        public void GrowCivs(Overworld.MapData[,] map, int iters, List<Faction> civs)
         {
             int width = map.GetLength(0);
             int height = map.GetLength(1);
