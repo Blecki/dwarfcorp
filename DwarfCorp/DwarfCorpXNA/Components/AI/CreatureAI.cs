@@ -585,23 +585,22 @@ namespace DwarfCorp
             var above = Physics.CurrentVoxel.GetVoxelAbove();
             // Todo: Use TemporaryVoxelHandle instead.
             foreach (var vox in Neighbors.EnumerateManhattanNeighbors(Physics.CurrentVoxel.Coordinate)
-                .Select(c => new VoxelHandle(World.ChunkManager.ChunkData, c)))
+                .Select(c => new TemporaryVoxelHandle(World.ChunkManager.ChunkData, c)))
             {
-                if (vox == null) continue;
+                if (!vox.IsValid) continue;
                 if (vox.IsEmpty) continue;
 
                 // Avoid teleporting through the block above. Never jump up through the
                 // block above you.
                 if (above != null && !above.IsEmpty)
-                {
-                    if ((int)vox.WorldPosition.Y >= (int)above.WorldPosition.Y)
-                    {
+                    if (vox.Coordinate.Y >= above.Coordinate.Y)
                         continue;
-                    }
-                }
-                VoxelHandle voxAbove = vox.GetVoxelAbove();
-                if (!voxAbove.IsEmpty) continue;
-                Vector3 target = voxAbove.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f);
+
+                var voxAbove = new TemporaryVoxelHandle(World.ChunkManager.ChunkData,
+                    new GlobalVoxelCoordinate(vox.Coordinate.X, vox.Coordinate.Y + 1, vox.Coordinate.Z));
+                if (voxAbove.IsValid && !voxAbove.IsEmpty) continue;
+
+                Vector3 target = voxAbove.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f);
                 Physics.Face(target);
                 foreach (Act.Status status in Hop(target))
                 {

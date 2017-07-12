@@ -317,7 +317,6 @@ namespace DwarfCorp
                 return false;
             }
             VoxelHandle voxBelow = chunk.MakeVoxel(0, 0, 0);
-            VoxelHandle neighbor = new VoxelHandle();
 
             for (int i = 0; i < toUpdate; i++)
             {
@@ -492,7 +491,7 @@ namespace DwarfCorp
                         neighborWater.Type = data.Water[idx].Type;
                     }
 
-                    neighbor.Water = neighborWater;
+                    v.WaterCell = neighborWater;
 
                     if (data.Water[idx].WaterLevel >= 1)
                     {
