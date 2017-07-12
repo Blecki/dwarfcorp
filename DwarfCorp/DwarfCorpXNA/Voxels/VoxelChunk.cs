@@ -670,7 +670,7 @@ namespace DwarfCorp
                 }
 
                 Motes[moteData.Name] = EntityFactory.GenerateGrassMotes(grassPositions,
-                    grassColors, grassScales, Manager.Components, Manager.Content, Manager.Graphics, Motes[moteData.Name], moteData.Asset, moteData.Name);
+                    grassColors, grassScales, Manager.World.ComponentManager, Manager.Content, Manager.Graphics, Motes[moteData.Name], moteData.Asset, moteData.Name);
             }
         }
 

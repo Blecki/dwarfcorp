@@ -117,7 +117,6 @@ namespace DwarfCorp
 
         public Camera camera = null;
         public WorldManager World { get; set; }
-        public ComponentManager Components { get { return World.ComponentManager; }}
         public ContentManager Content { get; set; }
 
         private readonly HashSet<VoxelChunk> visibleSet = new HashSet<VoxelChunk>();
@@ -135,7 +134,6 @@ namespace DwarfCorp
 
         public ChunkManager(ContentManager content, 
             WorldManager world,
-            uint chunkSizeX, uint chunkSizeY, uint chunkSizeZ, 
             Camera camera, GraphicsDevice graphics,
             ChunkGenerator chunkGen, int maxChunksX, int maxChunksY, int maxChunksZ)
         {
@@ -145,7 +143,7 @@ namespace DwarfCorp
             drawDistSq = DrawDistance * DrawDistance;
             Content = content;
 
-            chunkData = new ChunkData(chunkSizeX, chunkSizeY, chunkSizeZ, 1.0f / chunkSizeX, 1.0f / chunkSizeY, 1.0f / chunkSizeZ, this);
+            chunkData = new ChunkData(this);
             ChunkData.ChunkMap = new ConcurrentDictionary<GlobalChunkCoordinate, VoxelChunk>();
             RenderList = new ConcurrentQueue<VoxelChunk>();
             RebuildList = new ConcurrentQueue<VoxelChunk>();
@@ -170,7 +168,7 @@ namespace DwarfCorp
 
             chunkGen.Manager = this;
 
-            ChunkData.MaxViewingLevel = chunkSizeY;
+            ChunkData.MaxViewingLevel = VoxelConstants.ChunkSizeY;
 
             GameSettings.Default.ChunkGenerateTime = 0.5f;
             generateChunksTimer = new Timer(GameSettings.Default.ChunkGenerateTime, false, Timer.TimerMode.Real);
@@ -192,7 +190,10 @@ namespace DwarfCorp
 
             WorldSize = new Point3(maxChunksX, maxChunksY, maxChunksZ);
 
-            Vector3 maxBounds = new Vector3(maxChunksX * chunkSizeX / 2.0f, maxChunksY * chunkSizeY / 2.0f, maxChunksZ * chunkSizeZ / 2.0f);
+            Vector3 maxBounds = new Vector3(
+                maxChunksX * VoxelConstants.ChunkSizeX / 2.0f,
+                maxChunksY * VoxelConstants.ChunkSizeY / 2.0f, 
+                maxChunksZ * VoxelConstants.ChunkSizeZ / 2.0f);
             Vector3 minBounds = -maxBounds;
             Bounds = new BoundingBox(minBounds, maxBounds);
         }
@@ -490,15 +491,14 @@ namespace DwarfCorp
             }
         }
 
-        public List<VoxelChunk> RebuildTest = new List<VoxelChunk>();
         private readonly ChunkData chunkData;
 
         public void UpdateRebuildList()
         {
             List<VoxelChunk> toRebuild = new List<VoxelChunk>();
             List<VoxelChunk> toRebuildLiquids = new List<VoxelChunk>();
-            RebuildTest = toRebuild;
-            foreach(VoxelChunk chunk in ChunkData.ChunkMap.Select(chunks => chunks.Value))
+
+            foreach (VoxelChunk chunk in ChunkData.ChunkMap.Select(chunks => chunks.Value))
             {
                 if(chunk.ShouldRebuild && ! chunk.RebuildPending)
                 {

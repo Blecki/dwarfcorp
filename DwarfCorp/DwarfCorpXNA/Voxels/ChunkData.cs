@@ -51,11 +51,8 @@ namespace DwarfCorp
     {
         private ChunkManager chunkManager;
 
-        // Todo: %KILL% size parms
-        public ChunkData(uint chunkSizeX, uint chunkSizeY, uint chunkSizeZ, float invCSX, float invCSY, float invCSZ,
-            ChunkManager chunkManager)
-        {
-           
+        public ChunkData(ChunkManager chunkManager)
+        {           
             this.chunkManager = chunkManager;
         }
 
@@ -521,25 +518,12 @@ namespace DwarfCorp
                 return false;
             }
         }
-        /*
-        public List<LiquidPrimitive> GetAllLiquidPrimitives()
-        {
-            List<LiquidPrimitive> toReturn = new List<LiquidPrimitive>();
-
-            foreach(VoxelChunk chunk in ChunkMap.Select(chunks => chunks.Value))
-            {
-                toReturn.AddRange(chunk.Liquids.Values);
-            }
-
-            return toReturn;
-        }*/
-
+       
         public void LoadFromFile(GameFile gameFile, Action<String> SetLoadingMessage)
         {
             foreach (VoxelChunk chunk in gameFile.Data.ChunkData.Select(file => file.ToChunk(chunkManager)))
-            {
                 AddChunk(chunk);
-            }
+
             chunkManager.UpdateBounds();
             chunkManager.CreateGraphics(SetLoadingMessage, this);
         }

@@ -245,7 +245,7 @@ namespace DwarfCorp
                 };
 
                 // Creates the terrain management system.
-                ChunkManager = new ChunkManager(Content, this, (uint)ChunkWidth, (uint)ChunkHeight, (uint)ChunkWidth, Camera,
+                ChunkManager = new ChunkManager(Content, this, Camera,
                     GraphicsDevice,
                     ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
             
