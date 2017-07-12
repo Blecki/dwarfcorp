@@ -331,6 +331,8 @@ namespace DwarfCorp
                 int vertOffset = 0;
                 int numVerts = 0;
                 primitive.GetFace(face, primitive.UVs, out idx, out vertexCount, out vertOffset, out numVerts);
+                // numVerts is always 4.
+                // vertexCount is always 6 ??
 
                 for (int i = 0; i < vertexCount; i++)
                 {
@@ -356,16 +358,15 @@ namespace DwarfCorp
                         // Run through the successors and count up the water in each voxel.
                         for (int v = 0; v < vertexSucc.Count; v++)
                         {
-                            var succ = vertexSucc[v];
                             // We are going to use a lookup key so calculate it now.
-                            int key = VoxelChunk.SuccessorToEuclidianLookupKey(succ);
+                            int key = VoxelChunk.SuccessorToEuclidianLookupKey(vertexSucc[v]);
 
                             // If we haven't gotten this DestinationVoxel yet then retrieve it.
                             // This allows us to only get a particular voxel once a function call instead of once per vertexCount/per face.
                             if (!cache.retrievedNeighbors[key])
                             {
                                 VoxelHandle neighbor = cache.neighbors[key];
-                                cache.validNeighbors[key] = voxel.GetNeighborBySuccessor(succ, ref neighbor, false);
+                                cache.validNeighbors[key] = voxel.GetNeighborBySuccessor(vertexSucc[v], ref neighbor, false);
                                 cache.retrievedNeighbors[key] = true;
                             }
                             // Only continue if it's a valid (non-null) voxel.

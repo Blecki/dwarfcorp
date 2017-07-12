@@ -15,12 +15,12 @@ namespace DwarfCorp
     /// </summary>
     public enum BoxFace
     {
-        Top,
-        Bottom,
-        Left,
-        Right,
-        Front,
-        Back
+        Top = 0,
+        Bottom = 1,
+        Left = 2,
+        Right = 3,
+        Front = 4,
+        Back = 5
     }
 
 
@@ -501,20 +501,27 @@ namespace DwarfCorp
             base.Render(device);
         }
 
-        public void GetFace(BoxFace face, BoxPrimitive.BoxTextureCoords uvs, out int index, out int count, out int vertexOffset, out int vertexCount)
+        public void GetFace(
+            BoxFace face, 
+            BoxPrimitive.BoxTextureCoords uvs, 
+            out int index, 
+            out int count, 
+            out int vertexOffset, 
+            out int vertexCount)
         {
+            // Todo: Put the underlying vertex data in the right order and this is just some multiplies.
             vertexCount = 4;
             count = 6;
             vertexOffset = 0;
             switch (face)
             {
-                case BoxFace.Back:
-                    index = 6;
-                    vertexOffset = 4;
+                case BoxFace.Top:
+                    index = 12;
+                    vertexOffset = 8;
                     return;
-                case BoxFace.Front:
-                    index = 0;
-                    vertexOffset = 0;
+                case BoxFace.Bottom:
+                    index = 18;
+                    vertexOffset = 12;
                     return;
                 case BoxFace.Left:
                     index = 24;
@@ -524,13 +531,13 @@ namespace DwarfCorp
                     index = 30;
                     vertexOffset = 20;
                     return;
-                case BoxFace.Top:
-                    index = 12;
-                    vertexOffset = 8;
+                case BoxFace.Front:
+                    index = 0;
+                    vertexOffset = 0;
                     return;
-                case BoxFace.Bottom:
-                    index = 18;
-                    vertexOffset = 12;
+                case BoxFace.Back:
+                    index = 6;
+                    vertexOffset = 4;
                     return;
             }
             index = 0;
