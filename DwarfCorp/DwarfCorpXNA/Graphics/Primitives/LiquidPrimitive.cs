@@ -307,6 +307,11 @@ namespace DwarfCorp
             cache = null;
         }
 
+        private static int SuccessorToEuclidianLookupKey(GlobalVoxelOffset C)
+        {
+            return (C.X + 1) + (C.Y + 1) * 3 + (C.Z + 1) * 9;
+        }
+
         private static void CreateWaterFaces(VoxelHandle voxel, VoxelChunk chunk,
                                             int x, int y, int z,
                                             ExtendedVertex[] vertices,
@@ -352,13 +357,13 @@ namespace DwarfCorp
                         float emptyNeighbors = 0.0f;
                         float averageWaterLevel = centerWaterlevel;
 
-                        var vertexSucc = VoxelChunk.VertexSuccessors[currentVertex];
+                        var vertexSucc = Neighbors.VertexNeighbors[(int)currentVertex];
 
                         // Run through the successors and count up the water in each voxel.
-                        for (int v = 0; v < vertexSucc.Count; v++)
+                        for (int v = 0; v < vertexSucc.Length; v++)
                         {
                             // We are going to use a lookup key so calculate it now.
-                            int key = VoxelChunk.SuccessorToEuclidianLookupKey(vertexSucc[v]);
+                            int key = SuccessorToEuclidianLookupKey(vertexSucc[v]);
 
                             // If we haven't gotten this DestinationVoxel yet then retrieve it.
                             // This allows us to only get a particular voxel once a function call instead of once per vertexCount/per face.

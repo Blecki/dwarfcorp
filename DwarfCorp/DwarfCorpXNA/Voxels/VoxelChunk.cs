@@ -86,7 +86,6 @@ namespace DwarfCorp
         public bool ShouldRecalculateLighting { get; set; }
         public bool ShouldRebuildWater { get; set; }
 
-        public static byte m_fogOfWar = 1;
         public List<DynamicLight> DynamicLights { get; set; }
 
 
@@ -94,10 +93,7 @@ namespace DwarfCorp
         private static Vector3[] vertexDeltas = new Vector3[8];
         private static Vector3[] faceDeltas = new Vector3[6];
 
-        public static readonly Dictionary<VoxelVertex, List<GlobalVoxelOffset>> VertexSuccessors = new Dictionary<VoxelVertex, List<GlobalVoxelOffset>>();
         public static readonly Dictionary<BoxFace, VoxelVertex[]> FaceVertices = new Dictionary<BoxFace, VoxelVertex[]>();
-        public static List<List<Point3>> EuclideanSuccessorsByVoxelPosition;
-
 
         //public static ColorGradient MSunGradient = new ColorGradient(new Color(70, 70, 70), new Color(255, 254, 224), 255);
         //public static ColorGradient MAmbientGradient = new ColorGradient(new Color(50, 50, 50), new Color(255, 255, 255), 255);
@@ -186,202 +182,7 @@ namespace DwarfCorp
                 VoxelVertex.BackBottomRight
             };
 
-            for (int i = 0; i < 8; i++)
-            {
-                VoxelVertex vertex = (VoxelVertex)(i);
-                var successors = new List<GlobalVoxelOffset>();
-                int xlim = 0;
-                int ylim = 0;
-                int zlim = 0;
-                int nXLim = 0;
-                int nYLim = 0;
-                int nZLim = 0;
-
-                switch (vertex)
-                {
-                    // Back = -z, bottom = -y, left = -x
-                    // Successors are all in the -1 to 0 range.
-                    case VoxelVertex.BackBottomLeft:
-                        nXLim = -1;
-                        xlim = 1;
-
-                        nYLim = -1;
-                        ylim = 1;
-
-                        nZLim = -1;
-                        zlim = 1;
-                        break;
-
-                    // Back = -z, Bottom = -y, Right = +x
-                    // z Successors are [-1, 0]
-                    // y successors are [-1, 0]
-                    // x Successors are [0, 1]
-                    case VoxelVertex.BackBottomRight:
-                        nXLim = 0;
-                        xlim = 2;
-
-                        nYLim = -1;
-                        ylim = 1;
-
-                        nZLim = -1;
-                        zlim = 1;
-                        break;
-
-                    // Back = -z, Top = +y, Left = -x
-                    // z Successors are [-1, 0]
-                    // y successors are [0, 1]
-                    // x Successors are [-1, 1]
-                    case VoxelVertex.BackTopLeft:
-                        nXLim = -1;
-                        xlim = 1;
-
-                        nYLim = 0;
-                        ylim = 2;
-
-                        nZLim = -1;
-                        zlim = 1;
-                        break;
-
-                    // Back = -z, Top = +y, Right = +x
-                    // z Successors are [-1, 0]
-                    // y successors are [0, 1]
-                    // x Successors are [0, 1]
-                    case VoxelVertex.BackTopRight:
-                        nXLim = 0;
-                        xlim = 2;
-
-                        nYLim = 0;
-                        ylim = 2;
-
-                        nZLim = -1;
-                        zlim = 1;
-                        break;
-
-                    // Front = +z, Bottom = -y, Left = -x
-                    // z Successors are [0, 1]
-                    // y successors are [-1, 0]
-                    // x Successors are [-1, 0]
-                    case VoxelVertex.FrontBottomLeft:
-                        nXLim = -1;
-                        xlim = 1;
-
-                        nYLim = -1;
-                        ylim = 1;
-
-                        nZLim = 0;
-                        zlim = 2;
-                        break;
-
-                    // Front = +z, Bottom = -y, Right = +x
-                    // z Successors are [0, 1]
-                    // y successors are [-1, 0]
-                    // x Successors are [0, 1]
-                    case VoxelVertex.FrontBottomRight:
-                        nXLim = 0;
-                        xlim = 2;
-
-                        nYLim = -1;
-                        ylim = 1;
-
-                        nZLim = 0;
-                        zlim = 2;
-                        break;
-
-                    // Front = +z, Top = +y, Left = -x
-                    // z Successors are [0, 1]
-                    // y successors are [0, 1]
-                    // x Successors are [-1, 0]
-                    case VoxelVertex.FrontTopLeft:
-                        nXLim = -1;
-                        xlim = 1;
-                        nYLim = 0;
-                        ylim = 2;
-                        nZLim = 0;
-                        zlim = 2;
-                        break;
-
-                    // Front = +z, Top = +y, Right = +x
-                    // z Successors are [0, 1]
-                    // y successors are [0, 1]
-                    // x Successors are [0, 1]
-                    case VoxelVertex.FrontTopRight:
-                        nXLim = 0;
-                        xlim = 2;
-                        nYLim = 0;
-                        ylim = 2;
-                        nZLim = 0;
-                        zlim = 2;
-                        break;
-                }
-
-                for (int dx = nXLim; dx < xlim; dx++)
-                {
-                    for (int dy = nYLim; dy < ylim; dy++)
-                    {
-                        for (int dz = nZLim; dz < zlim; dz++)
-                        {
-                            if (dx == 0 && dy == 0 && dz == 0)
-                            {
-                                continue;
-                            }
-                            else
-                            {
-                                successors.Add(new GlobalVoxelOffset(dx, dy, dz));
-                            }
-                        }
-                    }
-                }
-
-                VertexSuccessors[vertex] = successors;
-            }
-
-            InitializeRelativeNeighborLookup();
-
             staticsInitialized = true;
-        }
-
-        public static void InitializeRelativeNeighborLookup()
-        {
-            EuclideanSuccessorsByVoxelPosition = new List<List<Point3>>();
-            for (int i = 0; i < 27; i++)
-            {
-                EuclideanSuccessorsByVoxelPosition.Add(new List<Point3>());
-            }
-
-            List<Point3> euclidianNeighbors = new List<Point3>();
-            for (int x = -1; x <= 1; x++)
-            {
-                for (int y = -1; y <= 1; y++)
-                {
-                    for (int z = -1; z <= 1; z++)
-                    {
-                        if (x == 0 && y == 0 && z == 0) continue;
-                        euclidianNeighbors.Add(new Point3(x, y, z));
-                    }
-                }
-            }
-
-            int key;
-            for (int x = -1; x <= 1; x++)
-            {
-                for (int y = -1; y <= 1; y++)
-                {
-                    for (int z = -1; z <= 1; z++)
-                    {
-                        key = SuccessorToEuclidianLookupKey(x, y, z);
-                        List<Point3> neighbors = EuclideanSuccessorsByVoxelPosition[key];
-
-                        for (int i = 0; i < euclidianNeighbors.Count; i++)
-                        {
-                            Point3 testPoint = euclidianNeighbors[i];
-                            if ((testPoint.X == x || testPoint.X == 0) &&
-                                (testPoint.Y == y || testPoint.Y == 0) &&
-                                (testPoint.Z == z || testPoint.Z == 0))
-                                neighbors.Add(testPoint);
-                        }
-                    }
-                }
-            }
         }
 
         #endregion
@@ -1263,17 +1064,6 @@ namespace DwarfCorp
         #endregion
 
         #region neighbors
-
-        // Function does not need any chunk specific information so it is static.
-        public static int SuccessorToEuclidianLookupKey(GlobalVoxelOffset successor)
-        {
-            return SuccessorToEuclidianLookupKey(MathFunctions.FloorInt(successor.X), MathFunctions.FloorInt(successor.Y), MathFunctions.FloorInt(successor.Z));
-        }
-
-        public static int SuccessorToEuclidianLookupKey(Point3 successor)
-        {
-            return SuccessorToEuclidianLookupKey(successor.X, successor.Y, successor.Z);
-        }
 
         // Todo: %KILL%
         public static int SuccessorToEuclidianLookupKey(int x, int y, int z)

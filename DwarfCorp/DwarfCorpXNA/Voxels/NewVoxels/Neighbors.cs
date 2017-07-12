@@ -104,7 +104,7 @@ namespace DwarfCorp
         };
 
         #region VertexNeighbors
-        private static GlobalVoxelOffset[][] VertexNeighbors = new GlobalVoxelOffset[][]
+        public static readonly GlobalVoxelOffset[][] VertexNeighbors = new GlobalVoxelOffset[][]
         {
             new GlobalVoxelOffset[] // Front Top Left (-1, 1, 1)
             {
