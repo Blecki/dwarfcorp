@@ -233,7 +233,7 @@ namespace DwarfCorp
 
         public bool IsTopEmpty()
         {
-            if(GridPosition.Y >= Chunk.SizeY)
+            if(GridPosition.Y >= VoxelConstants.ChunkSizeY)
             {
                 return true;
             }
@@ -244,7 +244,7 @@ namespace DwarfCorp
 
         public VoxelHandle GetVoxelAbove()
         {
-            if (Chunk == null || GridPosition.Y >= Chunk.SizeY - 1)
+            if (Chunk == null || GridPosition.Y >= VoxelConstants.ChunkSizeY - 1)
             {
                 return null;
             }

@@ -163,11 +163,11 @@ namespace DwarfCorp
             int maxVertex = 0;
             bool fogOfWar = GameSettings.Default.FogofWar;
 
-            for (int y = 0; y < Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, chunk.SizeY); y++)
+            for (int y = 0; y < Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, VoxelConstants.ChunkSizeY); y++)
             {
-                for (int x = 0; x < chunk.SizeX; x++)
+                for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
                 {
-                    for (int z = 0; z < chunk.SizeZ; z++)
+                    for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                     {
                         int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
                         if (fogOfWar && !chunk.Data.IsExplored[index]) continue;

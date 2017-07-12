@@ -439,8 +439,8 @@ namespace DwarfCorp
                 return -1;
             }
 
-            float dA = (a.Origin - camera.Position + new Vector3(a.SizeX / 2.0f, a.SizeY / 2.0f, a.SizeZ / 2.0f)).LengthSquared();
-            float dB = (b.Origin - camera.Position + new Vector3(b.SizeX / 2.0f, b.SizeY / 2.0f, b.SizeZ / 2.0f)).LengthSquared();
+            float dA = (a.Origin - camera.Position + new Vector3(VoxelConstants.ChunkSizeX / 2.0f, VoxelConstants.ChunkSizeY / 2.0f, VoxelConstants.ChunkSizeZ / 2.0f)).LengthSquared();
+            float dB = (b.Origin - camera.Position + new Vector3(VoxelConstants.ChunkSizeX / 2.0f, VoxelConstants.ChunkSizeY / 2.0f, VoxelConstants.ChunkSizeZ / 2.0f)).LengthSquared();
 
             if (!camera.GetFrustrum().Intersects(a.GetBoundingBox()))
             {

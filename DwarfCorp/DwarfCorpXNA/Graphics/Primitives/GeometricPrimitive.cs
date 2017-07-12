@@ -159,17 +159,17 @@ namespace DwarfCorp
                 VoxelVertex.BackTopRight
             };
 
-            for (int x = 0; x < chunk.SizeX; x++)
+            for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
-                for (int y = 0; y < chunk.SizeY; y++)
+                for (int y = 0; y < VoxelConstants.ChunkSizeY; y++)
                 {
-                    for (int z = 0; z < chunk.SizeZ; z++)
+                    for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                     {
                         v.GridPosition = new LocalVoxelCoordinate(x, y, z);
                         bool isTop = false;
 
 
-                        if (y < chunk.SizeY - 1)
+                        if (y < VoxelConstants.ChunkSizeY - 1)
                         {
                             vAbove.GridPosition = new LocalVoxelCoordinate(x, y + 1, z);
 
@@ -341,17 +341,17 @@ namespace DwarfCorp
             var voxelOnFace = chunk.MakeVoxel(0, 0, 0);
             var worldVoxel = new VoxelHandle();
 
-            for (int x = 0; x < chunk.SizeX; x++)
+            for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
-                for (int y = 0; y < Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, chunk.SizeY); y++)
+                for (int y = 0; y < Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, VoxelConstants.ChunkSizeY); y++)
                 {
-                    for (int z = 0; z < chunk.SizeZ; z++)
+                    for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                     {
                         v.GridPosition = new LocalVoxelCoordinate(x, y, z);
                         bool isTop = false;
 
 
-                        if (y < chunk.SizeY - 1)
+                        if (y < VoxelConstants.ChunkSizeY - 1)
                         {
                             vAbove.GridPosition = new LocalVoxelCoordinate(x, y + 1, z);
 

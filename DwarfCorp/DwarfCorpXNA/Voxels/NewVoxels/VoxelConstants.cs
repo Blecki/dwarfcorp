@@ -11,6 +11,7 @@ namespace DwarfCorp
         public const Int32 ChunkSizeX = 16;
         public const Int32 ChunkSizeY = 64;
         public const Int32 ChunkSizeZ = 16;
+        public const Int32 ChunkVoxelCount = 16 * 64 * 16;
 
         public static Int32 DataIndexOf(LocalVoxelCoordinate C)
         {

@@ -308,7 +308,7 @@ namespace DwarfCorp
             bool updateOccurred = false;
             WaterCell cellBelow = new WaterCell();
 
-            int maxSize = chunk.SizeX * chunk.SizeY * chunk.SizeZ;
+            int maxSize = VoxelConstants.ChunkVoxelCount;
             int toUpdate = 0;
             var data = chunk.Data;
             for (int i = 0; i < maxSize; i++)

@@ -73,21 +73,6 @@ namespace DwarfCorp
         public VoxelData Data { get; set; }
         public ConcurrentDictionary<VoxelHandle, byte> Springs { get; set; }
 
-        public int SizeX
-        {
-            get { return sizeX; }
-        }
-
-        public int SizeY
-        {
-            get { return sizeY; }
-        }
-
-        public int SizeZ
-        {
-            get { return sizeZ; }
-        }
-
         public bool IsVisible { get; set; }
         public bool ShouldRebuild { get; set; }
         public bool IsRebuilding { get; set; }
@@ -123,9 +108,6 @@ namespace DwarfCorp
         //public static ColorGradient MTorchGradient = null;
         public bool LightingCalculated { get; set; }
         private bool firstRebuild = true;
-        private int sizeX = -1;
-        private int sizeY = -1;
-        private int sizeZ = -1;
         private int tileSize = -1;
 
 
@@ -425,12 +407,10 @@ namespace DwarfCorp
             }
         }
 
+        // Todo: %KILL% size arguments
         public VoxelChunk(ChunkManager manager, Vector3 origin, int tileSize, GlobalChunkCoordinate id, int sizeX, int sizeY, int sizeZ)
         {
             FirstWaterIter = true;
-            this.sizeX = sizeX;
-            this.sizeY = sizeY;
-            this.sizeZ = sizeZ;
             ID = id;
             Origin = origin;
             Data = VoxelData.Allocate();
@@ -528,7 +508,7 @@ namespace DwarfCorp
         {
             if (!m_boundingBoxCreated)
             {
-                Vector3 max = new Vector3(sizeX, sizeY, sizeZ) + Origin;
+                Vector3 max = new Vector3(VoxelConstants.ChunkSizeX, VoxelConstants.ChunkSizeY, VoxelConstants.ChunkSizeZ) + Origin;
                 m_boundingBox = new BoundingBox(Origin, max);
                 m_boundingBoxCreated = true;
             }
@@ -543,8 +523,8 @@ namespace DwarfCorp
         {
             if (!m_boundingSphereCreated)
             {
-                float m = Math.Max(Math.Max(sizeX, sizeY), sizeZ) * 0.5f;
-                m_boundingSphere = new BoundingSphere(Origin + new Vector3(sizeX, sizeY, sizeZ) * 0.5f, (float)Math.Sqrt(3 * m * m));
+                float m = VoxelConstants.ChunkSizeY * 0.5f;
+                m_boundingSphere = new BoundingSphere(Origin + new Vector3(VoxelConstants.ChunkSizeX, VoxelConstants.ChunkSizeY, VoxelConstants.ChunkSizeZ) * 0.5f, (float)Math.Sqrt(3 * m * m));
                 m_boundingSphereCreated = true;
             }
 
@@ -649,11 +629,11 @@ namespace DwarfCorp
                 DetailMoteData moteData = biomeData.Motes[i];
                 VoxelHandle v = MakeVoxel(0, 0, 0);
                 VoxelHandle voxelBelow = MakeVoxel(0, 0, 0);
-                for (int x = 0; x < SizeX; x++)
+                for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
                 {
-                    for (int y = 1; y < Math.Min(Manager.ChunkData.MaxViewingLevel + 1, SizeY - 1); y++)
+                    for (int y = 1; y < Math.Min(Manager.ChunkData.MaxViewingLevel + 1, VoxelConstants.ChunkSizeY - 1); y++)
                     {
-                        for (int z = 0; z < SizeZ; z++)
+                        for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                         {
                             v.GridPosition = new LocalVoxelCoordinate(x, y, z);
                             voxelBelow.GridPosition = new LocalVoxelCoordinate(x, y - 1, z);
@@ -835,7 +815,12 @@ namespace DwarfCorp
 
         public bool IsCellValid(int x, int y, int z)
         {
-            return x >= 0 && y >= 0 && z >= 0 && x < SizeX && y < SizeY && z < SizeZ;
+            return x >= 0 
+                && y >= 0 
+                && z >= 0 
+                && x < VoxelConstants.ChunkSizeX 
+                && y < VoxelConstants.ChunkSizeY 
+                && z < VoxelConstants.ChunkSizeZ;
         }
 
         public bool IsCellValid(Point3 point)
@@ -894,11 +879,11 @@ namespace DwarfCorp
 
         public void ResetSunlightIgnoreEdges(byte sunColor)
         {
-            for (int x = 1; x < SizeX - 1; x++)
+            for (int x = 1; x < VoxelConstants.ChunkSizeX - 1; x++)
             {
-                for (int z = 1; z < SizeZ - 1; z++)
+                for (int z = 1; z < VoxelConstants.ChunkSizeZ - 1; z++)
                 {
-                    for (int y = 0; y < SizeY; y++)
+                    for (int y = 0; y < VoxelConstants.ChunkSizeY; y++)
                     {
                         int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
                         Data.SunColors[index] = sunColor;
@@ -909,7 +894,7 @@ namespace DwarfCorp
 
         public void ResetSunlight(byte sunColor)
         {
-            int numVoxels = sizeX * sizeY * sizeZ;
+            int numVoxels = VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeY * VoxelConstants.ChunkSizeZ;
             for (int i = 0; i < numVoxels; i++)
             {
                 Data.SunColors[i] = sunColor;
@@ -921,7 +906,7 @@ namespace DwarfCorp
             float tot = 0;
             int x = (int)voxRef.GridPosition.X;
             int z = (int)voxRef.GridPosition.Z;
-            for (int y = (int)voxRef.GridPosition.Y; y < SizeY; y++)
+            for (int y = (int)voxRef.GridPosition.Y; y < VoxelConstants.ChunkSizeY; y++)
             {
                 int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
                 tot += Data.Water[index].WaterLevel;
@@ -940,7 +925,7 @@ namespace DwarfCorp
             float tot = 0;
             int x = (int)voxRef.GridPosition.X;
             int z = (int)voxRef.GridPosition.Z;
-            for (int y = (int)voxRef.GridPosition.Y; y < SizeY; y++)
+            for (int y = (int)voxRef.GridPosition.Y; y < VoxelConstants.ChunkSizeY; y++)
             {
                 int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
                 tot += (Data.Water[index].WaterLevel) / (float)WaterManager.maxWaterLevel;
@@ -966,12 +951,12 @@ namespace DwarfCorp
             ResetSunlight(0);
             VoxelHandle reference = MakeVoxel(0, 0, 0);
 
-            for (int x = 0; x < SizeX; x++)
+            for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
-                for (int z = 0; z < SizeZ; z++)
+                for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                 {
                     bool rayHit = false;
-                    for (int y = SizeY - 1; y >= 0; y--)
+                    for (int y = VoxelConstants.ChunkSizeY - 1; y >= 0; y--)
                     {
                         if (rayHit)
                         {
@@ -985,7 +970,7 @@ namespace DwarfCorp
                             continue;
                         }
 
-                        if (y >= SizeY - 1)
+                        if (y >= VoxelConstants.ChunkSizeY - 1)
                         {
                             continue;
                         }
@@ -1060,9 +1045,9 @@ namespace DwarfCorp
         {
             float level = Manager.ChunkData.MaxViewingLevel;
 
-            int mx = SizeX;
-            int my = SizeY;
-            int mz = SizeZ;
+            int mx = VoxelConstants.ChunkSizeX;
+            int my = VoxelConstants.ChunkSizeY;
+            int mz = VoxelConstants.ChunkSizeZ;
             VoxelHandle voxel = MakeVoxel(0, 0, 0);
             for (int y = 0; y < my; y++)
             {
@@ -1128,7 +1113,12 @@ namespace DwarfCorp
 
         public bool IsInterior(int x, int y, int z)
         {
-            return (x != 0 && y != 0 && z != 0 && x != SizeX - 1 && y != SizeY - 1 && z != SizeZ - 1);
+            return x != 0 
+                && y != 0 
+                && z != 0 
+                && x != VoxelConstants.ChunkSizeX - 1 
+                && y != VoxelConstants.ChunkSizeY - 1 
+                && z != VoxelConstants.ChunkSizeZ - 1;
         }
 
         

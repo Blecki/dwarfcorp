@@ -192,16 +192,16 @@ namespace DwarfCorp
 
         public void GenerateWater(VoxelChunk chunk)
         {
-            int waterHeight = (int) (SeaLevel*chunk.SizeY) + 1;
+            int waterHeight = (int) (SeaLevel*VoxelConstants.ChunkSizeY) + 1;
             VoxelHandle voxel = chunk.MakeVoxel(0, 0, 0);
-            for (int x = 0; x < chunk.SizeX; x++)
+            for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
-                for (int z = 0; z < chunk.SizeZ; z++)
+                for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                 {
                     int h;
                     for (int y = 0; y <= waterHeight; y++)
                     {
-                        h = chunk.GetFilledVoxelGridHeightAt(x, chunk.SizeY - 1, z);
+                        h = chunk.GetFilledVoxelGridHeightAt(x, VoxelConstants.ChunkSizeY - 1, z);
                         voxel.GridPosition = new LocalVoxelCoordinate(x, y, z);
                         int index = VoxelConstants.DataIndexOf(voxel.GridPosition);
                         if (voxel.IsEmpty && y >= h)
@@ -218,7 +218,7 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    h = chunk.GetFilledVoxelGridHeightAt(x, chunk.SizeY - 1, z);
+                    h = chunk.GetFilledVoxelGridHeightAt(x, VoxelConstants.ChunkSizeY - 1, z);
 
 
                     if (h <= 0)
@@ -236,9 +236,9 @@ namespace DwarfCorp
         {
             int lavaHeight = 2;
             VoxelHandle voxel = chunk.MakeVoxel(0, 0, 0);
-            for (int x = 0; x < chunk.SizeX; x++)
+            for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
-                for (int z = 0; z < chunk.SizeZ; z++)
+                for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                 {
                     for (int y = 0; y < lavaHeight; y++)
                     {
@@ -269,17 +269,17 @@ namespace DwarfCorp
 
         public void GenerateFauna(VoxelChunk chunk, ComponentManager components, ContentManager content, GraphicsDevice graphics, FactionLibrary factions)
         {
-            int waterHeight = (int)(SeaLevel * chunk.SizeY);
+            int waterHeight = (int)(SeaLevel * VoxelConstants.ChunkSizeY);
             VoxelHandle v = chunk.MakeVoxel(0, 0, 0);
-            for (int x = 0; x < chunk.SizeX; x++)
+            for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
-                for (int z = 0; z < chunk.SizeZ; z++)
+                for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                 {
                     Vector2 vec = new Vector2(x + chunk.Origin.X, z + chunk.Origin.Z) / WorldScale;
                     Overworld.Biome biome = Overworld.Map[(int)MathFunctions.Clamp(vec.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(vec.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
                     BiomeData biomeData = BiomeLibrary.Biomes[biome];
 
-                    int y = chunk.GetFilledVoxelGridHeightAt(x, chunk.SizeY - 1, z);
+                    int y = chunk.GetFilledVoxelGridHeightAt(x, VoxelConstants.ChunkSizeY - 1, z);
 
                     if (!chunk.IsCellValid(x, (int)(y - chunk.Origin.Y), z))
                     {
@@ -310,19 +310,19 @@ namespace DwarfCorp
 
         public void GenerateVegetation(VoxelChunk chunk, ComponentManager components, ContentManager content, GraphicsDevice graphics)
         {
-            int waterHeight = (int) (SeaLevel * chunk.SizeY);
+            int waterHeight = (int) (SeaLevel * VoxelConstants.ChunkSizeY);
             bool updated = false;
             VoxelHandle v = chunk.MakeVoxel(0, 0, 0);
             VoxelHandle vUnder = chunk.MakeVoxel(0, 0, 0);
-            for(int x = 0; x < chunk.SizeX; x++)
+            for(int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
-                for(int z = 0; z < chunk.SizeZ; z++)
+                for(int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                 {
                     Vector2 vec = new Vector2(x + chunk.Origin.X, z + chunk.Origin.Z) / WorldScale;
                     Overworld.Biome biome = Overworld.Map[(int)MathFunctions.Clamp(vec.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(vec.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
                     BiomeData biomeData = BiomeLibrary.Biomes[biome];
 
-                    int y = chunk.GetFilledVoxelGridHeightAt(x, chunk.SizeY - 1, z);
+                    int y = chunk.GetFilledVoxelGridHeightAt(x, VoxelConstants.ChunkSizeY - 1, z);
 
                     if(!chunk.IsCellValid(x, (int) (y - chunk.Origin.Y), z))
                     {
@@ -387,14 +387,11 @@ namespace DwarfCorp
         public void GenerateLavaTubes(VoxelChunk chunk)
         {
             Vector3 origin = chunk.Origin;
-            int chunkSizeX = chunk.SizeX;
-            int chunkSizeY = chunk.SizeY;
-            int chunkSizeZ = chunk.SizeZ;
-            for (int x = 0; x < chunkSizeX; x++)
+            for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
-                for (int z = 0; z < chunkSizeZ; z++)
+                for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                 {
-                    int h = chunk.GetFilledVoxelGridHeightAt(x, chunk.SizeY - 1, z);
+                    int h = chunk.GetFilledVoxelGridHeightAt(x, VoxelConstants.ChunkSizeY - 1, z);
                     for (int i = 0; i < LavaLevels.Count; i++)
                     {
                         int y = LavaLevels[i];
@@ -418,17 +415,14 @@ namespace DwarfCorp
         public void GenerateCaves(VoxelChunk chunk, WorldManager world)
         {
             Vector3 origin = chunk.Origin;
-            int chunkSizeX = chunk.SizeX;
-            int chunkSizeY = chunk.SizeY;
-            int chunkSizeZ = chunk.SizeZ;
             BiomeData biome = BiomeLibrary.Biomes[Overworld.Biome.Cave];
             List<VoxelHandle> neighbors = new List<VoxelHandle>();
             VoxelHandle vUnder = chunk.MakeVoxel(0, 0, 0);
-            for (int x = 0; x < chunkSizeX; x++)
+            for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
-                for (int z = 0; z < chunkSizeZ; z++)
+                for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                 {
-                    int h = chunk.GetFilledVoxelGridHeightAt(x, chunk.SizeY - 1, z);
+                    int h = chunk.GetFilledVoxelGridHeightAt(x, VoxelConstants.ChunkSizeY - 1, z);
                     for (int i = 0; i < CaveLevels.Count; i++)
                     {
                         int y = CaveLevels[i];
@@ -547,14 +541,11 @@ namespace DwarfCorp
         public void GenerateAquifers(VoxelChunk chunk)
         {
             Vector3 origin = chunk.Origin;
-            int chunkSizeX = chunk.SizeX;
-            int chunkSizeY = chunk.SizeY;
-            int chunkSizeZ = chunk.SizeZ;
-            for (int x = 0; x < chunkSizeX; x++)
+            for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
-                for (int z = 0; z < chunkSizeZ; z++)
+                for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                 {
-                    int h = chunk.GetFilledVoxelGridHeightAt(x, chunk.SizeY - 1, z);
+                    int h = chunk.GetFilledVoxelGridHeightAt(x, VoxelConstants.ChunkSizeY - 1, z);
                     for (int i = 0; i < AquiverLevels.Count; i++)
                     {
                         int y = AquiverLevels[i];
