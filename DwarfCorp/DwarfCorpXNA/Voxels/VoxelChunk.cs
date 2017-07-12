@@ -678,9 +678,250 @@ namespace DwarfCorp
         {
             if (ReconstructRamps || firstRebuild)
             {
-                VoxelListPrimitive.UpdateCornerRamps(this);
+                UpdateCornerRamps(this);
                 ReconstructRamps = false;
             }
+        }
+
+        public static void UpdateCornerRamps(VoxelChunk chunk)
+        {
+            var v = chunk.MakeVoxel(0, 0, 0);
+            var vAbove = chunk.MakeVoxel(0, 0, 0);
+
+            List<VoxelVertex> top = new List<VoxelVertex>()
+            {
+                VoxelVertex.FrontTopLeft,
+                VoxelVertex.FrontTopRight,
+                VoxelVertex.BackTopLeft,
+                VoxelVertex.BackTopRight
+            };
+
+            for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
+            {
+                for (int y = 0; y < VoxelConstants.ChunkSizeY; y++)
+                {
+                    for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
+                    {
+                        v.GridPosition = new LocalVoxelCoordinate(x, y, z);
+                        bool isTop = false;
+
+
+                        if (y < VoxelConstants.ChunkSizeY - 1)
+                        {
+                            vAbove.GridPosition = new LocalVoxelCoordinate(x, y + 1, z);
+
+                            isTop = vAbove.IsEmpty;
+                        }
+
+                        if (v.IsEmpty || !v.IsVisible || !isTop || !v.Type.CanRamp)
+                        {
+                            v.RampType = RampType.None;
+                            continue;
+                        }
+                        v.RampType = RampType.None;
+
+                        foreach (VoxelVertex bestKey in top)
+                        {
+                            // If there are no empty neighbors, no slope.
+                            if (!Neighbors.EnumerateVertexNeighbors2D(v.Coordinate, bestKey)
+                                .Any(n =>
+                                {
+                                    var handle = new TemporaryVoxelHandle(chunk.Manager.ChunkData, n);
+                                    return !handle.IsValid || handle.IsEmpty;
+                                }))
+                                continue;
+
+                            switch (bestKey)
+                            {
+                                case VoxelVertex.FrontTopLeft:
+                                    v.RampType |= RampType.TopBackLeft;
+                                    break;
+                                case VoxelVertex.FrontTopRight:
+                                    v.RampType |= RampType.TopBackRight;
+                                    break;
+                                case VoxelVertex.BackTopLeft:
+                                    v.RampType |= RampType.TopFrontLeft;
+                                    break;
+                                case VoxelVertex.BackTopRight:
+                                    v.RampType |= RampType.TopFrontRight;
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void SetTop(RampType rampType, Dictionary<VoxelVertex, float> top)
+        {
+            float r = 0.5f;
+            List<VoxelVertex> keys = top.Keys.ToList();
+            foreach (VoxelVertex vert in keys)
+            {
+                top[vert] = 1.0f;
+            }
+            if (rampType.HasFlag(RampType.TopFrontLeft))
+            {
+                top[VoxelVertex.FrontTopLeft] = r;
+            }
+
+            if (rampType.HasFlag(RampType.TopFrontRight))
+            {
+                top[VoxelVertex.FrontTopRight] = r;
+            }
+
+            if (rampType.HasFlag(RampType.TopBackLeft))
+            {
+                top[VoxelVertex.BackTopLeft] = r;
+            }
+            if (rampType.HasFlag(RampType.TopBackRight))
+            {
+                top[VoxelVertex.BackTopRight] = r;
+            }
+        }
+
+        // This insanity creates a map from voxel faces to ramp types, determining
+        // whether or not the voxel on a face should draw that face given that its neighbor
+        // has a certain ramp type.
+        // This allows faces to be drawn next to ramps (for example, if dirt is next to stone,
+        // the dirt ramps, revealing part of the stone face that needs to be drawn).
+        public static void CreateFaceDrawMap()
+        {
+            BoxFace[] faces = (BoxFace[])Enum.GetValues(typeof(BoxFace));
+
+            List<RampType> ramps = new List<RampType>()
+            {
+                RampType.None,
+                RampType.TopFrontLeft,
+                RampType.TopFrontRight,
+                RampType.TopBackRight,
+                RampType.TopBackLeft,
+                RampType.Front,
+                RampType.All,
+                RampType.Back,
+                RampType.Left,
+                RampType.Right,
+                RampType.TopFrontLeft | RampType.TopBackRight,
+                RampType.TopFrontRight | RampType.TopBackLeft,
+                RampType.TopBackLeft | RampType.TopBackRight | RampType.TopFrontLeft,
+                RampType.TopBackLeft | RampType.TopBackRight | RampType.TopFrontRight,
+                RampType.TopFrontLeft | RampType.TopFrontRight | RampType.TopBackLeft,
+                RampType.TopFrontLeft | RampType.TopFrontRight | RampType.TopBackRight
+            };
+
+            Dictionary<VoxelVertex, float> myTop = new Dictionary<VoxelVertex, float>()
+            {
+                {
+                    VoxelVertex.BackTopLeft, 0.0f
+                },
+                {
+                    VoxelVertex.BackTopRight,  0.0f
+                },
+                {
+                    VoxelVertex.FrontTopLeft,  0.0f
+                },
+                {
+                    VoxelVertex.FrontTopRight,  0.0f
+                }
+            };
+
+            Dictionary<VoxelVertex, float> theirTop = new Dictionary<VoxelVertex, float>()
+            {
+                {
+                    VoxelVertex.BackTopLeft,  0.0f
+                },
+                {
+                    VoxelVertex.BackTopRight,  0.0f
+                },
+                {
+                    VoxelVertex.FrontTopLeft,  0.0f
+                },
+                {
+                    VoxelVertex.FrontTopRight, 0.0f
+                }
+            };
+
+            foreach (RampType myRamp in ramps)
+            {
+                SetTop(myRamp, myTop);
+                foreach (RampType neighborRamp in ramps)
+                {
+                    SetTop(neighborRamp, theirTop);
+                    foreach (BoxFace neighborFace in faces)
+                    {
+
+                        if (neighborFace == BoxFace.Bottom || neighborFace == BoxFace.Top)
+                        {
+                            GeometricPrimitive.FaceDrawMap[(int)neighborFace, (int)myRamp, (int)neighborRamp] = false;
+                            continue;
+                        }
+
+                        float my1 = 0.0f;
+                        float my2 = 0.0f;
+                        float their1 = 0.0f;
+                        float their2 = 0.0f;
+
+                        switch (neighborFace)
+                        {
+                            case BoxFace.Back:
+                                my1 = myTop[VoxelVertex.BackTopLeft];
+                                my2 = myTop[VoxelVertex.BackTopRight];
+                                their1 = theirTop[VoxelVertex.FrontTopLeft];
+                                their2 = theirTop[VoxelVertex.FrontTopRight];
+                                break;
+                            case BoxFace.Front:
+                                my1 = myTop[VoxelVertex.FrontTopLeft];
+                                my2 = myTop[VoxelVertex.FrontTopRight];
+                                their1 = theirTop[VoxelVertex.BackTopLeft];
+                                their2 = theirTop[VoxelVertex.BackTopRight];
+                                break;
+                            case BoxFace.Left:
+                                my1 = myTop[VoxelVertex.FrontTopLeft];
+                                my2 = myTop[VoxelVertex.BackTopLeft];
+                                their1 = theirTop[VoxelVertex.FrontTopRight];
+                                their2 = theirTop[VoxelVertex.BackTopRight];
+                                break;
+                            case BoxFace.Right:
+                                my1 = myTop[VoxelVertex.FrontTopRight];
+                                my2 = myTop[VoxelVertex.BackTopRight];
+                                their1 = theirTop[VoxelVertex.FrontTopLeft];
+                                their2 = theirTop[VoxelVertex.BackTopLeft];
+                                break;
+                            default:
+                                break;
+                        }
+
+                        GeometricPrimitive.FaceDrawMap[(int)neighborFace, (int)myRamp, (int)neighborRamp] = (their1 < my1 || their2 < my2);
+                    }
+                }
+            }
+        }
+
+        public static bool ShouldRamp(VoxelVertex vertex, RampType rampType)
+        {
+            bool toReturn = false;
+
+            if (VoxelHandle.HasFlag(rampType, RampType.TopFrontRight))
+            {
+                toReturn = (vertex == VoxelVertex.BackTopRight);
+            }
+
+            if (VoxelHandle.HasFlag(rampType, RampType.TopBackRight))
+            {
+                toReturn = toReturn || (vertex == VoxelVertex.FrontTopRight);
+            }
+
+            if (VoxelHandle.HasFlag(rampType, RampType.TopFrontLeft))
+            {
+                toReturn = toReturn || (vertex == VoxelVertex.BackTopLeft);
+            }
+
+            if (VoxelHandle.HasFlag(rampType, RampType.TopBackLeft))
+            {
+                toReturn = toReturn || (vertex == VoxelVertex.FrontTopLeft);
+            }
+
+            return toReturn;
         }
 
         public void BuildGrassMotes()

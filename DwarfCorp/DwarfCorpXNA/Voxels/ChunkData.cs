@@ -429,52 +429,17 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        /// TODO: Get rid of the recursion
         /// Recursive function which gets all the voxels at a position in the world, assuming the voxel is in a given chunk
         /// </summary>
         /// <param Name="checkFirst">The voxel chunk to check first</param>
         /// <param Name="worldLocation">The point in the world to check</param>
         /// <param Name="toReturn">A list of voxels to get</param>
-        /// <param Name="depth">The depth of the recursion</param>
         public bool GetNonNullVoxelAtWorldLocationCheckFirst(VoxelChunk checkFirst, Vector3 worldLocation, ref VoxelHandle toReturn)
         {
-
-            if(checkFirst != null)
-            {
-                if(!checkFirst.IsWorldLocationValid(worldLocation))
-                {
-                    return GetNonNullVoxelAtWorldLocation(worldLocation, ref toReturn);
-                }
-
-                bool success = checkFirst.GetVoxelAtWorldLocation(worldLocation, ref toReturn);
-
-                if(success && !toReturn.IsEmpty)
-                {
-                    return true;
-                }
-                return GetNonNullVoxelAtWorldLocation(worldLocation, ref toReturn);
-            }
-
-            var chunk = GetChunk(worldLocation);
-
-            if(chunk == null)
-            {
-                return false;
-            }
-
-            if(!chunk.IsWorldLocationValid(worldLocation))
-            {
-                return false;
-            }
-
-            if (chunk.GetVoxelAtWorldLocation(worldLocation, ref toReturn) && !toReturn.IsEmpty)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            var v = new TemporaryVoxelHandle(this, GlobalVoxelCoordinate.FromVector3(worldLocation));
+            if (!v.IsValid || v.IsEmpty) return false;
+            toReturn.ChangeVoxel(v.Chunk, v.Coordinate.GetLocalVoxelCoordinate());
+            return true;
         }
        
         public void LoadFromFile(GameFile gameFile, Action<String> SetLoadingMessage)
