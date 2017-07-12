@@ -367,48 +367,6 @@ namespace DwarfCorp
             return false;
         }
 
-        public void RemoveChunk(VoxelChunk chunk)
-        {
-            VoxelChunk removed = null;
-            while (!ChunkMap.TryRemove(chunk.ID, out removed))
-            {
-                Thread.Sleep(10);
-            }
-
-            HashSet<IBoundedObject> locatables = new HashSet<IBoundedObject>();
-
-            chunkManager.World.CollisionManager.GetObjectsIntersecting(chunk.GetBoundingBox(), locatables, CollisionManager.CollisionType.Static | CollisionManager.CollisionType.Dynamic);
-
-            foreach(var component in locatables.Where(o => o is Body).Select(o => o as Body))
-            {
-                component.Die();
-            }
-
-            chunk.Destroy(chunkManager.Graphics);
-        }
-
-        public List<VoxelChunk> GetAdjacentChunks(VoxelChunk chunk)
-        {
-            List<VoxelChunk> toReturn = new List<VoxelChunk>();
-            for(int dx = -1; dx < 2; dx++)
-            {
-                for(int dz = -1; dz < 2; dz++)
-                {
-                    if(dx != 0 || dz != 0)
-                    {
-                        var key = new GlobalChunkCoordinate(chunk.ID.X + dx, 0, chunk.ID.Z + dz);
-
-                        if(ChunkMap.ContainsKey(key))
-                        {
-                            toReturn.Add(ChunkMap[key]);
-                        }
-                    }
-                }
-            }
-
-            return toReturn;
-        }
-
         public VoxelChunk GetVoxelChunkAtWorldLocation(GlobalVoxelCoordinate worldLocation)
         {
             VoxelChunk returnChunk = null;

@@ -951,6 +951,19 @@ namespace DwarfCorp
             chunks.RemoveWhere(chunk => frustum.Contains(chunk.GetBoundingBox()) == ContainmentType.Disjoint);
         }
 
+        private IEnumerable<VoxelChunk> EnumerateAdjacentChunks(VoxelChunk Chunk)
+        {
+            for (int dx = -1; dx < 2; dx++)
+                for (int dz = -1; dz < 2; dz++)
+                    if (dx != 0 || dz != 0)
+                    {
+                        VoxelChunk adjacent;
+                        if (ChunkData.ChunkMap.TryGetValue(new GlobalChunkCoordinate(
+                            Chunk.ID.X + dx, 0, Chunk.ID.Z + dz), out adjacent))
+                            yield return adjacent;
+                    }
+        }
+
         public void Update(DwarfTime gameTime, Camera camera, GraphicsDevice g)
         {
             UpdateRenderList(camera);
@@ -975,8 +988,7 @@ namespace DwarfCorp
                     if(!ChunkData.ChunkMap.ContainsKey(chunk.ID))
                     {
                         ChunkData.AddChunk(chunk);
-                        List<VoxelChunk> adjacents = ChunkData.GetAdjacentChunks(chunk);
-                        foreach(VoxelChunk c in adjacents)
+                        foreach(var c in EnumerateAdjacentChunks(chunk))
                         {
                             c.ShouldRecalculateLighting = true;
                             c.ShouldRebuild = true;
@@ -1028,10 +1040,7 @@ namespace DwarfCorp
                 }
             }
 
-            if (GameSettings.Default.FogofWar)
-            {
-                ChunkData.Reveal(KilledVoxels);
-            }
+            ChunkData.Reveal(KilledVoxels);
 
             lock (RebuildList)
             {
