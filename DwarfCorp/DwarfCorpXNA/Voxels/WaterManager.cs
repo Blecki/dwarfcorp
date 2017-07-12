@@ -84,15 +84,6 @@ namespace DwarfCorp
         public ConcurrentQueue<SplashType> Splashes { get; set; }
         public ConcurrentQueue<Transfer> Transfers { get; set; }
 
-        // Todo: %KILL%
-        public static GlobalVoxelOffset[] m_spreadNeighbors =
-        {
-            new GlobalVoxelOffset(1, 0, 0),
-            new GlobalVoxelOffset(-1, 0, 0),
-            new GlobalVoxelOffset(0, 0, 1),
-            new GlobalVoxelOffset(0, 0, -1)
-        };
-
         public WaterManager(ChunkManager chunks)
         {
             Chunks = chunks;
@@ -468,21 +459,13 @@ namespace DwarfCorp
                 //Array.Sort(m_spreadNeighbors, (a, b) => CompareFlowVectors(a, b, data.Water[idx].FluidFlow));
                 //m_spreadNeighbors.Shuffle();
                 
-                for (int s = 0; s < m_spreadNeighbors.Length; s++)
+                foreach (var globalCoordinate in Neighbors.EnumerateManhattanNeighbors2D(
+                        chunk.ID + new LocalVoxelCoordinate(x, y, z)))
                 {
-                    var globalPos = chunk.ID + new LocalVoxelCoordinate((int)gridCoord.X, (int)gridCoord.Y, (int)gridCoord.Z) + m_spreadNeighbors[s];
-
-                    // If neighbor is past chunk edge, use GetVoxel, otherwise, use GetVoxelLocal
-
-                    bool success = chunk.Manager.ChunkData.GetVoxel(globalPos, ref neighbor);
-
-                    if (!success || !neighbor.IsEmpty)
-                    {
-                        continue;
-                    }
-
-                    WaterCell neighborWater = neighbor.Water;
-
+                    var v = new TemporaryVoxelHandle(chunk.Manager.ChunkData, globalCoordinate);
+                    if (!v.IsValid || !v.IsEmpty) continue;
+                    var neighborWater = v.WaterCell;
+                    
                     if (neighborWater.WaterLevel >= data.Water[idx].WaterLevel)
                         continue;
 
@@ -500,7 +483,7 @@ namespace DwarfCorp
                         updateOccurred = true;
                     }
 
-                    CreateTransfer(globalPos, data.Water[idx], neighborWater, amountToMove);
+                    CreateTransfer(globalCoordinate, data.Water[idx], neighborWater, amountToMove);
 
                     data.Water[idx].WaterLevel -= amountToMove;
                     neighborWater.WaterLevel += amountToMove;

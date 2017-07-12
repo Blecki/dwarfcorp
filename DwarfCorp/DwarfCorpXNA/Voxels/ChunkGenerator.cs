@@ -446,7 +446,7 @@ namespace DwarfCorp
 
                             waterFound = Neighbors.EnumerateManhattanNeighbors(chunk.ID + new LocalVoxelCoordinate(x, y - dy, z))
                                 .Select(c => new TemporaryVoxelHandle(Manager.ChunkData, c))
-                                .Any(v => v.IsValid && v.WaterLevel > 0);
+                                .Any(v => v.IsValid && v.WaterCell.WaterLevel > 0);
                             
                             if (waterFound)
                                 break;

@@ -619,51 +619,6 @@ namespace DwarfCorp
             return toReturn;
         }*/
 
-        public bool DoesWaterCellExist(Vector3 worldLocation)
-        {
-            var chunkAtLocation = GetChunk(worldLocation);
-            return chunkAtLocation != null && chunkAtLocation.IsWorldLocationValid(worldLocation);
-        }
-
-        //Todo: %KILL%
-        public WaterCell GetWaterCellAtLocation(GlobalVoxelCoordinate worldLocation)
-        {
-            var chunkAtLocation = GetVoxelChunkAtWorldLocation(worldLocation);
-
-            if(chunkAtLocation == null)
-            {
-                return new WaterCell();
-            }
-
-            return chunkAtLocation.Data.Water[VoxelConstants.DataIndexOf(worldLocation.GetLocalVoxelCoordinate())];
-        }
-
-        public bool SaveAllChunks(string directory, bool compress)
-        {
-            foreach(var pair in ChunkMap)
-            {
-                ChunkFile chunkFile = new ChunkFile(pair.Value);
-
-                string fileName = directory + Path.DirectorySeparatorChar + pair.Key.X + "_" + pair.Key.Y + "_" + pair.Key.Z;
-
-                if(compress)
-                {
-                    fileName += ".zch";
-                }
-                else
-                {
-                    fileName += ".jch";
-                }
-
-                if(!chunkFile.WriteFile(fileName, compress, true))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
         public void LoadFromFile(GameFile gameFile, Action<String> SetLoadingMessage)
         {
             foreach (VoxelChunk chunk in gameFile.Data.ChunkData.Select(file => file.ToChunk(chunkManager)))

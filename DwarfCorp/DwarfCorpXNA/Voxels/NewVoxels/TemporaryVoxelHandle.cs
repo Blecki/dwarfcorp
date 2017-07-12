@@ -151,17 +151,19 @@ namespace DwarfCorp
             set { _cache_Chunk.Data.Water[_cache_Index] = value; }
         }
 
-        [JsonIgnore]
-        public byte WaterLevel
-        {
-            get { return WaterCell.WaterLevel; }
-            set
-            {
-                WaterCell cell = WaterCell;
-                cell.WaterLevel = value;
-                _cache_Chunk.Data.Water[_cache_Index] = cell;
-            }
-        }
+        //[JsonIgnore]
+        //public byte LiquidLevel
+        //{
+        //    get { return _cache_Chunk.Data.LiquidLevel[_cache_Index]; }
+        //    set { _cache_Chunk.Data.LiquidLevel[_cache_Index] = value; }
+        //}
+
+        //[JsonIgnore]
+        //public byte LiquidType
+        //{
+        //    get { return _cache_Chunk.Data.LiquidType[_cache_Index]; }
+        //    set { _cache_Chunk.Data.LiquidType[_cache_Index] = value; }
+        //}
 
         #endregion
     }
