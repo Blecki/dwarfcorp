@@ -763,7 +763,7 @@ namespace DwarfCorp
             voxel.Health = voxel.Type.StartingHealth;
         }
 
-
+        // todo: %KILL%
         public static bool IsSolid(VoxelHandle v)
         {
             return (!v.IsEmpty);

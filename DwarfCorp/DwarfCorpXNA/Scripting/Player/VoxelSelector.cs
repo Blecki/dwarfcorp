@@ -355,7 +355,8 @@ namespace DwarfCorp
                             { 
                                 SelectionBuffer.RemoveAll(
                                 voxel =>
-                                    (!voxel.Equals(underMouse) && !Chunks.ChunkData.IsVoxelVisibleSurface(voxel)));
+                                    (!voxel.Equals(underMouse) && !Chunks.ChunkData.DoesVoxelHaveVisibleSurface(new TemporaryVoxelHandle(Chunks.ChunkData, voxel.Coordinate))));
+                                //Todo: Pass voxel handle change up stack.
                             }
                         }
 
@@ -419,7 +420,8 @@ namespace DwarfCorp
                             {
                                 SelectionBuffer.RemoveAll(
                                 voxel =>
-                                    (!voxel.Equals(underMouse) && !Chunks.ChunkData.IsVoxelVisibleSurface(voxel)));
+                                    (!voxel.Equals(underMouse) && !Chunks.ChunkData.DoesVoxelHaveVisibleSurface(new TemporaryVoxelHandle(Chunks.ChunkData, voxel.Coordinate))));
+                                //Todo: Pass voxel handle change up stack.
                             }
                         }
                         if (newVoxel)

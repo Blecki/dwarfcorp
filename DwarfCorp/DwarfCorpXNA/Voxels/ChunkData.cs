@@ -247,23 +247,21 @@ namespace DwarfCorp
             return false;
         }
 
-        public bool IsVoxelVisibleSurface(VoxelHandle voxel)
+        public bool DoesVoxelHaveVisibleSurface(TemporaryVoxelHandle V)
         {
-            if (voxel == null) return false;
+            if (V.IsValid)
+                return false;
 
-            if (!voxel.IsVisible || voxel.IsEmpty) return false;
+            if (!V.IsVisible || V.IsEmpty) return false;
 
-            List<VoxelHandle> neighbors = new List<VoxelHandle>(6);
-            voxel.Chunk.GetNeighborsManhattan(voxel, neighbors);
-
-            foreach (VoxelHandle neighbor in neighbors)
+            foreach (var neighborCoordinate in DwarfCorp.Neighbors.EnumerateManhattanNeighbors(V.Coordinate))
             {
-                if (neighbor == null || (neighbor.IsEmpty && neighbor.IsExplored) || !(neighbor.IsVisible))
-                {
-                    return true;
-                }
+                var neighbor = new TemporaryVoxelHandle(this, neighborCoordinate);
+                if (!neighbor.IsValid) return true;
+                if (neighbor.IsEmpty && neighbor.IsExplored) return true;
+                if (!neighbor.IsVisible) return true;
             }
-
+            
             return false;
         }
 

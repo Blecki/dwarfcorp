@@ -897,31 +897,25 @@ namespace DwarfCorp
             float numHit = 1;
             float numChecked = 1;
 
-            int index = vox.Index;
             color.DynamicColor = 0;
-            color.SunColor += vox.Chunk.Data.SunColors[index];
-            vox.Chunk.GetNeighborsVertex(face, vox, neighbors);
+            color.SunColor += vox.Chunk.Data.SunColors[vox.Index];
 
-            foreach (VoxelHandle v in neighbors)
+            foreach (var c in DwarfCorp.Neighbors.EnumerateVertexNeighbors(vox.Coordinate, face))
             {
-                if (v == null)
-                {
-                    continue;
-                }
+                var v = new TemporaryVoxelHandle(chunks.ChunkData, c);
+                if (!v.IsValid) continue;
+
                 color.SunColor += v.SunColor;
-                if (VoxelLibrary.IsSolid(v) || !v.IsExplored)
+                if (!v.IsEmpty || !v.IsExplored)
                 {
                     if (v.Type.EmitsLight) color.DynamicColor = 255;
-                    numHit++;
-                    numChecked++;
+                    numHit += 1;
+                    numChecked += 1;
                 }
                 else
-                {
-                    numChecked++;
-                }
+                    numChecked += 1;
             }
-
-
+            
             float proportionHit = numHit / numChecked;
             color.AmbientColor = (int)Math.Min((1.0f - proportionHit) * 255.0f, 255);
             color.SunColor = (int)Math.Min((float)color.SunColor / (float)numChecked, 255);
@@ -1033,107 +1027,6 @@ namespace DwarfCorp
             }
         }
 
-        public void GetSharedVertices(VoxelHandle v, VoxelVertex vertex, List<KeyValuePair<VoxelHandle, List<VoxelVertex>>> vertices, List<VoxelHandle> neighbors)
-        {
-            vertices.Clear();
-
-
-            GetNeighborsVertex(vertex, v, neighbors);
-
-            Vector3 myDelta = vertexDeltas[(int)vertex];
-            foreach (VoxelHandle neighbor in neighbors)
-            {
-                if (neighbor == null || neighbor.IsEmpty)
-                {
-                    continue;
-                }
-
-                List<VoxelVertex> vertsNeighbor = new List<VoxelVertex>();
-                Vector3 otherDelta = v.WorldPosition - neighbor.WorldPosition + myDelta;
-                vertsNeighbor.Add(GetNearestDelta(otherDelta));
-
-
-                vertices.Add(new KeyValuePair<VoxelHandle, List<VoxelVertex>>(neighbor, vertsNeighbor));
-            }
-        }
-
-        public void CalculateVertexLighting()
-        {
-            /*
-            List<Voxel> neighbors = new List<Voxel>();
-            VertexColorInfo colorInfo = new VertexColorInfo();
-            bool ambientOcclusion = GameSettings.Default.AmbientOcclusion;
-            Voxel voxel = MakeVoxel(0, 0, 0);
-            HashSet<int> indexesToUpdate = new HashSet<int>();
-
-            for (int x = 0; x < SizeX; x++)
-            {
-                for (int y = 0; y < Math.Min(Manager.ChunkData.MaxViewingLevel + 1, SizeY); y++)
-                {
-                    for (int z = 0; z < SizeZ; z++)
-                    {
-                        voxel.GridPosition = new Vector3(x, y, z);
-
-                        if (voxel.IsEmpty)
-                        {
-                            continue;
-                        }
-
-                        VoxelType type = voxel.Type;
-
-                        if (VoxelLibrary.IsSolid(voxel) && voxel.IsVisible)
-                        {
-
-                            if (ambientOcclusion)
-                            {
-                                for (int i = 0; i < 8; i++)
-                                {
-                                    int vertIndex = Data.VertIndex(x, y, z, (VoxelVertex)i);
-                                    if (!indexesToUpdate.Contains(vertIndex))
-                                    {
-                                        indexesToUpdate.Add(Data.VertIndex(x, y, z, (VoxelVertex)i));
-                                        CalculateVertexLight(voxel, (VoxelVertex)i, Manager, neighbors, ref colorInfo);
-                                        if (type.EmitsLight) colorInfo.DynamicColor = 255;
-                                        Data.SetColor(x, y, z, (VoxelVertex)i,
-                                            new Color(colorInfo.SunColor, colorInfo.AmbientColor, colorInfo.DynamicColor));
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                byte sunColor = Data.SunColors[Data.IndexAt((int)voxel.GridPosition.X, (int)voxel.GridPosition.Y, (int)voxel.GridPosition.Z)];
-                                for (int i = 0; i < 8; i++)
-                                {
-                                    int vertIndex = Data.VertIndex(x, y, z, (VoxelVertex)i);
-                                    if (!indexesToUpdate.Contains(vertIndex))
-                                    {
-                                        indexesToUpdate.Add(vertIndex);
-                                        Data.SetColor(x, y, z, (VoxelVertex)i, new Color(sunColor, 128, 0));
-                                    }
-                                }
-                            }
-                        }
-                        else if (voxel.IsVisible)
-                        {
-                            Data.SunColors[Data.IndexAt((int)voxel.GridPosition.X, (int)voxel.GridPosition.Y, (int)voxel.GridPosition.Z)] = 0;
-                            for (int i = 0; i < 8; i++)
-                            {
-                                int vertIndex = Data.VertIndex(x, y, z, (VoxelVertex)i);
-                                if (!indexesToUpdate.Contains(vertIndex))
-                                {
-                                    indexesToUpdate.Add(vertIndex);
-                                    Data.SetColor(x, y, z, (VoxelVertex)i, new Color(0, m_fogOfWar, 0));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            LightingCalculated = true;
-             */
-        }
-
         public void CalculateGlobalLight()
         {
             if (GameSettings.Default.CalculateSunlight)
@@ -1242,13 +1135,6 @@ namespace DwarfCorp
 
         #region neighbors
 
-        //-------------------------
-        public void GetNeighborsVertex(VoxelVertex vertex, VoxelHandle v, List<VoxelHandle> toReturn)
-        {
-            var grid = v.GridPosition;
-            GetNeighborsVertex(vertex, grid.X, grid.Y, grid.Z, toReturn);
-        }
-
         // Function does not need any chunk specific information so it is static.
         public static int SuccessorToEuclidianLookupKey(GlobalVoxelOffset successor)
         {
@@ -1320,6 +1206,7 @@ namespace DwarfCorp
             return value;
         }
 
+        // Todo: %KILL%
         public void Get2DManhattanNeighbors(VoxelHandle[] neighbors, int x, int y, int z)
         {
             var index = 0;
@@ -1391,11 +1278,7 @@ namespace DwarfCorp
             }            
         }
 
-        public void GetNeighborsVertex(VoxelVertex vertex, int x, int y, int z, List<VoxelHandle> toReturn)
-        {
-            GetNeighborsSuccessors(VertexSuccessors[vertex], x, y, z, toReturn);
-        }
-
+        // Todo: %KILL%
         public void GetNeighborsManhattan(int x, int y, int z, List<VoxelHandle> neighbors)
         {
             GetNeighborsSuccessors(ManhattanSuccessors, x, y, z, neighbors);

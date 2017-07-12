@@ -129,6 +129,16 @@ namespace DwarfCorp
             return new BoundingBox(pos, pos + Vector3.One);
         }
 
+        [JsonIgnore]
+        public int SunColor { get { return _cache_Chunk.Data.SunColors[_cache_Index]; } }
+
+        [JsonIgnore]
+        public bool IsExplored
+        {
+            get { return !GameSettings.Default.FogofWar || _cache_Chunk.Data.IsExplored[_cache_Index]; }
+            set { _cache_Chunk.Data.IsExplored[_cache_Index] = value; }
+        }
+
         #endregion
     }
 }
