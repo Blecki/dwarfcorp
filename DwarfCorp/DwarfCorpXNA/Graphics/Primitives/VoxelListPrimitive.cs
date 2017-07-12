@@ -56,7 +56,7 @@ namespace DwarfCorp
                     new Vector3(1, 0, -1),
                     new Vector3(1, 0, 0)
                 };
-                CreateFaceDrawMap();
+                VoxelChunk.CreateFaceDrawMap();
                 StaticInitialized = true;
             }
         }
@@ -188,7 +188,7 @@ namespace DwarfCorp
                                 Vector3 offset = Vector3.Zero;
                                 Vector2 texOffset = Vector2.Zero;
 
-                                if(v.Type.CanRamp && ShouldRamp(bestKey, v.RampType))
+                                if(v.Type.CanRamp && VoxelChunk.ShouldRamp(bestKey, v.RampType))
                                 {
                                     offset = new Vector3(0, -v.Type.RampSize, 0);
                                 }
