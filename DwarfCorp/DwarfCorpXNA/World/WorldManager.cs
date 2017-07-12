@@ -654,11 +654,11 @@ namespace DwarfCorp
         /// <param name="time">The current time</param>
         /// <param name="view">The camera view matrix</param>
 		/// <param name="scale">The scale for the sky drawing</param>
-        public void DrawSky(DwarfTime time, Matrix view, float scale, Color fogColor)
+        public void DrawSky(DwarfTime time, Matrix view, float scale, Color fogColor, bool drawBackground = true)
         {
             Matrix oldView = Camera.ViewMatrix;
             Camera.ViewMatrix = view;
-            Sky.Render(time, GraphicsDevice, Camera, scale ,fogColor, ChunkManager.Bounds);
+            Sky.Render(time, GraphicsDevice, Camera, scale ,fogColor, ChunkManager.Bounds, drawBackground);
             GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             Camera.ViewMatrix = oldView;
@@ -784,21 +784,23 @@ namespace DwarfCorp
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.BlendState = BlendState.Opaque;
 
-            SelectionBuffer.Begin(GraphicsDevice);
-
             Plane slicePlane = WaterRenderer.CreatePlane(SlicePlane, new Vector3(0, -1, 0), Camera.ViewMatrix, false);
 
-            // Draw the whole world, and make sure to handle slicing
-            DefaultShader.ClipPlane = new Vector4(slicePlane.Normal, slicePlane.D);
-            DefaultShader.ClippingEnabled = true;
-            DefaultShader.View = Camera.ViewMatrix;
-            DefaultShader.Projection = Camera.ProjectionMatrix;
-            DefaultShader.World = Matrix.Identity;
-            ChunkManager.RenderSelectionBuffer(DefaultShader, GraphicsDevice, Camera.ViewMatrix);
-            ComponentRenderer.RenderSelectionBuffer(renderables, gameTime, ChunkManager, Camera, 
-                DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader);
-            InstanceManager.RenderSelectionBuffer(GraphicsDevice, DefaultShader, Camera, false);
-            SelectionBuffer.End(GraphicsDevice);
+            if (SelectionBuffer.Begin(GraphicsDevice))
+            {
+                // Draw the whole world, and make sure to handle slicing
+                DefaultShader.ClipPlane = new Vector4(slicePlane.Normal, slicePlane.D);
+                DefaultShader.ClippingEnabled = true;
+                DefaultShader.View = Camera.ViewMatrix;
+                DefaultShader.Projection = Camera.ProjectionMatrix;
+                DefaultShader.World = Matrix.Identity;
+                ChunkManager.RenderSelectionBuffer(DefaultShader, GraphicsDevice, Camera.ViewMatrix);
+                ComponentRenderer.RenderSelectionBuffer(renderables, gameTime, ChunkManager, Camera,
+                    DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader);
+                InstanceManager.RenderSelectionBuffer(GraphicsDevice, DefaultShader, Camera, false);
+                SelectionBuffer.End(GraphicsDevice);
+            }
+
             #endregion
 
             // Start drawing the bloom effect
