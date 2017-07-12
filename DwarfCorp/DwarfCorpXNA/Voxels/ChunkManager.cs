@@ -1168,7 +1168,7 @@ namespace DwarfCorp
         {
             Queue<VoxelHandle> queue = new Queue<VoxelHandle>();
             queue.Enqueue(seed);
-            HashSet<VoxelHandle> visited = new HashSet<VoxelHandle>();
+            var visited = new HashSet<GlobalVoxelCoordinate>();
             List<VoxelHandle> neighbors = new List<VoxelHandle>(6);
             while (queue.Count > 0)
             {
@@ -1180,18 +1180,17 @@ namespace DwarfCorp
                 
                 if((curr.WorldPosition - seed.WorldPosition).LengthSquared() < radiusSquared)
                 {
-                    curr.Chunk.GetNeighborsManhattan((int)curr.GridPosition.X, (int)curr.GridPosition.Y, (int)curr.GridPosition.Z, neighbors);
-
-                    foreach (VoxelHandle voxel in neighbors)
+                    foreach (var voxel in Neighbors.EnumerateManhattanNeighbors(curr.Coordinate)
+                        .Select(c => new TemporaryVoxelHandle(ChunkData, c)))
                     {
-                        if (voxel != null && !visited.Contains(voxel))
+                        if (voxel.IsValid && !visited.Contains(voxel.Coordinate))
                         {
-                            queue.Enqueue(new VoxelHandle(voxel.GridPosition, voxel.Chunk));
+                            queue.Enqueue(new VoxelHandle(ChunkData, voxel.Coordinate));
                         }
                     }
                 }
-                //Drawer3D.DrawBox(curr.GetBoundingBox(), Color.White, 0.01f);
-                visited.Add(curr);
+
+                visited.Add(curr.Coordinate);
             }
             return null;
         }

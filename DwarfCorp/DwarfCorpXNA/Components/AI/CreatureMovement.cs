@@ -281,6 +281,7 @@ namespace DwarfCorp
             return GetMoveActions(vox);
         }
 
+        // Todo: Convert to temporary voxel handles?
         /// <summary> gets the list of actions that the creature can take from a given voxel. </summary>
         public IEnumerable<MoveAction> GetMoveActions(VoxelHandle voxel)
         {
@@ -575,19 +576,13 @@ namespace DwarfCorp
         // Very, very slow.
         public IEnumerable<MoveAction> GetInverseMoveActions(VoxelHandle current)
         {
-            List<VoxelHandle> n = current.Chunk.GetNeighborsEuclidean(current).ToList();
-            foreach (VoxelHandle voxel in n)
+            foreach (var v in Neighbors.EnumerateAllNeighbors(current.Coordinate)
+                .Select(n => new VoxelHandle(current.Chunk.Manager.ChunkData, n))
+                .Where(h => h.Chunk != null))
             {
-                var actions = GetMoveActions(voxel);
-                foreach (var action in actions)
-                {
-                    if (action.DestinationVoxel.Equals(current))
-                    {
-                        yield return action;
-                    }
-                }
+                foreach (var a in GetMoveActions(v).Where(a => a.DestinationVoxel.Equals(current)))
+                    yield return a;
             }
-
         }
     }
 }

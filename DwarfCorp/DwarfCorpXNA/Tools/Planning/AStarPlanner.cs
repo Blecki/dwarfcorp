@@ -309,7 +309,9 @@ namespace DwarfCorp
             List<VoxelHandle> goalVoxels = new List<VoxelHandle>();
             goalVoxels.Add(goal.GetVoxel());
             // Starting conditions of the search.
-            foreach(var goalVoxel in goal.GetVoxel().Chunk.GetNeighborsEuclidean(goal.GetVoxel()))
+
+            foreach (var goalVoxel in Neighbors.EnumerateAllNeighbors(goal.GetVoxel().Coordinate)
+                .Select(c => new VoxelHandle(start.Chunk.Manager.ChunkData, c))) // Todo: Stop this.
             {
                 if (goal.IsInGoalRegion(goalVoxel))
                 {

@@ -174,14 +174,6 @@ namespace DwarfCorp
                 new GlobalVoxelOffset(0, 0, 1)
             };
 
-            Manhattan2DSuccessors = new List<GlobalVoxelOffset>
-            {
-                new GlobalVoxelOffset(-1, 0, 0),
-                new GlobalVoxelOffset(1, 0, 0),
-                new GlobalVoxelOffset(0, 0, -1),
-                new GlobalVoxelOffset(0, 0, 1)
-            };
-
             manhattan2DMultipliers = new[]
             {
                 2,
@@ -1322,6 +1314,7 @@ namespace DwarfCorp
             return (x != 0 && y != 0 && z != 0 && x != SizeX - 1 && y != SizeY - 1 && z != SizeZ - 1);
         }
 
+        // Todo: Kill call to Get Neighbord.
         public BoxTransition ComputeTransitionValue(VoxelType.TransitionType transitionType, int x, int y, int z, VoxelHandle[] neighbors)
         {
             VoxelType type = VoxelLibrary.GetVoxelType(Data.Types[VoxelData.IndexAt(new LocalVoxelCoordinate(x, y, z))]);
@@ -1392,6 +1385,7 @@ namespace DwarfCorp
             }
         }
 
+        // todo: %KILL%
         public void Get2DManhattanNeighbors(ChunkManager.SliceMode slice, VoxelHandle[] neighbors, int x, int y, int z)
         {
             var index = 0;
@@ -1439,63 +1433,6 @@ namespace DwarfCorp
         public void GetNeighborsVertex(VoxelVertex vertex, int x, int y, int z, List<VoxelHandle> toReturn)
         {
             GetNeighborsSuccessors(VertexSuccessors[vertex], x, y, z, toReturn);
-        }
-
-        // Todo: %KILL%!
-        public IEnumerable<VoxelHandle> GetNeighborsEuclidean(VoxelHandle v)
-        {
-            var gridCoord = v.GridPosition;
-            return GetNeighborsEuclidean((int)gridCoord.X, (int)gridCoord.Y, (int)gridCoord.Z);
-        }
-
-        // Todo: Kill with fire.
-        public IEnumerable<VoxelHandle> GetNeighborsEuclidean(int x, int y, int z)
-        {
-            bool isInterior = (x > 0 && y > 0 && z > 0 && x < SizeX - 1 && y < SizeY - 1 && z < SizeZ - 1);
-            for (int dx = -1; dx < 2; dx++)
-            {
-                for (int dy = -1; dy < 2; dy++)
-                {
-                    for (int dz = -1; dz < 2; dz++)
-                    {
-                        if (dx == 0 && dy == 0 && dz == 0)
-                        {
-                            continue;
-                        }
-
-                        int nx = (int) dx + x;
-                        int ny = (int) dy + y;
-                        int nz = (int) dz + z;
-
-                        if (isInterior || IsCellValid(nx, ny, nz))
-                        {
-                            yield return MakeVoxel(nx, ny, nz);
-                        }
-                        else
-                        {
-                            VoxelHandle otherVox = new VoxelHandle();
-                            if (Manager.ChunkData.GetVoxel(this, 
-                                ID + new LocalVoxelCoordinate(nx,ny, nz), ref otherVox))
-                            { 
-                                yield return otherVox;
-                            }
-                        }
-                    }
-                }
-            }
-            ;
-        }
-
-
-        public List<VoxelHandle> AllocateVoxels(int num)
-        {
-            List<VoxelHandle> toReturn = new List<VoxelHandle>();
-            for (int i = 0; i < num; i++)
-            {
-                toReturn.Add(MakeVoxel(0, 0, 0));
-            }
-
-            return toReturn;
         }
 
         public void GetNeighborsManhattan(int x, int y, int z, List<VoxelHandle> neighbors)

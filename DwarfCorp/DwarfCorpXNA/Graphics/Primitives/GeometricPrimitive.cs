@@ -150,7 +150,7 @@ namespace DwarfCorp
         {
             var v = chunk.MakeVoxel(0, 0, 0);
             var vAbove = chunk.MakeVoxel(0, 0, 0);
-            List<VoxelHandle> diagNeighbors = chunk.AllocateVoxels(3);
+
             List<VoxelVertex> top = new List<VoxelVertex>()
             {
                 VoxelVertex.FrontTopLeft,

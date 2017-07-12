@@ -86,7 +86,9 @@ namespace DwarfCorp
                     // If the creature intersects the box, find a voxel adjacent to it that is free, and jump there to avoid getting crushed.
                     if (Creature.Physics.BoundingBox.Intersects(Voxel.GetBoundingBox()))
                     {
-                        IEnumerable<VoxelHandle> neighbors = Voxel.Chunk.GetNeighborsEuclidean(Voxel);
+                        var neighbors = Neighbors.EnumerateAllNeighbors(Voxel.Coordinate)
+                            .Select(c => new VoxelHandle(Voxel.Chunk.Manager.ChunkData, c)); // Todo: Stop jumping through hoops to get the chunk data.
+
                         VoxelHandle closest = null;
                         float closestDist = float.MaxValue;
                         foreach (VoxelHandle voxel in neighbors)

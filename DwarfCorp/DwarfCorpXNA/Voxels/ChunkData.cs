@@ -195,41 +195,6 @@ namespace DwarfCorp
 
         }
 
-        public VoxelHandle GetNearestFreeAdjacentVoxel(VoxelHandle voxel, Vector3 referenceLocation)
-        {
-            if (voxel == null)
-            {
-                return null;
-            }
-
-            if (voxel.IsEmpty)
-            {
-                return voxel;
-            }
-
-            List<VoxelHandle> neighbors = voxel.Chunk.AllocateVoxels(6);
-            voxel.Chunk.GetNeighborsManhattan((int) voxel.GridPosition.X, (int) voxel.GridPosition.Y,
-                (int) voxel.GridPosition.Z, neighbors);
-
-            VoxelHandle closestNeighbor = null;
-
-            float closestDist = 999;
-
-            foreach (VoxelHandle neighbor in neighbors)
-            {
-                float d = (neighbor.WorldPosition - referenceLocation).LengthSquared();
-
-                if (d < closestDist && neighbor.IsEmpty)
-                {
-                    closestDist = d;
-                    closestNeighbor = neighbor;
-                }
-            }
-
-            return closestNeighbor;
-
-        }
-
         public bool GetNeighbors(GlobalVoxelCoordinate worldPosition, List<GlobalVoxelOffset> succ, List<VoxelHandle> toReturn)
         {
             toReturn.Clear();
