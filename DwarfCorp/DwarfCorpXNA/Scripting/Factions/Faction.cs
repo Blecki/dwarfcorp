@@ -161,6 +161,16 @@ namespace DwarfCorp
             World = ((WorldManager)ctx.Context);
         }
 
+        private ulong GetVoxelQuickCompare(GlobalChunkCoordinate Coord, int Index)
+        {
+            ulong q = 0;
+            q |= (((ulong)Coord.X & 0xFFFF) << 48);
+            q |= (((ulong)Coord.Y & 0xFFFF) << 32);
+            q |= (((ulong)Coord.Z & 0xFFFF) << 16);
+            q |= ((ulong)Index & 0xFFFF);
+            return q;
+        }
+
         public static List<CreatureAI> FilterMinionsWithCapability(List<CreatureAI> minions, GameMaster.ToolMode action)
         {
             return minions.Where(creature => creature.Stats.CurrentClass.HasAction(action)).ToList();
@@ -484,7 +494,7 @@ namespace DwarfCorp
         public BuildOrder GetDigDesignation(VoxelHandle vox)
         {
             BuildOrder returnOrder;
-            if (DigDesignations.TryGetValue(vox.QuickCompare, out returnOrder))
+            if (DigDesignations.TryGetValue(GetVoxelQuickCompare(vox.ChunkID, vox.Index), out returnOrder))
                 return returnOrder;
             return new BuildOrder();
         }
@@ -492,14 +502,15 @@ namespace DwarfCorp
         public void AddDigDesignation(BuildOrder order)
         {
             if (order.Vox == null) return;
-            DigDesignations.Add(order.Vox.QuickCompare, order);
+            DigDesignations.Add(GetVoxelQuickCompare(order.Vox.ChunkID, order.Vox.Index), order);
         }
 
         public void RemoveDigDesignation(VoxelHandle vox)
         {
-            if (DigDesignations.ContainsKey(vox.QuickCompare))
+            var q = GetVoxelQuickCompare(vox.ChunkID, vox.Index);
+            if (DigDesignations.ContainsKey(q))
             {
-                DigDesignations.Remove(vox.QuickCompare);
+                DigDesignations.Remove(q);
                 Drawer3D.UnHighlightVoxel(vox);
             }
         }
@@ -508,7 +519,7 @@ namespace DwarfCorp
         {
             GamePerformance.Instance.TrackValueType<int>("Dig Designations", DigDesignations.Count);
 
-            return DigDesignations.ContainsKey(vox.QuickCompare);
+            return DigDesignations.ContainsKey(GetVoxelQuickCompare(vox.ChunkID, vox.Index));
             /*
             for (int i = 0; i < DigDesignations.Count; i++)
             {

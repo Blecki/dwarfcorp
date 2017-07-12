@@ -140,7 +140,6 @@ namespace DwarfCorp
                 if (Chunk != null)
                 {
                     index = VoxelConstants.DataIndexOf(gridpos);
-                    RegenerateQuickCompare();
                 }
             }
         }
@@ -155,8 +154,6 @@ namespace DwarfCorp
             chunkID = _chunk.ID;
             gridpos = gridPosition;
             index = VoxelConstants.DataIndexOf(gridpos);
-            if (generateQuickCompare) RegenerateQuickCompare();
-            else quickCompare = invalidCompareValue;
         }
 
         [JsonIgnore]
@@ -178,33 +175,7 @@ namespace DwarfCorp
         public GlobalChunkCoordinate ChunkID
         {
             get { return chunkID; }
-            set { chunkID = value; RegenerateQuickCompare(); }
-        }
-
-        [JsonIgnore]
-        private ulong quickCompare;
-        private const ulong invalidCompareValue = 0xFFFFFFFFFFFFFFFFUL;
-
-        [JsonIgnore]
-        public ulong QuickCompare
-        {
-            get {
-                //System.Diagnostics.Debug.Assert(quickCompare == invalidCompareValue, "DestinationVoxel was generated without Quick Compare.  Set using GridPosition instead.");
-                return quickCompare;
-            }
-        }
-
-        // Todo: %KILL% - Only used by Faction for storing dig designations?
-        private void RegenerateQuickCompare()
-        {
-            // long build of the ulong.
-            ulong q = 0;
-            q |= (((ulong)chunkID.X & 0xFFFF) << 48);
-            q |= (((ulong)chunkID.Y & 0xFFFF) << 32);
-            q |= (((ulong)chunkID.Z & 0xFFFF) << 16);
-            q |= ((ulong)index & 0xFFFF);
-            quickCompare = q;
-            //quickCompare = (ulong) (((chunkID.X & 0xFFFF) << 48) | ((chunkID.Y & 0xFFFF) << 32) | ((chunkID.Y & 0xFFFF) << 16) | (index & 0xFFFF));
+            set { chunkID = value; }
         }
 
         public VoxelHandle(VoxelHandle other)
@@ -309,7 +280,6 @@ namespace DwarfCorp
             Chunk = chunk;
             GridPosition = gridPosition;
             index = VoxelConstants.DataIndexOf(gridPosition);
-            RegenerateQuickCompare();
         }
 
         public override bool Equals(object o)
@@ -400,7 +370,6 @@ namespace DwarfCorp
             {
                 Chunk = world.ChunkManager.ChunkData.ChunkMap[chunkID];
                 index = VoxelConstants.DataIndexOf(GridPosition);
-                RegenerateQuickCompare();
             }
         }
 
