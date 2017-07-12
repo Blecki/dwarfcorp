@@ -467,45 +467,22 @@ namespace DwarfCorp
 
         public bool CollidesWithChunks(ChunkManager chunks, Vector3 pos, bool applyForce)
         {
-            BoundingBox box = new BoundingBox(pos - new Vector3(0.5f, 0.5f, 0.5f), pos + new Vector3(0.5f, 0.5f, 0.5f));
-            VoxelHandle currentVoxel = new VoxelHandle();
-            bool success = chunks.ChunkData.GetVoxel(pos, ref currentVoxel);
-
-            List<VoxelHandle> vs = new List<VoxelHandle>
-            {
-                currentVoxel
-            };
-
-            VoxelChunk chunk = chunks.ChunkData.GetChunk(pos);
-
-
-            if (!success || currentVoxel == null || chunk == null)
-            {
-                return false;
-            }
-
-            Vector3 grid = chunk.WorldToGrid(pos);
-
-            IEnumerable<VoxelHandle> adjacencies = chunk.GetNeighborsEuclidean((int)grid.X, (int)grid.Y, (int)grid.Z);
-            vs.AddRange(adjacencies);
-
+            var box = new BoundingBox(pos - new Vector3(0.5f, 0.5f, 0.5f), pos + new Vector3(0.5f, 0.5f, 0.5f));
             bool gotCollision = false;
-            foreach (VoxelHandle v in vs)
-            {
-                if (v.IsEmpty || !v.IsVisible)
-                {
-                    continue;
-                }
 
-                BoundingBox voxAABB = v.GetBoundingBox();
+            foreach (var v in Neighbors.EnumerateCube(GlobalVoxelCoordinate.FromVector3(pos))
+                .Select(n => new TemporaryVoxelHandle(chunks.ChunkData, n)))                
+            {
+                if (!v.IsValid) continue;
+                if (v.IsEmpty) continue;
+                if (!v.IsVisible) continue;
+
+                var voxAABB = v.GetBoundingBox();
                 if (box.Intersects(voxAABB))
                 {
                     gotCollision = true;
                     if (applyForce)
-                    {
                         Collide(box, voxAABB);
-                    }
-
                     else
                         return true;
                 }

@@ -1441,6 +1441,7 @@ namespace DwarfCorp
             GetNeighborsSuccessors(VertexSuccessors[vertex], x, y, z, toReturn);
         }
 
+        // Todo: %KILL%!
         public IEnumerable<VoxelHandle> GetNeighborsEuclidean(VoxelHandle v)
         {
             var gridCoord = v.GridPosition;

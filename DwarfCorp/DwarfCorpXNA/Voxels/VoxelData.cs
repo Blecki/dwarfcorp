@@ -18,11 +18,13 @@ namespace DwarfCorp
         public WaterCell[] Water;
         public RampType[] RampTypes;
 
+        // Todo: %KILL% - Replace with constants version!!
         public static int IndexAt(LocalVoxelCoordinate C)
         {
             return (C.Z * VoxelConstants.ChunkSizeY + C.Y) * VoxelConstants.ChunkSizeX + C.X;
         }
 
+        // Todo: %KILL%
         public Vector3 CoordsAt(int idx)
         {
             int x = idx % (VoxelConstants.ChunkSizeX);

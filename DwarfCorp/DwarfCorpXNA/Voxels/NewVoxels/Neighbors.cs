@@ -59,6 +59,39 @@ namespace DwarfCorp
             new GlobalVoxelOffset(1,1,1),
         };
 
+        private static GlobalVoxelOffset[] Cube = new GlobalVoxelOffset[]
+        {
+            new GlobalVoxelOffset(-1,-1,-1),
+            new GlobalVoxelOffset(-1,-1,0),
+            new GlobalVoxelOffset(-1,-1,1),
+            new GlobalVoxelOffset(-1,0,-1),
+            new GlobalVoxelOffset(-1,0,0),
+            new GlobalVoxelOffset(-1,0,1),
+            new GlobalVoxelOffset(-1,1,-1),
+            new GlobalVoxelOffset(-1,1,0),
+            new GlobalVoxelOffset(-1,1,1),
+
+            new GlobalVoxelOffset(0,-1,-1),
+            new GlobalVoxelOffset(0,-1,0),
+            new GlobalVoxelOffset(0,-1,1),
+            new GlobalVoxelOffset(0,0,-1),
+            new GlobalVoxelOffset(0,0,0),
+            new GlobalVoxelOffset(0,0,1),
+            new GlobalVoxelOffset(0,1,-1),
+            new GlobalVoxelOffset(0,1,0),
+            new GlobalVoxelOffset(0,1,1),
+
+            new GlobalVoxelOffset(1,-1,-1),
+            new GlobalVoxelOffset(1,-1,0),
+            new GlobalVoxelOffset(1,-1,1),
+            new GlobalVoxelOffset(1,0,-1),
+            new GlobalVoxelOffset(1,0,0),
+            new GlobalVoxelOffset(1,0,1),
+            new GlobalVoxelOffset(1,1,-1),
+            new GlobalVoxelOffset(1,1,0),
+            new GlobalVoxelOffset(1,1,1),
+        };
+
         #region VertexNeighbors
         private static GlobalVoxelOffset[][] VertexNeighbors = new GlobalVoxelOffset[][]
         {
@@ -253,6 +286,12 @@ namespace DwarfCorp
             GlobalVoxelCoordinate Coordinate)
         {
             return EnumerateNeighbors(AllNeighbors, Coordinate);
+        }
+
+        public static IEnumerable<GlobalVoxelCoordinate> EnumerateCube(
+            GlobalVoxelCoordinate Coordinate)
+        {
+            return EnumerateNeighbors(Cube, Coordinate);
         }
 
         public static IEnumerable<GlobalVoxelCoordinate> EnumerateVertexNeighbors(

@@ -91,6 +91,11 @@ namespace DwarfCorp
             return new GlobalVoxelCoordinate(
                 (int)Math.Floor(V.X), (int)Math.Floor(V.Y), (int)Math.Floor(V.Z));
         }
+
+        public Vector3 ToVector3()
+        {
+            return new Vector3(X, Y, Z);
+        }
     }
 
     [Serializable]

@@ -1,6 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
@@ -114,6 +115,18 @@ namespace DwarfCorp
                 _cache_Chunk.Data.Types[_cache_Index] = (byte)value.ID;
                 _cache_Chunk.Data.Health[_cache_Index] = (byte)value.StartingHealth;
             }
+        }
+
+        [JsonIgnore]
+        public bool IsVisible
+        {
+            get { return Coordinate.Y <= _cache_Chunk.Manager.ChunkData.MaxViewingLevel; }
+        }
+
+        public BoundingBox GetBoundingBox()
+        {
+            var pos = Coordinate.ToVector3();
+            return new BoundingBox(pos, pos + Vector3.One);
         }
 
         #endregion

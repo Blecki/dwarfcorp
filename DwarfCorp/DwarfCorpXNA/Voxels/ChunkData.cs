@@ -81,6 +81,7 @@ namespace DwarfCorp
             set { GameSettings.Default.MaxChunks = (int) value; }
         }
 
+        // Todo: Why is this here?
         public float MaxViewingLevel { get; set; }
         public ChunkManager.SliceMode Slice { get; set; }
 
