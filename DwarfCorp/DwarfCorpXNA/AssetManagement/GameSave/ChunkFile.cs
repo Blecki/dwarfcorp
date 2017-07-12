@@ -148,7 +148,7 @@ namespace DwarfCorp
                 {
                     for(int y = 0; y < chunkSizeY; y++)
                     {
-                        int index = VoxelData.IndexAt(new LocalVoxelCoordinate(x, y, z));
+                        int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
                         if(Types[x, y, z] > 0)
                         {
                             c.Data.Types[index] = Types[x, y, z];
@@ -174,7 +174,7 @@ namespace DwarfCorp
                 {
                     for(int z = 0; z < Size.Z; z++)
                     {
-                        int index = VoxelData.IndexAt(new LocalVoxelCoordinate(x, y, z));
+                        int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
                         WaterCell water = data.Water[index];
                         Types[x, y, z] = data.Types[index];
                         Explored[x, y, z] = data.IsExplored[index];

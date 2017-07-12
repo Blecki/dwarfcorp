@@ -203,7 +203,7 @@ namespace DwarfCorp
                     {
                         h = chunk.GetFilledVoxelGridHeightAt(x, chunk.SizeY - 1, z);
                         voxel.GridPosition = new LocalVoxelCoordinate(x, y, z);
-                        int index = VoxelData.IndexAt(voxel.GridPosition);
+                        int index = VoxelConstants.DataIndexOf(voxel.GridPosition);
                         if (voxel.IsEmpty && y >= h)
                         {
                             chunk.Data.Water[index].WaterLevel = WaterManager.maxWaterLevel;
@@ -226,8 +226,8 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    chunk.Data.Water[VoxelData.IndexAt(new LocalVoxelCoordinate(x, h, z))].WaterLevel = WaterManager.maxWaterLevel;
-                    chunk.Data.Water[VoxelData.IndexAt(new LocalVoxelCoordinate(x, h, z))].Type = LiquidType.Lava;
+                    chunk.Data.Water[VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, h, z))].WaterLevel = WaterManager.maxWaterLevel;
+                    chunk.Data.Water[VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, h, z))].Type = LiquidType.Lava;
                 }
             }
         }
@@ -405,7 +405,7 @@ namespace DwarfCorp
 
                         if (caveNoise > LavaSize)
                         {
-                            var index = VoxelData.IndexAt(new LocalVoxelCoordinate(x, y, z));
+                            var index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
                             chunk.Data.Types[index] = 0;
                             chunk.Data.Water[index].WaterLevel = WaterManager.maxWaterLevel;
                             chunk.Data.Water[index].Type = LiquidType.Lava;
@@ -447,7 +447,7 @@ namespace DwarfCorp
                         bool waterFound = false;
                         for (int dy = 0; dy < caveHeight; dy++)
                         {
-                            int index = VoxelData.IndexAt(new LocalVoxelCoordinate(x, y - dy, z));
+                            int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y - dy, z));
                             chunk.GetNeighborsManhattan(x, y - dy, z, neighbors);
 
                             if (neighbors.Any(v => v != null &&  v.WaterLevel > 0))
@@ -502,7 +502,7 @@ namespace DwarfCorp
         public static void GenerateCaveVegetation(VoxelChunk chunk, int x, int y, int z, int caveHeight, BiomeData biome, Vector3 vec, WorldManager world, Perlin NoiseGenerator)
         {
             VoxelHandle vUnder = chunk.MakeVoxel(x, y - 1, z);
-            int indexunder = VoxelData.IndexAt(new LocalVoxelCoordinate(x, y - caveHeight, z));
+            int indexunder = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y - caveHeight, z));
             chunk.Data.Types[indexunder] = (byte)VoxelLibrary.GetVoxelType(biome.GrassLayer.VoxelType).ID;
             chunk.Data.Health[indexunder] = (byte)VoxelLibrary.GetVoxelType(biome.GrassLayer.VoxelType).StartingHealth;
             //chunk.Data.IsExplored[indexunder] = false;
@@ -566,7 +566,7 @@ namespace DwarfCorp
 
                         if (caveNoise > AquiferSize)
                         {
-                            var index = VoxelData.IndexAt(new LocalVoxelCoordinate(x, y, z));
+                            var index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
                             chunk.Data.Types[index] = 0;
                             chunk.Data.Water[index].WaterLevel = WaterManager.maxWaterLevel;
                             chunk.Data.Water[index].Type = LiquidType.Water;

@@ -18,12 +18,6 @@ namespace DwarfCorp
         public WaterCell[] Water;
         public RampType[] RampTypes;
 
-        // Todo: %KILL% - Replace with constants version!!
-        public static int IndexAt(LocalVoxelCoordinate C)
-        {
-            return (C.Z * VoxelConstants.ChunkSizeY + C.Y) * VoxelConstants.ChunkSizeX + C.X;
-        }
-
         // Todo: %KILL%
         public Vector3 CoordsAt(int idx)
         {
@@ -33,6 +27,28 @@ namespace DwarfCorp
             idx /= (VoxelConstants.ChunkSizeY);
             int z = idx;
             return new Vector3(x, y, z);
+        }
+
+        public static VoxelData Allocate()
+        {
+            int numVoxels = VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeY * VoxelConstants.ChunkSizeZ;
+
+            VoxelData toReturn = new VoxelData()
+            {
+                Health = new byte[numVoxels],
+                IsExplored = new bool[numVoxels],
+                SunColors = new byte[numVoxels],
+                Types = new byte[numVoxels],
+                Water = new WaterCell[numVoxels],
+                RampTypes = new RampType[numVoxels],
+            };
+
+            for (int i = 0; i < numVoxels; i++)
+            {
+                toReturn.Water[i] = new WaterCell();
+            }
+
+            return toReturn;
         }
     }
 

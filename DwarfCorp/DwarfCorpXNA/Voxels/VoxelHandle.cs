@@ -145,7 +145,7 @@ namespace DwarfCorp
 
                 if (Chunk != null)
                 {
-                    index = VoxelData.IndexAt(gridpos);
+                    index = VoxelConstants.DataIndexOf(gridpos);
                     RegenerateQuickCompare();
                 }
             }
@@ -160,7 +160,7 @@ namespace DwarfCorp
             _chunk = chunk;
             chunkID = _chunk.ID;
             gridpos = gridPosition;
-            index = VoxelData.IndexAt(gridpos);
+            index = VoxelConstants.DataIndexOf(gridpos);
             if (generateQuickCompare) RegenerateQuickCompare();
             else quickCompare = invalidCompareValue;
         }
@@ -245,7 +245,7 @@ namespace DwarfCorp
             }
             return
                 Chunk.Data.Types[
-                    VoxelData.IndexAt(new LocalVoxelCoordinate(GridPosition.X, GridPosition.Y + 1,  GridPosition.Z))] == 0;
+                    VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(GridPosition.X, GridPosition.Y + 1,  GridPosition.Z))] == 0;
         }
 
         public VoxelHandle GetVoxelAbove()
@@ -293,7 +293,7 @@ namespace DwarfCorp
             }
             return
                 Chunk.Data.Types[
-                    VoxelData.IndexAt(new LocalVoxelCoordinate(GridPosition.X, GridPosition.Y - 1, GridPosition.Z))] == 0;
+                    VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(GridPosition.X, GridPosition.Y - 1, GridPosition.Z))] == 0;
         }        
 
         public static bool HasFlag(RampType ramp, RampType flag)
@@ -314,7 +314,7 @@ namespace DwarfCorp
         {
             Chunk = chunk;
             GridPosition = gridPosition;
-            index = VoxelData.IndexAt(gridPosition);
+            index = VoxelConstants.DataIndexOf(gridPosition);
             RegenerateQuickCompare();
         }
 
@@ -405,7 +405,7 @@ namespace DwarfCorp
             if (world.ChunkManager.ChunkData.ChunkMap.ContainsKey(chunkID))
             {
                 Chunk = world.ChunkManager.ChunkData.ChunkMap[chunkID];
-                index = VoxelData.IndexAt(GridPosition);
+                index = VoxelConstants.DataIndexOf(GridPosition);
                 RegenerateQuickCompare();
             }
         }
