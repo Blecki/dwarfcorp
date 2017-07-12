@@ -5,7 +5,6 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    /*
     public class Neighbors
     {
         #region Offset Lists
@@ -210,5 +209,4 @@ namespace DwarfCorp
             return EnumerateNeighbors(VertexNeighbors[(int)Vertex], Coordinate);
         }
     }
-     */
 }
