@@ -669,32 +669,6 @@ namespace DwarfCorp
             Render(gameTime);
         }
 
-        /// <summary>
-        /// If the game is not loaded yet, just draws a loading message centered
-        /// </summary>
-        /// <param name="gameTime">The current time</param>
-        public void RenderScreenSaverMessages(DwarfTime gameTime)
-        {
-            /* DwarfGame.SpriteBatch.Begin();
-            float t = (float)(Math.Sin(gameTime.TotalGameTime.TotalSeconds * 2.0f) + 1.0f) * 0.5f + 0.5f;
-            Color toDraw = new Color(t, t, t);
-            SpriteFont font = Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
-            Vector2 measurement = Datastructures.SafeMeasure(font, LoadingMessage);
-            Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, LoadingMessage, font,
-                new Vector2(GraphicsDevice.Viewport.Width / 2 - measurement.X / 2,
-                    GraphicsDevice.Viewport.Height / 2), toDraw, new Color(50, 50, 50));
-
-            if (!string.IsNullOrEmpty(LoadingMessageBottom))
-            {
-                Vector2 tipMeasurement = Datastructures.SafeMeasure(font, LoadingMessageBottom);
-                Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, LoadingMessageBottom, font,
-                    new Vector2(GraphicsDevice.Viewport.Width / 2 - tipMeasurement.X / 2,
-                        GraphicsDevice.Viewport.Height - tipMeasurement.Y * 2), toDraw, new Color(50, 50, 50));
-            }
-            DwarfGame.SpriteBatch.End();
-            */
-        }
-
         public void FillClosestLights(DwarfTime time)
         {
             List<Vector3> positions = (from light in DynamicLight.Lights select light.Position).ToList();
@@ -732,12 +706,8 @@ namespace DwarfCorp
         /// <param name="gameTime">The current time</param>
         public void Render(DwarfTime gameTime)
         {
-            // If we are not ready to show the world then just display the loading text
             if (!ShowingWorld)
-            {
-                RenderScreenSaverMessages(gameTime);
                 return;
-            }
 
             var renderables = ComponentRenderer.EnumerateVisibleRenderables(ComponentManager.GetRenderables(),
                 ChunkManager,
@@ -817,7 +787,7 @@ namespace DwarfCorp
 
             // Defines the current slice for the GPU
             float level = ChunkManager.ChunkData.MaxViewingLevel + 2.0f;
-            if (level > ChunkManager.ChunkData.ChunkSizeY)
+            if (level > VoxelConstants.ChunkSizeY)
             {
                 level = 1000;
             }

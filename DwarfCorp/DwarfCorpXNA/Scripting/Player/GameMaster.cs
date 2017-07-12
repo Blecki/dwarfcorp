@@ -384,7 +384,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.ChunkSizeY, ChunkManager.SliceMode.Y);
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxelConstants.ChunkSizeY, ChunkManager.SliceMode.Y);
                 }
             }
 

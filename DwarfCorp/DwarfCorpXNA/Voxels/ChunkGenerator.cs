@@ -598,20 +598,19 @@ namespace DwarfCorp
             return voxels;
         }
 
-        public VoxelChunk GenerateChunk(Vector3 origin, int chunkSizeX, int chunkSizeY, int chunkSizeZ, WorldManager World, ContentManager content, GraphicsDevice graphics)
+        public VoxelChunk GenerateChunk(Vector3 origin, WorldManager World, ContentManager content, GraphicsDevice graphics)
         {
-            float waterHeight = SeaLevel + 1.0f / chunkSizeY;
-            VoxelChunk c = new VoxelChunk(Manager, origin, 1,
-                Manager.ChunkData.GetChunkID(origin + new Vector3(0.5f, 0.5f, 0.5f)), chunkSizeX, chunkSizeY, chunkSizeZ)
+            float waterHeight = SeaLevel + 1.0f / VoxelConstants.ChunkSizeY;
+            VoxelChunk c = new VoxelChunk(Manager, origin, GlobalVoxelCoordinate.FromVector3(origin).GetGlobalChunkCoordinate())
             {
                 ShouldRebuild = true,
                 ShouldRecalculateLighting = true
             };
 
             VoxelHandle voxel = c.MakeVoxel(0, 0, 0);
-            for(int x = 0; x < chunkSizeX; x++)
+            for(int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
-                for(int z = 0; z < chunkSizeZ; z++)
+                for(int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                 {
                     Vector2 v = new Vector2(x + origin.X, z + origin.Z) / WorldScale;
 
@@ -621,12 +620,12 @@ namespace DwarfCorp
 
                     Vector2 pos = new Vector2(x + origin.X, z + origin.Z) / WorldScale;
                     float hNorm = Overworld.LinearInterpolate(pos, Overworld.Map, Overworld.ScalarFieldType.Height);
-                    float h = MathFunctions.Clamp(hNorm * chunkSizeY, 0.0f, chunkSizeY - 2);
+                    float h = MathFunctions.Clamp(hNorm * VoxelConstants.ChunkSizeY, 0.0f, VoxelConstants.ChunkSizeY - 2);
                     int stoneHeight = (int)(MathFunctions.Clamp((int)(h - (biomeData.SoilLayer.Depth + (Math.Sin(v.X) + Math.Cos(v.Y)))), 1, h));
 
                     int currentSubsurfaceLayer = 0;
                     int depthWithinSubsurface = 0;
-                    for(int y = chunkSizeY - 1; y >= 0; y--)
+                    for(int y = VoxelConstants.ChunkSizeY - 1; y >= 0; y--)
                     {
                         
                         voxel.GridPosition = new LocalVoxelCoordinate(x, y, z);

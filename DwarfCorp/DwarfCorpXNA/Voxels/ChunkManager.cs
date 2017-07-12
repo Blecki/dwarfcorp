@@ -582,10 +582,11 @@ namespace DwarfCorp
                         {
                             if (!ChunkData.ChunkMap.ContainsKey(box))
                             {
-                                Vector3 worldPos = new Vector3(box.X*ChunkData.ChunkSizeX, box.Y*ChunkData.ChunkSizeY,
-                                    box.Z*ChunkData.ChunkSizeZ);
-                                VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, (int) ChunkData.ChunkSizeX,
-                                    (int) ChunkData.ChunkSizeY, (int) ChunkData.ChunkSizeZ, World, Content,
+                                Vector3 worldPos = new Vector3(
+                                    box.X * VoxelConstants.ChunkSizeX, 
+                                    box.Y * VoxelConstants.ChunkSizeY,
+                                    box.Z * VoxelConstants.ChunkSizeZ);
+                                VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, World, Content,
                                     Graphics);
                                 Drawer3D.DrawBox(chunk.GetBoundingBox(), Color.Red, 0.1f);
                                 chunk.ShouldRebuild = true;
@@ -870,8 +871,11 @@ namespace DwarfCorp
             {
                 if (!ChunkData.ChunkMap.ContainsKey(box))
                 {
-                    Vector3 worldPos = new Vector3(box.X * ChunkData.ChunkSizeX, box.Y * ChunkData.ChunkSizeY, box.Z * ChunkData.ChunkSizeZ);
-                    VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, (int)ChunkData.ChunkSizeX, (int)ChunkData.ChunkSizeY, (int)ChunkData.ChunkSizeZ, World, Content, Graphics);
+                    Vector3 worldPos = new Vector3(
+                        box.X * VoxelConstants.ChunkSizeX, 
+                        box.Y * VoxelConstants.ChunkSizeY, 
+                        box.Z * VoxelConstants.ChunkSizeZ);
+                    VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, World, Content, Graphics);
                     chunk.ShouldRebuild = true;
                     chunk.ShouldRecalculateLighting = true;
                     chunk.IsVisible = true;
@@ -899,7 +903,7 @@ namespace DwarfCorp
             // This is a pseudo hack to stop worlds created with Fog of War off then looking awful if it is turned back on.
             bool fogOfWar = GameSettings.Default.FogofWar;
             GameSettings.Default.FogofWar = true;
-            ChunkData.Reveal(GeneratedChunks.First().MakeVoxel(0, (int)ChunkData.ChunkSizeY - 1, 0));
+            ChunkData.Reveal(GeneratedChunks.First().MakeVoxel(0, (int)VoxelConstants.ChunkSizeY - 1, 0));
             GameSettings.Default.FogofWar = fogOfWar;
 
             //UpdateRebuildList();
@@ -927,8 +931,8 @@ namespace DwarfCorp
         public void GetChunksIntersecting(BoundingBox box, HashSet<VoxelChunk> chunks)
         {
             chunks.Clear();
-            var minChunk = ChunkData.GetChunkID(box.Min);
-            var maxChunk = ChunkData.GetChunkID(box.Max);
+            var minChunk = GlobalVoxelCoordinate.FromVector3(box.Min).GetGlobalChunkCoordinate();
+            var maxChunk = GlobalVoxelCoordinate.FromVector3(box.Max).GetGlobalChunkCoordinate();
             for (var x = minChunk.X; x <= maxChunk.X; ++x)
                 for (var y = minChunk.Y; y <= maxChunk.Y; ++y)
                     for (var z = minChunk.Z; z <= maxChunk.Z; ++z)

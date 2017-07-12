@@ -77,7 +77,6 @@ namespace DwarfCorp
         public bool ShouldRebuild { get; set; }
         public bool IsRebuilding { get; set; }
         public Vector3 Origin { get; set; }
-        private Vector3 HalfLength { get; set; }
         public bool RenderWireframe { get; set; }
         public ChunkManager Manager { get; set; }
         public bool IsActive { get; set; }
@@ -108,8 +107,6 @@ namespace DwarfCorp
         //public static ColorGradient MTorchGradient = null;
         public bool LightingCalculated { get; set; }
         private bool firstRebuild = true;
-        private int tileSize = -1;
-
 
         public bool RebuildPending { get; set; }
         public bool RebuildLiquidPending { get; set; }
@@ -407,8 +404,7 @@ namespace DwarfCorp
             }
         }
 
-        // Todo: %KILL% size arguments
-        public VoxelChunk(ChunkManager manager, Vector3 origin, int tileSize, GlobalChunkCoordinate id, int sizeX, int sizeY, int sizeZ)
+        public VoxelChunk(ChunkManager manager, Vector3 origin, GlobalChunkCoordinate id)
         {
             FirstWaterIter = true;
             ID = id;
@@ -416,8 +412,6 @@ namespace DwarfCorp
             Data = VoxelData.Allocate();
             IsVisible = true;
             ShouldRebuild = true;
-            this.tileSize = tileSize;
-            HalfLength = new Vector3((float)this.tileSize / 2.0f, (float)this.tileSize / 2.0f, (float)this.tileSize / 2.0f);
             Primitive = new VoxelListPrimitive();
             RenderWireframe = false;
             Manager = manager;

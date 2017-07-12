@@ -91,9 +91,8 @@ namespace DwarfCorp
             ChunkData data = chunks.ChunkData;
 
             // Create reusable arrays for randomized indices
-            uint maxSize = data.ChunkSizeX * data.ChunkSizeY * data.ChunkSizeZ;
-            updateList = new int[maxSize];
-            randomIndices = new int[maxSize];
+            updateList = new int[VoxelConstants.ChunkVoxelCount];
+            randomIndices = new int[VoxelConstants.ChunkVoxelCount];
 
             Splashes = new ConcurrentQueue<SplashType>();
             Transfers = new ConcurrentQueue<Transfer>();

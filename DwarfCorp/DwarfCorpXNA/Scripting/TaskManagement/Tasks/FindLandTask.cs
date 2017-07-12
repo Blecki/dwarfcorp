@@ -80,7 +80,7 @@ namespace DwarfCorp
             int z = (int)creature.Physics.CurrentVoxel.GridPosition.Z;
             VoxelChunk chunk = creature.Physics.CurrentVoxel.Chunk;
             VoxelHandle check = chunk.MakeVoxel(0, 0, 0);
-            for (int y = startHeight; y < creature.World.ChunkManager.ChunkData.ChunkSizeY; y++)
+            for (int y = startHeight; y < VoxelConstants.ChunkSizeY; y++)
             {
                 check.GridPosition = new LocalVoxelCoordinate(x, y, z);
                 if (check.WaterLevel == 0 && check.IsEmpty)

@@ -127,7 +127,7 @@ namespace DwarfCorp
 
         public VoxelChunk ToChunk(ChunkManager Manager)
         {
-            VoxelChunk c = new VoxelChunk(Manager, Origin, 1, ID, VoxelConstants.ChunkSizeX, VoxelConstants.ChunkSizeY, VoxelConstants.ChunkSizeZ)
+            VoxelChunk c = new VoxelChunk(Manager, Origin, ID)
             {
                 ShouldRebuild = true,
                 ShouldRecalculateLighting = true,

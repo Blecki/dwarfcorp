@@ -331,7 +331,8 @@ namespace DwarfCorp
                         MathHelper.PiOver4, AspectRatio, 0.1f,
                         GameSettings.Default.VertexCullDistance);
 
-                    var chunkOffset = ChunkManager.ChunkData.RoundToChunkCoords(globalOffset);
+                    var chunkOffset = GlobalVoxelCoordinate.FromVector3(globalOffset).GetGlobalChunkCoordinate();
+                    //var chunkOffset = ChunkManager.ChunkData.RoundToChunkCoords(globalOffset);
                     globalOffset.X = chunkOffset.X * ChunkWidth;
                     globalOffset.Y = chunkOffset.Y * ChunkHeight;
                     globalOffset.Z = chunkOffset.Z * ChunkWidth;
@@ -344,7 +345,8 @@ namespace DwarfCorp
                     if (gameFile == null) // Todo: Always true?
                     {
                         ChunkManager.GenerateInitialChunks(
-                            ChunkManager.ChunkData.GetChunkID(globalOffset), SetLoadingMessage);
+                            GlobalVoxelCoordinate.FromVector3(globalOffset).GetGlobalChunkCoordinate(),
+                            SetLoadingMessage);
                     }
 
                     ComponentManager = new ComponentManager(this, CompanyMakerState.CompanyInformation, Natives);

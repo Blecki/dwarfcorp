@@ -51,15 +51,11 @@ namespace DwarfCorp
     {
         private ChunkManager chunkManager;
 
+        // Todo: %KILL% size parms
         public ChunkData(uint chunkSizeX, uint chunkSizeY, uint chunkSizeZ, float invCSX, float invCSY, float invCSZ,
             ChunkManager chunkManager)
         {
-            ChunkSizeX = chunkSizeX;
-            ChunkSizeY = chunkSizeY;
-            ChunkSizeZ = chunkSizeZ;
-            InvCSX = invCSX;
-            InvCSY = invCSY;
-            InvCSZ = invCSZ;
+           
             this.chunkManager = chunkManager;
         }
 
@@ -100,13 +96,6 @@ namespace DwarfCorp
             get { return TextureManager.GetTexture(ContentPaths.Gradients.torchgradient); }
         }
 
-        public uint ChunkSizeX { get; set; }
-        public uint ChunkSizeY { get; set; }
-        public uint ChunkSizeZ { get; set; }
-        public float InvCSX { get; set; }
-        public float InvCSY { get; set; }
-        public float InvCSZ { get; set; }
-
         public ChunkManager ChunkManager
         {
             set { chunkManager = value; }
@@ -121,7 +110,7 @@ namespace DwarfCorp
             }
 
             Slice = slice;
-            MaxViewingLevel = Math.Max(Math.Min(level, ChunkSizeY), 1);
+            MaxViewingLevel = Math.Max(Math.Min(level, VoxelConstants.ChunkSizeY), 1);
 
             foreach (VoxelChunk c in ChunkMap.Select(chunks => chunks.Value))
             {
@@ -291,7 +280,7 @@ namespace DwarfCorp
 
             var point = position.GetLocalVoxelCoordinate();
 
-            for (int y = point.Y; y < ChunkSizeY; y++)
+            for (int y = point.Y; y < VoxelConstants.ChunkSizeY; y++)
             {
                 int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(point.X, y, point.Z));
 
@@ -474,24 +463,6 @@ namespace DwarfCorp
             }
         }
 
-
-
-        public GlobalChunkCoordinate RoundToChunkCoords(Vector3 location)
-        {
-            int x = MathFunctions.FloorInt(location.X * InvCSX);
-            int y = MathFunctions.FloorInt(location.Y * InvCSY);
-            int z = MathFunctions.FloorInt(location.Z * InvCSZ);
-            return new GlobalChunkCoordinate(x, y, z);
-        }
-
-        public GlobalChunkCoordinate RoundToChunkCoordsPoint3(Vector3 location)
-        {
-            int x = MathFunctions.FloorInt(location.X * InvCSX);
-            int y = MathFunctions.FloorInt(location.Y * InvCSY);
-            int z = MathFunctions.FloorInt(location.Z * InvCSZ);
-            return new GlobalChunkCoordinate(x, y, z);
-        }
-
         public VoxelChunk GetVoxelChunkAtWorldLocation(GlobalVoxelCoordinate worldLocation)
         {
             VoxelChunk returnChunk = null;
@@ -526,12 +497,7 @@ namespace DwarfCorp
             if (chunk == null) return false;
             return chunk.GetVoxelAtValidWorldLocation(worldLocation, ref newReference);
         }
-
-        public GlobalChunkCoordinate GetChunkID(Vector3 origin)
-        {
-            return RoundToChunkCoordsPoint3(origin);
-        }
-
+        
         /// <summary> 
         /// Given a world location, returns the voxel at that location if it exists
         /// Otherwise returns null.
