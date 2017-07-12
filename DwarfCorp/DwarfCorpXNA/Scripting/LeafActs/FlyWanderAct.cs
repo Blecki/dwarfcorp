@@ -221,13 +221,11 @@ namespace DwarfCorp
 
                         if (CanPerchOnWalls)
                         {
-                            foreach (VoxelHandle n in Creature.Physics.Neighbors)
+                            foreach (var n in Neighbors.EnumerateManhattanNeighbors(Creature.Physics.CurrentVoxel.Coordinate)
+                                .Select(c => new TemporaryVoxelHandle(Creature.World.ChunkManager.ChunkData, c)))
                             {
-                                if (n != null && n.GridPosition.Y >= vox.GridPosition.Y && !n.IsEmpty)
-                                {
+                                if (n.IsValid && n.Coordinate.Y >= vox.Coordinate.Y && !n.IsEmpty)
                                     State = FlyState.Perching;
-                                    continue;
-                                }
                             }
                         }
 

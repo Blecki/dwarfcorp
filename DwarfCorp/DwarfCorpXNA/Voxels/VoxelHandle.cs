@@ -115,12 +115,6 @@ namespace DwarfCorp
         }
 
         [JsonIgnore]
-        public BoxPrimitive Primitive 
-        {
-            get { return VoxelLibrary.GetPrimitive(Type); }
-        }
-
-        [JsonIgnore]
         public bool IsVisible 
         {
             get { return  GridPosition.Y <= Chunk.Manager.ChunkData.MaxViewingLevel; }

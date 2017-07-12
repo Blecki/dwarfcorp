@@ -18,6 +18,17 @@ namespace DwarfCorp
             new GlobalVoxelOffset(0,0,-1)
         };
 
+        private static GlobalVoxelOffset[] ManhattanCubeNeighbors = new GlobalVoxelOffset[]
+        {
+            new GlobalVoxelOffset(0,0,0),
+            new GlobalVoxelOffset(1,0,0),
+            new GlobalVoxelOffset(-1,0,0),
+            new GlobalVoxelOffset(0,1,0),
+            new GlobalVoxelOffset(0,-1,0),
+            new GlobalVoxelOffset(0,0,1),
+            new GlobalVoxelOffset(0,0,-1)
+        };
+
         private static GlobalVoxelOffset[] ManhattanNeighbors2D = new GlobalVoxelOffset[]
         {
             new GlobalVoxelOffset(-1,0,0),
@@ -292,6 +303,12 @@ namespace DwarfCorp
             GlobalVoxelCoordinate Coordinate)
         {
             return EnumerateNeighbors(Cube, Coordinate);
+        }
+
+        public static IEnumerable<GlobalVoxelCoordinate> EnumerateManhattanCube(
+           GlobalVoxelCoordinate Coordinate)
+        {
+            return EnumerateNeighbors(ManhattanCubeNeighbors, Coordinate);
         }
 
         public static IEnumerable<GlobalVoxelCoordinate> EnumerateVertexNeighbors(

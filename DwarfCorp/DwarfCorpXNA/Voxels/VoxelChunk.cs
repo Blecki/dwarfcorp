@@ -114,10 +114,7 @@ namespace DwarfCorp
 
         public static readonly Dictionary<VoxelVertex, List<GlobalVoxelOffset>> VertexSuccessors = new Dictionary<VoxelVertex, List<GlobalVoxelOffset>>();
         public static readonly Dictionary<BoxFace, VoxelVertex[]> FaceVertices = new Dictionary<BoxFace, VoxelVertex[]>();
-        public static List<GlobalVoxelOffset> ManhattanSuccessors;
-        public static List<GlobalVoxelOffset> Manhattan2DSuccessors;
         public static List<List<Point3>> EuclideanSuccessorsByVoxelPosition;
-        private static int[] manhattan2DMultipliers;
 
 
         //public static ColorGradient MSunGradient = new ColorGradient(new Color(70, 70, 70), new Color(255, 254, 224), 255);
@@ -162,36 +159,13 @@ namespace DwarfCorp
             vertexDeltas[(int)VoxelVertex.FrontBottomRight] = new Vector3(1.0f, 0, 1.0f);
             vertexDeltas[(int)VoxelVertex.FrontTopRight] = new Vector3(1.0f, 1.0f, 1.0f);
 
-            // TODO: %KILL%
-
-            ManhattanSuccessors = new List<GlobalVoxelOffset>
-            {
-                new GlobalVoxelOffset(1, 0, 0),
-                new GlobalVoxelOffset(-1, 0, 0),
-                new GlobalVoxelOffset(0, -1, 0),
-                new GlobalVoxelOffset(0, 1, 0),
-                new GlobalVoxelOffset(0, 0, -1),
-                new GlobalVoxelOffset(0, 0, 1)
-            };
-
-            manhattan2DMultipliers = new[]
-            {
-                2,
-                8,
-                4,
-                1
-            };
-
-
-
             faceDeltas[(int)BoxFace.Top] = new Vector3(0.5f, 0.0f, 0.5f);
             faceDeltas[(int)BoxFace.Bottom] = new Vector3(0.5f, 1.0f, 0.5f);
             faceDeltas[(int)BoxFace.Left] = new Vector3(1.0f, 0.5f, 0.5f);
             faceDeltas[(int)BoxFace.Right] = new Vector3(0.0f, 0.5f, 0.5f);
             faceDeltas[(int)BoxFace.Front] = new Vector3(0.5f, 0.5f, 0.0f);
             faceDeltas[(int)BoxFace.Back] = new Vector3(0.5f, 0.5f, 1.0f);
-
-
+            
             FaceVertices[BoxFace.Top] = new[]
             {
                 VoxelVertex.BackTopLeft,
@@ -758,7 +732,9 @@ namespace DwarfCorp
             }
             IsRebuilding = true;
 
-            BuildPrimitive();
+            VoxelListPrimitive primitive = new VoxelListPrimitive();
+            primitive.InitializeFromChunk(this);
+
             BuildGrassMotes();
             if (firstRebuild)
             {
@@ -772,12 +748,6 @@ namespace DwarfCorp
                 NotifyChangedComponents();
             }
             ShouldRebuild = false;
-        }
-
-        public void BuildPrimitive()
-        {
-            VoxelListPrimitive primitive = new VoxelListPrimitive();
-            primitive.InitializeFromChunk(this);
         }
 
         public void NotifyChangedComponents()
@@ -1161,50 +1131,7 @@ namespace DwarfCorp
             return (x != 0 && y != 0 && z != 0 && x != SizeX - 1 && y != SizeY - 1 && z != SizeZ - 1);
         }
 
-        // Todo: Kill call to Get Neighbord.
-        public BoxTransition ComputeTransitionValue(VoxelType.TransitionType transitionType, int x, int y, int z, VoxelHandle[] neighbors)
-        {
-            VoxelType type = VoxelLibrary.GetVoxelType(Data.Types[VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z))]);
-
-            if (transitionType == VoxelType.TransitionType.Horizontal)
-            {
-                Get2DManhattanNeighbors(neighbors, x, y, z);
-
-                var value = ComputeTransitionValue(neighbors, type);
-                TransitionTexture toReturn = (TransitionTexture)value;
-                return new BoxTransition()
-                {
-                    Top = toReturn
-                };
-            }
-            else
-            {
-                Get2DManhattanNeighbors(ChunkManager.SliceMode.Z, neighbors, x, y, z);
-                var transitionFrontBack = ComputeTransitionValue(neighbors, type);
-                Get2DManhattanNeighbors(ChunkManager.SliceMode.X, neighbors, x, y, z);
-                var transitionLeftRight = ComputeTransitionValue(neighbors, type);
-                return new BoxTransition()
-                {
-                    Front = (TransitionTexture) transitionFrontBack,
-                    Back = (TransitionTexture) transitionFrontBack,
-                    Left = (TransitionTexture) transitionLeftRight,
-                    Right = (TransitionTexture) transitionLeftRight
-                };
-            }
-        }
-
-        private static int ComputeTransitionValue(VoxelHandle[] neighbors, VoxelType type)
-        {
-            int value = 0;
-            for (int i = 0; i < neighbors.Length; i++)
-            {
-                if (neighbors[i] != null && !neighbors[i].IsEmpty && neighbors[i].Type == type)
-                {
-                    value += manhattan2DMultipliers[i];
-                }
-            }
-            return value;
-        }
+        
 
         // Todo: %KILL%
         public void Get2DManhattanNeighbors(VoxelHandle[] neighbors, int x, int y, int z)
@@ -1269,19 +1196,12 @@ namespace DwarfCorp
                 succ,
                 new GlobalVoxelCoordinate(ID, new LocalVoxelCoordinate(x, y, z))))
             {
-
                 var localPart = neighbor.GetLocalVoxelCoordinate();
                 var chunkPart = neighbor.GetGlobalChunkCoordinate();
 
                 if (Manager.ChunkData.ChunkMap.ContainsKey(chunkPart))
                     ToFill.Add(new VoxelHandle(localPart, Manager.ChunkData.ChunkMap[chunkPart]));
             }            
-        }
-
-        // Todo: %KILL%
-        public void GetNeighborsManhattan(int x, int y, int z, List<VoxelHandle> neighbors)
-        {
-            GetNeighborsSuccessors(ManhattanSuccessors, x, y, z, neighbors);
         }
 
         public void NotifyTotalRebuild(bool neighbors)
@@ -1332,19 +1252,10 @@ namespace DwarfCorp
             return true;
         }
 
-        // Todo: %KILL%
-        public void GetNeighborsManhattan(VoxelHandle v, List<VoxelHandle> toReturn)
-        {
-            GetNeighborsManhattan((int)v.GridPosition.X, (int)v.GridPosition.Y, (int)v.GridPosition.Z, toReturn);
-        }
-
-
         public Vector3 GridToWorld(Vector3 gridCoord)
         {
             return gridCoord + Origin;
         }
-
-        //-------------------------
 
         public List<VoxelHandle> GetVoxelsIntersecting(BoundingBox box)
         {

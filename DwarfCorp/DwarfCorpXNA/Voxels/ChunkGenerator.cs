@@ -447,14 +447,13 @@ namespace DwarfCorp
                         bool waterFound = false;
                         for (int dy = 0; dy < caveHeight; dy++)
                         {
+                            // x, y, z are in local chunk space.
                             int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y - dy, z));
-                            chunk.GetNeighborsManhattan(x, y - dy, z, neighbors);
 
-                            if (neighbors.Any(v => v != null &&  v.WaterLevel > 0))
-                            {
-                                waterFound = true;
-                            }
-
+                            waterFound = Neighbors.EnumerateManhattanNeighbors(chunk.ID + new LocalVoxelCoordinate(x, y - dy, z))
+                                .Select(c => new TemporaryVoxelHandle(Manager.ChunkData, c))
+                                .Any(v => v.IsValid && v.WaterLevel > 0);
+                            
                             if (waterFound)
                                 break;
 

@@ -1194,39 +1194,5 @@ namespace DwarfCorp
             }
             return null;
         }
-
-        public List<VoxelHandle> BreadthFirstSearch(VoxelHandle seed, float radiusSquared, bool searchEmpty = true)
-        {
-            Queue<VoxelHandle> queue = new Queue<VoxelHandle>();
-            queue.Enqueue(seed);
-            List<VoxelHandle> outList = new List<VoxelHandle>();
-            Func<VoxelHandle, bool> searchQuery = (VoxelHandle v) => v.IsEmpty;
-            if (!searchEmpty)
-            {
-                searchQuery = v => !v.IsEmpty;
-            }
-            
-
-            while (queue.Count > 0)
-            {
-                VoxelHandle curr = queue.Dequeue();
-                if (curr != null && searchQuery(curr) && !outList.Contains(curr) && (curr.WorldPosition - seed.WorldPosition).LengthSquared() < radiusSquared)
-                {
-                    outList.Add(curr);
-                    List<VoxelHandle> neighbors = new List<VoxelHandle>(6);
-                    curr.Chunk.GetNeighborsManhattan((int)curr.GridPosition.X, (int)curr.GridPosition.Y, (int)curr.GridPosition.Z, neighbors);
-
-                    foreach (VoxelHandle voxel in neighbors)
-                    {
-                        if (voxel != null && !outList.Contains(voxel)  && searchQuery(voxel))
-                        {
-                            queue.Enqueue(voxel);
-                        }
-                    }
-                }
-            }
-            return outList;
-        }
     }
-
 }

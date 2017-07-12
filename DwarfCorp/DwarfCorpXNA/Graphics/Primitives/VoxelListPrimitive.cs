@@ -110,7 +110,7 @@ namespace DwarfCorp
 
                         if (v.Type.HasTransitionTextures && v.IsExplored)
                         {
-                            uvs = ComputeTransitionTexture(v, manhattanNeighbors);
+                            uvs = ComputeTransitionTexture(new TemporaryVoxelHandle(v.Chunk.Manager.ChunkData, v.Coordinate));
                         }
 
                         for(int i = 0; i < 6; i++)
@@ -221,20 +221,74 @@ namespace DwarfCorp
             //chunk.PrimitiveMutex.ReleaseMutex();
         }
 
-        private BoxPrimitive.BoxTextureCoords ComputeTransitionTexture(VoxelHandle V, VoxelHandle[] manhattanNeighbors)
+        private BoxPrimitive.BoxTextureCoords ComputeTransitionTexture(TemporaryVoxelHandle V)
         {
-            if (!V.Type.HasTransitionTextures && V.Primitive != null)
-            {
-                return V.Primitive.UVs;
-            }
-            else if (V.Primitive == null)
-            {
+            var type = V.Type;
+            var primitive = VoxelLibrary.GetPrimitive(type);
+
+            if (!type.HasTransitionTextures && primitive != null)
+                return primitive.UVs;
+            else if (primitive == null)
                 return null;
+            else
+            {
+                var transition = ComputeTransitions(V.Chunk.Manager.ChunkData, V, type);
+                return type.TransitionTextures[transition];
+            }
+        }
+
+        private static BoxTransition ComputeTransitions(
+            ChunkData Data,
+            TemporaryVoxelHandle V,
+            VoxelType Type)
+        {
+            if (Type.Transitions == VoxelType.TransitionType.Horizontal)
+            {
+                var value = ComputeTransitionValueOnPlain(
+                    DwarfCorp.Neighbors.EnumerateManhattanNeighbors2D(V.Coordinate)
+                    .Select(c => new TemporaryVoxelHandle(Data, c)), Type);
+
+                return new BoxTransition()
+                {
+                    Top = (TransitionTexture)value
+                };
             }
             else
             {
-                return V.Type.TransitionTextures[V.Chunk.ComputeTransitionValue(V.Type.Transitions, (int)V.GridPosition.X, (int)V.GridPosition.Y, (int)V.GridPosition.Z, manhattanNeighbors)];
+                var transitionFrontBack = ComputeTransitionValueOnPlain(
+                    DwarfCorp.Neighbors.EnumerateManhattanNeighbors2D(V.Coordinate, ChunkManager.SliceMode.Z)
+                    .Select(c => new TemporaryVoxelHandle(Data, c)),
+                    Type);
+
+                var transitionLeftRight = ComputeTransitionValueOnPlain(
+                    DwarfCorp.Neighbors.EnumerateManhattanNeighbors2D(V.Coordinate, ChunkManager.SliceMode.X)
+                    .Select(c => new TemporaryVoxelHandle(Data, c)),
+                    Type);
+
+                return new BoxTransition()
+                {
+                    Front = (TransitionTexture)transitionFrontBack,
+                    Back = (TransitionTexture)transitionFrontBack,
+                    Left = (TransitionTexture)transitionLeftRight,
+                    Right = (TransitionTexture)transitionLeftRight
+                };
             }
+        }
+
+        // Todo: Reorder 2d neighbors to make this unecessary.
+        private static int[] TransitionMultipliers = new int[] { 2, 8, 4, 1 };
+
+        private static int ComputeTransitionValueOnPlain(IEnumerable<TemporaryVoxelHandle> Neighbors, VoxelType Type)
+        {
+            int index = 0;
+            int accumulator = 0;
+            foreach (var v in Neighbors)
+            {
+                if (v.IsValid && !v.IsEmpty && v.Type == Type)
+                    accumulator += TransitionMultipliers[index];
+                index += 1;
+            }
+            return accumulator;
         }
 
         public bool ContainsNearVertex(Vector3 vertexPos1, List<VertexPositionColorTexture> accumulated)

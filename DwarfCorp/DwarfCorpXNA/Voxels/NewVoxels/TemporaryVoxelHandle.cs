@@ -144,6 +144,25 @@ namespace DwarfCorp
             set { _cache_Chunk.Data.IsExplored[_cache_Index] = value; }
         }
 
+        [JsonIgnore]
+        public WaterCell WaterCell
+        {
+            get { return _cache_Chunk.Data.Water[_cache_Index]; }
+            set { _cache_Chunk.Data.Water[_cache_Index] = value; }
+        }
+
+        [JsonIgnore]
+        public byte WaterLevel
+        {
+            get { return WaterCell.WaterLevel; }
+            set
+            {
+                WaterCell cell = WaterCell;
+                cell.WaterLevel = value;
+                _cache_Chunk.Data.Water[_cache_Index] = cell;
+            }
+        }
+
         #endregion
     }
 }

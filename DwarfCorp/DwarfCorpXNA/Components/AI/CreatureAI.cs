@@ -583,7 +583,9 @@ namespace DwarfCorp
         public IEnumerable<Act.Status> AvoidFalling()
         {
             var above = Physics.CurrentVoxel.GetVoxelAbove();
-            foreach (VoxelHandle vox in Physics.Neighbors)
+            // Todo: Use TemporaryVoxelHandle instead.
+            foreach (var vox in Neighbors.EnumerateManhattanNeighbors(Physics.CurrentVoxel.Coordinate)
+                .Select(c => new VoxelHandle(World.ChunkManager.ChunkData, c)))
             {
                 if (vox == null) continue;
                 if (vox.IsEmpty) continue;
