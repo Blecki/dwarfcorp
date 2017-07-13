@@ -16,9 +16,9 @@ namespace DwarfCorp
     /// </summary>
     public class VoxelListPrimitive : GeometricPrimitive, IDisposable
     {
-        private readonly bool[] faceExists = new bool[6];
-        private readonly bool[] drawFace = new bool[6];
-        private bool isRebuilding = false;
+        protected readonly bool[] faceExists = new bool[6];
+        protected readonly bool[] drawFace = new bool[6];
+        protected bool isRebuilding = false;
         private readonly Mutex rebuildMutex = new Mutex();
         public static bool StaticInitialized = false;
 
@@ -122,6 +122,7 @@ namespace DwarfCorp
                         }
 
                         BoxPrimitive primitive = VoxelLibrary.GetPrimitive(v.Type);
+
                         if (v.IsExplored && primitive == null) continue;
                         if (!v.IsExplored)
                         {

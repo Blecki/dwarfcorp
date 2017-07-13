@@ -307,6 +307,8 @@ namespace DwarfCorp
             cache = null;
         }
 
+        // Create faces for each individual voxel.
+
         private static void CreateWaterFaces(VoxelHandle voxel, VoxelChunk chunk,
                                             int x, int y, int z,
                                             ExtendedVertex[] vertices,
@@ -338,6 +340,13 @@ namespace DwarfCorp
                     int primitiveIndex = primitive.Indexes[i + idx];
                     VoxelVertex currentVertex = primitive.Deltas[primitiveIndex];
 
+                    // Check if it should ramp.
+                    Vector3 offset = Vector3.Zero;
+                    if (VoxelChunk.ShouldRamp(currentVertex, voxel.RampType))
+                    {
+                        offset = new Vector3(0, -0.4f, 0); // -voxel.Type.RampSize
+                    }
+
                     // These two will be filled out before being used.
                     float foaminess;
                     Vector3 pos;
@@ -358,7 +367,9 @@ namespace DwarfCorp
                         {
                             Vector3 succ = vertexSucc[v];
                             // We are going to use a lookup key so calculate it now.
-                            int key = VoxelChunk.SuccessorToEuclidianLookupKey(succ);
+                            //int key = VoxelChunk.SuccessorToEuclidianLookupKey(succ);
+                            int key = VoxelChunk.SuccessorToEuclidianLookupKey(
+                                MathFunctions.FloorInt(succ.X), MathFunctions.FloorInt(succ.Y), MathFunctions.FloorInt(succ.Z));
 
                             // If we haven't gotten this DestinationVoxel yet then retrieve it.
                             // This allows us to only get a particular voxel once a function call instead of once per vertexCount/per face.
@@ -382,8 +393,8 @@ namespace DwarfCorp
                         if (foaminess <= 0.5f) foaminess = 0.0f;
 
                         pos = primitive.Vertices[primitiveIndex].Position;
-                        pos.Y -= 0.6f;// Minimum ramp position 
-                        pos += origin;
+                        //pos.Y -= 0.6f;// Minimum ramp position 
+                        pos += origin + offset;
 
                         // Store the vertex information for future use when we need it again on this or another face.
                         cache.vertexCalculated[(int)currentVertex] = true;
@@ -402,18 +413,18 @@ namespace DwarfCorp
                         case BoxFace.Back:
                         case BoxFace.Front:
                             vertices[i + startVertex].Set(pos,
-                                                          new Color(foaminess * 0.5f, 0.0f, 1.0f, 1.0f),
-                                                          Color.White,
-                                                          new Vector2(pos.X, pos.Y),
-                                                          new Vector4(0, 0, 1, 1));
+                                                new Color(foaminess * 0.5f, 0.0f, 1.0f, 1.0f),
+                                                Color.White,
+                                                new Vector2(pos.X, pos.Y),
+                                                new Vector4(0, 0, 1, 1));
                             break;
                         case BoxFace.Right:
                         case BoxFace.Left:
                             vertices[i + startVertex].Set(pos,
-                                                        new Color(foaminess * 0.5f, 0.0f, 1.0f, 1.0f),
-                                                        Color.White,
-                                                        new Vector2(pos.Z, pos.Y),
-                                                        new Vector4(0, 0, 1, 1));
+                                                new Color(foaminess * 0.5f, 0.0f, 1.0f, 1.0f),
+                                                Color.White,
+                                                new Vector2(pos.Z, pos.Y),
+                                                new Vector4(0, 0, 1, 1));
                             break;
                         case BoxFace.Top:
                             vertices[i + startVertex].Set(pos,
