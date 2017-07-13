@@ -352,12 +352,13 @@ namespace DwarfCorp
                         if (!altPressed && Brush != VoxelBrush.Stairs)
                         {
                             if (SelectionType == VoxelSelectionType.SelectFilled)
-                            { 
-                                SelectionBuffer.RemoveAll(
-                                voxel =>
-                                    (!voxel.Equals(underMouse) && !Chunks.ChunkData.DoesVoxelHaveVisibleSurface(new TemporaryVoxelHandle(Chunks.ChunkData, voxel.Coordinate))));
-                                //Todo: Pass voxel handle change up stack.
-                            }
+                                SelectionBuffer.RemoveAll(v =>
+                                {
+                                    if (v.Equals(underMouse)) return false;
+                                    return VoxelHelpers.DoesVoxelHaveVisibleSurface(
+                                        Chunks.ChunkData,
+                                        new TemporaryVoxelHandle(v.Chunk, v.GridPosition));
+                                });
                         }
 
                         if (newVoxel)
@@ -417,12 +418,13 @@ namespace DwarfCorp
                         if (!altPressed && Brush != VoxelBrush.Stairs)
                         {
                             if (SelectionType == VoxelSelectionType.SelectFilled)
-                            {
-                                SelectionBuffer.RemoveAll(
-                                voxel =>
-                                    (!voxel.Equals(underMouse) && !Chunks.ChunkData.DoesVoxelHaveVisibleSurface(new TemporaryVoxelHandle(Chunks.ChunkData, voxel.Coordinate))));
-                                //Todo: Pass voxel handle change up stack.
-                            }
+                                SelectionBuffer.RemoveAll(v =>
+                                {
+                                    if (v.Equals(underMouse)) return false;
+                                    return VoxelHelpers.DoesVoxelHaveVisibleSurface(
+                                        Chunks.ChunkData,
+                                        new TemporaryVoxelHandle(v.Chunk, v.GridPosition));
+                                });
                         }
                         if (newVoxel)
                         {

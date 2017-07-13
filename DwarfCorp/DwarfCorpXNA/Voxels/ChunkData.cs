@@ -199,50 +199,6 @@ namespace DwarfCorp
             return false;
         }
 
-        public bool DoesVoxelHaveVisibleSurface(TemporaryVoxelHandle V)
-        {
-            if (!V.IsValid)
-                return false;
-
-            if (!V.IsVisible || V.IsEmpty) return false;
-
-            foreach (var neighborCoordinate in DwarfCorp.Neighbors.EnumerateManhattanNeighbors(V.Coordinate))
-            {
-                var neighbor = new TemporaryVoxelHandle(this, neighborCoordinate);
-                if (!neighbor.IsValid) return true;
-                if (neighbor.IsEmpty && neighbor.IsExplored) return true;
-                if (!neighbor.IsVisible) return true;
-            }
-            
-            return false;
-        }
-
-        public bool GetFirstVoxelAbove(GlobalVoxelCoordinate position, ref VoxelHandle under, bool considerWater = false)
-        {
-            VoxelChunk startChunk = GetVoxelChunkAtWorldLocation(position);
-
-            if (startChunk == null)
-            {
-                return false;
-            }
-
-            var point = position.GetLocalVoxelCoordinate();
-
-            for (int y = point.Y; y < VoxelConstants.ChunkSizeY; y++)
-            {
-                int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(point.X, y, point.Z));
-
-                if (startChunk.Data.Types[index] != 0 || (considerWater && startChunk.Data.Water[index].WaterLevel > 0))
-                {
-                    under.Chunk = startChunk;
-                    under.GridPosition = new LocalVoxelCoordinate(point.X, y, point.Z);
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         // Todo: %KILL% Is raystart a real ray? Probably not.
         public bool GetFirstVoxelUnder(Vector3 rayStart, ref VoxelHandle under, bool considerWater = false)
         {
@@ -338,6 +294,7 @@ namespace DwarfCorp
             return returnChunk;
         }
 
+        [Obsolete]
         public VoxelChunk GetChunk(Vector3 WorldLocation)
         {
             return GetVoxelChunkAtWorldLocation(new GlobalVoxelCoordinate(
@@ -346,6 +303,7 @@ namespace DwarfCorp
                 (int)Math.Floor(WorldLocation.Z)));
         }
 
+        [Obsolete]
         public bool GetVoxel(Vector3 WorldLocation, ref VoxelHandle Voxel)
         {
             return GetVoxel(null, new GlobalVoxelCoordinate(
@@ -354,11 +312,13 @@ namespace DwarfCorp
                 (int)Math.Floor(WorldLocation.Z)), ref Voxel);
         }
 
+        [Obsolete]
         public bool GetVoxel(GlobalVoxelCoordinate worldLocation, ref VoxelHandle voxel)
         {
             return GetVoxel(null, worldLocation, ref voxel);
         }
 
+        [Obsolete]
         public bool GetVoxel(VoxelChunk checkFirst, GlobalVoxelCoordinate worldLocation, ref VoxelHandle newReference)
         {
             var chunk = GetVoxelChunkAtWorldLocation(worldLocation);
