@@ -190,10 +190,14 @@ namespace DwarfCorp
             }) as Sprite;
             sprite2.AddAnimation(tableAnimation);
 
-            VoxelHandle voxelUnder = new VoxelHandle();
+            // Todo: Clean up when VoxelListener can take TemporaryVoxelHandles.
+            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+                manager.World.ChunkManager.ChunkData,
+                GlobalVoxelCoordinate.FromVector3(position)));
+            if (voxelUnder.IsValid)
+                AddChild(new VoxelListener(manager, manager.World.ChunkManager,
+                    new VoxelHandle(voxelUnder.Coordinate.GetLocalVoxelCoordinate(), voxelUnder.Chunk)));
 
-            if (manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
-                AddChild(new VoxelListener(manager, manager.World.ChunkManager, voxelUnder));
 
 
             tableAnimation.Play();

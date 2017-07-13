@@ -50,8 +50,8 @@ namespace DwarfCorp
             
         }
 
-        public Wheat(ComponentManager componentManager, Vector3 position) :
-            base(componentManager, "Wheat", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, "wheat", 1.0f)
+        public Wheat(ComponentManager Manager, Vector3 position) :
+            base(Manager, "Wheat", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, "wheat", 1.0f)
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.gnarled, 32, 32);
             SeedlingFrame = new Point(0, 0);
@@ -59,13 +59,16 @@ namespace DwarfCorp
             matrix.Translation = position + new Vector3(0.5f, -0.25f, 0.5f);
             LocalTransform = matrix;
 
-            VoxelHandle voxelUnder = new VoxelHandle();
-            bool success = componentManager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder);
+            // Todo: Clean up when VoxelListener can take TemporaryVoxelHandles.
+            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+                Manager.World.ChunkManager.ChunkData,
+                GlobalVoxelCoordinate.FromVector3(position)));
+            if (voxelUnder.IsValid)
+                AddChild(new VoxelListener(Manager, Manager.World.ChunkManager,
+                    new VoxelHandle(voxelUnder.Coordinate.GetLocalVoxelCoordinate(), voxelUnder.Chunk)));
 
-            if (success)
-                AddChild(new VoxelListener(componentManager, componentManager.World.ChunkManager, voxelUnder));
-            
-            Inventory inventory = AddChild(new Inventory(componentManager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)
+
+            Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)
             {
                 Resources = new ResourceContainer()
                 {
@@ -80,8 +83,8 @@ namespace DwarfCorp
                 }
             }) as Inventory;
 
-            AddChild(new Health(componentManager, "HP", 30, 0.0f, 30));
-            AddChild(new Flammable(componentManager, "Flames"));
+            AddChild(new Health(Manager, "HP", 30, 0.0f, 30));
+            AddChild(new Flammable(Manager, "Flames"));
 
             Tags.Add("Wheat");
             Tags.Add("Vegetation");

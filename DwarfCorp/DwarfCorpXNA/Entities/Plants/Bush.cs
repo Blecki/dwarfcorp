@@ -46,23 +46,27 @@ namespace DwarfCorp
     {
         public Cactus() { }
 
-        public Cactus(ComponentManager componentManager, Vector3 position, string asset, float bushSize) :
-            base(componentManager, "Cactus", Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), Vector3.Zero, asset, bushSize)
+        public Cactus(ComponentManager Manager, Vector3 position, string asset, float bushSize) :
+            base(Manager, "Cactus", Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), Vector3.Zero, asset, bushSize)
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
             SeedlingFrame = new Point(0, 0);
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position + new Vector3(0.5f, -0.2f, 0.5f);
             LocalTransform = matrix;
-            AddChild(new Health(componentManager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
-            AddChild(new Flammable(componentManager, "Flames"));
+            AddChild(new Health(Manager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
+            AddChild(new Flammable(Manager, "Flames"));
 
-            VoxelHandle voxelUnder = new VoxelHandle();
+            // Todo: Clean up when VoxelListener can take TemporaryVoxelHandles.
+            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+                Manager.World.ChunkManager.ChunkData,
+                GlobalVoxelCoordinate.FromVector3(position)));
+            if (voxelUnder.IsValid)
+                AddChild(new VoxelListener(Manager, Manager.World.ChunkManager,
+                    new VoxelHandle(voxelUnder.Coordinate.GetLocalVoxelCoordinate(), voxelUnder.Chunk)));
 
-            if (componentManager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
-                AddChild(new VoxelListener(componentManager, componentManager.World.ChunkManager, voxelUnder));
 
-            Inventory inventory = AddChild(new Inventory(componentManager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)
+            Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)
             {
                 Resources = new ResourceContainer
                 {
@@ -84,6 +88,7 @@ namespace DwarfCorp
         }
     }
 
+    //Todo: Split file
     [JsonObject(IsReference = true)]
     public class Bush : Plant
     {
@@ -100,11 +105,15 @@ namespace DwarfCorp
             AddChild(new Health(componentManager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
             AddChild(new Flammable(componentManager, "Flames"));
 
-            VoxelHandle voxelUnder = new VoxelHandle();
+            // Todo: Clean up when VoxelListener can take TemporaryVoxelHandles.
+            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+                Manager.World.ChunkManager.ChunkData,
+                GlobalVoxelCoordinate.FromVector3(position)));
+            if (voxelUnder.IsValid)
+                AddChild(new VoxelListener(Manager, Manager.World.ChunkManager,
+                    new VoxelHandle(voxelUnder.Coordinate.GetLocalVoxelCoordinate(), voxelUnder.Chunk)));
 
-            if (componentManager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
-                AddChild(new VoxelListener(componentManager, componentManager.World.ChunkManager, voxelUnder));
-            
+
             Tags.Add("Vegetation");
             Tags.Add("Bush");
             Tags.Add("EmitsFood");

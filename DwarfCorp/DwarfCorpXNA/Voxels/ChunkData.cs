@@ -199,34 +199,6 @@ namespace DwarfCorp
             return false;
         }
 
-        // Todo: %KILL% Is raystart a real ray? Probably not.
-        public bool GetFirstVoxelUnder(Vector3 rayStart, ref VoxelHandle under, bool considerWater = false)
-        {
-            VoxelChunk startChunk = GetVoxelChunkAtWorldLocation(
-                new GlobalVoxelCoordinate((int)rayStart.X, (int)rayStart.Y, (int)rayStart.Z));
-
-            if(startChunk == null)
-            {
-                return false;
-            }
-
-            Point3 point = new Point3(startChunk.WorldToGrid(rayStart));
-
-            for(int y = point.Y; y >= 0; y--)
-            {
-                int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(point.X, y, point.Z));
-              
-                if(startChunk.Data.Types[index] != 0 || (considerWater && startChunk.Data.Water[index].WaterLevel > 0))
-                {
-                    under.Chunk = startChunk;
-                    under.GridPosition = new LocalVoxelCoordinate(point.X, y, point.Z);
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         public VoxelHandle GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd)
         {
             return GetFirstVisibleBlockHitByRay(rayStart, rayEnd, null, false);

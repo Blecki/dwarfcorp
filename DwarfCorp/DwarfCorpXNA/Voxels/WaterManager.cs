@@ -300,6 +300,16 @@ namespace DwarfCorp
             }
         }
 
+        private static Vector3 CoordsAt(int idx)
+        {
+            int x = idx % (VoxelConstants.ChunkSizeX);
+            idx /= (VoxelConstants.ChunkSizeX);
+            int y = idx % (VoxelConstants.ChunkSizeY);
+            idx /= (VoxelConstants.ChunkSizeY);
+            int z = idx;
+            return new Vector3(x, y, z);
+        }
+
         public bool DiscreteUpdate(VoxelChunk chunk)
         {
             var gridCoord = Vector3.Zero;
@@ -344,7 +354,7 @@ namespace DwarfCorp
                 }
 
                 //Todo: %KILL% the CoordsAt bit.
-                gridCoord = data.CoordsAt(idx);
+                gridCoord = CoordsAt(idx);
                 int x = (int)gridCoord.X;
                 int y = (int)gridCoord.Y;
                 int z = (int)gridCoord.Z;

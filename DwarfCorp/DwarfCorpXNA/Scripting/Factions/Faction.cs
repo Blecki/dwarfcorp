@@ -944,11 +944,12 @@ namespace DwarfCorp
             {
                 string creature = Race.CreatureTypes[MathFunctions.Random.Next(Race.CreatureTypes.Count)];
                 Vector3 offset = MathFunctions.RandVector3Cube() * 2;
-                VoxelHandle voxel = new VoxelHandle();
-                
-                if (World.ChunkManager.ChunkData.GetFirstVoxelUnder(position + offset, ref voxel, true))
-                {
-                    var body = EntityFactory.CreateEntity<Body>(creature, voxel.WorldPosition + new Vector3(0.5f, 1, 0.5f));
+
+                var voxelUnder = VoxelHelpers.FindFirstVoxelBelowIncludeWater(new TemporaryVoxelHandle(
+                    World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(position + offset)));
+                if (voxelUnder.IsValid)
+                { 
+                    var body = EntityFactory.CreateEntity<Body>(creature, voxelUnder.Coordinate.ToVector3() + new Vector3(0.5f, 1, 0.5f));
                     var ai = body.EnumerateAll().OfType<CreatureAI>().FirstOrDefault();
                     
                     if (ai != null)

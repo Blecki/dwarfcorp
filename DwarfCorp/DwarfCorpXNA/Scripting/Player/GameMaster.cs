@@ -376,7 +376,7 @@ namespace DwarfCorp
 
             if (dwarf.Velocity.Length() > 0.1)
             {
-                var above = VoxelHelpers.GetFirstVoxelAbove(new TemporaryVoxelHandle(
+                var above = VoxelHelpers.FindFirstVoxelAbove(new TemporaryVoxelHandle(
                     World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(dwarf.Position)));
                 if (above.IsValid)
                 { 

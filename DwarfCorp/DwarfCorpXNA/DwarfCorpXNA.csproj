@@ -358,7 +358,8 @@
     <Compile Include="Voxels\Enums.cs" />
     <Compile Include="Voxels\BoxTransition.cs" />
     <Compile Include="Voxels\VoxelData.cs" />
-    <Compile Include="Voxels\VoxelHelpers\GetFirstVoxelAbove.cs" />
+    <Compile Include="Voxels\VoxelHelpers\FindFirstVoxelBelow.cs" />
+    <Compile Include="Voxels\VoxelHelpers\FindFirstVoxelAbove.cs" />
     <Compile Include="World\IndicatorManager.cs" />
     <Compile Include="Gui\Enums.cs" />
     <Compile Include="Gui\Geo\Basics.cs" />

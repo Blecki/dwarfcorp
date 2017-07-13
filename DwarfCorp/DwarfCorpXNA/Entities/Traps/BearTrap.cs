@@ -78,9 +78,15 @@ namespace DwarfCorp
             }) as ParticleTrigger;
 
             DamageAmount = 200;
-            VoxelHandle voxUnder = new VoxelHandle();
-            Manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(pos, ref voxUnder);
-            VoxListener = AddChild(new VoxelListener(Manager, Manager.World.ChunkManager, voxUnder)) as VoxelListener;
+
+            // Todo: Clean up when VoxelListener can take TemporaryVoxelHandles.
+            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+                manager.World.ChunkManager.ChunkData,
+                GlobalVoxelCoordinate.FromVector3(pos)));
+            VoxListener = AddChild(new VoxelListener(manager, manager.World.ChunkManager,
+                    new VoxelHandle(voxelUnder.Coordinate.GetLocalVoxelCoordinate(), voxelUnder.Chunk)))
+                    as VoxelListener;
+
             Sprite = AddChild(new Sprite(Manager, "Sprite", Matrix.Identity, new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap), false)) as Sprite;
             Sprite.AddAnimation(new Animation(0, ContentPaths.Entities.DwarfObjects.beartrap, 32, 32,  0) {Name = IdleAnimation});
             Sprite.AddAnimation(new Animation(1, ContentPaths.Entities.DwarfObjects.beartrap, 32, 32,  0, 1, 2, 3) {Name = TriggerAnimation, Speeds =  new List<float>() {6.6f}, Loops = true});
