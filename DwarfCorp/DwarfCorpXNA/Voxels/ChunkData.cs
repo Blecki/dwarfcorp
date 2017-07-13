@@ -217,42 +217,6 @@ namespace DwarfCorp
             return false;
         }
 
-        public bool IsVoxelOccluded(VoxelHandle voxel, Vector3 cameraPos)
-        {
-            Vector3 voxelPoint = voxel.WorldPosition + Vector3.One * 0.5f;
-            VoxelHandle atPos = new VoxelHandle();
-            foreach (Point3 coord in MathFunctions.RasterizeLine(cameraPos, voxelPoint))
-            {
-                Vector3 pos = new Vector3(coord.X, coord.Y, coord.Z);
-
-                bool success = GetNonNullVoxelAtWorldLocationCheckFirst(null, pos, ref atPos);
-
-                if (success && atPos.IsVisible && !atPos.Equals(voxel))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public bool CheckOcclusionRay(Vector3 rayStart, Vector3 rayEnd)
-        {
-            VoxelHandle atPos = new VoxelHandle();
-            foreach (Point3 coord in MathFunctions.RasterizeLine(rayStart, rayEnd))
-            {
-                Vector3 pos = new Vector3(coord.X, coord.Y, coord.Z);
-
-                bool success = GetNonNullVoxelAtWorldLocationCheckFirst(null, pos, ref atPos);
-
-                if (success && atPos.IsVisible)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         public bool GetFirstVoxelAbove(GlobalVoxelCoordinate position, ref VoxelHandle under, bool considerWater = false)
         {
             VoxelChunk startChunk = GetVoxelChunkAtWorldLocation(position);

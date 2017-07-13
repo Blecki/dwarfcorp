@@ -611,13 +611,9 @@ namespace DwarfCorp
             {
                 ProgramData.WriteExceptionLog(exception);
             }
-#endif
-
-           
+#endif           
         }
-
-
-
+        
         public void SimpleRender(GraphicsDevice graphicsDevice, Shader effect, Texture2D tilemap)
         {
             effect.SelfIlluminationTexture = ChunkData.IllumMap;

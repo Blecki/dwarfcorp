@@ -232,30 +232,7 @@ namespace DwarfCorp
             RebuildLiquidPending = false;
             ReconstructRamps = true;
         }
-
-
-        public static WaterCell[][][] WaterAllocate(int sx, int sy, int sz)
-        {
-            WaterCell[][][] w = new WaterCell[sx][][];
-
-            for (int x = 0; x < sx; x++)
-            {
-                w[x] = new WaterCell[sy][];
-
-                for (int y = 0; y < sy; y++)
-                {
-                    w[x][y] = new WaterCell[sz];
-
-                    for (int z = 0; z < sx; z++)
-                    {
-                        w[x][y][z] = new WaterCell();
-                    }
-                }
-            }
-
-            return w;
-        }
-        
+       
         public static VoxelVertex GetNearestDelta(Vector3 position)
         {
             float bestDist = float.MaxValue;
@@ -267,24 +244,6 @@ namespace DwarfCorp
                 {
                     bestDist = dist;
                     bestKey = (VoxelVertex)(i);
-                }
-            }
-
-
-            return bestKey;
-        }
-
-        public static BoxFace GetNearestFace(Vector3 position)
-        {
-            float bestDist = 10000000;
-            BoxFace bestKey = BoxFace.Top;
-            for (int i = 0; i < 6; i++)
-            {
-                float dist = (position - faceDeltas[i]).LengthSquared();
-                if (dist < bestDist)
-                {
-                    bestDist = dist;
-                    bestKey = (BoxFace)(i);
                 }
             }
 
