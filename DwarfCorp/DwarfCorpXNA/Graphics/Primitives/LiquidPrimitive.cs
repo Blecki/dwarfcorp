@@ -341,14 +341,15 @@ namespace DwarfCorp
                     VoxelVertex currentVertex = primitive.Deltas[primitiveIndex];
 
                     // Check if it should ramp.
-                    Vector3 offset = Vector3.Zero;
+                    Vector3 rampOffset = Vector3.Zero;
                     if (VoxelChunk.ShouldRamp(currentVertex, voxel.RampType))
                     {
-                        offset = new Vector3(0, -0.4f, 0); // -voxel.Type.RampSize
+                        //offset = new Vector3(0, -0.4f, 0); // -voxel.Type.RampSize
                     }
 
                     // These two will be filled out before being used.
                     float foaminess;
+                    bool shoreLine = false;
                     Vector3 pos;
 
                     // We are going to have to reuse some vertices when drawing a single so we'll store the position/foaminess
@@ -386,15 +387,23 @@ namespace DwarfCorp
                             var vox = cache.neighbors[key];
                             count++;
                             if (vox.WaterLevel < 1) emptyNeighbors++;
+                            if (vox.Water.Type == LiquidType.None && !vox.IsEmpty) shoreLine = true;
                         }
 
                         foaminess = emptyNeighbors / count;
 
-                        if (foaminess <= 0.5f) foaminess = 0.0f;
+                        if (foaminess <= 0.5f)
+                        {
+                            foaminess = 0.0f;
+                        }
+                        else if (!shoreLine)
+                        {
+                            rampOffset.Y = -0.4f;
+                        }
 
                         pos = primitive.Vertices[primitiveIndex].Position;
-                        //pos.Y -= 0.6f;// Minimum ramp position 
-                        pos += origin + offset;
+                        pos.Y -= 0.6f;// Minimum ramp position 
+                        pos += origin + rampOffset;
 
                         // Store the vertex information for future use when we need it again on this or another face.
                         cache.vertexCalculated[(int)currentVertex] = true;

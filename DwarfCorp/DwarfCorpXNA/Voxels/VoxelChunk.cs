@@ -605,11 +605,12 @@ namespace DwarfCorp
             Neighbors = new ConcurrentDictionary<GlobalChunkCoordinate, VoxelChunk>();
             EuclidianNeighbors = new ConcurrentDictionary<int, VoxelChunk>();
             DynamicLights = new List<DynamicLight>();
+            Springs = new ConcurrentDictionary<VoxelHandle, byte>();
+
             Liquids = new Dictionary<LiquidType, LiquidPrimitive>();
             Liquids[LiquidType.Water] = new LiquidPrimitive(LiquidType.Water);
             Liquids[LiquidType.Lava] = new LiquidPrimitive(LiquidType.Lava);
             ShouldRebuildWater = true;
-            Springs = new ConcurrentDictionary<VoxelHandle, byte>();
 
             IsRebuilding = false;
             LightingCalculated = false;
@@ -735,11 +736,11 @@ namespace DwarfCorp
         public void RebuildLiquids()
         {
             List<LiquidPrimitive> toInit = new List<LiquidPrimitive>();
-
             foreach (KeyValuePair<LiquidType, LiquidPrimitive> primitive in Liquids)
             {
                 toInit.Add(primitive.Value);
             }
+
             LiquidPrimitive.InitializePrimativesFromChunk(this, toInit);
             ShouldRebuildWater = false;
         }
@@ -898,11 +899,25 @@ namespace DwarfCorp
                             isTop = vAbove.IsEmpty;
                         }
 
-                        if (v.IsEmpty || !v.IsVisible || !isTop || !v.Type.CanRamp)
+                        // Check solid voxels
+                        if (v.Water.Type == LiquidType.None)
                         {
-                            v.RampType = RampType.None;
-                            continue;
+                            if (v.IsEmpty || !v.IsVisible || !isTop || !v.Type.CanRamp)
+                            {
+                                v.RampType = RampType.None;
+                                continue;
+                            }
                         }
+                        // Check liquid voxels for tops
+                        else
+                        {
+                            if (!isTop)
+                            {
+                                v.RampType = RampType.None;
+                                continue;
+                            }
+                        }
+
                         v.RampType = RampType.None;
 
                         foreach (VoxelVertex bestKey in top)
@@ -912,10 +927,8 @@ namespace DwarfCorp
 
                             bool emptyFound = diagNeighbors.Any(vox => vox == null || vox.IsEmpty);
 
-                            if (!emptyFound)
-                            {
+                            if (v.Water.Type == LiquidType.None && !emptyFound)
                                 continue;
-                            }
 
                             switch (bestKey)
                             {
@@ -933,6 +946,7 @@ namespace DwarfCorp
                                     break;
                             }
                         }
+                        // End for loop
                     }
                 }
             }
@@ -1837,7 +1851,6 @@ namespace DwarfCorp
                     }
                 }
             }
-            ;
         }
 
 
