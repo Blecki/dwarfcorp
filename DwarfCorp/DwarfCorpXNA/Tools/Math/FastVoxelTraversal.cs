@@ -11,11 +11,16 @@ namespace DwarfCorp
         /// <summary>
         /// Rasterizes the line, producing a list of Point3's that intersect the line segment.
         /// </summary>
-        /// <param name="start">The start.</param>
-        /// <param name="end">The end.</param>
+        /// <param name="Start">The start.</param>
+        /// <param name="End">The end.</param>
         /// <returns></returns>
-        public static IEnumerable<Point3> RasterizeLine(Vector3 start, Vector3 end)
+        public static IEnumerable<Point3> FastVoxelTraversal(Vector3 Start, Vector3 End)
         {
+            if (L1(Start, End) < 1e-12 || HasNan(Start) || HasNan(End))
+            {
+                yield break;
+            }
+
             // From "A Fast DestinationVoxel Traversal Algorithm for Ray Tracing"
             // by John Amanatides and Andrew Woo, 1987
             // <http://www.cse.yorku.ca/~amana/research/grid.pdf>
@@ -32,47 +37,38 @@ namespace DwarfCorp
             // (i.e. change the integer part of the coordinate) in the variables
             // tMaxX, tMaxY, and tMaxZ.
 
-            // Cube containing origin point.
-            var x = start.X;
-            var y = start.Y;
-            var z = start.Z;
-            Vector3 direction = new Vector3(end.X, end.Y, end.Z) - new Vector3(start.X, start.Y, start.Z);
-
-            if (L1(start, end) < 1e-12 || HasNan(start) || HasNan(end))
-            {
-                yield break;
-            }
-
-            float d1 = direction.Length();
-
+            Vector3 direction = End - Start;
+            var cutoffLength = direction.LengthSquared() * 1.01f;
             direction.Normalize();
-            // Break out direction vector.
-            var dx = direction.X;
-            var dy = direction.Y;
-            var dz = direction.Z;
+            
             // Direction to increment x,y,z when stepping.
-            var stepX = Math.Sign(dx);
-            var stepY = Math.Sign(dy);
-            var stepZ = Math.Sign(dz);
+            var stepX = Math.Sign(direction.X);
+            var stepY = Math.Sign(direction.Y);
+            var stepZ = Math.Sign(direction.Z);
+            
             // See description above. The initial values depend on the fractional
             // part of the origin.
-            var tMaxX = IntBound(x, dx);
-            var tMaxY = IntBound(y, dy);
-            var tMaxZ = IntBound(z, dz);
+            var tMaxX = IntBound(Start.X, direction.X);
+            var tMaxY = IntBound(Start.Y, direction.Y);
+            var tMaxZ = IntBound(Start.Z, direction.Z);
+            
             // The change in t when taking a step (always positive).
-            var tDeltaX = stepX / dx;
-            var tDeltaY = stepY / dy;
-            var tDeltaZ = stepZ / dz;
-            Vector3 curr = new Vector3(x, y, z);
+            var tDeltaX = stepX / direction.X;
+            var tDeltaY = stepY / direction.Y;
+            var tDeltaZ = stepZ / direction.Z;
+
+            var endX = FloorInt(End.X);
+            var endY = FloorInt(End.Y);
+            var endZ = FloorInt(End.Z);
+
             while (true)
             {
-                curr.X = x;
-                curr.Y = y;
-                curr.Z = z;
-                float len = (curr - end).Length();
-                yield return new Point3(FloorInt(x), FloorInt(y), FloorInt(z));
-                if (FloorInt(x) == FloorInt(end.X) && FloorInt(y) == FloorInt(end.Y) && FloorInt(z) == FloorInt(end.Z)) yield break;
-                if (len > d1 * 1.1f) yield break;
+                var r = new Point3(FloorInt(Start.X), FloorInt(Start.Y), FloorInt(Start.Z));
+                yield return r;
+
+                if (r.X == endX && r.Y == endY && r.Z == endZ) yield break;
+                if ((End - Start).LengthSquared() > cutoffLength) yield break;
+
                 // tMaxX stores the t-value at which we cross a cube boundary along the
                 // X axis, and similarly for Y and Z. Therefore, choosing the least tMax
                 // chooses the closest cube boundary. Only the first case of the four
@@ -82,13 +78,13 @@ namespace DwarfCorp
                     if (tMaxX < tMaxZ)
                     {
                         // Update which cube we are now in.
-                        x += stepX;
+                        Start.X += stepX;
                         // Adjust tMaxX to the next X-oriented boundary crossing.
                         tMaxX += tDeltaX;
                     }
                     else
                     {
-                        z += stepZ;
+                        Start.Z += stepZ;
                         tMaxZ += tDeltaZ;
                     }
                 }
@@ -96,14 +92,14 @@ namespace DwarfCorp
                 {
                     if (tMaxY < tMaxZ)
                     {
-                        y += stepY;
+                        Start.Y += stepY;
                         tMaxY += tDeltaY;
                     }
                     else
                     {
                         // Identical to the second case, repeated for simplicity in
                         // the conditionals.
-                        z += stepZ;
+                        Start.Z += stepZ;
                         tMaxZ += tDeltaZ;
                     }
                 }

@@ -184,7 +184,7 @@ namespace DwarfCorp
         public bool CheckRaySolid(Vector3 rayStart, Vector3 rayEnd)
         {
             VoxelHandle atPos = new VoxelHandle();
-            foreach (Point3 coord in MathFunctions.RasterizeLine(rayStart, rayEnd))
+            foreach (Point3 coord in MathFunctions.FastVoxelTraversal(rayStart, rayEnd))
             {
                 Vector3 pos = new Vector3(coord.X, coord.Y, coord.Z);
 
@@ -221,7 +221,7 @@ namespace DwarfCorp
             delta.Normalize();
             VoxelHandle atPos = new VoxelHandle();
             VoxelHandle prev = new VoxelHandle();
-            foreach (Point3 coord in MathFunctions.RasterizeLine(rayStart, rayEnd))
+            foreach (Point3 coord in MathFunctions.FastVoxelTraversal(rayStart, rayEnd))
             //for(float dn = 0.0f; dn < length; dn += 0.2f)
             {
                 Vector3 pos = new Vector3(coord.X, coord.Y, coord.Z);
