@@ -54,9 +54,9 @@ namespace DwarfCorp
         public LocalVoxelCoordinate GetLocalVoxelCoordinate()
         {
             return new LocalVoxelCoordinate(
-                (Int32)((((X & 0x80000000) >> 31) * VoxelConstants.ChunkSizeX) + (X % VoxelConstants.ChunkSizeX)),
-                (Int32)((((Y & 0x80000000) >> 31) * VoxelConstants.ChunkSizeY) + (Y % VoxelConstants.ChunkSizeY)),
-                (Int32)((((Z & 0x80000000) >> 31) * VoxelConstants.ChunkSizeZ) + (Z % VoxelConstants.ChunkSizeZ)));
+                (Int32)((((X & 0x80000000) >> 31) * VoxelConstants.ChunkSizeX) + (X % VoxelConstants.ChunkSizeX) - ((X & 0x80000000) >> 31)),
+                (Int32)((((Y & 0x80000000) >> 31) * VoxelConstants.ChunkSizeY) + (Y % VoxelConstants.ChunkSizeY) - ((Y & 0x80000000) >> 31)),
+                (Int32)((((Z & 0x80000000) >> 31) * VoxelConstants.ChunkSizeZ) + (Z % VoxelConstants.ChunkSizeZ) - ((Z & 0x80000000) >> 31)));
         }
 
         public static bool operator ==(GlobalVoxelCoordinate A, GlobalVoxelCoordinate B)
