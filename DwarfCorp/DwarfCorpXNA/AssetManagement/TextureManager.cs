@@ -30,6 +30,8 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -101,11 +103,26 @@ namespace DwarfCorp
         public static Texture2D LoadInstanceTexture(string file)
         {
             Texture2D texture = null;
-            FileStream stream = new FileStream(file, FileMode.Open);
-            texture = Texture2D.FromStream(GameState.Game.GraphicsDevice, stream);
-            stream.Close();
-            AssetMap[texture] = file;
-            return texture;
+            using(var stream = new FileStream(file, FileMode.Open))
+            {
+                if (!stream.CanRead)
+                {
+                    Console.Error.WriteLine("Failed to read {0}, stream cannot be read.", file);
+                    return null;
+                }
+                try
+                {
+                    texture = Texture2D.FromStream(GameState.Game.GraphicsDevice, stream);
+                    AssetMap[texture] = file;
+                    return texture;
+                }
+                catch (Exception exception)
+                {
+                    Console.Error.Write("Failed to load texture {0}: {1}", file, exception.ToString());
+                    return null;
+                }
+           }
+            return null;
         }
     }
 
