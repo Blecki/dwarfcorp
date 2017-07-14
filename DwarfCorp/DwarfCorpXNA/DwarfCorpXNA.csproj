@@ -352,6 +352,7 @@
     <Compile Include="Tutorial\JsonTutorialSet.cs" />
     <Compile Include="Tutorial\TutorialSaveData.cs" />
     <Compile Include="Voxels\NewVoxels\Coordinate.cs" />
+    <Compile Include="Voxels\VoxelHelpers\FindFirstVisibleVoxelOnRay.cs" />
     <Compile Include="Voxels\VoxelHelpers\DoesRayHitSolidVoxel.cs" />
     <Compile Include="Voxels\VoxelHelpers\DoesVoxelHaveVisibleSurface.cs" />
     <Compile Include="Voxels\NewVoxels\Neighbors.cs" />

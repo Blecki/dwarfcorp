@@ -78,12 +78,13 @@ namespace DwarfCorp
             }
 
             var mouseState = Mouse.GetState();
-            var vox = Player.World.ChunkManager.ChunkData.GetFirstVisibleBlockHitByScreenCoord(
+
+            var vox = VoxelHelpers.FindFirstVisibleVoxelOnScreenRay(
+                Player.World.ChunkManager.ChunkData,
                 mouseState.X, mouseState.Y,
                 Player.World.Camera, 
                 GameState.Game.GraphicsDevice.Viewport,
                 150.0f, 
-                false,
                 false,
                 voxel => voxel != null && (!voxel.IsEmpty || voxel.WaterCell.WaterLevel > 0));
 

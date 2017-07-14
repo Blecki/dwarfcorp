@@ -159,55 +159,7 @@ namespace DwarfCorp
                 v.IsExplored = true;
             }
         }
-
-
-        public TemporaryVoxelHandle GetFirstVisibleBlockHitByScreenCoord(
-            int x, int y, 
-            Camera camera, 
-            Viewport viewPort, 
-            float dist,
-            bool draw, 
-            bool selectEmpty, 
-            Func<TemporaryVoxelHandle, bool> acceptFn)
-        {
-            Vector3 pos1 = viewPort.Unproject(new Vector3(x, y, 0), camera.ProjectionMatrix, camera.ViewMatrix,
-                Matrix.Identity);
-            Vector3 pos2 = viewPort.Unproject(new Vector3(x, y, 1), camera.ProjectionMatrix, camera.ViewMatrix,
-                Matrix.Identity);
-            Vector3 dir = Vector3.Normalize(pos2 - pos1);
-            return GetFirstVisibleBlockHitByRay(pos1, pos1 + dir*dist, draw, selectEmpty, acceptFn);
-        }
-
-        public TemporaryVoxelHandle GetFirstVisibleBlockHitByRay(Vector3 Start, Vector3 End, bool Draw, bool SelectEmpty, Func<TemporaryVoxelHandle, bool> FilterPredicate)
-        {
-            if (FilterPredicate == null)
-            {
-                FilterPredicate = v => v.IsValid && !v.IsEmpty;
-            }
-
-            var prev = TemporaryVoxelHandle.InvalidHandle;
-            foreach (var coordinate in MathFunctions.FastVoxelTraversal(Start, End))
-            {
-                var voxel = new TemporaryVoxelHandle(this, coordinate);
-
-                if (Draw)
-                    Drawer3D.DrawBox(new BoundingBox(coordinate.ToVector3(),
-                        coordinate.ToVector3() + Vector3.One), Color.White, 0.01f);
-
-                if (voxel.IsValid && voxel.IsVisible && FilterPredicate(voxel))
-                {
-                    if (SelectEmpty)
-                        return prev;
-                    else
-                        return voxel;
-                }
-
-                prev = voxel;
-            }
-            
-            return TemporaryVoxelHandle.InvalidHandle;
-        }
-
+        
         public bool AddChunk(VoxelChunk chunk)
         {
             if(ChunkMap.Count < MaxChunks && !ChunkMap.ContainsKey(chunk.ID))
@@ -269,11 +221,13 @@ namespace DwarfCorp
         /// <param Name="worldLocation">A floating point vector location in the world space</param>
         /// <param Name="depth">unused</param>
         /// <returns>The voxel at that location (as a list)</returns>
+        [Obsolete]
         public bool GetNonNullVoxelAtWorldLocation(Vector3 worldLocation, ref VoxelHandle voxel)
         {
             return GetNonNullVoxelAtWorldLocationCheckFirst(null, worldLocation, ref voxel);
         }
 
+        // Todo: %KILL%
         public float GetFilledVoxelGridHeightAt(float x, float y, float z)
         {
             var chunk = GetChunk(new Vector3(x, y, z));

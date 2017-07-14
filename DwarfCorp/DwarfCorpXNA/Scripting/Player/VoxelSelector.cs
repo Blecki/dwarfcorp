@@ -665,13 +665,13 @@ namespace DwarfCorp
         {
             MouseState mouse = Mouse.GetState();
 
-            var v = Chunks.ChunkData.GetFirstVisibleBlockHitByScreenCoord(
+            var v = VoxelHelpers.FindFirstVisibleVoxelOnScreenRay(
+                Chunks.ChunkData,
                 mouse.X,
                 mouse.Y,
                 CameraController,
                 Graphics.Viewport,
                 150.0f,
-                false,
                 SelectionType == VoxelSelectionType.SelectEmpty,
                 null);
 

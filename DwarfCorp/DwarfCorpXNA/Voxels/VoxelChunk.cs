@@ -657,6 +657,7 @@ namespace DwarfCorp
             }
         }
 
+        // Todo: Move
         public static bool ShouldRamp(VoxelVertex vertex, RampType rampType)
         {
             bool toReturn = false;
@@ -823,10 +824,6 @@ namespace DwarfCorp
 
         #region lighting
 
-
-
-
-
         public byte GetIntensity(DynamicLight light, byte lightIntensity, VoxelHandle voxel)
         {
             Vector3 vertexPos = voxel.WorldPosition;
@@ -882,35 +879,25 @@ namespace DwarfCorp
                 return;
             }
 
-            ResetSunlight(0);
-            VoxelHandle reference = MakeVoxel(0, 0, 0);
-
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
                 for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                 {
-                    bool rayHit = false;
-                    for (int y = VoxelConstants.ChunkSizeY - 1; y >= 0; y--)
+                    var y = VoxelConstants.ChunkSizeY - 1;
+
+                    for (; y >= 0; y--)
                     {
-                        if (rayHit)
-                        {
+                        int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
+                        Data.SunColors[index] = sunColor;
+
+                        if (Data.Types[index] != 0 && !VoxelLibrary.GetVoxelType(Data.Types[index]).IsTransparent)
                             break;
-                        }
-                        reference.GridPosition = new LocalVoxelCoordinate(x, y, z);
-                        int index = VoxelConstants.DataIndexOf(reference.GridPosition);
-                        if (Data.Types[index] == 0 || VoxelLibrary.GetVoxelType(Data.Types[index]).IsTransparent)
-                        {
-                            Data.SunColors[index] = sunColor;
-                            continue;
-                        }
+                    }
 
-                        if (y >= VoxelConstants.ChunkSizeY - 1)
-                        {
-                            continue;
-                        }
-
-                        Data.SunColors[reference.Index] = sunColor;
-                        rayHit = true;
+                    for (;y >= 0; y--)
+                    {
+                        int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
+                        Data.SunColors[index] = 0;
                     }
                 }
             }
@@ -932,6 +919,7 @@ namespace DwarfCorp
 
         #region visibility
 
+        // Todo: %KILL%
         public int GetFilledVoxelGridHeightAt(int x, int y, int z)
         {
             int invalid = -1;
