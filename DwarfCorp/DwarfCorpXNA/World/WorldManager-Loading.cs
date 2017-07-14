@@ -125,7 +125,7 @@ namespace DwarfCorp
                                                       ProgramData.DirChar + Overworld.Name);
                         OverworldFile overWorldFile =
                             new OverworldFile(
-                                worldDirectory.FullName + ProgramData.DirChar + "world." + OverworldFile.CompressedExtension,
+                                worldDirectory.FullName + ProgramData.DirChar + "world." + (DwarfGame.COMPRESSED_BINARY_SAVES ?  OverworldFile.CompressedExtension : OverworldFile.Extension),
                                 DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
                         Overworld.Map = overWorldFile.Data.CreateMap();
                         Overworld.Name = overWorldFile.Data.Name;
