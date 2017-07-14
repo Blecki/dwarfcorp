@@ -67,9 +67,14 @@ namespace DwarfCorp
             {
                 InitialEmbark = Embarkment.DefaultEmbarkment;
             }
-            Vector3 g = c.WorldToGrid(Camera.Position);
+
+            var cameraCoordinate = GlobalVoxelCoordinate.FromVector3(Camera.Position);
             // Find the height of the world at the camera
-            float h = c.GetFilledVoxelGridHeightAt((int)g.X, ChunkHeight - 1, (int)g.Z);
+            var cameraVoxel = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+                ChunkManager.ChunkData, new GlobalVoxelCoordinate(cameraCoordinate.X,
+                VoxelConstants.ChunkSizeY - 1, cameraCoordinate.Z)));
+            var h = (float)(cameraVoxel.Coordinate.Y + 1);
+
 
             // This is done just to make sure the camera is in the correct place.
             Camera.UpdateBasisVectors();
@@ -185,13 +190,11 @@ namespace DwarfCorp
                         continue;
                     }
                     affectedChunks.Add(chunk);
-                    Vector3 gridPos = chunk.WorldToGrid(worldPos);
-                    int h = chunk.GetFilledVoxelGridHeightAt((int)gridPos.X, (int)gridPos.Y, (int)gridPos.Z);
 
-                    if (h == -1)
-                    {
-                        continue;
-                    }
+                    var baseVoxel = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+                        chunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(worldPos)));
+                    var h = baseVoxel.Coordinate.Y + 1;
+                    Vector3 gridPos = chunk.WorldToGrid(worldPos);
 
                     for (int y = averageHeight; y < h; y++)
                     {

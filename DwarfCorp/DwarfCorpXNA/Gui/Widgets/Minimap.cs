@@ -135,7 +135,9 @@ namespace DwarfCorp.Gui.Widgets
 
             Vector3 pos = viewPort.Unproject(new Vector3(X, Y, 0), Camera.ProjectionMatrix, Camera.ViewMatrix, Matrix.Identity) - forward * 10;
             Vector3 target = new Vector3(pos.X, World.Camera.Target.Y, pos.Z);
-            float height = World.ChunkManager.ChunkData.GetFilledVoxelGridHeightAt(target.X, target.Y, target.Z);
+            var height = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+                World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(target)))
+                .Coordinate.Y + 1;
             target.Y = Math.Max(height + 15, target.Y);
             target = MathFunctions.Clamp(target, World.ChunkManager.Bounds);
             World.Camera.ZoomTargets.Clear();

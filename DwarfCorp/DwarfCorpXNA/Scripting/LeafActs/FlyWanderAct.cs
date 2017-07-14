@@ -138,8 +138,9 @@ namespace DwarfCorp
                 Vector3 oldPosition = Agent.Position;
 
                 // Get the height of the terrain beneath the bird.
-                float surfaceHeight = Agent.Chunks.ChunkData.GetFilledVoxelGridHeightAt(oldPosition.X, oldPosition.Y,
-                    oldPosition.Z);
+                var surfaceHeight = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+                    Agent.Chunks.ChunkData, GlobalVoxelCoordinate.FromVector3(oldPosition)))
+                    .Coordinate.Y + 1;
 
                 // Immediately start flying.
                 Agent.Creature.CurrentCharacterMode = CharacterMode.Flying;

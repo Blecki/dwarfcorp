@@ -83,6 +83,7 @@ namespace DwarfCorp
         // The vertical size of the overworld in pixels
         public int WorldHeight = 800;
 
+        // Todo: %KILL%
         // The number of voxels along x and z in a chunk
         public int ChunkWidth { get { return GameSettings.Default.ChunkWidth; } }
 

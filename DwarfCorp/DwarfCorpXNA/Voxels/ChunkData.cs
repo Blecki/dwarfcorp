@@ -227,21 +227,6 @@ namespace DwarfCorp
             return GetNonNullVoxelAtWorldLocationCheckFirst(null, worldLocation, ref voxel);
         }
 
-        // Todo: %KILL%
-        public float GetFilledVoxelGridHeightAt(float x, float y, float z)
-        {
-            var chunk = GetChunk(new Vector3(x, y, z));
-
-            if(chunk != null)
-            {
-                return chunk.GetFilledVoxelGridHeightAt((int) (x - chunk.Origin.X), (int) (y - chunk.Origin.Y), (int) (z - chunk.Origin.Z));
-            }
-            else
-            {
-                return -1;
-            }
-        }
-
         /// <summary>
         /// Recursive function which gets all the voxels at a position in the world, assuming the voxel is in a given chunk
         /// </summary>

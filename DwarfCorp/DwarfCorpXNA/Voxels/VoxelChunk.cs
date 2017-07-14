@@ -843,7 +843,7 @@ namespace DwarfCorp
             color.DynamicColor = 0;
             color.SunColor += vox.Chunk.Data.SunColors[vox.Index];
 
-            foreach (var c in DwarfCorp.Neighbors.EnumerateVertexNeighbors(vox.Coordinate, face))
+            foreach (var c in Neighbors.EnumerateVertexNeighbors(vox.Coordinate, face))
             {
                 var v = new TemporaryVoxelHandle(chunks.ChunkData, c);
                 if (!v.IsValid) continue;
@@ -873,11 +873,6 @@ namespace DwarfCorp
         public void UpdateSunlight(byte sunColor)
         {
             LightingCalculated = false;
-
-            if (!Manager.ChunkData.ChunkMap.ContainsKey(ID))
-            {
-                return;
-            }
 
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
@@ -920,6 +915,7 @@ namespace DwarfCorp
         #region visibility
 
         // Todo: %KILL%
+        [Obsolete]
         public int GetFilledVoxelGridHeightAt(int x, int y, int z)
         {
             int invalid = -1;
