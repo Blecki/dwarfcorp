@@ -255,6 +255,7 @@ namespace DwarfCorp
             public string OverworldFile { get; set; }
             public float WorldScale { get; set; }
             public Vector2 WorldOrigin { get; set; }
+            //Todo: %KILL%
             public int ChunkWidth { get; set; }
             public int ChunkHeight { get; set; }
             public float TimeOfDay { get; set; }
