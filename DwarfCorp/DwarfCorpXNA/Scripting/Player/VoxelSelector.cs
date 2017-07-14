@@ -665,7 +665,7 @@ namespace DwarfCorp
         {
             MouseState mouse = Mouse.GetState();
 
-            VoxelHandle v = Chunks.ChunkData.GetFirstVisibleBlockHitByScreenCoord(
+            var v = Chunks.ChunkData.GetFirstVisibleBlockHitByScreenCoord(
                 mouse.X,
                 mouse.Y,
                 CameraController,
@@ -675,23 +675,20 @@ namespace DwarfCorp
                 SelectionType == VoxelSelectionType.SelectEmpty,
                 null);
 
-            if (v == null || v.Chunk == null)
-            {
+            if (!v.IsValid)
                 return null;
-            }
 
             switch (SelectionType)
             {
                 case VoxelSelectionType.SelectFilled:
                     if (!v.IsEmpty)
                     {
-                        return v;
+                        return new VoxelHandle(v.Coordinate.GetLocalVoxelCoordinate(), v.Chunk);
                     }
                     return default(VoxelHandle);
 
-
                 case VoxelSelectionType.SelectEmpty:
-                    return v;
+                    return new VoxelHandle(v.Coordinate.GetLocalVoxelCoordinate(), v.Chunk);
             }
 
             return default(VoxelHandle);

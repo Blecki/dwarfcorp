@@ -134,17 +134,15 @@ namespace DwarfCorp
 
         public float GetVisibleWaterHeight(ChunkManager chunkManager, Camera camera, Viewport port, float defaultHeight)
         {
-            VoxelHandle vox = chunkManager.ChunkData.GetFirstVisibleBlockHitByScreenCoord(port.Width / 2, port.Height / 2, camera, port, 100.0f, false, false, null);
+            var vox = chunkManager.ChunkData.GetFirstVisibleBlockHitByScreenCoord(port.Width / 2, port.Height / 2, camera, port, 100.0f, false, false, null);
 
-            if(vox != null)
+            if(vox.IsValid)
             {
-                float h = GetTotalWaterHeightCells(new TemporaryVoxelHandle(vox.Chunk, vox.GridPosition)) - 0.75f;
+                float h = GetTotalWaterHeightCells(vox) - 0.75f;
                 if(h < 0.01f)
-                {
                     return defaultHeight;
-                }
 
-                return (h + vox.WorldPosition.Y + defaultHeight) / 2.0f + 0.5f;
+                return (h + vox.Coordinate.Y + defaultHeight) / 2.0f + 0.5f;
             }
             else
             {

@@ -25,7 +25,7 @@ namespace DwarfCorp
                     return above;
             }
 
-            return new TemporaryVoxelHandle(null, p);
+            return TemporaryVoxelHandle.InvalidHandle;
         }
     }
 }

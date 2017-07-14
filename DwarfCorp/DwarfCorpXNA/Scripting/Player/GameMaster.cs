@@ -378,6 +378,7 @@ namespace DwarfCorp
             {
                 var above = VoxelHelpers.FindFirstVoxelAbove(new TemporaryVoxelHandle(
                     World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(dwarf.Position)));
+
                 if (above.IsValid)
                 { 
                     World.ChunkManager.ChunkData.SetMaxViewingLevel(above.Coordinate.Y - 1, ChunkManager.SliceMode.Y);

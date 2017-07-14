@@ -123,12 +123,9 @@ namespace DwarfCorp
 
         private Vector3 ProjectToSurface(Vector3 pos)
         {
-            VoxelHandle vox =  World.ChunkManager.ChunkData.GetFirstVisibleBlockHitByRay(new Vector3(pos.X, World.ChunkHeight - 1, pos.Z), new Vector3(pos.X, 0, pos.Z), false, false, null);
-            if (vox == null)
-            {
-                return pos;
-            }
-            else return new Vector3(pos.X, vox.WorldPosition.Y + 0.5f, pos.Z);
+            var vox = World.ChunkManager.ChunkData.GetFirstVisibleBlockHitByRay(new Vector3(pos.X, World.ChunkHeight - 1, pos.Z), new Vector3(pos.X, 0, pos.Z), false, false, null);
+            if (!vox.IsValid) return pos;
+            return new Vector3(pos.X, vox.Coordinate.ToVector3().Y + 0.5f, pos.Z);
         }
 
         public void OverheadUpdate(DwarfTime time, ChunkManager chunks)

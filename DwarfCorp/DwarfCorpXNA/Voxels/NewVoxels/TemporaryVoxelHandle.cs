@@ -8,6 +8,8 @@ namespace DwarfCorp
     [Serializable] // Should never be serialized! But just in case, it works.
     public struct TemporaryVoxelHandle : IEquatable<TemporaryVoxelHandle>
     {
+        public static TemporaryVoxelHandle InvalidHandle = new TemporaryVoxelHandle(new GlobalVoxelCoordinate(0, 0, 0));
+
         #region Cache
 
         [JsonIgnore]

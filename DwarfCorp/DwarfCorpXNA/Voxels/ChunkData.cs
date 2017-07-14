@@ -161,47 +161,51 @@ namespace DwarfCorp
         }
 
 
-        public VoxelHandle GetFirstVisibleBlockHitByScreenCoord(int x, int y, Camera camera, Viewport viewPort, float dist,
-            bool draw, bool selectEmpty, Func<VoxelHandle, bool> acceptFn)
+        public TemporaryVoxelHandle GetFirstVisibleBlockHitByScreenCoord(
+            int x, int y, 
+            Camera camera, 
+            Viewport viewPort, 
+            float dist,
+            bool draw, 
+            bool selectEmpty, 
+            Func<TemporaryVoxelHandle, bool> acceptFn)
         {
             Vector3 pos1 = viewPort.Unproject(new Vector3(x, y, 0), camera.ProjectionMatrix, camera.ViewMatrix,
                 Matrix.Identity);
             Vector3 pos2 = viewPort.Unproject(new Vector3(x, y, 1), camera.ProjectionMatrix, camera.ViewMatrix,
                 Matrix.Identity);
             Vector3 dir = Vector3.Normalize(pos2 - pos1);
-            VoxelHandle vox = GetFirstVisibleBlockHitByRay(pos1, pos1 + dir*dist, draw, selectEmpty, acceptFn);
-
-            return vox;
+            return GetFirstVisibleBlockHitByRay(pos1, pos1 + dir*dist, draw, selectEmpty, acceptFn);
         }
 
-        public VoxelHandle GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd, bool draw, bool selectEmpty, Func<VoxelHandle, bool> acceptFn)
+        public TemporaryVoxelHandle GetFirstVisibleBlockHitByRay(Vector3 Start, Vector3 End, bool Draw, bool SelectEmpty, Func<TemporaryVoxelHandle, bool> FilterPredicate)
         {
-            if (acceptFn == null)
+            if (FilterPredicate == null)
             {
-                acceptFn = v => v != null && !v.IsEmpty;
+                FilterPredicate = v => v.IsValid && !v.IsEmpty;
             }
 
-            VoxelHandle atPos = new VoxelHandle();
-            VoxelHandle prev = new VoxelHandle();
-            foreach (var coord in MathFunctions.FastVoxelTraversal(rayStart, rayEnd))
+            var prev = TemporaryVoxelHandle.InvalidHandle;
+            foreach (var coordinate in MathFunctions.FastVoxelTraversal(Start, End))
             {
-                Vector3 pos = new Vector3(coord.X, coord.Y, coord.Z);
+                var voxel = new TemporaryVoxelHandle(this, coordinate);
 
-                bool success = GetVoxel(pos, ref atPos) && acceptFn(atPos);
-                if (draw)
+                if (Draw)
+                    Drawer3D.DrawBox(new BoundingBox(coordinate.ToVector3(),
+                        coordinate.ToVector3() + Vector3.One), Color.White, 0.01f);
+
+                if (voxel.IsValid && voxel.IsVisible && FilterPredicate(voxel))
                 {
-                    Drawer3D.DrawBox(new BoundingBox(pos, pos + new Vector3(1f, 1f, 1f)), Color.White, 0.01f);
+                    if (SelectEmpty)
+                        return prev;
+                    else
+                        return voxel;
                 }
-                
-                if (success && atPos.IsVisible)
-                {
-                    return selectEmpty ? prev : atPos;
-                }
-                prev.Chunk = atPos.Chunk;
-                prev.GridPosition = atPos.GridPosition;
+
+                prev = voxel;
             }
-
-            return null;
+            
+            return TemporaryVoxelHandle.InvalidHandle;
         }
 
         public bool AddChunk(VoxelChunk chunk)
