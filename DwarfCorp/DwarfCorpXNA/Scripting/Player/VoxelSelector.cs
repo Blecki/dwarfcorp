@@ -355,7 +355,7 @@ namespace DwarfCorp
                                 SelectionBuffer.RemoveAll(v =>
                                 {
                                     if (v.Equals(underMouse)) return false;
-                                    return VoxelHelpers.DoesVoxelHaveVisibleSurface(
+                                    return !VoxelHelpers.DoesVoxelHaveVisibleSurface(
                                         Chunks.ChunkData,
                                         new TemporaryVoxelHandle(v.Chunk, v.GridPosition));
                                 });
@@ -421,7 +421,7 @@ namespace DwarfCorp
                                 SelectionBuffer.RemoveAll(v =>
                                 {
                                     if (v.Equals(underMouse)) return false;
-                                    return VoxelHelpers.DoesVoxelHaveVisibleSurface(
+                                    return !VoxelHelpers.DoesVoxelHaveVisibleSurface(
                                         Chunks.ChunkData,
                                         new TemporaryVoxelHandle(v.Chunk, v.GridPosition));
                                 });
