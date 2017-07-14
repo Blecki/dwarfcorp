@@ -294,11 +294,14 @@ namespace DwarfCorp
                 // Else, stop and attack
                 else
                 {
-                    if (CurrentAttack.Mode == Attack.AttackMode.Ranged && Creature.AI.Raycast(Target.Position))
+                    if (CurrentAttack.Mode == Attack.AttackMode.Ranged 
+                        && VoxelHelpers.DoesRayHitSolidVoxel(Creature.World.ChunkManager.ChunkData,
+                            Creature.AI.Position, Target.Position))
                     {
                         yield return Status.Fail;
                         yield break;
                     }
+
                     FailTimer.Reset();
                     avoided = false;
                     Creature.Physics.Orientation = Physics.OrientMode.Fixed;

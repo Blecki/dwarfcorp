@@ -266,16 +266,6 @@ namespace DwarfCorp
             }
         }
 
-        /// <summary>
-        /// Raycasts to the specified target and returns true if the ray hit a voxel before hitting the target.
-        /// </summary>
-        /// <param name="target">The target.</param>
-        /// <returns>True if the ray hit a voxel before the target.</returns>
-        public bool Raycast(Vector3 target)
-        {
-            return Manager.World.ChunkManager.ChunkData.CheckRaySolid(Creature.AI.Position, target);
-        }
-
         /// <summary> Find the task from the list of tasks which is easiest to perform. </summary>
         public Task GetEasiestTask(List<Task> tasks)
         {

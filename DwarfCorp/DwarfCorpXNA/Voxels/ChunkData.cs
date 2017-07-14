@@ -160,16 +160,9 @@ namespace DwarfCorp
             }
         }
 
-        public VoxelHandle GetFirstVisibleBlockHitByMouse(MouseState mouse, Camera camera, Viewport viewPort,
-            bool selectEmpty = false, Func<VoxelHandle, bool> acceptFn = null)
-        {
-            VoxelHandle vox = GetFirstVisibleBlockHitByScreenCoord(mouse.X, mouse.Y, camera, viewPort, 150.0f, false,
-                selectEmpty, acceptFn);
-            return vox;
-        }
 
         public VoxelHandle GetFirstVisibleBlockHitByScreenCoord(int x, int y, Camera camera, Viewport viewPort, float dist,
-            bool draw = false, bool selectEmpty = false, Func<VoxelHandle, bool> acceptFn = null)
+            bool draw, bool selectEmpty, Func<VoxelHandle, bool> acceptFn)
         {
             Vector3 pos1 = viewPort.Unproject(new Vector3(x, y, 0), camera.ProjectionMatrix, camera.ViewMatrix,
                 Matrix.Identity);
@@ -181,48 +174,16 @@ namespace DwarfCorp
             return vox;
         }
 
-        public bool CheckRaySolid(Vector3 rayStart, Vector3 rayEnd)
-        {
-            VoxelHandle atPos = new VoxelHandle();
-            foreach (Point3 coord in MathFunctions.FastVoxelTraversal(rayStart, rayEnd))
-            {
-                Vector3 pos = new Vector3(coord.X, coord.Y, coord.Z);
-
-                bool success = GetNonNullVoxelAtWorldLocationCheckFirst(null, pos, ref atPos);
-
-                if (success && !atPos.IsEmpty)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public VoxelHandle GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd)
-        {
-            return GetFirstVisibleBlockHitByRay(rayStart, rayEnd, null, false);
-        }
-
-        public VoxelHandle GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd, bool draw, bool selectEmpty, Func<VoxelHandle, bool> acceptFn = null)
-        {
-            return GetFirstVisibleBlockHitByRay(rayStart, rayEnd, null, draw, selectEmpty, acceptFn);
-        }
-
-
-        public VoxelHandle GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd, VoxelHandle ignore,  bool draw, bool selectEmpty = false, Func<VoxelHandle, bool> acceptFn = null)
+        public VoxelHandle GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd, bool draw, bool selectEmpty, Func<VoxelHandle, bool> acceptFn)
         {
             if (acceptFn == null)
             {
                 acceptFn = v => v != null && !v.IsEmpty;
             }
-            Vector3 delta = rayEnd - rayStart;
-            float length = delta.Length();
-            delta.Normalize();
+
             VoxelHandle atPos = new VoxelHandle();
             VoxelHandle prev = new VoxelHandle();
-            foreach (Point3 coord in MathFunctions.FastVoxelTraversal(rayStart, rayEnd))
-            //for(float dn = 0.0f; dn < length; dn += 0.2f)
+            foreach (var coord in MathFunctions.FastVoxelTraversal(rayStart, rayEnd))
             {
                 Vector3 pos = new Vector3(coord.X, coord.Y, coord.Z);
 
@@ -238,7 +199,6 @@ namespace DwarfCorp
                 }
                 prev.Chunk = atPos.Chunk;
                 prev.GridPosition = atPos.GridPosition;
-
             }
 
             return null;

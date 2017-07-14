@@ -9,17 +9,16 @@ namespace DwarfCorp
     public static partial class MathFunctions
     {
         /// <summary>
-        /// Rasterizes the line, producing a list of Point3's that intersect the line segment.
+        /// Rasterizes the line, producing a list of GlobalVoxelCoordinates's that intersect
+        /// the line segment.
         /// </summary>
         /// <param name="Start">The start.</param>
         /// <param name="End">The end.</param>
         /// <returns></returns>
-        public static IEnumerable<Point3> FastVoxelTraversal(Vector3 Start, Vector3 End)
+        public static IEnumerable<GlobalVoxelCoordinate> FastVoxelTraversal(Vector3 Start, Vector3 End)
         {
             if (L1(Start, End) < 1e-12 || HasNan(Start) || HasNan(End))
-            {
                 yield break;
-            }
 
             // From "A Fast DestinationVoxel Traversal Algorithm for Ray Tracing"
             // by John Amanatides and Andrew Woo, 1987
@@ -63,7 +62,7 @@ namespace DwarfCorp
 
             while (true)
             {
-                var r = new Point3(FloorInt(Start.X), FloorInt(Start.Y), FloorInt(Start.Z));
+                var r = GlobalVoxelCoordinate.FromVector3(Start);
                 yield return r;
 
                 if (r.X == endX && r.Y == endY && r.Z == endZ) yield break;

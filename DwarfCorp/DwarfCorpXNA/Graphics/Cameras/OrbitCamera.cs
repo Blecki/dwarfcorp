@@ -123,7 +123,7 @@ namespace DwarfCorp
 
         private Vector3 ProjectToSurface(Vector3 pos)
         {
-            VoxelHandle vox =  World.ChunkManager.ChunkData.GetFirstVisibleBlockHitByRay(new Vector3(pos.X, World.ChunkHeight - 1, pos.Z), new Vector3(pos.X, 0, pos.Z));
+            VoxelHandle vox =  World.ChunkManager.ChunkData.GetFirstVisibleBlockHitByRay(new Vector3(pos.X, World.ChunkHeight - 1, pos.Z), new Vector3(pos.X, 0, pos.Z), false, false, null);
             if (vox == null)
             {
                 return pos;

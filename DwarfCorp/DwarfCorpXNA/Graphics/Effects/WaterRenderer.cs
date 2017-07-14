@@ -134,7 +134,7 @@ namespace DwarfCorp
 
         public float GetVisibleWaterHeight(ChunkManager chunkManager, Camera camera, Viewport port, float defaultHeight)
         {
-            VoxelHandle vox = chunkManager.ChunkData.GetFirstVisibleBlockHitByScreenCoord(port.Width / 2, port.Height / 2, camera, port, 100.0f);
+            VoxelHandle vox = chunkManager.ChunkData.GetFirstVisibleBlockHitByScreenCoord(port.Width / 2, port.Height / 2, camera, port, 100.0f, false, false, null);
 
             if(vox != null)
             {
