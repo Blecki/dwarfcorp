@@ -44,46 +44,55 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     /// <summary>
-    /// A request to plan from point A to point B
+    /// This is a goal region which is a sphere around a voxel.
     /// </summary>
-    public class AstarPlanRequest
+    /// <seealso cref="GoalRegion" />
+    public class SphereGoalRegion : GoalRegion
     {
-        public PlanSubscriber Subscriber;
-        public CreatureAI Sender;
-        public VoxelHandle Start;
-        public int MaxExpansions;
-        public GoalRegion GoalRegion;
-        public float HeuristicWeight = 1;
-    }
-
-    /// <summary>
-    /// The result of a plan request (has a path on success)
-    /// </summary>
-    public class AStarPlanResponse
-    {
-        public bool Success;
-        public List<MoveAction> Path;
-    }
-
-    /// <summary>
-    /// A service call which plans from pointA to pointB voxels.
-    /// </summary>
-    public class PlanService : Service<AstarPlanRequest, AStarPlanResponse>
-    {
-        public override AStarPlanResponse HandleRequest(AstarPlanRequest req)
+        public Vector3 Position { get; set; }
+        public VoxelHandle Voxel { get; set; }
+        private float r = 0.0f;
+        public float Radius 
         {
-            List<MoveAction> path = AStarPlanner.FindPath(req.Sender.Movement, req.Start, req.GoalRegion, req.Sender.Manager.World.ChunkManager, 
-                req.MaxExpansions, req.HeuristicWeight);
-
-            AStarPlanResponse res = new AStarPlanResponse
+            get
             {
-                Path = path,
-                Success = (path != null)
-            };
+                return r;
+            }
+            set
+            {
+                r = value;
+                RadiusSquared = r*r;
+            }
+        } 
 
-            return res;
+        private float RadiusSquared { get; set; }
+
+        public SphereGoalRegion(VoxelHandle voxel, float radius)
+        {
+            Radius = radius;
+            Voxel = voxel;
+            Position = voxel.WorldPosition;
         }
 
-    }
+        public override float Heuristic(VoxelHandle voxel)
+        {
+            return (voxel.WorldPosition - Voxel.WorldPosition).LengthSquared();
+        }
 
+        public override bool IsInGoalRegion(VoxelHandle voxel)
+        {
+            return (voxel.WorldPosition - Position).LengthSquared() < RadiusSquared;
+        }
+
+        public override bool IsPossible()
+        {
+            return Voxel != null && !VoxelHelpers.VoxelIsCompletelySurrounded(new TemporaryVoxelHandle(Voxel.Chunk, Voxel.GridPosition));
+        }
+
+
+        public override VoxelHandle GetVoxel()
+        {
+            return Voxel;
+        }
+    }
 }

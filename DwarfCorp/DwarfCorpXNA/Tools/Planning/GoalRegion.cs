@@ -43,47 +43,37 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// A request to plan from point A to point B
-    /// </summary>
-    public class AstarPlanRequest
-    {
-        public PlanSubscriber Subscriber;
-        public CreatureAI Sender;
-        public VoxelHandle Start;
-        public int MaxExpansions;
-        public GoalRegion GoalRegion;
-        public float HeuristicWeight = 1;
-    }
 
     /// <summary>
-    /// The result of a plan request (has a path on success)
+    /// A goal region is an abstract way of specifing when a dwarf has reached a goal.
     /// </summary>
-    public class AStarPlanResponse
+    public abstract class GoalRegion
     {
-        public bool Success;
-        public List<MoveAction> Path;
+        /// <summary>
+        /// Determines whetherthe specified voxel is within the goal region.
+        /// </summary>
+        /// <param name="voxel">The voxel.</param>
+        /// <returns>
+        ///   <c>true</c> if [is in goal region] [the specified voxel]; otherwise, <c>false</c>.
+        /// </returns>
+        public abstract bool IsInGoalRegion(VoxelHandle voxel);
+        /// <summary>
+        /// Gets a voxel associated with this goal region.
+        /// </summary>
+        /// <returns>The voxel associated with this goal region.</returns>
+        public abstract VoxelHandle GetVoxel();
+        /// <summary>
+        /// Returns an admissible heuristic for A* planning from the given voxel to this region.
+        /// </summary>
+        /// <param name="voxel">The voxel.</param>
+        /// <returns>An admissible heuristic value.</returns>
+        public abstract float Heuristic(VoxelHandle voxel);
+        /// <summary>
+        /// Determines whether the goal is a.priori possible.
+        /// </summary>
+        /// <returns>
+        ///   <c>true</c> if this instance is possible; otherwise, <c>false</c>.
+        /// </returns>
+        public abstract bool IsPossible();
     }
-
-    /// <summary>
-    /// A service call which plans from pointA to pointB voxels.
-    /// </summary>
-    public class PlanService : Service<AstarPlanRequest, AStarPlanResponse>
-    {
-        public override AStarPlanResponse HandleRequest(AstarPlanRequest req)
-        {
-            List<MoveAction> path = AStarPlanner.FindPath(req.Sender.Movement, req.Start, req.GoalRegion, req.Sender.Manager.World.ChunkManager, 
-                req.MaxExpansions, req.HeuristicWeight);
-
-            AStarPlanResponse res = new AStarPlanResponse
-            {
-                Path = path,
-                Success = (path != null)
-            };
-
-            return res;
-        }
-
-    }
-
 }

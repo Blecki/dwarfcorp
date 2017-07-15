@@ -44,46 +44,32 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     /// <summary>
-    /// A request to plan from point A to point B
+    /// This is a goal region which causes a dwarf to leave the world.
     /// </summary>
-    public class AstarPlanRequest
+    public class EdgeGoalRegion : GoalRegion
     {
-        public PlanSubscriber Subscriber;
-        public CreatureAI Sender;
-        public VoxelHandle Start;
-        public int MaxExpansions;
-        public GoalRegion GoalRegion;
-        public float HeuristicWeight = 1;
-    }
-
-    /// <summary>
-    /// The result of a plan request (has a path on success)
-    /// </summary>
-    public class AStarPlanResponse
-    {
-        public bool Success;
-        public List<MoveAction> Path;
-    }
-
-    /// <summary>
-    /// A service call which plans from pointA to pointB voxels.
-    /// </summary>
-    public class PlanService : Service<AstarPlanRequest, AStarPlanResponse>
-    {
-        public override AStarPlanResponse HandleRequest(AstarPlanRequest req)
+        public override bool IsInGoalRegion(VoxelHandle voxel)
         {
-            List<MoveAction> path = AStarPlanner.FindPath(req.Sender.Movement, req.Start, req.GoalRegion, req.Sender.Manager.World.ChunkManager, 
-                req.MaxExpansions, req.HeuristicWeight);
+            return Heuristic(voxel) < 2.0f;
+        }
 
-            AStarPlanResponse res = new AStarPlanResponse
-            {
-                Path = path,
-                Success = (path != null)
-            };
+        public override VoxelHandle GetVoxel()
+        {
+            return null;
+        }
 
-            return res;
+        public override float Heuristic(VoxelHandle voxel)
+        {
+            BoundingBox worldBounds = voxel.Chunk.Manager.Bounds;
+            Vector3 pos = voxel.WorldPosition;
+            float value = MathFunctions.Dist2D(worldBounds, pos);
+            return value;
+        }
+
+        public override bool IsPossible()
+        {
+            return true;
         }
 
     }
-
 }

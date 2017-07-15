@@ -925,21 +925,6 @@ namespace DwarfCorp
                 && z != VoxelConstants.ChunkSizeZ - 1;
         }
 
-        public bool IsCompletelySurrounded(VoxelHandle V)
-        {
-            if (!Manager.ChunkData.ChunkMap.ContainsKey(V.ChunkID))
-                return false;
-
-            foreach (var neighborCoordinate in DwarfCorp.Neighbors.EnumerateManhattanNeighbors(V.Coordinate))
-            {
-                var voxelHandle = new TemporaryVoxelHandle(Manager.ChunkData, neighborCoordinate);
-                if (!voxelHandle.IsValid) return false;
-                if (voxelHandle.IsEmpty) return false;
-            }
-
-            return true;
-        }
-
         public Vector3 GridToWorld(Vector3 gridCoord)
         {
             return gridCoord + Origin;

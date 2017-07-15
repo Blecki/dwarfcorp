@@ -43,47 +43,38 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// A request to plan from point A to point B
-    /// </summary>
-    public class AstarPlanRequest
-    {
-        public PlanSubscriber Subscriber;
-        public CreatureAI Sender;
-        public VoxelHandle Start;
-        public int MaxExpansions;
-        public GoalRegion GoalRegion;
-        public float HeuristicWeight = 1;
-    }
 
     /// <summary>
-    /// The result of a plan request (has a path on success)
+    /// This is a GoalRegion which tells the dwarf to be in a specific voxel.
     /// </summary>
-    public class AStarPlanResponse
+    /// <seealso cref="GoalRegion" />
+    public class VoxelGoalRegion : GoalRegion
     {
-        public bool Success;
-        public List<MoveAction> Path;
-    }
+        public VoxelHandle Voxel { get; set; }
 
-    /// <summary>
-    /// A service call which plans from pointA to pointB voxels.
-    /// </summary>
-    public class PlanService : Service<AstarPlanRequest, AStarPlanResponse>
-    {
-        public override AStarPlanResponse HandleRequest(AstarPlanRequest req)
+        public override bool IsPossible()
         {
-            List<MoveAction> path = AStarPlanner.FindPath(req.Sender.Movement, req.Start, req.GoalRegion, req.Sender.Manager.World.ChunkManager, 
-                req.MaxExpansions, req.HeuristicWeight);
-
-            AStarPlanResponse res = new AStarPlanResponse
-            {
-                Path = path,
-                Success = (path != null)
-            };
-
-            return res;
+            return Voxel != null && !VoxelHelpers.VoxelIsCompletelySurrounded(new TemporaryVoxelHandle(Voxel.Chunk, Voxel.GridPosition));
         }
 
-    }
+        public override float Heuristic(VoxelHandle voxel)
+        {
+            return (voxel.WorldPosition - Voxel.WorldPosition).LengthSquared();
+        }
 
+        public VoxelGoalRegion(VoxelHandle voxel)
+        {
+            Voxel = voxel;
+        }
+
+        public override bool IsInGoalRegion(VoxelHandle voxel)
+        {
+            return Voxel.Equals(voxel);
+        }
+
+        public override VoxelHandle GetVoxel()
+        {
+            return Voxel;
+        }
+    }
 }

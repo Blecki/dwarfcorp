@@ -82,7 +82,7 @@ namespace DwarfCorp
                 return false;
             }
 
-            return agent.Faction.IsDigDesignation(VoxelToKill) && !VoxelToKill.Chunk.IsCompletelySurrounded(VoxelToKill);
+            return agent.Faction.IsDigDesignation(VoxelToKill) && !VoxelHelpers.VoxelIsCompletelySurrounded(new TemporaryVoxelHandle(VoxelToKill.Chunk, VoxelToKill.Coordinate.GetLocalVoxelCoordinate()));
         }
 
         public override bool ShouldDelete(Creature agent)
@@ -101,10 +101,8 @@ namespace DwarfCorp
             int surroundedValue = 0;
             if (!alreadyCheckedFeasible)
             {
-                if (VoxelToKill.Chunk.IsCompletelySurrounded(VoxelToKill))
-                {
+                if (VoxelHelpers.VoxelIsCompletelySurrounded(new TemporaryVoxelHandle(VoxelToKill.Chunk, VoxelToKill.Coordinate.GetLocalVoxelCoordinate())))
                     surroundedValue = 10000;
-                }
             }
 
             return (agent.AI.Position - VoxelToKill.WorldPosition).LengthSquared() + 100 * Math.Abs(agent.AI.Position.Y - VoxelToKill.WorldPosition.Y) + surroundedValue;

@@ -44,46 +44,38 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     /// <summary>
-    /// A request to plan from point A to point B
+    /// This is a GoalRegion which tells the dwarf to be 4-ways adjacent to the voxel in X and Z.
     /// </summary>
-    public class AstarPlanRequest
+    /// <seealso cref="GoalRegion" />
+    public class AdjacentVoxelGoalRegion2D : GoalRegion
     {
-        public PlanSubscriber Subscriber;
-        public CreatureAI Sender;
-        public VoxelHandle Start;
-        public int MaxExpansions;
-        public GoalRegion GoalRegion;
-        public float HeuristicWeight = 1;
-    }
+        public TemporaryVoxelHandle Voxel { get; set; }
 
-    /// <summary>
-    /// The result of a plan request (has a path on success)
-    /// </summary>
-    public class AStarPlanResponse
-    {
-        public bool Success;
-        public List<MoveAction> Path;
-    }
-
-    /// <summary>
-    /// A service call which plans from pointA to pointB voxels.
-    /// </summary>
-    public class PlanService : Service<AstarPlanRequest, AStarPlanResponse>
-    {
-        public override AStarPlanResponse HandleRequest(AstarPlanRequest req)
+        public override bool IsPossible()
         {
-            List<MoveAction> path = AStarPlanner.FindPath(req.Sender.Movement, req.Start, req.GoalRegion, req.Sender.Manager.World.ChunkManager, 
-                req.MaxExpansions, req.HeuristicWeight);
-
-            AStarPlanResponse res = new AStarPlanResponse
-            {
-                Path = path,
-                Success = (path != null)
-            };
-
-            return res;
+            return Voxel.IsValid && !VoxelHelpers.VoxelIsCompletelySurrounded(Voxel);
         }
 
-    }
+        public override float Heuristic(VoxelHandle voxel)
+        {
+            return (voxel.WorldPosition - Voxel.Coordinate.ToVector3()).LengthSquared();
+        }
 
+        public AdjacentVoxelGoalRegion2D(VoxelHandle Voxel)
+        {
+            this.Voxel = new TemporaryVoxelHandle(Voxel.Chunk, Voxel.GridPosition);
+        }
+
+        public override bool IsInGoalRegion(VoxelHandle voxel)
+        {
+            return (Math.Abs(voxel.WorldPosition.X - Voxel.Coordinate.X) <= 0.5f &&
+                   Math.Abs(voxel.WorldPosition.Z - Voxel.Coordinate.Z) <= 0.5f) &&
+                   Math.Abs(voxel.WorldPosition.Y - Voxel.Coordinate.Y) <= 1.0f;
+        }
+
+        public override VoxelHandle GetVoxel()
+        {
+            return new VoxelHandle(Voxel.Coordinate.GetLocalVoxelCoordinate(), Voxel.Chunk);
+        }
+    }
 }

@@ -348,10 +348,16 @@
     <Compile Include="Scripting\Rooms\RoomTypes\Treasury.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\FindLandTask.cs" />
     <Compile Include="Tools\Math\FastVoxelTraversal.cs" />
+    <Compile Include="Tools\Planning\GoalRegion.cs" />
+    <Compile Include="Tools\Planning\AdjacentVoxelGoalRegion2D.cs" />
+    <Compile Include="Tools\Planning\EdgeGoalRegion.cs" />
+    <Compile Include="Tools\Planning\SphereGoalRegion.cs" />
+    <Compile Include="Tools\Planning\VoxelGoalRegion.cs" />
     <Compile Include="Tutorial\TutorialManager.cs" />
     <Compile Include="Tutorial\JsonTutorialSet.cs" />
     <Compile Include="Tutorial\TutorialSaveData.cs" />
     <Compile Include="Voxels\NewVoxels\Coordinate.cs" />
+    <Compile Include="Voxels\VoxelHelpers\VoxelIsCompletelySurrounded.cs" />
     <Compile Include="Voxels\VoxelHelpers\FindFirstVisibleVoxelOnRay.cs" />
     <Compile Include="Voxels\VoxelHelpers\DoesRayHitSolidVoxel.cs" />
     <Compile Include="Voxels\VoxelHelpers\DoesVoxelHaveVisibleSurface.cs" />
