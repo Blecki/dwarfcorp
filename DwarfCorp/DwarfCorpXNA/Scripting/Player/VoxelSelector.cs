@@ -412,8 +412,11 @@ namespace DwarfCorp
                             buffer.Min.Y += BoxYOffset;
                         }
 
-
-                        SelectionBuffer = Chunks.GetVoxelsIntersecting(buffer);
+                        SelectionBuffer = VoxelHelpers.EnumerateCoordinatesInBoundingBox(buffer)
+                            .Select(c => new TemporaryVoxelHandle(Chunks.ChunkData, c))
+                            .Where(v => v.IsValid)
+                            .Select(v => new VoxelHandle(v.Coordinate.GetLocalVoxelCoordinate(), v.Chunk))
+                            .ToList();
 
                         if (!altPressed && Brush != VoxelBrush.Stairs)
                         {
@@ -448,9 +451,14 @@ namespace DwarfCorp
             switch (Brush)
             {
                 case VoxelBrush.Box:
-                    return Chunks.GetVoxelsIntersecting(buffer);
+                    return VoxelHelpers.EnumerateCoordinatesInBoundingBox(buffer)
+                        .Select(c => new TemporaryVoxelHandle(Chunks.ChunkData, c))
+                        .Where(v => v.IsValid)
+                        .Select(v => new VoxelHandle(v.Coordinate.GetLocalVoxelCoordinate(), v.Chunk));
                 case VoxelBrush.Shell:
                 {
+                        // Todo: Change the stair and shell functions to enumerate coordinates
+                        //  then simplify and combine this code.
                     return Chunks.GetVoxelsIntersecting(GetShell(buffer));
                 }
                 default:

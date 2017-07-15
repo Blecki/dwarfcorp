@@ -260,11 +260,6 @@ namespace DwarfCorp
                 Chunk.Data.Types[
                     VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(GridPosition.X, GridPosition.Y - 1, GridPosition.Z))] == 0;
         }        
-
-        public static bool HasFlag(RampType ramp, RampType flag)
-        {
-            return (ramp & flag) == flag;
-        }
        
         [JsonIgnore]
         public bool IsEmpty
@@ -274,13 +269,6 @@ namespace DwarfCorp
 
         [JsonIgnore]
         public int SunColor { get { return Chunk.Data.SunColors[Index]; }}
-
-        public void SetFromData(VoxelChunk chunk, LocalVoxelCoordinate gridPosition)
-        {
-            Chunk = chunk;
-            GridPosition = gridPosition;
-            index = VoxelConstants.DataIndexOf(gridPosition);
-        }
 
         public override bool Equals(object o)
         {

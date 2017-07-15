@@ -58,24 +58,16 @@ namespace DwarfCorp
 
         public void CheckForLavaAndWater(Body Body, DwarfTime gameTime, ChunkManager chunks)
         {
-            BoundingBox expandedBoundingBox = Body.BoundingBox.Expand(0.5f);
-
-            List<VoxelHandle> voxels = chunks.GetVoxelsIntersecting(expandedBoundingBox);
-
-            foreach(VoxelHandle currentVoxel in voxels)
+            foreach (var coordinate in VoxelHelpers.EnumerateCoordinatesInBoundingBox(
+                Body.BoundingBox.Expand(0.5f)))
             {
-                WaterCell cell = currentVoxel.Water;
+                var voxel = new TemporaryVoxelHandle(chunks.ChunkData, coordinate);
+                if (!voxel.IsValid || voxel.WaterCell.WaterLevel == 0) continue;
 
-                if (cell.WaterLevel == 0) continue;
-                else if (cell.Type == LiquidType.Lava)
-                {
-                    Heat += 100;
-                }
-                else if (cell.Type == LiquidType.Water)
-                {
-                    Heat -= 100;
-                    Heat = Math.Max(0.0f, Heat);
-                }
+                if (voxel.WaterCell.Type == LiquidType.Lava)
+                    Heat += 100.0f;
+                else if (voxel.WaterCell.Type == LiquidType.Water)
+                    Heat = Math.Max(0.0f, Heat - 100.0f);
             }
         }
 

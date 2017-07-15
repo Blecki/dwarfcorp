@@ -662,22 +662,22 @@ namespace DwarfCorp
         {
             bool toReturn = false;
 
-            if (VoxelHandle.HasFlag(rampType, RampType.TopFrontRight))
+            if ((rampType & RampType.TopFrontRight) == RampType.TopFrontRight)
             {
                 toReturn = (vertex == VoxelVertex.BackTopRight);
             }
 
-            if (VoxelHandle.HasFlag(rampType, RampType.TopBackRight))
+            if ((rampType & RampType.TopBackRight) == RampType.TopBackRight)
             {
                 toReturn = toReturn || (vertex == VoxelVertex.FrontTopRight);
             }
 
-            if (VoxelHandle.HasFlag(rampType, RampType.TopFrontLeft))
+            if ((rampType & RampType.TopFrontLeft) == RampType.TopFrontLeft)
             {
                 toReturn = toReturn || (vertex == VoxelVertex.BackTopLeft);
             }
 
-            if (VoxelHandle.HasFlag(rampType, RampType.TopBackLeft))
+            if ((rampType & RampType.TopBackLeft) == RampType.TopBackLeft)
             {
                 toReturn = toReturn || (vertex == VoxelVertex.FrontTopLeft);
             }
@@ -928,33 +928,6 @@ namespace DwarfCorp
         public Vector3 GridToWorld(Vector3 gridCoord)
         {
             return gridCoord + Origin;
-        }
-
-        public List<VoxelHandle> GetVoxelsIntersecting(BoundingBox box)
-        {
-            if (!GetBoundingBox().Intersects(box) && GetBoundingBox().Contains(box) != ContainmentType.Disjoint)
-            {
-                return new List<VoxelHandle>();
-            }
-            else
-            {
-                BoundingBox myBox = GetBoundingBox();
-                List<VoxelHandle> toReturn = new List<VoxelHandle>();
-                for (float x = Math.Max(box.Min.X, myBox.Min.X); x < Math.Min(box.Max.X, myBox.Max.X); x++)
-                {
-                    for (float y = Math.Max(box.Min.Y, myBox.Min.Y); y < Math.Min(box.Max.Y, myBox.Max.Y); y++)
-                    {
-                        for (float z = Math.Max(box.Min.Z, myBox.Min.Z); z < Math.Min(box.Max.Z, myBox.Max.Z); z++)
-                        {
-                            Vector3 grid = new Vector3(x, y, z) - Origin;
-                            VoxelHandle vox = MakeVoxel((int)grid.X, (int)grid.Y, (int)grid.Z);
-                            toReturn.Add(vox);
-                        }
-                    }
-                }
-
-                return toReturn;
-            }
         }
 
         #endregion neighbors

@@ -1053,22 +1053,6 @@ namespace DwarfCorp
             }
         }
 
-        // Todo: Change to use enumeration
-        public List<VoxelHandle> GetVoxelsIntersecting(BoundingBox box)
-        {
-            HashSet<VoxelChunk> intersects = new HashSet<VoxelChunk>();
-            GetChunksIntersecting(box, intersects);
-
-            List<VoxelHandle> toReturn = new List<VoxelHandle>();
-
-            foreach (VoxelChunk chunk in intersects)
-            {
-                toReturn.AddRange(chunk.GetVoxelsIntersecting(box));
-            }
-
-            return toReturn;
-        }
-
         public void CreateGraphics(Action<String> SetLoadingMessage, ChunkData chunkData)
         {
             SetLoadingMessage("Creating Graphics");
