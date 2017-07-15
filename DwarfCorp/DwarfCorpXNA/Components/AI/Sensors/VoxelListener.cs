@@ -47,7 +47,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class VoxelListener : GameComponent, IUpdateableComponent
     {
-        public Point3 VoxelID;
+        public LocalVoxelCoordinate VoxelID;
 
         [JsonIgnore]
         public VoxelChunk Chunk;
@@ -78,7 +78,7 @@ namespace DwarfCorp
             base("VoxelListener", manager)
         {
             Chunk = vref.Chunk;
-            VoxelID = new Point3(vref.GridPosition);
+            VoxelID = vref.GridPosition;
             Chunk.OnVoxelDestroyed += VoxelListener_OnVoxelDestroyed;
             ChunkID = Chunk.ID;
 
@@ -88,7 +88,7 @@ namespace DwarfCorp
         {
             if (firstIter)
             {
-                if (Chunk.Data.Types[Chunk.Data.IndexAt(VoxelID.X, VoxelID.Y, VoxelID.Z)] == 0)
+                if (Chunk.Data.Types[Chunk.Data.IndexAt(VoxelID)] == 0)
                 {
                     Delete();
                 }
@@ -107,9 +107,9 @@ namespace DwarfCorp
             }
         }
 
-        void VoxelListener_OnVoxelDestroyed(Point3 voxelID)
+        void VoxelListener_OnVoxelDestroyed(LocalVoxelCoordinate voxelID)
         {
-            if (voxelID.Equals(VoxelID))
+            if (voxelID == VoxelID)
             {
                 GetRoot().Die();
             }
@@ -131,7 +131,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class ExploredListener : GameComponent
     {
-        public Point3 VoxelID;
+        public LocalVoxelCoordinate VoxelID;
 
         [JsonIgnore]
         public VoxelChunk Chunk;
@@ -156,15 +156,15 @@ namespace DwarfCorp
             base("ExploredListener", manager)
         {
             Chunk = vref.Chunk;
-            VoxelID = new Point3(vref.GridPosition);
+            VoxelID = vref.GridPosition;
             Chunk.OnVoxelExplored += ExploredListener_OnVoxelExplored;
             ChunkID = Chunk.ID;
 
         }
 
-        void ExploredListener_OnVoxelExplored(Point3 voxelID)
+        void ExploredListener_OnVoxelExplored(LocalVoxelCoordinate voxelID)
         {
-            if (voxelID.Equals(VoxelID))
+            if (voxelID == VoxelID)
             {
                 GetRoot().SetFlagRecursive(Flag.Active, true);
                 GetRoot().SetFlagRecursive(Flag.Visible, true);

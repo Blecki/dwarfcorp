@@ -1,4 +1,5 @@
 butler login
+butler push .\\DwarfCorp\\DwarfCorpContent\\Music completelyfairgames/dwarfcorp:soundtrack
 butler push .\\DwarfCorp\\DwarfCorpXNA\\build\\osx completelyfairgames/dwarfcorp:osx
 butler push .\\DwarfCorp\\DwarfCorpXNA\\build\\win32 completelyfairgames/dwarfcorp:win32-fna
 butler push .\\DwarfCorp\\DwarfCorpXNA\\build\\linux64 completelyfairgames/dwarfcorp:linux64

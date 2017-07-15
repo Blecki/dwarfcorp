@@ -47,10 +47,11 @@ namespace DwarfCorp
     /// </summary>
     public class VoxelChunk : IBoundedObject
     {
-        public delegate void VoxelDestroyed(Point3 voxelID);
+        //Todo: Use actions
+        public delegate void VoxelDestroyed(LocalVoxelCoordinate voxelID);
         public event VoxelDestroyed OnVoxelDestroyed;
 
-        public delegate void VoxelExplored(Point3 voxelID);
+        public delegate void VoxelExplored(LocalVoxelCoordinate voxelID);
 
         public event VoxelExplored OnVoxelExplored;
 
@@ -130,9 +131,9 @@ namespace DwarfCorp
                 return (z * (SizeY + 1) + y) * (SizeX + 1) + x;
             }
 
-            public int IndexAt(int x, int y, int z)
+            public int IndexAt(LocalVoxelCoordinate C)
             {
-                return (z * SizeY + y) * SizeX + x;
+                return (C.Z * SizeY + C.Y) * SizeX + C.X;
             }
 
             public Vector3 CoordsAt(int idx)
@@ -203,11 +204,10 @@ namespace DwarfCorp
         private static Vector3[] vertexDeltas = new Vector3[8];
         private static Vector3[] faceDeltas = new Vector3[6];
 
-        public static readonly Dictionary<VoxelVertex, List<Vector3>> VertexSuccessors = new Dictionary<VoxelVertex, List<Vector3>>();
-        public static readonly Dictionary<VoxelVertex, List<Vector3>> VertexSuccessorsDiag = new Dictionary<VoxelVertex, List<Vector3>>();
+        public static readonly Dictionary<VoxelVertex, List<GlobalVoxelOffset>> VertexSuccessors = new Dictionary<VoxelVertex, List<GlobalVoxelOffset>>();
         public static readonly Dictionary<BoxFace, VoxelVertex[]> FaceVertices = new Dictionary<BoxFace, VoxelVertex[]>();
-        public static List<Vector3> ManhattanSuccessors;
-        public static List<Vector3> Manhattan2DSuccessors;
+        public static List<GlobalVoxelOffset> ManhattanSuccessors;
+        public static List<GlobalVoxelOffset> Manhattan2DSuccessors;
         public static List<List<Point3>> EuclideanSuccessorsByVoxelPosition;
         private static int[] manhattan2DMultipliers;
 
@@ -254,22 +254,24 @@ namespace DwarfCorp
             vertexDeltas[(int)VoxelVertex.FrontBottomRight] = new Vector3(1.0f, 0, 1.0f);
             vertexDeltas[(int)VoxelVertex.FrontTopRight] = new Vector3(1.0f, 1.0f, 1.0f);
 
-            ManhattanSuccessors = new List<Vector3>
+            // TODO: %KILL%
+
+            ManhattanSuccessors = new List<GlobalVoxelOffset>
             {
-                new Vector3(1.0f, 0, 0),
-                new Vector3(-1.0f, 0, 0),
-                new Vector3(0, -1.0f, 0),
-                new Vector3(0, 1.0f, 0),
-                new Vector3(0, 0, -1.0f),
-                new Vector3(0, 0, 1.0f)
+                new GlobalVoxelOffset(1, 0, 0),
+                new GlobalVoxelOffset(-1, 0, 0),
+                new GlobalVoxelOffset(0, -1, 0),
+                new GlobalVoxelOffset(0, 1, 0),
+                new GlobalVoxelOffset(0, 0, -1),
+                new GlobalVoxelOffset(0, 0, 1)
             };
 
-            Manhattan2DSuccessors = new List<Vector3>
+            Manhattan2DSuccessors = new List<GlobalVoxelOffset>
             {
-                new Vector3(-1.0f, 0, 0),
-                new Vector3(1.0f, 0, 0),
-                new Vector3(0, 0, -1.0f),
-                new Vector3(0, 0, 1.0f)
+                new GlobalVoxelOffset(-1, 0, 0),
+                new GlobalVoxelOffset(1, 0, 0),
+                new GlobalVoxelOffset(0, 0, -1),
+                new GlobalVoxelOffset(0, 0, 1)
             };
 
             manhattan2DMultipliers = new[]
@@ -336,8 +338,7 @@ namespace DwarfCorp
             for (int i = 0; i < 8; i++)
             {
                 VoxelVertex vertex = (VoxelVertex)(i);
-                List<Vector3> successors = new List<Vector3>();
-                List<Vector3> diagSuccessors = new List<Vector3>();
+                var successors = new List<GlobalVoxelOffset>();
                 int xlim = 0;
                 int ylim = 0;
                 int zlim = 0;
@@ -474,19 +475,13 @@ namespace DwarfCorp
                             }
                             else
                             {
-                                successors.Add(new Vector3(dx, dy, dz));
-
-                                if ((dx != 0 && dz != 0 && dy == 0))
-                                {
-                                    diagSuccessors.Add(new Vector3(dx, dy, dz));
-                                }
+                                successors.Add(new GlobalVoxelOffset(dx, dy, dz));
                             }
                         }
                     }
                 }
 
                 VertexSuccessors[vertex] = successors;
-                VertexSuccessorsDiag[vertex] = diagSuccessors;
             }
 
             InitializeRelativeNeighborLookup();
@@ -540,7 +535,7 @@ namespace DwarfCorp
 
         #endregion
 
-        public void NotifyExplored(Point3 voxel)
+        public void NotifyExplored(LocalVoxelCoordinate voxel)
         {
             if (OnVoxelExplored != null)
             {
@@ -548,7 +543,7 @@ namespace DwarfCorp
             }
         }
 
-        public void NotifyDestroyed(Point3 voxel)
+        public void NotifyDestroyed(LocalVoxelCoordinate voxel)
         {
             if (OnVoxelDestroyed != null)
             {
@@ -785,9 +780,10 @@ namespace DwarfCorp
             return v;
         }
 
+        [Obsolete]
         public VoxelHandle MakeVoxel(int x, int y, int z)
         {
-            return new VoxelHandle(new Point3(x, y, z), this);
+            return new VoxelHandle(new LocalVoxelCoordinate(x, y, z), this);
         }
 
         public void BuildGrassMotes(Overworld.Biome biome)
@@ -810,8 +806,8 @@ namespace DwarfCorp
                     {
                         for (int z = 0; z < SizeZ; z++)
                         {
-                            v.GridPosition = new Vector3(x, y, z);
-                            voxelBelow.GridPosition = new Vector3(x, y - 1, z);
+                            v.GridPosition = new LocalVoxelCoordinate(x, y, z);
+                            voxelBelow.GridPosition = new LocalVoxelCoordinate(x, y - 1, z);
 
                             if (v.IsEmpty || voxelBelow.IsEmpty
                                 || v.Type.Name != grassType || !v.IsVisible
@@ -967,24 +963,22 @@ namespace DwarfCorp
             if (!valid) return false;
 
             voxel.Chunk = this;
-            voxel.GridPosition = new Vector3(MathFunctions.FloorInt(grid.X), MathFunctions.FloorInt(grid.Y), MathFunctions.FloorInt(grid.Z));
+            voxel.GridPosition = new LocalVoxelCoordinate(MathFunctions.FloorInt(grid.X), MathFunctions.FloorInt(grid.Y), MathFunctions.FloorInt(grid.Z));
             return true;
         }
 
         // Same as GetVoxelAtWorldLocation except skips the part where it has to check to see if it is in range.
         // If you don't know for sure it is valid use the other function.
-        public bool GetVoxelAtValidWorldLocation(Vector3 worldLocation, ref VoxelHandle voxel)
+        public bool GetVoxelAtValidWorldLocation(GlobalVoxelCoordinate worldLocation, ref VoxelHandle voxel)
         {
-            Vector3 grid = WorldToGrid(worldLocation);
-
             voxel.Chunk = this;
-            voxel.GridPosition = new Vector3(MathFunctions.FloorInt(grid.X), MathFunctions.FloorInt(grid.Y), MathFunctions.FloorInt(grid.Z));
+            voxel.GridPosition = worldLocation.GetLocalVoxelCoordinate();
             return true;
         }
 
-        public bool IsGridPositionValid(Vector3 grid)
+        public bool IsGridPositionValid(LocalVoxelCoordinate grid)
         {
-            return IsCellValid((int)grid.X, (int)grid.Y, (int)grid.Z);
+            return IsCellValid(grid.X, grid.Y, grid.Z);
         }
 
         public bool IsWorldLocationValid(Vector3 worldLocation)
@@ -1067,7 +1061,7 @@ namespace DwarfCorp
                 {
                     for (int y = 0; y < SizeY; y++)
                     {
-                        int index = Data.IndexAt(x, y, z);
+                        int index = Data.IndexAt(new LocalVoxelCoordinate(x, y, z));
                         Data.SunColors[index] = sunColor;
                     }
                 }
@@ -1090,7 +1084,7 @@ namespace DwarfCorp
             int z = (int)voxRef.GridPosition.Z;
             for (int y = (int)voxRef.GridPosition.Y; y < SizeY; y++)
             {
-                int index = Data.IndexAt(x, y, z);
+                int index = Data.IndexAt(new LocalVoxelCoordinate(x, y, z));
                 tot += Data.Water[index].WaterLevel;
 
                 if (Data.Water[index].WaterLevel == 0)
@@ -1109,7 +1103,7 @@ namespace DwarfCorp
             int z = (int)voxRef.GridPosition.Z;
             for (int y = (int)voxRef.GridPosition.Y; y < SizeY; y++)
             {
-                int index = Data.IndexAt(x, y, z);
+                int index = Data.IndexAt(new LocalVoxelCoordinate(x, y, z));
                 tot += (Data.Water[index].WaterLevel) / (float)WaterManager.maxWaterLevel;
 
                 if (Data.Water[index].WaterLevel == 0 && y > (int)voxRef.GridPosition.Y)
@@ -1144,8 +1138,8 @@ namespace DwarfCorp
                         {
                             break;
                         }
-                        reference.GridPosition = new Vector3(x, y, z);
-                        int index = Data.IndexAt(x, y, z);
+                        reference.GridPosition = new LocalVoxelCoordinate(x, y, z);
+                        int index = Data.IndexAt(reference.GridPosition);
                         if (Data.Types[index] == 0 || VoxelLibrary.GetVoxelType(Data.Types[index]).IsTransparent)
                         {
                             Data.SunColors[index] = sunColor;
@@ -1293,7 +1287,7 @@ namespace DwarfCorp
             {
                 for (int h = y; h > 0; h--)
                 {
-                    if (Data.Types[Data.IndexAt(x, h, z)] != 0)
+                    if (Data.Types[Data.IndexAt(new LocalVoxelCoordinate(x, h, z))] != 0)
                     {
                         return h + 1;
                     }
@@ -1313,7 +1307,8 @@ namespace DwarfCorp
             {
                 for (int h = y; h >= 0; h--)
                 {
-                    if (Data.Types[Data.IndexAt(x, h, z)] != 0 || Data.Water[Data.IndexAt(x, h, z)].WaterLevel > 1)
+                    if (Data.Types[Data.IndexAt(new LocalVoxelCoordinate(x, h, z))] != 0 
+                        || Data.Water[Data.IndexAt(new LocalVoxelCoordinate(x, h, z))].WaterLevel > 1)
                     {
                         return h + 1;
                     }
@@ -1352,7 +1347,7 @@ namespace DwarfCorp
                                 break;
                         }
 
-                        voxel.GridPosition = new Vector3(x, y, z);
+                        voxel.GridPosition = new LocalVoxelCoordinate(x, y, z);
                         if (test > level && (!voxel.IsEmpty || voxel.WaterLevel > 0))
                         {
                             return true;
@@ -1375,8 +1370,8 @@ namespace DwarfCorp
         //-------------------------
         public void GetNeighborsVertex(VoxelVertex vertex, VoxelHandle v, List<VoxelHandle> toReturn)
         {
-            Vector3 grid = v.GridPosition;
-            GetNeighborsVertex(vertex, (int)grid.X, (int)grid.Y, (int)grid.Z, toReturn);
+            var grid = v.GridPosition;
+            GetNeighborsVertex(vertex, grid.X, grid.Y, grid.Z, toReturn);
         }
 
         public int GridPositionToEuclidianLookupKey(Vector3 gridPos)
@@ -1397,7 +1392,7 @@ namespace DwarfCorp
         }
 
         // Function does not need any chunk specific information so it is static.
-        public static int SuccessorToEuclidianLookupKey(Vector3 successor)
+        public static int SuccessorToEuclidianLookupKey(GlobalVoxelOffset successor)
         {
             return SuccessorToEuclidianLookupKey(MathFunctions.FloorInt(successor.X), MathFunctions.FloorInt(successor.Y), MathFunctions.FloorInt(successor.Z));
         }
@@ -1416,23 +1411,6 @@ namespace DwarfCorp
             return (x + 1) + (y + 1) * 3 + (z + 1) * 9;
         }
 
-        public List<Point3> GetEuclidianSuccessorByVoxel(VoxelHandle v)
-        {
-            Vector3 gridPos;
-            if (v == null)
-            {
-                gridPos = Vector3.Zero;
-            }
-            else
-            {
-                gridPos = v.GridPosition;
-            }
-
-            int key = GridPositionToEuclidianLookupKey(gridPos);
-
-            return EuclideanSuccessorsByVoxelPosition[key];
-        }
-
         public bool IsInterior(int x, int y, int z)
         {
             return (x != 0 && y != 0 && z != 0 && x != SizeX - 1 && y != SizeY - 1 && z != SizeZ - 1);
@@ -1440,7 +1418,7 @@ namespace DwarfCorp
 
         public BoxTransition ComputeTransitionValue(VoxelType.TransitionType transitionType, int x, int y, int z, VoxelHandle[] neighbors)
         {
-            VoxelType type = VoxelLibrary.GetVoxelType(Data.Types[Data.IndexAt(x, y, z)]);
+            VoxelType type = VoxelLibrary.GetVoxelType(Data.Types[Data.IndexAt(new LocalVoxelCoordinate(x, y, z))]);
 
             if (transitionType == VoxelType.TransitionType.Horizontal)
             {
@@ -1496,7 +1474,7 @@ namespace DwarfCorp
                 if (!Manager.ChunkData.ChunkMap.ContainsKey(chunkPart))
                     neighbors[index] = null;
                 else
-                    neighbors[index] = new VoxelHandle(new Point3(localPart.X, localPart.Y, localPart.Z), Manager.ChunkData.ChunkMap[chunkPart]);
+                    neighbors[index] = new VoxelHandle(localPart, Manager.ChunkData.ChunkMap[chunkPart]);
 
                 index += 1;
             }
@@ -1522,7 +1500,7 @@ namespace DwarfCorp
                 if (!Manager.ChunkData.ChunkMap.ContainsKey(chunkPart))
                     neighbors[index] = null;
                 else
-                    neighbors[index] = new VoxelHandle(new Point3(localPart.X, localPart.Y, localPart.Z), Manager.ChunkData.ChunkMap[chunkPart]);
+                    neighbors[index] = new VoxelHandle(localPart, Manager.ChunkData.ChunkMap[chunkPart]);
 
                 index += 1;
             }
@@ -1534,12 +1512,12 @@ namespace DwarfCorp
             }
         }
         
-        public void GetNeighborsSuccessors(List<Vector3> succ, int x, int y, int z, List<VoxelHandle> ToFill)
+        public void GetNeighborsSuccessors(List<GlobalVoxelOffset> succ, int x, int y, int z, List<VoxelHandle> ToFill)
         {
             ToFill.Clear();
 
             foreach (var neighbor in DwarfCorp.Neighbors.EnumerateNeighbors(
-                succ.Select(v => new GlobalVoxelOffset((int)v.X, (int)v.Y, (int)v.Z)),
+                succ,
                 new GlobalVoxelCoordinate(ID, new LocalVoxelCoordinate(x, y, z))))
             {
 
@@ -1547,7 +1525,7 @@ namespace DwarfCorp
                 var chunkPart = neighbor.GetGlobalChunkCoordinate();
 
                 if (Manager.ChunkData.ChunkMap.ContainsKey(chunkPart))
-                    ToFill.Add(new VoxelHandle(new Point3(localPart.X, localPart.Y, localPart.Z), Manager.ChunkData.ChunkMap[chunkPart]));
+                    ToFill.Add(new VoxelHandle(localPart, Manager.ChunkData.ChunkMap[chunkPart]));
             }            
         }
 
@@ -1558,10 +1536,11 @@ namespace DwarfCorp
 
         public IEnumerable<VoxelHandle> GetNeighborsEuclidean(VoxelHandle v)
         {
-            Vector3 gridCoord = v.GridPosition;
+            var gridCoord = v.GridPosition;
             return GetNeighborsEuclidean((int)gridCoord.X, (int)gridCoord.Y, (int)gridCoord.Z);
         }
 
+        // Todo: Kill with fire.
         public IEnumerable<VoxelHandle> GetNeighborsEuclidean(int x, int y, int z)
         {
             bool isInterior = (x > 0 && y > 0 && z > 0 && x < SizeX - 1 && y < SizeY - 1 && z < SizeZ - 1);
@@ -1587,8 +1566,9 @@ namespace DwarfCorp
                         else
                         {
                             VoxelHandle otherVox = new VoxelHandle();
-                            if (Manager.ChunkData.GetVoxel(this, new Vector3(nx, ny, nz) + Origin + Vector3.One * 0.5f, ref otherVox))
-                            {
+                            if (Manager.ChunkData.GetVoxel(this, 
+                                ID + new LocalVoxelCoordinate(nx,ny, nz), ref otherVox))
+                            { 
                                 yield return otherVox;
                             }
                         }
@@ -1638,15 +1618,14 @@ namespace DwarfCorp
             return v == null || v.IsEmpty;
         }
 
-        public static bool IsInteriorPoint(Point3 gridPosition, VoxelChunk chunk)
+        public static bool IsInteriorPoint(LocalVoxelCoordinate gridPosition, VoxelChunk chunk)
         {
             return chunk.IsInterior(gridPosition.X, gridPosition.Y, gridPosition.Z);
         }
 
         public bool HasNoNeighbors(VoxelHandle v)
         {
-            Vector3 pos = v.Position;
-            Vector3 gridPos = v.GridPosition;
+            var gridPos = v.GridPosition;
 
             if (!Manager.ChunkData.ChunkMap.ContainsKey(v.ChunkID))
             {
@@ -1654,17 +1633,19 @@ namespace DwarfCorp
             }
 
             VoxelChunk chunk = Manager.ChunkData.ChunkMap[v.ChunkID];
-            Point3 gridPoint = new Point3(gridPos);
+            var gridPoint = gridPos;
 
             bool interior = IsInteriorPoint(gridPoint, chunk);
 
+            //TODO: KILL WITH FIRE
 
             if (interior)
             {
+                //Todo: Reimplement using Neighbors.Enumerate
                 for (int i = 0; i < 6; i++)
                 {
-                    Vector3 neighbor = ManhattanSuccessors[i];
-                    int index = Data.IndexAt(gridPoint.X + (int)neighbor.X, gridPoint.Y + (int)neighbor.Y, gridPoint.Z + (int)neighbor.Z);
+                    var neighbor = ManhattanSuccessors[i];
+                    int index = Data.IndexAt(new LocalVoxelCoordinate(gridPoint.X + (int)neighbor.X, gridPoint.Y + (int)neighbor.Y, gridPoint.Z + (int)neighbor.Z));
 
                     if (Data.Types[index] != 0)
                     {
@@ -1678,18 +1659,20 @@ namespace DwarfCorp
                 VoxelHandle atPos = new VoxelHandle();
                 for (int i = 0; i < 6; i++)
                 {
-                    Vector3 neighbor = ManhattanSuccessors[i];
+                    var neighbor = ManhattanSuccessors[i];
 
-                    if (!IsGridPositionValid(neighbor + gridPos))
+                    if (!IsGridPositionValid(new LocalVoxelCoordinate((int)neighbor.X + gridPos.X, (int)neighbor.Y + gridPos.Y, (int)neighbor.Z + gridPos.Z)))
                     {
-                        if (Manager.ChunkData.GetNonNullVoxelAtWorldLocation(pos + neighbor, ref atPos) && !atPos.IsEmpty)
+                        if (Manager.ChunkData.GetNonNullVoxelAtWorldLocation(
+                            new Vector3(v.Position.X + neighbor.X, v.Position.Y + neighbor.Y, 
+                            v.Position.Z + neighbor.Z), ref atPos) && !atPos.IsEmpty)
                         {
                             return false;
                         }
                     }
                     else
                     {
-                        int index = Data.IndexAt(gridPoint.X + (int)neighbor.X, gridPoint.Y + (int)neighbor.Y, gridPoint.Z + (int)neighbor.Z);
+                        int index = Data.IndexAt(new LocalVoxelCoordinate(gridPoint.X + (int)neighbor.X, gridPoint.Y + (int)neighbor.Y, gridPoint.Z + (int)neighbor.Z));
 
                         if (Data.Types[index] != 0)
                         {
@@ -1712,17 +1695,19 @@ namespace DwarfCorp
 
             Vector3 pos = v.Position;
             VoxelChunk chunk = Manager.ChunkData.ChunkMap[v.ChunkID];
-            Point3 gridPoint = new Point3(v.GridPosition);
+            var gridPoint = v.GridPosition;
             bool interior = IsInteriorPoint(gridPoint, chunk);
+
+            //TODO: KILL WITH FIRE
 
 
             if (interior)
             {
                 for (int i = 0; i < 6; i++)
                 {
-                    Vector3 neighbor = ManhattanSuccessors[i];
-                    int neighborIndex = Data.IndexAt(gridPoint.X + (int)neighbor.X, gridPoint.Y + (int)neighbor.Y,
-                        gridPoint.Z + (int)neighbor.Z);
+                    var neighbor = ManhattanSuccessors[i];
+                    int neighborIndex = Data.IndexAt(new LocalVoxelCoordinate(gridPoint.X + (int)neighbor.X, gridPoint.Y + (int)neighbor.Y,
+                        gridPoint.Z + (int)neighbor.Z));
                     if (Data.Types[neighborIndex] == 0 || (ramps && Data.RampTypes[neighborIndex] != RampType.None))
                     {
                         return false;
@@ -1734,9 +1719,11 @@ namespace DwarfCorp
                 VoxelHandle atPos = new VoxelHandle();
                 for (int i = 0; i < 6; i++)
                 {
-                    Vector3 neighbor = ManhattanSuccessors[i];
+                    var neighbor = ManhattanSuccessors[i];
 
-                    if (!Manager.ChunkData.GetNonNullVoxelAtWorldLocationCheckFirst(chunk, pos + neighbor, ref atPos) || atPos.IsEmpty || (ramps && atPos.RampType != RampType.None))
+                    if (!Manager.ChunkData.GetNonNullVoxelAtWorldLocationCheckFirst(chunk, 
+                        new Vector3(pos.X + neighbor.X, pos.Y + neighbor.Y, pos.Z + neighbor.Z),
+                        ref atPos) || atPos.IsEmpty || (ramps && atPos.RampType != RampType.None))
                     {
                         return false;
                     }

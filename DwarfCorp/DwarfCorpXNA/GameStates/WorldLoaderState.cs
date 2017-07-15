@@ -37,7 +37,8 @@ namespace DwarfCorp.GameStates
 
             this.OnProceedClicked = (path) =>
             {
-                var file = new OverworldFile(path + ProgramData.DirChar + "world." + OverworldFile.CompressedExtension, true, true);
+                var file = new OverworldFile(path + ProgramData.DirChar + "world." + (DwarfGame.COMPRESSED_BINARY_SAVES ? OverworldFile.CompressedExtension : OverworldFile.Extension),
+                    DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
                 Overworld.Map = file.Data.CreateMap();
                 Overworld.Name = file.Data.Name;
                 Overworld.NativeFactions = new List<Faction>();

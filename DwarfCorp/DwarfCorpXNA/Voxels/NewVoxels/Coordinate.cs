@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
@@ -83,8 +84,15 @@ namespace DwarfCorp
         {
             return this == other;
         }
+
+        internal static GlobalVoxelCoordinate FromVector3(Vector3 V)
+        {
+            return new GlobalVoxelCoordinate(
+                (int)Math.Floor(V.X), (int)Math.Floor(V.Y), (int)Math.Floor(V.Z));
+        }
     }
 
+    [Serializable]
     public struct GlobalVoxelOffset : IEquatable<GlobalVoxelOffset>
     {
         public readonly Int32 X;
@@ -131,6 +139,7 @@ namespace DwarfCorp
         }
     }
 
+    [Serializable]
     public struct GlobalChunkCoordinate : IEquatable<GlobalChunkCoordinate>
     {
         public readonly Int32 X;
@@ -177,6 +186,7 @@ namespace DwarfCorp
         }
     }
 
+    [Serializable]
     public struct LocalVoxelCoordinate : IEquatable<LocalVoxelCoordinate>
     {
         public readonly Int32 X;

@@ -156,7 +156,7 @@ namespace DwarfCorp
                 CurrentDesignation = new CraftDesignation()
                 {
                     ItemType = CurrentCraftType,
-                    Location = new VoxelHandle(new Point3(0, 0, 0), null)
+                    Location = new VoxelHandle(new LocalVoxelCoordinate(0, 0, 0), null)
                 };
                 SetDisplayColor(Color.Green);
             }
@@ -289,7 +289,7 @@ namespace DwarfCorp
                                 if (IsValid(newDesignation))
                                 {
                                     AddDesignation(newDesignation);
-                                    assignments.Add(new CraftItemTask(new VoxelHandle(new Point3(r.GridPosition), r.Chunk),
+                                    assignments.Add(new CraftItemTask(new VoxelHandle(r.GridPosition, r.Chunk),
                                         CurrentCraftType));
                                 }
                                 else

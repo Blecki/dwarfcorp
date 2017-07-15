@@ -50,7 +50,7 @@ namespace DwarfCorp
 #if WINDOWS || XBOX
     internal static class Program
     {
-        public static string Version = "17.05.15_FNA";
+        public static string Version = "17.07.15_FNA";
         public static char DirChar = Path.DirectorySeparatorChar;
         
         /// <summary>

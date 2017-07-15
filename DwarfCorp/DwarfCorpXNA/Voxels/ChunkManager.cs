@@ -789,7 +789,7 @@ namespace DwarfCorp
             {
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
-                    if (GameSettings.Default.UseLightmaps)
+                    if (GameSettings.Default.UseLightmaps && chunk.Primitive.Lightmap != null)
                     {
                         effect.LightMap = chunk.Primitive.Lightmap;
                         effect.PixelSize = new Vector2(1.0f/chunk.Primitive.Lightmap.Width,
@@ -1019,7 +1019,7 @@ namespace DwarfCorp
             foreach (VoxelHandle voxel in KilledVoxels)
             {
                 affectedChunks.Add(voxel.Chunk);
-                voxel.Chunk.NotifyDestroyed(new Point3(voxel.GridPosition));
+                voxel.Chunk.NotifyDestroyed(voxel.GridPosition);
                 foreach (var neighbor in Neighbors.EnumerateAllNeighbors(new GlobalVoxelCoordinate(
                     voxel.ChunkID, new LocalVoxelCoordinate((int)voxel.GridPosition.X, (int)voxel.GridPosition.Y, (int)voxel.GridPosition.Z))))
                 {
@@ -1188,7 +1188,7 @@ namespace DwarfCorp
                     {
                         if (voxel != null && !visited.Contains(voxel))
                         {
-                            queue.Enqueue(new VoxelHandle(new Point3(voxel.GridPosition), voxel.Chunk));
+                            queue.Enqueue(new VoxelHandle(voxel.GridPosition, voxel.Chunk));
                         }
                     }
                 }

@@ -300,9 +300,9 @@ namespace DwarfCorp
                     chunks.ChunkData.GetVoxel(Position, ref CurrentVoxel);
                     if (CurrentVoxel != null && CurrentVoxel.Chunk != null)
                     {
-                        Vector3 gridPos = CurrentVoxel.GridPosition;
-                        CurrentVoxel.Chunk.GetNeighborsSuccessors(VoxelChunk.ManhattanSuccessors, (int)gridPos.X,
-                            (int)gridPos.Y, (int)gridPos.Z, Neighbors);
+                        var gridPos = CurrentVoxel.GridPosition;
+                        CurrentVoxel.Chunk.GetNeighborsSuccessors(VoxelChunk.ManhattanSuccessors, 
+                            gridPos.X, gridPos.Y, gridPos.Z, Neighbors);
                     }
 
                     // Collide with the world.

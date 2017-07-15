@@ -32,29 +32,31 @@ namespace DwarfCorp
                 FaceDeltas[(int)BoxFace.Right] = new Vector3(1, 0, 0);
                 FaceDeltas[(int)BoxFace.Top] = new Vector3(0, 1, 0);
                 FaceDeltas[(int)BoxFace.Bottom] = new Vector3(0, -1, 0);
-                VertexNeighbors2D[(int)VoxelVertex.FrontTopLeft] = new List<Vector3>()
+
+                //Todo %KILL%
+                VertexNeighbors2D[(int)VoxelVertex.FrontTopLeft] = new List<GlobalVoxelOffset>()
                 {
-                    new Vector3(-1, 0, 0),
-                    new Vector3(-1, 0, 1),
-                    new Vector3(0, 0, 1)
+                    new GlobalVoxelOffset(-1, 0, 0),
+                    new GlobalVoxelOffset(-1, 0, 1),
+                    new GlobalVoxelOffset(0, 0, 1)
                 };
-                VertexNeighbors2D[(int)VoxelVertex.FrontTopRight] = new List<Vector3>()
+                VertexNeighbors2D[(int)VoxelVertex.FrontTopRight] = new List<GlobalVoxelOffset>()
                 {
-                    new Vector3(0, 0, 1),
-                    new Vector3(1, 0, 1),
-                    new Vector3(1, 0, 0)
+                    new GlobalVoxelOffset(0, 0, 1),
+                    new GlobalVoxelOffset(1, 0, 1),
+                    new GlobalVoxelOffset(1, 0, 0)
                 };
-                VertexNeighbors2D[(int)VoxelVertex.BackTopLeft] = new List<Vector3>()
+                VertexNeighbors2D[(int)VoxelVertex.BackTopLeft] = new List<GlobalVoxelOffset>()
                 {
-                    new Vector3(-1, 0, 0),
-                    new Vector3(-1, 0, -1),
-                    new Vector3(0, 0, -1)
+                    new GlobalVoxelOffset(-1, 0, 0),
+                    new GlobalVoxelOffset(-1, 0, -1),
+                    new GlobalVoxelOffset(0, 0, -1)
                 };
-                VertexNeighbors2D[(int)VoxelVertex.BackTopRight] = new List<Vector3>()
+                VertexNeighbors2D[(int)VoxelVertex.BackTopRight] = new List<GlobalVoxelOffset>()
                 {
-                    new Vector3(0, 0, -1),
-                    new Vector3(1, 0, -1),
-                    new Vector3(1, 0, 0)
+                    new GlobalVoxelOffset(0, 0, -1),
+                    new GlobalVoxelOffset(1, 0, -1),
+                    new GlobalVoxelOffset(1, 0, 0)
                 };
                 CreateFaceDrawMap();
                 StaticInitialized = true;
@@ -114,7 +116,7 @@ namespace DwarfCorp
                 {
                     for(int z = 0; z < chunk.SizeZ; z++)
                     {
-                        v.GridPosition = new Vector3(x, y, z); 
+                        v.GridPosition = new LocalVoxelCoordinate(x, y, z); 
 
                         if((v.IsExplored && v.IsEmpty) || !v.IsVisible)
                         {
@@ -145,7 +147,7 @@ namespace DwarfCorp
 
                             if(faceExists[(int)face])
                             {
-                                voxelOnFace.GridPosition = new Vector3(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z);
+                                voxelOnFace.GridPosition = new LocalVoxelCoordinate(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z);
                                 drawFace[(int)face] =  (voxelOnFace.IsExplored && voxelOnFace.IsEmpty) || (voxelOnFace.Type.IsTransparent && !v.Type.IsTransparent) || 
                                     !voxelOnFace.IsVisible || 
                                     (voxelOnFace.Type.CanRamp && voxelOnFace.RampType != RampType.None && IsSideFace(face) && 

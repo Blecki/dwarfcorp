@@ -20,5 +20,7 @@ namespace DwarfCorp
         {
             World = ((WorldManager)context.Context);
         }
+
+        // Cache chunk, local coords, make immutable
     }
 }
