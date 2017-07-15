@@ -47,7 +47,8 @@ namespace DwarfCorp
         private RenderTarget2D Buffer;
         private Color[] colorBuffer;
         private int Scale = 4;
-
+        private Timer renderTimer = new Timer(0.5f, false, Timer.TimerMode.Real);
+        private bool renderThisFrame = false;
         public SelectionBuffer(int scale, GraphicsDevice device)
         {
             Scale = scale;
@@ -66,11 +67,18 @@ namespace DwarfCorp
             }
         }
 
-        public void Begin(GraphicsDevice device)
+        public bool Begin(GraphicsDevice device)
         {
+            renderTimer.Update(DwarfTime.LastTime);
+            renderThisFrame = renderTimer.HasTriggered || colorBuffer == null;
+            if (!renderThisFrame)
+            {
+                return false;
+            }
             ValidateBuffer(device);
             device.SetRenderTarget(Buffer);
             device.Clear(Color.Transparent);
+            return true;
         }
 
         public void End(GraphicsDevice device)

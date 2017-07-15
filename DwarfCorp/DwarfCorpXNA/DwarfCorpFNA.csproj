@@ -45,6 +45,11 @@
     <Reference Include="System.Management" />
     <Reference Include="System.Management.Instrumentation" />
   </ItemGroup>
+  <!---
+  <ItemGroup>
+     <Compile Include=".\**\*.cs"/>
+  </ItemGroup>
+  -->
   <ItemGroup>
      <Compile Include=".\**\*.cs"/>
   </ItemGroup>

@@ -50,12 +50,13 @@ namespace DwarfCorp
             }
         }
 
-        public void Render(DwarfTime time, GraphicsDevice device, Camera camera, float scale, Color fogColor, BoundingBox backgroundScale)
+        public void Render(DwarfTime time, GraphicsDevice device, Camera camera, float scale, Color fogColor, BoundingBox backgroundScale, bool drawBackground=true)
         {
             RenderNightSky(time, device, camera);
             RenderDaySky(time, device, camera);
             RenderSunMoon(time, device, camera, device.Viewport, scale);
-            RenderBackgroundMesh(device, camera, fogColor, backgroundScale);
+            if (drawBackground)
+                RenderBackgroundMesh(device, camera, fogColor, backgroundScale);
         }
 
         private void CreateBackgroundMesh(GraphicsDevice Device, BoundingBox worldBounds)

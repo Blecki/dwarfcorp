@@ -786,7 +786,7 @@ namespace DwarfCorp
             {
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
-                    if (GameSettings.Default.UseLightmaps)
+                    if (GameSettings.Default.UseLightmaps && chunk.Primitive.Lightmap != null)
                     {
                         effect.LightMap = chunk.Primitive.Lightmap;
                         effect.PixelSize = new Vector2(1.0f/chunk.Primitive.Lightmap.Width,

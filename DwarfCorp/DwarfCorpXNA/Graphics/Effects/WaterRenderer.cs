@@ -168,12 +168,12 @@ namespace DwarfCorp
 
             if(DrawTerrainReflected)
             {
-                game.DrawSky(gameTime, reflectionViewMatrix, 0.25f, effect.FogColor);
+                game.DrawSky(gameTime, reflectionViewMatrix, 0.25f, effect.FogColor, false);
                 game.Draw3DThings(gameTime, effect, reflectionViewMatrix);
             }
             else
             {
-                game.DrawSky(gameTime, reflectionViewMatrix, 0.25f, effect.FogColor);
+                game.DrawSky(gameTime, reflectionViewMatrix, 0.25f, effect.FogColor, false);
             }
 
             effect.View = reflectionViewMatrix;

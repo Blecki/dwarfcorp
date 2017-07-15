@@ -17,6 +17,7 @@ namespace DwarfCorp
     public class Flammable : GameComponent, IUpdateableComponent
     {
         private Health _health = null;
+        [JsonIgnore]
         public Health Health
         {
             get
