@@ -326,11 +326,13 @@ namespace DwarfCorp
             {
                 for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                 {
-                    int h = chunk.GetFilledVoxelGridHeightAt(x, VoxelConstants.ChunkSizeY - 1, z);
+                    var topVoxel = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+                        chunk, new LocalVoxelCoordinate(x, VoxelConstants.ChunkSizeY - 1, z)));
+
                     for (int i = 0; i < CaveLevels.Count; i++)
                     {
                         int y = CaveLevels[i];
-                        if (y <= 0 || y >= h - 1) continue;
+                        if (y <= 0 || y >= topVoxel.Coordinate.Y) continue;
                         Vector3 vec = new Vector3(x, y, z) + chunk.Origin;
                         double caveNoise = CaveNoise.GetValue((x + origin.X) * CaveNoiseScale * CaveFrequencies[i],
                             (y + origin.Y) * CaveNoiseScale * 3.0f, (z + origin.Z) * CaveNoiseScale * CaveFrequencies[i]);

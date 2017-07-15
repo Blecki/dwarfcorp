@@ -914,30 +914,6 @@ namespace DwarfCorp
 
         #region visibility
 
-        // Todo: %KILL%
-        [Obsolete]
-        public int GetFilledVoxelGridHeightAt(int x, int y, int z)
-        {
-            int invalid = -1;
-
-            if (!IsCellValid(x, y, z))
-            {
-                return invalid;
-            }
-            else
-            {
-                for (int h = y; h > 0; h--)
-                {
-                    if (Data.Types[VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, h, z))] != 0)
-                    {
-                        return h + 1;
-                    }
-                }
-            }
-
-            return invalid;
-        }
-
         public int GetFilledHeightOrWaterAt(int x, int y, int z)
         {
             if (!IsCellValid(x, y, z))
