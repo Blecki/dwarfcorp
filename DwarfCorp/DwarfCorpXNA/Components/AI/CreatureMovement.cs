@@ -314,7 +314,10 @@ namespace DwarfCorp
                     neighborHood[1, 1, 0]
                 };
 
-                var wall = walls.FirstOrDefault(v => v.IsValid && !v.IsEmpty);
+                var wall = TemporaryVoxelHandle.InvalidHandle;
+                foreach (var w in walls)
+                    if (w.IsValid && !w.IsEmpty)
+                        wall = w;
 
                 if (wall.IsValid)
                 {
