@@ -510,7 +510,7 @@ namespace DwarfCorp
             }
             else if (key == ControlSettings.Mappings.Unslice)
             {
-                World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkHeight, ChunkManager.SliceMode.Y);
+                World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxelConstants.ChunkSizeY, ChunkManager.SliceMode.Y);
             }
             //else if(key == ControlSettings.Mappings.GodMode)
             //{

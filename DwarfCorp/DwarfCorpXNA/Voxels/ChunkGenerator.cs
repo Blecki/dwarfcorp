@@ -72,7 +72,6 @@ namespace DwarfCorp
         public float NoiseScale { get; set; }
         public float CaveNoiseScale { get; set; }
         public float SeaLevel { get; set; }
-        public float MaxMountainHeight { get; set; }
         public LibNoise.FastRidgedMultifractal AquiferNoise { get; set; }
         public LibNoise.FastRidgedMultifractal LavaNoise { get; set; }
         public ChunkManager Manager { get; set; }
@@ -85,13 +84,12 @@ namespace DwarfCorp
         public float LavaSize { get; set; }
         public static float WorldScale { get; set; }
 
-        public ChunkGenerator(VoxelLibrary voxLibrary, int randomSeed, float noiseScale, float maxMountainHeight, float worldScale)
+        public ChunkGenerator(VoxelLibrary voxLibrary, int randomSeed, float noiseScale, float worldScale)
         {
             WorldScale = worldScale;
             NoiseGenerator = new Perlin(randomSeed);
             NoiseScale = noiseScale;
 
-            MaxMountainHeight = maxMountainHeight;
             VoxLibrary = voxLibrary;
             CaveNoiseScale = noiseScale*10.0f;
             CaveSize = 0.03f;

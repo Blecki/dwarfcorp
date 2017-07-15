@@ -274,7 +274,7 @@ namespace DwarfCorp.GameStates
 
             LevelLabel.Text = String.Format("{0}/{1}",
                 World.ChunkManager.ChunkData.MaxViewingLevel,
-                World.ChunkHeight);
+                VoxelConstants.ChunkSizeY);
             LevelLabel.Invalidate();
             #endregion
 

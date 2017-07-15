@@ -71,25 +71,14 @@ namespace DwarfCorp
 
         public float SlicePlane = 0;
 
-        // The horizontal size of the overworld in pixels
-        public int WorldWidth = 800;
-
         // Used to pass WorldOrigin from the WorldGenState into 
         public Vector2 WorldGenerationOrigin { get; set; }
 
         // The origin of the overworld in pixels [(0, 0, 0) in world space.]
         public Vector2 WorldOrigin { get; set; }
 
-        // The vertical size of the overworld in pixels
-        public int WorldHeight = 800;
 
-        // Todo: %KILL%
-        // The number of voxels along x and z in a chunk
-        public int ChunkWidth { get { return GameSettings.Default.ChunkWidth; } }
-
-        // The number of voxels along y in a chunk.
-        public int ChunkHeight { get { return GameSettings.Default.ChunkHeight; } }
-
+        // Todo: %KILL% - Just an alias for CursorLightPos.
         public Vector3 CursorPos { get { return CursorLightPos; } }
 
         // The current coordinate of the cursor light
