@@ -151,13 +151,13 @@ namespace DwarfCorp
             // Todo: There should be a way to do this without trig.
             float angle = (float) Math.Atan2(yComponent, xComponent);
 
-            if (angle > 3.0f * MathHelper.PiOver4)
+            if (angle > 3.0f * MathHelper.PiOver4) // 135 degrees
                 CurrentOrientation = Orientation.Right;
-            else if (angle > MathHelper.PiOver4)
+            else if (angle > MathHelper.PiOver4) // 45 degrees
                 CurrentOrientation = Orientation.Backward;
-            else if (angle > -MathHelper.PiOver4)
+            else if (angle > -MathHelper.PiOver4) // -45 degrees
                 CurrentOrientation = Orientation.Left;
-            else if (angle > -3.0f * MathHelper.PiOver4)
+            else if (angle > -3.0f * MathHelper.PiOver4) // -135 degrees
                 CurrentOrientation = Orientation.Forward;
             else
                 CurrentOrientation = Orientation.Right;

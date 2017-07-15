@@ -163,7 +163,6 @@ namespace DwarfCorp
                             }
                         }
 
-
                         for(int i = 0; i < 6; i++)
                         {
                             BoxFace face = (BoxFace) i;
