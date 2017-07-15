@@ -54,6 +54,9 @@ namespace DwarfCorp
         public ChunkData(ChunkManager chunkManager)
         {           
             this.chunkManager = chunkManager;
+            ChunkMap = new ConcurrentDictionary<GlobalChunkCoordinate, VoxelChunk>();
+            MaxViewingLevel = VoxelConstants.ChunkSizeY;
+            Slice = ChunkManager.SliceMode.Y;
         }
 
         public ConcurrentDictionary<GlobalChunkCoordinate, VoxelChunk> ChunkMap { get; set; }

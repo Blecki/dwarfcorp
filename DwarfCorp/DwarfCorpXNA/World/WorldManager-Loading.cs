@@ -244,6 +244,8 @@ namespace DwarfCorp
                 ChunkManager = new ChunkManager(Content, this, Camera,
                     GraphicsDevice,
                     ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
+
+                ChunkRenderer = new ChunkRenderer(this, Camera, GraphicsDevice, ChunkManager.ChunkData);
             
                 #region Load Components
 

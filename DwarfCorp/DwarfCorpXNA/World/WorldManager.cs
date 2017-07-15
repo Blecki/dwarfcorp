@@ -119,6 +119,7 @@ namespace DwarfCorp
 
         // Responsible for managing terrain
         public ChunkManager ChunkManager = null;
+        public ChunkRenderer ChunkRenderer = null;
 
         // Maps a set of voxel types to assets and properties
         public VoxelLibrary VoxelLibrary = null;
@@ -504,6 +505,7 @@ namespace DwarfCorp
 
             //GamePerformance.Instance.StartTrackPerformance("Chunk Manager");
             ChunkManager.Update(gameTime, Camera, GraphicsDevice);
+            ChunkRenderer.Update(gameTime, Camera, GraphicsDevice);
             //GamePerformance.Instance.StopTrackPerformance("Chunk Manager");
 
             //GamePerformance.Instance.StartTrackPerformance("Instance Manager");
@@ -633,7 +635,7 @@ namespace DwarfCorp
             effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
             effect.ClippingEnabled = true;
             GraphicsDevice.BlendState = BlendState.NonPremultiplied;
-            ChunkManager.Render(Camera, gameTime, GraphicsDevice, effect, Matrix.Identity);
+            ChunkRenderer.Render(Camera, gameTime, GraphicsDevice, effect, Matrix.Identity);
             Camera.ViewMatrix = viewMatrix;
             effect.ClippingEnabled = true;
         }
@@ -716,12 +718,12 @@ namespace DwarfCorp
 
             if (GameSettings.Default.UseDynamicShadows)
             {
-                ChunkManager.RenderShadowmap(DefaultShader, GraphicsDevice, Shadows, Matrix.Identity, Tilesheet);
+                ChunkRenderer.RenderShadowmap(DefaultShader, GraphicsDevice, Shadows, Matrix.Identity, Tilesheet);
             }
 
             if (GameSettings.Default.UseLightmaps)
             {
-                ChunkManager.RenderLightmaps(Camera, gameTime, GraphicsDevice, DefaultShader, Matrix.Identity);
+                ChunkRenderer.RenderLightmaps(Camera, gameTime, GraphicsDevice, DefaultShader, Matrix.Identity);
             }
 
             // Computes the water height.
@@ -753,7 +755,7 @@ namespace DwarfCorp
                 DefaultShader.View = Camera.ViewMatrix;
                 DefaultShader.Projection = Camera.ProjectionMatrix;
                 DefaultShader.World = Matrix.Identity;
-                ChunkManager.RenderSelectionBuffer(DefaultShader, GraphicsDevice, Camera.ViewMatrix);
+                ChunkRenderer.RenderSelectionBuffer(DefaultShader, GraphicsDevice, Camera.ViewMatrix);
                 ComponentRenderer.RenderSelectionBuffer(renderables, gameTime, ChunkManager, Camera,
                     DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader);
                 InstanceManager.RenderSelectionBuffer(GraphicsDevice, DefaultShader, Camera, false);
