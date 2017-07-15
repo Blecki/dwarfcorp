@@ -426,7 +426,7 @@ namespace DwarfCorp
                     {
                         if (dx == 1 && dz == 1) continue;
 
-                        if (!neighborHood[dx, 1, dz].IsValid || neighborHood[dx, 1, dz].IsEmpty)
+                        if (neighborHood[dx, 1, dz].IsValid && !neighborHood[dx, 1, dz].IsEmpty)
                         {
                             successors.Add(new MoveAction
                             {
