@@ -1021,30 +1021,22 @@ namespace DwarfCorp
             Water.Splash(gameTime);
             Water.HandleTransfers(gameTime);
 
-            HashSet<VoxelChunk> affectedChunks = new HashSet<VoxelChunk>();
-            
+            var affectedChunks = new HashSet<GlobalVoxelCoordinate>();
+
             foreach (VoxelHandle voxel in KilledVoxels)
             {
-                affectedChunks.Add(voxel.Chunk);
+                affectedChunks.Add(voxel.Coordinate);
                 voxel.Chunk.NotifyDestroyed(voxel.GridPosition);
-                foreach (var neighbor in Neighbors.EnumerateAllNeighbors(new GlobalVoxelCoordinate(
-                    voxel.ChunkID, new LocalVoxelCoordinate((int)voxel.GridPosition.X, (int)voxel.GridPosition.Y, (int)voxel.GridPosition.Z))))
-                {
-                    VoxelChunk chunk;
-                    if (chunkData.ChunkMap.TryGetValue(neighbor.GetGlobalChunkCoordinate(), out chunk))
-                        affectedChunks.Add(chunk);
-                }
             }
 
             ChunkData.Reveal(KilledVoxels);
 
             lock (RebuildList)
             {
-                foreach (VoxelChunk affected in affectedChunks)
-                {
-                    affected.NotifyTotalRebuild(false);
-                }
+                foreach (var affected in affectedChunks)
+                    ChunkData.NotifyRebuild(affected);
             }
+
             KilledVoxels.Clear();
         }
 

@@ -216,14 +216,22 @@ namespace DwarfCorp
 
                     Vector2 vec = new Vector2(x + chunk.Origin.X, z + chunk.Origin.Z) / WorldScale;
 
-                    if (topVoxel.IsValid &&
-                        Overworld.GetWater(Overworld.Map, vec) == Overworld.WaterType.Volcano)
+
+                    if (topVoxel.Coordinate.Y < VoxelConstants.ChunkSizeY - 1
+                        && Overworld.GetWater(Overworld.Map, vec) == Overworld.WaterType.Volcano)
                     {
-                        topVoxel.WaterCell = new WaterCell
-                        {
-                            Type = LiquidType.Lava,
-                            WaterLevel = WaterManager.maxWaterLevel
-                        };
+                        var localCoord = topVoxel.Coordinate.GetLocalVoxelCoordinate();
+                        topVoxel = new TemporaryVoxelHandle(topVoxel.Chunk, new LocalVoxelCoordinate(
+                            localCoord.X, localCoord.Y + 1, localCoord.Z));
+
+                        if (topVoxel.IsEmpty)
+                        { 
+                            topVoxel.WaterCell = new WaterCell
+                            {
+                                Type = LiquidType.Lava,
+                                WaterLevel = WaterManager.maxWaterLevel
+                            };
+                        }
                     }
                 }
             }

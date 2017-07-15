@@ -74,8 +74,8 @@ namespace DwarfCorp
             v.Type = Type;
             v.Water = new WaterCell();
             v.Health = Type.StartingHealth;
-            chunk.NotifyTotalRebuild(!v.IsInterior);
-
+            manager.ChunkData.NotifyRebuild(v.Coordinate);
+            
             World.ParticleManager.Trigger("puff", v.WorldPosition, Color.White, 20);
 
             foreach(Physics phys in manager.World.CollisionManager.EnumerateIntersectingObjects(Vox.GetBoundingBox(), CollisionManager.CollisionType.Dynamic).OfType<Physics>())

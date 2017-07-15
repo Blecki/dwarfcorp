@@ -140,37 +140,29 @@ namespace DwarfCorp
         public BalloonPort GenerateInitialBalloonPort(RoomBuilder roomDes, ChunkManager chunkManager, float x, float z,
             int size)
         {
-            Vector3 pos = new Vector3(x, ChunkHeight - 1, z);
+            var centerCoordinate = GlobalVoxelCoordinate.FromVector3(new Vector3(x, VoxelConstants.ChunkSizeY - 1, z));
 
-            // First, compute the maximum height of the terrain in a square window.
-            int averageHeight = 0;
-            int count = 0;
-            for (int dx = -size; dx <= size; dx++)
+            var accumulator = 0;
+            var count = 0;
+            for (var offsetX = -size; offsetX <= size; ++offsetX)
             {
-                for (int dz = -size; dz <= size; dz++)
+                for (var offsetY = -size; offsetY <= size; ++offsetY)
                 {
-                    Vector3 worldPos = new Vector3(pos.X + dx, pos.Y, pos.Z + dz);
-                    VoxelChunk chunk = chunkManager.ChunkData.GetChunk(worldPos);
+                    var topVoxel = VoxelHelpers.FindFirstVoxelBelowIncludeWater(
+                        new TemporaryVoxelHandle(chunkManager.ChunkData,
+                            centerCoordinate + new GlobalVoxelOffset(offsetX, 0, offsetY)));
 
-                    if (chunk == null)
+                    if (topVoxel.Coordinate.Y > 0)
                     {
-                        continue;
-                    }
-
-                    Vector3 gridPos = chunk.WorldToGrid(worldPos);
-                    int h = chunk.GetFilledHeightOrWaterAt((int)gridPos.X + dx, (int)gridPos.Y, (int)gridPos.Z + dz);
-
-                    if (h > 0)
-                    {
-                        averageHeight += h;
-                        count++;
+                        accumulator += topVoxel.Coordinate.Y + 1;
+                        count += 1;
                     }
                 }
             }
+            
+            var averageHeight = (int)Math.Round(((float)accumulator / (float)count));
 
-            averageHeight = (int)Math.Round(((float)averageHeight / (float)count));
-
-            HashSet<VoxelChunk> affectedChunks = new HashSet<VoxelChunk>();
+            var affectedChunks = new HashSet<GlobalVoxelCoordinate>();
             // Next, create the balloon port by deciding which voxels to fill.
             List<VoxelHandle> balloonPortDesignations = new List<VoxelHandle>();
             List<VoxelHandle> treasuryDesignations = new List<VoxelHandle>();
@@ -178,17 +170,17 @@ namespace DwarfCorp
             {
                 for (int dz = -size; dz <= size; dz++)
                 {
-                    Vector3 worldPos = new Vector3(pos.X + dx, pos.Y, pos.Z + dz);
+                    Vector3 worldPos = new Vector3(centerCoordinate.X + dx, centerCoordinate.Y, centerCoordinate.Z + dz);
                     VoxelChunk chunk = chunkManager.ChunkData.GetChunk(worldPos);
 
                     if (chunk == null)
                     {
                         continue;
                     }
-                    affectedChunks.Add(chunk);
 
                     var baseVoxel = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
                         chunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(worldPos)));
+                    affectedChunks.Add(baseVoxel.Coordinate);
                     var h = baseVoxel.Coordinate.Y + 1;
                     Vector3 gridPos = chunk.WorldToGrid(worldPos);
 
@@ -240,7 +232,7 @@ namespace DwarfCorp
                         v.Type = VoxelLibrary.GetVoxelType("Scaffold");
                         chunk.Data.Water[v.Index].WaterLevel = 0;
                         v.Chunk = chunk;
-                        v.Chunk.NotifyTotalRebuild(!v.IsInterior);
+                        chunkManager.ChunkData.NotifyRebuild(v.Coordinate);
 
                         if (y == averageHeight - 1)
                         {
@@ -279,12 +271,9 @@ namespace DwarfCorp
             treasury.OnBuilt();
             roomDes.DesignatedRooms.Add(treasury);
 
-            foreach (VoxelChunk chunk in affectedChunks)
-            {
-                chunk.ReconstructRamps = true;
-                chunk.UpdateRamps();
-                chunk.NotifyTotalRebuild(true);
-            }
+            foreach (var chunk in affectedChunks)
+                chunkManager.ChunkData.NotifyRebuild(chunk);
+
             return toBuild;
         }
 

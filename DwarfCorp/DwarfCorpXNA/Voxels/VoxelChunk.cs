@@ -912,87 +912,8 @@ namespace DwarfCorp
 
         #endregion
 
-        #region visibility
-
-        public int GetFilledHeightOrWaterAt(int x, int y, int z)
-        {
-            if (!IsCellValid(x, y, z))
-            {
-                return -1;
-            }
-            else
-            {
-                for (int h = y; h >= 0; h--)
-                {
-                    if (Data.Types[VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, h, z))] != 0 
-                        || Data.Water[VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, h, z))].WaterLevel > 1)
-                    {
-                        return h + 1;
-                    }
-                }
-            }
-
-            return -1;
-        }
-
-        public bool NeedsViewingLevelChange()
-        {
-            float level = Manager.ChunkData.MaxViewingLevel;
-
-            int mx = VoxelConstants.ChunkSizeX;
-            int my = VoxelConstants.ChunkSizeY;
-            int mz = VoxelConstants.ChunkSizeZ;
-            VoxelHandle voxel = MakeVoxel(0, 0, 0);
-            for (int y = 0; y < my; y++)
-            {
-                for (int x = 0; x < mx; x++)
-                {
-                    for (int z = 0; z < mz; z++)
-                    {
-                        float test = 0.0f;
-
-                        switch (Manager.ChunkData.Slice)
-                        {
-                            case ChunkManager.SliceMode.X:
-                                test = x + Origin.X;
-                                break;
-                            case ChunkManager.SliceMode.Y:
-                                test = y + Origin.Y;
-                                break;
-                            case ChunkManager.SliceMode.Z:
-                                test = z + Origin.Z;
-                                break;
-                        }
-
-                        voxel.GridPosition = new LocalVoxelCoordinate(x, y, z);
-                        if (test > level && (!voxel.IsEmpty || voxel.WaterLevel > 0))
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-
-            return false;
-
-        }
-
-
-
-        #endregion
 
         #region neighbors
-
-        // Todo: %KILL%
-        public static int SuccessorToEuclidianLookupKey(int x, int y, int z)
-        {
-            Debug.Assert(x >= -1 && x <= 1, "X coordinate of successor must be between -1 and 1");
-            Debug.Assert(y >= -1 && y <= 1, "Y coordinate of successor must be between -1 and 1");
-            Debug.Assert(z >= -1 && z <= 1, "Z coordinate of successor must be between -1 and 1");
-
-            return (x + 1) + (y + 1) * 3 + (z + 1) * 9;
-        }
 
         public bool IsInterior(int x, int y, int z)
         {
@@ -1002,47 +923,6 @@ namespace DwarfCorp
                 && x != VoxelConstants.ChunkSizeX - 1 
                 && y != VoxelConstants.ChunkSizeY - 1 
                 && z != VoxelConstants.ChunkSizeZ - 1;
-        }
-
-        public void NotifyTotalRebuild(bool neighbors)
-        {
-            ShouldRebuild = true;
-            ShouldRecalculateLighting = true;
-            ShouldRebuildWater = true;
-            ReconstructRamps = true;
-
-            if (neighbors)
-            {
-                // Enumerator works in world space - this is the ONLY place where we
-                //  enumerate neighbors in CHUNK space, so just hack it!
-                foreach (var n in DwarfCorp.Neighbors.EnumerateManhattanNeighbors(
-                    new GlobalVoxelCoordinate(ID.X, ID.Y, ID.Z)))
-                {
-                    var chunkCoord = new GlobalChunkCoordinate(n.X, n.Y, n.Z);
-                    VoxelChunk chunk;
-                    if (Manager.ChunkData.ChunkMap.TryGetValue(chunkCoord, out chunk))
-                    {
-                        chunk.ShouldRebuild = true;
-                        chunk.ShouldRecalculateLighting = true;
-                        chunk.ShouldRebuildWater = true;
-                    }
-                }
-            }
-        }
-
-        public bool HasNoNeighbors(VoxelHandle V)
-        {
-            if (!Manager.ChunkData.ChunkMap.ContainsKey(V.ChunkID))
-                return false;
-
-            foreach (var neighborCoordinate in DwarfCorp.Neighbors.EnumerateManhattanNeighbors(V.Coordinate))
-            {
-                var voxelHandle = new TemporaryVoxelHandle(Manager.ChunkData, neighborCoordinate);
-                if (!voxelHandle.IsValid) continue;
-                if (!voxelHandle.IsEmpty) return false;
-            }
-
-            return true;
         }
 
         public bool IsCompletelySurrounded(VoxelHandle V)

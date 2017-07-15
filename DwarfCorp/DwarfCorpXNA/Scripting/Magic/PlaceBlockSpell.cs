@@ -81,7 +81,7 @@ namespace DwarfCorp
 
         public override void OnVoxelsSelected(SpellTree tree, List<VoxelHandle> voxels)
         {
-            var chunksToRebuild = new HashSet<GlobalChunkCoordinate>();
+            var chunksToRebuild = new HashSet<GlobalVoxelCoordinate>();
             bool placed = false;
             foreach (VoxelHandle selected in voxels)
             {
@@ -102,21 +102,15 @@ namespace DwarfCorp
                         });
                     }
                     placed = true;
-                    chunksToRebuild.Add(selected.ChunkID);
+                    chunksToRebuild.Add(selected.Coordinate);
                 }
             }
 
             foreach (var point in chunksToRebuild)
-            {
-                VoxelChunk chunk = World.ChunkManager.ChunkData.ChunkMap[point];
-                chunk.ShouldRebuild = true;
-                chunk.NotifyTotalRebuild(true);
-            }
+                World.ChunkManager.ChunkData.NotifyRebuild(point);
 
             if (placed)
-            {
                 SoundManager.PlaySound(ContentPaths.Audio.tinkle, World.CursorLightPos, true, 1.0f);
-            }
 
             RechargeTimer.Reset(RechargeTimer.TargetTimeSeconds);
             base.OnVoxelsSelected(tree, voxels);

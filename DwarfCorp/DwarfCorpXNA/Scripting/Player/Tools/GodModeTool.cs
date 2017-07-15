@@ -91,7 +91,7 @@ namespace DwarfCorp
         public override void OnVoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
         {
            
-            var chunksToRebuild = new HashSet<GlobalChunkCoordinate>();
+            var chunksToRebuild = new HashSet<GlobalVoxelCoordinate>();
 
             if(Command.Contains("Build/"))
             {
@@ -135,7 +135,7 @@ namespace DwarfCorp
                         }
 
 
-                        chunksToRebuild.Add(vox.ChunkID);
+                        chunksToRebuild.Add(vox.Coordinate);
                     }
                     else switch(Command)
                     {
@@ -165,7 +165,7 @@ namespace DwarfCorp
                             {
                                 vox.WaterLevel = WaterManager.maxWaterLevel;
                                 vox.Chunk.Data.Water[vox.Index].Type = LiquidType.Water;
-                                chunksToRebuild.Add(vox.ChunkID);
+                                chunksToRebuild.Add(vox.Coordinate);
                             }
                         }
                             break;
@@ -175,7 +175,7 @@ namespace DwarfCorp
                             {
                                 vox.WaterLevel = WaterManager.maxWaterLevel;
                                 vox.Chunk.Data.Water[vox.Index].Type = LiquidType.Lava;
-                                chunksToRebuild.Add(vox.ChunkID);
+                                chunksToRebuild.Add(vox.Coordinate);
                             }
                         }
                             break;
@@ -217,10 +217,8 @@ namespace DwarfCorp
                 }
             }
 
-            foreach(var chunk in chunksToRebuild)
-            {
-                Chunks.ChunkData.ChunkMap[chunk].NotifyTotalRebuild(false);
-            }
+            foreach (var chunk in chunksToRebuild)
+                Chunks.ChunkData.NotifyRebuild(chunk);
         }
 
 

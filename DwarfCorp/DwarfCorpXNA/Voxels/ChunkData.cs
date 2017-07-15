@@ -250,7 +250,19 @@ namespace DwarfCorp
             chunkManager.CreateGraphics(SetLoadingMessage, this);
         }
 
-
+        public void NotifyRebuild(GlobalVoxelCoordinate At)
+        {
+            foreach (var n in Neighbors.EnumerateManhattanNeighbors2D(At))
+            {
+                var vox = new TemporaryVoxelHandle(this, n);
+                if (vox.IsValid)
+                {
+                    vox.Chunk.ShouldRebuild = true;
+                    vox.Chunk.ShouldRecalculateLighting = true;
+                    vox.Chunk.ShouldRebuildWater = true;
+                    vox.Chunk.ReconstructRamps = true;
+                }
+            }
+        }
     }
-
 }
