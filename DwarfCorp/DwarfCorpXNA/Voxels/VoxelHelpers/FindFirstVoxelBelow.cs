@@ -9,6 +9,8 @@ namespace DwarfCorp
     {
         public static TemporaryVoxelHandle FindFirstVoxelBelow(TemporaryVoxelHandle V)
         {
+            if (!V.IsValid) return V;
+
             var p = V.Coordinate.GetLocalVoxelCoordinate();
 
             for (int y = p.Y; y >= 0; --y)
@@ -18,7 +20,7 @@ namespace DwarfCorp
                     return vox;
             }
 
-            return new TemporaryVoxelHandle(null, p);
+            return TemporaryVoxelHandle.InvalidHandle;
         }
 
         public static TemporaryVoxelHandle FindFirstVoxelBelowIncludeWater(TemporaryVoxelHandle V)
@@ -32,7 +34,7 @@ namespace DwarfCorp
                     return vox;
             }
 
-            return new TemporaryVoxelHandle(null, p);
+            return TemporaryVoxelHandle.InvalidHandle;
         }
     }
 }

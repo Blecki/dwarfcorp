@@ -126,11 +126,7 @@ namespace DwarfCorp
         private void GenerateInitialObjects()
         {
             foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
-            {
-                ChunkManager.ChunkGen.GenerateVegetation(chunk.Value, ComponentManager, Content, GraphicsDevice);
-                ChunkManager.ChunkGen.GenerateFauna(chunk.Value, ComponentManager, Content, GraphicsDevice,
-                    Factions);
-            }
+                ChunkManager.ChunkGen.GenerateSurfaceLife(chunk.Value);
         }
 
         /// <summary>
