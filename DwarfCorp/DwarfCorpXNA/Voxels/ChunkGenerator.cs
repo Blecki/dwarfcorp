@@ -452,7 +452,7 @@ namespace DwarfCorp
             }
         }
 
-        public VoxelChunk GenerateChunk(Vector3 origin, WorldManager World, ContentManager content, GraphicsDevice graphics)
+        public VoxelChunk GenerateChunk(Vector3 origin, WorldManager World)
         {
             float waterHeight = SeaLevel + 1.0f / VoxelConstants.ChunkSizeY;
             VoxelChunk c = new VoxelChunk(Manager, origin, GlobalVoxelCoordinate.FromVector3(origin).GetGlobalChunkCoordinate())
@@ -544,12 +544,9 @@ namespace DwarfCorp
                 }
             }
 
-
             GenerateWater(c);
             GenerateLava(c);
             GenerateCaves(c, World);
-            //GenerateAquifers(c);
-            //GenerateLavaTubes(c);
 
             c.ShouldRecalculateLighting = true;
             c.ShouldRebuildWater = true;

@@ -587,8 +587,7 @@ namespace DwarfCorp
                                     box.X * VoxelConstants.ChunkSizeX, 
                                     box.Y * VoxelConstants.ChunkSizeY,
                                     box.Z * VoxelConstants.ChunkSizeZ);
-                                VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, World, Content,
-                                    Graphics);
+                                VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, World);
                                 Drawer3D.DrawBox(chunk.GetBoundingBox(), Color.Red, 0.1f);
                                 chunk.ShouldRebuild = true;
                                 chunk.ShouldRecalculateLighting = true;
@@ -872,7 +871,7 @@ namespace DwarfCorp
                         box.X * VoxelConstants.ChunkSizeX, 
                         box.Y * VoxelConstants.ChunkSizeY, 
                         box.Z * VoxelConstants.ChunkSizeZ);
-                    VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, World, Content, Graphics);
+                    VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, World);
                     chunk.ShouldRebuild = true;
                     chunk.ShouldRecalculateLighting = true;
                     chunk.IsVisible = true;

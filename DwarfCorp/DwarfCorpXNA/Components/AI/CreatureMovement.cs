@@ -213,169 +213,130 @@ namespace DwarfCorp
         /// Returns a 3 x 3 x 3 voxel grid corresponding to the immediate neighborhood
         /// around the given voxel..
         /// </summary>
-        private VoxelHandle[, ,] GetNeighborhood(VoxelHandle voxel)
+        private TemporaryVoxelHandle[, ,] GetNeighborhood(TemporaryVoxelHandle Voxel)
         {
-            var neighborHood = new VoxelHandle[3, 3, 3];
-            CollisionManager objectHash = Creature.Manager.World.CollisionManager;
+            var neighborhood = new TemporaryVoxelHandle[3, 3, 3];
 
-            VoxelChunk startChunk = voxel.Chunk;
-            var x = (int)voxel.GridPosition.X;
-            var y = (int)voxel.GridPosition.Y;
-            var z = (int)voxel.GridPosition.Z;
-            for (int dx = -1; dx < 2; dx++)
-            {
-                for (int dy = -1; dy < 2; dy++)
-                {
-                    for (int dz = -1; dz < 2; dz++)
+            for (var dx = -1; dx <= 1; ++dx)
+                for (var dy = -1; dy <= 1; ++dy)
+                    for (var dz = -1; dz <= 1; ++dz)
                     {
-                        neighborHood[dx + 1, dy + 1, dz + 1] = new VoxelHandle();
-                        int nx = dx + x;
-                        int ny = dy + y;
-                        int nz = dz + z;
-                        if (
-                            !Creature.Manager.World.ChunkManager.ChunkData.GetVoxel(startChunk,
-                                startChunk.ID + new LocalVoxelCoordinate(nx, ny, nz),
-                                ref neighborHood[dx + 1, dy + 1, dz + 1]))
-                        {
-                            neighborHood[dx + 1, dy + 1, dz + 1] = null;
-                        }
+                        var v = new TemporaryVoxelHandle(Creature.World.ChunkManager.ChunkData,
+                            Voxel.Coordinate + new GlobalVoxelOffset(dx, dy, dz));
+                        neighborhood[dx + 1, dy + 1, dz + 1] = v;
                     }
-                }
-            }
-            return neighborHood;
+
+            return neighborhood;
         }
 
         /// <summary> Determines whether the voxel has any neighbors in X or Z directions </summary>
-        private bool HasNeighbors(VoxelHandle[, ,] neighborHood)
+        private bool HasNeighbors(TemporaryVoxelHandle[,,] Neighborhood)
         {
-            bool hasNeighbors = false;
-            for (int dx = 0; dx < 3; dx++)
-            {
-                for (int dz = 0; dz < 3; dz++)
+            for (var x = 0; x < 3; ++x)
+                for (var z = 0; z < 3; ++z)
                 {
-                    if (dx == 1 && dz == 1)
-                    {
+                    if (x == 1 && z == 1)
                         continue;
-                    }
 
-                    hasNeighbors = hasNeighbors ||
-                                   (neighborHood[dx, 1, dz] != null && (!neighborHood[dx, 1, dz].IsEmpty));
+                    if (Neighborhood[x, 1, z].IsValid && (!Neighborhood[x, 1, z].IsEmpty))
+                        return true;
                 }
-            }
 
-
-            return hasNeighbors;
-        }
-
-        /// <summary> Determines whether the given voxel is null or empty </summary>
-        private bool IsEmpty(VoxelHandle v)
-        {
-            return v == null || v.IsEmpty;
+            return false;
         }
 
         /// <summary> gets a list of actions that the creature can take from the given position </summary>
-        public IEnumerable<MoveAction> GetMoveActions(Vector3 pos)
+        public IEnumerable<MoveAction> GetMoveActions(Vector3 Pos)
         {
-            var vox = new VoxelHandle();
-            Creature.Manager.World.ChunkManager.ChunkData.GetVoxel(pos, ref vox);
+            var vox = new TemporaryVoxelHandle(Creature.World.ChunkManager.ChunkData,
+                GlobalVoxelCoordinate.FromVector3(Pos));
             return GetMoveActions(vox);
         }
 
         // Todo: Convert to temporary voxel handles?
         /// <summary> gets the list of actions that the creature can take from a given voxel. </summary>
-        public IEnumerable<MoveAction> GetMoveActions(VoxelHandle voxel)
+        public IEnumerable<MoveAction> GetMoveActions(TemporaryVoxelHandle voxel)
         {
             if (!voxel.IsEmpty)
-            {
                 yield break;
-            }
 
             CollisionManager objectHash = Creature.Manager.World.CollisionManager;
 
-            VoxelHandle[, ,] neighborHood = GetNeighborhood(voxel);
-            var x = (int)voxel.GridPosition.X;
-            var y = (int)voxel.GridPosition.Y;
-            var z = (int)voxel.GridPosition.Z;
-            bool inWater = (neighborHood[1, 1, 1] != null && neighborHood[1, 1, 1].WaterLevel > WaterManager.inWaterThreshold);
-            bool standingOnGround = (neighborHood[1, 0, 1] != null && !neighborHood[1, 0, 1].IsEmpty);
-            bool topCovered = (neighborHood[1, 2, 1] != null && !neighborHood[1, 2, 1].IsEmpty);
+            var neighborHood = GetNeighborhood(voxel);
+            bool inWater = (neighborHood[1, 1, 1].IsValid && neighborHood[1, 1, 1].WaterCell.WaterLevel > WaterManager.inWaterThreshold);
+            bool standingOnGround = (neighborHood[1, 0, 1].IsValid && !neighborHood[1, 0, 1].IsEmpty);
+            bool topCovered = (neighborHood[1, 2, 1].IsValid && !neighborHood[1, 2, 1].IsEmpty);
             bool hasNeighbors = HasNeighbors(neighborHood);
             bool isClimbing = false;
 
             var successors = new List<MoveAction>();
 
-            //Climbing ladders.
-            IEnumerable<IBoundedObject> objectsInside = objectHash.GetObjectsAt(voxel,
-                CollisionManager.CollisionType.Static);
-            if (objectsInside != null)
+            if (CanClimb)
             {
-                IEnumerable<GameComponent> bodies = objectsInside.OfType<GameComponent>();
-                IList<GameComponent> enumerable = bodies as IList<GameComponent> ?? bodies.ToList();
-                if (CanClimb)
+                //Climbing ladders.
+                var bodies = objectHash.GetObjectsAt(voxel, CollisionManager.CollisionType.Static).OfType<GameComponent>();
+
+                var ladder = bodies.FirstOrDefault(component => component.Tags.Contains("Climbable"));
+
+                // if the creature can climb objects and a ladder is in this voxel,
+                // then add a climb action.
+                if (ladder != null)
                 {
-                    bool hasLadder = enumerable.Any(component => component.Tags.Contains("Climbable"));
-                    // if the creature can climb objects and a ladder is in this voxel,
-                    // then add a climb action.
-                    if (hasLadder)
+                    successors.Add(new MoveAction
+                    {
+                        Diff = new Vector3(1, 2, 1),
+                        MoveType = MoveType.Climb,
+                        InteractObject = ladder
+                    });
+
+                    isClimbing = true;
+
+                    if (!standingOnGround)
                     {
                         successors.Add(new MoveAction
                         {
-                            Diff = new Vector3(1, 2, 1),
+                            Diff = new Vector3(1, 0, 1),
                             MoveType = MoveType.Climb,
-                            InteractObject = enumerable.FirstOrDefault(component => component.Tags.Contains("Climbable"))
+                            InteractObject = ladder
                         });
-
-                        isClimbing = true;
-
-                        if (!standingOnGround)
-                        {
-                            successors.Add(new MoveAction
-                            {
-                                Diff = new Vector3(1, 0, 1),
-                                MoveType = MoveType.Climb,
-                                InteractObject = enumerable.FirstOrDefault(component => component.Tags.Contains("Climbable"))
-                            });
-                        }
-
-                        standingOnGround = true;
                     }
+
+                    standingOnGround = true;
                 }
             }
 
             // If the creature can climb walls and is not blocked by a voxl above.
             if (CanClimbWalls && !topCovered)
             {
-                VoxelHandle[] walls =
+                var walls = new TemporaryVoxelHandle[]
                 {
                     neighborHood[2, 1, 1], neighborHood[0, 1, 1], neighborHood[1, 1, 2],
                     neighborHood[1, 1, 0]
                 };
-                // Determine if the creature is adjacent to a wall.
-                bool nearWall = (neighborHood[2, 1, 1] != null && !neighborHood[2, 1, 1].IsEmpty) ||
-                                (neighborHood[0, 1, 1] != null && !neighborHood[0, 1, 1].IsEmpty) ||
-                                (neighborHood[1, 1, 2] != null && !neighborHood[1, 1, 2].IsEmpty) ||
-                                (neighborHood[1, 1, 0] != null && !neighborHood[1, 1, 0].IsEmpty);
 
-                // If we're near a wall, we can climb upwards.
-                if (nearWall)
+                var wall = walls.FirstOrDefault(v => v.IsValid && !v.IsEmpty);
+
+                if (wall.IsValid)
                 {
                     isClimbing = true;
                     successors.Add(new MoveAction
                     {
                         Diff = new Vector3(1, 2, 1),
                         MoveType = MoveType.ClimbWalls,
-                        ActionVoxel = walls.FirstOrDefault(v => v != null && !v.IsEmpty)
+                        ActionVoxel = new VoxelHandle(wall.Coordinate.GetLocalVoxelCoordinate(),
+                        wall.Chunk)
                     });
-                }
-                // If we're near a wall and not blocked from below, we can climb downward.
-                if (nearWall && !standingOnGround)
-                {
-                    successors.Add(new MoveAction
+
+                    if (!standingOnGround)
                     {
-                        Diff = new Vector3(1, 0, 1),
-                        MoveType = MoveType.ClimbWalls,
-                        ActionVoxel = walls.FirstOrDefault(v => v != null && !v.IsEmpty)
-                    });
+                        successors.Add(new MoveAction
+                        {
+                            Diff = new Vector3(1, 0, 1),
+                            MoveType = MoveType.ClimbWalls,
+                            ActionVoxel = new VoxelHandle(wall.Coordinate.GetLocalVoxelCoordinate(),
+                            wall.Chunk)
+                        });
+                    }
                 }
             }
 
@@ -385,7 +346,7 @@ namespace DwarfCorp
             {
                 // If the creature is in water, it can swim. Otherwise, it will walk.
                 var moveType = inWater ? MoveType.Swim : MoveType.Walk;
-                if (IsEmpty(neighborHood[0, 1, 1]))
+                if (!neighborHood[0, 1, 1].IsValid || neighborHood[0,1,1].IsEmpty)
                     // +- x
                     successors.Add(new MoveAction
                     {
@@ -393,14 +354,14 @@ namespace DwarfCorp
                         MoveType = moveType
                     });
 
-                if (IsEmpty(neighborHood[2, 1, 1]))
+                if (!neighborHood[2, 1, 1].IsValid || neighborHood[2, 1, 1].IsEmpty)
                     successors.Add(new MoveAction
                     {
                         Diff = new Vector3(2, 1, 1),
                         MoveType = moveType
                     });
 
-                if (IsEmpty(neighborHood[1, 1, 0]))
+                if (!neighborHood[1, 1, 0].IsValid || neighborHood[1, 1, 0].IsEmpty)
                     // +- z
                     successors.Add(new MoveAction
                     {
@@ -408,7 +369,7 @@ namespace DwarfCorp
                         MoveType = moveType
                     });
 
-                if (IsEmpty(neighborHood[1, 1, 2]))
+                if (!neighborHood[1, 1, 2].IsValid || neighborHood[1, 1, 2].IsEmpty)
                     successors.Add(new MoveAction
                     {
                         Diff = new Vector3(1, 1, 2),
@@ -419,7 +380,7 @@ namespace DwarfCorp
                 // no full neighbors around the voxel.
                 if (!hasNeighbors)
                 {
-                    if (IsEmpty(neighborHood[2, 1, 2]))
+                    if (!neighborHood[2, 1, 2].IsValid || neighborHood[2, 1, 2].IsEmpty)
                         // +x + z
                         successors.Add(new MoveAction
                         {
@@ -427,14 +388,14 @@ namespace DwarfCorp
                             MoveType = moveType
                         });
 
-                    if (IsEmpty(neighborHood[2, 1, 0]))
+                    if (!neighborHood[2, 1, 0].IsValid || neighborHood[2, 1, 0].IsEmpty)
                         successors.Add(new MoveAction
                         {
                             Diff = new Vector3(2, 1, 0),
                             MoveType = moveType
                         });
 
-                    if (IsEmpty(neighborHood[0, 1, 2]))
+                    if (!neighborHood[0, 1, 2].IsValid || neighborHood[0, 1, 2].IsEmpty)
                         // -x -z
                         successors.Add(new MoveAction
                         {
@@ -442,7 +403,7 @@ namespace DwarfCorp
                             MoveType = moveType
                         });
 
-                    if (IsEmpty(neighborHood[0, 1, 0]))
+                    if (!neighborHood[0, 1, 0].IsValid || neighborHood[0, 1, 0].IsEmpty)
                         successors.Add(new MoveAction
                         {
                             Diff = new Vector3(0, 1, 0),
@@ -462,7 +423,7 @@ namespace DwarfCorp
                     {
                         if (dx == 1 && dz == 1) continue;
 
-                        if (!IsEmpty(neighborHood[dx, 1, dz]))
+                        if (!neighborHood[dx, 1, dz].IsValid || neighborHood[dx, 1, dz].IsEmpty)
                         {
                             successors.Add(new MoveAction
                             {
@@ -498,7 +459,7 @@ namespace DwarfCorp
                         {
                             if (dx == 1 && dz == 1 && dy == 1) continue;
 
-                            if (IsEmpty(neighborHood[dx, 1, dz]))
+                            if (!neighborHood[dx, 1, dz].IsValid || neighborHood[dx, 1, dz].IsEmpty)
                             {
                                 successors.Add(new MoveAction
                                 {
@@ -514,8 +475,8 @@ namespace DwarfCorp
             // Now, validate each move action that the creature might take.
             foreach (MoveAction v in successors)
             {
-                VoxelHandle n = neighborHood[(int)v.Diff.X, (int)v.Diff.Y, (int)v.Diff.Z];
-                if (n != null && (n.IsEmpty || n.WaterLevel > 0))
+                var n = neighborHood[(int)v.Diff.X, (int)v.Diff.Y, (int)v.Diff.Z];
+                if (n.IsValid && (n.IsEmpty || n.WaterCell.WaterLevel > 0))
                 {
                     // Do one final check to see if there is an object blocking the motion.
                     bool blockedByObject = false;
@@ -545,8 +506,8 @@ namespace DwarfCorp
                                             Diff = v.Diff,
                                             MoveType = MoveType.DestroyObject,
                                             InteractObject = door,
-                                            DestinationVoxel = new VoxelHandle(n),
-                                            SourceVoxel = new VoxelHandle(voxel)
+                                            DestinationVoxel = new VoxelHandle(n.Coordinate.GetLocalVoxelCoordinate(), n.Chunk),
+                                            SourceVoxel = new VoxelHandle(voxel.Coordinate.GetLocalVoxelCoordinate(), voxel.Chunk)
                                         });
                                     blockedByObject = true;
                                 }
@@ -557,8 +518,8 @@ namespace DwarfCorp
                     if (!blockedByObject)
                     {
                         MoveAction newAction = v;
-                        newAction.SourceVoxel = new VoxelHandle(voxel);
-                        newAction.DestinationVoxel = new VoxelHandle(n);
+                        newAction.SourceVoxel = new VoxelHandle(voxel.Coordinate.GetLocalVoxelCoordinate(), voxel.Chunk);
+                        newAction.DestinationVoxel = new VoxelHandle(n.Coordinate.GetLocalVoxelCoordinate(), n.Chunk);
                        yield return newAction;
                     }
                 }
@@ -577,8 +538,8 @@ namespace DwarfCorp
         public IEnumerable<MoveAction> GetInverseMoveActions(VoxelHandle current)
         {
             foreach (var v in Neighbors.EnumerateAllNeighbors(current.Coordinate)
-                .Select(n => new VoxelHandle(current.Chunk.Manager.ChunkData, n))
-                .Where(h => h.Chunk != null))
+                .Select(n => new TemporaryVoxelHandle(current.Chunk.Manager.ChunkData, n))
+                .Where(h => h.IsValid))
             {
                 foreach (var a in GetMoveActions(v).Where(a => a.DestinationVoxel.Equals(current)))
                     yield return a;

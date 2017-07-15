@@ -88,7 +88,9 @@ namespace DwarfCorp
             for (int i = 0; i < path.Count - 1; i++)
             {
                 if (!path[i].DestinationVoxel.IsEmpty) return false;
-                var neighbors = Agent.Movement.GetMoveActions(path[i].DestinationVoxel);
+                var neighbors = Agent.Movement.GetMoveActions(
+                    new TemporaryVoxelHandle(path[i].DestinationVoxel.Chunk,
+                    path[i].DestinationVoxel.GridPosition));
                 bool valid = false;
                 foreach (MoveAction vr in neighbors)
                 {

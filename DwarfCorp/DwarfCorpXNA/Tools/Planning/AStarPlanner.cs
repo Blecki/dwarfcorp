@@ -206,7 +206,7 @@ namespace DwarfCorp
                 IEnumerable<MoveAction> neighbors = null;
 
                 // Get the voxels that can be moved to from the current voxel.
-                neighbors = mover.GetMoveActions(current);
+                neighbors = mover.GetMoveActions(new TemporaryVoxelHandle(current.Chunk, current.GridPosition));
                 //currentChunk.GetNeighborsManhattan(current, manhattanNeighbors);
 
                 var foundGoalAdjacent = Neighbors.EnumerateManhattanNeighbors(current.Coordinate)
