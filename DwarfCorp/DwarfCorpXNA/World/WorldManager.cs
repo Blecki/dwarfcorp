@@ -77,10 +77,6 @@ namespace DwarfCorp
         // The origin of the overworld in pixels [(0, 0, 0) in world space.]
         public Vector2 WorldOrigin { get; set; }
 
-
-        // Todo: %KILL% - Just an alias for CursorLightPos.
-        public Vector3 CursorPos { get { return CursorLightPos; } }
-
         // The current coordinate of the cursor light
         public Vector3 CursorLightPos
         {

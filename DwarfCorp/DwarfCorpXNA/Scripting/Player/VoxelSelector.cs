@@ -291,7 +291,7 @@ namespace DwarfCorp
                 int offset = (int) BoxYOffset;
                 if (offset != PrevBoxYOffsetInt)
                 {
-                    DragSound.Play(World.CursorPos);
+                    DragSound.Play(World.CursorLightPos);
                     newVoxel = true;
                 }
                 PrevBoxYOffsetInt = offset;
@@ -316,7 +316,7 @@ namespace DwarfCorp
                 // On release, select voxels.
                 if (mouse.LeftButton == ButtonState.Released)
                 {
-                    ReleaseSound.Play(World.CursorPos);
+                    ReleaseSound.Play(World.CursorLightPos);
                     isLeftPressed = false;
                     LeftReleasedCallback();
                     BoxYOffset = 0;
@@ -363,7 +363,7 @@ namespace DwarfCorp
 
                         if (newVoxel)
                         {
-                            DragSound.Play(World.CursorPos, SelectionBuffer.Count / 20.0f);
+                            DragSound.Play(World.CursorLightPos, SelectionBuffer.Count / 20.0f);
                             Dragged.Invoke(SelectionBuffer, InputManager.MouseButton.Left);
                         }
                     }
@@ -372,7 +372,7 @@ namespace DwarfCorp
             // If the mouse was not previously pressed, but is now pressed, then notify us of that.
             else if (mouse.LeftButton == ButtonState.Pressed)
             {
-                ClickSound.Play(World.CursorPos); ;
+                ClickSound.Play(World.CursorLightPos); ;
                 isLeftPressed = true;
                 BoxYOffset = 0;
                 PrevBoxYOffsetInt = 0;
@@ -384,7 +384,7 @@ namespace DwarfCorp
             {
                 if (mouse.RightButton == ButtonState.Released)
                 {
-                    ReleaseSound.Play(World.CursorPos);
+                    ReleaseSound.Play(World.CursorLightPos);
                     isRightPressed = false;
                     RightReleasedCallback();
                     BoxYOffset = 0;
@@ -431,7 +431,7 @@ namespace DwarfCorp
                         }
                         if (newVoxel)
                         {
-                            DragSound.Play(World.CursorPos, SelectionBuffer.Count / 20.0f);
+                            DragSound.Play(World.CursorLightPos, SelectionBuffer.Count / 20.0f);
                             Dragged.Invoke(SelectionBuffer, InputManager.MouseButton.Right);
                         }
                     }
@@ -439,7 +439,7 @@ namespace DwarfCorp
             }
             else if (mouse.RightButton == ButtonState.Pressed)
             {
-                ClickSound.Play(World.CursorPos);
+                ClickSound.Play(World.CursorLightPos);
                 RightPressedCallback();
                 BoxYOffset = 0;
                 isRightPressed = true;

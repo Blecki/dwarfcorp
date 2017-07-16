@@ -146,7 +146,8 @@ namespace DwarfCorp
                             vox.Type = VoxelType.TypeList[0];
                             vox.Water = new WaterCell();
 
-                            vox.Chunk.Manager.KilledVoxels.Add(vox);
+                            vox.Chunk.Manager.KilledVoxels.Add(new TemporaryVoxelHandle(
+                                vox.Chunk, vox.GridPosition));
                         }
                             break;
                         case "Kill Block":

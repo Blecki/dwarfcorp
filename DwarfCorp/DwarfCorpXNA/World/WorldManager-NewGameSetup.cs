@@ -186,10 +186,15 @@ namespace DwarfCorp
 
                     for (int y = averageHeight; y < h; y++)
                     {
-                        VoxelHandle v = chunk.MakeVoxel((int)gridPos.X, y, (int)gridPos.Z);
+                        var v = new TemporaryVoxelHandle(chunk,
+                            new LocalVoxelCoordinate((int)gridPos.X, y, (int)gridPos.Z));
                         v.Type = VoxelLibrary.GetVoxelType(0);
-                        chunk.Manager.ChunkData.Reveal(v);
-                        chunk.Data.Water[v.Index].WaterLevel = 0;
+                        VoxelHelpers.Reveal(chunk.Manager.ChunkData, v);
+                        v.WaterCell = new WaterCell
+                        {
+                            Type = LiquidType.None,
+                            WaterLevel = 0
+                        };
                     }
 
                     if (averageHeight < h)

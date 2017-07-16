@@ -118,50 +118,6 @@ namespace DwarfCorp
                 c.ShouldRebuild = true;
             }
         }
-
-        public void Reveal(VoxelHandle voxel)
-        {
-            Reveal(new List<VoxelHandle>() {voxel});
-        }
-
-        public void Reveal(IEnumerable<VoxelHandle> voxels)
-        {
-            if (!GameSettings.Default.FogofWar) return;
-
-            var queue = new Queue<TemporaryVoxelHandle>(128);
-
-            foreach (VoxelHandle voxel in voxels)
-            {
-                if (voxel != null)
-                    queue.Enqueue(new TemporaryVoxelHandle(this, voxel.Coordinate));
-            }
-
-            while (queue.Count > 0)
-            {
-                var v = queue.Dequeue();
-                if (!v.IsValid) continue;
-
-                foreach (var neighborCoordinate in Neighbors.EnumerateManhattanNeighbors(v.Coordinate))
-                {
-                    var neighbor = new TemporaryVoxelHandle(this, neighborCoordinate);
-                    if (!neighbor.IsValid) continue;
-                    if (neighbor.IsExplored) continue;
-                    neighbor.Chunk.NotifyExplored(neighbor.Coordinate.GetLocalVoxelCoordinate());
-                    neighbor.IsExplored = true;
-                    if (neighbor.IsEmpty)
-                        queue.Enqueue(neighbor);
-
-                    if (!neighbor.Chunk.ShouldRebuild)
-                    {
-                        neighbor.Chunk.ShouldRebuild = true;
-                        neighbor.Chunk.ShouldRebuildWater = true;
-                        neighbor.Chunk.ShouldRecalculateLighting = true;
-                    }
-                }
-
-                v.IsExplored = true;
-            }
-        }
         
         public bool AddChunk(VoxelChunk chunk)
         {

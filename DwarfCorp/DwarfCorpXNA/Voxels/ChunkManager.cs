@@ -126,7 +126,7 @@ namespace DwarfCorp
             get { return chunkData; }
         }
 
-        public List<VoxelHandle> KilledVoxels { get; set; }
+        public List<TemporaryVoxelHandle> KilledVoxels { get; set; }
 
         public ChunkManager(ContentManager content, 
             WorldManager world,
@@ -134,7 +134,7 @@ namespace DwarfCorp
             ChunkGenerator chunkGen, int maxChunksX, int maxChunksY, int maxChunksZ)
         {
             World = world;
-            KilledVoxels = new List<VoxelHandle>();
+            KilledVoxels = new List<TemporaryVoxelHandle>();
             ExitThreads = false;
             drawDistSq = DrawDistance * DrawDistance;
             Content = content;
@@ -661,8 +661,9 @@ namespace DwarfCorp
             // This is a pseudo hack to stop worlds created with Fog of War off then looking awful if it is turned back on.
             bool fogOfWar = GameSettings.Default.FogofWar;
             GameSettings.Default.FogofWar = true;
-            ChunkData.Reveal(GeneratedChunks.First().MakeVoxel(0, (int)VoxelConstants.ChunkSizeY - 1, 0));
-            GameSettings.Default.FogofWar = fogOfWar;
+            VoxelHelpers.Reveal(ChunkData, new TemporaryVoxelHandle(
+                ChunkData, new GlobalVoxelCoordinate(0, VoxelConstants.ChunkSizeY - 1, 0)));
+GameSettings.Default.FogofWar = fogOfWar;
 
             //UpdateRebuildList();
             GenerateDistance = origBuildRadius;
@@ -747,25 +748,26 @@ namespace DwarfCorp
             Water.Splash(gameTime);
             Water.HandleTransfers(gameTime);
 
-            var affectedChunks = new HashSet<GlobalVoxelCoordinate>();
+            var affectedVoxels = new HashSet<GlobalVoxelCoordinate>();
 
-            foreach (VoxelHandle voxel in KilledVoxels)
+            foreach (var voxel in KilledVoxels)
             {
-                affectedChunks.Add(voxel.Coordinate);
-                voxel.Chunk.NotifyDestroyed(voxel.GridPosition);
+                affectedVoxels.Add(voxel.Coordinate);
+                voxel.Chunk.NotifyDestroyed(voxel.Coordinate.GetLocalVoxelCoordinate());
             }
 
-            ChunkData.Reveal(KilledVoxels);
+            VoxelHelpers.Reveal(ChunkData, KilledVoxels);
 
             lock (RebuildList)
             {
-                foreach (var affected in affectedChunks)
+                foreach (var affected in affectedVoxels)
                     ChunkData.NotifyRebuild(affected);
             }
 
             KilledVoxels.Clear();
         }
 
+        // Todo: %Kill% or %Lift% - only used by voxel selector.
         public IEnumerable<VoxelHandle> GetVoxelsIntersecting(IEnumerable<Vector3> positions)
         {
             foreach (Vector3 vec in positions)

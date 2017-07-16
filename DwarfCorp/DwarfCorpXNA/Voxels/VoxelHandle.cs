@@ -201,7 +201,7 @@ namespace DwarfCorp
             return (uint) GetHashCode();
         }
 
-
+        // Todo: %Kill%
         public bool IsTopEmpty()
         {
             if(GridPosition.Y >= VoxelConstants.ChunkSizeY)
@@ -213,6 +213,7 @@ namespace DwarfCorp
                     VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(GridPosition.X, GridPosition.Y + 1,  GridPosition.Z))] == 0;
         }
 
+        // Todo: %Kill%
         public VoxelHandle GetVoxelAbove()
         {
             if (Chunk == null || GridPosition.Y >= VoxelConstants.ChunkSizeY - 1)
@@ -223,16 +224,7 @@ namespace DwarfCorp
                 Chunk.MakeVoxel((int) GridPosition.X, (int) GridPosition.Y + 1, (int) GridPosition.Z);
         }
 
-        public VoxelHandle GetVoxelBelow()
-        {
-            if (GridPosition.Y <=0)
-            {
-                return null;
-            }
-            return
-                Chunk.MakeVoxel((int)GridPosition.X, (int)GridPosition.Y - 1, (int)GridPosition.Z);
-        }
-
+        // Todo: %KILL%
         public bool GetNeighborBySuccessor(GlobalVoxelOffset Offset, ref VoxelHandle neighbor, bool requireQuickCompare = true)
         {
             Debug.Assert(neighbor != null, "Null reference passed");
@@ -302,7 +294,7 @@ namespace DwarfCorp
                 }
             }
 
-            Chunk.Manager.KilledVoxels.Add(this);
+            Chunk.Manager.KilledVoxels.Add(new TemporaryVoxelHandle(Chunk, GridPosition));
             Chunk.Data.Types[Index] = 0;
             return emittedResources;
         }
