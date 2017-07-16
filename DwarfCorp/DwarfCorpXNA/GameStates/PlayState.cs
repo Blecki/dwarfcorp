@@ -597,10 +597,10 @@ namespace DwarfCorp.GameStates
 
                 OnLayout = (sender) =>
                 {
-                    sender.Rect = new Rectangle(0, MinimapFrame.Rect.Y - 450, 400, 450);
+                    sender.Rect = new Rectangle(0, MinimapFrame.Rect.Y - 450, 400, Math.Min(MinimapFrame.Rect.Y, GuiRoot.RenderData.VirtualScreen.Height - 450));
                     (sender as CollapsableFrame).ExpandedPosition = sender.Rect;
                     (sender as CollapsableFrame).CollapsedPosition = new Rectangle(0,
-                        MinimapFrame.Rect.Y - 40, 400, 40);
+                        MinimapFrame.Rect.Y - 40, 200, 40);
                 }
             }) as CollapsableFrame;
             #endregion
