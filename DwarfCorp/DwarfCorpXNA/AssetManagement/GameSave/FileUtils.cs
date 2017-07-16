@@ -40,10 +40,13 @@ using System.Runtime.Serialization.Formatters;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using DwarfCorp.GameStates;
+using ICSharpCode.SharpZipLib;
+using ICSharpCode.SharpZipLib.Zip;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO.Compression;
+using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 
 namespace DwarfCorp
 {
@@ -169,9 +172,11 @@ namespace DwarfCorp
             if (isCompressed)
             {
                 using (FileStream fs = new FileStream(filePath, FileMode.Open))
-                using (GZipStream stream = new GZipStream(fs, CompressionMode.Decompress))
+                using (var stream = new ZipInputStream(fs))
                 {
-                    return LoadJson<T>(stream, context);
+                    while (stream.GetNextEntry() != null)
+                        return LoadJson<T>(stream, context);
+                    return default(T);
                 }
             }
             else
@@ -290,9 +295,12 @@ namespace DwarfCorp
             }
             else
             {
-                using (GZipStream zip = new GZipStream(new FileStream(filePath, FileMode.OpenOrCreate), CompressionMode.Compress))
+                using (var zip = new ZipOutputStream(new FileStream(filePath, FileMode.OpenOrCreate)))
                 using (JsonWriter writer = new JsonTextWriter(new StreamWriter(zip)))
                 {
+                    zip.SetLevel(9); // 0 - store only to 9 - means best compression
+                    var entry = new ZipEntry(Path.GetFileName(filePath));
+                    zip.PutNextEntry(entry);
                     serializer.Serialize(writer, obj);
                     return true;
                 }
