@@ -175,6 +175,10 @@ namespace DwarfCorp.GameStates
 
         public override void Update(DwarfTime gameTime)
         {
+            if (!Game.IsActive)
+            {
+                return;
+            }
             GuiRoot.Update(gameTime.ToRealTime());
             DwarfGame.GumInput.FireActions(GuiRoot, null);
             if (!WaitThread.IsAlive && Object.ReferenceEquals(StateManager.CurrentState, this) && !Done)

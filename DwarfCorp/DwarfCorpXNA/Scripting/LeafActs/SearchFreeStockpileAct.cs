@@ -164,7 +164,7 @@ namespace DwarfCorp
 
                 VoxelHandle v = s.GetNearestVoxel(Creature.Physics.GlobalTransform.Translation);
 
-                if(v.IsEmpty)
+                if(v == null || v.IsEmpty)
                 {
                     continue;
                 }

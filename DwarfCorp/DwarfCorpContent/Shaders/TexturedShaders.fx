@@ -91,11 +91,11 @@ Texture xIllumination;
 
 sampler IllumSampler = sampler_state { texture = <xIllumination> ;  magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = clamp; AddressV = clamp;};
 
-sampler TextureSampler = sampler_state { texture = <xTexture> ; magfilter = POINT; minfilter = ANISOTROPIC; mipfilter=POINT; AddressU = clamp; AddressV = clamp;};
+sampler TextureSampler = sampler_state { texture = <xTexture>; magfilter = POINT; minfilter = LINEAR; mipfilter = Linear; AddressU = clamp; AddressV = clamp; };
 
-sampler ColorscaleSampler = sampler_state { texture = <xTexture>; magfilter = POINT; minfilter = LINEAR; mipfilter = POINT; AddressU = clamp; AddressV = clamp; };
+sampler ColorscaleSampler = sampler_state { texture = <xTexture>; magfilter = POINT; minfilter = LINEAR; mipfilter = Linear; AddressU = clamp; AddressV = clamp; };
 
-sampler WrappedTextureSampler = sampler_state { texture = <xTexture>; magfilter = POINT; minfilter = LINEAR; mipfilter = POINT; AddressU = wrap; AddressV = wrap; };
+sampler WrappedTextureSampler = sampler_state { texture = <xTexture>; magfilter = POINT; minfilter = LINEAR; mipfilter = Linear; AddressU = wrap; AddressV = wrap; };
 
 Texture xReflectionMap;
 float xWaterReflective;

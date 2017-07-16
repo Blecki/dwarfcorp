@@ -113,7 +113,7 @@ namespace DwarfCorp
 
             if (!creature.IsAsleep)
             {
-                Hunger.CurrentValue -= dt*creature.Stats.HungerGrowth;
+                Hunger.CurrentValue -= dt*creature.Stats.HungerGrowth * 100;
             }
             else
             {
