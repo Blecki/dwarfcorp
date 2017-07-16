@@ -413,6 +413,11 @@ namespace DwarfCorp
 
         public int CompareChunkDistance(VoxelChunk a, VoxelChunk b)
         {
+            if (a == null || b == null)
+            {
+                return 0;
+            }
+
             if(a == b || !a.IsVisible && !b.IsVisible)
             {
                 return 0;

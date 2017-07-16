@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp.Gui.Input
@@ -85,6 +86,11 @@ namespace DwarfCorp.Gui.Input
 
         public void FireActions(Gui.Root Gui, Action<Gui.InputEvents, Gui.InputEventArgs> MouseHandler)
         {
+            if (!GameState.Game.IsActive)
+            {
+                return;
+            }
+
             var queue = Mapper.GetInputQueue();
             foreach (var @event in queue)
             {

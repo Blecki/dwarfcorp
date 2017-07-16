@@ -74,7 +74,7 @@ namespace DwarfCorp
             Name = "Sleep";
             RechargeRate = 1.0f;
             Teleport = false;
-            Type = SleepType.Heal;
+            Type = SleepType.Sleep;
         }
 
         public override void OnCanceled()

@@ -253,18 +253,29 @@ namespace DwarfCorp
 
         /// <summary> List of ongoing effects the creature is sustaining </summary>
         public List<Buff> Buffs { get; set; }
-
+        private List<Buff> BuffsToAdd { get; set; }
+ 
         /// <summary> Adds the specified ongoing effect. </summary>
         /// <param name="buff"> The onging effect to add </param>
         public void AddBuff(Buff buff)
         {
+            if (BuffsToAdd == null)
+            {
+                BuffsToAdd = new List<Buff>();
+            }
             buff.OnApply(this);
-            Buffs.Add(buff);
+            BuffsToAdd.Add(buff);
         }
 
         /// <summary> Updates the creature's ongoing effects </summary>
         public void HandleBuffs(DwarfTime time)
         {
+            if (BuffsToAdd == null)
+            {
+                BuffsToAdd = new List<Buff>();
+            }
+            Buffs.AddRange(BuffsToAdd);
+            BuffsToAdd.Clear();
             foreach (Buff buff in Buffs)
             {
                 buff.Update(time, this);
@@ -644,12 +655,6 @@ namespace DwarfCorp
                 if (deathParticleTrigger != null)
                     Manager.World.ParticleManager.Trigger(deathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
                 DrawLifeTimer.Reset();
-                var injury = DiseaseLibrary.GetRandomInjury();
-
-                if (MathFunctions.RandEvent(injury.LikelihoodOfSpread))
-                {
-                    AcquireDisease(injury.Name);
-                }
             }
 
 

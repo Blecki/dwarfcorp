@@ -226,12 +226,6 @@ namespace DwarfCorp.GameStates
                 return;
             }
 
-            if (!Game.IsActive)
-            {
-                Paused = true;
-                GameSpeedControls.CurrentSpeed = 0;
-            }
-
             if (QuitOnNextUpdate)
             {
                 QuitGame();

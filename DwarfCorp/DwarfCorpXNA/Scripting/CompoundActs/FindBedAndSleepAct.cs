@@ -65,6 +65,8 @@ namespace DwarfCorp
             {
                 closestItem.ReservedFor = Agent;
                 Creature.AI.Blackboard.SetData("Bed", closestItem);
+                closestItem.IsReserved = true;
+                closestItem.ReservedFor = Agent;
                 Act unreserveAct = new Wrap(() => Creature.Unreserve("Bed"));
                 Tree = 
                     new Sequence

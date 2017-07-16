@@ -119,6 +119,12 @@ namespace DwarfCorp
     {
         public CraftItem Item { get; set; }
         private string noise;
+
+        public CraftResourceTask()
+        {
+            
+        }
+
         public CraftResourceTask(CraftItem selectedResource)
         {
             Item = selectedResource;
