@@ -19,12 +19,12 @@ namespace DwarfCorp
             ChunkData Data,
             IEnumerable<TemporaryVoxelHandle> voxels)
         {
-            if (!GameSettings.Default.FogofWar) return;
+            //if (!GameSettings.Default.FogofWar) return;
 
             var queue = new Queue<TemporaryVoxelHandle>(128);
 
             foreach (var voxel in voxels)
-                if (voxel.IsValid && !voxel.IsExplored)
+                if (voxel.IsValid)
                     queue.Enqueue(voxel);
 
             while (queue.Count > 0)
@@ -37,17 +37,16 @@ namespace DwarfCorp
                     var neighbor = new TemporaryVoxelHandle(Data, neighborCoordinate);
                     if (!neighbor.IsValid) continue;
                     if (neighbor.IsExplored) continue;
+
                     neighbor.Chunk.NotifyExplored(neighbor.Coordinate.GetLocalVoxelCoordinate());
                     neighbor.IsExplored = true;
+
                     if (neighbor.IsEmpty)
                         queue.Enqueue(neighbor);
 
-                    if (!neighbor.Chunk.ShouldRebuild)
-                    {
-                        neighbor.Chunk.ShouldRebuild = true;
-                        neighbor.Chunk.ShouldRebuildWater = true;
-                        neighbor.Chunk.ShouldRecalculateLighting = true;
-                    }
+                    neighbor.Chunk.ShouldRebuild = true;
+                    neighbor.Chunk.ShouldRebuildWater = true;
+                    neighbor.Chunk.ShouldRecalculateLighting = true;
                 }
 
                 v.IsExplored = true;
