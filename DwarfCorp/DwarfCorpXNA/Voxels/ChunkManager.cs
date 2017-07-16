@@ -662,7 +662,7 @@ namespace DwarfCorp
             bool fogOfWar = GameSettings.Default.FogofWar;
             GameSettings.Default.FogofWar = true;
             VoxelHelpers.Reveal(ChunkData, new TemporaryVoxelHandle(
-                ChunkData, new GlobalVoxelCoordinate(0, VoxelConstants.ChunkSizeY - 1, 0)));
+                ChunkData.ChunkMap.FirstOrDefault().Value, new LocalVoxelCoordinate(0, VoxelConstants.ChunkSizeY - 1, 0)));
 GameSettings.Default.FogofWar = fogOfWar;
 
             //UpdateRebuildList();
