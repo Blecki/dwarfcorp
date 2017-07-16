@@ -102,6 +102,9 @@ namespace DwarfCorp
             get { return chunkManager; }
         }
 
+
+        // Final argument is always mode Y.
+        // Todo: %KILL% - does not belong here.
         public void SetMaxViewingLevel(float level, ChunkManager.SliceMode slice)
         {
             if (Math.Abs(level - MaxViewingLevel) < 0.1f && slice == Slice)

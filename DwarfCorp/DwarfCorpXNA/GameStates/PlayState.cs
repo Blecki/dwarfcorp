@@ -55,7 +55,7 @@ namespace DwarfCorp.GameStates
         private AnnouncementPopup Announcer;
         private FramedIcon EconomyIcon;
         private Timer AutoSaveTimer;
-        private EmployeeInfo SelectedEmployeeInfo;
+        private CollapsableFrame SelectedEmployeeInfo;
 
         private class ToolbarItem
         {
@@ -315,46 +315,14 @@ namespace DwarfCorp.GameStates
             }
 
 #region select employee
-            if (Master.SelectedMinions.Count == 1 && SelectedEmployeeInfo == null)
-            {
-                SelectedEmployeeInfo = GuiRoot.RootItem.AddChild(new EmployeeInfo()
-                {
-                    AutoLayout = AutoLayout.FloatLeft,
-                    Rect = new Rectangle(0, GuiRoot.RenderData.VirtualScreen.Height/2 - 450/2, 400, 450),
-                    Employee = Master.SelectedMinions[0],
-                    Border = "border-button",
-                    OnFireClicked = (sender) =>
-                    {
-                        GuiRoot.ShowDialog(GuiRoot.ConstructWidget(new Gui.Widgets.Confirm
-                        {
-                            OkayText = "Fire this dwarf!",
-                            CancelText = "Keep this dwarf.",
-                            Padding = new Margin(32, 10, 10, 10),
-                            MinimumSize = new Point(512, 128),
-                            OnClose = (confirm) =>
-                            {
-                                if ((confirm as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
-                                {
-                                    SoundManager.PlaySound(ContentPaths.Audio.change, 0.5f);
-                                    var selectedEmployee = (sender as EmployeeInfo).Employee;
-                                    selectedEmployee.GetRoot().Delete();
-
-                                    Master.Faction.Minions.Remove(selectedEmployee);
-                                    Master.Faction.SelectedMinions.Remove(selectedEmployee);
-                                }
-                            }
-                        }));
-                    }
-                }) as EmployeeInfo;
-                SelectedEmployeeInfo.Layout();
-            }
-
+           
             if (Master.SelectedMinions.Count == 1 && SelectedEmployeeInfo != null)
             {
                 // Lol this is evil just trying to reduce the update rate for speed
                 if (MathFunctions.RandEvent(0.1f))
                 {
-                    SelectedEmployeeInfo.Employee = Master.SelectedMinions[0];
+                    (SelectedEmployeeInfo.ExpandedContents as Gui.Widgets.EmployeeInfo).Employee = Master.SelectedMinions[0];
+                    SelectedEmployeeInfo.CollapsedContents.Text = Master.SelectedMinions[0].Name;
                     SelectedEmployeeInfo.Hidden = false;
                     SelectedEmployeeInfo.Invalidate();
                 }
@@ -585,6 +553,56 @@ namespace DwarfCorp.GameStates
                 RestoreButton = minimapRestoreButton
             }) as Gui.Widgets.MinimapFrame;
 
+            #endregion
+
+            #region Employee Info
+
+            SelectedEmployeeInfo = GuiRoot.RootItem.AddChild(new CollapsableFrame
+            {
+                ExpandedPosition = new Rectangle(0, GuiRoot.RenderData.VirtualScreen.Height / 2 - 450 / 2, 400, 450),
+                Hidden = true,
+
+                ExpandedContents = new Gui.Widgets.EmployeeInfo
+                {
+                    Employee = null,
+
+                    OnFireClicked = (sender) =>
+                    {
+                        GuiRoot.ShowDialog(GuiRoot.ConstructWidget(new Gui.Widgets.Confirm
+                        {
+                            OkayText = "Fire this dwarf!",
+                            CancelText = "Keep this dwarf.",
+                            Padding = new Margin(32, 10, 10, 10),
+                            MinimumSize = new Point(512, 128),
+                            OnClose = (confirm) =>
+                            {
+                                if ((confirm as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
+                                {
+                                    SoundManager.PlaySound(ContentPaths.Audio.change, 0.5f);
+                                    var selectedEmployee = (sender as EmployeeInfo).Employee;
+                                    selectedEmployee.GetRoot().Delete();
+
+                                    Master.Faction.Minions.Remove(selectedEmployee);
+                                    Master.Faction.SelectedMinions.Remove(selectedEmployee);
+                                }
+                            }
+                        }));
+                    }
+                },
+
+                CollapsedContents = new Widget
+                {
+                    Text = "EMPLOYEE NAME"
+                },
+
+                OnLayout = (sender) =>
+                {
+                    sender.Rect = new Rectangle(0, MinimapFrame.Rect.Y - 450, 400, 450);
+                    (sender as CollapsableFrame).ExpandedPosition = sender.Rect;
+                    (sender as CollapsableFrame).CollapsedPosition = new Rectangle(0,
+                        MinimapFrame.Rect.Y - 40, 400, 40);
+                }
+            }) as CollapsableFrame;
             #endregion
 
             #region Setup top right tray

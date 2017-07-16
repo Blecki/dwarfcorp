@@ -166,6 +166,7 @@
     <Compile Include="Components\Graphics\LightEmitter.cs" />
     <Compile Include="Components\Graphics\Mesh.cs" />
     <Compile Include="Components\Graphics\OrientedAnimation.cs" />
+    <Compile Include="Gui\Widgets\CollapsableFrame.cs" />
     <Compile Include="Gui\Widgets\FlatToolTray.cs" />
     <Compile Include="ParticleEffects\ParticleEmitter.cs" />
     <Compile Include="ParticleEffects\ParticleTrigger.cs" />
