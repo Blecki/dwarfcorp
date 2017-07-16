@@ -863,43 +863,5 @@ namespace DwarfCorp
             WaterThread.Join();
             ChunkData.ChunkMap.Clear();
         }
-
-        /// <summary>
-        /// Does a n-iteration breadth-first search starting from the seed.
-        /// </summary>
-        /// <param name="seed">The seed.</param>
-        /// <param name="radiusSquared">The squared number of voxels to search.</param>
-        /// <param name="fn">The function. Returns the first voxel matching this function.</param>
-        /// <returns>the first voxel matching fn.</returns>
-        public VoxelHandle BreadthFirstSearch(VoxelHandle seed, float radiusSquared, Func<VoxelHandle, bool> fn)
-        {
-            Queue<VoxelHandle> queue = new Queue<VoxelHandle>();
-            queue.Enqueue(seed);
-            var visited = new HashSet<GlobalVoxelCoordinate>();
-            List<VoxelHandle> neighbors = new List<VoxelHandle>(6);
-            while (queue.Count > 0)
-            {
-                VoxelHandle curr = queue.Dequeue();
-                if (fn(curr))
-                {
-                    return curr;
-                }
-                
-                if((curr.WorldPosition - seed.WorldPosition).LengthSquared() < radiusSquared)
-                {
-                    foreach (var voxel in Neighbors.EnumerateManhattanNeighbors(curr.Coordinate)
-                        .Select(c => new TemporaryVoxelHandle(ChunkData, c)))
-                    {
-                        if (voxel.IsValid && !visited.Contains(voxel.Coordinate))
-                        {
-                            queue.Enqueue(new VoxelHandle(ChunkData, voxel.Coordinate));
-                        }
-                    }
-                }
-
-                visited.Add(curr.Coordinate);
-            }
-            return null;
-        }
     }
 }

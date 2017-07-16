@@ -249,18 +249,7 @@ namespace DwarfCorp
             }
             return false;
         }
-
-        public bool IsBottomEmpty()
-        {
-            if (GridPosition.Y <= 0)
-            {
-                return true;
-            }
-            return
-                Chunk.Data.Types[
-                    VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(GridPosition.X, GridPosition.Y - 1, GridPosition.Z))] == 0;
-        }        
-       
+     
         [JsonIgnore]
         public bool IsEmpty
         {

@@ -912,9 +912,6 @@ namespace DwarfCorp
 
         #endregion
 
-
-        #region neighbors
-
         public bool IsInterior(int x, int y, int z)
         {
             return x != 0 
@@ -929,9 +926,5 @@ namespace DwarfCorp
         {
             return gridCoord + Origin;
         }
-
-        #endregion neighbors
-
     }
-
 }
