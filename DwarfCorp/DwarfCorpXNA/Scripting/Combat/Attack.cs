@@ -315,6 +315,14 @@ namespace DwarfCorp
                     if (health != null)
                     {
                         health.Damage(DamageAmount + bonus);
+                        var injury = DiseaseLibrary.GetRandomInjury();
+
+                        if (MathFunctions.RandEvent(injury.LikelihoodOfSpread))
+                        {
+                            var creature = other.GetComponent<Creature>();
+                            if (creature != null)
+                                creature.AcquireDisease(injury.Name);
+                        }
                         Vector3 knock = other.Position - performer.Physics.Position;
                         knock.Normalize();
                         knock *= 0.2f;
@@ -354,6 +362,15 @@ namespace DwarfCorp
                 {
                     PlayNoise(other.GlobalTransform.Translation);
                     LaunchProjectile(pos, other.Position, other);
+
+                    var injury = DiseaseLibrary.GetRandomInjury();
+
+                    if (MathFunctions.RandEvent(injury.LikelihoodOfSpread))
+                    {
+                        var creature = other.GetComponent<Creature>();
+                        if (creature != null)
+                            creature.AcquireDisease(injury.Name);
+                    }
                     break;
                 }
             }

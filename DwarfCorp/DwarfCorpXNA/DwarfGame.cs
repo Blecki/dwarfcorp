@@ -221,6 +221,11 @@ namespace DwarfCorp
 
         protected override void Update(GameTime time)
         {
+            if (!IsActive)
+            {
+                base.Update(time);
+                return;
+            }
             GamePerformance.Instance.PreUpdate();
             DwarfTime.LastTime.Update(time);
             StateManager.Update(DwarfTime.LastTime);
