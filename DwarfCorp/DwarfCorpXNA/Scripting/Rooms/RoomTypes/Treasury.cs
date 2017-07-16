@@ -172,7 +172,7 @@ namespace DwarfCorp
             {
                 for (int i = Coins.Count; i < numCoins; i++)
                 {
-                    CreateCoins(Voxels[i].Position + VertexNoise.GetNoiseVectorFromRepeatingTexture(Voxels[i].Position));
+                    CreateCoins(Voxels[i].WorldPosition + VertexNoise.GetNoiseVectorFromRepeatingTexture(Voxels[i].WorldPosition));
                 }
             }
 
@@ -223,7 +223,7 @@ namespace DwarfCorp
                 moneyToPut = remainder;
             }
 
-            Vector3 targetToss = Coins.Count == 0 ? Voxels[0].Position + new Vector3(0.5f, 0.5f, 0.5f) : Coins[Coins.Count - 1].LocalTransform.Translation + new Vector3(0.5f, 0.5f, 0.5f);
+            Vector3 targetToss = Coins.Count == 0 ? Voxels[0].WorldPosition + new Vector3(0.5f, 0.5f, 0.5f) : Coins[Coins.Count - 1].LocalTransform.Translation + new Vector3(0.5f, 0.5f, 0.5f);
             Body component = EntityFactory.CreateEntity<Body>("Coins", dwarfPos);
             TossMotion toss = new TossMotion(1.0f, 2.5f, component.LocalTransform,
                targetToss);

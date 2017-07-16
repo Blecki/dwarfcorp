@@ -115,19 +115,34 @@ namespace DwarfCorp
             return finalPlane;
         }
 
+        private static float GetTotalWaterHeightCells(TemporaryVoxelHandle vox)
+        {
+            float tot = 0;
+
+            var localVoxelCoordinate = vox.Coordinate.GetLocalVoxelCoordinate();
+            for (var y = vox.Coordinate.Y; y < VoxelConstants.ChunkSizeY; y++)
+            {
+                var v = new TemporaryVoxelHandle(vox.Chunk, new LocalVoxelCoordinate(
+                    localVoxelCoordinate.X, y, localVoxelCoordinate.Z));
+                tot += v.WaterCell.WaterLevel / (float)WaterManager.maxWaterLevel;
+                if (y > vox.Coordinate.Y && v.WaterCell.WaterLevel == 0)
+                    return tot;
+            }
+
+            return tot;
+        }
+
         public float GetVisibleWaterHeight(ChunkManager chunkManager, Camera camera, Viewport port, float defaultHeight)
         {
-            VoxelHandle vox = chunkManager.ChunkData.GetFirstVisibleBlockHitByScreenCoord(port.Width / 2, port.Height / 2, camera, port, 100.0f);
+            var vox = VoxelHelpers.FindFirstVisibleVoxelOnScreenRay(chunkManager.ChunkData, port.Width / 2, port.Height / 2, camera, port, 100.0f, false, null);
 
-            if(vox != null)
+            if(vox.IsValid)
             {
-                float h = vox.Chunk.GetTotalWaterHeightCells(vox) - 0.75f;
+                float h = GetTotalWaterHeightCells(vox) - 0.75f;
                 if(h < 0.01f)
-                {
                     return defaultHeight;
-                }
 
-                return (h + vox.Position.Y + defaultHeight) / 2.0f + 0.5f;
+                return (h + vox.Coordinate.Y + defaultHeight) / 2.0f + 0.5f;
             }
             else
             {

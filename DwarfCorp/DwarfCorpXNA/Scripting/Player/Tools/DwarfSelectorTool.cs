@@ -77,12 +77,19 @@ namespace DwarfCorp
                 return;
             }
 
-            VoxelHandle vox = Player.World.ChunkManager.ChunkData.GetFirstVisibleBlockHitByMouse(Mouse.GetState(), 
-                Player.World.Camera, GameState.Game.GraphicsDevice.Viewport, false, voxel => voxel != null && (!voxel.IsEmpty || voxel.WaterLevel > 0));
-            if(vox == null)
-            {
+            var mouseState = Mouse.GetState();
+
+            var vox = VoxelHelpers.FindFirstVisibleVoxelOnScreenRay(
+                Player.World.ChunkManager.ChunkData,
+                mouseState.X, mouseState.Y,
+                Player.World.Camera, 
+                GameState.Game.GraphicsDevice.Viewport,
+                150.0f, 
+                false,
+                voxel => voxel != null && (!voxel.IsEmpty || voxel.WaterCell.WaterLevel > 0));
+
+            if (!vox.IsValid)
                 return;
-            }
 
             foreach(CreatureAI minion in Player.SelectedMinions)
             {
@@ -98,13 +105,13 @@ namespace DwarfCorp
                     minion.CurrentTask.SetupScript(minion.Creature);
                     minion.CurrentTask = null;
                 }
-                minion.Blackboard.SetData("MoveTarget", vox.GetVoxelAbove());
+                minion.Blackboard.SetData("MoveTarget", (new VoxelHandle(vox.Coordinate.GetLocalVoxelCoordinate(), vox.Chunk)).GetVoxelAbove());
                 minion.CurrentTask = new GoToVoxelAct("MoveTarget", PlanAct.PlanType.Adjacent, minion).AsTask();
                 minion.CurrentTask.AutoRetry = false;
             }
             OnConfirm(Player.SelectedMinions);
 
-            IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.DownArrow, vox.Position + Vector3.One * 0.5f, 0.5f, 2.0f, new Vector2(0, -50), Color.LightGreen);
+            IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.DownArrow, vox.Coordinate.ToVector3() + Vector3.One * 0.5f, 0.5f, 2.0f, new Vector2(0, -50), Color.LightGreen);
         }
 
 

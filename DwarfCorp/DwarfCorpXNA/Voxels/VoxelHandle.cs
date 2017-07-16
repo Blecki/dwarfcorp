@@ -54,12 +54,6 @@ namespace DwarfCorp
             return Equals(Chunk, other.Chunk) && Index == other.Index;
         }
 
-        public bool IsSameAs(VoxelHandle other)
-        {
-            if (quickCompare == other.quickCompare) return true;
-            return false;
-        }
-
         public override int GetHashCode()
         {
             unchecked
@@ -84,7 +78,7 @@ namespace DwarfCorp
         }
 
         [JsonIgnore]
-        public Vector3 Position 
+        public Vector3 WorldPosition 
         {
             get
             {
@@ -93,6 +87,11 @@ namespace DwarfCorp
             }
         }
 
+        [JsonIgnore]
+        public GlobalVoxelCoordinate Coordinate
+        {
+            get { return ChunkID + GridPosition; }
+        }
 
         [JsonIgnore]
         public VoxelType Type
@@ -113,12 +112,6 @@ namespace DwarfCorp
         public int Index
         {
             get { return index; }
-        }
-
-        [JsonIgnore]
-        public BoxPrimitive Primitive 
-        {
-            get { return VoxelLibrary.GetPrimitive(Type); }
         }
 
         [JsonIgnore]
@@ -146,8 +139,7 @@ namespace DwarfCorp
 
                 if (Chunk != null)
                 {
-                    index = Chunk.Data.IndexAt(gridpos);
-                    RegenerateQuickCompare();
+                    index = VoxelConstants.DataIndexOf(gridpos);
                 }
             }
         }
@@ -161,9 +153,7 @@ namespace DwarfCorp
             _chunk = chunk;
             chunkID = _chunk.ID;
             gridpos = gridPosition;
-            index = Chunk.Data.IndexAt(gridpos);
-            if (generateQuickCompare) RegenerateQuickCompare();
-            else quickCompare = invalidCompareValue;
+            index = VoxelConstants.DataIndexOf(gridpos);
         }
 
         [JsonIgnore]
@@ -180,36 +170,12 @@ namespace DwarfCorp
         }
         private static readonly Color BlankColor = new Color(0, 255, 0);
 
+        // Todo: %KILL% - Can get from chunk. Verify proper serialization.
         private GlobalChunkCoordinate chunkID = new GlobalChunkCoordinate(0, 0, 0);
         public GlobalChunkCoordinate ChunkID
         {
             get { return chunkID; }
-            set { chunkID = value; RegenerateQuickCompare(); }
-        }
-
-        [JsonIgnore]
-        private ulong quickCompare;
-        private const ulong invalidCompareValue = 0xFFFFFFFFFFFFFFFFUL;
-
-        [JsonIgnore]
-        public ulong QuickCompare
-        {
-            get {
-                //System.Diagnostics.Debug.Assert(quickCompare == invalidCompareValue, "DestinationVoxel was generated without Quick Compare.  Set using GridPosition instead.");
-                return quickCompare;
-            }
-        }
-
-        private void RegenerateQuickCompare()
-        {
-            // long build of the ulong.
-            ulong q = 0;
-            q |= (((ulong)chunkID.X & 0xFFFF) << 48);
-            q |= (((ulong)chunkID.Y & 0xFFFF) << 32);
-            q |= (((ulong)chunkID.Z & 0xFFFF) << 16);
-            q |= ((ulong)index & 0xFFFF);
-            quickCompare = q;
-            //quickCompare = (ulong) (((chunkID.X & 0xFFFF) << 48) | ((chunkID.Y & 0xFFFF) << 32) | ((chunkID.Y & 0xFFFF) << 16) | (index & 0xFFFF));
+            set { chunkID = value; }
         }
 
         public VoxelHandle(VoxelHandle other)
@@ -235,21 +201,22 @@ namespace DwarfCorp
             return (uint) GetHashCode();
         }
 
-
+        // Todo: %Kill%
         public bool IsTopEmpty()
         {
-            if(GridPosition.Y >= Chunk.SizeY)
+            if(GridPosition.Y >= VoxelConstants.ChunkSizeY)
             {
                 return true;
             }
             return
                 Chunk.Data.Types[
-                    Chunk.Data.IndexAt(new LocalVoxelCoordinate(GridPosition.X, GridPosition.Y + 1,  GridPosition.Z))] == 0;
+                    VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(GridPosition.X, GridPosition.Y + 1,  GridPosition.Z))] == 0;
         }
 
+        // Todo: %Kill%
         public VoxelHandle GetVoxelAbove()
         {
-            if (Chunk == null || GridPosition.Y >= Chunk.SizeY - 1)
+            if (Chunk == null || GridPosition.Y >= VoxelConstants.ChunkSizeY - 1)
             {
                 return null;
             }
@@ -257,16 +224,7 @@ namespace DwarfCorp
                 Chunk.MakeVoxel((int) GridPosition.X, (int) GridPosition.Y + 1, (int) GridPosition.Z);
         }
 
-        public VoxelHandle GetVoxelBelow()
-        {
-            if (GridPosition.Y <=0)
-            {
-                return null;
-            }
-            return
-                Chunk.MakeVoxel((int)GridPosition.X, (int)GridPosition.Y - 1, (int)GridPosition.Z);
-        }
-
+        // Todo: %KILL%
         public bool GetNeighborBySuccessor(GlobalVoxelOffset Offset, ref VoxelHandle neighbor, bool requireQuickCompare = true)
         {
             Debug.Assert(neighbor != null, "Null reference passed");
@@ -283,23 +241,7 @@ namespace DwarfCorp
             }
             return false;
         }
-
-        public bool IsBottomEmpty()
-        {
-            if (GridPosition.Y <= 0)
-            {
-                return true;
-            }
-            return
-                Chunk.Data.Types[
-                    Chunk.Data.IndexAt(new LocalVoxelCoordinate(GridPosition.X, GridPosition.Y - 1, GridPosition.Z))] == 0;
-        }        
-
-        public static bool HasFlag(RampType ramp, RampType flag)
-        {
-            return (ramp & flag) == flag;
-        }
-       
+     
         [JsonIgnore]
         public bool IsEmpty
         {
@@ -308,14 +250,6 @@ namespace DwarfCorp
 
         [JsonIgnore]
         public int SunColor { get { return Chunk.Data.SunColors[Index]; }}
-
-        public void SetFromData(VoxelChunk chunk, LocalVoxelCoordinate gridPosition)
-        {
-            Chunk = chunk;
-            GridPosition = gridPosition;
-            index = Chunk.Data.IndexAt(gridPosition);
-            RegenerateQuickCompare();
-        }
 
         public override bool Equals(object o)
         {
@@ -334,8 +268,8 @@ namespace DwarfCorp
 
             if(Chunk.Manager.World.ParticleManager != null)
             {
-                Chunk.Manager.World.ParticleManager.Trigger(Type.ParticleType, Position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
-                Chunk.Manager.World.ParticleManager.Trigger("puff", Position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
+                Chunk.Manager.World.ParticleManager.Trigger(Type.ParticleType, WorldPosition + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
+                Chunk.Manager.World.ParticleManager.Trigger("puff", WorldPosition + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
             }
 
             if(Chunk.Manager.World.Master != null)
@@ -343,7 +277,7 @@ namespace DwarfCorp
                 Chunk.Manager.World.Master.Faction.OnVoxelDestroyed(this);
             }
 
-            Type.ExplosionSound.Play(Position);
+            Type.ExplosionSound.Play(WorldPosition);
 
             List<Body> emittedResources = null;
             if (Type.ReleasesResource)
@@ -355,24 +289,24 @@ namespace DwarfCorp
                     emittedResources = new List<Body>
                     {
                         EntityFactory.CreateEntity<Body>(Type.ResourceToRelease + " Resource",
-                            Position + new Vector3(0.5f, 0.5f, 0.5f))
+                            WorldPosition + new Vector3(0.5f, 0.5f, 0.5f))
                     };
                 }
             }
 
-            Chunk.Manager.KilledVoxels.Add(this);
+            Chunk.Manager.KilledVoxels.Add(new TemporaryVoxelHandle(Chunk, GridPosition));
             Chunk.Data.Types[Index] = 0;
             return emittedResources;
         }
 
         public BoundingSphere GetBoundingSphere()
         {
-            return new BoundingSphere(Position, 1);
+            return new BoundingSphere(WorldPosition, 1);
         }
 
         public BoundingBox GetBoundingBox()
         {
-            var pos = Position;
+            var pos = WorldPosition;
             return new BoundingBox(pos, pos + Vector3.One);
         }
 
@@ -389,6 +323,14 @@ namespace DwarfCorp
             GridPosition = gridPosition;
         }
 
+        public VoxelHandle(ChunkData Chunks, GlobalVoxelCoordinate Coordinate)
+        {
+            Chunks.ChunkMap.TryGetValue(Coordinate.GetGlobalChunkCoordinate(), out _chunk);
+            if (Chunk != null)
+                chunkID = Chunk.ID;
+            GridPosition = Coordinate.GetLocalVoxelCoordinate();
+        }
+
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
@@ -396,8 +338,7 @@ namespace DwarfCorp
             if (world.ChunkManager.ChunkData.ChunkMap.ContainsKey(chunkID))
             {
                 Chunk = world.ChunkManager.ChunkData.ChunkMap[chunkID];
-                index = Chunk.Data.IndexAt(GridPosition);
-                RegenerateQuickCompare();
+                index = VoxelConstants.DataIndexOf(GridPosition);
             }
         }
 
@@ -422,7 +363,7 @@ namespace DwarfCorp
 
         public bool GetNeighbor(Vector3 dir, ref VoxelHandle vox)
         {
-            return Chunk.Manager.ChunkData.GetVoxel(Position + dir, ref vox);
+            return Chunk.Manager.ChunkData.GetVoxel(WorldPosition + dir, ref vox);
         }
 
         public override string ToString()

@@ -71,25 +71,11 @@ namespace DwarfCorp
 
         public float SlicePlane = 0;
 
-        // The horizontal size of the overworld in pixels
-        public int WorldWidth = 800;
-
         // Used to pass WorldOrigin from the WorldGenState into 
         public Vector2 WorldGenerationOrigin { get; set; }
 
         // The origin of the overworld in pixels [(0, 0, 0) in world space.]
         public Vector2 WorldOrigin { get; set; }
-
-        // The vertical size of the overworld in pixels
-        public int WorldHeight = 800;
-
-        // The number of voxels along x and z in a chunk
-        public int ChunkWidth { get { return GameSettings.Default.ChunkWidth; } }
-
-        // The number of voxels along y in a chunk.
-        public int ChunkHeight { get { return GameSettings.Default.ChunkHeight; } }
-
-        public Vector3 CursorPos { get { return CursorLightPos; } }
 
         // The current coordinate of the cursor light
         public Vector3 CursorLightPos
@@ -129,6 +115,7 @@ namespace DwarfCorp
 
         // Responsible for managing terrain
         public ChunkManager ChunkManager = null;
+        public ChunkRenderer ChunkRenderer = null;
 
         // Maps a set of voxel types to assets and properties
         public VoxelLibrary VoxelLibrary = null;
@@ -408,8 +395,8 @@ namespace DwarfCorp
 
         public bool IsCameraUnderwater()
         {
-            WaterCell water = ChunkManager.ChunkData.GetWaterCellAtLocation(GlobalVoxelCoordinate.FromVector3(Camera.Position));
-            return water.WaterLevel > 0;
+            var handle = new TemporaryVoxelHandle(ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Camera.Position));
+            return handle.IsValid && handle.WaterCell.WaterLevel > 0;
         }
         
         /// <summary>
@@ -514,6 +501,7 @@ namespace DwarfCorp
 
             //GamePerformance.Instance.StartTrackPerformance("Chunk Manager");
             ChunkManager.Update(gameTime, Camera, GraphicsDevice);
+            ChunkRenderer.Update(gameTime, Camera, GraphicsDevice);
             //GamePerformance.Instance.StopTrackPerformance("Chunk Manager");
 
             //GamePerformance.Instance.StartTrackPerformance("Instance Manager");
@@ -643,7 +631,7 @@ namespace DwarfCorp
             effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
             effect.ClippingEnabled = true;
             GraphicsDevice.BlendState = BlendState.NonPremultiplied;
-            ChunkManager.Render(Camera, gameTime, GraphicsDevice, effect, Matrix.Identity);
+            ChunkRenderer.Render(Camera, gameTime, GraphicsDevice, effect, Matrix.Identity);
             Camera.ViewMatrix = viewMatrix;
             effect.ClippingEnabled = true;
         }
@@ -667,32 +655,6 @@ namespace DwarfCorp
         public void RenderUninitialized(DwarfTime gameTime, String tip = null)
         {
             Render(gameTime);
-        }
-
-        /// <summary>
-        /// If the game is not loaded yet, just draws a loading message centered
-        /// </summary>
-        /// <param name="gameTime">The current time</param>
-        public void RenderScreenSaverMessages(DwarfTime gameTime)
-        {
-            /* DwarfGame.SpriteBatch.Begin();
-            float t = (float)(Math.Sin(gameTime.TotalGameTime.TotalSeconds * 2.0f) + 1.0f) * 0.5f + 0.5f;
-            Color toDraw = new Color(t, t, t);
-            SpriteFont font = Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
-            Vector2 measurement = Datastructures.SafeMeasure(font, LoadingMessage);
-            Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, LoadingMessage, font,
-                new Vector2(GraphicsDevice.Viewport.Width / 2 - measurement.X / 2,
-                    GraphicsDevice.Viewport.Height / 2), toDraw, new Color(50, 50, 50));
-
-            if (!string.IsNullOrEmpty(LoadingMessageBottom))
-            {
-                Vector2 tipMeasurement = Datastructures.SafeMeasure(font, LoadingMessageBottom);
-                Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, LoadingMessageBottom, font,
-                    new Vector2(GraphicsDevice.Viewport.Width / 2 - tipMeasurement.X / 2,
-                        GraphicsDevice.Viewport.Height - tipMeasurement.Y * 2), toDraw, new Color(50, 50, 50));
-            }
-            DwarfGame.SpriteBatch.End();
-            */
         }
 
         public void FillClosestLights(DwarfTime time)
@@ -732,12 +694,8 @@ namespace DwarfCorp
         /// <param name="gameTime">The current time</param>
         public void Render(DwarfTime gameTime)
         {
-            // If we are not ready to show the world then just display the loading text
             if (!ShowingWorld)
-            {
-                RenderScreenSaverMessages(gameTime);
                 return;
-            }
 
             var renderables = ComponentRenderer.EnumerateVisibleRenderables(ComponentManager.GetRenderables(),
                 ChunkManager,
@@ -756,12 +714,12 @@ namespace DwarfCorp
 
             if (GameSettings.Default.UseDynamicShadows)
             {
-                ChunkManager.RenderShadowmap(DefaultShader, GraphicsDevice, Shadows, Matrix.Identity, Tilesheet);
+                ChunkRenderer.RenderShadowmap(DefaultShader, GraphicsDevice, Shadows, Matrix.Identity, Tilesheet);
             }
 
             if (GameSettings.Default.UseLightmaps)
             {
-                ChunkManager.RenderLightmaps(Camera, gameTime, GraphicsDevice, DefaultShader, Matrix.Identity);
+                ChunkRenderer.RenderLightmaps(Camera, gameTime, GraphicsDevice, DefaultShader, Matrix.Identity);
             }
 
             // Computes the water height.
@@ -793,7 +751,7 @@ namespace DwarfCorp
                 DefaultShader.View = Camera.ViewMatrix;
                 DefaultShader.Projection = Camera.ProjectionMatrix;
                 DefaultShader.World = Matrix.Identity;
-                ChunkManager.RenderSelectionBuffer(DefaultShader, GraphicsDevice, Camera.ViewMatrix);
+                ChunkRenderer.RenderSelectionBuffer(DefaultShader, GraphicsDevice, Camera.ViewMatrix);
                 ComponentRenderer.RenderSelectionBuffer(renderables, gameTime, ChunkManager, Camera,
                     DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader);
                 InstanceManager.RenderSelectionBuffer(GraphicsDevice, DefaultShader, Camera, false);
@@ -818,7 +776,7 @@ namespace DwarfCorp
 
             // Defines the current slice for the GPU
             float level = ChunkManager.ChunkData.MaxViewingLevel + 2.0f;
-            if (level > ChunkManager.ChunkData.ChunkSizeY)
+            if (level > VoxelConstants.ChunkSizeY)
             {
                 level = 1000;
             }

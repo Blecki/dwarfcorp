@@ -60,17 +60,18 @@ namespace DwarfCorp
             }
             else
             {
-                VoxelHandle voxel = new VoxelHandle();
+                var voxelUnder = VoxelHelpers.FindFirstVoxelBelowIncludeWater(new TemporaryVoxelHandle(
+                    creature.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(
+                        target.BoundingBox.Center())));
 
-                if (!creature.World.ChunkManager.ChunkData.GetFirstVoxelUnder(target.BoundingBox.Center(), ref voxel, true))
+                if (voxelUnder.IsValid)
                 {
-                    return Status.Fail;
-                }
-                else
-                {
-                    creature.AI.Blackboard.SetData(voxelOutName, voxel);
+                    creature.AI.Blackboard.SetData(voxelOutName, new VoxelHandle(
+                        voxelUnder.Coordinate.GetLocalVoxelCoordinate(), voxelUnder.Chunk));
                     return Status.Success;
                 }
+                else
+                    return Status.Fail;
             }
         }
 

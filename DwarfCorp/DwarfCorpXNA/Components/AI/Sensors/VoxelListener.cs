@@ -88,7 +88,7 @@ namespace DwarfCorp
         {
             if (firstIter)
             {
-                if (Chunk.Data.Types[Chunk.Data.IndexAt(VoxelID)] == 0)
+                if (Chunk.Data.Types[VoxelConstants.DataIndexOf(VoxelID)] == 0)
                 {
                     Delete();
                 }

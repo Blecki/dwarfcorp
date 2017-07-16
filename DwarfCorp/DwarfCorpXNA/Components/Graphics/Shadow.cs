@@ -113,12 +113,12 @@ namespace DwarfCorp
 
                 if(chunk != null)
                 {
-                    Vector3 g = chunk.WorldToGrid(p.GlobalTransform.Translation + Vector3.Down * 0.25f);
+                    var shadowTarget = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+                        chunks.ChunkData, GlobalVoxelCoordinate.FromVector3(p.GlobalTransform.Translation + Vector3.Down * 0.25f)));
 
-                    int h = chunk.GetFilledVoxelGridHeightAt((int) g.X, (int) g.Y, (int) g.Z);
-
-                    if(h != -1)
+                    if (shadowTarget.IsValid)
                     {
+                        var h = shadowTarget.Coordinate.Y + 1;
                         Vector3 pos = p.GlobalTransform.Translation;
                         pos.Y = h;
                         float scaleFactor = GlobalScale / (Math.Max((p.GlobalTransform.Translation.Y - h) * 0.25f, 1));

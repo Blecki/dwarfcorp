@@ -49,20 +49,18 @@ namespace DwarfCorp
     ///     Exists to write to and from files.
     /// </summary>
     [Serializable]
-    public class ChunkFile 
+    public class ChunkFile
     {
         public static string Extension = "chunk";
         public static string CompressedExtension = "zchunk";
 
-        public bool[,,] Explored;
-
         public GlobalChunkCoordinate ID;
-        public byte[,,] Liquid;
-        public byte[,,] LiquidTypes;
-
         public Vector3 Origin;
-        public Point3 Size;
-        public byte[,,] Types;
+
+        public bool[] Explored;
+        public byte[] Liquid;
+        public byte[] LiquidTypes;
+        public byte[] Types;
 
         public ChunkFile()
         {
@@ -70,12 +68,11 @@ namespace DwarfCorp
 
         public ChunkFile(VoxelChunk chunk)
         {
-            Size = new Point3(chunk.SizeX, chunk.SizeY, chunk.SizeZ);
             ID = chunk.ID;
-            Types = new byte[Size.X, Size.Y, Size.Z];
-            LiquidTypes = new byte[Size.X, Size.Y, Size.Z];
-            Liquid = new byte[Size.X, Size.Y, Size.Z];
-            Explored = new bool[Size.X, Size.Y, Size.Z];
+            Types = new byte[VoxelConstants.ChunkVoxelCount];
+            LiquidTypes = new byte[VoxelConstants.ChunkVoxelCount];
+            Liquid = new byte[VoxelConstants.ChunkVoxelCount];
+            Explored = new bool[VoxelConstants.ChunkVoxelCount];
             Origin = chunk.Origin;
             FillDataFromChunk(chunk);
         }
@@ -85,14 +82,12 @@ namespace DwarfCorp
             ReadFile(fileName, compressed, binary);
         }
 
-
         public void CopyFrom(ChunkFile chunkFile)
         {
             ID = chunkFile.ID;
             Liquid = chunkFile.Liquid;
             LiquidTypes = chunkFile.LiquidTypes;
             Origin = chunkFile.Origin;
-            Size = chunkFile.Size;
             Types = chunkFile.Types;
             Explored = chunkFile.Explored;
         }
@@ -130,69 +125,54 @@ namespace DwarfCorp
             return FileUtils.SaveBinary(this, filePath);
         }
 
-        public VoxelChunk ToChunk(ChunkManager manager)
+        public VoxelChunk ToChunk(ChunkManager Manager)
         {
-            int chunkSizeX = this.Size.X;
-            int chunkSizeY = this.Size.Y;
-            int chunkSizeZ = this.Size.Z;
-            Vector3 origin = this.Origin;
-            VoxelChunk c = new VoxelChunk(manager, origin, 1, ID, chunkSizeX, chunkSizeY, chunkSizeZ)
+            VoxelChunk c = new VoxelChunk(Manager, Origin, ID)
             {
                 ShouldRebuild = true,
-                ShouldRecalculateLighting = true
+                ShouldRecalculateLighting = true,
+                ShouldRebuildWater = true
             };
 
-            for(int x = 0; x < chunkSizeX; x++)
+            for (var i = 0; i < VoxelConstants.ChunkVoxelCount; ++i)
             {
-                for(int z = 0; z < chunkSizeZ; z++)
-                {
-                    for(int y = 0; y < chunkSizeY; y++)
-                    {
-                        int index = c.Data.IndexAt(new LocalVoxelCoordinate(x, y, z));
-                        if(Types[x, y, z] > 0)
-                        {
-                            c.Data.Types[index] = Types[x, y, z];
-                            c.Data.Health[index] = (byte) VoxelLibrary.GetVoxelType(Types[x, y, z]).StartingHealth;
-                        }
-                        c.Data.IsExplored[index] = Explored[x, y, z];
-                        c.Data.Water[index].WaterLevel = Liquid[x, y, z];
-                        c.Data.Water[index].Type = (LiquidType)LiquidTypes[x, y, z];
-                    }
-                }
+                c.Data.Types[i] = Types[i];
+
+                if (Types[i] > 0)
+                    c.Data.Health[i] = (byte)VoxelLibrary.GetVoxelType(Types[i]).StartingHealth;
             }
-            c.ShouldRebuildWater = true;
+
+            Explored.CopyTo(c.Data.IsExplored, 0);
+
+            // Separate loop for cache effeciency
+            for (var i = 0; i < VoxelConstants.ChunkVoxelCount; ++i)
+            {
+                c.Data.Water[i].WaterLevel = Liquid[i];
+                c.Data.Water[i].Type = (LiquidType)LiquidTypes[i];
+            }
 
             return c;
         }
 
         public void FillDataFromChunk(VoxelChunk chunk)
         {
-            VoxelChunk.VoxelData data = chunk.Data;
-            for(int x = 0; x < Size.X; x++)
-            {
-                for(int y = 0; y < Size.Y; y++)
-                {
-                    for(int z = 0; z < Size.Z; z++)
-                    {
-                        int index = data.IndexAt(new LocalVoxelCoordinate(x, y, z));
-                        WaterCell water = data.Water[index];
-                        Types[x, y, z] = data.Types[index];
-                        Explored[x, y, z] = data.IsExplored[index];
+            chunk.Data.Types.CopyTo(Types, 0);
+            chunk.Data.IsExplored.CopyTo(Explored, 0);
 
-                        if(water.WaterLevel > 0)
-                        {
-                            Liquid[x, y, z] = water.WaterLevel;
-                            LiquidTypes[x, y, z] = (byte) water.Type;
-                        }
-                        else
-                        {
-                            Liquid[x, y, z] = 0;
-                            LiquidTypes[x, y, z] = 0;
-                        }
-                    }
+            for (var i = 0; i < VoxelConstants.ChunkVoxelCount; ++i)
+            {
+                var water = chunk.Data.Water[i];
+                if (water.WaterLevel > 0)
+                {
+                    Liquid[i] = water.WaterLevel;
+                    LiquidTypes[i] = (byte)water.Type;
+                }
+                else
+                {
+                    Liquid[i] = 0;
+                    LiquidTypes[i] = 0;
                 }
             }
         }
     }
-
 }

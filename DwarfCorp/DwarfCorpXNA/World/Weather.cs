@@ -342,7 +342,7 @@ namespace DwarfCorp
                         above.Type = stormProperties.VoxelToCreate;
                         above.Water = new WaterCell();
                         above.Health = above.Type.StartingHealth;
-                        above.Chunk.NotifyTotalRebuild(!above.IsInterior);
+                        chunks.ChunkData.NotifyRebuild(above.Coordinate);
                     }
 
                 }

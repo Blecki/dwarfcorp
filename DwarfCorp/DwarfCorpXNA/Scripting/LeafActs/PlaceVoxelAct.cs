@@ -64,7 +64,7 @@ namespace DwarfCorp
                 yield break;
             }
 
-            foreach (Status status in Creature.HitAndWait(1.0f, true, () => Voxel.Position))
+            foreach (Status status in Creature.HitAndWait(1.0f, true, () => Voxel.WorldPosition))
             {
                 if (status == Status.Running)
                 {
@@ -86,12 +86,14 @@ namespace DwarfCorp
                     // If the creature intersects the box, find a voxel adjacent to it that is free, and jump there to avoid getting crushed.
                     if (Creature.Physics.BoundingBox.Intersects(Voxel.GetBoundingBox()))
                     {
-                        IEnumerable<VoxelHandle> neighbors = Voxel.Chunk.GetNeighborsEuclidean(Voxel);
+                        var neighbors = Neighbors.EnumerateAllNeighbors(Voxel.Coordinate)
+                            .Select(c => new VoxelHandle(Voxel.Chunk.Manager.ChunkData, c)); // Todo: Stop jumping through hoops to get the chunk data.
+
                         VoxelHandle closest = null;
                         float closestDist = float.MaxValue;
                         foreach (VoxelHandle voxel in neighbors)
                         {
-                            float dist = (voxel.Position - Creature.Physics.Position).LengthSquared();
+                            float dist = (voxel.WorldPosition - Creature.Physics.Position).LengthSquared();
                             if (dist < closestDist && voxel.IsEmpty)
                             {
                                 closestDist = dist;
@@ -101,11 +103,11 @@ namespace DwarfCorp
 
                         if (closest != null)
                         {
-                            TossMotion teleport = new TossMotion(0.5f, 1.0f, Creature.Physics.GlobalTransform, closest.Position + Vector3.One * 0.5f);
+                            TossMotion teleport = new TossMotion(0.5f, 1.0f, Creature.Physics.GlobalTransform, closest.WorldPosition + Vector3.One * 0.5f);
                             Creature.Physics.AnimationQueue.Add(teleport);
                         }
                     }
-                    TossMotion motion = new TossMotion(1.0f, 2.0f, grabbed.LocalTransform, Voxel.Position + new Vector3(0.5f, 0.5f, 0.5f));
+                    TossMotion motion = new TossMotion(1.0f, 2.0f, grabbed.LocalTransform, Voxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f));
                     motion.OnComplete += grabbed.Die;
                     grabbed.GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
                     grabbed.AnimationQueue.Add(motion);

@@ -91,7 +91,7 @@ namespace DwarfCorp
         public override void OnVoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
         {
            
-            var chunksToRebuild = new HashSet<GlobalChunkCoordinate>();
+            var chunksToRebuild = new HashSet<GlobalVoxelCoordinate>();
 
             if(Command.Contains("Build/"))
             {
@@ -109,7 +109,7 @@ namespace DwarfCorp
                 {
                     if (vox.IsEmpty)
                     {
-                        EntityFactory.CreateEntity<Body>(type, vox.Position + new Vector3(0.5f, 0.5f, 0.5f));
+                        EntityFactory.CreateEntity<Body>(type, vox.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f));
                     }
                 }
             }
@@ -135,7 +135,7 @@ namespace DwarfCorp
                         }
 
 
-                        chunksToRebuild.Add(vox.ChunkID);
+                        chunksToRebuild.Add(vox.Coordinate);
                     }
                     else switch(Command)
                     {
@@ -146,7 +146,8 @@ namespace DwarfCorp
                             vox.Type = VoxelType.TypeList[0];
                             vox.Water = new WaterCell();
 
-                            vox.Chunk.Manager.KilledVoxels.Add(vox);
+                            vox.Chunk.Manager.KilledVoxels.Add(new TemporaryVoxelHandle(
+                                vox.Chunk, vox.GridPosition));
                         }
                             break;
                         case "Kill Block":
@@ -165,7 +166,7 @@ namespace DwarfCorp
                             {
                                 vox.WaterLevel = WaterManager.maxWaterLevel;
                                 vox.Chunk.Data.Water[vox.Index].Type = LiquidType.Water;
-                                chunksToRebuild.Add(vox.ChunkID);
+                                chunksToRebuild.Add(vox.Coordinate);
                             }
                         }
                             break;
@@ -175,7 +176,7 @@ namespace DwarfCorp
                             {
                                 vox.WaterLevel = WaterManager.maxWaterLevel;
                                 vox.Chunk.Data.Water[vox.Index].Type = LiquidType.Lava;
-                                chunksToRebuild.Add(vox.ChunkID);
+                                chunksToRebuild.Add(vox.Coordinate);
                             }
                         }
                             break;
@@ -217,10 +218,8 @@ namespace DwarfCorp
                 }
             }
 
-            foreach(var chunk in chunksToRebuild)
-            {
-                Chunks.ChunkData.ChunkMap[chunk].NotifyTotalRebuild(false);
-            }
+            foreach (var chunk in chunksToRebuild)
+                Chunks.ChunkData.NotifyRebuild(chunk);
         }
 
 

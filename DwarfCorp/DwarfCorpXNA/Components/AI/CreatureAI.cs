@@ -266,16 +266,6 @@ namespace DwarfCorp
             }
         }
 
-        /// <summary>
-        /// Raycasts to the specified target and returns true if the ray hit a voxel before hitting the target.
-        /// </summary>
-        /// <param name="target">The target.</param>
-        /// <returns>True if the ray hit a voxel before the target.</returns>
-        public bool Raycast(Vector3 target)
-        {
-            return Manager.World.ChunkManager.ChunkData.CheckRaySolid(Creature.AI.Position, target);
-        }
-
         /// <summary> Find the task from the list of tasks which is easiest to perform. </summary>
         public Task GetEasiestTask(List<Task> tasks)
         {
@@ -583,23 +573,24 @@ namespace DwarfCorp
         public IEnumerable<Act.Status> AvoidFalling()
         {
             var above = Physics.CurrentVoxel.GetVoxelAbove();
-            foreach (VoxelHandle vox in Physics.Neighbors)
+            // Todo: Use TemporaryVoxelHandle instead.
+            foreach (var vox in Neighbors.EnumerateManhattanNeighbors(Physics.CurrentVoxel.Coordinate)
+                .Select(c => new TemporaryVoxelHandle(World.ChunkManager.ChunkData, c)))
             {
-                if (vox == null) continue;
+                if (!vox.IsValid) continue;
                 if (vox.IsEmpty) continue;
 
                 // Avoid teleporting through the block above. Never jump up through the
                 // block above you.
                 if (above != null && !above.IsEmpty)
-                {
-                    if ((int)vox.Position.Y >= (int)above.Position.Y)
-                    {
+                    if (vox.Coordinate.Y >= above.Coordinate.Y)
                         continue;
-                    }
-                }
-                VoxelHandle voxAbove = vox.GetVoxelAbove();
-                if (!voxAbove.IsEmpty) continue;
-                Vector3 target = voxAbove.Position + new Vector3(0.5f, 0.5f, 0.5f);
+
+                var voxAbove = new TemporaryVoxelHandle(World.ChunkManager.ChunkData,
+                    new GlobalVoxelCoordinate(vox.Coordinate.X, vox.Coordinate.Y + 1, vox.Coordinate.Z));
+                if (voxAbove.IsValid && !voxAbove.IsEmpty) continue;
+
+                Vector3 target = voxAbove.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f);
                 Physics.Face(target);
                 foreach (Act.Status status in Hop(target))
                 {
@@ -1021,7 +1012,8 @@ namespace DwarfCorp
                         yield break;
                     }
 
-                    var actions = agent.AI.Movement.GetMoveActions(creatureVoxel);
+                    var actions = agent.AI.Movement.GetMoveActions(new TemporaryVoxelHandle(
+                        creatureVoxel.Chunk, creatureVoxel.GridPosition));
 
                     float minCost = float.MaxValue;
                     var minAction = new MoveAction();

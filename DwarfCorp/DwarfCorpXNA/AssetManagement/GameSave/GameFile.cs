@@ -115,8 +115,6 @@ namespace DwarfCorp
                     WorldOrigin = world.WorldOrigin,
                     WorldScale = world.WorldScale,
                     TimeOfDay = world.Sky.TimeOfDay,
-                    ChunkHeight = world.ChunkHeight,
-                    ChunkWidth = world.ChunkWidth,
                     GameID = id,
                     Time = world.Time,
                     Slice = (int)world.ChunkManager.ChunkData.MaxViewingLevel
@@ -255,8 +253,6 @@ namespace DwarfCorp
             public string OverworldFile { get; set; }
             public float WorldScale { get; set; }
             public Vector2 WorldOrigin { get; set; }
-            public int ChunkWidth { get; set; }
-            public int ChunkHeight { get; set; }
             public float TimeOfDay { get; set; }
             public int GameID { get; set; }
             public int Slice { get; set; }
@@ -278,8 +274,6 @@ namespace DwarfCorp
             {
                 WorldScale = file.WorldScale;
                 WorldOrigin = file.WorldOrigin;
-                ChunkWidth = file.ChunkWidth;
-                ChunkHeight = file.ChunkHeight;
                 TimeOfDay = file.TimeOfDay;
                 GameID = file.GameID;
                 OverworldFile = file.OverworldFile;

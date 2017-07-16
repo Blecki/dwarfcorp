@@ -123,12 +123,12 @@ namespace DwarfCorp
 
         private Vector3 ProjectToSurface(Vector3 pos)
         {
-            VoxelHandle vox =  World.ChunkManager.ChunkData.GetFirstVisibleBlockHitByRay(new Vector3(pos.X, World.ChunkHeight - 1, pos.Z), new Vector3(pos.X, 0, pos.Z));
-            if (vox == null)
-            {
-                return pos;
-            }
-            else return new Vector3(pos.X, vox.Position.Y + 0.5f, pos.Z);
+            var vox = VoxelHelpers.FindFirstVisibleVoxelOnRay(
+                World.ChunkManager.ChunkData,
+                new Vector3(pos.X, VoxelConstants.ChunkSizeY - 1, pos.Z),
+                new Vector3(pos.X, 0, pos.Z));
+            if (!vox.IsValid) return pos;
+            return new Vector3(pos.X, vox.Coordinate.ToVector3().Y + 0.5f, pos.Z);
         }
 
         public void OverheadUpdate(DwarfTime time, ChunkManager chunks)
@@ -370,11 +370,11 @@ namespace DwarfCorp
                         {
                             float diffxy =
                                 (new Vector3(Target.X, 0, Target.Z) -
-                                 new Vector3(World.CursorPos.X, 0, World.CursorPos.Z)).Length();
+                                 new Vector3(World.CursorLightPos.X, 0, World.CursorLightPos.Z)).Length();
 
                             if (diffxy > 5)
                             {
-                                Vector3 slewTarget = Target*0.9f + World.CursorPos*0.1f;
+                                Vector3 slewTarget = Target*0.9f + World.CursorLightPos*0.1f;
                                 Vector3 slewDiff = slewTarget - Target;
                                 Target += slewDiff;
                                 Position += slewDiff;
@@ -467,45 +467,22 @@ namespace DwarfCorp
 
         public bool CollidesWithChunks(ChunkManager chunks, Vector3 pos, bool applyForce)
         {
-            BoundingBox box = new BoundingBox(pos - new Vector3(0.5f, 0.5f, 0.5f), pos + new Vector3(0.5f, 0.5f, 0.5f));
-            VoxelHandle currentVoxel = new VoxelHandle();
-            bool success = chunks.ChunkData.GetVoxel(pos, ref currentVoxel);
-
-            List<VoxelHandle> vs = new List<VoxelHandle>
-            {
-                currentVoxel
-            };
-
-            VoxelChunk chunk = chunks.ChunkData.GetChunk(pos);
-
-
-            if (!success || currentVoxel == null || chunk == null)
-            {
-                return false;
-            }
-
-            Vector3 grid = chunk.WorldToGrid(pos);
-
-            IEnumerable<VoxelHandle> adjacencies = chunk.GetNeighborsEuclidean((int)grid.X, (int)grid.Y, (int)grid.Z);
-            vs.AddRange(adjacencies);
-
+            var box = new BoundingBox(pos - new Vector3(0.5f, 0.5f, 0.5f), pos + new Vector3(0.5f, 0.5f, 0.5f));
             bool gotCollision = false;
-            foreach (VoxelHandle v in vs)
-            {
-                if (v.IsEmpty || !v.IsVisible)
-                {
-                    continue;
-                }
 
-                BoundingBox voxAABB = v.GetBoundingBox();
+            foreach (var v in Neighbors.EnumerateCube(GlobalVoxelCoordinate.FromVector3(pos))
+                .Select(n => new TemporaryVoxelHandle(chunks.ChunkData, n)))                
+            {
+                if (!v.IsValid) continue;
+                if (v.IsEmpty) continue;
+                if (!v.IsVisible) continue;
+
+                var voxAABB = v.GetBoundingBox();
                 if (box.Intersects(voxAABB))
                 {
                     gotCollision = true;
                     if (applyForce)
-                    {
                         Collide(box, voxAABB);
-                    }
-
                     else
                         return true;
                 }

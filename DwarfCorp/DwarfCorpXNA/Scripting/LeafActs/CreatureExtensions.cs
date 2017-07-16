@@ -272,7 +272,7 @@ namespace DwarfCorp
                 }
 
                 // Look at the block and slow your velocity down.
-                agent.Physics.Face(vox.Position + Vector3.One * 0.5f);
+                agent.Physics.Face(vox.WorldPosition + Vector3.One * 0.5f);
                 agent.Physics.Velocity *= 0.9f;
 
                 // Play the attack animations.
@@ -290,12 +290,12 @@ namespace DwarfCorp
                 {
                     if (status == Act.Status.Running)
                     {
-                        agent.Physics.Face(vox.Position + Vector3.One*0.5f);
+                        agent.Physics.Face(vox.WorldPosition + Vector3.One*0.5f);
                         agent.Physics.Velocity *= 0.9f;
 
                         // Debug drawing.
                         if (agent.AI.DrawPath)
-                            Drawer3D.DrawLine(vox.Position, agent.AI.Position, Color.Green, 0.25f);
+                            Drawer3D.DrawLine(vox.WorldPosition, agent.AI.Position, Color.Green, 0.25f);
                         yield return Act.Status.Running;
                     }
                 }
@@ -322,7 +322,7 @@ namespace DwarfCorp
                 // Wait until the animation is done playing before continuing.
                 while (!agent.Sprite.CurrentAnimation.IsDone() && agent.Sprite.CurrentAnimation.IsPlaying)
                 {
-                    agent.Physics.Face(vox.Position + Vector3.One * 0.5f);
+                    agent.Physics.Face(vox.WorldPosition + Vector3.One * 0.5f);
                     agent.Physics.Velocity *= 0.9f;
                     yield return Act.Status.Running;
                 }
@@ -336,7 +336,7 @@ namespace DwarfCorp
                 while (!agent.Attacks[0].RechargeTimer.HasTriggered)
                 {
                     agent.Attacks[0].RechargeTimer.Update(DwarfTime.LastTime);
-                    agent.Physics.Face(vox.Position + Vector3.One * 0.5f);
+                    agent.Physics.Face(vox.WorldPosition + Vector3.One * 0.5f);
                     agent.Physics.Velocity *= 0.9f;
                     yield return Act.Status.Running;
                 }

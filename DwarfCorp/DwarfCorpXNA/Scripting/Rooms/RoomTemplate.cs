@@ -271,7 +271,7 @@ namespace DwarfCorp
             Dictionary<Point, VoxelHandle> voxelDict = new Dictionary<Point, VoxelHandle>();
             foreach(VoxelHandle vox in voxelsInRoom)
             {
-                voxelDict[new Point((int)(vox.Position.X - box.Min.X) + 1, (int)(vox.Position.Z - box.Min.Z) + 1)] = vox;
+                voxelDict[new Point((int)(vox.WorldPosition.X - box.Min.X) + 1, (int)(vox.WorldPosition.Z - box.Min.Z) + 1)] = vox;
             }
 
             for(int r = 0; r < nr + 2; r++)

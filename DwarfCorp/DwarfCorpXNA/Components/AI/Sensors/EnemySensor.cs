@@ -105,7 +105,8 @@ namespace DwarfCorp
 
                     float dist = (minion.Position - GlobalTransform.Translation).LengthSquared();
 
-                    if (dist < SenseRadius && !Manager.World.ChunkManager.ChunkData.CheckRaySolid(Position, minion.Position))
+                    if (dist < SenseRadius && !VoxelHelpers.DoesRayHitSolidVoxel(
+                        Manager.World.ChunkManager.ChunkData, Position, minion.Position))
                     {
                         sensed.Add(minion);
                     }

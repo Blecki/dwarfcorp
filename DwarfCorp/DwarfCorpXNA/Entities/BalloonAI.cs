@@ -119,8 +119,10 @@ namespace DwarfCorp
 
                     if(chunk != null)
                     {
-                        Vector3 gridPos = chunk.WorldToGrid(body.GlobalTransform.Translation);
-                        float height = chunk.GetFilledVoxelGridHeightAt((int) gridPos.X, (int) gridPos.Y, (int) gridPos.Z) + chunk.Origin.Y;
+                        var surfaceVoxel = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+                            chunks.ChunkData, GlobalVoxelCoordinate.FromVector3(body.GlobalTransform.Translation)));
+                        var height = surfaceVoxel.Coordinate.Y + 1;
+
                         TargetPosition = new Vector3(body.GlobalTransform.Translation.X, height + 5, body.GlobalTransform.Translation.Z);
 
                         Vector3 diff = body.GlobalTransform.Translation - TargetPosition;

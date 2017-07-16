@@ -162,11 +162,11 @@ namespace DwarfCorp
             int numExpansions = 0;
 
             // Check the voxels adjacent to the current voxel as a quick test of adjacency to the goal.
-            var manhattanNeighbors = new List<VoxelHandle>(6);
-            for (int i = 0; i < 6; i++)
-            {
-                manhattanNeighbors.Add(new VoxelHandle());
-            }
+            //var manhattanNeighbors = new List<VoxelHandle>(6);
+            //for (int i = 0; i < 6; i++)
+            //{
+            //    manhattanNeighbors.Add(new VoxelHandle());
+            //}
 
             // Loop until we've either checked every possible voxel, or we've exceeded the maximum number of
             // expansions.
@@ -206,12 +206,15 @@ namespace DwarfCorp
                 IEnumerable<MoveAction> neighbors = null;
 
                 // Get the voxels that can be moved to from the current voxel.
-                neighbors = mover.GetMoveActions(current);
-                currentChunk.GetNeighborsManhattan(current, manhattanNeighbors);
+                neighbors = mover.GetMoveActions(new TemporaryVoxelHandle(current.Chunk, current.GridPosition));
+                //currentChunk.GetNeighborsManhattan(current, manhattanNeighbors);
+
+                var foundGoalAdjacent = Neighbors.EnumerateManhattanNeighbors(current.Coordinate)
+                    .Contains(goal.GetVoxel().Coordinate);
 
                 // A quick test to see if we're already adjacent to the goal. If we are, assume
                 // that we can just walk to it.
-                if (manhattanNeighbors.Contains(goal.GetVoxel()))
+                if (foundGoalAdjacent)
                 {
                     var first = new MoveAction
                     {
@@ -309,20 +312,22 @@ namespace DwarfCorp
             List<VoxelHandle> goalVoxels = new List<VoxelHandle>();
             goalVoxels.Add(goal.GetVoxel());
             // Starting conditions of the search.
-            foreach(var goalVoxel in goal.GetVoxel().Chunk.GetNeighborsEuclidean(goal.GetVoxel()))
+
+            foreach (var goalVoxel in Neighbors.EnumerateAllNeighbors(goal.GetVoxel().Coordinate)
+                .Select(c => new VoxelHandle(start.Chunk.Manager.ChunkData, c))) // Todo: Stop this.
             {
                 if (goal.IsInGoalRegion(goalVoxel))
                 {
                     goalVoxels.Add(goalVoxel);
                     gScore[goalVoxel] = 0.0f;
                     fScore.Enqueue(goalVoxel,
-                        gScore[goalVoxel] + weight*(goalVoxel.Position - start.Position).LengthSquared());
+                        gScore[goalVoxel] + weight*(goalVoxel.WorldPosition - start.WorldPosition).LengthSquared());
                 }
             }
 
             gScore[goal.GetVoxel()] = 0.0f;
             fScore.Enqueue(goal.GetVoxel(),
-                gScore[goal.GetVoxel()] + weight * (goal.GetVoxel().Position - start.Position).LengthSquared());
+                gScore[goal.GetVoxel()] + weight * (goal.GetVoxel().WorldPosition - start.WorldPosition).LengthSquared());
 
             // Keep count of the number of expansions we've taken to get to the goal.
             int numExpansions = 0;
@@ -408,7 +413,7 @@ namespace DwarfCorp
 
                     // Update the expansion scores for the next voxel.
                     gScore[n.SourceVoxel] = tenativeGScore;
-                    fScore.Enqueue(n.SourceVoxel, gScore[n.SourceVoxel] + weight * (n.SourceVoxel.Position - start.Position).LengthSquared());
+                    fScore.Enqueue(n.SourceVoxel, gScore[n.SourceVoxel] + weight * (n.SourceVoxel.WorldPosition - start.WorldPosition).LengthSquared());
                 }
 
                 // If we've expanded too many voxels, just give up.
@@ -468,7 +473,7 @@ namespace DwarfCorp
             }
             // Otherwise, the cost is the distance between the voxels multiplied by the intrinsic cost
             // of an action.
-            float score = (a.Position - b.Position).LengthSquared() * ActionCost(movement, action);
+            float score = (a.WorldPosition - b.WorldPosition).LengthSquared() * ActionCost(movement, action);
 
             return score;
         }

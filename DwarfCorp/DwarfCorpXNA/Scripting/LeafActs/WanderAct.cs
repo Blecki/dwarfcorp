@@ -154,13 +154,13 @@ namespace DwarfCorp
             for (int i = 0; i < PathLength; i++)
             {
                 var actions = 
-                    Creature.AI.Movement.GetMoveActions(curr);
+                    Creature.AI.Movement.GetMoveActions(new TemporaryVoxelHandle(curr.Chunk, curr.GridPosition));
 
                 MoveAction? bestAction = null;
                 float bestDist = float.MaxValue;
                 foreach (MoveAction action in actions)
                 {
-                    float dist = (action.DestinationVoxel.Position - target).LengthSquared();
+                    float dist = (action.DestinationVoxel.WorldPosition - target).LengthSquared();
 
                     if (dist < bestDist)
                     {

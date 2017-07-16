@@ -257,7 +257,7 @@ namespace DwarfCorp
                 //World.ParticleManager.Trigger("crumbs", underMouse.Position + Vector3.Up, Color.White, 1);
                 VoxelUnderMouse = underMouse;
                 // Update the cursor light.
-                World.CursorLightPos = underMouse.Position + new Vector3(0.5f, 0.5f, 0.5f);
+                World.CursorLightPos = underMouse.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f);
 
                 // Get the type of the voxel and display it to the player.
                 if (Enabled && !underMouse.IsEmpty && underMouse.IsExplored)
@@ -291,7 +291,7 @@ namespace DwarfCorp
                 int offset = (int) BoxYOffset;
                 if (offset != PrevBoxYOffsetInt)
                 {
-                    DragSound.Play(World.CursorPos);
+                    DragSound.Play(World.CursorLightPos);
                     newVoxel = true;
                 }
                 PrevBoxYOffsetInt = offset;
@@ -316,7 +316,7 @@ namespace DwarfCorp
                 // On release, select voxels.
                 if (mouse.LeftButton == ButtonState.Released)
                 {
-                    ReleaseSound.Play(World.CursorPos);
+                    ReleaseSound.Play(World.CursorLightPos);
                     isLeftPressed = false;
                     LeftReleasedCallback();
                     BoxYOffset = 0;
@@ -347,21 +347,23 @@ namespace DwarfCorp
                             buffer.Min.Y += BoxYOffset;
                         }
 
-                        SelectionBuffer = Select(buffer, FirstVoxel.Position, underMouse.Position).ToList();
+                        SelectionBuffer = Select(buffer, FirstVoxel.WorldPosition, underMouse.WorldPosition).ToList();
 
                         if (!altPressed && Brush != VoxelBrush.Stairs)
                         {
                             if (SelectionType == VoxelSelectionType.SelectFilled)
-                            { 
-                                SelectionBuffer.RemoveAll(
-                                voxel =>
-                                    (!voxel.Equals(underMouse) && !Chunks.ChunkData.IsVoxelVisibleSurface(voxel)));
-                            }
+                                SelectionBuffer.RemoveAll(v =>
+                                {
+                                    if (v.Equals(underMouse)) return false;
+                                    return !VoxelHelpers.DoesVoxelHaveVisibleSurface(
+                                        Chunks.ChunkData,
+                                        new TemporaryVoxelHandle(v.Chunk, v.GridPosition));
+                                });
                         }
 
                         if (newVoxel)
                         {
-                            DragSound.Play(World.CursorPos, SelectionBuffer.Count / 20.0f);
+                            DragSound.Play(World.CursorLightPos, SelectionBuffer.Count / 20.0f);
                             Dragged.Invoke(SelectionBuffer, InputManager.MouseButton.Left);
                         }
                     }
@@ -370,7 +372,7 @@ namespace DwarfCorp
             // If the mouse was not previously pressed, but is now pressed, then notify us of that.
             else if (mouse.LeftButton == ButtonState.Pressed)
             {
-                ClickSound.Play(World.CursorPos); ;
+                ClickSound.Play(World.CursorLightPos); ;
                 isLeftPressed = true;
                 BoxYOffset = 0;
                 PrevBoxYOffsetInt = 0;
@@ -382,7 +384,7 @@ namespace DwarfCorp
             {
                 if (mouse.RightButton == ButtonState.Released)
                 {
-                    ReleaseSound.Play(World.CursorPos);
+                    ReleaseSound.Play(World.CursorLightPos);
                     isRightPressed = false;
                     RightReleasedCallback();
                     BoxYOffset = 0;
@@ -410,21 +412,26 @@ namespace DwarfCorp
                             buffer.Min.Y += BoxYOffset;
                         }
 
-
-                        SelectionBuffer = Chunks.GetVoxelsIntersecting(buffer);
+                        SelectionBuffer = VoxelHelpers.EnumerateCoordinatesInBoundingBox(buffer)
+                            .Select(c => new TemporaryVoxelHandle(Chunks.ChunkData, c))
+                            .Where(v => v.IsValid)
+                            .Select(v => new VoxelHandle(v.Coordinate.GetLocalVoxelCoordinate(), v.Chunk))
+                            .ToList();
 
                         if (!altPressed && Brush != VoxelBrush.Stairs)
                         {
                             if (SelectionType == VoxelSelectionType.SelectFilled)
-                            {
-                                SelectionBuffer.RemoveAll(
-                                voxel =>
-                                    (!voxel.Equals(underMouse) && !Chunks.ChunkData.IsVoxelVisibleSurface(voxel)));
-                            }
+                                SelectionBuffer.RemoveAll(v =>
+                                {
+                                    if (v.Equals(underMouse)) return false;
+                                    return !VoxelHelpers.DoesVoxelHaveVisibleSurface(
+                                        Chunks.ChunkData,
+                                        new TemporaryVoxelHandle(v.Chunk, v.GridPosition));
+                                });
                         }
                         if (newVoxel)
                         {
-                            DragSound.Play(World.CursorPos, SelectionBuffer.Count / 20.0f);
+                            DragSound.Play(World.CursorLightPos, SelectionBuffer.Count / 20.0f);
                             Dragged.Invoke(SelectionBuffer, InputManager.MouseButton.Right);
                         }
                     }
@@ -432,7 +439,7 @@ namespace DwarfCorp
             }
             else if (mouse.RightButton == ButtonState.Pressed)
             {
-                ClickSound.Play(World.CursorPos);
+                ClickSound.Play(World.CursorLightPos);
                 RightPressedCallback();
                 BoxYOffset = 0;
                 isRightPressed = true;
@@ -444,9 +451,14 @@ namespace DwarfCorp
             switch (Brush)
             {
                 case VoxelBrush.Box:
-                    return Chunks.GetVoxelsIntersecting(buffer);
+                    return VoxelHelpers.EnumerateCoordinatesInBoundingBox(buffer)
+                        .Select(c => new TemporaryVoxelHandle(Chunks.ChunkData, c))
+                        .Where(v => v.IsValid)
+                        .Select(v => new VoxelHandle(v.Coordinate.GetLocalVoxelCoordinate(), v.Chunk));
                 case VoxelBrush.Shell:
                 {
+                        // Todo: Change the stair and shell functions to enumerate coordinates
+                        //  then simplify and combine this code.
                     return Chunks.GetVoxelsIntersecting(GetShell(buffer));
                 }
                 default:
@@ -652,7 +664,7 @@ namespace DwarfCorp
                 if ((SelectionType == VoxelSelectionType.SelectFilled && !v.IsEmpty)
                     || (SelectionType == VoxelSelectionType.SelectEmpty && v.IsEmpty))
                 {
-                    Drawer2D.DrawRect(World.Camera, v.Position + half, screenRect, dotColor, Color.Transparent, 0.0f);
+                    Drawer2D.DrawRect(World.Camera, v.WorldPosition + half, screenRect, dotColor, Color.Transparent, 0.0f);
                 }
             }
         }
@@ -661,26 +673,30 @@ namespace DwarfCorp
         {
             MouseState mouse = Mouse.GetState();
 
-            VoxelHandle v = Chunks.ChunkData.GetFirstVisibleBlockHitByMouse(mouse, CameraController, Graphics.Viewport,
-                SelectionType == VoxelSelectionType.SelectEmpty);
+            var v = VoxelHelpers.FindFirstVisibleVoxelOnScreenRay(
+                Chunks.ChunkData,
+                mouse.X,
+                mouse.Y,
+                CameraController,
+                Graphics.Viewport,
+                150.0f,
+                SelectionType == VoxelSelectionType.SelectEmpty,
+                null);
 
-            if (v == null || v.Chunk == null)
-            {
+            if (!v.IsValid)
                 return null;
-            }
 
             switch (SelectionType)
             {
                 case VoxelSelectionType.SelectFilled:
                     if (!v.IsEmpty)
                     {
-                        return v;
+                        return new VoxelHandle(v.Coordinate.GetLocalVoxelCoordinate(), v.Chunk);
                     }
                     return default(VoxelHandle);
 
-
                 case VoxelSelectionType.SelectEmpty:
-                    return v;
+                    return new VoxelHandle(v.Coordinate.GetLocalVoxelCoordinate(), v.Chunk);
             }
 
             return default(VoxelHandle);

@@ -138,8 +138,9 @@ namespace DwarfCorp
                 Vector3 oldPosition = Agent.Position;
 
                 // Get the height of the terrain beneath the bird.
-                float surfaceHeight = Agent.Chunks.ChunkData.GetFilledVoxelGridHeightAt(oldPosition.X, oldPosition.Y,
-                    oldPosition.Z);
+                var surfaceHeight = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+                    Agent.Chunks.ChunkData, GlobalVoxelCoordinate.FromVector3(oldPosition)))
+                    .Coordinate.Y + 1;
 
                 // Immediately start flying.
                 Agent.Creature.CurrentCharacterMode = CharacterMode.Flying;
@@ -210,9 +211,10 @@ namespace DwarfCorp
                         if (CanPerchOnGround)
                         {
                             Creature.Physics.ApplyForce(OriginalGravity, (float)DwarfTime.LastTime.ElapsedGameTime.TotalSeconds);
-                            VoxelHandle below = vox.GetVoxelBelow();
+                            var below = new TemporaryVoxelHandle(Creature.World.ChunkManager.ChunkData,
+                                vox.Coordinate + new GlobalVoxelOffset(0, -1, 0));
 
-                            if (below != null && !below.IsEmpty && below.WaterLevel == 0)
+                            if (below.IsValid && !below.IsEmpty && below.WaterCell.WaterLevel == 0)
                             {
                                 State = FlyState.Perching;
                                 continue;
@@ -221,13 +223,11 @@ namespace DwarfCorp
 
                         if (CanPerchOnWalls)
                         {
-                            foreach (VoxelHandle n in Creature.Physics.Neighbors)
+                            foreach (var n in Neighbors.EnumerateManhattanNeighbors(Creature.Physics.CurrentVoxel.Coordinate)
+                                .Select(c => new TemporaryVoxelHandle(Creature.World.ChunkManager.ChunkData, c)))
                             {
-                                if (n != null && n.GridPosition.Y >= vox.GridPosition.Y && !n.IsEmpty)
-                                {
+                                if (n.IsValid && n.Coordinate.Y >= vox.Coordinate.Y && !n.IsEmpty)
                                     State = FlyState.Perching;
-                                    continue;
-                                }
                             }
                         }
 
