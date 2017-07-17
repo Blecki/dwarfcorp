@@ -134,7 +134,8 @@ namespace DwarfCorp.GameStates
                 inWater = Overworld.Map[center.X, center.Y].Height < Settings.SeaLevel;
                 if (inWater)
                 {
-                    Settings.WorldGenerationOrigin = new Vector2(MathFunctions.Rand(rect.Width + 1, Settings.Width - rect.Width), MathFunctions.Rand(rect.Height + 1, Settings.Height));
+                    Settings.WorldGenerationOrigin = 
+                        new Vector2(MathFunctions.Rand(rect.Width + 1, Settings.Width - rect.Width), MathFunctions.Rand(rect.Height + 1, Settings.Height));
                     Settings.WorldOrigin = Settings.WorldGenerationOrigin;
                 }
             } while (inWater);
@@ -841,6 +842,14 @@ namespace DwarfCorp.GameStates
             int w = (int)(Settings.ColonySize.X * Settings.WorldScale);
             int h = (int)(Settings.ColonySize.Z * Settings.WorldScale);
             return new Rectangle((int)Settings.WorldGenerationOrigin.X - w, (int)Settings.WorldGenerationOrigin.Y - h, w * 2, h * 2);
+        }
+
+        public Vector2 GetOrigin(Point clickPoint, Vector3 worldSize)
+        {
+            return new Vector2(
+                System.Math.Max(System.Math.Min(clickPoint.X, Settings.Width  - worldSize.X), worldSize.X),
+                System.Math.Max(System.Math.Min(clickPoint.Y, Settings.Height - worldSize.Z), worldSize.Z)
+            );
         }
     }
     
