@@ -284,14 +284,14 @@ namespace DwarfCorp
 
             foreach(KeyValuePair<Point, VoxelHandle> voxPair in voxelDict)
             {
-                VoxelHandle vox = voxPair.Value.GetVoxelAbove();
+                var vox = VoxelHelpers.GetVoxelAbove(voxPair.Value.tvh);
                 Point p = voxPair.Key;
 
                 if(vox.IsEmpty && p.X > 0 && p.X < nr + 1 && p.Y > 0 && p.Y < nc + 1)
                 {
                     toReturn[p.X, p.Y] = RoomTile.Open;
                 }
-                else if(!vox.IsEmpty)
+                else if(vox.IsValid && !vox.IsEmpty)
                 {
                     toReturn[p.X, p.Y] = RoomTile.Wall;
                 }

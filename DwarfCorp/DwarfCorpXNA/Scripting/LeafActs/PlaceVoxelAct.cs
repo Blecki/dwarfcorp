@@ -45,26 +45,30 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class PlaceVoxelAct : CreatureAct
     {
-        public VoxelHandle Voxel { get; set; }
-        public ResourceAmount Resource { get; set; }
-        public PlaceVoxelAct(VoxelHandle voxel, CreatureAI agent, ResourceAmount resource) :
-            base(agent)
+        public GlobalVoxelCoordinate Location;
+        public ResourceAmount Resource;
+
+        public PlaceVoxelAct(
+            GlobalVoxelCoordinate Location,
+            CreatureAI Agent,
+            ResourceAmount Resource) :
+            base(Agent)
         {
-            Agent = agent;
-            Voxel = voxel;
-            Name = "Build DestinationVoxel " + voxel.ToString();
-            Resource = resource;
+            this.Location = Location;
+            this.Resource = Resource;
+
+            Name = "Build DestinationVoxel " + Location.ToString();
         }
 
         public override IEnumerable<Status> Run()
         {
-            if (!Creature.Faction.WallBuilder.IsDesignation(Voxel))
+            if (!Creature.Faction.WallBuilder.IsDesignation(Location))
             {
                 yield return Status.Fail;
                 yield break;
             }
 
-            foreach (Status status in Creature.HitAndWait(1.0f, true, () => Voxel.WorldPosition))
+            foreach (var status in Creature.HitAndWait(1.0f, true, () => Location.ToVector3()))
             {
                 if (status == Status.Running)
                 {
@@ -72,7 +76,7 @@ namespace DwarfCorp
                 }
             }
 
-            Body grabbed = Creature.Inventory.RemoveAndCreate(Resource).FirstOrDefault();
+            var grabbed = Creature.Inventory.RemoveAndCreate(Resource).FirstOrDefault();
 
             if(grabbed == null)
             {
@@ -81,19 +85,22 @@ namespace DwarfCorp
             }
             else
             {
-                if(Creature.Faction.WallBuilder.IsDesignation(Voxel))
+                if(Creature.Faction.WallBuilder.IsDesignation(Location))
                 {
                     // If the creature intersects the box, find a voxel adjacent to it that is free, and jump there to avoid getting crushed.
-                    if (Creature.Physics.BoundingBox.Intersects(Voxel.GetBoundingBox()))
+                    if (Creature.Physics.BoundingBox.Intersects(new BoundingBox(
+                        Location.ToVector3(), Location.ToVector3() + Vector3.One)))
                     {
-                        var neighbors = Neighbors.EnumerateAllNeighbors(Voxel.Coordinate)
-                            .Select(c => new VoxelHandle(Voxel.Chunk.Manager.ChunkData, c)); // Todo: Stop jumping through hoops to get the chunk data.
+                        var neighbors = Neighbors.EnumerateAllNeighbors(Location)
+                            .Select(c => new TemporaryVoxelHandle(Agent.Chunks.ChunkData, c));
 
-                        VoxelHandle closest = null;
+                        var closest = TemporaryVoxelHandle.InvalidHandle;
                         float closestDist = float.MaxValue;
-                        foreach (VoxelHandle voxel in neighbors)
+                        foreach (var voxel in neighbors)
                         {
-                            float dist = (voxel.WorldPosition - Creature.Physics.Position).LengthSquared();
+                            if (!voxel.IsValid) continue;
+
+                            float dist = (voxel.Coordinate.ToVector3() - Creature.Physics.Position).LengthSquared();
                             if (dist < closestDist && voxel.IsEmpty)
                             {
                                 closestDist = dist;
@@ -101,21 +108,20 @@ namespace DwarfCorp
                             }
                         }
 
-                        if (closest != null)
+                        if (closest.IsValid)
                         {
-                            TossMotion teleport = new TossMotion(0.5f, 1.0f, Creature.Physics.GlobalTransform, closest.WorldPosition + Vector3.One * 0.5f);
+                            TossMotion teleport = new TossMotion(0.5f, 1.0f, Creature.Physics.GlobalTransform, closest.Coordinate.ToVector3() + Vector3.One * 0.5f);
                             Creature.Physics.AnimationQueue.Add(teleport);
                         }
                     }
-                    TossMotion motion = new TossMotion(1.0f, 2.0f, grabbed.LocalTransform, Voxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f));
+                    TossMotion motion = new TossMotion(1.0f, 2.0f, grabbed.LocalTransform, Location.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f));
                     motion.OnComplete += grabbed.Die;
                     grabbed.GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
                     grabbed.AnimationQueue.Add(motion);
 
-                    WallBuilder put = Creature.Faction.WallBuilder.GetDesignation(Voxel);
+                    WallBuilder put = Creature.Faction.WallBuilder.GetDesignation(Location);
                     put.Put(Creature.Manager.World.ChunkManager);
-
-
+                    
                     Creature.Faction.WallBuilder.Designations.Remove(put);
                     Creature.Stats.NumBlocksPlaced++;
                     Creature.AI.AddXP(1);

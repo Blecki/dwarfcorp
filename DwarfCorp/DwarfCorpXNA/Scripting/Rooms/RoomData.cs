@@ -140,16 +140,15 @@ namespace DwarfCorp
             bool anyEmpty = false;
             foreach (VoxelHandle voxel in refs)
             {
-
                 if (voxel.IsEmpty)
                 {
                     continue;
                 }
 
-                if (!anyEmpty && voxel.IsTopEmpty())
-                {
-                    anyEmpty = true;
-                }
+                var above = new TemporaryVoxelHandle(world.ChunkManager.ChunkData,
+                    new GlobalVoxelCoordinate(voxel.Coordinate.X, voxel.Coordinate.Y + 1, voxel.Coordinate.Z));
+
+                anyEmpty &= (above.IsValid && above.IsEmpty);
 
                 if (voxel.Type.IsInvincible) continue;
 

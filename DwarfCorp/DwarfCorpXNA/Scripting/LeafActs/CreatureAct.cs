@@ -46,28 +46,22 @@ namespace DwarfCorp
     public class CreatureAct : Act
     {
         public CreatureAI Agent { get; set; }
-
-
+        
         [JsonIgnore]
         public Creature Creature
         {
             get { return Agent.Creature; }
         }
-
-
+        
         public CreatureAct(CreatureAI agent)
         {
             Agent = agent;
             Name = "Creature Act";
         }
 
-        public  CreatureAct()
+        public CreatureAct()
         {
 
         }
-
-  
-
     }
-
 }

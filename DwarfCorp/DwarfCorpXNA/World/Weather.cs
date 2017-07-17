@@ -324,23 +324,23 @@ namespace DwarfCorp
 
                     if (!MathFunctions.RandEvent(0.1f)) continue;
 
-                    VoxelHandle above = test.IsEmpty ? test : test.GetVoxelAbove();
+                    var above = test.IsEmpty ? test.tvh : VoxelHelpers.GetVoxelAbove(test.tvh);
 
-                    if (above == null) continue;
+                    if (!above.IsValid) continue;
                     if (stormProperties.CreatesLiquid && 
-                        (above.WaterLevel < WaterManager.maxWaterLevel && (above.Water.Type == LiquidType.Water || above.Water.Type == LiquidType.None)))
+                        (above.WaterCell.WaterLevel < WaterManager.maxWaterLevel && (above.WaterCell.Type == LiquidType.Water || above.WaterCell.Type == LiquidType.None)))
                     {
-                        WaterCell water = above.Water;
+                        WaterCell water = above.WaterCell;
                         water.WaterLevel = (byte)Math.Min(WaterManager.maxWaterLevel, water.WaterLevel + WaterManager.rainFallAmount);
                         water.Type = stormProperties.LiquidToCreate;
                                    
-                        above.Water = water;
+                        above.WaterCell = water;
                         above.Chunk.ShouldRebuildWater = true;
                     }
-                    else if (stormProperties.CreatesVoxel && above.IsEmpty && above.WaterLevel == 0)
+                    else if (stormProperties.CreatesVoxel && above.IsEmpty && above.WaterCell.WaterLevel == 0)
                     {
                         above.Type = stormProperties.VoxelToCreate;
-                        above.Water = new WaterCell();
+                        above.WaterCell = new WaterCell();
                         above.Health = above.Type.StartingHealth;
                         chunks.ChunkData.NotifyRebuild(above.Coordinate);
                     }

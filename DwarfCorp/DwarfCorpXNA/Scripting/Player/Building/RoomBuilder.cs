@@ -268,11 +268,11 @@ namespace DwarfCorp
                     continue;
                 }
 
-        
-                if (!v.GetVoxelAbove().IsEmpty)
-                {
+
+                var above = VoxelHelpers.GetVoxelAbove(v.tvh);
+                if (above.IsValid && !v.IsEmpty)
                     continue;
-                }
+
 
                 if(order == null)
                 {

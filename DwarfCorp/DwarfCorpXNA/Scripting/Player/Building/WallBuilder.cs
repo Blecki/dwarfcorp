@@ -140,6 +140,12 @@ namespace DwarfCorp
             return des.ReservedCreature;
         }
 
+        public bool IsDesignation(GlobalVoxelCoordinate Location)
+        {
+            return Designations.Any(d => d.Vox.Coordinate == Location);
+        }
+
+        // Todo: %KILL% 
         public bool IsDesignation(VoxelHandle reference)
         {
             foreach(WallBuilder put in Designations)
@@ -153,7 +159,12 @@ namespace DwarfCorp
             return false;
         }
 
+        public WallBuilder GetDesignation(GlobalVoxelCoordinate Location)
+        {
+            return Designations.FirstOrDefault(d => d.Vox.Coordinate == Location);
+        }
 
+        // Todo: %KILL%
         public WallBuilder GetDesignation(VoxelHandle v)
         {
             foreach(WallBuilder put in Designations)

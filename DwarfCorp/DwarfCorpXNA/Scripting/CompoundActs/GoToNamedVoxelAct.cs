@@ -43,34 +43,43 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GoToNamedVoxelAct : CompoundCreatureAct
     {
-        public string Voxel { get; set; }
+        public string VoxelName;
+        public PlanAct.PlanType PlanType;
+        public float Radius;
 
-        public GoToNamedVoxelAct()
+        public GoToNamedVoxelAct() : base()
         {
 
         }
 
-        public GoToNamedVoxelAct(string voxel, CreatureAI creature) :
+        public GoToNamedVoxelAct(string voxel, PlanAct.PlanType planType, CreatureAI creature, float radius = 0.0f) :
             base(creature)
         {
-            Voxel = voxel;
+            Radius = radius;
+            PlanType = planType;
+            VoxelName = voxel;
             Name = "Go to DestinationVoxel " + voxel;
         }
 
         public override void Initialize()
         {
-            Tree = new Sequence(
-                new ForLoop(new Sequence( 
-                                  new PlanAct(Agent, "PathToVoxel", Voxel, PlanAct.PlanType.Adjacent),
-                                  new FollowPathAct(Agent, "PathToVoxel")
-                                 )
-                                   , 3, true),
-                                  new StopAct(Agent));
-
+            if (!String.IsNullOrEmpty(VoxelName))
+            {
+                // Todo: Purpose of nested Sequence acts?
+                Tree = new Sequence(
+                    new Sequence(
+                        new PlanAct(Agent, "PathToVoxel", VoxelName, PlanType) { Radius = Radius },
+                        new FollowPathAct(Agent, "PathToVoxel")),
+                    new StopAct(Agent));
+            }
             base.Initialize();
         }
 
-
+        // Todo: Can this be removed?
+        public override IEnumerable<Act.Status> Run()
+        {
+            return base.Run();
+        }
     }
 
 }

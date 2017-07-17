@@ -168,7 +168,6 @@ namespace DwarfCorp
         {
             get { return Chunk.IsInterior((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z); }
         }
-        private static readonly Color BlankColor = new Color(0, 255, 0);
 
         // Todo: %KILL% - Can get from chunk. Verify proper serialization.
         private GlobalChunkCoordinate chunkID = new GlobalChunkCoordinate(0, 0, 0);
@@ -194,34 +193,10 @@ namespace DwarfCorp
                 Chunk.Data.Health[Index] = (byte)(Math.Max(Math.Min(value, 255.0f), 0.0f));
             }
         }
-
       
         public uint GetID()
         {
             return (uint) GetHashCode();
-        }
-
-        // Todo: %Kill%
-        public bool IsTopEmpty()
-        {
-            if(GridPosition.Y >= VoxelConstants.ChunkSizeY)
-            {
-                return true;
-            }
-            return
-                Chunk.Data.Types[
-                    VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(GridPosition.X, GridPosition.Y + 1,  GridPosition.Z))] == 0;
-        }
-
-        // Todo: %Kill%
-        public VoxelHandle GetVoxelAbove()
-        {
-            if (Chunk == null || GridPosition.Y >= VoxelConstants.ChunkSizeY - 1)
-            {
-                return null;
-            }
-            return
-                Chunk.MakeVoxel((int) GridPosition.X, (int) GridPosition.Y + 1, (int) GridPosition.Z);
         }
 
         // Todo: %KILL%
@@ -369,6 +344,15 @@ namespace DwarfCorp
         public override string ToString()
         {
             return String.Format("DestinationVoxel {{{0}, {1}, {2}}}", gridpos.X, gridpos.Y, gridpos.Z);
+        }
+
+        // Todo: %KILL%
+        public TemporaryVoxelHandle tvh
+        {
+            get
+            {
+                return new TemporaryVoxelHandle(Chunk, GridPosition);
+            }
         }
     }
 
