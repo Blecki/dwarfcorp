@@ -200,10 +200,14 @@ namespace DwarfCorp.GameStates
                         case "Medium": Settings.ColonySize = new Point3(10, 1, 10); break;
                     }
 
-                    float w = Settings.ColonySize.X * Settings.WorldScale;
-                    float h = Settings.ColonySize.Z * Settings.WorldScale;
-                    float clickX = System.Math.Max(System.Math.Min(Settings.WorldGenerationOrigin.X, Settings.Width - w - 1), w + 1);
-                    float clickY = System.Math.Max(System.Math.Min(Settings.WorldGenerationOrigin.Y, Settings.Height - h - 1), h + 1);
+                    int chunkSize = 16;
+                    var worldSize = Settings.ColonySize.ToVector3() * chunkSize / Settings.WorldScale;
+
+                    float w = worldSize.X / 2;
+                    float h = worldSize.Z / 2;
+
+                    float clickX = System.Math.Max(System.Math.Min(Settings.WorldGenerationOrigin.X, Settings.Width - w), w);
+                    float clickY = System.Math.Max(System.Math.Min(Settings.WorldGenerationOrigin.Y, Settings.Height - h), h);
 
                     Settings.WorldGenerationOrigin = new Vector2((int)(clickX), (int)(clickY));
                 }

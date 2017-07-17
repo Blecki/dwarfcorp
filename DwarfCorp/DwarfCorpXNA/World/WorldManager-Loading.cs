@@ -323,18 +323,18 @@ namespace DwarfCorp
                 else
                 {
                     Time = new WorldTime();
-
                     var globalOffset = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y) * WorldScale;
 
-                    Camera = new OrbitCamera(this, new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + new Vector3(WorldOrigin.X, 0, WorldOrigin.Y) * WorldScale,
+                    Camera = new OrbitCamera(this, 
+                        new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + new Vector3(WorldOrigin.X, 0, WorldOrigin.Y) * WorldScale,
                         new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + new Vector3(WorldOrigin.X, 0, WorldOrigin.Y) * WorldScale + Vector3.Up * 10.0f + Vector3.Backward * 10,
                         MathHelper.PiOver4, AspectRatio, 0.1f,
                         GameSettings.Default.VertexCullDistance);
 
                     var chunkOffset = ChunkManager.ChunkData.RoundToChunkCoords(globalOffset);
-                    globalOffset.X = chunkOffset.X * ChunkWidth;
-                    globalOffset.Y = chunkOffset.Y * ChunkHeight;
-                    globalOffset.Z = chunkOffset.Z * ChunkWidth;
+                    //globalOffset.X = chunkOffset.X * ChunkWidth;
+                    //globalOffset.Y = chunkOffset.Y * ChunkHeight;
+                    //globalOffset.Z = chunkOffset.Z * ChunkWidth;
 
                     WorldOrigin = new Vector2(globalOffset.X, globalOffset.Z);
                     Camera.Position = new Vector3(0, 10, 0) + globalOffset;

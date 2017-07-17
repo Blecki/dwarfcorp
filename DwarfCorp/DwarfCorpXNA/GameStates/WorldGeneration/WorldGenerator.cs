@@ -837,18 +837,22 @@ namespace DwarfCorp.GameStates
             }
         }
 
+        // Spawn rectangle in world map pixel units
         public Rectangle GetSpawnRectangle()
         {
-            int w = (int)(Settings.ColonySize.X * Settings.WorldScale);
-            int h = (int)(Settings.ColonySize.Z * Settings.WorldScale);
-            return new Rectangle((int)Settings.WorldGenerationOrigin.X - w, (int)Settings.WorldGenerationOrigin.Y - h, w * 2, h * 2);
+            int chunkSize = 16;
+            int w = (int)(Settings.ColonySize.X * chunkSize / Settings.WorldScale);
+            int h = (int)(Settings.ColonySize.Z * chunkSize / Settings.WorldScale);
+            return new Rectangle(
+                (int)Settings.WorldGenerationOrigin.X - w / 2, (int)Settings.WorldGenerationOrigin.Y - h / 2, w, h);
         }
 
+        // Get origin in world map pixel units
         public Vector2 GetOrigin(Point clickPoint, Vector3 worldSize)
         {
             return new Vector2(
-                System.Math.Max(System.Math.Min(clickPoint.X, Settings.Width  - worldSize.X), worldSize.X),
-                System.Math.Max(System.Math.Min(clickPoint.Y, Settings.Height - worldSize.Z), worldSize.Z)
+                System.Math.Max(System.Math.Min(clickPoint.X, Settings.Width  - worldSize.X / 2), worldSize.X / 2),
+                System.Math.Max(System.Math.Min(clickPoint.Y, Settings.Height - worldSize.Z / 2), worldSize.Z / 2)
             );
         }
     }
