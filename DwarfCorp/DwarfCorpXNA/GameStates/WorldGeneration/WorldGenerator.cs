@@ -840,9 +840,8 @@ namespace DwarfCorp.GameStates
         // Spawn rectangle in world map pixel units
         public Rectangle GetSpawnRectangle()
         {
-            int chunkSize = 16;
-            int w = (int)(Settings.ColonySize.X * chunkSize / Settings.WorldScale);
-            int h = (int)(Settings.ColonySize.Z * chunkSize / Settings.WorldScale);
+            int w = (int)(Settings.ColonySize.X * VoxelConstants.ChunkSizeX / Settings.WorldScale);
+            int h = (int)(Settings.ColonySize.Z * VoxelConstants.ChunkSizeZ / Settings.WorldScale);
             return new Rectangle(
                 (int)Settings.WorldGenerationOrigin.X - w / 2, (int)Settings.WorldGenerationOrigin.Y - h / 2, w, h);
         }

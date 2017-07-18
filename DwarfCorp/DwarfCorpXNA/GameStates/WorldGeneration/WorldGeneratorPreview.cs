@@ -162,7 +162,6 @@ namespace DwarfCorp.GameStates
                         var worldSize = Generator.Settings.ColonySize.ToVector3() * chunkSize / Generator.Settings.WorldScale;
                         var clickPoint = ScreenToWorld(new Vector2(args.X, args.Y));
                         Generator.Settings.WorldGenerationOrigin = Generator.GetOrigin(clickPoint, worldSize);
-                        //Vector2 test = Generator.Settings.WorldGenerationOrigin;
                     }
                 },
                 OnMouseMove = (sender, args) =>

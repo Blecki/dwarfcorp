@@ -530,16 +530,6 @@ namespace DwarfCorp
             }
         }
 
-
-
-        public GlobalChunkCoordinate RoundToChunkCoords(Vector3 location)
-        {
-            int x = MathFunctions.FloorInt(location.X * InvCSX);
-            int y = MathFunctions.FloorInt(location.Y * InvCSY);
-            int z = MathFunctions.FloorInt(location.Z * InvCSZ);
-            return new GlobalChunkCoordinate(x, y, z);
-        }
-
         public GlobalChunkCoordinate RoundToChunkCoordsPoint3(Vector3 location)
         {
             int x = MathFunctions.FloorInt(location.X * InvCSX);
