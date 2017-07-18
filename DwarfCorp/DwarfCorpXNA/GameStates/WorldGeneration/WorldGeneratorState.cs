@@ -188,16 +188,16 @@ namespace DwarfCorp.GameStates
             var colonySizeCombo = rightPanel.AddChild(new Gui.Widgets.ComboBox
             {
                 AutoLayout = Gui.AutoLayout.DockTop,
-                Items = new List<string>(new string[] { "Tiny", "Small", "Medium"}),
+                Items = new List<string>(new string[] { "Small", "Medium", "Large" }),
                 Font = "font",
                 TextColor = new Vector4(0, 0, 0, 1),
                 OnSelectedIndexChanged = (sender) =>
                 {
                     switch ((sender as Gui.Widgets.ComboBox).SelectedItem)
                     {
-                        case "Tiny": Settings.ColonySize = new Point3(4, 1, 4); break;
-                        case "Small": Settings.ColonySize = new Point3(8, 1, 8); break;
-                        case "Medium": Settings.ColonySize = new Point3(10, 1, 10); break;
+                        case "Small": Settings.ColonySize = new Point3(4, 1, 4); break;
+                        case "Medium": Settings.ColonySize = new Point3(8, 1, 8); break;
+                        case "Large": Settings.ColonySize = new Point3(10, 1, 10); break;
                     }
 
                     var worldSize = Settings.ColonySize.ToVector3() * VoxelConstants.ChunkSizeX / Settings.WorldScale;
