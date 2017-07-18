@@ -25,6 +25,13 @@ namespace DwarfCorp.Gui.Widgets
             Rect = ExpandedPosition;
             AutoLayout = AutoLayout.None;
 
+            AddChild(ExpandedContents);
+            ExpandedContents.AutoLayout = AutoLayout.DockFill;
+
+            AddChild(CollapsedContents);
+            CollapsedContents.AutoLayout = AutoLayout.DockFill;
+            CollapsedContents.Hidden = true;
+
             ExpandButton = AddChild(new Gui.Widgets.ImageButton
             {
                 Background = new Gui.TileReference("round-buttons", 3),
@@ -34,12 +41,14 @@ namespace DwarfCorp.Gui.Widgets
                 OnClick = (sender, args) =>
                 {
                     Rect = ExpandedPosition;
-                    ExpandButton.Hidden = false;
-                    CollapseButton.Hidden = true;
+                    ExpandButton.Hidden = true;
+                    CollapseButton.Hidden = false;
                     ExpandedContents.Hidden = false;
                     CollapsedContents.Hidden = true;
+                    Layout();
                     Invalidate();
-                }
+                },
+                Hidden = true
             });
 
             CollapseButton = AddChild(new Gui.Widgets.ImageButton
@@ -51,24 +60,33 @@ namespace DwarfCorp.Gui.Widgets
                 OnClick = (sender, args) =>
                 {
                     Rect = CollapsedPosition;
-                    ExpandButton.Hidden = true;
-                    CollapseButton.Hidden = false;
+                    ExpandButton.Hidden = false;
+                    CollapseButton.Hidden = true;
                     ExpandedContents.Hidden = true;
                     CollapsedContents.Hidden = false;
+                    Layout();
                     Invalidate();
-                },
-                Hidden = true
+                }
             });
-
-            AddChild(ExpandedContents);
-            ExpandedContents.AutoLayout = AutoLayout.DockFill;
-
-            AddChild(CollapsedContents);
-            CollapsedContents.AutoLayout = AutoLayout.DockFill;
-            CollapsedContents.Hidden = true;
 
             base.Construct();
         }
-        
+
+        public override void Layout()
+        {
+            Root.SafeCall(OnLayout, this);
+
+            Rect = CollapseButton.Hidden ? CollapsedPosition : ExpandedPosition;
+
+            ExpandedContents.Rect = GetDrawableInterior();
+            CollapsedContents.Rect = GetDrawableInterior();
+
+            ExpandButton.Rect = new Rectangle(Rect.Right - 24, Rect.Top + 8, 16, 16);
+            CollapseButton.Rect = new Rectangle(Rect.Right - 24, Rect.Top + 8, 16, 16);
+
+            ExpandedContents.Layout();
+            CollapsedContents.Layout();
+        }
+
     }
 }

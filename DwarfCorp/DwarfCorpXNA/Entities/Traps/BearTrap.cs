@@ -83,8 +83,7 @@ namespace DwarfCorp
             var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
                 manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(pos)));
-            VoxListener = AddChild(new VoxelListener(manager, manager.World.ChunkManager,
-                    new VoxelHandle(voxelUnder.Coordinate.GetLocalVoxelCoordinate(), voxelUnder.Chunk)))
+            VoxListener = AddChild(new VoxelListener(manager, manager.World.ChunkManager, voxelUnder))
                     as VoxelListener;
 
             Sprite = AddChild(new Sprite(Manager, "Sprite", Matrix.Identity, new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap), false)) as Sprite;

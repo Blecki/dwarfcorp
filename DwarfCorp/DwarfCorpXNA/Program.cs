@@ -61,12 +61,6 @@ namespace DwarfCorp
         /// </summary>
         private static void Main(string[] args)
         {
-            var g = new GlobalVoxelCoordinate(-32, 31, 32);
-            var l = g.GetLocalVoxelCoordinate();
-            var index = VoxelConstants.DataIndexOf(l);
-
-
-
 #if CREATE_CRASH_LOGS
             try
 #endif

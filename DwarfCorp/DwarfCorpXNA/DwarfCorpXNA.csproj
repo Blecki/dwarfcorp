@@ -162,6 +162,7 @@
     <Compile Include="Components\AI\Sensors\EnemySensor.cs" />
     <Compile Include="Components\AI\Sensors\Sensor.cs" />
     <Compile Include="Components\AI\Sensors\TrapSensor.cs" />
+    <Compile Include="Components\AI\Sensors\ExploredListener.cs" />
     <Compile Include="Components\AI\Sensors\VoxelListener.cs" />
     <Compile Include="Components\AI\StatBuff.cs" />
     <Compile Include="Components\AI\ThoughtBuff.cs" />
@@ -368,6 +369,7 @@
     <Compile Include="Tutorial\TutorialSaveData.cs" />
     <Compile Include="Voxels\ChunkRenderer.cs" />
     <Compile Include="Voxels\NewVoxels\Coordinate.cs" />
+    <Compile Include="Voxels\VoxelHelpers\GetVoxelAbove.cs" />
     <Compile Include="Voxels\VoxelHelpers\Reveal.cs" />
     <Compile Include="Voxels\VoxelHelpers\BreadthFirstSearch.cs" />
     <Compile Include="Voxels\VoxelHelpers\EnumerateCoordinatesInBoundingBox.cs" />
@@ -536,7 +538,6 @@
     <Compile Include="Scripting\LeafActs\DropItemAct.cs" />
     <Compile Include="Scripting\LeafActs\FlyWanderAct.cs" />
     <Compile Include="Scripting\LeafActs\FollowPathAct.cs" />
-    <Compile Include="Scripting\LeafActs\GetNearestFreeVoxelInZone.cs" />
     <Compile Include="Scripting\LeafActs\MeleeAct.cs" />
     <Compile Include="Scripting\LeafActs\PlaceRoomResourcesAct.cs" />
     <Compile Include="Scripting\LeafActs\PlaceVoxelAct.cs" />

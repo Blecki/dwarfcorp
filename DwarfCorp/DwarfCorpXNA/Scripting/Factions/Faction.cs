@@ -283,9 +283,7 @@ namespace DwarfCorp
                 removals.Add(d);
 
                 if (!v.IsEmpty)
-                {
-                    v.Kill();
-                }
+                    World.ChunkManager.KillVoxel(v.tvh);
             }
 
             foreach (BuildOrder v in removals)
@@ -376,31 +374,22 @@ namespace DwarfCorp
             return RoomBuilder.DesignatedRooms;
         }
 
-        public void OnVoxelDestroyed(VoxelHandle v)
+        public void OnVoxelDestroyed(TemporaryVoxelHandle V)
         {
-            if(v.IsEmpty)
-            {
+            if(!V.IsValid || V.IsEmpty)
                 return;
-            }
 
-            VoxelHandle Voxel = v;
+            var oldV = new VoxelHandle(V.Coordinate.GetLocalVoxelCoordinate(), V.Chunk);
+            RoomBuilder.OnVoxelDestroyed(oldV);
 
-            RoomBuilder.OnVoxelDestroyed(v);
-
-            List<Stockpile> toRemove = new List<Stockpile>();
-            List<Stockpile> currentStockpiles = new List<Stockpile>();
-            currentStockpiles.AddRange(Stockpiles);
-            foreach (Stockpile s in currentStockpiles)
+            var toRemove = new List<Stockpile>();
+            foreach (var s in new List<Stockpile>(Stockpiles))
             {
-                if(s.ContainsVoxel(Voxel))
-                {
-                    s.RemoveVoxel(Voxel);
-                }
-
+                if(s.ContainsVoxel(V))
+                    s.RemoveVoxel(V);
+                
                 if(s.Voxels.Count == 0)
-                {
                     toRemove.Add(s);
-                }
             }
 
             foreach(Stockpile s in toRemove)
@@ -573,7 +562,7 @@ namespace DwarfCorp
             {
                 if (room.RoomData.Name != typeName || !room.IsBuilt) continue;
                 float dist =
-                    (room.GetNearestVoxel(position).WorldPosition - position).LengthSquared();
+                    (room.GetNearestVoxel(position).Coordinate.ToVector3() - position).LengthSquared();
 
                 if (dist < nearestDistance)
                 {
@@ -627,10 +616,9 @@ namespace DwarfCorp
             return RoomBuilder.DesignatedRooms.Where(room => room.Intersects(v)).ToList();
         }
 
-        public bool IsInStockpile(VoxelHandle v)
+        public bool IsInStockpile(TemporaryVoxelHandle v)
         {
-            VoxelHandle vRef = v;
-            return Stockpiles.Any(s => s.ContainsVoxel(vRef));
+            return Stockpiles.Any(s => s.ContainsVoxel(v));
         }
 
         public Body GetRandomGatherDesignationWithTag(string tag)
@@ -997,7 +985,7 @@ namespace DwarfCorp
             {
                 if (room.Voxels.Count == 0) continue;
                 float dist =
-                    (room.GetNearestVoxel(position).WorldPosition - position).LengthSquared();
+                    (room.GetNearestVoxel(position).Coordinate.ToVector3() - position).LengthSquared();
 
                 if (dist < nearestDistance)
                 {

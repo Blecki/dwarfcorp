@@ -516,8 +516,8 @@ namespace DwarfCorp
             // With a small probability, the creature will drown if its under water.
             if (MathFunctions.RandEvent(0.01f))
             {
-                VoxelHandle above = Physics.CurrentVoxel.GetVoxelAbove();
-                bool shouldDrown = above != null && (!above.IsEmpty || above.WaterLevel > 0);
+                var above = VoxelHelpers.GetVoxelAbove(Physics.CurrentVoxel.tvh);
+                bool shouldDrown = above.IsValid && (!above.IsEmpty || above.WaterCell.WaterLevel > 0);
                 if (Physics.IsInLiquid && (!Movement.CanSwim || shouldDrown))
                 {
                     Creature.Damage(1.0f, Health.DamageType.Normal);
@@ -572,8 +572,7 @@ namespace DwarfCorp
         /// <returns>Success if the jump has succeeded, Fail if it failed, and Running otherwise.</returns>
         public IEnumerable<Act.Status> AvoidFalling()
         {
-            var above = Physics.CurrentVoxel.GetVoxelAbove();
-            // Todo: Use TemporaryVoxelHandle instead.
+            var above = VoxelHelpers.GetVoxelAbove(Physics.CurrentVoxel.tvh);
             foreach (var vox in Neighbors.EnumerateManhattanNeighbors(Physics.CurrentVoxel.Coordinate)
                 .Select(c => new TemporaryVoxelHandle(World.ChunkManager.ChunkData, c)))
             {
@@ -582,9 +581,8 @@ namespace DwarfCorp
 
                 // Avoid teleporting through the block above. Never jump up through the
                 // block above you.
-                if (above != null && !above.IsEmpty)
-                    if (vox.Coordinate.Y >= above.Coordinate.Y)
-                        continue;
+                if (above.IsValid && !above.IsEmpty && vox.Coordinate.Y >= above.Coordinate.Y)
+                    continue;
 
                 var voxAbove = new TemporaryVoxelHandle(World.ChunkManager.ChunkData,
                     new GlobalVoxelCoordinate(vox.Coordinate.X, vox.Coordinate.Y + 1, vox.Coordinate.Z));
@@ -1058,7 +1056,7 @@ namespace DwarfCorp
             public override Act CreateScript(Creature agent)
             {
                 return new Select(
-                    new GoToVoxelAct("", PlanAct.PlanType.Edge, agent.AI),
+                    new GoToNamedVoxelAct("", PlanAct.PlanType.Edge, agent.AI),
                     new Wrap(() => GreedyFallbackBehavior(agent))
                     );
             }

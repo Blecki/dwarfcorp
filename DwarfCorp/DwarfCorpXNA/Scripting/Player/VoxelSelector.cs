@@ -265,7 +265,7 @@ namespace DwarfCorp
                     string info = underMouse.Type.Name;
 
                     // If it belongs to a room, display that information.
-                    if (World.PlayerFaction.RoomBuilder.IsInRoom(underMouse))
+                    if (World.PlayerFaction.RoomBuilder.IsInRoom(underMouse.tvh))
                     {
                         Room room = World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(underMouse);
 

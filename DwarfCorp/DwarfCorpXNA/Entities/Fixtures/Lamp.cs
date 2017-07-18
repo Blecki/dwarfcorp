@@ -131,7 +131,7 @@ namespace DwarfCorp
                 GlobalVoxelCoordinate.FromVector3(position)));
             if (voxelUnder.IsValid)
                 AddChild(new VoxelListener(Manager, Manager.World.ChunkManager,
-                    new VoxelHandle(voxelUnder.Coordinate.GetLocalVoxelCoordinate(), voxelUnder.Chunk)));
+                    voxelUnder));
 
 
             AddChild(new LightEmitter(Manager, "light", Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero, 255, 8)

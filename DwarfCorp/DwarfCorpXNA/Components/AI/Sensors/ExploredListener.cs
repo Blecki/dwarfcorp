@@ -1,4 +1,4 @@
-﻿// GetNearestFreeVoxelInZone.cs
+﻿// VoxelListener.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -33,52 +33,68 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
+using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// This act finds the nearest unoccupied and unreserved voxel in a zone,
-    /// and fills the blackboard with it.
-    /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
-    internal class GetNearestFreeVoxelInZone : CreatureAct
+    [JsonObject(IsReference = true)]
+    public class ExploredListener : GameComponent
     {
-        public Zone TargetZone { get; set; }
-        public string OutputVoxel { get; set; }
-        public bool ReserveVoxel { get; set; }
+        public LocalVoxelCoordinate VoxelID;
 
-        public GetNearestFreeVoxelInZone(CreatureAI agent, Zone targetZone, string outputVoxel, bool reserve) :
-            base(agent)
+        [JsonIgnore]
+        public VoxelChunk Chunk;
+
+        public GlobalChunkCoordinate ChunkID { get; set; }
+
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
         {
-            Name = "Get Free DestinationVoxel";
-            OutputVoxel = outputVoxel;
-            TargetZone = targetZone;
-            ReserveVoxel = reserve;
+            Chunk = (context.Context as WorldManager).ChunkManager.ChunkData.ChunkMap[ChunkID];
+            Chunk.OnVoxelExplored += ExploredListener_OnVoxelExplored;
         }
 
-        public override IEnumerable<Status> Run()
+        public ExploredListener()
         {
-            if(TargetZone == null)
-            {
-                yield return Status.Fail;
-            }
-            else
-            {
-                VoxelHandle v = TargetZone.GetNearestVoxel(Agent.Position);
 
-                if(!v.IsEmpty)
-                {
-                    Agent.Blackboard.SetData(OutputVoxel, v);
-                    yield return Status.Success;
-                }
-                else
-                {
-                    Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
-                    yield return Status.Fail;
-                }
+        }
+
+
+        public ExploredListener(ComponentManager manager, ChunkManager chunkManager, VoxelHandle vref) :
+            base("ExploredListener", manager)
+        {
+            Chunk = vref.Chunk;
+            VoxelID = vref.GridPosition;
+            Chunk.OnVoxelExplored += ExploredListener_OnVoxelExplored;
+            ChunkID = Chunk.ID;
+
+        }
+
+        void ExploredListener_OnVoxelExplored(LocalVoxelCoordinate voxelID)
+        {
+            if (voxelID == VoxelID)
+            {
+                GetRoot().SetFlagRecursive(Flag.Active, true);
+                GetRoot().SetFlagRecursive(Flag.Visible, true);
+                Delete();
             }
+        }
+
+        public override void Die()
+        {
+            Chunk.OnVoxelExplored -= ExploredListener_OnVoxelExplored;
+            base.Die();
+        }
+
+        public override void Delete()
+        {
+            Chunk.OnVoxelExplored -= ExploredListener_OnVoxelExplored;
+            base.Delete();
         }
     }
-
 }

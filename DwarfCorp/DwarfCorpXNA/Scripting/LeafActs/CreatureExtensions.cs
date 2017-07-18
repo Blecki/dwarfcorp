@@ -308,7 +308,7 @@ namespace DwarfCorp
                     agent.Stats.NumBlocksDestroyed++;
                     agent.World.GoalManager.OnGameEvent(new Goals.Events.DigBlock(voxelType, agent));
 
-                    List<Body> items = vox.Kill();
+                    var items = agent.World.ChunkManager.KillVoxel(vox.tvh);
 
                     if (items != null)
                     {

@@ -47,12 +47,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class VoxelListener : GameComponent, IUpdateableComponent
     {
-        public LocalVoxelCoordinate VoxelID;
-
-        [JsonIgnore]
-        public VoxelChunk Chunk;
-
-        public GlobalChunkCoordinate ChunkID { get; set; }
+        public TemporaryVoxelHandle Voxel;
 
         private bool firstIter = false;
 
@@ -63,9 +58,10 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            Chunk = (context.Context as WorldManager).ChunkManager.ChunkData.ChunkMap[ChunkID];
             firstIter = true;
-            Chunk.OnVoxelDestroyed += VoxelListener_OnVoxelDestroyed;
+
+            if (Voxel.IsValid)
+                Voxel.Chunk.OnVoxelDestroyed += VoxelListener_OnVoxelDestroyed;
         }
 
         public VoxelListener()
@@ -74,24 +70,20 @@ namespace DwarfCorp
         }
 
 
-        public VoxelListener(ComponentManager manager, ChunkManager chunkManager, VoxelHandle vref) :
-            base("VoxelListener", manager)
+        public VoxelListener(ComponentManager Manager, ChunkManager chunkManager, TemporaryVoxelHandle Voxel) :
+            base("VoxelListener", Manager)
         {
-            Chunk = vref.Chunk;
-            VoxelID = vref.GridPosition;
-            Chunk.OnVoxelDestroyed += VoxelListener_OnVoxelDestroyed;
-            ChunkID = Chunk.ID;
-
+            this.Voxel = Voxel;
+            if (Voxel.IsValid)
+                Voxel.Chunk.OnVoxelDestroyed += VoxelListener_OnVoxelDestroyed;
         }
 
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (firstIter)
             {
-                if (Chunk.Data.Types[VoxelConstants.DataIndexOf(VoxelID)] == 0)
-                {
+                if (!Voxel.IsValid || Voxel.TypeID == 0)
                     Delete();
-                }
                 firstIter = false;
             }
 
@@ -102,85 +94,28 @@ namespace DwarfCorp
                 if (DestroyTimer.HasTriggered)
                 {
                     Die();
-                    Chunk.MakeVoxel(VoxelID.X, VoxelID.Y, VoxelID.Z).Kill();
+                    chunks.KillVoxel(Voxel);
                 }
             }
         }
 
         void VoxelListener_OnVoxelDestroyed(LocalVoxelCoordinate voxelID)
         {
-            if (voxelID == VoxelID)
-            {
+            if (Voxel.IsValid && Voxel.Coordinate == (Voxel.Chunk.ID + voxelID))
                 GetRoot().Die();
-            }
         }
 
         public override void Die()
         {
-            Chunk.OnVoxelDestroyed -= VoxelListener_OnVoxelDestroyed;
+            if (Voxel.IsValid)
+                Voxel.Chunk.OnVoxelDestroyed -= VoxelListener_OnVoxelDestroyed;
             base.Die();
         }
 
         public override void Delete()
         {
-            Chunk.OnVoxelDestroyed -= VoxelListener_OnVoxelDestroyed;
-            base.Delete();
-        }
-    }
-
-    [JsonObject(IsReference = true)]
-    public class ExploredListener : GameComponent
-    {
-        public LocalVoxelCoordinate VoxelID;
-
-        [JsonIgnore]
-        public VoxelChunk Chunk;
-
-        public GlobalChunkCoordinate ChunkID { get; set; }
-
-
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
-        {
-            Chunk = (context.Context as WorldManager).ChunkManager.ChunkData.ChunkMap[ChunkID];
-            Chunk.OnVoxelExplored += ExploredListener_OnVoxelExplored;
-        }
-
-        public ExploredListener()
-        {
-
-        }
-
-
-        public ExploredListener(ComponentManager manager, ChunkManager chunkManager, VoxelHandle vref) :
-            base("ExploredListener", manager)
-        {
-            Chunk = vref.Chunk;
-            VoxelID = vref.GridPosition;
-            Chunk.OnVoxelExplored += ExploredListener_OnVoxelExplored;
-            ChunkID = Chunk.ID;
-
-        }
-
-        void ExploredListener_OnVoxelExplored(LocalVoxelCoordinate voxelID)
-        {
-            if (voxelID == VoxelID)
-            {
-                GetRoot().SetFlagRecursive(Flag.Active, true);
-                GetRoot().SetFlagRecursive(Flag.Visible, true);
-                Delete();
-            }
-        }
-
-        public override void Die()
-        {
-            Chunk.OnVoxelExplored -= ExploredListener_OnVoxelExplored;
-            base.Die();
-        }
-
-        public override void Delete()
-        {
-            Chunk.OnVoxelExplored -= ExploredListener_OnVoxelExplored;
+            if (Voxel.IsValid)
+                Voxel.Chunk.OnVoxelDestroyed -= VoxelListener_OnVoxelDestroyed;
             base.Delete();
         }
     }

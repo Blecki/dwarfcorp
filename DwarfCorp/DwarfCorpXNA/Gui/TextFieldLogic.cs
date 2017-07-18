@@ -9,6 +9,8 @@ namespace DwarfCorp.Gui
     {
         public static String Process(String Text, int CursorPosition, int Character, out int NewCursorPosition)
         {
+            CursorPosition = MathFunctions.Clamp(CursorPosition, 0, Text.Length);
+
             if (Character == 8) // Backspace
             {
                 if (CursorPosition == 0)
@@ -40,7 +42,7 @@ namespace DwarfCorp.Gui
             else if (Character >= 32 && Character <= 126) // Ascii printable range.
             {
                 NewCursorPosition = CursorPosition + 1;
-                return Text.Substring(0, CursorPosition) + new String((char)Character, 1) + Text.Substring(CursorPosition, Text.Length - CursorPosition);
+                return Text.Substring(0, CursorPosition) + new String((char)Character, 1) + Text.Substring(CursorPosition);
             }
             else
             {

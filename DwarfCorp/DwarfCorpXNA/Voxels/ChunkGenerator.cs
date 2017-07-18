@@ -526,7 +526,7 @@ namespace DwarfCorp
                         }
                         else if(y > h && y > 0)
                         {
-                            voxel.Type = VoxelLibrary.GetVoxelType("empty");
+                            voxel.Type = VoxelLibrary.GetVoxelType(0);
                         }
                         else if(hNorm <= waterHeight)
                         {

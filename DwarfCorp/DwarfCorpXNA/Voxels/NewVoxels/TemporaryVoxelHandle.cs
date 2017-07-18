@@ -115,6 +115,11 @@ namespace DwarfCorp
             {
                 return _cache_Chunk.Data.Types[_cache_Index];
             }
+            set
+            {
+                _cache_Chunk.Data.Types[_cache_Index] = value;
+                _cache_Chunk.Data.Health[_cache_Index] = (byte)VoxelType.TypeList[value].StartingHealth;
+            }
         }
 
         // Todo: Eliminate members that aren't straight pass throughs to the underlying data.
@@ -161,19 +166,17 @@ namespace DwarfCorp
             set { _cache_Chunk.Data.Water[_cache_Index] = value; }
         }
 
-        //[JsonIgnore]
-        //public byte LiquidLevel
-        //{
-        //    get { return _cache_Chunk.Data.LiquidLevel[_cache_Index]; }
-        //    set { _cache_Chunk.Data.LiquidLevel[_cache_Index] = value; }
-        //}
-
-        //[JsonIgnore]
-        //public byte LiquidType
-        //{
-        //    get { return _cache_Chunk.Data.LiquidType[_cache_Index]; }
-        //    set { _cache_Chunk.Data.LiquidType[_cache_Index] = value; }
-        //}
+        [JsonIgnore]
+        public float Health
+        {
+            get { return (float)_cache_Chunk.Data.Health[_cache_Index]; }
+            set
+            {
+                // Todo: Bad spot for this. Ideally is checked by whatever is trying to damage the voxel.
+                if (Type.IsInvincible) return;
+                _cache_Chunk.Data.Health[_cache_Index] = (byte)(Math.Max(Math.Min(value, 255.0f), 0.0f));
+            }
+        }
 
         #endregion
     }

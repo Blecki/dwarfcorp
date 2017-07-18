@@ -667,7 +667,7 @@ namespace DwarfCorp
             bool fogOfWar = GameSettings.Default.FogofWar;
             GameSettings.Default.FogofWar = true;
             VoxelHelpers.Reveal(ChunkData, new TemporaryVoxelHandle(
-                ChunkData, new GlobalVoxelCoordinate(0, VoxelConstants.ChunkSizeY - 1, 0)));
+                ChunkData.ChunkMap.FirstOrDefault().Value, new LocalVoxelCoordinate(0, VoxelConstants.ChunkSizeY - 1, 0)));
 GameSettings.Default.FogofWar = fogOfWar;
 
             //UpdateRebuildList();
@@ -870,5 +870,43 @@ GameSettings.Default.FogofWar = fogOfWar;
             WaterThread.Join();
             ChunkData.ChunkMap.Clear();
         }
+
+        public List<Body> KillVoxel(TemporaryVoxelHandle Voxel)
+        {
+            if (!Voxel.IsValid || Voxel.IsEmpty)
+                return null;
+
+            if (World.ParticleManager != null)
+            {
+                World.ParticleManager.Trigger(Voxel.Type.ParticleType, 
+                    Voxel.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
+                World.ParticleManager.Trigger("puff", 
+                    Voxel.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
+            }
+
+            if (World.Master != null)
+                World.Master.Faction.OnVoxelDestroyed(Voxel);
+
+            Voxel.Type.ExplosionSound.Play(Voxel.Coordinate.ToVector3());
+
+            List<Body> emittedResources = null;
+            if (Voxel.Type.ReleasesResource)
+            {
+                if (MathFunctions.Rand() < Voxel.Type.ProbabilityOfRelease)
+                {
+                    emittedResources = new List<Body>
+                    {
+                        EntityFactory.CreateEntity<Body>(Voxel.Type.ResourceToRelease + " Resource",
+                            Voxel.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f))
+                    };
+                }
+            }
+
+            KilledVoxels.Add(Voxel);
+            Voxel.TypeID = 0;
+
+            return emittedResources;
+        }
+
     }
 }

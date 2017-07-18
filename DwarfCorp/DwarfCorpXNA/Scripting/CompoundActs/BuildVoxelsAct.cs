@@ -77,8 +77,8 @@ namespace DwarfCorp
             int i = 0;
             foreach (KeyValuePair<VoxelHandle, VoxelType> pair in Voxels)
             {
-                children.Add(new GoToVoxelAct(pair.Key, PlanAct.PlanType.Radius, Agent, 3.0f));
-                children.Add(new PlaceVoxelAct(pair.Key, Creature.AI, resources[i]));
+                children.Add(new GoToVoxelAct(pair.Key.tvh, PlanAct.PlanType.Radius, Agent, 3.0f));
+                children.Add(new PlaceVoxelAct(pair.Key.Coordinate, Creature.AI, resources[i]));
                 i++;
             }
 

@@ -122,8 +122,8 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature creature)
         {
-            VoxelHandle above = creature.Physics.CurrentVoxel.GetVoxelAbove();
-            if ((above != null && above.WaterLevel > 0 ) || creature.AI.Movement.CanFly)
+            var above = VoxelHelpers.GetVoxelAbove(creature.Physics.CurrentVoxel.tvh);
+            if ((above.IsValid && above.WaterCell.WaterLevel > 0 ) || creature.AI.Movement.CanFly)
             {
                 return new Wrap(() => SwimUp(creature)) { Name = "Swim up"};
             }
@@ -131,9 +131,7 @@ namespace DwarfCorp
             var findLand = FindLand(creature.World.ChunkManager.ChunkData,
                 creature.Physics.CurrentVoxel.Coordinate, 3);
             if (findLand.IsValid)
-                return new GoToVoxelAct(
-                    new VoxelHandle(findLand.Coordinate.GetLocalVoxelCoordinate(), findLand.Chunk),
-                    PlanAct.PlanType.Into, creature.AI);
+                return new GoToVoxelAct(findLand, PlanAct.PlanType.Into, creature.AI);
             else
             { 
                 if (creature.Faction.GetRooms().Count == 0)

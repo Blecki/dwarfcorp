@@ -69,7 +69,7 @@ namespace DwarfCorp
                 GlobalVoxelCoordinate.FromVector3(position)));
             if (voxelUnder.IsValid)
                 AddChild(new VoxelListener(Manager, Manager.World.ChunkManager,
-                    new VoxelHandle(voxelUnder.Coordinate.GetLocalVoxelCoordinate(), voxelUnder.Chunk)));
+                    voxelUnder));
 
 
             Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)

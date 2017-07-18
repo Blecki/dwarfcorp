@@ -43,31 +43,31 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class BuildVoxelAct : CompoundCreatureAct
     {
-        public VoxelHandle Voxel { get; set; }
-   
         public BuildVoxelAct()
         {
             
         }
 
-        public BuildVoxelAct(CreatureAI creature, VoxelHandle voxel, VoxelType type) :
-            base(creature)
+        public BuildVoxelAct(
+            CreatureAI AI, 
+            GlobalVoxelCoordinate Location, 
+            VoxelType Type) :
+            base(AI)
         {
-            Voxel = voxel;
             Name = "Build voxel";
 
-            List<ResourceAmount> resources = new List<ResourceAmount>()
+            var resources = new List<ResourceAmount>()
             {
-                new ResourceAmount(ResourceLibrary.Resources[type.ResourceToRelease], 1)
+                new ResourceAmount(ResourceLibrary.Resources[Type.ResourceToRelease], 1)
             };
 
-            if(Agent.Faction.WallBuilder.IsDesignation(voxel))
+            if(Agent.Faction.WallBuilder.IsDesignation(Location))
             {
-
                 Tree = new Sequence(new GetResourcesAct(Agent, resources),
                     new Sequence(
-                        new GoToVoxelAct(voxel, PlanAct.PlanType.Adjacent, Agent),
-                        new PlaceVoxelAct(voxel, creature, resources.First()), new Wrap(Creature.RestockAll)) | new Wrap(Creature.RestockAll)
+                        new GoToVoxelAct(new TemporaryVoxelHandle(AI.World.ChunkManager.ChunkData,
+                            Location), PlanAct.PlanType.Adjacent, Agent),
+                        new PlaceVoxelAct(Location, AI, resources.First()), new Wrap(Creature.RestockAll)) | new Wrap(Creature.RestockAll)
                     );
             }
             else

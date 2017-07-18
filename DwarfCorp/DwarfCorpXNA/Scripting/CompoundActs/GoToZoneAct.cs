@@ -30,10 +30,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace DwarfCorp
 {
@@ -63,32 +60,20 @@ namespace DwarfCorp
             base.Initialize();
         }
 
-
-
-
         public override IEnumerable<Status> Run()
         {
             if (Tree == null)
             {
-                VoxelHandle voxel = Destination.GetNearestVoxel(Agent.Position);
-
+                var voxel = Destination.GetNearestVoxel(Agent.Position);
                 Tree = new GoToVoxelAct(voxel, PlanAct.PlanType.Adjacent, Agent);
-
                 Tree.Initialize();
             }
 
             if (Tree == null)
-            {
                 yield return Status.Fail;
-            }
             else
-            {
                 foreach (Status s in base.Run())
-                {
                     yield return s;
-                }
-            }
         }
     }
-
 }

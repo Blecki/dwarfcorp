@@ -48,13 +48,18 @@ namespace DwarfCorp
     public class Zone
     {
         public string ID = "";
-        public List<VoxelHandle> Voxels = new List<VoxelHandle>();
+        public List<TemporaryVoxelHandle> Voxels = new List<TemporaryVoxelHandle>();
         public List<Body> ZoneBodies = new List<Body>();
         
         [JsonProperty]
         protected int ResPerVoxel = 8;
+
         [JsonIgnore]
-        public int ResourcesPerVoxel { get { return ResPerVoxel; } set { ResPerVoxel = value; RecalculateMaxResources(); } }
+        public int ResourcesPerVoxel
+        {
+            get { return ResPerVoxel; }
+            set { ResPerVoxel = value; RecalculateMaxResources(); }
+        }
         
         [JsonIgnore]
         public bool ReplaceVoxelTypes
@@ -163,11 +168,11 @@ namespace DwarfCorp
                 body.Die();
             }
 
-            List<VoxelHandle> voxelsToKill = new List<VoxelHandle>();
+            var voxelsToKill = new List<TemporaryVoxelHandle>();
             voxelsToKill.AddRange(Voxels);
-            foreach (VoxelHandle voxel in voxelsToKill)
+            foreach (var voxel in voxelsToKill)
             {
-                voxel.Kill();
+                World.ChunkManager.KillVoxel(voxel);
             }
 
             ClearItems();
@@ -186,26 +191,22 @@ namespace DwarfCorp
         }
 
         
-        public bool ContainsVoxel(VoxelHandle voxel)
+        public bool ContainsVoxel(TemporaryVoxelHandle voxel)
         {
-            return Voxels.Any(store => store.Equals(voxel));
+            return Voxels.Any(store => store == voxel);
         }
 
-        public virtual void RemoveVoxel(VoxelHandle voxel)
+        public virtual void RemoveVoxel(TemporaryVoxelHandle voxel)
         {
-            VoxelHandle toRemove = Voxels.FirstOrDefault(store => store.Equals(voxel));
+            var toRemove = Voxels.FirstOrDefault(store => store == voxel);
 
-            if(toRemove == null)
-            {
+            if(!toRemove.IsValid)
                 return;
-            }
 
             Voxels.Remove(toRemove);
 
-            if(ReplaceVoxelTypes)
-            {
-                toRemove.Kill();
-            }
+            if (ReplaceVoxelTypes)
+                World.ChunkManager.KillVoxel(toRemove);
 
             RecalculateMaxResources();
         }
@@ -229,36 +230,33 @@ namespace DwarfCorp
             }
         }
 
-        public virtual void AddVoxel(VoxelHandle voxel)
+        public virtual void AddVoxel(TemporaryVoxelHandle Voxel)
         {
-            if(ContainsVoxel(voxel))
-            {
+            if(ContainsVoxel(Voxel))
                 return;
-            }
 
-            Voxels.Add(voxel);
+            Voxels.Add(Voxel);
 
             if(ReplaceVoxelTypes)
             {
-                VoxelHandle v = voxel;
-                v.Type = ReplacementType;
-                v.Chunk.ShouldRebuild = true;
-                v.Chunk.ReconstructRamps = true;
+                Voxel.Type = ReplacementType;
+                Voxel.Chunk.ShouldRebuild = true;
+                Voxel.Chunk.ReconstructRamps = true;
             }
 
             RecalculateMaxResources();
           
         }
 
-        public VoxelHandle GetNearestVoxel(Vector3 position)
+        public TemporaryVoxelHandle GetNearestVoxel(Vector3 position)
         {
-            VoxelHandle closest = null;
+            TemporaryVoxelHandle closest = TemporaryVoxelHandle.InvalidHandle;
             Vector3 halfSize = new Vector3(0.5f, 0.5f, 0.5f);
             double closestDist = double.MaxValue;
 
-            foreach (VoxelHandle v in Voxels)
+            foreach (var v in Voxels)
             {
-                double d = (v.WorldPosition - position + halfSize).LengthSquared();
+                double d = (v.Coordinate.ToVector3() - position + halfSize).LengthSquared();
 
                 if(d < closestDist)
                 {
@@ -289,6 +287,7 @@ namespace DwarfCorp
             return Intersects(v.GetBoundingBox());
         }
 
+        // Todo: Faster algorithm - find min and max voxel extents and create bounding box from that.
         public BoundingBox GetBoundingBox()
         {
             List<BoundingBox> boxes = Voxels.Select(storage => storage.GetBoundingBox()).ToList();

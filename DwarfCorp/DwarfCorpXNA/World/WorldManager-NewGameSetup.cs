@@ -164,8 +164,8 @@ namespace DwarfCorp
 
             var affectedChunks = new HashSet<GlobalVoxelCoordinate>();
             // Next, create the balloon port by deciding which voxels to fill.
-            List<VoxelHandle> balloonPortDesignations = new List<VoxelHandle>();
-            List<VoxelHandle> treasuryDesignations = new List<VoxelHandle>();
+            var balloonPortDesignations = new List<TemporaryVoxelHandle>();
+            var treasuryDesignations = new List<TemporaryVoxelHandle>();
             for (int dx = -size; dx <= size; dx++)
             {
                 for (int dz = -size; dz <= size; dz++)
@@ -233,10 +233,14 @@ namespace DwarfCorp
                     // Fill from the top height down to the bottom.
                     for (int y = h - 1; y < averageHeight; y++)
                     {
-                        VoxelHandle v = chunk.MakeVoxel((int)gridPos.X, y, (int)gridPos.Z);
+                        var v = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate((int)gridPos.X, y, (int)gridPos.Z));
                         v.Type = VoxelLibrary.GetVoxelType("Scaffold");
-                        chunk.Data.Water[v.Index].WaterLevel = 0;
-                        v.Chunk = chunk;
+                        v.WaterCell = new WaterCell
+                        {
+                            Type = LiquidType.None,
+                            WaterLevel = 0
+                        };
+
                         chunkManager.ChunkData.NotifyRebuild(v.Coordinate);
 
                         if (y == averageHeight - 1)
@@ -253,13 +257,12 @@ namespace DwarfCorp
 
                         if (isSide)
                         {
-                            VoxelHandle ladderVox = new VoxelHandle();
-
-                            Vector3 center = new Vector3(worldPos.X, y, worldPos.Z) + offset + Vector3.One * .5f;
-                            if (chunk.Manager.ChunkData.GetVoxel(center, ref ladderVox) && ladderVox.IsEmpty)
-                            {
-                                EntityFactory.CreateEntity<Ladder>("Wooden Ladder", center);
-                            }
+                            var ladderPos = new Vector3(worldPos.X, y, worldPos.Z) + offset +
+                                Vector3.One * 0.5f;
+                            var ladderVox = new TemporaryVoxelHandle(chunkManager.ChunkData,
+                                GlobalVoxelCoordinate.FromVector3(ladderPos));
+                            if (ladderVox.IsValid && ladderVox.IsEmpty)
+                                EntityFactory.CreateEntity<Ladder>("Wooden Ladder", ladderPos);
                         }
                     }
                 }
