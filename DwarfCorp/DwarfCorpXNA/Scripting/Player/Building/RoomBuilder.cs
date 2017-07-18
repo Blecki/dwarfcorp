@@ -112,7 +112,7 @@ namespace DwarfCorp
 
         public bool IsBuildDesignation(TemporaryVoxelHandle v)
         {
-            return BuildDesignations.SelectMany(room => room.VoxelOrders).Any(buildDesignation => buildDesignation.Voxel.tvh == v);
+            return BuildDesignations.SelectMany(room => room.VoxelOrders).Any(buildDesignation => buildDesignation.Voxel == v);
         }
 
         public bool IsBuildDesignation(Room r)
@@ -130,7 +130,7 @@ namespace DwarfCorp
 
         public BuildVoxelOrder GetBuildDesignation(VoxelHandle v)
         {
-            return BuildDesignations.SelectMany(room => room.VoxelOrders).FirstOrDefault(buildDesignation => (buildDesignation.Voxel.WorldPosition - v.WorldPosition).LengthSquared() < 0.1f);
+            return BuildDesignations.SelectMany(room => room.VoxelOrders).FirstOrDefault(buildDesignation => (buildDesignation.Voxel.Coordinate.ToVector3() - v.WorldPosition).LengthSquared() < 0.1f);
         }
 
         public BuildRoomOrder GetMostLikelyDesignation(TemporaryVoxelHandle v)
@@ -272,8 +272,7 @@ namespace DwarfCorp
 
                 if (order != null)
                 {
-                    order.VoxelOrders.Add(new BuildVoxelOrder(order, order.ToBuild, 
-                        new VoxelHandle(v.Coordinate.GetLocalVoxelCoordinate(), v.Chunk)));
+                    order.VoxelOrders.Add(new BuildVoxelOrder(order, order.ToBuild, v));
                 }
                 else
                 {
@@ -282,8 +281,7 @@ namespace DwarfCorp
                         Room toBuild = RoomLibrary.CreateRoom(Faction, CurrentRoomData.Name, designations.ToList(), true, World);
                         DesignatedRooms.Add(toBuild);
                         order = new BuildRoomOrder(toBuild, Faction, Faction.World);
-                        order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild,
-                            new VoxelHandle(v.Coordinate.GetLocalVoxelCoordinate(), v.Chunk)));
+                        order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild, v));
                         BuildDesignations.Add(order);
                     }
                     else
@@ -291,8 +289,7 @@ namespace DwarfCorp
                         Stockpile toBuild = new Stockpile(Faction, World);
                         DesignatedRooms.Add(toBuild);
                         order = new BuildStockpileOrder(toBuild, this.Faction);
-                        order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild,
-                            new VoxelHandle(v.Coordinate.GetLocalVoxelCoordinate(), v.Chunk)));
+                        order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild, v));
                         BuildDesignations.Add(order);
                     }
                 }
@@ -302,7 +299,7 @@ namespace DwarfCorp
             {
                 order.WorkObjects.AddRange(Fence.CreateFences(World.ComponentManager,
                     ContentPaths.Entities.DwarfObjects.constructiontape,
-                    order.VoxelOrders.Select(o => o.Voxel.tvh),
+                    order.VoxelOrders.Select(o => o.Voxel),
                     true));
                 foreach (var obj in order.WorkObjects)
                 {

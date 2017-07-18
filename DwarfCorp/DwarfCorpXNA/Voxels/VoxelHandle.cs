@@ -307,6 +307,7 @@ namespace DwarfCorp
         }
 
         // Todo: %KILL%
+        [JsonIgnore]
         public TemporaryVoxelHandle tvh
         {
             get

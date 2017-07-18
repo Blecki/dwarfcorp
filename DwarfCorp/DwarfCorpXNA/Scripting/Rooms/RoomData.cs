@@ -137,7 +137,7 @@ namespace DwarfCorp
             }
 
             int height = -1;
-            bool anyEmpty = false;
+            bool anyEmpty = true;
             foreach (VoxelHandle voxel in refs)
             {
                 if (voxel.IsEmpty)
