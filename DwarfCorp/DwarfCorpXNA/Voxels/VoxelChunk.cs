@@ -889,7 +889,7 @@ namespace DwarfCorp
                             break;
                     }
 
-                    for (;y >= 0; y--)
+                    for (y -= 1; y >= 0; y--)
                     {
                         int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
                         Data.SunColors[index] = 0;
