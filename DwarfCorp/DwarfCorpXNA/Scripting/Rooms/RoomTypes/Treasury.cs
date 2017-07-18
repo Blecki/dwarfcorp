@@ -87,7 +87,7 @@ namespace DwarfCorp
             Faction = null;
         }
 
-        public Treasury(Faction faction, IEnumerable<VoxelHandle> voxels, WorldManager world) :
+        public Treasury(Faction faction, IEnumerable<TemporaryVoxelHandle> voxels, WorldManager world) :
             base(voxels, RoomLibrary.GetData(TreasuryName), world, faction)
         {
             Coins = new List<Body>();
@@ -101,7 +101,7 @@ namespace DwarfCorp
             Faction = faction;
         }
 
-        public Treasury(Faction faction, bool designation, IEnumerable<VoxelHandle> designations, RoomData data, WorldManager world) :
+        public Treasury(Faction faction, bool designation, IEnumerable<TemporaryVoxelHandle> designations, RoomData data, WorldManager world) :
             base(designation, designations, data, world, faction)
         {
             Coins = new List<Body>();
@@ -172,7 +172,7 @@ namespace DwarfCorp
             {
                 for (int i = Coins.Count; i < numCoins; i++)
                 {
-                    CreateCoins(Voxels[i].WorldPosition + VertexNoise.GetNoiseVectorFromRepeatingTexture(Voxels[i].WorldPosition));
+                    CreateCoins(Voxels[i].Coordinate.ToVector3() + VertexNoise.GetNoiseVectorFromRepeatingTexture(Voxels[i].Coordinate.ToVector3()));
                 }
             }
 
@@ -223,7 +223,7 @@ namespace DwarfCorp
                 moneyToPut = remainder;
             }
 
-            Vector3 targetToss = Coins.Count == 0 ? Voxels[0].WorldPosition + new Vector3(0.5f, 0.5f, 0.5f) : Coins[Coins.Count - 1].LocalTransform.Translation + new Vector3(0.5f, 0.5f, 0.5f);
+            Vector3 targetToss = Coins.Count == 0 ? Voxels[0].Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f) : Coins[Coins.Count - 1].LocalTransform.Translation + new Vector3(0.5f, 0.5f, 0.5f);
             Body component = EntityFactory.CreateEntity<Body>("Coins", dwarfPos);
             TossMotion toss = new TossMotion(1.0f, 2.5f, component.LocalTransform,
                targetToss);

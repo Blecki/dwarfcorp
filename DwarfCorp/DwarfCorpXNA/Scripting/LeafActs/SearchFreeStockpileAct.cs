@@ -162,19 +162,13 @@ namespace DwarfCorp
                     continue;
                 }
 
-                VoxelHandle v = s.GetNearestVoxel(Creature.Physics.GlobalTransform.Translation);
+                var v = s.GetNearestVoxel(Creature.Physics.GlobalTransform.Translation);
 
-                if(v == null || v.IsEmpty)
-                {
+                if(!v.IsValid || v.IsEmpty)
                     continue;
-                }
 
-                Voxel = v;
+                Voxel = new VoxelHandle(v.Coordinate.GetLocalVoxelCoordinate(), v.Chunk);
                 Stockpile = s;
-                if(Voxel == null)
-                {
-                    continue;
-                }
 
                 validTargetFound = true;
                 break;

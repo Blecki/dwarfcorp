@@ -535,7 +535,6 @@
     <Compile Include="Scripting\LeafActs\DropItemAct.cs" />
     <Compile Include="Scripting\LeafActs\FlyWanderAct.cs" />
     <Compile Include="Scripting\LeafActs\FollowPathAct.cs" />
-    <Compile Include="Scripting\LeafActs\GetNearestFreeVoxelInZone.cs" />
     <Compile Include="Scripting\LeafActs\MeleeAct.cs" />
     <Compile Include="Scripting\LeafActs\PlaceRoomResourcesAct.cs" />
     <Compile Include="Scripting\LeafActs\PlaceVoxelAct.cs" />

@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+    // Todo: Move to VoxelHelpers
     public class Neighbors
     {
         #region Offset Lists
@@ -321,6 +322,12 @@ namespace DwarfCorp
             GlobalVoxelCoordinate Coordinate, VoxelVertex Vertex)
         {
             return EnumerateNeighbors(VertexNeighbors2D[(int)Vertex], Coordinate);
+        }
+
+        public static TemporaryVoxelHandle GetNeighbor(TemporaryVoxelHandle Of, GlobalVoxelOffset Offset)
+        {
+            if (!Of.IsValid) return TemporaryVoxelHandle.InvalidHandle;
+            return new TemporaryVoxelHandle(Of.Chunk.Manager.ChunkData, Of.Coordinate + Offset);
         }
     }
 }

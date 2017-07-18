@@ -120,11 +120,11 @@ namespace DwarfCorp
 
             foreach(BuildVoxelOrder vox in VoxelOrders)
             {
-                ToBuild.AddVoxel(vox.Voxel);
+                ToBuild.AddVoxel(vox.Voxel.tvh);
             }
             IsBuilt = true;
             ToBuild.IsBuilt = true;
-            List<Body> components = RoomLibrary.GenerateRoomComponentsTemplate(ToBuild.RoomData, ToBuild.Voxels,
+            List<Body> components = RoomLibrary.GenerateRoomComponentsTemplate(ToBuild.RoomData, ToBuild.Voxels.Select(v => new VoxelHandle(v.Coordinate.GetLocalVoxelCoordinate(), v.Chunk)).ToList(),
                 Faction.Components, World.ChunkManager.Content, World.ChunkManager.Graphics);
             RoomLibrary.BuildAllComponents(components, ToBuild, World.ParticleManager);
             ToBuild.OnBuilt();

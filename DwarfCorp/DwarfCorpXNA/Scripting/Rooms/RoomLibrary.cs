@@ -111,7 +111,7 @@ namespace DwarfCorp
             return b.Any(p => FurnitureIntersects(a, p));
         }
       
-        public static Room CreateRoom(Faction faction, string name, List<VoxelHandle> designations, bool blueprint, WorldManager world)
+        public static Room CreateRoom(Faction faction, string name, List<TemporaryVoxelHandle> designations, bool blueprint, WorldManager world)
         {
             // TODO(mklingen): omg get rid of this horrible legacy function!
             if (name == BalloonPort.BalloonPortName)
@@ -145,10 +145,8 @@ namespace DwarfCorp
             else if (name == Stockpile.StockpileName)
             {
                 Stockpile toBuild = new Stockpile(faction, world);
-                foreach (VoxelHandle voxel in designations)
-                {
+                foreach (var voxel in designations)
                     toBuild.AddVoxel(voxel);
-                }
                 return toBuild;
             }
             else if (name == Graveyard.GraveyardName)
