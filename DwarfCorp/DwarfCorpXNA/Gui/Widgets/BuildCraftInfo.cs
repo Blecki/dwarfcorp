@@ -27,6 +27,8 @@ namespace DwarfCorp.Gui.Widgets
             OnShown = (sender) =>
             {
                 Clear();
+                ResourceCombos.Clear();
+                Parent.OnClick = null;
 
                 var builder = new StringBuilder();
                 builder.AppendLine(Data.Name);
@@ -121,14 +123,18 @@ namespace DwarfCorp.Gui.Widgets
                         var buildButton = AddChild(new Button()
                         {
                             Text = "Craft",
-                            OnClick = (widget, args) => { BuildAction(widget, args);
-                                                            sender.Hidden = true; sender.Invalidate();
+                            OnClick = (widget, args) => 
+                            {
+                                BuildAction(widget, args);
+                                //sender.Hidden = true;
+                                //sender.Invalidate();
                             },
                             AutoLayout = AutoLayout.DockTop,
                             MinimumSize = new Point(64, 24),
                             MaximumSize = new Point(64, 24)
                         });
-                        Parent.OnClick += (parent, args) => buildButton.OnClick(buildButton, args);
+
+                        Parent.OnClick = (parent, args) => buildButton.OnClick(buildButton, args);
                     }
                 }
 

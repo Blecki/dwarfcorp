@@ -32,8 +32,7 @@ namespace DwarfCorp
                 manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(position)));
             if (voxelUnder.IsValid)
-                AddChild(new VoxelListener(manager, manager.World.ChunkManager,
-                    new VoxelHandle(voxelUnder.Coordinate.GetLocalVoxelCoordinate(), voxelUnder.Chunk)));
+                AddChild(new VoxelListener(manager, manager.World.ChunkManager, voxelUnder));
 
             OrientToWalls();
         }

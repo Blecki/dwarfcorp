@@ -234,46 +234,6 @@ namespace DwarfCorp
             return Equals((VoxelHandle) o);
         }
 
-        public List<Body> Kill()
-        {
-            if (IsEmpty)
-            {
-                return null;
-            }
-
-            if(Chunk.Manager.World.ParticleManager != null)
-            {
-                Chunk.Manager.World.ParticleManager.Trigger(Type.ParticleType, WorldPosition + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
-                Chunk.Manager.World.ParticleManager.Trigger("puff", WorldPosition + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
-            }
-
-            if(Chunk.Manager.World.Master != null)
-            {
-                Chunk.Manager.World.Master.Faction.OnVoxelDestroyed(this);
-            }
-
-            Type.ExplosionSound.Play(WorldPosition);
-
-            List<Body> emittedResources = null;
-            if (Type.ReleasesResource)
-            {
-                float randFloat = MathFunctions.Rand();
-
-                if (randFloat < Type.ProbabilityOfRelease)
-                {
-                    emittedResources = new List<Body>
-                    {
-                        EntityFactory.CreateEntity<Body>(Type.ResourceToRelease + " Resource",
-                            WorldPosition + new Vector3(0.5f, 0.5f, 0.5f))
-                    };
-                }
-            }
-
-            Chunk.Manager.KilledVoxels.Add(new TemporaryVoxelHandle(Chunk, GridPosition));
-            Chunk.Data.Types[Index] = 0;
-            return emittedResources;
-        }
-
         public BoundingSphere GetBoundingSphere()
         {
             return new BoundingSphere(WorldPosition, 1);

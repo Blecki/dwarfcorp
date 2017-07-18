@@ -115,6 +115,11 @@ namespace DwarfCorp
             {
                 return _cache_Chunk.Data.Types[_cache_Index];
             }
+            set
+            {
+                _cache_Chunk.Data.Types[_cache_Index] = value;
+                _cache_Chunk.Data.Health[_cache_Index] = (byte)VoxelType.TypeList[value].StartingHealth;
+            }
         }
 
         // Todo: Eliminate members that aren't straight pass throughs to the underlying data.

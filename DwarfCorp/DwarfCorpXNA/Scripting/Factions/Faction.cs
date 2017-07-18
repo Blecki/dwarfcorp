@@ -283,9 +283,7 @@ namespace DwarfCorp
                 removals.Add(d);
 
                 if (!v.IsEmpty)
-                {
-                    v.Kill();
-                }
+                    World.ChunkManager.KillVoxel(v.tvh);
             }
 
             foreach (BuildOrder v in removals)
@@ -376,31 +374,23 @@ namespace DwarfCorp
             return RoomBuilder.DesignatedRooms;
         }
 
-        public void OnVoxelDestroyed(VoxelHandle v)
+        public void OnVoxelDestroyed(TemporaryVoxelHandle V)
         {
-            if(v.IsEmpty)
-            {
+            if(!V.IsValid || V.IsEmpty)
                 return;
-            }
 
-            VoxelHandle Voxel = v;
+            var oldV = new VoxelHandle(V.Coordinate.GetLocalVoxelCoordinate(), V.Chunk);
 
-            RoomBuilder.OnVoxelDestroyed(v);
+            RoomBuilder.OnVoxelDestroyed(oldV);
 
-            List<Stockpile> toRemove = new List<Stockpile>();
-            List<Stockpile> currentStockpiles = new List<Stockpile>();
-            currentStockpiles.AddRange(Stockpiles);
-            foreach (Stockpile s in currentStockpiles)
+            var toRemove = new List<Stockpile>();
+            foreach (var s in new List<Stockpile>(Stockpiles))
             {
-                if(s.ContainsVoxel(Voxel))
-                {
-                    s.RemoveVoxel(Voxel);
-                }
-
+                if(s.ContainsVoxel(oldV))
+                    s.RemoveVoxel(oldV);
+                
                 if(s.Voxels.Count == 0)
-                {
                     toRemove.Add(s);
-                }
             }
 
             foreach(Stockpile s in toRemove)

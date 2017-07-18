@@ -127,7 +127,7 @@ namespace DwarfCorp
                         if (type == "Magic")
                         {
                             Player.World.ComponentManager.RootComponent.AddChild(
-                                new VoxelListener(Player.World.ComponentManager, Player.World.ChunkManager, vox)
+                                new VoxelListener(Player.World.ComponentManager, Player.World.ChunkManager, vox.tvh)
                                 {
                                     DestroyOnTimer = true,
                                     DestroyTimer = new Timer(5.0f + MathFunctions.Rand(-0.5f, 0.5f), true)
@@ -141,7 +141,7 @@ namespace DwarfCorp
                     {
                         case "Delete Block":
                         {
-                            Player.World.Master.Faction.OnVoxelDestroyed(vox);
+                            Player.World.Master.Faction.OnVoxelDestroyed(vox.tvh);
                             vox.Chunk.NotifyDestroyed(vox.GridPosition);
                             vox.Type = VoxelType.TypeList[0];
                             vox.Water = new WaterCell();
@@ -151,14 +151,12 @@ namespace DwarfCorp
                         }
                             break;
                         case "Kill Block":
-                            foreach(VoxelHandle selected in refs)
-                            {
-
-                                if (!selected.IsEmpty)
+                                foreach (VoxelHandle selected in refs)
                                 {
-                                    selected.Kill();
+                                    if (!selected.IsEmpty)
+                                        Player.World.ChunkManager.KillVoxel(selected.tvh);
+
                                 }
-                            }
                             break;
                         case "Fill Water":
                         {

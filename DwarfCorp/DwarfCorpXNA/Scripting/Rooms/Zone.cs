@@ -167,7 +167,7 @@ namespace DwarfCorp
             voxelsToKill.AddRange(Voxels);
             foreach (VoxelHandle voxel in voxelsToKill)
             {
-                voxel.Kill();
+                World.ChunkManager.KillVoxel(voxel.tvh);
             }
 
             ClearItems();
@@ -202,10 +202,8 @@ namespace DwarfCorp
 
             Voxels.Remove(toRemove);
 
-            if(ReplaceVoxelTypes)
-            {
-                toRemove.Kill();
-            }
+            if (ReplaceVoxelTypes)
+                World.ChunkManager.KillVoxel(toRemove.tvh);
 
             RecalculateMaxResources();
         }

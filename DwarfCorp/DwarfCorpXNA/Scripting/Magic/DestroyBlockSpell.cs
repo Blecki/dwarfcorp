@@ -71,7 +71,7 @@ namespace DwarfCorp
                         IndicatorManager.DrawIndicator("-" + ManaCost + " M", p, 1.0f, Color.Red);
                         World.ParticleManager.Trigger("star_particle", p,
                             Color.White, 4);
-                        selected.Kill();
+                        World.ChunkManager.KillVoxel(selected.tvh);
                         destroyed = true;
                     }
                 }

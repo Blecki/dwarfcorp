@@ -12,10 +12,6 @@ namespace DwarfCorp
             ChunkData Data,
             TemporaryVoxelHandle Start)
         {
-            var x = 0;
-            if (!Start.IsEmpty)
-                x = 5;
-
             Reveal(Data, new TemporaryVoxelHandle[] { Start });
         }
 

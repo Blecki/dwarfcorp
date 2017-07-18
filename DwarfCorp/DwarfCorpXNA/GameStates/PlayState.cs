@@ -316,7 +316,7 @@ namespace DwarfCorp.GameStates
                 if (MathFunctions.RandEvent(0.1f))
                 {
                     (SelectedEmployeeInfo.ExpandedContents as Gui.Widgets.EmployeeInfo).Employee = Master.SelectedMinions[0];
-                    SelectedEmployeeInfo.CollapsedContents.Text = Master.SelectedMinions[0].Name;
+                    SelectedEmployeeInfo.CollapsedContents.Text = Master.SelectedMinions[0].Stats.FullName;
                     SelectedEmployeeInfo.Hidden = false;
                     SelectedEmployeeInfo.Invalidate();
                 }
@@ -1009,9 +1009,12 @@ namespace DwarfCorp.GameStates
                             BuildAction = (sender, args) =>
                             {
                                 var buildInfo = (sender.Parent as Gui.Widgets.BuildCraftInfo);
+                                if (buildInfo == null)
+                                    return;
+
                                 data.SelectedResources = buildInfo.GetSelectedResources();
                                 data.NumRepeats = buildInfo.GetNumRepeats();
-                                List<Task> assignments = new List<Task> { new CraftResourceTask(data) };
+                                var assignments = new List<Task> { new CraftResourceTask(data) };
                                 var minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions,
                                     GameMaster.ToolMode.Craft);
                                 if (minions.Count > 0)

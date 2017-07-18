@@ -1,4 +1,4 @@
-// GoToVoxelAct.cs
+﻿// VoxelListener.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -33,47 +33,68 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
+using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    // Todo: Take a GlobalVoxelCoordinate, not a TemporaryVoxelHandle.
-
-    /// <summary>
-    /// A creature plans to a voxel and then follows the path to it.
-    /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
-    public class GoToVoxelAct : CompoundCreatureAct
+    [JsonObject(IsReference = true)]
+    public class ExploredListener : GameComponent
     {
-        public TemporaryVoxelHandle Voxel;
-        public PlanAct.PlanType PlanType;
-        public float Radius;
+        public LocalVoxelCoordinate VoxelID;
 
-        public GoToVoxelAct() : base()
+        [JsonIgnore]
+        public VoxelChunk Chunk;
+
+        public GlobalChunkCoordinate ChunkID { get; set; }
+
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            Chunk = (context.Context as WorldManager).ChunkManager.ChunkData.ChunkMap[ChunkID];
+            Chunk.OnVoxelExplored += ExploredListener_OnVoxelExplored;
+        }
+
+        public ExploredListener()
         {
 
         }
 
-        public GoToVoxelAct(TemporaryVoxelHandle voxel, PlanAct.PlanType planType, CreatureAI creature, float radius = 0.0f) :
-            base(creature)
+
+        public ExploredListener(ComponentManager manager, ChunkManager chunkManager, VoxelHandle vref) :
+            base("ExploredListener", manager)
         {
-            Radius = radius;
-            Voxel = voxel;
-            Name = "Go to DestinationVoxel";
-            PlanType = planType;
+            Chunk = vref.Chunk;
+            VoxelID = vref.GridPosition;
+            Chunk.OnVoxelExplored += ExploredListener_OnVoxelExplored;
+            ChunkID = Chunk.ID;
+
         }
 
-        public override void Initialize()
+        void ExploredListener_OnVoxelExplored(LocalVoxelCoordinate voxelID)
         {
-            if (Voxel.IsValid)
+            if (voxelID == VoxelID)
             {
-                Tree = new Sequence(
-                      new SetBlackboardData<VoxelHandle>(Agent, "ActionVoxel", new VoxelHandle(Voxel.Coordinate.GetLocalVoxelCoordinate(), Voxel.Chunk)),
-                      new PlanAct(Agent, "PathToVoxel", "ActionVoxel", PlanType) { Radius = Radius },
-                      new FollowPathAct(Agent, "PathToVoxel"),
-                      new StopAct(Agent));
+                GetRoot().SetFlagRecursive(Flag.Active, true);
+                GetRoot().SetFlagRecursive(Flag.Visible, true);
+                Delete();
             }
-            base.Initialize();
+        }
+
+        public override void Die()
+        {
+            Chunk.OnVoxelExplored -= ExploredListener_OnVoxelExplored;
+            base.Die();
+        }
+
+        public override void Delete()
+        {
+            Chunk.OnVoxelExplored -= ExploredListener_OnVoxelExplored;
+            base.Delete();
         }
     }
 }

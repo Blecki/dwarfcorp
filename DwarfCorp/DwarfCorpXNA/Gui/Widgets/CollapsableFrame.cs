@@ -78,11 +78,11 @@ namespace DwarfCorp.Gui.Widgets
 
             Rect = CollapseButton.Hidden ? CollapsedPosition : ExpandedPosition;
 
-            ExpandedContents.Rect = Rect;
-            CollapsedContents.Rect = Rect;
+            ExpandedContents.Rect = GetDrawableInterior();
+            CollapsedContents.Rect = GetDrawableInterior();
 
-            ExpandButton.Rect = new Rectangle(Rect.Right - 32, Rect.Top + 32, 16, 16);
-            CollapseButton.Rect = new Rectangle(Rect.Right - 32, Rect.Top + 32, 16, 16);
+            ExpandButton.Rect = new Rectangle(Rect.Right - 24, Rect.Top + 8, 16, 16);
+            CollapseButton.Rect = new Rectangle(Rect.Right - 24, Rect.Top + 8, 16, 16);
 
             ExpandedContents.Layout();
             CollapsedContents.Layout();

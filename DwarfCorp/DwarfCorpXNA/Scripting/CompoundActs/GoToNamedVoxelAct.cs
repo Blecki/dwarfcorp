@@ -65,21 +65,12 @@ namespace DwarfCorp
         {
             if (!String.IsNullOrEmpty(VoxelName))
             {
-                // Todo: Purpose of nested Sequence acts?
                 Tree = new Sequence(
-                    new Sequence(
-                        new PlanAct(Agent, "PathToVoxel", VoxelName, PlanType) { Radius = Radius },
-                        new FollowPathAct(Agent, "PathToVoxel")),
+                    new PlanAct(Agent, "PathToVoxel", VoxelName, PlanType) { Radius = Radius },
+                    new FollowPathAct(Agent, "PathToVoxel"),
                     new StopAct(Agent));
             }
             base.Initialize();
         }
-
-        // Todo: Can this be removed?
-        public override IEnumerable<Act.Status> Run()
-        {
-            return base.Run();
-        }
     }
-
 }
