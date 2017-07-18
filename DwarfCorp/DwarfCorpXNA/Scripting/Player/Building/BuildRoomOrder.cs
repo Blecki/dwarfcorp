@@ -123,7 +123,8 @@ namespace DwarfCorp
 
             IsBuilt = true;
             ToBuild.IsBuilt = true;
-            List<Body> components = RoomLibrary.GenerateRoomComponentsTemplate(ToBuild.RoomData, ToBuild.Voxels.Select(v => new VoxelHandle(v.Coordinate.GetLocalVoxelCoordinate(), v.Chunk)).ToList(),
+            List<Body> components = RoomLibrary.GenerateRoomComponentsTemplate(
+                ToBuild.RoomData, ToBuild.Voxels,
                 Faction.Components, World.ChunkManager.Content, World.ChunkManager.Graphics);
             RoomLibrary.BuildAllComponents(components, ToBuild, World.ParticleManager);
             ToBuild.OnBuilt();
