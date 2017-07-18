@@ -85,15 +85,6 @@ namespace DwarfCorp
         public ConcurrentQueue<SplashType> Splashes { get; set; }
         public ConcurrentQueue<Transfer> Transfers { get; set; }
 
-        // Todo: %KILL%
-        public static GlobalVoxelOffset[] m_spreadNeighbors =
-        {
-            new GlobalVoxelOffset(1, 0, 0),
-            new GlobalVoxelOffset(-1, 0, 0),
-            new GlobalVoxelOffset(0, 0, 1),
-            new GlobalVoxelOffset(0, 0, -1)
-        };
-
         public WaterManager(ChunkManager chunks)
         {
             Chunks = chunks;
@@ -102,9 +93,8 @@ namespace DwarfCorp
             ChunkData data = chunks.ChunkData;
 
             // Create reusable arrays for randomized indices
-            uint maxSize = data.ChunkSizeX * data.ChunkSizeY * data.ChunkSizeZ;
-            updateList = new int[maxSize];
-            randomIndices = new int[maxSize];
+            updateList = new int[VoxelConstants.ChunkVoxelCount];
+            randomIndices = new int[VoxelConstants.ChunkVoxelCount];
 
             Splashes = new ConcurrentQueue<SplashType>();
             Transfers = new ConcurrentQueue<Transfer>();
@@ -310,15 +300,25 @@ namespace DwarfCorp
             }
         }
 
+        private static Vector3 CoordsAt(int idx)
+        {
+            int x = idx % (VoxelConstants.ChunkSizeX);
+            idx /= (VoxelConstants.ChunkSizeX);
+            int y = idx % (VoxelConstants.ChunkSizeY);
+            idx /= (VoxelConstants.ChunkSizeY);
+            int z = idx;
+            return new Vector3(x, y, z);
+        }
+
         public bool DiscreteUpdate(VoxelChunk chunk)
         {
             var gridCoord = Vector3.Zero;
             bool updateOccurred = false;
             WaterCell cellBelow = new WaterCell();
 
-            int maxSize = chunk.SizeX * chunk.SizeY * chunk.SizeZ;
+            int maxSize = VoxelConstants.ChunkVoxelCount;
             int toUpdate = 0;
-            VoxelChunk.VoxelData data = chunk.Data;
+            var data = chunk.Data;
             for (int i = 0; i < maxSize; i++)
             {
                 // Don't check empty cells or cells we've already modified.
@@ -335,7 +335,6 @@ namespace DwarfCorp
                 return false;
             }
             VoxelHandle voxBelow = chunk.MakeVoxel(0, 0, 0);
-            VoxelHandle neighbor = new VoxelHandle();
 
             for (int i = 0; i < toUpdate; i++)
             {
@@ -354,7 +353,8 @@ namespace DwarfCorp
                     continue;
                 }
 
-                gridCoord = data.CoordsAt(idx);
+                //Todo: %KILL% the CoordsAt bit.
+                gridCoord = CoordsAt(idx);
                 int x = (int)gridCoord.X;
                 int y = (int)gridCoord.Y;
                 int z = (int)gridCoord.Z;
@@ -475,21 +475,13 @@ namespace DwarfCorp
                 //Array.Sort(m_spreadNeighbors, (a, b) => CompareFlowVectors(a, b, data.Water[idx].FluidFlow));
                 //m_spreadNeighbors.Shuffle();
                 
-                for (int s = 0; s < m_spreadNeighbors.Length; s++)
+                foreach (var globalCoordinate in Neighbors.EnumerateManhattanNeighbors2D(
+                        chunk.ID + new LocalVoxelCoordinate(x, y, z)))
                 {
-                    var globalPos = chunk.ID + new LocalVoxelCoordinate((int)gridCoord.X, (int)gridCoord.Y, (int)gridCoord.Z) + m_spreadNeighbors[s];
-
-                    // If neighbor is past chunk edge, use GetVoxel, otherwise, use GetVoxelLocal
-
-                    bool success = chunk.Manager.ChunkData.GetVoxel(globalPos, ref neighbor);
-
-                    if (!success || !neighbor.IsEmpty)
-                    {
-                        continue;
-                    }
-
-                    WaterCell neighborWater = neighbor.Water;
-
+                    var v = new TemporaryVoxelHandle(chunk.Manager.ChunkData, globalCoordinate);
+                    if (!v.IsValid || !v.IsEmpty) continue;
+                    var neighborWater = v.WaterCell;
+                    
                     if (neighborWater.WaterLevel >= data.Water[idx].WaterLevel)
                         continue;
 
@@ -507,7 +499,7 @@ namespace DwarfCorp
                         updateOccurred = true;
                     }
 
-                    CreateTransfer(globalPos, data.Water[idx], neighborWater, amountToMove);
+                    CreateTransfer(globalCoordinate, data.Water[idx], neighborWater, amountToMove);
 
                     data.Water[idx].WaterLevel -= amountToMove;
                     neighborWater.WaterLevel += amountToMove;
@@ -517,7 +509,7 @@ namespace DwarfCorp
                         neighborWater.Type = data.Water[idx].Type;
                     }
 
-                    neighbor.Water = neighborWater;
+                    v.WaterCell = neighborWater;
 
                     if (data.Water[idx].WaterLevel >= 1)
                     {

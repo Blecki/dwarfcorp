@@ -70,10 +70,13 @@ namespace DwarfCorp
             });
             Tags.Add("Flag");
 
-            VoxelHandle voxelUnder = new VoxelHandle();
-
-            if (Manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
-                AddChild(new VoxelListener(Manager, Manager.World.ChunkManager, voxelUnder));
+            // Todo: Clean up when VoxelListener can take TemporaryVoxelHandles.
+            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+                Manager.World.ChunkManager.ChunkData,
+                GlobalVoxelCoordinate.FromVector3(position)));
+            if (voxelUnder.IsValid)
+                AddChild(new VoxelListener(Manager, Manager.World.ChunkManager,
+                    voxelUnder));
 
             CollisionType = CollisionManager.CollisionType.Static;
         }

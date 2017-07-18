@@ -173,7 +173,7 @@ namespace DwarfCorp
                             new Wrap(() => Creature.HitAndWait(time, true, () => Creature.AI.Position, "Craft")),
                             new Wrap(DestroyResources),
                             unreserveAct,
-                            new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
+                            new GoToVoxelAct(Voxel.tvh, PlanAct.PlanType.Adjacent, Agent),
                             new CreateCraftItemAct(Voxel, Creature.AI, ItemType.Name)
                             ) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false)
                         ) | new Sequence(unreserveAct, false);
@@ -182,7 +182,7 @@ namespace DwarfCorp
                 {
                     Tree = new Sequence(
                         getResources,
-                        new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
+                        new GoToVoxelAct(Voxel.tvh, PlanAct.PlanType.Adjacent, Agent),
                         new Wrap(() => Creature.HitAndWait(time, true, () => Creature.AI.Position, "Craft")),
                         new Wrap(DestroyResources),
                         new CreateCraftItemAct(Voxel, Creature.AI, ItemType.Name)) |

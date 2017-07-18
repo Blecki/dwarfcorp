@@ -163,13 +163,13 @@ namespace DwarfCorp
             int maxVertex = 0;
             bool fogOfWar = GameSettings.Default.FogofWar;
 
-            for (int y = 0; y < Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, chunk.SizeY); y++)
+            for (int y = 0; y < Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, VoxelConstants.ChunkSizeY); y++)
             {
-                for (int x = 0; x < chunk.SizeX; x++)
+                for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
                 {
-                    for (int z = 0; z < chunk.SizeZ; z++)
+                    for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                     {
-                        int index = chunk.Data.IndexAt(new LocalVoxelCoordinate(x, y, z));
+                        int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
                         if (fogOfWar && !chunk.Data.IsExplored[index]) continue;
 
                         if (chunk.Data.Water[index].WaterLevel > 0)
@@ -307,6 +307,11 @@ namespace DwarfCorp
             cache = null;
         }
 
+        private static int SuccessorToEuclidianLookupKey(GlobalVoxelOffset C)
+        {
+            return (C.X + 1) + (C.Y + 1) * 3 + (C.Z + 1) * 9;
+        }
+
         private static void CreateWaterFaces(VoxelHandle voxel, VoxelChunk chunk,
                                             int x, int y, int z,
                                             ExtendedVertex[] vertices,
@@ -316,9 +321,8 @@ namespace DwarfCorp
             cache.Reset();
 
             // These are reused for every face.
-            Vector3 origin = chunk.Origin + new Vector3(x, y, z);
-            int index = chunk.Data.IndexAt(new LocalVoxelCoordinate(x, y, z));
-            float centerWaterlevel = chunk.Data.Water[chunk.Data.IndexAt(new LocalVoxelCoordinate(x, y, z))].WaterLevel;
+            var origin = voxel.WorldPosition;
+            float centerWaterlevel = chunk.Data.Water[VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z))].WaterLevel;
 
             for (int faces = 0; faces < cache.drawFace.Length; faces++)
             {
@@ -331,6 +335,8 @@ namespace DwarfCorp
                 int vertOffset = 0;
                 int numVerts = 0;
                 primitive.GetFace(face, primitive.UVs, out idx, out vertexCount, out vertOffset, out numVerts);
+                // numVerts is always 4.
+                // vertexCount is always 6 ??
 
                 for (int i = 0; i < vertexCount; i++)
                 {
@@ -351,21 +357,20 @@ namespace DwarfCorp
                         float emptyNeighbors = 0.0f;
                         float averageWaterLevel = centerWaterlevel;
 
-                        var vertexSucc = VoxelChunk.VertexSuccessors[currentVertex];
+                        var vertexSucc = Neighbors.VertexNeighbors[(int)currentVertex];
 
                         // Run through the successors and count up the water in each voxel.
-                        for (int v = 0; v < vertexSucc.Count; v++)
+                        for (int v = 0; v < vertexSucc.Length; v++)
                         {
-                            var succ = vertexSucc[v];
                             // We are going to use a lookup key so calculate it now.
-                            int key = VoxelChunk.SuccessorToEuclidianLookupKey(succ);
+                            int key = SuccessorToEuclidianLookupKey(vertexSucc[v]);
 
                             // If we haven't gotten this DestinationVoxel yet then retrieve it.
                             // This allows us to only get a particular voxel once a function call instead of once per vertexCount/per face.
                             if (!cache.retrievedNeighbors[key])
                             {
                                 VoxelHandle neighbor = cache.neighbors[key];
-                                cache.validNeighbors[key] = voxel.GetNeighborBySuccessor(succ, ref neighbor, false);
+                                cache.validNeighbors[key] = voxel.GetNeighborBySuccessor(vertexSucc[v], ref neighbor, false);
                                 cache.retrievedNeighbors[key] = true;
                             }
                             // Only continue if it's a valid (non-null) voxel.

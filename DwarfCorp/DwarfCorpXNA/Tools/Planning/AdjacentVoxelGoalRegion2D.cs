@@ -1,4 +1,4 @@
-﻿// GetNearestFreeVoxelInZone.cs
+// PlanService.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -32,53 +32,50 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
+using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// This act finds the nearest unoccupied and unreserved voxel in a zone,
-    /// and fills the blackboard with it.
+    /// This is a GoalRegion which tells the dwarf to be 4-ways adjacent to the voxel in X and Z.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
-    internal class GetNearestFreeVoxelInZone : CreatureAct
+    /// <seealso cref="GoalRegion" />
+    public class AdjacentVoxelGoalRegion2D : GoalRegion
     {
-        public Zone TargetZone { get; set; }
-        public string OutputVoxel { get; set; }
-        public bool ReserveVoxel { get; set; }
+        public TemporaryVoxelHandle Voxel { get; set; }
 
-        public GetNearestFreeVoxelInZone(CreatureAI agent, Zone targetZone, string outputVoxel, bool reserve) :
-            base(agent)
+        public override bool IsPossible()
         {
-            Name = "Get Free DestinationVoxel";
-            OutputVoxel = outputVoxel;
-            TargetZone = targetZone;
-            ReserveVoxel = reserve;
+            return Voxel.IsValid && !VoxelHelpers.VoxelIsCompletelySurrounded(Voxel);
         }
 
-        public override IEnumerable<Status> Run()
+        public override float Heuristic(VoxelHandle voxel)
         {
-            if(TargetZone == null)
-            {
-                yield return Status.Fail;
-            }
-            else
-            {
-                VoxelHandle v = TargetZone.GetNearestVoxel(Agent.Position);
+            return (voxel.WorldPosition - Voxel.Coordinate.ToVector3()).LengthSquared();
+        }
 
-                if(!v.IsEmpty)
-                {
-                    Agent.Blackboard.SetData(OutputVoxel, v);
-                    yield return Status.Success;
-                }
-                else
-                {
-                    Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
-                    yield return Status.Fail;
-                }
-            }
+        public AdjacentVoxelGoalRegion2D(VoxelHandle Voxel)
+        {
+            this.Voxel = new TemporaryVoxelHandle(Voxel.Chunk, Voxel.GridPosition);
+        }
+
+        public override bool IsInGoalRegion(VoxelHandle voxel)
+        {
+            return (Math.Abs(voxel.WorldPosition.X - Voxel.Coordinate.X) <= 0.5f &&
+                   Math.Abs(voxel.WorldPosition.Z - Voxel.Coordinate.Z) <= 0.5f) &&
+                   Math.Abs(voxel.WorldPosition.Y - Voxel.Coordinate.Y) <= 1.0f;
+        }
+
+        public override VoxelHandle GetVoxel()
+        {
+            return new VoxelHandle(Voxel.Coordinate.GetLocalVoxelCoordinate(), Voxel.Chunk);
         }
     }
-
 }

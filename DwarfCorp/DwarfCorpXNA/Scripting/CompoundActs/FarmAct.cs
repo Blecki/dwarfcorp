@@ -123,7 +123,7 @@ namespace DwarfCorp
                         else
                         {
                             FarmToWork.Vox.Type = VoxelLibrary.GetVoxelType("TilledSoil");
-                            FarmToWork.Vox.Chunk.NotifyTotalRebuild(true);
+                            Creature.World.ChunkManager.ChunkData.NotifyRebuild(FarmToWork.Vox.Coordinate);
                         }
                     }
                     if (MathFunctions.RandEvent(0.01f))
@@ -165,7 +165,7 @@ namespace DwarfCorp
                 {
                     Tree = new Sequence(
                         new Condition(!FarmToWork.IsCanceled),
-                        new GoToVoxelAct(FarmToWork.Vox, PlanAct.PlanType.Adjacent, Creature.AI),
+                        new GoToVoxelAct(FarmToWork.Vox.tvh, PlanAct.PlanType.Adjacent, Creature.AI),
                         new Condition(!FarmToWork.IsCanceled),
                         new StopAct(Creature.AI),
                         new Condition(!FarmToWork.IsCanceled),

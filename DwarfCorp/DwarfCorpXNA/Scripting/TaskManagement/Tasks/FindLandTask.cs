@@ -57,17 +57,26 @@ namespace DwarfCorp
             return new FindLandTask();
         }
 
-        /// <summary>
-        /// Finds a voxel to stand on within a radius of N voxels using BFS.
-        /// </summary>
-        /// <param name="radius">The radius to search in.</param>
-        /// <param name="checkVoxel">The voxel to start the search from</param>
-        /// <returns>The voxel within the radius which is over land if it exists, null otherwise.</returns>
-        public VoxelHandle FindLand(int radius, VoxelHandle checkVoxel)
-        {
-            return checkVoxel.Chunk.Manager.BreadthFirstSearch(checkVoxel, radius * radius, voxel => voxel != null && voxel.IsEmpty && voxel.WaterLevel == 0 && !voxel.IsBottomEmpty());
+        public TemporaryVoxelHandle FindLand(
+            ChunkData Data,
+            GlobalVoxelCoordinate Start,
+            int Radius)
+        { 
+            GlobalVoxelCoordinate landFound;
+            if (VoxelHelpers.BreadthFirstSearch(Data, Start, Radius,
+                coord =>
+                {
+                    var v = new TemporaryVoxelHandle(Data, coord);
+                    if (!v.IsValid || !v.IsEmpty || v.WaterCell.WaterLevel > 0) return false;
+                    var below = new TemporaryVoxelHandle(Data,
+                        new GlobalVoxelCoordinate(coord.X, coord.Y - 1, coord.Z));
+                    return below.IsValid && !below.IsEmpty;
+                },
+                out landFound))
+                return new TemporaryVoxelHandle(Data, landFound);
+            return TemporaryVoxelHandle.InvalidHandle;
         }
-
+         
         /// <summary>
         /// Finds the air above the creature.
         /// </summary>
@@ -80,7 +89,7 @@ namespace DwarfCorp
             int z = (int)creature.Physics.CurrentVoxel.GridPosition.Z;
             VoxelChunk chunk = creature.Physics.CurrentVoxel.Chunk;
             VoxelHandle check = chunk.MakeVoxel(0, 0, 0);
-            for (int y = startHeight; y < creature.World.ChunkManager.ChunkData.ChunkSizeY; y++)
+            for (int y = startHeight; y < VoxelConstants.ChunkSizeY; y++)
             {
                 check.GridPosition = new LocalVoxelCoordinate(x, y, z);
                 if (check.WaterLevel == 0 && check.IsEmpty)
@@ -113,15 +122,18 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature creature)
         {
-            VoxelHandle above = creature.Physics.CurrentVoxel.GetVoxelAbove();
-            if ((above != null && above.WaterLevel > 0 ) || creature.AI.Movement.CanFly)
+            var above = VoxelHelpers.GetVoxelAbove(creature.Physics.CurrentVoxel.tvh);
+            if ((above.IsValid && above.WaterCell.WaterLevel > 0 ) || creature.AI.Movement.CanFly)
             {
                 return new Wrap(() => SwimUp(creature)) { Name = "Swim up"};
             }
 
-            VoxelHandle findLand = FindLand(3, creature.Physics.CurrentVoxel);
-            if (findLand == null)
-            {
+            var findLand = FindLand(creature.World.ChunkManager.ChunkData,
+                creature.Physics.CurrentVoxel.Coordinate, 3);
+            if (findLand.IsValid)
+                return new GoToVoxelAct(findLand, PlanAct.PlanType.Into, creature.AI);
+            else
+            { 
                 if (creature.Faction.GetRooms().Count == 0)
                 {
                     return new LongWanderAct(creature.AI) {PathLength = 20, Radius = 30, Is2D = true};
@@ -130,10 +142,6 @@ namespace DwarfCorp
                 {
                     return new GoToZoneAct(creature.AI, Datastructures.SelectRandom(creature.Faction.GetRooms()));
                 }
-            }
-            else
-            {
-                return new GoToVoxelAct(findLand, PlanAct.PlanType.Into, creature.AI);
             }
         }
 

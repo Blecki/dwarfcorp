@@ -103,7 +103,14 @@ namespace DwarfCorp
 
         public VoxelHandle GetTarget()
         {
-            return Agent.Blackboard.GetData<VoxelHandle>(TargetName);
+            var vhan = Agent.Blackboard.GetData<VoxelHandle>(TargetName);
+            if (vhan == null)
+            {
+                var tvh = Agent.Blackboard.GetData<TemporaryVoxelHandle>(TargetName);
+                if (!tvh.IsValid) return null;
+                return new VoxelHandle(tvh.Coordinate.GetLocalVoxelCoordinate(), tvh.Chunk);
+            }
+            return vhan;
         }
 
         public void SetTarget(VoxelHandle target)
@@ -215,7 +222,7 @@ namespace DwarfCorp
                 else
                 {
                     if (Target != null && Creature.AI.DrawAIPlan)
-                        Drawer3D.DrawLine(Creature.AI.Position, Target.Position, Color.Blue, 0.25f);
+                        Drawer3D.DrawLine(Creature.AI.Position, Target.WorldPosition, Color.Blue, 0.25f);
                     Status statusResult = Status.Running;
 
                     while(PlanSubscriber.Responses.Count > 0)

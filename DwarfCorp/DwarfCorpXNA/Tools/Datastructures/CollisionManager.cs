@@ -178,10 +178,14 @@ namespace DwarfCorp
 
         public List<IBoundedObject> GetObjectsAt(VoxelHandle voxel, CollisionType queryType)
         {
-            return GetObjectsAt(new Point3(MathFunctions.FloorInt(voxel.Position.X),
-                MathFunctions.FloorInt(voxel.Position.Y), MathFunctions.FloorInt(voxel.Position.Z)), queryType);
+            return GetObjectsAt(new Point3(MathFunctions.FloorInt(voxel.WorldPosition.X),
+                MathFunctions.FloorInt(voxel.WorldPosition.Y), MathFunctions.FloorInt(voxel.WorldPosition.Z)), queryType);
         }
 
+        public List<IBoundedObject> GetObjectsAt(TemporaryVoxelHandle V, CollisionType queryType)
+        {
+            return GetObjectsAt(new Point3(V.Coordinate.X, V.Coordinate.Y, V.Coordinate.Z), queryType);
+        }
 
         public List<IBoundedObject> GetObjectsAt(Point3 pos, CollisionType queryType)
         {

@@ -81,42 +81,36 @@ namespace DwarfCorp
 
         public override void OnVoxelsSelected(SpellTree tree, List<VoxelHandle> voxels)
         {
-            var chunksToRebuild = new HashSet<GlobalChunkCoordinate>();
+            var chunksToRebuild = new HashSet<GlobalVoxelCoordinate>();
             bool placed = false;
             foreach (VoxelHandle selected in voxels)
             {
 
                 if (selected != null && ((!Transmute && selected.IsEmpty) || Transmute && !selected.IsEmpty) && OnCast(tree))
                 {
-                    Vector3 p = selected.Position + Vector3.One*0.5f;
+                    Vector3 p = selected.WorldPosition + Vector3.One*0.5f;
                     IndicatorManager.DrawIndicator("-" + ManaCost + " M",p, 1.0f, Color.Red);
                     World.ParticleManager.Trigger("star_particle", p, Color.White, 4);
                     VoxelLibrary.PlaceType(VoxelLibrary.GetVoxelType(VoxelType), selected);
 
                     if (VoxelType == "Magic")
                     {
-                        World.ComponentManager.RootComponent.AddChild(new VoxelListener(World.ComponentManager, World.ChunkManager, selected)
+                        World.ComponentManager.RootComponent.AddChild(new VoxelListener(World.ComponentManager, World.ChunkManager, selected.tvh)
                         {
                             DestroyOnTimer = true,
                             DestroyTimer = new Timer(5.0f + MathFunctions.Rand(-0.5f, 0.5f), true)
                         });
                     }
                     placed = true;
-                    chunksToRebuild.Add(selected.ChunkID);
+                    chunksToRebuild.Add(selected.Coordinate);
                 }
             }
 
             foreach (var point in chunksToRebuild)
-            {
-                VoxelChunk chunk = World.ChunkManager.ChunkData.ChunkMap[point];
-                chunk.ShouldRebuild = true;
-                chunk.NotifyTotalRebuild(true);
-            }
+                World.ChunkManager.ChunkData.NotifyRebuild(point);
 
             if (placed)
-            {
                 SoundManager.PlaySound(ContentPaths.Audio.tinkle, World.CursorLightPos, true, 1.0f);
-            }
 
             RechargeTimer.Reset(RechargeTimer.TargetTimeSeconds);
             base.OnVoxelsSelected(tree, voxels);

@@ -55,16 +55,16 @@ namespace DwarfCorp
             }
             else
             {
-                VoxelHandle closestVoxel = null;
+                var closestVoxel = TemporaryVoxelHandle.InvalidHandle;
                 float closestDist = float.MaxValue;
-                foreach (BuildVoxelOrder voxDes in buildRoom.VoxelOrders)
+                foreach (var order in buildRoom.VoxelOrders)
                 {
-                    float dist = (voxDes.Voxel.Position - Agent.Position).LengthSquared();
+                    float dist = (order.Voxel.Coordinate.ToVector3() - Agent.Position).LengthSquared();
 
                     if (dist < closestDist)
                     {
                         closestDist = dist;
-                        closestVoxel = voxDes.Voxel;
+                        closestVoxel = order.Voxel;
                     }
                 }
 
@@ -72,6 +72,7 @@ namespace DwarfCorp
                 yield return Status.Success;
             }
         }
+
         public Act SetTargetVoxelFromRoomAct(BuildRoomOrder buildRoom, string target)
         {
             return new Wrap(() => SetTargetVoxelFromRoom(buildRoom, target));
@@ -99,7 +100,7 @@ namespace DwarfCorp
                     new Wrap(() => IsRoomBuildOrder(buildRoom)),
                     SetTargetVoxelFromRoomAct(buildRoom, "ActionVoxel"),
                     new Wrap(() => IsRoomBuildOrder(buildRoom)),
-                    new GoToVoxelAct("ActionVoxel", PlanAct.PlanType.Adjacent, Agent),
+                    new GoToNamedVoxelAct("ActionVoxel", PlanAct.PlanType.Adjacent, Agent),
                     new Wrap(() => IsRoomBuildOrder(buildRoom)),
                     new Wrap(() => Creature.HitAndWait(buildRoom.VoxelOrders.Count * 0.5f / agent.Stats.BuildSpeed, true, () => buildRoom.GetBoundingBox().Center(), ContentPaths.Audio.Oscar.sfx_ic_dwarf_craft, () => !buildRoom.IsBuilt && !buildRoom.IsDestroyed)),
                     new Wrap(() => IsRoomBuildOrder(buildRoom)),

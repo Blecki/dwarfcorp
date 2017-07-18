@@ -48,10 +48,9 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Room : Zone
     {
-        public List<VoxelHandle> Designations { get; set; }
-
-        public bool IsBuilt { get; set; }
-        public RoomData RoomData { get; set; }
+        public List<TemporaryVoxelHandle> Designations;
+        public bool IsBuilt;
+        public RoomData RoomData;
         private static int Counter = 0;
 
         public bool wasDeserialized = false;
@@ -61,7 +60,14 @@ namespace DwarfCorp
             
         }
 
-        public Room(bool designation, IEnumerable<VoxelHandle> designations, RoomData data, WorldManager world, Faction faction) :
+        // Todo: Kill unused parameter? Seems to be to distinquish between two ways of creating
+        // a room where arguments are same types.
+        public Room(
+            bool designation,
+            IEnumerable<TemporaryVoxelHandle> designations, 
+            RoomData data,
+            WorldManager world,
+            Faction faction) :
             base(data.Name + " " + Counter, world, faction)
         {
             RoomData = data;
@@ -72,17 +78,21 @@ namespace DwarfCorp
         }
 
 
-        public Room(IEnumerable<VoxelHandle> voxels, RoomData data, WorldManager world, Faction faction) :
+        public Room(
+            IEnumerable<TemporaryVoxelHandle> voxels, 
+            RoomData data, 
+            WorldManager world, 
+            Faction faction) :
             base(data.Name + " " + Counter, world, faction)
         {
             RoomData = data;
             ReplacementType = VoxelLibrary.GetVoxelType(RoomData.FloorType);
 
-            Designations = new List<VoxelHandle>();
+            Designations = new List<TemporaryVoxelHandle>();
             Counter++;
 
             IsBuilt = true;
-            foreach (VoxelHandle voxel in voxels)
+            foreach (var voxel in voxels)
             {
                 AddVoxel(voxel);
             }
@@ -130,8 +140,8 @@ namespace DwarfCorp
 
             for(int i = 0; i < Designations.Count; i++)
             {
-                VoxelHandle v = Designations[i];
-                float d = (v.Position - worldCoordinate).LengthSquared();
+                var v = Designations[i];
+                float d = (v.Coordinate.ToVector3() - worldCoordinate).LengthSquared();
 
                 if(d < closestDist)
                 {

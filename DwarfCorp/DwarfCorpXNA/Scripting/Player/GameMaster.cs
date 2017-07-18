@@ -376,15 +376,16 @@ namespace DwarfCorp
 
             if (dwarf.Velocity.Length() > 0.1)
             {
-                VoxelHandle above = new VoxelHandle();
-                if (World.ChunkManager.ChunkData.GetFirstVoxelAbove(
-                    GlobalVoxelCoordinate.FromVector3(dwarf.Position), ref above, false))
-                {
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(above.GridPosition.Y - 1, ChunkManager.SliceMode.Y);
+                var above = VoxelHelpers.FindFirstVoxelAbove(new TemporaryVoxelHandle(
+                    World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(dwarf.Position)));
+
+                if (above.IsValid)
+                { 
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(above.Coordinate.Y - 1, ChunkManager.SliceMode.Y);
                 }
                 else
                 {
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.ChunkSizeY, ChunkManager.SliceMode.Y);
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxelConstants.ChunkSizeY, ChunkManager.SliceMode.Y);
                 }
             }
 
@@ -502,14 +503,14 @@ namespace DwarfCorp
                 if (VoxSelector.VoxelUnderMouse != null)
                 {
                     World.Tutorial("unslice");
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Position.Y,
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.WorldPosition.Y,
                         ChunkManager.SliceMode.Y);
                     Drawer3D.DrawBox(VoxSelector.VoxelUnderMouse.GetBoundingBox(), Color.White, 0.15f, true);
                 }
             }
             else if (key == ControlSettings.Mappings.Unslice)
             {
-                World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkHeight, ChunkManager.SliceMode.Y);
+                World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxelConstants.ChunkSizeY, ChunkManager.SliceMode.Y);
             }
             //else if(key == ControlSettings.Mappings.GodMode)
             //{

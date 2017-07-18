@@ -48,7 +48,7 @@ namespace DwarfCorp
 
         public GuardVoxelTask(VoxelHandle vox)
         {
-            Name = "Guard DestinationVoxel: " + vox.Position;
+            Name = "Guard DestinationVoxel: " + vox.WorldPosition;
             VoxelToGuard = vox;
             Priority = PriorityType.Medium;
         }
@@ -65,7 +65,7 @@ namespace DwarfCorp
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            return VoxelToGuard == null ? 1000 : (agent.AI.Position - VoxelToGuard.Position).LengthSquared();
+            return VoxelToGuard == null ? 1000 : (agent.AI.Position - VoxelToGuard.WorldPosition).LengthSquared();
         }
 
         public override bool ShouldRetry(Creature agent)

@@ -53,7 +53,7 @@ namespace DwarfCorp
         public FarmTask(FarmTool.FarmTile farmToWork)
         {
             FarmToWork = farmToWork;
-            Name = "Work " + FarmToWork.Vox.Position;
+            Name = "Work " + FarmToWork.Vox.WorldPosition;
             Priority = PriorityType.Low;
         }
 
@@ -69,7 +69,7 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature agent)
         {
-            return new FarmAct(agent.AI) {Resources = RequiredResources, PlantToCreate = Plant, Mode = Mode, FarmToWork = FarmToWork, Name = "Work " + FarmToWork.Vox.Position};
+            return new FarmAct(agent.AI) {Resources = RequiredResources, PlantToCreate = Plant, Mode = Mode, FarmToWork = FarmToWork, Name = "Work " + FarmToWork.Vox.WorldPosition};
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
@@ -77,7 +77,7 @@ namespace DwarfCorp
             if (FarmToWork == null) return float.MaxValue;
             else
             {
-                return (FarmToWork.Vox.Position - agent.AI.Position).LengthSquared();
+                return (FarmToWork.Vox.WorldPosition - agent.AI.Position).LengthSquared();
             }
         }
 

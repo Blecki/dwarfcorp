@@ -5,11 +5,23 @@ using System.Text;
 
 namespace DwarfCorp
 {
+    // Todo: Move to VoxelHelpers
     public class Neighbors
     {
         #region Offset Lists
         private static GlobalVoxelOffset[] ManhattanNeighbors = new GlobalVoxelOffset[]
         {
+            new GlobalVoxelOffset(1,0,0),
+            new GlobalVoxelOffset(-1,0,0),
+            new GlobalVoxelOffset(0,1,0),
+            new GlobalVoxelOffset(0,-1,0),
+            new GlobalVoxelOffset(0,0,1),
+            new GlobalVoxelOffset(0,0,-1)
+        };
+
+        private static GlobalVoxelOffset[] ManhattanCubeNeighbors = new GlobalVoxelOffset[]
+        {
+            new GlobalVoxelOffset(0,0,0),
             new GlobalVoxelOffset(1,0,0),
             new GlobalVoxelOffset(-1,0,0),
             new GlobalVoxelOffset(0,1,0),
@@ -59,7 +71,41 @@ namespace DwarfCorp
             new GlobalVoxelOffset(1,1,1),
         };
 
-        private static GlobalVoxelOffset[][] VertexNeighbors = new GlobalVoxelOffset[][]
+        private static GlobalVoxelOffset[] Cube = new GlobalVoxelOffset[]
+        {
+            new GlobalVoxelOffset(-1,-1,-1),
+            new GlobalVoxelOffset(-1,-1,0),
+            new GlobalVoxelOffset(-1,-1,1),
+            new GlobalVoxelOffset(-1,0,-1),
+            new GlobalVoxelOffset(-1,0,0),
+            new GlobalVoxelOffset(-1,0,1),
+            new GlobalVoxelOffset(-1,1,-1),
+            new GlobalVoxelOffset(-1,1,0),
+            new GlobalVoxelOffset(-1,1,1),
+
+            new GlobalVoxelOffset(0,-1,-1),
+            new GlobalVoxelOffset(0,-1,0),
+            new GlobalVoxelOffset(0,-1,1),
+            new GlobalVoxelOffset(0,0,-1),
+            new GlobalVoxelOffset(0,0,0),
+            new GlobalVoxelOffset(0,0,1),
+            new GlobalVoxelOffset(0,1,-1),
+            new GlobalVoxelOffset(0,1,0),
+            new GlobalVoxelOffset(0,1,1),
+
+            new GlobalVoxelOffset(1,-1,-1),
+            new GlobalVoxelOffset(1,-1,0),
+            new GlobalVoxelOffset(1,-1,1),
+            new GlobalVoxelOffset(1,0,-1),
+            new GlobalVoxelOffset(1,0,0),
+            new GlobalVoxelOffset(1,0,1),
+            new GlobalVoxelOffset(1,1,-1),
+            new GlobalVoxelOffset(1,1,0),
+            new GlobalVoxelOffset(1,1,1),
+        };
+
+        #region VertexNeighbors
+        public static readonly GlobalVoxelOffset[][] VertexNeighbors = new GlobalVoxelOffset[][]
         {
             new GlobalVoxelOffset[] // Front Top Left (-1, 1, 1)
             {
@@ -159,6 +205,57 @@ namespace DwarfCorp
         };
         #endregion
 
+        #region Vertex Neighbors 2D
+        private static GlobalVoxelOffset[][] VertexNeighbors2D = new GlobalVoxelOffset[][]
+        {
+            // Front Top Left
+            new GlobalVoxelOffset[]
+            {
+                new GlobalVoxelOffset(-1, 0, 0),
+                new GlobalVoxelOffset(-1, 0, 1),
+                new GlobalVoxelOffset(0, 0, 1)
+            },
+
+            // Front Top Right
+            new GlobalVoxelOffset[]
+            {
+                new GlobalVoxelOffset(0, 0, 1),
+                new GlobalVoxelOffset(1, 0, 1),
+                new GlobalVoxelOffset(1, 0, 0)
+            },
+
+            // Front Bottom Left
+            new GlobalVoxelOffset[] { },
+
+            // Front Bottom Right
+            new GlobalVoxelOffset[] { },
+
+            // Back Top Left
+            new GlobalVoxelOffset[]
+            {
+                new GlobalVoxelOffset(-1, 0, 0),
+                new GlobalVoxelOffset(-1, 0, -1),
+                new GlobalVoxelOffset(0, 0, -1)
+            },
+            
+            // Back Top Right
+            new GlobalVoxelOffset[]
+            {
+                new GlobalVoxelOffset(0, 0, -1),
+                new GlobalVoxelOffset(1, 0, -1),
+                new GlobalVoxelOffset(1, 0, 0)
+            },
+
+            // Back Bottom Left
+            new GlobalVoxelOffset[] { },
+
+            // Back Bottom Right
+            new GlobalVoxelOffset[] { }
+        };
+        #endregion
+
+        #endregion
+
         public static IEnumerable<GlobalVoxelCoordinate> EnumerateNeighbors(
             IEnumerable<GlobalVoxelOffset> Neighbors,
             GlobalVoxelCoordinate Coordinate)
@@ -203,10 +300,34 @@ namespace DwarfCorp
             return EnumerateNeighbors(AllNeighbors, Coordinate);
         }
 
+        public static IEnumerable<GlobalVoxelCoordinate> EnumerateCube(
+            GlobalVoxelCoordinate Coordinate)
+        {
+            return EnumerateNeighbors(Cube, Coordinate);
+        }
+
+        public static IEnumerable<GlobalVoxelCoordinate> EnumerateManhattanCube(
+           GlobalVoxelCoordinate Coordinate)
+        {
+            return EnumerateNeighbors(ManhattanCubeNeighbors, Coordinate);
+        }
+
         public static IEnumerable<GlobalVoxelCoordinate> EnumerateVertexNeighbors(
             GlobalVoxelCoordinate Coordinate, VoxelVertex Vertex)
         {
             return EnumerateNeighbors(VertexNeighbors[(int)Vertex], Coordinate);
+        }
+
+        public static IEnumerable<GlobalVoxelCoordinate> EnumerateVertexNeighbors2D(
+            GlobalVoxelCoordinate Coordinate, VoxelVertex Vertex)
+        {
+            return EnumerateNeighbors(VertexNeighbors2D[(int)Vertex], Coordinate);
+        }
+
+        public static TemporaryVoxelHandle GetNeighbor(TemporaryVoxelHandle Of, GlobalVoxelOffset Offset)
+        {
+            if (!Of.IsValid) return TemporaryVoxelHandle.InvalidHandle;
+            return new TemporaryVoxelHandle(Of.Chunk.Manager.ChunkData, Of.Coordinate + Offset);
         }
     }
 }

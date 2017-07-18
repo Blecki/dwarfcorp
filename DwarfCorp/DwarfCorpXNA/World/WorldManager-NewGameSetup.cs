@@ -67,9 +67,14 @@ namespace DwarfCorp
             {
                 InitialEmbark = Embarkment.DefaultEmbarkment;
             }
-            Vector3 g = c.WorldToGrid(Camera.Position);
+
+            var cameraCoordinate = GlobalVoxelCoordinate.FromVector3(Camera.Position);
             // Find the height of the world at the camera
-            float h = c.GetFilledVoxelGridHeightAt((int)g.X, ChunkHeight - 1, (int)g.Z);
+            var cameraVoxel = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+                ChunkManager.ChunkData, new GlobalVoxelCoordinate(cameraCoordinate.X,
+                VoxelConstants.ChunkSizeY - 1, cameraCoordinate.Z)));
+            var h = (float)(cameraVoxel.Coordinate.Y + 1);
+
 
             // This is done just to make sure the camera is in the correct place.
             Camera.UpdateBasisVectors();
@@ -121,11 +126,7 @@ namespace DwarfCorp
         private void GenerateInitialObjects()
         {
             foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
-            {
-                ChunkManager.ChunkGen.GenerateVegetation(chunk.Value, ComponentManager, Content, GraphicsDevice);
-                ChunkManager.ChunkGen.GenerateFauna(chunk.Value, ComponentManager, Content, GraphicsDevice,
-                    Factions);
-            }
+                ChunkManager.ChunkGen.GenerateSurfaceLife(chunk.Value);
         }
 
         /// <summary>
@@ -139,66 +140,61 @@ namespace DwarfCorp
         public BalloonPort GenerateInitialBalloonPort(RoomBuilder roomDes, ChunkManager chunkManager, float x, float z,
             int size)
         {
-            Vector3 pos = new Vector3(x, ChunkHeight - 1, z);
+            var centerCoordinate = GlobalVoxelCoordinate.FromVector3(new Vector3(x, VoxelConstants.ChunkSizeY - 1, z));
 
-            // First, compute the maximum height of the terrain in a square window.
-            int averageHeight = 0;
-            int count = 0;
-            for (int dx = -size; dx <= size; dx++)
+            var accumulator = 0;
+            var count = 0;
+            for (var offsetX = -size; offsetX <= size; ++offsetX)
             {
-                for (int dz = -size; dz <= size; dz++)
+                for (var offsetY = -size; offsetY <= size; ++offsetY)
                 {
-                    Vector3 worldPos = new Vector3(pos.X + dx, pos.Y, pos.Z + dz);
-                    VoxelChunk chunk = chunkManager.ChunkData.GetChunk(worldPos);
+                    var topVoxel = VoxelHelpers.FindFirstVoxelBelowIncludeWater(
+                        new TemporaryVoxelHandle(chunkManager.ChunkData,
+                            centerCoordinate + new GlobalVoxelOffset(offsetX, 0, offsetY)));
 
-                    if (chunk == null)
+                    if (topVoxel.Coordinate.Y > 0)
                     {
-                        continue;
-                    }
-
-                    Vector3 gridPos = chunk.WorldToGrid(worldPos);
-                    int h = chunk.GetFilledHeightOrWaterAt((int)gridPos.X + dx, (int)gridPos.Y, (int)gridPos.Z + dz);
-
-                    if (h > 0)
-                    {
-                        averageHeight += h;
-                        count++;
+                        accumulator += topVoxel.Coordinate.Y + 1;
+                        count += 1;
                     }
                 }
             }
+            
+            var averageHeight = (int)Math.Round(((float)accumulator / (float)count));
 
-            averageHeight = (int)Math.Round(((float)averageHeight / (float)count));
-
-            HashSet<VoxelChunk> affectedChunks = new HashSet<VoxelChunk>();
+            var affectedChunks = new HashSet<GlobalVoxelCoordinate>();
             // Next, create the balloon port by deciding which voxels to fill.
-            List<VoxelHandle> balloonPortDesignations = new List<VoxelHandle>();
-            List<VoxelHandle> treasuryDesignations = new List<VoxelHandle>();
+            var balloonPortDesignations = new List<TemporaryVoxelHandle>();
+            var treasuryDesignations = new List<TemporaryVoxelHandle>();
             for (int dx = -size; dx <= size; dx++)
             {
                 for (int dz = -size; dz <= size; dz++)
                 {
-                    Vector3 worldPos = new Vector3(pos.X + dx, pos.Y, pos.Z + dz);
+                    Vector3 worldPos = new Vector3(centerCoordinate.X + dx, centerCoordinate.Y, centerCoordinate.Z + dz);
                     VoxelChunk chunk = chunkManager.ChunkData.GetChunk(worldPos);
 
                     if (chunk == null)
                     {
                         continue;
                     }
-                    affectedChunks.Add(chunk);
-                    Vector3 gridPos = chunk.WorldToGrid(worldPos);
-                    int h = chunk.GetFilledVoxelGridHeightAt((int)gridPos.X, (int)gridPos.Y, (int)gridPos.Z);
 
-                    if (h == -1)
-                    {
-                        continue;
-                    }
+                    var baseVoxel = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+                        chunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(worldPos)));
+                    affectedChunks.Add(baseVoxel.Coordinate);
+                    var h = baseVoxel.Coordinate.Y + 1;
+                    Vector3 gridPos = chunk.WorldToGrid(worldPos);
 
                     for (int y = averageHeight; y < h; y++)
                     {
-                        VoxelHandle v = chunk.MakeVoxel((int)gridPos.X, y, (int)gridPos.Z);
+                        var v = new TemporaryVoxelHandle(chunk,
+                            new LocalVoxelCoordinate((int)gridPos.X, y, (int)gridPos.Z));
                         v.Type = VoxelLibrary.GetVoxelType(0);
-                        chunk.Manager.ChunkData.Reveal(v);
-                        chunk.Data.Water[v.Index].WaterLevel = 0;
+                        VoxelHelpers.Reveal(chunk.Manager.ChunkData, v);
+                        v.WaterCell = new WaterCell
+                        {
+                            Type = LiquidType.None,
+                            WaterLevel = 0
+                        };
                     }
 
                     if (averageHeight < h)
@@ -237,11 +233,15 @@ namespace DwarfCorp
                     // Fill from the top height down to the bottom.
                     for (int y = h - 1; y < averageHeight; y++)
                     {
-                        VoxelHandle v = chunk.MakeVoxel((int)gridPos.X, y, (int)gridPos.Z);
+                        var v = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate((int)gridPos.X, y, (int)gridPos.Z));
                         v.Type = VoxelLibrary.GetVoxelType("Scaffold");
-                        chunk.Data.Water[v.Index].WaterLevel = 0;
-                        v.Chunk = chunk;
-                        v.Chunk.NotifyTotalRebuild(!v.IsInterior);
+                        v.WaterCell = new WaterCell
+                        {
+                            Type = LiquidType.None,
+                            WaterLevel = 0
+                        };
+
+                        chunkManager.ChunkData.NotifyRebuild(v.Coordinate);
 
                         if (y == averageHeight - 1)
                         {
@@ -257,13 +257,12 @@ namespace DwarfCorp
 
                         if (isSide)
                         {
-                            VoxelHandle ladderVox = new VoxelHandle();
-
-                            Vector3 center = new Vector3(worldPos.X, y, worldPos.Z) + offset + Vector3.One * .5f;
-                            if (chunk.Manager.ChunkData.GetVoxel(center, ref ladderVox) && ladderVox.IsEmpty)
-                            {
-                                EntityFactory.CreateEntity<Ladder>("Wooden Ladder", center);
-                            }
+                            var ladderPos = new Vector3(worldPos.X, y, worldPos.Z) + offset +
+                                Vector3.One * 0.5f;
+                            var ladderVox = new TemporaryVoxelHandle(chunkManager.ChunkData,
+                                GlobalVoxelCoordinate.FromVector3(ladderPos));
+                            if (ladderVox.IsValid && ladderVox.IsEmpty)
+                                EntityFactory.CreateEntity<Ladder>("Wooden Ladder", ladderPos);
                         }
                     }
                 }
@@ -280,12 +279,9 @@ namespace DwarfCorp
             treasury.OnBuilt();
             roomDes.DesignatedRooms.Add(treasury);
 
-            foreach (VoxelChunk chunk in affectedChunks)
-            {
-                chunk.ReconstructRamps = true;
-                chunk.UpdateRamps();
-                chunk.NotifyTotalRebuild(true);
-            }
+            foreach (var chunk in affectedChunks)
+                chunkManager.ChunkData.NotifyRebuild(chunk);
+
             return toBuild;
         }
 

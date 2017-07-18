@@ -172,10 +172,6 @@ namespace DwarfCorp
         /// </summary>
         public VoxelHandle CurrentVoxel = null;
         /// <summary>
-        /// The neighbors of this voxel.
-        /// </summary>
-        public List<VoxelHandle> Neighbors = new List<VoxelHandle>();
-        /// <summary>
         /// Fixed time to update physics at. This is to prevent instabilty on very slow
         /// or very fast machines, and to protect stability during fast forward.
         /// </summary>
@@ -298,13 +294,7 @@ namespace DwarfCorp
 
                     // Get the current voxel.
                     chunks.ChunkData.GetVoxel(Position, ref CurrentVoxel);
-                    if (CurrentVoxel != null && CurrentVoxel.Chunk != null)
-                    {
-                        var gridPos = CurrentVoxel.GridPosition;
-                        CurrentVoxel.Chunk.GetNeighborsSuccessors(VoxelChunk.ManhattanSuccessors, 
-                            gridPos.X, gridPos.Y, gridPos.Z, Neighbors);
-                    }
-
+                    
                     // Collide with the world.
                     HandleCollisions(chunks, FixedDT);
 
@@ -497,20 +487,14 @@ namespace DwarfCorp
             return true;
         }
 
-        private IEnumerable<VoxelHandle> LocationPlusNeighbors()
-        {
-            yield return CurrentVoxel;
-            foreach (var neighbor in Neighbors)
-                yield return neighbor;
-        }
-
         public virtual void HandleCollisions(ChunkManager chunks, float dt)
         {
             if (CollideMode == CollisionMode.None) return;
 
             int y = (int)Position.Y;
 
-            foreach (VoxelHandle v in LocationPlusNeighbors())
+            foreach (var v in DwarfCorp.Neighbors.EnumerateManhattanCube(CurrentVoxel.Coordinate)
+                .Select(c => new VoxelHandle(chunks.ChunkData, c)))
             {
                 if (v == null || v.Chunk == null || v.IsEmpty)
                 {

@@ -105,15 +105,14 @@ namespace DwarfCorp
         }
 
 
-        public bool IsInRoom(VoxelHandle v)
+        public bool IsInRoom(TemporaryVoxelHandle v)
         {
-            VoxelHandle vRef = v;
-            return DesignatedRooms.Any(r => r.ContainsVoxel(vRef)) || Faction.IsInStockpile(v);
+            return DesignatedRooms.Any(r => r.ContainsVoxel(v)) || Faction.IsInStockpile(v);
         }
 
-        public bool IsBuildDesignation(VoxelHandle v)
+        public bool IsBuildDesignation(TemporaryVoxelHandle v)
         {
-            return BuildDesignations.SelectMany(room => room.VoxelOrders).Any(buildDesignation => buildDesignation.Voxel.Equals(v));
+            return BuildDesignations.SelectMany(room => room.VoxelOrders).Any(buildDesignation => buildDesignation.Voxel == v);
         }
 
         public bool IsBuildDesignation(Room r)
@@ -129,12 +128,12 @@ namespace DwarfCorp
                 select room.VoxelOrders[0]).FirstOrDefault();
         }
 
-        public BuildVoxelOrder GetBuildDesignation(VoxelHandle v)
+        public BuildVoxelOrder GetBuildDesignation(TemporaryVoxelHandle v)
         {
-            return BuildDesignations.SelectMany(room => room.VoxelOrders).FirstOrDefault(buildDesignation => (buildDesignation.Voxel.Position - v.Position).LengthSquared() < 0.1f);
+            return BuildDesignations.SelectMany(room => room.VoxelOrders).FirstOrDefault(buildDesignation => buildDesignation.Voxel == v);
         }
 
-        public BuildRoomOrder GetMostLikelyDesignation(VoxelHandle v)
+        public BuildRoomOrder GetMostLikelyDesignation(TemporaryVoxelHandle v)
         {
             BoundingBox larger = new BoundingBox(v.GetBoundingBox().Min - new Vector3(0.5f, 0.5f, 0.5f), v.GetBoundingBox().Max + new Vector3(0.5f, 0.5f, 0.5f));
 
@@ -144,13 +143,10 @@ namespace DwarfCorp
                 select room).FirstOrDefault();
         }
 
-        public Room GetMostLikelyRoom(VoxelHandle v)
+        public Room GetMostLikelyRoom(TemporaryVoxelHandle v)
         {
-            VoxelHandle vRef = v;
-            foreach(Room r in DesignatedRooms.Where(r => r.ContainsVoxel(vRef)))
-            {
+            foreach(Room r in DesignatedRooms.Where(r => r.ContainsVoxel(v)))
                 return r;
-            }
 
             BoundingBox larger = new BoundingBox(v.GetBoundingBox().Min - new Vector3(0.5f, 0.5f, 0.5f), v.GetBoundingBox().Max + new Vector3(0.5f, 0.5f, 0.5f));
 
@@ -231,7 +227,7 @@ namespace DwarfCorp
                 toCheck.AddRange(DesignatedRooms);
                 foreach (Room r in toCheck)
                 {
-                    r.RemoveVoxel(vRef);
+                    r.RemoveVoxel(vRef.tvh);
                     if (r.Voxels.Count == 0)
                     {
                         toDestroy.Add(r);
@@ -256,28 +252,22 @@ namespace DwarfCorp
             World.SetMouse(World.MousePointer);
         }
 
-        private void BuildNewVoxels(IEnumerable<VoxelHandle> refs)
+        private void BuildNewVoxels(IEnumerable<TemporaryVoxelHandle> designations)
         {
             BuildRoomOrder order = null;
-            IEnumerable<VoxelHandle> designations = refs as IList<VoxelHandle> ?? refs.ToList();
-            IEnumerable<VoxelHandle> nonEmpty = designations.Select(r => r).Where(v => !v.IsEmpty);
-            foreach(VoxelHandle v in nonEmpty)
+            foreach(var v in designations.Where(v => v.IsValid && !v.IsEmpty))
             {
                 if(IsBuildDesignation(v) || IsInRoom(v))
-                {
                     continue;
-                }
 
-        
-                if (!v.GetVoxelAbove().IsEmpty)
-                {
+                // This check should be rendered pointless by the call to Verify made just
+                // before calling this function.
+                var above = VoxelHelpers.GetVoxelAbove(v);
+                if (above.IsValid && !above.IsEmpty)
                     continue;
-                }
 
                 if(order == null)
-                {
                     order = GetMostLikelyDesignation(v);
-                }
 
                 if (order != null)
                 {
@@ -306,9 +296,9 @@ namespace DwarfCorp
 
             if(order != null)
             {
-                order.WorkObjects.AddRange(Fence.CreateFences(World.ComponentManager, 
-                    ContentPaths.Entities.DwarfObjects.constructiontape,  
-                    from o in order.VoxelOrders select o.Voxel, 
+                order.WorkObjects.AddRange(Fence.CreateFences(World.ComponentManager,
+                    ContentPaths.Entities.DwarfObjects.constructiontape,
+                    order.VoxelOrders.Select(o => o.Voxel),
                     true));
                 foreach (var obj in order.WorkObjects)
                 {
@@ -327,7 +317,7 @@ namespace DwarfCorp
                 sprite.VertexColorTint = color;
         }
 
-        public void OnVoxelsDragged(List<VoxelHandle> refs, InputManager.MouseButton button)
+        public void OnVoxelsDragged(List<TemporaryVoxelHandle> refs, InputManager.MouseButton button)
         {
             if (Faction == null)
             {
@@ -388,7 +378,8 @@ namespace DwarfCorp
 
                     World.ShowToolPopup("Release to build here.");
 
-                    displayObjects = RoomLibrary.GenerateRoomComponentsTemplate(CurrentRoomData, refs, Faction.Components, 
+                    displayObjects = RoomLibrary.GenerateRoomComponentsTemplate(CurrentRoomData, refs,
+                        Faction.Components, 
                         World.ChunkManager.Content, World.ChunkManager.Graphics);
 
                     foreach(Body thing in displayObjects)
@@ -400,7 +391,7 @@ namespace DwarfCorp
             }
             else
             {
-                foreach (VoxelHandle v in refs.Where(v => !v.IsEmpty))
+                foreach (var v in refs.Where(v => !v.IsEmpty))
                 {
                     if (IsBuildDesignation(v))
                     {
@@ -429,7 +420,7 @@ namespace DwarfCorp
             }
         }
 
-        public void VoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
+        public void VoxelsSelected(List<TemporaryVoxelHandle> refs, InputManager.MouseButton button)
         {
             foreach (BuildRoomOrder order in BuildDesignations)
             {
@@ -471,9 +462,9 @@ namespace DwarfCorp
             }
         }
 
-        private void DeleteVoxels(IEnumerable<VoxelHandle> refs )
+        private void DeleteVoxels(IEnumerable<TemporaryVoxelHandle> Voxels )
         {
-            foreach(VoxelHandle v in refs.Select(r => r).Where(v => !v.IsEmpty))
+            foreach(var v in Voxels.Where(v => !v.IsEmpty))
             {
                 if(IsBuildDesignation(v))
                 {

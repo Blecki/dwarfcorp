@@ -113,8 +113,6 @@ namespace DwarfCorp
                     Time = gameFile.Data.Metadata.Time;
                     WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
                     WorldScale = gameFile.Data.Metadata.WorldScale;
-                    GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
-                    GameSettings.Default.ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
                     GameID = gameFile.Data.GameID;
                     if (gameFile.Data.Metadata.OverworldFile != null && gameFile.Data.Metadata.OverworldFile != "flat")
                     {
@@ -129,8 +127,6 @@ namespace DwarfCorp
                                 DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
                         Overworld.Map = overWorldFile.Data.CreateMap();
                         Overworld.Name = overWorldFile.Data.Name;
-                        WorldWidth = Overworld.Map.GetLength(1);
-                        WorldHeight = Overworld.Map.GetLength(0);
                     }
                     else
                     {
@@ -239,15 +235,17 @@ namespace DwarfCorp
                 if (!fileExists)
                     GameID = MathFunctions.Random.Next(0, 1024);
                 
-                ChunkGenerator = new ChunkGenerator(VoxelLibrary, Seed, 0.02f, ChunkHeight / 2.0f, this.WorldScale)
+                ChunkGenerator = new ChunkGenerator(VoxelLibrary, Seed, 0.02f, this.WorldScale)
                 {
                     SeaLevel = SeaLevel
                 };
 
                 // Creates the terrain management system.
-                ChunkManager = new ChunkManager(Content, this, (uint)ChunkWidth, (uint)ChunkHeight, (uint)ChunkWidth, Camera,
+                ChunkManager = new ChunkManager(Content, this, Camera,
                     GraphicsDevice,
                     ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
+
+                ChunkRenderer = new ChunkRenderer(this, Camera, GraphicsDevice, ChunkManager.ChunkData);
             
                 #region Load Components
 
@@ -297,8 +295,6 @@ namespace DwarfCorp
                     Time = gameFile.Data.Metadata.Time;
                     WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
                     WorldScale = gameFile.Data.Metadata.WorldScale;
-                    GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
-                    GameSettings.Default.ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
 
                     // Restore native factions from deserialized data.
                     Natives = new List<Faction>();
@@ -326,15 +322,19 @@ namespace DwarfCorp
 
                     var globalOffset = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y) * WorldScale;
 
-                    Camera = new OrbitCamera(this, new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + new Vector3(WorldOrigin.X, 0, WorldOrigin.Y) * WorldScale,
-                        new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + new Vector3(WorldOrigin.X, 0, WorldOrigin.Y) * WorldScale + Vector3.Up * 10.0f + Vector3.Backward * 10,
+                    Camera = new OrbitCamera(this, 
+                        new Vector3(VoxelConstants.ChunkSizeX, 
+                        VoxelConstants.ChunkSizeY - 1.0f, 
+                        VoxelConstants.ChunkSizeZ) + new Vector3(WorldOrigin.X, 0, WorldOrigin.Y) * WorldScale,
+                        new Vector3(VoxelConstants.ChunkSizeY, VoxelConstants.ChunkSizeY - 1.0f, VoxelConstants.ChunkSizeZ) + new Vector3(WorldOrigin.X, 0, WorldOrigin.Y) * WorldScale + Vector3.Up * 10.0f + Vector3.Backward * 10,
                         MathHelper.PiOver4, AspectRatio, 0.1f,
                         GameSettings.Default.VertexCullDistance);
 
-                    var chunkOffset = ChunkManager.ChunkData.RoundToChunkCoords(globalOffset);
-                    globalOffset.X = chunkOffset.X * ChunkWidth;
-                    globalOffset.Y = chunkOffset.Y * ChunkHeight;
-                    globalOffset.Z = chunkOffset.Z * ChunkWidth;
+                    var chunkOffset = GlobalVoxelCoordinate.FromVector3(globalOffset).GetGlobalChunkCoordinate();
+                    //var chunkOffset = ChunkManager.ChunkData.RoundToChunkCoords(globalOffset);
+                    globalOffset.X = chunkOffset.X * VoxelConstants.ChunkSizeX;
+                    globalOffset.Y = chunkOffset.Y * VoxelConstants.ChunkSizeY;
+                    globalOffset.Z = chunkOffset.Z * VoxelConstants.ChunkSizeZ;
 
                     WorldOrigin = new Vector2(globalOffset.X, globalOffset.Z);
                     Camera.Position = new Vector3(0, 10, 0) + globalOffset;
@@ -344,7 +344,8 @@ namespace DwarfCorp
                     if (gameFile == null) // Todo: Always true?
                     {
                         ChunkManager.GenerateInitialChunks(
-                            ChunkManager.ChunkData.GetChunkID(globalOffset), SetLoadingMessage);
+                            GlobalVoxelCoordinate.FromVector3(globalOffset).GetGlobalChunkCoordinate(),
+                            SetLoadingMessage);
                     }
 
                     ComponentManager = new ComponentManager(this, CompanyMakerState.CompanyInformation, Natives);

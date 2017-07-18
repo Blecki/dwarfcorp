@@ -63,10 +63,15 @@ namespace DwarfCorp
             Name = adult.Name + " seedling";
             AddChild(new Health(Manager, "HP", 1.0f, 0.0f, 1.0f));
             AddChild(new Flammable(Manager, "Flames"));
-            VoxelHandle voxelUnder = new VoxelHandle();
 
-            if (Manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
-                AddChild(new VoxelListener(Manager, Manager.World.ChunkManager, voxelUnder));
+            // Todo: Clean up when VoxelListener can take TemporaryVoxelHandles.
+            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+                Manager.World.ChunkManager.ChunkData,
+                GlobalVoxelCoordinate.FromVector3(position)));
+            if (voxelUnder.IsValid)
+                AddChild(new VoxelListener(Manager, Manager.World.ChunkManager,
+                    voxelUnder));
+
         }
 
         public override void Delete()
@@ -190,10 +195,14 @@ namespace DwarfCorp
             Tags.Add("EmitsWood");
 
             //new MinimapIcon(this, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 1, 0));
-            VoxelHandle voxelUnder = new VoxelHandle();
+            // Todo: Clean up when VoxelListener can take TemporaryVoxelHandles.
+            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+                manager.World.ChunkManager.ChunkData,
+                GlobalVoxelCoordinate.FromVector3(position)));
+            if (voxelUnder.IsValid)
+                AddChild(new VoxelListener(manager, manager.World.ChunkManager,
+                    voxelUnder));
 
-            if (Manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
-                AddChild(new VoxelListener(componentManager, componentManager.World.ChunkManager, voxelUnder));
 
             Inventory inventory = AddChild(new Inventory(componentManager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)
             {

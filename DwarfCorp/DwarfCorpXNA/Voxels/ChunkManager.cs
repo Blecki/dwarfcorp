@@ -78,7 +78,6 @@ namespace DwarfCorp
         private Thread WaterThread { get; set; }
 
         private readonly Timer generateChunksTimer = new Timer(0.5f, false, Timer.TimerMode.Real);
-        private readonly Timer visibilityChunksTimer = new Timer(0.03f, false, Timer.TimerMode.Real);
         private readonly Timer waterUpdateTimer = new Timer(0.15f, false, Timer.TimerMode.Real);
 
         public BoundingBox Bounds { get; set; }
@@ -101,6 +100,7 @@ namespace DwarfCorp
             set { GameSettings.Default.ChunkGenerateDistance = value; }
         }
 
+        // Todo: %KILL% Wrong spot for this, but too large to move currently.
         public GraphicsDevice Graphics { get; set; }
 
         public bool PauseThreads { get; set; }
@@ -117,41 +117,33 @@ namespace DwarfCorp
 
         public Camera camera = null;
         public WorldManager World { get; set; }
-        public ComponentManager Components { get { return World.ComponentManager; }}
         public ContentManager Content { get; set; }
 
-        private readonly HashSet<VoxelChunk> visibleSet = new HashSet<VoxelChunk>();
-
         public WaterManager Water { get; set; }
-
-        public List<DynamicLight> DynamicLights { get; set; }
 
         public ChunkData ChunkData
         {
             get { return chunkData; }
         }
 
-        public List<VoxelHandle> KilledVoxels { get; set; }
+        public List<TemporaryVoxelHandle> KilledVoxels { get; set; }
 
         public ChunkManager(ContentManager content, 
             WorldManager world,
-            uint chunkSizeX, uint chunkSizeY, uint chunkSizeZ, 
             Camera camera, GraphicsDevice graphics,
             ChunkGenerator chunkGen, int maxChunksX, int maxChunksY, int maxChunksZ)
         {
             World = world;
-            KilledVoxels = new List<VoxelHandle>();
+            KilledVoxels = new List<TemporaryVoxelHandle>();
             ExitThreads = false;
             drawDistSq = DrawDistance * DrawDistance;
             Content = content;
 
-            chunkData = new ChunkData(chunkSizeX, chunkSizeY, chunkSizeZ, 1.0f / chunkSizeX, 1.0f / chunkSizeY, 1.0f / chunkSizeZ, this);
-            ChunkData.ChunkMap = new ConcurrentDictionary<GlobalChunkCoordinate, VoxelChunk>();
+            chunkData = new ChunkData(this);
             RenderList = new ConcurrentQueue<VoxelChunk>();
             RebuildList = new ConcurrentQueue<VoxelChunk>();
             RebuildLiquidsList = new ConcurrentQueue<VoxelChunk>();
             ChunkGen = chunkGen;
-
 
             GeneratedChunks = new ConcurrentQueue<VoxelChunk>();
             GeneratorThread = new Thread(GenerateThread);
@@ -170,29 +162,25 @@ namespace DwarfCorp
 
             chunkGen.Manager = this;
 
-            ChunkData.MaxViewingLevel = chunkSizeY;
-
             GameSettings.Default.ChunkGenerateTime = 0.5f;
             generateChunksTimer = new Timer(GameSettings.Default.ChunkGenerateTime, false, Timer.TimerMode.Real);
             GameSettings.Default.ChunkRebuildTime = 0.1f;
             Timer rebuildChunksTimer = new Timer(GameSettings.Default.ChunkRebuildTime, false, Timer.TimerMode.Real);
             GameSettings.Default.VisibilityUpdateTime = 0.05f;
-            visibilityChunksTimer = new Timer(GameSettings.Default.VisibilityUpdateTime, false, Timer.TimerMode.Real);
             generateChunksTimer.HasTriggered = true;
             rebuildChunksTimer.HasTriggered = true;
-            visibilityChunksTimer.HasTriggered = true;
             this.camera = camera;
 
             Water = new WaterManager(this);
 
-            DynamicLights = new List<DynamicLight>();
-
-            ChunkData.Slice = SliceMode.Y;
             PauseThreads = false;
 
             WorldSize = new Point3(maxChunksX, maxChunksY, maxChunksZ);
 
-            Vector3 maxBounds = new Vector3(maxChunksX * chunkSizeX / 2.0f, maxChunksY * chunkSizeY / 2.0f, maxChunksZ * chunkSizeZ / 2.0f);
+            Vector3 maxBounds = new Vector3(
+                maxChunksX * VoxelConstants.ChunkSizeX / 2.0f,
+                maxChunksY * VoxelConstants.ChunkSizeY / 2.0f, 
+                maxChunksZ * VoxelConstants.ChunkSizeZ / 2.0f);
             Vector3 minBounds = -maxBounds;
             Bounds = new BoundingBox(minBounds, maxBounds);
         }
@@ -445,8 +433,8 @@ namespace DwarfCorp
                 return -1;
             }
 
-            float dA = (a.Origin - camera.Position + new Vector3(a.SizeX / 2.0f, a.SizeY / 2.0f, a.SizeZ / 2.0f)).LengthSquared();
-            float dB = (b.Origin - camera.Position + new Vector3(b.SizeX / 2.0f, b.SizeY / 2.0f, b.SizeZ / 2.0f)).LengthSquared();
+            float dA = (a.Origin - camera.Position + new Vector3(VoxelConstants.ChunkSizeX / 2.0f, VoxelConstants.ChunkSizeY / 2.0f, VoxelConstants.ChunkSizeZ / 2.0f)).LengthSquared();
+            float dB = (b.Origin - camera.Position + new Vector3(VoxelConstants.ChunkSizeX / 2.0f, VoxelConstants.ChunkSizeY / 2.0f, VoxelConstants.ChunkSizeZ / 2.0f)).LengthSquared();
 
             if (!camera.GetFrustrum().Intersects(a.GetBoundingBox()))
             {
@@ -467,44 +455,14 @@ namespace DwarfCorp
             return 1;
         }
 
-
-        public void UpdateRenderList(Camera camera)
-        {
-            while(RenderList.Count > 0)
-            {
-                VoxelChunk result;
-                if(!RenderList.TryDequeue(out result))
-                {
-                    break;
-                }
-            }
-
-
-            foreach(VoxelChunk chunk in visibleSet)
-            {
-                BoundingBox box = chunk.GetBoundingBox();
-
-                if((camera.Position - (box.Min + box.Max) * 0.5f).Length() < DrawDistance)
-                {
-                    chunk.IsVisible = true;
-                    RenderList.Enqueue(chunk);
-                }
-                else
-                {
-                    chunk.IsVisible = false;
-                }
-            }
-        }
-
-        public List<VoxelChunk> RebuildTest = new List<VoxelChunk>();
         private readonly ChunkData chunkData;
 
         public void UpdateRebuildList()
         {
             List<VoxelChunk> toRebuild = new List<VoxelChunk>();
             List<VoxelChunk> toRebuildLiquids = new List<VoxelChunk>();
-            RebuildTest = toRebuild;
-            foreach(VoxelChunk chunk in ChunkData.ChunkMap.Select(chunks => chunks.Value))
+
+            foreach (VoxelChunk chunk in ChunkData.ChunkMap.Select(chunks => chunks.Value))
             {
                 if(chunk.ShouldRebuild && ! chunk.RebuildPending)
                 {
@@ -555,14 +513,6 @@ namespace DwarfCorp
             }
         }
 
-        public bool BoundingBoxIntersectsWorld(BoundingBox box)
-        {
-            HashSet<VoxelChunk> chunksIntersecting = new HashSet<VoxelChunk>();
-            GetChunksIntersecting(box, chunksIntersecting);
-
-            return chunksIntersecting.Count > 0 || GeneratedChunks.Any(chunk => chunk.GetBoundingBox().Intersects(box));
-        }
-
         public void GenerateThread()
         {
             EventWaitHandle[] waitHandles =
@@ -588,11 +538,11 @@ namespace DwarfCorp
                         {
                             if (!ChunkData.ChunkMap.ContainsKey(box))
                             {
-                                Vector3 worldPos = new Vector3(box.X*ChunkData.ChunkSizeX, box.Y*ChunkData.ChunkSizeY,
-                                    box.Z*ChunkData.ChunkSizeZ);
-                                VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, (int) ChunkData.ChunkSizeX,
-                                    (int) ChunkData.ChunkSizeY, (int) ChunkData.ChunkSizeZ, World, Content,
-                                    Graphics);
+                                Vector3 worldPos = new Vector3(
+                                    box.X * VoxelConstants.ChunkSizeX, 
+                                    box.Y * VoxelConstants.ChunkSizeY,
+                                    box.Z * VoxelConstants.ChunkSizeZ);
+                                VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, World);
                                 Drawer3D.DrawBox(chunk.GetBoundingBox(), Color.Red, 0.1f);
                                 chunk.ShouldRebuild = true;
                                 chunk.ShouldRecalculateLighting = true;
@@ -615,199 +565,9 @@ namespace DwarfCorp
             {
                 ProgramData.WriteExceptionLog(exception);
             }
-#endif
-
-           
+#endif           
         }
-
-
-
-        public void SimpleRender(GraphicsDevice graphicsDevice, Shader effect, Texture2D tilemap)
-        {
-            effect.SelfIlluminationTexture = ChunkData.IllumMap;
-            effect.MainTexture = tilemap;
-            effect.SunlightGradient = ChunkData.SunMap;
-            effect.AmbientOcclusionGradient = ChunkData.AmbientMap;
-            effect.TorchlightGradient = ChunkData.TorchMap;
-            effect.LightRampTint = Color.White;
-            effect.VertexColorTint = Color.White;
-            effect.SelfIlluminationEnabled = false;
-            effect.EnableShadows = false;
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                foreach (var chunk in ChunkData.ChunkMap)
-                {
-                    chunk.Value.Render(Graphics);
-                }
-            }
-        }
-
-        public BoundingBox GetVisibileBoundingBox()
-        {
-            List<BoundingBox> toAdd = ChunkData.ChunkMap.Select(chunk => chunk.Value.GetBoundingBox()).ToList();
-            return MathFunctions.GetBoundingBox(toAdd);
-        }
-
-        public void RenderAll(Camera renderCamera, DwarfTime gameTime, GraphicsDevice graphicsDevice, Shader effect, Matrix worldMatrix, Texture2D tilemap)
-        {
-            effect.SelfIlluminationTexture = ChunkData.IllumMap;
-            effect.MainTexture = tilemap;
-            effect.SunlightGradient = ChunkData.SunMap;
-            effect.AmbientOcclusionGradient = ChunkData.AmbientMap;
-            effect.TorchlightGradient = ChunkData.TorchMap;
-            effect.LightRampTint = Color.White;
-            effect.VertexColorTint = Color.White;
-            effect.SelfIlluminationEnabled = true;
-            effect.EnableShadows = false;
-
-			BoundingFrustum cameraFrustrum = renderCamera.GetFrustrum();
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                foreach (var chunk in ChunkData.ChunkMap)
-                {
-                    if (cameraFrustrum.Intersects(chunk.Value.GetBoundingBox()))
-                    {
-                        chunk.Value.Render(Graphics);
-                    }
-                }
-            }
-            effect.SelfIlluminationEnabled = false;
-        }
-
-        public void RenderSelectionBuffer(Shader effect, GraphicsDevice graphicsDevice,
-            Matrix viewmatrix)
-        {
-            effect.CurrentTechnique = effect.Techniques[Shader.Technique.SelectionBuffer];
-            effect.MainTexture = ChunkData.Tilemap;
-            effect.World = Matrix.Identity;
-            effect.View = viewmatrix;
-            effect.SelectionBufferColor = Vector4.Zero;
-            List<VoxelChunk> renderListCopy = RenderList.ToArray().ToList();
-
-            foreach (VoxelChunk chunk in renderListCopy)
-            {
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-                    chunk.Render(Graphics);
-                }
-            }
-        }
-
-        public void RenderShadowmap(Shader effect,
-                                    GraphicsDevice graphicsDevice, 
-                                    ShadowRenderer shadowRenderer,
-                                    Matrix worldMatrix, 
-                                    Texture2D tilemap)
-        {
-            Vector3[] corners = new Vector3[8];
-            Camera tempCamera = new Camera(World, camera.Target, camera.Position, camera.FOV, camera.AspectRatio, camera.NearPlane, 30);
-            tempCamera.GetFrustrum().GetCorners(corners);
-            BoundingBox cameraBox = MathFunctions.GetBoundingBox(corners);
-            cameraBox = cameraBox.Expand(1.0f);
-            effect.World = worldMatrix;
-            effect.MainTexture = tilemap;
-            shadowRenderer.SetupViewProj(cameraBox);
-            shadowRenderer.PrepareEffect(effect, false);
-            shadowRenderer.BindShadowmapEffect(effect);
-            shadowRenderer.BindShadowmap(graphicsDevice);
-
-            List<VoxelChunk> renderListCopy = RenderList.ToArray().ToList();
-
-            foreach (VoxelChunk chunk in renderListCopy)
-            {
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-                    chunk.Render(Graphics);
-                }
-            }
-            shadowRenderer.UnbindShadowmap(graphicsDevice);
-            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
-            effect.SelfIlluminationEnabled = false;
-        }
-
-        public void RenderLightmaps(Camera renderCamera, DwarfTime gameTime, GraphicsDevice graphicsDevice,
-            Shader effect, Matrix worldMatrix)
-        {
-            RasterizerState state = RasterizerState.CullNone;
-            RasterizerState origState = graphicsDevice.RasterizerState;
-
-            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Lightmap];
-            effect.SelfIlluminationTexture = ChunkData.IllumMap;
-            effect.MainTexture = ChunkData.Tilemap;
-            effect.SunlightGradient = ChunkData.SunMap;
-            effect.AmbientOcclusionGradient = ChunkData.AmbientMap;
-            effect.TorchlightGradient = ChunkData.TorchMap;
-            effect.LightRampTint = Color.White;
-            effect.VertexColorTint = Color.White;
-            effect.SelfIlluminationEnabled = true;
-            effect.EnableShadows = GameSettings.Default.UseDynamicShadows;
-            effect.EnableLighting = true;
-            graphicsDevice.RasterizerState = state;
-            Graphics.BlendState = BlendState.NonPremultiplied;
-            List<VoxelChunk> renderListCopy = RenderList.ToArray().ToList();
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                foreach (VoxelChunk chunk in renderListCopy)
-                {
-                    Graphics.SetRenderTarget(chunk.Primitive.Lightmap);
-                    Graphics.Clear(ClearOptions.Target, Color.Black, 0.0f, 0);
-                    chunk.Render(Graphics);
-                }
-            }
-            Graphics.SetRenderTarget(null);
-            effect.SelfIlluminationEnabled = false;
-            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
-            graphicsDevice.RasterizerState = origState;
-        }
-
-        public void Render(Camera renderCamera, DwarfTime gameTime, GraphicsDevice graphicsDevice, Shader effect, Matrix worldMatrix)
-        {
-            if (GameSettings.Default.UseLightmaps)
-            {
-                effect.CurrentTechnique = effect.Techniques[Shader.Technique.TexturedWithLightmap];
-                effect.EnableShadows = false;
-            }
-            else
-            {
-                effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
-                effect.EnableShadows = GameSettings.Default.UseDynamicShadows;
-            }
-            effect.SelfIlluminationTexture = ChunkData.IllumMap;
-            effect.MainTexture = ChunkData.Tilemap;
-            effect.SunlightGradient = ChunkData.SunMap;
-            effect.AmbientOcclusionGradient = ChunkData.AmbientMap;
-            effect.TorchlightGradient = ChunkData.TorchMap;
-            effect.LightRampTint = Color.White;
-            effect.VertexColorTint = Color.White;
-            effect.SelfIlluminationEnabled = true;
-            effect.EnableShadows = GameSettings.Default.UseDynamicShadows;
-            effect.World = Matrix.Identity;
-            effect.EnableLighting = true;
-            List<VoxelChunk> renderListCopy = RenderList.ToArray().ToList();
-
-            foreach (VoxelChunk chunk in renderListCopy)
-            {
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-                {
-                    if (GameSettings.Default.UseLightmaps && chunk.Primitive.Lightmap != null)
-                    {
-                        effect.LightMap = chunk.Primitive.Lightmap;
-                        effect.PixelSize = new Vector2(1.0f/chunk.Primitive.Lightmap.Width,
-                            1.0f/chunk.Primitive.Lightmap.Height);
-                    }
-                    pass.Apply();
-                    chunk.Render(Graphics);
-                }
-            }
-            effect.SelfIlluminationEnabled = false;
-            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
-        }
-
+        
         public void GenerateOres()
         {
             foreach (VoxelType type in VoxelLibrary.GetTypes())
@@ -858,26 +618,29 @@ namespace DwarfCorp
             float origBuildRadius = GenerateDistance;
             GenerateDistance = origBuildRadius * 2.0f;
 
-            var boxes = new List<GlobalChunkCoordinate>();
+            var initialChunkCoordinates = new List<GlobalChunkCoordinate>();
             for (int dx = origin.X - WorldSize.X/2 + 1; dx < origin.X + WorldSize.X/2; dx++)
             {
                 for (int dy = origin.Y - WorldSize.Y/2; dy <= origin.Y + WorldSize.Y/2; dy++)
                 {
                     for (int dz = origin.Z - WorldSize.Z/2 + 1; dz < origin.Z + WorldSize.Z/2; dz++)
                     {
-                        boxes.Add(new GlobalChunkCoordinate(dx, dy, dz));
+                        initialChunkCoordinates.Add(new GlobalChunkCoordinate(dx, dy, dz));
                     }
                 }
             }
 
             SetLoadingMessage("Generating Chunks...");
 
-            foreach(var box in boxes)
+            foreach(var box in initialChunkCoordinates)
             {
                 if (!ChunkData.ChunkMap.ContainsKey(box))
                 {
-                    Vector3 worldPos = new Vector3(box.X * ChunkData.ChunkSizeX, box.Y * ChunkData.ChunkSizeY, box.Z * ChunkData.ChunkSizeZ);
-                    VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, (int)ChunkData.ChunkSizeX, (int)ChunkData.ChunkSizeY, (int)ChunkData.ChunkSizeZ, World, Content, Graphics);
+                    Vector3 worldPos = new Vector3(
+                        box.X * VoxelConstants.ChunkSizeX, 
+                        box.Y * VoxelConstants.ChunkSizeY, 
+                        box.Z * VoxelConstants.ChunkSizeZ);
+                    VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, World);
                     chunk.ShouldRebuild = true;
                     chunk.ShouldRecalculateLighting = true;
                     chunk.IsVisible = true;
@@ -893,9 +656,7 @@ namespace DwarfCorp
                 }
             }
 
-
             RecalculateBounds();
-            chunkData.RecomputeNeighbors();
             SetLoadingMessage("Generating Ores...");
 
             GenerateOres();
@@ -905,10 +666,9 @@ namespace DwarfCorp
             // This is a pseudo hack to stop worlds created with Fog of War off then looking awful if it is turned back on.
             bool fogOfWar = GameSettings.Default.FogofWar;
             GameSettings.Default.FogofWar = true;
-            //
-            ChunkData.Reveal(GeneratedChunks.First().MakeVoxel(0, (int)ChunkData.ChunkSizeY - 1, 0));
-            //
-            GameSettings.Default.FogofWar = fogOfWar;
+            VoxelHelpers.Reveal(ChunkData, new TemporaryVoxelHandle(
+                ChunkData.ChunkMap.FirstOrDefault().Value, new LocalVoxelCoordinate(0, VoxelConstants.ChunkSizeY - 1, 0)));
+GameSettings.Default.FogofWar = fogOfWar;
 
             //UpdateRebuildList();
             GenerateDistance = origBuildRadius;
@@ -931,35 +691,21 @@ namespace DwarfCorp
             Bounds = MathFunctions.GetBoundingBox(boxes);
         }
 
-
-        public void GetChunksIntersecting(BoundingBox box, HashSet<VoxelChunk> chunks)
+        private IEnumerable<VoxelChunk> EnumerateAdjacentChunks(VoxelChunk Chunk)
         {
-            chunks.Clear();
-            var minChunk = ChunkData.GetChunkID(box.Min);
-            var maxChunk = ChunkData.GetChunkID(box.Max);
-            for (var x = minChunk.X; x <= maxChunk.X; ++x)
-                for (var y = minChunk.Y; y <= maxChunk.Y; ++y)
-                    for (var z = minChunk.Z; z <= maxChunk.Z; ++z)
+            for (int dx = -1; dx < 2; dx++)
+                for (int dz = -1; dz < 2; dz++)
+                    if (dx != 0 || dz != 0)
                     {
-                        VoxelChunk chunk;
-                        if (ChunkData.ChunkMap.TryGetValue(new GlobalChunkCoordinate(x, y, z), out chunk))
-                            chunks.Add(chunk);
+                        VoxelChunk adjacent;
+                        if (ChunkData.ChunkMap.TryGetValue(new GlobalChunkCoordinate(
+                            Chunk.ID.X + dx, 0, Chunk.ID.Z + dz), out adjacent))
+                            yield return adjacent;
                     }
-        }
-
-        public void GetChunksIntersecting(BoundingFrustum frustum, HashSet<VoxelChunk> chunks)
-        {
-            chunks.Clear();
-            BoundingBox frustumBox = MathFunctions.GetBoundingBox(frustum.GetCorners());
-            GetChunksIntersecting(frustumBox, chunks);
-
-            chunks.RemoveWhere(chunk => frustum.Contains(chunk.GetBoundingBox()) == ContainmentType.Disjoint);
         }
 
         public void Update(DwarfTime gameTime, Camera camera, GraphicsDevice g)
         {
-            UpdateRenderList(camera);
-
             if (waterUpdateTimer.Update(gameTime))
             {
                 WaterUpdateEvent.Set();
@@ -973,7 +719,6 @@ namespace DwarfCorp
                 if(ToGenerate.Count > 0)
                 {
                     NeedsGenerationEvent.Set();
-                    ChunkData.RecomputeNeighbors();
                 }
 
                 foreach(VoxelChunk chunk in GeneratedChunks)
@@ -981,8 +726,7 @@ namespace DwarfCorp
                     if(!ChunkData.ChunkMap.ContainsKey(chunk.ID))
                     {
                         ChunkData.AddChunk(chunk);
-                        List<VoxelChunk> adjacents = ChunkData.GetAdjacentChunks(chunk);
-                        foreach(VoxelChunk c in adjacents)
+                        foreach(var c in EnumerateAdjacentChunks(chunk))
                         {
                             c.ShouldRecalculateLighting = true;
                             c.ShouldRebuild = true;
@@ -1001,16 +745,6 @@ namespace DwarfCorp
                 }
             }
 
-
-            visibilityChunksTimer.Update(gameTime);
-            if(visibilityChunksTimer.HasTriggered)
-            {
-                visibleSet.Clear();
-                GetChunksIntersecting(camera.GetFrustrum(), visibleSet);
-                //RemoveDistantBlocks(camera);
-            }
-
-
             foreach(VoxelChunk chunk in ChunkData.ChunkMap.Values)
             {
                 chunk.Update(gameTime);
@@ -1019,36 +753,26 @@ namespace DwarfCorp
             Water.Splash(gameTime);
             Water.HandleTransfers(gameTime);
 
-            HashSet<VoxelChunk> affectedChunks = new HashSet<VoxelChunk>();
-            
-            foreach (VoxelHandle voxel in KilledVoxels)
+            var affectedVoxels = new HashSet<GlobalVoxelCoordinate>();
+
+            foreach (var voxel in KilledVoxels)
             {
-                affectedChunks.Add(voxel.Chunk);
-                voxel.Chunk.NotifyDestroyed(voxel.GridPosition);
-                foreach (var neighbor in Neighbors.EnumerateAllNeighbors(new GlobalVoxelCoordinate(
-                    voxel.ChunkID, new LocalVoxelCoordinate((int)voxel.GridPosition.X, (int)voxel.GridPosition.Y, (int)voxel.GridPosition.Z))))
-                {
-                    VoxelChunk chunk;
-                    if (chunkData.ChunkMap.TryGetValue(neighbor.GetGlobalChunkCoordinate(), out chunk))
-                        affectedChunks.Add(chunk);
-                }
+                affectedVoxels.Add(voxel.Coordinate);
+                voxel.Chunk.NotifyDestroyed(voxel.Coordinate.GetLocalVoxelCoordinate());
             }
 
-            if (GameSettings.Default.FogofWar)
-            {
-                ChunkData.Reveal(KilledVoxels);
-            }
+            VoxelHelpers.Reveal(ChunkData, KilledVoxels);
 
             lock (RebuildList)
             {
-                foreach (VoxelChunk affected in affectedChunks)
-                {
-                    affected.NotifyTotalRebuild(false);
-                }
+                foreach (var affected in affectedVoxels)
+                    ChunkData.NotifyRebuild(affected);
             }
+
             KilledVoxels.Clear();
         }
 
+        // Todo: %Kill% or %Lift% - only used by voxel selector.
         public IEnumerable<VoxelHandle> GetVoxelsIntersecting(IEnumerable<Vector3> positions)
         {
             foreach (Vector3 vec in positions)
@@ -1060,21 +784,6 @@ namespace DwarfCorp
                     yield return vox;
                 }
             }
-        }
-
-        public List<VoxelHandle> GetVoxelsIntersecting(BoundingBox box)
-        {
-            HashSet<VoxelChunk> intersects = new HashSet<VoxelChunk>();
-            GetChunksIntersecting(box, intersects);
-
-            List<VoxelHandle> toReturn = new List<VoxelHandle>();
-
-            foreach (VoxelChunk chunk in intersects)
-            {
-                toReturn.AddRange(chunk.GetVoxelsIntersecting(box));
-            }
-
-            return toReturn;
         }
 
         public void CreateGraphics(Action<String> SetLoadingMessage, ChunkData chunkData)
@@ -1144,9 +853,7 @@ namespace DwarfCorp
 
             SetLoadingMessage("Cleaning Up.");
         }
-
-       
-
+        
         public void UpdateBounds()
         {
             List<BoundingBox> boundingBoxes = chunkData.ChunkMap.Select(chunkPair => chunkPair.Value.GetBoundingBox()).ToList();
@@ -1164,77 +871,42 @@ namespace DwarfCorp
             ChunkData.ChunkMap.Clear();
         }
 
-        /// <summary>
-        /// Does a n-iteration breadth-first search starting from the seed.
-        /// </summary>
-        /// <param name="seed">The seed.</param>
-        /// <param name="radiusSquared">The squared number of voxels to search.</param>
-        /// <param name="fn">The function. Returns the first voxel matching this function.</param>
-        /// <returns>the first voxel matching fn.</returns>
-        public VoxelHandle BreadthFirstSearch(VoxelHandle seed, float radiusSquared, Func<VoxelHandle, bool> fn)
+        public List<Body> KillVoxel(TemporaryVoxelHandle Voxel)
         {
-            Queue<VoxelHandle> queue = new Queue<VoxelHandle>();
-            queue.Enqueue(seed);
-            HashSet<VoxelHandle> visited = new HashSet<VoxelHandle>();
-            List<VoxelHandle> neighbors = new List<VoxelHandle>(6);
-            while (queue.Count > 0)
-            {
-                VoxelHandle curr = queue.Dequeue();
-                if (fn(curr))
-                {
-                    return curr;
-                }
-                
-                if((curr.Position - seed.Position).LengthSquared() < radiusSquared)
-                {
-                    curr.Chunk.GetNeighborsManhattan((int)curr.GridPosition.X, (int)curr.GridPosition.Y, (int)curr.GridPosition.Z, neighbors);
+            if (!Voxel.IsValid || Voxel.IsEmpty)
+                return null;
 
-                    foreach (VoxelHandle voxel in neighbors)
-                    {
-                        if (voxel != null && !visited.Contains(voxel))
-                        {
-                            queue.Enqueue(new VoxelHandle(voxel.GridPosition, voxel.Chunk));
-                        }
-                    }
-                }
-                //Drawer3D.DrawBox(curr.GetBoundingBox(), Color.White, 0.01f);
-                visited.Add(curr);
+            if (World.ParticleManager != null)
+            {
+                World.ParticleManager.Trigger(Voxel.Type.ParticleType, 
+                    Voxel.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
+                World.ParticleManager.Trigger("puff", 
+                    Voxel.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
             }
-            return null;
+
+            if (World.Master != null)
+                World.Master.Faction.OnVoxelDestroyed(Voxel);
+
+            Voxel.Type.ExplosionSound.Play(Voxel.Coordinate.ToVector3());
+
+            List<Body> emittedResources = null;
+            if (Voxel.Type.ReleasesResource)
+            {
+                if (MathFunctions.Rand() < Voxel.Type.ProbabilityOfRelease)
+                {
+                    emittedResources = new List<Body>
+                    {
+                        EntityFactory.CreateEntity<Body>(Voxel.Type.ResourceToRelease + " Resource",
+                            Voxel.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f))
+                    };
+                }
+            }
+
+            KilledVoxels.Add(Voxel);
+            Voxel.TypeID = 0;
+
+            return emittedResources;
         }
 
-        public List<VoxelHandle> BreadthFirstSearch(VoxelHandle seed, float radiusSquared, bool searchEmpty = true)
-        {
-            Queue<VoxelHandle> queue = new Queue<VoxelHandle>();
-            queue.Enqueue(seed);
-            List<VoxelHandle> outList = new List<VoxelHandle>();
-            Func<VoxelHandle, bool> searchQuery = (VoxelHandle v) => v.IsEmpty;
-            if (!searchEmpty)
-            {
-                searchQuery = v => !v.IsEmpty;
-            }
-            
-
-            while (queue.Count > 0)
-            {
-                VoxelHandle curr = queue.Dequeue();
-                if (curr != null && searchQuery(curr) && !outList.Contains(curr) && (curr.Position - seed.Position).LengthSquared() < radiusSquared)
-                {
-                    outList.Add(curr);
-                    List<VoxelHandle> neighbors = new List<VoxelHandle>(6);
-                    curr.Chunk.GetNeighborsManhattan((int)curr.GridPosition.X, (int)curr.GridPosition.Y, (int)curr.GridPosition.Z, neighbors);
-
-                    foreach (VoxelHandle voxel in neighbors)
-                    {
-                        if (voxel != null && !outList.Contains(voxel)  && searchQuery(voxel))
-                        {
-                            queue.Enqueue(voxel);
-                        }
-                    }
-                }
-            }
-            return outList;
-        }
     }
-
 }

@@ -75,10 +75,14 @@ namespace DwarfCorp
             Tags.Add("Forge");
 
 
-            VoxelHandle voxelUnder = new VoxelHandle();
+            // Todo: Clean up when VoxelListener can take TemporaryVoxelHandles.
+            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+                manager.World.ChunkManager.ChunkData,
+                GlobalVoxelCoordinate.FromVector3(position)));
+            if (voxelUnder.IsValid)
+                AddChild(new VoxelListener(manager, manager.World.ChunkManager,
+                    voxelUnder));
 
-            if (manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
-                AddChild(new VoxelListener(manager, manager.World.ChunkManager, voxelUnder));
 
             AddChild(new LightEmitter(manager, "light", Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero, 50, 4)
             {

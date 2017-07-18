@@ -114,8 +114,8 @@ namespace DwarfCorp
                 {
                     if (a.Equals(b)) return 0;
 
-                    float da = (a.DestinationVoxel.Position - Target.Position).LengthSquared();
-                    float db = (b.DestinationVoxel.Position - Target.Position).LengthSquared();
+                    float da = (a.DestinationVoxel.WorldPosition - Target.Position).LengthSquared();
+                    float db = (b.DestinationVoxel.WorldPosition - Target.Position).LengthSquared();
 
                     return da.CompareTo(db);
                 });
@@ -134,7 +134,7 @@ namespace DwarfCorp
                 Timer timeout = new Timer(2.0f, true);
                 while (!reachedTarget)
                 {
-                    Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, furthest.DestinationVoxel.Position + Vector3.One*0.5f,
+                    Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, furthest.DestinationVoxel.WorldPosition + Vector3.One*0.5f,
                         Agent.Position);
                     Creature.Physics.ApplyForce(output, DwarfTime.Dt);
 
@@ -146,7 +146,7 @@ namespace DwarfCorp
                     timeout.Update(DwarfTime.LastTime);
 
                     yield return Status.Running;
-                    if (timeout.HasTriggered || (furthest.DestinationVoxel.Position - Agent.Position).Length() < 1)
+                    if (timeout.HasTriggered || (furthest.DestinationVoxel.WorldPosition - Agent.Position).Length() < 1)
                     {
                         reachedTarget = true;
                     }
@@ -294,11 +294,14 @@ namespace DwarfCorp
                 // Else, stop and attack
                 else
                 {
-                    if (CurrentAttack.Mode == Attack.AttackMode.Ranged && Creature.AI.Raycast(Target.Position))
+                    if (CurrentAttack.Mode == Attack.AttackMode.Ranged 
+                        && VoxelHelpers.DoesRayHitSolidVoxel(Creature.World.ChunkManager.ChunkData,
+                            Creature.AI.Position, Target.Position))
                     {
                         yield return Status.Fail;
                         yield break;
                     }
+
                     FailTimer.Reset();
                     avoided = false;
                     Creature.Physics.Orientation = Physics.OrientMode.Fixed;
@@ -435,14 +438,14 @@ namespace DwarfCorp
             for (int i = 0; i < PathLength; i++)
             {
                 IEnumerable<MoveAction> actions =
-                    Creature.AI.Movement.GetMoveActions(curr);
+                    Creature.AI.Movement.GetMoveActions(new TemporaryVoxelHandle(curr.Chunk, curr.GridPosition));
 
                 MoveAction? bestAction = null;
                 float bestDist = float.MaxValue;
 
                 foreach (MoveAction action in actions)
                 {
-                    float dist = (action.DestinationVoxel.Position - target).LengthSquared();
+                    float dist = (action.DestinationVoxel.WorldPosition - target).LengthSquared();
 
                     if (dist < bestDist)
                     {
@@ -461,7 +464,7 @@ namespace DwarfCorp
                     curr = bestAction.Value.DestinationVoxel;
                     bestAction = action;
 
-                    if (((bestAction.Value.DestinationVoxel.Position + half) - target).Length() < Threshold)
+                    if (((bestAction.Value.DestinationVoxel.WorldPosition + half) - target).Length() < Threshold)
                     {
                         break;
                     }

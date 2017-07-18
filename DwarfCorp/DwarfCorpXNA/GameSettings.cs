@@ -61,8 +61,6 @@ namespace DwarfCorp
             public float CameraScrollSpeed = 10.0f;
             public float CameraZoomSpeed = 0.5f;
             public bool EnableEdgeScroll = false;
-            public int ChunkWidth = 16;
-            public int ChunkHeight = 64;
             public float WorldScale = 2.0f;
             public bool DisplayIntro = true;
             public float MasterVolume = 1.0f;

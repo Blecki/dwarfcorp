@@ -37,70 +37,43 @@ using System.Text;
 
 namespace DwarfCorp
 {
+    // Todo: Take a GlobalVoxelCoordinate, not a TemporaryVoxelHandle.
+
     /// <summary>
     /// A creature plans to a voxel and then follows the path to it.
     /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GoToVoxelAct : CompoundCreatureAct
     {
-        public VoxelHandle Voxel { get; set; }
-        public string VoxelName { get; set; }
-        public PlanAct.PlanType PlanType { get; set; }
-        public float Radius { get; set; }
+        public TemporaryVoxelHandle Voxel;
+        public PlanAct.PlanType PlanType;
+        public float Radius;
 
         public GoToVoxelAct() : base()
         {
-            
-        }
-
-        public GoToVoxelAct(string voxel, PlanAct.PlanType planType, CreatureAI creature, float radius = 0.0f) :
-            base(creature)
-        {
-            Radius = radius;
-            PlanType = planType;
-            VoxelName = voxel;
-            Name = "Go to DestinationVoxel " + voxel;
 
         }
 
-        public GoToVoxelAct(VoxelHandle voxel, PlanAct.PlanType planType, CreatureAI creature, float radius = 0.0f) :
+        public GoToVoxelAct(TemporaryVoxelHandle voxel, PlanAct.PlanType planType, CreatureAI creature, float radius = 0.0f) :
             base(creature)
         {
             Radius = radius;
             Voxel = voxel;
             Name = "Go to DestinationVoxel";
             PlanType = planType;
-
         }
 
         public override void Initialize()
         {
-            if (VoxelName != null)
+            if (Voxel.IsValid)
             {
                 Tree = new Sequence(
-            new Sequence(
-                          new PlanAct(Agent, "PathToVoxel", VoxelName, PlanType) { Radius = Radius},
-                          new FollowPathAct(Agent, "PathToVoxel")
-                         ),
-                          new StopAct(Agent));
-            }
-            else if (Voxel != null)
-            {
-                Tree = new Sequence(
-                      new SetBlackboardData<VoxelHandle>(Agent, "ActionVoxel", Voxel),
+                      new SetBlackboardData<VoxelHandle>(Agent, "ActionVoxel", new VoxelHandle(Voxel.Coordinate.GetLocalVoxelCoordinate(), Voxel.Chunk)),
                       new PlanAct(Agent, "PathToVoxel", "ActionVoxel", PlanType) { Radius = Radius },
                       new FollowPathAct(Agent, "PathToVoxel"),
                       new StopAct(Agent));
             }
             base.Initialize();
         }
-
-
-        public override IEnumerable<Act.Status> Run()
-        {
-            return base.Run();
-        }
-
     }
-
 }
