@@ -494,7 +494,7 @@ namespace DwarfCorp
 
             int y = (int)Position.Y;
 
-            foreach (var v in DwarfCorp.Neighbors.EnumerateManhattanCube(CurrentVoxel.Coordinate)
+            foreach (var v in VoxelHelpers.EnumerateManhattanCube(CurrentVoxel.Coordinate)
                 .Select(c => new TemporaryVoxelHandle(chunks.ChunkData, c)))
             {
                 if (!v.IsValid || v.IsEmpty)

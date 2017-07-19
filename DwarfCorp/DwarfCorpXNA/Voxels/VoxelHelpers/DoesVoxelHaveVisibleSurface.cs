@@ -14,7 +14,7 @@ namespace DwarfCorp
 
             if (!V.IsVisible || V.IsEmpty) return false;
 
-            foreach (var neighborCoordinate in Neighbors.EnumerateManhattanNeighbors(V.Coordinate))
+            foreach (var neighborCoordinate in VoxelHelpers.EnumerateManhattanNeighbors(V.Coordinate))
             {
                 var neighbor = new TemporaryVoxelHandle(Data, neighborCoordinate);
                 if (!neighbor.IsValid) return true;

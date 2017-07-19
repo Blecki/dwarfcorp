@@ -91,7 +91,7 @@ namespace DwarfCorp
                     if (Creature.Physics.BoundingBox.Intersects(new BoundingBox(
                         Location.ToVector3(), Location.ToVector3() + Vector3.One)))
                     {
-                        var neighbors = Neighbors.EnumerateAllNeighbors(Location)
+                        var neighbors = VoxelHelpers.EnumerateAllNeighbors(Location)
                             .Select(c => new TemporaryVoxelHandle(Agent.Chunks.ChunkData, c));
 
                         var closest = TemporaryVoxelHandle.InvalidHandle;

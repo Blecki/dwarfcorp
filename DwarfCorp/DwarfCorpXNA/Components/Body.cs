@@ -231,7 +231,7 @@ namespace DwarfCorp
                 GlobalVoxelCoordinate.FromVector3(LocalTransform.Translation));
             if (curr.IsValid)
             {
-                foreach (var n in Neighbors.EnumerateManhattanNeighbors2D(curr.Coordinate))
+                foreach (var n in VoxelHelpers.EnumerateManhattanNeighbors2D(curr.Coordinate))
                 {
                     var v = new TemporaryVoxelHandle(World.ChunkManager.ChunkData, n);
                     if (v.IsValid && !v.IsEmpty)

@@ -217,7 +217,7 @@ namespace DwarfCorp
                 {
                     case CraftItem.CraftPrereq.NearWall:
                         {
-                            var neighborFound = Neighbors.EnumerateManhattanNeighbors2D(designation.Location.Coordinate)
+                            var neighborFound = VoxelHelpers.EnumerateManhattanNeighbors2D(designation.Location.Coordinate)
                                     .Select(c => new TemporaryVoxelHandle(World.ChunkManager.ChunkData, c))
                                     .Any(v => v.IsValid && !v.IsEmpty);
 
@@ -231,7 +231,7 @@ namespace DwarfCorp
                         }
                     case CraftItem.CraftPrereq.OnGround:
                     {
-                            var below = Neighbors.GetNeighbor(designation.Location, new GlobalVoxelOffset(0, -1, 0));
+                            var below = VoxelHelpers.GetNeighbor(designation.Location, new GlobalVoxelOffset(0, -1, 0));
 
                         if (!below.IsValid || below.IsEmpty)
                         {

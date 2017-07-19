@@ -362,7 +362,7 @@ namespace DwarfCorp
                             // x, y, z are in local chunk space.
                             int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y - dy, z));
 
-                            waterFound = Neighbors.EnumerateManhattanNeighbors(chunk.ID + new LocalVoxelCoordinate(x, y - dy, z))
+                            waterFound = VoxelHelpers.EnumerateManhattanNeighbors(chunk.ID + new LocalVoxelCoordinate(x, y - dy, z))
                                 .Select(c => new TemporaryVoxelHandle(Manager.ChunkData, c))
                                 .Any(v => v.IsValid && v.WaterCell.WaterLevel > 0);
                             

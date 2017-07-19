@@ -469,7 +469,7 @@ namespace DwarfCorp
             var box = new BoundingBox(pos - new Vector3(0.5f, 0.5f, 0.5f), pos + new Vector3(0.5f, 0.5f, 0.5f));
             bool gotCollision = false;
 
-            foreach (var v in Neighbors.EnumerateCube(GlobalVoxelCoordinate.FromVector3(pos))
+            foreach (var v in VoxelHelpers.EnumerateCube(GlobalVoxelCoordinate.FromVector3(pos))
                 .Select(n => new TemporaryVoxelHandle(chunks.ChunkData, n)))                
             {
                 if (!v.IsValid) continue;

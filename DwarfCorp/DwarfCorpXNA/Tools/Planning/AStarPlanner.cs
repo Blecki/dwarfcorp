@@ -207,7 +207,7 @@ namespace DwarfCorp
                 neighbors = mover.GetMoveActions(current);
                 //currentChunk.GetNeighborsManhattan(current, manhattanNeighbors);
 
-                var foundGoalAdjacent = Neighbors.EnumerateManhattanNeighbors(current.Coordinate)
+                var foundGoalAdjacent = VoxelHelpers.EnumerateManhattanNeighbors(current.Coordinate)
                     .Contains(goal.GetVoxel().Coordinate);
 
                 // A quick test to see if we're already adjacent to the goal. If we are, assume
@@ -311,7 +311,7 @@ namespace DwarfCorp
             goalVoxels.Add(goal.GetVoxel());
             // Starting conditions of the search.
 
-            foreach (var goalVoxel in Neighbors.EnumerateAllNeighbors(goal.GetVoxel().Coordinate)
+            foreach (var goalVoxel in VoxelHelpers.EnumerateAllNeighbors(goal.GetVoxel().Coordinate)
                 .Select(c => new TemporaryVoxelHandle(start.Chunk.Manager.ChunkData, c))) 
             {
                 if (!goalVoxel.IsValid) continue;

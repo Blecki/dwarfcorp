@@ -250,7 +250,7 @@ namespace DwarfCorp
             if (Type.Transitions == VoxelType.TransitionType.Horizontal)
             {
                 var value = ComputeTransitionValueOnPlain(
-                    DwarfCorp.Neighbors.EnumerateManhattanNeighbors2D(V.Coordinate)
+                    VoxelHelpers.EnumerateManhattanNeighbors2D(V.Coordinate)
                     .Select(c => new TemporaryVoxelHandle(Data, c)), Type);
 
                 return new BoxTransition()
@@ -261,12 +261,12 @@ namespace DwarfCorp
             else
             {
                 var transitionFrontBack = ComputeTransitionValueOnPlain(
-                    DwarfCorp.Neighbors.EnumerateManhattanNeighbors2D(V.Coordinate, ChunkManager.SliceMode.Z)
+                    VoxelHelpers.EnumerateManhattanNeighbors2D(V.Coordinate, ChunkManager.SliceMode.Z)
                     .Select(c => new TemporaryVoxelHandle(Data, c)),
                     Type);
 
                 var transitionLeftRight = ComputeTransitionValueOnPlain(
-                    DwarfCorp.Neighbors.EnumerateManhattanNeighbors2D(V.Coordinate, ChunkManager.SliceMode.X)
+                    VoxelHelpers.EnumerateManhattanNeighbors2D(V.Coordinate, ChunkManager.SliceMode.X)
                     .Select(c => new TemporaryVoxelHandle(Data, c)),
                     Type);
 

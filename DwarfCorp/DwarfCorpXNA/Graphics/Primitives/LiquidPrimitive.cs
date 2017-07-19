@@ -201,7 +201,7 @@ namespace DwarfCorp
 
                                 // Pull the current neighbor DestinationVoxel based on the face it would be touching.
 
-                                var vox = Neighbors.GetNeighbor(voxel, delta);
+                                var vox = VoxelHelpers.GetNeighbor(voxel, delta);
 
                                 if (vox.IsValid)
                                 {
@@ -355,7 +355,7 @@ namespace DwarfCorp
                         float emptyNeighbors = 0.0f;
                         float averageWaterLevel = centerWaterlevel;
 
-                        var vertexSucc = Neighbors.VertexNeighbors[(int)currentVertex];
+                        var vertexSucc = VoxelHelpers.VertexNeighbors[(int)currentVertex];
 
                         // Run through the successors and count up the water in each voxel.
                         for (int v = 0; v < vertexSucc.Length; v++)

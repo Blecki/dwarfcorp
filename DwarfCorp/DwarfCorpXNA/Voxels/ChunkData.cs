@@ -163,7 +163,7 @@ namespace DwarfCorp
 
         public void NotifyRebuild(GlobalVoxelCoordinate At)
         {
-            foreach (var n in Neighbors.EnumerateManhattanNeighbors2D(At))
+            foreach (var n in VoxelHelpers.EnumerateManhattanNeighbors2D(At))
             {
                 var vox = new TemporaryVoxelHandle(this, n);
                 if (vox.IsValid)

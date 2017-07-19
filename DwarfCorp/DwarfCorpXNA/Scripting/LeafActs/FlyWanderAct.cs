@@ -223,7 +223,7 @@ namespace DwarfCorp
 
                         if (CanPerchOnWalls)
                         {
-                            foreach (var n in Neighbors.EnumerateManhattanNeighbors(Creature.Physics.CurrentVoxel.Coordinate)
+                            foreach (var n in VoxelHelpers.EnumerateManhattanNeighbors(Creature.Physics.CurrentVoxel.Coordinate)
                                 .Select(c => new TemporaryVoxelHandle(Creature.World.ChunkManager.ChunkData, c)))
                             {
                                 if (n.IsValid && n.Coordinate.Y >= vox.Coordinate.Y && !n.IsEmpty)

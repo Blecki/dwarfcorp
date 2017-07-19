@@ -570,7 +570,7 @@ namespace DwarfCorp
         public IEnumerable<Act.Status> AvoidFalling()
         {
             var above = VoxelHelpers.GetVoxelAbove(Physics.CurrentVoxel);
-            foreach (var vox in Neighbors.EnumerateManhattanNeighbors(Physics.CurrentVoxel.Coordinate)
+            foreach (var vox in VoxelHelpers.EnumerateManhattanNeighbors(Physics.CurrentVoxel.Coordinate)
                 .Select(c => new TemporaryVoxelHandle(World.ChunkManager.ChunkData, c)))
             {
                 if (!vox.IsValid) continue;

@@ -477,7 +477,7 @@ namespace DwarfCorp
                 //Array.Sort(m_spreadNeighbors, (a, b) => CompareFlowVectors(a, b, data.Water[idx].FluidFlow));
                 //m_spreadNeighbors.Shuffle();
                 
-                foreach (var globalCoordinate in Neighbors.EnumerateManhattanNeighbors2D(
+                foreach (var globalCoordinate in VoxelHelpers.EnumerateManhattanNeighbors2D(
                         chunk.ID + new LocalVoxelCoordinate(x, y, z)))
                 {
                     var v = new TemporaryVoxelHandle(chunk.Manager.ChunkData, globalCoordinate);

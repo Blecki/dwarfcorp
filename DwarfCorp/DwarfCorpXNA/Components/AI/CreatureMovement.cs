@@ -538,7 +538,7 @@ namespace DwarfCorp
         // Very, very slow.
         public IEnumerable<MoveAction> GetInverseMoveActions(TemporaryVoxelHandle current)
         {
-            foreach (var v in Neighbors.EnumerateAllNeighbors(current.Coordinate)
+            foreach (var v in VoxelHelpers.EnumerateAllNeighbors(current.Coordinate)
                 .Select(n => new TemporaryVoxelHandle(current.Chunk.Manager.ChunkData, n))
                 .Where(h => h.IsValid))
             {

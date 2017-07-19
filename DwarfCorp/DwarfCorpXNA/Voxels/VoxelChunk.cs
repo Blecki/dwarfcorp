@@ -470,7 +470,7 @@ namespace DwarfCorp
                         foreach (VoxelVertex bestKey in top)
                         {
                             // If there are no empty neighbors, no slope.
-                            if (!Neighbors.EnumerateVertexNeighbors2D(v.Coordinate, bestKey)
+                            if (!VoxelHelpers.EnumerateVertexNeighbors2D(v.Coordinate, bestKey)
                                 .Any(n =>
                                 {
                                     var handle = new TemporaryVoxelHandle(chunk.Manager.ChunkData, n);
@@ -807,7 +807,7 @@ namespace DwarfCorp
             color.DynamicColor = 0;
             color.SunColor += vox.SunColor;
 
-            foreach (var c in Neighbors.EnumerateVertexNeighbors(vox.Coordinate, face))
+            foreach (var c in VoxelHelpers.EnumerateVertexNeighbors(vox.Coordinate, face))
             {
                 var v = new TemporaryVoxelHandle(chunks.ChunkData, c);
                 if (!v.IsValid) continue;
