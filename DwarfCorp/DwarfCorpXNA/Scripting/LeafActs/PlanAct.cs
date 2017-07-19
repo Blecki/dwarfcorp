@@ -103,6 +103,7 @@ namespace DwarfCorp
 
         public VoxelHandle GetTarget()
         {
+            // This is a hack to support both VoxelHandle and TemporaryVoxelHandle for now.
             var vhan = Agent.Blackboard.GetData<VoxelHandle>(TargetName);
             if (vhan == null)
             {

@@ -104,16 +104,13 @@ namespace DwarfCorp
                     Tree = new Sequence(
                         new SetBlackboardData<ResourceAmount>(Agent, "GatheredResource", ItemToStock.CloneResource()),
                         new SearchFreeStockpileAct(Agent, "TargetStockpile", "FreeVoxel", ItemToStock),
-                        
-                                        new Select(
-                                                    new Sequence(
-                                                                    new GoToNamedVoxelAct("FreeVoxel", PlanAct.PlanType.Adjacent, Agent),
-                                                                    new PutResourceInZone(Agent, "TargetStockpile", "FreeVoxel", "GatheredResource")
-                                                                )
-                                                  )
-                                         
-                        ) | new Wrap(OnFail)
-                     ;
+                            new Select(
+                                new Sequence(
+                                    new GoToNamedVoxelAct("FreeVoxel", PlanAct.PlanType.Adjacent, Agent),
+                                    new PutResourceInZone(Agent, "TargetStockpile", "FreeVoxel", "GatheredResource")
+                                    )
+                            )
+                        ) | new Wrap(OnFail);
 
                     Tree.Initialize();
                 }

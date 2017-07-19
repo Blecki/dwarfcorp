@@ -319,7 +319,7 @@ namespace DwarfCorp
 
                             var treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
                             EntityFactory.CreateEntity<Body>(veg.Name,
-                                topVoxel.Coordinate.ToVector3() + (Vector3.Up * treeSize * offset),
+                                topVoxel.Coordinate.ToVector3() + (Vector3.Up * treeSize * offset) + Vector3.Up,
                                 Blackboard.Create("Scale", treeSize));
 
                             break;
