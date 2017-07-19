@@ -79,7 +79,6 @@ namespace DwarfCorp
 
             DamageAmount = 200;
 
-            // Todo: Clean up when VoxelListener can take TemporaryVoxelHandles.
             var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
                 manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(pos)));

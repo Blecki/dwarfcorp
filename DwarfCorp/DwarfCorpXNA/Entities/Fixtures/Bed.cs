@@ -27,7 +27,6 @@ namespace DwarfCorp
             Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Entities.Furniture.bedtex);
              var model = AddChild(new Box(manager, "bedbox", Matrix.CreateTranslation(-0.5f, -0.5f, -0.5f) * Matrix.CreateRotationY((float)Math.PI * 0.5f), new Vector3(1.0f, 1.0f, 2.0f), new Vector3(0.5f, 0.5f, 1.0f), "bed", spriteSheet)) as Box;
 
-            // Todo: Clean up when VoxelListener can take TemporaryVoxelHandles.
             var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
                 manager.World.ChunkManager.ChunkData, 
                 GlobalVoxelCoordinate.FromVector3(position)));
