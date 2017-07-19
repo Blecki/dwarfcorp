@@ -379,8 +379,7 @@ namespace DwarfCorp
             if(!V.IsValid || V.IsEmpty)
                 return;
 
-            var oldV = new VoxelHandle(V.Coordinate.GetLocalVoxelCoordinate(), V.Chunk);
-            RoomBuilder.OnVoxelDestroyed(oldV);
+            RoomBuilder.OnVoxelDestroyed(V);
 
             var toRemove = new List<Stockpile>();
             foreach (var s in new List<Stockpile>(Stockpiles))

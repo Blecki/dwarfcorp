@@ -282,11 +282,6 @@ namespace DwarfCorp
             return Voxels.Any(storage => storage.GetBoundingBox().Intersects(larger));
         }
 
-        public bool Intersects(VoxelHandle v)
-        {
-            return Intersects(v.GetBoundingBox());
-        }
-
         // Todo: Faster algorithm - find min and max voxel extents and create bounding box from that.
         public BoundingBox GetBoundingBox()
         {

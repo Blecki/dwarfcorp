@@ -133,7 +133,6 @@ namespace DwarfCorp
 
         public void OverheadUpdate(DwarfTime time, ChunkManager chunks)
         {
-            VoxelHandle currentVoxel = new VoxelHandle();
             float diffPhi = 0;
             float diffTheta = 0;
             float diffRadius = 0;

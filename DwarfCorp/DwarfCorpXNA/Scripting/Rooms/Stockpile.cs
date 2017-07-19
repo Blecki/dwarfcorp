@@ -59,7 +59,6 @@ namespace DwarfCorp
         public List<Body> Boxes { get; set; }
         public static string StockpileName = "Stockpile";
         public string BoxType = "Crate";
-        public Faction Faction { get; set; }
         public Vector3 BoxOffset = Vector3.Zero;
 
         // If this is empty, all resources are allowed if and only if whitelist is empty. Otherwise,

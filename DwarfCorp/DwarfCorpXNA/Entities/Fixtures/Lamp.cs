@@ -93,28 +93,32 @@ namespace DwarfCorp
 
         private void CreateSprite()
         {
-            VoxelHandle voxel = new VoxelHandle();
-            if (!Manager.World.ChunkManager.ChunkData.GetVoxel(LocalPosition, ref voxel))
+            var voxel = new TemporaryVoxelHandle(Manager.World.ChunkManager.ChunkData,
+                GlobalVoxelCoordinate.FromVector3(LocalPosition));
+            if (!voxel.IsValid)
             {
                 CreateSpriteStanding();
                 return;
             }
-
-            VoxelHandle neighbor = new VoxelHandle();
-            for (int dx = -1; dx < 2; dx ++)
+           
+            for (var dx = -1; dx < 2; dx ++)
             {
-                for (int dz = -1; dz < 2; dz++)
+                for (var dz = -1; dz < 2; dz++)
                 {
                     if (Math.Abs(dx) + Math.Abs(dz) != 1)
                         continue;
-                    Vector3 diff = new Vector3(dx, 0, dz);
-                    if (voxel.GetNeighbor(diff, ref neighbor) && !neighbor.IsEmpty)
+
+                    var vox = new TemporaryVoxelHandle(Manager.World.ChunkManager.ChunkData,
+                        voxel.Coordinate + new GlobalVoxelOffset(dx, 0, dz));
+
+                    if (vox.IsValid && !vox.IsEmpty)
                     {
-                        CreateSpriteWall(diff);
+                        CreateSpriteWall(new Vector3(dx, 0, dz));
                         return;
                     }
                 }
             }
+
             CreateSpriteStanding();
             return;
         }

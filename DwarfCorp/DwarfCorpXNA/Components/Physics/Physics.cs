@@ -441,7 +441,7 @@ namespace DwarfCorp
             }
         }
 
-        public virtual void OnTerrainCollision(VoxelHandle vox)
+        public virtual void OnTerrainCollision(TemporaryVoxelHandle vox)
         {
             //
         }
@@ -495,19 +495,17 @@ namespace DwarfCorp
             int y = (int)Position.Y;
 
             foreach (var v in DwarfCorp.Neighbors.EnumerateManhattanCube(CurrentVoxel.Coordinate)
-                .Select(c => new VoxelHandle(chunks.ChunkData, c)))
+                .Select(c => new TemporaryVoxelHandle(chunks.ChunkData, c)))
             {
-                if (v == null || v.Chunk == null || v.IsEmpty)
+                if (!v.IsValid || v.IsEmpty)
+                    continue;
+
+                if (CollideMode == CollisionMode.UpDown && (int)v.Coordinate.Y == y)
                 {
                     continue;
                 }
 
-                if (CollideMode == CollisionMode.UpDown && (int)v.GridPosition.Y == y)
-                {
-                    continue;
-                }
-
-                if (CollideMode == CollisionMode.Sides && (int)v.GridPosition.Y != y)
+                if (CollideMode == CollisionMode.Sides && (int)v.Coordinate.Y != y)
                 {
                     continue;
                 }

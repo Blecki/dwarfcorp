@@ -834,14 +834,14 @@ namespace DwarfCorp
         }
 
 
-        public static void CalculateVertexLight(VoxelHandle vox, VoxelVertex face,
-            ChunkManager chunks, List<VoxelHandle> neighbors, ref VertexColorInfo color)
+        public static void CalculateVertexLight(TemporaryVoxelHandle vox, VoxelVertex face,
+            ChunkManager chunks, ref VertexColorInfo color)
         {
             float numHit = 1;
             float numChecked = 1;
 
             color.DynamicColor = 0;
-            color.SunColor += vox.Chunk.Data.SunColors[vox.Index];
+            color.SunColor += vox.SunColor;
 
             foreach (var c in Neighbors.EnumerateVertexNeighbors(vox.Coordinate, face))
             {

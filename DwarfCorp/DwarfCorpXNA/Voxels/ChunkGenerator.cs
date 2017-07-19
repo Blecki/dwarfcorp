@@ -131,7 +131,6 @@ namespace DwarfCorp
 
         public void GenerateCluster(OreCluster cluster, ChunkData chunks)
         {
-            VoxelHandle vox = new VoxelHandle();
             for (float x = -cluster.Size.X*0.5f; x < cluster.Size.X*0.5f; x += 1.0f)
             {
                 for (float y = -cluster.Size.Y*0.5f; y < cluster.Size.Y*0.5f; y += 1.0f)
@@ -149,9 +148,10 @@ namespace DwarfCorp
                         if (globalPosition.Y > cluster.Type.MaxSpawnHeight ||
                             globalPosition.Y < cluster.Type.MinSpawnHeight) continue;
 
-                        if (!chunks.GetVoxel(globalPosition, ref vox)) continue;
+                        var vox = new TemporaryVoxelHandle(chunks,
+                            GlobalVoxelCoordinate.FromVector3(globalPosition));
 
-                        if (vox.IsEmpty) continue;
+                        if (!vox.IsValid || vox.IsEmpty) continue;
 
                         if (!cluster.Type.SpawnOnSurface && vox.Type.IsSurface) continue;
 

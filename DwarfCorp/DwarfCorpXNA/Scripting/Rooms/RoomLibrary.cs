@@ -98,7 +98,6 @@ namespace DwarfCorp
         {
             public Rectangle OccupiedSpace;
             public FurnitureRotation Rotation;
-            public VoxelHandle Vox;
         };
 
         public static bool FurnitureIntersects(PlacedFurniture a, PlacedFurniture B)

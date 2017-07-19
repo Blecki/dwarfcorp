@@ -242,7 +242,7 @@ namespace DwarfCorp
             MouseState mouse = Mouse.GetState();
             KeyboardState keyboard = Keyboard.GetState();
 
-            var underMouse = GetVoxelUnderMouse().tvh;
+            var underMouse = GetVoxelUnderMouse();
             // Keep track of whether a new voxel has been selected.
             bool newVoxel = underMouse != null && !underMouse.Equals(VoxelUnderMouse);
 
@@ -665,7 +665,7 @@ namespace DwarfCorp
             }
         }
 
-        public VoxelHandle GetVoxelUnderMouse()
+        public TemporaryVoxelHandle GetVoxelUnderMouse()
         {
             MouseState mouse = Mouse.GetState();
 
@@ -680,34 +680,31 @@ namespace DwarfCorp
                 null);
 
             if (!v.IsValid)
-                return null;
+                return TemporaryVoxelHandle.InvalidHandle;
 
             switch (SelectionType)
             {
                 case VoxelSelectionType.SelectFilled:
                     if (!v.IsEmpty)
-                    {
-                        return new VoxelHandle(v.Coordinate.GetLocalVoxelCoordinate(), v.Chunk);
-                    }
-                    return default(VoxelHandle);
-
+                        return v;
+                    return TemporaryVoxelHandle.InvalidHandle;
                 case VoxelSelectionType.SelectEmpty:
-                    return new VoxelHandle(v.Coordinate.GetLocalVoxelCoordinate(), v.Chunk);
+                    return v;
             }
 
-            return default(VoxelHandle);
+            return TemporaryVoxelHandle.InvalidHandle;
         }
 
         public TemporaryVoxelHandle LeftPressedCallback()
         {
             SelectionBuffer.Clear();
-            return GetVoxelUnderMouse().tvh;
+            return GetVoxelUnderMouse();
         }
 
         public TemporaryVoxelHandle RightPressedCallback()
         {
             SelectionBuffer.Clear();
-            return GetVoxelUnderMouse().tvh;
+            return GetVoxelUnderMouse();
         }
 
         public List<TemporaryVoxelHandle> LeftReleasedCallback()
