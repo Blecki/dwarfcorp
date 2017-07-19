@@ -165,7 +165,6 @@ namespace DwarfCorp
 
         public void GenerateVein(OreVein vein, ChunkData chunks)
         {
-            VoxelHandle vox = new VoxelHandle();
             Vector3 curr = vein.Start;
             Vector3 directionBias = MathFunctions.RandVector3Box(-1, 1, -0.1f, 0.1f, -1, 1);
             for (float t = 0; t < vein.Length; t++)
@@ -173,9 +172,10 @@ namespace DwarfCorp
                 if (curr.Y > vein.Type.MaxSpawnHeight ||
                     curr.Y < vein.Type.MinSpawnHeight) continue;
                 Vector3 p = new Vector3(curr.X , curr.Y, curr.Z);
-                if (!chunks.GetVoxel(p, ref vox)) continue;
 
-                if (vox.IsEmpty) continue;
+                var vox = new TemporaryVoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(p));
+
+                if (!vox.IsValid || vox.IsEmpty) continue;
 
                 if (!MathFunctions.RandEvent(vein.Type.SpawnProbability)) continue;
 
@@ -333,8 +333,7 @@ namespace DwarfCorp
         {
             Vector3 origin = chunk.Origin;
             BiomeData biome = BiomeLibrary.Biomes[Overworld.Biome.Cave];
-            List<VoxelHandle> neighbors = new List<VoxelHandle>();
-            VoxelHandle vUnder = chunk.MakeVoxel(0, 0, 0);
+
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
                 for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
@@ -465,7 +464,6 @@ namespace DwarfCorp
                 ShouldRecalculateLighting = true
             };
 
-            VoxelHandle voxel = c.MakeVoxel(0, 0, 0);
             for(int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
                 for(int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
@@ -485,8 +483,8 @@ namespace DwarfCorp
                     int depthWithinSubsurface = 0;
                     for(int y = VoxelConstants.ChunkSizeY - 1; y >= 0; y--)
                     {
-                        
-                        voxel.GridPosition = new LocalVoxelCoordinate(x, y, z);
+                        var voxel = new TemporaryVoxelHandle(c, new LocalVoxelCoordinate(x, y, z));
+
                         if(y == 0)
                         {
                             voxel.Type = VoxelLibrary.GetVoxelType("Bedrock");

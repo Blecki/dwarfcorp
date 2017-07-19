@@ -109,7 +109,7 @@ namespace DwarfCorp
             {
                 Body p = (Body) Parent;
 
-                VoxelChunk chunk = chunks.ChunkData.GetChunk(p.GlobalTransform.Translation);
+                VoxelChunk chunk = chunks.ChunkData.GetVoxelChunkAtWorldLocation(p.GlobalTransform.Translation);
 
                 if(chunk != null)
                 {

@@ -160,7 +160,6 @@ namespace DwarfCorp
 
         public void HandleTransfers(DwarfTime time)
         {
-            VoxelHandle atPos = new VoxelHandle();
             while(Transfers.Count > 0)
             {
                 Transfer transfer;
@@ -174,18 +173,20 @@ namespace DwarfCorp
                 && transfer.cellTo.Type == LiquidType.Water) || 
                 (transfer.cellFrom.Type == LiquidType.Water && transfer.cellTo.Type == LiquidType.Lava))
                 {
-                    bool success = Chunks.ChunkData.GetVoxel(transfer.worldLocation, ref atPos);
+                    var v = new TemporaryVoxelHandle(Chunks.ChunkData, transfer.worldLocation);
 
-                    if(success)
+                    if(v.IsValid)
                     {
-                        VoxelHandle v = atPos;
+                        VoxelLibrary.PlaceType(VoxelLibrary.GetVoxelType("Stone"), v);
 
-                        VoxelLibrary.PlaceType(VoxelLibrary.GetVoxelType("Stone"), atPos.tvh);
-                        VoxelChunk chunk = Chunks.ChunkData.ChunkMap[v.ChunkID];
-                        chunk.Data.Water[v.Index].Type = LiquidType.None;
-                        chunk.Data.Water[v.Index].WaterLevel = 0;
-                        chunk.ShouldRebuild = true;
-                        chunk.ShouldRecalculateLighting = true;
+                        v.WaterCell = new WaterCell
+                        {
+                            Type = LiquidType.None,
+                            WaterLevel = 0
+                        };
+
+                        v.Chunk.ShouldRebuild = true;
+                        v.Chunk.ShouldRecalculateLighting = true;
                     }
                 }
             }
@@ -334,7 +335,8 @@ namespace DwarfCorp
             {
                 return false;
             }
-            VoxelHandle voxBelow = chunk.MakeVoxel(0, 0, 0);
+
+            TemporaryVoxelHandle voxBelow = TemporaryVoxelHandle.InvalidHandle;
 
             for (int i = 0; i < toUpdate; i++)
             {
@@ -384,10 +386,10 @@ namespace DwarfCorp
                 // Otherwise, we just get the cell immediately beneath us.
                 if (y > 0)
                 {
-                    voxBelow.GridPosition = new LocalVoxelCoordinate(x, y - 1, z);
+                    voxBelow = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y - 1, z));
                     if (voxBelow.IsEmpty)
                     {
-                        cellBelow = voxBelow.Water;
+                        cellBelow = voxBelow.WaterCell;
                         shouldFall = true;
                     }
                 }
@@ -424,7 +426,7 @@ namespace DwarfCorp
                         }
                         data.Water[idx].WaterLevel = 0;
                         data.Water[idx].Type = LiquidType.None;
-                        voxBelow.Water = cellBelow;
+                        voxBelow.WaterCell = cellBelow;
                         CreateTransfer(GlobalVoxelCoordinate.FromVector3(worldPos), data.Water[idx], cellBelow, cellBelow.WaterLevel);
                         updateOccurred = true;
 
@@ -450,7 +452,7 @@ namespace DwarfCorp
                                 data.Water[idx].Type = LiquidType.None;
 
                                 CreateTransfer(GlobalVoxelCoordinate.FromVector3(worldPos - Vector3.UnitY), data.Water[idx], cellBelow, transfer);
-                                voxBelow.Water = cellBelow;
+                                voxBelow.WaterCell = cellBelow;
                                 updateOccurred = true;
                                 continue;
                             }
@@ -464,7 +466,7 @@ namespace DwarfCorp
                                     cellBelow.Type = data.Water[idx].Type;
                                 }
                                 CreateTransfer(GlobalVoxelCoordinate.FromVector3(worldPos - Vector3.UnitY), data.Water[idx], cellBelow, spaceLeft);
-                                voxBelow.Water = cellBelow;
+                                voxBelow.WaterCell = cellBelow;
                             }
                         }
                     }

@@ -296,11 +296,6 @@ namespace DwarfCorp
             }
         }
 
-        public bool GetNeighbor(Vector3 dir, ref VoxelHandle vox)
-        {
-            return Chunk.Manager.ChunkData.GetVoxel(WorldPosition + dir, ref vox);
-        }
-
         public override string ToString()
         {
             return String.Format("DestinationVoxel {{{0}, {1}, {2}}}", gridpos.X, gridpos.Y, gridpos.Z);

@@ -101,7 +101,7 @@ namespace DwarfCorp
             // If no file exists, we have to create the balloon and balloon port.
             if (!string.IsNullOrEmpty(ExistingFile)) return;
 
-            VoxelChunk c = ChunkManager.ChunkData.GetChunk(Camera.Position);
+            VoxelChunk c = ChunkManager.ChunkData.GetVoxelChunkAtWorldLocation(Camera.Position);
             BalloonPort port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager,
                 Camera.Position.X, Camera.Position.Z, 3);
             CreateInitialDwarves(c);
@@ -171,7 +171,7 @@ namespace DwarfCorp
                 for (int dz = -size; dz <= size; dz++)
                 {
                     Vector3 worldPos = new Vector3(centerCoordinate.X + dx, centerCoordinate.Y, centerCoordinate.Z + dz);
-                    VoxelChunk chunk = chunkManager.ChunkData.GetChunk(worldPos);
+                    VoxelChunk chunk = chunkManager.ChunkData.GetVoxelChunkAtWorldLocation(worldPos);
 
                     if (chunk == null)
                     {
