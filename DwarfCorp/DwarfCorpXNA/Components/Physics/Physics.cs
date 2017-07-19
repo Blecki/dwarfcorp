@@ -170,7 +170,7 @@ namespace DwarfCorp
         /// <summary>
         /// The current voxel
         /// </summary>
-        public VoxelHandle CurrentVoxel = null;
+        public TemporaryVoxelHandle CurrentVoxel = TemporaryVoxelHandle.InvalidHandle;
         /// <summary>
         /// Fixed time to update physics at. This is to prevent instabilty on very slow
         /// or very fast machines, and to protect stability during fast forward.
@@ -229,7 +229,6 @@ namespace DwarfCorp
             CollideMode = CollisionMode.All;
             Orientation = orientation;
             SleepTimer = new Timer(5.0f, true);
-            CurrentVoxel = new VoxelHandle();
         }
 
         public void Move(float dt)
@@ -293,8 +292,9 @@ namespace DwarfCorp
                     Move(FixedDT / velocityLength);
 
                     // Get the current voxel.
-                    chunks.ChunkData.GetVoxel(Position, ref CurrentVoxel);
-                    
+                    CurrentVoxel = new TemporaryVoxelHandle(chunks.ChunkData,
+                        GlobalVoxelCoordinate.FromVector3(Position));
+
                     // Collide with the world.
                     HandleCollisions(chunks, FixedDT);
 
@@ -415,11 +415,12 @@ namespace DwarfCorp
 
         public void CheckLiquids(ChunkManager chunks, float dt)
         {
-            bool success = chunks.ChunkData.GetVoxel(GlobalTransform.Translation + Vector3.Up * 0.5f, ref CurrentVoxel);
-            VoxelHandle belowVoxel = new VoxelHandle();
-            bool successBelow = chunks.ChunkData.GetVoxel(GlobalTransform.Translation + Vector3.Down * 0.25f, ref belowVoxel);
+            CurrentVoxel = new TemporaryVoxelHandle(chunks.ChunkData,
+                GlobalVoxelCoordinate.FromVector3(GlobalTransform.Translation + Vector3.Up * 0.5f));
+            var below = new TemporaryVoxelHandle(chunks.ChunkData,
+                GlobalVoxelCoordinate.FromVector3(GlobalTransform.Translation + Vector3.Down * 0.25f));
 
-            if (success && CurrentVoxel.WaterLevel > WaterManager.inWaterThreshold)
+            if (CurrentVoxel.IsValid && CurrentVoxel.WaterCell.WaterLevel > WaterManager.inWaterThreshold)
             {
                 ApplyForce(new Vector3(0, 25, 0), dt);
                 Velocity = new Vector3(Velocity.X * 0.9f, Velocity.Y * 0.5f, Velocity.Z * 0.9f);
@@ -430,7 +431,7 @@ namespace DwarfCorp
                 Manager.World.ParticleManager.Trigger("splat", Position + MathFunctions.RandVector3Box(-0.5f, 0.5f, 0.1f, 0.25f, -0.5f, 0.5f), Color.White, MathFunctions.Random.Next(0, 2));
             }
 
-            if (successBelow && belowVoxel.WaterLevel > WaterManager.inWaterThreshold)
+            if (below.IsValid && below.WaterCell.WaterLevel > WaterManager.inWaterThreshold)
             {
                 IsInLiquid = true;
             }

@@ -513,7 +513,7 @@ namespace DwarfCorp
             // With a small probability, the creature will drown if its under water.
             if (MathFunctions.RandEvent(0.01f))
             {
-                var above = VoxelHelpers.GetVoxelAbove(Physics.CurrentVoxel.tvh);
+                var above = VoxelHelpers.GetVoxelAbove(Physics.CurrentVoxel);
                 bool shouldDrown = above.IsValid && (!above.IsEmpty || above.WaterCell.WaterLevel > 0);
                 if (Physics.IsInLiquid && (!Movement.CanSwim || shouldDrown))
                 {
@@ -569,7 +569,7 @@ namespace DwarfCorp
         /// <returns>Success if the jump has succeeded, Fail if it failed, and Running otherwise.</returns>
         public IEnumerable<Act.Status> AvoidFalling()
         {
-            var above = VoxelHelpers.GetVoxelAbove(Physics.CurrentVoxel.tvh);
+            var above = VoxelHelpers.GetVoxelAbove(Physics.CurrentVoxel);
             foreach (var vox in Neighbors.EnumerateManhattanNeighbors(Physics.CurrentVoxel.Coordinate)
                 .Select(c => new TemporaryVoxelHandle(World.ChunkManager.ChunkData, c)))
             {
@@ -999,7 +999,7 @@ namespace DwarfCorp
 
                 while (true)
                 {
-                    var creatureVoxel = agent.Physics.CurrentVoxel.tvh;
+                    var creatureVoxel = agent.Physics.CurrentVoxel;
 
                     if (edgeGoal.IsInGoalRegion(creatureVoxel))
                     {

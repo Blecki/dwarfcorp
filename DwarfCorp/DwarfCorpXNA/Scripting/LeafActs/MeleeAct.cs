@@ -434,7 +434,7 @@ namespace DwarfCorp
 
             if (Is2D) target.Y = Creature.AI.Position.Y;
             List<MoveAction> path = new List<MoveAction>();
-            var curr = Creature.Physics.CurrentVoxel.tvh;
+            var curr = Creature.Physics.CurrentVoxel;
             for (int i = 0; i < PathLength; i++)
             {
                 IEnumerable<MoveAction> actions =
@@ -478,7 +478,7 @@ namespace DwarfCorp
                     new MoveAction()
                     {
                         Diff = Vector3.Zero,
-                        DestinationVoxel = Creature.Physics.CurrentVoxel.tvh,
+                        DestinationVoxel = Creature.Physics.CurrentVoxel,
                         MoveType = MoveType.Walk
                     });
                 Creature.AI.Blackboard.SetData("RandomPath", path);

@@ -227,9 +227,9 @@ namespace DwarfCorp
 
         public void OrientToWalls()
         {
-            VoxelHandle curr = new VoxelHandle();
-            Vector3 pos = LocalTransform.Translation;
-            if (Manager.World.ChunkManager.ChunkData.GetVoxel(pos, ref curr))
+            var curr = new TemporaryVoxelHandle(Manager.World.ChunkManager.ChunkData,
+                GlobalVoxelCoordinate.FromVector3(LocalTransform.Translation));
+            if (curr.IsValid)
             {
                 foreach (var n in Neighbors.EnumerateManhattanNeighbors2D(curr.Coordinate))
                 {
@@ -238,7 +238,7 @@ namespace DwarfCorp
                     { 
                         Vector3 diff = n.ToVector3() - curr.WorldPosition;
                         Matrix mat = Matrix.CreateRotationY((float)Math.Atan2(diff.X, diff.Z));
-                        mat.Translation = pos;
+                        mat.Translation = LocalTransform.Translation;
                         LocalTransform = mat;
                         break;
                     }

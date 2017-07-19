@@ -150,7 +150,7 @@ namespace DwarfCorp
             Vector3 target = MathFunctions.RandVector3Cube()*Radius + Creature.AI.Position;
             if (Is2D) target.Y = Creature.AI.Position.Y;
             List<MoveAction> path = new List<MoveAction>();
-            TemporaryVoxelHandle curr = Creature.Physics.CurrentVoxel.tvh;
+            TemporaryVoxelHandle curr = Creature.Physics.CurrentVoxel;
             for (int i = 0; i < PathLength; i++)
             {
                 var actions = Creature.AI.Movement.GetMoveActions(curr);

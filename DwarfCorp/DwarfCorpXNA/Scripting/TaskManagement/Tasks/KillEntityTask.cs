@@ -157,7 +157,7 @@ namespace DwarfCorp
                 var target = new TemporaryVoxelHandle(agent.World.ChunkManager.ChunkData,
                     GlobalVoxelCoordinate.FromVector3(EntityToKill.Position));
                 // Todo: Find out if it is calculating the path twice to make PathExists work.
-                if (!target.IsValid || !PlanAct.PathExists(agent.Physics.CurrentVoxel.tvh, target, agent.AI))
+                if (!target.IsValid || !PlanAct.PathExists(agent.Physics.CurrentVoxel, target, agent.AI))
                 {
                     return false;
                 }

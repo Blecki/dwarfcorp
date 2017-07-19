@@ -588,12 +588,6 @@ namespace DwarfCorp
             return nearest;
         }
 
-
-        public Stockpile GetIntersectingStockpile(VoxelHandle v)
-        {
-            return Stockpiles.FirstOrDefault(pile => pile.Intersects(v));
-        }
-
         public Stockpile GetIntersectingStockpile(BoundingBox v)
         {
             return Stockpiles.FirstOrDefault(pile => pile.Intersects(v));
