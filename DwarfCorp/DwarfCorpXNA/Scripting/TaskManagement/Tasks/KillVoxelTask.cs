@@ -45,16 +45,16 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class KillVoxelTask : Task
     {
-        public VoxelHandle VoxelToKill = null;
+        public TemporaryVoxelHandle VoxelToKill = TemporaryVoxelHandle.InvalidHandle;
 
         public KillVoxelTask()
         {
             Priority = PriorityType.Medium;
         }
 
-        public KillVoxelTask(VoxelHandle vox)
+        public KillVoxelTask(TemporaryVoxelHandle vox)
         {
-            Name = "Mine Block " + vox.WorldPosition;
+            Name = "Mine Block " + vox.Coordinate;
             VoxelToKill = vox;
             Priority = PriorityType.Low;
         }
@@ -71,8 +71,7 @@ namespace DwarfCorp
 
         public override bool ShouldRetry(Creature agent)
         {
-            VoxelHandle v = VoxelToKill;
-            return !v.IsEmpty && agent.Faction.IsDigDesignation(v);
+            return !VoxelToKill.IsEmpty && agent.Faction.IsDigDesignation(VoxelToKill);
         }
 
         public override bool IsFeasible(Creature agent)
@@ -105,7 +104,7 @@ namespace DwarfCorp
                     surroundedValue = 10000;
             }
 
-            return (agent.AI.Position - VoxelToKill.WorldPosition).LengthSquared() + 100 * Math.Abs(agent.AI.Position.Y - VoxelToKill.WorldPosition.Y) + surroundedValue;
+            return (agent.AI.Position - VoxelToKill.Coordinate.ToVector3()).LengthSquared() + 100 * Math.Abs(agent.AI.Position.Y - VoxelToKill.Coordinate.Y) + surroundedValue;
         }
     }
 

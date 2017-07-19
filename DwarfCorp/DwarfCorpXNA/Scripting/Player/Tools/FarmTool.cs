@@ -63,7 +63,7 @@ namespace DwarfCorp
 
         public class FarmTile
         {
-            public VoxelHandle Vox = null;
+            public TemporaryVoxelHandle Vox = TemporaryVoxelHandle.InvalidHandle;
             public Plant Plant = null;
             public float Progress = 0.0f;
             public CreatureAI Farmer = null;
@@ -86,7 +86,7 @@ namespace DwarfCorp
 
             public void CreatePlant(string plantToCreate, WorldManager world)
             {
-                Plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[plantToCreate].PlantToGenerate, Vox.WorldPosition + Vector3.Up * 1.5f);
+                Plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[plantToCreate].PlantToGenerate, Vox.Coordinate.ToVector3() + Vector3.Up * 1.5f);
                 Seedling seed = Plant.BecomeSeedling();
 
                 Matrix original = Plant.LocalTransform;
@@ -95,37 +95,37 @@ namespace DwarfCorp
                  
                 world.ParticleManager.Trigger("puff", original.Translation, Color.White, 20);
                 
-                SoundManager.PlaySound(ContentPaths.Audio.pluck, Vox.WorldPosition, true);
+                SoundManager.PlaySound(ContentPaths.Audio.pluck, Vox.Coordinate.ToVector3(), true);
                 
             }
         }
 
         public List<FarmTile> FarmTiles = new List<FarmTile>();
 
-        public bool HasTile(VoxelHandle vox)
+        public bool HasTile(TemporaryVoxelHandle vox)
         {
-            return FarmTiles.Any(f => f.Vox.Equals(vox));
+            return FarmTiles.Any(f => f.Vox == vox);
         }
 
 
-        public bool HasPlant(VoxelHandle vox)
+        public bool HasPlant(TemporaryVoxelHandle vox)
         {
             return HasTile(vox) && FarmTiles.Any(f => f.Vox.Equals(vox) && f.PlantExists());
         }
 
-        public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsDragged(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }
 
-        public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
         {
             List<CreatureAI> minions = Player.World.Master.SelectedMinions.Where(minion => minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm)).ToList();
             List<Task> goals = new List<Task>();
             switch (Mode)
             {
                 case FarmMode.Tilling:
-                    foreach (VoxelHandle voxel in voxels)
+                    foreach (var voxel in voxels)
                     {
                         if (button == InputManager.MouseButton.Left)
                         {
@@ -178,7 +178,7 @@ namespace DwarfCorp
                     int currentAmount =
                         Player.Faction.ListResources()
                         .Sum(resource => resource.Key == PlantType && resource.Value.NumResources > 0 ? resource.Value.NumResources : 0);
-                    foreach (VoxelHandle voxel in voxels)
+                    foreach (var voxel in voxels)
                     {
 
                         if (currentAmount == 0)

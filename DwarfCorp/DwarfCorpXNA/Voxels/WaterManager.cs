@@ -180,7 +180,7 @@ namespace DwarfCorp
                     {
                         VoxelHandle v = atPos;
 
-                        VoxelLibrary.PlaceType(VoxelLibrary.GetVoxelType("Stone"), v);
+                        VoxelLibrary.PlaceType(VoxelLibrary.GetVoxelType("Stone"), atPos.tvh);
                         VoxelChunk chunk = Chunks.ChunkData.ChunkMap[v.ChunkID];
                         chunk.Data.Water[v.Index].Type = LiquidType.None;
                         chunk.Data.Water[v.Index].WaterLevel = 0;

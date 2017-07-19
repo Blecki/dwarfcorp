@@ -87,17 +87,17 @@ namespace DwarfCorp
             base.OnEntitiesSelected(tree, entities);
         }
 
-        public override void OnVoxelsSelected(SpellTree tree, List<VoxelHandle> voxels)
+        public override void OnVoxelsSelected(SpellTree tree, List<TemporaryVoxelHandle> voxels)
         {
             if (Transmute) return;
             bool got = false;
-            foreach (VoxelHandle voxel in voxels)
+            foreach (var voxel in voxels)
             {
                 if (voxel.IsEmpty)
                 {
                     if (OnCast(tree))
                     {
-                        CreateEntity(voxel.WorldPosition + Vector3.One*0.5f);
+                        CreateEntity(voxel.Coordinate.ToVector3() + Vector3.One*0.5f);
                         got = true;
                     }
                 }

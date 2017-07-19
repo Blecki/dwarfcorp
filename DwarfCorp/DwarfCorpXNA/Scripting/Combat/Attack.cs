@@ -149,11 +149,11 @@ namespace DwarfCorp
             CreateHitAnimation();
         }
 
-        public IEnumerable<Act.Status> Perform(Creature performer, Vector3 pos, VoxelHandle other, DwarfTime time, float bonus, string faction)
+        public IEnumerable<Act.Status> Perform(Creature performer, Vector3 pos, TemporaryVoxelHandle other, DwarfTime time, float bonus, string faction)
         {
             while (true)
             {
-                if (other == null)
+                if (!other.IsValid)
                 {
                     yield return Act.Status.Fail;
                     yield break;
@@ -186,25 +186,25 @@ namespace DwarfCorp
                     case AttackMode.Melee:
                     {
                         other.Health -= DamageAmount + bonus;
-                        other.Type.HitSound.Play(other.WorldPosition);
+                        other.Type.HitSound.Play(other.Coordinate.ToVector3());
                         //PlayNoise(other.Position);
                         if (HitParticles != "")
                         {
-                            performer.Manager.World.ParticleManager.Trigger(HitParticles, other.WorldPosition, Color.White, 5);
+                            performer.Manager.World.ParticleManager.Trigger(HitParticles, other.Coordinate.ToVector3(), Color.White, 5);
                         }
 
                         if (HitAnimation != null)
                         {
                             HitAnimation.Reset();
                             HitAnimation.Play();
-                            IndicatorManager.DrawIndicator(HitAnimation.Clone(), other.WorldPosition + Vector3.One*0.5f,
+                            IndicatorManager.DrawIndicator(HitAnimation.Clone(), other.Coordinate.ToVector3() + Vector3.One*0.5f,
                                 10.0f, 1.0f, MathFunctions.RandVector2Circle()*10, HitColor, MathFunctions.Rand() > 0.5f);
                         }
                         break;
                     }
                     case AttackMode.Ranged:
                     {
-                        LaunchProjectile(pos, other.WorldPosition, null);
+                        LaunchProjectile(pos, other.Coordinate.ToVector3(), null);
                         break;
                     }
 

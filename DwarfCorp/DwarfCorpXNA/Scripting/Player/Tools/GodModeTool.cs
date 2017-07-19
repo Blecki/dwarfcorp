@@ -60,7 +60,7 @@ namespace DwarfCorp
         {
         }
 
-        public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsDragged(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }
@@ -88,7 +88,7 @@ namespace DwarfCorp
             Player.VoxSelector.SelectionType = GetSelectionTypeBySelectionBoxValue(arg);
         }
 
-        public override void OnVoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<TemporaryVoxelHandle> refs, InputManager.MouseButton button)
         {
            
             var chunksToRebuild = new HashSet<GlobalVoxelCoordinate>();
@@ -96,8 +96,8 @@ namespace DwarfCorp
             if(Command.Contains("Build/"))
             {
                 string type = Command.Substring(6);
-                BuildRoomOrder des = new BuildRoomOrder(RoomLibrary.CreateRoom(Player.Faction, type, refs.Select(v => v.tvh).ToList(), false, Player.World), Player.Faction, Player.World);
-                des.ToBuild.Designations = refs.Select(v => v.tvh).ToList();
+                BuildRoomOrder des = new BuildRoomOrder(RoomLibrary.CreateRoom(Player.Faction, type, refs, false, Player.World), Player.Faction, Player.World);
+                des.ToBuild.Designations = refs;
                 Player.Faction.RoomBuilder.BuildDesignations.Add(des);
                 Player.Faction.RoomBuilder.DesignatedRooms.Add(des.ToBuild);
                 des.Build();
@@ -105,29 +105,30 @@ namespace DwarfCorp
             else if (Command.Contains("Spawn/"))
             {
                 string type = Command.Substring(6);
-                foreach (VoxelHandle vox in refs.Where(vox => vox != null))
+                foreach (var vox in refs.Where(vox => vox.IsValid))
                 {
                     if (vox.IsEmpty)
                     {
-                        EntityFactory.CreateEntity<Body>(type, vox.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f));
+                        EntityFactory.CreateEntity<Body>(type, vox.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f));
                     }
                 }
             }
             else
             {
-                foreach(VoxelHandle vox in refs.Where(vox => vox != null))
+                foreach(var vox in refs.Where(vox => vox.IsValid))
                 {
                     if(Command.Contains("Place/"))
                     {
                         string type = Command.Substring(6);
-                        vox.Type = VoxelLibrary.GetVoxelType(type);
-                        vox.Water = new WaterCell();
-                        vox.Health = vox.Type.StartingHealth;
+                        var v = vox;
+                        v.Type = VoxelLibrary.GetVoxelType(type);
+                        v.WaterCell = new WaterCell();
+                        v.Health = vox.Type.StartingHealth;
 
                         if (type == "Magic")
                         {
                             Player.World.ComponentManager.RootComponent.AddChild(
-                                new VoxelListener(Player.World.ComponentManager, Player.World.ChunkManager, vox.tvh)
+                                new VoxelListener(Player.World.ComponentManager, Player.World.ChunkManager, vox)
                                 {
                                     DestroyOnTimer = true,
                                     DestroyTimer = new Timer(5.0f + MathFunctions.Rand(-0.5f, 0.5f), true)
@@ -141,20 +142,20 @@ namespace DwarfCorp
                     {
                         case "Delete Block":
                         {
-                            Player.World.Master.Faction.OnVoxelDestroyed(vox.tvh);
-                            vox.Chunk.NotifyDestroyed(vox.GridPosition);
-                            vox.Type = VoxelType.TypeList[0];
-                            vox.Water = new WaterCell();
+                                    var v = vox;
+                            Player.World.Master.Faction.OnVoxelDestroyed(vox);
+                            vox.Chunk.NotifyDestroyed(vox.Coordinate.GetLocalVoxelCoordinate());
+                            v.Type = VoxelType.TypeList[0];
+                            v.WaterCell = new WaterCell();
 
-                            vox.Chunk.Manager.KilledVoxels.Add(new TemporaryVoxelHandle(
-                                vox.Chunk, vox.GridPosition));
+                            vox.Chunk.Manager.KilledVoxels.Add(vox);
                         }
                             break;
                         case "Kill Block":
-                                foreach (VoxelHandle selected in refs)
+                                foreach (var selected in refs)
                                 {
                                     if (!selected.IsEmpty)
-                                        Player.World.ChunkManager.KillVoxel(selected.tvh);
+                                        Player.World.ChunkManager.KillVoxel(selected);
 
                                 }
                             break;
@@ -162,8 +163,13 @@ namespace DwarfCorp
                         {
                             if (vox.IsEmpty)
                             {
-                                vox.WaterLevel = WaterManager.maxWaterLevel;
-                                vox.Chunk.Data.Water[vox.Index].Type = LiquidType.Water;
+                                        var v = vox;
+                                        v.WaterCell = new WaterCell
+                                        {
+                                            Type = LiquidType.Water,
+                                            WaterLevel = WaterManager.maxWaterLevel
+                                        };
+
                                 chunksToRebuild.Add(vox.Coordinate);
                             }
                         }
@@ -172,9 +178,13 @@ namespace DwarfCorp
                         {
                             if (vox.IsEmpty)
                             {
-                                vox.WaterLevel = WaterManager.maxWaterLevel;
-                                vox.Chunk.Data.Water[vox.Index].Type = LiquidType.Lava;
-                                chunksToRebuild.Add(vox.Coordinate);
+                                        var v = vox;
+                                        v.WaterCell = new WaterCell
+                                        {
+                                            Type = LiquidType.Lava,
+                                            WaterLevel = WaterManager.maxWaterLevel
+                                        };
+                                        chunksToRebuild.Add(vox.Coordinate);
                             }
                         }
                             break;

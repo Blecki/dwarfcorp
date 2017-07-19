@@ -773,16 +773,13 @@ GameSettings.Default.FogofWar = fogOfWar;
         }
 
         // Todo: %Kill% or %Lift% - only used by voxel selector.
-        public IEnumerable<VoxelHandle> GetVoxelsIntersecting(IEnumerable<Vector3> positions)
+        public IEnumerable<TemporaryVoxelHandle> GetVoxelsIntersecting(IEnumerable<Vector3> positions)
         {
-            foreach (Vector3 vec in positions)
+            foreach (var vec in positions)
             {
-                VoxelHandle vox = new VoxelHandle();
-                bool success = ChunkData.GetVoxel(vec, ref vox);
-                if (success)
-                {
+                var vox = new TemporaryVoxelHandle(ChunkData, GlobalVoxelCoordinate.FromVector3(vec));
+                if (vox.IsValid)
                     yield return vox;
-                }
             }
         }
 

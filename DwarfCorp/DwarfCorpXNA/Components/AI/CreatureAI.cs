@@ -747,7 +747,7 @@ namespace DwarfCorp
             if (GatherManager.VoxelOrders.Count > 0)
             {
                 // Otherwise handle build orders.
-                var voxels = new List<VoxelHandle>();
+                var voxels = new List<TemporaryVoxelHandle>();
                 var types = new List<VoxelType>();
                 foreach (GatherManager.BuildVoxelOrder order in GatherManager.VoxelOrders)
                 {

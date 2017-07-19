@@ -245,10 +245,10 @@ namespace DwarfCorp
             //CollideMinions(time);
 
             List<ulong> removalKeys = new List<ulong>();
-            foreach (KeyValuePair<ulong, BuildOrder> kvp in DigDesignations)
+            foreach (var kvp in DigDesignations)
             {
-                VoxelHandle v = kvp.Value.Vox;;
-                if (v.IsEmpty || v.Health <= 0.0f || v.Type.Name == "empty" || v.Type.IsInvincible)
+                var v = kvp.Value.Vox;;
+                if (v.IsValid && (v.IsEmpty || v.Health <= 0.0f || v.Type.Name == "empty" || v.Type.IsInvincible))
                 {
                     Drawer3D.UnHighlightVoxel(v);
                     removalKeys.Add(kvp.Key);
@@ -273,9 +273,9 @@ namespace DwarfCorp
             List<BuildOrder> removals = new List<BuildOrder>();
             foreach (BuildOrder d in GuardDesignations)
             {
-                VoxelHandle v = d.Vox;
+                var v = d.Vox;
 
-                if (!v.IsEmpty && !(v.Health <= 0.0f) && v.Type.Name != "empty")
+                if (!v.IsValid || (!v.IsEmpty && !(v.Health <= 0.0f) && v.Type.Name != "empty"))
                 {
                     continue;
                 }
@@ -283,7 +283,7 @@ namespace DwarfCorp
                 removals.Add(d);
 
                 if (!v.IsEmpty)
-                    World.ChunkManager.KillVoxel(v.tvh);
+                    World.ChunkManager.KillVoxel(v);
             }
 
             foreach (BuildOrder v in removals)
@@ -431,12 +431,9 @@ namespace DwarfCorp
         {
             float closestDist = 99999;
             BuildOrder closestVoxel = null;
-            foreach(KeyValuePair<ulong, BuildOrder> kvp in DigDesignations)
+            foreach(var kvp in DigDesignations)
             {
-                VoxelHandle vref = kvp.Value.Vox;
-                VoxelHandle v = vref;
-
-                float d = (v.WorldPosition - position).LengthSquared();
+                float d = (kvp.Value.Vox.Coordinate.ToVector3() - position).LengthSquared();
                 if(!(d < closestDist))
                 {
                     continue;
@@ -453,12 +450,9 @@ namespace DwarfCorp
         {
             float closestDist = 99999;
             BuildOrder closestVoxel = null;
-            foreach(BuildOrder designation in GuardDesignations)
+            foreach(var designation in GuardDesignations)
             {
-                VoxelHandle vref = designation.Vox;
-                VoxelHandle v = vref;
-
-                float d = (v.WorldPosition - position).LengthSquared();
+                float d = (designation.Vox.Coordinate.ToVector3() - position).LengthSquared();
                 if(!(d < closestDist))
                 {
                     continue;
@@ -471,19 +465,15 @@ namespace DwarfCorp
             return closestVoxel;
         }
 
-        public BuildOrder GetGuardDesignation(VoxelHandle vox)
+        public BuildOrder GetGuardDesignation(TemporaryVoxelHandle vox)
         {
-            return (from d in GuardDesignations
-                let vref = d.Vox
-                let v = vref
-                where vox.Equals(v)
-                select d).FirstOrDefault();
+            return GuardDesignations.FirstOrDefault(d => d.Vox == vox);
         }
 
-        public BuildOrder GetDigDesignation(VoxelHandle vox)
+        public BuildOrder GetDigDesignation(TemporaryVoxelHandle vox)
         {
             BuildOrder returnOrder;
-            if (DigDesignations.TryGetValue(GetVoxelQuickCompare(vox.ChunkID, vox.Index), out returnOrder))
+            if (DigDesignations.TryGetValue(GetVoxelQuickCompare(vox.Coordinate.GetGlobalChunkCoordinate(), VoxelConstants.DataIndexOf(vox.Coordinate.GetLocalVoxelCoordinate())), out returnOrder))
                 return returnOrder;
             return new BuildOrder();
         }
@@ -491,12 +481,14 @@ namespace DwarfCorp
         public void AddDigDesignation(BuildOrder order)
         {
             if (order.Vox == null) return;
-            DigDesignations.Add(GetVoxelQuickCompare(order.Vox.ChunkID, order.Vox.Index), order);
+            // Todo: Improve this call.
+            DigDesignations.Add(GetVoxelQuickCompare(order.Vox.Coordinate.GetGlobalChunkCoordinate(), VoxelConstants.DataIndexOf(order.Vox.Coordinate.GetLocalVoxelCoordinate())), order);
         }
 
-        public void RemoveDigDesignation(VoxelHandle vox)
+        public void RemoveDigDesignation(TemporaryVoxelHandle vox)
         {
-            var q = GetVoxelQuickCompare(vox.ChunkID, vox.Index);
+            var q = GetVoxelQuickCompare(vox.Coordinate.GetGlobalChunkCoordinate(), 
+                VoxelConstants.DataIndexOf(vox.Coordinate.GetLocalVoxelCoordinate()));
             if (DigDesignations.ContainsKey(q))
             {
                 DigDesignations.Remove(q);
@@ -504,11 +496,12 @@ namespace DwarfCorp
             }
         }
 
-        public bool IsDigDesignation(VoxelHandle vox)
+        public bool IsDigDesignation(TemporaryVoxelHandle vox)
         {
             GamePerformance.Instance.TrackValueType<int>("Dig Designations", DigDesignations.Count);
 
-            return DigDesignations.ContainsKey(GetVoxelQuickCompare(vox.ChunkID, vox.Index));
+            return DigDesignations.ContainsKey(GetVoxelQuickCompare(vox.Coordinate.GetGlobalChunkCoordinate(),
+                VoxelConstants.DataIndexOf(vox.Coordinate.GetLocalVoxelCoordinate())));
             /*
             for (int i = 0; i < DigDesignations.Count; i++)
             {
@@ -519,9 +512,9 @@ namespace DwarfCorp
         }
 
 
-        public bool IsGuardDesignation(VoxelHandle vox)
+        public bool IsGuardDesignation(TemporaryVoxelHandle vox)
         {
-            return GuardDesignations.Select(d => d.Vox).Select(vref => vref).Any(vox.Equals);
+            return GuardDesignations.Select(d => d.Vox).Any(v => v == vox);
         }
 
         public bool AddResources(ResourceAmount resources)

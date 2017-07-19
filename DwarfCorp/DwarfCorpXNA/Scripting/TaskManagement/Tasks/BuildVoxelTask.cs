@@ -46,16 +46,16 @@ namespace DwarfCorp
     internal class BuildVoxelTask : Task
     {
         public VoxelType VoxType { get; set; }
-        public VoxelHandle Voxel { get; set; }
+        public TemporaryVoxelHandle Voxel { get; set; }
 
         public BuildVoxelTask()
         {
             Priority = PriorityType.Low;
         }
 
-        public BuildVoxelTask(VoxelHandle voxel, VoxelType type)
+        public BuildVoxelTask(TemporaryVoxelHandle voxel, VoxelType type)
         {
-            Name = "Put voxel of type: " + type.Name + " on voxel " + voxel.WorldPosition;
+            Name = "Put voxel of type: " + type.Name + " on voxel " + voxel.Coordinate;
             Voxel = voxel;
             VoxType = type;
             Priority = PriorityType.Low;
@@ -83,7 +83,7 @@ namespace DwarfCorp
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            return Voxel == null ? 1000 : 0.01f * (agent.AI.Position - Voxel.WorldPosition).LengthSquared() + (Voxel.WorldPosition.Y);
+            return Voxel == null ? 1000 : 0.01f * (agent.AI.Position - Voxel.Coordinate.ToVector3()).LengthSquared() + (Voxel.Coordinate.Y);
         }
 
         public IEnumerable<Act.Status> AddBuildOrder(Creature creature)

@@ -79,23 +79,23 @@ namespace DwarfCorp
 
         }
 
-        public override void OnVoxelsSelected(SpellTree tree, List<VoxelHandle> voxels)
+        public override void OnVoxelsSelected(SpellTree tree, List<TemporaryVoxelHandle> voxels)
         {
             var chunksToRebuild = new HashSet<GlobalVoxelCoordinate>();
             bool placed = false;
-            foreach (VoxelHandle selected in voxels)
+            foreach (var selected in voxels)
             {
 
-                if (selected != null && ((!Transmute && selected.IsEmpty) || Transmute && !selected.IsEmpty) && OnCast(tree))
+                if (selected.IsValid && ((!Transmute && selected.IsEmpty) || Transmute && !selected.IsEmpty) && OnCast(tree))
                 {
-                    Vector3 p = selected.WorldPosition + Vector3.One*0.5f;
+                    Vector3 p = selected.Coordinate.ToVector3() + Vector3.One*0.5f;
                     IndicatorManager.DrawIndicator("-" + ManaCost + " M",p, 1.0f, Color.Red);
                     World.ParticleManager.Trigger("star_particle", p, Color.White, 4);
                     VoxelLibrary.PlaceType(VoxelLibrary.GetVoxelType(VoxelType), selected);
 
                     if (VoxelType == "Magic")
                     {
-                        World.ComponentManager.RootComponent.AddChild(new VoxelListener(World.ComponentManager, World.ChunkManager, selected.tvh)
+                        World.ComponentManager.RootComponent.AddChild(new VoxelListener(World.ComponentManager, World.ChunkManager, selected)
                         {
                             DestroyOnTimer = true,
                             DestroyTimer = new Timer(5.0f + MathFunctions.Rand(-0.5f, 0.5f), true)
