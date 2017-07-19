@@ -326,8 +326,7 @@ namespace DwarfCorp
                     {
                         Diff = new Vector3(1, 2, 1),
                         MoveType = MoveType.ClimbWalls,
-                        ActionVoxel = new VoxelHandle(wall.Coordinate.GetLocalVoxelCoordinate(),
-                        wall.Chunk)
+                        ActionVoxel = wall
                     });
 
                     if (!standingOnGround)
@@ -336,8 +335,7 @@ namespace DwarfCorp
                         {
                             Diff = new Vector3(1, 0, 1),
                             MoveType = MoveType.ClimbWalls,
-                            ActionVoxel = new VoxelHandle(wall.Coordinate.GetLocalVoxelCoordinate(),
-                            wall.Chunk)
+                            ActionVoxel = wall
                         });
                     }
                 }
@@ -509,8 +507,8 @@ namespace DwarfCorp
                                             Diff = v.Diff,
                                             MoveType = MoveType.DestroyObject,
                                             InteractObject = door,
-                                            DestinationVoxel = new VoxelHandle(n.Coordinate.GetLocalVoxelCoordinate(), n.Chunk),
-                                            SourceVoxel = new VoxelHandle(voxel.Coordinate.GetLocalVoxelCoordinate(), voxel.Chunk)
+                                            DestinationVoxel = n,
+                                            SourceVoxel = voxel
                                         });
                                     blockedByObject = true;
                                 }
@@ -521,8 +519,8 @@ namespace DwarfCorp
                     if (!blockedByObject)
                     {
                         MoveAction newAction = v;
-                        newAction.SourceVoxel = new VoxelHandle(voxel.Coordinate.GetLocalVoxelCoordinate(), voxel.Chunk);
-                        newAction.DestinationVoxel = new VoxelHandle(n.Coordinate.GetLocalVoxelCoordinate(), n.Chunk);
+                        newAction.SourceVoxel = voxel;
+                        newAction.DestinationVoxel = n;
                        yield return newAction;
                     }
                 }
@@ -538,13 +536,13 @@ namespace DwarfCorp
 
         // Inverts GetMoveActions. So, returns the list of move actions whose target is the current voxel.
         // Very, very slow.
-        public IEnumerable<MoveAction> GetInverseMoveActions(VoxelHandle current)
+        public IEnumerable<MoveAction> GetInverseMoveActions(TemporaryVoxelHandle current)
         {
             foreach (var v in Neighbors.EnumerateAllNeighbors(current.Coordinate)
                 .Select(n => new TemporaryVoxelHandle(current.Chunk.Manager.ChunkData, n))
                 .Where(h => h.IsValid))
             {
-                foreach (var a in GetMoveActions(v).Where(a => a.DestinationVoxel.Equals(current)))
+                foreach (var a in GetMoveActions(v).Where(a => a.DestinationVoxel == current))
                     yield return a;
             }
         }

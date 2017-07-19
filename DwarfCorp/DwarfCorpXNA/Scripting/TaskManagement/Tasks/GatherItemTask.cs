@@ -85,7 +85,7 @@ namespace DwarfCorp
                   !EntityToGather.IsDead && 
                   !agent.AI.GatherManager.ItemsToGather.Contains(EntityToGather) && 
                   agent.AI.Faction.GatherDesignations.Contains(EntityToGather) &&
-                  PlanAct.PathExists(EntityToGather.GetComponent<Physics>().CurrentVoxel, agent.Physics.CurrentVoxel, agent.AI);
+                  PlanAct.PathExists(EntityToGather.GetComponent<Physics>().CurrentVoxel.tvh, agent.Physics.CurrentVoxel.tvh, agent.AI);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)

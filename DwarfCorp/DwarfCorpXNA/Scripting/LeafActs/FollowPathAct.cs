@@ -88,13 +88,11 @@ namespace DwarfCorp
             for (int i = 0; i < path.Count - 1; i++)
             {
                 if (!path[i].DestinationVoxel.IsEmpty) return false;
-                var neighbors = Agent.Movement.GetMoveActions(
-                    new TemporaryVoxelHandle(path[i].DestinationVoxel.Chunk,
-                    path[i].DestinationVoxel.GridPosition));
+                var neighbors = Agent.Movement.GetMoveActions(path[i].DestinationVoxel);
                 bool valid = false;
                 foreach (MoveAction vr in neighbors)
                 {
-                    Vector3 dif = vr.DestinationVoxel.WorldPosition - path[i + 1].DestinationVoxel.WorldPosition;
+                    Vector3 dif = vr.DestinationVoxel.Coordinate.ToVector3() - path[i + 1].DestinationVoxel.Coordinate.ToVector3();
                     if (dif.Length() < .1)
                     {
                         valid = true;
@@ -120,7 +118,7 @@ namespace DwarfCorp
                 nextAction = Path[nextID];
                 if (nextAction.DestinationVoxel != null)
                 {
-                    diff = (nextAction.DestinationVoxel.WorldPosition + half - (action.DestinationVoxel.WorldPosition + half));
+                    diff = (nextAction.DestinationVoxel.Coordinate.ToVector3() + half - (action.DestinationVoxel.Coordinate.ToVector3() + half));
                     diffNorm = diff.Length();
                 }
             }
@@ -163,7 +161,9 @@ namespace DwarfCorp
                     time += dt;
                     i++;
                 }
-                RandomPositionOffsets[0] = Agent.Position - (Path[0].DestinationVoxel.WorldPosition + Vector3.One * 0.5f);
+
+                //Todo: Find replace .Coordinate.ToVector3() -> .WorldPosition
+                RandomPositionOffsets[0] = Agent.Position - (Path[0].DestinationVoxel.Coordinate.ToVector3() + Vector3.One * 0.5f);
                 TrajectoryTimer = new Timer(time, true);
                 return true;
             }

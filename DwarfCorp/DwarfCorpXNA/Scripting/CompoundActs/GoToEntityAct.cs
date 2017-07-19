@@ -226,8 +226,9 @@ namespace DwarfCorp
                             yield return Act.Status.Fail;
                             yield break;
                         }
-                        bool targetMoved = (path.Last().DestinationVoxel.WorldPosition - entity.LocalTransform.Translation).Length() > Math.Max(Radius, 2) * 2
-                        ;
+
+                        bool targetMoved = (path.Last().DestinationVoxel.Coordinate.ToVector3() - entity.LocalTransform.Translation).Length() > Math.Max(Radius, 2) * 2;
+
                         if (MovingTarget && path != null && (path.Count > 0 && targetMoved))
                         {
                             break;

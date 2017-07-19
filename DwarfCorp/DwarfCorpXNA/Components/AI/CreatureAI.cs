@@ -1002,7 +1002,7 @@ namespace DwarfCorp
 
                 while (true)
                 {
-                    VoxelHandle creatureVoxel = agent.Physics.CurrentVoxel;
+                    var creatureVoxel = agent.Physics.CurrentVoxel.tvh;
 
                     if (edgeGoal.IsInGoalRegion(creatureVoxel))
                     {
@@ -1010,15 +1010,14 @@ namespace DwarfCorp
                         yield break;
                     }
 
-                    var actions = agent.AI.Movement.GetMoveActions(new TemporaryVoxelHandle(
-                        creatureVoxel.Chunk, creatureVoxel.GridPosition));
+                    var actions = agent.AI.Movement.GetMoveActions(creatureVoxel);
 
                     float minCost = float.MaxValue;
                     var minAction = new MoveAction();
                     bool hasMinAction = false;
                     foreach (var action in actions)
                     {
-                        VoxelHandle vox = action.DestinationVoxel;
+                        var vox = action.DestinationVoxel;
 
                         float cost = edgeGoal.Heuristic(vox) + MathFunctions.Rand(0.0f, 5.0f);
 

@@ -50,7 +50,7 @@ namespace DwarfCorp
     {
         public PlanSubscriber Subscriber;
         public CreatureAI Sender;
-        public VoxelHandle Start;
+        public TemporaryVoxelHandle Start;
         public int MaxExpansions;
         public GoalRegion GoalRegion;
         public float HeuristicWeight = 1;
