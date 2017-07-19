@@ -55,6 +55,7 @@ namespace DwarfCorp
         private ChunkManager Chunks { get; set; }
         private int[] updateList;
         private int[] randomIndices;
+        private bool[] alreadyUpdated;
         private int maxChunks;
         public byte EvaporationLevel { get; set; }
 
@@ -104,6 +105,7 @@ namespace DwarfCorp
             uint maxSize = data.ChunkSizeX * data.ChunkSizeY * data.ChunkSizeZ;
             updateList = new int[maxSize];
             randomIndices = new int[maxSize];
+            alreadyUpdated = new bool[maxSize];
 
             Splashes = new ConcurrentQueue<SplashType>();
             Transfers = new ConcurrentQueue<Transfer>();
@@ -312,12 +314,13 @@ namespace DwarfCorp
         public bool DiscreteUpdate(VoxelChunk chunk)
         {
             Vector3 gridCoord = Vector3.Zero;
+            VoxelChunk.VoxelData data = chunk.Data;
             bool updateOccurred = false;
             WaterCell cellBelow = new WaterCell();
 
             int maxSize = chunk.SizeX * chunk.SizeY * chunk.SizeZ;
             int toUpdate = 0;
-            VoxelChunk.VoxelData data = chunk.Data;
+
             for (int i = 0; i < maxSize; i++)
             {
                 // Don't check empty cells or cells we've already modified.
@@ -325,6 +328,8 @@ namespace DwarfCorp
                 {
                     continue;
                 }
+
+                alreadyUpdated[i] = false;
                 updateList[toUpdate] = i;
                 toUpdate++;
             }
@@ -333,6 +338,7 @@ namespace DwarfCorp
             {
                 return false;
             }
+
             VoxelHandle voxBelow = chunk.MakeVoxel(0, 0, 0);
             VoxelHandle neighbor = new VoxelHandle();
 
@@ -347,17 +353,16 @@ namespace DwarfCorp
             {
                 int idx = updateList[randomIndices[t]];
 
+                if (alreadyUpdated[idx])
+                {
+                    continue;
+                }
+
                 // Don't check empty cells or cells we've already modified.
                 if (data.Water[idx].Type == LiquidType.None || data.Types[idx] != 0)
                 {
                     continue;
                 }
-
-                gridCoord = data.CoordsAt(idx);
-                int x = (int)gridCoord.X;
-                int y = (int)gridCoord.Y;
-                int z = (int)gridCoord.Z;
-                Vector3 worldPos = gridCoord + chunk.Origin;
 
                 if (data.Water[idx].WaterLevel <= EvaporationLevel && MathFunctions.RandEvent(0.01f))
                 {
@@ -381,8 +386,16 @@ namespace DwarfCorp
                 // There are two cases, either we are at the bottom of the chunk,
                 // in which case we must find the water from the chunk manager.
                 // Otherwise, we just get the cell immediately beneath us.
-                if (y > 0)
+
+                gridCoord = data.CoordsAt(idx);
+                Vector3 worldPos = gridCoord + chunk.Origin;
+
+                if ((int)gridCoord.Y > 0)
                 {
+                    int x = (int)gridCoord.X;
+                    int y = (int)gridCoord.Y;
+                    int z = (int)gridCoord.Z;
+
                     voxBelow.GridPosition = new Vector3(x, y - 1, z);
                     if (voxBelow.IsEmpty)
                     {
@@ -390,22 +403,6 @@ namespace DwarfCorp
                         shouldFall = true;
                     }
                 }
-                /*  This is commented out as Chunks take up the full vertical space.  This needs to be added/fixed if the chunks take up less space.
-                else
-                {
-                    if(chunk.Manager.ChunkData.DoesWaterCellExist(worldPos))
-                    {
-                        DestinationVoxel voxelsBelow = chunk.Manager.ChunkData.GetVoxel(chunk, worldPos + new Vector3(0, -1, 0));
-
-                        if(voxelsBelow != null && voxelsBelow.IsEmpty)
-                        {
-                            cellBelow = chunk.Manager.ChunkData.GetWaterCellAtLocation(worldPos + new Vector3(0, -1, 0));
-                            shouldFall = true;
-                            cellBelow.IsFalling = true;
-                        }
-                    }
-                }
-                 */
 
                 // Cases where the fluid can fall down.
                 if (shouldFall)
@@ -467,13 +464,16 @@ namespace DwarfCorp
                             }
                         }
                     }
+                    // Tag voxel below as checked
+                    int idx2 = (int)((voxBelow.GridPosition.Z * data.SizeY + voxBelow.GridPosition.Y) * data.SizeX + voxBelow.GridPosition.X);
+                    alreadyUpdated[idx2] = true;
                 }
 
                 // Now the only fluid left can spread.
                 // We spread to the manhattan neighbors
-                //Array.Sort(m_spreadNeighbors, (a, b) => CompareFlowVectors(a, b, data.Water[idx].FluidFlow));
-                //m_spreadNeighbors.Shuffle();
-                
+
+                WaterCell neighborWater = new WaterCell();
+
                 for (int s = 0; s < m_spreadNeighbors.Length; s++)
                 {
                     Vector3 spread = m_spreadNeighbors[s];
@@ -499,7 +499,14 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    WaterCell neighborWater = neighbor.Water;
+                    if (neighbor.GridPosition == localPos)
+                    {
+                        // Tag neighbor as checked
+                        int idx2 = (int)((localPos.Z * data.SizeY + localPos.Y) * data.SizeX + localPos.X);
+                        alreadyUpdated[idx2] = true;
+                    }
+
+                    neighborWater = neighbor.Water;
 
                     if (neighborWater.WaterLevel >= data.Water[idx].WaterLevel)
                         continue;
