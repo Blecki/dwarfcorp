@@ -61,7 +61,7 @@ namespace DwarfCorp
         public override float Heuristic(TemporaryVoxelHandle voxel)
         {
             BoundingBox worldBounds = voxel.Chunk.Manager.Bounds;
-            Vector3 pos = voxel.Coordinate.ToVector3();
+            Vector3 pos = voxel.WorldPosition;
             float value = MathFunctions.Dist2D(worldBounds, pos);
             return value;
         }

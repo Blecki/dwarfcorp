@@ -151,7 +151,7 @@ namespace DwarfCorp
 
             if (CurrentCraftType != null && CurrentCraftBody == null)
             {
-                CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.Name, player.VoxSelector.VoxelUnderMouse.Coordinate.ToVector3());
+                CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.Name, player.VoxSelector.VoxelUnderMouse.WorldPosition);
                 CurrentCraftBody.SetFlagRecursive(GameComponent.Flag.Active, false);
                 CurrentDesignation = new CraftDesignation()
                 {
@@ -164,7 +164,7 @@ namespace DwarfCorp
             if (CurrentCraftBody == null || player.VoxSelector.VoxelUnderMouse == null) 
                 return;
 
-            CurrentCraftBody.LocalPosition = player.VoxSelector.VoxelUnderMouse.Coordinate.ToVector3() + Vector3.One * 0.5f;
+            CurrentCraftBody.LocalPosition = player.VoxSelector.VoxelUnderMouse.WorldPosition + Vector3.One * 0.5f;
             CurrentCraftBody.GlobalTransform = CurrentCraftBody.LocalTransform;
             CurrentCraftBody.OrientToWalls();
 
@@ -191,7 +191,7 @@ namespace DwarfCorp
             }
 
             if (!String.IsNullOrEmpty(designation.ItemType.CraftLocation) &&
-                Faction.FindNearestItemWithTags(designation.ItemType.CraftLocation, designation.Location.Coordinate.ToVector3(), false) ==
+                Faction.FindNearestItemWithTags(designation.ItemType.CraftLocation, designation.Location.WorldPosition, false) ==
                 null)
             {
                 World.ShowToolPopup("Can't build, need " + designation.ItemType.CraftLocation);
@@ -271,7 +271,7 @@ namespace DwarfCorp
                             }
                             else
                             {
-                                Vector3 pos = r.Coordinate.ToVector3() + Vector3.One*0.5f;
+                                Vector3 pos = r.WorldPosition + Vector3.One*0.5f;
                                 Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f);
                                 Vector3 endPos = pos;
                                 CraftDesignation newDesignation = new CraftDesignation()

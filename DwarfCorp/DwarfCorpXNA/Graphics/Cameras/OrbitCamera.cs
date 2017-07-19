@@ -128,7 +128,7 @@ namespace DwarfCorp
                 new Vector3(pos.X, VoxelConstants.ChunkSizeY - 1, pos.Z),
                 new Vector3(pos.X, 0, pos.Z));
             if (!vox.IsValid) return pos;
-            return new Vector3(pos.X, vox.Coordinate.ToVector3().Y + 0.5f, pos.Z);
+            return new Vector3(pos.X, vox.WorldPosition.Y + 0.5f, pos.Z);
         }
 
         public void OverheadUpdate(DwarfTime time, ChunkManager chunks)

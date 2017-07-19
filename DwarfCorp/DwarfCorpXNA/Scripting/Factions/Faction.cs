@@ -433,7 +433,7 @@ namespace DwarfCorp
             BuildOrder closestVoxel = null;
             foreach(var kvp in DigDesignations)
             {
-                float d = (kvp.Value.Vox.Coordinate.ToVector3() - position).LengthSquared();
+                float d = (kvp.Value.Vox.WorldPosition - position).LengthSquared();
                 if(!(d < closestDist))
                 {
                     continue;
@@ -452,7 +452,7 @@ namespace DwarfCorp
             BuildOrder closestVoxel = null;
             foreach(var designation in GuardDesignations)
             {
-                float d = (designation.Vox.Coordinate.ToVector3() - position).LengthSquared();
+                float d = (designation.Vox.WorldPosition - position).LengthSquared();
                 if(!(d < closestDist))
                 {
                     continue;
@@ -555,7 +555,7 @@ namespace DwarfCorp
             {
                 if (room.RoomData.Name != typeName || !room.IsBuilt) continue;
                 float dist =
-                    (room.GetNearestVoxel(position).Coordinate.ToVector3() - position).LengthSquared();
+                    (room.GetNearestVoxel(position).WorldPosition - position).LengthSquared();
 
                 if (dist < nearestDistance)
                 {
@@ -930,7 +930,7 @@ namespace DwarfCorp
                     World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(position + offset)));
                 if (voxelUnder.IsValid)
                 { 
-                    var body = EntityFactory.CreateEntity<Body>(creature, voxelUnder.Coordinate.ToVector3() + new Vector3(0.5f, 1, 0.5f));
+                    var body = EntityFactory.CreateEntity<Body>(creature, voxelUnder.WorldPosition + new Vector3(0.5f, 1, 0.5f));
                     var ai = body.EnumerateAll().OfType<CreatureAI>().FirstOrDefault();
                     
                     if (ai != null)
@@ -978,7 +978,7 @@ namespace DwarfCorp
             {
                 if (room.Voxels.Count == 0) continue;
                 float dist =
-                    (room.GetNearestVoxel(position).Coordinate.ToVector3() - position).LengthSquared();
+                    (room.GetNearestVoxel(position).WorldPosition - position).LengthSquared();
 
                 if (dist < nearestDistance)
                 {

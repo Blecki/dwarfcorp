@@ -83,7 +83,7 @@ namespace DwarfCorp
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            return Voxel == null ? 1000 : 0.01f * (agent.AI.Position - Voxel.Coordinate.ToVector3()).LengthSquared() + (Voxel.Coordinate.Y);
+            return Voxel == null ? 1000 : 0.01f * (agent.AI.Position - Voxel.WorldPosition).LengthSquared() + (Voxel.Coordinate.Y);
         }
 
         public IEnumerable<Act.Status> AddBuildOrder(Creature creature)

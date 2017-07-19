@@ -200,7 +200,7 @@ namespace DwarfCorp
             {
                 for (int i = Boxes.Count; i < numBoxes; i++)
                 {
-                    CreateBox(Voxels[i].Coordinate.ToVector3() + VertexNoise.GetNoiseVectorFromRepeatingTexture(Voxels[i].Coordinate.ToVector3()));
+                    CreateBox(Voxels[i].WorldPosition + VertexNoise.GetNoiseVectorFromRepeatingTexture(Voxels[i].WorldPosition));
                 }
             }
         }

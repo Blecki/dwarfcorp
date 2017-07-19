@@ -59,7 +59,7 @@ namespace DwarfCorp
                 float closestDist = float.MaxValue;
                 foreach (var order in buildRoom.VoxelOrders)
                 {
-                    float dist = (order.Voxel.Coordinate.ToVector3() - Agent.Position).LengthSquared();
+                    float dist = (order.Voxel.WorldPosition - Agent.Position).LengthSquared();
 
                     if (dist < closestDist)
                     {

@@ -65,7 +65,7 @@ namespace DwarfCorp
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            return VoxelToGuard == null ? 1000 : (agent.AI.Position - VoxelToGuard.Coordinate.ToVector3()).LengthSquared();
+            return VoxelToGuard == null ? 1000 : (agent.AI.Position - VoxelToGuard.WorldPosition).LengthSquared();
         }
 
         public override bool ShouldRetry(Creature agent)

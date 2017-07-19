@@ -77,7 +77,7 @@ namespace DwarfCorp
             if (FarmToWork == null) return float.MaxValue;
             else
             {
-                return (FarmToWork.Vox.Coordinate.ToVector3() - agent.AI.Position).LengthSquared();
+                return (FarmToWork.Vox.WorldPosition - agent.AI.Position).LengthSquared();
             }
         }
 

@@ -321,13 +321,13 @@ namespace DwarfCorp
                     goalVoxels.Add(goalVoxel);
                     gScore[goalVoxel] = 0.0f;
                     fScore.Enqueue(goalVoxel,
-                        gScore[goalVoxel] + weight*(goalVoxel.Coordinate.ToVector3() - start.Coordinate.ToVector3()).LengthSquared());
+                        gScore[goalVoxel] + weight*(goalVoxel.WorldPosition - start.WorldPosition).LengthSquared());
                 }
             }
 
             gScore[goal.GetVoxel()] = 0.0f;
             fScore.Enqueue(goal.GetVoxel(),
-                gScore[goal.GetVoxel()] + weight * (goal.GetVoxel().Coordinate.ToVector3() - start.Coordinate.ToVector3()).LengthSquared());
+                gScore[goal.GetVoxel()] + weight * (goal.GetVoxel().WorldPosition - start.WorldPosition).LengthSquared());
 
             // Keep count of the number of expansions we've taken to get to the goal.
             int numExpansions = 0;
@@ -411,7 +411,7 @@ namespace DwarfCorp
 
                     // Update the expansion scores for the next voxel.
                     gScore[n.SourceVoxel] = tenativeGScore;
-                    fScore.Enqueue(n.SourceVoxel, gScore[n.SourceVoxel] + weight * (n.SourceVoxel.Coordinate.ToVector3() - start.Coordinate.ToVector3()).LengthSquared());
+                    fScore.Enqueue(n.SourceVoxel, gScore[n.SourceVoxel] + weight * (n.SourceVoxel.WorldPosition - start.WorldPosition).LengthSquared());
                 }
 
                 // If we've expanded too many voxels, just give up.
@@ -471,7 +471,7 @@ namespace DwarfCorp
             }
             // Otherwise, the cost is the distance between the voxels multiplied by the intrinsic cost
             // of an action.
-            float score = (a.Coordinate.ToVector3() - b.Coordinate.ToVector3()).LengthSquared() * ActionCost(movement, action);
+            float score = (a.WorldPosition - b.WorldPosition).LengthSquared() * ActionCost(movement, action);
 
             return score;
         }

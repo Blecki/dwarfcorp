@@ -71,17 +71,17 @@ namespace DwarfCorp
         {
             Radius = radius;
             Voxel = voxel;
-            Position = voxel.Coordinate.ToVector3();
+            Position = voxel.WorldPosition;
         }
 
         public override float Heuristic(TemporaryVoxelHandle voxel)
         {
-            return (voxel.Coordinate.ToVector3() - Voxel.Coordinate.ToVector3()).LengthSquared();
+            return (voxel.WorldPosition - Voxel.WorldPosition).LengthSquared();
         }
 
         public override bool IsInGoalRegion(TemporaryVoxelHandle voxel)
         {
-            return (voxel.Coordinate.ToVector3() - Position).LengthSquared() < RadiusSquared;
+            return (voxel.WorldPosition - Position).LengthSquared() < RadiusSquared;
         }
 
         public override bool IsPossible()

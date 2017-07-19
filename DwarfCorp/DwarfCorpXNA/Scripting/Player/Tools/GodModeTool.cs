@@ -109,7 +109,7 @@ namespace DwarfCorp
                 {
                     if (vox.IsEmpty)
                     {
-                        EntityFactory.CreateEntity<Body>(type, vox.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f));
+                        EntityFactory.CreateEntity<Body>(type, vox.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f));
                     }
                 }
             }

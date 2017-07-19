@@ -588,7 +588,7 @@ namespace DwarfCorp
                     new GlobalVoxelCoordinate(vox.Coordinate.X, vox.Coordinate.Y + 1, vox.Coordinate.Z));
                 if (voxAbove.IsValid && !voxAbove.IsEmpty) continue;
 
-                Vector3 target = voxAbove.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f);
+                Vector3 target = voxAbove.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f);
                 Physics.Face(target);
                 foreach (Act.Status status in Hop(target))
                 {

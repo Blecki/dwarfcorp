@@ -115,7 +115,7 @@ namespace DwarfCorp
             }
             OnConfirm(Player.SelectedMinions);
 
-            IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.DownArrow, vox.Coordinate.ToVector3() + Vector3.One * 0.5f, 0.5f, 2.0f, new Vector2(0, -50), Color.LightGreen);
+            IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.DownArrow, vox.WorldPosition + Vector3.One * 0.5f, 0.5f, 2.0f, new Vector2(0, -50), Color.LightGreen);
         }
 
 

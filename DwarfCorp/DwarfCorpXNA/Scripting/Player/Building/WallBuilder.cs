@@ -74,11 +74,11 @@ namespace DwarfCorp
             v.Health = Type.StartingHealth;
             manager.ChunkData.NotifyRebuild(v.Coordinate);
             
-            World.ParticleManager.Trigger("puff", v.Coordinate.ToVector3(), Color.White, 20);
+            World.ParticleManager.Trigger("puff", v.WorldPosition, Color.White, 20);
 
             foreach(Physics phys in manager.World.CollisionManager.EnumerateIntersectingObjects(Vox.GetBoundingBox(), CollisionManager.CollisionType.Dynamic).OfType<Physics>())
             {
-                phys.ApplyForce((phys.GlobalTransform.Translation - (Vox.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f))) * 100, 0.01f);
+                phys.ApplyForce((phys.GlobalTransform.Translation - (Vox.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f))) * 100, 0.01f);
                 BoundingBox box = v.GetBoundingBox();
                 Physics.Contact contact = new Physics.Contact();
                 Physics.TestStaticAABBAABB(box, phys.GetBoundingBox(), ref contact);
@@ -207,7 +207,7 @@ namespace DwarfCorp
             foreach(WallBuilder put in Designations)
             {
                 //Drawer3D.DrawBox(put.Vox.GetBoundingBox(), Color.LightBlue, st * 0.01f + 0.05f);
-                effect.World = Matrix.CreateTranslation(put.Vox.Coordinate.ToVector3());
+                effect.World = Matrix.CreateTranslation(put.Vox.WorldPosition);
 
                 foreach(EffectPass pass in effect.CurrentTechnique.Passes)
                 {
@@ -229,7 +229,7 @@ namespace DwarfCorp
             effect.VertexColorTint = verified ? new Color(0.0f, 1.0f, 0.0f, 0.5f * st + 0.45f) : new Color(1.0f, 0.0f, 0.0f, 0.5f * st + 0.45f);
             foreach (var voxel in Selected)
             {
-                effect.World = Matrix.CreateTranslation(voxel.Coordinate.ToVector3());
+                effect.World = Matrix.CreateTranslation(voxel.WorldPosition);
 
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {

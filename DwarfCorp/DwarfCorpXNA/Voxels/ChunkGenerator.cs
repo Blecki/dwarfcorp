@@ -294,7 +294,7 @@ namespace DwarfCorp
                         if (MathFunctions.RandEvent(animal.SpawnProbability))
                         {
                             EntityFactory.CreateEntity<Body>(animal.Name, 
-                                topVoxel.Coordinate.ToVector3() + Vector3.Up);
+                                topVoxel.WorldPosition + Vector3.Up);
 
                             break;
                         }
@@ -319,7 +319,7 @@ namespace DwarfCorp
 
                             var treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
                             EntityFactory.CreateEntity<Body>(veg.Name,
-                                topVoxel.Coordinate.ToVector3() + (Vector3.Up * treeSize * offset) + Vector3.Up,
+                                topVoxel.WorldPosition + (Vector3.Up * treeSize * offset) + Vector3.Up,
                                 Blackboard.Create("Scale", treeSize));
 
                             break;

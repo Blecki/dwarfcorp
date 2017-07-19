@@ -86,7 +86,7 @@ namespace DwarfCorp
 
             public void CreatePlant(string plantToCreate, WorldManager world)
             {
-                Plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[plantToCreate].PlantToGenerate, Vox.Coordinate.ToVector3() + Vector3.Up * 1.5f);
+                Plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[plantToCreate].PlantToGenerate, Vox.WorldPosition + Vector3.Up * 1.5f);
                 Seedling seed = Plant.BecomeSeedling();
 
                 Matrix original = Plant.LocalTransform;
@@ -95,7 +95,7 @@ namespace DwarfCorp
                  
                 world.ParticleManager.Trigger("puff", original.Translation, Color.White, 20);
                 
-                SoundManager.PlaySound(ContentPaths.Audio.pluck, Vox.Coordinate.ToVector3(), true);
+                SoundManager.PlaySound(ContentPaths.Audio.pluck, Vox.WorldPosition, true);
                 
             }
         }

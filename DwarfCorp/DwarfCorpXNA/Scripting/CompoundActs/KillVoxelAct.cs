@@ -103,7 +103,7 @@ namespace DwarfCorp
             base(creature)
         {
             Voxel = voxel;
-            Name = "Kill DestinationVoxel " + voxel.Coordinate.ToVector3();
+            Name = "Kill DestinationVoxel " + voxel.WorldPosition;
             Tree = new Sequence(
                 new SetBlackboardData<TemporaryVoxelHandle>(creature, "DigVoxel", voxel),
                 new Sequence(

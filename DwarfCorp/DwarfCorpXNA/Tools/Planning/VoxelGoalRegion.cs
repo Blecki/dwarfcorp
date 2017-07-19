@@ -59,7 +59,7 @@ namespace DwarfCorp
 
         public override float Heuristic(TemporaryVoxelHandle voxel)
         {
-            return (voxel.Coordinate.ToVector3() - Voxel.Coordinate.ToVector3()).LengthSquared();
+            return (voxel.WorldPosition - Voxel.WorldPosition).LengthSquared();
         }
 
         public VoxelGoalRegion(TemporaryVoxelHandle voxel)

@@ -67,7 +67,7 @@ namespace DwarfCorp
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            return !Voxel.IsValid || !CanBuild(agent) ? 1000 : (agent.AI.Position - Voxel.Coordinate.ToVector3()).LengthSquared();
+            return !Voxel.IsValid || !CanBuild(agent) ? 1000 : (agent.AI.Position - Voxel.WorldPosition).LengthSquared();
         }
 
         public override Act CreateScript(Creature creature)

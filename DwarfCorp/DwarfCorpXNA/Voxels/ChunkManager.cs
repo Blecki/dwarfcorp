@@ -876,15 +876,15 @@ GameSettings.Default.FogofWar = fogOfWar;
             if (World.ParticleManager != null)
             {
                 World.ParticleManager.Trigger(Voxel.Type.ParticleType, 
-                    Voxel.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
+                    Voxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
                 World.ParticleManager.Trigger("puff", 
-                    Voxel.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
+                    Voxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
             }
 
             if (World.Master != null)
                 World.Master.Faction.OnVoxelDestroyed(Voxel);
 
-            Voxel.Type.ExplosionSound.Play(Voxel.Coordinate.ToVector3());
+            Voxel.Type.ExplosionSound.Play(Voxel.WorldPosition);
 
             List<Body> emittedResources = null;
             if (Voxel.Type.ReleasesResource)
@@ -894,7 +894,7 @@ GameSettings.Default.FogofWar = fogOfWar;
                     emittedResources = new List<Body>
                     {
                         EntityFactory.CreateEntity<Body>(Voxel.Type.ResourceToRelease + " Resource",
-                            Voxel.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f))
+                            Voxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f))
                     };
                 }
             }

@@ -186,25 +186,25 @@ namespace DwarfCorp
                     case AttackMode.Melee:
                     {
                         other.Health -= DamageAmount + bonus;
-                        other.Type.HitSound.Play(other.Coordinate.ToVector3());
+                        other.Type.HitSound.Play(other.WorldPosition);
                         //PlayNoise(other.Position);
                         if (HitParticles != "")
                         {
-                            performer.Manager.World.ParticleManager.Trigger(HitParticles, other.Coordinate.ToVector3(), Color.White, 5);
+                            performer.Manager.World.ParticleManager.Trigger(HitParticles, other.WorldPosition, Color.White, 5);
                         }
 
                         if (HitAnimation != null)
                         {
                             HitAnimation.Reset();
                             HitAnimation.Play();
-                            IndicatorManager.DrawIndicator(HitAnimation.Clone(), other.Coordinate.ToVector3() + Vector3.One*0.5f,
+                            IndicatorManager.DrawIndicator(HitAnimation.Clone(), other.WorldPosition + Vector3.One*0.5f,
                                 10.0f, 1.0f, MathFunctions.RandVector2Circle()*10, HitColor, MathFunctions.Rand() > 0.5f);
                         }
                         break;
                     }
                     case AttackMode.Ranged:
                     {
-                        LaunchProjectile(pos, other.Coordinate.ToVector3(), null);
+                        LaunchProjectile(pos, other.WorldPosition, null);
                         break;
                     }
 
