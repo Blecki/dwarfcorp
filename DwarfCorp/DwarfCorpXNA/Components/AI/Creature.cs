@@ -348,31 +348,26 @@ namespace DwarfCorp
         /// </summary>
         public void CheckNeighborhood(ChunkManager chunks, float dt)
         {
-            var voxelBelow = new VoxelHandle();
-            bool belowExists = chunks.ChunkData.GetVoxel(Physics.GlobalTransform.Translation - Vector3.UnitY * 0.8f,
-                ref voxelBelow);
-            var voxelAbove = new VoxelHandle();
-            bool aboveExists = chunks.ChunkData.GetVoxel(Physics.GlobalTransform.Translation + Vector3.UnitY,
-                ref voxelAbove);
+            var below = new TemporaryVoxelHandle(chunks.ChunkData,
+                GlobalVoxelCoordinate.FromVector3(Physics.GlobalTransform.Translation - Vector3.UnitY * 0.8f));
+            var above = new TemporaryVoxelHandle(chunks.ChunkData,
+                GlobalVoxelCoordinate.FromVector3(Physics.GlobalTransform.Translation + Vector3.UnitY * 0.8f));
 
-            if (aboveExists)
+            if (above.IsValid)
             {
-                IsHeadClear = voxelAbove.IsEmpty;
+                IsHeadClear = above.IsEmpty;
             }
-            if (belowExists && Physics.IsInLiquid)
+            if (below.IsValid && Physics.IsInLiquid)
             {
                 IsOnGround = false;
             }
-            else if (belowExists)
+            else if (below.IsValid)
             {
-                IsOnGround = !voxelBelow.IsEmpty;
+                IsOnGround = !below.IsEmpty;
             }
             else
             {
-                if (IsOnGround)
-                {
                     IsOnGround = false;
-                }
             }
 
             if (!IsOnGround)

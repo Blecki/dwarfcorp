@@ -404,8 +404,7 @@ namespace DwarfCorp
                         entity.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
                         entity.AddChild(new ExploredListener
                             (world.ComponentManager,
-                                world.ChunkManager, chunk.MakeVoxel(x, y, z)));
-                    }
+                                world.ChunkManager, new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z))));                    }
                 });
                 break;
             }
@@ -413,11 +412,12 @@ namespace DwarfCorp
 
         public static void GenerateCaveVegetation(VoxelChunk chunk, int x, int y, int z, int caveHeight, BiomeData biome, Vector3 vec, WorldManager world, Perlin NoiseGenerator)
         {
-            VoxelHandle vUnder = chunk.MakeVoxel(x, y - 1, z);
+            var vUnder = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y - 1, z));
+
             int indexunder = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y - caveHeight, z));
             chunk.Data.Types[indexunder] = (byte)VoxelLibrary.GetVoxelType(biome.GrassLayer.VoxelType).ID;
             chunk.Data.Health[indexunder] = (byte)VoxelLibrary.GetVoxelType(biome.GrassLayer.VoxelType).StartingHealth;
-            //chunk.Data.IsExplored[indexunder] = false;
+            
             foreach (VegetationData veg in biome.Vegetation)
             {
                 if (!MathFunctions.RandEvent(veg.SpawnProbability))
@@ -431,7 +431,6 @@ namespace DwarfCorp
                 }
 
 
-                vUnder.GridPosition = new LocalVoxelCoordinate(x, y - 1, z);
                 if (!vUnder.IsEmpty && vUnder.Type.Name == biome.GrassLayer.VoxelType)
                 {
                     vUnder.Type = VoxelLibrary.GetVoxelType(biome.SoilLayer.VoxelType);

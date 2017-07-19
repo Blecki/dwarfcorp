@@ -67,7 +67,6 @@ namespace DwarfCorp
             Movement = new CreatureMovement(this);
             GatherManager = new GatherManager(this);
             Blackboard = new Blackboard();
-            CurrentPath = null;
             PlannerTimer = new Timer(0.1f, false);
             LocalControlTimeout = new Timer(5, false, Timer.TimerMode.Real);
             WanderTimer = new Timer(1, false);
@@ -87,8 +86,6 @@ namespace DwarfCorp
         }
 
         private bool jumpHeld = false;
-        /// <summary> The current path of voxels the AI is following </summary>
-        public List<VoxelHandle> CurrentPath { get; set; }
 
         private Creature _cachedCreature = null;
         [JsonIgnore] public Creature Creature

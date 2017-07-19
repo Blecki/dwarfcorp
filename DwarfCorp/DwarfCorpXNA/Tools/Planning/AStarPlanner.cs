@@ -332,13 +332,6 @@ namespace DwarfCorp
             // Keep count of the number of expansions we've taken to get to the goal.
             int numExpansions = 0;
     
-            // Check the voxels adjacent to the current voxel as a quick test of adjacency to the goal.
-            var manhattanNeighbors = new List<VoxelHandle>(6);
-            for (int i = 0; i < 6; i++)
-            {
-                manhattanNeighbors.Add(new VoxelHandle());
-            }
-
             // Loop until we've either checked every possible voxel, or we've exceeded the maximum number of
             // expansions.
             while (openSet.Count > 0 && numExpansions < maxExpansions)

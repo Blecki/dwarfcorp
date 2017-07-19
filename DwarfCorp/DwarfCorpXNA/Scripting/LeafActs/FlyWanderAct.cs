@@ -200,9 +200,9 @@ namespace DwarfCorp
 
                     if (State == FlyState.SearchingForPerch)
                     {
-                        VoxelHandle vox = Creature.Physics.CurrentVoxel;
+                        var vox = Creature.Physics.CurrentVoxel.tvh;
 
-                        if (vox.WaterLevel > 0)
+                        if (vox.WaterCell.WaterLevel > 0)
                         {
                             yield return Act.Status.Running;
                             continue;
