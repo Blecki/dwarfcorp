@@ -131,8 +131,11 @@ namespace DwarfCorp
 
         public virtual void GenerateLightmap(Rectangle textureBounds)
         {
-            BoundingBox box = GenerateLightmapUVs();
-            CreateLightMapTexture(box, textureBounds);
+            if (GameSettings.Default.UseLightmaps)
+            {
+                BoundingBox box = GenerateLightmapUVs();
+                CreateLightMapTexture(box, textureBounds);
+            }
         }
 
         /// <summary>
@@ -171,10 +174,9 @@ namespace DwarfCorp
             int newWidth = (int)Math.Ceiling((widthScale) * textureBounds.Width);
             int newHeight = (int)Math.Ceiling((heightScale) * textureBounds.Height);
 
-
             if (Lightmap == null || Lightmap.Width < newWidth || Lightmap.Height < newHeight)
             {
-               Lightmap = new RenderTarget2D(GameState.Game.GraphicsDevice, newWidth, newHeight, false,
+                Lightmap = new RenderTarget2D(GameState.Game.GraphicsDevice, newWidth, newHeight, false,
                     SurfaceFormat.Color, DepthFormat.None);
             }
             else
