@@ -244,36 +244,32 @@ namespace DwarfCorp
 
             var underMouse = GetVoxelUnderMouse();
             // Keep track of whether a new voxel has been selected.
-            bool newVoxel = underMouse != null && !underMouse.Equals(VoxelUnderMouse);
+            bool newVoxel = underMouse.IsValid && underMouse != VoxelUnderMouse;
 
-            if (underMouse == null)
+            if (!underMouse.IsValid)
             {
                 return;
             }
+                        
+            VoxelUnderMouse = underMouse;
 
-            // If there is a voxel under the mouse...
-            if (underMouse != null)
+            // Update the cursor light.
+            World.CursorLightPos = underMouse.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f);
+
+            // Get the type of the voxel and display it to the player.
+            if (Enabled && !underMouse.IsEmpty && underMouse.IsExplored)
             {
-                //World.ParticleManager.Trigger("crumbs", underMouse.Position + Vector3.Up, Color.White, 1);
-                VoxelUnderMouse = underMouse;
-                // Update the cursor light.
-                World.CursorLightPos = underMouse.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f);
+                string info = underMouse.Type.Name;
 
-                // Get the type of the voxel and display it to the player.
-                if (Enabled && !underMouse.IsEmpty && underMouse.IsExplored)
+                // If it belongs to a room, display that information.
+                if (World.PlayerFaction.RoomBuilder.IsInRoom(underMouse))
                 {
-                    string info = underMouse.Type.Name;
+                    Room room = World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(underMouse);
 
-                    // If it belongs to a room, display that information.
-                    if (World.PlayerFaction.RoomBuilder.IsInRoom(underMouse))
-                    {
-                        Room room = World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(underMouse);
-
-                        if (room != null)
-                            info += " (" + room.ID + ")";
-                    }
-                    World.ShowInfo(info);
+                    if (room != null)
+                        info += " (" + room.ID + ")";
                 }
+                World.ShowInfo(info);
             }
 
             // Do nothing if not enabled.
@@ -281,6 +277,7 @@ namespace DwarfCorp
             {
                 return;
             }
+
             bool altPressed = false;
             // If the left or right ALT keys are pressed, we can adjust the height of the selection
             // for building pits and tall walls using the mouse wheel.

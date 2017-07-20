@@ -704,6 +704,7 @@ namespace DwarfCorp
                         AutoRetry = false
                     };
                 }
+
                 if (IdleTimer.HasTriggered)
                 {
                     IdleTimer.Reset(IdleTimer.TargetTimeSeconds);
@@ -715,6 +716,7 @@ namespace DwarfCorp
                 Physics.Velocity *= 0.0f;
                 return null;
             }
+
             // If we have no more build orders, look for gather orders
             if (GatherManager.VoxelOrders.Count == 0 && GatherManager.StockOrders.Count > 0)
             {

@@ -479,7 +479,7 @@ namespace DwarfCorp
 
         public void AddDigDesignation(BuildOrder order)
         {
-            if (order.Vox == null) return;
+            if (!order.Vox.IsValid) return;
             // Todo: Improve this call.
             DigDesignations.Add(GetVoxelQuickCompare(order.Vox.Coordinate.GetGlobalChunkCoordinate(), VoxelConstants.DataIndexOf(order.Vox.Coordinate.GetLocalVoxelCoordinate())), order);
         }
@@ -501,13 +501,6 @@ namespace DwarfCorp
 
             return DigDesignations.ContainsKey(GetVoxelQuickCompare(vox.Coordinate.GetGlobalChunkCoordinate(),
                 VoxelConstants.DataIndexOf(vox.Coordinate.GetLocalVoxelCoordinate())));
-            /*
-            for (int i = 0; i < DigDesignations.Count; i++)
-            {
-                if (DigDesignations[i].Vox.IsSameAs(vox)) return true;
-            }
-            return false;
-             * */
         }
 
 

@@ -76,23 +76,23 @@ namespace DwarfCorp
 
         public override bool IsFeasible(Creature agent)
         {
-            if(VoxelToKill == null || VoxelToKill.IsEmpty || VoxelToKill.Health <= 0)
+            if(!VoxelToKill.IsValid || VoxelToKill.IsEmpty || VoxelToKill.Health <= 0)
             {
                 return false;
             }
 
-            return agent.Faction.IsDigDesignation(VoxelToKill) && !VoxelHelpers.VoxelIsCompletelySurrounded(new TemporaryVoxelHandle(VoxelToKill.Chunk, VoxelToKill.Coordinate.GetLocalVoxelCoordinate()));
+            return agent.Faction.IsDigDesignation(VoxelToKill) && !VoxelHelpers.VoxelIsCompletelySurrounded(VoxelToKill);
         }
 
         public override bool ShouldDelete(Creature agent)
         {
-            return VoxelToKill == null || VoxelToKill.IsEmpty || VoxelToKill.Health <= 0 ||
+            return !VoxelToKill.IsValid || VoxelToKill.IsEmpty || VoxelToKill.Health <= 0 ||
                    !agent.Faction.IsDigDesignation(VoxelToKill);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            if (VoxelToKill == null)
+            if (!VoxelToKill.IsValid)
             {
                 return 1000;
             }
@@ -100,7 +100,7 @@ namespace DwarfCorp
             int surroundedValue = 0;
             if (!alreadyCheckedFeasible)
             {
-                if (VoxelHelpers.VoxelIsCompletelySurrounded(new TemporaryVoxelHandle(VoxelToKill.Chunk, VoxelToKill.Coordinate.GetLocalVoxelCoordinate())))
+                if (VoxelHelpers.VoxelIsCompletelySurrounded(VoxelToKill))
                     surroundedValue = 10000;
             }
 

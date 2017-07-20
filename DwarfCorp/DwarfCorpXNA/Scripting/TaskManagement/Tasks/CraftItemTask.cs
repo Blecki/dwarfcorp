@@ -138,7 +138,7 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature creature)
         {
-            return new ForLoop(new CraftItemAct(creature.AI, Item)
+            return new Repeat(new CraftItemAct(creature.AI, Item)
             {
                 Noise = noise
             }, this.Item.NumRepeats, false);

@@ -510,7 +510,7 @@
     <Compile Include="Scripting\CompoundActs\KillVoxelAct.cs" />
     <Compile Include="Scripting\CompoundActs\StockResourceAct.cs" />
     <Compile Include="Scripting\ControlFlow\Condition.cs" />
-    <Compile Include="Scripting\ControlFlow\ForLoop.cs" />
+    <Compile Include="Scripting\ControlFlow\Repeat.cs" />
     <Compile Include="Scripting\ControlFlow\Not.cs" />
     <Compile Include="Scripting\ControlFlow\Parallel.cs" />
     <Compile Include="Scripting\ControlFlow\Select.cs" />

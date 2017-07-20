@@ -57,6 +57,7 @@ namespace DwarfCorp
         public IEnumerable<Status> IncrementAssignment( CreatureAI creature, string designation, int amount)
         {
             TemporaryVoxelHandle vref = creature.Blackboard.GetData<TemporaryVoxelHandle>(designation);
+
             if(vref.IsValid)
             {
                 BuildOrder digBuildOrder = creature.Faction.GetDigDesignation(vref);
@@ -81,6 +82,7 @@ namespace DwarfCorp
         public IEnumerable<Status> CheckIsDigDesignation(CreatureAI creature, string designation)
         {
             TemporaryVoxelHandle vref = creature.Blackboard.GetData<TemporaryVoxelHandle>(designation);
+
             if (vref.IsValid)
             {
                 BuildOrder digBuildOrder = creature.Faction.GetDigDesignation(vref);
