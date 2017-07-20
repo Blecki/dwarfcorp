@@ -82,7 +82,8 @@ namespace DwarfCorp
             }
 
             rebuildMutex.WaitOne();
-            if(isRebuilding)
+
+            if (isRebuilding)
             {
                 rebuildMutex.ReleaseMutex();
                 return;
@@ -121,10 +122,7 @@ namespace DwarfCorp
                     {
                         v.GridPosition = new Vector3(x, y, z); 
 
-                        if((v.IsExplored && v.IsEmpty) || !v.IsVisible)
-                        {
-                            continue;
-                        }
+                        if((v.IsExplored && v.IsEmpty) || !v.IsVisible) continue;
 
                         BoxPrimitive primitive = VoxelLibrary.GetPrimitive(v.Type);
 
@@ -136,6 +134,7 @@ namespace DwarfCorp
                         }
 
                         Color tint = v.Type.Tint;
+
                         BoxPrimitive.BoxTextureCoords uvs = primitive.UVs;
 
                         if (v.Type.HasTransitionTextures && v.IsExplored)
@@ -259,15 +258,9 @@ namespace DwarfCorp
             }
             else
             {
-                return V.Type.TransitionTextures[V.Chunk.ComputeTransitionValue(V.Type.Transitions, (int)V.GridPosition.X, (int)V.GridPosition.Y, (int)V.GridPosition.Z, manhattanNeighbors)];
+                return V.Type.TransitionTextures[V.Chunk.ComputeTransitionValue(
+                    V.Type.Transitions, (int)V.GridPosition.X, (int)V.GridPosition.Y, (int)V.GridPosition.Z, manhattanNeighbors)];
             }
-        }
-
-        public bool ContainsNearVertex(Vector3 vertexPos1, List<VertexPositionColorTexture> accumulated)
-        {
-            const float epsilon = 0.001f;
-
-            return accumulated.Select(vert => (vertexPos1 - (vert.Position)).LengthSquared()).Any(dist => dist < epsilon);
         }
 
         public void Dispose()
