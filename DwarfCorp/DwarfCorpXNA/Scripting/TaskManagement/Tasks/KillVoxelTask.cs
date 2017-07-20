@@ -77,9 +77,7 @@ namespace DwarfCorp
         public override bool IsFeasible(Creature agent)
         {
             if(!VoxelToKill.IsValid || VoxelToKill.IsEmpty || VoxelToKill.Health <= 0)
-            {
                 return false;
-            }
 
             return agent.Faction.IsDigDesignation(VoxelToKill) && !VoxelHelpers.VoxelIsCompletelySurrounded(VoxelToKill);
         }
@@ -93,9 +91,7 @@ namespace DwarfCorp
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
             if (!VoxelToKill.IsValid)
-            {
                 return 1000;
-            }
 
             int surroundedValue = 0;
             if (!alreadyCheckedFeasible)

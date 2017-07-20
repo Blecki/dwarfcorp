@@ -182,5 +182,10 @@ namespace DwarfCorp
         }
 
         #endregion
+
+        public override string ToString()
+        {
+            return "voxel at " + Coordinate.ToString();
+        }
     }
 }

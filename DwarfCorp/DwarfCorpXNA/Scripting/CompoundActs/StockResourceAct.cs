@@ -100,7 +100,6 @@ namespace DwarfCorp
 
                 if (ItemToStock != null)
                 {
-
                     Tree = new Sequence(
                         new SetBlackboardData<ResourceAmount>(Agent, "GatheredResource", ItemToStock.CloneResource()),
                         new SearchFreeStockpileAct(Agent, "TargetStockpile", "FreeVoxel", ItemToStock),

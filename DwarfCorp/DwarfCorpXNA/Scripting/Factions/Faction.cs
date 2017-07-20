@@ -161,13 +161,16 @@ namespace DwarfCorp
             World = ((WorldManager)ctx.Context);
         }
 
-        private ulong GetVoxelQuickCompare(GlobalChunkCoordinate Coord, int Index)
+        private ulong GetVoxelQuickCompare(TemporaryVoxelHandle V)
         {
+            var coord = V.Coordinate.GetGlobalChunkCoordinate();
+            var index = VoxelConstants.DataIndexOf(V.Coordinate.GetLocalVoxelCoordinate());
+
             ulong q = 0;
-            q |= (((ulong)Coord.X & 0xFFFF) << 48);
-            q |= (((ulong)Coord.Y & 0xFFFF) << 32);
-            q |= (((ulong)Coord.Z & 0xFFFF) << 16);
-            q |= ((ulong)Index & 0xFFFF);
+            q |= (((ulong)coord.X & 0xFFFF) << 48);
+            q |= (((ulong)coord.Y & 0xFFFF) << 32);
+            q |= (((ulong)coord.Z & 0xFFFF) << 16);
+            q |= ((ulong)index & 0xFFFF);
             return q;
         }
 
@@ -472,7 +475,7 @@ namespace DwarfCorp
         public BuildOrder GetDigDesignation(TemporaryVoxelHandle vox)
         {
             BuildOrder returnOrder;
-            if (DigDesignations.TryGetValue(GetVoxelQuickCompare(vox.Coordinate.GetGlobalChunkCoordinate(), VoxelConstants.DataIndexOf(vox.Coordinate.GetLocalVoxelCoordinate())), out returnOrder))
+            if (DigDesignations.TryGetValue(GetVoxelQuickCompare(vox), out returnOrder))
                 return returnOrder;
             return new BuildOrder();
         }
@@ -480,14 +483,12 @@ namespace DwarfCorp
         public void AddDigDesignation(BuildOrder order)
         {
             if (!order.Vox.IsValid) return;
-            // Todo: Improve this call.
-            DigDesignations.Add(GetVoxelQuickCompare(order.Vox.Coordinate.GetGlobalChunkCoordinate(), VoxelConstants.DataIndexOf(order.Vox.Coordinate.GetLocalVoxelCoordinate())), order);
+            DigDesignations.Add(GetVoxelQuickCompare(order.Vox), order);
         }
 
         public void RemoveDigDesignation(TemporaryVoxelHandle vox)
         {
-            var q = GetVoxelQuickCompare(vox.Coordinate.GetGlobalChunkCoordinate(), 
-                VoxelConstants.DataIndexOf(vox.Coordinate.GetLocalVoxelCoordinate()));
+            var q = GetVoxelQuickCompare(vox);
             if (DigDesignations.ContainsKey(q))
             {
                 DigDesignations.Remove(q);
@@ -499,8 +500,7 @@ namespace DwarfCorp
         {
             GamePerformance.Instance.TrackValueType<int>("Dig Designations", DigDesignations.Count);
 
-            return DigDesignations.ContainsKey(GetVoxelQuickCompare(vox.Coordinate.GetGlobalChunkCoordinate(),
-                VoxelConstants.DataIndexOf(vox.Coordinate.GetLocalVoxelCoordinate())));
+            return DigDesignations.ContainsKey(GetVoxelQuickCompare(vox));
         }
 
 

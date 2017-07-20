@@ -109,13 +109,12 @@ namespace DwarfCorp
             Tree = new Sequence(
                 new SetBlackboardData<TemporaryVoxelHandle>(creature, "DigVoxel", voxel),
                 new Sequence(
-                              new Wrap(() => IncrementAssignment(creature, "DigVoxel", 1)),
-                              new GoToVoxelAct(voxel, PlanAct.PlanType.Radius, creature) {Radius = 2.0f},
-                              new Wrap(() => CheckIsDigDesignation(creature, "DigVoxel")),
-                              new DigAct(Agent, "DigVoxel"),
-                              new ClearBlackboardData(creature, "DigVoxel")
-                            ) 
-                            | new Wrap(() => IncrementAssignment(creature, "DigVoxel", -1)) & false);
+                    new Wrap(() => IncrementAssignment(creature, "DigVoxel", 1)),
+                    new GoToVoxelAct(voxel, PlanAct.PlanType.Radius, creature) {Radius = 2.0f},
+                    new Wrap(() => CheckIsDigDesignation(creature, "DigVoxel")),
+                    new DigAct(Agent, "DigVoxel"),
+                    new ClearBlackboardData(creature, "DigVoxel")) 
+               | new Wrap(() => IncrementAssignment(creature, "DigVoxel", -1)) & false);
         }
     }
 
