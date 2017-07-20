@@ -745,21 +745,6 @@ namespace DwarfCorp
             ShouldRebuildWater = false;
         }
 
-        private byte getMax(byte[] values)
-        {
-            byte max = 0;
-
-            foreach (byte b in values)
-            {
-                if (b > max)
-                {
-                    max = b;
-                }
-            }
-
-            return max;
-        }
-
         public static Perlin MoteNoise = new Perlin(0);
         public static Perlin MoteScaleNoise = new Perlin(250);
 
