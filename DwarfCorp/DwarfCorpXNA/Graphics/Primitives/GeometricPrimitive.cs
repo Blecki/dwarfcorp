@@ -49,7 +49,7 @@ namespace DwarfCorp
 
         public static readonly bool[, ,] FaceDrawMap = new bool[6, (int)RampType.All + 1, (int)RampType.All + 1];
 
-        public static bool ShouldDrawFace(BoxFace face, RampType neighborRamp, RampType myRamp)
+        protected static bool ShouldDrawFace(BoxFace face, RampType neighborRamp, RampType myRamp)
         {
             if (face == BoxFace.Top || face == BoxFace.Bottom)
             {
@@ -59,9 +59,20 @@ namespace DwarfCorp
             return FaceDrawMap[(int)face, (int)myRamp, (int)neighborRamp];
         }
 
-        public static bool IsSideFace(BoxFace face)
+        protected static bool IsSideFace(BoxFace face)
         {
             return face != BoxFace.Top && face != BoxFace.Bottom;
+        }
+
+        protected static bool IsFaceVisible(VoxelHandle voxel, VoxelHandle neighbor, BoxFace face)
+        {
+            return
+                (neighbor.IsExplored && neighbor.IsEmpty) ||
+                (neighbor.Type.IsTransparent && !voxel.Type.IsTransparent) ||
+                !neighbor.IsVisible ||
+                (neighbor.Type.CanRamp && neighbor.RampType != RampType.None &&
+                IsSideFace(face) &&
+                ShouldDrawFace(face, neighbor.RampType, voxel.RampType));
         }
         
         /// <summary>
