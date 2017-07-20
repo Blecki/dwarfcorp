@@ -237,7 +237,8 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockBottom,
                 OnLayout = (sender) =>
                 {
-                    var space = System.Math.Min(difficultySelectorCombo.Rect.Width, StartButton.Rect.Top - difficultySelectorCombo.Rect.Bottom - 4);
+                    var space = System.Math.Min(
+                        difficultySelectorCombo.Rect.Width, StartButton.Rect.Top - difficultySelectorCombo.Rect.Bottom - 4);
                     sender.Rect.Height = space;
                     sender.Rect.Width = space;
                     sender.Rect.Y = difficultySelectorCombo.Rect.Bottom + 2;
@@ -316,8 +317,9 @@ namespace DwarfCorp.GameStates
                 Preview.DrawPreview();
                 GuiRoot.DrawMesh(
                         Gui.Mesh.Quad()
-                        .Scale(ZoomedPreview.Rect.Width, ZoomedPreview.Rect.Height)
-                        .Translate(ZoomedPreview.Rect.X, ZoomedPreview.Rect.Y)
+                        .Scale(-ZoomedPreview.Rect.Width, -ZoomedPreview.Rect.Height)
+                        .Translate(ZoomedPreview.Rect.X + ZoomedPreview.Rect.Width, 
+                            ZoomedPreview.Rect.Y + ZoomedPreview.Rect.Height)
                         .Texture(Preview.ZoomedPreviewMatrix),
                         Preview.PreviewTexture);
 
