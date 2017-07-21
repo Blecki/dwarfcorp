@@ -129,29 +129,10 @@ namespace DwarfCorp
                 ChunkMap[chunk.ID] = chunk;
                 return true;
             }
-            else if(ChunkMap.ContainsKey(chunk.ID))
-            {
-                return false;
-            }
 
             return false;
         }
 
-        public VoxelChunk GetVoxelChunkAtWorldLocation(GlobalVoxelCoordinate worldLocation)
-        {
-            VoxelChunk returnChunk = null;
-            ChunkMap.TryGetValue(worldLocation.GetGlobalChunkCoordinate(), out returnChunk);
-            return returnChunk;
-        }
-
-        public VoxelChunk GetVoxelChunkAtWorldLocation(Vector3 WorldLocation)
-        {
-            return GetVoxelChunkAtWorldLocation(new GlobalVoxelCoordinate(
-                (int)Math.Floor(WorldLocation.X),
-                (int)Math.Floor(WorldLocation.Y),
-                (int)Math.Floor(WorldLocation.Z)));
-        }
-       
         public void LoadFromFile(GameFile gameFile, Action<String> SetLoadingMessage)
         {
             foreach (VoxelChunk chunk in gameFile.Data.ChunkData.Select(file => file.ToChunk(chunkManager)))

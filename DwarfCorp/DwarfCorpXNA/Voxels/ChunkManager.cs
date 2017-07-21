@@ -772,49 +772,33 @@ GameSettings.Default.FogofWar = fogOfWar;
             KilledVoxels.Clear();
         }
 
-        // Todo: %Kill% or %Lift% - only used by voxel selector.
-        public IEnumerable<TemporaryVoxelHandle> GetVoxelsIntersecting(IEnumerable<Vector3> positions)
-        {
-            foreach (var vec in positions)
-            {
-                var vox = new TemporaryVoxelHandle(ChunkData, GlobalVoxelCoordinate.FromVector3(vec));
-                if (vox.IsValid)
-                    yield return vox;
-            }
-        }
-
         public void CreateGraphics(Action<String> SetLoadingMessage, ChunkData chunkData)
         {
             SetLoadingMessage("Creating Graphics");
+
             List<VoxelChunk> toRebuild = new List<VoxelChunk>();
 
             while(RebuildList.Count > 0)
             {
                 VoxelChunk chunk = null;
-                if(!RebuildList.TryDequeue(out chunk))
-                {
+
+                if (!RebuildList.TryDequeue(out chunk))
                     break;
-                }
-
+            
                 if(chunk == null)
-                {
                     continue;
-                }
-
+            
                 toRebuild.Add(chunk);
             }
 
             SetLoadingMessage("Updating Ramps");
-            foreach (var chunk in toRebuild.Where(chunk => GameSettings.Default.CalculateRamps))
-            {
+            if (GameSettings.Default.CalculateRamps)
+                foreach (var chunk in toRebuild)
                   chunk.UpdateRamps();
-            }
 
             SetLoadingMessage("Calculating lighting ");
-            int j = 0;
             foreach(var chunk in toRebuild)
             {
-                j++;
                 if (chunk.ShouldRecalculateLighting)
                 {
                     chunk.CalculateGlobalLight();
@@ -822,25 +806,11 @@ GameSettings.Default.FogofWar = fogOfWar;
                 }
             }
 
-            j = 0;
-            SetLoadingMessage("Calculating vertex light ...");
-            foreach(VoxelChunk chunk in toRebuild)
-            {
-                j++;
-                //chunk.CalculateVertexLighting();
-            };
-
             SetLoadingMessage("Building Vertices...");
-            j = 0;
             foreach(var  chunk in toRebuild)
             {
-                j++;
-                //SetLoadingMessage("Building Vertices " + j + "/" + toRebuild.Count);
-
                 if (!chunk.ShouldRebuild)
-                {
                     return;
-                }
 
                 chunk.Rebuild(Graphics);
                 chunk.ShouldRebuild = false;

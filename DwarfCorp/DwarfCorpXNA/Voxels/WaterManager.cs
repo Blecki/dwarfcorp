@@ -59,7 +59,7 @@ namespace DwarfCorp
         public byte EvaporationLevel { get; set; }
 
         public static byte maxWaterLevel = 8;
-        public static byte threeQuarterWaterLevel;
+        public static byte threeQuarterWaterLevel = (byte)(Math.Round((maxWaterLevel / 8.0f) * 6));
         public static byte oneHalfWaterLevel;
         public static byte oneQuarterWaterLevel;
         public static byte rainFallAmount;

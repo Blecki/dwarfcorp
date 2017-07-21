@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using DwarfCorp.GameStates;
@@ -449,26 +450,26 @@ namespace DwarfCorp
                         .Select(c => new TemporaryVoxelHandle(Chunks.ChunkData, c))
                         .Where(v => v.IsValid);
                 case VoxelBrush.Shell:
-                {
-                        // Todo: Change the stair and shell functions to enumerate coordinates
-                        //  then simplify and combine this code.
-                    return Chunks.GetVoxelsIntersecting(GetShell(buffer));
-                }
+                    return EnumerateShell(buffer)
+                            .Select(c => new TemporaryVoxelHandle(Chunks.ChunkData, c))
+                            .Where(v => v.IsValid);
+                case VoxelBrush.Stairs:
+                    return EnumerateStairVoxels(buffer, start, end, SelectionType == VoxelSelectionType.SelectFilled)
+                        .Select(c => new TemporaryVoxelHandle(Chunks.ChunkData, c))
+                        .Where(v => v.IsValid);
                 default:
-                {
-                    return Chunks.GetVoxelsIntersecting(GetStair(buffer, start, end, SelectionType == VoxelSelectionType.SelectFilled));
-                }
+                    throw new InvalidOperationException("VoxelBrush has invalid value");
             }
         }
-
 
         /// <summary>
         /// Gets a stairstep stretching accross the box.
         /// </summary>
         /// <param name="box">The box.</param>
         /// <returns>A stairstep starting filled on the bottom row, pointing in the maximum x or z direction</returns>
-        private IEnumerable<Vector3> GetStair(BoundingBox box,  Vector3 start, Vector3 end, bool invert)
+        private IEnumerable<GlobalVoxelCoordinate> EnumerateStairVoxels(BoundingBox box,  Vector3 start, Vector3 end, bool invert)
         {
+            // Todo: Can this be simplified to return voxels above or below the line?
             int minX = MathFunctions.FloorInt(box.Min.X + 0.5f);
             int minY = MathFunctions.FloorInt(box.Min.Y + 0.5f);
             int minZ = MathFunctions.FloorInt(box.Min.Z + 0.5f);
@@ -523,7 +524,7 @@ namespace DwarfCorp
                         {
                             for (int z = minZ; z <= maxZ; z++)
                             {
-                                yield return new Vector3(x + 0.5f, y + 0.5f, z + 0.5f);
+                                yield return new GlobalVoxelCoordinate(x, y, z);
                             }
                         }
                     }
@@ -534,7 +535,7 @@ namespace DwarfCorp
                         {
                             for (int z = minZ; z <= maxZ; z++)
                             {
-                                yield return new Vector3(x + 0.5f, y + 0.5f, z + 0.5f);
+                                yield return new GlobalVoxelCoordinate(x, y, z);
                             }
                         }
                     }
@@ -550,7 +551,7 @@ namespace DwarfCorp
                         {
                             for (int x = minX; x <= maxX; x++)
                             {
-                                yield return new Vector3(x + 0.5f, y + 0.5f, z + 0.5f);
+                                yield return new GlobalVoxelCoordinate(x, y, z);
                             }
                         }
                     }
@@ -561,7 +562,7 @@ namespace DwarfCorp
                         {
                             for (int x = minX; x <= maxX; x++)
                             {
-                                yield return new Vector3(x + 0.5f, y + 0.5f, z + 0.5f);
+                                yield return new GlobalVoxelCoordinate(x, y, z);
                             }
                         }
                     }
@@ -569,14 +570,13 @@ namespace DwarfCorp
                 }
             }
         }
-
-
+        
         /// <summary>
         /// Gets the 1-voxel shell of a bounding box.
         /// </summary>
         /// <param name="box">The box.</param>
         /// <returns>A list of points on the boundary of the box.</returns>
-        private IEnumerable<Vector3> GetShell(BoundingBox box)
+        private IEnumerable<GlobalVoxelCoordinate> EnumerateShell(BoundingBox box)
         {
             int minX = MathFunctions.FloorInt(box.Min.X + 0.5f);
             int minY = MathFunctions.FloorInt(box.Min.Y + 0.5f);
@@ -585,19 +585,19 @@ namespace DwarfCorp
             int maxY = MathFunctions.FloorInt(box.Max.Y - 0.5f);
             int maxZ = MathFunctions.FloorInt(box.Max.Z - 0.5f);
             
-            for (int y = minY; y <= maxY; y++)
+            for (var y = minY; y <= maxY; y++)
             {
                 // yx planes
-                for (int z = minZ; z <= maxZ; z++)
+                for (var z = minZ; z <= maxZ; z++)
                 {
-                    yield return new Vector3(minX + 0.5f, y + 0.5f, z + 0.5f);
-                    yield return new Vector3(maxX + 0.5f, y + 0.5f, z + 0.5f);
+                    yield return new GlobalVoxelCoordinate(minX, y, z);
+                    yield return new GlobalVoxelCoordinate(maxX, y, z);
                 }
                 // yz planes
-                for (int x = minX + 1; x < maxX; x++)
+                for (var x = minX + 1; x < maxX; x++)
                 {
-                    yield return new Vector3(x + 0.5f, y + 0.5f, minZ + 0.5f);
-                    yield return new Vector3(x + 0.5f, y + 0.5f, maxZ + 0.5f);
+                    yield return new GlobalVoxelCoordinate(x, y, minZ);
+                    yield return new GlobalVoxelCoordinate(x, y, maxZ);
                 }
             }
 
