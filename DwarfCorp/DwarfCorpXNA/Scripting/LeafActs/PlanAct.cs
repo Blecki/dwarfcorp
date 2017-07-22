@@ -54,7 +54,7 @@ namespace DwarfCorp
         public string TargetName { get; set; }
 
         public List<MoveAction> Path { get { return GetPath(); } set {  SetPath(value);} }
-        public VoxelHandle Target { get { return GetTarget(); } set {  SetTarget(value);} }
+        public TemporaryVoxelHandle Target { get { return GetTarget(); } set {  SetTarget(value);} }
 
         public PlanSubscriber PlanSubscriber { get; set; }
 
@@ -101,19 +101,12 @@ namespace DwarfCorp
             Weights = new List<float> {1.0f, 10.0f, 20.0f, 30.0f, 40.0f};
         }
 
-        public VoxelHandle GetTarget()
+        public TemporaryVoxelHandle GetTarget()
         {
-            var vhan = Agent.Blackboard.GetData<VoxelHandle>(TargetName);
-            if (vhan == null)
-            {
-                var tvh = Agent.Blackboard.GetData<TemporaryVoxelHandle>(TargetName);
-                if (!tvh.IsValid) return null;
-                return new VoxelHandle(tvh.Coordinate.GetLocalVoxelCoordinate(), tvh.Chunk);
-            }
-            return vhan;
+            return Agent.Blackboard.GetData<TemporaryVoxelHandle>(TargetName);
         }
 
-        public void SetTarget(VoxelHandle target)
+        public void SetTarget(TemporaryVoxelHandle target)
         {
             Agent.Blackboard.SetData(TargetName, target);
         }
@@ -128,7 +121,7 @@ namespace DwarfCorp
             Agent.Blackboard.SetData(PathOut, path);
         }
 
-        public static bool PathExists(VoxelHandle voxA, VoxelHandle voxB, CreatureAI creature)
+        public static bool PathExists(TemporaryVoxelHandle voxA, TemporaryVoxelHandle voxB, CreatureAI creature)
         {
             var path = AStarPlanner.FindPath(creature.Movement, voxA, new VoxelGoalRegion(voxB), creature.Manager.World.ChunkManager, 1000, 1);
             return path != null && path.Count > 0;
@@ -139,8 +132,8 @@ namespace DwarfCorp
             Path = null;
             Timeouts = 0;
             PlannerTimer.Reset(PlannerTimer.TargetTimeSeconds);
-            VoxelHandle voxUnder = new VoxelHandle();
-            while(true)
+
+            while (true)
             {
                 if (Path != null)
                 {
@@ -157,65 +150,56 @@ namespace DwarfCorp
                 PlannerTimer.Update(DwarfTime.LastTime);
 
                 ChunkManager chunks = Creature.Manager.World.ChunkManager;
-                if(PlannerTimer.HasTriggered || Timeouts == 0)
+                if (PlannerTimer.HasTriggered || Timeouts == 0)
                 {
-
-                    if (!chunks.ChunkData.GetVoxel(Agent.Position, ref voxUnder))
+                    if (!Target.IsValid && Type != PlanType.Edge)
                     {
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                         yield return Status.Fail;
                         break;
                     }
 
+                    var voxUnder = new TemporaryVoxelHandle(chunks.ChunkData,
+                        GlobalVoxelCoordinate.FromVector3(Agent.Position));
 
-                    if(Target == null && Type != PlanType.Edge)
+                    if (!voxUnder.IsValid)
                     {
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                         yield return Status.Fail;
                         break;
                     }
 
-                    if (voxUnder != null)
+                    Path = null;
+                    AstarPlanRequest aspr = new AstarPlanRequest
                     {
-                        Path = null;
-                        AstarPlanRequest aspr = new AstarPlanRequest
-                        {
-                            Subscriber = PlanSubscriber,
-                            Start = voxUnder,
-                            MaxExpansions = MaxExpansions,
-                            Sender = Agent,
-                            HeuristicWeight = Weights[Timeouts]
-                        };
+                        Subscriber = PlanSubscriber,
+                        Start = voxUnder,
+                        MaxExpansions = MaxExpansions,
+                        Sender = Agent,
+                        HeuristicWeight = Weights[Timeouts]
+                    };
 
-                        switch (Type)
-                        {
-                            case PlanType.Radius:
-                                aspr.GoalRegion = new SphereGoalRegion(Target, Radius);
-                                break;
-                            case PlanType.Into:
-                                aspr.GoalRegion = new VoxelGoalRegion(Target);
-                                break;
-                            case PlanType.Adjacent:
-                                aspr.GoalRegion = new AdjacentVoxelGoalRegion2D(Target);
-                                break;
-                            case PlanType.Edge:
-                                aspr.GoalRegion = new EdgeGoalRegion();
-                                break;
-                        }
-
-                        PlanSubscriber.SendRequest(aspr);
-                        PlannerTimer.Reset(PlannerTimer.TargetTimeSeconds);
-                        WaitingOnResponse = true;
-                        yield return Status.Running;
-
-                    }
-                    else
+                    switch (Type)
                     {
-                        Path = null;
-                        Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
-                        yield return Status.Fail;
-                        break;
+                        case PlanType.Radius:
+                            aspr.GoalRegion = new SphereGoalRegion(Target, Radius);
+                            break;
+                        case PlanType.Into:
+                            aspr.GoalRegion = new VoxelGoalRegion(Target);
+                            break;
+                        case PlanType.Adjacent:
+                            aspr.GoalRegion = new AdjacentVoxelGoalRegion2D(Target);
+                            break;
+                        case PlanType.Edge:
+                            aspr.GoalRegion = new EdgeGoalRegion();
+                            break;
                     }
+
+                    PlanSubscriber.SendRequest(aspr);
+                    PlannerTimer.Reset(PlannerTimer.TargetTimeSeconds);
+                    WaitingOnResponse = true;
+                    yield return Status.Running;
+
 
                     Timeouts++;
                 }
@@ -225,7 +209,7 @@ namespace DwarfCorp
                         Drawer3D.DrawLine(Creature.AI.Position, Target.WorldPosition, Color.Blue, 0.25f);
                     Status statusResult = Status.Running;
 
-                    while(PlanSubscriber.Responses.Count > 0)
+                    while (PlanSubscriber.Responses.Count > 0)
                     {
                         AStarPlanResponse response;
                         PlanSubscriber.Responses.TryDequeue(out response);

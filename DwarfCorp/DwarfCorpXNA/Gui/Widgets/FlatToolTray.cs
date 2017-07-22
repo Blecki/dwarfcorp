@@ -82,7 +82,7 @@ namespace DwarfCorp.Gui.Widgets
             public bool KeepChildVisible = false;
             public bool ExpandChildWhenDisabled = false;
             
-            public void Expand(Widget sender, InputEventArgs args)
+            public void ExpandPopup(Widget sender, InputEventArgs args)
             {
                 foreach (var child in sender.Parent.EnumerateChildren().Where(c => c is FramedIcon)
 .                       SelectMany(c => c.EnumerateChildren()))
@@ -109,15 +109,6 @@ namespace DwarfCorp.Gui.Widgets
 
             public override void Construct()
             {
-                    OnMouseEnter = Expand;
-
-                    OnMouseLeave = (sender, args) =>
-                    {
-                        if (!KeepChildVisible && PopupChild != null)
-                            Unexpand();
-                    };
-                
-
                 OnDisable = (sender) =>
                 {
                     if (PopupChild != null)
@@ -147,43 +138,25 @@ namespace DwarfCorp.Gui.Widgets
 
                 base.Construct();
 
-                if (PopupChild != null)
-                {
-                    AddChild(PopupChild);
-                    PopupChild.Hidden = true;
-                }
-
-                if (OnClick != null)
+                if (PopupChild != null && ReplacementMenu != null)
                 {
                     System.Diagnostics.Debug.Assert(ReplacementMenu == null, "Conflicting menu options");
                 }
 
+                if (PopupChild != null)
+                {
+                    AddChild(PopupChild);
+                    PopupChild.Hidden = true;
+
+                    OnClick = (sender, args) => ExpandPopup(sender, args);
+                }
+                
                 if (ReplacementMenu != null)
                     OnClick = (sender, args) =>
                     {
                         var root = Parent.Parent as RootTray;
                         if (root != null) root.SwitchTray(ReplacementMenu);
                     };
-            }
-            
-            public void Unexpand()
-            {
-                if (PopupChild != null)
-                {
-                    PopupChild.Hidden = true;
-                    PopupChild.Invalidate();
-                    Hidden = false;
-                }
-            }
-
-            public void Expand()
-            {
-                if (PopupChild != null)
-                {
-                    PopupChild.Hidden = false;
-                    PopupChild.Invalidate();
-                    Hidden = true;
-                }
             }
         }
     }

@@ -256,7 +256,7 @@ namespace DwarfCorp
 
             foreach (var v in Voxels)
             {
-                double d = (v.Coordinate.ToVector3() - position + halfSize).LengthSquared();
+                double d = (v.WorldPosition - position + halfSize).LengthSquared();
 
                 if(d < closestDist)
                 {
@@ -280,11 +280,6 @@ namespace DwarfCorp
             BoundingBox larger = new BoundingBox(box.Min - new Vector3(0.1f, 0.1f, 0.1f), box.Max + new Vector3(0.1f, 0.1f, 0.1f));
 
             return Voxels.Any(storage => storage.GetBoundingBox().Intersects(larger));
-        }
-
-        public bool Intersects(VoxelHandle v)
-        {
-            return Intersects(v.GetBoundingBox());
         }
 
         // Todo: Faster algorithm - find min and max voxel extents and create bounding box from that.

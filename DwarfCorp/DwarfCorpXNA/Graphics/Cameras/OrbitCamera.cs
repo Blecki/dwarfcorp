@@ -128,12 +128,11 @@ namespace DwarfCorp
                 new Vector3(pos.X, VoxelConstants.ChunkSizeY - 1, pos.Z),
                 new Vector3(pos.X, 0, pos.Z));
             if (!vox.IsValid) return pos;
-            return new Vector3(pos.X, vox.Coordinate.ToVector3().Y + 0.5f, pos.Z);
+            return new Vector3(pos.X, vox.WorldPosition.Y + 0.5f, pos.Z);
         }
 
         public void OverheadUpdate(DwarfTime time, ChunkManager chunks)
         {
-            VoxelHandle currentVoxel = new VoxelHandle();
             float diffPhi = 0;
             float diffTheta = 0;
             float diffRadius = 0;
@@ -470,7 +469,7 @@ namespace DwarfCorp
             var box = new BoundingBox(pos - new Vector3(0.5f, 0.5f, 0.5f), pos + new Vector3(0.5f, 0.5f, 0.5f));
             bool gotCollision = false;
 
-            foreach (var v in Neighbors.EnumerateCube(GlobalVoxelCoordinate.FromVector3(pos))
+            foreach (var v in VoxelHelpers.EnumerateCube(GlobalVoxelCoordinate.FromVector3(pos))
                 .Select(n => new TemporaryVoxelHandle(chunks.ChunkData, n)))                
             {
                 if (!v.IsValid) continue;

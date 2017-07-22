@@ -77,29 +77,6 @@ namespace DwarfCorp
             return TemporaryVoxelHandle.InvalidHandle;
         }
          
-        /// <summary>
-        /// Finds the air above the creature.
-        /// </summary>
-        /// <param name="creature">The creature.</param>
-        /// <returns>A voxel containing air above the creature if it exists, or null otherwise</returns>
-        public VoxelHandle FindAir(Creature creature)
-        {
-            int startHeight = (int) creature.AI.Position.Y;
-            int x = (int)creature.Physics.CurrentVoxel.GridPosition.X;
-            int z = (int)creature.Physics.CurrentVoxel.GridPosition.Z;
-            VoxelChunk chunk = creature.Physics.CurrentVoxel.Chunk;
-            VoxelHandle check = chunk.MakeVoxel(0, 0, 0);
-            for (int y = startHeight; y < VoxelConstants.ChunkSizeY; y++)
-            {
-                check.GridPosition = new LocalVoxelCoordinate(x, y, z);
-                if (check.WaterLevel == 0 && check.IsEmpty)
-                {
-                    return check;
-                }
-            }
-            return null;
-        }
-
         public IEnumerable<Act.Status> SwimUp(Creature creature)
         {
             Timer timer = new Timer(10.0f, false, Timer.TimerMode.Game);
@@ -122,7 +99,7 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature creature)
         {
-            var above = VoxelHelpers.GetVoxelAbove(creature.Physics.CurrentVoxel.tvh);
+            var above = VoxelHelpers.GetVoxelAbove(creature.Physics.CurrentVoxel);
             if ((above.IsValid && above.WaterCell.WaterLevel > 0 ) || creature.AI.Movement.CanFly)
             {
                 return new Wrap(() => SwimUp(creature)) { Name = "Swim up"};

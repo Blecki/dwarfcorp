@@ -279,7 +279,6 @@ namespace DwarfCorp
                         }
                     }
 
-                VoxelHandle test = new VoxelHandle();
                 Storm.StormProperties stormProperties = Storm.Properties[TypeofStorm];
                 var rainEmitter = World.ParticleManager.Effects[stormProperties.RainEffect];
                 var hitEmitter = World.ParticleManager.Effects[stormProperties.HitEffect];
@@ -316,15 +315,16 @@ namespace DwarfCorp
                         RainDrops[i].Particle.Velocity = RainDrops[i].Vel;
                     }
 
-                    if (!chunks.ChunkData.GetVoxel(RainDrops[i].Pos, ref test)) continue;
-                    if (test == null || test.IsEmpty || test.WaterLevel > 0) continue;
+                    var test = new TemporaryVoxelHandle(chunks.ChunkData,
+                        GlobalVoxelCoordinate.FromVector3(RainDrops[i].Pos));
+                    if (!test.IsValid || test.IsEmpty || test.WaterCell.WaterLevel > 0) continue;
 
                     RainDrops[i].IsAlive = false;
                     hitEmitter.Trigger(1, RainDrops[i].Pos + Vector3.UnitY * 0.5f, Color.White);
 
                     if (!MathFunctions.RandEvent(0.1f)) continue;
 
-                    var above = test.IsEmpty ? test.tvh : VoxelHelpers.GetVoxelAbove(test.tvh);
+                    var above = test.IsEmpty ? test : VoxelHelpers.GetVoxelAbove(test);
 
                     if (!above.IsValid) continue;
                     if (stormProperties.CreatesLiquid && 

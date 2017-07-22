@@ -253,10 +253,10 @@ namespace DwarfCorp
             while(true)
             {
                 // Get the voxel stored in the agent's blackboard.
-                var vox = agent.AI.Blackboard.GetData<VoxelHandle>(voxel);
+                var vox = agent.AI.Blackboard.GetData<TemporaryVoxelHandle>(voxel);
 
                 // Somehow, there wasn't a voxel to mine.
-                if(vox == null)
+                if(!vox.IsValid)
                 {
                     agent.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                     yield return Act.Status.Fail;
@@ -308,7 +308,7 @@ namespace DwarfCorp
                     agent.Stats.NumBlocksDestroyed++;
                     agent.World.GoalManager.OnGameEvent(new Goals.Events.DigBlock(voxelType, agent));
 
-                    var items = agent.World.ChunkManager.KillVoxel(vox.tvh);
+                    var items = agent.World.ChunkManager.KillVoxel(vox);
 
                     if (items != null)
                     {

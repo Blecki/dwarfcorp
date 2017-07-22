@@ -115,28 +115,29 @@ namespace DwarfCorp
             switch(State)
             {
                 case BalloonState.DeliveringGoods:
-                    VoxelChunk chunk = chunks.ChunkData.GetChunk(body.GlobalTransform.Translation);
-
-                    if(chunk != null)
                     {
-                        var surfaceVoxel = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
-                            chunks.ChunkData, GlobalVoxelCoordinate.FromVector3(body.GlobalTransform.Translation)));
-                        var height = surfaceVoxel.Coordinate.Y + 1;
+                        var voxel = new TemporaryVoxelHandle(chunks.ChunkData,
+                            GlobalVoxelCoordinate.FromVector3(body.GlobalTransform.Translation));
 
-                        TargetPosition = new Vector3(body.GlobalTransform.Translation.X, height + 5, body.GlobalTransform.Translation.Z);
-
-                        Vector3 diff = body.GlobalTransform.Translation - TargetPosition;
-
-                        if(diff.LengthSquared() < 2)
+                        if (voxel.IsValid)
                         {
-                            State = BalloonState.Waiting;
+                            var surfaceVoxel = VoxelHelpers.FindFirstVoxelBelow(voxel);
+                            var height = surfaceVoxel.Coordinate.Y + 1;
+
+                            TargetPosition = new Vector3(body.GlobalTransform.Translation.X, height + 5, body.GlobalTransform.Translation.Z);
+
+                            Vector3 diff = body.GlobalTransform.Translation - TargetPosition;
+
+                            if (diff.LengthSquared() < 2)
+                            {
+                                State = BalloonState.Waiting;
+                            }
+                        }
+                        else
+                        {
+                            State = BalloonState.Leaving;
                         }
                     }
-                    else
-                    {
-                        State = BalloonState.Leaving;
-                    }
-
                     break;
                 case BalloonState.Leaving:
                     TargetPosition = Vector3.UnitY * 100 + body.GlobalTransform.Translation;

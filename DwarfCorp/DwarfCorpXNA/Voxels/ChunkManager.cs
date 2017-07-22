@@ -772,52 +772,33 @@ GameSettings.Default.FogofWar = fogOfWar;
             KilledVoxels.Clear();
         }
 
-        // Todo: %Kill% or %Lift% - only used by voxel selector.
-        public IEnumerable<VoxelHandle> GetVoxelsIntersecting(IEnumerable<Vector3> positions)
-        {
-            foreach (Vector3 vec in positions)
-            {
-                VoxelHandle vox = new VoxelHandle();
-                bool success = ChunkData.GetVoxel(vec, ref vox);
-                if (success)
-                {
-                    yield return vox;
-                }
-            }
-        }
-
         public void CreateGraphics(Action<String> SetLoadingMessage, ChunkData chunkData)
         {
             SetLoadingMessage("Creating Graphics");
+
             List<VoxelChunk> toRebuild = new List<VoxelChunk>();
 
             while(RebuildList.Count > 0)
             {
                 VoxelChunk chunk = null;
-                if(!RebuildList.TryDequeue(out chunk))
-                {
+
+                if (!RebuildList.TryDequeue(out chunk))
                     break;
-                }
-
+            
                 if(chunk == null)
-                {
                     continue;
-                }
-
+            
                 toRebuild.Add(chunk);
             }
 
             SetLoadingMessage("Updating Ramps");
-            foreach (var chunk in toRebuild.Where(chunk => GameSettings.Default.CalculateRamps))
-            {
+            if (GameSettings.Default.CalculateRamps)
+                foreach (var chunk in toRebuild)
                   chunk.UpdateRamps();
-            }
 
             SetLoadingMessage("Calculating lighting ");
-            int j = 0;
             foreach(var chunk in toRebuild)
             {
-                j++;
                 if (chunk.ShouldRecalculateLighting)
                 {
                     chunk.CalculateGlobalLight();
@@ -825,25 +806,11 @@ GameSettings.Default.FogofWar = fogOfWar;
                 }
             }
 
-            j = 0;
-            SetLoadingMessage("Calculating vertex light ...");
-            foreach(VoxelChunk chunk in toRebuild)
-            {
-                j++;
-                //chunk.CalculateVertexLighting();
-            };
-
             SetLoadingMessage("Building Vertices...");
-            j = 0;
             foreach(var  chunk in toRebuild)
             {
-                j++;
-                //SetLoadingMessage("Building Vertices " + j + "/" + toRebuild.Count);
-
                 if (!chunk.ShouldRebuild)
-                {
                     return;
-                }
 
                 chunk.Rebuild(Graphics);
                 chunk.ShouldRebuild = false;
@@ -879,15 +846,15 @@ GameSettings.Default.FogofWar = fogOfWar;
             if (World.ParticleManager != null)
             {
                 World.ParticleManager.Trigger(Voxel.Type.ParticleType, 
-                    Voxel.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
+                    Voxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
                 World.ParticleManager.Trigger("puff", 
-                    Voxel.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
+                    Voxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
             }
 
             if (World.Master != null)
                 World.Master.Faction.OnVoxelDestroyed(Voxel);
 
-            Voxel.Type.ExplosionSound.Play(Voxel.Coordinate.ToVector3());
+            Voxel.Type.ExplosionSound.Play(Voxel.WorldPosition);
 
             List<Body> emittedResources = null;
             if (Voxel.Type.ReleasesResource)
@@ -897,7 +864,7 @@ GameSettings.Default.FogofWar = fogOfWar;
                     emittedResources = new List<Body>
                     {
                         EntityFactory.CreateEntity<Body>(Voxel.Type.ResourceToRelease + " Resource",
-                            Voxel.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f))
+                            Voxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f))
                     };
                 }
             }

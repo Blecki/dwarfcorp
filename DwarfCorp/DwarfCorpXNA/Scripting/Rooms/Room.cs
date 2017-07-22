@@ -141,7 +141,7 @@ namespace DwarfCorp
             for(int i = 0; i < Designations.Count; i++)
             {
                 var v = Designations[i];
-                float d = (v.Coordinate.ToVector3() - worldCoordinate).LengthSquared();
+                float d = (v.WorldPosition - worldCoordinate).LengthSquared();
 
                 if(d < closestDist)
                 {

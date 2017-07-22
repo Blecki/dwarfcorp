@@ -70,12 +70,8 @@ namespace DwarfCorp
             int[] ambientValues = new int[4];
             int maxIndex = 0;
             int maxVertex = 0;
-            VoxelHandle v = chunk.MakeVoxel(0, 0, 0);
-            VoxelHandle voxelOnFace = chunk.MakeVoxel(0, 0, 0);
-            VoxelHandle[] manhattanNeighbors = new VoxelHandle[4];
             BoxPrimitive bedrockModel = VoxelLibrary.GetPrimitive("Bedrock");
-            VoxelHandle worldVoxel = new VoxelHandle();
-            List<VoxelHandle> lightingScratchSpace = new List<VoxelHandle>(8);
+
             if (Vertices == null)
             {
                 Vertices = new ExtendedVertex[1024];
@@ -92,7 +88,7 @@ namespace DwarfCorp
                 {
                     for(int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                     {
-                        v.GridPosition = new LocalVoxelCoordinate(x, y, z); 
+                        var v = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
 
                         if((v.IsExplored && v.IsEmpty) || !v.IsVisible)
                         {
@@ -121,21 +117,30 @@ namespace DwarfCorp
                             faceExists[(int)face] = chunk.IsCellValid(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z);
                             drawFace[(int)face] = true;
 
-                            if(faceExists[(int)face])
+                            if (faceExists[(int)face])
                             {
-                                voxelOnFace.GridPosition = new LocalVoxelCoordinate(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z);
-                                drawFace[(int)face] =  (voxelOnFace.IsExplored && voxelOnFace.IsEmpty) || (voxelOnFace.Type.IsTransparent && !v.Type.IsTransparent) || 
-                                    !voxelOnFace.IsVisible || 
-                                    (voxelOnFace.Type.CanRamp && voxelOnFace.RampType != RampType.None && IsSideFace(face) && 
-                                    ShouldDrawFace(face, voxelOnFace.RampType, v.RampType));
+                                var faceVoxel = new TemporaryVoxelHandle(chunk,
+                                    new LocalVoxelCoordinate(x + (int)delta.X, y + (int)delta.Y, z + (int)delta.Z));
+
+                                drawFace[(int)face] = (faceVoxel.IsExplored && faceVoxel.IsEmpty)
+                                    || (faceVoxel.Type.IsTransparent && !v.Type.IsTransparent)
+                                    || !faceVoxel.IsVisible
+                                    || (faceVoxel.Type.CanRamp && faceVoxel.RampType != RampType.None && IsSideFace(face) &&
+                                    ShouldDrawFace(face, faceVoxel.RampType, v.RampType));
                             }
                             else
                             {
-                                bool success = chunk.Manager.ChunkData.GetNonNullVoxelAtWorldLocation(new Vector3(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z) + chunk.Origin, ref worldVoxel);
-                                    drawFace[(int)face] = !success || (worldVoxel.IsExplored && worldVoxel.IsEmpty) || (worldVoxel.Type.IsTransparent && !v.Type.IsTransparent) || !worldVoxel.IsVisible ||
-                                                     (worldVoxel.Type.CanRamp && worldVoxel.RampType != RampType.None &&
-                                                      IsSideFace(face) &&
-                                                      ShouldDrawFace(face, worldVoxel.RampType, v.RampType));
+                                var worldVoxel = new TemporaryVoxelHandle(chunk.Manager.ChunkData,
+                                    new GlobalVoxelCoordinate(chunk.ID, new LocalVoxelCoordinate(
+                                        (int)(x + delta.X), (int)(y + delta.Y), (int)(z + delta.Z))));
+
+                                drawFace[(int)face] = !worldVoxel.IsValid 
+                                    || (worldVoxel.IsExplored && worldVoxel.IsEmpty) 
+                                    || (worldVoxel.Type.IsTransparent && !v.Type.IsTransparent) 
+                                    || !worldVoxel.IsVisible 
+                                    || (worldVoxel.Type.CanRamp && worldVoxel.RampType != RampType.None &&
+                                                  IsSideFace(face) &&
+                                                  ShouldDrawFace(face, worldVoxel.RampType, v.RampType));
                             }
                         }
 
@@ -161,7 +166,7 @@ namespace DwarfCorp
                                 //Color color = v.Chunk.Data.GetColor(x, y, z, bestKey);
                                 Color color;
                                 VoxelChunk.VertexColorInfo colorInfo = new VoxelChunk.VertexColorInfo();
-                                VoxelChunk.CalculateVertexLight(v, bestKey, chunk.Manager, lightingScratchSpace, ref colorInfo);
+                                VoxelChunk.CalculateVertexLight(v, bestKey, chunk.Manager, ref colorInfo);
                                 ambientValues[vertOffset] = colorInfo.AmbientColor;
                                 Vector3 offset = Vector3.Zero;
                                 Vector2 texOffset = Vector2.Zero;
@@ -245,7 +250,7 @@ namespace DwarfCorp
             if (Type.Transitions == VoxelType.TransitionType.Horizontal)
             {
                 var value = ComputeTransitionValueOnPlain(
-                    DwarfCorp.Neighbors.EnumerateManhattanNeighbors2D(V.Coordinate)
+                    VoxelHelpers.EnumerateManhattanNeighbors2D(V.Coordinate)
                     .Select(c => new TemporaryVoxelHandle(Data, c)), Type);
 
                 return new BoxTransition()
@@ -256,12 +261,12 @@ namespace DwarfCorp
             else
             {
                 var transitionFrontBack = ComputeTransitionValueOnPlain(
-                    DwarfCorp.Neighbors.EnumerateManhattanNeighbors2D(V.Coordinate, ChunkManager.SliceMode.Z)
+                    VoxelHelpers.EnumerateManhattanNeighbors2D(V.Coordinate, ChunkManager.SliceMode.Z)
                     .Select(c => new TemporaryVoxelHandle(Data, c)),
                     Type);
 
                 var transitionLeftRight = ComputeTransitionValueOnPlain(
-                    DwarfCorp.Neighbors.EnumerateManhattanNeighbors2D(V.Coordinate, ChunkManager.SliceMode.X)
+                    VoxelHelpers.EnumerateManhattanNeighbors2D(V.Coordinate, ChunkManager.SliceMode.X)
                     .Select(c => new TemporaryVoxelHandle(Data, c)),
                     Type);
 

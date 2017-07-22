@@ -378,7 +378,7 @@
     <Compile Include="Voxels\VoxelHelpers\FindFirstVisibleVoxelOnRay.cs" />
     <Compile Include="Voxels\VoxelHelpers\DoesRayHitSolidVoxel.cs" />
     <Compile Include="Voxels\VoxelHelpers\DoesVoxelHaveVisibleSurface.cs" />
-    <Compile Include="Voxels\NewVoxels\Neighbors.cs" />
+    <Compile Include="Voxels\VoxelHelpers\Neighbors.cs" />
     <Compile Include="Voxels\NewVoxels\TemporaryVoxelHandle.cs" />
     <Compile Include="Voxels\NewVoxels\VoxelConstants.cs" />
     <Compile Include="Voxels\Enums.cs" />
@@ -513,7 +513,7 @@
     <Compile Include="Scripting\CompoundActs\KillVoxelAct.cs" />
     <Compile Include="Scripting\CompoundActs\StockResourceAct.cs" />
     <Compile Include="Scripting\ControlFlow\Condition.cs" />
-    <Compile Include="Scripting\ControlFlow\ForLoop.cs" />
+    <Compile Include="Scripting\ControlFlow\Repeat.cs" />
     <Compile Include="Scripting\ControlFlow\Not.cs" />
     <Compile Include="Scripting\ControlFlow\Parallel.cs" />
     <Compile Include="Scripting\ControlFlow\Select.cs" />
@@ -665,7 +665,6 @@
     <Compile Include="Voxels\ChunkManager.cs" />
     <Compile Include="Voxels\DynamicLight.cs" />
     <Compile Include="Voxels\LiquidAsset.cs" />
-    <Compile Include="Voxels\VoxelHandle.cs" />
     <Compile Include="Voxels\VoxelChunk.cs" />
     <Compile Include="Voxels\VoxelLibrary.cs" />
     <Compile Include="Voxels\VoxelType.cs" />

@@ -31,6 +31,9 @@ namespace DwarfCorp
         #endregion
 
         public readonly GlobalVoxelCoordinate Coordinate;
+        
+        [JsonIgnore]
+        public Vector3 WorldPosition { get { return Coordinate.ToVector3(); } }
 
         [JsonIgnore]
         public bool IsValid { get { return _cache_Chunk != null; } }
@@ -179,5 +182,10 @@ namespace DwarfCorp
         }
 
         #endregion
+
+        public override string ToString()
+        {
+            return "voxel at " + Coordinate.ToString();
+        }
     }
 }

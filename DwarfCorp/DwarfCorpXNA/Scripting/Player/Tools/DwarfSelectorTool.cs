@@ -107,15 +107,14 @@ namespace DwarfCorp
                 }
 
                 var above = VoxelHelpers.GetVoxelAbove(vox);
-                minion.Blackboard.SetData("MoveTarget", new VoxelHandle(
-                    above.Coordinate.GetLocalVoxelCoordinate(), above.Chunk));
+                minion.Blackboard.SetData("MoveTarget", above);
 
                 minion.CurrentTask = new GoToNamedVoxelAct("MoveTarget", PlanAct.PlanType.Adjacent, minion).AsTask();
                 minion.CurrentTask.AutoRetry = false;
             }
             OnConfirm(Player.SelectedMinions);
 
-            IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.DownArrow, vox.Coordinate.ToVector3() + Vector3.One * 0.5f, 0.5f, 2.0f, new Vector2(0, -50), Color.LightGreen);
+            IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.DownArrow, vox.WorldPosition + Vector3.One * 0.5f, 0.5f, 2.0f, new Vector2(0, -50), Color.LightGreen);
         }
 
 
@@ -124,7 +123,7 @@ namespace DwarfCorp
         {
             
         }
-        public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
         {
           
         }
@@ -245,7 +244,7 @@ namespace DwarfCorp
 
         }
 
-        public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsDragged(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }

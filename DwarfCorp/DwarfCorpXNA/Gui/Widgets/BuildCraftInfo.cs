@@ -134,7 +134,7 @@ namespace DwarfCorp.Gui.Widgets
                             MaximumSize = new Point(64, 24)
                         });
 
-                        Parent.OnClick = (parent, args) => buildButton.OnClick(buildButton, args);
+                        //Parent.OnClick = (parent, args) => buildButton.OnClick(buildButton, args);
                     }
                 }
 

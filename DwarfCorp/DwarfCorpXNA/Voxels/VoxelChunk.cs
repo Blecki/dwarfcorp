@@ -71,7 +71,6 @@ namespace DwarfCorp
 
 
         public VoxelData Data { get; set; }
-        public ConcurrentDictionary<VoxelHandle, byte> Springs { get; set; }
 
         public bool IsVisible { get; set; }
         public bool ShouldRebuild { get; set; }
@@ -224,7 +223,6 @@ namespace DwarfCorp
             Liquids[LiquidType.Water] = new LiquidPrimitive(LiquidType.Water);
             Liquids[LiquidType.Lava] = new LiquidPrimitive(LiquidType.Lava);
             ShouldRebuildWater = true;
-            Springs = new ConcurrentDictionary<VoxelHandle, byte>();
 
             IsRebuilding = false;
             LightingCalculated = false;
@@ -359,12 +357,6 @@ namespace DwarfCorp
             return v;
         }
 
-        [Obsolete]
-        public VoxelHandle MakeVoxel(int x, int y, int z)
-        {
-            return new VoxelHandle(new LocalVoxelCoordinate(x, y, z), this);
-        }
-
         public void BuildGrassMotes(Overworld.Biome biome)
         {
             BiomeData biomeData = BiomeLibrary.Biomes[biome];
@@ -377,20 +369,19 @@ namespace DwarfCorp
                 List<Color> grassColors = new List<Color>();
                 List<float> grassScales = new List<float>();
                 DetailMoteData moteData = biomeData.Motes[i];
-                VoxelHandle v = MakeVoxel(0, 0, 0);
-                VoxelHandle voxelBelow = MakeVoxel(0, 0, 0);
+
                 for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
                 {
                     for (int y = 1; y < Math.Min(Manager.ChunkData.MaxViewingLevel + 1, VoxelConstants.ChunkSizeY - 1); y++)
                     {
                         for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                         {
-                            v.GridPosition = new LocalVoxelCoordinate(x, y, z);
-                            voxelBelow.GridPosition = new LocalVoxelCoordinate(x, y - 1, z);
+                            var v = new TemporaryVoxelHandle(this, new LocalVoxelCoordinate(x, y, z));
+                            var voxelBelow = new TemporaryVoxelHandle(this, new LocalVoxelCoordinate(x, y - 1, z));
 
                             if (v.IsEmpty || voxelBelow.IsEmpty
                                 || v.Type.Name != grassType || !v.IsVisible
-                                || voxelBelow.WaterLevel != 0)
+                                || voxelBelow.WaterCell.WaterLevel != 0)
                             {
                                 continue;
                             }
@@ -445,9 +436,6 @@ namespace DwarfCorp
 
         public static void UpdateCornerRamps(VoxelChunk chunk)
         {
-            var v = chunk.MakeVoxel(0, 0, 0);
-            var vAbove = chunk.MakeVoxel(0, 0, 0);
-
             List<VoxelVertex> top = new List<VoxelVertex>()
             {
                 VoxelVertex.FrontTopLeft,
@@ -462,13 +450,12 @@ namespace DwarfCorp
                 {
                     for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                     {
-                        v.GridPosition = new LocalVoxelCoordinate(x, y, z);
+                        var v = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
                         bool isTop = false;
-
 
                         if (y < VoxelConstants.ChunkSizeY - 1)
                         {
-                            vAbove.GridPosition = new LocalVoxelCoordinate(x, y + 1, z);
+                            var vAbove = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y + 1, z));
 
                             isTop = vAbove.IsEmpty;
                         }
@@ -483,7 +470,7 @@ namespace DwarfCorp
                         foreach (VoxelVertex bestKey in top)
                         {
                             // If there are no empty neighbors, no slope.
-                            if (!Neighbors.EnumerateVertexNeighbors2D(v.Coordinate, bestKey)
+                            if (!VoxelHelpers.EnumerateVertexNeighbors2D(v.Coordinate, bestKey)
                                 .Any(n =>
                                 {
                                     var handle = new TemporaryVoxelHandle(chunk.Manager.ChunkData, n);
@@ -770,29 +757,6 @@ namespace DwarfCorp
             return new Point3(worldLocation - Origin);
         }
 
-
-        public bool GetVoxelAtWorldLocation(Vector3 worldLocation, ref VoxelHandle voxel)
-        {
-            Vector3 grid = WorldToGrid(worldLocation);
-
-            bool valid = IsCellValid(MathFunctions.FloorInt(grid.X), MathFunctions.FloorInt(grid.Y), MathFunctions.FloorInt(grid.Z));
-
-            if (!valid) return false;
-
-            voxel.Chunk = this;
-            voxel.GridPosition = new LocalVoxelCoordinate(MathFunctions.FloorInt(grid.X), MathFunctions.FloorInt(grid.Y), MathFunctions.FloorInt(grid.Z));
-            return true;
-        }
-
-        // Same as GetVoxelAtWorldLocation except skips the part where it has to check to see if it is in range.
-        // If you don't know for sure it is valid use the other function.
-        public bool GetVoxelAtValidWorldLocation(GlobalVoxelCoordinate worldLocation, ref VoxelHandle voxel)
-        {
-            voxel.Chunk = this;
-            voxel.GridPosition = worldLocation.GetLocalVoxelCoordinate();
-            return true;
-        }
-
         public bool IsGridPositionValid(LocalVoxelCoordinate grid)
         {
             return IsCellValid(grid.X, grid.Y, grid.Z);
@@ -824,7 +788,7 @@ namespace DwarfCorp
 
         #region lighting
 
-        public byte GetIntensity(DynamicLight light, byte lightIntensity, VoxelHandle voxel)
+        public byte GetIntensity(DynamicLight light, byte lightIntensity, TemporaryVoxelHandle voxel)
         {
             Vector3 vertexPos = voxel.WorldPosition;
             Vector3 diff = vertexPos - (light.Position + new Vector3(0.5f, 0.5f, 0.5f));
@@ -834,16 +798,16 @@ namespace DwarfCorp
         }
 
 
-        public static void CalculateVertexLight(VoxelHandle vox, VoxelVertex face,
-            ChunkManager chunks, List<VoxelHandle> neighbors, ref VertexColorInfo color)
+        public static void CalculateVertexLight(TemporaryVoxelHandle vox, VoxelVertex face,
+            ChunkManager chunks, ref VertexColorInfo color)
         {
             float numHit = 1;
             float numChecked = 1;
 
             color.DynamicColor = 0;
-            color.SunColor += vox.Chunk.Data.SunColors[vox.Index];
+            color.SunColor += vox.SunColor;
 
-            foreach (var c in Neighbors.EnumerateVertexNeighbors(vox.Coordinate, face))
+            foreach (var c in VoxelHelpers.EnumerateVertexNeighbors(vox.Coordinate, face))
             {
                 var v = new TemporaryVoxelHandle(chunks.ChunkData, c);
                 if (!v.IsValid) continue;

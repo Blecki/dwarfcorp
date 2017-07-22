@@ -68,7 +68,7 @@ namespace DwarfCorp
             if (Voxel.IsValid)
             {
                 Tree = new Sequence(
-                      new SetBlackboardData<VoxelHandle>(Agent, "ActionVoxel", new VoxelHandle(Voxel.Coordinate.GetLocalVoxelCoordinate(), Voxel.Chunk)),
+                      new SetBlackboardData<TemporaryVoxelHandle>(Agent, "ActionVoxel", Voxel),
                       new PlanAct(Agent, "PathToVoxel", "ActionVoxel", PlanType) { Radius = Radius },
                       new FollowPathAct(Agent, "PathToVoxel"),
                       new StopAct(Agent));

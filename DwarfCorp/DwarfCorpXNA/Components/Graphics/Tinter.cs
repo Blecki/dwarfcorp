@@ -47,12 +47,9 @@ namespace DwarfCorp
         public bool LightsWithVoxels { get; set; }
         public Color Tint { get; set; }
         public float TintChangeRate { get; set; }
-        //public Timer LightingTimer { get; set; }
-        public VoxelHandle VoxelUnder = null;
         public bool ColorAppplied = false;
         private bool entityLighting = GameSettings.Default.EntityLighting;
         public Color VertexColorTint { get; set; }
-        //public Timer StartTimer { get; set; }
 
         public Tinter()
         {
@@ -67,7 +64,6 @@ namespace DwarfCorp
             //LightingTimer = new Timer(0.2f, true);
             //StartTimer = new Timer(0.5f, true);
             TintChangeRate = 1.0f;
-            VoxelUnder = new VoxelHandle();
             VertexColorTint = Color.White;
         }
 
@@ -105,11 +101,12 @@ namespace DwarfCorp
             //{
                 if (entityLighting && LightsWithVoxels)
                 {
-                    bool success = chunks.ChunkData.GetVoxel(Position, ref VoxelUnder);
+                var under = new TemporaryVoxelHandle(chunks.ChunkData,
+                    GlobalVoxelCoordinate.FromVector3(Position));
 
-                    if (success)
+                    if (under.IsValid)
                     {
-                        Color color = new Color(VoxelUnder.SunColor, 255, 0);
+                        Color color = new Color(under.SunColor, 255, 0);
 
                         Tint = color;
                         //ColorAppplied = true;

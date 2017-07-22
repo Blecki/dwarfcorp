@@ -88,9 +88,7 @@ namespace DwarfCorp
             for (int i = 0; i < path.Count - 1; i++)
             {
                 if (!path[i].DestinationVoxel.IsEmpty) return false;
-                var neighbors = Agent.Movement.GetMoveActions(
-                    new TemporaryVoxelHandle(path[i].DestinationVoxel.Chunk,
-                    path[i].DestinationVoxel.GridPosition));
+                var neighbors = Agent.Movement.GetMoveActions(path[i].DestinationVoxel);
                 bool valid = false;
                 foreach (MoveAction vr in neighbors)
                 {
@@ -163,6 +161,8 @@ namespace DwarfCorp
                     time += dt;
                     i++;
                 }
+
+                //Todo: Find replace .WorldPosition -> .WorldPosition
                 RandomPositionOffsets[0] = Agent.Position - (Path[0].DestinationVoxel.WorldPosition + Vector3.One * 0.5f);
                 TrajectoryTimer = new Timer(time, true);
                 return true;

@@ -60,8 +60,7 @@ namespace DwarfCorp
         /// <summary>
         /// Generates a random set of dwarves in the given chunk.
         /// </summary>
-        /// <param name="c">The chunk the dwarves belong to</param>
-        public void CreateInitialDwarves(VoxelChunk c)
+        public void CreateInitialDwarves()
         {
             if (InitialEmbark == null)
             {
@@ -101,10 +100,9 @@ namespace DwarfCorp
             // If no file exists, we have to create the balloon and balloon port.
             if (!string.IsNullOrEmpty(ExistingFile)) return;
 
-            VoxelChunk c = ChunkManager.ChunkData.GetChunk(Camera.Position);
             BalloonPort port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager,
                 Camera.Position.X, Camera.Position.Z, 3);
-            CreateInitialDwarves(c);
+            CreateInitialDwarves();
             PlayerFaction.Economy.CurrentMoney = InitialEmbark.Money;
 
             foreach (var res in InitialEmbark.Resources)
@@ -171,25 +169,24 @@ namespace DwarfCorp
                 for (int dz = -size; dz <= size; dz++)
                 {
                     Vector3 worldPos = new Vector3(centerCoordinate.X + dx, centerCoordinate.Y, centerCoordinate.Z + dz);
-                    VoxelChunk chunk = chunkManager.ChunkData.GetChunk(worldPos);
-
-                    if (chunk == null)
-                    {
-                        continue;
-                    }
 
                     var baseVoxel = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
                         chunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(worldPos)));
+
+                    if (!baseVoxel.IsValid)
+                        continue;
+
                     affectedChunks.Add(baseVoxel.Coordinate);
+
                     var h = baseVoxel.Coordinate.Y + 1;
-                    Vector3 gridPos = chunk.WorldToGrid(worldPos);
+                    var localCoord = baseVoxel.Coordinate.GetLocalVoxelCoordinate();
 
                     for (int y = averageHeight; y < h; y++)
                     {
-                        var v = new TemporaryVoxelHandle(chunk,
-                            new LocalVoxelCoordinate((int)gridPos.X, y, (int)gridPos.Z));
+                        var v = new TemporaryVoxelHandle(baseVoxel.Chunk,
+                            new LocalVoxelCoordinate((int)localCoord.X, y, (int)localCoord.Z));
                         v.Type = VoxelLibrary.GetVoxelType(0);
-                        VoxelHelpers.Reveal(chunk.Manager.ChunkData, v);
+                        VoxelHelpers.Reveal(baseVoxel.Chunk.Manager.ChunkData, v);
                         v.WaterCell = new WaterCell
                         {
                             Type = LiquidType.None,
@@ -233,15 +230,14 @@ namespace DwarfCorp
                     // Fill from the top height down to the bottom.
                     for (int y = h - 1; y < averageHeight; y++)
                     {
-                        var v = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate((int)gridPos.X, y, (int)gridPos.Z));
+                        var v = new TemporaryVoxelHandle(baseVoxel.Chunk, 
+                            new LocalVoxelCoordinate((int)localCoord.X, y, (int)localCoord.Z));
                         v.Type = VoxelLibrary.GetVoxelType("Scaffold");
                         v.WaterCell = new WaterCell
                         {
                             Type = LiquidType.None,
                             WaterLevel = 0
                         };
-
-                        chunkManager.ChunkData.NotifyRebuild(v.Coordinate);
 
                         if (y == averageHeight - 1)
                         {

@@ -61,6 +61,12 @@ namespace DwarfCorp
         /// </summary>
         private static void Main(string[] args)
         {
+            var t = default(TemporaryVoxelHandle);
+            var x = 0;
+            if (t.IsValid)
+                x = 5;
+
+
 #if CREATE_CRASH_LOGS
             try
 #endif

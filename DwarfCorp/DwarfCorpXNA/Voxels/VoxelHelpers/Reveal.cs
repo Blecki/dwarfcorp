@@ -32,7 +32,7 @@ namespace DwarfCorp
                 var v = queue.Dequeue();
                 if (!v.IsValid) continue;
 
-                foreach (var neighborCoordinate in Neighbors.EnumerateManhattanNeighbors(v.Coordinate))
+                foreach (var neighborCoordinate in VoxelHelpers.EnumerateManhattanNeighbors(v.Coordinate))
                 {
                     var neighbor = new TemporaryVoxelHandle(Data, neighborCoordinate);
                     if (!neighbor.IsValid) continue;

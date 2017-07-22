@@ -91,7 +91,7 @@ namespace DwarfCorp
                     if (Creature.Physics.BoundingBox.Intersects(new BoundingBox(
                         Location.ToVector3(), Location.ToVector3() + Vector3.One)))
                     {
-                        var neighbors = Neighbors.EnumerateAllNeighbors(Location)
+                        var neighbors = VoxelHelpers.EnumerateAllNeighbors(Location)
                             .Select(c => new TemporaryVoxelHandle(Agent.Chunks.ChunkData, c));
 
                         var closest = TemporaryVoxelHandle.InvalidHandle;
@@ -100,7 +100,7 @@ namespace DwarfCorp
                         {
                             if (!voxel.IsValid) continue;
 
-                            float dist = (voxel.Coordinate.ToVector3() - Creature.Physics.Position).LengthSquared();
+                            float dist = (voxel.WorldPosition - Creature.Physics.Position).LengthSquared();
                             if (dist < closestDist && voxel.IsEmpty)
                             {
                                 closestDist = dist;
@@ -110,7 +110,7 @@ namespace DwarfCorp
 
                         if (closest.IsValid)
                         {
-                            TossMotion teleport = new TossMotion(0.5f, 1.0f, Creature.Physics.GlobalTransform, closest.Coordinate.ToVector3() + Vector3.One * 0.5f);
+                            TossMotion teleport = new TossMotion(0.5f, 1.0f, Creature.Physics.GlobalTransform, closest.WorldPosition + Vector3.One * 0.5f);
                             Creature.Physics.AnimationQueue.Add(teleport);
                         }
                     }

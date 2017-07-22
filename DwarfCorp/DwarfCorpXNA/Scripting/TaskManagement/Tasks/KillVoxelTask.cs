@@ -45,16 +45,16 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class KillVoxelTask : Task
     {
-        public VoxelHandle VoxelToKill = null;
+        public TemporaryVoxelHandle VoxelToKill = TemporaryVoxelHandle.InvalidHandle;
 
         public KillVoxelTask()
         {
             Priority = PriorityType.Medium;
         }
 
-        public KillVoxelTask(VoxelHandle vox)
+        public KillVoxelTask(TemporaryVoxelHandle vox)
         {
-            Name = "Mine Block " + vox.WorldPosition;
+            Name = "Mine Block " + vox.Coordinate;
             VoxelToKill = vox;
             Priority = PriorityType.Low;
         }
@@ -71,41 +71,36 @@ namespace DwarfCorp
 
         public override bool ShouldRetry(Creature agent)
         {
-            VoxelHandle v = VoxelToKill;
-            return !v.IsEmpty && agent.Faction.IsDigDesignation(v);
+            return !VoxelToKill.IsEmpty && agent.Faction.IsDigDesignation(VoxelToKill);
         }
 
         public override bool IsFeasible(Creature agent)
         {
-            if(VoxelToKill == null || VoxelToKill.IsEmpty || VoxelToKill.Health <= 0)
-            {
+            if(!VoxelToKill.IsValid || VoxelToKill.IsEmpty || VoxelToKill.Health <= 0)
                 return false;
-            }
 
-            return agent.Faction.IsDigDesignation(VoxelToKill) && !VoxelHelpers.VoxelIsCompletelySurrounded(new TemporaryVoxelHandle(VoxelToKill.Chunk, VoxelToKill.Coordinate.GetLocalVoxelCoordinate()));
+            return agent.Faction.IsDigDesignation(VoxelToKill) && !VoxelHelpers.VoxelIsCompletelySurrounded(VoxelToKill);
         }
 
         public override bool ShouldDelete(Creature agent)
         {
-            return VoxelToKill == null || VoxelToKill.IsEmpty || VoxelToKill.Health <= 0 ||
+            return !VoxelToKill.IsValid || VoxelToKill.IsEmpty || VoxelToKill.Health <= 0 ||
                    !agent.Faction.IsDigDesignation(VoxelToKill);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            if (VoxelToKill == null)
-            {
+            if (!VoxelToKill.IsValid)
                 return 1000;
-            }
 
             int surroundedValue = 0;
             if (!alreadyCheckedFeasible)
             {
-                if (VoxelHelpers.VoxelIsCompletelySurrounded(new TemporaryVoxelHandle(VoxelToKill.Chunk, VoxelToKill.Coordinate.GetLocalVoxelCoordinate())))
+                if (VoxelHelpers.VoxelIsCompletelySurrounded(VoxelToKill))
                     surroundedValue = 10000;
             }
 
-            return (agent.AI.Position - VoxelToKill.WorldPosition).LengthSquared() + 100 * Math.Abs(agent.AI.Position.Y - VoxelToKill.WorldPosition.Y) + surroundedValue;
+            return (agent.AI.Position - VoxelToKill.WorldPosition).LengthSquared() + 100 * Math.Abs(agent.AI.Position.Y - VoxelToKill.Coordinate.Y) + surroundedValue;
         }
     }
 

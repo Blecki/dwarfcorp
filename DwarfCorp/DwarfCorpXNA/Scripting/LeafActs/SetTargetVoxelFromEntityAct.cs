@@ -66,8 +66,7 @@ namespace DwarfCorp
 
                 if (voxelUnder.IsValid)
                 {
-                    creature.AI.Blackboard.SetData(voxelOutName, new VoxelHandle(
-                        voxelUnder.Coordinate.GetLocalVoxelCoordinate(), voxelUnder.Chunk));
+                    creature.AI.Blackboard.SetData(voxelOutName, voxelUnder);
                     return Status.Success;
                 }
                 else

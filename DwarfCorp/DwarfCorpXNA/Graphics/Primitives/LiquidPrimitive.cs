@@ -31,11 +31,11 @@ namespace DwarfCorp
             public LiquidRebuildCache()
             {
                 int euclidianNeighborCount = 27;
-                neighbors = new List<VoxelHandle>(euclidianNeighborCount);
+                neighbors = new List<TemporaryVoxelHandle>(euclidianNeighborCount);
                 validNeighbors = new bool[euclidianNeighborCount];
                 retrievedNeighbors = new bool[euclidianNeighborCount];
 
-                for (int i = 0; i < 27; i++) neighbors.Add(new VoxelHandle());
+                for (int i = 0; i < 27; i++) neighbors.Add(TemporaryVoxelHandle.InvalidHandle);
 
                 int vertexCount = (int)VoxelVertex.Count;
                 vertexCalculated = new bool[vertexCount];
@@ -57,7 +57,7 @@ namespace DwarfCorp
             internal bool[] drawFace = new bool[6];
 
             // A list of unattached voxels we can change to the neighbors of the voxel who's faces we are drawing.
-            internal List<VoxelHandle> neighbors;
+            internal List<TemporaryVoxelHandle> neighbors;
 
             // A list of which voxels are valid in the neighbors list.  We can't just set a neighbor to null as we reuse them so we use this.
             // Does not need to be cleared between sets of face drawing as retrievedNeighbors stops us from using a stale value.
@@ -158,8 +158,6 @@ namespace DwarfCorp
             ExtendedVertex[] curVertices = null;
             int[] maxVertices = new int[lps.Length];
 
-            VoxelHandle myVoxel = chunk.MakeVoxel(0, 0, 0);
-            VoxelHandle vox = chunk.MakeVoxel(0, 0, 0);
             int maxVertex = 0;
             bool fogOfWar = GameSettings.Default.FogofWar;
 
@@ -169,6 +167,7 @@ namespace DwarfCorp
                 {
                     for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                     {
+                        var voxel = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
                         int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
                         if (fogOfWar && !chunk.Data.IsExplored[index]) continue;
 
@@ -191,8 +190,6 @@ namespace DwarfCorp
                                 maxVertex = maxVertices[(int)liqType];
                             }
 
-                            myVoxel.GridPosition = new LocalVoxelCoordinate(x, y, z);
-
                             int facesToDraw = 0;
                             for (int i = 0; i < 6; i++)
                             {
@@ -203,13 +200,14 @@ namespace DwarfCorp
                                 var delta = faceDeltas[(int)face];
 
                                 // Pull the current neighbor DestinationVoxel based on the face it would be touching.
-                                bool success = myVoxel.GetNeighborBySuccessor(delta, ref vox, false);
 
-                                if (success)
+                                var vox = VoxelHelpers.GetNeighbor(voxel, delta);
+
+                                if (vox.IsValid)
                                 {
                                     if (face == BoxFace.Top)
                                     {
-                                        if (!(vox.WaterLevel == 0 || y == (int)chunk.Manager.ChunkData.MaxViewingLevel))
+                                        if (!(vox.WaterCell.WaterLevel == 0 || y == (int)chunk.Manager.ChunkData.MaxViewingLevel))
                                         {
                                             cache.drawFace[(int)face] = false;
                                             continue;
@@ -217,7 +215,7 @@ namespace DwarfCorp
                                     }
                                     else
                                     {
-                                        if (vox.WaterLevel != 0 || !vox.IsEmpty)
+                                        if (vox.WaterCell.WaterLevel != 0 || !vox.IsEmpty)
                                         {
                                             cache.drawFace[(int)face] = false;
                                             continue;
@@ -248,7 +246,7 @@ namespace DwarfCorp
                             }
 
                             // Now we have a list of all the faces that will need to be drawn.  Let's draw them.
-                            CreateWaterFaces(myVoxel, chunk, x, y, z, curVertices, maxVertex);
+                            CreateWaterFaces(voxel, chunk, x, y, z, curVertices, maxVertex);
 
                             // Finally increase the size so we can move on.
                             maxVertex += vertexSizeIncrease;
@@ -312,7 +310,7 @@ namespace DwarfCorp
             return (C.X + 1) + (C.Y + 1) * 3 + (C.Z + 1) * 9;
         }
 
-        private static void CreateWaterFaces(VoxelHandle voxel, VoxelChunk chunk,
+        private static void CreateWaterFaces(TemporaryVoxelHandle voxel, VoxelChunk chunk,
                                             int x, int y, int z,
                                             ExtendedVertex[] vertices,
                                             int startVertex)
@@ -357,29 +355,19 @@ namespace DwarfCorp
                         float emptyNeighbors = 0.0f;
                         float averageWaterLevel = centerWaterlevel;
 
-                        var vertexSucc = Neighbors.VertexNeighbors[(int)currentVertex];
+                        var vertexSucc = VoxelHelpers.VertexNeighbors[(int)currentVertex];
 
                         // Run through the successors and count up the water in each voxel.
                         for (int v = 0; v < vertexSucc.Length; v++)
                         {
-                            // We are going to use a lookup key so calculate it now.
-                            int key = SuccessorToEuclidianLookupKey(vertexSucc[v]);
-
-                            // If we haven't gotten this DestinationVoxel yet then retrieve it.
-                            // This allows us to only get a particular voxel once a function call instead of once per vertexCount/per face.
-                            if (!cache.retrievedNeighbors[key])
-                            {
-                                VoxelHandle neighbor = cache.neighbors[key];
-                                cache.validNeighbors[key] = voxel.GetNeighborBySuccessor(vertexSucc[v], ref neighbor, false);
-                                cache.retrievedNeighbors[key] = true;
-                            }
+                            var neighborVoxel = new TemporaryVoxelHandle(chunk.Manager.ChunkData,
+                                voxel.Coordinate + vertexSucc[v]);
                             // Only continue if it's a valid (non-null) voxel.
-                            if (!cache.validNeighbors[key]) continue;
+                            if (!neighborVoxel.IsValid) continue;
 
                             // Now actually do the math.
-                            var vox = cache.neighbors[key];
                             count++;
-                            if (vox.WaterLevel < 1) emptyNeighbors++;
+                            if (neighborVoxel.WaterCell.WaterLevel < 1) emptyNeighbors++;
                         }
 
                         foaminess = emptyNeighbors / count;

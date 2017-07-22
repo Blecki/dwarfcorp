@@ -57,7 +57,7 @@ namespace DwarfCorp
         public class CraftDesignation
         {
             public CraftItem ItemType { get; set; }
-            public VoxelHandle Location { get; set; }
+            public TemporaryVoxelHandle Location { get; set; }
             public Body WorkPile { get; set; }
         }
 
@@ -90,16 +90,16 @@ namespace DwarfCorp
             IsEnabled = false;
         }
 
-        public bool IsDesignation(VoxelHandle reference)
+        public bool IsDesignation(TemporaryVoxelHandle reference)
         {
             if (reference == null) return false;
-            return Designations.Any(put => (put.Location.WorldPosition - reference.WorldPosition).LengthSquared() < 0.1);
+            return Designations.Any(put => put.Location == reference);
         }
 
 
-        public CraftDesignation GetDesignation(VoxelHandle v)
+        public CraftDesignation GetDesignation(TemporaryVoxelHandle v)
         {
-            return Designations.FirstOrDefault(put => (put.Location.WorldPosition - v.WorldPosition).LengthSquared() < 0.1);
+            return Designations.FirstOrDefault(put => put.Location == v);
         }
 
         public void AddDesignation(CraftDesignation des)
@@ -116,7 +116,7 @@ namespace DwarfCorp
         }
 
 
-        public void RemoveDesignation(VoxelHandle v)
+        public void RemoveDesignation(TemporaryVoxelHandle v)
         {
             CraftDesignation des = GetDesignation(v);
 
@@ -156,7 +156,7 @@ namespace DwarfCorp
                 CurrentDesignation = new CraftDesignation()
                 {
                     ItemType = CurrentCraftType,
-                    Location = new VoxelHandle(new LocalVoxelCoordinate(0, 0, 0), null)
+                    Location = TemporaryVoxelHandle.InvalidHandle
                 };
                 SetDisplayColor(Color.Green);
             }
@@ -171,8 +171,8 @@ namespace DwarfCorp
             //Todo: Operator == implemented correctly for voxel handles?
             if (CurrentDesignation.Location.Equals(player.VoxSelector.VoxelUnderMouse)) 
                 return;
-            
-            CurrentDesignation.Location = new VoxelHandle(player.VoxSelector.VoxelUnderMouse);
+
+            CurrentDesignation.Location = player.VoxSelector.VoxelUnderMouse;
 
             SetDisplayColor(IsValid(CurrentDesignation) ? Color.Green : Color.Red);
         }
@@ -217,7 +217,7 @@ namespace DwarfCorp
                 {
                     case CraftItem.CraftPrereq.NearWall:
                         {
-                            var neighborFound = Neighbors.EnumerateManhattanNeighbors2D(designation.Location.Coordinate)
+                            var neighborFound = VoxelHelpers.EnumerateManhattanNeighbors2D(designation.Location.Coordinate)
                                     .Select(c => new TemporaryVoxelHandle(World.ChunkManager.ChunkData, c))
                                     .Any(v => v.IsValid && !v.IsEmpty);
 
@@ -231,10 +231,9 @@ namespace DwarfCorp
                         }
                     case CraftItem.CraftPrereq.OnGround:
                     {
-                        VoxelHandle below = new VoxelHandle();
-                        designation.Location.GetNeighbor(Vector3.Down, ref below);
+                            var below = VoxelHelpers.GetNeighbor(designation.Location, new GlobalVoxelOffset(0, -1, 0));
 
-                        if (below.IsEmpty)
+                        if (!below.IsValid || below.IsEmpty)
                         {
                             World.ShowToolPopup("Must be built on solid ground!");
                             return false;
@@ -248,7 +247,7 @@ namespace DwarfCorp
 
         }
 
-        public void VoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
+        public void VoxelsSelected(List<TemporaryVoxelHandle> refs, InputManager.MouseButton button)
         {
             if (!IsEnabled)
             {
@@ -264,9 +263,9 @@ namespace DwarfCorp
                             return;
                         }
                         List<Task> assignments = new List<Task>();
-                        foreach (VoxelHandle r in refs)
+                        foreach (var r in refs)
                         {
-                            if (IsDesignation(r) ||r == null || !r.IsEmpty)
+                            if (IsDesignation(r) || !r.IsValid || !r.IsEmpty)
                             {
                                 continue;
                             }
@@ -287,7 +286,7 @@ namespace DwarfCorp
                                 if (IsValid(newDesignation))
                                 {
                                     AddDesignation(newDesignation);
-                                    assignments.Add(new CraftItemTask(new VoxelHandle(r.GridPosition, r.Chunk),
+                                    assignments.Add(new CraftItemTask(r,
                                         CurrentCraftType));
                                 }
                                 else
@@ -306,7 +305,7 @@ namespace DwarfCorp
                     }
                 case (InputManager.MouseButton.Right):
                     {
-                        foreach (VoxelHandle r in refs)
+                        foreach (var r in refs)
                         {
                             if (!IsDesignation(r))
                             {

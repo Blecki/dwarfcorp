@@ -46,7 +46,7 @@ namespace DwarfCorp
     internal class CraftItemAct : CompoundCreatureAct
     {
         public CraftItem ItemType { get; set; }
-        public VoxelHandle Voxel { get; set; }
+        public TemporaryVoxelHandle Voxel { get; set; }
         public string Noise { get; set; }
         public CraftItemAct()
         {
@@ -58,7 +58,6 @@ namespace DwarfCorp
             Creature.Inventory.Remove(ItemType.SelectedResources);
             yield return Status.Success;
         }
-
 
         public IEnumerable<Status> CreateResources()
         {
@@ -128,11 +127,11 @@ namespace DwarfCorp
             base(creature)
         {
             ItemType = type;
-            Voxel = null;
+            Voxel = TemporaryVoxelHandle.InvalidHandle;
             Name = "Build craft item";
         }
 
-        public CraftItemAct(CreatureAI creature, VoxelHandle voxel, CraftItem type) :
+        public CraftItemAct(CreatureAI creature, TemporaryVoxelHandle voxel, CraftItem type) :
             base(creature)
         {
             ItemType = type;
@@ -173,7 +172,7 @@ namespace DwarfCorp
                             new Wrap(() => Creature.HitAndWait(time, true, () => Creature.AI.Position, "Craft")),
                             new Wrap(DestroyResources),
                             unreserveAct,
-                            new GoToVoxelAct(Voxel.tvh, PlanAct.PlanType.Adjacent, Agent),
+                            new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
                             new CreateCraftItemAct(Voxel, Creature.AI, ItemType.Name)
                             ) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false)
                         ) | new Sequence(unreserveAct, false);
@@ -182,7 +181,7 @@ namespace DwarfCorp
                 {
                     Tree = new Sequence(
                         getResources,
-                        new GoToVoxelAct(Voxel.tvh, PlanAct.PlanType.Adjacent, Agent),
+                        new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
                         new Wrap(() => Creature.HitAndWait(time, true, () => Creature.AI.Position, "Craft")),
                         new Wrap(DestroyResources),
                         new CreateCraftItemAct(Voxel, Creature.AI, ItemType.Name)) |

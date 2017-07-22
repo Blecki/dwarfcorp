@@ -48,17 +48,17 @@ namespace DwarfCorp
     /// </summary>
     public class EdgeGoalRegion : GoalRegion
     {
-        public override bool IsInGoalRegion(VoxelHandle voxel)
+        public override bool IsInGoalRegion(TemporaryVoxelHandle voxel)
         {
             return Heuristic(voxel) < 2.0f;
         }
 
-        public override VoxelHandle GetVoxel()
+        public override TemporaryVoxelHandle GetVoxel()
         {
-            return null;
+            return TemporaryVoxelHandle.InvalidHandle;
         }
 
-        public override float Heuristic(VoxelHandle voxel)
+        public override float Heuristic(TemporaryVoxelHandle voxel)
         {
             BoundingBox worldBounds = voxel.Chunk.Manager.Bounds;
             Vector3 pos = voxel.WorldPosition;

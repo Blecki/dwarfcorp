@@ -217,12 +217,12 @@ namespace DwarfCorp
             CurrentTool.OnBodiesSelected(bodies, button);
         }
 
-        public void OnDrag(List<VoxelHandle> voxels, InputManager.MouseButton button)
+        public void OnDrag(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
         {
             CurrentTool.OnVoxelsDragged(voxels, button);
         }
 
-        public void OnSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
+        public void OnSelected(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
         {
             CurrentTool.OnVoxelsSelected(voxels, button);
         }
@@ -503,7 +503,7 @@ namespace DwarfCorp
                 if (VoxSelector.VoxelUnderMouse != null)
                 {
                     World.Tutorial("unslice");
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.WorldPosition.Y,
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Coordinate.Y,
                         ChunkManager.SliceMode.Y);
                     Drawer3D.DrawBox(VoxSelector.VoxelUnderMouse.GetBoundingBox(), Color.White, 0.15f, true);
                 }
