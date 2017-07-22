@@ -87,7 +87,7 @@ namespace DwarfCorp.Gui.Widgets
                 foreach (var child in sender.Parent.EnumerateChildren().Where(c => c is FramedIcon)
 .                       SelectMany(c => c.EnumerateChildren()))
                 {
-                    if (!Object.ReferenceEquals(child, PopupChild))
+                    if (!Object.ReferenceEquals(child, PopupChild) && !child.Hidden)
                     {
                         child.Hidden = true;
                         child.Invalidate();
@@ -102,26 +102,6 @@ namespace DwarfCorp.Gui.Widgets
                 }
             }
 
-            public void HidePopup(Widget sender, InputEventArgs args)
-            {
-                foreach (var child in sender.Parent.EnumerateChildren().Where(c => c is FramedIcon)
-                    .SelectMany(c => c.EnumerateChildren()))
-                {
-                    if (!Object.ReferenceEquals(child, PopupChild))
-                    {
-                        child.Hidden = true;
-                        child.Invalidate();
-                    }
-                }
-
-                if (PopupChild != null && (ExpandChildWhenDisabled || (sender as FramedIcon).Enabled) && !PopupChild.Hidden)
-                {
-                    PopupChild.Hidden = true;
-                    Root.SafeCall(PopupChild.OnShown, PopupChild);
-                    PopupChild.Invalidate();
-                }
-            }
-
             public Icon()
             {
   
@@ -129,7 +109,7 @@ namespace DwarfCorp.Gui.Widgets
 
             public override void Construct()
             {
-                OnDisable = (sender) =>
+                OnDisable += (sender) =>
                 {
                     if (PopupChild != null)
                     {
@@ -141,7 +121,7 @@ namespace DwarfCorp.Gui.Widgets
                     }
                 };
 
-                OnLayout = (sender) =>
+                OnLayout += (sender) =>
                 {
                     if (PopupChild != null)
                     {
@@ -154,7 +134,8 @@ namespace DwarfCorp.Gui.Widgets
 
                         if (PopupChild.Rect.Right > Root.RenderData.VirtualScreen.Right)
                             PopupChild.Rect.X = Root.RenderData.VirtualScreen.Right - PopupChild.Rect.Width;
-                    }                };
+                    }                
+                };
 
                 base.Construct();
 
@@ -168,11 +149,11 @@ namespace DwarfCorp.Gui.Widgets
                     AddChild(PopupChild);
                     PopupChild.Hidden = true;
 
-                    OnClick += ExpandPopup;
+                    OnClick = ExpandPopup;
                 }
                 
                 if (ReplacementMenu != null)
-                    OnClick += (sender, args) =>
+                    OnClick = (sender, args) =>
                     {
                         var root = Parent.Parent as RootTray;
                         if (root != null) root.SwitchTray(ReplacementMenu);

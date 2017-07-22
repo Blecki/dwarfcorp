@@ -92,7 +92,7 @@ namespace DwarfCorp
 
         public bool IsDesignation(TemporaryVoxelHandle reference)
         {
-            if (reference.IsValid) return false;
+            if (!reference.IsValid) return false;
             return Designations.Any(put => put.Location == reference);
         }
 
