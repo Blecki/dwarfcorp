@@ -194,11 +194,14 @@ namespace DwarfCorp
             List<Body> bodyList = bodies.Where(IsDwarf).ToList();
             for (int i = 0; i < bodyList.Count; i++)
             {
-                Dwarf dwarf = bodyList[i].GetComponent<Dwarf>();
-                sb.Append(dwarf.Stats.FullName + " (" + dwarf.Stats.CurrentClass.Name + ")");
-                if (i < bodyList.Count - 1)
+                Creature dwarf = bodyList[i].GetComponent<Creature>();
+                if (dwarf != null)
                 {
-                    sb.Append("\n");
+                    sb.Append(dwarf.Stats.FullName + " (" + dwarf.Stats.CurrentClass.Name + ")");
+                    if (i < bodyList.Count - 1)
+                    {
+                        sb.Append("\n");
+                    }
                 }
             }
             Player.World.ShowTooltip(sb.ToString());

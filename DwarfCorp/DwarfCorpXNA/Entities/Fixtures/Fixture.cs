@@ -52,7 +52,7 @@ namespace DwarfCorp
         }
 
         public Fixture(ComponentManager Manager, Vector3 position, SpriteSheet asset, Point frame) :
-            base(Manager, "Fixture", Matrix.CreateTranslation(position), new Vector3(asset.FrameWidth * (1.0f / 32.0f), asset.Height * (1.0f / 32.0f), asset.FrameWidth * (1.0f / 32.0f)), Vector3.Zero, true)
+            base(Manager, "Fixture", Matrix.CreateTranslation(position), new Vector3(asset.FrameWidth * (1.0f / 32.0f), asset.FrameHeight * (1.0f / 32.0f), asset.FrameWidth * (1.0f / 32.0f)), Vector3.Zero, true)
         {
             Asset = asset;
             Frame = frame;

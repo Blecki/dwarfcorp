@@ -23,12 +23,12 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     Background = new TileReference("basic", 0)
                 });
-
+                var idx = GetIconIndex(employee.Stats.CurrentClass.Name);
                 bar.AddChild(new Widget
                 {
                     AutoLayout = AutoLayout.DockLeft,
                     MinimumSize = new Point(32, 48),
-                    Background = new TileReference("dwarves", GetIconIndex(employee.Stats.CurrentClass.Name))
+                    Background = idx > 0 ? new TileReference("dwarves", idx) : null
                 });
 
                 bar.AddChild(new Widget
@@ -76,7 +76,9 @@ namespace DwarfCorp.Gui.Widgets
                 IconIndex.Add("Wizard", 4);
             }
 
-            return IconIndex[Class];
+            if (IconIndex.ContainsKey(Class))
+                return IconIndex[Class];
+            return -1;
         }
 
         public override void Construct()

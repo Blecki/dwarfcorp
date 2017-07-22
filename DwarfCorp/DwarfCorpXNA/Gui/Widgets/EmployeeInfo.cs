@@ -242,7 +242,8 @@ namespace DwarfCorp.Gui.Widgets
             // Set values from CreatureAI
             if (Employee != null)
             {
-                Icon.Background = new TileReference("dwarves", EmployeePanel.GetIconIndex(Employee.Stats.CurrentClass.Name));
+                var idx = EmployeePanel.GetIconIndex(Employee.Stats.CurrentClass.Name);
+                Icon.Background = idx > 0 ? new TileReference("dwarves", idx) : null;
                 Icon.Invalidate();
                 
                 NameLabel.Text = "\n" + Employee.Stats.FullName;

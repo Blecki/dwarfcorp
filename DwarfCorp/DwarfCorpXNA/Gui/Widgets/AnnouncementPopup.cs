@@ -47,15 +47,18 @@ namespace DwarfCorp.Gui.Widgets
                         announcement.SecondsVisible += time.ElapsedGameTime.TotalSeconds;
 
                         if (announcement.Widget == null)
+                        {
+                            QueuedAnnouncement announcement1 = announcement;
                             announcement.Widget = AddChild(new Widget
                             {
                                 Text = announcement.Text,
                                 OnClick = (_s, _a) =>
                                 {
-                                    if (announcement.ClickAction != null)
-                                        announcement.ClickAction();
+                                    if (announcement1.ClickAction != null)
+                                        announcement1.ClickAction();
                                 }
                             });
+                        }
                     }
 
                     Announcements.RemoveAll(a => a.SecondsVisible > MessageLingerSeconds);

@@ -106,8 +106,10 @@ namespace DwarfCorp.Gui.Widgets
                 LastJobLocation.Text = String.Format("Home town - {0}", Applicant.HomeTown);
                 Biography.Text = Applicant.Biography;
                 Resume.Text = Applicant.CoverLetter;
-                Portrait.Background = new TileReference("dwarves", EmployeePanel.GetIconIndex(Applicant.Class.Name));
+                var idx = EmployeePanel.GetIconIndex(Applicant.Class.Name);
+                Portrait.Background = idx > 0 ? new TileReference("dwarves", idx) : null;
                 Portrait.Invalidate();
+
             }
 
             return base.Redraw();

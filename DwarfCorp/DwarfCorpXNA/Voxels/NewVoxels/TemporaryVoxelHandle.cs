@@ -1,4 +1,4 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System;
 using Microsoft.Xna.Framework;
@@ -21,8 +21,7 @@ namespace DwarfCorp
         private void UpdateCache(ChunkData Chunks)
         {
             _cache_Index = VoxelConstants.DataIndexOf(Coordinate.GetLocalVoxelCoordinate());
-            Chunks.ChunkMap.TryGetValue(Coordinate.GetGlobalChunkCoordinate(),
-                out _cache_Chunk);
+            _cache_Chunk = Chunks.ChunkMap.ContainsKey(Coordinate.GetGlobalChunkCoordinate()) ? Chunks.ChunkMap[Coordinate.GetGlobalChunkCoordinate()] : null;
         }
 
         [JsonIgnore]
