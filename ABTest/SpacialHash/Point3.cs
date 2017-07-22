@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -36,6 +36,7 @@ namespace ABTest.SpacialHash
         {
             return other.X == X && other.Y == Y && other.Z == Z;
         }
+
 
         public override bool Equals(object obj)
         {
