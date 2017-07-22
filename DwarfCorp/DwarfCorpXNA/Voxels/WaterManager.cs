@@ -66,27 +66,20 @@ namespace DwarfCorp
         public static byte inWaterThreshold = 5;
         public static byte waterMoveThreshold = 1;
         
-        private LinkedList<SplashType> Splashes = new LinkedList<SplashType>();
-        private Mutex SplashLock = new Mutex();
+        private LinkedList<LiquidSplash> Splashes = new LinkedList<LiquidSplash>();
+        private LinkedList<LiquidTransfer> Transfers = new LinkedList<LiquidTransfer>();
 
-        private LinkedList<Transfer> Transfers = new LinkedList<Transfer>();
-        private Mutex TransferLock = new Mutex();
-
-        public IEnumerable<SplashType> GetSplashQueue()
+        public IEnumerable<LiquidSplash> GetSplashQueue()
         {
-            SplashLock.WaitOne();
             var r = Splashes;
-            Splashes = new LinkedList<SplashType>();
-            SplashLock.ReleaseMutex();
+            Splashes = new LinkedList<LiquidSplash>();
             return r;
         }
 
-        public IEnumerable<Transfer> GetTransferQueue()
+        public IEnumerable<LiquidTransfer> GetTransferQueue()
         {
-            TransferLock.WaitOne();
             var r = Transfers;
-            Transfers = new LinkedList<Transfer>();
-            TransferLock.ReleaseMutex();
+            Transfers = new LinkedList<LiquidTransfer>();
             return r;
         }
 
@@ -103,30 +96,28 @@ namespace DwarfCorp
         }
 
         public void CreateTransfer(
-            GlobalVoxelCoordinate worldPosition, WaterCell water1, WaterCell water2, byte amount)
+            TemporaryVoxelHandle Vox, WaterCell water1, WaterCell water2, byte amount)
         {
-            Transfer transfer = new Transfer();
+            LiquidTransfer transfer = new LiquidTransfer();
             transfer.amount = amount;
             transfer.cellFrom = water1;
             transfer.cellTo = water2;
-            transfer.worldLocation = worldPosition;
+            transfer.Location = Vox;
 
-            TransferLock.WaitOne();
             Transfers.AddFirst(transfer);
-            TransferLock.ReleaseMutex();
         }
 
         public void CreateSplash(Vector3 pos, LiquidType liquid)
         {
             if (MathFunctions.RandEvent(0.9f)) return;
 
-            SplashType splash;
+            LiquidSplash splash;
 
             switch(liquid)
             {
                 case LiquidType.Water:
                 {
-                    splash = new SplashType
+                    splash = new LiquidSplash
                     {
                         name = "splash2",
                         numSplashes = 2,
@@ -137,7 +128,7 @@ namespace DwarfCorp
                     break;
                 case LiquidType.Lava:
                 {
-                    splash = new SplashType
+                    splash = new LiquidSplash
                     {
                         name = "flame",
                         numSplashes = 5,
@@ -150,9 +141,7 @@ namespace DwarfCorp
                     throw new InvalidOperationException();
             }
 
-            SplashLock.WaitOne();
             Splashes.AddFirst(splash);
-            SplashLock.ReleaseMutex();
         }
 
         public float GetSpreadRate(LiquidType type)
@@ -187,7 +176,7 @@ namespace DwarfCorp
 
                 chunksUpdated++;
 
-                if(!UpdateChunk(chunk) && !chunk.FirstWaterIter)
+                if(!DiscreteUpdate(chunk) && !chunk.FirstWaterIter)
                 {
                     chunk.FirstWaterIter = false;
                     continue;
@@ -195,47 +184,6 @@ namespace DwarfCorp
 
                 chunk.ShouldRebuildWater = true;
                 chunk.FirstWaterIter = false;
-            }
-        }
-
-        public int CompareLevels(byte A, byte B)
-        {
-            if (A.Equals(B))
-            {
-                return 0;
-            }
-            else
-            {
-                if (A > B)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return -1;
-                }
-            }
-        }
-
-        private int CompareFlowVectors(Vector3 A, Vector3 B, Vector3 flow)
-        {
-            if (A.Equals(B))
-            {
-                return 0;
-            }
-            else
-            {
-                float dotA = Vector3.Dot(A, flow);
-                float dotB = Vector3.Dot(B, flow);
-
-                if (dotA > dotB)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return -1;
-                }
             }
         }
 
@@ -295,9 +243,7 @@ namespace DwarfCorp
 
                 // Don't check empty cells or cells we've already modified.
                 if (data.Water[idx].Type == LiquidType.None || data.Types[idx] != 0)
-                {
                     continue;
-                }
 
                 //Todo: %KILL% the CoordsAt bit.
                 gridCoord = CoordsAt(idx);
@@ -320,6 +266,8 @@ namespace DwarfCorp
                     data.Water[idx].Type = LiquidType.None;
 
                     updateOccurred = true;
+
+                    continue;
                 }
 
                 bool shouldFall = false;
@@ -331,29 +279,14 @@ namespace DwarfCorp
                 if (y > 0)
                 {
                     voxBelow = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y - 1, z));
+
                     if (voxBelow.IsEmpty)
                     {
                         cellBelow = voxBelow.WaterCell;
                         shouldFall = true;
                     }
                 }
-                /*  This is commented out as Chunks take up the full vertical space.  This needs to be added/fixed if the chunks take up less space.
-                else
-                {
-                    if(chunk.Manager.ChunkData.DoesWaterCellExist(worldPos))
-                    {
-                        DestinationVoxel voxelsBelow = chunk.Manager.ChunkData.GetVoxel(chunk, worldPos + new Vector3(0, -1, 0));
-
-                        if(voxelsBelow != null && voxelsBelow.IsEmpty)
-                        {
-                            cellBelow = chunk.Manager.ChunkData.GetWaterCellAtLocation(worldPos + new Vector3(0, -1, 0));
-                            shouldFall = true;
-                            cellBelow.IsFalling = true;
-                        }
-                    }
-                }
-                 */
-
+                
                 // Cases where the fluid can fall down.
                 if (shouldFall)
                 {
@@ -371,7 +304,7 @@ namespace DwarfCorp
                         data.Water[idx].WaterLevel = 0;
                         data.Water[idx].Type = LiquidType.None;
                         voxBelow.WaterCell = cellBelow;
-                        CreateTransfer(GlobalVoxelCoordinate.FromVector3(worldPos), data.Water[idx], cellBelow, cellBelow.WaterLevel);
+                        CreateTransfer(new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x,y, z)), data.Water[idx], cellBelow, cellBelow.WaterLevel);
                         updateOccurred = true;
 
                         continue;
@@ -395,7 +328,7 @@ namespace DwarfCorp
                                 data.Water[idx].WaterLevel = 0;
                                 data.Water[idx].Type = LiquidType.None;
 
-                                CreateTransfer(GlobalVoxelCoordinate.FromVector3(worldPos - Vector3.UnitY), data.Water[idx], cellBelow, transfer);
+                                CreateTransfer(voxBelow, data.Water[idx], cellBelow, transfer);
                                 voxBelow.WaterCell = cellBelow;
                                 updateOccurred = true;
                                 continue;
@@ -409,7 +342,9 @@ namespace DwarfCorp
                                 {
                                     cellBelow.Type = data.Water[idx].Type;
                                 }
-                                CreateTransfer(GlobalVoxelCoordinate.FromVector3(worldPos - Vector3.UnitY), data.Water[idx], cellBelow, spaceLeft);
+
+                                CreateTransfer(voxBelow, data.Water[idx], cellBelow, spaceLeft);
+
                                 voxBelow.WaterCell = cellBelow;
                             }
                         }
@@ -445,7 +380,7 @@ namespace DwarfCorp
                         updateOccurred = true;
                     }
 
-                    CreateTransfer(globalCoordinate, data.Water[idx], neighborWater, amountToMove);
+                    CreateTransfer(v, data.Water[idx], neighborWater, amountToMove);
 
                     data.Water[idx].WaterLevel -= amountToMove;
                     neighborWater.WaterLevel += amountToMove;
@@ -470,11 +405,5 @@ namespace DwarfCorp
 
             return updateOccurred;
         }
-
-        public bool UpdateChunk(VoxelChunk chunk)
-        {
-            return DiscreteUpdate(chunk);
-        }
     }
-
 }

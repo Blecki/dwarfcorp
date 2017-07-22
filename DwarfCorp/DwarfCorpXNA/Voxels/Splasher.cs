@@ -38,15 +38,15 @@ using System.Collections.Concurrent;
 
 namespace DwarfCorp
 {
-    public struct Transfer
+    public struct LiquidTransfer
     {
         public WaterCell cellFrom;
         public WaterCell cellTo;
         public byte amount;
-        public GlobalVoxelCoordinate worldLocation;
+        public TemporaryVoxelHandle Location;
     }
 
-    public struct SplashType
+    public struct LiquidSplash
     {
         public string name;
         public Vector3 position;
@@ -67,7 +67,7 @@ namespace DwarfCorp
             splashNoiseLimiter["flame"] = new Timer(0.1f, false);
         }
 
-        public void HandleTransfers(DwarfTime time, IEnumerable<Transfer> Transfers)
+        public void HandleTransfers(DwarfTime time, IEnumerable<LiquidTransfer> Transfers)
         {
             foreach (var transfer in Transfers)
             { 
@@ -75,7 +75,7 @@ namespace DwarfCorp
                     || (transfer.cellFrom.Type == LiquidType.Water && transfer.cellTo.Type == LiquidType.Lava))
                 {
                     // Todo: Avoid chunk lookup by storing TVH in first place.
-                    var v = new TemporaryVoxelHandle(Chunks.ChunkData, transfer.worldLocation);
+                    var v = transfer.Location;
 
                     if(v.IsValid)
                     {
@@ -94,7 +94,7 @@ namespace DwarfCorp
             }
         }
 
-        public void Splash(DwarfTime time, IEnumerable<SplashType> Splashes)
+        public void Splash(DwarfTime time, IEnumerable<LiquidSplash> Splashes)
         {
             foreach (var splash in Splashes)
             {
