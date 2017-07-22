@@ -405,12 +405,6 @@ namespace DwarfCorp
         /// <param name="gameTime">The current time</param>
         public void Update(DwarfTime gameTime)
         {
-            // Can't do this in the loading thread because threaded generation
-            // of entities is bad -- it leads to GPU calls for texture loading.
-            if (firstIter && string.IsNullOrEmpty(ExistingFile))
-            {
-                CreateInitialEmbarkment();
-            }
             firstIter = false;
 
             EntityFactory.DoLazyActions();
