@@ -17,6 +17,7 @@ namespace DwarfCorp
         public byte[] SunColors;
         public WaterCell[] Water;
         public RampType[] RampTypes;
+        public int[] LiquidPresent;
         
         public static VoxelData Allocate()
         {
@@ -30,6 +31,7 @@ namespace DwarfCorp
                 Types = new byte[numVoxels],
                 Water = new WaterCell[numVoxels],
                 RampTypes = new RampType[numVoxels],
+                LiquidPresent = new int[VoxelConstants.ChunkSizeY],
             };
 
             for (int i = 0; i < numVoxels; i++)

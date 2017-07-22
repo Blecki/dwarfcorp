@@ -165,7 +165,16 @@ namespace DwarfCorp
         public WaterCell WaterCell
         {
             get { return _cache_Chunk.Data.Water[_cache_Index]; }
-            set { _cache_Chunk.Data.Water[_cache_Index] = value; }
+            set {
+
+                var existingLiquid = _cache_Chunk.Data.Water[_cache_Index];
+                if (existingLiquid.Type != LiquidType.None && value.Type == LiquidType.None)
+                    _cache_Chunk.Data.LiquidPresent[Coordinate.Y] -= 1;
+                if (existingLiquid.Type == LiquidType.None && value.Type != LiquidType.None)
+                    _cache_Chunk.Data.LiquidPresent[Coordinate.Y] += 1;
+
+                _cache_Chunk.Data.Water[_cache_Index] = value;
+            }
         }
 
         [JsonIgnore]

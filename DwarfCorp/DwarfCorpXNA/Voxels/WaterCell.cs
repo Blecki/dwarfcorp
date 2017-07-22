@@ -41,5 +41,11 @@ namespace DwarfCorp
     {
         public byte WaterLevel;
         public LiquidType Type;
+
+        public static readonly WaterCell Empty = new WaterCell
+        {
+            Type = LiquidType.None,
+            WaterLevel = 0
+        };
     }
 }

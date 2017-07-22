@@ -171,9 +171,9 @@ namespace DwarfCorp
                         int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
                         if (fogOfWar && !chunk.Data.IsExplored[index]) continue;
 
-                        if (chunk.Data.Water[index].WaterLevel > 0)
+                        if (voxel.WaterCell.WaterLevel > 0)
                         {
-                            LiquidType liqType = chunk.Data.Water[index].Type;
+                            var liqType = voxel.WaterCell.Type;
 
                             // We need to see if we changed types and should change the data we are writing to.
                             if (liqType != curLiqType)
@@ -246,7 +246,7 @@ namespace DwarfCorp
                             }
 
                             // Now we have a list of all the faces that will need to be drawn.  Let's draw them.
-                            CreateWaterFaces(voxel, chunk, x, y, z, curVertices, maxVertex);
+                            CreateWaterFaces(voxel, chunk, curVertices, maxVertex);
 
                             // Finally increase the size so we can move on.
                             maxVertex += vertexSizeIncrease;
@@ -311,7 +311,6 @@ namespace DwarfCorp
         }
 
         private static void CreateWaterFaces(TemporaryVoxelHandle voxel, VoxelChunk chunk,
-                                            int x, int y, int z,
                                             ExtendedVertex[] vertices,
                                             int startVertex)
         {
@@ -320,7 +319,7 @@ namespace DwarfCorp
 
             // These are reused for every face.
             var origin = voxel.WorldPosition;
-            float centerWaterlevel = chunk.Data.Water[VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z))].WaterLevel;
+            float centerWaterlevel = voxel.WaterCell.WaterLevel;
 
             for (int faces = 0; faces < cache.drawFace.Length; faces++)
             {
