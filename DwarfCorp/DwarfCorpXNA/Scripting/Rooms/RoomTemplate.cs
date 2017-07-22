@@ -258,20 +258,20 @@ namespace DwarfCorp
             return (requirements & value) == value;
         }
 
-        public static RoomTile[,] CreateFromRoom(List<VoxelHandle> voxelsInRoom, ChunkManager chunks)
+        public static RoomTile[,] CreateFromRoom(List<TemporaryVoxelHandle> voxelsInRoom, ChunkManager chunks)
         {
-            BoundingBox box0 = MathFunctions.GetBoundingBox(voxelsInRoom);
+            var box0 = VoxelHelpers.GetVoxelBoundingBox(voxelsInRoom);
             BoundingBox box = new BoundingBox(box0.Min + Vector3.Up, box0.Max + Vector3.Up);
-            BoundingBox bigBox = new BoundingBox(box0.Min + Vector3.Up + new Vector3(-1, 0, -1), box0.Max + Vector3.Up + new Vector3(1, 0, 1));
+            BoundingBox bigBox = new BoundingBox(box0.Min - Vector3.One, box0.Max + Vector3.One);
             int nr = Math.Max((int) (box.Max.X - box.Min.X), 1);
             int nc = Math.Max((int) (box.Max.Z - box.Min.Z), 1);
 
             RoomTile[,] toReturn = new RoomTile[nr + 2, nc + 2];
 
-            Dictionary<Point, VoxelHandle> voxelDict = new Dictionary<Point, VoxelHandle>();
-            foreach(VoxelHandle vox in voxelsInRoom)
+            var voxelDict = new Dictionary<Point, TemporaryVoxelHandle>();
+            foreach (var vox in voxelsInRoom)
             {
-                voxelDict[new Point((int)(vox.WorldPosition.X - box.Min.X) + 1, (int)(vox.WorldPosition.Z - box.Min.Z) + 1)] = vox;
+                voxelDict[new Point((int)(vox.Coordinate.X - box.Min.X) + 1, (int)(vox.Coordinate.Z - box.Min.Z) + 1)] = vox;
             }
 
             for(int r = 0; r < nr + 2; r++)
@@ -282,9 +282,9 @@ namespace DwarfCorp
                 }
             }
 
-            foreach(KeyValuePair<Point, VoxelHandle> voxPair in voxelDict)
+            foreach (var voxPair in voxelDict)
             {
-                var vox = VoxelHelpers.GetVoxelAbove(voxPair.Value.tvh);
+                var vox = VoxelHelpers.GetVoxelAbove(voxPair.Value);
                 Point p = voxPair.Key;
 
                 if(vox.IsEmpty && p.X > 0 && p.X < nr + 1 && p.Y > 0 && p.Y < nc + 1)

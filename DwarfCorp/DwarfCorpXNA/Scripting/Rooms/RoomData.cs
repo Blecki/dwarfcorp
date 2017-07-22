@@ -107,16 +107,16 @@ namespace DwarfCorp
         }
 
 
-        public bool Verify(List<VoxelHandle> refs, Faction faction, WorldManager world)
+        public bool Verify(
+            List<TemporaryVoxelHandle> Voxels, 
+            Faction Faction, 
+            WorldManager World)
         {
-            if (refs.Count == 0)
-            {
+            if (Voxels.Count == 0)
                 return false;
-            }
 
-            
-
-            List<BoundingBox> boxes = refs.Select(voxel => voxel.GetBoundingBox()).ToList();
+            // Todo: Lift into helper function that uses better algorithm.
+            List<BoundingBox> boxes = Voxels.Select(voxel => voxel.GetBoundingBox()).ToList();
             BoundingBox box = MathFunctions.GetBoundingBox(boxes);
 
             Vector3 extents = box.Max - box.Min;
@@ -126,72 +126,57 @@ namespace DwarfCorp
 
             if (maxExtents < MinimumSideLength || minExtents < MinimumSideWidth)
             {
-                world.ShowToolPopup("Room is too small (minimum is " + MinimumSideLength + " x " + MinimumSideWidth + ")!");
+                World.ShowToolPopup("Room is too small (minimum is " + MinimumSideLength + " x " + MinimumSideWidth + ")!");
                 return false;
             }
 
-            if (!HasAvailableResources(refs.Count, faction))
+            if (!HasAvailableResources(Voxels.Count, Faction))
             {
-                world.ShowToolPopup("Not enough resources for this room.");
+                World.ShowToolPopup("Not enough resources for this room.");
                 return false;
             }
 
-            int height = -1;
-            bool anyEmpty = true;
-            foreach (VoxelHandle voxel in refs)
+            int height = Voxels[0].Coordinate.Y;
+            bool allEmpty = true;
+
+            foreach (var voxel in Voxels)
             {
                 if (voxel.IsEmpty)
-                {
                     continue;
-                }
 
-                var above = new TemporaryVoxelHandle(world.ChunkManager.ChunkData,
-                    new GlobalVoxelCoordinate(voxel.Coordinate.X, voxel.Coordinate.Y + 1, voxel.Coordinate.Z));
-
-                anyEmpty &= (above.IsValid && above.IsEmpty);
+                var above = VoxelHelpers.GetVoxelAbove(voxel);
+                allEmpty &= (above.IsValid && above.IsEmpty);
 
                 if (voxel.Type.IsInvincible) continue;
 
-                if (height == -1)
+                if (height != (int)voxel.Coordinate.Y && !CanBuildOnMultipleLevels)
                 {
-                    height = (int)voxel.GridPosition.Y;
-                }
-                else if (height != (int) voxel.GridPosition.Y && !CanBuildOnMultipleLevels)
-                {
-                    world.ShowToolPopup("Room must be on flat ground!");
+                    World.ShowToolPopup("Room must be on flat ground!");
                     return false;
                 }
 
-                if (MustBeBuiltOnSoil)
+                if (MustBeBuiltOnSoil && !voxel.Type.IsSoil)
                 {
-                    if (!voxel.Type.IsSoil)
-                    {
-                        world.ShowToolPopup("Room must be built on soil!");
-                        return false;
-                    }
-                }
-
-                if (!CanBuildAboveGround)
-                {
-                    if (voxel.Chunk.Data.SunColors[voxel.Index] <= 5) continue;
-
-                    world.ShowToolPopup("Room can't be built aboveground!");
-                    return false;
-                } 
-                else if (!CanBuildBelowGround)
-                {
-                    if (voxel.Chunk.Data.SunColors[voxel.Index] >= 5) continue;
-
-                    world.ShowToolPopup("Room can't be built belowground!");
+                    World.ShowToolPopup("Room must be built on soil!");
                     return false;
                 }
 
+                if (!CanBuildAboveGround && voxel.SunColor >= 5)
+                {
+                    World.ShowToolPopup("Room can't be built aboveground!");
+                    return false;
+                }
 
+                if (!CanBuildBelowGround && voxel.SunColor < 5)
+                {
+                    World.ShowToolPopup("Room can't be built belowground!");
+                    return false;
+                }
             }
 
-            if (!anyEmpty)
+            if (!allEmpty)
             {
-                world.ShowToolPopup("Room must be built in free space.");
+                World.ShowToolPopup("Room must be built in free space.");
                 return false;
             }
 

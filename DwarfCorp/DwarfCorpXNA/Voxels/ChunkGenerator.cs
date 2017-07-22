@@ -310,9 +310,16 @@ namespace DwarfCorp
                             veg.NoiseOffset, topVoxel.Coordinate.Y / veg.ClumpSize) >= veg.ClumpThreshold)
                         {
                             topVoxel.Type = VoxelLibrary.GetVoxelType(biomeData.SoilLayer.VoxelType);
+
+                            float offset = veg.VerticalOffset;
+
+                            // Vegetation doesn't shift with ramps - is this accomplishing anything?
+                            if (topVoxel.RampType != RampType.None)
+                                offset -= 0.25f;
+
                             var treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
                             EntityFactory.CreateEntity<Body>(veg.Name,
-                                topVoxel.Coordinate.ToVector3() + (Vector3.Up * treeSize) + (Vector3.Up * 1.25f),
+                                topVoxel.Coordinate.ToVector3() + (Vector3.Up * treeSize * offset),
                                 Blackboard.Create("Scale", treeSize));
 
                             break;

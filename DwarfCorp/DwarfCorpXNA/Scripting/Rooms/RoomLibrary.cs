@@ -187,11 +187,16 @@ namespace DwarfCorp
             }
         }
 
-        public static List<Body> GenerateRoomComponentsTemplate(RoomData roomData, List<VoxelHandle> voxels , ComponentManager componentManager, 
-            Microsoft.Xna.Framework.Content.ContentManager content, GraphicsDevice graphics)
+        public static List<Body> GenerateRoomComponentsTemplate(
+            RoomData roomData,
+            List<TemporaryVoxelHandle> voxels , 
+            ComponentManager componentManager, 
+            Microsoft.Xna.Framework.Content.ContentManager content, 
+            GraphicsDevice graphics)
         {
             List<Body> components = new List<Body>();
-            RoomTile[,] currentTiles = RoomTemplate.CreateFromRoom(voxels, componentManager.World.ChunkManager);
+            RoomTile[,] currentTiles = RoomTemplate.CreateFromRoom(
+                voxels, componentManager.World.ChunkManager);
             float[,] rotations = new float[currentTiles.GetLength(0), currentTiles.GetLength(1)];
             foreach (RoomTemplate myTemp in roomData.Templates)
             {
@@ -209,7 +214,7 @@ namespace DwarfCorp
                 }
             }
 
-            BoundingBox box = MathFunctions.GetBoundingBox(voxels);
+            var box = VoxelHelpers.GetVoxelBoundingBox(voxels);
             int thingsMade = 0;
             for(int r = 0; r < currentTiles.GetLength(0); r++)
             {
@@ -219,7 +224,7 @@ namespace DwarfCorp
                     Body createdComponent = null;
                     Vector3 noise =
                         VertexNoise.GetNoiseVectorFromRepeatingTexture(box.Min +
-                                                                       new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
+                            new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
                     switch(tile)
                     {
                         case RoomTile.Barrel:
