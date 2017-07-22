@@ -149,7 +149,7 @@ namespace DwarfCorp
             if (SelectedBody != null)
             {
                 var voxelUnderMouse = Player.VoxSelector.VoxelUnderMouse;
-                if (voxelUnderMouse != null && voxelUnderMouse.IsEmpty)
+                if (voxelUnderMouse.IsValid && voxelUnderMouse.IsEmpty)
                 {
                     SelectedBody.LocalPosition = voxelUnderMouse.WorldPosition + Vector3.One * 0.5f;
                     SelectedBody.HasMoved = true;

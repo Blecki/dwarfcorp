@@ -1,4 +1,4 @@
-﻿// ResourceAmount.cs
+// ResourceAmount.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -158,7 +158,7 @@ namespace DwarfCorp
                 return false;
             }
 
-            if (ReferenceEquals(a, null) && ReferenceEquals(b, null))
+            if (ReferenceEquals(a, null))
             {
                 return true;
             }

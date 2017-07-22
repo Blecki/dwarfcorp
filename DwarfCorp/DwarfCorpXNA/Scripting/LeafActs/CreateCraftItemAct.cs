@@ -64,16 +64,9 @@ namespace DwarfCorp
             item.Tags.Add("Moveable");
             Creature.Faction.OwnedObjects.Add(item);
             Creature.Manager.World.ParticleManager.Trigger("puff", Voxel.WorldPosition + Vector3.One * 0.5f, Color.White, 10);
-            if (item == null)
-            {
-                yield return Status.Fail;
-            }
-            else
-            {
-                Creature.Faction.CraftBuilder.RemoveDesignation(Voxel);
-                Creature.AI.AddXP(10);
-                yield return Status.Success;
-            }
+            Creature.Faction.CraftBuilder.RemoveDesignation(Voxel);
+            Creature.AI.AddXP(10);
+            yield return Status.Success;
         }
     }
 

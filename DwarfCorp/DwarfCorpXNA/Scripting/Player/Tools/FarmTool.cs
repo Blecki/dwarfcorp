@@ -71,7 +71,7 @@ namespace DwarfCorp
 
             public bool IsTilled()
             {
-                return (Vox != null) && Vox.Type.Name == "TilledSoil";
+                return (Vox.IsValid) && Vox.Type.Name == "TilledSoil";
             }
 
             public bool IsFree()

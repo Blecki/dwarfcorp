@@ -1,4 +1,4 @@
-﻿// GuardVoxelTask.cs
+// GuardVoxelTask.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -65,7 +65,7 @@ namespace DwarfCorp
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            return VoxelToGuard == null ? 1000 : (agent.AI.Position - VoxelToGuard.WorldPosition).LengthSquared();
+            return !VoxelToGuard.IsValid ? 1000 : (agent.AI.Position - VoxelToGuard.WorldPosition).LengthSquared();
         }
 
         public override bool ShouldRetry(Creature agent)

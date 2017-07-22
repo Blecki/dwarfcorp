@@ -92,7 +92,7 @@ namespace DwarfCorp
 
         public bool IsDesignation(TemporaryVoxelHandle reference)
         {
-            if (reference == null) return false;
+            if (reference.IsValid) return false;
             return Designations.Any(put => put.Location == reference);
         }
 
@@ -161,7 +161,7 @@ namespace DwarfCorp
                 SetDisplayColor(Color.Green);
             }
 
-            if (CurrentCraftBody == null || player.VoxSelector.VoxelUnderMouse == null) 
+            if (CurrentCraftBody == null || !player.VoxSelector.VoxelUnderMouse.IsValid) 
                 return;
 
             CurrentCraftBody.LocalPosition = player.VoxSelector.VoxelUnderMouse.WorldPosition + Vector3.One * 0.5f;

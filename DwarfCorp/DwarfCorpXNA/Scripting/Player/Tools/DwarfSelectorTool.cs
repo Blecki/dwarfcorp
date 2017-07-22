@@ -86,7 +86,7 @@ namespace DwarfCorp
                 GameState.Game.GraphicsDevice.Viewport,
                 150.0f, 
                 false,
-                voxel => voxel != null && (!voxel.IsEmpty || voxel.WaterCell.WaterLevel > 0));
+                voxel => voxel.IsValid && (!voxel.IsEmpty || voxel.WaterCell.WaterLevel > 0));
 
             if (!vox.IsValid)
                 return;

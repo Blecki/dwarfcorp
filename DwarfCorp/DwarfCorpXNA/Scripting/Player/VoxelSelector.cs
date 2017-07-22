@@ -302,7 +302,7 @@ namespace DwarfCorp
             }
 
             // Draw a box around the current voxel under the mouse.
-            if (underMouse != null)
+            if (underMouse.IsValid)
             {
                 BoundingBox box = underMouse.GetBoundingBox().Expand(0.05f);
                 Drawer3D.DrawBox(box, CurrentColor, CurrentWidth, true);

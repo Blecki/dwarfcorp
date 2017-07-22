@@ -161,7 +161,7 @@ namespace DwarfCorp
         {
             if (FarmToWork != null)
             {
-                if (FarmToWork.Vox != null)
+                if (FarmToWork.Vox.IsValid)
                 {
                     Tree = new Sequence(
                         new Condition(!FarmToWork.IsCanceled),
