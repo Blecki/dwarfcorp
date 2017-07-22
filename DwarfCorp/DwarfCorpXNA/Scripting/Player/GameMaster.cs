@@ -356,36 +356,40 @@ namespace DwarfCorp
 
         public void HandlePosessedDwarf()
         {
-            foreach (var creature in Faction.Minions)
-            {
-                creature.IsPosessed = false;
-            }
             KeyboardState keyState = Keyboard.GetState();
             if (SelectedMinions.Count != 1)
             {
                 CameraController.FollowAutoTarget = false;
                 CameraController.EnableControl = true;
+                foreach (var creature in Faction.Minions)
+                {
+                    creature.IsPosessed = false;
+                }
                 return;
             }
 
             var dwarf = SelectedMinions[0];
-            dwarf.IsPosessed = true;
-            CameraController.EnableControl = false;
-            CameraController.AutoTarget = dwarf.Position;
-            CameraController.FollowAutoTarget = true;
 
-            if (dwarf.Velocity.Length() > 0.1)
+            if (dwarf.IsPosessed)
             {
-                var above = VoxelHelpers.FindFirstVoxelAbove(new TemporaryVoxelHandle(
-                    World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(dwarf.Position)));
+                CameraController.EnableControl = false;
+                CameraController.AutoTarget = dwarf.Position;
+                CameraController.FollowAutoTarget = true;
 
-                if (above.IsValid)
-                { 
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(above.Coordinate.Y - 1, ChunkManager.SliceMode.Y);
-                }
-                else
+                if (dwarf.Velocity.Length() > 0.1)
                 {
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxelConstants.ChunkSizeY, ChunkManager.SliceMode.Y);
+                    var above = VoxelHelpers.FindFirstVoxelAbove(new TemporaryVoxelHandle(
+                        World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(dwarf.Position)));
+
+                    if (above.IsValid)
+                    {
+                        World.ChunkManager.ChunkData.SetMaxViewingLevel(above.Coordinate.Y - 1, ChunkManager.SliceMode.Y);
+                    }
+                    else
+                    {
+                        World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxelConstants.ChunkSizeY,
+                            ChunkManager.SliceMode.Y);
+                    }
                 }
             }
 

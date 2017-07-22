@@ -28,7 +28,7 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     AutoLayout = AutoLayout.DockLeft,
                     MinimumSize = new Point(32, 48),
-                    Background = idx > 0 ? new TileReference("dwarves", idx) : null
+                    Background = idx >= 0 ? new TileReference("dwarves", idx) : null
                 });
 
                 bar.AddChild(new Widget

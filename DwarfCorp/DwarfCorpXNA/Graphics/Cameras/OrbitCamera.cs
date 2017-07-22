@@ -266,7 +266,9 @@ namespace DwarfCorp
             else if (FollowAutoTarget)
             {
                 Vector3 prevTarget = Target;
-                Target = AutoTarget*0.1f + Target*0.9f;
+                float damper = MathFunctions.Clamp((Target - AutoTarget).Length() - 5, 0, 1);
+                float smooth = 0.1f*damper;
+                Target = AutoTarget * (smooth) + Target * (1.0f - smooth);
                 Position += (Target - prevTarget);
             }
 
@@ -426,7 +428,7 @@ namespace DwarfCorp
 
         public override void UpdateViewMatrix()
         {
-            ViewMatrix = Matrix.CreateLookAt(Position, Target, Vector3.UnitY);
+            ViewMatrix = Matrix.CreateLookAt(Position, FollowAutoTarget ? (AutoTarget * 0.5f + Target * 0.5f) : Target, Vector3.UnitY);
         }
 
         public bool Collide(BoundingBox myBox, BoundingBox box)

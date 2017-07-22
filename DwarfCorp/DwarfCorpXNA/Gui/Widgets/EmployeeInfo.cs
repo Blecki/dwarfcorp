@@ -10,6 +10,7 @@ namespace DwarfCorp.Gui.Widgets
 {
     public class EmployeeInfo : Widget
     {
+        public bool EnablePosession = false;
         private CreatureAI _employee;
         public CreatureAI Employee
         {
@@ -195,10 +196,9 @@ namespace DwarfCorp.Gui.Widgets
                 MinimumSize = new Point(0, 24)
             });
 
-            AddChild(new Widget
+            AddChild(new Button()
             {
                 Text = "Fire",
-                Font = "font-hires",
                 Border = "border-button",
                 AutoLayout = AutoLayout.FloatBottomRight,
                 OnClick = (sender, args) =>
@@ -207,12 +207,26 @@ namespace DwarfCorp.Gui.Widgets
                 }
             });
 
-            LevelButton = right.AddChild(new Widget
+            if (EnablePosession)
             {
-                Text = "Level Up!",
-                Font = "font-hires",
+                AddChild(new Button()
+                {
+                    Text = "Follow",
+                    Tooltip = "Click to directly control this dwarf and have the camera follow.",
+                    AutoLayout = AutoLayout.FloatBottomLeft,
+                    OnClick = (sender, args) =>
+                    {
+                        (sender.Parent as EmployeeInfo).Employee.IsPosessed = true;
+                    }
+                });
+            }
+
+            LevelButton = right.AddChild(new Button()
+            {
+                Text = "Promote!",
                 Border = "border-button",
                 AutoLayout = AutoLayout.FloatBottomLeft,
+                Tooltip = "Click to promote this dwarf.\nPromoting Dwarves raises their pay and makes them\nmore effective workers.",
                 OnClick = (sender, args) =>
                 {
                     Employee.Stats.LevelUp();
@@ -243,7 +257,7 @@ namespace DwarfCorp.Gui.Widgets
             if (Employee != null)
             {
                 var idx = EmployeePanel.GetIconIndex(Employee.Stats.CurrentClass.Name);
-                Icon.Background = idx > 0 ? new TileReference("dwarves", idx) : null;
+                Icon.Background = idx >= 0 ? new TileReference("dwarves", idx) : null;
                 Icon.Invalidate();
                 
                 NameLabel.Text = "\n" + Employee.Stats.FullName;

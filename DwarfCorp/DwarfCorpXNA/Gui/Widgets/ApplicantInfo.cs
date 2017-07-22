@@ -107,7 +107,7 @@ namespace DwarfCorp.Gui.Widgets
                 Biography.Text = Applicant.Biography;
                 Resume.Text = Applicant.CoverLetter;
                 var idx = EmployeePanel.GetIconIndex(Applicant.Class.Name);
-                Portrait.Background = idx > 0 ? new TileReference("dwarves", idx) : null;
+                Portrait.Background = idx >= 0 ? new TileReference("dwarves", idx) : null;
                 Portrait.Invalidate();
 
             }

@@ -337,7 +337,19 @@ namespace DwarfCorp
         public void ZoomToMe()
         {
             Manager.World.Camera.ZoomTo(Position + Vector3.Up * 8.0f);
-            Manager.World.ChunkManager.ChunkData.SetMaxViewingLevel((int)Position.Y, ChunkManager.SliceMode.Y);
+
+            var above = VoxelHelpers.FindFirstVoxelAbove(new TemporaryVoxelHandle(
+                World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Position)));
+
+            if (above.IsValid)
+            {
+                World.ChunkManager.ChunkData.SetMaxViewingLevel(above.Coordinate.Y - 1, ChunkManager.SliceMode.Y);
+            }
+            else
+            {
+                World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxelConstants.ChunkSizeY,
+                    ChunkManager.SliceMode.Y);
+            }
         }
 
         public void HandleReproduction()
