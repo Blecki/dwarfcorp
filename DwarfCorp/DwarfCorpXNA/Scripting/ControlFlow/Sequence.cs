@@ -1,4 +1,4 @@
-﻿// Sequence.cs
+// Sequence.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -93,7 +93,7 @@ namespace DwarfCorp
                 yield break;
             }
             
-            while(CurrentChildIndex < Children.Count && !failed)
+            while(CurrentChildIndex < Children.Count)
             {
                 if (CurrentChild == null)
                 {

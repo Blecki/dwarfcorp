@@ -63,6 +63,24 @@ namespace DwarfCorp
                         Strength = 1,
                         Wisdom = 10
                     }
+                },
+                new Level
+                {
+                    Index = 0,
+                    Name = "Fairy",
+                    Pay = 0,
+                    XP = 9999999,
+                   
+                    BaseStats = new CreatureStats.StatNums()
+                    {
+                        Constitution = 1.0f,
+                        Dexterity = 10,
+                        Charisma = 10,
+                        Intelligence = 10,
+                        Size = 1,
+                        Strength = 1,
+                        Wisdom = 10
+                    }
                 }
             };
         }

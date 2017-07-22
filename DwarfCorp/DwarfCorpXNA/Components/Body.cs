@@ -152,11 +152,14 @@ namespace DwarfCorp
             get { return hasMoved; }
             set
             {
-                hasMoved = value;
-
-                foreach(Body child in Children.OfType<Body>())
+                if (hasMoved != value)
                 {
-                    (child).HasMoved = value;
+                    hasMoved = value;
+
+                    foreach (Body child in Children.OfType<Body>())
+                    {
+                        (child).HasMoved = value;
+                    }
                 }
             }
         }

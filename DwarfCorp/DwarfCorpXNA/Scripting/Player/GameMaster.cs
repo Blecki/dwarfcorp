@@ -500,7 +500,7 @@ namespace DwarfCorp
             }
             else if (key == ControlSettings.Mappings.SliceSelected)
             {
-                if (VoxSelector.VoxelUnderMouse != null)
+                if (VoxSelector.VoxelUnderMouse.IsValid)
                 {
                     World.Tutorial("unslice");
                     World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Coordinate.Y,

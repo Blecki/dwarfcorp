@@ -282,7 +282,7 @@ namespace DwarfCorp
             // Sometimes a goal may not even be achievable a.priori. If this is true, we know there can't be a path 
             // which satisifies that goal.
             // It only makes sense to do inverse plans for goals that have an associated voxel.
-            if (!goal.IsPossible() || goal.GetVoxel() == null)
+            if (!goal.IsPossible() || !goal.GetVoxel().IsValid)
             {
                 toReturn = null;
                 return false;

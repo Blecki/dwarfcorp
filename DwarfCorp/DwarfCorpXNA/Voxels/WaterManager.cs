@@ -260,8 +260,14 @@ namespace DwarfCorp
             var data = chunk.Data;
             for (int i = 0; i < maxSize; i++)
             {
+                if (data.Types[i] != 0)
+                {
+                    data.Water[i].WaterLevel = 0;
+                    data.Water[i].Type = LiquidType.None;
+                    continue;
+                }
                 // Don't check empty cells or cells we've already modified.
-                if (data.Water[i].WaterLevel < 1 || data.Types[i] != 0)
+                if (data.Water[i].WaterLevel < 1)
                 {
                     continue;
                 }

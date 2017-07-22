@@ -1,4 +1,4 @@
-﻿// WhileLoop.cs
+// WhileLoop.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -78,9 +78,7 @@ namespace DwarfCorp
             {
                 Child.Initialize();
 
-                bool childDone = false;
-
-                while(!childDone && CheckCondition())
+                while(CheckCondition())
                 {
                     Status childStatus = Child.Tick();
                     LastTickedChild = Child;
@@ -93,7 +91,6 @@ namespace DwarfCorp
                     else if(childStatus == Status.Success)
                     {
                         yield return Status.Running;
-                        childDone = true;
                         break;
                     }
                     else

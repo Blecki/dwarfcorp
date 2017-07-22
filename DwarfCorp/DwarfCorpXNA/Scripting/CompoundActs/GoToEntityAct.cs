@@ -229,7 +229,7 @@ namespace DwarfCorp
 
                         bool targetMoved = (path.Last().DestinationVoxel.WorldPosition - entity.LocalTransform.Translation).Length() > Math.Max(Radius, 2) * 2;
 
-                        if (MovingTarget && path != null && (path.Count > 0 && targetMoved))
+                        if (MovingTarget && (path.Count > 0 && targetMoved))
                         {
                             break;
                         }

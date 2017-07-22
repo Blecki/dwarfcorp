@@ -1,4 +1,4 @@
-﻿// Parallel.cs
+// Parallel.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -111,14 +111,7 @@ namespace DwarfCorp
                 }
             }
 
-            if(allSuccess)
-            {
-                yield return Status.Success;
-            }
-            else
-            {
-                yield return Status.Fail;
-            }
+            yield return Status.Success;
         }
     }
 

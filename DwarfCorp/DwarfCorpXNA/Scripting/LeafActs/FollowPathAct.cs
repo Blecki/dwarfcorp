@@ -116,7 +116,7 @@ namespace DwarfCorp
             {
                 hasNextAction = true;
                 nextAction = Path[nextID];
-                if (nextAction.DestinationVoxel != null)
+                if (nextAction.DestinationVoxel.IsValid)
                 {
                     diff = (nextAction.DestinationVoxel.WorldPosition + half - (action.DestinationVoxel.WorldPosition + half));
                     diffNorm = diff.Length();
@@ -175,7 +175,7 @@ namespace DwarfCorp
             Vector3 half = Vector3.One * 0.5f;
             half.Y = Creature.Physics.BoundingBox.Extents().Y * 2.0f;
 
-            if (Path[0].DestinationVoxel == null)
+            if (!Path[0].DestinationVoxel.IsValid)
                 yield break;
             Vector3 target = Path[0].DestinationVoxel.WorldPosition + half + RandomPositionOffsets[0];
             Matrix transform = Agent.Physics.LocalTransform;
@@ -331,7 +331,7 @@ namespace DwarfCorp
                         transform.Translation = diff * t + currPosition;
                         Agent.Physics.Velocity = diff;
 
-                        if (action.ActionVoxel != null)
+                        if (action.ActionVoxel.IsValid)
                         {
                             Agent.Physics.Velocity = (action.DestinationVoxel.WorldPosition + Vector3.One*0.5f) - currPosition;
                         }

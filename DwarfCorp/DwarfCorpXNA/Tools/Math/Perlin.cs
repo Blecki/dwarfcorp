@@ -1,4 +1,4 @@
-﻿// Perlin.cs
+// Perlin.cs
 // 
 //  Modified MIT License (MIT)
 //  
