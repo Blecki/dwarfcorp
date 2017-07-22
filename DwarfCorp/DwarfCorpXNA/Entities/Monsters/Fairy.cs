@@ -24,7 +24,7 @@ namespace DwarfCorp
             base(manager, new CreatureStats(new FairyClass(), 0), "Player", manager.World.PlanService, manager.World.Factions.Factions[allies], "Fairy")
         {
             Physics = new Physics(manager, "Fairy", Matrix.CreateTranslation(position),
-                       new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, 0, 0));
+                      new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             Physics.AddChild(this);
 
@@ -111,7 +111,7 @@ namespace DwarfCorp
             MinimapIcon minimapIcon = Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 0))) as MinimapIcon;
 
             //new LightEmitter("Light Emitter", Sprite, Matrix.Identity, Vector3.One, Vector3.One, 255, 150);
-            Physics.AddChild(new Bobber(Manager, 0.25f, 3.0f, MathFunctions.Rand(), Physics.LocalTransform.Translation.Y));
+            Sprite.AddChild(new Bobber(Manager, 0.25f, 3.0f, MathFunctions.Rand(), Sprite.LocalTransform.Translation.Y));
           
             Stats.FullName = TextGenerator.GenerateRandom("$firstname");
             //Stats.LastName = "The Fairy";
@@ -119,8 +119,11 @@ namespace DwarfCorp
             Stats.CanSleep = false;
             Stats.CanEat = false;
             AI.Movement.CanClimbWalls = true;
-            AI.Movement.SetCost(MoveType.ClimbWalls, 5.0f);
-            AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
+            AI.Movement.CanFly = true;
+            AI.Movement.SetCost(MoveType.Fly, 1.0f);
+            AI.Movement.SetSpeed(MoveType.Fly, 1.0f);
+            AI.Movement.SetCost(MoveType.ClimbWalls, 1.0f);
+            AI.Movement.SetSpeed(MoveType.ClimbWalls, 1.0f);
             
             Species = "Fairy";
         }
