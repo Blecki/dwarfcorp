@@ -54,6 +54,9 @@ namespace DwarfCorp
     /// </summary>
     public class ChunkManager
     {
+        //Todo: This belongs in WorldManager!
+        private Splasher Splasher;
+
         public ConcurrentQueue<VoxelChunk> RenderList { get; set; }
         public ConcurrentQueue<VoxelChunk> RebuildList { get; set; }
         public ConcurrentQueue<VoxelChunk> RebuildLiquidsList { get; set; }
@@ -183,6 +186,8 @@ namespace DwarfCorp
                 maxChunksZ * VoxelConstants.ChunkSizeZ / 2.0f);
             Vector3 minBounds = -maxBounds;
             Bounds = new BoundingBox(minBounds, maxBounds);
+
+            Splasher = new Splasher(this);
         }
 
         public void StartThreads()
@@ -750,8 +755,9 @@ GameSettings.Default.FogofWar = fogOfWar;
                 chunk.Update(gameTime);
             }
 
-            Water.Splash(gameTime);
-            Water.HandleTransfers(gameTime);
+            // Todo: This belongs up in world manager.
+            Splasher.Splash(gameTime, Water.GetSplashQueue());
+            Splasher.HandleTransfers(gameTime, Water.GetTransferQueue());
 
             var affectedVoxels = new HashSet<GlobalVoxelCoordinate>();
 

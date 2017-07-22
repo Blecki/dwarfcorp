@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using System.Collections.Concurrent;
+using System.Threading;
 
 namespace DwarfCorp
 {
@@ -51,7 +52,6 @@ namespace DwarfCorp
     /// </summary>
     public class WaterManager
     {
-        private Dictionary<string, Timer> splashNoiseLimiter = new Dictionary<string, Timer>();
         private ChunkManager Chunks { get; set; }
         private int[] updateList;
         private int[] randomIndices;
@@ -59,31 +59,36 @@ namespace DwarfCorp
         public byte EvaporationLevel { get; set; }
 
         public static byte maxWaterLevel = 8;
-        public static byte threeQuarterWaterLevel = (byte)(Math.Round((maxWaterLevel / 8.0f) * 6));
-        public static byte oneHalfWaterLevel;
-        public static byte oneQuarterWaterLevel;
-        public static byte rainFallAmount;
-        public static byte inWaterThreshold;
+        public static byte threeQuarterWaterLevel = 6;
+        public static byte oneHalfWaterLevel = 4;
+        public static byte oneQuarterWaterLevel = 2;
+        public static byte rainFallAmount = 1;
+        public static byte inWaterThreshold = 5;
         public static byte waterMoveThreshold = 1;
+        
+        private LinkedList<SplashType> Splashes = new LinkedList<SplashType>();
+        private Mutex SplashLock = new Mutex();
 
-        public struct Transfer
+        private LinkedList<Transfer> Transfers = new LinkedList<Transfer>();
+        private Mutex TransferLock = new Mutex();
+
+        public IEnumerable<SplashType> GetSplashQueue()
         {
-            public WaterCell cellFrom;
-            public WaterCell cellTo;
-            public byte amount;
-            public GlobalVoxelCoordinate worldLocation;
+            SplashLock.WaitOne();
+            var r = Splashes;
+            Splashes = new LinkedList<SplashType>();
+            SplashLock.ReleaseMutex();
+            return r;
         }
 
-        public struct SplashType
+        public IEnumerable<Transfer> GetTransferQueue()
         {
-            public string name;
-            public Vector3 position;
-            public int numSplashes;
-            public string sound;
+            TransferLock.WaitOne();
+            var r = Transfers;
+            Transfers = new LinkedList<Transfer>();
+            TransferLock.ReleaseMutex();
+            return r;
         }
-
-        public ConcurrentQueue<SplashType> Splashes { get; set; }
-        public ConcurrentQueue<Transfer> Transfers { get; set; }
 
         public WaterManager(ChunkManager chunks)
         {
@@ -95,27 +100,10 @@ namespace DwarfCorp
             // Create reusable arrays for randomized indices
             updateList = new int[VoxelConstants.ChunkVoxelCount];
             randomIndices = new int[VoxelConstants.ChunkVoxelCount];
-
-            Splashes = new ConcurrentQueue<SplashType>();
-            Transfers = new ConcurrentQueue<Transfer>();
-            splashNoiseLimiter["splash2"] = new Timer(0.1f, false);
-            splashNoiseLimiter["flame"] = new Timer(0.1f, false);
-            InitializeStatics();
         }
 
-        public void InitializeStatics()
-        {
-            float oneEighth = maxWaterLevel / 8;
-
-            threeQuarterWaterLevel = (byte)(Math.Round(oneEighth * 6));
-            oneHalfWaterLevel = (byte)(Math.Round(oneEighth * 4));
-            oneQuarterWaterLevel = (byte)(Math.Round(oneEighth * 2));
-            rainFallAmount = (byte)(Math.Round(oneEighth));
-            inWaterThreshold = (byte)(Math.Round(oneEighth * 5));
-            waterMoveThreshold = 1;
-        }
-
-        public void CreateTransfer(GlobalVoxelCoordinate worldPosition, WaterCell water1, WaterCell water2, byte amount)
+        public void CreateTransfer(
+            GlobalVoxelCoordinate worldPosition, WaterCell water1, WaterCell water2, byte amount)
         {
             Transfer transfer = new Transfer();
             transfer.amount = amount;
@@ -123,98 +111,48 @@ namespace DwarfCorp
             transfer.cellTo = water2;
             transfer.worldLocation = worldPosition;
 
-            Transfers.Enqueue(transfer);
+            TransferLock.WaitOne();
+            Transfers.AddFirst(transfer);
+            TransferLock.ReleaseMutex();
         }
 
         public void CreateSplash(Vector3 pos, LiquidType liquid)
         {
             if (MathFunctions.RandEvent(0.9f)) return;
+
+            SplashType splash;
+
             switch(liquid)
             {
                 case LiquidType.Water:
                 {
-                    SplashType splash = new SplashType
+                    splash = new SplashType
                     {
                         name = "splash2",
                         numSplashes = 2,
                         position = pos,
                         sound = ContentPaths.Audio.river
                     };
-                    Splashes.Enqueue(splash);
                 }
                     break;
                 case LiquidType.Lava:
                 {
-                    SplashType splash = new SplashType
+                    splash = new SplashType
                     {
                         name = "flame",
                         numSplashes = 5,
                         position = pos,
                         sound = ContentPaths.Audio.fire
                     };
-                    Splashes.Enqueue(splash);
                 }
                     break;
-            }
-        }
-
-        public void HandleTransfers(DwarfTime time)
-        {
-            while(Transfers.Count > 0)
-            {
-                Transfer transfer;
-
-                if(!Transfers.TryDequeue(out transfer))
-                {
-                    break;
-                }
-
-                if((transfer.cellFrom.Type == LiquidType.Lava 
-                && transfer.cellTo.Type == LiquidType.Water) || 
-                (transfer.cellFrom.Type == LiquidType.Water && transfer.cellTo.Type == LiquidType.Lava))
-                {
-                    var v = new TemporaryVoxelHandle(Chunks.ChunkData, transfer.worldLocation);
-
-                    if(v.IsValid)
-                    {
-                        VoxelLibrary.PlaceType(VoxelLibrary.GetVoxelType("Stone"), v);
-
-                        v.WaterCell = new WaterCell
-                        {
-                            Type = LiquidType.None,
-                            WaterLevel = 0
-                        };
-
-                        v.Chunk.ShouldRebuild = true;
-                        v.Chunk.ShouldRecalculateLighting = true;
-                    }
-                }
-            }
-        }
-
-        public void Splash(DwarfTime time)
-        {
-            while (Splashes.Count > 0)
-            {
-                SplashType splash;
-
-                if (!Splashes.TryDequeue(out splash))
-                {
-                    break;
-                }
-
-                Chunks.World.ParticleManager.Trigger(splash.name, splash.position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, splash.numSplashes);
-
-                if (splashNoiseLimiter[splash.name].HasTriggered)
-                {
-                    SoundManager.PlaySound(splash.sound, splash.position + new Vector3(0.5f, 0.5f, 0.5f), true);
-                }
+                default:
+                    throw new InvalidOperationException();
             }
 
-            foreach (Timer t in splashNoiseLimiter.Values)
-            {
-                t.Update(time);
-            }
+            SplashLock.WaitOne();
+            Splashes.AddFirst(splash);
+            SplashLock.ReleaseMutex();
         }
 
         public float GetSpreadRate(LiquidType type)
