@@ -174,6 +174,7 @@ namespace DwarfCorp
                 }
                 yield return Act.Status.Running;
             }
+            yield break;
         }
 
 

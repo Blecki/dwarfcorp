@@ -1,4 +1,4 @@
-﻿// FlyWanderAct.cs
+// FlyWanderAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -201,8 +201,12 @@ namespace DwarfCorp
                     if (State == FlyState.SearchingForPerch)
                     {
                         var vox = Creature.Physics.CurrentVoxel;
-
-                        if (vox.WaterCell.WaterLevel > 0)
+                        if (!vox.IsValid)
+                        {
+                            yield return Act.Status.Running;
+                            continue;
+                        }
+                        if (vox.IsValid && vox.WaterCell.WaterLevel > 0)
                         {
                             yield return Act.Status.Running;
                             continue;

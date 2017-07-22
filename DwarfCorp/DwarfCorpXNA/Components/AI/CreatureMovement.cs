@@ -257,7 +257,7 @@ namespace DwarfCorp
         /// <summary> gets the list of actions that the creature can take from a given voxel. </summary>
         public IEnumerable<MoveAction> GetMoveActions(TemporaryVoxelHandle voxel)
         {
-            if (!voxel.IsEmpty)
+            if (!voxel.IsValid || !voxel.IsEmpty)
                 yield break;
 
             CollisionManager objectHash = Creature.Manager.World.CollisionManager;

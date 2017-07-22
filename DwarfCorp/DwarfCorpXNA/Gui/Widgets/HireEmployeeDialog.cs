@@ -76,6 +76,7 @@ namespace DwarfCorp.Gui.Widgets
                     MinimumSize = new Point(32*2, 48*2 + 15),
                     AutoLayout = AutoLayout.DockLeft
                 });
+                var idx = EmployeePanel.GetIconIndex(job.Value.Name);
                 frame.AddChild(new ImageButton()
                 {
                     Tooltip = "Click to review applications for " + job.Value.Name,
@@ -89,7 +90,7 @@ namespace DwarfCorp.Gui.Widgets
                         HireButton.Invalidate();
                         applicantInfo.Applicant = GenerateApplicant(Company, newJob);
                     },
-                    Background = new TileReference("dwarves", EmployeePanel.GetIconIndex(job.Value.Name)),
+                    Background = idx > 0 ? new TileReference("dwarves", idx) : null,
                     MinimumSize = new Point(32 * 2, 48 * 2),
                     MaximumSize = new Point(32 * 2, 48 * 2)
                 });

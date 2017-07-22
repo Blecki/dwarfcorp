@@ -999,7 +999,7 @@ namespace DwarfCorp.GameStates
                         Icon = data.Icon,
                         Tooltip = "Craft " + data.Name,
                         KeepChildVisible = true, // So the player can interact with the popup.
-
+                        ExpandChildWhenDisabled = true,
                         PopupChild = new BuildCraftInfo
                         {
                             Data = data,

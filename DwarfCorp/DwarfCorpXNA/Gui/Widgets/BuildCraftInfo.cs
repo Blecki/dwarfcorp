@@ -170,12 +170,16 @@ namespace DwarfCorp.Gui.Widgets
                 var nearestBuildLocation = World.PlayerFaction.FindNearestItemWithTags(Data.CraftLocation, Vector3.Zero, false);
 
                 if (nearestBuildLocation == null)
+                {
                     return false;
+                }
             }
 
             foreach (var resourceAmount in Data.RequiredResources)
                 if (Master.Faction.ListResourcesWithTag(resourceAmount.ResourceType).Count == 0)
+                {
                     return false;
+                }
 
             return true;
         }
