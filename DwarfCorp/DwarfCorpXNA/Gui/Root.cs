@@ -42,6 +42,7 @@ namespace DwarfCorp.Gui
         public MousePointer SpecialIndicator = null;
         public Point SpecialIndicatorPosition = new Point(0, 0);
         public Rectangle? SpecialHiliteRegion = null;
+        public Widget SpecialHighligtedWidget = null;
         public String SpecialHiliteSheet = null;
 
         public void ClearSpecials()
@@ -620,21 +621,30 @@ namespace DwarfCorp.Gui
 
             if (SpecialHiliteRegion.HasValue && !String.IsNullOrEmpty(SpecialHiliteSheet))
             {
-                var sheet = GetTileSheet(SpecialHiliteSheet);
-                var area = SpecialHiliteRegion.Value.Interior(-sheet.TileWidth, -sheet.TileHeight,
-                    -sheet.TileWidth, -sheet.TileHeight);
-                var mesh = Mesh.CreateScale9Background(area, sheet);
-                mesh.Render(RenderData.Device);
+                if (SpecialHighligtedWidget == null || !SpecialHighligtedWidget.Hidden)
+                {
+                    var sheet = GetTileSheet(SpecialHiliteSheet);
+                    var area = SpecialHiliteRegion.Value.Interior(-sheet.TileWidth, -sheet.TileHeight,
+                        -sheet.TileWidth, -sheet.TileHeight);
+                    var mesh = Mesh.CreateScale9Background(area, sheet);
+                    mesh.Render(RenderData.Device);
+                }
             }
 
             if (SpecialIndicator != null)
             {
-                var tileSheet = GetTileSheet(SpecialIndicator.Sheet);
-                var mouseMesh = Mesh.Quad()
-                    .Scale(tileSheet.TileWidth, tileSheet.TileHeight)
-                    .Translate(SpecialIndicatorPosition.X + (float)Math.Sin(DwarfTime.LastTime.TotalRealTime.TotalSeconds * 4.0) * 8.0f, SpecialIndicatorPosition.Y)
-                    .Texture(tileSheet.TileMatrix(SpecialIndicator.AnimationFrame));
-                mouseMesh.Render(RenderData.Device);
+                if (SpecialHighligtedWidget == null || !SpecialHighligtedWidget.Hidden)
+                {
+                    var tileSheet = GetTileSheet(SpecialIndicator.Sheet);
+                    var mouseMesh = Mesh.Quad()
+                        .Scale(tileSheet.TileWidth, tileSheet.TileHeight)
+                        .Translate(
+                            SpecialIndicatorPosition.X +
+                            (float) Math.Sin(DwarfTime.LastTime.TotalRealTime.TotalSeconds*4.0)*8.0f,
+                            SpecialIndicatorPosition.Y)
+                        .Texture(tileSheet.TileMatrix(SpecialIndicator.AnimationFrame));
+                    mouseMesh.Render(RenderData.Device);
+                }
             }
 
             if (MouseVisible && MousePointer != null)

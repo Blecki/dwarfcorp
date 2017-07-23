@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,7 +22,16 @@ namespace DwarfCorp.Gui
         public Dictionary<String, ITileSheet> TileSheets { get; private set; }
         public Rectangle VirtualScreen { get; private set; }
         public Rectangle RealScreen { get; private set; }
-        public int ScaleRatio { get { return DwarfCorp.GameSettings.Default.GuiScale; } }
+        public int ScaleRatio { get { return CalculateScale(); } }
+
+        public int CalculateScale()
+        {
+            if (!DwarfCorp.GameSettings.Default.GuiAutoScale) return DwarfCorp.GameSettings.Default.GuiScale;
+            float scaleX = ActualScreenBounds.X/1920.0f;
+            float scaleY = ActualScreenBounds.Y/1080.0f;
+            float maxScale = Math.Max(scaleX, scaleY);
+            return (int) MathFunctions.Clamp((int)Math.Ceiling(maxScale), 1, 10);
+        }
 
         public RenderData(GraphicsDevice Device, ContentManager Content, String Effect, String Skin)
         {

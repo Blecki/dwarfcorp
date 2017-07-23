@@ -81,7 +81,7 @@ namespace DwarfCorp
         private Thread WaterThread { get; set; }
 
         private readonly Timer generateChunksTimer = new Timer(0.5f, false, Timer.TimerMode.Real);
-        private readonly Timer waterUpdateTimer = new Timer(0.15f, false, Timer.TimerMode.Real);
+        private readonly Timer waterUpdateTimer = new Timer(0.016f, false, Timer.TimerMode.Real);
 
         public BoundingBox Bounds { get; set; }
 

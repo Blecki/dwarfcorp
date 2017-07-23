@@ -93,6 +93,7 @@ namespace DwarfCorp.Tutorial
                     if (widget != null)
                     {
                         Gui.SpecialHiliteRegion = widget.Rect;
+                        Gui.SpecialHighligtedWidget = widget;
                         Gui.SpecialHiliteSheet = "border-hilite";
 
                         if (widget.Rect.Right < Gui.RenderData.VirtualScreen.Width / 2 ||
