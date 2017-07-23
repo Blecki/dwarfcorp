@@ -120,6 +120,7 @@ namespace DwarfCorp
             updateList = new int[VoxelConstants.ChunkVoxelCount];
             randomIndices = new int[VoxelConstants.ChunkVoxelCount];
 
+            // Create permutation arrays for random update orders.
             SlicePermutations = new int[16][];
             var temp = new int[VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeZ];
             for (var i = 0; i < temp.Length; ++i)
@@ -555,6 +556,8 @@ namespace DwarfCorp
                         }
                     }
 
+                    if (water.WaterLevel <= 1) continue;
+
                     // Nothing left to do but spread.
 
                     RollArray(NeighborPermutations[MathFunctions.RandInt(0, NeighborPermutations.Length)], NeighborScratch, MathFunctions.RandInt(0, 4));
@@ -579,16 +582,14 @@ namespace DwarfCorp
                                 currentVoxel.WaterCell = new WaterCell
                                 {
                                     Type = newWater == 0 ? LiquidType.None : water.Type,
-                                    WaterLevel = (byte)(amountToMove)
+                                    WaterLevel = (byte)(water.WaterLevel - amountToMove)
                                 };
 
                                 neighborVoxel.WaterCell = new WaterCell
                                 {
                                     Type = neighborWater.Type == LiquidType.None ? water.Type : neighborWater.Type,
-                                    WaterLevel = (byte)(neighborWater.Type + amountToMove)
+                                    WaterLevel = (byte)(neighborWater.WaterLevel + amountToMove)
                                 };
-
-                                water = currentVoxel.WaterCell;
 
                                 CreateTransfer(neighborVoxel, water, neighborWater, (byte)amountToMove);
                                 updateOccured = true;
