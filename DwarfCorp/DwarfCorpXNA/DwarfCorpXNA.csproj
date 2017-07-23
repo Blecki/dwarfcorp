@@ -386,6 +386,7 @@
     <Compile Include="Voxels\VoxelData.cs" />
     <Compile Include="Voxels\VoxelHelpers\FindFirstVoxelBelow.cs" />
     <Compile Include="Voxels\VoxelHelpers\FindFirstVoxelAbove.cs" />
+    <Compile Include="Voxels\Splasher.cs" />
     <Compile Include="World\IndicatorManager.cs" />
     <Compile Include="Gui\Enums.cs" />
     <Compile Include="Gui\Geo\Basics.cs" />

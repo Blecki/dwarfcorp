@@ -18,7 +18,7 @@ namespace DwarfCorp
 
         public static Int32 DataIndexOf(LocalVoxelCoordinate C)
         {
-            return (C.Z * ChunkSizeY + C.Y) * ChunkSizeX + C.X;
+            return (C.Y * ChunkSizeX * ChunkSizeZ) + (C.Z * ChunkSizeX) + C.X;
         }
     }
 }

@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using System.Collections.Concurrent;
+using System.Threading;
 
 namespace DwarfCorp
 {
@@ -51,7 +52,6 @@ namespace DwarfCorp
     /// </summary>
     public class WaterManager
     {
-        private Dictionary<string, Timer> splashNoiseLimiter = new Dictionary<string, Timer>();
         private ChunkManager Chunks { get; set; }
         private int[] updateList;
         private int[] randomIndices;
@@ -59,31 +59,55 @@ namespace DwarfCorp
         public byte EvaporationLevel { get; set; }
 
         public static byte maxWaterLevel = 8;
-        public static byte threeQuarterWaterLevel = (byte)(Math.Round((maxWaterLevel / 8.0f) * 6));
-        public static byte oneHalfWaterLevel;
-        public static byte oneQuarterWaterLevel;
-        public static byte rainFallAmount;
-        public static byte inWaterThreshold;
+        public static byte threeQuarterWaterLevel = 6;
+        public static byte oneHalfWaterLevel = 4;
+        public static byte oneQuarterWaterLevel = 2;
+        public static byte rainFallAmount = 1;
+        public static byte inWaterThreshold = 5;
         public static byte waterMoveThreshold = 1;
 
-        public struct Transfer
+        private int[][] SlicePermutations;
+        private int[][] NeighborPermutations = new int[][]
         {
-            public WaterCell cellFrom;
-            public WaterCell cellTo;
-            public byte amount;
-            public GlobalVoxelCoordinate worldLocation;
+            new int[] { 0, 1, 2, 3 },
+            new int[] { 0, 1, 3, 2 },
+            new int[] { 0, 2, 1, 3 },
+            new int[] { 0, 2, 3, 1 },
+            new int[] { 0, 3, 1, 2 },
+            new int[] { 0, 3, 2, 1 }
+        };
+
+        private void RollArray(int[] from, int[] into, int offset)
+        {
+            for (var i = 0; i < 4; ++i)
+            {
+                into[offset] = from[i];
+                offset = (offset + 1) & 0x3;
+            }
+        }
+                
+        private LinkedList<LiquidSplash> Splashes = new LinkedList<LiquidSplash>();
+        private Mutex SplashLock = new Mutex();
+        private LinkedList<LiquidTransfer> Transfers = new LinkedList<LiquidTransfer>();
+        private Mutex TransferLock = new Mutex();
+
+        public IEnumerable<LiquidSplash> GetSplashQueue()
+        {
+            SplashLock.WaitOne();
+            var r = Splashes;
+            Splashes = new LinkedList<LiquidSplash>();
+            SplashLock.ReleaseMutex();
+            return r;
         }
 
-        public struct SplashType
+        public IEnumerable<LiquidTransfer> GetTransferQueue()
         {
-            public string name;
-            public Vector3 position;
-            public int numSplashes;
-            public string sound;
+            TransferLock.WaitOne();
+            var r = Transfers;
+            Transfers = new LinkedList<LiquidTransfer>();
+            TransferLock.ReleaseMutex();
+            return r;
         }
-
-        public ConcurrentQueue<SplashType> Splashes { get; set; }
-        public ConcurrentQueue<Transfer> Transfers { get; set; }
 
         public WaterManager(ChunkManager chunks)
         {
@@ -96,125 +120,68 @@ namespace DwarfCorp
             updateList = new int[VoxelConstants.ChunkVoxelCount];
             randomIndices = new int[VoxelConstants.ChunkVoxelCount];
 
-            Splashes = new ConcurrentQueue<SplashType>();
-            Transfers = new ConcurrentQueue<Transfer>();
-            splashNoiseLimiter["splash2"] = new Timer(0.1f, false);
-            splashNoiseLimiter["flame"] = new Timer(0.1f, false);
-            InitializeStatics();
+            SlicePermutations = new int[16][];
+            var temp = new int[VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeZ];
+            for (var i = 0; i < temp.Length; ++i)
+                temp[i] = i;
+            for (var i = 0; i < 16; ++i)
+            {
+                temp.Shuffle();
+                SlicePermutations[i] = temp.ToArray(); // Copies the array
+            }
         }
 
-        public void InitializeStatics()
+        public void CreateTransfer(
+            TemporaryVoxelHandle Vox, WaterCell water1, WaterCell water2, byte amount)
         {
-            float oneEighth = maxWaterLevel / 8;
-
-            threeQuarterWaterLevel = (byte)(Math.Round(oneEighth * 6));
-            oneHalfWaterLevel = (byte)(Math.Round(oneEighth * 4));
-            oneQuarterWaterLevel = (byte)(Math.Round(oneEighth * 2));
-            rainFallAmount = (byte)(Math.Round(oneEighth));
-            inWaterThreshold = (byte)(Math.Round(oneEighth * 5));
-            waterMoveThreshold = 1;
-        }
-
-        public void CreateTransfer(GlobalVoxelCoordinate worldPosition, WaterCell water1, WaterCell water2, byte amount)
-        {
-            Transfer transfer = new Transfer();
+            LiquidTransfer transfer = new LiquidTransfer();
             transfer.amount = amount;
             transfer.cellFrom = water1;
             transfer.cellTo = water2;
-            transfer.worldLocation = worldPosition;
+            transfer.Location = Vox;
 
-            Transfers.Enqueue(transfer);
+            TransferLock.WaitOne();
+            Transfers.AddFirst(transfer);
+            TransferLock.ReleaseMutex();
         }
 
         public void CreateSplash(Vector3 pos, LiquidType liquid)
         {
             if (MathFunctions.RandEvent(0.9f)) return;
+
+            LiquidSplash splash;
+
             switch(liquid)
             {
                 case LiquidType.Water:
                 {
-                    SplashType splash = new SplashType
+                    splash = new LiquidSplash
                     {
                         name = "splash2",
                         numSplashes = 2,
                         position = pos,
                         sound = ContentPaths.Audio.river
                     };
-                    Splashes.Enqueue(splash);
                 }
                     break;
                 case LiquidType.Lava:
                 {
-                    SplashType splash = new SplashType
+                    splash = new LiquidSplash
                     {
                         name = "flame",
                         numSplashes = 5,
                         position = pos,
                         sound = ContentPaths.Audio.fire
                     };
-                    Splashes.Enqueue(splash);
                 }
                     break;
-            }
-        }
-
-        public void HandleTransfers(DwarfTime time)
-        {
-            while(Transfers.Count > 0)
-            {
-                Transfer transfer;
-
-                if(!Transfers.TryDequeue(out transfer))
-                {
-                    break;
-                }
-
-                if((transfer.cellFrom.Type == LiquidType.Lava 
-                && transfer.cellTo.Type == LiquidType.Water) || 
-                (transfer.cellFrom.Type == LiquidType.Water && transfer.cellTo.Type == LiquidType.Lava))
-                {
-                    var v = new TemporaryVoxelHandle(Chunks.ChunkData, transfer.worldLocation);
-
-                    if(v.IsValid)
-                    {
-                        VoxelLibrary.PlaceType(VoxelLibrary.GetVoxelType("Stone"), v);
-
-                        v.WaterCell = new WaterCell
-                        {
-                            Type = LiquidType.None,
-                            WaterLevel = 0
-                        };
-
-                        v.Chunk.ShouldRebuild = true;
-                        v.Chunk.ShouldRecalculateLighting = true;
-                    }
-                }
-            }
-        }
-
-        public void Splash(DwarfTime time)
-        {
-            while (Splashes.Count > 0)
-            {
-                SplashType splash;
-
-                if (!Splashes.TryDequeue(out splash))
-                {
-                    break;
-                }
-
-                Chunks.World.ParticleManager.Trigger(splash.name, splash.position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, splash.numSplashes);
-
-                if (splashNoiseLimiter[splash.name].HasTriggered)
-                {
-                    SoundManager.PlaySound(splash.sound, splash.position + new Vector3(0.5f, 0.5f, 0.5f), true);
-                }
+                default:
+                    throw new InvalidOperationException();
             }
 
-            foreach (Timer t in splashNoiseLimiter.Values)
-            {
-                t.Update(time);
-            }
+            SplashLock.WaitOne();
+            Splashes.AddFirst(splash);
+            SplashLock.ReleaseMutex();
         }
 
         public float GetSpreadRate(LiquidType type)
@@ -237,19 +204,34 @@ namespace DwarfCorp
                 return;
             }
 
-            List<VoxelChunk> chunksToUpdate = Chunks.ChunkData.ChunkMap.Select(chunks => chunks.Value).ToList();
+            //List<VoxelChunk> chunksToUpdate = Chunks.ChunkData.ChunkMap.Select(chunks => chunks.Value).ToList();
 
-            chunksToUpdate.Sort(Chunks.CompareChunkDistance);
-            int chunksUpdated = 0;
+            //chunksToUpdate.Sort(Chunks.CompareChunkDistance);
+            //int chunksUpdated = 0;
 
-            foreach(VoxelChunk chunk in chunksToUpdate)
+            foreach(var chunk in Chunks.ChunkData.ChunkMap.Values)
             {
-                if (chunksUpdated >= maxChunks)
-                    continue;
+                //if (chunksUpdated >= maxChunks)
+                //    continue;
 
-                chunksUpdated++;
+                //chunksUpdated++;
 
-                if(!UpdateChunk(chunk) && !chunk.FirstWaterIter)
+                bool didUpdate = false;
+
+                //if (MathFunctions.RandEvent(0.5f))
+                //{
+                    GamePerformance.Instance.StartTrackPerformance("New Water Update");
+                    didUpdate = ReplacementDiscreteUpdate(chunk);
+                    GamePerformance.Instance.StopTrackPerformance("New Water Update");
+                //}
+                //else
+                //{
+                //    GamePerformance.Instance.StartTrackPerformance("Old Water Update");
+                //    didUpdate = DiscreteUpdate(chunk);
+                //    GamePerformance.Instance.StopTrackPerformance("Old Water Update");
+                //}
+
+                if (!didUpdate && !chunk.FirstWaterIter)
                 {
                     chunk.FirstWaterIter = false;
                     continue;
@@ -260,59 +242,19 @@ namespace DwarfCorp
             }
         }
 
-        public int CompareLevels(byte A, byte B)
-        {
-            if (A.Equals(B))
-            {
-                return 0;
-            }
-            else
-            {
-                if (A > B)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return -1;
-                }
-            }
-        }
-
-        private int CompareFlowVectors(Vector3 A, Vector3 B, Vector3 flow)
-        {
-            if (A.Equals(B))
-            {
-                return 0;
-            }
-            else
-            {
-                float dotA = Vector3.Dot(A, flow);
-                float dotB = Vector3.Dot(B, flow);
-
-                if (dotA > dotB)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return -1;
-                }
-            }
-        }
-
         private static Vector3 CoordsAt(int idx)
         {
             int x = idx % (VoxelConstants.ChunkSizeX);
-            idx /= (VoxelConstants.ChunkSizeX);
-            int y = idx % (VoxelConstants.ChunkSizeY);
-            idx /= (VoxelConstants.ChunkSizeY);
-            int z = idx;
+            idx /= VoxelConstants.ChunkSizeX;
+            int z = idx % (VoxelConstants.ChunkSizeZ);
+            idx /= VoxelConstants.ChunkSizeZ;
+            int y = idx;
             return new Vector3(x, y, z);
         }
 
+        /*
         public bool DiscreteUpdate(VoxelChunk chunk)
-        {
+        {            
             var gridCoord = Vector3.Zero;
             bool updateOccurred = false;
             WaterCell cellBelow = new WaterCell();
@@ -357,9 +299,7 @@ namespace DwarfCorp
 
                 // Don't check empty cells or cells we've already modified.
                 if (data.Water[idx].Type == LiquidType.None || data.Types[idx] != 0)
-                {
                     continue;
-                }
 
                 //Todo: %KILL% the CoordsAt bit.
                 gridCoord = CoordsAt(idx);
@@ -382,6 +322,8 @@ namespace DwarfCorp
                     data.Water[idx].Type = LiquidType.None;
 
                     updateOccurred = true;
+
+                    continue;
                 }
 
                 bool shouldFall = false;
@@ -393,29 +335,14 @@ namespace DwarfCorp
                 if (y > 0)
                 {
                     voxBelow = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y - 1, z));
+
                     if (voxBelow.IsEmpty)
                     {
                         cellBelow = voxBelow.WaterCell;
                         shouldFall = true;
                     }
                 }
-                /*  This is commented out as Chunks take up the full vertical space.  This needs to be added/fixed if the chunks take up less space.
-                else
-                {
-                    if(chunk.Manager.ChunkData.DoesWaterCellExist(worldPos))
-                    {
-                        DestinationVoxel voxelsBelow = chunk.Manager.ChunkData.GetVoxel(chunk, worldPos + new Vector3(0, -1, 0));
-
-                        if(voxelsBelow != null && voxelsBelow.IsEmpty)
-                        {
-                            cellBelow = chunk.Manager.ChunkData.GetWaterCellAtLocation(worldPos + new Vector3(0, -1, 0));
-                            shouldFall = true;
-                            cellBelow.IsFalling = true;
-                        }
-                    }
-                }
-                 */
-
+                
                 // Cases where the fluid can fall down.
                 if (shouldFall)
                 {
@@ -433,7 +360,7 @@ namespace DwarfCorp
                         data.Water[idx].WaterLevel = 0;
                         data.Water[idx].Type = LiquidType.None;
                         voxBelow.WaterCell = cellBelow;
-                        CreateTransfer(GlobalVoxelCoordinate.FromVector3(worldPos), data.Water[idx], cellBelow, cellBelow.WaterLevel);
+                        CreateTransfer(new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x,y, z)), data.Water[idx], cellBelow, cellBelow.WaterLevel);
                         updateOccurred = true;
 
                         continue;
@@ -457,7 +384,7 @@ namespace DwarfCorp
                                 data.Water[idx].WaterLevel = 0;
                                 data.Water[idx].Type = LiquidType.None;
 
-                                CreateTransfer(GlobalVoxelCoordinate.FromVector3(worldPos - Vector3.UnitY), data.Water[idx], cellBelow, transfer);
+                                CreateTransfer(voxBelow, data.Water[idx], cellBelow, transfer);
                                 voxBelow.WaterCell = cellBelow;
                                 updateOccurred = true;
                                 continue;
@@ -471,7 +398,9 @@ namespace DwarfCorp
                                 {
                                     cellBelow.Type = data.Water[idx].Type;
                                 }
-                                CreateTransfer(GlobalVoxelCoordinate.FromVector3(worldPos - Vector3.UnitY), data.Water[idx], cellBelow, spaceLeft);
+
+                                CreateTransfer(voxBelow, data.Water[idx], cellBelow, spaceLeft);
+
                                 voxBelow.WaterCell = cellBelow;
                             }
                         }
@@ -507,7 +436,7 @@ namespace DwarfCorp
                         updateOccurred = true;
                     }
 
-                    CreateTransfer(globalCoordinate, data.Water[idx], neighborWater, amountToMove);
+                    CreateTransfer(v, data.Water[idx], neighborWater, amountToMove);
 
                     data.Water[idx].WaterLevel -= amountToMove;
                     neighborWater.WaterLevel += amountToMove;
@@ -532,11 +461,147 @@ namespace DwarfCorp
 
             return updateOccurred;
         }
+        //*/
 
-        public bool UpdateChunk(VoxelChunk chunk)
+        private int[] NeighborScratch = new int[4];
+
+        public bool ReplacementDiscreteUpdate(VoxelChunk chunk)
         {
-            return DiscreteUpdate(chunk);
-        }
-    }
+            bool updateOccured = false;
 
+            for (var y = 0; y < VoxelConstants.ChunkSizeY; ++y)
+            {
+                // Apply 'liquid present' tracking in voxel data to skip entire slices.
+                if (chunk.Data.LiquidPresent[y] == 0) continue;
+
+                var layerOrder = SlicePermutations[MathFunctions.RandInt(0, SlicePermutations.Length)];
+
+                for (var i = 0; i < layerOrder.Length; ++i)
+                {
+                    var x = layerOrder[i] % VoxelConstants.ChunkSizeX;
+                    var z = (layerOrder[i] >> VoxelConstants.XDivShift) % VoxelConstants.ChunkSizeZ;
+                    var currentVoxel = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
+
+                    if (currentVoxel.TypeID != 0)
+                        continue;
+
+                    var water = currentVoxel.WaterCell;
+
+                    if (water.WaterLevel < 1 || water.Type == LiquidType.None)
+                        continue;
+
+                    // Evaporate.
+                    //if (water.WaterLevel <= EvaporationLevel && MathFunctions.RandEvent(0.01f))
+                    //{
+                    //    if (water.Type == LiquidType.Lava)
+                    //    {
+                    //        currentVoxel.Type = VoxelLibrary.GetVoxelType("Stone");
+                    //        chunk.ShouldRebuild = true;
+                    //        chunk.ShouldRecalculateLighting = true;
+                    //    }
+
+                    //    currentVoxel.WaterCell = new WaterCell
+                    //    {
+                    //        Type = LiquidType.None,
+                    //        WaterLevel = 0
+                    //    };
+
+                    //    updateOccured = true;
+                    //    continue;
+                    //}
+
+                    var voxBelow = (y > 0) ? new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y - 1, z)) : TemporaryVoxelHandle.InvalidHandle;
+
+                    if (voxBelow.IsValid && voxBelow.IsEmpty)
+                    {
+                        // Fall into the voxel below.
+
+                        var belowWater = voxBelow.WaterCell;
+
+                        // Special case: No liquid below, just drop down.
+                        if (belowWater.WaterLevel == 0)
+                        {
+                            CreateSplash(currentVoxel.Coordinate.ToVector3(), water.Type);
+                            voxBelow.WaterCell = water;
+                            currentVoxel.WaterCell = WaterCell.Empty;
+                            CreateTransfer(voxBelow, water, belowWater, water.WaterLevel);
+                            updateOccured = true;
+                            continue;
+                        }
+
+                        var spaceLeftBelow = maxWaterLevel - belowWater.WaterLevel;
+
+                        if (spaceLeftBelow >= water.WaterLevel)
+                        {
+                            CreateSplash(currentVoxel.Coordinate.ToVector3(), water.Type);
+                            belowWater.WaterLevel += water.WaterLevel;
+                            voxBelow.WaterCell = belowWater;
+                            currentVoxel.WaterCell = WaterCell.Empty;
+                            CreateTransfer(voxBelow, water, belowWater, water.WaterLevel);
+                            updateOccured = true;
+                            continue;
+                        }
+
+                        if (spaceLeftBelow > 0)
+                        {
+                            CreateSplash(currentVoxel.Coordinate.ToVector3(), water.Type);
+                            water.WaterLevel = (byte)(water.WaterLevel - maxWaterLevel + belowWater.WaterLevel);
+                            belowWater.WaterLevel = maxWaterLevel;
+                            voxBelow.WaterCell = belowWater;
+                            currentVoxel.WaterCell = water;
+                            CreateTransfer(voxBelow, water, belowWater, water.WaterLevel);
+                            updateOccured = true;
+                            continue;
+                        }
+                    }
+
+                    // Nothing left to do but spread.
+
+                    RollArray(NeighborPermutations[MathFunctions.RandInt(0, NeighborPermutations.Length)], NeighborScratch, MathFunctions.RandInt(0, 4));
+
+                    for (var n = 0; n < NeighborScratch.Length; ++n)
+                    {
+                        var neighborOffset = VoxelHelpers.ManhattanNeighbors2D[NeighborScratch[n]];
+                        var neighborVoxel = new TemporaryVoxelHandle(Chunks.ChunkData,
+                            currentVoxel.Coordinate + neighborOffset);
+
+                        if (neighborVoxel.IsValid && neighborVoxel.IsEmpty)
+                        {
+                            var neighborWater = neighborVoxel.WaterCell;
+
+                            if (neighborWater.WaterLevel < water.WaterLevel)
+                            {
+                                var amountToMove = (int)(water.WaterLevel * GetSpreadRate(water.Type));
+                                if (neighborWater.WaterLevel + amountToMove > maxWaterLevel)
+                                    amountToMove = maxWaterLevel - neighborWater.WaterLevel;
+                                var newWater = water.WaterLevel - amountToMove;
+
+                                currentVoxel.WaterCell = new WaterCell
+                                {
+                                    Type = newWater == 0 ? LiquidType.None : water.Type,
+                                    WaterLevel = (byte)(amountToMove)
+                                };
+
+                                neighborVoxel.WaterCell = new WaterCell
+                                {
+                                    Type = neighborWater.Type == LiquidType.None ? water.Type : neighborWater.Type,
+                                    WaterLevel = (byte)(neighborWater.Type + amountToMove)
+                                };
+
+                                water = currentVoxel.WaterCell;
+
+                                CreateTransfer(neighborVoxel, water, neighborWater, (byte)amountToMove);
+                                updateOccured = true;
+                                break; 
+                            }
+
+                        }
+                    }
+                }
+            }
+
+            return updateOccured;
+        }
+
+    }
 }

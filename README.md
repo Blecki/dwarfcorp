@@ -4,6 +4,9 @@
 
 [DwarfCorp](www.dwarfcorp.com) from [Completely Fair Games](www.completelyfairgames.com) is a single player tycoon/strategy game for PC. In the game, the player manages a corporate colony of dwarves. The dwarves must mine resources, build structures, and contend with the natives to survive.
 
+## BEFORE READING
+If you're a developer/programmer and have the technical chops to compile C# code on Windows, continue reading. Otherwise, if you just want to play the game, download a binary package [from our website](http://www.dwarfcorp.com/site/download).
+
 ## External Dependencies
 To develop DwarfCorp, you need the following libraries. If you just want to play the game, download one of the packages on our releases page.
 
