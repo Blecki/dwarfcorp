@@ -9,10 +9,11 @@ Grated #2
 #1 Sandwich with #2
 #2 Sandwich with #1
 #1 au #2
-#1 con #2
 #2 au #1
-#2 con #2
+#1 con #2
+#2 con #1
 Frosted #1
+Frosted #2
 #1 Pie
 #2 Pie
 #1 Butter

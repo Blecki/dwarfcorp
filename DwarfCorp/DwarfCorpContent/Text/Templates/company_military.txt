@@ -1,5 +1,5 @@
 <firstname>'s <military>
-<military> of <adjective>
+<military> of <noun>s
 <lastname>'s <military>
 <color> <material> <military>
 <adjective> <military>
