@@ -431,7 +431,7 @@ namespace DwarfCorp
 
                 if (Master.Faction.Economy.Company.Information == null)
                     Master.Faction.Economy.Company.Information = new CompanyInformation();
-
+                CreateInitialEmbarkment();
                 SetLoadingMessage("Presimulating ...");
                 ShowingWorld = false;
                 OnLoadedEvent();

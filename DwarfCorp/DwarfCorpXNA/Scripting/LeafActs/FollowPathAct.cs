@@ -157,6 +157,7 @@ namespace DwarfCorp
                 {
                     RandomPositionOffsets.Add(MathFunctions.RandVector3Box(-0.1f, 0.1f, 0.0f, 0.0f, -0.1f, 0.1f));
                     dt = GetActionTime(action, i);
+                    Trace.Assert(dt > 0);
                     ActionTimes.Add(dt);
                     time += dt;
                     i++;
@@ -232,7 +233,7 @@ namespace DwarfCorp
             {
                 yield break;
             }
-
+            Trace.Assert(t >= 0);
             int nextID = currentIndex + 1;
             bool hasNextAction = false;
             Vector3 half = Vector3.One * 0.5f;

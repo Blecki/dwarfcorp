@@ -559,7 +559,7 @@ namespace DwarfCorp.GameStates
                 ExpandedContents = new Gui.Widgets.EmployeeInfo
                 {
                     Employee = null,
-
+                    EnablePosession = true,
                     OnFireClicked = (sender) =>
                     {
                         GuiRoot.ShowDialog(GuiRoot.ConstructWidget(new Gui.Widgets.Confirm
@@ -599,6 +599,7 @@ namespace DwarfCorp.GameStates
                         MinimapFrame.Rect.Y - 40, 200, 40);
                 }
             }) as CollapsableFrame;
+
             #endregion
 
             #region Setup top right tray

@@ -221,7 +221,7 @@ namespace DwarfCorp
                         {
                             offset = -Vector3.UnitX;
                         }
-                        else
+                        else if (isNegZ)
                         {
                             offset = -Vector3.UnitZ;
                         }

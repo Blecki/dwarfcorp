@@ -284,7 +284,7 @@ namespace DwarfCorp
                         Chunk, new LocalVoxelCoordinate(x, VoxelConstants.ChunkSizeY - 1, z)));
 
                     if (!topVoxel.IsValid 
-                        || topVoxel.WaterCell.WaterLevel != 0 
+                        || VoxelHelpers.GetVoxelAbove(topVoxel).WaterCell.WaterLevel != 0 
                         || topVoxel.Coordinate.Y == 0
                         || topVoxel.Coordinate.Y >= 60) // Lift to some kind of generator settings?
                         continue;

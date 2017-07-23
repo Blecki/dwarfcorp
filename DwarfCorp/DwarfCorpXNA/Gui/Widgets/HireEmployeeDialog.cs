@@ -90,7 +90,7 @@ namespace DwarfCorp.Gui.Widgets
                         HireButton.Invalidate();
                         applicantInfo.Applicant = GenerateApplicant(Company, newJob);
                     },
-                    Background = idx > 0 ? new TileReference("dwarves", idx) : null,
+                    Background = idx >= 0 ? new TileReference("dwarves", idx) : null,
                     MinimumSize = new Point(32 * 2, 48 * 2),
                     MaximumSize = new Point(32 * 2, 48 * 2)
                 });

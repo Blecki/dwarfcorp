@@ -116,6 +116,8 @@ namespace DwarfCorp
 
     class CraftResourceTask : Task
     {
+        public int TaskID = 0;
+        private static int MaxID = 0;
         public CraftItem Item { get; set; }
         private string noise;
 
@@ -124,10 +126,12 @@ namespace DwarfCorp
             
         }
 
-        public CraftResourceTask(CraftItem selectedResource)
+        public CraftResourceTask(CraftItem selectedResource, int id = -1)
         {
-            Item = selectedResource;
-            Name = "Craft " + Item.Name;
+            TaskID = id < 0 ? MaxID : id;
+            MaxID++;
+            Item = selectedResource.Clone();
+            Name = String.Format("Craft order {0}", TaskID);
             Priority = PriorityType.Low;
 
             noise = ResourceLibrary.GetResourceByName(Item.ResourceCreated).Tags.Contains(Resource.ResourceTags.Edible)
@@ -136,17 +140,28 @@ namespace DwarfCorp
             AutoRetry = true;
         }
 
+        public IEnumerable<Act.Status> Repeat(Creature creature)
+        {
+            CraftItem newItem = Item.Clone();
+            newItem.NumRepeats--;
+            if (newItem.NumRepeats >= 1)
+            {
+                creature.AI.Tasks.Add(new CraftResourceTask(newItem, TaskID));
+            }
+            yield return Act.Status.Success;
+        }
+
         public override Act CreateScript(Creature creature)
         {
-            return new Repeat(new CraftItemAct(creature.AI, Item)
+            return new Sequence(new CraftItemAct(creature.AI, Item)
             {
                 Noise = noise
-            }, this.Item.NumRepeats, false);
+            }, new Wrap(() => Repeat(creature)));
         }
 
         public override Task Clone()
         {
-            return new CraftResourceTask(Item);
+            return new CraftResourceTask(Item, TaskID);
         }
     }
 

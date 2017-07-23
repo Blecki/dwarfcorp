@@ -891,7 +891,7 @@ WPixelToFrame WaterPS(WVertexToPixel PSIn)
 
 	Output.Color.rgba = float4(lerp(Output.Color.rgb, xFogColor, PSIn.Fog) * Output.Color.a, Output.Color.a);
 
-	float st = xTime * 0.1 + lerp(perturbation.r / xWaveHeight, PSIn.Color.r, 0.8);
+	float st = -xTime * 0.1 + lerp(perturbation.r / xWaveHeight, PSIn.Color.r, 0.8);
 	Output.Color.rgb += (xRippleColor * (PSIn.Color.r * 1.5) * tex2D(ShoreSampler, st)).rgb;
 	Output.Color.a = lerp(xWaterMinOpacity, xWaterOpacity, 1.0 - fresnelTerm);
 	return Output;
