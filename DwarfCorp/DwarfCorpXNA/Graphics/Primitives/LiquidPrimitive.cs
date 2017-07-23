@@ -163,8 +163,9 @@ namespace DwarfCorp
                 return;
 
             LiquidType curLiqType = LiquidType.None;
-            LiquidPrimitive curPrimative = null;
+            LiquidPrimitive curPrimitive = null;
             ExtendedVertex[] curVertices = null;
+            ushort[] curIndexes = null;
             int[] maxVertices = new int[lps.Length];
 
             VoxelHandle v = chunk.MakeVoxel(0, 0, 0);
@@ -200,8 +201,9 @@ namespace DwarfCorp
                                 maxVertices[(int)curLiqType] = maxVertex;
 
                                 curVertices = newPrimitive.Vertices;
+                                curIndexes = newPrimitive.Indexes;
                                 curLiqType = liqType;
-                                curPrimative = newPrimitive;
+                                curPrimitive = newPrimitive;
                                 maxVertex = maxVertices[(int)liqType];
                             }
 
@@ -252,18 +254,26 @@ namespace DwarfCorp
                             if (curVertices == null)
                             {
                                 curVertices = new ExtendedVertex[256];
-                                curPrimative.Vertices = curVertices;
+                                curIndexes = new ushort[256];
+                                curPrimitive.Vertices = curVertices;
+                                curPrimitive.Indexes = curIndexes;
                             }
                             else if (curVertices.Length <= maxVertex + vertexSizeIncrease)
                             {
                                 ExtendedVertex[] newVerts = new ExtendedVertex[curVertices.Length * 2];
+                                ushort[] newIdxs = new ushort[curIndexes.Length * 2];
+
                                 curVertices.CopyTo(newVerts, 0);
                                 curVertices = newVerts;
-                                curPrimative.Vertices = curVertices;
+                                curPrimitive.Vertices = curVertices;
+
+                                curIndexes.CopyTo(newIdxs, 0);
+                                curIndexes = newIdxs;
+                                curPrimitive.Indexes = curIndexes;
                             }
 
                             // Now we have a list of all the faces that will need to be drawn.  Let's draw them.
-                            CreateWaterFaces(v, chunk, x, y, z, curVertices, maxVertex);
+                            CreateWaterFaces(v, chunk, x, y, z, curVertices, curIndexes, maxVertex);
 
                             // Finally increase the size so we can move on.
                             maxVertex += vertexSizeIncrease;
@@ -290,6 +300,7 @@ namespace DwarfCorp
                         {
                             updatedPrimative.MaxVertex = maxVertex;
                             updatedPrimative.VertexBuffer = null;
+                            updatedPrimative.IndexBuffer = null;
                         }
                     }
                     catch (System.Threading.AbandonedMutexException e)
@@ -305,6 +316,7 @@ namespace DwarfCorp
                         {
                             updatedPrimative.VertexBuffer = null;
                             updatedPrimative.Vertices = null;
+                            updatedPrimative.IndexBuffer = null;
                             updatedPrimative.Indexes = null;
                             updatedPrimative.MaxVertex = 0;
                             updatedPrimative.MaxIndex = 0;
@@ -327,6 +339,7 @@ namespace DwarfCorp
         private static void CreateWaterFaces(VoxelHandle voxel, VoxelChunk chunk,
                                             int x, int y, int z,
                                             ExtendedVertex[] vertices,
+                                            ushort[] indexes,
                                             int startVertex)
         {
             // Reset the appropriate parts of the cache.
@@ -437,7 +450,9 @@ namespace DwarfCorp
 
                 for (int vertOffset = 0; vertOffset < 6; vertOffset++) // vertexCount
                 {
-                    //int offset = flippedQuad ? FlippedIndexes[vertOffset] : Indexes[vertOffset];
+                    ushort offset = (ushort)(vertOffset + startVertex);//flippedQuad ? primitive.FlippedIndexes[vertOffset] : primitive.Indexes[vertOffset];
+
+                    indexes[vertOffset + startVertex] = offset;
 
                     switch (face)
                     {
