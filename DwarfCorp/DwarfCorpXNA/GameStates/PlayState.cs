@@ -761,6 +761,7 @@ namespace DwarfCorp.GameStates
                 Icon = new Gui.TileReference("tool-icons", 5),
                 OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.SelectUnits),
                 Tooltip = "Select dwarves",
+                Behavior = FlatToolTray.IconBehavior.LeafIcon,
                 OnConstruct = (sender) =>
                 {
                     // This could just be done after declaring icon_SelectTool, but is here for
@@ -777,7 +778,8 @@ namespace DwarfCorp.GameStates
             var icon_menu_RoomTypes_Return = new FlatToolTray.Icon
             {
                 Icon = new TileReference("tool-icons", 32),
-                Tooltip = "Go Back"
+                Tooltip = "Go Back",
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
             var menu_RoomTypes = new FlatToolTray.Tray
@@ -805,6 +807,7 @@ namespace DwarfCorp.GameStates
                             World.ShowToolPopup("Click and drag to build " + data.Name);
                             World.Tutorial("build rooms");
                         },
+                        Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
                         OnConstruct = (sender) =>
                         {
                             AddToolbarIcon(sender, () =>
@@ -822,7 +825,8 @@ namespace DwarfCorp.GameStates
                 {
                     World.ShowToolPopup("Left click objects to move them.\nRight click to destroy them.");
                     Master.ChangeTool(GameMaster.ToolMode.MoveObjects);
-                }
+                },
+                Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
 
             var icon_BuildRoom = new FlatToolTray.Icon
@@ -834,7 +838,8 @@ namespace DwarfCorp.GameStates
                 TextVerticalAlign = VerticalAlign.Center,
                 KeepChildVisible = true,
                 ReplacementMenu = menu_RoomTypes,
-                Tag = "build room"
+                Tag = "build room",
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
             #endregion
@@ -844,7 +849,8 @@ namespace DwarfCorp.GameStates
             var icon_menu_WallTypes_Return = new FlatToolTray.Icon
             {
                 Icon = new TileReference("tool-icons", 32),
-                Tooltip = "Go Back"
+                Tooltip = "Go Back",
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
             var menu_WallTypes = new FlatToolTray.Tray
@@ -883,6 +889,7 @@ namespace DwarfCorp.GameStates
                                 World.ShowToolPopup("Click and drag to build " + data.Name + " wall.");
                                 World.Tutorial("build blocks");
                             },
+                            Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
                             Hidden = false
                         }));
                     widget.Construct();
@@ -902,7 +909,8 @@ namespace DwarfCorp.GameStates
                 Tooltip = "Place blocks",
                 Text = "Block",
                 TextColor = Color.White.ToVector4(),
-                ReplacementMenu = menu_WallTypes
+                ReplacementMenu = menu_WallTypes,
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
             #endregion
@@ -912,7 +920,8 @@ namespace DwarfCorp.GameStates
             var icon_menu_CraftTypes_Return = new FlatToolTray.Icon
             {
                 Icon = new TileReference("tool-icons", 32),
-                Tooltip = "Go Back"
+                Tooltip = "Go Back",
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
             var menu_CraftTypes = new FlatToolTray.Tray
@@ -926,6 +935,7 @@ namespace DwarfCorp.GameStates
                         Tooltip = "Craft " + data.Name,
                         KeepChildVisible = true, // So the player can interact with the popup.
                         ExpandChildWhenDisabled = true,
+                        Behavior = FlatToolTray.IconBehavior.ShowClickPopup,
                         PopupChild = new BuildCraftInfo
                         {
                             Data = data,
@@ -974,7 +984,8 @@ namespace DwarfCorp.GameStates
                 TextVerticalAlign = VerticalAlign.Center,
                 KeepChildVisible = true,
                 MinimumSize = new Point(128, 32),
-                ReplacementMenu = menu_CraftTypes
+                ReplacementMenu = menu_CraftTypes,
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
             #endregion
@@ -984,7 +995,8 @@ namespace DwarfCorp.GameStates
             var icon_menu_ResourceTypes_Return = new FlatToolTray.Icon
             {
                 Icon = new TileReference("tool-icons", 32),
-                Tooltip = "Go Back"
+                Tooltip = "Go Back",
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
             var menu_ResourceTypes = new FlatToolTray.Tray
@@ -1001,6 +1013,7 @@ namespace DwarfCorp.GameStates
                         Tooltip = "Craft " + data.Name,
                         KeepChildVisible = true, // So the player can interact with the popup.
                         ExpandChildWhenDisabled = true,
+                        Behavior = FlatToolTray.IconBehavior.ShowClickPopup,
                         PopupChild = new BuildCraftInfo
                         {
                             Data = data,
@@ -1041,7 +1054,8 @@ namespace DwarfCorp.GameStates
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 KeepChildVisible = true,
-                ReplacementMenu = menu_ResourceTypes
+                ReplacementMenu = menu_ResourceTypes,
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
             #endregion
@@ -1051,7 +1065,8 @@ namespace DwarfCorp.GameStates
             var icon_menu_BuildTools_Return = new FlatToolTray.Icon
             {
                 Icon = new TileReference("tool-icons", 32),
-                Tooltip = "Go Back"
+                Tooltip = "Go Back",
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
             var menu_BuildTools = new FlatToolTray.Tray
@@ -1084,7 +1099,8 @@ namespace DwarfCorp.GameStates
                     AddToolSelectIcon(GameMaster.ToolMode.Build, sender);
                 },
                 Tooltip = "Build",
-                ReplacementMenu = menu_BuildTools
+                ReplacementMenu = menu_BuildTools,
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
             #endregion
@@ -1094,7 +1110,8 @@ namespace DwarfCorp.GameStates
             var icon_menu_Edibles_Return = new FlatToolTray.Icon
             {
                 Icon = new TileReference("tool-icons", 32),
-                Tooltip = "Go Back"
+                Tooltip = "Go Back",
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
             var menu_Edibles = new FlatToolTray.Tray
@@ -1108,6 +1125,7 @@ namespace DwarfCorp.GameStates
                         Icon = data.Icon,
                         KeepChildVisible = true, // So the player can interact with the popup.
                         Tooltip = data.Verb + " " + data.Name,
+                        Behavior = FlatToolTray.IconBehavior.ShowClickPopup,
                         PopupChild = new BuildCraftInfo
                         {
                             Data = data,
@@ -1150,7 +1168,8 @@ namespace DwarfCorp.GameStates
                         minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Cook)));
                     AddToolSelectIcon(GameMaster.ToolMode.Cook, sender);
                 },
-                ReplacementMenu = menu_Edibles
+                ReplacementMenu = menu_Edibles,
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
             #endregion
@@ -1169,7 +1188,8 @@ namespace DwarfCorp.GameStates
                     Master.Faction.SelectedMinions.Any(minion =>
                         minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Dig)));
                     AddToolSelectIcon(GameMaster.ToolMode.Dig, sender);
-                }
+                },
+                Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
 
             #endregion
@@ -1188,7 +1208,8 @@ namespace DwarfCorp.GameStates
                     Master.Faction.SelectedMinions.Any(minion =>
                         minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Gather)));
                     AddToolSelectIcon(GameMaster.ToolMode.Gather, sender);
-                }
+                },
+                Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
 
             #endregion
@@ -1207,7 +1228,8 @@ namespace DwarfCorp.GameStates
                     Master.Faction.SelectedMinions.Any(minion =>
                         minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Chop)));
                     AddToolSelectIcon(GameMaster.ToolMode.Chop, sender);
-                }
+                },
+                Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
 
             #endregion
@@ -1226,7 +1248,8 @@ namespace DwarfCorp.GameStates
                     Master.Faction.SelectedMinions.Any(minion =>
                         minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Guard)));
                     AddToolSelectIcon(GameMaster.ToolMode.Guard, sender);
-                }
+                },
+                Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
 
             #endregion
@@ -1245,7 +1268,8 @@ namespace DwarfCorp.GameStates
                     Master.Faction.SelectedMinions.Any(minion =>
                         minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack)));
                     AddToolSelectIcon(GameMaster.ToolMode.Attack, sender);
-                }
+                },
+                Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
 
             #endregion
@@ -1255,7 +1279,8 @@ namespace DwarfCorp.GameStates
             var icon_menu_Farm_Return = new FlatToolTray.Icon
             {
                 Icon = new TileReference("tool-icons", 32),
-                Tooltip = "Go Back"
+                Tooltip = "Go Back",
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
             #region icon_Till
@@ -1281,7 +1306,8 @@ namespace DwarfCorp.GameStates
                     Text = "Till Soil.\n Click and drag to till soil for planting.",
                     Rect = new Rectangle(0, 0, 256, 128),
                     TextColor = Color.Black.ToVector4(),
-                }
+                },
+                Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
             #endregion
 
@@ -1290,7 +1316,8 @@ namespace DwarfCorp.GameStates
             var icon_menu_Plant_Return = new FlatToolTray.Icon
             {
                 Icon = new TileReference("tool-icons", 32),
-                Tooltip = "Go Back"
+                Tooltip = "Go Back",
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
             var menu_Plant = new FlatToolTray.Tray
@@ -1307,6 +1334,7 @@ namespace DwarfCorp.GameStates
                            {
                                Icon = new TileReference("resources", resource.ResourceType.GetResource().GuiSprite),
                                Tooltip = "Plant " + resource.ResourceType,
+                               Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
                                OnClick = (sender, args) =>
                                {
                                    World.ShowToolPopup("Click and drag to plant " + resource.ResourceType + ".");
@@ -1345,7 +1373,8 @@ namespace DwarfCorp.GameStates
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 KeepChildVisible = true,
-                ReplacementMenu = menu_Plant
+                ReplacementMenu = menu_Plant,
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
             #endregion
 
@@ -1371,7 +1400,8 @@ namespace DwarfCorp.GameStates
                     ChangeTool(GameMaster.ToolMode.Farm);
                     (Master.Tools[GameMaster.ToolMode.Farm] as FarmTool).Mode = FarmTool.FarmMode.Harvesting;
                     World.Tutorial("harvest");
-                }
+                },
+                Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
             #endregion
 
@@ -1397,7 +1427,8 @@ namespace DwarfCorp.GameStates
                     ChangeTool(GameMaster.ToolMode.Farm);
                     (Master.Tools[GameMaster.ToolMode.Farm] as FarmTool).Mode = FarmTool.FarmMode.WranglingAnimals;
                     World.Tutorial("wrangle");
-                }
+                },
+                Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
             #endregion
 
@@ -1428,7 +1459,8 @@ namespace DwarfCorp.GameStates
                         minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm)));
                     AddToolSelectIcon(GameMaster.ToolMode.Farm, sender);
                 },
-                ReplacementMenu = menu_Farm
+                ReplacementMenu = menu_Farm,
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
             #endregion
@@ -1439,7 +1471,8 @@ namespace DwarfCorp.GameStates
             var icon_menu_CastSpells_Return = new FlatToolTray.Icon
             {
                 Icon = new TileReference("tool-icons", 32),
-                Tooltip = "Go Back"
+                Tooltip = "Go Back",
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
             var menu_CastSpells = new FlatToolTray.Tray()
@@ -1468,7 +1501,8 @@ namespace DwarfCorp.GameStates
                                         .CurrentSpell =
                                         spell.Spell;
                                     World.Tutorial("cast spells");
-                                }
+                                },
+                                Behavior = FlatToolTray.IconBehavior.ShowHoverPopup
                             }));
                     widget.Construct();
                     widget.Hidden = false;
@@ -1481,7 +1515,8 @@ namespace DwarfCorp.GameStates
                 Icon = new TileReference("tool-icons", 14),
                 Tooltip = "Cast",
                 KeepChildVisible = true,
-                ReplacementMenu = menu_CastSpells
+                ReplacementMenu = menu_CastSpells,
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
             #endregion
 
@@ -1490,7 +1525,8 @@ namespace DwarfCorp.GameStates
             var icon_menu_ResearchSpells_Return = new FlatToolTray.Icon
             {
                 Icon = new TileReference("tool-icons", 32),
-                Tooltip = "Go Back"
+                Tooltip = "Go Back",
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
             var menu_ResearchSpells = new FlatToolTray.Tray()
@@ -1516,13 +1552,14 @@ namespace DwarfCorp.GameStates
                                     Rect = new Rectangle(0, 0, 256, 128),
                                     Master = Master
                                 },
-                                OnClick =
-                                    (button, args2) =>
-                                    {
-                                        ((MagicTool)Master.Tools[GameMaster.ToolMode.Magic])
-                                            .Research(spell);
-                                        World.Tutorial("research spells");
-                                    }
+                                OnClick = (button, args2) =>
+                                {
+                                    ChangeTool(GameMaster.ToolMode.Magic);
+                                    ((MagicTool)Master.Tools[GameMaster.ToolMode.Magic])
+                                        .Research(spell);
+                                    World.Tutorial("research spells");
+                                },
+                                Behavior = FlatToolTray.IconBehavior.ShowHoverPopup
                             }));
                     widget.Construct();
                     widget.Hidden = false;
@@ -1535,14 +1572,16 @@ namespace DwarfCorp.GameStates
                 Icon = new TileReference("tool-icons", 14),
                 Tooltip = "Research",
                 KeepChildVisible = true,
-                ReplacementMenu = menu_ResearchSpells
+                ReplacementMenu = menu_ResearchSpells,
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
             #endregion
 
             var icon_menu_Magic_Return = new FlatToolTray.Icon
             {
                 Icon = new TileReference("tool-icons", 32),
-                Tooltip = "Go Back"
+                Tooltip = "Go Back",
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
             var menu_Magic = new FlatToolTray.Tray
@@ -1562,7 +1601,7 @@ namespace DwarfCorp.GameStates
             {
                 Icon = new TileReference("tool-icons", 14),
                 Tooltip = "Magic",
-                OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Magic),
+                //OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Magic),
                 OnConstruct = (sender) =>
                 {
                     AddToolbarIcon(sender, () =>
@@ -1571,7 +1610,8 @@ namespace DwarfCorp.GameStates
                     AddToolSelectIcon(GameMaster.ToolMode.Magic, sender);
                 },
                 KeepChildVisible = true,
-                ReplacementMenu = menu_Magic
+                ReplacementMenu = menu_Magic,
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
             #endregion
@@ -1590,8 +1630,7 @@ namespace DwarfCorp.GameStates
                     icon_AttackTool,
                     icon_FarmTool,
                     icon_MagicTool
-                },
-                OnShown = (sender) => ChangeTool(GameMaster.ToolMode.SelectUnits)
+                }
             };
 
             icon_menu_BuildTools_Return.ReplacementMenu = MainMenu;
@@ -1619,7 +1658,7 @@ namespace DwarfCorp.GameStates
                 OnLayout = (sender) =>
                 {
                     sender.Rect = sender.ComputeBoundingChildRect();
-                    sender.Rect.X = GuiRoot.RenderData.VirtualScreen.Center.X - 128; // Position against minimap frame.
+                    sender.Rect.X = GuiRoot.RenderData.VirtualScreen.Center.X - 128; 
                     sender.Rect.Y = GuiRoot.RenderData.VirtualScreen.Bottom - MainMenu.MinimumSize.Y;
                 },
                 Tag = "tools"
