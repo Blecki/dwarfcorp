@@ -159,22 +159,78 @@ namespace DwarfCorp
         {
             string tileSheet = ContentPaths.Entities.Resources.resources;
             Resources = new Dictionary<ResourceType, Resource>();
-            Add(new Resource(ResourceType.Wood, 10.0m, "Sometimes hard to come by! Comes from trees.", new NamedImageFrame(tileSheet, GetRect(3, 1)), 11, Color.White, Resource.ResourceTags.Wood, Resource.ResourceTags.Material, Resource.ResourceTags.Flammable, Resource.ResourceTags.HardMaterial));
-            Add(new Resource(ResourceType.Stone, 5.0m, "Dwarf's favorite material! Comes from the earth.", new NamedImageFrame(tileSheet, GetRect(3, 0)), 3, Color.White, Resource.ResourceTags.Stone, Resource.ResourceTags.Material, Resource.ResourceTags.HardMaterial));
+            Add(new Resource(ResourceType.Wood, 10.0m, "Sometimes hard to come by! Comes from trees.", new NamedImageFrame(tileSheet, GetRect(3, 1)), 11, Color.White, Resource.ResourceTags.Wood, Resource.ResourceTags.Material, Resource.ResourceTags.Flammable, Resource.ResourceTags.HardMaterial)
+            {
+                TrinketData = new Resource.TrinketInfo()
+                {
+                    BaseAsset = ContentPaths.Entities.DwarfObjects.trinkets_carve,
+                    EncrustingAsset = ContentPaths.Entities.DwarfObjects.trinkets_carve_insets,
+                    SpriteRow = 0
+                }
+            });
+            Add(new Resource(ResourceType.Stone, 5.0m, "Dwarf's favorite material! Comes from the earth.", new NamedImageFrame(tileSheet, GetRect(3, 0)), 3, Color.White, Resource.ResourceTags.Stone, Resource.ResourceTags.Material, Resource.ResourceTags.HardMaterial)
+            {
+                TrinketData = new Resource.TrinketInfo()
+                {
+                    BaseAsset = ContentPaths.Entities.DwarfObjects.trinkets_sculpt,
+                    EncrustingAsset = ContentPaths.Entities.DwarfObjects.trinkets_sculpt_insets,
+                    SpriteRow = 0
+                }
+            });
             Add(new Resource(ResourceType.Dirt, 1.0m, "Can be used to make bricks.",
                 new NamedImageFrame(tileSheet, GetRect(0, 1)), 8, Color.White, Resource.ResourceTags.Soil,
-                Resource.ResourceTags.Material));
-            Add(new Resource(ResourceType.Sand,  2.0m, "Can be used to make glass.", new NamedImageFrame(tileSheet, GetRect(1, 1)), 9, Color.White, Resource.ResourceTags.Material, Resource.ResourceTags.Sand));
+                Resource.ResourceTags.Material)
+                {
+                    TrinketData = new Resource.TrinketInfo()
+                    {
+                        BaseAsset = ContentPaths.Entities.DwarfObjects.trinkets_sculpt,
+                        EncrustingAsset = ContentPaths.Entities.DwarfObjects.trinkets_sculpt_insets,
+                        SpriteRow = 1
+                    }
+                });
+            Add(new Resource(ResourceType.Sand, 2.0m, "Can be used to make glass.", new NamedImageFrame(tileSheet, GetRect(1, 1)), 9, Color.White, Resource.ResourceTags.Material, Resource.ResourceTags.Sand)
+            {
+                TrinketData = new Resource.TrinketInfo()
+                {
+                    BaseAsset = ContentPaths.Entities.DwarfObjects.trinkets_sculpt,
+                    EncrustingAsset = ContentPaths.Entities.DwarfObjects.trinkets_sculpt_insets,
+                    SpriteRow = 3
+                }
+            });
             Add(new Resource(ResourceType.Mana, 400.0m, "Mysterious properties!",
                 new NamedImageFrame(tileSheet, GetRect(1, 0)), 1, Color.White, Resource.ResourceTags.Magical, Resource.ResourceTags.Precious, Resource.ResourceTags.SelfIlluminating));
-            Add(new Resource(ResourceType.Gold, 500.0m, "Shiny!", new NamedImageFrame(tileSheet, GetRect(0, 0)), 0, Color.White, Resource.ResourceTags.Material, Resource.ResourceTags.Metal, Resource.ResourceTags.Precious, Resource.ResourceTags.HardMaterial));
+            Add(new Resource(ResourceType.Gold, 500.0m, "Shiny!", new NamedImageFrame(tileSheet, GetRect(0, 0)), 0, Color.White, Resource.ResourceTags.Material, Resource.ResourceTags.Metal, Resource.ResourceTags.Precious, Resource.ResourceTags.HardMaterial)
+            {
+                TrinketData = new Resource.TrinketInfo()
+                {
+                    BaseAsset = ContentPaths.Entities.DwarfObjects.trinkets_cast,
+                    EncrustingAsset = ContentPaths.Entities.DwarfObjects.trinkets_cast_insets,
+                    SpriteRow = 1
+                }
+            });
             Add(new Resource(ResourceType.Coal, 10.0m, "Used as fuel", new NamedImageFrame(tileSheet, GetRect(2, 2)), 18, Color.White, Resource.ResourceTags.Fuel, Resource.ResourceTags.Flammable));
-            Add(new Resource(ResourceType.Iron, 50.0m, "Needed to build things.", new NamedImageFrame(tileSheet, GetRect(2, 0)), 2, Color.White, Resource.ResourceTags.Metal, Resource.ResourceTags.Material, Resource.ResourceTags.HardMaterial));
+            Add(new Resource(ResourceType.Iron, 50.0m, "Needed to build things.", new NamedImageFrame(tileSheet, GetRect(2, 0)), 2, Color.White, Resource.ResourceTags.Metal, Resource.ResourceTags.Material, Resource.ResourceTags.HardMaterial)
+            {
+                TrinketData = new Resource.TrinketInfo()
+                {
+                    BaseAsset = ContentPaths.Entities.DwarfObjects.trinkets_cast,
+                    EncrustingAsset = ContentPaths.Entities.DwarfObjects.trinkets_cast_insets,
+                    SpriteRow = 0
+                }
+            });
             Add(new Resource(ResourceType.Berry, 5.0m, "Dwarves can eat these.", new NamedImageFrame(tileSheet, GetRect(2, 1)), 10, Color.White, Resource.ResourceTags.Edible, Resource.ResourceTags.Flammable, Resource.ResourceTags.RawFood, Resource.ResourceTags.Plantable, Resource.ResourceTags.AboveGroundPlant) { FoodContent = 50, PlantToGenerate = "Berry Bush"});
             Add(new Resource(ResourceType.Mushroom, 2.5m, "Dwarves can eat these.", new NamedImageFrame(tileSheet, GetRect(1, 2)), 17, Color.White, Resource.ResourceTags.Edible, Resource.ResourceTags.Fungus, Resource.ResourceTags.Flammable, Resource.ResourceTags.RawFood, Resource.ResourceTags.Brewable, Resource.ResourceTags.Plantable, Resource.ResourceTags.BelowGroundPlant) { FoodContent = 50, PlantToGenerate = "Mushroom" });
             Add(new Resource(ResourceType.CaveMushroom, 3.5m, "Dwarves can eat these.", new NamedImageFrame(tileSheet, GetRect(4, 1)), 12, Color.White, Resource.ResourceTags.SelfIlluminating, Resource.ResourceTags.Edible, Resource.ResourceTags.Fungus, Resource.ResourceTags.Flammable, Resource.ResourceTags.RawFood, Resource.ResourceTags.Brewable, Resource.ResourceTags.Plantable, Resource.ResourceTags.BelowGroundPlant) { FoodContent = 30, PlantToGenerate = "Cave Mushroom" });
             Add(new Resource(ResourceType.Grain, 2.5m, "Dwarves can eat this.", new NamedImageFrame(tileSheet, GetRect(0, 2)), 16, Color.White, Resource.ResourceTags.Edible, Resource.ResourceTags.Grain, Resource.ResourceTags.Flammable, Resource.ResourceTags.RawFood, Resource.ResourceTags.Brewable, Resource.ResourceTags.Bakeable, Resource.ResourceTags.Plantable, Resource.ResourceTags.AboveGroundPlant) { FoodContent = 100, PlantToGenerate = "Wheat" });
-            Add(new Resource(ResourceType.Bones,  15.0m, "Came from an animal.", new NamedImageFrame(tileSheet, GetRect(3, 3)), 27, Color.White, Resource.ResourceTags.Bone, Resource.ResourceTags.Material, Resource.ResourceTags.AnimalProduct, Resource.ResourceTags.HardMaterial));
+            Add(new Resource(ResourceType.Bones, 15.0m, "Came from an animal.", new NamedImageFrame(tileSheet, GetRect(3, 3)), 27, Color.White, Resource.ResourceTags.Bone, Resource.ResourceTags.Material, Resource.ResourceTags.AnimalProduct, Resource.ResourceTags.HardMaterial)
+            {
+                TrinketData = new Resource.TrinketInfo()
+                {
+                    BaseAsset = ContentPaths.Entities.DwarfObjects.trinkets_carve,
+                    EncrustingAsset = ContentPaths.Entities.DwarfObjects.trinkets_carve_insets_bone,
+                    SpriteRow = 1
+                }
+            });
             Add(new Resource("Corpse", 0.0m, "Dead carcass. Should be buried.", new NamedImageFrame(tileSheet, GetRect(3, 4)), 35, Color.White, Resource.ResourceTags.Corpse));
             Add(new Resource(ResourceType.Meat,  25.0m, "Came from an animal.",
                 new NamedImageFrame(tileSheet, GetRect(3, 2)), 19, Color.White, Resource.ResourceTags.Edible,
@@ -218,13 +274,23 @@ namespace DwarfCorp
             {
                 FoodContent = 150
             });
-            Add(new Resource("Ruby", 350.0m, "Shiny!", new NamedImageFrame(tileSheet, GetRect(0, 3)), 24, Color.White, Resource.ResourceTags.Precious, Resource.ResourceTags.Gem, Resource.ResourceTags.HardMaterial));
+            Add(new Resource("Ruby", 350.0m, "Shiny!", new NamedImageFrame(tileSheet, GetRect(0, 3)), 24, Color.White, Resource.ResourceTags.Precious, Resource.ResourceTags.Gem, Resource.ResourceTags.HardMaterial)
+            {
+                TrinketData = new Resource.TrinketInfo()
+                {
+                    SpriteRow = 0
+                }
+            });
             Add(new Resource(Resources["Ruby"])
             {
                 Type = "Emerald",
                 ShortName = "Emerald",
                 Image = new NamedImageFrame(tileSheet, GetRect(0, 4)),
-                GuiSprite = 32
+                GuiSprite = 32,
+                TrinketData = new Resource.TrinketInfo()
+                {
+                    SpriteRow = 3
+                }
             });
 
             Add(new Resource(Resources["Ruby"])
@@ -232,8 +298,11 @@ namespace DwarfCorp
                 Type = "Amethyst",
                 ShortName = "Amethyst",
                 Image = new NamedImageFrame(tileSheet, GetRect(2, 4)),
-                GuiSprite = 34
-
+                GuiSprite = 34,
+                TrinketData = new Resource.TrinketInfo()
+                {
+                    SpriteRow = 5
+                }
             });
 
             Add(new Resource(Resources["Ruby"])
@@ -241,7 +310,11 @@ namespace DwarfCorp
                 Type = "Garnet",
                 ShortName = "Garnet",
                 Image = new NamedImageFrame(tileSheet, GetRect(1, 3)),
-                GuiSprite = 25
+                GuiSprite = 25,
+                TrinketData = new Resource.TrinketInfo()
+                {
+                    SpriteRow = 1
+                }
             });
 
             Add(new Resource(Resources["Ruby"])
@@ -249,7 +322,11 @@ namespace DwarfCorp
                 Type = "Citrine",
                 ShortName = "Citrine",
                 Image = new NamedImageFrame(tileSheet, GetRect(2, 3)),
-                GuiSprite = 26
+                GuiSprite = 26,
+                TrinketData = new Resource.TrinketInfo()
+                {
+                    SpriteRow = 2
+                }
             });
 
             Add(new Resource(Resources["Ruby"])
@@ -257,7 +334,11 @@ namespace DwarfCorp
                 Type = "Sapphire",
                 ShortName = "Sapphire",
                 Image = new NamedImageFrame(tileSheet, GetRect(1, 4)),
-                GuiSprite = 33
+                GuiSprite = 33,
+                TrinketData = new Resource.TrinketInfo()
+                {
+                    SpriteRow = 4
+                }
             });
 
             Add(new Resource(ResourceType.Egg, 5.0m, "An egg", new NamedImageFrame(tileSheet, GetRect(7, 2)), 23, Color.White, Resource.ResourceTags.Edible, Resource.ResourceTags.AnimalProduct, Resource.ResourceTags.Brewable));
@@ -267,9 +348,29 @@ namespace DwarfCorp
             Add((new Resource(ResourceType.Trinket, 100.0m, "A crafted item.",
                     new NamedImageFrame(ContentPaths.Entities.DwarfObjects.crafts, 32, 0, 0), 0, Color.White, Resource.ResourceTags.Craft, Resource.ResourceTags.Encrustable)));
 
-            Add(new Resource(ResourceType.Glass, 8.0m, "Made from sand. Allows light to pass through.", new NamedImageFrame(tileSheet, GetRect(4, 0)), 4, Color.White, Resource.ResourceTags.Material, Resource.ResourceTags.HardMaterial, Resource.ResourceTags.Craft) { CanCraft = true, CraftPrereqs = new List<Quantitiy<Resource.ResourceTags>>() { new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Sand) } });
+            Add(new Resource(ResourceType.Glass, 8.0m, "Made from sand. Allows light to pass through.", new NamedImageFrame(tileSheet, GetRect(4, 0)), 4, Color.White, Resource.ResourceTags.Material, Resource.ResourceTags.HardMaterial, Resource.ResourceTags.Craft)
+            {
+                CanCraft = true,
+                CraftPrereqs = new List<Quantitiy<Resource.ResourceTags>>() { new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Sand) },
+                TrinketData = new Resource.TrinketInfo()
+                {
+                    BaseAsset = ContentPaths.Entities.DwarfObjects.trinkets_cast,
+                    EncrustingAsset = ContentPaths.Entities.DwarfObjects.trinkets_cast_insets,
+                    SpriteRow = 0
+                }
+            });
 
-            Add(new Resource(ResourceType.Brick, 4.0m, "Made from dirt. Building material.", new NamedImageFrame(tileSheet, GetRect(5, 0)), 5, Color.White, Resource.ResourceTags.Stone, Resource.ResourceTags.Material, Resource.ResourceTags.HardMaterial, Resource.ResourceTags.Craft) {CanCraft = true, CraftPrereqs = new List<Quantitiy<Resource.ResourceTags>>() {new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Soil)}});
+            Add(new Resource(ResourceType.Brick, 4.0m, "Made from dirt. Building material.", new NamedImageFrame(tileSheet, GetRect(5, 0)), 5, Color.White, Resource.ResourceTags.Stone, Resource.ResourceTags.Material, Resource.ResourceTags.HardMaterial, Resource.ResourceTags.Craft)
+            {
+                CanCraft = true,
+                CraftPrereqs = new List<Quantitiy<Resource.ResourceTags>>() { new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Soil) },
+                TrinketData = new Resource.TrinketInfo()
+                {
+                    BaseAsset = ContentPaths.Entities.DwarfObjects.trinkets_sculpt,
+                    EncrustingAsset = ContentPaths.Entities.DwarfObjects.trinkets_sculpt_insets,
+                    SpriteRow = 2
+                }
+            });
 
             Add(new Resource(ResourceType.Coins, 64.0m, "Dwarfbux container.",
                 new NamedImageFrame(tileSheet, GetRect(6, 0)), 6, Color.White, Resource.ResourceTags.Precious,
@@ -391,9 +492,19 @@ namespace DwarfCorp
         {
             Resource toReturn = new Resource(Resources[resourcetype]);
             toReturn.Type = gemType + "-encrusted " + toReturn.ResourceName;
+            if (Resources.ContainsKey(toReturn.Type))
+            {
+                return Resources[toReturn.Type];
+            }
+
             toReturn.MoneyValue += Resources[gemType].MoneyValue * 2m;
-            toReturn.Tags = new List<Resource.ResourceTags>() {Resource.ResourceTags.Craft};
-            toReturn.Image = new NamedImageFrame(toReturn.Image.AssetName, toReturn.Image.SourceRect.Width, toReturn.Image.SourceRect.X / toReturn.Image.SourceRect.Width + 1, toReturn.Image.SourceRect.Y / toReturn.Image.SourceRect.Height);
+            toReturn.Tags = new List<Resource.ResourceTags>() {Resource.ResourceTags.Craft, Resource.ResourceTags.Precious};
+            toReturn.CompositeLayers = new List<KeyValuePair<Point, string>>();
+            toReturn.CompositeLayers.AddRange(Resources[resourcetype].CompositeLayers);
+            toReturn.CompositeLayers.Add(
+                new KeyValuePair<Point, string>(
+                    new Point(Resources[resourcetype].TrinketData.SpriteColumn, Resources[gemType].TrinketData.SpriteRow),
+                    Resources[resourcetype].TrinketData.EncrustingAsset));
             Add(toReturn);
             return toReturn;
         }
@@ -405,23 +516,23 @@ namespace DwarfCorp
             string[] names =
             {
                 "Ring",
+                "Bracer",
                 "Pendant",
-                "Earrings",
-                "Crown",
-                "Brace",
                 "Figure",
-                "Staff"
+                "Earrings",
+                "Staff",
+                "Crown"
             };
 
-            Point[] tiles =
+            int[] tiles =
             {
-                new Point(0, 0),
-                new Point(0, 1),
-                new Point(0, 2),
-                new Point(0, 3),
-                new Point(2, 0),
-                new Point(2, 1),
-                new Point(2, 2)
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
             };
 
             float[] values =
@@ -438,7 +549,7 @@ namespace DwarfCorp
             int item = MathFunctions.Random.Next(names.Count());
 
             string name = names[item];
-            Point tile = tiles[item];
+            Point tile = new Point(tiles[item], Resources[baseMaterial].TrinketData.SpriteRow);
             toReturn.MoneyValue = values[item]*Resources[baseMaterial].MoneyValue * 3m * quality;
 
             string qualityType = "";
@@ -473,14 +584,19 @@ namespace DwarfCorp
             }
 
             toReturn.Type = baseMaterial + " " + name + " (" + qualityType + ")";
-
             if (Resources.ContainsKey(toReturn.Type))
             {
                 return Resources[toReturn.Type];
             }
             toReturn.Tint = Resources[baseMaterial].Tint;
-            toReturn.Image = new NamedImageFrame(ContentPaths.Entities.DwarfObjects.crafts, 32, tile.X, tile.Y);
-            toReturn.GuiSprite = (tile.Y * 4) + tile.X;
+            toReturn.CompositeLayers = new List<KeyValuePair<Point, string>>()
+            {
+                new KeyValuePair<Point, string>(tile, Resources[baseMaterial].TrinketData.BaseAsset)
+            };
+            Resource.TrinketInfo trinketInfo = Resources[baseMaterial].TrinketData;
+            trinketInfo.SpriteColumn = tile.X;
+            toReturn.TrinketData = trinketInfo;
+            toReturn.GuiSprite = (tile.Y * 5) + tile.X;
             Add(toReturn);
             toReturn.ShortName = baseMaterial + " " + names[item];
             return toReturn;
