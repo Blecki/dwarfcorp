@@ -100,6 +100,7 @@ namespace DwarfCorp
             return r;
         }
 
+        // Todo: Delete after verifying that creating stone on the water thread is okay.
         public IEnumerable<LiquidTransfer> GetTransferQueue()
         {
             TransferLock.WaitOne();
