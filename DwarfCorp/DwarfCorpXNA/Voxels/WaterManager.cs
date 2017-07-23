@@ -87,19 +87,25 @@ namespace DwarfCorp
         }
                 
         private LinkedList<LiquidSplash> Splashes = new LinkedList<LiquidSplash>();
+        private Mutex SplashLock = new Mutex();
         private LinkedList<LiquidTransfer> Transfers = new LinkedList<LiquidTransfer>();
+        private Mutex TransferLock = new Mutex();
 
         public IEnumerable<LiquidSplash> GetSplashQueue()
         {
+            SplashLock.WaitOne();
             var r = Splashes;
             Splashes = new LinkedList<LiquidSplash>();
+            SplashLock.ReleaseMutex();
             return r;
         }
 
         public IEnumerable<LiquidTransfer> GetTransferQueue()
         {
+            TransferLock.WaitOne();
             var r = Transfers;
             Transfers = new LinkedList<LiquidTransfer>();
+            TransferLock.ReleaseMutex();
             return r;
         }
 
@@ -134,7 +140,9 @@ namespace DwarfCorp
             transfer.cellTo = water2;
             transfer.Location = Vox;
 
+            TransferLock.WaitOne();
             Transfers.AddFirst(transfer);
+            TransferLock.ReleaseMutex();
         }
 
         public void CreateSplash(Vector3 pos, LiquidType liquid)
@@ -171,7 +179,9 @@ namespace DwarfCorp
                     throw new InvalidOperationException();
             }
 
+            SplashLock.WaitOne();
             Splashes.AddFirst(splash);
+            SplashLock.ReleaseMutex();
         }
 
         public float GetSpreadRate(LiquidType type)
@@ -194,17 +204,17 @@ namespace DwarfCorp
                 return;
             }
 
-            List<VoxelChunk> chunksToUpdate = Chunks.ChunkData.ChunkMap.Select(chunks => chunks.Value).ToList();
+            //List<VoxelChunk> chunksToUpdate = Chunks.ChunkData.ChunkMap.Select(chunks => chunks.Value).ToList();
 
-            chunksToUpdate.Sort(Chunks.CompareChunkDistance);
-            int chunksUpdated = 0;
+            //chunksToUpdate.Sort(Chunks.CompareChunkDistance);
+            //int chunksUpdated = 0;
 
-            foreach(VoxelChunk chunk in chunksToUpdate)
+            foreach(var chunk in Chunks.ChunkData.ChunkMap.Values)
             {
-                if (chunksUpdated >= maxChunks)
-                    continue;
+                //if (chunksUpdated >= maxChunks)
+                //    continue;
 
-                chunksUpdated++;
+                //chunksUpdated++;
 
                 bool didUpdate = false;
 
@@ -481,24 +491,24 @@ namespace DwarfCorp
                         continue;
 
                     // Evaporate.
-                    if (water.WaterLevel <= EvaporationLevel && MathFunctions.RandEvent(0.01f))
-                    {
-                        if (water.Type == LiquidType.Lava)
-                        {
-                            currentVoxel.Type = VoxelLibrary.GetVoxelType("Stone");
-                            chunk.ShouldRebuild = true;
-                            chunk.ShouldRecalculateLighting = true;
-                        }
+                    //if (water.WaterLevel <= EvaporationLevel && MathFunctions.RandEvent(0.01f))
+                    //{
+                    //    if (water.Type == LiquidType.Lava)
+                    //    {
+                    //        currentVoxel.Type = VoxelLibrary.GetVoxelType("Stone");
+                    //        chunk.ShouldRebuild = true;
+                    //        chunk.ShouldRecalculateLighting = true;
+                    //    }
 
-                        currentVoxel.WaterCell = new WaterCell
-                        {
-                            Type = LiquidType.None,
-                            WaterLevel = 0
-                        };
+                    //    currentVoxel.WaterCell = new WaterCell
+                    //    {
+                    //        Type = LiquidType.None,
+                    //        WaterLevel = 0
+                    //    };
 
-                        updateOccured = true;
-                        continue;
-                    }
+                    //    updateOccured = true;
+                    //    continue;
+                    //}
 
                     var voxBelow = (y > 0) ? new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y - 1, z)) : TemporaryVoxelHandle.InvalidHandle;
 
