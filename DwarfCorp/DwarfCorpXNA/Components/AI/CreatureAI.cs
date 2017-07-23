@@ -675,6 +675,11 @@ namespace DwarfCorp
                     }
                 }
 
+                foreach (var resource in Creature.Inventory.Resources.Where(resource => resource.MarkedForRestock))
+                {
+                    return new StockResourceTask(new ResourceAmount(resource.Resource));
+                }
+
                 // Farm stuff if applicable
                 if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm) && MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction)
                 {

@@ -118,7 +118,7 @@ namespace DwarfCorp
             }
 
             Resource resource = ResourceLibrary.Resources[ItemType.ResourceCreated];
-            Creature.Inventory.Resources.AddResource(new ResourceAmount(resource, 1));
+            Creature.Inventory.AddResource(new ResourceAmount(resource, 1));
             yield return Status.Success;
         }
 

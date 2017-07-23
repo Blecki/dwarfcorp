@@ -1,4 +1,4 @@
-﻿// StashResourcesAct.cs
+// StashResourcesAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -70,7 +70,7 @@ namespace DwarfCorp
             {
                 foreach(ResourceAmount resource in Resources)
                 {
-                    Agent.Creature.Inventory.Resources.AddResource(resource.CloneResource());   
+                    Agent.Creature.Inventory.AddResource(resource.CloneResource());   
                 }
 
                 while (!waitTimer.HasTriggered)

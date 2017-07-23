@@ -59,7 +59,7 @@ namespace DwarfCorp
         public static IEnumerable<Act.Status> EatStockedFood(this Creature agent)
         {
             List<ResourceAmount> foods =
-                agent.Inventory.Resources.GetResources(new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Edible));
+                agent.Inventory.GetResources(new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Edible));
 
             if (foods.Count == 0 && agent.Allies == "Dwarf")
             {
@@ -225,14 +225,13 @@ namespace DwarfCorp
 
         public static IEnumerable<Act.Status> RestockAll(this Creature agent)
         {
-            foreach (ResourceAmount resource in agent.Inventory.Resources)
+            foreach (var resource in agent.Inventory.Resources)
             {
-                if (resource.NumResources > 0)
-                    agent.AI.GatherManager.StockOrders.Add(new GatherManager.StockOrder()
-                    {
-                        Destination = null,
-                        Resource = resource
-                    });
+                agent.AI.GatherManager.StockOrders.Add(new GatherManager.StockOrder()
+                {
+                    Destination = null,
+                    Resource = new ResourceAmount(resource.Resource)
+                });
             }
 
             yield return Act.Status.Success;

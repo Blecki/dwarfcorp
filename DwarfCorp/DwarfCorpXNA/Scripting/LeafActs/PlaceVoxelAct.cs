@@ -129,7 +129,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    Creature.Inventory.Resources.AddItem(grabbed);
+                    Creature.Inventory.Pickup(grabbed, Inventory.RestockType.RestockResource);
                     grabbed.Die();
                     
                     yield return Status.Fail;

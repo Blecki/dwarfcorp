@@ -67,20 +67,16 @@ namespace DwarfCorp
                     voxelUnder));
 
 
-            Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)
+            Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)) as Inventory;
+
+            for (int i = 0; i < MathFunctions.RandInt(1, 5); i++)
             {
-                Resources = new ResourceContainer()
+                inventory.Resources.Add(new Inventory.InventoryItem()
                 {
-                    MaxResources = 4,
-                    Resources = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>()
-                    {
-                        {
-                            ResourceLibrary.ResourceType.Grain,
-                            new ResourceAmount(ResourceLibrary.ResourceType.Grain, MathFunctions.RandInt(1, 5))
-                        }
-                    }
-                }
-            }) as Inventory;
+                    MarkedForRestock = false,
+                    Resource = ResourceLibrary.ResourceType.Grain
+                });
+            }
 
             AddChild(new Health(Manager, "HP", 30, 0.0f, 30));
             AddChild(new Flammable(Manager, "Flames"));

@@ -856,8 +856,9 @@ namespace DwarfCorp
                 ScissorTestEnable = true
             };
 
-            if (CompositeLibrary.Composites.ContainsKey("resources"))
-                CompositeLibrary.Composites["resources"].DebugDraw(DwarfGame.SpriteBatch, 0, 0);
+            
+            //if (CompositeLibrary.Composites.ContainsKey("resources"))
+            //    CompositeLibrary.Composites["resources"].DebugDraw(DwarfGame.SpriteBatch, 0, 0);
             //SelectionBuffer.DebugDraw(GraphicsDevice.Viewport.Bounds);
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp,
                 null, rasterizerState);

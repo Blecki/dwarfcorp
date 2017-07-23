@@ -82,19 +82,13 @@ namespace DwarfCorp
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
-            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.BoundingBoxPos)
-            {
-                Resources = new ResourceContainer
-                {
-                    MaxResources = 16
-                }
-            }) as Inventory;
+            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.BoundingBoxPos)) as Inventory;
 
             var gems = ResourceLibrary.GetResourcesByTag(Resource.ResourceTags.Gem);
             for (int i = 0; i < 16;  i++)
             {
                 int num = MathFunctions.RandInt(1, 32 - i);
-                Inventory.Resources.AddResource(new ResourceAmount(Datastructures.SelectRandom(gems), num));
+                Inventory.AddResource(new ResourceAmount(Datastructures.SelectRandom(gems), num));
                 i += num - 1;
             }
 
