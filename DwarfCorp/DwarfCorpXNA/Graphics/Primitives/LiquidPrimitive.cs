@@ -163,6 +163,8 @@ namespace DwarfCorp
 
             for (int y = 0; y < Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, VoxelConstants.ChunkSizeY); y++)
             {
+                if (chunk.Data.LiquidPresent[y] == 0) continue;
+
                 for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
                 {
                     for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
@@ -375,6 +377,7 @@ namespace DwarfCorp
 
                         pos = primitive.Vertices[primitiveIndex].Position;
                         pos.Y -= 0.6f;// Minimum ramp position 
+                        pos.Y *= ((float)voxel.WaterCell.WaterLevel / 8.0f); // Hack water level visualization in
                         pos += origin;
 
                         // Store the vertex information for future use when we need it again on this or another face.

@@ -120,6 +120,7 @@ namespace DwarfCorp
             updateList = new int[VoxelConstants.ChunkVoxelCount];
             randomIndices = new int[VoxelConstants.ChunkVoxelCount];
 
+            // Create permutation arrays for random update orders.
             SlicePermutations = new int[16][];
             var temp = new int[VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeZ];
             for (var i = 0; i < temp.Length; ++i)
@@ -131,18 +132,16 @@ namespace DwarfCorp
             }
         }
 
-        public void CreateTransfer(
-            TemporaryVoxelHandle Vox, WaterCell water1, WaterCell water2, byte amount)
+        public void CreateTransfer(TemporaryVoxelHandle Vox, WaterCell From, WaterCell To)
         {
-            LiquidTransfer transfer = new LiquidTransfer();
-            transfer.amount = amount;
-            transfer.cellFrom = water1;
-            transfer.cellTo = water2;
-            transfer.Location = Vox;
-
-            TransferLock.WaitOne();
-            Transfers.AddFirst(transfer);
-            TransferLock.ReleaseMutex();
+            if ((From.Type == LiquidType.Lava && To.Type == LiquidType.Water)
+                || (From.Type == LiquidType.Water && To.Type == LiquidType.Lava))
+            {
+                Vox.Type = VoxelLibrary.GetVoxelType("Stone");
+                Vox.WaterCell = WaterCell.Empty;
+                Vox.Chunk.ShouldRebuild = true;
+                Vox.Chunk.ShouldRecalculateLighting = true;
+            }            
         }
 
         public void CreateSplash(Vector3 pos, LiquidType liquid)
@@ -524,7 +523,7 @@ namespace DwarfCorp
                             CreateSplash(currentVoxel.Coordinate.ToVector3(), water.Type);
                             voxBelow.WaterCell = water;
                             currentVoxel.WaterCell = WaterCell.Empty;
-                            CreateTransfer(voxBelow, water, belowWater, water.WaterLevel);
+                            CreateTransfer(voxBelow, water, belowWater);
                             updateOccured = true;
                             continue;
                         }
@@ -537,7 +536,7 @@ namespace DwarfCorp
                             belowWater.WaterLevel += water.WaterLevel;
                             voxBelow.WaterCell = belowWater;
                             currentVoxel.WaterCell = WaterCell.Empty;
-                            CreateTransfer(voxBelow, water, belowWater, water.WaterLevel);
+                            CreateTransfer(voxBelow, water, belowWater);
                             updateOccured = true;
                             continue;
                         }
@@ -549,11 +548,13 @@ namespace DwarfCorp
                             belowWater.WaterLevel = maxWaterLevel;
                             voxBelow.WaterCell = belowWater;
                             currentVoxel.WaterCell = water;
-                            CreateTransfer(voxBelow, water, belowWater, water.WaterLevel);
+                            CreateTransfer(voxBelow, water, belowWater);
                             updateOccured = true;
                             continue;
                         }
                     }
+
+                    if (water.WaterLevel <= 1) continue;
 
                     // Nothing left to do but spread.
 
@@ -579,18 +580,16 @@ namespace DwarfCorp
                                 currentVoxel.WaterCell = new WaterCell
                                 {
                                     Type = newWater == 0 ? LiquidType.None : water.Type,
-                                    WaterLevel = (byte)(amountToMove)
+                                    WaterLevel = (byte)(water.WaterLevel - amountToMove)
                                 };
 
                                 neighborVoxel.WaterCell = new WaterCell
                                 {
                                     Type = neighborWater.Type == LiquidType.None ? water.Type : neighborWater.Type,
-                                    WaterLevel = (byte)(neighborWater.Type + amountToMove)
+                                    WaterLevel = (byte)(neighborWater.WaterLevel + amountToMove)
                                 };
 
-                                water = currentVoxel.WaterCell;
-
-                                CreateTransfer(neighborVoxel, water, neighborWater, (byte)amountToMove);
+                                CreateTransfer(neighborVoxel, water, neighborWater);
                                 updateOccured = true;
                                 break; 
                             }
