@@ -1249,20 +1249,6 @@ namespace DwarfCorp
 
         #region lighting
 
-
-
-
-
-        public byte GetIntensity(DynamicLight light, byte lightIntensity, VoxelHandle voxel)
-        {
-            Vector3 vertexPos = voxel.Position;
-            Vector3 diff = vertexPos - (light.Position + new Vector3(0.5f, 0.5f, 0.5f));
-            float dist = diff.LengthSquared() * 2;
-
-            return (byte)(int)((Math.Min(1.0f / (dist + 0.0001f), 1.0f)) * (float)light.Intensity);
-        }
-
-
         public static void CalculateVertexLight(VoxelHandle vox, VoxelVertex face,
             ChunkManager chunks, List<VoxelHandle> neighbors, ref VertexColorInfo color)
         {
@@ -1299,22 +1285,6 @@ namespace DwarfCorp
             color.SunColor = (int)Math.Min((float)color.SunColor / (float)numChecked, 255);
         }
 
-
-        public void ResetSunlightIgnoreEdges(byte sunColor)
-        {
-            for (int x = 1; x < SizeX - 1; x++)
-            {
-                for (int z = 1; z < SizeZ - 1; z++)
-                {
-                    for (int y = 0; y < SizeY; y++)
-                    {
-                        int index = Data.IndexAt(x, y, z);
-                        Data.SunColors[index] = sunColor;
-                    }
-                }
-            }
-        }
-
         public void ResetSunlight(byte sunColor)
         {
             int numVoxels = sizeX * sizeY * sizeZ;
@@ -1322,25 +1292,6 @@ namespace DwarfCorp
             {
                 Data.SunColors[i] = sunColor;
             }
-        }
-
-        public float GetTotalWaterHeight(VoxelHandle voxRef)
-        {
-            float tot = 0;
-            int x = (int)voxRef.GridPosition.X;
-            int z = (int)voxRef.GridPosition.Z;
-            for (int y = (int)voxRef.GridPosition.Y; y < SizeY; y++)
-            {
-                int index = Data.IndexAt(x, y, z);
-                tot += Data.Water[index].WaterLevel;
-
-                if (Data.Water[index].WaterLevel == 0)
-                {
-                    return tot;
-                }
-            }
-
-            return tot;
         }
 
         public float GetTotalWaterHeightCells(VoxelHandle voxRef)
@@ -1405,30 +1356,6 @@ namespace DwarfCorp
             }
         }
 
-        public void GetSharedVertices(VoxelHandle v, VoxelVertex vertex, List<KeyValuePair<VoxelHandle, List<VoxelVertex>>> vertices, List<VoxelHandle> neighbors)
-        {
-            vertices.Clear();
-
-
-            GetNeighborsVertex(vertex, v, neighbors);
-
-            Vector3 myDelta = vertexDeltas[(int)vertex];
-            foreach (VoxelHandle neighbor in neighbors)
-            {
-                if (neighbor == null || neighbor.IsEmpty)
-                {
-                    continue;
-                }
-
-                List<VoxelVertex> vertsNeighbor = new List<VoxelVertex>();
-                Vector3 otherDelta = v.Position - neighbor.Position + myDelta;
-                vertsNeighbor.Add(GetNearestDelta(otherDelta));
-
-
-                vertices.Add(new KeyValuePair<VoxelHandle, List<VoxelVertex>>(neighbor, vertsNeighbor));
-            }
-        }
-
         public void CalculateGlobalLight()
         {
             if (GameSettings.Default.CalculateSunlight)
@@ -1486,51 +1413,6 @@ namespace DwarfCorp
 
             return -1;
         }
-
-        public bool NeedsViewingLevelChange()
-        {
-            float level = Manager.ChunkData.MaxViewingLevel;
-
-            int mx = SizeX;
-            int my = SizeY;
-            int mz = SizeZ;
-            VoxelHandle voxel = MakeVoxel(0, 0, 0);
-            for (int y = 0; y < my; y++)
-            {
-                for (int x = 0; x < mx; x++)
-                {
-                    for (int z = 0; z < mz; z++)
-                    {
-                        float test = 0.0f;
-
-                        switch (Manager.ChunkData.Slice)
-                        {
-                            case ChunkManager.SliceMode.X:
-                                test = x + Origin.X;
-                                break;
-                            case ChunkManager.SliceMode.Y:
-                                test = y + Origin.Y;
-                                break;
-                            case ChunkManager.SliceMode.Z:
-                                test = z + Origin.Z;
-                                break;
-                        }
-
-                        voxel.GridPosition = new Vector3(x, y, z);
-                        if (test > level && (!voxel.IsEmpty || voxel.WaterLevel > 0))
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-
-            return false;
-
-        }
-
-
 
         #endregion
 
