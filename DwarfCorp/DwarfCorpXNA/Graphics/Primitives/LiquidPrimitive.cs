@@ -370,7 +370,6 @@ namespace DwarfCorp
             float centerWaterlevel = chunk.Data.Water[chunk.Data.IndexAt(x, y, z)].WaterLevel;
 
             float[] foaminess = new float[4];
-            Vector3[] pos = new Vector3[4];
 
             for (int i = 0; i < cache.drawFace.Length; i++)
             {
@@ -396,6 +395,8 @@ namespace DwarfCorp
                     //float foaminess1;
                     foaminess[vertOffset] = 0.0f;
                     bool shoreLine = false;
+
+                    Vector3 pos = Vector3.Zero;
                     Vector3 rampOffset = Vector3.Zero;
 
                     // We are going to have to reuse some vertices when drawing a single so we'll store the position/foaminess
@@ -448,23 +449,25 @@ namespace DwarfCorp
                             rampOffset.Y = -0.4f;
                         }
 
-                        pos[vertOffset] = primitive.Vertices[vertOffset + vertexIndex].Position;
-                        pos[vertOffset].Y -= 0.6f;// Minimum ramp position 
-                        pos[vertOffset] += origin + rampOffset;
+                        pos = primitive.Vertices[vertOffset + vertexIndex].Position;
+                        pos.Y -= 0.6f;// Minimum ramp position 
+                        pos += origin + rampOffset;
 
                         // Store the vertex information for future use when we need it again on this or another face.
                         cache.vertexCalculated[(int)currentVertex] = true;
                         cache.vertexFoaminess[(int)currentVertex] = foaminess[vertOffset];
-                        cache.vertexPositions[(int)currentVertex] = pos[vertOffset];
+                        cache.vertexPositions[(int)currentVertex] = pos;
                     }
                     else
                     {
                         // We've already calculated this one.  Time for a cheap grab from the lookup.
                         foaminess[vertOffset] = cache.vertexFoaminess[(int)currentVertex];
-                        pos[vertOffset] = cache.vertexPositions[(int)currentVertex];
+                        pos = cache.vertexPositions[(int)currentVertex];
                     }
 
-                    vertices[startVertex].Set(pos[vertOffset],
+                    Vector2 uv = Vector2.Zero;
+
+                    vertices[startVertex].Set(pos,
                         new Color(foaminess[vertOffset], 0.0f, 1.0f, 1.0f),
                         Color.White,
                         primitive.UVs.Uvs[vertOffset + vertexIndex],
@@ -478,9 +481,9 @@ namespace DwarfCorp
 
                 for (int idx = faceIndex; idx < faceCount + faceIndex; idx++)
                 {
-                    ushort offset  = flippedQuad ? primitive.FlippedIndexes[idx] : primitive.Indexes[idx];
+                    ushort offset = flippedQuad ? primitive.FlippedIndexes[idx] : primitive.Indexes[idx];
                     ushort offset0 = flippedQuad ? primitive.FlippedIndexes[faceIndex] : primitive.Indexes[faceIndex];
-                        
+
                     Indexes[startIndex] = (ushort)(indexOffset + offset - offset0);
                     startIndex++;
                 }
