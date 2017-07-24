@@ -222,10 +222,9 @@ namespace DwarfCorp
                                         Indexes = indexes;
                                     }
 
-                                    ushort vertexOffset = flippedQuad ? primitive.FlippedIndexes[idx] : primitive.Indexes[idx];
-                                    ushort vertexOffset0 = flippedQuad ? primitive.FlippedIndexes[faceIndex] : primitive.Indexes[faceIndex];
-                                    Indexes[maxIndex] =
-                                        (ushort)((int)indexOffset + (int)((int)vertexOffset - (int)vertexOffset0));
+                                    ushort offset = flippedQuad ? primitive.FlippedIndexes[idx] : primitive.Indexes[idx];
+                                    ushort offset0 = flippedQuad ? primitive.FlippedIndexes[faceIndex] : primitive.Indexes[faceIndex];
+                                    Indexes[maxIndex] = (ushort)(indexOffset + offset - offset0);
                                     maxIndex++;
                                 }
                             }
