@@ -185,7 +185,6 @@ namespace DwarfCorp
                     for (int z = 0; z < chunk.SizeZ; z++)
                     {
                         int index = chunk.Data.IndexAt(x, y, z);
-
                         if (fogOfWar && !chunk.Data.IsExplored[index]) continue;
 
                         if (chunk.Data.Water[index].WaterLevel > 0)
@@ -196,17 +195,17 @@ namespace DwarfCorp
                             if (liqType != curLiqType)
                             {
                                 LiquidPrimitive newPrimitive = lps[(int)liqType];
-
                                 // We weren't passed a LiquidPrimitive object to work with for this type so we'll skip it.
                                 if (newPrimitive == null) continue;
 
                                 maxVertices[(int)curLiqType] = maxVertex;
+                                maxIndexes[(int)curLiqType] = maxIndex;
 
                                 curVertices = newPrimitive.Vertices;
                                 curIndexes = newPrimitive.Indexes;
+
                                 curLiqType = liqType;
                                 curPrimitive = newPrimitive;
-
                                 maxVertex = maxVertices[(int)liqType];
                                 maxIndex = maxIndexes[(int)liqType];
                             }
@@ -214,22 +213,22 @@ namespace DwarfCorp
                             v.GridPosition = new Vector3(x, y, z);
 
                             int facesToDraw = 0;
-
                             for (int i = 0; i < totalFaces; i++)
                             {
-                                BoxFace face = (BoxFace) i;
-
+                                BoxFace face = (BoxFace)i;
                                 // We won't draw the bottom face.  This might be needed down the line if we add transparent tiles like glass.
-                                if (face == BoxFace.Bottom) continue;
-                                Vector3 delta = faceDeltas[(int)face];
+                                //if (face == BoxFace.Bottom) continue;
 
-                                // Pull the current neighbor voxel based on the face it would be touching.
+                                var delta = faceDeltas[(int)face];
 
-                                if (v.GetNeighborBySuccessor(delta, ref voxelOnFace, false))
+                                // Pull the current neighbor DestinationVoxel based on the face it would be touching.
+                                bool success = v.GetNeighborBySuccessor(delta, ref v, false);
+
+                                if (success)
                                 {
                                     if (face == BoxFace.Top)
                                     {
-                                        if (!(voxelOnFace.WaterLevel == 0 || y == (int)chunk.Manager.ChunkData.MaxViewingLevel))
+                                        if (!(v.WaterLevel == 0 || y == (int)chunk.Manager.ChunkData.MaxViewingLevel))
                                         {
                                             cache.drawFace[(int)face] = false;
                                             continue;
@@ -237,7 +236,7 @@ namespace DwarfCorp
                                     }
                                     else
                                     {
-                                        if (voxelOnFace.WaterLevel != 0 || !voxelOnFace.IsEmpty)
+                                        if (v.WaterLevel != 0 || !v.IsEmpty)
                                         {
                                             cache.drawFace[(int)face] = false;
                                             continue;
@@ -373,10 +372,10 @@ namespace DwarfCorp
             float[] foaminess = new float[4];
             Vector3[] pos = new Vector3[4];
 
-            for (int faces = 0; faces < cache.drawFace.Length; faces++)
+            for (int i = 0; i < cache.drawFace.Length; i++)
             {
-                if (!cache.drawFace[faces]) continue;
-                BoxFace face = (BoxFace)faces;
+                if (!cache.drawFace[i]) continue;
+                BoxFace face = (BoxFace)i;
 
                 // Let's get the vertex/index positions for the current face.
                 int faceIndex = 0;
@@ -387,7 +386,7 @@ namespace DwarfCorp
                 primitive.GetFace(face, primitive.UVs, out faceIndex, out faceCount, out vertexIndex, out vertexCount);
                 int indexOffset = startVertex;
 
-                for (int vertOffset = 0; vertOffset < vertexCount; vertOffset++) //vertexCount, 6
+                for (int vertOffset = 0; vertOffset < vertexCount; vertOffset++)
                 {
                     // Used twice so we'll store it for later use.
                     ExtendedVertex vert = primitive.Vertices[vertOffset + vertexIndex];
@@ -465,47 +464,20 @@ namespace DwarfCorp
                         pos[vertOffset] = cache.vertexPositions[(int)currentVertex];
                     }
 
-                   /* switch (face)
-                    {
-                        case BoxFace.Back:
-                        case BoxFace.Front:
-                            vertices[startVertex].Set(pos[vertOffset],
-                                                new Color(foaminess[vertOffset] * 0.5f, 0.0f, 1.0f, 1.0f),
-                                                Color.White,
-                                                new Vector2(pos[vertOffset].X, pos[vertOffset].Y),
-                                                new Vector4(0, 0, 1, 1));
-                            break;
-                        case BoxFace.Right:
-                        case BoxFace.Left:
-                            vertices[startVertex].Set(pos[vertOffset],
-                                                new Color(foaminess[vertOffset] * 0.5f, 0.0f, 1.0f, 1.0f),
-                                                Color.White,
-                                                new Vector2(pos[vertOffset].Z, pos[vertOffset].Y),
-                                                new Vector4(0, 0, 1, 1));
-                            break;
-                        case BoxFace.Top:*/
-                            vertices[startVertex].Set(pos[vertOffset],
-                                                new Color(foaminess[vertOffset], 0.0f, 1.0f, 1.0f),
-                                                Color.White,
-                                                new Vector2(pos[vertOffset].X, pos[vertOffset].Z),
-                                                new Vector4(0, 0, 1, 1));
-                            //break;
-                    //}
+                    vertices[startVertex].Set(pos[vertOffset],
+                        new Color(foaminess[vertOffset], 0.0f, 1.0f, 1.0f),
+                        Color.White,
+                        primitive.UVs.Uvs[vertOffset + vertexIndex],
+                        new Vector4(0, 0, 1, 1));
+
                     startVertex++;
                 }
 
-                bool flippedQuad = foaminess[0] + foaminess[2] < 
-                                   foaminess[1] + foaminess[3];
+                bool flippedQuad = foaminess[1] + foaminess[3] > 
+                                   foaminess[0] + foaminess[2];
 
-                for (int idx = faceIndex; idx < faceCount + faceIndex; idx++) // vertexCount
+                for (int idx = faceIndex; idx < faceCount + faceIndex; idx++)
                 {
-                    if (startIndex >= Indexes.Length)
-                    {
-                        ushort[] indexes = new ushort[Indexes.Length * 2];
-                        Indexes.CopyTo(indexes, 0);
-                        Indexes = indexes;
-                    }
-
                     ushort offset  = flippedQuad ? primitive.FlippedIndexes[idx] : primitive.Indexes[idx];
                     ushort offset0 = flippedQuad ? primitive.FlippedIndexes[faceIndex] : primitive.Indexes[faceIndex];
                         
