@@ -142,91 +142,90 @@ namespace DwarfCorp
                             uvs = ComputeTransitionTexture(v, manhattanNeighbors);
                         }
 
-                        for(int i = 0; i < totalFaces; i++)
+                        for (int i = 0; i < totalFaces; i++)
                         {
-                            BoxFace face = (BoxFace) i;
-                            Vector3 delta = FaceDeltas[(int)face];
+                            BoxFace face = (BoxFace)i;
+                            Vector3 delta = FaceDeltas[i];
 
                             // Pull the current neighbor voxel based on the face it would be touching.
 
                             if (chunk.IsCellValid(x + (int)delta.X, y + (int)delta.Y, z + (int)delta.Z))
                             {
                                 voxelOnFace.GridPosition = v.GridPosition + delta;
-                                drawFace[(int)face] = IsFaceVisible(v, voxelOnFace, face);
+                                drawFace[i] = IsFaceVisible(v, voxelOnFace, face);
                             }
                             else
                             {
                                 bool success = chunk.Manager.ChunkData.GetNonNullVoxelAtWorldLocation(
                                     v.GridPosition + delta + chunk.Origin, ref worldVoxel);
 
-                                drawFace[(int)face] = !success || IsFaceVisible(v, worldVoxel, face);
+                                drawFace[i] = !success || IsFaceVisible(v, worldVoxel, face);
                             }
 
-                            if (drawFace[(int)face])
+                            if (!drawFace[i]) continue;
+
+                            // Let's get the vertex/index positions for the current face.
+
+                            int faceIndex = 0;
+                            int faceCount = 0;
+                            int vertexIndex = 0;
+                            int vertexCount = 0;
+
+                            primitive.GetFace(face, primitive.UVs, out faceIndex, out faceCount, out vertexIndex, out vertexCount);
+                            int indexOffset = maxVertex;
+
+                            // Add vertex data to visible voxel faces
+
+                            for (int vertOffset = 0; vertOffset < vertexCount; vertOffset++)
                             {
-                                // Set up vertex data
+                                ExtendedVertex vert = primitive.Vertices[vertOffset + vertexIndex];
+                                VoxelVertex currentVertex = primitive.Deltas[vertOffset + vertexIndex];
 
-                                int faceIndex = 0;
-                                int faceCount = 0;
-                                int vertexIndex = 0;
-                                int vertexCount = 0;
+                                VoxelChunk.VertexColorInfo colorInfo = new VoxelChunk.VertexColorInfo();
+                                VoxelChunk.CalculateVertexLight(v, currentVertex, chunk.Manager, lightingScratchSpace, ref colorInfo);
+                                ambientValues[vertOffset] = colorInfo.AmbientColor;
+                                Vector3 offset = Vector3.Zero;
+                                Vector2 texOffset = Vector2.Zero;
 
-                                primitive.GetFace(face, uvs, out faceIndex, out faceCount, out vertexIndex, out vertexCount);
-                                int indexOffset = maxVertex;
-
-                                // Add vertex data to visible voxel faces
-
-                                for (int vertOffset = 0; vertOffset < vertexCount; vertOffset++)
+                                if (v.Type.CanRamp && VoxelChunk.ShouldRamp(currentVertex, v.RampType))
                                 {
-                                    ExtendedVertex vert = primitive.Vertices[vertOffset + vertexIndex];
-                                    VoxelVertex bestKey = primitive.Deltas[vertOffset + vertexIndex];
-
-                                    VoxelChunk.VertexColorInfo colorInfo = new VoxelChunk.VertexColorInfo();
-                                    VoxelChunk.CalculateVertexLight(v, bestKey, chunk.Manager, lightingScratchSpace, ref colorInfo);
-                                    ambientValues[vertOffset] = colorInfo.AmbientColor;
-                                    Vector3 offset = Vector3.Zero;
-                                    Vector2 texOffset = Vector2.Zero;
-
-                                    if (v.Type.CanRamp && VoxelChunk.ShouldRamp(bestKey, v.RampType))
-                                    {
-                                        offset = new Vector3(0, -v.Type.RampSize, 0);
-                                    }
-
-                                    if (maxVertex >= Vertices.Length)
-                                    {
-                                        ExtendedVertex[] newVertices = new ExtendedVertex[Vertices.Length * 2];
-                                        Vertices.CopyTo(newVertices, 0);
-                                        Vertices = newVertices;
-                                    }
-
-                                    Vertices[maxVertex] = new ExtendedVertex(
-                                        vert.Position + v.Position + offset +
-                                            VertexNoise.GetNoiseVectorFromRepeatingTexture(vert.Position + v.Position),
-                                        new Color(colorInfo.SunColor, colorInfo.AmbientColor, colorInfo.DynamicColor),
-                                        tint,
-                                        uvs.Uvs[vertOffset + vertexIndex] + texOffset,
-                                        uvs.Bounds[faceIndex / 6]);
-
-                                    maxVertex++;
+                                    offset = new Vector3(0, -v.Type.RampSize, 0);
                                 }
 
-                                bool flippedQuad = ambientValues[0] + ambientValues[2] >
-                                                   ambientValues[1] + ambientValues[3];
-
-                                for (int idx = faceIndex; idx < faceCount + faceIndex; idx++)
+                                if (maxVertex >= Vertices.Length)
                                 {
-                                    if (maxIndex >= Indexes.Length)
-                                    {
-                                        ushort[] indexes = new ushort[Indexes.Length * 2];
-                                        Indexes.CopyTo(indexes, 0);
-                                        Indexes = indexes;
-                                    }
-
-                                    ushort offset = flippedQuad ? primitive.FlippedIndexes[idx] : primitive.Indexes[idx];
-                                    ushort offset0 = flippedQuad ? primitive.FlippedIndexes[faceIndex] : primitive.Indexes[faceIndex];
-                                    Indexes[maxIndex] = (ushort)(indexOffset + offset - offset0);
-                                    maxIndex++;
+                                    ExtendedVertex[] newVertices = new ExtendedVertex[Vertices.Length * 2];
+                                    Vertices.CopyTo(newVertices, 0);
+                                    Vertices = newVertices;
                                 }
+
+                                Vertices[maxVertex] = new ExtendedVertex(
+                                    vert.Position + v.Position + offset +
+                                        VertexNoise.GetNoiseVectorFromRepeatingTexture(vert.Position + v.Position),
+                                    new Color(colorInfo.SunColor, colorInfo.AmbientColor, colorInfo.DynamicColor),
+                                    tint,
+                                    uvs.Uvs[vertOffset + vertexIndex] + texOffset,
+                                    uvs.Bounds[faceIndex / 6]);
+
+                                maxVertex++;
+                            }
+
+                            bool flippedQuad = ambientValues[0] + ambientValues[2] >
+                                               ambientValues[1] + ambientValues[3];
+
+                            for (int idx = faceIndex; idx < faceCount + faceIndex; idx++)
+                            {
+                                if (maxIndex >= Indexes.Length)
+                                {
+                                    ushort[] indexes = new ushort[Indexes.Length * 2];
+                                    Indexes.CopyTo(indexes, 0);
+                                    Indexes = indexes;
+                                }
+
+                                ushort offset = flippedQuad ? primitive.FlippedIndexes[idx] : primitive.Indexes[idx];
+                                ushort offset0 = flippedQuad ? primitive.FlippedIndexes[faceIndex] : primitive.Indexes[faceIndex];
+                                Indexes[maxIndex] = (ushort)(indexOffset + offset - offset0);
+                                maxIndex++;
                             }
                         }
                         // End looping faces
