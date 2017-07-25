@@ -171,7 +171,6 @@ namespace DwarfCorp
 
             VoxelHandle v = chunk.MakeVoxel(0, 0, 0);
             VoxelHandle voxelOnFace = chunk.MakeVoxel(0, 0, 0);
-            VoxelHandle worldVoxel = new VoxelHandle();
 
             int maxVertex = 0;
             int maxIndex = 0;
@@ -217,18 +216,18 @@ namespace DwarfCorp
                             {
                                 BoxFace face = (BoxFace)i;
                                 // We won't draw the bottom face.  This might be needed down the line if we add transparent tiles like glass.
-                                //if (face == BoxFace.Bottom) continue;
+                                if (face == BoxFace.Bottom) continue;
 
                                 var delta = faceDeltas[(int)face];
 
                                 // Pull the current neighbor DestinationVoxel based on the face it would be touching.
-                                bool success = v.GetNeighborBySuccessor(delta, ref v, false);
+                                bool success = v.GetNeighborBySuccessor(delta, ref voxelOnFace, false);
 
                                 if (success)
                                 {
                                     if (face == BoxFace.Top)
                                     {
-                                        if (!(v.WaterLevel == 0 || y == (int)chunk.Manager.ChunkData.MaxViewingLevel))
+                                        if (!(voxelOnFace.WaterLevel == 0 || y == (int)chunk.Manager.ChunkData.MaxViewingLevel))
                                         {
                                             cache.drawFace[(int)face] = false;
                                             continue;
@@ -236,7 +235,7 @@ namespace DwarfCorp
                                     }
                                     else
                                     {
-                                        if (v.WaterLevel != 0 || !v.IsEmpty)
+                                        if (voxelOnFace.WaterLevel != 0 || !voxelOnFace.IsEmpty)
                                         {
                                             cache.drawFace[(int)face] = false;
                                             continue;
@@ -464,8 +463,6 @@ namespace DwarfCorp
                         foaminess[vertOffset] = cache.vertexFoaminess[(int)currentVertex];
                         pos = cache.vertexPositions[(int)currentVertex];
                     }
-
-                    Vector2 uv = Vector2.Zero;
 
                     vertices[startVertex].Set(pos,
                         new Color(foaminess[vertOffset], 0.0f, 1.0f, 1.0f),
