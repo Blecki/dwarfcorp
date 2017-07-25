@@ -53,9 +53,6 @@ namespace DwarfCorp
     public class WaterManager
     {
         private ChunkManager Chunks { get; set; }
-        private int[] updateList;
-        private int[] randomIndices;
-        private int maxChunks;
         public byte EvaporationLevel { get; set; }
 
         public static byte maxWaterLevel = 8;
@@ -76,6 +73,8 @@ namespace DwarfCorp
             new int[] { 0, 3, 1, 2 },
             new int[] { 0, 3, 2, 1 }
         };
+
+        private int[] NeighborScratch = new int[4];
 
         private void RollArray(int[] from, int[] into, int offset)
         {
@@ -114,12 +113,7 @@ namespace DwarfCorp
         {
             Chunks = chunks;
             EvaporationLevel = 1;
-            maxChunks = 81;
             ChunkData data = chunks.ChunkData;
-
-            // Create reusable arrays for randomized indices
-            updateList = new int[VoxelConstants.ChunkVoxelCount];
-            randomIndices = new int[VoxelConstants.ChunkVoxelCount];
 
             // Create permutation arrays for random update orders.
             SlicePermutations = new int[16][];
@@ -199,37 +193,17 @@ namespace DwarfCorp
 
         public void UpdateWater()
         {
+            //Chunks.camera.Position;
+
+
             if(Chunks.World.Paused)
             {
                 return;
             }
 
-            //List<VoxelChunk> chunksToUpdate = Chunks.ChunkData.ChunkMap.Select(chunks => chunks.Value).ToList();
-
-            //chunksToUpdate.Sort(Chunks.CompareChunkDistance);
-            //int chunksUpdated = 0;
-
             foreach(var chunk in Chunks.ChunkData.ChunkMap.Values)
             {
-                //if (chunksUpdated >= maxChunks)
-                //    continue;
-
-                //chunksUpdated++;
-
-                bool didUpdate = false;
-
-                //if (MathFunctions.RandEvent(0.5f))
-                //{
-                    GamePerformance.Instance.StartTrackPerformance("New Water Update");
-                    didUpdate = ReplacementDiscreteUpdate(chunk);
-                    GamePerformance.Instance.StopTrackPerformance("New Water Update");
-                //}
-                //else
-                //{
-                //    GamePerformance.Instance.StartTrackPerformance("Old Water Update");
-                //    didUpdate = DiscreteUpdate(chunk);
-                //    GamePerformance.Instance.StopTrackPerformance("Old Water Update");
-                //}
+                bool didUpdate = DiscreteUpdate(chunk);
 
                 if (!didUpdate && !chunk.FirstWaterIter)
                 {
@@ -242,230 +216,7 @@ namespace DwarfCorp
             }
         }
 
-        private static Vector3 CoordsAt(int idx)
-        {
-            int x = idx % (VoxelConstants.ChunkSizeX);
-            idx /= VoxelConstants.ChunkSizeX;
-            int z = idx % (VoxelConstants.ChunkSizeZ);
-            idx /= VoxelConstants.ChunkSizeZ;
-            int y = idx;
-            return new Vector3(x, y, z);
-        }
-
-        /*
-        public bool DiscreteUpdate(VoxelChunk chunk)
-        {            
-            var gridCoord = Vector3.Zero;
-            bool updateOccurred = false;
-            WaterCell cellBelow = new WaterCell();
-
-            int maxSize = VoxelConstants.ChunkVoxelCount;
-            int toUpdate = 0;
-            var data = chunk.Data;
-            for (int i = 0; i < maxSize; i++)
-            {
-                if (data.Types[i] != 0)
-                {
-                    data.Water[i].WaterLevel = 0;
-                    data.Water[i].Type = LiquidType.None;
-                    continue;
-                }
-                // Don't check empty cells or cells we've already modified.
-                if (data.Water[i].WaterLevel < 1)
-                {
-                    continue;
-                }
-                updateList[toUpdate] = i;
-                toUpdate++;
-            }
-
-            if (toUpdate == 0)
-            {
-                return false;
-            }
-
-            TemporaryVoxelHandle voxBelow = TemporaryVoxelHandle.InvalidHandle;
-
-            for (int i = 0; i < toUpdate; i++)
-            {
-                randomIndices[i] = i;
-            }
-            randomIndices.ShuffleSeedRandom(toUpdate);
-
-            // Loop through each cell.                
-            for (int t = 0; t < toUpdate; t++)
-            {
-                int idx = updateList[randomIndices[t]];
-
-                // Don't check empty cells or cells we've already modified.
-                if (data.Water[idx].Type == LiquidType.None || data.Types[idx] != 0)
-                    continue;
-
-                //Todo: %KILL% the CoordsAt bit.
-                gridCoord = CoordsAt(idx);
-                int x = (int)gridCoord.X;
-                int y = (int)gridCoord.Y;
-                int z = (int)gridCoord.Z;
-                Vector3 worldPos = gridCoord + chunk.Origin;
-
-                if (data.Water[idx].WaterLevel <= EvaporationLevel && MathFunctions.RandEvent(0.01f))
-                {
-                    data.Water[idx].WaterLevel = 0;
-
-                    if (data.Water[idx].Type == LiquidType.Lava)
-                    {
-                        data.Types[idx] = (byte)VoxelLibrary.GetVoxelType("Stone").ID;
-                        data.Health[idx] = (byte)VoxelLibrary.GetVoxelType("Stone").StartingHealth;
-                        chunk.ShouldRebuild = true;
-                        chunk.ShouldRecalculateLighting = true;
-                    }
-                    data.Water[idx].Type = LiquidType.None;
-
-                    updateOccurred = true;
-
-                    continue;
-                }
-
-                bool shouldFall = false;
-
-                // Now check the cell immediately below this one.
-                // There are two cases, either we are at the bottom of the chunk,
-                // in which case we must find the water from the chunk manager.
-                // Otherwise, we just get the cell immediately beneath us.
-                if (y > 0)
-                {
-                    voxBelow = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y - 1, z));
-
-                    if (voxBelow.IsEmpty)
-                    {
-                        cellBelow = voxBelow.WaterCell;
-                        shouldFall = true;
-                    }
-                }
-                
-                // Cases where the fluid can fall down.
-                if (shouldFall)
-                {
-                    // If the cell immediately below us is empty,
-                    // swap the contents and move on.
-                    if (cellBelow.WaterLevel < 1)
-                    {
-                        CreateSplash(worldPos, data.Water[idx].Type);
-
-                        cellBelow.WaterLevel = data.Water[idx].WaterLevel;
-                        if (cellBelow.Type == LiquidType.None)
-                        {
-                            cellBelow.Type = data.Water[idx].Type;
-                        }
-                        data.Water[idx].WaterLevel = 0;
-                        data.Water[idx].Type = LiquidType.None;
-                        voxBelow.WaterCell = cellBelow;
-                        CreateTransfer(new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x,y, z)), data.Water[idx], cellBelow, cellBelow.WaterLevel);
-                        updateOccurred = true;
-
-                        continue;
-                    }
-                    // Otherwise, fill as much of the space as we can.
-                    else
-                    {
-                        byte spaceLeft = (byte)(maxWaterLevel - cellBelow.WaterLevel);
-
-                        if (spaceLeft > 0)
-                        {
-                            // Special case where we can flow completely into the next cell.
-                            if (spaceLeft >= data.Water[idx].WaterLevel)
-                            {
-                                byte transfer = data.Water[idx].WaterLevel;
-                                cellBelow.WaterLevel += transfer;
-                                if (cellBelow.Type == LiquidType.None)
-                                {
-                                    cellBelow.Type = data.Water[idx].Type;
-                                }
-                                data.Water[idx].WaterLevel = 0;
-                                data.Water[idx].Type = LiquidType.None;
-
-                                CreateTransfer(voxBelow, data.Water[idx], cellBelow, transfer);
-                                voxBelow.WaterCell = cellBelow;
-                                updateOccurred = true;
-                                continue;
-                            }
-                            // Otherwise, only flow a little bit, and spread later.
-                            else
-                            {
-                                data.Water[idx].WaterLevel -= spaceLeft;
-                                cellBelow.WaterLevel += spaceLeft;
-                                if (cellBelow.Type == LiquidType.None)
-                                {
-                                    cellBelow.Type = data.Water[idx].Type;
-                                }
-
-                                CreateTransfer(voxBelow, data.Water[idx], cellBelow, spaceLeft);
-
-                                voxBelow.WaterCell = cellBelow;
-                            }
-                        }
-                    }
-                }
-
-                // Now the only fluid left can spread.
-                // We spread to the manhattan neighbors
-                //Array.Sort(m_spreadNeighbors, (a, b) => CompareFlowVectors(a, b, data.Water[idx].FluidFlow));
-                //m_spreadNeighbors.Shuffle();
-                
-                foreach (var globalCoordinate in VoxelHelpers.EnumerateManhattanNeighbors2D(
-                        chunk.ID + new LocalVoxelCoordinate(x, y, z)))
-                {
-                    var v = new TemporaryVoxelHandle(chunk.Manager.ChunkData, globalCoordinate);
-                    if (!v.IsValid || !v.IsEmpty) continue;
-                    var neighborWater = v.WaterCell;
-                    
-                    if (neighborWater.WaterLevel >= data.Water[idx].WaterLevel)
-                        continue;
-
-                    byte amountToMove = (byte)(
-                        Math.Min(maxWaterLevel - neighborWater.WaterLevel, data.Water[idx].WaterLevel) * GetSpreadRate(data.Water[idx].Type)
-                    );
-
-                    if (amountToMove == 0)
-                    {
-                        continue;
-                    }
-
-                    if (neighborWater.WaterLevel < oneQuarterWaterLevel)
-                    {
-                        updateOccurred = true;
-                    }
-
-                    CreateTransfer(v, data.Water[idx], neighborWater, amountToMove);
-
-                    data.Water[idx].WaterLevel -= amountToMove;
-                    neighborWater.WaterLevel += amountToMove;
-
-                    if (neighborWater.Type == LiquidType.None)
-                    {
-                        neighborWater.Type = data.Water[idx].Type;
-                    }
-
-                    v.WaterCell = neighborWater;
-
-                    if (data.Water[idx].WaterLevel >= 1)
-                    {
-                        continue;
-                    }
-
-                    data.Water[idx].WaterLevel = 0;
-                    data.Water[idx].Type = LiquidType.None;
-                    break;
-                }
-            }
-
-            return updateOccurred;
-        }
-        //*/
-
-        private int[] NeighborScratch = new int[4];
-
-        public bool ReplacementDiscreteUpdate(VoxelChunk chunk)
+        private bool DiscreteUpdate(VoxelChunk chunk)
         {
             bool updateOccured = false;
 

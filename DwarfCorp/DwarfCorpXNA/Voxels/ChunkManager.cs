@@ -71,17 +71,14 @@ namespace DwarfCorp
 
         private Thread RebuildThread { get; set; }
         private Thread RebuildLiquidThread { get; set; }
+        private AutoScaleThread WaterUpdateThread;
 
 
-        private static readonly AutoResetEvent WaterUpdateEvent = new AutoResetEvent(true);
         private static readonly AutoResetEvent NeedsGenerationEvent = new AutoResetEvent(false);
         private static readonly AutoResetEvent NeedsRebuildEvent = new AutoResetEvent(false);
         private static readonly AutoResetEvent NeedsLiquidEvent = new AutoResetEvent(false);
 
-        private Thread WaterThread { get; set; }
-
         private readonly Timer generateChunksTimer = new Timer(0.5f, false, Timer.TimerMode.Real);
-        private readonly Timer waterUpdateTimer = new Timer(0.15f, false, Timer.TimerMode.Real);
 
         public BoundingBox Bounds { get; set; }
 
@@ -157,8 +154,8 @@ namespace DwarfCorp
             RebuildLiquidThread = new Thread(RebuildLiquidsThread);
             RebuildLiquidThread.Name = "RebuildLiquids";
 
-            WaterThread = new Thread(UpdateWaterThread);
-            WaterThread.Name = "UpdateWater";
+            WaterUpdateThread = new AutoScaleThread(this, GamePerformance.ThreadIdentifier.UpdateWater,
+                (f) => Water.UpdateWater());
 
             ToGenerate = new List<GlobalChunkCoordinate>();
             Graphics = graphics;
@@ -194,48 +191,8 @@ namespace DwarfCorp
         {
             GeneratorThread.Start();
             RebuildThread.Start();
-            WaterThread.Start();
+            WaterUpdateThread.Start();
             RebuildLiquidThread.Start();
-        }
-
-        public void UpdateWaterThread()
-        {
-            EventWaitHandle[] waitHandles =
-            {
-                WaterUpdateEvent,
-                Program.ShutdownEvent
-            };
-
-            GamePerformance.Instance.RegisterThreadLoopTracker("UpdateWater", GamePerformance.ThreadIdentifier.UpdateWater);
-#if CREATE_CRASH_LOGS
-            try
-#endif
-            {
-                while (!DwarfGame.ExitGame && !ExitThreads)
-                {
-                    EventWaitHandle wh = Datastructures.WaitFor(waitHandles);
-
-                    GamePerformance.Instance.PreThreadLoop(GamePerformance.ThreadIdentifier.UpdateWater);
-                    GamePerformance.Instance.EnterZone("UpdateWater");
-                    if (wh == Program.ShutdownEvent)
-                    {
-                        break;
-                    }
-
-                    if (!PauseThreads)
-                    {
-                        Water.UpdateWater();
-                    }
-                    GamePerformance.Instance.PostThreadLoop(GamePerformance.ThreadIdentifier.UpdateWater);
-                    GamePerformance.Instance.ExitZone("UpdateWater");
-                }
-            }
-#if CREATE_CRASH_LOGS
-            catch (Exception exception)
-            {
-                ProgramData.WriteExceptionLog(exception);
-            }
-#endif
         }
 
         public void RebuildLiquidsThread()
@@ -711,11 +668,6 @@ GameSettings.Default.FogofWar = fogOfWar;
 
         public void Update(DwarfTime gameTime, Camera camera, GraphicsDevice g)
         {
-            if (waterUpdateTimer.Update(gameTime))
-            {
-                WaterUpdateEvent.Set();
-            }
-
             UpdateRebuildList();
 
             generateChunksTimer.Update(gameTime);
@@ -840,7 +792,7 @@ GameSettings.Default.FogofWar = fogOfWar;
             GeneratorThread.Join();
             RebuildLiquidThread.Join();
             RebuildThread.Join();
-            WaterThread.Join();
+            WaterUpdateThread.Join();
             ChunkData.ChunkMap.Clear();
         }
 

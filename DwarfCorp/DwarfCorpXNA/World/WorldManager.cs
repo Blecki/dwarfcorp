@@ -750,10 +750,20 @@ namespace DwarfCorp
                 DefaultShader.View = Camera.ViewMatrix;
                 DefaultShader.Projection = Camera.ProjectionMatrix;
                 DefaultShader.World = Matrix.Identity;
+
+                GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer - Chunks");
                 ChunkRenderer.RenderSelectionBuffer(DefaultShader, GraphicsDevice, Camera.ViewMatrix);
+                GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Chunks");
+
+                GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer - Components");
                 ComponentRenderer.RenderSelectionBuffer(renderables, gameTime, ChunkManager, Camera,
                     DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader);
+                GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Components");
+
+                GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer - Instances");
                 InstanceManager.RenderSelectionBuffer(GraphicsDevice, DefaultShader, Camera, false);
+                GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Instances");
+
                 SelectionBuffer.End(GraphicsDevice);
             }
 
