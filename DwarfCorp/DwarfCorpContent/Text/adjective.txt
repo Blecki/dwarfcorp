@@ -73,7 +73,6 @@ blue
 imported
 ugly
 ruthless
-deeply
 eminent
 reminiscent
 rotten
@@ -97,7 +96,6 @@ ordinary
 dry
 great
 ultra
-ahead
 broken
 dusty
 piquant
@@ -128,7 +126,6 @@ illegal
 angry
 faint
 rustic
-few
 calm
 gorgeous
 mysterious
@@ -144,7 +141,6 @@ clever
 barbarous
 pretty
 endurable
-handsomely
 unequaled
 acceptable
 symptomatic
@@ -157,7 +153,7 @@ ashamed
 excellent
 known
 adamant
-eatable
+edible
 verdant
 meek
 unbiased
@@ -271,7 +267,6 @@ grubby
 moaning
 placid
 permissible
-half
 towering
 bawdy
 measly
@@ -332,7 +327,6 @@ repulsive
 flawless
 labored
 disturbed
-aboard
 gusty
 loud
 jumbled
@@ -481,7 +475,6 @@ black
 dysfunctional
 knowledgeable
 truculent
-various
 luxuriant
 shrill
 spiffy
@@ -516,14 +509,12 @@ slimy
 cynical
 fluffy
 plausible
-nasty 
 tender
 changeable
 smiling
 oceanic
 satisfying
 steadfast
-ugliest
 crooked
 subsequent
 fascinated
@@ -554,7 +545,6 @@ smoggy
 swift
 lyrical
 steep
-quack
 direful
 talented
 hesitant
@@ -592,7 +582,6 @@ damp
 political
 dazzling
 erect
-Early
 immense
 hellish
 omniscient
@@ -652,7 +641,6 @@ makeshift
 strange
 painstaking
 merciful
-madly
 clammy
 itchy
 difficult
@@ -725,7 +713,7 @@ big
 gamy
 early
 auspicious
-blue-eyed 
+blue-eyed
 discreet
 nappy
 vague
@@ -882,7 +870,6 @@ aromatic
 successful
 zany
 evasive
-wet 
 naive
 nice
 uttermost
@@ -903,7 +890,6 @@ sore
 rich
 blushing
 stale
-daily
 watchful
 uncovered
 rough

@@ -30,7 +30,7 @@ Berserker/Jockey
 Butler-Priestess
 Cavalier Secretary
 Cobbler Enchanter
-Comedian/Soceress
+Comedian/Sorceress
 Decorator Thief
 Duelist-Groundskeeper
 Footpad Whittler
