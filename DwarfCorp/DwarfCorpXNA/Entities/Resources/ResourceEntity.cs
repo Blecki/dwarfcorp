@@ -56,26 +56,59 @@ namespace DwarfCorp
             Restitution = 0.1f;
             Friction = 0.1f;
             Resource type = ResourceLibrary.Resources[resourceType];
-            SpriteSheet spriteSheet = new SpriteSheet(type.Image.AssetName);
 
-            int frameX = type.Image.SourceRect.X / 32;
-            int frameY = type.Image.SourceRect.Y / 32;
 
-            List<Point> frames = new List<Point>
+            var sprite =
+                AddChild(new Sprite(Manager, "Sprite", Matrix.CreateTranslation(Vector3.UnitY*0.25f), null,
+                    false)
+                {
+                    OrientationType = Sprite.OrientMode.Spherical,
+                    LightsWithVoxels = !type.SelfIlluminating
+                }) as Sprite;
+
+            if (type.CompositeLayers == null || type.CompositeLayers.Count == 0)
             {
-                new Point(frameX, frameY)
-            };
-            Animation animation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(type.Image.AssetName), "Animation", 32, 32, frames, false, type.Tint, 0.01f, 0.75f, 0.75f, false);
+                int frameX = type.Image.SourceRect.X/32;
+                int frameY = type.Image.SourceRect.Y/32;
 
-            var sprite = AddChild(new Sprite(Manager, "Sprite", Matrix.CreateTranslation(Vector3.UnitY * 0.25f), spriteSheet, false)
+                List<Point> frames = new List<Point>
+                {
+                    new Point(frameX, frameY)
+                };
+                Animation animation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(type.Image.AssetName),
+                    "Animation", 32, 32, frames, false, type.Tint, 0.01f, 0.75f, 0.75f, false);;
+                sprite.AddAnimation(animation);
+
+
+                animation.Play();
+            }
+            else
             {
-                OrientationType = Sprite.OrientMode.Spherical,
-                LightsWithVoxels = !type.SelfIlluminating
-            }) as Sprite;
-            sprite.AddAnimation(animation);
+                List<Composite.Frame> frames = new List<Composite.Frame>();
+                var frame = new Composite.Frame();
+                frame.Layers = new List<SpriteSheet>();
+                foreach (var layer in type.CompositeLayers)
+                {
+                    frame.Layers.Add(new SpriteSheet(layer.Value, 32));
+                    frame.Positions.Add(layer.Key);
+                    frame.Tints.Add(type.Tint);
+                }
+                frames.Add(frame);
+                CompositeAnimation compositeAnimation = new CompositeAnimation("resources", frames)
+                {
+                    CompositeName = "resources",
+                    CurrentFrame = 0,
+                    CurrentOffset = new Point(0, 0),
+                    FrameWidth = 32,
+                    FrameHeight = 32,
+                    FrameHZ = 1,
+                    Name = "Composite resource",
+                    Tint = type.Tint
+                };
 
-
-            animation.Play();
+                sprite.AddAnimation(compositeAnimation);
+                compositeAnimation.Play();
+            }
 
             Tags.Add(type.ResourceName);
             Tags.Add("Resource");

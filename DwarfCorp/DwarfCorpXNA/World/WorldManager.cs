@@ -896,11 +896,13 @@ namespace DwarfCorp
                 ScissorTestEnable = true
             };
 
+            
+            //if (CompositeLibrary.Composites.ContainsKey("resources"))
+            //    CompositeLibrary.Composites["resources"].DebugDraw(DwarfGame.SpriteBatch, 0, 0);
             //SelectionBuffer.DebugDraw(GraphicsDevice.Viewport.Bounds);
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp,
                 null, rasterizerState);
             //DwarfGame.SpriteBatch.Draw(Shadows.ShadowTexture, Vector2.Zero, Color.White);
-
             if (IsCameraUnderwater())
             {
                 Drawer2D.FillRect(DwarfGame.SpriteBatch, GraphicsDevice.Viewport.Bounds, new Color(10, 40, 60, 200));

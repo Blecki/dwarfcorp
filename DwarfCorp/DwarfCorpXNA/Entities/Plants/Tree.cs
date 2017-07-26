@@ -202,26 +202,26 @@ namespace DwarfCorp
                     voxelUnder));
 
 
-            Inventory inventory = AddChild(new Inventory(componentManager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)
+            Inventory inventory = AddChild(new Inventory(componentManager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)) as Inventory;
+
+
+            for (int i = 0; i < treeSize * 10; i++)
             {
-                Resources = new ResourceContainer
+                inventory.Resources.Add(new Inventory.InventoryItem()
                 {
-                    MaxResources = 500
-                }
-            }) as Inventory;
+                    MarkedForRestock = false,
+                    Resource = ResourceLibrary.ResourceType.Wood
+                });
+            }
 
-            inventory.Resources.AddResource(new ResourceAmount()
+            for (int i = 0; i < treeSize * 2; i++)
             {
-                NumResources = (int)(treeSize * 10),
-                ResourceType = ResourceLibrary.ResourceType.Wood
-            });
-
-
-            inventory.Resources.AddResource(new ResourceAmount()
-            {
-                NumResources = (int)(treeSize * 2),
-                ResourceType = seed
-            });
+                inventory.Resources.Add(new Inventory.InventoryItem()
+                {
+                    MarkedForRestock = false,
+                    Resource = seed
+                });
+            }
 
             Particles = AddChild(new ParticleTrigger("Leaves", componentManager, "LeafEmitter",
                 Matrix.Identity, BoundingBoxPos, GetBoundingBox().Extents())

@@ -369,27 +369,29 @@ namespace DwarfCorp
             }
 
             var dwarf = SelectedMinions[0];
-
-            if (dwarf.IsPosessed)
+            if (!dwarf.IsPosessed)
             {
-                CameraController.EnableControl = false;
-                CameraController.AutoTarget = dwarf.Position;
-                CameraController.FollowAutoTarget = true;
+                CameraController.FollowAutoTarget = false;
+                CameraController.EnableControl = true;
+                return;
+            }
+            CameraController.EnableControl = false;
+            CameraController.AutoTarget = dwarf.Position;
+            CameraController.FollowAutoTarget = true;
 
-                if (dwarf.Velocity.Length() > 0.1)
+            if (dwarf.Velocity.Length() > 0.1)
+            {
+                var above = VoxelHelpers.FindFirstVoxelAbove(new TemporaryVoxelHandle(
+                    World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(dwarf.Position)));
+
+                if (above.IsValid)
                 {
-                    var above = VoxelHelpers.FindFirstVoxelAbove(new TemporaryVoxelHandle(
-                        World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(dwarf.Position)));
-
-                    if (above.IsValid)
-                    {
-                        World.ChunkManager.ChunkData.SetMaxViewingLevel(above.Coordinate.Y - 1, ChunkManager.SliceMode.Y);
-                    }
-                    else
-                    {
-                        World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxelConstants.ChunkSizeY,
-                            ChunkManager.SliceMode.Y);
-                    }
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(above.Coordinate.Y - 1, ChunkManager.SliceMode.Y);
+                }
+                else
+                {
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxelConstants.ChunkSizeY,
+                        ChunkManager.SliceMode.Y);
                 }
             }
 

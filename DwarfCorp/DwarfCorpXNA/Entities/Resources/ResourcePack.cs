@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,7 +22,7 @@ namespace DwarfCorp
             AddChild(new Fixture(Manager, Vector3.Zero, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 0)));
             Contents = AddChild(new Inventory(Manager, "Contents", BoundingBox.Extents(), BoundingBoxPos)
             {
-                Resources = new ResourceContainer() { MaxResources = 999999 },
+                Resources = new List<Inventory.InventoryItem>(),
                 DropRate = 0.1f
             }) as Inventory;
         }

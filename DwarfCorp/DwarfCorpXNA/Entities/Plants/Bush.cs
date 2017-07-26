@@ -67,13 +67,10 @@ namespace DwarfCorp
 
             Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)
             {
-                Resources = new ResourceContainer
-                {
-                    MaxResources = 2
-                }
+                Resources = new List<Inventory.InventoryItem>(),
             }) as Inventory;
 
-            inventory.Resources.AddResource(new ResourceAmount()
+            inventory.AddResource(new ResourceAmount()
             {
                 NumResources = 2,
                 ResourceType = ResourceLibrary.ResourceType.Cactus
@@ -115,15 +112,9 @@ namespace DwarfCorp
             Tags.Add("Vegetation");
             Tags.Add("Bush");
             Tags.Add("EmitsFood");
-            Inventory inventory = AddChild(new Inventory(componentManager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)
-            {
-                Resources = new ResourceContainer
-                {
-                    MaxResources = 4
-                }
-            }) as Inventory;
+            Inventory inventory = AddChild(new Inventory(componentManager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)) as Inventory;
 
-            inventory.Resources.AddResource(new ResourceAmount()
+            inventory.AddResource(new ResourceAmount()
             {
                 NumResources = 3,
                 ResourceType = ResourceLibrary.ResourceType.Berry

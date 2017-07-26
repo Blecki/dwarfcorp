@@ -27,11 +27,7 @@ namespace DwarfCorp
                     {
                         tintHash = tintHash * 31 + tint.GetHashCode();
                     }
-                    int layerHash = 19;
-                    foreach (var layer in Layers)
-                    {
-                        layerHash = layerHash * 31 + layer.GetHashCode();
-                    }
+                    int layerHash = Layers.Aggregate(19, (current, layer) => current*31 + layer.GetHashCode());
                     hashCode = (hashCode * 397) ^ (layerHash);
                     hashCode = (hashCode*397) ^ Position.GetHashCode();
                     return hashCode;
@@ -41,17 +37,19 @@ namespace DwarfCorp
             public List<SpriteSheet> Layers { get; set; }
             public List<Color> Tints { get; set; } 
             public Point Position { get; set; }
-
+            public List<Point> Positions { get; set; }
             public Frame()
             {
                 Layers = new List<SpriteSheet>();
                 Tints = new List<Color>();
+                Positions = new List<Point>();
             }
 
             public List<NamedImageFrame> GetFrames()
             {
-                return Layers.Select(sheet => sheet.GenerateFrame(Position)).ToList();
+                return Positions.Count == 0 ? Layers.Select(sheet => sheet.GenerateFrame(Position)).ToList() : Layers.Select((t, i) => t.GenerateFrame(Positions[i])).ToList();
             }
+
             public static bool operator ==(Frame a, Frame b)
             {
                 // If both are null, or both are same instance, return true.
@@ -85,7 +83,8 @@ namespace DwarfCorp
 
             protected bool Equals(Frame otherFrame)
             {
-                if (Layers.Count != otherFrame.Layers.Count || Tints.Count != otherFrame.Tints.Count) return false;
+                if (Layers.Count != otherFrame.Layers.Count || Tints.Count != otherFrame.Tints.Count ||
+                    Positions.Count != otherFrame.Positions.Count) return false;
                 if (!Position.Equals(otherFrame.Position)) return false;
 
                 if (Layers.Where((t, i) => !t.Equals(otherFrame.Layers[i])).Any())
@@ -94,6 +93,11 @@ namespace DwarfCorp
                 }
 
                 if (Tints.Where((t, i) => !t.Equals(otherFrame.Tints[i])).Any())
+                {
+                    return false;
+                }
+
+                if (Positions.Where((t, i) => !t.Equals(otherFrame.Positions[i])).Any())
                 {
                     return false;
                 }
@@ -178,13 +182,10 @@ namespace DwarfCorp
                 {
                     resize = true;
                     TargetSizeFrames = new Point(TargetSizeFrames.X * 2, TargetSizeFrames.Y * 2);
+                    Initialize();
+                    return PushFrame(frame);
                 }
                 CurrentFrames[frame] = toReturn;
-
-                if (resize)
-                {
-                    Initialize();
-                }
 
                 return toReturn;
             }

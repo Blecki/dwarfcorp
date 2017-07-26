@@ -425,7 +425,6 @@ namespace DwarfCorp
             // This is just a silly hack to make sure that creatures
             // carrying resources to a trade depot release their resources
             // when they die.
-            Inventory.Resources.MaxResources = 99999;
 
             CreateMeatAndBones();
             NoiseMaker.MakeNoise("Die", Physics.Position, true);
@@ -457,7 +456,7 @@ namespace DwarfCorp
                     });
                 }
 
-                Inventory.Resources.AddResource(new ResourceAmount(type, 1));
+                Inventory.AddResource(new ResourceAmount(type, 1));
             }
 
             if (HasBones)
@@ -473,7 +472,7 @@ namespace DwarfCorp
                     });
                 }
 
-                Inventory.Resources.AddResource(new ResourceAmount(type, 1));
+                Inventory.AddResource(new ResourceAmount(type, 1));
             }
 
             if (HasCorpse)
@@ -489,7 +488,7 @@ namespace DwarfCorp
                     });
                 }
 
-                Inventory.Resources.AddResource(new ResourceAmount(type, 1));
+                Inventory.AddResource(new ResourceAmount(type, 1));
             }
         }
 

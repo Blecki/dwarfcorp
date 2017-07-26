@@ -141,13 +141,7 @@ namespace DwarfCorp
 
             Attacks = new List<Attack>() {new Attack("Bite", 50.0f, 1.0f, 3.0f, ContentPaths.Audio.hiss, ContentPaths.Effects.claws)};
 
-            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.BoundingBoxPos)
-            {
-                Resources = new ResourceContainer()
-                {
-                    MaxResources = 1
-                }
-            }) as Inventory;
+            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.BoundingBoxPos)) as Inventory;
 
             Physics.Tags.Add("Snake");
             Physics.Tags.Add("Animal");

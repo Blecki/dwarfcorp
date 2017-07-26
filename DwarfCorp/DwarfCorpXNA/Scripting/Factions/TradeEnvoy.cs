@@ -68,7 +68,7 @@ namespace DwarfCorp
                     pack.Contents.Resources.Clear();
                     for (int i = currentGood; i < System.Math.Min(currentGood + goodsPerCreature, TradeGoods.Count); i++)
                     {
-                        pack.Contents.Resources.AddResource(TradeGoods[i]);
+                        pack.Contents.AddResource(TradeGoods[i]);
                     }
                     currentGood += goodsPerCreature;
                 }

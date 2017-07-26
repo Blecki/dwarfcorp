@@ -1630,7 +1630,9 @@ namespace DwarfCorp.GameStates
                     icon_AttackTool,
                     icon_FarmTool,
                     icon_MagicTool
-                }
+                },
+                OnShown = (sender) => ChangeTool(GameMaster.ToolMode.SelectUnits),
+                Tag = "tools"
             };
 
             icon_menu_BuildTools_Return.ReplacementMenu = MainMenu;
@@ -1661,7 +1663,6 @@ namespace DwarfCorp.GameStates
                     sender.Rect.X = GuiRoot.RenderData.VirtualScreen.Center.X - 128; 
                     sender.Rect.Y = GuiRoot.RenderData.VirtualScreen.Bottom - MainMenu.MinimumSize.Y;
                 },
-                Tag = "tools"
             }) as FlatToolTray.RootTray;
 
             BottomToolBar.SwitchTray(MainMenu);

@@ -108,7 +108,7 @@ namespace DwarfCorp
 
                         if (removed)
                         {
-                            if(Creature.Inventory.Pickup(Target))
+                            if(Creature.Inventory.Pickup(Target, Inventory.RestockType.RestockResource))
                             {
                                 Agent.Blackboard.SetData(StashedItemOut, new ResourceAmount(Target));
                                 Agent.Creature.NoiseMaker.MakeNoise("Stash", Agent.Position);
@@ -133,7 +133,7 @@ namespace DwarfCorp
                             Creature.AI.AddMoney(money);
                             Target.Die();
                         }
-                        else if (!Creature.Inventory.Pickup(Target))
+                        else if (!Creature.Inventory.Pickup(Target, Inventory.RestockType.RestockResource))
                         {
                             yield return Status.Fail;
                         }

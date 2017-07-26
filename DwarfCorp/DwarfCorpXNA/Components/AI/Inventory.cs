@@ -35,7 +35,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Management.Instrumentation;
-using System.Security.AccessControl;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -46,7 +45,19 @@ namespace DwarfCorp
     [JsonObject(IsReference=true)]
     public class Inventory : Body
     {
-        public ResourceContainer Resources { get; set; }
+        //public ResourceContainer Resources { get; set; }
+        public struct InventoryItem
+        {
+            public ResourceLibrary.ResourceType Resource;
+            public bool MarkedForRestock;
+        }
+
+        public enum RestockType
+        {
+            RestockResource,
+            None
+        }
+        public List<InventoryItem> Resources { get; set; } 
         public float DropRate { get; set; }
 
         public delegate void DieDelegate(List<Body> items);
@@ -68,52 +79,91 @@ namespace DwarfCorp
             base(Manager, name, Matrix.Identity, BoundingBoxExtents, BoundingBoxPos)
         {
             DropRate = 1.0f;
+            Resources = new List<InventoryItem>();
         }
 
-        public bool Pickup(ResourceAmount resourceAmount)
+        public bool Pickup(ResourceAmount resourceAmount, RestockType restock)
         {
-            return Resources.AddResource(resourceAmount);
+            for (int i = 0; i < resourceAmount.NumResources; i++)
+            {
+                Resources.Add(new InventoryItem()
+                {
+                    Resource = resourceAmount.ResourceType,
+                    MarkedForRestock = restock == RestockType.RestockResource
+                });
+            }
+            return true;
         }
 
         public bool Remove(IEnumerable<Quantitiy<Resource.ResourceTags>> amount)
         {
-            return amount.Aggregate(true, (current, resource) => current && Resources.RemoveResource(resource));
+            foreach (var quantity in amount)
+            {
+                for (int i = 0; i < quantity.NumResources; i++)
+                {
+                    int kRemove = -1;
+                    for (int k = 0; k < Resources.Count; k++)
+                    {
+                        if (!ResourceLibrary.GetResourceByName(Resources[k].Resource)
+                            .Tags.Contains(quantity.ResourceType)) continue;
+                        kRemove = k;
+                        break;
+                    }
+                    if (kRemove < 0)
+                    {
+                        return false;
+                    }
+                    Resources.RemoveAt(kRemove);
+                }
+            }
+            return true;
         }
 
         public bool Remove(IEnumerable<ResourceAmount> resourceAmount)
         {
-            return resourceAmount.Aggregate(true, (current, resource) => current && Resources.RemoveResource(resource));
+            foreach (var quantity in resourceAmount)
+            {
+                for (int i = 0; i < quantity.NumResources; i++)
+                {
+                    int kRemove = -1;
+                    for (int k = 0; k < Resources.Count; k++)
+                    {
+                        if (Resources[k].Resource != quantity.ResourceType) continue;
+                        kRemove = k;
+                        break;
+                    }
+                    if (kRemove < 0)
+                    {
+                        return false;
+                    }
+                    Resources.RemoveAt(kRemove);
+                }
+            }
+            return true;
         }
 
         public bool Remove(ResourceAmount resourceAmount)
         {
-            return Resources.RemoveResource(resourceAmount);
+            return Remove(new List<ResourceAmount>() {resourceAmount});
         }
 
-        public bool Pickup(Body component)
+        public bool Pickup(Body component, RestockType restockType)
         {
-            return Pickup(Item.CreateItem(null, component));
+            return Pickup(Item.CreateItem(null, component), restockType);
         }
 
-        public bool Pickup(Item item)
+        public bool Pickup(Item item, RestockType restockType)
         {
             if(item == null || item.UserData == null || item.UserData.IsDead)
             {
                 return false;
             }
 
-            bool success =  Resources.AddResource
-            (new ResourceAmount
+            Resources.Add(new InventoryItem()
             {
-                NumResources = 1,
-                ResourceType = item.UserData.Tags[0]
+                MarkedForRestock = restockType == RestockType.RestockResource,
+                Resource = item.UserData.Tags[0]
             });
-
-            if(!success)
-            {
-                return false;
-            }
-
             if(item.IsInZone)
             {
                 item.Zone = null;
@@ -132,7 +182,7 @@ namespace DwarfCorp
         {
             List<Body> toReturn = new List<Body>();
 
-            if(!Resources.RemoveResource(resources.CloneResource()))
+            if(!Remove(resources.CloneResource()))
             {
                 return toReturn;
             }
@@ -152,31 +202,47 @@ namespace DwarfCorp
         public override void Die()
         {
             List<Body> release = new List<Body>();
-            foreach(var resource in Resources.Where(resource => resource.NumResources > 0))
+            foreach(var resource in Resources)
             {
-                for(int i = 0; i < resource.NumResources; i++)
+                if (MathFunctions.RandEvent(DropRate))
                 {
-                    if (MathFunctions.RandEvent(DropRate))
+                    Vector3 pos = MathFunctions.RandVector3Box(GetBoundingBox());
+                    Physics item =
+                        EntityFactory.CreateEntity<Physics>(resource.Resource + " Resource",
+                            pos) as Physics;
+                    if (item != null)
                     {
-                        Vector3 pos = MathFunctions.RandVector3Box(GetBoundingBox());
-                        Physics item =
-                            EntityFactory.CreateEntity<Physics>(resource.ResourceType + " Resource",
-                                pos) as Physics;
-                        if (item != null)
-                        {
-                            release.Add(item);
-                            item.Velocity = pos - GetBoundingBox().Center();
-                            item.Velocity.Normalize();
-                            item.Velocity *= 5.0f;
-                            item.IsSleeping = false;
-                        }
+                        release.Add(item);
+                        item.Velocity = pos - GetBoundingBox().Center();
+                        item.Velocity.Normalize();
+                        item.Velocity *= 5.0f;
+                        item.IsSleeping = false;
                     }
-
                 }
             }
 
             OnOnDeath(release);
             base.Die();
+        }
+
+        public bool HasResource(ResourceAmount itemToStock)
+        {
+            return Resources.Count(resource => resource.Resource == itemToStock.ResourceType) >= itemToStock.NumResources;
+        }
+
+        public bool HasResource(Quantitiy<Resource.ResourceTags> itemToStock)
+        {
+            return Resources.Count(resource => ResourceLibrary.GetResourceByName(resource.Resource).Tags.Contains(itemToStock.ResourceType)) >= itemToStock.NumResources;
+        }
+
+        public List<ResourceAmount> GetResources(Quantitiy<Resource.ResourceTags> quantitiy)
+        {
+            return (from resource in Resources where ResourceLibrary.GetResourceByName(resource.Resource).Tags.Contains(quantitiy.ResourceType) select new ResourceAmount(resource.Resource)).ToList();
+        }
+
+        public void AddResource(ResourceAmount tradeGood)
+        {
+            Pickup(tradeGood, RestockType.RestockResource);
         }
     }
 }

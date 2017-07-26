@@ -477,6 +477,13 @@ namespace DwarfCorp
                 public static string constructiontape = ProgramData.CreatePath("Entities", "DwarfObjects", "constructiontape");
                 public static string fence = ProgramData.CreatePath("Entities", "DwarfObjects", "fence");
                 public static string crafts = ProgramData.CreatePath("Entities", "DwarfObjects", "crafts");
+                public static string trinkets_carve_insets_bone = ProgramData.CreatePath("newgui", "trinkets-carve-insets-bone");
+                public static string trinkets_carve_insets = ProgramData.CreatePath("newgui", "trinkets-carve-insets");
+                public static string trinkets_cast_insets = ProgramData.CreatePath("newgui", "trinkets-cast-insets");
+                public static string trinkets_cast = ProgramData.CreatePath("newgui", "trinkets-cast");
+                public static string trinkets_sculpt_insets = ProgramData.CreatePath("newgui", "trinkets-sculpt-insets");
+                public static string trinkets_sculpt = ProgramData.CreatePath("newgui", "trinkets-sculpt");
+                public static string trinkets_carve = ProgramData.CreatePath("newgui", "trinkets-carve");
             }
 
             public class Furniture
