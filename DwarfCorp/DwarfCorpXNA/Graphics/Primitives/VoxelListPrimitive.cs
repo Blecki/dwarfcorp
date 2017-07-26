@@ -249,7 +249,7 @@ namespace DwarfCorp
         {
             if (Type.Transitions == VoxelType.TransitionType.Horizontal)
             {
-                var value = ComputeTransitionValueOnPlain(
+                var value = ComputeTransitionValueOnPlane(
                     VoxelHelpers.EnumerateManhattanNeighbors2D(V.Coordinate)
                     .Select(c => new TemporaryVoxelHandle(Data, c)), Type);
 
@@ -260,12 +260,12 @@ namespace DwarfCorp
             }
             else
             {
-                var transitionFrontBack = ComputeTransitionValueOnPlain(
+                var transitionFrontBack = ComputeTransitionValueOnPlane(
                     VoxelHelpers.EnumerateManhattanNeighbors2D(V.Coordinate, ChunkManager.SliceMode.Z)
                     .Select(c => new TemporaryVoxelHandle(Data, c)),
                     Type);
 
-                var transitionLeftRight = ComputeTransitionValueOnPlain(
+                var transitionLeftRight = ComputeTransitionValueOnPlane(
                     VoxelHelpers.EnumerateManhattanNeighbors2D(V.Coordinate, ChunkManager.SliceMode.X)
                     .Select(c => new TemporaryVoxelHandle(Data, c)),
                     Type);
@@ -283,7 +283,7 @@ namespace DwarfCorp
         // Todo: Reorder 2d neighbors to make this unecessary.
         private static int[] TransitionMultipliers = new int[] { 2, 8, 4, 1 };
 
-        private static int ComputeTransitionValueOnPlain(IEnumerable<TemporaryVoxelHandle> Neighbors, VoxelType Type)
+        private static int ComputeTransitionValueOnPlane(IEnumerable<TemporaryVoxelHandle> Neighbors, VoxelType Type)
         {
             int index = 0;
             int accumulator = 0;

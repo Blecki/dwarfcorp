@@ -15,7 +15,7 @@ namespace DwarfCorp
 
         public float TimeBudget = 0.1f; // Allow thread to run for 1 tenth of every second.
         public float Frequency = 0.2f;
-        public float FrequencyStep = 0.01f;
+        public float FrequencyStep = 0.1f;
         public float MaxFrequency = 2.0f;
         public float MinFrequency = 0.1f;
 
@@ -92,11 +92,11 @@ namespace DwarfCorp
 
                             if (totalTime > TimeBudget)
                             {
-                                Frequency = Math.Min(Frequency + FrequencyStep, MaxFrequency);
+                                Frequency = Math.Min(Frequency * (1.0f +  FrequencyStep), MaxFrequency);
                             }
                             else if (totalTime < TimeBudget)
                             {
-                                Frequency = Math.Max(Frequency - FrequencyStep, MinFrequency);
+                                Frequency = Math.Max(Frequency * (1.0f - FrequencyStep), MinFrequency);
                             }
 
                             GamePerformance.Instance.TrackValueType("Water Update Frequency", Frequency);
