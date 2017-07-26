@@ -91,7 +91,7 @@ namespace DwarfCorp
                 foreach (Quantitiy<Resource.ResourceTags> resource in Resources)
                 {
 
-                    if (!Creature.Inventory.Resources.HasResource(resource))
+                    if (!Creature.Inventory.HasResource(resource))
                     {
                         hasAllResources = false;
                     }
@@ -102,7 +102,7 @@ namespace DwarfCorp
                 foreach (ResourceAmount resource in ResourcesToStash)
                 {
 
-                    if (!Creature.Inventory.Resources.HasResource(resource))
+                    if (!Creature.Inventory.HasResource(resource))
                     {
                         hasAllResources = false;
                     }

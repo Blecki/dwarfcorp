@@ -42,13 +42,13 @@ namespace DwarfCorp
     /// Restarts its child on each iteration.
     /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
-    public class ForLoop : Act
+    public class Repeat : Act
     {
         public Act Child { get; set; }
         public int Iters { get; set; }
         public bool BreakOnSuccess { get; set; }
 
-        public ForLoop(Act child, int iters, bool breakOnSuccess)
+        public Repeat(Act child, int iters, bool breakOnSuccess)
         {
             Name = "For(" + iters + ")";
             Iters = iters;

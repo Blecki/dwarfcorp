@@ -166,7 +166,7 @@ namespace DwarfCorp
             Primitives = new List<BillboardPrimitive>();
         }
 
-        public void UpdatePrimitive()
+        public void UpdatePrimitive(bool force = false)
         {
             if (HasValidFrame && CurrentFrame >= 0 && CurrentFrame < CompositeFrames.Count && lastOffset != CurrentOffset)
             {

@@ -28,7 +28,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 Clear();
                 ResourceCombos.Clear();
-                Parent.OnClick = null;
+                //Parent.OnClick = null;
 
                 var builder = new StringBuilder();
                 builder.AppendLine(Data.Name);
@@ -134,7 +134,7 @@ namespace DwarfCorp.Gui.Widgets
                             MaximumSize = new Point(64, 24)
                         });
 
-                        Parent.OnClick = (parent, args) => buildButton.OnClick(buildButton, args);
+                        //Parent.OnClick = (parent, args) => buildButton.OnClick(buildButton, args);
                     }
                 }
 
@@ -170,12 +170,16 @@ namespace DwarfCorp.Gui.Widgets
                 var nearestBuildLocation = World.PlayerFaction.FindNearestItemWithTags(Data.CraftLocation, Vector3.Zero, false);
 
                 if (nearestBuildLocation == null)
+                {
                     return false;
+                }
             }
 
             foreach (var resourceAmount in Data.RequiredResources)
                 if (Master.Faction.ListResourcesWithTag(resourceAmount.ResourceType).Count == 0)
+                {
                     return false;
+                }
 
             return true;
         }

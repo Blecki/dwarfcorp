@@ -109,12 +109,13 @@ namespace DwarfCorp
             {
                 Body p = (Body) Parent;
 
-                VoxelChunk chunk = chunks.ChunkData.GetChunk(p.GlobalTransform.Translation);
+                var voxelBelow = new TemporaryVoxelHandle(chunks.ChunkData, 
+                    GlobalVoxelCoordinate.FromVector3(p.GlobalTransform.Translation 
+                        + Vector3.Down * 0.25f));
 
-                if(chunk != null)
+                if(voxelBelow.IsValid)
                 {
-                    var shadowTarget = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
-                        chunks.ChunkData, GlobalVoxelCoordinate.FromVector3(p.GlobalTransform.Translation + Vector3.Down * 0.25f)));
+                    var shadowTarget = VoxelHelpers.FindFirstVoxelBelow(voxelBelow);
 
                     if (shadowTarget.IsValid)
                     {

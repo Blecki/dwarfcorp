@@ -65,11 +65,11 @@ namespace DwarfCorp
         }
 
 
-        public ExploredListener(ComponentManager manager, ChunkManager chunkManager, VoxelHandle vref) :
+        public ExploredListener(ComponentManager manager, ChunkManager chunkManager, TemporaryVoxelHandle vref) :
             base("ExploredListener", manager)
         {
             Chunk = vref.Chunk;
-            VoxelID = vref.GridPosition;
+            VoxelID = vref.Coordinate.GetLocalVoxelCoordinate();
             Chunk.OnVoxelExplored += ExploredListener_OnVoxelExplored;
             ChunkID = Chunk.ID;
 

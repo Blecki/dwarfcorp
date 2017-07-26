@@ -43,7 +43,7 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GuardVoxelAct : CompoundCreatureAct
     {
-        public VoxelHandle Voxel { get; set; }
+        public TemporaryVoxelHandle Voxel { get; set; }
 
 
         public GuardVoxelAct()
@@ -77,7 +77,7 @@ namespace DwarfCorp
             return (Agent.Sensor.Enemies.Count > 0);
         }
 
-        public GuardVoxelAct(CreatureAI agent, VoxelHandle voxel) :
+        public GuardVoxelAct(CreatureAI agent, TemporaryVoxelHandle voxel) :
             base(agent)
         {
             Voxel = voxel;
@@ -85,7 +85,7 @@ namespace DwarfCorp
 
             Tree = new Sequence
                 (
-                    new GoToVoxelAct(voxel.tvh, PlanAct.PlanType.Adjacent, agent),
+                    new GoToVoxelAct(voxel, PlanAct.PlanType.Adjacent, agent),
                     new StopAct(Agent),
                     new WhileLoop(new WanderAct(Agent, 1.0f, 0.5f, 0.1f), new Condition(LoopCondition)),
                     new Condition(ExitCondition)

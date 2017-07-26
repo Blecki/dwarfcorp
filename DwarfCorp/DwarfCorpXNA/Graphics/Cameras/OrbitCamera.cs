@@ -128,12 +128,11 @@ namespace DwarfCorp
                 new Vector3(pos.X, VoxelConstants.ChunkSizeY - 1, pos.Z),
                 new Vector3(pos.X, 0, pos.Z));
             if (!vox.IsValid) return pos;
-            return new Vector3(pos.X, vox.Coordinate.ToVector3().Y + 0.5f, pos.Z);
+            return new Vector3(pos.X, vox.WorldPosition.Y + 0.5f, pos.Z);
         }
 
         public void OverheadUpdate(DwarfTime time, ChunkManager chunks)
         {
-            VoxelHandle currentVoxel = new VoxelHandle();
             float diffPhi = 0;
             float diffTheta = 0;
             float diffRadius = 0;
@@ -267,7 +266,9 @@ namespace DwarfCorp
             else if (FollowAutoTarget)
             {
                 Vector3 prevTarget = Target;
-                Target = AutoTarget*0.1f + Target*0.9f;
+                float damper = MathFunctions.Clamp((Target - AutoTarget).Length() - 5, 0, 1);
+                float smooth = 0.1f*damper;
+                Target = AutoTarget * (smooth) + Target * (1.0f - smooth);
                 Position += (Target - prevTarget);
             }
 
@@ -427,7 +428,7 @@ namespace DwarfCorp
 
         public override void UpdateViewMatrix()
         {
-            ViewMatrix = Matrix.CreateLookAt(Position, Target, Vector3.UnitY);
+            ViewMatrix = Matrix.CreateLookAt(Position, FollowAutoTarget ? (AutoTarget * 0.5f + Target * 0.5f) : Target, Vector3.UnitY);
         }
 
         public bool Collide(BoundingBox myBox, BoundingBox box)
@@ -470,7 +471,7 @@ namespace DwarfCorp
             var box = new BoundingBox(pos - new Vector3(0.5f, 0.5f, 0.5f), pos + new Vector3(0.5f, 0.5f, 0.5f));
             bool gotCollision = false;
 
-            foreach (var v in Neighbors.EnumerateCube(GlobalVoxelCoordinate.FromVector3(pos))
+            foreach (var v in VoxelHelpers.EnumerateCube(GlobalVoxelCoordinate.FromVector3(pos))
                 .Select(n => new TemporaryVoxelHandle(chunks.ChunkData, n)))                
             {
                 if (!v.IsValid) continue;

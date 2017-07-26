@@ -43,6 +43,13 @@ namespace DwarfCorp
     /// </summary>
     public class Resource
     {
+        public struct TrinketInfo
+        {
+            public string BaseAsset;
+            public string EncrustingAsset;
+            public int SpriteRow;
+            public int SpriteColumn;
+        }
         public ResourceLibrary.ResourceType Type { get; set; }
         public string ResourceName { get { return Type; }}
         public DwarfBux MoneyValue { get; set; }
@@ -53,6 +60,9 @@ namespace DwarfCorp
         public float FoodContent { get; set; }
         public bool SelfIlluminating { get { return Tags.Contains(ResourceTags.SelfIlluminating); }}
         public bool IsFlammable { get { return Tags.Contains(ResourceTags.Flammable); }}
+        public List<KeyValuePair<Point, string>> CompositeLayers { get; set; }
+        public TrinketInfo TrinketData { get; set; }
+
         private string shortName = null;
         public string ShortName 
         { 
@@ -127,6 +137,8 @@ namespace DwarfCorp
             CanCraft = other.CanCraft;
             CraftPrereqs = new List<Quantitiy<Resource.ResourceTags>>();
             CraftPrereqs.AddRange(other.CraftPrereqs);
+            CompositeLayers = null;
+            TrinketData = other.TrinketData;
         }
 
         public Resource(ResourceLibrary.ResourceType type,  DwarfBux money, string description, NamedImageFrame image, int WidgetsSprite, Color tint, params ResourceTags[] tags)
@@ -142,6 +154,7 @@ namespace DwarfCorp
             FoodContent = 0;
             CanCraft = false;
             CraftPrereqs = new List<Quantitiy<Resource.ResourceTags>>();
+            CompositeLayers = null;
         }
 
         public string GetTagDescription(string delimiter)

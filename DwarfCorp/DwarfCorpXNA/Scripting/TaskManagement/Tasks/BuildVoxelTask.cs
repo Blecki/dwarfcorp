@@ -1,4 +1,4 @@
-﻿// BuildVoxelTask.cs
+// BuildVoxelTask.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -46,16 +46,16 @@ namespace DwarfCorp
     internal class BuildVoxelTask : Task
     {
         public VoxelType VoxType { get; set; }
-        public VoxelHandle Voxel { get; set; }
+        public TemporaryVoxelHandle Voxel { get; set; }
 
         public BuildVoxelTask()
         {
             Priority = PriorityType.Low;
         }
 
-        public BuildVoxelTask(VoxelHandle voxel, VoxelType type)
+        public BuildVoxelTask(TemporaryVoxelHandle voxel, VoxelType type)
         {
-            Name = "Put voxel of type: " + type.Name + " on voxel " + voxel.WorldPosition;
+            Name = "Put voxel of type: " + type.Name + " on voxel " + voxel.Coordinate;
             Voxel = voxel;
             VoxType = type;
             Priority = PriorityType.Low;
@@ -63,17 +63,17 @@ namespace DwarfCorp
 
         public override bool IsFeasible(Creature agent)
         {
-            return Voxel != null && agent.Faction.WallBuilder.IsDesignation(Voxel);
+            return Voxel.IsValid && agent.Faction.WallBuilder.IsDesignation(Voxel);
         }
 
         public override bool ShouldDelete(Creature agent)
         {
-            return Voxel == null || !agent.Faction.WallBuilder.IsDesignation(Voxel);
+            return !Voxel.IsValid || !agent.Faction.WallBuilder.IsDesignation(Voxel);
         }
 
         public override bool ShouldRetry(Creature agent)
         {
-            return Voxel != null && agent.Faction.WallBuilder.IsDesignation(Voxel);
+            return Voxel.IsValid && agent.Faction.WallBuilder.IsDesignation(Voxel);
         }
 
         public override Task Clone()
@@ -83,7 +83,7 @@ namespace DwarfCorp
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            return Voxel == null ? 1000 : 0.01f * (agent.AI.Position - Voxel.WorldPosition).LengthSquared() + (Voxel.WorldPosition.Y);
+            return !Voxel.IsValid ? 1000 : 0.01f * (agent.AI.Position - Voxel.WorldPosition).LengthSquared() + (Voxel.Coordinate.Y);
         }
 
         public IEnumerable<Act.Status> AddBuildOrder(Creature creature)
@@ -99,10 +99,6 @@ namespace DwarfCorp
 
         public override void Render(DwarfTime time)
         {
-            if (Voxel != null)
-            {
-                
-            }
             base.Render(time);
         }
     }

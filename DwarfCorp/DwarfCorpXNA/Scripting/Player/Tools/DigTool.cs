@@ -66,36 +66,28 @@ namespace DwarfCorp
         }
 
 
-        public override void OnVoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<TemporaryVoxelHandle> refs, InputManager.MouseButton button)
         {
 
             if (button == InputManager.MouseButton.Left)
             {
                 Player.World.Tutorial("slice");
                 List<Task> assignments = new List<Task>();
-                foreach (VoxelHandle r in refs)
+                foreach (var v in refs)
                 {
-                    if (r == null)
-                    {
+                    if (!v.IsValid || v.IsEmpty)
                         continue;
-                    }
-
-                    VoxelHandle v = r;
-                    if (v.IsEmpty)
-                    {
-                        continue;
-                    }
-
-                    if(!Player.Faction.IsDigDesignation(v) && !Player.Faction.RoomBuilder.IsInRoom(v.tvh))
+                    
+                    if(!Player.Faction.IsDigDesignation(v) && !Player.Faction.RoomBuilder.IsInRoom(v))
                     {
                         BuildOrder d = new BuildOrder
                         {
-                            Vox = r
+                            Vox = v
                         };
                         Player.Faction.AddDigDesignation(d);
                     }
 
-                    assignments.Add(new KillVoxelTask(r));
+                    assignments.Add(new KillVoxelTask(v));
                 }
 
                 List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.SelectedMinions,GameMaster.ToolMode.Dig);
@@ -104,9 +96,9 @@ namespace DwarfCorp
             }
             else
             {
-                foreach (VoxelHandle r in refs)
+                foreach (var r in refs)
                 {
-                    if (r == null || r.IsEmpty)
+                    if (!r.IsValid || r.IsEmpty)
                     {
                         continue;
                     }
@@ -133,7 +125,7 @@ namespace DwarfCorp
 
             Player.VoxSelector.Enabled = true;
 
-            if (Player.VoxSelector.VoxelUnderMouse != null && !Player.World.IsMouseOverGui)
+            if (Player.VoxSelector.VoxelUnderMouse.IsValid && !Player.World.IsMouseOverGui)
             {
                 Player.World.ShowTooltip(Player.VoxSelector.VoxelUnderMouse.IsExplored ? Player.VoxSelector.VoxelUnderMouse.Type.Name : "???");
             }
@@ -151,7 +143,7 @@ namespace DwarfCorp
         {
             foreach (KeyValuePair<ulong, BuildOrder> kvp in Player.Faction.DigDesignations)
             {
-                VoxelHandle v = kvp.Value.Vox;
+                var v = kvp.Value.Vox;
 
                 BoundingBox box = v.GetBoundingBox();
 
@@ -178,7 +170,7 @@ namespace DwarfCorp
             
         }
 
-        public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsDragged(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }

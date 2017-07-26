@@ -50,7 +50,7 @@ namespace DwarfCorp
     public class SphereGoalRegion : GoalRegion
     {
         public Vector3 Position { get; set; }
-        public VoxelHandle Voxel { get; set; }
+        public TemporaryVoxelHandle Voxel { get; set; }
         private float r = 0.0f;
         public float Radius 
         {
@@ -67,30 +67,30 @@ namespace DwarfCorp
 
         private float RadiusSquared { get; set; }
 
-        public SphereGoalRegion(VoxelHandle voxel, float radius)
+        public SphereGoalRegion(TemporaryVoxelHandle voxel, float radius)
         {
             Radius = radius;
             Voxel = voxel;
             Position = voxel.WorldPosition;
         }
 
-        public override float Heuristic(VoxelHandle voxel)
+        public override float Heuristic(TemporaryVoxelHandle voxel)
         {
             return (voxel.WorldPosition - Voxel.WorldPosition).LengthSquared();
         }
 
-        public override bool IsInGoalRegion(VoxelHandle voxel)
+        public override bool IsInGoalRegion(TemporaryVoxelHandle voxel)
         {
             return (voxel.WorldPosition - Position).LengthSquared() < RadiusSquared;
         }
 
         public override bool IsPossible()
         {
-            return Voxel != null && !VoxelHelpers.VoxelIsCompletelySurrounded(new TemporaryVoxelHandle(Voxel.Chunk, Voxel.GridPosition));
+            return Voxel.IsValid && !VoxelHelpers.VoxelIsCompletelySurrounded(Voxel);
         }
 
 
-        public override VoxelHandle GetVoxel()
+        public override TemporaryVoxelHandle GetVoxel()
         {
             return Voxel;
         }

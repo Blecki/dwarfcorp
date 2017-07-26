@@ -1,4 +1,4 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System;
 using Microsoft.Xna.Framework;
@@ -21,8 +21,7 @@ namespace DwarfCorp
         private void UpdateCache(ChunkData Chunks)
         {
             _cache_Index = VoxelConstants.DataIndexOf(Coordinate.GetLocalVoxelCoordinate());
-            Chunks.ChunkMap.TryGetValue(Coordinate.GetGlobalChunkCoordinate(),
-                out _cache_Chunk);
+            _cache_Chunk = Chunks.ChunkMap.ContainsKey(Coordinate.GetGlobalChunkCoordinate()) ? Chunks.ChunkMap[Coordinate.GetGlobalChunkCoordinate()] : null;
         }
 
         [JsonIgnore]
@@ -31,6 +30,9 @@ namespace DwarfCorp
         #endregion
 
         public readonly GlobalVoxelCoordinate Coordinate;
+        
+        [JsonIgnore]
+        public Vector3 WorldPosition { get { return Coordinate.ToVector3(); } }
 
         [JsonIgnore]
         public bool IsValid { get { return _cache_Chunk != null; } }
@@ -163,7 +165,16 @@ namespace DwarfCorp
         public WaterCell WaterCell
         {
             get { return _cache_Chunk.Data.Water[_cache_Index]; }
-            set { _cache_Chunk.Data.Water[_cache_Index] = value; }
+            set {
+
+                var existingLiquid = _cache_Chunk.Data.Water[_cache_Index];
+                if (existingLiquid.Type != LiquidType.None && value.Type == LiquidType.None)
+                    _cache_Chunk.Data.LiquidPresent[Coordinate.Y] -= 1;
+                if (existingLiquid.Type == LiquidType.None && value.Type != LiquidType.None)
+                    _cache_Chunk.Data.LiquidPresent[Coordinate.Y] += 1;
+
+                _cache_Chunk.Data.Water[_cache_Index] = value;
+            }
         }
 
         [JsonIgnore]
@@ -179,5 +190,10 @@ namespace DwarfCorp
         }
 
         #endregion
+
+        public override string ToString()
+        {
+            return "voxel at " + Coordinate.ToString();
+        }
     }
 }

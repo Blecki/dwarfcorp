@@ -38,6 +38,8 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+    // Todo: Should split stockpile/treasury search - Or, implement stockpile filtering
+    // and let treasurys be a stockpile that only accepts money.
     /// <summary>
     /// A creature looks for the nearest, free stockpile and puts that information onto the blackboard.
     /// </summary>
@@ -47,9 +49,10 @@ namespace DwarfCorp
         public string StockpileName { get; set; }
         public string VoxelName { get; set; }
 
+        // Todo: Most of these properties are useless cruft.
         public Zone Stockpile { get { return GetStockpile(); } set { SetStockpile(value);} }
 
-        public VoxelHandle Voxel { get { return GetVoxel(); } set { SetVoxel(value);} }
+        public TemporaryVoxelHandle Voxel { get { return GetVoxel(); } set { SetVoxel(value);} }
 
         public ResourceAmount Item { get; set; }
 
@@ -62,13 +65,12 @@ namespace DwarfCorp
             Item = itemToStock;
         }
 
-        public VoxelHandle GetVoxel()
+        public TemporaryVoxelHandle GetVoxel()
         {
-            return Agent.Blackboard.GetData<VoxelHandle>(VoxelName);
+            return Agent.Blackboard.GetData<TemporaryVoxelHandle>(VoxelName);
         }
 
-
-        public void SetVoxel(VoxelHandle value)
+        public void SetVoxel(TemporaryVoxelHandle value)
         {
             Agent.Blackboard.SetData(VoxelName, value);
         }
@@ -167,7 +169,7 @@ namespace DwarfCorp
                 if(!v.IsValid || v.IsEmpty)
                     continue;
 
-                Voxel = new VoxelHandle(v.Coordinate.GetLocalVoxelCoordinate(), v.Chunk);
+                Voxel = v;
                 Stockpile = s;
 
                 validTargetFound = true;

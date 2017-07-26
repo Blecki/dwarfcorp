@@ -128,16 +128,16 @@ namespace DwarfCorp
             {
                 foreach (var segment in FenceSegments)
                 {
-                    var neighbor = Neighbors.GetNeighbor(voxel, segment.VoxelOffset);
+                    var neighbor = VoxelHelpers.GetNeighbor(voxel, segment.VoxelOffset);
                     if (neighbor.IsValid && !Voxels.Any(v => v == neighbor))
                         yield return new Fence(components,
-                            voxel.Coordinate.ToVector3() + off + segment.VisibleOffset,
+                            voxel.WorldPosition + off + segment.VisibleOffset,
                             segment.Angle, asset);
                 }
 
                 if (createWorkPiles && MathFunctions.RandEvent(0.1f))
                 {
-                    yield return new WorkPile(components, voxel.Coordinate.ToVector3() + off);
+                    yield return new WorkPile(components, voxel.WorldPosition + off);
                 }
             }
         }

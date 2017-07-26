@@ -161,11 +161,11 @@ namespace DwarfCorp
         {
             if (FarmToWork != null)
             {
-                if (FarmToWork.Vox != null)
+                if (FarmToWork.Vox.IsValid)
                 {
                     Tree = new Sequence(
                         new Condition(!FarmToWork.IsCanceled),
-                        new GoToVoxelAct(FarmToWork.Vox.tvh, PlanAct.PlanType.Adjacent, Creature.AI),
+                        new GoToVoxelAct(FarmToWork.Vox, PlanAct.PlanType.Adjacent, Creature.AI),
                         new Condition(!FarmToWork.IsCanceled),
                         new StopAct(Creature.AI),
                         new Condition(!FarmToWork.IsCanceled),

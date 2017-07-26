@@ -119,7 +119,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 if (ExpandOnClick && OnClick == null)
                 {
-                    OnClick = Expand;
+                    OnClick += Expand;
                 }
                 else
                 {

@@ -40,7 +40,6 @@ namespace DwarfCorp.GameStates
         private Gui.Widgets.ComboBox Antialiasing;
         private CheckBox ReflectTerrain;
         private CheckBox ReflectEntities;
-        private CheckBox Sunlight;
         private CheckBox AmbientOcclusion;
         private CheckBox Ramps;
         private CheckBox CursorLight;
@@ -51,6 +50,7 @@ namespace DwarfCorp.GameStates
         private HorizontalFloatSlider NumMotes;
         private CheckBox LightMap;
         private CheckBox DynamicShadows;
+        private CheckBox GuiAutoScale;
         private Gui.Widgets.ComboBox EasyGraphicsSetting;
         private CheckBox Autosave;
         private Widget AutoSaveFrequency;
@@ -306,6 +306,13 @@ namespace DwarfCorp.GameStates
             {
                 Items = new List<string>(new String[] { "1", "2", "3", "4", "5" }),
             })).GetChild(1) as ComboBox;
+            GuiAutoScale = panel.AddChild(new CheckBox
+            {
+                Text = "Autoscale GUI",
+                Tooltip = "When checked, the GUI will get scaled up on high resolution screens",
+                OnCheckStateChange = OnItemChanged,
+                AutoLayout = AutoLayout.DockTop
+            }) as CheckBox;
 
             if (World != null)
             {
@@ -521,14 +528,6 @@ namespace DwarfCorp.GameStates
                 Tooltip = "When checked, water will reflect entities. Turn off to increase game performance."
             }) as CheckBox;
 
-            Sunlight = rightPanel.AddChild(new CheckBox
-            {
-                Text = "Sunlight",
-                OnCheckStateChange = OnItemChanged,
-                AutoLayout = AutoLayout.DockTop,
-                Tooltip = "When checked, caves will be darker than sunlit areas. Turn off to increase game performance."
-            }) as CheckBox;
-
             AmbientOcclusion = rightPanel.AddChild(new CheckBox
             {
                 Text = "Ambient Occlusion",
@@ -640,7 +639,7 @@ namespace DwarfCorp.GameStates
                                 GameSettings.Default.AmbientOcclusion = false;
                                 GameSettings.Default.AntiAliasing = 0;
                                 GameSettings.Default.CalculateRamps = false;
-                                GameSettings.Default.CalculateSunlight = false;
+                                GameSettings.Default.CalculateSunlight = true;
                                 GameSettings.Default.CursorLightEnabled = false;
                                 GameSettings.Default.DrawChunksReflected = false;
                                 GameSettings.Default.DrawEntityReflected = false;
@@ -799,7 +798,6 @@ namespace DwarfCorp.GameStates
             GameSettings.Default.AntiAliasing = AntialiasingOptions[this.Antialiasing.SelectedItem];
             GameSettings.Default.DrawChunksReflected = this.ReflectTerrain.CheckState;
             GameSettings.Default.DrawEntityReflected = this.ReflectEntities.CheckState;
-            GameSettings.Default.CalculateSunlight = this.Sunlight.CheckState;
             GameSettings.Default.AmbientOcclusion = this.AmbientOcclusion.CheckState;
             GameSettings.Default.CalculateRamps = this.Ramps.CheckState;
             GameSettings.Default.CursorLightEnabled = this.CursorLight.CheckState;
@@ -812,6 +810,7 @@ namespace DwarfCorp.GameStates
             GameSettings.Default.UseDynamicShadows = this.DynamicShadows.CheckState;
 
             GameSettings.Default.GuiScale = GuiScale.SelectedIndex + 1;
+            GameSettings.Default.GuiAutoScale = this.GuiAutoScale.CheckState;
             
             if (preResolutionX != GameSettings.Default.ResolutionX || 
                 preResolutionY != GameSettings.Default.ResolutionY ||
@@ -896,7 +895,6 @@ namespace DwarfCorp.GameStates
 
             this.ReflectTerrain.CheckState = GameSettings.Default.DrawChunksReflected;
             this.ReflectEntities.CheckState = GameSettings.Default.DrawEntityReflected;
-            this.Sunlight.CheckState = GameSettings.Default.CalculateSunlight;
             this.AmbientOcclusion.CheckState = GameSettings.Default.AmbientOcclusion;
             this.Ramps.CheckState = GameSettings.Default.CalculateRamps;
             this.CursorLight.CheckState = GameSettings.Default.CursorLightEnabled;
@@ -909,6 +907,7 @@ namespace DwarfCorp.GameStates
             this.DynamicShadows.CheckState = GameSettings.Default.UseDynamicShadows;
 
             GuiScale.SelectedIndex = GameSettings.Default.GuiScale - 1;
+            GuiAutoScale.CheckState = GameSettings.Default.GuiAutoScale;
 
             if (World != null && EnableTutorial != null)
                 EnableTutorial.CheckState = World.TutorialManager.TutorialEnabled;

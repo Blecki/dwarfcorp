@@ -41,10 +41,11 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
 using Newtonsoft.Json;
-
 #if !XNA_BUILD
 using SDL2;
 #endif
+using SharpRaven;
+using SharpRaven.Data;
 
 namespace DwarfCorp
 {
@@ -68,8 +69,30 @@ namespace DwarfCorp
 
         public const string GameName = "DwarfCorp";
         private static StreamWriter _logwriter;
+#if SHARP_RAVEN
+        private RavenClient ravenClient;
+#endif
         public DwarfGame()
         {
+            try
+            {
+#if SHARP_RAVEN
+                ravenClient =
+                    new RavenClient(
+                        "https://af78a676a448474dacee4c72a9197dd2:0dd0a01a9d4e4fa4abc6e89ac7538346@sentry.io/192119");
+                ravenClient.Tags["Version"] = Program.Version;
+#if XNA_BUILD
+                ravenClient.Tags["Platform"] = "XNA";
+#else
+                ravenClient.Tags["Platform"] = "FNA";
+#endif
+#endif
+            }
+            catch (Exception exception)
+            {
+                Console.Error.WriteLine(exception.ToString());
+            }
+
             //BoundingBox foo = new BoundingBox(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
             //string serialized = FileUtils.SerializeBasicJSON(foo);
             //BoundingBox deserialized = Newtonsoft.Json.JsonConvert.DeserializeObject<BoundingBox>(serialized, new BoxConverter());
@@ -95,6 +118,10 @@ namespace DwarfCorp
             catch(NoSuitableGraphicsDeviceException exception)
             {
                 Console.Error.WriteLine(exception.Message);
+#if SHARP_RAVEN
+                if (ravenClient != null)
+                    ravenClient.Capture(new SentryEvent(exception));
+#endif
             }
         }
 
@@ -170,53 +197,79 @@ namespace DwarfCorp
 
         protected override void Initialize()
         {
-            InitializeLogger();
-            Thread.CurrentThread.Name = "Main";
-            // Goes before anything else so we can track from the very start.
-            GamePerformance.Initialize(this);
+#if SHARP_RAVEN
+            try
+            {
+#endif
+                InitializeLogger();
+                Thread.CurrentThread.Name = "Main";
+                // Goes before anything else so we can track from the very start.
+                GamePerformance.Initialize(this);
 
-            SpriteBatch = new SpriteBatch(GraphicsDevice);
-            base.Initialize();
+                SpriteBatch = new SpriteBatch(GraphicsDevice);
+                base.Initialize();
+#if SHARP_RAVEN
+            }
+            catch (Exception exception)
+            {
+                if (ravenClient != null)
+                    ravenClient.Capture(new SentryEvent(exception));
+                throw;
+            }
+#endif
         }
 
         protected override void LoadContent()
         {
-            // Prepare GemGui
-            GumInputMapper = new Gui.Input.GumInputMapper(Window.Handle);
-            GumInput = new Gui.Input.Input(GumInputMapper);
-
-            // Register all bindable actions with the input system.
-            GumInput.AddAction("TEST", Gui.Input.KeyBindingType.Pressed);
-
-            GumSkin = new RenderData(GraphicsDevice,  Content,
-                    "newgui/xna_draw", "Content/newgui/sheets.txt");
-
-            if (SoundManager.Content == null)
+#if SHARP_RAVEN
+            try
             {
-                SoundManager.Content = Content;
-                SoundManager.LoadDefaultSounds();
-#if XNA_BUILD
-                //SoundManager.SetActiveSongs(ContentPaths.Music.dwarfcorp, ContentPaths.Music.dwarfcorp_2,
-                //    ContentPaths.Music.dwarfcorp_3, ContentPaths.Music.dwarfcorp_4, ContentPaths.Music.dwarfcorp_5);
 #endif
-            }
+                // Prepare GemGui
+                GumInputMapper = new Gui.Input.GumInputMapper(Window.Handle);
+                GumInput = new Gui.Input.Input(GumInputMapper);
 
-            if(GameSettings.Default.DisplayIntro)
-            {
-                StateManager.PushState(new IntroState(this, StateManager));
-            }
-            else
-            {
-                StateManager.PushState(new MainMenuState(this, StateManager));
-            }
+                // Register all bindable actions with the input system.
+                GumInput.AddAction("TEST", Gui.Input.KeyBindingType.Pressed);
 
-            BiomeLibrary.InitializeStatics();
-            Embarkment.Initialize();
-            VoxelChunk.InitializeStatics();
-            ControlSettings.Load();
-            Drawer2D.Initialize(Content, GraphicsDevice);
-            ResourceLibrary.Initialize();
-            base.LoadContent();
+                GumSkin = new RenderData(GraphicsDevice, Content,
+                        "newgui/xna_draw", "Content/newgui/sheets.txt");
+
+                if (SoundManager.Content == null)
+                {
+                    SoundManager.Content = Content;
+                    SoundManager.LoadDefaultSounds();
+#if XNA_BUILD
+                    //SoundManager.SetActiveSongs(ContentPaths.Music.dwarfcorp, ContentPaths.Music.dwarfcorp_2,
+                    //    ContentPaths.Music.dwarfcorp_3, ContentPaths.Music.dwarfcorp_4, ContentPaths.Music.dwarfcorp_5);
+#endif
+                }
+
+                if (GameSettings.Default.DisplayIntro)
+                {
+                    StateManager.PushState(new IntroState(this, StateManager));
+                }
+                else
+                {
+                    StateManager.PushState(new MainMenuState(this, StateManager));
+                }
+
+                BiomeLibrary.InitializeStatics();
+                Embarkment.Initialize();
+                VoxelChunk.InitializeStatics();
+                ControlSettings.Load();
+                Drawer2D.Initialize(Content, GraphicsDevice);
+                ResourceLibrary.Initialize();
+                base.LoadContent();
+#if SHARP_RAVEN
+            }
+            catch (Exception exception)
+            {
+                if (ravenClient != null)
+                    ravenClient.Capture(new SentryEvent(exception));
+                throw;
+            }
+#endif
         }
 
         protected override void Update(GameTime time)
@@ -226,21 +279,47 @@ namespace DwarfCorp
                 base.Update(time);
                 return;
             }
-            GamePerformance.Instance.PreUpdate();
-            DwarfTime.LastTime.Update(time);
-            StateManager.Update(DwarfTime.LastTime);
-            base.Update(time);
-            GamePerformance.Instance.PostUpdate();
+#if SHARP_RAVEN
+            try
+            {
+#endif
+                GamePerformance.Instance.PreUpdate();
+                DwarfTime.LastTime.Update(time);
+                StateManager.Update(DwarfTime.LastTime);
+                base.Update(time);
+                GamePerformance.Instance.PostUpdate();
+#if SHARP_RAVEN
+            }
+            catch (Exception exception)
+            {
+                if (ravenClient != null)
+                    ravenClient.Capture(new SentryEvent(exception));
+                throw;
+            }
+#endif
         }
 
         protected override void Draw(GameTime time)
         {
-            GamePerformance.Instance.PreRender();
-            StateManager.Render(DwarfTime.LastTime);
-            GraphicsDevice.SetRenderTarget(null);
-            base.Draw(time);
-            GamePerformance.Instance.PostRender();
-            GamePerformance.Instance.Render(SpriteBatch);
+#if SHARP_RAVEN
+            try
+            {
+#endif
+                GamePerformance.Instance.PreRender();
+                StateManager.Render(DwarfTime.LastTime);
+                GraphicsDevice.SetRenderTarget(null);
+                base.Draw(time);
+                GamePerformance.Instance.PostRender();
+                GamePerformance.Instance.Render(SpriteBatch);
+#if SHARP_RAVEN
+            }
+            catch (Exception exception)
+            {
+                if (ravenClient != null)
+                    ravenClient.Capture(new SentryEvent(exception));
+                throw;
+            }
+#endif
             
         }
 

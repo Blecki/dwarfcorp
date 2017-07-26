@@ -107,10 +107,10 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    VoxelHandle vox = new VoxelHandle();
-                    World.ChunkManager.ChunkData.GetNonNullVoxelAtWorldLocation(World.CursorLightPos, ref vox);
-
-                    OnVoxelsSelected(World.Master.Spells, new List<VoxelHandle>(){vox});
+                    var vox = new TemporaryVoxelHandle(World.ChunkManager.ChunkData,
+                        GlobalVoxelCoordinate.FromVector3(World.CursorLightPos));
+                    if (vox.IsValid)
+                        OnVoxelsSelected(World.Master.Spells, new List<TemporaryVoxelHandle>(){vox});
                 }
             }
             base.Update(time, voxSelector, bodySelector);
@@ -135,14 +135,14 @@ namespace DwarfCorp
             base.OnEntitiesSelected(tree, entities);
         }
 
-        public override void OnVoxelsSelected(SpellTree tree, List<VoxelHandle> voxels)
+        public override void OnVoxelsSelected(SpellTree tree, List<TemporaryVoxelHandle> voxels)
         {
             if (this.Type != InspectType.InspectBlock) return;
 
 
             string description = "";
             bool first = true;
-            foreach (VoxelHandle selected in voxels)
+            foreach (var selected in voxels)
             {
                 if (!selected.IsEmpty)
                 {
@@ -154,7 +154,7 @@ namespace DwarfCorp
                     {
                         first = false;
                     }
-                    description +=  selected.Type.Name + " at " + selected.GridPosition + ". Health: " + selected.Health;
+                    description +=  selected.Type.Name + " at " + selected.Coordinate.GetLocalVoxelCoordinate() + ". Health: " + selected.Health;
                 }
             }
 

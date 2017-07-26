@@ -307,6 +307,7 @@ namespace DwarfCorp
                 Color color = val < 0.75f ? (val < 0.5f ? Color.Red : Color.Orange) : Color.LightGreen;
                 Drawer2D.DrawLoadBar(Manager.World.Camera, AI.Position - Vector3.Up * 0.5f, color, Color.Black, 32, 2, Hp / MaxHealth);
             }
+
             CheckNeighborhood(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
             UpdateAnimation(gameTime, chunks, camera);
             Status.Update(this, gameTime, chunks, camera);
@@ -348,31 +349,26 @@ namespace DwarfCorp
         /// </summary>
         public void CheckNeighborhood(ChunkManager chunks, float dt)
         {
-            var voxelBelow = new VoxelHandle();
-            bool belowExists = chunks.ChunkData.GetVoxel(Physics.GlobalTransform.Translation - Vector3.UnitY * 0.8f,
-                ref voxelBelow);
-            var voxelAbove = new VoxelHandle();
-            bool aboveExists = chunks.ChunkData.GetVoxel(Physics.GlobalTransform.Translation + Vector3.UnitY,
-                ref voxelAbove);
+            var below = new TemporaryVoxelHandle(chunks.ChunkData,
+                GlobalVoxelCoordinate.FromVector3(Physics.GlobalTransform.Translation - Vector3.UnitY * 0.8f));
+            var above = new TemporaryVoxelHandle(chunks.ChunkData,
+                GlobalVoxelCoordinate.FromVector3(Physics.GlobalTransform.Translation + Vector3.UnitY * 0.8f));
 
-            if (aboveExists)
+            if (above.IsValid)
             {
-                IsHeadClear = voxelAbove.IsEmpty;
+                IsHeadClear = above.IsEmpty;
             }
-            if (belowExists && Physics.IsInLiquid)
+            if (below.IsValid && Physics.IsInLiquid)
             {
                 IsOnGround = false;
             }
-            else if (belowExists)
+            else if (below.IsValid)
             {
-                IsOnGround = !voxelBelow.IsEmpty;
+                IsOnGround = !below.IsEmpty;
             }
             else
             {
-                if (IsOnGround)
-                {
                     IsOnGround = false;
-                }
             }
 
             if (!IsOnGround)
@@ -429,7 +425,6 @@ namespace DwarfCorp
             // This is just a silly hack to make sure that creatures
             // carrying resources to a trade depot release their resources
             // when they die.
-            Inventory.Resources.MaxResources = 99999;
 
             CreateMeatAndBones();
             NoiseMaker.MakeNoise("Die", Physics.Position, true);
@@ -461,7 +456,7 @@ namespace DwarfCorp
                     });
                 }
 
-                Inventory.Resources.AddResource(new ResourceAmount(type, 1));
+                Inventory.AddResource(new ResourceAmount(type, 1));
             }
 
             if (HasBones)
@@ -477,7 +472,7 @@ namespace DwarfCorp
                     });
                 }
 
-                Inventory.Resources.AddResource(new ResourceAmount(type, 1));
+                Inventory.AddResource(new ResourceAmount(type, 1));
             }
 
             if (HasCorpse)
@@ -493,7 +488,7 @@ namespace DwarfCorp
                     });
                 }
 
-                Inventory.Resources.AddResource(new ResourceAmount(type, 1));
+                Inventory.AddResource(new ResourceAmount(type, 1));
             }
         }
 

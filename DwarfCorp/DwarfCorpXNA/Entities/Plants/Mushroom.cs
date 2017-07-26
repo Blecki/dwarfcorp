@@ -63,7 +63,6 @@ namespace DwarfCorp
             matrix.Translation = position + new Vector3(0.5f, -0.25f, 0.5f);
             LocalTransform = matrix;
 
-            // Todo: Clean up when VoxelListener can take TemporaryVoxelHandles.
             var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
                 Manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(position)));
@@ -72,20 +71,16 @@ namespace DwarfCorp
                     voxelUnder));
 
 
-            Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)
+            Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)) as Inventory;
+
+            for (int i = 0; i < numRelease; i++)
             {
-                Resources = new ResourceContainer()
+                inventory.Resources.Add(new Inventory.InventoryItem()
                 {
-                    MaxResources = 2,
-                    Resources = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>()
-                    {
-                        {
-                            resource,
-                            new ResourceAmount(resource, numRelease)
-                        }
-                    }
-                }
-            }) as Inventory;
+                    MarkedForRestock = false,
+                    Resource = resource
+                });
+            }
 
             AddChild(new Health(Manager.World.ComponentManager, "HP", 30, 0.0f, 30));
             AddChild(new Flammable(Manager.World.ComponentManager, "Flames"));

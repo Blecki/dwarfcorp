@@ -129,80 +129,10 @@ namespace DwarfCorp
                 ChunkMap[chunk.ID] = chunk;
                 return true;
             }
-            else if(ChunkMap.ContainsKey(chunk.ID))
-            {
-                return false;
-            }
 
             return false;
         }
 
-        public VoxelChunk GetVoxelChunkAtWorldLocation(GlobalVoxelCoordinate worldLocation)
-        {
-            VoxelChunk returnChunk = null;
-            ChunkMap.TryGetValue(worldLocation.GetGlobalChunkCoordinate(), out returnChunk);
-            return returnChunk;
-        }
-
-        [Obsolete]
-        public VoxelChunk GetChunk(Vector3 WorldLocation)
-        {
-            return GetVoxelChunkAtWorldLocation(new GlobalVoxelCoordinate(
-                (int)Math.Floor(WorldLocation.X),
-                (int)Math.Floor(WorldLocation.Y),
-                (int)Math.Floor(WorldLocation.Z)));
-        }
-
-        [Obsolete]
-        public bool GetVoxel(Vector3 WorldLocation, ref VoxelHandle Voxel)
-        {
-            return GetVoxel(null, new GlobalVoxelCoordinate(
-                (int)Math.Floor(WorldLocation.X),
-                (int)Math.Floor(WorldLocation.Y),
-                (int)Math.Floor(WorldLocation.Z)), ref Voxel);
-        }
-
-        [Obsolete]
-        public bool GetVoxel(GlobalVoxelCoordinate worldLocation, ref VoxelHandle voxel)
-        {
-            return GetVoxel(null, worldLocation, ref voxel);
-        }
-
-        [Obsolete]
-        public bool GetVoxel(VoxelChunk checkFirst, GlobalVoxelCoordinate worldLocation, ref VoxelHandle newReference)
-        {
-            var chunk = GetVoxelChunkAtWorldLocation(worldLocation);
-            if (chunk == null) return false;
-            return chunk.GetVoxelAtValidWorldLocation(worldLocation, ref newReference);
-        }
-        
-        /// <summary> 
-        /// Given a world location, returns the voxel at that location if it exists
-        /// Otherwise returns null.
-        /// </summary>
-        /// <param Name="worldLocation">A floating point vector location in the world space</param>
-        /// <param Name="depth">unused</param>
-        /// <returns>The voxel at that location (as a list)</returns>
-        [Obsolete]
-        public bool GetNonNullVoxelAtWorldLocation(Vector3 worldLocation, ref VoxelHandle voxel)
-        {
-            return GetNonNullVoxelAtWorldLocationCheckFirst(null, worldLocation, ref voxel);
-        }
-
-        /// <summary>
-        /// Recursive function which gets all the voxels at a position in the world, assuming the voxel is in a given chunk
-        /// </summary>
-        /// <param Name="checkFirst">The voxel chunk to check first</param>
-        /// <param Name="worldLocation">The point in the world to check</param>
-        /// <param Name="toReturn">A list of voxels to get</param>
-        public bool GetNonNullVoxelAtWorldLocationCheckFirst(VoxelChunk checkFirst, Vector3 worldLocation, ref VoxelHandle toReturn)
-        {
-            var v = new TemporaryVoxelHandle(this, GlobalVoxelCoordinate.FromVector3(worldLocation));
-            if (!v.IsValid || v.IsEmpty) return false;
-            toReturn.ChangeVoxel(v.Chunk, v.Coordinate.GetLocalVoxelCoordinate());
-            return true;
-        }
-       
         public void LoadFromFile(GameFile gameFile, Action<String> SetLoadingMessage)
         {
             foreach (VoxelChunk chunk in gameFile.Data.ChunkData.Select(file => file.ToChunk(chunkManager)))
@@ -214,7 +144,7 @@ namespace DwarfCorp
 
         public void NotifyRebuild(GlobalVoxelCoordinate At)
         {
-            foreach (var n in Neighbors.EnumerateManhattanNeighbors2D(At))
+            foreach (var n in VoxelHelpers.EnumerateManhattanNeighbors2D(At))
             {
                 var vox = new TemporaryVoxelHandle(this, n);
                 if (vox.IsValid)

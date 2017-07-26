@@ -1,4 +1,4 @@
-﻿// FlyWanderAct.cs
+// FlyWanderAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -200,9 +200,13 @@ namespace DwarfCorp
 
                     if (State == FlyState.SearchingForPerch)
                     {
-                        VoxelHandle vox = Creature.Physics.CurrentVoxel;
-
-                        if (vox.WaterLevel > 0)
+                        var vox = Creature.Physics.CurrentVoxel;
+                        if (!vox.IsValid)
+                        {
+                            yield return Act.Status.Running;
+                            continue;
+                        }
+                        if (vox.IsValid && vox.WaterCell.WaterLevel > 0)
                         {
                             yield return Act.Status.Running;
                             continue;
@@ -223,7 +227,7 @@ namespace DwarfCorp
 
                         if (CanPerchOnWalls)
                         {
-                            foreach (var n in Neighbors.EnumerateManhattanNeighbors(Creature.Physics.CurrentVoxel.Coordinate)
+                            foreach (var n in VoxelHelpers.EnumerateManhattanNeighbors(Creature.Physics.CurrentVoxel.Coordinate)
                                 .Select(c => new TemporaryVoxelHandle(Creature.World.ChunkManager.ChunkData, c)))
                             {
                                 if (n.IsValid && n.Coordinate.Y >= vox.Coordinate.Y && !n.IsEmpty)

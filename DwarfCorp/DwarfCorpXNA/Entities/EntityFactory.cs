@@ -170,11 +170,11 @@ namespace DwarfCorp
 
         public static ResourceEntity CreateRandomTrinket(WorldManager world, Vector3 pos)
         {
-            Resource randResource = ResourceLibrary.GenerateTrinket("Gold", MathFunctions.Rand(0.1f, 3.5f));
+            Resource randResource = ResourceLibrary.GenerateTrinket(Datastructures.SelectRandom(ResourceLibrary.Resources.Where(r => r.Value.Tags.Contains(Resource.ResourceTags.Material))).Key, MathFunctions.Rand(0.1f, 3.5f));
 
             if (MathFunctions.RandEvent(0.5f))
             {
-                randResource = ResourceLibrary.EncrustTrinket(randResource.Type, "Emerald");
+                randResource = ResourceLibrary.EncrustTrinket(randResource.Type, Datastructures.SelectRandom(ResourceLibrary.Resources.Where(r => r.Value.Tags.Contains(Resource.ResourceTags.Gem))).Key);
             }
 
             return new ResourceEntity(world.ComponentManager, randResource.Type, pos);

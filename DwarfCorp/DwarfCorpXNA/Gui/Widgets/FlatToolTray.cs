@@ -75,19 +75,28 @@ namespace DwarfCorp.Gui.Widgets
             }
         }
 
+        public enum IconBehavior
+        {
+            LeafIcon,
+            ShowSubMenu,
+            ShowClickPopup,
+            ShowHoverPopup
+        }
+
         public class Icon : FramedIcon
         {
+            public IconBehavior Behavior = IconBehavior.ShowSubMenu;
             public Widget PopupChild;
             public Widget ReplacementMenu;
             public bool KeepChildVisible = false;
             public bool ExpandChildWhenDisabled = false;
             
-            public void Expand(Widget sender, InputEventArgs args)
+            public void ExpandPopup(Widget sender, InputEventArgs args)
             {
                 foreach (var child in sender.Parent.EnumerateChildren().Where(c => c is FramedIcon)
 .                       SelectMany(c => c.EnumerateChildren()))
                 {
-                    if (!Object.ReferenceEquals(child, PopupChild))
+                    if (!Object.ReferenceEquals(child, PopupChild) && !child.Hidden)
                     {
                         child.Hidden = true;
                         child.Invalidate();
@@ -109,16 +118,7 @@ namespace DwarfCorp.Gui.Widgets
 
             public override void Construct()
             {
-                    OnMouseEnter = Expand;
-
-                    OnMouseLeave = (sender, args) =>
-                    {
-                        if (!KeepChildVisible && PopupChild != null)
-                            Unexpand();
-                    };
-                
-
-                OnDisable = (sender) =>
+                OnDisable += (sender) =>
                 {
                     if (PopupChild != null)
                     {
@@ -130,59 +130,53 @@ namespace DwarfCorp.Gui.Widgets
                     }
                 };
 
-                OnLayout = (sender) =>
+                OnLayout += (sender) =>
                 {
                     if (PopupChild != null)
                     {
                         var midPoint = sender.Rect.X + (sender.Rect.Width / 2);
                         PopupChild.Rect.X = midPoint - (PopupChild.Rect.Width / 2);
-                        PopupChild.Rect.Y = sender.Rect.Y - PopupChild.Rect.Height;
+                        PopupChild.Rect.Y = Parent.Rect.Y - PopupChild.Rect.Height;
 
                         if (PopupChild.Rect.X < Parent.Rect.X)
                             PopupChild.Rect.X = Parent.Rect.X;
 
                         if (PopupChild.Rect.Right > Root.RenderData.VirtualScreen.Right)
                             PopupChild.Rect.X = Root.RenderData.VirtualScreen.Right - PopupChild.Rect.Width;
-                    }                };
+                    }             
+                };
 
                 base.Construct();
 
-                if (PopupChild != null)
-                {
-                    AddChild(PopupChild);
-                    PopupChild.Hidden = true;
-                }
+                if (PopupChild != null && ReplacementMenu != null)
+                    throw new InvalidProgramException("Conflicting icon behavior");
 
-                if (OnClick != null)
+                switch (Behavior)
                 {
-                    System.Diagnostics.Debug.Assert(ReplacementMenu == null, "Conflicting menu options");
-                }
-
-                if (ReplacementMenu != null)
-                    OnClick = (sender, args) =>
-                    {
-                        var root = Parent.Parent as RootTray;
-                        if (root != null) root.SwitchTray(ReplacementMenu);
-                    };
-            }
-            
-            public void Unexpand()
-            {
-                if (PopupChild != null)
-                {
-                    PopupChild.Hidden = true;
-                    PopupChild.Invalidate();
-                    Hidden = false;
-                }
-            }
-
-            public void Expand()
-            {
-                if (PopupChild != null)
-                {
-                    PopupChild.Hidden = false;
-                    PopupChild.Invalidate();
-                    Hidden = true;
+                    case IconBehavior.LeafIcon:
+                        break;
+                    case IconBehavior.ShowClickPopup:
+                        if (PopupChild == null || OnClick != null)
+                            throw new InvalidProgramException("Conflicting icon behavior");
+                        AddChild(PopupChild);
+                        PopupChild.Hidden = true;
+                        OnClick = ExpandPopup;
+                        break;
+                    case IconBehavior.ShowHoverPopup:
+                        if (PopupChild == null) throw new InvalidProgramException("Conflicting icon behavior");
+                        AddChild(PopupChild);
+                        PopupChild.Hidden = true;
+                        OnMouseEnter = ExpandPopup;
+                        break;
+                    case IconBehavior.ShowSubMenu:
+                        if (ReplacementMenu == null || OnClick != null)
+                            throw new InvalidProgramException("Conflicting icon behavior");
+                        OnClick = (sender, args) =>
+                        {
+                            var root = Parent.Parent as RootTray;
+                            if (root != null) root.SwitchTray(ReplacementMenu);
+                        };
+                        break;
                 }
             }
         }

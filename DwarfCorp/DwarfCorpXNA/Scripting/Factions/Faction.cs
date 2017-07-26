@@ -161,13 +161,16 @@ namespace DwarfCorp
             World = ((WorldManager)ctx.Context);
         }
 
-        private ulong GetVoxelQuickCompare(GlobalChunkCoordinate Coord, int Index)
+        private ulong GetVoxelQuickCompare(TemporaryVoxelHandle V)
         {
+            var coord = V.Coordinate.GetGlobalChunkCoordinate();
+            var index = VoxelConstants.DataIndexOf(V.Coordinate.GetLocalVoxelCoordinate());
+
             ulong q = 0;
-            q |= (((ulong)Coord.X & 0xFFFF) << 48);
-            q |= (((ulong)Coord.Y & 0xFFFF) << 32);
-            q |= (((ulong)Coord.Z & 0xFFFF) << 16);
-            q |= ((ulong)Index & 0xFFFF);
+            q |= (((ulong)coord.X & 0xFFFF) << 48);
+            q |= (((ulong)coord.Y & 0xFFFF) << 32);
+            q |= (((ulong)coord.Z & 0xFFFF) << 16);
+            q |= ((ulong)index & 0xFFFF);
             return q;
         }
 
@@ -245,10 +248,10 @@ namespace DwarfCorp
             //CollideMinions(time);
 
             List<ulong> removalKeys = new List<ulong>();
-            foreach (KeyValuePair<ulong, BuildOrder> kvp in DigDesignations)
+            foreach (var kvp in DigDesignations)
             {
-                VoxelHandle v = kvp.Value.Vox;;
-                if (v.IsEmpty || v.Health <= 0.0f || v.Type.Name == "empty" || v.Type.IsInvincible)
+                var v = kvp.Value.Vox;;
+                if (v.IsValid && (v.IsEmpty || v.Health <= 0.0f || v.Type.Name == "empty" || v.Type.IsInvincible))
                 {
                     Drawer3D.UnHighlightVoxel(v);
                     removalKeys.Add(kvp.Key);
@@ -273,9 +276,9 @@ namespace DwarfCorp
             List<BuildOrder> removals = new List<BuildOrder>();
             foreach (BuildOrder d in GuardDesignations)
             {
-                VoxelHandle v = d.Vox;
+                var v = d.Vox;
 
-                if (!v.IsEmpty && !(v.Health <= 0.0f) && v.Type.Name != "empty")
+                if (!v.IsValid || (!v.IsEmpty && !(v.Health <= 0.0f) && v.Type.Name != "empty"))
                 {
                     continue;
                 }
@@ -283,7 +286,7 @@ namespace DwarfCorp
                 removals.Add(d);
 
                 if (!v.IsEmpty)
-                    World.ChunkManager.KillVoxel(v.tvh);
+                    World.ChunkManager.KillVoxel(v);
             }
 
             foreach (BuildOrder v in removals)
@@ -379,8 +382,7 @@ namespace DwarfCorp
             if(!V.IsValid || V.IsEmpty)
                 return;
 
-            var oldV = new VoxelHandle(V.Coordinate.GetLocalVoxelCoordinate(), V.Chunk);
-            RoomBuilder.OnVoxelDestroyed(oldV);
+            RoomBuilder.OnVoxelDestroyed(V);
 
             var toRemove = new List<Stockpile>();
             foreach (var s in new List<Stockpile>(Stockpiles))
@@ -431,12 +433,9 @@ namespace DwarfCorp
         {
             float closestDist = 99999;
             BuildOrder closestVoxel = null;
-            foreach(KeyValuePair<ulong, BuildOrder> kvp in DigDesignations)
+            foreach(var kvp in DigDesignations)
             {
-                VoxelHandle vref = kvp.Value.Vox;
-                VoxelHandle v = vref;
-
-                float d = (v.WorldPosition - position).LengthSquared();
+                float d = (kvp.Value.Vox.WorldPosition - position).LengthSquared();
                 if(!(d < closestDist))
                 {
                     continue;
@@ -453,12 +452,9 @@ namespace DwarfCorp
         {
             float closestDist = 99999;
             BuildOrder closestVoxel = null;
-            foreach(BuildOrder designation in GuardDesignations)
+            foreach(var designation in GuardDesignations)
             {
-                VoxelHandle vref = designation.Vox;
-                VoxelHandle v = vref;
-
-                float d = (v.WorldPosition - position).LengthSquared();
+                float d = (designation.Vox.WorldPosition - position).LengthSquared();
                 if(!(d < closestDist))
                 {
                     continue;
@@ -471,32 +467,28 @@ namespace DwarfCorp
             return closestVoxel;
         }
 
-        public BuildOrder GetGuardDesignation(VoxelHandle vox)
+        public BuildOrder GetGuardDesignation(TemporaryVoxelHandle vox)
         {
-            return (from d in GuardDesignations
-                let vref = d.Vox
-                let v = vref
-                where vox.Equals(v)
-                select d).FirstOrDefault();
+            return GuardDesignations.FirstOrDefault(d => d.Vox == vox);
         }
 
-        public BuildOrder GetDigDesignation(VoxelHandle vox)
+        public BuildOrder GetDigDesignation(TemporaryVoxelHandle vox)
         {
             BuildOrder returnOrder;
-            if (DigDesignations.TryGetValue(GetVoxelQuickCompare(vox.ChunkID, vox.Index), out returnOrder))
+            if (DigDesignations.TryGetValue(GetVoxelQuickCompare(vox), out returnOrder))
                 return returnOrder;
             return new BuildOrder();
         }
 
         public void AddDigDesignation(BuildOrder order)
         {
-            if (order.Vox == null) return;
-            DigDesignations.Add(GetVoxelQuickCompare(order.Vox.ChunkID, order.Vox.Index), order);
+            if (!order.Vox.IsValid) return;
+            DigDesignations.Add(GetVoxelQuickCompare(order.Vox), order);
         }
 
-        public void RemoveDigDesignation(VoxelHandle vox)
+        public void RemoveDigDesignation(TemporaryVoxelHandle vox)
         {
-            var q = GetVoxelQuickCompare(vox.ChunkID, vox.Index);
+            var q = GetVoxelQuickCompare(vox);
             if (DigDesignations.ContainsKey(q))
             {
                 DigDesignations.Remove(q);
@@ -504,24 +496,17 @@ namespace DwarfCorp
             }
         }
 
-        public bool IsDigDesignation(VoxelHandle vox)
+        public bool IsDigDesignation(TemporaryVoxelHandle vox)
         {
             GamePerformance.Instance.TrackValueType<int>("Dig Designations", DigDesignations.Count);
 
-            return DigDesignations.ContainsKey(GetVoxelQuickCompare(vox.ChunkID, vox.Index));
-            /*
-            for (int i = 0; i < DigDesignations.Count; i++)
-            {
-                if (DigDesignations[i].Vox.IsSameAs(vox)) return true;
-            }
-            return false;
-             * */
+            return DigDesignations.ContainsKey(GetVoxelQuickCompare(vox));
         }
 
 
-        public bool IsGuardDesignation(VoxelHandle vox)
+        public bool IsGuardDesignation(TemporaryVoxelHandle vox)
         {
-            return GuardDesignations.Select(d => d.Vox).Select(vref => vref).Any(vox.Equals);
+            return GuardDesignations.Select(d => d.Vox).Any(v => v == vox);
         }
 
         public bool AddResources(ResourceAmount resources)
@@ -562,7 +547,7 @@ namespace DwarfCorp
             {
                 if (room.RoomData.Name != typeName || !room.IsBuilt) continue;
                 float dist =
-                    (room.GetNearestVoxel(position).Coordinate.ToVector3() - position).LengthSquared();
+                    (room.GetNearestVoxel(position).WorldPosition - position).LengthSquared();
 
                 if (dist < nearestDistance)
                 {
@@ -593,12 +578,6 @@ namespace DwarfCorp
             }
 
             return nearest;
-        }
-
-
-        public Stockpile GetIntersectingStockpile(VoxelHandle v)
-        {
-            return Stockpiles.FirstOrDefault(pile => pile.Intersects(v));
         }
 
         public Stockpile GetIntersectingStockpile(BoundingBox v)
@@ -937,7 +916,7 @@ namespace DwarfCorp
                     World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(position + offset)));
                 if (voxelUnder.IsValid)
                 { 
-                    var body = EntityFactory.CreateEntity<Body>(creature, voxelUnder.Coordinate.ToVector3() + new Vector3(0.5f, 1, 0.5f));
+                    var body = EntityFactory.CreateEntity<Body>(creature, voxelUnder.WorldPosition + new Vector3(0.5f, 1, 0.5f));
                     var ai = body.EnumerateAll().OfType<CreatureAI>().FirstOrDefault();
                     
                     if (ai != null)
@@ -985,7 +964,7 @@ namespace DwarfCorp
             {
                 if (room.Voxels.Count == 0) continue;
                 float dist =
-                    (room.GetNearestVoxel(position).Coordinate.ToVector3() - position).LengthSquared();
+                    (room.GetNearestVoxel(position).WorldPosition - position).LengthSquared();
 
                 if (dist < nearestDistance)
                 {

@@ -56,26 +56,28 @@ namespace DwarfCorp
             return Voxel.IsValid && !VoxelHelpers.VoxelIsCompletelySurrounded(Voxel);
         }
 
-        public override float Heuristic(VoxelHandle voxel)
+        public override float Heuristic(TemporaryVoxelHandle voxel)
         {
-            return (voxel.WorldPosition - Voxel.Coordinate.ToVector3()).LengthSquared();
+            return (voxel.WorldPosition - Voxel.WorldPosition).LengthSquared();
         }
 
-        public AdjacentVoxelGoalRegion2D(VoxelHandle Voxel)
+        public AdjacentVoxelGoalRegion2D(TemporaryVoxelHandle Voxel)
         {
-            this.Voxel = new TemporaryVoxelHandle(Voxel.Chunk, Voxel.GridPosition);
+            this.Voxel = Voxel;
         }
 
-        public override bool IsInGoalRegion(VoxelHandle voxel)
+        public override bool IsInGoalRegion(TemporaryVoxelHandle voxel)
         {
-            return (Math.Abs(voxel.WorldPosition.X - Voxel.Coordinate.X) <= 0.5f &&
-                   Math.Abs(voxel.WorldPosition.Z - Voxel.Coordinate.Z) <= 0.5f) &&
-                   Math.Abs(voxel.WorldPosition.Y - Voxel.Coordinate.Y) <= 1.0f;
+            // This is really just a same-voxel check. 
+            //return (Math.Abs(voxel.WorldPosition.X - Voxel.Coordinate.X) <= 0.5f &&
+            //       Math.Abs(voxel.WorldPosition.Z - Voxel.Coordinate.Z) <= 0.5f) &&
+            //       Math.Abs(voxel.WorldPosition.Y - Voxel.Coordinate.Y) <= 1.0f;
+            return voxel == Voxel;
         }
 
-        public override VoxelHandle GetVoxel()
+        public override TemporaryVoxelHandle GetVoxel()
         {
-            return new VoxelHandle(Voxel.Coordinate.GetLocalVoxelCoordinate(), Voxel.Chunk);
+            return Voxel;
         }
     }
 }

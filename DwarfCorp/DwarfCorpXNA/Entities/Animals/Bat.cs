@@ -97,13 +97,7 @@ namespace DwarfCorp
 
 
             // The bird can hold one item at a time in its inventory
-            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.BoundingBoxPos)
-            {
-                Resources = new ResourceContainer
-                {
-                    MaxResources = 1
-                }
-            }) as Inventory;
+            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.BoundingBoxPos)) as Inventory;
 
             Physics.AddChild(Shadow.Create(0.25f, Manager));
 
@@ -174,6 +168,7 @@ namespace DwarfCorp
                 }
                 yield return Act.Status.Running;
             }
+            yield break;
         }
 
 

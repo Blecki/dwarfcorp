@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using DwarfCorp.GameStates;
@@ -57,47 +58,47 @@ namespace DwarfCorp
         /// </summary>
         /// <param name="voxels">The voxels selected.</param>
         /// <param name="button">The button depressed.</param>
-        public delegate void OnDragged(List<VoxelHandle> voxels, InputManager.MouseButton button);
+        public delegate void OnDragged(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button);
 
         /// <summary>
         /// Called whenever the left mouse button is pressed
         /// </summary>
         /// <returns>The voxel under the mouse</returns>
-        public delegate VoxelHandle OnLeftPressed();
+        public delegate TemporaryVoxelHandle OnLeftPressed();
 
         /// <summary>
         /// Called whenever the left mouse button is released.
         /// </summary>
         /// <returns>A list of voxels that were selected</returns>
-        public delegate List<VoxelHandle> OnLeftReleased();
+        public delegate List<TemporaryVoxelHandle> OnLeftReleased();
 
         /// <summary>
         /// Called whenever the right mouse button is pressed.
         /// </summary>
         /// <returns>The voxel under the mouse</returns>
-        public delegate VoxelHandle OnRightPressed();
+        public delegate TemporaryVoxelHandle OnRightPressed();
 
         /// <summary>
         /// Called whenever the right mouse button is released
         /// </summary>
         /// <returns>List of voxels selected.</returns>
-        public delegate List<VoxelHandle> OnRightReleased();
+        public delegate List<TemporaryVoxelHandle> OnRightReleased();
 
         /// <summary>
         /// Called whenever a list of voxels have been selected.
         /// </summary>
         /// <param name="voxels">The voxels.</param>
         /// <param name="button">The button depressed to select the voxels.</param>
-        public delegate void OnSelected(List<VoxelHandle> voxels, InputManager.MouseButton button);
+        public delegate void OnSelected(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button);
 
         /// <summary>
         /// The first voxel selected before the player begins dragging the mouse.
         /// </summary>
-        public VoxelHandle FirstVoxel = default(VoxelHandle);
+        public TemporaryVoxelHandle FirstVoxel = TemporaryVoxelHandle.InvalidHandle;
         /// <summary>
         /// The voxel currently under the mouse.
         /// </summary>
-        public VoxelHandle VoxelUnderMouse = default(VoxelHandle);
+        public TemporaryVoxelHandle VoxelUnderMouse = TemporaryVoxelHandle.InvalidHandle;
         /// <summary>
         /// True if the left mouse button is depressed.
         /// </summary>
@@ -130,7 +131,7 @@ namespace DwarfCorp
             CameraController = camera;
             Graphics = graphics;
             Chunks = chunks;
-            SelectionBuffer = new List<VoxelHandle>();
+            SelectionBuffer = new List<TemporaryVoxelHandle>();
             LeftPressed = LeftPressedCallback;
             RightPressed = RightPressedCallback;
             LeftReleased = LeftReleasedCallback;
@@ -204,7 +205,7 @@ namespace DwarfCorp
         /// <value>
         /// The selection buffer.
         /// </value>
-        public List<VoxelHandle> SelectionBuffer { get; set; }
+        public List<TemporaryVoxelHandle> SelectionBuffer { get; set; }
 
         /// <summary>
         /// If this selector is enabled, when the player clicks they 
@@ -242,38 +243,34 @@ namespace DwarfCorp
             MouseState mouse = Mouse.GetState();
             KeyboardState keyboard = Keyboard.GetState();
 
-            VoxelHandle underMouse = GetVoxelUnderMouse();
+            var underMouse = GetVoxelUnderMouse();
             // Keep track of whether a new voxel has been selected.
-            bool newVoxel = underMouse != null && !underMouse.Equals(VoxelUnderMouse);
+            bool newVoxel = underMouse.IsValid && underMouse != VoxelUnderMouse;
 
-            if (underMouse == null)
+            if (!underMouse.IsValid)
             {
                 return;
             }
+                        
+            VoxelUnderMouse = underMouse;
 
-            // If there is a voxel under the mouse...
-            if (underMouse != null)
+            // Update the cursor light.
+            World.CursorLightPos = underMouse.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f);
+
+            // Get the type of the voxel and display it to the player.
+            if (Enabled && !underMouse.IsEmpty && underMouse.IsExplored)
             {
-                //World.ParticleManager.Trigger("crumbs", underMouse.Position + Vector3.Up, Color.White, 1);
-                VoxelUnderMouse = underMouse;
-                // Update the cursor light.
-                World.CursorLightPos = underMouse.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f);
+                string info = underMouse.Type.Name;
 
-                // Get the type of the voxel and display it to the player.
-                if (Enabled && !underMouse.IsEmpty && underMouse.IsExplored)
+                // If it belongs to a room, display that information.
+                if (World.PlayerFaction.RoomBuilder.IsInRoom(underMouse))
                 {
-                    string info = underMouse.Type.Name;
+                    Room room = World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(underMouse);
 
-                    // If it belongs to a room, display that information.
-                    if (World.PlayerFaction.RoomBuilder.IsInRoom(underMouse.tvh))
-                    {
-                        Room room = World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(underMouse.tvh);
-
-                        if (room != null)
-                            info += " (" + room.ID + ")";
-                    }
-                    World.ShowInfo(info);
+                    if (room != null)
+                        info += " (" + room.ID + ")";
                 }
+                World.ShowInfo(info);
             }
 
             // Do nothing if not enabled.
@@ -281,6 +278,7 @@ namespace DwarfCorp
             {
                 return;
             }
+
             bool altPressed = false;
             // If the left or right ALT keys are pressed, we can adjust the height of the selection
             // for building pits and tall walls using the mouse wheel.
@@ -304,7 +302,7 @@ namespace DwarfCorp
             }
 
             // Draw a box around the current voxel under the mouse.
-            if (underMouse != null)
+            if (underMouse.IsValid)
             {
                 BoundingBox box = underMouse.GetBoundingBox().Expand(0.05f);
                 Drawer3D.DrawBox(box, CurrentColor, CurrentWidth, true);
@@ -356,8 +354,7 @@ namespace DwarfCorp
                                 {
                                     if (v.Equals(underMouse)) return false;
                                     return !VoxelHelpers.DoesVoxelHaveVisibleSurface(
-                                        Chunks.ChunkData,
-                                        new TemporaryVoxelHandle(v.Chunk, v.GridPosition));
+                                        Chunks.ChunkData, v);
                                 });
                         }
 
@@ -415,7 +412,6 @@ namespace DwarfCorp
                         SelectionBuffer = VoxelHelpers.EnumerateCoordinatesInBoundingBox(buffer)
                             .Select(c => new TemporaryVoxelHandle(Chunks.ChunkData, c))
                             .Where(v => v.IsValid)
-                            .Select(v => new VoxelHandle(v.Coordinate.GetLocalVoxelCoordinate(), v.Chunk))
                             .ToList();
 
                         if (!altPressed && Brush != VoxelBrush.Stairs)
@@ -425,8 +421,7 @@ namespace DwarfCorp
                                 {
                                     if (v.Equals(underMouse)) return false;
                                     return !VoxelHelpers.DoesVoxelHaveVisibleSurface(
-                                        Chunks.ChunkData,
-                                        new TemporaryVoxelHandle(v.Chunk, v.GridPosition));
+                                        Chunks.ChunkData, v);
                                 });
                         }
                         if (newVoxel)
@@ -446,36 +441,35 @@ namespace DwarfCorp
             }
         }
 
-        public IEnumerable<VoxelHandle> Select(BoundingBox buffer, Vector3 start, Vector3 end)
+        public IEnumerable<TemporaryVoxelHandle> Select(BoundingBox buffer, Vector3 start, Vector3 end)
         {
             switch (Brush)
             {
                 case VoxelBrush.Box:
                     return VoxelHelpers.EnumerateCoordinatesInBoundingBox(buffer)
                         .Select(c => new TemporaryVoxelHandle(Chunks.ChunkData, c))
-                        .Where(v => v.IsValid)
-                        .Select(v => new VoxelHandle(v.Coordinate.GetLocalVoxelCoordinate(), v.Chunk));
+                        .Where(v => v.IsValid);
                 case VoxelBrush.Shell:
-                {
-                        // Todo: Change the stair and shell functions to enumerate coordinates
-                        //  then simplify and combine this code.
-                    return Chunks.GetVoxelsIntersecting(GetShell(buffer));
-                }
+                    return EnumerateShell(buffer)
+                            .Select(c => new TemporaryVoxelHandle(Chunks.ChunkData, c))
+                            .Where(v => v.IsValid);
+                case VoxelBrush.Stairs:
+                    return EnumerateStairVoxels(buffer, start, end, SelectionType == VoxelSelectionType.SelectFilled)
+                        .Select(c => new TemporaryVoxelHandle(Chunks.ChunkData, c))
+                        .Where(v => v.IsValid);
                 default:
-                {
-                    return Chunks.GetVoxelsIntersecting(GetStair(buffer, start, end, SelectionType == VoxelSelectionType.SelectFilled));
-                }
+                    throw new InvalidOperationException("VoxelBrush has invalid value");
             }
         }
-
 
         /// <summary>
         /// Gets a stairstep stretching accross the box.
         /// </summary>
         /// <param name="box">The box.</param>
         /// <returns>A stairstep starting filled on the bottom row, pointing in the maximum x or z direction</returns>
-        private IEnumerable<Vector3> GetStair(BoundingBox box,  Vector3 start, Vector3 end, bool invert)
+        private IEnumerable<GlobalVoxelCoordinate> EnumerateStairVoxels(BoundingBox box,  Vector3 start, Vector3 end, bool invert)
         {
+            // Todo: Can this be simplified to return voxels above or below the line?
             int minX = MathFunctions.FloorInt(box.Min.X + 0.5f);
             int minY = MathFunctions.FloorInt(box.Min.Y + 0.5f);
             int minZ = MathFunctions.FloorInt(box.Min.Z + 0.5f);
@@ -530,7 +524,7 @@ namespace DwarfCorp
                         {
                             for (int z = minZ; z <= maxZ; z++)
                             {
-                                yield return new Vector3(x + 0.5f, y + 0.5f, z + 0.5f);
+                                yield return new GlobalVoxelCoordinate(x, y, z);
                             }
                         }
                     }
@@ -541,7 +535,7 @@ namespace DwarfCorp
                         {
                             for (int z = minZ; z <= maxZ; z++)
                             {
-                                yield return new Vector3(x + 0.5f, y + 0.5f, z + 0.5f);
+                                yield return new GlobalVoxelCoordinate(x, y, z);
                             }
                         }
                     }
@@ -557,7 +551,7 @@ namespace DwarfCorp
                         {
                             for (int x = minX; x <= maxX; x++)
                             {
-                                yield return new Vector3(x + 0.5f, y + 0.5f, z + 0.5f);
+                                yield return new GlobalVoxelCoordinate(x, y, z);
                             }
                         }
                     }
@@ -568,7 +562,7 @@ namespace DwarfCorp
                         {
                             for (int x = minX; x <= maxX; x++)
                             {
-                                yield return new Vector3(x + 0.5f, y + 0.5f, z + 0.5f);
+                                yield return new GlobalVoxelCoordinate(x, y, z);
                             }
                         }
                     }
@@ -576,14 +570,13 @@ namespace DwarfCorp
                 }
             }
         }
-
-
+        
         /// <summary>
         /// Gets the 1-voxel shell of a bounding box.
         /// </summary>
         /// <param name="box">The box.</param>
         /// <returns>A list of points on the boundary of the box.</returns>
-        private IEnumerable<Vector3> GetShell(BoundingBox box)
+        private IEnumerable<GlobalVoxelCoordinate> EnumerateShell(BoundingBox box)
         {
             int minX = MathFunctions.FloorInt(box.Min.X + 0.5f);
             int minY = MathFunctions.FloorInt(box.Min.Y + 0.5f);
@@ -592,30 +585,30 @@ namespace DwarfCorp
             int maxY = MathFunctions.FloorInt(box.Max.Y - 0.5f);
             int maxZ = MathFunctions.FloorInt(box.Max.Z - 0.5f);
             
-            for (int y = minY; y <= maxY; y++)
+            for (var y = minY; y <= maxY; y++)
             {
                 // yx planes
-                for (int z = minZ; z <= maxZ; z++)
+                for (var z = minZ; z <= maxZ; z++)
                 {
-                    yield return new Vector3(minX + 0.5f, y + 0.5f, z + 0.5f);
-                    yield return new Vector3(maxX + 0.5f, y + 0.5f, z + 0.5f);
+                    yield return new GlobalVoxelCoordinate(minX, y, z);
+                    yield return new GlobalVoxelCoordinate(maxX, y, z);
                 }
                 // yz planes
-                for (int x = minX + 1; x < maxX; x++)
+                for (var x = minX + 1; x < maxX; x++)
                 {
-                    yield return new Vector3(x + 0.5f, y + 0.5f, minZ + 0.5f);
-                    yield return new Vector3(x + 0.5f, y + 0.5f, maxZ + 0.5f);
+                    yield return new GlobalVoxelCoordinate(x, y, minZ);
+                    yield return new GlobalVoxelCoordinate(x, y, maxZ);
                 }
             }
 
         }
 
-        public void DraggedCallback(List<VoxelHandle> voxels, InputManager.MouseButton button)
+        public void DraggedCallback(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
         {
         }
 
 
-        public void SelectedCallback(List<VoxelHandle> voxels, InputManager.MouseButton button)
+        public void SelectedCallback(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
         {
         }
 
@@ -657,9 +650,9 @@ namespace DwarfCorp
             Vector3 half = Vector3.One * 0.5f;
             Color dotColor = Mouse.GetState().LeftButton == ButtonState.Pressed ? SelectionColor : DeleteColor;
             dotColor.A = 90;
-            foreach (VoxelHandle v in SelectionBuffer)
+            foreach (var v in SelectionBuffer)
             {
-                if (v == null) continue;
+                if (!v.IsValid) continue;
                 
                 if ((SelectionType == VoxelSelectionType.SelectFilled && !v.IsEmpty)
                     || (SelectionType == VoxelSelectionType.SelectEmpty && v.IsEmpty))
@@ -669,7 +662,7 @@ namespace DwarfCorp
             }
         }
 
-        public VoxelHandle GetVoxelUnderMouse()
+        public TemporaryVoxelHandle GetVoxelUnderMouse()
         {
             MouseState mouse = Mouse.GetState();
 
@@ -684,39 +677,36 @@ namespace DwarfCorp
                 null);
 
             if (!v.IsValid)
-                return null;
+                return TemporaryVoxelHandle.InvalidHandle;
 
             switch (SelectionType)
             {
                 case VoxelSelectionType.SelectFilled:
                     if (!v.IsEmpty)
-                    {
-                        return new VoxelHandle(v.Coordinate.GetLocalVoxelCoordinate(), v.Chunk);
-                    }
-                    return default(VoxelHandle);
-
+                        return v;
+                    return TemporaryVoxelHandle.InvalidHandle;
                 case VoxelSelectionType.SelectEmpty:
-                    return new VoxelHandle(v.Coordinate.GetLocalVoxelCoordinate(), v.Chunk);
+                    return v;
             }
 
-            return default(VoxelHandle);
+            return TemporaryVoxelHandle.InvalidHandle;
         }
 
-        public VoxelHandle LeftPressedCallback()
+        public TemporaryVoxelHandle LeftPressedCallback()
         {
             SelectionBuffer.Clear();
             return GetVoxelUnderMouse();
         }
 
-        public VoxelHandle RightPressedCallback()
+        public TemporaryVoxelHandle RightPressedCallback()
         {
             SelectionBuffer.Clear();
             return GetVoxelUnderMouse();
         }
 
-        public List<VoxelHandle> LeftReleasedCallback()
+        public List<TemporaryVoxelHandle> LeftReleasedCallback()
         {
-            var toReturn = new List<VoxelHandle>();
+            var toReturn = new List<TemporaryVoxelHandle>();
             if (SelectionBuffer.Count > 0)
             {
                 toReturn.AddRange(SelectionBuffer);
@@ -726,9 +716,9 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public List<VoxelHandle> RightReleasedCallback()
+        public List<TemporaryVoxelHandle> RightReleasedCallback()
         {
-            var toReturn = new List<VoxelHandle>();
+            var toReturn = new List<TemporaryVoxelHandle>();
             toReturn.AddRange(SelectionBuffer);
             SelectionBuffer.Clear();
             Selected.Invoke(toReturn, InputManager.MouseButton.Right);

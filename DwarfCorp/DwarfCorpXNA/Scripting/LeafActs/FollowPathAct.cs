@@ -88,9 +88,7 @@ namespace DwarfCorp
             for (int i = 0; i < path.Count - 1; i++)
             {
                 if (!path[i].DestinationVoxel.IsEmpty) return false;
-                var neighbors = Agent.Movement.GetMoveActions(
-                    new TemporaryVoxelHandle(path[i].DestinationVoxel.Chunk,
-                    path[i].DestinationVoxel.GridPosition));
+                var neighbors = Agent.Movement.GetMoveActions(path[i].DestinationVoxel);
                 bool valid = false;
                 foreach (MoveAction vr in neighbors)
                 {
@@ -118,7 +116,7 @@ namespace DwarfCorp
             {
                 hasNextAction = true;
                 nextAction = Path[nextID];
-                if (nextAction.DestinationVoxel != null)
+                if (nextAction.DestinationVoxel.IsValid)
                 {
                     diff = (nextAction.DestinationVoxel.WorldPosition + half - (action.DestinationVoxel.WorldPosition + half));
                     diffNorm = diff.Length();
@@ -159,10 +157,13 @@ namespace DwarfCorp
                 {
                     RandomPositionOffsets.Add(MathFunctions.RandVector3Box(-0.1f, 0.1f, 0.0f, 0.0f, -0.1f, 0.1f));
                     dt = GetActionTime(action, i);
+                    Trace.Assert(dt > 0);
                     ActionTimes.Add(dt);
                     time += dt;
                     i++;
                 }
+
+                //Todo: Find replace .WorldPosition -> .WorldPosition
                 RandomPositionOffsets[0] = Agent.Position - (Path[0].DestinationVoxel.WorldPosition + Vector3.One * 0.5f);
                 TrajectoryTimer = new Timer(time, true);
                 return true;
@@ -175,7 +176,7 @@ namespace DwarfCorp
             Vector3 half = Vector3.One * 0.5f;
             half.Y = Creature.Physics.BoundingBox.Extents().Y * 2.0f;
 
-            if (Path[0].DestinationVoxel == null)
+            if (!Path[0].DestinationVoxel.IsValid)
                 yield break;
             Vector3 target = Path[0].DestinationVoxel.WorldPosition + half + RandomPositionOffsets[0];
             Matrix transform = Agent.Physics.LocalTransform;
@@ -232,7 +233,7 @@ namespace DwarfCorp
             {
                 yield break;
             }
-
+            Trace.Assert(t >= 0);
             int nextID = currentIndex + 1;
             bool hasNextAction = false;
             Vector3 half = Vector3.One * 0.5f;
@@ -331,7 +332,7 @@ namespace DwarfCorp
                         transform.Translation = diff * t + currPosition;
                         Agent.Physics.Velocity = diff;
 
-                        if (action.ActionVoxel != null)
+                        if (action.ActionVoxel.IsValid)
                         {
                             Agent.Physics.Velocity = (action.DestinationVoxel.WorldPosition + Vector3.One*0.5f) - currPosition;
                         }

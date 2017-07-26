@@ -216,10 +216,9 @@ namespace DwarfCorp
             }
         }
 
-        public void OnVoxelDestroyed(VoxelHandle voxDestroyed)
+        public void OnVoxelDestroyed(TemporaryVoxelHandle voxDestroyed)
         {
             List<Room> toDestroy = new List<Room>();
-            VoxelHandle vRef = voxDestroyed;
 
             lock (DesignatedRooms)
             {
@@ -227,7 +226,7 @@ namespace DwarfCorp
                 toCheck.AddRange(DesignatedRooms);
                 foreach (Room r in toCheck)
                 {
-                    r.RemoveVoxel(vRef.tvh);
+                    r.RemoveVoxel(voxDestroyed);
                     if (r.Voxels.Count == 0)
                     {
                         toDestroy.Add(r);

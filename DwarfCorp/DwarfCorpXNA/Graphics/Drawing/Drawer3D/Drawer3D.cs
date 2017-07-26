@@ -53,12 +53,12 @@ namespace DwarfCorp
         private static int MaxStripVertex = -1;
         private static VoxelHighlighter Highlighter = new VoxelHighlighter();
 
-        public static void UnHighlightVoxel(VoxelHandle voxel)
+        public static void UnHighlightVoxel(TemporaryVoxelHandle voxel)
         {
             Highlighter.Remove(voxel);
         }
 
-        public static void HighlightVoxel(VoxelHandle voxel, Color color)
+        public static void HighlightVoxel(TemporaryVoxelHandle voxel, Color color)
         {
             Highlighter.Highlight(voxel, color);   
         }
@@ -291,7 +291,7 @@ namespace DwarfCorp
         {
             public Color Color;
             private float Thickness;
-            private List<VoxelHandle> Voxels;
+            private List<TemporaryVoxelHandle> Voxels;
             private bool Valid;
             private VertexBuffer VertBuffer;
             private DrawCommand3D.LineStrip Strip;
@@ -300,25 +300,26 @@ namespace DwarfCorp
             {
                 Color = Color.White;
                 Thickness = 0.05f;
-                Voxels = new List<VoxelHandle>();
+                Voxels = new List<TemporaryVoxelHandle>();
                 Valid = false;
             }
 
-            public void AddVoxel(VoxelHandle voxel)
+            public void AddVoxel(TemporaryVoxelHandle voxel)
             {
-                if (Voxels.Any(v => v.Equals(voxel)))
+                // Todo: Switch to hashset for unique list.
+                if (Voxels.Any(v => v == voxel))
                 {
                     return;
                 }
 
-                Voxels.Add(new VoxelHandle(voxel));
+                Voxels.Add(voxel);
                 Valid = false;
             }
              
-            public void RemoveVoxel(VoxelHandle voxel)
+            public void RemoveVoxel(TemporaryVoxelHandle voxel)
             {
                 int before = Voxels.Count;
-                Voxels.RemoveAll(v => v.Equals(voxel));
+                Voxels.RemoveAll(v => v == voxel);
 
                 if (Voxels.Count != before)
                     Valid = false;
@@ -332,7 +333,7 @@ namespace DwarfCorp
                 }
                 Strip.Vertices.Clear();
                 Strip.NumTriangles = 0;
-                foreach (VoxelHandle vox in Voxels)
+                foreach (var vox in Voxels)
                 {
                     BoxDrawCommand3D boxDraw = new BoxDrawCommand3D(vox.GetBoundingBox(), Color.White, Thickness, true);
                     boxDraw.AccumulateStrips(Strip);
@@ -383,7 +384,7 @@ namespace DwarfCorp
             HighlightGroups = new Dictionary<Color, VoxelHighlightGroup>();
         }
 
-        public void Remove(VoxelHandle voxel)
+        public void Remove(TemporaryVoxelHandle voxel)
         {
             foreach (var pair in HighlightGroups)
             {
@@ -391,7 +392,7 @@ namespace DwarfCorp
             }
         }
 
-        public void Highlight(VoxelHandle voxel, Color color)
+        public void Highlight(TemporaryVoxelHandle voxel, Color color)
         {
             foreach (var pair in HighlightGroups.Where(v => v.Key != color))
             {

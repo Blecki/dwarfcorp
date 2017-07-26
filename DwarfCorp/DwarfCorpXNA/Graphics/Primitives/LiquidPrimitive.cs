@@ -10,10 +10,11 @@ namespace DwarfCorp
     /// Represents a list of liquid surfaces which are to be rendered. Only the top surfaces of liquids
     /// get rendered. Liquids are also "smoothed" in terms of their positions.
     /// </summary>
-    public class LiquidPrimitive : GeometricPrimitive
+    public class LiquidPrimitive : VoxelListPrimitive // GeometricPrimitive
     {
         public LiquidType LiqType { get; set; }
         public bool IsBuilding = false;
+        protected readonly static bool[] drawFace = new bool[6];
 
         // The primitive everything will be based on.
         private static readonly BoxPrimitive primitive = VoxelLibrary.GetPrimitive("water");
@@ -31,11 +32,11 @@ namespace DwarfCorp
             public LiquidRebuildCache()
             {
                 int euclidianNeighborCount = 27;
-                neighbors = new List<VoxelHandle>(euclidianNeighborCount);
+                neighbors = new List<TemporaryVoxelHandle>(euclidianNeighborCount);
                 validNeighbors = new bool[euclidianNeighborCount];
                 retrievedNeighbors = new bool[euclidianNeighborCount];
 
-                for (int i = 0; i < 27; i++) neighbors.Add(new VoxelHandle());
+                for (int i = 0; i < 27; i++) neighbors.Add(TemporaryVoxelHandle.InvalidHandle);
 
                 int vertexCount = (int)VoxelVertex.Count;
                 vertexCalculated = new bool[vertexCount];
@@ -57,7 +58,7 @@ namespace DwarfCorp
             internal bool[] drawFace = new bool[6];
 
             // A list of unattached voxels we can change to the neighbors of the voxel who's faces we are drawing.
-            internal List<VoxelHandle> neighbors;
+            internal List<TemporaryVoxelHandle> neighbors;
 
             // A list of which voxels are valid in the neighbors list.  We can't just set a neighbor to null as we reuse them so we use this.
             // Does not need to be cleared between sets of face drawing as retrievedNeighbors stops us from using a stale value.
@@ -92,7 +93,8 @@ namespace DwarfCorp
 
         private void InitializeStatics()
         {
-            if (StaticsInitialized) return;
+            if (!StaticsInitialized)
+            { 
 
             faceDeltas[(int)BoxFace.Back] = new GlobalVoxelOffset(0, 0, 1);
             faceDeltas[(int)BoxFace.Front] = new GlobalVoxelOffset(0, 0, -1);
@@ -101,17 +103,14 @@ namespace DwarfCorp
             faceDeltas[(int)BoxFace.Top] = new GlobalVoxelOffset(0, 1, 0);
             faceDeltas[(int)BoxFace.Bottom] = new GlobalVoxelOffset(0, -1, 0);
 
-            caches = new List<LiquidRebuildCache>();
+                caches = new List<LiquidRebuildCache>();
 
-            StaticsInitialized = true;
+                StaticsInitialized = true;
+            }
         }
 
-
-        // This will loop through the whole world and draw out all liquid primatives that are handed to the function.
-        public static void InitializePrimativesFromChunk(VoxelChunk chunk, List<LiquidPrimitive> primitivesToInit)
+        private static bool AddCaches(List<LiquidPrimitive> primitivesToInit, ref LiquidPrimitive[] lps)
         {
-            LiquidPrimitive[] lps = new LiquidPrimitive[(int)LiquidType.Count];
-
             // We are going to first set up the internal array.
             foreach (LiquidPrimitive lp in primitivesToInit)
             {
@@ -125,7 +124,7 @@ namespace DwarfCorp
                 // We check all parts of the array before setting any to avoid somehow setting a few then leaving before we can unset them.
                 for (int i = 0; i < lps.Length; i++)
                 {
-                    if (lps[i] != null && lps[i].IsBuilding) return;
+                    if (lps[i] != null && lps[i].IsBuilding) return false;
                 }
 
                 // Now we know we are safe so we can set IsBuilding.
@@ -153,28 +152,44 @@ namespace DwarfCorp
                 }
             }
 
-            LiquidType curLiqType = LiquidType.None;
-            LiquidPrimitive curPrimative = null;
-            ExtendedVertex[] curVertices = null;
-            int[] maxVertices = new int[lps.Length];
+            return true;
+        }
 
-            VoxelHandle myVoxel = chunk.MakeVoxel(0, 0, 0);
-            VoxelHandle vox = chunk.MakeVoxel(0, 0, 0);
+        // This will loop through the whole world and draw out all liquid primatives that are handed to the function.
+        public static void InitializePrimativesFromChunk(VoxelChunk chunk, List<LiquidPrimitive> primitivesToInit)
+        {
+            LiquidPrimitive[] lps = new LiquidPrimitive[(int)LiquidType.Count];
+
+            if(!AddCaches(primitivesToInit, ref lps))
+                return;
+
+            LiquidType curLiqType = LiquidType.None;
+            LiquidPrimitive curPrimitive = null;
+            ExtendedVertex[] curVertices = null;
+            ushort[] curIndexes = null;
+            int[] maxVertices = new int[lps.Length];
+            int[] maxIndexes = new int[lps.Length];
+
             int maxVertex = 0;
+            int maxIndex = 0;
+            int totalFaces = 6;
             bool fogOfWar = GameSettings.Default.FogofWar;
 
             for (int y = 0; y < Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, VoxelConstants.ChunkSizeY); y++)
             {
+                if (chunk.Data.LiquidPresent[y] == 0) continue;
+
                 for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
                 {
                     for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                     {
+                        var voxel = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
                         int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
                         if (fogOfWar && !chunk.Data.IsExplored[index]) continue;
 
-                        if (chunk.Data.Water[index].WaterLevel > 0)
+                        if (voxel.WaterCell.WaterLevel > 0)
                         {
-                            LiquidType liqType = chunk.Data.Water[index].Type;
+                            var liqType = voxel.WaterCell.Type;
 
                             // We need to see if we changed types and should change the data we are writing to.
                             if (liqType != curLiqType)
@@ -184,17 +199,19 @@ namespace DwarfCorp
                                 if (newPrimitive == null) continue;
 
                                 maxVertices[(int)curLiqType] = maxVertex;
+                                maxIndexes[(int)curLiqType] = maxIndex;
 
                                 curVertices = newPrimitive.Vertices;
+                                curIndexes = newPrimitive.Indexes;
+
                                 curLiqType = liqType;
-                                curPrimative = newPrimitive;
+                                curPrimitive = newPrimitive;
                                 maxVertex = maxVertices[(int)liqType];
+                                maxIndex = maxIndexes[(int)liqType];
                             }
 
-                            myVoxel.GridPosition = new LocalVoxelCoordinate(x, y, z);
-
                             int facesToDraw = 0;
-                            for (int i = 0; i < 6; i++)
+                            for (int i = 0; i < totalFaces; i++)
                             {
                                 BoxFace face = (BoxFace)i;
                                 // We won't draw the bottom face.  This might be needed down the line if we add transparent tiles like glass.
@@ -203,13 +220,14 @@ namespace DwarfCorp
                                 var delta = faceDeltas[(int)face];
 
                                 // Pull the current neighbor DestinationVoxel based on the face it would be touching.
-                                bool success = myVoxel.GetNeighborBySuccessor(delta, ref vox, false);
 
-                                if (success)
+                                var vox = VoxelHelpers.GetNeighbor(voxel, delta);
+
+                                if (vox.IsValid)
                                 {
                                     if (face == BoxFace.Top)
                                     {
-                                        if (!(vox.WaterLevel == 0 || y == (int)chunk.Manager.ChunkData.MaxViewingLevel))
+                                        if (!(vox.WaterCell.WaterLevel == 0 || y == (int)chunk.Manager.ChunkData.MaxViewingLevel))
                                         {
                                             cache.drawFace[(int)face] = false;
                                             continue;
@@ -217,7 +235,7 @@ namespace DwarfCorp
                                     }
                                     else
                                     {
-                                        if (vox.WaterLevel != 0 || !vox.IsEmpty)
+                                        if (vox.WaterCell.WaterLevel != 0 || !vox.IsEmpty)
                                         {
                                             cache.drawFace[(int)face] = false;
                                             continue;
@@ -228,30 +246,50 @@ namespace DwarfCorp
                                 cache.drawFace[(int)face] = true;
                                 facesToDraw++;
                             }
-
+                            
                             // There's no faces to draw on this voxel.  Let's go to the next one.
                             if (facesToDraw == 0) continue;
 
                             // Now we check to see if we need to resize the current Vertex array.
-                            int vertexSizeIncrease = facesToDraw * 6;
+                            int vertexSizeIncrease = facesToDraw * 4;
+                            int indexSizeIncrease  = facesToDraw * 6;
+
+                            // Check vertex array size
                             if (curVertices == null)
                             {
                                 curVertices = new ExtendedVertex[256];
-                                curPrimative.Vertices = curVertices;
+                                curPrimitive.Vertices = curVertices;
                             }
                             else if (curVertices.Length <= maxVertex + vertexSizeIncrease)
                             {
                                 ExtendedVertex[] newVerts = new ExtendedVertex[curVertices.Length * 2];
+
                                 curVertices.CopyTo(newVerts, 0);
                                 curVertices = newVerts;
-                                curPrimative.Vertices = curVertices;
+                                curPrimitive.Vertices = curVertices;
+                            }
+
+                            // Check index array size
+                            if (curIndexes == null)
+                            {
+                                curIndexes = new ushort[256];
+                                curPrimitive.Indexes = curIndexes;
+                            }
+                            else if (curIndexes.Length <= maxIndex + indexSizeIncrease)
+                            {
+                                ushort[] newIdxs = new ushort[curIndexes.Length * 2];
+
+                                curIndexes.CopyTo(newIdxs, 0);
+                                curIndexes = newIdxs;
+                                curPrimitive.Indexes = curIndexes;
                             }
 
                             // Now we have a list of all the faces that will need to be drawn.  Let's draw them.
-                            CreateWaterFaces(myVoxel, chunk, x, y, z, curVertices, maxVertex);
+                            CreateWaterFaces(voxel, chunk, x, y, z, curVertices, curIndexes, maxVertex, maxIndex);
 
                             // Finally increase the size so we can move on.
                             maxVertex += vertexSizeIncrease;
+                            maxIndex  += indexSizeIncrease;
                         }
                     }
                 }
@@ -259,6 +297,7 @@ namespace DwarfCorp
 
             // The last thing we need to do is make sure we set the current primative's maxVertices to the right value.
             maxVertices[(int)curLiqType] = maxVertex;
+            maxIndexes[(int)curLiqType] = maxIndex;
 
             // Now actually force the VertexBuffer to be recreated in each primative we worked with.
             for (int i = 0; i < lps.Length; i++)
@@ -267,6 +306,8 @@ namespace DwarfCorp
                 if (updatedPrimative == null) continue;
 
                 maxVertex = maxVertices[i];
+                maxIndex = maxIndexes[i];
+
                 if (maxVertex > 0)
                 {
                     try
@@ -274,7 +315,9 @@ namespace DwarfCorp
                         lock (updatedPrimative.VertexLock)
                         {
                             updatedPrimative.MaxVertex = maxVertex;
+                            updatedPrimative.MaxIndex = maxIndex;
                             updatedPrimative.VertexBuffer = null;
+                            updatedPrimative.IndexBuffer = null;
                         }
                     }
                     catch (System.Threading.AbandonedMutexException e)
@@ -290,6 +333,7 @@ namespace DwarfCorp
                         {
                             updatedPrimative.VertexBuffer = null;
                             updatedPrimative.Vertices = null;
+                            updatedPrimative.IndexBuffer = null;
                             updatedPrimative.Indexes = null;
                             updatedPrimative.MaxVertex = 0;
                             updatedPrimative.MaxIndex = 0;
@@ -312,41 +356,49 @@ namespace DwarfCorp
             return (C.X + 1) + (C.Y + 1) * 3 + (C.Z + 1) * 9;
         }
 
-        private static void CreateWaterFaces(VoxelHandle voxel, VoxelChunk chunk,
+        private static void CreateWaterFaces(TemporaryVoxelHandle voxel, VoxelChunk chunk,
                                             int x, int y, int z,
                                             ExtendedVertex[] vertices,
-                                            int startVertex)
+                                            ushort[] Indexes,
+                                            int startVertex,
+                                            int startIndex)
         {
             // Reset the appropriate parts of the cache.
             cache.Reset();
 
             // These are reused for every face.
             var origin = voxel.WorldPosition;
-            float centerWaterlevel = chunk.Data.Water[VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z))].WaterLevel;
+            float centerWaterlevel = voxel.WaterCell.WaterLevel;
 
-            for (int faces = 0; faces < cache.drawFace.Length; faces++)
+            float[] foaminess = new float[4];
+
+            for (int i = 0; i < cache.drawFace.Length; i++)
             {
-                if (!cache.drawFace[faces]) continue;
-                BoxFace face = (BoxFace)faces;
+                if (!cache.drawFace[i]) continue;
+                BoxFace face = (BoxFace)i;
 
                 // Let's get the vertex/index positions for the current face.
-                int idx = 0;
+                int faceIndex = 0;
                 int vertexCount = 0;
-                int vertOffset = 0;
-                int numVerts = 0;
-                primitive.GetFace(face, primitive.UVs, out idx, out vertexCount, out vertOffset, out numVerts);
-                // numVerts is always 4.
-                // vertexCount is always 6 ??
+                int vertexIndex = 0;
+                int faceCount = 0;
 
-                for (int i = 0; i < vertexCount; i++)
+                primitive.GetFace(face, primitive.UVs, out faceIndex, out faceCount, out vertexIndex, out vertexCount);
+                int indexOffset = startVertex;
+
+                for (int vertOffset = 0; vertOffset < vertexCount; vertOffset++)
                 {
                     // Used twice so we'll store it for later use.
-                    int primitiveIndex = primitive.Indexes[i + idx];
-                    VoxelVertex currentVertex = primitive.Deltas[primitiveIndex];
+                    ExtendedVertex vert = primitive.Vertices[vertOffset + vertexIndex];
+                    VoxelVertex currentVertex = primitive.Deltas[vertOffset + vertexIndex];
 
-                    // These two will be filled out before being used.
-                    float foaminess;
-                    Vector3 pos;
+                    // These will be filled out before being used   lh  .
+                    //float foaminess1;
+                    foaminess[vertOffset] = 0.0f;
+                    bool shoreLine = false;
+
+                    Vector3 pos = Vector3.Zero;
+                    Vector3 rampOffset = Vector3.Zero;
 
                     // We are going to have to reuse some vertices when drawing a single so we'll store the position/foaminess
                     // for quick lookup when we find one of those reused ones.
@@ -357,79 +409,71 @@ namespace DwarfCorp
                         float emptyNeighbors = 0.0f;
                         float averageWaterLevel = centerWaterlevel;
 
-                        var vertexSucc = Neighbors.VertexNeighbors[(int)currentVertex];
+                        var vertexSucc = VoxelHelpers.VertexNeighbors[(int)currentVertex];
 
                         // Run through the successors and count up the water in each voxel.
                         for (int v = 0; v < vertexSucc.Length; v++)
                         {
-                            // We are going to use a lookup key so calculate it now.
-                            int key = SuccessorToEuclidianLookupKey(vertexSucc[v]);
-
-                            // If we haven't gotten this DestinationVoxel yet then retrieve it.
-                            // This allows us to only get a particular voxel once a function call instead of once per vertexCount/per face.
-                            if (!cache.retrievedNeighbors[key])
-                            {
-                                VoxelHandle neighbor = cache.neighbors[key];
-                                cache.validNeighbors[key] = voxel.GetNeighborBySuccessor(vertexSucc[v], ref neighbor, false);
-                                cache.retrievedNeighbors[key] = true;
-                            }
+                            var neighborVoxel = new TemporaryVoxelHandle(chunk.Manager.ChunkData,
+                                voxel.Coordinate + vertexSucc[v]);
                             // Only continue if it's a valid (non-null) voxel.
-                            if (!cache.validNeighbors[key]) continue;
+                            if (!neighborVoxel.IsValid) continue;
 
                             // Now actually do the math.
-                            var vox = cache.neighbors[key];
                             count++;
-                            if (vox.WaterLevel < 1) emptyNeighbors++;
+                            if (neighborVoxel.WaterCell.WaterLevel < 1) emptyNeighbors++;
+                            if (neighborVoxel.WaterCell.Type == LiquidType.None && !neighborVoxel.IsEmpty) shoreLine = true;
                         }
 
-                        foaminess = emptyNeighbors / count;
+                        foaminess[vertOffset] = emptyNeighbors / count;
 
-                        if (foaminess <= 0.5f) foaminess = 0.0f;
+                        if (foaminess[vertOffset] <= 0.5f)
+                        {
+                            foaminess[vertOffset] = 0.0f;
+                        }
+                        // Check if it should ramp.
+                        else if (!shoreLine)
+                        {
+                            rampOffset.Y = -0.4f;
+                        }
 
-                        pos = primitive.Vertices[primitiveIndex].Position;
+                        pos = primitive.Vertices[vertOffset + vertexIndex].Position;
                         pos.Y -= 0.6f;// Minimum ramp position 
-                        pos += origin;
+                        pos.Y *= ((float)voxel.WaterCell.WaterLevel / 8.0f); // Hack water level visualization in
+                        pos += origin + rampOffset;
 
                         // Store the vertex information for future use when we need it again on this or another face.
                         cache.vertexCalculated[(int)currentVertex] = true;
-                        cache.vertexFoaminess[(int)currentVertex] = foaminess;
+                        cache.vertexFoaminess[(int)currentVertex] = foaminess[vertOffset];
                         cache.vertexPositions[(int)currentVertex] = pos;
                     }
                     else
                     {
                         // We've already calculated this one.  Time for a cheap grab from the lookup.
-                        foaminess = cache.vertexFoaminess[(int)currentVertex];
+                        foaminess[vertOffset] = cache.vertexFoaminess[(int)currentVertex];
                         pos = cache.vertexPositions[(int)currentVertex];
                     }
 
-                    switch (face)
-                    {
-                        case BoxFace.Back:
-                        case BoxFace.Front:
-                            vertices[i + startVertex].Set(pos,
-                                                          new Color(foaminess * 0.5f, 0.0f, 1.0f, 1.0f),
-                                                          Color.White,
-                                                          new Vector2(pos.X, pos.Y),
-                                                          new Vector4(0, 0, 1, 1));
-                            break;
-                        case BoxFace.Right:
-                        case BoxFace.Left:
-                            vertices[i + startVertex].Set(pos,
-                                                        new Color(foaminess * 0.5f, 0.0f, 1.0f, 1.0f),
-                                                        Color.White,
-                                                        new Vector2(pos.Z, pos.Y),
-                                                        new Vector4(0, 0, 1, 1));
-                            break;
-                        case BoxFace.Top:
-                            vertices[i + startVertex].Set(pos,
-                                                new Color(foaminess, 0.0f, 1.0f, 1.0f),
-                                                Color.White,
-                                                new Vector2(pos.X, pos.Z),
-                                                new Vector4(0, 0, 1, 1));
-                            break;
-                    }
+                    vertices[startVertex].Set(pos,
+                        new Color(foaminess[vertOffset], 0.0f, 1.0f, 1.0f),
+                        Color.White,
+                        primitive.UVs.Uvs[vertOffset + vertexIndex],
+                        new Vector4(0, 0, 1, 1));
+
+                    startVertex++;
                 }
-                startVertex += 6;
+
+                bool flippedQuad = foaminess[1] + foaminess[3] > 
+                                   foaminess[0] + foaminess[2];
+
+                for (int idx = faceIndex; idx < faceCount + faceIndex; idx++)
+                {
+                    ushort offset = flippedQuad ? primitive.FlippedIndexes[idx] : primitive.Indexes[idx];
+                    ushort offset0 = flippedQuad ? primitive.FlippedIndexes[faceIndex] : primitive.Indexes[faceIndex];
+
+                    Indexes[startIndex] = (ushort)(indexOffset + offset - offset0);
+                    startIndex++;
+                }
             }
             // End cache.drawFace loop
         }

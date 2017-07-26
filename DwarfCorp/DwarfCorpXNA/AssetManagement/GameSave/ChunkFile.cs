@@ -149,6 +149,10 @@ namespace DwarfCorp
             {
                 c.Data.Water[i].WaterLevel = Liquid[i];
                 c.Data.Water[i].Type = (LiquidType)LiquidTypes[i];
+
+                // Rebuild the LiquidPresent counters
+                if ((LiquidType)LiquidTypes[i] != LiquidType.None)
+                    c.Data.LiquidPresent[(i >> VoxelConstants.ZDivShift) >> VoxelConstants.XDivShift] += 1;
             }
 
             return c;

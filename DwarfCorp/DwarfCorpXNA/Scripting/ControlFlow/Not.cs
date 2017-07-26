@@ -1,4 +1,4 @@
-﻿// Not.cs
+// Not.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -62,9 +62,7 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            bool done = false;
-
-            while(!done)
+            while(true)
             {
                 Status childStatus = Child.Tick();
                 LastTickedChild = Child;
@@ -75,13 +73,11 @@ namespace DwarfCorp
                 else if(childStatus == Status.Success)
                 {
                     yield return Status.Fail;
-                    done = true;
                     break;
                 }
                 else if(childStatus == Status.Fail)
                 {
                     yield return Status.Success;
-                    done = true;
                     break;
                 }
             }

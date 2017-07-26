@@ -59,7 +59,6 @@ namespace DwarfCorp
         public List<Body> Boxes { get; set; }
         public static string StockpileName = "Stockpile";
         public string BoxType = "Crate";
-        public Faction Faction { get; set; }
         public Vector3 BoxOffset = Vector3.Zero;
 
         // If this is empty, all resources are allowed if and only if whitelist is empty. Otherwise,
@@ -200,7 +199,7 @@ namespace DwarfCorp
             {
                 for (int i = Boxes.Count; i < numBoxes; i++)
                 {
-                    CreateBox(Voxels[i].Coordinate.ToVector3() + VertexNoise.GetNoiseVectorFromRepeatingTexture(Voxels[i].Coordinate.ToVector3()));
+                    CreateBox(Voxels[i].WorldPosition + VertexNoise.GetNoiseVectorFromRepeatingTexture(Voxels[i].WorldPosition));
                 }
             }
         }

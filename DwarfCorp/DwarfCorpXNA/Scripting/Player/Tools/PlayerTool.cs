@@ -47,8 +47,8 @@ namespace DwarfCorp
     {
         public GameMaster Player { get; set; }
 
-        public abstract void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button);
-        public abstract void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button);
+        public abstract void OnVoxelsDragged(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button);
+        public abstract void OnVoxelsSelected(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button);
         public abstract void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button);
         public abstract void OnMouseOver(IEnumerable<Body> bodies);
         public abstract void Update(DwarfGame game, DwarfTime time);

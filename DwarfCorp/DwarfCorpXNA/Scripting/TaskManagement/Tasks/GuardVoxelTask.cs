@@ -1,4 +1,4 @@
-﻿// GuardVoxelTask.cs
+// GuardVoxelTask.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -44,11 +44,11 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class GuardVoxelTask : Task
     {
-        public VoxelHandle VoxelToGuard = null;
+        public TemporaryVoxelHandle VoxelToGuard = TemporaryVoxelHandle.InvalidHandle;
 
-        public GuardVoxelTask(VoxelHandle vox)
+        public GuardVoxelTask(TemporaryVoxelHandle vox)
         {
-            Name = "Guard DestinationVoxel: " + vox.WorldPosition;
+            Name = "Guard DestinationVoxel: " + vox.Coordinate;
             VoxelToGuard = vox;
             Priority = PriorityType.Medium;
         }
@@ -65,7 +65,7 @@ namespace DwarfCorp
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            return VoxelToGuard == null ? 1000 : (agent.AI.Position - VoxelToGuard.WorldPosition).LengthSquared();
+            return !VoxelToGuard.IsValid ? 1000 : (agent.AI.Position - VoxelToGuard.WorldPosition).LengthSquared();
         }
 
         public override bool ShouldRetry(Creature agent)

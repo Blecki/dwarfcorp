@@ -303,8 +303,8 @@ namespace DwarfCorp
 
 
             bool particlePhysics = GameSettings.Default.ParticlePhysics;
-            VoxelHandle v = new VoxelHandle();
-            foreach(Particle p in Particles)
+
+            foreach (Particle p in Particles)
             {
                 float vel = p.Velocity.LengthSquared();
                 if(!Data.Sleeps || vel > 0.2f)
@@ -345,27 +345,20 @@ namespace DwarfCorp
                 p.Scale += Data.GrowthSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                 p.Scale = Math.Max(p.Scale, 0.0f);
-                bool success = false;
 
+                var v = new TemporaryVoxelHandle(chunks.ChunkData,
+                        GlobalVoxelCoordinate.FromVector3(p.Position));
 
                 if (Data.HasLighting)
                 {
-                    success = chunks.ChunkData.GetVoxel(p.Position, ref v);
-
-                    if (success && v.IsEmpty)
-                    {
+                    if (v.IsValid && v.IsEmpty)
                         p.Tint = new Color(v.SunColor, 255, 0);
-                    }
                 }
 
                 if(Data.CollidesWorld && particlePhysics && vel > 0.2f)
                 {
-                    if (!Data.HasLighting)
-                    {
-                        success = chunks.ChunkData.GetVoxel(p.Position, ref v);
-                    }
                     BoundingBox b = new BoundingBox(p.Position - Vector3.One * p.Scale * 0.5f, p.Position + Vector3.One * p.Scale * 0.5f);
-                    if(success && !v.IsEmpty)
+                    if(v.IsValid && !v.IsEmpty)
                     {
                         Physics.Contact contact = new Physics.Contact();
                         if(Physics.TestStaticAABBAABB(b, v.GetBoundingBox(), ref contact))

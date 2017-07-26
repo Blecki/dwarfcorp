@@ -131,7 +131,6 @@ namespace DwarfCorp
 
         public void GenerateCluster(OreCluster cluster, ChunkData chunks)
         {
-            VoxelHandle vox = new VoxelHandle();
             for (float x = -cluster.Size.X*0.5f; x < cluster.Size.X*0.5f; x += 1.0f)
             {
                 for (float y = -cluster.Size.Y*0.5f; y < cluster.Size.Y*0.5f; y += 1.0f)
@@ -149,9 +148,10 @@ namespace DwarfCorp
                         if (globalPosition.Y > cluster.Type.MaxSpawnHeight ||
                             globalPosition.Y < cluster.Type.MinSpawnHeight) continue;
 
-                        if (!chunks.GetVoxel(globalPosition, ref vox)) continue;
+                        var vox = new TemporaryVoxelHandle(chunks,
+                            GlobalVoxelCoordinate.FromVector3(globalPosition));
 
-                        if (vox.IsEmpty) continue;
+                        if (!vox.IsValid || vox.IsEmpty) continue;
 
                         if (!cluster.Type.SpawnOnSurface && vox.Type.IsSurface) continue;
 
@@ -165,7 +165,6 @@ namespace DwarfCorp
 
         public void GenerateVein(OreVein vein, ChunkData chunks)
         {
-            VoxelHandle vox = new VoxelHandle();
             Vector3 curr = vein.Start;
             Vector3 directionBias = MathFunctions.RandVector3Box(-1, 1, -0.1f, 0.1f, -1, 1);
             for (float t = 0; t < vein.Length; t++)
@@ -173,9 +172,10 @@ namespace DwarfCorp
                 if (curr.Y > vein.Type.MaxSpawnHeight ||
                     curr.Y < vein.Type.MinSpawnHeight) continue;
                 Vector3 p = new Vector3(curr.X , curr.Y, curr.Z);
-                if (!chunks.GetVoxel(p, ref vox)) continue;
 
-                if (vox.IsEmpty) continue;
+                var vox = new TemporaryVoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(p));
+
+                if (!vox.IsValid || vox.IsEmpty) continue;
 
                 if (!MathFunctions.RandEvent(vein.Type.SpawnProbability)) continue;
 
@@ -284,7 +284,7 @@ namespace DwarfCorp
                         Chunk, new LocalVoxelCoordinate(x, VoxelConstants.ChunkSizeY - 1, z)));
 
                     if (!topVoxel.IsValid 
-                        || topVoxel.WaterCell.WaterLevel != 0 
+                        || VoxelHelpers.GetVoxelAbove(topVoxel).WaterCell.WaterLevel != 0 
                         || topVoxel.Coordinate.Y == 0
                         || topVoxel.Coordinate.Y >= 60) // Lift to some kind of generator settings?
                         continue;
@@ -294,7 +294,7 @@ namespace DwarfCorp
                         if (MathFunctions.RandEvent(animal.SpawnProbability))
                         {
                             EntityFactory.CreateEntity<Body>(animal.Name, 
-                                topVoxel.Coordinate.ToVector3() + Vector3.Up);
+                                topVoxel.WorldPosition + Vector3.Up);
 
                             break;
                         }
@@ -319,7 +319,7 @@ namespace DwarfCorp
 
                             var treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
                             EntityFactory.CreateEntity<Body>(veg.Name,
-                                topVoxel.Coordinate.ToVector3() + (Vector3.Up * treeSize * offset),
+                                topVoxel.WorldPosition + (Vector3.Up * treeSize * offset) + Vector3.Up,
                                 Blackboard.Create("Scale", treeSize));
 
                             break;
@@ -333,8 +333,7 @@ namespace DwarfCorp
         {
             Vector3 origin = chunk.Origin;
             BiomeData biome = BiomeLibrary.Biomes[Overworld.Biome.Cave];
-            List<VoxelHandle> neighbors = new List<VoxelHandle>();
-            VoxelHandle vUnder = chunk.MakeVoxel(0, 0, 0);
+
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
                 for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
@@ -363,7 +362,7 @@ namespace DwarfCorp
                             // x, y, z are in local chunk space.
                             int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y - dy, z));
 
-                            waterFound = Neighbors.EnumerateManhattanNeighbors(chunk.ID + new LocalVoxelCoordinate(x, y - dy, z))
+                            waterFound = VoxelHelpers.EnumerateManhattanNeighbors(chunk.ID + new LocalVoxelCoordinate(x, y - dy, z))
                                 .Select(c => new TemporaryVoxelHandle(Manager.ChunkData, c))
                                 .Any(v => v.IsValid && v.WaterCell.WaterLevel > 0);
                             
@@ -404,8 +403,7 @@ namespace DwarfCorp
                         entity.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
                         entity.AddChild(new ExploredListener
                             (world.ComponentManager,
-                                world.ChunkManager, chunk.MakeVoxel(x, y, z)));
-                    }
+                                world.ChunkManager, new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z))));                    }
                 });
                 break;
             }
@@ -413,11 +411,12 @@ namespace DwarfCorp
 
         public static void GenerateCaveVegetation(VoxelChunk chunk, int x, int y, int z, int caveHeight, BiomeData biome, Vector3 vec, WorldManager world, Perlin NoiseGenerator)
         {
-            VoxelHandle vUnder = chunk.MakeVoxel(x, y - 1, z);
+            var vUnder = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y - 1, z));
+
             int indexunder = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y - caveHeight, z));
             chunk.Data.Types[indexunder] = (byte)VoxelLibrary.GetVoxelType(biome.GrassLayer.VoxelType).ID;
             chunk.Data.Health[indexunder] = (byte)VoxelLibrary.GetVoxelType(biome.GrassLayer.VoxelType).StartingHealth;
-            //chunk.Data.IsExplored[indexunder] = false;
+            
             foreach (VegetationData veg in biome.Vegetation)
             {
                 if (!MathFunctions.RandEvent(veg.SpawnProbability))
@@ -431,7 +430,6 @@ namespace DwarfCorp
                 }
 
 
-                vUnder.GridPosition = new LocalVoxelCoordinate(x, y - 1, z);
                 if (!vUnder.IsEmpty && vUnder.Type.Name == biome.GrassLayer.VoxelType)
                 {
                     vUnder.Type = VoxelLibrary.GetVoxelType(biome.SoilLayer.VoxelType);
@@ -466,7 +464,6 @@ namespace DwarfCorp
                 ShouldRecalculateLighting = true
             };
 
-            VoxelHandle voxel = c.MakeVoxel(0, 0, 0);
             for(int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
                 for(int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
@@ -486,8 +483,8 @@ namespace DwarfCorp
                     int depthWithinSubsurface = 0;
                     for(int y = VoxelConstants.ChunkSizeY - 1; y >= 0; y--)
                     {
-                        
-                        voxel.GridPosition = new LocalVoxelCoordinate(x, y, z);
+                        var voxel = new TemporaryVoxelHandle(c, new LocalVoxelCoordinate(x, y, z));
+
                         if(y == 0)
                         {
                             voxel.Type = VoxelLibrary.GetVoxelType("Bedrock");

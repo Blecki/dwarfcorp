@@ -54,6 +54,9 @@ namespace DwarfCorp
     /// </summary>
     public class ChunkManager
     {
+        //Todo: This belongs in WorldManager!
+        private Splasher Splasher;
+
         public ConcurrentQueue<VoxelChunk> RenderList { get; set; }
         public ConcurrentQueue<VoxelChunk> RebuildList { get; set; }
         public ConcurrentQueue<VoxelChunk> RebuildLiquidsList { get; set; }
@@ -68,17 +71,14 @@ namespace DwarfCorp
 
         private Thread RebuildThread { get; set; }
         private Thread RebuildLiquidThread { get; set; }
+        private AutoScaleThread WaterUpdateThread;
 
 
-        private static readonly AutoResetEvent WaterUpdateEvent = new AutoResetEvent(true);
         private static readonly AutoResetEvent NeedsGenerationEvent = new AutoResetEvent(false);
         private static readonly AutoResetEvent NeedsRebuildEvent = new AutoResetEvent(false);
         private static readonly AutoResetEvent NeedsLiquidEvent = new AutoResetEvent(false);
 
-        private Thread WaterThread { get; set; }
-
         private readonly Timer generateChunksTimer = new Timer(0.5f, false, Timer.TimerMode.Real);
-        private readonly Timer waterUpdateTimer = new Timer(0.15f, false, Timer.TimerMode.Real);
 
         public BoundingBox Bounds { get; set; }
 
@@ -154,8 +154,8 @@ namespace DwarfCorp
             RebuildLiquidThread = new Thread(RebuildLiquidsThread);
             RebuildLiquidThread.Name = "RebuildLiquids";
 
-            WaterThread = new Thread(UpdateWaterThread);
-            WaterThread.Name = "UpdateWater";
+            WaterUpdateThread = new AutoScaleThread(this, GamePerformance.ThreadIdentifier.UpdateWater,
+                (f) => Water.UpdateWater());
 
             ToGenerate = new List<GlobalChunkCoordinate>();
             Graphics = graphics;
@@ -183,54 +183,16 @@ namespace DwarfCorp
                 maxChunksZ * VoxelConstants.ChunkSizeZ / 2.0f);
             Vector3 minBounds = -maxBounds;
             Bounds = new BoundingBox(minBounds, maxBounds);
+
+            Splasher = new Splasher(this);
         }
 
         public void StartThreads()
         {
             GeneratorThread.Start();
             RebuildThread.Start();
-            WaterThread.Start();
+            WaterUpdateThread.Start();
             RebuildLiquidThread.Start();
-        }
-
-        public void UpdateWaterThread()
-        {
-            EventWaitHandle[] waitHandles =
-            {
-                WaterUpdateEvent,
-                Program.ShutdownEvent
-            };
-
-            GamePerformance.Instance.RegisterThreadLoopTracker("UpdateWater", GamePerformance.ThreadIdentifier.UpdateWater);
-#if CREATE_CRASH_LOGS
-            try
-#endif
-            {
-                while (!DwarfGame.ExitGame && !ExitThreads)
-                {
-                    EventWaitHandle wh = Datastructures.WaitFor(waitHandles);
-
-                    GamePerformance.Instance.PreThreadLoop(GamePerformance.ThreadIdentifier.UpdateWater);
-                    GamePerformance.Instance.EnterZone("UpdateWater");
-                    if (wh == Program.ShutdownEvent)
-                    {
-                        break;
-                    }
-
-                    if (!PauseThreads)
-                    {
-                        Water.UpdateWater();
-                    }
-                    GamePerformance.Instance.PostThreadLoop(GamePerformance.ThreadIdentifier.UpdateWater);
-                    GamePerformance.Instance.ExitZone("UpdateWater");
-                }
-            }
-#if CREATE_CRASH_LOGS
-            catch (Exception exception)
-            {
-                ProgramData.WriteExceptionLog(exception);
-            }
-#endif
         }
 
         public void RebuildLiquidsThread()
@@ -706,11 +668,6 @@ GameSettings.Default.FogofWar = fogOfWar;
 
         public void Update(DwarfTime gameTime, Camera camera, GraphicsDevice g)
         {
-            if (waterUpdateTimer.Update(gameTime))
-            {
-                WaterUpdateEvent.Set();
-            }
-
             UpdateRebuildList();
 
             generateChunksTimer.Update(gameTime);
@@ -750,8 +707,9 @@ GameSettings.Default.FogofWar = fogOfWar;
                 chunk.Update(gameTime);
             }
 
-            Water.Splash(gameTime);
-            Water.HandleTransfers(gameTime);
+            // Todo: This belongs up in world manager.
+            Splasher.Splash(gameTime, Water.GetSplashQueue());
+            Splasher.HandleTransfers(gameTime, Water.GetTransferQueue());
 
             var affectedVoxels = new HashSet<GlobalVoxelCoordinate>();
 
@@ -772,52 +730,33 @@ GameSettings.Default.FogofWar = fogOfWar;
             KilledVoxels.Clear();
         }
 
-        // Todo: %Kill% or %Lift% - only used by voxel selector.
-        public IEnumerable<VoxelHandle> GetVoxelsIntersecting(IEnumerable<Vector3> positions)
-        {
-            foreach (Vector3 vec in positions)
-            {
-                VoxelHandle vox = new VoxelHandle();
-                bool success = ChunkData.GetVoxel(vec, ref vox);
-                if (success)
-                {
-                    yield return vox;
-                }
-            }
-        }
-
         public void CreateGraphics(Action<String> SetLoadingMessage, ChunkData chunkData)
         {
             SetLoadingMessage("Creating Graphics");
+
             List<VoxelChunk> toRebuild = new List<VoxelChunk>();
 
             while(RebuildList.Count > 0)
             {
                 VoxelChunk chunk = null;
-                if(!RebuildList.TryDequeue(out chunk))
-                {
+
+                if (!RebuildList.TryDequeue(out chunk))
                     break;
-                }
-
+            
                 if(chunk == null)
-                {
                     continue;
-                }
-
+            
                 toRebuild.Add(chunk);
             }
 
             SetLoadingMessage("Updating Ramps");
-            foreach (var chunk in toRebuild.Where(chunk => GameSettings.Default.CalculateRamps))
-            {
+            if (GameSettings.Default.CalculateRamps)
+                foreach (var chunk in toRebuild)
                   chunk.UpdateRamps();
-            }
 
             SetLoadingMessage("Calculating lighting ");
-            int j = 0;
             foreach(var chunk in toRebuild)
             {
-                j++;
                 if (chunk.ShouldRecalculateLighting)
                 {
                     chunk.CalculateGlobalLight();
@@ -825,25 +764,11 @@ GameSettings.Default.FogofWar = fogOfWar;
                 }
             }
 
-            j = 0;
-            SetLoadingMessage("Calculating vertex light ...");
-            foreach(VoxelChunk chunk in toRebuild)
-            {
-                j++;
-                //chunk.CalculateVertexLighting();
-            };
-
             SetLoadingMessage("Building Vertices...");
-            j = 0;
             foreach(var  chunk in toRebuild)
             {
-                j++;
-                //SetLoadingMessage("Building Vertices " + j + "/" + toRebuild.Count);
-
                 if (!chunk.ShouldRebuild)
-                {
                     return;
-                }
 
                 chunk.Rebuild(Graphics);
                 chunk.ShouldRebuild = false;
@@ -867,7 +792,7 @@ GameSettings.Default.FogofWar = fogOfWar;
             GeneratorThread.Join();
             RebuildLiquidThread.Join();
             RebuildThread.Join();
-            WaterThread.Join();
+            WaterUpdateThread.Join();
             ChunkData.ChunkMap.Clear();
         }
 
@@ -879,15 +804,15 @@ GameSettings.Default.FogofWar = fogOfWar;
             if (World.ParticleManager != null)
             {
                 World.ParticleManager.Trigger(Voxel.Type.ParticleType, 
-                    Voxel.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
+                    Voxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
                 World.ParticleManager.Trigger("puff", 
-                    Voxel.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
+                    Voxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
             }
 
             if (World.Master != null)
                 World.Master.Faction.OnVoxelDestroyed(Voxel);
 
-            Voxel.Type.ExplosionSound.Play(Voxel.Coordinate.ToVector3());
+            Voxel.Type.ExplosionSound.Play(Voxel.WorldPosition);
 
             List<Body> emittedResources = null;
             if (Voxel.Type.ReleasesResource)
@@ -897,7 +822,7 @@ GameSettings.Default.FogofWar = fogOfWar;
                     emittedResources = new List<Body>
                     {
                         EntityFactory.CreateEntity<Body>(Voxel.Type.ResourceToRelease + " Resource",
-                            Voxel.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f))
+                            Voxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f))
                     };
                 }
             }

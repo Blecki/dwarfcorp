@@ -188,24 +188,25 @@ namespace DwarfCorp.GameStates
             var colonySizeCombo = rightPanel.AddChild(new Gui.Widgets.ComboBox
             {
                 AutoLayout = Gui.AutoLayout.DockTop,
-                Items = new List<string>(new string[] { "Tiny", "Small", "Medium", "Large", "Huge" }),
+                Items = new List<string>(new string[] { "Small", "Medium", "Large" }),
                 Font = "font",
                 TextColor = new Vector4(0, 0, 0, 1),
                 OnSelectedIndexChanged = (sender) =>
                 {
                     switch ((sender as Gui.Widgets.ComboBox).SelectedItem)
                     {
-                        case "Tiny": Settings.ColonySize = new Point3(4, 1, 4); break;
-                        case "Small": Settings.ColonySize = new Point3(8, 1, 8); break;
-                        case "Medium": Settings.ColonySize = new Point3(10, 1, 10); break;
-                        case "Large": Settings.ColonySize = new Point3(16, 1, 16); break;
-                        case "Huge": Settings.ColonySize = new Point3(24, 1, 24); break;
+                        case "Small": Settings.ColonySize = new Point3(4, 1, 4); break;
+                        case "Medium": Settings.ColonySize = new Point3(8, 1, 8); break;
+                        case "Large": Settings.ColonySize = new Point3(10, 1, 10); break;
                     }
 
-                    float w = Settings.ColonySize.X * Settings.WorldScale;
-                    float h = Settings.ColonySize.Z * Settings.WorldScale;
-                    float clickX = System.Math.Max(System.Math.Min(Settings.WorldGenerationOrigin.X, Settings.Width - w - 1), w + 1);
-                    float clickY = System.Math.Max(System.Math.Min(Settings.WorldGenerationOrigin.Y, Settings.Height - h - 1), h + 1);
+                    var worldSize = Settings.ColonySize.ToVector3() * VoxelConstants.ChunkSizeX / Settings.WorldScale;
+
+                    float w = worldSize.X / 2;
+                    float h = worldSize.Z / 2;
+
+                    float clickX = System.Math.Max(System.Math.Min(Settings.WorldGenerationOrigin.X, Settings.Width - w), w);
+                    float clickY = System.Math.Max(System.Math.Min(Settings.WorldGenerationOrigin.Y, Settings.Height - h), h);
 
                     Settings.WorldGenerationOrigin = new Vector2((int)(clickX), (int)(clickY));
                 }
@@ -236,7 +237,8 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockBottom,
                 OnLayout = (sender) =>
                 {
-                    var space = System.Math.Min(difficultySelectorCombo.Rect.Width, StartButton.Rect.Top - difficultySelectorCombo.Rect.Bottom - 4);
+                    var space = System.Math.Min(
+                        difficultySelectorCombo.Rect.Width, StartButton.Rect.Top - difficultySelectorCombo.Rect.Bottom - 4);
                     sender.Rect.Height = space;
                     sender.Rect.Width = space;
                     sender.Rect.Y = difficultySelectorCombo.Rect.Bottom + 2;
@@ -315,8 +317,9 @@ namespace DwarfCorp.GameStates
                 Preview.DrawPreview();
                 GuiRoot.DrawMesh(
                         Gui.Mesh.Quad()
-                        .Scale(ZoomedPreview.Rect.Width, ZoomedPreview.Rect.Height)
-                        .Translate(ZoomedPreview.Rect.X, ZoomedPreview.Rect.Y)
+                        .Scale(-ZoomedPreview.Rect.Width, -ZoomedPreview.Rect.Height)
+                        .Translate(ZoomedPreview.Rect.X + ZoomedPreview.Rect.Width, 
+                            ZoomedPreview.Rect.Y + ZoomedPreview.Rect.Height)
                         .Texture(Preview.ZoomedPreviewMatrix),
                         Preview.PreviewTexture);
 

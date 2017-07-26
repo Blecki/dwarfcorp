@@ -70,7 +70,6 @@ namespace DwarfCorp
             });
             Tags.Add("Flag");
 
-            // Todo: Clean up when VoxelListener can take TemporaryVoxelHandles.
             var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
                 Manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(position)));

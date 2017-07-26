@@ -35,7 +35,7 @@ namespace DwarfCorp
                 var delta = current.ToVector3() - Start.ToVector3();
                 if (delta.LengthSquared() < radiusSquared)
                 {
-                    foreach (var neighbor in Neighbors.EnumerateManhattanNeighbors(current))
+                    foreach (var neighbor in VoxelHelpers.EnumerateManhattanNeighbors(current))
                         if (!visited.Contains(neighbor))
                         {
                             visited.Add(neighbor);

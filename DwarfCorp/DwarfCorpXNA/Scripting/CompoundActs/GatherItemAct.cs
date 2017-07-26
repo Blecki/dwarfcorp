@@ -64,7 +64,7 @@ namespace DwarfCorp
 
         public IEnumerable<Status> RemoveItemFromGatherManager()
         {
-            if (Creature.Inventory.Resources.IsFull() && !ItemToGather.IsDead)
+            if (!ItemToGather.IsDead)
             {
                 yield return Status.Fail;
             }
@@ -101,7 +101,7 @@ namespace DwarfCorp
 
         public bool IsGatherable()
         {
-            return (Agent.Faction.GatherDesignations.Contains(ItemToGather) && !Creature.Inventory.Resources.IsFull());
+            return (Agent.Faction.GatherDesignations.Contains(ItemToGather));
         }
 
         public Act EntityIsGatherable()

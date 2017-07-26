@@ -405,12 +405,6 @@ namespace DwarfCorp
         /// <param name="gameTime">The current time</param>
         public void Update(DwarfTime gameTime)
         {
-            // Can't do this in the loading thread because threaded generation
-            // of entities is bad -- it leads to GPU calls for texture loading.
-            if (firstIter && string.IsNullOrEmpty(ExistingFile))
-            {
-                CreateInitialEmbarkment();
-            }
             firstIter = false;
 
             EntityFactory.DoLazyActions();
@@ -697,6 +691,8 @@ namespace DwarfCorp
             if (!ShowingWorld)
                 return;
 
+            GamePerformance.Instance.StartTrackPerformance("Render - Prep");
+
             var renderables = ComponentRenderer.EnumerateVisibleRenderables(ComponentManager.GetRenderables(),
                 ChunkManager,
                 Camera);
@@ -732,6 +728,9 @@ namespace DwarfCorp
                 GetReflectedCameraMatrix(wHeight),
                 DefaultShader, GraphicsDevice);
 
+            GamePerformance.Instance.StopTrackPerformance("Render - Prep");
+            GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer");
+
             #region Draw Selection Buffer.
 
             if (SelectionBuffer == null)
@@ -751,14 +750,28 @@ namespace DwarfCorp
                 DefaultShader.View = Camera.ViewMatrix;
                 DefaultShader.Projection = Camera.ProjectionMatrix;
                 DefaultShader.World = Matrix.Identity;
+
+                GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer - Chunks");
                 ChunkRenderer.RenderSelectionBuffer(DefaultShader, GraphicsDevice, Camera.ViewMatrix);
+                GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Chunks");
+
+                GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer - Components");
                 ComponentRenderer.RenderSelectionBuffer(renderables, gameTime, ChunkManager, Camera,
                     DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader);
+                GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Components");
+
+                GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer - Instances");
                 InstanceManager.RenderSelectionBuffer(GraphicsDevice, DefaultShader, Camera, false);
+                GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Instances");
+
                 SelectionBuffer.End(GraphicsDevice);
             }
 
             #endregion
+
+            GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer");
+            GamePerformance.Instance.StartTrackPerformance("Render - BG Stuff");
+
 
             // Start drawing the bloom effect
             if (GameSettings.Default.EnableGlow)
@@ -781,6 +794,11 @@ namespace DwarfCorp
                 level = 1000;
             }
 
+            GamePerformance.Instance.StopTrackPerformance("Render - BG Stuff");
+            GamePerformance.Instance.StartTrackPerformance("Render - Chunks");
+
+
+
             SlicePlane = SlicePlane * 0.5f + level * 0.5f;
 
             DefaultShader.WindDirection = Weather.CurrentWind;
@@ -791,6 +809,10 @@ namespace DwarfCorp
             //Blue ghost effect above the current slice.
             DefaultShader.GhostClippingEnabled = true;
             Draw3DThings(gameTime, DefaultShader, Camera.ViewMatrix);
+
+            GamePerformance.Instance.StopTrackPerformance("Render - Chunks");
+            GamePerformance.Instance.StartTrackPerformance("Render - Components");
+
 
             // Now we want to draw the water on top of everything else
             DefaultShader.ClippingEnabled = true;
@@ -821,6 +843,10 @@ namespace DwarfCorp
                 DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader,
                 ComponentRenderer.WaterRenderType.None, lastWaterHeight);
 
+            GamePerformance.Instance.StopTrackPerformance("Render - Components");
+            GamePerformance.Instance.StartTrackPerformance("Render - Tools");
+
+
 
             if (Master.CurrentToolMode == GameMaster.ToolMode.Build)
             {
@@ -832,6 +858,10 @@ namespace DwarfCorp
                 Master.Faction.CraftBuilder.Render(gameTime, GraphicsDevice, DefaultShader);
             }
 
+            GamePerformance.Instance.StopTrackPerformance("Render - Tools");
+            GamePerformance.Instance.StartTrackPerformance("Render - Water");
+
+
             WaterRenderer.DrawWater(
                 GraphicsDevice,
                 (float)gameTime.TotalGameTime.TotalSeconds,
@@ -842,6 +872,10 @@ namespace DwarfCorp
                 new Vector3(0.1f, 0.0f, 0.1f),
                 Camera,
                 ChunkManager);
+
+            GamePerformance.Instance.StopTrackPerformance("Render - Water");
+            GamePerformance.Instance.StartTrackPerformance("Render - Misc");
+
 
             DefaultShader.ClippingEnabled = false;
 
@@ -862,11 +896,13 @@ namespace DwarfCorp
                 ScissorTestEnable = true
             };
 
+            
+            //if (CompositeLibrary.Composites.ContainsKey("resources"))
+            //    CompositeLibrary.Composites["resources"].DebugDraw(DwarfGame.SpriteBatch, 0, 0);
             //SelectionBuffer.DebugDraw(GraphicsDevice.Viewport.Bounds);
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp,
                 null, rasterizerState);
             //DwarfGame.SpriteBatch.Draw(Shadows.ShadowTexture, Vector2.Zero, Color.White);
-
             if (IsCameraUnderwater())
             {
                 Drawer2D.FillRect(DwarfGame.SpriteBatch, GraphicsDevice.Viewport.Bounds, new Color(10, 40, 60, 200));
@@ -885,6 +921,9 @@ namespace DwarfCorp
 
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.BlendState = BlendState.Opaque;
+
+            GamePerformance.Instance.StopTrackPerformance("Render - Misc");
+
 
             lock (ScreenshotLock)
             {

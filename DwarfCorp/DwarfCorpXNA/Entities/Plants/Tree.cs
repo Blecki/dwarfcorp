@@ -64,7 +64,6 @@ namespace DwarfCorp
             AddChild(new Health(Manager, "HP", 1.0f, 0.0f, 1.0f));
             AddChild(new Flammable(Manager, "Flames"));
 
-            // Todo: Clean up when VoxelListener can take TemporaryVoxelHandles.
             var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
                 Manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(position)));
@@ -195,7 +194,6 @@ namespace DwarfCorp
             Tags.Add("EmitsWood");
 
             //new MinimapIcon(this, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 1, 0));
-            // Todo: Clean up when VoxelListener can take TemporaryVoxelHandles.
             var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
                 manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(position)));
@@ -204,26 +202,26 @@ namespace DwarfCorp
                     voxelUnder));
 
 
-            Inventory inventory = AddChild(new Inventory(componentManager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)
+            Inventory inventory = AddChild(new Inventory(componentManager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)) as Inventory;
+
+
+            for (int i = 0; i < treeSize * 10; i++)
             {
-                Resources = new ResourceContainer
+                inventory.Resources.Add(new Inventory.InventoryItem()
                 {
-                    MaxResources = 500
-                }
-            }) as Inventory;
+                    MarkedForRestock = false,
+                    Resource = ResourceLibrary.ResourceType.Wood
+                });
+            }
 
-            inventory.Resources.AddResource(new ResourceAmount()
+            for (int i = 0; i < treeSize * 2; i++)
             {
-                NumResources = (int)(treeSize * 10),
-                ResourceType = ResourceLibrary.ResourceType.Wood
-            });
-
-
-            inventory.Resources.AddResource(new ResourceAmount()
-            {
-                NumResources = (int)(treeSize * 2),
-                ResourceType = seed
-            });
+                inventory.Resources.Add(new Inventory.InventoryItem()
+                {
+                    MarkedForRestock = false,
+                    Resource = seed
+                });
+            }
 
             Particles = AddChild(new ParticleTrigger("Leaves", componentManager, "LeafEmitter",
                 Matrix.Identity, BoundingBoxPos, GetBoundingBox().Extents())

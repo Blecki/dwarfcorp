@@ -105,7 +105,7 @@ namespace DwarfCorp
 
         public static Act SimpleFor()
         {
-            return new ForLoop(new Wrap(TestBehaviors.AlwaysTrue), 10, false);
+            return new Repeat(new Wrap(TestBehaviors.AlwaysTrue), 10, false);
         }
 
         public static Act SimpleWhile()

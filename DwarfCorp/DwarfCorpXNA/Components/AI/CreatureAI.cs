@@ -67,7 +67,6 @@ namespace DwarfCorp
             Movement = new CreatureMovement(this);
             GatherManager = new GatherManager(this);
             Blackboard = new Blackboard();
-            CurrentPath = null;
             PlannerTimer = new Timer(0.1f, false);
             LocalControlTimeout = new Timer(5, false, Timer.TimerMode.Real);
             WanderTimer = new Timer(1, false);
@@ -87,8 +86,6 @@ namespace DwarfCorp
         }
 
         private bool jumpHeld = false;
-        /// <summary> The current path of voxels the AI is following </summary>
-        public List<VoxelHandle> CurrentPath { get; set; }
 
         private Creature _cachedCreature = null;
         [JsonIgnore] public Creature Creature
@@ -340,7 +337,19 @@ namespace DwarfCorp
         public void ZoomToMe()
         {
             Manager.World.Camera.ZoomTo(Position + Vector3.Up * 8.0f);
-            Manager.World.ChunkManager.ChunkData.SetMaxViewingLevel((int)Position.Y, ChunkManager.SliceMode.Y);
+
+            var above = VoxelHelpers.FindFirstVoxelAbove(new TemporaryVoxelHandle(
+                World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Position)));
+
+            if (above.IsValid)
+            {
+                World.ChunkManager.ChunkData.SetMaxViewingLevel(above.Coordinate.Y - 1, ChunkManager.SliceMode.Y);
+            }
+            else
+            {
+                World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxelConstants.ChunkSizeY,
+                    ChunkManager.SliceMode.Y);
+            }
         }
 
         public void HandleReproduction()
@@ -516,7 +525,7 @@ namespace DwarfCorp
             // With a small probability, the creature will drown if its under water.
             if (MathFunctions.RandEvent(0.01f))
             {
-                var above = VoxelHelpers.GetVoxelAbove(Physics.CurrentVoxel.tvh);
+                var above = VoxelHelpers.GetVoxelAbove(Physics.CurrentVoxel);
                 bool shouldDrown = above.IsValid && (!above.IsEmpty || above.WaterCell.WaterLevel > 0);
                 if (Physics.IsInLiquid && (!Movement.CanSwim || shouldDrown))
                 {
@@ -572,8 +581,8 @@ namespace DwarfCorp
         /// <returns>Success if the jump has succeeded, Fail if it failed, and Running otherwise.</returns>
         public IEnumerable<Act.Status> AvoidFalling()
         {
-            var above = VoxelHelpers.GetVoxelAbove(Physics.CurrentVoxel.tvh);
-            foreach (var vox in Neighbors.EnumerateManhattanNeighbors(Physics.CurrentVoxel.Coordinate)
+            var above = VoxelHelpers.GetVoxelAbove(Physics.CurrentVoxel);
+            foreach (var vox in VoxelHelpers.EnumerateManhattanNeighbors(Physics.CurrentVoxel.Coordinate)
                 .Select(c => new TemporaryVoxelHandle(World.ChunkManager.ChunkData, c)))
             {
                 if (!vox.IsValid) continue;
@@ -588,7 +597,7 @@ namespace DwarfCorp
                     new GlobalVoxelCoordinate(vox.Coordinate.X, vox.Coordinate.Y + 1, vox.Coordinate.Z));
                 if (voxAbove.IsValid && !voxAbove.IsEmpty) continue;
 
-                Vector3 target = voxAbove.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f);
+                Vector3 target = voxAbove.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f);
                 Physics.Face(target);
                 foreach (Act.Status status in Hop(target))
                 {
@@ -666,6 +675,11 @@ namespace DwarfCorp
                     }
                 }
 
+                foreach (var resource in Creature.Inventory.Resources.Where(resource => resource.MarkedForRestock))
+                {
+                    return new StockResourceTask(new ResourceAmount(resource.Resource));
+                }
+
                 // Farm stuff if applicable
                 if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm) && MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction)
                 {
@@ -707,6 +721,7 @@ namespace DwarfCorp
                         AutoRetry = false
                     };
                 }
+
                 if (IdleTimer.HasTriggered)
                 {
                     IdleTimer.Reset(IdleTimer.TargetTimeSeconds);
@@ -718,6 +733,7 @@ namespace DwarfCorp
                 Physics.Velocity *= 0.0f;
                 return null;
             }
+
             // If we have no more build orders, look for gather orders
             if (GatherManager.VoxelOrders.Count == 0 && GatherManager.StockOrders.Count > 0)
             {
@@ -747,7 +763,7 @@ namespace DwarfCorp
             if (GatherManager.VoxelOrders.Count > 0)
             {
                 // Otherwise handle build orders.
-                var voxels = new List<VoxelHandle>();
+                var voxels = new List<TemporaryVoxelHandle>();
                 var types = new List<VoxelType>();
                 foreach (GatherManager.BuildVoxelOrder order in GatherManager.VoxelOrders)
                 {
@@ -1002,7 +1018,7 @@ namespace DwarfCorp
 
                 while (true)
                 {
-                    VoxelHandle creatureVoxel = agent.Physics.CurrentVoxel;
+                    var creatureVoxel = agent.Physics.CurrentVoxel;
 
                     if (edgeGoal.IsInGoalRegion(creatureVoxel))
                     {
@@ -1010,15 +1026,14 @@ namespace DwarfCorp
                         yield break;
                     }
 
-                    var actions = agent.AI.Movement.GetMoveActions(new TemporaryVoxelHandle(
-                        creatureVoxel.Chunk, creatureVoxel.GridPosition));
+                    var actions = agent.AI.Movement.GetMoveActions(creatureVoxel);
 
                     float minCost = float.MaxValue;
                     var minAction = new MoveAction();
                     bool hasMinAction = false;
                     foreach (var action in actions)
                     {
-                        VoxelHandle vox = action.DestinationVoxel;
+                        var vox = action.DestinationVoxel;
 
                         float cost = edgeGoal.Heuristic(vox) + MathFunctions.Rand(0.0f, 5.0f);
 

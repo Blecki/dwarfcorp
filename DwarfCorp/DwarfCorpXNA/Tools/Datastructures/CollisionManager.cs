@@ -176,12 +176,6 @@ namespace DwarfCorp
             Hashes[type].RemoveItem(bounded, new IntegerBoundingBox(oldLocation));
         }
 
-        public List<IBoundedObject> GetObjectsAt(VoxelHandle voxel, CollisionType queryType)
-        {
-            return GetObjectsAt(new Point3(MathFunctions.FloorInt(voxel.WorldPosition.X),
-                MathFunctions.FloorInt(voxel.WorldPosition.Y), MathFunctions.FloorInt(voxel.WorldPosition.Z)), queryType);
-        }
-
         public List<IBoundedObject> GetObjectsAt(TemporaryVoxelHandle V, CollisionType queryType)
         {
             return GetObjectsAt(new Point3(V.Coordinate.X, V.Coordinate.Y, V.Coordinate.Z), queryType);

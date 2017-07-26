@@ -472,6 +472,7 @@ namespace DwarfCorp
                 Name = "water",
                 ReleasesResource = false,
                 CanRamp = true,
+                RampSize = 0.5f,
                 IsBuildable = false,
                 StartingHealth = 255
             };
@@ -756,10 +757,10 @@ namespace DwarfCorp
             }
         }
 
-        public static void PlaceType(VoxelType type, VoxelHandle voxel)
+        public static void PlaceType(VoxelType type, TemporaryVoxelHandle voxel)
         {
             voxel.Type = type;
-            voxel.Water = new WaterCell();
+            voxel.WaterCell = new WaterCell();
             voxel.Health = voxel.Type.StartingHealth;
         }
 

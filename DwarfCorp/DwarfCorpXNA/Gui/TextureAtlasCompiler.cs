@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -74,7 +74,7 @@ namespace DwarfCorp.Gui.TextureAtlas
                     BSpace = new Rectangle(Dimensions.X + tex.Rect.Width, Dimensions.Y, HorizontalDifference, tex.Rect.Height);
             }
 
-            if (ASpace.HasValue) TryPlaceTextures(ASpace.Value, Textures);
+           TryPlaceTextures(ASpace.Value, Textures);
             if (BSpace.HasValue) TryPlaceTextures(BSpace.Value, Textures);
         }
 

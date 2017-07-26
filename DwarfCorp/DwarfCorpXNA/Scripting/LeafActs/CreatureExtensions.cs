@@ -59,7 +59,7 @@ namespace DwarfCorp
         public static IEnumerable<Act.Status> EatStockedFood(this Creature agent)
         {
             List<ResourceAmount> foods =
-                agent.Inventory.Resources.GetResources(new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Edible));
+                agent.Inventory.GetResources(new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Edible));
 
             if (foods.Count == 0 && agent.Allies == "Dwarf")
             {
@@ -225,14 +225,13 @@ namespace DwarfCorp
 
         public static IEnumerable<Act.Status> RestockAll(this Creature agent)
         {
-            foreach (ResourceAmount resource in agent.Inventory.Resources)
+            foreach (var resource in agent.Inventory.Resources)
             {
-                if (resource.NumResources > 0)
-                    agent.AI.GatherManager.StockOrders.Add(new GatherManager.StockOrder()
-                    {
-                        Destination = null,
-                        Resource = resource
-                    });
+                agent.AI.GatherManager.StockOrders.Add(new GatherManager.StockOrder()
+                {
+                    Destination = null,
+                    Resource = new ResourceAmount(resource.Resource)
+                });
             }
 
             yield return Act.Status.Success;
@@ -253,10 +252,10 @@ namespace DwarfCorp
             while(true)
             {
                 // Get the voxel stored in the agent's blackboard.
-                var vox = agent.AI.Blackboard.GetData<VoxelHandle>(voxel);
+                var vox = agent.AI.Blackboard.GetData<TemporaryVoxelHandle>(voxel);
 
                 // Somehow, there wasn't a voxel to mine.
-                if(vox == null)
+                if(!vox.IsValid)
                 {
                     agent.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                     yield return Act.Status.Fail;
@@ -308,7 +307,7 @@ namespace DwarfCorp
                     agent.Stats.NumBlocksDestroyed++;
                     agent.World.GoalManager.OnGameEvent(new Goals.Events.DigBlock(voxelType, agent));
 
-                    var items = agent.World.ChunkManager.KillVoxel(vox.tvh);
+                    var items = agent.World.ChunkManager.KillVoxel(vox);
 
                     if (items != null)
                     {

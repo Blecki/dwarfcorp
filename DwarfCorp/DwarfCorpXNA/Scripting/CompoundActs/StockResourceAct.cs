@@ -76,7 +76,7 @@ namespace DwarfCorp
 
         public IEnumerable<Status> OnFail()
         {
-            if (ItemToStock != null && ItemToStock.NumResources >= 0 && Agent.Creature.Inventory.Resources.HasResource(ItemToStock))
+            if (ItemToStock != null && ItemToStock.NumResources >= 0 && Agent.Creature.Inventory.HasResource(ItemToStock))
             {
                 Agent.GatherManager.StockOrders.Add(new GatherManager.StockOrder()
                 {
@@ -100,20 +100,16 @@ namespace DwarfCorp
 
                 if (ItemToStock != null)
                 {
-
                     Tree = new Sequence(
                         new SetBlackboardData<ResourceAmount>(Agent, "GatheredResource", ItemToStock.CloneResource()),
                         new SearchFreeStockpileAct(Agent, "TargetStockpile", "FreeVoxel", ItemToStock),
-                        
-                                        new Select(
-                                                    new Sequence(
-                                                                    new GoToNamedVoxelAct("FreeVoxel", PlanAct.PlanType.Adjacent, Agent),
-                                                                    new PutResourceInZone(Agent, "TargetStockpile", "FreeVoxel", "GatheredResource")
-                                                                )
-                                                  )
-                                         
-                        ) | new Wrap(OnFail)
-                     ;
+                            new Select(
+                                new Sequence(
+                                    new GoToNamedVoxelAct("FreeVoxel", PlanAct.PlanType.Adjacent, Agent),
+                                    new PutResourceInZone(Agent, "TargetStockpile", "FreeVoxel", "GatheredResource")
+                                    )
+                            )
+                        ) | new Wrap(OnFail);
 
                     Tree.Initialize();
                 }

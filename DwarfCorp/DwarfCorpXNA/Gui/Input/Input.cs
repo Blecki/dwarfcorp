@@ -109,7 +109,8 @@ namespace DwarfCorp.Gui.Input
                     }
                     else if (@event.Message == global::DwarfCorp.Gui.InputEvents.KeyUp)
                     {
-                        foreach (var binding in InputActions.Where((KeyValuePair<string, InputAction> ia) => ia.Value.Keys.Contains((Keys)@event.Args.KeyValue) && ia.Value.Type == KeyBindingType.Pressed))
+                        GumInputMapper.QueuedInput localevent = @event;
+                        foreach (var binding in InputActions.Where((KeyValuePair<string, InputAction> ia) => ia.Value.Keys.Contains((Keys)localevent.Args.KeyValue) && ia.Value.Type == KeyBindingType.Pressed))
                             if (binding.Value.Handler != null)
                                 binding.Value.Handler();
                     }

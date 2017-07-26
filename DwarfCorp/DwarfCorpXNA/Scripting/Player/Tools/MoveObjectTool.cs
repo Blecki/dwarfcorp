@@ -119,12 +119,12 @@ namespace DwarfCorp
             }
         }
 
-        public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }
 
-        public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsDragged(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }
@@ -149,28 +149,33 @@ namespace DwarfCorp
             if (SelectedBody != null)
             {
                 var voxelUnderMouse = Player.VoxSelector.VoxelUnderMouse;
-                if (voxelUnderMouse != null && voxelUnderMouse.IsEmpty)
+                if (voxelUnderMouse.IsValid && voxelUnderMouse.IsEmpty)
                 {
                     SelectedBody.LocalPosition = voxelUnderMouse.WorldPosition + Vector3.One * 0.5f;
                     SelectedBody.HasMoved = true;
                     SelectedBody.UpdateTransformsRecursive(SelectedBody.Parent as Body);
                 }
 
-                bool intersectsAnyOther =
-                    Player.Faction.OwnedObjects.Any(
-                        o => o != SelectedBody && o.GetBoundingBox().Intersects(SelectedBody.GetBoundingBox()));
+                foreach (var obj in Player.Faction.OwnedObjects)
+                {
+                    Drawer3D.DrawBox(obj.GetBoundingBox(), Color.White, 0.001f);
+                }
 
+                var intersectsAnyOther =
+                    Player.Faction.OwnedObjects.FirstOrDefault(
+                        o => o != SelectedBody && o.GetRotatedBoundingBox().Intersects(SelectedBody.GetRotatedBoundingBox()));
+                Drawer3D.DrawBox(SelectedBody.GetBoundingBox(), Color.White, 0.1f);
                 var tinter = SelectedBody.GetComponent<Tinter>();
                 if (tinter != null)
                 {
-                    tinter.VertexColorTint = !intersectsAnyOther ? Color.Green : Color.Red;
+                    tinter.VertexColorTint = intersectsAnyOther == null ? Color.Green : Color.Red;
                 }
                 MouseState mouse = Mouse.GetState();
                 SelectedBody.OrientToWalls();
                 if (mouse.LeftButton == ButtonState.Released && mouseDown)
                 {
                     mouseDown = false;
-                    if (!intersectsAnyOther)
+                    if (intersectsAnyOther == null)
                     {
                         SelectedBody = null;
                         if (tinter != null)
@@ -178,7 +183,7 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        Player.World.ShowToolPopup("Can't move here, it intersects something else.");
+                        Player.World.ShowToolPopup("Can't move here, it intersects a " + intersectsAnyOther.Name);
                     }
                 }
                 else if (mouse.LeftButton == ButtonState.Pressed)

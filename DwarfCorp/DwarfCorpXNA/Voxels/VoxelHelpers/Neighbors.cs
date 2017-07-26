@@ -5,8 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    // Todo: Move to VoxelHelpers
-    public class Neighbors
+    public partial class VoxelHelpers
     {
         #region Offset Lists
         private static GlobalVoxelOffset[] ManhattanNeighbors = new GlobalVoxelOffset[]
@@ -30,7 +29,7 @@ namespace DwarfCorp
             new GlobalVoxelOffset(0,0,-1)
         };
 
-        private static GlobalVoxelOffset[] ManhattanNeighbors2D = new GlobalVoxelOffset[]
+        public static GlobalVoxelOffset[] ManhattanNeighbors2D = new GlobalVoxelOffset[]
         {
             new GlobalVoxelOffset(-1,0,0),
             new GlobalVoxelOffset(1,0,0),

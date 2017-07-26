@@ -58,10 +58,10 @@ namespace DwarfCorp
             Recharges = false;
             TileRef = 18;
         }
-        public override void OnVoxelsSelected(SpellTree tree, List<VoxelHandle> voxels)
+        public override void OnVoxelsSelected(SpellTree tree, List<TemporaryVoxelHandle> voxels)
         {
             bool destroyed = false;
-            foreach (VoxelHandle selected in voxels)
+            foreach (var selected in voxels)
             {
                 if (!selected.IsEmpty && !selected.Type.IsInvincible)
                 {
@@ -71,7 +71,7 @@ namespace DwarfCorp
                         IndicatorManager.DrawIndicator("-" + ManaCost + " M", p, 1.0f, Color.Red);
                         World.ParticleManager.Trigger("star_particle", p,
                             Color.White, 4);
-                        World.ChunkManager.KillVoxel(selected.tvh);
+                        World.ChunkManager.KillVoxel(selected);
                         destroyed = true;
                     }
                 }

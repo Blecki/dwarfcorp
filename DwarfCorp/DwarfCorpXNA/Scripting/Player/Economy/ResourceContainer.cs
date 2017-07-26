@@ -87,6 +87,7 @@ namespace DwarfCorp
             InitializeResources();
         }
 
+
         public void Clear()
         {
             InitializeResources();

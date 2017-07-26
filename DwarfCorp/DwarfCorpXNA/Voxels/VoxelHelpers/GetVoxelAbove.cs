@@ -9,6 +9,7 @@ namespace DwarfCorp
     {
         public static TemporaryVoxelHandle GetVoxelAbove(TemporaryVoxelHandle V)
         {
+            if (!V.IsValid) return TemporaryVoxelHandle.InvalidHandle;
             return new TemporaryVoxelHandle(V.Chunk.Manager.ChunkData,
                 new GlobalVoxelCoordinate(V.Coordinate.X, V.Coordinate.Y + 1, V.Coordinate.Z));
         }

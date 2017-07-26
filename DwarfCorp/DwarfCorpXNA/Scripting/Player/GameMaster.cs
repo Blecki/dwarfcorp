@@ -217,12 +217,12 @@ namespace DwarfCorp
             CurrentTool.OnBodiesSelected(bodies, button);
         }
 
-        public void OnDrag(List<VoxelHandle> voxels, InputManager.MouseButton button)
+        public void OnDrag(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
         {
             CurrentTool.OnVoxelsDragged(voxels, button);
         }
 
-        public void OnSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
+        public void OnSelected(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
         {
             CurrentTool.OnVoxelsSelected(voxels, button);
         }
@@ -356,20 +356,25 @@ namespace DwarfCorp
 
         public void HandlePosessedDwarf()
         {
-            foreach (var creature in Faction.Minions)
-            {
-                creature.IsPosessed = false;
-            }
             KeyboardState keyState = Keyboard.GetState();
             if (SelectedMinions.Count != 1)
             {
                 CameraController.FollowAutoTarget = false;
                 CameraController.EnableControl = true;
+                foreach (var creature in Faction.Minions)
+                {
+                    creature.IsPosessed = false;
+                }
                 return;
             }
 
             var dwarf = SelectedMinions[0];
-            dwarf.IsPosessed = true;
+            if (!dwarf.IsPosessed)
+            {
+                CameraController.FollowAutoTarget = false;
+                CameraController.EnableControl = true;
+                return;
+            }
             CameraController.EnableControl = false;
             CameraController.AutoTarget = dwarf.Position;
             CameraController.FollowAutoTarget = true;
@@ -380,12 +385,13 @@ namespace DwarfCorp
                     World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(dwarf.Position)));
 
                 if (above.IsValid)
-                { 
+                {
                     World.ChunkManager.ChunkData.SetMaxViewingLevel(above.Coordinate.Y - 1, ChunkManager.SliceMode.Y);
                 }
                 else
                 {
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxelConstants.ChunkSizeY, ChunkManager.SliceMode.Y);
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxelConstants.ChunkSizeY,
+                        ChunkManager.SliceMode.Y);
                 }
             }
 
@@ -500,10 +506,10 @@ namespace DwarfCorp
             }
             else if (key == ControlSettings.Mappings.SliceSelected)
             {
-                if (VoxSelector.VoxelUnderMouse != null)
+                if (VoxSelector.VoxelUnderMouse.IsValid)
                 {
                     World.Tutorial("unslice");
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.WorldPosition.Y,
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Coordinate.Y,
                         ChunkManager.SliceMode.Y);
                     Drawer3D.DrawBox(VoxSelector.VoxelUnderMouse.GetBoundingBox(), Color.White, 0.15f, true);
                 }
