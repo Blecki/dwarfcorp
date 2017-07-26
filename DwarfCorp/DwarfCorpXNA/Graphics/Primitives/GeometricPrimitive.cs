@@ -46,7 +46,7 @@ namespace DwarfCorp
 
         public static readonly bool[, ,] FaceDrawMap = new bool[6, (int)RampType.All + 1, (int)RampType.All + 1];
 
-        public static bool ShouldDrawFace(BoxFace face, RampType neighborRamp, RampType myRamp)
+        protected static bool ShouldDrawFace(BoxFace face, RampType neighborRamp, RampType myRamp)
         {
             if (face == BoxFace.Top || face == BoxFace.Bottom)
             {
@@ -56,11 +56,23 @@ namespace DwarfCorp
             return FaceDrawMap[(int)face, (int)myRamp, (int)neighborRamp];
         }
 
-        public static bool IsSideFace(BoxFace face)
+        protected static bool IsSideFace(BoxFace face)
         {
             return face != BoxFace.Top && face != BoxFace.Bottom;
         }
 
+        protected static bool IsFaceVisible(TemporaryVoxelHandle voxel, TemporaryVoxelHandle neighbor, BoxFace face)
+        {
+            return
+                !neighbor.IsValid ||
+                (neighbor.IsExplored && neighbor.IsEmpty) ||
+                (neighbor.Type.IsTransparent && !voxel.Type.IsTransparent) ||
+                !neighbor.IsVisible ||
+                (neighbor.Type.CanRamp && neighbor.RampType != RampType.None &&
+                IsSideFace(face) &&
+                ShouldDrawFace(face, neighbor.RampType, voxel.RampType));
+        }
+        
         /// <summary>
         /// Draws the primitive to the screen.
         /// </summary>
@@ -128,8 +140,11 @@ namespace DwarfCorp
 
         public virtual void GenerateLightmap(Rectangle textureBounds)
         {
-            BoundingBox box = GenerateLightmapUVs();
-            CreateLightMapTexture(box, textureBounds);
+            if (GameSettings.Default.UseLightmaps)
+            {
+                BoundingBox box = GenerateLightmapUVs();
+                CreateLightMapTexture(box, textureBounds);
+            }
         }
 
         /// <summary>
@@ -168,10 +183,9 @@ namespace DwarfCorp
             int newWidth = (int)Math.Ceiling((widthScale) * textureBounds.Width);
             int newHeight = (int)Math.Ceiling((heightScale) * textureBounds.Height);
 
-
             if (Lightmap == null || Lightmap.Width < newWidth || Lightmap.Height < newHeight)
             {
-               Lightmap = new RenderTarget2D(GameState.Game.GraphicsDevice, newWidth, newHeight, false,
+                Lightmap = new RenderTarget2D(GameState.Game.GraphicsDevice, newWidth, newHeight, false,
                     SurfaceFormat.Color, DepthFormat.None);
             }
             else
