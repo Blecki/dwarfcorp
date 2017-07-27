@@ -170,8 +170,7 @@ namespace DwarfCorp
                     };
                     bloom.Initialize();
 
-
-                    fxaa = new FXAA();
+                    fxaa = new FXAA(Game);
                     fxaa.Initialize();
 
                     SoundManager.Content = Content;

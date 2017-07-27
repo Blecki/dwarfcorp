@@ -126,6 +126,7 @@ namespace BloomPostprocess
 
             int width = pp.BackBufferWidth / 4;
             int height = pp.BackBufferHeight / 4;
+
             if (renderTarget1 == null || renderTarget2 == null ||
                 renderTarget1.Width != width || renderTarget1.Height != height
                 || renderTarget2.Width != width || renderTarget2.Height != height)
@@ -157,12 +158,11 @@ namespace BloomPostprocess
         public void BeginDraw()
         {
             ValidateBuffers();
-            if(Visible)
+            if (Visible)
             {
                 GraphicsDevice.SetRenderTarget(sceneRenderTarget);
             }
         }
-
 
         /// <summary>
         /// This is where it all happens. Grabs a scene that has already been rendered,
