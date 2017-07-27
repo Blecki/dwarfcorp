@@ -272,6 +272,48 @@
 			"Texture": "newgui/hand",
 			"TileWidth": 32,
 			"TileHeight": 32
-		}
+		},
+		{
+			"Name": "newgui\\trinkets-carve-insets-bone",
+			"Texture": "newgui/trinkets-carve-insets-bone",
+			"TileWidth": 32,
+			"TileHeight": 32
+		},
+		{
+			"Name": "newgui\\trinkets-carve-insets",
+			"Texture": "newgui/trinkets-carve-insets",
+			"TileWidth": 32,
+			"TileHeight": 32
+		},
+		{
+			"Name": "newgui\\trinkets-carve",
+			"Texture": "newgui/trinkets-carve",
+			"TileWidth": 32,
+			"TileHeight": 32
+		},
+		{
+			"Name": "newgui\\trinkets-cast-insets",
+			"Texture": "newgui/trinkets-cast-insets",
+			"TileWidth": 32,
+			"TileHeight": 32
+		},
+		{
+			"Name": "newgui\\trinkets-cast",
+			"Texture": "newgui/trinkets-cast",
+			"TileWidth": 32,
+			"TileHeight": 32
+		},
+		{
+			"Name": "newgui\\trinkets-sculpt-insets",
+			"Texture": "newgui/trinkets-sculpt-insets",
+			"TileWidth": 32,
+			"TileHeight": 32
+		},
+		{
+			"Name": "newgui\\trinkets-sculpt",
+			"Texture": "newgui/trinkets-sculpt",
+			"TileWidth": 32,
+			"TileHeight": 32
+		},
 	]
 }

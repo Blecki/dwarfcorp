@@ -1305,7 +1305,7 @@ namespace DwarfCorp.GameStates
                          Master.Faction.ListResourcesWithTag(Resource.ResourceTags.Plantable)
                         .Select(resource => new FlatToolTray.Icon
                            {
-                               Icon = new TileReference("resources", resource.ResourceType.GetResource().GuiSprite),
+                               Icon = resource.ResourceType.GetResource().GuiLayers[0],
                                Tooltip = "Plant " + resource.ResourceType,
                                OnClick = (sender, args) =>
                                {

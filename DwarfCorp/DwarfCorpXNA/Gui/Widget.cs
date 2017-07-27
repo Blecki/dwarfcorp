@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp.Gui
 {

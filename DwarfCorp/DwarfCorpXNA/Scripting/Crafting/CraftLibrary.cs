@@ -517,7 +517,7 @@ namespace DwarfCorp
                 BaseCraftTime = 30,
                 CraftLocation = "Forge",
                 Description = res.Description,
-                Icon = new Gui.TileReference("resources", res.GuiSprite),
+                Icon = res.GuiLayers[0],
                 RequiredResources = res.CraftPrereqs,
                 ResourceCreated = resource,
                 Type = CraftItem.CraftType.Resource
