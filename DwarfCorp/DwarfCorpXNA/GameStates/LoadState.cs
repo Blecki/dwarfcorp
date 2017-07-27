@@ -97,7 +97,6 @@ namespace DwarfCorp.GameStates
 
         private void CreateWorld()
         {
-
             World = new WorldManager(Game)
             {
                 WorldOrigin = Settings.WorldOrigin,

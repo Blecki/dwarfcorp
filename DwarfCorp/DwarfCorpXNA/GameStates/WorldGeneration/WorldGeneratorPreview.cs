@@ -41,7 +41,7 @@ namespace DwarfCorp.GameStates
         {
             get
             {
-                var previewRect = GetSpawnRectangleInWorldSpace();
+                var previewRect = Generator.GetSpawnRectangle();
                 var worldRect = new Rectangle(0, 0, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1));
                 float vScale = 1.0f / worldRect.Width;
                 float uScale = 1.0f / worldRect.Height;
@@ -158,13 +158,10 @@ namespace DwarfCorp.GameStates
                 {
                     if (args.MouseButton == 0)
                     {
-                        var worldSize = Generator.Settings.ColonySize.ToVector3()*Generator.Settings.WorldScale;
+                        int chunkSize = 16;
+                        var worldSize = Generator.Settings.ColonySize.ToVector3() * chunkSize / Generator.Settings.WorldScale;
                         var clickPoint = ScreenToWorld(new Vector2(args.X, args.Y));
-                        Generator.Settings.WorldGenerationOrigin = new Vector2(
-                            System.Math.Max(System.Math.Min(clickPoint.X, Generator.Settings.Width - worldSize.X - 1),
-                                worldSize.X + 1),
-                            System.Math.Max(System.Math.Min(clickPoint.Y, Generator.Settings.Height - worldSize.Z - 1),
-                                worldSize.Z + 1));
+                        Generator.Settings.WorldGenerationOrigin = Generator.GetOrigin(clickPoint, worldSize);
                     }
                 },
                 OnMouseMove = (sender, args) =>
@@ -254,21 +251,19 @@ namespace DwarfCorp.GameStates
             return port.Project(worldSpace, ProjectionMatrix, ViewMatrix, Matrix.Identity);
         }
 
-        public Rectangle GetSpawnRectangleInWorldSpace()
-        {
-            int w = (int)(Generator.Settings.ColonySize.X * Generator.Settings.WorldScale);
-            int h = (int)(Generator.Settings.ColonySize.Z * Generator.Settings.WorldScale);
-            return new Rectangle((int)Generator.Settings.WorldGenerationOrigin.X - w, (int)Generator.Settings.WorldGenerationOrigin.Y - h, w * 2, h * 2);
-        }
-
         public void GetSpawnRectangleInScreenSpace(List<Vector2> Points)
         {
-            Rectangle spawnRect = GetSpawnRectangleInWorldSpace();
+            Rectangle spawnRect = Generator.GetSpawnRectangle();
             Points[0] = new Vector2(spawnRect.X, spawnRect.Y);
             Points[1] = new Vector2(spawnRect.X + spawnRect.Width, spawnRect.Y);
             Points[2] = new Vector2(spawnRect.X + spawnRect.Width, spawnRect.Height + spawnRect.Y);
             Points[3] = new Vector2(spawnRect.X, spawnRect.Height + spawnRect.Y);
-            newTarget = new Vector3((Points[0].X + Points[2].X) / (float)Overworld.Map.GetLength(0), 0, (Points[0].Y + Points[2].Y) / (float)(Overworld.Map.GetLength(1))) * 0.5f;
+
+            newTarget = new Vector3(
+                (Points[0].X + Points[2].X) / (float)Overworld.Map.GetLength(0), 0, 
+                (Points[0].Y + Points[2].Y) / (float)(Overworld.Map.GetLength(1)))
+                * 0.5f;
+
             for (var i = 0; i < 4; ++i)
             {
                 var vec3 = WorldToScreen(Points[i]);  
@@ -341,7 +336,7 @@ namespace DwarfCorp.GameStates
                 Root.DrawMesh(iconMesh, Root.RenderData.Texture);
             }
 
-            Rectangle spawnWorld = GetSpawnRectangleInWorldSpace();
+            Rectangle spawnWorld = Generator.GetSpawnRectangle();
             Vector2 newSpawn = new Vector2(spawnWorld.Center.X, spawnWorld.Center.Y);
             Vector2 spawnCenter = newSpawn * 0.1f + lastSpawnWorld * 0.9f;
             Vector3 newCenter = WorldToScreen(newSpawn);

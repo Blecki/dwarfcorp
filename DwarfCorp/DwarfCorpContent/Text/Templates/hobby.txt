@@ -24,7 +24,7 @@ Destroy <adjective> Things
 Buy <adjective> Things
 <verb> and <verb>
 <verb> <adverb>
-Meet  <adjective> Dwarves
+Meet <adjective> Dwarves
 <verb>
 Make <noun>s
 Drink <adverb>

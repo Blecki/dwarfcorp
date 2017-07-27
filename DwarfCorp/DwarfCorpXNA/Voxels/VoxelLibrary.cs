@@ -472,6 +472,7 @@ namespace DwarfCorp
                 Name = "water",
                 ReleasesResource = false,
                 CanRamp = true,
+                RampSize = 0.5f,
                 IsBuildable = false,
                 StartingHealth = 255
             };

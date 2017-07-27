@@ -16,15 +16,14 @@ namespace DwarfCorp
     /// </summary>
     public class VoxelListPrimitive : GeometricPrimitive, IDisposable
     {
-        private readonly bool[] faceExists = new bool[6];
-        private readonly bool[] drawFace = new bool[6];
-        private bool isRebuilding = false;
+        protected readonly bool[] drawFace = new bool[6];
+        protected bool isRebuilding = false;
         private readonly Mutex rebuildMutex = new Mutex();
-        public static bool StaticInitialized = false;
+        private static bool StaticsInitialized = false;
 
-        public void InitializeStatics()
+        protected void InitializeStatics()
         {
-            if(!StaticInitialized)
+            if(!StaticsInitialized)
             {
                 FaceDeltas[(int)BoxFace.Back] = new Vector3(0, 0, 1);
                 FaceDeltas[(int)BoxFace.Front] = new Vector3(0, 0, -1);
@@ -35,7 +34,7 @@ namespace DwarfCorp
 
                 VoxelChunk.CreateFaceDrawMap();
 
-                StaticInitialized = true;
+                StaticsInitialized = true;
             }
         }
 
@@ -59,7 +58,8 @@ namespace DwarfCorp
             }
 
             rebuildMutex.WaitOne();
-            if(isRebuilding)
+
+            if (isRebuilding)
             {
                 rebuildMutex.ReleaseMutex();
                 return;
@@ -90,19 +90,19 @@ namespace DwarfCorp
                     {
                         var v = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
 
-                        if((v.IsExplored && v.IsEmpty) || !v.IsVisible)
-                        {
-                            continue;
-                        }
+                        if((v.IsExplored && v.IsEmpty) || !v.IsVisible) continue;
 
                         BoxPrimitive primitive = VoxelLibrary.GetPrimitive(v.Type);
+
                         if (v.IsExplored && primitive == null) continue;
+
                         if (!v.IsExplored)
                         {
                             primitive = bedrockModel;
                         }
 
                         Color tint = v.Type.Tint;
+
                         BoxPrimitive.BoxTextureCoords uvs = primitive.UVs;
 
                         if (v.Type.HasTransitionTextures && v.IsExplored)
@@ -110,68 +110,41 @@ namespace DwarfCorp
                             uvs = ComputeTransitionTexture(new TemporaryVoxelHandle(v.Chunk.Manager.ChunkData, v.Coordinate));
                         }
 
-                        for(int i = 0; i < 6; i++)
+                        for (int i = 0; i < 6; i++)
                         {
-                            BoxFace face = (BoxFace) i;
-                            Vector3 delta = FaceDeltas[(int)face];
-                            faceExists[(int)face] = chunk.IsCellValid(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z);
-                            drawFace[(int)face] = true;
+                            BoxFace face = (BoxFace)i;
+                            Vector3 delta = FaceDeltas[i];
 
-                            if (faceExists[(int)face])
-                            {
-                                var faceVoxel = new TemporaryVoxelHandle(chunk,
-                                    new LocalVoxelCoordinate(x + (int)delta.X, y + (int)delta.Y, z + (int)delta.Z));
+                            var faceVoxel = new TemporaryVoxelHandle(chunk.Manager.ChunkData,
+                                    chunk.ID + new LocalVoxelCoordinate(x + (int)delta.X, y + (int)delta.Y, z + (int)delta.Z));
+                            drawFace[(int)face] = IsFaceVisible(v, faceVoxel, face);
+                                                        
+                            if (!drawFace[i]) continue;
 
-                                drawFace[(int)face] = (faceVoxel.IsExplored && faceVoxel.IsEmpty)
-                                    || (faceVoxel.Type.IsTransparent && !v.Type.IsTransparent)
-                                    || !faceVoxel.IsVisible
-                                    || (faceVoxel.Type.CanRamp && faceVoxel.RampType != RampType.None && IsSideFace(face) &&
-                                    ShouldDrawFace(face, faceVoxel.RampType, v.RampType));
-                            }
-                            else
-                            {
-                                var worldVoxel = new TemporaryVoxelHandle(chunk.Manager.ChunkData,
-                                    new GlobalVoxelCoordinate(chunk.ID, new LocalVoxelCoordinate(
-                                        (int)(x + delta.X), (int)(y + delta.Y), (int)(z + delta.Z))));
+                            // Let's get the vertex/index positions for the current face.
 
-                                drawFace[(int)face] = !worldVoxel.IsValid 
-                                    || (worldVoxel.IsExplored && worldVoxel.IsEmpty) 
-                                    || (worldVoxel.Type.IsTransparent && !v.Type.IsTransparent) 
-                                    || !worldVoxel.IsVisible 
-                                    || (worldVoxel.Type.CanRamp && worldVoxel.RampType != RampType.None &&
-                                                  IsSideFace(face) &&
-                                                  ShouldDrawFace(face, worldVoxel.RampType, v.RampType));
-                            }
-                        }
-
-                        for(int i = 0; i < 6; i++)
-                        {
-                            BoxFace face = (BoxFace) i;
-                            if(!drawFace[(int)face])
-                            {
-                                continue;
-                            }
-
-                          
                             int faceIndex = 0;
                             int faceCount = 0;
                             int vertexIndex = 0;
                             int vertexCount = 0;
-                            primitive.GetFace(face, uvs, out faceIndex, out faceCount, out vertexIndex, out vertexCount);
+
+                            primitive.GetFace(face, primitive.UVs, out faceIndex, out faceCount, out vertexIndex, out vertexCount);
                             int indexOffset = maxVertex;
+
+                            // Add vertex data to visible voxel faces
+
                             for (int vertOffset = 0; vertOffset < vertexCount; vertOffset++)
                             {
                                 ExtendedVertex vert = primitive.Vertices[vertOffset + vertexIndex];
-                                VoxelVertex bestKey = primitive.Deltas[vertOffset + vertexIndex];
-                                //Color color = v.Chunk.Data.GetColor(x, y, z, bestKey);
-                                Color color;
+                                VoxelVertex currentVertex = primitive.Deltas[vertOffset + vertexIndex];
+
                                 VoxelChunk.VertexColorInfo colorInfo = new VoxelChunk.VertexColorInfo();
-                                VoxelChunk.CalculateVertexLight(v, bestKey, chunk.Manager, ref colorInfo);
+                                VoxelChunk.CalculateVertexLight(v, currentVertex, chunk.Manager, ref colorInfo);
                                 ambientValues[vertOffset] = colorInfo.AmbientColor;
                                 Vector3 offset = Vector3.Zero;
                                 Vector2 texOffset = Vector2.Zero;
 
-                                if(v.Type.CanRamp && VoxelChunk.ShouldRamp(bestKey, v.RampType))
+                                if (v.Type.CanRamp && VoxelChunk.ShouldRamp(currentVertex, v.RampType))
                                 {
                                     offset = new Vector3(0, -v.Type.RampSize, 0);
                                 }
@@ -190,11 +163,13 @@ namespace DwarfCorp
                                     tint,
                                     uvs.Uvs[vertOffset + vertexIndex] + texOffset,
                                     uvs.Bounds[faceIndex / 6]);
+
                                 maxVertex++;
                             }
 
-                            bool flippedQuad = ambientValues[0] + ambientValues[2] > 
+                            bool flippedQuad = ambientValues[0] + ambientValues[2] >
                                                ambientValues[1] + ambientValues[3];
+
                             for (int idx = faceIndex; idx < faceCount + faceIndex; idx++)
                             {
                                 if (maxIndex >= Indexes.Length)
@@ -204,13 +179,13 @@ namespace DwarfCorp
                                     Indexes = indexes;
                                 }
 
-                                ushort vertexOffset = flippedQuad ? primitive.FlippedIndexes[idx] : primitive.Indexes[idx];
-                                ushort vertexOffset0 = flippedQuad? primitive.FlippedIndexes[faceIndex] : primitive.Indexes[faceIndex];
-                                Indexes[maxIndex] =
-                                    (ushort) ((int)indexOffset + (int)((int)vertexOffset - (int)vertexOffset0));
+                                ushort offset = flippedQuad ? primitive.FlippedIndexes[idx] : primitive.Indexes[idx];
+                                ushort offset0 = flippedQuad ? primitive.FlippedIndexes[faceIndex] : primitive.Indexes[faceIndex];
+                                Indexes[maxIndex] = (ushort)(indexOffset + offset - offset0);
                                 maxIndex++;
                             }
                         }
+                        // End looping faces
                     }
                 }
             }
@@ -249,7 +224,7 @@ namespace DwarfCorp
         {
             if (Type.Transitions == VoxelType.TransitionType.Horizontal)
             {
-                var value = ComputeTransitionValueOnPlain(
+                var value = ComputeTransitionValueOnPlane(
                     VoxelHelpers.EnumerateManhattanNeighbors2D(V.Coordinate)
                     .Select(c => new TemporaryVoxelHandle(Data, c)), Type);
 
@@ -260,12 +235,12 @@ namespace DwarfCorp
             }
             else
             {
-                var transitionFrontBack = ComputeTransitionValueOnPlain(
+                var transitionFrontBack = ComputeTransitionValueOnPlane(
                     VoxelHelpers.EnumerateManhattanNeighbors2D(V.Coordinate, ChunkManager.SliceMode.Z)
                     .Select(c => new TemporaryVoxelHandle(Data, c)),
                     Type);
 
-                var transitionLeftRight = ComputeTransitionValueOnPlain(
+                var transitionLeftRight = ComputeTransitionValueOnPlane(
                     VoxelHelpers.EnumerateManhattanNeighbors2D(V.Coordinate, ChunkManager.SliceMode.X)
                     .Select(c => new TemporaryVoxelHandle(Data, c)),
                     Type);
@@ -283,7 +258,7 @@ namespace DwarfCorp
         // Todo: Reorder 2d neighbors to make this unecessary.
         private static int[] TransitionMultipliers = new int[] { 2, 8, 4, 1 };
 
-        private static int ComputeTransitionValueOnPlain(IEnumerable<TemporaryVoxelHandle> Neighbors, VoxelType Type)
+        private static int ComputeTransitionValueOnPlane(IEnumerable<TemporaryVoxelHandle> Neighbors, VoxelType Type)
         {
             int index = 0;
             int accumulator = 0;
@@ -294,13 +269,6 @@ namespace DwarfCorp
                 index += 1;
             }
             return accumulator;
-        }
-
-        public bool ContainsNearVertex(Vector3 vertexPos1, List<VertexPositionColorTexture> accumulated)
-        {
-            const float epsilon = 0.001f;
-
-            return accumulated.Select(vert => (vertexPos1 - (vert.Position)).LengthSquared()).Any(dist => dist < epsilon);
         }
 
         public void Dispose()

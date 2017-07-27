@@ -28,7 +28,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 Clear();
                 ResourceCombos.Clear();
-                Parent.OnClick = null;
+                //Parent.OnClick = null;
 
                 var builder = new StringBuilder();
                 builder.AppendLine(Data.Name);

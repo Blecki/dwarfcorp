@@ -25,6 +25,8 @@ namespace DwarfCorp
 
         public static TemporaryVoxelHandle FindFirstVoxelBelowIncludeWater(TemporaryVoxelHandle V)
         {
+            if (!V.IsValid) return V;
+
             var p = V.Coordinate.GetLocalVoxelCoordinate();
 
             for (int y = p.Y; y >= 0; --y)

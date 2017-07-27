@@ -319,7 +319,7 @@ namespace DwarfCorp
                 else
                 {
                     Time = new WorldTime();
-
+                    // WorldOrigin is in "map" units. Convert to voxels
                     var globalOffset = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y) * WorldScale;
 
                     Camera = new OrbitCamera(this, 
@@ -332,9 +332,9 @@ namespace DwarfCorp
 
                     var chunkOffset = GlobalVoxelCoordinate.FromVector3(globalOffset).GetGlobalChunkCoordinate();
                     //var chunkOffset = ChunkManager.ChunkData.RoundToChunkCoords(globalOffset);
-                    globalOffset.X = chunkOffset.X * VoxelConstants.ChunkSizeX;
-                    globalOffset.Y = chunkOffset.Y * VoxelConstants.ChunkSizeY;
-                    globalOffset.Z = chunkOffset.Z * VoxelConstants.ChunkSizeZ;
+                    //globalOffset.X = chunkOffset.X * VoxelConstants.ChunkSizeX;
+                    //globalOffset.Y = chunkOffset.Y * VoxelConstants.ChunkSizeY;
+                    //globalOffset.Z = chunkOffset.Z * VoxelConstants.ChunkSizeZ;
 
                     WorldOrigin = new Vector2(globalOffset.X, globalOffset.Z);
                     Camera.Position = new Vector3(0, 10, 0) + globalOffset;
