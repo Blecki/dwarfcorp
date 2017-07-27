@@ -746,48 +746,6 @@ namespace DwarfCorp
             }
         }
 
-        #region transformations
-
-        public Vector3 WorldToGrid(Vector3 worldLocation)
-        {
-            Vector3 grid = (worldLocation - Origin);
-            return grid;
-        }
-
-        public Point3 WorldToGridPoint3(Vector3 worldLocation)
-        {
-            return new Point3(worldLocation - Origin);
-        }
-
-        public bool IsGridPositionValid(LocalVoxelCoordinate grid)
-        {
-            return IsCellValid(grid.X, grid.Y, grid.Z);
-        }
-
-        public bool IsWorldLocationValid(Vector3 worldLocation)
-        {
-            Vector3 grid = WorldToGrid(worldLocation);
-
-            return IsCellValid((int)grid.X, (int)grid.Y, (int)grid.Z);
-        }
-
-        public bool IsCellValid(int x, int y, int z)
-        {
-            return x >= 0 
-                && y >= 0 
-                && z >= 0 
-                && x < VoxelConstants.ChunkSizeX 
-                && y < VoxelConstants.ChunkSizeY 
-                && z < VoxelConstants.ChunkSizeZ;
-        }
-
-        public bool IsCellValid(Point3 point)
-        {
-            return IsCellValid(point.X, point.Y, point.Z);
-        }
-
-        #endregion transformations
-
         #region lighting
 
         public byte GetIntensity(DynamicLight light, byte lightIntensity, TemporaryVoxelHandle voxel)
