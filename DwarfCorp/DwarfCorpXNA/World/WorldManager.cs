@@ -107,7 +107,7 @@ namespace DwarfCorp
 
         public bool UseFXAA
         {
-            get { return MultiSamples == -1; }
+            get { return MultiSamples > 0; }
         }
 
         // The ratio of width to height in screen pixels. (ie 16/9 or 4/3)
@@ -883,10 +883,8 @@ namespace DwarfCorp
             {
                 bloom.DrawTarget = UseFXAA ? fxaa.RenderTarget : null;
                 bloom.Draw(gameTime.ToGameTime());
-                if (UseFXAA)
-                    fxaa.End();
             }
-            else if (UseFXAA)
+            if (UseFXAA)
             {
                 fxaa.End();
             }
