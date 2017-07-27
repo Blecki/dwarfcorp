@@ -119,8 +119,15 @@ namespace DwarfCorp
             }
             set
             {
+                var previous = _cache_Chunk.Data.Types[_cache_Index];
+
                 _cache_Chunk.Data.Types[_cache_Index] = value;
                 _cache_Chunk.Data.Health[_cache_Index] = (byte)VoxelType.TypeList[value].StartingHealth;
+
+                if (previous == 0 && value != 0)
+                    _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] += 1;
+                else if (previous != 0 && value == 0)
+                    _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] -= 1;
             }
         }
 
@@ -134,8 +141,15 @@ namespace DwarfCorp
             }
             set
             {
+                var previous = _cache_Chunk.Data.Types[_cache_Index];
+
                 _cache_Chunk.Data.Types[_cache_Index] = (byte)value.ID;
                 _cache_Chunk.Data.Health[_cache_Index] = (byte)value.StartingHealth;
+
+                if (previous == 0 && value.ID != 0)
+                    _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] += 1;
+                else if (previous != 0 && value.ID == 0)
+                    _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] -= 1;
             }
         }
 
@@ -152,7 +166,11 @@ namespace DwarfCorp
         }
 
         [JsonIgnore]
-        public int SunColor { get { return _cache_Chunk.Data.SunColors[_cache_Index]; } }
+        public int SunColor
+        {
+            get { return _cache_Chunk.Data.SunColors[_cache_Index]; }
+            set { _cache_Chunk.Data.SunColors[_cache_Index] = (byte)value; }
+        }
 
         [JsonIgnore]
         public bool IsExplored

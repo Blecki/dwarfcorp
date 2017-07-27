@@ -139,7 +139,12 @@ namespace DwarfCorp
                 c.Data.Types[i] = Types[i];
 
                 if (Types[i] > 0)
+                {
                     c.Data.Health[i] = (byte)VoxelLibrary.GetVoxelType(Types[i]).StartingHealth;
+
+                    // Rebuild the VoxelsPresentInSlice counters
+                    c.Data.VoxelsPresentInSlice[(i >> VoxelConstants.ZDivShift) >> VoxelConstants.XDivShift] += 1;
+                }                
             }
 
             Explored.CopyTo(c.Data.IsExplored, 0);

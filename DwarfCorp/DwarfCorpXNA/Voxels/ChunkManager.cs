@@ -606,7 +606,7 @@ namespace DwarfCorp
                     chunk.ShouldRebuild = true;
                     chunk.ShouldRecalculateLighting = true;
                     chunk.IsVisible = true;
-                    chunk.ResetSunlight(0);
+                    chunk.Data.ResetSunlight(0);
                     GeneratedChunks.Enqueue(chunk);
                     foreach (VoxelChunk chunk2 in GeneratedChunks)
                     {

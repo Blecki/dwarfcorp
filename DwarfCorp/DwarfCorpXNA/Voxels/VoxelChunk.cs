@@ -788,12 +788,6 @@ namespace DwarfCorp
             color.SunColor = (int)Math.Min((float)color.SunColor / (float)numChecked, 255);
         }
 
-        public void ResetSunlight(byte sunColor)
-        {
-            for (int i = 0; i < VoxelConstants.ChunkVoxelCount; i++)
-                Data.SunColors[i] = sunColor;
-        }
-
         public void UpdateSunlight(byte sunColor)
         {
             LightingCalculated = false;
@@ -806,17 +800,16 @@ namespace DwarfCorp
 
                     for (; y >= 0; y--)
                     {
-                        int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
-                        Data.SunColors[index] = sunColor;
-
-                        if (Data.Types[index] != 0 && !VoxelLibrary.GetVoxelType(Data.Types[index]).IsTransparent)
+                        var v = new TemporaryVoxelHandle(this, new LocalVoxelCoordinate(x, y, z));
+                        v.SunColor = sunColor;
+                        if (v.TypeID != 0 && !v.Type.IsTransparent)
                             break;
                     }
 
                     for (y -= 1; y >= 0; y--)
                     {
-                        int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
-                        Data.SunColors[index] = 0;
+                        var v = new TemporaryVoxelHandle(this, new LocalVoxelCoordinate(x, y, z));
+                        v.SunColor = 0;
                     }
                 }
             }
@@ -830,7 +823,7 @@ namespace DwarfCorp
             }
             else
             {
-                ResetSunlight(255);
+                Data.ResetSunlight(255);
             }
         }
 
