@@ -17,15 +17,15 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class GeometricPrimitive
     {
-        public int MaxIndex = 0;
-        public int MaxVertex = 0;
+        public int IndexCount = 0;
+        public int VertexCount = 0;
 
         [JsonIgnore]
         public IndexBuffer IndexBuffer = null;
 
-        public ushort[] Indexes = null;
+        public ushort[] Indexes = new ushort[1024];
 
-        public ExtendedVertex[] Vertices = null;
+        public ExtendedVertex[] Vertices = new ExtendedVertex[1024];
 
         [JsonIgnore]
         public static Vector3[] FaceDeltas = new Vector3[6];
@@ -98,25 +98,25 @@ namespace DwarfCorp
                     ResetBuffer(device);
                 }
 
-                if (MaxVertex <= 0)
+                if (VertexCount <= 0)
                 {
-                    MaxVertex = Vertices.Length;
+                    VertexCount = Vertices.Length;
                 }
 
-                if (MaxIndex <= 0 && Indexes != null)
+                if (IndexCount <= 0 && Indexes != null)
                 {
-                    MaxIndex = Indexes.Length;
+                    IndexCount = Indexes.Length;
                 }
 
                 device.SetVertexBuffer(VertexBuffer);
                 if (IndexBuffer != null)
                 {
                     device.Indices = IndexBuffer;
-                    device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, MaxVertex, 0, MaxIndex / 3);
+                    device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, VertexCount, 0, IndexCount / 3);
                 }
                 else if (Indexes == null || Indexes.Length == 0)
                 {
-                    device.DrawPrimitives(PrimitiveType.TriangleList, 0, MaxVertex/3);
+                    device.DrawPrimitives(PrimitiveType.TriangleList, 0, VertexCount/3);
                 }
             }
         }
@@ -227,7 +227,7 @@ namespace DwarfCorp
             float drawnHeight = 0;
 
             // For each 4-vertex quad...
-            for (int quad = 0; quad < MaxVertex / 4; quad++)
+            for (int quad = 0; quad < VertexCount / 4; quad++)
             {
 
                 // Compute the bounds of the quad
@@ -311,14 +311,14 @@ namespace DwarfCorp
                     IndexBuffer = null;
                 }
 
-                if (MaxIndex <= 0 && Indexes != null)
+                if (IndexCount <= 0 && Indexes != null)
                 {
-                    MaxIndex = Indexes.Length;
+                    IndexCount = Indexes.Length;
                 }
 
-                if (MaxVertex <= 0 && Vertices != null)
+                if (VertexCount <= 0 && Vertices != null)
                 {
-                    MaxVertex = Vertices.Length;
+                    VertexCount = Vertices.Length;
                 }
 
 

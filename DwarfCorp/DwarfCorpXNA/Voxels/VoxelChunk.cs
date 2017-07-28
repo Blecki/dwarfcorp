@@ -55,13 +55,6 @@ namespace DwarfCorp
 
         public event VoxelExplored OnVoxelExplored;
 
-        public struct VertexColorInfo
-        {
-            public int SunColor;
-            public int AmbientColor;
-            public int DynamicColor;
-        }
-
         public Dictionary<string, List<InstanceData>> Motes { get; set; }
         public VoxelListPrimitive Primitive { get; set; }
         public VoxelListPrimitive NewPrimitive = null;
@@ -756,38 +749,7 @@ namespace DwarfCorp
 
             return (byte)(int)((Math.Min(1.0f / (dist + 0.0001f), 1.0f)) * (float)light.Intensity);
         }
-
-
-        public static void CalculateVertexLight(TemporaryVoxelHandle vox, VoxelVertex face,
-            ChunkManager chunks, ref VertexColorInfo color)
-        {
-            float numHit = 1;
-            float numChecked = 1;
-
-            color.DynamicColor = 0;
-            color.SunColor += vox.SunColor;
-
-            foreach (var c in VoxelHelpers.EnumerateVertexNeighbors(vox.Coordinate, face))
-            {
-                var v = new TemporaryVoxelHandle(chunks.ChunkData, c);
-                if (!v.IsValid) continue;
-
-                color.SunColor += v.SunColor;
-                if (!v.IsEmpty || !v.IsExplored)
-                {
-                    if (v.Type.EmitsLight) color.DynamicColor = 255;
-                    numHit += 1;
-                    numChecked += 1;
-                }
-                else
-                    numChecked += 1;
-            }
-            
-            float proportionHit = numHit / numChecked;
-            color.AmbientColor = (int)Math.Min((1.0f - proportionHit) * 255.0f, 255);
-            color.SunColor = (int)Math.Min((float)color.SunColor / (float)numChecked, 255);
-        }
-
+        
         public void UpdateSunlight(byte sunColor)
         {
             LightingCalculated = false;

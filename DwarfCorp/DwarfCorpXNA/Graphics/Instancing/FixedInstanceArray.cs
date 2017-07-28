@@ -205,7 +205,7 @@ namespace DwarfCorp
             {
                 pass.Apply();
                 graphics.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0,
-                    Model.MaxVertex, 0,
+                    Model.VertexCount, 0,
                     Model.Indexes.Length / 3,
                     numActiveInstances);
             }
@@ -312,7 +312,7 @@ namespace DwarfCorp
 
         public void RenderSelectionBuffer(GraphicsDevice graphics, Shader effect, Camera cam, bool rebuildVertices)
         {
-            if (!HasSelectionBuffer || Model == null || Model.MaxVertex < 3 || numActiveInstances < 1)
+            if (!HasSelectionBuffer || Model == null || Model.VertexCount < 3 || numActiveInstances < 1)
             {
                 return;
             }

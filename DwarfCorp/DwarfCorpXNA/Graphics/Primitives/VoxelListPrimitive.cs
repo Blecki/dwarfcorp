@@ -16,7 +16,6 @@ namespace DwarfCorp
     /// </summary>
     public class VoxelListPrimitive : GeometricPrimitive, IDisposable
     {
-        protected readonly bool[] drawFace = new bool[6];
         protected bool isRebuilding = false;
         private readonly Mutex rebuildMutex = new Mutex();
         private static bool StaticsInitialized = false;
@@ -53,9 +52,7 @@ namespace DwarfCorp
         public void InitializeFromChunk(VoxelChunk chunk)
         {
             if (chunk == null)
-            {
                 return;
-            }
 
             rebuildMutex.WaitOne();
 
@@ -67,141 +64,180 @@ namespace DwarfCorp
 
             isRebuilding = true;
             rebuildMutex.ReleaseMutex();
+
             int[] ambientValues = new int[4];
-            int maxIndex = 0;
-            int maxVertex = 0;
+            VertexCount = 0;
+            IndexCount = 0;
             BoxPrimitive bedrockModel = VoxelLibrary.GetPrimitive("Bedrock");
 
-            if (Vertices == null)
+            for (var y = 0; y < Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, VoxelConstants.ChunkSizeY); ++y)
             {
-                Vertices = new ExtendedVertex[1024];
-            }
+                if (chunk.Data.VoxelsPresentInSlice[y] == 0)
+                    continue;
 
-            if (Indexes == null)
-            {
-                Indexes = new ushort[512];
-            }
-
-            for (int y = 0; y < Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, VoxelConstants.ChunkSizeY); y++)
-            {
-                for(int x = 0; x < VoxelConstants.ChunkSizeX; x++)
+                for(var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
                 {
-                    for(int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
+                    for(var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
                     {
-                        var v = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
-
-                        if((v.IsExplored && v.IsEmpty) || !v.IsVisible) continue;
-
-                        BoxPrimitive primitive = VoxelLibrary.GetPrimitive(v.Type);
-
-                        if (v.IsExplored && primitive == null) continue;
-
-                        if (!v.IsExplored)
-                        {
-                            primitive = bedrockModel;
-                        }
-
-                        Color tint = v.Type.Tint;
-
-                        BoxPrimitive.BoxTextureCoords uvs = primitive.UVs;
-
-                        if (v.Type.HasTransitionTextures && v.IsExplored)
-                        {
-                            uvs = ComputeTransitionTexture(new TemporaryVoxelHandle(v.Chunk.Manager.ChunkData, v.Coordinate));
-                        }
-
-                        for (int i = 0; i < 6; i++)
-                        {
-                            BoxFace face = (BoxFace)i;
-                            Vector3 delta = FaceDeltas[i];
-
-                            var faceVoxel = new TemporaryVoxelHandle(chunk.Manager.ChunkData,
-                                    chunk.ID + new LocalVoxelCoordinate(x + (int)delta.X, y + (int)delta.Y, z + (int)delta.Z));
-                            drawFace[(int)face] = IsFaceVisible(v, faceVoxel, face);
-                                                        
-                            if (!drawFace[i]) continue;
-
-                            // Let's get the vertex/index positions for the current face.
-
-                            int faceIndex = 0;
-                            int faceCount = 0;
-                            int vertexIndex = 0;
-                            int vertexCount = 0;
-
-                            primitive.GetFace(face, primitive.UVs, out faceIndex, out faceCount, out vertexIndex, out vertexCount);
-                            int indexOffset = maxVertex;
-
-                            // Add vertex data to visible voxel faces
-
-                            for (int vertOffset = 0; vertOffset < vertexCount; vertOffset++)
-                            {
-                                ExtendedVertex vert = primitive.Vertices[vertOffset + vertexIndex];
-                                VoxelVertex currentVertex = primitive.Deltas[vertOffset + vertexIndex];
-
-                                VoxelChunk.VertexColorInfo colorInfo = new VoxelChunk.VertexColorInfo();
-                                VoxelChunk.CalculateVertexLight(v, currentVertex, chunk.Manager, ref colorInfo);
-                                ambientValues[vertOffset] = colorInfo.AmbientColor;
-                                Vector3 offset = Vector3.Zero;
-                                Vector2 texOffset = Vector2.Zero;
-
-                                if (v.Type.CanRamp && VoxelChunk.ShouldRamp(currentVertex, v.RampType))
-                                {
-                                    offset = new Vector3(0, -v.Type.RampSize, 0);
-                                }
-
-                                if (maxVertex >= Vertices.Length)
-                                {
-                                    ExtendedVertex[] newVertices = new ExtendedVertex[Vertices.Length * 2];
-                                    Vertices.CopyTo(newVertices, 0);
-                                    Vertices = newVertices;
-                                }
-
-                                Vertices[maxVertex] = new ExtendedVertex(vert.Position + v.WorldPosition +
-                                                                   VertexNoise.GetNoiseVectorFromRepeatingTexture(
-                                                                       vert.Position + v.WorldPosition) + offset,
-                                    new Color(colorInfo.SunColor, colorInfo.AmbientColor, colorInfo.DynamicColor), 
-                                    tint,
-                                    uvs.Uvs[vertOffset + vertexIndex] + texOffset,
-                                    uvs.Bounds[faceIndex / 6]);
-
-                                maxVertex++;
-                            }
-
-                            bool flippedQuad = ambientValues[0] + ambientValues[2] >
-                                               ambientValues[1] + ambientValues[3];
-
-                            for (int idx = faceIndex; idx < faceCount + faceIndex; idx++)
-                            {
-                                if (maxIndex >= Indexes.Length)
-                                {
-                                    ushort[] indexes = new ushort[Indexes.Length * 2];
-                                    Indexes.CopyTo(indexes, 0);
-                                    Indexes = indexes;
-                                }
-
-                                ushort offset = flippedQuad ? primitive.FlippedIndexes[idx] : primitive.Indexes[idx];
-                                ushort offset0 = flippedQuad ? primitive.FlippedIndexes[faceIndex] : primitive.Indexes[faceIndex];
-                                Indexes[maxIndex] = (ushort)(indexOffset + offset - offset0);
-                                maxIndex++;
-                            }
-                        }
-                        // End looping faces
+                        BuildVoxelGeometry(ref Vertices, ref Indexes, ref VertexCount, ref IndexCount,
+                            x, y, z, chunk, bedrockModel, ambientValues);
                     }
                 }
             }
 
-            MaxIndex = maxIndex;
-            MaxVertex = maxVertex;
             GenerateLightmap(chunk.Manager.ChunkData.Tilemap.Bounds);
             isRebuilding = false;
 
-            //chunk.PrimitiveMutex.WaitOne();
+            chunk.PrimitiveMutex.WaitOne();
             chunk.NewPrimitive = this;
             chunk.NewPrimitiveReceived = true;
-            //chunk.PrimitiveMutex.ReleaseMutex();
+            chunk.PrimitiveMutex.ReleaseMutex();
         }
 
-        private BoxPrimitive.BoxTextureCoords ComputeTransitionTexture(TemporaryVoxelHandle V)
+        private static void BuildVoxelGeometry(
+            ref ExtendedVertex[] Verticies,
+            ref ushort[] Indicies,
+            ref int VertexCount,
+            ref int IndexCount,
+            int X,
+            int Y,
+            int Z,
+            VoxelChunk Chunk,
+            BoxPrimitive BedrockModel,
+            int[] AmbientScratchSpace)
+        {
+            var v = new TemporaryVoxelHandle(Chunk, new LocalVoxelCoordinate(X, Y, Z));
+
+            if ((v.IsExplored && v.IsEmpty) || !v.IsVisible) return;
+
+            var primitive = VoxelLibrary.GetPrimitive(v.Type);
+            if (v.IsExplored && primitive == null) return;
+
+            if (!v.IsExplored)
+                primitive = BedrockModel;
+
+            var tint = v.Type.Tint;
+
+            var uvs = primitive.UVs;
+
+            if (v.Type.HasTransitionTextures && v.IsExplored)
+            {
+                uvs = ComputeTransitionTexture(new TemporaryVoxelHandle(v.Chunk.Manager.ChunkData, v.Coordinate));
+            }
+
+            for (int i = 0; i < 6; i++)
+            {
+                BoxFace face = (BoxFace)i;
+                Vector3 delta = FaceDeltas[i];
+
+                var faceVoxel = new TemporaryVoxelHandle(Chunk.Manager.ChunkData,
+                        Chunk.ID + new LocalVoxelCoordinate(X + (int)delta.X, Y + (int)delta.Y, Z + (int)delta.Z));
+
+                if (!IsFaceVisible(v, faceVoxel, face))
+                    continue;
+
+                var faceDescriptor = primitive.GetFace(face);
+                var indexOffset = VertexCount;
+
+                for (int faceVertex = 0; faceVertex < faceDescriptor.VertexCount; faceVertex++)
+                {
+                    var vertex = primitive.Vertices[faceDescriptor.VertexOffset + faceVertex];
+                    var voxelVertex = primitive.Deltas[faceDescriptor.VertexOffset + faceVertex];
+
+                    var vertexColor = CalculateVertexLight(v, voxelVertex, Chunk.Manager);
+                    AmbientScratchSpace[faceVertex] = vertexColor.AmbientColor;
+
+                    var rampOffset = Vector3.Zero;
+                    if (v.Type.CanRamp && VoxelChunk.ShouldRamp(voxelVertex, v.RampType))
+                        rampOffset = new Vector3(0, -v.Type.RampSize, 0);
+
+                    EnsureSpace(ref Verticies, VertexCount);
+
+                    var worldPosition = v.WorldPosition + vertex.Position;
+
+                    Verticies[VertexCount] = new ExtendedVertex(
+                        worldPosition + rampOffset + VertexNoise.GetNoiseVectorFromRepeatingTexture(worldPosition),
+                        vertexColor.AsColor(),
+                        tint,
+                        uvs.Uvs[faceDescriptor.VertexOffset + faceVertex],
+                        uvs.Bounds[faceDescriptor.IndexOffset / 6]);
+
+                    VertexCount++;
+                }
+
+                bool flippedQuad = AmbientScratchSpace[0] + AmbientScratchSpace[2] >
+                                   AmbientScratchSpace[1] + AmbientScratchSpace[3];
+
+                for (int idx = faceDescriptor.IndexOffset; idx < faceDescriptor.IndexCount +
+                    faceDescriptor.IndexOffset; idx++)
+                {
+                    EnsureSpace(ref Indicies, IndexCount);
+
+                    ushort offset = flippedQuad ? primitive.FlippedIndexes[idx] : primitive.Indexes[idx];
+                    ushort offset0 = flippedQuad ? primitive.FlippedIndexes[faceDescriptor.IndexOffset] : primitive.Indexes[faceDescriptor.IndexOffset];
+                    Indicies[IndexCount] = (ushort)(indexOffset + offset - offset0);
+                    IndexCount++;
+                }
+            }
+            // End looping faces
+        }
+
+        private static void EnsureSpace<T>(ref T[] In, int Size)
+        {
+            if (Size >= In.Length)
+            {
+                var r = new T[In.Length * 2];
+                In.CopyTo(r, 0);
+                In = r;
+            }
+        }
+
+        private struct VertexColorInfo
+        {
+            public int SunColor;
+            public int AmbientColor;
+            public int DynamicColor;
+
+            public Color AsColor()
+            {
+                return new Color(SunColor, AmbientColor, DynamicColor);
+            }
+        }
+
+        private static VertexColorInfo CalculateVertexLight(TemporaryVoxelHandle vox, VoxelVertex face,
+            ChunkManager chunks)
+        {
+            float numHit = 1;
+            float numChecked = 1;
+
+            var color = new VertexColorInfo();
+            color.DynamicColor = 0;
+            color.SunColor = vox.SunColor;
+
+            foreach (var c in VoxelHelpers.EnumerateVertexNeighbors(vox.Coordinate, face))
+            {
+                var v = new TemporaryVoxelHandle(chunks.ChunkData, c);
+                if (!v.IsValid) continue;
+
+                color.SunColor += v.SunColor;
+                if (!v.IsEmpty || !v.IsExplored)
+                {
+                    if (v.Type.EmitsLight) color.DynamicColor = 255;
+                    numHit += 1;
+                    numChecked += 1;
+                }
+                else
+                    numChecked += 1;
+            }
+
+            float proportionHit = numHit / numChecked;
+            color.AmbientColor = (int)Math.Min((1.0f - proportionHit) * 255.0f, 255);
+            color.SunColor = (int)Math.Min((float)color.SunColor / (float)numChecked, 255);
+
+            return color;
+        }
+
+        private static BoxPrimitive.BoxTextureCoords ComputeTransitionTexture(TemporaryVoxelHandle V)
         {
             var type = V.Type;
             var primitive = VoxelLibrary.GetPrimitive(type);

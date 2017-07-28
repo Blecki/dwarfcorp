@@ -341,20 +341,11 @@ namespace DwarfCorp
                         {
                             if (chunk.RebuildPending && chunk.ShouldRebuild)
                             {
-                                /*
-                                if (chunk.ShouldRecalculateLighting)
-                                {
-                                    chunk.CalculateVertexLighting();
-                                }
-                                 */
+                                // Todo: Race condition? What if the chunk is modified while rebuilding??
                                 chunk.Rebuild(Graphics);
                                 chunk.ShouldRebuild = false;
                                 chunk.RebuildPending = false;
                                 chunk.ShouldRecalculateLighting = false;
-                            }
-                            else
-                            {
-                                chunk.RebuildPending = false;
                             }
                         }
                         

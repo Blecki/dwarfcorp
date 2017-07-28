@@ -14,7 +14,6 @@ namespace DwarfCorp
     {
         public LiquidType LiqType { get; set; }
         public bool IsBuilding = false;
-        protected readonly static bool[] drawFace = new bool[6];
 
         // The primitive everything will be based on.
         private static readonly BoxPrimitive primitive = VoxelLibrary.GetPrimitive("water");
@@ -314,8 +313,8 @@ namespace DwarfCorp
                     {
                         lock (updatedPrimative.VertexLock)
                         {
-                            updatedPrimative.MaxVertex = maxVertex;
-                            updatedPrimative.MaxIndex = maxIndex;
+                            updatedPrimative.VertexCount = maxVertex;
+                            updatedPrimative.IndexCount = maxIndex;
                             updatedPrimative.VertexBuffer = null;
                             updatedPrimative.IndexBuffer = null;
                         }
@@ -335,8 +334,8 @@ namespace DwarfCorp
                             updatedPrimative.Vertices = null;
                             updatedPrimative.IndexBuffer = null;
                             updatedPrimative.Indexes = null;
-                            updatedPrimative.MaxVertex = 0;
-                            updatedPrimative.MaxIndex = 0;
+                            updatedPrimative.VertexCount = 0;
+                            updatedPrimative.IndexCount = 0;
                         }
                     }
                     catch (System.Threading.AbandonedMutexException e)
@@ -377,20 +376,14 @@ namespace DwarfCorp
                 if (!cache.drawFace[i]) continue;
                 BoxFace face = (BoxFace)i;
 
-                // Let's get the vertex/index positions for the current face.
-                int faceIndex = 0;
-                int vertexCount = 0;
-                int vertexIndex = 0;
-                int faceCount = 0;
-
-                primitive.GetFace(face, primitive.UVs, out faceIndex, out faceCount, out vertexIndex, out vertexCount);
+                var faceDescriptor = primitive.GetFace(face);
                 int indexOffset = startVertex;
 
-                for (int vertOffset = 0; vertOffset < vertexCount; vertOffset++)
+                for (int vertOffset = 0; vertOffset < faceDescriptor.VertexCount; vertOffset++)
                 {
                     // Used twice so we'll store it for later use.
-                    ExtendedVertex vert = primitive.Vertices[vertOffset + vertexIndex];
-                    VoxelVertex currentVertex = primitive.Deltas[vertOffset + vertexIndex];
+                    ExtendedVertex vert = primitive.Vertices[faceDescriptor.VertexOffset + vertOffset];
+                    VoxelVertex currentVertex = primitive.Deltas[faceDescriptor.VertexOffset + vertOffset];
 
                     // These will be filled out before being used   lh  .
                     //float foaminess1;
@@ -437,7 +430,7 @@ namespace DwarfCorp
                             rampOffset.Y = -0.4f;
                         }
 
-                        pos = primitive.Vertices[vertOffset + vertexIndex].Position;
+                        pos = primitive.Vertices[vertOffset + faceDescriptor.VertexOffset].Position;
                         pos.Y -= 0.6f;// Minimum ramp position 
                         pos.Y *= ((float)voxel.WaterCell.WaterLevel / 8.0f); // Hack water level visualization in
                         pos += origin + rampOffset;
@@ -457,7 +450,7 @@ namespace DwarfCorp
                     vertices[startVertex].Set(pos,
                         new Color(foaminess[vertOffset], 0.0f, 1.0f, 1.0f),
                         Color.White,
-                        primitive.UVs.Uvs[vertOffset + vertexIndex],
+                        primitive.UVs.Uvs[vertOffset + faceDescriptor.VertexOffset],
                         new Vector4(0, 0, 1, 1));
 
                     startVertex++;
@@ -466,10 +459,10 @@ namespace DwarfCorp
                 bool flippedQuad = foaminess[1] + foaminess[3] > 
                                    foaminess[0] + foaminess[2];
 
-                for (int idx = faceIndex; idx < faceCount + faceIndex; idx++)
+                for (int idx = faceDescriptor.IndexOffset; idx < faceDescriptor.IndexCount + faceDescriptor.IndexOffset; idx++)
                 {
                     ushort offset = flippedQuad ? primitive.FlippedIndexes[idx] : primitive.Indexes[idx];
-                    ushort offset0 = flippedQuad ? primitive.FlippedIndexes[faceIndex] : primitive.Indexes[faceIndex];
+                    ushort offset0 = flippedQuad ? primitive.FlippedIndexes[faceDescriptor.IndexOffset] : primitive.Indexes[faceDescriptor.IndexOffset];
 
                     Indexes[startIndex] = (ushort)(indexOffset + offset - offset0);
                     startIndex++;
