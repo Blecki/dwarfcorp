@@ -59,7 +59,7 @@ namespace DwarfCorp
             {
                 while (!DwarfGame.ExitGame && !Manager.ExitThreads)
                 {
-                    if (Program.ShutdownEvent.WaitOne(500))
+                    if (Program.ShutdownEvent.WaitOne(1))
                         break;
 
                     

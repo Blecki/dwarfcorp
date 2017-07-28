@@ -124,10 +124,7 @@ namespace DwarfCorp
                 _cache_Chunk.Data.Types[_cache_Index] = value;
                 _cache_Chunk.Data.Health[_cache_Index] = (byte)VoxelType.TypeList[value].StartingHealth;
 
-                if (previous == 0 && value != 0)
-                    _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] += 1;
-                else if (previous != 0 && value == 0)
-                    _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] -= 1;
+                OnTypeSet(previous, value);
             }
         }
 
@@ -146,11 +143,19 @@ namespace DwarfCorp
                 _cache_Chunk.Data.Types[_cache_Index] = (byte)value.ID;
                 _cache_Chunk.Data.Health[_cache_Index] = (byte)value.StartingHealth;
 
-                if (previous == 0 && value.ID != 0)
-                    _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] += 1;
-                else if (previous != 0 && value.ID == 0)
-                    _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] -= 1;
+                OnTypeSet(previous, value.ID);
             }
+        }
+
+        private void OnTypeSet(int Previous, int New)
+        {
+            if (Previous == 0 && New != 0)
+                _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] += 1;
+            else if (Previous != 0 && New == 0)
+                _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] -= 1;
+
+            _cache_Chunk.Data.SliceCache[Coordinate.Y] = null;
+            if (Coordinate.Y > 0) _cache_Chunk.Data.SliceCache[Coordinate.Y - 1] = null;
         }
 
         [JsonIgnore]

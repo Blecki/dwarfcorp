@@ -432,7 +432,7 @@ namespace DwarfCorp
 
                         pos = primitive.Vertices[vertOffset + faceDescriptor.VertexOffset].Position;
                         pos.Y -= 0.6f;// Minimum ramp position 
-                        pos.Y *= ((float)voxel.WaterCell.WaterLevel / 8.0f); // Hack water level visualization in
+                        //pos.Y *= ((float)voxel.WaterCell.WaterLevel / 8.0f); // Hack water level visualization in
                         pos += origin + rampOffset;
 
                         // Store the vertex information for future use when we need it again on this or another face.
