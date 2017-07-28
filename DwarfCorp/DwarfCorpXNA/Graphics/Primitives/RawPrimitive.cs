@@ -36,7 +36,8 @@ namespace DwarfCorp
 
             foreach (var primitive in Primitives)
             {
-                primitive.Vertices.CopyTo(r.Vertices, vBase);
+                for (var i = 0; i < primitive.VertexCount; ++i)
+                    r.Vertices[vBase + i] = primitive.Vertices[i];
                 for (var i = 0; i < primitive.IndexCount; ++i)
                     r.Indexes[iBase + i] = (ushort)(primitive.Indexes[i] + vBase);
 

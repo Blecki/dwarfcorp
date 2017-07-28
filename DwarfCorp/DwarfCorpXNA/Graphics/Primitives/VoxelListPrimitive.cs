@@ -70,20 +70,38 @@ namespace DwarfCorp
             IndexCount = 0;
             BoxPrimitive bedrockModel = VoxelLibrary.GetPrimitive("Bedrock");
 
-            for (var y = 0; y < Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, VoxelConstants.ChunkSizeY); ++y)
+            for (var y = 0; y < chunk.Manager.ChunkData.MaxViewingLevel; ++y)
             {
-                if (chunk.Data.VoxelsPresentInSlice[y] == 0)
-                    continue;
+                if (chunk.Data.VoxelsPresentInSlice[y] == 0)  continue;
+                if (chunk.Data.SliceCache[y] != null) continue;
+
+                var sliceGeometry = new RawPrimitive
+                {
+                    Vertices = new ExtendedVertex[128],
+                    Indexes = new ushort[128]
+                };
+
+                chunk.Data.SliceCache[y] = sliceGeometry;
 
                 for(var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
                 {
                     for(var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
                     {
-                        BuildVoxelGeometry(ref Vertices, ref Indexes, ref VertexCount, ref IndexCount,
+                        BuildVoxelGeometry(ref sliceGeometry.Vertices, ref sliceGeometry.Indexes, ref sliceGeometry.VertexCount, ref sliceGeometry.IndexCount,
                             x, y, z, chunk, bedrockModel, ambientValues);
                     }
                 }
             }
+
+            var combinedGeometry = RawPrimitive.Concat(chunk.Data.SliceCache.Where((s, y) => 
+                s != null 
+                && y < chunk.Manager.ChunkData.MaxViewingLevel 
+                && chunk.Data.VoxelsPresentInSlice[y] != 0)); // Todo: Final check may be unecessary.
+
+            Vertices = combinedGeometry.Vertices;
+            VertexCount = combinedGeometry.VertexCount;
+            Indexes = combinedGeometry.Indexes;
+            IndexCount = combinedGeometry.IndexCount;
 
             GenerateLightmap(chunk.Manager.ChunkData.Tilemap.Bounds);
             isRebuilding = false;
