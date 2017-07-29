@@ -238,7 +238,7 @@ namespace DwarfCorp
                 List<Task> tasks = new List<Task>();
                 foreach (Body tree in bodies.Where(c => c.Tags.Contains("Vegetation")))
                 {
-                    if (!tree.IsVisible || tree.IsAboveCullPlane) continue;
+                    if (!tree.IsVisible || tree.IsAboveCullPlane(Player.World.ChunkManager)) continue;
 
                     Drawer3D.DrawBox(tree.BoundingBox, Color.LightGreen, 0.1f, false);
                     if (button == InputManager.MouseButton.Left)

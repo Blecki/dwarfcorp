@@ -77,7 +77,7 @@ namespace DwarfCorp
                 c.IsVisible && 
                 c.Parent == Player.World.ComponentManager.RootComponent))
             {
-                if (!resource.IsVisible || resource.IsAboveCullPlane) continue;
+                if (!resource.IsVisible || resource.IsAboveCullPlane(Player.World.ChunkManager)) continue;
                 Drawer3D.DrawBox(resource.BoundingBox, Color.LightGoldenrodYellow, 0.05f, true);
 
                 if(button == InputManager.MouseButton.Left)
