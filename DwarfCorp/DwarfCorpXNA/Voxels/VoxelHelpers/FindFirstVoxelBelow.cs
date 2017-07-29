@@ -16,7 +16,7 @@ namespace DwarfCorp
             for (int y = p.Y; y >= 0; --y)
             {
                 var vox = new TemporaryVoxelHandle(V.Chunk, new LocalVoxelCoordinate(p.X, y, p.Z));
-                if (vox.IsValid && !vox.IsEmpty)
+                if (!vox.IsEmpty)
                     return vox;
             }
 

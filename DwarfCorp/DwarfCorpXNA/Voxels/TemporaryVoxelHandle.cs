@@ -119,12 +119,7 @@ namespace DwarfCorp
             }
             set
             {
-                var previous = _cache_Chunk.Data.Types[_cache_Index];
-
-                _cache_Chunk.Data.Types[_cache_Index] = value;
-                _cache_Chunk.Data.Health[_cache_Index] = (byte)VoxelType.TypeList[value].StartingHealth;
-
-                OnTypeSet(previous, value);
+                OnTypeSet(VoxelType.TypeList[value]);
             }
         }
 
@@ -138,24 +133,65 @@ namespace DwarfCorp
             }
             set
             {
-                var previous = _cache_Chunk.Data.Types[_cache_Index];
-
-                _cache_Chunk.Data.Types[_cache_Index] = (byte)value.ID;
-                _cache_Chunk.Data.Health[_cache_Index] = (byte)value.StartingHealth;
-
-                OnTypeSet(previous, value.ID);
+                OnTypeSet(value);
             }
         }
 
-        private void OnTypeSet(int Previous, int New)
+        private void OnTypeSet(VoxelType NewType)
         {
-            if (Previous == 0 && New != 0)
+            // Changing a voxel is actually a relatively rare event, so we can afford to do a bit of 
+            // bookkeeping here.
+
+            var previous = _cache_Chunk.Data.Types[_cache_Index];
+
+            // Change actual data
+            _cache_Chunk.Data.Types[_cache_Index] = (byte)NewType.ID;
+            _cache_Chunk.Data.Health[_cache_Index] = (byte)NewType.StartingHealth;
+
+            // Did we go from empty to filled or vice versa? Update filled counter.
+            if (previous == 0 && NewType.ID != 0)
                 _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] += 1;
-            else if (Previous != 0 && New == 0)
+            else if (previous != 0 && NewType.ID == 0)
                 _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] -= 1;
 
+            // Invalidate slice cache for current chunk.
             _cache_Chunk.Data.SliceCache[Coordinate.Y] = null;
             if (Coordinate.Y > 0) _cache_Chunk.Data.SliceCache[Coordinate.Y - 1] = null;
+
+            // Invalidate slice cache for neighbor chunks.
+            if (Coordinate.X == 0)
+                InvalidateNeighborSlice(Chunk.Manager.ChunkData, Chunk.ID, new Point3(-1, 0, 0), Coordinate.Y);
+            if (Coordinate.X == VoxelConstants.ChunkSizeX - 1)
+                InvalidateNeighborSlice(Chunk.Manager.ChunkData, Chunk.ID, new Point3(1, 0, 0), Coordinate.Y);
+            if (Coordinate.Z == 0)
+                InvalidateNeighborSlice(Chunk.Manager.ChunkData, Chunk.ID, new Point3(0, 0, -1), Coordinate.Y);
+            if (Coordinate.Z == VoxelConstants.ChunkSizeZ - 1)
+                InvalidateNeighborSlice(Chunk.Manager.ChunkData, Chunk.ID, new Point3(0, 0, 1), Coordinate.Y);
+
+            // Find the first filled voxel below and invalidate it's layer.
+            if (Coordinate.Y > 0)
+            {
+                var localCoordinate = Coordinate.GetLocalVoxelCoordinate();
+                var below = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(Chunk,
+                    new LocalVoxelCoordinate(localCoordinate.X, localCoordinate.Y - 1, localCoordinate.Z)));
+                if (below.IsValid)
+                    _cache_Chunk.Data.SliceCache[below.Coordinate.Y] = null;
+            }
+        }
+
+        private void InvalidateNeighborSlice(ChunkData Chunks, GlobalChunkCoordinate ChunkCoordinate,
+            Point3 NeighborOffset, int Y)
+        {
+            var neighborCoordinate = new GlobalChunkCoordinate(ChunkCoordinate.X + NeighborOffset.X,
+                ChunkCoordinate.Y + NeighborOffset.Y,
+                ChunkCoordinate.Z + NeighborOffset.Z);
+
+            VoxelChunk chunk = null;
+            if (Chunks.ChunkMap.TryGetValue(neighborCoordinate, out chunk))
+            {
+                chunk.Data.SliceCache[Y] = null;
+                if (Y > 0) chunk.Data.SliceCache[Y - 1] = null;
+            }
         }
 
         [JsonIgnore]
