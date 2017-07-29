@@ -54,12 +54,12 @@ namespace DwarfCorp
         public ChunkData(ChunkManager chunkManager)
         {           
             this.chunkManager = chunkManager;
-            ChunkMap = new ConcurrentDictionary<GlobalChunkCoordinate, VoxelChunk>();
+            ChunkMap = new Dictionary<GlobalChunkCoordinate, VoxelChunk>();
             MaxViewingLevel = VoxelConstants.ChunkSizeY;
             Slice = ChunkManager.SliceMode.Y;
         }
 
-        public ConcurrentDictionary<GlobalChunkCoordinate, VoxelChunk> ChunkMap { get; set; }
+        public Dictionary<GlobalChunkCoordinate, VoxelChunk> ChunkMap { get; set; }
 
         public Texture2D Tilemap
         {
@@ -119,7 +119,7 @@ namespace DwarfCorp
             {
                 c.Data.SliceCache[oldLevel - 1] = null;
                 c.Data.SliceCache[MaxViewingLevel - 1] = null;
-                c.ShouldRecalculateLighting = true;
+                
                 c.ShouldRebuild = true;
             }
         }

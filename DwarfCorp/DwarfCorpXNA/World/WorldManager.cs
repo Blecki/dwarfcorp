@@ -502,7 +502,7 @@ namespace DwarfCorp
             GamePerformance.Instance.StopTrackPerformance("Chunk Manager");
 
             GamePerformance.Instance.StartTrackPerformance("Instance Manager");
-            InstanceManager.Update(gameTime, Camera, GraphicsDevice);
+            InstanceManager.Update(gameTime, Camera, GraphicsDevice, ChunkManager.ChunkData.MaxViewingLevel);
             GamePerformance.Instance.StopTrackPerformance("Instance Manager");
 
             GamePerformance.Instance.StartTrackPerformance("Sound Manager");
@@ -786,7 +786,7 @@ namespace DwarfCorp
             DrawSky(gameTime, Camera.ViewMatrix, 1.0f, DefaultShader.FogColor);
 
             // Defines the current slice for the GPU
-            float level = ChunkManager.ChunkData.MaxViewingLevel + 2.0f;
+            float level = ChunkManager.ChunkData.MaxViewingLevel + 0.25f;
             if (level > VoxelConstants.ChunkSizeY)
             {
                 level = 1000;

@@ -351,7 +351,7 @@ namespace DwarfCorp
 
                 for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
                 {
-                    for (int y = 1; y < Math.Min(Manager.ChunkData.MaxViewingLevel + 1, VoxelConstants.ChunkSizeY - 1); y++)
+                    for (int y = 1; y < VoxelConstants.ChunkSizeY - 1; y++)
                     {
                         for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                         {
@@ -685,16 +685,18 @@ namespace DwarfCorp
 
             VoxelListPrimitive primitive = new VoxelListPrimitive();
             primitive.InitializeFromChunk(this);
-
-            BuildGrassMotes();
             if (firstRebuild)
                 firstRebuild = false;
 
             RebuildLiquids();
+            if (ShouldRecalculateLighting)
+            {
+
+                BuildGrassMotes();
+                NotifyChangedComponents();
+            }
             IsRebuilding = false;
 
-            if (ShouldRecalculateLighting)
-                NotifyChangedComponents();
         }
 
         public void NotifyChangedComponents()
