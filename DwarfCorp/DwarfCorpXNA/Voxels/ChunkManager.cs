@@ -339,14 +339,8 @@ namespace DwarfCorp
 
                         foreach (VoxelChunk chunk in toRebuild.Select(chunkPair => chunkPair.Value))
                         {
-                            if (chunk.RebuildPending && chunk.ShouldRebuild)
-                            {
-                                // Todo: Race condition? What if the chunk is modified while rebuilding??
-                                chunk.Rebuild(Graphics);
-                                chunk.ShouldRebuild = false;
-                                chunk.RebuildPending = false;
-                                chunk.ShouldRecalculateLighting = false;
-                            }
+                            chunk.Rebuild(Graphics);
+                            chunk.ShouldRecalculateLighting = false;
                         }
                         
                     }
