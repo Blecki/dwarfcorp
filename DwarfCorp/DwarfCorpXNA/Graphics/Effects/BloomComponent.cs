@@ -24,18 +24,16 @@ namespace BloomPostprocess
     /// <summary>
     /// Full screen bloom effect from Microsoft
     /// </summary>
-    public class BloomComponent : DrawableGameComponent
+    public class BloomComponent : ScreenSpaceComponent
     {
         #region Fields
 
         public RenderTarget2D DrawTarget = null;
-        private SpriteBatch spriteBatch;
 
         private Effect bloomExtractEffect;
         private Effect bloomCombineEffect;
         private Effect gaussianBlurEffect;
 
-        public RenderTarget2D sceneRenderTarget;
         private RenderTarget2D renderTarget1;
         private RenderTarget2D renderTarget2;
 
@@ -48,7 +46,6 @@ namespace BloomPostprocess
         }
 
         private BloomSettings settings = BloomSettings.PresetSettings[0];
-
 
         // Optionally displays one of the intermediate buffers used
         // by the bloom postprocess, so you can see exactly what is
@@ -76,10 +73,6 @@ namespace BloomPostprocess
         public BloomComponent(Game game)
             : base(game)
         {
-            if(game == null)
-            {
-                throw new ArgumentNullException("game");
-            }
         }
 
 
@@ -88,18 +81,11 @@ namespace BloomPostprocess
         /// </summary>
         protected override void LoadContent()
         {
-            spriteBatch = DwarfCorp.DwarfGame.SpriteBatch;
+            base.LoadContent();
+
             bloomExtractEffect = Game.Content.Load<Effect>(ContentPaths.Shaders.BloomExtract);
             bloomCombineEffect = Game.Content.Load<Effect>(ContentPaths.Shaders.BloomCombine);
             gaussianBlurEffect = Game.Content.Load<Effect>(ContentPaths.Shaders.GaussianBlur);
-
-            // Look up the resolution and format of our main backbuffer.
-            PresentationParameters pp = GraphicsDevice.PresentationParameters;
-
-            int width = pp.BackBufferWidth;
-            int height = pp.BackBufferHeight;
-
-            SurfaceFormat format = pp.BackBufferFormat;
 
             // Create a texture for rendering the main scene, prior to applying bloom.
             sceneRenderTarget = new RenderTarget2D(GraphicsDevice, width, height, false,
@@ -118,10 +104,9 @@ namespace BloomPostprocess
         }
 
 
-        public void ValidateBuffers()
+        public override void ValidateBuffers()
         {
             // Look up the resolution and format of our main backbuffer.
-            PresentationParameters pp = GraphicsDevice.PresentationParameters;
             SurfaceFormat format = pp.BackBufferFormat;
 
             int width = pp.BackBufferWidth / 4;
@@ -149,20 +134,6 @@ namespace BloomPostprocess
         #endregion
 
         #region Draw
-
-        /// <summary>
-        /// This should be called at the very start of the scene rendering. The bloom
-        /// component uses it to redirect drawing into its custom rendertarget, so it
-        /// can capture the scene image in preparation for applying the bloom filter.
-        /// </summary>
-        public void BeginDraw()
-        {
-            ValidateBuffers();
-            if (Visible)
-            {
-                GraphicsDevice.SetRenderTarget(sceneRenderTarget);
-            }
-        }
 
         /// <summary>
         /// This is where it all happens. Grabs a scene that has already been rendered,

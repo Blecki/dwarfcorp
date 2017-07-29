@@ -886,7 +886,7 @@ namespace DwarfCorp
             }
             if (UseFXAA)
             {
-                fxaa.End();
+                fxaa.Draw(gameTime.ToGameTime());
             }
 
             RasterizerState rasterizerState = new RasterizerState()
@@ -954,14 +954,14 @@ namespace DwarfCorp
             {
                 pp.MultiSampleCount = 0;
             }
-
+            /*
             if (bloom != null)
             {
                 bloom.sceneRenderTarget = new RenderTarget2D(GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight,
                     false,
                     format, pp.DepthStencilFormat, pp.MultiSampleCount,
                     RenderTargetUsage.DiscardContents);
-            }
+            }*/
         }
 
         public void Dispose()

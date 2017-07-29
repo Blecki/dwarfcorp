@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-    class FXAA : DrawableGameComponent
+    public class FXAA : ScreenSpaceComponent
     {
         #region Fields
 
@@ -85,9 +85,6 @@ namespace DwarfCorp
         //   then start at zero and increase until aliasing is a problem.
         private float consoleEdgeThresholdMin = 0f;
 
-        public RenderTarget2D RenderTarget { get; set; }
-        private SpriteBatch spriteBatch;
-
         private Effect Shader { get; set; }
 
         #endregion
@@ -97,10 +94,6 @@ namespace DwarfCorp
         public FXAA(Game game)
             : base(game)
         {
-            if(game == null)
-            {
-                throw new ArgumentNullException("game");
-            }
         }
 
         /// <summary>
@@ -108,23 +101,23 @@ namespace DwarfCorp
         /// </summary>
         protected override void LoadContent()
         {
-            spriteBatch = DwarfCorp.DwarfGame.SpriteBatch;
-
-            // Look up the resolution and format of our main backbuffer.
-            PresentationParameters pp = GraphicsDevice.PresentationParameters;
-
-            int width = pp.BackBufferWidth;
-            int height = pp.BackBufferHeight;
-
-            SurfaceFormat format = pp.BackBufferFormat;
+            base.LoadContent();
 
             Shader = Game.Content.Load<Effect>(ContentPaths.Shaders.FXAA);
-            RenderTarget = new RenderTarget2D(GraphicsDevice, width, height, false, 
+            sceneRenderTarget = new RenderTarget2D(GraphicsDevice, width, height, false, 
                 format, DepthFormat.None);
 
+            SetParameters();
+            Shader.CurrentTechnique = Shader.Techniques["FXAA"];
+
+        }
+
+        public void SetParameters()
+        {
             Viewport viewport = GraphicsDevice.Viewport;
             Matrix projection = Matrix.CreateOrthographicOffCenter(0, viewport.Width, viewport.Height, 0, 0, 1);
             Matrix halfPixelOffset = Matrix.CreateTranslation(-0.5f, -0.5f, 0);
+
             Shader.Parameters["World"].SetValue(Matrix.Identity);
             Shader.Parameters["View"].SetValue(Matrix.Identity);
             Shader.Parameters["Projection"].SetValue(halfPixelOffset * projection);
@@ -153,54 +146,19 @@ namespace DwarfCorp
             Shader.Parameters["ConsoleEdgeSharpness"].SetValue(consoleEdgeSharpness);
             Shader.Parameters["ConsoleEdgeThreshold"].SetValue(consoleEdgeThreshold);
             Shader.Parameters["ConsoleEdgeThresholdMin"].SetValue(consoleEdgeThresholdMin);
-
-            Shader.CurrentTechnique = Shader.Techniques["FXAA"];
-
         }
 
-        public void ValidateBuffer()
+        public override void ValidateBuffers()
         {
-            PresentationParameters pp = GraphicsDevice.PresentationParameters;
             SurfaceFormat format = pp.BackBufferFormat;
 
-            if (RenderTarget == null || 
-                RenderTarget.Width != pp.BackBufferWidth ||
-                RenderTarget.Height != pp.BackBufferHeight)
+            if (sceneRenderTarget == null ||
+                sceneRenderTarget.Width != pp.BackBufferWidth ||
+                sceneRenderTarget.Height != pp.BackBufferHeight)
             {
-                RenderTarget = new RenderTarget2D(GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight, false, pp.BackBufferFormat, DepthFormat.None);
+                sceneRenderTarget = new RenderTarget2D(GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight, false, pp.BackBufferFormat, DepthFormat.None);
 
-                Viewport viewport = GraphicsDevice.Viewport;
-                Matrix projection = Matrix.CreateOrthographicOffCenter(0, viewport.Width, viewport.Height, 0, 0, 1);
-                Matrix halfPixelOffset = Matrix.CreateTranslation(-0.5f, -0.5f, 0);
-
-                Shader.Parameters["World"].SetValue(Matrix.Identity);
-                Shader.Parameters["View"].SetValue(Matrix.Identity);
-                Shader.Parameters["Projection"].SetValue(halfPixelOffset * projection);
-                Shader.Parameters["InverseViewportSize"].SetValue(new Vector2(1f / viewport.Width, 1f / viewport.Height));
-                Shader.Parameters["ConsoleSharpness"].SetValue(new Vector4(
-                    -N / viewport.Width,
-                    -N / viewport.Height,
-                    N / viewport.Width,
-                    N / viewport.Height
-                    ));
-                Shader.Parameters["ConsoleOpt1"].SetValue(new Vector4(
-                    -2.0f / viewport.Width,
-                    -2.0f / viewport.Height,
-                    2.0f / viewport.Width,
-                    2.0f / viewport.Height
-                    ));
-                Shader.Parameters["ConsoleOpt2"].SetValue(new Vector4(
-                    8.0f / viewport.Width,
-                    8.0f / viewport.Height,
-                    -4.0f / viewport.Width,
-                    -4.0f / viewport.Height
-                    ));
-                Shader.Parameters["SubPixelAliasingRemoval"].SetValue(subPixelAliasingRemoval);
-                Shader.Parameters["EdgeThreshold"].SetValue(edgeTheshold);
-                Shader.Parameters["EdgeThresholdMin"].SetValue(edgeThesholdMin);
-                Shader.Parameters["ConsoleEdgeSharpness"].SetValue(consoleEdgeSharpness);
-                Shader.Parameters["ConsoleEdgeThreshold"].SetValue(consoleEdgeThreshold);
-                Shader.Parameters["ConsoleEdgeThresholdMin"].SetValue(consoleEdgeThresholdMin);
+                SetParameters();
             }
         }
 
@@ -208,18 +166,10 @@ namespace DwarfCorp
 
         #region Draw
 
-        public void BeginDraw()
-        {
-            ValidateBuffer();
-            if (Visible)
-            {
-                GraphicsDevice.SetRenderTarget(RenderTarget);
-            }
-        }
-
-        public void End()
+        public override void Draw(GameTime dwarfTime)
         {
             GraphicsDevice.SetRenderTarget(null);
+
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.LinearClamp, 
                 DepthStencilState.None, RasterizerState.CullNone, Shader, Matrix.Identity);
             spriteBatch.Draw(RenderTarget, GraphicsDevice.Viewport.Bounds, Color.White);
