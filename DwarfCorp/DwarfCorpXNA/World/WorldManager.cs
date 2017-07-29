@@ -398,7 +398,7 @@ namespace DwarfCorp
             var handle = new TemporaryVoxelHandle(ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Camera.Position));
             return handle.IsValid && handle.WaterCell.WaterLevel > 0;
         }
-        
+
         /// <summary>
         /// Called every frame
         /// </summary>
@@ -448,25 +448,28 @@ namespace DwarfCorp
             // If not paused, we want to just update the rest of the game.
             if (!Paused)
             {
-                //GamePerformance.Instance.StartTrackPerformance("Diplomacy");
+                GamePerformance.Instance.StartTrackPerformance("Diplomacy");
                 Diplomacy.Update(gameTime, Time.CurrentDate, this);
-                //GamePerformance.Instance.StopTrackPerformance("Diplomacy");
+                GamePerformance.Instance.StopTrackPerformance("Diplomacy");
 
-                //GamePerformance.Instance.StartTrackPerformance("Components");
+                GamePerformance.Instance.StartTrackPerformance("Factions");
                 Factions.Update(gameTime);
+                GamePerformance.Instance.StopTrackPerformance("Factions");
+
+                GamePerformance.Instance.StartTrackPerformance("Components");
                 ComponentManager.Update(gameTime, ChunkManager, Camera);
-                //GamePerformance.Instance.StopTrackPerformance("Components");
+                GamePerformance.Instance.StopTrackPerformance("Components");
 
                 Sky.TimeOfDay = Time.GetSkyLightness();
 
                 Sky.CosTime = (float)(Time.GetTotalHours() * 2 * Math.PI / 24.0f);
                 DefaultShader.TimeOfDay = Sky.TimeOfDay;
 
-                //GamePerformance.Instance.StartTrackPerformance("Monster Spawner");
+                GamePerformance.Instance.StartTrackPerformance("Monster Spawner");
                 MonsterSpawner.Update(gameTime);
-                //GamePerformance.Instance.StopTrackPerformance("Monster Spawner");
+                GamePerformance.Instance.StopTrackPerformance("Monster Spawner");
 
-                //GamePerformance.Instance.StartTrackPerformance("All Asleep");
+                GamePerformance.Instance.StartTrackPerformance("All Asleep");
                 bool allAsleep = Master.AreAllEmployeesAsleep();
                 if (SleepPrompt && allAsleep && !FastForwardToDay && Time.IsNight())
                 {
@@ -488,33 +491,28 @@ namespace DwarfCorp
                 {
                     SleepPrompt = true;
                 }
-                //GamePerformance.Instance.StopTrackPerformance("All Asleep");
+                GamePerformance.Instance.StopTrackPerformance("All Asleep");
             }
 
             // These things are updated even when the game is paused
 
-            //GamePerformance.Instance.StartTrackPerformance("Chunk Manager");
+            GamePerformance.Instance.StartTrackPerformance("Chunk Manager");
             ChunkManager.Update(gameTime, Camera, GraphicsDevice);
             ChunkRenderer.Update(gameTime, Camera, GraphicsDevice);
-            //GamePerformance.Instance.StopTrackPerformance("Chunk Manager");
+            GamePerformance.Instance.StopTrackPerformance("Chunk Manager");
 
-            //GamePerformance.Instance.StartTrackPerformance("Instance Manager");
+            GamePerformance.Instance.StartTrackPerformance("Instance Manager");
             InstanceManager.Update(gameTime, Camera, GraphicsDevice);
-            //GamePerformance.Instance.StopTrackPerformance("Instance Manager");
+            GamePerformance.Instance.StopTrackPerformance("Instance Manager");
 
-            //GamePerformance.Instance.StartTrackPerformance("Sound Manager");
+            GamePerformance.Instance.StartTrackPerformance("Sound Manager");
             SoundManager.Update(gameTime, Camera, Time);
-            //GamePerformance.Instance.StopTrackPerformance("Sound Manager");
+            GamePerformance.Instance.StopTrackPerformance("Sound Manager");
 
-            //GamePerformance.Instance.StartTrackPerformance("Weather");
+            GamePerformance.Instance.StartTrackPerformance("Weather");
             Weather.Update(this.Time.CurrentDate, this);
-            //GamePerformance.Instance.StopTrackPerformance("Weather");
+            GamePerformance.Instance.StopTrackPerformance("Weather");
 
-            // Make sure that the slice slider snaps to the current viewing level (an integer)
-            //if(!LevelSlider.IsMouseOver)
-            {
-                //   LevelSlider.SliderValue = ChunkManager.ChunkData.MaxViewingLevel;
-            }
         }
 
         public bool FastForwardToDay { get; set; }

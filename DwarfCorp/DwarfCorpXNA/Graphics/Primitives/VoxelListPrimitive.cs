@@ -95,8 +95,7 @@ namespace DwarfCorp
 
             var combinedGeometry = RawPrimitive.Concat(chunk.Data.SliceCache.Where((s, y) => 
                 s != null 
-                && y < chunk.Manager.ChunkData.MaxViewingLevel 
-                && chunk.Data.VoxelsPresentInSlice[y] != 0)); // Todo: Final check may be unecessary.
+                && y < chunk.Manager.ChunkData.MaxViewingLevel)); 
 
             Vertices = combinedGeometry.Vertices;
             VertexCount = combinedGeometry.VertexCount;

@@ -161,7 +161,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public bool IsVisible
         {
-            get { return Coordinate.Y <= _cache_Chunk.Manager.ChunkData.MaxViewingLevel; }
+            get { return Coordinate.Y < _cache_Chunk.Manager.ChunkData.MaxViewingLevel; }
         }
 
         public BoundingBox GetBoundingBox()
