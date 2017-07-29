@@ -176,6 +176,7 @@
     <Compile Include="Components\Graphics\LightEmitter.cs" />
     <Compile Include="Components\Graphics\Mesh.cs" />
     <Compile Include="Components\Graphics\OrientedAnimation.cs" />
+    <Compile Include="Graphics\Primitives\RawPrimitive.cs" />
     <Compile Include="Gui\Widgets\CollapsableFrame.cs" />
     <Compile Include="Gui\Widgets\FlatToolTray.cs" />
     <Compile Include="ParticleEffects\ParticleEmitter.cs" />
@@ -369,7 +370,7 @@
     <Compile Include="Tutorial\TutorialSaveData.cs" />
     <Compile Include="Voxels\AutoScaleThread.cs" />
     <Compile Include="Voxels\ChunkRenderer.cs" />
-    <Compile Include="Voxels\NewVoxels\Coordinate.cs" />
+    <Compile Include="Voxels\Coordinate.cs" />
     <Compile Include="Voxels\VoxelHelpers\GetVoxelBoundingBox.cs" />
     <Compile Include="Voxels\VoxelHelpers\GetVoxelAbove.cs" />
     <Compile Include="Voxels\VoxelHelpers\Reveal.cs" />
@@ -380,8 +381,8 @@
     <Compile Include="Voxels\VoxelHelpers\DoesRayHitSolidVoxel.cs" />
     <Compile Include="Voxels\VoxelHelpers\DoesVoxelHaveVisibleSurface.cs" />
     <Compile Include="Voxels\VoxelHelpers\Neighbors.cs" />
-    <Compile Include="Voxels\NewVoxels\TemporaryVoxelHandle.cs" />
-    <Compile Include="Voxels\NewVoxels\VoxelConstants.cs" />
+    <Compile Include="Voxels\TemporaryVoxelHandle.cs" />
+    <Compile Include="Voxels\VoxelConstants.cs" />
     <Compile Include="Voxels\Enums.cs" />
     <Compile Include="Voxels\BoxTransition.cs" />
     <Compile Include="Voxels\VoxelData.cs" />

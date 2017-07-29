@@ -219,13 +219,22 @@ namespace DwarfCorp
 
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            GamePerformance.Instance.StartTrackPerformance("Components - transforms");
             if (RootComponent != null)
                 RootComponent.UpdateTransformsRecursive(null);
+            GamePerformance.Instance.StopTrackPerformance("Components - transforms");
 
+            GamePerformance.Instance.StartTrackPerformance("Components - update");
             foreach (var componentType in UpdateableComponents)
                 foreach (var component in componentType.Value)
                     if (component.Active)
+                    {
+                        GamePerformance.Instance.StartTrackPerformance("Component - " + component.GetType().Name);
                         component.Update(gameTime, chunks, camera);
+                        GamePerformance.Instance.StopTrackPerformance("Component - " + component.GetType().Name);
+                    }
+            GamePerformance.Instance.StopTrackPerformance("Components - update");
+
 
             AdditionMutex.WaitOne();
             foreach (GameComponent component in Additions)

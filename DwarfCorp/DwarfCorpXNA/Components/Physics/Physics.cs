@@ -383,8 +383,8 @@ namespace DwarfCorp
                     AngularVelocity *= AngularDamping;
 
                     // These will get called next time around anyway...
-                    UpdateBoundingBox();
-                    UpdateTransformsRecursive(Parent as Body);
+                    //UpdateBoundingBox();
+                    //UpdateTransformsRecursive(Parent as Body);
                 }
 
             }

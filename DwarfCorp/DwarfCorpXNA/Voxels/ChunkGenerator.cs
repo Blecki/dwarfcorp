@@ -359,17 +359,16 @@ namespace DwarfCorp
                         bool waterFound = false;
                         for (int dy = 0; dy < caveHeight; dy++)
                         {
-                            // x, y, z are in local chunk space.
-                            int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y - dy, z));
+                            var voxel = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y - dy, z));
 
-                            waterFound = VoxelHelpers.EnumerateManhattanNeighbors(chunk.ID + new LocalVoxelCoordinate(x, y - dy, z))
+                            waterFound = VoxelHelpers.EnumerateManhattanNeighbors(voxel.Coordinate)
                                 .Select(c => new TemporaryVoxelHandle(Manager.ChunkData, c))
                                 .Any(v => v.IsValid && v.WaterCell.WaterLevel > 0);
-                            
+
                             if (waterFound)
                                 break;
 
-                            chunk.Data.Types[index] = 0;
+                            voxel.TypeID = 0;
                         }
 
                         if (!waterFound && caveNoise > CaveSize*1.8f && y - caveHeight > 0)
@@ -412,10 +411,9 @@ namespace DwarfCorp
         public static void GenerateCaveVegetation(VoxelChunk chunk, int x, int y, int z, int caveHeight, BiomeData biome, Vector3 vec, WorldManager world, Perlin NoiseGenerator)
         {
             var vUnder = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y - 1, z));
+            var wayUnder = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y - caveHeight, z));
 
-            int indexunder = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y - caveHeight, z));
-            chunk.Data.Types[indexunder] = (byte)VoxelLibrary.GetVoxelType(biome.GrassLayer.VoxelType).ID;
-            chunk.Data.Health[indexunder] = (byte)VoxelLibrary.GetVoxelType(biome.GrassLayer.VoxelType).StartingHealth;
+            wayUnder.Type = VoxelLibrary.GetVoxelType(biome.GrassLayer.VoxelType);
             
             foreach (VegetationData veg in biome.Vegetation)
             {

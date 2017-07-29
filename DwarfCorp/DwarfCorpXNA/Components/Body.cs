@@ -141,7 +141,11 @@ namespace DwarfCorp
         public bool DepthSort { get; set; }
         public bool FrustrumCull { get; set; }
         public bool DrawInFrontOfSiblings { get; set; }
-        public bool IsAboveCullPlane { get; set; }
+
+        public bool IsAboveCullPlane(ChunkManager Chunks)
+        {
+            return GlobalTransform.Translation.Y - GetBoundingBox().Extents().Y > (Chunks.ChunkData.MaxViewingLevel + 5);
+        }
 
         public List<MotionAnimation> AnimationQueue { get; set; }
 
@@ -304,29 +308,6 @@ namespace DwarfCorp
 
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            //if (MathFunctions.HasNan(Position))
-            //{
-            //    Die();
-            //}
-
-            IsAboveCullPlane =  GlobalTransform.Translation.Y - GetBoundingBox().Extents().Y > (chunks.ChunkData.MaxViewingLevel + 5);
-
-            //if(DrawScreenRect) // Never true.
-            //{
-            //    Drawer2D.DrawRect(GetScreenRect(camera), Color.Transparent, Color.White, 1);
-            //}
-
-            //if(DrawBoundingBox) // Only used by TrapSensor
-            //{
-            //    Drawer3D.DrawBox(BoundingBox, Color.White, 0.02f);
-            //    Drawer3D.DrawBox(GetRotatedBoundingBox(), Color.Red, 0.02f);
-            //}
-
-            //if (DrawReservation && IsReserved) // Never true.
-            //{
-            //    Drawer3D.DrawBox(BoundingBox, Color.White, 0.02f);
-            //}
-
             if(AnimationQueue.Count > 0)
             {
                 HasMoved = true;

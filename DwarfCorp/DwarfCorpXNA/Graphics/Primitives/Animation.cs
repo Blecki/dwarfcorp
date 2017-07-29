@@ -247,6 +247,7 @@ namespace DwarfCorp
                 {
                     time = Speeds[Math.Min(CurrentFrame, Speeds.Count - 1)];
                 }
+
                 if(FrameTimer * SpeedMultiplier >= 1.0f / time)
                 {
                     NextFrame();

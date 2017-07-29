@@ -55,13 +55,6 @@ namespace DwarfCorp
 
         public event VoxelExplored OnVoxelExplored;
 
-        public struct VertexColorInfo
-        {
-            public int SunColor;
-            public int AmbientColor;
-            public int DynamicColor;
-        }
-
         public Dictionary<string, List<InstanceData>> Motes { get; set; }
         public VoxelListPrimitive Primitive { get; set; }
         public VoxelListPrimitive NewPrimitive = null;
@@ -684,31 +677,24 @@ namespace DwarfCorp
 
         public void Rebuild(GraphicsDevice g)
         {
-            //debug
-            //Drawer3D.DrawBox(GetBoundingBox(), Color.White, 0.1f);
-
             if (g == null || g.IsDisposed)
-            {
                 return;
-            }
+
             IsRebuilding = true;
+            ShouldRebuild = false;
 
             VoxelListPrimitive primitive = new VoxelListPrimitive();
             primitive.InitializeFromChunk(this);
 
             BuildGrassMotes();
             if (firstRebuild)
-            {
                 firstRebuild = false;
-            }
+
             RebuildLiquids();
             IsRebuilding = false;
 
             if (ShouldRecalculateLighting)
-            {
                 NotifyChangedComponents();
-            }
-            ShouldRebuild = false;
         }
 
         public void NotifyChangedComponents()
@@ -746,48 +732,6 @@ namespace DwarfCorp
             }
         }
 
-        #region transformations
-
-        public Vector3 WorldToGrid(Vector3 worldLocation)
-        {
-            Vector3 grid = (worldLocation - Origin);
-            return grid;
-        }
-
-        public Point3 WorldToGridPoint3(Vector3 worldLocation)
-        {
-            return new Point3(worldLocation - Origin);
-        }
-
-        public bool IsGridPositionValid(LocalVoxelCoordinate grid)
-        {
-            return IsCellValid(grid.X, grid.Y, grid.Z);
-        }
-
-        public bool IsWorldLocationValid(Vector3 worldLocation)
-        {
-            Vector3 grid = WorldToGrid(worldLocation);
-
-            return IsCellValid((int)grid.X, (int)grid.Y, (int)grid.Z);
-        }
-
-        public bool IsCellValid(int x, int y, int z)
-        {
-            return x >= 0 
-                && y >= 0 
-                && z >= 0 
-                && x < VoxelConstants.ChunkSizeX 
-                && y < VoxelConstants.ChunkSizeY 
-                && z < VoxelConstants.ChunkSizeZ;
-        }
-
-        public bool IsCellValid(Point3 point)
-        {
-            return IsCellValid(point.X, point.Y, point.Z);
-        }
-
-        #endregion transformations
-
         #region lighting
 
         public byte GetIntensity(DynamicLight light, byte lightIntensity, TemporaryVoxelHandle voxel)
@@ -798,44 +742,7 @@ namespace DwarfCorp
 
             return (byte)(int)((Math.Min(1.0f / (dist + 0.0001f), 1.0f)) * (float)light.Intensity);
         }
-
-
-        public static void CalculateVertexLight(TemporaryVoxelHandle vox, VoxelVertex face,
-            ChunkManager chunks, ref VertexColorInfo color)
-        {
-            float numHit = 1;
-            float numChecked = 1;
-
-            color.DynamicColor = 0;
-            color.SunColor += vox.SunColor;
-
-            foreach (var c in VoxelHelpers.EnumerateVertexNeighbors(vox.Coordinate, face))
-            {
-                var v = new TemporaryVoxelHandle(chunks.ChunkData, c);
-                if (!v.IsValid) continue;
-
-                color.SunColor += v.SunColor;
-                if (!v.IsEmpty || !v.IsExplored)
-                {
-                    if (v.Type.EmitsLight) color.DynamicColor = 255;
-                    numHit += 1;
-                    numChecked += 1;
-                }
-                else
-                    numChecked += 1;
-            }
-            
-            float proportionHit = numHit / numChecked;
-            color.AmbientColor = (int)Math.Min((1.0f - proportionHit) * 255.0f, 255);
-            color.SunColor = (int)Math.Min((float)color.SunColor / (float)numChecked, 255);
-        }
-
-        public void ResetSunlight(byte sunColor)
-        {
-            for (int i = 0; i < VoxelConstants.ChunkVoxelCount; i++)
-                Data.SunColors[i] = sunColor;
-        }
-
+        
         public void UpdateSunlight(byte sunColor)
         {
             LightingCalculated = false;
@@ -848,17 +755,16 @@ namespace DwarfCorp
 
                     for (; y >= 0; y--)
                     {
-                        int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
-                        Data.SunColors[index] = sunColor;
-
-                        if (Data.Types[index] != 0 && !VoxelLibrary.GetVoxelType(Data.Types[index]).IsTransparent)
+                        var v = new TemporaryVoxelHandle(this, new LocalVoxelCoordinate(x, y, z));
+                        v.SunColor = sunColor;
+                        if (v.TypeID != 0 && !v.Type.IsTransparent)
                             break;
                     }
 
                     for (y -= 1; y >= 0; y--)
                     {
-                        int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
-                        Data.SunColors[index] = 0;
+                        var v = new TemporaryVoxelHandle(this, new LocalVoxelCoordinate(x, y, z));
+                        v.SunColor = 0;
                     }
                 }
             }
@@ -872,7 +778,7 @@ namespace DwarfCorp
             }
             else
             {
-                ResetSunlight(255);
+                Data.ResetSunlight(255);
             }
         }
 

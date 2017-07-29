@@ -78,7 +78,7 @@ namespace DwarfCorp
         }
 
         // Todo: Why is this here?
-        public float MaxViewingLevel { get; set; }
+        public int MaxViewingLevel { get; set; }
         public ChunkManager.SliceMode Slice { get; set; }
 
         public Texture2D SunMap
@@ -105,18 +105,20 @@ namespace DwarfCorp
 
         // Final argument is always mode Y.
         // Todo: %KILL% - does not belong here.
-        public void SetMaxViewingLevel(float level, ChunkManager.SliceMode slice)
+        public void SetMaxViewingLevel(int level, ChunkManager.SliceMode slice)
         {
-            if (Math.Abs(level - MaxViewingLevel) < 0.1f && slice == Slice)
-            {
+            if (level == MaxViewingLevel && slice == Slice)
                 return;
-            }
+
+            var oldLevel = MaxViewingLevel;
 
             Slice = slice;
             MaxViewingLevel = Math.Max(Math.Min(level, VoxelConstants.ChunkSizeY), 1);
 
             foreach (VoxelChunk c in ChunkMap.Select(chunks => chunks.Value))
             {
+                c.Data.SliceCache[oldLevel - 1] = null;
+                c.Data.SliceCache[MaxViewingLevel - 1] = null;
                 c.ShouldRecalculateLighting = true;
                 c.ShouldRebuild = true;
             }
