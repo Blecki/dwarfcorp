@@ -73,7 +73,7 @@ namespace DwarfCorp
 
             for (var y = 0; y < chunk.Manager.ChunkData.MaxViewingLevel; ++y)
             {
-                if (chunk.Data.VoxelsPresentInSlice[y] == 0)  continue;
+                if (chunk.Data.VoxelsPresentInSlice[y] == 0) continue;
                 if (chunk.Data.SliceCache[y] != null) continue;
 
                 var sliceGeometry = new RawPrimitive
@@ -84,9 +84,9 @@ namespace DwarfCorp
 
                 chunk.Data.SliceCache[y] = sliceGeometry;
 
-                for(var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
+                for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
                 {
-                    for(var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
+                    for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
                     {
                         BuildVoxelGeometry(ref sliceGeometry.Vertices, ref sliceGeometry.Indexes, ref sliceGeometry.VertexCount, ref sliceGeometry.IndexCount,
                             x, y, z, chunk, bedrockModel, ambientValues);
@@ -108,14 +108,14 @@ namespace DwarfCorp
                 IndexCount = combinedGeometry.IndexCount;
 
                 GenerateLightmap(chunk.Manager.ChunkData.Tilemap.Bounds);
+
+                chunk.PrimitiveMutex.WaitOne();
+                chunk.NewPrimitive = this;
+                chunk.NewPrimitiveReceived = true;
+                chunk.PrimitiveMutex.ReleaseMutex();
             }
 
             isRebuilding = false;
-
-            chunk.PrimitiveMutex.WaitOne();
-            chunk.NewPrimitive = this;
-            chunk.NewPrimitiveReceived = true;
-            chunk.PrimitiveMutex.ReleaseMutex();
         }
 
         private static void BuildVoxelGeometry(
