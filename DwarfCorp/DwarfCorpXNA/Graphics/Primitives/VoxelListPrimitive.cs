@@ -69,6 +69,7 @@ namespace DwarfCorp
             VertexCount = 0;
             IndexCount = 0;
             BoxPrimitive bedrockModel = VoxelLibrary.GetPrimitive("Bedrock");
+            var totalBuilt = 0;
 
             for (var y = 0; y < chunk.Manager.ChunkData.MaxViewingLevel; ++y)
             {
@@ -91,18 +92,24 @@ namespace DwarfCorp
                             x, y, z, chunk, bedrockModel, ambientValues);
                     }
                 }
+
+                totalBuilt += 1;
             }
 
-            var combinedGeometry = RawPrimitive.Concat(chunk.Data.SliceCache.Where((s, y) => 
-                s != null 
-                && y < chunk.Manager.ChunkData.MaxViewingLevel)); 
+            if (totalBuilt != 0)
+            {
+                var combinedGeometry = RawPrimitive.Concat(chunk.Data.SliceCache.Where((s, y) =>
+                    s != null
+                    && y < chunk.Manager.ChunkData.MaxViewingLevel).Reverse());
 
-            Vertices = combinedGeometry.Vertices;
-            VertexCount = combinedGeometry.VertexCount;
-            Indexes = combinedGeometry.Indexes;
-            IndexCount = combinedGeometry.IndexCount;
+                Vertices = combinedGeometry.Vertices;
+                VertexCount = combinedGeometry.VertexCount;
+                Indexes = combinedGeometry.Indexes;
+                IndexCount = combinedGeometry.IndexCount;
 
-            GenerateLightmap(chunk.Manager.ChunkData.Tilemap.Bounds);
+                GenerateLightmap(chunk.Manager.ChunkData.Tilemap.Bounds);
+            }
+
             isRebuilding = false;
 
             chunk.PrimitiveMutex.WaitOne();
