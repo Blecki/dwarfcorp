@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
+using DwarfCorp.Gui.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -48,9 +49,14 @@ namespace DwarfCorp
     {
         private Body SelectedBody { get; set; }
         private bool mouseDown = false;
+        private TemporaryVoxelHandle prevVoxel = new TemporaryVoxelHandle();
+        private bool OverrideOrientation = false;
+        private float CurrentOrientation = 0.0f;
+
+        private bool leftPressed = false;
+        private bool rightPressed = false;
         public MoveObjectTool()
         {
-
         }
 
         public override void OnBegin()
@@ -80,13 +86,17 @@ namespace DwarfCorp
                         if (Player.Faction.OwnedObjects.Contains(body) && !body.IsReserved &&
                             body.Tags.Any(tag => tag == "Moveable"))
                         {
+                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, body.Position, 0.1f);
                             SelectedBody = body;
+                            Player.World.ShowToolPopup(String.Format("Press {0}/{1} to rotate.", ControlSettings.Mappings.RotateObjectLeft, ControlSettings.Mappings.RotateObjectRight));
                             break;
                         }
                     }
                     else if (Player.Faction.OwnedObjects.Contains(body) && body.Tags.Any(tag => tag == "Moveable") && !body.IsReserved)
                     {
                         body.Delete();
+                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, body.Position,
+                        0.5f);
                         if (CraftLibrary.CraftItems.ContainsKey(body.Name))
                         {
                             var item = CraftLibrary.CraftItems[body.Name];
@@ -149,50 +159,108 @@ namespace DwarfCorp
             if (SelectedBody != null)
             {
                 var voxelUnderMouse = Player.VoxSelector.VoxelUnderMouse;
-                if (voxelUnderMouse.IsValid && voxelUnderMouse.IsEmpty)
+                if (voxelUnderMouse != prevVoxel && voxelUnderMouse.IsValid && voxelUnderMouse.IsEmpty)
                 {
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_click_voxel, voxelUnderMouse.WorldPosition,
+                        0.1f);
                     SelectedBody.LocalPosition = voxelUnderMouse.WorldPosition + Vector3.One * 0.5f;
                     SelectedBody.HasMoved = true;
                     SelectedBody.UpdateTransformsRecursive(SelectedBody.Parent as Body);
+                    if (OverrideOrientation)
+                    {
+                        SelectedBody.Orient(CurrentOrientation);
+                    }
+                    else
+                    {
+                        SelectedBody.OrientToWalls();   
+                    }
+                    SelectedBody.UpdateBoundingBox();
                 }
 
                 foreach (var obj in Player.Faction.OwnedObjects)
                 {
-                    Drawer3D.DrawBox(obj.GetBoundingBox(), Color.White, 0.001f);
+                    Drawer3D.DrawBox(obj.GetRotatedBoundingBox(), Color.White, 0.001f);
                 }
 
                 var intersectsAnyOther =
                     Player.Faction.OwnedObjects.FirstOrDefault(
-                        o => o != SelectedBody && o.GetRotatedBoundingBox().Intersects(SelectedBody.GetRotatedBoundingBox()));
-                Drawer3D.DrawBox(SelectedBody.GetBoundingBox(), Color.White, 0.1f);
+                        o => o != SelectedBody && o.GetRotatedBoundingBox().Intersects(SelectedBody.GetRotatedBoundingBox().Expand(-0.1f)));
+                Drawer3D.DrawBox(SelectedBody.GetRotatedBoundingBox(), Color.White, 0.05f);
+
+                bool intersectsWall = VoxelHelpers.EnumerateCoordinatesInBoundingBox(
+                    SelectedBody.GetRotatedBoundingBox().Expand(-0.1f)).Any(
+                        v =>
+                        {
+                            var tvh = new TemporaryVoxelHandle(Player.VoxSelector.Chunks.ChunkData, v);
+                            return tvh.IsValid && !tvh.IsEmpty;
+                        });
                 var tinter = SelectedBody.GetComponent<Tinter>();
                 if (tinter != null)
                 {
-                    tinter.VertexColorTint = intersectsAnyOther == null ? Color.Green : Color.Red;
+                    tinter.VertexColorTint = intersectsAnyOther == null && !intersectsWall ? Color.Green : Color.Red;
                 }
                 MouseState mouse = Mouse.GetState();
-                SelectedBody.OrientToWalls();
                 if (mouse.LeftButton == ButtonState.Released && mouseDown)
                 {
                     mouseDown = false;
-                    if (intersectsAnyOther == null)
+                    if (intersectsAnyOther == null && !intersectsWall)
                     {
+                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, SelectedBody.Position, 0.5f);
+                        SelectedBody.UpdateBoundingBox();
                         SelectedBody = null;
+                        OverrideOrientation = false;
+                        CurrentOrientation = 0;
                         if (tinter != null)
                             tinter.VertexColorTint = Color.White;
                     }
+                    else if (!intersectsWall)
+                    {
+                        Player.World.ShowToolPopup("Can't move here: intersects " + intersectsAnyOther.Name);
+                    }
                     else
                     {
-                        Player.World.ShowToolPopup("Can't move here, it intersects a " + intersectsAnyOther.Name);
+                        Player.World.ShowToolPopup("Can't move here: intersects wall.");
                     }
                 }
                 else if (mouse.LeftButton == ButtonState.Pressed)
                 {
                     mouseDown = true;
                 }
-
+                prevVoxel = voxelUnderMouse;
 
             }
+
+            KeyboardState state = Keyboard.GetState();
+            bool leftKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectLeft);
+            bool rightKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectRight);
+            if (leftPressed && !leftKey)
+            {
+                OverrideOrientation = true;
+                leftPressed = false;
+                CurrentOrientation += (float)(Math.PI / 2);
+                if (SelectedBody != null)
+                {
+                    SelectedBody.Orient(CurrentOrientation);
+                    SelectedBody.UpdateBoundingBox();
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, SelectedBody.Position, 0.5f);
+                }
+            }
+
+            if (rightPressed && !rightKey)
+            {
+                OverrideOrientation = true;
+                rightPressed = false;
+                CurrentOrientation -= (float)(Math.PI / 2);
+                if (SelectedBody != null)
+                {
+                    SelectedBody.Orient(CurrentOrientation);
+                    SelectedBody.UpdateBoundingBox();
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, SelectedBody.Position, 0.5f);
+                }
+            }
+
+            leftPressed = leftKey;
+            rightPressed = rightKey;
 
         }
 

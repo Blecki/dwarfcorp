@@ -240,13 +240,18 @@ namespace DwarfCorp
                     if (v.IsValid && !v.IsEmpty)
                     { 
                         Vector3 diff = n.ToVector3() - curr.WorldPosition;
-                        Matrix mat = Matrix.CreateRotationY((float)Math.Atan2(diff.X, diff.Z));
-                        mat.Translation = LocalTransform.Translation;
-                        LocalTransform = mat;
+                        Orient((float)Math.Atan2(diff.X, diff.Z));
                         break;
                     }
                 }
             }
+        }
+
+        public void Orient(float angle)
+        {
+            Matrix mat = Matrix.CreateRotationY(angle);
+            mat.Translation = LocalTransform.Translation;
+            LocalTransform = mat;
         }
  
 
@@ -387,7 +392,7 @@ namespace DwarfCorp
         {
             Vector3 min = Vector3.Transform(BoundingBox.Min - GlobalTransform.Translation, GlobalTransform);
             Vector3 max = Vector3.Transform(BoundingBox.Max - GlobalTransform.Translation, GlobalTransform);
-            return new BoundingBox(min, max);
+            return new BoundingBox(MathFunctions.Min(min, max), MathFunctions.Max(min, max));
         }
 
 

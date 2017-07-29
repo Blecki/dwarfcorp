@@ -34,6 +34,8 @@ namespace DwarfCorp
             ControlSettings.Mappings.Map = this["Toggle Map"];
             ControlSettings.Mappings.Pause = this["Pause"];
             ControlSettings.Mappings.Jump = this["Jump"];
+            ControlSettings.Mappings.RotateObjectLeft = this["Rotate Object Left"];
+            ControlSettings.Mappings.RotateObjectRight = this["Rotate Object Right"];
             ControlSettings.Save();
         }
 
@@ -60,6 +62,8 @@ namespace DwarfCorp
             this["Toggle Map"] = ControlSettings.Mappings.Map;
             this["Pause"] = ControlSettings.Mappings.Pause;
             this["Jump"] = ControlSettings.Mappings.Jump;
+            this["Rotate Object Left"] = ControlSettings.Mappings.RotateObjectLeft;
+            this["Rotate Object Right"] = ControlSettings.Mappings.RotateObjectRight;
         }
 
         public KeyManager()
