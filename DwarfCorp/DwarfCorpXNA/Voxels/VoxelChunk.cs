@@ -677,31 +677,24 @@ namespace DwarfCorp
 
         public void Rebuild(GraphicsDevice g)
         {
-            //debug
-            //Drawer3D.DrawBox(GetBoundingBox(), Color.White, 0.1f);
-
             if (g == null || g.IsDisposed)
-            {
                 return;
-            }
+
             IsRebuilding = true;
+            ShouldRebuild = false;
 
             VoxelListPrimitive primitive = new VoxelListPrimitive();
             primitive.InitializeFromChunk(this);
 
             BuildGrassMotes();
             if (firstRebuild)
-            {
                 firstRebuild = false;
-            }
+
             RebuildLiquids();
             IsRebuilding = false;
 
             if (ShouldRecalculateLighting)
-            {
                 NotifyChangedComponents();
-            }
-            ShouldRebuild = false;
         }
 
         public void NotifyChangedComponents()
