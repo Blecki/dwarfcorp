@@ -386,7 +386,7 @@ namespace DwarfCorp
 
                 if (above.IsValid)
                 {
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(above.Coordinate.Y - 1, ChunkManager.SliceMode.Y);
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(above.Coordinate.Y, ChunkManager.SliceMode.Y);
                 }
                 else
                 {
@@ -509,7 +509,7 @@ namespace DwarfCorp
                 if (VoxSelector.VoxelUnderMouse.IsValid)
                 {
                     World.Tutorial("unslice");
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Coordinate.Y,
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Coordinate.Y + 1,
                         ChunkManager.SliceMode.Y);
                     Drawer3D.DrawBox(VoxSelector.VoxelUnderMouse.GetBoundingBox(), Color.White, 0.15f, true);
                 }

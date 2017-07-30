@@ -80,6 +80,7 @@ namespace DwarfCorp
         {
             if (Coordinate.X < ChunkMapMinX || Coordinate.X >= ChunkMapMinX + ChunkMapWidth) return false;
             if (Coordinate.Z < ChunkMapMinZ || Coordinate.Z >= ChunkMapMinZ + ChunkMapHeight) return false;
+            if (Coordinate.Y != 0) return false;
             return true;
         }
 

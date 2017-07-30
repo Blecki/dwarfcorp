@@ -171,26 +171,16 @@ namespace DwarfCorp
             else if (previous != 0 && NewType.ID == 0)
                 _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] -= 1;
 
-            // Invalidate slice cache for current chunk.
-            _cache_Chunk.Data.SliceCache[Coordinate.Y] = null;
-            if (Coordinate.Y > 0) _cache_Chunk.Data.SliceCache[Coordinate.Y - 1] = null;
+            if (Coordinate.Y < VoxelConstants.ChunkSizeY - 1)
+                InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y + 1);
+            InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
 
-            // Invalidate slice cache for neighbor chunks.
-            if (Coordinate.X == 0)
-                InvalidateNeighborSlice(Chunk.Manager.ChunkData, Chunk.ID, new Point3(-1, 0, 0), Coordinate.Y);
-            if (Coordinate.X == VoxelConstants.ChunkSizeX - 1)
-                InvalidateNeighborSlice(Chunk.Manager.ChunkData, Chunk.ID, new Point3(1, 0, 0), Coordinate.Y);
-            if (Coordinate.Z == 0)
-                InvalidateNeighborSlice(Chunk.Manager.ChunkData, Chunk.ID, new Point3(0, 0, -1), Coordinate.Y);
-            if (Coordinate.Z == VoxelConstants.ChunkSizeZ - 1)
-                InvalidateNeighborSlice(Chunk.Manager.ChunkData, Chunk.ID, new Point3(0, 0, 1), Coordinate.Y);
-
-            // Find the first filled voxel below and invalidate it's layer.
+            // Propogate sunlight (or lack thereof) downwards.
             if (Coordinate.Y > 0)
             {
                 var localCoordinate = Coordinate.GetLocalVoxelCoordinate();
                 var Y = localCoordinate.Y - 1;
-                var sunColor = NewType.ID == 0 ? this.SunColor : 0;
+                var sunColor = (NewType.ID == 0 || NewType.IsTransparent) ? this.SunColor : 0;
                 var below = TemporaryVoxelHandle.InvalidHandle;
 
                 while (Y >= 0)
@@ -198,20 +188,54 @@ namespace DwarfCorp
                     below = new TemporaryVoxelHandle(Chunk, new LocalVoxelCoordinate(localCoordinate.X, Y,
                         localCoordinate.Z));
                     below.SunColor = sunColor;
+                    InvalidateVoxel(Chunk, new GlobalVoxelCoordinate(Coordinate.X, Y, Coordinate.Z), Y);
                     if (!below.IsEmpty && !below.Type.IsTransparent)
                         break;
                     Y -= 1;
                 }
-
-                if (below.IsValid)
-                    _cache_Chunk.Data.SliceCache[below.Coordinate.Y] = null;
             }
         }
 
-        private void InvalidateNeighborSlice(ChunkData Chunks, GlobalChunkCoordinate ChunkCoordinate,
+        private static void InvalidateVoxel(
+            VoxelChunk Chunk,
+            GlobalVoxelCoordinate Coordinate,
+            int Y)
+        {
+            Chunk.Data.SliceCache[Coordinate.Y] = null;
+
+            var localCoordinate = Coordinate.GetLocalVoxelCoordinate();
+
+            // Invalidate slice cache for neighbor chunks.
+            if (localCoordinate.X == 0)
+            {
+                InvalidateNeighborSlice(Chunk.Manager.ChunkData, Chunk.ID, new Point3(-1, 0, 0), Y);
+                if (localCoordinate.Z == 0)
+                    InvalidateNeighborSlice(Chunk.Manager.ChunkData, Chunk.ID, new Point3(-1, 0, -1), Y);
+                if (localCoordinate.Z == VoxelConstants.ChunkSizeZ - 1)
+                    InvalidateNeighborSlice(Chunk.Manager.ChunkData, Chunk.ID, new Point3(-1, 0, 1), Y);
+            }
+
+            if (localCoordinate.X == VoxelConstants.ChunkSizeX - 1)
+            {
+                InvalidateNeighborSlice(Chunk.Manager.ChunkData, Chunk.ID, new Point3(1, 0, 0), Y);
+                if (localCoordinate.Z == 0)
+                    InvalidateNeighborSlice(Chunk.Manager.ChunkData, Chunk.ID, new Point3(1, 0, -1), Y);
+                if (localCoordinate.Z == VoxelConstants.ChunkSizeZ - 1)
+                    InvalidateNeighborSlice(Chunk.Manager.ChunkData, Chunk.ID, new Point3(1, 0, 1), Y);
+            }
+
+            if (localCoordinate.Z == 0)
+                InvalidateNeighborSlice(Chunk.Manager.ChunkData, Chunk.ID, new Point3(0, 0, -1), Y);
+
+            if (localCoordinate.Z == VoxelConstants.ChunkSizeZ - 1)
+                InvalidateNeighborSlice(Chunk.Manager.ChunkData, Chunk.ID, new Point3(0, 0, 1), Y);
+        }
+
+        private static void InvalidateNeighborSlice(ChunkData Chunks, GlobalChunkCoordinate ChunkCoordinate,
             Point3 NeighborOffset, int Y)
         {
-            var neighborCoordinate = new GlobalChunkCoordinate(ChunkCoordinate.X + NeighborOffset.X,
+            var neighborCoordinate = new GlobalChunkCoordinate(
+                ChunkCoordinate.X + NeighborOffset.X,
                 ChunkCoordinate.Y + NeighborOffset.Y,
                 ChunkCoordinate.Z + NeighborOffset.Z);
 
@@ -219,7 +243,7 @@ namespace DwarfCorp
             {
                 var chunk = Chunks.GetChunk(neighborCoordinate);
                 chunk.Data.SliceCache[Y] = null;
-                if (Y > 0) chunk.Data.SliceCache[Y - 1] = null;
+                chunk.ShouldRebuild = true;
             }
         }
 

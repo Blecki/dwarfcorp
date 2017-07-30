@@ -411,7 +411,7 @@ namespace DwarfCorp
             var vUnder = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y - 1, z));
             var wayUnder = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y - caveHeight, z));
 
-            wayUnder.Type = VoxelLibrary.GetVoxelType(biome.GrassLayer.VoxelType);
+            wayUnder.RawSetType(VoxelLibrary.GetVoxelType(biome.GrassLayer.VoxelType));
             
             foreach (VegetationData veg in biome.Vegetation)
             {
