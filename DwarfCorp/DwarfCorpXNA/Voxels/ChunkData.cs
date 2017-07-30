@@ -80,7 +80,7 @@ namespace DwarfCorp
         {
             if (Coordinate.X < ChunkMapMinX || Coordinate.X >= ChunkMapMinX + ChunkMapWidth) return false;
             if (Coordinate.Z < ChunkMapMinZ || Coordinate.Z >= ChunkMapMinZ + ChunkMapHeight) return false;
-            return true;
+            return Coordinate.Y == 0;
         }
 
         public IEnumerable<VoxelChunk> GetChunkEnumerator()

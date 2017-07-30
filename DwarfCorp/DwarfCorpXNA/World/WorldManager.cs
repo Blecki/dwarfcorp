@@ -823,7 +823,7 @@ namespace DwarfCorp
             DefaultShader.GhostClippingEnabled = true;
             // Now draw all of the entities in the game
             DefaultShader.ClipPlane = new Vector4(slicePlane.Normal, slicePlane.D);
-            DefaultShader.ClippingEnabled = false;
+            DefaultShader.ClippingEnabled = true;
 
             // Render simple geometry (boxes, etc.)
             Drawer3D.Render(GraphicsDevice, DefaultShader, true);
