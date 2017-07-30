@@ -217,7 +217,15 @@ namespace DwarfCorp
         public bool IsExplored
         {
             get { return !GameSettings.Default.FogofWar || _cache_Chunk.Data.IsExplored[_cache_Index]; }
-            set { _cache_Chunk.Data.IsExplored[_cache_Index] = value; }
+            set
+            {
+                var prev = _cache_Chunk.Data.IsExplored[_cache_Index];
+                if (prev != value)
+                {
+                    _cache_Chunk.Data.IsExplored[_cache_Index] = value;
+                    _cache_Chunk.Data.SliceCache[Coordinate.Y] = null;
+                }
+            }
         }
 
         [JsonIgnore]

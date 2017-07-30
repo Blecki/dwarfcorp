@@ -820,6 +820,7 @@ namespace DwarfCorp
 
             DefaultShader.View = Camera.ViewMatrix;
             DefaultShader.Projection = Camera.ProjectionMatrix;
+            DefaultShader.GhostClippingEnabled = true;
             // Render simple geometry (boxes, etc.)
             Drawer3D.Render(GraphicsDevice, DefaultShader, true);
 

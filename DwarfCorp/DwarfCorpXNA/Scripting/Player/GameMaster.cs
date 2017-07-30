@@ -386,7 +386,7 @@ namespace DwarfCorp
 
                 if (above.IsValid)
                 {
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(above.Coordinate.Y - 1, ChunkManager.SliceMode.Y);
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(above.Coordinate.Y, ChunkManager.SliceMode.Y);
                 }
                 else
                 {

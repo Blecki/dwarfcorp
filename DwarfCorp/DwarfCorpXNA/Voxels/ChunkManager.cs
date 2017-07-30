@@ -343,7 +343,7 @@ namespace DwarfCorp
                             {
                                 // Todo: Race condition? What if the chunk is modified while rebuilding??
                                 chunk.Rebuild(Graphics);
-                                chunk.ShouldRebuild = false;
+                                //chunk.ShouldRebuild = false;
                                 chunk.RebuildPending = false;
                                 chunk.ShouldRecalculateLighting = false;
                             }

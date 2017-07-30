@@ -677,17 +677,21 @@ namespace DwarfCorp
 
         public void Rebuild(GraphicsDevice g)
         {
-            if (g == null || g.IsDisposed)
-                return;
+            //debug
+            //Drawer3D.DrawBox(GetBoundingBox(), Color.White, 0.1f);
 
+            if (g == null || g.IsDisposed)
+            {
+                return;
+            }
             IsRebuilding = true;
-            ShouldRebuild = false;
 
             VoxelListPrimitive primitive = new VoxelListPrimitive();
             primitive.InitializeFromChunk(this);
             if (firstRebuild)
+            {
                 firstRebuild = false;
-
+            }
             RebuildLiquids();
             if (ShouldRecalculateLighting)
             {
@@ -696,7 +700,7 @@ namespace DwarfCorp
                 NotifyChangedComponents();
             }
             IsRebuilding = false;
-
+            ShouldRebuild = false;
         }
 
         public void NotifyChangedComponents()
