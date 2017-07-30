@@ -51,15 +51,44 @@ namespace DwarfCorp
     {
         private ChunkManager chunkManager;
 
-        public ChunkData(ChunkManager chunkManager)
+        public ChunkData(ChunkManager chunkManager, int ChunkMapWidth, int ChunkMapHeight, int ChunkMapMinX, int ChunkMapMinZ)
         {           
             this.chunkManager = chunkManager;
-            ChunkMap = new ConcurrentDictionary<GlobalChunkCoordinate, VoxelChunk>();
             MaxViewingLevel = VoxelConstants.ChunkSizeY;
             Slice = ChunkManager.SliceMode.Y;
+
+            this.ChunkMapWidth = ChunkMapWidth;
+            this.ChunkMapHeight = ChunkMapHeight;
+            this.ChunkMapMinX = ChunkMapMinX;
+            this.ChunkMapMinZ = ChunkMapMinZ;
+            this.ChunkMap = new VoxelChunk[ChunkMapWidth * ChunkMapHeight];
         }
 
-        public ConcurrentDictionary<GlobalChunkCoordinate, VoxelChunk> ChunkMap { get; set; }
+        private VoxelChunk[] ChunkMap;
+        private int ChunkMapWidth;
+        private int ChunkMapHeight;
+        private int ChunkMapMinX;
+        private int ChunkMapMinZ;
+
+        public VoxelChunk GetChunk(GlobalChunkCoordinate Coordinate)
+        {
+            if (!CheckBounds(Coordinate)) throw new IndexOutOfRangeException();
+            return ChunkMap[(Coordinate.Z - ChunkMapMinZ) * ChunkMapWidth + (Coordinate.X - ChunkMapMinX)];
+        }
+
+        public bool CheckBounds(GlobalChunkCoordinate Coordinate)
+        {
+            if (Coordinate.X < ChunkMapMinX || Coordinate.X >= ChunkMapMinX + ChunkMapWidth) return false;
+            if (Coordinate.Z < ChunkMapMinZ || Coordinate.Z >= ChunkMapMinZ + ChunkMapHeight) return false;
+            return true;
+        }
+
+        public IEnumerable<VoxelChunk> GetChunkEnumerator()
+        {
+            return ChunkMap;
+        }
+
+        //public ConcurrentDictionary<GlobalChunkCoordinate, VoxelChunk> ChunkMap { get; set; }
 
         public Texture2D Tilemap
         {
@@ -69,12 +98,6 @@ namespace DwarfCorp
         public Texture2D IllumMap
         {
             get { return TextureManager.GetTexture(ContentPaths.Terrain.terrain_illumination); }
-        }
-
-        public int MaxChunks
-        {
-            get { return (int) GameSettings.Default.MaxChunks; }
-            set { GameSettings.Default.MaxChunks = (int) value; }
         }
 
         // Todo: Why is this here?
@@ -115,28 +138,33 @@ namespace DwarfCorp
             Slice = slice;
             MaxViewingLevel = Math.Max(Math.Min(level, VoxelConstants.ChunkSizeY), 1);
 
-            foreach (VoxelChunk c in ChunkMap.Select(chunks => chunks.Value))
+            foreach (var c in ChunkMap)
             {
                 c.Data.SliceCache[oldLevel - 1] = null;
                 c.Data.SliceCache[MaxViewingLevel - 1] = null;
-                c.ShouldRecalculateLighting = true;
+                //c.ShouldRecalculateLighting = true;
                 c.ShouldRebuild = true;
             }
         }
         
-        public bool AddChunk(VoxelChunk chunk)
+        public bool AddChunk(VoxelChunk Chunk)
         {
-            if(ChunkMap.Count < MaxChunks && !ChunkMap.ContainsKey(chunk.ID))
-            {
-                ChunkMap[chunk.ID] = chunk;
-                return true;
-            }
+            if (!CheckBounds(Chunk.ID)) throw new IndexOutOfRangeException();
 
-            return false;
+            ChunkMap[(Chunk.ID.Z - ChunkMapMinZ) * ChunkMapWidth + (Chunk.ID.X - ChunkMapMinX)] = Chunk;
+            return true;
         }
 
         public void LoadFromFile(GameFile gameFile, Action<String> SetLoadingMessage)
         {
+            var maxChunkX = gameFile.Data.ChunkData.Max(c => c.ID.X);
+            var maxChunkZ = gameFile.Data.ChunkData.Max(c => c.ID.Z);
+            ChunkMapMinX = gameFile.Data.ChunkData.Min(c => c.ID.X);
+            ChunkMapMinZ = gameFile.Data.ChunkData.Min(c => c.ID.Z);
+            ChunkMapWidth = maxChunkX - ChunkMapMinX;
+            ChunkMapHeight = maxChunkZ - ChunkMapMinZ;
+            ChunkMap = new VoxelChunk[ChunkMapWidth * ChunkMapHeight];
+
             foreach (VoxelChunk chunk in gameFile.Data.ChunkData.Select(file => file.ToChunk(chunkManager)))
                 AddChunk(chunk);
 

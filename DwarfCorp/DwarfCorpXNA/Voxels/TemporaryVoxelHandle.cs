@@ -21,7 +21,8 @@ namespace DwarfCorp
         private void UpdateCache(ChunkData Chunks)
         {
             _cache_Index = VoxelConstants.DataIndexOf(Coordinate.GetLocalVoxelCoordinate());
-            _cache_Chunk = Chunks.ChunkMap.ContainsKey(Coordinate.GetGlobalChunkCoordinate()) ? Chunks.ChunkMap[Coordinate.GetGlobalChunkCoordinate()] : null;
+            var chunkCoord = Coordinate.GetGlobalChunkCoordinate();
+            _cache_Chunk = Chunks.CheckBounds(chunkCoord) ? Chunks.GetChunk(chunkCoord) : null;
         }
 
         [JsonIgnore]
@@ -186,9 +187,9 @@ namespace DwarfCorp
                 ChunkCoordinate.Y + NeighborOffset.Y,
                 ChunkCoordinate.Z + NeighborOffset.Z);
 
-            VoxelChunk chunk = null;
-            if (Chunks.ChunkMap.TryGetValue(neighborCoordinate, out chunk))
+            if (Chunks.CheckBounds(neighborCoordinate))
             {
+                var chunk = Chunks.GetChunk(neighborCoordinate);
                 chunk.Data.SliceCache[Y] = null;
                 if (Y > 0) chunk.Data.SliceCache[Y - 1] = null;
             }

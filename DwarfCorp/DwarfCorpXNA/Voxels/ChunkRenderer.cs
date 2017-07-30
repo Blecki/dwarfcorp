@@ -135,11 +135,11 @@ namespace DwarfCorp
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                foreach (var chunk in ChunkData.ChunkMap)
+                foreach (var chunk in ChunkData.GetChunkEnumerator())
                 {
-                    if (cameraFrustrum.Intersects(chunk.Value.GetBoundingBox()))
+                    if (cameraFrustrum.Intersects(chunk.GetBoundingBox()))
                     {
-                        chunk.Value.Render(Graphics);
+                        chunk.Render(Graphics);
                     }
                 }
             }
@@ -287,9 +287,9 @@ namespace DwarfCorp
                 for (var y = minChunk.Y; y <= maxChunk.Y; ++y)
                     for (var z = minChunk.Z; z <= maxChunk.Z; ++z)
                     {
-                        VoxelChunk chunk;
-                        if (ChunkData.ChunkMap.TryGetValue(new GlobalChunkCoordinate(x, y, z), out chunk))
-                            chunks.Add(chunk);
+                        var coord = new GlobalChunkCoordinate(x, y, z);
+                        if (ChunkData.CheckBounds(coord))
+                            chunks.Add(ChunkData.GetChunk(coord));
                     }
         }
 

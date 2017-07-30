@@ -210,13 +210,12 @@ namespace DwarfCorp
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    foreach (var chunkpair in chunks.ChunkData.ChunkMap)
+                    foreach (var c in chunks.ChunkData.GetChunkEnumerator())
                     {
-                        VoxelChunk chunk = chunkpair.Value;
-                        if (chunk.IsVisible)
+                        if (c.IsVisible)
                         {
                             //chunk.PrimitiveMutex.WaitOne();
-                            chunk.Liquids[asset.Key].Render(device);
+                            c.Liquids[asset.Key].Render(device);
                             //chunk.PrimitiveMutex.ReleaseMutex();
                         }
                     }
@@ -290,9 +289,8 @@ namespace DwarfCorp
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    foreach (var chunkpair in chunks.ChunkData.ChunkMap)
+                    foreach (var chunk in chunks.ChunkData.GetChunkEnumerator())
                     {
-                        VoxelChunk chunk = chunkpair.Value;
                         if (chunk.IsVisible)
                         {
                             //chunk.PrimitiveMutex.WaitOne();
