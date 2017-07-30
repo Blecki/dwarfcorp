@@ -230,6 +230,11 @@ namespace DwarfCorp
 
             }
 
+            HandleOrientation();
+        }
+
+        private void HandleOrientation()
+        {
             KeyboardState state = Keyboard.GetState();
             bool leftKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectLeft);
             bool rightKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectRight);
@@ -237,7 +242,7 @@ namespace DwarfCorp
             {
                 OverrideOrientation = true;
                 leftPressed = false;
-                CurrentOrientation += (float)(Math.PI / 2);
+                CurrentOrientation += (float) (Math.PI/2);
                 if (SelectedBody != null)
                 {
                     SelectedBody.Orient(CurrentOrientation);
@@ -250,7 +255,7 @@ namespace DwarfCorp
             {
                 OverrideOrientation = true;
                 rightPressed = false;
-                CurrentOrientation -= (float)(Math.PI / 2);
+                CurrentOrientation -= (float) (Math.PI/2);
                 if (SelectedBody != null)
                 {
                     SelectedBody.Orient(CurrentOrientation);
@@ -261,7 +266,6 @@ namespace DwarfCorp
 
             leftPressed = leftKey;
             rightPressed = rightKey;
-
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)

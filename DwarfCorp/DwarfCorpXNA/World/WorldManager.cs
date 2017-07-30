@@ -821,13 +821,14 @@ namespace DwarfCorp
             DefaultShader.View = Camera.ViewMatrix;
             DefaultShader.Projection = Camera.ProjectionMatrix;
             DefaultShader.GhostClippingEnabled = true;
+            // Now draw all of the entities in the game
+            DefaultShader.ClipPlane = new Vector4(slicePlane.Normal, slicePlane.D);
+            DefaultShader.ClippingEnabled = false;
+
             // Render simple geometry (boxes, etc.)
             Drawer3D.Render(GraphicsDevice, DefaultShader, true);
 
-            // Now draw all of the entities in the game
-            DefaultShader.ClipPlane = new Vector4(slicePlane.Normal, slicePlane.D);
-            DefaultShader.ClippingEnabled = true;
-            DefaultShader.GhostClippingEnabled = true;
+
             DefaultShader.EnableShadows = GameSettings.Default.UseDynamicShadows;
 
             if (GameSettings.Default.UseDynamicShadows)

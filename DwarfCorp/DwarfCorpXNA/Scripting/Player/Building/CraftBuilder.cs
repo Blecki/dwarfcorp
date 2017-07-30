@@ -54,11 +54,14 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class CraftBuilder
     {
-        public class CraftDesignation
+        public struct CraftDesignation
         {
-            public CraftItem ItemType { get; set; }
-            public TemporaryVoxelHandle Location { get; set; }
-            public Body WorkPile { get; set; }
+            public CraftItem ItemType;
+            public TemporaryVoxelHandle Location;
+            public Body WorkPile;
+            public bool OverrideOrientation;
+            public float Orientation;
+            public bool Valid;
         }
 
         public Faction Faction { get; set; }
@@ -66,7 +69,11 @@ namespace DwarfCorp
         public CraftItem CurrentCraftType { get; set; }
         public bool IsEnabled { get; set; }
         public Body CurrentCraftBody { get; set; }
-        protected CraftDesignation CurrentDesignation { get; set; }
+        protected CraftDesignation CurrentDesignation;
+        private float CurrentOrientation = 0.0f;
+        private bool OverrideOrientation = false;
+        private bool rightPressed = false;
+        private bool leftPressed = false;
 
         [JsonIgnore]
         private WorldManager World { get; set; }
@@ -120,7 +127,7 @@ namespace DwarfCorp
         {
             CraftDesignation des = GetDesignation(v);
 
-            if (des != null)
+            if (des.Valid)
             {
                 RemoveDesignation(des);
             }
@@ -156,8 +163,10 @@ namespace DwarfCorp
                 CurrentDesignation = new CraftDesignation()
                 {
                     ItemType = CurrentCraftType,
-                    Location = TemporaryVoxelHandle.InvalidHandle
+                    Location = TemporaryVoxelHandle.InvalidHandle,
+                    Valid = true
                 };
+                OverrideOrientation = false;
                 SetDisplayColor(Color.Green);
             }
 
@@ -166,7 +175,17 @@ namespace DwarfCorp
 
             CurrentCraftBody.LocalPosition = player.VoxSelector.VoxelUnderMouse.WorldPosition + Vector3.One * 0.5f;
             CurrentCraftBody.GlobalTransform = CurrentCraftBody.LocalTransform;
-            CurrentCraftBody.OrientToWalls();
+
+            if (OverrideOrientation)
+            {
+                CurrentCraftBody.Orient(CurrentOrientation);
+            }
+            else
+            {
+                CurrentCraftBody.OrientToWalls();
+            }
+
+            HandleOrientation();
 
             //Todo: Operator == implemented correctly for voxel handles?
             if (CurrentDesignation.Location.Equals(player.VoxSelector.VoxelUnderMouse)) 
@@ -177,6 +196,40 @@ namespace DwarfCorp
             SetDisplayColor(IsValid(CurrentDesignation) ? Color.Green : Color.Red);
         }
 
+        private void HandleOrientation()
+        {
+            KeyboardState state = Keyboard.GetState();
+            bool leftKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectLeft);
+            bool rightKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectRight);
+            if (leftPressed && !leftKey)
+            {
+                OverrideOrientation = true;
+                leftPressed = false;
+                CurrentOrientation += (float) (Math.PI/2);
+                CurrentCraftBody.Orient(CurrentOrientation);
+                CurrentCraftBody.UpdateBoundingBox();
+                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, CurrentCraftBody.Position,
+                    0.5f);
+            }
+            if (rightPressed && !rightKey)
+            {
+                OverrideOrientation = true;
+                rightPressed = false;
+                CurrentOrientation -= (float)(Math.PI / 2);
+                CurrentCraftBody.Orient(CurrentOrientation);
+                CurrentCraftBody.UpdateBoundingBox();
+                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, CurrentCraftBody.Position, 0.5f);
+            }
+
+
+            leftPressed = leftKey;
+            rightPressed = rightKey;
+
+            CurrentDesignation.OverrideOrientation = this.OverrideOrientation;
+            CurrentDesignation.Orientation = this.CurrentOrientation;
+        }
+
+
         public void Render(DwarfTime gameTime, GraphicsDevice graphics, Effect effect)
         {
         }
@@ -184,6 +237,11 @@ namespace DwarfCorp
 
         public bool IsValid(CraftDesignation designation)
         {
+            if (!designation.Valid)
+            {
+                return false;
+            }
+
             if (IsDesignation(designation.Location))
             {
                 World.ShowToolPopup("Something is already being built there!");
@@ -278,7 +336,10 @@ namespace DwarfCorp
                                 {
                                     ItemType = CurrentCraftType,
                                     Location = r,
-                                    WorkPile = new WorkPile(World.ComponentManager, startPos)
+                                    WorkPile = new WorkPile(World.ComponentManager, startPos),
+                                    Orientation = CurrentDesignation.Orientation,
+                                    OverrideOrientation = CurrentDesignation.OverrideOrientation,
+                                    Valid = true
                                 };
                                 World.ComponentManager.RootComponent.AddChild(newDesignation.WorkPile);
                                 newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));
@@ -287,7 +348,7 @@ namespace DwarfCorp
                                 {
                                     AddDesignation(newDesignation);
                                     assignments.Add(new CraftItemTask(r,
-                                        CurrentCraftType));
+                                        CurrentDesignation));
                                 }
                                 else
                                 {

@@ -188,7 +188,7 @@ namespace DwarfCorp
             Width = width;
             Height = height;
             Depth = depth;
-
+            Indexes = null;
             UVs = uvs;
             CreateVerticies();
             ResetBuffer(device);

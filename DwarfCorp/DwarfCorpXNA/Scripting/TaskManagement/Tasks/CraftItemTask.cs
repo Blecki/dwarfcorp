@@ -42,42 +42,39 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class CraftItemTask : Task
     {
-        public CraftItem CraftType { get; set; }
-        public TemporaryVoxelHandle Voxel { get; set; }
-
+        public CraftBuilder.CraftDesignation Designation { get; set; }
         public CraftItemTask()
         {
             Priority = PriorityType.Low;
             AutoRetry = true;
         }
 
-        public CraftItemTask(TemporaryVoxelHandle voxel, CraftItem type)
+        public CraftItemTask(TemporaryVoxelHandle voxel, CraftBuilder.CraftDesignation type)
         {
             Name = "Craft item " + voxel.Coordinate;
-            Voxel = voxel;
-            CraftType = type;
             Priority = PriorityType.Low;
             AutoRetry = true;
+            Designation = type;
         }
 
         public override Task Clone()
         {
-            return new CraftItemTask(Voxel, CraftType);
+            return new CraftItemTask(Designation.Location, Designation);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            return !Voxel.IsValid || !CanBuild(agent) ? 1000 : (agent.AI.Position - Voxel.WorldPosition).LengthSquared();
+            return !Designation.Location.IsValid || !CanBuild(agent) ? 1000 : (agent.AI.Position - Designation.Location.WorldPosition).LengthSquared();
         }
 
         public override Act CreateScript(Creature creature)
         {
-            return new CraftItemAct(creature.AI, Voxel, CraftType);
+            return new CraftItemAct(creature.AI, Designation);
         }
 
         public override bool ShouldRetry(Creature agent)
         {
-            if (!agent.Faction.CraftBuilder.IsDesignation(Voxel))
+            if (!agent.Faction.CraftBuilder.IsDesignation(Designation.Location))
             {
                 return false;
             }
@@ -92,19 +89,19 @@ namespace DwarfCorp
 
         public bool CanBuild(Creature agent)
         {
-            if (!agent.Faction.CraftBuilder.IsDesignation(Voxel))
+            if (!agent.Faction.CraftBuilder.IsDesignation(Designation.Location))
             {
                 return false;
             }
-            if (!String.IsNullOrEmpty(CraftType.CraftLocation))
+            if (!String.IsNullOrEmpty(Designation.ItemType.CraftLocation))
             {
-                var nearestBuildLocation = agent.Faction.FindNearestItemWithTags(CraftType.CraftLocation, Vector3.Zero, false);
+                var nearestBuildLocation = agent.Faction.FindNearestItemWithTags(Designation.ItemType.CraftLocation, Vector3.Zero, false);
 
                 if (nearestBuildLocation == null)
                     return false;
             }
 
-            foreach (var resourceAmount in CraftType.RequiredResources)
+            foreach (var resourceAmount in Designation.ItemType.RequiredResources)
                 if (agent.Faction.ListResourcesWithTag(resourceAmount.ResourceType).Count == 0)
                     return false;
 
@@ -118,7 +115,7 @@ namespace DwarfCorp
     {
         public int TaskID = 0;
         private static int MaxID = 0;
-        public CraftItem Item { get; set; }
+        public CraftBuilder.CraftDesignation Item { get; set; }
         private string noise;
 
         public CraftResourceTask()
@@ -130,11 +127,16 @@ namespace DwarfCorp
         {
             TaskID = id < 0 ? MaxID : id;
             MaxID++;
-            Item = selectedResource.Clone();
+            Item = new CraftBuilder.CraftDesignation()
+            {
+                ItemType = selectedResource.Clone(),
+                Location = TemporaryVoxelHandle.InvalidHandle,
+                Valid = true
+            };
             Name = String.Format("Craft order {0}", TaskID);
             Priority = PriorityType.Low;
 
-            noise = ResourceLibrary.GetResourceByName(Item.ResourceCreated).Tags.Contains(Resource.ResourceTags.Edible)
+            noise = ResourceLibrary.GetResourceByName(Item.ItemType.ResourceCreated).Tags.Contains(Resource.ResourceTags.Edible)
                 ? "Cook"
                 : "Craft";
             AutoRetry = true;
@@ -142,7 +144,7 @@ namespace DwarfCorp
 
         public IEnumerable<Act.Status> Repeat(Creature creature)
         {
-            CraftItem newItem = Item.Clone();
+            CraftItem newItem = Item.ItemType.Clone();
             newItem.NumRepeats--;
             if (newItem.NumRepeats >= 1)
             {
@@ -161,7 +163,7 @@ namespace DwarfCorp
 
         public override Task Clone()
         {
-            return new CraftResourceTask(Item, TaskID);
+            return new CraftResourceTask(Item.ItemType, TaskID);
         }
     }
 
