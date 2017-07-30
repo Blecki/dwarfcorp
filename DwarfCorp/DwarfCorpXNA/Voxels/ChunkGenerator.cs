@@ -157,7 +157,7 @@ namespace DwarfCorp
 
                         if (!MathFunctions.RandEvent(cluster.Type.SpawnProbability)) continue;
 
-                        vox.Type = cluster.Type;
+                        vox.RawSetType(cluster.Type);
                     }
                 }
             }
@@ -181,7 +181,7 @@ namespace DwarfCorp
 
                 if (!vein.Type.SpawnOnSurface && vox.Type.IsSurface) continue;
 
-                vox.Type = vein.Type;
+                vox.RawSetType(vein.Type);
                 Vector3 step = directionBias + MathFunctions.RandVector3Box(-1, 1, -1, 1, -1, 1)*0.25f;
                 step.Normalize();
                 curr += step;
@@ -309,7 +309,7 @@ namespace DwarfCorp
                             NoiseGenerator.Noise(topVoxel.Coordinate.X / veg.ClumpSize,
                             veg.NoiseOffset, topVoxel.Coordinate.Y / veg.ClumpSize) >= veg.ClumpThreshold)
                         {
-                            topVoxel.Type = VoxelLibrary.GetVoxelType(biomeData.SoilLayer.VoxelType);
+                            topVoxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.SoilLayer.VoxelType));
 
                             float offset = veg.VerticalOffset;
 
@@ -368,7 +368,7 @@ namespace DwarfCorp
                             if (waterFound)
                                 break;
 
-                            voxel.TypeID = 0;
+                            voxel.RawSetType(VoxelLibrary.emptyType);
                         }
 
                         if (!waterFound && caveNoise > CaveSize*1.8f && y - caveHeight > 0)
@@ -387,9 +387,7 @@ namespace DwarfCorp
             foreach (FaunaData animal in biome.Fauna)
             {
                 if (y <= 0 || !(MathFunctions.Random.NextDouble() < animal.SpawnProbability))
-                {
                     continue;
-                }
 
                 EntityFactory.DoLazy(() =>
                 {
@@ -430,7 +428,7 @@ namespace DwarfCorp
 
                 if (!vUnder.IsEmpty && vUnder.Type.Name == biome.GrassLayer.VoxelType)
                 {
-                    vUnder.Type = VoxelLibrary.GetVoxelType(biome.SoilLayer.VoxelType);
+                    vUnder.RawSetType(VoxelLibrary.GetVoxelType(biome.SoilLayer.VoxelType));
                     float offset = veg.VerticalOffset;
                     if (vUnder.RampType != RampType.None)
                     {
@@ -459,7 +457,6 @@ namespace DwarfCorp
             VoxelChunk c = new VoxelChunk(Manager, origin, GlobalVoxelCoordinate.FromVector3(origin).GetGlobalChunkCoordinate())
             {
                 ShouldRebuild = true,
-                ShouldRecalculateLighting = true
             };
 
             for(int x = 0; x < VoxelConstants.ChunkSizeX; x++)
@@ -485,15 +482,14 @@ namespace DwarfCorp
 
                         if(y == 0)
                         {
-                            voxel.Type = VoxelLibrary.GetVoxelType("Bedrock");
-                            voxel.Health = 8;
+                            voxel.RawSetType(VoxelLibrary.GetVoxelType("Bedrock"));
+                            voxel.Health = 8; // ? 
                             continue;
                         }
 
-                        if(y <= stoneHeight && stoneHeight > 1)
+                        if (y <= stoneHeight && stoneHeight > 1)
                         {
-                            voxel.Type = VoxelLibrary.GetVoxelType(biomeData.SubsurfaceLayers[currentSubsurfaceLayer].VoxelType);
-                            voxel.Health = VoxelLibrary.GetVoxelType(biomeData.SubsurfaceLayers[currentSubsurfaceLayer].VoxelType).StartingHealth;
+                            voxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.SubsurfaceLayers[currentSubsurfaceLayer].VoxelType));
                             depthWithinSubsurface++;
                             if (depthWithinSubsurface > biomeData.SubsurfaceLayers[currentSubsurfaceLayer].Depth)
                             {
@@ -506,39 +502,34 @@ namespace DwarfCorp
                             }
                         }
 
-                        else if((y == (int) h || y == stoneHeight) && hNorm > waterHeight)
+                        else if ((y == (int)h || y == stoneHeight) && hNorm > waterHeight)
                         {
                             if (biomeData.ClumpGrass &&
-                                NoiseGenerator.Noise(pos.X/biomeData.ClumpSize, 0, pos.Y/biomeData.ClumpSize) >
+                                NoiseGenerator.Noise(pos.X / biomeData.ClumpSize, 0, pos.Y / biomeData.ClumpSize) >
                                 biomeData.ClumpTreshold)
                             {
-                                voxel.Type = VoxelLibrary.GetVoxelType(biomeData.GrassLayer.VoxelType);
-                                voxel.Health = VoxelLibrary.GetVoxelType(biomeData.GrassLayer.VoxelType).StartingHealth;   
+                                voxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.GrassLayer.VoxelType));
                             }
-                            else if(!biomeData.ClumpGrass)
+                            else if (!biomeData.ClumpGrass)
                             {
-                                voxel.Type = VoxelLibrary.GetVoxelType(biomeData.GrassLayer.VoxelType);
-                                voxel.Health = VoxelLibrary.GetVoxelType(biomeData.GrassLayer.VoxelType).StartingHealth; 
+                                voxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.GrassLayer.VoxelType));
                             }
                             else
                             {
-                                voxel.Type = VoxelLibrary.GetVoxelType(biomeData.SoilLayer.VoxelType);
-                                voxel.Health = VoxelLibrary.GetVoxelType(biomeData.SoilLayer.VoxelType).StartingHealth;
+                                voxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.SoilLayer.VoxelType));
                             }
                         }
-                        else if(y > h && y > 0)
+                        else if (y > h && y > 0)
                         {
-                            voxel.Type = VoxelLibrary.GetVoxelType(0);
+                            voxel.RawSetType(VoxelLibrary.emptyType);
                         }
-                        else if(hNorm <= waterHeight)
+                        else if (hNorm <= waterHeight)
                         {
-                            voxel.Type = VoxelLibrary.GetVoxelType(biomeData.ShoreVoxel);
-                            voxel.Health = VoxelLibrary.GetVoxelType(biomeData.ShoreVoxel).StartingHealth;
+                            voxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.ShoreVoxel));
                         }
                         else
                         {
-                            voxel.Type = VoxelLibrary.GetVoxelType(biomeData.SoilLayer.VoxelType);
-                            voxel.Health = VoxelLibrary.GetVoxelType(biomeData.SoilLayer.VoxelType).StartingHealth;
+                            voxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.SoilLayer.VoxelType));
                         }
                     }
                 }
@@ -548,8 +539,12 @@ namespace DwarfCorp
             GenerateLava(c);
             GenerateCaves(c, World);
 
-            c.ShouldRecalculateLighting = true;
             c.ShouldRebuildWater = true;
+
+            c.CalculateGlobalLight();
+
+            for (var i = 0; i < VoxelConstants.ChunkSizeY; ++i)
+                c.Data.SliceCache[i] = null;
             return c;
         }
     }

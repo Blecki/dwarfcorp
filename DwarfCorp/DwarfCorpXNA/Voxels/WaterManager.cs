@@ -135,7 +135,6 @@ namespace DwarfCorp
                 Vox.Type = VoxelLibrary.GetVoxelType("Stone");
                 Vox.WaterCell = WaterCell.Empty;
                 Vox.Chunk.ShouldRebuild = true;
-                Vox.Chunk.ShouldRecalculateLighting = true;
             }            
         }
 
@@ -201,7 +200,7 @@ namespace DwarfCorp
                 return;
             }
 
-            foreach(var chunk in Chunks.ChunkData.ChunkMap.Values)
+            foreach(var chunk in Chunks.ChunkData.GetChunkEnumerator())
             {
                 bool didUpdate = DiscreteUpdate(chunk);
 

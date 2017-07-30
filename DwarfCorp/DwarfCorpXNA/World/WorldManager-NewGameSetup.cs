@@ -123,8 +123,8 @@ namespace DwarfCorp
 
         private void GenerateInitialObjects()
         {
-            foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
-                ChunkManager.ChunkGen.GenerateSurfaceLife(chunk.Value);
+            foreach (var chunk in ChunkManager.ChunkData.GetChunkEnumerator())
+                ChunkManager.ChunkGen.GenerateSurfaceLife(chunk);
         }
 
         /// <summary>

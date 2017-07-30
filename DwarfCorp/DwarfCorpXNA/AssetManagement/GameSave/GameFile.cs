@@ -133,11 +133,8 @@ namespace DwarfCorp
             };
 
 
-            foreach (ChunkFile file in world.ChunkManager.ChunkData.ChunkMap.Select(pair => new ChunkFile(pair.Value)))
-            {
+            foreach (ChunkFile file in world.ChunkManager.ChunkData.GetChunkEnumerator().Select(c => new ChunkFile(c)))
                 Data.ChunkData.Add(file);
-            }
-
         }
 
         public virtual string GetExtension()

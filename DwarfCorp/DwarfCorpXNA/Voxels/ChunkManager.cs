@@ -133,13 +133,22 @@ namespace DwarfCorp
             Camera camera, GraphicsDevice graphics,
             ChunkGenerator chunkGen, int maxChunksX, int maxChunksY, int maxChunksZ)
         {
+            WorldSize = new Point3(maxChunksX, maxChunksY, maxChunksZ);
+
             World = world;
             KilledVoxels = new List<TemporaryVoxelHandle>();
             ExitThreads = false;
             drawDistSq = DrawDistance * DrawDistance;
             Content = content;
 
-            chunkData = new ChunkData(this);
+            var originCoord = new GlobalVoxelCoordinate(
+                (int)(world.WorldOrigin.X * world.WorldScale),
+                0,
+                (int)(world.WorldOrigin.Y * world.WorldScale))
+                .GetGlobalChunkCoordinate();
+
+            chunkData = new ChunkData(this, maxChunksX - 1, maxChunksZ - 1, (int)(originCoord.X - WorldSize.X / 2 + 1), (int)(originCoord.Z - WorldSize.Z / 2 + 1));             
+
             RenderList = new ConcurrentQueue<VoxelChunk>();
             RebuildList = new ConcurrentQueue<VoxelChunk>();
             RebuildLiquidsList = new ConcurrentQueue<VoxelChunk>();
@@ -174,8 +183,6 @@ namespace DwarfCorp
             Water = new WaterManager(this);
 
             PauseThreads = false;
-
-            WorldSize = new Point3(maxChunksX, maxChunksY, maxChunksZ);
 
             Vector3 maxBounds = new Vector3(
                 maxChunksX * VoxelConstants.ChunkSizeX / 2.0f,
@@ -329,13 +336,13 @@ namespace DwarfCorp
                             }
                         }
 
-                        foreach (
-                            VoxelChunk chunk in
-                                toRebuild.Select(chunkPair => chunkPair.Value)
-                                    .Where(chunk => chunk.ShouldRecalculateLighting))
-                        {
-                            chunk.CalculateGlobalLight();
-                        }
+                        //foreach (
+                        //    VoxelChunk chunk in
+                        //        toRebuild.Select(chunkPair => chunkPair.Value)
+                        //            .Where(chunk => chunk.ShouldRecalculateLighting))
+                        //{
+                        //    chunk.CalculateGlobalLight();
+                        //}
 
                         foreach (VoxelChunk chunk in toRebuild.Select(chunkPair => chunkPair.Value))
                         {
@@ -345,7 +352,6 @@ namespace DwarfCorp
                                 chunk.Rebuild(Graphics);
                                 //chunk.ShouldRebuild = false;
                                 chunk.RebuildPending = false;
-                                chunk.ShouldRecalculateLighting = false;
                             }
                         }
                         
@@ -415,7 +421,7 @@ namespace DwarfCorp
             List<VoxelChunk> toRebuild = new List<VoxelChunk>();
             List<VoxelChunk> toRebuildLiquids = new List<VoxelChunk>();
 
-            foreach (VoxelChunk chunk in ChunkData.ChunkMap.Select(chunks => chunks.Value))
+            foreach (VoxelChunk chunk in ChunkData.GetChunkEnumerator())
             {
                 if(chunk.ShouldRebuild && ! chunk.RebuildPending)
                 {
@@ -489,8 +495,8 @@ namespace DwarfCorp
  
                         System.Threading.Tasks.Parallel.ForEach(ToGenerate, box =>
                         {
-                            if (!ChunkData.ChunkMap.ContainsKey(box))
-                            {
+                            //if (!ChunkData.CheckBounds(box))
+                            //{
                                 Vector3 worldPos = new Vector3(
                                     box.X * VoxelConstants.ChunkSizeX, 
                                     box.Y * VoxelConstants.ChunkSizeY,
@@ -498,9 +504,8 @@ namespace DwarfCorp
                                 VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, World);
                                 Drawer3D.DrawBox(chunk.GetBoundingBox(), Color.Red, 0.1f);
                                 chunk.ShouldRebuild = true;
-                                chunk.ShouldRecalculateLighting = true;
                                 GeneratedChunks.Enqueue(chunk);
-                            }
+                            //}
                         });
                         ToGenerate.Clear();
                     }
@@ -568,45 +573,35 @@ namespace DwarfCorp
 
         public void GenerateInitialChunks(GlobalChunkCoordinate origin, Action<String> SetLoadingMessage)
         {
+            // todo: Since the world isn't infinite we can get rid of this.
             float origBuildRadius = GenerateDistance;
             GenerateDistance = origBuildRadius * 2.0f;
 
             var initialChunkCoordinates = new List<GlobalChunkCoordinate>();
-            for (int dx = origin.X - WorldSize.X/2 + 1; dx < origin.X + WorldSize.X/2; dx++)
-            {
-                for (int dy = origin.Y - WorldSize.Y/2; dy <= origin.Y + WorldSize.Y/2; dy++)
-                {
-                    for (int dz = origin.Z - WorldSize.Z/2 + 1; dz < origin.Z + WorldSize.Z/2; dz++)
-                    {
-                        initialChunkCoordinates.Add(new GlobalChunkCoordinate(dx, dy, dz));
-                    }
-                }
-            }
 
+            for (int dx = origin.X - WorldSize.X / 2 + 1; dx < origin.X + WorldSize.X/2; dx++)
+                for (int dz = origin.Z - WorldSize.Z / 2 + 1; dz < origin.Z + WorldSize.Z/2; dz++)
+                    initialChunkCoordinates.Add(new GlobalChunkCoordinate(dx, 0, dz));
+                    
             SetLoadingMessage("Generating Chunks...");
 
             foreach(var box in initialChunkCoordinates)
             {
-                if (!ChunkData.ChunkMap.ContainsKey(box))
-                {
+                //if (!ChunkData.ChunkMap.ContainsKey(box))
+                //{
                     Vector3 worldPos = new Vector3(
                         box.X * VoxelConstants.ChunkSizeX, 
                         box.Y * VoxelConstants.ChunkSizeY, 
                         box.Z * VoxelConstants.ChunkSizeZ);
                     VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, World);
                     chunk.ShouldRebuild = true;
-                    chunk.ShouldRecalculateLighting = true;
                     chunk.IsVisible = true;
-                    chunk.Data.ResetSunlight(0);
+                    //chunk.Data.ResetSunlight(0);
                     GeneratedChunks.Enqueue(chunk);
                     foreach (VoxelChunk chunk2 in GeneratedChunks)
-                    {
-                        if (!ChunkData.ChunkMap.ContainsKey(chunk2.ID))
-                        {
-                            ChunkData.AddChunk(chunk2);
-                        }
-                    }
-                }
+                        ChunkData.AddChunk(chunk2);
+                        
+                //}
             }
 
             RecalculateBounds();
@@ -620,7 +615,7 @@ namespace DwarfCorp
             bool fogOfWar = GameSettings.Default.FogofWar;
             GameSettings.Default.FogofWar = true;
             VoxelHelpers.Reveal(ChunkData, new TemporaryVoxelHandle(
-                ChunkData.ChunkMap.FirstOrDefault().Value, new LocalVoxelCoordinate(0, VoxelConstants.ChunkSizeY - 1, 0)));
+                ChunkData.GetChunkEnumerator().FirstOrDefault(), new LocalVoxelCoordinate(0, VoxelConstants.ChunkSizeY - 1, 0)));
 GameSettings.Default.FogofWar = fogOfWar;
 
             //UpdateRebuildList();
@@ -640,7 +635,7 @@ GameSettings.Default.FogofWar = fogOfWar;
 
         private void RecalculateBounds()
         {
-            List<BoundingBox> boxes = ChunkData.ChunkMap.Select(chunkPair => chunkPair.Value.GetBoundingBox()).ToList();
+            List<BoundingBox> boxes = ChunkData.GetChunkEnumerator().Select(c => c.GetBoundingBox()).ToList();
             Bounds = MathFunctions.GetBoundingBox(boxes);
         }
 
@@ -650,10 +645,10 @@ GameSettings.Default.FogofWar = fogOfWar;
                 for (int dz = -1; dz < 2; dz++)
                     if (dx != 0 || dz != 0)
                     {
-                        VoxelChunk adjacent;
-                        if (ChunkData.ChunkMap.TryGetValue(new GlobalChunkCoordinate(
-                            Chunk.ID.X + dx, 0, Chunk.ID.Z + dz), out adjacent))
-                            yield return adjacent;
+                        var adjacentCoord = new GlobalChunkCoordinate(
+                            Chunk.ID.X + dx, 0, Chunk.ID.Z + dz);
+                        if (ChunkData.CheckBounds(adjacentCoord))
+                            yield return ChunkData.GetChunk(adjacentCoord);
                     }
         }
 
@@ -671,16 +666,10 @@ GameSettings.Default.FogofWar = fogOfWar;
 
                 foreach(VoxelChunk chunk in GeneratedChunks)
                 {
-                    if(!ChunkData.ChunkMap.ContainsKey(chunk.ID))
-                    {
                         ChunkData.AddChunk(chunk);
                         foreach(var c in EnumerateAdjacentChunks(chunk))
-                        {
-                            c.ShouldRecalculateLighting = true;
                             c.ShouldRebuild = true;
-                        }
                         RecalculateBounds();
-                    }
                 }
 
                 while(GeneratedChunks.Count > 0)
@@ -693,10 +682,8 @@ GameSettings.Default.FogofWar = fogOfWar;
                 }
             }
 
-            foreach(VoxelChunk chunk in ChunkData.ChunkMap.Values)
-            {
+            foreach (var chunk in ChunkData.GetChunkEnumerator())
                 chunk.Update(gameTime);
-            }
 
             // Todo: This belongs up in world manager.
             Splasher.Splash(gameTime, Water.GetSplashQueue());
@@ -723,6 +710,8 @@ GameSettings.Default.FogofWar = fogOfWar;
 
         public void CreateGraphics(Action<String> SetLoadingMessage, ChunkData chunkData)
         {
+            // Todo: Figure out if this needs to duplicate effort of rebuild thread.
+
             SetLoadingMessage("Creating Graphics");
 
             List<VoxelChunk> toRebuild = new List<VoxelChunk>();
@@ -745,15 +734,15 @@ GameSettings.Default.FogofWar = fogOfWar;
                 foreach (var chunk in toRebuild)
                   chunk.UpdateRamps();
 
-            SetLoadingMessage("Calculating lighting ");
-            foreach(var chunk in toRebuild)
-            {
-                if (chunk.ShouldRecalculateLighting)
-                {
-                    chunk.CalculateGlobalLight();
-                    chunk.ShouldRecalculateLighting = false;
-                }
-            }
+            //SetLoadingMessage("Calculating lighting ");
+            //foreach(var chunk in toRebuild)
+            //{
+            //    if (chunk.ShouldRecalculateLighting)
+            //    {
+            //        chunk.CalculateGlobalLight();
+            //        chunk.ShouldRecalculateLighting = false;
+            //    }
+            //}
 
             SetLoadingMessage("Building Vertices...");
             foreach(var  chunk in toRebuild)
@@ -772,7 +761,7 @@ GameSettings.Default.FogofWar = fogOfWar;
         
         public void UpdateBounds()
         {
-            List<BoundingBox> boundingBoxes = chunkData.ChunkMap.Select(chunkPair => chunkPair.Value.GetBoundingBox()).ToList();
+            var boundingBoxes = chunkData.GetChunkEnumerator().Select(c => c.GetBoundingBox());
             Bounds = MathFunctions.GetBoundingBox(boundingBoxes);
         }
 
@@ -784,7 +773,7 @@ GameSettings.Default.FogofWar = fogOfWar;
             RebuildLiquidThread.Join();
             RebuildThread.Join();
             WaterUpdateThread.Join();
-            ChunkData.ChunkMap.Clear();
+            //ChunkData.ChunkMap.Clear();
         }
 
         public List<Body> KillVoxel(TemporaryVoxelHandle Voxel)
@@ -819,7 +808,7 @@ GameSettings.Default.FogofWar = fogOfWar;
             }
 
             KilledVoxels.Add(Voxel);
-            Voxel.TypeID = 0;
+            Voxel.Type = VoxelLibrary.emptyType;
 
             return emittedResources;
         }

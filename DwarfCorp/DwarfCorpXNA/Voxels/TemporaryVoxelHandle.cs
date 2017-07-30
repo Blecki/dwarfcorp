@@ -21,7 +21,8 @@ namespace DwarfCorp
         private void UpdateCache(ChunkData Chunks)
         {
             _cache_Index = VoxelConstants.DataIndexOf(Coordinate.GetLocalVoxelCoordinate());
-            _cache_Chunk = Chunks.ChunkMap.ContainsKey(Coordinate.GetGlobalChunkCoordinate()) ? Chunks.ChunkMap[Coordinate.GetGlobalChunkCoordinate()] : null;
+            var chunkCoord = Coordinate.GetGlobalChunkCoordinate();
+            _cache_Chunk = Chunks.CheckBounds(chunkCoord) ? Chunks.GetChunk(chunkCoord) : null;
         }
 
         [JsonIgnore]
@@ -117,10 +118,6 @@ namespace DwarfCorp
             {
                 return _cache_Chunk.Data.Types[_cache_Index];
             }
-            set
-            {
-                OnTypeSet(VoxelType.TypeList[value]);
-            }
         }
 
         // Todo: Eliminate members that aren't straight pass throughs to the underlying data.
@@ -135,6 +132,26 @@ namespace DwarfCorp
             {
                 OnTypeSet(value);
             }
+        }
+
+        /// <summary>
+        /// Set the type of a voxel without triggering all the bookkeeping mechanisms. 
+        /// Should only be used by ChunkGenerator as it can break geometry building.
+        /// </summary>
+        /// <param name="NewType"></param>
+        public void RawSetType(VoxelType NewType)
+        {
+            var previous = _cache_Chunk.Data.Types[_cache_Index];
+
+            // Change actual data
+            _cache_Chunk.Data.Types[_cache_Index] = (byte)NewType.ID;
+            _cache_Chunk.Data.Health[_cache_Index] = (byte)NewType.StartingHealth;
+
+            // Did we go from empty to filled or vice versa? Update filled counter.
+            if (previous == 0 && NewType.ID != 0)
+                _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] += 1;
+            else if (previous != 0 && NewType.ID == 0)
+                _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] -= 1;
         }
 
         private void OnTypeSet(VoxelType NewType)
@@ -172,8 +189,20 @@ namespace DwarfCorp
             if (Coordinate.Y > 0)
             {
                 var localCoordinate = Coordinate.GetLocalVoxelCoordinate();
-                var below = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(Chunk,
-                    new LocalVoxelCoordinate(localCoordinate.X, localCoordinate.Y - 1, localCoordinate.Z)));
+                var Y = localCoordinate.Y - 1;
+                var sunColor = NewType.ID == 0 ? this.SunColor : 0;
+                var below = TemporaryVoxelHandle.InvalidHandle;
+
+                while (Y >= 0)
+                {
+                    below = new TemporaryVoxelHandle(Chunk, new LocalVoxelCoordinate(localCoordinate.X, Y,
+                        localCoordinate.Z));
+                    below.SunColor = sunColor;
+                    if (!below.IsEmpty && !below.Type.IsTransparent)
+                        break;
+                    Y -= 1;
+                }
+
                 if (below.IsValid)
                     _cache_Chunk.Data.SliceCache[below.Coordinate.Y] = null;
             }
@@ -186,9 +215,9 @@ namespace DwarfCorp
                 ChunkCoordinate.Y + NeighborOffset.Y,
                 ChunkCoordinate.Z + NeighborOffset.Z);
 
-            VoxelChunk chunk = null;
-            if (Chunks.ChunkMap.TryGetValue(neighborCoordinate, out chunk))
+            if (Chunks.CheckBounds(neighborCoordinate))
             {
+                var chunk = Chunks.GetChunk(neighborCoordinate);
                 chunk.Data.SliceCache[Y] = null;
                 if (Y > 0) chunk.Data.SliceCache[Y - 1] = null;
             }
