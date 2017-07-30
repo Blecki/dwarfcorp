@@ -46,7 +46,6 @@ namespace DwarfCorp
 
                     neighbor.Chunk.ShouldRebuild = true;
                     neighbor.Chunk.ShouldRebuildWater = true;
-                    neighbor.Chunk.ShouldRecalculateLighting = true;
                 }
 
                 v.IsExplored = true;

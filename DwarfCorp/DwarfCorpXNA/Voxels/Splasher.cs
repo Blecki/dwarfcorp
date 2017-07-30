@@ -88,7 +88,6 @@ namespace DwarfCorp
                         };
 
                         v.Chunk.ShouldRebuild = true;
-                        v.Chunk.ShouldRecalculateLighting = true;
                     }
                 }
             }

@@ -336,13 +336,13 @@ namespace DwarfCorp
                             }
                         }
 
-                        foreach (
-                            VoxelChunk chunk in
-                                toRebuild.Select(chunkPair => chunkPair.Value)
-                                    .Where(chunk => chunk.ShouldRecalculateLighting))
-                        {
-                            chunk.CalculateGlobalLight();
-                        }
+                        //foreach (
+                        //    VoxelChunk chunk in
+                        //        toRebuild.Select(chunkPair => chunkPair.Value)
+                        //            .Where(chunk => chunk.ShouldRecalculateLighting))
+                        //{
+                        //    chunk.CalculateGlobalLight();
+                        //}
 
                         foreach (VoxelChunk chunk in toRebuild.Select(chunkPair => chunkPair.Value))
                         {
@@ -352,7 +352,6 @@ namespace DwarfCorp
                                 chunk.Rebuild(Graphics);
                                 //chunk.ShouldRebuild = false;
                                 chunk.RebuildPending = false;
-                                chunk.ShouldRecalculateLighting = false;
                             }
                         }
                         
@@ -505,7 +504,6 @@ namespace DwarfCorp
                                 VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, World);
                                 Drawer3D.DrawBox(chunk.GetBoundingBox(), Color.Red, 0.1f);
                                 chunk.ShouldRebuild = true;
-                                chunk.ShouldRecalculateLighting = true;
                                 GeneratedChunks.Enqueue(chunk);
                             //}
                         });
@@ -597,9 +595,8 @@ namespace DwarfCorp
                         box.Z * VoxelConstants.ChunkSizeZ);
                     VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, World);
                     chunk.ShouldRebuild = true;
-                    chunk.ShouldRecalculateLighting = true;
                     chunk.IsVisible = true;
-                    chunk.Data.ResetSunlight(0);
+                    //chunk.Data.ResetSunlight(0);
                     GeneratedChunks.Enqueue(chunk);
                     foreach (VoxelChunk chunk2 in GeneratedChunks)
                         ChunkData.AddChunk(chunk2);
@@ -671,10 +668,7 @@ GameSettings.Default.FogofWar = fogOfWar;
                 {
                         ChunkData.AddChunk(chunk);
                         foreach(var c in EnumerateAdjacentChunks(chunk))
-                        {
-                            c.ShouldRecalculateLighting = true;
                             c.ShouldRebuild = true;
-                        }
                         RecalculateBounds();
                 }
 
@@ -716,6 +710,8 @@ GameSettings.Default.FogofWar = fogOfWar;
 
         public void CreateGraphics(Action<String> SetLoadingMessage, ChunkData chunkData)
         {
+            // Todo: Figure out if this needs to duplicate effort of rebuild thread.
+
             SetLoadingMessage("Creating Graphics");
 
             List<VoxelChunk> toRebuild = new List<VoxelChunk>();
@@ -738,15 +734,15 @@ GameSettings.Default.FogofWar = fogOfWar;
                 foreach (var chunk in toRebuild)
                   chunk.UpdateRamps();
 
-            SetLoadingMessage("Calculating lighting ");
-            foreach(var chunk in toRebuild)
-            {
-                if (chunk.ShouldRecalculateLighting)
-                {
-                    chunk.CalculateGlobalLight();
-                    chunk.ShouldRecalculateLighting = false;
-                }
-            }
+            //SetLoadingMessage("Calculating lighting ");
+            //foreach(var chunk in toRebuild)
+            //{
+            //    if (chunk.ShouldRecalculateLighting)
+            //    {
+            //        chunk.CalculateGlobalLight();
+            //        chunk.ShouldRecalculateLighting = false;
+            //    }
+            //}
 
             SetLoadingMessage("Building Vertices...");
             foreach(var  chunk in toRebuild)
@@ -812,7 +808,7 @@ GameSettings.Default.FogofWar = fogOfWar;
             }
 
             KilledVoxels.Add(Voxel);
-            Voxel.TypeID = 0;
+            Voxel.Type = VoxelLibrary.emptyType;
 
             return emittedResources;
         }

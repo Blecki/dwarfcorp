@@ -75,7 +75,6 @@ namespace DwarfCorp
         public bool FirstWaterIter { get; set; }
 
         public Mutex PrimitiveMutex { get; set; }
-        public bool ShouldRecalculateLighting { get; set; }
         public bool ShouldRebuildWater { get; set; }
 
         public List<DynamicLight> DynamicLights { get; set; }
@@ -210,7 +209,6 @@ namespace DwarfCorp
 
             InitializeStatics();
             PrimitiveMutex = new Mutex();
-            ShouldRecalculateLighting = true;
             DynamicLights = new List<DynamicLight>();
 
             Liquids = new Dictionary<LiquidType, LiquidPrimitive>();
@@ -697,10 +695,7 @@ namespace DwarfCorp
             RebuildLiquids();
             IsRebuilding = false;
 
-            if (ShouldRecalculateLighting)
-            {
-                NotifyChangedComponents();
-            }
+            NotifyChangedComponents();
             ShouldRebuild = false;
         }
 
@@ -764,7 +759,7 @@ namespace DwarfCorp
                     {
                         var v = new TemporaryVoxelHandle(this, new LocalVoxelCoordinate(x, y, z));
                         v.SunColor = sunColor;
-                        if (v.TypeID != 0 && !v.Type.IsTransparent)
+                        if (v.Type.ID != 0 && !v.Type.IsTransparent)
                             break;
                     }
 

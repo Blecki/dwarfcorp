@@ -130,7 +130,6 @@ namespace DwarfCorp
             VoxelChunk c = new VoxelChunk(Manager, Origin, ID)
             {
                 ShouldRebuild = true,
-                ShouldRecalculateLighting = true,
                 ShouldRebuildWater = true
             };
 

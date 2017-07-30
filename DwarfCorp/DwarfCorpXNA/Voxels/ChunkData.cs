@@ -180,7 +180,6 @@ namespace DwarfCorp
                 if (vox.IsValid)
                 {
                     vox.Chunk.ShouldRebuild = true;
-                    vox.Chunk.ShouldRecalculateLighting = true;
                     vox.Chunk.ShouldRebuildWater = true;
                     vox.Chunk.ReconstructRamps = true;
                 }
