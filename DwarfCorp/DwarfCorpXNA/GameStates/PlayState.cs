@@ -974,7 +974,7 @@ namespace DwarfCorp.GameStates
                         {
                             AddToolbarIcon(sender, () =>
                                 ((sender as FlatToolTray.Icon).PopupChild as BuildCraftInfo).CanBuild());
-                        }
+                        },
                     }))
             };
 

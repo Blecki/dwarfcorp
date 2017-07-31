@@ -98,6 +98,10 @@ namespace DwarfCorp.Dialogue
                 GuiRoot.HandleInput(@event.Message, @event.Args);
                 if (!@event.Args.Handled)
                 {
+                    if (@event.Args.KeyValue > 0)
+                    {
+                        DialogueContext.Skip();
+                    }
                     // Pass event to game...
                 }
             }

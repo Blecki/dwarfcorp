@@ -26,10 +26,12 @@ namespace DwarfCorp.Dialogue
         public Diplomacy.Politics Politics;
         public WorldManager World;
 
-        private IEnumerator<Utterance> speech; 
+        private IEnumerator<Utterance> speech;
+        private string sentence;
 
         public void Say(String Text)
         {
+            sentence = Text;
             SpeechBubble.Text = "";
             SpeechBubble.Invalidate();
 
@@ -86,6 +88,13 @@ namespace DwarfCorp.Dialogue
                 next(this);
 
 
+        }
+
+        public void Skip()
+        {
+            speech = null;
+            SpeechBubble.Text = sentence;
+            SpeakerAnimation.Stop();
         }
     }    
 }
