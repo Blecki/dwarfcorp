@@ -69,12 +69,17 @@ namespace DwarfCorp
             VertexCount = 0;
             IndexCount = 0;
             BoxPrimitive bedrockModel = VoxelLibrary.GetPrimitive("Bedrock");
+            var sliceStack = new List<RawPrimitive>();
             var totalBuilt = 0;
 
             for (var y = 0; y < chunk.Manager.ChunkData.MaxViewingLevel; ++y)
             {
                 if (chunk.Data.VoxelsPresentInSlice[y] == 0) continue;
-                if (chunk.Data.SliceCache[y] != null) continue;
+                if (chunk.Data.SliceCache[y] != null)
+                {
+                    sliceStack.Add(chunk.Data.SliceCache[y]);
+                    continue;
+                }
 
                 var sliceGeometry = new RawPrimitive
                 {
@@ -93,14 +98,13 @@ namespace DwarfCorp
                     }
                 }
 
+                sliceStack.Add(sliceGeometry);
                 totalBuilt += 1;
             }
 
-            if (totalBuilt != 0)
+            if (totalBuilt > 0)
             {
-                var combinedGeometry = RawPrimitive.Concat(chunk.Data.SliceCache.Where((s, y) =>
-                    s != null
-                    && y < chunk.Manager.ChunkData.MaxViewingLevel).Reverse());
+                var combinedGeometry = RawPrimitive.Concat(sliceStack);
 
                 Vertices = combinedGeometry.Vertices;
                 VertexCount = combinedGeometry.VertexCount;
@@ -228,17 +232,17 @@ namespace DwarfCorp
             }
         }
 
-        private static VertexColorInfo CalculateVertexLight(TemporaryVoxelHandle vox, VoxelVertex face,
+        private static VertexColorInfo CalculateVertexLight(TemporaryVoxelHandle Vox, VoxelVertex Vertex,
             ChunkManager chunks)
         {
-            float numHit = 1;
-            float numChecked = 1;
+            int neighborsEmpty = 0;
+            int neighborsChecked = 0;
 
             var color = new VertexColorInfo();
             color.DynamicColor = 0;
-            color.SunColor = vox.SunColor;
+            color.SunColor = 0;
 
-            foreach (var c in VoxelHelpers.EnumerateVertexNeighbors(vox.Coordinate, face))
+            foreach (var c in VoxelHelpers.EnumerateVertexNeighbors(Vox.Coordinate, Vertex))
             {
                 var v = new TemporaryVoxelHandle(chunks.ChunkData, c);
                 if (!v.IsValid) continue;
@@ -247,19 +251,28 @@ namespace DwarfCorp
                 if (!v.IsEmpty || !v.IsExplored)
                 {
                     if (v.Type.EmitsLight) color.DynamicColor = 255;
-                    numHit += 1;
-                    numChecked += 1;
+                    neighborsEmpty += 1;
+                    neighborsChecked += 1;
                 }
                 else
-                    numChecked += 1;
+                    neighborsChecked += 1;
             }
 
-            float proportionHit = numHit / numChecked;
+            float proportionHit = (float)neighborsEmpty / (float)neighborsChecked;
             color.AmbientColor = (int)Math.Min((1.0f - proportionHit) * 255.0f, 255);
-            color.SunColor = (int)Math.Min((float)color.SunColor / (float)numChecked, 255);
+            color.SunColor = (int)Math.Min((float)color.SunColor / (float)neighborsChecked, 255);
 
             return color;
         }
+
+        //private static void GetCacheID(TemporaryVoxelHandle Voxel, VoxelVertex Vertex)
+        //{
+        //    var coordinate = Voxel.Coordinate;
+        //    switch (Vertex)
+        //    {
+        //        case VoxelVertex.
+        //    }
+        //}
 
         private static BoxPrimitive.BoxTextureCoords ComputeTransitionTexture(TemporaryVoxelHandle V)
         {

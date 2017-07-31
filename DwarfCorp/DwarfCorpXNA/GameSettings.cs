@@ -55,7 +55,6 @@ namespace DwarfCorp
             public bool DrawSkyReflected = true;
             public bool DrawChunksReflected = true;
             public bool DrawEntityReflected = true;
-            public bool CalculateSunlight = true;
             public bool AmbientOcclusion = true;
             public bool CalculateRamps = true;
             public float CameraScrollSpeed = 10.0f;

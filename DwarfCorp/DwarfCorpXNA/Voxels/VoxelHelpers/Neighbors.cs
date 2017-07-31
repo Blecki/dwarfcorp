@@ -112,7 +112,7 @@ namespace DwarfCorp
                 new GlobalVoxelOffset(-1,0,1),
                 new GlobalVoxelOffset(-1,1,0),
                 new GlobalVoxelOffset(-1,1,1),
-                //new GlobalVoxelOffset(0,0,0),
+                new GlobalVoxelOffset(0,0,0),
                 new GlobalVoxelOffset(0,0,1),
                 new GlobalVoxelOffset(0,1,0),
                 new GlobalVoxelOffset(0,1,1)
@@ -120,7 +120,7 @@ namespace DwarfCorp
 
             new GlobalVoxelOffset[] // Front Top Right (1, 1, 1)
             {
-                //new GlobalVoxelOffset(0,0,0),
+                new GlobalVoxelOffset(0,0,0),
                 new GlobalVoxelOffset(0,0,1),
                 new GlobalVoxelOffset(0,1,0),
                 new GlobalVoxelOffset(0,1,1),
@@ -138,7 +138,7 @@ namespace DwarfCorp
                 new GlobalVoxelOffset(-1,0,1),
                 new GlobalVoxelOffset(0,-1,0),
                 new GlobalVoxelOffset(0,-1,1),
-                //new GlobalVoxelOffset(0,0,0),
+                new GlobalVoxelOffset(0,0,0),
                 new GlobalVoxelOffset(0,0,1)
             },
 
@@ -146,7 +146,7 @@ namespace DwarfCorp
             {
                 new GlobalVoxelOffset(0,-1,0),
                 new GlobalVoxelOffset(0,-1,1),
-                //new GlobalVoxelOffset(0,0,0),
+                new GlobalVoxelOffset(0,0,0),
                 new GlobalVoxelOffset(0,0,1),
                 new GlobalVoxelOffset(1,-1,0),
                 new GlobalVoxelOffset(1,-1,1),
@@ -161,7 +161,7 @@ namespace DwarfCorp
                 new GlobalVoxelOffset(-1,1,-1),
                 new GlobalVoxelOffset(-1,1,0),
                 new GlobalVoxelOffset(0,0,-1),
-                //new GlobalVoxelOffset(0,0,0),
+                new GlobalVoxelOffset(0,0,0),
                 new GlobalVoxelOffset(0,1,-1),
                 new GlobalVoxelOffset(0,1,0)
             },
@@ -169,7 +169,7 @@ namespace DwarfCorp
             new GlobalVoxelOffset[] // Back Top Right (1, 1, -1)
             {
                 new GlobalVoxelOffset(0,0,-1),
-                //new GlobalVoxelOffset(0,0,0),
+                new GlobalVoxelOffset(0,0,0),
                 new GlobalVoxelOffset(0,1,-1),
                 new GlobalVoxelOffset(0,1,0),
                 new GlobalVoxelOffset(1,0,-1),
@@ -187,7 +187,7 @@ namespace DwarfCorp
                 new GlobalVoxelOffset(0,-1,-1),
                 new GlobalVoxelOffset(0,-1,0),
                 new GlobalVoxelOffset(0,0,-1),
-                //new GlobalVoxelOffset(0,0,0)
+                new GlobalVoxelOffset(0,0,0)
             },
 
             new GlobalVoxelOffset[] // Back Bottom Right (1, -1, -1)
@@ -195,7 +195,7 @@ namespace DwarfCorp
                 new GlobalVoxelOffset(0,-1,-1),
                 new GlobalVoxelOffset(0,-1,0),
                 new GlobalVoxelOffset(0,0,-1),
-                //new GlobalVoxelOffset(0,0,0),
+                new GlobalVoxelOffset(0,0,0),
                 new GlobalVoxelOffset(1,-1,-1),
                 new GlobalVoxelOffset(1,-1,0),
                 new GlobalVoxelOffset(1,0,-1),
