@@ -37,7 +37,6 @@ namespace BloomPostprocess
         private RenderTarget2D renderTarget1;
         private RenderTarget2D renderTarget2;
 
-
         // Choose what display settings the bloom should use.
         public BloomSettings Settings
         {
@@ -70,11 +69,7 @@ namespace BloomPostprocess
 
         #region Initialization
 
-        public BloomComponent(Game game)
-            : base(game)
-        {
-        }
-
+        public BloomComponent(Game game) : base(game) { }
 
         /// <summary>
         /// Load your graphics content.

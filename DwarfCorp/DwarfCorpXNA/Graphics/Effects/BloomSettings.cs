@@ -64,7 +64,6 @@ namespace BloomPostprocess
             BaseSaturation = baseSaturation;
         }
 
-
         /// <summary>
         /// Table of preset bloom settings, used by the sample program.
         /// </summary>
@@ -79,5 +78,4 @@ namespace BloomPostprocess
             new BloomSettings("Subtle", 0.6f, 2, 1, 0.99f, 0.8f, 1),
         };
     }
-
 }
