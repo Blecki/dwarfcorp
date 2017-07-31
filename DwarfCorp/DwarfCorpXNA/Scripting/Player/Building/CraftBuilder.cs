@@ -301,7 +301,26 @@ namespace DwarfCorp
                 }
             }
 
-            return true;
+            var intersectsAnyOther = Faction.OwnedObjects.FirstOrDefault(
+                o => o != CurrentCraftBody && o.GetRotatedBoundingBox().Intersects(CurrentCraftBody.GetRotatedBoundingBox().Expand(-0.1f)));
+            bool intersectsWall = VoxelHelpers.EnumerateCoordinatesInBoundingBox
+                ( CurrentCraftBody.GetRotatedBoundingBox().Expand(-0.1f)).Any(
+        v =>
+        {
+            var tvh = new TemporaryVoxelHandle(World.ChunkManager.ChunkData, v);
+            return tvh.IsValid && !tvh.IsEmpty;
+        });
+
+            if (intersectsAnyOther != null)
+            {
+                World.ShowToolPopup("Can't build here: intersects " + intersectsAnyOther.Name);
+            }
+            else if (intersectsWall && !designation.ItemType.Prerequisites.Contains(CraftItem.CraftPrereq.NearWall))
+            {
+                World.ShowToolPopup("Can't build here: intersects wall.");
+            }
+
+            return (intersectsAnyOther == null && (!intersectsWall || designation.ItemType.Prerequisites.Contains(CraftItem.CraftPrereq.NearWall)));
 
         }
 

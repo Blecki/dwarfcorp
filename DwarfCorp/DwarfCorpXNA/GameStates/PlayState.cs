@@ -942,6 +942,10 @@ namespace DwarfCorp.GameStates
                             Rect = new Rectangle(0, 0, 256, 150),
                             Master = Master,
                             World = World,
+                            OnShown = (sender) =>
+                            {
+                               Master.Faction.CraftBuilder.IsEnabled = false;
+                            },
                             BuildAction = (sender, args) =>
                             {
                                 var buildInfo = sender.Parent as Gui.Widgets.BuildCraftInfo;
@@ -949,7 +953,7 @@ namespace DwarfCorp.GameStates
                                 {
                                     return;
                                 }
-
+                                sender.Parent.Hidden = true;
                                 data.SelectedResources = buildInfo.GetSelectedResources();
                                 data.NumRepeats = buildInfo.GetNumRepeats();
                                 Master.Faction.RoomBuilder.CurrentRoomData = null;

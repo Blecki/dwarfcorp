@@ -184,11 +184,11 @@ namespace DwarfCorp
 
                 var intersectsAnyOther =
                     Player.Faction.OwnedObjects.FirstOrDefault(
-                        o => o != SelectedBody && o.GetRotatedBoundingBox().Intersects(SelectedBody.GetRotatedBoundingBox().Expand(-0.1f)));
+                        o => o != SelectedBody && o.GetRotatedBoundingBox().Intersects(SelectedBody.GetRotatedBoundingBox().Expand(-0.5f)));
                 Drawer3D.DrawBox(SelectedBody.GetRotatedBoundingBox(), Color.White, 0.05f);
 
                 bool intersectsWall = VoxelHelpers.EnumerateCoordinatesInBoundingBox(
-                    SelectedBody.GetRotatedBoundingBox().Expand(-0.1f)).Any(
+                    SelectedBody.GetRotatedBoundingBox().Expand(-0.5f)).Any(
                         v =>
                         {
                             var tvh = new TemporaryVoxelHandle(Player.VoxSelector.Chunks.ChunkData, v);
