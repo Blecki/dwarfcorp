@@ -106,28 +106,18 @@ namespace DwarfCorp
         #region VertexNeighbors
         public static readonly GlobalVoxelOffset[][] VertexNeighbors = new GlobalVoxelOffset[][]
         {
-            new GlobalVoxelOffset[] // Front Top Left (-1, 1, 1)
-            {
-                new GlobalVoxelOffset(-1,0,0),
-                new GlobalVoxelOffset(-1,0,1),
-                new GlobalVoxelOffset(-1,1,0),
-                new GlobalVoxelOffset(-1,1,1),
-                new GlobalVoxelOffset(0,0,0),
-                new GlobalVoxelOffset(0,0,1),
-                new GlobalVoxelOffset(0,1,0),
-                new GlobalVoxelOffset(0,1,1)
-            },
+            // This MUST be in the same order as the VoxelVertex enum!
 
-            new GlobalVoxelOffset[] // Front Top Right (1, 1, 1)
+            new GlobalVoxelOffset[] // Back Bottom Left (-1, -1, -1)
             {
-                new GlobalVoxelOffset(0,0,0),
-                new GlobalVoxelOffset(0,0,1),
-                new GlobalVoxelOffset(0,1,0),
-                new GlobalVoxelOffset(0,1,1),
-                new GlobalVoxelOffset(1,0,0),
-                new GlobalVoxelOffset(1,0,1),
-                new GlobalVoxelOffset(1,1,0),
-                new GlobalVoxelOffset(1,1,1)
+                new GlobalVoxelOffset(-1,-1,-1),
+                new GlobalVoxelOffset(-1,-1,0),
+                new GlobalVoxelOffset(-1,0,-1),
+                new GlobalVoxelOffset(-1,0,0),
+                new GlobalVoxelOffset(0,-1,-1),
+                new GlobalVoxelOffset(0,-1,0),
+                new GlobalVoxelOffset(0,0,-1),
+                new GlobalVoxelOffset(0,0,0)
             },
 
             new GlobalVoxelOffset[] // Front Bottom Left (-1, -1, 1)
@@ -142,18 +132,6 @@ namespace DwarfCorp
                 new GlobalVoxelOffset(0,0,1)
             },
 
-            new GlobalVoxelOffset[] // Front Bottom Right (1, -1, 1)
-            {
-                new GlobalVoxelOffset(0,-1,0),
-                new GlobalVoxelOffset(0,-1,1),
-                new GlobalVoxelOffset(0,0,0),
-                new GlobalVoxelOffset(0,0,1),
-                new GlobalVoxelOffset(1,-1,0),
-                new GlobalVoxelOffset(1,-1,1),
-                new GlobalVoxelOffset(1,0,0),
-                new GlobalVoxelOffset(1,0,1)
-            },
-
             new GlobalVoxelOffset[] // Back Top Left (-1, 1, -1)
             {
                 new GlobalVoxelOffset(-1,0,-1),
@@ -164,6 +142,42 @@ namespace DwarfCorp
                 new GlobalVoxelOffset(0,0,0),
                 new GlobalVoxelOffset(0,1,-1),
                 new GlobalVoxelOffset(0,1,0)
+            },
+
+            new GlobalVoxelOffset[] // Front Top Left (-1, 1, 1)
+            {
+                new GlobalVoxelOffset(-1,0,0),
+                new GlobalVoxelOffset(-1,0,1),
+                new GlobalVoxelOffset(-1,1,0),
+                new GlobalVoxelOffset(-1,1,1),
+                new GlobalVoxelOffset(0,0,0),
+                new GlobalVoxelOffset(0,0,1),
+                new GlobalVoxelOffset(0,1,0),
+                new GlobalVoxelOffset(0,1,1)
+            },
+
+            new GlobalVoxelOffset[] // Back Bottom Right (1, -1, -1)
+            {
+                new GlobalVoxelOffset(0,-1,-1),
+                new GlobalVoxelOffset(0,-1,0),
+                new GlobalVoxelOffset(0,0,-1),
+                new GlobalVoxelOffset(0,0,0),
+                new GlobalVoxelOffset(1,-1,-1),
+                new GlobalVoxelOffset(1,-1,0),
+                new GlobalVoxelOffset(1,0,-1),
+                new GlobalVoxelOffset(1,0,0)
+            },
+
+            new GlobalVoxelOffset[] // Front Bottom Right (1, -1, 1)
+            {
+                new GlobalVoxelOffset(0,-1,0),
+                new GlobalVoxelOffset(0,-1,1),
+                new GlobalVoxelOffset(0,0,0),
+                new GlobalVoxelOffset(0,0,1),
+                new GlobalVoxelOffset(1,-1,0),
+                new GlobalVoxelOffset(1,-1,1),
+                new GlobalVoxelOffset(1,0,0),
+                new GlobalVoxelOffset(1,0,1)
             },
 
             new GlobalVoxelOffset[] // Back Top Right (1, 1, -1)
@@ -178,55 +192,27 @@ namespace DwarfCorp
                 new GlobalVoxelOffset(1,1,0)
             },
 
-            new GlobalVoxelOffset[] // Back Bottom Left (-1, -1, -1)
+            new GlobalVoxelOffset[] // Front Top Right (1, 1, 1)
             {
-                new GlobalVoxelOffset(-1,-1,-1),
-                new GlobalVoxelOffset(-1,-1,0),
-                new GlobalVoxelOffset(-1,0,-1),
-                new GlobalVoxelOffset(-1,0,0),
-                new GlobalVoxelOffset(0,-1,-1),
-                new GlobalVoxelOffset(0,-1,0),
-                new GlobalVoxelOffset(0,0,-1),
-                new GlobalVoxelOffset(0,0,0)
-            },
-
-            new GlobalVoxelOffset[] // Back Bottom Right (1, -1, -1)
-            {
-                new GlobalVoxelOffset(0,-1,-1),
-                new GlobalVoxelOffset(0,-1,0),
-                new GlobalVoxelOffset(0,0,-1),
                 new GlobalVoxelOffset(0,0,0),
-                new GlobalVoxelOffset(1,-1,-1),
-                new GlobalVoxelOffset(1,-1,0),
-                new GlobalVoxelOffset(1,0,-1),
-                new GlobalVoxelOffset(1,0,0)
-            },
+                new GlobalVoxelOffset(0,0,1),
+                new GlobalVoxelOffset(0,1,0),
+                new GlobalVoxelOffset(0,1,1),
+                new GlobalVoxelOffset(1,0,0),
+                new GlobalVoxelOffset(1,0,1),
+                new GlobalVoxelOffset(1,1,0),
+                new GlobalVoxelOffset(1,1,1)
+            }
         };
         #endregion
 
         #region Vertex Neighbors 2D
         private static GlobalVoxelOffset[][] VertexNeighbors2D = new GlobalVoxelOffset[][]
         {
-            // Front Top Left
-            new GlobalVoxelOffset[]
-            {
-                new GlobalVoxelOffset(-1, 0, 0),
-                new GlobalVoxelOffset(-1, 0, 1),
-                new GlobalVoxelOffset(0, 0, 1)
-            },
-
-            // Front Top Right
-            new GlobalVoxelOffset[]
-            {
-                new GlobalVoxelOffset(0, 0, 1),
-                new GlobalVoxelOffset(1, 0, 1),
-                new GlobalVoxelOffset(1, 0, 0)
-            },
-
-            // Front Bottom Left
+            // Back Bottom Left
             new GlobalVoxelOffset[] { },
 
-            // Front Bottom Right
+            // Front Bottom Left
             new GlobalVoxelOffset[] { },
 
             // Back Top Left
@@ -237,6 +223,20 @@ namespace DwarfCorp
                 new GlobalVoxelOffset(0, 0, -1)
             },
             
+            // Front Top Left
+            new GlobalVoxelOffset[]
+            {
+                new GlobalVoxelOffset(-1, 0, 0),
+                new GlobalVoxelOffset(-1, 0, 1),
+                new GlobalVoxelOffset(0, 0, 1)
+            },
+            
+            // Back Bottom Right
+            new GlobalVoxelOffset[] { },
+            
+            // Front Bottom Right
+            new GlobalVoxelOffset[] { },
+            
             // Back Top Right
             new GlobalVoxelOffset[]
             {
@@ -245,11 +245,13 @@ namespace DwarfCorp
                 new GlobalVoxelOffset(1, 0, 0)
             },
 
-            // Back Bottom Left
-            new GlobalVoxelOffset[] { },
-
-            // Back Bottom Right
-            new GlobalVoxelOffset[] { }
+            // Front Top Right
+            new GlobalVoxelOffset[]
+            {
+                new GlobalVoxelOffset(0, 0, 1),
+                new GlobalVoxelOffset(1, 0, 1),
+                new GlobalVoxelOffset(1, 0, 0)
+            },
         };
         #endregion
 

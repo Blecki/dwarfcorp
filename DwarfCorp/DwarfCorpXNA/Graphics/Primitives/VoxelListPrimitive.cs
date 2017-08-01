@@ -31,8 +31,6 @@ namespace DwarfCorp
                 FaceDeltas[(int)BoxFace.Top] = new Vector3(0, 1, 0);
                 FaceDeltas[(int)BoxFace.Bottom] = new Vector3(0, -1, 0);
 
-                VoxelChunk.CreateFaceDrawMap();
-
                 StaticsInitialized = true;
             }
         }

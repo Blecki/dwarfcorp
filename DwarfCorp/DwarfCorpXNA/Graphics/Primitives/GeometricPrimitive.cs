@@ -44,16 +44,38 @@ namespace DwarfCorp
             ResetBuffer(GameState.Game.GraphicsDevice);
         }
 
-        public static readonly bool[, ,] FaceDrawMap = new bool[6, (int)RampType.All + 1, (int)RampType.All + 1];
+        private static bool RampSet(RampType ToCheck, RampType For)
+        {
+            return (int)(ToCheck & For) != 0;
+        }
 
         protected static bool ShouldDrawFace(BoxFace face, RampType neighborRamp, RampType myRamp)
         {
-            if (face == BoxFace.Top || face == BoxFace.Bottom)
+            switch (face)
             {
-                return true;
+                case BoxFace.Top:
+                case BoxFace.Bottom:
+                    return true;
+                case BoxFace.Back:
+                    return CheckRamps(myRamp, RampType.TopBackLeft, RampType.TopBackRight,
+                        neighborRamp, RampType.TopFrontLeft, RampType.TopFrontRight);
+                case BoxFace.Front:
+                    return CheckRamps(myRamp, RampType.TopFrontLeft, RampType.TopFrontRight,
+                        neighborRamp, RampType.TopBackLeft, RampType.TopBackRight);
+                case BoxFace.Left:
+                    return CheckRamps(myRamp, RampType.TopBackLeft, RampType.TopFrontLeft,
+                        neighborRamp, RampType.TopBackRight, RampType.TopFrontRight);
+                case BoxFace.Right:
+                    return CheckRamps(myRamp, RampType.TopBackRight, RampType.TopFrontRight,
+                        neighborRamp, RampType.TopBackLeft, RampType.TopFrontLeft);
+                default:
+                    return false;
             }
+        }
 
-            return FaceDrawMap[(int)face, (int)myRamp, (int)neighborRamp];
+        private static bool CheckRamps(RampType A, RampType A1, RampType A2, RampType B, RampType B1, RampType B2)
+        {
+            return (!RampSet(A, A1) && RampSet(B, B1)) || (!RampSet(A, A2) && RampSet(B, B2));
         }
 
         protected static bool IsSideFace(BoxFace face)
