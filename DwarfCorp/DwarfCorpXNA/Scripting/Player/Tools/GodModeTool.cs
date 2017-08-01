@@ -90,9 +90,6 @@ namespace DwarfCorp
 
         public override void OnVoxelsSelected(List<TemporaryVoxelHandle> refs, InputManager.MouseButton button)
         {
-           
-            var chunksToRebuild = new HashSet<GlobalVoxelCoordinate>();
-
             if(Command.Contains("Build/"))
             {
                 string type = Command.Substring(6);
@@ -134,9 +131,6 @@ namespace DwarfCorp
                                     DestroyTimer = new Timer(5.0f + MathFunctions.Rand(-0.5f, 0.5f), true)
                                 });
                         }
-
-
-                        chunksToRebuild.Add(vox.Coordinate);
                     }
                     else switch(Command)
                     {
@@ -169,8 +163,6 @@ namespace DwarfCorp
                                             Type = LiquidType.Water,
                                             WaterLevel = WaterManager.maxWaterLevel
                                         };
-
-                                chunksToRebuild.Add(vox.Coordinate);
                             }
                         }
                             break;
@@ -184,7 +176,6 @@ namespace DwarfCorp
                                             Type = LiquidType.Lava,
                                             WaterLevel = WaterManager.maxWaterLevel
                                         };
-                                        chunksToRebuild.Add(vox.Coordinate);
                             }
                         }
                             break;
@@ -225,11 +216,7 @@ namespace DwarfCorp
                     }
                 }
             }
-
-            foreach (var chunk in chunksToRebuild)
-                Chunks.ChunkData.NotifyRebuild(chunk);
         }
-
 
         public override void OnMouseOver(IEnumerable<Body> bodies)
         {

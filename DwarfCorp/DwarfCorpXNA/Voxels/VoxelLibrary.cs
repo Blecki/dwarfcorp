@@ -761,7 +761,6 @@ namespace DwarfCorp
         {
             voxel.Type = type;
             voxel.WaterCell = new WaterCell();
-            voxel.Health = voxel.Type.StartingHealth;
         }
 
         public static void RegisterType(VoxelType type, BoxPrimitive primitive)

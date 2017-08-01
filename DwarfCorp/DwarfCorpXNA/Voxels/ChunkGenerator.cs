@@ -455,10 +455,7 @@ namespace DwarfCorp
         public VoxelChunk GenerateChunk(Vector3 origin, WorldManager World)
         {
             float waterHeight = SeaLevel + 1.0f / VoxelConstants.ChunkSizeY;
-            VoxelChunk c = new VoxelChunk(Manager, origin, GlobalVoxelCoordinate.FromVector3(origin).GetGlobalChunkCoordinate())
-            {
-                ShouldRebuild = true,
-            };
+            VoxelChunk c = new VoxelChunk(Manager, origin, GlobalVoxelCoordinate.FromVector3(origin).GetGlobalChunkCoordinate());
 
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
@@ -549,8 +546,7 @@ namespace DwarfCorp
                 // Update corner ramps on all chunks so that they don't have seams when they 
                 // are initially built.
                 VoxelListPrimitive.UpdateCornerRamps(c, i);
-
-                c.Data.SliceCache[i] = null;
+                c.InvalidateSlice(i);
             }
 
             return c;

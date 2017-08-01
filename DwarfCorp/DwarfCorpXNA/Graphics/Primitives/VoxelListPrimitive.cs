@@ -73,9 +73,15 @@ namespace DwarfCorp
 
             for (var y = 0; y < chunk.Manager.ChunkData.MaxViewingLevel; ++y)
             {
-                if (chunk.Data.VoxelsPresentInSlice[y] == 0) continue;
+                if (chunk.Data.VoxelsPresentInSlice[y] == 0)
+                {
+                    lightCache.Clear(); // If we skip a slice, nothing in the cache will be reused.
+                    continue;
+                }
+
                 if (chunk.Data.SliceCache[y] != null)
                 {
+                    lightCache.Clear(); // If we skip a slice, nothing in the cache will be reused.
                     sliceStack.Add(chunk.Data.SliceCache[y]);
                     continue;
                 }

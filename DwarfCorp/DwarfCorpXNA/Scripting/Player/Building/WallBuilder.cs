@@ -72,7 +72,6 @@ namespace DwarfCorp
             v.Type = Type;
             v.WaterCell = new WaterCell();
             v.Health = Type.StartingHealth;
-            manager.ChunkData.NotifyRebuild(v.Coordinate);
             
             World.ParticleManager.Trigger("puff", v.WorldPosition, Color.White, 20);
 

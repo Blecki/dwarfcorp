@@ -160,7 +160,6 @@ namespace DwarfCorp
             
             var averageHeight = (int)Math.Round(((float)accumulator / (float)count));
 
-            var affectedChunks = new HashSet<GlobalVoxelCoordinate>();
             // Next, create the balloon port by deciding which voxels to fill.
             var balloonPortDesignations = new List<TemporaryVoxelHandle>();
             var treasuryDesignations = new List<TemporaryVoxelHandle>();
@@ -175,8 +174,6 @@ namespace DwarfCorp
 
                     if (!baseVoxel.IsValid)
                         continue;
-
-                    affectedChunks.Add(baseVoxel.Coordinate);
 
                     var h = baseVoxel.Coordinate.Y + 1;
                     var localCoord = baseVoxel.Coordinate.GetLocalVoxelCoordinate();
@@ -274,9 +271,6 @@ namespace DwarfCorp
             Treasury treasury = new Treasury(PlayerFaction, treasuryDesignations, this);
             treasury.OnBuilt();
             roomDes.DesignatedRooms.Add(treasury);
-
-            foreach (var chunk in affectedChunks)
-                chunkManager.ChunkData.NotifyRebuild(chunk);
 
             return toBuild;
         }

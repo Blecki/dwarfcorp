@@ -81,7 +81,6 @@ namespace DwarfCorp
 
 
         private static bool staticsInitialized = false;
-        private static Vector3[] vertexDeltas = new Vector3[8];
         private static Vector3[] faceDeltas = new Vector3[6];
 
         private bool firstRebuild = true;
@@ -95,6 +94,13 @@ namespace DwarfCorp
             return (uint)ID.GetHashCode();
         }
 
+        public void InvalidateSlice(int Y)
+        {
+            if (Y < 0 || Y >= VoxelConstants.ChunkSizeY) throw new InvalidOperationException();
+            ShouldRebuild = true;
+            Data.SliceCache[Y] = null;
+        }
+
         #region statics
 
         public static void InitializeStatics()
@@ -103,17 +109,7 @@ namespace DwarfCorp
             {
                 return;
             }
-
-            vertexDeltas[(int)VoxelVertex.BackBottomLeft] = new Vector3(0, 0, 0);
-            vertexDeltas[(int)VoxelVertex.BackTopLeft] = new Vector3(0, 1.0f, 0);
-            vertexDeltas[(int)VoxelVertex.BackBottomRight] = new Vector3(1.0f, 0, 0);
-            vertexDeltas[(int)VoxelVertex.BackTopRight] = new Vector3(1.0f, 1.0f, 0);
-
-            vertexDeltas[(int)VoxelVertex.FrontBottomLeft] = new Vector3(0, 0, 1.0f);
-            vertexDeltas[(int)VoxelVertex.FrontTopLeft] = new Vector3(0, 1.0f, 1.0f);
-            vertexDeltas[(int)VoxelVertex.FrontBottomRight] = new Vector3(1.0f, 0, 1.0f);
-            vertexDeltas[(int)VoxelVertex.FrontTopRight] = new Vector3(1.0f, 1.0f, 1.0f);
-
+            
             faceDeltas[(int)BoxFace.Top] = new Vector3(0.5f, 0.0f, 0.5f);
             faceDeltas[(int)BoxFace.Bottom] = new Vector3(0.5f, 1.0f, 0.5f);
             faceDeltas[(int)BoxFace.Left] = new Vector3(1.0f, 0.5f, 0.5f);
@@ -170,23 +166,6 @@ namespace DwarfCorp
             RebuildLiquidPending = false;
         }
        
-        public static VoxelVertex GetNearestDelta(Vector3 position)
-        {
-            float bestDist = float.MaxValue;
-            VoxelVertex bestKey = 0;
-            for (int i = 0; i < 8; i++)
-            {
-                float dist = (position - vertexDeltas[i]).LengthSquared();
-                if (dist < bestDist)
-                {
-                    bestDist = dist;
-                    bestKey = (VoxelVertex)(i);
-                }
-            }
-
-            return bestKey;
-        }
-
         private BoundingBox m_boundingBox;
         private bool m_boundingBoxCreated = false;
 

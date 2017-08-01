@@ -238,10 +238,7 @@ namespace DwarfCorp
             Voxels.Add(Voxel);
 
             if(ReplaceVoxelTypes)
-            {
                 Voxel.Type = ReplacementType;
-                Voxel.Chunk.ShouldRebuild = true;
-            }
 
             RecalculateMaxResources();
           

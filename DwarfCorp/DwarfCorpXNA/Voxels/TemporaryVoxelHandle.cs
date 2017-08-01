@@ -201,7 +201,7 @@ namespace DwarfCorp
             GlobalVoxelCoordinate Coordinate,
             int Y)
         {
-            Chunk.Data.SliceCache[Coordinate.Y] = null;
+            Chunk.InvalidateSlice(Coordinate.Y);
 
             var localCoordinate = Coordinate.GetLocalVoxelCoordinate();
 
@@ -242,8 +242,7 @@ namespace DwarfCorp
             if (Chunks.CheckBounds(neighborCoordinate))
             {
                 var chunk = Chunks.GetChunk(neighborCoordinate);
-                chunk.Data.SliceCache[Y] = null;
-                chunk.ShouldRebuild = true;
+                chunk.InvalidateSlice(Y);
             }
         }
 
@@ -270,7 +269,20 @@ namespace DwarfCorp
         public bool IsExplored
         {
             get { return !GameSettings.Default.FogofWar || _cache_Chunk.Data.IsExplored[_cache_Index]; }
-            set { _cache_Chunk.Data.IsExplored[_cache_Index] = value; }
+            set
+            {
+                _cache_Chunk.Data.IsExplored[_cache_Index] = value;
+                InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
+            }
+        }
+
+        /// <summary>
+        /// Set IsExplored without invoking the invalidation mechanism.
+        /// </summary>
+        /// <param name="Value"></param>
+        public void RawSetIsExplored(bool Value)
+        {
+            _cache_Chunk.Data.IsExplored[_cache_Index] = Value;
         }
 
         [JsonIgnore]

@@ -123,7 +123,6 @@ namespace DwarfCorp
                         else
                         {
                             FarmToWork.Vox.Type = VoxelLibrary.GetVoxelType("TilledSoil");
-                            Creature.World.ChunkManager.ChunkData.NotifyRebuild(FarmToWork.Vox.Coordinate);
                         }
                     }
                     if (MathFunctions.RandEvent(0.01f))

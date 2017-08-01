@@ -134,7 +134,6 @@ namespace DwarfCorp
             {
                 Vox.Type = VoxelLibrary.GetVoxelType("Stone");
                 Vox.WaterCell = WaterCell.Empty;
-                Vox.Chunk.ShouldRebuild = true;
             }            
         }
 

@@ -86,8 +86,6 @@ namespace DwarfCorp
                             Type = LiquidType.None,
                             WaterLevel = 0
                         };
-
-                        v.Chunk.ShouldRebuild = true;
                     }
                 }
             }

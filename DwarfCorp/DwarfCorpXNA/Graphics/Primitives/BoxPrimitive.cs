@@ -492,8 +492,46 @@ namespace DwarfCorp
             BoundingBox = new BoundingBox(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(width, height, depth));
             for (int i = 0; i < NumVertices; i++)
             {
-                Deltas[i] = VoxelChunk.GetNearestDelta(Vertices[i].Position);
+                Deltas[i] = GetNearestDelta(Vertices[i].Position);
             }
+        }
+
+        private static Vector3[] vertexDeltas = null;
+
+        private static void InitializeDeltas()
+        {
+            if (vertexDeltas != null) return;
+
+            vertexDeltas = new Vector3[8];
+
+            vertexDeltas[(int)VoxelVertex.BackBottomLeft] = new Vector3(0, 0, 0);
+            vertexDeltas[(int)VoxelVertex.BackTopLeft] = new Vector3(0, 1.0f, 0);
+            vertexDeltas[(int)VoxelVertex.BackBottomRight] = new Vector3(1.0f, 0, 0);
+            vertexDeltas[(int)VoxelVertex.BackTopRight] = new Vector3(1.0f, 1.0f, 0);
+
+            vertexDeltas[(int)VoxelVertex.FrontBottomLeft] = new Vector3(0, 0, 1.0f);
+            vertexDeltas[(int)VoxelVertex.FrontTopLeft] = new Vector3(0, 1.0f, 1.0f);
+            vertexDeltas[(int)VoxelVertex.FrontBottomRight] = new Vector3(1.0f, 0, 1.0f);
+            vertexDeltas[(int)VoxelVertex.FrontTopRight] = new Vector3(1.0f, 1.0f, 1.0f);
+        }
+
+        private static VoxelVertex GetNearestDelta(Vector3 position)
+        {
+            InitializeDeltas();
+
+            float bestDist = float.MaxValue;
+            VoxelVertex bestKey = 0;
+            for (int i = 0; i < 8; i++)
+            {
+                float dist = (position - vertexDeltas[i]).LengthSquared();
+                if (dist < bestDist)
+                {
+                    bestDist = dist;
+                    bestKey = (VoxelVertex)(i);
+                }
+            }
+
+            return bestKey;
         }
 
         public override void Render(GraphicsDevice device)
