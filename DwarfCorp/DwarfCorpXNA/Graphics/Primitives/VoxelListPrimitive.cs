@@ -69,6 +69,7 @@ namespace DwarfCorp
             BoxPrimitive bedrockModel = VoxelLibrary.GetPrimitive("Bedrock");
             var sliceStack = new List<RawPrimitive>();
             var totalBuilt = 0;
+            var lightCache = new Dictionary<GlobalVoxelCoordinate, VertexColorInfo>();
 
             for (var y = 0; y < chunk.Manager.ChunkData.MaxViewingLevel; ++y)
             {
@@ -95,7 +96,7 @@ namespace DwarfCorp
                     for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
                     {
                         BuildVoxelGeometry(ref sliceGeometry.Vertices, ref sliceGeometry.Indexes, ref sliceGeometry.VertexCount, ref sliceGeometry.IndexCount,
-                            x, y, z, chunk, bedrockModel, ambientValues);
+                            x, y, z, chunk, bedrockModel, ambientValues, lightCache);
                     }
                 }
 
@@ -123,6 +124,22 @@ namespace DwarfCorp
             isRebuilding = false;
         }
 
+        private static GlobalVoxelCoordinate GetCacheKey(TemporaryVoxelHandle Handle, VoxelVertex Vertex)
+        {
+            var coord = Handle.Coordinate;
+
+            if ((Vertex & VoxelVertex.Front) == VoxelVertex.Front)
+                coord = new GlobalVoxelCoordinate(coord.X, coord.Y, coord.Z + 1);
+
+            if ((Vertex & VoxelVertex.Top) == VoxelVertex.Top)
+                coord = new GlobalVoxelCoordinate(coord.X, coord.Y + 1, coord.Z);
+
+            if ((Vertex & VoxelVertex.Right) == VoxelVertex.Right)
+                coord = new GlobalVoxelCoordinate(coord.X + 1, coord.Y, coord.Z);
+
+            return coord;
+        }
+
         private static void BuildVoxelGeometry(
             ref ExtendedVertex[] Verticies,
             ref ushort[] Indicies,
@@ -133,7 +150,8 @@ namespace DwarfCorp
             int Z,
             VoxelChunk Chunk,
             BoxPrimitive BedrockModel,
-            int[] AmbientScratchSpace)
+            int[] AmbientScratchSpace,
+            Dictionary<GlobalVoxelCoordinate, VertexColorInfo> LightCache)
         {
             var v = new TemporaryVoxelHandle(Chunk, new LocalVoxelCoordinate(X, Y, Z));
 
@@ -173,7 +191,14 @@ namespace DwarfCorp
                     var vertex = primitive.Vertices[faceDescriptor.VertexOffset + faceVertex];
                     var voxelVertex = primitive.Deltas[faceDescriptor.VertexOffset + faceVertex];
 
-                    var vertexColor = CalculateVertexLight(v, voxelVertex, Chunk.Manager);
+                    var cacheKey = GetCacheKey(v, voxelVertex);
+                    VertexColorInfo vertexColor;
+                    if (!LightCache.TryGetValue(cacheKey, out vertexColor))
+                    {
+                        vertexColor = CalculateVertexLight(v, voxelVertex, Chunk.Manager);
+                        LightCache.Add(cacheKey, vertexColor);
+                    }
+
                     AmbientScratchSpace[faceVertex] = vertexColor.AmbientColor;
 
                     var rampOffset = Vector3.Zero;

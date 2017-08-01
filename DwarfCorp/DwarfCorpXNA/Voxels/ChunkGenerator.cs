@@ -545,7 +545,14 @@ namespace DwarfCorp
             UpdateSunlight(c, 255);
 
             for (var i = 0; i < VoxelConstants.ChunkSizeY; ++i)
+            {
+                // Update corner ramps on all chunks so that they don't have seams when they 
+                // are initially built.
+                VoxelListPrimitive.UpdateCornerRamps(c, i);
+
                 c.Data.SliceCache[i] = null;
+            }
+
             return c;
         }
 

@@ -71,7 +71,7 @@ namespace DwarfCorp
 
         public override int GetHashCode()
         {
-            return (X << VoxelConstants.ChunkSizeX) + Z;
+            return (((Z << VoxelConstants.ZDivShift) + Y) << VoxelConstants.YDivShift) + X;
         }
 
         public override bool Equals(object obj)
