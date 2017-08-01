@@ -328,13 +328,13 @@ namespace DwarfCorp
                             }
                         }
 
-                        if (calculateRamps)
-                        {
-                            foreach (VoxelChunk chunk in toRebuild.Select(chunkPair => chunkPair.Value))
-                            {
-                                chunk.UpdateRamps();
-                            }
-                        }
+                        //if (calculateRamps)
+                        //{
+                        //    foreach (VoxelChunk chunk in toRebuild.Select(chunkPair => chunkPair.Value))
+                        //    {
+                        //        chunk.UpdateRamps();
+                        //    }
+                        //}
 
                         //foreach (
                         //    VoxelChunk chunk in
@@ -729,10 +729,10 @@ GameSettings.Default.FogofWar = fogOfWar;
                 toRebuild.Add(chunk);
             }
 
-            SetLoadingMessage("Updating Ramps");
-            if (GameSettings.Default.CalculateRamps)
-                foreach (var chunk in toRebuild)
-                  chunk.UpdateRamps();
+            //SetLoadingMessage("Updating Ramps");
+            //if (GameSettings.Default.CalculateRamps)
+            //    foreach (var chunk in toRebuild)
+            //      chunk.UpdateRamps();
 
             //SetLoadingMessage("Calculating lighting ");
             //foreach(var chunk in toRebuild)

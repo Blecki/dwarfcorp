@@ -241,7 +241,6 @@ namespace DwarfCorp
             {
                 Voxel.Type = ReplacementType;
                 Voxel.Chunk.ShouldRebuild = true;
-                Voxel.Chunk.ReconstructRamps = true;
             }
 
             RecalculateMaxResources();

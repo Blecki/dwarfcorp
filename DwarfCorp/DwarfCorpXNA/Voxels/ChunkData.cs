@@ -182,7 +182,6 @@ namespace DwarfCorp
                 {
                     vox.Chunk.ShouldRebuild = true;
                     vox.Chunk.ShouldRebuildWater = true;
-                    vox.Chunk.ReconstructRamps = true;
                 }
             }
         }

@@ -90,8 +90,6 @@ namespace DwarfCorp
         public bool RebuildLiquidPending { get; set; }
         public GlobalChunkCoordinate ID { get; set; }
 
-        public bool ReconstructRamps { get; set; }
-
         public uint GetID()
         {
             return (uint)ID.GetHashCode();
@@ -170,7 +168,6 @@ namespace DwarfCorp
             IsRebuilding = false;
             RebuildPending = false;
             RebuildLiquidPending = false;
-            ReconstructRamps = true;
         }
        
         public static VoxelVertex GetNearestDelta(Vector3 position)
@@ -349,118 +346,6 @@ namespace DwarfCorp
                 Motes[moteData.Name] = EntityFactory.GenerateGrassMotes(grassPositions,
                     grassColors, grassScales, Manager.World.ComponentManager, Manager.Content, Manager.Graphics, Motes[moteData.Name], moteData.Asset, moteData.Name);
             }
-        }
-
-        public void UpdateRamps()
-        {
-            if (ReconstructRamps || firstRebuild)
-            {
-                UpdateCornerRamps(this);
-                ReconstructRamps = false;
-            }
-        }
-
-        public static void UpdateCornerRamps(VoxelChunk chunk)
-        {
-            List<VoxelVertex> top = new List<VoxelVertex>()
-            {
-                VoxelVertex.FrontTopLeft,
-                VoxelVertex.FrontTopRight,
-                VoxelVertex.BackTopLeft,
-                VoxelVertex.BackTopRight
-            };
-
-            for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
-            {
-                for (int y = 0; y < VoxelConstants.ChunkSizeY; y++)
-                {
-                    for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
-                    {
-                        var v = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
-                        bool isTop = false;
-
-                        if (y < VoxelConstants.ChunkSizeY - 1)
-                        {
-                            var vAbove = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y + 1, z));
-
-                            isTop = vAbove.IsEmpty;
-                        }
-
-                        v.RampType = RampType.None;
-
-                        // Check solid voxels
-                        if (v.WaterCell.Type == LiquidType.None)
-                        {
-                            if (v.IsEmpty || !v.IsVisible || !isTop || !v.Type.CanRamp)
-                                continue;
-                        }
-                        // Check liquid voxels for tops
-                        else
-                        {
-                            if (!isTop)
-                                continue;
-                        }
-
-                        foreach (var bestKey in top)
-                        {
-                            // If there are no empty neighbors, no slope.
-                            if (v.WaterCell.Type == LiquidType.None 
-                                && !VoxelHelpers.EnumerateVertexNeighbors2D(v.Coordinate, bestKey)
-                                .Any(n =>
-                                {
-                                    var handle = new TemporaryVoxelHandle(chunk.Manager.ChunkData, n);
-                                    return !handle.IsValid || handle.IsEmpty;
-                                }))
-                                continue;
-
-                            switch (bestKey)
-                            {
-                                case VoxelVertex.FrontTopLeft:
-                                    v.RampType |= RampType.TopFrontLeft;
-                                    break;
-                                case VoxelVertex.FrontTopRight:
-                                    v.RampType |= RampType.TopFrontRight;
-                                    break;
-                                case VoxelVertex.BackTopLeft:
-                                    v.RampType |= RampType.TopBackLeft;
-                                    break;
-                                case VoxelVertex.BackTopRight:
-                                    v.RampType |= RampType.TopBackRight;
-                                    break;
-                            }
-                        }
-                        // End for loop
-                    }
-                }
-            }
-        }
-
-        // Todo: Move
-        public static bool ShouldRamp(VoxelVertex vertex, RampType rampType)
-        {
-            bool toReturn = false;
-
-            if ((rampType & RampType.TopFrontRight) == RampType.TopFrontRight)
-            {
-                toReturn = (vertex == VoxelVertex.FrontTopRight);
-            }
-
-            if ((rampType & RampType.TopBackRight) == RampType.TopBackRight)
-            {
-                toReturn = toReturn || (vertex == VoxelVertex.BackTopRight);
-            }
-
-            if ((rampType & RampType.TopFrontLeft) == RampType.TopFrontLeft)
-            {
-                toReturn = toReturn || (vertex == VoxelVertex.FrontTopLeft);
-            }
-
-            if ((rampType & RampType.TopBackLeft) == RampType.TopBackLeft)
-            {
-                toReturn = toReturn || (vertex == VoxelVertex.BackTopLeft);
-            }
-
-            return toReturn;
         }
 
         public void BuildGrassMotes()

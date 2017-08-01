@@ -79,6 +79,9 @@ namespace DwarfCorp
                     continue;
                 }
 
+                if (GameSettings.Default.CalculateRamps)
+                    UpdateCornerRamps(chunk, y);
+
                 var sliceGeometry = new RawPrimitive
                 {
                     Vertices = new ExtendedVertex[128],
@@ -174,7 +177,7 @@ namespace DwarfCorp
                     AmbientScratchSpace[faceVertex] = vertexColor.AmbientColor;
 
                     var rampOffset = Vector3.Zero;
-                    if (v.Type.CanRamp && VoxelChunk.ShouldRamp(voxelVertex, v.RampType))
+                    if (v.Type.CanRamp && ShouldRamp(voxelVertex, v.RampType))
                         rampOffset = new Vector3(0, -v.Type.RampSize, 0);
 
                     EnsureSpace(ref Verticies, VertexCount);
@@ -206,6 +209,105 @@ namespace DwarfCorp
                 }
             }
             // End looping faces
+        }
+
+        private static bool ShouldRamp(VoxelVertex vertex, RampType rampType)
+        {
+            bool toReturn = false;
+
+            if ((rampType & RampType.TopFrontRight) == RampType.TopFrontRight)
+            {
+                toReturn = (vertex == VoxelVertex.FrontTopRight);
+            }
+
+            if ((rampType & RampType.TopBackRight) == RampType.TopBackRight)
+            {
+                toReturn = toReturn || (vertex == VoxelVertex.BackTopRight);
+            }
+
+            if ((rampType & RampType.TopFrontLeft) == RampType.TopFrontLeft)
+            {
+                toReturn = toReturn || (vertex == VoxelVertex.FrontTopLeft);
+            }
+
+            if ((rampType & RampType.TopBackLeft) == RampType.TopBackLeft)
+            {
+                toReturn = toReturn || (vertex == VoxelVertex.BackTopLeft);
+            }
+
+            return toReturn;
+        }
+
+
+        public static void UpdateCornerRamps(VoxelChunk Chunk, int Y)
+        {
+            List<VoxelVertex> top = new List<VoxelVertex>()
+            {
+                VoxelVertex.FrontTopLeft,
+                VoxelVertex.FrontTopRight,
+                VoxelVertex.BackTopLeft,
+                VoxelVertex.BackTopRight
+            };
+
+            for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
+            {
+                for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
+                {
+                    var v = new TemporaryVoxelHandle(Chunk, new LocalVoxelCoordinate(x, Y, z));
+                    bool isTop = false;
+
+                    if (Y < VoxelConstants.ChunkSizeY - 1)
+                    {
+                        var vAbove = new TemporaryVoxelHandle(Chunk, new LocalVoxelCoordinate(x, Y + 1, z));
+
+                        isTop = vAbove.IsEmpty;
+                    }
+
+                    v.RampType = RampType.None;
+
+                    // Check solid voxels
+                    if (v.WaterCell.Type == LiquidType.None)
+                    {
+                        if (v.IsEmpty || !v.IsVisible || !isTop || !v.Type.CanRamp)
+                            continue;
+                    }
+                    // Check liquid voxels for tops
+                    else
+                    {
+                        if (!isTop)
+                            continue;
+                    }
+
+                    foreach (var vertex in top)
+                    {
+                        // If there are no empty neighbors, no slope.
+                        if (v.WaterCell.Type == LiquidType.None
+                            && !VoxelHelpers.EnumerateVertexNeighbors2D(v.Coordinate, vertex)
+                            .Any(n =>
+                            {
+                                var handle = new TemporaryVoxelHandle(Chunk.Manager.ChunkData, n);
+                                return !handle.IsValid || handle.IsEmpty;
+                            }))
+                            continue;
+
+                        switch (vertex)
+                        {
+                            case VoxelVertex.FrontTopLeft:
+                                v.RampType |= RampType.TopFrontLeft;
+                                break;
+                            case VoxelVertex.FrontTopRight:
+                                v.RampType |= RampType.TopFrontRight;
+                                break;
+                            case VoxelVertex.BackTopLeft:
+                                v.RampType |= RampType.TopBackLeft;
+                                break;
+                            case VoxelVertex.BackTopRight:
+                                v.RampType |= RampType.TopBackRight;
+                                break;
+                        }
+                    }
+                }
+            }
         }
 
         private static void EnsureSpace<T>(ref T[] In, int Size)
