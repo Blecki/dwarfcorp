@@ -338,7 +338,7 @@ namespace DwarfCorp
         {
             Manager.World.Camera.ZoomTo(Position + Vector3.Up * 8.0f);
 
-            var above = VoxelHelpers.FindFirstVoxelAbove(new TemporaryVoxelHandle(
+            var above = VoxelHelpers.FindFirstVoxelAbove(new VoxelHandle(
                 World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Position)));
 
             if (above.IsValid)
@@ -583,7 +583,7 @@ namespace DwarfCorp
         {
             var above = VoxelHelpers.GetVoxelAbove(Physics.CurrentVoxel);
             foreach (var vox in VoxelHelpers.EnumerateManhattanNeighbors(Physics.CurrentVoxel.Coordinate)
-                .Select(c => new TemporaryVoxelHandle(World.ChunkManager.ChunkData, c)))
+                .Select(c => new VoxelHandle(World.ChunkManager.ChunkData, c)))
             {
                 if (!vox.IsValid) continue;
                 if (vox.IsEmpty) continue;
@@ -593,7 +593,7 @@ namespace DwarfCorp
                 if (above.IsValid && !above.IsEmpty && vox.Coordinate.Y >= above.Coordinate.Y)
                     continue;
 
-                var voxAbove = new TemporaryVoxelHandle(World.ChunkManager.ChunkData,
+                var voxAbove = new VoxelHandle(World.ChunkManager.ChunkData,
                     new GlobalVoxelCoordinate(vox.Coordinate.X, vox.Coordinate.Y + 1, vox.Coordinate.Z));
                 if (voxAbove.IsValid && !voxAbove.IsEmpty) continue;
 
@@ -763,7 +763,7 @@ namespace DwarfCorp
             if (GatherManager.VoxelOrders.Count > 0)
             {
                 // Otherwise handle build orders.
-                var voxels = new List<TemporaryVoxelHandle>();
+                var voxels = new List<VoxelHandle>();
                 var types = new List<VoxelType>();
                 foreach (GatherManager.BuildVoxelOrder order in GatherManager.VoxelOrders)
                 {

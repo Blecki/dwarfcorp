@@ -110,7 +110,7 @@ namespace DwarfCorp
             return b.Any(p => FurnitureIntersects(a, p));
         }
       
-        public static Room CreateRoom(Faction faction, string name, List<TemporaryVoxelHandle> designations, bool blueprint, WorldManager world)
+        public static Room CreateRoom(Faction faction, string name, List<VoxelHandle> designations, bool blueprint, WorldManager world)
         {
             // TODO(mklingen): omg get rid of this horrible legacy function!
             if (name == BalloonPort.BalloonPortName)
@@ -188,7 +188,7 @@ namespace DwarfCorp
 
         public static List<Body> GenerateRoomComponentsTemplate(
             RoomData roomData,
-            List<TemporaryVoxelHandle> voxels , 
+            List<VoxelHandle> voxels , 
             ComponentManager componentManager, 
             Microsoft.Xna.Framework.Content.ContentManager content, 
             GraphicsDevice graphics)

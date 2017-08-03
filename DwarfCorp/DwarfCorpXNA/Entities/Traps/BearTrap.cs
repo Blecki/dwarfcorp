@@ -79,7 +79,7 @@ namespace DwarfCorp
 
             DamageAmount = 200;
 
-            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                 manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(pos)));
             VoxListener = AddChild(new VoxelListener(manager, manager.World.ChunkManager, voxelUnder))

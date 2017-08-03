@@ -101,7 +101,7 @@ namespace DwarfCorp
             //{
                 if (entityLighting && LightsWithVoxels)
                 {
-                var under = new TemporaryVoxelHandle(chunks.ChunkData,
+                var under = new VoxelHandle(chunks.ChunkData,
                     GlobalVoxelCoordinate.FromVector3(Position));
 
                     if (under.IsValid)

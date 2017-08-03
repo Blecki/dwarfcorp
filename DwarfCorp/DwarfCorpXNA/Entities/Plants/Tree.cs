@@ -64,7 +64,7 @@ namespace DwarfCorp
             AddChild(new Health(Manager, "HP", 1.0f, 0.0f, 1.0f));
             AddChild(new Flammable(Manager, "Flames"));
 
-            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                 Manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(position)));
             if (voxelUnder.IsValid)
@@ -194,7 +194,7 @@ namespace DwarfCorp
             Tags.Add("EmitsWood");
 
             //new MinimapIcon(this, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 1, 0));
-            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                 manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(position)));
             if (voxelUnder.IsValid)

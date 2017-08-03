@@ -48,7 +48,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Room : Zone
     {
-        public List<TemporaryVoxelHandle> Designations;
+        public List<VoxelHandle> Designations;
         public bool IsBuilt;
         public RoomData RoomData;
         private static int Counter = 0;
@@ -64,7 +64,7 @@ namespace DwarfCorp
         // a room where arguments are same types.
         public Room(
             bool designation,
-            IEnumerable<TemporaryVoxelHandle> designations, 
+            IEnumerable<VoxelHandle> designations, 
             RoomData data,
             WorldManager world,
             Faction faction) :
@@ -79,7 +79,7 @@ namespace DwarfCorp
 
 
         public Room(
-            IEnumerable<TemporaryVoxelHandle> voxels, 
+            IEnumerable<VoxelHandle> voxels, 
             RoomData data, 
             WorldManager world, 
             Faction faction) :
@@ -88,7 +88,7 @@ namespace DwarfCorp
             RoomData = data;
             ReplacementType = VoxelLibrary.GetVoxelType(RoomData.FloorType);
 
-            Designations = new List<TemporaryVoxelHandle>();
+            Designations = new List<VoxelHandle>();
             Counter++;
 
             IsBuilt = true;

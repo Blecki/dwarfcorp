@@ -57,7 +57,7 @@ namespace DwarfCorp
             return new FindLandTask();
         }
 
-        public TemporaryVoxelHandle FindLand(
+        public VoxelHandle FindLand(
             ChunkData Data,
             GlobalVoxelCoordinate Start,
             int Radius)
@@ -66,15 +66,15 @@ namespace DwarfCorp
             if (VoxelHelpers.BreadthFirstSearch(Data, Start, Radius,
                 coord =>
                 {
-                    var v = new TemporaryVoxelHandle(Data, coord);
+                    var v = new VoxelHandle(Data, coord);
                     if (!v.IsValid || !v.IsEmpty || v.WaterCell.WaterLevel > 0) return false;
-                    var below = new TemporaryVoxelHandle(Data,
+                    var below = new VoxelHandle(Data,
                         new GlobalVoxelCoordinate(coord.X, coord.Y - 1, coord.Z));
                     return below.IsValid && !below.IsEmpty;
                 },
                 out landFound))
-                return new TemporaryVoxelHandle(Data, landFound);
-            return TemporaryVoxelHandle.InvalidHandle;
+                return new VoxelHandle(Data, landFound);
+            return VoxelHandle.InvalidHandle;
         }
          
         public IEnumerable<Act.Status> SwimUp(Creature creature)

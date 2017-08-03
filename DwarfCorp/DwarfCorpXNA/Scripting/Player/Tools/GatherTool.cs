@@ -109,12 +109,12 @@ namespace DwarfCorp
             DefaultOnMouseOver(bodies);
         }
 
-        public override void OnVoxelsSelected(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }
 
-        public override void OnVoxelsDragged(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }

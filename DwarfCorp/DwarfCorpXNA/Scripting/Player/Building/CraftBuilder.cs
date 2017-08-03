@@ -57,7 +57,7 @@ namespace DwarfCorp
         public class CraftDesignation
         {
             public CraftItem ItemType { get; set; }
-            public TemporaryVoxelHandle Location { get; set; }
+            public VoxelHandle Location { get; set; }
             public Body WorkPile { get; set; }
         }
 
@@ -90,14 +90,14 @@ namespace DwarfCorp
             IsEnabled = false;
         }
 
-        public bool IsDesignation(TemporaryVoxelHandle reference)
+        public bool IsDesignation(VoxelHandle reference)
         {
             if (!reference.IsValid) return false;
             return Designations.Any(put => put.Location == reference);
         }
 
 
-        public CraftDesignation GetDesignation(TemporaryVoxelHandle v)
+        public CraftDesignation GetDesignation(VoxelHandle v)
         {
             return Designations.FirstOrDefault(put => put.Location == v);
         }
@@ -116,7 +116,7 @@ namespace DwarfCorp
         }
 
 
-        public void RemoveDesignation(TemporaryVoxelHandle v)
+        public void RemoveDesignation(VoxelHandle v)
         {
             CraftDesignation des = GetDesignation(v);
 
@@ -156,7 +156,7 @@ namespace DwarfCorp
                 CurrentDesignation = new CraftDesignation()
                 {
                     ItemType = CurrentCraftType,
-                    Location = TemporaryVoxelHandle.InvalidHandle
+                    Location = VoxelHandle.InvalidHandle
                 };
                 SetDisplayColor(Color.Green);
             }
@@ -218,7 +218,7 @@ namespace DwarfCorp
                     case CraftItem.CraftPrereq.NearWall:
                         {
                             var neighborFound = VoxelHelpers.EnumerateManhattanNeighbors2D(designation.Location.Coordinate)
-                                    .Select(c => new TemporaryVoxelHandle(World.ChunkManager.ChunkData, c))
+                                    .Select(c => new VoxelHandle(World.ChunkManager.ChunkData, c))
                                     .Any(v => v.IsValid && !v.IsEmpty);
 
                             if (!neighborFound)
@@ -247,7 +247,7 @@ namespace DwarfCorp
 
         }
 
-        public void VoxelsSelected(List<TemporaryVoxelHandle> refs, InputManager.MouseButton button)
+        public void VoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
         {
             if (!IsEnabled)
             {

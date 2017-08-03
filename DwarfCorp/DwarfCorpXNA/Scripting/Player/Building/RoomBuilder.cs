@@ -105,12 +105,12 @@ namespace DwarfCorp
         }
 
 
-        public bool IsInRoom(TemporaryVoxelHandle v)
+        public bool IsInRoom(VoxelHandle v)
         {
             return DesignatedRooms.Any(r => r.ContainsVoxel(v)) || Faction.IsInStockpile(v);
         }
 
-        public bool IsBuildDesignation(TemporaryVoxelHandle v)
+        public bool IsBuildDesignation(VoxelHandle v)
         {
             return BuildDesignations.SelectMany(room => room.VoxelOrders).Any(buildDesignation => buildDesignation.Voxel == v);
         }
@@ -128,12 +128,12 @@ namespace DwarfCorp
                 select room.VoxelOrders[0]).FirstOrDefault();
         }
 
-        public BuildVoxelOrder GetBuildDesignation(TemporaryVoxelHandle v)
+        public BuildVoxelOrder GetBuildDesignation(VoxelHandle v)
         {
             return BuildDesignations.SelectMany(room => room.VoxelOrders).FirstOrDefault(buildDesignation => buildDesignation.Voxel == v);
         }
 
-        public BuildRoomOrder GetMostLikelyDesignation(TemporaryVoxelHandle v)
+        public BuildRoomOrder GetMostLikelyDesignation(VoxelHandle v)
         {
             BoundingBox larger = new BoundingBox(v.GetBoundingBox().Min - new Vector3(0.5f, 0.5f, 0.5f), v.GetBoundingBox().Max + new Vector3(0.5f, 0.5f, 0.5f));
 
@@ -143,7 +143,7 @@ namespace DwarfCorp
                 select room).FirstOrDefault();
         }
 
-        public Room GetMostLikelyRoom(TemporaryVoxelHandle v)
+        public Room GetMostLikelyRoom(VoxelHandle v)
         {
             foreach(Room r in DesignatedRooms.Where(r => r.ContainsVoxel(v)))
                 return r;
@@ -216,7 +216,7 @@ namespace DwarfCorp
             }
         }
 
-        public void OnVoxelDestroyed(TemporaryVoxelHandle voxDestroyed)
+        public void OnVoxelDestroyed(VoxelHandle voxDestroyed)
         {
             List<Room> toDestroy = new List<Room>();
 
@@ -251,7 +251,7 @@ namespace DwarfCorp
             World.SetMouse(World.MousePointer);
         }
 
-        private void BuildNewVoxels(IEnumerable<TemporaryVoxelHandle> designations)
+        private void BuildNewVoxels(IEnumerable<VoxelHandle> designations)
         {
             BuildRoomOrder order = null;
             foreach(var v in designations.Where(v => v.IsValid && !v.IsEmpty))
@@ -316,7 +316,7 @@ namespace DwarfCorp
                 sprite.VertexColorTint = color;
         }
 
-        public void OnVoxelsDragged(List<TemporaryVoxelHandle> refs, InputManager.MouseButton button)
+        public void OnVoxelsDragged(List<VoxelHandle> refs, InputManager.MouseButton button)
         {
             if (Faction == null)
             {
@@ -419,7 +419,7 @@ namespace DwarfCorp
             }
         }
 
-        public void VoxelsSelected(List<TemporaryVoxelHandle> refs, InputManager.MouseButton button)
+        public void VoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
         {
             foreach (BuildRoomOrder order in BuildDesignations)
             {
@@ -461,7 +461,7 @@ namespace DwarfCorp
             }
         }
 
-        private void DeleteVoxels(IEnumerable<TemporaryVoxelHandle> Voxels )
+        private void DeleteVoxels(IEnumerable<VoxelHandle> Voxels )
         {
             foreach(var v in Voxels.Where(v => !v.IsEmpty))
             {

@@ -53,9 +53,9 @@ namespace DwarfCorp
         /// </summary>
         /// <param name="fScore">Queue of voxels by their expansion scores.</param>
         /// <returns>The DestinationVoxel with minimu expansion score.</returns>
-        public static TemporaryVoxelHandle GetVoxelWithMinimumFScore(PriorityQueue<TemporaryVoxelHandle> fScore)
+        public static VoxelHandle GetVoxelWithMinimumFScore(PriorityQueue<VoxelHandle> fScore)
         {
-            return fScore.Count == 0 ? TemporaryVoxelHandle.InvalidHandle : fScore.Dequeue();
+            return fScore.Count == 0 ? VoxelHandle.InvalidHandle : fScore.Dequeue();
         }
 
 
@@ -65,7 +65,7 @@ namespace DwarfCorp
         /// <param name="cameFrom">A dictionary of Voxels to the movement that was taken to get there.</param>
         /// <param name="currentNode">The very last movement in the path.</param>
         /// <returns>The path of movements. from the start to the current node</returns>
-        public static List<MoveAction> ReconstructPath(Dictionary<TemporaryVoxelHandle, MoveAction> cameFrom,
+        public static List<MoveAction> ReconstructPath(Dictionary<VoxelHandle, MoveAction> cameFrom,
             MoveAction currentNode)
         {
             var toReturn = new List<MoveAction>();
@@ -82,7 +82,7 @@ namespace DwarfCorp
         }
 
 
-        public static List<MoveAction> ReconstructInversePath(IEnumerable<TemporaryVoxelHandle> goal, Dictionary<TemporaryVoxelHandle, MoveAction> cameFrom, MoveAction first)
+        public static List<MoveAction> ReconstructInversePath(IEnumerable<VoxelHandle> goal, Dictionary<VoxelHandle, MoveAction> cameFrom, MoveAction first)
         {
             /*
             foreach (var came in cameFrom)
@@ -97,7 +97,7 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public static IEnumerable<MoveAction> ReconstructInversePath(TemporaryVoxelHandle voxel, Dictionary<TemporaryVoxelHandle, MoveAction> cameFrom)
+        public static IEnumerable<MoveAction> ReconstructInversePath(VoxelHandle voxel, Dictionary<VoxelHandle, MoveAction> cameFrom)
         {
             // If there is a dictionary entry for the current voxel, add it to the path recursively.
             if (cameFrom.ContainsKey(voxel))
@@ -125,7 +125,7 @@ namespace DwarfCorp
         ///     usually result in faster plans that are suboptimal.
         /// </param>
         /// <returns>True if a path could be found, or false otherwise.</returns>
-        private static bool Path(CreatureMovement mover, TemporaryVoxelHandle start, GoalRegion goal, ChunkManager chunks,
+        private static bool Path(CreatureMovement mover, VoxelHandle start, GoalRegion goal, ChunkManager chunks,
             int maxExpansions, ref List<MoveAction> toReturn, float weight)
         {
             // Sometimes a goal may not even be achievable a.priori. If this is true, we know there can't be a path 
@@ -137,22 +137,22 @@ namespace DwarfCorp
             }
 
             // Voxels that have already been explored.
-            var closedSet = new HashSet<TemporaryVoxelHandle>();
+            var closedSet = new HashSet<VoxelHandle>();
 
             // Voxels which should be explored.
-            var openSet = new HashSet<TemporaryVoxelHandle>
+            var openSet = new HashSet<VoxelHandle>
             {
                 start
             };
 
             // Dictionary of voxels to the optimal action that got the mover to that voxel.
-            var cameFrom = new Dictionary<TemporaryVoxelHandle, MoveAction>();
+            var cameFrom = new Dictionary<VoxelHandle, MoveAction>();
 
             // Optimal score of a voxel based on the path it took to get there.
-            var gScore = new Dictionary<TemporaryVoxelHandle, float>();
+            var gScore = new Dictionary<VoxelHandle, float>();
 
             // Expansion priority of voxels.
-            var fScore = new PriorityQueue<TemporaryVoxelHandle>();
+            var fScore = new PriorityQueue<VoxelHandle>();
 
             // Starting conditions of the search.
             gScore[start] = 0.0f;
@@ -276,7 +276,7 @@ namespace DwarfCorp
 
         // Find a path from the start to the goal by computing an inverse path from goal to the start. Should only be used
         // if the forward path fails.
-        private static bool InversePath(CreatureMovement mover, TemporaryVoxelHandle start, GoalRegion goal, ChunkManager chunks,
+        private static bool InversePath(CreatureMovement mover, VoxelHandle start, GoalRegion goal, ChunkManager chunks,
                 int maxExpansions, ref List<MoveAction> toReturn, float weight)
         {
             // Sometimes a goal may not even be achievable a.priori. If this is true, we know there can't be a path 
@@ -290,29 +290,29 @@ namespace DwarfCorp
 
 
             // Voxels that have already been explored.
-            var closedSet = new HashSet<TemporaryVoxelHandle>();
+            var closedSet = new HashSet<VoxelHandle>();
 
             // Voxels which should be explored.
-            var openSet = new HashSet<TemporaryVoxelHandle>
+            var openSet = new HashSet<VoxelHandle>
             {
                 start
             };
 
             // Dictionary of voxels to the optimal action that got the mover to that voxel.
-            var cameFrom = new Dictionary<TemporaryVoxelHandle, MoveAction>();
+            var cameFrom = new Dictionary<VoxelHandle, MoveAction>();
 
             // Optimal score of a voxel based on the path it took to get there.
-            var gScore = new Dictionary<TemporaryVoxelHandle, float>();
+            var gScore = new Dictionary<VoxelHandle, float>();
 
             // Expansion priority of voxels.
-            var fScore = new PriorityQueue<TemporaryVoxelHandle>();
+            var fScore = new PriorityQueue<VoxelHandle>();
 
-            var goalVoxels = new List<TemporaryVoxelHandle>();
+            var goalVoxels = new List<VoxelHandle>();
             goalVoxels.Add(goal.GetVoxel());
             // Starting conditions of the search.
 
             foreach (var goalVoxel in VoxelHelpers.EnumerateAllNeighbors(goal.GetVoxel().Coordinate)
-                .Select(c => new TemporaryVoxelHandle(start.Chunk.Manager.ChunkData, c))) 
+                .Select(c => new VoxelHandle(start.Chunk.Manager.ChunkData, c))) 
             {
                 if (!goalVoxel.IsValid) continue;
 
@@ -433,7 +433,7 @@ namespace DwarfCorp
         ///     Higher values result in suboptimal paths, but the search may be faster.
         /// </param>
         /// <returns>The path of movements the creature must take to reach the goal. Returns null if no such path exists.</returns>
-        public static List<MoveAction> FindPath(CreatureMovement mover, TemporaryVoxelHandle start, GoalRegion goal,
+        public static List<MoveAction> FindPath(CreatureMovement mover, VoxelHandle start, GoalRegion goal,
             ChunkManager chunks, int maxExpansions, float weight)
         {
             var p = new List<MoveAction>();
@@ -455,7 +455,7 @@ namespace DwarfCorp
         /// <param name="action">The action taken to get between voxels.</param>
         /// <param name="movement">The creature making the movement.</param>
         /// <returns>The cost of going from a to b using the given action.</returns>
-        public static float GetDistance(TemporaryVoxelHandle a, TemporaryVoxelHandle b, MoveType action, CreatureMovement movement)
+        public static float GetDistance(VoxelHandle a, VoxelHandle b, MoveType action, CreatureMovement movement)
         {
             // If trying to move through a non-empty voxel, the cost is  just a big number.
             if (!b.IsEmpty)

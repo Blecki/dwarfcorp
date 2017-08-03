@@ -9,38 +9,38 @@ namespace DwarfCorp
 {
     public partial class VoxelHelpers
     {
-        public static TemporaryVoxelHandle FindFirstVisibleVoxelOnRay(
+        public static VoxelHandle FindFirstVisibleVoxelOnRay(
             ChunkData Data,
             Vector3 Start,
             Vector3 End)
         {
             foreach (var coordinate in MathFunctions.FastVoxelTraversal(Start, End))
             {
-                var voxel = new TemporaryVoxelHandle(Data, coordinate);
+                var voxel = new VoxelHandle(Data, coordinate);
 
                 if (voxel.IsValid && voxel.IsVisible && !voxel.IsEmpty)
                     return voxel;
             }
 
-            return TemporaryVoxelHandle.InvalidHandle;
+            return VoxelHandle.InvalidHandle;
         }
 
-        public static TemporaryVoxelHandle FindFirstVisibleVoxelOnRayEx(
+        public static VoxelHandle FindFirstVisibleVoxelOnRayEx(
             ChunkData Data,
             Vector3 Start,
             Vector3 End,
             bool SelectEmpty,
-            Func<TemporaryVoxelHandle, bool> FilterPredicate)
+            Func<VoxelHandle, bool> FilterPredicate)
         {
             if (FilterPredicate == null)
             {
                 FilterPredicate = v => v.IsValid && !v.IsEmpty;
             }
 
-            var prev = TemporaryVoxelHandle.InvalidHandle;
+            var prev = VoxelHandle.InvalidHandle;
             foreach (var coordinate in MathFunctions.FastVoxelTraversal(Start, End))
             {
-                var voxel = new TemporaryVoxelHandle(Data, coordinate);
+                var voxel = new VoxelHandle(Data, coordinate);
 
                 if (voxel.IsValid && voxel.IsVisible && FilterPredicate(voxel))
                 {
@@ -53,17 +53,17 @@ namespace DwarfCorp
                 prev = voxel;
             }
 
-            return TemporaryVoxelHandle.InvalidHandle;
+            return VoxelHandle.InvalidHandle;
         }
 
-        public static TemporaryVoxelHandle FindFirstVisibleVoxelOnScreenRay(
+        public static VoxelHandle FindFirstVisibleVoxelOnScreenRay(
             ChunkData Data,
             int X, int Y,
             Camera Camera,
             Viewport Viewport,
             float Distance,
             bool SelectEmpty,
-            Func<TemporaryVoxelHandle, bool> FilterPredicate)
+            Func<VoxelHandle, bool> FilterPredicate)
         {
             var near = Viewport.Unproject(new Vector3(X, Y, 0),
                 Camera.ProjectionMatrix, Camera.ViewMatrix, Matrix.Identity);

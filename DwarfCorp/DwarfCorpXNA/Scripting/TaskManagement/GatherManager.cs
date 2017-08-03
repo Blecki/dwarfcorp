@@ -55,7 +55,7 @@ namespace DwarfCorp
 
         public struct BuildVoxelOrder 
         {
-            public TemporaryVoxelHandle Voxel { get; set; }
+            public VoxelHandle Voxel { get; set; }
             public VoxelType Type { get; set; }
         }
 

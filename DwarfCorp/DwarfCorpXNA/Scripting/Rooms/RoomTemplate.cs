@@ -258,7 +258,7 @@ namespace DwarfCorp
             return (requirements & value) == value;
         }
 
-        public static RoomTile[,] CreateFromRoom(List<TemporaryVoxelHandle> voxelsInRoom, ChunkManager chunks)
+        public static RoomTile[,] CreateFromRoom(List<VoxelHandle> voxelsInRoom, ChunkManager chunks)
         {
             var box0 = VoxelHelpers.GetVoxelBoundingBox(voxelsInRoom);
             BoundingBox box = new BoundingBox(box0.Min + Vector3.Up, box0.Max + Vector3.Up);
@@ -268,7 +268,7 @@ namespace DwarfCorp
 
             RoomTile[,] toReturn = new RoomTile[nr + 2, nc + 2];
 
-            var voxelDict = new Dictionary<Point, TemporaryVoxelHandle>();
+            var voxelDict = new Dictionary<Point, VoxelHandle>();
             foreach (var vox in voxelsInRoom)
             {
                 voxelDict[new Point((int)(vox.Coordinate.X - box.Min.X) + 1, (int)(vox.Coordinate.Z - box.Min.Z) + 1)] = vox;

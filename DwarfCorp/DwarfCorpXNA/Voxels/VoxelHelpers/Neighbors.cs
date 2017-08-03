@@ -325,10 +325,10 @@ namespace DwarfCorp
             return EnumerateNeighbors(VertexNeighbors2D[(int)Vertex], Coordinate);
         }
 
-        public static TemporaryVoxelHandle GetNeighbor(TemporaryVoxelHandle Of, GlobalVoxelOffset Offset)
+        public static VoxelHandle GetNeighbor(VoxelHandle Of, GlobalVoxelOffset Offset)
         {
-            if (!Of.IsValid) return TemporaryVoxelHandle.InvalidHandle;
-            return new TemporaryVoxelHandle(Of.Chunk.Manager.ChunkData, Of.Coordinate + Offset);
+            if (!Of.IsValid) return VoxelHandle.InvalidHandle;
+            return new VoxelHandle(Of.Chunk.Manager.ChunkData, Of.Coordinate + Offset);
         }
     }
 }

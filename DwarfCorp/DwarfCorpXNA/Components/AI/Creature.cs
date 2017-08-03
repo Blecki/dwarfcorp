@@ -349,9 +349,9 @@ namespace DwarfCorp
         /// </summary>
         public void CheckNeighborhood(ChunkManager chunks, float dt)
         {
-            var below = new TemporaryVoxelHandle(chunks.ChunkData,
+            var below = new VoxelHandle(chunks.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(Physics.GlobalTransform.Translation - Vector3.UnitY * 0.8f));
-            var above = new TemporaryVoxelHandle(chunks.ChunkData,
+            var above = new VoxelHandle(chunks.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(Physics.GlobalTransform.Translation + Vector3.UnitY * 0.8f));
 
             if (above.IsValid)

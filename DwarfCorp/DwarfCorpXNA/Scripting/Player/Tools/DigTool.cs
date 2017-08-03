@@ -66,7 +66,7 @@ namespace DwarfCorp
         }
 
 
-        public override void OnVoxelsSelected(List<TemporaryVoxelHandle> refs, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
         {
 
             if (button == InputManager.MouseButton.Left)
@@ -170,7 +170,7 @@ namespace DwarfCorp
             
         }
 
-        public override void OnVoxelsDragged(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }

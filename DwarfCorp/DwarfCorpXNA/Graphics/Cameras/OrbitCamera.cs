@@ -472,7 +472,7 @@ namespace DwarfCorp
             bool gotCollision = false;
 
             foreach (var v in VoxelHelpers.EnumerateCube(GlobalVoxelCoordinate.FromVector3(pos))
-                .Select(n => new TemporaryVoxelHandle(chunks.ChunkData, n)))                
+                .Select(n => new VoxelHandle(chunks.ChunkData, n)))                
             {
                 if (!v.IsValid) continue;
                 if (v.IsEmpty) continue;

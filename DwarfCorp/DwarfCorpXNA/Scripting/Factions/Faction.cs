@@ -161,7 +161,7 @@ namespace DwarfCorp
             World = ((WorldManager)ctx.Context);
         }
 
-        private ulong GetVoxelQuickCompare(TemporaryVoxelHandle V)
+        private ulong GetVoxelQuickCompare(VoxelHandle V)
         {
             var coord = V.Coordinate.GetGlobalChunkCoordinate();
             var index = VoxelConstants.DataIndexOf(V.Coordinate.GetLocalVoxelCoordinate());
@@ -377,7 +377,7 @@ namespace DwarfCorp
             return RoomBuilder.DesignatedRooms;
         }
 
-        public void OnVoxelDestroyed(TemporaryVoxelHandle V)
+        public void OnVoxelDestroyed(VoxelHandle V)
         {
             if(!V.IsValid || V.IsEmpty)
                 return;
@@ -467,12 +467,12 @@ namespace DwarfCorp
             return closestVoxel;
         }
 
-        public BuildOrder GetGuardDesignation(TemporaryVoxelHandle vox)
+        public BuildOrder GetGuardDesignation(VoxelHandle vox)
         {
             return GuardDesignations.FirstOrDefault(d => d.Vox == vox);
         }
 
-        public BuildOrder GetDigDesignation(TemporaryVoxelHandle vox)
+        public BuildOrder GetDigDesignation(VoxelHandle vox)
         {
             BuildOrder returnOrder;
             if (DigDesignations.TryGetValue(GetVoxelQuickCompare(vox), out returnOrder))
@@ -486,7 +486,7 @@ namespace DwarfCorp
             DigDesignations.Add(GetVoxelQuickCompare(order.Vox), order);
         }
 
-        public void RemoveDigDesignation(TemporaryVoxelHandle vox)
+        public void RemoveDigDesignation(VoxelHandle vox)
         {
             var q = GetVoxelQuickCompare(vox);
             if (DigDesignations.ContainsKey(q))
@@ -496,7 +496,7 @@ namespace DwarfCorp
             }
         }
 
-        public bool IsDigDesignation(TemporaryVoxelHandle vox)
+        public bool IsDigDesignation(VoxelHandle vox)
         {
             GamePerformance.Instance.TrackValueType<int>("Dig Designations", DigDesignations.Count);
 
@@ -504,7 +504,7 @@ namespace DwarfCorp
         }
 
 
-        public bool IsGuardDesignation(TemporaryVoxelHandle vox)
+        public bool IsGuardDesignation(VoxelHandle vox)
         {
             return GuardDesignations.Select(d => d.Vox).Any(v => v == vox);
         }
@@ -595,7 +595,7 @@ namespace DwarfCorp
             return RoomBuilder.DesignatedRooms.Where(room => room.Intersects(v)).ToList();
         }
 
-        public bool IsInStockpile(TemporaryVoxelHandle v)
+        public bool IsInStockpile(VoxelHandle v)
         {
             return Stockpiles.Any(s => s.ContainsVoxel(v));
         }
@@ -912,7 +912,7 @@ namespace DwarfCorp
                 string creature = Race.CreatureTypes[MathFunctions.Random.Next(Race.CreatureTypes.Count)];
                 Vector3 offset = MathFunctions.RandVector3Cube() * 2;
 
-                var voxelUnder = VoxelHelpers.FindFirstVoxelBelowIncludeWater(new TemporaryVoxelHandle(
+                var voxelUnder = VoxelHelpers.FindFirstVoxelBelowIncludeWater(new VoxelHandle(
                     World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(position + offset)));
                 if (voxelUnder.IsValid)
                 { 

@@ -79,7 +79,7 @@ namespace DwarfCorp
 
         }
 
-        public override void OnVoxelsSelected(SpellTree tree, List<TemporaryVoxelHandle> voxels)
+        public override void OnVoxelsSelected(SpellTree tree, List<VoxelHandle> voxels)
         {
             bool placed = false;
             foreach (var selected in voxels)

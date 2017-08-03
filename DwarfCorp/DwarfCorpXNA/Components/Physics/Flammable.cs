@@ -62,7 +62,7 @@ namespace DwarfCorp
             foreach (var coordinate in VoxelHelpers.EnumerateCoordinatesInBoundingBox(
                 Body.BoundingBox.Expand(0.5f)))
             {
-                var voxel = new TemporaryVoxelHandle(chunks.ChunkData, coordinate);
+                var voxel = new VoxelHandle(chunks.ChunkData, coordinate);
                 if (!voxel.IsValid || voxel.WaterCell.WaterLevel == 0) continue;
 
                 if (voxel.WaterCell.Type == LiquidType.Lava)

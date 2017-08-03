@@ -137,7 +137,7 @@ namespace DwarfCorp
             isRebuilding = false;
         }
 
-        private static GlobalVoxelCoordinate GetCacheKey(TemporaryVoxelHandle Handle, VoxelVertex Vertex)
+        private static GlobalVoxelCoordinate GetCacheKey(VoxelHandle Handle, VoxelVertex Vertex)
         {
             var coord = Handle.Coordinate;
 
@@ -166,7 +166,7 @@ namespace DwarfCorp
             int[] AmbientScratchSpace,
             Dictionary<GlobalVoxelCoordinate, VertexColorInfo> LightCache)
         {
-            var v = new TemporaryVoxelHandle(Chunk, new LocalVoxelCoordinate(X, Y, Z));
+            var v = new VoxelHandle(Chunk, new LocalVoxelCoordinate(X, Y, Z));
 
             if ((v.IsExplored && v.IsEmpty) || !v.IsVisible) return;
 
@@ -182,7 +182,7 @@ namespace DwarfCorp
 
             if (v.Type.HasTransitionTextures && v.IsExplored)
             {
-                uvs = ComputeTransitionTexture(new TemporaryVoxelHandle(v.Chunk.Manager.ChunkData, v.Coordinate));
+                uvs = ComputeTransitionTexture(new VoxelHandle(v.Chunk.Manager.ChunkData, v.Coordinate));
             }
 
             for (int i = 0; i < 6; i++)
@@ -190,7 +190,7 @@ namespace DwarfCorp
                 BoxFace face = (BoxFace)i;
                 Vector3 delta = FaceDeltas[i];
 
-                var faceVoxel = new TemporaryVoxelHandle(Chunk.Manager.ChunkData,
+                var faceVoxel = new VoxelHandle(Chunk.Manager.ChunkData,
                         Chunk.ID + new LocalVoxelCoordinate(X + (int)delta.X, Y + (int)delta.Y, Z + (int)delta.Z));
 
                 if (!IsFaceVisible(v, faceVoxel, face))
@@ -283,12 +283,12 @@ namespace DwarfCorp
             {
                 for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                 {
-                    var v = new TemporaryVoxelHandle(Chunk, new LocalVoxelCoordinate(x, Y, z));
+                    var v = new VoxelHandle(Chunk, new LocalVoxelCoordinate(x, Y, z));
                     bool isTop = false;
 
                     if (Y < VoxelConstants.ChunkSizeY - 1)
                     {
-                        var vAbove = new TemporaryVoxelHandle(Chunk, new LocalVoxelCoordinate(x, Y + 1, z));
+                        var vAbove = new VoxelHandle(Chunk, new LocalVoxelCoordinate(x, Y + 1, z));
 
                         isTop = vAbove.IsEmpty;
                     }
@@ -315,7 +315,7 @@ namespace DwarfCorp
                             && !VoxelHelpers.EnumerateVertexNeighbors2D(v.Coordinate, vertex)
                             .Any(n =>
                             {
-                                var handle = new TemporaryVoxelHandle(Chunk.Manager.ChunkData, n);
+                                var handle = new VoxelHandle(Chunk.Manager.ChunkData, n);
                                 return !handle.IsValid || handle.IsEmpty;
                             }))
                             continue;
@@ -362,7 +362,7 @@ namespace DwarfCorp
             }
         }
 
-        private static VertexColorInfo CalculateVertexLight(TemporaryVoxelHandle Vox, VoxelVertex Vertex,
+        private static VertexColorInfo CalculateVertexLight(VoxelHandle Vox, VoxelVertex Vertex,
             ChunkManager chunks)
         {
             int neighborsEmpty = 0;
@@ -374,7 +374,7 @@ namespace DwarfCorp
 
             foreach (var c in VoxelHelpers.EnumerateVertexNeighbors(Vox.Coordinate, Vertex))
             {
-                var v = new TemporaryVoxelHandle(chunks.ChunkData, c);
+                var v = new VoxelHandle(chunks.ChunkData, c);
                 if (!v.IsValid) continue;
 
                 color.SunColor += v.SunColor;
@@ -395,7 +395,7 @@ namespace DwarfCorp
             return color;
         }
 
-        private static BoxPrimitive.BoxTextureCoords ComputeTransitionTexture(TemporaryVoxelHandle V)
+        private static BoxPrimitive.BoxTextureCoords ComputeTransitionTexture(VoxelHandle V)
         {
             var type = V.Type;
             var primitive = VoxelLibrary.GetPrimitive(type);
@@ -413,14 +413,14 @@ namespace DwarfCorp
 
         private static BoxTransition ComputeTransitions(
             ChunkData Data,
-            TemporaryVoxelHandle V,
+            VoxelHandle V,
             VoxelType Type)
         {
             if (Type.Transitions == VoxelType.TransitionType.Horizontal)
             {
                 var value = ComputeTransitionValueOnPlane(
                     VoxelHelpers.EnumerateManhattanNeighbors2D(V.Coordinate)
-                    .Select(c => new TemporaryVoxelHandle(Data, c)), Type);
+                    .Select(c => new VoxelHandle(Data, c)), Type);
 
                 return new BoxTransition()
                 {
@@ -431,12 +431,12 @@ namespace DwarfCorp
             {
                 var transitionFrontBack = ComputeTransitionValueOnPlane(
                     VoxelHelpers.EnumerateManhattanNeighbors2D(V.Coordinate, ChunkManager.SliceMode.Z)
-                    .Select(c => new TemporaryVoxelHandle(Data, c)),
+                    .Select(c => new VoxelHandle(Data, c)),
                     Type);
 
                 var transitionLeftRight = ComputeTransitionValueOnPlane(
                     VoxelHelpers.EnumerateManhattanNeighbors2D(V.Coordinate, ChunkManager.SliceMode.X)
-                    .Select(c => new TemporaryVoxelHandle(Data, c)),
+                    .Select(c => new VoxelHandle(Data, c)),
                     Type);
 
                 return new BoxTransition()
@@ -452,7 +452,7 @@ namespace DwarfCorp
         // Todo: Reorder 2d neighbors to make this unecessary.
         private static int[] TransitionMultipliers = new int[] { 2, 8, 4, 1 };
 
-        private static int ComputeTransitionValueOnPlane(IEnumerable<TemporaryVoxelHandle> Neighbors, VoxelType Type)
+        private static int ComputeTransitionValueOnPlane(IEnumerable<VoxelHandle> Neighbors, VoxelType Type)
         {
             int index = 0;
             int accumulator = 0;

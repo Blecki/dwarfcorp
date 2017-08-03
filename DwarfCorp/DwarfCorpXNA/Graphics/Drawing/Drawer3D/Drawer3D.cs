@@ -53,12 +53,12 @@ namespace DwarfCorp
         private static int MaxStripVertex = -1;
         private static VoxelHighlighter Highlighter = new VoxelHighlighter();
 
-        public static void UnHighlightVoxel(TemporaryVoxelHandle voxel)
+        public static void UnHighlightVoxel(VoxelHandle voxel)
         {
             Highlighter.Remove(voxel);
         }
 
-        public static void HighlightVoxel(TemporaryVoxelHandle voxel, Color color)
+        public static void HighlightVoxel(VoxelHandle voxel, Color color)
         {
             Highlighter.Highlight(voxel, color);   
         }
@@ -291,7 +291,7 @@ namespace DwarfCorp
         {
             public Color Color;
             private float Thickness;
-            private List<TemporaryVoxelHandle> Voxels;
+            private List<VoxelHandle> Voxels;
             private bool Valid;
             private VertexBuffer VertBuffer;
             private DrawCommand3D.LineStrip Strip;
@@ -300,11 +300,11 @@ namespace DwarfCorp
             {
                 Color = Color.White;
                 Thickness = 0.05f;
-                Voxels = new List<TemporaryVoxelHandle>();
+                Voxels = new List<VoxelHandle>();
                 Valid = false;
             }
 
-            public void AddVoxel(TemporaryVoxelHandle voxel)
+            public void AddVoxel(VoxelHandle voxel)
             {
                 // Todo: Switch to hashset for unique list.
                 if (Voxels.Any(v => v == voxel))
@@ -316,7 +316,7 @@ namespace DwarfCorp
                 Valid = false;
             }
              
-            public void RemoveVoxel(TemporaryVoxelHandle voxel)
+            public void RemoveVoxel(VoxelHandle voxel)
             {
                 int before = Voxels.Count;
                 Voxels.RemoveAll(v => v == voxel);
@@ -384,7 +384,7 @@ namespace DwarfCorp
             HighlightGroups = new Dictionary<Color, VoxelHighlightGroup>();
         }
 
-        public void Remove(TemporaryVoxelHandle voxel)
+        public void Remove(VoxelHandle voxel)
         {
             foreach (var pair in HighlightGroups)
             {
@@ -392,7 +392,7 @@ namespace DwarfCorp
             }
         }
 
-        public void Highlight(TemporaryVoxelHandle voxel, Color color)
+        public void Highlight(VoxelHandle voxel, Color color)
         {
             foreach (var pair in HighlightGroups.Where(v => v.Key != color))
             {

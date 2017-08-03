@@ -10,18 +10,18 @@ namespace DwarfCorp
     {
         public static void Reveal(
             ChunkData Data,
-            TemporaryVoxelHandle Start)
+            VoxelHandle Start)
         {
-            Reveal(Data, new TemporaryVoxelHandle[] { Start });
+            Reveal(Data, new VoxelHandle[] { Start });
         }
 
         public static void Reveal(
             ChunkData Data,
-            IEnumerable<TemporaryVoxelHandle> voxels)
+            IEnumerable<VoxelHandle> voxels)
         {
             //if (!GameSettings.Default.FogofWar) return;
 
-            var queue = new Queue<TemporaryVoxelHandle>(128);
+            var queue = new Queue<VoxelHandle>(128);
 
             foreach (var voxel in voxels)
                 if (voxel.IsValid)
@@ -34,7 +34,7 @@ namespace DwarfCorp
 
                 foreach (var neighborCoordinate in VoxelHelpers.EnumerateManhattanNeighbors(v.Coordinate))
                 {
-                    var neighbor = new TemporaryVoxelHandle(Data, neighborCoordinate);
+                    var neighbor = new VoxelHandle(Data, neighborCoordinate);
                     if (!neighbor.IsValid) continue;
                     if (neighbor.IsExplored) continue;
 
@@ -56,13 +56,13 @@ namespace DwarfCorp
         /// <param name="voxels"></param>
         public static void InitialReveal(
             ChunkData Data,
-            TemporaryVoxelHandle voxel)
+            VoxelHandle voxel)
         {
             // Fog of war must be on for the initial reveal to avoid artifacts.
             bool fogOfWar = GameSettings.Default.FogofWar;
             GameSettings.Default.FogofWar = true;
 
-            var queue = new Queue<TemporaryVoxelHandle>(128);
+            var queue = new Queue<VoxelHandle>(128);
             queue.Enqueue(voxel);
 
             while (queue.Count > 0)
@@ -72,7 +72,7 @@ namespace DwarfCorp
 
                 foreach (var neighborCoordinate in VoxelHelpers.EnumerateManhattanNeighbors(v.Coordinate))
                 {
-                    var neighbor = new TemporaryVoxelHandle(Data, neighborCoordinate);
+                    var neighbor = new VoxelHandle(Data, neighborCoordinate);
                     if (!neighbor.IsValid) continue;
                     if (neighbor.IsExplored) continue;
 

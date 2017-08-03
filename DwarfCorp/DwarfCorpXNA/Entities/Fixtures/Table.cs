@@ -190,7 +190,7 @@ namespace DwarfCorp
             }) as Sprite;
             sprite2.AddAnimation(tableAnimation);
 
-            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                 manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(position)));
             if (voxelUnder.IsValid)

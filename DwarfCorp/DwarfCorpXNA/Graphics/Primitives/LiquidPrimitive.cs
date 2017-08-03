@@ -31,11 +31,11 @@ namespace DwarfCorp
             public LiquidRebuildCache()
             {
                 int euclidianNeighborCount = 27;
-                neighbors = new List<TemporaryVoxelHandle>(euclidianNeighborCount);
+                neighbors = new List<VoxelHandle>(euclidianNeighborCount);
                 validNeighbors = new bool[euclidianNeighborCount];
                 retrievedNeighbors = new bool[euclidianNeighborCount];
 
-                for (int i = 0; i < 27; i++) neighbors.Add(TemporaryVoxelHandle.InvalidHandle);
+                for (int i = 0; i < 27; i++) neighbors.Add(VoxelHandle.InvalidHandle);
 
                 int vertexCount = (int)VoxelVertex.Count;
                 vertexCalculated = new bool[vertexCount];
@@ -57,7 +57,7 @@ namespace DwarfCorp
             internal bool[] drawFace = new bool[6];
 
             // A list of unattached voxels we can change to the neighbors of the voxel who's faces we are drawing.
-            internal List<TemporaryVoxelHandle> neighbors;
+            internal List<VoxelHandle> neighbors;
 
             // A list of which voxels are valid in the neighbors list.  We can't just set a neighbor to null as we reuse them so we use this.
             // Does not need to be cleared between sets of face drawing as retrievedNeighbors stops us from using a stale value.
@@ -182,7 +182,7 @@ namespace DwarfCorp
                 {
                     for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                     {
-                        var voxel = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
+                        var voxel = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
                         int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
                         if (fogOfWar && !chunk.Data.IsExplored[index]) continue;
 
@@ -355,7 +355,7 @@ namespace DwarfCorp
             return (C.X + 1) + (C.Y + 1) * 3 + (C.Z + 1) * 9;
         }
 
-        private static void CreateWaterFaces(TemporaryVoxelHandle voxel, VoxelChunk chunk,
+        private static void CreateWaterFaces(VoxelHandle voxel, VoxelChunk chunk,
                                             int x, int y, int z,
                                             ExtendedVertex[] vertices,
                                             ushort[] Indexes,
@@ -407,7 +407,7 @@ namespace DwarfCorp
                         // Run through the successors and count up the water in each voxel.
                         for (int v = 0; v < vertexSucc.Length; v++)
                         {
-                            var neighborVoxel = new TemporaryVoxelHandle(chunk.Manager.ChunkData,
+                            var neighborVoxel = new VoxelHandle(chunk.Manager.ChunkData,
                                 voxel.Coordinate + vertexSucc[v]);
                             // Only continue if it's a valid (non-null) voxel.
                             if (!neighborVoxel.IsValid) continue;

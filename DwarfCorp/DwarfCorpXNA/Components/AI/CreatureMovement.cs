@@ -213,15 +213,15 @@ namespace DwarfCorp
         /// Returns a 3 x 3 x 3 voxel grid corresponding to the immediate neighborhood
         /// around the given voxel..
         /// </summary>
-        private TemporaryVoxelHandle[, ,] GetNeighborhood(TemporaryVoxelHandle Voxel)
+        private VoxelHandle[, ,] GetNeighborhood(VoxelHandle Voxel)
         {
-            var neighborhood = new TemporaryVoxelHandle[3, 3, 3];
+            var neighborhood = new VoxelHandle[3, 3, 3];
 
             for (var dx = -1; dx <= 1; ++dx)
                 for (var dy = -1; dy <= 1; ++dy)
                     for (var dz = -1; dz <= 1; ++dz)
                     {
-                        var v = new TemporaryVoxelHandle(Creature.World.ChunkManager.ChunkData,
+                        var v = new VoxelHandle(Creature.World.ChunkManager.ChunkData,
                             Voxel.Coordinate + new GlobalVoxelOffset(dx, dy, dz));
                         neighborhood[dx + 1, dy + 1, dz + 1] = v;
                     }
@@ -230,7 +230,7 @@ namespace DwarfCorp
         }
 
         /// <summary> Determines whether the voxel has any neighbors in X or Z directions </summary>
-        private bool HasNeighbors(TemporaryVoxelHandle[,,] Neighborhood)
+        private bool HasNeighbors(VoxelHandle[,,] Neighborhood)
         {
             for (var x = 0; x < 3; ++x)
                 for (var z = 0; z < 3; ++z)
@@ -248,14 +248,14 @@ namespace DwarfCorp
         /// <summary> gets a list of actions that the creature can take from the given position </summary>
         public IEnumerable<MoveAction> GetMoveActions(Vector3 Pos)
         {
-            var vox = new TemporaryVoxelHandle(Creature.World.ChunkManager.ChunkData,
+            var vox = new VoxelHandle(Creature.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(Pos));
             return GetMoveActions(vox);
         }
 
         // Todo: Convert to temporary voxel handles?
         /// <summary> gets the list of actions that the creature can take from a given voxel. </summary>
-        public IEnumerable<MoveAction> GetMoveActions(TemporaryVoxelHandle voxel)
+        public IEnumerable<MoveAction> GetMoveActions(VoxelHandle voxel)
         {
             if (!voxel.IsValid || !voxel.IsEmpty)
                 yield break;
@@ -308,13 +308,13 @@ namespace DwarfCorp
             // If the creature can climb walls and is not blocked by a voxl above.
             if (CanClimbWalls && !topCovered)
             {
-                var walls = new TemporaryVoxelHandle[]
+                var walls = new VoxelHandle[]
                 {
                     neighborHood[2, 1, 1], neighborHood[0, 1, 1], neighborHood[1, 1, 2],
                     neighborHood[1, 1, 0]
                 };
 
-                var wall = TemporaryVoxelHandle.InvalidHandle;
+                var wall = VoxelHandle.InvalidHandle;
                 foreach (var w in walls)
                     if (w.IsValid && !w.IsEmpty)
                         wall = w;
@@ -536,10 +536,10 @@ namespace DwarfCorp
 
         // Inverts GetMoveActions. So, returns the list of move actions whose target is the current voxel.
         // Very, very slow.
-        public IEnumerable<MoveAction> GetInverseMoveActions(TemporaryVoxelHandle current)
+        public IEnumerable<MoveAction> GetInverseMoveActions(VoxelHandle current)
         {
             foreach (var v in VoxelHelpers.EnumerateAllNeighbors(current.Coordinate)
-                .Select(n => new TemporaryVoxelHandle(current.Chunk.Manager.ChunkData, n))
+                .Select(n => new VoxelHandle(current.Chunk.Manager.ChunkData, n))
                 .Where(h => h.IsValid))
             {
                 foreach (var a in GetMoveActions(v).Where(a => a.DestinationVoxel == current))

@@ -69,7 +69,7 @@ namespace DwarfCorp
 
             var cameraCoordinate = GlobalVoxelCoordinate.FromVector3(Camera.Position);
             // Find the height of the world at the camera
-            var cameraVoxel = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+            var cameraVoxel = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                 ChunkManager.ChunkData, new GlobalVoxelCoordinate(cameraCoordinate.X,
                 VoxelConstants.ChunkSizeY - 1, cameraCoordinate.Z)));
             var h = (float)(cameraVoxel.Coordinate.Y + 1);
@@ -147,7 +147,7 @@ namespace DwarfCorp
                 for (var offsetY = -size; offsetY <= size; ++offsetY)
                 {
                     var topVoxel = VoxelHelpers.FindFirstVoxelBelowIncludeWater(
-                        new TemporaryVoxelHandle(chunkManager.ChunkData,
+                        new VoxelHandle(chunkManager.ChunkData,
                             centerCoordinate + new GlobalVoxelOffset(offsetX, 0, offsetY)));
 
                     if (topVoxel.Coordinate.Y > 0)
@@ -161,15 +161,15 @@ namespace DwarfCorp
             var averageHeight = (int)Math.Round(((float)accumulator / (float)count));
 
             // Next, create the balloon port by deciding which voxels to fill.
-            var balloonPortDesignations = new List<TemporaryVoxelHandle>();
-            var treasuryDesignations = new List<TemporaryVoxelHandle>();
+            var balloonPortDesignations = new List<VoxelHandle>();
+            var treasuryDesignations = new List<VoxelHandle>();
             for (int dx = -size; dx <= size; dx++)
             {
                 for (int dz = -size; dz <= size; dz++)
                 {
                     Vector3 worldPos = new Vector3(centerCoordinate.X + dx, centerCoordinate.Y, centerCoordinate.Z + dz);
 
-                    var baseVoxel = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+                    var baseVoxel = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                         chunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(worldPos)));
 
                     if (!baseVoxel.IsValid)
@@ -180,7 +180,7 @@ namespace DwarfCorp
 
                     for (int y = averageHeight; y < h; y++)
                     {
-                        var v = new TemporaryVoxelHandle(baseVoxel.Chunk,
+                        var v = new VoxelHandle(baseVoxel.Chunk,
                             new LocalVoxelCoordinate((int)localCoord.X, y, (int)localCoord.Z));
                         v.Type = VoxelLibrary.GetVoxelType(0);
                         VoxelHelpers.Reveal(baseVoxel.Chunk.Manager.ChunkData, v);
@@ -227,7 +227,7 @@ namespace DwarfCorp
                     // Fill from the top height down to the bottom.
                     for (int y = h - 1; y < averageHeight; y++)
                     {
-                        var v = new TemporaryVoxelHandle(baseVoxel.Chunk, 
+                        var v = new VoxelHandle(baseVoxel.Chunk, 
                             new LocalVoxelCoordinate((int)localCoord.X, y, (int)localCoord.Z));
                         v.Type = VoxelLibrary.GetVoxelType("Scaffold");
                         v.WaterCell = new WaterCell
@@ -252,7 +252,7 @@ namespace DwarfCorp
                         {
                             var ladderPos = new Vector3(worldPos.X, y, worldPos.Z) + offset +
                                 Vector3.One * 0.5f;
-                            var ladderVox = new TemporaryVoxelHandle(chunkManager.ChunkData,
+                            var ladderVox = new VoxelHandle(chunkManager.ChunkData,
                                 GlobalVoxelCoordinate.FromVector3(ladderPos));
                             if (ladderVox.IsValid && ladderVox.IsEmpty)
                                 EntityFactory.CreateEntity<Ladder>("Wooden Ladder", ladderPos);

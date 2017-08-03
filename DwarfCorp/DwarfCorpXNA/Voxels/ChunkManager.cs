@@ -125,7 +125,7 @@ namespace DwarfCorp
             get { return chunkData; }
         }
 
-        public List<TemporaryVoxelHandle> KilledVoxels { get; set; }
+        public List<VoxelHandle> KilledVoxels { get; set; }
 
         public ChunkManager(ContentManager content, 
             WorldManager world,
@@ -135,7 +135,7 @@ namespace DwarfCorp
             WorldSize = new Point3(maxChunksX, maxChunksY, maxChunksZ);
 
             World = world;
-            KilledVoxels = new List<TemporaryVoxelHandle>();
+            KilledVoxels = new List<VoxelHandle>();
             ExitThreads = false;
             drawDistSq = DrawDistance * DrawDistance;
             Content = content;
@@ -600,7 +600,7 @@ namespace DwarfCorp
 
             SetLoadingMessage("Fog of war...");
 
-            VoxelHelpers.InitialReveal(ChunkData, new TemporaryVoxelHandle(
+            VoxelHelpers.InitialReveal(ChunkData, new VoxelHandle(
                 ChunkData.GetChunkEnumerator().FirstOrDefault(), new LocalVoxelCoordinate(0, VoxelConstants.ChunkSizeY - 1, 0)));
 
             GenerateDistance = origBuildRadius;
@@ -723,7 +723,7 @@ namespace DwarfCorp
             //ChunkData.ChunkMap.Clear();
         }
 
-        public List<Body> KillVoxel(TemporaryVoxelHandle Voxel)
+        public List<Body> KillVoxel(VoxelHandle Voxel)
         {
             if (!Voxel.IsValid || Voxel.IsEmpty)
                 return null;

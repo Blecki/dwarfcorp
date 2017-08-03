@@ -127,7 +127,7 @@ namespace DwarfCorp
             }
         }
 
-        public void CreateTransfer(TemporaryVoxelHandle Vox, WaterCell From, WaterCell To)
+        public void CreateTransfer(VoxelHandle Vox, WaterCell From, WaterCell To)
         {
             if ((From.Type == LiquidType.Lava && To.Type == LiquidType.Water)
                 || (From.Type == LiquidType.Water && To.Type == LiquidType.Lava))
@@ -229,7 +229,7 @@ namespace DwarfCorp
                 {
                     var x = layerOrder[i] % VoxelConstants.ChunkSizeX;
                     var z = (layerOrder[i] >> VoxelConstants.XDivShift) % VoxelConstants.ChunkSizeZ;
-                    var currentVoxel = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
+                    var currentVoxel = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
 
                     if (currentVoxel.TypeID != 0)
                         continue;
@@ -259,7 +259,7 @@ namespace DwarfCorp
                     //    continue;
                     //}
 
-                    var voxBelow = (y > 0) ? new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y - 1, z)) : TemporaryVoxelHandle.InvalidHandle;
+                    var voxBelow = (y > 0) ? new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y - 1, z)) : VoxelHandle.InvalidHandle;
 
                     if (voxBelow.IsValid && voxBelow.IsEmpty)
                     {
@@ -313,7 +313,7 @@ namespace DwarfCorp
                     for (var n = 0; n < NeighborScratch.Length; ++n)
                     {
                         var neighborOffset = VoxelHelpers.ManhattanNeighbors2D[NeighborScratch[n]];
-                        var neighborVoxel = new TemporaryVoxelHandle(Chunks.ChunkData,
+                        var neighborVoxel = new VoxelHandle(Chunks.ChunkData,
                             currentVoxel.Coordinate + neighborOffset);
 
                         if (neighborVoxel.IsValid && neighborVoxel.IsEmpty)

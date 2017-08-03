@@ -43,7 +43,7 @@ namespace DwarfCorp
         public WaterCell cellFrom;
         public WaterCell cellTo;
         public byte amount;
-        public TemporaryVoxelHandle Location;
+        public VoxelHandle Location;
     }
 
     public struct LiquidSplash

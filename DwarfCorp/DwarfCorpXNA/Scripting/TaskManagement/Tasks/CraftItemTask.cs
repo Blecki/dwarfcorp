@@ -43,7 +43,7 @@ namespace DwarfCorp
     internal class CraftItemTask : Task
     {
         public CraftItem CraftType { get; set; }
-        public TemporaryVoxelHandle Voxel { get; set; }
+        public VoxelHandle Voxel { get; set; }
 
         public CraftItemTask()
         {
@@ -51,7 +51,7 @@ namespace DwarfCorp
             AutoRetry = true;
         }
 
-        public CraftItemTask(TemporaryVoxelHandle voxel, CraftItem type)
+        public CraftItemTask(VoxelHandle voxel, CraftItem type)
         {
             Name = "Craft item " + voxel.Coordinate;
             Voxel = voxel;

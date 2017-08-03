@@ -170,7 +170,7 @@ namespace DwarfCorp
         /// <summary>
         /// The current voxel
         /// </summary>
-        public TemporaryVoxelHandle CurrentVoxel = TemporaryVoxelHandle.InvalidHandle;
+        public VoxelHandle CurrentVoxel = VoxelHandle.InvalidHandle;
         /// <summary>
         /// Fixed time to update physics at. This is to prevent instabilty on very slow
         /// or very fast machines, and to protect stability during fast forward.
@@ -292,7 +292,7 @@ namespace DwarfCorp
                     Move(FixedDT / velocityLength);
 
                     // Get the current voxel.
-                    CurrentVoxel = new TemporaryVoxelHandle(chunks.ChunkData,
+                    CurrentVoxel = new VoxelHandle(chunks.ChunkData,
                         GlobalVoxelCoordinate.FromVector3(Position));
 
                     // Collide with the world.
@@ -415,9 +415,9 @@ namespace DwarfCorp
 
         public void CheckLiquids(ChunkManager chunks, float dt)
         {
-            CurrentVoxel = new TemporaryVoxelHandle(chunks.ChunkData,
+            CurrentVoxel = new VoxelHandle(chunks.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(GlobalTransform.Translation + Vector3.Up * 0.5f));
-            var below = new TemporaryVoxelHandle(chunks.ChunkData,
+            var below = new VoxelHandle(chunks.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(GlobalTransform.Translation + Vector3.Down * 0.25f));
 
             if (CurrentVoxel.IsValid && CurrentVoxel.WaterCell.WaterLevel > WaterManager.inWaterThreshold)
@@ -441,7 +441,7 @@ namespace DwarfCorp
             }
         }
 
-        public virtual void OnTerrainCollision(TemporaryVoxelHandle vox)
+        public virtual void OnTerrainCollision(VoxelHandle vox)
         {
             //
         }
@@ -495,7 +495,7 @@ namespace DwarfCorp
             int y = (int)Position.Y;
 
             foreach (var v in VoxelHelpers.EnumerateManhattanCube(CurrentVoxel.Coordinate)
-                .Select(c => new TemporaryVoxelHandle(chunks.ChunkData, c)))
+                .Select(c => new VoxelHandle(chunks.ChunkData, c)))
             {
                 if (!v.IsValid || v.IsEmpty)
                     continue;

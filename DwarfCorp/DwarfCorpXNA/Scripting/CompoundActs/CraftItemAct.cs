@@ -46,7 +46,7 @@ namespace DwarfCorp
     internal class CraftItemAct : CompoundCreatureAct
     {
         public CraftItem ItemType { get; set; }
-        public TemporaryVoxelHandle Voxel { get; set; }
+        public VoxelHandle Voxel { get; set; }
         public string Noise { get; set; }
         public CraftItemAct()
         {
@@ -127,11 +127,11 @@ namespace DwarfCorp
             base(creature)
         {
             ItemType = type;
-            Voxel = TemporaryVoxelHandle.InvalidHandle;
+            Voxel = VoxelHandle.InvalidHandle;
             Name = "Build craft item";
         }
 
-        public CraftItemAct(CreatureAI creature, TemporaryVoxelHandle voxel, CraftItem type) :
+        public CraftItemAct(CreatureAI creature, VoxelHandle voxel, CraftItem type) :
             base(creature)
         {
             ItemType = type;

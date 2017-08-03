@@ -83,7 +83,7 @@ namespace DwarfCorp
             return face != BoxFace.Top && face != BoxFace.Bottom;
         }
 
-        protected static bool IsFaceVisible(TemporaryVoxelHandle voxel, TemporaryVoxelHandle neighbor, BoxFace face)
+        protected static bool IsFaceVisible(VoxelHandle voxel, VoxelHandle neighbor, BoxFace face)
         {
             return
                 !neighbor.IsValid ||

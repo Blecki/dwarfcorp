@@ -757,7 +757,7 @@ namespace DwarfCorp
             }
         }
 
-        public static void PlaceType(VoxelType type, TemporaryVoxelHandle voxel)
+        public static void PlaceType(VoxelType type, VoxelHandle voxel)
         {
             voxel.Type = type;
             voxel.WaterCell = new WaterCell();

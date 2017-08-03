@@ -6,9 +6,9 @@ using Microsoft.Xna.Framework;
 namespace DwarfCorp
 {
     [Serializable] // Should never be serialized! But just in case, it works.
-    public struct TemporaryVoxelHandle : IEquatable<TemporaryVoxelHandle>
+    public struct VoxelHandle : IEquatable<VoxelHandle>
     {
-        public static TemporaryVoxelHandle InvalidHandle = new TemporaryVoxelHandle(new GlobalVoxelCoordinate(0, 0, 0));
+        public static VoxelHandle InvalidHandle = new VoxelHandle(new GlobalVoxelCoordinate(0, 0, 0));
 
         #region Cache
 
@@ -38,7 +38,13 @@ namespace DwarfCorp
         [JsonIgnore]
         public bool IsValid { get { return _cache_Chunk != null; } }
 
-        public TemporaryVoxelHandle(ChunkData Chunks, GlobalVoxelCoordinate Coordinate)
+        public BoundingBox GetBoundingBox()
+        {
+            var pos = Coordinate.ToVector3();
+            return new BoundingBox(pos, pos + Vector3.One);
+        }
+
+        public VoxelHandle(ChunkData Chunks, GlobalVoxelCoordinate Coordinate)
         {
             this.Coordinate = Coordinate;
             this._cache_Chunk = null;
@@ -47,7 +53,7 @@ namespace DwarfCorp
         }
 
         [JsonConstructor]
-        private TemporaryVoxelHandle(GlobalVoxelCoordinate Coordinate)
+        private VoxelHandle(GlobalVoxelCoordinate Coordinate)
         {
             this.Coordinate = Coordinate;
             this._cache_Chunk = null;
@@ -60,7 +66,7 @@ namespace DwarfCorp
             UpdateCache(((WorldManager)context.Context).ChunkManager.ChunkData);
         }
 
-        public TemporaryVoxelHandle(VoxelChunk Chunk, LocalVoxelCoordinate Coordinate)
+        public VoxelHandle(VoxelChunk Chunk, LocalVoxelCoordinate Coordinate)
         {
             this.Coordinate = Chunk.ID + Coordinate;
             this._cache_Chunk = Chunk;
@@ -68,12 +74,12 @@ namespace DwarfCorp
         }
 
         #region Equality
-        public static bool operator ==(TemporaryVoxelHandle A, TemporaryVoxelHandle B)
+        public static bool operator ==(VoxelHandle A, VoxelHandle B)
         {
             return A.Coordinate == B.Coordinate;
         }
 
-        public static bool operator !=(TemporaryVoxelHandle A, TemporaryVoxelHandle B)
+        public static bool operator !=(VoxelHandle A, VoxelHandle B)
         {
             return A.Coordinate != B.Coordinate;
         }
@@ -85,11 +91,11 @@ namespace DwarfCorp
 
         public override bool Equals(object obj)
         {
-            if (!(obj is TemporaryVoxelHandle)) return false;
-            return this == (TemporaryVoxelHandle)obj;
+            if (!(obj is VoxelHandle)) return false;
+            return this == (VoxelHandle)obj;
         }
 
-        public bool Equals(TemporaryVoxelHandle other)
+        public bool Equals(VoxelHandle other)
         {
             return this == other;
         }
@@ -132,6 +138,73 @@ namespace DwarfCorp
             {
                 OnTypeSet(value);
             }
+        }
+
+        [JsonIgnore]
+        public bool IsVisible
+        {
+            get { return Coordinate.Y < _cache_Chunk.Manager.ChunkData.MaxViewingLevel; }
+        }
+        
+        [JsonIgnore]
+        public int SunColor
+        {
+            get { return _cache_Chunk.Data.SunColors[_cache_Index]; }
+            set { _cache_Chunk.Data.SunColors[_cache_Index] = (byte)value; }
+        }
+
+        [JsonIgnore]
+        public bool IsExplored
+        {
+            get { return !GameSettings.Default.FogofWar || _cache_Chunk.Data.IsExplored[_cache_Index]; }
+            set
+            {
+                _cache_Chunk.Data.IsExplored[_cache_Index] = value;
+                InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
+            }
+        }
+
+        [JsonIgnore]
+        public WaterCell WaterCell
+        {
+            get { return _cache_Chunk.Data.Water[_cache_Index]; }
+            set
+            {
+
+                var existingLiquid = _cache_Chunk.Data.Water[_cache_Index];
+                if (existingLiquid.Type != LiquidType.None && value.Type == LiquidType.None)
+                    _cache_Chunk.Data.LiquidPresent[Coordinate.Y] -= 1;
+                if (existingLiquid.Type == LiquidType.None && value.Type != LiquidType.None)
+                    _cache_Chunk.Data.LiquidPresent[Coordinate.Y] += 1;
+
+                _cache_Chunk.Data.Water[_cache_Index] = value;
+            }
+        }
+
+        [JsonIgnore]
+        public float Health
+        {
+            get { return (float)_cache_Chunk.Data.Health[_cache_Index]; }
+            set
+            {
+                // Todo: Bad spot for this. Ideally is checked by whatever is trying to damage the voxel.
+                if (Type.IsInvincible) return;
+                _cache_Chunk.Data.Health[_cache_Index] = (byte)(Math.Max(Math.Min(value, 255.0f), 0.0f));
+            }
+        }
+
+        #endregion
+
+        #region Chunk Invalidation
+
+        /// <summary>
+        /// Set IsExplored without invoking the invalidation mechanism.
+        /// Should only be used by ChunkGenerator as it can break geometry building.
+        /// </summary>
+        /// <param name="Value"></param>
+        public void RawSetIsExplored(bool Value)
+        {
+            _cache_Chunk.Data.IsExplored[_cache_Index] = Value;
         }
 
         /// <summary>
@@ -181,11 +254,11 @@ namespace DwarfCorp
                 var localCoordinate = Coordinate.GetLocalVoxelCoordinate();
                 var Y = localCoordinate.Y - 1;
                 var sunColor = (NewType.ID == 0 || NewType.IsTransparent) ? this.SunColor : 0;
-                var below = TemporaryVoxelHandle.InvalidHandle;
+                var below = VoxelHandle.InvalidHandle;
 
                 while (Y >= 0)
                 {
-                    below = new TemporaryVoxelHandle(Chunk, new LocalVoxelCoordinate(localCoordinate.X, Y,
+                    below = new VoxelHandle(Chunk, new LocalVoxelCoordinate(localCoordinate.X, Y,
                         localCoordinate.Z));
                     below.SunColor = sunColor;
                     InvalidateVoxel(Chunk, new GlobalVoxelCoordinate(Coordinate.X, Y, Coordinate.Z), Y);
@@ -245,74 +318,7 @@ namespace DwarfCorp
                 chunk.InvalidateSlice(Y);
             }
         }
-
-        [JsonIgnore]
-        public bool IsVisible
-        {
-            get { return Coordinate.Y < _cache_Chunk.Manager.ChunkData.MaxViewingLevel; }
-        }
-
-        public BoundingBox GetBoundingBox()
-        {
-            var pos = Coordinate.ToVector3();
-            return new BoundingBox(pos, pos + Vector3.One);
-        }
-
-        [JsonIgnore]
-        public int SunColor
-        {
-            get { return _cache_Chunk.Data.SunColors[_cache_Index]; }
-            set { _cache_Chunk.Data.SunColors[_cache_Index] = (byte)value; }
-        }
-
-        [JsonIgnore]
-        public bool IsExplored
-        {
-            get { return !GameSettings.Default.FogofWar || _cache_Chunk.Data.IsExplored[_cache_Index]; }
-            set
-            {
-                _cache_Chunk.Data.IsExplored[_cache_Index] = value;
-                InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
-            }
-        }
-
-        /// <summary>
-        /// Set IsExplored without invoking the invalidation mechanism.
-        /// </summary>
-        /// <param name="Value"></param>
-        public void RawSetIsExplored(bool Value)
-        {
-            _cache_Chunk.Data.IsExplored[_cache_Index] = Value;
-        }
-
-        [JsonIgnore]
-        public WaterCell WaterCell
-        {
-            get { return _cache_Chunk.Data.Water[_cache_Index]; }
-            set {
-
-                var existingLiquid = _cache_Chunk.Data.Water[_cache_Index];
-                if (existingLiquid.Type != LiquidType.None && value.Type == LiquidType.None)
-                    _cache_Chunk.Data.LiquidPresent[Coordinate.Y] -= 1;
-                if (existingLiquid.Type == LiquidType.None && value.Type != LiquidType.None)
-                    _cache_Chunk.Data.LiquidPresent[Coordinate.Y] += 1;
-
-                _cache_Chunk.Data.Water[_cache_Index] = value;
-            }
-        }
-
-        [JsonIgnore]
-        public float Health
-        {
-            get { return (float)_cache_Chunk.Data.Health[_cache_Index]; }
-            set
-            {
-                // Todo: Bad spot for this. Ideally is checked by whatever is trying to damage the voxel.
-                if (Type.IsInvincible) return;
-                _cache_Chunk.Data.Health[_cache_Index] = (byte)(Math.Max(Math.Min(value, 255.0f), 0.0f));
-            }
-        }
-
+       
         #endregion
 
         public override string ToString()
