@@ -250,63 +250,6 @@ namespace DwarfCorp
             return new Necromancer(stats, allies, planService, faction, componentManager, "Necromancer", position).Physics;
         }
 
-        public static List<InstanceData> GenerateGrassMotes(List<Vector3> positions,
-            List<Color> colors,
-            List<float> scales,
-            ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, List<InstanceData> motes,
-            string asset, string name)
-        {
-            if (!GameSettings.Default.GrassMotes)
-            {
-                return new List<InstanceData>();
-            }
-
-            try
-            {
-
-                InstanceManager.RemoveInstances(name, motes);
-                InstanceManager.Instances[name].HasSelectionBuffer = false;
-                motes.Clear();
-
-
-                float minNorm = float.MaxValue;
-                float maxNorm = float.MinValue;
-                foreach (Vector3 p in positions)
-                {
-                    if (p.LengthSquared() > maxNorm)
-                    {
-                        maxNorm = p.LengthSquared();
-                    }
-                    else if (p.LengthSquared() < minNorm)
-                    {
-                        minNorm = p.LengthSquared();
-                    }
-                }
-
-
-
-                for (int i = 0; i < positions.Count; i++)
-                {
-                    float rot = scales[i] * scales[i];
-                    Matrix trans = Matrix.CreateTranslation(positions[i]);
-                    Matrix scale = Matrix.CreateScale(scales[i]);
-                    motes.Add(new InstanceData(scale * Matrix.CreateRotationY(rot) * trans, colors[i], true));
-                }
-
-                foreach (InstanceData data in motes.Where(data => data != null))
-                {
-                    InstanceManager.AddInstance(name, data);
-                }
-
-                return motes;
-            }
-            catch (ContentLoadException e)
-            {
-                throw e;
-            }
-        }
-
-
         public static Body GenerateElf(WorldManager worldManger, Vector3 position, Faction faction, string allies)
         {
             CreatureStats stats = new CreatureStats(new ElfClass(), 0);

@@ -83,11 +83,18 @@ namespace DwarfCorp
                 {
                     lightCache.Clear(); // If we skip a slice, nothing in the cache will be reused.
                     sliceStack.Add(chunk.Data.SliceCache[y]);
+
+                    if (GameSettings.Default.GrassMotes)
+                        chunk.RebuildMoteLayerIfNull(y);
+
                     continue;
                 }
 
                 if (GameSettings.Default.CalculateRamps)
                     UpdateCornerRamps(chunk, y);
+
+                if (GameSettings.Default.GrassMotes)
+                    chunk.RebuildMoteLayer(y);
 
                 var sliceGeometry = new RawPrimitive
                 {
@@ -247,24 +254,16 @@ namespace DwarfCorp
             bool toReturn = false;
 
             if ((rampType & RampType.TopFrontRight) == RampType.TopFrontRight)
-            {
                 toReturn = (vertex == VoxelVertex.FrontTopRight);
-            }
 
             if ((rampType & RampType.TopBackRight) == RampType.TopBackRight)
-            {
                 toReturn = toReturn || (vertex == VoxelVertex.BackTopRight);
-            }
 
             if ((rampType & RampType.TopFrontLeft) == RampType.TopFrontLeft)
-            {
                 toReturn = toReturn || (vertex == VoxelVertex.FrontTopLeft);
-            }
 
             if ((rampType & RampType.TopBackLeft) == RampType.TopBackLeft)
-            {
                 toReturn = toReturn || (vertex == VoxelVertex.BackTopLeft);
-            }
 
             return toReturn;
         }
@@ -396,15 +395,6 @@ namespace DwarfCorp
             return color;
         }
 
-        //private static void GetCacheID(TemporaryVoxelHandle Voxel, VoxelVertex Vertex)
-        //{
-        //    var coordinate = Voxel.Coordinate;
-        //    switch (Vertex)
-        //    {
-        //        case VoxelVertex.
-        //    }
-        //}
-
         private static BoxPrimitive.BoxTextureCoords ComputeTransitionTexture(TemporaryVoxelHandle V)
         {
             var type = V.Type;
@@ -479,6 +469,155 @@ namespace DwarfCorp
         {
             rebuildMutex.Dispose();
         }
+
+        private void GenerateLightmap(Rectangle textureBounds)
+        {
+            if (GameSettings.Default.UseLightmaps)
+            {
+                BoundingBox box = GenerateLightmapUVs();
+                CreateLightMapTexture(box, textureBounds);
+            }
+        }
+
+        /// <summary>
+        /// Generates a lightmap UV unwrapping, and provides new UV bounds.
+        /// </summary>
+        /// <returns></returns>
+        private BoundingBox GenerateLightmapUVs()
+        {
+            BoundingBox bounds = new BoundingBox(Vector3.Zero, Vector3.One);
+
+            bool success = false;
+
+            do
+            {
+                success = GenerateLightmapUVsInBounds(bounds);
+
+                if (!success)
+                {
+                    bounds = new BoundingBox(bounds.Min, bounds.Max * 1.25f);
+                }
+            }
+            while (!success);
+            return bounds;
+        }
+
+
+        /// <summary>
+        /// Creates a light map texture for the given bounds, and original UV texture bounds.
+        /// </summary>
+        /// <param name="bounds">New bounds in UV space of the lightmap</param>
+        /// <param name="textureBounds">The bounds of the texture used to draw the primitive</param>
+        private void CreateLightMapTexture(BoundingBox bounds, Rectangle textureBounds)
+        {
+            float widthScale = bounds.Max.X - bounds.Min.X;
+            float heightScale = bounds.Max.Y - bounds.Min.Y;
+            int newWidth = (int)Math.Ceiling((widthScale) * textureBounds.Width);
+            int newHeight = (int)Math.Ceiling((heightScale) * textureBounds.Height);
+
+            if (Lightmap == null || Lightmap.Width < newWidth || Lightmap.Height < newHeight)
+            {
+                Lightmap = new RenderTarget2D(GameState.Game.GraphicsDevice, newWidth, newHeight, false,
+                    SurfaceFormat.Color, DepthFormat.None);
+            }
+            else
+            {
+                newWidth = Lightmap.Width;
+                newHeight = Lightmap.Height;
+            }
+            widthScale = newWidth / ((float)textureBounds.Width);
+            heightScale = newHeight / ((float)textureBounds.Height);
+            for (int i = 0; i < Vertices.Length; i++)
+            {
+                Vector2 lmc = Vertices[i].LightmapCoordinate;
+                lmc.X /= widthScale;
+                lmc.Y /= heightScale;
+                Vertices[i].LightmapCoordinate = lmc;
+
+                Vector4 lmb = Vertices[i].LightmapBounds;
+                lmb.X /= widthScale;
+                lmb.Y /= heightScale;
+                lmb.Z /= widthScale;
+                lmb.W /= heightScale;
+                Vertices[i].LightmapBounds = lmb;
+            }
+        }
+
+        /// <summary>
+        /// Generates UV map for the model for a light map with given bounds.
+        /// Returns false if the triangles could not fit within the bounds.
+        /// Bounds Y coordinates will not be used.
+        /// </summary>
+        /// <param name="bounds">Bounding box in the image (0, 1 space)</param>
+        private bool GenerateLightmapUVsInBounds(BoundingBox bounds)
+        {
+            // The top left of the quad
+            // to draw.
+            float penX = 0;
+            float penY = 0;
+            // The maximum height of the last row.
+            float drawnHeight = 0;
+
+            // For each 4-vertex quad...
+            for (int quad = 0; quad < VertexCount / 4; quad++)
+            {
+
+                // Compute the bounds of the quad
+                float minQuadUvx = float.MaxValue;
+                float minQuadUvy = float.MaxValue;
+                float maxQuadUvx = float.MinValue;
+                float maxQuadUvy = float.MinValue;
+
+                for (int vertex = 0; vertex < 4; vertex++)
+                {
+                    int index = quad * 4 + vertex;
+                    minQuadUvx = Math.Min(minQuadUvx, Vertices[index].TextureCoordinate.X);
+                    minQuadUvy = Math.Min(minQuadUvy, Vertices[index].TextureCoordinate.Y);
+                    maxQuadUvx = Math.Max(maxQuadUvx, Vertices[index].TextureCoordinate.X);
+                    maxQuadUvy = Math.Max(maxQuadUvy, Vertices[index].TextureCoordinate.Y);
+                }
+
+                float quadWidth = maxQuadUvx - minQuadUvx;
+                float quadHeight = maxQuadUvy - minQuadUvy;
+
+                // If the current quad isn't going to 
+                // fit, go to the next row down.
+                if (penX + quadWidth > bounds.Max.X)
+                {
+                    penY += drawnHeight;
+                    penX = 0;
+                    drawnHeight = 0;
+                }
+
+                // If the current quad won't fit because we're
+                // outside of the lower bounds, there isn't enough
+                // space to draw the quads, so return false.
+                if (penY + quadHeight > bounds.Max.Y)
+                {
+                    return false;
+                }
+
+                // For each vertex, try to draw it to the UV bounds.
+                for (int vertex = 0; vertex < 4; vertex++)
+                {
+                    int index = quad * 4 + vertex;
+                    // The coordinate is whatever the pen coordinate was plus the original UV coordinate, minus the
+                    // top left corner of the quad.
+                    Vertices[index].LightmapCoordinate = new Vector2(penX + (Vertices[index].TextureCoordinate.X - minQuadUvx),
+                                                                     penY + (Vertices[index].TextureCoordinate.Y - minQuadUvy));
+                    Vertices[index].LightmapBounds = new Vector4(penX + Vertices[index].TextureBounds.X - minQuadUvx,
+                                                                 penY + Vertices[index].TextureBounds.Y - minQuadUvy,
+                                                                 penX + Vertices[index].TextureBounds.Z - minQuadUvx,
+                                                                 penY + Vertices[index].TextureBounds.W - minQuadUvy);
+                }
+
+                // Move the pen over if any of the vertexes were drawn.
+                penX += quadWidth;
+                drawnHeight = Math.Max(drawnHeight, quadHeight);
+            }
+            return true;
+        }
+
     }
 
 }

@@ -45,7 +45,7 @@ namespace DwarfCorp
     /// <summary>
     /// A 3D grid of voxels, water, and light.
     /// </summary>
-    public class VoxelChunk : IBoundedObject
+    public partial class VoxelChunk : IBoundedObject
     {
         //Todo: Use actions
         public delegate void VoxelDestroyed(LocalVoxelCoordinate voxelID);
@@ -55,7 +55,6 @@ namespace DwarfCorp
 
         public event VoxelExplored OnVoxelExplored;
 
-        public Dictionary<string, List<InstanceData>> Motes { get; set; }
         public VoxelListPrimitive Primitive { get; set; }
         public VoxelListPrimitive NewPrimitive = null;
         public Dictionary<LiquidType, LiquidPrimitive> Liquids { get; set; }
@@ -232,109 +231,7 @@ namespace DwarfCorp
             LiquidPrimitive.InitializePrimativesFromChunk(this, toInit);
             ShouldRebuildWater = false;
         }
-
-        public static Perlin MoteNoise = new Perlin(0);
-        public static Perlin MoteScaleNoise = new Perlin(250);
-
-        private float Clamp(float v, float a)
-        {
-            if (v > a)
-            {
-                return a;
-            }
-
-            if (v < -a)
-            {
-                return -a;
-            }
-
-            return v;
-        }
-
-        private Vector3 ClampVector(Vector3 v, float a)
-        {
-            v.X = Clamp(v.X, a);
-            v.Y = Clamp(v.Y, a);
-            v.Z = Clamp(v.Z, a);
-            return v;
-        }
-
-        public void BuildGrassMotes(Overworld.Biome biome)
-        {
-            BiomeData biomeData = BiomeLibrary.Biomes[biome];
-
-            string grassType = biomeData.GrassLayer.VoxelType;
-
-            for (int i = 0; i < biomeData.Motes.Count; i++)
-            {
-                List<Vector3> grassPositions = new List<Vector3>();
-                List<Color> grassColors = new List<Color>();
-                List<float> grassScales = new List<float>();
-                DetailMoteData moteData = biomeData.Motes[i];
-
-                for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
-                {
-                    for (int y = 1; y < Math.Min(Manager.ChunkData.MaxViewingLevel + 1, VoxelConstants.ChunkSizeY - 1); y++)
-                    {
-                        for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
-                        {
-                            var v = new TemporaryVoxelHandle(this, new LocalVoxelCoordinate(x, y, z));
-                            var voxelBelow = new TemporaryVoxelHandle(this, new LocalVoxelCoordinate(x, y - 1, z));
-
-                            if (v.IsEmpty || voxelBelow.IsEmpty
-                                || v.Type.Name != grassType || !v.IsVisible
-                                || voxelBelow.WaterCell.WaterLevel != 0)
-                            {
-                                continue;
-                            }
-
-                            float vOffset = 0.0f;
-
-                            if (v.RampType != RampType.None)
-                            {
-                                vOffset = -0.5f;
-                            }
-
-                            float value = MoteNoise.Noise(v.WorldPosition.X * moteData.RegionScale, v.WorldPosition.Y * moteData.RegionScale, v.WorldPosition.Z * moteData.RegionScale);
-                            float s = MoteScaleNoise.Noise(v.WorldPosition.X * moteData.RegionScale, v.WorldPosition.Y * moteData.RegionScale, v.WorldPosition.Z * moteData.RegionScale) * moteData.MoteScale;
-
-                            if (!(Math.Abs(value) > moteData.SpawnThreshold))
-                            {
-                                continue;
-                            }
-
-                            Vector3 smallNoise = ClampVector(VertexNoise.GetRandomNoiseVector(v.WorldPosition * moteData.RegionScale * 20.0f) * 20.0f, 0.4f);
-                            smallNoise.Y = 0.0f;
-                            grassPositions.Add(v.WorldPosition + new Vector3(0.5f, 1.0f + s * 0.5f + vOffset, 0.5f) + smallNoise);
-                            grassScales.Add(s);
-                            grassColors.Add(new Color(v.SunColor, 128, 0));
-                        }
-                    }
-                }
-
-                if (Motes == null)
-                {
-                    Motes = new Dictionary<string, List<InstanceData>>();
-                }
-
-                if (Motes.Count < i + 1)
-                {
-                    Motes[moteData.Name] = new List<InstanceData>();
-                }
-
-                Motes[moteData.Name] = EntityFactory.GenerateGrassMotes(grassPositions,
-                    grassColors, grassScales, Manager.World.ComponentManager, Manager.Content, Manager.Graphics, Motes[moteData.Name], moteData.Asset, moteData.Name);
-            }
-        }
-
-        public void BuildGrassMotes()
-        {
-            Vector2 v = new Vector2(Origin.X, Origin.Z) / Manager.World.WorldScale;
-
-            Overworld.Biome biome = Overworld.Map[(int)MathFunctions.Clamp(v.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(v.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
-            BuildGrassMotes(biome);
-        }
-
+        
         public void Rebuild(GraphicsDevice g)
         {
             //debug
@@ -349,7 +246,6 @@ namespace DwarfCorp
             VoxelListPrimitive primitive = new VoxelListPrimitive();
             primitive.InitializeFromChunk(this);
 
-            BuildGrassMotes();
             if (firstRebuild)
             {
                 firstRebuild = false;
@@ -382,17 +278,6 @@ namespace DwarfCorp
             if (Primitive != null)
             {
                 Primitive.ResetBuffer(device);
-            }
-
-            if (Motes != null)
-            {
-                foreach (KeyValuePair<string, List<InstanceData>> mote in Motes)
-                {
-                    foreach (InstanceData mote2 in mote.Value)
-                    {
-                        EntityFactory.InstanceManager.RemoveInstance(mote.Key, mote2);
-                    }
-                }
             }
         }
     }
