@@ -146,7 +146,7 @@ namespace DwarfCorp
             }
         }
 
-        public void Update(DwarfTime time, Camera cam, GraphicsDevice graphics)
+        public void Update(DwarfTime time, Camera cam, GraphicsDevice graphics, int maxViewingLevel)
         {
             if (DwarfGame.ExitGame)
             {
@@ -181,7 +181,7 @@ namespace DwarfCorp
                 int j = 0;
                 foreach (InstanceData t in SortedData.Data)
                 {
-                    if (t.ShouldDraw)
+                    if (t.ShouldDraw && t.Transform.Translation.Y < maxViewingLevel + 1)
                     {
                         instanceVertexes[j].Transform = t.Transform;
                         instanceVertexes[j].Color = t.Color;

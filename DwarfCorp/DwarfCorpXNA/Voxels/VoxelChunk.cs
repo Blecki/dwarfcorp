@@ -231,7 +231,7 @@ namespace DwarfCorp
             LiquidPrimitive.InitializePrimativesFromChunk(this, toInit);
             ShouldRebuildWater = false;
         }
-        
+
         public void Rebuild(GraphicsDevice g)
         {
             //debug
@@ -251,9 +251,8 @@ namespace DwarfCorp
                 firstRebuild = false;
             }
             RebuildLiquids();
-            IsRebuilding = false;
-
             NotifyChangedComponents();
+            IsRebuilding = false;
             ShouldRebuild = false;
         }
 

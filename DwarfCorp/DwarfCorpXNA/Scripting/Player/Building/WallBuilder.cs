@@ -58,7 +58,7 @@ namespace DwarfCorp
         public VoxelType Type;
         public CreatureAI ReservedCreature = null;
         private WorldManager World { get; set; }
-
+        List<VoxelHandle> highlighted = new List<VoxelHandle>(); 
         public WallBuilder(VoxelHandle v, VoxelType t, WorldManager world)
         {
             World = world;
@@ -203,10 +203,11 @@ namespace DwarfCorp
             effect.MainTexture = World.ChunkManager.ChunkData.Tilemap;
             effect.LightRampTint = Color.White;
             effect.VertexColorTint = new Color(0.1f, 0.9f, 1.0f, 0.5f * st + 0.45f);
+            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
             foreach(WallBuilder put in Designations)
             {
                 //Drawer3D.DrawBox(put.Vox.GetBoundingBox(), Color.LightBlue, st * 0.01f + 0.05f);
-                effect.World = Matrix.CreateTranslation(put.Vox.WorldPosition);
+                effect.World = Matrix.CreateTranslation(put.Vox.WorldPosition + Vector3.Up * 0.15f);
 
                 foreach(EffectPass pass in effect.CurrentTechnique.Passes)
                 {
@@ -226,10 +227,11 @@ namespace DwarfCorp
             }
 
             effect.VertexColorTint = verified ? new Color(0.0f, 1.0f, 0.0f, 0.5f * st + 0.45f) : new Color(1.0f, 0.0f, 0.0f, 0.5f * st + 0.45f);
+            Vector3 offset = World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? Vector3.Zero : Vector3.Up * 0.15f;
             foreach (var voxel in Selected)
             {
-                effect.World = Matrix.CreateTranslation(voxel.WorldPosition);
-
+  
+                effect.World = Matrix.CreateTranslation(voxel.WorldPosition + offset);
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
@@ -296,7 +298,7 @@ namespace DwarfCorp
                         return;
                     }
                     List<Task> assignments = new List<Task>();
-                    var validRefs = refs.Where(r => !IsDesignation(r) && r.IsEmpty).ToList();
+                    var validRefs = refs.Where(r => !IsDesignation(r) && World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? r.IsEmpty : !r.IsEmpty).ToList();
 
                     if (!Verify(validRefs, CurrentVoxelType.ResourceToRelease))
                     {

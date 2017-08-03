@@ -382,7 +382,7 @@
     <Compile Include="Voxels\VoxelHelpers\DoesRayHitSolidVoxel.cs" />
     <Compile Include="Voxels\VoxelHelpers\DoesVoxelHaveVisibleSurface.cs" />
     <Compile Include="Voxels\VoxelHelpers\Neighbors.cs" />
-    <Compile Include="Voxels\TemporaryVoxelHandle.cs" />
+    <Compile Include="Voxels\VoxelHandle.cs" />
     <Compile Include="Voxels\VoxelConstants.cs" />
     <Compile Include="Voxels\Enums.cs" />
     <Compile Include="Voxels\BoxTransition.cs" />

@@ -165,9 +165,16 @@ sampler ShadowMapSampler = sampler_state { texture = <xShadowMap>; magfilter = L
 
 		Output.Color = PSIn.Color;
 
-	    clip(PSIn.ClipDistance);  //MSS - Water Refactor added
+		if (GhostMode && PSIn.ClipDistance.w < 0.0f)
+		{
+			Output.Color *= clamp(-1.0f / (PSIn.ClipDistance.w * 0.75f) * 0.25f, 0, 1.0f);
 
-
+			clip((Output.Color.a - 0.1f));
+		}
+		else
+		{
+			clip(PSIn.ClipDistance);
+		}
 		return Output;
 	}
 
@@ -591,9 +598,9 @@ TPixelToFrame TexturedPS_Colorscale(TVertexToPixel PSIn)
 	{
 		if (GhostMode && PSIn.ClipDistance.w < 0.0f)
 		{
-			Output.Color *= clamp(-1.0f / (PSIn.ClipDistance.w * 0.75f) * 0.5f, 0, 1.0f);
+			Output.Color.a *= clamp(-1.0f / (PSIn.ClipDistance.w * 10), 0, 1.0f);
 
-			clip((Output.Color.a - 0.1f));
+			clip((Output.Color.a - 0.3f));
 		}
 		else
 		{

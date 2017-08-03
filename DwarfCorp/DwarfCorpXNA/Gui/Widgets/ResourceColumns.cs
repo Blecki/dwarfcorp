@@ -204,11 +204,11 @@ namespace DwarfCorp.Gui.Widgets
 
             var resourceInfo = ResourceLibrary.GetResourceByName(Resource.ResourceType);
 
-            r.AddChild(new Gui.Widget
+            r.AddChild(new ResourceIcon()
             {
                 MinimumSize = new Point(32, 32),
                 MaximumSize = new Point(32, 32),
-                Background = new TileReference("resources", resourceInfo.GuiSprite),
+                Layers = resourceInfo.GuiLayers,
                 AutoLayout = AutoLayout.DockLeft,
                 BackgroundColor = Resource.NumResources > 0 ? resourceInfo.Tint.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f)
             });
@@ -244,10 +244,7 @@ namespace DwarfCorp.Gui.Widgets
             LineItem.GetChild(0).BackgroundColor = Resource.NumResources > 0
                 ? resourceInfo.Tint.ToVector4()
                 : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
-            if (resourceInfo.Tags.Contains(DwarfCorp.Resource.ResourceTags.Craft))
-                LineItem.GetChild(0).Background = new TileReference("crafts", resourceInfo.GuiSprite);
-            else
-                LineItem.GetChild(0).Background = new TileReference("resources", resourceInfo.GuiSprite);
+            LineItem.GetChild(0).Background = resourceInfo.GuiLayers[0];
 
             LineItem.GetChild(1).Invalidate();
         }

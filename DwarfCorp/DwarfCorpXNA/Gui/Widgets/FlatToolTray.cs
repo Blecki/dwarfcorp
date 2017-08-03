@@ -169,8 +169,6 @@ namespace DwarfCorp.Gui.Widgets
                         OnMouseEnter = ExpandPopup;
                         break;
                     case IconBehavior.ShowSubMenu:
-                        if (ReplacementMenu == null || OnClick != null)
-                            throw new InvalidProgramException("Conflicting icon behavior");
                         OnClick = (sender, args) =>
                         {
                             var root = Parent.Parent as RootTray;

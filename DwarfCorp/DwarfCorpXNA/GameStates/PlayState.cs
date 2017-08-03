@@ -898,6 +898,52 @@ namespace DwarfCorp.GameStates
                 }
             };
 
+
+            var menu_Floortypes = new FlatToolTray.Tray
+            {
+                Tag = "build floor",
+                ItemSource = new List<Widget>(),
+                OnShown = (widget) =>
+                {
+                    // Dynamically rebuild the tray
+                    widget.Clear();
+                    (widget as FlatToolTray.Tray).ItemSource =
+                        (new Widget[] { icon_menu_WallTypes_Return }).Concat(
+                        VoxelLibrary.GetTypes()
+                        .Where(voxel => voxel.IsBuildable && World.PlayerFaction.HasResources(voxel.ResourceToRelease))
+                        .Select(data => new FlatToolTray.Icon
+                        {
+                            Tooltip = "Build " + data.Name,
+                            Icon = new Gui.TileReference("voxels", data.ID),
+                            TextHorizontalAlign = HorizontalAlign.Right,
+                            TextVerticalAlign = VerticalAlign.Bottom,
+                            Text = Master.Faction.ListResources()[data.ResourceToRelease].NumResources.ToString(),
+                            TextColor = Color.White.ToVector4(),
+                            PopupChild = new BuildWallInfo
+                            {
+                                Data = data,
+                                Rect = new Rectangle(0, 0, 256, 128),
+                                Master = Master
+                            },
+                            OnClick = (sender, args) =>
+                            {
+                                Master.Faction.RoomBuilder.CurrentRoomData = null;
+                                Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+                                Master.Faction.WallBuilder.CurrentVoxelType = data;
+                                Master.Faction.CraftBuilder.IsEnabled = false;
+                                ChangeTool(GameMaster.ToolMode.Build);
+                                World.ShowToolPopup("Click and drag to build " + data.Name + " floor.");
+                                World.Tutorial("build blocks");
+                            },
+                            Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
+                            Hidden = false
+                        }));
+                    widget.Construct();
+                    widget.Hidden = false;
+                    widget.Layout();
+                }
+            };
+
             var icon_BuildWall = new FlatToolTray.Icon
             {
                 Icon = null,
@@ -910,6 +956,21 @@ namespace DwarfCorp.GameStates
                 Text = "Block",
                 TextColor = Color.White.ToVector4(),
                 ReplacementMenu = menu_WallTypes,
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
+            };
+
+            var icon_BuildFloor = new FlatToolTray.Icon
+            {
+                Icon = null,
+                Font = "font",
+                KeepChildVisible = true,
+                ExpandChildWhenDisabled = true,
+                TextHorizontalAlign = HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Center,
+                Tooltip = "Place floor",
+                Text = "Floor",
+                TextColor = Color.White.ToVector4(),
+                ReplacementMenu = menu_Floortypes,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
@@ -942,6 +1003,10 @@ namespace DwarfCorp.GameStates
                             Rect = new Rectangle(0, 0, 256, 150),
                             Master = Master,
                             World = World,
+                            OnShown = (sender) =>
+                            {
+                               Master.Faction.CraftBuilder.IsEnabled = false;
+                            },
                             BuildAction = (sender, args) =>
                             {
                                 var buildInfo = sender.Parent as Gui.Widgets.BuildCraftInfo;
@@ -949,7 +1014,7 @@ namespace DwarfCorp.GameStates
                                 {
                                     return;
                                 }
-
+                                sender.Parent.Hidden = true;
                                 data.SelectedResources = buildInfo.GetSelectedResources();
                                 data.NumRepeats = buildInfo.GetNumRepeats();
                                 Master.Faction.RoomBuilder.CurrentRoomData = null;
@@ -970,7 +1035,7 @@ namespace DwarfCorp.GameStates
                         {
                             AddToolbarIcon(sender, () =>
                                 ((sender as FlatToolTray.Icon).PopupChild as BuildCraftInfo).CanBuild());
-                        }
+                        },
                     }))
             };
 
@@ -1077,6 +1142,7 @@ namespace DwarfCorp.GameStates
                         icon_moveObjects,
                         icon_BuildRoom,
                         icon_BuildWall,
+                        icon_BuildFloor,
                         icon_BuildCraft,
                         icon_BuildResource
                     }
@@ -1332,7 +1398,7 @@ namespace DwarfCorp.GameStates
                          Master.Faction.ListResourcesWithTag(Resource.ResourceTags.Plantable)
                         .Select(resource => new FlatToolTray.Icon
                            {
-                               Icon = new TileReference("resources", resource.ResourceType.GetResource().GuiSprite),
+                               Icon = resource.ResourceType.GetResource().GuiLayers[0],
                                Tooltip = "Plant " + resource.ResourceType,
                                Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
                                OnClick = (sender, args) =>
@@ -1655,7 +1721,8 @@ namespace DwarfCorp.GameStates
                     menu_ResearchSpells,
                     menu_ResourceTypes,
                     menu_RoomTypes,
-                    menu_WallTypes
+                    menu_WallTypes,
+                    menu_Floortypes
                 },
                 OnLayout = (sender) =>
                 {

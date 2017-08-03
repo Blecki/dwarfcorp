@@ -66,6 +66,8 @@ namespace DwarfCorp
             public Keys DebugToggle1 = Keys.F9;
             // Toggles FPS and other stat showing via GamePerformance.
             public Keys TogglePerformanceOverlay = Keys.F10;
+            public Keys RotateObjectLeft = Keys.R;
+            public Keys RotateObjectRight = Keys.T;
         }
 
         public static KeyMappings Mappings { get; set; }

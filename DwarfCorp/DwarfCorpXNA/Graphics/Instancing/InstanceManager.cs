@@ -163,11 +163,11 @@ namespace DwarfCorp
             
         }
 
-        public void Update(DwarfTime time, Camera cam, GraphicsDevice graphics)
+        public void Update(DwarfTime time, Camera cam, GraphicsDevice graphics, int maxviewinglevel)
         {
             foreach(FixedInstanceArray list in Instances.Values)
             {
-                list.Update(time, cam, graphics);
+                list.Update(time, cam, graphics, maxviewinglevel);
             }
         }
 
