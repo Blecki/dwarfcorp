@@ -64,7 +64,7 @@ namespace DwarfCorp
 
         }
 
-        public ExploredListener(ComponentManager manager, ChunkManager chunkManager, TemporaryVoxelHandle vref) :
+        public ExploredListener(ComponentManager manager, ChunkManager chunkManager, VoxelHandle vref) :
             base("ExploredListener", manager)
         {
             Chunk = vref.Chunk;

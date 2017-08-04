@@ -12,7 +12,7 @@ namespace DwarfCorp
         {
             foreach (var coordinate in MathFunctions.FastVoxelTraversal(Start, End))
             {
-                var voxel = new TemporaryVoxelHandle(Data, coordinate);
+                var voxel = new VoxelHandle(Data, coordinate);
                 if (voxel.IsValid && !voxel.IsEmpty)
                     return true;
             }

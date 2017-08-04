@@ -46,14 +46,14 @@ namespace DwarfCorp
     internal class BuildVoxelTask : Task
     {
         public VoxelType VoxType { get; set; }
-        public TemporaryVoxelHandle Voxel { get; set; }
+        public VoxelHandle Voxel { get; set; }
 
         public BuildVoxelTask()
         {
             Priority = PriorityType.Low;
         }
 
-        public BuildVoxelTask(TemporaryVoxelHandle voxel, VoxelType type)
+        public BuildVoxelTask(VoxelHandle voxel, VoxelType type)
         {
             Name = "Put voxel of type: " + type.Name + " on voxel " + voxel.Coordinate;
             Voxel = voxel;

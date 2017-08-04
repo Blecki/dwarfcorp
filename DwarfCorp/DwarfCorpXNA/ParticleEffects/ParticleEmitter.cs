@@ -346,7 +346,7 @@ namespace DwarfCorp
 
                 p.Scale = Math.Max(p.Scale, 0.0f);
 
-                var v = new TemporaryVoxelHandle(chunks.ChunkData,
+                var v = new VoxelHandle(chunks.ChunkData,
                         GlobalVoxelCoordinate.FromVector3(p.Position));
 
                 if (Data.HasLighting)

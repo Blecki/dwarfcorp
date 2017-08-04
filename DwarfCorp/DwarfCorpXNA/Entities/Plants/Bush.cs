@@ -57,7 +57,7 @@ namespace DwarfCorp
             AddChild(new Health(Manager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
             AddChild(new Flammable(Manager, "Flames"));
 
-            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                 Manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(position)));
             if (voxelUnder.IsValid)
@@ -101,7 +101,7 @@ namespace DwarfCorp
             AddChild(new Health(componentManager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
             AddChild(new Flammable(componentManager, "Flames"));
 
-            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                 Manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(position)));
             if (voxelUnder.IsValid)

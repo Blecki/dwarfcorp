@@ -149,7 +149,7 @@ namespace DwarfCorp
             CreateHitAnimation();
         }
 
-        public IEnumerable<Act.Status> Perform(Creature performer, Vector3 pos, TemporaryVoxelHandle other, DwarfTime time, float bonus, string faction)
+        public IEnumerable<Act.Status> Perform(Creature performer, Vector3 pos, VoxelHandle other, DwarfTime time, float bonus, string faction)
         {
             while (true)
             {

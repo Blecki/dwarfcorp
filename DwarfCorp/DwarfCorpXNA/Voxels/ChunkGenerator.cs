@@ -76,9 +76,9 @@ namespace DwarfCorp
         public LibNoise.FastRidgedMultifractal LavaNoise { get; set; }
         public ChunkManager Manager { get; set; }
         public List<int> CaveLevels { get; set; }
-        public List<float> CaveFrequencies { get; set; } 
+        public List<float> CaveFrequencies { get; set; }
         public List<int> AquiverLevels { get; set; }
-        public List<int> LavaLevels { get; set; } 
+        public List<int> LavaLevels { get; set; }
         public float CaveSize { get; set; }
         public float AquiferSize { get; set; }
         public float LavaSize { get; set; }
@@ -91,10 +91,10 @@ namespace DwarfCorp
             NoiseScale = noiseScale;
 
             VoxLibrary = voxLibrary;
-            CaveNoiseScale = noiseScale*10.0f;
+            CaveNoiseScale = noiseScale * 10.0f;
             CaveSize = 0.03f;
-            CaveLevels = new List<int>(){4, 8, 11, 16};
-            CaveFrequencies = new List<float>(){0.5f, 0.7f, 0.9f, 1.0f};
+            CaveLevels = new List<int>() { 4, 8, 11, 16 };
+            CaveFrequencies = new List<float>() { 0.5f, 0.7f, 0.9f, 1.0f };
 
             CaveNoise = new FastRidgedMultifractal(randomSeed)
             {
@@ -105,7 +105,7 @@ namespace DwarfCorp
                 Seed = randomSeed
             };
 
-            AquiverLevels = new List<int>() {5};
+            AquiverLevels = new List<int>() { 5 };
 
             AquiferSize = 0.02f;
             AquiferNoise = new FastRidgedMultifractal(randomSeed + 100)
@@ -131,14 +131,14 @@ namespace DwarfCorp
 
         public void GenerateCluster(OreCluster cluster, ChunkData chunks)
         {
-            for (float x = -cluster.Size.X*0.5f; x < cluster.Size.X*0.5f; x += 1.0f)
+            for (float x = -cluster.Size.X * 0.5f; x < cluster.Size.X * 0.5f; x += 1.0f)
             {
-                for (float y = -cluster.Size.Y*0.5f; y < cluster.Size.Y*0.5f; y += 1.0f)
+                for (float y = -cluster.Size.Y * 0.5f; y < cluster.Size.Y * 0.5f; y += 1.0f)
                 {
-                    for (float z = -cluster.Size.Z*0.5f; z < cluster.Size.Z*0.5f; z += 1.0f)
+                    for (float z = -cluster.Size.Z * 0.5f; z < cluster.Size.Z * 0.5f; z += 1.0f)
                     {
-                        float radius = (float)(Math.Pow(x/cluster.Size.X, 2.0f) + Math.Pow(y/cluster.Size.Y, 2.0f) +
-                                       Math.Pow(z/cluster.Size.Z, 2.0f));
+                        float radius = (float)(Math.Pow(x / cluster.Size.X, 2.0f) + Math.Pow(y / cluster.Size.Y, 2.0f) +
+                                       Math.Pow(z / cluster.Size.Z, 2.0f));
 
                         if (radius > 1.0f + MathFunctions.Rand(0.0f, 0.25f)) continue;
                         Vector3 locPosition = new Vector3(x, y, z);
@@ -148,7 +148,7 @@ namespace DwarfCorp
                         if (globalPosition.Y > cluster.Type.MaxSpawnHeight ||
                             globalPosition.Y < cluster.Type.MinSpawnHeight) continue;
 
-                        var vox = new TemporaryVoxelHandle(chunks,
+                        var vox = new VoxelHandle(chunks,
                             GlobalVoxelCoordinate.FromVector3(globalPosition));
 
                         if (!vox.IsValid || vox.IsEmpty) continue;
@@ -171,9 +171,9 @@ namespace DwarfCorp
             {
                 if (curr.Y > vein.Type.MaxSpawnHeight ||
                     curr.Y < vein.Type.MinSpawnHeight) continue;
-                Vector3 p = new Vector3(curr.X , curr.Y, curr.Z);
+                Vector3 p = new Vector3(curr.X, curr.Y, curr.Z);
 
-                var vox = new TemporaryVoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(p));
+                var vox = new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(p));
 
                 if (!vox.IsValid || vox.IsEmpty) continue;
 
@@ -182,7 +182,7 @@ namespace DwarfCorp
                 if (!vein.Type.SpawnOnSurface && vox.Type.IsSurface) continue;
 
                 vox.RawSetType(vein.Type);
-                Vector3 step = directionBias + MathFunctions.RandVector3Box(-1, 1, -1, 1, -1, 1)*0.25f;
+                Vector3 step = directionBias + MathFunctions.RandVector3Box(-1, 1, -1, 1, -1, 1) * 0.25f;
                 step.Normalize();
                 curr += step;
             }
@@ -190,18 +190,18 @@ namespace DwarfCorp
 
         public void GenerateWater(VoxelChunk chunk)
         {
-            int waterHeight = (int) (SeaLevel*VoxelConstants.ChunkSizeY) + 1;
+            int waterHeight = (int)(SeaLevel * VoxelConstants.ChunkSizeY) + 1;
 
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
             {
                 for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
                 {
-                    var topVoxel = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+                    var topVoxel = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                         chunk, new LocalVoxelCoordinate(x, VoxelConstants.ChunkSizeY - 1, z)));
 
                     for (var y = 0; y <= waterHeight; ++y)
                     {
-                        var vox = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
+                        var vox = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
                         if (vox.IsEmpty && y > topVoxel.Coordinate.Y)
                         {
                             vox.WaterCell = new WaterCell
@@ -219,11 +219,11 @@ namespace DwarfCorp
                         && Overworld.GetWater(Overworld.Map, vec) == Overworld.WaterType.Volcano)
                     {
                         var localCoord = topVoxel.Coordinate.GetLocalVoxelCoordinate();
-                        topVoxel = new TemporaryVoxelHandle(topVoxel.Chunk, new LocalVoxelCoordinate(
+                        topVoxel = new VoxelHandle(topVoxel.Chunk, new LocalVoxelCoordinate(
                             localCoord.X, localCoord.Y + 1, localCoord.Z));
 
                         if (topVoxel.IsEmpty)
-                        { 
+                        {
                             topVoxel.WaterCell = new WaterCell
                             {
                                 Type = LiquidType.Lava,
@@ -245,7 +245,7 @@ namespace DwarfCorp
                 {
                     for (var y = 0; y < lavaHeight; ++y)
                     {
-                        var voxel = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
+                        var voxel = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
                         if (voxel.IsEmpty && voxel.WaterCell.WaterLevel == 0)
                             voxel.WaterCell = new WaterCell
                             {
@@ -280,20 +280,20 @@ namespace DwarfCorp
                 for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
                 {
                     var biomeData = GetBiomeAt(new Vector2(x + Chunk.Origin.X, z + Chunk.Origin.Z));
-                    var topVoxel = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+                    var topVoxel = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                         Chunk, new LocalVoxelCoordinate(x, VoxelConstants.ChunkSizeY - 1, z)));
 
-                    if (!topVoxel.IsValid 
-                        || VoxelHelpers.GetVoxelAbove(topVoxel).WaterCell.WaterLevel != 0 
+                    if (!topVoxel.IsValid
+                        || VoxelHelpers.GetVoxelAbove(topVoxel).WaterCell.WaterLevel != 0
                         || topVoxel.Coordinate.Y == 0
                         || topVoxel.Coordinate.Y >= 60) // Lift to some kind of generator settings?
                         continue;
-                    
+
                     foreach (var animal in biomeData.Fauna)
                     {
                         if (MathFunctions.RandEvent(animal.SpawnProbability))
                         {
-                            EntityFactory.CreateEntity<Body>(animal.Name, 
+                            EntityFactory.CreateEntity<Body>(animal.Name,
                                 topVoxel.WorldPosition + Vector3.Up);
 
                             break;
@@ -338,7 +338,7 @@ namespace DwarfCorp
             {
                 for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                 {
-                    var topVoxel = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+                    var topVoxel = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                         chunk, new LocalVoxelCoordinate(x, VoxelConstants.ChunkSizeY - 1, z)));
 
                     for (int i = 0; i < CaveLevels.Count; i++)
@@ -349,20 +349,20 @@ namespace DwarfCorp
                         double caveNoise = CaveNoise.GetValue((x + origin.X) * CaveNoiseScale * CaveFrequencies[i],
                             (y + origin.Y) * CaveNoiseScale * 3.0f, (z + origin.Z) * CaveNoiseScale * CaveFrequencies[i]);
 
-                        double heightnoise = NoiseGenerator.Noise((x + origin.X)*NoiseScale*CaveFrequencies[i],
+                        double heightnoise = NoiseGenerator.Noise((x + origin.X) * NoiseScale * CaveFrequencies[i],
                             (y + origin.Y) * NoiseScale * 3.0f, (z + origin.Z) * NoiseScale * CaveFrequencies[i]);
 
-                        int caveHeight = Math.Min(Math.Max((int) (heightnoise*5), 1), 3);
+                        int caveHeight = Math.Min(Math.Max((int)(heightnoise * 5), 1), 3);
 
                         if (!(caveNoise > CaveSize)) continue;
 
                         bool waterFound = false;
                         for (int dy = 0; dy < caveHeight; dy++)
                         {
-                            var voxel = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y - dy, z));
+                            var voxel = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y - dy, z));
 
                             waterFound = VoxelHelpers.EnumerateManhattanNeighbors(voxel.Coordinate)
-                                .Select(c => new TemporaryVoxelHandle(Manager.ChunkData, c))
+                                .Select(c => new VoxelHandle(Manager.ChunkData, c))
                                 .Any(v => v.IsValid && v.WaterCell.WaterLevel > 0);
 
                             if (waterFound)
@@ -371,7 +371,7 @@ namespace DwarfCorp
                             voxel.RawSetType(VoxelLibrary.emptyType);
                         }
 
-                        if (!waterFound && caveNoise > CaveSize*1.8f && y - caveHeight > 0)
+                        if (!waterFound && caveNoise > CaveSize * 1.8f && y - caveHeight > 0)
                         {
                             GenerateCaveVegetation(chunk, x, y, z, caveHeight, biome, vec, world, NoiseGenerator);
                         }
@@ -392,7 +392,7 @@ namespace DwarfCorp
                 EntityFactory.DoLazy(() =>
                 {
                     var entity = EntityFactory.CreateEntity<GameComponent>(animal.Name,
-                        chunk.Origin + new Vector3(x, y, z) + Vector3.Up*1.0f);
+                        chunk.Origin + new Vector3(x, y, z) + Vector3.Up * 1.0f);
 
                     if (GameSettings.Default.FogofWar)
                     {
@@ -400,7 +400,8 @@ namespace DwarfCorp
                         entity.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
                         entity.AddChild(new ExploredListener
                             (world.ComponentManager,
-                                world.ChunkManager, new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z))));                    }
+                                world.ChunkManager, new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z))));
+                    }
                 });
                 break;
             }
@@ -408,11 +409,11 @@ namespace DwarfCorp
 
         public static void GenerateCaveVegetation(VoxelChunk chunk, int x, int y, int z, int caveHeight, BiomeData biome, Vector3 vec, WorldManager world, Perlin NoiseGenerator)
         {
-            var vUnder = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y - 1, z));
-            var wayUnder = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y - caveHeight, z));
+            var vUnder = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y - 1, z));
+            var wayUnder = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y - caveHeight, z));
 
-            wayUnder.Type = VoxelLibrary.GetVoxelType(biome.GrassLayer.VoxelType);
-            
+            wayUnder.RawSetType(VoxelLibrary.GetVoxelType(biome.GrassLayer.VoxelType));
+
             foreach (VegetationData veg in biome.Vegetation)
             {
                 if (!MathFunctions.RandEvent(veg.SpawnProbability))
@@ -439,7 +440,7 @@ namespace DwarfCorp
                     EntityFactory.DoLazy(() =>
                     {
                         GameComponent entity = EntityFactory.CreateEntity<GameComponent>(veg.Name,
-                            chunk.Origin + new Vector3(x, y, z) + new Vector3(0, treeSize*offset, 0),
+                            chunk.Origin + new Vector3(x, y, z) + new Vector3(0, treeSize * offset, 0),
                             Blackboard.Create("Scale", treeSize));
                         entity.GetRoot().SetFlagRecursive(GameComponent.Flag.Active, false);
                         entity.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
@@ -454,14 +455,11 @@ namespace DwarfCorp
         public VoxelChunk GenerateChunk(Vector3 origin, WorldManager World)
         {
             float waterHeight = SeaLevel + 1.0f / VoxelConstants.ChunkSizeY;
-            VoxelChunk c = new VoxelChunk(Manager, origin, GlobalVoxelCoordinate.FromVector3(origin).GetGlobalChunkCoordinate())
-            {
-                ShouldRebuild = true,
-            };
+            VoxelChunk c = new VoxelChunk(Manager, origin, GlobalVoxelCoordinate.FromVector3(origin).GetGlobalChunkCoordinate());
 
-            for(int x = 0; x < VoxelConstants.ChunkSizeX; x++)
+            for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
-                for(int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
+                for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                 {
                     Vector2 v = new Vector2(x + origin.X, z + origin.Z) / WorldScale;
 
@@ -476,11 +474,11 @@ namespace DwarfCorp
 
                     int currentSubsurfaceLayer = 0;
                     int depthWithinSubsurface = 0;
-                    for(int y = VoxelConstants.ChunkSizeY - 1; y >= 0; y--)
+                    for (int y = VoxelConstants.ChunkSizeY - 1; y >= 0; y--)
                     {
-                        var voxel = new TemporaryVoxelHandle(c, new LocalVoxelCoordinate(x, y, z));
+                        var voxel = new VoxelHandle(c, new LocalVoxelCoordinate(x, y, z));
 
-                        if(y == 0)
+                        if (y == 0)
                         {
                             voxel.RawSetType(VoxelLibrary.GetVoxelType("Bedrock"));
                             voxel.Health = 8; // ? 
@@ -541,12 +539,42 @@ namespace DwarfCorp
 
             c.ShouldRebuildWater = true;
 
-            c.CalculateGlobalLight();
+            UpdateSunlight(c, 255);
 
             for (var i = 0; i < VoxelConstants.ChunkSizeY; ++i)
-                c.Data.SliceCache[i] = null;
+            {
+                // Update corner ramps on all chunks so that they don't have seams when they 
+                // are initially built.
+                VoxelListPrimitive.UpdateCornerRamps(c, i);
+                c.InvalidateSlice(i);
+            }
+
             return c;
         }
-    }
 
+        private static void UpdateSunlight(VoxelChunk Chunk, byte sunColor)
+        {
+            for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
+            {
+                for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
+                {
+                    var y = VoxelConstants.ChunkSizeY - 1;
+
+                    for (; y >= 0; y--)
+                    {
+                        var v = new VoxelHandle(Chunk, new LocalVoxelCoordinate(x, y, z));
+                        v.SunColor = sunColor;
+                        if (v.Type.ID != 0 && !v.Type.IsTransparent)
+                            break;
+                    }
+
+                    for (y -= 1; y >= 0; y--)
+                    {
+                        var v = new VoxelHandle(Chunk, new LocalVoxelCoordinate(x, y, z));
+                        v.SunColor = 0;
+                    }
+                }
+            }
+        }
+    }
 }

@@ -65,7 +65,7 @@ namespace DwarfCorp
             {
                 Tree = new Sequence(new GetResourcesAct(Agent, resources),
                     new Sequence(
-                        new GoToVoxelAct(new TemporaryVoxelHandle(AI.World.ChunkManager.ChunkData,
+                        new GoToVoxelAct(new VoxelHandle(AI.World.ChunkManager.ChunkData,
                             Location), PlanAct.PlanType.Adjacent, Agent),
                         new PlaceVoxelAct(Location, AI, resources.First()), new Wrap(Creature.RestockAll)) | new Wrap(Creature.RestockAll)
                     );

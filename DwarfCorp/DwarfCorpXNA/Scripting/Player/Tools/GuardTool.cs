@@ -52,7 +52,7 @@ namespace DwarfCorp
         public float GuardDesignationGlowRate { get; set; }
         public Color UnreachableColor { get; set; }
 
-        public override void OnVoxelsSelected(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
             List<Task> assignedTasks = new List<Task>();
 
@@ -93,7 +93,7 @@ namespace DwarfCorp
 
         }
 
-        public override void OnVoxelsDragged(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }

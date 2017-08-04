@@ -45,14 +45,14 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class KillVoxelTask : Task
     {
-        public TemporaryVoxelHandle VoxelToKill = TemporaryVoxelHandle.InvalidHandle;
+        public VoxelHandle VoxelToKill = VoxelHandle.InvalidHandle;
 
         public KillVoxelTask()
         {
             Priority = PriorityType.Medium;
         }
 
-        public KillVoxelTask(TemporaryVoxelHandle vox)
+        public KillVoxelTask(VoxelHandle vox)
         {
             Name = "Mine Block " + vox.Coordinate;
             VoxelToKill = vox;

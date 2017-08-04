@@ -49,7 +49,7 @@ namespace DwarfCorp
     {
         private Body SelectedBody { get; set; }
         private bool mouseDown = false;
-        private TemporaryVoxelHandle prevVoxel = new TemporaryVoxelHandle();
+        private VoxelHandle prevVoxel = new VoxelHandle();
         private bool OverrideOrientation = false;
         private float CurrentOrientation = 0.0f;
 
@@ -129,12 +129,12 @@ namespace DwarfCorp
             }
         }
 
-        public override void OnVoxelsSelected(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }
 
-        public override void OnVoxelsDragged(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }
@@ -191,7 +191,7 @@ namespace DwarfCorp
                     SelectedBody.GetRotatedBoundingBox().Expand(-0.5f)).Any(
                         v =>
                         {
-                            var tvh = new TemporaryVoxelHandle(Player.VoxSelector.Chunks.ChunkData, v);
+                            var tvh = new VoxelHandle(Player.VoxSelector.Chunks.ChunkData, v);
                             return tvh.IsValid && !tvh.IsEmpty;
                         });
                 var tinter = SelectedBody.GetComponent<Tinter>();

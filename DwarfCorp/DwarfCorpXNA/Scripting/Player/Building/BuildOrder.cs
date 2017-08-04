@@ -38,7 +38,7 @@ namespace DwarfCorp
     /// </summary>
     public class BuildOrder
     {
-        public TemporaryVoxelHandle Vox = TemporaryVoxelHandle.InvalidHandle;
+        public VoxelHandle Vox = VoxelHandle.InvalidHandle;
         public int NumCreaturesAssigned = 0;
     }
 

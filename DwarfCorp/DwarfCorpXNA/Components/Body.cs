@@ -234,13 +234,13 @@ namespace DwarfCorp
 
         public void OrientToWalls()
         {
-            var curr = new TemporaryVoxelHandle(Manager.World.ChunkManager.ChunkData,
+            var curr = new VoxelHandle(Manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(LocalTransform.Translation));
             if (curr.IsValid)
             {
                 foreach (var n in VoxelHelpers.EnumerateManhattanNeighbors2D(curr.Coordinate))
                 {
-                    var v = new TemporaryVoxelHandle(World.ChunkManager.ChunkData, n);
+                    var v = new VoxelHandle(World.ChunkManager.ChunkData, n);
                     if (v.IsValid && !v.IsEmpty)
                     { 
                         Vector3 diff = n.ToVector3() - curr.WorldPosition;

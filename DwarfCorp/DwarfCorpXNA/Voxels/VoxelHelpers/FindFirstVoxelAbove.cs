@@ -14,18 +14,18 @@ namespace DwarfCorp
         /// </summary>
         /// <param name="V"></param>
         /// <returns></returns>
-        public static TemporaryVoxelHandle FindFirstVoxelAbove(TemporaryVoxelHandle V)
+        public static VoxelHandle FindFirstVoxelAbove(VoxelHandle V)
         {
             var p = V.Coordinate.GetLocalVoxelCoordinate();
 
             for (int y = p.Y; y < VoxelConstants.ChunkSizeY; ++y)
             {
-                var above = new TemporaryVoxelHandle(V.Chunk, new LocalVoxelCoordinate(p.X, y, p.Z));
+                var above = new VoxelHandle(V.Chunk, new LocalVoxelCoordinate(p.X, y, p.Z));
                 if (above.IsValid && !above.IsEmpty)
                     return above;
             }
 
-            return TemporaryVoxelHandle.InvalidHandle;
+            return VoxelHandle.InvalidHandle;
         }
     }
 }

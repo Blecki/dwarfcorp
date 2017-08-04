@@ -49,24 +49,24 @@ namespace DwarfCorp
     /// <seealso cref="GoalRegion" />
     public class AdjacentVoxelGoalRegion2D : GoalRegion
     {
-        public TemporaryVoxelHandle Voxel { get; set; }
+        public VoxelHandle Voxel { get; set; }
 
         public override bool IsPossible()
         {
             return Voxel.IsValid && !VoxelHelpers.VoxelIsCompletelySurrounded(Voxel);
         }
 
-        public override float Heuristic(TemporaryVoxelHandle voxel)
+        public override float Heuristic(VoxelHandle voxel)
         {
             return (voxel.WorldPosition - Voxel.WorldPosition).LengthSquared();
         }
 
-        public AdjacentVoxelGoalRegion2D(TemporaryVoxelHandle Voxel)
+        public AdjacentVoxelGoalRegion2D(VoxelHandle Voxel)
         {
             this.Voxel = Voxel;
         }
 
-        public override bool IsInGoalRegion(TemporaryVoxelHandle voxel)
+        public override bool IsInGoalRegion(VoxelHandle voxel)
         {
             // This is really just a same-voxel check. 
             //return (Math.Abs(voxel.WorldPosition.X - Voxel.Coordinate.X) <= 0.5f &&
@@ -75,7 +75,7 @@ namespace DwarfCorp
             return voxel == Voxel;
         }
 
-        public override TemporaryVoxelHandle GetVoxel()
+        public override VoxelHandle GetVoxel()
         {
             return Voxel;
         }

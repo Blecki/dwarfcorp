@@ -63,7 +63,7 @@ namespace DwarfCorp
 
         public class FarmTile
         {
-            public TemporaryVoxelHandle Vox = TemporaryVoxelHandle.InvalidHandle;
+            public VoxelHandle Vox = VoxelHandle.InvalidHandle;
             public Plant Plant = null;
             public float Progress = 0.0f;
             public CreatureAI Farmer = null;
@@ -102,23 +102,23 @@ namespace DwarfCorp
 
         public List<FarmTile> FarmTiles = new List<FarmTile>();
 
-        public bool HasTile(TemporaryVoxelHandle vox)
+        public bool HasTile(VoxelHandle vox)
         {
             return FarmTiles.Any(f => f.Vox == vox);
         }
 
 
-        public bool HasPlant(TemporaryVoxelHandle vox)
+        public bool HasPlant(VoxelHandle vox)
         {
             return HasTile(vox) && FarmTiles.Any(f => f.Vox.Equals(vox) && f.PlantExists());
         }
 
-        public override void OnVoxelsDragged(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }
 
-        public override void OnVoxelsSelected(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
             List<CreatureAI> minions = Player.World.Master.SelectedMinions.Where(minion => minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm)).ToList();
             List<Task> goals = new List<Task>();

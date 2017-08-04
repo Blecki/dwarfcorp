@@ -54,7 +54,7 @@ namespace DwarfCorp
         public string TargetName { get; set; }
 
         public List<MoveAction> Path { get { return GetPath(); } set {  SetPath(value);} }
-        public TemporaryVoxelHandle Target { get { return GetTarget(); } set {  SetTarget(value);} }
+        public VoxelHandle Target { get { return GetTarget(); } set {  SetTarget(value);} }
 
         public PlanSubscriber PlanSubscriber { get; set; }
 
@@ -101,12 +101,12 @@ namespace DwarfCorp
             Weights = new List<float> {1.0f, 10.0f, 20.0f, 30.0f, 40.0f};
         }
 
-        public TemporaryVoxelHandle GetTarget()
+        public VoxelHandle GetTarget()
         {
-            return Agent.Blackboard.GetData<TemporaryVoxelHandle>(TargetName);
+            return Agent.Blackboard.GetData<VoxelHandle>(TargetName);
         }
 
-        public void SetTarget(TemporaryVoxelHandle target)
+        public void SetTarget(VoxelHandle target)
         {
             Agent.Blackboard.SetData(TargetName, target);
         }
@@ -121,7 +121,7 @@ namespace DwarfCorp
             Agent.Blackboard.SetData(PathOut, path);
         }
 
-        public static bool PathExists(TemporaryVoxelHandle voxA, TemporaryVoxelHandle voxB, CreatureAI creature)
+        public static bool PathExists(VoxelHandle voxA, VoxelHandle voxB, CreatureAI creature)
         {
             var path = AStarPlanner.FindPath(creature.Movement, voxA, new VoxelGoalRegion(voxB), creature.Manager.World.ChunkManager, 1000, 1);
             return path != null && path.Count > 0;
@@ -159,7 +159,7 @@ namespace DwarfCorp
                         break;
                     }
 
-                    var voxUnder = new TemporaryVoxelHandle(chunks.ChunkData,
+                    var voxUnder = new VoxelHandle(chunks.ChunkData,
                         GlobalVoxelCoordinate.FromVector3(Agent.Position));
 
                     if (!voxUnder.IsValid)

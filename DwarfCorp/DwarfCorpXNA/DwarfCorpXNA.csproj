@@ -371,6 +371,7 @@
     <Compile Include="Voxels\AutoScaleThread.cs" />
     <Compile Include="Voxels\ChunkRenderer.cs" />
     <Compile Include="Voxels\Coordinate.cs" />
+    <Compile Include="Voxels\VoxelChunk-Motes.cs" />
     <Compile Include="Voxels\VoxelHelpers\GetVoxelBoundingBox.cs" />
     <Compile Include="Voxels\VoxelHelpers\GetVoxelAbove.cs" />
     <Compile Include="Voxels\VoxelHelpers\Reveal.cs" />
@@ -381,7 +382,7 @@
     <Compile Include="Voxels\VoxelHelpers\DoesRayHitSolidVoxel.cs" />
     <Compile Include="Voxels\VoxelHelpers\DoesVoxelHaveVisibleSurface.cs" />
     <Compile Include="Voxels\VoxelHelpers\Neighbors.cs" />
-    <Compile Include="Voxels\TemporaryVoxelHandle.cs" />
+    <Compile Include="Voxels\VoxelHandle.cs" />
     <Compile Include="Voxels\VoxelConstants.cs" />
     <Compile Include="Voxels\Enums.cs" />
     <Compile Include="Voxels\BoxTransition.cs" />

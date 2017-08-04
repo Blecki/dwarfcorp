@@ -93,7 +93,7 @@ namespace DwarfCorp
 
         private void CreateSprite()
         {
-            var voxel = new TemporaryVoxelHandle(Manager.World.ChunkManager.ChunkData,
+            var voxel = new VoxelHandle(Manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(LocalPosition));
             if (!voxel.IsValid)
             {
@@ -108,7 +108,7 @@ namespace DwarfCorp
                     if (Math.Abs(dx) + Math.Abs(dz) != 1)
                         continue;
 
-                    var vox = new TemporaryVoxelHandle(Manager.World.ChunkManager.ChunkData,
+                    var vox = new VoxelHandle(Manager.World.ChunkManager.ChunkData,
                         voxel.Coordinate + new GlobalVoxelOffset(dx, 0, dz));
 
                     if (vox.IsValid && !vox.IsEmpty)
@@ -129,7 +129,7 @@ namespace DwarfCorp
             CreateSprite();
             Tags.Add("Lamp");
 
-            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                 Manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(position)));
             if (voxelUnder.IsValid)

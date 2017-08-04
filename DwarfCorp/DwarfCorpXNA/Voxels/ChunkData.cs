@@ -80,7 +80,8 @@ namespace DwarfCorp
         {
             if (Coordinate.X < ChunkMapMinX || Coordinate.X >= ChunkMapMinX + ChunkMapWidth) return false;
             if (Coordinate.Z < ChunkMapMinZ || Coordinate.Z >= ChunkMapMinZ + ChunkMapHeight) return false;
-            return Coordinate.Y == 0;
+            if (Coordinate.Y != 0) return false;
+            return true;
         }
 
         public IEnumerable<VoxelChunk> GetChunkEnumerator()
@@ -140,10 +141,8 @@ namespace DwarfCorp
 
             foreach (var c in ChunkMap)
             {
-                c.Data.SliceCache[oldLevel - 1] = null;
-                c.Data.SliceCache[MaxViewingLevel - 1] = null;
-                
-                c.ShouldRebuild = true;
+                c.InvalidateSlice(oldLevel - 1);
+                c.InvalidateSlice(MaxViewingLevel - 1);
             }
         }
         
@@ -170,20 +169,6 @@ namespace DwarfCorp
 
             chunkManager.UpdateBounds();
             chunkManager.CreateGraphics(SetLoadingMessage, this);
-        }
-
-        public void NotifyRebuild(GlobalVoxelCoordinate At)
-        {
-            foreach (var n in VoxelHelpers.EnumerateManhattanNeighbors2D(At))
-            {
-                var vox = new TemporaryVoxelHandle(this, n);
-                if (vox.IsValid)
-                {
-                    vox.Chunk.ShouldRebuild = true;
-                    vox.Chunk.ShouldRebuildWater = true;
-                    vox.Chunk.ReconstructRamps = true;
-                }
-            }
         }
     }
 }

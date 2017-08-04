@@ -43,13 +43,14 @@ namespace DwarfCorp
     internal class CraftItemTask : Task
     {
         public CraftBuilder.CraftDesignation Designation { get; set; }
+
         public CraftItemTask()
         {
             Priority = PriorityType.Low;
             AutoRetry = true;
         }
 
-        public CraftItemTask(TemporaryVoxelHandle voxel, CraftBuilder.CraftDesignation type)
+        public CraftItemTask(VoxelHandle voxel, CraftBuilder.CraftDesignation type)
         {
             Name = "Craft item " + voxel.Coordinate;
             Priority = PriorityType.Low;
@@ -130,7 +131,7 @@ namespace DwarfCorp
             Item = new CraftBuilder.CraftDesignation()
             {
                 ItemType = selectedResource.Clone(),
-                Location = TemporaryVoxelHandle.InvalidHandle,
+                Location = VoxelHandle.InvalidHandle,
                 Valid = true
             };
             Name = String.Format("Craft order {0}", TaskID);

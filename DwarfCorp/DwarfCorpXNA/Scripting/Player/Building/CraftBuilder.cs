@@ -57,7 +57,7 @@ namespace DwarfCorp
         public struct CraftDesignation
         {
             public CraftItem ItemType;
-            public TemporaryVoxelHandle Location;
+            public VoxelHandle Location;
             public Body WorkPile;
             public bool OverrideOrientation;
             public float Orientation;
@@ -97,14 +97,14 @@ namespace DwarfCorp
             IsEnabled = false;
         }
 
-        public bool IsDesignation(TemporaryVoxelHandle reference)
+        public bool IsDesignation(VoxelHandle reference)
         {
             if (!reference.IsValid) return false;
             return Designations.Any(put => put.Location == reference);
         }
 
 
-        public CraftDesignation GetDesignation(TemporaryVoxelHandle v)
+        public CraftDesignation GetDesignation(VoxelHandle v)
         {
             return Designations.FirstOrDefault(put => put.Location == v);
         }
@@ -123,7 +123,7 @@ namespace DwarfCorp
         }
 
 
-        public void RemoveDesignation(TemporaryVoxelHandle v)
+        public void RemoveDesignation(VoxelHandle v)
         {
             CraftDesignation des = GetDesignation(v);
 
@@ -163,7 +163,7 @@ namespace DwarfCorp
                 CurrentDesignation = new CraftDesignation()
                 {
                     ItemType = CurrentCraftType,
-                    Location = TemporaryVoxelHandle.InvalidHandle,
+                    Location = VoxelHandle.InvalidHandle,
                     Valid = true
                 };
                 OverrideOrientation = false;
@@ -276,7 +276,7 @@ namespace DwarfCorp
                     case CraftItem.CraftPrereq.NearWall:
                         {
                             var neighborFound = VoxelHelpers.EnumerateManhattanNeighbors2D(designation.Location.Coordinate)
-                                    .Select(c => new TemporaryVoxelHandle(World.ChunkManager.ChunkData, c))
+                                    .Select(c => new VoxelHandle(World.ChunkManager.ChunkData, c))
                                     .Any(v => v.IsValid && !v.IsEmpty);
 
                             if (!neighborFound)
@@ -307,7 +307,7 @@ namespace DwarfCorp
                 ( CurrentCraftBody.GetRotatedBoundingBox().Expand(-0.1f)).Any(
         v =>
         {
-            var tvh = new TemporaryVoxelHandle(World.ChunkManager.ChunkData, v);
+            var tvh = new VoxelHandle(World.ChunkManager.ChunkData, v);
             return tvh.IsValid && !tvh.IsEmpty;
         });
 
@@ -324,7 +324,7 @@ namespace DwarfCorp
 
         }
 
-        public void VoxelsSelected(List<TemporaryVoxelHandle> refs, InputManager.MouseButton button)
+        public void VoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
         {
             if (!IsEnabled)
             {

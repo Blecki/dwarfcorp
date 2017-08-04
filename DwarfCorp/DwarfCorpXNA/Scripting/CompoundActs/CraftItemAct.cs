@@ -46,7 +46,7 @@ namespace DwarfCorp
     internal class CraftItemAct : CompoundCreatureAct
     {
         public CraftBuilder.CraftDesignation Item { get; set; }
-        public TemporaryVoxelHandle Voxel { get; set; }
+        public VoxelHandle Voxel { get; set; }
         public string Noise { get; set; }
         public CraftItemAct()
         {

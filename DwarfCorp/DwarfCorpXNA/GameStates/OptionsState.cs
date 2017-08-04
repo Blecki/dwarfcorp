@@ -639,7 +639,6 @@ namespace DwarfCorp.GameStates
                                 GameSettings.Default.AmbientOcclusion = false;
                                 GameSettings.Default.AntiAliasing = 0;
                                 GameSettings.Default.CalculateRamps = false;
-                                GameSettings.Default.CalculateSunlight = true;
                                 GameSettings.Default.CursorLightEnabled = false;
                                 GameSettings.Default.DrawChunksReflected = false;
                                 GameSettings.Default.DrawEntityReflected = false;
@@ -657,7 +656,6 @@ namespace DwarfCorp.GameStates
                                 GameSettings.Default.AmbientOcclusion = false;
                                 GameSettings.Default.AntiAliasing = 0;
                                 GameSettings.Default.CalculateRamps = true;
-                                GameSettings.Default.CalculateSunlight = true;
                                 GameSettings.Default.CursorLightEnabled = false;
                                 GameSettings.Default.DrawChunksReflected = false;
                                 GameSettings.Default.DrawEntityReflected = false;
@@ -675,7 +673,6 @@ namespace DwarfCorp.GameStates
                                 GameSettings.Default.AmbientOcclusion = true;
                                 GameSettings.Default.AntiAliasing = 4;
                                 GameSettings.Default.CalculateRamps = true;
-                                GameSettings.Default.CalculateSunlight = true;
                                 GameSettings.Default.CursorLightEnabled = true;
                                 GameSettings.Default.DrawChunksReflected = true;
                                 GameSettings.Default.DrawEntityReflected = false;
@@ -693,7 +690,6 @@ namespace DwarfCorp.GameStates
                                 GameSettings.Default.AmbientOcclusion = true;
                                 GameSettings.Default.AntiAliasing = 16;
                                 GameSettings.Default.CalculateRamps = true;
-                                GameSettings.Default.CalculateSunlight = true;
                                 GameSettings.Default.CursorLightEnabled = true;
                                 GameSettings.Default.DrawChunksReflected = true;
                                 GameSettings.Default.DrawEntityReflected = true;
@@ -711,7 +707,6 @@ namespace DwarfCorp.GameStates
                                 GameSettings.Default.AmbientOcclusion = true;
                                 GameSettings.Default.AntiAliasing = -1;
                                 GameSettings.Default.CalculateRamps = true;
-                                GameSettings.Default.CalculateSunlight = true;
                                 GameSettings.Default.CursorLightEnabled = true;
                                 GameSettings.Default.DrawChunksReflected = true;
                                 GameSettings.Default.DrawEntityReflected = false;

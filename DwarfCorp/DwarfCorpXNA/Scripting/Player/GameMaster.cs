@@ -217,12 +217,12 @@ namespace DwarfCorp
             CurrentTool.OnBodiesSelected(bodies, button);
         }
 
-        public void OnDrag(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
+        public void OnDrag(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
             CurrentTool.OnVoxelsDragged(voxels, button);
         }
 
-        public void OnSelected(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
+        public void OnSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
             CurrentTool.OnVoxelsSelected(voxels, button);
         }
@@ -381,7 +381,7 @@ namespace DwarfCorp
 
             if (dwarf.Velocity.Length() > 0.1)
             {
-                var above = VoxelHelpers.FindFirstVoxelAbove(new TemporaryVoxelHandle(
+                var above = VoxelHelpers.FindFirstVoxelAbove(new VoxelHandle(
                     World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(dwarf.Position)));
 
                 if (above.IsValid)

@@ -315,7 +315,7 @@ namespace DwarfCorp
                         RainDrops[i].Particle.Velocity = RainDrops[i].Vel;
                     }
 
-                    var test = new TemporaryVoxelHandle(chunks.ChunkData,
+                    var test = new VoxelHandle(chunks.ChunkData,
                         GlobalVoxelCoordinate.FromVector3(RainDrops[i].Pos));
                     if (!test.IsValid || test.IsEmpty || test.WaterCell.WaterLevel > 0) continue;
 
@@ -342,7 +342,6 @@ namespace DwarfCorp
                         above.Type = stormProperties.VoxelToCreate;
                         above.WaterCell = new WaterCell();
                         above.Health = above.Type.StartingHealth;
-                        chunks.ChunkData.NotifyRebuild(above.Coordinate);
                     }
 
                 }

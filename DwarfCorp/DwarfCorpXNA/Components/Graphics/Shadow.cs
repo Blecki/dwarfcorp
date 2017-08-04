@@ -109,7 +109,7 @@ namespace DwarfCorp
             {
                 Body p = (Body) Parent;
 
-                var voxelBelow = new TemporaryVoxelHandle(chunks.ChunkData, 
+                var voxelBelow = new VoxelHandle(chunks.ChunkData, 
                     GlobalVoxelCoordinate.FromVector3(p.GlobalTransform.Translation 
                         + Vector3.Down * 0.25f));
 
