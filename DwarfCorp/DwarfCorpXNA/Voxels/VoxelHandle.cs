@@ -233,6 +233,7 @@ namespace DwarfCorp
             // bookkeeping here.
 
             var previous = _cache_Chunk.Data.Types[_cache_Index];
+            var blockDestroyed = false;
 
             // Change actual data
             _cache_Chunk.Data.Types[_cache_Index] = (byte)NewType.ID;
@@ -242,7 +243,10 @@ namespace DwarfCorp
             if (previous == 0 && NewType.ID != 0)
                 _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] += 1;
             else if (previous != 0 && NewType.ID == 0)
+            {
+                blockDestroyed = true;
                 _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] -= 1;
+            }
 
             if (Coordinate.Y < VoxelConstants.ChunkSizeY - 1)
                 InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y + 1);
@@ -266,6 +270,12 @@ namespace DwarfCorp
                         break;
                     Y -= 1;
                 }
+            }
+
+            if (blockDestroyed)
+            {
+                _cache_Chunk.NotifyDestroyed(Coordinate.GetLocalVoxelCoordinate());
+                VoxelHelpers.Reveal(_cache_Chunk.Manager.ChunkData, this);
             }
         }
 

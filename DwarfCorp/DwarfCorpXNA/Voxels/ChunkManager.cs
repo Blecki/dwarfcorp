@@ -125,8 +125,6 @@ namespace DwarfCorp
             get { return chunkData; }
         }
 
-        public List<VoxelHandle> KilledVoxels { get; set; }
-
         public ChunkManager(ContentManager content, 
             WorldManager world,
             Camera camera, GraphicsDevice graphics,
@@ -135,7 +133,6 @@ namespace DwarfCorp
             WorldSize = new Point3(maxChunksX, maxChunksY, maxChunksZ);
 
             World = world;
-            KilledVoxels = new List<VoxelHandle>();
             ExitThreads = false;
             drawDistSq = DrawDistance * DrawDistance;
             Content = content;
@@ -646,13 +643,6 @@ namespace DwarfCorp
             // Todo: This belongs up in world manager.
             Splasher.Splash(gameTime, Water.GetSplashQueue());
             Splasher.HandleTransfers(gameTime, Water.GetTransferQueue());
-
-            foreach (var voxel in KilledVoxels)
-                voxel.Chunk.NotifyDestroyed(voxel.Coordinate.GetLocalVoxelCoordinate());
-
-            VoxelHelpers.Reveal(ChunkData, KilledVoxels);
-
-            KilledVoxels.Clear();
         }
 
         public void CreateGraphics(Action<String> SetLoadingMessage, ChunkData chunkData)
@@ -754,7 +744,6 @@ namespace DwarfCorp
                 }
             }
 
-            KilledVoxels.Add(Voxel);
             Voxel.Type = VoxelLibrary.emptyType;
 
             return emittedResources;

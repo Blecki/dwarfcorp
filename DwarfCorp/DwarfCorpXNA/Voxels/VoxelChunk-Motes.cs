@@ -148,8 +148,8 @@ namespace DwarfCorp
                         var vPos = v.WorldPosition * moteDetail.RegionScale;
                         float value = MoteNoise.Noise(vPos.X, vPos.Y, vPos.Z);
 
-                        if (!(Math.Abs(value) > moteDetail.SpawnThreshold))
-                            continue;
+                        //if (!(Math.Abs(value) > moteDetail.SpawnThreshold))
+                        //    continue;
 
                         float s = MoteScaleNoise.Noise(vPos.X, vPos.Y, vPos.Z) * moteDetail.MoteScale;
 

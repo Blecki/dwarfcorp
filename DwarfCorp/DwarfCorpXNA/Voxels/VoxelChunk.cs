@@ -47,23 +47,18 @@ namespace DwarfCorp
     /// </summary>
     public partial class VoxelChunk : IBoundedObject
     {
+        public VoxelData Data { get; set; }
+
         //Todo: Use actions
-        public delegate void VoxelDestroyed(LocalVoxelCoordinate voxelID);
-        public event VoxelDestroyed OnVoxelDestroyed;
-
-        public delegate void VoxelExplored(LocalVoxelCoordinate voxelID);
-
-        public event VoxelExplored OnVoxelExplored;
+        public Action<LocalVoxelCoordinate> OnVoxelDestroyed;
+        public Action<LocalVoxelCoordinate> OnVoxelExplored;
 
         public VoxelListPrimitive Primitive { get; set; }
         public VoxelListPrimitive NewPrimitive = null;
         public Dictionary<LiquidType, LiquidPrimitive> Liquids { get; set; }
         public bool NewPrimitiveReceived = false;
         public bool NewLiquidReceived = false;
-
-
-        public VoxelData Data { get; set; }
-
+        
         public bool IsVisible { get; set; }
         public bool ShouldRebuild { get; set; }
         public bool IsRebuilding { get; set; }
@@ -77,7 +72,6 @@ namespace DwarfCorp
         public bool ShouldRebuildWater { get; set; }
 
         public List<DynamicLight> DynamicLights { get; set; }
-
 
         private static bool staticsInitialized = false;
         private static Vector3[] faceDeltas = new Vector3[6];
@@ -251,13 +245,7 @@ namespace DwarfCorp
                 firstRebuild = false;
             }
             RebuildLiquids();
-            NotifyChangedComponents();
-            IsRebuilding = false;
-            ShouldRebuild = false;
-        }
 
-        public void NotifyChangedComponents()
-        {
             HashSet<IBoundedObject> componentsInside = new HashSet<IBoundedObject>();
             Manager.World.CollisionManager.GetObjectsIntersecting(GetBoundingBox(), componentsInside, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
 
@@ -270,6 +258,9 @@ namespace DwarfCorp
                     ((GameComponent)c).ReceiveMessageRecursive(changedMessage);
                 }
             }
+
+            IsRebuilding = false;
+            ShouldRebuild = false;
         }
 
         public void Destroy(GraphicsDevice device)

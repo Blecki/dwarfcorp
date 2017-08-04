@@ -135,22 +135,18 @@ namespace DwarfCorp
                     else switch(Command)
                     {
                         case "Delete Block":
-                        {
+                                {
                                     var v = vox;
-                            Player.World.Master.Faction.OnVoxelDestroyed(vox);
-                            vox.Chunk.NotifyDestroyed(vox.Coordinate.GetLocalVoxelCoordinate());
-                            v.Type = VoxelType.TypeList[0];
-                            v.WaterCell = new WaterCell();
-
-                            vox.Chunk.Manager.KilledVoxels.Add(vox);
-                        }
+                                    Player.World.Master.Faction.OnVoxelDestroyed(vox);
+                                    v.Type = VoxelLibrary.emptyType;
+                                    v.WaterCell = new WaterCell();
+                                }
                             break;
                         case "Kill Block":
                                 foreach (var selected in refs)
                                 {
                                     if (!selected.IsEmpty)
                                         Player.World.ChunkManager.KillVoxel(selected);
-
                                 }
                             break;
                         case "Fill Water":
