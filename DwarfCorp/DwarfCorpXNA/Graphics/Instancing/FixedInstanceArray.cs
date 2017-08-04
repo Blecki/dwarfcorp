@@ -181,7 +181,7 @@ namespace DwarfCorp
                 int j = 0;
                 foreach (InstanceData t in SortedData.Data)
                 {
-                    if (t.ShouldDraw && t.Transform.Translation.Y < maxViewingLevel + 1)
+                    if (t.ShouldDraw && t.Transform.Translation.Y < maxViewingLevel)
                     {
                         instanceVertexes[j].Transform = t.Transform;
                         instanceVertexes[j].Color = t.Color;

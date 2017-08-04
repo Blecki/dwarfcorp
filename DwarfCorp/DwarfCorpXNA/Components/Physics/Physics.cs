@@ -382,9 +382,12 @@ namespace DwarfCorp
                     Velocity += dampingForce * FixedDT;
                     AngularVelocity *= AngularDamping;
 
-                    // These will get called next time around anyway...
-                    //UpdateBoundingBox();
-                    //UpdateTransformsRecursive(Parent as Body);
+                    // These will get called next time around anyway... No they won't @blecki, this broke everything!!
+                    if (numTimesteps*velocityLength > 1)
+                    {
+                        UpdateBoundingBox();
+                        UpdateTransformsRecursive(Parent as Body);
+                    }
                 }
 
             }
