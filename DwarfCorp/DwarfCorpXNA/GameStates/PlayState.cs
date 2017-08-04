@@ -200,7 +200,7 @@ namespace DwarfCorp.GameStates
                 };
             }
             World.Unpause();
-            AutoSaveTimer = new Timer(GameSettings.Default.AutoSaveTimeMinutes * 60.0f, false, Timer.TimerMode.Real);
+            AutoSaveTimer = new Timer(GameSettings.Default.AutoSaveTimeMinutes * 60.0f, false, Timer.TimerMode.Game);
             base.OnEnter();
         }
 
