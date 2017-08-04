@@ -225,7 +225,7 @@ namespace DwarfCorp
                 foreach (VoxelChunk chunk in renderListCopy)
                 {
                     Graphics.SetRenderTarget(chunk.Primitive.Lightmap);
-                    Graphics.Clear(ClearOptions.Target, Color.Black, 0.0f, 0);
+                    Graphics.Clear(ClearOptions.Target, Color.Transparent, 0.0f, 0);
                     chunk.Render(Graphics);
                 }
             }

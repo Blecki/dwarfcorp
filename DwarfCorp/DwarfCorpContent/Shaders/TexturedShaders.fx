@@ -496,6 +496,7 @@ TPixelToFrame TexturedPS_From_Lightmap(LightmapToPixel PSIn)
 	Output.Color = tex2D(LightmapSampler, textureCoords);
 	clip((Output.Color.a - 0.5));
 	Output.Color.rgba = float4(lerp(Output.Color.rgb, xFogColor, PSIn.Fog) * Output.Color.a, Output.Color.a);
+
 	if (Clipping)
 	{
 		if (GhostMode && PSIn.ClipDistance.w < 0.0f)
