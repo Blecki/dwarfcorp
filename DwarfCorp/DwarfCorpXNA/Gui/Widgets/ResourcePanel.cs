@@ -23,7 +23,8 @@ namespace DwarfCorp.Gui.Widgets
                     {
                         Rect = this.Rect,
                         AutoLayout = AutoLayout.DockFill,
-                        Background = layer
+                        Background = layer,
+                        MaximumSize = new Point(32, 32)
                     });
                 }
             }

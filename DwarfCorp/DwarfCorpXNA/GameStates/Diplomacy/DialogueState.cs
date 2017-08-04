@@ -106,6 +106,7 @@ namespace DwarfCorp.Dialogue
                 }
             }
 
+            GuiRoot.Update(gameTime.ToGameTime());
             DialogueContext.Update(gameTime);
             World.TutorialManager.Update(GuiRoot);
             World.Paused = true;
