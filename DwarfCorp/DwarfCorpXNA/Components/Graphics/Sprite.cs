@@ -32,7 +32,6 @@ namespace DwarfCorp
             YAxis,
         }
 
-        public float BillboardRotation { get; set; }
         public bool EnableWind { get; set; }
 
         public Sprite(ComponentManager Manager, string name, Matrix localTransform, SpriteSheet spriteSheet, bool addToCollisionManager) :
@@ -41,7 +40,6 @@ namespace DwarfCorp
             SpriteSheet = spriteSheet;
             Animations = new Dictionary<string, Animation>();
             OrientationType = OrientMode.Spherical;
-            BillboardRotation = 0.0f;
             DrawSilhouette = false;
             SilhouetteColor = new Color(0.0f, 1.0f, 1.0f, 0.5f);
             EnableWind = false;
@@ -144,6 +142,7 @@ namespace DwarfCorp
 
             GamePerformance.Instance.StartTrackPerformance("Render - Sprite");
 
+            // Everything that draws should set it's tint, making this pointless.
             Color origTint = effect.VertexColorTint;  
             ApplyTintingToEffect(effect);            
 
@@ -154,17 +153,16 @@ namespace DwarfCorp
             switch (OrientationType)
             {
                 case OrientMode.Spherical:
-                    {
+                    { 
                         float xscale = GlobalTransform.Left.Length();
                         float yscale = GlobalTransform.Up.Length();
                         float zscale = GlobalTransform.Forward.Length();
-                        Matrix rot = Matrix.CreateRotationZ(BillboardRotation);
                         Matrix bill = Matrix.CreateBillboard(GlobalTransform.Translation, camera.Position, camera.UpVector, null);
                         Matrix noTransBill = bill;
-                        noTransBill.Translation = Vector3.Zero;
+                        //noTransBill.Translation = Vector3.Zero;
 
-                        Matrix worldRot = Matrix.CreateScale(new Vector3(xscale, yscale, zscale)) * rot * noTransBill;
-                        worldRot.Translation = bill.Translation + VertexNoise.GetNoiseVectorFromRepeatingTexture(bill.Translation);
+                        Matrix worldRot = Matrix.CreateScale(new Vector3(xscale, yscale, zscale)) * noTransBill;
+                        //worldRot.Translation = bill.Translation;// + VertexNoise.GetNoiseVectorFromRepeatingTexture(bill.Translation);
                         effect.World = worldRot;
                         break;
                     }
@@ -185,6 +183,7 @@ namespace DwarfCorp
             }
              
             effect.MainTexture = SpriteSheet.GetTexture();
+
             if (DrawSilhouette)
             {
                 Color oldTint = effect.VertexColorTint; 

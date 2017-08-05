@@ -58,13 +58,15 @@ namespace DwarfCorp
                 return true;
             }).ToList();
 
-            visibleComponents.Sort((A, B) =>
-            {
-                if (A == B) return 0;
-                return
-                -(Camera.Position - A.GlobalTransform.Translation).LengthSquared()
-                    .CompareTo((Camera.Position - B.GlobalTransform.Translation).LengthSquared());
-            });
+            // Need to identify transparent entities and draw them last. Alpha masked entities do not 
+            //   count - they don't blend!
+            //visibleComponents.Sort((A, B) =>
+            //{
+            //    if (A == B) return 0;
+            //    return
+            //    -(Camera.Position - A.GlobalTransform.Translation).LengthSquared()
+            //        .CompareTo((Camera.Position - B.GlobalTransform.Translation).LengthSquared());
+            //});
 
             return visibleComponents;
         }
@@ -97,7 +99,10 @@ namespace DwarfCorp
             {
                 foreach (IRenderableComponent bodyToDraw in Renderables)
                 {
+                    GamePerformance.Instance.StartTrackPerformance("Component Render - " + bodyToDraw.GetType().Name);
                     bodyToDraw.Render(gameTime, chunks, Camera, spriteBatch, graphicsDevice, effect, false);
+                    GamePerformance.Instance.StopTrackPerformance("Component Render - " + bodyToDraw.GetType().Name);
+
                 }
             }
 

@@ -807,7 +807,6 @@ namespace DwarfCorp
             Draw3DThings(gameTime, DefaultShader, Camera.ViewMatrix);
 
             GamePerformance.Instance.StopTrackPerformance("Render - Chunks");
-            GamePerformance.Instance.StartTrackPerformance("Render - Components");
 
 
             // Now we want to draw the water on top of everything else
@@ -823,9 +822,12 @@ namespace DwarfCorp
             DefaultShader.ClipPlane = new Vector4(slicePlane.Normal, slicePlane.D);
             DefaultShader.ClippingEnabled = true;
 
+            GamePerformance.Instance.StartTrackPerformance("Render - Drawer3D");
             // Render simple geometry (boxes, etc.)
             Drawer3D.Render(GraphicsDevice, DefaultShader, true);
+            GamePerformance.Instance.StopTrackPerformance("Render - Drawer3D");
 
+            GamePerformance.Instance.StartTrackPerformance("Render - Components");
 
             DefaultShader.EnableShadows = GameSettings.Default.UseDynamicShadows;
 
