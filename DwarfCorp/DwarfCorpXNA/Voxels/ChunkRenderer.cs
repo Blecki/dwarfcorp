@@ -204,7 +204,7 @@ namespace DwarfCorp
         {
             RasterizerState state = RasterizerState.CullNone;
             RasterizerState origState = graphicsDevice.RasterizerState;
-
+            BlendState origBlendState = graphicsDevice.BlendState;
             effect.CurrentTechnique = effect.Techniques[Shader.Technique.Lightmap];
             effect.SelfIlluminationTexture = ChunkData.IllumMap;
             effect.MainTexture = ChunkData.Tilemap;
@@ -225,7 +225,7 @@ namespace DwarfCorp
                 foreach (VoxelChunk chunk in renderListCopy)
                 {
                     Graphics.SetRenderTarget(chunk.Primitive.Lightmap);
-                    Graphics.Clear(ClearOptions.Target, Color.Black, 0.0f, 0);
+                    Graphics.Clear(ClearOptions.Target, Color.Transparent, 1.0f, 0);
                     chunk.Render(Graphics);
                 }
             }
@@ -233,6 +233,7 @@ namespace DwarfCorp
             effect.SelfIlluminationEnabled = false;
             effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
             graphicsDevice.RasterizerState = origState;
+            graphicsDevice.BlendState = origBlendState;
         }
 
         public void Render(Camera renderCamera, DwarfTime gameTime, GraphicsDevice graphicsDevice, Shader effect, Matrix worldMatrix)

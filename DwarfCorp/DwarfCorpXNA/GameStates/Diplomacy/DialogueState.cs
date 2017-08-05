@@ -42,22 +42,28 @@ namespace DwarfCorp.Dialogue
             GuiRoot = new Gui.Root(DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
 
+            int w = System.Math.Min(GuiRoot.RenderData.VirtualScreen.Width - 200, 550);
+            int h = System.Math.Min(GuiRoot.RenderData.VirtualScreen.Height - 200, 300);
+            int x = GuiRoot.RenderData.VirtualScreen.Width / 2 - w / 2;
+            int y = System.Math.Max(GuiRoot.RenderData.VirtualScreen.Height / 2 - h / 2, 230);
+
             DialogueContext.SpeechBubble = GuiRoot.RootItem.AddChild(new Gui.Widget
             {
-                Rect = new Rectangle(200, 0, GuiRoot.RenderData.VirtualScreen.Width - 200, 200),
+                Rect = new Rectangle(200, 0, GuiRoot.RenderData.VirtualScreen.Width - 350, 150),
                 Border = "speech-bubble-reverse",
                 Font = "font-hires",
                 TextColor = Color.Black.ToVector4()
             });
 
-            int w = System.Math.Min(GuiRoot.RenderData.VirtualScreen.Width - 200, 600);
-            int h = System.Math.Min(GuiRoot.RenderData.VirtualScreen.Height - 200, 400);
-            int x = GuiRoot.RenderData.VirtualScreen.Width / 2 - w / 2;
-            int y = System.Math.Max(GuiRoot.RenderData.VirtualScreen.Height / 2 - h / 2, 230);
+            GuiRoot.RootItem.AddChild(new Widget()
+            {
+                Border = "border-dark",
+                Rect = new Rectangle(5, 5, 200, 200)
+            });
+
             DialogueContext.ChoicePanel = GuiRoot.RootItem.AddChild(new Gui.Widget
             {
-                Rect = new Rectangle(200, 200, GuiRoot.RenderData.VirtualScreen.Width - 200, 
-                GuiRoot.RenderData.VirtualScreen.Height - 200),
+                Rect = new Rectangle(x, y, w, h),
                 Border = "border-fancy",
             });
 
@@ -106,6 +112,7 @@ namespace DwarfCorp.Dialogue
                 }
             }
 
+            GuiRoot.Update(gameTime.ToGameTime());
             DialogueContext.Update(gameTime);
             World.TutorialManager.Update(GuiRoot);
             World.Paused = true;
@@ -119,6 +126,7 @@ namespace DwarfCorp.Dialogue
             //Image.Image = Animation.SpriteSheet.GetTexture();
             //Image.SourceRect = Animation.GetCurrentFrameRect();
 
+            GuiRoot.Draw();
             var texture = SpeakerAnimation.SpriteSheet.GetTexture();
             var frame = SpeakerAnimation.GetCurrentFrameRect();
 
@@ -130,9 +138,6 @@ namespace DwarfCorp.Dialogue
                 .Scale(200, 200);
 
             GuiRoot.DrawMesh(quad, texture);
-
-
-            GuiRoot.Draw();
             base.Render(gameTime);
         }
     }

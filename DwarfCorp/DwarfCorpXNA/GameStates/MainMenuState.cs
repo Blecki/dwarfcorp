@@ -33,6 +33,7 @@
 
 using System;
 using System.Collections.Generic;
+using DwarfCorp.Gui;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -57,18 +58,22 @@ namespace DwarfCorp.GameStates
             {
                 MinimumSize = new Point(600, 348),
                 Background = new Gui.TileReference("logo", 0),
-                AutoLayout = Gui.AutoLayout.FloatTop,
+                AutoLayout = Gui.AutoLayout.FloatTop
             });
 
             return GuiRoot.RootItem.AddChild(new Gui.Widget
             {
-                MinimumSize = new Point(256, 200),
-                Border = "border-fancy",
+                MinimumSize = new Point(400, 250),
+                Font = "outline-font",
+                Border = "basic",
+                Background = new TileReference("basic", 0),
+                BackgroundColor = new Vector4(0.0f, 0.0f, 0.0f, 0.25f),
                 AutoLayout = Gui.AutoLayout.FloatBottom,
                 TextHorizontalAlign = Gui.HorizontalAlign.Center,
                 Text = Name,
-                InteriorMargin = new Gui.Margin(12,0,0,0),
-                Padding = new Gui.Margin(2, 2, 2, 2)
+                InteriorMargin = new Gui.Margin(24,0,0,0),
+                Padding = new Gui.Margin(2, 2, 2, 2),
+                TextColor = Color.White.ToVector4()
             });
         }
 
@@ -77,12 +82,15 @@ namespace DwarfCorp.GameStates
             Menu.AddChild(new Gui.Widgets.Button
             {
                 AutoLayout = Gui.AutoLayout.DockTop,
-                Border = "border-thin",
                 Text = Name,
+                Border = "none",
                 OnClick = OnClick,
                 Tooltip = Tooltip,
                 TextHorizontalAlign = Gui.HorizontalAlign.Center,
                 TextVerticalAlign = Gui.VerticalAlign.Center,
+                Font = "outline-font",
+                TextColor = Color.White.ToVector4(),
+                HoverTextColor = Color.Red.ToVector4()
             });
         }
 

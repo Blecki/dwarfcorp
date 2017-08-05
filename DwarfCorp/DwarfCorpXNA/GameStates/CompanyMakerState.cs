@@ -124,7 +124,8 @@ namespace DwarfCorp.GameStates
 
             mainPanel.AddChild(new Gui.Widgets.Button
             {
-                Text = "CREATE!",
+                Text = "Create!",
+                Font = "font-hires",
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 Border = "border-button",
@@ -142,16 +143,16 @@ namespace DwarfCorp.GameStates
 
             mainPanel.AddChild(new Gui.Widgets.Button
             {
-                Text = "BACK",
+                Text = "Back",
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 Border = "border-button",
+                Font = "font-hires",
                 OnClick = (sender, args) =>
                 {
                     StateManager.PopState();
                 },
-                AutoLayout = AutoLayout.FloatBottomRight,
-                OnLayout = s => s.Rect.X -= 128 // Hack to keep it from floating over the other button.
+                AutoLayout = AutoLayout.FloatBottomLeft,
             });
 
             #region Name 

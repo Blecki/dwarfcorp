@@ -795,9 +795,7 @@ namespace DwarfCorp
             GamePerformance.Instance.StopTrackPerformance("Render - BG Stuff");
             GamePerformance.Instance.StartTrackPerformance("Render - Chunks");
 
-
-
-            SlicePlane = SlicePlane * 0.5f + level * 0.5f;
+            SlicePlane = level;
 
             DefaultShader.WindDirection = Weather.CurrentWind;
             DefaultShader.WindForce = 0.0005f * (1.0f + (float)Math.Sin(Time.GetTotalSeconds()*0.001f));
