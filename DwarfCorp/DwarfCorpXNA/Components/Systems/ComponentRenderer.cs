@@ -83,13 +83,22 @@ namespace DwarfCorp
             effect.EnableLighting = GameSettings.Default.CursorLightEnabled;
             graphicsDevice.RasterizerState = RasterizerState.CullNone;
 
-            foreach (IRenderableComponent bodyToDraw in Renderables)
+            if (waterRenderMode == WaterRenderType.Reflective)
             {
-                if (waterRenderMode == WaterRenderType.Reflective &&
-                   !(bodyToDraw.GetBoundingBox().Min.Y > waterLevel - 2))
-                    continue;
-               
-                bodyToDraw.Render(gameTime, chunks, Camera, spriteBatch, graphicsDevice, effect, (waterRenderMode != WaterRenderType.None));
+                foreach (IRenderableComponent bodyToDraw in Renderables)
+                {
+                    if (!(bodyToDraw.GetBoundingBox().Min.Y > waterLevel - 2))
+                        continue;
+
+                    bodyToDraw.Render(gameTime, chunks, Camera, spriteBatch, graphicsDevice, effect, true);
+                }
+            }
+            else
+            {
+                foreach (IRenderableComponent bodyToDraw in Renderables)
+                {
+                    bodyToDraw.Render(gameTime, chunks, Camera, spriteBatch, graphicsDevice, effect, false);
+                }
             }
 
             effect.EnableLighting = false;

@@ -241,7 +241,11 @@ namespace DwarfCorp
             }
         }
 
-        public void Render(GraphicsDevice graphics, Shader effect, Camera cam, bool rebuildVertices, string mode)
+        public void Render(
+            GraphicsDevice graphics,
+            Shader effect,
+            Camera cam, 
+            string mode)
         {
             effect.EnableWind = EnableWind;
             Camera = cam;
@@ -305,9 +309,9 @@ namespace DwarfCorp
         }
 
 
-        public void Render(GraphicsDevice graphics, Shader effect, Camera cam, bool rebuildVertices)
+        public void Render(GraphicsDevice graphics, Shader effect, Camera cam)
         {
-            Render(graphics, effect, cam, rebuildVertices, Shader.Technique.Instanced);
+            Render(graphics, effect, cam, Shader.Technique.Instanced);
         }
 
         public void RenderSelectionBuffer(GraphicsDevice graphics, Shader effect, Camera cam, bool rebuildVertices)

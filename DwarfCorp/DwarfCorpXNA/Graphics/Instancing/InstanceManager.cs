@@ -179,11 +179,11 @@ namespace DwarfCorp
             }
         }
 
-        public void Render(GraphicsDevice device, Shader effect, Camera camera, bool resetVertices)
+        public void Render(GraphicsDevice device, Shader effect, Camera camera)
         {
             foreach(FixedInstanceArray list in Instances.Values)
             {
-                list.Render(device, effect, camera, resetVertices);
+                list.Render(device, effect, camera);
             }
             effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
             effect.World = Matrix.Identity;
