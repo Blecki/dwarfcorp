@@ -65,7 +65,7 @@ namespace DwarfCorp
                     new CraftItem()
                     {
                         Name = "Bear Trap",
-                        Description = "Triggers on enemies, doing massive damage before being destroyed",
+                        Description = "Damages enemies and then explodes.",
                         RequiredResources = new List<Quantitiy<Resource.ResourceTags>>
                         {
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Metal, 4)

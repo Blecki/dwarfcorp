@@ -31,7 +31,7 @@ namespace DwarfCorp.Gui.Widgets
                 //Parent.OnClick = null;
 
                 var builder = new StringBuilder();
-                builder.AppendLine(Data.Name);
+                builder.AppendLine("-" + Data.Name + "-");
                 builder.AppendLine(Data.Description);
                 builder.AppendLine("Required:");
 
