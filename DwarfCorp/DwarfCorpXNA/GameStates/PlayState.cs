@@ -528,10 +528,7 @@ namespace DwarfCorp.GameStates
                 Hidden = true,
                 OnClick = (sender, args) =>
                 {
-                    sender.Hidden = true;
-                    sender.Invalidate();
-                    MinimapFrame.Hidden = false;
-                    MinimapFrame.Invalidate();
+                    MinimapFrame.ToggleHidden();
                 },
                 Tooltip = "Restore minimap"
             });
@@ -545,6 +542,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.FloatBottomLeft,
                 Renderer = MinimapRenderer,
                 RestoreButton = minimapRestoreButton
+
             }) as Gui.Widgets.MinimapFrame;
 
             #endregion
@@ -1766,8 +1764,7 @@ namespace DwarfCorp.GameStates
             else if (key == ControlSettings.Mappings.Map)
             {
                 World.DrawMap = !World.DrawMap;
-                MinimapFrame.Hidden = true;
-                MinimapFrame.Invalidate();
+                MinimapFrame.ToggleHidden();
             }
             else if (key == ControlSettings.Mappings.GodMode)
             {

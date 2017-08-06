@@ -23,6 +23,14 @@ namespace DwarfCorp.Gui.Widgets
             return new Point(Renderer.RenderWidth + 16, Renderer.RenderHeight + 12);
         }
 
+        public void ToggleHidden()
+        {
+            RestoreButton.Hidden = !RestoreButton.Hidden;
+            RestoreButton.Invalidate();
+            this.Hidden = !this.Hidden;
+            this.Invalidate();
+        }
+
         public override void Construct()
         {
             MinimumSize = GetBestSize();
@@ -83,10 +91,7 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = Gui.AutoLayout.DockLeft,
                 OnClick = (sender, args) =>
                     {
-                        RestoreButton.Hidden = false;
-                        RestoreButton.Invalidate();
-                        this.Hidden = true;
-                        this.Invalidate();
+                        ToggleHidden();
                     },
                 Tooltip = "Minimize the map"
             });
