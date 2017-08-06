@@ -689,6 +689,7 @@ namespace DwarfCorp
             if (!ShowingWorld)
                 return;
 
+            GamePerformance.Instance.StartTrackPerformance("Render - RENDER");
             GamePerformance.Instance.StartTrackPerformance("Render - Prep");
 
             var renderables = ComponentRenderer.EnumerateVisibleRenderables(ComponentManager.GetRenderables(),
@@ -923,7 +924,7 @@ namespace DwarfCorp
             GraphicsDevice.BlendState = BlendState.Opaque;
 
             GamePerformance.Instance.StopTrackPerformance("Render - Misc");
-
+            GamePerformance.Instance.StopTrackPerformance("Render - RENDER");
 
             lock (ScreenshotLock)
             {

@@ -73,18 +73,9 @@ namespace DwarfCorp
             Commands.Add(new LineListCommand3D(points.ToArray(), color, thickness));
         }
 
-
         public static void DrawLineList(List<Vector3> points, List<Color> color, float thickness)
         {
             Commands.Add(new LineListCommand3D(points.ToArray(), color, thickness));
-        }
-
-        public static void DrawBoxList(List<BoundingBox> boxes, Color color, float thickness)
-        {
-            foreach(BoundingBox box in boxes)
-            {
-                Commands.Add(new BoxDrawCommand3D(box, color, thickness, false));
-            }
         }
 
         public static void DrawBox(BoundingBox box, Color color, float thickness)
@@ -95,11 +86,6 @@ namespace DwarfCorp
         public static void DrawBox(BoundingBox box, Color color, float thickness, bool warp)
         {
             Commands.Add(new BoxDrawCommand3D(box, color, thickness, warp));
-        }
-
-        public static void DrawPlane(float y, float minX, float minZ, float maxX, float maxZ, Color color)
-        {
-            Commands.Add(new PlaneDrawCommand(new Vector3((maxX + minX) * 0.5f, y, (maxZ + minZ) * 0.5f), new Vector3((maxX - minX), 1.0f, (maxZ - minZ)), color));
         }
 
         public static void Render(GraphicsDevice device, Shader effect, bool delete)
@@ -273,15 +259,6 @@ namespace DwarfCorp
             }
 
             return list;
-        }
-
-
-        public static void DrawAxes(Matrix t, float length)
-        {
-            Vector3 p = t.Translation;
-            DrawLine(p, p + t.Right * length, Color.Red, 0.01f);
-            DrawLine(p, p + t.Up * length, Color.Green, 0.01f);
-            DrawLine(p, p + t.Forward * length, Color.Blue, 0.01f);
         }
     }
 
