@@ -58,13 +58,15 @@ namespace DwarfCorp
                 return true;
             }).ToList();
 
-            visibleComponents.Sort((A, B) =>
-            {
-                if (A == B) return 0;
-                return
-                -(Camera.Position - A.GlobalTransform.Translation).LengthSquared()
-                    .CompareTo((Camera.Position - B.GlobalTransform.Translation).LengthSquared());
-            });
+            // Need to identify transparent entities and draw them last. Alpha masked entities do not 
+            //   count - they don't blend!
+            //visibleComponents.Sort((A, B) =>
+            //{
+            //    if (A == B) return 0;
+            //    return
+            //    -(Camera.Position - A.GlobalTransform.Translation).LengthSquared()
+            //        .CompareTo((Camera.Position - B.GlobalTransform.Translation).LengthSquared());
+            //});
 
             return visibleComponents;
         }
@@ -83,13 +85,25 @@ namespace DwarfCorp
             effect.EnableLighting = GameSettings.Default.CursorLightEnabled;
             graphicsDevice.RasterizerState = RasterizerState.CullNone;
 
-            foreach (IRenderableComponent bodyToDraw in Renderables)
+            if (waterRenderMode == WaterRenderType.Reflective)
             {
-                if (waterRenderMode == WaterRenderType.Reflective &&
-                   !(bodyToDraw.GetBoundingBox().Min.Y > waterLevel - 2))
-                    continue;
-               
-                bodyToDraw.Render(gameTime, chunks, Camera, spriteBatch, graphicsDevice, effect, (waterRenderMode != WaterRenderType.None));
+                foreach (IRenderableComponent bodyToDraw in Renderables)
+                {
+                    if (!(bodyToDraw.GetBoundingBox().Min.Y > waterLevel - 2))
+                        continue;
+
+                    bodyToDraw.Render(gameTime, chunks, Camera, spriteBatch, graphicsDevice, effect, true);
+                }
+            }
+            else
+            {
+                foreach (IRenderableComponent bodyToDraw in Renderables)
+                {
+                    GamePerformance.Instance.StartTrackPerformance("Component Render - " + bodyToDraw.GetType().Name);
+                    bodyToDraw.Render(gameTime, chunks, Camera, spriteBatch, graphicsDevice, effect, false);
+                    GamePerformance.Instance.StopTrackPerformance("Component Render - " + bodyToDraw.GetType().Name);
+
+                }
             }
 
             effect.EnableLighting = false;

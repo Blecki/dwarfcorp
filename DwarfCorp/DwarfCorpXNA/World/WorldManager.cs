@@ -372,7 +372,7 @@ namespace DwarfCorp
                     Draw3DThings(new DwarfTime(), DefaultShader, Camera.ViewMatrix);
 
                     DefaultShader.View = Camera.ViewMatrix;
-                    InstanceManager.Render(GraphicsDevice, DefaultShader, Camera, true);
+                    InstanceManager.Render(GraphicsDevice, DefaultShader, Camera);
                     ComponentRenderer.Render(ComponentManager.GetRenderables(), new DwarfTime(), ChunkManager, Camera,
                         DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader,
                         ComponentRenderer.WaterRenderType.None, 0);
@@ -749,18 +749,18 @@ namespace DwarfCorp
                 DefaultShader.Projection = Camera.ProjectionMatrix;
                 DefaultShader.World = Matrix.Identity;
 
-                GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer - Chunks");
+                //GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer - Chunks");
                 ChunkRenderer.RenderSelectionBuffer(DefaultShader, GraphicsDevice, Camera.ViewMatrix);
-                GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Chunks");
+                //GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Chunks");
 
-                GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer - Components");
+                //GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer - Components");
                 ComponentRenderer.RenderSelectionBuffer(renderables, gameTime, ChunkManager, Camera,
                     DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader);
-                GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Components");
+                //GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Components");
 
-                GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer - Instances");
+                //GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer - Instances");
                 InstanceManager.RenderSelectionBuffer(GraphicsDevice, DefaultShader, Camera, false);
-                GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Instances");
+                //GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Instances");
 
                 SelectionBuffer.End(GraphicsDevice);
             }
@@ -807,7 +807,6 @@ namespace DwarfCorp
             Draw3DThings(gameTime, DefaultShader, Camera.ViewMatrix);
 
             GamePerformance.Instance.StopTrackPerformance("Render - Chunks");
-            GamePerformance.Instance.StartTrackPerformance("Render - Components");
 
 
             // Now we want to draw the water on top of everything else
@@ -823,9 +822,12 @@ namespace DwarfCorp
             DefaultShader.ClipPlane = new Vector4(slicePlane.Normal, slicePlane.D);
             DefaultShader.ClippingEnabled = true;
 
+            GamePerformance.Instance.StartTrackPerformance("Render - Drawer3D");
             // Render simple geometry (boxes, etc.)
             Drawer3D.Render(GraphicsDevice, DefaultShader, true);
+            GamePerformance.Instance.StopTrackPerformance("Render - Drawer3D");
 
+            GamePerformance.Instance.StartTrackPerformance("Render - Components");
 
             DefaultShader.EnableShadows = GameSettings.Default.UseDynamicShadows;
 
@@ -835,7 +837,7 @@ namespace DwarfCorp
             }
 
             DefaultShader.View = Camera.ViewMatrix;
-            InstanceManager.Render(GraphicsDevice, DefaultShader, Camera, true);
+            InstanceManager.Render(GraphicsDevice, DefaultShader, Camera);
             ComponentRenderer.Render(renderables, gameTime, ChunkManager,
                 Camera,
                 DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader,

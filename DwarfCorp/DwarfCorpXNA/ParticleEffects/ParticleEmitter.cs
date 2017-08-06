@@ -251,12 +251,12 @@ namespace DwarfCorp
             }
         }
 
-        public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
+        public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool Ignored)
         {
             ApplyTintingToEffect(effect);
             foreach (var sprites in Sprites)
             {
-                sprites.Render(graphicsDevice, effect, camera, !renderingForWater);
+                sprites.Render(graphicsDevice, effect, camera);
             }
         }
 

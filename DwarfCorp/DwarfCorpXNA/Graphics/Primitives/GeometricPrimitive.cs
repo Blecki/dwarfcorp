@@ -101,7 +101,9 @@ namespace DwarfCorp
         /// <param Name="device">GPU to draw with.</param>
         public virtual void Render(GraphicsDevice device)
         {
-            lock (VertexLock)
+            // This lock does not appear to actually be protecting against anything; however
+            //   the cost of locking must still be paid for every primitive drawn.
+            //lock (VertexLock)
             {
 #if MONOGAME_BUILD
                 device.SamplerStates[0].Filter = TextureFilter.MinLinearMagPointMipLinear;
@@ -167,12 +169,12 @@ namespace DwarfCorp
         /// <param Name="device">GPU to draw with.</param></summary>
         public virtual void ResetBuffer(GraphicsDevice device)
         {
-            if(DwarfGame.ExitGame)
-            {
-                return;
-            }
+            //if(DwarfGame.ExitGame)
+            //{
+            //    return;
+            //}
 
-            lock (VertexLock)
+            //lock (VertexLock)
             {
                 if (VertexBuffer != null && !VertexBuffer.IsDisposed)
                 {

@@ -21,7 +21,6 @@ namespace DwarfCorp
         public SpriteSheet SpriteSheet { get; set; }
         public Animation CurrentAnimation { get; set; }
         public OrientMode OrientationType { get; set; }
-        public bool DistortPosition { get; set; }
         public bool DrawSilhouette { get; set; }
         public Color SilhouetteColor { get; set; }
 
@@ -30,12 +29,9 @@ namespace DwarfCorp
         {
             Fixed,
             Spherical,
-            XAxis,
             YAxis,
-            ZAxis
         }
 
-        public float BillboardRotation { get; set; }
         public bool EnableWind { get; set; }
 
         public Sprite(ComponentManager Manager, string name, Matrix localTransform, SpriteSheet spriteSheet, bool addToCollisionManager) :
@@ -44,8 +40,6 @@ namespace DwarfCorp
             SpriteSheet = spriteSheet;
             Animations = new Dictionary<string, Animation>();
             OrientationType = OrientMode.Spherical;
-            BillboardRotation = 0.0f;
-            DistortPosition = true;
             DrawSilhouette = false;
             SilhouetteColor = new Color(0.0f, 1.0f, 1.0f, 0.5f);
             EnableWind = false;
@@ -53,7 +47,6 @@ namespace DwarfCorp
 
         public Sprite()
         {
-            DistortPosition = true;
         }
 
         public void SetSimpleAnimation(int row = 0)
@@ -141,74 +134,56 @@ namespace DwarfCorp
             Shader effect,
             bool renderingForWater)
         {
-
-            Color origTint = effect.VertexColorTint;  
-            ApplyTintingToEffect(effect);
-
-            if(!IsVisible)
-            {
+            if (!IsVisible)
                 return;
-            }
 
             if (CurrentAnimation == null || CurrentAnimation.CurrentFrame < 0 ||
                 CurrentAnimation.CurrentFrame >= CurrentAnimation.Primitives.Count) return;
 
+            GamePerformance.Instance.StartTrackPerformance("Render - Sprite");
+
+            // Everything that draws should set it's tint, making this pointless.
+            Color origTint = effect.VertexColorTint;  
+            ApplyTintingToEffect(effect);            
+
+            
             CurrentAnimation.PreRender();
             SpriteSheet = CurrentAnimation.SpriteSheet;
-            if(OrientationType != OrientMode.Fixed)
+
+            switch (OrientationType)
             {
-                if(camera.Projection == Camera.ProjectionMode.Perspective)
-                {
-                    if(OrientationType == OrientMode.Spherical)
-                    {
+                case OrientMode.Spherical:
+                    { 
                         float xscale = GlobalTransform.Left.Length();
                         float yscale = GlobalTransform.Up.Length();
                         float zscale = GlobalTransform.Forward.Length();
-                        Matrix rot = Matrix.CreateRotationZ(BillboardRotation);
                         Matrix bill = Matrix.CreateBillboard(GlobalTransform.Translation, camera.Position, camera.UpVector, null);
                         Matrix noTransBill = bill;
-                        noTransBill.Translation = Vector3.Zero;
+                        //noTransBill.Translation = Vector3.Zero;
 
-                        Matrix worldRot = Matrix.CreateScale(new Vector3(xscale, yscale, zscale)) * rot * noTransBill;
-                        worldRot.Translation = DistortPosition ? bill.Translation + VertexNoise.GetNoiseVectorFromRepeatingTexture(bill.Translation) : bill.Translation;
+                        Matrix worldRot = Matrix.CreateScale(new Vector3(xscale, yscale, zscale)) * noTransBill;
+                        //worldRot.Translation = bill.Translation;// + VertexNoise.GetNoiseVectorFromRepeatingTexture(bill.Translation);
                         effect.World = worldRot;
+                        break;
                     }
-                    else
+                case OrientMode.Fixed:
                     {
-                        Vector3 axis = Vector3.Zero;
-
-                        switch(OrientationType)
-                        {
-                            case OrientMode.XAxis:
-                                axis = Vector3.UnitX;
-                                break;
-                            case OrientMode.YAxis:
-                                axis = Vector3.UnitY;
-                                break;
-                            case OrientMode.ZAxis:
-                                axis = Vector3.UnitZ;
-                                break;
-                        }
-
-                        Matrix worldRot = Matrix.CreateConstrainedBillboard(GlobalTransform.Translation, camera.Position, axis, null, null);
-                        worldRot.Translation = DistortPosition ? worldRot.Translation + VertexNoise.GetNoiseVectorFromRepeatingTexture(worldRot.Translation) : worldRot.Translation;
-                        effect.World = worldRot;
+                        Matrix rotation = GlobalTransform;
+                        rotation.Translation = rotation.Translation + VertexNoise.GetNoiseVectorFromRepeatingTexture(rotation.Translation);
+                        effect.World = rotation;
+                        break;
                     }
-                }
-                else
-                {
-                    Matrix rotation = Matrix.CreateRotationY(-(float) Math.PI * 0.25f) * Matrix.CreateTranslation(GlobalTransform.Translation);
-                    rotation.Translation = DistortPosition ? rotation.Translation + VertexNoise.GetNoiseVectorFromRepeatingTexture(rotation.Translation) : rotation.Translation;
-                    effect.World = rotation;
-                }
+                case OrientMode.YAxis:
+                    {
+                        Matrix worldRot = Matrix.CreateConstrainedBillboard(GlobalTransform.Translation, camera.Position, Vector3.UnitY, null, null);
+                        worldRot.Translation = worldRot.Translation + VertexNoise.GetNoiseVectorFromRepeatingTexture(worldRot.Translation);
+                        effect.World = worldRot;
+                        break;
+                    }
             }
-            else
-            {
-                Matrix rotation = GlobalTransform;
-                rotation.Translation = DistortPosition ? rotation.Translation + VertexNoise.GetNoiseVectorFromRepeatingTexture(rotation.Translation) : rotation.Translation;
-                effect.World = rotation;
-            } 
+             
             effect.MainTexture = SpriteSheet.GetTexture();
+
             if (DrawSilhouette)
             {
                 Color oldTint = effect.VertexColorTint; 
@@ -239,6 +214,8 @@ namespace DwarfCorp
             }
             effect.VertexColorTint = origTint;
             effect.EnableWind = false;
+
+            GamePerformance.Instance.StopTrackPerformance("Render - Sprite");
         }
     }
 

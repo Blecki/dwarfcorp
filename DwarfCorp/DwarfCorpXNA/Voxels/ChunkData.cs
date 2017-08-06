@@ -64,11 +64,12 @@ namespace DwarfCorp
             this.ChunkMap = new VoxelChunk[ChunkMapWidth * ChunkMapHeight];
         }
 
-        private VoxelChunk[] ChunkMap;
-        private int ChunkMapWidth;
-        private int ChunkMapHeight;
-        private int ChunkMapMinX;
-        private int ChunkMapMinZ;
+        // These have to be public so that VoxelHandle can access them effeciently. ;_;
+        public VoxelChunk[] ChunkMap;
+        public int ChunkMapWidth;
+        public int ChunkMapHeight;
+        public int ChunkMapMinX;
+        public int ChunkMapMinZ;
 
         public VoxelChunk GetChunk(GlobalChunkCoordinate Coordinate)
         {

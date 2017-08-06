@@ -382,12 +382,15 @@ namespace DwarfCorp
                     Velocity += dampingForce * FixedDT;
                     AngularVelocity *= AngularDamping;
 
-                    // These will get called next time around anyway... No they won't @blecki, this broke everything!!
-                    if (numTimesteps*velocityLength > 1)
-                    {
+                    // These will get called next time around anyway... -@blecki
+                    // No they won't @blecki, this broke everything!! -@mklingen
+                    // Remove check so that it is ALWAYS called when an object moves. Call removed
+                    //   from component update in ComponentManager. -@blecki
+                    //if (numTimesteps*velocityLength > 1)
+                    //{
                         UpdateBoundingBox();
                         UpdateTransformsRecursive(Parent as Body);
-                    }
+                    //}
                 }
 
             }
