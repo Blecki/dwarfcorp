@@ -20,9 +20,43 @@ namespace DwarfCorp
 
         private void UpdateCache(ChunkData Chunks)
         {
-            _cache_Index = VoxelConstants.DataIndexOf(Coordinate.GetLocalVoxelCoordinate());
-            var chunkCoord = Coordinate.GetGlobalChunkCoordinate();
-            _cache_Chunk = Chunks.CheckBounds(chunkCoord) ? Chunks.GetChunk(chunkCoord) : null;
+            // Were inlining the coordinate conversions because we can gain a few cycles from not
+            //  calculating the Y coordinates and from function call overhead.
+
+            if (Coordinate.Y < 0 || Coordinate.Y >= VoxelConstants.ChunkSizeY)
+                goto Invalid;
+
+            var sX = (Coordinate.X & 0x80000000) >> 31;
+            var sZ = (Coordinate.Z & 0x80000000) >> 31;
+
+            // If the world was always at 0,0 this could be simplified further.
+            // Inline GlobalVoxelCoordinate.GetGlobalChunkCoordinate
+            // Inline ChunkData.CheckBounds
+            var chunkX = (Coordinate.X >> VoxelConstants.XDivShift) - sX;
+            if (chunkX < Chunks.ChunkMapMinX || chunkX >= Chunks.ChunkMapMinX + Chunks.ChunkMapWidth)
+                goto Invalid;
+
+            var chunkZ = (Coordinate.Z >> VoxelConstants.ZDivShift) - sZ;
+            if (chunkZ < Chunks.ChunkMapMinZ || chunkZ >= Chunks.ChunkMapMinZ + Chunks.ChunkMapHeight)
+                goto Invalid;
+
+            // Inline ChunkData.GetChunk
+           _cache_Chunk = Chunks.ChunkMap[(chunkZ - Chunks.ChunkMapMinZ) * Chunks.ChunkMapWidth 
+               + (chunkX - Chunks.ChunkMapMinX)];
+
+            // Inline GlobalVoxelCoordinate.GetLocalVoxelCoordinate
+            var localX = (sX << VoxelConstants.XDivShift) + (Coordinate.X & VoxelConstants.XModMask) - sX;
+            var localZ = (sZ << VoxelConstants.ZDivShift) + (Coordinate.Z & VoxelConstants.ZModMask) - sZ;
+
+            // Inline VoxelConstants.DataIndexOf
+            _cache_Index = (Int32)((Coordinate.Y * VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeZ) +
+                (localZ * VoxelConstants.ChunkSizeX) + localX);
+
+            return;
+
+            Invalid:
+            _cache_Chunk = null;
+            _cache_Index = 0;
         }
 
         [JsonIgnore]
