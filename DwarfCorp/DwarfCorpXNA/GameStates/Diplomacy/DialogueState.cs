@@ -16,7 +16,8 @@ namespace DwarfCorp.Dialogue
         private DialogueContext DialogueContext;
         private Animation SpeakerAnimation;
         private WorldManager World;
-
+        private Gui.Widget SpeakerWidget;
+        private int prevFrame = 0;
         public DialogueState(
             DwarfGame Game, 
             GameStateManager StateManager,
@@ -42,35 +43,48 @@ namespace DwarfCorp.Dialogue
             GuiRoot = new Gui.Root(DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
 
-            int w = System.Math.Min(GuiRoot.RenderData.VirtualScreen.Width - 200, 550);
-            int h = System.Math.Min(GuiRoot.RenderData.VirtualScreen.Height - 200, 300);
+            int w = System.Math.Min(GuiRoot.RenderData.VirtualScreen.Width - 256, 550);
+            int h = System.Math.Min(GuiRoot.RenderData.VirtualScreen.Height - 256, 300);
             int x = GuiRoot.RenderData.VirtualScreen.Width / 2 - w / 2;
-            int y = System.Math.Max(GuiRoot.RenderData.VirtualScreen.Height / 2 - h / 2, 230);
+            int y = System.Math.Max(GuiRoot.RenderData.VirtualScreen.Height / 2 - h / 2, 280);
+
+            int bgx = x - 258;
+            int bgy = y - 128;
 
             DialogueContext.SpeechBubble = GuiRoot.RootItem.AddChild(new Gui.Widget
             {
-                Rect = new Rectangle(200, 0, GuiRoot.RenderData.VirtualScreen.Width - 350, 150),
+                Rect = new Rectangle(bgx + 258, bgy, w + 50, 128),
                 Border = "speech-bubble-reverse",
                 Font = "font-hires",
                 TextColor = Color.Black.ToVector4()
             });
 
-            GuiRoot.RootItem.AddChild(new Widget()
+            var bg = GuiRoot.RootItem.AddChild(new Widget()
             {
                 Border = "border-dark",
-                Rect = new Rectangle(5, 5, 200, 200)
+                Rect = new Rectangle(bgx, bgy, 258, 258)
             });
+
 
             DialogueContext.ChoicePanel = GuiRoot.RootItem.AddChild(new Gui.Widget
             {
                 Rect = new Rectangle(x, y, w, h),
                 Border = "border-fancy",
+                AutoLayout = AutoLayout.DockFill
             });
 
             SpeakerAnimation = new Animation(DialogueContext.Envoy.OwnerFaction.Race.TalkAnimation);
             DialogueContext.SpeakerAnimation = SpeakerAnimation;
             DialogueContext.SpeakerAnimation.Loops = false;
-            
+
+
+            SpeakerWidget = bg.AddChild(new Widget()
+            {
+                Background = new TileReference(SpeakerAnimation.SpriteSheet.AssetName, 0),
+                AutoLayout = AutoLayout.DockFill,
+                MinimumSize = new Point(256, 256),
+                Rect = new Rectangle(bgx, bgy - 5, 256, 256)
+            });
 
             DialogueContext.Politics = World.Diplomacy.GetPolitics(
                 DialogueContext.PlayerFaction, DialogueContext.Envoy.OwnerFaction);
@@ -122,22 +136,14 @@ namespace DwarfCorp.Dialogue
 
         public override void Render(DwarfTime gameTime)
         {
-            // Draw speaker anim;
-            //Image.Image = Animation.SpriteSheet.GetTexture();
-            //Image.SourceRect = Animation.GetCurrentFrameRect();
-
             GuiRoot.Draw();
-            var texture = SpeakerAnimation.SpriteSheet.GetTexture();
-            var frame = SpeakerAnimation.GetCurrentFrameRect();
-
-            var offset = new Vector2((float)frame.X / (float)texture.Width, (float)frame.Y / (float)texture.Height);
-            var scale = new Vector2((float)frame.Width / (float)texture.Width, (float)frame.Height / (float)texture.Height);
-
-            var quad = Gui.Mesh.Quad().Texture(Matrix.CreateScale(scale.X, scale.Y, 1.0f))
-                .Texture(Matrix.CreateTranslation(offset.X, offset.Y, 0.0f))
-                .Scale(200, 200);
-
-            GuiRoot.DrawMesh(quad, texture);
+            
+            if (prevFrame != SpeakerAnimation.Frames[SpeakerAnimation.CurrentFrame].X)
+            {
+                SpeakerWidget.Background = new TileReference(SpeakerAnimation.SpriteSheet.AssetName, SpeakerAnimation.Frames[SpeakerAnimation.CurrentFrame].X);
+                prevFrame = SpeakerAnimation.Frames[SpeakerAnimation.CurrentFrame].X;
+                SpeakerWidget.Invalidate();
+            }
             base.Render(gameTime);
         }
     }
