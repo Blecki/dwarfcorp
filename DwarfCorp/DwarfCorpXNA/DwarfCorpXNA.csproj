@@ -306,10 +306,7 @@
     <Compile Include="Graphics\Drawing\Drawer2D\SpriteDrawCommand.cs" />
     <Compile Include="Graphics\Drawing\Drawer2D\TextBoxDrawCommand.cs" />
     <Compile Include="Graphics\Drawing\Drawer2D\TextDrawCommand.cs" />
-    <Compile Include="Graphics\Drawing\Drawer3D\BoxDrawCommand3D.cs" />
-    <Compile Include="Graphics\Drawing\Drawer3D\DrawCommand3D.cs" />
     <Compile Include="Graphics\Drawing\Drawer3D\Drawer3D.cs" />
-    <Compile Include="Graphics\Drawing\Drawer3D\LineListCommand3D.cs" />
     <Compile Include="Graphics\Drawing\HSLColor.cs" />
     <Compile Include="Graphics\Drawing\ImageFrame.cs" />
     <Compile Include="Graphics\Drawing\SpriteSheet.cs" />

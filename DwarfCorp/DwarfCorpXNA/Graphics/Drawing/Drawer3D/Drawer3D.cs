@@ -46,6 +46,148 @@ namespace DwarfCorp
     /// </summary>
     public class Drawer3D
     {
+        private const int MaxTriangles = 64;
+        private static VertexPositionColor[] Verticies = new VertexPositionColor[MaxTriangles * 3];
+        private static int VertexCount;
+        private static GraphicsDevice Device;
+        private static Shader Effect;
+        private static OrbitCamera Camera;
+        private static Dictionary<Color, List<GlobalVoxelCoordinate>> HighlightGroups = new Dictionary<Color, List<GlobalVoxelCoordinate>>();
+        private static List<BoundingBox> Boxes = new List<BoundingBox>();
+
+        private static void Flush()
+        {
+            if (VertexCount == 0) return;
+
+            BlendState origBlen = Device.BlendState;
+            Device.BlendState = BlendState.NonPremultiplied;
+
+            RasterizerState oldState = Device.RasterizerState;
+            Device.RasterizerState = RasterizerState.CullNone;
+
+            Effect.CurrentTechnique = Effect.Techniques[Shader.Technique.Untextured];
+            Effect.View = Camera.ViewMatrix;
+            Effect.Projection = Camera.ProjectionMatrix;
+            Effect.World = Matrix.Identity;
+            foreach (var pass in Effect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                Device.DrawUserPrimitives(PrimitiveType.TriangleList, Verticies, 0, VertexCount / 3);
+            }
+            
+            Effect.CurrentTechnique = Effect.Techniques[Shader.Technique.Textured];
+            
+            if (oldState != null)
+            {
+                Device.RasterizerState = oldState;
+            }
+
+            if (origBlen != null)
+            {
+                Device.BlendState = origBlen;
+            }
+
+            VertexCount = 0;
+        }
+
+        private static void AddTriangle(Vector3 A, Vector3 B, Vector3 C, Color Color)
+        {
+            Verticies[VertexCount] = new VertexPositionColor
+            {
+                Position = A,
+                Color = Color,
+            };
+
+            Verticies[VertexCount + 1] = new VertexPositionColor
+            {
+                Position = B,
+                Color = Color,
+            };
+
+            Verticies[VertexCount + 2] = new VertexPositionColor
+            {
+                Position = C,
+                Color = Color,
+            };
+
+            VertexCount += 3;
+            if (VertexCount >= MaxTriangles * 3)
+                Flush();
+        }
+
+        private static void DrawLineSegment(Vector3 A, Vector3 B, Color Color, float Thickness)
+        {
+            var aRay = A - Camera.Position;
+            var bRay = A - B;
+            var perp = Vector3.Cross(aRay, bRay);
+            perp.Normalize();
+            perp *= Thickness / 2;
+
+            AddTriangle(A + perp, B + perp, A - perp, Color);
+            AddTriangle(A - perp, B - perp, B + perp, Color);
+        }
+
+        private static void DrawBox(Vector3 M, Vector3 S, Color C, float T)
+        {
+            // Draw bottom loop.
+            DrawLineSegment(new Vector3(M.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y, M.Z), C, T);
+            DrawLineSegment(new Vector3(M.X + S.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y, M.Z + S.X), C, T);
+            DrawLineSegment(new Vector3(M.X + S.X, M.Y, M.Z + S.X), new Vector3(M.X, M.Y, M.Z + S.X), C, T);
+            DrawLineSegment(new Vector3(M.X, M.Y, M.Z + S.X), new Vector3(M.X, M.Y, M.Z), C, T);
+
+            // Draw top loop.
+            DrawLineSegment(new Vector3(M.X, M.Y + S.Y, M.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z), C, T);
+            DrawLineSegment(new Vector3(M.X + S.X, M.Y + S.Y, M.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z + S.X), C, T);
+            DrawLineSegment(new Vector3(M.X + S.X, M.Y + S.Y, M.Z + S.X), new Vector3(M.X, M.Y + S.Y, M.Z + S.X), C, T);
+            DrawLineSegment(new Vector3(M.X, M.Y + S.Y, M.Z + S.X), new Vector3(M.X, M.Y + S.Y, M.Z), C, T);
+
+            // Draw uprights
+            DrawLineSegment(new Vector3(M.X, M.Y, M.Z), new Vector3(M.X, M.Y + S.Y, M.Z), C, T);
+            DrawLineSegment(new Vector3(M.X + S.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z), C, T);
+            DrawLineSegment(new Vector3(M.X + S.X, M.Y, M.Z + S.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z + S.Z), C, T);
+            DrawLineSegment(new Vector3(M.X, M.Y, M.Z + S.Z), new Vector3(M.X, M.Y + S.Y, M.Z + S.Z), C, T);
+
+        }
+
+        public static void Render(GraphicsDevice Device, Shader Effect, OrbitCamera Camera)
+        {
+            Drawer3D.Device = Device;
+            Drawer3D.Effect = Effect;
+            Drawer3D.Camera = Camera;
+
+            foreach (var hilitedVoxelGroup in HighlightGroups)
+                foreach (var hilitedVoxel in hilitedVoxelGroup.Value)
+                    DrawBox(hilitedVoxel.ToVector3(), Vector3.One, hilitedVoxelGroup.Key, 0.1f);
+
+            foreach (var box in Boxes)
+                DrawBox(box.Min, box.Extents(), Color.White, 0.3f);
+
+            Flush();
+
+            Boxes.Clear();
+        }
+
+        public static void UnHighlightVoxel(VoxelHandle voxel)
+        {
+            foreach (var group in HighlightGroups)
+                group.Value.Remove(voxel.Coordinate);
+        }
+
+        public static void HighlightVoxel(VoxelHandle voxel, Color color)
+        {
+            if (!HighlightGroups.ContainsKey(color))
+                HighlightGroups.Add(color, new List<GlobalVoxelCoordinate>());
+
+            UnHighlightVoxel(voxel);
+            HighlightGroups[color].Add(voxel.Coordinate);
+        }
+        
+        public static void DrawBox(BoundingBox box, Color color, float thickness, bool warp)
+        {
+            Boxes.Add(box);
+        }
+
+        /*
         private static readonly ConcurrentBag<DrawCommand3D> Commands = new ConcurrentBag<DrawCommand3D>();
         public static OrbitCamera Camera = null;
         private static DynamicVertexBuffer StripBuffer;
@@ -395,6 +537,7 @@ namespace DwarfCorp
                 pair.Value.Render(device, shader);
             }
         }
+        */
     }
 
 }

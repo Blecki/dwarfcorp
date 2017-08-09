@@ -177,7 +177,7 @@ namespace DwarfCorp
             }
 
             effect.View = reflectionViewMatrix;
-            Drawer3D.Render(device, effect, false);
+            //Drawer3D.Render(device, effect, false);
 
             if(DrawComponentsReflected)
             {

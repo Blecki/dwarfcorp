@@ -409,7 +409,7 @@ namespace DwarfCorp
                 }
 
                 Camera.World = this;
-                Drawer3D.Camera = Camera;
+                //Drawer3D.Camera = Camera;
 
 
                 #endregion

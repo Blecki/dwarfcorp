@@ -293,8 +293,8 @@ namespace DwarfCorp
                         agent.Physics.Velocity *= 0.9f;
 
                         // Debug drawing.
-                        if (agent.AI.DrawPath)
-                            Drawer3D.DrawLine(vox.WorldPosition, agent.AI.Position, Color.Green, 0.25f);
+                        //if (agent.AI.DrawPath)
+                        //    Drawer3D.DrawLine(vox.WorldPosition, agent.AI.Position, Color.Green, 0.25f);
                         yield return Act.Status.Running;
                     }
                 }

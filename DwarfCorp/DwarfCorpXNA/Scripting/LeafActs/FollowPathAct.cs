@@ -393,39 +393,39 @@ namespace DwarfCorp
                     yield return Status.Running;
                 }
 
-                if (Agent.DrawPath)
-                {
-                    List<Vector3> points =
-                        Path.Select(
-                            (v, i) => v.DestinationVoxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f) + RandomPositionOffsets[i])
-                            .ToList();
-                    List<Color> colors =
-                            Path.Select((v, i) =>
-                            {
-                                switch (v.MoveType)
-                                {
-                                    case MoveType.Climb:
-                                        return Color.Cyan;
-                                    case MoveType.ClimbWalls:
-                                        return Color.DarkCyan;
-                                    case MoveType.DestroyObject:
-                                        return Color.Orange;
-                                    case MoveType.Fall:
-                                        return Color.LightBlue;
-                                    case MoveType.Fly:
-                                        return Color.Green;
-                                    case MoveType.Jump:
-                                        return Color.Yellow;
-                                    case MoveType.Swim:
-                                        return Color.Blue;
-                                    case MoveType.Walk:
-                                        return Color.Red;
-                                }
-                                return Color.White;
-                            })
-                            .ToList();
-                    Drawer3D.DrawLineList(points, colors, 0.1f);
-                }
+                //if (Agent.DrawPath)
+                //{
+                //    List<Vector3> points =
+                //        Path.Select(
+                //            (v, i) => v.DestinationVoxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f) + RandomPositionOffsets[i])
+                //            .ToList();
+                //    List<Color> colors =
+                //            Path.Select((v, i) =>
+                //            {
+                //                switch (v.MoveType)
+                //                {
+                //                    case MoveType.Climb:
+                //                        return Color.Cyan;
+                //                    case MoveType.ClimbWalls:
+                //                        return Color.DarkCyan;
+                //                    case MoveType.DestroyObject:
+                //                        return Color.Orange;
+                //                    case MoveType.Fall:
+                //                        return Color.LightBlue;
+                //                    case MoveType.Fly:
+                //                        return Color.Green;
+                //                    case MoveType.Jump:
+                //                        return Color.Yellow;
+                //                    case MoveType.Swim:
+                //                        return Color.Blue;
+                //                    case MoveType.Walk:
+                //                        return Color.Red;
+                //                }
+                //                return Color.White;
+                //            })
+                //            .ToList();
+                //    Drawer3D.DrawLineList(points, colors, 0.1f);
+                //}
 
 
                 // Check if the path has been made invalid
