@@ -53,11 +53,22 @@ namespace DwarfCorp
         private static Shader Effect;
         private static OrbitCamera Camera;
         private static Dictionary<Color, List<GlobalVoxelCoordinate>> HighlightGroups = new Dictionary<Color, List<GlobalVoxelCoordinate>>();
-        private static List<BoundingBox> Boxes = new List<BoundingBox>();
 
-        private static void Flush()
+        private struct Box
+        {
+            public BoundingBox RealBox;
+            public float Thickness;
+            public Color Color;
+        }
+
+        private static List<Box> Boxes = new List<Box>();
+
+        private static void _flush()
         {
             if (VertexCount == 0) return;
+
+            for (var i = 0; i < VertexCount; ++i)
+                Verticies[i].Position += VertexNoise.GetNoiseVectorFromRepeatingTexture(Verticies[i].Position);
 
             BlendState origBlen = Device.BlendState;
             Device.BlendState = BlendState.NonPremultiplied;
@@ -90,7 +101,7 @@ namespace DwarfCorp
             VertexCount = 0;
         }
 
-        private static void AddTriangle(Vector3 A, Vector3 B, Vector3 C, Color Color)
+        private static void _addTriangle(Vector3 A, Vector3 B, Vector3 C, Color Color)
         {
             Verticies[VertexCount] = new VertexPositionColor
             {
@@ -112,10 +123,10 @@ namespace DwarfCorp
 
             VertexCount += 3;
             if (VertexCount >= MaxTriangles * 3)
-                Flush();
+                _flush();
         }
 
-        private static void DrawLineSegment(Vector3 A, Vector3 B, Color Color, float Thickness)
+        private static void _addLineSegment(Vector3 A, Vector3 B, Color Color, float Thickness)
         {
             var aRay = A - Camera.Position;
             var bRay = A - B;
@@ -123,29 +134,29 @@ namespace DwarfCorp
             perp.Normalize();
             perp *= Thickness / 2;
 
-            AddTriangle(A + perp, B + perp, A - perp, Color);
-            AddTriangle(A - perp, B - perp, B + perp, Color);
+            _addTriangle(A + perp, B + perp, A - perp, Color);
+            _addTriangle(A - perp, B - perp, B + perp, Color);
         }
 
-        private static void DrawBox(Vector3 M, Vector3 S, Color C, float T)
+        private static void _addBox(Vector3 M, Vector3 S, Color C, float T)
         {
             // Draw bottom loop.
-            DrawLineSegment(new Vector3(M.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y, M.Z), C, T);
-            DrawLineSegment(new Vector3(M.X + S.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y, M.Z + S.X), C, T);
-            DrawLineSegment(new Vector3(M.X + S.X, M.Y, M.Z + S.X), new Vector3(M.X, M.Y, M.Z + S.X), C, T);
-            DrawLineSegment(new Vector3(M.X, M.Y, M.Z + S.X), new Vector3(M.X, M.Y, M.Z), C, T);
+            _addLineSegment(new Vector3(M.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y, M.Z), C, T);
+            _addLineSegment(new Vector3(M.X + S.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y, M.Z + S.X), C, T);
+            _addLineSegment(new Vector3(M.X + S.X, M.Y, M.Z + S.X), new Vector3(M.X, M.Y, M.Z + S.X), C, T);
+            _addLineSegment(new Vector3(M.X, M.Y, M.Z + S.X), new Vector3(M.X, M.Y, M.Z), C, T);
 
             // Draw top loop.
-            DrawLineSegment(new Vector3(M.X, M.Y + S.Y, M.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z), C, T);
-            DrawLineSegment(new Vector3(M.X + S.X, M.Y + S.Y, M.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z + S.X), C, T);
-            DrawLineSegment(new Vector3(M.X + S.X, M.Y + S.Y, M.Z + S.X), new Vector3(M.X, M.Y + S.Y, M.Z + S.X), C, T);
-            DrawLineSegment(new Vector3(M.X, M.Y + S.Y, M.Z + S.X), new Vector3(M.X, M.Y + S.Y, M.Z), C, T);
+            _addLineSegment(new Vector3(M.X, M.Y + S.Y, M.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z), C, T);
+            _addLineSegment(new Vector3(M.X + S.X, M.Y + S.Y, M.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z + S.X), C, T);
+            _addLineSegment(new Vector3(M.X + S.X, M.Y + S.Y, M.Z + S.X), new Vector3(M.X, M.Y + S.Y, M.Z + S.X), C, T);
+            _addLineSegment(new Vector3(M.X, M.Y + S.Y, M.Z + S.X), new Vector3(M.X, M.Y + S.Y, M.Z), C, T);
 
             // Draw uprights
-            DrawLineSegment(new Vector3(M.X, M.Y, M.Z), new Vector3(M.X, M.Y + S.Y, M.Z), C, T);
-            DrawLineSegment(new Vector3(M.X + S.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z), C, T);
-            DrawLineSegment(new Vector3(M.X + S.X, M.Y, M.Z + S.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z + S.Z), C, T);
-            DrawLineSegment(new Vector3(M.X, M.Y, M.Z + S.Z), new Vector3(M.X, M.Y + S.Y, M.Z + S.Z), C, T);
+            _addLineSegment(new Vector3(M.X, M.Y, M.Z), new Vector3(M.X, M.Y + S.Y, M.Z), C, T);
+            _addLineSegment(new Vector3(M.X + S.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z), C, T);
+            _addLineSegment(new Vector3(M.X + S.X, M.Y, M.Z + S.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z + S.Z), C, T);
+            _addLineSegment(new Vector3(M.X, M.Y, M.Z + S.Z), new Vector3(M.X, M.Y + S.Y, M.Z + S.Z), C, T);
 
         }
 
@@ -155,14 +166,24 @@ namespace DwarfCorp
             Drawer3D.Effect = Effect;
             Drawer3D.Camera = Camera;
 
+            var colorModulation = Math.Abs(Math.Sin(DwarfTime.LastTime.TotalGameTime.TotalSeconds * 2.0f));
+
             foreach (var hilitedVoxelGroup in HighlightGroups)
+            {
+                var groupColor = new Color(
+                    (byte)(hilitedVoxelGroup.Key.R * colorModulation + 50),
+                    (byte)(hilitedVoxelGroup.Key.G * colorModulation + 50),
+                    (byte)(hilitedVoxelGroup.Key.B * colorModulation + 50),
+                    255);
+
                 foreach (var hilitedVoxel in hilitedVoxelGroup.Value)
-                    DrawBox(hilitedVoxel.ToVector3(), Vector3.One, hilitedVoxelGroup.Key, 0.1f);
+                    _addBox(hilitedVoxel.ToVector3(), Vector3.One, groupColor, 0.1f);
+            }
 
             foreach (var box in Boxes)
-                DrawBox(box.Min, box.Extents(), Color.White, 0.3f);
+                _addBox(box.RealBox.Min, box.RealBox.Max - box.RealBox.Min, box.Color, box.Thickness);
 
-            Flush();
+            _flush();
 
             Boxes.Clear();
         }
@@ -184,7 +205,12 @@ namespace DwarfCorp
         
         public static void DrawBox(BoundingBox box, Color color, float thickness, bool warp)
         {
-            Boxes.Add(box);
+            Boxes.Add(new Box
+            {
+                RealBox = box,
+                Color = color,
+                Thickness = thickness
+            });
         }
 
         /*
