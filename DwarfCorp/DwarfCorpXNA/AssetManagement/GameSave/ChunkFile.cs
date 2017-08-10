@@ -143,7 +143,6 @@ namespace DwarfCorp
             }
 
             Explored.CopyTo(c.Data.IsExplored, 0);
-
             // Separate loop for cache effeciency
             for (var i = 0; i < VoxelConstants.ChunkVoxelCount; ++i)
             {
@@ -154,7 +153,7 @@ namespace DwarfCorp
                 if ((LiquidType)LiquidTypes[i] != LiquidType.None)
                     c.Data.LiquidPresent[(i >> VoxelConstants.ZDivShift) >> VoxelConstants.XDivShift] += 1;
             }
-
+            c.CalculateInitialSunlight();
             return c;
         }
 

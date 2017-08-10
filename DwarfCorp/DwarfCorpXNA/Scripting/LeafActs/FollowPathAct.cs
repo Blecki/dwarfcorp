@@ -110,7 +110,7 @@ namespace DwarfCorp
             Vector3 diff = Vector3.Zero;
             float diffNorm = 0.0f;
             Vector3 half = Vector3.One * 0.5f;
-            half.Y = Creature.Physics.BoundingBox.Extents().Y * 1.5f;
+            half.Y = Creature.Physics.BoundingBox.Extents().Y * 2.0f;
             int nextID = index + 1;
             if (nextID < Path.Count)
             {
@@ -237,7 +237,7 @@ namespace DwarfCorp
             int nextID = currentIndex + 1;
             bool hasNextAction = false;
             Vector3 half = Vector3.One * 0.5f;
-            half.Y = Creature.Physics.BoundingBox.Extents().Y * 2;
+            half.Y = Creature.Physics.BoundingBox.Extents().Y * 2.0f;
             Vector3 nextPosition = Vector3.Zero;
             Vector3 currPosition = action.DestinationVoxel.WorldPosition + half;
 

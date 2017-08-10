@@ -113,6 +113,7 @@ namespace DwarfCorp
                     Time = gameFile.Data.Metadata.Time;
                     WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
                     WorldScale = gameFile.Data.Metadata.WorldScale;
+                    WorldSize = gameFile.Data.Metadata.NumChunks;
                     GameID = gameFile.Data.GameID;
                     if (gameFile.Data.Metadata.OverworldFile != null && gameFile.Data.Metadata.OverworldFile != "flat")
                     {
@@ -418,9 +419,6 @@ namespace DwarfCorp
                 // Finally, the chunk manager's threads are started to allow it to 
                 // dynamically rebuild terrain
                 ChunkManager.RebuildList = new ConcurrentQueue<VoxelChunk>();
-                ChunkManager.UpdateRebuildList();
-                ChunkManager.StartThreads();
-
 
                 SetLoadingMessage("Creating Particles ...");
                 ParticleManager = new ParticleManager(ComponentManager);
@@ -432,6 +430,9 @@ namespace DwarfCorp
                 if (Master.Faction.Economy.Company.Information == null)
                     Master.Faction.Economy.Company.Information = new CompanyInformation();
                 CreateInitialEmbarkment();
+                ChunkManager.UpdateRebuildList();
+                ChunkManager.CreateGraphics(SetLoadingMessage, ChunkManager.ChunkData);
+                ChunkManager.StartThreads();
                 SetLoadingMessage("Presimulating ...");
                 ShowingWorld = false;
                 OnLoadedEvent();

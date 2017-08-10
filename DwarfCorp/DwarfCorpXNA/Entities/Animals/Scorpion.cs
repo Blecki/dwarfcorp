@@ -94,7 +94,7 @@ namespace DwarfCorp
             AI = Physics.AddChild(new PacingCreatureAI(Manager, "Scorpion AI", Sensors, PlanService)) as CreatureAI;
 
             // The bird can peck at its enemies (0.1 damage)
-            Attacks = new List<Attack> { new Attack("Sting", 4.0f, 2.0f, 1.0f, SoundSource.Create(ContentPaths.Audio.hiss), ContentPaths.Effects.pierce) };
+            Attacks = new List<Attack> { new Attack("Sting", 4.0f, 2.0f, 1.5f, SoundSource.Create(ContentPaths.Audio.hiss), ContentPaths.Effects.pierce) { TriggerFrame = 2, TriggerMode = Attack.AttackTrigger.Animation} };
 
 
             // The bird can hold one item at a time in its inventory
@@ -125,6 +125,9 @@ namespace DwarfCorp
             NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.hiss };
             AI.Movement.CanClimbWalls = true;
             AI.Movement.CanSwim = false;
+            AI.Movement.SetSpeed(MoveType.Jump, 1.5f);
+            AI.Movement.SetSpeed(MoveType.Climb, 1.5f);
+            AI.Movement.SetCost(MoveType.Climb, 0.1f);
             Species = "Scorpion";
             CanReproduce = true;
             BabyType = "Scorpion";

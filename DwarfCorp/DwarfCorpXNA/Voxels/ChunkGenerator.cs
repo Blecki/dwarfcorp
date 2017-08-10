@@ -284,11 +284,12 @@ namespace DwarfCorp
                         Chunk, new LocalVoxelCoordinate(x, VoxelConstants.ChunkSizeY - 1, z)));
 
                     if (!topVoxel.IsValid
-                        || VoxelHelpers.GetVoxelAbove(topVoxel).WaterCell.WaterLevel != 0
                         || topVoxel.Coordinate.Y == 0
                         || topVoxel.Coordinate.Y >= 60) // Lift to some kind of generator settings?
                         continue;
-
+                    var above = VoxelHelpers.GetVoxelAbove(topVoxel);
+                    if (above.IsValid && above.WaterCell.WaterLevel != 0)
+                        continue;
                     foreach (var animal in biomeData.Fauna)
                     {
                         if (MathFunctions.RandEvent(animal.SpawnProbability))
@@ -361,7 +362,7 @@ namespace DwarfCorp
                         {
                             var voxel = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y - dy, z));
 
-                            waterFound = VoxelHelpers.EnumerateManhattanNeighbors(voxel.Coordinate)
+                            waterFound = VoxelHelpers.EnumerateCube(voxel.Coordinate)
                                 .Select(c => new VoxelHandle(Manager.ChunkData, c))
                                 .Any(v => v.IsValid && v.WaterCell.WaterLevel > 0);
 
@@ -437,7 +438,7 @@ namespace DwarfCorp
                     }
                     float treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
 
-                    EntityFactory.DoLazy(() =>
+                   EntityFactory.DoLazy(() =>
                     {
                         GameComponent entity = EntityFactory.CreateEntity<GameComponent>(veg.Name,
                             chunk.Origin + new Vector3(x, y, z) + new Vector3(0, treeSize * offset, 0),
@@ -481,7 +482,7 @@ namespace DwarfCorp
                         if (y == 0)
                         {
                             voxel.RawSetType(VoxelLibrary.GetVoxelType("Bedrock"));
-                            voxel.Health = 8; // ? 
+                            voxel.Health = 255; // ? 
                             continue;
                         }
 
@@ -536,7 +537,6 @@ namespace DwarfCorp
             GenerateWater(c);
             GenerateLava(c);
             GenerateCaves(c, World);
-
             c.ShouldRebuildWater = true;
 
             UpdateSunlight(c, 255);

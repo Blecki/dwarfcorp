@@ -228,8 +228,8 @@ namespace DwarfCorp
             CollisionType = CollisionManager.CollisionType.Dynamic;
             CollideMode = CollisionMode.All;
             Orientation = orientation;
-            SleepTimer = new Timer(3.0f, true);
-            WakeTimer = new Timer(0.5f, true);
+            SleepTimer = new Timer(5.0f, true);
+            WakeTimer = new Timer(0.01f, true);
         }
 
         public void Move(float dt)
@@ -256,11 +256,10 @@ namespace DwarfCorp
 
             if (IsSleeping)
             {
-                Drawer3D.DrawBox(GetBoundingBox(), Color.CornflowerBlue, 0.01f);
                 applyGravityThisFrame = false;
             }
 
-            bool goingSlow = Velocity.LengthSquared() < 0.5f;
+            bool goingSlow = Velocity.LengthSquared() < 0.05f;
             // If we're not sleeping and moving very slowly, go to sleep.
             if (!IsSleeping && goingSlow)
             {
