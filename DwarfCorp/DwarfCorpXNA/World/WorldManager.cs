@@ -764,7 +764,12 @@ namespace DwarfCorp
                 //GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Instances");
 
                 SelectionBuffer.End(GraphicsDevice);
+
+                GamePerformance.Instance.TrackValueType("SBUFFER RENDERED", true);
             }
+            else
+                GamePerformance.Instance.TrackValueType("SBUFFER RENDERED", false);
+
 
             #endregion
 
