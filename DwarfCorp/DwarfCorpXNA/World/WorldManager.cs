@@ -828,7 +828,7 @@ namespace DwarfCorp
             Drawer3D.Render(GraphicsDevice, DefaultShader, Camera);
             GamePerformance.Instance.StopTrackPerformance("Render - Drawer3D");
 
-            GamePerformance.Instance.StartTrackPerformance("Render - Components");
+            GamePerformance.Instance.StartTrackPerformance("Render - Instances");
 
             DefaultShader.EnableShadows = GameSettings.Default.UseDynamicShadows;
 
@@ -839,6 +839,9 @@ namespace DwarfCorp
 
             DefaultShader.View = Camera.ViewMatrix;
             InstanceManager.Render(GraphicsDevice, DefaultShader, Camera);
+            GamePerformance.Instance.StopTrackPerformance("Render - Instances");
+            GamePerformance.Instance.StartTrackPerformance("Render - Components");
+
             ComponentRenderer.Render(renderables, gameTime, ChunkManager,
                 Camera,
                 DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader,
