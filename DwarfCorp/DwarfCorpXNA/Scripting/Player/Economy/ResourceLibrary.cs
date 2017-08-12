@@ -344,10 +344,11 @@ namespace DwarfCorp
 
             Add(new Resource(ResourceType.Egg, 5.0m, "An egg", new NamedImageFrame(tileSheet, GetRect(7, 2)), 23, Color.White, Resource.ResourceTags.Edible, Resource.ResourceTags.AnimalProduct, Resource.ResourceTags.Brewable));
 
-            // Todo: Trinkets won't show up right in new gui.
-            // Images are in crafts.png - combine into single sprite sheet.
             Add((new Resource(ResourceType.Trinket, 100.0m, "A crafted item.",
                     new NamedImageFrame(ContentPaths.Entities.DwarfObjects.crafts, 32, 0, 0), 0, Color.White, Resource.ResourceTags.Craft, Resource.ResourceTags.Encrustable)));
+
+            Add((new Resource(ResourceLibrary.ResourceType.GemTrinket, 100.0m, "A crafted item.",
+                new NamedImageFrame(ContentPaths.Entities.DwarfObjects.crafts, 32, 0, 0), 0, Color.White, Resource.ResourceTags.Craft)));
 
             Add(new Resource(ResourceType.Glass, 8.0m, "Made from sand. Allows light to pass through.", new NamedImageFrame(tileSheet, GetRect(4, 0)), 4, Color.White, Resource.ResourceTags.Material, Resource.ResourceTags.HardMaterial, Resource.ResourceTags.Craft)
             {

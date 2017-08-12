@@ -60,7 +60,7 @@ namespace DwarfCorp.Gui.Widgets
                         var child = AddChild(new Widget()
                         {
                             AutoLayout = AutoLayout.DockTop,
-                            MinimumSize = new Point(100, 18)
+                            MinimumSize = new Point(200, 18)
                         });
 
                         child.AddChild(new Gui.Widget()
@@ -69,13 +69,14 @@ namespace DwarfCorp.Gui.Widgets
                             Text = String.Format("{0} {1}: ",resourceAmount.NumResources, resourceAmount.ResourceType),
                             AutoLayout = AutoLayout.DockLeft
                         });
+                        child.Layout();
 
                         var resourceSelector = child.AddChild(new Gui.Widgets.ComboBox
                         {
                             Font = "font",
-                            Items = Master.Faction.ListResourcesWithTag(resourceAmount.ResourceType).Select(r => r.ResourceType.ToString()).ToList(),
+                            Items = Master.Faction.ListResourcesWithTag(resourceAmount.ResourceType).Where(r => r.NumResources >= resourceAmount.NumResources).Select(r => r.ResourceType.ToString()).ToList(),
                             AutoLayout = AutoLayout.DockLeft,
-                            MinimumSize = new Point(100, 18)
+                            MinimumSize = new Point(200, 18)
                         }) as Gui.Widgets.ComboBox;
 
                         if (resourceSelector.Items.Count == 0)
@@ -84,38 +85,38 @@ namespace DwarfCorp.Gui.Widgets
                         resourceSelector.SelectedIndex = 0;
 
                         ResourceCombos.Add(resourceSelector);
+                    }
 
 
-                        if (Data.Type == CraftItem.CraftType.Resource)
+                    if (Data.Type == CraftItem.CraftType.Resource)
+                    {
+                        var child2 = AddChild(new Widget()
                         {
-                            var child2 = AddChild(new Widget()
-                            {
-                                AutoLayout = AutoLayout.DockTop,
-                                MinimumSize = new Point(100, 18)
-                            });
+                            AutoLayout = AutoLayout.DockTop,
+                            MinimumSize = new Point(100, 18)
+                        });
 
-                            child2.AddChild(new Gui.Widget()
-                            {
-                                Font = "font",
-                                Text = "Repeat ",
-                                AutoLayout = AutoLayout.DockLeft
-                            });
-                            NumCombo = child2.AddChild(new Gui.Widgets.ComboBox
-                            {
-                                Font = "font",
-                                Items = new List<string>()
+                        child2.AddChild(new Gui.Widget()
+                        {
+                            Font = "font",
+                            Text = "Repeat ",
+                            AutoLayout = AutoLayout.DockLeft
+                        });
+                        NumCombo = child2.AddChild(new Gui.Widgets.ComboBox
+                        {
+                            Font = "font",
+                            Items = new List<string>()
                                 {
                                     "1x",
                                     "5x",
                                     "10x",
                                     "100x"
                                 },
-                                AutoLayout = AutoLayout.DockLeft,
-                                MinimumSize = new Point(64, 18),
-                                MaximumSize = new Point(64, 18)
-                            }) as Gui.Widgets.ComboBox;
-                            NumCombo.SelectedIndex = 0;
-                        }
+                            AutoLayout = AutoLayout.DockLeft,
+                            MinimumSize = new Point(64, 18),
+                            MaximumSize = new Point(64, 18)
+                        }) as Gui.Widgets.ComboBox;
+                        NumCombo.SelectedIndex = 0;
                     }
 
                     if (BuildAction != null)

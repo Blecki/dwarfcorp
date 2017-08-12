@@ -45,6 +45,7 @@ namespace DwarfCorp
     {
         public List<Quantitiy<Resource.ResourceTags>> Resources { get; set; }
         public List<ResourceAmount> ResourcesToStash { get; set; }
+        public bool AllowHeterogenous { get; set; }
         public GetResourcesAct()
         {
 
@@ -55,6 +56,7 @@ namespace DwarfCorp
         {
             Name = "Get Resources";
             ResourcesToStash = resources;
+            AllowHeterogenous = false;
 
         }
 
@@ -63,7 +65,7 @@ namespace DwarfCorp
         {
             Name = "Get Resources";
             Resources = resources;
-
+            AllowHeterogenous = false;
         }
 
         public GetResourcesAct(CreatureAI agent, Resource.ResourceTags resources) :
@@ -71,7 +73,7 @@ namespace DwarfCorp
         {
             Name = "Get Resources";
             Resources = new List<Quantitiy<Resource.ResourceTags>>(){new Quantitiy<Resource.ResourceTags>(resources)};
-
+            AllowHeterogenous = false;
         }
 
 
@@ -91,7 +93,7 @@ namespace DwarfCorp
                 foreach (Quantitiy<Resource.ResourceTags> resource in Resources)
                 {
 
-                    if (!Creature.Inventory.HasResource(resource))
+                    if (!Creature.Inventory.HasResource(resource, AllowHeterogenous))
                     {
                         hasAllResources = false;
                     }
@@ -115,7 +117,7 @@ namespace DwarfCorp
                 Stockpile nearestStockpile =  Agent.Faction.GetNearestStockpile(Agent.Position, (pile) => !(pile is Graveyard));
 
                 if(ResourcesToStash == null && Resources != null)
-                    ResourcesToStash = Agent.Faction.GetResourcesWithTags(Resources);
+                    ResourcesToStash = Agent.Faction.GetResourcesWithTags(Resources, AllowHeterogenous);
 
                 if(nearestStockpile == null || ResourcesToStash.Count == 0)
                 {

@@ -67,6 +67,8 @@ namespace DwarfCorp
         public string Verb { get; set; }
         public string PastTeseVerb { get; set; }
         public string CurrentVerb { get; set; }
+        public bool AllowHeterogenous { get; set; }
+
         public CraftItem()
         {
             Name = "";
@@ -82,6 +84,7 @@ namespace DwarfCorp
             PastTeseVerb = "Built";
             CurrentVerb = "Building";
             NumRepeats = 1;
+            AllowHeterogenous = false;
         }
 
         public CraftItem Clone()
@@ -97,7 +100,8 @@ namespace DwarfCorp
                 Verb = this.Verb,
                 PastTeseVerb = this.PastTeseVerb,
                 CurrentVerb = this.CurrentVerb,
-                NumRepeats = this.NumRepeats
+                NumRepeats = this.NumRepeats,
+                AllowHeterogenous = this.AllowHeterogenous
             };
             item.Prerequisites.AddRange(this.Prerequisites);
             item.SelectedResources.AddRange(this.SelectedResources);

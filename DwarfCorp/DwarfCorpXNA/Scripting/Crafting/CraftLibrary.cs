@@ -222,9 +222,9 @@ namespace DwarfCorp
                         BaseCraftTime = 15,
                         Type = CraftItem.CraftType.Resource,
                         ResourceCreated = "Gem-set Trinket",
-                        Verb = "Craft",
-                        CurrentVerb = "Crafting",
-                        PastTeseVerb = "Crafted"
+                        Verb = "Encrust",
+                        CurrentVerb = "Encrusting",
+                        PastTeseVerb = "Encrusted"
                     }
                 },
                 {
@@ -245,7 +245,8 @@ namespace DwarfCorp
                         CraftLocation = "Cutting Board",
                         Verb = "Cook",
                         PastTeseVerb = "Cooked",
-                        CurrentVerb = "Cooking"
+                        CurrentVerb = "Cooking",
+                        AllowHeterogenous = true
                     }
                 },
                 {

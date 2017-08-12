@@ -230,9 +230,27 @@ namespace DwarfCorp
             return Resources.Count(resource => resource.Resource == itemToStock.ResourceType) >= itemToStock.NumResources;
         }
 
-        public bool HasResource(Quantitiy<Resource.ResourceTags> itemToStock)
+        public bool HasResource(Quantitiy<Resource.ResourceTags> itemToStock, bool allowHeterogenous = false)
         {
-            return Resources.Count(resource => ResourceLibrary.GetResourceByName(resource.Resource).Tags.Contains(itemToStock.ResourceType)) >= itemToStock.NumResources;
+            if (allowHeterogenous)
+                return Resources.Count(resource => ResourceLibrary.GetResourceByName(resource.Resource).Tags.Contains(itemToStock.ResourceType)) >= itemToStock.NumResources;
+            else
+            {
+                Dictionary<ResourceLibrary.ResourceType, int> resourceCounts = new Dictionary<ResourceLibrary.ResourceType, int>();
+                foreach (var resource in Resources)
+                {
+                    if (ResourceLibrary.GetResourceByName(resource.Resource).Tags.Contains(itemToStock.ResourceType))
+                    {
+                        if (!resourceCounts.ContainsKey(resource.Resource))
+                        {
+                            resourceCounts[resource.Resource] = 0;
+                        }
+                        resourceCounts[resource.Resource]++;
+                    }
+                }
+
+                return resourceCounts.Count > 0 && resourceCounts.Max(r => r.Value >= itemToStock.NumResources);
+            }
         }
 
         public List<ResourceAmount> GetResources(Quantitiy<Resource.ResourceTags> quantitiy)

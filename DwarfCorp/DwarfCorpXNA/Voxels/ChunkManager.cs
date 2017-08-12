@@ -645,8 +645,6 @@ namespace DwarfCorp
 
         public void CreateGraphics(Action<String> SetLoadingMessage, ChunkData chunkData)
         {
-            // Todo: Figure out if this needs to duplicate effort of rebuild thread.
-
             SetLoadingMessage("Creating Graphics");
 
             List<VoxelChunk> toRebuild = new List<VoxelChunk>();

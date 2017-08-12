@@ -280,10 +280,8 @@ namespace DwarfCorp
                     for (int y = VoxelConstants.ChunkSizeY - 1; y >= 0; y--)
                     {
                         LocalVoxelCoordinate coord = new LocalVoxelCoordinate(x, y, z);
-                        VoxelHandle voxel = new VoxelHandle(this, coord);
-                        if (!voxel.IsValid) continue;
-                        voxel.SunColor = 255;
-                        if (!voxel.IsEmpty && !voxel.Type.IsTransparent) continue;
+                        VoxelHandle voxel = new VoxelHandle(this, coord) {SunColor = 255};
+                        if (!voxel.IsEmpty && !voxel.Type.IsTransparent) break;
                     }
                 }
             }

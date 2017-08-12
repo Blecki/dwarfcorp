@@ -694,7 +694,7 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public List<ResourceAmount> GetResourcesWithTags(List<Quantitiy<Resource.ResourceTags>> tags)
+        public List<ResourceAmount> GetResourcesWithTags(List<Quantitiy<Resource.ResourceTags>> tags, bool allowHeterogenous = false)
         {
             Dictionary<Resource.ResourceTags, int> tagsRequired = new Dictionary<Resource.ResourceTags, int>();
             Dictionary<Resource.ResourceTags, int> tagsGot = new Dictionary<Resource.ResourceTags, int>();
@@ -738,7 +738,24 @@ namespace DwarfCorp
                 }
             }
 
-            return amounts.Values.ToList();
+            if (allowHeterogenous)
+            {
+                return amounts.Values.ToList();
+            }
+
+            ResourceAmount maxAmount = null;
+            foreach (var pair in amounts)
+            {
+                if (maxAmount == null || pair.Value.NumResources > maxAmount.NumResources)
+                {
+                    maxAmount = pair.Value;
+                }
+            }
+            if (maxAmount != null)
+            {
+                return new List<ResourceAmount>(){maxAmount};
+            }
+            return new List<ResourceAmount>();
         }
 
         public bool HasResources(IEnumerable<Quantitiy<Resource.ResourceTags>> resources)
@@ -948,10 +965,26 @@ namespace DwarfCorp
             return amounts;
         }
 
-        public List<ResourceAmount> ListResourcesWithTag(Resource.ResourceTags tag)
+        public List<ResourceAmount> ListResourcesWithTag(Resource.ResourceTags tag, bool allowHeterogenous = true)
         {
             Dictionary<string, ResourceAmount> resources = ListResources();
-            return (from pair in resources where ResourceLibrary.GetResourceByName(pair.Value.ResourceType).Tags.Contains(tag) select pair.Value).ToList();
+            if (allowHeterogenous)
+            {
+                return (from pair in resources
+                    where ResourceLibrary.GetResourceByName(pair.Value.ResourceType).Tags.Contains(tag)
+                    select pair.Value).ToList();
+            }
+            ResourceAmount maxAmount = null;
+            foreach (var pair in resources)
+            {
+                var resource = ResourceLibrary.GetResourceByName(pair.Value.ResourceType);
+                if (!resource.Tags.Contains(tag)) continue;
+                if (maxAmount == null || pair.Value.NumResources > maxAmount.NumResources)
+                {
+                    maxAmount = pair.Value;
+                }
+            }
+            return maxAmount != null ? new List<ResourceAmount>(){maxAmount} : new List<ResourceAmount>();
         }
 
         public Room GetNearestRoom(Vector3 position)

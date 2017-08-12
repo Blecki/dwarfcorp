@@ -1000,7 +1000,7 @@ namespace DwarfCorp.GameStates
                         PopupChild = new BuildCraftInfo
                         {
                             Data = data,
-                            Rect = new Rectangle(0, 0, 300, 150),
+                            Rect = new Rectangle(0, 0, 350, 150),
                             Master = Master,
                             World = World,
                             OnShown = (sender) =>
@@ -1075,14 +1075,14 @@ namespace DwarfCorp.GameStates
                     .Select(data => new FlatToolTray.Icon
                     {
                         Icon = data.Icon,
-                        Tooltip = "Craft " + data.Name,
+                        Tooltip = data.Verb + " a " + data.Name,
                         KeepChildVisible = true, // So the player can interact with the popup.
                         ExpandChildWhenDisabled = true,
                         Behavior = FlatToolTray.IconBehavior.ShowClickPopup,
                         PopupChild = new BuildCraftInfo
                         {
                             Data = data,
-                            Rect = new Rectangle(0, 0, 300, 150),
+                            Rect = new Rectangle(0, 0, 350, 200),
                             Master = Master,
                             World = World,
                             BuildAction = (sender, args) =>
@@ -1090,7 +1090,7 @@ namespace DwarfCorp.GameStates
                                 var buildInfo = (sender.Parent as Gui.Widgets.BuildCraftInfo);
                                 if (buildInfo == null)
                                     return;
-
+                                sender.Parent.Hidden = true;
                                 data.SelectedResources = buildInfo.GetSelectedResources();
                                 data.NumRepeats = buildInfo.GetNumRepeats();
                                 var assignments = new List<Task> { new CraftResourceTask(data) };
@@ -1195,12 +1195,13 @@ namespace DwarfCorp.GameStates
                         PopupChild = new BuildCraftInfo
                         {
                             Data = data,
-                            Rect = new Rectangle(0, 0, 300, 150),
+                            Rect = new Rectangle(0, 0, 350, 200),
                             Master = Master,
                             World = World,
                             BuildAction = (sender, args) =>
                             {
                                 var buildInfo = sender.Parent as Gui.Widgets.BuildCraftInfo;
+                                sender.Parent.Hidden = true;
                                 data.SelectedResources = buildInfo.GetSelectedResources();
                                 data.NumRepeats = buildInfo.GetNumRepeats();
                                 List<Task> assignments = new List<Task> { new CraftResourceTask(data) };
