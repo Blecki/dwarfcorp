@@ -173,6 +173,10 @@ namespace DwarfCorp
                                     Texture2D tilemap)
         {
             Vector3[] corners = new Vector3[8];
+            if (camera == null)
+            {
+                camera = World.Camera;
+            }
             Camera tempCamera = new Camera(World, camera.Target, camera.Position, camera.FOV, camera.AspectRatio, camera.NearPlane, 30);
             tempCamera.GetFrustrum().GetCorners(corners);
             BoundingBox cameraBox = MathFunctions.GetBoundingBox(corners);

@@ -103,8 +103,13 @@ namespace DwarfCorp
             }
 
             foreach (var resourceAmount in Designation.ItemType.RequiredResources)
-                if (agent.Faction.ListResourcesWithTag(resourceAmount.ResourceType).Count == 0)
+            {
+                var resources = agent.Faction.ListResourcesWithTag(resourceAmount.ResourceType, Designation.ItemType.AllowHeterogenous);
+                if (resources.Count == 0 || !resources.Any(r => r.NumResources >= resourceAmount.NumResources))
+                {
                     return false;
+                }
+            }
 
             return true;
         }
