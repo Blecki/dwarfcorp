@@ -155,17 +155,14 @@ namespace DwarfCorp
             switch (OrientationType)
             {
                 case OrientMode.Spherical:
-                    { 
-                        float xscale = GlobalTransform.Left.Length();
-                        float yscale = GlobalTransform.Up.Length();
-                        float zscale = GlobalTransform.Forward.Length();
-                        Matrix bill = Matrix.CreateBillboard(GlobalTransform.Translation, camera.Position, camera.UpVector, null);
-                        Matrix noTransBill = bill;
+                    {
+                        Matrix bill = Matrix.CreateBillboard(GlobalTransform.Translation, camera.Position, camera.UpVector, null) * Matrix.CreateTranslation(distortion);
+                        //Matrix noTransBill = bill;
                         //noTransBill.Translation = Vector3.Zero;
-
-                        Matrix worldRot = Matrix.CreateScale(new Vector3(xscale, yscale, zscale)) * noTransBill;
-                        worldRot.Translation = bill.Translation + distortion;
-                        effect.World = worldRot;
+                        
+                        //Matrix worldRot = noTransBill;
+                        //worldRot.Translation = bill.Translation;// + VertexNoise.GetNoiseVectorFromRepeatingTexture(bill.Translation);
+                        effect.World = bill;
                         break;
                     }
                 case OrientMode.Fixed:

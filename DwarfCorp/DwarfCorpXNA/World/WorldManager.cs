@@ -689,6 +689,7 @@ namespace DwarfCorp
             if (!ShowingWorld)
                 return;
 
+            GamePerformance.Instance.StartTrackPerformance("Render - RENDER");
             GamePerformance.Instance.StartTrackPerformance("Render - Prep");
 
             var renderables = ComponentRenderer.EnumerateVisibleRenderables(ComponentManager.GetRenderables(),
@@ -763,7 +764,12 @@ namespace DwarfCorp
                 //GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Instances");
 
                 SelectionBuffer.End(GraphicsDevice);
+
+                GamePerformance.Instance.TrackValueType("SBUFFER RENDERED", true);
             }
+            else
+                GamePerformance.Instance.TrackValueType("SBUFFER RENDERED", false);
+
 
             #endregion
 
@@ -824,10 +830,10 @@ namespace DwarfCorp
 
             GamePerformance.Instance.StartTrackPerformance("Render - Drawer3D");
             // Render simple geometry (boxes, etc.)
-            Drawer3D.Render(GraphicsDevice, DefaultShader, true);
+            Drawer3D.Render(GraphicsDevice, DefaultShader, Camera);
             GamePerformance.Instance.StopTrackPerformance("Render - Drawer3D");
 
-            GamePerformance.Instance.StartTrackPerformance("Render - Components");
+            GamePerformance.Instance.StartTrackPerformance("Render - Instances");
 
             DefaultShader.EnableShadows = GameSettings.Default.UseDynamicShadows;
 
@@ -838,6 +844,9 @@ namespace DwarfCorp
 
             DefaultShader.View = Camera.ViewMatrix;
             InstanceManager.Render(GraphicsDevice, DefaultShader, Camera);
+            GamePerformance.Instance.StopTrackPerformance("Render - Instances");
+            GamePerformance.Instance.StartTrackPerformance("Render - Components");
+
             ComponentRenderer.Render(renderables, gameTime, ChunkManager,
                 Camera,
                 DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader,
@@ -923,7 +932,7 @@ namespace DwarfCorp
             GraphicsDevice.BlendState = BlendState.Opaque;
 
             GamePerformance.Instance.StopTrackPerformance("Render - Misc");
-
+            GamePerformance.Instance.StopTrackPerformance("Render - RENDER");
 
             lock (ScreenshotLock)
             {

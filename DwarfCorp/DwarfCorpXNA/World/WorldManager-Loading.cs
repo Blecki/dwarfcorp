@@ -241,17 +241,19 @@ namespace DwarfCorp
                     SeaLevel = SeaLevel
                 };
 
-                // Creates the terrain management system.
-                ChunkManager = new ChunkManager(Content, this, Camera,
-                    GraphicsDevice,
-                    ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
-
-                ChunkRenderer = new ChunkRenderer(this, Camera, GraphicsDevice, ChunkManager.ChunkData);
             
                 #region Load Components
 
                 if (fileExists)
                 {
+                    Camera = gameFile.Data.Worlddata.Camera;
+
+                    ChunkManager = new ChunkManager(Content, this, Camera,
+                        GraphicsDevice,
+                        ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
+
+                    ChunkRenderer = new ChunkRenderer(this, Camera, GraphicsDevice, ChunkManager.ChunkData);
+
                     SetLoadingMessage("Loading Terrain...");
                     gameFile.ReadChunks(ExistingFile);
                     ChunkManager.ChunkData.LoadFromFile(gameFile, SetLoadingMessage);
@@ -314,8 +316,6 @@ namespace DwarfCorp
 
                     TutorialManager = new Tutorial.TutorialManager("Content/tutorial.txt");
                     TutorialManager.SetFromSaveData(gameFile.Data.Worlddata.TutorialSaveData);
-
-                    Camera = gameFile.Data.Worlddata.Camera;
                 }
                 else
                 {
@@ -330,6 +330,13 @@ namespace DwarfCorp
                         new Vector3(VoxelConstants.ChunkSizeY, VoxelConstants.ChunkSizeY - 1.0f, VoxelConstants.ChunkSizeZ) + new Vector3(WorldOrigin.X, 0, WorldOrigin.Y) * WorldScale + Vector3.Up * 10.0f + Vector3.Backward * 10,
                         MathHelper.PiOver4, AspectRatio, 0.1f,
                         GameSettings.Default.VertexCullDistance);
+
+                    ChunkManager = new ChunkManager(Content, this, Camera,
+                        GraphicsDevice,
+                        ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
+
+                    ChunkRenderer = new ChunkRenderer(this, Camera, GraphicsDevice, ChunkManager.ChunkData);
+
 
                     var chunkOffset = GlobalVoxelCoordinate.FromVector3(globalOffset).GetGlobalChunkCoordinate();
                     //var chunkOffset = ChunkManager.ChunkData.RoundToChunkCoords(globalOffset);
@@ -410,7 +417,7 @@ namespace DwarfCorp
                 }
 
                 Camera.World = this;
-                Drawer3D.Camera = Camera;
+                //Drawer3D.Camera = Camera;
 
 
                 #endregion

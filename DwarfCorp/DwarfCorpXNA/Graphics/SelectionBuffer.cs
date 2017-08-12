@@ -81,8 +81,7 @@ namespace DwarfCorp
             {
                 case SelectionBufferState.Idle:
                     renderTimer.Update(DwarfTime.LastTime);
-                    renderThisFrame = (renderTimer.HasTriggered || colorBuffer == null)
-                        && State == SelectionBufferState.Idle;
+                    renderThisFrame = (renderTimer.HasTriggered || colorBuffer == null);
                     if (!renderThisFrame)
                         return false;
                     ValidateBuffer(device);

@@ -421,7 +421,7 @@ TVertexToPixel TexturedVS(float4 inPos : POSITION,
 	{
 		Output.Color = saturate(Output.Color + LIGHT_COLOR / 999.0f);
 	}
-
+	
 	if (xEnableFog)
 	{
 		Output.Fog = saturate((Output.Position.z - xFogStart) / (xFogEnd - xFogStart));
@@ -642,7 +642,11 @@ TPixelToFrame SilhouettePS(TVertexToPixel PSIn)
 
 TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
 {
-    TPixelToFrame Output = (TPixelToFrame)0;
+	float2 textureCoords = ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds);
+	float4 texColor = tex2D(TextureSampler, textureCoords);
+	clip((texColor.a - 0.5));
+
+	TPixelToFrame Output = (TPixelToFrame)0;
 
 	if (xEnableShadows)
 	{
@@ -669,8 +673,6 @@ TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
 	
 	saturate(Output.Color.rgb);
 
-	float2 textureCoords = ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds);
-	float4 texColor = tex2D(TextureSampler, textureCoords);
 	float4 illumColor = tex2D(IllumSampler, textureCoords);
 
 	Output.Color.rgba *= texColor;
@@ -679,8 +681,6 @@ TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
 		Output.Color.rgba = lerp(Output.Color.rgba, texColor, illumColor.r); 
 	
 	Output.Color.rgba = float4(lerp(Output.Color.rgb, xFogColor, PSIn.Fog) * Output.Color.a, Output.Color.a);
-
-	clip((texColor.a - 0.5));
 
 	if (Clipping)
 	{
@@ -701,6 +701,8 @@ TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
 
 TPixelToFrame TexturedPS(TVertexToPixel PSIn)
 {
+	float4 texColor = tex2D(TextureSampler, ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds));
+
     TPixelToFrame Output = (TPixelToFrame)0;
 	if (Clipping)  clip(PSIn.ClipDistance);  //MSS - Water Refactor added
     
@@ -728,7 +730,6 @@ TPixelToFrame TexturedPS(TVertexToPixel PSIn)
 
 	Output.Color.rgb *=  tex2D(AmbientSampler, float2(PSIn.Color.g, 0.5f));
 	Output.Color.rgb *= PSIn.ColorTint;
-	float4 texColor = tex2D(TextureSampler, ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds));
 	float4 illumColor = tex2D(IllumSampler, ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds));
 
 	Output.Color.rgba *= texColor;

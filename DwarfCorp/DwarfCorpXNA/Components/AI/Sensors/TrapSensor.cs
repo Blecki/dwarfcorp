@@ -70,8 +70,8 @@ namespace DwarfCorp
         {
             //if (DrawBoundingBox)
             //{
-                Drawer3D.DrawBox(BoundingBox, Color.White, 0.02f);
-                Drawer3D.DrawBox(GetRotatedBoundingBox(), Color.Red, 0.02f);
+                Drawer3D.DrawBox(BoundingBox, Color.White, 0.02f, false);
+                Drawer3D.DrawBox(GetRotatedBoundingBox(), Color.Red, 0.02f, false);
             //}
 
             base.Update(gameTime, chunks, camera);
