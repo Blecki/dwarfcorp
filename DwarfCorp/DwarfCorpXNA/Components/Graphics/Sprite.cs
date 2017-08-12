@@ -23,7 +23,7 @@ namespace DwarfCorp
         public OrientMode OrientationType { get; set; }
         public bool DrawSilhouette { get; set; }
         public Color SilhouetteColor { get; set; }
-
+        private Vector3 prevDistortion = Vector3.Zero;
 
         public enum OrientMode
         {
@@ -149,15 +149,17 @@ namespace DwarfCorp
             
             CurrentAnimation.PreRender();
             SpriteSheet = CurrentAnimation.SpriteSheet;
-
+            var currDistortion = VertexNoise.GetNoiseVectorFromRepeatingTexture(GlobalTransform.Translation);
+            var distortion = currDistortion * 0.1f + prevDistortion * 0.9f;
+            prevDistortion = distortion;
             switch (OrientationType)
             {
                 case OrientMode.Spherical:
-                    { 
-                        Matrix bill = Matrix.CreateBillboard(GlobalTransform.Translation, camera.Position, camera.UpVector, null);
+                    {
+                        Matrix bill = Matrix.CreateBillboard(GlobalTransform.Translation, camera.Position, camera.UpVector, null) * Matrix.CreateTranslation(distortion);
                         //Matrix noTransBill = bill;
                         //noTransBill.Translation = Vector3.Zero;
-
+                        
                         //Matrix worldRot = noTransBill;
                         //worldRot.Translation = bill.Translation;// + VertexNoise.GetNoiseVectorFromRepeatingTexture(bill.Translation);
                         effect.World = bill;
@@ -166,14 +168,14 @@ namespace DwarfCorp
                 case OrientMode.Fixed:
                     {
                         Matrix rotation = GlobalTransform;
-                        rotation.Translation = rotation.Translation + VertexNoise.GetNoiseVectorFromRepeatingTexture(rotation.Translation);
+                        rotation.Translation = rotation.Translation + distortion;
                         effect.World = rotation;
                         break;
                     }
                 case OrientMode.YAxis:
                     {
                         Matrix worldRot = Matrix.CreateConstrainedBillboard(GlobalTransform.Translation, camera.Position, Vector3.UnitY, null, null);
-                        worldRot.Translation = worldRot.Translation + VertexNoise.GetNoiseVectorFromRepeatingTexture(worldRot.Translation);
+                        worldRot.Translation = worldRot.Translation + distortion;
                         effect.World = worldRot;
                         break;
                     }

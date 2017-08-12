@@ -320,7 +320,7 @@ namespace DwarfCorp
                 {
                     foreach(var r in refs)
                     {
-                        if(!IsDesignation(r) || r.Type.Name != "empty")
+                        if(!IsDesignation(r))
                         {
                             continue;
                         }

@@ -75,7 +75,7 @@ namespace DwarfCorp.GameStates
 
             LoadTicker = GuiRoot.RootItem.AddChild(new Gui.Widgets.InfoTicker
             {
-                Font = "outline-font",
+                Font = "font",
                 AutoLayout = Gui.AutoLayout.DockFill,
                 TextColor = new Vector4(1,1,1,1)
             }) as Gui.Widgets.InfoTicker;

@@ -157,12 +157,13 @@ namespace DwarfCorp
 
         public void LoadFromFile(GameFile gameFile, Action<String> SetLoadingMessage)
         {
-            var maxChunkX = gameFile.Data.ChunkData.Max(c => c.ID.X);
-            var maxChunkZ = gameFile.Data.ChunkData.Max(c => c.ID.Z);
+            var maxChunkX = gameFile.Data.ChunkData.Max(c => c.ID.X) + 1;
+            var maxChunkZ = gameFile.Data.ChunkData.Max(c => c.ID.Z) + 1;
             ChunkMapMinX = gameFile.Data.ChunkData.Min(c => c.ID.X);
             ChunkMapMinZ = gameFile.Data.ChunkData.Min(c => c.ID.Z);
             ChunkMapWidth = maxChunkX - ChunkMapMinX;
             ChunkMapHeight = maxChunkZ - ChunkMapMinZ;
+
             ChunkMap = new VoxelChunk[ChunkMapWidth * ChunkMapHeight];
 
             foreach (VoxelChunk chunk in gameFile.Data.ChunkData.Select(file => file.ToChunk(chunkManager)))

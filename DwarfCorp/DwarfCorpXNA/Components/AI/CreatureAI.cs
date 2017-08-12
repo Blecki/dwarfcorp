@@ -677,7 +677,11 @@ namespace DwarfCorp
 
                 foreach (var resource in Creature.Inventory.Resources.Where(resource => resource.MarkedForRestock))
                 {
-                    return new StockResourceTask(new ResourceAmount(resource.Resource));
+                    Task task = new StockResourceTask(new ResourceAmount(resource.Resource));
+                    if (task.IsFeasible(Creature))
+                    {
+                        return task;
+                    }
                 }
 
                 // Farm stuff if applicable
@@ -741,13 +745,18 @@ namespace DwarfCorp
                 if (Faction.HasFreeStockpile(order.Resource))
                 {
                     GatherManager.StockOrders.RemoveAt(0);
-                    return new ActWrapperTask(new StockResourceAct(this, order.Resource))
+                    Task task = new StockResourceTask(order.Resource)
                     {
                         Priority = Task.PriorityType.Low
                     };
+                    if (task.IsFeasible(this.Creature))
+                    {
+                        return task;
+                    }
                 }
             }
-            else if (GatherManager.VoxelOrders.Count == 0 && GatherManager.StockMoneyOrders.Count > 0)
+            
+            if (GatherManager.VoxelOrders.Count == 0 && GatherManager.StockMoneyOrders.Count > 0)
             {
                 var order = GatherManager.StockMoneyOrders[0];
                 if (Faction.HasFreeTreasury(order.Money))

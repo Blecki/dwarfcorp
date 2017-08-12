@@ -113,6 +113,7 @@ namespace DwarfCorp
                     Time = gameFile.Data.Metadata.Time;
                     WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
                     WorldScale = gameFile.Data.Metadata.WorldScale;
+                    WorldSize = gameFile.Data.Metadata.NumChunks;
                     GameID = gameFile.Data.GameID;
                     if (gameFile.Data.Metadata.OverworldFile != null && gameFile.Data.Metadata.OverworldFile != "flat")
                     {
@@ -240,17 +241,19 @@ namespace DwarfCorp
                     SeaLevel = SeaLevel
                 };
 
-                // Creates the terrain management system.
-                ChunkManager = new ChunkManager(Content, this, Camera,
-                    GraphicsDevice,
-                    ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
-
-                ChunkRenderer = new ChunkRenderer(this, Camera, GraphicsDevice, ChunkManager.ChunkData);
             
                 #region Load Components
 
                 if (fileExists)
                 {
+                    Camera = gameFile.Data.Worlddata.Camera;
+
+                    ChunkManager = new ChunkManager(Content, this, Camera,
+                        GraphicsDevice,
+                        ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
+
+                    ChunkRenderer = new ChunkRenderer(this, Camera, GraphicsDevice, ChunkManager.ChunkData);
+
                     SetLoadingMessage("Loading Terrain...");
                     gameFile.ReadChunks(ExistingFile);
                     ChunkManager.ChunkData.LoadFromFile(gameFile, SetLoadingMessage);
@@ -313,8 +316,6 @@ namespace DwarfCorp
 
                     TutorialManager = new Tutorial.TutorialManager("Content/tutorial.txt");
                     TutorialManager.SetFromSaveData(gameFile.Data.Worlddata.TutorialSaveData);
-
-                    Camera = gameFile.Data.Worlddata.Camera;
                 }
                 else
                 {
@@ -329,6 +330,13 @@ namespace DwarfCorp
                         new Vector3(VoxelConstants.ChunkSizeY, VoxelConstants.ChunkSizeY - 1.0f, VoxelConstants.ChunkSizeZ) + new Vector3(WorldOrigin.X, 0, WorldOrigin.Y) * WorldScale + Vector3.Up * 10.0f + Vector3.Backward * 10,
                         MathHelper.PiOver4, AspectRatio, 0.1f,
                         GameSettings.Default.VertexCullDistance);
+
+                    ChunkManager = new ChunkManager(Content, this, Camera,
+                        GraphicsDevice,
+                        ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
+
+                    ChunkRenderer = new ChunkRenderer(this, Camera, GraphicsDevice, ChunkManager.ChunkData);
+
 
                     var chunkOffset = GlobalVoxelCoordinate.FromVector3(globalOffset).GetGlobalChunkCoordinate();
                     //var chunkOffset = ChunkManager.ChunkData.RoundToChunkCoords(globalOffset);
@@ -418,9 +426,6 @@ namespace DwarfCorp
                 // Finally, the chunk manager's threads are started to allow it to 
                 // dynamically rebuild terrain
                 ChunkManager.RebuildList = new ConcurrentQueue<VoxelChunk>();
-                ChunkManager.UpdateRebuildList();
-                ChunkManager.StartThreads();
-
 
                 SetLoadingMessage("Creating Particles ...");
                 ParticleManager = new ParticleManager(ComponentManager);
@@ -432,6 +437,9 @@ namespace DwarfCorp
                 if (Master.Faction.Economy.Company.Information == null)
                     Master.Faction.Economy.Company.Information = new CompanyInformation();
                 CreateInitialEmbarkment();
+                ChunkManager.UpdateRebuildList();
+                ChunkManager.CreateGraphics(SetLoadingMessage, ChunkManager.ChunkData);
+                ChunkManager.StartThreads();
                 SetLoadingMessage("Presimulating ...");
                 ShowingWorld = false;
                 OnLoadedEvent();

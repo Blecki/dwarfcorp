@@ -1000,7 +1000,7 @@ namespace DwarfCorp.GameStates
                         PopupChild = new BuildCraftInfo
                         {
                             Data = data,
-                            Rect = new Rectangle(0, 0, 256, 150),
+                            Rect = new Rectangle(0, 0, 300, 150),
                             Master = Master,
                             World = World,
                             OnShown = (sender) =>
@@ -1082,7 +1082,7 @@ namespace DwarfCorp.GameStates
                         PopupChild = new BuildCraftInfo
                         {
                             Data = data,
-                            Rect = new Rectangle(0, 0, 256, 150),
+                            Rect = new Rectangle(0, 0, 300, 150),
                             Master = Master,
                             World = World,
                             BuildAction = (sender, args) =>
@@ -1195,7 +1195,7 @@ namespace DwarfCorp.GameStates
                         PopupChild = new BuildCraftInfo
                         {
                             Data = data,
-                            Rect = new Rectangle(0, 0, 256, 128),
+                            Rect = new Rectangle(0, 0, 300, 150),
                             Master = Master,
                             World = World,
                             BuildAction = (sender, args) =>

@@ -421,7 +421,7 @@ TVertexToPixel TexturedVS(float4 inPos : POSITION,
 	{
 		Output.Color = saturate(Output.Color + LIGHT_COLOR / 999.0f);
 	}
-
+	
 	if (xEnableFog)
 	{
 		Output.Fog = saturate((Output.Position.z - xFogStart) / (xFogEnd - xFogStart));

@@ -196,7 +196,7 @@ namespace DwarfCorp
             catch (InvalidOperationException exception)
             {
                 Console.Error.WriteLine(exception.ToString());
-                throw exception;
+                //throw exception;
             }
 
         }

@@ -196,6 +196,36 @@
 			"TileHeight": 64
 		},
 		{
+			"Name" : "GUI\\diplo-dorf",
+			"Texture" : "GUI/diplo-dorf",
+			"TileWidth" : 64,
+			"TileHeight" : 64
+		},
+		{
+			"Name" : "GUI\\diplo-elf",
+			"Texture" : "GUI/diplo-elf",
+			"TileWidth" : 64,
+			"TileHeight" : 64
+		},
+		{
+			"Name" : "GUI\\diplo-goblin",
+			"Texture" : "GUI/diplo-goblin",
+			"TileWidth" : 64,
+			"TileHeight" : 64
+		},
+		{
+			"Name" : "GUI\\diplo-moleman",
+			"Texture" : "GUI/diplo-moleman",
+			"TileWidth" : 64,
+			"TileHeight" : 64
+		},
+		{
+			"Name" : "GUI\\diplo-necro",
+			"Texture" : "GUI/diplo-necro",
+			"TileWidth" : 64,
+			"TileHeight" : 64
+		},
+		{
 			"Name": "minimap-frame",
 			"Texture": "newgui/gui_minimap",
 			"TileWidth": 239,

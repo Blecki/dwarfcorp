@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -54,6 +54,7 @@ namespace DwarfCorp
             for (int i = 0; i < VoxelConstants.ChunkVoxelCount; i++)
                 SunColors[i] = sunColor;
         }
+
     }
 
 }

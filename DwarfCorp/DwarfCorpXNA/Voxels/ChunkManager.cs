@@ -601,8 +601,6 @@ namespace DwarfCorp
                 ChunkData.GetChunkEnumerator().FirstOrDefault(), new LocalVoxelCoordinate(0, VoxelConstants.ChunkSizeY - 1, 0)));
 
             GenerateDistance = origBuildRadius;
-
-            ChunkData.ChunkManager.CreateGraphics(SetLoadingMessage, ChunkData);
         }
 
         private void RecalculateBounds()

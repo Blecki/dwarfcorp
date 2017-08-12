@@ -229,6 +229,7 @@ namespace DwarfCorp
             CollideMode = CollisionMode.All;
             Orientation = orientation;
             SleepTimer = new Timer(5.0f, true);
+            WakeTimer = new Timer(0.01f, true);
         }
 
         public void Move(float dt)
@@ -242,6 +243,7 @@ namespace DwarfCorp
         new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (!Active) return;
+
             if (gameTime.Speed < 0.01)
             {
                 base.Update(gameTime, chunks, camera);
@@ -251,22 +253,32 @@ namespace DwarfCorp
             // How would this get a NaN anyway?
             if (MathFunctions.HasNan(Velocity))
                 Velocity = Vector3.Zero;
-            
+
+            if (IsSleeping)
+            {
+                applyGravityThisFrame = false;
+            }
+
+            bool goingSlow = Velocity.LengthSquared() < 0.05f;
             // If we're not sleeping and moving very slowly, go to sleep.
-            if (!IsSleeping && Velocity.LengthSquared() < 0.0225f)
+            if (!IsSleeping && goingSlow)
             {
                 SleepTimer.Update(gameTime);
                 if (SleepTimer.HasTriggered)
                 {
-                    applyGravityThisFrame = false;
+                    WakeTimer.Reset();
                     Velocity = Vector3.Zero;
                     IsSleeping = true;
                 }
             }
-            else
+            else if (IsSleeping && !goingSlow)
             {
+                WakeTimer.Update(gameTime);
                 SleepTimer.Reset();
-                IsSleeping = false;
+                if (WakeTimer.HasTriggered)
+                {
+                    IsSleeping = false;
+                }
             }
 
             // If not sleeping, update physics.
@@ -284,7 +296,6 @@ namespace DwarfCorp
                 // Prepare expanded world bounds.
                 BoundingBox worldBounds = chunks.Bounds;
                 worldBounds.Max.Y += 50;
-
                 // For each timestep, move and collide.
                 for (int n = 0; n < numTimesteps * velocityLength; n++)
                 {
@@ -386,11 +397,13 @@ namespace DwarfCorp
                     // No they won't @blecki, this broke everything!! -@mklingen
                     // Remove check so that it is ALWAYS called when an object moves. Call removed
                     //   from component update in ComponentManager. -@blecki
-                    //if (numTimesteps*velocityLength > 1)
-                    //{
+                    if (numTimesteps*velocityLength > 1)
+                    {
+                        // Assume all physics are attached to the root.
+                        GlobalTransform = Manager.RootComponent.LocalTransform * LocalTransform;
                         UpdateBoundingBox();
-                        UpdateTransformsRecursive(Parent as Body);
-                    //}
+                        //UpdateTransformsRecursive(Parent as Body);
+                    }
                 }
 
             }
@@ -403,6 +416,7 @@ namespace DwarfCorp
         }
 
         public Timer SleepTimer { get; set; }
+        public Timer WakeTimer { get; set; }
 
         public void Face(Vector3 target)
         {
@@ -458,6 +472,9 @@ namespace DwarfCorp
             {
                 case Message.MessageType.OnChunkModified:
                     overrideSleepThisFrame = true;
+                    IsSleeping = false;
+                    SleepTimer.Reset();
+                    HandleCollisions(World.ChunkManager, DwarfTime.Dt);
                     break;
             }
 
@@ -473,6 +490,7 @@ namespace DwarfCorp
                 return false;
             }
 
+
             Contact contact = new Contact();
 
             if (!TestStaticAABBAABB(BoundingBox, box, ref contact))
@@ -481,16 +499,23 @@ namespace DwarfCorp
             }
 
             Matrix m = LocalTransform;
-            m.Translation += contact.NEnter * (contact.Penetration) * 0.5f;
 
-            Vector3 impulse = (Vector3.Dot(Velocity, -contact.NEnter) * contact.NEnter) * 60.0f;
-            Velocity += impulse * dt;
-            //Velocity = Vector3.Reflect(Velocity, -contact.NEnter) * Restitution;
-            Velocity = new Vector3(Velocity.X * Friction, Velocity.Y, Velocity.Z * Friction);
+            if (box.Contains(Position) == ContainmentType.Contains)
+            {
+                var extents = BoundingBox.Extents();
+                m.Translation = new Vector3(m.Translation.X, box.Max.Y + extents.Y, m.Translation.Z);
+            }
+            else
+            {
+                m.Translation += contact.NEnter * (contact.Penetration) * 0.5f;
+
+                Vector3 impulse = (Vector3.Dot(Velocity, -contact.NEnter) * contact.NEnter) * 60.0f;
+                Velocity += impulse * dt;
+                Velocity = new Vector3(Velocity.X * Friction, Velocity.Y, Velocity.Z * Friction);
+            }
 
             LocalTransform = m;
             UpdateBoundingBox();
-
             return true;
         }
 
@@ -524,10 +549,10 @@ namespace DwarfCorp
         }
 
 
-        public class Contact
+        public struct Contact
         {
-            public bool IsIntersecting = false;
-            public Vector3 NEnter = Vector3.Zero;
+            public bool IsIntersecting;
+            public Vector3 NEnter;
             public float Penetration;
         }
 
