@@ -84,6 +84,7 @@ namespace DwarfCorp
             public bool DrawPaths = false;
             public bool AutoSave = true;
             public float AutoSaveTimeMinutes = 2.0f;
+            public bool VSync = true;
 
             public override string ToString()
             {
