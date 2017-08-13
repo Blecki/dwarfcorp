@@ -175,6 +175,10 @@
     <Compile Include="Components\Graphics\LightEmitter.cs" />
     <Compile Include="Components\Graphics\Mesh.cs" />
     <Compile Include="Components\Graphics\OrientedAnimation.cs" />
+    <Compile Include="Graphics\Instancing\InstanceRenderData.cs" />
+    <Compile Include="Graphics\Instancing\InstanceRenderer.cs" />
+    <Compile Include="Graphics\Instancing\NewInstanceData.cs" />
+    <Compile Include="Graphics\Instancing\NewInstanceManager.cs" />
     <Compile Include="Graphics\Primitives\RawPrimitive.cs" />
     <Compile Include="Gui\Widgets\CollapsableFrame.cs" />
     <Compile Include="Gui\Widgets\FlatToolTray.cs" />
@@ -355,6 +359,7 @@
     <Compile Include="Scripting\Factions\Race.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\Treasury.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\FindLandTask.cs" />
+    <Compile Include="Tools\Datastructures\OctTree.cs" />
     <Compile Include="Tools\Math\FastVoxelTraversal.cs" />
     <Compile Include="Tools\Planning\GoalRegion.cs" />
     <Compile Include="Tools\Planning\AdjacentVoxelGoalRegion2D.cs" />
