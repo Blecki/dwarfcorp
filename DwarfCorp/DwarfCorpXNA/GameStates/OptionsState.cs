@@ -699,7 +699,7 @@ namespace DwarfCorp.GameStates
                                 GameSettings.Default.DrawChunksReflected = true;
                                 GameSettings.Default.DrawEntityReflected = true;
                                 GameSettings.Default.DrawSkyReflected = true;
-                                GameSettings.Default.UseLightmaps = true;
+                                GameSettings.Default.UseLightmaps = false;
                                 GameSettings.Default.UseDynamicShadows = false;
                                 GameSettings.Default.EntityLighting = true;
                                 GameSettings.Default.EnableGlow = true;
@@ -716,8 +716,8 @@ namespace DwarfCorp.GameStates
                                 GameSettings.Default.DrawChunksReflected = true;
                                 GameSettings.Default.DrawEntityReflected = false;
                                 GameSettings.Default.DrawSkyReflected = true;
-                                GameSettings.Default.UseLightmaps = true;
-                                GameSettings.Default.UseDynamicShadows = true;
+                                GameSettings.Default.UseLightmaps = false;
+                                GameSettings.Default.UseDynamicShadows = false;
                                 GameSettings.Default.EntityLighting = true;
                                 GameSettings.Default.EnableGlow = true;
                                 GameSettings.Default.SelfIlluminationEnabled = true;

@@ -185,7 +185,7 @@ namespace DwarfCorp
             {
                 list.Render(device, effect, camera);
             }
-            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
+            effect.SetTexturedTechnique();
             effect.World = Matrix.Identity;
         }
     }

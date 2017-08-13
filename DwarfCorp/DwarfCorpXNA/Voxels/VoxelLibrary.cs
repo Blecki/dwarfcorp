@@ -814,7 +814,7 @@ namespace DwarfCorp
         
             device.SetRenderTarget(toReturn);
             device.Clear(Color.Transparent);
-            shader.CurrentTechnique = shader.Techniques[Shader.Technique.Textured];
+            shader.SetTexturedTechnique();
             shader.MainTexture = chunks.ChunkData.Tilemap;
             shader.SelfIlluminationEnabled = true;
             shader.SelfIlluminationTexture = chunks.ChunkData.IllumMap;

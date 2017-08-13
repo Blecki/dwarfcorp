@@ -620,7 +620,7 @@ namespace DwarfCorp
             GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
             effect.View = view;
             effect.Projection = Camera.ProjectionMatrix;
-            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
+            effect.SetTexturedTechnique();
             effect.ClippingEnabled = true;
             GraphicsDevice.BlendState = BlendState.NonPremultiplied;
             ChunkRenderer.Render(Camera, gameTime, GraphicsDevice, effect, Matrix.Identity);
@@ -676,7 +676,7 @@ namespace DwarfCorp
             {
                 LightPositions[j] = new Vector3(0, 0, 0);
             }
-
+            DefaultShader.CurrentNumLights = numLights - 1;
             DynamicLight.TempLights.Clear();
         }
 
@@ -861,7 +861,7 @@ namespace DwarfCorp
             {
                 DefaultShader.View = Camera.ViewMatrix;
                 DefaultShader.Projection = Camera.ProjectionMatrix;
-                DefaultShader.CurrentTechnique = DefaultShader.Techniques[Shader.Technique.Textured];
+                DefaultShader.SetTexturedTechnique();
                 GraphicsDevice.BlendState = BlendState.NonPremultiplied;
                 Master.Faction.WallBuilder.Render(gameTime, GraphicsDevice, DefaultShader);
                 Master.Faction.CraftBuilder.Render(gameTime, GraphicsDevice, DefaultShader);
