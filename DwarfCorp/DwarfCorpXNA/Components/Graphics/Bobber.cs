@@ -1,4 +1,4 @@
-﻿// Bobber.cs
+// Bobber.cs
 // 
 //  Modified MIT License (MIT)
 //  

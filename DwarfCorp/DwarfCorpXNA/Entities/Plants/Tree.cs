@@ -142,7 +142,7 @@ namespace DwarfCorp
 
         public virtual Seedling BecomeSeedling()
         {
-            UpdateTransformsRecursive(Parent as Body);
+            UpdateTransform();
             SetFlagRecursive(Flag.Active, false);
             SetFlagRecursive(Flag.Visible, false);
 

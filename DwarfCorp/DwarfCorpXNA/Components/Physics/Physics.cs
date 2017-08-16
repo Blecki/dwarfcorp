@@ -406,7 +406,7 @@ namespace DwarfCorp
                     }
                 }
 
-            }
+            } 
 
             applyGravityThisFrame = true;
             CheckLiquids(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);

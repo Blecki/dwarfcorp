@@ -165,7 +165,7 @@ namespace DwarfCorp
                         0.1f);
                     SelectedBody.LocalPosition = voxelUnderMouse.WorldPosition + Vector3.One * 0.5f;
                     SelectedBody.HasMoved = true;
-                    SelectedBody.UpdateTransformsRecursive(SelectedBody.Parent as Body);
+                    SelectedBody.UpdateTransform();
                     if (OverrideOrientation)
                     {
                         SelectedBody.Orient(CurrentOrientation);

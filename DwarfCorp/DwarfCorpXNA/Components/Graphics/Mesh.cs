@@ -84,7 +84,7 @@ namespace DwarfCorp
         {
             base.Update(gameTime, chunks, camera);
 
-            if(Instance != null  && (HasMoved || firstIter || Instance.Color != Tint))
+            if(Instance != null)
             {
                 Instance.Color = Tint;
                 Instance.Transform = GlobalTransform;

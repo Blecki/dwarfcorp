@@ -60,7 +60,7 @@ namespace DwarfCorp
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.deadbush, 32, 32);
             SeedlingFrame = new Point(0, 0);
             Matrix matrix = Matrix.CreateRotationY(MathFunctions.Rand(-0.1f, 0.1f));
-            matrix.Translation = position + new Vector3(0.5f, -0.25f, 0.5f);
+            matrix.Translation = position + new Vector3(0.5f, 0.0f, 0.5f);
             LocalTransform = matrix;
 
             var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(

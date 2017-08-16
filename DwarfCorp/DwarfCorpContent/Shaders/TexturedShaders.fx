@@ -816,7 +816,7 @@ technique Textured_8_Lights
 	}
 }
 
-technique Textured_9_Light
+technique Textured_9_Lights
 {
 	pass Pass0
 	{
