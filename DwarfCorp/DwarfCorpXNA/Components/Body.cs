@@ -363,9 +363,9 @@ namespace DwarfCorp
 
         public void PropogateTransforms()
         {
+            UpdateTransform();
             foreach (var child in Children.OfType<Body>())
             {
-                child.UpdateTransform();
                 child.PropogateTransforms();
             }
         }
