@@ -649,7 +649,6 @@ namespace DwarfCorp.GameStates
                     DwarfTime.LastTime.Speed = (float)speed;
                     Paused = speed == 0;
                     PausedWidget.Hidden = !Paused;
-                    PausedWidget.Tooltip = "(push " + ControlSettings.Mappings.Pause.ToString() + " to unpause)";
                     PausedWidget.Invalidate();
                 },
                 Tooltip = "Game speed controls."
@@ -657,11 +656,12 @@ namespace DwarfCorp.GameStates
 
             PausedWidget = GuiRoot.RootItem.AddChild(new Widget()
             {
-                Text = "\n\nPaused",
+                Text = "Paused",
                 AutoLayout = Gui.AutoLayout.FloatCenter,
                 Tooltip = "(push " + ControlSettings.Mappings.Pause.ToString() + " to unpause)",
                 Font = "outline-font",
                 TextColor = Color.White.ToVector4(),
+                IsFloater = true,
                 Hidden = true,
             });
 
