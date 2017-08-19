@@ -75,6 +75,10 @@ namespace DwarfCorp
             System.Diagnostics.Debug.Assert(InstanceTypes.ContainsKey(Instance.Type));
 
             var group = InstanceTypes[Instance.Type];
+
+            if (Mode == RenderMode.SelectionBuffer && !group.RenderData.RenderInSelectionBuffer)
+                return;
+
             group.Instances[group.InstanceCount] = new InstancedVertex
             {
                 Transform = Instance.Transform,

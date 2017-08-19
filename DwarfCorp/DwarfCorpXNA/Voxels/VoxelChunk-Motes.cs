@@ -62,29 +62,27 @@ namespace DwarfCorp
             return v;
         }
 
-        private static void DestroyGrassMote(String Name, InstanceData Data)
+        private static void DestroyGrassMote(WorldManager World, String Name, NewInstanceData Data)
         {
-            EntityFactory.InstanceManager.RemoveInstance(Name, Data);
+            World.NewInstanceManager.RemoveInstance(Data);
+            //EntityFactory.InstanceManager.RemoveInstance(Name, Data);
             // Todo: Should this be automatically set whenever an instance is added or removed?
-            EntityFactory.InstanceManager.Instances[Name].HasSelectionBuffer = false;
+            //EntityFactory.InstanceManager.Instances[Name].HasSelectionBuffer = false;
         }
 
-        private static InstanceData GenerateGrassMote(Vector3 Position, Color Color, float Scale, String Name)
+        private static NewInstanceData GenerateGrassMote(WorldManager World, Vector3 Position, Color Color, float Scale, String Name)
         {
-            var mote = new InstanceData(
+            var mote = new NewInstanceData(
+                World.NewInstanceManager,
+                Name,
+                Vector3.One / 2,
                 Matrix.CreateScale(Scale) * Matrix.CreateRotationY(Scale * Scale)
                 * Matrix.CreateTranslation(Position), Color, true);
-            EntityFactory.InstanceManager.AddInstance(Name, mote);
+            //EntityFactory.InstanceManager.AddInstance(Name, mote);
             return mote;
         }
-
-        private class MoteRecord
-        {
-            public String Name;
-            public InstanceData InstanceData;
-        }
-
-        private List<MoteRecord>[] MoteRecords = new List<MoteRecord>[VoxelConstants.ChunkSizeY];
+        
+        private List<NewInstanceData>[] MoteRecords = new List<NewInstanceData>[VoxelConstants.ChunkSizeY];
 
         public void RebuildMoteLayerIfNull(int Y)
         {
@@ -98,12 +96,12 @@ namespace DwarfCorp
             if (MoteRecords[Y] != null)
             {
                 foreach (var record in MoteRecords[Y])
-                    DestroyGrassMote(record.Name, record.InstanceData);
+                    DestroyGrassMote(this.Manager.World, record.Type, record);
                 MoteRecords[Y].Clear();
             }
             else
             {
-                MoteRecords[Y] = new List<MoteRecord>();
+                MoteRecords[Y] = new List<NewInstanceData>();
             }
 
             // Enumerate voxels.
@@ -157,16 +155,13 @@ namespace DwarfCorp
                         smallNoise.Y = 0.0f;
 
                         var mote = GenerateGrassMote(
+                            Manager.World,
                             v.WorldPosition + new Vector3(0.5f, 1.0f + s * 0.5f + vOffset, 0.5f) + smallNoise,
                             new Color(v.SunColor, 128, 0),
                             s,
                             moteDetail.Name);
 
-                        MoteRecords[Y].Add(new MoteRecord
-                        {
-                            Name = moteDetail.Name,
-                            InstanceData = mote
-                        });
+                        MoteRecords[Y].Add(mote);
                     }
                 }
             }

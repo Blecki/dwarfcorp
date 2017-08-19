@@ -112,27 +112,6 @@ namespace DwarfCorp
             
         }
 
-        public List<Body> GetComponentsInRoom()
-        {
-            List<Body> toReturn = new List<Body>();
-            HashSet<IBoundedObject> components = new HashSet<IBoundedObject>();
-            BoundingBox box = GetBoundingBox();
-            box.Max += new Vector3(0, 0, 2);
-            World.CollisionManager.GetObjectsIntersecting(GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
-
-            toReturn.AddRange(components.Where(o => o is Body).Select(o => o as Body));
-
-            return toReturn;
-        }
-
-        public List<Body> GetComponentsInRoomContainingTag(string tag)
-        {
-            List<Body> inRoom = GetComponentsInRoom();
-
-            return inRoom.Where(c => c.Tags.Contains(tag)).ToList();
-        }
-
-
         public int GetClosestDesignationTo(Vector3 worldCoordinate)
         {
             float closestDist = 99999;

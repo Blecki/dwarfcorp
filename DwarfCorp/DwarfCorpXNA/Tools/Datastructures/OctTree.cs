@@ -88,44 +88,7 @@ namespace DwarfCorp
                     child.RemoveFromTree(Item);
         }
 
-        public void FindItemsAt(Vector3 Point, HashSet<T> Results)
-        {
-            if (Bounds.Contains(Point) != ContainmentType.Disjoint)
-            {
-                if (Children == null)
-                {
-                    for (var i = 0; i < Items.Count; ++i)
-                        if (Items[i].Item2.Contains(Point) != ContainmentType.Disjoint)
-                            Results.Add(Items[i].Item1);
-                }
-                else
-                {
-                    for (var i = 0; i < 8; ++i)
-                        Children[i].FindItemsAt(Point, Results);
-                }
-            }
-        }
-
-
-        public void FindItemsInBox(BoundingBox SearchBounds, HashSet<T> results)
-        {
-            if (SearchBounds.Intersects(Bounds))
-            {
-                if (Children == null)
-                {
-                    for (var i = 0; i < Items.Count; ++i)
-                        if (Items[i].Item2.Intersects(SearchBounds))
-                            results.Add(Items[i].Item1);
-                }
-                else
-                {
-                    for (var i = 0; i < 8; ++i)
-                        Children[i].FindItemsInBox(SearchBounds, results);
-                }
-            }
-        }
-
-        public IEnumerable<T> EnumerateItemsInFrustrum(BoundingFrustum SearchBounds)
+        public IEnumerable<T> EnumerateItems(BoundingBox SearchBounds)
         {
             if (SearchBounds.Intersects(Bounds))
             {
@@ -138,7 +101,26 @@ namespace DwarfCorp
                 else
                 {
                     for (var i = 0; i < 8; ++i)
-                        foreach (var item in Children[i].EnumerateItemsInFrustrum(SearchBounds))
+                        foreach (var item in Children[i].EnumerateItems(SearchBounds))
+                            yield return item;
+                }
+            }
+        }
+
+        public IEnumerable<T> EnumerateItems(BoundingFrustum SearchBounds)
+        {
+            if (SearchBounds.Intersects(Bounds))
+            {
+                if (Children == null)
+                {
+                    for (var i = 0; i < Items.Count; ++i)
+                        if (Items[i].Item2.Intersects(SearchBounds))
+                            yield return Items[i].Item1;
+                }
+                else
+                {
+                    for (var i = 0; i < 8; ++i)
+                        foreach (var item in Children[i].EnumerateItems(SearchBounds))
                             yield return item;
                 }
             }

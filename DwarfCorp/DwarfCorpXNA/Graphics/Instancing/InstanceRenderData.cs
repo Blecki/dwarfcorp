@@ -15,5 +15,6 @@ namespace DwarfCorp
         public Texture2D Texture { get; set; }
         public BlendState BlendMode { get; set; }
         public bool EnableWind = false;
+        public bool RenderInSelectionBuffer = true;
     }
 }

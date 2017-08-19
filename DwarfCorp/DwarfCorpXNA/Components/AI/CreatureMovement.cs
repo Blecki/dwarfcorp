@@ -274,7 +274,7 @@ namespace DwarfCorp
             if (CanClimb)
             {
                 //Climbing ladders.
-                var bodies = objectHash.GetObjectsAt(voxel, CollisionManager.CollisionType.Static).OfType<GameComponent>();
+                var bodies = objectHash.EnumerateIntersectingObjects(voxel.GetBoundingBox(), CollisionManager.CollisionType.Static).OfType<GameComponent>();
 
                 var ladder = bodies.FirstOrDefault(component => component.Tags.Contains("Climbable"));
 
@@ -481,40 +481,36 @@ namespace DwarfCorp
                 {
                     // Do one final check to see if there is an object blocking the motion.
                     bool blockedByObject = false;
-                    List<IBoundedObject> objectsAtNeighbor = Creature.Manager.World.CollisionManager.GetObjectsAt(
-                        n, CollisionManager.CollisionType.Static);
+                    var objectsAtNeighbor = Creature.Manager.World.CollisionManager.EnumerateIntersectingObjects(
+                        n.GetBoundingBox(), CollisionManager.CollisionType.Static);
 
                     // If there is an object blocking the motion, determine if it can be passed through.
-                    if (objectsAtNeighbor != null)
-                    {
-                        IEnumerable<GameComponent> bodies = objectsAtNeighbor.OfType<GameComponent>();
-                        IList<GameComponent> enumerable = bodies as IList<GameComponent> ?? bodies.ToList();
 
-                        foreach (GameComponent body in enumerable)
+                    foreach (var body in objectsAtNeighbor.OfType<GameComponent>())
+                    {
+                        var door = body.GetRoot().EnumerateAll().OfType<Door>().FirstOrDefault();
+                        // If there is an enemy door blocking movement, we can destroy it to get through.
+                        if (door != null)
                         {
-                            var door = body.GetRoot().EnumerateAll().OfType<Door>().FirstOrDefault();
-                            // If there is an enemy door blocking movement, we can destroy it to get through.
-                            if (door != null)
+                            if (
+                                Creature.World.Diplomacy.GetPolitics(door.TeamFaction, Creature.Faction)
+                                    .GetCurrentRelationship() !=
+                                Relationship.Loving)
                             {
-                                if (
-                                    Creature.World.Diplomacy.GetPolitics(door.TeamFaction, Creature.Faction)
-                                        .GetCurrentRelationship() !=
-                                    Relationship.Loving)
-                                {
-                                    if (Can(MoveType.DestroyObject))
-                                        yield return (new MoveAction
-                                        {
-                                            Diff = v.Diff,
-                                            MoveType = MoveType.DestroyObject,
-                                            InteractObject = door,
-                                            DestinationVoxel = n,
-                                            SourceVoxel = voxel
-                                        });
-                                    blockedByObject = true;
-                                }
+                                if (Can(MoveType.DestroyObject))
+                                    yield return (new MoveAction
+                                    {
+                                        Diff = v.Diff,
+                                        MoveType = MoveType.DestroyObject,
+                                        InteractObject = door,
+                                        DestinationVoxel = n,
+                                        SourceVoxel = voxel
+                                    });
+                                blockedByObject = true;
                             }
                         }
                     }
+                    
                     // If no object blocked us, we can move freely as normal.
                     if (!blockedByObject)
                     {

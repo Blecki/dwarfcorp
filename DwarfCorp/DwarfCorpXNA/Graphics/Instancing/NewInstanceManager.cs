@@ -38,17 +38,22 @@ namespace DwarfCorp
             Camera Camera,
             InstanceRenderer.RenderMode Mode)
         {
+            int uniqueInstances = 0;
             RenderPass += 1;
             var frustrum = Camera.GetFrustrum();
 
-            foreach (var item in OctTree.EnumerateItemsInFrustrum(frustrum))
+            foreach (var item in OctTree.EnumerateItems(frustrum))
             {
                 if (item.RenderPass < RenderPass)
+                {
+                    uniqueInstances += 1;
                     Renderer.RenderInstance(item, Device, Effect, Camera, Mode);
+                }
                 item.RenderPass = RenderPass;
             }
 
             Renderer.Flush(Device, Effect, Camera, Mode);
+            GamePerformance.Instance.TrackValueType("Instances Drawn", uniqueInstances);
         }
     }
 }

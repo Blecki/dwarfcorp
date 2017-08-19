@@ -246,19 +246,11 @@ namespace DwarfCorp
             }
             RebuildLiquids();
 
-            HashSet<IBoundedObject> componentsInside = new HashSet<IBoundedObject>();
-            Manager.World.CollisionManager.GetObjectsIntersecting(GetBoundingBox(), componentsInside, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
-
-            Message changedMessage = new Message(Message.MessageType.OnChunkModified, "Chunk Modified");
-
-            foreach (IBoundedObject c in componentsInside)
-            {
-                if (c is GameComponent)
-                {
-                    ((GameComponent)c).ReceiveMessageRecursive(changedMessage);
-                }
-            }
-
+            var changedMessage = new Message(Message.MessageType.OnChunkModified, "Chunk Modified");
+            foreach (var c in Manager.World.CollisionManager.EnumerateIntersectingObjects(GetBoundingBox(),
+                CollisionManager.CollisionType.Both).OfType<GameComponent>())
+                c.ReceiveMessageRecursive(changedMessage);
+            
             IsRebuilding = false;
             ShouldRebuild = false;
         }
