@@ -28,7 +28,7 @@ namespace DwarfCorp
             CreateInstanceTypes(Content);
         }
 
-        private void CreateBillboard(string name, ContentManager content, int count)
+        private void CreateBillboard(string name, ContentManager content)
         {
             if (!PrimitiveLibrary.BatchBillboardPrimitives.ContainsKey(name))
                 PrimitiveLibrary.CreateIntersecting(name, name, GameState.Game.GraphicsDevice, content);
@@ -47,20 +47,21 @@ namespace DwarfCorp
 
         private void CreateInstanceTypes(ContentManager content)
         {
-            CreateBillboard("pine", content, 0);
-            CreateBillboard("palm", content, 0);
-            CreateBillboard("snowpine", content, 0);
-            CreateBillboard("appletree", content, 0);
-            CreateBillboard("berrybush", content, (int)(GameSettings.Default.NumMotes));
-            CreateBillboard("cactus", content, (int)(GameSettings.Default.NumMotes));
-            CreateBillboard("grass", content, (int)(GameSettings.Default.NumMotes));
-            CreateBillboard("frostgrass", content, (int)(GameSettings.Default.NumMotes));
-            CreateBillboard("flower", content, (int)(GameSettings.Default.NumMotes));
-            CreateBillboard("deadbush", content, (int)(GameSettings.Default.NumMotes));
-            CreateBillboard("vine", content, (int)(GameSettings.Default.NumMotes));
-            CreateBillboard("gnarled", content, (int)(GameSettings.Default.NumMotes));
-            CreateBillboard("mushroom", content, (int)(GameSettings.Default.NumMotes));
-            CreateBillboard("wheat", content, (int)(GameSettings.Default.NumMotes));
+            CreateBillboard("pine", content);
+            CreateBillboard("palm", content);
+            CreateBillboard("snowpine", content);
+            CreateBillboard("appletree", content);
+            CreateBillboard("berrybush", content);
+            CreateBillboard("cactus", content);
+            CreateBillboard("grass", content);
+            CreateBillboard("frostgrass", content);
+            CreateBillboard("flower", content);
+            CreateBillboard("deadbush", content);
+            CreateBillboard("vine", content);
+            CreateBillboard("gnarled", content);
+            CreateBillboard("mushroom", content);
+            CreateBillboard("wheat", content);
+            CreateBillboard("caveshroom", content);
         }
 
         public enum RenderMode

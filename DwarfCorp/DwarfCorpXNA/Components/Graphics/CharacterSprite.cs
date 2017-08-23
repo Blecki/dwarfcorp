@@ -141,25 +141,6 @@ namespace DwarfCorp
             return CreateAnimation(mode, orient, texture, frameHz, frameWidth, frameHeight, row, cols.ToList());
         }
 
-
-        public static CompositeAnimation CreateCompositeAnimation(CharacterMode mode,
-            Orientation orient,
-            string composite,
-            float frameHz,
-            List<SpriteSheet> layers,
-            List<Color> tints,
-            params int[][] frames
-            )
-        {
-            return new CompositeAnimation(composite, layers, tints, frames)
-            {
-                FrameHZ = frameHz,
-                Name = mode.ToString() + OrientationStrings[(int) orient],
-                Loops = true,
-                CurrentFrame = 0
-            };
-        }
-
         public static Animation CreateAnimation(CharacterMode mode,
             Orientation orient,
             SpriteSheet texture,

@@ -16,47 +16,8 @@ namespace DwarfCorp
     {
         private void Initialize(ComponentManager manager)
         {
-            SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture);
-            Point topFrame = new Point(2, 6);
-            Point sideFrame = new Point(3, 6);
-
-            List<Point> frames = new List<Point>
-            {
-                topFrame
-            };
-
-            List<Point> sideframes = new List<Point>
-            {
-                sideFrame
-            };
-
-            Animation tableTop = new Animation(GameState.Game.GraphicsDevice, spriteSheet, "tableTop", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
-            Animation tableAnimation = new Animation(GameState.Game.GraphicsDevice, spriteSheet, "tableTop", 32, 32, sideframes, false, Color.White, 0.01f, 1.0f, 1.0f, false);
-
-            Sprite tabletopSprite = AddChild(new Sprite(manager, "sprite1", Matrix.CreateRotationX((float)Math.PI * 0.5f), spriteSheet, false)
-            {
-                OrientationType = Sprite.OrientMode.Fixed
-            }) as Sprite;
-            tabletopSprite.AddAnimation(tableTop);
-
-            Sprite sprite = AddChild(new Sprite(manager, "sprite", Matrix.CreateTranslation(0.0f, -0.05f, -0.0f) * Matrix.Identity, spriteSheet, false)
-            {
-                OrientationType = Sprite.OrientMode.Fixed
-            }) as Sprite;
-            sprite.AddAnimation(tableAnimation);
-
-            Sprite sprite2 = AddChild(new Sprite(manager, "sprite2", Matrix.CreateTranslation(0.0f, -0.05f, -0.0f) * Matrix.CreateRotationY((float)Math.PI * 0.5f), spriteSheet, false)
-            {
-                OrientationType = Sprite.OrientMode.Fixed
-            }) as Sprite;
-            sprite2.AddAnimation(tableAnimation);
-
-            
-
-            tableAnimation.Play();
             Tags.Add("Chair");
             CollisionType = CollisionManager.CollisionType.Static;
-
         }
 
         public Chair()
@@ -71,20 +32,43 @@ namespace DwarfCorp
             LocalTransform = matrix;
 
             Initialize(Manager);
+            CreateCosmeticChildren(Manager);
 
             var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                 manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(position)));
+
             if (voxelUnder.IsValid)
                 AddChild(new VoxelListener(manager, manager.World.ChunkManager,
                     voxelUnder));
-
         }
 
-        public override void CreateCosmeticChildren(ComponentManager manager)
+        public override void CreateCosmeticChildren(ComponentManager Manager)
         {
-            //Initialize(manager);
-            base.CreateCosmeticChildren(manager);
+            base.CreateCosmeticChildren(Manager);
+
+            var spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32);
+
+            // Todo: Should these be instances?
+            AddChild(new SimpleSprite(Manager, "chair top", Matrix.CreateRotationX((float)Math.PI * 0.5f),
+                false, spriteSheet, new Point(2, 6))
+            {
+                OrientationType = SimpleSprite.OrientMode.Fixed,
+
+            }).SetFlag(Flag.ShouldSerialize, false);
+
+            AddChild(new SimpleSprite(Manager, "chair legs 1", Matrix.CreateTranslation(0, -0.05f, 0),
+                false, spriteSheet, new Point(3, 6))
+            {
+                OrientationType = SimpleSprite.OrientMode.Fixed
+            }).SetFlag(Flag.ShouldSerialize, false);
+
+            AddChild(new SimpleSprite(Manager, "chair legs 2",
+                Matrix.CreateTranslation(0, -0.05f, 0) * Matrix.CreateRotationY((float)Math.PI * 0.5f),
+                false, spriteSheet, new Point(3, 6))
+            {
+                OrientationType = SimpleSprite.OrientMode.Fixed
+            }).SetFlag(Flag.ShouldSerialize, false);
         }
     }
 }
