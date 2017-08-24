@@ -175,6 +175,7 @@ namespace DwarfCorp
         // Responsible for handling instances of particular primitives (or models)
         // and drawing them to the screen
         public InstanceManager InstanceManager;
+        public NewInstanceManager NewInstanceManager;
 
         // Handles loading of game assets
         public ContentManager Content;
@@ -844,6 +845,7 @@ namespace DwarfCorp
 
             DefaultShader.View = Camera.ViewMatrix;
             InstanceManager.Render(GraphicsDevice, DefaultShader, Camera);
+            NewInstanceManager.RenderInstances(GraphicsDevice, DefaultShader, Camera, InstanceRenderer.RenderMode.Normal);
             GamePerformance.Instance.StopTrackPerformance("Render - Instances");
             GamePerformance.Instance.StartTrackPerformance("Render - Components");
 

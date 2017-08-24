@@ -150,6 +150,7 @@ namespace DwarfCorp
 
                     new PrimitiveLibrary(GraphicsDevice, Content);
                     InstanceManager = new InstanceManager();
+                    NewInstanceManager = new NewInstanceManager(new BoundingBox(origin - extents, origin + extents), Content);
 
                     EntityFactory.InstanceManager = InstanceManager;
                     InstanceManager.CreateStatics(Content);

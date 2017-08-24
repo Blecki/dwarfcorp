@@ -55,7 +55,8 @@ namespace DwarfCorp
                         string asset, 
                         ResourceLibrary.ResourceType resource, 
                         int numRelease, bool selfIlluminate) :
-            base(Manager, "Mushroom", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, asset, 1.0f)
+            base(Manager, "Mushroom", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, 
+                System.IO.Path.GetFileName(asset), 1.0f)
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.deadbush, 32, 32);
             SeedlingFrame = new Point(0, 0);

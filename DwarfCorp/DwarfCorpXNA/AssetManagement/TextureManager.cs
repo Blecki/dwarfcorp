@@ -83,12 +83,6 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public static Texture2D LoadTexture(string asset)
-        {
-            Texture2D toReturn = LoadInstanceTexture(asset);
-            return toReturn;
-        }
-
         public Texture2D GetInstanceTexture(string asset)
         {
             if (AssetMap.ContainsValue(asset))

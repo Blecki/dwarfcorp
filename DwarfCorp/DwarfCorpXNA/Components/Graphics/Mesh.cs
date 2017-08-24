@@ -52,14 +52,20 @@ namespace DwarfCorp
     {
         public string ModelType { get; set; }
         [JsonIgnore]
-        public InstanceData Instance { get; set; }
+        public NewInstanceData Instance { get; set; }
         private bool instanceVisible = true;
         private bool checkHeight = false;
 
         [OnDeserialized]
         protected void OnDeserialized(StreamingContext context)
         {
-            Instance = (context.Context as WorldManager).InstanceManager.AddInstance(ModelType, GlobalTransform, Tint);
+            Instance = new NewInstanceData(
+                (context.Context as WorldManager).NewInstanceManager,
+                ModelType,
+                Vector3.One,
+                GlobalTransform,
+                Tint,
+                true);
             Instance.SelectionBufferColor = GetGlobalIDColor();
             instanceVisible = true;
         }
@@ -73,7 +79,8 @@ namespace DwarfCorp
             base(Manager, name, localTransform, Vector3.Zero, Vector3.Zero, addToCollisionManager)
         {
             ModelType = modelType;
-            Instance = Manager.World.InstanceManager.AddInstance(ModelType, GlobalTransform, Tint);
+            Instance = new NewInstanceData(Manager.World.NewInstanceManager, ModelType,
+                Vector3.One, GlobalTransform, Tint, true);
             Instance.SelectionBufferColor = GetGlobalIDColor();
             instanceVisible = true;
         }
@@ -84,7 +91,7 @@ namespace DwarfCorp
         {
             base.Update(gameTime, chunks, camera);
 
-            if(Instance != null)
+            if(Instance != null  && IsVisible && (HasMoved || firstIter || Instance.Color != Tint))
             {
                 Instance.Color = Tint;
                 Instance.Transform = GlobalTransform;
@@ -105,7 +112,7 @@ namespace DwarfCorp
 
         public override void Die()
         {
-            Manager.World.InstanceManager.Instances[ModelType].Remove(Instance);
+            Manager.World.NewInstanceManager.RemoveInstance(Instance);
             base.Die();
         }
 
@@ -115,11 +122,11 @@ namespace DwarfCorp
             {
                 if(value && !instanceVisible)
                 {
-                    Manager.World.InstanceManager.Instances[ModelType].Add(Instance);
+                    Manager.World.NewInstanceManager.AddInstance(Instance);
                 }
                 else if(!value && instanceVisible)
                 {
-                    Manager.World.InstanceManager.Instances[ModelType].Remove(Instance);
+                    Manager.World.NewInstanceManager.RemoveInstance(Instance);
                 }
             }
 

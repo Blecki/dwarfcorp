@@ -240,24 +240,20 @@ namespace DwarfCorp
                         continue;
 
                     // Evaporate.
-                    //if (water.WaterLevel <= EvaporationLevel && MathFunctions.RandEvent(0.01f))
-                    //{
-                    //    if (water.Type == LiquidType.Lava)
-                    //    {
-                    //        currentVoxel.Type = VoxelLibrary.GetVoxelType("Stone");
-                    //        chunk.ShouldRebuild = true;
-                    //        chunk.ShouldRecalculateLighting = true;
-                    //    }
+                    if (water.WaterLevel <= EvaporationLevel && MathFunctions.RandEvent(0.01f))
+                    {
+                        if (water.Type == LiquidType.Lava)
+                            currentVoxel.Type = VoxelLibrary.GetVoxelType("Stone");
 
-                    //    currentVoxel.WaterCell = new WaterCell
-                    //    {
-                    //        Type = LiquidType.None,
-                    //        WaterLevel = 0
-                    //    };
+                        currentVoxel.WaterCell = new WaterCell
+                        {
+                            Type = LiquidType.None,
+                            WaterLevel = 0
+                        };
 
-                    //    updateOccured = true;
-                    //    continue;
-                    //}
+                        updateOccured = true;
+                        continue;
+                    }
 
                     var voxBelow = (y > 0) ? new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y - 1, z)) : VoxelHandle.InvalidHandle;
 

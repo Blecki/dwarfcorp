@@ -106,7 +106,8 @@ namespace DwarfCorp
                     "mushroom",
                     "vine",
                     "gnarled",
-                    "wheat"
+                    "wheat",
+                    "caveshroom"
                 };
 
                 foreach(string mote in motes)
