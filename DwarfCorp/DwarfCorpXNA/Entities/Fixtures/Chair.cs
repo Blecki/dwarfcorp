@@ -54,7 +54,6 @@ namespace DwarfCorp
                 false, spriteSheet, new Point(2, 6))
             {
                 OrientationType = SimpleSprite.OrientMode.Fixed,
-
             }).SetFlag(Flag.ShouldSerialize, false);
 
             AddChild(new SimpleSprite(Manager, "chair legs 1", Matrix.CreateTranslation(0, -0.05f, 0),
