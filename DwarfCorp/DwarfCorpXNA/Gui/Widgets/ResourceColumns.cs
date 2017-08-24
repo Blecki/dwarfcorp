@@ -198,33 +198,47 @@ namespace DwarfCorp.Gui.Widgets
         {
             var r = Root.ConstructWidget(new Gui.Widget
             {
-                MinimumSize = new Point(1, 32),
-                MaximumSize = new Point(1, 32)
+                MinimumSize = new Point(1, 32)
             });
 
             var resourceInfo = ResourceLibrary.GetResourceByName(Resource.ResourceType);
 
-            r.AddChild(new Gui.Widget
+            var icon = r.AddChild(new ResourceIcon()
             {
-                MinimumSize = new Point(32, 32),
-                MaximumSize = new Point(32, 32),
-                Background = new TileReference("resources", resourceInfo.GuiSprite),
+                MinimumSize = new Point(32 + 16, 32),
+                MaximumSize = new Point(32 + 16, 32),
+                Layers = resourceInfo.GuiLayers,
                 AutoLayout = AutoLayout.DockLeft,
-                BackgroundColor = Resource.NumResources > 0 ? resourceInfo.Tint.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f)
+                BackgroundColor = Resource.NumResources > 0 ? resourceInfo.Tint.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
+                Font = "font",
+                TextColor = Color.Black.ToVector4(),
+                TextHorizontalAlign = HorizontalAlign.Right,
+                TextVerticalAlign = VerticalAlign.Bottom
             });
 
             r.AddChild(new Gui.Widget
             {
-                AutoLayout = AutoLayout.DockFill,
-                //Text = String.Format("{0} at ${1}e", Resource.NumResources, resourceInfo.MoneyValue),
-                //Font = "outline-font",
-                //TextColor = new Vector4(1,1,1,1),
-                TextColor = Resource.NumResources > 0 ? Color.Black.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f) ,
+                AutoLayout = AutoLayout.DockLeft,
+                MinimumSize = new Point(64, 0),
+                TextColor = Resource.NumResources > 0 ? Color.Black.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
                 TextVerticalAlign = VerticalAlign.Center,
                 HoverTextColor = Color.DarkRed.ToVector4(),
                 ChangeColorOnHover = true
             });
 
+            r.AddChild(new Gui.Widget
+            {
+                AutoLayout = AutoLayout.DockRight,
+                //Text = String.Format("{0} at ${1}e", Resource.NumResources, resourceInfo.MoneyValue),
+                //Font = "outline-font",
+                //TextColor = new Vector4(1,1,1,1),
+                TextColor = Resource.NumResources > 0 ? Color.Black.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
+                TextVerticalAlign = VerticalAlign.Center,
+                HoverTextColor = Color.DarkRed.ToVector4(),
+                ChangeColorOnHover = true
+            });
+
+            r.Layout();
             UpdateLineItemText(r, Resource);
 
             return r;
@@ -234,22 +248,27 @@ namespace DwarfCorp.Gui.Widgets
         {
             var resourceInfo = ResourceLibrary.GetResourceByName(Resource.ResourceType);
 
-            LineItem.GetChild(1).Text = String.Format("{0} at {1}",
-                Resource.NumResources,
-                ValueSourceEntity.ComputeValue(Resource.ResourceType));
-            LineItem.GetChild(1).TextColor = Resource.NumResources > 0
-                ? Color.Black.ToVector4()
-                : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
-            LineItem.Tooltip = resourceInfo.ResourceName + "\n" + resourceInfo.Description;
-            LineItem.GetChild(0).BackgroundColor = Resource.NumResources > 0
-                ? resourceInfo.Tint.ToVector4()
-                : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
-            if (resourceInfo.Tags.Contains(DwarfCorp.Resource.ResourceTags.Craft))
-                LineItem.GetChild(0).Background = new TileReference("crafts", resourceInfo.GuiSprite);
-            else
-                LineItem.GetChild(0).Background = new TileReference("resources", resourceInfo.GuiSprite);
-
+            LineItem.GetChild(1).Text = resourceInfo.ShortName ?? resourceInfo.ResourceName;
             LineItem.GetChild(1).Invalidate();
+            LineItem.GetChild(2).Text = String.Format("{0}",
+                ValueSourceEntity.ComputeValue(Resource.ResourceType));
+            var counter = LineItem.GetChild(0);
+            counter.Text = Resource.NumResources.ToString();
+            counter.Invalidate();
+            LineItem.GetChild(0).Invalidate();
+            LineItem.Tooltip = resourceInfo.ResourceName + "\n" + resourceInfo.Description;
+            for (int i = 0; i < 3; i++)
+            {
+                LineItem.GetChild(i).TextColor = Resource.NumResources > 0
+                    ? Color.Black.ToVector4()
+                    : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
+                LineItem.GetChild(i).BackgroundColor = Resource.NumResources > 0
+                    ? resourceInfo.Tint.ToVector4()
+                    : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
+                LineItem.GetChild(i).Tooltip = resourceInfo.ResourceName + "\n" + resourceInfo.Description;
+                LineItem.GetChild(i).Invalidate();
+
+            }
         }
     }
 }

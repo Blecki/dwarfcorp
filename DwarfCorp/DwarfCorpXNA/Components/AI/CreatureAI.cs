@@ -36,6 +36,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 //using System.Windows.Forms;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -245,6 +246,8 @@ namespace DwarfCorp
 
         public BoundingBox? PositionConstraint = null;
 
+        public string LastFailedAct = null;
+
         /// <summary> Add exprience points to the creature. It will level up from time to time </summary>
         public void AddXP(int amount)
         {
@@ -338,12 +341,12 @@ namespace DwarfCorp
         {
             Manager.World.Camera.ZoomTo(Position + Vector3.Up * 8.0f);
 
-            var above = VoxelHelpers.FindFirstVoxelAbove(new TemporaryVoxelHandle(
+            var above = VoxelHelpers.FindFirstVoxelAbove(new VoxelHandle(
                 World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Position)));
 
             if (above.IsValid)
             {
-                World.ChunkManager.ChunkData.SetMaxViewingLevel(above.Coordinate.Y - 1, ChunkManager.SliceMode.Y);
+                World.ChunkManager.ChunkData.SetMaxViewingLevel(above.Coordinate.Y, ChunkManager.SliceMode.Y);
             }
             else
             {
@@ -380,6 +383,17 @@ namespace DwarfCorp
         /// <summary> Update this creature </summary>
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            /*DEBUG DRAW TASK QUEUE HERE
+            StringBuilder taskString = new StringBuilder();
+            foreach (var task in Tasks)
+            {
+                taskString.Append(task.Name);
+                taskString.Append(String.Format(" Feasible: {0}, Cost {1}, Priority {2}", task.IsFeasible(Creature),
+                    task.ComputeCost(Creature), task.Priority));
+                taskString.Append("\n");
+            }
+            Drawer2D.DrawText(taskString.ToString(), Position, Color.White, Color.Black);
+             */
             if (!Active) return;
 
             if (Faction == null && !string.IsNullOrEmpty(Creature.Allies))
@@ -440,6 +454,7 @@ namespace DwarfCorp
                 bool retried = false;
                 if (status == Act.Status.Fail)
                 {
+                    LastFailedAct = CurrentAct.Name;
                     if (History.ContainsKey(CurrentTask.Name))
                     {
                         History[CurrentTask.Name].NumFailures++;
@@ -582,8 +597,8 @@ namespace DwarfCorp
         public IEnumerable<Act.Status> AvoidFalling()
         {
             var above = VoxelHelpers.GetVoxelAbove(Physics.CurrentVoxel);
-            foreach (var vox in VoxelHelpers.EnumerateManhattanNeighbors(Physics.CurrentVoxel.Coordinate)
-                .Select(c => new TemporaryVoxelHandle(World.ChunkManager.ChunkData, c)))
+            foreach (var vox in VoxelHelpers.EnumerateAllNeighbors(Physics.CurrentVoxel.Coordinate)
+                .Select(c => new VoxelHandle(World.ChunkManager.ChunkData, c)))
             {
                 if (!vox.IsValid) continue;
                 if (vox.IsEmpty) continue;
@@ -593,7 +608,7 @@ namespace DwarfCorp
                 if (above.IsValid && !above.IsEmpty && vox.Coordinate.Y >= above.Coordinate.Y)
                     continue;
 
-                var voxAbove = new TemporaryVoxelHandle(World.ChunkManager.ChunkData,
+                var voxAbove = new VoxelHandle(World.ChunkManager.ChunkData,
                     new GlobalVoxelCoordinate(vox.Coordinate.X, vox.Coordinate.Y + 1, vox.Coordinate.Z));
                 if (voxAbove.IsValid && !voxAbove.IsEmpty) continue;
 
@@ -606,7 +621,7 @@ namespace DwarfCorp
                 yield return Act.Status.Success;
                 yield break;
             }
-            yield return Act.Status.Fail;
+            yield return Act.Status.Success;
             yield break;
         }
 
@@ -677,7 +692,11 @@ namespace DwarfCorp
 
                 foreach (var resource in Creature.Inventory.Resources.Where(resource => resource.MarkedForRestock))
                 {
-                    return new StockResourceTask(new ResourceAmount(resource.Resource));
+                    Task task = new StockResourceTask(new ResourceAmount(resource.Resource));
+                    if (task.IsFeasible(Creature))
+                    {
+                        return task;
+                    }
                 }
 
                 // Farm stuff if applicable
@@ -730,7 +749,6 @@ namespace DwarfCorp
                         Priority = Task.PriorityType.Eventually
                     };
                 }
-                Physics.Velocity *= 0.0f;
                 return null;
             }
 
@@ -741,13 +759,18 @@ namespace DwarfCorp
                 if (Faction.HasFreeStockpile(order.Resource))
                 {
                     GatherManager.StockOrders.RemoveAt(0);
-                    return new ActWrapperTask(new StockResourceAct(this, order.Resource))
+                    Task task = new StockResourceTask(order.Resource)
                     {
                         Priority = Task.PriorityType.Low
                     };
+                    if (task.IsFeasible(this.Creature))
+                    {
+                        return task;
+                    }
                 }
             }
-            else if (GatherManager.VoxelOrders.Count == 0 && GatherManager.StockMoneyOrders.Count > 0)
+            
+            if (GatherManager.VoxelOrders.Count == 0 && GatherManager.StockMoneyOrders.Count > 0)
             {
                 var order = GatherManager.StockMoneyOrders[0];
                 if (Faction.HasFreeTreasury(order.Money))
@@ -763,7 +786,7 @@ namespace DwarfCorp
             if (GatherManager.VoxelOrders.Count > 0)
             {
                 // Otherwise handle build orders.
-                var voxels = new List<TemporaryVoxelHandle>();
+                var voxels = new List<VoxelHandle>();
                 var types = new List<VoxelType>();
                 foreach (GatherManager.BuildVoxelOrder order in GatherManager.VoxelOrders)
                 {
@@ -1006,6 +1029,11 @@ namespace DwarfCorp
                 desc += act.Name;
             }
 
+            if (LastFailedAct != null)
+            {
+                desc += "\n    Last failed: " + LastFailedAct;
+            }
+
             return desc;
         }
 
@@ -1159,8 +1187,10 @@ namespace DwarfCorp
             if (jumpCommand && !jumpHeld && (Creature.IsOnGround || Creature.Physics.IsInLiquid) && Creature.IsHeadClear)
             {
                 Creature.NoiseMaker.MakeNoise("Jump", Position);
-                Creature.Physics.LocalTransform *= Matrix.CreateTranslation(Vector3.Up*0.01f);
+                Creature.Physics.LocalTransform *= Matrix.CreateTranslation(Vector3.Up*0.1f);
                 Creature.Physics.Velocity += Vector3.Up*5;
+                Creature.Physics.UpdateTransform();
+                Creature.Physics.UpdateBoundingBox();
                 Creature.IsOnGround = false;
                 Creature.Physics.IsInLiquid = false;
             }

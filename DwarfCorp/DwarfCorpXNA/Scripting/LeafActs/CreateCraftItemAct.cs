@@ -42,15 +42,15 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class CreateCraftItemAct : CreatureAct
     {
-        public TemporaryVoxelHandle Voxel { get; set; }
-        public string ItemType { get; set; }
-        public CreateCraftItemAct(TemporaryVoxelHandle voxel, CreatureAI agent, string itemType) :
+        public VoxelHandle Voxel { get; set; }
+        public CraftBuilder.CraftDesignation Item { get; set; }
+        public CreateCraftItemAct(VoxelHandle voxel, CreatureAI agent, CraftBuilder.CraftDesignation itemType) :
             base(agent)
         {
             Agent = agent;
             Voxel = voxel;
             Name = "Create craft item";
-            ItemType = itemType;
+            Item = itemType;
         }
 
         public override IEnumerable<Status> Run()
@@ -60,7 +60,11 @@ namespace DwarfCorp
                 yield return Status.Fail;
             }
 
-            Body item = EntityFactory.CreateEntity<Body>(CraftLibrary.CraftItems[ItemType].Name, Voxel.WorldPosition + Vector3.One * 0.5f);
+            Body item = EntityFactory.CreateEntity<Body>(Item.ItemType.Name, Voxel.WorldPosition + Vector3.One * 0.5f);
+            if (Item.OverrideOrientation)
+            {
+                item.Orient(Item.Orientation);
+            }
             item.Tags.Add("Moveable");
             Creature.Faction.OwnedObjects.Add(item);
             Creature.Manager.World.ParticleManager.Trigger("puff", Voxel.WorldPosition + Vector3.One * 0.5f, Color.White, 10);

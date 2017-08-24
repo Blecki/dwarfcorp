@@ -219,14 +219,24 @@ namespace DwarfCorp
 
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            // Physics updates this whenever something moves... maybe? Let's see if anything breaks.
+            //  What broke: Anything that did not move became invisible.
+            //GamePerformance.Instance.StartTrackPerformance("Components - transforms");
             if (RootComponent != null)
-                RootComponent.UpdateTransformsRecursive(null);
+                RootComponent.UpdateTransform();
+            //GamePerformance.Instance.StopTrackPerformance("Components - transforms");
 
+            GamePerformance.Instance.StartTrackPerformance("Components - update");
             foreach (var componentType in UpdateableComponents)
                 foreach (var component in componentType.Value)
                     if (component.Active)
+                    {
+                        //GamePerformance.Instance.StartTrackPerformance("Component - " + component.GetType().Name);
                         component.Update(gameTime, chunks, camera);
-
+                        //GamePerformance.Instance.StopTrackPerformance("Component - " + component.GetType().Name);
+                    }
+            GamePerformance.Instance.StopTrackPerformance("Components - update");
+            
             AdditionMutex.WaitOne();
             foreach (GameComponent component in Additions)
                 AddComponentImmediate(component);

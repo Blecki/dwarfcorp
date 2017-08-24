@@ -42,10 +42,10 @@ namespace DwarfCorp
     public class BuildVoxelOrder
     {
         public Room ToBuild;
-        public TemporaryVoxelHandle Voxel;
+        public VoxelHandle Voxel;
         public BuildRoomOrder Order;
 
-        public BuildVoxelOrder(BuildRoomOrder Order, Room ToBuild, TemporaryVoxelHandle Voxel)
+        public BuildVoxelOrder(BuildRoomOrder Order, Room ToBuild, VoxelHandle Voxel)
         {
             this.Order = Order;
             this.ToBuild = ToBuild;

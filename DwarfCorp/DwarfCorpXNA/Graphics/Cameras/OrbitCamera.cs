@@ -384,7 +384,7 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        chunks.ChunkData.SetMaxViewingLevel(chunks.ChunkData.MaxViewingLevel + (int)((float)change * 0.01f), ChunkManager.SliceMode.Y);
+                        chunks.ChunkData.SetMaxViewingLevel(chunks.ChunkData.MaxViewingLevel + 1 + (int)((float)change * 0.01f), ChunkManager.SliceMode.Y);
                     }
                 }
             }
@@ -472,7 +472,7 @@ namespace DwarfCorp
             bool gotCollision = false;
 
             foreach (var v in VoxelHelpers.EnumerateCube(GlobalVoxelCoordinate.FromVector3(pos))
-                .Select(n => new TemporaryVoxelHandle(chunks.ChunkData, n)))                
+                .Select(n => new VoxelHandle(chunks.ChunkData, n)))                
             {
                 if (!v.IsValid) continue;
                 if (v.IsEmpty) continue;

@@ -120,7 +120,7 @@ namespace DwarfCorp
         public static IEnumerable<Body> CreateFences(
             ComponentManager components,
             string asset, 
-            IEnumerable<TemporaryVoxelHandle> Voxels, 
+            IEnumerable<VoxelHandle> Voxels, 
             bool createWorkPiles)
         {
             Vector3 off = (Vector3.One * 0.5f) + Vector3.Up;

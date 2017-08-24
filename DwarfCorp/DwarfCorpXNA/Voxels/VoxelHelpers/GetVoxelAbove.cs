@@ -7,10 +7,10 @@ namespace DwarfCorp
 {
     public partial class VoxelHelpers
     {
-        public static TemporaryVoxelHandle GetVoxelAbove(TemporaryVoxelHandle V)
+        public static VoxelHandle GetVoxelAbove(VoxelHandle V)
         {
-            if (!V.IsValid) return TemporaryVoxelHandle.InvalidHandle;
-            return new TemporaryVoxelHandle(V.Chunk.Manager.ChunkData,
+            if (!V.IsValid) return VoxelHandle.InvalidHandle;
+            return new VoxelHandle(V.Chunk.Manager.ChunkData,
                 new GlobalVoxelCoordinate(V.Coordinate.X, V.Coordinate.Y + 1, V.Coordinate.Z));
         }
     }

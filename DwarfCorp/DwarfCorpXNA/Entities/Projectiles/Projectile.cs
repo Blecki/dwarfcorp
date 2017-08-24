@@ -179,7 +179,7 @@ namespace DwarfCorp
         }
 
 
-        public override void OnTerrainCollision(TemporaryVoxelHandle vox)
+        public override void OnTerrainCollision(VoxelHandle vox)
         {
             if (Target == null || Target.IsDead)
             {

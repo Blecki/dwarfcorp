@@ -61,7 +61,7 @@ namespace DwarfCorp
         }
 
 
-        public override void OnVoxelsSelected(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }
@@ -117,7 +117,7 @@ namespace DwarfCorp
             }
         }
 
-        public override void OnVoxelsDragged(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }
@@ -131,7 +131,7 @@ namespace DwarfCorp
             List<Task> tasks = new List<Task>();
             foreach (Body tree in treesPicked)
             {
-                if (!tree.IsVisible || tree.IsAboveCullPlane) continue;
+                if (!tree.IsVisible || tree.IsAboveCullPlane(Player.World.ChunkManager)) continue;
 
                 Drawer3D.DrawBox(tree.BoundingBox, Color.LightGreen, 0.1f, false);
                 if (button == InputManager.MouseButton.Left)

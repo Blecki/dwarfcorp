@@ -60,7 +60,7 @@ namespace DwarfCorp
             }
             else
             {
-                var voxelUnder = VoxelHelpers.FindFirstVoxelBelowIncludeWater(new TemporaryVoxelHandle(
+                var voxelUnder = VoxelHelpers.FindFirstVoxelBelowIncludeWater(new VoxelHandle(
                     creature.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(
                         target.BoundingBox.Center())));
 

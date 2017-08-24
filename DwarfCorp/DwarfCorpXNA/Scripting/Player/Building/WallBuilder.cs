@@ -54,12 +54,12 @@ namespace DwarfCorp
     /// </summary>
     public class WallBuilder
     {
-        public TemporaryVoxelHandle Vox;
+        public VoxelHandle Vox;
         public VoxelType Type;
         public CreatureAI ReservedCreature = null;
         private WorldManager World { get; set; }
-
-        public WallBuilder(TemporaryVoxelHandle v, VoxelType t, WorldManager world)
+        List<VoxelHandle> highlighted = new List<VoxelHandle>(); 
+        public WallBuilder(VoxelHandle v, VoxelType t, WorldManager world)
         {
             World = world;
             Vox = v;
@@ -68,11 +68,10 @@ namespace DwarfCorp
 
         public void Put(ChunkManager manager)
         {
-            TemporaryVoxelHandle v = Vox;
+            VoxelHandle v = Vox;
             v.Type = Type;
             v.WaterCell = new WaterCell();
             v.Health = Type.StartingHealth;
-            manager.ChunkData.NotifyRebuild(v.Coordinate);
             
             World.ParticleManager.Trigger("puff", v.WorldPosition, Color.White, 20);
 
@@ -102,7 +101,7 @@ namespace DwarfCorp
         public Faction Faction { get; set; }
         public List<WallBuilder> Designations { get; set; }
         public VoxelType CurrentVoxelType { get; set; }
-        private List<TemporaryVoxelHandle> Selected { get; set; }
+        private List<VoxelHandle> Selected { get; set; }
         private bool verified = false;
             [JsonIgnore]
         public WorldManager World { get; set; }
@@ -123,10 +122,10 @@ namespace DwarfCorp
             World = world;
             Faction = faction;
             Designations = new List<WallBuilder>();
-            Selected = new List<TemporaryVoxelHandle>();
+            Selected = new List<VoxelHandle>();
         }
 
-        public CreatureAI GetReservedCreature(TemporaryVoxelHandle reference)
+        public CreatureAI GetReservedCreature(VoxelHandle reference)
         {
             WallBuilder des = GetDesignation(reference);
 
@@ -144,7 +143,7 @@ namespace DwarfCorp
         }
 
         // Todo: %KILL% 
-        public bool IsDesignation(TemporaryVoxelHandle reference)
+        public bool IsDesignation(VoxelHandle reference)
         {
             foreach(WallBuilder put in Designations)
             {
@@ -161,7 +160,7 @@ namespace DwarfCorp
         }
 
         // Todo: %KILL%
-        public WallBuilder GetDesignation(TemporaryVoxelHandle v)
+        public WallBuilder GetDesignation(VoxelHandle v)
         {
             foreach(WallBuilder put in Designations)
             {
@@ -183,7 +182,7 @@ namespace DwarfCorp
         }
 
 
-        public void RemoveDesignation(TemporaryVoxelHandle v)
+        public void RemoveDesignation(VoxelHandle v)
         {
             WallBuilder des = GetDesignation(v);
 
@@ -204,10 +203,11 @@ namespace DwarfCorp
             effect.MainTexture = World.ChunkManager.ChunkData.Tilemap;
             effect.LightRampTint = Color.White;
             effect.VertexColorTint = new Color(0.1f, 0.9f, 1.0f, 0.5f * st + 0.45f);
+            effect.SetTexturedTechnique();
             foreach(WallBuilder put in Designations)
             {
                 //Drawer3D.DrawBox(put.Vox.GetBoundingBox(), Color.LightBlue, st * 0.01f + 0.05f);
-                effect.World = Matrix.CreateTranslation(put.Vox.WorldPosition);
+                effect.World = Matrix.CreateTranslation(put.Vox.WorldPosition + Vector3.Up * 0.15f);
 
                 foreach(EffectPass pass in effect.CurrentTechnique.Passes)
                 {
@@ -218,7 +218,7 @@ namespace DwarfCorp
 
             if (Selected == null)
             {
-                Selected = new List<TemporaryVoxelHandle>();
+                Selected = new List<VoxelHandle>();
             }
 
             if (CurrentVoxelType == null)
@@ -227,10 +227,11 @@ namespace DwarfCorp
             }
 
             effect.VertexColorTint = verified ? new Color(0.0f, 1.0f, 0.0f, 0.5f * st + 0.45f) : new Color(1.0f, 0.0f, 0.0f, 0.5f * st + 0.45f);
+            Vector3 offset = World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? Vector3.Zero : Vector3.Up * 0.15f;
             foreach (var voxel in Selected)
             {
-                effect.World = Matrix.CreateTranslation(voxel.WorldPosition);
-
+  
+                effect.World = Matrix.CreateTranslation(voxel.WorldPosition + offset);
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
@@ -244,7 +245,7 @@ namespace DwarfCorp
             graphics.DepthStencilState = state;
         }
 
-        public void VoxelDragged(List<TemporaryVoxelHandle> refs)
+        public void VoxelDragged(List<VoxelHandle> refs)
         {
             if (CurrentVoxelType == null)
                 return;
@@ -268,14 +269,14 @@ namespace DwarfCorp
             }
         }
 
-        public bool Verify(List<TemporaryVoxelHandle> refs, ResourceLibrary.ResourceType type)
+        public bool Verify(List<VoxelHandle> refs, ResourceLibrary.ResourceType type)
         {
             ResourceAmount requiredResources = new ResourceAmount(type, refs.Count);
             List<ResourceAmount> res = new List<ResourceAmount>() {requiredResources};
             return Faction.HasResources(res);
         }
 
-        public void VoxelsSelected(List<TemporaryVoxelHandle> refs, InputManager.MouseButton button)
+        public void VoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
         {
             if (Faction == null)
             {
@@ -297,7 +298,7 @@ namespace DwarfCorp
                         return;
                     }
                     List<Task> assignments = new List<Task>();
-                    var validRefs = refs.Where(r => !IsDesignation(r) && r.IsEmpty).ToList();
+                    var validRefs = refs.Where(r => !IsDesignation(r) && World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? r.IsEmpty : !r.IsEmpty).ToList();
 
                     if (!Verify(validRefs, CurrentVoxelType.ResourceToRelease))
                     {
@@ -319,7 +320,7 @@ namespace DwarfCorp
                 {
                     foreach(var r in refs)
                     {
-                        if(!IsDesignation(r) || r.Type.Name != "empty")
+                        if(!IsDesignation(r))
                         {
                             continue;
                         }

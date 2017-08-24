@@ -20,6 +20,12 @@ namespace DwarfCorp.Gui.Widgets
                 Border = "border-button";
             }
 
+            if (Border == "none")
+            {
+                Border = null;
+            }
+
+
             var color = TextColor;
             OnMouseEnter += (widget, action) =>
             {

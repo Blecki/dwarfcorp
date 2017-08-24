@@ -127,23 +127,22 @@ namespace DwarfCorp
 
         public VoxelChunk ToChunk(ChunkManager Manager)
         {
-            VoxelChunk c = new VoxelChunk(Manager, Origin, ID)
-            {
-                ShouldRebuild = true,
-                ShouldRecalculateLighting = true,
-                ShouldRebuildWater = true
-            };
+            VoxelChunk c = new VoxelChunk(Manager, Origin, ID);
 
             for (var i = 0; i < VoxelConstants.ChunkVoxelCount; ++i)
             {
                 c.Data.Types[i] = Types[i];
 
                 if (Types[i] > 0)
+                {
                     c.Data.Health[i] = (byte)VoxelLibrary.GetVoxelType(Types[i]).StartingHealth;
+
+                    // Rebuild the VoxelsPresentInSlice counters
+                    c.Data.VoxelsPresentInSlice[(i >> VoxelConstants.ZDivShift) >> VoxelConstants.XDivShift] += 1;
+                }                
             }
 
             Explored.CopyTo(c.Data.IsExplored, 0);
-
             // Separate loop for cache effeciency
             for (var i = 0; i < VoxelConstants.ChunkVoxelCount; ++i)
             {
@@ -154,7 +153,7 @@ namespace DwarfCorp
                 if ((LiquidType)LiquidTypes[i] != LiquidType.None)
                     c.Data.LiquidPresent[(i >> VoxelConstants.ZDivShift) >> VoxelConstants.XDivShift] += 1;
             }
-
+            c.CalculateInitialSunlight();
             return c;
         }
 

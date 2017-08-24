@@ -47,7 +47,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class VoxelListener : GameComponent, IUpdateableComponent
     {
-        public TemporaryVoxelHandle Voxel;
+        public VoxelHandle Voxel;
 
         private bool firstIter = false;
 
@@ -70,7 +70,7 @@ namespace DwarfCorp
         }
 
 
-        public VoxelListener(ComponentManager Manager, ChunkManager chunkManager, TemporaryVoxelHandle Voxel) :
+        public VoxelListener(ComponentManager Manager, ChunkManager chunkManager, VoxelHandle Voxel) :
             base("VoxelListener", Manager)
         {
             this.Voxel = Voxel;

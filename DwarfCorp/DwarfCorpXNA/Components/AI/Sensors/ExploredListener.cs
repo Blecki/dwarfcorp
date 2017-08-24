@@ -55,7 +55,7 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            Chunk = (context.Context as WorldManager).ChunkManager.ChunkData.ChunkMap[ChunkID];
+            Chunk = (context.Context as WorldManager).ChunkManager.ChunkData.GetChunk(ChunkID);
             Chunk.OnVoxelExplored += ExploredListener_OnVoxelExplored;
         }
 
@@ -64,8 +64,7 @@ namespace DwarfCorp
 
         }
 
-
-        public ExploredListener(ComponentManager manager, ChunkManager chunkManager, TemporaryVoxelHandle vref) :
+        public ExploredListener(ComponentManager manager, ChunkManager chunkManager, VoxelHandle vref) :
             base("ExploredListener", manager)
         {
             Chunk = vref.Chunk;

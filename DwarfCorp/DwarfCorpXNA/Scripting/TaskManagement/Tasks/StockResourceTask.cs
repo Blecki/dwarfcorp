@@ -1,4 +1,4 @@
-﻿// StockResourceTask.cs
+// StockResourceTask.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -75,7 +75,7 @@ namespace DwarfCorp
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            return 1.0f;
+            return IsFeasible(agent) ? 1.0f : 1000.0f;
         }
 
 

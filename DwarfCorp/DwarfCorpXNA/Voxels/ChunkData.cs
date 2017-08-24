@@ -51,15 +51,46 @@ namespace DwarfCorp
     {
         private ChunkManager chunkManager;
 
-        public ChunkData(ChunkManager chunkManager)
+        public ChunkData(ChunkManager chunkManager, int ChunkMapWidth, int ChunkMapHeight, int ChunkMapMinX, int ChunkMapMinZ)
         {           
             this.chunkManager = chunkManager;
-            ChunkMap = new ConcurrentDictionary<GlobalChunkCoordinate, VoxelChunk>();
             MaxViewingLevel = VoxelConstants.ChunkSizeY;
             Slice = ChunkManager.SliceMode.Y;
+
+            this.ChunkMapWidth = ChunkMapWidth;
+            this.ChunkMapHeight = ChunkMapHeight;
+            this.ChunkMapMinX = ChunkMapMinX;
+            this.ChunkMapMinZ = ChunkMapMinZ;
+            this.ChunkMap = new VoxelChunk[ChunkMapWidth * ChunkMapHeight];
         }
 
-        public ConcurrentDictionary<GlobalChunkCoordinate, VoxelChunk> ChunkMap { get; set; }
+        // These have to be public so that VoxelHandle can access them effeciently. ;_;
+        public VoxelChunk[] ChunkMap;
+        public int ChunkMapWidth;
+        public int ChunkMapHeight;
+        public int ChunkMapMinX;
+        public int ChunkMapMinZ;
+
+        public VoxelChunk GetChunk(GlobalChunkCoordinate Coordinate)
+        {
+            if (!CheckBounds(Coordinate)) throw new IndexOutOfRangeException();
+            return ChunkMap[(Coordinate.Z - ChunkMapMinZ) * ChunkMapWidth + (Coordinate.X - ChunkMapMinX)];
+        }
+
+        public bool CheckBounds(GlobalChunkCoordinate Coordinate)
+        {
+            if (Coordinate.X < ChunkMapMinX || Coordinate.X >= ChunkMapMinX + ChunkMapWidth) return false;
+            if (Coordinate.Z < ChunkMapMinZ || Coordinate.Z >= ChunkMapMinZ + ChunkMapHeight) return false;
+            if (Coordinate.Y != 0) return false;
+            return true;
+        }
+
+        public IEnumerable<VoxelChunk> GetChunkEnumerator()
+        {
+            return ChunkMap;
+        }
+
+        //public ConcurrentDictionary<GlobalChunkCoordinate, VoxelChunk> ChunkMap { get; set; }
 
         public Texture2D Tilemap
         {
@@ -71,14 +102,8 @@ namespace DwarfCorp
             get { return TextureManager.GetTexture(ContentPaths.Terrain.terrain_illumination); }
         }
 
-        public int MaxChunks
-        {
-            get { return (int) GameSettings.Default.MaxChunks; }
-            set { GameSettings.Default.MaxChunks = (int) value; }
-        }
-
         // Todo: Why is this here?
-        public float MaxViewingLevel { get; set; }
+        public int MaxViewingLevel { get; set; }
         public ChunkManager.SliceMode Slice { get; set; }
 
         public Texture2D SunMap
@@ -105,56 +130,47 @@ namespace DwarfCorp
 
         // Final argument is always mode Y.
         // Todo: %KILL% - does not belong here.
-        public void SetMaxViewingLevel(float level, ChunkManager.SliceMode slice)
+        public void SetMaxViewingLevel(int level, ChunkManager.SliceMode slice)
         {
-            if (Math.Abs(level - MaxViewingLevel) < 0.1f && slice == Slice)
-            {
+            if (level == MaxViewingLevel && slice == Slice)
                 return;
-            }
+
+            var oldLevel = MaxViewingLevel;
 
             Slice = slice;
             MaxViewingLevel = Math.Max(Math.Min(level, VoxelConstants.ChunkSizeY), 1);
 
-            foreach (VoxelChunk c in ChunkMap.Select(chunks => chunks.Value))
+            foreach (var c in ChunkMap)
             {
-                c.ShouldRecalculateLighting = true;
-                c.ShouldRebuild = true;
+                c.InvalidateSlice(oldLevel - 1);
+                c.InvalidateSlice(MaxViewingLevel - 1);
             }
         }
         
-        public bool AddChunk(VoxelChunk chunk)
+        public bool AddChunk(VoxelChunk Chunk)
         {
-            if(ChunkMap.Count < MaxChunks && !ChunkMap.ContainsKey(chunk.ID))
-            {
-                ChunkMap[chunk.ID] = chunk;
-                return true;
-            }
+            if (!CheckBounds(Chunk.ID)) throw new IndexOutOfRangeException();
 
-            return false;
+            ChunkMap[(Chunk.ID.Z - ChunkMapMinZ) * ChunkMapWidth + (Chunk.ID.X - ChunkMapMinX)] = Chunk;
+            return true;
         }
 
         public void LoadFromFile(GameFile gameFile, Action<String> SetLoadingMessage)
         {
+            var maxChunkX = gameFile.Data.ChunkData.Max(c => c.ID.X) + 1;
+            var maxChunkZ = gameFile.Data.ChunkData.Max(c => c.ID.Z) + 1;
+            ChunkMapMinX = gameFile.Data.ChunkData.Min(c => c.ID.X);
+            ChunkMapMinZ = gameFile.Data.ChunkData.Min(c => c.ID.Z);
+            ChunkMapWidth = maxChunkX - ChunkMapMinX;
+            ChunkMapHeight = maxChunkZ - ChunkMapMinZ;
+
+            ChunkMap = new VoxelChunk[ChunkMapWidth * ChunkMapHeight];
+
             foreach (VoxelChunk chunk in gameFile.Data.ChunkData.Select(file => file.ToChunk(chunkManager)))
                 AddChunk(chunk);
 
             chunkManager.UpdateBounds();
             chunkManager.CreateGraphics(SetLoadingMessage, this);
-        }
-
-        public void NotifyRebuild(GlobalVoxelCoordinate At)
-        {
-            foreach (var n in VoxelHelpers.EnumerateManhattanNeighbors2D(At))
-            {
-                var vox = new TemporaryVoxelHandle(this, n);
-                if (vox.IsValid)
-                {
-                    vox.Chunk.ShouldRebuild = true;
-                    vox.Chunk.ShouldRecalculateLighting = true;
-                    vox.Chunk.ShouldRebuildWater = true;
-                    vox.Chunk.ReconstructRamps = true;
-                }
-            }
         }
     }
 }

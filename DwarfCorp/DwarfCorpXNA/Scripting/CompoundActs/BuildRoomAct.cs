@@ -55,7 +55,7 @@ namespace DwarfCorp
             }
             else
             {
-                var closestVoxel = TemporaryVoxelHandle.InvalidHandle;
+                var closestVoxel = VoxelHandle.InvalidHandle;
                 float closestDist = float.MaxValue;
                 foreach (var order in buildRoom.VoxelOrders)
                 {

@@ -7,7 +7,7 @@ namespace DwarfCorp
 {
     public partial class VoxelHelpers
     {
-        public static TemporaryVoxelHandle FindFirstVoxelBelow(TemporaryVoxelHandle V)
+        public static VoxelHandle FindFirstVoxelBelow(VoxelHandle V)
         {
             if (!V.IsValid) return V;
 
@@ -15,15 +15,15 @@ namespace DwarfCorp
 
             for (int y = p.Y; y >= 0; --y)
             {
-                var vox = new TemporaryVoxelHandle(V.Chunk, new LocalVoxelCoordinate(p.X, y, p.Z));
-                if (vox.IsValid && !vox.IsEmpty)
+                var vox = new VoxelHandle(V.Chunk, new LocalVoxelCoordinate(p.X, y, p.Z));
+                if (!vox.IsEmpty)
                     return vox;
             }
 
-            return TemporaryVoxelHandle.InvalidHandle;
+            return VoxelHandle.InvalidHandle;
         }
 
-        public static TemporaryVoxelHandle FindFirstVoxelBelowIncludeWater(TemporaryVoxelHandle V)
+        public static VoxelHandle FindFirstVoxelBelowIncludeWater(VoxelHandle V)
         {
             if (!V.IsValid) return V;
 
@@ -31,12 +31,12 @@ namespace DwarfCorp
 
             for (int y = p.Y; y >= 0; --y)
             {
-                var vox = new TemporaryVoxelHandle(V.Chunk, new LocalVoxelCoordinate(p.X, y, p.Z));
+                var vox = new VoxelHandle(V.Chunk, new LocalVoxelCoordinate(p.X, y, p.Z));
                 if (vox.IsValid && (!vox.IsEmpty || vox.WaterCell.WaterLevel > 0))
                     return vox;
             }
 
-            return TemporaryVoxelHandle.InvalidHandle;
+            return VoxelHandle.InvalidHandle;
         }
     }
 }

@@ -88,7 +88,7 @@ namespace DwarfCorp
             return canCast;
         }
 
-        public virtual void OnVoxelsSelected(SpellTree tree, List<TemporaryVoxelHandle> voxels)
+        public virtual void OnVoxelsSelected(SpellTree tree, List<VoxelHandle> voxels)
         {
             
         }

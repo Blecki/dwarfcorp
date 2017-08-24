@@ -49,14 +49,12 @@ namespace DwarfCorp
             public bool GuiAutoScale = true;
             public float ChunkDrawDistance = 100;
             public float VertexCullDistance = 80;
-            public int MaxChunks = 1000;
             public int AntiAliasing = 16;
             public bool Fullscreen = false;
             public bool EnableGlow = true;
             public bool DrawSkyReflected = true;
             public bool DrawChunksReflected = true;
             public bool DrawEntityReflected = true;
-            public bool CalculateSunlight = true;
             public bool AmbientOcclusion = true;
             public bool CalculateRamps = true;
             public float CameraScrollSpeed = 10.0f;
@@ -86,6 +84,7 @@ namespace DwarfCorp
             public bool DrawPaths = false;
             public bool AutoSave = true;
             public float AutoSaveTimeMinutes = 2.0f;
+            public bool VSync = true;
 
             public override string ToString()
             {

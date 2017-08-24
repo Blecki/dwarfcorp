@@ -135,11 +135,11 @@ namespace DwarfCorp
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                foreach (var chunk in ChunkData.ChunkMap)
+                foreach (var chunk in ChunkData.GetChunkEnumerator())
                 {
-                    if (cameraFrustrum.Intersects(chunk.Value.GetBoundingBox()))
+                    if (cameraFrustrum.Intersects(chunk.GetBoundingBox()))
                     {
-                        chunk.Value.Render(Graphics);
+                        chunk.Render(Graphics);
                     }
                 }
             }
@@ -173,6 +173,10 @@ namespace DwarfCorp
                                     Texture2D tilemap)
         {
             Vector3[] corners = new Vector3[8];
+            if (camera == null)
+            {
+                camera = World.Camera;
+            }
             Camera tempCamera = new Camera(World, camera.Target, camera.Position, camera.FOV, camera.AspectRatio, camera.NearPlane, 30);
             tempCamera.GetFrustrum().GetCorners(corners);
             BoundingBox cameraBox = MathFunctions.GetBoundingBox(corners);
@@ -195,7 +199,7 @@ namespace DwarfCorp
                 }
             }
             shadowRenderer.UnbindShadowmap(graphicsDevice);
-            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
+            effect.SetTexturedTechnique();
             effect.SelfIlluminationEnabled = false;
         }
 
@@ -204,7 +208,7 @@ namespace DwarfCorp
         {
             RasterizerState state = RasterizerState.CullNone;
             RasterizerState origState = graphicsDevice.RasterizerState;
-
+            BlendState origBlendState = graphicsDevice.BlendState;
             effect.CurrentTechnique = effect.Techniques[Shader.Technique.Lightmap];
             effect.SelfIlluminationTexture = ChunkData.IllumMap;
             effect.MainTexture = ChunkData.Tilemap;
@@ -225,14 +229,15 @@ namespace DwarfCorp
                 foreach (VoxelChunk chunk in renderListCopy)
                 {
                     Graphics.SetRenderTarget(chunk.Primitive.Lightmap);
-                    Graphics.Clear(ClearOptions.Target, Color.Black, 0.0f, 0);
+                    Graphics.Clear(ClearOptions.Target, Color.Transparent, 1.0f, 0);
                     chunk.Render(Graphics);
                 }
             }
             Graphics.SetRenderTarget(null);
             effect.SelfIlluminationEnabled = false;
-            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
+            effect.SetTexturedTechnique();
             graphicsDevice.RasterizerState = origState;
+            graphicsDevice.BlendState = origBlendState;
         }
 
         public void Render(Camera renderCamera, DwarfTime gameTime, GraphicsDevice graphicsDevice, Shader effect, Matrix worldMatrix)
@@ -244,7 +249,7 @@ namespace DwarfCorp
             }
             else
             {
-                effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
+                effect.SetTexturedTechnique();
                 effect.EnableShadows = GameSettings.Default.UseDynamicShadows;
             }
             effect.SelfIlluminationTexture = ChunkData.IllumMap;
@@ -275,7 +280,7 @@ namespace DwarfCorp
                 }
             }
             effect.SelfIlluminationEnabled = false;
-            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
+            effect.SetTexturedTechnique();
         }
 
         public void GetChunksIntersecting(BoundingBox box, HashSet<VoxelChunk> chunks)
@@ -287,9 +292,9 @@ namespace DwarfCorp
                 for (var y = minChunk.Y; y <= maxChunk.Y; ++y)
                     for (var z = minChunk.Z; z <= maxChunk.Z; ++z)
                     {
-                        VoxelChunk chunk;
-                        if (ChunkData.ChunkMap.TryGetValue(new GlobalChunkCoordinate(x, y, z), out chunk))
-                            chunks.Add(chunk);
+                        var coord = new GlobalChunkCoordinate(x, y, z);
+                        if (ChunkData.CheckBounds(coord))
+                            chunks.Add(ChunkData.GetChunk(coord));
                     }
         }
 

@@ -655,12 +655,9 @@ namespace DwarfCorp
             List<int> lastFPS;
             long lastSecond;
             int counter;
-            string[] graphLegend;
-
             public FramerateTracker(GamePerformance parent)
                 : base(parent)
             {
-                graphLegend = new string[] { "60", "30", "10" };
                 lastFPS = new List<int>();
             }
 
@@ -684,7 +681,7 @@ namespace DwarfCorp
 
 
                 _parent.DrawString("FPS " + fps, Color.White);
-                _parent.DrawChangeGraph(graphLegend, lastFPS, 60, new Vector2(0, 60));
+                _parent.DrawChangeGraph(lastFPS, 60);
 
                 base.Render();
             }
@@ -1226,10 +1223,18 @@ namespace DwarfCorp
         /// <param name="data">An enumerable block of data in integer format.</param>
         /// <param name="height">The height of the final graph</param>
         /// <param name="bounds">The bounds for the data set, lower then upper.</param>
-        public void DrawChangeGraph(string[] legend, IEnumerable<int> data, int height, Vector2 bounds)
+        public void DrawChangeGraph(IEnumerable<int> data, int height)
         {
             int labelSizeX = 0;
-
+            string[] legend = new string[3];
+            List<int> dataList = data.ToList();
+            int maxData = dataList.Max();
+            int minData = dataList.Min();
+            int median = (int)((maxData - minData) / 2) + minData;
+            legend[2] = minData.ToString();
+            legend[1] = median.ToString();
+            legend[0] = maxData.ToString();
+            float bounds = maxData - minData;
             for (int i = 0; i < legend.Length; i++)
             {
                 Vector2 stringSize = overlayFont.MeasureString(legend[i]);
@@ -1245,12 +1250,13 @@ namespace DwarfCorp
             labelSizeX += (int)guiPadding;
 
             int count = 0;
-            foreach (int value in data)
+            foreach (int curr in data)
             {
-                int lineHeight = (int)((value / bounds.Y) * height);
+                var value = curr - minData;
+                int lineHeight = (int)((value / bounds) * height);
                 DwarfGame.SpriteBatch.Draw(pixel,
                     new Rectangle((int)guiPosition.X + labelSizeX + count * 2, (int)guiPosition.Y + height - lineHeight, 2, lineHeight),
-                    new Color(1.0f - value / bounds.Y, value / bounds.Y, 0.0f, 0.5f));
+                    new Color(1.0f - value / bounds, value / bounds, 0.0f, 0.5f));
                 count++;
             }
             /*

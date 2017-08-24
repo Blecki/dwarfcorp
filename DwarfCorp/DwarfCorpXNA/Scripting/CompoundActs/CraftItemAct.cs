@@ -45,8 +45,8 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class CraftItemAct : CompoundCreatureAct
     {
-        public CraftItem ItemType { get; set; }
-        public TemporaryVoxelHandle Voxel { get; set; }
+        public CraftBuilder.CraftDesignation Item { get; set; }
+        public VoxelHandle Voxel { get; set; }
         public string Noise { get; set; }
         public CraftItemAct()
         {
@@ -55,21 +55,21 @@ namespace DwarfCorp
 
         public IEnumerable<Status> DestroyResources()
         {
-            Creature.Inventory.Remove(ItemType.SelectedResources);
+            Creature.Inventory.Remove(Item.ItemType.SelectedResources);
             yield return Status.Success;
         }
 
         public IEnumerable<Status> CreateResources()
         {
             List<ResourceAmount> stashed = Agent.Blackboard.GetData<List<ResourceAmount>>("ResourcesStashed");
-            ItemType.SelectedResources = stashed;
-            if (ItemType.Name == ResourceLibrary.ResourceType.Trinket)
+            Item.ItemType.SelectedResources = stashed;
+            if (Item.ItemType.Name == ResourceLibrary.ResourceType.Trinket)
             {
                 Resource craft = ResourceLibrary.GenerateTrinket(stashed.ElementAt(0).ResourceType,
                     (Agent.Stats.Dexterity + Agent.Stats.Intelligence)/15.0f*MathFunctions.Rand(0.5f, 1.75f));
-                ItemType.ResourceCreated = craft.Type;
+                Item.ItemType.ResourceCreated = craft.Type;
             }
-            else if (ItemType.Name == ResourceLibrary.ResourceType.Meal)
+            else if (Item.ItemType.Name == ResourceLibrary.ResourceType.Meal)
             {
                 if (stashed.Count < 2)
                 {
@@ -77,19 +77,19 @@ namespace DwarfCorp
                     yield break;
                 }
                 Resource craft = ResourceLibrary.CreateMeal(stashed.ElementAt(0).ResourceType, stashed.ElementAt(1).ResourceType);
-                ItemType.ResourceCreated = craft.Type;
+                Item.ItemType.ResourceCreated = craft.Type;
             }
-            else if (ItemType.Name == ResourceLibrary.ResourceType.Ale)
+            else if (Item.ItemType.Name == ResourceLibrary.ResourceType.Ale)
             {
                 Resource craft = ResourceLibrary.CreateAle(stashed.ElementAt(0).ResourceType);
-                ItemType.ResourceCreated = craft.Type;
+                Item.ItemType.ResourceCreated = craft.Type;
             }
-            else if (ItemType.Name == ResourceLibrary.ResourceType.Bread)
+            else if (Item.ItemType.Name == ResourceLibrary.ResourceType.Bread)
             {
                 Resource craft = ResourceLibrary.CreateBread(stashed.ElementAt(0).ResourceType);
-                ItemType.ResourceCreated = craft.Type;
+                Item.ItemType.ResourceCreated = craft.Type;
             }
-            else if (ItemType.Name == ResourceLibrary.ResourceType.GemTrinket)
+            else if (Item.ItemType.Name == ResourceLibrary.ResourceType.GemTrinket)
             {
                 Resource gem = null;
                 Resource trinket = null;
@@ -114,66 +114,59 @@ namespace DwarfCorp
                 }
 
                 Resource craft = ResourceLibrary.EncrustTrinket(trinket.Type, gem.Type);
-                ItemType.ResourceCreated = craft.Type;
+                Item.ItemType.ResourceCreated = craft.Type;
             }
 
-            Resource resource = ResourceLibrary.Resources[ItemType.ResourceCreated];
+            Resource resource = ResourceLibrary.Resources[Item.ItemType.ResourceCreated];
             Creature.Inventory.AddResource(new ResourceAmount(resource, 1));
             yield return Status.Success;
         }
 
 
-        public CraftItemAct(CreatureAI creature, CraftItem type) :
+        public CraftItemAct(CreatureAI creature, CraftBuilder.CraftDesignation type) :
             base(creature)
         {
-            ItemType = type;
-            Voxel = TemporaryVoxelHandle.InvalidHandle;
-            Name = "Build craft item";
-        }
-
-        public CraftItemAct(CreatureAI creature, TemporaryVoxelHandle voxel, CraftItem type) :
-            base(creature)
-        {
-            ItemType = type;
-            Voxel = voxel;
+            Item = type;
+            Voxel = type.Location;
             Name = "Build craft item";
         }
 
         public override void Initialize()
         {
-            Act unreserveAct = new Wrap(() => Creature.Unreserve(ItemType.CraftLocation));
-            float time = ItemType.BaseCraftTime / Creature.AI.Stats.BuffedInt;
+            Act unreserveAct = new Wrap(() => Creature.Unreserve(Item.ItemType.CraftLocation));
+            float time = Item.ItemType.BaseCraftTime / Creature.AI.Stats.BuffedInt;
             Act getResources = null;
-            if (ItemType.SelectedResources == null || ItemType.SelectedResources.Count == 0)
+            if (Item.ItemType.SelectedResources == null || Item.ItemType.SelectedResources.Count == 0)
             {
-                getResources = new GetResourcesAct(Agent, ItemType.RequiredResources);
+                getResources = new GetResourcesAct(Agent, Item.ItemType.RequiredResources);
             }
             else
             {
-                getResources = new GetResourcesAct(Agent, ItemType.SelectedResources);
+                getResources = new GetResourcesAct(Agent, Item.ItemType.SelectedResources);
             }
 
-            if (ItemType.Type == CraftItem.CraftType.Object)
+            if (Item.ItemType.Type == CraftItem.CraftType.Object)
             {
-                if (!String.IsNullOrEmpty(ItemType.CraftLocation))
+                if (!String.IsNullOrEmpty(Item.ItemType.CraftLocation))
                 {
                     Tree = new Sequence(
-                        new Wrap(() => Creature.FindAndReserve(ItemType.CraftLocation, ItemType.CraftLocation)),
+                        new Wrap(() => Creature.FindAndReserve(Item.ItemType.CraftLocation, Item.ItemType.CraftLocation)),
                         getResources,
                         new Sequence
                             (
                             new GoToTaggedObjectAct(Agent)
                             {
-                                Tag = ItemType.CraftLocation,
+                                Tag = Item.ItemType.CraftLocation,
                                 Teleport = false,
                                 TeleportOffset = new Vector3(1, 0, 0),
-                                ObjectName = ItemType.CraftLocation
+                                ObjectName = Item.ItemType.CraftLocation
                             },
-                            new Wrap(() => Creature.HitAndWait(time, true, () => Creature.AI.Position, "Craft")),
+                            new Wrap(() => Creature.HitAndWait(time, true, 
+                                () => Creature.AI.Position, "Craft")),
                             new Wrap(DestroyResources),
                             unreserveAct,
                             new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
-                            new CreateCraftItemAct(Voxel, Creature.AI, ItemType.Name)
+                            new CreateCraftItemAct(Voxel, Creature.AI, Item)
                             ) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false)
                         ) | new Sequence(unreserveAct, false);
                 }
@@ -184,30 +177,30 @@ namespace DwarfCorp
                         new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
                         new Wrap(() => Creature.HitAndWait(time, true, () => Creature.AI.Position, "Craft")),
                         new Wrap(DestroyResources),
-                        new CreateCraftItemAct(Voxel, Creature.AI, ItemType.Name)) |
+                        new CreateCraftItemAct(Voxel, Creature.AI, Item)) |
                        new Wrap(Creature.RestockAll);
                 }
             }
             else
             {
-                if (!String.IsNullOrEmpty(ItemType.CraftLocation))
+                if (!String.IsNullOrEmpty(Item.ItemType.CraftLocation))
                 {
                     Tree = new Sequence(
-                        new Wrap(() => Creature.FindAndReserve(ItemType.CraftLocation, ItemType.CraftLocation)),
+                        new Wrap(() => Creature.FindAndReserve(Item.ItemType.CraftLocation, Item.ItemType.CraftLocation)),
                         getResources,
                         new Sequence
                             (
                             new GoToTaggedObjectAct(Agent)
                             {
-                                Tag = ItemType.CraftLocation,
+                                Tag = Item.ItemType.CraftLocation,
                                 Teleport = false,
                                 TeleportOffset = new Vector3(1, 0, 0),
-                                ObjectName = ItemType.CraftLocation
+                                ObjectName = Item.ItemType.CraftLocation
                             },
                             new Wrap(
                                 () =>
                                     Creature.HitAndWait(time, true,
-                                        () => Agent.Blackboard.GetData<Body>(ItemType.CraftLocation).Position, Noise)),
+                                        () => Agent.Blackboard.GetData<Body>(Item.ItemType.CraftLocation).Position, Noise)),
                             new Wrap(DestroyResources),
                             unreserveAct,
                             new Wrap(CreateResources),
@@ -231,7 +224,7 @@ namespace DwarfCorp
 
         public override void OnCanceled()
         {
-            foreach (var statuses in Creature.Unreserve(ItemType.CraftLocation))
+            foreach (var statuses in Creature.Unreserve(Item.ItemType.CraftLocation))
             {
                 continue;
             }

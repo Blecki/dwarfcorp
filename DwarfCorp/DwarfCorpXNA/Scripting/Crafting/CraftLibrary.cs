@@ -65,7 +65,7 @@ namespace DwarfCorp
                     new CraftItem()
                     {
                         Name = "Bear Trap",
-                        Description = "Triggers on enemies, doing massive damage before being destroyed",
+                        Description = "Damages enemies and then explodes.",
                         RequiredResources = new List<Quantitiy<Resource.ResourceTags>>
                         {
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Metal, 4)
@@ -222,9 +222,9 @@ namespace DwarfCorp
                         BaseCraftTime = 15,
                         Type = CraftItem.CraftType.Resource,
                         ResourceCreated = "Gem-set Trinket",
-                        Verb = "Craft",
-                        CurrentVerb = "Crafting",
-                        PastTeseVerb = "Crafted"
+                        Verb = "Encrust",
+                        CurrentVerb = "Encrusting",
+                        PastTeseVerb = "Encrusted"
                     }
                 },
                 {
@@ -245,7 +245,8 @@ namespace DwarfCorp
                         CraftLocation = "Cutting Board",
                         Verb = "Cook",
                         PastTeseVerb = "Cooked",
-                        CurrentVerb = "Cooking"
+                        CurrentVerb = "Cooking",
+                        AllowHeterogenous = true
                     }
                 },
                 {
@@ -517,7 +518,7 @@ namespace DwarfCorp
                 BaseCraftTime = 30,
                 CraftLocation = "Forge",
                 Description = res.Description,
-                Icon = new Gui.TileReference("resources", res.GuiSprite),
+                Icon = res.GuiLayers[0],
                 RequiredResources = res.CraftPrereqs,
                 ResourceCreated = resource,
                 Type = CraftItem.CraftType.Resource

@@ -161,7 +161,7 @@ namespace DwarfCorp
             World = ((WorldManager)ctx.Context);
         }
 
-        private ulong GetVoxelQuickCompare(TemporaryVoxelHandle V)
+        private ulong GetVoxelQuickCompare(VoxelHandle V)
         {
             var coord = V.Coordinate.GetGlobalChunkCoordinate();
             var index = VoxelConstants.DataIndexOf(V.Coordinate.GetLocalVoxelCoordinate());
@@ -377,7 +377,7 @@ namespace DwarfCorp
             return RoomBuilder.DesignatedRooms;
         }
 
-        public void OnVoxelDestroyed(TemporaryVoxelHandle V)
+        public void OnVoxelDestroyed(VoxelHandle V)
         {
             if(!V.IsValid || V.IsEmpty)
                 return;
@@ -467,12 +467,12 @@ namespace DwarfCorp
             return closestVoxel;
         }
 
-        public BuildOrder GetGuardDesignation(TemporaryVoxelHandle vox)
+        public BuildOrder GetGuardDesignation(VoxelHandle vox)
         {
             return GuardDesignations.FirstOrDefault(d => d.Vox == vox);
         }
 
-        public BuildOrder GetDigDesignation(TemporaryVoxelHandle vox)
+        public BuildOrder GetDigDesignation(VoxelHandle vox)
         {
             BuildOrder returnOrder;
             if (DigDesignations.TryGetValue(GetVoxelQuickCompare(vox), out returnOrder))
@@ -486,7 +486,7 @@ namespace DwarfCorp
             DigDesignations.Add(GetVoxelQuickCompare(order.Vox), order);
         }
 
-        public void RemoveDigDesignation(TemporaryVoxelHandle vox)
+        public void RemoveDigDesignation(VoxelHandle vox)
         {
             var q = GetVoxelQuickCompare(vox);
             if (DigDesignations.ContainsKey(q))
@@ -496,7 +496,7 @@ namespace DwarfCorp
             }
         }
 
-        public bool IsDigDesignation(TemporaryVoxelHandle vox)
+        public bool IsDigDesignation(VoxelHandle vox)
         {
             GamePerformance.Instance.TrackValueType<int>("Dig Designations", DigDesignations.Count);
 
@@ -504,7 +504,7 @@ namespace DwarfCorp
         }
 
 
-        public bool IsGuardDesignation(TemporaryVoxelHandle vox)
+        public bool IsGuardDesignation(VoxelHandle vox)
         {
             return GuardDesignations.Select(d => d.Vox).Any(v => v == vox);
         }
@@ -595,7 +595,7 @@ namespace DwarfCorp
             return RoomBuilder.DesignatedRooms.Where(room => room.Intersects(v)).ToList();
         }
 
-        public bool IsInStockpile(TemporaryVoxelHandle v)
+        public bool IsInStockpile(VoxelHandle v)
         {
             return Stockpiles.Any(s => s.ContainsVoxel(v));
         }
@@ -694,7 +694,7 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public List<ResourceAmount> GetResourcesWithTags(List<Quantitiy<Resource.ResourceTags>> tags)
+        public List<ResourceAmount> GetResourcesWithTags(List<Quantitiy<Resource.ResourceTags>> tags, bool allowHeterogenous = false)
         {
             Dictionary<Resource.ResourceTags, int> tagsRequired = new Dictionary<Resource.ResourceTags, int>();
             Dictionary<Resource.ResourceTags, int> tagsGot = new Dictionary<Resource.ResourceTags, int>();
@@ -738,7 +738,24 @@ namespace DwarfCorp
                 }
             }
 
-            return amounts.Values.ToList();
+            if (allowHeterogenous)
+            {
+                return amounts.Values.ToList();
+            }
+
+            ResourceAmount maxAmount = null;
+            foreach (var pair in amounts)
+            {
+                if (maxAmount == null || pair.Value.NumResources > maxAmount.NumResources)
+                {
+                    maxAmount = pair.Value;
+                }
+            }
+            if (maxAmount != null)
+            {
+                return new List<ResourceAmount>(){maxAmount};
+            }
+            return new List<ResourceAmount>();
         }
 
         public bool HasResources(IEnumerable<Quantitiy<Resource.ResourceTags>> resources)
@@ -912,7 +929,7 @@ namespace DwarfCorp
                 string creature = Race.CreatureTypes[MathFunctions.Random.Next(Race.CreatureTypes.Count)];
                 Vector3 offset = MathFunctions.RandVector3Cube() * 2;
 
-                var voxelUnder = VoxelHelpers.FindFirstVoxelBelowIncludeWater(new TemporaryVoxelHandle(
+                var voxelUnder = VoxelHelpers.FindFirstVoxelBelowIncludeWater(new VoxelHandle(
                     World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(position + offset)));
                 if (voxelUnder.IsValid)
                 { 
@@ -948,10 +965,26 @@ namespace DwarfCorp
             return amounts;
         }
 
-        public List<ResourceAmount> ListResourcesWithTag(Resource.ResourceTags tag)
+        public List<ResourceAmount> ListResourcesWithTag(Resource.ResourceTags tag, bool allowHeterogenous = true)
         {
             Dictionary<string, ResourceAmount> resources = ListResources();
-            return (from pair in resources where ResourceLibrary.GetResourceByName(pair.Value.ResourceType).Tags.Contains(tag) select pair.Value).ToList();
+            if (allowHeterogenous)
+            {
+                return (from pair in resources
+                    where ResourceLibrary.GetResourceByName(pair.Value.ResourceType).Tags.Contains(tag)
+                    select pair.Value).ToList();
+            }
+            ResourceAmount maxAmount = null;
+            foreach (var pair in resources)
+            {
+                var resource = ResourceLibrary.GetResourceByName(pair.Value.ResourceType);
+                if (!resource.Tags.Contains(tag)) continue;
+                if (maxAmount == null || pair.Value.NumResources > maxAmount.NumResources)
+                {
+                    maxAmount = pair.Value;
+                }
+            }
+            return maxAmount != null ? new List<ResourceAmount>(){maxAmount} : new List<ResourceAmount>();
         }
 
         public Room GetNearestRoom(Vector3 position)

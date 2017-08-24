@@ -100,7 +100,7 @@ namespace DwarfCorp
 
         public IEnumerable<Status> TargetMoved(string pathName)
         {
-            var path = Agent.Blackboard.GetData<List<TemporaryVoxelHandle>>(pathName);
+            var path = Agent.Blackboard.GetData<List<VoxelHandle>>(pathName);
             Body entity = Agent.Blackboard.GetData<Body>(EntityName);
             if (path == null || entity == null)
             {

@@ -252,7 +252,7 @@ namespace DwarfCorp
             while(true)
             {
                 // Get the voxel stored in the agent's blackboard.
-                var vox = agent.AI.Blackboard.GetData<TemporaryVoxelHandle>(voxel);
+                var vox = agent.AI.Blackboard.GetData<VoxelHandle>(voxel);
 
                 // Somehow, there wasn't a voxel to mine.
                 if(!vox.IsValid)
@@ -293,8 +293,8 @@ namespace DwarfCorp
                         agent.Physics.Velocity *= 0.9f;
 
                         // Debug drawing.
-                        if (agent.AI.DrawPath)
-                            Drawer3D.DrawLine(vox.WorldPosition, agent.AI.Position, Color.Green, 0.25f);
+                        //if (agent.AI.DrawPath)
+                        //    Drawer3D.DrawLine(vox.WorldPosition, agent.AI.Position, Color.Green, 0.25f);
                         yield return Act.Status.Running;
                     }
                 }

@@ -49,15 +49,23 @@ namespace DwarfCorp
     /// </summary>
     public enum VoxelVertex
     {
-        FrontTopLeft = 0,
-        FrontTopRight,
-        FrontBottomLeft,
-        FrontBottomRight,
-        BackTopLeft,
-        BackTopRight,
-        BackBottomLeft,
-        BackBottomRight,
-        Count
+        Back = 0,
+        Front = 1,
+        Bottom = 0,
+        Top = 2,
+        Left = 0,
+        Right = 4,
+
+        BackBottomLeft = Back | Bottom | Left,      // 000
+        FrontBottomLeft = Front | Bottom | Left,    // 001
+        BackTopLeft = Back | Top | Left,            // 010
+        FrontTopLeft = Front | Top | Left,          // 011
+        BackBottomRight = Back | Bottom | Right,    // 100
+        FrontBottomRight = Front | Bottom | Right,  // 101
+        BackTopRight = Back | Top | Right,          // 110
+        FrontTopRight = Front | Top | Right,        // 111
+
+        Count = 8
     }
 
     /// <summary>

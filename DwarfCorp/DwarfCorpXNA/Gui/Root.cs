@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using DwarfCorp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -80,6 +81,12 @@ namespace DwarfCorp.Gui
 
         }
 
+
+        public string Sanitize(String Name)
+        {
+            return Regex.Replace(Name, "/", "\\");
+        }
+
         /// <summary>
         /// Get a named tile sheet.
         /// </summary>
@@ -87,7 +94,7 @@ namespace DwarfCorp.Gui
         /// <returns></returns>
         public ITileSheet GetTileSheet(String Name)
         {
-            return RenderData.TileSheets[Name];
+            return RenderData.TileSheets[Sanitize(Name)];
         }
 
 

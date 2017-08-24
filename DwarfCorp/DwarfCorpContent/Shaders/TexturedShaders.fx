@@ -49,6 +49,7 @@ int GhostMode;
 int SelfIllumination;
 float4 ClipPlane0;
 
+/*
 float4 GetNoise(float4 pos)
 {
 	pos.w = 0;
@@ -57,14 +58,13 @@ float4 GetNoise(float4 pos)
 	float cm = cos(mag);
 	return float4(cm * 0.2 + sm * 0.1, sm * 0.5 + cm * 0.1, sm * 0.2 + cm * 0.1, 0);
 }
+*/
 
 float4 GetWind(float4 pos, float2 uv, float4 bounds)
 {
 	pos.w = 0;
 	float windPower = 0.5 + sin(pos.x / 10.0f + pos.y / 10.0f + xTime * (1.2f + xWindForce / 10.0f));
-	if (windPower < 0.0f)
-		windPower = windPower*0.05f;
-	else windPower = windPower*0.08f;
+	windPower = windPower*0.08f;
 	float windTemp = (1.0 - (uv.y - bounds.y) / bounds.w);
 	return float4(xWindDirection * windPower * windTemp, 0);
 }
@@ -145,16 +145,14 @@ sampler ShadowMapSampler = sampler_state { texture = <xShadowMap>; magfilter = L
 	UTVertexToPixel UTexturedVS( float4 inPos_ : POSITION,  float4 inColor : COLOR0)
 	{
 		UTVertexToPixel Output = (UTVertexToPixel)0;
-		float4 inPos = inPos_ + GetNoise(inPos_);
+		float4 inPos = inPos_; // +GetNoise(inPos_);
 		float4x4 preViewProjection = mul (xView, xProjection);
 		float4x4 preWorldViewProjection = mul (xWorld, preViewProjection);
 
 		Output.Position = mul(inPos, preWorldViewProjection);
 		Output.Color = inColor * xTint;
 
-
-		if(Clipping)
-		Output.ClipDistance = dot(mul(xWorld,inPos), ClipPlane0); //MSS - Water Refactor added
+		Output.ClipDistance = Clipping * dot(mul(xWorld,inPos), ClipPlane0); //MSS - Water Refactor added
 
 		return Output;
 	}
@@ -165,9 +163,8 @@ sampler ShadowMapSampler = sampler_state { texture = <xShadowMap>; magfilter = L
 
 		Output.Color = PSIn.Color;
 
-	    clip(PSIn.ClipDistance);  //MSS - Water Refactor added
-
-
+		clip(PSIn.ClipDistance);
+	
 		return Output;
 	}
 
@@ -177,7 +174,7 @@ sampler ShadowMapSampler = sampler_state { texture = <xShadowMap>; magfilter = L
 		pass Pass0
 		{   
 			VertexShader = compile vs_2_0 UTexturedVS();
-			PixelShader  = compile ps_2_0 UTexturedPS();
+			PixelShader = compile ps_2_0 UTexturedPS();
 		}
 	}
 
@@ -243,8 +240,8 @@ technique Shadow
 {
 	pass Pass0
 	{
-		VertexShader = compile vs_2_0 ShadowMapVSNonInstance();
-		PixelShader = compile ps_2_0 ShadowMapPixelShader();
+		VertexShader = compile vs_3_0 ShadowMapVSNonInstance();
+		PixelShader = compile ps_3_0 ShadowMapPixelShader();
 	}
 };
 
@@ -252,8 +249,8 @@ technique ShadowInstanced
 {
 	pass Pass0
 	{
-		VertexShader = compile vs_2_0 ShadowMapVSInstance();
-		PixelShader = compile ps_2_0 ShadowMapPixelShader();
+		VertexShader = compile vs_3_0 ShadowMapVSInstance();
+		PixelShader = compile ps_3_0 ShadowMapPixelShader();
 	}
 };
 
@@ -300,7 +297,6 @@ SelectionBufferToPixel SelectionVS(float4 inPos: POSITION, float2 inTexCoords : 
 	SelectionBufferToPixel Output = (SelectionBufferToPixel)0;
 
 	float4 worldPosition = mul(inPos, world);
-	worldPosition += GetNoise(worldPosition);
 
 	float4 viewPosition = mul(worldPosition, xView);
 	Output.Position = mul(viewPosition, xProjection);
@@ -311,51 +307,58 @@ SelectionBufferToPixel SelectionVS(float4 inPos: POSITION, float2 inTexCoords : 
 	return Output;
 }
 
+
+float4 Lighting(uniform int max_lights, float4 worldPosition, float4 color)
+{
+	for (int i = 0; i < max_lights; i++)
+	{
+		float dx = worldPosition.x - xLightPositions[i].x;
+		float dy = worldPosition.y - xLightPositions[i].y;
+		float dz = worldPosition.z - xLightPositions[i].z;
+		float dist = pow(dx, 2) + pow(dy, 2) + pow(dz, 2) + 0.001f;
+		color = saturate(color + xEnableLighting * LIGHT_COLOR / dist);
+	}
+	color = saturate(color + (1.0 - xEnableLighting) * LIGHT_COLOR / 999.0f);
+	return color;
+}
+
+float4 Lighting1Light(float4 worldPosition, float4 color)
+{
+	float dx = worldPosition.x - xLightPositions[0].x;
+	float dy = worldPosition.y - xLightPositions[0].y;
+	float dz = worldPosition.z - xLightPositions[0].z;
+	float dist = pow(dx, 2) + pow(dy, 2) + pow(dz, 2) + 0.001f;
+	color = saturate(color + xEnableLighting * LIGHT_COLOR / dist + (1.0 - xEnableLighting) * LIGHT_COLOR / 999.0f);
+	return color;
+}
+
 TVertexToPixel TexturedVS_Flag(float4 inPos : POSITION, 
 							float2 inTexCoords : TEXCOORD0, 
 							float4 inColor : COLOR0, 
 							float4 inTexSource : TEXCOORD1, 
-							float3 vertColor : COLOR1)
+							float3 vertColor : COLOR1,
+							uniform int max_lights)
 {
 	TVertexToPixel Output = (TVertexToPixel)0;
 
 	float4 worldPosition = mul(inPos, xWorld);
-		worldPosition += GetNoise(worldPosition);
 
 	worldPosition += GetFlagWind(worldPosition, inTexCoords, inTexSource);
 
 	Output.WorldPosition = worldPosition;
 
 	float4 viewPosition = mul(worldPosition, xView);
-		Output.Position = mul(viewPosition, xProjection);
+	Output.Position = mul(viewPosition, xProjection);
 
 	Output.TextureCoords = inTexCoords;
 	Output.ClipDistance = dot(worldPosition, ClipPlane0);
 	Output.Color = inColor * xTint;
 	Output.Color.a = xTint.a;
-	Output.ColorTint = vertColor * xColorTint;
+	Output.ColorTint.rgb = vertColor * xColorTint.rgb;
 	Output.Color.a *= xColorTint.a;
-	if (xEnableLighting)
-	{
-		for (int i = 0; i < MAX_LIGHTS; i++)
-		{
-			float dx = worldPosition.x - xLightPositions[i].x;
-			float dy = worldPosition.y - xLightPositions[i].y;
-			float dz = worldPosition.z - xLightPositions[i].z;
-			float dist = pow(dx, 2) + pow(dy, 2) + pow(dz, 2) + 0.001f;
-			Output.Color = saturate(Output.Color + LIGHT_COLOR / dist);
-		}
-	}
+	Output.Color = Lighting(max_lights, worldPosition, Output.Color);
 
-	if (!xEnableLighting)
-	{
-		Output.Color = saturate(Output.Color + LIGHT_COLOR / 999.0f);
-	}
-
-	if (xEnableFog)
-	{
-		Output.Fog = saturate((Output.Position.z - xFogStart) / (xFogEnd - xFogStart));
-	}
+	Output.Fog = saturate((Output.Position.z - xFogStart) / (xFogEnd - xFogStart));
 
 	Output.TextureBounds = inTexSource;
 	return Output;
@@ -367,17 +370,14 @@ TVertexToPixel TexturedVS(float4 inPos : POSITION,
 						   float4 inTexSource : TEXCOORD1, 
 						   float4x4 world : BLENDWEIGHT, 
 						   float4 lightTint : COLOR1, 
-						   float3 tint)
+						   float3 tint,
+						   uniform int max_lights)
 {
     TVertexToPixel Output = (TVertexToPixel)0;
 
 	float4 worldPosition = mul(inPos, world);
-	worldPosition += GetNoise(worldPosition);
 
-	if (xEnableWind)
-	{
-		worldPosition += GetWind(worldPosition, inTexCoords, inTexSource);
-	}
+	worldPosition += xEnableWind * GetWind(worldPosition, inTexCoords, inTexSource);
 
 	Output.WorldPosition = worldPosition;
     
@@ -388,75 +388,75 @@ TVertexToPixel TexturedVS(float4 inPos : POSITION,
     Output.ClipDistance = dot(worldPosition, ClipPlane0);
 	Output.Color = inColor * lightTint;
 	Output.Color.a = lightTint.a;
-	Output.ColorTint = tint * xColorTint;
+	Output.ColorTint.rgb = tint.rgb * xColorTint.rgb;
 	Output.Color.a *= xColorTint.a;
-	// Dumb fake lighting for testing.
-	/*
-	float3 normal = normalize(inPos - float3(0.5, 0.5, 0.5));
-	float3 lightPos = normalize(float3(-0.0, 0.5, -1));
-
-	Output.Color.r *= clamp(dot(normal, lightPos), 0, 1);
-	Output.Color.g = 0.8;
-	*/
-	if(xEnableLighting)
-	{
-		for (int i = 0; i < MAX_LIGHTS; i++)
-		{
-			float dx = worldPosition.x - xLightPositions[i].x;
-			float dy = worldPosition.y - xLightPositions[i].y;
-			float dz = worldPosition.z - xLightPositions[i].z;
-			float dist = pow(dx, 2) + pow(dy, 2) + pow(dz, 2) + 0.001f;
-			Output.Color = saturate(Output.Color + LIGHT_COLOR / dist);
-		}
-	}
-	
-	if(!xEnableLighting)
-	{
-		Output.Color = saturate(Output.Color + LIGHT_COLOR / 999.0f);
-	}
-
-	if (xEnableFog)
-	{
-		Output.Fog = saturate((Output.Position.z - xFogStart) / (xFogEnd - xFogStart));
-	}
+	Output.Color = Lighting(max_lights, worldPosition, Output.Color);
+	Output.Fog = saturate((Output.Position.z - xFogStart) / (xFogEnd - xFogStart));
 	
 	Output.TextureBounds = inTexSource;
     return Output;
 }
+
+TVertexToPixel TexturedVS_1Light(float4 inPos : POSITION,
+	float2 inTexCoords : TEXCOORD0,
+	float4 inColor : COLOR0,
+	float4 inTexSource : TEXCOORD1,
+	float4x4 world : BLENDWEIGHT,
+	float4 lightTint : COLOR1,
+	float3 tint)
+{
+	TVertexToPixel Output = (TVertexToPixel)0;
+
+	float4 worldPosition = mul(inPos, world);
+
+		worldPosition += xEnableWind * GetWind(worldPosition, inTexCoords, inTexSource);
+
+	Output.WorldPosition = worldPosition;
+
+	float4 viewPosition = mul(worldPosition, xView);
+		Output.Position = mul(viewPosition, xProjection);
+
+	Output.TextureCoords = inTexCoords;
+	Output.ClipDistance = dot(worldPosition, ClipPlane0);
+	Output.Color = inColor * lightTint;
+	Output.Color.a = lightTint.a;
+	Output.ColorTint.rgb = tint.rgb * xColorTint.rgb;
+	Output.Color.a *= xColorTint.a;
+	Output.Color = Lighting1Light(worldPosition, Output.Color);
+	Output.Fog = saturate((Output.Position.z - xFogStart) / (xFogEnd - xFogStart));
+
+	Output.TextureBounds = inTexSource;
+	return Output;
+}
+
 
 TVertexToPixel TexturedVS_To_Lightmap(float4 inPos : POSITION, 
 							          float2 inTexCoords : TEXCOORD0, 
 								      float2 inLightmapCoords : TEXCOORD2,
 								      float4 inColor : COLOR0, 
 								      float4 inTexSource : TEXCOORD1, 
-								      float4 lightTint : COLOR1)
+								      float4 lightTint : COLOR1,
+									  uniform int max_lights)
 {
 	TVertexToPixel Output = (TVertexToPixel)0;
 	float4 worldPosition = mul(inPos, xWorld);
-	worldPosition += GetNoise(worldPosition);
 	Output.WorldPosition = worldPosition;
 	Output.Position = float4(2 * inLightmapCoords.x - 1.0 - pixelSize.x * 0.5, -(2 * inLightmapCoords.y - 1.0 - pixelSize.y * 0.5), 0.0, 1);
 	Output.TextureCoords = inTexCoords;
 	Output.Color = inColor * lightTint;
 	Output.Color.a = lightTint.a;
-	Output.ColorTint = xTint;
+	Output.ColorTint.rgb = xTint.rgb;
 
-	if (xEnableLighting)
+	for (int i = 0; i < max_lights; i++)
 	{
-		for (int i = 0; i < MAX_LIGHTS; i++)
-		{
-			float dx = worldPosition.x - xLightPositions[i].x;
-			float dy = worldPosition.y - xLightPositions[i].y;
-			float dz = worldPosition.z - xLightPositions[i].z;
-			float dist = pow(dx, 2) + pow(dy, 2) + pow(dz, 2) + 0.001f;
-			Output.Color = saturate(Output.Color + LIGHT_COLOR / dist);
-		}
+		float dx = worldPosition.x - xLightPositions[i].x;
+		float dy = worldPosition.y - xLightPositions[i].y;
+		float dz = worldPosition.z - xLightPositions[i].z;
+		float dist = pow(dx, 2) + pow(dy, 2) + pow(dz, 2) + 0.001f;
+		Output.Color = saturate(Output.Color + xEnableLighting * LIGHT_COLOR / dist);
 	}
 
-	if (!xEnableLighting)
-	{
-		Output.Color = saturate(Output.Color + LIGHT_COLOR / 999.0f);
-	}
+	Output.Color = saturate(Output.Color + (1.0 - xEnableLighting) * LIGHT_COLOR / 999.0f);
 	Output.TextureBounds = inTexSource;
 	return Output;
 }
@@ -469,13 +469,11 @@ LightmapToPixel TexturedVS_From_Lightmap(
 {
 	LightmapToPixel Output = (LightmapToPixel)0;
 	float4 worldPosition = mul(inPos, xWorld);
-	worldPosition += GetNoise(worldPosition);
 	float4 viewPosition = mul(worldPosition, xView);
 	Output.Position = mul(viewPosition, xProjection);
 	Output.ClipDistance = dot(worldPosition, ClipPlane0);
 
-	if (xEnableFog)
-		Output.Fog = saturate((Output.Position.z - xFogStart) / (xFogEnd - xFogStart));
+	Output.Fog = saturate((Output.Position.z - xFogStart) / (xFogEnd - xFogStart));
 	Output.LightmapBounds = inLightmapBounds;
 	Output.LightmapCoords = inLightmapCoords;
 	return Output;
@@ -489,19 +487,8 @@ TPixelToFrame TexturedPS_From_Lightmap(LightmapToPixel PSIn)
 	Output.Color = tex2D(LightmapSampler, textureCoords);
 	clip((Output.Color.a - 0.5));
 	Output.Color.rgba = float4(lerp(Output.Color.rgb, xFogColor, PSIn.Fog) * Output.Color.a, Output.Color.a);
-	if (Clipping)
-	{
-		if (GhostMode && PSIn.ClipDistance.w < 0.0f)
-		{
-			Output.Color *= clamp(-1.0f / (PSIn.ClipDistance.w * 0.75f) * 0.25f, 0, 1.0f);
 
-			clip((Output.Color.a - 0.1f));
-		}
-		else
-		{
-			clip(PSIn.ClipDistance.w);
-		}
-	}
+	clip(PSIn.ClipDistance.w);
 	//Output = (TPixelToFrame)0;
 	//Output.Color = float4(1, 0, 0, 1);
 	return Output;
@@ -510,29 +497,28 @@ TPixelToFrame TexturedPS_From_Lightmap(LightmapToPixel PSIn)
 TPixelToFrame TexturedPS_To_Lightmap(TVertexToPixel PSIn)
 {
 	TPixelToFrame Output = (TPixelToFrame)0;
-	if (xEnableShadows)
-	{
-		float4 shadowPos = GetPositionFromLight(PSIn.WorldPosition);
+	float4 shadowPos = GetPositionFromLight(PSIn.WorldPosition);
 		float2 shadowUV = 0.5 * shadowPos.xy / shadowPos.w + float2(0.5, 0.5);
 		shadowUV.y = 1.0f - shadowUV.y;
 
-		if (shadowUV.x < 1.0 && shadowUV.y < 1.0 && shadowUV.x > 0 && shadowUV.y > 0)
-		{
-			float shadowdepth = tex2D(ShadowMapSampler, shadowUV).r;
+	/*xEnableShadows
+	if (shadowUV.x < 1.0 && shadowUV.y < 1.0 && shadowUV.x > 0 && shadowUV.y > 0)
+	{
+		float shadowdepth = tex2D(ShadowMapSampler, shadowUV).r;
 
-			// Check our value against the depth value
-			float ourdepth = 1 - (shadowPos.z / shadowPos.w) + 0.01;
+		// Check our value against the depth value
+		float ourdepth = 1 - (shadowPos.z / shadowPos.w) + 0.01;
 
-			// Check the shadowdepth against the depth of this pixel
-			// a fudge factor is added to account for floating-point error
-			PSIn.Color.r *= saturate(exp(200 * (ourdepth - shadowdepth)) + 0.25f);
-		}
+		// Check the shadowdepth against the depth of this pixel
+		// a fudge factor is added to account for floating-point error
+		PSIn.Color.r *= saturate(exp(200 * (ourdepth - shadowdepth)) + 0.25f);
 	}
+	*/
 
 	Output.Color = tex2D(SunSampler, float2(PSIn.Color.r, (xTimeOfDay)));
 	Output.Color.a *= PSIn.Color.a;
-	Output.Color.rgb += tex2D(TorchSampler, float2(PSIn.Color.b, 0.5f));
-	Output.Color.rgb *= tex2D(AmbientSampler, float2(PSIn.Color.g, 0.5f));
+	Output.Color.rgb += tex2D(TorchSampler, float2(PSIn.Color.b, 0.5f)).rgb;
+	Output.Color.rgb *= tex2D(AmbientSampler, float2(PSIn.Color.g, 0.5f)).rgb;
 	
 	saturate(Output.Color.rgb);
 	float2 textureCoords = ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds);
@@ -542,28 +528,53 @@ TPixelToFrame TexturedPS_To_Lightmap(TVertexToPixel PSIn)
 	Output.Color.rgba *= texColor;
 	Output.Color.rgb *= PSIn.ColorTint;
 
-	if (SelfIllumination)
-	{
-		Output.Color.rgba = lerp(Output.Color.rgba, texColor, illumColor.r);
-	}
+	Output.Color.rgba = lerp(Output.Color.rgba, texColor, SelfIllumination * illumColor.r);
 	return Output;
 }
 
 
-TVertexToPixel TexturedVSNonInstanced( float4 inPos : POSITION,  float2 inTexCoords: TEXCOORD0, float4 inColor : COLOR0, float4 inTexSource : TEXCOORD1, float3 vertColor : COLOR1)
+TVertexToPixel TexturedVSNonInstanced( float4 inPos : POSITION,  
+									   float2 inTexCoords: TEXCOORD0, 
+									   float4 inColor : COLOR0, 
+									   float4 inTexSource : TEXCOORD1, 
+									   float3 vertColor : COLOR1,
+									   uniform int max_lights)
 {
-	return TexturedVS(inPos, inTexCoords, inColor, inTexSource, xWorld, xTint, vertColor);
+	return TexturedVS(inPos, inTexCoords, inColor, inTexSource, xWorld, xTint, vertColor, max_lights);
 }
 
+
+TVertexToPixel TexturedVSNonInstanced_1Light(float4 inPos : POSITION,
+	float2 inTexCoords : TEXCOORD0,
+	float4 inColor : COLOR0,
+	float4 inTexSource : TEXCOORD1,
+	float3 vertColor : COLOR1)
+{
+	return TexturedVS_1Light(inPos, inTexCoords, inColor, inTexSource, xWorld, xTint, vertColor);
+}
 TVertexToPixel TexturedVSInstanced( float4 inPos : POSITION,  
 								    float2 inTexCoords: TEXCOORD0, 
 									float4 inColor : COLOR0, 
 									float4 inTexSource : TEXCOORD1, 
 									float4 tint : COLOR1, 
 									float4x4 transform : BLENDWEIGHT, 
-									float4 instanceColor : COLOR2)
+									float4 instanceColor : COLOR2,
+									uniform int max_lights)
 {
-	return TexturedVS(inPos, inTexCoords, inColor, inTexSource, transpose(transform), instanceColor, float4(1, 1, 1, 1));
+	return TexturedVS(inPos, inTexCoords, inColor, inTexSource, transpose(transform), 
+		              instanceColor, float3(1, 1, 1), max_lights);
+}
+
+TVertexToPixel TexturedVSInstanced_1Light(float4 inPos : POSITION,
+	float2 inTexCoords : TEXCOORD0,
+	float4 inColor : COLOR0,
+	float4 inTexSource : TEXCOORD1,
+	float4 tint : COLOR1,
+	float4x4 transform : BLENDWEIGHT,
+	float4 instanceColor : COLOR2)
+{
+	return TexturedVS_1Light(inPos, inTexCoords, inColor, inTexSource, transpose(transform),
+		instanceColor, float3(1, 1, 1));
 }
 
 SelectionBufferToPixel SelectionVSNonInstanced(float4 inPos : POSITION, float2 inTexCoords : TEXCOORD0)
@@ -585,22 +596,9 @@ TPixelToFrame TexturedPS_Colorscale(TVertexToPixel PSIn)
 	TPixelToFrame Output = (TPixelToFrame)0;
 
 	Output.Color = tex2D(ColorscaleSampler, ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds));
-	Output.Color.rgb *= tex2D(AmbientSampler, float2(PSIn.Color.g, 0.5f));
+	Output.Color.rgb *= tex2D(AmbientSampler, float2(PSIn.Color.g, 0.5f)).rgb;
 
-	if (Clipping)
-	{
-		if (GhostMode && PSIn.ClipDistance.w < 0.0f)
-		{
-			Output.Color *= clamp(-1.0f / (PSIn.ClipDistance.w * 0.75f) * 0.5f, 0, 1.0f);
-
-			clip((Output.Color.a - 0.1f));
-		}
-		else
-		{
-			clip(PSIn.ClipDistance.w);
-		}
-	}
-
+	clip(PSIn.ClipDistance.w);
 	return Output;
 }
 
@@ -613,10 +611,7 @@ TPixelToFrame SelectionPS_Alphatest(SelectionBufferToPixel PSIn)
 
 	clip((texColor.a - 0.5));
 
-	if (Clipping)
-	{
-		clip(PSIn.ClipDistance.w);
-	}
+	clip(PSIn.ClipDistance.w);
 	Output.Color = PSIn.SelectionColor;
 	return Output;
 }
@@ -636,6 +631,7 @@ TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
 {
     TPixelToFrame Output = (TPixelToFrame)0;
 
+	/*
 	if (xEnableShadows)
 	{
 		float4 shadowPos = GetPositionFromLight(PSIn.WorldPosition);
@@ -653,13 +649,13 @@ TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
 			PSIn.Color.r *= (exp(200 * (ourdepth - shadowdepth)) + 0.25f);
 		}
 	}
-
+	*/
 	Output.Color = tex2D(SunSampler, float2(PSIn.Color.r, (xTimeOfDay)));
 	Output.Color.a *= PSIn.Color.a;
-	Output.Color.rgb += tex2D(TorchSampler, float2(PSIn.Color.b,  0.5f));
-	Output.Color.rgb *= tex2D(AmbientSampler, float2(PSIn.Color.g, 0.5f));
+	Output.Color.rgb += tex2D(TorchSampler, float2(PSIn.Color.b,  0.5f)).rgb;
+	Output.Color.rgb *= tex2D(AmbientSampler, float2(PSIn.Color.g, 0.5f)).rgb;
 	
-	saturate(Output.Color.rgb);
+	//saturate(Output.Color.rgb);
 
 	float2 textureCoords = ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds);
 	float4 texColor = tex2D(TextureSampler, textureCoords);
@@ -667,26 +663,14 @@ TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
 
 	Output.Color.rgba *= texColor;
 	Output.Color.rgb *= PSIn.ColorTint;
-	if(SelfIllumination)
-		Output.Color.rgba = lerp(Output.Color.rgba, texColor, illumColor.r); 
+
+	Output.Color.rgba = lerp(Output.Color.rgba, texColor, SelfIllumination * illumColor.r);
 	
 	Output.Color.rgba = float4(lerp(Output.Color.rgb, xFogColor, PSIn.Fog) * Output.Color.a, Output.Color.a);
 
 	clip((texColor.a - 0.5));
 
-	if (Clipping)
-	{
-		if (GhostMode && PSIn.ClipDistance.w < 0.0f)
-		{
-			Output.Color *= clamp(-1.0f / (PSIn.ClipDistance.w * 0.75f) * 0.25f, 0, 1.0f);
-
-			clip((Output.Color.a - 0.1f));
-		}
-		else
-		{
-			clip(PSIn.ClipDistance.w);
-		}
-	}
+	clip(PSIn.ClipDistance.w);
     return Output;
 }
 
@@ -694,8 +678,9 @@ TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
 TPixelToFrame TexturedPS(TVertexToPixel PSIn)
 {
     TPixelToFrame Output = (TPixelToFrame)0;
-	if (Clipping)  clip(PSIn.ClipDistance);  //MSS - Water Refactor added
+	clip(PSIn.ClipDistance);  //MSS - Water Refactor added
     
+	/*
 	if (xEnableShadows)
 	{
 		float4 shadowPos = GetPositionFromLight(PSIn.WorldPosition);
@@ -713,19 +698,18 @@ TPixelToFrame TexturedPS(TVertexToPixel PSIn)
 			PSIn.Color.r *= saturate(exp(100 * (ourdepth - shadowdepth)) + 0.25f);
 		}
 	}
-
+	*/
 	Output.Color = tex2D(SunSampler, float2(PSIn.Color.r, (xTimeOfDay)));
-	Output.Color.rgb += tex2D(TorchSampler, float2(PSIn.Color.b, 0.5f));
+	Output.Color.rgb += tex2D(TorchSampler, float2(PSIn.Color.b, 0.5f)).rgb;
 	saturate(Output.Color.rgb);
 
-	Output.Color.rgb *=  tex2D(AmbientSampler, float2(PSIn.Color.g, 0.5f));
+	Output.Color.rgb *=  tex2D(AmbientSampler, float2(PSIn.Color.g, 0.5f)).rgb;
 	Output.Color.rgb *= PSIn.ColorTint;
 	float4 texColor = tex2D(TextureSampler, ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds));
 	float4 illumColor = tex2D(IllumSampler, ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds));
 
 	Output.Color.rgba *= texColor;
-	if(SelfIllumination)
-		Output.Color.rgba = lerp(Output.Color.rgba, texColor, illumColor.r); 
+	Output.Color.rgba = lerp(Output.Color.rgba, texColor, SelfIllumination * illumColor.r);
 	
 	Output.Color.rgba = float4(lerp(Output.Color.rgb, xFogColor, PSIn.Fog), Output.Color.a * PSIn.Color.a);
     return Output;
@@ -735,8 +719,8 @@ technique Selection
 {
 	pass Pass0
 	{
-		VertexShader = compile vs_2_0 SelectionVSNonInstanced();
-		PixelShader = compile ps_2_0 SelectionPS_Alphatest();
+		VertexShader = compile vs_3_0 SelectionVSNonInstanced();
+		PixelShader = compile ps_3_0 SelectionPS_Alphatest();
 	}
 };
 
@@ -744,16 +728,171 @@ technique Textured
 {
     pass Pass0
     {   
-        VertexShader = compile vs_2_0 TexturedVSNonInstanced();
-        PixelShader  = compile ps_2_0 TexturedPS_Alphatest();
+        VertexShader = compile vs_3_0 TexturedVSNonInstanced(MAX_LIGHTS);
+        PixelShader  = compile ps_3_0 TexturedPS_Alphatest();
     }
+}
+
+/*
+technique Textured_0_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSNonInstanced(0);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+*/
+
+technique Textured_1_Light
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSNonInstanced_1Light();
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Textured_2_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSNonInstanced(2);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Textured_3_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSNonInstanced(3);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Textured_4_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSNonInstanced(4);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Textured_5_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSNonInstanced(5);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Textured_6_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSNonInstanced(6);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Textured_7_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSNonInstanced(7);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Textured_8_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSNonInstanced(8);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Textured_9_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSNonInstanced(9);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Textured_10_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSNonInstanced(10);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Textured_11_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSNonInstanced(11);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Textured_12_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSNonInstanced(12);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Textured_13_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSNonInstanced(13);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Textured_14_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSNonInstanced(14);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Textured_15_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSNonInstanced(15);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Textured_16_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSNonInstanced(16);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
 }
 
 technique Textured_Flag
 {
 	pass Pass0
 	{
-		VertexShader = compile vs_2_0 TexturedVS_Flag();
+		VertexShader = compile vs_2_0 TexturedVS_Flag(MAX_LIGHTS);
 		PixelShader = compile ps_2_0 TexturedPS_Alphatest();
 	}
 }
@@ -762,8 +901,8 @@ technique Silhouette
 {
 	pass Pass0
 	{
-		VertexShader = compile vs_2_0 TexturedVSNonInstanced();
-		PixelShader = compile ps_2_0 SilhouettePS();
+		VertexShader = compile vs_3_0 TexturedVSNonInstanced(MAX_LIGHTS);
+		PixelShader = compile ps_3_0 SilhouettePS();
 	}
 }
 
@@ -771,8 +910,8 @@ technique Textured_From_Lightmap
 {
 	pass Pass0
 	{
-		VertexShader = compile vs_2_0 TexturedVS_From_Lightmap();
-		PixelShader = compile ps_2_0 TexturedPS_From_Lightmap();
+		VertexShader = compile vs_3_0 TexturedVS_From_Lightmap();
+		PixelShader = compile ps_3_0 TexturedPS_From_Lightmap();
 	}
 }
 
@@ -780,8 +919,8 @@ technique Lightmap
 {
 	pass Pass0
 	{
-		VertexShader = compile vs_2_0 TexturedVS_To_Lightmap();
-		PixelShader = compile ps_2_0 TexturedPS_To_Lightmap();
+		VertexShader = compile vs_3_0 TexturedVS_To_Lightmap(MAX_LIGHTS);
+		PixelShader = compile ps_3_0 TexturedPS_To_Lightmap();
 	}
 }
 
@@ -789,8 +928,8 @@ technique Textured_colorscale
 {
 	pass Pass0
 	{
-		VertexShader = compile vs_2_0 TexturedVSNonInstanced();
-		PixelShader = compile ps_2_0 TexturedPS_Colorscale();
+		VertexShader = compile vs_3_0 TexturedVSNonInstanced(MAX_LIGHTS);
+		PixelShader = compile ps_3_0 TexturedPS_Colorscale();
 	}
 }
 
@@ -798,17 +937,166 @@ technique Instanced
 {
     pass Pass0
     {   
-        VertexShader = compile vs_2_0 TexturedVSInstanced();
-        PixelShader  = compile ps_2_0 TexturedPS_Alphatest();
+		VertexShader = compile vs_3_0 TexturedVSInstanced(MAX_LIGHTS);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
     }
 }
+
+technique Instanced_1_Light
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSInstanced_1Light();
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Instanced_2_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSInstanced(2);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Instanced_3_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSInstanced(3);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Instanced_4_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSInstanced(4);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Instanced_5_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSInstanced(5);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Instanced_6_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSInstanced(6);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+
+technique Instanced_7_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSInstanced(7);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+
+technique Instanced_8_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSInstanced(8);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Instanced_9_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSInstanced(9);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Instanced_10_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSInstanced(10);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Instanced_11_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSInstanced(11);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Instanced_12_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSInstanced(12);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Instanced_13_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSInstanced(13);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique Instanced_14_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSInstanced(14);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+
+technique Instanced_15_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSInstanced(15);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+
+technique Instanced_16_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSInstanced(16);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
 
 technique Instanced_SelectionBuffer
 {
 	pass Pass0
 	{
-		VertexShader = compile vs_2_0 SelectionVSInstanced();
-		PixelShader = compile ps_2_0 SelectionPS_Alphatest();
+		VertexShader = compile vs_3_0 SelectionVSInstanced();
+		PixelShader = compile ps_3_0 SelectionPS_Alphatest();
 	}
 }
 
@@ -835,7 +1123,7 @@ struct WPixelToFrame
 
 WVertexToPixel WaterVS(float4 inPos_ : POSITION, float2 inTex: TEXCOORD0, float4 inColor : COLOR0)
 {    
-	float4 inPos = inPos_ + GetNoise(inPos_);
+	float4 inPos = inPos_;// +GetNoise(inPos_);
 	WVertexToPixel Output = (WVertexToPixel)0;
 
 	float4x4 preViewProjection = mul (xView, xProjection);
@@ -851,15 +1139,16 @@ WVertexToPixel WaterVS(float4 inPos_ : POSITION, float2 inTex: TEXCOORD0, float4
 	Output.Position3D = mul(inPos, xWorld);
 	Output.BumpMapSamplingPos = inTex/xWaveLength;
 
+	float st = sin(xTime * 0.2 + inTex.y * 0.1);
 	float2 moveVector = xWindDirection.xz * xWindForce * xTime * 100;
-	moveVector.x += sin(xTime * 0.2 + inTex.y * 0.1);
-	moveVector.y += cos(xTime * 0.2 + inTex.x * 0.1);
+	moveVector.x += st;
+	moveVector.y += 1.0 - st;
 	Output.BumpMapSamplingPos = moveVector + inTex;   
 	Output.TextureSamplingPos = moveVector + inTex;
 	Output.UnMovedTextureSamplingPos = inTex;
 	Output.Color = inColor;
 	Output.Fog = saturate((Output.Position.z - xFogStart) / (xFogEnd - xFogStart));
-	if(Clipping) Output.ClipDistance = dot(mul(xWorld,inPos), ClipPlane0);
+	Output.ClipDistance = Clipping * dot(Output.Position3D, ClipPlane0);
 
 	return Output;
 }
@@ -867,7 +1156,7 @@ WVertexToPixel WaterVS(float4 inPos_ : POSITION, float2 inTex: TEXCOORD0, float4
 WPixelToFrame WaterPS(WVertexToPixel PSIn)
 {
 	WPixelToFrame Output = (WPixelToFrame)0;
-	if (Clipping)  clip(PSIn.ClipDistance);
+	clip(PSIn.ClipDistance);
 	Output.Color = PSIn.Color;
 
 	float4 bumpColor = tex2D(WaterBumpMapSampler, PSIn.BumpMapSamplingPos);
@@ -879,7 +1168,7 @@ WPixelToFrame WaterPS(WVertexToPixel PSIn)
 	float2 perturbatedTexCoords = ProjectedTexCoords + perturbation;
 	float4 reflectiveColor = tex2D(ReflectionSampler, perturbatedTexCoords);
 
-	float3 eyeVector = normalize(xCamPos - PSIn.Position3D);
+	float3 eyeVector = normalize(xCamPos.xyz - PSIn.Position3D.xyz);
 
 	float3 normalVector = float3(0, 1, 0);
 
@@ -905,11 +1194,10 @@ WVertexToPixel WaterVS_Flat(float4 inPos : POSITION, float2 inTex : TEXCOORD0, f
 
 	float4x4 preViewProjection = mul(xView, xProjection);
 	float4 pos3d = mul(inPos, xWorld);
-	pos3d += GetNoise(pos3d);
 	Output.Position = mul(pos3d, preViewProjection);
 	Output.Color = xFlatColor;
 
-	if (Clipping) Output.ClipDistance = dot(mul(xWorld, inPos), ClipPlane0);
+	Output.ClipDistance = Clipping * dot(mul(xWorld, inPos), ClipPlane0);
 
 	return Output;
 }
@@ -917,14 +1205,14 @@ WVertexToPixel WaterVS_Flat(float4 inPos : POSITION, float2 inTex : TEXCOORD0, f
 WPixelToFrame WaterPS_Textured(WVertexToPixel PSIn)
 {
 	WPixelToFrame Output = (WPixelToFrame)0;
-	if (Clipping)  clip(PSIn.ClipDistance);
+	clip(PSIn.ClipDistance);
 
 	Output.Color = tex2D(WrappedTextureSampler, PSIn.TextureSamplingPos);
 
 	float r = PSIn.Color.r;
 
 	Output.Color.rgba = float4(lerp(Output.Color.rgb, xFogColor, PSIn.Fog) * Output.Color.a, Output.Color.a);
-	float3 eyeVector = normalize(xCamPos - PSIn.Position3D);
+	float3 eyeVector = normalize(xCamPos.xyz - PSIn.Position3D.xyz);
 
 	float3 normalVector = float3(0, 1, 0);
 
@@ -938,7 +1226,7 @@ WPixelToFrame WaterPS_Textured(WVertexToPixel PSIn)
 
 WVertexToPixel WaterVS_Textured(float4 inPos_ : POSITION, float2 inTex : TEXCOORD0, float4 inColor : COLOR0)
 {
-	float4 inPos = inPos_ + GetNoise(inPos_);
+	float4 inPos = inPos_;  //+GetNoise(inPos_);
 	WVertexToPixel Output = (WVertexToPixel)0;
 
 	float4x4 preViewProjection = mul(xView, xProjection);
@@ -947,13 +1235,14 @@ WVertexToPixel WaterVS_Textured(float4 inPos_ : POSITION, float2 inTex : TEXCOOR
 	Output.Position = mul(inPos, preWorldViewProjection);
 	Output.Position3D = mul(inPos, xWorld);
 
+	float st = sin(xTime * 0.2 + inTex.y * 0.1);
 	float2 moveVector = xWindDirection.xz * xWindForce * xTime * 1000;
-	moveVector.x += sin(xTime * 0.2 + inTex.y * 0.1);
-	moveVector.y += cos(xTime * 0.2 + inTex.x * 0.1);
+	moveVector.x += st;
+	moveVector.y += 1.0 - st;
 	Output.TextureSamplingPos = moveVector + inTex;
 	Output.Color = inColor;
 	Output.Fog = saturate((Output.Position.z - xFogStart) / (xFogEnd - xFogStart));
-	if (Clipping) Output.ClipDistance = dot(mul(xWorld, inPos), ClipPlane0);
+	Output.ClipDistance = Clipping * dot(Output.Position3D, ClipPlane0);
 
 	return Output;
 }
@@ -969,8 +1258,8 @@ technique Water
 {
      pass Pass0
      {
-         VertexShader = compile vs_1_1 WaterVS();
-         PixelShader = compile ps_2_0 WaterPS();
+		 VertexShader = compile vs_3_0 WaterVS();
+		 PixelShader = compile ps_3_0 WaterPS();
 
      }
 }
@@ -979,8 +1268,8 @@ technique WaterFlat
 {
 	pass Pass0
 	{
-		VertexShader = compile vs_1_1 WaterVS_Flat();
-		PixelShader = compile ps_2_0 WaterPS_Flat();
+		VertexShader = compile vs_3_0 WaterVS_Flat();
+		PixelShader = compile ps_3_0 WaterPS_Flat();
 
 	}
 }
@@ -989,8 +1278,8 @@ technique WaterTextured
 {
 	pass Pass0
 	{
-		VertexShader = compile vs_1_1 WaterVS_Textured();
-		PixelShader = compile ps_2_0 WaterPS_Textured();
+		VertexShader = compile vs_3_0 WaterVS_Textured();
+		PixelShader = compile ps_3_0 WaterPS_Textured();
 
 	}
 }

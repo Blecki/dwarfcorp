@@ -14,7 +14,6 @@ namespace DwarfCorp
     {
         public LiquidType LiqType { get; set; }
         public bool IsBuilding = false;
-        protected readonly static bool[] drawFace = new bool[6];
 
         // The primitive everything will be based on.
         private static readonly BoxPrimitive primitive = VoxelLibrary.GetPrimitive("water");
@@ -32,11 +31,11 @@ namespace DwarfCorp
             public LiquidRebuildCache()
             {
                 int euclidianNeighborCount = 27;
-                neighbors = new List<TemporaryVoxelHandle>(euclidianNeighborCount);
+                neighbors = new List<VoxelHandle>(euclidianNeighborCount);
                 validNeighbors = new bool[euclidianNeighborCount];
                 retrievedNeighbors = new bool[euclidianNeighborCount];
 
-                for (int i = 0; i < 27; i++) neighbors.Add(TemporaryVoxelHandle.InvalidHandle);
+                for (int i = 0; i < 27; i++) neighbors.Add(VoxelHandle.InvalidHandle);
 
                 int vertexCount = (int)VoxelVertex.Count;
                 vertexCalculated = new bool[vertexCount];
@@ -58,7 +57,7 @@ namespace DwarfCorp
             internal bool[] drawFace = new bool[6];
 
             // A list of unattached voxels we can change to the neighbors of the voxel who's faces we are drawing.
-            internal List<TemporaryVoxelHandle> neighbors;
+            internal List<VoxelHandle> neighbors;
 
             // A list of which voxels are valid in the neighbors list.  We can't just set a neighbor to null as we reuse them so we use this.
             // Does not need to be cleared between sets of face drawing as retrievedNeighbors stops us from using a stale value.
@@ -183,7 +182,7 @@ namespace DwarfCorp
                 {
                     for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                     {
-                        var voxel = new TemporaryVoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
+                        var voxel = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
                         int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
                         if (fogOfWar && !chunk.Data.IsExplored[index]) continue;
 
@@ -314,8 +313,8 @@ namespace DwarfCorp
                     {
                         lock (updatedPrimative.VertexLock)
                         {
-                            updatedPrimative.MaxVertex = maxVertex;
-                            updatedPrimative.MaxIndex = maxIndex;
+                            updatedPrimative.VertexCount = maxVertex;
+                            updatedPrimative.IndexCount = maxIndex;
                             updatedPrimative.VertexBuffer = null;
                             updatedPrimative.IndexBuffer = null;
                         }
@@ -335,8 +334,8 @@ namespace DwarfCorp
                             updatedPrimative.Vertices = null;
                             updatedPrimative.IndexBuffer = null;
                             updatedPrimative.Indexes = null;
-                            updatedPrimative.MaxVertex = 0;
-                            updatedPrimative.MaxIndex = 0;
+                            updatedPrimative.VertexCount = 0;
+                            updatedPrimative.IndexCount = 0;
                         }
                     }
                     catch (System.Threading.AbandonedMutexException e)
@@ -356,7 +355,7 @@ namespace DwarfCorp
             return (C.X + 1) + (C.Y + 1) * 3 + (C.Z + 1) * 9;
         }
 
-        private static void CreateWaterFaces(TemporaryVoxelHandle voxel, VoxelChunk chunk,
+        private static void CreateWaterFaces(VoxelHandle voxel, VoxelChunk chunk,
                                             int x, int y, int z,
                                             ExtendedVertex[] vertices,
                                             ushort[] Indexes,
@@ -377,20 +376,14 @@ namespace DwarfCorp
                 if (!cache.drawFace[i]) continue;
                 BoxFace face = (BoxFace)i;
 
-                // Let's get the vertex/index positions for the current face.
-                int faceIndex = 0;
-                int vertexCount = 0;
-                int vertexIndex = 0;
-                int faceCount = 0;
-
-                primitive.GetFace(face, primitive.UVs, out faceIndex, out faceCount, out vertexIndex, out vertexCount);
+                var faceDescriptor = primitive.GetFace(face);
                 int indexOffset = startVertex;
 
-                for (int vertOffset = 0; vertOffset < vertexCount; vertOffset++)
+                for (int vertOffset = 0; vertOffset < faceDescriptor.VertexCount; vertOffset++)
                 {
                     // Used twice so we'll store it for later use.
-                    ExtendedVertex vert = primitive.Vertices[vertOffset + vertexIndex];
-                    VoxelVertex currentVertex = primitive.Deltas[vertOffset + vertexIndex];
+                    ExtendedVertex vert = primitive.Vertices[faceDescriptor.VertexOffset + vertOffset];
+                    VoxelVertex currentVertex = primitive.Deltas[faceDescriptor.VertexOffset + vertOffset];
 
                     // These will be filled out before being used   lh  .
                     //float foaminess1;
@@ -414,7 +407,7 @@ namespace DwarfCorp
                         // Run through the successors and count up the water in each voxel.
                         for (int v = 0; v < vertexSucc.Length; v++)
                         {
-                            var neighborVoxel = new TemporaryVoxelHandle(chunk.Manager.ChunkData,
+                            var neighborVoxel = new VoxelHandle(chunk.Manager.ChunkData,
                                 voxel.Coordinate + vertexSucc[v]);
                             // Only continue if it's a valid (non-null) voxel.
                             if (!neighborVoxel.IsValid) continue;
@@ -437,9 +430,9 @@ namespace DwarfCorp
                             rampOffset.Y = -0.4f;
                         }
 
-                        pos = primitive.Vertices[vertOffset + vertexIndex].Position;
+                        pos = primitive.Vertices[vertOffset + faceDescriptor.VertexOffset].Position;
                         pos.Y -= 0.6f;// Minimum ramp position 
-                        pos.Y *= ((float)voxel.WaterCell.WaterLevel / 8.0f); // Hack water level visualization in
+                        //pos.Y *= ((float)voxel.WaterCell.WaterLevel / 8.0f); // Hack water level visualization in
                         pos += origin + rampOffset;
 
                         // Store the vertex information for future use when we need it again on this or another face.
@@ -457,7 +450,7 @@ namespace DwarfCorp
                     vertices[startVertex].Set(pos,
                         new Color(foaminess[vertOffset], 0.0f, 1.0f, 1.0f),
                         Color.White,
-                        primitive.UVs.Uvs[vertOffset + vertexIndex],
+                        primitive.UVs.Uvs[vertOffset + faceDescriptor.VertexOffset],
                         new Vector4(0, 0, 1, 1));
 
                     startVertex++;
@@ -466,10 +459,10 @@ namespace DwarfCorp
                 bool flippedQuad = foaminess[1] + foaminess[3] > 
                                    foaminess[0] + foaminess[2];
 
-                for (int idx = faceIndex; idx < faceCount + faceIndex; idx++)
+                for (int idx = faceDescriptor.IndexOffset; idx < faceDescriptor.IndexCount + faceDescriptor.IndexOffset; idx++)
                 {
                     ushort offset = flippedQuad ? primitive.FlippedIndexes[idx] : primitive.Indexes[idx];
-                    ushort offset0 = flippedQuad ? primitive.FlippedIndexes[faceIndex] : primitive.Indexes[faceIndex];
+                    ushort offset0 = flippedQuad ? primitive.FlippedIndexes[faceDescriptor.IndexOffset] : primitive.Indexes[faceDescriptor.IndexOffset];
 
                     Indexes[startIndex] = (ushort)(indexOffset + offset - offset0);
                     startIndex++;

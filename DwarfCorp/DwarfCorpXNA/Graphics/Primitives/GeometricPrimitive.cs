@@ -17,15 +17,15 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class GeometricPrimitive
     {
-        public int MaxIndex = 0;
-        public int MaxVertex = 0;
+        public int IndexCount = 0;
+        public int VertexCount = 0;
 
         [JsonIgnore]
         public IndexBuffer IndexBuffer = null;
 
-        public ushort[] Indexes = null;
+        public ushort[] Indexes = new ushort[1024];
 
-        public ExtendedVertex[] Vertices = null;
+        public ExtendedVertex[] Vertices = new ExtendedVertex[1024];
 
         [JsonIgnore]
         public static Vector3[] FaceDeltas = new Vector3[6];
@@ -44,16 +44,38 @@ namespace DwarfCorp
             ResetBuffer(GameState.Game.GraphicsDevice);
         }
 
-        public static readonly bool[, ,] FaceDrawMap = new bool[6, (int)RampType.All + 1, (int)RampType.All + 1];
+        private static bool RampSet(RampType ToCheck, RampType For)
+        {
+            return (int)(ToCheck & For) != 0;
+        }
 
         protected static bool ShouldDrawFace(BoxFace face, RampType neighborRamp, RampType myRamp)
         {
-            if (face == BoxFace.Top || face == BoxFace.Bottom)
+            switch (face)
             {
-                return true;
+                case BoxFace.Top:
+                case BoxFace.Bottom:
+                    return true;
+                case BoxFace.Back:
+                    return CheckRamps(myRamp, RampType.TopBackLeft, RampType.TopBackRight,
+                        neighborRamp, RampType.TopFrontLeft, RampType.TopFrontRight);
+                case BoxFace.Front:
+                    return CheckRamps(myRamp, RampType.TopFrontLeft, RampType.TopFrontRight,
+                        neighborRamp, RampType.TopBackLeft, RampType.TopBackRight);
+                case BoxFace.Left:
+                    return CheckRamps(myRamp, RampType.TopBackLeft, RampType.TopFrontLeft,
+                        neighborRamp, RampType.TopBackRight, RampType.TopFrontRight);
+                case BoxFace.Right:
+                    return CheckRamps(myRamp, RampType.TopBackRight, RampType.TopFrontRight,
+                        neighborRamp, RampType.TopBackLeft, RampType.TopFrontLeft);
+                default:
+                    return false;
             }
+        }
 
-            return FaceDrawMap[(int)face, (int)myRamp, (int)neighborRamp];
+        private static bool CheckRamps(RampType A, RampType A1, RampType A2, RampType B, RampType B1, RampType B2)
+        {
+            return (!RampSet(A, A1) && RampSet(B, B1)) || (!RampSet(A, A2) && RampSet(B, B2));
         }
 
         protected static bool IsSideFace(BoxFace face)
@@ -61,7 +83,7 @@ namespace DwarfCorp
             return face != BoxFace.Top && face != BoxFace.Bottom;
         }
 
-        protected static bool IsFaceVisible(TemporaryVoxelHandle voxel, TemporaryVoxelHandle neighbor, BoxFace face)
+        protected static bool IsFaceVisible(VoxelHandle voxel, VoxelHandle neighbor, BoxFace face)
         {
             return
                 !neighbor.IsValid ||
@@ -79,7 +101,9 @@ namespace DwarfCorp
         /// <param Name="device">GPU to draw with.</param>
         public virtual void Render(GraphicsDevice device)
         {
-            lock (VertexLock)
+            // This lock does not appear to actually be protecting against anything; however
+            //   the cost of locking must still be paid for every primitive drawn.
+            //lock (VertexLock)
             {
 #if MONOGAME_BUILD
                 device.SamplerStates[0].Filter = TextureFilter.MinLinearMagPointMipLinear;
@@ -98,25 +122,25 @@ namespace DwarfCorp
                     ResetBuffer(device);
                 }
 
-                if (MaxVertex <= 0)
+                if (VertexCount <= 0)
                 {
-                    MaxVertex = Vertices.Length;
+                    VertexCount = Vertices.Length;
                 }
 
-                if (MaxIndex <= 0 && Indexes != null)
+                if (IndexCount <= 0 && Indexes != null)
                 {
-                    MaxIndex = Indexes.Length;
+                    IndexCount = Indexes.Length;
                 }
 
                 device.SetVertexBuffer(VertexBuffer);
                 if (IndexBuffer != null)
                 {
                     device.Indices = IndexBuffer;
-                    device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, MaxVertex, 0, MaxIndex / 3);
+                    device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, VertexCount, 0, IndexCount / 3);
                 }
                 else if (Indexes == null || Indexes.Length == 0)
                 {
-                    device.DrawPrimitives(PrimitiveType.TriangleList, 0, MaxVertex/3);
+                    device.DrawPrimitives(PrimitiveType.TriangleList, 0, VertexCount/3);
                 }
             }
         }
@@ -138,166 +162,19 @@ namespace DwarfCorp
             }
         }
 
-        public virtual void GenerateLightmap(Rectangle textureBounds)
-        {
-            if (GameSettings.Default.UseLightmaps)
-            {
-                BoundingBox box = GenerateLightmapUVs();
-                CreateLightMapTexture(box, textureBounds);
-            }
-        }
-
-        /// <summary>
-        /// Generates a lightmap UV unwrapping, and provides new UV bounds.
-        /// </summary>
-        /// <returns></returns>
-        public virtual BoundingBox GenerateLightmapUVs()
-        {
-            BoundingBox bounds = new BoundingBox(Vector3.Zero, Vector3.One);
-
-            bool success = false;
-
-            do
-            {
-                success = GenerateLightmapUVsInBounds(bounds);
-
-                if (!success)
-                {
-                    bounds = new BoundingBox(bounds.Min, bounds.Max * 1.25f);
-                }
-            } 
-            while (!success);
-            return bounds;
-        }
-
-
-        /// <summary>
-        /// Creates a light map texture for the given bounds, and original UV texture bounds.
-        /// </summary>
-        /// <param name="bounds">New bounds in UV space of the lightmap</param>
-        /// <param name="textureBounds">The bounds of the texture used to draw the primitive</param>
-        public virtual void CreateLightMapTexture(BoundingBox bounds, Rectangle textureBounds)
-        {
-            float widthScale = bounds.Max.X - bounds.Min.X;
-            float heightScale = bounds.Max.Y - bounds.Min.Y;
-            int newWidth = (int)Math.Ceiling((widthScale) * textureBounds.Width);
-            int newHeight = (int)Math.Ceiling((heightScale) * textureBounds.Height);
-
-            if (Lightmap == null || Lightmap.Width < newWidth || Lightmap.Height < newHeight)
-            {
-                Lightmap = new RenderTarget2D(GameState.Game.GraphicsDevice, newWidth, newHeight, false,
-                    SurfaceFormat.Color, DepthFormat.None);
-            }
-            else
-            {
-                newWidth = Lightmap.Width;
-                newHeight = Lightmap.Height;
-            }
-            widthScale = newWidth / ((float)textureBounds.Width);
-            heightScale = newHeight / ((float)textureBounds.Height);
-            for (int i = 0; i < Vertices.Length; i++)
-            {
-                Vector2 lmc = Vertices[i].LightmapCoordinate;
-                lmc.X /= widthScale;
-                lmc.Y /= heightScale;
-                Vertices[i].LightmapCoordinate = lmc;
-
-                Vector4 lmb = Vertices[i].LightmapBounds;
-                lmb.X /= widthScale;
-                lmb.Y /= heightScale;
-                lmb.Z /= widthScale;
-                lmb.W /= heightScale;
-                Vertices[i].LightmapBounds = lmb;
-            }
-        }
-
-        /// <summary>
-        /// Generates UV map for the model for a light map with given bounds.
-        /// Returns false if the triangles could not fit within the bounds.
-        /// Bounds Y coordinates will not be used.
-        /// </summary>
-        /// <param name="bounds">Bounding box in the image (0, 1 space)</param>
-        public virtual bool GenerateLightmapUVsInBounds(BoundingBox bounds)
-        {
-            // The top left of the quad
-            // to draw.
-            float penX = 0;
-            float penY = 0;
-            // The maximum height of the last row.
-            float drawnHeight = 0;
-
-            // For each 4-vertex quad...
-            for (int quad = 0; quad < MaxVertex / 4; quad++)
-            {
-
-                // Compute the bounds of the quad
-                float minQuadUvx = float.MaxValue;
-                float minQuadUvy = float.MaxValue;
-                float maxQuadUvx = float.MinValue;
-                float maxQuadUvy = float.MinValue;
-                
-                for (int vertex = 0; vertex < 4; vertex++)
-                {
-                    int index = quad * 4 + vertex;
-                    minQuadUvx = Math.Min(minQuadUvx, Vertices[index].TextureCoordinate.X);
-                    minQuadUvy = Math.Min(minQuadUvy, Vertices[index].TextureCoordinate.Y);
-                    maxQuadUvx = Math.Max(maxQuadUvx, Vertices[index].TextureCoordinate.X);
-                    maxQuadUvy = Math.Max(maxQuadUvy, Vertices[index].TextureCoordinate.Y);
-                }
-
-                float quadWidth = maxQuadUvx - minQuadUvx;
-                float quadHeight = maxQuadUvy - minQuadUvy;
-
-                // If the current quad isn't going to 
-                // fit, go to the next row down.
-                if (penX + quadWidth > bounds.Max.X)
-                {
-                    penY += drawnHeight;
-                    penX = 0;
-                    drawnHeight = 0;
-                }
-
-                // If the current quad won't fit because we're
-                // outside of the lower bounds, there isn't enough
-                // space to draw the quads, so return false.
-                if (penY + quadHeight > bounds.Max.Y)
-                {
-                    return false;
-                }
-
-                // For each vertex, try to draw it to the UV bounds.
-                for (int vertex = 0; vertex < 4; vertex++)
-                {
-                    int index = quad * 4 + vertex;
-                    // The coordinate is whatever the pen coordinate was plus the original UV coordinate, minus the
-                    // top left corner of the quad.
-                    Vertices[index].LightmapCoordinate = new Vector2(penX + (Vertices[index].TextureCoordinate.X - minQuadUvx), 
-                                                                     penY + (Vertices[index].TextureCoordinate.Y - minQuadUvy));
-                    Vertices[index].LightmapBounds = new Vector4(penX + Vertices[index].TextureBounds.X - minQuadUvx,
-                                                                 penY + Vertices[index].TextureBounds.Y - minQuadUvy,
-                                                                 penX + Vertices[index].TextureBounds.Z - minQuadUvx,
-                                                                 penY + Vertices[index].TextureBounds.W - minQuadUvy);
-                }
-
-                // Move the pen over if any of the vertexes were drawn.
-                penX += quadWidth;
-                drawnHeight = Math.Max(drawnHeight, quadHeight);
-            }
-            return true;
-        }
-
+        
 
         /// <summary>
         /// Resets the vertex buffer object from the verticies.
         /// <param Name="device">GPU to draw with.</param></summary>
         public virtual void ResetBuffer(GraphicsDevice device)
         {
-            if(DwarfGame.ExitGame)
-            {
-                return;
-            }
+            //if(DwarfGame.ExitGame)
+            //{
+            //    return;
+            //}
 
-            lock (VertexLock)
+            //lock (VertexLock)
             {
                 if (VertexBuffer != null && !VertexBuffer.IsDisposed)
                 {
@@ -311,14 +188,14 @@ namespace DwarfCorp
                     IndexBuffer = null;
                 }
 
-                if (MaxIndex <= 0 && Indexes != null)
+                if (IndexCount <= 0 && Indexes != null)
                 {
-                    MaxIndex = Indexes.Length;
+                    IndexCount = Indexes.Length;
                 }
 
-                if (MaxVertex <= 0 && Vertices != null)
+                if (VertexCount <= 0 && Vertices != null)
                 {
-                    MaxVertex = Vertices.Length;
+                    VertexCount = Vertices.Length;
                 }
 
 

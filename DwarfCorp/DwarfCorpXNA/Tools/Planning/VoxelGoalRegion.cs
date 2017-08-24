@@ -50,29 +50,29 @@ namespace DwarfCorp
     /// <seealso cref="GoalRegion" />
     public class VoxelGoalRegion : GoalRegion
     {
-        public TemporaryVoxelHandle Voxel { get; set; }
+        public VoxelHandle Voxel { get; set; }
 
         public override bool IsPossible()
         {
             return Voxel.IsValid && !VoxelHelpers.VoxelIsCompletelySurrounded(Voxel);
         }
 
-        public override float Heuristic(TemporaryVoxelHandle voxel)
+        public override float Heuristic(VoxelHandle voxel)
         {
             return (voxel.WorldPosition - Voxel.WorldPosition).LengthSquared();
         }
 
-        public VoxelGoalRegion(TemporaryVoxelHandle voxel)
+        public VoxelGoalRegion(VoxelHandle voxel)
         {
             Voxel = voxel;
         }
 
-        public override bool IsInGoalRegion(TemporaryVoxelHandle voxel)
+        public override bool IsInGoalRegion(VoxelHandle voxel)
         {
             return Voxel == voxel;
         }
 
-        public override TemporaryVoxelHandle GetVoxel()
+        public override VoxelHandle GetVoxel()
         {
             return Voxel;
         }

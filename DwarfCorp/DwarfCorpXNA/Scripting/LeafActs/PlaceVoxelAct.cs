@@ -92,9 +92,9 @@ namespace DwarfCorp
                         Location.ToVector3(), Location.ToVector3() + Vector3.One)))
                     {
                         var neighbors = VoxelHelpers.EnumerateAllNeighbors(Location)
-                            .Select(c => new TemporaryVoxelHandle(Agent.Chunks.ChunkData, c));
+                            .Select(c => new VoxelHandle(Agent.Chunks.ChunkData, c));
 
-                        var closest = TemporaryVoxelHandle.InvalidHandle;
+                        var closest = VoxelHandle.InvalidHandle;
                         float closestDist = float.MaxValue;
                         foreach (var voxel in neighbors)
                         {

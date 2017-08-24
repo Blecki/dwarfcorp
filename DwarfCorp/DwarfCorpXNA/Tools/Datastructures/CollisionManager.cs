@@ -1,4 +1,4 @@
-﻿// CollisionManager.cs
+// CollisionManager.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -176,7 +176,7 @@ namespace DwarfCorp
             Hashes[type].RemoveItem(bounded, new IntegerBoundingBox(oldLocation));
         }
 
-        public List<IBoundedObject> GetObjectsAt(TemporaryVoxelHandle V, CollisionType queryType)
+        public List<IBoundedObject> GetObjectsAt(VoxelHandle V, CollisionType queryType)
         {
             return GetObjectsAt(new Point3(V.Coordinate.X, V.Coordinate.Y, V.Coordinate.Z), queryType);
         }

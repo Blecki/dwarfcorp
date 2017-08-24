@@ -61,8 +61,6 @@ namespace DwarfCorp
         {
             LightsWithVoxels = true;
             Tint = new Color(255, 255, 0);
-            //LightingTimer = new Timer(0.2f, true);
-            //StartTimer = new Timer(0.5f, true);
             TintChangeRate = 1.0f;
             VertexColorTint = Color.White;
         }
@@ -77,75 +75,35 @@ namespace DwarfCorp
             base.ReceiveMessageRecursive(messageToReceive);
         }
 
-        //public bool ShouldUpdate()
-        //{
-        //    if(!StartTimer.HasTriggered)
-        //    {
-        //        return false;
-        //    }
-
-        //    return LightingTimer.HasTriggered;
-        //}
-
         new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            //LightingTimer.Update(gameTime);
-            //StartTimer.Update(gameTime);
-
             if (!LightsWithVoxels)
-            {
                 Tint = Color.White;
-            }
 
-            //if(ShouldUpdate())
-            //{
-                if (entityLighting && LightsWithVoxels)
-                {
-                var under = new TemporaryVoxelHandle(chunks.ChunkData,
+            if (entityLighting && LightsWithVoxels)
+            {
+                var under = new VoxelHandle(chunks.ChunkData,
                     GlobalVoxelCoordinate.FromVector3(Position));
 
-                    if (under.IsValid)
-                    {
-                        Color color = new Color(under.SunColor, 255, 0);
-
-                        Tint = color;
-                        //ColorAppplied = true;
-                    }
-                }
-                else
+                if (under.IsValid)
                 {
-                    Tint = new Color(200, 255, 0);
+                    Color color = new Color(under.SunColor, 255, 0);
+
+                    Tint = color;
                 }
-
-               // LightingTimer.HasTriggered = false;
-               // LightingTimer.Reset(LightingTimer.TargetTimeSeconds);
-            //}
-            //else if(!entityLighting)
-            //{
-            //    TargetTint = new Color(200, 255, 0);
-            //}
-            //else if(LightsWithVoxels)
-            //{
-            //    //Vector4 lerpTint = new Vector4((float) TargetTint.R / 255.0f, (float) TargetTint.G / 255.0f, (float) TargetTint.B / 255.0f, (float) TargetTint.A / 255.0f);
-                //Vector4 currTint = new Vector4((float) Tint.R / 255.0f, (float) Tint.G / 255.0f, (float) Tint.B / 255.0f, (float) Tint.A / 255.0f);
-
-                //Vector4 delta = lerpTint - currTint;
-                //lerpTint = currTint + delta * Math.Max(Math.Min(LightingTimer.CurrentTimeSeconds * TintChangeRate, 1.0f), 0.0f);
-
-                //Tint = new Color(lerpTint.X, lerpTint.Y, lerpTint.Z, lerpTint.W);
-            //    Tint = TargetTint;
-            //}
+            }
+            else
+            {
+                Tint = new Color(200, 255, 0);
+            }
 
             base.Update(gameTime, chunks, camera);
         }
 
         public void ApplyTintingToEffect(Shader effect)
         {
-            if (IsVisible)
-            {
                 effect.LightRampTint = Tint;
                 effect.VertexColorTint = VertexColorTint;
-            }
         }
     }
 

@@ -217,12 +217,12 @@ namespace DwarfCorp
             CurrentTool.OnBodiesSelected(bodies, button);
         }
 
-        public void OnDrag(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
+        public void OnDrag(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
             CurrentTool.OnVoxelsDragged(voxels, button);
         }
 
-        public void OnSelected(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
+        public void OnSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
             CurrentTool.OnVoxelsSelected(voxels, button);
         }
@@ -381,12 +381,12 @@ namespace DwarfCorp
 
             if (dwarf.Velocity.Length() > 0.1)
             {
-                var above = VoxelHelpers.FindFirstVoxelAbove(new TemporaryVoxelHandle(
+                var above = VoxelHelpers.FindFirstVoxelAbove(new VoxelHandle(
                     World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(dwarf.Position)));
 
                 if (above.IsValid)
                 {
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(above.Coordinate.Y - 1, ChunkManager.SliceMode.Y);
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(above.Coordinate.Y, ChunkManager.SliceMode.Y);
                 }
                 else
                 {
@@ -509,7 +509,7 @@ namespace DwarfCorp
                 if (VoxSelector.VoxelUnderMouse.IsValid)
                 {
                     World.Tutorial("unslice");
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Coordinate.Y,
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Coordinate.Y + 1,
                         ChunkManager.SliceMode.Y);
                     Drawer3D.DrawBox(VoxSelector.VoxelUnderMouse.GetBoundingBox(), Color.White, 0.15f, true);
                 }

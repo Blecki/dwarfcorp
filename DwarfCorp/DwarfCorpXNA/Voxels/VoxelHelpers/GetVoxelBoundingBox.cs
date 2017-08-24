@@ -8,7 +8,7 @@ namespace DwarfCorp
 {
     public partial class VoxelHelpers
     {
-        public static BoundingBox GetVoxelBoundingBox(IEnumerable<TemporaryVoxelHandle> Voxels)
+        public static BoundingBox GetVoxelBoundingBox(IEnumerable<VoxelHandle> Voxels)
         {
             Vector3 maxPos = new Vector3(Single.MinValue, Single.MinValue, Single.MinValue);
             Vector3 minPos = new Vector3(Single.MaxValue, Single.MaxValue, Single.MaxValue);

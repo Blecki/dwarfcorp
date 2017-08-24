@@ -163,11 +163,11 @@ namespace DwarfCorp
             
         }
 
-        public void Update(DwarfTime time, Camera cam, GraphicsDevice graphics)
+        public void Update(DwarfTime time, Camera cam, GraphicsDevice graphics, int maxviewinglevel)
         {
             foreach(FixedInstanceArray list in Instances.Values)
             {
-                list.Update(time, cam, graphics);
+                list.Update(time, cam, graphics, maxviewinglevel);
             }
         }
 
@@ -179,13 +179,13 @@ namespace DwarfCorp
             }
         }
 
-        public void Render(GraphicsDevice device, Shader effect, Camera camera, bool resetVertices)
+        public void Render(GraphicsDevice device, Shader effect, Camera camera)
         {
             foreach(FixedInstanceArray list in Instances.Values)
             {
-                list.Render(device, effect, camera, resetVertices);
+                list.Render(device, effect, camera);
             }
-            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
+            effect.SetTexturedTechnique();
             effect.World = Matrix.Identity;
         }
     }

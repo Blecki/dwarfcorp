@@ -13,11 +13,12 @@ namespace DwarfCorp
         private Action<float> Worker;
         private ChunkManager Manager;
 
-        public float TimeBudget = 0.1f; // Allow thread to run for 1 tenth of every second.
+        public float TimeBudget = 0.05f; // How long the thread can be allowed to run per second.
         public float Frequency = 0.2f;
-        public float FrequencyStep = 0.1f;
+        public float FrequencyStep = 0.3f;
         public float MaxFrequency = 2.0f;
         public float MinFrequency = 0.1f;
+        public int MaxRecordsTracked = 10;
 
         private DateTime LastRan = DateTime.Now;
 
@@ -59,7 +60,7 @@ namespace DwarfCorp
             {
                 while (!DwarfGame.ExitGame && !Manager.ExitThreads)
                 {
-                    if (Program.ShutdownEvent.WaitOne(500))
+                    if (Program.ShutdownEvent.WaitOne(1))
                         break;
 
                     
@@ -85,16 +86,17 @@ namespace DwarfCorp
                                 Duration = endTime - timeNow
                             });
 
-                            while (RecentRuns.Count > 0 && (timeNow - RecentRuns.First.Value.StartTime).TotalSeconds > 1.0f)
+                            while (RecentRuns.Count > MaxRecordsTracked)
                                 RecentRuns.RemoveFirst();
-
-                            var totalTime = RecentRuns.Sum(r => r.Duration.TotalSeconds);
-
-                            if (totalTime > TimeBudget)
+                            var sumTime = RecentRuns.Sum(r => r.Duration.TotalSeconds);
+                            var runTimeSpan = (endTime - RecentRuns.First.Value.StartTime).TotalSeconds;
+                            var timeUsed = sumTime / runTimeSpan;
+                            
+                            if (timeUsed > TimeBudget)
                             {
                                 Frequency = Math.Min(Frequency * (1.0f +  FrequencyStep), MaxFrequency);
                             }
-                            else if (totalTime < TimeBudget)
+                            else if (timeUsed < TimeBudget)
                             {
                                 Frequency = Math.Max(Frequency * (1.0f - FrequencyStep), MinFrequency);
                             }

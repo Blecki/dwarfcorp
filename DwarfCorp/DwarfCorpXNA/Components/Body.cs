@@ -76,13 +76,13 @@ namespace DwarfCorp
             set
             {
                 globalTransform = value;
-
+                UpdateBoundingBox();
                 if(!AddToCollisionManager)
                 {
                     return;
                 }
 
-                if(!Active || (!HasMoved && wasEverAddedToOctree) )
+                if(!Active)
                 {
                     return;
                 }
@@ -90,19 +90,17 @@ namespace DwarfCorp
                 if (!ExceedsMovementThreshold && wasEverAddedToOctree)
                     return;
 
-                UpdateBoundingBox();
                 Manager.World.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
                 Manager.World.CollisionManager.AddObject(this, CollisionType);
 
                 lastBounds = GetBoundingBox();
                 wasEverAddedToOctree = true;
-                HasMoved = false;
                 ExceedsMovementThreshold = false;
                 thresholdPos = Position;
             }
         }
 
-
+        private bool propogateTransforms = false;
         public Matrix LocalTransform
         {
             get { return localTransform; }
@@ -116,8 +114,11 @@ namespace DwarfCorp
                 {
                     ExceedsMovementThreshold = true;
                 }
+                propogateTransforms = true;
             }
         }
+
+        private bool firstIter = true;
 
         [JsonIgnore]
         public Vector3 Position
@@ -141,7 +142,11 @@ namespace DwarfCorp
         public bool DepthSort { get; set; }
         public bool FrustrumCull { get; set; }
         public bool DrawInFrontOfSiblings { get; set; }
-        public bool IsAboveCullPlane { get; set; }
+
+        public bool IsAboveCullPlane(ChunkManager Chunks)
+        {
+            return GlobalTransform.Translation.Y - GetBoundingBox().Extents().Y > (Chunks.ChunkData.MaxViewingLevel + 5);
+        }
 
         public List<MotionAnimation> AnimationQueue { get; set; }
 
@@ -230,23 +235,28 @@ namespace DwarfCorp
 
         public void OrientToWalls()
         {
-            var curr = new TemporaryVoxelHandle(Manager.World.ChunkManager.ChunkData,
+            var curr = new VoxelHandle(Manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(LocalTransform.Translation));
             if (curr.IsValid)
             {
                 foreach (var n in VoxelHelpers.EnumerateManhattanNeighbors2D(curr.Coordinate))
                 {
-                    var v = new TemporaryVoxelHandle(World.ChunkManager.ChunkData, n);
+                    var v = new VoxelHandle(World.ChunkManager.ChunkData, n);
                     if (v.IsValid && !v.IsEmpty)
                     { 
                         Vector3 diff = n.ToVector3() - curr.WorldPosition;
-                        Matrix mat = Matrix.CreateRotationY((float)Math.Atan2(diff.X, diff.Z));
-                        mat.Translation = LocalTransform.Translation;
-                        LocalTransform = mat;
+                        Orient((float)Math.Atan2(diff.X, diff.Z));
                         break;
                     }
                 }
             }
+        }
+
+        public void Orient(float angle)
+        {
+            Matrix mat = Matrix.CreateRotationY(angle);
+            mat.Translation = LocalTransform.Translation;
+            LocalTransform = mat;
         }
  
 
@@ -299,29 +309,6 @@ namespace DwarfCorp
 
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            //if (MathFunctions.HasNan(Position))
-            //{
-            //    Die();
-            //}
-
-            IsAboveCullPlane =  GlobalTransform.Translation.Y - GetBoundingBox().Extents().Y > (chunks.ChunkData.MaxViewingLevel + 5);
-
-            //if(DrawScreenRect) // Never true.
-            //{
-            //    Drawer2D.DrawRect(GetScreenRect(camera), Color.Transparent, Color.White, 1);
-            //}
-
-            //if(DrawBoundingBox) // Only used by TrapSensor
-            //{
-            //    Drawer3D.DrawBox(BoundingBox, Color.White, 0.02f);
-            //    Drawer3D.DrawBox(GetRotatedBoundingBox(), Color.Red, 0.02f);
-            //}
-
-            //if (DrawReservation && IsReserved) // Never true.
-            //{
-            //    Drawer3D.DrawBox(BoundingBox, Color.White, 0.02f);
-            //}
-
             if(AnimationQueue.Count > 0)
             {
                 HasMoved = true;
@@ -334,6 +321,13 @@ namespace DwarfCorp
                 {
                     AnimationQueue.RemoveAt(0);
                 }
+            }
+            if (firstIter || propogateTransforms)
+            {
+                UpdateTransform();
+                PropogateTransforms();
+                firstIter = false;
+                propogateTransforms = false;
             }
         }
 
@@ -352,11 +346,11 @@ namespace DwarfCorp
         //}
 
 
-        public void UpdateTransformsRecursive(Body ParentBody)
+        public void UpdateTransform()
         {
-            if (ParentBody != null)
+            if (Parent != Manager.RootComponent && Parent != null)
             {
-                GlobalTransform = LocalTransform * ParentBody.GlobalTransform;
+                GlobalTransform = LocalTransform * (Parent as Body).GlobalTransform;
                 hasMoved = false;
             }
             else
@@ -364,18 +358,17 @@ namespace DwarfCorp
                 GlobalTransform = LocalTransform;
                 hasMoved = false;
             }
-            
-            for (int i = 0; i < Children.Count; ++i)
-            {
-                var childBody = Children[i] as Body;
-                if (childBody != null)
-                    childBody.UpdateTransformsRecursive(this);
-            }
-
-            // Setting the global transform does this...
-            UpdateBoundingBox();
         }
 
+
+        public void PropogateTransforms()
+        {
+            UpdateTransform();
+            foreach (var child in Children.OfType<Body>())
+            {
+                child.PropogateTransforms();
+            }
+        }
 
 
         public BoundingBox GetBoundingBox()
@@ -387,7 +380,7 @@ namespace DwarfCorp
         {
             Vector3 min = Vector3.Transform(BoundingBox.Min - GlobalTransform.Translation, GlobalTransform);
             Vector3 max = Vector3.Transform(BoundingBox.Max - GlobalTransform.Translation, GlobalTransform);
-            return new BoundingBox(min, max);
+            return new BoundingBox(MathFunctions.Min(min, max), MathFunctions.Max(min, max));
         }
 
 
@@ -408,7 +401,6 @@ namespace DwarfCorp
             }
             Active = false;
             IsVisible = false;
-            HasMoved = false;
             OnDestroyed.Invoke();
             base.Die();
         }

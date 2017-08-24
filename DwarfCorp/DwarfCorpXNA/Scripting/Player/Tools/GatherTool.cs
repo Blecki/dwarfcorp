@@ -77,7 +77,7 @@ namespace DwarfCorp
                 c.IsVisible && 
                 c.Parent == Player.World.ComponentManager.RootComponent))
             {
-                if (!resource.IsVisible || resource.IsAboveCullPlane) continue;
+                if (!resource.IsVisible || resource.IsAboveCullPlane(Player.World.ChunkManager)) continue;
                 Drawer3D.DrawBox(resource.BoundingBox, Color.LightGoldenrodYellow, 0.05f, true);
 
                 if(button == InputManager.MouseButton.Left)
@@ -109,12 +109,12 @@ namespace DwarfCorp
             DefaultOnMouseOver(bodies);
         }
 
-        public override void OnVoxelsSelected(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }
 
-        public override void OnVoxelsDragged(List<TemporaryVoxelHandle> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
 
         }

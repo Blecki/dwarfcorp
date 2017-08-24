@@ -251,12 +251,12 @@ namespace DwarfCorp
             }
         }
 
-        public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
+        public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool Ignored)
         {
             ApplyTintingToEffect(effect);
             foreach (var sprites in Sprites)
             {
-                sprites.Render(graphicsDevice, effect, camera, !renderingForWater);
+                sprites.Render(graphicsDevice, effect, camera);
             }
         }
 
@@ -346,7 +346,7 @@ namespace DwarfCorp
 
                 p.Scale = Math.Max(p.Scale, 0.0f);
 
-                var v = new TemporaryVoxelHandle(chunks.ChunkData,
+                var v = new VoxelHandle(chunks.ChunkData,
                         GlobalVoxelCoordinate.FromVector3(p.Position));
 
                 if (Data.HasLighting)
@@ -415,7 +415,7 @@ namespace DwarfCorp
 
             foreach (var sprites in Sprites)
             {
-                sprites.Update(gameTime, camera, chunks.Graphics);
+                sprites.Update(gameTime, camera, chunks.Graphics, chunks.ChunkData.MaxViewingLevel);
             }
             if (Particles.Count > 0)
                 base.Update(gameTime, chunks, camera);

@@ -372,7 +372,7 @@ namespace DwarfCorp
                     Draw3DThings(new DwarfTime(), DefaultShader, Camera.ViewMatrix);
 
                     DefaultShader.View = Camera.ViewMatrix;
-                    InstanceManager.Render(GraphicsDevice, DefaultShader, Camera, true);
+                    InstanceManager.Render(GraphicsDevice, DefaultShader, Camera);
                     ComponentRenderer.Render(ComponentManager.GetRenderables(), new DwarfTime(), ChunkManager, Camera,
                         DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader,
                         ComponentRenderer.WaterRenderType.None, 0);
@@ -395,10 +395,10 @@ namespace DwarfCorp
 
         public bool IsCameraUnderwater()
         {
-            var handle = new TemporaryVoxelHandle(ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Camera.Position));
+            var handle = new VoxelHandle(ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Camera.Position));
             return handle.IsValid && handle.WaterCell.WaterLevel > 0;
         }
-        
+
         /// <summary>
         /// Called every frame
         /// </summary>
@@ -448,25 +448,28 @@ namespace DwarfCorp
             // If not paused, we want to just update the rest of the game.
             if (!Paused)
             {
-                //GamePerformance.Instance.StartTrackPerformance("Diplomacy");
+                GamePerformance.Instance.StartTrackPerformance("Diplomacy");
                 Diplomacy.Update(gameTime, Time.CurrentDate, this);
-                //GamePerformance.Instance.StopTrackPerformance("Diplomacy");
+                GamePerformance.Instance.StopTrackPerformance("Diplomacy");
 
-                //GamePerformance.Instance.StartTrackPerformance("Components");
+                GamePerformance.Instance.StartTrackPerformance("Factions");
                 Factions.Update(gameTime);
+                GamePerformance.Instance.StopTrackPerformance("Factions");
+
+                GamePerformance.Instance.StartTrackPerformance("Components");
                 ComponentManager.Update(gameTime, ChunkManager, Camera);
-                //GamePerformance.Instance.StopTrackPerformance("Components");
+                GamePerformance.Instance.StopTrackPerformance("Components");
 
                 Sky.TimeOfDay = Time.GetSkyLightness();
 
                 Sky.CosTime = (float)(Time.GetTotalHours() * 2 * Math.PI / 24.0f);
                 DefaultShader.TimeOfDay = Sky.TimeOfDay;
 
-                //GamePerformance.Instance.StartTrackPerformance("Monster Spawner");
+                GamePerformance.Instance.StartTrackPerformance("Monster Spawner");
                 MonsterSpawner.Update(gameTime);
-                //GamePerformance.Instance.StopTrackPerformance("Monster Spawner");
+                GamePerformance.Instance.StopTrackPerformance("Monster Spawner");
 
-                //GamePerformance.Instance.StartTrackPerformance("All Asleep");
+                GamePerformance.Instance.StartTrackPerformance("All Asleep");
                 bool allAsleep = Master.AreAllEmployeesAsleep();
                 if (SleepPrompt && allAsleep && !FastForwardToDay && Time.IsNight())
                 {
@@ -488,33 +491,28 @@ namespace DwarfCorp
                 {
                     SleepPrompt = true;
                 }
-                //GamePerformance.Instance.StopTrackPerformance("All Asleep");
+                GamePerformance.Instance.StopTrackPerformance("All Asleep");
             }
 
             // These things are updated even when the game is paused
 
-            //GamePerformance.Instance.StartTrackPerformance("Chunk Manager");
+            GamePerformance.Instance.StartTrackPerformance("Chunk Manager");
             ChunkManager.Update(gameTime, Camera, GraphicsDevice);
             ChunkRenderer.Update(gameTime, Camera, GraphicsDevice);
-            //GamePerformance.Instance.StopTrackPerformance("Chunk Manager");
+            GamePerformance.Instance.StopTrackPerformance("Chunk Manager");
 
-            //GamePerformance.Instance.StartTrackPerformance("Instance Manager");
-            InstanceManager.Update(gameTime, Camera, GraphicsDevice);
-            //GamePerformance.Instance.StopTrackPerformance("Instance Manager");
+            GamePerformance.Instance.StartTrackPerformance("Instance Manager");
+            InstanceManager.Update(gameTime, Camera, GraphicsDevice, ChunkManager.ChunkData.MaxViewingLevel);
+            GamePerformance.Instance.StopTrackPerformance("Instance Manager");
 
-            //GamePerformance.Instance.StartTrackPerformance("Sound Manager");
+            GamePerformance.Instance.StartTrackPerformance("Sound Manager");
             SoundManager.Update(gameTime, Camera, Time);
-            //GamePerformance.Instance.StopTrackPerformance("Sound Manager");
+            GamePerformance.Instance.StopTrackPerformance("Sound Manager");
 
-            //GamePerformance.Instance.StartTrackPerformance("Weather");
+            GamePerformance.Instance.StartTrackPerformance("Weather");
             Weather.Update(this.Time.CurrentDate, this);
-            //GamePerformance.Instance.StopTrackPerformance("Weather");
+            GamePerformance.Instance.StopTrackPerformance("Weather");
 
-            // Make sure that the slice slider snaps to the current viewing level (an integer)
-            //if(!LevelSlider.IsMouseOver)
-            {
-                //   LevelSlider.SliderValue = ChunkManager.ChunkData.MaxViewingLevel;
-            }
         }
 
         public bool FastForwardToDay { get; set; }
@@ -622,7 +620,7 @@ namespace DwarfCorp
             GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
             effect.View = view;
             effect.Projection = Camera.ProjectionMatrix;
-            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
+            effect.SetTexturedTechnique();
             effect.ClippingEnabled = true;
             GraphicsDevice.BlendState = BlendState.NonPremultiplied;
             ChunkRenderer.Render(Camera, gameTime, GraphicsDevice, effect, Matrix.Identity);
@@ -678,7 +676,7 @@ namespace DwarfCorp
             {
                 LightPositions[j] = new Vector3(0, 0, 0);
             }
-
+            DefaultShader.CurrentNumLights = numLights - 1;
             DynamicLight.TempLights.Clear();
         }
 
@@ -691,6 +689,7 @@ namespace DwarfCorp
             if (!ShowingWorld)
                 return;
 
+            GamePerformance.Instance.StartTrackPerformance("Render - RENDER");
             GamePerformance.Instance.StartTrackPerformance("Render - Prep");
 
             var renderables = ComponentRenderer.EnumerateVisibleRenderables(ComponentManager.GetRenderables(),
@@ -751,21 +750,26 @@ namespace DwarfCorp
                 DefaultShader.Projection = Camera.ProjectionMatrix;
                 DefaultShader.World = Matrix.Identity;
 
-                GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer - Chunks");
+                //GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer - Chunks");
                 ChunkRenderer.RenderSelectionBuffer(DefaultShader, GraphicsDevice, Camera.ViewMatrix);
-                GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Chunks");
+                //GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Chunks");
 
-                GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer - Components");
+                //GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer - Components");
                 ComponentRenderer.RenderSelectionBuffer(renderables, gameTime, ChunkManager, Camera,
                     DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader);
-                GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Components");
+                //GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Components");
 
-                GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer - Instances");
+                //GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer - Instances");
                 InstanceManager.RenderSelectionBuffer(GraphicsDevice, DefaultShader, Camera, false);
-                GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Instances");
+                //GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Instances");
 
                 SelectionBuffer.End(GraphicsDevice);
+
+                GamePerformance.Instance.TrackValueType("SBUFFER RENDERED", true);
             }
+            else
+                GamePerformance.Instance.TrackValueType("SBUFFER RENDERED", false);
+
 
             #endregion
 
@@ -788,7 +792,7 @@ namespace DwarfCorp
             DrawSky(gameTime, Camera.ViewMatrix, 1.0f, DefaultShader.FogColor);
 
             // Defines the current slice for the GPU
-            float level = ChunkManager.ChunkData.MaxViewingLevel + 2.0f;
+            float level = ChunkManager.ChunkData.MaxViewingLevel + 0.25f;
             if (level > VoxelConstants.ChunkSizeY)
             {
                 level = 1000;
@@ -797,9 +801,7 @@ namespace DwarfCorp
             GamePerformance.Instance.StopTrackPerformance("Render - BG Stuff");
             GamePerformance.Instance.StartTrackPerformance("Render - Chunks");
 
-
-
-            SlicePlane = SlicePlane * 0.5f + level * 0.5f;
+            SlicePlane = level;
 
             DefaultShader.WindDirection = Weather.CurrentWind;
             DefaultShader.WindForce = 0.0005f * (1.0f + (float)Math.Sin(Time.GetTotalSeconds()*0.001f));
@@ -811,7 +813,6 @@ namespace DwarfCorp
             Draw3DThings(gameTime, DefaultShader, Camera.ViewMatrix);
 
             GamePerformance.Instance.StopTrackPerformance("Render - Chunks");
-            GamePerformance.Instance.StartTrackPerformance("Render - Components");
 
 
             // Now we want to draw the water on top of everything else
@@ -822,13 +823,18 @@ namespace DwarfCorp
 
             DefaultShader.View = Camera.ViewMatrix;
             DefaultShader.Projection = Camera.ProjectionMatrix;
-            // Render simple geometry (boxes, etc.)
-            Drawer3D.Render(GraphicsDevice, DefaultShader, true);
-
+            DefaultShader.GhostClippingEnabled = true;
             // Now draw all of the entities in the game
             DefaultShader.ClipPlane = new Vector4(slicePlane.Normal, slicePlane.D);
             DefaultShader.ClippingEnabled = true;
-            DefaultShader.GhostClippingEnabled = true;
+
+            GamePerformance.Instance.StartTrackPerformance("Render - Drawer3D");
+            // Render simple geometry (boxes, etc.)
+            Drawer3D.Render(GraphicsDevice, DefaultShader, Camera);
+            GamePerformance.Instance.StopTrackPerformance("Render - Drawer3D");
+
+            GamePerformance.Instance.StartTrackPerformance("Render - Instances");
+
             DefaultShader.EnableShadows = GameSettings.Default.UseDynamicShadows;
 
             if (GameSettings.Default.UseDynamicShadows)
@@ -837,7 +843,10 @@ namespace DwarfCorp
             }
 
             DefaultShader.View = Camera.ViewMatrix;
-            InstanceManager.Render(GraphicsDevice, DefaultShader, Camera, true);
+            InstanceManager.Render(GraphicsDevice, DefaultShader, Camera);
+            GamePerformance.Instance.StopTrackPerformance("Render - Instances");
+            GamePerformance.Instance.StartTrackPerformance("Render - Components");
+
             ComponentRenderer.Render(renderables, gameTime, ChunkManager,
                 Camera,
                 DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader,
@@ -852,7 +861,7 @@ namespace DwarfCorp
             {
                 DefaultShader.View = Camera.ViewMatrix;
                 DefaultShader.Projection = Camera.ProjectionMatrix;
-                DefaultShader.CurrentTechnique = DefaultShader.Techniques[Shader.Technique.Textured];
+                DefaultShader.SetTexturedTechnique();
                 GraphicsDevice.BlendState = BlendState.NonPremultiplied;
                 Master.Faction.WallBuilder.Render(gameTime, GraphicsDevice, DefaultShader);
                 Master.Faction.CraftBuilder.Render(gameTime, GraphicsDevice, DefaultShader);
@@ -923,7 +932,7 @@ namespace DwarfCorp
             GraphicsDevice.BlendState = BlendState.Opaque;
 
             GamePerformance.Instance.StopTrackPerformance("Render - Misc");
-
+            GamePerformance.Instance.StopTrackPerformance("Render - RENDER");
 
             lock (ScreenshotLock)
             {

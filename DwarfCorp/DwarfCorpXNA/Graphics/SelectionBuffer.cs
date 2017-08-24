@@ -54,6 +54,14 @@ namespace DwarfCorp
             Scale = scale;
         }
 
+        private enum SelectionBufferState
+        {
+            Idle,
+            Rendering,
+        }
+
+        private SelectionBufferState State = SelectionBufferState.Idle;
+
         public void ValidateBuffer(GraphicsDevice device)
         {
             PresentationParameters pp = device.PresentationParameters;
@@ -69,26 +77,32 @@ namespace DwarfCorp
 
         public bool Begin(GraphicsDevice device)
         {
-            renderTimer.Update(DwarfTime.LastTime);
-            renderThisFrame = renderTimer.HasTriggered || colorBuffer == null;
-            if (!renderThisFrame)
+            switch (State)
             {
-                return false;
+                case SelectionBufferState.Idle:
+                    renderTimer.Update(DwarfTime.LastTime);
+                    renderThisFrame = (renderTimer.HasTriggered || colorBuffer == null);
+                    if (!renderThisFrame)
+                        return false;
+                    ValidateBuffer(device);
+                    device.SetRenderTarget(Buffer);
+                    device.Clear(Color.Transparent);
+                    State = SelectionBufferState.Rendering;
+                    return true;
+                case SelectionBufferState.Rendering:
+                    if (colorBuffer == null)
+                        colorBuffer = new Color[(device.Viewport.Width / Scale) * (device.Viewport.Height / Scale)];
+                    Buffer.GetData(colorBuffer);
+                    State = SelectionBufferState.Idle;
+                    return false;
+                default:
+                    return false;
             }
-            ValidateBuffer(device);
-            device.SetRenderTarget(Buffer);
-            device.Clear(Color.Transparent);
-            return true;
         }
 
         public void End(GraphicsDevice device)
         {
             device.SetRenderTarget(null);
-            if (colorBuffer == null)
-            {
-                colorBuffer = new Color[(device.Viewport.Width / Scale) * (device.Viewport.Height / Scale)];
-            }
-            Buffer.GetData(colorBuffer);
         }
 
         /// <summary>
@@ -98,6 +112,8 @@ namespace DwarfCorp
         /// <returns></returns>
         public IEnumerable<uint> GetIDsSelected(Rectangle screenRectangle)
         {
+            if (colorBuffer == null) yield break;
+
             int width = Buffer.Width;
             int height = Buffer.Height;
 

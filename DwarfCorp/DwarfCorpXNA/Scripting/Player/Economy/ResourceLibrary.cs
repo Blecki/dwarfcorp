@@ -35,6 +35,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using DwarfCorp.GameStates;
+using DwarfCorp.Gui;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -286,7 +287,7 @@ namespace DwarfCorp
                 Type = "Emerald",
                 ShortName = "Emerald",
                 Image = new NamedImageFrame(tileSheet, GetRect(0, 4)),
-                GuiSprite = 32,
+                GuiLayers = new List<TileReference>() { new TileReference("resources", 32) },
                 TrinketData = new Resource.TrinketInfo()
                 {
                     SpriteRow = 3
@@ -298,7 +299,7 @@ namespace DwarfCorp
                 Type = "Amethyst",
                 ShortName = "Amethyst",
                 Image = new NamedImageFrame(tileSheet, GetRect(2, 4)),
-                GuiSprite = 34,
+                GuiLayers = new List<TileReference>() { new TileReference("resources", 34) },
                 TrinketData = new Resource.TrinketInfo()
                 {
                     SpriteRow = 5
@@ -310,7 +311,7 @@ namespace DwarfCorp
                 Type = "Garnet",
                 ShortName = "Garnet",
                 Image = new NamedImageFrame(tileSheet, GetRect(1, 3)),
-                GuiSprite = 25,
+                GuiLayers = new List<TileReference>() { new TileReference("resources", 25) },
                 TrinketData = new Resource.TrinketInfo()
                 {
                     SpriteRow = 1
@@ -322,7 +323,7 @@ namespace DwarfCorp
                 Type = "Citrine",
                 ShortName = "Citrine",
                 Image = new NamedImageFrame(tileSheet, GetRect(2, 3)),
-                GuiSprite = 26,
+                GuiLayers = new List<TileReference>() { new TileReference("resources", 26) },
                 TrinketData = new Resource.TrinketInfo()
                 {
                     SpriteRow = 2
@@ -334,7 +335,7 @@ namespace DwarfCorp
                 Type = "Sapphire",
                 ShortName = "Sapphire",
                 Image = new NamedImageFrame(tileSheet, GetRect(1, 4)),
-                GuiSprite = 33,
+                GuiLayers = new List<TileReference>() { new TileReference("resources", 33) },
                 TrinketData = new Resource.TrinketInfo()
                 {
                     SpriteRow = 4
@@ -343,10 +344,11 @@ namespace DwarfCorp
 
             Add(new Resource(ResourceType.Egg, 5.0m, "An egg", new NamedImageFrame(tileSheet, GetRect(7, 2)), 23, Color.White, Resource.ResourceTags.Edible, Resource.ResourceTags.AnimalProduct, Resource.ResourceTags.Brewable));
 
-            // Todo: Trinkets won't show up right in new gui.
-            // Images are in crafts.png - combine into single sprite sheet.
             Add((new Resource(ResourceType.Trinket, 100.0m, "A crafted item.",
                     new NamedImageFrame(ContentPaths.Entities.DwarfObjects.crafts, 32, 0, 0), 0, Color.White, Resource.ResourceTags.Craft, Resource.ResourceTags.Encrustable)));
+
+            Add((new Resource(ResourceLibrary.ResourceType.GemTrinket, 100.0m, "A crafted item.",
+                new NamedImageFrame(ContentPaths.Entities.DwarfObjects.crafts, 32, 0, 0), 0, Color.White, Resource.ResourceTags.Craft)));
 
             Add(new Resource(ResourceType.Glass, 8.0m, "Made from sand. Allows light to pass through.", new NamedImageFrame(tileSheet, GetRect(4, 0)), 4, Color.White, Resource.ResourceTags.Material, Resource.ResourceTags.HardMaterial, Resource.ResourceTags.Craft)
             {
@@ -505,6 +507,9 @@ namespace DwarfCorp
                 new KeyValuePair<Point, string>(
                     new Point(Resources[resourcetype].TrinketData.SpriteColumn, Resources[gemType].TrinketData.SpriteRow),
                     Resources[resourcetype].TrinketData.EncrustingAsset));
+            toReturn.GuiLayers = new List<TileReference>();
+            toReturn.GuiLayers.AddRange(Resources[resourcetype].GuiLayers);
+            toReturn.GuiLayers.Add(new TileReference(Resources[resourcetype].TrinketData.EncrustingAsset, Resources[gemType].TrinketData.SpriteRow * 7 + Resources[resourcetype].TrinketData.SpriteColumn));
             Add(toReturn);
             return toReturn;
         }
@@ -596,7 +601,7 @@ namespace DwarfCorp
             Resource.TrinketInfo trinketInfo = Resources[baseMaterial].TrinketData;
             trinketInfo.SpriteColumn = tile.X;
             toReturn.TrinketData = trinketInfo;
-            toReturn.GuiSprite = (tile.Y * 5) + tile.X;
+            toReturn.GuiLayers = new List<TileReference>() {new TileReference(Resources[baseMaterial].TrinketData.BaseAsset, tile.Y*7 + tile.X)};
             Add(toReturn);
             toReturn.ShortName = baseMaterial + " " + names[item];
             return toReturn;

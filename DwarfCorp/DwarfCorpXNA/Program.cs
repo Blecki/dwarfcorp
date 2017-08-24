@@ -61,7 +61,7 @@ namespace DwarfCorp
         /// </summary>
         private static void Main(string[] args)
         {
-            var t = default(TemporaryVoxelHandle);
+            var t = default(VoxelHandle);
             var x = 0;
             if (t.IsValid)
                 x = 5;

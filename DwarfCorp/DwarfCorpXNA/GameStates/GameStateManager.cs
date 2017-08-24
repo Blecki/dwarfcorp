@@ -144,14 +144,14 @@ namespace DwarfCorp.GameStates
                 {
                     if(state.IsInitialized)
                     {
-                        try
-                        {
+                        //try
+                        //{
                             state.Render(time);
-                        }
-                        catch (InvalidOperationException exception)
-                        {
-                            removals.Add(state);
-                        }
+                        //}
+                        //catch (InvalidOperationException exception)
+                        //{
+                        //    removals.Add(state);
+                        //}
                     }
                     else if(!state.IsInitialized)
                     {
@@ -159,6 +159,7 @@ namespace DwarfCorp.GameStates
                     }
                 }
             }
+
             foreach (var state in removals)
             {
                 StateStack.Remove(state);

@@ -70,7 +70,7 @@ namespace DwarfCorp
             });
             Tags.Add("Flag");
 
-            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new TemporaryVoxelHandle(
+            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                 Manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(position)));
             if (voxelUnder.IsValid)
@@ -192,7 +192,7 @@ namespace DwarfCorp
             var oldWind = effect.WindDirection;
             var oldWindForce = effect.WindForce;
             
-            var phys = Parent.GetComponent<Physics>();
+            var phys = Parent.GetRoot().GetComponent<Physics>();
             if (phys != null)
             {
                 Vector3 vel = -phys.Velocity;
@@ -223,7 +223,7 @@ namespace DwarfCorp
                 pass.Apply();
                 graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, banner.Verts.Length, 0, banner.Idx.Length / 3);
             }
-            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
+            effect.SetTexturedTechnique();
             effect.WindDirection = oldWind;
             effect.WindForce = oldWindForce;
         }

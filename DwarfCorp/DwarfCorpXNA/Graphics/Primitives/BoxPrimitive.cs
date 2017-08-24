@@ -188,7 +188,7 @@ namespace DwarfCorp
             Width = width;
             Height = height;
             Depth = depth;
-
+            Indexes = null;
             UVs = uvs;
             CreateVerticies();
             ResetBuffer(device);
@@ -492,8 +492,46 @@ namespace DwarfCorp
             BoundingBox = new BoundingBox(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(width, height, depth));
             for (int i = 0; i < NumVertices; i++)
             {
-                Deltas[i] = VoxelChunk.GetNearestDelta(Vertices[i].Position);
+                Deltas[i] = GetNearestDelta(Vertices[i].Position);
             }
+        }
+
+        private static Vector3[] vertexDeltas = null;
+
+        private static void InitializeDeltas()
+        {
+            if (vertexDeltas != null) return;
+
+            vertexDeltas = new Vector3[8];
+
+            vertexDeltas[(int)VoxelVertex.BackBottomLeft] = new Vector3(0, 0, 0);
+            vertexDeltas[(int)VoxelVertex.BackTopLeft] = new Vector3(0, 1.0f, 0);
+            vertexDeltas[(int)VoxelVertex.BackBottomRight] = new Vector3(1.0f, 0, 0);
+            vertexDeltas[(int)VoxelVertex.BackTopRight] = new Vector3(1.0f, 1.0f, 0);
+
+            vertexDeltas[(int)VoxelVertex.FrontBottomLeft] = new Vector3(0, 0, 1.0f);
+            vertexDeltas[(int)VoxelVertex.FrontTopLeft] = new Vector3(0, 1.0f, 1.0f);
+            vertexDeltas[(int)VoxelVertex.FrontBottomRight] = new Vector3(1.0f, 0, 1.0f);
+            vertexDeltas[(int)VoxelVertex.FrontTopRight] = new Vector3(1.0f, 1.0f, 1.0f);
+        }
+
+        private static VoxelVertex GetNearestDelta(Vector3 position)
+        {
+            InitializeDeltas();
+
+            float bestDist = float.MaxValue;
+            VoxelVertex bestKey = 0;
+            for (int i = 0; i < 8; i++)
+            {
+                float dist = (position - vertexDeltas[i]).LengthSquared();
+                if (dist < bestDist)
+                {
+                    bestDist = dist;
+                    bestKey = (VoxelVertex)(i);
+                }
+            }
+
+            return bestKey;
         }
 
         public override void Render(GraphicsDevice device)
@@ -501,47 +539,53 @@ namespace DwarfCorp
             base.Render(device);
         }
 
-        public void GetFace(
-            BoxFace face, 
-            BoxPrimitive.BoxTextureCoords uvs, 
-            out int index, 
-            out int count, 
-            out int vertexOffset, 
-            out int vertexCount)
+        public struct FaceDescriptor
         {
+            public int IndexOffset;
+            public int IndexCount;
+            public int VertexOffset;
+            public int VertexCount;
+        }
+
+        public FaceDescriptor GetFace(BoxFace face)
+        {
+            var r = new FaceDescriptor
+            {
+                VertexCount = 4,
+                IndexCount = 6
+            };
             // Todo: Put the underlying vertex data in the right order and this is just some multiplies.
-            vertexCount = 4;
-            count = 6;
-            vertexOffset = 0;
             switch (face)
             {
                 case BoxFace.Top:
-                    index = 12;
-                    vertexOffset = 8;
-                    return;
+                    r.IndexOffset = 12;
+                    r.VertexOffset = 8;
+                    return r;
                 case BoxFace.Bottom:
-                    index = 18;
-                    vertexOffset = 12;
-                    return;
+                    r.IndexOffset = 18;
+                    r.VertexOffset = 12;
+                    return r;
                 case BoxFace.Left:
-                    index = 24;
-                    vertexOffset = 16;
-                    return;
+                    r.IndexOffset = 24;
+                    r.VertexOffset = 16;
+                    return r;
                 case BoxFace.Right:
-                    index = 30;
-                    vertexOffset = 20;
-                    return;
+                    r.IndexOffset = 30;
+                    r.VertexOffset = 20;
+                    return r;
                 case BoxFace.Front:
-                    index = 0;
-                    vertexOffset = 0;
-                    return;
+                    r.IndexOffset = 0;
+                    r.VertexOffset = 0;
+                    return r;
                 case BoxFace.Back:
-                    index = 6;
-                    vertexOffset = 4;
-                    return;
+                    r.IndexOffset = 6;
+                    r.VertexOffset = 4;
+                    return r;
             }
-            index = 0;
-            count = 0;
+
+            r.IndexOffset = 0;
+            r.VertexOffset = 0;
+            return r;
         }
 
 

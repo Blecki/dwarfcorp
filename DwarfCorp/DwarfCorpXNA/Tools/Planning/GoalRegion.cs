@@ -56,18 +56,18 @@ namespace DwarfCorp
         /// <returns>
         ///   <c>true</c> if [is in goal region] [the specified voxel]; otherwise, <c>false</c>.
         /// </returns>
-        public abstract bool IsInGoalRegion(TemporaryVoxelHandle voxel);
+        public abstract bool IsInGoalRegion(VoxelHandle voxel);
         /// <summary>
         /// Gets a voxel associated with this goal region.
         /// </summary>
         /// <returns>The voxel associated with this goal region.</returns>
-        public abstract TemporaryVoxelHandle GetVoxel();
+        public abstract VoxelHandle GetVoxel();
         /// <summary>
         /// Returns an admissible heuristic for A* planning from the given voxel to this region.
         /// </summary>
         /// <param name="voxel">The voxel.</param>
         /// <returns>An admissible heuristic value.</returns>
-        public abstract float Heuristic(TemporaryVoxelHandle voxel);
+        public abstract float Heuristic(VoxelHandle voxel);
         /// <summary>
         /// Determines whether the goal is a.priori possible.
         /// </summary>

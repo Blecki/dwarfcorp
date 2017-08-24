@@ -10,18 +10,18 @@ namespace DwarfCorp
     {
         public static void Reveal(
             ChunkData Data,
-            TemporaryVoxelHandle Start)
+            VoxelHandle Start)
         {
-            Reveal(Data, new TemporaryVoxelHandle[] { Start });
+            Reveal(Data, new VoxelHandle[] { Start });
         }
 
         public static void Reveal(
             ChunkData Data,
-            IEnumerable<TemporaryVoxelHandle> voxels)
+            IEnumerable<VoxelHandle> voxels)
         {
             //if (!GameSettings.Default.FogofWar) return;
 
-            var queue = new Queue<TemporaryVoxelHandle>(128);
+            var queue = new Queue<VoxelHandle>(128);
 
             foreach (var voxel in voxels)
                 if (voxel.IsValid)
@@ -34,7 +34,7 @@ namespace DwarfCorp
 
                 foreach (var neighborCoordinate in VoxelHelpers.EnumerateManhattanNeighbors(v.Coordinate))
                 {
-                    var neighbor = new TemporaryVoxelHandle(Data, neighborCoordinate);
+                    var neighbor = new VoxelHandle(Data, neighborCoordinate);
                     if (!neighbor.IsValid) continue;
                     if (neighbor.IsExplored) continue;
 
@@ -43,14 +43,50 @@ namespace DwarfCorp
 
                     if (neighbor.IsEmpty)
                         queue.Enqueue(neighbor);
-
-                    neighbor.Chunk.ShouldRebuild = true;
-                    neighbor.Chunk.ShouldRebuildWater = true;
-                    neighbor.Chunk.ShouldRecalculateLighting = true;
                 }
 
                 v.IsExplored = true;
             }
+        }
+
+        /// <summary>
+        /// Run the reveal algorithm without invoking the invalidation mechanism.
+        /// </summary>
+        /// <param name="Data"></param>
+        /// <param name="voxels"></param>
+        public static void InitialReveal(
+            ChunkData Data,
+            VoxelHandle voxel)
+        {
+            // Fog of war must be on for the initial reveal to avoid artifacts.
+            bool fogOfWar = GameSettings.Default.FogofWar;
+            GameSettings.Default.FogofWar = true;
+
+            var queue = new Queue<VoxelHandle>(128);
+            queue.Enqueue(voxel);
+
+            while (queue.Count > 0)
+            {
+                var v = queue.Dequeue();
+                if (!v.IsValid) continue;
+
+                foreach (var neighborCoordinate in VoxelHelpers.EnumerateManhattanNeighbors(v.Coordinate))
+                {
+                    var neighbor = new VoxelHandle(Data, neighborCoordinate);
+                    if (!neighbor.IsValid) continue;
+                    if (neighbor.IsExplored) continue;
+
+                    neighbor.Chunk.NotifyExplored(neighbor.Coordinate.GetLocalVoxelCoordinate());
+                    neighbor.RawSetIsExplored(true);
+
+                    if (neighbor.IsEmpty)
+                        queue.Enqueue(neighbor);
+                }
+
+                v.RawSetIsExplored(true);
+            }
+
+            GameSettings.Default.FogofWar = fogOfWar;
         }
     }
 }

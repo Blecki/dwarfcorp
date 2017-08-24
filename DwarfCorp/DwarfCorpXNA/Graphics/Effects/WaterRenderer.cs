@@ -115,14 +115,14 @@ namespace DwarfCorp
             return finalPlane;
         }
 
-        private static float GetTotalWaterHeightCells(TemporaryVoxelHandle vox)
+        private static float GetTotalWaterHeightCells(VoxelHandle vox)
         {
             float tot = 0;
 
             var localVoxelCoordinate = vox.Coordinate.GetLocalVoxelCoordinate();
             for (var y = vox.Coordinate.Y; y < VoxelConstants.ChunkSizeY; y++)
             {
-                var v = new TemporaryVoxelHandle(vox.Chunk, new LocalVoxelCoordinate(
+                var v = new VoxelHandle(vox.Chunk, new LocalVoxelCoordinate(
                     localVoxelCoordinate.X, y, localVoxelCoordinate.Z));
                 tot += v.WaterCell.WaterLevel / (float)WaterManager.maxWaterLevel;
                 if (y > vox.Coordinate.Y && v.WaterCell.WaterLevel == 0)
@@ -177,12 +177,12 @@ namespace DwarfCorp
             }
 
             effect.View = reflectionViewMatrix;
-            Drawer3D.Render(device, effect, false);
+            //Drawer3D.Render(device, effect, false);
 
             if(DrawComponentsReflected)
             {
                 effect.View = reflectionViewMatrix;
-                game.InstanceManager.Render(game.GraphicsDevice, effect, game.Camera, false);
+                game.InstanceManager.Render(game.GraphicsDevice, effect, game.Camera);
                 ComponentRenderer.Render(Renderables, gameTime, game.ChunkManager, game.Camera,
                     DwarfGame.SpriteBatch, game.GraphicsDevice, effect,
                     ComponentRenderer.WaterRenderType.Reflective, waterHeight);
@@ -210,13 +210,12 @@ namespace DwarfCorp
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    foreach (var chunkpair in chunks.ChunkData.ChunkMap)
+                    foreach (var c in chunks.ChunkData.GetChunkEnumerator())
                     {
-                        VoxelChunk chunk = chunkpair.Value;
-                        if (chunk.IsVisible)
+                        if (c.IsVisible)
                         {
                             //chunk.PrimitiveMutex.WaitOne();
-                            chunk.Liquids[asset.Key].Render(device);
+                            c.Liquids[asset.Key].Render(device);
                             //chunk.PrimitiveMutex.ReleaseMutex();
                         }
                     }
@@ -290,9 +289,8 @@ namespace DwarfCorp
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    foreach (var chunkpair in chunks.ChunkData.ChunkMap)
+                    foreach (var chunk in chunks.ChunkData.GetChunkEnumerator())
                     {
-                        VoxelChunk chunk = chunkpair.Value;
                         if (chunk.IsVisible)
                         {
                             //chunk.PrimitiveMutex.WaitOne();

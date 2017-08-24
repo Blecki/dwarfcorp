@@ -110,6 +110,7 @@ namespace DwarfCorp
             Graphics.PreferredBackBufferWidth = GameSettings.Default.Fullscreen ? GameSettings.Default.ResolutionX : Math.Min(GameSettings.Default.ResolutionX, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width);
             Graphics.PreferredBackBufferHeight = GameSettings.Default.Fullscreen ? GameSettings.Default.ResolutionY : Math.Min(GameSettings.Default.ResolutionY,
                 GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
+            Graphics.SynchronizeWithVerticalRetrace = GameSettings.Default.VSync;
             MathFunctions.Random = new ThreadSafeRandom(new Random().Next());
             try
             {

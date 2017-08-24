@@ -64,16 +64,6 @@ namespace DwarfCorp
             "BACKWARD"
         };
 
-        //public delegate void FrameEvent(Animation animation, Orientation orientation, int frame);
-
-        //public event FrameEvent OnFrame;
-
-        //protected virtual void InvokeOnFrame(Animation animation, Orientation orientation, int frame)
-        //{
-        //    FrameEvent handler = OnFrame;
-        //    if (handler != null) handler(animation, orientation, frame);
-        //}
-
         public Orientation CurrentOrientation { get; set; }
 
         protected string currentMode = "";
@@ -125,8 +115,8 @@ namespace DwarfCorp
                     animation.Update(gameTime);
             }
 
-            string s = currentMode + OrientationStrings[(int) CurrentOrientation];
-            if(Animations.ContainsKey(s))
+            string s = currentMode + OrientationStrings[(int)CurrentOrientation];
+            if (Animations.ContainsKey(s))
             {
                 var previousAnimation = CurrentAnimation;
                 CurrentAnimation = Animations[s];
@@ -136,11 +126,6 @@ namespace DwarfCorp
             }
 
             base.Update(gameTime, chunks, camera);
-
-            //if (CurrentAnimation != null && CurrentAnimation.LastFrame != CurrentAnimation.CurrentFrame)
-            //{
-            //    InvokeOnFrame(CurrentAnimation, CurrentOrientation, CurrentAnimation.CurrentFrame);
-            //}
         }
 
         public void CalculateCurrentOrientation(Camera camera)

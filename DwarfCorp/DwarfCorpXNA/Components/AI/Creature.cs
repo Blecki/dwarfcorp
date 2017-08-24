@@ -118,7 +118,6 @@ namespace DwarfCorp
             IsHeadClear = true;
             NoiseMaker = new NoiseMaker();
             OverrideCharacterMode = false;
-
         }
 
         public void LayEgg()
@@ -296,6 +295,7 @@ namespace DwarfCorp
             {
                 FirstUpdate = false;
                 Faction.Minions.Add(AI);
+                Physics.AllowPhysicsSleep = false;
             }
 
             if (!Active) return;
@@ -349,9 +349,9 @@ namespace DwarfCorp
         /// </summary>
         public void CheckNeighborhood(ChunkManager chunks, float dt)
         {
-            var below = new TemporaryVoxelHandle(chunks.ChunkData,
+            var below = new VoxelHandle(chunks.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(Physics.GlobalTransform.Translation - Vector3.UnitY * 0.8f));
-            var above = new TemporaryVoxelHandle(chunks.ChunkData,
+            var above = new VoxelHandle(chunks.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(Physics.GlobalTransform.Translation + Vector3.UnitY * 0.8f));
 
             if (above.IsValid)

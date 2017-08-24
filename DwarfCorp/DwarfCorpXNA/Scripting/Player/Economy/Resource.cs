@@ -33,6 +33,7 @@
 using System.Collections.Generic;
 using System.Security.AccessControl;
 using DwarfCorp.GameStates;
+using DwarfCorp.Gui;
 using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
@@ -55,7 +56,7 @@ namespace DwarfCorp
         public DwarfBux MoneyValue { get; set; }
         public string Description { get; set; }
         public NamedImageFrame Image { get; set; }
-        public int GuiSprite = 0;
+        public List<TileReference> GuiLayers { get; set; } 
         public List<ResourceTags> Tags { get; set; }
         public float FoodContent { get; set; }
         public bool SelfIlluminating { get { return Tags.Contains(ResourceTags.SelfIlluminating); }}
@@ -127,7 +128,8 @@ namespace DwarfCorp
             MoneyValue = other.MoneyValue;
             Description = new string(other.Description.ToCharArray());
             Image = other.Image;
-            GuiSprite = other.GuiSprite;
+            GuiLayers = new List<TileReference>();
+            GuiLayers.AddRange(other.GuiLayers);
             Tint = other.Tint;
             Tags = new List<ResourceTags>();
             Tags.AddRange(other.Tags);
@@ -147,7 +149,8 @@ namespace DwarfCorp
             MoneyValue = money;
             Description = description;
             Image = image;
-            this.GuiSprite = WidgetsSprite;
+            this.GuiLayers = new List<TileReference>();
+            GuiLayers.Add(new TileReference("resources", WidgetsSprite));
             Tint = tint;
             Tags = new List<ResourceTags>();
             Tags.AddRange(tags);

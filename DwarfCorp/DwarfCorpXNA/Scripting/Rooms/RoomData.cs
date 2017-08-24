@@ -108,7 +108,7 @@ namespace DwarfCorp
 
 
         public bool Verify(
-            List<TemporaryVoxelHandle> Voxels, 
+            List<VoxelHandle> Voxels, 
             Faction Faction, 
             WorldManager World)
         {

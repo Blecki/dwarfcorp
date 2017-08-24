@@ -154,12 +154,12 @@ namespace DwarfCorp
             RoomData = KitchenRoomData;
         }
 
-        public Kitchen(bool designation, IEnumerable<TemporaryVoxelHandle> designations, WorldManager chunks, Faction faction) :
+        public Kitchen(bool designation, IEnumerable<VoxelHandle> designations, WorldManager chunks, Faction faction) :
             base(designation, designations, KitchenRoomData, chunks, faction)
         {
         }
 
-        public Kitchen(IEnumerable<TemporaryVoxelHandle> voxels, WorldManager world, Faction faction) :
+        public Kitchen(IEnumerable<VoxelHandle> voxels, WorldManager world, Faction faction) :
             base(voxels, KitchenRoomData, world, faction)
         {
             OnBuilt();

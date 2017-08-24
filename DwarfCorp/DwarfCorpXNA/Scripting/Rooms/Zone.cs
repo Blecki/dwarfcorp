@@ -48,7 +48,7 @@ namespace DwarfCorp
     public class Zone
     {
         public string ID = "";
-        public List<TemporaryVoxelHandle> Voxels = new List<TemporaryVoxelHandle>();
+        public List<VoxelHandle> Voxels = new List<VoxelHandle>();
         public List<Body> ZoneBodies = new List<Body>();
         
         [JsonProperty]
@@ -168,7 +168,7 @@ namespace DwarfCorp
                 body.Die();
             }
 
-            var voxelsToKill = new List<TemporaryVoxelHandle>();
+            var voxelsToKill = new List<VoxelHandle>();
             voxelsToKill.AddRange(Voxels);
             foreach (var voxel in voxelsToKill)
             {
@@ -191,12 +191,12 @@ namespace DwarfCorp
         }
 
         
-        public bool ContainsVoxel(TemporaryVoxelHandle voxel)
+        public bool ContainsVoxel(VoxelHandle voxel)
         {
             return Voxels.Any(store => store == voxel);
         }
 
-        public virtual void RemoveVoxel(TemporaryVoxelHandle voxel)
+        public virtual void RemoveVoxel(VoxelHandle voxel)
         {
             var toRemove = Voxels.FirstOrDefault(store => store == voxel);
 
@@ -230,7 +230,7 @@ namespace DwarfCorp
             }
         }
 
-        public virtual void AddVoxel(TemporaryVoxelHandle Voxel)
+        public virtual void AddVoxel(VoxelHandle Voxel)
         {
             if(ContainsVoxel(Voxel))
                 return;
@@ -238,19 +238,15 @@ namespace DwarfCorp
             Voxels.Add(Voxel);
 
             if(ReplaceVoxelTypes)
-            {
                 Voxel.Type = ReplacementType;
-                Voxel.Chunk.ShouldRebuild = true;
-                Voxel.Chunk.ReconstructRamps = true;
-            }
 
             RecalculateMaxResources();
           
         }
 
-        public TemporaryVoxelHandle GetNearestVoxel(Vector3 position)
+        public VoxelHandle GetNearestVoxel(Vector3 position)
         {
-            TemporaryVoxelHandle closest = TemporaryVoxelHandle.InvalidHandle;
+            VoxelHandle closest = VoxelHandle.InvalidHandle;
             Vector3 halfSize = new Vector3(0.5f, 0.5f, 0.5f);
             double closestDist = double.MaxValue;
 

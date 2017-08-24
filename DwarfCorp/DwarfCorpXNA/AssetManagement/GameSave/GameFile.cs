@@ -117,7 +117,8 @@ namespace DwarfCorp
                     TimeOfDay = world.Sky.TimeOfDay,
                     GameID = id,
                     Time = world.Time,
-                    Slice = (int)world.ChunkManager.ChunkData.MaxViewingLevel
+                    Slice = (int)world.ChunkManager.ChunkData.MaxViewingLevel,
+                    NumChunks = world.ChunkManager.WorldSize
                 },
                 Worlddata =  new GameData.WorldData()
                 {
@@ -133,11 +134,8 @@ namespace DwarfCorp
             };
 
 
-            foreach (ChunkFile file in world.ChunkManager.ChunkData.ChunkMap.Select(pair => new ChunkFile(pair.Value)))
-            {
+            foreach (ChunkFile file in world.ChunkManager.ChunkData.GetChunkEnumerator().Select(c => new ChunkFile(c)))
                 Data.ChunkData.Add(file);
-            }
-
         }
 
         public virtual string GetExtension()
@@ -257,6 +255,8 @@ namespace DwarfCorp
             public int GameID { get; set; }
             public int Slice { get; set; }
             public WorldTime Time { get; set; }
+            public Point3 NumChunks { get; set; }
+
             public static string Extension = "meta";
             public static string CompressedExtension = "zmeta";
 
@@ -279,6 +279,7 @@ namespace DwarfCorp
                 OverworldFile = file.OverworldFile;
                 Time = file.Time;
                 Slice = file.Slice;
+                NumChunks = file.NumChunks;
             }
 
             public  bool ReadFile(string filePath, bool isCompressed)
