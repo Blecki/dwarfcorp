@@ -100,7 +100,7 @@ namespace DwarfCorp
             }
         }
 
-
+        private bool propogateTransforms = false;
         public Matrix LocalTransform
         {
             get { return localTransform; }
@@ -114,8 +114,7 @@ namespace DwarfCorp
                 {
                     ExceedsMovementThreshold = true;
                 }
-
-                PropogateTransforms();
+                propogateTransforms = true;
             }
         }
 
@@ -323,11 +322,12 @@ namespace DwarfCorp
                     AnimationQueue.RemoveAt(0);
                 }
             }
-            if (firstIter)
+            if (firstIter || propogateTransforms)
             {
                 UpdateTransform();
                 PropogateTransforms();
                 firstIter = false;
+                propogateTransforms = false;
             }
         }
 

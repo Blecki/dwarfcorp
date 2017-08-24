@@ -175,7 +175,8 @@ namespace DwarfCorp
 
             CurrentCraftBody.LocalPosition = player.VoxSelector.VoxelUnderMouse.WorldPosition + Vector3.One * 0.5f;
             CurrentCraftBody.GlobalTransform = CurrentCraftBody.LocalTransform;
-
+            CurrentCraftBody.UpdateTransform();
+            CurrentCraftBody.PropogateTransforms();
             if (OverrideOrientation)
             {
                 CurrentCraftBody.Orient(CurrentOrientation);
@@ -208,6 +209,8 @@ namespace DwarfCorp
                 CurrentOrientation += (float) (Math.PI/2);
                 CurrentCraftBody.Orient(CurrentOrientation);
                 CurrentCraftBody.UpdateBoundingBox();
+                CurrentCraftBody.UpdateTransform();
+                CurrentCraftBody.PropogateTransforms();
                 SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, CurrentCraftBody.Position,
                     0.5f);
             }
@@ -218,6 +221,8 @@ namespace DwarfCorp
                 CurrentOrientation -= (float)(Math.PI / 2);
                 CurrentCraftBody.Orient(CurrentOrientation);
                 CurrentCraftBody.UpdateBoundingBox();
+                CurrentCraftBody.UpdateTransform();
+                CurrentCraftBody.PropogateTransforms();
                 SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, CurrentCraftBody.Position, 0.5f);
             }
 
@@ -366,8 +371,7 @@ namespace DwarfCorp
                                 if (IsValid(newDesignation))
                                 {
                                     AddDesignation(newDesignation);
-                                    assignments.Add(new CraftItemTask(r,
-                                        CurrentDesignation));
+                                    assignments.Add(new CraftItemTask(newDesignation));
                                 }
                                 else
                                 {

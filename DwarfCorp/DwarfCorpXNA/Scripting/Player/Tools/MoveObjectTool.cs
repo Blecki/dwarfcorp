@@ -177,14 +177,16 @@ namespace DwarfCorp
                     SelectedBody.UpdateBoundingBox();
                 }
 
+                /*
                 foreach (var obj in Player.Faction.OwnedObjects)
                 {
                     Drawer3D.DrawBox(obj.GetRotatedBoundingBox(), Color.White, 0.001f, false);
                 }
+                 */
 
                 var intersectsAnyOther =
                     Player.Faction.OwnedObjects.FirstOrDefault(
-                        o => o != SelectedBody && o.GetRotatedBoundingBox().Intersects(SelectedBody.GetRotatedBoundingBox().Expand(-0.5f)));
+                        o => o != SelectedBody && o.Tags.Contains("Moveable") && o.GetRotatedBoundingBox().Intersects(SelectedBody.GetRotatedBoundingBox().Expand(-0.5f)));
                 Drawer3D.DrawBox(SelectedBody.GetRotatedBoundingBox(), Color.White, 0.05f, false);
 
                 bool intersectsWall = VoxelHelpers.EnumerateCoordinatesInBoundingBox(

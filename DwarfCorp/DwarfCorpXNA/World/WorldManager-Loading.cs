@@ -246,13 +246,13 @@ namespace DwarfCorp
 
                 if (fileExists)
                 {
-                    Camera = gameFile.Data.Worlddata.Camera;
 
                     ChunkManager = new ChunkManager(Content, this, Camera,
                         GraphicsDevice,
                         ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
 
                     ChunkRenderer = new ChunkRenderer(this, Camera, GraphicsDevice, ChunkManager.ChunkData);
+
 
                     SetLoadingMessage("Loading Terrain...");
                     gameFile.ReadChunks(ExistingFile);
@@ -262,10 +262,13 @@ namespace DwarfCorp
                     ? gameFile.Data.Metadata.Slice
                     : ChunkManager.ChunkData.MaxViewingLevel, ChunkManager.SliceMode.Y);
 
-                    InstanceManager.Clear();
 
                     SetLoadingMessage("Loading Entities...");
                     gameFile.ReadWorld(ExistingFile, this);
+                    Camera = gameFile.Data.Worlddata.Camera;
+                    ChunkManager.camera = Camera;
+                    ChunkRenderer.camera = Camera;
+                    InstanceManager.Clear();
 
                     Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
                     Vector3 extents = new Vector3(1500, 1500, 1500);

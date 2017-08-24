@@ -255,7 +255,12 @@ namespace DwarfCorp
                             var ladderVox = new VoxelHandle(chunkManager.ChunkData,
                                 GlobalVoxelCoordinate.FromVector3(ladderPos));
                             if (ladderVox.IsValid && ladderVox.IsEmpty)
-                                EntityFactory.CreateEntity<Ladder>("Wooden Ladder", ladderPos);
+                            {
+                                var ladder = EntityFactory.CreateEntity<Ladder>("Wooden Ladder", ladderPos);
+                                Master.Faction.OwnedObjects.Add(ladder);
+                                ladder.Tags.Add("Moveable");
+                            }
+
                         }
                     }
                 }

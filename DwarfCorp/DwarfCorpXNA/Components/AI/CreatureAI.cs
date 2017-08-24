@@ -36,6 +36,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 //using System.Windows.Forms;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -245,6 +246,8 @@ namespace DwarfCorp
 
         public BoundingBox? PositionConstraint = null;
 
+        public string LastFailedAct = null;
+
         /// <summary> Add exprience points to the creature. It will level up from time to time </summary>
         public void AddXP(int amount)
         {
@@ -380,6 +383,17 @@ namespace DwarfCorp
         /// <summary> Update this creature </summary>
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            /*DEBUG DRAW TASK QUEUE HERE
+            StringBuilder taskString = new StringBuilder();
+            foreach (var task in Tasks)
+            {
+                taskString.Append(task.Name);
+                taskString.Append(String.Format(" Feasible: {0}, Cost {1}, Priority {2}", task.IsFeasible(Creature),
+                    task.ComputeCost(Creature), task.Priority));
+                taskString.Append("\n");
+            }
+            Drawer2D.DrawText(taskString.ToString(), Position, Color.White, Color.Black);
+             */
             if (!Active) return;
 
             if (Faction == null && !string.IsNullOrEmpty(Creature.Allies))
@@ -440,6 +454,7 @@ namespace DwarfCorp
                 bool retried = false;
                 if (status == Act.Status.Fail)
                 {
+                    LastFailedAct = CurrentAct.Name;
                     if (History.ContainsKey(CurrentTask.Name))
                     {
                         History[CurrentTask.Name].NumFailures++;
@@ -582,7 +597,7 @@ namespace DwarfCorp
         public IEnumerable<Act.Status> AvoidFalling()
         {
             var above = VoxelHelpers.GetVoxelAbove(Physics.CurrentVoxel);
-            foreach (var vox in VoxelHelpers.EnumerateManhattanNeighbors(Physics.CurrentVoxel.Coordinate)
+            foreach (var vox in VoxelHelpers.EnumerateAllNeighbors(Physics.CurrentVoxel.Coordinate)
                 .Select(c => new VoxelHandle(World.ChunkManager.ChunkData, c)))
             {
                 if (!vox.IsValid) continue;
@@ -606,7 +621,7 @@ namespace DwarfCorp
                 yield return Act.Status.Success;
                 yield break;
             }
-            yield return Act.Status.Fail;
+            yield return Act.Status.Success;
             yield break;
         }
 
@@ -734,7 +749,6 @@ namespace DwarfCorp
                         Priority = Task.PriorityType.Eventually
                     };
                 }
-                Physics.Velocity *= 0.0f;
                 return null;
             }
 
@@ -1015,6 +1029,11 @@ namespace DwarfCorp
                 desc += act.Name;
             }
 
+            if (LastFailedAct != null)
+            {
+                desc += "\n    Last failed: " + LastFailedAct;
+            }
+
             return desc;
         }
 
@@ -1168,8 +1187,10 @@ namespace DwarfCorp
             if (jumpCommand && !jumpHeld && (Creature.IsOnGround || Creature.Physics.IsInLiquid) && Creature.IsHeadClear)
             {
                 Creature.NoiseMaker.MakeNoise("Jump", Position);
-                Creature.Physics.LocalTransform *= Matrix.CreateTranslation(Vector3.Up*0.01f);
+                Creature.Physics.LocalTransform *= Matrix.CreateTranslation(Vector3.Up*0.1f);
                 Creature.Physics.Velocity += Vector3.Up*5;
+                Creature.Physics.UpdateTransform();
+                Creature.Physics.UpdateBoundingBox();
                 Creature.IsOnGround = false;
                 Creature.Physics.IsInLiquid = false;
             }

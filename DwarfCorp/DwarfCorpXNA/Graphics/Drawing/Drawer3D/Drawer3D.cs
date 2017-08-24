@@ -155,8 +155,8 @@ namespace DwarfCorp
             // Draw bottom loop.
             _addLineSegment(new Vector3(M.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y, M.Z), C, T);
             _addLineSegment(new Vector3(M.X + S.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y, M.Z + S.Z), C, T);
-            _addLineSegment(new Vector3(M.X + S.X, M.Y, M.Z + S.X), new Vector3(M.X, M.Y, M.Z + S.Z), C, T);
-            _addLineSegment(new Vector3(M.X, M.Y, M.Z + S.X), new Vector3(M.X, M.Y, M.Z), C, T);
+            _addLineSegment(new Vector3(M.X + S.X, M.Y, M.Z + S.Z), new Vector3(M.X, M.Y, M.Z + S.Z), C, T);
+            _addLineSegment(new Vector3(M.X, M.Y, M.Z + S.Z), new Vector3(M.X, M.Y, M.Z), C, T);
 
             // Draw top loop.
             _addLineSegment(new Vector3(M.X, M.Y + S.Y, M.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z), C, T);

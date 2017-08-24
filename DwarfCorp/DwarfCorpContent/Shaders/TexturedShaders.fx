@@ -173,8 +173,8 @@ sampler ShadowMapSampler = sampler_state { texture = <xShadowMap>; magfilter = L
 	{
 		pass Pass0
 		{   
-			VertexShader = compile vs_3_0 UTexturedVS();
-			PixelShader = compile ps_3_0 UTexturedPS();
+			VertexShader = compile vs_2_0 UTexturedVS();
+			PixelShader = compile ps_2_0 UTexturedPS();
 		}
 	}
 
