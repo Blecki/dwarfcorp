@@ -285,7 +285,7 @@ namespace DwarfCorp
             if (keyboard.IsKeyDown(Keys.LeftAlt) || keyboard.IsKeyDown(Keys.RightAlt))
             {
                 var change = mouse.ScrollWheelValue - LastMouseWheel;
-                BoxYOffset += (change) * 0.01f;
+                BoxYOffset += (change)*0.01f;
                 int offset = (int) BoxYOffset;
                 if (offset != PrevBoxYOffsetInt)
                 {
@@ -293,13 +293,13 @@ namespace DwarfCorp
                     newVoxel = true;
                 }
                 PrevBoxYOffsetInt = offset;
-                LastMouseWheel = mouse.ScrollWheelValue;
                 altPressed = true;
             }
             else
             {
-                LastMouseWheel = mouse.ScrollWheelValue;
+                PrevBoxYOffsetInt = 0;
             }
+            LastMouseWheel = mouse.ScrollWheelValue;
 
             // Draw a box around the current voxel under the mouse.
             if (underMouse.IsValid)
@@ -338,11 +338,11 @@ namespace DwarfCorp
                         // Update the selection box to account for offsets from mouse wheel.
                         if (BoxYOffset > 0)
                         {
-                            buffer.Max.Y += BoxYOffset;
+                            buffer.Max.Y += (int)BoxYOffset;
                         }
                         else if (BoxYOffset < 0)
                         {
-                            buffer.Min.Y += BoxYOffset;
+                            buffer.Min.Y += (int)BoxYOffset;
                         }
 
                         SelectionBuffer = Select(buffer, FirstVoxel.WorldPosition, underMouse.WorldPosition).ToList();
@@ -402,11 +402,11 @@ namespace DwarfCorp
                         BoundingBox buffer = GetSelectionBox();
                         if (BoxYOffset > 0)
                         {
-                            buffer.Max.Y += BoxYOffset;
+                            buffer.Max.Y += (int)BoxYOffset;
                         }
                         else if (BoxYOffset < 0)
                         {
-                            buffer.Min.Y += BoxYOffset;
+                            buffer.Min.Y += (int)BoxYOffset;
                         }
 
                         SelectionBuffer = VoxelHelpers.EnumerateCoordinatesInBoundingBox(buffer)
