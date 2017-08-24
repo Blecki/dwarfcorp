@@ -122,6 +122,8 @@ namespace DwarfCorp
         /// Book keeping for applying gravity. Avoids applying gravity when it would otherwise mess up physics.
         /// </summary>
         private bool applyGravityThisFrame = true;
+
+        private bool isSleeping = false;
         /// <summary>
         /// Gets or sets a value indicating whether this instance is sleeping. A sleeping instance does not update
         /// unless acted upon by an outside force. (Take that, newton)
@@ -129,7 +131,7 @@ namespace DwarfCorp
         /// <value>
         /// <c>true</c> if this instance is sleeping; otherwise, <c>false</c>.
         /// </value>
-        public bool IsSleeping { get; set; }
+        public bool IsSleeping { get { return AllowPhysicsSleep && isSleeping;  } set { isSleeping = value; } }
         /// <summary>
         /// Book-keeping. If we are sleeping, and this is set to true, we check physics for one more frame
         /// before going back to sleep.
@@ -204,6 +206,9 @@ namespace DwarfCorp
             RotateY
         }
 
+        // If true, the physics object will sleep when it has low velocity.
+        public bool AllowPhysicsSleep = true;
+
         public Physics()
         {
 
@@ -239,7 +244,7 @@ namespace DwarfCorp
             transform.Translation = newPos;
             LocalTransform = transform;
         }
-
+ 
         new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (!Active) return;
@@ -252,7 +257,7 @@ namespace DwarfCorp
 
             // How would this get a NaN anyway?
             if (MathFunctions.HasNan(Velocity))
-                Velocity = Vector3.Zero;
+                throw new InvalidOperationException(string.Format("Physics went haywire for object {0} : {1}", GlobalID, Name));
 
             if (IsSleeping)
             {
@@ -261,7 +266,7 @@ namespace DwarfCorp
 
             bool goingSlow = Velocity.LengthSquared() < 0.05f;
             // If we're not sleeping and moving very slowly, go to sleep.
-            if (!IsSleeping && goingSlow)
+            if (AllowPhysicsSleep && !IsSleeping && goingSlow)
             {
                 SleepTimer.Update(gameTime);
                 if (SleepTimer.HasTriggered)
@@ -271,7 +276,7 @@ namespace DwarfCorp
                     IsSleeping = true;
                 }
             }
-            else if (IsSleeping && !goingSlow)
+            else if (AllowPhysicsSleep && IsSleeping && !goingSlow)
             {
                 WakeTimer.Update(gameTime);
                 SleepTimer.Reset();
@@ -400,13 +405,13 @@ namespace DwarfCorp
                     if (numTimesteps*velocityLength > 1)
                     {
                         // Assume all physics are attached to the root.
-                        GlobalTransform = Manager.RootComponent.LocalTransform * LocalTransform;
+                        UpdateTransform();
                         UpdateBoundingBox();
                         //UpdateTransformsRecursive(Parent as Body);
                     }
                 }
 
-            }
+            } 
 
             applyGravityThisFrame = true;
             CheckLiquids(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);

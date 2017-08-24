@@ -24,7 +24,10 @@ namespace DwarfCorp.Gui.Widgets
                         Rect = this.Rect,
                         AutoLayout = AutoLayout.DockFill,
                         Background = layer,
-                        MaximumSize = new Point(32, 32)
+                        MaximumSize = new Point(32, 32),
+                        TextHorizontalAlign = HorizontalAlign.Right,
+                        TextVerticalAlign = VerticalAlign.Bottom,
+                        TextColor = new Vector4(1, 1, 1, 1)
                     });
                 }
             }
@@ -95,7 +98,7 @@ namespace DwarfCorp.Gui.Widgets
                         AddChild(icon);
                     }
 
-                    icon.Text = resource.Value.NumResources.ToString();
+                    icon.Children.Last().Text = resource.Value.NumResources.ToString();
                     icon.Invalidate();                    
                 }
 

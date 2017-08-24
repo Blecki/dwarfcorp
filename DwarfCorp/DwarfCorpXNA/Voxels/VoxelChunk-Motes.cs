@@ -92,6 +92,10 @@ namespace DwarfCorp
 
         public void RebuildMoteLayer(int Y)
         {
+            BoundingBox box = GetBoundingBox();
+            box.Min.Y = Y;
+            box.Max.Y = Y + 1;
+            //Drawer3D.DrawBox(box, Color.Red, 0.1f, true);
             // Destroy old motes.
             if (MoteRecords[Y] != null)
             {
@@ -125,8 +129,8 @@ namespace DwarfCorp
 
                     // Find biome type.
                     var biome = Overworld.Map[
-                        (int)MathFunctions.Clamp(x / Manager.World.WorldScale, 0, Overworld.Map.GetLength(0) - 1),
-                        (int)MathFunctions.Clamp(Y / Manager.World.WorldScale, 0, Overworld.Map.GetLength(1) - 1)]
+                        (int)MathFunctions.Clamp(v.WorldPosition.X / Manager.World.WorldScale, 0, Overworld.Map.GetLength(0) - 1),
+                        (int)MathFunctions.Clamp(v.WorldPosition.Z / Manager.World.WorldScale, 0, Overworld.Map.GetLength(1) - 1)]
                         .Biome;
 
                     var biomeData = BiomeLibrary.Biomes[biome];
@@ -146,8 +150,8 @@ namespace DwarfCorp
                         var vPos = v.WorldPosition * moteDetail.RegionScale;
                         float value = MoteNoise.Noise(vPos.X, vPos.Y, vPos.Z);
 
-                        //if (!(Math.Abs(value) > moteDetail.SpawnThreshold))
-                        //    continue;
+                        if (!(Math.Abs(value) > moteDetail.SpawnThreshold))
+                            continue;
 
                         float s = MoteScaleNoise.Noise(vPos.X, vPos.Y, vPos.Z) * moteDetail.MoteScale;
 

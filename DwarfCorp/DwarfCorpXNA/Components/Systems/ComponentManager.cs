@@ -223,7 +223,7 @@ namespace DwarfCorp
             //  What broke: Anything that did not move became invisible.
             //GamePerformance.Instance.StartTrackPerformance("Components - transforms");
             if (RootComponent != null)
-                RootComponent.UpdateTransformsRecursive(null);
+                RootComponent.UpdateTransform();
             //GamePerformance.Instance.StopTrackPerformance("Components - transforms");
 
             GamePerformance.Instance.StartTrackPerformance("Components - update");

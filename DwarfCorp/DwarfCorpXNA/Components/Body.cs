@@ -76,13 +76,13 @@ namespace DwarfCorp
             set
             {
                 globalTransform = value;
-
+                UpdateBoundingBox();
                 if(!AddToCollisionManager)
                 {
                     return;
                 }
 
-                if(!Active || (!HasMoved && wasEverAddedToOctree) )
+                if(!Active)
                 {
                     return;
                 }
@@ -90,19 +90,17 @@ namespace DwarfCorp
                 if (!ExceedsMovementThreshold && wasEverAddedToOctree)
                     return;
 
-                UpdateBoundingBox();
                 Manager.World.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
                 Manager.World.CollisionManager.AddObject(this, CollisionType);
 
                 lastBounds = GetBoundingBox();
                 wasEverAddedToOctree = true;
-                HasMoved = false;
                 ExceedsMovementThreshold = false;
                 thresholdPos = Position;
             }
         }
 
-
+        private bool propogateTransforms = false;
         public Matrix LocalTransform
         {
             get { return localTransform; }
@@ -116,8 +114,11 @@ namespace DwarfCorp
                 {
                     ExceedsMovementThreshold = true;
                 }
+                propogateTransforms = true;
             }
         }
+
+        private bool firstIter = true;
 
         [JsonIgnore]
         public Vector3 Position
@@ -321,6 +322,13 @@ namespace DwarfCorp
                     AnimationQueue.RemoveAt(0);
                 }
             }
+            if (firstIter || propogateTransforms)
+            {
+                UpdateTransform();
+                PropogateTransforms();
+                firstIter = false;
+                propogateTransforms = false;
+            }
         }
 
         ///// <summary>
@@ -338,11 +346,11 @@ namespace DwarfCorp
         //}
 
 
-        public void UpdateTransformsRecursive(Body ParentBody)
+        public void UpdateTransform()
         {
-            if (ParentBody != null)
+            if (Parent != Manager.RootComponent && Parent != null)
             {
-                GlobalTransform = LocalTransform * ParentBody.GlobalTransform;
+                GlobalTransform = LocalTransform * (Parent as Body).GlobalTransform;
                 hasMoved = false;
             }
             else
@@ -350,18 +358,17 @@ namespace DwarfCorp
                 GlobalTransform = LocalTransform;
                 hasMoved = false;
             }
-            
-            for (int i = 0; i < Children.Count; ++i)
-            {
-                var childBody = Children[i] as Body;
-                if (childBody != null)
-                    childBody.UpdateTransformsRecursive(this);
-            }
-
-            // Setting the global transform does this...
-            UpdateBoundingBox();
         }
 
+
+        public void PropogateTransforms()
+        {
+            UpdateTransform();
+            foreach (var child in Children.OfType<Body>())
+            {
+                child.PropogateTransforms();
+            }
+        }
 
 
         public BoundingBox GetBoundingBox()
@@ -394,7 +401,6 @@ namespace DwarfCorp
             }
             Active = false;
             IsVisible = false;
-            HasMoved = false;
             OnDestroyed.Invoke();
             base.Die();
         }

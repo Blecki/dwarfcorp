@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +17,10 @@ namespace DwarfCorp
         public static VoxelHandle FindFirstVoxelAbove(VoxelHandle V)
         {
             var p = V.Coordinate.GetLocalVoxelCoordinate();
-
+            if (V.Chunk == null)
+            {
+                return VoxelHandle.InvalidHandle;
+            }
             for (int y = p.Y; y < VoxelConstants.ChunkSizeY; ++y)
             {
                 var above = new VoxelHandle(V.Chunk, new LocalVoxelCoordinate(p.X, y, p.Z));

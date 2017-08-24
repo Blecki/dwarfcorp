@@ -297,11 +297,11 @@ namespace DwarfCorp
                 else
                 {
                     // Fallback case when hardware instancing is not supported
-                    effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
+                    effect.SetTexturedTechnique();
                     DrawNonInstanced(graphics, effect, cam);
                 }
 
-                effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
+                effect.SetTexturedTechnique();
                 effect.World = Matrix.Identity;
                 graphics.BlendState = blendState;
             }
@@ -311,7 +311,7 @@ namespace DwarfCorp
 
         public void Render(GraphicsDevice graphics, Shader effect, Camera cam)
         {
-            Render(graphics, effect, cam, Shader.Technique.Instanced);
+            Render(graphics, effect, cam, Shader.InstancedTechniques[effect.CurrentNumLights]);
         }
 
         public void RenderSelectionBuffer(GraphicsDevice graphics, Shader effect, Camera cam, bool rebuildVertices)

@@ -43,16 +43,15 @@ namespace DwarfCorp
     internal class CraftItemTask : Task
     {
         public CraftBuilder.CraftDesignation Designation { get; set; }
-
         public CraftItemTask()
         {
             Priority = PriorityType.Low;
             AutoRetry = true;
         }
 
-        public CraftItemTask(VoxelHandle voxel, CraftBuilder.CraftDesignation type)
+        public CraftItemTask(CraftBuilder.CraftDesignation type)
         {
-            Name = "Craft item " + voxel.Coordinate;
+            Name = string.Format("Craft {0} at {1}", type.ItemType.Name, type.Location);
             Priority = PriorityType.Low;
             AutoRetry = true;
             Designation = type;
@@ -60,7 +59,7 @@ namespace DwarfCorp
 
         public override Task Clone()
         {
-            return new CraftItemTask(Designation.Location, Designation);
+            return new CraftItemTask(Designation);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)

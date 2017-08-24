@@ -199,7 +199,7 @@ namespace DwarfCorp
                 }
             }
             shadowRenderer.UnbindShadowmap(graphicsDevice);
-            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
+            effect.SetTexturedTechnique();
             effect.SelfIlluminationEnabled = false;
         }
 
@@ -235,7 +235,7 @@ namespace DwarfCorp
             }
             Graphics.SetRenderTarget(null);
             effect.SelfIlluminationEnabled = false;
-            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
+            effect.SetTexturedTechnique();
             graphicsDevice.RasterizerState = origState;
             graphicsDevice.BlendState = origBlendState;
         }
@@ -249,7 +249,7 @@ namespace DwarfCorp
             }
             else
             {
-                effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
+                effect.SetTexturedTechnique();
                 effect.EnableShadows = GameSettings.Default.UseDynamicShadows;
             }
             effect.SelfIlluminationTexture = ChunkData.IllumMap;
@@ -280,7 +280,7 @@ namespace DwarfCorp
                 }
             }
             effect.SelfIlluminationEnabled = false;
-            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
+            effect.SetTexturedTechnique();
         }
 
         public void GetChunksIntersecting(BoundingBox box, HashSet<VoxelChunk> chunks)

@@ -52,7 +52,7 @@ namespace DwarfCorp
         private static Shader Effect;
         private static OrbitCamera Camera;
         private static Dictionary<Color, List<GlobalVoxelCoordinate>> HighlightGroups = new Dictionary<Color, List<GlobalVoxelCoordinate>>();
-
+        private static object renderLock = new object();
         private struct Box
         {
             public BoundingBox RealBox;
@@ -95,7 +95,7 @@ namespace DwarfCorp
                 Device.DrawUserPrimitives(PrimitiveType.TriangleList, Verticies, 0, VertexCount / 3);
             }
             
-            Effect.CurrentTechnique = Effect.Techniques[Shader.Technique.Textured];
+            Effect.SetTexturedTechnique();
             
             if (oldState != null)
             {
@@ -149,6 +149,9 @@ namespace DwarfCorp
 
         private static void _addBox(Vector3 M, Vector3 S, Color C, float T)
         {
+            float halfT = T * 0.5f;
+            S += Vector3.One * halfT;
+            M -= Vector3.One * halfT;
             // Draw bottom loop.
             _addLineSegment(new Vector3(M.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y, M.Z), C, T);
             _addLineSegment(new Vector3(M.X + S.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y, M.Z + S.Z), C, T);
@@ -171,70 +174,89 @@ namespace DwarfCorp
 
         public static void Render(GraphicsDevice Device, Shader Effect, OrbitCamera Camera)
         {
-            Drawer3D.Device = Device;
-            Drawer3D.Effect = Effect;
-            Drawer3D.Camera = Camera;
-
-            var colorModulation = Math.Abs(Math.Sin(DwarfTime.LastTime.TotalGameTime.TotalSeconds * 2.0f));
-
-            foreach (var hilitedVoxelGroup in HighlightGroups)
+            lock (renderLock)
             {
-                var groupColor = new Color(
-                    (byte)(hilitedVoxelGroup.Key.R * colorModulation + 50),
-                    (byte)(hilitedVoxelGroup.Key.G * colorModulation + 50),
-                    (byte)(hilitedVoxelGroup.Key.B * colorModulation + 50),
-                    255);
+                Drawer3D.Device = Device;
+                Drawer3D.Effect = Effect;
+                Drawer3D.Camera = Camera;
 
-                foreach (var hilitedVoxel in hilitedVoxelGroup.Value)
-                    _addBox(hilitedVoxel.ToVector3(), Vector3.One, groupColor, 0.1f);
+                var colorModulation = Math.Abs(Math.Sin(DwarfTime.LastTime.TotalGameTime.TotalSeconds*2.0f));
+
+                foreach (var hilitedVoxelGroup in HighlightGroups)
+                {
+                    var groupColor = new Color(
+                        (byte) (hilitedVoxelGroup.Key.R*colorModulation + 50),
+                        (byte) (hilitedVoxelGroup.Key.G*colorModulation + 50),
+                        (byte) (hilitedVoxelGroup.Key.B*colorModulation + 50),
+                        255);
+
+                    foreach (var hilitedVoxel in hilitedVoxelGroup.Value)
+                        _addBox(hilitedVoxel.ToVector3(), Vector3.One, groupColor, 0.1f);
+                }
+
+                foreach (var box in Boxes)
+                    _addBox(box.RealBox.Min, box.RealBox.Max - box.RealBox.Min, box.Color, box.Thickness);
+
+                foreach (var segment in Segments)
+                    _addLineSegment(segment.A, segment.B, segment.Color, segment.Thickness);
+
+                _flush();
+
+                Boxes.Clear();
+                Segments.Clear();
             }
-
-            foreach (var box in Boxes)
-                _addBox(box.RealBox.Min, box.RealBox.Max - box.RealBox.Min, box.Color, box.Thickness);
-
-            foreach (var segment in Segments)
-                _addLineSegment(segment.A, segment.B, segment.Color, segment.Thickness);
-
-            _flush();
-
-            Boxes.Clear();
-            Segments.Clear();
         }
 
         public static void UnHighlightVoxel(VoxelHandle voxel)
         {
-            foreach (var group in HighlightGroups)
-                group.Value.Remove(voxel.Coordinate);
+            lock (renderLock)
+            {
+                foreach (var group in HighlightGroups)
+                    group.Value.Remove(voxel.Coordinate);
+            }
         }
 
         public static void HighlightVoxel(VoxelHandle voxel, Color color)
         {
-            if (!HighlightGroups.ContainsKey(color))
-                HighlightGroups.Add(color, new List<GlobalVoxelCoordinate>());
-
+            lock (renderLock)
+            {
+                if (!HighlightGroups.ContainsKey(color))
+                    HighlightGroups.Add(color, new List<GlobalVoxelCoordinate>());
+            }
             UnHighlightVoxel(voxel);
-            HighlightGroups[color].Add(voxel.Coordinate);
+
+            lock (renderLock)
+            {
+                HighlightGroups[color].Add(voxel.Coordinate);
+            }
+
         }
         
         public static void DrawBox(BoundingBox box, Color color, float thickness, bool warp)
         {
-            Boxes.Add(new Box
+            lock (renderLock)
             {
-                RealBox = box,
-                Color = color,
-                Thickness = thickness
-            });
+                Boxes.Add(new Box
+                {
+                    RealBox = box,
+                    Color = color,
+                    Thickness = thickness
+                });
+            }
         }
 
         public static void DrawLine(Vector3 A, Vector3 B, Color Color, float Thickness)
         {
-            Segments.Add(new Segment
+            lock (renderLock)
             {
-                A = A,
-                B = B,
-                Color = Color,
-                Thickness = Thickness
-            });
+                Segments.Add(new Segment
+                {
+                    A = A,
+                    B = B,
+                    Color = Color,
+                    Thickness = Thickness
+                });
+            }
         }
     }
 }

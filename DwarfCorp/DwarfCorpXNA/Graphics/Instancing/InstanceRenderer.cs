@@ -119,7 +119,10 @@ namespace DwarfCorp
 
             Effect.EnableWind = Group.RenderData.EnableWind;
             Device.RasterizerState = new RasterizerState { CullMode = CullMode.None };
-            Effect.CurrentTechnique = Effect.Techniques[Mode == RenderMode.Normal ? Shader.Technique.Instanced : Shader.Technique.SelectionBufferInstanced];
+            if (Mode == RenderMode.Normal)
+                Effect.SetInstancedTechnique();
+            else
+                Effect.CurrentTechnique = Effect.Techniques[Shader.Technique.SelectionBufferInstanced];
             Effect.EnableLighting = true;
             Effect.VertexColorTint = Color.White;
 
@@ -149,7 +152,7 @@ namespace DwarfCorp
             }
 
 
-            Effect.CurrentTechnique = Effect.Techniques[Shader.Technique.Textured];
+            Effect.SetTexturedTechnique();
             Effect.World = Matrix.Identity;
             Device.BlendState = blendState;
             Effect.EnableWind = false;

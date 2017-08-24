@@ -275,6 +275,8 @@ namespace DwarfCorp
             set { Parameters["xEnableWind"].SetValue(value ? 1 : 0); }
         }
 
+        public int CurrentNumLights { get; set; }
+
         public class Technique
         {
             public static string Water = "Water";
@@ -284,14 +286,65 @@ namespace DwarfCorp
             public static string ShadowMap = "Shadow";
             public static string ShadowMapInstanced = "ShadowInstanced";
             public static string SelectionBuffer = "Selection";
-            public static string Textured = "Textured";
+            public static string Textured_ = "Textured";
             public static string TexturedFlag = "Textured_Flag";
             public static string TexturedWithLightmap = "Textured_From_Lightmap";
             public static string Lightmap = "Lightmap";
             public static string TexturedWithColorScale = "Textured_colorscale";
-            public static string Instanced = "Instanced";
+            public static string Instanced_ = "Instanced";
             public static string SelectionBufferInstanced = "Instanced_SelectionBuffer";
             public static string Silhouette = "Silhouette";
+        }
+
+
+        public static string[] TexturedTechniques =
+        {
+            Shader.Technique.Textured_ + "_1_Light",
+            Shader.Technique.Textured_ + "_2_Lights",
+            Shader.Technique.Textured_ + "_3_Lights",
+            Shader.Technique.Textured_ + "_4_Lights",
+            Shader.Technique.Textured_ + "_5_Lights",
+            Shader.Technique.Textured_ + "_6_Lights",
+            Shader.Technique.Textured_ + "_7_Lights",
+            Shader.Technique.Textured_ + "_8_Lights",
+            Shader.Technique.Textured_ + "_9_Lights",
+            Shader.Technique.Textured_ + "_10_Lights",
+            Shader.Technique.Textured_ + "_11_Lights",
+            Shader.Technique.Textured_ + "_12_Lights",
+            Shader.Technique.Textured_ + "_13_Lights",
+            Shader.Technique.Textured_ + "_14_Lights",
+            Shader.Technique.Textured_ + "_15_Lights",
+            Shader.Technique.Textured_ + "_16_Lights",
+        };
+
+        public static string[] InstancedTechniques =
+        {
+            Shader.Technique.Instanced_ + "_1_Light",
+            Shader.Technique.Instanced_ + "_2_Lights",
+            Shader.Technique.Instanced_ + "_3_Lights",
+            Shader.Technique.Instanced_ + "_4_Lights",
+            Shader.Technique.Instanced_ + "_5_Lights",
+            Shader.Technique.Instanced_ + "_6_Lights",
+            Shader.Technique.Instanced_ + "_7_Lights",
+            Shader.Technique.Instanced_ + "_8_Lights",
+            Shader.Technique.Instanced_ + "_9_Lights",
+            Shader.Technique.Instanced_ + "_10_Lights",
+            Shader.Technique.Instanced_ + "_11_Lights",
+            Shader.Technique.Instanced_ + "_12_Lights",
+            Shader.Technique.Instanced_ + "_13_Lights",
+            Shader.Technique.Instanced_ + "_14_Lights",
+            Shader.Technique.Instanced_ + "_15_Lights",
+            Shader.Technique.Instanced_ + "_16_Lights",
+        };
+
+        public void SetTexturedTechnique()
+        {
+            CurrentTechnique = Techniques[TexturedTechniques[CurrentNumLights]];
+        }
+
+        public void SetInstancedTechnique()
+        {
+            CurrentTechnique = Techniques[InstancedTechniques[CurrentNumLights]];
         }
 
         public Shader(GraphicsDevice graphicsDevice, byte[] effectCode) 

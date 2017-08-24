@@ -203,7 +203,7 @@ namespace DwarfCorp
             effect.MainTexture = World.ChunkManager.ChunkData.Tilemap;
             effect.LightRampTint = Color.White;
             effect.VertexColorTint = new Color(0.1f, 0.9f, 1.0f, 0.5f * st + 0.45f);
-            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
+            effect.SetTexturedTechnique();
             foreach(WallBuilder put in Designations)
             {
                 //Drawer3D.DrawBox(put.Vox.GetBoundingBox(), Color.LightBlue, st * 0.01f + 0.05f);

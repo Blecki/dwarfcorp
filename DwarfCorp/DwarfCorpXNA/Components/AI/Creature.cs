@@ -118,7 +118,6 @@ namespace DwarfCorp
             IsHeadClear = true;
             NoiseMaker = new NoiseMaker();
             OverrideCharacterMode = false;
-
         }
 
         public void LayEgg()
@@ -296,6 +295,7 @@ namespace DwarfCorp
             {
                 FirstUpdate = false;
                 Faction.Minions.Add(AI);
+                Physics.AllowPhysicsSleep = false;
             }
 
             if (!Active) return;

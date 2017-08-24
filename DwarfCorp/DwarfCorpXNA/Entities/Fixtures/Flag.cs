@@ -223,7 +223,7 @@ namespace DwarfCorp
                 pass.Apply();
                 graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, banner.Verts.Length, 0, banner.Idx.Length / 3);
             }
-            effect.CurrentTechnique = effect.Techniques[Shader.Technique.Textured];
+            effect.SetTexturedTechnique();
             effect.WindDirection = oldWind;
             effect.WindForce = oldWindForce;
         }

@@ -332,13 +332,16 @@ namespace DwarfCorp.Gui.Widgets
                     CancelTask.Invalidate();
                     CancelTask.OnClick = (sender, args) =>
                     {
-                        Employee.CurrentTask.Cancel();
-                        Employee.CurrentTask = null;
-                        TaskLabel.Text = "No tasks";
-                        TaskLabel.Invalidate();
-                        CancelTask.OnClick = null;
-                        CancelTask.TextColor = new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
-                        CancelTask.Invalidate();
+                        if (Employee.CurrentTask != null)
+                        {
+                            Employee.CurrentTask.Cancel();
+                            Employee.CurrentTask = null;
+                            TaskLabel.Text = "No tasks";
+                            TaskLabel.Invalidate();
+                            CancelTask.OnClick = null;
+                            CancelTask.TextColor = new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
+                            CancelTask.Invalidate();
+                        }
                     };
                 }
                 else

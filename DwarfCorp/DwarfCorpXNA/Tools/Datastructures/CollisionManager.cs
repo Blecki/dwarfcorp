@@ -1,4 +1,4 @@
-﻿// CollisionManager.cs
+// CollisionManager.cs
 // 
 //  Modified MIT License (MIT)
 //  
