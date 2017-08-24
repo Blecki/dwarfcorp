@@ -51,24 +51,30 @@ namespace DwarfCorp
             
         }
 
-        public Fixture(ComponentManager Manager, Vector3 position, SpriteSheet asset, Point frame) :
-            base(Manager, "Fixture", Matrix.CreateTranslation(position), new Vector3(asset.FrameWidth * (1.0f / 32.0f), asset.FrameHeight * (1.0f / 32.0f), asset.FrameWidth * (1.0f / 32.0f)), Vector3.Zero, true)
+        public Fixture(
+            ComponentManager Manager, 
+            Vector3 position, 
+            SpriteSheet asset, 
+            Point frame) :
+            base(Manager, "Fixture", Matrix.CreateTranslation(position), 
+                new Vector3(asset.FrameWidth * (1.0f / 32.0f), asset.FrameHeight * (1.0f / 32.0f), asset.FrameWidth * (1.0f / 32.0f)), Vector3.Zero, true)
         {
             Asset = asset;
             Frame = frame;
-            var sprite = AddChild(new Sprite(Manager, "Sprite", Matrix.Identity, asset, false)) as Sprite;
-            sprite.AddAnimation(new Animation(asset.GenerateFrame(frame)));
-            sprite.SetFlag(Flag.ShouldSerialize, false);
             AddToCollisionManager = false;
             CollisionType = CollisionManager.CollisionType.Static;
+
+            CreateCosmeticChildren(Manager);
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            var sprite = AddChild(new Sprite(manager, "Sprite", Matrix.Identity, Asset, false)) as Sprite;
-            sprite.AddAnimation(new Animation(Asset.GenerateFrame(Frame)));
-            sprite.SetFlag(Flag.ShouldSerialize, false);
             base.CreateCosmeticChildren(manager);
-        }
+
+            AddChild(new SimpleSprite(manager, "Sprite", Matrix.Identity, false, Asset, Frame)
+            {
+                OrientationType = SimpleSprite.OrientMode.YAxis
+            }).SetFlag(Flag.ShouldSerialize, false);
+        }            
     }
 }
