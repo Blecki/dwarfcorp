@@ -481,12 +481,12 @@ namespace DwarfCorp
         public WrangleAnimalTask(Creature animal)
         {
             Animal = animal;
-            Name = "Wrangle " + animal.GlobalID;
+            Name = "Wrangle animal" + animal.GlobalID;
         }
 
         public IEnumerable<Act.Status> WrangleAnimal(CreatureAI agent, CreatureAI creature, AnimalPen animalPen)
         {
-            Animal.GetComponent<CreatureAI>().Tasks.Add(new ActWrapperTask(new GoToZoneAct(creature, animalPen) &
+            Animal.GetRoot().GetComponent<CreatureAI>().Tasks.Add(new ActWrapperTask(new GoToZoneAct(creature, animalPen) &
                 new Wrap(() => animalPen.AddAnimal(Animal.Physics, agent.Faction))));
             yield return Act.Status.Success;
         }
@@ -526,7 +526,7 @@ namespace DwarfCorp
 
         public override bool IsFeasible(Creature agent)
         {
-            return agent.Faction.WrangleDesignations.Contains(Animal.GetComponent<Physics>());
+            return agent.Faction.WrangleDesignations.Contains(Animal.GetRoot().GetComponent<Physics>());
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
