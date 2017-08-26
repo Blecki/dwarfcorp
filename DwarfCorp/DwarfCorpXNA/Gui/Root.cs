@@ -84,7 +84,7 @@ namespace DwarfCorp.Gui
 
         public string Sanitize(String Name)
         {
-            return Regex.Replace(Name, "/", "\\");
+            return Name == null ? null : Regex.Replace(Name, "/", "\\");
         }
 
         /// <summary>

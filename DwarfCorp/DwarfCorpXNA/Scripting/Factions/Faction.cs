@@ -1027,12 +1027,17 @@ namespace DwarfCorp
 
         public void AddMoney(DwarfBux money)
         {
+            if (money == 0.0m)
+            {
+                return;
+            }
+
             // In this case, we need to remove money from the economy.
             // This means that we first take money from treasuries. If there is any left,
             // we subtract it from the current money count.
             if (money < 0)
             {
-                DwarfBux amountLeft = money;
+                DwarfBux amountLeft = -money;
                 foreach (Treasury treasury in Treasurys)
                 {
                     DwarfBux amountToTake = System.Math.Min(treasury.Money, amountLeft);
@@ -1044,6 +1049,7 @@ namespace DwarfCorp
                 Economy.CurrentMoney = System.Math.Max(Economy.CurrentMoney, 0m);
                 return;
             }
+
 
 
             // If there are no minions, we add money to treasuries first, then generate random coin piles.
