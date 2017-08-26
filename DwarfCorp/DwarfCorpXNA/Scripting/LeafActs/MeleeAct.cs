@@ -178,7 +178,7 @@ namespace DwarfCorp
                 }
             }
 
-            Inventory targetInventory = Target.GetComponent<Inventory>();
+            Inventory targetInventory = Target.GetRoot().GetComponent<Inventory>();
 
             if (targetInventory != null)
             {

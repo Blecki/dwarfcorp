@@ -854,7 +854,7 @@ namespace DwarfCorp
 
                         TossMotion toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f),
                             2.5f + MathFunctions.Rand(-0.5f, 0.5f), newEntity.LocalTransform, position);
-                        newEntity.GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
+                        newEntity.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
                         newEntity.AnimationQueue.Add(toss);
                         toss.OnComplete += () => toss_OnComplete(newEntity);
 
@@ -1013,7 +1013,7 @@ namespace DwarfCorp
         public void AddMinion(CreatureAI minion)
         {
             Minions.Add(minion);
-            Inventory targetInventory = minion.GetComponent<Inventory>();
+            Inventory targetInventory = minion.GetRoot().GetComponent<Inventory>();
 
             if (targetInventory != null)
             {

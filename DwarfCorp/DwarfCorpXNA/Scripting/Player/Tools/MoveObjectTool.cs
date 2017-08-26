@@ -196,7 +196,7 @@ namespace DwarfCorp
                             var tvh = new VoxelHandle(Player.VoxSelector.Chunks.ChunkData, v);
                             return tvh.IsValid && !tvh.IsEmpty;
                         });
-                var tinter = SelectedBody.GetComponent<Tinter>();
+                var tinter = SelectedBody.GetRoot().GetComponent<Tinter>();
                 if (tinter != null)
                 {
                     tinter.VertexColorTint = intersectsAnyOther == null && !intersectsWall ? Color.Green : Color.Red;

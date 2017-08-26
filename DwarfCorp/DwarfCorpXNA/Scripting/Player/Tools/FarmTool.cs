@@ -274,7 +274,7 @@ namespace DwarfCorp
                         if (!Player.Faction.WrangleDesignations.Contains(animal))
                         {
                             Player.Faction.WrangleDesignations.Add(animal);
-                            tasks.Add(new WrangleAnimalTask(animal.GetComponent<Creature>()));
+                            tasks.Add(new WrangleAnimalTask(animal.GetRoot().GetComponent<Creature>()));
                         }
                     }
                     else if (button == InputManager.MouseButton.Right)

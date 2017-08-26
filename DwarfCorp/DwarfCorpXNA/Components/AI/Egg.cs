@@ -86,7 +86,7 @@ namespace DwarfCorp
             var adult = EntityFactory.CreateEntity<Body>(Adult, ParentBody.Position);
             if (PositionConstrain.HasValue)
             {
-                adult.GetComponent<CreatureAI>().PositionConstraint = PositionConstrain.Value;
+                adult.GetRoot().GetComponent<CreatureAI>().PositionConstraint = PositionConstrain.Value;
             }
             GetRoot().Die();
         }

@@ -786,20 +786,16 @@ namespace DwarfCorp
             if (GatherManager.VoxelOrders.Count > 0)
             {
                 // Otherwise handle build orders.
-                var voxels = new List<VoxelHandle>();
-                var types = new List<VoxelType>();
-                foreach (GatherManager.BuildVoxelOrder order in GatherManager.VoxelOrders)
-                {
-                    voxels.Add(order.Voxel);
-                    types.Add(order.Type);
-                }
+                var voxels = GatherManager.VoxelOrders.Select(order => new KeyValuePair<VoxelHandle, VoxelType>(order.Voxel, order.Type)).ToList();
 
                 GatherManager.VoxelOrders.Clear();
+                /*
                 return new ActWrapperTask(new BuildVoxelsAct(this, voxels, types))
                 {
                     Priority = Task.PriorityType.Low,
                     AutoRetry = true
-                };
+                };*/
+                return new BuildVoxelsTask(voxels);
             }
 
             return null;

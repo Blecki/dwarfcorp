@@ -350,7 +350,7 @@ namespace DwarfCorp
             Add((new Resource(ResourceLibrary.ResourceType.GemTrinket, 100.0m, "A crafted item.",
                 new NamedImageFrame(ContentPaths.Entities.DwarfObjects.crafts, 32, 0, 0), 0, Color.White, Resource.ResourceTags.Craft)));
 
-            Add(new Resource(ResourceType.Glass, 8.0m, "Made from sand. Allows light to pass through.", new NamedImageFrame(tileSheet, GetRect(4, 0)), 4, Color.White, Resource.ResourceTags.Material, Resource.ResourceTags.HardMaterial, Resource.ResourceTags.Craft)
+            Add(new Resource(ResourceType.Glass, 8.0m, "Made from sand. Allows light to pass through.", new NamedImageFrame(tileSheet, GetRect(4, 0)), 4, Color.White, Resource.ResourceTags.Material, Resource.ResourceTags.HardMaterial, Resource.ResourceTags.Craft, Resource.ResourceTags.Glass)
             {
                 CanCraft = true,
                 CraftPrereqs = new List<Quantitiy<Resource.ResourceTags>>() { new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Sand) },

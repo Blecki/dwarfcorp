@@ -178,6 +178,11 @@ namespace DwarfCorp.Gui.Widgets
                         };
                         break;
                 }
+
+                if (OnUpdate != null)
+                {
+                    Root.RegisterForUpdate(this);
+                }
             }
         }
     }

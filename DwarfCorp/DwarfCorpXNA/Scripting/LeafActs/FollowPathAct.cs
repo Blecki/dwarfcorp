@@ -343,7 +343,7 @@ namespace DwarfCorp
                         }
                         else if (action.InteractObject != null)
                         {
-                            Agent.Physics.Velocity = (action.InteractObject.GetComponent<Body>().Position) - currPosition;
+                            Agent.Physics.Velocity = (action.InteractObject.GetRoot().GetComponent<Body>().Position) - currPosition;
                         }
                     }
                     else

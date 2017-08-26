@@ -1,4 +1,5 @@
 using System.IO;
+using System.Net.Mime;
 using DwarfCorp.Gui.Widgets;
 using DwarfCorp.Gui;
 using DwarfCorp.Gui.Input;
@@ -375,6 +376,30 @@ namespace DwarfCorp.GameStates
             EnableScreensaver = true;
             World.Render(gameTime);
             base.RenderUnitialized(gameTime);
+        }
+
+        void UpdateBlockWidget(Gui.Widget sender, VoxelType data)
+        {
+            int numResources;
+            if (!int.TryParse(sender.Text, out numResources))
+            {
+                sender.Text = "";
+                sender.Invalidate();
+                return;
+            }
+            var factionResources = Master.Faction.ListResources();
+            if (!factionResources.ContainsKey(data.ResourceToRelease))
+            {
+                sender.Text = "";
+                sender.Invalidate();
+                return;
+            }
+            int newNum = Math.Max(factionResources[data.ResourceToRelease].NumResources - Master.Faction.WallBuilder.GetNumDesignations(data.ResourceToRelease), 0);
+            if (newNum != numResources)
+            {
+                sender.Text = newNum.ToString();
+                sender.Invalidate();
+            }
         }
 
         /// <summary>
@@ -889,9 +914,11 @@ namespace DwarfCorp.GameStates
                                 World.ShowToolPopup("Click and drag to build " + data.Name + " wall.");
                                 World.Tutorial("build blocks");
                             },
+                            OnUpdate = (sender, args) => UpdateBlockWidget(sender, data),
                             Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
                             Hidden = false
                         }));
+                    
                     widget.Construct();
                     widget.Hidden = false;
                     widget.Layout();
