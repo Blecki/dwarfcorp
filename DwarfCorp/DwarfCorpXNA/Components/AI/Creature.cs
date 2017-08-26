@@ -333,7 +333,7 @@ namespace DwarfCorp
             {
                 var baby = EntityFactory.CreateEntity<GameComponent>(BabyType, Physics.Position);
                 if (AI.PositionConstraint.HasValue)
-                    baby.GetComponent<CreatureAI>().PositionConstraint = AI.PositionConstraint.Value;
+                    baby.GetRoot().GetComponent<CreatureAI>().PositionConstraint = AI.PositionConstraint.Value;
                 CurrentPregnancy = null;
             }
 
