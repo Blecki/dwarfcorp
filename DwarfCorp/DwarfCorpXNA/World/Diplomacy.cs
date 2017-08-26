@@ -288,7 +288,7 @@ namespace DwarfCorp
 
                     foreach (CreatureAI creature in envoy.Creatures)
                     {
-                        creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
+                       creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
                         if (natives.Economy == null)
                         {
                             natives.Economy = new Economy(natives, 1000.0m, World, new CompanyInformation()

@@ -62,7 +62,7 @@ namespace DwarfCorp
             int currentGood = 0;
             foreach (CreatureAI creature in Creatures)
             {
-                ResourcePack pack = creature.GetComponent<ResourcePack>();
+                ResourcePack pack = creature.GetRoot().GetComponent<ResourcePack>();
                 if (pack != null)
                 {
                     pack.Contents.Resources.Clear();
