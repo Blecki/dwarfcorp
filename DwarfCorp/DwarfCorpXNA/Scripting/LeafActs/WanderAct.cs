@@ -148,6 +148,10 @@ namespace DwarfCorp
         public IEnumerable<Status> FindRandomPath()
         {
             Vector3 target = MathFunctions.RandVector3Cube()*Radius + Creature.AI.Position;
+            if (Creature.AI.PositionConstraint.HasValue)
+            {
+                target = MathFunctions.RandVector3Box(Creature.AI.PositionConstraint.Value);
+            }
             if (Is2D) target.Y = Creature.AI.Position.Y;
             List<MoveAction> path = new List<MoveAction>();
             VoxelHandle curr = Creature.Physics.CurrentVoxel;

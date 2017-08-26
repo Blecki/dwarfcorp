@@ -153,8 +153,6 @@ namespace DwarfCorp.Gui.Widgets
 
                 switch (Behavior)
                 {
-                    case IconBehavior.LeafIcon:
-                        break;
                     case IconBehavior.ShowClickPopup:
                         if (PopupChild == null || OnClick != null)
                             throw new InvalidProgramException("Conflicting icon behavior");
@@ -162,11 +160,15 @@ namespace DwarfCorp.Gui.Widgets
                         PopupChild.Hidden = true;
                         OnClick = ExpandPopup;
                         break;
+                    case IconBehavior.LeafIcon:
                     case IconBehavior.ShowHoverPopup:
-                        if (PopupChild == null) throw new InvalidProgramException("Conflicting icon behavior");
-                        AddChild(PopupChild);
-                        PopupChild.Hidden = true;
-                        OnMouseEnter = ExpandPopup;
+                        if (PopupChild == null && Behavior == IconBehavior.ShowHoverPopup) throw new InvalidProgramException("Conflicting icon behavior");
+                        if (PopupChild != null)
+                        {
+                            AddChild(PopupChild);
+                            PopupChild.Hidden = true;
+                            OnMouseEnter = ExpandPopup;
+                        }
                         break;
                     case IconBehavior.ShowSubMenu:
                         OnClick = (sender, args) =>

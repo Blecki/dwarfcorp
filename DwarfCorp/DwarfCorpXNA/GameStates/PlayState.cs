@@ -1485,7 +1485,7 @@ namespace DwarfCorp.GameStates
                 PopupChild = new Widget()
                 {
                     Border = "border-fancy",
-                    Text = "Wrangle Animals.\n Click and drag to wrangle animals.",
+                    Text = "Wrangle Animals.\n Click and drag to wrangle animals.\nRequires animal pen.",
                     Rect = new Rectangle(0, 0, 256, 128),
                     TextColor = Color.Black.ToVector4()
                 },
@@ -1494,6 +1494,8 @@ namespace DwarfCorp.GameStates
                     ChangeTool(GameMaster.ToolMode.Farm);
                     (Master.Tools[GameMaster.ToolMode.Farm] as FarmTool).Mode = FarmTool.FarmMode.WranglingAnimals;
                     World.Tutorial("wrangle");
+                    World.ShowToolPopup(
+                        "Left click to tell dwarves to wrangle animals.\nRight click to cancel wrangling.\nRequires animal pen.");
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
