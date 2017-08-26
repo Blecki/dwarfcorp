@@ -761,6 +761,8 @@ namespace DwarfCorp
                 //GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Components");
 
                 //GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer - Instances");
+                NewInstanceManager.RenderInstances(GraphicsDevice, DefaultShader, Camera,
+                    InstanceRenderer.RenderMode.SelectionBuffer);
                 InstanceManager.RenderSelectionBuffer(GraphicsDevice, DefaultShader, Camera, false);
                 //GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Instances");
 
