@@ -125,7 +125,7 @@ namespace DwarfCorp.Dialogue
                     // Pass event to game...
                 }
             }
-
+            SoundManager.Update(gameTime, World.Camera, World.Time);
             GuiRoot.Update(gameTime.ToGameTime());
             DialogueContext.Update(gameTime);
             World.TutorialManager.Update(GuiRoot);
