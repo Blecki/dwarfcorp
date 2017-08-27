@@ -691,6 +691,7 @@ namespace DwarfCorp.GameStates
                 Tooltip = "(push " + ControlSettings.Mappings.Pause.ToString() + " to unpause)",
                 Font = "outline-font",
                 TextColor = Color.White.ToVector4(),
+                MaximumSize = new Point(0, 0),
                 Hidden = true,
             });
 
