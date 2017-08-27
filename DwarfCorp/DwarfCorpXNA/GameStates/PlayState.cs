@@ -597,8 +597,10 @@ namespace DwarfCorp.GameStates
                             {
                                 if ((confirm as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
                                 {
-                                    SoundManager.PlaySound(ContentPaths.Audio.change, 0.5f);
+                                    SoundManager.PlaySound(ContentPaths.Audio.change, 0.25f);
                                     var selectedEmployee = (sender as EmployeeInfo).Employee;
+                                    selectedEmployee.GetRoot().GetComponent<Inventory>().Die();
+                                    World.MakeAnnouncement(string.Format("{0} was fired.", selectedEmployee.Stats.FullName));
                                     selectedEmployee.GetRoot().Delete();
 
                                     Master.Faction.Minions.Remove(selectedEmployee);
