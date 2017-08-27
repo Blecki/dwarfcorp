@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class SimpleSprite : Tinter, IUpdateableComponent, IRenderableComponent
+    public class SimpleSprite : Tinter, IRenderableComponent
     {
         public enum OrientMode
         {
@@ -91,7 +91,7 @@ namespace DwarfCorp
                     Frame,
                     WorldWidth,
                     WorldHeight,
-                    Tint,
+                    new Color(255, 255, 255, 255),
                     false);
             }
 

@@ -663,7 +663,8 @@ namespace DwarfCorp
 
             if (!IsPosessed && GatherManager.VoxelOrders.Count == 0 &&
                 (GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile()) &&
-                (GatherManager.StockMoneyOrders.Count == 0 || !Faction.HasFreeTreasury()))
+                (GatherManager.StockMoneyOrders.Count == 0 || !Faction.HasFreeTreasury())
+                && Tasks.Count == 0)
             {
 
                 // Craft random items for fun.

@@ -543,7 +543,6 @@ TVertexToPixel TexturedVSNonInstanced( float4 inPos : POSITION,
 	return TexturedVS(inPos, inTexCoords, inColor, inTexSource, xWorld, xTint, vertColor, max_lights);
 }
 
-
 TVertexToPixel TexturedVSNonInstanced_1Light(float4 inPos : POSITION,
 	float2 inTexCoords : TEXCOORD0,
 	float4 inColor : COLOR0,
@@ -552,6 +551,7 @@ TVertexToPixel TexturedVSNonInstanced_1Light(float4 inPos : POSITION,
 {
 	return TexturedVS_1Light(inPos, inTexCoords, inColor, inTexSource, xWorld, xTint, vertColor);
 }
+
 TVertexToPixel TexturedVSInstanced( float4 inPos : POSITION,  
 								    float2 inTexCoords: TEXCOORD0, 
 									float4 inColor : COLOR0, 
