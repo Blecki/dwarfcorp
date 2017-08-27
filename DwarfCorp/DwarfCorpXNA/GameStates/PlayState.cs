@@ -587,7 +587,7 @@ namespace DwarfCorp.GameStates
                     EnablePosession = true,
                     OnFireClicked = (sender) =>
                     {
-                        GuiRoot.ShowDialog(GuiRoot.ConstructWidget(new Gui.Widgets.Confirm
+                        GuiRoot.ShowModalPopup(GuiRoot.ConstructWidget(new Gui.Widgets.Confirm
                         {
                             OkayText = "Fire this dwarf!",
                             CancelText = "Keep this dwarf.",
