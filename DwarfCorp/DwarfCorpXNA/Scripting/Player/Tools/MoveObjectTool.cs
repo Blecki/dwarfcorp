@@ -92,8 +92,13 @@ namespace DwarfCorp
                             break;
                         }
                     }
-                    else if (Player.Faction.OwnedObjects.Contains(body) && body.Tags.Any(tag => tag == "Moveable") && !body.IsReserved)
+                    else if (Player.Faction.OwnedObjects.Contains(body) && body.Tags.Any(tag => tag == "Moveable"))
                     {
+                        if (body.IsReserved)
+                        {
+                            Player.World.ShowToolPopup(string.Format("Can't move this {0}. It is being used.", body.Name));
+                            continue;
+                        }
                         body.Delete();
                         SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, body.Position,
                         0.5f);
@@ -124,6 +129,11 @@ namespace DwarfCorp
             {
                 if (body.Tags.Contains("Moveable"))
                 {
+                    if (body.IsReserved)
+                    {
+                        Player.World.ShowTooltip("Can't move this " + body.Name + "\nIt is being used.");
+                        continue;
+                    }
                     Player.World.ShowTooltip("Left click to move this " + body.Name + "\nRight click to destroy it.");
                 }
             }
@@ -175,6 +185,9 @@ namespace DwarfCorp
                         SelectedBody.OrientToWalls();   
                     }
                     SelectedBody.UpdateBoundingBox();
+                    SelectedBody.UpdateTransform();
+                    SelectedBody.PropogateTransforms();
+                    SelectedBody.UpdateBoundingBox();
                 }
 
                 /*
@@ -190,7 +203,7 @@ namespace DwarfCorp
                 Drawer3D.DrawBox(SelectedBody.GetRotatedBoundingBox(), Color.White, 0.05f, false);
 
                 bool intersectsWall = VoxelHelpers.EnumerateCoordinatesInBoundingBox(
-                    SelectedBody.GetRotatedBoundingBox().Expand(-0.5f)).Any(
+                    SelectedBody.GetRotatedBoundingBox().Expand(-0.25f)).Any(
                         v =>
                         {
                             var tvh = new VoxelHandle(Player.VoxSelector.Chunks.ChunkData, v);
@@ -208,6 +221,8 @@ namespace DwarfCorp
                     if (intersectsAnyOther == null && !intersectsWall)
                     {
                         SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, SelectedBody.Position, 0.5f);
+                        SelectedBody.UpdateTransform();
+                        SelectedBody.PropogateTransforms();
                         SelectedBody.UpdateBoundingBox();
                         SelectedBody = null;
                         OverrideOrientation = false;
@@ -249,6 +264,9 @@ namespace DwarfCorp
                 {
                     SelectedBody.Orient(CurrentOrientation);
                     SelectedBody.UpdateBoundingBox();
+                    SelectedBody.UpdateTransform();
+                    SelectedBody.PropogateTransforms();
+                    SelectedBody.UpdateBoundingBox();
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, SelectedBody.Position, 0.5f);
                 }
             }
@@ -261,6 +279,9 @@ namespace DwarfCorp
                 if (SelectedBody != null)
                 {
                     SelectedBody.Orient(CurrentOrientation);
+                    SelectedBody.UpdateBoundingBox();
+                    SelectedBody.UpdateTransform();
+                    SelectedBody.PropogateTransforms();
                     SelectedBody.UpdateBoundingBox();
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, SelectedBody.Position, 0.5f);
                 }
