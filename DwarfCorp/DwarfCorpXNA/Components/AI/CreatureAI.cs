@@ -1059,7 +1059,7 @@ namespace DwarfCorp
                     {
                         var vox = action.DestinationVoxel;
 
-                        float cost = edgeGoal.Heuristic(vox) + MathFunctions.Rand(0.0f, 5.0f);
+                        float cost = edgeGoal.Heuristic(vox) + MathFunctions.Rand(0.0f, 0.1f);
 
                         if (cost < minCost)
                         {
@@ -1095,7 +1095,9 @@ namespace DwarfCorp
             public override Act CreateScript(Creature agent)
             {
                 return new Select(
-                    new GoToNamedVoxelAct("", PlanAct.PlanType.Edge, agent.AI),
+                    new Sequence(new SetBlackboardData<VoxelHandle>(agent.AI, "EdgeVoxel", VoxelHandle.InvalidHandle),
+                                 new PlanAct(agent.AI, "PathToVoxel", "EdgeVoxel", PlanAct.PlanType.Edge),
+                                 new FollowPathAct(agent.AI, "PathToVoxel")),
                     new Wrap(() => GreedyFallbackBehavior(agent))
                     );
             }
