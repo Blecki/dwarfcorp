@@ -32,12 +32,14 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace DwarfCorp
 {
@@ -247,6 +249,7 @@ namespace DwarfCorp
                         {
                             Player.Faction.ChopDesignations.Add(tree);
                             tasks.Add(new KillEntityTask(tree, KillEntityTask.KillType.Chop) { Priority = Task.PriorityType.Low });
+                            this.Player.World.ShowToolPopup("Will harvest this " + tree.Name);
                         }
                     }
                     else if (button == InputManager.MouseButton.Right)
@@ -254,6 +257,7 @@ namespace DwarfCorp
                         if (Player.Faction.ChopDesignations.Contains(tree))
                         {
                             Player.Faction.ChopDesignations.Remove(tree);
+                            this.Player.World.ShowToolPopup("Harvest cancelled " + tree.Name);
                         }
                     }
                 }
@@ -275,6 +279,7 @@ namespace DwarfCorp
                         {
                             Player.Faction.WrangleDesignations.Add(animal);
                             tasks.Add(new WrangleAnimalTask(animal.GetRoot().GetComponent<Creature>()));
+                            this.Player.World.ShowToolPopup("Will wrangle this " + animal.Name);
                         }
                     }
                     else if (button == InputManager.MouseButton.Right)
@@ -282,6 +287,7 @@ namespace DwarfCorp
                         if (Player.Faction.WrangleDesignations.Contains(animal))
                         {
                             Player.Faction.WrangleDesignations.Remove(animal);
+                            this.Player.World.ShowToolPopup("Wrangle cancelled " + animal.Name);
                         }
                     }
                 }
@@ -360,6 +366,8 @@ namespace DwarfCorp
                 Player.BodySelector.Enabled = false;
                 return;
             }
+
+            Player.BodySelector.AllowRightClickSelection = true;
 
             switch (Mode)
             {
@@ -473,6 +481,7 @@ namespace DwarfCorp
     public class WrangleAnimalTask : Task
     {
         public Creature Animal { get; set; }
+        public AnimalPen LastPen { get; set; }
 
         public WrangleAnimalTask()
         {
@@ -482,17 +491,44 @@ namespace DwarfCorp
         {
             Animal = animal;
             Name = "Wrangle animal" + animal.GlobalID;
+            AutoRetry = true;
         }
 
-        public IEnumerable<Act.Status> WrangleAnimal(CreatureAI agent, CreatureAI creature, AnimalPen animalPen)
+        public IEnumerable<Act.Status> PenAnimal(CreatureAI agent, CreatureAI creature, AnimalPen animalPen)
         {
-            Animal.GetRoot().GetComponent<CreatureAI>().Tasks.Add(new ActWrapperTask(new GoToZoneAct(creature, animalPen) &
-                new Wrap(() => animalPen.AddAnimal(Animal.Physics, agent.Faction))));
+            foreach (var status in animalPen.AddAnimal(Animal.Physics, agent.Faction))
+            {
+                if (status == Act.Status.Fail)
+                {
+                    creature.PositionConstraint = null;
+                    yield return Act.Status.Fail;
+                    yield break;
+                }
+            }
             yield return Act.Status.Success;
         }
 
-        public override Act CreateScript(Creature agent)
+        public IEnumerable<Act.Status> ReleaseAnimal(CreatureAI animal)
         {
+            animal.PositionConstraint = null;
+            yield return Act.Status.Success;
+        }
+
+        public IEnumerable<Act.Status> WrangleAnimal(CreatureAI agent, CreatureAI creature)
+        {
+            creature.PositionConstraint = new BoundingBox(agent.Position - new Vector3(1.0f, 0.5f, 1.0f), 
+                agent.Position + new Vector3(1.0f, 0.5f, 1.0f));
+            Drawer3D.DrawLine(creature.Position, agent.Position, Color.Black, 0.05f);
+            yield return Act.Status.Success;
+        }
+
+        public AnimalPen GetClosestPen(Creature agent)
+        {
+            if (LastPen != null && (LastPen.Species == "" || LastPen.Species == Animal.Species) && agent.Faction.GetRooms().Contains(LastPen))
+            {
+                return LastPen;
+            }
+
             var pens = agent.Faction.GetRooms().Where(room => room is AnimalPen).Cast<AnimalPen>().Where(pen => pen.Species == "" || pen.Species == Animal.Species);
             AnimalPen closestPen = null;
             float closestDist = float.MaxValue;
@@ -509,14 +545,26 @@ namespace DwarfCorp
             if (closestPen == null)
             {
                 agent.World.MakeAnnouncement("Can't wrangle " + Animal.Species + "s. Need more animal pens.");
+            }
+            LastPen = closestPen;
+            return closestPen;
+        }
+
+        public override Act CreateScript(Creature agent)
+        {
+            var closestPen = GetClosestPen(agent);
+            if (closestPen == null)
+            {
                 return null;
             }
 
             closestPen.Species = Animal.Species;
 
-            return new Sequence(new GoToEntityAct(Animal.Physics, agent.AI),
-                new Wrap(() => WrangleAnimal(agent.AI, Animal.AI, closestPen)),
-                new GoToZoneAct(agent.AI, closestPen));
+            return new Select(new Sequence(new Domain(() => IsFeasible(agent), new GoToEntityAct(Animal.Physics, agent.AI)),
+                new Domain(() => IsFeasible(agent), new Parallel(new Repeat(new Wrap(() => WrangleAnimal(agent.AI, Animal.AI)), -1, false),
+                new GoToZoneAct(agent.AI, closestPen)) { ReturnOnAllSucces = false}),
+                new Domain(() => IsFeasible(agent), new Wrap(() => PenAnimal(agent.AI, Animal.AI, closestPen)))), 
+                new Wrap(() => ReleaseAnimal(Animal.AI)));
         }
 
         public override Task Clone()
@@ -526,8 +574,10 @@ namespace DwarfCorp
 
         public override bool IsFeasible(Creature agent)
         {
-            return agent.Faction.WrangleDesignations.Contains(Animal.GetRoot().GetComponent<Physics>());
+            return agent.Faction.WrangleDesignations.Contains(Animal.GetRoot().GetComponent<Physics>()) && Animal != null && !Animal.IsDead &&
+                GetClosestPen(agent) != null;
         }
+
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {

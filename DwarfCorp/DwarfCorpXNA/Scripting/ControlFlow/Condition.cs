@@ -1,4 +1,4 @@
-﻿// Condition.cs
+// Condition.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -73,6 +73,67 @@ namespace DwarfCorp
             else
             {
                 yield return Status.Fail;
+            }
+        }
+    }
+
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    public class Domain : Act
+    {
+        private Func<bool> Function { get; set; }
+        public Act Child { get; set; }
+        public Domain()
+        {
+
+        }
+
+        public Domain(bool condition, Act child)
+        {
+            Name = "Domain";
+            Function = () => condition;
+            Child = child;
+        }
+
+        public Domain(Func<bool> condition, Act child)
+        {
+            Name = "Domain: " + condition.Method.Name;
+            Function = condition;
+            Child = child;
+        }
+
+        public override void Initialize()
+        {
+            Child.Initialize();
+            base.Initialize();
+        }
+
+        public override void OnCanceled()
+        {
+            Child.OnCanceled();
+            base.OnCanceled();
+        }
+
+        public override IEnumerable<Status> Run()
+        {
+            LastTickedChild = this;
+            while (true)
+            {
+                if (Function())
+                {
+                    var childStatus = Child.Tick();
+                    LastTickedChild = Child;
+                    if (childStatus == Act.Status.Running)
+                    {
+                        yield return Act.Status.Running;
+                        continue;
+                    }
+                    yield return childStatus;
+                    yield break;
+                }
+                else
+                {
+                    yield return Status.Fail;
+                }
             }
         }
     }
