@@ -63,7 +63,16 @@ namespace DwarfCorp.GameStates
         {
             get
             {
-                return Matrix.CreateLookAt(zoom * Vector3.Transform(Vector3.Forward, CameraRotation) + cameraTarget, cameraTarget, Vector3.Up);
+                return Matrix.CreateLookAt(CameraPos, cameraTarget, Vector3.Up);
+            }
+        }
+
+        private Vector3 CameraPos
+        {
+            get
+            {
+                return zoom*Vector3.Transform(Vector3.Forward, CameraRotation) + cameraTarget;
+                
             }
         }
 
@@ -238,16 +247,21 @@ namespace DwarfCorp.GameStates
             }
         }
 
+        public Vector3 GetWorldSpace(Vector2 worldCoord)
+        {
+            var height = 0.0f;
+            if ((int)worldCoord.X > 0 && (int)worldCoord.Y > 0 &&
+                (int)worldCoord.X < Overworld.Map.GetLength(0) && (int)worldCoord.Y < Overworld.Map.GetLength(1))
+            {
+                height = Overworld.Map[(int)worldCoord.X, (int)worldCoord.Y].Height * 0.05f;
+            }
+            return new Vector3(worldCoord.X / Overworld.Map.GetLength(0), height, worldCoord.Y / Overworld.Map.GetLength(1));
+        }
+
         public Vector3 WorldToScreen(Vector2 worldCoord)
         {
             Viewport port = new Viewport(PreviewPanel.Rect);
-            var height = 0.0f;
-            if ((int) worldCoord.X > 0 && (int) worldCoord.Y > 0 &&
-                (int) worldCoord.X < Overworld.Map.GetLength(0) && (int) worldCoord.Y < Overworld.Map.GetLength(1))
-            {
-                height = Overworld.Map[(int) worldCoord.X, (int) worldCoord.Y].Height * 0.05f;
-            }
-            Vector3 worldSpace = new Vector3(worldCoord.X / Overworld.Map.GetLength(0), height, worldCoord.Y / Overworld.Map.GetLength(1));
+            Vector3 worldSpace = GetWorldSpace(worldCoord);
             return port.Project(worldSpace, ProjectionMatrix, ViewMatrix, Matrix.Identity);
         }
 
@@ -275,6 +289,12 @@ namespace DwarfCorp.GameStates
         {
             //Because Gum doesn't send deltas on mouse move.
             PreviousMousePosition = Root.MousePosition;
+        }
+
+        private float GetIconScale(Point pos)
+        {
+            float dist = (CameraPos - GetWorldSpace(new Vector2(pos.X, pos.Y))).Length();
+            return MathFunctions.Clamp((1.0f - dist) * 4.0f, 1.0f, 4);
         }
 
         public void DrawPreview()
@@ -306,7 +326,8 @@ namespace DwarfCorp.GameStates
                 nameBounds.X = (int)treeLocation.X - (nameBounds.Width / 2);
                 nameBounds.Y = (int)treeLocation.Y - (nameBounds.Height / 2);
                 if (!PreviewPanel.Rect.Contains(nameBounds)) continue;
-                var mesh = Gui.Mesh.TiledSprite(new Rectangle(nameBounds.Center.X, nameBounds.Center.Y, 16, 16),
+                float scale = GetIconScale(new Point(tree.X, tree.Y));
+                var mesh = Gui.Mesh.FittedSprite(new Rectangle(nameBounds.Center.X, nameBounds.Center.Y, (int)(16 * scale), (int)(16 * scale)),
                     icon, tree.Z);
                 Root.DrawMesh(mesh, Root.RenderData.Texture);
             }
@@ -331,7 +352,8 @@ namespace DwarfCorp.GameStates
                     Root.DrawMesh(bkgmesh, Root.RenderData.Texture);
                     Root.DrawMesh(mesh, Root.RenderData.Texture);
                 }
-                var iconMesh = Gui.Mesh.TiledSprite(new Rectangle(nameBounds.Center.X - 8, nameBounds.Center.Y + 8, 16, 16),
+                float scale = GetIconScale(civ.Center);
+                var iconMesh = Gui.Mesh.FittedSprite(new Rectangle((int)(nameBounds.Center.X - 8 * scale), (int)(nameBounds.Center.Y + 8 * scale), (int)(16 * scale), (int)(16 * scale)),
                     icon, civ.Race.Icon);
                 Root.DrawMesh(iconMesh, Root.RenderData.Texture);
             }
@@ -343,8 +365,9 @@ namespace DwarfCorp.GameStates
             Vector3 worldCenter = WorldToScreen(spawnCenter);
             if (worldCenter.Z < 0.9999f)
             {
-                Rectangle balloon = new Rectangle((int)worldCenter.X - 8, (int)(worldCenter.Y + 5 * System.Math.Sin(DwarfTime.LastTime.TotalRealTime.TotalSeconds * 2.0f)) - 8, 16, 16);
-                var balloonMesh = Gui.Mesh.TiledSprite(MathFunctions.SnapRect(balloon, PreviewPanel.Rect), icon, 2);
+                float scale = GetIconScale(new Point((int)spawnCenter.X, (int)spawnCenter.Y));
+                Rectangle balloon = new Rectangle((int)(worldCenter.X - 8 * scale), (int)(worldCenter.Y + 5 * System.Math.Sin(DwarfTime.LastTime.TotalRealTime.TotalSeconds * 2.0f)) - (int)(8 * scale), (int)(16 * scale), (int)(16 * scale));
+                var balloonMesh = Gui.Mesh.FittedSprite(MathFunctions.SnapRect(balloon, PreviewPanel.Rect), icon, 2);
                 Root.DrawMesh(balloonMesh, Root.RenderData.Texture);
 
                 Rectangle nameBounds;
