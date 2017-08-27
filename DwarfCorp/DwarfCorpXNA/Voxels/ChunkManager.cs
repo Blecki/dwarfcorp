@@ -590,6 +590,15 @@ namespace DwarfCorp
                 ChunkData.AddChunk(chunk);
             }
 
+            // This is critical at the beginning to allow trees to spawn on ramps correctly,
+            // and also to ensure no inconsistencies in chunk geometry due to ramps.
+            foreach (var chunk in ChunkData.ChunkMap)
+            {
+                for (int y = 0; y < VoxelConstants.ChunkSizeY; y++)
+                {
+                    VoxelListPrimitive.UpdateCornerRamps(chunk, y);
+                }
+            }
             RecalculateBounds();
             SetLoadingMessage("Generating Ores...");
 
