@@ -1090,15 +1090,23 @@ namespace DwarfCorp
             // In this case, add money to the wallet of each minion and tell him/her to stock the money.
             else
             {
-                DwarfBux amountPerMinion = money / (decimal)Minions.Count;
+                int amountPerMinion = (int)(money / (decimal)Minions.Count);
+                DwarfBux remaining = money;
                 foreach (var minion in Minions)
                 {
-                    minion.Status.Money += amountPerMinion;
+                    minion.Status.Money += (DwarfBux)amountPerMinion;
+                    remaining -= (DwarfBux) amountPerMinion;
                     minion.GatherManager.StockMoneyOrders.Add(new GatherManager.StockMoneyOrder()
                     {
                         Money = amountPerMinion
                     });
                 }
+
+                Minions[0].Status.Money += remaining;
+                Minions[0].GatherManager.StockMoneyOrders.Add(new GatherManager.StockMoneyOrder()
+                {
+                    Money = remaining
+                });
             }
         }
     }
