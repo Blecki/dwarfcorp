@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -120,6 +120,11 @@ namespace DwarfCorp
                 if (VertexBuffer == null ||  VertexBuffer.IsDisposed)
                 {
                     ResetBuffer(device);
+                }
+
+                if (VertexBuffer == null)
+                {
+                    return;
                 }
 
                 if (VertexCount <= 0)
