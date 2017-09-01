@@ -332,8 +332,7 @@ namespace DwarfCorp
             if (IsPregnant && World.Time.CurrentDate > CurrentPregnancy.EndDate)
             {
                 var baby = EntityFactory.CreateEntity<GameComponent>(BabyType, Physics.Position);
-                if (AI.PositionConstraint.HasValue)
-                    baby.GetRoot().GetComponent<CreatureAI>().PositionConstraint = AI.PositionConstraint.Value;
+                baby.GetRoot().GetComponent<CreatureAI>().PositionConstraint = AI.PositionConstraint;
                 CurrentPregnancy = null;
             }
 

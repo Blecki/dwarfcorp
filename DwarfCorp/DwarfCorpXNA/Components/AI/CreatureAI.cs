@@ -244,7 +244,15 @@ namespace DwarfCorp
 
         public string Biography = "";
 
-        public BoundingBox? PositionConstraint = null;
+        public BoundingBox PositionConstraint = new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue),
+            new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
+
+        public void ResetPositionConstraint()
+        {
+            PositionConstraint = new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue),
+            new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
+            
+        }
 
         public string LastFailedAct = null;
 
@@ -553,10 +561,8 @@ namespace DwarfCorp
                 history.Value.Update();
             }
 
-            if (PositionConstraint.HasValue)
-            {
-                Physics.LocalPosition = MathFunctions.Clamp(Physics.Position, PositionConstraint.Value);
-            }
+            if (PositionConstraint.Contains(Physics.LocalPosition) == ContainmentType.Disjoint)
+                Physics.LocalPosition = MathFunctions.Clamp(Physics.Position, PositionConstraint);
         }
 
         private int lastXPAnnouncement = 0;

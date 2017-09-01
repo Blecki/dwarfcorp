@@ -35,7 +35,7 @@ namespace DwarfCorp.GameStates
         private Gui.Widgets.ComboBox Resolution;
         private CheckBox Fullscreen;
         private HorizontalFloatSlider ChunkDrawDistance;
-        private HorizontalFloatSlider VertexCullDistance;
+        //private HorizontalFloatSlider VertexCullDistance;
         private CheckBox Glow;
         private Gui.Widgets.ComboBox Antialiasing;
         private CheckBox ReflectTerrain;
@@ -481,6 +481,7 @@ namespace DwarfCorp.GameStates
                 Tooltip = "Higher values allow you to see more terrain. Lower values will make the game run faster."
             })).GetChild(1) as HorizontalFloatSlider;
 
+            /*
             VertexCullDistance = leftPanel.AddChild(LabelAndDockWidget("Geometry Draw Distance",
                 new HorizontalFloatSlider
             {
@@ -488,7 +489,7 @@ namespace DwarfCorp.GameStates
                 OnSliderChanged = OnItemChanged,
                 Tooltip = "Higher values allow you to see more terrain. Lower values will make the game run faster."
             })).GetChild(1) as HorizontalFloatSlider;
-
+            */
             /*
             GenerateDistance = leftPanel.AddChild(LabelAndDockWidget("Generate Distance",
                 new HorizontalFloatSlider
@@ -792,7 +793,7 @@ namespace DwarfCorp.GameStates
 
             GameSettings.Default.Fullscreen = this.Fullscreen.CheckState;
             GameSettings.Default.ChunkDrawDistance = this.ChunkDrawDistance.ScrollPosition + 1.0f;
-            GameSettings.Default.VertexCullDistance = this.VertexCullDistance.ScrollPosition + 0.1f;
+            //GameSettings.Default.VertexCullDistance = this.VertexCullDistance.ScrollPosition + 0.1f;
             //GameSettings.Default.ChunkGenerateDistance = this.GenerateDistance.ScrollPosition + 1.0f;
             GameSettings.Default.EnableGlow = this.Glow.CheckState;
             GameSettings.Default.AntiAliasing = AntialiasingOptions[this.Antialiasing.SelectedItem];
@@ -880,7 +881,7 @@ namespace DwarfCorp.GameStates
             SetBestResolution();
             this.Fullscreen.CheckState = GameSettings.Default.Fullscreen;
             this.ChunkDrawDistance.ScrollPosition = GameSettings.Default.ChunkDrawDistance - 1.0f;
-            this.VertexCullDistance.ScrollPosition = GameSettings.Default.VertexCullDistance - 0.1f;
+            //this.VertexCullDistance.ScrollPosition = GameSettings.Default.VertexCullDistance - 0.1f;
             //this.GenerateDistance.ScrollPosition = GameSettings.Default.ChunkGenerateDistance - 1.0f;
             this.Glow.CheckState = GameSettings.Default.EnableGlow;
             

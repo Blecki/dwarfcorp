@@ -148,9 +148,9 @@ namespace DwarfCorp
         public IEnumerable<Status> FindRandomPath()
         {
             Vector3 target = MathFunctions.RandVector3Cube()*Radius + Creature.AI.Position;
-            if (Creature.AI.PositionConstraint.HasValue)
+            if (Creature.AI.PositionConstraint.Contains(target) == ContainmentType.Disjoint)
             {
-                target = MathFunctions.RandVector3Box(Creature.AI.PositionConstraint.Value);
+                target = MathFunctions.RandVector3Box(Creature.AI.PositionConstraint);
             }
             if (Is2D) target.Y = Creature.AI.Position.Y;
             List<MoveAction> path = new List<MoveAction>();

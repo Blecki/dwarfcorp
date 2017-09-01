@@ -32,7 +32,6 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
@@ -275,19 +274,16 @@ namespace DwarfCorp
                     Drawer3D.DrawBox(animal.BoundingBox, Color.Tomato, 0.1f, false);
                     if (button == InputManager.MouseButton.Left)
                     {
-                        if (!Player.Faction.WrangleDesignations.Contains(animal))
-                        {
-                            Player.Faction.WrangleDesignations.Add(animal);
-                            tasks.Add(new WrangleAnimalTask(animal.GetRoot().GetComponent<Creature>()));
-                            this.Player.World.ShowToolPopup("Will wrangle this " + animal.Name);
-                        }
+                        Player.Faction.WrangleDesignations.Add(animal);
+                        tasks.Add(new WrangleAnimalTask(animal.GetRoot().GetComponent<Creature>()));
+                        this.Player.World.ShowToolPopup("Will wrangle this " + animal.GetRoot().GetComponent<Creature>().Species);
                     }
                     else if (button == InputManager.MouseButton.Right)
                     {
                         if (Player.Faction.WrangleDesignations.Contains(animal))
                         {
                             Player.Faction.WrangleDesignations.Remove(animal);
-                            this.Player.World.ShowToolPopup("Wrangle cancelled " + animal.Name);
+                            this.Player.World.ShowToolPopup("Wrangle cancelled for " + animal.GetRoot().GetComponent<Creature>().Species);
                         }
                     }
                 }
@@ -500,7 +496,7 @@ namespace DwarfCorp
             {
                 if (status == Act.Status.Fail)
                 {
-                    creature.PositionConstraint = null;
+                    creature.ResetPositionConstraint();
                     yield return Act.Status.Fail;
                     yield break;
                 }
@@ -510,7 +506,7 @@ namespace DwarfCorp
 
         public IEnumerable<Act.Status> ReleaseAnimal(CreatureAI animal)
         {
-            animal.PositionConstraint = null;
+            animal.ResetPositionConstraint();
             yield return Act.Status.Success;
         }
 
