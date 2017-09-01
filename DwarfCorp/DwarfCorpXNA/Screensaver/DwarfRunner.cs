@@ -120,12 +120,12 @@ namespace DwarfCorp
 
                 //Generate new column.
                 World[WorldSize.X - 1, 0] = new Tile { Solid = true, Image = Soil };
-                if (Random.NextDouble() > 0.8)
-                {
-                    World[WorldSize.X - 1, 1] = new Tile { Solid = true, Image = Soil };
-                    World[WorldSize.X - 1, 2] = new Tile { Solid = true, Image = Grass };
-                }
-                else
+                //if (Random.NextDouble() > 0.8)
+                //{
+                //    World[WorldSize.X - 1, 1] = new Tile { Solid = true, Image = Soil };
+                //    World[WorldSize.X - 1, 2] = new Tile { Solid = true, Image = Grass };
+                //}
+                //else
                 {
                     World[WorldSize.X - 1, 1] = new Tile { Solid = true, Image = Grass };
                     World[WorldSize.X - 1, 2] = null;

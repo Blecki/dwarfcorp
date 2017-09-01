@@ -245,7 +245,6 @@ namespace DwarfCorp.GameStates
                 // Mouse down but not handled by GUI? Collapse menu.
                 if (@event == Gui.InputEvents.MouseClick) 
                 {
-                    //BottomToolBar.CollapseTrays();
                     GodMenu.CollapseTrays();
                 }
             });
