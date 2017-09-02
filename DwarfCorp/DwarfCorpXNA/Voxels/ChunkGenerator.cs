@@ -359,7 +359,7 @@ namespace DwarfCorp
 
                         bool invalidCave = false;
                         for (int dy = 0; dy < caveHeight; dy++)
-                        {
+                        { 
                             var voxel = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y - dy, z));
 
                             foreach (var coord in VoxelHelpers.EnumerateAllNeighbors(voxel.Coordinate))
