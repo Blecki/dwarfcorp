@@ -151,7 +151,8 @@ namespace DwarfCorp
             {
                 Name = "empty",
                 ReleasesResource = false,
-                IsBuildable = false
+                IsBuildable = false,
+                ID = 0
             };
 
             SoundSource dirtPicks = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_ic_dwarf_pick_dirt_1,

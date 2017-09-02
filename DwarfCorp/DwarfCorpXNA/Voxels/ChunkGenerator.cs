@@ -335,7 +335,6 @@ namespace DwarfCorp
         {
             Vector3 origin = chunk.Origin;
             BiomeData biome = BiomeLibrary.Biomes[Overworld.Biome.Cave];
-
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
                 for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
@@ -358,30 +357,55 @@ namespace DwarfCorp
 
                         if (!(caveNoise > CaveSize)) continue;
 
-                        bool waterFound = false;
+                        bool invalidCave = false;
                         for (int dy = 0; dy < caveHeight; dy++)
                         {
                             var voxel = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y - dy, z));
 
-                            waterFound = VoxelHelpers.EnumerateCube(voxel.Coordinate)
-                                .Select(c => new VoxelHandle(Manager.ChunkData, c))
-                                .Any(v => v.IsValid && v.WaterCell.WaterLevel > 0);
+                            foreach (var coord in VoxelHelpers.EnumerateAllNeighbors(voxel.Coordinate))
+                            {
+                                VoxelHandle v = new VoxelHandle(Manager.ChunkData, coord);
+                                if (v.IsValid && (v.WaterCell.WaterLevel > 0 || v.SunColor > 0))
+                                {
+                                    invalidCave = true;
+                                    break;
+                                }
+                            }
 
-                            if (waterFound)
+                            if (!invalidCave)
+                                voxel.RawSetType(VoxelLibrary.emptyType);
+                            else
+                            {
                                 break;
-
-                            voxel.RawSetType(VoxelLibrary.emptyType);
+                            }
                         }
 
-                        if (!waterFound && caveNoise > CaveSize * 1.8f && y - caveHeight > 0)
+                        if (!invalidCave && caveNoise > CaveSize * 1.8f && y - caveHeight > 0)
                         {
                             GenerateCaveVegetation(chunk, x, y, z, caveHeight, biome, vec, world, NoiseGenerator);
+                            GenerateCaveFauna(chunk, world, biome, y, x, z);
                         }
-
-                        GenerateCaveFauna(chunk, world, biome, y, x, z);
                     }
                 }
             }
+
+            /*
+            // Second pass sets the caves to empty as needed
+            for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
+            {
+                for (int y = 0; y < VoxelConstants.ChunkSizeY; y++)
+                {
+                    for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
+                    {
+                        VoxelHandle handle = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
+                        if (handle.Type == magicCube)
+                        {
+                            handle.RawSetType(VoxelLibrary.emptyType);
+                        }
+                    }
+                }
+            }
+             */
         }
 
         private static void GenerateCaveFauna(VoxelChunk chunk, WorldManager world, BiomeData biome, int y, int x, int z)
@@ -537,19 +561,9 @@ namespace DwarfCorp
 
             GenerateWater(c);
             GenerateLava(c);
-            GenerateCaves(c, World);
-            c.ShouldRebuildWater = true;
 
             UpdateSunlight(c, 255);
-
-            for (var i = 0; i < VoxelConstants.ChunkSizeY; ++i)
-            {
-                // Update corner ramps on all chunks so that they don't have seams when they 
-                // are initially built.
-                VoxelListPrimitive.UpdateCornerRamps(c, i);
-                c.InvalidateSlice(i);
-            }
-
+            c.ShouldRebuildWater = true;
             return c;
         }
 
