@@ -317,7 +317,7 @@ namespace DwarfCorp
 
                             // Vegetation doesn't shift with ramps - is this accomplishing anything?
                             if (topVoxel.RampType != RampType.None)
-                                offset -= 0.25f;
+                                offset -= 0.5f;
 
                             var treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
                             EntityFactory.CreateEntity<Body>(veg.Name,
