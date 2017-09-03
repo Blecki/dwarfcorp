@@ -129,7 +129,7 @@ namespace DwarfCorp
 
         public static Resource GetResourceByName(string name)
         {
-            return (from pair in Resources where pair.Value.ResourceName == name select pair.Value).FirstOrDefault();
+            return Resources.ContainsKey((ResourceType) name) ? Resources[name] : null;
         }
 
 
