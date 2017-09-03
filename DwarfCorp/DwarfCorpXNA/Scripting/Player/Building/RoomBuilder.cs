@@ -288,7 +288,7 @@ namespace DwarfCorp
                         DesignatedRooms.Add(toBuild);
                         order = new BuildRoomOrder(toBuild, this.Faction, Faction.World);
                         order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild, v));
-                        BuildDesignations.Add(order);
+                        BuildDesignations.Add(order); 
                     }
                     else
                     {
