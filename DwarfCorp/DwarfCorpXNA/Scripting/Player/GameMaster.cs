@@ -271,7 +271,8 @@ namespace DwarfCorp
             }
 
             World.MakeAnnouncement(String.Format("We paid our employees {0} today.",
-                total), null, ContentPaths.Audio.change);
+                total), null);
+            SoundManager.PlaySound(ContentPaths.Audio.change, 0.15f);
             World.Tutorial("pay");
         }
 

@@ -267,93 +267,81 @@ namespace DwarfCorp
 
         public TradeEnvoy SendTradeEnvoy(Faction natives, WorldManager world)
         {
-            //if (!world.gameState.IsActiveState) return;
             TradeEnvoy envoy = null;
+
+            List<CreatureAI> creatures =
+                world.MonsterSpawner.Spawn(world.MonsterSpawner.GenerateSpawnEvent(natives,
+                world.PlayerFaction, MathFunctions.Random.Next(4) + 1, false));
+
+            envoy = new TradeEnvoy(world.Time.CurrentDate)
+            {
+                Creatures = creatures,
+                OtherFaction = world.PlayerFaction,
+                ShouldRemove = false,
+                OwnerFaction = natives,
+                TradeGoods = natives.Race.GenerateResources(),
+                TradeMoney = natives.TradeMoney
+            };
+
             if (natives.Race.IsNative)
             {
-                List<CreatureAI> creatures =
-                    world.MonsterSpawner.Spawn(world.MonsterSpawner.GenerateSpawnEvent(natives,
-                        world.PlayerFaction, MathFunctions.Random.Next(4) + 1, false));
-                if (creatures.Count > 0)
+                if (natives.Economy == null)
                 {
-                    envoy = new TradeEnvoy(world.Time.CurrentDate)
+                    natives.Economy = new Economy(natives, 1000.0m, World, new CompanyInformation()
                     {
-                        Creatures = creatures,
-                        OtherFaction = world.PlayerFaction,
-                        ShouldRemove = false,
-                        OwnerFaction = natives,
-                        TradeGoods = natives.Race.GenerateResources(),
-                        TradeMoney = natives.TradeMoney
-                    };
+                        Name = natives.Name
+                    });
+                }
 
-                    foreach (CreatureAI creature in envoy.Creatures)
-                    {
-                        creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
-                        if (natives.Economy == null)
-                        {
-                            natives.Economy = new Economy(natives, 1000.0m, World, new CompanyInformation()
-                            {
-                                Name = natives.Name
-                            });
-                        }
+                if (natives.Economy.Company.Information == null)
+                    natives.Economy.Company.Information = new CompanyInformation();
+                
+                foreach (CreatureAI creature in envoy.Creatures)
+                {
 
-                        if (natives.Economy.Company.Information == null)
-                            natives.Economy.Company.Information = new CompanyInformation();
-
-                        creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, natives.Economy.Company.Information));
-                    }
-                    envoy.DistributeGoods();
-
-                    natives.TradeEnvoys.Add(envoy);
-                    world.MakeAnnouncement(String.Format("Trade envoy from {0} has arrived!", natives.Name),
-                       creatures.First().ZoomToMe, ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
+                    creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, natives.Economy.Company.Information));
                 }
             }
             else
             {
+                Body balloon = world.PlayerFaction.DispatchBalloon();
 
-                List<CreatureAI> creatures =
-                    world.MonsterSpawner.Spawn(world.MonsterSpawner.GenerateSpawnEvent(natives,
-                        world.PlayerFaction, MathFunctions.Random.Next(4) + 1, false));
-
-
-                if (creatures.Count > 0)
+                foreach (CreatureAI creature in creatures)
                 {
-                    Body balloon = world.PlayerFaction.DispatchBalloon();
-
-                    foreach (CreatureAI creature in creatures)
-                    {
-                        Matrix tf = creature.Physics.LocalTransform;
-                        tf.Translation = balloon.LocalTransform.Translation;
-                        creature.Physics.LocalTransform = tf;
-                    }
-
-                    envoy = new TradeEnvoy(world.Time.CurrentDate)
-                    {
-                        Creatures = creatures,
-                        OtherFaction = world.PlayerFaction,
-                        ShouldRemove = false,
-                        OwnerFaction = natives,
-                        TradeGoods = natives.Race.GenerateResources(),
-                        TradeMoney = natives.TradeMoney
-                    };
-
-                    foreach (CreatureAI creature in envoy.Creatures)
-                        creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
-
-                    envoy.DistributeGoods();
-                    natives.TradeEnvoys.Add(envoy);
-                    world.MakeAnnouncement(String.Format("Trade envoy from {0} has arrived!",
-                        natives.Name), creatures.First().ZoomToMe, ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
-                    world.Tutorial("trade");
+                    Matrix tf = creature.Physics.LocalTransform;
+                    tf.Translation = balloon.LocalTransform.Translation;
+                    creature.Physics.LocalTransform = tf;
                 }
             }
 
+            foreach (CreatureAI creature in envoy.Creatures)
+                creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
+
+            envoy.DistributeGoods();
+            natives.TradeEnvoys.Add(envoy);
+            world.MakeAnnouncement(String.Format("Trade envoy from {0} has arrived!",
+                natives.Name),
+                (gui) =>
+                {
+                    envoy.Creatures.First().ZoomToMe();
+                    gui.ShowModalPopup(gui.ConstructWidget(new Gui.Widgets.Popup
+                    {
+                        Text = String.Format("Traders from {0} ({1}) have entered our territory. They will try to get to our balloon port to trade with us.", natives.Name, natives.Race.Name),
+                        OkayText = "Okay!",
+                    }));
+                },
+                () =>
+                {
+                    return envoy.ExpiditionState == Expedition.State.Arriving;
+                });
+
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
+
+
             world.Tutorial("trade");
             if (!String.IsNullOrEmpty(natives.Race.TradeMusic))
-            {
                 SoundManager.PlayMusic(natives.Race.TradeMusic);
-            }
+
             return envoy;
         }
 

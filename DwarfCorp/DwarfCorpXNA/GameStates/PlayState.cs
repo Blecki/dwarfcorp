@@ -679,9 +679,9 @@ namespace DwarfCorp.GameStates
                 }
             }) as AnnouncementPopup;
 
-            World.OnAnnouncement = (message, clickAction) =>
+            World.OnAnnouncement = (message) =>
             {
-                Announcer.QueueAnnouncement(message, clickAction);
+                Announcer.QueueAnnouncement(message.Text, message.OnClick, message.Keep);
             };
 
             InfoTray = GuiRoot.RootItem.AddChild(new Gui.Widgets.InfoTray

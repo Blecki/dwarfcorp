@@ -900,7 +900,8 @@ namespace DwarfCorp
             newMinion.AI.Biography = currentApplicant.Biography;
 
             World.MakeAnnouncement(String.Format("{0} was hired as a {1}.",
-                currentApplicant.Name, currentApplicant.Level.Name), newMinion.AI.ZoomToMe,  ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
+                currentApplicant.Name, currentApplicant.Level.Name), (gui) => newMinion.AI.ZoomToMe());
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
         }
 
         public Body DispatchBalloon()

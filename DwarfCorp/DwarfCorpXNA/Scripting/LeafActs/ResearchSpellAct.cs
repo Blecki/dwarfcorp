@@ -98,7 +98,8 @@ namespace DwarfCorp
                     Creature.Manager.World.MakeAnnouncement(
                         String.Format("{0} ({1}) discovered the {2} spell!", Creature.Stats.FullName,
                         Creature.Stats.CurrentLevel.Name, Spell.Spell.Name),
-                        Agent.ZoomToMe, ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
+                        (gui) => Agent.ZoomToMe());
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
                 }
 
                 starParitcle.Update(DwarfTime.LastTime);

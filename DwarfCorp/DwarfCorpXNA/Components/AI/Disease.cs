@@ -299,7 +299,8 @@ namespace DwarfCorp
         {
             creature.Faction.World.Tutorial("disease");
             if (creature.Faction == creature.Faction.World.PlayerFaction)
-                creature.Faction.World.MakeAnnouncement(creature.Stats.FullName + " got " + Name + "!", creature.AI.ZoomToMe, ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
+                creature.Faction.World.MakeAnnouncement(creature.Stats.FullName + " got " + Name + "!", (gui) => creature.AI.ZoomToMe());
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.15f);
             creature.Stats.StatBuffs += StatDamage;
             base.OnApply(creature);
         }
@@ -308,7 +309,8 @@ namespace DwarfCorp
         {
             creature.Stats.StatBuffs -= StatDamage;
             if (creature.Faction == creature.Faction.World.PlayerFaction)
-                creature.Faction.World.MakeAnnouncement(creature.Stats.FullName + " recovered from  " + Name + "!", creature.AI.ZoomToMe, ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
+                creature.Faction.World.MakeAnnouncement(creature.Stats.FullName + " recovered from  " + Name + "!", (gui) => creature.AI.ZoomToMe());
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.15f);
             base.OnEnd(creature);
         }
 
