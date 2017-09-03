@@ -49,6 +49,7 @@ namespace DwarfCorp
     public class Room : Zone
     {
         public List<VoxelHandle> Designations;
+        
         public bool IsBuilt;
         public RoomData RoomData;
         private static int Counter = 0;
