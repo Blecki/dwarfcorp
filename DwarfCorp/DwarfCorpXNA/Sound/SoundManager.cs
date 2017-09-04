@@ -493,7 +493,7 @@ namespace DwarfCorp
             {
                 AudioEngine.SetGlobalVariable("TimeofDay", worldTime.GetTimeOfDay());
             }
-            AudioEngine.GetCategory("Ambience").SetVolume(GameSettings.Default.SoundEffectVolume * 0.1f);
+            AudioEngine.GetCategory("Ambience").SetVolume(GameSettings.Default.SoundEffectVolume * 0.1f * GameSettings.Default.MasterVolume);
             AudioEngine.GetCategory("Music").SetVolume(GameSettings.Default.MusicVolume * GameSettings.Default.MasterVolume);
             CurrentMusic.Update();
             List<Sound3D> toRemove = new List<Sound3D>();

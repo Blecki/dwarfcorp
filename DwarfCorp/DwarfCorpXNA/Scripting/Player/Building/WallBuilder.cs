@@ -249,8 +249,8 @@ namespace DwarfCorp
         {
             if (CurrentVoxelType == null)
                 return;
-
-            verified = Verify(refs, CurrentVoxelType.ResourceToRelease);
+            verified = true;
+            //verified = Verify(refs, CurrentVoxelType.ResourceToRelease);
 
             if (!verified)
             {
@@ -300,11 +300,13 @@ namespace DwarfCorp
                     List<Task> assignments = new List<Task>();
                     var validRefs = refs.Where(r => !IsDesignation(r) && World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? r.IsEmpty : !r.IsEmpty).ToList();
 
+                    /*
                     if (!Verify(validRefs, CurrentVoxelType.ResourceToRelease))
                     {
                         World.ShowToolPopup("Can't build this! Need at least " + validRefs.Count + " " + ResourceLibrary.Resources[CurrentVoxelType.ResourceToRelease].ResourceName + ".");
                         return;
                     }
+                     */
 
                     foreach (var r in validRefs)
                     {
@@ -332,6 +334,11 @@ namespace DwarfCorp
                     break;
                 }
             }
+        }
+
+        public int GetNumDesignations(ResourceLibrary.ResourceType resourceToRelease)
+        {
+            return Designations.Sum(d => d.Type.ResourceToRelease == resourceToRelease ? 1 : 0);
         }
     }
 

@@ -66,12 +66,12 @@ namespace DwarfCorp
         {
             RegisterType(Stockpile.InitializeData());
             RegisterType(BalloonPort.InitializeData());
-            RegisterType(BedRoom.InitializeData());
-            RegisterType(CommonRoom.InitializeData());
-            RegisterType(LibraryRoom.InitializeData());
-            RegisterType(TrainingRoom.InitializeData());
-            RegisterType(WorkshopRoom.InitializeData());
-            RegisterType(Kitchen.InitializeData());
+            //RegisterType(BedRoom.InitializeData());
+            //RegisterType(CommonRoom.InitializeData());
+            //RegisterType(LibraryRoom.InitializeData());
+            //RegisterType(TrainingRoom.InitializeData());
+            //RegisterType(WorkshopRoom.InitializeData());
+            //RegisterType(Kitchen.InitializeData());
             RegisterType(Graveyard.InitializeData());
             RegisterType(AnimalPen.InitializeData());
             RegisterType(Treasury.InitializeData());
@@ -162,7 +162,9 @@ namespace DwarfCorp
             }
             else if (name == Treasury.TreasuryName)
             {
-                Treasury toBuild = new Treasury(faction, designations, world);
+                Treasury toBuild = new Treasury(faction, world);
+                foreach (var voxel in designations)
+                    toBuild.AddVoxel(voxel);
                 return toBuild;
             }
             else

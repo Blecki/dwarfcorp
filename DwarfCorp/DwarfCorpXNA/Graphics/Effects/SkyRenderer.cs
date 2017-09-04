@@ -27,6 +27,8 @@ namespace DwarfCorp
         public VertexBuffer BackgroundMesh { get; set; }
         public IndexBuffer BackgroundIndex { get; set; }
         public Effect BackgroundEffect { get; set; }
+        public List<Vector3> StarPositions { get; set; }
+ 
         public SkyRenderer(Texture2D moonTexture, Texture2D sunTexture, TextureCube skyTexture, TextureCube nightTexture, Texture2D skyGrad, Model skyMesh, Effect skyEffect, Effect backgroundEffect)
         {
             SkyTexture = skyTexture;
@@ -48,13 +50,25 @@ namespace DwarfCorp
                     part.Effect = SkyEffect;
                 }
             }
+            int numStars = 250;
+            StarPositions = new List<Vector3>();
+            for (int i = 0; i < numStars; i++)
+            {
+                var star = MathFunctions.RandVector3Cube();
+                star.Normalize();
+                star *= 1000;
+                StarPositions.Add(star);
+            }
         }
 
         public void Render(DwarfTime time, GraphicsDevice device, Camera camera, float scale, Color fogColor, BoundingBox backgroundScale, bool drawBackground=true)
         {
+            device.DepthStencilState = DepthStencilState.None;
             RenderNightSky(time, device, camera);
+            RenderStars(time, device, camera, device.Viewport);
             RenderDaySky(time, device, camera);
             RenderSunMoon(time, device, camera, device.Viewport, scale);
+            device.DepthStencilState = DepthStencilState.None;
             if (drawBackground)
                 RenderBackgroundMesh(device, camera, fogColor, backgroundScale);
         }
@@ -137,14 +151,38 @@ namespace DwarfCorp
             SkyEffect.Parameters["SkyboxTexture"].SetValue(NightTexture);
             SkyEffect.Parameters["ViewMatrix"].SetValue(camera.ViewMatrix);
             SkyEffect.Parameters["ProjectionMatrix"].SetValue(camera.ProjectionMatrix);
-            SkyEffect.Parameters["xTransparency"].SetValue(TimeOfDay);
-            SkyEffect.Parameters["xRot"].SetValue(Matrix.CreateRotationZ(-(CosTime + 0.5f) * (float) Math.PI));
+            SkyEffect.Parameters["xTransparency"].SetValue(1.0f - TimeOfDay);
+            SkyEffect.Parameters["xRot"].SetValue(Matrix.CreateRotationZ(-(CosTime + 0.5f * (float) Math.PI)));
             SkyEffect.Parameters["xTint"].SetValue(0.0f);
             SkyEffect.CurrentTechnique = SkyEffect.Techniques[0];
             foreach(ModelMesh mesh in SkyMesh.Meshes)
             {
                 mesh.Draw();
             }
+        }
+
+        public void RenderStars(DwarfTime time, GraphicsDevice device, Camera camera, Viewport viewPort)
+        {
+            Matrix rot = Matrix.CreateRotationZ((-CosTime + 0.5f * (float)Math.PI));
+            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
+            foreach (var star in StarPositions)
+            {
+                var
+                transformed = Vector3.Transform(star, rot);
+
+                transformed += camera.Position;
+
+                Vector3 cameraFrame = Vector3.Transform(transformed, camera.ViewMatrix);
+
+                Vector3 unproject = viewPort.Project(transformed, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
+
+                if (cameraFrame.Z > 0.999f)
+                {
+                    Drawer2D.FillRect(DwarfGame.SpriteBatch, new Rectangle((int)unproject.X, (int)unproject.Y, 2, 2), Color.White);
+                }
+            }
+            DwarfGame.SpriteBatch.End();
+
         }
 
         public void RenderSunMoon(DwarfTime time, GraphicsDevice device, Camera camera, Viewport viewPort, float scale)

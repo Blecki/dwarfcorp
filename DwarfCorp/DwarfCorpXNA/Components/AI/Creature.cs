@@ -332,8 +332,7 @@ namespace DwarfCorp
             if (IsPregnant && World.Time.CurrentDate > CurrentPregnancy.EndDate)
             {
                 var baby = EntityFactory.CreateEntity<GameComponent>(BabyType, Physics.Position);
-                if (AI.PositionConstraint.HasValue)
-                    baby.GetComponent<CreatureAI>().PositionConstraint = AI.PositionConstraint.Value;
+                baby.GetRoot().GetComponent<CreatureAI>().PositionConstraint = AI.PositionConstraint;
                 CurrentPregnancy = null;
             }
 
@@ -611,8 +610,13 @@ namespace DwarfCorp
             yield break;
         }
 
+        public List<Disease.Immunity> Immunities = new List<Disease.Immunity>(); 
+
         public void AcquireDisease(string disease)
         {
+            if (Immunities.Any(immunity => immunity.Disease == disease))
+                return;
+
             bool hasDisease = false;
             foreach (var buff in Buffs)
             {
@@ -623,7 +627,17 @@ namespace DwarfCorp
                 }
             }
             if (!hasDisease)
-                AddBuff(DiseaseLibrary.GetDisease(disease).Clone());
+            {
+                var buff = DiseaseLibrary.GetDisease(disease).Clone();
+                AddBuff(buff);
+                if (!(buff as Disease).IsInjury)
+                {
+                    Immunities.Add(new Disease.Immunity()
+                    {
+                        Disease = disease
+                    });
+                }
+            }
         }
 
         /// <summary>

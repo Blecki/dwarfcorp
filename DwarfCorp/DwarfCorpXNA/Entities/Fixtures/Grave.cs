@@ -54,10 +54,16 @@ namespace DwarfCorp
             AddToCollisionManager = false;
             Name = "Grave";
             Tags.Add("Grave");
-            GetComponent<Sprite>().OrientationType = Sprite.OrientMode.Fixed;
             Matrix transform = Matrix.CreateRotationY(1.57f + MathFunctions.Rand(-0.1f, 0.1f));
             transform.Translation = LocalTransform.Translation;
             LocalTransform = transform;
+        }
+
+        public override void CreateCosmeticChildren(ComponentManager manager)
+        {
+            base.CreateCosmeticChildren(manager);
+
+            GetComponent<SimpleSprite>().OrientationType = SimpleSprite.OrientMode.Fixed;
         }
     }
 

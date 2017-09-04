@@ -19,7 +19,7 @@ namespace DwarfCorp
         private float DwarfVelocity = 0.0f;
         private float ScrollSpeed = 6.0f;
         private float HorizontalOffset = 0;
-        private Point TileSize = new Point(32, 32);
+        private Point TileSize = new Point(64, 64);
         private Random Random = new Random();
         private Point WorldSize = new Point(1, 1);
         private ImageFrame UpFrame;
@@ -34,8 +34,6 @@ namespace DwarfCorp
 
         public DwarfRunner(DwarfGame game)
         {
-            TileSize.Y = game.GraphicsDevice.Viewport.Height / 10;
-            TileSize.X = TileSize.Y;
 
             WorldSize = new Point((game.GraphicsDevice.Viewport.Width / TileSize.X) + 4, 10);
             World = new Tile[WorldSize.X, WorldSize.Y];
@@ -120,12 +118,12 @@ namespace DwarfCorp
 
                 //Generate new column.
                 World[WorldSize.X - 1, 0] = new Tile { Solid = true, Image = Soil };
-                if (Random.NextDouble() > 0.8)
-                {
-                    World[WorldSize.X - 1, 1] = new Tile { Solid = true, Image = Soil };
-                    World[WorldSize.X - 1, 2] = new Tile { Solid = true, Image = Grass };
-                }
-                else
+                //if (Random.NextDouble() > 0.8)
+                //{
+                //    World[WorldSize.X - 1, 1] = new Tile { Solid = true, Image = Soil };
+                //    World[WorldSize.X - 1, 2] = new Tile { Solid = true, Image = Grass };
+                //}
+                //else
                 {
                     World[WorldSize.X - 1, 1] = new Tile { Solid = true, Image = Grass };
                     World[WorldSize.X - 1, 2] = null;
@@ -168,7 +166,7 @@ namespace DwarfCorp
                                 World[x, y].Image.SourceRect, Color.White);
 
                 sprites.Draw(Balloon, new Vector2(graphics.Viewport.Width*0.75f,
-                    (float) Math.Sin(time.TotalRealTime.TotalSeconds)*64), Color.White);
+                    (float) Math.Sin(time.TotalRealTime.TotalSeconds)*64), null, Color.White, 0.0f, new Vector2(0, 0), 2.0f, SpriteEffects.None, 0.0f);
 
                 var dwarfFrame = (int) (time.TotalRealTime.TotalSeconds*16)%4;
                 var tile = DwarfFrames[dwarfFrame].SourceRect;
@@ -186,9 +184,9 @@ namespace DwarfCorp
                 sprites.Draw(Dwarf,
                     new Rectangle(
                         (int) (DwarfPosition.X*TileSize.X) - (TileSize.X/2),
-                        graphics.Viewport.Height - (int) (DwarfPosition.Y*TileSize.Y) - (int) (TileSize.Y*1.25f),
-                        TileSize.X,
-                        (int) (TileSize.Y*1.25f)),
+                        graphics.Viewport.Height - (int) (DwarfPosition.Y*TileSize.Y) - (int) (tile.Height * 2),
+                        tile.Width * 2,
+                        tile.Height * 2),
                     tile, Color.White);
 
                 sprites.End();

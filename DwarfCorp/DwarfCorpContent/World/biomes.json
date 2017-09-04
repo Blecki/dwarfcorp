@@ -17,10 +17,10 @@
       {
         "Name": "Apple Tree",
         "ClumpSize": 25.0,
-        "ClumpThreshold": 0.8,
+        "ClumpThreshold": 1.25,
         "MeanSize": 0.5,
         "SizeVariance": 0.5,
-        "VerticalOffset": 1.7,
+        "VerticalOffset": 0.9,
         "NoiseOffset": 54.3905869,
         "SpawnProbability": 0.005
       },
@@ -199,7 +199,7 @@
         "ClumpThreshold": 0.5,
         "MeanSize": 1.0,
         "SizeVariance": 0.5,
-        "VerticalOffset": 1.0,
+        "VerticalOffset": 1.25,
         "NoiseOffset": 57.248703,
         "SpawnProbability": 0.04
       },

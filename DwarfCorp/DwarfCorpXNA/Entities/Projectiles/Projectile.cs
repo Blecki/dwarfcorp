@@ -129,7 +129,7 @@ namespace DwarfCorp
         {
             if (Target != null && (Target.Position - Position).LengthSquared() < DamageRadius)
             {
-                Health health = Target.GetComponent<Health>();
+                Health health = Target.GetRoot().GetComponent<Health>();
 
                 if (health != null)
                 {
@@ -143,7 +143,7 @@ namespace DwarfCorp
 
                 if (Damage.DamageType == Health.DamageType.Fire)
                 {
-                    Flammable flammabe = Target.GetComponent<Flammable>();
+                    Flammable flammabe = Target.GetRoot().GetComponent<Flammable>();
 
                     if (flammabe != null)
                         flammabe.Heat += 50.0f;

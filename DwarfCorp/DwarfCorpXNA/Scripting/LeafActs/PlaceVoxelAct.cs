@@ -64,7 +64,7 @@ namespace DwarfCorp
         {
             if (!Creature.Faction.WallBuilder.IsDesignation(Location))
             {
-                yield return Status.Fail;
+                yield return Status.Success;
                 yield break;
             }
 
@@ -116,7 +116,7 @@ namespace DwarfCorp
                     }
                     TossMotion motion = new TossMotion(1.0f, 2.0f, grabbed.LocalTransform, Location.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f));
                     motion.OnComplete += grabbed.Die;
-                    grabbed.GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
+                    grabbed.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
                     grabbed.AnimationQueue.Add(motion);
 
                     WallBuilder put = Creature.Faction.WallBuilder.GetDesignation(Location);
@@ -132,7 +132,7 @@ namespace DwarfCorp
                     Creature.Inventory.Pickup(grabbed, Inventory.RestockType.RestockResource);
                     grabbed.Die();
                     
-                    yield return Status.Fail;
+                    yield return Status.Success;
                 }
             }
         }

@@ -67,16 +67,14 @@ namespace DwarfCorp
             base(componentManager, position, new SpriteSheet(asset, 32, 32), new Point(0, 0))
         {
             FenceRotation = orientation;
-            GetComponent<Sprite>().OrientationType = Sprite.OrientMode.Fixed;
-            GetComponent<Sprite>().LocalTransform = Matrix.CreateRotationY(orientation);
         }
 
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             base.CreateCosmeticChildren(manager);
-            GetComponent<Sprite>().OrientationType = Sprite.OrientMode.Fixed;
-            GetComponent<Sprite>().LocalTransform = Matrix.CreateRotationY(FenceRotation);
+            GetComponent<SimpleSprite>().OrientationType = SimpleSprite.OrientMode.Fixed;
+            GetComponent<SimpleSprite>().LocalTransform = Matrix.CreateRotationY(FenceRotation);
         }
 
         private struct FenceSegmentInfo

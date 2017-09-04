@@ -12,7 +12,9 @@ namespace DwarfCorp.Gui.Widgets
     public class QueuedAnnouncement
     {
         public String Text;
-        public Action ClickAction;
+        public Action<Gui.Root> ClickAction;
+        public Func<bool> ShouldKeep;
+        public bool Keep;
         public double SecondsVisible;
         public Widget Widget = null;
     }
@@ -23,7 +25,8 @@ namespace DwarfCorp.Gui.Widgets
         public String Speaker = "dwarf";
         public double MessageLingerSeconds = 5.0f;
 
-        public void QueueAnnouncement(String Announcement, Action ClickAction)
+        public void QueueAnnouncement(String Announcement, Action<Gui.Root> ClickAction, 
+            Func<bool> ShouldKeep)
         {
             if (Announcements.All(msg => msg.Text != Announcement))
             {
@@ -31,7 +34,9 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     Text = Announcement,
                     ClickAction = ClickAction,
-                    SecondsVisible = 0
+                    SecondsVisible = 0,
+                    ShouldKeep = ShouldKeep,
+                    Keep = true
                 });
             }
         }
@@ -44,8 +49,6 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     foreach (var announcement in Announcements)
                     {
-                        announcement.SecondsVisible += time.ElapsedGameTime.TotalSeconds;
-
                         if (announcement.Widget == null)
                         {
                             QueuedAnnouncement announcement1 = announcement;
@@ -55,13 +58,42 @@ namespace DwarfCorp.Gui.Widgets
                                 OnClick = (_s, _a) =>
                                 {
                                     if (announcement1.ClickAction != null)
-                                        announcement1.ClickAction();
+                                        announcement1.ClickAction(Root);
+                                }
+                            });
+
+                            announcement.Widget.AddChild(new Widget
+                            {
+                                Background = new TileReference("round-buttons", 5),
+                                AutoLayout = AutoLayout.FloatTopRight,
+                                MaximumSize = new Point(16, 16),
+                                MinimumSize = new Point(16, 16),
+                                OnClick = (_s, _a) =>
+                                {
+                                    announcement.Keep = false;
+                                },
+                                OnLayout = (_s) =>
+                                {
+                                    _s.Rect.X += 16;
                                 }
                             });
                         }
+
+
+                        if (announcement.Keep)
+                        {
+                            if (announcement.ShouldKeep != null)
+                                announcement.Keep = announcement.ShouldKeep();
+                            else
+                            {
+                                announcement.SecondsVisible += time.ElapsedGameTime.TotalSeconds;
+                                announcement.Keep = announcement.SecondsVisible < MessageLingerSeconds;
+                            }
+                        }
                     }
 
-                    Announcements.RemoveAll(a => a.SecondsVisible > MessageLingerSeconds);
+
+                    Announcements.RemoveAll(a => a.Keep == false);
 
                     Children = Announcements.Select(a => a.Widget).ToList();
 
@@ -89,7 +121,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 announcement.Widget.Text = font.WordWrapString(announcement.Text, 1.0f, Rect.Width - (speakerTiles.TileWidth * 2));
                 var size = font.MeasureString(announcement.Widget.Text);
-                announcement.Widget.Rect = new Rectangle(0, 0, size.X, size.Y);
+                announcement.Widget.Rect = new Rectangle(0, 0, Rect.Width - (speakerTiles.TileWidth * 2), size.Y);
             }
 
             // Resize widget.
@@ -102,6 +134,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 announcement.Widget.Rect = new Rectangle(Rect.X + 20, childPos, announcement.Widget.Rect.Width,
                     announcement.Widget.Rect.Height);
+                announcement.Widget.Layout();
                 childPos += announcement.Widget.Rect.Height + 2;
             }
 

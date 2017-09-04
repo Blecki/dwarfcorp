@@ -691,6 +691,23 @@ namespace DwarfCorp
                 }
             }
 
+            foreach (var creature in Minions)
+            {
+                var inventory = creature.Creature.Inventory;
+                foreach(var i in inventory.Resources)
+                {
+                    var resource = i.Resource;
+                    if (toReturn.ContainsKey(resource))
+                    {
+                        toReturn[resource].NumResources += 1;
+                    }
+                    else
+                    {
+                        toReturn[resource] = new ResourceAmount(resource);
+                    }
+                }
+            }
+
             return toReturn;
         }
 
@@ -854,7 +871,7 @@ namespace DwarfCorp
 
                         TossMotion toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f),
                             2.5f + MathFunctions.Rand(-0.5f, 0.5f), newEntity.LocalTransform, position);
-                        newEntity.GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
+                        newEntity.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
                         newEntity.AnimationQueue.Add(toss);
                         toss.OnComplete += () => toss_OnComplete(newEntity);
 
@@ -900,7 +917,8 @@ namespace DwarfCorp
             newMinion.AI.Biography = currentApplicant.Biography;
 
             World.MakeAnnouncement(String.Format("{0} was hired as a {1}.",
-                currentApplicant.Name, currentApplicant.Level.Name), newMinion.AI.ZoomToMe,  ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
+                currentApplicant.Name, currentApplicant.Level.Name), (gui) => newMinion.AI.ZoomToMe());
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
         }
 
         public Body DispatchBalloon()
@@ -1013,7 +1031,7 @@ namespace DwarfCorp
         public void AddMinion(CreatureAI minion)
         {
             Minions.Add(minion);
-            Inventory targetInventory = minion.GetComponent<Inventory>();
+            Inventory targetInventory = minion.GetRoot().GetComponent<Inventory>();
 
             if (targetInventory != null)
             {
@@ -1027,12 +1045,17 @@ namespace DwarfCorp
 
         public void AddMoney(DwarfBux money)
         {
+            if (money == 0.0m)
+            {
+                return;
+            }
+
             // In this case, we need to remove money from the economy.
             // This means that we first take money from treasuries. If there is any left,
             // we subtract it from the current money count.
             if (money < 0)
             {
-                DwarfBux amountLeft = money;
+                DwarfBux amountLeft = -money;
                 foreach (Treasury treasury in Treasurys)
                 {
                     DwarfBux amountToTake = System.Math.Min(treasury.Money, amountLeft);
@@ -1044,6 +1067,7 @@ namespace DwarfCorp
                 Economy.CurrentMoney = System.Math.Max(Economy.CurrentMoney, 0m);
                 return;
             }
+
 
 
             // If there are no minions, we add money to treasuries first, then generate random coin piles.
@@ -1084,15 +1108,23 @@ namespace DwarfCorp
             // In this case, add money to the wallet of each minion and tell him/her to stock the money.
             else
             {
-                DwarfBux amountPerMinion = money / (decimal)Minions.Count;
+                int amountPerMinion = (int)(money / (decimal)Minions.Count);
+                DwarfBux remaining = money;
                 foreach (var minion in Minions)
                 {
-                    minion.Status.Money += amountPerMinion;
+                    minion.Status.Money += (DwarfBux)amountPerMinion;
+                    remaining -= (DwarfBux) amountPerMinion;
                     minion.GatherManager.StockMoneyOrders.Add(new GatherManager.StockMoneyOrder()
                     {
                         Money = amountPerMinion
                     });
                 }
+
+                Minions[0].Status.Money += remaining;
+                Minions[0].GatherManager.StockMoneyOrders.Add(new GatherManager.StockMoneyOrder()
+                {
+                    Money = remaining
+                });
             }
         }
     }

@@ -114,7 +114,8 @@ namespace DwarfCorp
             Bone,
             Corpse,
             Money,
-            Sand
+            Sand,
+            Glass
         }
 
         public Resource()

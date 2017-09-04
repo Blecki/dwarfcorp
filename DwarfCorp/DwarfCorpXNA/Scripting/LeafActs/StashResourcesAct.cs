@@ -59,6 +59,37 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
+            Zone zone = Agent.Faction.GetNearestStockpile(Agent.Position, (s) => !s.IsFull());
+
+            if (zone != null)
+            {
+                var resourcesToStock = Creature.Inventory.Resources.Where(a => a.MarkedForRestock).ToList();
+                foreach (var resource in resourcesToStock)
+                {
+                    List<Body> createdItems = Creature.Inventory.RemoveAndCreate(new ResourceAmount(resource.Resource));
+
+                    foreach (Body b in createdItems)
+                    {
+                        if (zone.AddItem(b))
+                        {
+                            Creature.NoiseMaker.MakeNoise("Stockpile", Creature.AI.Position);
+                            Creature.Stats.NumItemsGathered++;
+                            Creature.AI.AddXP(1);
+                            Creature.CurrentCharacterMode = CharacterMode.Attacking;
+                            Creature.Sprite.ResetAnimations(CharacterMode.Attacking);
+                            Creature.Sprite.PlayAnimations(CharacterMode.Attacking);
+
+                            while (!Creature.Sprite.CurrentAnimation.IsDone())
+                            {
+                                yield return Status.Running;
+                            }
+
+                            yield return Status.Running;
+                        }
+                    }
+                }
+            }
+
             Timer waitTimer = new Timer(1.0f, true);
             bool removed = Agent.Faction.RemoveResources(Resources, Agent.Position);
 

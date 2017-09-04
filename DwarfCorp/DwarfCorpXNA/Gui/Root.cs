@@ -84,7 +84,7 @@ namespace DwarfCorp.Gui
 
         public string Sanitize(String Name)
         {
-            return Regex.Replace(Name, "/", "\\");
+            return Name == null ? null : Regex.Replace(Name, "/", "\\");
         }
 
         /// <summary>
@@ -623,6 +623,11 @@ namespace DwarfCorp.Gui
 
         public void DrawMouse()
         {
+            if (RootItem.Hidden)
+            {
+                return;
+            }
+
             RenderData.Effect.Parameters["Texture"].SetValue(RenderData.Texture);
             RenderData.Effect.CurrentTechnique.Passes[0].Apply();
 

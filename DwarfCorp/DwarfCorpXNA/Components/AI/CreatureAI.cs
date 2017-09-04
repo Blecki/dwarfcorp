@@ -244,7 +244,15 @@ namespace DwarfCorp
 
         public string Biography = "";
 
-        public BoundingBox? PositionConstraint = null;
+        public BoundingBox PositionConstraint = new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue),
+            new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
+
+        public void ResetPositionConstraint()
+        {
+            PositionConstraint = new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue),
+            new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
+            
+        }
 
         public string LastFailedAct = null;
 
@@ -509,8 +517,10 @@ namespace DwarfCorp
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Sad);
                         if (Creature.Allies == "Dwarf")
                         {
-                            Manager.World.MakeAnnouncement(String.Format("{0} ({1}) refuses to work!",
-                                Stats.FullName, Stats.CurrentClass.Name), ZoomToMe);
+                            Manager.World.MakeAnnouncement(
+                                String.Format("{0} ({1}) refuses to work!",
+                                Stats.FullName, Stats.CurrentClass.Name), 
+                                (gui) => ZoomToMe());
                             Manager.World.Tutorial("happiness");
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                         }
@@ -553,10 +563,8 @@ namespace DwarfCorp
                 history.Value.Update();
             }
 
-            if (PositionConstraint.HasValue)
-            {
-                Physics.LocalPosition = MathFunctions.Clamp(Physics.Position, PositionConstraint.Value);
-            }
+            if (PositionConstraint.Contains(Physics.LocalPosition) == ContainmentType.Disjoint)
+                Physics.LocalPosition = MathFunctions.Clamp(Physics.Position, PositionConstraint);
         }
 
         private int lastXPAnnouncement = 0;
@@ -575,8 +583,8 @@ namespace DwarfCorp
                     lastXPAnnouncement = Stats.LevelIndex;
                     Manager.World.MakeAnnouncement(String.Format("{0} ({1}) wants a promotion!",
                             Stats.FullName, Stats.CurrentClass.Name),
-                        () => Manager.World.Game.StateManager.PushState(new NewEconomyState(Manager.World.Game, Manager.World.Game.StateManager, Manager.World)),
-                    ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
+                        (gui) => Manager.World.Game.StateManager.PushState(new NewEconomyState(Manager.World.Game, Manager.World.Game.StateManager, Manager.World)));
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
                     Manager.World.Tutorial("level up");
                 }
             }
@@ -663,7 +671,8 @@ namespace DwarfCorp
 
             if (!IsPosessed && GatherManager.VoxelOrders.Count == 0 &&
                 (GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile()) &&
-                (GatherManager.StockMoneyOrders.Count == 0 || !Faction.HasFreeTreasury()))
+                (GatherManager.StockMoneyOrders.Count == 0 || !Faction.HasFreeTreasury())
+                && Tasks.Count == 0)
             {
 
                 // Craft random items for fun.
@@ -786,20 +795,16 @@ namespace DwarfCorp
             if (GatherManager.VoxelOrders.Count > 0)
             {
                 // Otherwise handle build orders.
-                var voxels = new List<VoxelHandle>();
-                var types = new List<VoxelType>();
-                foreach (GatherManager.BuildVoxelOrder order in GatherManager.VoxelOrders)
-                {
-                    voxels.Add(order.Voxel);
-                    types.Add(order.Type);
-                }
+                var voxels = GatherManager.VoxelOrders.Select(order => new KeyValuePair<VoxelHandle, VoxelType>(order.Voxel, order.Type)).ToList();
 
                 GatherManager.VoxelOrders.Clear();
+                /*
                 return new ActWrapperTask(new BuildVoxelsAct(this, voxels, types))
                 {
                     Priority = Task.PriorityType.Low,
                     AutoRetry = true
-                };
+                };*/
+                return new BuildVoxelsTask(voxels);
             }
 
             return null;
@@ -961,7 +966,7 @@ namespace DwarfCorp
                                 Stats.CurrentClass.Name,
                                 TextGenerator.IndefiniteArticle(enemy.Stats.CurrentClass.Name),
                                 enemy.Faction.Race.Name),
-                            ZoomToMe);
+                            (gui) => ZoomToMe());
                         Manager.World.Tutorial("combat");
                     }
                 }
@@ -1063,7 +1068,7 @@ namespace DwarfCorp
                     {
                         var vox = action.DestinationVoxel;
 
-                        float cost = edgeGoal.Heuristic(vox) + MathFunctions.Rand(0.0f, 5.0f);
+                        float cost = edgeGoal.Heuristic(vox) + MathFunctions.Rand(0.0f, 0.1f);
 
                         if (cost < minCost)
                         {
@@ -1099,7 +1104,9 @@ namespace DwarfCorp
             public override Act CreateScript(Creature agent)
             {
                 return new Select(
-                    new GoToNamedVoxelAct("", PlanAct.PlanType.Edge, agent.AI),
+                    new Sequence(new SetBlackboardData<VoxelHandle>(agent.AI, "EdgeVoxel", VoxelHandle.InvalidHandle),
+                                 new PlanAct(agent.AI, "PathToVoxel", "EdgeVoxel", PlanAct.PlanType.Edge),
+                                 new FollowPathAct(agent.AI, "PathToVoxel")),
                     new Wrap(() => GreedyFallbackBehavior(agent))
                     );
             }

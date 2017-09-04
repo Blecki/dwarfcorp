@@ -302,7 +302,7 @@ namespace DwarfCorp
                 case AttackMode.Melee:
                 case AttackMode.Dogfight:
                 {
-                    var otherCreature = other.GetComponent<Creature>();
+                    var otherCreature = other.GetRoot().GetComponent<Creature>();
                     if (otherCreature != null && !String.IsNullOrEmpty(DiseaseToSpread))
                     {
                         var disease = DiseaseLibrary.GetDisease(DiseaseToSpread);
@@ -319,7 +319,7 @@ namespace DwarfCorp
 
                         if (MathFunctions.RandEvent(injury.LikelihoodOfSpread))
                         {
-                            var creature = other.GetComponent<Creature>();
+                            var creature = other.GetRoot().GetComponent<Creature>();
                             if (creature != null)
                                 creature.AcquireDisease(injury.Name);
                         }
@@ -367,7 +367,7 @@ namespace DwarfCorp
 
                     if (MathFunctions.RandEvent(injury.LikelihoodOfSpread))
                     {
-                        var creature = other.GetComponent<Creature>();
+                        var creature = other.GetRoot().GetComponent<Creature>();
                         if (creature != null)
                             creature.AcquireDisease(injury.Name);
                     }

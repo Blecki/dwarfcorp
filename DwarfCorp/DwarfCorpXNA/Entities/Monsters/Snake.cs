@@ -219,6 +219,8 @@ namespace DwarfCorp
             foreach (var tail in Tail)
             {
                 tail.Sprite.LocalPosition = 0.9f*tail.Sprite.LocalPosition + 0.1f*tail.Target;
+                tail.Sprite.UpdateTransform();
+                tail.Sprite.PropogateTransforms();
             }
             base.Update(gameTime, chunks, camera);
         }
