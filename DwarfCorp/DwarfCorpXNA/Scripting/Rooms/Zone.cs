@@ -214,8 +214,11 @@ namespace DwarfCorp
 
                 if (ReplaceVoxelTypes)
                 {
-                    toRemove.TypeID = OriginalVoxelTypes[i];
-                    OriginalVoxelTypes.RemoveAt(i);
+                    if (OriginalVoxelTypes.Count > i)
+                    {
+                        toRemove.TypeID = OriginalVoxelTypes[i];
+                        OriginalVoxelTypes.RemoveAt(i);
+                    }
                 }
                 break;
             }
