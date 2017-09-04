@@ -55,7 +55,7 @@ namespace DwarfCorp
         public Elf(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
             base(manager, stats, allies, planService, faction, name)
         {
-            Physics = new Physics(manager, "Elf", Matrix.CreateTranslation(position), new Vector3(0.5f, 1.5f, 0.5f), new Vector3(0.0f, -0.0f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
+            Physics = new Physics(manager, "Elf", Matrix.CreateTranslation(position), new Vector3(0.5f, 1.0f, 0.5f), new Vector3(0.0f, -0.0f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
             Physics.DrawBoundingBox = true;
             Physics.AddChild(this);
 
