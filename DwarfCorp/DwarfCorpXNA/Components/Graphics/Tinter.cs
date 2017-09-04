@@ -102,7 +102,7 @@ namespace DwarfCorp
 
         public void ApplyTintingToEffect(Shader effect)
         {
-                effect.LightRampTint = Tint;
+            effect.LightRampTint = Tint;
                 effect.VertexColorTint = VertexColorTint;
         }
     }

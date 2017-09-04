@@ -517,8 +517,10 @@ namespace DwarfCorp
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Sad);
                         if (Creature.Allies == "Dwarf")
                         {
-                            Manager.World.MakeAnnouncement(String.Format("{0} ({1}) refuses to work!",
-                                Stats.FullName, Stats.CurrentClass.Name), ZoomToMe);
+                            Manager.World.MakeAnnouncement(
+                                String.Format("{0} ({1}) refuses to work!",
+                                Stats.FullName, Stats.CurrentClass.Name), 
+                                (gui) => ZoomToMe());
                             Manager.World.Tutorial("happiness");
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                         }
@@ -581,8 +583,8 @@ namespace DwarfCorp
                     lastXPAnnouncement = Stats.LevelIndex;
                     Manager.World.MakeAnnouncement(String.Format("{0} ({1}) wants a promotion!",
                             Stats.FullName, Stats.CurrentClass.Name),
-                        () => Manager.World.Game.StateManager.PushState(new NewEconomyState(Manager.World.Game, Manager.World.Game.StateManager, Manager.World)),
-                    ContentPaths.Audio.Oscar.sfx_gui_positive_generic);
+                        (gui) => Manager.World.Game.StateManager.PushState(new NewEconomyState(Manager.World.Game, Manager.World.Game.StateManager, Manager.World)));
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
                     Manager.World.Tutorial("level up");
                 }
             }
@@ -669,7 +671,8 @@ namespace DwarfCorp
 
             if (!IsPosessed && GatherManager.VoxelOrders.Count == 0 &&
                 (GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile()) &&
-                (GatherManager.StockMoneyOrders.Count == 0 || !Faction.HasFreeTreasury()))
+                (GatherManager.StockMoneyOrders.Count == 0 || !Faction.HasFreeTreasury())
+                && Tasks.Count == 0)
             {
 
                 // Craft random items for fun.
@@ -963,7 +966,7 @@ namespace DwarfCorp
                                 Stats.CurrentClass.Name,
                                 TextGenerator.IndefiniteArticle(enemy.Stats.CurrentClass.Name),
                                 enemy.Faction.Race.Name),
-                            ZoomToMe);
+                            (gui) => ZoomToMe());
                         Manager.World.Tutorial("combat");
                     }
                 }

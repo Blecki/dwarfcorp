@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class SimpleSprite : Tinter, IUpdateableComponent, IRenderableComponent
+    public class SimpleSprite : Tinter, IRenderableComponent
     {
         public enum OrientMode
         {
@@ -25,9 +25,10 @@ namespace DwarfCorp
         public float WorldWidth = 1.0f;
         public float WorldHeight = 1.0f;
         private Vector3 prevDistortion = Vector3.Zero;
-        private GeometricPrimitive Primitive;
         private SpriteSheet Sheet;
         private Point Frame;
+        private ExtendedVertex[] Verticies;
+        private int[] Indicies;
 
         public SimpleSprite(
             ComponentManager Manager,
@@ -81,18 +82,49 @@ namespace DwarfCorp
             if (!IsVisible)
                 return;
 
-            if (Primitive == null)
+            if (Verticies == null)
             {
-                Primitive = new BillboardPrimitive(
-                    graphicsDevice,
-                    Sheet.GetTexture(),
-                    Sheet.FrameWidth,
-                    Sheet.FrameHeight,
-                    Frame,
-                    WorldWidth,
-                    WorldHeight,
-                    Tint,
-                    false);
+                float normalizeX = Sheet.FrameWidth / (float)(Sheet.Width);
+                float normalizeY = Sheet.FrameWidth / (float)(Sheet.Height);
+
+                List<Vector2> uvs = new List<Vector2>
+                {
+                    new Vector2(0.0f, 0.0f),
+                    new Vector2(1.0f, 0.0f),
+                    new Vector2(1.0f, 1.0f),
+                    new Vector2(0.0f, 1.0f)
+                };
+
+
+
+                Vector2 pixelCoords = new Vector2(Frame.X * Sheet.FrameWidth, Frame.Y * Sheet.FrameHeight);
+                Vector2 normalizedCoords = new Vector2(pixelCoords.X / (float)Sheet.Width, pixelCoords.Y / (float)Sheet.Height);
+                var bounds = new Vector4(normalizedCoords.X + 0.001f, normalizedCoords.Y + 0.001f, normalizedCoords.X + normalizeX - 0.001f, normalizedCoords.Y + normalizeY - 0.001f);
+
+                for (int vert = 0; vert < 4; vert++)
+                {
+                    uvs[vert] = new Vector2(normalizedCoords.X + uvs[vert].X * normalizeX, normalizedCoords.Y + uvs[vert].Y * normalizeY);
+                }
+
+
+                Vector3 topLeftFront = new Vector3(-0.5f * WorldWidth, 0.5f * WorldHeight, 0.0f);
+                Vector3 topRightFront = new Vector3(0.5f * WorldWidth, 0.5f * WorldHeight, 0.0f);
+                Vector3 btmRightFront = new Vector3(0.5f * WorldWidth, -0.5f * WorldHeight, 0.0f);
+                Vector3 btmLeftFront = new Vector3(-0.5f * WorldWidth, -0.5f * WorldHeight, 0.0f);
+
+                Verticies = new[]
+                {
+                    new ExtendedVertex(topLeftFront, Color.White, Color.White, uvs[0], bounds), // 0
+                    new ExtendedVertex(topRightFront, Color.White, Color.White, uvs[1], bounds), // 1
+                    new ExtendedVertex(btmRightFront, Color.White, Color.White, uvs[2], bounds), // 2
+                    new ExtendedVertex(btmLeftFront, Color.White, Color.White, uvs[3], bounds) // 3
+                };
+
+                Indicies = new int[]
+                {
+                    0, 1, 3,
+                    1, 2, 3
+                };
             }
 
             GamePerformance.Instance.StartTrackPerformance("Render - Simple Sprite");
@@ -140,7 +172,8 @@ namespace DwarfCorp
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    Primitive.Render(graphicsDevice);
+                    graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList,
+                        Verticies, 0, 4, Indicies, 0, 2);
                 }
 
                 graphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -153,7 +186,8 @@ namespace DwarfCorp
             foreach(EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                Primitive.Render(graphicsDevice);
+                graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList,
+                                        Verticies, 0, 4, Indicies, 0, 2);
             }
 
             effect.VertexColorTint = origTint;
