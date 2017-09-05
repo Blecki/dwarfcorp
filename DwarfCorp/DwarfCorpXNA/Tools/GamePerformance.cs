@@ -1228,6 +1228,9 @@ namespace DwarfCorp
             int labelSizeX = 0;
             string[] legend = new string[3];
             List<int> dataList = data.ToList();
+            if (dataList.Count == 0)
+                return;
+
             int maxData = dataList.Max();
             int minData = dataList.Min();
             int median = (int)((maxData - minData) / 2) + minData;
