@@ -231,25 +231,23 @@ namespace DwarfCorp
 
         public Point3 WorldSize { get; set; }
 
-        // More statics. Hate this.
-        public class AnnouncementSettings
-        {
-            public String Text = "Announcement!";
-            public Action<Gui.Root> OnClick = null;
-            public Func<bool> Keep = null;
-        }
+        public Action<QueuedAnnouncement> OnAnnouncement;
 
-        public Action<AnnouncementSettings> OnAnnouncement;
-
-        public void MakeAnnouncement(String Message, Action<Gui.Root> ClickAction = null, Func<bool> Keep = null)
+        public void MakeAnnouncement(String Message, Action<Gui.Root, QueuedAnnouncement> ClickAction = null, Func<bool> Keep = null)
         {
             if (OnAnnouncement != null)
-                OnAnnouncement(new AnnouncementSettings
+                OnAnnouncement(new QueuedAnnouncement
                 {
                     Text = Message,
-                    OnClick = ClickAction,
-                    Keep = Keep
+                    ClickAction = ClickAction,
+                    ShouldKeep = Keep
                 });
+        }
+
+        public void MakeAnnouncement(QueuedAnnouncement Announcement)
+        {
+            if (OnAnnouncement != null)
+                OnAnnouncement(Announcement);
         }
 
         public void AwardBux(DwarfBux Bux)

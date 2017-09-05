@@ -12,7 +12,7 @@ namespace DwarfCorp.Gui.Widgets
     public class QueuedAnnouncement
     {
         public String Text;
-        public Action<Gui.Root> ClickAction;
+        public Action<Gui.Root, QueuedAnnouncement> ClickAction;
         public Func<bool> ShouldKeep;
         public bool Keep;
         public double SecondsVisible;
@@ -25,19 +25,13 @@ namespace DwarfCorp.Gui.Widgets
         public String Speaker = "dwarf";
         public double MessageLingerSeconds = 5.0f;
 
-        public void QueueAnnouncement(String Announcement, Action<Gui.Root> ClickAction, 
-            Func<bool> ShouldKeep)
+        public void QueueAnnouncement(QueuedAnnouncement Announcement)
         {
-            if (Announcements.All(msg => msg.Text != Announcement))
+            if (Announcements.All(msg => msg.Text != Announcement.Text))
             {
-                Announcements.Add(new QueuedAnnouncement
-                {
-                    Text = Announcement,
-                    ClickAction = ClickAction,
-                    SecondsVisible = 0,
-                    ShouldKeep = ShouldKeep,
-                    Keep = true
-                });
+                Announcement.Keep = true;
+                Announcement.SecondsVisible = 0;
+                Announcements.Add(Announcement);
             }
         }
 
@@ -51,14 +45,14 @@ namespace DwarfCorp.Gui.Widgets
                     {
                         if (announcement.Widget == null)
                         {
-                            QueuedAnnouncement announcement1 = announcement;
+                            var announcement1 = announcement;
                             announcement.Widget = AddChild(new Widget
                             {
                                 Text = announcement.Text,
                                 OnClick = (_s, _a) =>
                                 {
                                     if (announcement1.ClickAction != null)
-                                        announcement1.ClickAction(Root);
+                                        announcement1.ClickAction(Root, announcement1);
                                 }
                             });
 
