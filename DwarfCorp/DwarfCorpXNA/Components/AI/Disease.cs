@@ -280,6 +280,11 @@ namespace DwarfCorp
             Sleep
         }
 
+        public struct Immunity
+        {
+            public string Disease;
+        }
+
         public bool AcquiredRandomly { get; set; }
         public float ChanceofRandomAcquisitionPerDay { get; set; }
         public HealType Type { get; set; }

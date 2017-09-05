@@ -73,7 +73,7 @@ namespace DwarfCorp
 
             AddChild(new SimpleSprite(manager, "Sprite", Matrix.Identity, false, Asset, Frame)
             {
-                OrientationType = SimpleSprite.OrientMode.YAxis
+                OrientationType = SimpleSprite.OrientMode.Spherical
             }).SetFlag(Flag.ShouldSerialize, false);
         }            
     }

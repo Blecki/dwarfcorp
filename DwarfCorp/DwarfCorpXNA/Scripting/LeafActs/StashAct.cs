@@ -104,6 +104,7 @@ namespace DwarfCorp
                             yield return Status.Fail;
                             break;
                         }
+                      
                         bool removed = Zone.Resources.RemoveResource(new ResourceAmount(Target.Tags[0]));
 
                         if (removed)

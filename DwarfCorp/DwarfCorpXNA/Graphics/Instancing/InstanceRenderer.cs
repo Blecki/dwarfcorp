@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
+using LibNoise.Modifiers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
@@ -28,7 +29,7 @@ namespace DwarfCorp
             CreateInstanceTypes(Content);
         }
 
-        private void CreateBillboard(string name, ContentManager content)
+        private void CreateBillboard(string name, ContentManager content, bool addToSelectionBuffer = true)
         {
             if (!PrimitiveLibrary.BatchBillboardPrimitives.ContainsKey(name))
                 PrimitiveLibrary.CreateIntersecting(name, name, GameState.Game.GraphicsDevice, content);
@@ -41,6 +42,7 @@ namespace DwarfCorp
                     Texture = PrimitiveLibrary.BatchBillboardPrimitives[name].Texture,
                     BlendMode = BlendState.NonPremultiplied,
                     EnableWind = true,
+                    RenderInSelectionBuffer = addToSelectionBuffer
                 }
             });
         }
@@ -53,12 +55,12 @@ namespace DwarfCorp
             CreateBillboard("appletree", content);
             CreateBillboard("berrybush", content);
             CreateBillboard("cactus", content);
-            CreateBillboard("grass", content);
-            CreateBillboard("frostgrass", content);
-            CreateBillboard("flower", content);
-            CreateBillboard("deadbush", content);
-            CreateBillboard("vine", content);
-            CreateBillboard("gnarled", content);
+            CreateBillboard("grass", content, false);
+            CreateBillboard("frostgrass", content, false);
+            CreateBillboard("flower", content, false);
+            CreateBillboard("deadbush", content, false);
+            CreateBillboard("vine", content, false);
+            CreateBillboard("gnarled", content, false);
             CreateBillboard("mushroom", content);
             CreateBillboard("wheat", content);
             CreateBillboard("caveshroom", content);
@@ -133,7 +135,7 @@ namespace DwarfCorp
             Device.Indices = Group.RenderData.Model.IndexBuffer;
 
             BlendState blendState = Device.BlendState;
-            Device.BlendState = Group.RenderData.BlendMode;
+            Device.BlendState = Mode == RenderMode.Normal ? Group.RenderData.BlendMode : BlendState.Opaque;
 
             Effect.MainTexture = Group.RenderData.Texture;
             Effect.LightRampTint = Color.White;

@@ -69,6 +69,14 @@ namespace DwarfCorp
         public bool BlendStart { get; set; }
         public bool BlendEnd { get; set; }
 
+        // Offset from voxel location to bounding box center.
+        public Vector3 GetBoundingBoxOffset()
+        {
+            Vector3 half = Vector3.One * 0.5f;
+            half.Y = Creature.Physics.BoundingBox.Extents().Y * 1.5f;
+            return half;
+        }
+
         public List<MoveAction> GetPath()
         {
             return Agent.Blackboard.GetData<List<MoveAction>>(PathName);
@@ -109,8 +117,7 @@ namespace DwarfCorp
             bool hasNextAction = false;
             Vector3 diff = Vector3.Zero;
             float diffNorm = 0.0f;
-            Vector3 half = Vector3.One * 0.5f;
-            half.Y = Creature.Physics.BoundingBox.Extents().Y * 2.0f;
+            Vector3 half = GetBoundingBoxOffset();
             int nextID = index + 1;
             if (nextID < Path.Count)
             {
@@ -162,9 +169,9 @@ namespace DwarfCorp
                     time += dt;
                     i++;
                 }
-
+                Vector3 half = GetBoundingBoxOffset();
                 //Todo: Find replace .WorldPosition -> .WorldPosition
-                RandomPositionOffsets[0] = Agent.Position - (Path[0].DestinationVoxel.WorldPosition + Vector3.One * 0.5f);
+                RandomPositionOffsets[0] = Agent.Position - (Path[0].DestinationVoxel.WorldPosition + half);
                 TrajectoryTimer = new Timer(time, true);
                 return true;
             }
@@ -173,8 +180,7 @@ namespace DwarfCorp
 
         public IEnumerable<Status> SnapToFirst()
         {
-            Vector3 half = Vector3.One * 0.5f;
-            half.Y = Creature.Physics.BoundingBox.Extents().Y * 2.0f;
+            Vector3 half = GetBoundingBoxOffset();
 
             if (!Path[0].DestinationVoxel.IsValid)
                 yield break;
@@ -236,8 +242,7 @@ namespace DwarfCorp
             Trace.Assert(t >= 0);
             int nextID = currentIndex + 1;
             bool hasNextAction = false;
-            Vector3 half = Vector3.One * 0.5f;
-            half.Y = Creature.Physics.BoundingBox.Extents().Y * 2.0f;
+            Vector3 half = GetBoundingBoxOffset();
             Vector3 nextPosition = Vector3.Zero;
             Vector3 currPosition = action.DestinationVoxel.WorldPosition + half;
 
@@ -338,7 +343,7 @@ namespace DwarfCorp
                         }
                         else if (action.InteractObject != null)
                         {
-                            Agent.Physics.Velocity = (action.InteractObject.GetComponent<Body>().Position) - currPosition;
+                            Agent.Physics.Velocity = (action.InteractObject.GetRoot().GetComponent<Body>().Position) - currPosition;
                         }
                     }
                     else

@@ -168,8 +168,8 @@ namespace DwarfCorp
             {
                 if (IsNotSelectedDwarf(body))
                 {
-                    Player.SelectedMinions.Add(body.GetComponent<CreatureAI>());
-                    newDwarves.Add(body.GetComponent<CreatureAI>());
+                    Player.SelectedMinions.Add(body.GetRoot().GetComponent<CreatureAI>());
+                    newDwarves.Add(body.GetRoot().GetComponent<CreatureAI>());
 
                     Player.World.Tutorial("dwarf selected");
                 }

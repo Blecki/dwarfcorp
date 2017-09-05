@@ -82,6 +82,13 @@ namespace DwarfCorp
             }
         }
 
+        public IEnumerable<Act.Status> OnAttackEnd(CreatureAI creature)
+        {
+            creature.Creature.OverrideCharacterMode = false;
+            creature.Creature.CurrentCharacterMode = CharacterMode.Idle;
+            yield return Act.Status.Success;
+        }
+
         public KillEntityAct(Body entity, CreatureAI creature, KillEntityTask.KillType mode) :
             base(creature)
         {
@@ -102,7 +109,7 @@ namespace DwarfCorp
                         new Sequence
                         (
                             new MeleeAct(Agent, entity)
-                        ),
+                        ) | new Wrap(() => OnAttackEnd(creature)),
                         new Wrap(Verify)
                         );
             }
@@ -117,7 +124,7 @@ namespace DwarfCorp
                                MovingTarget = mode != KillEntityTask.KillType.Chop,
                                PlanType = planType,
                                Radius = radius
-                           },
+                           } | new Wrap(() => OnAttackEnd(creature)),
                            new MeleeAct(Agent, entity)
                        ),
                        new Wrap(Verify)

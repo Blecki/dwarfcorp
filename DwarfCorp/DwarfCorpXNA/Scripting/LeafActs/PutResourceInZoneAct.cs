@@ -117,8 +117,7 @@ namespace DwarfCorp
             List<Body> createdItems = Creature.Inventory.RemoveAndCreate(Resource);
             if(createdItems.Count == 0)
             {
-                Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
-                yield return Status.Fail;
+                yield return Status.Success;
             }
 
             foreach (Body b in createdItems)

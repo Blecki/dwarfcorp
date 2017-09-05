@@ -1,4 +1,4 @@
-﻿// FarmTask.cs
+// FarmTask.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -55,11 +55,12 @@ namespace DwarfCorp
             FarmToWork = farmToWork;
             Name = "Work " + FarmToWork.Vox.Coordinate;
             Priority = PriorityType.Low;
+            AutoRetry = true;
         }
 
         public override bool ShouldRetry(Creature agent)
         {
-            return false;
+            return true;
         }
 
         public override bool IsFeasible(Creature agent)

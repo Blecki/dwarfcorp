@@ -115,7 +115,7 @@ namespace DwarfCorp.GameStates
                     // Pass event to game...
                 }
             }
-
+            SoundManager.Update(gameTime, World.Camera, World.Time);
             World.TutorialManager.Update(GuiRoot);
 
             TabPanel.GetTabButton(1).IndicatorValue = World.GoalManager.NewAvailableGoals;

@@ -1,4 +1,5 @@
 using System.IO;
+using System.Net.Mime;
 using DwarfCorp.Gui.Widgets;
 using DwarfCorp.Gui;
 using DwarfCorp.Gui.Input;
@@ -376,6 +377,30 @@ namespace DwarfCorp.GameStates
             base.RenderUnitialized(gameTime);
         }
 
+        void UpdateBlockWidget(Gui.Widget sender, VoxelType data)
+        {
+            int numResources;
+            if (!int.TryParse(sender.Text, out numResources))
+            {
+                sender.Text = "";
+                sender.Invalidate();
+                return;
+            }
+            var factionResources = Master.Faction.ListResources();
+            if (!factionResources.ContainsKey(data.ResourceToRelease))
+            {
+                sender.Text = "";
+                sender.Invalidate();
+                return;
+            }
+            int newNum = Math.Max(factionResources[data.ResourceToRelease].NumResources - Master.Faction.WallBuilder.GetNumDesignations(data.ResourceToRelease), 0);
+            if (newNum != numResources)
+            {
+                sender.Text = newNum.ToString();
+                sender.Invalidate();
+            }
+        }
+
         /// <summary>
         /// Creates all of the sub-components of the GUI in for the PlayState (buttons, etc.)
         /// </summary>
@@ -561,7 +586,7 @@ namespace DwarfCorp.GameStates
                     EnablePosession = true,
                     OnFireClicked = (sender) =>
                     {
-                        GuiRoot.ShowDialog(GuiRoot.ConstructWidget(new Gui.Widgets.Confirm
+                        GuiRoot.ShowModalPopup(GuiRoot.ConstructWidget(new Gui.Widgets.Confirm
                         {
                             OkayText = "Fire this dwarf!",
                             CancelText = "Keep this dwarf.",
@@ -571,8 +596,10 @@ namespace DwarfCorp.GameStates
                             {
                                 if ((confirm as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
                                 {
-                                    SoundManager.PlaySound(ContentPaths.Audio.change, 0.5f);
+                                    SoundManager.PlaySound(ContentPaths.Audio.change, 0.25f);
                                     var selectedEmployee = (sender as EmployeeInfo).Employee;
+                                    selectedEmployee.GetRoot().GetComponent<Inventory>().Die();
+                                    World.MakeAnnouncement(string.Format("{0} was fired.", selectedEmployee.Stats.FullName));
                                     selectedEmployee.GetRoot().Delete();
 
                                     Master.Faction.Minions.Remove(selectedEmployee);
@@ -663,6 +690,7 @@ namespace DwarfCorp.GameStates
                 Tooltip = "(push " + ControlSettings.Mappings.Pause.ToString() + " to unpause)",
                 Font = "outline-font",
                 TextColor = Color.White.ToVector4(),
+                MaximumSize = new Point(0, 0),
                 Hidden = true,
             });
 
@@ -888,9 +916,11 @@ namespace DwarfCorp.GameStates
                                 World.ShowToolPopup("Click and drag to build " + data.Name + " wall.");
                                 World.Tutorial("build blocks");
                             },
+                            OnUpdate = (sender, args) => UpdateBlockWidget(sender, data),
                             Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
                             Hidden = false
                         }));
+                    
                     widget.Construct();
                     widget.Hidden = false;
                     widget.Layout();
@@ -1484,7 +1514,7 @@ namespace DwarfCorp.GameStates
                 PopupChild = new Widget()
                 {
                     Border = "border-fancy",
-                    Text = "Wrangle Animals.\n Click and drag to wrangle animals.",
+                    Text = "Wrangle Animals.\n Click and drag to wrangle animals.\nRequires animal pen.",
                     Rect = new Rectangle(0, 0, 256, 128),
                     TextColor = Color.Black.ToVector4()
                 },
@@ -1493,6 +1523,8 @@ namespace DwarfCorp.GameStates
                     ChangeTool(GameMaster.ToolMode.Farm);
                     (Master.Tools[GameMaster.ToolMode.Farm] as FarmTool).Mode = FarmTool.FarmMode.WranglingAnimals;
                     World.Tutorial("wrangle");
+                    World.ShowToolPopup(
+                        "Left click to tell dwarves to wrangle animals.\nRight click to cancel wrangling.\nRequires animal pen.");
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };

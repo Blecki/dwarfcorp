@@ -293,11 +293,16 @@ namespace DwarfCorp
                     });
                 }
 
-                if (natives.Economy.Company.Information == null)
-                    natives.Economy.Company.Information = new CompanyInformation();
-                
-                foreach (CreatureAI creature in envoy.Creatures)
-                {
+                    foreach (CreatureAI creature in envoy.Creatures)
+                    {
+                       creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
+                        if (natives.Economy == null)
+                        {
+                            natives.Economy = new Economy(natives, 1000.0m, World, new CompanyInformation()
+                            {
+                                Name = natives.Name
+                            });
+                        }
 
                     creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, natives.Economy.Company.Information));
                 }

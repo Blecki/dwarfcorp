@@ -158,6 +158,11 @@ namespace DwarfCorp
             {
                 return _cache_Chunk.Data.Types[_cache_Index];
             }
+            set
+            {
+                _cache_Chunk.Data.Types[_cache_Index] = value;
+                OnTypeSet(VoxelType.TypeList[value]);
+            }
         }
 
         // Todo: Eliminate members that aren't straight pass throughs to the underlying data.

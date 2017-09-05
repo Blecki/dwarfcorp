@@ -194,6 +194,7 @@ namespace DwarfCorp
 
             CurrentDesignation.Location = player.VoxSelector.VoxelUnderMouse;
 
+            World.ShowTooltip("Click to build. Press R/T to rotate.");
             SetDisplayColor(IsValid(CurrentDesignation) ? Color.Green : Color.Red);
         }
 

@@ -69,7 +69,9 @@
             "Precious" :  4,
             "Fungus" :  32,
             "Stone" :  64,
-            "Metal" :  64
+            "Metal" :  64,
+            "Sand" :  16,
+            "Glass" :  8
         },
         "Crafts" :  ["Metal"],
         "Encrustings":  ["Precious"],
@@ -200,7 +202,9 @@
             "Stone" :  64,
             "Fungus" :  32,
             "Soil" :  64,
-            "Craft" :  2
+            "Craft" :  2,
+            "Sand" :  16,
+            "Glass" :  8
         },
         "Crafts" :  ["Stone"],
         "Encrustings":  ["Gem"],
@@ -270,7 +274,7 @@
             "Precious" :  5,
             "Craft" :  16
         },
-        "Crafts" :  ["Wood", "AboveGroundPlant"],
+        "Crafts" :  ["Wood"],
         "Encrustings":  ["Precious"],
         "TradeMusic" :  "elf",
         "Icon":  "5"

@@ -49,6 +49,9 @@ namespace DwarfCorp
     {
         public string ID = "";
         public List<VoxelHandle> Voxels = new List<VoxelHandle>();
+        // This is a list of voxel type ids that existed before this zone
+        // was created. When the zone is destroyed, the voxel types will be restored.
+        public List<byte> OriginalVoxelTypes = new List<byte>(); 
         public List<Body> ZoneBodies = new List<Body>();
         
         [JsonProperty]
@@ -172,7 +175,8 @@ namespace DwarfCorp
             voxelsToKill.AddRange(Voxels);
             foreach (var voxel in voxelsToKill)
             {
-                World.ChunkManager.KillVoxel(voxel);
+                World.ParticleManager.Trigger("dirt_particle", voxel.WorldPosition + Vector3.Up, Color.White, 1);
+                RemoveVoxel(voxel);
             }
 
             ClearItems();
@@ -198,16 +202,23 @@ namespace DwarfCorp
 
         public virtual void RemoveVoxel(VoxelHandle voxel)
         {
-            var toRemove = Voxels.FirstOrDefault(store => store == voxel);
+            for (int i = 0; i < Voxels.Count; i++)
+            {
+                var toRemove = Voxels[i];
+                if (toRemove != voxel)
+                    continue;
+                if (!toRemove.IsValid)
+                    return;
 
-            if(!toRemove.IsValid)
-                return;
+                Voxels.Remove(toRemove);
 
-            Voxels.Remove(toRemove);
-
-            if (ReplaceVoxelTypes)
-                World.ChunkManager.KillVoxel(toRemove);
-
+                if (ReplaceVoxelTypes)
+                {
+                    toRemove.TypeID = OriginalVoxelTypes[i];
+                    OriginalVoxelTypes.RemoveAt(i);
+                }
+                break;
+            }
             RecalculateMaxResources();
         }
 
@@ -236,9 +247,11 @@ namespace DwarfCorp
                 return;
 
             Voxels.Add(Voxel);
-
-            if(ReplaceVoxelTypes)
+            if (ReplaceVoxelTypes)
+            {
+                OriginalVoxelTypes.Add(Voxel.TypeID);
                 Voxel.Type = ReplacementType;
+            }
 
             RecalculateMaxResources();
           

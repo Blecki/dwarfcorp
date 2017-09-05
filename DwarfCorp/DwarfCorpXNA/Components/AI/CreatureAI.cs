@@ -244,7 +244,15 @@ namespace DwarfCorp
 
         public string Biography = "";
 
-        public BoundingBox? PositionConstraint = null;
+        public BoundingBox PositionConstraint = new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue),
+            new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
+
+        public void ResetPositionConstraint()
+        {
+            PositionConstraint = new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue),
+            new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
+            
+        }
 
         public string LastFailedAct = null;
 
@@ -559,10 +567,8 @@ namespace DwarfCorp
                 history.Value.Update();
             }
 
-            if (PositionConstraint.HasValue)
-            {
-                Physics.LocalPosition = MathFunctions.Clamp(Physics.Position, PositionConstraint.Value);
-            }
+            if (PositionConstraint.Contains(Physics.LocalPosition) == ContainmentType.Disjoint)
+                Physics.LocalPosition = MathFunctions.Clamp(Physics.Position, PositionConstraint);
         }
 
         private int lastXPAnnouncement = 0;
@@ -802,20 +808,16 @@ namespace DwarfCorp
             if (GatherManager.VoxelOrders.Count > 0)
             {
                 // Otherwise handle build orders.
-                var voxels = new List<VoxelHandle>();
-                var types = new List<VoxelType>();
-                foreach (GatherManager.BuildVoxelOrder order in GatherManager.VoxelOrders)
-                {
-                    voxels.Add(order.Voxel);
-                    types.Add(order.Type);
-                }
+                var voxels = GatherManager.VoxelOrders.Select(order => new KeyValuePair<VoxelHandle, VoxelType>(order.Voxel, order.Type)).ToList();
 
                 GatherManager.VoxelOrders.Clear();
+                /*
                 return new ActWrapperTask(new BuildVoxelsAct(this, voxels, types))
                 {
                     Priority = Task.PriorityType.Low,
                     AutoRetry = true
-                };
+                };*/
+                return new BuildVoxelsTask(voxels);
             }
 
             return null;
@@ -1083,7 +1085,7 @@ namespace DwarfCorp
                     {
                         var vox = action.DestinationVoxel;
 
-                        float cost = edgeGoal.Heuristic(vox) + MathFunctions.Rand(0.0f, 5.0f);
+                        float cost = edgeGoal.Heuristic(vox) + MathFunctions.Rand(0.0f, 0.1f);
 
                         if (cost < minCost)
                         {
@@ -1119,7 +1121,9 @@ namespace DwarfCorp
             public override Act CreateScript(Creature agent)
             {
                 return new Select(
-                    new GoToNamedVoxelAct("", PlanAct.PlanType.Edge, agent.AI),
+                    new Sequence(new SetBlackboardData<VoxelHandle>(agent.AI, "EdgeVoxel", VoxelHandle.InvalidHandle),
+                                 new PlanAct(agent.AI, "PathToVoxel", "EdgeVoxel", PlanAct.PlanType.Edge),
+                                 new FollowPathAct(agent.AI, "PathToVoxel")),
                     new Wrap(() => GreedyFallbackBehavior(agent))
                     );
             }

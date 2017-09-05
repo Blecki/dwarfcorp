@@ -1,4 +1,4 @@
-﻿// ForLoop.cs
+// ForLoop.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -54,6 +54,10 @@ namespace DwarfCorp
             Iters = iters;
             Child = child;
             BreakOnSuccess = breakOnSuccess;
+            if (Iters < 0)
+            {
+                Iters = int.MaxValue;
+            }
         }
 
         public override void Initialize()

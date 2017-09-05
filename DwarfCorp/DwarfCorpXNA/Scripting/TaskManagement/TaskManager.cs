@@ -153,6 +153,7 @@ namespace DwarfCorp
                         cost += 1e10f;
                     }
                     cost += task.ComputeCost(creature.Creature, true);
+                    cost += creature.Tasks.Sum(existingTask => existingTask.ComputeCost(creature.Creature, true));
                     costs.Add(new KeyValuePair<int, float>(i, cost));
                 }
                 // The sort lambda function has been replaced by an IComparer class.

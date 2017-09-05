@@ -88,7 +88,7 @@ namespace DwarfCorp
         {
             Skeleton skeleton = EntityFactory.GenerateSkeleton(pos, Manager, GameState.Game.Content,
                 GameState.Game.GraphicsDevice, Chunks, Manager.World.Camera, Faction, Manager.World.PlanService,
-                this.Creature.Allies).GetComponent<Skeleton>();
+                this.Creature.Allies).GetRoot().GetComponent<Skeleton>();
 
             Skeletons.Add(skeleton);
             Matrix animatePosition = skeleton.Sprite.LocalTransform;

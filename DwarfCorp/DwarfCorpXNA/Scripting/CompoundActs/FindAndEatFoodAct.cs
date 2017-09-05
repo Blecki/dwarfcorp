@@ -60,7 +60,8 @@ namespace DwarfCorp
         {
             if(Agent.Status.Hunger.IsDissatisfied())
             {
-                Tree = new Sequence(new GetResourcesAct(Agent, Resource.ResourceTags.Edible), 
+                Tree = new Sequence(new Select(new GetResourcesAct(Agent, Resource.ResourceTags.PreparedFood), 
+                                               new GetResourcesAct(Agent, Resource.ResourceTags.Edible)), 
                                     new Select(new GoToChairAndSitAct(Agent), true),
                                     new Wrap(Creature.EatStockedFood));
                 /*

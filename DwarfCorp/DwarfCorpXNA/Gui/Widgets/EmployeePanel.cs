@@ -90,7 +90,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 OnFireClicked = (sender) =>
                 {
-                    Root.ShowDialog(Root.ConstructWidget(new Gui.Widgets.Confirm
+                    Root.ShowModalPopup(Root.ConstructWidget(new Gui.Widgets.Confirm
                     {
                         OkayText = "Fire this dwarf!",
                         CancelText = "Keep this dwarf.",

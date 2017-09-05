@@ -274,19 +274,27 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    if(CurrentRoomData != RoomLibrary.GetData("Stockpile"))
-                    {
-                        Room toBuild = RoomLibrary.CreateRoom(Faction, CurrentRoomData.Name, designations.ToList(), true, World);
-                        DesignatedRooms.Add(toBuild);
-                        order = new BuildRoomOrder(toBuild, Faction, Faction.World);
-                        order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild, v));
-                        BuildDesignations.Add(order);
-                    }
-                    else
+                    if (CurrentRoomData == RoomLibrary.GetData("Stockpile"))
                     {
                         Stockpile toBuild = new Stockpile(Faction, World);
                         DesignatedRooms.Add(toBuild);
                         order = new BuildStockpileOrder(toBuild, this.Faction);
+                        order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild, v));
+                        BuildDesignations.Add(order);
+                    }
+                    else if (CurrentRoomData == RoomLibrary.GetData("Treasury"))
+                    {
+                        Treasury toBuild = new Treasury(Faction, World);
+                        DesignatedRooms.Add(toBuild);
+                        order = new BuildRoomOrder(toBuild, this.Faction, Faction.World);
+                        order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild, v));
+                        BuildDesignations.Add(order); 
+                    }
+                    else
+                    {
+                        Room toBuild = RoomLibrary.CreateRoom(Faction, CurrentRoomData.Name, designations.ToList(), true, World);
+                        DesignatedRooms.Add(toBuild);
+                        order = new BuildRoomOrder(toBuild, Faction, Faction.World);
                         order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild, v));
                         BuildDesignations.Add(order);
                     }
@@ -480,9 +488,9 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    World.Gui.ShowDialog(new Gui.Widgets.Confirm
+                    World.Gui.ShowModalPopup(new Gui.Widgets.Confirm
                         {
-                            Text = "Do you want to destroy this" + existingRoom.RoomData.Name + "?",
+                            Text = "Do you want to destroy this " + existingRoom.RoomData.Name + "?",
                             OnClose = (sender) => destroyDialog_OnClosed((sender as Gui.Widgets.Confirm).DialogResult, existingRoom)
                         });
 
