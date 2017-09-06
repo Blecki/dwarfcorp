@@ -274,9 +274,21 @@ namespace DwarfCorp
                     Drawer3D.DrawBox(animal.BoundingBox, Color.Tomato, 0.1f, false);
                     if (button == InputManager.MouseButton.Left)
                     {
-                        Player.Faction.WrangleDesignations.Add(animal);
-                        tasks.Add(new WrangleAnimalTask(animal.GetRoot().GetComponent<Creature>()));
-                        this.Player.World.ShowToolPopup("Will wrangle this " + animal.GetRoot().GetComponent<Creature>().Species);
+                        var pens = Player.Faction.GetRooms().Where(room => room is AnimalPen).Cast<AnimalPen>().Where(pen => pen.Species == "" || pen.Species == animal.GetRoot().GetComponent<Creature>().Species);
+
+                        if (pens.Any())
+                        {
+                            Player.Faction.WrangleDesignations.Add(animal);
+                            tasks.Add(new WrangleAnimalTask(animal.GetRoot().GetComponent<Creature>()));
+                            this.Player.World.ShowToolPopup("Will wrangle this " +
+                                                            animal.GetRoot().GetComponent<Creature>().Species);
+                        }
+                        else
+                        {
+                            this.Player.World.ShowToolPopup("Can't wrangle this " +
+                                                            animal.GetRoot().GetComponent<Creature>().Species +
+                                                            " : need more animal pens.");
+                        }
                     }
                     else if (button == InputManager.MouseButton.Right)
                     {
