@@ -249,6 +249,14 @@ namespace DwarfCorp
         {
             if (!Active) return;
 
+            // Never apply physics when animating!
+            if (AnimationQueue.Count > 0)
+            {
+                PropogateTransforms();
+                base.Update(gameTime, chunks, camera);
+                return;
+            }
+
             if (gameTime.Speed < 0.01)
             {
                 base.Update(gameTime, chunks, camera);
