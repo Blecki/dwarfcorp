@@ -237,6 +237,11 @@ namespace DwarfCorp
                     }
             GamePerformance.Instance.StopTrackPerformance("Components - update");
             
+            AddRemove();
+        }
+
+        private void AddRemove()
+        {
             AdditionMutex.WaitOne();
             foreach (GameComponent component in Additions)
                 AddComponentImmediate(component);
@@ -250,6 +255,11 @@ namespace DwarfCorp
 
             Removals.Clear();
             RemovalMutex.ReleaseMutex();
+        }
+
+        public void UpdatePaused()
+        {
+            AddRemove();
         }
     }
 }

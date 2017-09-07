@@ -304,6 +304,7 @@ namespace DwarfCorp
             HandleThreats();
 
             OwnedObjects.RemoveAll(obj => obj.IsDead);
+
         }
 
         public bool IsTaskAssigned(Task task)
