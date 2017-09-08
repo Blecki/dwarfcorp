@@ -576,7 +576,10 @@ namespace DwarfCorp
             }
 
             if (PositionConstraint.Contains(Physics.LocalPosition) == ContainmentType.Disjoint)
+            {
                 Physics.LocalPosition = MathFunctions.Clamp(Physics.Position, PositionConstraint);
+                Physics.PropogateTransforms();
+            }
         }
 
         private int lastXPAnnouncement = 0;
@@ -671,10 +674,12 @@ namespace DwarfCorp
         /// </summary>
         public virtual Task ActOnIdle()
         {
+            /*
             if (!IsPosessed && !Creature.IsOnGround && !Movement.CanFly && !Creature.Physics.IsInLiquid)
             {
                 return new ActWrapperTask(new Wrap(AvoidFalling));
             }
+             */
 
             if (!IsPosessed && Creature.Physics.IsInLiquid && MathFunctions.RandEvent(0.01f))
             {
@@ -704,6 +709,7 @@ namespace DwarfCorp
                             }
                             item.SelectedResources.Add(Datastructures.SelectRandom(amount));
                         }
+                        
                         if (gotAny)
                         {
                             return new CraftResourceTask(item);

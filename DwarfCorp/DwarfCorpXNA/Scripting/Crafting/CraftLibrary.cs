@@ -535,6 +535,10 @@ namespace DwarfCorp
                 {
                     continue;
                 }
+                if (!faction.OwnedObjects.Any(o => o.Tags.Contains(item.Value.CraftLocation)))
+                {
+                    continue;
+                }
                 return item.Value.Clone();
             }
             return null;
