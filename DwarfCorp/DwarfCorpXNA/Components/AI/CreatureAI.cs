@@ -341,7 +341,19 @@ namespace DwarfCorp
         /// <summary> remove any impossible or already completed tasks </summary>
         public void DeleteBadTasks()
         {
-            Tasks.RemoveAll(task => task.ShouldDelete(Creature));
+            var tasksToremove = Tasks.Where(task => (task.ShouldDelete(Creature) || !task.IsFeasible(Creature))).ToList();
+            foreach (var task in tasksToremove)
+            {
+                Tasks.Remove(task);
+                History.Remove(task.Name);
+            }
+
+
+            var historyToRemove = History.Where(history => Tasks.All(task => task.Name != history.Key)).ToList();
+            foreach (var history in historyToRemove)
+            {
+                History.Remove(history.Key);
+            }
         }
 
         /// <summary> Animate the PlayState Camera to look at this creature </summary>

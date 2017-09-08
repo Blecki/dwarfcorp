@@ -85,6 +85,7 @@ namespace DwarfCorp
             public bool AutoSave = true;
             public float AutoSaveTimeMinutes = 2.0f;
             public bool VSync = true;
+            public bool AllowReporting = true;
 
             public override string ToString()
             {
