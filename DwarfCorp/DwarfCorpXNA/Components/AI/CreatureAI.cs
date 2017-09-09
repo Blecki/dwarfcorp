@@ -341,7 +341,19 @@ namespace DwarfCorp
         /// <summary> remove any impossible or already completed tasks </summary>
         public void DeleteBadTasks()
         {
-            Tasks.RemoveAll(task => task.ShouldDelete(Creature));
+            var tasksToremove = Tasks.Where(task => (task.ShouldDelete(Creature) || !task.IsFeasible(Creature))).ToList();
+            foreach (var task in tasksToremove)
+            {
+                Tasks.Remove(task);
+                History.Remove(task.Name);
+            }
+
+
+            var historyToRemove = History.Where(history => Tasks.All(task => task.Name != history.Key)).ToList();
+            foreach (var history in historyToRemove)
+            {
+                History.Remove(history.Key);
+            }
         }
 
         /// <summary> Animate the PlayState Camera to look at this creature </summary>
@@ -564,7 +576,10 @@ namespace DwarfCorp
             }
 
             if (PositionConstraint.Contains(Physics.LocalPosition) == ContainmentType.Disjoint)
+            {
                 Physics.LocalPosition = MathFunctions.Clamp(Physics.Position, PositionConstraint);
+                Physics.PropogateTransforms();
+            }
         }
 
         private int lastXPAnnouncement = 0;
@@ -659,10 +674,12 @@ namespace DwarfCorp
         /// </summary>
         public virtual Task ActOnIdle()
         {
+            /*
             if (!IsPosessed && !Creature.IsOnGround && !Movement.CanFly && !Creature.Physics.IsInLiquid)
             {
                 return new ActWrapperTask(new Wrap(AvoidFalling));
             }
+             */
 
             if (!IsPosessed && Creature.Physics.IsInLiquid && MathFunctions.RandEvent(0.01f))
             {
@@ -692,6 +709,7 @@ namespace DwarfCorp
                             }
                             item.SelectedResources.Add(Datastructures.SelectRandom(amount));
                         }
+                        
                         if (gotAny)
                         {
                             return new CraftResourceTask(item);

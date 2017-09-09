@@ -454,9 +454,12 @@ namespace DwarfCorp
             TutorialManager.Update(Gui);
             Time.Update(gameTime);
 
-
+            if (Paused)
+            {
+                ComponentManager.UpdatePaused();
+            }
             // If not paused, we want to just update the rest of the game.
-            if (!Paused)
+            else
             {
                 GamePerformance.Instance.StartTrackPerformance("Diplomacy");
                 Diplomacy.Update(gameTime, Time.CurrentDate, this);

@@ -77,10 +77,13 @@ namespace DwarfCorp
             try
             {
 #if SHARP_RAVEN
-                ravenClient =
-                    new RavenClient(
-                        "https://af78a676a448474dacee4c72a9197dd2:0dd0a01a9d4e4fa4abc6e89ac7538346@sentry.io/192119");
-                ravenClient.Tags["Version"] = Program.Version;
+                if (GameSettings.Default.AllowReporting)
+                {
+                    ravenClient =
+                        new RavenClient(
+                            "https://af78a676a448474dacee4c72a9197dd2:0dd0a01a9d4e4fa4abc6e89ac7538346@sentry.io/192119");
+                    ravenClient.Tags["Version"] = Program.Version;
+                }
 #if XNA_BUILD
                 ravenClient.Tags["Platform"] = "XNA";
 #else

@@ -67,6 +67,8 @@ namespace DwarfCorp
             base(componentManager, position, new SpriteSheet(asset, 32, 32), new Point(0, 0))
         {
             FenceRotation = orientation;
+            GetComponent<SimpleSprite>().OrientationType = SimpleSprite.OrientMode.Fixed;
+            GetComponent<SimpleSprite>().LocalTransform = Matrix.CreateRotationY(FenceRotation);
         }
 
 
