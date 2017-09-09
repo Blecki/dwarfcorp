@@ -139,11 +139,23 @@ namespace DwarfCorp
             }
         }
 
+
+        private bool Validate()
+        {
+            return !FarmToWork.IsCanceled && FarmToWork.Farmer == Agent && FarmToWork.Vox.IsValid && !FarmToWork.Vox.IsEmpty;
+        }
+
+        private IEnumerable<Act.Status> Cleanup()
+        {
+            OnCanceled();
+            yield return Act.Status.Success;
+        }
+
         public override void OnCanceled()
         {
             FarmTool.FarmTile tile = Creature.AI.Blackboard.GetData<FarmTool.FarmTile>("ClosestTile");
 
-            if (tile != null)
+            if (tile != null && tile.Farmer == Agent)
             {
                 tile.Farmer = null;
             }
@@ -162,17 +174,16 @@ namespace DwarfCorp
             {
                 if (FarmToWork.Vox.IsValid)
                 {
-                    Tree = new Sequence(
-                        new Condition(!FarmToWork.IsCanceled),
-                        new GoToVoxelAct(FarmToWork.Vox, PlanAct.PlanType.Adjacent, Creature.AI),
-                        new Condition(!FarmToWork.IsCanceled),
-                        new StopAct(Creature.AI),
-                        new Condition(!FarmToWork.IsCanceled),
-                        new Wrap(FarmATile));
+                    FarmToWork.Farmer = Agent;
+                    Tree = new Select(new Sequence(
+                        new Domain(Validate, new GoToVoxelAct(FarmToWork.Vox, PlanAct.PlanType.Adjacent, Creature.AI)),
+                        new Domain(Validate, new StopAct(Creature.AI)),
+                        new Domain(Validate, new Wrap(FarmATile)),
+                        new Wrap(Cleanup)), new Wrap(Cleanup));
 
                     if (Mode == FarmMode.Plant)
                     {
-                        Tree.Children.Insert(0, new Sequence(new GetResourcesAct(Agent, Resources)));
+                        Tree.Children[0].Children.Insert(0, new Sequence(new GetResourcesAct(Agent, Resources)));
                     }
                 }
             }
