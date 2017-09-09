@@ -341,7 +341,7 @@ namespace DwarfCorp
         /// <summary> remove any impossible or already completed tasks </summary>
         public void DeleteBadTasks()
         {
-            var tasksToremove = Tasks.Where(task => (task.ShouldDelete(Creature) || !task.IsFeasible(Creature))).ToList();
+            var tasksToremove = Tasks.Where(task => (task.ShouldDelete(Creature))).ToList();
             foreach (var task in tasksToremove)
             {
                 Tasks.Remove(task);
@@ -403,17 +403,21 @@ namespace DwarfCorp
         /// <summary> Update this creature </summary>
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            /*DEBUG DRAW TASK QUEUE HERE
-            StringBuilder taskString = new StringBuilder();
-            foreach (var task in Tasks)
+            //DEBUG DRAW TASK QUEUE HERE
+
+            if (DrawPath)
             {
-                taskString.Append(task.Name);
-                taskString.Append(String.Format(" Feasible: {0}, Cost {1}, Priority {2}", task.IsFeasible(Creature),
-                    task.ComputeCost(Creature), task.Priority));
-                taskString.Append("\n");
+                StringBuilder taskString = new StringBuilder();
+                foreach (var task in Tasks)
+                {
+                    taskString.Append(task.Name);
+                    taskString.Append(String.Format(" Feasible: {0}, Cost {1}, Priority {2}", task.IsFeasible(Creature),
+                        task.ComputeCost(Creature), task.Priority));
+                    taskString.Append("\n");
+                }
+                Drawer2D.DrawText(taskString.ToString(), Position, Color.White, Color.Black);
             }
-            Drawer2D.DrawText(taskString.ToString(), Position, Color.White, Color.Black);
-             */
+
             if (!Active) return;
 
             if (Faction == null && !string.IsNullOrEmpty(Creature.Allies))
