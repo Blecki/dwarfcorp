@@ -96,9 +96,14 @@ namespace DwarfCorp
                 if (Spell.ResearchProgress >= Spell.ResearchTime)
                 {
                     Creature.Manager.World.MakeAnnouncement(
-                        String.Format("{0} ({1}) discovered the {2} spell!", Creature.Stats.FullName,
-                        Creature.Stats.CurrentLevel.Name, Spell.Spell.Name),
-                        (gui) => Agent.ZoomToMe());
+                        new Gui.Widgets.QueuedAnnouncement
+                        {
+                            Text = String.Format("{0} ({1}) discovered the {2} spell!",
+                                Creature.Stats.FullName,
+                                Creature.Stats.CurrentLevel.Name, Spell.Spell.Name),
+                            ClickAction = (gui, sender) => Agent.ZoomToMe()
+                        });
+
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
                 }
 

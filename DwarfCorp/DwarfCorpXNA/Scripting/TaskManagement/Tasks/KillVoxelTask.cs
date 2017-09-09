@@ -1,4 +1,4 @@
-﻿// KillVoxelTask.cs
+// KillVoxelTask.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -73,6 +73,7 @@ namespace DwarfCorp
         {
             return !VoxelToKill.IsEmpty && agent.Faction.IsDigDesignation(VoxelToKill);
         }
+
 
         public override bool IsFeasible(Creature agent)
         {

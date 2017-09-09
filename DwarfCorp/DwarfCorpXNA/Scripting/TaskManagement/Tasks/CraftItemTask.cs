@@ -82,6 +82,12 @@ namespace DwarfCorp
             return true;
         }
 
+
+        public override bool ShouldDelete(Creature agent)
+        {
+            return !agent.Faction.CraftBuilder.IsDesignation(Designation.Location);
+        }
+
         public override bool IsFeasible(Creature agent)
         {
             return CanBuild(agent);

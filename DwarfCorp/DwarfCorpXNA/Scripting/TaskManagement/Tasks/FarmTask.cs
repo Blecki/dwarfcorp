@@ -63,6 +63,12 @@ namespace DwarfCorp
             return true;
         }
 
+
+        public override bool ShouldDelete(Creature agent)
+        {
+            return !IsFeasible(agent);
+        }
+
         public override bool IsFeasible(Creature agent)
         {
             return FarmToWork != null && !FarmToWork.IsCanceled;

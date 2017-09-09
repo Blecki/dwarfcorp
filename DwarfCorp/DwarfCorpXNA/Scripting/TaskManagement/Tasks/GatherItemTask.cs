@@ -69,6 +69,11 @@ namespace DwarfCorp
             return new GatherItemAct(creature.AI, EntityToGather);
         }
 
+        public override bool ShouldDelete(Creature agent)
+        {
+            return !IsFeasible(agent);
+        }
+
         public override bool IsFeasible(Creature agent)
         {
             return EntityToGather != null
