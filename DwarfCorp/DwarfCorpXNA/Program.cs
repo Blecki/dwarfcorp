@@ -61,10 +61,12 @@ namespace DwarfCorp
         /// </summary>
         private static void Main(string[] args)
         {
-            var t = default(VoxelHandle);
-            var x = 0;
-            if (t.IsValid)
-                x = 5;
+            using (Stream stream = System.Reflection.Assembly.GetExecutingAssembly()
+                    .GetManifestResourceStream("DwarfCorp." + "version.txt"))
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                GamePerformance.Version = reader.ReadToEnd();
+            }
 
 
 #if CREATE_CRASH_LOGS
