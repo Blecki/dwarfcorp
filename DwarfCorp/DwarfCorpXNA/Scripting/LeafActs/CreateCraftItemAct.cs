@@ -65,6 +65,10 @@ namespace DwarfCorp
             {
                 item.Orient(Item.Orientation);
             }
+            else
+            {
+                item.OrientToWalls();
+            }
             item.Tags.Add("Moveable");
             Creature.Faction.OwnedObjects.Add(item);
             Creature.Manager.World.ParticleManager.Trigger("puff", Voxel.WorldPosition + Vector3.One * 0.5f, Color.White, 10);

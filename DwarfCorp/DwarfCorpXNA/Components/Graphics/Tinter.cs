@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -104,6 +105,15 @@ namespace DwarfCorp
         {
             effect.LightRampTint = Tint;
                 effect.VertexColorTint = VertexColorTint;
+        }
+    }
+
+    public static class TintExtension
+    {
+        public static void SetTintRecursive(this GameComponent component, Color color)
+        {
+            foreach (var sprite in component.EnumerateAll().OfType<Tinter>())
+                sprite.VertexColorTint = color;
         }
     }
 

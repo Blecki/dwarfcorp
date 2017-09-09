@@ -44,6 +44,14 @@ namespace DwarfCorp
     /// </summary>
     public static partial class MathFunctions
     {
+        public static Color Pulsate(Color baseColor, DwarfTime time, float alpha = 1.0f, float amplitude = 0.25f, float rate = 1.0f)
+        {
+            var vec = baseColor.ToVector4();
+            var pulseVec = vec + Vector4.One * (float) Math.Sin(time.TotalRealTime.TotalSeconds*rate) * amplitude;
+            pulseVec.W = alpha;
+            return new Color(pulseVec);
+        }
+
         public static bool RandEvent(float probability)
         {
             return Rand(0, 1) < probability;
