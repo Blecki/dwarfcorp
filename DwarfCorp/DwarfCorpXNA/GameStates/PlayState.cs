@@ -709,7 +709,7 @@ namespace DwarfCorp.GameStates
 
             World.OnAnnouncement = (message) =>
             {
-                Announcer.QueueAnnouncement(message.Text, message.OnClick, message.Keep);
+                Announcer.QueueAnnouncement(message);
             };
 
             InfoTray = GuiRoot.RootItem.AddChild(new Gui.Widgets.InfoTray

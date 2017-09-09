@@ -324,21 +324,27 @@ namespace DwarfCorp
 
             envoy.DistributeGoods();
             natives.TradeEnvoys.Add(envoy);
-            world.MakeAnnouncement(String.Format("Trade envoy from {0} has arrived!",
-                natives.Name),
-                (gui) =>
+            world.MakeAnnouncement(new DwarfCorp.Gui.Widgets.QueuedAnnouncement
+            {
+                Text = String.Format("Trade envoy from {0} has arrived!", natives.Name),
+                ClickAction = (gui, sender) =>
                 {
                     envoy.Creatures.First().ZoomToMe();
                     gui.ShowModalPopup(gui.ConstructWidget(new Gui.Widgets.Popup
                     {
                         Text = String.Format("Traders from {0} ({1}) have entered our territory. They will try to get to our balloon port to trade with us.", natives.Name, natives.Race.Name),
                         OkayText = "Okay!",
+                        OnClose = (widget) =>
+                        {
+                            sender.Keep = false;
+                        }
                     }));
                 },
-                () =>
+                ShouldKeep = () =>
                 {
                     return envoy.ExpiditionState == Expedition.State.Arriving;
-                });
+                }
+            });
 
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
 

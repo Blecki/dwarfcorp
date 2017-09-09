@@ -530,9 +530,13 @@ namespace DwarfCorp
                         if (Creature.Allies == "Dwarf")
                         {
                             Manager.World.MakeAnnouncement(
-                                String.Format("{0} ({1}) refuses to work!",
-                                Stats.FullName, Stats.CurrentClass.Name), 
-                                (gui) => ZoomToMe());
+                                new Gui.Widgets.QueuedAnnouncement
+                                {
+                                    Text = String.Format("{0} ({1}) refuses to work!",
+                                        Stats.FullName, Stats.CurrentClass.Name),
+                                    ClickAction = (gui, sender) => ZoomToMe()
+                                });
+
                             Manager.World.Tutorial("happiness");
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                         }
@@ -596,9 +600,18 @@ namespace DwarfCorp
                 if (Stats.IsOverQualified && lastXPAnnouncement != Stats.LevelIndex && Faction == Manager.World.PlayerFaction)
                 {
                     lastXPAnnouncement = Stats.LevelIndex;
-                    Manager.World.MakeAnnouncement(String.Format("{0} ({1}) wants a promotion!",
-                            Stats.FullName, Stats.CurrentClass.Name),
-                        (gui) => Manager.World.Game.StateManager.PushState(new NewEconomyState(Manager.World.Game, Manager.World.Game.StateManager, Manager.World)));
+
+                    Manager.World.MakeAnnouncement(
+                        new Gui.Widgets.QueuedAnnouncement
+                        {
+                            Text = String.Format("{0} ({1}) wants a promotion!",
+                                Stats.FullName, Stats.CurrentClass.Name),
+                            ClickAction = (gui, sender) =>
+                            {
+                                Manager.World.Game.StateManager.PushState(new NewEconomyState(Manager.World.Game, Manager.World.Game.StateManager, Manager.World));
+                            }
+                        });
+
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
                     Manager.World.Tutorial("level up");
                 }
@@ -980,11 +993,15 @@ namespace DwarfCorp
                     if (Faction == Manager.World.PlayerFaction)
                     {
                         Manager.World.MakeAnnouncement(
-                            String.Format("{0} the {1} is fighting {2} ({3})", Stats.FullName,
-                                Stats.CurrentClass.Name,
-                                TextGenerator.IndefiniteArticle(enemy.Stats.CurrentClass.Name),
-                                enemy.Faction.Race.Name),
-                            (gui) => ZoomToMe());
+                            new Gui.Widgets.QueuedAnnouncement
+                            {
+                                Text = String.Format("{0} the {1} is fighting {2} ({3})", Stats.FullName,
+                                    Stats.CurrentClass.Name,
+                                    TextGenerator.IndefiniteArticle(enemy.Stats.CurrentClass.Name),
+                                    enemy.Faction.Race.Name),
+                                ClickAction = (gui, sender) => ZoomToMe()
+                            });
+
                         Manager.World.Tutorial("combat");
                     }
                 }
