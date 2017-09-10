@@ -806,7 +806,11 @@ namespace DwarfCorp.GameStates
             {
                 Icon = new TileReference("tool-icons", 32),
                 Tooltip = "Go Back",
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
             };
 
             var menu_RoomTypes = new FlatToolTray.Tray
@@ -877,7 +881,11 @@ namespace DwarfCorp.GameStates
             {
                 Icon = new TileReference("tool-icons", 32),
                 Tooltip = "Go Back",
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
             };
 
             var menu_WallTypes = new FlatToolTray.Tray
@@ -1011,7 +1019,11 @@ namespace DwarfCorp.GameStates
             {
                 Icon = new TileReference("tool-icons", 32),
                 Tooltip = "Go Back",
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
             };
 
             var menu_CraftTypes = new FlatToolTray.Tray
@@ -1160,7 +1172,11 @@ namespace DwarfCorp.GameStates
             {
                 Icon = new TileReference("tool-icons", 32),
                 Tooltip = "Go Back",
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
             };
 
             var menu_BuildTools = new FlatToolTray.Tray
@@ -1206,7 +1222,11 @@ namespace DwarfCorp.GameStates
             {
                 Icon = new TileReference("tool-icons", 32),
                 Tooltip = "Go Back",
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
             };
 
             var menu_Edibles = new FlatToolTray.Tray
@@ -1376,7 +1396,11 @@ namespace DwarfCorp.GameStates
             {
                 Icon = new TileReference("tool-icons", 32),
                 Tooltip = "Go Back",
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
             };
 
             #region icon_Till
@@ -1413,7 +1437,11 @@ namespace DwarfCorp.GameStates
             {
                 Icon = new TileReference("tool-icons", 32),
                 Tooltip = "Go Back",
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
             };
 
             var menu_Plant = new FlatToolTray.Tray
@@ -1570,7 +1598,11 @@ namespace DwarfCorp.GameStates
             {
                 Icon = new TileReference("tool-icons", 32),
                 Tooltip = "Go Back",
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
             };
 
             var menu_CastSpells = new FlatToolTray.Tray()
@@ -1624,7 +1656,11 @@ namespace DwarfCorp.GameStates
             {
                 Icon = new TileReference("tool-icons", 32),
                 Tooltip = "Go Back",
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
             };
 
             var menu_ResearchSpells = new FlatToolTray.Tray()
@@ -1679,7 +1715,11 @@ namespace DwarfCorp.GameStates
             {
                 Icon = new TileReference("tool-icons", 32),
                 Tooltip = "Go Back",
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
             };
 
             var menu_Magic = new FlatToolTray.Tray
