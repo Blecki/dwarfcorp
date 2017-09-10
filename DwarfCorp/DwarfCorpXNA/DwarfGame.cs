@@ -74,6 +74,20 @@ namespace DwarfCorp
 #endif
         public DwarfGame()
         {
+
+            //BoundingBox foo = new BoundingBox(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
+            //string serialized = FileUtils.SerializeBasicJSON(foo);
+            //BoundingBox deserialized = Newtonsoft.Json.JsonConvert.DeserializeObject<BoundingBox>(serialized, new BoxConverter());
+            //string code = ContentPathGenerator.GenerateCode();
+            //Console.Out.Write(code);
+            GameState.Game = this;
+            Content.RootDirectory = "Content";
+            StateManager = new GameStateManager(this);
+            Graphics = new GraphicsDeviceManager(this);
+            Window.Title = "DwarfCorp";
+            Window.AllowUserResizing = false;
+            TextureManager = new TextureManager(Content, GraphicsDevice);
+            GameSettings.Load();
             try
             {
 #if SHARP_RAVEN
@@ -95,20 +109,6 @@ namespace DwarfCorp
             {
                 Console.Error.WriteLine(exception.ToString());
             }
-
-            //BoundingBox foo = new BoundingBox(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
-            //string serialized = FileUtils.SerializeBasicJSON(foo);
-            //BoundingBox deserialized = Newtonsoft.Json.JsonConvert.DeserializeObject<BoundingBox>(serialized, new BoxConverter());
-            //string code = ContentPathGenerator.GenerateCode();
-            //Console.Out.Write(code);
-            GameState.Game = this;
-            Content.RootDirectory = "Content";
-            StateManager = new GameStateManager(this);
-            Graphics = new GraphicsDeviceManager(this);
-            Window.Title = "DwarfCorp";
-            Window.AllowUserResizing = false;
-            TextureManager = new TextureManager(Content, GraphicsDevice);
-            GameSettings.Load();
             Graphics.IsFullScreen = GameSettings.Default.Fullscreen;
             Graphics.PreferredBackBufferWidth = GameSettings.Default.Fullscreen ? GameSettings.Default.ResolutionX : Math.Min(GameSettings.Default.ResolutionX, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width);
             Graphics.PreferredBackBufferHeight = GameSettings.Default.Fullscreen ? GameSettings.Default.ResolutionY : Math.Min(GameSettings.Default.ResolutionY,
