@@ -715,6 +715,7 @@ namespace DwarfCorp
                     var item = CraftLibrary.GetRandomApplicableCraftItem(Faction);
                     if (item != null)
                     {
+                        item.NumRepeats = 1;
                         bool gotAny = true;
                         foreach (var resource in item.RequiredResources)
                         {
@@ -729,7 +730,7 @@ namespace DwarfCorp
                         
                         if (gotAny)
                         {
-                            return new CraftResourceTask(item);
+                            return new CraftResourceTask(item) {IsAutonomous = true, Priority = Task.PriorityType.Low};
                         }
                     }
                 }
