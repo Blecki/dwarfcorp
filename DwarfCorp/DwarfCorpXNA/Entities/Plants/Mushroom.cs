@@ -83,6 +83,12 @@ namespace DwarfCorp
                 });
             }
 
+            var particles = AddChild(new ParticleTrigger("Leaves", Manager, "LeafEmitter",
+    Matrix.Identity, BoundingBoxPos, GetBoundingBox().Extents())
+            {
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_env_bush_harvest_1
+            }) as ParticleTrigger;
+
             AddChild(new Health(Manager.World.ComponentManager, "HP", 30, 0.0f, 30));
             AddChild(new Flammable(Manager.World.ComponentManager, "Flames"));
 

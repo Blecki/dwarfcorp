@@ -226,7 +226,7 @@ namespace DwarfCorp
             Particles = AddChild(new ParticleTrigger("Leaves", componentManager, "LeafEmitter",
                 Matrix.Identity, BoundingBoxPos, GetBoundingBox().Extents())
             {
-                SoundToPlay = ContentPaths.Audio.vegetation_break
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_env_tree_cut_down_1
             }) as ParticleTrigger;
 
 

@@ -139,7 +139,7 @@ namespace DwarfCorp
             AI = Physics.AddChild(new PacingCreatureAI(Manager, "snake AI", Sensors, PlanService)) as CreatureAI;
 
 
-            Attacks = new List<Attack>() {new Attack("Bite", 50.0f, 1.0f, 3.0f, ContentPaths.Audio.hiss, ContentPaths.Effects.claws)};
+            Attacks = new List<Attack>() {new Attack("Bite", 50.0f, 1.0f, 3.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_giant_snake_attack_1), ContentPaths.Effects.bite)};
 
             Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.BoundingBoxPos)) as Inventory;
 
@@ -177,8 +177,16 @@ namespace DwarfCorp
                 TriggerOnDeath = true,
                 TriggerAmount = 1,
                 BoxTriggerTimes = 10,
-                SoundToPlay = ContentPaths.Entities.Dwarf.Audio.dwarfhurt1,
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_oc_giant_snake_hurt_1,
             });
+
+
+            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_giant_snake_hurt_1 };
+            NoiseMaker.Noises["Chirp"] = new List<string>()
+            {
+                ContentPaths.Audio.Oscar.sfx_oc_giant_snake_neutral_1,
+                ContentPaths.Audio.Oscar.sfx_oc_giant_snake_neutral_2
+            };
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
             HasBones = true;

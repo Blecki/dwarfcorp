@@ -76,6 +76,13 @@ namespace DwarfCorp
                 ResourceType = ResourceLibrary.ResourceType.Cactus
             });
 
+
+            var particles = AddChild(new ParticleTrigger("Leaves", Manager, "LeafEmitter",
+                Matrix.Identity, BoundingBoxPos, GetBoundingBox().Extents())
+            {
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_env_bush_harvest_1
+            }) as ParticleTrigger;
+
             Tags.Add("Vegetation");
             Tags.Add("Cactus");
 
@@ -108,6 +115,11 @@ namespace DwarfCorp
                 AddChild(new VoxelListener(Manager, Manager.World.ChunkManager,
                     voxelUnder));
 
+            var particles = AddChild(new ParticleTrigger("Leaves", Manager, "LeafEmitter",
+    Matrix.Identity, BoundingBoxPos, GetBoundingBox().Extents())
+            {
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_env_bush_harvest_1
+            }) as ParticleTrigger;
 
             Tags.Add("Vegetation");
             Tags.Add("Bush");

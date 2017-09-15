@@ -27,7 +27,7 @@ namespace DwarfCorp
         {
             Allies = faction;
             SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32);
-            Weapon = new Attack("BowAttack", 5.0f, 1.0f, 5.0f, SoundSource.Create(ContentPaths.Audio.trap), ContentPaths.Effects.pierce)
+            Weapon = new Attack("BowAttack", 5.0f, 1.0f, 5.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_trap_turret_shoot_1, ContentPaths.Audio.Oscar.sfx_trap_turret_shoot_2), ContentPaths.Effects.pierce)
             {
                 ProjectileType = "Arrow",
                 Mode = Attack.AttackMode.Ranged,
@@ -37,7 +37,7 @@ namespace DwarfCorp
             AddChild(new ParticleTrigger("explode", Manager, "DeathParticles",
             Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
             {
-                SoundToPlay = ""
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_trap_turret_shoot_1
             });
 
             AddChild(new Health(Manager, "health", 50.0f, 0.0f, 50.0f));
@@ -50,9 +50,9 @@ namespace DwarfCorp
 
             Sensor.OnEnemySensed += Sensor_OnEnemySensed;
             BaseSprite = AddChild(new Fixture(Manager, Vector3.Zero, spriteSheet, new Point(2, 7))) as Fixture;
-            BaseSprite.GetComponent<Sprite>().OrientationType = Sprite.OrientMode.YAxis;
+            BaseSprite.GetComponent<SimpleSprite>().OrientationType = SimpleSprite.OrientMode.YAxis;
             TurretSprite = AddChild(new Fixture(Manager, Vector3.Up * 0.25f, spriteSheet, new Point(1, 7))) as Fixture;
-            TurretSprite.GetComponent<Sprite>().OrientationType = Sprite.OrientMode.Fixed;
+            TurretSprite.GetComponent<SimpleSprite>().OrientationType = SimpleSprite.OrientMode.Fixed;
             SetTurretAngle(0.0f);
             AddChild(new Shadow(Manager));
         }
@@ -79,6 +79,7 @@ namespace DwarfCorp
             Matrix turretTransform = Matrix.CreateRotationX(1.57f) * Matrix.CreateRotationY((radians));
             turretTransform.Translation = Vector3.Up * 0.25f;
             TurretSprite.LocalTransform = turretTransform;
+            PropogateTransforms();
         }
 
         new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
@@ -88,13 +89,14 @@ namespace DwarfCorp
                 
                 Weapon.RechargeTimer.Update(gameTime);
 
-                SetTurretAngle((float) Math.Atan2(offset.X, offset.Z) + (float)Math.PI * 0.5f);
+                SetTurretAngle((float) Math.Atan2(offset.X, offset.Z) - (float)Math.PI * 0.5f);
 
                 if (Weapon.RechargeTimer.HasTriggered)
                 {
                     closestCreature.Kill(this);
                     Weapon.LaunchProjectile(Position + Vector3.Up * 0.5f, closestCreature.Position, closestCreature.Physics);
                     Weapon.PlayNoise(Position);
+                    Weapon.RechargeTimer.Reset();
                 }
             }
             base.Update(gameTime, chunks, camera);
