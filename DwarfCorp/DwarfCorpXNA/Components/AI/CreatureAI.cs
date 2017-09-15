@@ -626,7 +626,7 @@ namespace DwarfCorp
         /// <summary> The Act that the creature performs when its told to "wander" (when it has nothing to do) </summary>
         public virtual Act ActOnWander()
         {
-            return new WanderAct(this, 2, 0.5f + MathFunctions.Rand(-0.25f, 0.25f), 1.0f);
+            return new WanderAct(this, 5, 1.5f + MathFunctions.Rand(-0.25f, 0.25f), 1.0f);
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-﻿// SpriteDrawCommand.cs
+// SpriteDrawCommand.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -84,7 +84,7 @@ namespace DwarfCorp
             }
 
             Vector3 screenCoord = viewport.Project(WorldPosition, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
-            Vector3 scaleCoord = viewport.Project(WorldPosition + camera.UpVector, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
+            Vector3 scaleCoord = viewport.Project(WorldPosition + camera.ViewMatrix.Up, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
             if (viewport.Bounds.Contains((int)screenCoord.X, (int)screenCoord.Y) && screenCoord.Z < 0.999f && Image != null)
             {
                 float perspectiveScale = 1.0f / 32.0f * (scaleCoord - screenCoord).Length();

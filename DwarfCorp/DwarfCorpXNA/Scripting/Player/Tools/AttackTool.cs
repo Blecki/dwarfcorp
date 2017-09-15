@@ -105,10 +105,11 @@ namespace DwarfCorp
             drawColor.R = (byte)(Math.Min(drawColor.R * alpha + 50, 255));
             drawColor.G = (byte)(Math.Min(drawColor.G * alpha + 50, 255));
             drawColor.B = (byte)(Math.Min(drawColor.B * alpha + 50, 255));
-
+            NamedImageFrame frame = new NamedImageFrame("newgui/pointers2", 32, 2, 0);
             foreach (BoundingBox box in Player.Faction.AttackDesignations.Select(d => d.GetBoundingBox()))
             {
                 Drawer3D.DrawBox(box, drawColor, 0.05f * alpha + 0.05f, true);
+                Drawer2D.DrawSprite(frame, box.Center(), Vector2.One, Vector2.Zero, new Color(255, 255, 255, 100));
             }
         }
 

@@ -79,6 +79,8 @@ namespace DwarfCorp
             Vector3 oldPosition = Agent.Position;
             bool firstIter = true;
             Creature.Controller.Reset();
+            WanderTime.Reset();
+            TurnTime.Reset();
             while(!WanderTime.HasTriggered)
             {
                 Creature.OverrideCharacterMode = false;
@@ -107,7 +109,6 @@ namespace DwarfCorp
                     Creature.Physics.Velocity *= 0.0f;
                     Creature.CurrentCharacterMode = CharacterMode.Idle;
                     yield return Status.Running;
-                    break;
                 }
                 else
                 {

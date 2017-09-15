@@ -141,6 +141,7 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
+            NamedImageFrame frame = new NamedImageFrame("newgui/pointers2", 32, 1, 0);
             foreach (KeyValuePair<ulong, BuildOrder> kvp in Player.Faction.DigDesignations)
             {
                 var v = kvp.Value.Vox;
@@ -162,6 +163,7 @@ namespace DwarfCorp
                 Drawer3D.DrawBox(box, drawColor, 0.05f, true);
                  */
                 Drawer3D.HighlightVoxel(v, drawColor);
+                Drawer2D.DrawSprite(frame, v.WorldPosition + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
             }
         }
 

@@ -502,6 +502,7 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
+            NamedImageFrame frame = new NamedImageFrame("newgui/pointers2", 32, 4, 1);
             switch (Mode)
             {
                 case FarmMode.Tilling:
@@ -518,6 +519,7 @@ namespace DwarfCorp
                         if (!tile.IsTilled())
                         {
                             Drawer3D.HighlightVoxel(tile.Vox, Color.LimeGreen);
+                            Drawer2D.DrawSprite(frame, tile.Vox.WorldPosition + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
                         }
                         else
                         {
@@ -533,6 +535,7 @@ namespace DwarfCorp
                         if (tile.IsTilled() && !tile.PlantExists() && tile.Farmer == null)
                         {
                             Drawer3D.HighlightVoxel(tile.Vox, Color.LimeGreen);
+                            Drawer2D.DrawSprite(frame, tile.Vox.WorldPosition + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
                         }
                         else
                         {
@@ -555,6 +558,7 @@ namespace DwarfCorp
                     foreach (BoundingBox box in Player.Faction.ChopDesignations.Select(d => d.GetBoundingBox()))
                     {
                         Drawer3D.DrawBox(box, drawColor, 0.05f*alpha + 0.05f, true);
+                        Drawer2D.DrawSprite(frame, box.Center(), Vector2.One, Vector2.Zero, new Color(255, 255, 255, 100));
                     }
                     break;
                 }
@@ -569,6 +573,7 @@ namespace DwarfCorp
                     foreach (BoundingBox box in Player.Faction.WrangleDesignations.Select(d => d.GetBoundingBox()))
                     {
                         Drawer3D.DrawBox(box, drawColor, 0.05f * alpha + 0.05f, true);
+                        Drawer2D.DrawSprite(frame, box.Center(), Vector2.One, Vector2.Zero, new Color(255, 255, 255, 100));
                     }
                     break;
                 }

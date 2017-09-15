@@ -863,8 +863,8 @@ namespace DwarfCorp.GameStates
             var icon_BuildRoom = new FlatToolTray.Icon
             {
                 TextColor = Vector4.One,
-                Text = "Room",
-                Tooltip = "Build rooms",
+                Text = "Zone",
+                Tooltip = "Designate zones/areas",
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 KeepChildVisible = true,
