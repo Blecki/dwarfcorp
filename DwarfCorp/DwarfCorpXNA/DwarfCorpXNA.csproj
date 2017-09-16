@@ -176,6 +176,8 @@
     <Compile Include="Components\Graphics\Mesh.cs" />
     <Compile Include="Components\Graphics\OrientedAnimation.cs" />
     <Compile Include="Components\Graphics\SimpleSprite.cs" />
+    <Compile Include="ContextCommands\ChopCommand.cs" />
+    <Compile Include="ContextCommands\ContextCommand.cs" />
     <Compile Include="Graphics\Instancing\InstanceRenderData.cs" />
     <Compile Include="Graphics\Instancing\InstanceRenderer.cs" />
     <Compile Include="Graphics\Instancing\NewInstanceData.cs" />

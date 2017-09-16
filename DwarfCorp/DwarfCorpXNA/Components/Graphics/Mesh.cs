@@ -72,7 +72,7 @@ namespace DwarfCorp
 
         public Mesh()
         {
-            
+
         }
 
         public Mesh(ComponentManager Manager, string name, Matrix localTransform, string modelType, bool addToCollisionManager) :
@@ -89,22 +89,19 @@ namespace DwarfCorp
 
         new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            bool saveHasMoved = HasMoved || ParentMoved;
+
             base.Update(gameTime, chunks, camera);
 
-            if(Instance != null  && IsVisible && (HasMoved || firstIter || Instance.Color != Tint))
+            if (Instance != null && IsVisible && (saveHasMoved || firstIter || Instance.Color != Tint))
             {
                 Instance.Color = Tint;
                 Instance.Transform = GlobalTransform;
                 Instance.SelectionBufferColor = GetGlobalIDColor();
                 firstIter = false;
             }
-
-            if(checkHeight)
-            {
-                checkHeight = false;
-            }
-
-            if(IsVisible != instanceVisible)
+            
+            if (IsVisible != instanceVisible)
             {
                 SetVisible(IsVisible);
             }
@@ -118,13 +115,13 @@ namespace DwarfCorp
 
         public void SetVisible(bool value)
         {
-            if(Instance != null)
+            if (Instance != null)
             {
-                if(value && !instanceVisible)
+                if (value && !instanceVisible)
                 {
                     Manager.World.NewInstanceManager.AddInstance(Instance);
                 }
-                else if(!value && instanceVisible)
+                else if (!value && instanceVisible)
                 {
                     Manager.World.NewInstanceManager.RemoveInstance(Instance);
                 }
@@ -132,15 +129,5 @@ namespace DwarfCorp
 
             instanceVisible = value;
         }
-
-        public override void ReceiveMessageRecursive(Message messageToReceive)
-        {
-            if(messageToReceive.MessageString == "Chunk Modified")
-            {
-                checkHeight = true;
-            }
-            base.ReceiveMessageRecursive(messageToReceive);
-        }
     }
-
 }

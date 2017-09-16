@@ -40,6 +40,8 @@ namespace DwarfCorp.GameStates
             set { World.Paused = value; }
         }
 
+        private List<ContextCommands.ContextCommand> ContextCommands;
+
         private Gui.Widget MoneyLabel;
         private Gui.Widget LevelLabel;
         private Gui.Widgets.FlatToolTray.RootTray BottomToolBar;
@@ -57,6 +59,7 @@ namespace DwarfCorp.GameStates
         private FramedIcon EconomyIcon;
         private Timer AutoSaveTimer;
         private CollapsableFrame SelectedEmployeeInfo;
+        private Widget ContextMenu;
 
         private class ToolbarItem
         {
@@ -202,6 +205,10 @@ namespace DwarfCorp.GameStates
             }
             World.Unpause();
             AutoSaveTimer = new Timer(GameSettings.Default.AutoSaveTimeMinutes * 60.0f, false, Timer.TimerMode.Game);
+
+            ContextCommands = new List<DwarfCorp.ContextCommands.ContextCommand>();
+            ContextCommands.Add(new ContextCommands.ChopCommand());
+
             base.OnEnter();
         }
 
@@ -247,6 +254,55 @@ namespace DwarfCorp.GameStates
                 if (@event == Gui.InputEvents.MouseClick) 
                 {
                     GodMenu.CollapseTrays();
+                    if (ContextMenu != null)
+                    {
+                        ContextMenu.Close();
+                        ContextMenu = null;
+                    }
+
+                    /*
+                    if (args.MouseButton == 1) // Right mouse click.
+                    {
+                        var bodiesClicked = World.ComponentManager.SelectRootBodiesOnScreen(
+                            new Rectangle(args.X, args.Y, 1, 1), World.Camera);
+
+                        if (bodiesClicked.Count > 0)
+                        {
+                            var contextBody = bodiesClicked[0];
+                            var availableCommands = ContextCommands.Where(c => c.CanBeAppliedTo(contextBody, World));
+
+                            if (availableCommands.Count() > 0)
+                            {
+                                // Show context menu.
+                                ContextMenu = GuiRoot.ConstructWidget(new Widget
+                                {
+                                    Rect = new Rectangle(0, 0, 1, 0),
+                                    Transparent = true
+                                });
+
+                                var degrees = (Math.PI * 2) / availableCommands.Count();
+                                double pos = 0.0f;
+
+                                foreach (var command in availableCommands)
+                                {
+                                    var buttonOffset = Vector2.Transform(Vector2.UnitY,
+                                        Matrix.CreateRotationZ((float)pos));
+                                    var buttonCenter = new Vector2(args.X, args.Y) + (buttonOffset * 32);
+                                    var iconSheet = GuiRoot.GetTileSheet(command.Icon.Sheet);
+                                    ContextMenu.AddChild(new Widget
+                                    {
+                                        Rect = new Rectangle(
+                                            (int)(buttonCenter.X - (iconSheet.TileWidth / 2)),
+                                            (int)(buttonCenter.Y - (iconSheet.TileHeight / 2)),
+                                        iconSheet.TileWidth, iconSheet.TileHeight),
+                                        Background = command.Icon
+                                    });
+                                }
+
+                                GuiRoot.ShowDialog(ContextMenu);
+                            }
+                        }
+                    }*/
                 }
             });
 

@@ -104,16 +104,14 @@ namespace DwarfCorp
         public Matrix LocalTransform
         {
             get { return localTransform; }
-
             set
             {
                 localTransform = value;
                 HasMoved = true;
 
                 if ((Position - thresholdPos).LengthSquared() > 1.0)
-                {
                     ExceedsMovementThreshold = true;
-                }
+
                 propogateTransforms = true;
             }
         }
@@ -157,17 +155,15 @@ namespace DwarfCorp
             get { return hasMoved; }
             set
             {
-                if (hasMoved != value)
-                {
-                    hasMoved = value;
+                hasMoved = value;
 
+                if (value)
                     foreach (Body child in Children.OfType<Body>())
-                    {
-                        (child).HasMoved = value;
-                    }
-                }
+                        child.ParentMoved = true;
             }
         }
+
+        public bool ParentMoved = false;
 
         public uint GetID()
         {
@@ -309,6 +305,9 @@ namespace DwarfCorp
 
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            if (ParentMoved) HasMoved = true;
+            ParentMoved = false;
+
             if(AnimationQueue.Count > 0)
             {
                 HasMoved = true;
@@ -322,9 +321,9 @@ namespace DwarfCorp
                     AnimationQueue.RemoveAt(0);
                 }
             }
-            if (firstIter || propogateTransforms)
+
+            if (firstIter || propogateTransforms || HasMoved)
             {
-                UpdateTransform();
                 PropogateTransforms();
                 firstIter = false;
                 propogateTransforms = false;
@@ -365,9 +364,7 @@ namespace DwarfCorp
         {
             UpdateTransform();
             foreach (var child in Children.OfType<Body>())
-            {
                 child.PropogateTransforms();
-            }
         }
 
 

@@ -179,21 +179,20 @@ namespace DwarfCorp
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
             SeedlingFrame = new Point(0, 0);
             HurtTimer = new Timer(1.0f, false);
-            ComponentManager componentManager = Manager.World.ComponentManager;
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position;
             LocalTransform = matrix;
+
             var meshTransform = GetComponent<Mesh>().LocalTransform;
             meshTransform = meshTransform*Matrix.CreateTranslation(0.5f, 0.0f, 0.5f);
             GetComponent<Mesh>().LocalTransform = meshTransform;
-            AddChild(new Health(componentManager, "HP", 100.0f * treeSize, 0.0f, 100.0f * treeSize));
 
-            AddChild(new Flammable(componentManager, "Flames"));
+            AddChild(new Health(Manager, "HP", 100.0f * treeSize, 0.0f, 100.0f * treeSize));
+            AddChild(new Flammable(Manager, "Flames"));
 
             Tags.Add("Vegetation");
             Tags.Add("EmitsWood");
 
-            //new MinimapIcon(this, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 1, 0));
             var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                 manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(position)));
@@ -201,10 +200,8 @@ namespace DwarfCorp
                 AddChild(new VoxelListener(manager, manager.World.ChunkManager,
                     voxelUnder));
 
-
-            Inventory inventory = AddChild(new Inventory(componentManager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)) as Inventory;
-
-
+            Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)) as Inventory;
+            
             for (int i = 0; i < treeSize * 10; i++)
             {
                 inventory.Resources.Add(new Inventory.InventoryItem()
@@ -223,7 +220,7 @@ namespace DwarfCorp
                 });
             }
 
-            Particles = AddChild(new ParticleTrigger("Leaves", componentManager, "LeafEmitter",
+            Particles = AddChild(new ParticleTrigger("Leaves", Manager, "LeafEmitter",
                 Matrix.Identity, BoundingBoxPos, GetBoundingBox().Extents())
             {
                 SoundToPlay = ContentPaths.Audio.vegetation_break
