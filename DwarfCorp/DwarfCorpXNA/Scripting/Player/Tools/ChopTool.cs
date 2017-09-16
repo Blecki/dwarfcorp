@@ -68,7 +68,16 @@ namespace DwarfCorp
 
         public override void OnMouseOver(IEnumerable<Body> bodies)
         {
-            DefaultOnMouseOver(bodies);
+            var treesPicked = bodies.Where(c => c.Tags.Contains("Vegetation"));
+
+            if (treesPicked.Any())
+            {
+                Player.World.ShowToolPopup("Click to harvest this plant. Right click to cancel.");
+            }
+            else
+            {
+                DefaultOnMouseOver(bodies);   
+            }
         }
 
         public override void Update(DwarfGame game, DwarfTime time)

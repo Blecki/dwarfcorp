@@ -72,7 +72,27 @@ namespace DwarfCorp
 
         public override void OnMouseOver(IEnumerable<Body> bodies)
         {
-            DefaultOnMouseOver(bodies);
+            bool shown = false;
+            foreach (Body other in bodies)
+            {
+                var creature = other.EnumerateAll().OfType<Creature>().FirstOrDefault();
+                if (creature == null)
+                {
+                    continue;
+                }
+
+                if (Player.World.Diplomacy.GetPolitics(creature.Faction, Player.Faction).GetCurrentRelationship() ==
+                    Relationship.Loving)
+                {
+                    Player.Faction.World.ShowToolPopup("We refuse to attack allies.");
+                    shown = true;
+                    continue;
+                }
+                Player.Faction.World.ShowToolPopup("Click to attack this " + creature.Species);
+                shown = true;
+            }
+            if (!shown)
+                DefaultOnMouseOver(bodies);
         }
 
         public override void Update(DwarfGame game, DwarfTime time)
@@ -98,7 +118,6 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-
             Color drawColor = DesignationColor;
 
             float alpha = (float)Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * GlowRate));
@@ -126,6 +145,7 @@ namespace DwarfCorp
 
                 if (Player.World.Diplomacy.GetPolitics(creature.Faction, Player.Faction).GetCurrentRelationship() == Relationship.Loving)
                 {
+                    Player.Faction.World.ShowToolPopup("We refuse to attack allies.");
                     continue;
                 }
 
@@ -140,12 +160,13 @@ namespace DwarfCorp
                         {
                             minion.Tasks.Add(new KillEntityTask(other, KillEntityTask.KillType.Attack));
                         }
-
+                        Player.Faction.World.ShowToolPopup("Will attack this " + creature.Species);
                         OnConfirm(Player.Faction.SelectedMinions);
                     }
                 }
                 else if (button == InputManager.MouseButton.Right)
                 {
+                    Player.Faction.World.ShowToolPopup("Attack cancelled for " + creature.Species);
                     if (Player.Faction.AttackDesignations.Contains(other))
                     {
                         Player.Faction.AttackDesignations.Remove(other);

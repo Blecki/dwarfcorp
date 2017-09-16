@@ -435,7 +435,7 @@ namespace DwarfCorp
 
 
             // Heal thyself
-            if (Status.Health.IsDissatisfied())
+            if (Status.Health.IsDissatisfied() && Stats.CanSleep)
             {
                 Task toReturn = new GetHealedTask();
                 toReturn.SetupScript(Creature);
@@ -460,14 +460,6 @@ namespace DwarfCorp
                 if (!Tasks.Contains(toReturn))
                     Tasks.Add(toReturn);
             }
-
-            /*
-            if (CurrentAct != null && CurrentAct.IsCanceled)
-            {
-                CurrentTask.Script = null;
-                CurrentTask = null;
-            }
-             */
 
             // Update the current task.
             if (CurrentTask != null && CurrentAct != null)
