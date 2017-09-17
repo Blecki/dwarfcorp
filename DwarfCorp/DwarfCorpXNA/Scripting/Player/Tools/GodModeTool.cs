@@ -106,7 +106,14 @@ namespace DwarfCorp
                 {
                     if (vox.IsEmpty)
                     {
-                        EntityFactory.CreateEntity<Body>(type, vox.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f));
+                        Vector3 offset = Vector3.Zero;
+                        // Evil hack to spawn plants above ground!
+                        if (type == "Pine Tree" || type == "Palm Tree" || type == "Cactus" || type == "Wheat" ||
+                            type == "Mushroom")
+                        {
+                            offset += Vector3.Up;
+                        }
+                        EntityFactory.CreateEntity<Body>(type, vox.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f) + offset);
                     }
                 }
             }

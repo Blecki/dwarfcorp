@@ -232,6 +232,7 @@ namespace DwarfCorp
 
             AddToCollisionManager = true;
             CollisionType = CollisionManager.CollisionType.Static;
+            PropogateTransforms();
         }
 
         public override void ReceiveMessageRecursive(Message messageToReceive)

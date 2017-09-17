@@ -48,7 +48,7 @@ namespace DwarfCorp
     {
         public LookInterestingTask()
         {
-            Name = "LookInteresting";
+            Name = "Look Interesting";
             Priority = PriorityType.Eventually;
         }
 
@@ -57,9 +57,37 @@ namespace DwarfCorp
             return new LookInterestingTask();
         }
 
+
         public override Act CreateScript(Creature creature)
         {
-            return new WanderAct(creature.AI, 2, 0.5f, 1.0f);
+            if (!creature.Faction.Race.IsIntelligent)
+            {
+                return creature.AI.ActOnWander();
+            }
+            
+            var rooms = creature.Faction.GetRooms();
+            var items = creature.Faction.OwnedObjects;
+            var minions = creature.Faction.Minions;
+
+            bool goToRoom = MathFunctions.RandEvent(0.3f);
+            if (goToRoom && rooms.Count > 0)
+            {
+                return new GoToZoneAct(creature.AI, Datastructures.SelectRandom(rooms));
+            }
+
+            bool goToItem = MathFunctions.RandEvent(0.3f);
+            if (goToItem && items.Count > 0)
+            {
+                return new GoToEntityAct(Datastructures.SelectRandom(items), creature.AI);
+            }
+
+            bool goToMinion = MathFunctions.RandEvent(0.3f);
+            if (goToMinion && minions.Count > 1)
+            {
+                return new GoToEntityAct(Datastructures.SelectRandom(minions.Select(minion => minion.Physics)), creature.AI);
+            }
+
+            return creature.AI.ActOnWander();
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)

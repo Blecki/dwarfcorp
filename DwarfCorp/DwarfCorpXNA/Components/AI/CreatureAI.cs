@@ -778,6 +778,7 @@ namespace DwarfCorp
                     };
                 }
 
+                /*
                 if (IdleTimer.HasTriggered)
                 {
                     IdleTimer.Reset(IdleTimer.TargetTimeSeconds);
@@ -787,6 +788,7 @@ namespace DwarfCorp
                     };
                 }
                 return null;
+                 */
             }
 
             // If we have no more build orders, look for gather orders
@@ -835,7 +837,7 @@ namespace DwarfCorp
                 return new BuildVoxelsTask(voxels);
             }
 
-            return null;
+            return new LookInterestingTask();
         }
 
 
