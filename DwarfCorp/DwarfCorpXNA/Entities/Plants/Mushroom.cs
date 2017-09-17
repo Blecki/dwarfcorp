@@ -95,6 +95,7 @@ namespace DwarfCorp
             Tags.Add("Mushroom");
             Tags.Add("Vegetation");
             CollisionType = CollisionManager.CollisionType.Static;
+            PropogateTransforms();
         }
     }
 }

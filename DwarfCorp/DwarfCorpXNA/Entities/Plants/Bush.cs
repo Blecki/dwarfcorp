@@ -88,6 +88,7 @@ namespace DwarfCorp
 
             AddToCollisionManager = true;
             CollisionType = CollisionManager.CollisionType.Static;
+            PropogateTransforms();
         }
     }
 
@@ -134,6 +135,7 @@ namespace DwarfCorp
 
             AddToCollisionManager = true;
             CollisionType = CollisionManager.CollisionType.Static;
+            PropogateTransforms();
         }
     }
 }

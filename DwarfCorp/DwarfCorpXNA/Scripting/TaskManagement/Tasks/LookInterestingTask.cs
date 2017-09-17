@@ -57,10 +57,32 @@ namespace DwarfCorp
             return new LookInterestingTask();
         }
 
+        public IEnumerable<Act.Status> ConverseFriends(CreatureAI c)
+        {
+            foreach (CreatureAI minion in c.Faction.Minions)
+            {
+                if (minion == c || minion.Creature.IsAsleep)
+                    continue;
+
+                float dist = (minion.Position - c.Position).Length();
+
+                if (dist < 2 && MathFunctions.Rand(0, 1) < 0.1f)
+                {
+                    c.Converse(minion);
+                    Timer converseTimer = new Timer(5.0f, true);
+                    while (!converseTimer.HasTriggered)
+                    {
+                        converseTimer.Update(DwarfTime.LastTime);
+                        yield return Act.Status.Running;
+                    }
+                }
+            }
+            yield return Act.Status.Success;
+        }
 
         public override Act CreateScript(Creature creature)
         {
-            if (!creature.Faction.Race.IsIntelligent)
+            if (!creature.Faction.Race.IsIntelligent || !creature.IsOnGround)
             {
                 return creature.AI.ActOnWander();
             }
@@ -69,19 +91,19 @@ namespace DwarfCorp
             var items = creature.Faction.OwnedObjects;
             var minions = creature.Faction.Minions;
 
-            bool goToRoom = MathFunctions.RandEvent(0.3f);
+            bool goToRoom = MathFunctions.RandEvent(0.2f);
             if (goToRoom && rooms.Count > 0)
             {
                 return new GoToZoneAct(creature.AI, Datastructures.SelectRandom(rooms));
             }
 
-            bool goToItem = MathFunctions.RandEvent(0.3f);
+            bool goToItem = MathFunctions.RandEvent(0.2f);
             if (goToItem && items.Count > 0)
             {
-                return new GoToEntityAct(Datastructures.SelectRandom(items), creature.AI);
+                return new GoToEntityAct(Datastructures.SelectRandom(items), creature.AI) & new Wrap(() => ConverseFriends(creature.AI));
             }
 
-            bool goToMinion = MathFunctions.RandEvent(0.3f);
+            bool goToMinion = MathFunctions.RandEvent(0.2f);
             if (goToMinion && minions.Count > 1)
             {
                 return new GoToEntityAct(Datastructures.SelectRandom(minions.Select(minion => minion.Physics)), creature.AI);

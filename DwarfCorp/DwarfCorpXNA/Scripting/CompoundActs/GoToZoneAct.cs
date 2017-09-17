@@ -1,4 +1,4 @@
-﻿// GoToZoneAct.cs
+// GoToZoneAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -31,6 +31,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
@@ -64,7 +65,7 @@ namespace DwarfCorp
         {
             if (Tree == null)
             {
-                var voxel = Destination.GetNearestVoxel(Agent.Position);
+                var voxel = Destination.GetNearestVoxel(Destination.GetBoundingBox().Center());
                 Tree = new GoToVoxelAct(voxel, PlanAct.PlanType.Adjacent, Agent);
                 Tree.Initialize();
             }

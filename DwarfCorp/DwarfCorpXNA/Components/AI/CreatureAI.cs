@@ -749,7 +749,7 @@ namespace DwarfCorp
                 }
 
                 // Find a room to train in, if applicable.
-                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack) && MathFunctions.RandEvent(0.0005f))
+                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack) && MathFunctions.RandEvent(0.01f))
                 {
                     Body closestTraining = Faction.FindNearestItemWithTags("Train", Position, true);
 
