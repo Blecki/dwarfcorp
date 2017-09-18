@@ -74,6 +74,11 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature creature)
         {
+            var otherCreature = EntityToKill.GetRoot().GetComponent<Creature>();
+            if (otherCreature != null && !creature.AI.FightOrFlight(otherCreature.AI))
+            {
+                return new FleeEntityAct(creature.AI) {Entity = EntityToKill, PathLength = 5};
+            }
             return new KillEntityAct(EntityToKill, creature.AI, Mode);
         }
 

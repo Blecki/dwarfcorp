@@ -346,6 +346,7 @@
     <Compile Include="Gui\Widgets\GoalInfo.cs" />
     <Compile Include="Gui\Widgets\GoalPanel.cs" />
     <Compile Include="Gui\Widgets\TutorialPopup.cs" />
+    <Compile Include="Scripting\CompoundActs\FleeEntityAct.cs" />
     <Compile Include="Scripting\CompoundActs\GetMoneyAct.cs" />
     <Compile Include="Scripting\CompoundActs\StockMoneyAct.cs" />
     <Compile Include="Scripting\LeafActs\PutMoneyInZoneAct.cs" />
