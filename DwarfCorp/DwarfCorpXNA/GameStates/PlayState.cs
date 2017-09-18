@@ -1865,6 +1865,7 @@ namespace DwarfCorp.GameStates
             }
             else if (key == Keys.Escape)
             {
+                BrushTray.Select(0);
                 if (MainMenu.Hidden)
                 {
                     (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(0);
