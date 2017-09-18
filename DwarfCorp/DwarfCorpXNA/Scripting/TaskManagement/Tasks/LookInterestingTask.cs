@@ -80,8 +80,18 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
+        public override bool IsFeasible(Creature agent)
+        {
+            return !agent.AI.IsPosessed;
+        }
+
         public override Act CreateScript(Creature creature)
         {
+            if (creature.AI.IsPosessed)
+            {
+                return null;
+            }
+
             if (!creature.Faction.Race.IsIntelligent || !creature.IsOnGround)
             {
                 return creature.AI.ActOnWander();

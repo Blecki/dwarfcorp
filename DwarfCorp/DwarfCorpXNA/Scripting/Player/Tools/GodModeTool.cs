@@ -114,7 +114,8 @@ namespace DwarfCorp
                             offset += Vector3.Up;
                         }
                         var body = EntityFactory.CreateEntity<Body>(type, vox.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f) + offset);
-                        body.PropogateTransforms();
+                        if (body != null)
+                            body.PropogateTransforms();
                     }
                 }
             }

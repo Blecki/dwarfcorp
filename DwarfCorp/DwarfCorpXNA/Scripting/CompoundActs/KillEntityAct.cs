@@ -52,34 +52,27 @@ namespace DwarfCorp
             PathExists = false;
         }
 
-        public IEnumerable<Act.Status> Verify()
+        public bool Verify()
         {
-            while (true)
+            switch (Mode)
             {
-                switch (Mode)
+                case KillEntityTask.KillType.Auto:
                 {
-                    case KillEntityTask.KillType.Auto:
-                    {
-                        if (Entity != null && !Entity.IsDead) yield return Act.Status.Running;
-                        else yield return Act.Status.Fail;
-                        break;
-                    }
-                    case KillEntityTask.KillType.Attack:
-                    {
-                        if (Entity != null && !Entity.IsDead && Creature.Faction.AttackDesignations.Contains(Entity))
-                            yield return Act.Status.Running;
-                        else yield return Act.Status.Fail;
-                        break;
-                    }
-                    case KillEntityTask.KillType.Chop:
-                    {
-                        if (Entity != null && !Entity.IsDead && Creature.Faction.ChopDesignations.Contains(Entity))
-                            yield return Act.Status.Running;
-                        else yield return Act.Status.Fail;
-                        break;
-                    }
+                    return Entity != null && !Entity.IsDead;
+                    break;
+                }
+                case KillEntityTask.KillType.Attack:
+                {
+                    return Entity != null && !Entity.IsDead && Creature.Faction.AttackDesignations.Contains(Entity);
+                    break;
+                }
+                case KillEntityTask.KillType.Chop:
+                {
+                    return Entity != null && !Entity.IsDead && Creature.Faction.ChopDesignations.Contains(Entity);
+                    break;
                 }
             }
+            return false;
         }
 
         public IEnumerable<Act.Status> OnAttackEnd(CreatureAI creature)
@@ -105,31 +98,28 @@ namespace DwarfCorp
             if (creature.Movement.IsSessile)
             {
                 Tree =
-                    new Parallel(
+                    new Domain(Verify,
                         new Sequence
                         (
                             new MeleeAct(Agent, entity)
-                        ) | new Wrap(() => OnAttackEnd(creature)),
-                        new Wrap(Verify)
+                        ) | new Wrap(() => OnAttackEnd(creature))
                         );
             }
             else
             {
                 Tree =
-                   new Parallel(
-                       new Sequence
-                       (
-                           new GoToEntityAct(entity, creature)
-                           {
-                               MovingTarget = mode != KillEntityTask.KillType.Chop,
-                               PlanType = planType,
-                               Radius = radius
-                           } | new Wrap(() => OnAttackEnd(creature)),
-                           new MeleeAct(Agent, entity)
-                       ),
-                       new Wrap(Verify)
-                       );   
-                        }
+                    new Domain(Verify, new Sequence
+                        (
+                        new GoToEntityAct(entity, creature)
+                        {
+                            MovingTarget = mode != KillEntityTask.KillType.Chop,
+                            PlanType = planType,
+                            Radius = radius
+                        } | new Wrap(() => OnAttackEnd(creature)),
+                        new MeleeAct(Agent, entity)
+                        ));
+
+            }
         }
     }
 

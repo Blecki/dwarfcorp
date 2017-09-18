@@ -69,7 +69,6 @@ namespace DwarfCorp
             ClosedTransform = LocalTransform;
             AddToCollisionManager = true;
             CollisionType = CollisionManager.CollisionType.Static;
-
             AddChild(new Health(manager, "Health", hp, 0.0f, hp));
         }
 
@@ -78,7 +77,7 @@ namespace DwarfCorp
             base.CreateCosmeticChildren(manager);
 
             GetComponent<SimpleSprite>().OrientationType = SimpleSprite.OrientMode.Fixed;
-            GetComponent<SimpleSprite>().LocalTransform = Matrix.CreateRotationY(0.5f * (float)Math.PI);
+            GetComponent<SimpleSprite>().LocalTransform = Matrix.CreateScale(new Vector3(-1.0f, 1.0f, 1.0f)) * Matrix.CreateRotationY(0.5f * (float)Math.PI);
         }
 
         public Matrix CreateHingeTransform(float angle)
