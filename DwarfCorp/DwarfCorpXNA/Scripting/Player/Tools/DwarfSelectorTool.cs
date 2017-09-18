@@ -61,7 +61,7 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
-            Player.VoxSelector.Brush = VoxelBrush.Box;
+
         }
 
         public override void OnEnd()
