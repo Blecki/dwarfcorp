@@ -109,6 +109,12 @@ namespace DwarfCorp
                 return new GoToEntityAct(Datastructures.SelectRandom(minions.Select(minion => minion.Physics)), creature.AI);
             }
 
+            bool getDrink = MathFunctions.RandEvent(0.0005f);
+            if (getDrink && creature.Faction.HasResources(new List<Quantitiy<Resource.ResourceTags>>(){new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Alcohol)}))
+            {
+                return new FindAndEatFoodAct(creature.AI) { FoodTag = Resource.ResourceTags.Alcohol, FallbackTag = Resource.ResourceTags.Alcohol};
+            }
+
             return creature.AI.ActOnWander();
         }
 
