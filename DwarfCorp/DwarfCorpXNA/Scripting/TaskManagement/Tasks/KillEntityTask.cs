@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
@@ -77,6 +78,8 @@ namespace DwarfCorp
             var otherCreature = EntityToKill.GetRoot().GetComponent<Creature>();
             if (otherCreature != null && !creature.AI.FightOrFlight(otherCreature.AI))
             {
+                Name = "Flee Entity: " + EntityToKill.Name + " " + EntityToKill.GlobalID;
+                IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.Exclaim, creature.AI.Position, 1.0f, 1.0f, Vector2.Zero);
                 return new FleeEntityAct(creature.AI) {Entity = EntityToKill, PathLength = 5};
             }
             return new KillEntityAct(EntityToKill, creature.AI, Mode);

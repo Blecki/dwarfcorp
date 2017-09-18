@@ -1271,7 +1271,7 @@ namespace DwarfCorp
                 fear += creature.Creature.Attacks[0].DamageAmount / Creature.Hp;
             }
 
-            fear = Math.Max(fear, 0.99f);
+            fear = Math.Min(fear, 0.99f);
             return MathFunctions.RandEvent(1.0f - fear);
         }
     }
