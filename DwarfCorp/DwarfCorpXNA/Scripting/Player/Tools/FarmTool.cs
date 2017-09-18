@@ -260,7 +260,10 @@ namespace DwarfCorp
                             foreach (FarmTile tile in FarmTiles)
                             {
                                 if (tile.Vox.Equals(voxel))
+                                { 
                                     tile.IsCanceled = true;
+                                    tile.Farmer = null;
+                                }
                             }
                             FarmTiles.RemoveAll(tile => tile.Vox.Equals(voxel));
                         }
