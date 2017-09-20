@@ -153,7 +153,11 @@
       {
         "Name": "White Rabbit",
         "SpawnProbability": 0.00005
-      }
+      },
+      {
+        "Name": "Spider",
+        "SpawnProbability": 0.00005
+      },
     ],
     "GrassLayer": {
         "VoxelType" :  "Grass",
@@ -253,7 +257,11 @@
       {
         "Name": "White Rabbit",
         "SpawnProbability": 0.00005
-      }
+      },
+      {
+        "Name": "Spider",
+        "SpawnProbability": 0.00005
+      },
     ],
     "GrassLayer": {
         "VoxelType" :  "Grass",
@@ -607,6 +615,10 @@
     "Fauna": [
       {
         "Name": "Scorpion",
+        "SpawnProbability": 0.005
+      },
+      {
+        "Name": "Spider",
         "SpawnProbability": 0.005
       },
       {
