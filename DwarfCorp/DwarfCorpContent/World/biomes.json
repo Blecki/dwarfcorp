@@ -9,7 +9,7 @@
         "ClumpSize": 50.0,
         "ClumpThreshold": 0.8,
         "MeanSize": 1.0,
-        "SizeVariance": 1.0,
+        "SizeVariance": 0.1,
         "VerticalOffset": 0.45,
         "NoiseOffset": 288.487122,
         "SpawnProbability": 0.01
@@ -17,12 +17,12 @@
       {
         "Name": "Apple Tree",
         "ClumpSize": 25.0,
-        "ClumpThreshold": 1.25,
+        "ClumpThreshold": 0.5,
         "MeanSize": 0.5,
         "SizeVariance": 0.5,
         "VerticalOffset": 0.9,
         "NoiseOffset": 54.3905869,
-        "SpawnProbability": 0.005
+        "SpawnProbability": 0.01
       },
       {
         "Name": "Berry Bush",
@@ -113,7 +113,7 @@
         "ClumpThreshold": 0.8,
         "MeanSize": 1.0,
         "SizeVariance": 1.0,
-        "VerticalOffset": 0.45,
+        "VerticalOffset": 0.2,
         "NoiseOffset": 290.818359,
         "SpawnProbability": 0.04
       },
@@ -209,7 +209,7 @@
         "ClumpThreshold": 0.8,
         "MeanSize": 1.0,
         "SizeVariance": 1.0,
-        "VerticalOffset": 0.45,
+        "VerticalOffset": 0.2,
         "NoiseOffset": 290.818359,
         "SpawnProbability": 0.03
       },
@@ -377,7 +377,7 @@
         "ClumpThreshold": 0.8,
         "MeanSize": 0.5,
         "SizeVariance": 0.1,
-        "VerticalOffset": 0.7,
+        "VerticalOffset": 0.45,
         "NoiseOffset": 51.2956276,
         "SpawnProbability": 0.04
       },
@@ -387,7 +387,7 @@
         "ClumpThreshold": 0.6,
         "MeanSize": 0.5,
         "SizeVariance": 0.1,
-        "VerticalOffset": 0.8,
+        "VerticalOffset": 0.45,
         "NoiseOffset": 99.2956276,
         "SpawnProbability": 0.12
       },
@@ -466,7 +466,7 @@
         "ClumpThreshold": 0.85,
         "MeanSize": 1.0,
         "SizeVariance": 1.0,
-        "VerticalOffset": 0.45,
+        "VerticalOffset": 0.2,
         "NoiseOffset": 265.476837,
         "SpawnProbability": 0.02
       },
@@ -591,7 +591,7 @@
         "ClumpThreshold": 0.6,
         "MeanSize": 1.0,
         "SizeVariance": 1.0,
-        "VerticalOffset": 0.5,
+        "VerticalOffset": 0.2,
         "NoiseOffset": 265.476837,
         "SpawnProbability": 0.4
       }],
