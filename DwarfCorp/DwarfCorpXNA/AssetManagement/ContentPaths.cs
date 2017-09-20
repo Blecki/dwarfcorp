@@ -61,6 +61,7 @@ namespace DwarfCorp
             public static string sfx_env_bush_harvest_3 = ProgramData.CreatePath("Audio", "oscar", "sfx_env_bush_harvest_3");
             public static string sfx_env_door_close_generic = ProgramData.CreatePath("Audio", "oscar", "sfx_env_door_close_generic");
             public static string sfx_env_door_open_generic = ProgramData.CreatePath("Audio", "oscar", "sfx_env_door_open_generic");
+            public static string sfx_env_plant_grow = ProgramData.CreatePath("Audio", "oscar", "sfx_env_plant_grow");
             public static string sfx_env_tree_cut_down_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_env_tree_cut_down_1");
             public static string sfx_env_tree_cut_down_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_env_tree_cut_down_2");
             public static string sfx_env_voxel_dirt_destroy = ProgramData.CreatePath("Audio", "oscar", "sfx_env_voxel_dirt_destroy");
@@ -80,6 +81,11 @@ namespace DwarfCorp
             public static string sfx_gui_positive_great_success = ProgramData.CreatePath("Audio", "oscar", "sfx_gui_positive_great_success");
             public static string sfx_gui_rain_storm_alert = ProgramData.CreatePath("Audio", "oscar", "sfx_gui_rain_storm_alert");
             public static string sfx_gui_snow_storm_alert = ProgramData.CreatePath("Audio", "oscar", "sfx_gui_snow_storm_alert");
+            public static string sfx_gui_speed_1x = ProgramData.CreatePath("Audio", "oscar", "sfx_gui_speed_1x");
+            public static string sfx_gui_speed_2x = ProgramData.CreatePath("Audio", "oscar", "sfx_gui_speed_2x");
+            public static string sfx_gui_speed_3x = ProgramData.CreatePath("Audio", "oscar", "sfx_gui_speed_3x");
+            public static string sfx_gui_speed_pause = ProgramData.CreatePath("Audio", "oscar", "sfx_gui_speed_pause");
+            public static string sfx_gui_speed_unpause = ProgramData.CreatePath("Audio", "oscar", "sfx_gui_speed_unpause");
             public static string sfx_gui_window_close = ProgramData.CreatePath("Audio", "oscar", "sfx_gui_window_close");
             public static string sfx_gui_window_open = ProgramData.CreatePath("Audio", "oscar", "sfx_gui_window_open");
             public static string sfx_ic_demon_angered = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_demon_angered");
@@ -216,9 +222,10 @@ namespace DwarfCorp
             public static string sfx_oc_scorpion_hurt_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_oc_scorpion_hurt_1");
             public static string sfx_oc_scorpion_neutral_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_oc_scorpion_neutral_1");
             public static string sfx_oc_scorpion_neutral_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_oc_scorpion_neutral_2");
+            public static string sfx_trap_destroyed = ProgramData.CreatePath("Audio", "oscar", "sfx_trap_destroyed");
+            public static string sfx_trap_trigger = ProgramData.CreatePath("Audio", "oscar", "sfx_trap_trigger");
             public static string sfx_trap_turret_shoot_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_trap_turret_shoot_1");
             public static string sfx_trap_turret_shoot_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_trap_turret_shoot_2");
-
         }
             public static string chew = ProgramData.CreatePath("Audio", "chew");
             public static string explode = ProgramData.CreatePath("Audio", "explode");

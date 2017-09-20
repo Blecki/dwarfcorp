@@ -74,7 +74,7 @@ namespace DwarfCorp
             DeathParticles = AddChild(new ParticleTrigger("explode", Manager, "DeathParticles", 
                 Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
             {
-                SoundToPlay = ""
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_trap_destroyed
             }) as ParticleTrigger;
 
             DamageAmount = 200;
@@ -131,7 +131,7 @@ namespace DwarfCorp
         {
             Sprite.SetCurrentAnimation(TriggerAnimation);
             Sprite.CurrentAnimation.Play();
-            SoundManager.PlaySound(ContentPaths.Audio.trap, GlobalTransform.Translation, false);
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_trap_trigger, GlobalTransform.Translation, false);
             ShouldDie = true;
             DeathTimer.Reset(DeathTimer.TargetTimeSeconds);
         }

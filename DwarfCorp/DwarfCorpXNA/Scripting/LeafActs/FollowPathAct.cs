@@ -325,7 +325,7 @@ namespace DwarfCorp
                     break;
                 case MoveType.Climb:
                 case MoveType.ClimbWalls:
-                    if ((int) (t*100)%25 == 0)
+                    if (((int) (t*100))%50 == 0)
                     {
                         Creature.NoiseMaker.MakeNoise("Climb", Agent.Position, false);
                     }
