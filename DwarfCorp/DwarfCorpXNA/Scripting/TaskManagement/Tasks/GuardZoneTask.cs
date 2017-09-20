@@ -42,51 +42,36 @@ namespace DwarfCorp
     /// Tells a creature that it should guard a voxel.
     /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
-    internal class GuardVoxelTask : Task
+    internal class GuardZoneTask : Task
     {
-        public VoxelHandle VoxelToGuard = VoxelHandle.InvalidHandle;
-
-        public GuardVoxelTask(VoxelHandle vox)
+        public GuardZoneTask()
         {
-            Name = "Guard DestinationVoxel: " + vox.Coordinate;
-            VoxelToGuard = vox;
+            Name = "Guard Area";
             Priority = PriorityType.Medium;
         }
 
         public override Task Clone()
         {
-            return new GuardVoxelTask(VoxelToGuard);
+            return new GuardZoneTask();
         }
 
         public override Act CreateScript(Creature agent)
         {
-            return new GuardVoxelAct(agent.AI, VoxelToGuard);
+            return new GuardAreaAct(agent.AI);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            return !VoxelToGuard.IsValid ? 1000 : (agent.AI.Position - VoxelToGuard.WorldPosition).LengthSquared();
+            return 1.0f;
         }
 
         public override bool ShouldRetry(Creature agent)
         {
-            return agent.Faction.IsGuardDesignation(VoxelToGuard);
+            return agent.Faction.GuardDesignations.Count > 0;
         }
 
         public override void Render(DwarfTime time)
         {
-            BoundingBox box = VoxelToGuard.GetBoundingBox();
-
-
-            Color drawColor = Color.LightBlue;
-
-      
-
-            drawColor.R = (byte)(Math.Min(drawColor.R * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * 0.5f)) + 50, 255));
-            drawColor.G = (byte)(Math.Min(drawColor.G * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * 0.5f)) + 50, 255));
-            drawColor.B = (byte)(Math.Min(drawColor.B * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * 0.5f)) + 50, 255));
-            Drawer3D.DrawBox(box, drawColor, 0.05f, true);
-            base.Render(time);
         }
     }
 

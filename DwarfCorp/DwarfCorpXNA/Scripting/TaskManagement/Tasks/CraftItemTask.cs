@@ -128,6 +128,7 @@ namespace DwarfCorp
         private static int MaxID = 0;
         public CraftBuilder.CraftDesignation Item { get; set; }
         private string noise;
+        public bool IsAutonomous { get; set; }
 
         public CraftResourceTask()
         {
@@ -164,6 +165,28 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
+        public override bool ShouldDelete(Creature agent)
+        {
+            return IsAutonomous && !IsFeasible(agent);
+        }
+
+        public override bool IsFeasible(Creature agent)
+        {
+            var resources = agent.Faction.GetResourcesWithTags(Item.ItemType.RequiredResources);
+            if (resources.Count == 0)
+            {
+                return false;
+            }
+
+            if (Item.ItemType.CraftLocation != "")
+            {
+                var anyCraftLocation = agent.Faction.OwnedObjects.Any(o => o.Tags.Contains(Item.ItemType.CraftLocation));
+                if (!anyCraftLocation)
+                    return false;
+            }
+            return true;
+        }
+
         public override Act CreateScript(Creature creature)
         {
             return new Sequence(new CraftItemAct(creature.AI, Item)
@@ -174,7 +197,7 @@ namespace DwarfCorp
 
         public override Task Clone()
         {
-            return new CraftResourceTask(Item.ItemType, TaskID);
+            return new CraftResourceTask(Item.ItemType, TaskID) {IsAutonomous = this.IsAutonomous};
         }
     }
 

@@ -48,7 +48,7 @@ namespace DwarfCorp
     {
         public LookInterestingTask()
         {
-            Name = "LookInteresting";
+            Name = "Look Interesting";
             Priority = PriorityType.Eventually;
         }
 
@@ -57,9 +57,75 @@ namespace DwarfCorp
             return new LookInterestingTask();
         }
 
+        public IEnumerable<Act.Status> ConverseFriends(CreatureAI c)
+        {
+            foreach (CreatureAI minion in c.Faction.Minions)
+            {
+                if (minion == c || minion.Creature.IsAsleep)
+                    continue;
+
+                float dist = (minion.Position - c.Position).Length();
+
+                if (dist < 2 && MathFunctions.Rand(0, 1) < 0.1f)
+                {
+                    c.Converse(minion);
+                    Timer converseTimer = new Timer(5.0f, true);
+                    while (!converseTimer.HasTriggered)
+                    {
+                        converseTimer.Update(DwarfTime.LastTime);
+                        yield return Act.Status.Running;
+                    }
+                }
+            }
+            yield return Act.Status.Success;
+        }
+
+        public override bool IsFeasible(Creature agent)
+        {
+            return !agent.AI.IsPosessed;
+        }
+
         public override Act CreateScript(Creature creature)
         {
-            return new WanderAct(creature.AI, 2, 0.5f, 1.0f);
+            if (creature.AI.IsPosessed)
+            {
+                return null;
+            }
+
+            if (!creature.Faction.Race.IsIntelligent || !creature.IsOnGround)
+            {
+                return creature.AI.ActOnWander();
+            }
+            
+            var rooms = creature.Faction.GetRooms();
+            var items = creature.Faction.OwnedObjects;
+            var minions = creature.Faction.Minions;
+
+            bool goToRoom = MathFunctions.RandEvent(0.2f);
+            if (goToRoom && rooms.Count > 0)
+            {
+                return new GoToZoneAct(creature.AI, Datastructures.SelectRandom(rooms));
+            }
+
+            bool goToItem = MathFunctions.RandEvent(0.2f);
+            if (goToItem && items.Count > 0)
+            {
+                return new GoToEntityAct(Datastructures.SelectRandom(items), creature.AI) & new Wrap(() => ConverseFriends(creature.AI));
+            }
+
+            bool goToMinion = MathFunctions.RandEvent(0.2f);
+            if (goToMinion && minions.Count > 1)
+            {
+                return new GoToEntityAct(Datastructures.SelectRandom(minions.Select(minion => minion.Physics)), creature.AI);
+            }
+
+            bool getDrink = MathFunctions.RandEvent(0.0005f);
+            if (getDrink && creature.Faction.HasResources(new List<Quantitiy<Resource.ResourceTags>>(){new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Alcohol)}))
+            {
+                return new FindAndEatFoodAct(creature.AI) { FoodTag = Resource.ResourceTags.Alcohol, FallbackTag = Resource.ResourceTags.Alcohol};
+            }
+
+            return creature.AI.ActOnWander();
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)

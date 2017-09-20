@@ -48,20 +48,21 @@ namespace DwarfCorp
         public string Adult { get; set; }
         public DateTime Birthday { get; set; }
         public Body ParentBody { get; set; }
-        public BoundingBox? PositionConstrain { get; set; }
+        public BoundingBox PositionConstrain { get; set; }
         public Egg()
         {
             
         }
 
-        public Egg(string adult, ComponentManager manager, Vector3 position, BoundingBox? positionConstraint) :
+        public Egg(string adult, ComponentManager manager, Vector3 position, BoundingBox positionConstraint) :
             base(manager)
         {
             PositionConstrain = positionConstraint;
             Adult = adult;
             Birthday = Manager.World.Time.CurrentDate + new TimeSpan(0, 12, 0, 0);
 
-            if (ResourceLibrary.GetResourceByName(adult + " Egg") == null)
+            if (ResourceLibrary.GetResourceByName(adult + " Egg") == null 
+                || !EntityFactory.EntityFuncs.ContainsKey(adult + " Egg Resource"))
             {
                 Resource newEggResource =
                     new Resource(ResourceLibrary.GetResourceByName(ResourceLibrary.ResourceType.Egg));
@@ -84,9 +85,9 @@ namespace DwarfCorp
         public void Hatch()
         {
             var adult = EntityFactory.CreateEntity<Body>(Adult, ParentBody.Position);
-            if (PositionConstrain.HasValue)
+            if (adult != null)
             {
-                adult.GetRoot().GetComponent<CreatureAI>().PositionConstraint = PositionConstrain.Value;
+                adult.GetRoot().GetComponent<CreatureAI>().PositionConstraint = PositionConstrain;
             }
             GetRoot().Die();
         }

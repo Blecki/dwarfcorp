@@ -108,6 +108,8 @@ namespace DwarfCorp
         public static void Load()
         {
             Load(ContentPaths.settings);
+            Default.DrawDebugData = false;
+            Default.DrawPaths = false;
         }
 
         public static void Save(string file)

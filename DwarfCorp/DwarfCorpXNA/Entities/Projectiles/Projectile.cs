@@ -60,6 +60,7 @@ namespace DwarfCorp
         public Projectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Health.DamageAmount damage, float size, string asset, string hitParticles, string hitNoise, Body target, bool animated = false, bool singleSprite = false) :
             base(manager, "Projectile", Matrix.CreateTranslation(position), new Vector3(size, size, size), Vector3.One, 1.0f, 1.0f, 1.0f, 1.0f, new Vector3(0, -10, 0))
         {
+            this.AllowPhysicsSleep = false; 
             Target = target;
             HitAnimation = null;
             IsSleeping = false;
@@ -127,7 +128,7 @@ namespace DwarfCorp
 
         new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if (Target != null && (Target.Position - Position).LengthSquared() < DamageRadius)
+            if (Target != null && (Target.Position - LocalPosition).LengthSquared() < DamageRadius)
             {
                 Health health = Target.GetRoot().GetComponent<Health>();
 
@@ -151,7 +152,7 @@ namespace DwarfCorp
 
                 Die();
             }
-            else if (Target != null && (Target.Position.Y - Position.Y) > 1 && Velocity.Y < 0)
+            else if (Target != null && (Target.Position.Y - LocalPosition.Y) > 1 && Velocity.Y < 0)
             {
                 Die();
             }
@@ -223,7 +224,7 @@ namespace DwarfCorp
         }
 
         public ArrowProjectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Body target) :
-            base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 10.0f, DamageType = Health.DamageType.Slashing }, 0.25f, ContentPaths.Entities.Elf.Sprites.arrow, "puff", ContentPaths.Audio.hit, target)
+            base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 10.0f, DamageType = Health.DamageType.Slashing }, 0.25f, ContentPaths.Entities.Elf.Sprites.arrow, "puff", ContentPaths.Audio.Oscar.sfx_ic_elf_arrow_hit, target)
         {
             HitAnimation = new Animation(ContentPaths.Effects.pierce, 32, 32, 0, 1, 2);
         }

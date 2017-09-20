@@ -435,7 +435,7 @@ namespace DwarfCorp
 
 
             // Heal thyself
-            if (Status.Health.IsDissatisfied())
+            if (Status.Health.IsDissatisfied() && Stats.CanSleep)
             {
                 Task toReturn = new GetHealedTask();
                 toReturn.SetupScript(Creature);
@@ -460,14 +460,6 @@ namespace DwarfCorp
                 if (!Tasks.Contains(toReturn))
                     Tasks.Add(toReturn);
             }
-
-            /*
-            if (CurrentAct != null && CurrentAct.IsCanceled)
-            {
-                CurrentTask.Script = null;
-                CurrentTask = null;
-            }
-             */
 
             // Update the current task.
             if (CurrentTask != null && CurrentAct != null)
@@ -626,7 +618,7 @@ namespace DwarfCorp
         /// <summary> The Act that the creature performs when its told to "wander" (when it has nothing to do) </summary>
         public virtual Act ActOnWander()
         {
-            return new WanderAct(this, 2, 0.5f + MathFunctions.Rand(-0.25f, 0.25f), 1.0f);
+            return new WanderAct(this, 5, 1.5f + MathFunctions.Rand(-0.25f, 0.25f), 1.0f);
         }
 
         /// <summary>
@@ -715,6 +707,7 @@ namespace DwarfCorp
                     var item = CraftLibrary.GetRandomApplicableCraftItem(Faction);
                     if (item != null)
                     {
+                        item.NumRepeats = 1;
                         bool gotAny = true;
                         foreach (var resource in item.RequiredResources)
                         {
@@ -729,7 +722,7 @@ namespace DwarfCorp
                         
                         if (gotAny)
                         {
-                            return new CraftResourceTask(item);
+                            return new CraftResourceTask(item) {IsAutonomous = true, Priority = Task.PriorityType.Low};
                         }
                     }
                 }
@@ -756,7 +749,7 @@ namespace DwarfCorp
                 }
 
                 // Find a room to train in, if applicable.
-                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack) && MathFunctions.RandEvent(0.0005f))
+                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack) && MathFunctions.RandEvent(0.01f))
                 {
                     Body closestTraining = Faction.FindNearestItemWithTags("Train", Position, true);
 
@@ -785,6 +778,7 @@ namespace DwarfCorp
                     };
                 }
 
+                /*
                 if (IdleTimer.HasTriggered)
                 {
                     IdleTimer.Reset(IdleTimer.TargetTimeSeconds);
@@ -794,6 +788,7 @@ namespace DwarfCorp
                     };
                 }
                 return null;
+                 */
             }
 
             // If we have no more build orders, look for gather orders
@@ -842,7 +837,7 @@ namespace DwarfCorp
                 return new BuildVoxelsTask(voxels);
             }
 
-            return null;
+            return new LookInterestingTask();
         }
 
 
@@ -1252,6 +1247,32 @@ namespace DwarfCorp
                     MathFunctions.ClampXZ(Creature.Physics.Velocity, Creature.Physics.IsInLiquid ? Stats.MaxSpeed * 0.5f: Stats.MaxSpeed);
             }
           
+        }
+
+        // If true, this creature can fight the other creature. Otherwise, we want to flee it.
+        public bool FightOrFlight(CreatureAI creature)
+        {
+            float fear = 0;
+            // If our health is low, we're a little afraid.
+            if (Creature.Hp < Creature.MaxHealth * 0.25f)
+            {
+                fear += 0.5f;
+            }
+
+            // If there are a lot of nearby threats vs allies, we are even more afraid.
+            if (Faction.Threats.Sum(threat => (threat.AI.Position - Position).Length() < 6.0f ? 1 : 0) - Faction.Minions.Sum(minion => (minion.Position - Position).Length() < 6.0f ? 1 : 0) > Creature.Stats.BuffedCon)
+            {
+                fear += 0.5f;
+            }
+
+            // If the creature has formidible weapons, we're in trouble.
+            if (creature.Creature.Attacks[0].DamageAmount > Creature.Attacks[0].DamageAmount)
+            {
+                fear += creature.Creature.Attacks[0].DamageAmount / Creature.Hp;
+            }
+
+            fear = Math.Min(fear, 0.99f);
+            return MathFunctions.RandEvent(1.0f - fear);
         }
     }
 }

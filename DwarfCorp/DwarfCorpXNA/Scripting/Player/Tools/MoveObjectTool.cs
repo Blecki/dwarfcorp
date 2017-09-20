@@ -135,6 +135,7 @@ namespace DwarfCorp
                         continue;
                     }
                     Player.World.ShowTooltip("Left click to move this " + body.Name + "\nRight click to destroy it.");
+
                 }
             }
         }

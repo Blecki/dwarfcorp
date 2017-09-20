@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Security.Cryptography;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -62,6 +63,7 @@ namespace DwarfCorp
             public bool OverrideOrientation;
             public float Orientation;
             public bool Valid;
+            public Body GhostBody;
         }
 
         public Faction Faction { get; set; }
@@ -111,6 +113,16 @@ namespace DwarfCorp
 
         public void AddDesignation(CraftDesignation des)
         {
+            des.GhostBody = EntityFactory.CreateGhostedEntity<Body>(des.ItemType.Name, des.Location.WorldPosition + Vector3.One * 0.5f, Color.LightBlue);
+            World.ComponentManager.RootComponent.AddChild(des.GhostBody);
+            if (des.OverrideOrientation)
+            {
+                des.GhostBody.Orient(des.Orientation);
+            }
+            else
+            {
+                des.GhostBody.OrientToWalls();
+            }
             Designations.Add(des);
         }
 
@@ -120,6 +132,9 @@ namespace DwarfCorp
 
             if (des.WorkPile != null)
                 des.WorkPile.Die();
+
+            if (des.GhostBody != null)
+                des.GhostBody.Delete();
         }
 
 
@@ -133,11 +148,6 @@ namespace DwarfCorp
             }
         }
 
-        private void SetDisplayColor(Color color)
-        {
-            foreach (var sprite in CurrentCraftBody.EnumerateAll().OfType<Tinter>())
-                sprite.VertexColorTint = color;
-        }
 
         public void Update(DwarfTime gameTime, GameMaster player)
         {
@@ -147,6 +157,11 @@ namespace DwarfCorp
                 {
                     CurrentCraftBody.Delete();
                     CurrentCraftBody = null;
+                }
+
+                foreach (var designation in Designations)
+                {
+                    designation.GhostBody.SetFlagRecursive(GameComponent.Flag.Visible, false);
                 }
                 return;
             }
@@ -158,8 +173,7 @@ namespace DwarfCorp
 
             if (CurrentCraftType != null && CurrentCraftBody == null)
             {
-                CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.Name, player.VoxSelector.VoxelUnderMouse.WorldPosition);
-                CurrentCraftBody.SetFlagRecursive(GameComponent.Flag.Active, false);
+                CurrentCraftBody = EntityFactory.CreateGhostedEntity<Body>(CurrentCraftType.Name, player.VoxSelector.VoxelUnderMouse.WorldPosition, Color.White);
                 CurrentDesignation = new CraftDesignation()
                 {
                     ItemType = CurrentCraftType,
@@ -167,7 +181,7 @@ namespace DwarfCorp
                     Valid = true
                 };
                 OverrideOrientation = false;
-                SetDisplayColor(Color.Green);
+                CurrentCraftBody.SetTintRecursive(Color.Green);
             }
 
             if (CurrentCraftBody == null || !player.VoxSelector.VoxelUnderMouse.IsValid) 
@@ -195,7 +209,7 @@ namespace DwarfCorp
             CurrentDesignation.Location = player.VoxSelector.VoxelUnderMouse;
 
             World.ShowTooltip("Click to build. Press R/T to rotate.");
-            SetDisplayColor(IsValid(CurrentDesignation) ? Color.Green : Color.Red);
+            CurrentCraftBody.SetTintRecursive(IsValid(CurrentDesignation) ? Color.Green : Color.Red);
         }
 
         private void HandleOrientation()
@@ -238,6 +252,12 @@ namespace DwarfCorp
 
         public void Render(DwarfTime gameTime, GraphicsDevice graphics, Effect effect)
         {
+            foreach (var designation in Designations)
+            {
+                designation.GhostBody.SetFlagRecursive(GameComponent.Flag.Visible, true);
+                designation.GhostBody.SetTintRecursive(MathFunctions.Pulsate(Color.Blue, gameTime, 0.7f));
+                designation.GhostBody.PropogateTransforms();
+            }
         }
 
 

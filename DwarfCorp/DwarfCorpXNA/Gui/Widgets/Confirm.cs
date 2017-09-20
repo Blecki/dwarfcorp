@@ -22,10 +22,12 @@ namespace DwarfCorp.Gui.Widgets
         public override void Construct()
         {
             //Set size and center on screen.
-            Rect = new Rectangle(0, 0, 400, 100 + (String.IsNullOrEmpty(Text) ? 0 : 100));
-            Rect.X = (Root.RenderData.VirtualScreen.Width / 2) - 128;
-            Rect.Y = (Root.RenderData.VirtualScreen.Height / 2) - 32;
-
+            if (Rect.Width == 0)
+            {
+                Rect = new Rectangle(0, 0, 400, 100 + (String.IsNullOrEmpty(Text) ? 0 : 100));
+                Rect.X = (Root.RenderData.VirtualScreen.Width/2) - 128;
+                Rect.Y = (Root.RenderData.VirtualScreen.Height/2) - 32;
+            }
             Border = "border-fancy";
 
             if (!String.IsNullOrEmpty(OkayText))

@@ -92,7 +92,7 @@ namespace DwarfCorp
 
             // The bird can peck at its enemies (0.1 damage)
             Attacks = new List<Attack> { new Attack("Sting", 0.01f, 1.0f, 3.0f, SoundSource.Create(ContentPaths.Audio.hiss), ContentPaths.Effects.bite),
-                new Attack("Web", 0.0f, 1.0f, 5.0f, SoundSource.Create(ContentPaths.Audio.hiss), ContentPaths.Effects.claws) {Mode = Attack.AttackMode.Ranged, LaunchSpeed = 10, ProjectileType = "Web"} };
+                new Attack("Web", 0.0f, 1.0f, 5.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_giant_spider_attack_1, ContentPaths.Audio.Oscar.sfx_oc_giant_spider_attack_2), ContentPaths.Effects.claws) {Mode = Attack.AttackMode.Ranged, LaunchSpeed = 10, ProjectileType = "Web"} };
 
 
             // The bird can hold one item at a time in its inventory
@@ -122,7 +122,12 @@ namespace DwarfCorp
                 Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Spider" } }
             };
 
-            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.hiss };
+            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_giant_spider_hurt_1 };
+            NoiseMaker.Noises["Chirp"] = new List<string>()
+            {
+                ContentPaths.Audio.Oscar.sfx_oc_giant_spider_neutral_1,
+                ContentPaths.Audio.Oscar.sfx_oc_giant_spider_neutral_2
+            };
             AI.Movement.CanClimbWalls = true;
             AI.Movement.CanSwim = false;
             Species = "Spider";

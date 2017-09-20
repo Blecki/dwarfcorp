@@ -674,7 +674,7 @@ namespace DwarfCorp
                 Graphics.Viewport,
                 150.0f,
                 SelectionType == VoxelSelectionType.SelectEmpty,
-                null);
+                vox => vox.IsValid && (!vox.IsEmpty || World.PlayerFaction.WallBuilder.IsDesignation(vox)));
 
             if (!v.IsValid)
                 return VoxelHandle.InvalidHandle;

@@ -140,6 +140,7 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
+            NamedImageFrame frame = new NamedImageFrame("newgui/pointers2", 32, 6, 0);
             // Draw a bounding box around the currently selected bodies.
             foreach (Body body in Player.BodySelector.CurrentBodies)
             {
@@ -151,6 +152,7 @@ namespace DwarfCorp
                     bounds.Max += Vector3.Up * 0.5f;
                     bounds = bounds.Expand(0.25f);
                     Drawer3D.DrawBox(bounds, Color.Orange, 0.02f, false);
+                    Drawer2D.DrawSprite(frame, bounds.Center(), Vector2.One, Vector2.Zero, new Color(255, 255, 255, 100));
                 }
             }
         }

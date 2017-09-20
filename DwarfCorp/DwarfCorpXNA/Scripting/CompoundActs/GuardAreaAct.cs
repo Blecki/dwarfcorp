@@ -1,4 +1,4 @@
-﻿// GuardVoxelAct.cs
+// GuardVoxelAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -41,24 +41,22 @@ namespace DwarfCorp
     /// A creature goes to a voxel, and then waits there until cancelled.
     /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
-    public class GuardVoxelAct : CompoundCreatureAct
+    public class GuardAreaAct : CompoundCreatureAct
     {
-        public VoxelHandle Voxel { get; set; }
 
-
-        public GuardVoxelAct()
+        public GuardAreaAct()
         {
 
         }
 
         public bool LoopCondition()
         {
-            return Agent.Faction.IsGuardDesignation(Voxel) && !EnemiesNearby() && !Creature.Status.Energy.IsDissatisfied() && !Creature.Status.Hunger.IsDissatisfied();
+            return GuardDesignationExists() && !EnemiesNearby() && !Creature.Status.Energy.IsDissatisfied() && !Creature.Status.Hunger.IsDissatisfied();
         }
 
         public bool GuardDesignationExists()
         {
-            return Agent.Faction.IsGuardDesignation(Voxel);
+            return Agent.Faction.GuardDesignations.Count > 0;
         }
 
         public bool ExitCondition()
@@ -77,19 +75,36 @@ namespace DwarfCorp
             return (Agent.Sensor.Enemies.Count > 0);
         }
 
-        public GuardVoxelAct(CreatureAI agent, VoxelHandle voxel) :
+        public IEnumerable<Act.Status> GetRandomGuardDesignation(CreatureAI agent)
+        {
+            List<DwarfCorp.BuildOrder> voxes = new List<BuildOrder>();
+            voxes.AddRange(Agent.Faction.GuardDesignations);
+            voxes.Sort((a, b) => (a.Vox.WorldPosition - agent.Position).LengthSquared() < (b.Vox.WorldPosition - agent.Position).LengthSquared() ? -1 : 1);
+            foreach (BuildOrder vox in voxes)
+            {
+                if (MathFunctions.RandEvent(0.25f))
+                {
+                    agent.Blackboard.SetData("GuardVoxel", vox.Vox);
+                    yield return Act.Status.Success;
+                    yield break;
+                }
+            }
+            yield return Act.Status.Fail;
+            yield break;
+        }
+
+        public GuardAreaAct(CreatureAI agent) :
             base(agent)
         {
-            Voxel = voxel;
-            Name = "Guard DestinationVoxel " + voxel;
+            Name = "Guard Area";
 
-            Tree = new Sequence
+            Tree = new WhileLoop(new Sequence 
                 (
-                    new GoToVoxelAct(voxel, PlanAct.PlanType.Adjacent, agent),
+                    new Wrap(() => GetRandomGuardDesignation(agent)),
+                    new Domain(LoopCondition, new GoToNamedVoxelAct("GuardVoxel", PlanAct.PlanType.Adjacent, agent)),
                     new StopAct(Agent),
-                    new WhileLoop(new WanderAct(Agent, 1.0f, 0.5f, 0.1f), new Condition(LoopCondition)),
-                    new Condition(ExitCondition)
-                );
+                    new Domain(LoopCondition, new WanderAct(Agent, 10.0f, 5.0f, 1.0f))
+                ), new Condition(LoopCondition));
         }
     }
 

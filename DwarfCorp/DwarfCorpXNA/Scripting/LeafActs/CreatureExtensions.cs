@@ -90,6 +90,7 @@ namespace DwarfCorp
                     else
                     {
                         foodBody = bodies[0];
+                        
 
                         while (!eatTimer.HasTriggered)
                         {
@@ -99,6 +100,7 @@ namespace DwarfCorp
                             foodBody.LocalTransform = agent.Physics.LocalTransform;
                             Vector3 foodPosition = agent.Physics.Position + Vector3.Up * 0.05f + Vector3.Transform(Vector3.Forward, rot) * 0.5f;
                             foodBody.LocalPosition = foodPosition;
+                            foodBody.PropogateTransforms();
                             foodBody.Active = false;
                             agent.Physics.Velocity = Vector3.Zero;
                             agent.CurrentCharacterMode = CharacterMode.Sitting;
