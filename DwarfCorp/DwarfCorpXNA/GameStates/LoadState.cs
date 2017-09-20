@@ -1,4 +1,5 @@
 using System.CodeDom.Compiler;
+using DwarfCorp.Gui.Widgets;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -16,7 +17,7 @@ namespace DwarfCorp.GameStates
         public InputManager Input = new InputManager();
         private DwarfRunner Runner;
         private bool DoneLoading = false;
-
+        private bool DisplayException = false;
         private Gui.Root GuiRoot;
         private Gui.Widget Tip;
         private Gui.Widgets.InfoTicker LoadTicker;
@@ -142,12 +143,35 @@ namespace DwarfCorp.GameStates
                     if (!LoadTicker.HasMesssage(Generator.LoadingMessage))
                         LoadTicker.AddMessage(Generator.LoadingMessage);
                 }
+
                 foreach (var item in DwarfGame.GumInputMapper.GetInputQueue())
+                {
+                    GuiRoot.HandleInput(item.Message, item.Args);
                     if (item.Message == Gui.InputEvents.KeyPress)
                         Runner.Jump();
-
+                }
                 GuiRoot.Update(gameTime.ToGameTime());
                 Runner.Update(gameTime);
+              
+                if (World != null && World.LoadStatus == WorldManager.LoadingStatus.Failure && !DisplayException)
+                {
+                    DisplayException = true;
+                    string exceptionText = World.LoadingException == null
+                        ? "Unknown exception."
+                        : World.LoadingException.ToString();
+                    GuiRoot.MouseVisible = true;
+                    GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
+                    GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm()
+                    {
+                        CancelText = "",
+                        Text = "Loading failed: " + exceptionText,
+                        OnClose = (s) =>
+                        {
+                           StateManager.PopState();
+                        },
+                        Rect = GuiRoot.RenderData.VirtualScreen
+                    });
+                }
             }
 
             base.Update(gameTime);

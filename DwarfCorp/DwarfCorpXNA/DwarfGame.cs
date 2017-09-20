@@ -276,6 +276,14 @@ namespace DwarfCorp
 #endif
         }
 
+        public void CaptureException(Exception exception)
+        {
+#if SHARP_RAVEN
+            if (ravenClient != null)
+                ravenClient.Capture(new SentryEvent(exception));
+#endif
+        }
+
         protected override void Update(GameTime time)
         {
             if (!IsActive)

@@ -547,7 +547,7 @@ namespace DwarfCorp
 
         public delegate void SaveCallback(bool success, Exception e);
 
-        public void Save(string filename, SaveCallback callback = null)
+        public void Save(string filename, WorldManager.SaveCallback callback = null)
         {
             Paused = true;
             WaitState waitforsave = new WaitState(Game, "Saving...", gameState.StateManager,
@@ -559,7 +559,7 @@ namespace DwarfCorp
 
         private bool SaveThreadRoutine(string filename)
         {
-            //try
+            try
             {
                 System.Threading.Thread.CurrentThread.Name = "Save";
                 DirectoryInfo worldDirectory =
@@ -591,9 +591,10 @@ namespace DwarfCorp
                     });
                 }
             }
-            //catch (Exception exception)
+            catch (Exception exception)
             {
-                //throw new WaitStateException(exception.Message);
+                Game.CaptureException(exception);
+                throw new WaitStateException(exception.Message);
             }
             return true;
         }
