@@ -1,0 +1,226 @@
+{
+  "SFXScale": 0.5,
+  "DopplerScale": 0.5,
+  "Gains": {
+    "Audio/oscar/sfx_ic_dwarf_stash_money": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/whoosh": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_gui_window_open": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/bird": {
+      "Volume": 0.0387931019,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_gui_window_close": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_oc_deer_neutral_2": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_env_water_splash": {
+      "Volume": 0.310344815,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_ic_dwarf_ok_2": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_ic_dwarf_ok_3": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_ic_dwarf_jump": {
+      "Volume": 0.6551724,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_gui_rain_storm_alert": {
+      "Volume": 0.146551728,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_ic_dwarf_ok_1": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_oc_rabbit_neutral_1": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_oc_rabbit_hurt_2": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_ic_dwarf_attack_sword_3": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_oc_rabbit_neutral_2": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_gui_change_selection": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_gui_confirm_selection": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_gui_click_voxel": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_oc_rabbit_hurt_1": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_ic_dwarf_stash_item": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_ic_dwarf_stockpile": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_ic_dwarf_pick_dirt_2": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_env_voxel_dirt_destroy": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_ic_dwarf_pick_dirt_3": {
+      "Volume": 0.517241359,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_ic_dwarf_pick_dirt_1": {
+      "Volume": 0.512931049,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_ic_dwarf_pick_stone_2": {
+      "Volume": 0.512931049,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_ic_dwarf_pick_stone_3": {
+      "Volume": 0.512931049,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_env_voxel_stone_destroy": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_ic_dwarf_pick_stone_1": {
+      "Volume": 0.517241359,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_gui_nighttime": {
+      "Volume": 0.107758619,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_env_voxel_metal_destroy": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_oc_chicken_neutral_2": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/hammer": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_ic_dwarf_tantrum_3": {
+      "Volume": 0.443965524,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_ic_dwarf_tantrum_1": {
+      "Volume": 0.439655185,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_ic_dwarf_sleep_2": {
+      "Volume": 0.487068951,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_ic_dwarf_sleep_1": {
+      "Volume": 0.487068951,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_ic_dwarf_sleep_3": {
+      "Volume": 0.4827586,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_ic_dwarf_pleased": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_gui_positive_generic": {
+      "Volume": 0.193965524,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_ic_dwarf_tantrum_2": {
+      "Volume": 0.435344815,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_gui_negative_generic": {
+      "Volume": 0.237068966,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_oc_chicken_neutral_1": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_gui_daytime": {
+      "Volume": 0.02586207,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_ic_dwarf_eat_2": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_ic_dwarf_eat_3": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_oc_deer_neutral_1": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_ic_dwarf_attack_musket_1": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Entities/Goblin/Audio/goblinhurt1": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Entities/Goblin/Audio/goblinhurt3": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Entities/Goblin/Audio/goblinhurt4": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/oscar/sfx_ic_dwarf_attack_musket_3": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Entities/Goblin/Audio/goblinhurt2": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    },
+    "Audio/vegetation_break": {
+      "Volume": 1.0,
+      "RandomPitch": 0.1
+    }
+  }
+}
