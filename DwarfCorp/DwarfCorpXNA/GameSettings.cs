@@ -87,6 +87,11 @@ namespace DwarfCorp
             public bool VSync = true;
             public bool AllowReporting = true;
 
+            public Settings Clone()
+            {
+                return MemberwiseClone() as Settings;
+            }
+
             public override string ToString()
             {
                 return FileUtils.SerializeBasicJSON(this);
