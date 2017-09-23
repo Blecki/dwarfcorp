@@ -825,7 +825,7 @@ namespace DwarfCorp.GameStates
             toReturn.EnableGlow = this.Glow.CheckState;
             toReturn.AntiAliasing = AntialiasingOptions[this.Antialiasing.SelectedItem];
             toReturn.DrawChunksReflected = this.ReflectTerrain.CheckState;
-            toReturn.DrawEntityReflected = this.ReflectEntities.CheckState;
+            toReturn.DrawEntityReflected =  this.ReflectEntities.CheckState;
             toReturn.AmbientOcclusion = this.AmbientOcclusion.CheckState;
             toReturn.CursorLightEnabled = this.CursorLight.CheckState;
             toReturn.EntityLighting = this.EntityLight.CheckState;

@@ -32,6 +32,7 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -366,6 +367,10 @@ namespace DwarfCorp
             UpdateTransform();
             foreach (var child in Children.OfType<Body>())
             {
+                if (child == this)
+                {
+                    throw new InvalidOperationException("Somehow we ended up our own parent?");
+                }
                 child.PropogateTransforms();
             }
         }

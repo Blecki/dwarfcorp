@@ -279,6 +279,11 @@ namespace DwarfCorp
         private static bool InversePath(CreatureMovement mover, VoxelHandle start, GoalRegion goal, ChunkManager chunks,
                 int maxExpansions, ref List<MoveAction> toReturn, float weight)
         {
+            if (!start.IsValid)
+            {
+                return false;
+            }
+
             // Sometimes a goal may not even be achievable a.priori. If this is true, we know there can't be a path 
             // which satisifies that goal.
             // It only makes sense to do inverse plans for goals that have an associated voxel.
