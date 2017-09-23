@@ -68,7 +68,7 @@ namespace DwarfCorp.Gui.Widgets
                 var existingResourceEntries = new List<Widget>(Children);
                 Children.Clear();
 
-                foreach (var resource in Master.Faction.ListResources().Where(p => p.Value.NumResources > 0))
+                foreach (var resource in Master.Faction.ListResourcesInStockpilesPlusMinions().Where(p => p.Value.NumResources > 0))
                 {
                     var resourceTemplate = ResourceLibrary.GetResourceByName(resource.Key);
 

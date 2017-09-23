@@ -480,7 +480,7 @@ namespace DwarfCorp
                         History[CurrentTask.Name] = new TaskHistory();
                     }
 
-                    if (CurrentTask.ShouldRetry(Creature) && !History[CurrentTask.Name].IsLocked)
+                    if (CurrentTask.ShouldRetry(Creature))
                     {
                         if (!Tasks.Contains(CurrentTask))
                         {

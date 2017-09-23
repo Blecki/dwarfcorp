@@ -178,7 +178,7 @@ namespace DwarfCorp
                         new Wrap(() => Creature.HitAndWait(time, true, () => Creature.AI.Position, "Craft")),
                         new Wrap(DestroyResources),
                         new CreateCraftItemAct(Voxel, Creature.AI, Item)) |
-                       new Wrap(Creature.RestockAll);
+                       (new Wrap(Creature.RestockAll) & false);
                 }
             }
             else
@@ -215,7 +215,7 @@ namespace DwarfCorp
                         new Wrap(() => Creature.HitAndWait(time, true, () => Creature.AI.Position)),
                         new Wrap(DestroyResources),
                         new Wrap(CreateResources)) |
-                       new Wrap(Creature.RestockAll);
+                       (new Wrap(Creature.RestockAll) & false);
                 }
             }
             base.Initialize();
