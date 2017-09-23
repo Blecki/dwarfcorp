@@ -167,13 +167,18 @@ namespace DwarfCorp
 
         public override bool ShouldDelete(Creature agent)
         {
-            return IsAutonomous && !IsFeasible(agent);
+            bool notfeasible = !IsFeasible(agent);
+            if (notfeasible)
+            {
+                agent.World.MakeAnnouncement(String.Format("{0} cancelled craft task because it is impossible.", agent.Name));
+            }
+            return notfeasible;
         }
 
         public override bool IsFeasible(Creature agent)
         {
-            var resources = agent.Faction.GetResourcesWithTags(Item.ItemType.RequiredResources);
-            if (resources.Count == 0)
+            var resources = agent.Faction.HasResources(Item.ItemType.SelectedResources);
+            if (!resources)
             {
                 return false;
             }
