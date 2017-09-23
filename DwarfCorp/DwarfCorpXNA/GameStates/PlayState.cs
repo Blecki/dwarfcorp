@@ -555,10 +555,14 @@ namespace DwarfCorp.GameStates
 
             GuiRoot.RootItem.AddChild(new Gui.Widgets.ResourcePanel
             {
-                AutoLayout = AutoLayout.FloatTop,
-                MinimumSize = new Point(256, 0),
+                AutoLayout = AutoLayout.None,
+                //MinimumSize = new Point(GuiRoot.RenderData.ActualScreenBounds.X - 256, 0),
                 Master = Master,
-                Transparent = true
+                Transparent = true,
+                OnLayout = (sender) =>
+                {
+                    sender.Rect = new Rectangle(48 + 256, 0, GuiRoot.RenderData.ActualScreenBounds.X - 256 - 48 - 64, 0);
+                }
             });
 
             #region Setup time display
