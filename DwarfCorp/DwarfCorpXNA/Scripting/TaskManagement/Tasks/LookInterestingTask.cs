@@ -107,13 +107,11 @@ namespace DwarfCorp
                 return new GoToZoneAct(creature.AI, Datastructures.SelectRandom(rooms));
             }
 
-            /*
             bool goToItem = MathFunctions.RandEvent(0.2f);
             if (goToItem && items.Count > 0)
             {
-                return new GoToEntityAct(Datastructures.SelectRandom(items), creature.AI) & new Wrap(() => ConverseFriends(creature.AI));
+                return new GoToEntityAct(Datastructures.SelectRandom(items.Where(item => !item.Tags.Contains("Climbable"))), creature.AI) & new Wrap(() => ConverseFriends(creature.AI));
             }
-            */
 
             bool goToMinion = MathFunctions.RandEvent(0.2f);
             if (goToMinion && minions.Count > 1)
