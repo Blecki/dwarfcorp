@@ -18,7 +18,7 @@ namespace DwarfCorp.Gui.Widgets
         public override void Construct()
         {
             //Set size and center on screen.
-            Rect = new Rectangle(0, 0, 350, 450);
+            Rect = new Rectangle(0, 0, 450, 350);
 
             Border = "border-fancy";
 
