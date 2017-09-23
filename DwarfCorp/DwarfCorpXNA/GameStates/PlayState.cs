@@ -714,12 +714,31 @@ namespace DwarfCorp.GameStates
                     if ((int) DwarfTime.LastTime.Speed != speed)
                     {
                         World.Tutorial("time");
+                        if ((int) DwarfTime.LastTime.Speed == 0)
+                        {
+                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_speed_unpause, 0.2f);
+                        }
+                        switch (speed)
+                        {
+                            case 1:
+                                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_speed_1x, 0.2f);
+                                break;
+                            case 2:
+                                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_speed_2x, 0.2f);
+                                break;
+                            case 3:
+                                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_speed_3x, 0.2f);
+                                break;
+                            case 0:
+                                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_speed_pause, 0.2f);
+                                break;
+                        }
+                        DwarfTime.LastTime.Speed = (float)speed;
+                        Paused = speed == 0;
+                        PausedWidget.Hidden = !Paused;
+                        PausedWidget.Tooltip = "(push " + ControlSettings.Mappings.Pause.ToString() + " to unpause)";
+                        PausedWidget.Invalidate();
                     }
-                    DwarfTime.LastTime.Speed = (float)speed;
-                    Paused = speed == 0;
-                    PausedWidget.Hidden = !Paused;
-                    PausedWidget.Tooltip = "(push " + ControlSettings.Mappings.Pause.ToString() + " to unpause)";
-                    PausedWidget.Invalidate();
                 },
                 Tooltip = "Game speed controls."
             }) as GameSpeedControls;
@@ -847,7 +866,11 @@ namespace DwarfCorp.GameStates
             {
                 Icon = new TileReference("tool-icons", 32),
                 Tooltip = "Go Back",
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
             };
 
             var menu_RoomTypes = new FlatToolTray.Tray
@@ -900,8 +923,8 @@ namespace DwarfCorp.GameStates
             var icon_BuildRoom = new FlatToolTray.Icon
             {
                 TextColor = Vector4.One,
-                Text = "Room",
-                Tooltip = "Build rooms",
+                Text = "Zone",
+                Tooltip = "Designate zones/areas",
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 KeepChildVisible = true,
@@ -918,7 +941,11 @@ namespace DwarfCorp.GameStates
             {
                 Icon = new TileReference("tool-icons", 32),
                 Tooltip = "Go Back",
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
             };
 
             var menu_WallTypes = new FlatToolTray.Tray
@@ -1052,7 +1079,11 @@ namespace DwarfCorp.GameStates
             {
                 Icon = new TileReference("tool-icons", 32),
                 Tooltip = "Go Back",
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
             };
 
             var menu_CraftTypes = new FlatToolTray.Tray
@@ -1103,8 +1134,7 @@ namespace DwarfCorp.GameStates
                         },
                         OnConstruct = (sender) =>
                         {
-                            AddToolbarIcon(sender, () =>
-                                ((sender as FlatToolTray.Icon).PopupChild as BuildCraftInfo).CanBuild());
+                            AddToolbarIcon(sender, () => true);
                         },
                     }))
             };
@@ -1201,7 +1231,11 @@ namespace DwarfCorp.GameStates
             {
                 Icon = new TileReference("tool-icons", 32),
                 Tooltip = "Go Back",
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
             };
 
             var menu_BuildTools = new FlatToolTray.Tray
@@ -1247,7 +1281,11 @@ namespace DwarfCorp.GameStates
             {
                 Icon = new TileReference("tool-icons", 32),
                 Tooltip = "Go Back",
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
             };
 
             var menu_Edibles = new FlatToolTray.Tray
@@ -1417,7 +1455,11 @@ namespace DwarfCorp.GameStates
             {
                 Icon = new TileReference("tool-icons", 32),
                 Tooltip = "Go Back",
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
             };
 
             #region icon_Till
@@ -1454,7 +1496,11 @@ namespace DwarfCorp.GameStates
             {
                 Icon = new TileReference("tool-icons", 32),
                 Tooltip = "Go Back",
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
             };
 
             var menu_Plant = new FlatToolTray.Tray
@@ -1611,7 +1657,11 @@ namespace DwarfCorp.GameStates
             {
                 Icon = new TileReference("tool-icons", 32),
                 Tooltip = "Go Back",
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
             };
 
             var menu_CastSpells = new FlatToolTray.Tray()
@@ -1665,7 +1715,11 @@ namespace DwarfCorp.GameStates
             {
                 Icon = new TileReference("tool-icons", 32),
                 Tooltip = "Go Back",
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
             };
 
             var menu_ResearchSpells = new FlatToolTray.Tray()
@@ -1678,8 +1732,7 @@ namespace DwarfCorp.GameStates
                         Master.Spells.EnumerateSubtrees
                         (spell => !spell.IsResearched,
                             spell =>
-                                spell.IsResearched &&
-                                spell.Children.Any(child => !child.IsResearched))
+                                spell.IsResearched)
                         .Select(spell =>
                             new FlatToolTray.Icon
                             {
@@ -1720,7 +1773,11 @@ namespace DwarfCorp.GameStates
             {
                 Icon = new TileReference("tool-icons", 32),
                 Tooltip = "Go Back",
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
             };
 
             var menu_Magic = new FlatToolTray.Tray
@@ -1866,6 +1923,7 @@ namespace DwarfCorp.GameStates
             }
             else if (key == Keys.Escape)
             {
+                BrushTray.Select(0);
                 if (MainMenu.Hidden)
                 {
                     (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(0);

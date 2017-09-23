@@ -296,7 +296,7 @@ namespace DwarfCorp
                         if (MathFunctions.RandEvent(animal.SpawnProbability))
                         {
                             EntityFactory.CreateEntity<Body>(animal.Name,
-                                topVoxel.WorldPosition + Vector3.Up);
+                                topVoxel.WorldPosition + Vector3.Up *1.5f);
 
                             break;
                         }
@@ -309,7 +309,7 @@ namespace DwarfCorp
                     {
                         if (MathFunctions.RandEvent(veg.SpawnProbability) &&
                             NoiseGenerator.Noise(topVoxel.Coordinate.X / veg.ClumpSize,
-                            veg.NoiseOffset, topVoxel.Coordinate.Y / veg.ClumpSize) >= veg.ClumpThreshold)
+                            veg.NoiseOffset, topVoxel.Coordinate.Z / veg.ClumpSize) >= veg.ClumpThreshold)
                         {
                             topVoxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.SoilLayer.VoxelType));
 
@@ -383,7 +383,7 @@ namespace DwarfCorp
                         if (!invalidCave && caveNoise > CaveSize * 1.8f && y - caveHeight > 0)
                         {
                             GenerateCaveVegetation(chunk, x, y, z, caveHeight, biome, vec, world, NoiseGenerator);
-                            GenerateCaveFauna(chunk, world, biome, y, x, z);
+                            GenerateCaveFauna(chunk, world, biome, y - caveHeight, x, z);
                         }
                     }
                 }
@@ -410,27 +410,7 @@ namespace DwarfCorp
 
         private static void GenerateCaveFauna(VoxelChunk chunk, WorldManager world, BiomeData biome, int y, int x, int z)
         {
-            foreach (FaunaData animal in biome.Fauna)
-            {
-                if (y <= 0 || !(MathFunctions.Random.NextDouble() < animal.SpawnProbability))
-                    continue;
 
-                EntityFactory.DoLazy(() =>
-                {
-                    var entity = EntityFactory.CreateEntity<GameComponent>(animal.Name,
-                        chunk.Origin + new Vector3(x, y, z) + Vector3.Up * 1.0f);
-
-                    if (GameSettings.Default.FogofWar)
-                    {
-                        entity.GetRoot().SetFlagRecursive(GameComponent.Flag.Active, false);
-                        entity.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
-                        entity.AddChild(new ExploredListener
-                            (world.ComponentManager,
-                                world.ChunkManager, new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z))));
-                    }
-                });
-                break;
-            }
         }
 
         public static void GenerateCaveVegetation(VoxelChunk chunk, int x, int y, int z, int caveHeight, BiomeData biome, Vector3 vec, WorldManager world, Perlin NoiseGenerator)
@@ -475,6 +455,29 @@ namespace DwarfCorp
                                 world.ComponentManager, world.ChunkManager, vUnder));
                     });
                 }
+            }
+
+            foreach (FaunaData animal in biome.Fauna)
+            {
+                if (y <= 0 || !(MathFunctions.Random.NextDouble() < animal.SpawnProbability))
+                    continue;
+
+                FaunaData animal1 = animal;
+                EntityFactory.DoLazy(() =>
+                {
+                    var entity = EntityFactory.CreateEntity<GameComponent>(animal1.Name,
+                        wayUnder.WorldPosition + Vector3.Up * 1.5f);
+
+                    if (GameSettings.Default.FogofWar)
+                    {
+                        entity.GetRoot().SetFlagRecursive(GameComponent.Flag.Active, false);
+                        entity.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
+                        entity.AddChild(new ExploredListener
+                            (world.ComponentManager,
+                                world.ChunkManager, new VoxelHandle(chunk, wayUnder.Coordinate.GetLocalVoxelCoordinate())));
+                    }
+                });
+                break;
             }
         }
 

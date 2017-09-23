@@ -325,7 +325,7 @@ namespace DwarfCorp
                     break;
                 case MoveType.Climb:
                 case MoveType.ClimbWalls:
-                    if ((int) (t*100)%25 == 0)
+                    if (((int) ((t + 1)*100))%50 == 0)
                     {
                         Creature.NoiseMaker.MakeNoise("Climb", Agent.Position, false);
                     }
@@ -366,9 +366,15 @@ namespace DwarfCorp
                     }
                     break;
                 case MoveType.DestroyObject:
-                    Creature.AI.Tasks.Add(new KillEntityTask((Body)(action.InteractObject), 
-                        KillEntityTask.KillType.Auto) {Priority = Task.PriorityType.Urgent});
-                    yield return Act.Status.Fail;
+                    var melee = new MeleeAct(Creature.AI, (Body) action.InteractObject);
+                    melee.Initialize();
+                    foreach (var status in melee.Run())
+                    {
+                        if (status == Act.Status.Fail)
+                            yield return Act.Status.Fail;
+                        yield return Act.Status.Running;
+                    }
+                    yield return Act.Status.Success;
                     yield break;
             }
 

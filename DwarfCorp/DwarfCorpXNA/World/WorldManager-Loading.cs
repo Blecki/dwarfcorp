@@ -37,6 +37,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using BloomPostprocess;
 using DwarfCorp.Gui.Widgets;
@@ -54,6 +55,17 @@ namespace DwarfCorp
 {
     public partial class WorldManager
     {
+        public enum LoadingStatus
+        {
+            Loading,
+            Success,
+            Failure
+        }
+
+        public LoadingStatus LoadStatus = LoadingStatus.Loading;
+
+        public Exception LoadingException = null;
+
         public void Setup()
         {
             Screenshots = new List<Screenshot>();
@@ -77,6 +89,7 @@ namespace DwarfCorp
 
         private void LoadThreaded()
         {
+            LoadStatus = LoadingStatus.Loading;
             SetLoadingMessage("Initializing ...");
 
             while (GraphicsDevice == null)
@@ -88,6 +101,7 @@ namespace DwarfCorp
 #if CREATE_CRASH_LOGS
             try
 #endif
+            try
             {
                 bool fileExists = !string.IsNullOrEmpty(ExistingFile);
 
@@ -124,7 +138,10 @@ namespace DwarfCorp
                                                       ProgramData.DirChar + Overworld.Name);
                         OverworldFile overWorldFile =
                             new OverworldFile(
-                                worldDirectory.FullName + ProgramData.DirChar + "world." + (DwarfGame.COMPRESSED_BINARY_SAVES ?  OverworldFile.CompressedExtension : OverworldFile.Extension),
+                                worldDirectory.FullName + ProgramData.DirChar + "world." +
+                                (DwarfGame.COMPRESSED_BINARY_SAVES
+                                    ? OverworldFile.CompressedExtension
+                                    : OverworldFile.Extension),
                                 DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
                         Overworld.Map = overWorldFile.Data.CreateMap();
                         Overworld.Name = overWorldFile.Data.Name;
@@ -139,6 +156,7 @@ namespace DwarfCorp
                 #endregion
 
                 #region Initialize static data
+
                 {
                     Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
                     Vector3 extents = new Vector3(1500, 1500, 1500);
@@ -150,7 +168,8 @@ namespace DwarfCorp
 
                     new PrimitiveLibrary(GraphicsDevice, Content);
                     InstanceManager = new InstanceManager();
-                    NewInstanceManager = new NewInstanceManager(new BoundingBox(origin - extents, origin + extents), Content);
+                    NewInstanceManager = new NewInstanceManager(new BoundingBox(origin - extents, origin + extents),
+                        Content);
 
                     EntityFactory.InstanceManager = InstanceManager;
                     InstanceManager.CreateStatics(Content);
@@ -184,6 +203,7 @@ namespace DwarfCorp
                     MonsterSpawner = new MonsterSpawner(this);
                     EntityFactory.Initialize(this);
                 }
+
                 #endregion
 
 
@@ -194,7 +214,9 @@ namespace DwarfCorp
                 Shadows = new ShadowRenderer(GraphicsDevice, 1024, 1024);
 
                 SetLoadingMessage("Creating Liquids ...");
+
                 #region liquids
+
                 WaterRenderer = new WaterRenderer(GraphicsDevice);
 
                 LiquidAsset waterAsset = new LiquidAsset
@@ -230,19 +252,20 @@ namespace DwarfCorp
                 };
 
                 WaterRenderer.AddLiquidAsset(lavaAsset);
+
                 #endregion
 
                 SetLoadingMessage("Generating Initial Terrain Chunks ...");
-            
+
                 if (!fileExists)
                     GameID = MathFunctions.Random.Next(0, 1024);
-                
+
                 ChunkGenerator = new ChunkGenerator(VoxelLibrary, Seed, 0.02f, this.WorldScale)
                 {
                     SeaLevel = SeaLevel
                 };
 
-            
+
                 #region Load Components
 
                 if (fileExists)
@@ -260,8 +283,8 @@ namespace DwarfCorp
                     ChunkManager.ChunkData.LoadFromFile(gameFile, SetLoadingMessage);
 
                     ChunkManager.ChunkData.SetMaxViewingLevel(gameFile.Data.Metadata.Slice > 0
-                    ? gameFile.Data.Metadata.Slice
-                    : ChunkManager.ChunkData.MaxViewingLevel, ChunkManager.SliceMode.Y);
+                        ? gameFile.Data.Metadata.Slice
+                        : ChunkManager.ChunkData.MaxViewingLevel, ChunkManager.SliceMode.Y);
 
 
                     SetLoadingMessage("Loading Entities...");
@@ -286,7 +309,7 @@ namespace DwarfCorp
                             throw new InvalidOperationException("Component exists in save data but not in manager.");
                         }
                     }
-                    
+
                     foreach (var resource in gameFile.Data.Worlddata.Resources)
                     {
                         if (!ResourceLibrary.Resources.ContainsKey(resource.Key))
@@ -297,7 +320,7 @@ namespace DwarfCorp
 
                     Factions = gameFile.Data.Worlddata.Factions;
                     ComponentManager.World = this;
-                    
+
                     Sky.TimeOfDay = gameFile.Data.Metadata.TimeOfDay;
                     Time = gameFile.Data.Metadata.Time;
                     WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
@@ -325,13 +348,15 @@ namespace DwarfCorp
                 {
                     Time = new WorldTime();
                     // WorldOrigin is in "map" units. Convert to voxels
-                    var globalOffset = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y) * WorldScale;
+                    var globalOffset = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y)*WorldScale;
 
-                    Camera = new OrbitCamera(this, 
-                        new Vector3(VoxelConstants.ChunkSizeX, 
-                        VoxelConstants.ChunkSizeY - 1.0f, 
-                        VoxelConstants.ChunkSizeZ) + new Vector3(WorldOrigin.X, 0, WorldOrigin.Y) * WorldScale,
-                        new Vector3(VoxelConstants.ChunkSizeY, VoxelConstants.ChunkSizeY - 1.0f, VoxelConstants.ChunkSizeZ) + new Vector3(WorldOrigin.X, 0, WorldOrigin.Y) * WorldScale + Vector3.Up * 10.0f + Vector3.Backward * 10,
+                    Camera = new OrbitCamera(this,
+                        new Vector3(VoxelConstants.ChunkSizeX,
+                            VoxelConstants.ChunkSizeY - 1.0f,
+                            VoxelConstants.ChunkSizeZ) + new Vector3(WorldOrigin.X, 0, WorldOrigin.Y)*WorldScale,
+                        new Vector3(VoxelConstants.ChunkSizeY, VoxelConstants.ChunkSizeY - 1.0f,
+                            VoxelConstants.ChunkSizeZ) + new Vector3(WorldOrigin.X, 0, WorldOrigin.Y)*WorldScale +
+                        Vector3.Up*10.0f + Vector3.Backward*10,
                         MathHelper.PiOver4, AspectRatio, 0.1f,
                         GameSettings.Default.VertexCullDistance);
 
@@ -402,7 +427,7 @@ namespace DwarfCorp
                     }
 
                     Factions.Initialize(this, CompanyMakerState.CompanyInformation);
-                    Point playerOrigin = new Point((int)(WorldOrigin.X), (int)(WorldOrigin.Y));
+                    Point playerOrigin = new Point((int) (WorldOrigin.X), (int) (WorldOrigin.Y));
 
                     Factions.Factions["Player"].Center = playerOrigin;
                     Factions.Factions["The Motherland"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
@@ -425,7 +450,7 @@ namespace DwarfCorp
 
 
                 #endregion
-                
+
                 ChunkManager.camera = Camera;
                 // Finally, the chunk manager's threads are started to allow it to 
                 // dynamically rebuild terrain
@@ -436,7 +461,7 @@ namespace DwarfCorp
 
                 SetLoadingMessage("Creating GameMaster ...");
                 Master = new GameMaster(Factions.Factions["Player"], Game, ComponentManager, ChunkManager,
-                Camera, GraphicsDevice);
+                    Camera, GraphicsDevice);
 
                 if (Master.Faction.Economy.Company.Information == null)
                     Master.Faction.Economy.Company.Information = new CompanyInformation();
@@ -454,13 +479,22 @@ namespace DwarfCorp
 
                 // GameFile is no longer needed.
                 gameFile = null;
+                LoadStatus = LoadingStatus.Success;
             }
+            catch (Exception exception)
+            {
+                Game.CaptureException(exception);
+                LoadingException = exception;
+                LoadStatus = LoadingStatus.Failure;
+            }
+        }
+        
+
 #if CREATE_CRASH_LOGS
             catch (Exception exception)
             {
                 ProgramData.WriteExceptionLog(exception);
             }
 #endif
-        }
     }
 }

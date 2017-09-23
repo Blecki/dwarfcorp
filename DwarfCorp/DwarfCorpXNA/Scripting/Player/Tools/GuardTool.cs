@@ -72,7 +72,7 @@ namespace DwarfCorp
                     };
 
                     Player.Faction.GuardDesignations.Add(d);
-                    assignedTasks.Add(new GuardVoxelTask(v));
+                    assignedTasks.Add(new GuardZoneTask());
                 }
                 else
                 {
@@ -86,6 +86,7 @@ namespace DwarfCorp
 
                 }
             }
+
 
             List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.World.Master.SelectedMinions, GameMaster.ToolMode.Gather);
             TaskManager.AssignTasks(assignedTasks, minions);
@@ -105,7 +106,10 @@ namespace DwarfCorp
 
         public override void OnEnd()
         {
-
+            foreach (var guard in Player.Faction.GuardDesignations)
+            {
+                Drawer3D.UnHighlightVoxel(guard.Vox);
+            }
         }
 
 
@@ -127,6 +131,8 @@ namespace DwarfCorp
             Player.BodySelector.Enabled = false;
             Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
 
+            Player.World.ShowToolPopup("Click to guard. Rick click to cancel.");
+
             if (Player.World.IsMouseOverGui)
                 Player.World.SetMouse(Player.World.MousePointer);
             else
@@ -135,6 +141,7 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
+            NamedImageFrame frame = new NamedImageFrame("newgui/pointers2", 32, 3, 0);
             foreach (BuildOrder d in Player.Faction.GuardDesignations)
             {
                 var v = d.Vox;
@@ -144,19 +151,8 @@ namespace DwarfCorp
                     continue;
                 }
                 Color drawColor = GuardDesignationColor;
-
-                if (d.NumCreaturesAssigned == 0)
-                {
-                    drawColor = UnreachableColor;
-                }
-
-                /*
-                drawColor.R = (byte)(Math.Min(drawColor.R * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * GuardDesignationGlowRate)) + 50, 255));
-                drawColor.G = (byte)(Math.Min(drawColor.G * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * GuardDesignationGlowRate)) + 50, 255));
-                drawColor.B = (byte)(Math.Min(drawColor.B * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * GuardDesignationGlowRate)) + 50, 255));
-                Drawer3D.DrawBox(box, drawColor, 0.05f, true);
-                */
                 Drawer3D.HighlightVoxel(v, drawColor);
+                Drawer2D.DrawSprite(frame, v.WorldPosition + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
             }
         }
 

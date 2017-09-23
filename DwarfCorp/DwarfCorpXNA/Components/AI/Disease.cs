@@ -300,6 +300,7 @@ namespace DwarfCorp
         private float TotalDamage = 0.0f;
         public int DamageEveryNSeconds { get; set; }
         public bool IsInjury { get; set; }
+        public Timer SpreadTimer = new Timer(1.0f, false);
         public override void OnApply(Creature creature)
         {
             creature.Faction.World.Tutorial("disease");
@@ -366,7 +367,8 @@ namespace DwarfCorp
 
             if (IsContagious)
             {
-                if (MathFunctions.RandEvent(LikelihoodOfSpread))
+                SpreadTimer.Update(time);
+                if (SpreadTimer.HasTriggered && MathFunctions.RandEvent(LikelihoodOfSpread))
                 {
                     foreach (CreatureAI other in creature.Faction.Minions)
                     {

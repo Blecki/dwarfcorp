@@ -78,7 +78,7 @@ namespace DwarfCorp
         private bool shiftPressed = false;
         public Vector3 PushVelocity = Vector3.Zero;
         public ControlType Control = ControlType.Overhead;
-
+        private Point mouseOnRotate = new Point(0, 0);
         public List<Vector3> ZoomTargets { get; set; }
 
 
@@ -179,6 +179,7 @@ namespace DwarfCorp
                     shiftPressed = true;
 
                     mouse = Mouse.GetState();
+                    mouseOnRotate = new Point(mouse.X, mouse.Y);
                     stateChanged = true;
                 }
                 if (!isLeftPressed && mouse.LeftButton == ButtonState.Pressed)
@@ -206,11 +207,12 @@ namespace DwarfCorp
                     Mouse.SetPosition(GameState.Game.GraphicsDevice.Viewport.Width / 2,
                         GameState.Game.GraphicsDevice.Viewport.Height / 2);
                     mouse = Mouse.GetState();
+                    mouseOnRotate = new Point(mouse.X, mouse.Y);
                 }
 
 
-                diffX = mouse.X - GameState.Game.GraphicsDevice.Viewport.Width / 2;
-                diffY = mouse.Y - GameState.Game.GraphicsDevice.Viewport.Height / 2;
+                diffX = mouse.X - mouseOnRotate.X;
+                diffY = mouse.Y - mouseOnRotate.Y;
 
 
                 if (!isRightPressed)

@@ -1,4 +1,4 @@
-﻿// Sensor.cs
+// Sensor.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -49,8 +49,14 @@ namespace DwarfCorp
     {
 
         public delegate void Sense(IEnumerable<Body> sensed);
+        
         public event Sense OnSensed;
         public Timer FireTimer { get; set; }
+
+        public Sensor()
+        {
+            
+        }
 
         public Sensor(
             ComponentManager Manager, 

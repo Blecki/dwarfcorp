@@ -45,7 +45,7 @@ namespace DwarfCorp
     {
         public SpriteSheet Asset { get; set; }
         public Point Frame { get; set; }
-
+        public SimpleSprite.OrientMode OrientMode = SimpleSprite.OrientMode.Spherical;
         public Fixture()
         {
             
@@ -63,7 +63,16 @@ namespace DwarfCorp
             Frame = frame;
             AddToCollisionManager = false;
             CollisionType = CollisionManager.CollisionType.Static;
-
+            AddChild(new Health(Manager, "Hp", 100, 0, 100));
+            /*
+            AddChild(new Flammable(Manager, "Flammable"));
+            AddChild(new ParticleTrigger("dirt_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 1
+            });
+            */
+            PropogateTransforms();
             CreateCosmeticChildren(Manager);
         }
 
@@ -73,7 +82,7 @@ namespace DwarfCorp
 
             AddChild(new SimpleSprite(manager, "Sprite", Matrix.Identity, false, Asset, Frame)
             {
-                OrientationType = SimpleSprite.OrientMode.Spherical
+                OrientationType = OrientMode
             }).SetFlag(Flag.ShouldSerialize, false);
         }            
     }

@@ -132,7 +132,7 @@ namespace DwarfCorp.GameStates
                                 OnClose = (s2) =>
                                     {
                                         if ((s2 as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
-                                            ApplySettings();
+                                            ConfirmSettings();
                                         if (OnClosed != null) OnClosed();
                                         StateManager.PopState();
                                     }
@@ -157,7 +157,7 @@ namespace DwarfCorp.GameStates
                 Border = "border-button",
                 OnClick = (sender, args) =>
                 {
-                    ApplySettings();
+                    ConfirmSettings();
                 },
                 AutoLayout = AutoLayout.FloatBottomRight,
                 OnLayout = s => s.Rect.X -= 128 // Hack to keep it from floating over the other button.
@@ -247,7 +247,7 @@ namespace DwarfCorp.GameStates
                             {
                                 GameSettings.Default = new GameSettings.Settings();
                                 RebuildGui();
-                                ApplySettings();
+                                ConfirmSettings();
                             }
                         }
                     });
@@ -730,7 +730,7 @@ namespace DwarfCorp.GameStates
 
                         HasChanges = true;
                         RebuildGui();
-                        ApplySettings();
+                        ConfirmSettings();
                         TabPanel.SelectedTab = 3;
                     }
                 }
@@ -761,56 +761,110 @@ namespace DwarfCorp.GameStates
             this.Resolution.SelectedIndex = this.Resolution.Items.IndexOf(bestMode);
         }
 
-        private void ApplySettings()
+        public class SettingsApplier : Confirm
         {
+            public OptionsState State;
+            public GameSettings.Settings PreviousSettings;
+            public GameSettings.Settings NewSettings;
+            private double ElapsedSeconds = 0;
+            private int ElapsedSecondsInt = 0;
+            public override void Construct()
+            {
+                base.Construct();
+                OnUpdate = (widget, time) =>
+                {
+                    // Do this instead of using timer in case it gets paused.
+                    ElapsedSeconds += 0.0167;
+                    int prevElapsed = ElapsedSecondsInt;
+                    ElapsedSecondsInt = (int) ElapsedSeconds;
+                    if (prevElapsed != ElapsedSecondsInt)
+                    {
+                        Text =
+                            String.Format(
+                                "Do you want to keep these settings? They will be reverted after {0} seconds...",
+                                10 - ElapsedSecondsInt);
+                        Invalidate();
+                    }
+                    if (ElapsedSeconds > 10)
+                    {
+                        State.ApplySettings(PreviousSettings.Clone());
+                        this.Close();
+                    }
+                };
+            }
+        }
+
+        public GameSettings.Settings GetNewSettings()
+        {
+            GameSettings.Settings toReturn = GameSettings.Default.Clone();
             // Copy all the states from widgets to game settings.
-
             // Gameplay settings
-            GameSettings.Default.CameraScrollSpeed = this.MoveSpeed.ScrollPosition;
-            GameSettings.Default.CameraZoomSpeed = this.ZoomSpeed.ScrollPosition;
-            GameSettings.Default.EnableEdgeScroll = this.EdgeScrolling.CheckState;
-            GameSettings.Default.FogofWar = this.FogOfWar.CheckState;
-            GameSettings.Default.InvertZoom = this.InvertZoom.CheckState;
-            GameSettings.Default.DisplayIntro = this.PlayIntro.CheckState;
-            GameSettings.Default.AutoSave = this.Autosave.CheckState;
-            GameSettings.Default.AutoSaveTimeMinutes = 
+            toReturn.CameraScrollSpeed = this.MoveSpeed.ScrollPosition;
+            toReturn.CameraZoomSpeed = this.ZoomSpeed.ScrollPosition;
+            toReturn.EnableEdgeScroll = this.EdgeScrolling.CheckState;
+            toReturn.FogofWar = this.FogOfWar.CheckState;
+            toReturn.InvertZoom = this.InvertZoom.CheckState;
+            toReturn.DisplayIntro = this.PlayIntro.CheckState;
+            toReturn.AutoSave = this.Autosave.CheckState;
+            toReturn.AutoSaveTimeMinutes =
                 (this.AutoSaveFrequency.GetChild(1) as HorizontalSlider).ScrollPosition + 5.0f;
-          
-            // Audio settings
-            GameSettings.Default.MasterVolume = this.MasterVolume.ScrollPosition;
-            GameSettings.Default.SoundEffectVolume = this.SFXVolume.ScrollPosition;
-            GameSettings.Default.MusicVolume = this.MusicVolume.ScrollPosition;
 
+            // Audio settings
+            toReturn.MasterVolume = this.MasterVolume.ScrollPosition;
+            toReturn.SoundEffectVolume = this.SFXVolume.ScrollPosition;
+            toReturn.MusicVolume = this.MusicVolume.ScrollPosition;
+
+            var newDisplayMode = DisplayModes[this.Resolution.SelectedItem];
+            toReturn.ResolutionX = newDisplayMode.Width;
+            toReturn.ResolutionY = newDisplayMode.Height;
+
+            toReturn.Fullscreen = this.Fullscreen.CheckState;
+            toReturn.ChunkDrawDistance = this.ChunkDrawDistance.ScrollPosition + 1.0f;
+            //toReturn.VertexCullDistance = this.VertexCullDistance.ScrollPosition + 0.1f;
+            //toReturn.ChunkGenerateDistance = this.GenerateDistance.ScrollPosition + 1.0f;
+            toReturn.EnableGlow = this.Glow.CheckState;
+            toReturn.AntiAliasing = AntialiasingOptions[this.Antialiasing.SelectedItem];
+            toReturn.DrawChunksReflected = this.ReflectTerrain.CheckState;
+            toReturn.DrawEntityReflected =  this.ReflectEntities.CheckState;
+            toReturn.AmbientOcclusion = this.AmbientOcclusion.CheckState;
+            toReturn.CursorLightEnabled = this.CursorLight.CheckState;
+            toReturn.EntityLighting = this.EntityLight.CheckState;
+            toReturn.SelfIlluminationEnabled = this.SelfIllumination.CheckState;
+            toReturn.ParticlePhysics = this.ParticlePhysics.CheckState;
+            toReturn.GrassMotes = this.Motes.CheckState;
+            toReturn.NumMotes = (int)this.NumMotes.ScrollPosition + 100;
+
+            toReturn.GuiScale = GuiScale.SelectedIndex + 1;
+            toReturn.GuiAutoScale = this.GuiAutoScale.CheckState;
+            return toReturn;
+        }
+
+        public void ConfirmSettings()
+        {
+            var prevSettings = GameSettings.Default.Clone();
+            ApplySettings(GetNewSettings());
+            var popup = new SettingsApplier()
+            {
+                PreviousSettings = prevSettings,
+                State = this,
+                Text = "Do you want to keep these settings? They will be reverted after 10 seconds...",
+                CancelText = ""
+            };
+            GuiRoot.ShowModalPopup(popup);
+            GuiRoot.RegisterForUpdate(popup);
+        }
+
+        public void ApplySettings(GameSettings.Settings settings)
+        {
             // Graphics settings
             var preResolutionX = GameSettings.Default.ResolutionX;
             var preResolutionY = GameSettings.Default.ResolutionY;
             var preFullscreen = GameSettings.Default.Fullscreen;
             var preGuiScale = GameSettings.Default.GuiScale;
-
-            var newDisplayMode = DisplayModes[this.Resolution.SelectedItem];
-            GameSettings.Default.ResolutionX = newDisplayMode.Width;
-            GameSettings.Default.ResolutionY = newDisplayMode.Height;
-
-            GameSettings.Default.Fullscreen = this.Fullscreen.CheckState;
-            GameSettings.Default.ChunkDrawDistance = this.ChunkDrawDistance.ScrollPosition + 1.0f;
-            //GameSettings.Default.VertexCullDistance = this.VertexCullDistance.ScrollPosition + 0.1f;
-            //GameSettings.Default.ChunkGenerateDistance = this.GenerateDistance.ScrollPosition + 1.0f;
-            GameSettings.Default.EnableGlow = this.Glow.CheckState;
-            GameSettings.Default.AntiAliasing = AntialiasingOptions[this.Antialiasing.SelectedItem];
-            GameSettings.Default.DrawChunksReflected = this.ReflectTerrain.CheckState;
-            GameSettings.Default.DrawEntityReflected = this.ReflectEntities.CheckState;
-            GameSettings.Default.AmbientOcclusion = this.AmbientOcclusion.CheckState;
-            GameSettings.Default.CursorLightEnabled = this.CursorLight.CheckState;
-            GameSettings.Default.EntityLighting = this.EntityLight.CheckState;
-            GameSettings.Default.SelfIlluminationEnabled = this.SelfIllumination.CheckState;
-            GameSettings.Default.ParticlePhysics = this.ParticlePhysics.CheckState;
-            GameSettings.Default.GrassMotes = this.Motes.CheckState;
-            GameSettings.Default.NumMotes = (int)this.NumMotes.ScrollPosition + 100;
-
-            GameSettings.Default.GuiScale = GuiScale.SelectedIndex + 1;
-            GameSettings.Default.GuiAutoScale = this.GuiAutoScale.CheckState;
             var preVsync = GameSettings.Default.VSync;
-            GameSettings.Default.VSync = this.VSync.CheckState;
+
+            GameSettings.Default = settings.Clone();
+
             if (preResolutionX != GameSettings.Default.ResolutionX || 
                 preResolutionY != GameSettings.Default.ResolutionY ||
                 preFullscreen != GameSettings.Default.Fullscreen ||

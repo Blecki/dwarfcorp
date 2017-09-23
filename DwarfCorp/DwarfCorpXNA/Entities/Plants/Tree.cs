@@ -102,6 +102,7 @@ namespace DwarfCorp
 
         public void CreateAdult()
         {
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_plant_grow, Position, true);
             IsGrown = true;
             Adult.IsGrown = true;
             Adult.SetFlagRecursive(Flag.Active, true);
@@ -223,12 +224,13 @@ namespace DwarfCorp
             Particles = AddChild(new ParticleTrigger("Leaves", Manager, "LeafEmitter",
                 Matrix.Identity, BoundingBoxPos, GetBoundingBox().Extents())
             {
-                SoundToPlay = ContentPaths.Audio.vegetation_break
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_env_tree_cut_down_1
             }) as ParticleTrigger;
 
 
             AddToCollisionManager = true;
             CollisionType = CollisionManager.CollisionType.Static;
+            PropogateTransforms();
         }
 
         public override void ReceiveMessageRecursive(Message messageToReceive)

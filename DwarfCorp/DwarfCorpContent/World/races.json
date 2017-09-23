@@ -139,7 +139,8 @@
         },
         "Crafts" :  ["Bone"],
         "Encrustings":  [],
-        "Icon":  3
+        "Icon":  3,
+        "TradeMusic" :  "goblin",
     },
     "Molemen": {
         "Name": "Molemen",

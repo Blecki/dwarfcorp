@@ -189,6 +189,21 @@ namespace DwarfCorp
             EntityFuncs[id] = function;
         }
 
+        // Create an entity and make it a transparent ghost object that doesn't interact with anything.
+        // This is for displaying stuff, for example in tools.
+        public static Body CreateGhostedEntity<T>(string id, Vector3 location, Color tint, Blackboard data = null) where T : Body
+        {
+            var ent = CreateEntity<T>(id, location, data);
+            ent.SetFlagRecursive(GameComponent.Flag.Active, false);
+            var tinters = ent.EnumerateAll().OfType<Tinter>();
+
+            foreach (var tinter in tinters)
+            {
+                tinter.VertexColorTint = tint;
+            }
+            return ent;
+        }
+
         public static T CreateEntity<T>(string id, Vector3 location, Blackboard data = null) where T : GameComponent
         {
             if (data == null) data = new Blackboard();

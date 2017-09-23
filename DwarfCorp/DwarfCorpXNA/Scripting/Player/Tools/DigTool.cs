@@ -141,9 +141,16 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-            //foreach (KeyValuePair<ulong, BuildOrder> kvp in Player.Faction.DigDesignations)
-            //{
-            //    var v = kvp.Value.Vox;
+//<<<<<<< HEAD
+//            //foreach (KeyValuePair<ulong, BuildOrder> kvp in Player.Faction.DigDesignations)
+//            //{
+//            //    var v = kvp.Value.Vox;
+//=======
+//            NamedImageFrame frame = new NamedImageFrame("newgui/pointers2", 32, 1, 0);
+//            foreach (KeyValuePair<ulong, BuildOrder> kvp in Player.Faction.DigDesignations)
+//            {
+//                var v = kvp.Value.Vox;
+//>>>>>>> cc30142a095c51bd81443c0769f00b9fb9c8d965
 
             //    BoundingBox box = v.GetBoundingBox();
 
@@ -155,14 +162,26 @@ namespace DwarfCorp
             //        drawColor = UnreachableColor;
             //    }
 
-            //    /*
-            //    drawColor.R = (byte)(drawColor.R * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * DigDesignationGlowRate)) + 50);
-            //    drawColor.G = (byte)(drawColor.G * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * DigDesignationGlowRate)) + 50);
-            //    drawColor.B = (byte)(drawColor.B * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * DigDesignationGlowRate)) + 50);
-            //    Drawer3D.DrawBox(box, drawColor, 0.05f, true);
-            //     */
-            //    Drawer3D.HighlightVoxel(v, drawColor);
-            //}
+//<<<<<<< HEAD
+//            //    /*
+//            //    drawColor.R = (byte)(drawColor.R * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * DigDesignationGlowRate)) + 50);
+//            //    drawColor.G = (byte)(drawColor.G * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * DigDesignationGlowRate)) + 50);
+//            //    drawColor.B = (byte)(drawColor.B * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * DigDesignationGlowRate)) + 50);
+//            //    Drawer3D.DrawBox(box, drawColor, 0.05f, true);
+//            //     */
+//            //    Drawer3D.HighlightVoxel(v, drawColor);
+//            //}
+//=======
+//                /*
+//                drawColor.R = (byte)(drawColor.R * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * DigDesignationGlowRate)) + 50);
+//                drawColor.G = (byte)(drawColor.G * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * DigDesignationGlowRate)) + 50);
+//                drawColor.B = (byte)(drawColor.B * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * DigDesignationGlowRate)) + 50);
+//                Drawer3D.DrawBox(box, drawColor, 0.05f, true);
+//                 */
+//                Drawer3D.HighlightVoxel(v, drawColor);
+//                Drawer2D.DrawSprite(frame, v.WorldPosition + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
+//            }
+//>>>>>>> cc30142a095c51bd81443c0769f00b9fb9c8d965
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)

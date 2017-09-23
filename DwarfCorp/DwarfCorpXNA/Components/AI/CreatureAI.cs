@@ -341,7 +341,19 @@ namespace DwarfCorp
         /// <summary> remove any impossible or already completed tasks </summary>
         public void DeleteBadTasks()
         {
-            Tasks.RemoveAll(task => task.ShouldDelete(Creature));
+            var tasksToremove = Tasks.Where(task => (task.ShouldDelete(Creature))).ToList();
+            foreach (var task in tasksToremove)
+            {
+                Tasks.Remove(task);
+                History.Remove(task.Name);
+            }
+
+
+            var historyToRemove = History.Where(history => Tasks.All(task => task.Name != history.Key)).ToList();
+            foreach (var history in historyToRemove)
+            {
+                History.Remove(history.Key);
+            }
         }
 
         /// <summary> Animate the PlayState Camera to look at this creature </summary>
@@ -391,17 +403,21 @@ namespace DwarfCorp
         /// <summary> Update this creature </summary>
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            /*DEBUG DRAW TASK QUEUE HERE
-            StringBuilder taskString = new StringBuilder();
-            foreach (var task in Tasks)
+            //DEBUG DRAW TASK QUEUE HERE
+
+            if (DrawPath)
             {
-                taskString.Append(task.Name);
-                taskString.Append(String.Format(" Feasible: {0}, Cost {1}, Priority {2}", task.IsFeasible(Creature),
-                    task.ComputeCost(Creature), task.Priority));
-                taskString.Append("\n");
+                StringBuilder taskString = new StringBuilder();
+                foreach (var task in Tasks)
+                {
+                    taskString.Append(task.Name);
+                    taskString.Append(String.Format(" Feasible: {0}, Cost {1}, Priority {2}", task.IsFeasible(Creature),
+                        task.ComputeCost(Creature), task.Priority));
+                    taskString.Append("\n");
+                }
+                Drawer2D.DrawText(taskString.ToString(), Position, Color.White, Color.Black);
             }
-            Drawer2D.DrawText(taskString.ToString(), Position, Color.White, Color.Black);
-             */
+
             if (!Active) return;
 
             if (Faction == null && !string.IsNullOrEmpty(Creature.Allies))
@@ -419,7 +435,7 @@ namespace DwarfCorp
 
 
             // Heal thyself
-            if (Status.Health.IsDissatisfied())
+            if (Status.Health.IsDissatisfied() && Stats.CanSleep)
             {
                 Task toReturn = new GetHealedTask();
                 toReturn.SetupScript(Creature);
@@ -444,14 +460,6 @@ namespace DwarfCorp
                 if (!Tasks.Contains(toReturn))
                     Tasks.Add(toReturn);
             }
-
-            /*
-            if (CurrentAct != null && CurrentAct.IsCanceled)
-            {
-                CurrentTask.Script = null;
-                CurrentTask = null;
-            }
-             */
 
             // Update the current task.
             if (CurrentTask != null && CurrentAct != null)
@@ -568,7 +576,10 @@ namespace DwarfCorp
             }
 
             if (PositionConstraint.Contains(Physics.LocalPosition) == ContainmentType.Disjoint)
+            {
                 Physics.LocalPosition = MathFunctions.Clamp(Physics.Position, PositionConstraint);
+                Physics.PropogateTransforms();
+            }
         }
 
         private int lastXPAnnouncement = 0;
@@ -607,7 +618,7 @@ namespace DwarfCorp
         /// <summary> The Act that the creature performs when its told to "wander" (when it has nothing to do) </summary>
         public virtual Act ActOnWander()
         {
-            return new WanderAct(this, 2, 0.5f + MathFunctions.Rand(-0.25f, 0.25f), 1.0f);
+            return new WanderAct(this, 5, 1.5f + MathFunctions.Rand(-0.25f, 0.25f), 1.0f);
         }
 
         /// <summary>
@@ -672,10 +683,12 @@ namespace DwarfCorp
         /// </summary>
         public virtual Task ActOnIdle()
         {
+            /*
             if (!IsPosessed && !Creature.IsOnGround && !Movement.CanFly && !Creature.Physics.IsInLiquid)
             {
                 return new ActWrapperTask(new Wrap(AvoidFalling));
             }
+             */
 
             if (!IsPosessed && Creature.Physics.IsInLiquid && MathFunctions.RandEvent(0.01f))
             {
@@ -694,6 +707,7 @@ namespace DwarfCorp
                     var item = CraftLibrary.GetRandomApplicableCraftItem(Faction);
                     if (item != null)
                     {
+                        item.NumRepeats = 1;
                         bool gotAny = true;
                         foreach (var resource in item.RequiredResources)
                         {
@@ -705,9 +719,10 @@ namespace DwarfCorp
                             }
                             item.SelectedResources.Add(Datastructures.SelectRandom(amount));
                         }
+                        
                         if (gotAny)
                         {
-                            return new CraftResourceTask(item);
+                            return new CraftResourceTask(item) {IsAutonomous = true, Priority = Task.PriorityType.Low};
                         }
                     }
                 }
@@ -734,7 +749,7 @@ namespace DwarfCorp
                 }
 
                 // Find a room to train in, if applicable.
-                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack) && MathFunctions.RandEvent(0.0005f))
+                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack) && MathFunctions.RandEvent(0.01f))
                 {
                     Body closestTraining = Faction.FindNearestItemWithTags("Train", Position, true);
 
@@ -763,6 +778,7 @@ namespace DwarfCorp
                     };
                 }
 
+                /*
                 if (IdleTimer.HasTriggered)
                 {
                     IdleTimer.Reset(IdleTimer.TargetTimeSeconds);
@@ -772,6 +788,7 @@ namespace DwarfCorp
                     };
                 }
                 return null;
+                 */
             }
 
             // If we have no more build orders, look for gather orders
@@ -820,7 +837,7 @@ namespace DwarfCorp
                 return new BuildVoxelsTask(voxels);
             }
 
-            return null;
+            return new LookInterestingTask();
         }
 
 
@@ -1230,6 +1247,32 @@ namespace DwarfCorp
                     MathFunctions.ClampXZ(Creature.Physics.Velocity, Creature.Physics.IsInLiquid ? Stats.MaxSpeed * 0.5f: Stats.MaxSpeed);
             }
           
+        }
+
+        // If true, this creature can fight the other creature. Otherwise, we want to flee it.
+        public bool FightOrFlight(CreatureAI creature)
+        {
+            float fear = 0;
+            // If our health is low, we're a little afraid.
+            if (Creature.Hp < Creature.MaxHealth * 0.25f)
+            {
+                fear += 0.5f;
+            }
+
+            // If there are a lot of nearby threats vs allies, we are even more afraid.
+            if (Faction.Threats.Sum(threat => (threat.AI.Position - Position).Length() < 6.0f ? 1 : 0) - Faction.Minions.Sum(minion => (minion.Position - Position).Length() < 6.0f ? 1 : 0) > Creature.Stats.BuffedCon)
+            {
+                fear += 0.5f;
+            }
+
+            // If the creature has formidible weapons, we're in trouble.
+            if (creature.Creature.Attacks[0].DamageAmount > Creature.Attacks[0].DamageAmount)
+            {
+                fear += creature.Creature.Attacks[0].DamageAmount / Creature.Hp;
+            }
+
+            fear = Math.Min(fear, 0.99f);
+            return MathFunctions.RandEvent(1.0f - fear);
         }
     }
 }

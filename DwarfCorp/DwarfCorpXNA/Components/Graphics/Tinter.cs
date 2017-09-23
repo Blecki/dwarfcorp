@@ -107,4 +107,13 @@ namespace DwarfCorp
         }
     }
 
+    public static class TintExtension
+    {
+        public static void SetTintRecursive(this GameComponent component, Color color)
+        {
+            foreach (var sprite in component.EnumerateAll().OfType<Tinter>())
+                sprite.VertexColorTint = color;
+        }
+    }
+
 }

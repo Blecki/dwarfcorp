@@ -79,6 +79,8 @@ namespace DwarfCorp
             Vector3 oldPosition = Agent.Position;
             bool firstIter = true;
             Creature.Controller.Reset();
+            WanderTime.Reset();
+            TurnTime.Reset();
             while(!WanderTime.HasTriggered)
             {
                 Creature.OverrideCharacterMode = false;
@@ -107,7 +109,6 @@ namespace DwarfCorp
                     Creature.Physics.Velocity *= 0.0f;
                     Creature.CurrentCharacterMode = CharacterMode.Idle;
                     yield return Status.Running;
-                    break;
                 }
                 else
                 {
@@ -172,7 +173,9 @@ namespace DwarfCorp
                     }
                 }
 
-                if (bestAction.HasValue && !path.Any(p => p.DestinationVoxel.Equals(bestAction.Value.DestinationVoxel) && p.MoveType == bestAction.Value.MoveType))
+                if (bestAction.HasValue && 
+                    !path.Any(p => p.DestinationVoxel.Equals(bestAction.Value.DestinationVoxel) && p.MoveType == bestAction.Value.MoveType &&
+                    Creature.AI.PositionConstraint.Contains(bestAction.Value.DestinationVoxel.WorldPosition + Vector3.One * 0.5f) == ContainmentType.Contains))
                 {
                     MoveAction action = bestAction.Value;
                     action.DestinationVoxel = curr;

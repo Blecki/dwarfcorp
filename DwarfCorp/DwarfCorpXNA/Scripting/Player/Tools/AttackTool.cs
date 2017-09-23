@@ -72,7 +72,27 @@ namespace DwarfCorp
 
         public override void OnMouseOver(IEnumerable<Body> bodies)
         {
-            DefaultOnMouseOver(bodies);
+            bool shown = false;
+            foreach (Body other in bodies)
+            {
+                var creature = other.EnumerateAll().OfType<Creature>().FirstOrDefault();
+                if (creature == null)
+                {
+                    continue;
+                }
+
+                if (Player.World.Diplomacy.GetPolitics(creature.Faction, Player.Faction).GetCurrentRelationship() ==
+                    Relationship.Loving)
+                {
+                    Player.Faction.World.ShowToolPopup("We refuse to attack allies.");
+                    shown = true;
+                    continue;
+                }
+                Player.Faction.World.ShowToolPopup("Click to attack this " + creature.Species);
+                shown = true;
+            }
+            if (!shown)
+                DefaultOnMouseOver(bodies);
         }
 
         public override void Update(DwarfGame game, DwarfTime time)
@@ -98,17 +118,17 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-
             Color drawColor = DesignationColor;
 
             float alpha = (float)Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * GlowRate));
             drawColor.R = (byte)(Math.Min(drawColor.R * alpha + 50, 255));
             drawColor.G = (byte)(Math.Min(drawColor.G * alpha + 50, 255));
             drawColor.B = (byte)(Math.Min(drawColor.B * alpha + 50, 255));
-
+            NamedImageFrame frame = new NamedImageFrame("newgui/pointers2", 32, 2, 0);
             foreach (BoundingBox box in Player.Faction.AttackDesignations.Select(d => d.GetBoundingBox()))
             {
                 Drawer3D.DrawBox(box, drawColor, 0.05f * alpha + 0.05f, true);
+                Drawer2D.DrawSprite(frame, box.Center(), Vector2.One, Vector2.Zero, new Color(255, 255, 255, 100));
             }
         }
 
@@ -125,6 +145,7 @@ namespace DwarfCorp
 
                 if (Player.World.Diplomacy.GetPolitics(creature.Faction, Player.Faction).GetCurrentRelationship() == Relationship.Loving)
                 {
+                    Player.Faction.World.ShowToolPopup("We refuse to attack allies.");
                     continue;
                 }
 
@@ -139,12 +160,13 @@ namespace DwarfCorp
                         {
                             minion.Tasks.Add(new KillEntityTask(other, KillEntityTask.KillType.Attack));
                         }
-
+                        Player.Faction.World.ShowToolPopup("Will attack this " + creature.Species);
                         OnConfirm(Player.Faction.SelectedMinions);
                     }
                 }
                 else if (button == InputManager.MouseButton.Right)
                 {
+                    Player.Faction.World.ShowToolPopup("Attack cancelled for " + creature.Species);
                     if (Player.Faction.AttackDesignations.Contains(other))
                     {
                         Player.Faction.AttackDesignations.Remove(other);

@@ -310,6 +310,7 @@ namespace DwarfCorp
             HandleThreats();
 
             OwnedObjects.RemoveAll(obj => obj.IsDead);
+
         }
 
         public enum AddChopResult

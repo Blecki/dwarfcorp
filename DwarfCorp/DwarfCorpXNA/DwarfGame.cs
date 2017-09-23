@@ -74,24 +74,6 @@ namespace DwarfCorp
 #endif
         public DwarfGame()
         {
-            try
-            {
-#if SHARP_RAVEN
-                ravenClient =
-                    new RavenClient(
-                        "https://af78a676a448474dacee4c72a9197dd2:0dd0a01a9d4e4fa4abc6e89ac7538346@sentry.io/192119");
-                ravenClient.Tags["Version"] = Program.Version;
-#if XNA_BUILD
-                ravenClient.Tags["Platform"] = "XNA";
-#else
-                ravenClient.Tags["Platform"] = "FNA";
-#endif
-#endif
-            }
-            catch (Exception exception)
-            {
-                Console.Error.WriteLine(exception.ToString());
-            }
 
             //BoundingBox foo = new BoundingBox(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
             //string serialized = FileUtils.SerializeBasicJSON(foo);
@@ -106,6 +88,27 @@ namespace DwarfCorp
             Window.AllowUserResizing = false;
             TextureManager = new TextureManager(Content, GraphicsDevice);
             GameSettings.Load();
+            try
+            {
+#if SHARP_RAVEN
+                if (GameSettings.Default.AllowReporting)
+                {
+                    ravenClient =
+                        new RavenClient(
+                            "https://af78a676a448474dacee4c72a9197dd2:0dd0a01a9d4e4fa4abc6e89ac7538346@sentry.io/192119");
+                    ravenClient.Tags["Version"] = Program.Version;
+                }
+#if XNA_BUILD
+                ravenClient.Tags["Platform"] = "XNA";
+#else
+                ravenClient.Tags["Platform"] = "FNA";
+#endif
+#endif
+            }
+            catch (Exception exception)
+            {
+                Console.Error.WriteLine(exception.ToString());
+            }
             Graphics.IsFullScreen = GameSettings.Default.Fullscreen;
             Graphics.PreferredBackBufferWidth = GameSettings.Default.Fullscreen ? GameSettings.Default.ResolutionX : Math.Min(GameSettings.Default.ResolutionX, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width);
             Graphics.PreferredBackBufferHeight = GameSettings.Default.Fullscreen ? GameSettings.Default.ResolutionY : Math.Min(GameSettings.Default.ResolutionY,
@@ -270,6 +273,14 @@ namespace DwarfCorp
                     ravenClient.Capture(new SentryEvent(exception));
                 throw;
             }
+#endif
+        }
+
+        public void CaptureException(Exception exception)
+        {
+#if SHARP_RAVEN
+            if (ravenClient != null)
+                ravenClient.Capture(new SentryEvent(exception));
 #endif
         }
 

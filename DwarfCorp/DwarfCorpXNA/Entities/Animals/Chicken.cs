@@ -103,7 +103,7 @@ namespace DwarfCorp
             // The bird can hold one item at a time in its inventory
             Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.BoundingBoxPos)) as Inventory;
 
-            Physics.AddChild(Shadow.Create(0.25f, Manager));
+            Physics.AddChild(Shadow.Create(0.5f, Manager));
             // The bird will emit a shower of blood when it dies
             Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
@@ -143,7 +143,7 @@ namespace DwarfCorp
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             CreateSprite(ContentPaths.Entities.Animals.chicken_animations, manager);
-            Physics.AddChild(Shadow.Create(0.25f, manager));
+            Physics.AddChild(Shadow.Create(0.5f, manager));
             base.CreateCosmeticChildren(manager);
         }
     }

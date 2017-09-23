@@ -82,6 +82,8 @@ namespace DwarfCorp
             Creature.Status.IsAsleep = false;
             Creature.CurrentCharacterMode = CharacterMode.Idle;
             Creature.OverrideCharacterMode = false;
+            Creature.Physics.IsSleeping = false;
+            Creature.Physics.AllowPhysicsSleep = false;
             base.OnCanceled();
         }
 
@@ -93,6 +95,8 @@ namespace DwarfCorp
             {
                 while (!Creature.Status.Energy.IsSatisfied() && Creature.Manager.World.Time.IsNight())
                 {
+                    Creature.Physics.AllowPhysicsSleep = true;
+                    Creature.Physics.IsSleeping = true;
                     if (Teleport)
                     {
                         Creature.AI.Position = TeleportLocation;
@@ -116,6 +120,8 @@ namespace DwarfCorp
                 }
                 Creature.AI.AddThought(Thought.ThoughtType.Slept);
                 Creature.Status.IsAsleep = false;
+                Creature.Physics.IsSleeping = false;
+                Creature.Physics.AllowPhysicsSleep = false;
                 yield return Status.Success;
             }
             else
@@ -128,6 +134,7 @@ namespace DwarfCorp
                         Creature.Physics.Velocity = Vector3.Zero;
                         Creature.Physics.LocalPosition = TeleportLocation;
                         Creature.Physics.IsSleeping = true;
+                        Creature.Physics.AllowPhysicsSleep = true;
                     }
                     Creature.CurrentCharacterMode = CharacterMode.Sleeping;
                     Creature.Status.Energy.CurrentValue += DwarfTime.Dt*RechargeRate;
@@ -138,6 +145,8 @@ namespace DwarfCorp
                 }
                 Creature.AI.AddThought(Thought.ThoughtType.Slept);
                 Creature.Status.IsAsleep = false;
+                Creature.Physics.IsSleeping = false;
+                Creature.Physics.AllowPhysicsSleep = false;
                 yield return Status.Success;
             }
         }

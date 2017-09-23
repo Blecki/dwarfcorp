@@ -1,4 +1,4 @@
-﻿// TrapSensor.cs
+// TrapSensor.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -46,6 +46,12 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     class TrapSensor : Sensor, IUpdateableComponent
     {
+
+        public TrapSensor()
+        {
+            
+        }
+
         public TrapSensor(ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
             base(manager, name, localTransform, boundingBoxExtents, boundingBoxPos)
         {

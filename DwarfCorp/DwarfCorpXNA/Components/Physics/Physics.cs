@@ -249,6 +249,14 @@ namespace DwarfCorp
         {
             if (!Active) return;
 
+            // Never apply physics when animating!
+            if (AnimationQueue.Count > 0)
+            {
+                PropogateTransforms();
+                base.Update(gameTime, chunks, camera);
+                return;
+            }
+
             if (gameTime.Speed < 0.01)
             {
                 base.Update(gameTime, chunks, camera);
@@ -505,19 +513,11 @@ namespace DwarfCorp
 
             Matrix m = LocalTransform;
 
-            if (box.Contains(Position) == ContainmentType.Contains)
-            {
-                var extents = BoundingBox.Extents();
-                m.Translation = new Vector3(m.Translation.X, box.Max.Y + extents.Y, m.Translation.Z);
-            }
-            else
-            {
-                m.Translation += contact.NEnter * (contact.Penetration) * 0.5f;
+            m.Translation += contact.NEnter * (contact.Penetration) * 0.5f;
 
-                Vector3 impulse = (Vector3.Dot(Velocity, -contact.NEnter) * contact.NEnter) * 60.0f;
-                Velocity += impulse * dt;
-                Velocity = new Vector3(Velocity.X * Friction, Velocity.Y, Velocity.Z * Friction);
-            }
+            Vector3 impulse = (Vector3.Dot(Velocity, -contact.NEnter) * contact.NEnter) * 60.0f;
+            Velocity += impulse * dt;
+            Velocity = new Vector3(Velocity.X * Friction, Velocity.Y, Velocity.Z * Friction);
 
             LocalTransform = m;
             UpdateBoundingBox();

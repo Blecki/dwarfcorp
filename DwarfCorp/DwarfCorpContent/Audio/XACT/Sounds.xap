@@ -16,8 +16,8 @@ Global Settings
     Header File = Sounds.h;
     Exclude Category Names = 0;
     Exclude Variable Names = 0;
-    Last Modified Low = 2337149957;
-    Last Modified High = 30601513;
+    Last Modified Low = 2952009060;
+    Last Modified High = 30618638;
 
     Category
     {
@@ -264,7 +264,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = Sound::1357c8fd-7176-41b8-bca7-5bcaecc9f9a4;
+            Name = Sound::aee33dcc-de30-44c4-bd03-e8ee29a9f3f0;
             Property = 0;
             Sound = 1;
             Line Color = 4281237832;
@@ -325,7 +325,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = Sound::85ce96af-283a-420e-98ba-ba94269c52c2;
+            Name = Sound::da3bbc82-f2f4-4e16-a495-f3e5c72e8d3c;
             Property = 0;
             Sound = 1;
             Line Color = 4281571480;
@@ -372,7 +372,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::c67791a0-191d-49c7-b041-0399559531f4;
+            Name = 1::b644ed05-4111-4623-bccc-bb3661e0acba;
             Property = 0;
             Sound = 0;
             Line Color = 4290610889;
@@ -405,7 +405,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::6377adc9-e1e1-410d-bafe-7543bdc29233;
+            Name = 1::c51df9a5-4a4b-48aa-84ee-6edaf3f75191;
             Property = 0;
             Sound = 0;
             Line Color = 4289091284;
@@ -438,7 +438,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::7091dbc0-dd75-4ab9-ae16-48ade0eb1e72;
+            Name = 1::c1705c90-2d6b-44c1-966a-2aa956d9cbe4;
             Property = 0;
             Sound = 0;
             Line Color = 4286991177;
@@ -471,7 +471,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::d79e9e03-3754-4d89-81aa-ce9e445599ee;
+            Name = 1::9f969e77-421d-431a-8177-9cc742c127a9;
             Property = 0;
             Sound = 0;
             Line Color = 4279643065;
@@ -523,10 +523,10 @@ Wave Bank
     Compression Preset Name = Compressed;
     Xbox Bank Last Modified Low = 0;
     Xbox Bank Last Modified High = 0;
-    PC Bank Last Modified Low = 4133137271;
-    PC Bank Last Modified High = 30601511;
-    Bank Last Revised Low = 3447580484;
-    Bank Last Revised High = 30601511;
+    PC Bank Last Modified Low = 2952134148;
+    PC Bank Last Modified High = 30618638;
+    Bank Last Revised Low = 1661779628;
+    Bank Last Revised High = 30618638;
 
     Wave
     {
@@ -684,8 +684,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3230243712;
-            Last Modified High = 30596429;
+            Last Modified Low = 709394445;
+            Last Modified High = 30614700;
         }
     }
 
@@ -707,8 +707,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3223751424;
-            Last Modified High = 30596429;
+            Last Modified Low = 709854561;
+            Last Modified High = 30614700;
         }
     }
 
@@ -803,6 +803,29 @@ Wave Bank
             Last Modified High = 30601511;
         }
     }
+
+    Wave
+    {
+        Name = mx_goblin_loop_v1;
+        File = ..\..\Music\mx_goblin_loop_v1.wav;
+        Build Settings Last Modified Low = 1265395451;
+        Build Settings Last Modified High = 30618638;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 80;
+            Play Region Length = 12171600;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 3630361468;
+            Last Modified High = 30618637;
+        }
+    }
 }
 
 Sound Bank
@@ -812,8 +835,6 @@ Sound Bank
     Windows File = Win\SoundBank.xsb;
     Xbox Bank Path Edited = 0;
     Windows Bank Path Edited = 0;
-    Bank Last Modified Low = 2337195010;
-    Bank Last Modified High = 30601513;
     Header Last Modified High = 0;
     Header Last Modified Low = 0;
 
@@ -1099,13 +1120,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = FadeOut;
-                RPC Curve Name = 1::c67791a0-191d-49c7-b041-0399559531f4;
+                RPC Curve Name = 1::b644ed05-4111-4623-bccc-bb3661e0acba;
             }
 
             RPC Curve Entry
             {
                 RPC Name = ShortFadeIn;
-                RPC Curve Name = 1::7091dbc0-dd75-4ab9-ae16-48ade0eb1e72;
+                RPC Curve Name = 1::c1705c90-2d6b-44c1-966a-2aa956d9cbe4;
             }
         }
     }
@@ -1216,13 +1237,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = FadeOut;
-                RPC Curve Name = 1::c67791a0-191d-49c7-b041-0399559531f4;
+                RPC Curve Name = 1::b644ed05-4111-4623-bccc-bb3661e0acba;
             }
 
             RPC Curve Entry
             {
                 RPC Name = FadeIn;
-                RPC Curve Name = 1::6377adc9-e1e1-410d-bafe-7543bdc29233;
+                RPC Curve Name = 1::c51df9a5-4a4b-48aa-84ee-6edaf3f75191;
             }
         }
     }
@@ -1334,13 +1355,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = FadeOut;
-                RPC Curve Name = 1::c67791a0-191d-49c7-b041-0399559531f4;
+                RPC Curve Name = 1::b644ed05-4111-4623-bccc-bb3661e0acba;
             }
 
             RPC Curve Entry
             {
                 RPC Name = MediumFadeIn;
-                RPC Curve Name = 1::d79e9e03-3754-4d89-81aa-ce9e445599ee;
+                RPC Curve Name = 1::9f969e77-421d-431a-8177-9cc742c127a9;
             }
         }
     }
@@ -1404,13 +1425,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = FadeOut;
-                RPC Curve Name = 1::c67791a0-191d-49c7-b041-0399559531f4;
+                RPC Curve Name = 1::b644ed05-4111-4623-bccc-bb3661e0acba;
             }
 
             RPC Curve Entry
             {
                 RPC Name = MediumFadeIn;
-                RPC Curve Name = 1::d79e9e03-3754-4d89-81aa-ce9e445599ee;
+                RPC Curve Name = 1::9f969e77-421d-431a-8177-9cc742c127a9;
             }
         }
     }
@@ -1469,7 +1490,112 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = MediumFadeIn;
-                RPC Curve Name = 1::d79e9e03-3754-4d89-81aa-ce9e445599ee;
+                RPC Curve Name = 1::9f969e77-421d-431a-8177-9cc742c127a9;
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = goblin;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Music;
+        }
+
+        RPC Entry
+        {
+            RPC Name = FadeOut;
+        }
+
+        RPC Entry
+        {
+            RPC Name = MediumFadeIn;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Loop Count = 255;
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = WaveBank;
+                    Bank Index = 0;
+                    Entry Name = mx_goblin_loop_v1;
+                    Entry Index = 12;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = FadeOut;
+                RPC Curve Name = 1::b644ed05-4111-4623-bccc-bb3661e0acba;
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = MediumFadeIn;
+                RPC Curve Name = 1::9f969e77-421d-431a-8177-9cc742c127a9;
+            }
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Loop Count = 255;
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = WaveBank;
+                    Bank Index = 0;
+                    Entry Name = mx_goblin_loop_v1;
+                    Entry Index = 12;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
             }
         }
     }
@@ -1786,6 +1912,26 @@ Sound Bank
         {
             Name = undead;
             Index = 9;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = goblin;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = goblin;
+            Index = 10;
             Weight Min = 0;
             Weight Max = 255;
         }

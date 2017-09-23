@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -116,7 +117,7 @@ namespace DwarfCorp
             {
                 if (component.Value.Parent != null && (!HasComponent(component.Value.Parent.GlobalID) || !component.Value.Parent.Children.Contains(component.Value)))
                 {
-                    throw new InvalidOperationException("Component's parent is not in the list of components");
+                    Console.Error.WriteLine("Component {0} parent: {1} is not in the list of components", component.Value.Name, component.Value.Parent.Name);
                 }
             }
         }
@@ -244,6 +245,11 @@ namespace DwarfCorp
 
             GamePerformance.Instance.StopTrackPerformance("Components - update");
             
+            AddRemove();
+        }
+
+        private void AddRemove()
+        {
             AdditionMutex.WaitOne();
             foreach (GameComponent component in Additions)
                 AddComponentImmediate(component);
@@ -257,6 +263,11 @@ namespace DwarfCorp
 
             Removals.Clear();
             RemovalMutex.ReleaseMutex();
+        }
+
+        public void UpdatePaused()
+        {
+            AddRemove();
         }
     }
 }

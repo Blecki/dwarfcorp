@@ -165,7 +165,7 @@
    "Layers" : [
       {
          "$id" : "1",
-         "AssetName" : "Entities\\Demon\\Demon",
+         "AssetName" : "Entities\\Demon\\demon",
          "FrameHeight" : 40,
          "FrameWidth" : 48
       },

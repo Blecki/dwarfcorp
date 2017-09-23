@@ -158,7 +158,7 @@ namespace DwarfCorp.Gui.Widgets
                             throw new InvalidProgramException("Conflicting icon behavior");
                         AddChild(PopupChild);
                         PopupChild.Hidden = true;
-                        OnClick = ExpandPopup;
+                        OnClick += ExpandPopup;
                         break;
                     case IconBehavior.LeafIcon:
                     case IconBehavior.ShowHoverPopup:
@@ -171,7 +171,7 @@ namespace DwarfCorp.Gui.Widgets
                         }
                         break;
                     case IconBehavior.ShowSubMenu:
-                        OnClick = (sender, args) =>
+                        OnClick += (sender, args) =>
                         {
                             var root = Parent.Parent as RootTray;
                             if (root != null) root.SwitchTray(ReplacementMenu);

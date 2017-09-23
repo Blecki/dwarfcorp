@@ -123,7 +123,7 @@ namespace DwarfCorp
         public void LayEgg()
         {
             NoiseMaker.MakeNoise("Lay Egg", AI.Position, true, 1.0f);
-            Manager.RootComponent.AddChild(new Egg(this.Name, Manager, Physics.Position, AI.PositionConstraint));
+            Manager.RootComponent.AddChild(new Egg(this.Species, Manager, Physics.Position, AI.PositionConstraint));
         }
 
         /// <summary> The creature's AI determines how it will behave. </summary>
@@ -318,14 +318,14 @@ namespace DwarfCorp
             {
                 if (EggTimer == null)
                 {
-                    EggTimer = new Timer(1200.0f, false);
+                    EggTimer = new Timer(1200f + MathFunctions.Rand(-30, 30), false);
                 }
                 EggTimer.Update(gameTime);
 
                 if (EggTimer.HasTriggered)
                 {
                     LayEgg();
-                    EggTimer = new Timer(1200.0f + MathFunctions.Rand(-30.0f, 30.0f), false);
+                    EggTimer = new Timer(1200f + MathFunctions.Rand(-30, 30), false);
                 }
             }
 

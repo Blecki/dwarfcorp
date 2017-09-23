@@ -85,6 +85,12 @@ namespace DwarfCorp
             public bool AutoSave = true;
             public float AutoSaveTimeMinutes = 2.0f;
             public bool VSync = true;
+            public bool AllowReporting = true;
+
+            public Settings Clone()
+            {
+                return MemberwiseClone() as Settings;
+            }
 
             public override string ToString()
             {
@@ -107,6 +113,8 @@ namespace DwarfCorp
         public static void Load()
         {
             Load(ContentPaths.settings);
+            Default.DrawDebugData = false;
+            Default.DrawPaths = false;
         }
 
         public static void Save(string file)

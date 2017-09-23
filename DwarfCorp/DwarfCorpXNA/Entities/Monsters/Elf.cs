@@ -92,7 +92,7 @@ namespace DwarfCorp
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 5,
-                SoundToPlay = ContentPaths.Entities.Goblin.Audio.goblinhurt1
+                SoundToPlay = ContentPaths.Audio.elf0,
             });
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
