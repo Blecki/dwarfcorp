@@ -179,6 +179,9 @@ namespace DwarfCorp
                 Skeletons.RemoveAll(skeleton => skeleton.IsDead);
                 if (SummonTimer.HasTriggered && Skeletons.Count < MaxSkeletons)
                 {
+                    Creature.CurrentCharacterMode = CharacterMode.Attacking;
+                    Creature.OverrideCharacterMode = true;
+                    Creature.Sprite.ReloopAnimations(CharacterMode.Attacking);
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_ic_necromancer_summon, Position, true);
                     SummonTimer.Reset(SummonTimer.TargetTimeSeconds);
                     for (int i = Skeletons.Count; i < MaxSkeletons; i+=2)
@@ -192,7 +195,8 @@ namespace DwarfCorp
                     yield return Act.Status.Success;
                 }
                 SummonTimer.Update(DwarfTime.LastTime);
-
+                Creature.CurrentCharacterMode = CharacterMode.Attacking;
+                Creature.OverrideCharacterMode = true;
                 if (WanderTimer.HasTriggered)
                 {
                     foreach (Act.Status status in wander.Run())

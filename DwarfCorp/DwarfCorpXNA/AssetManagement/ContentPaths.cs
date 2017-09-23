@@ -548,8 +548,11 @@ namespace DwarfCorp
 
             public class Skeleton
             {
-                public static string skeleton = ProgramData.CreatePath("Entities", "Skeleton", "skeleton.json"); 
-                
+                public static string skeleton = ProgramData.CreatePath("Entities", "Skeleton", "skeleton.json");
+
+                public static string necro_animations = ProgramData.CreatePath("Entities", "Skeleton",
+                    "necro_animation.json");
+
                 public class Sprites
                 {
                     public static string skele = ProgramData.CreatePath("Entities", "Skeleton", "skele");

@@ -1958,6 +1958,11 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="Entities\Skeleton\necro-summon.png">
+      <Name>necro-summon</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Particles\particles.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>particles</Name>
@@ -2099,10 +2104,10 @@
       <Name>skele_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Entities\Skeleton\necro_animation.json">
+    <Content Include="Entities\Skeleton\necro_animation.json">
       <Name>necro_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Entities\Skeleton\skeleton.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>skeleton</Name>

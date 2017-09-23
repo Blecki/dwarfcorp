@@ -226,13 +226,13 @@
    "Layers" : [
       {
          "$id" : "1",
-         "AssetName" : "Entities\\Skeleton\\Sprites\\necro",
+         "AssetName" : "Entities\\Skeleton\\necro",
          "FrameHeight" : 40,
          "FrameWidth" : 32
       },
 	  {
          "$id" : "2",
-         "AssetName" : "Entities\\Skeleton\\Sprites\\necro-summon",
+         "AssetName" : "Entities\\Skeleton\\necro-summon",
          "FrameHeight" : 48,
          "FrameWidth" : 48
       }
