@@ -1691,8 +1691,7 @@ namespace DwarfCorp.GameStates
                         Master.Spells.EnumerateSubtrees
                         (spell => !spell.IsResearched,
                             spell =>
-                                spell.IsResearched &&
-                                spell.Children.Any(child => !child.IsResearched))
+                                spell.IsResearched)
                         .Select(spell =>
                             new FlatToolTray.Icon
                             {
