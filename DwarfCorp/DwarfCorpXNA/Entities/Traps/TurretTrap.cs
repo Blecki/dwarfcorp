@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -16,6 +17,13 @@ namespace DwarfCorp
         public EnemySensor Sensor { get; set; }
         private CreatureAI closestCreature = null;
         private Vector3 offset = Vector3.Zero;
+
+        [OnDeserialized]
+        public void OnDeserialized(StreamingContext ctx)
+        {
+            Sensor.OnEnemySensed += Sensor_OnEnemySensed;
+        }
+
         public TurretTrap()
         {
             
@@ -50,11 +58,11 @@ namespace DwarfCorp
 
             Sensor.OnEnemySensed += Sensor_OnEnemySensed;
             BaseSprite = AddChild(new Fixture(Manager, Vector3.Zero, spriteSheet, new Point(2, 7))) as Fixture;
-            BaseSprite.GetComponent<SimpleSprite>().OrientationType = SimpleSprite.OrientMode.YAxis;
+            BaseSprite.OrientMode = SimpleSprite.OrientMode.YAxis;
             TurretSprite = AddChild(new Fixture(Manager, Vector3.Up * 0.25f, spriteSheet, new Point(1, 7))) as Fixture;
-            TurretSprite.GetComponent<SimpleSprite>().OrientationType = SimpleSprite.OrientMode.Fixed;
+            TurretSprite.OrientMode = SimpleSprite.OrientMode.Fixed;
             SetTurretAngle(0.0f);
-            base.CreateCosmeticChildren(manager);
+            CreateCosmeticChildren(manager);
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
