@@ -5,7 +5,7 @@
 [DwarfCorp](www.dwarfcorp.com) from [Completely Fair Games](www.completelyfairgames.com) is a single player tycoon/strategy game for PC. In the game, the player manages a corporate colony of dwarves. The dwarves must mine resources, build structures, and contend with the natives to survive.
 
 ## BEFORE READING
-If you're a developer/programmer and have the technical chops to compile C# code on Windows, continue reading. Otherwise, if you just want to play the game, buy the game on [Steam](http://store.steampowered.com/app/252390/DwarfCorp/?beta=0) or [itch.io](https://completelyfairgames.itch.io/dwarfcorp).
+If you're a developer/programmer and have the technical chops to compile C# code on Windows, continue reading. Otherwise, if you just want to play the game, buy the game on [Steam](http://store.steampowered.com/app/252390/DwarfCorp/?beta=0) or [itch.io](https://completelyfairgames.itch.io/dwarfcorp). You can also try a build on our releases page (above), but these builds will not be updated after the weekend of September 23rd, 2017.
 
 ## External Dependencies
 To develop DwarfCorp, you need the following libraries. If you just want to play the game, download one of the packages on our releases page.
