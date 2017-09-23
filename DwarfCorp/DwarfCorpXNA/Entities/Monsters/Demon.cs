@@ -89,22 +89,13 @@ namespace DwarfCorp
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 5,
-                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_demon_angered
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_demon_death
             });
 
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
-                ContentPaths.Audio.Oscar.sfx_ic_demon_angered,
-                ContentPaths.Audio.demon0,
-                ContentPaths.Audio.demon1,
-                ContentPaths.Audio.demon2,
-                ContentPaths.Audio.demon3,
-                 ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_1,
-                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_2,
-                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_3,
-                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_4,
-                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_5,
-                ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_6,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_hurt_1,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_hurt_2,
             };
 
 
@@ -122,12 +113,16 @@ namespace DwarfCorp
                 ContentPaths.Audio.Oscar.sfx_ic_demon_angered,
             };
 
+            NoiseMaker.Noises["Flap"] = new List<string>
+            {
+                ContentPaths.Audio.Oscar.sfx_ic_demon_flap_wings_1,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_flap_wings_2,
+                ContentPaths.Audio.Oscar.sfx_ic_demon_flap_wings_3,
+            };
+
+
             NoiseMaker.Noises["Chirp"] = new List<string>
             {
-                ContentPaths.Audio.demon0,
-                ContentPaths.Audio.demon1,
-                ContentPaths.Audio.demon2,
-                ContentPaths.Audio.demon3,
                 ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_1,
                 ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_2,
                 ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_3,
@@ -272,7 +267,7 @@ namespace DwarfCorp
         {
             Attacks = new List<Attack>()
             {
-                new Attack("Fireball", 0.1f, 1.0f, 5.0f, ContentPaths.Audio.demon_attack, ContentPaths.Effects.hit)
+                new Attack("Fireball", 0.1f, 1.0f, 5.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_ic_demon_fire_spit_1, ContentPaths.Audio.Oscar.sfx_ic_demon_fire_spit_2), ContentPaths.Effects.hit)
                 {
                     Mode = Attack.AttackMode.Ranged,
                     LaunchSpeed = 10.0f,

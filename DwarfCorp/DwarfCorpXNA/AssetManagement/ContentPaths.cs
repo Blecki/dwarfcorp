@@ -61,6 +61,7 @@ namespace DwarfCorp
             public static string sfx_env_bush_harvest_3 = ProgramData.CreatePath("Audio", "oscar", "sfx_env_bush_harvest_3");
             public static string sfx_env_door_close_generic = ProgramData.CreatePath("Audio", "oscar", "sfx_env_door_close_generic");
             public static string sfx_env_door_open_generic = ProgramData.CreatePath("Audio", "oscar", "sfx_env_door_open_generic");
+            public static string sfx_env_lava_spread = ProgramData.CreatePath("Audio", "oscar", "sfx_env_lava_spread");
             public static string sfx_env_plant_grow = ProgramData.CreatePath("Audio", "oscar", "sfx_env_plant_grow");
             public static string sfx_env_tree_cut_down_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_env_tree_cut_down_1");
             public static string sfx_env_tree_cut_down_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_env_tree_cut_down_2");
@@ -70,6 +71,7 @@ namespace DwarfCorp
             public static string sfx_env_voxel_snow_destroy = ProgramData.CreatePath("Audio", "oscar", "sfx_env_voxel_snow_destroy");
             public static string sfx_env_voxel_stone_destroy = ProgramData.CreatePath("Audio", "oscar", "sfx_env_voxel_stone_destroy");
             public static string sfx_env_voxel_wood_destroy = ProgramData.CreatePath("Audio", "oscar", "sfx_env_voxel_wood_destroy");
+            public static string sfx_env_water_object_fall = ProgramData.CreatePath("Audio", "oscar", "sfx_env_water_object_fall");
             public static string sfx_env_water_splash = ProgramData.CreatePath("Audio", "oscar", "sfx_env_water_splash");
             public static string sfx_gui_change_selection = ProgramData.CreatePath("Audio", "oscar", "sfx_gui_change_selection");
             public static string sfx_gui_click_voxel = ProgramData.CreatePath("Audio", "oscar", "sfx_gui_click_voxel");
@@ -89,6 +91,16 @@ namespace DwarfCorp
             public static string sfx_gui_window_close = ProgramData.CreatePath("Audio", "oscar", "sfx_gui_window_close");
             public static string sfx_gui_window_open = ProgramData.CreatePath("Audio", "oscar", "sfx_gui_window_open");
             public static string sfx_ic_demon_angered = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_demon_angered");
+            public static string sfx_ic_demon_death = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_demon_death");
+            public static string sfx_ic_demon_fire_hit_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_demon_fire_hit_1");
+            public static string sfx_ic_demon_fire_hit_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_demon_fire_hit_2");
+            public static string sfx_ic_demon_fire_spit_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_demon_fire_spit_1");
+            public static string sfx_ic_demon_fire_spit_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_demon_fire_spit_2");
+            public static string sfx_ic_demon_flap_wings_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_demon_flap_wings_1");
+            public static string sfx_ic_demon_flap_wings_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_demon_flap_wings_2");
+            public static string sfx_ic_demon_flap_wings_3 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_demon_flap_wings_3");
+            public static string sfx_ic_demon_hurt_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_demon_hurt_1");
+            public static string sfx_ic_demon_hurt_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_demon_hurt_2");
             public static string sfx_ic_demon_mumble_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_demon_mumble_1");
             public static string sfx_ic_demon_mumble_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_demon_mumble_2");
             public static string sfx_ic_demon_mumble_3 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_demon_mumble_3");
@@ -124,6 +136,10 @@ namespace DwarfCorp
             public static string sfx_ic_dwarf_mumble_4 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_mumble_4");
             public static string sfx_ic_dwarf_mumble_5 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_mumble_5");
             public static string sfx_ic_dwarf_mumble_6 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_mumble_6");
+            public static string sfx_ic_dwarf_musket_bullet_explode_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_musket_bullet_explode_1");
+            public static string sfx_ic_dwarf_musket_bullet_explode_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_musket_bullet_explode_2");
+            public static string sfx_ic_dwarf_musket_bullet_explode_3 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_musket_bullet_explode_3");
+            public static string sfx_ic_dwarf_musket_reload = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_musket_reload");
             public static string sfx_ic_dwarf_ok_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_ok_1");
             public static string sfx_ic_dwarf_ok_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_ok_2");
             public static string sfx_ic_dwarf_ok_3 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_ok_3");
@@ -140,6 +156,8 @@ namespace DwarfCorp
             public static string sfx_ic_dwarf_sleep_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_sleep_1");
             public static string sfx_ic_dwarf_sleep_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_sleep_2");
             public static string sfx_ic_dwarf_sleep_3 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_sleep_3");
+            public static string sfx_ic_dwarf_spell_cast_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_spell_cast_1");
+            public static string sfx_ic_dwarf_spell_cast_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_spell_cast_2");
             public static string sfx_ic_dwarf_stash_item = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_stash_item");
             public static string sfx_ic_dwarf_stash_money = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_stash_money");
             public static string sfx_ic_dwarf_stockpile = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_stockpile");
@@ -148,6 +166,9 @@ namespace DwarfCorp
             public static string sfx_ic_dwarf_tantrum_3 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_dwarf_tantrum_3");
             public static string sfx_ic_elf_angered = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_elf_angered");
             public static string sfx_ic_elf_arrow_hit = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_elf_arrow_hit");
+            public static string sfx_ic_elf_death = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_elf_death");
+            public static string sfx_ic_elf_hurt_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_elf_hurt_1");
+            public static string sfx_ic_elf_hurt_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_elf_hurt_2");
             public static string sfx_ic_elf_mumble_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_elf_mumble_1");
             public static string sfx_ic_elf_mumble_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_elf_mumble_2");
             public static string sfx_ic_elf_mumble_3 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_elf_mumble_3");
@@ -160,6 +181,9 @@ namespace DwarfCorp
             public static string sfx_ic_generic_hurt_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_generic_hurt_2");
             public static string sfx_ic_generic_hurt_3 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_generic_hurt_3");
             public static string sfx_ic_goblin_angered = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_goblin_angered");
+            public static string sfx_ic_goblin_attack_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_goblin_attack_1");
+            public static string sfx_ic_goblin_attack_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_goblin_attack_2");
+            public static string sfx_ic_goblin_attack_3 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_goblin_attack_3");
             public static string sfx_ic_goblin_mumble_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_goblin_mumble_1");
             public static string sfx_ic_goblin_mumble_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_goblin_mumble_2");
             public static string sfx_ic_goblin_mumble_3 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_goblin_mumble_3");
@@ -168,6 +192,19 @@ namespace DwarfCorp
             public static string sfx_ic_goblin_mumble_6 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_goblin_mumble_6");
             public static string sfx_ic_goblin_pleased = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_goblin_pleased");
             public static string sfx_ic_moleman_angered = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_moleman_angered");
+            public static string sfx_ic_moleman_claw_attack_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_moleman_claw_attack_1");
+            public static string sfx_ic_moleman_claw_attack_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_moleman_claw_attack_2");
+            public static string sfx_ic_moleman_claw_attack_3 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_moleman_claw_attack_3");
+            public static string sfx_ic_moleman_claw_dig_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_moleman_claw_dig_1");
+            public static string sfx_ic_moleman_claw_dig_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_moleman_claw_dig_2");
+            public static string sfx_ic_moleman_claw_dig_3 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_moleman_claw_dig_3");
+            public static string sfx_ic_moleman_claw_dig_4 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_moleman_claw_dig_4");
+            public static string sfx_ic_moleman_claw_dig_5 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_moleman_claw_dig_5");
+            public static string sfx_ic_moleman_claw_dig_6 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_moleman_claw_dig_6");
+            public static string sfx_ic_moleman_claw_dig_loop = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_moleman_claw_dig_loop");
+            public static string sfx_ic_moleman_death = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_moleman_death");
+            public static string sfx_ic_moleman_hurt_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_moleman_hurt_1");
+            public static string sfx_ic_moleman_hurt_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_moleman_hurt_2");
             public static string sfx_ic_moleman_mumble_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_moleman_mumble_1");
             public static string sfx_ic_moleman_mumble_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_moleman_mumble_2");
             public static string sfx_ic_moleman_mumble_3 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_moleman_mumble_3");
@@ -176,6 +213,9 @@ namespace DwarfCorp
             public static string sfx_ic_moleman_mumble_6 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_moleman_mumble_6");
             public static string sfx_ic_moleman_pleased = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_moleman_pleased");
             public static string sfx_ic_necromancer_angered = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_necromancer_angered");
+            public static string sfx_ic_necromancer_death = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_necromancer_death");
+            public static string sfx_ic_necromancer_hurt_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_necromancer_hurt_1");
+            public static string sfx_ic_necromancer_hurt_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_necromancer_hurt_2");
             public static string sfx_ic_necromancer_mumble_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_necromancer_mumble_1");
             public static string sfx_ic_necromancer_mumble_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_necromancer_mumble_2");
             public static string sfx_ic_necromancer_mumble_3 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_necromancer_mumble_3");
@@ -183,11 +223,20 @@ namespace DwarfCorp
             public static string sfx_ic_necromancer_mumble_5 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_necromancer_mumble_5");
             public static string sfx_ic_necromancer_mumble_6 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_necromancer_mumble_6");
             public static string sfx_ic_necromancer_pleased = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_necromancer_pleased");
+            public static string sfx_ic_necromancer_skeleton_attack_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_necromancer_skeleton_attack_1");
+            public static string sfx_ic_necromancer_skeleton_attack_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_necromancer_skeleton_attack_2");
+            public static string sfx_ic_necromancer_skeleton_hurt_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_necromancer_skeleton_hurt_1");
+            public static string sfx_ic_necromancer_skeleton_hurt_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_necromancer_skeleton_hurt_2");
             public static string sfx_ic_necromancer_summon = ProgramData.CreatePath("Audio", "oscar", "sfx_ic_necromancer_summon");
             public static string sfx_oc_bat_attack_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_oc_bat_attack_1");
             public static string sfx_oc_bat_hurt_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_oc_bat_hurt_1");
             public static string sfx_oc_bat_neutral_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_oc_bat_neutral_1");
             public static string sfx_oc_bat_neutral_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_oc_bat_neutral_2");
+            public static string sfx_oc_bird_attack = ProgramData.CreatePath("Audio", "oscar", "sfx_oc_bird_attack");
+            public static string sfx_oc_bird_hurt = ProgramData.CreatePath("Audio", "oscar", "sfx_oc_bird_hurt");
+            public static string sfx_oc_bird_lay_egg = ProgramData.CreatePath("Audio", "oscar", "sfx_oc_bird_lay_egg");
+            public static string sfx_oc_bird_neutral_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_oc_bird_neutral_1");
+            public static string sfx_oc_bird_neutral_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_oc_bird_neutral_2");
             public static string sfx_oc_chicken_attack = ProgramData.CreatePath("Audio", "oscar", "sfx_oc_chicken_attack");
             public static string sfx_oc_chicken_hurt_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_oc_chicken_hurt_1");
             public static string sfx_oc_chicken_hurt_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_oc_chicken_hurt_2");
@@ -226,6 +275,7 @@ namespace DwarfCorp
             public static string sfx_trap_trigger = ProgramData.CreatePath("Audio", "oscar", "sfx_trap_trigger");
             public static string sfx_trap_turret_shoot_1 = ProgramData.CreatePath("Audio", "oscar", "sfx_trap_turret_shoot_1");
             public static string sfx_trap_turret_shoot_2 = ProgramData.CreatePath("Audio", "oscar", "sfx_trap_turret_shoot_2");
+
         }
             public static string chew = ProgramData.CreatePath("Audio", "chew");
             public static string explode = ProgramData.CreatePath("Audio", "explode");

@@ -59,6 +59,7 @@ namespace DwarfCorp
 
         public IEnumerable<Act.Status> ConverseFriends(CreatureAI c)
         {
+            CreatureAI minionToConverse = null;
             foreach (CreatureAI minion in c.Faction.Minions)
             {
                 if (minion == c || minion.Creature.IsAsleep)
@@ -68,13 +69,18 @@ namespace DwarfCorp
 
                 if (dist < 2 && MathFunctions.Rand(0, 1) < 0.1f)
                 {
-                    c.Converse(minion);
-                    Timer converseTimer = new Timer(5.0f, true);
-                    while (!converseTimer.HasTriggered)
-                    {
-                        converseTimer.Update(DwarfTime.LastTime);
-                        yield return Act.Status.Running;
-                    }
+                    minionToConverse = minion;
+                    break;
+                }
+            }
+            if (minionToConverse != null)
+            {
+                c.Converse(minionToConverse);
+                Timer converseTimer = new Timer(5.0f, true);
+                while (!converseTimer.HasTriggered)
+                {
+                    converseTimer.Update(DwarfTime.LastTime);
+                    yield return Act.Status.Running;
                 }
             }
             yield return Act.Status.Success;
