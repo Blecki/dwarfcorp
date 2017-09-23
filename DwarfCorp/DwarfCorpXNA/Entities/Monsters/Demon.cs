@@ -273,7 +273,8 @@ namespace DwarfCorp
                     LaunchSpeed = 10.0f,
                     ProjectileType = "Fireball",
                     TriggerMode = Attack.AttackTrigger.Animation,
-                    TriggerFrame = 2
+                    TriggerFrame = 2,
+                    DamageAmount = 15
                 }
             };
         }

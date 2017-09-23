@@ -352,6 +352,10 @@ namespace DwarfCorp
                     }
                     break;
                 case MoveType.Fly:
+                    if (((int)((t + 1) * 100)) % 2 == 0)
+                    {
+                        Creature.NoiseMaker.MakeNoise("Flap", Agent.Position, false);
+                    }
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = CharacterMode.Flying;
                     Creature.OverrideCharacterMode = true;
