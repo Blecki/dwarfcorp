@@ -18,7 +18,7 @@ namespace DwarfCorp.Gui.Widgets
         public override void Construct()
         {
             //Set size and center on screen.
-            Rect = new Rectangle(0, 0, 350, 250);
+            Rect = new Rectangle(0, 0, 350, 450);
 
             Border = "border-fancy";
 
@@ -29,7 +29,7 @@ namespace DwarfCorp.Gui.Widgets
             AddChild(new Button
             {
                 Text = "Dismiss",
-                Font = "font",
+                Font = "font2x",
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 Border = "border-button",
@@ -47,7 +47,7 @@ namespace DwarfCorp.Gui.Widgets
             AddChild(new Widget
             {
                 Text = Message == null ? "" : Message.Text,
-                Font = "font",
+                Font = "font2x",
                 AutoLayout = AutoLayout.DockFill,
                 OnLayout = (sender) => sender.Rect.Height -= 20
             });
