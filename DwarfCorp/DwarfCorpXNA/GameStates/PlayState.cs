@@ -1928,8 +1928,13 @@ namespace DwarfCorp.GameStates
             }
             else if (key == ControlSettings.Mappings.GodMode)
             {
+                if (!GodMenu.Hidden)
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
                 GodMenu.Hidden = !GodMenu.Hidden;
                 GodMenu.Invalidate();
+                
             }
         }
 
