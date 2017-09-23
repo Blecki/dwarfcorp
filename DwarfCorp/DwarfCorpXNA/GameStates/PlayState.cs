@@ -260,7 +260,6 @@ namespace DwarfCorp.GameStates
                         ContextMenu = null;
                     }
 
-                    /*
                     if (args.MouseButton == 1) // Right mouse click.
                     {
                         var bodiesClicked = World.ComponentManager.SelectRootBodiesOnScreen(
@@ -274,35 +273,17 @@ namespace DwarfCorp.GameStates
                             if (availableCommands.Count() > 0)
                             {
                                 // Show context menu.
-                                ContextMenu = GuiRoot.ConstructWidget(new Widget
+                                ContextMenu = GuiRoot.ConstructWidget(new ContextMenu
                                 {
-                                    Rect = new Rectangle(0, 0, 1, 0),
-                                    Transparent = true
+                                    Commands = availableCommands.ToList(),
+                                    Body = contextBody,
+                                    World = World
                                 });
-
-                                var degrees = (Math.PI * 2) / availableCommands.Count();
-                                double pos = 0.0f;
-
-                                foreach (var command in availableCommands)
-                                {
-                                    var buttonOffset = Vector2.Transform(Vector2.UnitY,
-                                        Matrix.CreateRotationZ((float)pos));
-                                    var buttonCenter = new Vector2(args.X, args.Y) + (buttonOffset * 32);
-                                    var iconSheet = GuiRoot.GetTileSheet(command.Icon.Sheet);
-                                    ContextMenu.AddChild(new Widget
-                                    {
-                                        Rect = new Rectangle(
-                                            (int)(buttonCenter.X - (iconSheet.TileWidth / 2)),
-                                            (int)(buttonCenter.Y - (iconSheet.TileHeight / 2)),
-                                        iconSheet.TileWidth, iconSheet.TileHeight),
-                                        Background = command.Icon
-                                    });
-                                }
-
+                                
                                 GuiRoot.ShowDialog(ContextMenu);
                             }
                         }
-                    }*/
+                    }
                 }
             });
 

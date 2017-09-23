@@ -53,6 +53,7 @@ namespace DwarfCorp
         private static OrbitCamera Camera;
         private static Dictionary<Color, List<GlobalVoxelCoordinate>> HighlightGroups = new Dictionary<Color, List<GlobalVoxelCoordinate>>();
         private static object renderLock = new object();
+
         private struct Box
         {
             public BoundingBox RealBox;
@@ -172,7 +173,7 @@ namespace DwarfCorp
 
         }
 
-        public static void Render(GraphicsDevice Device, Shader Effect, OrbitCamera Camera)
+        public static void Render(GraphicsDevice Device, Shader Effect, OrbitCamera Camera, DesignationDrawer DesignationSet)
         {
             lock (renderLock)
             {
@@ -181,6 +182,8 @@ namespace DwarfCorp
                 Drawer3D.Camera = Camera;
 
                 var colorModulation = Math.Abs(Math.Sin(DwarfTime.LastTime.TotalGameTime.TotalSeconds*2.0f));
+
+                DesignationSet.EnumerateHilites(_addBox);
 
                 foreach (var hilitedVoxelGroup in HighlightGroups)
                 {

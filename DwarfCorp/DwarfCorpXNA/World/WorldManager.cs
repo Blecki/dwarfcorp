@@ -274,6 +274,9 @@ namespace DwarfCorp
             get { return Master.Faction; }
         }
 
+        [Newtonsoft.Json.JsonIgnore]
+        public DesignationDrawer DesignationDrawer = new DesignationDrawer();
+
         public Economy PlayerEconomy
         {
             get { return Master.Faction.Economy; }
@@ -325,7 +328,6 @@ namespace DwarfCorp
         // event that is called when the player loses in the world
         public delegate void OnLose();
         public event OnLose OnLoseEvent;
-        private bool firstIter = true;
         #endregion
 
         /// <summary>
@@ -413,8 +415,6 @@ namespace DwarfCorp
         /// <param name="gameTime">The current time</param>
         public void Update(DwarfTime gameTime)
         {
-            firstIter = false;
-
             EntityFactory.DoLazyActions();
             if (FastForwardToDay)
             {
@@ -840,7 +840,7 @@ namespace DwarfCorp
 
             GamePerformance.Instance.StartTrackPerformance("Render - Drawer3D");
             // Render simple geometry (boxes, etc.)
-            Drawer3D.Render(GraphicsDevice, DefaultShader, Camera);
+            Drawer3D.Render(GraphicsDevice, DefaultShader, Camera, DesignationDrawer);
             GamePerformance.Instance.StopTrackPerformance("Render - Drawer3D");
 
             GamePerformance.Instance.StartTrackPerformance("Render - Instances");

@@ -728,7 +728,7 @@ namespace DwarfCorp
 
                     if (task != null)
                     {
-                        Faction.ChopDesignations.Add(task.EntityToKill);
+                        Faction.AddChopDesignation(task.EntityToKill);
                         return task;
                     }
                 }

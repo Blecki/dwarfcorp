@@ -73,7 +73,7 @@ namespace DwarfCorp
                     }
                     case KillEntityTask.KillType.Chop:
                     {
-                        if (Entity != null && !Entity.IsDead && Creature.Faction.ChopDesignations.Contains(Entity))
+                        if (Entity != null && !Entity.IsDead && Creature.Faction.IsChopDesignation(Entity))
                             yield return Act.Status.Running;
                         else yield return Act.Status.Fail;
                         break;

@@ -244,20 +244,16 @@ namespace DwarfCorp
                     Drawer3D.DrawBox(tree.BoundingBox, Color.LightGreen, 0.1f, false);
                     if (button == InputManager.MouseButton.Left)
                     {
-                        if (!Player.Faction.ChopDesignations.Contains(tree))
+                        if (Player.Faction.AddChopDesignation(tree) == Faction.AddChopResult.Added)
                         {
-                            Player.Faction.ChopDesignations.Add(tree);
                             tasks.Add(new KillEntityTask(tree, KillEntityTask.KillType.Chop) { Priority = Task.PriorityType.Low });
                             this.Player.World.ShowToolPopup("Will harvest this " + tree.Name);
                         }
                     }
                     else if (button == InputManager.MouseButton.Right)
                     {
-                        if (Player.Faction.ChopDesignations.Contains(tree))
-                        {
-                            Player.Faction.ChopDesignations.Remove(tree);
+                        if (Player.Faction.RemoveChopDesignation(tree) == Faction.RemoveChopResult.Removed)
                             this.Player.World.ShowToolPopup("Harvest cancelled " + tree.Name);
-                        }
                     }
                 }
                 if (tasks.Count > 0 && Player.SelectedMinions.Count > 0)
@@ -445,10 +441,10 @@ namespace DwarfCorp
                     drawColor.G = (byte) (Math.Min(drawColor.G*alpha + 50, 255));
                     drawColor.B = (byte) (Math.Min(drawColor.B*alpha + 50, 255));
 
-                    foreach (BoundingBox box in Player.Faction.ChopDesignations.Select(d => d.GetBoundingBox()))
-                    {
-                        Drawer3D.DrawBox(box, drawColor, 0.05f*alpha + 0.05f, true);
-                    }
+                    //foreach (BoundingBox box in Player.Faction.ChopDesignations.Select(d => d.GetBoundingBox()))
+                    //{
+                    //    Drawer3D.DrawBox(box, drawColor, 0.05f*alpha + 0.05f, true);
+                    //}
                     break;
                 }
 

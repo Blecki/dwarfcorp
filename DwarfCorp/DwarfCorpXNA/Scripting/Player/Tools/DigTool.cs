@@ -141,28 +141,28 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-            foreach (KeyValuePair<ulong, BuildOrder> kvp in Player.Faction.DigDesignations)
-            {
-                var v = kvp.Value.Vox;
+            //foreach (KeyValuePair<ulong, BuildOrder> kvp in Player.Faction.DigDesignations)
+            //{
+            //    var v = kvp.Value.Vox;
 
-                BoundingBox box = v.GetBoundingBox();
+            //    BoundingBox box = v.GetBoundingBox();
 
 
-                Color drawColor = DigDesignationColor;
+            //    Color drawColor = DigDesignationColor;
 
-                if (kvp.Value.NumCreaturesAssigned == 0)
-                {
-                    drawColor = UnreachableColor;
-                }
+            //    if (kvp.Value.NumCreaturesAssigned == 0)
+            //    {
+            //        drawColor = UnreachableColor;
+            //    }
 
-                /*
-                drawColor.R = (byte)(drawColor.R * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * DigDesignationGlowRate)) + 50);
-                drawColor.G = (byte)(drawColor.G * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * DigDesignationGlowRate)) + 50);
-                drawColor.B = (byte)(drawColor.B * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * DigDesignationGlowRate)) + 50);
-                Drawer3D.DrawBox(box, drawColor, 0.05f, true);
-                 */
-                Drawer3D.HighlightVoxel(v, drawColor);
-            }
+            //    /*
+            //    drawColor.R = (byte)(drawColor.R * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * DigDesignationGlowRate)) + 50);
+            //    drawColor.G = (byte)(drawColor.G * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * DigDesignationGlowRate)) + 50);
+            //    drawColor.B = (byte)(drawColor.B * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * DigDesignationGlowRate)) + 50);
+            //    Drawer3D.DrawBox(box, drawColor, 0.05f, true);
+            //     */
+            //    Drawer3D.HighlightVoxel(v, drawColor);
+            //}
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)

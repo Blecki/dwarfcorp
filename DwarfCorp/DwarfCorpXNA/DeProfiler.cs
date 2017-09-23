@@ -62,7 +62,7 @@ namespace fbDeprofiler
             if (!GraphicsAdapter.DefaultAdapter.IsProfileSupported(GraphicsProfile.HiDef))
             {
                 DialogResult result = MessageBox.Show(
-                    "Your graphics adapter does not support the HiDef profile. That means not all of the features of the game are supported on by graphics card. Would you like to continue anyway? (WARNING: this may lead to crashes/instability).",
+                    "Your graphics adapter does not support the HiDef profile. That means not all of the features of the game are supported by your graphics card. Would you like to continue anyway? (WARNING: this may lead to crashes/instability).",
                     "HIDEF Not Supported!",
                     MessageBoxButtons.OKCancel,
                     MessageBoxIcon.Warning

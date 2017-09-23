@@ -16,5 +16,21 @@ namespace DwarfCorp.ContextCommands
         {
             return Entity.Tags.Contains("Vegetation");
         }
+
+        public override void Apply(Body Entity, WorldManager World)
+        {
+            var minions = Faction.FilterMinionsWithCapability(World.PlayerFaction.Minions,
+                GameMaster.ToolMode.Chop);
+            if (minions.Count > 0)
+            {
+                var task = ChopTool.ChopTree(Entity, World.PlayerFaction);
+                if (task != null)
+                {
+                    var tasks = new List<Task>();
+                    tasks.Add(task);
+                    TaskManager.AssignTasks(tasks, minions);
+                }
+            }
+        }
     }
 }
