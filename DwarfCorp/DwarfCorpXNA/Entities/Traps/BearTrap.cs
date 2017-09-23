@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -54,6 +55,12 @@ namespace DwarfCorp
         public bool ShouldDie = false;
         public Timer DeathTimer { get; set; }
 
+        [OnDeserialized]
+        public void OnDeserialized(StreamingContext ctx)
+        {
+            Sensor.OnSensed += Sensor_OnSensed;
+        }
+
         public BearTrap()
         {
             
@@ -74,7 +81,7 @@ namespace DwarfCorp
             DeathParticles = AddChild(new ParticleTrigger("explode", Manager, "DeathParticles", 
                 Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
             {
-                SoundToPlay = ""
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_trap_destroyed
             }) as ParticleTrigger;
 
             DamageAmount = 200;
@@ -88,7 +95,13 @@ namespace DwarfCorp
             Sprite = AddChild(new Sprite(Manager, "Sprite", Matrix.Identity, new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap), false)) as Sprite;
             Sprite.AddAnimation(new Animation(0, ContentPaths.Entities.DwarfObjects.beartrap, 32, 32,  0) {Name = IdleAnimation});
             Sprite.AddAnimation(new Animation(1, ContentPaths.Entities.DwarfObjects.beartrap, 32, 32,  0, 1, 2, 3) {Name = TriggerAnimation, Speeds =  new List<float>() {6.6f}, Loops = true});
-            AddChild(new Shadow(Manager));
+            CreateCosmeticChildren(manager);
+        }
+
+        public override void CreateCosmeticChildren(ComponentManager manager)
+        {
+            AddChild(new Shadow(manager));
+            base.CreateCosmeticChildren(manager);
         }
 
         void Sensor_OnSensed(IEnumerable<Body> sensed)
@@ -131,7 +144,7 @@ namespace DwarfCorp
         {
             Sprite.SetCurrentAnimation(TriggerAnimation);
             Sprite.CurrentAnimation.Play();
-            SoundManager.PlaySound(ContentPaths.Audio.trap, GlobalTransform.Translation, false);
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_trap_trigger, GlobalTransform.Translation, false);
             ShouldDie = true;
             DeathTimer.Reset(DeathTimer.TargetTimeSeconds);
         }

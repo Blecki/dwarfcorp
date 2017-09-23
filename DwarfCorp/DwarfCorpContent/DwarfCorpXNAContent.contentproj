@@ -1831,6 +1831,46 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
+    <Compile Include="Audio\oscar\sfx_env_plant_grow.wav">
+      <Name>sfx_env_plant_grow</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_gui_speed_1x.wav">
+      <Name>sfx_gui_speed_1x</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_gui_speed_2x.wav">
+      <Name>sfx_gui_speed_2x</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_gui_speed_3x.wav">
+      <Name>sfx_gui_speed_3x</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_gui_speed_pause.wav">
+      <Name>sfx_gui_speed_pause</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_gui_speed_unpause.wav">
+      <Name>sfx_gui_speed_unpause</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_trap_destroyed.wav">
+      <Name>sfx_trap_destroyed</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\oscar\sfx_trap_trigger.wav">
+      <Name>sfx_trap_trigger</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
     <Content Include="Audio\XACT\Win\SoundBank.xsb">
       <Name>SoundBank</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -1918,6 +1958,11 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="Entities\Skeleton\necro-summon.png">
+      <Name>necro-summon</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Particles\particles.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>particles</Name>
@@ -1934,6 +1979,10 @@
     <Content Include="Text\Templates\nations_molemen.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>nations_molemen</Name>
+    </Content>
+    <Content Include="Audio\mixer.json">
+      <Name>mixer</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="tutorial.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -2055,10 +2104,10 @@
       <Name>skele_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Entities\Skeleton\necro_animation.json">
+    <Content Include="Entities\Skeleton\necro_animation.json">
       <Name>necro_animation</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Entities\Skeleton\skeleton.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>skeleton</Name>

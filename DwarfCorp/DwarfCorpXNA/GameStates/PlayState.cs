@@ -673,12 +673,31 @@ namespace DwarfCorp.GameStates
                     if ((int) DwarfTime.LastTime.Speed != speed)
                     {
                         World.Tutorial("time");
+                        if ((int) DwarfTime.LastTime.Speed == 0)
+                        {
+                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_speed_unpause, 0.2f);
+                        }
+                        switch (speed)
+                        {
+                            case 1:
+                                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_speed_1x, 0.2f);
+                                break;
+                            case 2:
+                                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_speed_2x, 0.2f);
+                                break;
+                            case 3:
+                                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_speed_3x, 0.2f);
+                                break;
+                            case 0:
+                                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_speed_pause, 0.2f);
+                                break;
+                        }
+                        DwarfTime.LastTime.Speed = (float)speed;
+                        Paused = speed == 0;
+                        PausedWidget.Hidden = !Paused;
+                        PausedWidget.Tooltip = "(push " + ControlSettings.Mappings.Pause.ToString() + " to unpause)";
+                        PausedWidget.Invalidate();
                     }
-                    DwarfTime.LastTime.Speed = (float)speed;
-                    Paused = speed == 0;
-                    PausedWidget.Hidden = !Paused;
-                    PausedWidget.Tooltip = "(push " + ControlSettings.Mappings.Pause.ToString() + " to unpause)";
-                    PausedWidget.Invalidate();
                 },
                 Tooltip = "Game speed controls."
             }) as GameSpeedControls;
@@ -1074,8 +1093,7 @@ namespace DwarfCorp.GameStates
                         },
                         OnConstruct = (sender) =>
                         {
-                            AddToolbarIcon(sender, () =>
-                                ((sender as FlatToolTray.Icon).PopupChild as BuildCraftInfo).CanBuild());
+                            AddToolbarIcon(sender, () => true);
                         },
                     }))
             };
@@ -1673,8 +1691,7 @@ namespace DwarfCorp.GameStates
                         Master.Spells.EnumerateSubtrees
                         (spell => !spell.IsResearched,
                             spell =>
-                                spell.IsResearched &&
-                                spell.Children.Any(child => !child.IsResearched))
+                                spell.IsResearched)
                         .Select(spell =>
                             new FlatToolTray.Icon
                             {

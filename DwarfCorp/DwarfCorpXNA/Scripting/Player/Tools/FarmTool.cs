@@ -116,7 +116,7 @@ namespace DwarfCorp
 
         public bool IsBeingWorked(VoxelHandle vox)
         {
-            return HasTile(vox) && FarmTiles.Any(f => f.Farmer != null);
+            return HasTile(vox) && FarmTiles.Any(f => f.Vox.Equals(vox) && f.Farmer != null);
         }
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)

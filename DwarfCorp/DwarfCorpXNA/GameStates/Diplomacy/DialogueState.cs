@@ -111,6 +111,12 @@ namespace DwarfCorp.Dialogue
             base.OnEnter();
         }
 
+        public override void OnExit()
+        {
+            World.Paused = false;
+            base.OnExit();
+        }
+
         public override void Update(DwarfTime gameTime)
         {
             foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())

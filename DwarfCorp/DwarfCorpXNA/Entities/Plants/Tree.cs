@@ -102,6 +102,7 @@ namespace DwarfCorp
 
         public void CreateAdult()
         {
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_plant_grow, Position, true);
             IsGrown = true;
             Adult.IsGrown = true;
             Adult.SetFlagRecursive(Flag.Active, true);

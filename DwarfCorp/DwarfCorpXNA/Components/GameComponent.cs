@@ -57,12 +57,13 @@ namespace DwarfCorp
 
         public void PrepareForSerialization()
         {
-            SerializableChildren = Children.Where(c => c.IsFlagSet(Flag.ShouldSerialize)).ToList();
+            SerializableChildren = Children.Where(c => c.IsFlagSet(Flag.ShouldSerialize) && c != this).ToList();
         }
 
         public void PostSerialization(ComponentManager manager)
         {
             Children = SerializableChildren;
+            Children.RemoveAll(c => c == this);
             SerializableChildren = null;
         }
 
@@ -354,6 +355,10 @@ namespace DwarfCorp
         /// <param name="child">The child.</param>
         public GameComponent AddChild(GameComponent child)
         {
+            if (child == this)
+            {
+                throw new InvalidOperationException("Object added to itself");
+            }
             lock (Children)
             {
                 System.Diagnostics.Debug.Assert(child.Parent == null, "Child was already added to another component.");

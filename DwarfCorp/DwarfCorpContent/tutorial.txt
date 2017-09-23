@@ -154,6 +154,11 @@
 			"Text" : "Our money is stored in a treasury. Each tile can hold some number of Dwarfbux ($). When the treasury gets full, we will have to build a larger one. Beware of evil creatures stealing money from the treasury."
 		},
 		{
+			"Name" : "build Animal Pen",
+			"Title" : "Animal Pen",
+			"Text" : "Build an animal pen to wrangle animals. Animals breed and produce meat/bones/eggs. Only one animal type per pen."
+		},
+		{
 			"Name" : "level up",
 			"Title" : "Promoting Dwarves",
 			"Text" : "One of your employees has gained enough experience points (XP) to get a promotion! Employees earn XP from working, digging, fighting and training.  Promoting employees makes them work harder, but they also demand higher wages. Go to the economy menu (by pushing the economy button on the top right of the screen), select an employee, and promote them. If you choose not to promote your employees, they may become unhappy."

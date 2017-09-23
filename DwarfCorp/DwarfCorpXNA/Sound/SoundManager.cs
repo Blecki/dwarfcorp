@@ -324,6 +324,11 @@ namespace DwarfCorp
                     Loop = "undead",
                     PlayLoopOverIntro = true
                 });
+                CurrentMusic.AddTrack("goblin", new MusicTrack(SoundBank)
+                {
+                    Loop = "goblin",
+                    PlayLoopOverIntro = true
+                });
 
             foreach (var cue in ActiveCues)
             {
