@@ -90,11 +90,11 @@ namespace DwarfCorp.Gui.Widgets
                 if (existing != null)
                 {
                     existing.Amount.NumResources += pair.Value.NumResources;
-                    existing.Members.Add(pair.Value.ResourceType);
+                    existing.Members.Add(String.Format("{0}x {1}", pair.Value.NumResources, pair.Value.ResourceType));
                 }
                 else
                 {
-                    aggregated.Add(new AggregatedResource(){Amount = pair.Value, Members = new List<string>(){pair.Value.ResourceType}});
+                    aggregated.Add(new AggregatedResource(){Amount = pair.Value, Members = new List<string>(){String.Format("{0}x {1}", pair.Value.NumResources, pair.Value.ResourceType)}});
                 }
             }
             return aggregated;
@@ -124,15 +124,15 @@ namespace DwarfCorp.Gui.Widgets
 
                     var icon = existingResourceEntries.FirstOrDefault(w => w is ResourceIcon && (w as ResourceIcon).EqualsLayers(resourceTemplate.GuiLayers));
 
+                    StringBuilder label = new StringBuilder();
+                    foreach (var aggregates in resource.Members)
+                    {
+                        label.Append(aggregates);
+                        label.Append("\n");
+                    }
+                    label.Append(resourceTemplate.Description);
                     if (icon == null)
                     {
-                        StringBuilder label = new StringBuilder();
-                        foreach (var aggregates in resource.Members)
-                        {
-                            label.Append(aggregates);
-                            label.Append("\n");
-                        }
-                        label.Append(resourceTemplate.Description);
                         icon = AddChild(new ResourceIcon()
                         {
                             Layers = resourceTemplate.GuiLayers,
@@ -142,9 +142,13 @@ namespace DwarfCorp.Gui.Widgets
                             TextColor = new Vector4(1,1,1,1)
                         });                        
                     }
-                    else if (!Children.Contains(icon))
+                    else
                     {
-                        AddChild(icon);
+                        icon.Tooltip = label.ToString();
+                        if (!Children.Contains(icon))
+                        {
+                            AddChild(icon);
+                        }
                     }
 
                     icon.Children.Last().Text = resource.Amount.NumResources.ToString();
