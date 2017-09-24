@@ -221,7 +221,8 @@
 		{
 			"Name" : "hire",
 			"Title" : "Hiring Dwarves",
-			"Text" : "Here, you can hire new dwarves to be employees of your company. Click on the employee type to view a new resume, and click \"Hire\" if you want to hire them. Hiring dwarves requires a balloon port and enough Dwarfbux to cover their signing bonus."
+			"Text" : "Here, you can hire new dwarves to be employees of your company. Click on the employee type to view a new resume, and click \"Hire\" if you want to hire them. Hiring dwarves requires a balloon port and enough Dwarfbux to cover their signing bonus.",
+			"Popup" : true
 		},
 		{
 			"Name" : "economy",

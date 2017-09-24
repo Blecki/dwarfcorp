@@ -449,7 +449,6 @@ namespace DwarfCorp
 
             Master.Update(Game, gameTime);
             GoalManager.Update(this);
-            TutorialManager.Update(Gui);
             Time.Update(gameTime);
 
             if (Paused)
@@ -459,6 +458,8 @@ namespace DwarfCorp
             // If not paused, we want to just update the rest of the game.
             else
             {
+                TutorialManager.Update(Gui);
+
                 GamePerformance.Instance.StartTrackPerformance("Diplomacy");
                 Diplomacy.Update(gameTime, Time.CurrentDate, this);
                 GamePerformance.Instance.StopTrackPerformance("Diplomacy");
