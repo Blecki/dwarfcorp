@@ -837,7 +837,7 @@ namespace DwarfCorp.GameStates
             toReturn.SelfIlluminationEnabled = this.SelfIllumination.CheckState;
             toReturn.ParticlePhysics = this.ParticlePhysics.CheckState;
             toReturn.GrassMotes = this.Motes.CheckState;
-            toReturn.NumMotes = (int)this.NumMotes.ScrollPosition + 100;
+            //toReturn.NumMotes = (int)this.NumMotes.ScrollPosition + 100;
 
             toReturn.GuiScale = GuiScale.SelectedIndex + 1;
             toReturn.GuiAutoScale = this.GuiAutoScale.CheckState;
@@ -870,35 +870,32 @@ namespace DwarfCorp.GameStates
 
             GameSettings.Default = settings.Clone();
 
-<<<<<<< HEAD
-=======
             var newDisplayMode = DisplayModes[this.Resolution.SelectedItem];
             GameSettings.Default.ResolutionX = newDisplayMode.Width;
             GameSettings.Default.ResolutionY = newDisplayMode.Height;
 
             GameSettings.Default.Fullscreen = this.Fullscreen.CheckState;
             GameSettings.Default.ChunkDrawDistance = this.ChunkDrawDistance.ScrollPosition + 1.0f;
-            GameSettings.Default.VertexCullDistance = this.VertexCullDistance.ScrollPosition + 0.1f;
+            //GameSettings.Default.VertexCullDistance = this.VertexCullDistance.ScrollPosition + 0.1f;
             //GameSettings.Default.ChunkGenerateDistance = this.GenerateDistance.ScrollPosition + 1.0f;
             GameSettings.Default.EnableGlow = this.Glow.CheckState;
             GameSettings.Default.AntiAliasing = AntialiasingOptions[this.Antialiasing.SelectedItem];
             GameSettings.Default.DrawChunksReflected = this.ReflectTerrain.CheckState;
             GameSettings.Default.DrawEntityReflected = this.ReflectEntities.CheckState;
-            GameSettings.Default.CalculateSunlight = this.Sunlight.CheckState;
+            //GameSettings.Default.CalculateSunlight = this.Sunlight.CheckState;
             GameSettings.Default.AmbientOcclusion = this.AmbientOcclusion.CheckState;
-            GameSettings.Default.CalculateRamps = this.Ramps.CheckState;
+            //GameSettings.Default.CalculateRamps = this.Ramps.CheckState;
             GameSettings.Default.CursorLightEnabled = this.CursorLight.CheckState;
             GameSettings.Default.EntityLighting = this.EntityLight.CheckState;
             GameSettings.Default.SelfIlluminationEnabled = this.SelfIllumination.CheckState;
             GameSettings.Default.ParticlePhysics = this.ParticlePhysics.CheckState;
             GameSettings.Default.GrassMotes = this.Motes.CheckState;
             //GameSettings.Default.NumMotes = (int)this.NumMotes.ScrollPosition + 100;
-            GameSettings.Default.UseLightmaps = this.LightMap.CheckState;
-            GameSettings.Default.UseDynamicShadows = this.DynamicShadows.CheckState;
+            //GameSettings.Default.UseLightmaps = this.LightMap.CheckState;
+            //GameSettings.Default.UseDynamicShadows = this.DynamicShadows.CheckState;
 
             GameSettings.Default.GuiScale = GuiScale.SelectedIndex + 1;
             
->>>>>>> Limit gui scale options, add scrollbar to keys, bump min res to 800 by 600
             if (preResolutionX != GameSettings.Default.ResolutionX || 
                 preResolutionY != GameSettings.Default.ResolutionY ||
                 preFullscreen != GameSettings.Default.Fullscreen ||
@@ -989,15 +986,9 @@ namespace DwarfCorp.GameStates
             this.SelfIllumination.CheckState = GameSettings.Default.SelfIlluminationEnabled;
             this.ParticlePhysics.CheckState = GameSettings.Default.ParticlePhysics;
             this.Motes.CheckState = GameSettings.Default.GrassMotes;
-<<<<<<< HEAD
-            this.NumMotes.ScrollPosition = GameSettings.Default.NumMotes - 100;
+            //this.NumMotes.ScrollPosition = GameSettings.Default.NumMotes - 100;
             //this.LightMap.CheckState = GameSettings.Default.UseLightmaps;
             //this.DynamicShadows.CheckState = GameSettings.Default.UseDynamicShadows;
-=======
-            //this.NumMotes.ScrollPosition = GameSettings.Default.NumMotes - 100;
-            this.LightMap.CheckState = GameSettings.Default.UseLightmaps;
-            this.DynamicShadows.CheckState = GameSettings.Default.UseDynamicShadows;
->>>>>>> Limit gui scale options, add scrollbar to keys, bump min res to 800 by 600
 
             GuiScale.SelectedIndex = GameSettings.Default.GuiScale - 1;
             GuiAutoScale.CheckState = GameSettings.Default.GuiAutoScale;
