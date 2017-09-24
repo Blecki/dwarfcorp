@@ -134,6 +134,7 @@ namespace DwarfCorp
         {
             if (level == MaxViewingLevel && slice == Slice)
                 return;
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_click_voxel, 0.15f, (float)(level / (float)VoxelConstants.ChunkSizeY) - 0.5f);
 
             var oldLevel = MaxViewingLevel;
 

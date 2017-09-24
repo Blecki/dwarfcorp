@@ -386,7 +386,7 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        chunks.ChunkData.SetMaxViewingLevel(chunks.ChunkData.MaxViewingLevel + 1 + (int)((float)change * 0.01f), ChunkManager.SliceMode.Y);
+                        chunks.ChunkData.SetMaxViewingLevel(chunks.ChunkData.MaxViewingLevel + (int)((float)change * 0.01f), ChunkManager.SliceMode.Y);
                     }
                 }
             }

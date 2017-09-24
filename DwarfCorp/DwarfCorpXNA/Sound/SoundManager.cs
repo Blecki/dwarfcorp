@@ -458,7 +458,7 @@ namespace DwarfCorp
 
         }
 
-        public static SoundEffectInstance PlaySound(string name, float volume = 1.0f)
+        public static SoundEffectInstance PlaySound(string name, float volume = 1.0f, float pitch  = 1.0f)
         {
             if (!HasAudioDevice) return null;
             // TODO: Remove this block once the SoundManager is initialized in a better location.
@@ -477,7 +477,8 @@ namespace DwarfCorp
             }
             SFXMixer.Levels levels = Mixer.GetOrCreateLevels(name);
             SoundEffectInstance instance = effect.CreateInstance();
-            instance.Volume = GameSettings.Default.MasterVolume*GameSettings.Default.SoundEffectVolume*volume*levels.Volume; 
+            instance.Volume = GameSettings.Default.MasterVolume*GameSettings.Default.SoundEffectVolume*volume*levels.Volume;
+            instance.Pitch = pitch;
             instance.Play();
             ActiveSounds2D.Add(instance);
             return instance;
