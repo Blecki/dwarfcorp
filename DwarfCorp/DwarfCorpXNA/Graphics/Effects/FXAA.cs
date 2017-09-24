@@ -92,7 +92,7 @@ namespace DwarfCorp
                 RenderTarget.Height != pp.BackBufferHeight)
             {
                 RenderTarget = new RenderTarget2D(GameState.Game.GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight, false, pp.BackBufferFormat, DepthFormat.None);
-
+                GameState.Game.GraphicsDevice.Viewport = new Viewport(0, 0, RenderTarget.Width, RenderTarget.Height);
                 Viewport viewport = GameState.Game.GraphicsDevice.Viewport;
                 Matrix projection = Matrix.CreateOrthographicOffCenter(0, viewport.Width, viewport.Height, 0, 0, 1);
                 Matrix halfPixelOffset = Matrix.CreateTranslation(-0.5f, -0.5f, 0);

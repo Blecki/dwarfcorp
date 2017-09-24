@@ -862,17 +862,16 @@ namespace DwarfCorp.GameStates
         public void ApplySettings(GameSettings.Settings settings)
         {
             // Graphics settings
-            var preResolutionX = GameSettings.Default.ResolutionX;
-            var preResolutionY = GameSettings.Default.ResolutionY;
+            var preResolutionX = StateManager.Game.Graphics.PreferredBackBufferWidth;
+            var preResolutionY = StateManager.Game.Graphics.PreferredBackBufferHeight;
             var preFullscreen = GameSettings.Default.Fullscreen;
             var preGuiScale = GameSettings.Default.GuiScale;
             var preVsync = GameSettings.Default.VSync;
 
             GameSettings.Default = settings.Clone();
 
-            var newDisplayMode = DisplayModes[this.Resolution.SelectedItem];
-            GameSettings.Default.ResolutionX = newDisplayMode.Width;
-            GameSettings.Default.ResolutionY = newDisplayMode.Height;
+            GameSettings.Default.ResolutionX = settings.ResolutionX;
+            GameSettings.Default.ResolutionY = settings.ResolutionY;
 
             GameSettings.Default.Fullscreen = this.Fullscreen.CheckState;
             GameSettings.Default.ChunkDrawDistance = this.ChunkDrawDistance.ScrollPosition + 1.0f;
