@@ -80,7 +80,7 @@ namespace DwarfCorp.GameStates
 
             DisplayModes = new Dictionary<string, DisplayMode>();
             foreach (var displayMode in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.Where(dm =>
-                dm.Format == SurfaceFormat.Color && dm.Width >= 640))
+                dm.Format == SurfaceFormat.Color && dm.Height >= 600))
                 DisplayModes.Add(string.Format("{0} x {1}", displayMode.Width, displayMode.Height), displayMode);
 
             RebuildGui();
@@ -303,9 +303,14 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
+            var guiScaleItems = new List<String>();
+            for (int i = 1; i < 10; ++i)
+                if (i * 480 <= GameSettings.Default.ResolutionY)
+                    guiScaleItems.Add(i.ToString());
+
             GuiScale = panel.AddChild(LabelAndDockWidget("Gui Scale", new ComboBox
             {
-                Items = new List<string>(new String[] { "1", "2", "3", "4", "5" }),
+                Items = guiScaleItems
             })).GetChild(1) as ComboBox;
             GuiAutoScale = panel.AddChild(new CheckBox
             {
@@ -588,14 +593,14 @@ namespace DwarfCorp.GameStates
                 Tooltip = "When checked, detail grass motes will spawn. Turn off to increase game performance."
             }) as CheckBox;
 
-            NumMotes = leftPanel.AddChild(LabelAndDockWidget("Max Number of Entities",
-                 new HorizontalFloatSlider
-                 {
-                     ScrollArea = 2048 - 100,
-                     OnSliderChanged = OnItemChanged,
-                     Tooltip = "Controls how many of each type of entity will get drawn to the screen. Higher values mean more detail. Lower values mean better performance."
+            //NumMotes = leftPanel.AddChild(LabelAndDockWidget("Max Number of Entities",
+            //     new HorizontalFloatSlider
+            //     {
+            //         ScrollArea = 2048 - 100,
+            //         OnSliderChanged = OnItemChanged,
+            //         Tooltip = "Controls how many of each type of entity will get drawn to the screen. Higher values mean more detail. Lower values mean better performance."
 
-                 })).GetChild(1) as HorizontalFloatSlider;
+            //     })).GetChild(1) as HorizontalFloatSlider;
 
             /*
             LightMap = leftPanel.AddChild(new CheckBox
@@ -832,7 +837,7 @@ namespace DwarfCorp.GameStates
             toReturn.SelfIlluminationEnabled = this.SelfIllumination.CheckState;
             toReturn.ParticlePhysics = this.ParticlePhysics.CheckState;
             toReturn.GrassMotes = this.Motes.CheckState;
-            toReturn.NumMotes = (int)this.NumMotes.ScrollPosition + 100;
+            //toReturn.NumMotes = (int)this.NumMotes.ScrollPosition + 100;
 
             toReturn.GuiScale = GuiScale.SelectedIndex + 1;
             toReturn.GuiAutoScale = this.GuiAutoScale.CheckState;
@@ -865,6 +870,32 @@ namespace DwarfCorp.GameStates
 
             GameSettings.Default = settings.Clone();
 
+            var newDisplayMode = DisplayModes[this.Resolution.SelectedItem];
+            GameSettings.Default.ResolutionX = newDisplayMode.Width;
+            GameSettings.Default.ResolutionY = newDisplayMode.Height;
+
+            GameSettings.Default.Fullscreen = this.Fullscreen.CheckState;
+            GameSettings.Default.ChunkDrawDistance = this.ChunkDrawDistance.ScrollPosition + 1.0f;
+            //GameSettings.Default.VertexCullDistance = this.VertexCullDistance.ScrollPosition + 0.1f;
+            //GameSettings.Default.ChunkGenerateDistance = this.GenerateDistance.ScrollPosition + 1.0f;
+            GameSettings.Default.EnableGlow = this.Glow.CheckState;
+            GameSettings.Default.AntiAliasing = AntialiasingOptions[this.Antialiasing.SelectedItem];
+            GameSettings.Default.DrawChunksReflected = this.ReflectTerrain.CheckState;
+            GameSettings.Default.DrawEntityReflected = this.ReflectEntities.CheckState;
+            //GameSettings.Default.CalculateSunlight = this.Sunlight.CheckState;
+            GameSettings.Default.AmbientOcclusion = this.AmbientOcclusion.CheckState;
+            //GameSettings.Default.CalculateRamps = this.Ramps.CheckState;
+            GameSettings.Default.CursorLightEnabled = this.CursorLight.CheckState;
+            GameSettings.Default.EntityLighting = this.EntityLight.CheckState;
+            GameSettings.Default.SelfIlluminationEnabled = this.SelfIllumination.CheckState;
+            GameSettings.Default.ParticlePhysics = this.ParticlePhysics.CheckState;
+            GameSettings.Default.GrassMotes = this.Motes.CheckState;
+            //GameSettings.Default.NumMotes = (int)this.NumMotes.ScrollPosition + 100;
+            //GameSettings.Default.UseLightmaps = this.LightMap.CheckState;
+            //GameSettings.Default.UseDynamicShadows = this.DynamicShadows.CheckState;
+
+            GameSettings.Default.GuiScale = GuiScale.SelectedIndex + 1;
+            
             if (preResolutionX != GameSettings.Default.ResolutionX || 
                 preResolutionY != GameSettings.Default.ResolutionY ||
                 preFullscreen != GameSettings.Default.Fullscreen ||
@@ -955,7 +986,7 @@ namespace DwarfCorp.GameStates
             this.SelfIllumination.CheckState = GameSettings.Default.SelfIlluminationEnabled;
             this.ParticlePhysics.CheckState = GameSettings.Default.ParticlePhysics;
             this.Motes.CheckState = GameSettings.Default.GrassMotes;
-            this.NumMotes.ScrollPosition = GameSettings.Default.NumMotes - 100;
+            //this.NumMotes.ScrollPosition = GameSettings.Default.NumMotes - 100;
             //this.LightMap.CheckState = GameSettings.Default.UseLightmaps;
             //this.DynamicShadows.CheckState = GameSettings.Default.UseDynamicShadows;
 
