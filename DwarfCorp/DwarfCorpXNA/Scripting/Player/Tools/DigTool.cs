@@ -75,7 +75,7 @@ namespace DwarfCorp
                 List<Task> assignments = new List<Task>();
                 foreach (var v in refs)
                 {
-                    if (!v.IsValid || v.IsEmpty)
+                    if (!v.IsValid || (v.IsEmpty && v.IsExplored))
                         continue;
                     
                     if(!Player.Faction.IsDigDesignation(v) && !Player.Faction.RoomBuilder.IsInRoom(v))
@@ -98,7 +98,7 @@ namespace DwarfCorp
             {
                 foreach (var r in refs)
                 {
-                    if (!r.IsValid || r.IsEmpty)
+                    if (!r.IsValid || (r.IsEmpty && r.IsExplored))
                     {
                         continue;
                     }

@@ -327,9 +327,16 @@ namespace DwarfCorp
                     {
                         if (Creature.AI.Movement.CanFly)
                         {
-                            Creature.Physics.ApplyForce(-Creature.Physics.Gravity, DwarfTime.Dt);
+                            Creature.Physics.ApplyForce(-Creature.Physics.Gravity * 0.1f, DwarfTime.Dt);
                         }
                         yield return Status.Running;
+                    }
+
+                    var targetCreature = Target.GetRoot().GetComponent<CreatureAI>();
+                    if (targetCreature != null && !Creature.AI.FightOrFlight(targetCreature))
+                    {
+                        yield return Act.Status.Fail;
+                        yield break;
                     }
                     Creature.CurrentCharacterMode = CharacterMode.Attacking;
                     Creature.Sprite.ReloopAnimations(CharacterMode.Attacking);

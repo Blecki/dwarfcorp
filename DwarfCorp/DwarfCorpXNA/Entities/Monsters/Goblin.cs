@@ -95,7 +95,7 @@ namespace DwarfCorp
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 3,
-                SoundToPlay = ContentPaths.Entities.Goblin.Audio.goblinhurt1
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_goblin_angered,
             });
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
@@ -103,10 +103,7 @@ namespace DwarfCorp
 
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
-                ContentPaths.Entities.Goblin.Audio.goblinhurt1,
-                ContentPaths.Entities.Goblin.Audio.goblinhurt2,
-                ContentPaths.Entities.Goblin.Audio.goblinhurt3,
-                ContentPaths.Entities.Goblin.Audio.goblinhurt4,
+                ContentPaths.Audio.Oscar.sfx_ic_goblin_angered,
             };
 
 

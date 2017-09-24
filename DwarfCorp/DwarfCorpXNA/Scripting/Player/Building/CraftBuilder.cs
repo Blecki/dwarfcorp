@@ -228,6 +228,7 @@ namespace DwarfCorp
                 CurrentCraftBody.PropogateTransforms();
                 SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, CurrentCraftBody.Position,
                     0.5f);
+                CurrentCraftBody.SetTintRecursive(IsValid(CurrentDesignation) ? Color.Green : Color.Red);
             }
             if (rightPressed && !rightKey)
             {
@@ -239,6 +240,7 @@ namespace DwarfCorp
                 CurrentCraftBody.UpdateTransform();
                 CurrentCraftBody.PropogateTransforms();
                 SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, CurrentCraftBody.Position, 0.5f);
+                CurrentCraftBody.SetTintRecursive(IsValid(CurrentDesignation) ? Color.Green : Color.Red);
             }
 
 

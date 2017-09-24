@@ -206,17 +206,29 @@ namespace DwarfCorp
             {
                 if (MathFunctions.RandEvent(DropRate))
                 {
-                    Vector3 pos = MathFunctions.RandVector3Box(GetBoundingBox());
-                    Physics item =
-                        EntityFactory.CreateEntity<Physics>(resource.Resource + " Resource",
-                            pos) as Physics;
-                    if (item != null)
+                    const int maxIters = 10;
+
+                    for (int i = 0; i < maxIters; i++)
                     {
-                        release.Add(item);
-                        item.Velocity = pos - GetBoundingBox().Center();
-                        item.Velocity.Normalize();
-                        item.Velocity *= 5.0f;
-                        item.IsSleeping = false;
+                        Vector3 pos = MathFunctions.RandVector3Box(GetBoundingBox());
+                        var voxel = new VoxelHandle(World.ChunkManager.ChunkData,
+                        GlobalVoxelCoordinate.FromVector3(pos));
+                        if ((!voxel.IsValid) || !voxel.IsEmpty)
+                        {
+                            continue;
+                        }
+                        Physics item =
+                            EntityFactory.CreateEntity<Physics>(resource.Resource + " Resource",
+                                pos) as Physics;
+                        if (item != null)
+                        {
+                            release.Add(item);
+                            item.Velocity = pos - GetBoundingBox().Center();
+                            item.Velocity.Normalize();
+                            item.Velocity *= 5.0f;
+                            item.IsSleeping = false;
+                        }
+                        break;
                     }
                 }
             }

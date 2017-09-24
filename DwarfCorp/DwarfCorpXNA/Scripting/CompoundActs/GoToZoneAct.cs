@@ -66,7 +66,7 @@ namespace DwarfCorp
             if (Tree == null)
             {
                 var voxel = Destination.GetNearestVoxel(Destination.GetBoundingBox().Center());
-                Tree = new GoToVoxelAct(voxel, PlanAct.PlanType.Adjacent, Agent);
+                Tree = new GoToVoxelAct(VoxelHelpers.GetVoxelAbove(voxel), PlanAct.PlanType.Into, Agent);
                 Tree.Initialize();
             }
 

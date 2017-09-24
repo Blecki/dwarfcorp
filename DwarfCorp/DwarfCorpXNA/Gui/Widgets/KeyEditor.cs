@@ -11,7 +11,9 @@ namespace DwarfCorp.Gui.Widgets
     public class KeyEditor : Widget
     {
         public KeyManager KeyManager;
+        public VerticalScrollBar ScrollBar;
         private List<Keys> ReservedKeys;
+        private List<Widget> Rows = new List<Widget>();
 
         public override void Construct()
         {
@@ -32,6 +34,31 @@ namespace DwarfCorp.Gui.Widgets
                 Keys.Escape
             }.ToList();
 
+            var bindingCount = KeyManager.Buttons.Count;
+            var insideScrollHandler = false;
+
+            ScrollBar = AddChild(new VerticalScrollBar
+            {
+                ScrollArea = bindingCount,
+                ScrollPosition = 0,
+                AutoLayout = AutoLayout.DockRight,
+                OnScrollValueChanged = (sender) =>
+                {
+                    if (insideScrollHandler) return;
+
+                    insideScrollHandler = true;
+                    LayoutRows();
+                    insideScrollHandler = false;
+                }
+            }) as VerticalScrollBar;
+
+            OnLayout += (sender) =>
+            {
+                var height = sender.Rect.Height;
+                var rowsVisible = height / 20;
+                ScrollBar.ScrollArea = Math.Max(0, bindingCount - rowsVisible);
+            };
+
             foreach (var binding in KeyManager.Buttons)
             {
                 var lambdaBinding = binding;
@@ -39,8 +66,10 @@ namespace DwarfCorp.Gui.Widgets
                 var row = AddChild(new Widget
                 {
                     MinimumSize = new Point(0, 20),
-                    AutoLayout = AutoLayout.DockTop
+                    AutoLayout = AutoLayout.None,
                 });
+
+                Rows.Add(row);
 
                 row.AddChild(new Widget
                 {
@@ -75,6 +104,28 @@ namespace DwarfCorp.Gui.Widgets
                     AutoLayout = AutoLayout.DockFill
                 });
 
+            }
+
+            LayoutRows();
+        }
+
+        private void LayoutRows()
+        {
+            var startRow = ScrollBar.ScrollPosition;
+
+            foreach (var row in Rows)
+            {
+                row.AutoLayout = AutoLayout.FloatTopLeft;
+                row.MinimumSize = new Point(0, 0);
+                row.Rect = new Rectangle(0, 0, 0, 0);
+                row.Hidden = true;
+            }
+
+            foreach (var row in Rows.Skip(startRow).Take(GetDrawableInterior().Height / 20))
+            {
+                row.AutoLayout = AutoLayout.DockTop;
+                row.MinimumSize = new Point(0, 20);
+                row.Hidden = false;
             }
 
             Layout();
