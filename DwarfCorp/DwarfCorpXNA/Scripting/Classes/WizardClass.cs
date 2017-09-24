@@ -1,4 +1,4 @@
-﻿// WizardClass.cs
+// WizardClass.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -222,7 +222,7 @@ namespace DwarfCorp
         {
             Attacks = new List<Attack>()
             {
-                new Attack("Magic Missile", 1.0f, 0.5f, 3.0f, ContentPaths.Audio.tinkle, ContentPaths.Effects.pierce)
+                new Attack("Magic Missile", 1.0f, 0.5f, 3.0f, ContentPaths.Audio.Oscar.sfx_ic_dwarf_spell_cast_1, ContentPaths.Effects.pierce)
                 {
                     Knockback = 0.5f,
                     HitParticles = "star_particle",

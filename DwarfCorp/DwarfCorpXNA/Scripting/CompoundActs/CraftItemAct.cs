@@ -131,6 +131,11 @@ namespace DwarfCorp
             Name = "Build craft item";
         }
 
+        public bool IsNotCancelled()
+        {
+            return Creature.Faction.CraftBuilder.IsDesignation(Voxel);
+        }
+
         public override void Initialize()
         {
             Act unreserveAct = new Wrap(() => Creature.Unreserve(Item.ItemType.CraftLocation));
@@ -152,7 +157,7 @@ namespace DwarfCorp
                     Tree = new Sequence(
                         new Wrap(() => Creature.FindAndReserve(Item.ItemType.CraftLocation, Item.ItemType.CraftLocation)),
                         getResources,
-                        new Sequence
+                        new Domain(IsNotCancelled, new Sequence
                             (
                             new GoToTaggedObjectAct(Agent)
                             {
@@ -168,17 +173,17 @@ namespace DwarfCorp
                             new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
                             new CreateCraftItemAct(Voxel, Creature.AI, Item)
                             ) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false)
-                        ) | new Sequence(unreserveAct, false);
+                        )) | new Sequence(unreserveAct, false);
                 }
                 else
                 {
-                    Tree = new Sequence(
+                    Tree = new Domain(IsNotCancelled, new Sequence(
                         getResources,
                         new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
                         new Wrap(() => Creature.HitAndWait(time, true, () => Creature.AI.Position, "Craft")),
                         new Wrap(DestroyResources),
-                        new CreateCraftItemAct(Voxel, Creature.AI, Item)) |
-                       new Wrap(Creature.RestockAll);
+                        new CreateCraftItemAct(Voxel, Creature.AI, Item))) |
+                       (new Wrap(Creature.RestockAll) & false);
                 }
             }
             else
@@ -215,7 +220,7 @@ namespace DwarfCorp
                         new Wrap(() => Creature.HitAndWait(time, true, () => Creature.AI.Position)),
                         new Wrap(DestroyResources),
                         new Wrap(CreateResources)) |
-                       new Wrap(Creature.RestockAll);
+                       (new Wrap(Creature.RestockAll) & false);
                 }
             }
             base.Initialize();

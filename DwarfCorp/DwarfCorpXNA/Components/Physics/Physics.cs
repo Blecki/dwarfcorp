@@ -529,6 +529,16 @@ namespace DwarfCorp
             if (CollideMode == CollisionMode.None) return;
 
             int y = (int)Position.Y;
+            if (CurrentVoxel.IsValid && !CurrentVoxel.IsEmpty)
+            {
+                var currentBox = CurrentVoxel.GetBoundingBox();
+                if (currentBox.Contains(Position) == ContainmentType.Contains)
+                {
+                    ResolveTerrainCollisionGradientMethod();
+                    OnTerrainCollision(CurrentVoxel);
+                    return;
+                }
+            }
 
             foreach (var v in VoxelHelpers.EnumerateManhattanCube(CurrentVoxel.Coordinate)
                 .Select(c => new VoxelHandle(chunks.ChunkData, c)))
@@ -553,6 +563,35 @@ namespace DwarfCorp
             }
         }
 
+        // This is a more expensive terrain collision method that has fewer problems than the box-collision method.
+        // It works by stepping the physics object along the gradient of the terrain field until it is out of collision.
+        // It will only work if the object is on the edge of the terrain (i.e exactly one voxel in or less).
+        public void ResolveTerrainCollisionGradientMethod()
+        {
+            Vector3 localGradient = Vector3.Zero;
+
+            var p = Position;
+            foreach (var v in VoxelHelpers.EnumerateAllNeighbors(CurrentVoxel.Coordinate))
+            {
+                var handle = new VoxelHandle(World.ChunkManager.ChunkData, v);
+                if (!handle.IsValid)
+                    continue;
+                
+                var center = handle.WorldPosition + Vector3.One*0.5f;
+                var offset = p - center;
+                var dist = offset.LengthSquared();
+                var sign = handle.IsEmpty ? -1 : 1;
+                localGradient += offset*sign/dist;
+            }
+
+            p += localGradient*0.01f;
+            Matrix m = LocalTransform;
+            m.Translation = p;
+            LocalTransform = m;
+            Velocity += localGradient*0.01f;
+            PropogateTransforms();
+            UpdateBoundingBox();
+        }
 
         public struct Contact
         {

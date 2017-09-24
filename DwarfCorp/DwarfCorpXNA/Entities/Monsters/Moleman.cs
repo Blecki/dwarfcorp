@@ -92,7 +92,7 @@ namespace DwarfCorp
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 5,
-                SoundToPlay = ContentPaths.Audio.gravel
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_moleman_death
             });
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
@@ -100,9 +100,8 @@ namespace DwarfCorp
 
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
-                ContentPaths.Audio.mole0,
-                ContentPaths.Audio.mole1,
-                ContentPaths.Audio.mole2
+                ContentPaths.Audio.Oscar.sfx_ic_moleman_hurt_1,
+                ContentPaths.Audio.Oscar.sfx_ic_moleman_hurt_2
             };
 
             Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 1)));

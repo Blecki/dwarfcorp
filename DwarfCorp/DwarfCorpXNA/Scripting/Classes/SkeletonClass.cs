@@ -255,7 +255,7 @@ namespace DwarfCorp
         {
             Attacks = new List<Attack>()
             {
-                new Attack("Claws", 1.0f, 0.5f, 2.0f, ContentPaths.Audio.sword, ContentPaths.Effects.claw)
+                new Attack("Claws", 1.0f, 0.5f, 2.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_ic_necromancer_skeleton_attack_1, ContentPaths.Audio.Oscar.sfx_ic_necromancer_skeleton_hurt_2), ContentPaths.Effects.claw)
                 {
                     Knockback = 0.5f,
                     TriggerMode = Attack.AttackTrigger.Animation,

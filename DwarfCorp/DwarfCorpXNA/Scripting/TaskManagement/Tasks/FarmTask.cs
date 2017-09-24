@@ -71,7 +71,22 @@ namespace DwarfCorp
 
         public override bool IsFeasible(Creature agent)
         {
-            return FarmToWork != null && !FarmToWork.IsCanceled;
+            bool farmValid =  FarmToWork != null && !FarmToWork.IsCanceled;
+            if (!farmValid)
+            {
+                return false;
+            }
+            if (Mode == FarmAct.FarmMode.Till && FarmToWork.Vox.Type.Name == "TilledSoil")
+            {
+                return false;
+            }
+
+            if (Mode == FarmAct.FarmMode.Plant && FarmToWork.PlantExists())
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public override Act CreateScript(Creature agent)

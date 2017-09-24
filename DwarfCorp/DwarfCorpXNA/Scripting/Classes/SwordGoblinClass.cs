@@ -1,4 +1,4 @@
-﻿// SwordGoblinClass.cs
+// SwordGoblinClass.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -255,7 +255,7 @@ namespace DwarfCorp
         {
             Attacks = new List<Attack>()
             {
-                new Attack("Sword", 2.0f, 0.5f, 2.0f, ContentPaths.Audio.sword, ContentPaths.Effects.slash)
+                new Attack("Sword", 2.0f, 0.5f, 2.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_ic_goblin_attack_1, ContentPaths.Audio.Oscar.sfx_ic_goblin_attack_2, ContentPaths.Audio.Oscar.sfx_ic_goblin_attack_3), ContentPaths.Effects.slash)
                 {
                     Knockback = 2.5f,
                     TriggerMode = Attack.AttackTrigger.Animation,

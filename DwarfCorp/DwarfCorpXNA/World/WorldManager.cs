@@ -796,10 +796,6 @@ namespace DwarfCorp
             {
                 bloom.BeginDraw();
             }
-            else if (UseFXAA)
-            {
-                fxaa.Begin(DwarfTime.LastTime, fxaa.RenderTarget);
-            }
 
             // Draw the sky
             GraphicsDevice.Clear(DefaultShader.FogColor);
@@ -906,6 +902,11 @@ namespace DwarfCorp
             if (GameSettings.Default.EnableGlow)
             {
                 bloom.DrawTarget = UseFXAA ? fxaa.RenderTarget : null;
+
+                if (UseFXAA)
+                {
+                    fxaa.Begin(DwarfTime.LastTime, fxaa.RenderTarget);
+                }
                 bloom.Draw(gameTime.ToGameTime());
                 if (UseFXAA)
                     fxaa.End(DwarfTime.LastTime, fxaa.RenderTarget);

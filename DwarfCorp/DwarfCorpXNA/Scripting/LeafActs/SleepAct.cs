@@ -50,6 +50,8 @@ namespace DwarfCorp
 
         public Vector3 TeleportLocation { get; set; }
 
+        public Vector3 PreTeleport { get; set; }
+
         public enum SleepType
         {
             Sleep,
@@ -90,7 +92,7 @@ namespace DwarfCorp
         public override IEnumerable<Status> Run()
         {
             float startingHealth = Creature.Status.Health.CurrentValue;
-
+            PreTeleport = Creature.AI.Position;
             if (Type == SleepType.Sleep)
             {
                 while (!Creature.Status.Energy.IsSatisfied() && Creature.Manager.World.Time.IsNight())
@@ -118,6 +120,16 @@ namespace DwarfCorp
                     Creature.OverrideCharacterMode = false;
                     yield return Status.Running;
                 }
+
+                if (Teleport)
+                {
+                    Creature.AI.Position = PreTeleport;
+                    Creature.Physics.Velocity = Vector3.Zero;
+                    Creature.Physics.LocalPosition = TeleportLocation;
+                    Creature.Physics.IsSleeping = false;
+                    Creature.Physics.AllowPhysicsSleep = false;
+                }
+
                 Creature.AI.AddThought(Thought.ThoughtType.Slept);
                 Creature.Status.IsAsleep = false;
                 Creature.Physics.IsSleeping = false;
@@ -142,6 +154,15 @@ namespace DwarfCorp
                     Creature.Status.IsAsleep = true;
                     Creature.OverrideCharacterMode = false;
                     yield return Status.Running;
+                }
+
+                if (Teleport)
+                {
+                    Creature.AI.Position = PreTeleport;
+                    Creature.Physics.Velocity = Vector3.Zero;
+                    Creature.Physics.LocalPosition = TeleportLocation;
+                    Creature.Physics.IsSleeping = false;
+                    Creature.Physics.AllowPhysicsSleep = false;
                 }
                 Creature.AI.AddThought(Thought.ThoughtType.Slept);
                 Creature.Status.IsAsleep = false;

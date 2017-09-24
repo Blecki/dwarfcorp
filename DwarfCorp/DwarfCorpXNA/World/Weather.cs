@@ -326,7 +326,7 @@ namespace DwarfCorp
 
                     var above = test.IsEmpty ? test : VoxelHelpers.GetVoxelAbove(test);
 
-                    if (!above.IsValid) continue;
+                    if (!above.IsValid || !above.IsEmpty) continue;
                     if (stormProperties.CreatesLiquid && 
                         (above.WaterCell.WaterLevel < WaterManager.maxWaterLevel && (above.WaterCell.Type == LiquidType.Water || above.WaterCell.Type == LiquidType.None)))
                     {

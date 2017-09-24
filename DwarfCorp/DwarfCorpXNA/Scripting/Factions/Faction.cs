@@ -668,6 +668,28 @@ namespace DwarfCorp
             }
         }
 
+        public Dictionary<string, ResourceAmount> ListResourcesInStockpilesPlusMinions()
+        {
+            Dictionary<string, ResourceAmount> toReturn = ListResources();
+            foreach (var creature in Minions)
+            {
+                var inventory = creature.Creature.Inventory;
+                foreach (var i in inventory.Resources)
+                {
+                    var resource = i.Resource;
+                    if (toReturn.ContainsKey(resource))
+                    {
+                        toReturn[resource].NumResources += 1;
+                    }
+                    else
+                    {
+                        toReturn[resource] = new ResourceAmount(resource);
+                    }
+                }
+            }
+            return toReturn;
+        }
+
         public Dictionary<string, ResourceAmount> ListResources()
         {
             Dictionary<string, ResourceAmount> toReturn = new Dictionary<string, ResourceAmount>();
@@ -691,24 +713,6 @@ namespace DwarfCorp
                     }
                 }
             }
-
-            foreach (var creature in Minions)
-            {
-                var inventory = creature.Creature.Inventory;
-                foreach(var i in inventory.Resources)
-                {
-                    var resource = i.Resource;
-                    if (toReturn.ContainsKey(resource))
-                    {
-                        toReturn[resource].NumResources += 1;
-                    }
-                    else
-                    {
-                        toReturn[resource] = new ResourceAmount(resource);
-                    }
-                }
-            }
-
             return toReturn;
         }
 
