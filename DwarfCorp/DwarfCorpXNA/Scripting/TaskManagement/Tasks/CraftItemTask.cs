@@ -160,7 +160,7 @@ namespace DwarfCorp
             newItem.NumRepeats--;
             if (newItem.NumRepeats >= 1)
             {
-                creature.AI.Tasks.Add(new CraftResourceTask(newItem, TaskID));
+                creature.AI.AssignTask(new CraftResourceTask(newItem, TaskID));
             }
             yield return Act.Status.Success;
         }

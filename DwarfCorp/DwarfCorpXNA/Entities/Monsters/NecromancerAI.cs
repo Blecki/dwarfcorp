@@ -123,7 +123,7 @@ namespace DwarfCorp
                     };
                     if (!skeleton.AI.Tasks.Contains(goToTask))
                     {
-                        skeleton.AI.Tasks.Add(goToTask);
+                        skeleton.AI.AssignTask(goToTask);
                     }
                 }
             }

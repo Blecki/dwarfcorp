@@ -686,7 +686,7 @@ namespace DwarfCorp
                 {
                     AI.Faction.GatherDesignations.Add(item);
                 }
-                AI.Tasks.Add(gatherTask);
+                AI.AssignTask(gatherTask);
             }
         }
 

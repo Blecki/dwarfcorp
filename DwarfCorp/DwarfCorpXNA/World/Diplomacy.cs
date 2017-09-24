@@ -623,7 +623,7 @@ namespace DwarfCorp
                 {
                     if (MathFunctions.RandEvent(0.001f))
                     {
-                        creature.Tasks.Add(new ActWrapperTask(new GetMoneyAct(creature, (decimal)MathFunctions.Rand(0, 64.0f), party.OtherFaction))
+                        creature.AssignTask(new ActWrapperTask(new GetMoneyAct(creature, (decimal)MathFunctions.Rand(0, 64.0f), party.OtherFaction))
                         {
                             Priority = Task.PriorityType.Medium
                         });

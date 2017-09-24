@@ -369,7 +369,10 @@ namespace DwarfCorp
             List<Task> tasks = (from item in items where AddGatherDesignation(item) select new GatherItemTask(item) as Task).ToList();
             foreach (CreatureAI creature in Minions)
             {
-                creature.Tasks.AddRange(tasks);
+                foreach (var task in tasks)
+                {
+                    creature.AssignTask(task);
+                }
             }
         }
 

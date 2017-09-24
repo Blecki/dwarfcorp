@@ -96,7 +96,7 @@ namespace DwarfCorp
                 if (minion.Creature.IsAsleep) continue;
                 if(minion.CurrentTask != null)
                 {
-                    minion.Tasks.Add(minion.CurrentTask);
+                    minion.AssignTask(minion.CurrentTask);
                     if (minion.CurrentTask.Script != null)
                     {
                         minion.CurrentAct.OnCanceled();

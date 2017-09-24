@@ -69,6 +69,24 @@ namespace DwarfCorp
             return !IsFeasible(agent);
         }
 
+        public override void OnAssign(Creature agent)
+        {
+            if (FarmToWork != null)
+            {
+                FarmToWork.Farmer = agent.AI;
+            }
+            base.OnAssign(agent);
+        }
+
+        public override void OnUnAssign(Creature agent)
+        {
+            if (FarmToWork != null && FarmToWork.Farmer == agent.AI)
+            {
+                FarmToWork.Farmer = null;
+            }
+            base.OnUnAssign(agent);
+        }
+
         public override bool IsFeasible(Creature agent)
         {
             bool farmValid =  FarmToWork != null && !FarmToWork.IsCanceled;
