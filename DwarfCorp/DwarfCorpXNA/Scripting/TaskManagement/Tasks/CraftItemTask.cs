@@ -167,22 +167,33 @@ namespace DwarfCorp
 
         public override bool ShouldDelete(Creature agent)
         {
-            bool notfeasible = !IsFeasible(agent);
-            if (notfeasible)
+            bool hasresources = HasResources(agent);
+            bool hasLocation = HasLocation(agent);
+            if (!hasresources)
             {
-                agent.World.MakeAnnouncement(String.Format("{0} cancelled craft task because it is impossible.", agent.Name));
+                agent.World.MakeAnnouncement(String.Format("{0} cancelled craft task: Not enough resources.", agent.Name));
+                return true;
             }
-            return notfeasible;
+            if (!hasLocation)
+            {
+                agent.World.MakeAnnouncement(String.Format("{0} cancelled craft task: Needs {1}.", agent.Name, Item.ItemType.CraftLocation));
+                return true;
+            }
+            return false;
         }
 
-        public override bool IsFeasible(Creature agent)
+        private bool HasResources(Creature agent)
         {
             var resources = agent.Faction.HasResources(Item.ItemType.SelectedResources);
             if (!resources)
             {
                 return false;
             }
+            return true;
+        }
 
+        private bool HasLocation(Creature agent)
+        {
             if (Item.ItemType.CraftLocation != "")
             {
                 var anyCraftLocation = agent.Faction.OwnedObjects.Any(o => o.Tags.Contains(Item.ItemType.CraftLocation));
@@ -190,6 +201,11 @@ namespace DwarfCorp
                     return false;
             }
             return true;
+        }
+
+        public override bool IsFeasible(Creature agent)
+        {
+            return HasResources(agent) && HasLocation(agent);
         }
 
         public override Act CreateScript(Creature creature)
