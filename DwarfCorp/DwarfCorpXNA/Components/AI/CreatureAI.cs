@@ -1256,7 +1256,7 @@ namespace DwarfCorp
             // If our health is low, we're a little afraid.
             if (Creature.Hp < Creature.MaxHealth * 0.25f)
             {
-                fear += 0.5f;
+                fear += 0.25f;
             }
 
             // If there are a lot of nearby threats vs allies, we are even more afraid.
@@ -1265,10 +1265,16 @@ namespace DwarfCorp
                 fear += 0.5f;
             }
 
-            // If the creature has formidible weapons, we're in trouble.
-            if (creature.Creature.Attacks[0].DamageAmount > Creature.Attacks[0].DamageAmount)
+            // In this case, we have a very very weak weapon in comparison to our enemy.
+            if (Creature.Attacks[0].DamageAmount*20 < creature.Creature.Hp)
             {
-                fear += creature.Creature.Attacks[0].DamageAmount / Creature.Hp;
+                fear += 0.25f;
+            }
+
+            // If the creature has formidible weapons, we're in trouble.
+            if (creature.Creature.Attacks[0].DamageAmount * 4 > Creature.Hp)
+            {
+                fear += 0.25f;
             }
 
             fear = Math.Min(fear, 0.99f);
