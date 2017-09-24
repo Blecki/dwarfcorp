@@ -87,7 +87,9 @@ namespace DwarfCorp
             Window.Title = "DwarfCorp";
             Window.AllowUserResizing = false;
             TextureManager = new TextureManager(Content, GraphicsDevice);
+
             GameSettings.Load();
+<<<<<<< HEAD
             try
             {
 #if SHARP_RAVEN
@@ -109,6 +111,12 @@ namespace DwarfCorp
             {
                 Console.Error.WriteLine(exception.ToString());
             }
+=======
+            // Check GUI scale - if the settings are bad, fix.
+            if (GameSettings.Default.GuiScale * 480 > GameSettings.Default.ResolutionY)
+                GameSettings.Default.GuiScale = 1;
+
+>>>>>>> Limit gui scale options, add scrollbar to keys, bump min res to 800 by 600
             Graphics.IsFullScreen = GameSettings.Default.Fullscreen;
             Graphics.PreferredBackBufferWidth = GameSettings.Default.Fullscreen ? GameSettings.Default.ResolutionX : Math.Min(GameSettings.Default.ResolutionX, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width);
             Graphics.PreferredBackBufferHeight = GameSettings.Default.Fullscreen ? GameSettings.Default.ResolutionY : Math.Min(GameSettings.Default.ResolutionY,
