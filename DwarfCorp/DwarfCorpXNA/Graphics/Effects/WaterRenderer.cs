@@ -196,31 +196,36 @@ namespace DwarfCorp
 
         public void DrawWaterFlat(GraphicsDevice device, Matrix view, Matrix projection, Shader effect, ChunkManager chunks)
         {
-            effect.CurrentTechnique = effect.Techniques[Shader.Technique.WaterFlat];
-            Matrix worldMatrix = Matrix.Identity;
-            effect.World = worldMatrix;
-            effect.View = view;
-            effect.Projection = projection;
-
-            foreach (KeyValuePair<LiquidType, LiquidAsset> asset in LiquidAssets)
+            try // Release day hack fix. Just eat any exceptions in case the fix applied to LiquidPrimitive 
+            // doesn't actually work.
             {
-                effect.FlatWaterColor = new Color(asset.Value.FlatColor);
+                effect.CurrentTechnique = effect.Techniques[Shader.Technique.WaterFlat];
+                Matrix worldMatrix = Matrix.Identity;
+                effect.World = worldMatrix;
+                effect.View = view;
+                effect.Projection = projection;
 
-
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                foreach (KeyValuePair<LiquidType, LiquidAsset> asset in LiquidAssets)
                 {
-                    pass.Apply();
-                    foreach (var c in chunks.ChunkData.GetChunkEnumerator())
+                    effect.FlatWaterColor = new Color(asset.Value.FlatColor);
+
+
+                    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                     {
-                        if (c.IsVisible)
+                        pass.Apply();
+                        foreach (var c in chunks.ChunkData.GetChunkEnumerator())
                         {
-                            //chunk.PrimitiveMutex.WaitOne();
-                            c.Liquids[asset.Key].Render(device);
-                            //chunk.PrimitiveMutex.ReleaseMutex();
+                            if (c.IsVisible)
+                            {
+                                //chunk.PrimitiveMutex.WaitOne();
+                                c.Liquids[asset.Key].Render(device);
+                                //chunk.PrimitiveMutex.ReleaseMutex();
+                            }
                         }
                     }
                 }
             }
+            catch (Exception e) { }
         }
         
 

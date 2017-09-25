@@ -101,8 +101,7 @@ namespace DwarfCorp
         /// <param Name="device">GPU to draw with.</param>
         public virtual void Render(GraphicsDevice device)
         {
-            // This lock does not appear to actually be protecting against anything; however
-            //   the cost of locking must still be paid for every primitive drawn.
+            // Todo: Redesign so locking is not required.
             //lock (VertexLock)
             {
 #if MONOGAME_BUILD

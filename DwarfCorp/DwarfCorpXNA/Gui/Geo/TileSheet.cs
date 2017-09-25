@@ -70,5 +70,10 @@ namespace DwarfCorp.Gui
         {
             return new Point(S.Length * TileWidth, TileHeight);
         }
+
+        public bool HasGlyph(int Index)
+        {
+            return true;
+        }
     }
 }

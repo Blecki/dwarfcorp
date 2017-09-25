@@ -15,5 +15,6 @@ namespace DwarfCorp.Gui
         Point GlyphSize(int TileID);
         Point MeasureString(String S);
         bool RepeatWhenUsedAsBorder { get; }
+        bool HasGlyph(int TileID);
     }
 }
