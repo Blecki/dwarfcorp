@@ -325,7 +325,6 @@ namespace DwarfCorp
         // event that is called when the player loses in the world
         public delegate void OnLose();
         public event OnLose OnLoseEvent;
-        private bool firstIter = true;
         #endregion
 
         /// <summary>
@@ -413,8 +412,6 @@ namespace DwarfCorp
         /// <param name="gameTime">The current time</param>
         public void Update(DwarfTime gameTime)
         {
-            firstIter = false;
-
             EntityFactory.DoLazyActions();
             if (FastForwardToDay)
             {

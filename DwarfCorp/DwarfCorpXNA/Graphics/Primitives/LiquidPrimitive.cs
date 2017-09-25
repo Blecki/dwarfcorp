@@ -108,6 +108,14 @@ namespace DwarfCorp
             }
         }
 
+        public override void Render(GraphicsDevice device)
+        {
+            lock (base.VertexLock)
+            {
+                base.Render(device);
+            }
+        }
+
         private static bool AddCaches(List<LiquidPrimitive> primitivesToInit, ref LiquidPrimitive[] lps)
         {
             // We are going to first set up the internal array.
