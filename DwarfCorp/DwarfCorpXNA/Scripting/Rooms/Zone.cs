@@ -82,6 +82,17 @@ namespace DwarfCorp
 
         public Faction Faction { get; set; }
 
+        [OnDeserialized]
+        public void OnDeserialized(StreamingContext ctx)
+        {
+            World = (WorldManager)ctx.Context;
+            foreach (var body in ZoneBodies)
+            {
+                Body body1 = body;
+                body.OnDestroyed += () => body_onDestroyed(body1);
+            }
+        }
+
         public Zone(string id, WorldManager world, Faction faction)
         {
             ID = id;
