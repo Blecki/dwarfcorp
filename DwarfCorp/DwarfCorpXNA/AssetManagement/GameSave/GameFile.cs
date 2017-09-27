@@ -68,7 +68,8 @@ namespace DwarfCorp
                 public Tutorial.TutorialSaveData TutorialSaveData { get; set; }
                 public Diplomacy Diplomacy { get; set; }
                 public FactionLibrary Factions;
-                public Dictionary<ResourceLibrary.ResourceType, Resource> Resources { get; set; } 
+                public Dictionary<ResourceLibrary.ResourceType, Resource> Resources { get; set; }
+                public DesignationDrawer Designations { get; set; }
             }
 
             public WorldData Worlddata { get; set; }
@@ -128,7 +129,8 @@ namespace DwarfCorp
                     TutorialSaveData = world.TutorialManager.GetSaveData(),
                     Diplomacy = world.Diplomacy,
                     Factions = world.Factions,
-                    Resources = ResourceLibrary.Resources
+                    Resources = ResourceLibrary.Resources,
+                    Designations = world.DesignationDrawer,
                 },
                 ChunkData = new List<ChunkFile>(),
             };

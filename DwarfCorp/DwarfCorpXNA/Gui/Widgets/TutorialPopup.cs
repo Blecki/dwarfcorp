@@ -35,13 +35,15 @@ namespace DwarfCorp.Gui.Widgets
                 Border = "border-button",
                 OnClick = (sender, args) => { this.Close(); SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_window_close, 0.25f); },
                 AutoLayout = AutoLayout.FloatBottomRight,
+                ChangeColorOnHover = true,
             });
 
             DisableBox = AddChild(new Gui.Widgets.CheckBox
             {
                 Text = "Disable tutorial",
                 Font = "font",
-                AutoLayout = AutoLayout.FloatBottomLeft
+                AutoLayout = AutoLayout.FloatBottomLeft,
+                ChangeColorOnHover = true,
             }) as Gui.Widgets.CheckBox;
 
             AddChild(new Widget
