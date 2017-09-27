@@ -32,7 +32,7 @@ namespace DwarfCorp.Gui.Widgets
         public bool CanBuild()
         {
             var requirment = ResourceLibrary.Resources[Data.ResourceToRelease];
-            foreach (var resource in Master.Faction.ListResources())
+            foreach (var resource in Master.Faction.ListResourcesInStockpilesPlusMinions())
                 if (resource.Value.ResourceType == requirment.Type && resource.Value.NumResources > 0)
                     return true;
             return false;

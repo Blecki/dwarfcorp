@@ -1,4 +1,4 @@
-﻿// MolemanMinerClass.cs
+// MolemanMinerClass.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -229,7 +229,7 @@ namespace DwarfCorp
         {
             Attacks = new List<Attack>()
             {
-                new Attack("Claws", 1.5f, 0.5f, 2.0f, ContentPaths.Audio.sword, ContentPaths.Effects.claw)
+                new Attack("Claws", 1.5f, 0.5f, 2.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_ic_moleman_claw_attack_1, ContentPaths.Audio.Oscar.sfx_ic_moleman_claw_attack_2, ContentPaths.Audio.Oscar.sfx_ic_moleman_claw_attack_3), ContentPaths.Effects.claw)
                 {
                     Knockback = 2.5f,
                     TriggerMode = Attack.AttackTrigger.Animation,

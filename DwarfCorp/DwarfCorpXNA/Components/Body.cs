@@ -232,6 +232,7 @@ namespace DwarfCorp
 
         public void OrientToWalls()
         {
+            Orient(0);
             var curr = new VoxelHandle(Manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(LocalTransform.Translation));
             if (curr.IsValid)

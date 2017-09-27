@@ -155,7 +155,7 @@ namespace DwarfCorp.GameStates
 
             var frame = MakeMenuFrame("GUI DEBUG");
 
-            MakeMenuItem(frame, "View Atlas", "", (sender, args) =>
+            MakeMenuItem(frame, "View Atlas \u00DF", "", (sender, args) =>
                 {
                     var pane = GuiRoot.ConstructWidget(new ShowTextureDialog());
                     GuiRoot.ShowDialog(pane);

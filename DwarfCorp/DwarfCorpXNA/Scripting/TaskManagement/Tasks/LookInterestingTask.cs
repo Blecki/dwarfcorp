@@ -59,6 +59,7 @@ namespace DwarfCorp
 
         public IEnumerable<Act.Status> ConverseFriends(CreatureAI c)
         {
+            CreatureAI minionToConverse = null;
             foreach (CreatureAI minion in c.Faction.Minions)
             {
                 if (minion == c || minion.Creature.IsAsleep)
@@ -68,13 +69,18 @@ namespace DwarfCorp
 
                 if (dist < 2 && MathFunctions.Rand(0, 1) < 0.1f)
                 {
-                    c.Converse(minion);
-                    Timer converseTimer = new Timer(5.0f, true);
-                    while (!converseTimer.HasTriggered)
-                    {
-                        converseTimer.Update(DwarfTime.LastTime);
-                        yield return Act.Status.Running;
-                    }
+                    minionToConverse = minion;
+                    break;
+                }
+            }
+            if (minionToConverse != null)
+            {
+                c.Converse(minionToConverse);
+                Timer converseTimer = new Timer(5.0f, true);
+                while (!converseTimer.HasTriggered)
+                {
+                    converseTimer.Update(DwarfTime.LastTime);
+                    yield return Act.Status.Running;
                 }
             }
             yield return Act.Status.Success;
@@ -107,13 +113,11 @@ namespace DwarfCorp
                 return new GoToZoneAct(creature.AI, Datastructures.SelectRandom(rooms));
             }
 
-            /*
             bool goToItem = MathFunctions.RandEvent(0.2f);
             if (goToItem && items.Count > 0)
             {
-                return new GoToEntityAct(Datastructures.SelectRandom(items), creature.AI) & new Wrap(() => ConverseFriends(creature.AI));
+                return new GoToEntityAct(Datastructures.SelectRandom(items.Where(item => !item.Tags.Contains("Climbable"))), creature.AI) & new Wrap(() => ConverseFriends(creature.AI));
             }
-            */
 
             bool goToMinion = MathFunctions.RandEvent(0.2f);
             if (goToMinion && minions.Count > 1)

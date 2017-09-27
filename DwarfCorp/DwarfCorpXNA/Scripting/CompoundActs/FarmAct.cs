@@ -142,7 +142,24 @@ namespace DwarfCorp
 
         private bool Validate()
         {
-            return !FarmToWork.IsCanceled && FarmToWork.Farmer == Agent && FarmToWork.Vox.IsValid && !FarmToWork.Vox.IsEmpty;
+            bool tileValid =  !FarmToWork.IsCanceled && FarmToWork.Farmer == Agent && FarmToWork.Vox.IsValid && !FarmToWork.Vox.IsEmpty;
+
+            if (!tileValid)
+            {
+                return false;
+            }
+
+            if (Mode == FarmMode.Plant && FarmToWork.PlantExists())
+            {
+                return false;
+            }
+
+            if (Mode == FarmMode.Till && FarmToWork.Vox.Type.Name == "TilledSoil")
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private IEnumerable<Act.Status> Cleanup()
@@ -153,7 +170,7 @@ namespace DwarfCorp
 
         public override void OnCanceled()
         {
-            FarmTool.FarmTile tile = Creature.AI.Blackboard.GetData<FarmTool.FarmTile>("ClosestTile");
+            FarmTool.FarmTile tile = FarmToWork;
 
             if (tile != null && tile.Farmer == Agent)
             {

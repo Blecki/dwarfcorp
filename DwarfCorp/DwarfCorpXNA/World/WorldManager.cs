@@ -448,7 +448,6 @@ namespace DwarfCorp
 
             Master.Update(Game, gameTime);
             GoalManager.Update(this);
-            TutorialManager.Update(Gui);
             Time.Update(gameTime);
 
             if (Paused)
@@ -458,6 +457,8 @@ namespace DwarfCorp
             // If not paused, we want to just update the rest of the game.
             else
             {
+                TutorialManager.Update(Gui);
+
                 GamePerformance.Instance.StartTrackPerformance("Diplomacy");
                 Diplomacy.Update(gameTime, Time.CurrentDate, this);
                 GamePerformance.Instance.StopTrackPerformance("Diplomacy");
@@ -795,10 +796,6 @@ namespace DwarfCorp
             {
                 bloom.BeginDraw();
             }
-            else if (UseFXAA)
-            {
-                fxaa.Begin(DwarfTime.LastTime, fxaa.RenderTarget);
-            }
 
             // Draw the sky
             GraphicsDevice.Clear(DefaultShader.FogColor);
@@ -905,6 +902,11 @@ namespace DwarfCorp
             if (GameSettings.Default.EnableGlow)
             {
                 bloom.DrawTarget = UseFXAA ? fxaa.RenderTarget : null;
+
+                if (UseFXAA)
+                {
+                    fxaa.Begin(DwarfTime.LastTime, fxaa.RenderTarget);
+                }
                 bloom.Draw(gameTime.ToGameTime());
                 if (UseFXAA)
                     fxaa.End(DwarfTime.LastTime, fxaa.RenderTarget);

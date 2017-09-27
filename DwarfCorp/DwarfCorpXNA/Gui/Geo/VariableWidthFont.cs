@@ -102,6 +102,11 @@ namespace DwarfCorp.Gui
             return new Point(Glyphs[Index].Width, Glyphs[Index].Height);
         }
 
+        public bool HasGlyph(int Index)
+        {
+            return Index >= 0 && Index < Glyphs.Count;
+        }
+
         public Point MeasureString(String S)
         {
             var size = new Point(0, TileHeight);
@@ -116,7 +121,7 @@ namespace DwarfCorp.Gui
                 else if (c < 32) continue;
                 else
                 {
-                    lineWidth += GlyphSize(c - ' ').X;
+                    lineWidth += HasGlyph(c - ' ') ? GlyphSize(c - ' ').X : 0;
                     if (lineWidth > size.X) size.X = lineWidth;
                 }
             }
@@ -168,7 +173,7 @@ namespace DwarfCorp.Gui
                 else
                 {
                     w.Append(c);
-                    wordLength += Glyphs[c - ' '].Width * GlyphWidthScale;
+                    wordLength += (HasGlyph(c - ' ') ? GlyphSize(c - ' ').X : 0) * GlyphWidthScale;
                 }
             }
 

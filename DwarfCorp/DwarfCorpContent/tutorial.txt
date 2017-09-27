@@ -45,7 +45,7 @@
 		{
 			"Name" : "build crafts",
 			"Title" : "Crafting",
-			"Text" : "You told one of your employees to craft an item. The dwarf will now attempt to gather the resources for the item and will build it in the workshop. The item will appear in the stockpile once the dwarf is finished. NOTE: a workshop is required to build crafts."
+			"Text" : "You told one of your employees to craft an item. The dwarf will now attempt to gather the resources for the item and will build it in the workshop. The item will appear in the stockpile once the dwarf is finished. NOTE: an anvil or forge is required to build crafts."
 		},
 		{
 			"Name" : "cook",
@@ -221,7 +221,8 @@
 		{
 			"Name" : "hire",
 			"Title" : "Hiring Dwarves",
-			"Text" : "Here, you can hire new dwarves to be employees of your company. Click on the employee type to view a new resume, and click \"Hire\" if you want to hire them. Hiring dwarves requires a balloon port and enough Dwarfbux to cover their signing bonus."
+			"Text" : "Here, you can hire new dwarves to be employees of your company. Click on the employee type to view a new resume, and click \"Hire\" if you want to hire them. Hiring dwarves requires a balloon port and enough Dwarfbux to cover their signing bonus.",
+			"Popup" : true
 		},
 		{
 			"Name" : "economy",

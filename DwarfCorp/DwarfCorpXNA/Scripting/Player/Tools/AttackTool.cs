@@ -159,6 +159,11 @@ namespace DwarfCorp
                         foreach (CreatureAI minion in Player.Faction.SelectedMinions)
                         {
                             minion.Tasks.Add(new KillEntityTask(other, KillEntityTask.KillType.Attack));
+                            CreatureAI otherAi = other.GetRoot().GetComponent<CreatureAI>();
+                            if (otherAi != null)
+                            {
+                                otherAi.Tasks.Add(new KillEntityTask(minion.Physics, KillEntityTask.KillType.Auto));
+                            }
                         }
                         Player.Faction.World.ShowToolPopup("Will attack this " + creature.Species);
                         OnConfirm(Player.Faction.SelectedMinions);

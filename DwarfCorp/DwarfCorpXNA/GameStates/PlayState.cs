@@ -423,7 +423,7 @@ namespace DwarfCorp.GameStates
                 sender.Invalidate();
                 return;
             }
-            var factionResources = Master.Faction.ListResources();
+            var factionResources = Master.Faction.ListResourcesInStockpilesPlusMinions();
             if (!factionResources.ContainsKey(data.ResourceToRelease))
             {
                 sender.Text = "";
@@ -966,7 +966,7 @@ namespace DwarfCorp.GameStates
                             Icon = new Gui.TileReference("voxels", data.ID),
                             TextHorizontalAlign = HorizontalAlign.Right,
                             TextVerticalAlign = VerticalAlign.Bottom,
-                            Text = Master.Faction.ListResources()[data.ResourceToRelease].NumResources.ToString(),
+                            Text = Master.Faction.ListResourcesInStockpilesPlusMinions()[data.ResourceToRelease].NumResources.ToString(),
                             TextColor = Color.White.ToVector4(),
                             PopupChild = new BuildWallInfo
                             {
@@ -1014,7 +1014,7 @@ namespace DwarfCorp.GameStates
                             Icon = new Gui.TileReference("voxels", data.ID),
                             TextHorizontalAlign = HorizontalAlign.Right,
                             TextVerticalAlign = VerticalAlign.Bottom,
-                            Text = Master.Faction.ListResources()[data.ResourceToRelease].NumResources.ToString(),
+                            Text = Master.Faction.ListResourcesInStockpilesPlusMinions()[data.ResourceToRelease].NumResources.ToString(),
                             TextColor = Color.White.ToVector4(),
                             PopupChild = new BuildWallInfo
                             {
@@ -1969,8 +1969,13 @@ namespace DwarfCorp.GameStates
             }
             else if (key == ControlSettings.Mappings.GodMode)
             {
+                if (!GodMenu.Hidden)
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
                 GodMenu.Hidden = !GodMenu.Hidden;
                 GodMenu.Invalidate();
+                
             }
         }
 

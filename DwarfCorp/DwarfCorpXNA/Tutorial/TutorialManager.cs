@@ -14,6 +14,7 @@ namespace DwarfCorp.Tutorial
             public String Text;
             public bool Shown;
             public String GuiHilite;
+            public bool Popup = false;
         }
 
         private Dictionary<String, TutorialEntry> Entries;
@@ -22,6 +23,7 @@ namespace DwarfCorp.Tutorial
         private Widget ExistingTutorial = null;
         private bool TutorialVisible = false;
         private Widget HighlightWidget = null;
+
         public TutorialManager(String TutorialFile)
         {
             var entries = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonTutorialSet>(
@@ -34,7 +36,8 @@ namespace DwarfCorp.Tutorial
                     Text = entry.Text,
                     Shown = false,
                     Title = entry.Title,
-                    GuiHilite = entry.GuiHilite
+                    GuiHilite = entry.GuiHilite,
+                    Popup = entry.Popup
                 });
         }
 
@@ -81,7 +84,13 @@ namespace DwarfCorp.Tutorial
                     }
                 });
 
-                Gui.RootItem.AddChild(popup);
+                if (entry.Popup)
+                {
+                    Gui.ShowMinorPopup(popup);
+                    popup.PopupDestructionType = PopupDestructionType.Keep;
+                }
+                else
+                    Gui.RootItem.AddChild(popup);
                 ExistingTutorial = popup;
                 PendingTutorial = null;
 

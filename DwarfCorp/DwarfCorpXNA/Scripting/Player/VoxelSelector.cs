@@ -654,7 +654,7 @@ namespace DwarfCorp
             {
                 if (!v.IsValid) continue;
                 
-                if ((SelectionType == VoxelSelectionType.SelectFilled && !v.IsEmpty)
+                if (!v.IsExplored || (SelectionType == VoxelSelectionType.SelectFilled && !v.IsEmpty)
                     || (SelectionType == VoxelSelectionType.SelectEmpty && v.IsEmpty))
                 {
                     Drawer2D.DrawRect(World.Camera, v.WorldPosition + half, screenRect, dotColor, Color.Transparent, 0.0f);

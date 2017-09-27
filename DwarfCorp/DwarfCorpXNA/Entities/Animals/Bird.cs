@@ -81,7 +81,7 @@ namespace DwarfCorp
             AI = Physics.AddChild(new BirdAI(Manager, "Bird AI", Sensors, PlanService)) as BirdAI;
             
             // The bird can peck at its enemies (0.1 damage)
-            Attacks = new List<Attack> { new Attack("Peck", 0.1f, 2.0f, 1.0f, ContentPaths.Audio.bird, ContentPaths.Effects.pierce) { Mode = Attack.AttackMode.Dogfight } };
+            Attacks = new List<Attack> { new Attack("Peck", 0.1f, 2.0f, 1.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_bird_attack), ContentPaths.Effects.pierce) { Mode = Attack.AttackMode.Dogfight } };
 
 
             // The bird can hold one item at a time in its inventory
@@ -93,7 +93,8 @@ namespace DwarfCorp
             Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
-                TriggerAmount = 1
+                TriggerAmount = 1,
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_oc_bird_hurt
             });
 
             // The bird is flammable, and can die when exposed to fire.
@@ -104,8 +105,9 @@ namespace DwarfCorp
             Physics.Tags.Add("Bird");
             Physics.Tags.Add("Animal");
             Physics.Tags.Add("DomesticAnimal");
-            NoiseMaker.Noises.Add("chirp", new List<string>(){ContentPaths.Audio.bird});
-
+            NoiseMaker.Noises.Add("chirp", new List<string>(){ContentPaths.Audio.Oscar.sfx_oc_bird_neutral_1, ContentPaths.Audio.Oscar.sfx_oc_bird_neutral_2});
+            NoiseMaker.Noises["Hurt"] =  new List<string>(){ContentPaths.Audio.Oscar.sfx_oc_bird_hurt};
+            NoiseMaker.Noises["Lay Egg"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_bird_lay_egg };
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the bird";
             Stats.CurrentClass = new EmployeeClass()
             {
