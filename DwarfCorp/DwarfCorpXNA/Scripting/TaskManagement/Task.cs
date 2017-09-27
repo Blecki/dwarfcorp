@@ -1,4 +1,4 @@
-﻿// Task.cs
+// Task.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -117,6 +117,16 @@ namespace DwarfCorp
         public virtual bool ShouldDelete(Creature agent)
         {
             return false;
+        }
+
+        public virtual void OnAssign(Creature agent)
+        {
+            
+        }
+
+        public virtual void OnUnAssign(Creature agent)
+        {
+            
         }
 
         public virtual void Cancel()

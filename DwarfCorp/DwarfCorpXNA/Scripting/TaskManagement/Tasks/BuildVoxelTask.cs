@@ -164,7 +164,7 @@ namespace DwarfCorp
 
             if (feasibleVoxels.Count > 0)
             {
-                agent.AI.Tasks.Add(new BuildVoxelsTask(feasibleVoxels));
+                agent.AI.AssignTask(new BuildVoxelsTask(feasibleVoxels));
             }
             yield return Act.Status.Success;
         }
