@@ -37,6 +37,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Concurrent;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
@@ -53,17 +54,46 @@ namespace DwarfCorp
             Chop // Red
         }
 
+        [JsonProperty]
         private Dictionary<DesignationType, List<GlobalVoxelCoordinate>> HilitedVoxels = new Dictionary<DesignationType, List<GlobalVoxelCoordinate>>();
-        private List<Body> HilitedBodies = new List<Body>();
 
-        private Dictionary<DesignationType, Color> BaseColor = new Dictionary<DesignationType, Color>();
+        private class HilitedBody
+        {
+            public Body Body;
+            public DesignationType DesignationType;
+        }
+
+        [JsonProperty]
+        private List<HilitedBody> HilitedBodies = new List<HilitedBody>();
+
+        private class DesignationTypeProperties
+        {
+            public Color Color;
+            public Color ModulatedColor;
+            public NamedImageFrame Icon;
+        }
+
+        private Dictionary<DesignationType, DesignationTypeProperties> DesignationProperties = new Dictionary<DesignationType, DesignationTypeProperties>();
+
+        private static DesignationTypeProperties DefaultProperties = new DesignationTypeProperties
+        {
+            Color = Color.Gray,
+            Icon = null
+        };
 
         public DesignationDrawer()
         {
-            BaseColor.Add(DesignationType.Dig, Color.Red);
-            BaseColor.Add(DesignationType.Farm, Color.LimeGreen);
-            BaseColor.Add(DesignationType.Guard, Color.Blue);
-            BaseColor.Add(DesignationType.Chop, Color.Red);
+            DesignationProperties.Add(DesignationType.Dig, new DesignationTypeProperties
+            {
+                Color = Color.Red,
+                Icon = new NamedImageFrame("newgui/pointers2", 32, 1, 0)
+            });
+
+            DesignationProperties.Add(DesignationType.Chop, new DesignationTypeProperties
+            {
+                Color = Color.LightGreen,
+                Icon = new NamedImageFrame("newgui/pointers2", 32, 5, 0)
+            });
         }
 
         public void HiliteVoxel(GlobalVoxelCoordinate Coordinate, DesignationType Type)
@@ -81,39 +111,59 @@ namespace DwarfCorp
 
         public void HiliteEntity(Body Entity, DesignationType Type)
         {
-            HilitedBodies.Add(Entity);
+            HilitedBodies.Add(new HilitedBody
+            {
+                Body = Entity,
+                DesignationType = Type
+            });
         }
 
         public void UnHiliteEntity(Body Entity, DesignationType Type)
         {
-            HilitedBodies.RemoveAll(b => Object.ReferenceEquals(b, Entity));
+            HilitedBodies.RemoveAll(b => Object.ReferenceEquals(b.Body, Entity) && Type == b.DesignationType);
         }
 
         public void EnumerateHilites(Action<Vector3, Vector3, Color, float> Callback)
         {
             var colorModulation = Math.Abs(Math.Sin(DwarfTime.LastTime.TotalGameTime.TotalSeconds * 2.0f));
-            var modulatedColors = new Dictionary<DesignationType, Color>();
-            foreach (var color in BaseColor)
+            foreach (var properties in DesignationProperties)
             {
-                modulatedColors.Add(color.Key, new Color(
-                    (byte)(color.Value.R * colorModulation + 50),
-                    (byte)(color.Value.G * colorModulation + 50),
-                    (byte)(color.Value.B * colorModulation + 50),
-                    255));
+                properties.Value.ModulatedColor = new Color(
+                    (byte)(properties.Value.Color.R * colorModulation + 50),
+                    (byte)(properties.Value.Color.G * colorModulation + 50),
+                    (byte)(properties.Value.Color.B * colorModulation + 50),
+                    255);
             }
 
             foreach (var group in HilitedVoxels)
             {
-                var color = modulatedColors[group.Key];
+                var props = DefaultProperties;
+                if (DesignationProperties.ContainsKey(group.Key))
+                    props = DesignationProperties[group.Key];
 
                 foreach (var voxel in group.Value)
-                    Callback(voxel.ToVector3(), Vector3.One, color, 0.1f);
+                {
+                    var v = voxel.ToVector3();
+                    Callback(v, Vector3.One, props.ModulatedColor, 0.1f);
+                    if (props.Icon != null)
+                    {
+                        Drawer2D.DrawSprite(props.Icon, v + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
+                    }
+                }
             }
 
             foreach (var entity in HilitedBodies)
             {
-                var box = entity.GetBoundingBox();
-                Callback(box.Min, box.Max - box.Min, modulatedColors[DesignationType.Chop], 0.1f);
+                var props = DefaultProperties;
+                if (DesignationProperties.ContainsKey(entity.DesignationType))
+                    props = DesignationProperties[entity.DesignationType];
+
+                var box = entity.Body.GetBoundingBox();
+                Callback(box.Min, box.Max - box.Min, props.ModulatedColor, 0.1f);
+                if (props.Icon != null)
+                {
+                    Drawer2D.DrawSprite(props.Icon, entity.Body.Position + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
+                }
             }
         }
     }

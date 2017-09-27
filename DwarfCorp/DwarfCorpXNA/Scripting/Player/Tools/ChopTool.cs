@@ -112,26 +112,13 @@ namespace DwarfCorp
             drawColor.G = (byte)(Math.Min(drawColor.G * alpha + 50, 255));
             drawColor.B = (byte)(Math.Min(drawColor.B * alpha + 50, 255));
 
-//<<<<<<< HEAD
-//            //foreach(BoundingBox box in Player.Faction.ChopDesignations.Select(d => d.GetBoundingBox()))
-//            //{
-//            //    Drawer3D.DrawBox(box, drawColor, 0.05f * alpha + 0.05f, true);
-//            //}
-
-//=======
-//            NamedImageFrame frame = new NamedImageFrame("newgui/pointers2", 32, 5, 0);
-//            foreach(BoundingBox box in Player.Faction.ChopDesignations.Select(d => d.GetBoundingBox()))
-//            {
-//                Drawer3D.DrawBox(box, drawColor, 0.05f * alpha + 0.05f, true);
-//                Drawer2D.DrawSprite(frame, box.Center(), Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
-//            }
-//>>>>>>> cc30142a095c51bd81443c0769f00b9fb9c8d965
+            NamedImageFrame frame = new NamedImageFrame("newgui/pointers2", 32, 5, 0);
             foreach (Body tree in Player.BodySelector.CurrentBodies)
             {
                 if (tree.Tags.Contains("Vegetation"))
                 {
                     Drawer3D.DrawBox(tree.BoundingBox, Color.LightGreen, 0.1f, false);
-                   // Drawer2D.DrawSprite(frame, tree.BoundingBox.Center(), Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
+                    Drawer2D.DrawSprite(frame, tree.BoundingBox.Center(), Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
                 }
             }
         }

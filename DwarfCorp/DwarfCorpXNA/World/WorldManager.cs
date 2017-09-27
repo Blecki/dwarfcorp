@@ -274,7 +274,6 @@ namespace DwarfCorp
             get { return Master.Faction; }
         }
 
-        [Newtonsoft.Json.JsonIgnore]
         public DesignationDrawer DesignationDrawer = new DesignationDrawer();
 
         public Economy PlayerEconomy
