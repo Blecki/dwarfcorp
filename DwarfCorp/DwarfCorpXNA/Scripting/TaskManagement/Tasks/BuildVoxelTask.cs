@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Security.AccessControl;
 using System.Text;
 using DwarfCorp.GameStates;
@@ -46,7 +47,7 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class BuildVoxelTask : Task
     {
-        public VoxelType VoxType { get; set; }
+        public string VoxType { get; set; }
         public VoxelHandle Voxel { get; set; }
 
         public BuildVoxelTask()
@@ -54,9 +55,9 @@ namespace DwarfCorp
             Priority = PriorityType.Low;
         }
 
-        public BuildVoxelTask(VoxelHandle voxel, VoxelType type)
+        public BuildVoxelTask(VoxelHandle voxel, string type)
         {
-            Name = "Put voxel of type: " + type.Name + " on voxel " + voxel.Coordinate;
+            Name = "Put voxel of type: " + type + " on voxel " + voxel.Coordinate;
             Voxel = voxel;
             VoxType = type;
             Priority = PriorityType.Low;
@@ -107,9 +108,14 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     class BuildVoxelsTask : Task
     {
-        public List<KeyValuePair<VoxelHandle, VoxelType>> Voxels { get; set; }
+        public List<KeyValuePair<VoxelHandle, string>> Voxels { get; set; }
 
-        public BuildVoxelsTask(List<KeyValuePair<VoxelHandle, VoxelType>> voxels)
+        public BuildVoxelsTask()
+        {
+            
+        }
+
+        public BuildVoxelsTask(List<KeyValuePair<VoxelHandle, string>> voxels)
         {
             Name = "Build " + voxels.Count + " blocks";
             Voxels = voxels;
@@ -131,18 +137,19 @@ namespace DwarfCorp
                 {
                     continue;
                 }
-                if (!numResources.ContainsKey(pair.Value.ResourceToRelease))
+                var voxtype = VoxelLibrary.GetVoxelType(pair.Value);
+                if (!numResources.ContainsKey(voxtype.ResourceToRelease))
                 {
-                    numResources.Add(pair.Value.ResourceToRelease, 0);
+                    numResources.Add(voxtype.ResourceToRelease, 0);
                 }
-                int num = numResources[pair.Value.ResourceToRelease] + 1;
-                if (!factionResources.ContainsKey(pair.Value.ResourceToRelease))
+                int num = numResources[voxtype.ResourceToRelease] + 1;
+                if (!factionResources.ContainsKey(voxtype.ResourceToRelease))
                 {
                     continue;
                 }
-                var numInStocks = factionResources[pair.Value.ResourceToRelease];
+                var numInStocks = factionResources[voxtype.ResourceToRelease];
                 if (numInStocks.NumResources < num) continue;
-                numResources[pair.Value.ResourceToRelease]++;
+                numResources[voxtype.ResourceToRelease]++;
                 numFeasibleVoxels++;
             }
             return numFeasibleVoxels > 0;
@@ -160,7 +167,7 @@ namespace DwarfCorp
 
         private IEnumerable<Act.Status> Reloop(Creature agent)
         {
-            List<KeyValuePair<VoxelHandle, VoxelType>> feasibleVoxels = Voxels.Where(voxel => agent.Faction.WallBuilder.IsDesignation(voxel.Key)).ToList();
+            List<KeyValuePair<VoxelHandle, string>> feasibleVoxels = Voxels.Where(voxel => agent.Faction.WallBuilder.IsDesignation(voxel.Key)).ToList();
 
             if (feasibleVoxels.Count > 0)
             {
@@ -181,7 +188,7 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature agent)
         {
-             List<KeyValuePair<VoxelHandle, VoxelType>> feasibleVoxels = new List<KeyValuePair<VoxelHandle, VoxelType>>();
+             List<KeyValuePair<VoxelHandle, string>> feasibleVoxels = new List<KeyValuePair<VoxelHandle, string>>();
             Dictionary<ResourceLibrary.ResourceType, int> numResources = new Dictionary<ResourceLibrary.ResourceType, int>();
 
             List<ResourceAmount> resources = new List<ResourceAmount>();
@@ -192,20 +199,21 @@ namespace DwarfCorp
                 {
                     continue;
                 }
-                if (!numResources.ContainsKey(pair.Value.ResourceToRelease))
+                var voxType = VoxelLibrary.GetVoxelType(pair.Value);
+                if (!numResources.ContainsKey(voxType.ResourceToRelease))
                 {
-                    numResources.Add(pair.Value.ResourceToRelease, 0);
+                    numResources.Add(voxType.ResourceToRelease, 0);
                 }
-                int num = numResources[pair.Value.ResourceToRelease] + 1;
-                if (!factionResources.ContainsKey(pair.Value.ResourceToRelease))
+                int num = numResources[voxType.ResourceToRelease] + 1;
+                if (!factionResources.ContainsKey(voxType.ResourceToRelease))
                 {
                     continue;
                 }
-                var numInStocks = factionResources[pair.Value.ResourceToRelease];
+                var numInStocks = factionResources[voxType.ResourceToRelease];
                 if (numInStocks.NumResources < num) continue;
-                numResources[pair.Value.ResourceToRelease]++;
+                numResources[voxType.ResourceToRelease]++;
                 feasibleVoxels.Add(pair);
-                resources.Add(new ResourceAmount(pair.Value.ResourceToRelease));
+                resources.Add(new ResourceAmount(voxType.ResourceToRelease));
             }
 
             List<Act> children = new List<Act>()

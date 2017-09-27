@@ -52,13 +52,25 @@ namespace DwarfCorp
     /// A designation specifying that a creature should put a voxel of a given type
     /// at a location.
     /// </summary>
+    [JsonObject(IsReference = true)]
     public class WallBuilder
     {
         public VoxelHandle Vox;
         public VoxelType Type;
         public CreatureAI ReservedCreature = null;
         private WorldManager World { get; set; }
-        List<VoxelHandle> highlighted = new List<VoxelHandle>(); 
+        List<VoxelHandle> highlighted = new List<VoxelHandle>();
+
+        [OnDeserialized]
+        public void OnDeserialized(StreamingContext ctx)
+        {
+            World = (WorldManager)ctx.Context;
+        }
+
+        public WallBuilder()
+        {
+            
+        }
         public WallBuilder(VoxelHandle v, VoxelType t, WorldManager world)
         {
             World = world;
@@ -311,7 +323,7 @@ namespace DwarfCorp
                     foreach (var r in validRefs)
                     {
                         AddDesignation(new WallBuilder(r, CurrentVoxelType, World));
-                        assignments.Add(new BuildVoxelTask(r, CurrentVoxelType));
+                        assignments.Add(new BuildVoxelTask(r, CurrentVoxelType.Name));
                     }
 
                     TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(World.Master.SelectedMinions, GameMaster.ToolMode.Build));

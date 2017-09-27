@@ -122,7 +122,6 @@ namespace DwarfCorp
         }
 
         /// <summary> Gets the current Task the creature is trying to perform </summary>
-        [JsonIgnore]
         public Task CurrentTask { get; set; }
 
         /// <summary> When this timer triggers, the creature will poll the PlanService for replanning paths </summary>
@@ -246,6 +245,15 @@ namespace DwarfCorp
 
         public BoundingBox PositionConstraint = new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue),
             new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
+
+        [OnDeserialized]
+        public void OnDeserialize(StreamingContext ctx)
+        {
+            if (CurrentTask != null)
+            {
+                CurrentTask.Script = null;
+            }
+        }
 
         public void ResetPositionConstraint()
         {
@@ -553,6 +561,10 @@ namespace DwarfCorp
                         CurrentTask.SetupScript(Creature);
                 }
             }
+            else if (CurrentTask != null)
+            {
+                CurrentTask.SetupScript(Creature);
+            }
 
 
             PlannerTimer.Update(gameTime);
@@ -825,7 +837,7 @@ namespace DwarfCorp
             if (GatherManager.VoxelOrders.Count > 0)
             {
                 // Otherwise handle build orders.
-                var voxels = GatherManager.VoxelOrders.Select(order => new KeyValuePair<VoxelHandle, VoxelType>(order.Voxel, order.Type)).ToList();
+                var voxels = GatherManager.VoxelOrders.Select(order => new KeyValuePair<VoxelHandle, string>(order.Voxel, order.Type)).ToList();
 
                 GatherManager.VoxelOrders.Clear();
                 /*
