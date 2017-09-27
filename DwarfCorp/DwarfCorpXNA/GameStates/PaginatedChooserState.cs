@@ -15,7 +15,7 @@ namespace DwarfCorp.GameStates
         {
             public String Path;
             public Texture2D Screenshot;
-            
+
             public enum ScreenshotStatusEnum
             {
                 Unloaded,
@@ -39,6 +39,11 @@ namespace DwarfCorp.GameStates
         public String ProceedButtonText = "Okay";
         public Action<String> OnProceedClicked;
         public Func<String, Texture2D> ScreenshotSource;
+
+        private Widget PrevButton;
+        private Widget NextButton;
+        private Widget LoadButton;
+        private Widget DeleteButton;
 
         public PaginatedChooserState(DwarfGame Game, GameStateManager StateManager) :
             base(Game, "GuiStateTemplate", StateManager)
@@ -70,77 +75,74 @@ namespace DwarfCorp.GameStates
             if (Items.Count == 0)
                 BottomBar.Text = NoItemsText;
 
-            if (Items.Count > 0)
+            LoadButton = BottomBar.AddChild(new Gui.Widget
             {
-                BottomBar.AddChild(new Gui.Widget
+                AutoLayout = Gui.AutoLayout.FloatBottomRight,
+                Border = "border-button",
+                Text = ProceedButtonText,
+                OnClick = (sender, args) =>
                 {
-                    AutoLayout = Gui.AutoLayout.FloatBottomRight,
-                    Border = "border-button",
-                    Text = ProceedButtonText,
-                    OnClick = (sender, args) =>
-                    {
-                        var selectedItem = Items[PreviewOffset + ItemSelected];
-                        if (OnProceedClicked != null) OnProceedClicked(selectedItem.Path);
-                    }
-                });
+                    var selectedItem = Items[PreviewOffset + ItemSelected];
+                    if (OnProceedClicked != null) OnProceedClicked(selectedItem.Path);
+                }
+            });
 
-                BottomBar.AddChild(new Gui.Widget
+            NextButton = BottomBar.AddChild(new Gui.Widget
+            {
+                AutoLayout = Gui.AutoLayout.FloatTopRight,
+                Border = "border-button",
+                Text = "Next",
+                OnClick = (sender, args) =>
                 {
-                    AutoLayout = Gui.AutoLayout.FloatTopRight,
-                    Border = "border-button",
-                    Text = "Next",
-                    OnClick = (sender, args) =>
+                    if (PreviewOffset + Grid.ItemsThatFit < Items.Count)
                     {
-                        if (PreviewOffset + Grid.ItemsThatFit < Items.Count)
-                        {
-                            NeedsRefresh = true;
-                            PreviewOffset += Grid.ItemsThatFit;
-                        }
+                        NeedsRefresh = true;
+                        PreviewOffset += Grid.ItemsThatFit;
                     }
-                });
+                }
+            });
 
-                BottomBar.AddChild(new Gui.Widget
+            PrevButton = BottomBar.AddChild(new Gui.Widget
+            {
+                AutoLayout = Gui.AutoLayout.FloatTopLeft,
+                Border = "border-button",
+                Text = "Prev",
+                OnClick = (sender, args) =>
                 {
-                    AutoLayout = Gui.AutoLayout.FloatTopLeft,
-                    Border = "border-button",
-                    Text = "Prev",
-                    OnClick = (sender, args) =>
+                    if (PreviewOffset > 0)
                     {
-                        if (PreviewOffset > 0)
-                        {
-                            NeedsRefresh = true;
-                            PreviewOffset -= Grid.ItemsThatFit;
-                        }
+                        NeedsRefresh = true;
+                        PreviewOffset -= Grid.ItemsThatFit;
                     }
-                });
+                }
+            });
 
-                BottomBar.AddChild(new Gui.Widget
+            DeleteButton = BottomBar.AddChild(new Gui.Widget
+            {
+                AutoLayout = AutoLayout.FloatBottom,
+                Border = "border-button",
+                Text = "Delete",
+                OnClick = (sender, args) =>
                 {
-                    AutoLayout = AutoLayout.FloatBottom,
-                    Border = "border-button",
-                    Text = "Delete",
-                    OnClick = (sender, args) =>
+                    var confirm = GuiRoot.ConstructWidget(new Gui.Widgets.Confirm
                     {
-                        var confirm = GuiRoot.ConstructWidget(new Gui.Widgets.Confirm
+                        OkayText = "Delete",
+                        CancelText = "Keep",
+                        Text = "Are you sure you want to delete this?",
+                        OnClose = (s) =>
                         {
-                            OkayText = "Delete",
-                            CancelText = "Keep",
-                            Text = "Are you sure you want to delete this?",
-                            OnClose = (s) =>
+                            if ((s as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
                             {
-                                if ((s as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
-                                {
-                                    var selectedItem = Items[PreviewOffset + ItemSelected];
-                                    Items.Remove(selectedItem);
-                                    System.IO.Directory.Delete(selectedItem.Path, true);
-                                    NeedsRefresh = true;
-                                }
+                                var selectedItem = Items[PreviewOffset + ItemSelected];
+                                Items.Remove(selectedItem);
+                                System.IO.Directory.Delete(selectedItem.Path, true);
+                                NeedsRefresh = true;
                             }
-                        });
-                        GuiRoot.ShowModalPopup(confirm);
-                    }
-                });
-            }
+                        }
+                    });
+                    GuiRoot.ShowModalPopup(confirm);
+                }
+            });
 
             BottomBar.AddChild(new Gui.Widget
             {
@@ -166,28 +168,25 @@ namespace DwarfCorp.GameStates
 
             GuiRoot.RootItem.Layout();
 
-            if (Items.Count > 0)
+            var gridSpaces = Grid.ItemsThatFit;
+            for (var i = 0; i < gridSpaces; ++i)
             {
-                var gridSpaces = Grid.ItemsThatFit;
-                for (var i = 0; i < gridSpaces; ++i)
+                var lambda_index = i;
+                Grid.AddChild(new Gui.Widget
                 {
-                    var lambda_index = i;
-                    Grid.AddChild(new Gui.Widget
+                    Border = "border-one",
+                    Text = "No Image",
+                    TextHorizontalAlign = HorizontalAlign.Center,
+                    TextVerticalAlign = VerticalAlign.Center,
+                    OnClick = (sender, args) =>
                     {
-                        Border = "border-one",
-                        Text = "No Image",
-                        TextHorizontalAlign = HorizontalAlign.Center,
-                        TextVerticalAlign = VerticalAlign.Center,
-                        OnClick = (sender, args) =>
-                        {
-                            ItemSelected = lambda_index;
-                            NeedsRefresh = true;
-                        }
-                    });
-                }
-
-                GuiRoot.RootItem.Layout();
+                        ItemSelected = lambda_index;
+                        NeedsRefresh = true;
+                    }
+                });
             }
+
+            GuiRoot.RootItem.Layout();
 
             // Must be true or Render will not be called.
             IsInitialized = true;
@@ -206,7 +205,7 @@ namespace DwarfCorp.GameStates
                 }
             }
 
-            if (NeedsRefresh && Items.Count > 0)
+            if (NeedsRefresh)
             {
                 NeedsRefresh = false;
 
@@ -221,9 +220,21 @@ namespace DwarfCorp.GameStates
                 var totalPages = (int)System.Math.Ceiling((float)Items.Count / (float)Grid.ItemsThatFit);
                 Grid.Text = String.Format("Page {0} of {1}", (int)System.Math.Ceiling((float)PreviewOffset / (float)Grid.ItemsThatFit), totalPages);
 
-                var directoryTime = System.IO.Directory.GetLastWriteTime(Items[PreviewOffset + ItemSelected].Path);
+                PrevButton.Hidden = PreviewOffset == 0;
+                NextButton.Hidden = (PreviewOffset + Grid.ItemsThatFit >= Items.Count);
+                DeleteButton.Hidden = Items.Count ==  0;
+                LoadButton.Hidden = Items.Count == 0;
 
-                BottomBar.Text = Items[PreviewOffset + ItemSelected].Path + "\n" + directoryTime.ToShortDateString() + " " + directoryTime.ToShortTimeString();
+                if (Items.Count > 0)
+                {
+                    var directoryTime = System.IO.Directory.GetLastWriteTime(Items[PreviewOffset + ItemSelected].Path);
+
+                    BottomBar.Text = Items[PreviewOffset + ItemSelected].Path + "\n" + directoryTime.ToShortDateString() + " " + directoryTime.ToShortTimeString();
+                }
+                else
+                {
+                    BottomBar.Text = NoItemsText;
+                }
 
                 for (var i = 0; i < Grid.Children.Count; ++i)
                 {
@@ -263,7 +274,7 @@ namespace DwarfCorp.GameStates
                 }
 
                 if (item.ScreenshotStatus == ChooserItem.ScreenshotStatusEnum.Loaded)
-                    GuiRoot.DrawQuad(Grid.GetChild(i - PreviewOffset).Rect.Interior(7,7,7,7), item.Screenshot);
+                    GuiRoot.DrawQuad(Grid.GetChild(i - PreviewOffset).Rect.Interior(7, 7, 7, 7), item.Screenshot);
             }
 
             GuiRoot.RedrawPopups(); // This hack sucks.
