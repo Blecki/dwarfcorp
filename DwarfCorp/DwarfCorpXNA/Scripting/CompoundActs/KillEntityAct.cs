@@ -59,17 +59,14 @@ namespace DwarfCorp
                 case KillEntityTask.KillType.Auto:
                 {
                     return Entity != null && !Entity.IsDead;
-                    break;
                 }
                 case KillEntityTask.KillType.Attack:
                 {
                     return Entity != null && !Entity.IsDead && Creature.Faction.AttackDesignations.Contains(Entity);
-                    break;
                 }
                 case KillEntityTask.KillType.Chop:
                 {
-                    return Entity != null && !Entity.IsDead && Creature.Faction.ChopDesignations.Contains(Entity);
-                    break;
+                    return Entity != null && !Entity.IsDead && Creature.Faction.IsChopDesignation(Entity);
                 }
             }
             return false;

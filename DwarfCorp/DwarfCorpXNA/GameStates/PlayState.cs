@@ -40,6 +40,8 @@ namespace DwarfCorp.GameStates
             set { World.Paused = value; }
         }
 
+        private List<ContextCommands.ContextCommand> ContextCommands;
+
         private Gui.Widget MoneyLabel;
         private Gui.Widget LevelLabel;
         private Gui.Widgets.FlatToolTray.RootTray BottomToolBar;
@@ -57,6 +59,7 @@ namespace DwarfCorp.GameStates
         private FramedIcon EconomyIcon;
         private Timer AutoSaveTimer;
         private CollapsableFrame SelectedEmployeeInfo;
+        private Widget ContextMenu;
 
         private class ToolbarItem
         {
@@ -202,6 +205,10 @@ namespace DwarfCorp.GameStates
             }
             World.Unpause();
             AutoSaveTimer = new Timer(GameSettings.Default.AutoSaveTimeMinutes * 60.0f, false, Timer.TimerMode.Game);
+
+            ContextCommands = new List<DwarfCorp.ContextCommands.ContextCommand>();
+            ContextCommands.Add(new ContextCommands.ChopCommand());
+
             base.OnEnter();
         }
 
@@ -247,6 +254,36 @@ namespace DwarfCorp.GameStates
                 if (@event == Gui.InputEvents.MouseClick) 
                 {
                     GodMenu.CollapseTrays();
+                    if (ContextMenu != null)
+                    {
+                        ContextMenu.Close();
+                        ContextMenu = null;
+                    }
+
+                    if (args.MouseButton == 1) // Right mouse click.
+                    {
+                        var bodiesClicked = World.ComponentManager.SelectRootBodiesOnScreen(
+                            new Rectangle(args.X, args.Y, 1, 1), World.Camera);
+
+                        if (bodiesClicked.Count > 0)
+                        {
+                            var contextBody = bodiesClicked[0];
+                            var availableCommands = ContextCommands.Where(c => c.CanBeAppliedTo(contextBody, World));
+
+                            if (availableCommands.Count() > 0)
+                            {
+                                // Show context menu.
+                                ContextMenu = GuiRoot.ConstructWidget(new ContextMenu
+                                {
+                                    Commands = availableCommands.ToList(),
+                                    Body = contextBody,
+                                    World = World
+                                });
+                                
+                                GuiRoot.ShowDialog(ContextMenu);
+                            }
+                        }
+                    }
                 }
             });
 
@@ -518,10 +555,14 @@ namespace DwarfCorp.GameStates
 
             GuiRoot.RootItem.AddChild(new Gui.Widgets.ResourcePanel
             {
-                AutoLayout = AutoLayout.FloatTop,
-                MinimumSize = new Point(256, 0),
+                AutoLayout = AutoLayout.None,
+                //MinimumSize = new Point(GuiRoot.RenderData.ActualScreenBounds.X - 256, 0),
                 Master = Master,
-                Transparent = true
+                Transparent = true,
+                OnLayout = (sender) =>
+                {
+                    sender.Rect = new Rectangle(48 + 256, 0, GuiRoot.RenderData.ActualScreenBounds.X - 256 - 48 - 64, 0);
+                }
             });
 
             #region Setup time display

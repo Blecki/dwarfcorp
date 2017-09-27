@@ -113,11 +113,6 @@ namespace DwarfCorp
             drawColor.B = (byte)(Math.Min(drawColor.B * alpha + 50, 255));
 
             NamedImageFrame frame = new NamedImageFrame("newgui/pointers2", 32, 5, 0);
-            foreach(BoundingBox box in Player.Faction.ChopDesignations.Select(d => d.GetBoundingBox()))
-            {
-                Drawer3D.DrawBox(box, drawColor, 0.05f * alpha + 0.05f, true);
-                Drawer2D.DrawSprite(frame, box.Center(), Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
-            }
             foreach (Body tree in Player.BodySelector.CurrentBodies)
             {
                 if (tree.Tags.Contains("Vegetation"))
@@ -131,6 +126,17 @@ namespace DwarfCorp
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
 
+        }
+
+        public static Task ChopTree(Body Tree, Faction PlayerFaction)
+        {
+            if (PlayerFaction.AddChopDesignation(Tree) == Faction.AddChopResult.Added)
+                return new KillEntityTask(Tree, KillEntityTask.KillType.Chop)
+                {
+                    Priority = Task.PriorityType.Low
+                };
+
+            return null;
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
@@ -148,19 +154,12 @@ namespace DwarfCorp
                 Drawer3D.DrawBox(tree.BoundingBox, Color.LightGreen, 0.1f, false);
                 if (button == InputManager.MouseButton.Left)
                 {
-                    if (!Player.Faction.ChopDesignations.Contains(tree))
-                    {
-                        Player.Faction.ChopDesignations.Add(tree);
-                        tasks.Add(new KillEntityTask(tree, KillEntityTask.KillType.Chop) { Priority = Task.PriorityType.Low });
-                    }
+                    var task = ChopTree(tree, Player.Faction);
+                    if (task != null)
+                        tasks.Add(task);
                 }
                 else if (button == InputManager.MouseButton.Right)
-                {
-                    if (Player.Faction.ChopDesignations.Contains(tree))
-                    {
-                        Player.Faction.ChopDesignations.Remove(tree);
-                    }
-                }
+                    Player.Faction.RemoveChopDesignation(tree);
             }
            
             if (tasks.Count > 0 && minions.Count > 0)

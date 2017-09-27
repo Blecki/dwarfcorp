@@ -11,6 +11,8 @@ namespace DwarfCorp
 {
     public class GamePerformance : IDisposable
     {
+        public static string Version = "UNKNOWN VERSION";
+
         /// <summary>
         /// A boolean toggle changed with a keyboard button press.  Allows realtime switching between two code blocks
         /// for comparsion testing.
@@ -189,8 +191,11 @@ namespace DwarfCorp
             internalWatch = Stopwatch.StartNew();
 
             trackers.Add(new FramerateTracker(this));
+            trackers.Add(new ReferenceTypeTracker<String>(this, "Version"));
             trackers.Add(new UpdateTimeTracker(this));
             trackers.Add(new RenderTimeTracker(this));
+
+            this.TrackReferenceType("Version", Version);
         }
 
         /// <summary>

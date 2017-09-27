@@ -326,30 +326,27 @@ namespace DwarfCorp
                 case FarmMode.Harvesting:
                 {
                     List<Task> tasks = new List<Task>();
-                    foreach (Body tree in bodies.Where(c => c.Tags.Contains("Vegetation")))
-                    {
-                        if (!tree.IsVisible || tree.IsAboveCullPlane(Player.World.ChunkManager)) continue;
-
-                        Drawer3D.DrawBox(tree.BoundingBox, Color.LightGreen, 0.1f, false);
-                        switch (button)
+                        foreach (Body tree in bodies.Where(c => c.Tags.Contains("Vegetation")))
                         {
-                            case InputManager.MouseButton.Left:
-                                if (!Player.Faction.ChopDesignations.Contains(tree))
-                                {
-                                    Player.Faction.ChopDesignations.Add(tree);
-                                    tasks.Add(new KillEntityTask(tree, KillEntityTask.KillType.Chop) { Priority = Task.PriorityType.Low });
-                                    this.Player.World.ShowToolPopup("Will harvest this " + tree.Name);
-                                }
-                                break;
-                            case InputManager.MouseButton.Right:
-                                if (Player.Faction.ChopDesignations.Contains(tree))
-                                {
-                                    Player.Faction.ChopDesignations.Remove(tree);
-                                    this.Player.World.ShowToolPopup("Harvest cancelled " + tree.Name);
-                                }
-                                break;
+                            if (!tree.IsVisible || tree.IsAboveCullPlane(Player.World.ChunkManager)) continue;
+
+                            switch (button)
+                            {
+                                case InputManager.MouseButton.Left:
+                                    if (Player.Faction.AddChopDesignation(tree) == Faction.AddChopResult.Added)
+                                    {
+                                        tasks.Add(new KillEntityTask(tree, KillEntityTask.KillType.Chop) { Priority = Task.PriorityType.Low });
+                                        this.Player.World.ShowToolPopup("Will harvest this " + tree.Name);
+                                    }
+                                    break;
+                                case InputManager.MouseButton.Right:
+                                    if (Player.Faction.RemoveChopDesignation(tree) == Faction.RemoveChopResult.Removed)
+                                    {
+                                        this.Player.World.ShowToolPopup("Harvest cancelled " + tree.Name);
+                                    }
+                                    break;
+                            }
                         }
-                    }
                     if (tasks.Count > 0 && Player.SelectedMinions.Count > 0)
                     {
                         TaskManager.AssignTasks(tasks, Player.SelectedMinions);
@@ -558,11 +555,18 @@ namespace DwarfCorp
                     drawColor.G = (byte) (Math.Min(drawColor.G*alpha + 50, 255));
                     drawColor.B = (byte) (Math.Min(drawColor.B*alpha + 50, 255));
 
-                    foreach (BoundingBox box in Player.Faction.ChopDesignations.Select(d => d.GetBoundingBox()))
-                    {
-                        Drawer3D.DrawBox(box, drawColor, 0.05f*alpha + 0.05f, true);
-                        Drawer2D.DrawSprite(frame, box.Center(), Vector2.One, Vector2.Zero, new Color(255, 255, 255, 100));
-                    }
+//<<<<<<< HEAD
+//                    //foreach (BoundingBox box in Player.Faction.ChopDesignations.Select(d => d.GetBoundingBox()))
+//                    //{
+//                    //    Drawer3D.DrawBox(box, drawColor, 0.05f*alpha + 0.05f, true);
+//                    //}
+//=======
+//                    foreach (BoundingBox box in Player.Faction.ChopDesignations.Select(d => d.GetBoundingBox()))
+//                    {
+//                        Drawer3D.DrawBox(box, drawColor, 0.05f*alpha + 0.05f, true);
+//                        Drawer2D.DrawSprite(frame, box.Center(), Vector2.One, Vector2.Zero, new Color(255, 255, 255, 100));
+//                    }
+//>>>>>>> cc30142a095c51bd81443c0769f00b9fb9c8d965
                     break;
                 }
 

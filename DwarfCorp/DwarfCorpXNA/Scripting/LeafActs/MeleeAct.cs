@@ -370,11 +370,6 @@ namespace DwarfCorp
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                     if (Target.IsDead)
                     {
-                        if (Creature.Faction.ChopDesignations.Contains(Target))
-                        {
-                            Creature.Faction.ChopDesignations.Remove(Target);
-                        }
-
                         if (Creature.Faction.AttackDesignations.Contains(Target))
                         {
                             Creature.Faction.AttackDesignations.Remove(Target);

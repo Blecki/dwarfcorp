@@ -274,6 +274,8 @@ namespace DwarfCorp
             get { return Master.Faction; }
         }
 
+        public DesignationDrawer DesignationDrawer = new DesignationDrawer();
+
         public Economy PlayerEconomy
         {
             get { return Master.Faction.Economy; }
@@ -838,7 +840,7 @@ namespace DwarfCorp
 
             GamePerformance.Instance.StartTrackPerformance("Render - Drawer3D");
             // Render simple geometry (boxes, etc.)
-            Drawer3D.Render(GraphicsDevice, DefaultShader, Camera);
+            Drawer3D.Render(GraphicsDevice, DefaultShader, Camera, DesignationDrawer);
             GamePerformance.Instance.StopTrackPerformance("Render - Drawer3D");
 
             GamePerformance.Instance.StartTrackPerformance("Render - Instances");

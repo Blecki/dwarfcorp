@@ -250,10 +250,10 @@ namespace DwarfCorp
             List<ulong> removalKeys = new List<ulong>();
             foreach (var kvp in DigDesignations)
             {
-                var v = kvp.Value.Vox;;
+                var v = kvp.Value.Vox;
                 if (v.IsValid && (v.IsEmpty || v.Health <= 0.0f || v.Type.Name == "empty" || v.Type.IsInvincible))
                 {
-                    Drawer3D.UnHighlightVoxel(v);
+                    World.DesignationDrawer.UnHiliteVoxel(kvp.Value.Vox.Coordinate, DesignationDrawer.DesignationType.Dig);
                     removalKeys.Add(kvp.Key);
                 }
             }
@@ -294,7 +294,13 @@ namespace DwarfCorp
                 GuardDesignations.Remove(v);
             }
 
-            ChopDesignations.RemoveAll(tree => tree.IsDead);
+            ChopDesignations.RemoveAll(tree =>
+            {
+                if (tree.IsDead)
+                    World.DesignationDrawer.UnHiliteEntity(tree, DesignationDrawer.DesignationType.Chop);
+                return tree.IsDead;
+            });
+
             AttackDesignations.RemoveAll(body => body.IsDead);
             WrangleDesignations.RemoveAll(body => body.IsDead);
             foreach (var zone in RoomBuilder.DesignatedRooms)
@@ -305,6 +311,46 @@ namespace DwarfCorp
 
             OwnedObjects.RemoveAll(obj => obj.IsDead);
 
+        }
+
+        public enum AddChopResult
+        {
+            AlreadyExisted,
+            Added
+        }
+
+        public enum RemoveChopResult
+        {
+            DidntExist,
+            Removed
+        }
+
+        // Todo: Why isn't there some kind of generic designation thing?
+        public AddChopResult AddChopDesignation(Body Entity)
+        {
+            if (!ChopDesignations.Contains(Entity))
+            {
+                ChopDesignations.Add(Entity);
+                World.DesignationDrawer.HiliteEntity(Entity, DesignationDrawer.DesignationType.Chop);
+                return AddChopResult.Added;
+            }
+            return AddChopResult.AlreadyExisted;
+        }
+
+        public RemoveChopResult RemoveChopDesignation(Body Entity)
+        {
+            if (ChopDesignations.Contains(Entity))
+            {
+                ChopDesignations.Remove(Entity);
+                World.DesignationDrawer.UnHiliteEntity(Entity, DesignationDrawer.DesignationType.Chop);
+                return RemoveChopResult.Removed;
+            }
+            return RemoveChopResult.DidntExist;
+        }
+
+        public bool IsChopDesignation(Body Entity)
+        {
+            return ChopDesignations.Contains(Entity);
         }
 
         public bool IsTaskAssigned(Task task)
@@ -488,6 +534,7 @@ namespace DwarfCorp
         {
             if (!order.Vox.IsValid) return;
             DigDesignations.Add(GetVoxelQuickCompare(order.Vox), order);
+            World.DesignationDrawer.HiliteVoxel(order.Vox.Coordinate, DesignationDrawer.DesignationType.Dig);
         }
 
         public void RemoveDigDesignation(VoxelHandle vox)
@@ -496,7 +543,8 @@ namespace DwarfCorp
             if (DigDesignations.ContainsKey(q))
             {
                 DigDesignations.Remove(q);
-                Drawer3D.UnHighlightVoxel(vox);
+                //Drawer3D.UnHighlightVoxel(vox);
+                World.DesignationDrawer.UnHiliteVoxel(vox.Coordinate, DesignationDrawer.DesignationType.Dig);
             }
         }
 

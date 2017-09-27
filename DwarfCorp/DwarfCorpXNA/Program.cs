@@ -61,6 +61,15 @@ namespace DwarfCorp
         /// </summary>
         private static void Main(string[] args)
         {
+            using (Stream stream = System.Reflection.Assembly.GetExecutingAssembly()
+                    .GetManifestResourceStream("DwarfCorp." + "version.txt"))
+                using (StreamReader reader = new StreamReader(stream))
+                    GamePerformance.Version = reader.ReadToEnd();
+
+            Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
+
+
 #if CREATE_CRASH_LOGS
             try
 #endif

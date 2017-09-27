@@ -28,8 +28,9 @@ namespace DwarfCorp
 
         private Dictionary<uint, GameComponent> Components;
         private uint MaxGlobalID = 0;
-        private Dictionary<System.Type, List<IUpdateableComponent>> UpdateableComponents =
-            new Dictionary<Type, List<IUpdateableComponent>>();
+        //private Dictionary<System.Type, List<IUpdateableComponent>> UpdateableComponents =
+        //    new Dictionary<Type, List<IUpdateableComponent>>();
+        private List<IUpdateableComponent> UpdateableComponents = new List<IUpdateableComponent>();
         private List<IRenderableComponent> Renderables = new List<IRenderableComponent>();
         private List<MinimapIcon> MinimapIcons = new List<MinimapIcon>();
         private List<GameComponent> Removals = new List<GameComponent>();
@@ -90,10 +91,11 @@ namespace DwarfCorp
             {
                 if (component.Value is IUpdateableComponent)
                 {
-                    var type = component.Value.GetType();
-                    if (!UpdateableComponents.ContainsKey(type))
-                        UpdateableComponents.Add(type, new List<IUpdateableComponent>());
-                    UpdateableComponents[type].Add(component.Value as IUpdateableComponent);
+                    //var type = component.Value.GetType();
+                    //if (!UpdateableComponents.ContainsKey(type))
+                    //    UpdateableComponents.Add(type, new List<IUpdateableComponent>());
+                    //UpdateableComponents[type].Add(component.Value as IUpdateableComponent);
+                    UpdateableComponents.Add(component.Value as IUpdateableComponent);
                 }
 
                 if (component.Value is IRenderableComponent)
@@ -178,9 +180,10 @@ namespace DwarfCorp
 
             if (component is IUpdateableComponent)
             {
-                var type = component.GetType();
-                if (UpdateableComponents.ContainsKey(type))
-                    UpdateableComponents[type].Remove(component as IUpdateableComponent);
+                //var type = component.GetType();
+                //if (UpdateableComponents.ContainsKey(type))
+                //    UpdateableComponents[type].Remove(component as IUpdateableComponent);
+                UpdateableComponents.Remove(component as IUpdateableComponent);
             }
 
             if (component is IRenderableComponent)
@@ -205,10 +208,11 @@ namespace DwarfCorp
 
             if (component is IUpdateableComponent)
             {
-                var type = component.GetType();
-                if (!UpdateableComponents.ContainsKey(type))
-                    UpdateableComponents.Add(type, new List<IUpdateableComponent>());
-                UpdateableComponents[type].Add(component as IUpdateableComponent);
+                //var type = component.GetType();
+                //if (!UpdateableComponents.ContainsKey(type))
+                //    UpdateableComponents.Add(type, new List<IUpdateableComponent>());
+                //UpdateableComponents[type].Add(component as IUpdateableComponent);
+                UpdateableComponents.Add(component as IUpdateableComponent);
             }
 
             if (component is IRenderableComponent)
@@ -228,14 +232,17 @@ namespace DwarfCorp
             //GamePerformance.Instance.StopTrackPerformance("Components - transforms");
 
             GamePerformance.Instance.StartTrackPerformance("Components - update");
-            foreach (var componentType in UpdateableComponents)
-                foreach (var component in componentType.Value)
-                    if (component.Active)
-                    {
-                        //GamePerformance.Instance.StartTrackPerformance("Component - " + component.GetType().Name);
-                        component.Update(gameTime, chunks, camera);
-                        //GamePerformance.Instance.StopTrackPerformance("Component - " + component.GetType().Name);
-                    }
+            //foreach (var componentType in UpdateableComponents)
+            //    foreach (var component in componentType.Value)
+            //        if (component.Active)
+            //        {
+            //            //GamePerformance.Instance.StartTrackPerformance("Component - " + component.GetType().Name);
+            //            component.Update(gameTime, chunks, camera);
+            //            //GamePerformance.Instance.StopTrackPerformance("Component - " + component.GetType().Name);
+            //        }
+            foreach (var component in UpdateableComponents)
+                component.Update(gameTime, chunks, camera);
+
             GamePerformance.Instance.StopTrackPerformance("Components - update");
             
             AddRemove();
