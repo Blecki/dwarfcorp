@@ -55,7 +55,7 @@ namespace DwarfCorp
     /// A static class with helper functions for saving/loading data to binary, JSON, and ZIP
     /// </summary>
     public static class FileUtils
-    {S
+    {
 
         /// <summary>
         /// Loads a serialized binary object from the given file.
