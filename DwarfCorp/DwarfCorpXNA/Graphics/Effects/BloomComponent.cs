@@ -96,8 +96,14 @@ namespace BloomPostprocess
             // Look up the resolution and format of our main backbuffer.
             PresentationParameters pp = GraphicsDevice.PresentationParameters;
 
-            int width = pp.BackBufferWidth;
-            int height = pp.BackBufferHeight;
+            int width = Math.Min(pp.BackBufferWidth, 4096);
+            int height = Math.Min(pp.BackBufferHeight, 4096);
+
+            if (pp.BackBufferWidth > 4096 || pp.BackBufferHeight > 4096)
+            {
+                Console.Error.WriteLine("Uh oh. Back buffer is HUGE {0} x {1}. Will need to downscale the image to apply bloom.", 
+                    pp.BackBufferWidth, pp.BackBufferHeight);
+            }
 
             SurfaceFormat format = pp.BackBufferFormat;
 

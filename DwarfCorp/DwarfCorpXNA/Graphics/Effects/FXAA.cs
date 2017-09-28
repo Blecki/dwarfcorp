@@ -88,10 +88,18 @@ namespace DwarfCorp
         {
             PresentationParameters pp = GameState.Game.GraphicsDevice.PresentationParameters;
 
-            if (RenderTarget == null || RenderTarget.Width != pp.BackBufferWidth ||
-                RenderTarget.Height != pp.BackBufferHeight)
+            int width = Math.Min(pp.BackBufferWidth, 4096);
+            int height = Math.Min(pp.BackBufferHeight, 4096);
+
+            if (RenderTarget == null || RenderTarget.Width != width ||
+                RenderTarget.Height != height)
             {
-                RenderTarget = new RenderTarget2D(GameState.Game.GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight, false, pp.BackBufferFormat, DepthFormat.None);
+                if (pp.BackBufferWidth > 4096 || pp.BackBufferHeight > 4096)
+                {
+                    Console.Error.WriteLine("Uh oh. Back buffer is HUGE {0} x {1}. Will need to downscale the image to apply FXAA.",
+                        pp.BackBufferWidth, pp.BackBufferHeight);
+                }
+                RenderTarget = new RenderTarget2D(GameState.Game.GraphicsDevice, width, height, false, pp.BackBufferFormat, DepthFormat.None);
                 GameState.Game.GraphicsDevice.Viewport = new Viewport(0, 0, RenderTarget.Width, RenderTarget.Height);
                 Viewport viewport = GameState.Game.GraphicsDevice.Viewport;
                 Matrix projection = Matrix.CreateOrthographicOffCenter(0, viewport.Width, viewport.Height, 0, 0, 1);
@@ -101,22 +109,22 @@ namespace DwarfCorp
                 Shader.Parameters["Projection"].SetValue(halfPixelOffset * projection);
                 Shader.Parameters["InverseViewportSize"].SetValue(new Vector2(1f / viewport.Width, 1f / viewport.Height));
                 Shader.Parameters["ConsoleSharpness"].SetValue(new Vector4(
-                    -N / viewport.Width,
-                    -N / viewport.Height,
-                    N / viewport.Width,
-                    N / viewport.Height
+                    -N / RenderTarget.Width,
+                    -N / RenderTarget.Height,
+                    N / RenderTarget.Width,
+                    N / RenderTarget.Height
                     ));
                 Shader.Parameters["ConsoleOpt1"].SetValue(new Vector4(
-                    -2.0f / viewport.Width,
-                    -2.0f / viewport.Height,
-                    2.0f / viewport.Width,
-                    2.0f / viewport.Height
+                    -2.0f / RenderTarget.Width,
+                    -2.0f / RenderTarget.Height,
+                    2.0f / RenderTarget.Width,
+                    2.0f / RenderTarget.Height
                     ));
                 Shader.Parameters["ConsoleOpt2"].SetValue(new Vector4(
-                    8.0f / viewport.Width,
-                    8.0f / viewport.Height,
-                    -4.0f / viewport.Width,
-                    -4.0f / viewport.Height
+                    8.0f / RenderTarget.Width,
+                    8.0f / RenderTarget.Height,
+                    -4.0f / RenderTarget.Width,
+                    -4.0f / RenderTarget.Height
                     ));
                 Shader.Parameters["SubPixelAliasingRemoval"].SetValue(subPixelAliasingRemoval);
                 Shader.Parameters["EdgeThreshold"].SetValue(edgeTheshold);
@@ -144,34 +152,41 @@ namespace DwarfCorp
         public void Initialize()
         {
             PresentationParameters pp = GameState.Game.GraphicsDevice.PresentationParameters;
+            int width = Math.Min(pp.BackBufferWidth, 4096);
+            int height = Math.Min(pp.BackBufferHeight, 4096);
 
+            if (pp.BackBufferWidth > 4096 || pp.BackBufferHeight > 4096)
+            {
+                Console.Error.WriteLine("Uh oh. Back buffer is HUGE {0} x {1}. Will need to downscale the image to apply FXAA.",
+                    pp.BackBufferWidth, pp.BackBufferHeight);
+            }
             Shader = GameStates.GameState.Game.Content.Load<Effect>(ContentPaths.Shaders.FXAA);
-            RenderTarget = new RenderTarget2D(GameState.Game.GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight, false, pp.BackBufferFormat, DepthFormat.None);
+            RenderTarget = new RenderTarget2D(GameState.Game.GraphicsDevice, width, height, false, pp.BackBufferFormat, DepthFormat.None);
 
             Viewport viewport = GameState.Game.GraphicsDevice.Viewport;
-            Matrix projection = Matrix.CreateOrthographicOffCenter(0, viewport.Width, viewport.Height, 0, 0, 1);
+            Matrix projection = Matrix.CreateOrthographicOffCenter(0, RenderTarget.Width, RenderTarget.Height, 0, 0, 1);
             Matrix halfPixelOffset = Matrix.CreateTranslation(-0.5f, -0.5f, 0);
             Shader.Parameters["World"].SetValue(Matrix.Identity);
             Shader.Parameters["View"].SetValue(Matrix.Identity);
             Shader.Parameters["Projection"].SetValue(halfPixelOffset * projection);
-            Shader.Parameters["InverseViewportSize"].SetValue(new Vector2(1f / viewport.Width, 1f / viewport.Height));
+            Shader.Parameters["InverseViewportSize"].SetValue(new Vector2(1f / RenderTarget.Width, 1f / RenderTarget.Height));
             Shader.Parameters["ConsoleSharpness"].SetValue(new Vector4(
-                -N / viewport.Width,
-                -N / viewport.Height,
-                N / viewport.Width,
-                N / viewport.Height
+                -N / RenderTarget.Width,
+                -N / RenderTarget.Height,
+                N / RenderTarget.Width,
+                N / RenderTarget.Height
                 ));
             Shader.Parameters["ConsoleOpt1"].SetValue(new Vector4(
-                -2.0f / viewport.Width,
-                -2.0f / viewport.Height,
-                2.0f / viewport.Width,
-                2.0f / viewport.Height
+                -2.0f / RenderTarget.Width,
+                -2.0f / RenderTarget.Height,
+                2.0f / RenderTarget.Width,
+                2.0f / RenderTarget.Height
                 ));
             Shader.Parameters["ConsoleOpt2"].SetValue(new Vector4(
-                8.0f / viewport.Width,
-                8.0f / viewport.Height,
-                -4.0f / viewport.Width,
-                -4.0f / viewport.Height
+                8.0f / RenderTarget.Width,
+                8.0f / RenderTarget.Height,
+                -4.0f / RenderTarget.Width,
+                -4.0f / RenderTarget.Height
                 ));
             Shader.Parameters["SubPixelAliasingRemoval"].SetValue(subPixelAliasingRemoval);
             Shader.Parameters["EdgeThreshold"].SetValue(edgeTheshold);
