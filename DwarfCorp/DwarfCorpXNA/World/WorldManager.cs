@@ -973,8 +973,26 @@ namespace DwarfCorp
         /// <param name="e">The device settings that are getting set</param>
         private void GraphicsPreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
         {
+            if (e == null)
+            {
+                Console.Error.WriteLine("Preparing device settings given null event args.");
+                return;
+            }
+
             PresentationParameters pp = e.GraphicsDeviceInformation.PresentationParameters;
+            if (pp == null)
+            {
+                Console.Error.WriteLine("Presentation parameters invalid.");
+                return;
+            }
+
             GraphicsAdapter adapter = e.GraphicsDeviceInformation.Adapter;
+            if (adapter == null)
+            {
+                Console.Error.WriteLine("Somehow, graphics adapter is null!");
+                return;
+            }
+
             SurfaceFormat format = adapter.CurrentDisplayMode.Format;
 
             if (MultiSamples > 0 && MultiSamples != pp.MultiSampleCount)
