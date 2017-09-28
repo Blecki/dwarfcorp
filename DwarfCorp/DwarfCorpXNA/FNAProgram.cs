@@ -62,6 +62,9 @@ namespace DwarfCorp
             try
 #endif
             {
+
+                Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+                Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
                 //fbDeprofiler.DeProfiler.Load();
                 using (DwarfGame game = new DwarfGame())
                 {

@@ -34,6 +34,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -562,6 +563,9 @@ namespace DwarfCorp
             try
             {
                 System.Threading.Thread.CurrentThread.Name = "Save";
+                // Ensure we're using the invariant culture.
+                System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+                System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
                 DirectoryInfo worldDirectory =
                     Directory.CreateDirectory(DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Worlds" +
                                               Path.DirectorySeparatorChar + Overworld.Name);

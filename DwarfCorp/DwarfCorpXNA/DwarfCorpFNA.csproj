@@ -29,7 +29,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\DwarfCorpFNA\bin\Release\</OutputPath>
-    <DefineConstants>WINDOWS GEMFNA</DefineConstants>
+    <DefineConstants>WINDOWS GEMFNA SHARP_RAVEN</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
