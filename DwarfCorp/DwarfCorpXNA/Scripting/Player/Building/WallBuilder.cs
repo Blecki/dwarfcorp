@@ -56,7 +56,7 @@ namespace DwarfCorp
     public class WallBuilder
     {
         public VoxelHandle Vox;
-        public VoxelType Type;
+        public byte Type;
         public CreatureAI ReservedCreature = null;
         private WorldManager World { get; set; }
         List<VoxelHandle> highlighted = new List<VoxelHandle>();
@@ -71,7 +71,7 @@ namespace DwarfCorp
         {
             
         }
-        public WallBuilder(VoxelHandle v, VoxelType t, WorldManager world)
+        public WallBuilder(VoxelHandle v, byte t, WorldManager world)
         {
             World = world;
             Vox = v;
@@ -81,9 +81,9 @@ namespace DwarfCorp
         public void Put(ChunkManager manager)
         {
             VoxelHandle v = Vox;
-            v.Type = Type;
+            v.TypeID = Type;
             v.WaterCell = new WaterCell();
-            v.Health = Type.StartingHealth;
+            v.Health = VoxelLibrary.GetVoxelType(Type).StartingHealth;
             
             World.ParticleManager.Trigger("puff", v.WorldPosition, Color.White, 20);
 
@@ -112,7 +112,7 @@ namespace DwarfCorp
     {
         public Faction Faction { get; set; }
         public List<WallBuilder> Designations { get; set; }
-        public VoxelType CurrentVoxelType { get; set; }
+        public byte CurrentVoxelType { get; set; }
         private List<VoxelHandle> Selected { get; set; }
         private bool verified = false;
             [JsonIgnore]
@@ -224,7 +224,7 @@ namespace DwarfCorp
                 foreach(EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    VoxelLibrary.GetPrimitive(put.Type.Name).Render(graphics);
+                    VoxelLibrary.GetPrimitive(put.Type).Render(graphics);
                 }
             }
 
@@ -233,7 +233,7 @@ namespace DwarfCorp
                 Selected = new List<VoxelHandle>();
             }
 
-            if (CurrentVoxelType == null)
+            if (CurrentVoxelType == 0)
             {
                 Selected.Clear();
             }
@@ -259,14 +259,14 @@ namespace DwarfCorp
 
         public void VoxelDragged(List<VoxelHandle> refs)
         {
-            if (CurrentVoxelType == null)
+            if (CurrentVoxelType == 0)
                 return;
             verified = true;
             //verified = Verify(refs, CurrentVoxelType.ResourceToRelease);
 
             if (!verified)
             {
-                World.ShowToolPopup("Can't build this! Need at least " + refs.Count + " " + ResourceLibrary.Resources[CurrentVoxelType.ResourceToRelease].ResourceName + ".");
+                World.ShowToolPopup("Can't build this! Need at least " + refs.Count + " " + ResourceLibrary.Resources[VoxelLibrary.GetVoxelType(CurrentVoxelType).ResourceToRelease].ResourceName + ".");
             }
             else
             {
@@ -295,7 +295,7 @@ namespace DwarfCorp
                 Faction = World.PlayerFaction;
             }
 
-            if(CurrentVoxelType == null)
+            if(CurrentVoxelType == 0)
             {
                 return;
             }
@@ -323,7 +323,7 @@ namespace DwarfCorp
                     foreach (var r in validRefs)
                     {
                         AddDesignation(new WallBuilder(r, CurrentVoxelType, World));
-                        assignments.Add(new BuildVoxelTask(r, CurrentVoxelType.Name));
+                        assignments.Add(new BuildVoxelTask(r, VoxelLibrary.GetVoxelType(CurrentVoxelType).Name));
                     }
 
                     TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(World.Master.SelectedMinions, GameMaster.ToolMode.Build));
@@ -350,7 +350,7 @@ namespace DwarfCorp
 
         public int GetNumDesignations(ResourceLibrary.ResourceType resourceToRelease)
         {
-            return Designations.Sum(d => d.Type.ResourceToRelease == resourceToRelease ? 1 : 0);
+            return Designations.Sum(d => VoxelLibrary.GetVoxelType(d.Type).ResourceToRelease == resourceToRelease ? 1 : 0);
         }
     }
 

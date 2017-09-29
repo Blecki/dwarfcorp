@@ -892,7 +892,7 @@ namespace DwarfCorp.GameStates
                         {
                             Master.Faction.RoomBuilder.CurrentRoomData = data;
                             Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
-                            Master.Faction.WallBuilder.CurrentVoxelType = null;
+                            Master.Faction.WallBuilder.CurrentVoxelType = 0;
                             Master.Faction.CraftBuilder.IsEnabled = false;
                             ChangeTool(GameMaster.ToolMode.Build);
                             World.ShowToolPopup("Click and drag to build " + data.Name);
@@ -978,7 +978,7 @@ namespace DwarfCorp.GameStates
                             {
                                 Master.Faction.RoomBuilder.CurrentRoomData = null;
                                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                                Master.Faction.WallBuilder.CurrentVoxelType = data;
+                                Master.Faction.WallBuilder.CurrentVoxelType = (byte)data.ID;
                                 Master.Faction.CraftBuilder.IsEnabled = false;
                                 ChangeTool(GameMaster.ToolMode.Build);
                                 World.ShowToolPopup("Click and drag to build " + data.Name + " wall.");
@@ -1026,7 +1026,7 @@ namespace DwarfCorp.GameStates
                             {
                                 Master.Faction.RoomBuilder.CurrentRoomData = null;
                                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
-                                Master.Faction.WallBuilder.CurrentVoxelType = data;
+                                Master.Faction.WallBuilder.CurrentVoxelType = (byte)data.ID;
                                 Master.Faction.CraftBuilder.IsEnabled = false;
                                 ChangeTool(GameMaster.ToolMode.Build);
                                 World.ShowToolPopup("Click and drag to build " + data.Name + " floor.");
@@ -1120,7 +1120,7 @@ namespace DwarfCorp.GameStates
                                 data.NumRepeats = buildInfo.GetNumRepeats();
                                 Master.Faction.RoomBuilder.CurrentRoomData = null;
                                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                                Master.Faction.WallBuilder.CurrentVoxelType = null;
+                                Master.Faction.WallBuilder.CurrentVoxelType = 0;
                                 Master.Faction.CraftBuilder.IsEnabled = true;
                                 Master.Faction.CraftBuilder.CurrentCraftType = data;
                                 if (Master.Faction.CraftBuilder.CurrentCraftBody != null)
