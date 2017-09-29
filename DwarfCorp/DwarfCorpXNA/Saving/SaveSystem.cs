@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Reflection;
+using Newtonsoft.Json;
 
 namespace DwarfCorp.Saving
 {
@@ -13,12 +14,28 @@ namespace DwarfCorp.Saving
     {
         public System.Type AssociatedType;
         public int Version;
+
+        [JsonIgnore]
+        public Object LoadedObject;
+
+        public static int FindSaveableObjectVersion(ISaveableObject SaveableObject)
+        {
+            var attributes = SaveableObject.GetType().GetCustomAttributes(false);
+            foreach (var attribute in attributes.OfType<SaveableObjectAttribute>())
+                return attribute.Version;
+            return 0;
+        }
+    }
+
+    public class GenericNugget : Nugget
+    {
+        public Object Data;
     }
 
     public interface ISaveableObject
     {
-        Nugget SaveToNugget();
-        void LoadFromNugget(Nugget From);
+        Nugget SaveToNugget(Saver SaveSystem);
+        void LoadFromNugget(Loader SaveSystem, Nugget From);
     }
 
     public class SaveableObjectAttribute : Attribute
@@ -53,11 +70,51 @@ namespace DwarfCorp.Saving
         }
     }
 
-    public static class SaveSystem
+    public class Saver
     {
-        private static List<NuggetUpgrader> Upgraders;
+        private Dictionary<Object, Nugget> CreatedNuggets = new Dictionary<object, Nugget>();
+        private List<String> GenericSaveableTypes = new List<string>();
 
-        public static void DiscoverUpgraders()
+        public Nugget SaveObject(Object SaveableObject)
+        {
+            if (CreatedNuggets.ContainsKey(SaveableObject))
+                return CreatedNuggets[SaveableObject];
+
+            var asSaveable = SaveableObject as ISaveableObject;
+            Nugget result = null;
+
+            if (asSaveable != null)
+            {
+                result = asSaveable.SaveToNugget(this);
+                result.AssociatedType = SaveableObject.GetType();
+                result.Version = Nugget.FindSaveableObjectVersion(asSaveable);
+            }
+            else
+            {
+                var generic = new GenericNugget();
+                result = generic;
+                generic.Data = SaveableObject;
+                result.AssociatedType = SaveableObject.GetType();
+                result.Version = -1;
+
+                GenericSaveableTypes.Add(SaveableObject.GetType().FullName);
+            }
+
+            CreatedNuggets.Add(SaveableObject, result);
+            return result;
+        }
+
+        public List<String> GetGenericallySavedTypes()
+        {
+            return GenericSaveableTypes.Distinct().ToList();
+        }
+    }
+
+    public class Loader
+    {
+        private List<NuggetUpgrader> Upgraders;
+
+        private void DiscoverUpgraders()
         {
             if (Upgraders != null) return;
 
@@ -96,36 +153,29 @@ namespace DwarfCorp.Saving
             }
         }
 
-        public static int FindSaveableObjectVersion(ISaveableObject SaveableObject)
+        public Object LoadObject(Nugget From)
         {
-            var attributes = SaveableObject.GetType().GetCustomAttributes(false);
-            foreach (var attribute in attributes.OfType<SaveableObjectAttribute>())
-                return attribute.Version;
-            return 0;
-        }
+            if (From.LoadedObject != null) return From.LoadedObject;
 
-        public static Nugget SaveObject(ISaveableObject SaveableObject)
-        {
-            var nugget = SaveableObject.SaveToNugget();
-            nugget.AssociatedType = SaveableObject.GetType();
-            nugget.Version = FindSaveableObjectVersion(SaveableObject);
-            return nugget;
-        }
+            if (From is GenericNugget)
+            {
+                var generic = From as GenericNugget;
+                generic.LoadedObject = generic.Data;
+                return generic.Data;
+            }
 
-        public static ISaveableObject LoadObject(Nugget From)
-        {
             var result = Activator.CreateInstance(From.AssociatedType) as ISaveableObject;
             if (result == null)
                 throw new InvalidOperationException("Attempted to load object that is not saveable.");
 
-            var resultVersion = FindSaveableObjectVersion(result);
+            var resultVersion = Nugget.FindSaveableObjectVersion(result);
             var currentNugget = From;
 
             while (resultVersion > currentNugget.Version)
             {
                 DiscoverUpgraders();
-                var upgrader = Upgraders.FirstOrDefault(u => 
-                    u.AssociatedType == currentNugget.AssociatedType 
+                var upgrader = Upgraders.FirstOrDefault(u =>
+                    u.AssociatedType == currentNugget.AssociatedType
                     && u.SourceVersion == currentNugget.Version);
                 if (upgrader == null)
                     throw new InvalidOperationException("Failed to upgrade nugget.");
@@ -135,7 +185,8 @@ namespace DwarfCorp.Saving
                 currentNugget.Version = upgrader.DestinationVersion;
             }
 
-            result.LoadFromNugget(currentNugget);
+            result.LoadFromNugget(this, currentNugget);
+            From.LoadedObject = result;
             return result;
         }
     }
@@ -152,12 +203,12 @@ namespace DwarfCorp.Saving
     {
         public float Data;
 
-        public void LoadFromNugget(Nugget From)
+        public void LoadFromNugget(Loader SaveSystem, Nugget From)
         {
             Data = (From as SampleNugget).Data;
         }
 
-        public Nugget SaveToNugget()
+        public Nugget SaveToNugget(Saver SaveSystem)
         {
             return new SampleNugget { Data = Data };
         }
@@ -181,12 +232,12 @@ namespace DwarfCorp.Saving
     {
         public double Data;
 
-        public void LoadFromNugget(Nugget From)
+        public void LoadFromNugget(Loader SaveSystem, Nugget From)
         {
             Data = (From as SampleNugget2).Data;
         }
 
-        public Nugget SaveToNugget()
+        public Nugget SaveToNugget(Saver SaveSystem)
         {
             return new SampleNugget2 { Data = Data };
         }
