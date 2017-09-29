@@ -318,7 +318,7 @@ namespace DwarfCorp
                     {
                         if (!ResourceLibrary.Resources.ContainsKey(resource.Key))
                         {
-                            ResourceLibrary.Resources.Add(resource.Key, resource.Value);
+                            ResourceLibrary.Add(resource.Value);
                         }
                     }
 
