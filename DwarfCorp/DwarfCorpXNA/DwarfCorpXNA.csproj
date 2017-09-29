@@ -350,6 +350,7 @@
     <Compile Include="Gui\Widgets\GoalInfo.cs" />
     <Compile Include="Gui\Widgets\GoalPanel.cs" />
     <Compile Include="Gui\Widgets\TutorialPopup.cs" />
+    <Compile Include="Saving\SaveSystem.cs" />
     <Compile Include="Scripting\CompoundActs\FleeEntityAct.cs" />
     <Compile Include="Scripting\CompoundActs\GetMoneyAct.cs" />
     <Compile Include="Scripting\CompoundActs\StockMoneyAct.cs" />
