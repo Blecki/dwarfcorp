@@ -647,9 +647,8 @@ namespace DwarfCorp
         }
         public class Fonts
         {
-            public static string Default = ProgramData.CreatePath("Fonts", "font1-w-2x");
-            public static string Small = ProgramData.CreatePath("Fonts", "font1-w");
-            public static string Title = ProgramData.CreatePath("Fonts", "font1-w-4x");
+            public static string Default = ProgramData.CreatePath("newgui", "font-14px-sprfont");
+            public static string Small = ProgramData.CreatePath("newgui", "font-8px-sprfont");
 
         }
         public class Gradients

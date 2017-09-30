@@ -65,7 +65,7 @@ namespace DwarfCorp.GameStates
             return GuiRoot.RootItem.AddChild(new Gui.Widget
             {
                 MinimumSize = new Point(400, 200),
-                Font = "outline-font",
+                Font = "font18-outline",
                 Border = "basic",
                 Background = new TileReference("basic", 0),
                 BackgroundColor = new Vector4(0.0f, 0.0f, 0.0f, 0.25f),
@@ -160,7 +160,7 @@ namespace DwarfCorp.GameStates
                 Tooltip = Tooltip,
                 TextHorizontalAlign = Gui.HorizontalAlign.Center,
                 TextVerticalAlign = Gui.VerticalAlign.Center,
-                Font = "outline-font",
+                Font = "font18-outline",
                 TextColor = Color.White.ToVector4(),
                 HoverTextColor = Color.Red.ToVector4()
             });

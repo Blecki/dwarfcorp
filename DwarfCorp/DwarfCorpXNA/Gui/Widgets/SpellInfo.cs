@@ -35,7 +35,7 @@ namespace DwarfCorp.Gui.Widgets
                 builder.AppendLine("Unlocks:");
                 builder.AppendLine(TextGenerator.GetListString(Spell.Children.Select(child => child.Spell.Name)));
             }
-            Font = "font";
+            Font = "font8";
             Text = builder.ToString();
         }
     }

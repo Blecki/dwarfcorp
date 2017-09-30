@@ -115,7 +115,7 @@ namespace DwarfCorp.GameStates
             MainPanel.AddChild(new Gui.Widgets.Button
             {
                 Text = "Close",
-                Font = "font-hires",
+                Font = "font16",
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 Border = "border-button",
@@ -151,7 +151,7 @@ namespace DwarfCorp.GameStates
             MainPanel.AddChild(new Gui.Widgets.Button
             {
                 Text = "Apply",
-                Font = "font-hires",
+                Font = "font16",
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 Border = "border-button",
@@ -378,7 +378,7 @@ namespace DwarfCorp.GameStates
                 {
                     Text = "ERROR. NO SUITABLE AUDIO HARDWARE FOUND. SOUND IS DISABLED :(",
                     TextColor = Color.DarkRed.ToVector4(),
-                    Font = "font-hires",
+                    Font = "font16",
                     AutoLayout = AutoLayout.DockTop
                 });
             }

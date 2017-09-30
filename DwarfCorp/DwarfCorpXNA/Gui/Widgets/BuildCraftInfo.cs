@@ -22,7 +22,7 @@ namespace DwarfCorp.Gui.Widgets
         public override void Construct()
         {
             Border = "border-fancy";
-            Font = "font";
+            Font = "font8";
             TextColor = new Vector4(0, 0, 0, 1);
             OnShown += (sender) =>
             {
@@ -65,7 +65,7 @@ namespace DwarfCorp.Gui.Widgets
 
                         child.AddChild(new Gui.Widget()
                         {
-                            Font = "font",
+                            Font = "font8",
                             Text = String.Format("{0} {1}: ",resourceAmount.NumResources, resourceAmount.ResourceType),
                             AutoLayout = AutoLayout.DockLeft
                         });
@@ -73,7 +73,7 @@ namespace DwarfCorp.Gui.Widgets
 
                         var resourceSelector = child.AddChild(new Gui.Widgets.ComboBox
                         {
-                            Font = "font",
+                            Font = "font8",
                             Items = Master.Faction.ListResourcesWithTag(resourceAmount.ResourceType).Where(r => r.NumResources >= resourceAmount.NumResources).Select(r => r.ResourceType.ToString()).ToList(),
                             AutoLayout = AutoLayout.DockLeft,
                             MinimumSize = new Point(200, 18)
@@ -98,13 +98,13 @@ namespace DwarfCorp.Gui.Widgets
 
                         child2.AddChild(new Gui.Widget()
                         {
-                            Font = "font",
+                            Font = "font8",
                             Text = "Repeat ",
                             AutoLayout = AutoLayout.DockLeft
                         });
                         NumCombo = child2.AddChild(new Gui.Widgets.ComboBox
                         {
-                            Font = "font",
+                            Font = "font8",
                             Items = new List<string>()
                                 {
                                     "1x",

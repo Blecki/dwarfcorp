@@ -191,7 +191,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 MinimumSize = new Point(128, 0),
                 AutoLayout = AutoLayout.DockLeft,
-                Font = "font",
+                Font = "font8",
                 TextColor = new Vector4(0, 0, 0, 1),
                 TextVerticalAlign = VerticalAlign.Center
             });
@@ -200,7 +200,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 MinimumSize = new Point(128, 0),
                 AutoLayout = AutoLayout.DockLeft,
-                Font = "font",
+                Font = "font8",
                 TextColor = new Vector4(0, 0, 0, 1),
                 TextVerticalAlign = VerticalAlign.Center
             });
@@ -208,7 +208,7 @@ namespace DwarfCorp.Gui.Widgets
 
             bottomRow.AddChild(new Gui.Widgets.Button
             {
-                Font = "font",
+                Font = "font8",
                 Border = "border-button",
                 TextColor = new Vector4(0, 0, 0, 1),
                 Text = "Propose Trade",
@@ -256,7 +256,7 @@ namespace DwarfCorp.Gui.Widgets
 
             bottomRow.AddChild(new Gui.Widgets.Button
             {
-                Font = "font",
+                Font = "font8",
                 Border = "border-button",
                 TextColor = new Vector4(0, 0, 0, 1),
                 Text = "What will make this work?",
@@ -266,7 +266,7 @@ namespace DwarfCorp.Gui.Widgets
 
             bottomRow.AddChild(new Gui.Widgets.Button
             {
-                Font = "font",
+                Font = "font8",
                 Border = "border-button",
                 TextColor = new Vector4(0, 0, 0, 1),
                 Text = "Cancel",

@@ -59,7 +59,7 @@ namespace DwarfCorp.Gui.Widgets
             leftPanel.AddChild(new Gui.Widget
             {
                 Text = LeftHeader,
-                Font = "font-hires",
+                Font = "font16",
                 TextColor = new Vector4(0, 0, 0, 1),
                 AutoLayout = AutoLayout.DockTop
             });
@@ -68,7 +68,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 MinimumSize = new Point(0, 32),
                 AutoLayout = AutoLayout.DockBottom,
-                Font = "font",
+                Font = "font8",
                 TextColor = new Vector4(0, 0, 0, 1),
                 Text = String.Format(MoneyLabel + ": {0}", TradeEntity.Money.ToString()),
                 TextHorizontalAlign = HorizontalAlign.Center,
@@ -86,7 +86,7 @@ namespace DwarfCorp.Gui.Widgets
             rightPanel.AddChild(new Gui.Widget
             {
                 Text = RightHeader,
-                Font = "font-hires",
+                Font = "font16",
                 TextColor = new Vector4(0, 0, 0, 1),
                 AutoLayout = AutoLayout.DockTop
             });
@@ -210,7 +210,7 @@ namespace DwarfCorp.Gui.Widgets
                 Layers = resourceInfo.GuiLayers,
                 AutoLayout = AutoLayout.DockLeft,
                 BackgroundColor = Resource.NumResources > 0 ? resourceInfo.Tint.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
-                Font = "font",
+                Font = "font8",
                 TextColor = Color.Black.ToVector4(),
                 TextHorizontalAlign = HorizontalAlign.Right,
                 TextVerticalAlign = VerticalAlign.Bottom
@@ -230,7 +230,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 AutoLayout = AutoLayout.DockRight,
                 //Text = String.Format("{0} at ${1}e", Resource.NumResources, resourceInfo.MoneyValue),
-                //Font = "outline-font",
+                //Font = "font18-outline",
                 //TextColor = new Vector4(1,1,1,1),
                 TextColor = Resource.NumResources > 0 ? Color.Black.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
                 TextVerticalAlign = VerticalAlign.Center,

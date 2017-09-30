@@ -23,13 +23,13 @@ namespace DwarfCorp.Gui.Widgets
             Border = "border-fancy";
 
             Text = Message == null || String.IsNullOrEmpty(Message.Title) ? "Tutorial" : Message.Title;
-            Font = "font-hires";
+            Font = "font16";
             InteriorMargin = new Margin(20, 0, 0, 0);
 
             AddChild(new Button
             {
                 Text = "Dismiss",
-                Font = "font2x",
+                Font = "font14",
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 Border = "border-button",
@@ -40,14 +40,14 @@ namespace DwarfCorp.Gui.Widgets
             DisableBox = AddChild(new Gui.Widgets.CheckBox
             {
                 Text = "Disable tutorial",
-                Font = "font",
+                Font = "font8",
                 AutoLayout = AutoLayout.FloatBottomLeft
             }) as Gui.Widgets.CheckBox;
 
             AddChild(new Widget
             {
                 Text = Message == null ? "" : Message.Text,
-                Font = "font2x",
+                Font = "font14",
                 AutoLayout = AutoLayout.DockFill,
                 OnLayout = (sender) => sender.Rect.Height -= 20
             });

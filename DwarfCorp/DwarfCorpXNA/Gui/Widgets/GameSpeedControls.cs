@@ -55,7 +55,7 @@ namespace DwarfCorp.Gui.Widgets
             Border = "border-dark";
             MinimumSize = new Point(128, 40);
             Padding = new Gui.Margin(2, 2, 4, 4);
-            Font = "font2x";
+            Font = "font14";
 
             TimeLabel = AddChild(new Gui.Widget
             {

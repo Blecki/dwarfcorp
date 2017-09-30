@@ -28,19 +28,19 @@ namespace DwarfCorp.Gui.Widgets
             {
                 MinimumSize = new Point(0, 32),
                 AutoLayout = AutoLayout.DockBottom,
-                Font = "font-hires"
+                Font = "font16"
             });
 
             Description = AddChild(new Gui.Widget
             {
                 AutoLayout = AutoLayout.DockFill,
-                Font = "font-hires"
+                Font = "font16"
             });
 
             ActivateButton = BottomBar.AddChild(new Widget
             {
                 Text = "Activate!",
-                Font = "font-hires",
+                Font = "font16",
                 Border = "border-button",
                 AutoLayout = AutoLayout.FloatBottomRight,
                 ChangeColorOnHover = true,

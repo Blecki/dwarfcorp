@@ -50,7 +50,7 @@ namespace DwarfCorp.Dialogue
                 Text = Prompt,
                 OnClick = (sender, args) => Transition(Action),
                 AutoLayout = Gui.AutoLayout.DockTop,
-                Font = "font-hires",
+                Font = "font16",
                 TextColor = Color.Black.ToVector4(),
                 ChangeColorOnHover = true,
                 HoverTextColor = Color.DarkRed.ToVector4()
