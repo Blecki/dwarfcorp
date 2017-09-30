@@ -90,20 +90,31 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
-        public IEnumerable<Act.Status> HasAllMoney()
+        public IEnumerable<Act.Status> ShouldContinue()
         {
             if (!Agent.Blackboard.Has("MoneyNeeded"))
             {
-                yield return Act.Status.Success;
+                yield return Act.Status.Fail;
                 yield break;
             }
             var needed = Agent.Blackboard.GetData<DwarfBux>("MoneyNeeded");
             if (needed <= 0)
             {
-                yield return Act.Status.Success;
+                yield return Act.Status.Fail;
+                yield break;
             }
+
+            if (Faction.Economy.CurrentMoney < needed)
+            {
+                Agent.World.MakeAnnouncement(String.Format("Could not pay {0}, not enough money!", Agent.Name));
+                yield return Act.Status.Fail;
+                yield break;
+            }
+            
             yield return Act.Status.Fail;
         }
+
+
 
         private float dist(Zone zone)
         {
@@ -117,7 +128,7 @@ namespace DwarfCorp
             Tree = new WhileLoop(new Sequence(new Wrap(() => GetNextTreasury()),
                                               new GoToZoneAct(Agent, "Treasury"),
                                               new StashMoneyAct(Agent, "MoneyNeeded", "Treasury")),
-                                 new Not(new Wrap(() => HasAllMoney())
+                                 new Wrap(() => ShouldContinue())
                 ))         ;
 
             base.Initialize();
