@@ -176,9 +176,19 @@ namespace DwarfCorp.Gui.Widgets
         }
 
 
+        private List<ResourceAmount> Clone(List<ResourceAmount> resources)
+        {
+            List<ResourceAmount> toReturn = new List<ResourceAmount>();
+            foreach(var resource in resources)
+            {
+                toReturn.Add(new ResourceAmount(resource));
+            }
+            return toReturn;
+        }
+
         public override void Construct()
         {
-            SourceResources = new List<ResourceAmount>(TradeEntity.Resources);
+            SourceResources = Clone(TradeEntity.Resources);
 
             Reconstruct(SourceResources, SelectedResources, 0);
         }

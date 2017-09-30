@@ -72,7 +72,7 @@ namespace DwarfCorp.Gui.Widgets
         {
             var tradeMin = envoyOut*0.25;
             var tradeMax = envoyOut*3.0;
-            return net >= tradeMin && net <= tradeMax;
+            return net >= tradeMin && net <= tradeMax && Math.Abs(net) > 1;
         }
 
         private void EqualizeColumns()
@@ -117,7 +117,7 @@ namespace DwarfCorp.Gui.Widgets
                         }
                         else if (t < 0.15f && remainingMoneyPlayer > 1)
                         {
-                            DwarfBux movement = Math.Min((decimal) MathFunctions.RandInt(1, (int)(envoyOut - net)), remainingMoneyPlayer);
+                            DwarfBux movement = Math.Min((decimal) MathFunctions.RandInt(1, Math.Max((int)(envoyOut - net), 2)), remainingMoneyPlayer);
                             selectedMoneyPlayer += movement;
                             remainingMoneyPlayer -= movement;
                         }
@@ -140,7 +140,7 @@ namespace DwarfCorp.Gui.Widgets
                         }
                         else if (t < 0.15f && remainingMoneyEnvoy > 1)
                         {
-                            DwarfBux movement = Math.Min((decimal)MathFunctions.RandInt(1, (int)(net - envoyOut)), remainingMoneyEnvoy);
+                            DwarfBux movement = Math.Min((decimal)MathFunctions.RandInt(1, Math.Max((int)(net - envoyOut), 2)), remainingMoneyEnvoy);
                             selectedMoneyEnvoy += movement;
                             remainingMoneyEnvoy -= movement;
                         }
