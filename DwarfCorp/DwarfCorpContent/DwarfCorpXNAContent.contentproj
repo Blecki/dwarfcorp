@@ -2235,6 +2235,13 @@
       <ProcessorParameters_ColorKeyEnabled>False</ProcessorParameters_ColorKeyEnabled>
       <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
     </Compile>
+    <Compile Include="newgui\font-10px-outline-numsonly.bmp">
+      <Name>font-10px-outline-numsonly</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyEnabled>False</ProcessorParameters_ColorKeyEnabled>
+      <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
+    </Compile>
     <Content Include="Particles\particles.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>particles</Name>

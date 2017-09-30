@@ -27,7 +27,8 @@ namespace DwarfCorp.Gui.Widgets
                         MaximumSize = new Point(32, 32),
                         TextHorizontalAlign = HorizontalAlign.Right,
                         TextVerticalAlign = VerticalAlign.Bottom,
-                        TextColor = new Vector4(1, 1, 1, 1)
+                        TextColor = new Vector4(1, 1, 1, 1),
+                        Font = "font10-outline-numsonly"
                     });
                 }
             }
@@ -151,7 +152,7 @@ namespace DwarfCorp.Gui.Widgets
                         }
                     }
 
-                    icon.Children.Last().Text = resource.Amount.NumResources.ToString();
+                    icon.Children.Last().Text = "S" + resource.Amount.NumResources.ToString();
                     icon.Invalidate();                    
                 }
 

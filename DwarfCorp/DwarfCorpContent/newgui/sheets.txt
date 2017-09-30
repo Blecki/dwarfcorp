@@ -17,6 +17,11 @@
 			"Type": "VariableWidthFont"
 		},
 		{
+			"Name": "font10-outline-numsonly",
+			"Texture": "newgui/font-10px-outline-numsonly",
+			"Type": "VariableWidthFont"
+		},
+		{
 			"Name": "font14",
 			"Texture": "newgui/font-14px",
 			"Type": "VariableWidthFont"
