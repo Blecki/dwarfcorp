@@ -306,8 +306,8 @@ namespace DwarfCorp.GameStates
 
             GetSpawnRectangleInScreenSpace(SpawnRectanglePoints);
 
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp,
-            null, null);
+            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp,
+            null, null, null, Matrix.Identity);
             Drawer2D.DrawPolygon(DwarfGame.SpriteBatch, Color.Yellow, 1, SpawnRectanglePoints);
             //Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, "Spawn", DefaultFont, new Vector2(a.X - 5, a.Y - 20),
             //    Color.White, Color.Black);

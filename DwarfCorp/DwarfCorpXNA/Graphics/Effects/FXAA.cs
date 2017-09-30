@@ -144,7 +144,7 @@ namespace DwarfCorp
         public void End(DwarfTime lastTime, RenderTarget2D renderTarget)
         {
             GameState.Game.GraphicsDevice.SetRenderTarget(null);
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, Shader, Matrix.Identity);
+            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, Shader, Matrix.Identity);
             DwarfGame.SpriteBatch.Draw(renderTarget, GameState.Game.GraphicsDevice.Viewport.Bounds, Color.White);
             DwarfGame.SpriteBatch.End();
         }

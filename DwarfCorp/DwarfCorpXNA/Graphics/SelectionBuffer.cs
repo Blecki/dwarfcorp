@@ -147,7 +147,8 @@ namespace DwarfCorp
 
         public void DebugDraw(Rectangle rect)
         {
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone);
+            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate, 
+                BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone, null, Matrix.Identity);
             DwarfGame.SpriteBatch.Draw((Texture2D)Buffer, rect, Color.White);
             DwarfGame.SpriteBatch.End();
         }

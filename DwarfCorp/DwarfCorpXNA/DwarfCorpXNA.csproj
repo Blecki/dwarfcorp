@@ -749,7 +749,7 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <PropertyGroup>
-    <PreBuildEvent>"C:\Program Files (x86)\Git\bin\git.exe" rev-parse --short HEAD &gt; "$(ProjectDir)\version.txt"</PreBuildEvent>
+    <PreBuildEvent>"C:\Program Files\Git\bin\git.exe" rev-parse --short HEAD &gt; "$(ProjectDir)\version.txt"</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>MKDIR "$(SolutionDir)DwarfCorpFNA\bin\$(ConfigurationName)\Content" &amp; XCOPY "$(ProjectDir)$(OutDir)Content" "$(SolutionDir)DwarfCorpFNA\bin\$(ConfigurationName)\Content" /Y /E</PostBuildEvent>

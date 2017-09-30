@@ -718,7 +718,7 @@ namespace DwarfCorp
             DefaultShader.FogColor = new Color(0.32f * x, 0.58f * x, 0.9f * x);
             DefaultShader.LightPositions = LightPositions;
 
-            CompositeLibrary.Render(GraphicsDevice, DwarfGame.SpriteBatch);
+            CompositeLibrary.Render(GraphicsDevice);
             CompositeLibrary.Update();
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.BlendState = BlendState.Opaque;
@@ -925,12 +925,12 @@ namespace DwarfCorp
                 ScissorTestEnable = true
             };
 
-            
+
             //if (CompositeLibrary.Composites.ContainsKey("resources"))
             //    CompositeLibrary.Composites["resources"].DebugDraw(DwarfGame.SpriteBatch, 0, 0);
             //SelectionBuffer.DebugDraw(GraphicsDevice.Viewport.Bounds);
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp,
-                null, rasterizerState);
+            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp,
+                null, rasterizerState, null, Matrix.Identity);
             //DwarfGame.SpriteBatch.Draw(Shadows.ShadowTexture, Vector2.Zero, Color.White);
             if (IsCameraUnderwater())
             {

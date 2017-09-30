@@ -75,8 +75,8 @@ namespace DwarfCorp
 
         public override void Render(DwarfTime gameTime)
         {
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointWrap,
-                DepthStencilState.Default, RasterizerState.CullNone);
+            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointWrap,
+                DepthStencilState.Default, RasterizerState.CullNone, null, Matrix.Identity);
             float y = -CurrentScroll;
             int w = GameState.Game.GraphicsDevice.Viewport.Width;
             int h = GameState.Game.GraphicsDevice.Viewport.Height; 

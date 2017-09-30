@@ -158,11 +158,11 @@ namespace DwarfCorp
 
         }
 
-        public void Render(GraphicsDevice graphics, SpriteBatch sprites, DwarfTime time)
+        public void Render(GraphicsDevice graphics, DwarfTime time)
         {
             try
             {
-                Draw(graphics, sprites, time);
+                Draw(graphics, time);
             }
             catch (InvalidOperationException exception)
             {
@@ -170,11 +170,11 @@ namespace DwarfCorp
             }
         }
 
-        private void Draw(GraphicsDevice graphics, SpriteBatch sprites, DwarfTime time)
+        private void Draw(GraphicsDevice graphics, DwarfTime time)
         {
             Bloom.BeginDraw();
-            sprites.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp,
-                DepthStencilState.Default, RasterizerState.CullNone);
+            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp,
+                DepthStencilState.Default, RasterizerState.CullNone, null, Matrix.Identity);
             graphics.Clear(Color.SkyBlue);
 
 
@@ -209,7 +209,7 @@ namespace DwarfCorp
                         float tileX = ix*(TileSize/backSize) - ((offsetX*0.6f)*(TileSize/backSize))%(TileSize/backSize);
                         float tileY = iy*(TileSize/backSize);
 
-                        Drawer2D.FillRect(sprites, new Rectangle((int) tileX, (int) tileY, TileSize/backSize, TileSize/backSize),
+                        Drawer2D.FillRect(DwarfGame.SpriteBatch, new Rectangle((int) tileX, (int) tileY, TileSize/backSize, TileSize/backSize),
                             new Color((int) (Color.SkyBlue.R*normalizedY*0.8f), (int) (Color.SkyBlue.G*normalizedY*0.8f),
                                 (int) (Color.SkyBlue.B*normalizedY)));
                     }
@@ -230,14 +230,14 @@ namespace DwarfCorp
                     {
                         Color tint = new Color(normalizedY, normalizedY, normalizedY);
 
-                        RenderTile(Grass, sprites, ix, iy, offsetX, t, tint);
+                        RenderTile(Grass, DwarfGame.SpriteBatch, ix, iy, offsetX, t, tint);
                     }
                     else if (normalizedY > height - 0.1f && normalizedY < height)
                     {
                         Color tint = new Color((float) Math.Pow(normalizedY, 1.5f), (float) Math.Pow(normalizedY, 1.6f),
                             normalizedY);
 
-                        RenderTile(Soil, sprites, ix, iy, offsetX, t, tint);
+                        RenderTile(Soil, DwarfGame.SpriteBatch, ix, iy, offsetX, t, tint);
                     }
                     else if (normalizedY < height)
                     {
@@ -264,11 +264,11 @@ namespace DwarfCorp
 
                             if (oreFound == null)
                             {
-                                RenderTile(Substrate, sprites, ix, iy, offsetX, t, tint);
+                                RenderTile(Substrate, DwarfGame.SpriteBatch, ix, iy, offsetX, t, tint);
                             }
                             else
                             {
-                                RenderTile(oreFound.Value, sprites, ix, iy, offsetX, t, tint);
+                                RenderTile(oreFound.Value, DwarfGame.SpriteBatch, ix, iy, offsetX, t, tint);
                             }
                         }
                         else
@@ -276,12 +276,12 @@ namespace DwarfCorp
                             if (normalizedY < lava)
                             {
                                 float glowiness = Noise.Noise(x*CaveScale*2, y*CaveScale*2, t);
-                                RenderTile(Lava, sprites, ix, iy, offsetX, t,
+                                RenderTile(Lava, DwarfGame.SpriteBatch, ix, iy, offsetX, t,
                                     new Color(0.5f*glowiness + 0.5f, 0.7f*glowiness + 0.3f*st, glowiness));
                             }
                             else
                             {
-                                RenderTile(Cave, sprites, ix, iy, offsetX, t,
+                                RenderTile(Cave, DwarfGame.SpriteBatch, ix, iy, offsetX, t,
                                     new Color((float) Math.Pow(normalizedY, 1.5f)*(1.0f - caviness)*0.8f,
                                         (float) Math.Pow(normalizedY, 1.6f)*(1.0f - caviness)*0.8f,
                                         normalizedY*(1.0f - caviness)));
@@ -292,7 +292,7 @@ namespace DwarfCorp
             }
 
 
-            sprites.End();
+            DwarfGame.SpriteBatch.End();
 
             Bloom.Draw(time.ToGameTime());
         }
