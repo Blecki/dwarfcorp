@@ -106,12 +106,12 @@ namespace DwarfCorp
 
             if (Faction.Economy.CurrentMoney < needed)
             {
-                Agent.World.MakeAnnouncement(String.Format("Could not pay {0}, not enough money!", Agent.Name));
+                Agent.World.MakeAnnouncement(String.Format("Could not pay {0}, not enough money!", Agent.Stats.FullName));
                 yield return Act.Status.Fail;
                 yield break;
             }
             
-            yield return Act.Status.Fail;
+            yield return Act.Status.Success;
         }
 
 
@@ -129,7 +129,7 @@ namespace DwarfCorp
                                               new GoToZoneAct(Agent, "Treasury"),
                                               new StashMoneyAct(Agent, "MoneyNeeded", "Treasury")),
                                  new Wrap(() => ShouldContinue())
-                ))         ;
+                )         ;
 
             base.Initialize();
 
