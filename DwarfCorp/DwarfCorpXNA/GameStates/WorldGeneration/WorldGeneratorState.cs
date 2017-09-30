@@ -332,5 +332,14 @@ namespace DwarfCorp.GameStates
             GuiRoot.DrawMouse();
             base.Render(gameTime);
         }
+
+        public override void OnPopped()
+        {
+            this.Generator.LandMesh.Dispose();
+            this.Generator.LandIndex.Dispose();
+            this.Generator.worldData = null;
+            this.GuiRoot.DestroyWidget(this.GuiRoot.RootItem);
+            base.OnExit();
+        }
     }
 }
