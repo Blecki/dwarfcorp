@@ -455,6 +455,7 @@ namespace DwarfCorp
             {
                 Drawer3D.UnHighlightVoxel(tile.Vox);
             }
+            Player.VoxSelector.Clear();
         }
 
 

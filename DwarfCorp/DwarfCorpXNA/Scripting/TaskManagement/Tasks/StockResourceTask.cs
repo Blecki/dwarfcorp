@@ -70,7 +70,7 @@ namespace DwarfCorp
 
         public override bool IsFeasible(Creature agent)
         {
-            return agent.Faction.HasFreeStockpile() && !agent.AI.Movement.IsSessile;
+            return agent.Faction.HasFreeStockpile() && !agent.AI.Movement.IsSessile && agent.Inventory.HasResource(EntityToGather);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)

@@ -30,6 +30,8 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+using System.Globalization;
 using System.Threading;
 using DwarfCorp.Gui;
 using Microsoft.Xna.Framework;
@@ -130,7 +132,12 @@ namespace DwarfCorp.GameStates
         public WaitState(DwarfGame game, string name, GameStateManager stateManager, WaitThreadRoutine routine)
             : base(game, name, stateManager)
         {
-            WaitThread = new Thread(() => runRoutine(routine));
+            WaitThread = new Thread(() =>
+            {
+                System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+                System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+                runRoutine(routine);
+            });
             OnFinished = (Boolean, Exception) => { };
             Done = false;
             GuiRoot = new Gui.Root(DwarfGame.GumSkin)

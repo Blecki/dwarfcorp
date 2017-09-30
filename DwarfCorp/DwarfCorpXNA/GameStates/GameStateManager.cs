@@ -130,7 +130,7 @@ namespace DwarfCorp.GameStates
             Game.GraphicsDevice.Clear(Color.Black);
 
             if (CurrentState != null && CurrentState.EnableScreensaver)
-                ScreenSaver.Render(Game.GraphicsDevice, DwarfGame.SpriteBatch, time);
+                ScreenSaver.Render(Game.GraphicsDevice, time);
 
             List<GameState> removals = new List<GameState>();
             for(int i = StateStack.Count - 1; i >= 0; i--)

@@ -128,6 +128,12 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "DWARF BUX",
                     OnClick = (sender, args) => Master.Faction.AddMoney(1000m)
                 },
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "PAY",
+                    OnClick = (sender, args) => Master.PayEmployees()
+                },
+
 
                 // Shouldn't this go into some kind of 'debug' menu?
                 new HorizontalMenuTray.MenuItem

@@ -430,7 +430,7 @@ namespace DwarfCorp.GameStates
                 sender.Invalidate();
                 return;
             }
-            int newNum = Math.Max(factionResources[data.ResourceToRelease].NumResources - Master.Faction.WallBuilder.GetNumDesignations(data.ResourceToRelease), 0);
+            int newNum = Math.Max(factionResources[data.ResourceToRelease].First.NumResources - Master.Faction.WallBuilder.GetNumDesignations(data.ResourceToRelease), 0);
             if (newNum != numResources)
             {
                 sender.Text = newNum.ToString();
@@ -892,7 +892,7 @@ namespace DwarfCorp.GameStates
                         {
                             Master.Faction.RoomBuilder.CurrentRoomData = data;
                             Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
-                            Master.Faction.WallBuilder.CurrentVoxelType = null;
+                            Master.Faction.WallBuilder.CurrentVoxelType = 0;
                             Master.Faction.CraftBuilder.IsEnabled = false;
                             ChangeTool(GameMaster.ToolMode.Build);
                             World.ShowToolPopup("Click and drag to build " + data.Name);
@@ -966,7 +966,7 @@ namespace DwarfCorp.GameStates
                             Icon = new Gui.TileReference("voxels", data.ID),
                             TextHorizontalAlign = HorizontalAlign.Right,
                             TextVerticalAlign = VerticalAlign.Bottom,
-                            Text = Master.Faction.ListResourcesInStockpilesPlusMinions()[data.ResourceToRelease].NumResources.ToString(),
+                            Text = Master.Faction.ListResourcesInStockpilesPlusMinions()[data.ResourceToRelease].First.NumResources.ToString(),
                             TextColor = Color.White.ToVector4(),
                             PopupChild = new BuildWallInfo
                             {
@@ -978,7 +978,8 @@ namespace DwarfCorp.GameStates
                             {
                                 Master.Faction.RoomBuilder.CurrentRoomData = null;
                                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                                Master.Faction.WallBuilder.CurrentVoxelType = data;
+                                Master.Faction.WallBuilder.SelectionType = Master.VoxSelector.SelectionType;
+                                Master.Faction.WallBuilder.CurrentVoxelType = (byte)data.ID;
                                 Master.Faction.CraftBuilder.IsEnabled = false;
                                 ChangeTool(GameMaster.ToolMode.Build);
                                 World.ShowToolPopup("Click and drag to build " + data.Name + " wall.");
@@ -1014,7 +1015,7 @@ namespace DwarfCorp.GameStates
                             Icon = new Gui.TileReference("voxels", data.ID),
                             TextHorizontalAlign = HorizontalAlign.Right,
                             TextVerticalAlign = VerticalAlign.Bottom,
-                            Text = Master.Faction.ListResourcesInStockpilesPlusMinions()[data.ResourceToRelease].NumResources.ToString(),
+                            Text = Master.Faction.ListResourcesInStockpilesPlusMinions()[data.ResourceToRelease].First.NumResources.ToString(),
                             TextColor = Color.White.ToVector4(),
                             PopupChild = new BuildWallInfo
                             {
@@ -1026,7 +1027,8 @@ namespace DwarfCorp.GameStates
                             {
                                 Master.Faction.RoomBuilder.CurrentRoomData = null;
                                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
-                                Master.Faction.WallBuilder.CurrentVoxelType = data;
+                                Master.Faction.WallBuilder.SelectionType = Master.VoxSelector.SelectionType;
+                                Master.Faction.WallBuilder.CurrentVoxelType = (byte)data.ID;
                                 Master.Faction.CraftBuilder.IsEnabled = false;
                                 ChangeTool(GameMaster.ToolMode.Build);
                                 World.ShowToolPopup("Click and drag to build " + data.Name + " floor.");
@@ -1120,7 +1122,7 @@ namespace DwarfCorp.GameStates
                                 data.NumRepeats = buildInfo.GetNumRepeats();
                                 Master.Faction.RoomBuilder.CurrentRoomData = null;
                                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                                Master.Faction.WallBuilder.CurrentVoxelType = null;
+                                Master.Faction.WallBuilder.CurrentVoxelType = 0;
                                 Master.Faction.CraftBuilder.IsEnabled = true;
                                 Master.Faction.CraftBuilder.CurrentCraftType = data;
                                 if (Master.Faction.CraftBuilder.CurrentCraftBody != null)
@@ -2098,11 +2100,13 @@ namespace DwarfCorp.GameStates
 
         public void AutoSave()
         {
+            bool paused = World.Paused;
             World.Save(
                     String.Format("{0}_{1}", Overworld.Name, World.GameID),
                     (success, exception) =>
                     {
                         World.MakeAnnouncement(success ? "File autosaved." : "Autosave failed - " + exception.Message);
+                        World.Paused = paused;
                     });
         }
     }

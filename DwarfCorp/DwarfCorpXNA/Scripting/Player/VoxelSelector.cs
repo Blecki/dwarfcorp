@@ -84,6 +84,11 @@ namespace DwarfCorp
         /// <returns>List of voxels selected.</returns>
         public delegate List<VoxelHandle> OnRightReleased();
 
+        public void Clear()
+        {
+            SelectionBuffer.Clear();
+        }
+
         /// <summary>
         /// Called whenever a list of voxels have been selected.
         /// </summary>

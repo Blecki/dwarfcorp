@@ -164,7 +164,7 @@ namespace DwarfCorp
         public void RenderStars(DwarfTime time, GraphicsDevice device, Camera camera, Viewport viewPort)
         {
             Matrix rot = Matrix.CreateRotationZ((-CosTime + 0.5f * (float)Math.PI));
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
+            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
             foreach (var star in StarPositions)
             {
                 var
@@ -203,7 +203,7 @@ namespace DwarfCorp
             Vector3 unProjectSun = viewPort.Project(SunPosition, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
             Vector3 unProjectMoon = viewPort.Project(moonPosition, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
 
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
+            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
 
             if (cameraFrameSun.Z > 0.999f)
             {

@@ -206,7 +206,9 @@ namespace DwarfCorp.Gui.Widgets
 
             World.DefaultShader.EnbleFog = true;
 
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, null, RasterizerState.CullNone);
+            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate, 
+                BlendState.NonPremultiplied, SamplerState.PointClamp, null, RasterizerState.CullNone, null, 
+                Matrix.Identity);
             Viewport viewPort = new Viewport(RenderTarget.Bounds);
 
             foreach (var icon in World.ComponentManager.GetMinimapIcons())

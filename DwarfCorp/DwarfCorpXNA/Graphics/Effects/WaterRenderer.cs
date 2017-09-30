@@ -87,18 +87,11 @@ namespace DwarfCorp
 
         public WaterRenderer(GraphicsDevice device)
         {
-            int width = device.Viewport.Width / 4;
-            int height = device.Viewport.Height / 4;
-
-            while(width <= 0 || height <= 0)
-            {
-                width = device.Viewport.Width / 4;
-                height = device.Viewport.Height / 4;
-                Thread.Sleep(100);
-            }
-
-            ReflectionMap = new Texture2D(device, width, height);
             PresentationParameters pp = device.PresentationParameters;
+
+            int width = Math.Min(pp.BackBufferWidth / 4, 4096);
+            int height = Math.Min(pp.BackBufferHeight / 4, 4096);
+            ReflectionMap = new Texture2D(device, width, height);
             reflectionRenderTarget = new RenderTarget2D(device, width, height, false, pp.BackBufferFormat, pp.DepthStencilFormat);
             ShoreMap = TextureManager.GetTexture(ContentPaths.Gradients.shoregradient);
         }

@@ -161,13 +161,25 @@ namespace DwarfCorp.GameStates
                         : World.LoadingException.ToString();
                     GuiRoot.MouseVisible = true;
                     GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
+                    DwarfTime.LastTime.IsPaused = false;
+                    DwarfTime.LastTime.Speed = 1.0f;
+                    World = null;
+                    
                     GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm()
                     {
                         CancelText = "",
                         Text = "Loading failed: " + exceptionText,
+                        OnClick = (s, a) =>
+                        {
+                            StateManager.PopState();
+                            StateManager.ClearState();
+                            StateManager.PushState(new MainMenuState(Game, StateManager));
+                        },
                         OnClose = (s) =>
                         {
-                           StateManager.PopState();
+                            StateManager.PopState();
+                            StateManager.ClearState();
+                            StateManager.PushState(new MainMenuState(Game, StateManager));
                         },
                         Rect = GuiRoot.RenderData.VirtualScreen
                     });

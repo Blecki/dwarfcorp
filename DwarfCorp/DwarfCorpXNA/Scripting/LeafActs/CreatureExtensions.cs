@@ -229,6 +229,7 @@ namespace DwarfCorp
         {
             foreach (var resource in agent.Inventory.Resources)
             {
+                resource.MarkedForRestock = true;
                 agent.AI.GatherManager.StockOrders.Add(new GatherManager.StockOrder()
                 {
                     Destination = null,

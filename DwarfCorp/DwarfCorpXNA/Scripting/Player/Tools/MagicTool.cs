@@ -63,7 +63,7 @@ namespace DwarfCorp
 
         public override void OnEnd()
         {
-
+            Player.VoxSelector.Clear();
         }
 
         void MagicMenu_SpellTriggered(Spell spell)

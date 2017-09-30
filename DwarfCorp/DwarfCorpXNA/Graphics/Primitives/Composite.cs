@@ -209,14 +209,14 @@ namespace DwarfCorp
             }
         }
 
-        public void RenderToTarget(GraphicsDevice device, SpriteBatch batch)
+        public void RenderToTarget(GraphicsDevice device)
         {
             if (!HasRendered && CurrentFrames.Count > 0)
             {
                 device.SetRenderTarget(Target);
                 device.Clear(ClearOptions.Target, Color.Transparent, 1.0f, 0);
-                batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp,
-                    DepthStencilState.None, RasterizerState.CullNone);
+                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp,
+                    DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
                 foreach (KeyValuePair<Frame, Point> framePair in CurrentFrames)
                 {
                     Frame frame = framePair.Key;
@@ -227,13 +227,13 @@ namespace DwarfCorp
                     {
                         int y = FrameSize.Y - images[i].SourceRect.Height;
                         int x = (FrameSize.X/2) - images[i].SourceRect.Width/2;
-                        batch.Draw(images[i].Image,
+                        DwarfGame.SpriteBatch.Draw(images[i].Image,
                             new Rectangle(currentOffset.X*FrameSize.X + x, currentOffset.Y*FrameSize.Y + y,
                                 images[i].SourceRect.Width, images[i].SourceRect.Height), images[i].SourceRect,
                             frame.Tints[i]);
                     }
                 }
-                batch.End();
+                DwarfGame.SpriteBatch.End();
                 device.SetRenderTarget(null);
                 HasRendered = true;
             }
@@ -322,11 +322,11 @@ namespace DwarfCorp
             }
         }
 
-        public static void Render(GraphicsDevice device, SpriteBatch batch)
+        public static void Render(GraphicsDevice device)
         {
             foreach (var composite in Composites)
             {
-                composite.Value.RenderToTarget(device, batch);
+                composite.Value.RenderToTarget(device);
             }
         }
     }

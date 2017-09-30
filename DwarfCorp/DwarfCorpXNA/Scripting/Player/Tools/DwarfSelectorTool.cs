@@ -143,6 +143,11 @@ namespace DwarfCorp
 
         bool IsDwarf(Body body)
         {
+            if (body == null)
+            {
+                return false;
+            }
+
             var dwarves = body.EnumerateAll().OfType<Creature>().ToList();
 
             if (dwarves.Count <= 0)

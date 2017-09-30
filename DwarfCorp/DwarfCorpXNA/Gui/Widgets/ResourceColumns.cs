@@ -68,7 +68,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 MinimumSize = new Point(0, 32),
                 AutoLayout = AutoLayout.DockBottom,
-                Font = "font8",
+                Font = "font10",
                 TextColor = new Vector4(0, 0, 0, 1),
                 Text = String.Format(MoneyLabel + ": {0}", TradeEntity.Money.ToString()),
                 TextHorizontalAlign = HorizontalAlign.Center,
@@ -176,9 +176,19 @@ namespace DwarfCorp.Gui.Widgets
         }
 
 
+        private List<ResourceAmount> Clone(List<ResourceAmount> resources)
+        {
+            List<ResourceAmount> toReturn = new List<ResourceAmount>();
+            foreach(var resource in resources)
+            {
+                toReturn.Add(new ResourceAmount(resource));
+            }
+            return toReturn;
+        }
+
         public override void Construct()
         {
-            SourceResources = new List<ResourceAmount>(TradeEntity.Resources);
+            SourceResources = Clone(TradeEntity.Resources);
 
             Reconstruct(SourceResources, SelectedResources, 0);
         }
@@ -223,6 +233,7 @@ namespace DwarfCorp.Gui.Widgets
                 TextColor = Resource.NumResources > 0 ? Color.Black.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
                 TextVerticalAlign = VerticalAlign.Center,
                 HoverTextColor = Color.DarkRed.ToVector4(),
+                Font = "font10",
                 ChangeColorOnHover = true
             });
 
@@ -235,6 +246,7 @@ namespace DwarfCorp.Gui.Widgets
                 TextColor = Resource.NumResources > 0 ? Color.Black.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
                 TextVerticalAlign = VerticalAlign.Center,
                 HoverTextColor = Color.DarkRed.ToVector4(),
+                Font = "font10",
                 ChangeColorOnHover = true
             });
 

@@ -66,7 +66,7 @@ namespace DwarfCorp
 
         public override void OnEnd()
         {
-
+            Player.VoxSelector.Clear();
         }
 
 

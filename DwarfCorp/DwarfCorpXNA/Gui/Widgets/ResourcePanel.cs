@@ -76,26 +76,29 @@ namespace DwarfCorp.Gui.Widgets
 
         private class AggregatedResource
         {
-            public ResourceAmount Amount;
+            public Pair<ResourceAmount> Amount;
             public List<string> Members = new List<string>(); 
         }
         // Aggregates resources by tags so that there aren't as many to display.
-        private List<AggregatedResource> AggregateResources(IEnumerable<KeyValuePair<string, ResourceAmount>> resources)
+        private List<AggregatedResource> AggregateResources(IEnumerable<KeyValuePair<string, Pair<ResourceAmount>>> resources)
         {
             List<AggregatedResource> aggregated = new List<AggregatedResource>();
             foreach (var pair in resources)
             {
-                var resource = ResourceLibrary.GetResourceByName(pair.Value.ResourceType);
-                var existing = aggregated.FirstOrDefault(existingResource => AreListsEqual(ResourceLibrary.GetResourceByName(existingResource.Amount.ResourceType).Tags, resource.Tags));
+                var resource = ResourceLibrary.GetResourceByName(pair.Value.First.ResourceType);
+                var existing = aggregated.FirstOrDefault(existingResource => 
+                AreListsEqual(ResourceLibrary.GetResourceByName(existingResource.Amount.First.ResourceType).Tags, resource.Tags));
 
                 if (existing != null)
                 {
-                    existing.Amount.NumResources += pair.Value.NumResources;
-                    existing.Members.Add(String.Format("{0}x {1}", pair.Value.NumResources, pair.Value.ResourceType));
+                    existing.Amount.First.NumResources += pair.Value.First.NumResources;
+                    existing.Amount.Second.NumResources += pair.Value.Second.NumResources;
+                    existing.Members.Add(String.Format("{0}x {1}", pair.Value.First.NumResources, pair.Value.First.ResourceType));
                 }
                 else
                 {
-                    aggregated.Add(new AggregatedResource(){Amount = pair.Value, Members = new List<string>(){String.Format("{0}x {1}", pair.Value.NumResources, pair.Value.ResourceType)}});
+                    aggregated.Add(new AggregatedResource(){Amount = pair.Value,
+                        Members = new List<string>(){String.Format("{0}x {1}", pair.Value.First.NumResources, pair.Value.First.ResourceType)}});
                 }
             }
             return aggregated;
@@ -112,10 +115,10 @@ namespace DwarfCorp.Gui.Widgets
                 Children.Clear();
                 var aggregated =
                     AggregateResources(
-                        Master.Faction.ListResourcesInStockpilesPlusMinions().Where(p => p.Value.NumResources > 0));
+                        Master.Faction.ListResourcesInStockpilesPlusMinions().Where(p => p.Value.First.NumResources > 0 || p.Value.Second.NumResources > 0));
                 foreach (var resource in aggregated)
                 {
-                    var resourceTemplate = ResourceLibrary.GetResourceByName(resource.Amount.ResourceType);
+                    var resourceTemplate = ResourceLibrary.GetResourceByName(resource.Amount.First.ResourceType);
 
                     // Don't display resources with no value (a hack, yes!). This is to prevent "special" resources from getting traded.
                     if (resourceTemplate.MoneyValue == 0.0m)
@@ -152,7 +155,12 @@ namespace DwarfCorp.Gui.Widgets
                         }
                     }
 
-                    icon.Children.Last().Text = "S" + resource.Amount.NumResources.ToString();
+                    string text = "S" + resource.Amount.First.NumResources.ToString();
+                    if (resource.Amount.Second.NumResources > 0)
+                    {
+                        text += "\nI" + resource.Amount.Second.NumResources.ToString();
+                    }
+                    icon.Children.Last().Text = text;
                     icon.Invalidate();                    
                 }
 
