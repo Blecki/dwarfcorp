@@ -2100,11 +2100,13 @@ namespace DwarfCorp.GameStates
 
         public void AutoSave()
         {
+            bool paused = World.Paused;
             World.Save(
                     String.Format("{0}_{1}", Overworld.Name, World.GameID),
                     (success, exception) =>
                     {
                         World.MakeAnnouncement(success ? "File autosaved." : "Autosave failed - " + exception.Message);
+                        World.Paused = paused;
                     });
         }
     }
