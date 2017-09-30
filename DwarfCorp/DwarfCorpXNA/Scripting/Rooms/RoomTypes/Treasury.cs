@@ -194,7 +194,7 @@ namespace DwarfCorp
 
 
         public bool RemoveMoney(Vector3 dwarfPos, DwarfBux money)
-        {
+        { 
             if (Money < money)
             {
                 return false;

@@ -216,6 +216,7 @@ namespace DwarfCorp.Gui.Widgets
                     AutoLayout = AutoLayout.FloatBottomLeft,
                     OnClick = (sender, args) =>
                     {
+                        (sender.Parent as EmployeeInfo).Employee.World.Tutorial("follow dwarf");
                         (sender.Parent as EmployeeInfo).Employee.IsPosessed = true;
                     }
                 });

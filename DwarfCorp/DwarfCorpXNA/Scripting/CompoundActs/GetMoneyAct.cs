@@ -37,6 +37,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     /// <summary>
     /// A creature finds money at a treasury and puts it in his/her wallet.
     /// </summary>
@@ -65,6 +66,45 @@ namespace DwarfCorp
             }
         }
 
+        public IEnumerable<Act.Status> GetNextTreasury()
+        {
+            List<Treasury> treasuries = new List<Treasury>(Faction.Treasurys);
+            treasuries.Sort((a, b) => a == b ? 0 : dist(a) < dist(b) ? -1 : 1);
+
+            foreach (var zone in treasuries)
+            {
+                if (zone.Money > 0)
+                {
+                    Agent.Blackboard.SetData<Treasury>("Treasury", zone);
+                    yield return Act.Status.Success;
+                    yield break;
+                }
+            }
+            Agent.Blackboard.SetData<Treasury>("Treasury", null);
+            yield return Act.Status.Fail;
+        }
+
+        public IEnumerable<Act.Status> SetMoneyNeeded(DwarfBux money)
+        {
+            Agent.Blackboard.SetData<DwarfBux>("MoneyNeeded", money);
+            yield return Act.Status.Success;
+        }
+
+        public IEnumerable<Act.Status> HasAllMoney()
+        {
+            if (!Agent.Blackboard.Has("MoneyNeeded"))
+            {
+                yield return Act.Status.Success;
+                yield break;
+            }
+            var needed = Agent.Blackboard.GetData<DwarfBux>("MoneyNeeded");
+            if (needed <= 0)
+            {
+                yield return Act.Status.Success;
+            }
+            yield return Act.Status.Fail;
+        }
+
         private float dist(Zone zone)
         {
             return (zone.GetBoundingBox().Center() - Creature.AI.Position).LengthSquared();
@@ -72,32 +112,14 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
-            
-            List<Treasury> treasuries = new List<Treasury>(Faction.Treasurys);
-            treasuries.Sort((a, b) => a == b? 0 : dist(a) < dist(b) ? -1 : 1);
-            if (treasuries.Count == 0)
-            {
-                Tree = null;
-                return;
-            }
+            Agent.Blackboard.SetData<DwarfBux>("MoneyNeeded", Money);
 
-            List<Act> plan = new List<Act>();
+            Tree = new WhileLoop(new Sequence(new Wrap(() => GetNextTreasury()),
+                                              new GoToZoneAct(Agent, "Treasury"),
+                                              new StashMoneyAct(Agent, "MoneyNeeded", "Treasury")),
+                                 new Not(new Wrap(() => HasAllMoney())
+                ))         ;
 
-            DwarfBux moneySum = 0m;
-
-            foreach (var zone in treasuries)
-            {
-                DwarfBux moneyGot = Math.Min(Money, zone.Money);
-                moneySum += moneyGot;
-                plan.Add(new GoToZoneAct(Agent, zone));
-                plan.Add(new StashMoneyAct(Agent, moneyGot) {Zone = zone});
-                if (moneySum >= Money)
-                {
-                    break;
-                }
-            }
-
-            Tree = new Sequence(plan);
             base.Initialize();
 
         }
