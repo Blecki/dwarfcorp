@@ -46,7 +46,7 @@ namespace DwarfCorp
     public class Inventory : Body
     {
         //public ResourceContainer Resources { get; set; }
-        public struct InventoryItem
+        public class InventoryItem
         {
             public ResourceLibrary.ResourceType Resource;
             public bool MarkedForRestock;

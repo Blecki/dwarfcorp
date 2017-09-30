@@ -707,6 +707,16 @@ namespace DwarfCorp
                 return new FindLandTask();
             }
 
+            if (!IsPosessed && Creature.Inventory.Resources.Count > 0)
+            {
+                foreach (var status in Creature.RestockAll())
+                {
+
+                }
+
+            }
+            
+
             if (!IsPosessed && GatherManager.VoxelOrders.Count == 0 &&
                 (GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile()) &&
                 (GatherManager.StockMoneyOrders.Count == 0 || !Faction.HasFreeTreasury())
