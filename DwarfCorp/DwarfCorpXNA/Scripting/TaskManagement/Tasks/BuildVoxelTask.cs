@@ -186,9 +186,10 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
-        public bool HasResources(CreatureAI creature, ResourceAmount resources)
+        public bool Validate(CreatureAI creature, VoxelHandle voxel, ResourceAmount resources)
         {
-            return creature.Creature.Inventory.HasResource(resources);
+            return creature.Faction.WallBuilder.IsDesignation(voxel) && 
+                creature.Creature.Inventory.HasResource(resources);
         }
 
         public override Act CreateScript(Creature agent)
@@ -230,7 +231,8 @@ namespace DwarfCorp
             foreach (var pair in feasibleVoxels)
             {
                 int local = i;
-                children.Add(new Select(new Sequence(new Domain(() => HasResources(agent.AI, resources[local]), 
+                var localVox = pair.Key;
+                children.Add(new Select(new Sequence(new Domain(() => Validate(agent.AI, pair.Key, resources[local]), 
                              new GoToVoxelAct(pair.Key, PlanAct.PlanType.Radius, agent.AI, 4.0f)),
                              new PlaceVoxelAct(pair.Key.Coordinate, agent.AI, resources[i])),
                              new Wrap(Succeed)));

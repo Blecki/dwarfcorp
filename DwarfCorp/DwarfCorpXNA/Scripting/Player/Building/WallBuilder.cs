@@ -211,7 +211,7 @@ namespace DwarfCorp
         {
             DepthStencilState state = graphics.DepthStencilState;
             graphics.DepthStencilState = DepthStencilState.DepthRead;
-            World.Master.VoxSelector.SelectionType = CurrentMouse == InputManager.MouseButton.Left ? SelectionType : VoxelSelectionType.SelectFilled;
+           
             float t = (float)gameTime.TotalGameTime.TotalSeconds;
             float st = (float) Math.Sin(t * 4) * 0.5f + 0.5f;
             effect.MainTexture = World.ChunkManager.ChunkData.Tilemap;
