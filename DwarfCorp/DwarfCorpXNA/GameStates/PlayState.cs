@@ -978,6 +978,7 @@ namespace DwarfCorp.GameStates
                             {
                                 Master.Faction.RoomBuilder.CurrentRoomData = null;
                                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+                                Master.Faction.WallBuilder.SelectionType = Master.VoxSelector.SelectionType;
                                 Master.Faction.WallBuilder.CurrentVoxelType = (byte)data.ID;
                                 Master.Faction.CraftBuilder.IsEnabled = false;
                                 ChangeTool(GameMaster.ToolMode.Build);
@@ -1026,6 +1027,7 @@ namespace DwarfCorp.GameStates
                             {
                                 Master.Faction.RoomBuilder.CurrentRoomData = null;
                                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+                                Master.Faction.WallBuilder.SelectionType = Master.VoxSelector.SelectionType;
                                 Master.Faction.WallBuilder.CurrentVoxelType = (byte)data.ID;
                                 Master.Faction.CraftBuilder.IsEnabled = false;
                                 ChangeTool(GameMaster.ToolMode.Build);

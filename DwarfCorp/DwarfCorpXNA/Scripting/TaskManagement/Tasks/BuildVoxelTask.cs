@@ -186,6 +186,11 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
+        public bool HasResources(CreatureAI creature, ResourceAmount resources)
+        {
+            return creature.Creature.Inventory.HasResource(resources);
+        }
+
         public override Act CreateScript(Creature agent)
         {
              List<KeyValuePair<VoxelHandle, string>> feasibleVoxels = new List<KeyValuePair<VoxelHandle, string>>();
@@ -224,8 +229,9 @@ namespace DwarfCorp
             int i = 0;
             foreach (var pair in feasibleVoxels)
             {
-
-                children.Add(new Select(new Sequence(new GoToVoxelAct(pair.Key, PlanAct.PlanType.Radius, agent.AI, 4.0f),
+                int local = i;
+                children.Add(new Select(new Sequence(new Domain(() => HasResources(agent.AI, resources[local]), 
+                             new GoToVoxelAct(pair.Key, PlanAct.PlanType.Radius, agent.AI, 4.0f)),
                              new PlaceVoxelAct(pair.Key.Coordinate, agent.AI, resources[i])),
                              new Wrap(Succeed)));
                 i++;

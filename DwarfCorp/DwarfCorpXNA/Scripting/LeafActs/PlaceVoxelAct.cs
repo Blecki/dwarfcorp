@@ -68,6 +68,11 @@ namespace DwarfCorp
                 yield break;
             }
 
+            if (!Creature.Inventory.HasResource(Resource))
+            {
+                yield return Status.Fail;
+            }
+
             foreach (var status in Creature.HitAndWait(1.0f, true, () => Location.ToVector3()))
             {
                 if (status == Status.Running)

@@ -84,7 +84,6 @@ namespace DwarfCorp
             v.TypeID = Type;
             v.WaterCell = new WaterCell();
             v.Health = VoxelLibrary.GetVoxelType(Type).StartingHealth;
-            
             World.ParticleManager.Trigger("puff", v.WorldPosition, Color.White, 20);
 
             foreach(Physics phys in manager.World.CollisionManager.EnumerateIntersectingObjects(Vox.GetBoundingBox(), CollisionManager.CollisionType.Dynamic).OfType<Physics>())
@@ -115,9 +114,12 @@ namespace DwarfCorp
         public byte CurrentVoxelType { get; set; }
         private List<VoxelHandle> Selected { get; set; }
         private bool verified = false;
-            [JsonIgnore]
+        [JsonIgnore]
         public WorldManager World { get; set; }
-
+        [JsonIgnore]
+        private InputManager.MouseButton CurrentMouse = InputManager.MouseButton.Left;
+        [JsonIgnore]
+        public VoxelSelectionType SelectionType = VoxelSelectionType.SelectEmpty;
         [OnDeserialized]
         public void OnDeserializing(StreamingContext ctx)
         {
@@ -209,7 +211,7 @@ namespace DwarfCorp
         {
             DepthStencilState state = graphics.DepthStencilState;
             graphics.DepthStencilState = DepthStencilState.DepthRead;
-            
+            World.Master.VoxSelector.SelectionType = CurrentMouse == InputManager.MouseButton.Left ? SelectionType : VoxelSelectionType.SelectFilled;
             float t = (float)gameTime.TotalGameTime.TotalSeconds;
             float st = (float) Math.Sin(t * 4) * 0.5f + 0.5f;
             effect.MainTexture = World.ChunkManager.ChunkData.Tilemap;
@@ -240,16 +242,21 @@ namespace DwarfCorp
 
             effect.VertexColorTint = verified ? new Color(0.0f, 1.0f, 0.0f, 0.5f * st + 0.45f) : new Color(1.0f, 0.0f, 0.0f, 0.5f * st + 0.45f);
             Vector3 offset = World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? Vector3.Zero : Vector3.Up * 0.15f;
-            foreach (var voxel in Selected)
+            if (CurrentMouse == InputManager.MouseButton.Left)
             {
-  
-                effect.World = Matrix.CreateTranslation(voxel.WorldPosition + offset);
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                foreach (var voxel in Selected)
                 {
-                    pass.Apply();
-                    VoxelLibrary.GetPrimitive(CurrentVoxelType).Render(graphics);
+
+                    effect.World = Matrix.CreateTranslation(voxel.WorldPosition + offset);
+                    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                    {
+                        pass.Apply();
+                        VoxelLibrary.GetPrimitive(CurrentVoxelType).Render(graphics);
+                    }
                 }
             }
+
+            
 
             effect.LightRampTint = Color.White;
             effect.VertexColorTint = Color.White;
@@ -263,14 +270,30 @@ namespace DwarfCorp
                 return;
             verified = true;
             //verified = Verify(refs, CurrentVoxelType.ResourceToRelease);
-
-            if (!verified)
+            var mouse = Mouse.GetState();
+            if (mouse.LeftButton == ButtonState.Pressed)
             {
-                World.ShowToolPopup("Can't build this! Need at least " + refs.Count + " " + ResourceLibrary.Resources[VoxelLibrary.GetVoxelType(CurrentVoxelType).ResourceToRelease].ResourceName + ".");
+                CurrentMouse = InputManager.MouseButton.Left;
             }
             else
             {
-                World.ShowToolPopup("Release to build.");
+                CurrentMouse = InputManager.MouseButton.Right;
+            }
+
+            if (CurrentMouse == InputManager.MouseButton.Left)
+            {
+                if (!verified)
+                {
+                    World.ShowToolPopup("Can't build this! Need at least " + refs.Count + " " + ResourceLibrary.Resources[VoxelLibrary.GetVoxelType(CurrentVoxelType).ResourceToRelease].ResourceName + ".");
+                }
+                else
+                {
+                    World.ShowToolPopup("Release to build.");
+                }
+            }
+            else
+            {
+                World.ShowToolPopup("Release to cancel.");
             }
 
             Selected.Clear();
@@ -310,7 +333,8 @@ namespace DwarfCorp
                         return;
                     }
                     List<Task> assignments = new List<Task>();
-                    var validRefs = refs.Where(r => !IsDesignation(r) && World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? r.IsEmpty : !r.IsEmpty).ToList();
+                    var validRefs = refs.Where(r => !IsDesignation(r) && 
+                    World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? r.IsEmpty : !r.IsEmpty).ToList();
 
                     /*
                     if (!Verify(validRefs, CurrentVoxelType.ResourceToRelease))
