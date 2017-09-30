@@ -32,16 +32,10 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
-using DwarfCorp.GameStates;
-using Newtonsoft.Json.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.IO.Compression;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
@@ -59,20 +53,8 @@ namespace DwarfCorp
 
             public MetaData Metadata { get; set; }
 
-            public class WorldData
-            {
-                public static string Extension = "world";
-                public OrbitCamera Camera { get; set; }
-                public ComponentManager.ComponentSaveData Components { get; set; }
-                public List<Goals.Goal> Goals { get; set; }
-                public Tutorial.TutorialSaveData TutorialSaveData { get; set; }
-                public Diplomacy Diplomacy { get; set; }
-                public FactionLibrary Factions;
-                public Dictionary<ResourceLibrary.ResourceType, Resource> Resources { get; set; }
-                public DesignationDrawer Designations { get; set; }
-            }
 
-            public WorldData Worlddata { get; set; }
+            public PlayData Worlddata { get; set; }
 
             public int GameID { get; set; }
 
@@ -92,12 +74,7 @@ namespace DwarfCorp
                 }
 
                 FileUtils.SaveJSon(this.Metadata, directory + ProgramData.DirChar + "Metadata." + MetaData.Extension, false);
-                FileUtils.SaveJSon(this.Worlddata, directory + ProgramData.DirChar + "World." + WorldData.Extension, DwarfGame.COMPRESSED_BINARY_SAVES);
-                /*
-                FileUtils.SaveJSon(this, directory + ProgramData.DirChar + "Data." +
-                    (DwarfGame.COMPRESSED_BINARY_SAVES ? GameFile.CompressedExtension : GameFile.Extension), DwarfGame.COMPRESSED_BINARY_SAVES);
-                */
-
+                FileUtils.SaveJSon(this.Worlddata, directory + ProgramData.DirChar + "World." + PlayData.Extension, DwarfGame.COMPRESSED_BINARY_SAVES);
             }
         }
 
@@ -121,17 +98,7 @@ namespace DwarfCorp
                     Slice = (int)world.ChunkManager.ChunkData.MaxViewingLevel,
                     NumChunks = world.ChunkManager.WorldSize
                 },
-                Worlddata =  new GameData.WorldData()
-                {
-                    Camera = world.Camera,
-                    Components = world.ComponentManager.GetSaveData(),
-                    Goals = world.GoalManager.EnumerateGoals().ToList(),
-                    TutorialSaveData = world.TutorialManager.GetSaveData(),
-                    Diplomacy = world.Diplomacy,
-                    Factions = world.Factions,
-                    Resources = ResourceLibrary.Resources,
-                    Designations = world.DesignationDrawer,
-                },
+                Worlddata =  PlayData.CreateFromWorld(world),
                 ChunkData = new List<ChunkFile>(),
             };
 
@@ -193,12 +160,12 @@ namespace DwarfCorp
 
         public bool ReadWorld(string filePath, WorldManager world)
         {
-            string[] worldFiles = System.IO.Directory.GetFiles(filePath, "*." + GameData.WorldData.Extension);
+            string[] worldFiles = System.IO.Directory.GetFiles(filePath, "*." + PlayData.Extension);
 
             if (worldFiles.Length > 0)
             {
                 string worldFile = worldFiles[0];
-                Data.Worlddata = FileUtils.LoadJson<GameData.WorldData>(worldFile, DwarfGame.COMPRESSED_BINARY_SAVES,
+                Data.Worlddata = FileUtils.LoadJson<PlayData>(worldFile, DwarfGame.COMPRESSED_BINARY_SAVES,
                     world);
             }
             else
@@ -246,63 +213,6 @@ namespace DwarfCorp
         {
             Data.SaveToDirectory(filePath);
             return true;
-        }
-
-        public class MetaData 
-        {
-            public string OverworldFile { get; set; }
-            public float WorldScale { get; set; }
-            public Vector2 WorldOrigin { get; set; }
-            public float TimeOfDay { get; set; }
-            public int GameID { get; set; }
-            public int Slice { get; set; }
-            public WorldTime Time { get; set; }
-            public Point3 NumChunks { get; set; }
-
-            public static string Extension = "meta";
-            public static string CompressedExtension = "zmeta";
-
-            public MetaData(string file, bool compressed)
-            {
-                ReadFile(file, compressed);
-            }
-
-
-            public MetaData()
-            {
-            }
-
-            public void CopyFrom(MetaData file)
-            {
-                WorldScale = file.WorldScale;
-                WorldOrigin = file.WorldOrigin;
-                TimeOfDay = file.TimeOfDay;
-                GameID = file.GameID;
-                OverworldFile = file.OverworldFile;
-                Time = file.Time;
-                Slice = file.Slice;
-                NumChunks = file.NumChunks;
-            }
-
-            public  bool ReadFile(string filePath, bool isCompressed)
-            {
-                MetaData file = FileUtils.LoadJson<MetaData>(filePath, isCompressed);
-
-                if(file == null)
-                {
-                    return false;
-                }
-                else
-                {
-                    CopyFrom(file);
-                    return true;
-                }
-            }
-
-            public  bool WriteFile(string filePath, bool compress)
-            {
-                return FileUtils.SaveJSon(this, filePath, compress);
-            }
         }
 
         public static string GetLatestSaveFile()

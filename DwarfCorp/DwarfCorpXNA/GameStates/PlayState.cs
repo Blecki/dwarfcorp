@@ -2072,7 +2072,8 @@ namespace DwarfCorp.GameStates
                 (sender, args) =>
                 {
                     var saveSystem = new Saving.Saver();
-                    var nugget = saveSystem.SaveObject(World);
+                    var playData = PlayData.CreateFromWorld(World);
+                    var nugget = saveSystem.SaveObject(playData);
                     GuiRoot.ShowModalPopup(new Popup
                     {
                         Text = "Generic save objects:\n" + String.Join("\n", saveSystem.GetGenericallySavedTypes()),

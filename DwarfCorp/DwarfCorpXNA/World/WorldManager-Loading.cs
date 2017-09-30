@@ -310,8 +310,6 @@ namespace DwarfCorp
                         }
                     }
 
-                    DesignationDrawer = gameFile.Data.Worlddata.Designations;
-
                     foreach (var resource in gameFile.Data.Worlddata.Resources)
                     {
                         if (!ResourceLibrary.Resources.ContainsKey(resource.Key))

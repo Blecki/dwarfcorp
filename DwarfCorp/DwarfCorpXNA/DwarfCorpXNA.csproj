@@ -131,6 +131,8 @@
     <Compile Include="AssetManagement\ContentPaths.cs" />
     <Compile Include="AssetManagement\GameSave\ChunkFile.cs" />
     <Compile Include="AssetManagement\GameSave\FileUtils.cs" />
+    <Compile Include="AssetManagement\GameSave\MetaData.cs" />
+    <Compile Include="AssetManagement\GameSave\PlayData.cs" />
     <Compile Include="AssetManagement\GameSave\GameFile.cs" />
     <Compile Include="AssetManagement\GameSave\JsonConverters\BoxConverter.cs" />
     <Compile Include="AssetManagement\GameSave\JsonConverters\ContentConverter.cs" />
