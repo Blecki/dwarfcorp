@@ -69,6 +69,7 @@ namespace DwarfCorp
             //    BuildPanel.Close();
             //BuildPanel = null;
             Player.Faction.CraftBuilder.IsEnabled = false;
+            Player.VoxSelector.Clear();
             Player.Faction.RoomBuilder.OnExit();
         }
 
@@ -126,5 +127,7 @@ namespace DwarfCorp
             Player.Faction.RoomBuilder.OnVoxelsDragged(voxels, button);
             Player.Faction.WallBuilder.VoxelDragged(voxels);
         }
+
+       
     }
 }

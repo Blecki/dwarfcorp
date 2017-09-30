@@ -110,6 +110,7 @@ namespace DwarfCorp
             {
                 Drawer3D.UnHighlightVoxel(guard.Vox);
             }
+            Player.VoxSelector.Clear();
         }
 
 
