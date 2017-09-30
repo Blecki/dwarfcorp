@@ -430,7 +430,7 @@ namespace DwarfCorp.GameStates
                 sender.Invalidate();
                 return;
             }
-            int newNum = Math.Max(factionResources[data.ResourceToRelease].NumResources - Master.Faction.WallBuilder.GetNumDesignations(data.ResourceToRelease), 0);
+            int newNum = Math.Max(factionResources[data.ResourceToRelease].First.NumResources - Master.Faction.WallBuilder.GetNumDesignations(data.ResourceToRelease), 0);
             if (newNum != numResources)
             {
                 sender.Text = newNum.ToString();
@@ -966,7 +966,7 @@ namespace DwarfCorp.GameStates
                             Icon = new Gui.TileReference("voxels", data.ID),
                             TextHorizontalAlign = HorizontalAlign.Right,
                             TextVerticalAlign = VerticalAlign.Bottom,
-                            Text = Master.Faction.ListResourcesInStockpilesPlusMinions()[data.ResourceToRelease].NumResources.ToString(),
+                            Text = Master.Faction.ListResourcesInStockpilesPlusMinions()[data.ResourceToRelease].First.NumResources.ToString(),
                             TextColor = Color.White.ToVector4(),
                             PopupChild = new BuildWallInfo
                             {
@@ -1015,7 +1015,7 @@ namespace DwarfCorp.GameStates
                             Icon = new Gui.TileReference("voxels", data.ID),
                             TextHorizontalAlign = HorizontalAlign.Right,
                             TextVerticalAlign = VerticalAlign.Bottom,
-                            Text = Master.Faction.ListResourcesInStockpilesPlusMinions()[data.ResourceToRelease].NumResources.ToString(),
+                            Text = Master.Faction.ListResourcesInStockpilesPlusMinions()[data.ResourceToRelease].First.NumResources.ToString(),
                             TextColor = Color.White.ToVector4(),
                             PopupChild = new BuildWallInfo
                             {

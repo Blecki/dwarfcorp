@@ -210,7 +210,7 @@ namespace DwarfCorp.Gui.Widgets
                 Layers = resourceInfo.GuiLayers,
                 AutoLayout = AutoLayout.DockLeft,
                 BackgroundColor = Resource.NumResources > 0 ? resourceInfo.Tint.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
-                Font = "font8",
+                Font = "font10-outline-numsonly",
                 TextColor = Color.Black.ToVector4(),
                 TextHorizontalAlign = HorizontalAlign.Right,
                 TextVerticalAlign = VerticalAlign.Bottom
