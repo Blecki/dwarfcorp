@@ -147,7 +147,7 @@ namespace DwarfCorp.GameStates
             GuiRoot.RootItem.AddChild(new Widget()
             {
                 Text = name,
-                Font = "outline-font",
+                Font = "font18-outline",
                 AutoLayout = AutoLayout.DockFill,
                 TextColor = Color.White.ToVector4(),
                 TextHorizontalAlign = HorizontalAlign.Center,

@@ -460,7 +460,7 @@ namespace DwarfCorp.GameStates
                 Rect = new Rectangle(48, 8, 256, 20),
                 Text = World.PlayerCompany.Information.Name,
                 AutoLayout = Gui.AutoLayout.None,
-                Font = "outline-font",
+                Font = "font18-outline",
                 TextColor = new Vector4(1, 1, 1, 1)
             });
 
@@ -489,7 +489,7 @@ namespace DwarfCorp.GameStates
             {
                 Rect = new Rectangle(48, 32, 128, 20),
                 AutoLayout = Gui.AutoLayout.DockFill,
-                Font = "outline-font",
+                Font = "font18-outline",
                 TextVerticalAlign = Gui.VerticalAlign.Center,
                 TextColor = new Vector4(1, 1, 1, 1),
                 Tooltip = "Amount of money in our treasury"
@@ -545,7 +545,7 @@ namespace DwarfCorp.GameStates
             LevelLabel = levelRow.AddChild(new Gui.Widget
             {
                 AutoLayout = Gui.AutoLayout.DockFill,
-                Font = "outline-font",
+                Font = "font18-outline",
                 OnLayout = (sender) => sender.Rect.X += 36,
                 TextVerticalAlign = Gui.VerticalAlign.Center,
                 TextColor = new Vector4(1, 1, 1, 1),
@@ -571,7 +571,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.FloatBottomRight,
                 TextHorizontalAlign = Gui.HorizontalAlign.Center,
                 MinimumSize = new Point(128, 20),
-                Font = "font",
+                Font = "font8",
                 TextColor = new Vector4(1, 1, 1, 1),
                 OnLayout = (sender) =>
                 {
@@ -748,7 +748,7 @@ namespace DwarfCorp.GameStates
                 Text = "\n\nPaused",
                 AutoLayout = Gui.AutoLayout.FloatCenter,
                 Tooltip = "(push " + ControlSettings.Mappings.Pause.ToString() + " to unpause)",
-                Font = "outline-font",
+                Font = "font18-outline",
                 TextColor = Color.White.ToVector4(),
                 MaximumSize = new Point(0, 0),
                 Hidden = true,
@@ -1044,7 +1044,7 @@ namespace DwarfCorp.GameStates
             var icon_BuildWall = new FlatToolTray.Icon
             {
                 Icon = null,
-                Font = "font",
+                Font = "font8",
                 KeepChildVisible = true,
                 ExpandChildWhenDisabled = true,
                 TextHorizontalAlign = HorizontalAlign.Center,
@@ -1059,7 +1059,7 @@ namespace DwarfCorp.GameStates
             var icon_BuildFloor = new FlatToolTray.Icon
             {
                 Icon = null,
-                Font = "font",
+                Font = "font8",
                 KeepChildVisible = true,
                 ExpandChildWhenDisabled = true,
                 TextHorizontalAlign = HorizontalAlign.Center,
@@ -1985,7 +1985,7 @@ namespace DwarfCorp.GameStates
             {
                 AutoLayout = Gui.AutoLayout.DockBottom,
                 Border = "border-thin",
-                Font = "font-hires",
+                Font = "font16",
                 Text = Name,
                 OnClick = OnClick,
                 Tooltip = Tooltip,
@@ -2014,7 +2014,7 @@ namespace DwarfCorp.GameStates
                 {
                     PausePanel = null;
                 },
-                Font = "font-hires"
+                Font = "font16"
             };
 
             GuiRoot.ConstructWidget(PausePanel);

@@ -66,7 +66,7 @@ namespace DwarfCorp.GameStates
                 Rect = GuiRoot.RenderData.VirtualScreen,
                 Border = "border-fancy",
                 Text = Settings.Name,
-                Font = "font-hires",
+                Font = "font16",
                 TextColor = new Vector4(0, 0, 0, 1),
                 Padding = new Gui.Margin(4, 4, 4, 4),
                 InteriorMargin = new Gui.Margin(24, 0, 0, 0),
@@ -85,7 +85,7 @@ namespace DwarfCorp.GameStates
                 Border = "border-button",
                 ChangeColorOnHover = true,
                 TextColor = new Vector4(0, 0, 0, 1),
-                Font = "font-hires",
+                Font = "font16",
                 AutoLayout = Gui.AutoLayout.DockTop,
                 OnClick = (sender, args) => RestartGeneration()
             });
@@ -96,7 +96,7 @@ namespace DwarfCorp.GameStates
                 Border = "border-button",
                 ChangeColorOnHover = true,
                 TextColor = new Vector4(0, 0, 0, 1),
-                Font = "font-hires",
+                Font = "font16",
                 AutoLayout = Gui.AutoLayout.DockTop,
                 OnClick = (sender, args) =>
                 {
@@ -122,7 +122,7 @@ namespace DwarfCorp.GameStates
                 Border = "border-button",
                 ChangeColorOnHover = true,
                 TextColor = new Vector4(0, 0, 0, 1),
-                Font = "font-hires",
+                Font = "font16",
                 AutoLayout = Gui.AutoLayout.DockTop,
                 OnClick = (sender, args) =>
                 {
@@ -142,7 +142,7 @@ namespace DwarfCorp.GameStates
                 Border = "border-button",
                 ChangeColorOnHover = true,
                 TextColor = new Vector4(0, 0, 0, 1),
-                Font = "font-hires",
+                Font = "font16",
                 AutoLayout = Gui.AutoLayout.DockTop,
                 OnClick = (sender, args) =>
                 {
@@ -157,7 +157,7 @@ namespace DwarfCorp.GameStates
                 Border = "border-button",
                 ChangeColorOnHover = true,
                 TextColor = new Vector4(0, 0, 0, 1),
-                Font = "font-hires",
+                Font = "font16",
                 AutoLayout = Gui.AutoLayout.DockBottom,
                 OnClick = (sender, args) =>
                 {
@@ -181,7 +181,7 @@ namespace DwarfCorp.GameStates
             {
                 Text = "Colony size",
                 AutoLayout = Gui.AutoLayout.DockTop,
-                Font = "font",
+                Font = "font8",
                 TextColor = new Vector4(0, 0, 0, 1)
             });
 
@@ -189,7 +189,7 @@ namespace DwarfCorp.GameStates
             {
                 AutoLayout = Gui.AutoLayout.DockTop,
                 Items = new List<string>(new string[] { "Small", "Medium", "Large" }),
-                Font = "font",
+                Font = "font8",
                 TextColor = new Vector4(0, 0, 0, 1),
                 OnSelectedIndexChanged = (sender) =>
                 {
@@ -216,7 +216,7 @@ namespace DwarfCorp.GameStates
             {
                 Text = "Difficulty",
                 AutoLayout = Gui.AutoLayout.DockTop,
-                Font = "font",
+                Font = "font8",
                 TextColor = new Vector4(0,0,0,1)
             });
 
@@ -225,7 +225,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockTop,
                 Items = Embarkment.EmbarkmentLibrary.Select(e => e.Key).ToList(),
                 TextColor = new Vector4(0, 0, 0, 1),
-                Font = "font",
+                Font = "font8",
                 OnSelectedIndexChanged = (sender) =>
                 {
                     Settings.InitalEmbarkment = Embarkment.EmbarkmentLibrary[(sender as Gui.Widgets.ComboBox).SelectedItem];
@@ -253,7 +253,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockBottom,
                 TextHorizontalAlign = Gui.HorizontalAlign.Center,
                 TextVerticalAlign = Gui.VerticalAlign.Center,
-                Font = "outline-font",
+                Font = "font18-outline",
                 TextColor = new Vector4(1,1,1,1)
             }) as Gui.Widgets.ProgressBar;
 

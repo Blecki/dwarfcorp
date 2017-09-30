@@ -77,7 +77,7 @@ namespace DwarfCorp.Gui
             {
                 if (!String.IsNullOrEmpty(_Font)) return _Font;
                 else if (Parent != null) return Parent.Font;
-                else return "font";
+                else return "font8";
             }
             set { _Font = value; }
         }

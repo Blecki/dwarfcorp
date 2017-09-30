@@ -150,7 +150,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.FloatTopLeft,
                 MinimumSize = new Point(128, 0),
                 OnSelectedIndexChanged = (sender) => UpdatePreview = true,
-                Font = "font",
+                Font = "font8",
                 TextColor = new Vector4(0, 0, 0, 1)
             }) as Gui.Widgets.ComboBox;
 
@@ -314,7 +314,7 @@ namespace DwarfCorp.GameStates
             DwarfGame.SpriteBatch.End();
 
 
-            var font = Root.GetTileSheet("font");
+            var font = Root.GetTileSheet("font8");
             var icon = Root.GetTileSheet("map-icons");
             var bkg = Root.GetTileSheet("basic");
             foreach (var tree in Trees)
@@ -415,7 +415,7 @@ namespace DwarfCorp.GameStates
                     Generator.worldData, PreviewTexture, Generator.Settings.SeaLevel);
 
                 var colorKeyEntries = style.GetColorKeys(Generator);
-                var font = Root.GetTileSheet("font");
+                var font = Root.GetTileSheet("font8");
                 var stringMeshes = new List<Gui.Mesh>();
                 var y = Rect.Y;
                 var maxWidth = 0;

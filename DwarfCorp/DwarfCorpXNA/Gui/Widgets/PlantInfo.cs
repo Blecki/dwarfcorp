@@ -28,7 +28,7 @@ namespace DwarfCorp.Gui.Widgets
             if (res.Tags.Contains(Resource.ResourceTags.BelowGroundPlant))
                 builder.AppendLine("* Grows below ground");
             builder.AppendLine("* Grows in soil");
-            Font = "font";
+            Font = "font8";
             Text = builder.ToString();
             TextColor = Color.Black.ToVector4();
         }

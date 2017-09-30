@@ -24,7 +24,7 @@ namespace DwarfCorp.Gui.Widgets
             builder.AppendLine(String.Format("Requires: {0}", ResourceLibrary.Resources[Data.ResourceToRelease].ResourceName));
             builder.Append("Click to build.");
             
-            Font = "font";
+            Font = "font8";
             Text = builder.ToString();
             TextColor = Color.Black.ToVector4();
         }

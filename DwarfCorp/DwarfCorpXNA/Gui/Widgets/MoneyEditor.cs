@@ -45,7 +45,7 @@ namespace DwarfCorp.Gui.Widgets
             AddChild(new Widget()
             {
                 AutoLayout = AutoLayout.DockLeft,
-                Font = "font-hires",
+                Font = "font16",
                 Text = "$",
                 TextVerticalAlign = VerticalAlign.Center,
                 TextHorizontalAlign = HorizontalAlign.Right,
@@ -108,7 +108,7 @@ namespace DwarfCorp.Gui.Widgets
             TextField = AddChild(new Gui.Widgets.EditableTextField
             {
                 AutoLayout = AutoLayout.DockFill,
-                Font = "font-hires",
+                Font = "font16",
                 TextColor = new Vector4(0, 0, 0, 1),
                 Text = "0",
                 BeforeTextChange = (sender, args) =>

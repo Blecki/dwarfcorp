@@ -64,7 +64,7 @@ namespace DwarfCorp.Gui.Widgets
                 Text = "Applicants",
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 20),
-                Font = "font-hires"
+                Font = "font16"
             });
 
 
@@ -99,7 +99,7 @@ namespace DwarfCorp.Gui.Widgets
                     Text = job.Value.Name,
                     MinimumSize = new Point(0, 15),
                     TextColor = Color.Black.ToVector4(),
-                    Font = "font",
+                    Font = "font8",
                     AutoLayout = AutoLayout.DockTop,
                     TextHorizontalAlign = HorizontalAlign.Center
                 });

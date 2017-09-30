@@ -68,7 +68,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 32),
-                Font = "font-hires"
+                Font = "font16"
             });
 
             LevelLabel = top.AddChild(new Widget
@@ -247,7 +247,7 @@ namespace DwarfCorp.Gui.Widgets
                 Label = Label,
                 SegmentCount = 10,
                 PercentageLabels = PercentageLabels,
-                Font = "font"
+                Font = "font8"
             }) as Gui.Widgets.TextProgressBar;
         }
 

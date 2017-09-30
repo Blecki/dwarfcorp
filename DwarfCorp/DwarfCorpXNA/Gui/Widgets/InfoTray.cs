@@ -24,7 +24,7 @@ namespace DwarfCorp.Gui.Widgets
         {
             Root.RegisterForUpdate(this);
 
-            Font = "font";
+            Font = "font8";
             TextColor = new Vector4(1, 1, 1, 1);
 
             OnUpdate += (sender, time) =>

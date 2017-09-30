@@ -65,7 +65,7 @@ namespace DwarfCorp.GameStates
 
             Tip = GuiRoot.RootItem.AddChild(new Gui.Widget
             {
-                Font = "outline-font",
+                Font = "font18-outline",
                 TextColor = new Vector4(1, 1, 1, 1),
                 MinimumSize = new Point(0, 128),
                 TextHorizontalAlign = Gui.HorizontalAlign.Center,
@@ -76,7 +76,7 @@ namespace DwarfCorp.GameStates
 
             LoadTicker = GuiRoot.RootItem.AddChild(new Gui.Widgets.InfoTicker
             {
-                Font = "font",
+                Font = "font8",
                 AutoLayout = Gui.AutoLayout.DockFill,
                 TextColor = new Vector4(1,1,1,1)
             }) as Gui.Widgets.InfoTicker;

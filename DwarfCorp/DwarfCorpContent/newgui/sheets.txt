@@ -7,29 +7,28 @@
 			"TileHeight": 348
 		},
 		{
-			"Name": "old-font",
-			"Texture": "newgui/font",
-			"TileWidth": 6,
-			"TileHeight": 8
-		},
-		{
-			"Name": "font",
-			"Texture": "newgui/font1-w",
+			"Name": "font8",
+			"Texture": "newgui/font-8px",
 			"Type": "VariableWidthFont"
 		},
 		{
-			"Name": "font-hires",
-			"Texture": "newgui/font1-hires",
+			"Name": "font10",
+			"Texture": "newgui/font-10px",
 			"Type": "VariableWidthFont"
 		},
 		{
-			"Name": "font2x",
-			"Texture": "newgui/font1-w-2x",
+			"Name": "font14",
+			"Texture": "newgui/font-14px",
 			"Type": "VariableWidthFont"
 		},
 		{
-			"Name": "outline-font",
-			"Texture": "newgui/font1-hires-outline-aa",
+			"Name": "font16",
+			"Texture": "newgui/font-16px",
+			"Type": "VariableWidthFont"
+		},
+		{
+			"Name": "font18-outline",
+			"Texture": "newgui/font-18px-outline",
 			"Type": "VariableWidthFont"
 		},
 		{

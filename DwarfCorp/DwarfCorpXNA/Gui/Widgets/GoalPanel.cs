@@ -43,7 +43,7 @@ namespace DwarfCorp.Gui.Widgets
             GoalList = left.AddChild(new Gui.Widgets.ListView
             {
                 AutoLayout = AutoLayout.DockFill,
-                Font = "font-hires",
+                Font = "font16",
                 OnSelectedIndexChanged = (sender) =>
                 {
                     if ((sender as Gui.Widgets.ListView).SelectedIndex >= 0 &&

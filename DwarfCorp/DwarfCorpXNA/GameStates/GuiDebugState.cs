@@ -56,7 +56,7 @@ namespace DwarfCorp.GameStates
                     TextHorizontalAlign = HorizontalAlign.Center,
                     TextVerticalAlign = VerticalAlign.Center,
                     Border = "border-thin",
-                    Font = "outline-font",
+                    Font = "font18-outline",
                     OnClick = (sender, args) => this.Close(),
                     AutoLayout = AutoLayout.DockRight
                 });
@@ -64,7 +64,7 @@ namespace DwarfCorp.GameStates
                 bottomBar.AddChild(new Widget
                     {
                         Border = "border-thin",
-                        Font = "outline-font",
+                        Font = "font18-outline",
                         TextHorizontalAlign = HorizontalAlign.Center,
                         TextVerticalAlign = VerticalAlign.Center,
                         TextColor = new Vector4(1, 1, 1, 1),
@@ -80,7 +80,7 @@ namespace DwarfCorp.GameStates
                 bottomBar.AddChild(new Widget
                 {
                     Border = "border-thin",
-                    Font = "outline-font",
+                    Font = "font18-outline",
                     TextHorizontalAlign = HorizontalAlign.Center,
                     TextVerticalAlign = VerticalAlign.Center,
                     TextColor = new Vector4(0, 0, 0, 1),
@@ -95,7 +95,7 @@ namespace DwarfCorp.GameStates
 
                 bottomBar.AddChild(new Widget
                 {
-                    Font = "outline-font",
+                    Font = "font18-outline",
                     TextHorizontalAlign = HorizontalAlign.Center,
                     TextVerticalAlign = VerticalAlign.Center,
                     TextColor = new Vector4(1, 1, 1, 1),

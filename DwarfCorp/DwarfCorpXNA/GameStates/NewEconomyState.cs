@@ -38,7 +38,7 @@ namespace DwarfCorp.GameStates
             mainPanel.AddChild(new Gui.Widgets.Button
             {
                 Text = "Close",
-                Font = "font-hires",
+                Font = "font16",
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 Border = "border-button",
