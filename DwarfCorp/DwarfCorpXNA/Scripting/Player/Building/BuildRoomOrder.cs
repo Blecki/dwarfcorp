@@ -36,6 +36,7 @@ using System.Linq;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace DwarfCorp
 {
@@ -52,8 +53,21 @@ namespace DwarfCorp
         public Faction Faction { get; set; }
         public List<GameComponent> WorkObjects = new List<GameComponent>(); 
         public bool IsBuilt { get; set; }
+        [JsonIgnore]
         private WorldManager World { get; set; }
         public bool IsDestroyed { get; set; }
+
+        [OnDeserialized]
+        public void OnDeserialized(StreamingContext ctx)
+        {
+            World = (WorldManager)ctx.Context;
+        }
+
+        public BuildRoomOrder()
+        {
+
+        }
+
 
         public BuildRoomOrder(Room toBuild, Faction faction, WorldManager world)
         {
