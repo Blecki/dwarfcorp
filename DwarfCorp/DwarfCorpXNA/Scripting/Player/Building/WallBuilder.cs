@@ -352,6 +352,15 @@ namespace DwarfCorp
         {
             return Designations.Sum(d => VoxelLibrary.GetVoxelType(d.Type).ResourceToRelease == resourceToRelease ? 1 : 0);
         }
+
+        public void End()
+        {
+            if (Selected != null)
+            {
+                Selected.Clear();
+            }
+            CurrentVoxelType = 0;
+        }
     }
 
 }

@@ -68,7 +68,9 @@ namespace DwarfCorp
             //if (BuildPanel != null && BuildPanel.Root != null)
             //    BuildPanel.Close();
             //BuildPanel = null;
-            Player.Faction.CraftBuilder.IsEnabled = false;
+            Player.Faction.WallBuilder.End();
+            Player.Faction.CraftBuilder.End();
+            Player.Faction.RoomBuilder.End();
             Player.VoxSelector.Clear();
             Player.Faction.RoomBuilder.OnExit();
         }

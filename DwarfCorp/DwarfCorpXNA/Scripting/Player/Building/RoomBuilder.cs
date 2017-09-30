@@ -30,6 +30,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
@@ -68,6 +69,19 @@ namespace DwarfCorp
         public List<Room> FilterRoomsByType(string type)
         {
             return DesignatedRooms.Where(r => r.RoomData.Name == type).ToList();
+        }
+
+        public void End()
+        {
+            CurrentRoomData = null;
+            if (displayObjects != null)
+            {
+                foreach (var body in displayObjects)
+                {
+                    body.Die();
+                }
+                displayObjects.Clear();
+            }
         }
 
         public RoomBuilder()

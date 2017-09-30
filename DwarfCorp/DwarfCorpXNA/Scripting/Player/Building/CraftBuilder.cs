@@ -71,6 +71,19 @@ namespace DwarfCorp
         public CraftItem CurrentCraftType { get; set; }
         public bool IsEnabled { get; set; }
         public Body CurrentCraftBody { get; set; }
+
+        public void End()
+        {
+            if (CurrentCraftBody != null)
+            {
+                CurrentCraftBody.Delete();
+                CurrentCraftBody = null;
+            }
+
+            CurrentCraftType = null;
+            IsEnabled = false;
+        }
+
         protected CraftDesignation CurrentDesignation;
         private float CurrentOrientation = 0.0f;
         private bool OverrideOrientation = false;
