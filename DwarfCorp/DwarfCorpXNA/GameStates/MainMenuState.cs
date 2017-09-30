@@ -100,7 +100,7 @@ namespace DwarfCorp.GameStates
 
             var frame = MakeMenuFrame("MAIN MENU");
 
-            string latestSave = GameFile.GetLatestSaveFile();
+            string latestSave = SaveGame.GetLatestSaveFile();
 
             if (latestSave != null)
             {

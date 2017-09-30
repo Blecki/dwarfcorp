@@ -122,17 +122,21 @@ namespace DwarfCorp
                 if (fileExists)
                 {
                     SetLoadingMessage("Loading " + ExistingFile);
-                    gameFile = new GameFile(ExistingFile, DwarfGame.COMPRESSED_BINARY_SAVES, this);
-                    Sky.TimeOfDay = gameFile.Data.Metadata.TimeOfDay;
-                    Time = gameFile.Data.Metadata.Time;
-                    WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
-                    WorldScale = gameFile.Data.Metadata.WorldScale;
-                    WorldSize = gameFile.Data.Metadata.NumChunks;
-                    GameID = gameFile.Data.GameID;
-                    if (gameFile.Data.Metadata.OverworldFile != null && gameFile.Data.Metadata.OverworldFile != "flat")
+
+                    gameFile = SaveGame.CreateFromDirectory(ExistingFile);
+                    if (gameFile == null) throw new InvalidOperationException("Game File does not exist.");
+
+                    Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
+                    Time = gameFile.Metadata.Time;
+                    WorldOrigin = gameFile.Metadata.WorldOrigin;
+                    WorldScale = gameFile.Metadata.WorldScale;
+                    WorldSize = gameFile.Metadata.NumChunks;
+                    GameID = gameFile.Metadata.GameID;
+
+                    if (gameFile.Metadata.OverworldFile != null && gameFile.Metadata.OverworldFile != "flat")
                     {
-                        SetLoadingMessage("Loading world " + gameFile.Data.Metadata.OverworldFile);
-                        Overworld.Name = gameFile.Data.Metadata.OverworldFile;
+                        SetLoadingMessage("Loading world " + gameFile.Metadata.OverworldFile);
+                        Overworld.Name = gameFile.Metadata.OverworldFile;
                         DirectoryInfo worldDirectory =
                             Directory.CreateDirectory(DwarfGame.GetGameDirectory() + ProgramData.DirChar + "Worlds" +
                                                       ProgramData.DirChar + Overworld.Name);
@@ -282,14 +286,14 @@ namespace DwarfCorp
                     gameFile.ReadChunks(ExistingFile);
                     ChunkManager.ChunkData.LoadFromFile(gameFile, SetLoadingMessage);
 
-                    ChunkManager.ChunkData.SetMaxViewingLevel(gameFile.Data.Metadata.Slice > 0
-                        ? gameFile.Data.Metadata.Slice
+                    ChunkManager.ChunkData.SetMaxViewingLevel(gameFile.Metadata.Slice > 0
+                        ? gameFile.Metadata.Slice
                         : ChunkManager.ChunkData.MaxViewingLevel, ChunkManager.SliceMode.Y);
 
 
                     SetLoadingMessage("Loading Entities...");
-                    gameFile.ReadWorld(ExistingFile, this);
-                    Camera = gameFile.Data.Worlddata.Camera;
+                    gameFile.LoadPlayData(ExistingFile, this);
+                    Camera = gameFile.PlayData.Camera;
                     ChunkManager.camera = Camera;
                     ChunkRenderer.camera = Camera;
                     InstanceManager.Clear();
@@ -298,9 +302,9 @@ namespace DwarfCorp
                     Vector3 extents = new Vector3(1500, 1500, 1500);
                     CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
 
-                    ComponentManager = new ComponentManager(gameFile.Data.Worlddata.Components, this);
+                    ComponentManager = new ComponentManager(gameFile.PlayData.Components, this);
 
-                    foreach (var component in gameFile.Data.Worlddata.Components.SaveableComponents)
+                    foreach (var component in gameFile.PlayData.Components.SaveableComponents)
                     {
                         if (!ComponentManager.HasComponent(component.GlobalID) &&
                             ComponentManager.HasComponent(component.Parent.GlobalID))
@@ -310,7 +314,7 @@ namespace DwarfCorp
                         }
                     }
 
-                    foreach (var resource in gameFile.Data.Worlddata.Resources)
+                    foreach (var resource in gameFile.PlayData.Resources)
                     {
                         if (!ResourceLibrary.Resources.ContainsKey(resource.Key))
                         {
@@ -318,13 +322,13 @@ namespace DwarfCorp
                         }
                     }
 
-                    Factions = gameFile.Data.Worlddata.Factions;
+                    Factions = gameFile.PlayData.Factions;
                     ComponentManager.World = this;
 
-                    Sky.TimeOfDay = gameFile.Data.Metadata.TimeOfDay;
-                    Time = gameFile.Data.Metadata.Time;
-                    WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
-                    WorldScale = gameFile.Data.Metadata.WorldScale;
+                    Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
+                    Time = gameFile.Metadata.Time;
+                    WorldOrigin = gameFile.Metadata.WorldOrigin;
+                    WorldScale = gameFile.Metadata.WorldScale;
 
                     // Restore native factions from deserialized data.
                     Natives = new List<Faction>();
@@ -336,13 +340,13 @@ namespace DwarfCorp
                         }
                     }
 
-                    Diplomacy = gameFile.Data.Worlddata.Diplomacy;
+                    Diplomacy = gameFile.PlayData.Diplomacy;
 
                     GoalManager = new Goals.GoalManager();
-                    GoalManager.Initialize(gameFile.Data.Worlddata.Goals);
+                    GoalManager.Initialize(gameFile.PlayData.Goals);
 
                     TutorialManager = new Tutorial.TutorialManager("Content/tutorial.txt");
-                    TutorialManager.SetFromSaveData(gameFile.Data.Worlddata.TutorialSaveData);
+                    TutorialManager.SetFromSaveData(gameFile.PlayData.TutorialSaveData);
                 }
                 else
                 {

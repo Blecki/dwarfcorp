@@ -227,7 +227,7 @@ namespace DwarfCorp
         // Hack to smooth water reflections TODO: Put into water manager
         private float lastWaterHeight = 8.0f;
 
-        private GameFile gameFile;
+        private SaveGame gameFile;
 
         public Point3 WorldSize { get; set; }
 
@@ -574,10 +574,11 @@ namespace DwarfCorp
                     DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
                 file.SaveScreenshot(worldDirectory.FullName + Path.DirectorySeparatorChar + "screenshot.png");
 
-                gameFile = new GameFile(Overworld.Name, GameID, this);
+                gameFile = SaveGame.CreateFromWorld(this);
+
                 gameFile.WriteFile(
                     DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves" + Path.DirectorySeparatorChar +
-                    filename, DwarfGame.COMPRESSED_BINARY_SAVES);
+                    filename);
                 ComponentManager.CleanupSaveData();
 
                 lock (ScreenshotLock)
