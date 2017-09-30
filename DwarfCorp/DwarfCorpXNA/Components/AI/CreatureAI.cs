@@ -820,7 +820,7 @@ namespace DwarfCorp
                 if (Faction.HasFreeStockpile(order.Resource))
                 {
                     GatherManager.StockOrders.RemoveAt(0);
-                    Task task = new StockResourceTask(order.Resource)
+                    StockResourceTask task = new StockResourceTask(order.Resource)
                     {
                         Priority = Task.PriorityType.Low
                     };
