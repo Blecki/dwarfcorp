@@ -55,7 +55,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\x86\Release</OutputPath>
-    <DefineConstants>TRACE;WINDOWS XNA_BUILD GEMXNA</DefineConstants>
+    <DefineConstants>TRACE;WINDOWS XNA_BUILD GEMXNA SHARP_RAVEN</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
@@ -131,13 +131,14 @@
     <Compile Include="AssetManagement\ContentPaths.cs" />
     <Compile Include="AssetManagement\GameSave\ChunkFile.cs" />
     <Compile Include="AssetManagement\GameSave\FileUtils.cs" />
-    <Compile Include="AssetManagement\GameSave\GameFile.cs" />
+    <Compile Include="AssetManagement\GameSave\MetaData.cs" />
+    <Compile Include="AssetManagement\GameSave\PlayData.cs" />
+    <Compile Include="AssetManagement\GameSave\SaveGame.cs" />
     <Compile Include="AssetManagement\GameSave\JsonConverters\BoxConverter.cs" />
     <Compile Include="AssetManagement\GameSave\JsonConverters\ContentConverter.cs" />
     <Compile Include="AssetManagement\GameSave\JsonConverters\MatrixConverter.cs" />
     <Compile Include="AssetManagement\GameSave\JsonConverters\RectangleConverter.cs" />
     <Compile Include="AssetManagement\GameSave\OverworldFile.cs" />
-    <Compile Include="AssetManagement\GameSave\SaveData.cs" />
     <Compile Include="AssetManagement\TextureLoader.cs" />
     <Compile Include="AssetManagement\TextureManager.cs" />
     <Compile Include="Components\AI\Buff.cs" />
@@ -350,6 +351,7 @@
     <Compile Include="Gui\Widgets\GoalInfo.cs" />
     <Compile Include="Gui\Widgets\GoalPanel.cs" />
     <Compile Include="Gui\Widgets\TutorialPopup.cs" />
+    <Compile Include="Saving\SaveSystem.cs" />
     <Compile Include="Scripting\CompoundActs\FleeEntityAct.cs" />
     <Compile Include="Scripting\CompoundActs\GetMoneyAct.cs" />
     <Compile Include="Scripting\CompoundActs\StockMoneyAct.cs" />

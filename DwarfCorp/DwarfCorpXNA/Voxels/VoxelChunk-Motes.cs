@@ -127,6 +127,9 @@ namespace DwarfCorp
                     if (v.IsEmpty)
                         continue;
 
+                    if (!v.IsExplored)
+                        continue;
+
                     // Find biome type.
                     var biome = Overworld.Map[
                         (int)MathFunctions.Clamp(v.WorldPosition.X / Manager.World.WorldScale, 0, Overworld.Map.GetLength(0) - 1),
