@@ -55,7 +55,7 @@ namespace DwarfCorp
         public List<Body> ZoneBodies = new List<Body>();
         
         [JsonProperty]
-        protected int ResPerVoxel = 8;
+        protected int ResPerVoxel = 32;
 
         [JsonIgnore]
         public int ResourcesPerVoxel

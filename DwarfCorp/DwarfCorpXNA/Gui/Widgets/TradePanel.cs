@@ -122,7 +122,7 @@ namespace DwarfCorp.Gui.Widgets
                             remainingMoneyPlayer -= movement;
                         }
                         else
-                        {
+                         {
                             MoveRandomValue(sourceResourcesPlayer, selectedResourcesPlayer, Envoy);
                         }
                     }
