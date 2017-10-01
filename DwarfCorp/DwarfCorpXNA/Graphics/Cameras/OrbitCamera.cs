@@ -369,7 +369,7 @@ namespace DwarfCorp
 
                         diffRadius = delta * CameraZoomSpeed * dt;
 
-                        if (diffRadius < 0 && !FollowAutoTarget)
+                        if (diffRadius < 0 && !FollowAutoTarget && GameSettings.Default.ZoomCameraTowardMouse)
                         {
                             float diffxy =
                                 (new Vector3(Target.X, 0, Target.Z) -
