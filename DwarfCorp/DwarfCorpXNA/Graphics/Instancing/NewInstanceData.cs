@@ -16,6 +16,8 @@ namespace DwarfCorp
         public Vector3 Position;
         public Vector3 HalfSize;
 
+        public bool Visible = true;
+
         private Matrix _transform;
         private NewInstanceManager Manager;
 

@@ -25,7 +25,7 @@ namespace DwarfCorp.GameStates
 
             this.ScreenshotSource = (path) =>
             {
-                var screenshots = SaveData.GetFilesInDirectory(path, false, "png", "png");
+                var screenshots = System.IO.Directory.GetFiles(path, "*.png");
                 if (screenshots.Length == 0)
                     return null;
                 else

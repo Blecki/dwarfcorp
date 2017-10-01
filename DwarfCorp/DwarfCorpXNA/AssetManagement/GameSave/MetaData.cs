@@ -1,4 +1,4 @@
-// SaveData.cs
+// GameFile.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -32,52 +32,30 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-
-    public class SaveData
+    public class MetaData
     {
-    
+        public string OverworldFile { get; set; }
+        public float WorldScale { get; set; }
+        public Vector2 WorldOrigin { get; set; }
+        public float TimeOfDay { get; set; }
+        public int GameID { get; set; }
+        public int Slice { get; set; }
+        public WorldTime Time { get; set; }
+        public Point3 NumChunks { get; set; }
 
-        public static string Extension = "json";
-        public static string CompressedExtension = "zip";
+        public static string Extension = "meta";
+        public static string CompressedExtension = "zmeta";
 
-        public virtual bool ReadFile(string filePath, bool isCompressed)
+        public MetaData()
         {
-            return false;
-        }
-
-        public virtual bool WriteFile(string filePath, bool compress)
-        {
-            return false;
-        }
-
-        public static string[] GetFilesInDirectory(string dir, bool compressed, string name, string compressedExtension, string extension)
-        {
-            if (compressed)
-            {
-                return System.IO.Directory.GetFiles(dir, name + "." + compressedExtension);
-            }
-            else
-            {
-                return System.IO.Directory.GetFiles(dir, name + "." + extension);
-            }
-        }
-
-        public static string[] GetFilesInDirectory(string dir, bool compressed, string compressedExtension, string extension)
-        {
-            if(compressed)
-            {
-                return System.IO.Directory.GetFiles(dir, "*." + compressedExtension);
-            }
-            else
-            {
-                return System.IO.Directory.GetFiles(dir, "*." + extension);
-            }
         }
     }
-
 }
