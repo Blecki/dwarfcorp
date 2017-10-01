@@ -32,6 +32,7 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -266,6 +267,8 @@ namespace DwarfCorp
 
         public void RebuildVoxelsThread()
         {
+            System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
             EventWaitHandle[] waitHandles =
             {
                 NeedsRebuildEvent,

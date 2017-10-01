@@ -42,7 +42,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 30),
-                Font = "font-hires",
+                Font = "font16",
                 TextVerticalAlign = VerticalAlign.Center
             });
 

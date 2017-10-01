@@ -42,10 +42,19 @@ namespace DwarfCorp
     public class GoToZoneAct : CompoundCreatureAct
     {
         public Zone Destination { get; set; }
-
+        public string DestinationName { get; set; }
         public GoToZoneAct()
         {
 
+        }
+
+        public GoToZoneAct(CreatureAI agent, string zone) :
+            base(agent)
+        {
+            Tree = null;
+            Name = "Goto zone : " + zone;
+            Destination = null;
+            DestinationName = zone;
         }
 
         public GoToZoneAct(CreatureAI agent, Zone zone) :
@@ -63,6 +72,10 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
+            if (DestinationName != null && Destination == null)
+            {
+                Destination = Agent.Blackboard.GetData<Zone>(DestinationName);
+            }
             if (Tree == null)
             {
                 var voxel = Destination.GetNearestVoxel(Destination.GetBoundingBox().Center());

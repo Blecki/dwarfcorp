@@ -68,7 +68,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 32),
-                Font = "font-hires"
+                Font = "font16"
             });
 
             LevelLabel = top.AddChild(new Widget
@@ -216,6 +216,7 @@ namespace DwarfCorp.Gui.Widgets
                     AutoLayout = AutoLayout.FloatBottomLeft,
                     OnClick = (sender, args) =>
                     {
+                        (sender.Parent as EmployeeInfo).Employee.World.Tutorial("follow dwarf");
                         (sender.Parent as EmployeeInfo).Employee.IsPosessed = true;
                     }
                 });
@@ -247,7 +248,7 @@ namespace DwarfCorp.Gui.Widgets
                 Label = Label,
                 SegmentCount = 10,
                 PercentageLabels = PercentageLabels,
-                Font = "font"
+                Font = "font8"
             }) as Gui.Widgets.TextProgressBar;
         }
 

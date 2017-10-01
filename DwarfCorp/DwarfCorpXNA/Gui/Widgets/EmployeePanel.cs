@@ -122,7 +122,7 @@ namespace DwarfCorp.Gui.Widgets
             EmployeeList = left.AddChild(new Gui.Widgets.WidgetListView
             {
                 AutoLayout = AutoLayout.DockFill,
-                Font = "font-hires",
+                Font = "font16",
                 ItemHeight = 48,
                 OnSelectedIndexChanged = (sender) =>
                 {

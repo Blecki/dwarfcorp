@@ -34,6 +34,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -562,6 +563,9 @@ namespace DwarfCorp
             try
             {
                 System.Threading.Thread.CurrentThread.Name = "Save";
+                // Ensure we're using the invariant culture.
+                System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+                System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
                 DirectoryInfo worldDirectory =
                     Directory.CreateDirectory(DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Worlds" +
                                               Path.DirectorySeparatorChar + Overworld.Name);
@@ -715,7 +719,7 @@ namespace DwarfCorp
             DefaultShader.FogColor = new Color(0.32f * x, 0.58f * x, 0.9f * x);
             DefaultShader.LightPositions = LightPositions;
 
-            CompositeLibrary.Render(GraphicsDevice, DwarfGame.SpriteBatch);
+            CompositeLibrary.Render(GraphicsDevice);
             CompositeLibrary.Update();
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.BlendState = BlendState.Opaque;
@@ -922,12 +926,12 @@ namespace DwarfCorp
                 ScissorTestEnable = true
             };
 
-            
+
             //if (CompositeLibrary.Composites.ContainsKey("resources"))
             //    CompositeLibrary.Composites["resources"].DebugDraw(DwarfGame.SpriteBatch, 0, 0);
             //SelectionBuffer.DebugDraw(GraphicsDevice.Viewport.Bounds);
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp,
-                null, rasterizerState);
+            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp,
+                null, rasterizerState, null, Matrix.Identity);
             //DwarfGame.SpriteBatch.Draw(Shadows.ShadowTexture, Vector2.Zero, Color.White);
             if (IsCameraUnderwater())
             {
@@ -970,8 +974,26 @@ namespace DwarfCorp
         /// <param name="e">The device settings that are getting set</param>
         private void GraphicsPreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
         {
+            if (e == null)
+            {
+                Console.Error.WriteLine("Preparing device settings given null event args.");
+                return;
+            }
+
             PresentationParameters pp = e.GraphicsDeviceInformation.PresentationParameters;
+            if (pp == null)
+            {
+                Console.Error.WriteLine("Presentation parameters invalid.");
+                return;
+            }
+
             GraphicsAdapter adapter = e.GraphicsDeviceInformation.Adapter;
+            if (adapter == null)
+            {
+                Console.Error.WriteLine("Somehow, graphics adapter is null!");
+                return;
+            }
+
             SurfaceFormat format = adapter.CurrentDisplayMode.Format;
 
             if (MultiSamples > 0 && MultiSamples != pp.MultiSampleCount)

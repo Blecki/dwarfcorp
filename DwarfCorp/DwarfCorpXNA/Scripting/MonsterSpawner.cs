@@ -125,7 +125,7 @@ namespace DwarfCorp
                         CreatureAI enemyMinion = spawnEvent.TargetFaction.GetNearestMinion(creature.Position);
                         if (enemyMinion != null)
                         {
-                            creature.Tasks.Add(new KillEntityTask(enemyMinion.Physics, KillEntityTask.KillType.Auto));
+                            creature.AssignTask(new KillEntityTask(enemyMinion.Physics, KillEntityTask.KillType.Auto));
                         }
                     }
                     else
@@ -133,7 +133,7 @@ namespace DwarfCorp
                         Room nearestRoom = spawnEvent.TargetFaction.GetNearestRoom(creature.Position);
                         if (nearestRoom != null)
                         {
-                            creature.Tasks.Add(new ActWrapperTask(new GoToZoneAct(creature, nearestRoom)));
+                            creature.AssignTask(new ActWrapperTask(new GoToZoneAct(creature, nearestRoom)));
                         }
                     }
                     toReturn.Add(creature);

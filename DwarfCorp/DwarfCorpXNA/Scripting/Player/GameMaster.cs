@@ -247,7 +247,7 @@ namespace DwarfCorp
                 {
                     DwarfBux pay = creature.Stats.CurrentLevel.Pay;
                     total += pay;
-                    creature.Tasks.Add(new ActWrapperTask(new GetMoneyAct(creature, pay)) { AutoRetry = true, Name = "Get paid." });
+                    creature.AssignTask(new ActWrapperTask(new GetMoneyAct(creature, pay)) { AutoRetry = true, Name = "Get paid." });
                 }
                 else
                 {

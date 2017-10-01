@@ -415,7 +415,10 @@ namespace DwarfCorp
             List<Task> tasks = (from item in items where AddGatherDesignation(item) select new GatherItemTask(item) as Task).ToList();
             foreach (CreatureAI creature in Minions)
             {
-                creature.Tasks.AddRange(tasks);
+                foreach (var task in tasks)
+                {
+                    creature.AssignTask(task);
+                }
             }
         }
 
@@ -716,9 +719,36 @@ namespace DwarfCorp
             }
         }
 
-        public Dictionary<string, ResourceAmount> ListResourcesInStockpilesPlusMinions()
+        public Dictionary<string, Pair<ResourceAmount> > ListResourcesInStockpilesPlusMinions()
         {
-            Dictionary<string, ResourceAmount> toReturn = ListResources();
+            Dictionary<string, ResourceAmount> stocks = ListResources();
+            Dictionary<string, Pair<ResourceAmount>> toReturn = new Dictionary<string, Pair<ResourceAmount>>();
+            foreach (var pair in stocks)
+            {
+                toReturn[pair.Key] = new Pair<ResourceAmount>(pair.Value, new ResourceAmount(pair.Value.ResourceType, 0));
+            }
+            foreach (var creature in Minions)
+            {
+                var inventory = creature.Creature.Inventory;
+                foreach (var i in inventory.Resources)
+                {
+                    var resource = i.Resource;
+                    if (toReturn.ContainsKey(resource))
+                    {
+                        toReturn[resource].Second.NumResources += 1;
+                    }
+                    else
+                    {
+                        toReturn[resource] = new Pair<ResourceAmount>(new ResourceAmount(resource, 0), new ResourceAmount(resource));
+                    }
+                }
+            }
+            return toReturn;
+        }
+
+        public Dictionary<string, ResourceAmount> ListResourcesInMinions()
+        {
+            Dictionary<string, ResourceAmount> toReturn = new Dictionary<string, ResourceAmount>();
             foreach (var creature in Minions)
             {
                 var inventory = creature.Creature.Inventory;
@@ -737,6 +767,7 @@ namespace DwarfCorp
             }
             return toReturn;
         }
+
 
         public Dictionary<string, ResourceAmount> ListResources()
         {

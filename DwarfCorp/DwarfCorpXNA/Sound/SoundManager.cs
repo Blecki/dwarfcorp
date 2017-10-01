@@ -458,7 +458,7 @@ namespace DwarfCorp
 
         }
 
-        public static SoundEffectInstance PlaySound(string name, float volume = 1.0f, float pitch  = 1.0f)
+        public static SoundEffectInstance PlaySound(string name, float volume = 1.0f, float pitch  = 0.0f)
         {
             if (!HasAudioDevice) return null;
             // TODO: Remove this block once the SoundManager is initialized in a better location.

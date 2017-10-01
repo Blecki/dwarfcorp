@@ -157,7 +157,7 @@ namespace DwarfCorp.Gui.Widgets
                     .Translate(Rect.Right - 16,
                         Rect.Bottom - 16).Colorize(Color.OrangeRed.ToVector4()));
                 var numberSize = new Rectangle();
-                var font = Root.GetTileSheet("font");
+                var font = Root.GetTileSheet("font8");
                 var stringMesh = Gui.Mesh.CreateStringMesh(
                     IndicatorValue.ToString(),
                     font,

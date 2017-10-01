@@ -50,7 +50,7 @@ namespace DwarfCorp
 #if WINDOWS || XBOX
     internal static class Program
     {
-        public static string Version = "17.09.04_FNA";
+        public static string Version = "17.09.27_FNA";
         public static char DirChar = Path.DirectorySeparatorChar;
         
         /// <summary>
@@ -62,6 +62,9 @@ namespace DwarfCorp
             try
 #endif
             {
+
+                Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+                Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
                 //fbDeprofiler.DeProfiler.Load();
                 using (DwarfGame game = new DwarfGame())
                 {

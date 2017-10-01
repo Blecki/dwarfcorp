@@ -96,7 +96,7 @@ namespace DwarfCorp
                 if (minion.Creature.IsAsleep) continue;
                 if(minion.CurrentTask != null)
                 {
-                    minion.Tasks.Add(minion.CurrentTask);
+                    minion.AssignTask(minion.CurrentTask);
                     if (minion.CurrentTask.Script != null)
                     {
                         minion.CurrentAct.OnCanceled();
@@ -143,6 +143,11 @@ namespace DwarfCorp
 
         bool IsDwarf(Body body)
         {
+            if (body == null)
+            {
+                return false;
+            }
+
             var dwarves = body.EnumerateAll().OfType<Creature>().ToList();
 
             if (dwarves.Count <= 0)

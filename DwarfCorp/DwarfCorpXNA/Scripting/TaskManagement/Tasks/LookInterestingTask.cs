@@ -104,7 +104,7 @@ namespace DwarfCorp
             }
             
             var rooms = creature.Faction.GetRooms();
-            var items = creature.Faction.OwnedObjects;
+            var items = creature.Faction.OwnedObjects.Where(item => !item.Tags.Contains("Climbable")).ToList();
             var minions = creature.Faction.Minions;
 
             bool goToRoom = MathFunctions.RandEvent(0.2f);
@@ -116,7 +116,7 @@ namespace DwarfCorp
             bool goToItem = MathFunctions.RandEvent(0.2f);
             if (goToItem && items.Count > 0)
             {
-                return new GoToEntityAct(Datastructures.SelectRandom(items.Where(item => !item.Tags.Contains("Climbable"))), creature.AI) & new Wrap(() => ConverseFriends(creature.AI));
+                return new GoToEntityAct(Datastructures.SelectRandom(items), creature.AI) & new Wrap(() => ConverseFriends(creature.AI));
             }
 
             bool goToMinion = MathFunctions.RandEvent(0.2f);

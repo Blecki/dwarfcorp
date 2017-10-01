@@ -125,7 +125,7 @@ namespace DwarfCorp.GameStates
             mainPanel.AddChild(new Gui.Widgets.Button
             {
                 Text = "Create!",
-                Font = "font-hires",
+                Font = "font16",
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 Border = "border-button",
@@ -147,7 +147,7 @@ namespace DwarfCorp.GameStates
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 Border = "border-button",
-                Font = "font-hires",
+                Font = "font16",
                 OnClick = (sender, args) =>
                 {
                     StateManager.PopState();
@@ -160,7 +160,7 @@ namespace DwarfCorp.GameStates
             mainPanel.AddChild(new Widget()
             {
                 Text = "Create a Company",
-                Font = "font-hires",
+                Font = "font16",
                 AutoLayout = AutoLayout.DockTop,
             });
 

@@ -430,7 +430,7 @@ namespace DwarfCorp.GameStates
                 sender.Invalidate();
                 return;
             }
-            int newNum = Math.Max(factionResources[data.ResourceToRelease].NumResources - Master.Faction.WallBuilder.GetNumDesignations(data.ResourceToRelease), 0);
+            int newNum = Math.Max(factionResources[data.ResourceToRelease].First.NumResources - Master.Faction.WallBuilder.GetNumDesignations(data.ResourceToRelease), 0);
             if (newNum != numResources)
             {
                 sender.Text = newNum.ToString();
@@ -460,7 +460,7 @@ namespace DwarfCorp.GameStates
                 Rect = new Rectangle(48, 8, 256, 20),
                 Text = World.PlayerCompany.Information.Name,
                 AutoLayout = Gui.AutoLayout.None,
-                Font = "outline-font",
+                Font = "font18-outline",
                 TextColor = new Vector4(1, 1, 1, 1)
             });
 
@@ -489,7 +489,7 @@ namespace DwarfCorp.GameStates
             {
                 Rect = new Rectangle(48, 32, 128, 20),
                 AutoLayout = Gui.AutoLayout.DockFill,
-                Font = "outline-font",
+                Font = "font18-outline",
                 TextVerticalAlign = Gui.VerticalAlign.Center,
                 TextColor = new Vector4(1, 1, 1, 1),
                 Tooltip = "Amount of money in our treasury"
@@ -545,7 +545,7 @@ namespace DwarfCorp.GameStates
             LevelLabel = levelRow.AddChild(new Gui.Widget
             {
                 AutoLayout = Gui.AutoLayout.DockFill,
-                Font = "outline-font",
+                Font = "font18-outline",
                 OnLayout = (sender) => sender.Rect.X += 36,
                 TextVerticalAlign = Gui.VerticalAlign.Center,
                 TextColor = new Vector4(1, 1, 1, 1),
@@ -571,7 +571,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.FloatBottomRight,
                 TextHorizontalAlign = Gui.HorizontalAlign.Center,
                 MinimumSize = new Point(128, 20),
-                Font = "font",
+                Font = "font8",
                 TextColor = new Vector4(1, 1, 1, 1),
                 OnLayout = (sender) =>
                 {
@@ -748,7 +748,7 @@ namespace DwarfCorp.GameStates
                 Text = "\n\nPaused",
                 AutoLayout = Gui.AutoLayout.FloatCenter,
                 Tooltip = "(push " + ControlSettings.Mappings.Pause.ToString() + " to unpause)",
-                Font = "outline-font",
+                Font = "font18-outline",
                 TextColor = Color.White.ToVector4(),
                 MaximumSize = new Point(0, 0),
                 Hidden = true,
@@ -892,7 +892,7 @@ namespace DwarfCorp.GameStates
                         {
                             Master.Faction.RoomBuilder.CurrentRoomData = data;
                             Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
-                            Master.Faction.WallBuilder.CurrentVoxelType = null;
+                            Master.Faction.WallBuilder.CurrentVoxelType = 0;
                             Master.Faction.CraftBuilder.IsEnabled = false;
                             ChangeTool(GameMaster.ToolMode.Build);
                             World.ShowToolPopup("Click and drag to build " + data.Name);
@@ -966,7 +966,7 @@ namespace DwarfCorp.GameStates
                             Icon = new Gui.TileReference("voxels", data.ID),
                             TextHorizontalAlign = HorizontalAlign.Right,
                             TextVerticalAlign = VerticalAlign.Bottom,
-                            Text = Master.Faction.ListResourcesInStockpilesPlusMinions()[data.ResourceToRelease].NumResources.ToString(),
+                            Text = Master.Faction.ListResourcesInStockpilesPlusMinions()[data.ResourceToRelease].First.NumResources.ToString(),
                             TextColor = Color.White.ToVector4(),
                             PopupChild = new BuildWallInfo
                             {
@@ -978,7 +978,8 @@ namespace DwarfCorp.GameStates
                             {
                                 Master.Faction.RoomBuilder.CurrentRoomData = null;
                                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                                Master.Faction.WallBuilder.CurrentVoxelType = data;
+                                Master.Faction.WallBuilder.SelectionType = Master.VoxSelector.SelectionType;
+                                Master.Faction.WallBuilder.CurrentVoxelType = (byte)data.ID;
                                 Master.Faction.CraftBuilder.IsEnabled = false;
                                 ChangeTool(GameMaster.ToolMode.Build);
                                 World.ShowToolPopup("Click and drag to build " + data.Name + " wall.");
@@ -1014,7 +1015,7 @@ namespace DwarfCorp.GameStates
                             Icon = new Gui.TileReference("voxels", data.ID),
                             TextHorizontalAlign = HorizontalAlign.Right,
                             TextVerticalAlign = VerticalAlign.Bottom,
-                            Text = Master.Faction.ListResourcesInStockpilesPlusMinions()[data.ResourceToRelease].NumResources.ToString(),
+                            Text = Master.Faction.ListResourcesInStockpilesPlusMinions()[data.ResourceToRelease].First.NumResources.ToString(),
                             TextColor = Color.White.ToVector4(),
                             PopupChild = new BuildWallInfo
                             {
@@ -1026,7 +1027,8 @@ namespace DwarfCorp.GameStates
                             {
                                 Master.Faction.RoomBuilder.CurrentRoomData = null;
                                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
-                                Master.Faction.WallBuilder.CurrentVoxelType = data;
+                                Master.Faction.WallBuilder.SelectionType = Master.VoxSelector.SelectionType;
+                                Master.Faction.WallBuilder.CurrentVoxelType = (byte)data.ID;
                                 Master.Faction.CraftBuilder.IsEnabled = false;
                                 ChangeTool(GameMaster.ToolMode.Build);
                                 World.ShowToolPopup("Click and drag to build " + data.Name + " floor.");
@@ -1044,7 +1046,7 @@ namespace DwarfCorp.GameStates
             var icon_BuildWall = new FlatToolTray.Icon
             {
                 Icon = null,
-                Font = "font",
+                Font = "font8",
                 KeepChildVisible = true,
                 ExpandChildWhenDisabled = true,
                 TextHorizontalAlign = HorizontalAlign.Center,
@@ -1059,7 +1061,7 @@ namespace DwarfCorp.GameStates
             var icon_BuildFloor = new FlatToolTray.Icon
             {
                 Icon = null,
-                Font = "font",
+                Font = "font8",
                 KeepChildVisible = true,
                 ExpandChildWhenDisabled = true,
                 TextHorizontalAlign = HorizontalAlign.Center,
@@ -1120,7 +1122,7 @@ namespace DwarfCorp.GameStates
                                 data.NumRepeats = buildInfo.GetNumRepeats();
                                 Master.Faction.RoomBuilder.CurrentRoomData = null;
                                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                                Master.Faction.WallBuilder.CurrentVoxelType = null;
+                                Master.Faction.WallBuilder.CurrentVoxelType = 0;
                                 Master.Faction.CraftBuilder.IsEnabled = true;
                                 Master.Faction.CraftBuilder.CurrentCraftType = data;
                                 if (Master.Faction.CraftBuilder.CurrentCraftBody != null)
@@ -1985,7 +1987,7 @@ namespace DwarfCorp.GameStates
             {
                 AutoLayout = Gui.AutoLayout.DockBottom,
                 Border = "border-thin",
-                Font = "font-hires",
+                Font = "font16",
                 Text = Name,
                 OnClick = OnClick,
                 Tooltip = Tooltip,
@@ -2014,7 +2016,7 @@ namespace DwarfCorp.GameStates
                 {
                     PausePanel = null;
                 },
-                Font = "font-hires"
+                Font = "font16"
             };
 
             GuiRoot.ConstructWidget(PausePanel);
@@ -2113,11 +2115,13 @@ namespace DwarfCorp.GameStates
 
         public void AutoSave()
         {
+            bool paused = World.Paused;
             World.Save(
                     String.Format("{0}_{1}", Overworld.Name, World.GameID),
                     (success, exception) =>
                     {
                         World.MakeAnnouncement(success ? "File autosaved." : "Autosave failed - " + exception.Message);
+                        World.Paused = paused;
                     });
         }
     }

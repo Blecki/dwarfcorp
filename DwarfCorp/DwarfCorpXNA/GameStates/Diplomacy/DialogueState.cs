@@ -55,7 +55,7 @@ namespace DwarfCorp.Dialogue
             {
                 Rect = new Rectangle(bgx + 258, bgy, w + 50, 128),
                 Border = "speech-bubble-reverse",
-                Font = "font-hires",
+                Font = "font16",
                 TextColor = Color.Black.ToVector4()
             });
 

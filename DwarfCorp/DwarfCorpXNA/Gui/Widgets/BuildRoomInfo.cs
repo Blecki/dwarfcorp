@@ -38,7 +38,7 @@ namespace DwarfCorp.Gui.Widgets
                     builder.AppendLine("Nothing!");
             builder.Append("CLICK TO BUILD");
             
-            Font = "font";
+            Font = "font8";
             Text = builder.ToString();
         }
 

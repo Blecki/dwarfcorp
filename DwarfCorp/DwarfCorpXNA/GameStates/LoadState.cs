@@ -65,7 +65,7 @@ namespace DwarfCorp.GameStates
 
             Tip = GuiRoot.RootItem.AddChild(new Gui.Widget
             {
-                Font = "outline-font",
+                Font = "font18-outline",
                 TextColor = new Vector4(1, 1, 1, 1),
                 MinimumSize = new Point(0, 128),
                 TextHorizontalAlign = Gui.HorizontalAlign.Center,
@@ -76,7 +76,7 @@ namespace DwarfCorp.GameStates
 
             LoadTicker = GuiRoot.RootItem.AddChild(new Gui.Widgets.InfoTicker
             {
-                Font = "font",
+                Font = "font8",
                 AutoLayout = Gui.AutoLayout.DockFill,
                 TextColor = new Vector4(1,1,1,1)
             }) as Gui.Widgets.InfoTicker;
@@ -161,13 +161,25 @@ namespace DwarfCorp.GameStates
                         : World.LoadingException.ToString();
                     GuiRoot.MouseVisible = true;
                     GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
+                    DwarfTime.LastTime.IsPaused = false;
+                    DwarfTime.LastTime.Speed = 1.0f;
+                    World = null;
+                    
                     GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm()
                     {
                         CancelText = "",
                         Text = "Loading failed: " + exceptionText,
+                        OnClick = (s, a) =>
+                        {
+                            StateManager.PopState();
+                            StateManager.ClearState();
+                            StateManager.PushState(new MainMenuState(Game, StateManager));
+                        },
                         OnClose = (s) =>
                         {
-                           StateManager.PopState();
+                            StateManager.PopState();
+                            StateManager.ClearState();
+                            StateManager.PushState(new MainMenuState(Game, StateManager));
                         },
                         Rect = GuiRoot.RenderData.VirtualScreen
                     });

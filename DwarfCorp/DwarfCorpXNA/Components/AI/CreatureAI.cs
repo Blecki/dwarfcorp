@@ -122,7 +122,6 @@ namespace DwarfCorp
         }
 
         /// <summary> Gets the current Task the creature is trying to perform </summary>
-        [JsonIgnore]
         public Task CurrentTask { get; set; }
 
         /// <summary> When this timer triggers, the creature will poll the PlanService for replanning paths </summary>
@@ -247,6 +246,15 @@ namespace DwarfCorp
         public BoundingBox PositionConstraint = new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue),
             new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
 
+        [OnDeserialized]
+        public void OnDeserialize(StreamingContext ctx)
+        {
+            if (CurrentTask != null)
+            {
+                CurrentTask.Script = null;
+            }
+        }
+
         public void ResetPositionConstraint()
         {
             PositionConstraint = new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue),
@@ -329,12 +337,12 @@ namespace DwarfCorp
                 CurrentTask.Cancel();
                 if (CurrentTask.ShouldRetry(Creature))
                 {
-                    Tasks.Add(CurrentTask);
+                    AssignTask(CurrentTask);
                     CurrentTask.SetupScript(Creature);
                 }
                 CurrentTask = newTask;
                 newTask.SetupScript(Creature);
-                Tasks.Remove(newTask);
+                RemoveTask(newTask);
             }
         }
 
@@ -344,7 +352,7 @@ namespace DwarfCorp
             var tasksToremove = Tasks.Where(task => (task.ShouldDelete(Creature))).ToList();
             foreach (var task in tasksToremove)
             {
-                Tasks.Remove(task);
+                RemoveTask(task);
                 History.Remove(task.Name);
             }
 
@@ -440,7 +448,7 @@ namespace DwarfCorp
                 Task toReturn = new GetHealedTask();
                 toReturn.SetupScript(Creature);
                 if (!Tasks.Contains(toReturn))
-                    Tasks.Add(toReturn);
+                    AssignTask(toReturn);
             }
 
             // Try to go to sleep if we are low on energy and it is night time.
@@ -449,7 +457,7 @@ namespace DwarfCorp
                 Task toReturn = new SatisfyTirednessTask();
                 toReturn.SetupScript(Creature);
                 if (!Tasks.Contains(toReturn))
-                    Tasks.Add(toReturn);
+                    AssignTask(toReturn);
             }
 
             // Try to find food if we are hungry.
@@ -458,7 +466,7 @@ namespace DwarfCorp
                 Task toReturn = new SatisfyHungerTask();
                 toReturn.SetupScript(Creature);
                 if (!Tasks.Contains(toReturn))
-                    Tasks.Add(toReturn);
+                    AssignTask(toReturn);
             }
 
             // Update the current task.
@@ -486,7 +494,7 @@ namespace DwarfCorp
                         {
                             // Lower the priority of failed tasks.
                             CurrentTask.Priority = Task.PriorityType.Eventually;
-                            Tasks.Add(CurrentTask);
+                            AssignTask(CurrentTask);
                             CurrentTask.SetupScript(Creature);
                             retried = true;
                         }
@@ -543,7 +551,7 @@ namespace DwarfCorp
                         IdleTimer.Reset(IdleTimer.TargetTimeSeconds);
                         goal.SetupScript(Creature);
                         CurrentTask = goal;
-                        Tasks.Remove(goal);
+                        RemoveTask(goal);
                     }
                 }
                 else
@@ -552,6 +560,10 @@ namespace DwarfCorp
                     if (CurrentTask != null)
                         CurrentTask.SetupScript(Creature);
                 }
+            }
+            else if (CurrentTask != null)
+            {
+                CurrentTask.SetupScript(Creature);
             }
 
 
@@ -695,6 +707,16 @@ namespace DwarfCorp
                 return new FindLandTask();
             }
 
+            if (!IsPosessed && Creature.Inventory.Resources.Count > 0)
+            {
+                foreach (var status in Creature.RestockAll())
+                {
+
+                }
+
+            }
+            
+
             if (!IsPosessed && GatherManager.VoxelOrders.Count == 0 &&
                 (GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile()) &&
                 (GatherManager.StockMoneyOrders.Count == 0 || !Faction.HasFreeTreasury())
@@ -798,7 +820,7 @@ namespace DwarfCorp
                 if (Faction.HasFreeStockpile(order.Resource))
                 {
                     GatherManager.StockOrders.RemoveAt(0);
-                    Task task = new StockResourceTask(order.Resource)
+                    StockResourceTask task = new StockResourceTask(order.Resource)
                     {
                         Priority = Task.PriorityType.Low
                     };
@@ -825,7 +847,7 @@ namespace DwarfCorp
             if (GatherManager.VoxelOrders.Count > 0)
             {
                 // Otherwise handle build orders.
-                var voxels = GatherManager.VoxelOrders.Select(order => new KeyValuePair<VoxelHandle, VoxelType>(order.Voxel, order.Type)).ToList();
+                var voxels = GatherManager.VoxelOrders.Select(order => new KeyValuePair<VoxelHandle, string>(order.Voxel, order.Type)).ToList();
 
                 GatherManager.VoxelOrders.Clear();
                 /*
@@ -914,7 +936,7 @@ namespace DwarfCorp
         {
             var killTask = new KillEntityTask(entity, KillEntityTask.KillType.Auto);
             if (!Tasks.Contains(killTask))
-                Tasks.Add(killTask);
+                AssignTask(killTask);
         }
 
         /// <summary> Tell the creature to find a path to the edge of the world and leave it. </summary>
@@ -926,7 +948,7 @@ namespace DwarfCorp
                 AutoRetry = true,
                 Name = "Leave the world."
             };
-            Tasks.Add(leaveTask);
+            AssignTask(leaveTask);
         }
 
         /// <summary> Updates the thoughts in the creature's head. </summary>
@@ -987,7 +1009,7 @@ namespace DwarfCorp
                 Task task = new KillEntityTask(enemy.Physics, KillEntityTask.KillType.Auto);
                 if (!HasTaskWithName(task))
                 {
-                    Creature.AI.Tasks.Add(task);
+                    Creature.AI.AssignTask(task);
 
                     if (Faction == Manager.World.PlayerFaction)
                     {
@@ -1279,6 +1301,18 @@ namespace DwarfCorp
 
             fear = Math.Min(fear, 0.99f);
             return MathFunctions.RandEvent(1.0f - fear);
+        }
+
+        public void AssignTask(Task task)
+        {
+            Tasks.Add(task);
+            task.OnAssign(this.Creature);
+        }
+
+        public void RemoveTask(Task task)
+        {
+            Tasks.Remove(task);
+            task.OnUnAssign(this.Creature);
         }
     }
 }

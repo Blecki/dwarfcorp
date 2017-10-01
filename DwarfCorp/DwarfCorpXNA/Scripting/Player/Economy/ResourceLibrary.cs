@@ -247,13 +247,15 @@ namespace DwarfCorp
                 new NamedImageFrame(tileSheet, GetRect(5, 1)), 13, Color.White, Resource.ResourceTags.Plantable,
                  Resource.ResourceTags.Flammable, Resource.ResourceTags.AboveGroundPlant, Resource.ResourceTags.Edible)
             {
-                PlantToGenerate = "Palm Tree"
+                PlantToGenerate = "Palm Tree",
+                FoodContent = 50
             });
             Add(new Resource(ResourceType.Apple, 5.0m, "Grows apple trees.",
                 new NamedImageFrame(tileSheet, GetRect(4, 3)), 28, Color.White, Resource.ResourceTags.Plantable,
                 Resource.ResourceTags.Flammable, Resource.ResourceTags.AboveGroundPlant, Resource.ResourceTags.Edible, Resource.ResourceTags.RawFood)
             {
-                PlantToGenerate = "Apple Tree"
+                PlantToGenerate = "Apple Tree",
+                FoodContent = 50
             });
             Add(new Resource(ResourceType.Cactus, 9.0m, "Grows cacti.",
                 new NamedImageFrame(tileSheet, GetRect(7, 1)), 15, Color.White, Resource.ResourceTags.Plantable,

@@ -173,7 +173,12 @@ namespace DwarfCorp.GameStates
             if (CurrentState == GenerationState.NotStarted)
             {
                 Settings.WorldGenerationOrigin = new Vector2(Settings.Width / 2.0f, Settings.Height / 2.0f);
-                genThread = new Thread(unused => GenerateWorld(Seed, (int) Settings.Width, (int) Settings.Height))
+                genThread = new Thread(unused =>
+                {
+                    System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+                    System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+                    GenerateWorld(Seed, (int) Settings.Width, (int) Settings.Height);
+                })
                 {
                     Name = "GenerateWorld"
                 };

@@ -1,4 +1,4 @@
-﻿// Datastructures.cs
+// Datastructures.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -171,7 +171,7 @@ namespace DwarfCorp
         public static T SelectRandom<T>(IEnumerable<T> list)
         {
             var enumerable = list as IList<T> ?? list.ToList();
-            return enumerable.ElementAt(MathFunctions.Random.Next(enumerable.Count()));
+            return enumerable.Count > 0 ? enumerable.ElementAt(MathFunctions.Random.Next(enumerable.Count())) : default(T);
         }
 
         public static T[,] RotateClockwise<T>(T[,] A)

@@ -63,7 +63,7 @@ namespace DwarfCorp
 
         public override void OnEnd()
         {
-
+            Player.VoxSelector.Clear();
         }
 
         void MagicMenu_SpellTriggered(Spell spell)
@@ -103,7 +103,7 @@ namespace DwarfCorp
 
                 foreach (CreatureAI wizard in wizards)
                 {
-                    wizard.Tasks.Add(new ActWrapperTask(new GoResearchSpellAct(wizard, spell))
+                    wizard.AssignTask(new ActWrapperTask(new GoResearchSpellAct(wizard, spell))
                     {
                         Priority = Task.PriorityType.Low
                     });

@@ -197,7 +197,7 @@ namespace DwarfCorp
                             if (counts[taskCost.Key] == 0) goalsUnassigned--;
 
                             counts[taskCost.Key]++;
-                            creature.Tasks.Add(newGoals[taskCost.Key].Clone());
+                            creature.AssignTask(newGoals[taskCost.Key].Clone());
                             break;
                         }
                     }
@@ -235,7 +235,7 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    creatures[i].Tasks.Add(unassignedGoals[assignment].Clone());
+                    creatures[i].AssignTask(unassignedGoals[assignment].Clone());
                     removals.Add(unassignedGoals[assignment]);
                 }
 

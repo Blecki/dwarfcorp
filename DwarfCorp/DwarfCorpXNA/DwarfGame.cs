@@ -342,6 +342,33 @@ namespace DwarfCorp
             
         }
 
+        public static void SafeSpriteBatchBegin(SpriteSortMode sortMode, BlendState blendState, SamplerState samplerstate, 
+            DepthStencilState depthState, RasterizerState rasterState, Effect effect, Matrix world)
+        {
+            try
+            {
+                SpriteBatch.Begin(sortMode,
+                    blendState,
+                    samplerstate,
+                    depthState,
+                    rasterState,
+                    effect,
+                    world);
+            }
+            catch (InvalidOperationException exception)
+            {
+                Console.Error.Write(exception);
+                SpriteBatch.End();
+                SpriteBatch.Begin(sortMode,
+                    blendState,
+                    samplerstate,
+                    depthState,
+                    rasterState,
+                    effect,
+                    world);
+            }
+        }
+
         protected override void OnExiting(object sender, EventArgs args)
         {
             _logwriter.Dispose();

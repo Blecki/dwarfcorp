@@ -283,6 +283,7 @@ namespace DwarfCorp.Dialogue
             else
             {
                 Context.Transition(RootWithPrompt("Changed your mind?"));
+               
             }
         }
 

@@ -35,6 +35,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -89,6 +90,9 @@ namespace DwarfCorp
 
         private void LoadThreaded()
         {
+            // Ensure we're using the invariant culture.
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
             LoadStatus = LoadingStatus.Loading;
             SetLoadingMessage("Initializing ...");
 
@@ -316,7 +320,7 @@ namespace DwarfCorp
                     {
                         if (!ResourceLibrary.Resources.ContainsKey(resource.Key))
                         {
-                            ResourceLibrary.Resources.Add(resource.Key, resource.Value);
+                            ResourceLibrary.Add(resource.Value);
                         }
                     }
 

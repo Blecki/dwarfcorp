@@ -139,15 +139,23 @@ namespace DwarfCorp
         {
             JObject jsonObject = JObject.Load(reader);
             var properties = jsonObject.Properties().ToList();
-            return new BoundingBox()
+            try
             {
-                Max = new Vector3(float.Parse((string)properties[0]),
-                    float.Parse((string)properties[1]),
-                    float.Parse((string)properties[2])),
-                Min = new Vector3(float.Parse((string)properties[3]),
-                    float.Parse((string)properties[4]),
-                    float.Parse((string)properties[5])) 
-            };
+                return new BoundingBox()
+                {
+                    Max = new Vector3(float.Parse((string)properties[0]),
+                        float.Parse((string)properties[1]),
+                        float.Parse((string)properties[2])),
+                    Min = new Vector3(float.Parse((string)properties[3]),
+                        float.Parse((string)properties[4]),
+                        float.Parse((string)properties[5]))
+                };
+            }
+            catch (System.OverflowException exception)
+            {
+                return new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue),
+                    new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
+            }
 
         }
 

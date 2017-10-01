@@ -44,23 +44,41 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class StashMoneyAct : CreatureAct
     {
-        public DwarfBux Money { get; set; }
+        public DwarfBux Money { get { return GetMoney(); } set { SetMoney(value); } }
         [JsonIgnore]
         public Treasury Zone { get { return GetZone(); } set { SetZone(value); } }
-
         public Treasury GetZone()
         {
             return Agent.Blackboard.GetData<Treasury>(StockpileName);
         }
 
         public string StockpileName = "Treasury";
+        public string MoneyName = "MoneyNeeded";
         public void SetZone(Treasury pile)
         {
             Agent.Blackboard.SetData(StockpileName, pile);
         }
+
+        public DwarfBux GetMoney()
+        {
+            return Agent.Blackboard.GetData<DwarfBux>(MoneyName);
+        }
+
+        public void SetMoney(DwarfBux value)
+        {
+            Agent.Blackboard.SetData(MoneyName, value);
+        }
         public StashMoneyAct()
         {
 
+        }
+
+        public StashMoneyAct(CreatureAI agent, string moneyAmountName, string zoneName) : 
+            base(agent)
+        {
+            StockpileName = zoneName;
+            MoneyName = moneyAmountName;
+            Name = "Stash " + moneyAmountName;
         }
 
         public StashMoneyAct(CreatureAI agent, DwarfBux money) :
@@ -72,8 +90,14 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
+            if (Zone == null)
+            {
+                yield return Act.Status.Fail;
+                yield break;
+            }
             Timer waitTimer = new Timer(1.0f, true);
-            bool removed = Zone.RemoveMoney(Agent.Position, Money);
+            var moneyRemoved = Math.Min(Money, Zone.Money);
+            bool removed = Zone.RemoveMoney(Agent.Position, moneyRemoved);
 
             if(!removed)
             {
@@ -82,7 +106,7 @@ namespace DwarfCorp
             else
             {
                 Agent.AddMoney(Money);
-
+                Money -= moneyRemoved;
                 while (!waitTimer.HasTriggered)
                 {
                     waitTimer.Update(DwarfTime.LastTime);

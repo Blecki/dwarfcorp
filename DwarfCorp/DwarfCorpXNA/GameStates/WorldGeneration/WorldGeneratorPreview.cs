@@ -150,7 +150,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.FloatTopLeft,
                 MinimumSize = new Point(128, 0),
                 OnSelectedIndexChanged = (sender) => UpdatePreview = true,
-                Font = "font",
+                Font = "font8",
                 TextColor = new Vector4(0, 0, 0, 1)
             }) as Gui.Widgets.ComboBox;
 
@@ -306,15 +306,15 @@ namespace DwarfCorp.GameStates
 
             GetSpawnRectangleInScreenSpace(SpawnRectanglePoints);
 
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp,
-            null, null);
+            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp,
+            null, null, null, Matrix.Identity);
             Drawer2D.DrawPolygon(DwarfGame.SpriteBatch, Color.Yellow, 1, SpawnRectanglePoints);
             //Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, "Spawn", DefaultFont, new Vector2(a.X - 5, a.Y - 20),
             //    Color.White, Color.Black);
             DwarfGame.SpriteBatch.End();
 
 
-            var font = Root.GetTileSheet("font");
+            var font = Root.GetTileSheet("font8");
             var icon = Root.GetTileSheet("map-icons");
             var bkg = Root.GetTileSheet("basic");
             foreach (var tree in Trees)
@@ -415,7 +415,7 @@ namespace DwarfCorp.GameStates
                     Generator.worldData, PreviewTexture, Generator.Settings.SeaLevel);
 
                 var colorKeyEntries = style.GetColorKeys(Generator);
-                var font = Root.GetTileSheet("font");
+                var font = Root.GetTileSheet("font8");
                 var stringMeshes = new List<Gui.Mesh>();
                 var y = Rect.Y;
                 var maxWidth = 0;

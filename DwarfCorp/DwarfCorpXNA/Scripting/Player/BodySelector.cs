@@ -241,8 +241,6 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    Vector3 screenPoint = CameraController.Project(ClickPoint3D);
-                    ClickPoint = new Point((int) screenPoint.X, (int) screenPoint.Y);
                     UpdateSelectionRectangle(mouse.X, mouse.Y);
                 }
             }
@@ -269,8 +267,6 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        Vector3 screenPoint = CameraController.Project(ClickPoint3D);
-                        ClickPoint = new Point((int) screenPoint.X, (int) screenPoint.Y);
                         UpdateSelectionRectangle(mouse.X, mouse.Y);
                     }
                 }

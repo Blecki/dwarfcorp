@@ -63,6 +63,7 @@ namespace DwarfCorp
             {
                 Drawer3D.UnHighlightVoxel(des.Value.Vox);
             }
+            Player.VoxSelector.Clear();
         }
 
 
