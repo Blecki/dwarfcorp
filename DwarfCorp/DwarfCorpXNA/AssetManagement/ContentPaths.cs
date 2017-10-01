@@ -647,7 +647,7 @@ namespace DwarfCorp
         }
         public class Fonts
         {
-            public static string Default = ProgramData.CreatePath("newgui", "font-14px-sprfont");
+            public static string Default = ProgramData.CreatePath("newgui", "font-16px-sprfont");
             public static string Small = ProgramData.CreatePath("newgui", "font-8px-sprfont");
 
         }

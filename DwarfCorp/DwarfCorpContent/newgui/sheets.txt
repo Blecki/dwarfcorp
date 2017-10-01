@@ -22,11 +22,6 @@
 			"Type": "VariableWidthFont"
 		},
 		{
-			"Name": "font14",
-			"Texture": "newgui/font-14px",
-			"Type": "VariableWidthFont"
-		},
-		{
 			"Name": "font16",
 			"Texture": "newgui/font-16px",
 			"Type": "VariableWidthFont"
