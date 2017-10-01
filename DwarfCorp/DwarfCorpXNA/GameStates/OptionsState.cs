@@ -25,6 +25,7 @@ namespace DwarfCorp.GameStates
         private HorizontalFloatSlider MoveSpeed;
         private HorizontalFloatSlider ZoomSpeed;
         private CheckBox InvertZoom;
+        private CheckBox ZoomTowardMouse;
         private CheckBox EdgeScrolling;
         private CheckBox FogOfWar;
         private CheckBox PlayIntro;
@@ -278,6 +279,15 @@ namespace DwarfCorp.GameStates
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
+
+            ZoomTowardMouse = panel.AddChild(new CheckBox
+            {
+                Text = "Zoom to Mouse",
+                Tooltip = "When checked, when you zoom in, you will zoom toward the mouse.",
+                OnCheckStateChange = OnItemChanged,
+                AutoLayout = AutoLayout.DockTop
+            }) as CheckBox;
+
 
             EdgeScrolling = panel.AddChild(new CheckBox
             {
@@ -809,6 +819,7 @@ namespace DwarfCorp.GameStates
             toReturn.EnableEdgeScroll = this.EdgeScrolling.CheckState;
             toReturn.FogofWar = this.FogOfWar.CheckState;
             toReturn.InvertZoom = this.InvertZoom.CheckState;
+            toReturn.ZoomCameraTowardMouse = this.ZoomTowardMouse.CheckState;
             toReturn.DisplayIntro = this.PlayIntro.CheckState;
             toReturn.AutoSave = this.Autosave.CheckState;
             toReturn.AutoSaveTimeMinutes =
@@ -950,6 +961,7 @@ namespace DwarfCorp.GameStates
             this.EdgeScrolling.CheckState = GameSettings.Default.EnableEdgeScroll;
             this.FogOfWar.CheckState = GameSettings.Default.FogofWar;
             this.InvertZoom.CheckState = GameSettings.Default.InvertZoom;
+            this.ZoomTowardMouse.CheckState = GameSettings.Default.ZoomCameraTowardMouse;
             this.PlayIntro.CheckState = GameSettings.Default.DisplayIntro;
             this.Autosave.CheckState = GameSettings.Default.AutoSave;
             (this.AutoSaveFrequency.GetChild(1) as HorizontalSlider).ScrollPosition =

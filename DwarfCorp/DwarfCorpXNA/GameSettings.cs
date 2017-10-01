@@ -86,6 +86,7 @@ namespace DwarfCorp
             public float AutoSaveTimeMinutes = 2.0f;
             public bool VSync = true;
             public bool AllowReporting = true;
+            public bool ZoomCameraTowardMouse = true;
 
             public Settings Clone()
             {
