@@ -472,6 +472,8 @@ namespace DwarfCorp
                 if (Master.Faction.Economy.Company.Information == null)
                     Master.Faction.Economy.Company.Information = new CompanyInformation();
                 CreateInitialEmbarkment();
+                foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
+                    ChunkManager.InvalidateChunk(chunk);
                 ChunkManager.UpdateRebuildList();
                 ChunkManager.CreateGraphics(SetLoadingMessage, ChunkManager.ChunkData);
                 ChunkManager.StartThreads();

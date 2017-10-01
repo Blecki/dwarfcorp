@@ -62,6 +62,30 @@ namespace DwarfCorp
         public ConcurrentQueue<VoxelChunk> RebuildList { get; set; }
         public ConcurrentQueue<VoxelChunk> RebuildLiquidsList { get; set; }
 
+        private Queue<VoxelChunk> RebuildQueue = new Queue<VoxelChunk>();
+        private Mutex RebuildQueueLock = new Mutex();
+
+        public void InvalidateChunk(VoxelChunk Chunk)
+        {
+            RebuildQueueLock.WaitOne();
+            if (!RebuildQueue.Contains(Chunk))
+            {
+                RebuildQueue.Enqueue(Chunk);
+                NeedsRebuildEvent.Set();
+            }
+            RebuildQueueLock.ReleaseMutex();
+        }
+
+        public VoxelChunk PopInvalidChunk()
+        {
+            VoxelChunk result = null;
+            RebuildQueueLock.WaitOne();
+            if (RebuildQueue.Count > 0)
+                result = RebuildQueue.Dequeue();
+            RebuildQueueLock.ReleaseMutex();
+            return result;
+        }
+
         public Point3 WorldSize { get; set; } 
 
         public ChunkGenerator ChunkGen { get; set; }
@@ -269,6 +293,7 @@ namespace DwarfCorp
         {
             System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+
             EventWaitHandle[] waitHandles =
             {
                 NeedsRebuildEvent,
@@ -289,71 +314,14 @@ namespace DwarfCorp
                     GamePerformance.Instance.EnterZone("RebuildVoxels");
 
                     if (wh == Program.ShutdownEvent)
-                    {
                         break;
-                    }
-                    {
-                        if (PauseThreads)
-                        {
+
+                    if (PauseThreads)
                             continue;
-                        }
+                    
+                    for (var chunk = PopInvalidChunk(); chunk != null; chunk = PopInvalidChunk())
+                        chunk.Rebuild(Graphics);
 
-                        var toRebuild = new Dictionary<GlobalChunkCoordinate, VoxelChunk>();
-                        bool calculateRamps = GameSettings.Default.CalculateRamps;
-
-                        lock (RebuildList)
-                        {
-                            while (RebuildList.Count > 0)
-                            {
-                                VoxelChunk chunk = null;
-
-                                if (!RebuildList.TryDequeue(out chunk))
-                                {
-                                    continue;
-                                }
-
-                                if (chunk == null)
-                                {
-                                    continue;
-                                }
-
-                                toRebuild[chunk.ID] = chunk;
-
-                                if (PauseThreads)
-                                {
-                                    break;
-                                }
-                            }
-                        }
-
-                        //if (calculateRamps)
-                        //{
-                        //    foreach (VoxelChunk chunk in toRebuild.Select(chunkPair => chunkPair.Value))
-                        //    {
-                        //        chunk.UpdateRamps();
-                        //    }
-                        //}
-
-                        //foreach (
-                        //    VoxelChunk chunk in
-                        //        toRebuild.Select(chunkPair => chunkPair.Value)
-                        //            .Where(chunk => chunk.ShouldRecalculateLighting))
-                        //{
-                        //    chunk.CalculateGlobalLight();
-                        //}
-
-                        foreach (VoxelChunk chunk in toRebuild.Select(chunkPair => chunkPair.Value))
-                        {
-                            if (chunk.RebuildPending && chunk.ShouldRebuild)
-                            {
-                                // Todo: Race condition? What if the chunk is modified while rebuilding??
-                                chunk.Rebuild(Graphics);
-                                //chunk.ShouldRebuild = false;
-                                chunk.RebuildPending = false;
-                            }
-                        }
-                        
-                    }
                     GamePerformance.Instance.PostThreadLoop(GamePerformance.ThreadIdentifier.RebuildVoxels);
                     GamePerformance.Instance.ExitZone("RebuildVoxels");
                 }
@@ -416,34 +384,15 @@ namespace DwarfCorp
 
         public void UpdateRebuildList()
         {
-            List<VoxelChunk> toRebuild = new List<VoxelChunk>();
             List<VoxelChunk> toRebuildLiquids = new List<VoxelChunk>();
 
             foreach (VoxelChunk chunk in ChunkData.GetChunkEnumerator())
             {
-                if(chunk.ShouldRebuild && ! chunk.RebuildPending)
-                {
-                    toRebuild.Add(chunk);
-                    chunk.RebuildPending = true;
-                }
-
                 if(chunk.ShouldRebuildWater && ! chunk.RebuildLiquidPending)
                 {
                     toRebuildLiquids.Add(chunk);
                     chunk.RebuildLiquidPending = true;
                 }
-            }
-
-
-            if(toRebuild.Count > 0)
-            {
-                toRebuild.Sort(CompareChunkDistance);
-                //RebuildLock.WaitOne();
-                foreach(VoxelChunk chunk in toRebuild)
-                {
-                    RebuildList.Enqueue(chunk);
-                }
-                //RebuildLock.ReleaseMutex();
             }
 
             if(toRebuildLiquids.Count > 0)
@@ -456,12 +405,6 @@ namespace DwarfCorp
                     RebuildLiquidsList.Enqueue(chunk);
                 }
                 //LiquidLock.ReleaseMutex();
-            }
-
-
-            if(RebuildList.Count > 0)
-            {
-                NeedsRebuildEvent.Set();
             }
 
             if(RebuildLiquidsList.Count > 0)
@@ -588,7 +531,6 @@ namespace DwarfCorp
                     box.Y * VoxelConstants.ChunkSizeY,
                     box.Z * VoxelConstants.ChunkSizeZ);
                 VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, World);
-                chunk.ShouldRebuild = true;
                 chunk.IsVisible = true;
                 ChunkData.AddChunk(chunk);
             }
@@ -662,22 +604,22 @@ namespace DwarfCorp
 
         public void CreateGraphics(Action<String> SetLoadingMessage, ChunkData chunkData)
         {
-            SetLoadingMessage("Creating Graphics");
+            //SetLoadingMessage("Creating Graphics");
 
-            List<VoxelChunk> toRebuild = new List<VoxelChunk>();
+            //List<VoxelChunk> toRebuild = new List<VoxelChunk>();
 
-            while(RebuildList.Count > 0)
-            {
-                VoxelChunk chunk = null;
+            //while(RebuildList.Count > 0)
+            //{
+            //    VoxelChunk chunk = null;
 
-                if (!RebuildList.TryDequeue(out chunk))
-                    break;
+            //    if (!RebuildList.TryDequeue(out chunk))
+            //        break;
             
-                if(chunk == null)
-                    continue;
+            //    if(chunk == null)
+            //        continue;
             
-                toRebuild.Add(chunk);
-            }
+            //    toRebuild.Add(chunk);
+            //}
 
             //SetLoadingMessage("Updating Ramps");
             //if (GameSettings.Default.CalculateRamps)
@@ -694,17 +636,12 @@ namespace DwarfCorp
             //    }
             //}
 
-            SetLoadingMessage("Building Vertices...");
-            foreach(var  chunk in toRebuild)
-            {
-                if (!chunk.ShouldRebuild)
-                    return;
-
-                chunk.Rebuild(Graphics);
-                chunk.ShouldRebuild = false;
-                chunk.RebuildPending = false;
-                chunk.RebuildLiquidPending = false;
-            };
+            //SetLoadingMessage("Building Vertices...");
+            //foreach(var  chunk in toRebuild)
+            //{
+            //    chunk.Rebuild(Graphics);
+            //    chunk.RebuildLiquidPending = false;
+            //};
 
             SetLoadingMessage("Cleaning Up.");
         }
