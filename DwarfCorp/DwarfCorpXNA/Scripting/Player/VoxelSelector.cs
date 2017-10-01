@@ -358,7 +358,7 @@ namespace DwarfCorp
                                 SelectionBuffer.RemoveAll(v =>
                                 {
                                     if (v.Equals(underMouse)) return false;
-                                    return !VoxelHelpers.DoesVoxelHaveVisibleSurface(
+                                    return v.IsExplored && !VoxelHelpers.DoesVoxelHaveVisibleSurface(
                                         Chunks.ChunkData, v);
                                 });
                         }
@@ -659,8 +659,8 @@ namespace DwarfCorp
             {
                 if (!v.IsValid) continue;
                 
-                if (!v.IsExplored || (SelectionType == VoxelSelectionType.SelectFilled && !v.IsEmpty)
-                    || (SelectionType == VoxelSelectionType.SelectEmpty && v.IsEmpty))
+                if (!v.IsExplored || ((SelectionType == VoxelSelectionType.SelectFilled && !v.IsEmpty)
+                    || (SelectionType == VoxelSelectionType.SelectEmpty && v.IsEmpty)))
                 {
                     Drawer2D.DrawRect(World.Camera, v.WorldPosition + half, screenRect, dotColor, Color.Transparent, 0.0f);
                 }
