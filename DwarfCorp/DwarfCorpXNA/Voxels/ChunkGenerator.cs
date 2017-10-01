@@ -443,7 +443,7 @@ namespace DwarfCorp
                     }
                     float treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
 
-                   EntityFactory.DoLazy(() =>
+                    EntityFactory.DoLazy(() =>
                     {
                         GameComponent entity = EntityFactory.CreateEntity<GameComponent>(veg.Name,
                             chunk.Origin + new Vector3(x, y, z) + new Vector3(0, treeSize * offset, 0),

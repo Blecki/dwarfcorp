@@ -280,8 +280,7 @@ namespace DwarfCorp
                         ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
 
                     ChunkRenderer = new ChunkRenderer(this, Camera, GraphicsDevice, ChunkManager.ChunkData);
-
-
+                    
                     SetLoadingMessage("Loading Terrain...");
                     gameFile.ReadChunks(ExistingFile);
                     ChunkManager.ChunkData.LoadFromFile(gameFile, SetLoadingMessage);
@@ -289,8 +288,7 @@ namespace DwarfCorp
                     ChunkManager.ChunkData.SetMaxViewingLevel(gameFile.Metadata.Slice > 0
                         ? gameFile.Metadata.Slice
                         : ChunkManager.ChunkData.MaxViewingLevel, ChunkManager.SliceMode.Y);
-
-
+                    
                     SetLoadingMessage("Loading Entities...");
                     gameFile.LoadPlayData(ExistingFile, this);
                     Camera = gameFile.PlayData.Camera;

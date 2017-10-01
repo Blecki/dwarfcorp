@@ -53,7 +53,6 @@ namespace DwarfCorp
         public string ModelType { get; set; }
         [JsonIgnore]
         public NewInstanceData Instance { get; set; }
-        private bool instanceVisible = true;
         private bool checkHeight = false;
 
         [OnDeserialized]
@@ -67,7 +66,6 @@ namespace DwarfCorp
                 Tint,
                 true);
             Instance.SelectionBufferColor = GetGlobalIDColor();
-            instanceVisible = true;
         }
 
         public Mesh()
@@ -82,7 +80,6 @@ namespace DwarfCorp
             Instance = new NewInstanceData(Manager.World.NewInstanceManager, ModelType,
                 Vector3.One, GlobalTransform, Tint, true);
             Instance.SelectionBufferColor = GetGlobalIDColor();
-            instanceVisible = true;
         }
 
         private bool firstIter = true;
@@ -100,34 +97,14 @@ namespace DwarfCorp
                 Instance.SelectionBufferColor = GetGlobalIDColor();
                 firstIter = false;
             }
-            
-            if (IsVisible != instanceVisible)
-            {
-                SetVisible(IsVisible);
-            }
+
+            Instance.Visible = IsVisible;
         }
 
         public override void Die()
         {
             Manager.World.NewInstanceManager.RemoveInstance(Instance);
             base.Die();
-        }
-
-        public void SetVisible(bool value)
-        {
-            if (Instance != null)
-            {
-                if (value && !instanceVisible)
-                {
-                    Manager.World.NewInstanceManager.AddInstance(Instance);
-                }
-                else if (!value && instanceVisible)
-                {
-                    Manager.World.NewInstanceManager.RemoveInstance(Instance);
-                }
-            }
-
-            instanceVisible = value;
         }
     }
 }
