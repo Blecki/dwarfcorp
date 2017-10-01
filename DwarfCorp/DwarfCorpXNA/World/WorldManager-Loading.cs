@@ -458,9 +458,6 @@ namespace DwarfCorp
                 #endregion
 
                 ChunkManager.camera = Camera;
-                // Finally, the chunk manager's threads are started to allow it to 
-                // dynamically rebuild terrain
-                ChunkManager.RebuildList = new ConcurrentQueue<VoxelChunk>();
 
                 SetLoadingMessage("Creating Particles ...");
                 ParticleManager = new ParticleManager(ComponentManager);
@@ -473,9 +470,11 @@ namespace DwarfCorp
                     Master.Faction.Economy.Company.Information = new CompanyInformation();
                 CreateInitialEmbarkment();
                 foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
+                {
                     ChunkManager.InvalidateChunk(chunk);
-                ChunkManager.UpdateRebuildList();
-                ChunkManager.CreateGraphics(SetLoadingMessage, ChunkManager.ChunkData);
+                    ChunkManager.InvalidateLiquidChunk(chunk);
+                }
+
                 ChunkManager.StartThreads();
                 SetLoadingMessage("Presimulating ...");
                 ShowingWorld = false;
