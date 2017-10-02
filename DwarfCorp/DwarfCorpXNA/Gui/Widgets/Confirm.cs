@@ -29,7 +29,7 @@ namespace DwarfCorp.Gui.Widgets
                 Rect.Y = (Root.RenderData.VirtualScreen.Height/2) - 32;
             }
             Border = "border-fancy";
-
+            Font = "font10";
             if (!String.IsNullOrEmpty(OkayText))
             {
                 AddChild(new Gui.Widgets.Button

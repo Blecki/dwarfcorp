@@ -253,7 +253,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockBottom,
                 TextHorizontalAlign = Gui.HorizontalAlign.Center,
                 TextVerticalAlign = Gui.VerticalAlign.Center,
-                Font = "font18-outline",
+                Font = "font10",
                 TextColor = new Vector4(1,1,1,1)
             }) as Gui.Widgets.ProgressBar;
 

@@ -314,7 +314,7 @@ namespace DwarfCorp.GameStates
             DwarfGame.SpriteBatch.End();
 
 
-            var font = Root.GetTileSheet("font8");
+            var font = Root.GetTileSheet("font10");
             var icon = Root.GetTileSheet("map-icons");
             var bkg = Root.GetTileSheet("basic");
             foreach (var tree in Trees)

@@ -119,7 +119,8 @@ namespace DwarfCorp.GameStates
                 Border = "border-fancy",
                 Padding = new Margin(4, 4, 4, 4),
                 InteriorMargin = new Margin(2,0,0,0),
-                TextSize = 1
+                TextSize = 1,
+                Font = "font10"
             });
 
             mainPanel.AddChild(new Gui.Widgets.Button
@@ -143,7 +144,7 @@ namespace DwarfCorp.GameStates
 
             mainPanel.AddChild(new Gui.Widgets.Button
             {
-                Text = "Back",
+                Text = "< Back",
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 Border = "border-button",
