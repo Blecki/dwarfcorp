@@ -191,25 +191,17 @@ namespace DwarfCorp
 
         public void UpdateWater()
         {
-            //Chunks.camera.Position;
-
-
             if(Chunks.World.Paused)
-            {
                 return;
-            }
-
+            
             foreach(var chunk in Chunks.ChunkData.GetChunkEnumerator())
             {
                 bool didUpdate = DiscreteUpdate(chunk);
 
                 if (!didUpdate && !chunk.FirstWaterIter)
-                {
-                    chunk.FirstWaterIter = false;
                     continue;
-                }
 
-                chunk.ShouldRebuildWater = true;
+                Chunks.InvalidateLiquidChunk(chunk);
                 chunk.FirstWaterIter = false;
             }
         }

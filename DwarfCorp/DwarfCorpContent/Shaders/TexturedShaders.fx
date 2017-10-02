@@ -159,12 +159,12 @@ sampler ShadowMapSampler = sampler_state { texture = <xShadowMap>; magfilter = L
 
 	UTPixelToFrame UTexturedPS(UTVertexToPixel PSIn)
 	{
+		clip(PSIn.ClipDistance);
+
 		UTPixelToFrame Output = (UTPixelToFrame)0;
 
 		Output.Color = PSIn.Color;
-
-		clip(PSIn.ClipDistance);
-	
+		
 		return Output;
 	}
 
