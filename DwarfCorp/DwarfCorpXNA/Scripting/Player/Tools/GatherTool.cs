@@ -78,7 +78,6 @@ namespace DwarfCorp
                 c.Parent == Player.World.ComponentManager.RootComponent))
             {
                 if (!resource.IsVisible || resource.IsAboveCullPlane(Player.World.ChunkManager)) continue;
-                Drawer3D.DrawBox(resource.BoundingBox, Color.LightGoldenrodYellow, 0.05f, true);
 
                 if(button == InputManager.MouseButton.Left)
                 {
@@ -88,12 +87,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    if(!Player.Faction.GatherDesignations.Contains(resource))
-                    {
-                        continue;
-                    }
-
-                    Player.Faction.GatherDesignations.Remove(resource);
+                    Player.Faction.RemoveGatherDesignation(resource);
                 }
             }
 

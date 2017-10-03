@@ -101,7 +101,7 @@ namespace DwarfCorp
 
         public bool IsGatherable()
         {
-            return (Agent.Faction.GatherDesignations.Contains(ItemToGather));
+            return (Agent.Faction.IsGatherDesignation(ItemToGather));
         }
 
         public Act EntityIsGatherable()

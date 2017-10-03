@@ -48,10 +48,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class DigTool : PlayerTool
     {
-        public Color DigDesignationColor { get; set; }
-        public Color UnreachableColor { get; set; }
-        public float DigDesignationGlowRate { get; set; }
-
         public override void OnBegin()
         {
            Player.World.Tutorial("mine");

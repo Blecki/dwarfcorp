@@ -49,10 +49,11 @@ namespace DwarfCorp
     {
         public enum DesignationType
         {
-            Dig, // Red
-            Farm, // LimeGreen
-            Guard, // Blue
-            Chop // Red
+            Dig,
+            Farm,
+            Guard,
+            Gather,
+            Chop
         }
 
         private Dictionary<DesignationType, List<GlobalVoxelCoordinate>> HilitedVoxels = new Dictionary<DesignationType, List<GlobalVoxelCoordinate>>();
@@ -92,6 +93,12 @@ namespace DwarfCorp
             {
                 Color = Color.LightGreen,
                 Icon = new NamedImageFrame("newgui/pointers2", 32, 5, 0)
+            });
+
+            DesignationProperties.Add(DesignationType.Gather, new DesignationTypeProperties
+            {
+                Color = Color.Orange,
+                Icon = new NamedImageFrame("newgui/pointers2", 32, 6, 0)
             });
         }
 

@@ -257,16 +257,13 @@ namespace DwarfCorp
                 DigOrders.Remove(removalKeys[i]);
             }
 
-            List<Body> gatherRemovals = (from b in GatherDesignations
-                where b == null || b.IsDead
-                select b).ToList();
-
-            foreach(Body b in gatherRemovals)
+            GatherDesignations.RemoveAll(b =>
             {
-                GatherDesignations.Remove(b);
-            }
-
-
+                if (b.IsDead)
+                    World.DesignationDrawer.UnHiliteEntity(b, DesignationDrawer.DesignationType.Gather);
+                return b.IsDead;
+            });
+            
             List<BuildOrder> removals = new List<BuildOrder>();
             foreach (BuildOrder d in GuardDesignations)
             {
@@ -342,9 +339,20 @@ namespace DwarfCorp
             return RemoveChopResult.DidntExist;
         }
 
+        public void RemoveGatherDesignation(Body Entity)
+        {
+            GatherDesignations.Remove(Entity);
+            World.DesignationDrawer.UnHiliteEntity(Entity, DesignationDrawer.DesignationType.Gather);
+        }
+
         public bool IsChopDesignation(Body Entity)
         {
             return ChopDesignations.Contains(Entity);
+        }
+
+        public bool IsGatherDesignation(Body Entity)
+        {
+            return GatherDesignations.Contains(Entity);
         }
 
         public bool IsTaskAssigned(Task task)
@@ -468,6 +476,7 @@ namespace DwarfCorp
 
             if (GatherDesignations.Contains(resource)) return false;
             GatherDesignations.Add(resource);
+            World.DesignationDrawer.HiliteEntity(resource, DesignationDrawer.DesignationType.Gather);
             return true;
         }
 
