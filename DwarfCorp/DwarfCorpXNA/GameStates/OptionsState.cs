@@ -387,7 +387,7 @@ namespace DwarfCorp.GameStates
             {
                 panel.AddChild(new Widget()
                 {
-                    Text = "ERROR. NO SUITABLE AUDIO HARDWARE FOUND. SOUND IS DISABLED :(",
+                    Text = String.Format("ERROR. SOUND IS DISABLED: {0}", SoundManager.AudioError),
                     TextColor = Color.DarkRed.ToVector4(),
                     Font = "font16",
                     AutoLayout = AutoLayout.DockTop
