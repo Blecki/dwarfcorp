@@ -171,7 +171,6 @@ namespace DwarfCorp
                 AddChunk(chunk);
 
             chunkManager.UpdateBounds();
-            chunkManager.CreateGraphics(SetLoadingMessage, this);
         }
     }
 }

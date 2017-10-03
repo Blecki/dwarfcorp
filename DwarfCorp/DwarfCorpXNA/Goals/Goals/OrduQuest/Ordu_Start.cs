@@ -17,20 +17,28 @@ namespace DwarfCorp.Goals.Goals
 
         public override void Activate(WorldManager World)
         {
-            // Create Ordu faction, add to FactionLibrary and World.Natives
-            var orduFaction = new Faction(World)
-            {
-                Race = World.Factions.Races["Undead"],
-                Name = "Ordu",
-                PrimaryColor = new HSLColor(300.0, 100.0, 100.0),
-                SecondaryColor = new HSLColor(300.0, 50.0, 50.0),
-                TradeMoney = (decimal)1000.0f,
-                Center = new Microsoft.Xna.Framework.Point(MathFunctions.RandInt(0, Overworld.Map.GetLength(0)), MathFunctions.RandInt(0, Overworld.Map.GetLength(1)))
-            };
+            Faction orduFaction = null;
 
-            World.Factions.Factions.Add("Ordu", orduFaction);
-            World.Natives.Add(orduFaction);
-            World.Diplomacy.InitializeFactionPolitics(orduFaction, World.Time.CurrentDate);
+            if (!World.Factions.Factions.ContainsKey("Ordu"))
+            {
+
+                // Create Ordu faction, add to FactionLibrary and World.Natives
+                orduFaction = new Faction(World)
+                {
+                    Race = World.Factions.Races["Undead"],
+                    Name = "Ordu",
+                    PrimaryColor = new HSLColor(300.0, 100.0, 100.0),
+                    SecondaryColor = new HSLColor(300.0, 50.0, 50.0),
+                    TradeMoney = (decimal)1000.0f,
+                    Center = new Microsoft.Xna.Framework.Point(MathFunctions.RandInt(0, Overworld.Map.GetLength(0)), MathFunctions.RandInt(0, Overworld.Map.GetLength(1)))
+                };
+
+                World.Factions.Factions.Add("Ordu", orduFaction);
+                World.Natives.Add(orduFaction);
+                World.Diplomacy.InitializeFactionPolitics(orduFaction, World.Time.CurrentDate);
+            }
+            else
+                orduFaction = World.Factions.Factions["Ordu"];
 
             // Spawn trade convoy from Ordu
             World.Diplomacy.SendTradeEnvoy(orduFaction, World);

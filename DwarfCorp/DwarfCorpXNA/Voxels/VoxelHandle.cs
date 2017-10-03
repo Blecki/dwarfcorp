@@ -209,7 +209,6 @@ namespace DwarfCorp
             get { return _cache_Chunk.Data.Water[_cache_Index]; }
             set
             {
-
                 var existingLiquid = _cache_Chunk.Data.Water[_cache_Index];
                 if (existingLiquid.Type != LiquidType.None && value.Type == LiquidType.None)
                     _cache_Chunk.Data.LiquidPresent[Coordinate.Y] -= 1;

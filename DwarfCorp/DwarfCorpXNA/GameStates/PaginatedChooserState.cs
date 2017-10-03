@@ -69,13 +69,14 @@ namespace DwarfCorp.GameStates
             {
                 AutoLayout = Gui.AutoLayout.DockBottom,
                 MinimumSize = new Point(0, 60),
-                TextHorizontalAlign = Gui.HorizontalAlign.Center
+                TextHorizontalAlign = Gui.HorizontalAlign.Center,
+                Font = "font10"
             });
 
             if (Items.Count == 0)
                 BottomBar.Text = NoItemsText;
 
-            LoadButton = BottomBar.AddChild(new Gui.Widget
+            LoadButton = BottomBar.AddChild(new Gui.Widgets.Button
             {
                 AutoLayout = Gui.AutoLayout.FloatBottomRight,
                 Border = "border-button",
@@ -87,11 +88,11 @@ namespace DwarfCorp.GameStates
                 }
             });
 
-            NextButton = BottomBar.AddChild(new Gui.Widget
+            NextButton = BottomBar.AddChild(new Gui.Widgets.Button
             {
                 AutoLayout = Gui.AutoLayout.FloatTopRight,
                 Border = "border-button",
-                Text = "Next",
+                Text = "Next >",
                 OnClick = (sender, args) =>
                 {
                     if (PreviewOffset + Grid.ItemsThatFit < Items.Count)
@@ -102,11 +103,11 @@ namespace DwarfCorp.GameStates
                 }
             });
 
-            PrevButton = BottomBar.AddChild(new Gui.Widget
+            PrevButton = BottomBar.AddChild(new Gui.Widgets.Button
             {
                 AutoLayout = Gui.AutoLayout.FloatTopLeft,
                 Border = "border-button",
-                Text = "Prev",
+                Text = "< Prev",
                 OnClick = (sender, args) =>
                 {
                     if (PreviewOffset > 0)
@@ -117,7 +118,7 @@ namespace DwarfCorp.GameStates
                 }
             });
 
-            DeleteButton = BottomBar.AddChild(new Gui.Widget
+            DeleteButton = BottomBar.AddChild(new Gui.Widgets.Button
             {
                 AutoLayout = AutoLayout.FloatBottom,
                 Border = "border-button",
@@ -144,11 +145,11 @@ namespace DwarfCorp.GameStates
                 }
             });
 
-            BottomBar.AddChild(new Gui.Widget
+            BottomBar.AddChild(new Gui.Widgets.Button
             {
                 AutoLayout = Gui.AutoLayout.FloatBottomLeft,
                 Border = "border-button",
-                Text = "Back",
+                Text = "< Back",
                 OnClick = (sender, args) =>
                 {
                     StateManager.PopState();
@@ -161,6 +162,7 @@ namespace DwarfCorp.GameStates
                 ItemSpacing = new Point(8, 8),
                 AutoLayout = Gui.AutoLayout.DockFill,
                 Border = "border-one",
+                Font = "font10",
                 InteriorMargin = new Gui.Margin(32, 0, 0, 0),
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Top

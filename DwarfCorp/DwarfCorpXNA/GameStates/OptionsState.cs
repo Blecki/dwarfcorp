@@ -110,7 +110,8 @@ namespace DwarfCorp.GameStates
                     Rect = rect,
                     Padding = new Margin(4,4,4,4),
                     Transparent = true,
-                    MinimumSize = new Point(640, 480)
+                    MinimumSize = new Point(640, 480),
+                    Font = "font10"
                 });
 
             MainPanel.AddChild(new Gui.Widgets.Button

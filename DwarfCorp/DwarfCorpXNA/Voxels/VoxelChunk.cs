@@ -60,8 +60,6 @@ namespace DwarfCorp
         public bool NewLiquidReceived = false;
         
         public bool IsVisible { get; set; }
-        public bool ShouldRebuild { get; set; }
-        public bool IsRebuilding { get; set; }
         public Vector3 Origin { get; set; }
         public bool RenderWireframe { get; set; }
         public ChunkManager Manager { get; set; }
@@ -76,9 +74,6 @@ namespace DwarfCorp
         private static bool staticsInitialized = false;
         private static Vector3[] faceDeltas = new Vector3[6];
 
-        private bool firstRebuild = true;
-
-        public bool RebuildPending { get; set; }
         public bool RebuildLiquidPending { get; set; }
         public GlobalChunkCoordinate ID { get; set; }
 
@@ -90,8 +85,8 @@ namespace DwarfCorp
         public void InvalidateSlice(int Y)
         {
             if (Y < 0 || Y >= VoxelConstants.ChunkSizeY) throw new InvalidOperationException();
-            ShouldRebuild = true;
             Data.SliceCache[Y] = null;
+            Manager.InvalidateChunk(this);
         }
 
         #region statics
@@ -139,7 +134,6 @@ namespace DwarfCorp
             Origin = origin;
             Data = VoxelData.Allocate();
             IsVisible = true;
-            ShouldRebuild = true;
             Primitive = new VoxelListPrimitive();
             RenderWireframe = false;
             Manager = manager;
@@ -154,8 +148,6 @@ namespace DwarfCorp
             Liquids[LiquidType.Lava] = new LiquidPrimitive(LiquidType.Lava);
             ShouldRebuildWater = true;
 
-            IsRebuilding = false;
-            RebuildPending = false;
             RebuildLiquidPending = false;
         }
        
@@ -228,31 +220,18 @@ namespace DwarfCorp
 
         public void Rebuild(GraphicsDevice g)
         {
-            //debug
-            //Drawer3D.DrawBox(GetBoundingBox(), Color.White, 0.1f);
-
             if (g == null || g.IsDisposed)
-            {
                 return;
-            }
-            IsRebuilding = true;
 
             VoxelListPrimitive primitive = new VoxelListPrimitive();
             primitive.InitializeFromChunk(this);
 
-            if (firstRebuild)
-            {
-                firstRebuild = false;
-            }
             RebuildLiquids();
 
             var changedMessage = new Message(Message.MessageType.OnChunkModified, "Chunk Modified");
             foreach (var c in Manager.World.CollisionManager.EnumerateIntersectingObjects(GetBoundingBox(),
                 CollisionManager.CollisionType.Both).OfType<GameComponent>())
                 c.ReceiveMessageRecursive(changedMessage);
-            
-            IsRebuilding = false;
-            ShouldRebuild = false;
         }
 
         public void Destroy(GraphicsDevice device)
