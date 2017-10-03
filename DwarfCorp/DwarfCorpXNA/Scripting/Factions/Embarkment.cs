@@ -1,4 +1,4 @@
-// GameFile.cs
+// FactionLibrary.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -32,31 +32,26 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class MetaData
+    [JsonObject(IsReference = false)]
+    public class Embarkment
     {
-        public string OverworldFile { get; set; }
-        public float WorldScale { get; set; }
-        public Vector2 WorldOrigin { get; set; }
-        public float TimeOfDay { get; set; }
-        public int GameID { get; set; }
-        public int Slice { get; set; }
-        public WorldTime Time { get; set; }
-        public Point3 NumChunks { get; set; }
-        public String Version;
-
-        public static string Extension = "meta";
-        public static string CompressedExtension = "zmeta";
-
-        public MetaData()
+        public static Dictionary<string, Embarkment> EmbarkmentLibrary { get; set; } 
+        public List<string> Party;
+        public Dictionary<ResourceLibrary.ResourceType, int> Resources;
+        public DwarfBux Money;
+        public static Embarkment DefaultEmbarkment = null;
+        public static void Initialize()
         {
+            EmbarkmentLibrary = ContentPaths.LoadFromJson<Dictionary<string, Embarkment>>(ContentPaths.World.embarks);
+            DefaultEmbarkment = EmbarkmentLibrary["Normal"];
         }
     }
 }

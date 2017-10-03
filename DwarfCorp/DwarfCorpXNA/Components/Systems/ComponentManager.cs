@@ -20,10 +20,33 @@ namespace DwarfCorp
     /// </summary>
     public class ComponentManager
     {
-        public class ComponentSaveData
+        [Saving.SaveableObject(0)]
+        public class ComponentSaveData : Saving.ISaveableObject
         {
+            public class ComponentSaveNugget : Saving.Nugget
+            {
+                public List<Saving.Nugget> SaveableComponents;
+                public uint RootComponent;
+            }
+
             public List<GameComponent> SaveableComponents;
             public uint RootComponent;
+
+            Saving.Nugget Saving.ISaveableObject.SaveToNugget(Saving.Saver SaveSystem)
+            {
+                return new ComponentSaveNugget
+                {
+                    SaveableComponents = SaveableComponents.Select(o => SaveSystem.SaveObject(o)).ToList(),
+                    RootComponent = RootComponent
+                };
+            }
+
+            void Saving.ISaveableObject.LoadFromNugget(Saving.Loader SaveSystem, Saving.Nugget From)
+            {
+                var n = From as ComponentSaveNugget;
+                SaveableComponents = n.SaveableComponents.Select(o => SaveSystem.LoadObject(o) as GameComponent).ToList();
+                RootComponent = n.RootComponent;
+            }
         }
 
         private Dictionary<uint, GameComponent> Components;
@@ -122,7 +145,7 @@ namespace DwarfCorp
             }
         }
 
-        public ComponentManager(WorldManager state, CompanyInformation CompanyInformation, List<Faction> natives)
+        public ComponentManager(WorldManager state)
         {
             World = state;
             Components = new Dictionary<uint, GameComponent>();

@@ -130,6 +130,10 @@ namespace DwarfCorp
                     gameFile = SaveGame.CreateFromDirectory(ExistingFile);
                     if (gameFile == null) throw new InvalidOperationException("Game File does not exist.");
 
+                    // Todo: REMOVE THIS WHEN THE NEW SAVE SYSTEM IS COMPLETE.
+                    if (gameFile.Metadata.Version != Program.Version)
+                        throw new InvalidOperationException("Game file is from a different version of the game and cannot be loaded.");
+
                     Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
                     Time = gameFile.Metadata.Time;
                     WorldOrigin = gameFile.Metadata.WorldOrigin;
@@ -391,7 +395,7 @@ namespace DwarfCorp
                             SetLoadingMessage);
                     }
 
-                    ComponentManager = new ComponentManager(this, CompanyMakerState.CompanyInformation, Natives);
+                    ComponentManager = new ComponentManager(this);
                     ComponentManager.SetRootComponent(new Body(ComponentManager, "root", Matrix.Identity,
                         Vector3.Zero, Vector3.Zero, false));
 

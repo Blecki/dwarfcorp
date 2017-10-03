@@ -44,7 +44,8 @@ namespace DwarfCorp
     /// <summary>
     /// This is a convenience class for drawing lines, boxes, etc. to the screen.
     /// </summary>
-    public class DesignationDrawer
+    [Saving.SaveableObject(0)]
+    public class DesignationDrawer : Saving.ISaveableObject
     {
         public enum DesignationType
         {
@@ -54,7 +55,6 @@ namespace DwarfCorp
             Chop // Red
         }
 
-        [JsonProperty]
         private Dictionary<DesignationType, List<GlobalVoxelCoordinate>> HilitedVoxels = new Dictionary<DesignationType, List<GlobalVoxelCoordinate>>();
 
         private class HilitedBody
@@ -63,7 +63,6 @@ namespace DwarfCorp
             public DesignationType DesignationType;
         }
 
-        [JsonProperty]
         private List<HilitedBody> HilitedBodies = new List<HilitedBody>();
 
         private class DesignationTypeProperties
@@ -165,6 +164,42 @@ namespace DwarfCorp
                     Drawer2D.DrawSprite(props.Icon, entity.Body.Position + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
                 }
             }
+        }
+
+        public class SaveNugget : Saving.Nugget
+        {
+            public class SavedHilitedBody
+            {
+                public Saving.Nugget Body;
+                public DesignationType DesignationType;
+            }
+
+            public Dictionary<DesignationType, List<GlobalVoxelCoordinate>> HilitedVoxels;
+            public List<SavedHilitedBody> HilitedBodies;
+        }
+
+        Saving.Nugget Saving.ISaveableObject.SaveToNugget(Saving.Saver SaveSystem)
+        {
+            return new SaveNugget
+            {
+                HilitedVoxels = HilitedVoxels,
+                HilitedBodies = HilitedBodies.Select(h => new SaveNugget.SavedHilitedBody
+                {
+                    Body = SaveSystem.SaveObject(h.Body),
+                    DesignationType = h.DesignationType
+                }).ToList()
+            };
+        }
+
+        void Saving.ISaveableObject.LoadFromNugget(Saving.Loader SaveSystem, Saving.Nugget From)
+        {
+            var n = From as SaveNugget;
+            HilitedVoxels = n.HilitedVoxels;
+            HilitedBodies = n.HilitedBodies.Select(h => new HilitedBody
+            {
+                Body = SaveSystem.LoadObject(h.Body) as Body,
+                DesignationType = h.DesignationType
+            }).ToList();
         }
     }
 }

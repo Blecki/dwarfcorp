@@ -62,7 +62,7 @@ namespace DwarfCorp
         private static void Main(string[] args)
         {
             using (Stream stream = System.Reflection.Assembly.GetExecutingAssembly()
-                    .GetManifestResourceStream("DwarfCorp." + "version.txt"))
+                    .GetManifestResourceStream("DwarfCorp.version.txt"))
                 using (StreamReader reader = new StreamReader(stream))
                     GamePerformance.Version = reader.ReadToEnd();
 

@@ -40,26 +40,11 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = false)]
-    public class Embarkment
-    {
-        public static Dictionary<string, Embarkment> EmbarkmentLibrary { get; set; } 
-        public List<string> Party;
-        public Dictionary<ResourceLibrary.ResourceType, int> Resources;
-        public DwarfBux Money;
-        public static Embarkment DefaultEmbarkment = null;
-        public static void Initialize()
-        {
-            EmbarkmentLibrary = ContentPaths.LoadFromJson<Dictionary<string, Embarkment>>(ContentPaths.World.embarks);
-            DefaultEmbarkment = EmbarkmentLibrary["Normal"];
-        }
-    }
-
     /// <summary>
     /// A static collection of factions.
     /// </summary>
-    [JsonObject(IsReference = true)]
-    public class FactionLibrary
+    [Saving.SaveableObject(0)]
+    public class FactionLibrary : Saving.ISaveableObject
     {
         public Dictionary<string, Faction> Factions { get; set; }
         public Dictionary<string, Race> Races { get; set; }
@@ -84,7 +69,6 @@ namespace DwarfCorp
 
         public void InitializeRaces()
         {
-            Races = new Dictionary<string, Race>();
             Races = ContentPaths.LoadFromJson<Dictionary<string, Race>>(ContentPaths.World.races);
         }
 
@@ -225,6 +209,40 @@ namespace DwarfCorp
             {
                 Factions[faction.Name] = faction;
             }
+        }
+
+        public class SaveNugget : Saving.Nugget
+        {
+            public Dictionary<string, Saving.Nugget> Factions;
+            public Dictionary<string, Saving.Nugget> Races;
+        }
+
+        Saving.Nugget Saving.ISaveableObject.SaveToNugget(Saving.Saver SaveSystem)
+        {
+            var r = new SaveNugget();
+
+            r.Factions = new Dictionary<string, Saving.Nugget>();
+            foreach (var faction in Factions)
+                r.Factions.Add(faction.Key, SaveSystem.SaveObject(faction.Value));
+
+            r.Races = new Dictionary<string, Saving.Nugget>();
+            foreach (var race in Races)
+                r.Races.Add(race.Key, SaveSystem.SaveObject(race.Value));
+
+            return r;
+        }
+
+        void Saving.ISaveableObject.LoadFromNugget(Saving.Loader SaveSystem, Saving.Nugget From)
+        {
+            var n = From as SaveNugget;
+
+            Factions = new Dictionary<string, Faction>();
+            foreach (var savedFaction in n.Factions)
+                Factions.Add(savedFaction.Key, SaveSystem.LoadObject(savedFaction.Value) as Faction);
+
+            Races = new Dictionary<string, Race>();
+            foreach (var savedRace in n.Races)
+                Races.Add(savedRace.Key, SaveSystem.LoadObject(savedRace.Value) as Race);
         }
     }
 }
