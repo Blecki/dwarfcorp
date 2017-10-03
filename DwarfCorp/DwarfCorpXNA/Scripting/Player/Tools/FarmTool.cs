@@ -333,17 +333,15 @@ namespace DwarfCorp
                             switch (button)
                             {
                                 case InputManager.MouseButton.Left:
-                                    if (Player.Faction.AddChopDesignation(tree) == Faction.AddChopResult.Added)
-                                    {
+                                    if (Player.Faction.AddEntityDesignation(tree, DesignationType.Chop) == Faction.AddEntityDesignationResult.Added)
+                                    { 
                                         tasks.Add(new KillEntityTask(tree, KillEntityTask.KillType.Chop) { Priority = Task.PriorityType.Low });
                                         this.Player.World.ShowToolPopup("Will harvest this " + tree.Name);
                                     }
                                     break;
                                 case InputManager.MouseButton.Right:
-                                    if (Player.Faction.RemoveChopDesignation(tree) == Faction.RemoveChopResult.Removed)
-                                    {
+                                    if (Player.Faction.RemoveEntityDesignation(tree, DesignationType.Chop) == Faction.RemoveEntityDesignationResult.Removed)
                                         this.Player.World.ShowToolPopup("Harvest cancelled " + tree.Name);
-                                    }
                                     break;
                             }
                         }

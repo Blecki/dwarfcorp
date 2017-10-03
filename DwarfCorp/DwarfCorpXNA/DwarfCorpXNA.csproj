@@ -179,7 +179,8 @@
     <Compile Include="Components\Graphics\SimpleSprite.cs" />
     <Compile Include="ContextCommands\ChopCommand.cs" />
     <Compile Include="ContextCommands\ContextCommand.cs" />
-    <Compile Include="Graphics\Drawing\Drawer3D\DesignationDrawer.cs" />
+    <Compile Include="Scripting\Factions\DesignationType.cs" />
+    <Compile Include="Scripting\Factions\DesignationDrawer.cs" />
     <Compile Include="Graphics\Instancing\InstanceRenderData.cs" />
     <Compile Include="Graphics\Instancing\InstanceRenderer.cs" />
     <Compile Include="Graphics\Instancing\NewInstanceData.cs" />

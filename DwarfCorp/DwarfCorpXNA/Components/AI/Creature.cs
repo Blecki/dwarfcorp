@@ -682,8 +682,7 @@ namespace DwarfCorp
 
             if (!AI.Tasks.Contains(gatherTask))
             {
-                if (!AI.Faction.IsGatherDesignation(item))
-                    AI.Faction.AddGatherDesignation(item);
+                AI.Faction.AddEntityDesignation(item, DesignationType.Gather);
                 AI.AssignTask(gatherTask);
             }
         }

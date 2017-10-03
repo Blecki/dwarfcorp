@@ -47,15 +47,6 @@ namespace DwarfCorp
     [Saving.SaveableObject(0)]
     public class DesignationDrawer : Saving.ISaveableObject
     {
-        public enum DesignationType
-        {
-            Dig,
-            Farm,
-            Guard,
-            Gather,
-            Chop
-        }
-
         private Dictionary<DesignationType, List<GlobalVoxelCoordinate>> HilitedVoxels = new Dictionary<DesignationType, List<GlobalVoxelCoordinate>>();
 
         private class HilitedBody

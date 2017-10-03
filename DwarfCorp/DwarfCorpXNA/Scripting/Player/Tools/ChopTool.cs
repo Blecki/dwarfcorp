@@ -130,7 +130,7 @@ namespace DwarfCorp
 
         public static Task ChopTree(Body Tree, Faction PlayerFaction)
         {
-            if (PlayerFaction.AddChopDesignation(Tree) == Faction.AddChopResult.Added)
+            if (PlayerFaction.AddEntityDesignation(Tree, DesignationType.Chop) == Faction.AddEntityDesignationResult.Added)
                 return new KillEntityTask(Tree, KillEntityTask.KillType.Chop)
                 {
                     Priority = Task.PriorityType.Low
@@ -159,7 +159,7 @@ namespace DwarfCorp
                         tasks.Add(task);
                 }
                 else if (button == InputManager.MouseButton.Right)
-                    Player.Faction.RemoveChopDesignation(tree);
+                    Player.Faction.RemoveEntityDesignation(tree, DesignationType.Chop);
             }
            
             if (tasks.Count > 0 && minions.Count > 0)

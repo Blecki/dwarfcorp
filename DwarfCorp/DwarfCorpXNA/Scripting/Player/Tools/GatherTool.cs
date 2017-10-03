@@ -81,13 +81,12 @@ namespace DwarfCorp
 
                 if(button == InputManager.MouseButton.Left)
                 {
-                    Player.Faction.AddGatherDesignation(resource);
-
+                    Player.Faction.AddEntityDesignation(resource, DesignationType.Gather);
                     assignments.Add(new GatherItemTask(resource));
                 }
                 else
                 {
-                    Player.Faction.RemoveGatherDesignation(resource);
+                    Player.Faction.RemoveEntityDesignation(resource, DesignationType.Gather);
                 }
             }
 

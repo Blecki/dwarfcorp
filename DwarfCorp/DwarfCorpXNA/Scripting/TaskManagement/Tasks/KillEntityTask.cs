@@ -116,7 +116,7 @@ namespace DwarfCorp
                     }
                 case KillType.Chop:
                     {
-                        return !agent.Faction.IsChopDesignation(EntityToKill);
+                        return !agent.Faction.IsDesignation(EntityToKill, DesignationType.Chop);
                     }
                 case KillType.Auto:
                     {
@@ -146,7 +146,7 @@ namespace DwarfCorp
                     }
                     case KillType.Chop:
                     {
-                            return agent.Faction.IsChopDesignation(EntityToKill);
+                            return agent.Faction.IsDesignation(EntityToKill, DesignationType.Chop);
                     }
                     case KillType.Auto:
                     {
