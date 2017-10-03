@@ -59,13 +59,8 @@ namespace DwarfCorp
 
         public override void OnEnd()
         {
-            foreach (var des in Player.Faction.DigDesignations)
-            {
-                Drawer3D.UnHighlightVoxel(des.Value.Vox);
-            }
             Player.VoxSelector.Clear();
         }
-
 
         public override void OnVoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
         {

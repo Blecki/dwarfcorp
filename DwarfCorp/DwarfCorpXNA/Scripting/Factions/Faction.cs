@@ -53,7 +53,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Faction
     {
-
         public Faction()
         {
             
@@ -67,7 +66,7 @@ namespace DwarfCorp
             SelectedMinions = new List<CreatureAI>();
             TaskManager = new TaskManager();
             Stockpiles = new List<Stockpile>();
-            DigDesignations = new Dictionary<ulong, BuildOrder>();
+            DigOrders = new Dictionary<ulong, BuildOrder>();
             GuardDesignations = new List<BuildOrder>();
             ChopDesignations = new List<Body>();
             AttackDesignations = new List<Body>();
@@ -90,7 +89,7 @@ namespace DwarfCorp
             SelectedMinions = new List<CreatureAI>();
             TaskManager = new TaskManager();
             Stockpiles = new List<Stockpile>();
-            DigDesignations = new Dictionary<ulong, BuildOrder>();
+            DigOrders = new Dictionary<ulong, BuildOrder>();
             GuardDesignations = new List<BuildOrder>();
             ChopDesignations = new List<Body>();
             AttackDesignations = new List<Body>();
@@ -121,13 +120,9 @@ namespace DwarfCorp
         public int TerritorySize { get; set; }
         public Race Race { get; set; }
         public Economy Economy { get; set; }
-
-        [JsonIgnore]
-        public ComponentManager Components { get { return World.ComponentManager; }}
-
         public List<TradeEnvoy> TradeEnvoys { get; set; }
         public List<WarParty> WarParties { get; set; }
-        public Dictionary<ulong, BuildOrder> DigDesignations { get; set; }
+        public Dictionary<ulong, BuildOrder> DigOrders { get; set; }
         public List<BuildOrder> GuardDesignations { get; set; }
         public List<Body> ChopDesignations { get; set; }
         public List<Body> AttackDesignations { get; set; }
@@ -138,7 +133,6 @@ namespace DwarfCorp
         public RoomBuilder RoomBuilder { get; set; }
         public PutDesignator WallBuilder { get; set; }
         public CraftBuilder CraftBuilder { get; set; }
-        public Color DigDesignationColor { get; set; }
         public Color PrimaryColor { get; set; }
         public Color SecondaryColor { get; set; }
 
@@ -248,7 +242,7 @@ namespace DwarfCorp
             //CollideMinions(time);
 
             List<ulong> removalKeys = new List<ulong>();
-            foreach (var kvp in DigDesignations)
+            foreach (var kvp in DigOrders)
             {
                 var v = kvp.Value.Vox;
                 if (v.IsValid && (v.IsEmpty || v.Health <= 0.0f || v.Type.Name == "empty" || v.Type.IsInvincible))
@@ -260,7 +254,7 @@ namespace DwarfCorp
 
             for (int i = 0; i < removalKeys.Count; i++)
             {
-                DigDesignations.Remove(removalKeys[i]);
+                DigOrders.Remove(removalKeys[i]);
             }
 
             List<Body> gatherRemovals = (from b in GatherDesignations
@@ -469,10 +463,8 @@ namespace DwarfCorp
 
         public bool AddGatherDesignation(Body resource)
         {
-            if (resource.Parent != Components.RootComponent || resource.IsDead)
-            {
+            if (resource.Parent != World.ComponentManager.RootComponent || resource.IsDead)
                 return false;
-            }
 
             if (GatherDesignations.Contains(resource)) return false;
             GatherDesignations.Add(resource);
@@ -483,7 +475,7 @@ namespace DwarfCorp
         {
             float closestDist = 99999;
             BuildOrder closestVoxel = null;
-            foreach(var kvp in DigDesignations)
+            foreach(var kvp in DigOrders)
             {
                 float d = (kvp.Value.Vox.WorldPosition - position).LengthSquared();
                 if(!(d < closestDist))
@@ -525,7 +517,7 @@ namespace DwarfCorp
         public BuildOrder GetDigDesignation(VoxelHandle vox)
         {
             BuildOrder returnOrder;
-            if (DigDesignations.TryGetValue(GetVoxelQuickCompare(vox), out returnOrder))
+            if (DigOrders.TryGetValue(GetVoxelQuickCompare(vox), out returnOrder))
                 return returnOrder;
             return new BuildOrder();
         }
@@ -533,16 +525,16 @@ namespace DwarfCorp
         public void AddDigDesignation(BuildOrder order)
         {
             if (!order.Vox.IsValid) return;
-            DigDesignations.Add(GetVoxelQuickCompare(order.Vox), order);
+            DigOrders.Add(GetVoxelQuickCompare(order.Vox), order);
             World.DesignationDrawer.HiliteVoxel(order.Vox.Coordinate, DesignationDrawer.DesignationType.Dig);
         }
 
         public void RemoveDigDesignation(VoxelHandle vox)
         {
             var q = GetVoxelQuickCompare(vox);
-            if (DigDesignations.ContainsKey(q))
+            if (DigOrders.ContainsKey(q))
             {
-                DigDesignations.Remove(q);
+                DigOrders.Remove(q);
                 //Drawer3D.UnHighlightVoxel(vox);
                 World.DesignationDrawer.UnHiliteVoxel(vox.Coordinate, DesignationDrawer.DesignationType.Dig);
             }
@@ -550,9 +542,9 @@ namespace DwarfCorp
 
         public bool IsDigDesignation(VoxelHandle vox)
         {
-            GamePerformance.Instance.TrackValueType<int>("Dig Designations", DigDesignations.Count);
+            GamePerformance.Instance.TrackValueType<int>("Dig Designations", DigOrders.Count);
 
-            return DigDesignations.ContainsKey(GetVoxelQuickCompare(vox));
+            return DigOrders.ContainsKey(GetVoxelQuickCompare(vox));
         }
 
 
@@ -987,7 +979,7 @@ namespace DwarfCorp
             var dwarfPhysics = 
                 EntityFactory.GenerateDwarf(
                     rooms.First().GetBoundingBox().Center() + Vector3.UnitY * 15,
-                    Components, GameState.Game.Content, GameState.Game.GraphicsDevice, World.ChunkManager,
+                    World.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, World.ChunkManager,
                     World.Camera, this, World.PlanService, "Player", currentApplicant.Class, currentApplicant.Level.Index);
             World.ComponentManager.RootComponent.AddChild(dwarfPhysics);
             var newMinion = dwarfPhysics.EnumerateAll().OfType<Dwarf>().FirstOrDefault();
@@ -1021,7 +1013,7 @@ namespace DwarfCorp
             }
 
             Vector3 pos = rooms.First().GetBoundingBox().Center();
-            return  EntityFactory.CreateBalloon(pos + new Vector3(0, 1000, 0), pos + Vector3.UnitY * 15, Components, GameState.Game.Content, GameState.Game.GraphicsDevice, new ShipmentOrder(0, null), this);
+            return  EntityFactory.CreateBalloon(pos + new Vector3(0, 1000, 0), pos + Vector3.UnitY * 15, World.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, new ShipmentOrder(0, null), this);
         }
 
         public List<Body> GenerateRandomSpawn(int numCreatures, Vector3 position)

@@ -400,7 +400,7 @@ namespace DwarfCorp
                     World.ShowToolPopup("Release to build here.");
 
                     displayObjects = RoomLibrary.GenerateRoomComponentsTemplate(CurrentRoomData, refs,
-                        Faction.Components, 
+                        World.ComponentManager, 
                         World.ChunkManager.Content, World.ChunkManager.Graphics);
 
                     foreach(Body thing in displayObjects)
