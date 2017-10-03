@@ -58,7 +58,8 @@ namespace DwarfCorp.GameStates
 
         public WorldManager World = null;
         private CheckBox EnableTutorial;
-        
+        private CheckBox DisableTutorialForAllGames;
+
         public OptionsState(DwarfGame Game, GameStateManager StateManager) :
             base(Game, "NewOptionsState", StateManager)
         { }
@@ -320,6 +321,13 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
+            DisableTutorialForAllGames = panel.AddChild(new CheckBox
+            {
+                Text = "Disable the tutorial for all new games",
+                Tooltip = "When checked, the tutorial will not open in new games.",
+                OnCheckStateChange = OnItemChanged,
+                AutoLayout = AutoLayout.DockTop
+            }) as CheckBox;
 
             if (World != null)
             {
@@ -892,6 +900,7 @@ namespace DwarfCorp.GameStates
             //GameSettings.Default.NumMotes = (int)this.NumMotes.ScrollPosition + 100;
             //GameSettings.Default.UseLightmaps = this.LightMap.CheckState;
             //GameSettings.Default.UseDynamicShadows = this.DynamicShadows.CheckState;
+            GameSettings.Default.TutorialDisabledGlobally = this.DisableTutorialForAllGames.CheckState;
 
             GameSettings.Default.GuiScale = GuiScale.SelectedIndex + 1;
             
@@ -934,6 +943,8 @@ namespace DwarfCorp.GameStates
 
             HasChanges = false;
 
+            
+
             if (World != null && EnableTutorial != null)
                 World.TutorialManager.TutorialEnabled = EnableTutorial.CheckState;
 
@@ -954,6 +965,7 @@ namespace DwarfCorp.GameStates
             this.Autosave.CheckState = GameSettings.Default.AutoSave;
             (this.AutoSaveFrequency.GetChild(1) as HorizontalSlider).ScrollPosition =
                 (int)(GameSettings.Default.AutoSaveTimeMinutes - 5);
+            this.DisableTutorialForAllGames.CheckState = GameSettings.Default.TutorialDisabledGlobally;
 
             // Audio settings
             this.MasterVolume.ScrollPosition = GameSettings.Default.MasterVolume;

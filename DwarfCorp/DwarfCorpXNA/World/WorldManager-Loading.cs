@@ -452,6 +452,7 @@ namespace DwarfCorp
                     GoalManager.Initialize(new List<Goals.Goal>());
 
                     TutorialManager = new Tutorial.TutorialManager("Content/tutorial.txt");
+                    TutorialManager.TutorialEnabled = !GameSettings.Default.TutorialDisabledGlobally;
                     Tutorial("new game start");
                 }
 
