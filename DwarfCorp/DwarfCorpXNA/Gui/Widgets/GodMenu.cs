@@ -113,13 +113,18 @@ namespace DwarfCorp.Gui.Widgets
                 new HorizontalMenuTray.MenuItem
                 {
                     Text = "TRADE ENVOY",
-                    OnClick = (sender, args) =>
+                    ExpansionChild = new HorizontalMenuTray.Tray
                     {
-                        var factionToSend = Datastructures.SelectRandom(
-                            Master.World.Factions.Factions.Values.Where(f =>
-                            f.Race.IsIntelligent && f.Race.IsNative));
-                        if (factionToSend != null)
-                            Master.World.Diplomacy.SendTradeEnvoy(factionToSend, Master.World);
+
+                            ItemSource = Master.World.Factions.Factions.Values.Where(f => f.Race.IsIntelligent && f != Master.Faction).Select(s =>
+                            {
+                                return new HorizontalMenuTray.MenuItem
+                                {
+                                    Text = s.Name,
+                                    OnClick = (sender, args) => Master.World.Diplomacy.SendTradeEnvoy(s, Master.World)
+                                };
+
+                            }),
                     }
                 },
 
