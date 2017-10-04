@@ -59,6 +59,8 @@ namespace DwarfCorp
 
         public override float Heuristic(VoxelHandle voxel)
         {
+            if (!voxel.IsValid)
+                return float.MaxValue;
             return (voxel.WorldPosition - Voxel.WorldPosition).LengthSquared();
         }
 
@@ -69,6 +71,8 @@ namespace DwarfCorp
 
         public override bool IsInGoalRegion(VoxelHandle voxel)
         {
+            if (!voxel.IsValid)
+                return false;
             return Voxel == voxel;
         }
 

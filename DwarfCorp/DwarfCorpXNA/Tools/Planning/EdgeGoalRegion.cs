@@ -60,6 +60,10 @@ namespace DwarfCorp
 
         public override float Heuristic(VoxelHandle voxel)
         {
+            if (!voxel.IsValid)
+            {
+                return float.MaxValue;
+            }
             BoundingBox worldBounds = voxel.Chunk.Manager.Bounds;
             Vector3 pos = voxel.WorldPosition;
             float value = MathFunctions.Dist2D(worldBounds, pos);
