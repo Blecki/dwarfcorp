@@ -110,6 +110,11 @@ namespace DwarfCorp
                     }
                 }
             }
+            else
+            {
+                Tree = null;
+                return;
+            }
 
 
             if(!hasAllResources)
@@ -119,7 +124,7 @@ namespace DwarfCorp
                 if(ResourcesToStash == null && Resources != null)
                     ResourcesToStash = Agent.Faction.GetResourcesWithTags(Resources, AllowHeterogenous);
 
-                if(nearestStockpile == null || ResourcesToStash.Count == 0)
+                if(nearestStockpile == null || (ResourcesToStash != null &&  ResourcesToStash.Count == 0))
                 {
                     if (Resources.Any(r => r.ResourceType == Resource.ResourceTags.Edible) && Agent.Faction == Agent.World.PlayerFaction)
                     {
