@@ -68,10 +68,8 @@ namespace DwarfCorp
             Stockpiles = new List<Stockpile>();
             DigOrders = new Dictionary<ulong, BuildOrder>();
             GuardDesignations = new List<BuildOrder>();
-            AttackDesignations = new List<Body>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
-            WrangleDesignations = new List<Body>();
             OwnedObjects = new List<Body>();
             RoomBuilder = new RoomBuilder(this, world);
             WallBuilder = new PutDesignator(this, world);
@@ -89,8 +87,6 @@ namespace DwarfCorp
             Stockpiles = new List<Stockpile>();
             DigOrders = new Dictionary<ulong, BuildOrder>();
             GuardDesignations = new List<BuildOrder>();
-            AttackDesignations = new List<Body>();
-            WrangleDesignations = new List<Body>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
             OwnedObjects = new List<Body>();
@@ -120,9 +116,6 @@ namespace DwarfCorp
         public List<WarParty> WarParties { get; set; }
         public Dictionary<ulong, BuildOrder> DigOrders { get; set; }
         public List<BuildOrder> GuardDesignations { get; set; }
-        //public List<Body> ChopDesignations { get; set; }
-        public List<Body> AttackDesignations { get; set; }
-        //public List<Body> GatherDesignations { get; set; }
         public List<Body> OwnedObjects { get; set; }
         public List<Stockpile> Stockpiles { get; set; }
         public List<CreatureAI> Minions { get; set; }
@@ -197,7 +190,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public WorldManager World { get; set; }
 
-        public List<Body> WrangleDesignations { get; set; }
+        //public List<Body> WrangleDesignations { get; set; }
         public List<Treasury> Treasurys = new List<Treasury>();
 
         [OnDeserialized]
@@ -335,8 +328,6 @@ namespace DwarfCorp
                 GuardDesignations.Remove(v);
             }
 
-            AttackDesignations.RemoveAll(body => body.IsDead);
-            WrangleDesignations.RemoveAll(body => body.IsDead);
             foreach (var zone in RoomBuilder.DesignatedRooms)
             {
                 zone.Update();
@@ -379,10 +370,7 @@ namespace DwarfCorp
 
                     if (!IsTaskAssigned(g))
                     {
-                        if (!AttackDesignations.Contains(threat.Physics))
-                        {
-                            AttackDesignations.Add(threat.Physics);
-                        }
+                        AddEntityDesignation(threat.Physics, DesignationType.Attack);
                         tasks.Add(g);
                     }
                     else

@@ -496,7 +496,7 @@ namespace DwarfCorp
                 else
                 {
                     if (envoy.Creatures.Any(
-                        creature => envoy.OtherFaction.AttackDesignations.Contains(creature.Physics)))
+                        creature => envoy.OtherFaction.IsDesignation(creature.Physics, DesignationType.Attack)))
                     {
 
                         if (!politics.HasEvent("You attacked our trade delegates"))

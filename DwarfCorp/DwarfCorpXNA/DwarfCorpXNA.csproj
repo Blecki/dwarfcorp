@@ -287,7 +287,6 @@
     <Compile Include="GameStates\WorldGeneration\WorldGenerator.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGenerationSettings.cs" />
     <Compile Include="Goals\Enums.cs" />
-    <Compile Include="Goals\Events\CreatureKilled.cs" />
     <Compile Include="Goals\Events\TradeEnvoyKilled.cs" />
     <Compile Include="Goals\Events\WarPartyDefeated.cs" />
     <Compile Include="Goals\Events\DigBlock.cs" />
@@ -480,7 +479,7 @@
     <Compile Include="Gui\Widgets\Minimap.cs" />
     <Compile Include="Gui\Widgets\Popup.cs" />
     <Compile Include="Gui\Widgets\Confirm.cs" />
-    <Compile Include="Gui\Widgets\TileSheetExtension.cs" />
+    <Compile Include="Gui\TileSheetExtension.cs" />
     <Compile Include="ProgramData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />

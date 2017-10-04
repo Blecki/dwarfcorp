@@ -91,6 +91,18 @@ namespace DwarfCorp
                 Color = Color.Orange,
                 Icon = new NamedImageFrame("newgui/pointers2", 32, 6, 0)
             });
+
+            DesignationProperties.Add(DesignationType.Attack, new DesignationTypeProperties
+            {
+                Color = Color.Red,
+                Icon = new NamedImageFrame("newgui/pointers2", 32, 2, 0)
+            });
+
+            DesignationProperties.Add(DesignationType.Wrangle, new DesignationTypeProperties
+            {
+                Color = Color.Tomato,
+                Icon = new NamedImageFrame("newgui/pointers2", 32, 4, 1)
+            });
         }
 
         public void HiliteVoxel(GlobalVoxelCoordinate Coordinate, DesignationType Type)

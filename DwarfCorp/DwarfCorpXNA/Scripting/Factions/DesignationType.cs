@@ -39,6 +39,8 @@ namespace DwarfCorp
         Farm,
         Guard,
         Gather,
+        Attack,
+        Wrangle,
         Chop
     }
 }

@@ -173,8 +173,6 @@ namespace DwarfCorp
             Tools[ToolMode.Attack] = new AttackTool
             {
                 Player = this,
-                DesignationColor = Color.Red,
-                GlowRate = 2.0f
             };
 
             Tools[ToolMode.Build] = new BuildTool
