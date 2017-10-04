@@ -68,7 +68,12 @@ namespace DwarfCorp
 
         public override void OnMouseOver(IEnumerable<Body> bodies)
         {
-            var treesPicked = bodies.Where(c => c.Tags.Contains("Vegetation"));
+            if (bodies == null)
+            {
+                return;
+            }
+
+            var treesPicked = bodies.Where(c => c != null && c.Tags.Contains("Vegetation"));
 
             if (treesPicked.Any())
             {
