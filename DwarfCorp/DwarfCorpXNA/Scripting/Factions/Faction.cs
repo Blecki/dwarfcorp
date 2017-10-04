@@ -110,7 +110,6 @@ namespace DwarfCorp
         public Point StartingPlace { get; set; }
         public Point Center { get; set; }
         public int TerritorySize { get; set; }
-        public Race Race { get; set; }
         public Economy Economy { get; set; }
         public List<TradeEnvoy> TradeEnvoys { get; set; }
         public List<WarParty> WarParties { get; set; }
@@ -124,6 +123,23 @@ namespace DwarfCorp
         public CraftBuilder CraftBuilder { get; set; }
         public Color PrimaryColor { get; set; }
         public Color SecondaryColor { get; set; }
+
+        // Todo: When converting to new save system, it can take care of this.
+        [JsonProperty]
+        private string _race;
+
+        [JsonIgnore]
+        public Race Race
+        {
+            get
+            {
+                return RaceLibrary.FindRace(_race);
+            }
+            set
+            {
+                _race = value.Name;
+            }
+        }
 
         #region Designations
 

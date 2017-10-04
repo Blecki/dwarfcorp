@@ -25,7 +25,7 @@ namespace DwarfCorp.Goals.Goals
                 // Create Ordu faction, add to FactionLibrary and World.Natives
                 orduFaction = new Faction(World)
                 {
-                    Race = World.Factions.Races["Undead"],
+                    Race = RaceLibrary.FindRace("Undead"),
                     Name = "Ordu",
                     PrimaryColor = new HSLColor(300.0, 100.0, 100.0),
                     SecondaryColor = new HSLColor(300.0, 50.0, 50.0),

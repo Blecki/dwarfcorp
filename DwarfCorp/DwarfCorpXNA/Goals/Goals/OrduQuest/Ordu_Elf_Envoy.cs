@@ -20,7 +20,7 @@ namespace DwarfCorp.Goals.Goals
             // Create Ordu faction, add to FactionLibrary and World.Natives
             var felFaction = new Faction(World)
             {
-                Race = World.Factions.Races["Elf"],
+                Race = RaceLibrary.FindRace("Elf"),
                 Name = "Fel'al'fe",
                 PrimaryColor = new HSLColor(120.0, 100.0, 100.0),
                 SecondaryColor = new HSLColor(300.0, 50.0, 50.0),

@@ -18,6 +18,7 @@ namespace DwarfCorp.Dialogue
         private WorldManager World;
         private Gui.Widget SpeakerWidget;
         private int prevFrame = 0;
+
         public DialogueState(
             DwarfGame Game, 
             GameStateManager StateManager,
@@ -31,7 +32,7 @@ namespace DwarfCorp.Dialogue
             DialogueContext = new DialogueContext
             {
                 Envoy = Envoy,
-                PlayerFaction = PlayerFaction
+                PlayerFaction = PlayerFaction,
             };
         }
 

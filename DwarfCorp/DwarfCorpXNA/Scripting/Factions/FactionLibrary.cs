@@ -47,11 +47,10 @@ namespace DwarfCorp
     public class FactionLibrary : Saving.ISaveableObject
     {
         public Dictionary<string, Faction> Factions { get; set; }
-        public Dictionary<string, Race> Races { get; set; }
         
         public Faction GenerateFaction(WorldManager world, int idx , int n)
         {
-            Race race = Datastructures.SelectRandom(Races.Values.Where(r => r.IsIntelligent && r.IsNative));
+            var race = RaceLibrary.RandomIntelligentRace();
 
             var fact = new Faction(world)
             {
@@ -67,31 +66,21 @@ namespace DwarfCorp
             return fact;
         }
 
-        public void InitializeRaces()
-        {
-            Races = ContentPaths.LoadFromJson<Dictionary<string, Race>>(ContentPaths.World.races);
-        }
-
         public void Initialize(WorldManager state, CompanyInformation CompanyInformation)
         {
-            if (Races == null)
-            {
-                InitializeRaces();
-            }
-
             if (Factions == null)
             {
                 Factions = new Dictionary<string, Faction>();
                 Factions["Player"] = new Faction(state)
                 {
                     Name = "Player",
-                    Race = Races["Dwarf"]
+                    Race = RaceLibrary.FindRace("Dwarf")
                 };
 
                 Factions["The Motherland"] = new Faction(state)
                 {
                     Name = "The Motherland",
-                    Race = Races["Dwarf"],
+                    Race = RaceLibrary.FindRace("Dwarf"),
                     IsRaceFaction = false,
                     TradeMoney = 10000
                 };
@@ -101,42 +90,42 @@ namespace DwarfCorp
             Factions["Goblins"] = new Faction(state)
             {
                 Name = "Goblins",
-                Race = Races["Goblins"],
+                Race = RaceLibrary.FindRace("Goblins"),
                 IsRaceFaction = true
             };
 
             Factions["Elf"] = new Faction(state)
             {
                 Name = "Elf",
-                Race = Races["Elf"],
+                Race = RaceLibrary.FindRace("Elf"),
                 IsRaceFaction = true
             };
 
             Factions["Undead"] = new Faction(state)
             {
                 Name = "Undead",
-                Race = Races["Undead"],
+                Race = RaceLibrary.FindRace("Undead"),
                 IsRaceFaction = true
             };
 
             Factions["Demon"] = new Faction(state)
             {
                 Name = "Demon",
-                Race = Races["Demon"],
+                Race = RaceLibrary.FindRace("Demon"),
                 IsRaceFaction = true
             };
 
             Factions["Herbivore"] = new Faction(state)
             {
                 Name = "Herbivore",
-                Race = Races["Herbivore"],
+                Race = RaceLibrary.FindRace("Herbivore"),
                 IsRaceFaction = true
             };
 
             Factions["Carnivore"] = new Faction(state)
             {
                 Name = "Carnivore",
-                Race = Races["Carnivore"],
+                Race = RaceLibrary.FindRace("Carnivore"),
                 IsRaceFaction = true
             };
 
@@ -144,7 +133,7 @@ namespace DwarfCorp
             Factions["Molemen"] = new Faction(state)
             {
                 Name = "Molemen",
-                Race = Races["Molemen"],
+                Race = RaceLibrary.FindRace("Molemen"),
                 IsRaceFaction = true
             };
             
@@ -172,21 +161,16 @@ namespace DwarfCorp
             {
                 Factions = new Dictionary<string, Faction>();
 
-                if (Races == null)
-                {
-                    InitializeRaces();
-                }
-
                 Factions["Player"] = new Faction(world)
                 {
                     Name = "Player",
-                    Race = Races["Dwarf"]
+                    Race = RaceLibrary.FindRace("Dwarf")
                 };
 
                 Factions["The Motherland"] = new Faction(world)
                 {
                     Name = "The Motherland",
-                    Race = Races["Dwarf"],
+                    Race = RaceLibrary.FindRace("Dwarf"),
                     IsRaceFaction = false,
                     TradeMoney = 10000
                 };
@@ -194,14 +178,14 @@ namespace DwarfCorp
                 Factions["Herbivore"] = new Faction(world)
                 {
                     Name = "Herbivore",
-                    Race = Races["Herbivore"],
+                    Race = RaceLibrary.FindRace("Herbivore"),
                     IsRaceFaction = true
                 };
 
                 Factions["Carnivore"] = new Faction(world)
                 {
                     Name = "Carnivore",
-                    Race = Races["Carnivore"],
+                    Race = RaceLibrary.FindRace("Carnivore"),
                     IsRaceFaction = true
                 };
             }
@@ -214,7 +198,6 @@ namespace DwarfCorp
         public class SaveNugget : Saving.Nugget
         {
             public Dictionary<string, Saving.Nugget> Factions;
-            public Dictionary<string, Saving.Nugget> Races;
         }
 
         Saving.Nugget Saving.ISaveableObject.SaveToNugget(Saving.Saver SaveSystem)
@@ -224,10 +207,6 @@ namespace DwarfCorp
             r.Factions = new Dictionary<string, Saving.Nugget>();
             foreach (var faction in Factions)
                 r.Factions.Add(faction.Key, SaveSystem.SaveObject(faction.Value));
-
-            r.Races = new Dictionary<string, Saving.Nugget>();
-            foreach (var race in Races)
-                r.Races.Add(race.Key, SaveSystem.SaveObject(race.Value));
 
             return r;
         }
@@ -239,10 +218,6 @@ namespace DwarfCorp
             Factions = new Dictionary<string, Faction>();
             foreach (var savedFaction in n.Factions)
                 Factions.Add(savedFaction.Key, SaveSystem.LoadObject(savedFaction.Value) as Faction);
-
-            Races = new Dictionary<string, Race>();
-            foreach (var savedRace in n.Races)
-                Races.Add(savedRace.Key, SaveSystem.LoadObject(savedRace.Value) as Race);
         }
     }
 }
