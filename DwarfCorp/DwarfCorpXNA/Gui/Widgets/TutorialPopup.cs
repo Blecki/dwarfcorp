@@ -29,7 +29,7 @@ namespace DwarfCorp.Gui.Widgets
             AddChild(new Button
             {
                 Text = "Dismiss",
-                Font = "font14",
+                Font = "font16",
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 Border = "border-button",

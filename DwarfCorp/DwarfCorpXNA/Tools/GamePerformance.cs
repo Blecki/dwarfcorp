@@ -1132,7 +1132,7 @@ namespace DwarfCorp
             {
                 try
                 {
-                    overlayFont = _game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
+                    overlayFont = _game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small);
                 }
                 catch (Exception)
                 {

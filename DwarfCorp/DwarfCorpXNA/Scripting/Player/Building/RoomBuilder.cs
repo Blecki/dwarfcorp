@@ -282,11 +282,11 @@ namespace DwarfCorp
                 if(order == null)
                     order = GetMostLikelyDesignation(v);
 
-                if (order != null)
+                if (order != null && order.ToBuild.RoomData == CurrentRoomData)
                 {
                     order.VoxelOrders.Add(new BuildVoxelOrder(order, order.ToBuild, v));
                 }
-                else
+                else if (order == null)
                 {
                     if (CurrentRoomData == RoomLibrary.GetData("Stockpile"))
                     {
