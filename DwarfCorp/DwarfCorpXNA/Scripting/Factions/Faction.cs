@@ -620,6 +620,10 @@ namespace DwarfCorp
             float closestDist = float.MaxValue;
             foreach(Stockpile stockpile in Stockpiles.Where(predicate))
             {
+                if (!stockpile.IsBuilt)
+                {
+                    continue;
+                }
                 float dist = (stockpile.GetBoundingBox().Center() - position).LengthSquared();
 
                 if(dist < closestDist)
@@ -661,22 +665,22 @@ namespace DwarfCorp
 
         public bool HasFreeStockpile()
         {
-            return Stockpiles.Any(s => !s.IsFull());
+            return Stockpiles.Any(s => s.IsBuilt && !s.IsFull());
         }
 
         public bool HasFreeTreasury()
         {
-            return Treasurys.Any(s => !s.IsFull());
+            return Treasurys.Any(s => s.IsBuilt && !s.IsFull());
         }
 
         public bool HasFreeStockpile(ResourceAmount toPut)
         {
-            return Stockpiles.Any(s => !s.IsFull() && s.IsAllowed(toPut.ResourceType));
+            return Stockpiles.Any(s => s.IsBuilt && !s.IsFull() && s.IsAllowed(toPut.ResourceType));
         }
 
         public bool HasFreeTreasury(DwarfBux toPut)
         {
-            return Treasurys.Any(s => !s.IsFull());
+            return Treasurys.Any(s => s.IsBuilt && !s.IsFull());
         }
 
         public Body FindNearestItemWithTags(string tag, Vector3 location, bool filterReserved)

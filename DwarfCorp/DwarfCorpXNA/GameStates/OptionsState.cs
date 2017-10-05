@@ -387,7 +387,7 @@ namespace DwarfCorp.GameStates
             {
                 panel.AddChild(new Widget()
                 {
-                    Text = "ERROR. NO SUITABLE AUDIO HARDWARE FOUND. SOUND IS DISABLED :(",
+                    Text = String.Format("ERROR. SOUND IS DISABLED: {0}", SoundManager.AudioError),
                     TextColor = Color.DarkRed.ToVector4(),
                     Font = "font16",
                     AutoLayout = AutoLayout.DockTop
@@ -901,6 +901,7 @@ namespace DwarfCorp.GameStates
             GameSettings.Default.SelfIlluminationEnabled = this.SelfIllumination.CheckState;
             GameSettings.Default.ParticlePhysics = this.ParticlePhysics.CheckState;
             GameSettings.Default.GrassMotes = this.Motes.CheckState;
+            GameSettings.Default.VSync = this.VSync.CheckState;
             //GameSettings.Default.NumMotes = (int)this.NumMotes.ScrollPosition + 100;
             //GameSettings.Default.UseLightmaps = this.LightMap.CheckState;
             //GameSettings.Default.UseDynamicShadows = this.DynamicShadows.CheckState;

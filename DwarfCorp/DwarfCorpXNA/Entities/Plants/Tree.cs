@@ -130,8 +130,8 @@ namespace DwarfCorp
         }
 
         public Plant(ComponentManager Manager, string name, Matrix localTransform, Vector3 bboxSize,
-            Vector3 bboxLocation, string meshAsset, float meshScale) :
-            base(Manager, name, localTransform, bboxSize, bboxLocation)
+           string meshAsset, float meshScale) :
+            base(Manager, name, localTransform, bboxSize, new Vector3(0.5f, 0, 0.5f))
         {
             MeshAsset = meshAsset;
             MeshScale = meshScale;
@@ -174,8 +174,9 @@ namespace DwarfCorp
         public Tree() { }
 
         public Tree(string name, ComponentManager manager, Vector3 position, string asset, ResourceLibrary.ResourceType seed, float treeSize) :
-            base(manager, name, Matrix.Identity, new Vector3(PrimitiveLibrary.BatchBillboardPrimitives[asset].Width, PrimitiveLibrary.BatchBillboardPrimitives[asset].Height , PrimitiveLibrary.BatchBillboardPrimitives[asset].Width) * 0.75f * treeSize,
-            new Vector3(0, 0, 0), asset, treeSize)
+            base(manager, name, Matrix.Identity, new Vector3(PrimitiveLibrary.BatchBillboardPrimitives[asset].Width, 
+                PrimitiveLibrary.BatchBillboardPrimitives[asset].Height , PrimitiveLibrary.BatchBillboardPrimitives[asset].Width) * 0.75f * treeSize,
+             asset, treeSize)
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
             SeedlingFrame = new Point(0, 0);

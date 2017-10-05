@@ -55,9 +55,10 @@ namespace DwarfCorp
                         string asset, 
                         ResourceLibrary.ResourceType resource, 
                         int numRelease, bool selfIlluminate) :
-            base(Manager, "Mushroom", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, 
+            base(Manager, "Mushroom", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), 
                 System.IO.Path.GetFileName(asset), 1.0f)
         {
+            BoundingBoxPos = Vector3.Zero;
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.deadbush, 32, 32);
             SeedlingFrame = new Point(0, 0);
             Matrix matrix = Matrix.CreateRotationY(MathFunctions.Rand(-0.1f, 0.1f));

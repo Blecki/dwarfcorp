@@ -177,6 +177,34 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(1, 24)
             });
+            var inventory = task.AddChild(new Button
+            {
+                AutoLayout = AutoLayout.DockRight,
+                Text = "Backpack...",
+                OnClick = (sender, args) =>
+                {
+                    var employeeInfo = sender.Parent.Parent as EmployeeInfo;
+                    if (employeeInfo != null && employeeInfo.Employee != null)
+                    {
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.Append("Backpack contains:\n");
+                        Dictionary<string, ResourceAmount> aggregateResources = employeeInfo.Employee.Creature.Inventory.Aggregate();
+                        foreach (var resource in aggregateResources)
+                        {
+                            stringBuilder.Append(String.Format("{0}x {1}\n", resource.Value.NumResources, resource.Key));
+                        }
+                        if (aggregateResources.Count == 0)
+                        {
+                            stringBuilder.Append("Nothing.");
+                        }
+                        sender.Root.ShowMinorPopup(new Confirm()
+                        {
+                            CancelText = "",
+                            Text = stringBuilder.ToString()
+                        });
+                    }
+                }
+            });
             CancelTask = task.AddChild(new Button
             {
                 AutoLayout = AutoLayout.DockRight,

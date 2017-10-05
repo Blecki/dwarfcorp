@@ -76,11 +76,20 @@ namespace DwarfCorp
 
         public override float Heuristic(VoxelHandle voxel)
         {
+            if (!voxel.IsValid)
+            {
+                return float.MaxValue;
+            }
+
             return (voxel.WorldPosition - Voxel.WorldPosition).LengthSquared();
         }
 
         public override bool IsInGoalRegion(VoxelHandle voxel)
         {
+            if (!voxel.IsValid)
+            {
+                return false;
+            }
             return (voxel.WorldPosition - Position).LengthSquared() < RadiusSquared;
         }
 

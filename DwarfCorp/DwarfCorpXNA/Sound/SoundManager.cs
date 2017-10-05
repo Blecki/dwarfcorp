@@ -252,6 +252,7 @@ namespace DwarfCorp
         public static FancyMusic CurrentMusic = null;
         public static List<SoundEffectInstance> ActiveSounds2D = new List<SoundEffectInstance>();
         public static bool HasAudioDevice = true;
+        public static string AudioError = "";
         public static SFXMixer Mixer = null;
 
         public static void LoadDefaultSounds()
@@ -330,17 +331,18 @@ namespace DwarfCorp
                     PlayLoopOverIntro = true
                 });
 
-            foreach (var cue in ActiveCues)
-            {
-                cue.Value.Stop(AudioStopOptions.Immediate);
-            }
-            ActiveCues.Clear();
+                foreach (var cue in ActiveCues)
+                {
+                    cue.Value.Stop(AudioStopOptions.Immediate);
+                }
+                ActiveCues.Clear();
 
             }
-            catch (NoAudioHardwareException exception)
+            catch (Exception exception)
             {
                 Console.Error.WriteLine(exception);
                 HasAudioDevice = false;
+                AudioError = exception.Message;
             }
         }
 

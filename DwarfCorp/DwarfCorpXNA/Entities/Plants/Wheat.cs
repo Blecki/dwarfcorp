@@ -51,8 +51,9 @@ namespace DwarfCorp
         }
 
         public Wheat(ComponentManager Manager, Vector3 position) :
-            base(Manager, "Wheat", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, "wheat", 1.0f)
+            base(Manager, "Wheat", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f),  "wheat", 1.0f)
         {
+            BoundingBoxPos = Vector3.Zero;
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.gnarled, 32, 32);
             SeedlingFrame = new Point(0, 0);
             Matrix matrix = Matrix.CreateRotationY(MathFunctions.Rand(-0.1f, 0.1f));

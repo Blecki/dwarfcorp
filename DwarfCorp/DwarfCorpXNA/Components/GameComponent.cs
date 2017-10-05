@@ -242,9 +242,9 @@ namespace DwarfCorp
         {
             // 0xFFFFFFFF
             // 0xRRGGBBAA
-            int r = (int)(GlobalID >> 6);
-            int g = (int)((GlobalID >> 4) & 0x000000FF);
-            int b = (int)((GlobalID >> 2) & 0x000000FF);
+            int r = (int)(GlobalID >> 24);
+            int g = (int)((GlobalID >> 16) & 0x000000FF);
+            int b = (int)((GlobalID >> 8) & 0x000000FF);
             int a = (int)((GlobalID) & 0x000000FF);
             //return new Color {PackedValue = GlobalID};
             return new Color(r, g, b, a);
@@ -261,9 +261,9 @@ namespace DwarfCorp
             // 0xRRGGBBAA
             //return color.PackedValue;
             uint id = 0;
-            id = id | (uint) (color.R << 6);
-            id = id | (uint) (color.G << 4);
-            id = id | (uint) (color.B << 2);
+            id = id | (uint) (color.R << 24);
+            id = id | (uint) (color.G << 16);
+            id = id | (uint) (color.B << 8);
             id = id | (uint) (color.A);
             return id;
         }

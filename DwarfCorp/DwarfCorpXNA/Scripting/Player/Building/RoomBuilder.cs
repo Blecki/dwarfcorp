@@ -412,11 +412,16 @@ namespace DwarfCorp
             }
             else
             {
-                foreach (var v in refs.Where(v => !v.IsEmpty))
+                foreach (var v in refs.Where(v => v.IsValid && !v.IsEmpty))
                 {
                     if (IsBuildDesignation(v))
                     {
                         var order = GetBuildDesignation(v);
+                        if (order == null || order.Order == null)
+                        {
+                            // TODO(mklingen): Don't know how this could happen, but we got a crash here...
+                            continue;
+                        }
                         if (!order.Order.IsBuilt)
                         {
                             order.Order.SetTint(Color.Red);
