@@ -51,6 +51,7 @@ namespace DwarfCorp
 
         private Dictionary<uint, GameComponent> Components;
         private uint MaxGlobalID = 0;
+        public const int InvalidID = 0;
         //private Dictionary<System.Type, List<IUpdateableComponent>> UpdateableComponents =
         //    new Dictionary<Type, List<IUpdateableComponent>>();
         private List<IUpdateableComponent> UpdateableComponents = new List<IUpdateableComponent>();
@@ -63,7 +64,6 @@ namespace DwarfCorp
 
         public void SetRootComponent(Body Component)
         {
-            Component.World = World;
             RootComponent = Component;
         }
 
@@ -105,10 +105,7 @@ namespace DwarfCorp
         {
             Components = new Dictionary<uint, GameComponent>();
             foreach (var component in SaveData.SaveableComponents)
-            {
                 Components.Add(component.GlobalID, component);
-                component.World = World;
-            }
             RootComponent = Components[SaveData.RootComponent] as Body;
 
             this.World = World;
@@ -139,13 +136,14 @@ namespace DwarfCorp
             foreach (var component in SaveData.SaveableComponents)
                 component.CreateCosmeticChildren(this);
 
+            /*
             foreach (var component in Components)
             {
                 if (component.Value.Parent != null && (!HasComponent(component.Value.Parent.GlobalID) || !component.Value.Parent.Children.Contains(component.Value)))
                 {
                     Console.Error.WriteLine("Component {0} parent: {1} is not in the list of components", component.Value.Name, component.Value.Parent.Name);
                 }
-            }
+            */
         }
 
         public ComponentManager(WorldManager state)
@@ -218,7 +216,7 @@ namespace DwarfCorp
             if (component is MinimapIcon)
                 MinimapIcons.Remove(component as MinimapIcon);
 
-            foreach (var child in new List<GameComponent>(component.Children))
+            foreach (var child in new List<GameComponent>(component.EnumerateChildren()))
                 RemoveComponentImmediate(child);
         }
 
@@ -294,6 +292,13 @@ namespace DwarfCorp
         public void UpdatePaused()
         {
             AddRemove();
+        }
+
+        public GameComponent FindComponent(uint ID)
+        {
+            GameComponent result = null;
+            Components.TryGetValue(ID, out result);
+            return result;
         }
     }
 }

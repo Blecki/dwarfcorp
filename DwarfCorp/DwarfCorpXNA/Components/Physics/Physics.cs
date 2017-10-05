@@ -77,6 +77,7 @@ namespace DwarfCorp
         private float Rotation = 0.0f;
         private bool overrideSleepThisFrame = true;
 
+        /*
         public class PhysicsSaveNugget : Saving.Nugget
         {
             public Saving.Nugget Base;
@@ -159,6 +160,7 @@ namespace DwarfCorp
             SleepTimer = n.SleepTimer;
             WakeTimer = n.WakeTimer;
         }
+        */
 
         /// <summary>
         /// Does this physics object collide on all sides, none,

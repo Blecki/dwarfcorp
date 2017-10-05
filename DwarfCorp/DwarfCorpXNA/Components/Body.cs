@@ -159,7 +159,7 @@ namespace DwarfCorp
                 hasMoved = value;
 
                 if (value)
-                    foreach (Body child in Children.OfType<Body>())
+                    foreach (var child in EnumerateChildren().OfType<Body>())
                         child.ParentMoved = true;
             }
         }
@@ -365,7 +365,7 @@ namespace DwarfCorp
         public void PropogateTransforms()
         {
             UpdateTransform();
-            foreach (var child in Children.OfType<Body>())
+            foreach (var child in EnumerateChildren().OfType<Body>())
             {
                 if (child == this)
                 {

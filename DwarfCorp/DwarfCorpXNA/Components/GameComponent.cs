@@ -13,18 +13,46 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [Saving.SaveableObject(0)]
-    public class GameComponent : Saving.ISaveableObject
+    //[Saving.SaveableObject(0)]
+    public class GameComponent // : Saving.ISaveableObject
     {
         public string Name { get; set; }
         public uint GlobalID { get; set; }
-        public GameComponent Parent { get; set; }
+
+        [JsonProperty] private uint ParentID = ComponentManager.InvalidID;
+        [JsonIgnore] private GameComponent CachedParent = null;
+        [JsonIgnore]
+        public GameComponent Parent
+        {
+            get
+            {
+                if (CachedParent == null)
+                    CachedParent = Manager.FindComponent(ParentID);
+                return CachedParent;
+            }
+            set
+            {
+                CachedParent = value;
+                ParentID = value != null ? value.GlobalID : ComponentManager.InvalidID;
+            }
+        }
+
         public Flag Flags = 0;
         public List<string> Tags { get; set; }
-        public List<GameComponent> SerializableChildren;
+        public List<uint> SerializableChildren;
+
+        [JsonIgnore]
         public List<GameComponent> Children { get; set; }
 
-        private class SaveNugget : Saving.Nugget
+        [JsonIgnore]
+        public WorldManager World { get; private set; }
+
+        [JsonIgnore]
+        public ComponentManager Manager { get { return World.ComponentManager; } }
+
+
+        /*
+        public class SaveNugget : Saving.Nugget
         {
             public uint GlobalID;
             public string Name;
@@ -72,22 +100,25 @@ namespace DwarfCorp
         {
             LoadFromSaveNugget(SaveSystem, From);
         }
+        */
+
 
         #region Serialization
 
         public void PrepareForSerialization()
         {
-            SerializableChildren = Children.Where(c => c.IsFlagSet(Flag.ShouldSerialize) && c != this).ToList();
+            SerializableChildren = Children.Where(c => c.IsFlagSet(Flag.ShouldSerialize) && c != this)
+                .Select(c => c.GlobalID).ToList();
         }
 
-        public void PostSerialization(ComponentManager manager)
+        public void PostSerialization(ComponentManager Manager)
         {
-            Children = SerializableChildren;
+            Children = SerializableChildren.Select(id => Manager.FindComponent(id)).ToList();
             Children.RemoveAll(c => c == this);
             SerializableChildren = null;
         }
 
-        public virtual void CreateCosmeticChildren(ComponentManager manager)
+        public virtual void CreateCosmeticChildren(ComponentManager Manager)
         {
 
         }
@@ -128,34 +159,40 @@ namespace DwarfCorp
         #endregion
         
         // Todo: Get rid of these helpers.
+        [JsonIgnore] 
         public bool IsVisible
         {
             get { return IsFlagSet(Flag.Visible); }
             set { SetFlag(Flag.Visible, value); }
         }
 
+        [JsonIgnore]
         public bool Active
         {
             get { return IsFlagSet(Flag.Active); }
             set { SetFlag(Flag.Active, value); }
         }
 
+        [JsonIgnore]
         public bool IsDead
         {
             get { return IsFlagSet(Flag.Dead); }
             set { SetFlag(Flag.Dead, value); }
         }
         
-        public WorldManager World { get; set; }
-
-        public ComponentManager Manager { get { return World.ComponentManager; } }
-
         public virtual void ReceiveMessageRecursive(Message messageToReceive)
         {
             foreach(GameComponent child in Children)
             {
                 child.ReceiveMessageRecursive(messageToReceive);
             }
+        }
+
+        [OnDeserialized]
+        void OnDeserializing(StreamingContext context)
+        {
+            // Assume the context passed in is a WorldManager
+            World = ((WorldManager) context.Context);
         }
 
         #region Constructors
@@ -336,6 +373,12 @@ namespace DwarfCorp
             foreach (var child in Children)
                 foreach (var grandChild in child.EnumerateAll())
                     yield return grandChild;
+        }
+
+        public IEnumerable<GameComponent> EnumerateChildren()
+        {
+            foreach (var child in Children)
+                yield return child;
         }
 
         #endregion
