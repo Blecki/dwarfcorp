@@ -129,9 +129,9 @@ namespace DwarfCorp
             foreach (var properties in DesignationProperties)
             {
                 properties.Value.ModulatedColor = new Color(
-                    (byte)(properties.Value.Color.R * colorModulation + 50),
-                    (byte)(properties.Value.Color.G * colorModulation + 50),
-                    (byte)(properties.Value.Color.B * colorModulation + 50),
+                    (byte)(MathFunctions.Clamp((float)(properties.Value.Color.R * colorModulation + 50), 0.0f, 255.0f)),
+                    (byte)(MathFunctions.Clamp((float)(properties.Value.Color.G * colorModulation + 50), 0.0f, 255.0f)),
+                    (byte)(MathFunctions.Clamp((float)(properties.Value.Color.B * colorModulation + 50), 0.0f, 255.0f)),
                     255);
             }
 
