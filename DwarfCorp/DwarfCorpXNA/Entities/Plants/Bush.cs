@@ -47,8 +47,9 @@ namespace DwarfCorp
         public Cactus() { }
 
         public Cactus(ComponentManager Manager, Vector3 position, string asset, float bushSize) :
-            base(Manager, "Cactus", Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), Vector3.Zero, asset, bushSize)
+            base(Manager, "Cactus", Matrix.Identity, new Vector3(bushSize, bushSize, bushSize),  asset, bushSize)
         {
+            BoundingBoxPos = Vector3.Zero;
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
             SeedlingFrame = new Point(0, 0);
             Matrix matrix = Matrix.Identity;
@@ -99,8 +100,9 @@ namespace DwarfCorp
         public Bush() { }
 
         public Bush(ComponentManager componentManager, Vector3 position, string asset, float bushSize) :
-            base(componentManager, "Berry Bush", Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), Vector3.Zero, asset, bushSize)
+            base(componentManager, "Berry Bush", Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), asset, bushSize)
         {
+            BoundingBoxPos = Vector3.Zero;
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
             SeedlingFrame = new Point(0, 0);
             Matrix matrix = Matrix.Identity;
