@@ -770,7 +770,6 @@ namespace DwarfCorp.GameStates
                 else
                 {
                     map[randomPoint.Value.X, randomPoint.Value.Y].Faction = (byte)(i + 1);
-                    civs[i].StartingPlace = randomPoint.Value;
                 }
             }
         }

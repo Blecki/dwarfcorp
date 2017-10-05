@@ -53,61 +53,8 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Faction
     {
-        public Faction()
-        {
-
-        }
-
-        public Faction(WorldManager world)
-        {
-            World = world;
-            Threats = new List<Creature>();
-            Minions = new List<CreatureAI>();
-            SelectedMinions = new List<CreatureAI>();
-            TaskManager = new TaskManager();
-            Stockpiles = new List<Stockpile>();
-            DigOrders = new Dictionary<ulong, BuildOrder>();
-            GuardDesignations = new List<BuildOrder>();
-            TradeEnvoys = new List<TradeEnvoy>();
-            WarParties = new List<WarParty>();
-            OwnedObjects = new List<Body>();
-            RoomBuilder = new RoomBuilder(this, world);
-            WallBuilder = new PutDesignator(this, world);
-            CraftBuilder = new CraftBuilder(this, world);
-            IsRaceFaction = false;
-            TradeMoney = 0.0m;
-        }
-
-        public Faction(OverworldFile.OverworldData.FactionDescriptor descriptor, Dictionary<string, Race> races)
-        {
-            Threats = new List<Creature>();
-            Minions = new List<CreatureAI>();
-            SelectedMinions = new List<CreatureAI>();
-            TaskManager = new TaskManager();
-            Stockpiles = new List<Stockpile>();
-            DigOrders = new Dictionary<ulong, BuildOrder>();
-            GuardDesignations = new List<BuildOrder>();
-            TradeEnvoys = new List<TradeEnvoy>();
-            WarParties = new List<WarParty>();
-            OwnedObjects = new List<Body>();
-            IsRaceFaction = false;
-            TradeMoney = 0.0m;
-            PrimaryColor = descriptor.PrimaryColory;
-            SecondaryColor = descriptor.SecondaryColor;
-            Name = descriptor.Name;
-            Race = races[descriptor.Race];
-            Center = new Point(descriptor.CenterX, descriptor.CenterY);
-        }
-
-        public class WarParty : Expedition
-        {
-            public WarParty(DateTime date) : base(date)
-            {
-            }
-        }
-
         public DwarfBux TradeMoney { get; set; }
-        public Point StartingPlace { get; set; }
+        //public Point StartingPlace { get; set; }
         public Point Center { get; set; }
         public int TerritorySize { get; set; }
         public Economy Economy { get; set; }
@@ -206,7 +153,6 @@ namespace DwarfCorp
         [JsonIgnore]
         public WorldManager World { get; set; }
 
-        //public List<Body> WrangleDesignations { get; set; }
         public List<Treasury> Treasurys = new List<Treasury>();
 
         [OnDeserialized]
@@ -214,6 +160,53 @@ namespace DwarfCorp
         {
             World = ((WorldManager)ctx.Context);
         }
+
+        public Faction()
+        {
+
+        }
+
+        public Faction(WorldManager world)
+        {
+            World = world;
+            Threats = new List<Creature>();
+            Minions = new List<CreatureAI>();
+            SelectedMinions = new List<CreatureAI>();
+            TaskManager = new TaskManager();
+            Stockpiles = new List<Stockpile>();
+            DigOrders = new Dictionary<ulong, BuildOrder>();
+            GuardDesignations = new List<BuildOrder>();
+            TradeEnvoys = new List<TradeEnvoy>();
+            WarParties = new List<WarParty>();
+            OwnedObjects = new List<Body>();
+            RoomBuilder = new RoomBuilder(this, world);
+            WallBuilder = new PutDesignator(this, world);
+            CraftBuilder = new CraftBuilder(this, world);
+            IsRaceFaction = false;
+            TradeMoney = 0.0m;
+        }
+
+        public Faction(OverworldFile.OverworldData.FactionDescriptor descriptor)
+        {
+            Threats = new List<Creature>();
+            Minions = new List<CreatureAI>();
+            SelectedMinions = new List<CreatureAI>();
+            TaskManager = new TaskManager();
+            Stockpiles = new List<Stockpile>();
+            DigOrders = new Dictionary<ulong, BuildOrder>();
+            GuardDesignations = new List<BuildOrder>();
+            TradeEnvoys = new List<TradeEnvoy>();
+            WarParties = new List<WarParty>();
+            OwnedObjects = new List<Body>();
+            IsRaceFaction = false;
+            TradeMoney = 0.0m;
+            PrimaryColor = descriptor.PrimaryColory;
+            SecondaryColor = descriptor.SecondaryColor;
+            Name = descriptor.Name;
+            Race = RaceLibrary.FindRace(descriptor.Race);
+            Center = new Point(descriptor.CenterX, descriptor.CenterY);
+        }
+
 
         private ulong GetVoxelQuickCompare(VoxelHandle V)
         {
@@ -232,43 +225,6 @@ namespace DwarfCorp
         {
             return minions.Where(creature => creature.Stats.CurrentClass.HasAction(action)).ToList();
         }
-
-        public void CollideMinions(DwarfTime time)
-        {
-            for (int i = 0; i < Minions.Count; i++)
-            {
-                CreatureAI minion = Minions[i];
-
-                if (!minion.Active) continue;
-
-                if (minion.Physics.CollideMode == Physics.CollisionMode.None)
-                    continue;
-
-                for (int j = i + 1; j < Minions.Count; j++)
-                {
-                    CreatureAI other = Minions[j];
-
-                    if (!other.Active) continue;
-
-                    // Grab both positions now to avoid the double lookup.
-                    Vector3 otherPosition = other.Position;
-                    Vector3 minionPosition = minion.Position;
-                    Vector3 meToOther = otherPosition - minionPosition;
-
-                    float dist = meToOther.Length();
-
-                    if (!float.IsNaN(dist) && (dist < 0.25f))
-                    {
-                        other.Physics.ApplyForce(meToOther / (dist + 0.05f) * 50, (float)time.ElapsedGameTime.TotalSeconds);
-
-                        // We need to set the physics on the second one as well.
-                        Vector3 otherToMe = minionPosition - otherPosition;
-                        minion.Physics.ApplyForce(otherToMe / (dist + 0.05f) * 50, (float)time.ElapsedGameTime.TotalSeconds);
-                    }
-                }
-            }
-        }
-
 
         public void Update(DwarfTime time)
         {
@@ -296,9 +252,6 @@ namespace DwarfCorp
             {
                 zone.ZoneBodies.RemoveAll(body => body.IsDead);
             }
-
-            // Turned off until a non-O(n^2) collision method is create.
-            //CollideMinions(time);
 
             List<ulong> removalKeys = new List<ulong>();
             foreach (var kvp in DigOrders)
@@ -416,12 +369,8 @@ namespace DwarfCorp
                 .ToList();
 
             foreach (CreatureAI creature in Minions)
-            {
                 foreach (var task in tasks)
-                {
                     creature.AssignTask(task);
-                }
-            }
         }
 
         public List<Room> GetRooms()
@@ -453,58 +402,9 @@ namespace DwarfCorp
             }
         }
 
-        public int ComputeStockpileCapacity()
-        {
-            int space = 0;
-            foreach (Stockpile pile in Stockpiles)
-            {
-                space += pile.Resources.MaxResources;
-            }
-
-            return space;
-        }
-
         public int ComputeStockpileSpace()
         {
             return Stockpiles.Sum(pile => pile.Resources.MaxResources - pile.Resources.CurrentResourceCount);
-        }
-
-        public BuildOrder GetClosestDigDesignationTo(Vector3 position)
-        {
-            float closestDist = 99999;
-            BuildOrder closestVoxel = null;
-            foreach (var kvp in DigOrders)
-            {
-                float d = (kvp.Value.Vox.WorldPosition - position).LengthSquared();
-                if (!(d < closestDist))
-                {
-                    continue;
-                }
-
-                closestDist = d;
-                closestVoxel = kvp.Value;
-            }
-
-            return closestVoxel;
-        }
-
-        public BuildOrder GetClosestGuardDesignationTo(Vector3 position)
-        {
-            float closestDist = 99999;
-            BuildOrder closestVoxel = null;
-            foreach (var designation in GuardDesignations)
-            {
-                float d = (designation.Vox.WorldPosition - position).LengthSquared();
-                if (!(d < closestDist))
-                {
-                    continue;
-                }
-
-                closestDist = d;
-                closestVoxel = designation;
-            }
-
-            return closestVoxel;
         }
 
         public BuildOrder GetGuardDesignation(VoxelHandle vox)
@@ -735,29 +635,6 @@ namespace DwarfCorp
             }
             return toReturn;
         }
-
-        public Dictionary<string, ResourceAmount> ListResourcesInMinions()
-        {
-            Dictionary<string, ResourceAmount> toReturn = new Dictionary<string, ResourceAmount>();
-            foreach (var creature in Minions)
-            {
-                var inventory = creature.Creature.Inventory;
-                foreach (var i in inventory.Resources)
-                {
-                    var resource = i.Resource;
-                    if (toReturn.ContainsKey(resource))
-                    {
-                        toReturn[resource].NumResources += 1;
-                    }
-                    else
-                    {
-                        toReturn[resource] = new ResourceAmount(resource);
-                    }
-                }
-            }
-            return toReturn;
-        }
-
 
         public Dictionary<string, ResourceAmount> ListResources()
         {

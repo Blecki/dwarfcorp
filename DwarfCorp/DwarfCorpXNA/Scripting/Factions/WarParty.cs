@@ -1,4 +1,4 @@
-// FactionLibrary.cs
+// Faction.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -30,26 +30,15 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace DwarfCorp
 {
-    public class RaceLibrary
+    public class WarParty : Expedition
     {
-        private static Dictionary<string, Race> Races = null;
-
-        public static Race FindRace(String Name)
+        public WarParty(DateTime date) : base(date)
         {
-            if (Races == null)
-                Races = ContentPaths.LoadFromJson<Dictionary<string, Race>>(ContentPaths.World.races);
-            return Races[Name];
-        }
-
-        public static Race RandomIntelligentRace()
-        {
-            return Datastructures.SelectRandom(Races.Values.Where(r => r.IsIntelligent && r.IsNative));
         }
     }
 }
