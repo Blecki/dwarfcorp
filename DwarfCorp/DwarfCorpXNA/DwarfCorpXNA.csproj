@@ -168,6 +168,7 @@
     <Compile Include="Components\AI\StatBuff.cs" />
     <Compile Include="Components\AI\ThoughtBuff.cs" />
     <Compile Include="Components\Body.cs" />
+    <Compile Include="Components\GameComponentExtensions.cs" />
     <Compile Include="Components\GameComponent.cs" />
     <Compile Include="Components\Graphics\Bobber.cs" />
     <Compile Include="Components\Graphics\Box.cs" />

@@ -38,7 +38,7 @@ namespace DwarfCorp
 
         public override void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect)
         {
-            effect.SelectionBufferColor = GetGlobalIDColor().ToVector4();
+            effect.SelectionBufferColor = this.GetGlobalIDColor().ToVector4();
             GetComponent<Box>().Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
         }
 

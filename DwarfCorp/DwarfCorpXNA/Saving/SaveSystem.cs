@@ -77,6 +77,8 @@ namespace DwarfCorp.Saving
 
         public Nugget SaveObject(Object SaveableObject)
         {
+            if (SaveableObject == null) return null;
+
             if (CreatedNuggets.ContainsKey(SaveableObject))
                 return CreatedNuggets[SaveableObject];
 
@@ -155,6 +157,7 @@ namespace DwarfCorp.Saving
 
         public Object LoadObject(Nugget From)
         {
+            if (From == null) return null;
             if (From.LoadedObject != null) return From.LoadedObject;
 
             if (From is GenericNugget)
@@ -188,6 +191,27 @@ namespace DwarfCorp.Saving
             result.LoadFromNugget(this, currentNugget);
             From.LoadedObject = result;
             return result;
+        }
+
+        public Nugget UpgradeNugget(Nugget From, int To)
+        {
+            var currentNugget = From;
+
+            while (To > currentNugget.Version)
+            {
+                DiscoverUpgraders();
+                var upgrader = Upgraders.FirstOrDefault(u =>
+                    u.AssociatedType == currentNugget.AssociatedType
+                    && u.SourceVersion == currentNugget.Version);
+                if (upgrader == null)
+                    throw new InvalidOperationException("Failed to upgrade nugget.");
+
+                currentNugget = upgrader.Method.Invoke(null, new Object[] { currentNugget }) as Nugget;
+                currentNugget.AssociatedType = upgrader.AssociatedType;
+                currentNugget.Version = upgrader.DestinationVersion;
+            }
+
+            return currentNugget;
         }
     }
 

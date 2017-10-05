@@ -65,7 +65,7 @@ namespace DwarfCorp
                 GlobalTransform,
                 Tint,
                 true);
-            Instance.SelectionBufferColor = GetGlobalIDColor();
+            Instance.SelectionBufferColor = this.GetGlobalIDColor();
         }
 
         public Mesh()
@@ -79,7 +79,7 @@ namespace DwarfCorp
             ModelType = modelType;
             Instance = new NewInstanceData(Manager.World.NewInstanceManager, ModelType,
                 Vector3.One, GlobalTransform, Tint, true);
-            Instance.SelectionBufferColor = GetGlobalIDColor();
+            Instance.SelectionBufferColor = this.GetGlobalIDColor();
         }
 
         private bool firstIter = true;
@@ -94,7 +94,7 @@ namespace DwarfCorp
             {
                 Instance.Color = Tint;
                 Instance.Transform = GlobalTransform;
-                Instance.SelectionBufferColor = GetGlobalIDColor();
+                Instance.SelectionBufferColor = this.GetGlobalIDColor();
                 firstIter = false;
             }
 

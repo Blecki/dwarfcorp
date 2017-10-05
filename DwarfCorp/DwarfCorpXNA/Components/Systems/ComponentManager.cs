@@ -105,7 +105,10 @@ namespace DwarfCorp
         {
             Components = new Dictionary<uint, GameComponent>();
             foreach (var component in SaveData.SaveableComponents)
+            {
                 Components.Add(component.GlobalID, component);
+                component.World = World;
+            }
             RootComponent = Components[SaveData.RootComponent] as Body;
 
             this.World = World;

@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
+using DwarfCorp.Saving;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -45,140 +46,119 @@ namespace DwarfCorp
     /// Basic physics object. When attached to an entity, it causes it to obey gravity, and collide with stuff.
     /// All objects are just axis-aligned boxes that are treated as point masses.
     /// </summary>
+    [Saving.SaveableObject(0)]
     public class Physics : Body, IUpdateableComponent
     {
-        /// <summary>
-        /// Gets or sets the angular velocity in radians per second.
-        /// </summary>
-        /// <value>
-        /// The angular velocity.
-        /// </value>
         public Vector3 AngularVelocity { get; set; }
-        /// <summary>
-        /// Gets or sets the linear velocity in voxels per second.
-        /// </summary>
-        /// <value>
-        /// The velocity.
-        /// </value>
         public Vector3 Velocity { get; set; }
-        /// <summary>
-        /// Gets or sets the mass in voxel weights.
-        /// </summary>
-        /// <value>
-        /// The mass.
-        /// </value>
         public float Mass { get; set; }
-        /// <summary>
-        /// Gets or sets the moment of inertia.
-        /// </summary>
-        /// <value>
-        /// The i.
-        /// </value>
         public float I { get; set; }
-        /// <summary>
-        /// Gets or sets the linear viscous damping force. 1.0 means no damping. 0.0 means full damping.
-        /// </summary>
-        /// <value>
-        /// The linear damping.
-        /// </value>
         public float LinearDamping { get; set; }
-        /// <summary>
-        /// Gets or sets the viscous angular damping force. 1.0 means no damping. 0.0 means full damping.
-        /// </summary>
-        /// <value>
-        /// The angular damping.
-        /// </value>
         public float AngularDamping { get; set; }
-        /// <summary>
-        /// Gets or sets the restitution in proportion. 
-        /// A colliding body with 1.0 restitution bounces back with 100% of its velocity.
-        /// </summary>
-        /// <value>
-        /// The restitution.
-        /// </value>
         public float Restitution { get; set; }
-        /// <summary>
-        /// Gets or sets the friction when colliding with voxels.
-        /// </summary>
-        /// <value>
-        /// The friction.
-        /// </value>
         public float Friction { get; set; }
-        /// <summary>
-        /// Gets or sets the gravity in voxels per second squared.
-        /// </summary>
-        /// <value>
-        /// The gravity.
-        /// </value>
         public Vector3 Gravity { get; set; }
-        /// <summary>
-        /// Gets or sets the previous position of this body on the last update.
-        /// </summary>
-        /// <value>
-        /// The previous position.
-        /// </value>
         public Vector3 PreviousPosition { get; set; }
-        /// <summary>
-        /// Book keeping for applying gravity. Avoids applying gravity when it would otherwise mess up physics.
-        /// </summary>
-        private bool applyGravityThisFrame = true;
-
+        
         private bool isSleeping = false;
-        /// <summary>
-        /// Gets or sets a value indicating whether this instance is sleeping. A sleeping instance does not update
-        /// unless acted upon by an outside force. (Take that, newton)
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if this instance is sleeping; otherwise, <c>false</c>.
-        /// </value>
         public bool IsSleeping { get { return AllowPhysicsSleep && isSleeping;  } set { isSleeping = value; } }
-        /// <summary>
-        /// Book-keeping. If we are sleeping, and this is set to true, we check physics for one more frame
-        /// before going back to sleep.
-        /// </summary>
-        private bool overrideSleepThisFrame = true;
-        /// <summary>
-        /// Gets or sets a value indicating whether this instance is in liquid (like water or lava).
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if this instance is in liquid; otherwise, <c>false</c>.
-        /// </value>
         public bool IsInLiquid { get; set; }
-        /// <summary>
-        /// Gets or sets the previous velocity. On the last update.
-        /// </summary>
-        /// <value>
-        /// The previous velocity.
-        /// </value>
         public Vector3 PreviousVelocity { get; set; }
-        /// <summary>
-        /// Gets or sets the orientation mode.
-        /// </summary>
-        /// <value>
-        /// The orientation.
-        /// </value>
         public OrientMode Orientation { get; set; }
-        /// <summary>
-        /// When in RotateY mode, this is the angle around Y in radians in which to rotate.
-        /// </summary>
-        private float Rotation = 0.0f;
-        /// <summary>
-        /// Gets or sets the collision mode. 
-        /// </summary>
-        /// <value>
-        /// The collide mode.
-        /// </value>
         public CollisionMode CollideMode { get; set; }
-        /// <summary>
-        /// The current voxel
-        /// </summary>
         public VoxelHandle CurrentVoxel = VoxelHandle.InvalidHandle;
-        /// <summary>
-        /// Fixed time to update physics at. This is to prevent instabilty on very slow
-        /// or very fast machines, and to protect stability during fast forward.
-        /// </summary>
         public const float FixedDT = 1.0f / 60.0f;
         public const int MaxTimesteps = 5; // The maximum number of timesteps to try and calculate in a single frame.
+        public bool AllowPhysicsSleep = true;
+        public Timer SleepTimer { get; set; }
+        public Timer WakeTimer { get; set; }
+
+        private bool applyGravityThisFrame = true;
+        private float Rotation = 0.0f;
+        private bool overrideSleepThisFrame = true;
+
+        public class PhysicsSaveNugget : Saving.Nugget
+        {
+            public Saving.Nugget Base;
+
+            public Vector3 AngularVelocity;
+            public Vector3 Velocity;
+            public float Mass;
+            public float I;
+            public float LinearDamping;
+            public float AngularDamping;
+            public float Restitution;
+            public float Friction;
+            public Vector3 Gravity;
+            public Vector3 PreviousPosition;
+            public bool isSleeping;
+            public bool IsInLiquid;
+            public Vector3 PreviousVelocity;
+            public OrientMode Orientation;
+            public CollisionMode CollideMode;
+            public VoxelHandle CurrentVoxel;
+            public bool AllowPhysicsSleep;
+            public Timer SleepTimer;
+            public Timer WakeTimer;
+        }
+
+        protected override Nugget PrepareSaveNugget(Saver SaveSystem)
+        {
+            return new PhysicsSaveNugget
+            {
+                AssociatedType = typeof(Physics),
+                Version = 0,
+
+                Base = base.PrepareSaveNugget(SaveSystem),
+
+                AngularVelocity = AngularVelocity,
+                Velocity = Velocity,
+                Mass = Mass,
+                I = I,
+                LinearDamping = LinearDamping,
+                AngularDamping = AngularDamping,
+                Restitution = Restitution,
+                Friction = Friction,
+                Gravity = Gravity,
+                PreviousPosition = PreviousPosition,
+                isSleeping = isSleeping,
+                IsInLiquid = IsInLiquid,
+                PreviousVelocity = PreviousVelocity,
+                Orientation = Orientation,
+                CollideMode = CollideMode,
+                CurrentVoxel = CurrentVoxel,
+                AllowPhysicsSleep = AllowPhysicsSleep,
+                SleepTimer = SleepTimer,
+                WakeTimer = WakeTimer
+            };
+        }
+
+        protected override void LoadFromSaveNugget(Loader SaveSystem, Nugget From)
+        {
+            var n = SaveSystem.UpgradeNugget(From, 0) as PhysicsSaveNugget;
+
+            base.LoadFromSaveNugget(SaveSystem, n.Base);
+
+            AngularVelocity = n.AngularVelocity;
+            Velocity = n.Velocity;
+            Mass = n.Mass;
+            I = n.I;
+            LinearDamping = n.LinearDamping;
+            AngularDamping = n.AngularDamping;
+            Restitution = n.Restitution;
+            Friction = n.Friction;
+            Gravity = n.Gravity;
+            PreviousPosition = n.PreviousPosition;
+            isSleeping = n.isSleeping;
+            IsInLiquid = n.IsInLiquid;
+            PreviousVelocity = n.PreviousVelocity;
+            Orientation = n.Orientation;
+            CollideMode = n.CollideMode;
+            CurrentVoxel = n.CurrentVoxel;
+            AllowPhysicsSleep = n.AllowPhysicsSleep;
+            SleepTimer = n.SleepTimer;
+            WakeTimer = n.WakeTimer;
+        }
 
         /// <summary>
         /// Does this physics object collide on all sides, none,
@@ -205,9 +185,6 @@ namespace DwarfCorp
             LookAt,
             RotateY
         }
-
-        // If true, the physics object will sleep when it has low velocity.
-        public bool AllowPhysicsSleep = true;
 
         public Physics()
         {
@@ -428,9 +405,6 @@ namespace DwarfCorp
             base.Update(gameTime, chunks, camera);
         }
 
-        public Timer SleepTimer { get; set; }
-        public Timer WakeTimer { get; set; }
-
         public void Face(Vector3 target)
         {
             Vector3 diff = target - GlobalTransform.Translation;
@@ -494,7 +468,6 @@ namespace DwarfCorp
 
             base.ReceiveMessageRecursive(messageToReceive);
         }
-
 
         public bool Collide(BoundingBox box, float dt)
         {
@@ -563,7 +536,7 @@ namespace DwarfCorp
             }
         }
 
-        // This is a more expensive terrain collision method that has fewer problems than the box-collision method.
+// This is a more expensive terrain collision method that has fewer problems than the box-collision method.
         // It works by stepping the physics object along the gradient of the terrain field until it is out of collision.
         // It will only work if the object is on the edge of the terrain (i.e exactly one voxel in or less).
         public void ResolveTerrainCollisionGradientMethod()
@@ -709,5 +682,4 @@ namespace DwarfCorp
             return MathFunctions.Clamp(vector3, Manager.World.ChunkManager.Bounds);
         }
     }
-
 }
