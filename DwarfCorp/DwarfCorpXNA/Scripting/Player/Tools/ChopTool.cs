@@ -68,7 +68,12 @@ namespace DwarfCorp
 
         public override void OnMouseOver(IEnumerable<Body> bodies)
         {
-            var treesPicked = bodies.Where(c => c.Tags.Contains("Vegetation"));
+            if (bodies == null)
+            {
+                return;
+            }
+
+            var treesPicked = bodies.Where(c => c != null && c.Tags.Contains("Vegetation"));
 
             if (treesPicked.Any())
             {
@@ -104,13 +109,6 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-
-            Color drawColor = ChopDesignationColor;
-
-            float alpha = (float)Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * ChopDesignationGlowRate));
-            drawColor.R = (byte)(Math.Min(drawColor.R * alpha + 50, 255));
-            drawColor.G = (byte)(Math.Min(drawColor.G * alpha + 50, 255));
-            drawColor.B = (byte)(Math.Min(drawColor.B * alpha + 50, 255));
 
             NamedImageFrame frame = new NamedImageFrame("newgui/pointers2", 32, 5, 0);
             foreach (Body tree in Player.BodySelector.CurrentBodies)

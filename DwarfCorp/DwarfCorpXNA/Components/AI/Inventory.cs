@@ -197,8 +197,23 @@ namespace DwarfCorp
             return toReturn;
         }
 
+        internal Dictionary<string, ResourceAmount> Aggregate()
+        {
+            Dictionary<string, ResourceAmount> toReturn = new Dictionary<string, ResourceAmount>();
+            foreach(var resource in Resources)
+            {
+                if (toReturn.ContainsKey(resource.Resource))
+                {
+                    toReturn[resource.Resource].NumResources++;
+                }
+                else
+                {
+                    toReturn.Add(resource.Resource, new ResourceAmount(resource.Resource));
+                }
+            }
+            return toReturn;
+        }
 
- 
         public override void Die()
         {
             List<Body> release = new List<Body>();

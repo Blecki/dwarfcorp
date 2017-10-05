@@ -187,23 +187,30 @@ namespace DwarfCorp
 
         public static void InitializeLogger()
         {
-            Trace.Listeners.Clear();
-            var dir = GetGameDirectory();
-            if (!System.IO.Directory.Exists(dir))
+            try
             {
-                System.IO.Directory.CreateDirectory(dir);
-            }
-            var path = ProgramData.CreatePath(dir, "log.txt");
-            if (!File.Exists(path))
-            {
-                File.Create(path).Close();
-            }
+                Trace.Listeners.Clear();
+                var dir = GetGameDirectory();
+                if (!System.IO.Directory.Exists(dir))
+                {
+                    System.IO.Directory.CreateDirectory(dir);
+                }
+                var path = ProgramData.CreatePath(dir, "log.txt");
+                if (!File.Exists(path))
+                {
+                    File.Create(path).Close();
+                }
 
-            FileStream writerOutput = new FileStream(ProgramData.CreatePath(dir, "log.txt"), FileMode.Append, FileAccess.Write);
-            _logwriter = new StreamWriter(writerOutput) {AutoFlush = true};
-            Console.SetOut(_logwriter);
-            Console.SetError(_logwriter);
-            Console.Out.WriteLine("Game started at " + DateTime.Now.ToShortDateString() + " : " + DateTime.Now.ToShortTimeString()); 
+                FileStream writerOutput = new FileStream(ProgramData.CreatePath(dir, "log.txt"), FileMode.Append, FileAccess.Write);
+                _logwriter = new StreamWriter(writerOutput) { AutoFlush = true };
+                Console.SetOut(_logwriter);
+                Console.SetError(_logwriter);
+                Console.Out.WriteLine("Game started at " + DateTime.Now.ToShortDateString() + " : " + DateTime.Now.ToShortTimeString());
+            }
+            catch (Exception exception)
+            {
+                Console.Error.WriteLine("Failed to initialize logger: {0}", exception.ToString());
+            }
         }
 
         protected override void Initialize()
