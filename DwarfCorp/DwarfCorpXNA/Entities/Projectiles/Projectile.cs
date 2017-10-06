@@ -41,10 +41,8 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Projectile : Physics, IUpdateableComponent
     {
-
         public Sprite Sprite { get; set; }
         public Sprite Sprite2 { get; set; }
         public ParticleTrigger HitParticles { get; set; }
@@ -52,6 +50,7 @@ namespace DwarfCorp
         public Body Target { get; set; }
         public float DamageRadius { get; set; }
         public Animation HitAnimation { get; set; }
+
         public Projectile()
         {
             
@@ -196,81 +195,5 @@ namespace DwarfCorp
         }
 
         
-    }
-
-    [JsonObject(IsReference = true)]
-    public class FireballProjectile : Projectile
-    {
-        public FireballProjectile()
-        {
-            
-        }
-
-        public FireballProjectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Body target) :
-            base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 15.0f, DamageType = Health.DamageType.Fire }, 0.25f, ContentPaths.Particles.fireball, "flame", ContentPaths.Audio.Oscar.sfx_ic_demon_fire_hit_1, target)
-        {
-            HitAnimation = new Animation(ContentPaths.Effects.pierce, 32, 32, 0, 1, 2, 3);
-            Sprite.LightsWithVoxels = false;
-            Sprite2.LightsWithVoxels = false;
-        }
-    }
-
-    [JsonObject(IsReference = true)]
-    public class ArrowProjectile : Projectile
-    {
-        public ArrowProjectile()
-        {
-            
-        }
-
-        public ArrowProjectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Body target) :
-            base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 10.0f, DamageType = Health.DamageType.Slashing }, 0.25f, ContentPaths.Entities.Elf.Sprites.arrow, "puff", ContentPaths.Audio.Oscar.sfx_ic_elf_arrow_hit, target)
-        {
-            HitAnimation = new Animation(ContentPaths.Effects.pierce, 32, 32, 0, 1, 2);
-        }
-    }
-
-    [JsonObject(IsReference = true)]
-    public class WebProjectile : Projectile
-    {
-        public WebProjectile()
-        {
-
-        }
-
-        public WebProjectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Body target) :
-            base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 10.0f, DamageType = Health.DamageType.Acid }, 0.25f, ContentPaths.Entities.Animals.Spider.webshot, "puff", ContentPaths.Audio.whoosh, target)
-        {
-            HitAnimation = new Animation(ContentPaths.Entities.Animals.Spider.webstick, 32, 32, 0);
-        }
-    }
-
-    [JsonObject(IsReference = true)]
-    public class BulletProjectile : Projectile
-    {
-        public BulletProjectile()
-        {
-
-        }
-
-        public BulletProjectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Body target) :
-            base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 30.0f, DamageType = Health.DamageType.Normal }, 0.25f, ContentPaths.Particles.stone_particle, null, ContentPaths.Audio.Oscar.sfx_ic_dwarf_musket_bullet_explode_1, target)
-        {
-            HitAnimation = new Animation(ContentPaths.Effects.explode, 32, 32, 0, 1, 2, 3, 4);
-        }
-    }
-
-    public class MudProjectile : Projectile
-    {
-        public MudProjectile()
-        {
-
-        }
-
-        public MudProjectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Body target) :
-            base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 30.0f, DamageType = Health.DamageType.Normal }, 0.25f, ContentPaths.Entities.mudman_projectile, "dirt_particle", ContentPaths.Audio.gravel, target, true, true)
-        {
-            HitAnimation = new Animation(ContentPaths.Effects.flash, 32, 32, 0, 1, 2, 3, 4);
-        }
     }
 }
