@@ -26,10 +26,13 @@ namespace DwarfCorp
 
         public InstanceRenderer(ContentManager Content)
         {
-            CreateInstanceTypes(Content);
+            InitializeVegetationInstanceMeshes(Content);
         }
 
-        private void CreateBillboard(string name, ContentManager content, bool addToSelectionBuffer = true)
+        private void CreateXMeshInstanceType(
+            string name, 
+            ContentManager content, 
+            bool addToSelectionBuffer = true)
         {
             if (!PrimitiveLibrary.BatchBillboardPrimitives.ContainsKey(name))
                 PrimitiveLibrary.CreateIntersecting(name, name, GameState.Game.GraphicsDevice, content);
@@ -47,23 +50,23 @@ namespace DwarfCorp
             });
         }
 
-        private void CreateInstanceTypes(ContentManager content)
+        private void InitializeVegetationInstanceMeshes(ContentManager content)
         {
-            CreateBillboard("pine", content);
-            CreateBillboard("palm", content);
-            CreateBillboard("snowpine", content);
-            CreateBillboard("appletree", content);
-            CreateBillboard("berrybush", content);
-            CreateBillboard("cactus", content);
-            CreateBillboard("grass", content, false);
-            CreateBillboard("frostgrass", content, false);
-            CreateBillboard("flower", content, false);
-            CreateBillboard("deadbush", content, false);
-            CreateBillboard("vine", content, false);
-            CreateBillboard("gnarled", content, false);
-            CreateBillboard("mushroom", content);
-            CreateBillboard("wheat", content);
-            CreateBillboard("caveshroom", content);
+            CreateXMeshInstanceType("pine", content);
+            CreateXMeshInstanceType("palm", content);
+            CreateXMeshInstanceType("snowpine", content);
+            CreateXMeshInstanceType("appletree", content);
+            CreateXMeshInstanceType("berrybush", content);
+            CreateXMeshInstanceType("cactus", content);
+            CreateXMeshInstanceType("grass", content, false);
+            CreateXMeshInstanceType("frostgrass", content, false);
+            CreateXMeshInstanceType("flower", content, false);
+            CreateXMeshInstanceType("deadbush", content, false);
+            CreateXMeshInstanceType("vine", content, false);
+            CreateXMeshInstanceType("gnarled", content, false);
+            CreateXMeshInstanceType("mushroom", content);
+            CreateXMeshInstanceType("wheat", content);
+            CreateXMeshInstanceType("caveshroom", content);
         }
 
         public enum RenderMode

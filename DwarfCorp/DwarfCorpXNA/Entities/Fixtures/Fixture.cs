@@ -46,6 +46,7 @@ namespace DwarfCorp
         public SpriteSheet Asset { get; set; }
         public Point Frame { get; set; }
         public SimpleSprite.OrientMode OrientMode = SimpleSprite.OrientMode.Spherical;
+
         public Fixture()
         {
             

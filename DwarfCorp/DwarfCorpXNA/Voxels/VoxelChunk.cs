@@ -85,8 +85,11 @@ namespace DwarfCorp
         public void InvalidateSlice(int Y)
         {
             if (Y < 0 || Y >= VoxelConstants.ChunkSizeY) throw new InvalidOperationException();
-            Data.SliceCache[Y] = null;
-            Manager.InvalidateChunk(this);
+            lock (Data.SliceCache)
+            {
+                Data.SliceCache[Y] = null;
+                Manager.InvalidateChunk(this);
+            }
         }
 
         #region statics

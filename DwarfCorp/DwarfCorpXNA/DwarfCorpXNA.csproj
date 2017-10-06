@@ -175,8 +175,9 @@
     <Compile Include="Components\Graphics\CharacterSprite.cs" />
     <Compile Include="Components\Graphics\Follower.cs" />
     <Compile Include="Components\Graphics\LightEmitter.cs" />
-    <Compile Include="Components\Graphics\Mesh.cs" />
+    <Compile Include="Components\Graphics\InstanceMesh.cs" />
     <Compile Include="Components\Graphics\OrientedAnimation.cs" />
+    <Compile Include="Components\Graphics\LayeredSimpleSprite.cs" />
     <Compile Include="Components\Graphics\SimpleSprite.cs" />
     <Compile Include="ContextCommands\ChopCommand.cs" />
     <Compile Include="ContextCommands\ContextCommand.cs" />

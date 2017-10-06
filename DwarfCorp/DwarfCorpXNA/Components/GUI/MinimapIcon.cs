@@ -7,11 +7,11 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class MinimapIcon : Body
     {
-        public NamedImageFrame Icon { get; set; }
-        public float IconScale { get; set; }
+        public NamedImageFrame Icon;
+        public float IconScale;
+
         public MinimapIcon()
         {
 

@@ -43,17 +43,12 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// This component represents an instance of a particular primitive (such as intersecting billboards, or a box), or a mesh. 
-    /// Efficiently drawn by the instance manager using state batching.
-    /// </summary>
-    [JsonObject(IsReference = true)]
-    public class Mesh : Tinter, IUpdateableComponent
+    public class InstanceMesh : Tinter, IUpdateableComponent
     {
         public string ModelType { get; set; }
+
         [JsonIgnore]
         public NewInstanceData Instance { get; set; }
-        private bool checkHeight = false;
 
         [OnDeserialized]
         protected void OnDeserialized(StreamingContext context)
@@ -68,12 +63,12 @@ namespace DwarfCorp
             Instance.SelectionBufferColor = this.GetGlobalIDColor();
         }
 
-        public Mesh()
+        public InstanceMesh()
         {
 
         }
 
-        public Mesh(ComponentManager Manager, string name, Matrix localTransform, string modelType, bool addToCollisionManager) :
+        public InstanceMesh(ComponentManager Manager, string name, Matrix localTransform, string modelType, bool addToCollisionManager) :
             base(Manager, name, localTransform, Vector3.Zero, Vector3.Zero, addToCollisionManager)
         {
             ModelType = modelType;

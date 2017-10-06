@@ -155,7 +155,7 @@ namespace DwarfCorp
 
         public void CreateMesh(ComponentManager manager)
         {
-            var mesh = AddChild(new Mesh(manager, "Model", Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(MeshScale, MeshScale, MeshScale), MeshAsset, false));
+            var mesh = AddChild(new InstanceMesh(manager, "Model", Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(MeshScale, MeshScale, MeshScale), MeshAsset, false));
             mesh.SetFlag(Flag.ShouldSerialize, false);
         }
 
@@ -185,9 +185,9 @@ namespace DwarfCorp
             matrix.Translation = position;
             LocalTransform = matrix;
 
-            var meshTransform = GetComponent<Mesh>().LocalTransform;
+            var meshTransform = GetComponent<InstanceMesh>().LocalTransform;
             meshTransform = meshTransform*Matrix.CreateTranslation(0.5f, 0.0f, 0.5f);
-            GetComponent<Mesh>().LocalTransform = meshTransform;
+            GetComponent<InstanceMesh>().LocalTransform = meshTransform;
 
             AddChild(new Health(Manager, "HP", 100.0f * treeSize, 0.0f, 100.0f * treeSize));
             AddChild(new Flammable(Manager, "Flames"));
@@ -250,9 +250,9 @@ namespace DwarfCorp
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             base.CreateCosmeticChildren(manager);
-            var meshTransform = GetComponent<Mesh>().LocalTransform;
+            var meshTransform = GetComponent<InstanceMesh>().LocalTransform;
             meshTransform = meshTransform * Matrix.CreateTranslation(0.5f, 0.0f, 0.5f);
-            GetComponent<Mesh>().LocalTransform = meshTransform;
+            GetComponent<InstanceMesh>().LocalTransform = meshTransform;
         }
     }
 }
