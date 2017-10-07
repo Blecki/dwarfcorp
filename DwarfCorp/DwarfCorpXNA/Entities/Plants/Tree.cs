@@ -157,6 +157,9 @@ namespace DwarfCorp
         {
             var mesh = AddChild(new Mesh(manager, "Model", Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(MeshScale, MeshScale, MeshScale), MeshAsset, false));
             mesh.SetFlag(Flag.ShouldSerialize, false);
+            mesh.IsVisible = IsVisible;
+            mesh.Active = Active;
+            mesh.IsDead = IsDead;
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
@@ -251,6 +254,9 @@ namespace DwarfCorp
             var meshTransform = GetComponent<Mesh>().LocalTransform;
             meshTransform = meshTransform * Matrix.CreateTranslation(0.5f, 0.0f, 0.5f);
             GetComponent<Mesh>().LocalTransform = meshTransform;
+            GetComponent<Mesh>().IsVisible = IsVisible;
+            GetComponent<Mesh>().IsDead = IsDead;
+            GetComponent<Mesh>().Active = Active;
         }
     }
 }

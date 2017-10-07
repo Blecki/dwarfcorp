@@ -113,9 +113,6 @@ namespace DwarfCorp
             foreach (var component in SaveData.SaveableComponents)
             {
                 component.CreateCosmeticChildren(this);
-                component.SetFlagRecursive(GameComponent.Flag.Active, component.Active);
-                component.SetFlagRecursive(GameComponent.Flag.Visible, component.IsVisible);
-                component.SetFlagRecursive(GameComponent.Flag.Dead, component.IsDead);
             }
 
             foreach (var component in Components)
