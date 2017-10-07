@@ -283,7 +283,6 @@ namespace DwarfCorp
         /// <returns>true if the object could be saved.</returns>
         public static bool Save<T>(JsonSerializer serializer, T obj, string filePath, bool compress)
         {
-
             if (!compress)
             {
                 using (StreamWriter filestream = new StreamWriter(filePath))
