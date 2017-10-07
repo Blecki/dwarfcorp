@@ -267,6 +267,11 @@ namespace DwarfCorp
 
         public TradeEnvoy SendTradeEnvoy(Faction natives, WorldManager world)
         {
+            if (!world.PlayerFaction.GetRooms().Any(room => room is BalloonPort && room.IsBuilt))
+            {
+                world.MakeAnnouncement(String.Format("Trade envoy from {0} left. No balloon port!", natives.Name));
+                return null;
+            }
             TradeEnvoy envoy = null;
 
             List<CreatureAI> creatures =
