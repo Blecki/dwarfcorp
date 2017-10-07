@@ -181,6 +181,11 @@
     <Compile Include="Components\Graphics\SimpleSprite.cs" />
     <Compile Include="ContextCommands\ChopCommand.cs" />
     <Compile Include="ContextCommands\ContextCommand.cs" />
+    <Compile Include="Entities\Projectiles\FireballProjectile.cs" />
+    <Compile Include="Entities\Projectiles\ArrowProjectile.cs" />
+    <Compile Include="Entities\Projectiles\BulletProjectile.cs" />
+    <Compile Include="Entities\Projectiles\MudProjectile.cs" />
+    <Compile Include="Entities\Projectiles\WebProjectile.cs" />
     <Compile Include="Scripting\Factions\DesignationType.cs" />
     <Compile Include="Scripting\Factions\DesignationDrawer.cs" />
     <Compile Include="Graphics\Instancing\InstanceRenderData.cs" />

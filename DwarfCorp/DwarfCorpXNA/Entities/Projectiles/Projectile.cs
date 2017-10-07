@@ -192,8 +192,6 @@ namespace DwarfCorp
             }
 
             base.OnTerrainCollision(vox);
-        }
-
-        
+        }        
     }
 }
