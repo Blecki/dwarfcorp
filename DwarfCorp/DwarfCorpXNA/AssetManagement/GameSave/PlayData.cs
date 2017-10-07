@@ -60,6 +60,8 @@ namespace DwarfCorp
         public FactionLibrary Factions;
         public Dictionary<ResourceLibrary.ResourceType, Resource> Resources;
         public DesignationDrawer Designations;
+        public SpellTree Spells;
+
 
         public static PlayData CreateFromWorld(WorldManager World)
         {
@@ -73,6 +75,7 @@ namespace DwarfCorp
                 Factions = World.Factions,
                 Resources = ResourceLibrary.Resources,
                 Designations = World.DesignationDrawer,
+                Spells = World.Master.Spells
             };
         }
 
@@ -87,7 +90,8 @@ namespace DwarfCorp
                 Diplomacy = SaveSystem.SaveObject(Diplomacy),
                 Factions = SaveSystem.SaveObject(Factions),
                 Resources = SaveSystem.SaveObject(Resources),
-                Designations = SaveSystem.SaveObject(Designations)
+                Designations = SaveSystem.SaveObject(Designations),
+                Spells = SaveSystem.SaveObject(Spells)
             };
         }
 
@@ -110,5 +114,6 @@ namespace DwarfCorp
         public Nugget Factions;
         public Nugget Resources;
         public Nugget Designations;
+        public Nugget Spells;
     }
 }

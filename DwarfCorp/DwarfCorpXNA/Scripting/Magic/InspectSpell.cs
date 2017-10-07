@@ -55,6 +55,11 @@ namespace DwarfCorp
         public InspectType Type { get; set; }
         public Timer SelectionTimer = new Timer(0.25f, false);
 
+        public InspectSpell()
+        {
+
+        }
+
         public InspectSpell(WorldManager world, InspectType type) :
             base(world)
         {

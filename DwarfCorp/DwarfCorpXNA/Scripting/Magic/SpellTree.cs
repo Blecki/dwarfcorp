@@ -181,6 +181,16 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        
+        internal SpellTree.Node GetSpell(string spell)
+        {
+            foreach(var s in Enumerate())
+            {
+                if (s.Spell.Name == spell)
+                {
+                    return s;
+                }
+            }
+            return null;
+        }
     }
 }

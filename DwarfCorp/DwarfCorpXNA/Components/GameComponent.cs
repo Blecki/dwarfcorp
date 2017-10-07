@@ -339,9 +339,13 @@ namespace DwarfCorp
                 System.Diagnostics.Debug.Assert(child.Parent == null, "Child was already added to another component.");
 
                 Children.Add(child);
-                child.Active = Active;
-                child.IsVisible = IsVisible;
-                child.IsDead = IsDead;
+
+                if (this != Manager.RootComponent)
+                {
+                    child.Active = Active;
+                    child.IsVisible = IsVisible;
+                    child.IsDead = IsDead;
+                }
                 child.Parent = this;
             }
 

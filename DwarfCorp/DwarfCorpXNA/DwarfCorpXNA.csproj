@@ -382,6 +382,7 @@
     <Compile Include="Scripting\Factions\Race.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\Treasury.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\FindLandTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\ResearchSpellTask.cs" />
     <Compile Include="Tools\Datastructures\OctTree.cs" />
     <Compile Include="Tools\Math\FastVoxelTraversal.cs" />
     <Compile Include="Tools\Planning\GoalRegion.cs" />

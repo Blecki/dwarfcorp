@@ -449,6 +449,11 @@ namespace DwarfCorp
                     TutorialManager = new Tutorial.TutorialManager("Content/tutorial.txt");
                     TutorialManager.TutorialEnabled = !GameSettings.Default.TutorialDisabledGlobally;
                     Tutorial("new game start");
+
+                    if (gameFile != null)
+                    {
+                        Master.Spells = gameFile.PlayData.Spells;
+                    }
                 }
 
                 Camera.World = this;

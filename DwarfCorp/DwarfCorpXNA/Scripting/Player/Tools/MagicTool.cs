@@ -103,7 +103,7 @@ namespace DwarfCorp
 
                 foreach (CreatureAI wizard in wizards)
                 {
-                    wizard.AssignTask(new ActWrapperTask(new GoResearchSpellAct(wizard, spell))
+                    wizard.AssignTask(new ResearchSpellTask(spell.Spell.Name)
                     {
                         Priority = Task.PriorityType.Low
                     });
