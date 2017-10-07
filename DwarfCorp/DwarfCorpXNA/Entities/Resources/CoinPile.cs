@@ -7,27 +7,10 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-
-    [JsonObject(IsReference = true)]
-    public class CoinPileFixture : Fixture
-    {
-        public CoinPileFixture()
-        {
-
-        }
-
-        public CoinPileFixture(ComponentManager manager, Vector3 position) :
-            base(manager, position, new SpriteSheet(ContentPaths.Entities.DwarfObjects.coinpiles, 32, 32), new Point(MathFunctions.RandInt(0, 3), 0))
-        {
-            Name = "Coins";
-            Tags.Add("Coins");
-        }
-    }
-
-    [JsonObject(IsReference = true)]
     public class CoinPile : ResourceEntity
     {
         public DwarfBux Money { get; set; }
+
         public CoinPile()
         {
 
@@ -40,6 +23,4 @@ namespace DwarfCorp
             Tags.Add("Coins");
         }
     }
-
-
 }

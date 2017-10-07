@@ -181,6 +181,11 @@
     <Compile Include="Components\Graphics\SimpleSprite.cs" />
     <Compile Include="ContextCommands\ChopCommand.cs" />
     <Compile Include="ContextCommands\ContextCommand.cs" />
+    <Compile Include="Entities\Fixtures\CoinPileFixture.cs" />
+    <Compile Include="Entities\Fixtures\Banner.cs" />
+    <Compile Include="Entities\Plants\Cactus.cs" />
+    <Compile Include="Entities\Plants\Seedling.cs" />
+    <Compile Include="Entities\Plants\Plant.cs" />
     <Compile Include="Entities\Projectiles\FireballProjectile.cs" />
     <Compile Include="Entities\Projectiles\ArrowProjectile.cs" />
     <Compile Include="Entities\Projectiles\BulletProjectile.cs" />
@@ -236,7 +241,7 @@
     <Compile Include="Entities\Fixtures\Anvil.cs" />
     <Compile Include="Entities\Fixtures\Bed.cs" />
     <Compile Include="Entities\Fixtures\Chair.cs" />
-    <Compile Include="Entities\Fixtures\CoinPile.cs" />
+    <Compile Include="Entities\Resources\CoinPile.cs" />
     <Compile Include="Entities\Fixtures\Crate.cs" />
     <Compile Include="Entities\Fixtures\Door.cs" />
     <Compile Include="Entities\Fixtures\Fixture.cs" />
@@ -757,7 +762,9 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Entities\Fixtures\SimpleFixtures\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <PropertyGroup>

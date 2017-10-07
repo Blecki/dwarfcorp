@@ -42,135 +42,10 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-
-    [JsonObject(IsReference = true)]
-    public class Seedling : Fixture, IUpdateableComponent
-    {
-        public DateTime FullyGrownDay { get; set; }
-        public DateTime Birthday { get; set; }
-        public Plant Adult { get; set; }
-        public bool IsGrown { get; set; }
-        public Seedling()
-        {
-            IsGrown = false;
-        }
-
-        public Seedling(ComponentManager Manager, Plant adult, Vector3 position, SpriteSheet asset, Point frame) :
-            base(Manager, position, asset, frame)
-        {
-            IsGrown = false;
-            Adult = adult;
-            Name = adult.Name + " seedling";
-            AddChild(new Health(Manager, "HP", 1.0f, 0.0f, 1.0f));
-            AddChild(new Flammable(Manager, "Flames"));
-
-            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
-                Manager.World.ChunkManager.ChunkData,
-                GlobalVoxelCoordinate.FromVector3(position)));
-            if (voxelUnder.IsValid)
-                AddChild(new VoxelListener(Manager, Manager.World.ChunkManager,
-                    voxelUnder));
-
-        }
-
-        public override void Delete()
-        {
-            if (!IsGrown)
-            {
-                Adult.Delete();
-            }
-            base.Delete();
-        }
-
-        public override void Die()
-        {
-            if (!IsGrown)
-            {
-                Adult.Delete();
-            }
-            base.Die();
-        }
-
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
-        {
-            if (Manager.World.Time.CurrentDate >= FullyGrownDay)
-            {
-                CreateAdult();
-            }
-            base.Update(gameTime, chunks, camera);
-        }
-
-        public void CreateAdult()
-        {
-            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_plant_grow, Position, true);
-            IsGrown = true;
-            Adult.IsGrown = true;
-            Adult.SetFlagRecursive(Flag.Active, true);
-            Adult.SetFlagRecursive(Flag.Visible, true);
-            Die();
-        }
-    }
-
-    [JsonObject(IsReference = true)]
-    public class Plant : Body
-    {
-        public SpriteSheet Seedlingsheet { get; set; }
-        public Point SeedlingFrame { get; set; }
-        public int GrowthDays { get; set; }
-        public int GrowthHours { get; set; }
-        public bool IsGrown { get; set; }
-        public string MeshAsset { get; set; }
-        public float MeshScale { get; set; }
-
-        public Plant()
-        {
-            GrowthDays = 0;
-            GrowthHours = 12;
-            IsGrown = false;
-        }
-
-        public Plant(ComponentManager Manager, string name, Matrix localTransform, Vector3 bboxSize,
-           string meshAsset, float meshScale) :
-            base(Manager, name, localTransform, bboxSize, new Vector3(0.5f, 0, 0.5f))
-        {
-            MeshAsset = meshAsset;
-            MeshScale = meshScale;
-            GrowthDays = 0;
-            GrowthHours = 12;
-            IsGrown = false;
-            CreateMesh(Manager);
-        }
-
-        public virtual Seedling BecomeSeedling()
-        {
-            UpdateTransform();
-            SetFlagRecursive(Flag.Active, false);
-            SetFlagRecursive(Flag.Visible, false);
-
-            return Parent.AddChild(new Seedling(Manager, this, LocalTransform.Translation, Seedlingsheet, SeedlingFrame)
-            {
-                FullyGrownDay = Manager.World.Time.CurrentDate.AddHours(GrowthHours).AddDays(GrowthDays)
-            }) as Seedling;
-        }
-
-        public void CreateMesh(ComponentManager manager)
-        {
-            var mesh = AddChild(new InstanceMesh(manager, "Model", Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(MeshScale, MeshScale, MeshScale), MeshAsset, false));
-            mesh.SetFlag(Flag.ShouldSerialize, false);
-        }
-
-        public override void CreateCosmeticChildren(ComponentManager manager)
-        {
-            CreateMesh(manager);
-            base.CreateCosmeticChildren(manager);
-        }
-    }
-
-    [JsonObject(IsReference = true)]
     public class Tree : Plant
     {
         public Timer HurtTimer { get; set; }
-        public ParticleTrigger Particles { get; set; }
+
         public Tree() { }
 
         public Tree(string name, ComponentManager manager, Vector3 position, string asset, ResourceLibrary.ResourceType seed, float treeSize) :
@@ -204,6 +79,7 @@ namespace DwarfCorp
 
             Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)) as Inventory;
             
+            // Can these be spawned when the tree dies rather than when it is created?
             for (int i = 0; i < treeSize * 10; i++)
             {
                 inventory.Resources.Add(new Inventory.InventoryItem()
@@ -222,13 +98,12 @@ namespace DwarfCorp
                 });
             }
 
-            Particles = AddChild(new ParticleTrigger("Leaves", Manager, "LeafEmitter",
+            AddChild(new ParticleTrigger("Leaves", Manager, "LeafEmitter",
                 Matrix.Identity, BoundingBoxPos, GetBoundingBox().Extents())
             {
                 SoundToPlay = ContentPaths.Audio.Oscar.sfx_env_tree_cut_down_1
-            }) as ParticleTrigger;
-
-
+            });
+            
             AddToCollisionManager = true;
             CollisionType = CollisionManager.CollisionType.Static;
             PropogateTransforms();
@@ -240,9 +115,14 @@ namespace DwarfCorp
             {
                 HurtTimer.Update(DwarfTime.LastTime);
 
-                if(HurtTimer.HasTriggered)
-                    Particles.Trigger(1);   
+                if (HurtTimer.HasTriggered)
+                {
+                    var particles = GetComponent<ParticleTrigger>();
+                    if (particles != null)
+                        particles.Trigger(1);
+                }
             }
+
             base.ReceiveMessageRecursive(messageToReceive);
         }
 

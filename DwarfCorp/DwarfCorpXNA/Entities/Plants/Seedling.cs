@@ -1,4 +1,4 @@
-// Wheat.cs
+// Tree.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -33,8 +33,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
-using DwarfCorp;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -42,22 +42,25 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Wheat : Plant
+    public class Seedling : Fixture, IUpdateableComponent
     {
-        public Wheat()
+        public DateTime FullyGrownDay { get; set; }
+        public DateTime Birthday { get; set; }
+        public Plant Adult { get; set; }
+        public bool IsGrown { get; set; }
+        public Seedling()
         {
-            
+            IsGrown = false;
         }
 
-        public Wheat(ComponentManager Manager, Vector3 position) :
-            base(Manager, "Wheat", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f),  "wheat", 1.0f)
+        public Seedling(ComponentManager Manager, Plant adult, Vector3 position, SpriteSheet asset, Point frame) :
+            base(Manager, position, asset, frame)
         {
-            BoundingBoxPos = Vector3.Zero;
-            Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.gnarled, 32, 32);
-            SeedlingFrame = new Point(0, 0);
-            Matrix matrix = Matrix.CreateRotationY(MathFunctions.Rand(-0.1f, 0.1f));
-            matrix.Translation = position + new Vector3(0.5f, 0.0f, 0.5f);
-            LocalTransform = matrix;
+            IsGrown = false;
+            Adult = adult;
+            Name = adult.Name + " seedling";
+            AddChild(new Health(Manager, "HP", 1.0f, 0.0f, 1.0f));
+            AddChild(new Flammable(Manager, "Flames"));
 
             var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                 Manager.World.ChunkManager.ChunkData,
@@ -65,31 +68,44 @@ namespace DwarfCorp
             if (voxelUnder.IsValid)
                 AddChild(new VoxelListener(Manager, Manager.World.ChunkManager,
                     voxelUnder));
-            
-            Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)) as Inventory;
 
-            for (int i = 0; i < MathFunctions.RandInt(1, 5); i++)
+        }
+
+        public override void Delete()
+        {
+            if (!IsGrown)
             {
-                inventory.Resources.Add(new Inventory.InventoryItem()
-                {
-                    MarkedForRestock = false,
-                    Resource = ResourceLibrary.ResourceType.Grain
-                });
+                Adult.Delete();
             }
+            base.Delete();
+        }
 
-            AddChild(new ParticleTrigger("Leaves", Manager, "LeafEmitter",
-                Matrix.Identity, BoundingBoxPos, GetBoundingBox().Extents())
+        public override void Die()
+        {
+            if (!IsGrown)
             {
-                SoundToPlay = ContentPaths.Audio.Oscar.sfx_env_bush_harvest_1
-            });
+                Adult.Delete();
+            }
+            base.Die();
+        }
 
-            AddChild(new Health(Manager, "HP", 30, 0.0f, 30));
-            AddChild(new Flammable(Manager, "Flames"));
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        {
+            if (Manager.World.Time.CurrentDate >= FullyGrownDay)
+            {
+                CreateAdult();
+            }
+            base.Update(gameTime, chunks, camera);
+        }
 
-            Tags.Add("Wheat");
-            Tags.Add("Vegetation");
-            CollisionType = CollisionManager.CollisionType.Static;
-            PropogateTransforms();
+        public void CreateAdult()
+        {
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_plant_grow, Position, true);
+            IsGrown = true;
+            Adult.IsGrown = true;
+            Adult.SetFlagRecursive(Flag.Active, true);
+            Adult.SetFlagRecursive(Flag.Visible, true);
+            Die();
         }
     }
 }

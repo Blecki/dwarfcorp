@@ -40,7 +40,6 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Door : Fixture, IUpdateableComponent
     {
         public Faction TeamFaction { get; set; }

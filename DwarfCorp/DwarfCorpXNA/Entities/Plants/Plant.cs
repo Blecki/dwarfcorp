@@ -1,4 +1,4 @@
-// Fixture.cs
+// Tree.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -33,60 +33,66 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
-    public class Fixture : Body
+    public class Plant : Body
     {
-        public SpriteSheet Asset { get; set; }
-        public Point Frame { get; set; }
-        public SimpleSprite.OrientMode OrientMode = SimpleSprite.OrientMode.Spherical;
+        public SpriteSheet Seedlingsheet { get; set; }
+        public Point SeedlingFrame { get; set; }
+        public int GrowthDays { get; set; }
+        public int GrowthHours { get; set; }
+        public bool IsGrown { get; set; }
+        public string MeshAsset { get; set; }
+        public float MeshScale { get; set; }
 
-        public Fixture()
+        public Plant()
         {
-            
+            GrowthDays = 0;
+            GrowthHours = 12;
+            IsGrown = false;
         }
 
-        public Fixture(
-            ComponentManager Manager, 
-            Vector3 position, 
-            SpriteSheet asset, 
-            Point frame) :
-            base(Manager, "Fixture", Matrix.CreateTranslation(position), 
-                new Vector3(asset.FrameWidth * (1.0f / 32.0f), asset.FrameHeight * (1.0f / 32.0f), asset.FrameWidth * (1.0f / 32.0f)), Vector3.Zero, true)
+        public Plant(ComponentManager Manager, string name, Matrix localTransform, Vector3 bboxSize,
+           string meshAsset, float meshScale) :
+            base(Manager, name, localTransform, bboxSize, new Vector3(0.5f, 0, 0.5f))
         {
-            Asset = asset;
-            Frame = frame;
-            AddToCollisionManager = false;
-            CollisionType = CollisionManager.CollisionType.Static;
-            AddChild(new Health(Manager, "Hp", 100, 0, 100));
+            MeshAsset = meshAsset;
+            MeshScale = meshScale;
+            GrowthDays = 0;
+            GrowthHours = 12;
+            IsGrown = false;
+            CreateMesh(Manager);
+        }
 
-            /*
-            AddChild(new Flammable(Manager, "Flammable"));
-            AddChild(new ParticleTrigger("dirt_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+        public virtual Seedling BecomeSeedling()
+        {
+            UpdateTransform();
+            SetFlagRecursive(Flag.Active, false);
+            SetFlagRecursive(Flag.Visible, false);
+
+            return Parent.AddChild(new Seedling(Manager, this, LocalTransform.Translation, Seedlingsheet, SeedlingFrame)
             {
-                TriggerOnDeath = true,
-                TriggerAmount = 1
-            });
-            */
+                FullyGrownDay = Manager.World.Time.CurrentDate.AddHours(GrowthHours).AddDays(GrowthDays)
+            }) as Seedling;
+        }
 
-            PropogateTransforms();
-            CreateCosmeticChildren(Manager);
+        public void CreateMesh(ComponentManager manager)
+        {
+            var mesh = AddChild(new InstanceMesh(manager, "Model", Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(MeshScale, MeshScale, MeshScale), MeshAsset, false));
+            mesh.SetFlag(Flag.ShouldSerialize, false);
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
+            CreateMesh(manager);
             base.CreateCosmeticChildren(manager);
-
-            AddChild(new SimpleSprite(manager, "Sprite", Matrix.Identity, false, Asset, Frame)
-            {
-                OrientationType = OrientMode
-            }).SetFlag(Flag.ShouldSerialize, false);
-        }            
+        }
     }
 }
