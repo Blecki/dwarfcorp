@@ -57,7 +57,7 @@ namespace DwarfCorp
                 Matrix.CreateTranslation(position), new Vector3(0.25f, 0.25f, 0.25f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0))
         {
             Resource = resourceType;
-            if (Resource.NumResources > 0)
+            if (Resource.NumResources > 1)
             {
                 Name = String.Format("Pile of {0} {1}", Resource.NumResources, Resource.ResourceType);
             }
