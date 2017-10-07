@@ -98,6 +98,11 @@ namespace DwarfCorp
             {
                 Mappings = FileUtils.LoadJson<KeyMappings>(file, false);
             }
+            catch (DirectoryNotFoundException)
+            {
+                Mappings = new KeyMappings();
+                Save();
+            }
             catch (FileNotFoundException)
             {
                 Mappings = new KeyMappings();
