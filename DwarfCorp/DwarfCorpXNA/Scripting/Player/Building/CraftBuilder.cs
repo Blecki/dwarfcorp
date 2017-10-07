@@ -344,6 +344,7 @@ namespace DwarfCorp
 
             var intersectsAnyOther = Faction.OwnedObjects.FirstOrDefault(
                 o => o != CurrentCraftBody && o.GetRotatedBoundingBox().Intersects(CurrentCraftBody.GetRotatedBoundingBox().Expand(-0.1f)));
+            var intersectsBuildObjects = this.Designations.Any(d => d.GhostBody != CurrentCraftBody && d.GhostBody.GetRotatedBoundingBox().Intersects(CurrentCraftBody.GetRotatedBoundingBox().Expand(-0.1f)));
             bool intersectsWall = VoxelHelpers.EnumerateCoordinatesInBoundingBox
                 ( CurrentCraftBody.GetRotatedBoundingBox().Expand(-0.1f)).Any(
         v =>
@@ -356,12 +357,16 @@ namespace DwarfCorp
             {
                 World.ShowToolPopup("Can't build here: intersects " + intersectsAnyOther.Name);
             }
+            else if (intersectsBuildObjects)
+            {
+                World.ShowToolPopup("Can't build here: intersects something else being built");
+            }
             else if (intersectsWall && !designation.ItemType.Prerequisites.Contains(CraftItem.CraftPrereq.NearWall))
             {
                 World.ShowToolPopup("Can't build here: intersects wall.");
             }
 
-            return (intersectsAnyOther == null && (!intersectsWall || designation.ItemType.Prerequisites.Contains(CraftItem.CraftPrereq.NearWall)));
+            return (intersectsAnyOther == null && !intersectsBuildObjects && (!intersectsWall || designation.ItemType.Prerequisites.Contains(CraftItem.CraftPrereq.NearWall)));
 
         }
 

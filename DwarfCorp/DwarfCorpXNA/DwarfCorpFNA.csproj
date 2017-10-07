@@ -60,11 +60,10 @@
   </ItemGroup>
   -->
   <ItemGroup>
-    <Compile Include=".\**\*.cs" />
+     <Compile Include=".\**\*.cs"/>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="AssetManagement\ContentPaths.cs.orig" />
     <None Include="FNA_libs\lib64\DwarfCorp.sh" />
     <None Include="FNA_libs\lib64\DwarfCorpFNA.bin.x86_64" />
     <None Include="FNA_libs\lib64\libjpeg.so.62" />
@@ -109,7 +108,6 @@
     <None Include="FNA_libs\osx\monoconfig" />
     <None Include="FNA_libs\osx\monomachineconfig" />
     <None Include="packages.config" />
-    <None Include="Scripting\LeafActs\MeleeAct.cs.orig" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />

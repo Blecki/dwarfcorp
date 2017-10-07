@@ -82,6 +82,7 @@ namespace DwarfCorp
         private Timer sliceDownTimer = new Timer(0.5f, true);
         private Timer sliceUpTimer = new Timer(0.5f, true);
 
+        [OnDeserialized]
         protected void OnDeserialized(StreamingContext context)
         {
             World = (WorldManager)(context.Context);
@@ -114,7 +115,9 @@ namespace DwarfCorp
             VoxSelector = new VoxelSelector(World, CameraController, chunks.Graphics, chunks);
             BodySelector = new BodySelector(CameraController, chunks.Graphics, components);
             SelectedMinions = new List<CreatureAI>();
-            Spells = SpellLibrary.CreateSpellTree(components.World);
+
+            if (Spells == null)
+                Spells = SpellLibrary.CreateSpellTree(components.World);
             CreateTools();
 
             InputManager.KeyReleasedCallback += OnKeyReleased;

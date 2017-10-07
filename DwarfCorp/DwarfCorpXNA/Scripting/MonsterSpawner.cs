@@ -128,14 +128,6 @@ namespace DwarfCorp
                             creature.AssignTask(new KillEntityTask(enemyMinion.Physics, KillEntityTask.KillType.Auto));
                         }
                     }
-                    else
-                    {
-                        Room nearestRoom = spawnEvent.TargetFaction.GetNearestRoom(creature.Position);
-                        if (nearestRoom != null)
-                        {
-                            creature.AssignTask(new ActWrapperTask(new GoToZoneAct(creature, nearestRoom)));
-                        }
-                    }
                     toReturn.Add(creature);
                 }
             }

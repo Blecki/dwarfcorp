@@ -45,6 +45,14 @@ namespace DwarfCorp
     {
         public List<Buff> Buffs { get; set; } 
         
+
+
+        public BuffSpell():
+            base()
+        {
+
+        }
+
         public BuffSpell(WorldManager world) :
             base(world)
         {
