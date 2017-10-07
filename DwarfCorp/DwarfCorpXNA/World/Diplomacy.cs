@@ -153,7 +153,7 @@ namespace DwarfCorp
         }
 
         private TradeEnvoy CurrentTradeEnvoy = null;
-        private Faction.WarParty CurrentWarParty = null;
+        private WarParty CurrentWarParty = null;
 
         public Diplomacy()
         {
@@ -361,7 +361,7 @@ namespace DwarfCorp
             return envoy;
         }
 
-        public Faction.WarParty SendWarParty(Faction natives)
+        public WarParty SendWarParty(Faction natives)
         {
             natives.World.MakeAnnouncement(String.Format("War party from {0} has arrived!", natives.Name), null);
             natives.World.Tutorial("war");
@@ -369,7 +369,7 @@ namespace DwarfCorp
             Politics politics = GetPolitics(natives, natives.World.PlayerFaction);
             politics.WasAtWar = true;
             List<CreatureAI> creatures = natives.World.MonsterSpawner.Spawn(natives.World.MonsterSpawner.GenerateSpawnEvent(natives, natives.World.PlayerFaction, MathFunctions.Random.Next(5) + 1, true));
-            var party = new Faction.WarParty(natives.World.Time.CurrentDate)
+            var party = new WarParty(natives.World.Time.CurrentDate)
             {
                 Creatures = creatures,
                 OtherFaction = natives.World.PlayerFaction,
@@ -406,7 +406,6 @@ namespace DwarfCorp
                     otherFaction = pair.First.Equals(world.PlayerFaction.Name) ? Factions.Factions[pair.Second] : Factions.Factions[pair.First];
                     UpdateTradeEnvoys(otherFaction);
                     UpdateWarParties(otherFaction);
-                    Race race = otherFaction.Race;
                     Politics relation = mypolitics.Value;
 
                     bool needsNewTradeEnvoy = true;
@@ -435,7 +434,7 @@ namespace DwarfCorp
                         CurrentWarParty = null;
                     }
                     
-                    if (needsNewTradeEnvoy && race.IsIntelligent  && !otherFaction.IsRaceFaction && 
+                    if (needsNewTradeEnvoy && otherFaction.Race.IsIntelligent  && !otherFaction.IsRaceFaction && 
                         relation.GetCurrentRelationship() != Relationship.Hateful)
                     {
                         if (otherFaction.TradeEnvoys.Count == 0 && !relation.TradePartyTimer.HasTriggered)
@@ -454,7 +453,7 @@ namespace DwarfCorp
 
                     }
                     else if (needsNewWarparty &&
-                             race.IsIntelligent && !otherFaction.IsRaceFaction &&
+                             otherFaction.Race.IsIntelligent && !otherFaction.IsRaceFaction &&
                              relation.GetCurrentRelationship() == Relationship.Hateful)
                     {
                         if (otherFaction.WarParties.Count == 0 && !relation.WarPartyTimer.HasTriggered)
@@ -501,7 +500,7 @@ namespace DwarfCorp
                 else
                 {
                     if (envoy.Creatures.Any(
-                        creature => envoy.OtherFaction.AttackDesignations.Contains(creature.Physics)))
+                        creature => envoy.OtherFaction.IsDesignation(creature.Physics, DesignationType.Attack)))
                     {
 
                         if (!politics.HasEvent("You attacked our trade delegates"))
@@ -617,7 +616,7 @@ namespace DwarfCorp
 
         public void UpdateWarParties(Faction faction)
         {
-            foreach (Faction.WarParty party in faction.WarParties)
+            foreach (var party in faction.WarParties)
             {
                 if (party.DeathTimer.Update(faction.World.Time.CurrentDate))
                 {
@@ -668,7 +667,7 @@ namespace DwarfCorp
             }
         }
 
-        public static void RecallWarParty(Faction.WarParty party)
+        public static void RecallWarParty(WarParty party)
         {
             // TODO: do ths more naturally
             party.ExpiditionState = Expedition.State.Leaving;

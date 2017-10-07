@@ -53,25 +53,6 @@ namespace DwarfCorp
         public Forge(ComponentManager manager, Vector3 position) :
             base(manager, "Forge", Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
         {
-            SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture);
-
-            List<Point> frames = new List<Point>
-            {
-                new Point(1, 3),
-                new Point(3, 3),
-                new Point(2, 3),
-                new Point(3, 3)
-            };
-            Animation lampAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture), "Forge", 32, 32, frames, true, Color.White, 3.0f, 1f, 1.0f, false);
-
-            var sprite = AddChild(new Sprite(manager, "sprite", Matrix.Identity, spriteSheet, false)
-            {
-                LightsWithVoxels = false
-            }) as Sprite;
-            sprite.AddAnimation(lampAnimation);
-
-
-            lampAnimation.Play();
             Tags.Add("Forge");
 
             var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
@@ -81,13 +62,44 @@ namespace DwarfCorp
                 AddChild(new VoxelListener(manager, manager.World.ChunkManager,
                     voxelUnder));
 
+            CollisionType = CollisionManager.CollisionType.Static;
 
-            AddChild(new LightEmitter(manager, "light", Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero, 50, 4)
+            CreateCosmeticChildren(manager);
+        }
+
+        public override void CreateCosmeticChildren(ComponentManager Manager)
+        {
+            base.CreateCosmeticChildren(Manager);
+
+            SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture);
+
+            List<Point> frames = new List<Point>
+            {
+                new Point(1, 3),
+                new Point(3, 3),
+                new Point(2, 3),
+                new Point(3, 3)
+            };
+
+            var lampAnimation = new Animation(GameState.Game.GraphicsDevice, 
+                new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture), 
+                "Forge", 32, 32, 
+                frames, 
+                true, Color.White, 3.0f, 1f, 1.0f, false);
+
+            var sprite = AddChild(new Sprite(Manager, "sprite", Matrix.Identity, spriteSheet, false)
+            {
+                LightsWithVoxels = false
+            }) as Sprite;
+
+            sprite.AddAnimation(lampAnimation);
+            sprite.SetFlag(Flag.ShouldSerialize, false);
+            lampAnimation.Play();
+
+            AddChild(new LightEmitter(Manager, "light", Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero, 50, 4)
             {
                 HasMoved = true
-            });
-
-            CollisionType = CollisionManager.CollisionType.Static;
+            }).SetFlag(Flag.ShouldSerialize, false);
         }
     }
 }

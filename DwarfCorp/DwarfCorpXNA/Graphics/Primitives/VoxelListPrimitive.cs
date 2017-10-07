@@ -52,17 +52,6 @@ namespace DwarfCorp
             if (chunk == null)
                 return;
 
-            rebuildMutex.WaitOne();
-
-            if (isRebuilding)
-            {
-                rebuildMutex.ReleaseMutex();
-                return;
-            }
-
-            isRebuilding = true;
-            rebuildMutex.ReleaseMutex();
-
             int[] ambientValues = new int[4];
             VertexCount = 0;
             IndexCount = 0;
@@ -79,15 +68,29 @@ namespace DwarfCorp
                     continue;
                 }
 
-                if (chunk.Data.SliceCache[y] != null)
+                RawPrimitive sliceGeometry = null;
+
+                lock (chunk.Data.SliceCache)
                 {
-                    lightCache.Clear(); // If we skip a slice, nothing in the cache will be reused.
-                    sliceStack.Add(chunk.Data.SliceCache[y]);
+                    var cachedSlice = chunk.Data.SliceCache[y];
+                    if (cachedSlice != null)
+                    {
+                        lightCache.Clear(); // If we skip a slice, nothing in the cache will be reused.
+                        sliceStack.Add(cachedSlice);
 
-                    if (GameSettings.Default.GrassMotes)
-                        chunk.RebuildMoteLayerIfNull(y);
+                        if (GameSettings.Default.GrassMotes)
+                            chunk.RebuildMoteLayerIfNull(y);
 
-                    continue;
+                        continue;
+                    }
+
+                    sliceGeometry = new RawPrimitive
+                    {
+                        Vertices = new ExtendedVertex[128],
+                        Indexes = new ushort[128]
+                    };
+                    
+                    chunk.Data.SliceCache[y] = sliceGeometry;
                 }
 
                 if (GameSettings.Default.CalculateRamps)
@@ -95,15 +98,7 @@ namespace DwarfCorp
 
                 if (GameSettings.Default.GrassMotes)
                     chunk.RebuildMoteLayer(y);
-
-                var sliceGeometry = new RawPrimitive
-                {
-                    Vertices = new ExtendedVertex[128],
-                    Indexes = new ushort[128]
-                };
-
-                chunk.Data.SliceCache[y] = sliceGeometry;
-
+                
                 for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
                 {
                     for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
@@ -133,8 +128,6 @@ namespace DwarfCorp
                 chunk.NewPrimitiveReceived = true;
                 chunk.PrimitiveMutex.ReleaseMutex();
             }
-
-            isRebuilding = false;
         }
 
         private static GlobalVoxelCoordinate GetCacheKey(VoxelHandle Handle, VoxelVertex Vertex)

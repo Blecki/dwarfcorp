@@ -48,10 +48,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class DigTool : PlayerTool
     {
-        public Color DigDesignationColor { get; set; }
-        public Color UnreachableColor { get; set; }
-        public float DigDesignationGlowRate { get; set; }
-
         public override void OnBegin()
         {
            Player.World.Tutorial("mine");
@@ -59,13 +55,8 @@ namespace DwarfCorp
 
         public override void OnEnd()
         {
-            foreach (var des in Player.Faction.DigDesignations)
-            {
-                Drawer3D.UnHighlightVoxel(des.Value.Vox);
-            }
             Player.VoxSelector.Clear();
         }
-
 
         public override void OnVoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
         {

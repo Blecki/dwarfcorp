@@ -41,7 +41,6 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Lamp : Body
     {
         public Lamp()
@@ -51,7 +50,7 @@ namespace DwarfCorp
 
         private void CreateSpriteStanding()
         {
-            SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture);
+            var spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture);
 
             List<Point> frames = new List<Point>
             {
@@ -60,35 +59,33 @@ namespace DwarfCorp
                 new Point(1, 1),
                 new Point(2, 1)
             };
-            Animation lampAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture), "Lamp", 32, 32, frames, true, Color.White, 3.0f, 1f, 1.0f, false);
+
+            var lampAnimation = new Animation(GameState.Game.GraphicsDevice, 
+                spriteSheet, 
+                "Lamp", 32, 32, frames, true, Color.White, 3.0f, 1f, 1.0f, false);
 
             var sprite = AddChild(new Sprite(Manager, "sprite", Matrix.Identity, spriteSheet, false)
             {
                 LightsWithVoxels = false,
                 OrientationType = Sprite.OrientMode.YAxis
             }) as Sprite;
+
             sprite.AddAnimation(lampAnimation);
+            sprite.SetFlag(Flag.ShouldSerialize, false);
             lampAnimation.Play();
         }
 
         private void CreateSpriteWall(Vector3 diff)
         {
-            Vector3 offset = diff * 0.2f + Vector3.Up*0.2f;
-            SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture);
-
-            List<Point> frames = new List<Point>
+            AddChild(new SimpleSprite(Manager, "sprite",
+                Matrix.CreateTranslation(diff * 0.2f + Vector3.Up * 0.2f),
+                false,
+                new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture),
+                new Point(5, 0))
             {
-                new Point(5, 0),
-            };
-            Animation lampAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture), "Lamp", 32, 32, frames, true, Color.White, 3.0f, 1f, 1.0f, false);
-
-            var sprite = AddChild(new Sprite(Manager, "sprite", Matrix.CreateTranslation(offset), spriteSheet, false)
-            {
-                LightsWithVoxels = false,
-                OrientationType = Sprite.OrientMode.YAxis
-            }) as Sprite;
-            sprite.AddAnimation(lampAnimation);
-            lampAnimation.Play();
+                OrientationType = SimpleSprite.OrientMode.YAxis,
+                LightsWithVoxels = false
+            }).SetFlag(Flag.ShouldSerialize, false);
         }
 
         private void CreateSprite()
@@ -126,7 +123,6 @@ namespace DwarfCorp
         public Lamp(ComponentManager Manager, Vector3 position) :
             base(Manager, "Lamp", Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
         {
-            CreateSprite();
             Tags.Add("Lamp");
 
             var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
@@ -135,16 +131,22 @@ namespace DwarfCorp
             if (voxelUnder.IsValid)
                 AddChild(new VoxelListener(Manager, Manager.World.ChunkManager,
                     voxelUnder));
+            
+            CollisionType = CollisionManager.CollisionType.Static;
 
+            CreateCosmeticChildren(Manager);
+        }
+
+        public override void CreateCosmeticChildren(ComponentManager Manager)
+        {
+            base.CreateCosmeticChildren(Manager);
+
+            CreateSprite();
 
             AddChild(new LightEmitter(Manager, "light", Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero, 255, 8)
             {
                 HasMoved = true
-            });
-
-            CollisionType = CollisionManager.CollisionType.Static;
+            }).SetFlag(Flag.ShouldSerialize, false);
         }
-
-
     }
 }

@@ -41,11 +41,13 @@ namespace DwarfCorp.Gui.Widgets
 
             var combo = r.AddChild(new Gui.Widgets.ComboBox
             {
-               AutoLayout = AutoLayout.DockFill, 
+                AutoLayout = AutoLayout.DockFill, 
                 Items = new List<String>(LevelStrings),
                 OnSelectedIndexChanged = (sender) =>
                 {
-                    Setter(Values[(sender as Gui.Widgets.ComboBox).SelectedIndex]);
+                    var box = sender as ComboBox;
+                    if (box.SelectedIndex >= 0 && box.SelectedIndex < Values.Length)
+                        Setter(Values[box.SelectedIndex]);
                 }
             }) as Gui.Widgets.ComboBox;
 

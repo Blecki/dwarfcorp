@@ -62,11 +62,11 @@ namespace DwarfCorp
                 }
                 case KillEntityTask.KillType.Attack:
                 {
-                    return Entity != null && !Entity.IsDead && Creature.Faction.AttackDesignations.Contains(Entity);
+                    return Entity != null && !Entity.IsDead && Creature.Faction.IsDesignation(Entity, DesignationType.Attack);
                 }
                 case KillEntityTask.KillType.Chop:
                 {
-                    return Entity != null && !Entity.IsDead && Creature.Faction.IsChopDesignation(Entity);
+                    return Entity != null && !Entity.IsDead && Creature.Faction.IsDesignation(Entity, DesignationType.Chop);
                 }
             }
             return false;

@@ -133,7 +133,7 @@ namespace DwarfCorp
             {
                 for (int y = startY; y <= endY; y++)
                 {
-                    uint id = GameComponent.GlobalIDFromColor(colorBuffer[x + y*width]);
+                    uint id = GameComponentExtensions.GlobalIDFromColor(colorBuffer[x + y*width]);
                     if (id == 0) continue;
                     if (selected.Contains(id))
                     {

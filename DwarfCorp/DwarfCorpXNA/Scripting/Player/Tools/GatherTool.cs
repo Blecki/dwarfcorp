@@ -78,22 +78,15 @@ namespace DwarfCorp
                 c.Parent == Player.World.ComponentManager.RootComponent))
             {
                 if (!resource.IsVisible || resource.IsAboveCullPlane(Player.World.ChunkManager)) continue;
-                Drawer3D.DrawBox(resource.BoundingBox, Color.LightGoldenrodYellow, 0.05f, true);
 
                 if(button == InputManager.MouseButton.Left)
                 {
-                    Player.Faction.AddGatherDesignation(resource);
-
+                    Player.Faction.AddEntityDesignation(resource, DesignationType.Gather);
                     assignments.Add(new GatherItemTask(resource));
                 }
                 else
                 {
-                    if(!Player.Faction.GatherDesignations.Contains(resource))
-                    {
-                        continue;
-                    }
-
-                    Player.Faction.GatherDesignations.Remove(resource);
+                    Player.Faction.RemoveEntityDesignation(resource, DesignationType.Gather);
                 }
             }
 

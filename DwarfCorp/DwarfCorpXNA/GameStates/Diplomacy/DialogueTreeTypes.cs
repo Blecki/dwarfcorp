@@ -86,8 +86,6 @@ namespace DwarfCorp.Dialogue
 
             if (next != null)
                 next(this);
-
-
         }
 
         public void Skip()

@@ -175,7 +175,6 @@ namespace DwarfCorp
 
         // Responsible for handling instances of particular primitives (or models)
         // and drawing them to the screen
-        public InstanceManager InstanceManager;
         public NewInstanceManager NewInstanceManager;
 
         // Handles loading of game assets
@@ -382,7 +381,9 @@ namespace DwarfCorp
                     Draw3DThings(new DwarfTime(), DefaultShader, Camera.ViewMatrix);
 
                     DefaultShader.View = Camera.ViewMatrix;
-                    InstanceManager.Render(GraphicsDevice, DefaultShader, Camera);
+                    NewInstanceManager.RenderInstances(GraphicsDevice, DefaultShader, Camera,
+                        InstanceRenderer.RenderMode.Normal);
+
                     ComponentRenderer.Render(ComponentManager.GetRenderables(), new DwarfTime(), ChunkManager, Camera,
                         DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader,
                         ComponentRenderer.WaterRenderType.None, 0);
@@ -512,10 +513,6 @@ namespace DwarfCorp
             ChunkManager.Update(gameTime, Camera, GraphicsDevice);
             ChunkRenderer.Update(gameTime, Camera, GraphicsDevice);
             GamePerformance.Instance.StopTrackPerformance("Chunk Manager");
-
-            GamePerformance.Instance.StartTrackPerformance("Instance Manager");
-            InstanceManager.Update(gameTime, Camera, GraphicsDevice, ChunkManager.ChunkData.MaxViewingLevel);
-            GamePerformance.Instance.StopTrackPerformance("Instance Manager");
 
             GamePerformance.Instance.StartTrackPerformance("Sound Manager");
             SoundManager.Update(gameTime, Camera, Time);
@@ -779,7 +776,6 @@ namespace DwarfCorp
                 //GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer - Instances");
                 NewInstanceManager.RenderInstances(GraphicsDevice, DefaultShader, Camera,
                     InstanceRenderer.RenderMode.SelectionBuffer);
-                InstanceManager.RenderSelectionBuffer(GraphicsDevice, DefaultShader, Camera, false);
                 //GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Instances");
 
                 SelectionBuffer.End(GraphicsDevice);
@@ -858,7 +854,6 @@ namespace DwarfCorp
             }
 
             DefaultShader.View = Camera.ViewMatrix;
-            InstanceManager.Render(GraphicsDevice, DefaultShader, Camera);
             NewInstanceManager.RenderInstances(GraphicsDevice, DefaultShader, Camera, InstanceRenderer.RenderMode.Normal);
             GamePerformance.Instance.StopTrackPerformance("Render - Instances");
             GamePerformance.Instance.StartTrackPerformance("Render - Components");

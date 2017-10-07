@@ -110,18 +110,11 @@ namespace DwarfCorp
             switch (Mode)
             {
                 case KillType.Attack:
-                {
-                    if (!agent.Faction.AttackDesignations.Contains(EntityToKill)) return true;
-                        return false;
-                    }
+                    return !agent.Faction.IsDesignation(EntityToKill, DesignationType.Attack);
                 case KillType.Chop:
-                    {
-                        return !agent.Faction.IsChopDesignation(EntityToKill);
-                    }
+                    return !agent.Faction.IsDesignation(EntityToKill, DesignationType.Chop);
                 case KillType.Auto:
-                    {
-                        return false;
-                    }
+                    return false;
             }
 
             return false;
@@ -140,18 +133,11 @@ namespace DwarfCorp
                 switch (Mode)
                 {
                     case KillType.Attack:
-                    {
-                        if (!agent.Faction.AttackDesignations.Contains(EntityToKill)) return false;
-                        return true;
-                    }
+                        return agent.Faction.IsDesignation(EntityToKill, DesignationType.Attack);
                     case KillType.Chop:
-                    {
-                            return agent.Faction.IsChopDesignation(EntityToKill);
-                    }
+                        return agent.Faction.IsDesignation(EntityToKill, DesignationType.Chop);
                     case KillType.Auto:
-                    {
                         return true;
-                    }
                 }
 
                 var target = new VoxelHandle(agent.World.ChunkManager.ChunkData,

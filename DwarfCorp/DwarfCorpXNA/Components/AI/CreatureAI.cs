@@ -246,7 +246,7 @@ namespace DwarfCorp
         public BoundingBox PositionConstraint = new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue),
             new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
 
-        [OnDeserialized]
+        [OnDeserializing]
         public void OnDeserialize(StreamingContext ctx)
         {
             if (CurrentTask != null)
@@ -765,7 +765,7 @@ namespace DwarfCorp
 
                     if (task != null)
                     {
-                        Faction.AddChopDesignation(task.EntityToKill);
+                        Faction.AddEntityDesignation(task.EntityToKill, DesignationType.Chop);
                         return task;
                     }
                 }

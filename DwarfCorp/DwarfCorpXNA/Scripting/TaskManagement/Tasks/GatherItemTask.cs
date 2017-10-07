@@ -79,7 +79,7 @@ namespace DwarfCorp
             return EntityToGather != null
                    && !EntityToGather.IsDead
                    && !agent.AI.Movement.IsSessile
-                   && agent.AI.Faction.GatherDesignations.Contains(EntityToGather)
+                   && agent.AI.Faction.IsDesignation(EntityToGather, DesignationType.Gather)
                    && !agent.AI.GatherManager.ItemsToGather.Contains(EntityToGather);
         }
 
@@ -88,7 +88,7 @@ namespace DwarfCorp
             return EntityToGather != null && 
                   !EntityToGather.IsDead && 
                   !agent.AI.GatherManager.ItemsToGather.Contains(EntityToGather) && 
-                  agent.AI.Faction.GatherDesignations.Contains(EntityToGather) &&
+                  agent.AI.Faction.IsDesignation(EntityToGather, DesignationType.Gather) &&
                   PlanAct.PathExists(EntityToGather.GetRoot().GetComponent<Physics>().CurrentVoxel, agent.Physics.CurrentVoxel, agent.AI);
         }
 

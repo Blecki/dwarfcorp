@@ -150,15 +150,10 @@ namespace DwarfCorp
                 Player = this
             };
 
-
             Tools[ToolMode.Dig] = new DigTool
             {
                 Player = this,
-                DigDesignationGlowRate = 2.0f,
-                UnreachableColor = new Color(205, 10, 10),
-                DigDesignationColor = new Color(205, 200, 10)
             };
-
 
             Tools[ToolMode.Gather] = new GatherTool
             {
@@ -185,8 +180,6 @@ namespace DwarfCorp
             Tools[ToolMode.Attack] = new AttackTool
             {
                 Player = this,
-                DesignationColor = Color.Red,
-                GlowRate = 2.0f
             };
 
             Tools[ToolMode.Build] = new BuildTool

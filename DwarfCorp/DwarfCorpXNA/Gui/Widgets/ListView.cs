@@ -55,7 +55,9 @@ namespace DwarfCorp.Gui.Widgets
 
             OnClick += (sender, args) =>
                 {
-                    SelectedIndex = ScrollBar.ScrollPosition + ((args.Y - GetDrawableInterior().Y) / ItemHeight);
+                    var newIndex = ScrollBar.ScrollPosition + ((args.Y - GetDrawableInterior().Y) / ItemHeight);
+                    if (newIndex >= 0 && newIndex < Items.Count)
+                        SelectedIndex = newIndex;
                 };
 
             OnScroll = (sender, args) =>

@@ -9,7 +9,6 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Crate : Body
     {
         public Crate()
@@ -21,23 +20,25 @@ namespace DwarfCorp
         public Crate(ComponentManager manager, Vector3 position) :
             base(manager, "Crate", Matrix.CreateTranslation(position), new Vector3(0.75f, 0.5f, 1.5f), new Vector3(0.5f, 0.5f, 1.0f))
         {
-            Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles);
-
-            var box = AddChild(new Box(manager, "Cratebox", Matrix.CreateRotationY(MathFunctions.Rand(-0.25f, 0.25f)), new Vector3(1.0f, 1.0f, 1.0f), new Vector3(0.5f, 0.5f, 0.5f), "crate", spriteSheet));
-
-            box.SetFlag(Flag.ShouldSerialize, false);
-
             Tags.Add("Crate");
             CollisionType = CollisionManager.CollisionType.Static;
+
+            CreateCosmeticChildren(manager);
         }
 
-        public override void CreateCosmeticChildren(ComponentManager manager)
+        public override void CreateCosmeticChildren(ComponentManager Manager)
         {
-            Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles);
-            var box = AddChild(new Box(manager, "Cratebox", Matrix.CreateRotationY(MathFunctions.Rand(-0.25f, 0.25f)), new Vector3(1.0f, 1.0f, 1.0f), new Vector3(0.5f, 0.5f, 0.5f), "crate", spriteSheet));
+            base.CreateCosmeticChildren(Manager);
 
-            box.SetFlag(Flag.ShouldSerialize, false);
-            base.CreateCosmeticChildren(manager);
+            var spriteSheet = TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles);
+
+            AddChild(new Box(Manager,
+                "Cratebox",
+                Matrix.CreateRotationY(MathFunctions.Rand(-0.25f, 0.25f)),
+                new Vector3(1.0f, 1.0f, 1.0f),
+                new Vector3(0.5f, 0.5f, 0.5f),
+                "crate",
+                spriteSheet)).SetFlag(Flag.ShouldSerialize, false);
         }
     }
 }
