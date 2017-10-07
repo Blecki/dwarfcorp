@@ -147,33 +147,39 @@ namespace DwarfCorp
             return Remove(new List<ResourceAmount>() {resourceAmount});
         }
 
-        public bool Pickup(Body component, RestockType restockType)
-        {
-            return Pickup(Item.CreateItem(null, component), restockType);
-        }
 
-        public bool Pickup(Item item, RestockType restockType)
+        public bool Pickup(Body item, RestockType restockType)
         {
-            if(item == null || item.UserData == null || item.UserData.IsDead)
+            if(item == null || item.IsDead)
             {
                 return false;
             }
 
-            Resources.Add(new InventoryItem()
+            if (item is ResourceEntity)
             {
-                MarkedForRestock = restockType == RestockType.RestockResource,
-                Resource = item.UserData.Tags[0]
-            });
-            if(item.IsInZone)
-            {
-                item.Zone = null;
+                ResourceEntity entity = item as ResourceEntity;
+                for (int i = 0; i < entity.Resource.NumResources; i++)
+                {
+                    Resources.Add(new InventoryItem()
+                    {
+                        MarkedForRestock = restockType == RestockType.RestockResource,
+                        Resource = entity.Resource.ResourceType
+                    });
+                }
             }
-         
-            
+            else
+            {
+                Resources.Add(new InventoryItem()
+                {
+                    MarkedForRestock = restockType == RestockType.RestockResource,
+                    Resource = item.Tags[0]
+                });
+            }
+
             TossMotion toss = new TossMotion(0.5f + MathFunctions.Rand(0.05f, 0.08f),
-                1.0f, item.UserData.GlobalTransform, Position);
-            item.UserData.AnimationQueue.Add(toss);
-            toss.OnComplete += () => item.UserData.GetRoot().Delete();
+                1.0f, item.GlobalTransform, Position);
+            item.AnimationQueue.Add(toss);
+            toss.OnComplete += () => item.GetRoot().Delete();
 
             return true;
         }

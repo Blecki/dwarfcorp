@@ -233,10 +233,10 @@ namespace DwarfCorp
             BoundingBox box = GetBoundingBox();
             foreach (ResourceAmount resource in Resources)
             {
-                for (int i = 0; i < resource.NumResources; i++)
+                //for (int i = 0; i < resource.NumResources; i++)
                 {
                     Physics body = EntityFactory.CreateEntity<Physics>(resource.ResourceType + " Resource",
-                        Vector3.Up + MathFunctions.RandVector3Box(box)) as Physics;
+                        Vector3.Up + MathFunctions.RandVector3Box(box), Blackboard.Create<int>("num", resource.NumResources)) as Physics;
 
                     if (body != null)
                     {

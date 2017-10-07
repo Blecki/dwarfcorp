@@ -164,7 +164,7 @@ namespace DwarfCorp
 
             Resource randresource = ResourceLibrary.CreateMeal(Datastructures.SelectRandom(foods).Type,
                 Datastructures.SelectRandom(foods).Type);
-            return new ResourceEntity(world.ComponentManager, randresource.Type, position);
+            return new ResourceEntity(world.ComponentManager, new ResourceAmount(randresource.Type), position);
         }
 
 
@@ -177,7 +177,7 @@ namespace DwarfCorp
                 randResource = ResourceLibrary.EncrustTrinket(randResource.Type, Datastructures.SelectRandom(ResourceLibrary.Resources.Where(r => r.Value.Tags.Contains(Resource.ResourceTags.Gem))).Key);
             }
 
-            return new ResourceEntity(world.ComponentManager, randResource.Type, pos);
+            return new ResourceEntity(world.ComponentManager, new ResourceAmount(randResource.Type), pos);
         }
 
         public static void RegisterEntity<T>(string id, Func<Vector3, Blackboard, T> function) where T : GameComponent

@@ -37,6 +37,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+    /* mklingen: Deprecated. I don't remember why this existed.
     /// <summary>
     /// An item keeps track of an entity in the context of it existing in a zone.
     /// </summary>
@@ -135,5 +136,6 @@ namespace DwarfCorp
             }
         }
     }
+    */
 
 }

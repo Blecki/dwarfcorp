@@ -45,17 +45,25 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class ResourceEntity : Physics
     {
+        public ResourceAmount Resource { get; set; }
+
         public ResourceEntity()
         {
             
         }
 
-        public ResourceEntity(ComponentManager manager, ResourceLibrary.ResourceType resourceType, Vector3 position) :
-            base(manager, ResourceLibrary.Resources[resourceType].ResourceName, Matrix.CreateTranslation(position), new Vector3(0.25f, 0.25f, 0.25f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0))
+        public ResourceEntity(ComponentManager manager, ResourceAmount resourceType, Vector3 position) :
+            base(manager, ResourceLibrary.Resources[resourceType.ResourceType].ResourceName, 
+                Matrix.CreateTranslation(position), new Vector3(0.25f, 0.25f, 0.25f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0))
         {
+            Resource = resourceType;
+            if (Resource.NumResources > 0)
+            {
+                Name = String.Format("Pile of {0} {1}", Resource.NumResources, Resource.ResourceType);
+            }
             Restitution = 0.1f;
             Friction = 0.1f;
-            Resource type = ResourceLibrary.Resources[resourceType];
+            Resource type = ResourceLibrary.Resources[resourceType.ResourceType];
 
 
             var sprite =

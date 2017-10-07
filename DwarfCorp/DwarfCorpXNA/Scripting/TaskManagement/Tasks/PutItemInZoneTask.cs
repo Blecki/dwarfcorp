@@ -37,6 +37,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+    /* mklingen: DEPRECATED. Can't remember why this exists.
     /// <summary>
     /// Tells a creature that it should put the given item in the given voxel zone.
     /// </summary>
@@ -44,16 +45,16 @@ namespace DwarfCorp
     internal class PutItemInZoneTask : Task
     {
         public Zone Zone;
-        public Item Item;
+        public ResourceAmount Item;
 
         public PutItemInZoneTask()
         {
             Priority = PriorityType.Low;
         }
 
-        public PutItemInZoneTask(Item item, Zone zone)
+        public PutItemInZoneTask(ResourceAmount item, Zone zone)
         {
-            Name = "Put Item: " + item.ID + " in zone " + zone.ID;
+            Name = "Put Item: " + item.ResourceType + " in zone " + zone.ID;
             Item = item;
             Zone = zone;
             Priority = PriorityType.Low;
@@ -75,5 +76,6 @@ namespace DwarfCorp
             return (Zone == null || Item == null || Item.UserData == null) ? 1000 : (agent.AI.Position - Item.UserData.GlobalTransform.Translation).LengthSquared();
         }
     }
+    */
 
 }
