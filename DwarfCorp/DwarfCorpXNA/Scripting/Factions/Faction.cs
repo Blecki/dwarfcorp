@@ -120,7 +120,8 @@ namespace DwarfCorp
                     Body = Entity,
                     Type = Type
                 });
-                World.DesignationDrawer.HiliteEntity(Entity, Type);
+                if (this == World.PlayerFaction)
+                    World.DesignationDrawer.HiliteEntity(Entity, Type);
                 return AddEntityDesignationResult.Added;
             }
             return AddEntityDesignationResult.AlreadyExisted;
@@ -130,7 +131,8 @@ namespace DwarfCorp
         {
             if (EntityDesignations.RemoveAll(e => Object.ReferenceEquals(e.Body, Entity) && e.Type == Type) != 0)
             {
-                World.DesignationDrawer.UnHiliteEntity(Entity, Type);
+                if (this == World.PlayerFaction)
+                    World.DesignationDrawer.UnHiliteEntity(Entity, Type);
                 return RemoveEntityDesignationResult.Removed;
             }
             return RemoveEntityDesignationResult.DidntExist;
@@ -259,7 +261,8 @@ namespace DwarfCorp
                 var v = kvp.Value.Vox;
                 if (v.IsValid && (v.IsEmpty || v.Health <= 0.0f || v.Type.Name == "empty" || v.Type.IsInvincible))
                 {
-                    World.DesignationDrawer.UnHiliteVoxel(kvp.Value.Vox.Coordinate, DesignationType.Dig);
+                    if (this == World.PlayerFaction)
+                        World.DesignationDrawer.UnHiliteVoxel(kvp.Value.Vox.Coordinate, DesignationType.Dig);
                     removalKeys.Add(kvp.Key);
                 }
             }
@@ -272,7 +275,10 @@ namespace DwarfCorp
             EntityDesignations.RemoveAll(b =>
             {
                 if (b.Body.IsDead)
-                    World.DesignationDrawer.UnHiliteEntity(b.Body, b.Type);
+                {
+                    if (this == World.PlayerFaction)
+                        World.DesignationDrawer.UnHiliteEntity(b.Body, b.Type);
+                }
                 return b.Body.IsDead;
             });
 
@@ -424,7 +430,8 @@ namespace DwarfCorp
         {
             if (!order.Vox.IsValid) return;
             DigOrders.Add(GetVoxelQuickCompare(order.Vox), order);
-            World.DesignationDrawer.HiliteVoxel(order.Vox.Coordinate, DesignationType.Dig);
+            if (this == World.PlayerFaction)
+                World.DesignationDrawer.HiliteVoxel(order.Vox.Coordinate, DesignationType.Dig);
         }
 
         public void RemoveDigDesignation(VoxelHandle vox)
@@ -433,7 +440,8 @@ namespace DwarfCorp
             if (DigOrders.ContainsKey(q))
             {
                 DigOrders.Remove(q);
-                World.DesignationDrawer.UnHiliteVoxel(vox.Coordinate, DesignationType.Dig);
+                if (this == World.PlayerFaction)
+                    World.DesignationDrawer.UnHiliteVoxel(vox.Coordinate, DesignationType.Dig);
             }
         }
 
