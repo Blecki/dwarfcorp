@@ -53,6 +53,7 @@ namespace DwarfCorp
         public Faction Faction { get; set; }
         public List<GameComponent> WorkObjects = new List<GameComponent>(); 
         public bool IsBuilt { get; set; }
+        public float BuildProgress { get; set; }
         [JsonIgnore]
         private WorldManager World { get; set; }
         public bool IsDestroyed { get; set; }
@@ -65,12 +66,13 @@ namespace DwarfCorp
 
         public BuildRoomOrder()
         {
-
+            BuildProgress = 0;
         }
 
 
         public BuildRoomOrder(Room toBuild, Faction faction, WorldManager world)
         {
+            BuildProgress = 0;
             World = world;
             ToBuild = toBuild;
             PutResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>();
