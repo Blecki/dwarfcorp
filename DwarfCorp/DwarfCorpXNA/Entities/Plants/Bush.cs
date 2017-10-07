@@ -47,7 +47,7 @@ namespace DwarfCorp
         public Cactus() { }
 
         public Cactus(ComponentManager Manager, Vector3 position, string asset, float bushSize) :
-            base(Manager, "Cactus", Matrix.Identity, new Vector3(bushSize, bushSize, bushSize),  asset, bushSize)
+            base(Manager, "Cactus", Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), asset, bushSize)
         {
             BoundingBoxPos = Vector3.Zero;
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
