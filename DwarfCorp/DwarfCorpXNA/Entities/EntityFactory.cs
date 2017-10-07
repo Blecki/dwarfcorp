@@ -49,7 +49,6 @@ namespace DwarfCorp
     {
         public static WorldManager World = null;
         private static ComponentManager Components { get { return World.ComponentManager; } }
-        public static InstanceManager InstanceManager = null;
         private static List<Action> LazyActions = new List<Action>();
 
         public static Dictionary<string, Func<Vector3, Blackboard, GameComponent>> EntityFuncs { get; set; }

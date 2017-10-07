@@ -175,7 +175,6 @@ namespace DwarfCorp
             if(DrawComponentsReflected)
             {
                 effect.View = reflectionViewMatrix;
-                game.InstanceManager.Render(game.GraphicsDevice, effect, game.Camera);
                 ComponentRenderer.Render(Renderables, gameTime, game.ChunkManager, game.Camera,
                     DwarfGame.SpriteBatch, game.GraphicsDevice, effect,
                     ComponentRenderer.WaterRenderType.Reflective, waterHeight);

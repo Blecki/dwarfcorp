@@ -226,33 +226,6 @@ namespace DwarfCorp
             DrawLine(spriteBatch, points[0], points[points.Count() - 1], lineColor, width);
         }
 
-
-        /// <summary>
-        /// Uses an expensive hack to draw text with a stroke of 1 pixel around it. Just draws the text five times
-        /// </summary>
-        /// <param Name="batch">The sprite batch.</param>
-        /// <param Name="toDisplay">The text to display.</param>
-        /// <param Name="Font">The font to use.</param>
-        /// <param Name="textPosition">The text position.</param>
-        /// <param Name="textColor">Color of the text.</param>
-        /// <param Name="strokeColor">Color of the stroke outside the text.</param>
-        public static void DrawStrokedText(SpriteBatch batch, string toDisplay, SpriteFont Font, Vector2 textPosition, Color textColor, Color strokeColor)
-        {
-            if(toDisplay == null)
-            {
-                toDisplay = "null";
-            }
-
-            if (strokeColor.A > 0)
-            {
-                SafeDraw(batch, toDisplay, Font, strokeColor, textPosition - new Vector2(1, 0), Vector2.Zero, false);
-                SafeDraw(batch, toDisplay, Font, strokeColor, textPosition + new Vector2(1, 0), Vector2.Zero, false);
-                SafeDraw(batch, toDisplay, Font, strokeColor, textPosition - new Vector2(0, 1), Vector2.Zero, false);
-                SafeDraw(batch, toDisplay, Font, strokeColor, textPosition + new Vector2(0, 1), Vector2.Zero, false);
-            }
-            SafeDraw(batch, toDisplay, Font, textColor, textPosition, Vector2.Zero);
-        }
-
         [Flags]
         public enum Alignment
         {

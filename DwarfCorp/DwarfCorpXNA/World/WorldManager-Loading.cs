@@ -179,12 +179,8 @@ namespace DwarfCorp
                     CraftLibrary = new CraftLibrary();
 
                     new PrimitiveLibrary(GraphicsDevice, Content);
-                    InstanceManager = new InstanceManager();
                     NewInstanceManager = new NewInstanceManager(new BoundingBox(origin - extents, origin + extents),
                         Content);
-
-                    EntityFactory.InstanceManager = InstanceManager;
-                    InstanceManager.CreateStatics(Content);
 
                     Color[] white = new Color[1];
                     white[0] = Color.White;
@@ -302,7 +298,6 @@ namespace DwarfCorp
                     Camera = gameFile.PlayData.Camera;
                     ChunkManager.camera = Camera;
                     ChunkRenderer.camera = Camera;
-                    InstanceManager.Clear();
 
                     Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
                     Vector3 extents = new Vector3(1500, 1500, 1500);

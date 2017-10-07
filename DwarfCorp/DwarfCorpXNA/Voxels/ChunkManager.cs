@@ -309,7 +309,7 @@ namespace DwarfCorp
                     if (chunk != null)
                         chunk.Rebuild(Graphics);
                     else
-                        System.Threading.Thread.Sleep(10);
+                        System.Threading.Thread.Yield();
                     
                     GamePerformance.Instance.PostThreadLoop(GamePerformance.ThreadIdentifier.RebuildVoxels);
                     GamePerformance.Instance.ExitZone("RebuildVoxels");
