@@ -28,9 +28,6 @@ namespace DwarfCorp
         public ExtendedVertex[] Vertices = new ExtendedVertex[1024];
 
         [JsonIgnore]
-        public static Vector3[] FaceDeltas = new Vector3[6];
-
-        [JsonIgnore]
         public VertexBuffer VertexBuffer = null;
 
         [JsonIgnore]

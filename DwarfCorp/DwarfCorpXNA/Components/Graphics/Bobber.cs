@@ -63,7 +63,6 @@ namespace DwarfCorp
             Rate = rate;
             Offset = offset;
             this.OrigY = OrigY;
-            //OrigY = component.LocalTransform.Translation.Y;
         }
 
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
