@@ -370,17 +370,8 @@ namespace DwarfCorp
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                     if (Target.IsDead)
                     {
-                        if (Creature.Faction.AttackDesignations.Contains(Target))
-                        {
-                            Creature.Faction.AttackDesignations.Remove(Target);
-                        }
-
-                        //Creature.World.GoalManager.OnGameEvent(new Goals.Events.CreatyreKilled
-                        //{
-                        //    Agressor = Creature.AI,
-                        //    Victim = Target.
-                        //})
-
+                        Creature.Faction.RemoveEntityDesignation(Target, DesignationType.Attack);
+                                                
                         Target = null;
                         Agent.AddXP(10);
                         Creature.Physics.Face(Creature.Physics.Velocity + Creature.Physics.GlobalTransform.Translation);

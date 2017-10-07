@@ -130,6 +130,11 @@ namespace DwarfCorp
 
         bool IsNotSelectedDwarf(Body body)
         {
+            if (body == null)
+            {
+                return true;
+            }
+
             var dwarves = body.EnumerateAll().OfType<Creature>().ToList();
 
             if (dwarves.Count <= 0)

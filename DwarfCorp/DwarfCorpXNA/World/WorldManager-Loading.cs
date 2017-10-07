@@ -130,6 +130,10 @@ namespace DwarfCorp
                     gameFile = SaveGame.CreateFromDirectory(ExistingFile);
                     if (gameFile == null) throw new InvalidOperationException("Game File does not exist.");
 
+                    // Todo: REMOVE THIS WHEN THE NEW SAVE SYSTEM IS COMPLETE.
+                    if (gameFile.Metadata.Version != Program.Version)
+                        throw new InvalidOperationException("Game file is from a different version of the game and cannot be loaded.");
+
                     Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
                     Time = gameFile.Metadata.Time;
                     WorldOrigin = gameFile.Metadata.WorldOrigin;
@@ -175,12 +179,8 @@ namespace DwarfCorp
                     CraftLibrary = new CraftLibrary();
 
                     new PrimitiveLibrary(GraphicsDevice, Content);
-                    InstanceManager = new InstanceManager();
                     NewInstanceManager = new NewInstanceManager(new BoundingBox(origin - extents, origin + extents),
                         Content);
-
-                    EntityFactory.InstanceManager = InstanceManager;
-                    InstanceManager.CreateStatics(Content);
 
                     Color[] white = new Color[1];
                     white[0] = Color.White;
@@ -298,7 +298,6 @@ namespace DwarfCorp
                     Camera = gameFile.PlayData.Camera;
                     ChunkManager.camera = Camera;
                     ChunkRenderer.camera = Camera;
-                    InstanceManager.Clear();
 
                     Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
                     Vector3 extents = new Vector3(1500, 1500, 1500);
@@ -391,7 +390,7 @@ namespace DwarfCorp
                             SetLoadingMessage);
                     }
 
-                    ComponentManager = new ComponentManager(this, CompanyMakerState.CompanyInformation, Natives);
+                    ComponentManager = new ComponentManager(this);
                     ComponentManager.SetRootComponent(new Body(ComponentManager, "root", Matrix.Identity,
                         Vector3.Zero, Vector3.Zero, false));
 
@@ -448,6 +447,7 @@ namespace DwarfCorp
                     GoalManager.Initialize(new List<Goals.Goal>());
 
                     TutorialManager = new Tutorial.TutorialManager("Content/tutorial.txt");
+                    TutorialManager.TutorialEnabled = !GameSettings.Default.TutorialDisabledGlobally;
                     Tutorial("new game start");
                 }
 

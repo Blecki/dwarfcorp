@@ -86,6 +86,10 @@ namespace DwarfCorp
 
             public static implicit operator ResourceType(string value)
             {
+                if (value == null)
+                {
+                    return null;
+                }
                 return new ResourceType { _value = new string(value.ToCharArray()) };
             }
 
@@ -101,6 +105,10 @@ namespace DwarfCorp
 
             public Resource GetResource()
             {
+                if (_value == null)
+                {
+                    return null;
+                }
                 return ResourceLibrary.GetResourceByName(_value);
             }
         }
@@ -152,7 +160,7 @@ namespace DwarfCorp
             }
             else
             {
-                EntityFactory.RegisterEntity(resource.ResourceName + " Resource", (position, data) => new ResourceEntity(EntityFactory.World.ComponentManager, resource.Type, position));   
+                EntityFactory.RegisterEntity(resource.ResourceName + " Resource", (position, data) => new ResourceEntity(EntityFactory.World.ComponentManager, new ResourceAmount(resource, data.GetData<int>("num", 1)), position));   
             }
         }
 

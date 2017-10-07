@@ -20,14 +20,38 @@ namespace DwarfCorp
     /// </summary>
     public class ComponentManager
     {
-        public class ComponentSaveData
+        [Saving.SaveableObject(0)]
+        public class ComponentSaveData : Saving.ISaveableObject
         {
+            public class ComponentSaveNugget : Saving.Nugget
+            {
+                public List<Saving.Nugget> SaveableComponents;
+                public uint RootComponent;
+            }
+
             public List<GameComponent> SaveableComponents;
             public uint RootComponent;
+
+            Saving.Nugget Saving.ISaveableObject.SaveToNugget(Saving.Saver SaveSystem)
+            {
+                return new ComponentSaveNugget
+                {
+                    SaveableComponents = SaveableComponents.Select(o => SaveSystem.SaveObject(o)).ToList(),
+                    RootComponent = RootComponent
+                };
+            }
+
+            void Saving.ISaveableObject.LoadFromNugget(Saving.Loader SaveSystem, Saving.Nugget From)
+            {
+                var n = From as ComponentSaveNugget;
+                SaveableComponents = n.SaveableComponents.Select(o => SaveSystem.LoadObject(o) as GameComponent).ToList();
+                RootComponent = n.RootComponent;
+            }
         }
 
         private Dictionary<uint, GameComponent> Components;
         private uint MaxGlobalID = 0;
+        public const int InvalidID = 0;
         //private Dictionary<System.Type, List<IUpdateableComponent>> UpdateableComponents =
         //    new Dictionary<Type, List<IUpdateableComponent>>();
         private List<IUpdateableComponent> UpdateableComponents = new List<IUpdateableComponent>();
@@ -40,7 +64,6 @@ namespace DwarfCorp
 
         public void SetRootComponent(Body Component)
         {
-            Component.World = World;
             RootComponent = Component;
         }
 
@@ -80,12 +103,15 @@ namespace DwarfCorp
 
         public ComponentManager(ComponentSaveData SaveData, WorldManager World)
         {
+            this.World = World;
+            World.ComponentManager = this;
             Components = new Dictionary<uint, GameComponent>();
             foreach (var component in SaveData.SaveableComponents)
+            {
                 Components.Add(component.GlobalID, component);
+                component.World = World;
+            }
             RootComponent = Components[SaveData.RootComponent] as Body;
-
-            this.World = World;
 
             foreach (var component in Components)
             {
@@ -111,18 +137,21 @@ namespace DwarfCorp
                 component.PostSerialization(this);
 
             foreach (var component in SaveData.SaveableComponents)
+            {
                 component.CreateCosmeticChildren(this);
+            }
 
+            /*
             foreach (var component in Components)
             {
                 if (component.Value.Parent != null && (!HasComponent(component.Value.Parent.GlobalID) || !component.Value.Parent.Children.Contains(component.Value)))
                 {
                     Console.Error.WriteLine("Component {0} parent: {1} is not in the list of components", component.Value.Name, component.Value.Parent.Name);
                 }
-            }
+            */
         }
 
-        public ComponentManager(WorldManager state, CompanyInformation CompanyInformation, List<Faction> natives)
+        public ComponentManager(WorldManager state)
         {
             World = state;
             Components = new Dictionary<uint, GameComponent>();
@@ -192,7 +221,7 @@ namespace DwarfCorp
             if (component is MinimapIcon)
                 MinimapIcons.Remove(component as MinimapIcon);
 
-            foreach (var child in new List<GameComponent>(component.Children))
+            foreach (var child in new List<GameComponent>(component.EnumerateChildren()))
                 RemoveComponentImmediate(child);
         }
 
@@ -268,6 +297,13 @@ namespace DwarfCorp
         public void UpdatePaused()
         {
             AddRemove();
+        }
+
+        public GameComponent FindComponent(uint ID)
+        {
+            GameComponent result = null;
+            Components.TryGetValue(ID, out result);
+            return result;
         }
     }
 }

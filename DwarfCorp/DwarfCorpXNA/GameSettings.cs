@@ -43,6 +43,7 @@ namespace DwarfCorp
     {
         public class Settings
         {
+            public bool TutorialDisabledGlobally = false;
             public int ResolutionX = 1280;
             public int ResolutionY = 720;
             public int GuiScale = 1;

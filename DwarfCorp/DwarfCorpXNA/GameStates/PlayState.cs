@@ -2076,10 +2076,12 @@ namespace DwarfCorp.GameStates
                     var saveSystem = new Saving.Saver();
                     var playData = PlayData.CreateFromWorld(World);
                     var nugget = saveSystem.SaveObject(playData);
-                    GuiRoot.ShowModalPopup(new Popup
+                    GuiRoot.ShowModalPopup(new Confirm
                     {
+                        CancelText = "",
                         Text = "Generic save objects:\n" + String.Join("\n", saveSystem.GetGenericallySavedTypes()),
-                        OnClose = (s2) => OpenPauseMenu()
+                        OnClose = (s2) => OpenPauseMenu(),
+                        Rect = GuiRoot.RenderData.VirtualScreen
                     });
                 });
 #endif

@@ -143,6 +143,7 @@ namespace DwarfCorp
 
         public virtual void Render(DwarfTime time)
         {
+            // Todo: Do this with GUI stuff?
             if (Recharges && !RechargeTimer.HasTriggered)
             {
                 Drawer2D.DrawLoadBar(World.Camera, World.CursorLightPos - Vector3.Up, Color.Cyan, Color.Black, 64, 4, RechargeTimer.CurrentTimeSeconds / RechargeTimer.TargetTimeSeconds);

@@ -47,9 +47,6 @@ namespace DwarfCorp
     /// </summary>
     public class AttackTool : PlayerTool
     {
-        public Color DesignationColor { get; set; }
-        public float GlowRate { get; set; }
-
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
 
@@ -118,18 +115,7 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-            Color drawColor = DesignationColor;
-
-            float alpha = (float)Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * GlowRate));
-            drawColor.R = (byte)(Math.Min(drawColor.R * alpha + 50, 255));
-            drawColor.G = (byte)(Math.Min(drawColor.G * alpha + 50, 255));
-            drawColor.B = (byte)(Math.Min(drawColor.B * alpha + 50, 255));
-            NamedImageFrame frame = new NamedImageFrame("newgui/pointers2", 32, 2, 0);
-            foreach (BoundingBox box in Player.Faction.AttackDesignations.Select(d => d.GetBoundingBox()))
-            {
-                Drawer3D.DrawBox(box, drawColor, 0.05f * alpha + 0.05f, true);
-                Drawer2D.DrawSprite(frame, box.Center(), Vector2.One, Vector2.Zero, new Color(255, 255, 255, 100));
-            }
+            
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
@@ -149,13 +135,12 @@ namespace DwarfCorp
                     continue;
                 }
 
-                Drawer3D.DrawBox(other.BoundingBox, DesignationColor, 0.1f, false);
+                Drawer3D.DrawBox(other.BoundingBox, Color.Red, 0.1f, false);
+
                 if (button == InputManager.MouseButton.Left)
                 {
-                    if (!Player.Faction.AttackDesignations.Contains(other))
-                    {
-                        Player.Faction.AttackDesignations.Add(other);
-
+                    if (Player.Faction.AddEntityDesignation(other, DesignationType.Attack) == Faction.AddEntityDesignationResult.Added)
+                    { 
                         foreach (CreatureAI minion in Player.Faction.SelectedMinions)
                         {
                             minion.AssignTask(new KillEntityTask(other, KillEntityTask.KillType.Attack));
@@ -172,10 +157,7 @@ namespace DwarfCorp
                 else if (button == InputManager.MouseButton.Right)
                 {
                     Player.Faction.World.ShowToolPopup("Attack cancelled for " + creature.Species);
-                    if (Player.Faction.AttackDesignations.Contains(other))
-                    {
-                        Player.Faction.AttackDesignations.Remove(other);
-                    }
+                    Player.Faction.RemoveEntityDesignation(other, DesignationType.Attack);
                 }
             }
         }

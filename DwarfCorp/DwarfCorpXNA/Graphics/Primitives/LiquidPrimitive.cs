@@ -261,37 +261,41 @@ namespace DwarfCorp
                             int vertexSizeIncrease = facesToDraw * 4;
                             int indexSizeIncrease  = facesToDraw * 6;
 
-                            // Check vertex array size
-                            if (curVertices == null)
+                            lock (curPrimitive.VertexLock)
                             {
-                                curVertices = new ExtendedVertex[256];
-                                curPrimitive.Vertices = curVertices;
-                            }
-                            else if (curVertices.Length <= maxVertex + vertexSizeIncrease)
-                            {
-                                ExtendedVertex[] newVerts = new ExtendedVertex[curVertices.Length * 2];
+                                // Check vertex array size
+                                if (curVertices == null)
+                                {
 
-                                curVertices.CopyTo(newVerts, 0);
-                                curVertices = newVerts;
-                                curPrimitive.Vertices = curVertices;
+                                    curVertices = new ExtendedVertex[256];
+                                    curPrimitive.Vertices = curVertices;
+                                }
+                                else if (curVertices.Length <= maxVertex + vertexSizeIncrease)
+                                {
+                                    ExtendedVertex[] newVerts = new ExtendedVertex[curVertices.Length * 2];
+
+                                    curVertices.CopyTo(newVerts, 0);
+                                    curVertices = newVerts;
+                                    curPrimitive.Vertices = curVertices;
+                                }
+
+                                // Check index array size
+                                if (curIndexes == null)
+                                {
+                                    curIndexes = new ushort[256];
+                                    curPrimitive.Indexes = curIndexes;
+                                }
+                                else if (curIndexes.Length <= maxIndex + indexSizeIncrease)
+                                {
+                                    ushort[] newIdxs = new ushort[curIndexes.Length * 2];
+
+                                    curIndexes.CopyTo(newIdxs, 0);
+                                    curIndexes = newIdxs;
+                                    curPrimitive.Indexes = curIndexes;
+                                }
                             }
 
-                            // Check index array size
-                            if (curIndexes == null)
-                            {
-                                curIndexes = new ushort[256];
-                                curPrimitive.Indexes = curIndexes;
-                            }
-                            else if (curIndexes.Length <= maxIndex + indexSizeIncrease)
-                            {
-                                ushort[] newIdxs = new ushort[curIndexes.Length * 2];
-
-                                curIndexes.CopyTo(newIdxs, 0);
-                                curIndexes = newIdxs;
-                                curPrimitive.Indexes = curIndexes;
-                            }
-
-                            // Now we have a list of all the faces that will need to be drawn.  Let's draw them.
+                            // Now we have a list of all the faces that will need to be drawn.  Let's draw  them.
                             CreateWaterFaces(voxel, chunk, x, y, z, curVertices, curIndexes, maxVertex, maxIndex);
 
                             // Finally increase the size so we can move on.

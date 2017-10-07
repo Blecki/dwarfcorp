@@ -190,6 +190,7 @@ namespace DwarfCorp.Gui.Widgets
             var r = new List<ResourceAmount>();
             for (var i = 0; i < Data.RequiredResources.Count && i < ResourceCombos.Count; ++i)
             {
+                if (ResourceCombos[i].SelectedItem == null) continue;
                 if (ResourceCombos[i].SelectedItem == "<Not enough!>") continue;
                 r.Add(new ResourceAmount(ResourceCombos[i].SelectedItem,
                     Data.RequiredResources[i].NumResources));

@@ -22,16 +22,21 @@ namespace DwarfCorp.Gui.Widgets
     public class AnnouncementPopup : Gui.Widget
     {
         public List<QueuedAnnouncement> Announcements = new List<QueuedAnnouncement>();
+        private List<QueuedAnnouncement> NewAnnouncements = new List<QueuedAnnouncement>();
         public String Speaker = "dwarf";
         public double MessageLingerSeconds = 5.0f;
 
         public void QueueAnnouncement(QueuedAnnouncement Announcement)
         {
-            if (Announcements.All(msg => msg.Text != Announcement.Text))
+            lock (NewAnnouncements)
             {
-                Announcement.Keep = true;
-                Announcement.SecondsVisible = 0;
-                Announcements.Add(Announcement);
+                if (Announcements.All(msg => msg.Text != Announcement.Text) 
+                    && NewAnnouncements.All(msg => msg.Text != Announcement.Text))
+                {
+                    Announcement.Keep = true;
+                    Announcement.SecondsVisible = 0;
+                    NewAnnouncements.Add(Announcement);
+                }
             }
         }
 
@@ -41,9 +46,9 @@ namespace DwarfCorp.Gui.Widgets
 
             OnUpdate += (sender, time) =>
                 {
-                    foreach (var announcement in Announcements)
+                    lock (NewAnnouncements)
                     {
-                        if (announcement.Widget == null)
+                        foreach (var announcement in NewAnnouncements)
                         {
                             var announcement1 = announcement;
                             announcement.Widget = AddChild(new Widget
@@ -71,9 +76,15 @@ namespace DwarfCorp.Gui.Widgets
                                     _s.Rect.X += 16;
                                 }
                             });
+
+                            Announcements.Add(announcement);
                         }
 
+                        NewAnnouncements.Clear();
+                    }
 
+                    foreach (var announcement in Announcements)
+                    {
                         if (announcement.Keep)
                         {
                             if (announcement.ShouldKeep != null)
@@ -86,8 +97,10 @@ namespace DwarfCorp.Gui.Widgets
                         }
                     }
 
-
-                    Announcements.RemoveAll(a => a.Keep == false);
+                    lock (NewAnnouncements)
+                    {
+                        Announcements.RemoveAll(a => a.Keep == false);
+                    }
 
                     Children = Announcements.Select(a => a.Widget).ToList();
 
@@ -105,6 +118,7 @@ namespace DwarfCorp.Gui.Widgets
             var meshes = new List<Gui.Mesh>();
 
             var speakerTiles = Root.GetTileSheet(Speaker);
+
             meshes.Add(Gui.Mesh.Quad()
                 .TileScaleAndTexture(speakerTiles, 0)
                 .Translate(Rect.Right - speakerTiles.TileWidth, Rect.Bottom - speakerTiles.TileHeight));

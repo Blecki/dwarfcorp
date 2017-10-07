@@ -219,6 +219,11 @@ namespace DwarfCorp
             try
             {
 #endif
+                var dir = GetGameDirectory();
+                if (!System.IO.Directory.Exists(dir))
+                {
+                    System.IO.Directory.CreateDirectory(dir);
+                }
                 InitializeLogger();
                 Thread.CurrentThread.Name = "Main";
                 // Goes before anything else so we can track from the very start.

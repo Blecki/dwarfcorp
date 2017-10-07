@@ -78,9 +78,9 @@ namespace DwarfCorp
             return new Wrap(() => SetTargetVoxelFromRoom(buildRoom, target));
         }
 
-        public IEnumerable<Status> IsRoomBuildOrder(BuildRoomOrder buildRooom)
+        public bool IsRoomBuildOrder(BuildRoomOrder buildRooom)
         {
-            yield return Creature.Faction.RoomBuilder.BuildDesignations.Contains(buildRooom) ? Status.Success : Status.Fail;
+            return Creature.Faction.RoomBuilder.BuildDesignations.Contains(buildRooom);
         }
 
 
@@ -96,16 +96,14 @@ namespace DwarfCorp
             Resources = buildRoom.ListRequiredResources();
 
             Tree = new Sequence(new GetResourcesAct(Agent, Resources),
-                new Sequence(
-                    new Wrap(() => IsRoomBuildOrder(buildRoom)),
+                new Domain(() => IsRoomBuildOrder(buildRoom) && !buildRoom.IsBuilt && !buildRoom.IsDestroyed, new Sequence(
                     SetTargetVoxelFromRoomAct(buildRoom, "ActionVoxel"),
-                    new Wrap(() => IsRoomBuildOrder(buildRoom)),
                     new GoToNamedVoxelAct("ActionVoxel", PlanAct.PlanType.Adjacent, Agent),
-                    new Wrap(() => IsRoomBuildOrder(buildRoom)),
-                    new Wrap(() => Creature.HitAndWait(buildRoom.VoxelOrders.Count * 0.5f / agent.Stats.BuildSpeed, true, () => buildRoom.GetBoundingBox().Center(), ContentPaths.Audio.Oscar.sfx_ic_dwarf_craft, () => !buildRoom.IsBuilt && !buildRoom.IsDestroyed)),
-                    new Wrap(() => IsRoomBuildOrder(buildRoom)),
+                    new Wrap(() => Creature.HitAndWait(true, () => 1.0f, () => buildRoom.BuildProgress,
+                    () => buildRoom.BuildProgress += agent.Stats.BuildSpeed / buildRoom.VoxelOrders.Count * 0.5f, 
+                    () => MathFunctions.RandVector3Box(buildRoom.GetBoundingBox()), ContentPaths.Audio.Oscar.sfx_ic_dwarf_craft, () => !buildRoom.IsBuilt && !buildRoom.IsDestroyed)),
                     new PlaceRoomResourcesAct(Agent, buildRoom, Resources)
-                    , new Wrap(Creature.RestockAll)) | new Wrap(Creature.RestockAll)
+                    , new Wrap(Creature.RestockAll))) | new Wrap(Creature.RestockAll)
                 );
         }
 

@@ -208,14 +208,14 @@ namespace DwarfCorp
                 {
                     VertexBuffer newBuff = new VertexBuffer(device, ExtendedVertex.VertexDeclaration, Vertices.Length,
                         BufferUsage.WriteOnly);
-                    newBuff.SetData(Vertices);
+                    newBuff.SetData(Vertices, 0, VertexCount);
                     VertexBuffer = newBuff;
                 }
 
                 if (Indexes != null)
                 {
                     IndexBuffer newIndexBuff = new IndexBuffer(device, typeof (ushort), Indexes.Length, BufferUsage.None);
-                    newIndexBuff.SetData(Indexes);
+                    newIndexBuff.SetData(Indexes, 0, IndexCount);
                     IndexBuffer = newIndexBuff;
                 }
 

@@ -297,17 +297,20 @@ namespace DwarfCorp
             {
                 while (!DwarfGame.ExitGame && !ExitThreads)
                 {
-                    EventWaitHandle wh = Datastructures.WaitFor(waitHandles);
+                    //EventWaitHandle wh = Datastructures.WaitFor(waitHandles);
 
                     GamePerformance.Instance.PreThreadLoop(GamePerformance.ThreadIdentifier.RebuildVoxels);
                     GamePerformance.Instance.EnterZone("RebuildVoxels");
 
-                    if (wh == Program.ShutdownEvent)
-                        break;
-                   
-                    for (var chunk = PopInvalidChunk(); chunk != null; chunk = PopInvalidChunk())
-                        chunk.Rebuild(Graphics);
+                    //if (wh == Program.ShutdownEvent)
+                    //    break;
 
+                    var chunk = PopInvalidChunk();
+                    if (chunk != null)
+                        chunk.Rebuild(Graphics);
+                    else
+                        System.Threading.Thread.Yield();
+                    
                     GamePerformance.Instance.PostThreadLoop(GamePerformance.ThreadIdentifier.RebuildVoxels);
                     GamePerformance.Instance.ExitZone("RebuildVoxels");
                 }

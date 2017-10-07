@@ -36,6 +36,7 @@ namespace DwarfCorp.Trade
         public void AddResources(List<ResourceAmount> Resources) { }
         public Race TraderRace { get { return SourceEnvoy.OwnerFaction.Race; } }
         public Faction TraderFaction { get { return SourceEnvoy.OwnerFaction; } }
+
         public DwarfBux ComputeValue(ResourceLibrary.ResourceType Resource)
         {
             var resource = ResourceLibrary.GetResourceByName(Resource);

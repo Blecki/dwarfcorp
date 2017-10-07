@@ -24,21 +24,19 @@ namespace DwarfCorp
             Tags.Add("Books");
             CollisionType = CollisionManager.CollisionType.Static;
 
-            Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Entities.Furniture.bookshelf);
-            AddChild(new Box(manager, "model", Matrix.CreateTranslation(new Vector3(-20.0f / 64.0f, -32.0f / 64.0f, -8.0f / 64.0f)), new Vector3(32.0f / 32.0f, 8.0f / 32.0f, 20.0f / 32.0f), new Vector3(0.0f, 0.0f, 0.0f), "bookshelf", spriteSheet));
-
             var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                 manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(position)));
             if (voxelUnder.IsValid)
                 AddChild(new VoxelListener(manager, manager.World.ChunkManager, voxelUnder));
 
+            CreateCosmeticChildren(manager);
             OrientToWalls();
         }
 
         public override void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect)
         {
-            effect.SelectionBufferColor = GetGlobalIDColor().ToVector4();
+            effect.SelectionBufferColor = this.GetGlobalIDColor().ToVector4();
             GetComponent<Box>().Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
         }
 
@@ -46,6 +44,21 @@ namespace DwarfCorp
             GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             // Only renders to selection buffer
+        }
+
+        public override void CreateCosmeticChildren(ComponentManager Manager)
+        {
+            base.CreateCosmeticChildren(Manager);
+
+            var spriteSheet = TextureManager.GetTexture(ContentPaths.Entities.Furniture.bookshelf);
+
+            AddChild(new Box(Manager,
+                "model",
+                Matrix.CreateTranslation(new Vector3(-20.0f / 64.0f, -32.0f / 64.0f, -8.0f / 64.0f)),
+                new Vector3(32.0f / 32.0f, 8.0f / 32.0f, 20.0f / 32.0f),
+                new Vector3(0.0f, 0.0f, 0.0f),
+                "bookshelf",
+                spriteSheet)).SetFlag(Flag.ShouldSerialize, false);
         }
     }
 }

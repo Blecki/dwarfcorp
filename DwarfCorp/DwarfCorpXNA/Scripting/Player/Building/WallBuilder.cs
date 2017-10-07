@@ -57,9 +57,7 @@ namespace DwarfCorp
     {
         public VoxelHandle Vox;
         public byte Type;
-        public CreatureAI ReservedCreature = null;
         private WorldManager World { get; set; }
-        List<VoxelHandle> highlighted = new List<VoxelHandle>();
 
         [OnDeserialized]
         public void OnDeserialized(StreamingContext ctx)
@@ -71,6 +69,7 @@ namespace DwarfCorp
         {
             
         }
+
         public WallBuilder(VoxelHandle v, byte t, WorldManager world)
         {
             World = world;
@@ -137,18 +136,6 @@ namespace DwarfCorp
             Faction = faction;
             Designations = new List<WallBuilder>();
             Selected = new List<VoxelHandle>();
-        }
-
-        public CreatureAI GetReservedCreature(VoxelHandle reference)
-        {
-            WallBuilder des = GetDesignation(reference);
-
-            if(des == null)
-            {
-                return null;
-            }
-
-            return des.ReservedCreature;
         }
 
         public bool IsDesignation(GlobalVoxelCoordinate Location)

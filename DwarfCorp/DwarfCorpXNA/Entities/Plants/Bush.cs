@@ -41,58 +41,6 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
-    public class Cactus : Plant
-    {
-        public Cactus() { }
-
-        public Cactus(ComponentManager Manager, Vector3 position, string asset, float bushSize) :
-            base(Manager, "Cactus", Matrix.Identity, new Vector3(bushSize, bushSize, bushSize),  asset, bushSize)
-        {
-            BoundingBoxPos = Vector3.Zero;
-            Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
-            SeedlingFrame = new Point(0, 0);
-            Matrix matrix = Matrix.Identity;
-            matrix.Translation = position + new Vector3(0.5f, -0.15f, 0.5f);
-            LocalTransform = matrix;
-            AddChild(new Health(Manager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
-            AddChild(new Flammable(Manager, "Flames"));
-
-            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
-                Manager.World.ChunkManager.ChunkData,
-                GlobalVoxelCoordinate.FromVector3(position)));
-            if (voxelUnder.IsValid)
-                AddChild(new VoxelListener(Manager, Manager.World.ChunkManager,
-                    voxelUnder));
-
-
-            Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)
-            {
-                Resources = new List<Inventory.InventoryItem>(),
-            }) as Inventory;
-
-            inventory.AddResource(new ResourceAmount()
-            {
-                NumResources = 2,
-                ResourceType = ResourceLibrary.ResourceType.Cactus
-            });
-
-
-            var particles = AddChild(new ParticleTrigger("Leaves", Manager, "LeafEmitter",
-                Matrix.Identity, BoundingBoxPos, GetBoundingBox().Extents())
-            {
-                SoundToPlay = ContentPaths.Audio.Oscar.sfx_env_bush_harvest_1
-            }) as ParticleTrigger;
-
-            Tags.Add("Vegetation");
-            Tags.Add("Cactus");
-
-            AddToCollisionManager = true;
-            CollisionType = CollisionManager.CollisionType.Static;
-            PropogateTransforms();
-        }
-    }
-
     //Todo: Split file
     [JsonObject(IsReference = true)]
     public class Bush : Plant

@@ -50,6 +50,7 @@ namespace DwarfCorp
         public int Slice { get; set; }
         public WorldTime Time { get; set; }
         public Point3 NumChunks { get; set; }
+        public String Version;
 
         public static string Extension = "meta";
         public static string CompressedExtension = "zmeta";

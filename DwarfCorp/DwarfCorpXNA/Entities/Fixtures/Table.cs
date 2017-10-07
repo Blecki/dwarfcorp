@@ -41,10 +41,11 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Table : Body, IUpdateableComponent
     {
         public ManaBattery Battery { get; set; }
+        public SpriteSheet fixtureAsset;
+        public Point fixtureFrame;
 
         public class ManaBattery
         {
@@ -151,7 +152,10 @@ namespace DwarfCorp
         public Table(ComponentManager manager, Vector3 position, SpriteSheet fixtureAsset, Point fixtureFrame) :
             base(manager, "Table", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
         {
-            Matrix matrix = Matrix.CreateRotationY((float)Math.PI * 0.5f);
+            this.fixtureAsset = fixtureAsset;
+            this.fixtureFrame = fixtureFrame;
+
+            var matrix = Matrix.CreateRotationY((float)Math.PI * 0.5f);
             matrix.Translation = position;
             LocalTransform = matrix;
 
@@ -166,9 +170,6 @@ namespace DwarfCorp
             CollisionType = CollisionManager.CollisionType.Static;
 
             CreateCosmeticChildren(Manager);
-
-            if (fixtureAsset != null)
-                AddChild(new Fixture(Manager, new Vector3(0, 0.3f, 0), fixtureAsset, fixtureFrame));
         }
 
         public override void CreateCosmeticChildren(ComponentManager Manager)
@@ -196,6 +197,9 @@ namespace DwarfCorp
             {
                 OrientationType = SimpleSprite.OrientMode.Fixed
             }).SetFlag(Flag.ShouldSerialize, false);
+
+            if (fixtureAsset != null)
+                AddChild(new Fixture(Manager, new Vector3(0, 0.3f, 0), fixtureAsset, fixtureFrame)).SetFlag(Flag.ShouldSerialize, false);
         }
     }
 }

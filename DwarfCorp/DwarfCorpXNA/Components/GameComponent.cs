@@ -13,66 +13,123 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-
-    /// <summary>
-    /// This class is responsible for handling components. "Components" are one of the most important parts of the 
-    /// DwarfCorp engine. Everything in the game is a collection of components. A collection of components is called an "entity".
-    /// Components live in a tree-like structure, they have parents and children. Most components (called Locatable components)
-    /// also have a position and orientation.
-    /// 
-    /// By adding and removing components to an entity, functionality can be changed.
-    /// </summary>
-    [JsonObject(IsReference = true)]
-    public class GameComponent
+    //[Saving.SaveableObject(0)]
+    public class GameComponent // : Saving.ISaveableObject
     {
-        /// <summary>
-        /// Gets or sets the name (used mostly for debugging purposes).
-        /// </summary>
-        /// <value>
-        /// The name.
-        /// </value>
         public string Name { get; set; }
-
-        /// <summary>
-        /// Gets or sets the global identifier (all GameComponents have a global ID).
-        /// </summary>
-        /// <value>
-        /// The global identifier.
-        /// </value>
         public uint GlobalID { get; set; }
 
-        /// <summary>
-        /// Gets or sets the parent. If null, this is the root component.
-        /// </summary>
-        public GameComponent Parent { get; set; }
+        [JsonProperty] private uint ParentID = ComponentManager.InvalidID;
+        [JsonIgnore] private GameComponent CachedParent = null;
+        [JsonIgnore]
+        public GameComponent Parent
+        {
+            get
+            {
+                if (World == null)
+                {
+                    return null;
+                }
+                if (CachedParent == null)
+                    CachedParent = Manager.FindComponent(ParentID);
+                return CachedParent;
+            }
+            set
+            {
+                CachedParent = value;
+                ParentID = value != null ? value.GlobalID : ComponentManager.InvalidID;
+            }
+        }
 
-        /// <summary>
-        /// List of GameComponent children attached to this one.
-        /// </summary>
+        public Flag Flags = 0;
+        public List<string> Tags { get; set; }
+        public List<uint> SerializableChildren;
+
         [JsonIgnore]
         public List<GameComponent> Children { get; set; }
 
+        [JsonIgnore]
+        public WorldManager World { get;  set; }
+
+        [JsonIgnore]
+        public ComponentManager Manager { get { return World.ComponentManager; } }
+
+
+        /*
+        public class SaveNugget : Saving.Nugget
+        {
+            public uint GlobalID;
+            public string Name;
+            public Flag Flags;
+            public List<String> Tags;
+            public Saving.Nugget Parent;
+            public List<Saving.Nugget> Children;            
+        }
+
+        protected virtual Saving.Nugget PrepareSaveNugget(Saving.Saver SaveSystem)
+        {
+            return new SaveNugget
+            {
+                AssociatedType = typeof(GameComponent), // Have to explicitely set since the save system
+                Version = 0,                            // isn't being invoked to create nugget.
+                GlobalID = GlobalID,
+                Name = Name,
+                Flags = Flags,
+                Tags = Tags,
+                Parent = SaveSystem.SaveObject(Parent),
+                Children = SerializableChildren.Select(c => SaveSystem.SaveObject(c)).ToList()
+            };
+        }
+
+        protected virtual void LoadFromSaveNugget(Saving.Loader SaveSystem, Saving.Nugget From)
+        {
+            var n = SaveSystem.UpgradeNugget(From, 0) as SaveNugget; // Need to explicitly invoke since save
+                // system was not involved for base type nugget.
+
+            GlobalID = n.GlobalID;
+            Name = n.Name;
+            Flags = n.Flags;
+            Tags = n.Tags;
+
+            Parent = SaveSystem.LoadObject(n.Parent) as GameComponent;
+            SerializableChildren = n.Children.Select(c => SaveSystem.LoadObject(c) as GameComponent).ToList();
+        }
+
+        Saving.Nugget Saving.ISaveableObject.SaveToNugget(Saving.Saver SaveSystem)
+        {
+            return PrepareSaveNugget(SaveSystem);
+        }
+
+        void Saving.ISaveableObject.LoadFromNugget(Saving.Loader SaveSystem, Saving.Nugget From)
+        {
+            LoadFromSaveNugget(SaveSystem, From);
+        }
+        */
+
+
         #region Serialization
-        public List<GameComponent> SerializableChildren;
 
         public void PrepareForSerialization()
         {
-            SerializableChildren = Children.Where(c => c.IsFlagSet(Flag.ShouldSerialize) && c != this).ToList();
+            SerializableChildren = Children.Where(c => c.IsFlagSet(Flag.ShouldSerialize) && c != this)
+                .Select(c => c.GlobalID).ToList();
         }
 
-        public void PostSerialization(ComponentManager manager)
+        public void PostSerialization(ComponentManager Manager)
         {
-            Children = SerializableChildren;
+            Children = SerializableChildren.Select(id => Manager.FindComponent(id)).ToList();
             Children.RemoveAll(c => c == this);
             SerializableChildren = null;
         }
 
-        public virtual void CreateCosmeticChildren(ComponentManager manager)
+        public virtual void CreateCosmeticChildren(ComponentManager Manager)
         {
 
         }
+
         #endregion
 
+        #region Flags
 
         [Flags]
         public enum Flag
@@ -82,8 +139,6 @@ namespace DwarfCorp
             Dead = 4,
             ShouldSerialize = 8
         }
-
-        public Flag Flags = 0;
 
         public bool IsFlagSet(Flag F)
         {
@@ -105,6 +160,8 @@ namespace DwarfCorp
                 child.SetFlagRecursive(F, Value);
         }
 
+        #endregion
+        
         // Todo: Get rid of these helpers.
         [JsonIgnore] 
         public bool IsVisible
@@ -127,27 +184,6 @@ namespace DwarfCorp
             set { SetFlag(Flag.Dead, value); }
         }
         
-        /// <summary>
-        /// Gets or sets the tags. Tags are just arbitrary strings attached to objects.
-        /// </summary>
-        /// <value>
-        /// The tags.
-        /// </value>
-        public List<string> Tags { get; set; }
-
-        
-        /// <summary>
-        /// Gets or sets the world.
-        /// </summary>
-        [JsonIgnore]
-        public WorldManager World { get; set; }
-
-        /// <summary>
-        /// Gets the component manager (from world)
-        /// </summary>
-        [JsonIgnore]
-        public ComponentManager Manager { get { return World.ComponentManager; } }
-
         public virtual void ReceiveMessageRecursive(Message messageToReceive)
         {
             foreach(GameComponent child in Children)
@@ -163,9 +199,8 @@ namespace DwarfCorp
             World = ((WorldManager) context.Context);
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GameComponent"/> class.
-        /// </summary>
+        #region Constructors
+
         public GameComponent()
         {
             World = null;
@@ -179,11 +214,6 @@ namespace DwarfCorp
             SetFlag(Flag.ShouldSerialize, true);
         }
 
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GameComponent"/> class, while adding it to the component manager.
-        /// </summary>
-        /// <param name="manager">The component manager to add the component to</param>
         public GameComponent(ComponentManager Manager) : this()
         {
             System.Diagnostics.Debug.Assert(Manager != null, "Manager cannot be null");
@@ -194,86 +224,20 @@ namespace DwarfCorp
             Manager.AddComponent(this);
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GameComponent"/> class.
-        /// </summary>
-        /// <param name="name">The name of the component.</param>
-        /// <param name="parent">The parent component.</param>
-        /// <param name="manager">The component manager.</param>
         public GameComponent(string name, ComponentManager manager) :
             this(manager)
         {
             Name = name;
         }
 
-        /// <summary>
-        /// Gets the first child component of the specified type from among the children.
-        /// </summary>
-        /// <typeparam name="T">The type</typeparam>
-        /// <param name="self">if set to <c>true</c> add this component to the list if it qualifies.</param>
-        /// <returns>The first component of type T.</returns>
-        public T GetComponent<T>() where T : GameComponent
-        {
-            return EnumerateAll().OfType<T>().FirstOrDefault();
-        }
+        #endregion
 
-        /// <summary>
-        /// Renders the component to the selection buffer (for selecting stuff on screen).
-        /// </summary>
-        /// <param name="gameTime">The game time.</param>
-        /// <param name="chunks">The chunks.</param>
-        /// <param name="camera">The camera.</param>
-        /// <param name="spriteBatch">The sprite batch.</param>
-        /// <param name="graphicsDevice">The graphics device.</param>
-        /// <param name="effect">The shader to use.</param>
         public virtual void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera,
             SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect)
         {
             
         }
 
-        // Todo: Lift to utility class
-        /// <summary>
-        /// Converts the global identifier into a color for rendering to 
-        /// the selection buffer.
-        /// </summary>
-        /// <returns></returns>
-        public Color GetGlobalIDColor()
-        {
-            // 0xFFFFFFFF
-            // 0xRRGGBBAA
-            int r = (int)(GlobalID >> 24);
-            int g = (int)((GlobalID >> 16) & 0x000000FF);
-            int b = (int)((GlobalID >> 8) & 0x000000FF);
-            int a = (int)((GlobalID) & 0x000000FF);
-            //return new Color {PackedValue = GlobalID};
-            return new Color(r, g, b, a);
-        }
-
-        /// <summary>
-        /// Converts a packed color representation of a global ID to a global ID.
-        /// </summary>
-        /// <param name="color">The color (packed representaiton)</param>
-        /// <returns></returns>
-        public static uint GlobalIDFromColor(Color color)
-        {
-            // 0xFFFFFFFF
-            // 0xRRGGBBAA
-            //return color.PackedValue;
-            uint id = 0;
-            id = id | (uint) (color.R << 24);
-            id = id | (uint) (color.G << 16);
-            id = id | (uint) (color.B << 8);
-            id = id | (uint) (color.A);
-            return id;
-        }
-
-        /// <summary>
-        /// Returns a hash code for this instance.
-        /// </summary>
-        /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
-        /// </returns>
         public override int GetHashCode()
         {
             return (int) GlobalID;
@@ -329,12 +293,11 @@ namespace DwarfCorp
         {
             string toReturn = "";
 
-            if(Parent == Manager.RootComponent)
+            if (Object.ReferenceEquals(Parent, Manager.RootComponent))
                 toReturn += Name;
 
             foreach (GameComponent component in Children)
             {
-
                 string componentDesc = component.GetDescription();
 
                 if (!String.IsNullOrEmpty(componentDesc))
@@ -347,7 +310,19 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        #region child_operators
+        #region heirarchy operators
+
+        /// <summary>
+        /// Gets the first child component of the specified type from among the children.
+        /// </summary>
+        /// <typeparam name="T">The type</typeparam>
+        /// <param name="self">if set to <c>true</c> add this component to the list if it qualifies.</param>
+        /// <returns>The first component of type T.</returns>
+        public T GetComponent<T>() where T : GameComponent
+        {
+            return EnumerateAll().OfType<T>().FirstOrDefault();
+        }
+
 
         /// <summary>
         /// Adds the child if it has not been added already.
@@ -364,6 +339,9 @@ namespace DwarfCorp
                 System.Diagnostics.Debug.Assert(child.Parent == null, "Child was already added to another component.");
 
                 Children.Add(child);
+                child.Active = Active;
+                child.IsVisible = IsVisible;
+                child.IsDead = IsDead;
                 child.Parent = this;
             }
 
@@ -381,8 +359,6 @@ namespace DwarfCorp
                 Children.Remove(child);
             }
         }
-
-        #endregion
 
         /// <summary>
         /// Gets the anscestor of this component which has no parent.
@@ -405,5 +381,13 @@ namespace DwarfCorp
                 foreach (var grandChild in child.EnumerateAll())
                     yield return grandChild;
         }
+
+        public IEnumerable<GameComponent> EnumerateChildren()
+        {
+            foreach (var child in Children)
+                yield return child;
+        }
+
+        #endregion
     }
 }

@@ -96,7 +96,7 @@ namespace DwarfCorp
                  
                 world.ParticleManager.Trigger("puff", original.Translation, Color.White, 20);
                 
-                SoundManager.PlaySound(ContentPaths.Audio.pluck, Vox.WorldPosition, true);
+                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_plant_grow, Vox.WorldPosition, true);
                 
             }
         }
@@ -324,8 +324,8 @@ namespace DwarfCorp
             switch (Mode)
             {
                 case FarmMode.Harvesting:
-                {
-                    List<Task> tasks = new List<Task>();
+                    {
+                        List<Task> tasks = new List<Task>();
                         foreach (Body tree in bodies.Where(c => c.Tags.Contains("Vegetation")))
                         {
                             if (!tree.IsVisible || tree.IsAboveCullPlane(Player.World.ChunkManager)) continue;
@@ -333,69 +333,64 @@ namespace DwarfCorp
                             switch (button)
                             {
                                 case InputManager.MouseButton.Left:
-                                    if (Player.Faction.AddChopDesignation(tree) == Faction.AddChopResult.Added)
+                                    if (Player.Faction.AddEntityDesignation(tree, DesignationType.Chop) == Faction.AddEntityDesignationResult.Added)
                                     {
                                         tasks.Add(new KillEntityTask(tree, KillEntityTask.KillType.Chop) { Priority = Task.PriorityType.Low });
                                         this.Player.World.ShowToolPopup("Will harvest this " + tree.Name);
                                     }
                                     break;
                                 case InputManager.MouseButton.Right:
-                                    if (Player.Faction.RemoveChopDesignation(tree) == Faction.RemoveChopResult.Removed)
-                                    {
+                                    if (Player.Faction.RemoveEntityDesignation(tree, DesignationType.Chop) == Faction.RemoveEntityDesignationResult.Removed)
                                         this.Player.World.ShowToolPopup("Harvest cancelled " + tree.Name);
-                                    }
                                     break;
                             }
                         }
-                    if (tasks.Count > 0 && Player.SelectedMinions.Count > 0)
-                    {
-                        TaskManager.AssignTasks(tasks, Player.SelectedMinions);
-                        OnConfirm(Player.SelectedMinions);
-                    }
-                }
-                    break;
-                case FarmMode.WranglingAnimals:
-                {
-                    List<Task> tasks = new List<Task>();
-                    foreach (Body animal in bodies.Where(c => c.Tags.Contains("DomesticAnimal")))
-                    {
-                        Drawer3D.DrawBox(animal.BoundingBox, Color.Tomato, 0.1f, false);
-                        switch (button)
+                        if (tasks.Count > 0 && Player.SelectedMinions.Count > 0)
                         {
-                            case InputManager.MouseButton.Left:
-                            {
-                                var pens = Player.Faction.GetRooms().Where(room => room is AnimalPen).Cast<AnimalPen>().Where(pen => pen.Species == "" || pen.Species == animal.GetRoot().GetComponent<Creature>().Species);
-
-                                if (pens.Any())
-                                {
-                                    Player.Faction.WrangleDesignations.Add(animal);
-                                    tasks.Add(new WrangleAnimalTask(animal.GetRoot().GetComponent<Creature>()));
-                                    this.Player.World.ShowToolPopup("Will wrangle this " +
-                                                                    animal.GetRoot().GetComponent<Creature>().Species);
-                                }
-                                else
-                                {
-                                    this.Player.World.ShowToolPopup("Can't wrangle this " +
-                                                                    animal.GetRoot().GetComponent<Creature>().Species +
-                                                                    " : need more animal pens.");
-                                }
-                            }
-                                break;
-                            case InputManager.MouseButton.Right:
-                                if (Player.Faction.WrangleDesignations.Contains(animal))
-                                {
-                                    Player.Faction.WrangleDesignations.Remove(animal);
-                                    this.Player.World.ShowToolPopup("Wrangle cancelled for " + animal.GetRoot().GetComponent<Creature>().Species);
-                                }
-                                break;
+                            TaskManager.AssignTasks(tasks, Player.SelectedMinions);
+                            OnConfirm(Player.SelectedMinions);
                         }
                     }
-                    if (tasks.Count > 0 && Player.SelectedMinions.Count > 0)
+                    break;
+                case FarmMode.WranglingAnimals:
                     {
-                        TaskManager.AssignTasks(tasks, Player.SelectedMinions);
-                        OnConfirm(Player.SelectedMinions);
+                        List<Task> tasks = new List<Task>();
+                        foreach (Body animal in bodies.Where(c => c.Tags.Contains("DomesticAnimal")))
+                        {
+                            Drawer3D.DrawBox(animal.BoundingBox, Color.Tomato, 0.1f, false);
+                            switch (button)
+                            {
+                                case InputManager.MouseButton.Left:
+                                    {
+                                        var pens = Player.Faction.GetRooms().Where(room => room is AnimalPen).Cast<AnimalPen>().Where(pen => pen.Species == "" || pen.Species == animal.GetRoot().GetComponent<Creature>().Species);
+
+                                        if (pens.Any())
+                                        {
+                                            Player.Faction.AddEntityDesignation(animal, DesignationType.Wrangle);
+                                            tasks.Add(new WrangleAnimalTask(animal.GetRoot().GetComponent<Creature>()));
+                                            this.Player.World.ShowToolPopup("Will wrangle this " +
+                                                                            animal.GetRoot().GetComponent<Creature>().Species);
+                                        }
+                                        else
+                                        {
+                                            this.Player.World.ShowToolPopup("Can't wrangle this " +
+                                                                            animal.GetRoot().GetComponent<Creature>().Species +
+                                                                            " : need more animal pens.");
+                                        }
+                                    }
+                                    break;
+                                case InputManager.MouseButton.Right:
+                                    if (Player.Faction.RemoveEntityDesignation(animal, DesignationType.Wrangle) == Faction.RemoveEntityDesignationResult.Removed)
+                                        this.Player.World.ShowToolPopup("Wrangle cancelled for " + animal.GetRoot().GetComponent<Creature>().Species);
+                                    break;
+                            }
+                        }
+                        if (tasks.Count > 0 && Player.SelectedMinions.Count > 0)
+                        {
+                            TaskManager.AssignTasks(tasks, Player.SelectedMinions);
+                            OnConfirm(Player.SelectedMinions);
+                        }
                     }
-                }
                     break;
             }
         }
@@ -408,24 +403,7 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
-            /*
-            if (FarmPanel != null)
-            {
-                FarmPanel.Destroy();
-            }
-            int w = 600;
-            int h = 350;
-            FarmPanel = new FarmingPanel(Player.World.GUI, Player.World.GUI.RootComponent, Player.World)
-            {
-                LocalBounds = new Rectangle(PlayState.Game.GraphicsDevice.Viewport.Width / 2 - w / 2, PlayState.Game.GraphicsDevice.Viewport.Height / 2 - h / 2, w, h),
-                IsVisible = true,
-                DrawOrder = 2
-            };
-            FarmPanel.OnHarvest += FarmPanel_OnHarvest;
-            FarmPanel.OnPlant += FarmPanel_OnPlant;
-            FarmPanel.OnTill += FarmPanel_OnTill;
-            FarmPanel.TweenIn(Drawer2D.Alignment.Right, 0.25f);
-             */
+
         }
 
         void FarmPanel_OnTill()
@@ -549,40 +527,13 @@ namespace DwarfCorp
 
                 case FarmMode.Harvesting:
                 {
-                    Color drawColor = Color.LimeGreen;
-
-                    float alpha = (float) Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds*2.0f));
-                    drawColor.R = (byte) (Math.Min(drawColor.R*alpha + 50, 255));
-                    drawColor.G = (byte) (Math.Min(drawColor.G*alpha + 50, 255));
-                    drawColor.B = (byte) (Math.Min(drawColor.B*alpha + 50, 255));
-
-//<<<<<<< HEAD
-//                    //foreach (BoundingBox box in Player.Faction.ChopDesignations.Select(d => d.GetBoundingBox()))
-//                    //{
-//                    //    Drawer3D.DrawBox(box, drawColor, 0.05f*alpha + 0.05f, true);
-//                    //}
-//=======
-//                    foreach (BoundingBox box in Player.Faction.ChopDesignations.Select(d => d.GetBoundingBox()))
-//                    {
-//                        Drawer3D.DrawBox(box, drawColor, 0.05f*alpha + 0.05f, true);
-//                        Drawer2D.DrawSprite(frame, box.Center(), Vector2.One, Vector2.Zero, new Color(255, 255, 255, 100));
-//                    }
-//>>>>>>> cc30142a095c51bd81443c0769f00b9fb9c8d965
+                    
                     break;
                 }
 
                 case FarmMode.WranglingAnimals:
                 {
-                    Color drawColor = Color.Tomato;
-                    float alpha = (float)Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * 2.0f));
-                    drawColor.R = (byte)(Math.Min(drawColor.R * alpha + 50, 255));
-                    drawColor.G = (byte)(Math.Min(drawColor.G * alpha + 50, 255));
-                    drawColor.B = (byte)(Math.Min(drawColor.B * alpha + 50, 255));
-                    foreach (BoundingBox box in Player.Faction.WrangleDesignations.Select(d => d.GetBoundingBox()))
-                    {
-                        Drawer3D.DrawBox(box, drawColor, 0.05f * alpha + 0.05f, true);
-                        Drawer2D.DrawSprite(frame, box.Center(), Vector2.One, Vector2.Zero, new Color(255, 255, 255, 100));
-                    }
+                    
                     break;
                 }
             }
@@ -690,8 +641,10 @@ namespace DwarfCorp
 
         public override bool IsFeasible(Creature agent)
         {
-            return agent.Faction.WrangleDesignations.Contains(Animal.GetRoot().GetComponent<Physics>()) && Animal != null && !Animal.IsDead &&
-                GetClosestPen(agent) != null;
+            return Animal != null 
+                && !Animal.IsDead 
+                && agent.Faction.IsDesignation(Animal.GetRoot().GetComponent<Physics>(), DesignationType.Wrangle) 
+                && GetClosestPen(agent) != null;
         }
 
 

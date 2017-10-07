@@ -77,6 +77,11 @@ namespace DwarfCorp
         public WorldManager World { get; set; }
 
 
+        private bool sliceDownheld = false;
+        private bool sliceUpheld = false;
+        private Timer sliceDownTimer = new Timer(0.5f, true);
+        private Timer sliceUpTimer = new Timer(0.5f, true);
+
         protected void OnDeserialized(StreamingContext context)
         {
             World = (WorldManager)(context.Context);
@@ -113,6 +118,7 @@ namespace DwarfCorp
             CreateTools();
 
             InputManager.KeyReleasedCallback += OnKeyReleased;
+            InputManager.KeyPressedCallback += OnKeyPressed;
         }
 
         public void Destroy()
@@ -123,6 +129,7 @@ namespace DwarfCorp
             BodySelector.MouseOver -= OnMouseOver;
             World.Time.NewDay -= Time_NewDay;
             InputManager.KeyReleasedCallback -= OnKeyReleased;
+            InputManager.KeyPressedCallback -= OnKeyPressed;
             Tools[ToolMode.God].Destroy();
             Tools[ToolMode.SelectUnits].Destroy();
             Tools.Clear();
@@ -143,15 +150,10 @@ namespace DwarfCorp
                 Player = this
             };
 
-
             Tools[ToolMode.Dig] = new DigTool
             {
                 Player = this,
-                DigDesignationGlowRate = 2.0f,
-                UnreachableColor = new Color(205, 10, 10),
-                DigDesignationColor = new Color(205, 200, 10)
             };
-
 
             Tools[ToolMode.Gather] = new GatherTool
             {
@@ -178,8 +180,6 @@ namespace DwarfCorp
             Tools[ToolMode.Attack] = new AttackTool
             {
                 Player = this,
-                DesignationColor = Color.Red,
-                GlowRate = 2.0f
             };
 
             Tools[ToolMode.Build] = new BuildTool
@@ -352,6 +352,28 @@ namespace DwarfCorp
             Faction.CraftBuilder.Update(time, this);
 
             HandlePosessedDwarf();
+
+            if (sliceDownheld)
+            {
+                sliceDownTimer.Update(time);
+
+                if (sliceDownTimer.HasTriggered)
+                {
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
+                    sliceDownTimer.Reset(0.1f);
+                }
+            }
+
+            if (sliceUpheld)
+            {
+                sliceUpTimer.Update(time);
+
+                if (sliceUpTimer.HasTriggered)
+                {
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
+                    sliceUpTimer.Reset(0.1f);
+                }
+            }
         }
 
 
@@ -488,20 +510,32 @@ namespace DwarfCorp
 
         }
 
-        public void OnKeyPressed()
+        public void OnKeyPressed(Keys key)
         {
+            if (key == ControlSettings.Mappings.SliceUp)
+            {
+                sliceUpheld = true;
+                sliceUpTimer.Reset(0.5f);
+            }
+            else if (key == ControlSettings.Mappings.SliceDown)
+            {
+                sliceDownheld = true;
+                sliceDownTimer.Reset(0.5f);
+            }
         }
 
         public void OnKeyReleased(Keys key)
         {
             if (key == ControlSettings.Mappings.SliceUp)
             {
+                sliceUpheld = false;
                 World.Tutorial("unslice");
                 World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
             }
 
             else if (key == ControlSettings.Mappings.SliceDown)
             {
+                sliceDownheld = false;
                 World.Tutorial("unslice");
                 World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
             }

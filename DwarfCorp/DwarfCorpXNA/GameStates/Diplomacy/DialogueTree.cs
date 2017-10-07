@@ -12,7 +12,7 @@ namespace DwarfCorp.Dialogue
     public class DialogueTree
     {
         public static void ConversationRoot(DialogueContext Context)
-        {
+        { 
             RootWithPrompt(String.Format("{0} I am {1} of {2}.",
                         Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.Greetings),
                         Context.EnvoyName,

@@ -124,6 +124,7 @@ namespace DwarfCorp
 
 
                 Agent.Position = snapPosition;
+                Agent.Physics.PropogateTransforms();
                 Agent.Physics.IsSleeping = true;
                 Agent.Physics.Velocity = Vector3.Zero;
                 Creature.CurrentCharacterMode = CharacterMode.Sitting;
@@ -146,6 +147,9 @@ namespace DwarfCorp
 
         public override void OnCanceled()
         {
+            Agent.Physics.IsSleeping = false;
+            Agent.Physics.Velocity = Vector3.Zero;
+            Creature.OverrideCharacterMode = false;
             foreach (var statuses in Creature.Unreserve("Chair"))
             {
                 continue;

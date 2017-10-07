@@ -67,7 +67,7 @@ namespace DwarfCorp
             if (!IsVisible) return;
 
             base.RenderSelectionBuffer(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect);
-            effect.SelectionBufferColor = GetGlobalIDColor().ToVector4();
+            effect.SelectionBufferColor = this.GetGlobalIDColor().ToVector4();
             Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
         }
 

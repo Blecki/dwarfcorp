@@ -610,6 +610,51 @@ namespace DwarfCorp
             yield break;
         }
 
+        public IEnumerable<Act.Status> HitAndWait(bool loadBar, Func<float> maxProgress, 
+            Func<float> progress, Action incrementProgress, Func<Vector3> pos, string playSound = "", Func<bool> continueHitting = null)
+        {
+            CurrentCharacterMode = CharacterMode.Attacking;
+            Sprite.ResetAnimations(CharacterMode.Attacking);
+            Sprite.PlayAnimations(CharacterMode.Attacking);
+
+            CurrentCharacterMode = CharacterMode.Attacking;
+            Timer incrementTimer = new Timer(1.0f, false);
+            while (progress() < maxProgress())
+            {
+                if (continueHitting != null && !continueHitting())
+                {
+                    yield break;
+                }
+
+                if (loadBar)
+                {
+                    Drawer2D.DrawLoadBar(Manager.World.Camera, AI.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4,
+                        progress() / maxProgress());
+                }
+
+                Attacks[0].PerformNoDamage(this, DwarfTime.LastTime, pos());
+                Physics.Velocity = Vector3.Zero;
+                Sprite.ReloopAnimations(CharacterMode.Attacking);
+
+                if (!String.IsNullOrEmpty(playSound))
+                {
+                    NoiseMaker.MakeNoise(playSound, AI.Position, true);
+                }
+
+                incrementTimer.Update(DwarfTime.LastTime);
+                if (incrementTimer.HasTriggered)
+                {
+                    incrementProgress();
+                }
+
+                yield return Act.Status.Running;
+            }
+            Sprite.PauseAnimations(CharacterMode.Attacking);
+            CurrentCharacterMode = CharacterMode.Idle;
+            yield return Act.Status.Success;
+            yield break;
+        }
+
         public List<Disease.Immunity> Immunities = new List<Disease.Immunity>(); 
 
         public void AcquireDisease(string disease)
@@ -682,10 +727,7 @@ namespace DwarfCorp
 
             if (!AI.Tasks.Contains(gatherTask))
             {
-                if (!AI.Faction.GatherDesignations.Contains(item))
-                {
-                    AI.Faction.GatherDesignations.Add(item);
-                }
+                AI.Faction.AddEntityDesignation(item, DesignationType.Gather);
                 AI.AssignTask(gatherTask);
             }
         }
