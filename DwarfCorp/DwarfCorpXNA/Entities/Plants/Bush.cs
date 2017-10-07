@@ -51,7 +51,7 @@ namespace DwarfCorp
             base(componentManager, "Berry Bush", Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), asset, bushSize)
         {
             BoundingBoxPos = Vector3.Zero;
-            Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
+            Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.berrybushsprout, 32, 32);
             SeedlingFrame = new Point(0, 0);
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position + new Vector3(0.5f, -0.15f, 0.5f);

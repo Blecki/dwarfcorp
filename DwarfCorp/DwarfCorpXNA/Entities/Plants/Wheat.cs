@@ -53,7 +53,7 @@ namespace DwarfCorp
             base(Manager, "Wheat", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f),  "wheat", 1.0f)
         {
             BoundingBoxPos = Vector3.Zero;
-            Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.gnarled, 32, 32);
+            Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.wheatsprout, 32, 32);
             SeedlingFrame = new Point(0, 0);
             Matrix matrix = Matrix.CreateRotationY(MathFunctions.Rand(-0.1f, 0.1f));
             matrix.Translation = position + new Vector3(0.5f, 0.0f, 0.5f);
