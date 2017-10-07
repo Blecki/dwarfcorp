@@ -366,6 +366,44 @@ namespace DwarfCorp.Gui
             return Mesh.Merge(result.ToArray());
         }
 
+        public bool IsAnyParentHidden()
+        {
+            if (Hidden)
+            {
+                return true;
+            }
+
+            if (Parent == null)
+            {
+                return false;
+            }
+
+            if (Parent == Root.RootItem && !Hidden)
+            {
+                return false;
+            }
+            return Parent.IsAnyParentHidden();
+        }
+
+        public bool IsAnyParentTransparent()
+        {
+            if (Transparent)
+            {
+                return true;
+            }
+
+            if (Parent == null)
+            {
+                return false;
+            }
+
+            if (Parent == Root.RootItem && !Transparent)
+            {
+                return false;
+            }
+            return Parent.IsAnyParentTransparent();
+        }
+
         public void GetTextMesh(List<Mesh> result)
         {
             var drawableArea = GetDrawableInterior();

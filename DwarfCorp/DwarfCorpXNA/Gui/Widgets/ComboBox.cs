@@ -74,7 +74,14 @@ namespace DwarfCorp.Gui.Widgets
                             var bufferHeight = childRect.Height - listView.GetDrawableInterior().Height;
                             listView.Rect.Height = bufferHeight + listView.ItemHeight * ItemsVisibleInPopup;
                             listView.Layout();
-
+                            listView.OnUpdate = (widget, time) =>
+                            {
+                                if (IsAnyParentHidden() || IsAnyParentTransparent())
+                                {
+                                    widget.Close();
+                                }
+                            };
+                        Root.RegisterForUpdate(listView);
                             listView.OnSelectedIndexChanged += (_sender) =>
                                 {
                                     if (SelectorPopup != null)
@@ -91,6 +98,7 @@ namespace DwarfCorp.Gui.Widgets
                             SelectorPopup = listView;
                             SelectorPopup.PopupDestructionType = PopupDestructionType.DestroyOnOffClick;
                             Root.ShowMinorPopup(SelectorPopup);
+                        OnClose += (s) => { if (SelectorPopup != null) { SelectorPopup.Close(); } };
                         }
                     //}
                 };
