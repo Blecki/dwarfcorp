@@ -183,6 +183,7 @@
     <Compile Include="ContextCommands\ContextCommand.cs" />
     <Compile Include="Entities\Fixtures\CoinPileFixture.cs" />
     <Compile Include="Entities\Fixtures\Banner.cs" />
+    <Compile Include="Entities\Fixtures\Fence.cs" />
     <Compile Include="Entities\Plants\Cactus.cs" />
     <Compile Include="Entities\Plants\Seedling.cs" />
     <Compile Include="Entities\Plants\Plant.cs" />
