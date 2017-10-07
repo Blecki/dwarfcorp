@@ -470,10 +470,7 @@ namespace DwarfCorp
                     Master.Faction.Economy.Company.Information = new CompanyInformation();
                 CreateInitialEmbarkment();
                 foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
-                {
                     ChunkManager.InvalidateChunk(chunk);
-                    ChunkManager.InvalidateLiquidChunk(chunk);
-                }
 
                 ChunkManager.StartThreads();
                 SetLoadingMessage("Presimulating ...");

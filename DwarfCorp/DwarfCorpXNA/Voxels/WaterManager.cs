@@ -201,7 +201,7 @@ namespace DwarfCorp
                 if (!didUpdate && !chunk.FirstWaterIter)
                     continue;
 
-                Chunks.InvalidateLiquidChunk(chunk);
+                chunk.RebuildLiquids();
                 chunk.FirstWaterIter = false;
             }
         }

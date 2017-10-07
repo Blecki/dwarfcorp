@@ -65,10 +65,7 @@ namespace DwarfCorp
         {
             RebuildQueueLock.WaitOne();
             if (!RebuildQueue.Contains(Chunk))
-            {
                 RebuildQueue.Enqueue(Chunk);
-                NeedsRebuildEvent.Set();
-            }
             RebuildQueueLock.ReleaseMutex();
         }
 
@@ -82,30 +79,6 @@ namespace DwarfCorp
             return result;
         }
 
-        private Queue<VoxelChunk> RebuildLiquidQueue = new Queue<VoxelChunk>();
-        private Mutex RebuildLiquidQueueLock = new Mutex();
-
-        public void InvalidateLiquidChunk(VoxelChunk Chunk)
-        {
-            RebuildLiquidQueueLock.WaitOne();
-            if (!RebuildLiquidQueue.Contains(Chunk))
-            {
-                RebuildLiquidQueue.Enqueue(Chunk);
-                NeedsLiquidEvent.Set();
-            }
-            RebuildLiquidQueueLock.ReleaseMutex();
-        }
-
-        public VoxelChunk PopInvalidLiquidChunk()
-        {
-            VoxelChunk result = null;
-            RebuildLiquidQueueLock.WaitOne();
-            if (RebuildLiquidQueue.Count > 0)
-                result = RebuildLiquidQueue.Dequeue();
-            RebuildLiquidQueueLock.ReleaseMutex();
-            return result;
-        }
-
         public Point3 WorldSize { get; set; } 
 
         public ChunkGenerator ChunkGen { get; set; }
@@ -114,13 +87,9 @@ namespace DwarfCorp
         private Thread GeneratorThread { get; set; }
 
         private Thread RebuildThread { get; set; }
-        private Thread RebuildLiquidThread { get; set; }
         private AutoScaleThread WaterUpdateThread;
 
-
         private static readonly AutoResetEvent NeedsGenerationEvent = new AutoResetEvent(false);
-        private static readonly AutoResetEvent NeedsRebuildEvent = new AutoResetEvent(false);
-        private static readonly AutoResetEvent NeedsLiquidEvent = new AutoResetEvent(false);
 
         private readonly Timer generateChunksTimer = new Timer(0.5f, false, Timer.TimerMode.Real);
 
@@ -197,8 +166,6 @@ namespace DwarfCorp
 
             RebuildThread = new Thread(RebuildVoxelsThread);
             RebuildThread.Name = "RebuildVoxels";
-            RebuildLiquidThread = new Thread(RebuildLiquidsThread);
-            RebuildLiquidThread.Name = "RebuildLiquids";
 
             WaterUpdateThread = new AutoScaleThread(this, GamePerformance.ThreadIdentifier.UpdateWater,
                 (f) => Water.UpdateWater());
@@ -236,58 +203,12 @@ namespace DwarfCorp
             GeneratorThread.Start();
             RebuildThread.Start();
             WaterUpdateThread.Start();
-            RebuildLiquidThread.Start();
-        }
-
-        public void RebuildLiquidsThread()
-        {
-            EventWaitHandle[] waitHandles =
-            {
-                NeedsLiquidEvent,
-                Program.ShutdownEvent
-            };
-
-            GamePerformance.Instance.RegisterThreadLoopTracker("RebuildLiquids", GamePerformance.ThreadIdentifier.RebuildWater);
-
-#if CREATE_CRASH_LOGS
-            try
-#endif
-            {
-                bool shouldExit = false;
-                while (!shouldExit && !DwarfGame.ExitGame && !ExitThreads)
-                {
-                    EventWaitHandle wh = Datastructures.WaitFor(waitHandles);
-
-                    if (wh == Program.ShutdownEvent)
-                        break;
-                
-                    GamePerformance.Instance.PreThreadLoop(GamePerformance.ThreadIdentifier.RebuildWater);
-
-                    for (var chunk = PopInvalidLiquidChunk(); chunk != null; chunk = PopInvalidLiquidChunk())
-                        chunk.RebuildLiquids();
-
-                    GamePerformance.Instance.PostThreadLoop(GamePerformance.ThreadIdentifier.RebuildWater);
-                }
-            }
-#if CREATE_CRASH_LOGS
-            catch (Exception exception)
-            {
-                ProgramData.WriteExceptionLog(exception);
-            }
-#endif
-
         }
 
         public void RebuildVoxelsThread()
         {
             System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-
-            EventWaitHandle[] waitHandles =
-            {
-                NeedsRebuildEvent,
-                Program.ShutdownEvent
-            };
 
             GamePerformance.Instance.RegisterThreadLoopTracker("RebuildVoxels", GamePerformance.ThreadIdentifier.RebuildVoxels);
 
@@ -297,13 +218,8 @@ namespace DwarfCorp
             {
                 while (!DwarfGame.ExitGame && !ExitThreads)
                 {
-                    //EventWaitHandle wh = Datastructures.WaitFor(waitHandles);
-
                     GamePerformance.Instance.PreThreadLoop(GamePerformance.ThreadIdentifier.RebuildVoxels);
                     GamePerformance.Instance.EnterZone("RebuildVoxels");
-
-                    //if (wh == Program.ShutdownEvent)
-                    //    break;
 
                     var chunk = PopInvalidChunk();
                     if (chunk != null)
@@ -525,7 +441,6 @@ namespace DwarfCorp
             PauseThreads = true;
             ExitThreads = true;
             GeneratorThread.Join();
-            RebuildLiquidThread.Join();
             RebuildThread.Join();
             WaterUpdateThread.Join();
             //ChunkData.ChunkMap.Clear();
