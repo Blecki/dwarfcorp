@@ -286,7 +286,7 @@ namespace DwarfCorp
                         Gains = new Dictionary<string, SFXMixer.Levels>()
                     };
                 }
-                SoundEffect.DistanceScale = 0.5f;
+                SoundEffect.DistanceScale = 0.1f;
                 //SoundEffect.DopplerScale = 0.1f;
                 AudioEngine = new AudioEngine("Content\\Audio\\XACT\\Win\\Sounds.xgs");
                 SoundBank = new SoundBank(AudioEngine, "Content\\Audio\\XACT\\Win\\SoundBank.xsb");
