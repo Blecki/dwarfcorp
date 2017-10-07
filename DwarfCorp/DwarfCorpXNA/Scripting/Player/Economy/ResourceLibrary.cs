@@ -86,6 +86,10 @@ namespace DwarfCorp
 
             public static implicit operator ResourceType(string value)
             {
+                if (value == null)
+                {
+                    return null;
+                }
                 return new ResourceType { _value = new string(value.ToCharArray()) };
             }
 
@@ -101,6 +105,10 @@ namespace DwarfCorp
 
             public Resource GetResource()
             {
+                if (_value == null)
+                {
+                    return null;
+                }
                 return ResourceLibrary.GetResourceByName(_value);
             }
         }
