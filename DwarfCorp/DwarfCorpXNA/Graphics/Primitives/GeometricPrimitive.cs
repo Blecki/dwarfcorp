@@ -41,57 +41,6 @@ namespace DwarfCorp
             ResetBuffer(GameState.Game.GraphicsDevice);
         }
 
-        private static bool RampSet(RampType ToCheck, RampType For)
-        {
-            return (int)(ToCheck & For) != 0;
-        }
-
-        protected static bool ShouldDrawFace(BoxFace face, RampType neighborRamp, RampType myRamp)
-        {
-            switch (face)
-            {
-                case BoxFace.Top:
-                case BoxFace.Bottom:
-                    return true;
-                case BoxFace.Back:
-                    return CheckRamps(myRamp, RampType.TopBackLeft, RampType.TopBackRight,
-                        neighborRamp, RampType.TopFrontLeft, RampType.TopFrontRight);
-                case BoxFace.Front:
-                    return CheckRamps(myRamp, RampType.TopFrontLeft, RampType.TopFrontRight,
-                        neighborRamp, RampType.TopBackLeft, RampType.TopBackRight);
-                case BoxFace.Left:
-                    return CheckRamps(myRamp, RampType.TopBackLeft, RampType.TopFrontLeft,
-                        neighborRamp, RampType.TopBackRight, RampType.TopFrontRight);
-                case BoxFace.Right:
-                    return CheckRamps(myRamp, RampType.TopBackRight, RampType.TopFrontRight,
-                        neighborRamp, RampType.TopBackLeft, RampType.TopFrontLeft);
-                default:
-                    return false;
-            }
-        }
-
-        private static bool CheckRamps(RampType A, RampType A1, RampType A2, RampType B, RampType B1, RampType B2)
-        {
-            return (!RampSet(A, A1) && RampSet(B, B1)) || (!RampSet(A, A2) && RampSet(B, B2));
-        }
-
-        protected static bool IsSideFace(BoxFace face)
-        {
-            return face != BoxFace.Top && face != BoxFace.Bottom;
-        }
-
-        protected static bool IsFaceVisible(VoxelHandle voxel, VoxelHandle neighbor, BoxFace face)
-        {
-            return
-                !neighbor.IsValid ||
-                (neighbor.IsExplored && neighbor.IsEmpty) ||
-                (neighbor.Type.IsTransparent && !voxel.Type.IsTransparent) ||
-                !neighbor.IsVisible ||
-                (neighbor.Type.CanRamp && neighbor.RampType != RampType.None &&
-                IsSideFace(face) &&
-                ShouldDrawFace(face, neighbor.RampType, voxel.RampType));
-        }
-        
         /// <summary>
         /// Draws the primitive to the screen.
         /// </summary>

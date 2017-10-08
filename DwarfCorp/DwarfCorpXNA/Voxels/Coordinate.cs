@@ -98,7 +98,31 @@ namespace DwarfCorp
 
         public override string ToString()
         {
-            return String.Format("[{0}, {1}, {2}]", X, Y, Z);
+            return String.Format("{0} {1} {2}", X, Y, Z);
+        }
+
+        public static GlobalVoxelCoordinate Parse(String In)
+        {
+            var parts = In.Split(' ');
+            if (parts.Length != 3) throw new InvalidOperationException();
+            return new GlobalVoxelCoordinate(Int32.Parse(parts[0]), Int32.Parse(parts[1]), Int32.Parse(parts[2]));
+        }
+
+        public static bool TryParse(String In, out GlobalVoxelCoordinate V)
+        {
+            V = new GlobalVoxelCoordinate(0, 0, 0);
+
+            var parts = In.Split(' ');
+            if (parts.Length != 3)
+                return false;
+
+            Int32 x = 0, y = 0, z = 0;
+            if (!Int32.TryParse(parts[0], out x)) return false;
+            if (!Int32.TryParse(parts[1], out y)) return false;
+            if (!Int32.TryParse(parts[2], out z)) return false;
+
+            V = new GlobalVoxelCoordinate(x, y, z);
+            return true;
         }
     }
 
