@@ -612,24 +612,35 @@ namespace DwarfCorp
             public class Plants
             {
                 public static string berrybush = ProgramData.CreatePath("Entities", "Plants", "berrybush");
+                public static string berrybushsprout = ProgramData.CreatePath("Entities", "Plants", "berrybush-sprout");
                 public static string deadbush = ProgramData.CreatePath("Entities", "Plants", "deadbush");
                 public static string flower = ProgramData.CreatePath("Entities", "Plants", "flower");
                 public static string frostgrass = ProgramData.CreatePath("Entities", "Plants", "frostgrass");
                 public static string gnarled = ProgramData.CreatePath("Entities", "Plants", "gnarled");
                 public static string grass = ProgramData.CreatePath("Entities", "Plants", "grass");
                 public static string mushroom = ProgramData.CreatePath("Entities", "Plants", "mushroom");
+                public static string mushroomsprout = ProgramData.CreatePath("Entities", "Plants", "mushroom-sprout");
                 public static string cavemushroom = ProgramData.CreatePath("Entities", "Plants", "caveshroom");
-                public static string palm = ProgramData.CreatePath("Entities", "Plants", "palm");
-                public static string pine = ProgramData.CreatePath("Entities", "Plants", "pine");
-                public static string shrub = ProgramData.CreatePath("Entities", "Plants", "shrub");
+                public static string cavemushroomsprout = ProgramData.CreatePath("Entities", "Plants", "caveshroom-sprout");
+                public static string palm = ProgramData.CreatePath("Entities", "Plants", "palmtree");
+                public static string palmsprout = ProgramData.CreatePath("Entities", "Plants", "palmtree-sprout");
+                public static string pine = ProgramData.CreatePath("Entities", "Plants", "pinetree");
+                public static string pinesprout = ProgramData.CreatePath("Entities", "Plants", "pinetree-sprout");
                 public static string snowpine = ProgramData.CreatePath("Entities", "Plants", "snowpine");
                 public static string vine = ProgramData.CreatePath("Entities", "Plants", "vine");
                 public static string wheat = ProgramData.CreatePath("Entities", "Plants", "wheat");
+                public static string wheatsprout = ProgramData.CreatePath("Entities", "Plants", "wheat-sprout");
                 public static string appletree = ProgramData.CreatePath("Entities", "Plants", "appletree");
+                public static string appletreesprout = ProgramData.CreatePath("Entities", "Plants", "appletree-sprout");
+                public static string eviltree = ProgramData.CreatePath("Entities", "Plants", "eviltree");
+                public static string eviltreesprout = ProgramData.CreatePath("Entities", "Plants", "eviltree-sprout");
+                public static string pumpkinvine = ProgramData.CreatePath("Entities", "Plants", "pumpkinvine");
+                public static string pumpkinvinesprout = ProgramData.CreatePath("Entities", "Plants", "pumpkinvine-sprout");
+                public static string cactus = ProgramData.CreatePath("Entities", "Plants", "cactus");
+                public static string cactussprout = ProgramData.CreatePath("Entities", "Plants", "cactus-sprout");
             }
             public class Resources
             {
-                //public static string resources = ProgramData.CreatePath("Entities", "Resources", "resources");
                 public static string resources = ProgramData.CreatePath("newgui", "resources");
             }
 

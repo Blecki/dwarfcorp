@@ -968,6 +968,7 @@ namespace DwarfCorp.GameStates
                             TextVerticalAlign = VerticalAlign.Bottom,
                             Text = Master.Faction.ListResourcesInStockpilesPlusMinions()[data.ResourceToRelease].First.NumResources.ToString(),
                             TextColor = Color.White.ToVector4(),
+                            Font = "font10-outline-numsonly",
                             PopupChild = new BuildWallInfo
                             {
                                 Data = data,
@@ -1017,6 +1018,7 @@ namespace DwarfCorp.GameStates
                             TextVerticalAlign = VerticalAlign.Bottom,
                             Text = Master.Faction.ListResourcesInStockpilesPlusMinions()[data.ResourceToRelease].First.NumResources.ToString(),
                             TextColor = Color.White.ToVector4(),
+                            Font = "font10-outline-numsonly",
                             PopupChild = new BuildWallInfo
                             {
                                 Data = data,
