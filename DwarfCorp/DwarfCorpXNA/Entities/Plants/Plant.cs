@@ -76,8 +76,14 @@ namespace DwarfCorp
             UpdateTransform();
             SetFlagRecursive(Flag.Active, false);
             SetFlagRecursive(Flag.Visible, false);
-
-            return Parent.AddChild(new Seedling(Manager, this, LocalTransform.Translation, Seedlingsheet, SeedlingFrame)
+            VoxelHandle below = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(Manager.World.ChunkManager.ChunkData, new GlobalVoxelCoordinate((int)LocalTransform.Translation.X, 
+                (int)LocalTransform.Translation.Y, (int)LocalTransform.Translation.Z)));
+            Vector3 pos = LocalTransform.Translation;
+            if (below.IsValid)
+            {
+                pos = below.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f);
+            }
+            return Parent.AddChild(new Seedling(Manager, this, pos, Seedlingsheet, SeedlingFrame)
             {
                 FullyGrownDay = Manager.World.Time.CurrentDate.AddHours(GrowthHours).AddDays(GrowthDays)
             }) as Seedling;
