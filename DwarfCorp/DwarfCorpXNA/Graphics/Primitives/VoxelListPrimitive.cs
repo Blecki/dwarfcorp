@@ -144,8 +144,10 @@ namespace DwarfCorp
                 }
 
                 if (GameSettings.Default.CalculateRamps)
+                {
                     UpdateCornerRamps(chunk, y);
-                    
+                    UpdateNeighborEdgeRamps(chunk, y);
+                }                    
 
                 if (GameSettings.Default.GrassMotes)
                     chunk.RebuildMoteLayer(y);
@@ -320,21 +322,24 @@ namespace DwarfCorp
         
         private static void UpdateVoxelRamps(VoxelHandle V)
         {
-            V.RampType = RampType.None;
-
             if (V.IsEmpty || !V.IsVisible || !V.Type.CanRamp)
+            {
+                V.RampType = RampType.None;
                 return;
-
-            bool isTop = false;
+            }
 
             if (V.Coordinate.Y < VoxelConstants.ChunkSizeY - 1)
             {
-                var vAbove = new VoxelHandle(V.Chunk, new LocalVoxelCoordinate(V.Coordinate.X, V.Coordinate.Y + 1, V.Coordinate.Z));
-                isTop = vAbove.IsEmpty;
+                var lCoord = V.Coordinate.GetLocalVoxelCoordinate();
+                var vAbove = new VoxelHandle(V.Chunk, new LocalVoxelCoordinate(lCoord.X, lCoord.Y + 1, lCoord.Z));
+                if (!vAbove.IsEmpty)
+                {
+                    V.RampType = RampType.None;
+                    return;
+                }
             }
 
-            if (!isTop)
-                return;
+            var compositeRamp = RampType.None;
 
             foreach (var vertex in TopVerticies)
             {
@@ -350,82 +355,57 @@ namespace DwarfCorp
                 switch (vertex)
                 {
                     case VoxelVertex.FrontTopLeft:
-                        V.RampType |= RampType.TopFrontLeft;
+                        compositeRamp |= RampType.TopFrontLeft;
                         break;
                     case VoxelVertex.FrontTopRight:
-                        V.RampType |= RampType.TopFrontRight;
+                        compositeRamp |= RampType.TopFrontRight;
                         break;
                     case VoxelVertex.BackTopLeft:
-                        V.RampType |= RampType.TopBackLeft;
+                        compositeRamp |= RampType.TopBackLeft;
                         break;
                     case VoxelVertex.BackTopRight:
-                        V.RampType |= RampType.TopBackRight;
+                        compositeRamp |= RampType.TopBackRight;
                         break;
                 }
             }
+
+            V.RampType = compositeRamp;
         }
 
         public static void UpdateCornerRamps(VoxelChunk Chunk, int Y)
         {
-            List<VoxelVertex> top = new List<VoxelVertex>()
-            {
-                VoxelVertex.FrontTopLeft,
-                VoxelVertex.FrontTopRight,
-                VoxelVertex.BackTopLeft,
-                VoxelVertex.BackTopRight
-            };
-
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
-            {
                 for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
-                {
-                    var v = new VoxelHandle(Chunk, new LocalVoxelCoordinate(x, Y, z));
-                    
-                    v.RampType = RampType.None;
+                    UpdateVoxelRamps(new VoxelHandle(Chunk, new LocalVoxelCoordinate(x, Y, z)));               
+        }
 
-                    if (v.IsEmpty || !v.IsVisible || !v.Type.CanRamp)
-                        continue;
+        private static void UpdateNeighborEdgeRamps(VoxelChunk Chunk, int Y)
+        {
+            var startChunkCorner = new GlobalVoxelCoordinate(Chunk.ID, new LocalVoxelCoordinate(0, 0, 0))
+                + new GlobalVoxelOffset(-1, 0, -1);
+            var endChunkCorner = new GlobalVoxelCoordinate(Chunk.ID, new LocalVoxelCoordinate(0, 0, 0))
+                + new GlobalVoxelOffset(VoxelConstants.ChunkSizeX, 0, VoxelConstants.ChunkSizeZ);
 
-                    bool isTop = false;
+            for (int x = startChunkCorner.X; x <= endChunkCorner.X; ++x)
+            {
+                var v1 = new VoxelHandle(Chunk.Manager.ChunkData,
+                    new GlobalVoxelCoordinate(x, Y, startChunkCorner.Z));
+                if (v1.IsValid) UpdateVoxelRamps(v1);
 
-                    if (Y < VoxelConstants.ChunkSizeY - 1)
-                    {
-                        var vAbove = new VoxelHandle(Chunk, new LocalVoxelCoordinate(x, Y + 1, z));
+                var v2 = new VoxelHandle(Chunk.Manager.ChunkData,
+                    new GlobalVoxelCoordinate(x, Y, endChunkCorner.Z));
+                if (v2.IsValid) UpdateVoxelRamps(v2);
+            }
 
-                        isTop = vAbove.IsEmpty;
-                    }
+            for (int z = startChunkCorner.Z + 1; z < endChunkCorner.Z; ++z)
+            {
+                var v1 = new VoxelHandle(Chunk.Manager.ChunkData,
+                    new GlobalVoxelCoordinate(startChunkCorner.X, Y, z));
+                if (v1.IsValid) UpdateVoxelRamps(v1);
 
-                    if (!isTop)
-                        continue;
-
-                    foreach (var vertex in top)
-                    {
-                        // If there are no empty neighbors, no slope.
-                        if (!VoxelHelpers.EnumerateVertexNeighbors2D(v.Coordinate, vertex)
-                            .Any(n =>
-                            {
-                                var handle = new VoxelHandle(Chunk.Manager.ChunkData, n);
-                                return !handle.IsValid || handle.IsEmpty;
-                            }))
-                            continue;
-
-                        switch (vertex)
-                        {
-                            case VoxelVertex.FrontTopLeft:
-                                v.RampType |= RampType.TopFrontLeft;
-                                break;
-                            case VoxelVertex.FrontTopRight:
-                                v.RampType |= RampType.TopFrontRight;
-                                break;
-                            case VoxelVertex.BackTopLeft:
-                                v.RampType |= RampType.TopBackLeft;
-                                break;
-                            case VoxelVertex.BackTopRight:
-                                v.RampType |= RampType.TopBackRight;
-                                break;
-                        }
-                    }
-                }
+                var v2 = new VoxelHandle(Chunk.Manager.ChunkData,
+                    new GlobalVoxelCoordinate(endChunkCorner.X, Y, z));
+                if (v2.IsValid) UpdateVoxelRamps(v2);
             }
         }
 
