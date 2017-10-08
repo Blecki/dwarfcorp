@@ -298,6 +298,7 @@ namespace DwarfCorp
                     Camera = gameFile.PlayData.Camera;
                     ChunkManager.camera = Camera;
                     ChunkRenderer.camera = Camera;
+                    DesignationDrawer = gameFile.PlayData.Designations;
 
                     Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
                     Vector3 extents = new Vector3(1500, 1500, 1500);

@@ -43,6 +43,60 @@ namespace DwarfCorp
             return v == VoxelVertex.BackTopLeft || v == VoxelVertex.FrontTopLeft || v == VoxelVertex.FrontTopRight || v == VoxelVertex.BackTopRight;
         }
 
+        protected static bool ShouldDrawFace(BoxFace face, RampType neighborRamp, RampType myRamp)
+        {
+            switch (face)
+            {
+                case BoxFace.Top:
+                case BoxFace.Bottom:
+                    return true;
+                case BoxFace.Back:
+                    return CheckRamps(myRamp, RampType.TopBackLeft, RampType.TopBackRight,
+                        neighborRamp, RampType.TopFrontLeft, RampType.TopFrontRight);
+                case BoxFace.Front:
+                    return CheckRamps(myRamp, RampType.TopFrontLeft, RampType.TopFrontRight,
+                        neighborRamp, RampType.TopBackLeft, RampType.TopBackRight);
+                case BoxFace.Left:
+                    return CheckRamps(myRamp, RampType.TopBackLeft, RampType.TopFrontLeft,
+                        neighborRamp, RampType.TopBackRight, RampType.TopFrontRight);
+                case BoxFace.Right:
+                    return CheckRamps(myRamp, RampType.TopBackRight, RampType.TopFrontRight,
+                        neighborRamp, RampType.TopBackLeft, RampType.TopFrontLeft);
+                default:
+                    return false;
+            }
+        }
+
+        private static bool RampSet(RampType ToCheck, RampType For)
+        {
+            return (ToCheck & For) != 0;
+        }
+
+        private static bool CheckRamps(RampType A, RampType A1, RampType A2, RampType B, RampType B1, RampType B2)
+        {
+            return (!RampSet(A, A1) && RampSet(B, B1)) || (!RampSet(A, A2) && RampSet(B, B2));
+        }
+
+        protected static bool IsSideFace(BoxFace face)
+        {
+            return face != BoxFace.Top && face != BoxFace.Bottom;
+        }
+
+        protected static bool IsFaceVisible(VoxelHandle voxel, VoxelHandle neighbor, BoxFace face)
+        {
+            return
+                !neighbor.IsValid
+                || (neighbor.IsExplored && neighbor.IsEmpty)
+                || (neighbor.Type.IsTransparent && !voxel.Type.IsTransparent)
+                || !neighbor.IsVisible
+                || (
+                    neighbor.Type.CanRamp
+                    && neighbor.RampType != RampType.None
+                    && IsSideFace(face)
+                    && ShouldDrawFace(face, neighbor.RampType, voxel.RampType)
+                );
+        }
+
         public void InitializeFromChunk(VoxelChunk chunk)
         {
             if (chunk == null)
@@ -91,6 +145,7 @@ namespace DwarfCorp
 
                 if (GameSettings.Default.CalculateRamps)
                     UpdateCornerRamps(chunk, y);
+                    
 
                 if (GameSettings.Default.GrassMotes)
                     chunk.RebuildMoteLayer(y);
@@ -255,6 +310,60 @@ namespace DwarfCorp
             return toReturn;
         }
 
+        private static VoxelVertex[] TopVerticies = new VoxelVertex[]
+            {
+                VoxelVertex.FrontTopLeft,
+                VoxelVertex.FrontTopRight,
+                VoxelVertex.BackTopLeft,
+                VoxelVertex.BackTopRight
+            };
+        
+        private static void UpdateVoxelRamps(VoxelHandle V)
+        {
+            V.RampType = RampType.None;
+
+            if (V.IsEmpty || !V.IsVisible || !V.Type.CanRamp)
+                return;
+
+            bool isTop = false;
+
+            if (V.Coordinate.Y < VoxelConstants.ChunkSizeY - 1)
+            {
+                var vAbove = new VoxelHandle(V.Chunk, new LocalVoxelCoordinate(V.Coordinate.X, V.Coordinate.Y + 1, V.Coordinate.Z));
+                isTop = vAbove.IsEmpty;
+            }
+
+            if (!isTop)
+                return;
+
+            foreach (var vertex in TopVerticies)
+            {
+                // If there are no empty neighbors, no slope.
+                if (!VoxelHelpers.EnumerateVertexNeighbors2D(V.Coordinate, vertex)
+                    .Any(n =>
+                    {
+                        var handle = new VoxelHandle(V.Chunk.Manager.ChunkData, n);
+                        return !handle.IsValid || handle.IsEmpty;
+                    }))
+                    continue;
+
+                switch (vertex)
+                {
+                    case VoxelVertex.FrontTopLeft:
+                        V.RampType |= RampType.TopFrontLeft;
+                        break;
+                    case VoxelVertex.FrontTopRight:
+                        V.RampType |= RampType.TopFrontRight;
+                        break;
+                    case VoxelVertex.BackTopLeft:
+                        V.RampType |= RampType.TopBackLeft;
+                        break;
+                    case VoxelVertex.BackTopRight:
+                        V.RampType |= RampType.TopBackRight;
+                        break;
+                }
+            }
+        }
 
         public static void UpdateCornerRamps(VoxelChunk Chunk, int Y)
         {
@@ -271,6 +380,12 @@ namespace DwarfCorp
                 for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                 {
                     var v = new VoxelHandle(Chunk, new LocalVoxelCoordinate(x, Y, z));
+                    
+                    v.RampType = RampType.None;
+
+                    if (v.IsEmpty || !v.IsVisible || !v.Type.CanRamp)
+                        continue;
+
                     bool isTop = false;
 
                     if (Y < VoxelConstants.ChunkSizeY - 1)
@@ -280,26 +395,13 @@ namespace DwarfCorp
                         isTop = vAbove.IsEmpty;
                     }
 
-                    v.RampType = RampType.None;
-
-                    // Check solid voxels
-                    if (v.WaterCell.Type == LiquidType.None)
-                    {
-                        if (v.IsEmpty || !v.IsVisible || !isTop || !v.Type.CanRamp)
-                            continue;
-                    }
-                    // Check liquid voxels for tops
-                    else
-                    {
-                        if (!isTop)
-                            continue;
-                    }
+                    if (!isTop)
+                        continue;
 
                     foreach (var vertex in top)
                     {
                         // If there are no empty neighbors, no slope.
-                        if (v.WaterCell.Type == LiquidType.None
-                            && !VoxelHelpers.EnumerateVertexNeighbors2D(v.Coordinate, vertex)
+                        if (!VoxelHelpers.EnumerateVertexNeighbors2D(v.Coordinate, vertex)
                             .Any(n =>
                             {
                                 var handle = new VoxelHandle(Chunk.Manager.ChunkData, n);

@@ -49,14 +49,13 @@ namespace DwarfCorp.Tutorial
 
         public void ShowTutorial(String Name)
         {
-            // Queue this and show on next frame in an update func.
             if (TutorialEnabled && Entries.ContainsKey(Name) && !Entries[Name].Shown)
                 PendingTutorial = Name;
         }
 
         public void Update(Gui.Root Gui)
         {
-            if (!String.IsNullOrEmpty(PendingTutorial) && Gui != null &&!Entries[PendingTutorial].Shown)
+            if (TutorialEnabled && !String.IsNullOrEmpty(PendingTutorial) && Gui != null &&!Entries[PendingTutorial].Shown)
             {
                 if (TutorialVisible && ExistingTutorial != null)
                 {

@@ -47,6 +47,7 @@ namespace DwarfCorp
     [Saving.SaveableObject(0)]
     public class DesignationDrawer : Saving.ISaveableObject
     {
+        [JsonProperty]
         private Dictionary<DesignationType, List<GlobalVoxelCoordinate>> HilitedVoxels = new Dictionary<DesignationType, List<GlobalVoxelCoordinate>>();
 
         private class HilitedBody
@@ -55,6 +56,7 @@ namespace DwarfCorp
             public DesignationType DesignationType;
         }
 
+        [JsonProperty]
         private List<HilitedBody> HilitedBodies = new List<HilitedBody>();
 
         private class DesignationTypeProperties
