@@ -76,7 +76,7 @@ namespace DwarfCorp.Gui.Widgets
                             listView.Layout();
                             listView.OnUpdate = (widget, time) =>
                             {
-                                if (IsAnyParentHidden() || IsAnyParentTransparent())
+                                if (IsAnyParentHidden())
                                 {
                                     widget.Close();
                                 }

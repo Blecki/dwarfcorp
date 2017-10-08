@@ -20,19 +20,19 @@ namespace DwarfCorp
     /// </summary>
     public class ComponentManager
     {
-        [Saving.SaveableObject(0)]
-        public class ComponentSaveData : Saving.ISaveableObject
+        //[Saving.SaveableObject(0)]
+        public class ComponentSaveData //: Saving.ISaveableObject
         {
-            public class ComponentSaveNugget : Saving.Nugget
+            /*public class ComponentSaveNugget : Saving.Nugget
             {
                 public List<Saving.Nugget> SaveableComponents;
                 public uint RootComponent;
-            }
+            }*/
 
             public List<GameComponent> SaveableComponents;
             public uint RootComponent;
 
-            Saving.Nugget Saving.ISaveableObject.SaveToNugget(Saving.Saver SaveSystem)
+            /*Saving.Nugget Saving.ISaveableObject.SaveToNugget(Saving.Saver SaveSystem)
             {
                 return new ComponentSaveNugget
                 {
@@ -46,7 +46,7 @@ namespace DwarfCorp
                 var n = From as ComponentSaveNugget;
                 SaveableComponents = n.SaveableComponents.Select(o => SaveSystem.LoadObject(o) as GameComponent).ToList();
                 RootComponent = n.RootComponent;
-            }
+            }*/
         }
 
         private Dictionary<uint, GameComponent> Components;

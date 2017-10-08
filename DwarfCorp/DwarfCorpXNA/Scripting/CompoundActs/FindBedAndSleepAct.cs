@@ -56,6 +56,15 @@ namespace DwarfCorp
         }
 
 
+        public override void OnCanceled()
+        {
+            foreach(var status in Creature.Unreserve("Bed"))
+            {
+
+            }
+            base.OnCanceled();
+        }
+
         public override void Initialize()
         {
             Body closestItem = Agent.Faction.FindNearestItemWithTags("Bed", Agent.Position, true);
@@ -111,6 +120,14 @@ namespace DwarfCorp
             Name = "Heal thyself";
         }
 
+        public override void OnCanceled()
+        {
+            foreach (var status in Creature.Unreserve("Bed"))
+            {
+
+            }
+            base.OnCanceled();
+        }
 
         public override void Initialize()
         {

@@ -60,7 +60,7 @@ namespace DwarfCorp
         public Economy Economy { get; set; }
         public List<TradeEnvoy> TradeEnvoys { get; set; }
         public List<WarParty> WarParties { get; set; }
-        public Dictionary<VoxelHandle, BuildOrder> DigOrders { get; set; }
+        public Dictionary<ulong, BuildOrder> DigOrders { get; set; }
         public List<BuildOrder> GuardDesignations { get; set; }
         public List<Body> OwnedObjects { get; set; }
         public List<Stockpile> Stockpiles { get; set; }
@@ -176,7 +176,7 @@ namespace DwarfCorp
             SelectedMinions = new List<CreatureAI>();
             TaskManager = new TaskManager();
             Stockpiles = new List<Stockpile>();
-            DigOrders = new Dictionary<VoxelHandle, BuildOrder>();
+            DigOrders = new Dictionary<ulong, BuildOrder>();
             GuardDesignations = new List<BuildOrder>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
@@ -195,7 +195,7 @@ namespace DwarfCorp
             SelectedMinions = new List<CreatureAI>();
             TaskManager = new TaskManager();
             Stockpiles = new List<Stockpile>();
-            DigOrders = new Dictionary<VoxelHandle, BuildOrder>();
+            DigOrders = new Dictionary<ulong, BuildOrder>();
             GuardDesignations = new List<BuildOrder>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
@@ -255,7 +255,7 @@ namespace DwarfCorp
                 zone.ZoneBodies.RemoveAll(body => body.IsDead);
             }
 
-            List<VoxelHandle> removalKeys = new List<VoxelHandle>();
+            List<ulong> removalKeys = new List<ulong>();
             foreach (var kvp in DigOrders)
             {
                 var v = kvp.Value.Vox;
@@ -421,7 +421,7 @@ namespace DwarfCorp
         public BuildOrder GetDigDesignation(VoxelHandle vox)
         {
             BuildOrder returnOrder;
-            if (DigOrders.TryGetValue(vox, out returnOrder))
+            if (DigOrders.TryGetValue(GetVoxelQuickCompare(vox), out returnOrder))
                 return returnOrder;
             return new BuildOrder();
         }
@@ -429,16 +429,17 @@ namespace DwarfCorp
         public void AddDigDesignation(BuildOrder order)
         {
             if (!order.Vox.IsValid) return;
-            DigOrders.Add(order.Vox, order);
+            DigOrders.Add(GetVoxelQuickCompare(order.Vox), order);
             if (this == World.PlayerFaction)
                 World.DesignationDrawer.HiliteVoxel(order.Vox.Coordinate, DesignationType.Dig);
         }
 
         public void RemoveDigDesignation(VoxelHandle vox)
         {
-            if (DigOrders.ContainsKey(vox))
+            var qc = GetVoxelQuickCompare(vox);
+            if (DigOrders.ContainsKey(qc))
             {
-                DigOrders.Remove(vox);
+                DigOrders.Remove(qc);
                 if (this == World.PlayerFaction)
                 	World.DesignationDrawer.UnHiliteVoxel(vox.Coordinate, DesignationType.Dig);
             }
@@ -446,7 +447,7 @@ namespace DwarfCorp
 
         public bool IsDigDesignation(VoxelHandle vox)
         {
-            return DigOrders.ContainsKey(vox);
+            return DigOrders.ContainsKey(GetVoxelQuickCompare(vox));
         }
 
 
