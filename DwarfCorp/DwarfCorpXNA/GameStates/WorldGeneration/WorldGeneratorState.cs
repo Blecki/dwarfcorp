@@ -335,10 +335,20 @@ namespace DwarfCorp.GameStates
 
         public override void OnPopped()
         {
-            this.Generator.LandMesh.Dispose();
-            this.Generator.LandIndex.Dispose();
+            if (this.Generator.LandMesh != null)
+            {
+                this.Generator.LandMesh.Dispose();
+            }
+            if (this.Generator.LandIndex != null)
+            {
+                this.Generator.LandIndex.Dispose();
+            }
             this.Generator.worldData = null;
-            this.GuiRoot.DestroyWidget(this.GuiRoot.RootItem);
+
+            if (this.GuiRoot != null)
+            {
+                this.GuiRoot.DestroyWidget(this.GuiRoot.RootItem);
+            }
             base.OnExit();
         }
     }
