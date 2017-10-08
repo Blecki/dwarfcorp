@@ -110,7 +110,6 @@ namespace DwarfCorp
         }
     }
 
-
     /// <summary>
     /// Serializes and deserializes BoundingBox objects to JSON.
     /// </summary>
