@@ -137,7 +137,7 @@ namespace DwarfCorp
 
         new public void Update(DwarfTime time, ChunkManager chunks, Camera camera)
         {
-            if (Battery != null)
+            if (Active && Battery != null)
             {
                 Battery.Update(time, Manager.World);
 

@@ -39,6 +39,7 @@ using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace DwarfCorp
 {
@@ -66,6 +67,17 @@ namespace DwarfCorp
             Continuous
         }
 
+
+        [OnDeserializing]
+        public void OnDeserializing(StreamingContext ctx)
+        {
+            World = (WorldManager)(ctx.Context);
+        }
+
+        public Spell()
+        {
+
+        }
 
         public Spell(WorldManager world)
         {

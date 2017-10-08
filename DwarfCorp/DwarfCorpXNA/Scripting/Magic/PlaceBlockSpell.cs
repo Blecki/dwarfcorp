@@ -47,6 +47,11 @@ namespace DwarfCorp
         public string VoxelType { get; set; }
         public bool Transmute { get; set; }
 
+        public PlaceBlockSpell()
+        {
+
+        }
+
         public PlaceBlockSpell(WorldManager world, string voxelType, bool transmute) :
             base(world)
         {

@@ -362,7 +362,8 @@ namespace DwarfCorp
                             {
                                 case InputManager.MouseButton.Left:
                                     {
-                                        var pens = Player.Faction.GetRooms().Where(room => room is AnimalPen).Cast<AnimalPen>().Where(pen => pen.Species == "" || pen.Species == animal.GetRoot().GetComponent<Creature>().Species);
+                                        var pens = Player.Faction.GetRooms().Where(room => room is AnimalPen).Cast<AnimalPen>().Where(pen => pen.IsBuilt && 
+                                        (pen.Species == "" || pen.Species == animal.GetRoot().GetComponent<Creature>().Species));
 
                                         if (pens.Any())
                                         {
@@ -591,12 +592,12 @@ namespace DwarfCorp
 
         public AnimalPen GetClosestPen(Creature agent)
         {
-            if (LastPen != null && (LastPen.Species == "" || LastPen.Species == Animal.Species) && agent.Faction.GetRooms().Contains(LastPen))
+            if (LastPen != null && (LastPen.Species == "" || LastPen.Species == Animal.Species) && agent.Faction.GetRooms().Contains(LastPen) && LastPen.IsBuilt)
             {
                 return LastPen;
             }
 
-            var pens = agent.Faction.GetRooms().Where(room => room is AnimalPen).Cast<AnimalPen>().Where(pen => pen.Species == "" || pen.Species == Animal.Species);
+            var pens = agent.Faction.GetRooms().Where(room => room is AnimalPen && room.IsBuilt).Cast<AnimalPen>().Where(pen => pen.Species == "" || pen.Species == Animal.Species);
             AnimalPen closestPen = null;
             float closestDist = float.MaxValue;
 

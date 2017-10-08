@@ -74,7 +74,7 @@ namespace DwarfCorp.Gui.Widgets
                         var resourceSelector = child.AddChild(new Gui.Widgets.ComboBox
                         {
                             Font = "font8",
-                            Items = Master.Faction.ListResourcesWithTag(resourceAmount.ResourceType).Where(r => r.NumResources >= resourceAmount.NumResources).Select(r => r.ResourceType.ToString()).ToList(),
+                            Items = Master.Faction.ListResourcesWithTag(resourceAmount.ResourceType).Where(r => r.NumResources >= resourceAmount.NumResources).Select(r => r.ResourceType.ToString()).OrderBy(p => p).ToList(),
                             AutoLayout = AutoLayout.DockLeft,
                             MinimumSize = new Point(200, 18)
                         }) as Gui.Widgets.ComboBox;

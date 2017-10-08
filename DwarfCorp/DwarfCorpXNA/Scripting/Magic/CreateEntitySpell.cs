@@ -46,6 +46,11 @@ namespace DwarfCorp
         public string Entity { get; set; }
         public bool Transmute { get; set; }
 
+        public CreateEntitySpell()
+        {
+
+        }
+
         public CreateEntitySpell(WorldManager world) :
             base(world)
         {

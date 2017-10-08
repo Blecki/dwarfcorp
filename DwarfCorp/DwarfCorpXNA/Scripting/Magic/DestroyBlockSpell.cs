@@ -45,6 +45,11 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class DestroyBlockSpell : Spell
     {
+        public DestroyBlockSpell()
+        {
+
+        }
+
         public DestroyBlockSpell(WorldManager world) :
             base(world)
         {
