@@ -48,12 +48,12 @@ namespace DwarfCorp
 
         public Tree() { }
 
-        public Tree(string name, ComponentManager manager, Vector3 position, string asset, ResourceLibrary.ResourceType seed, float treeSize) :
+        public Tree(string name, ComponentManager manager, Vector3 position, string asset, ResourceLibrary.ResourceType seed, float treeSize, string seedlingAsset) :
             base(manager, name, Matrix.Identity, new Vector3(PrimitiveLibrary.BatchBillboardPrimitives[asset].Width, 
                 PrimitiveLibrary.BatchBillboardPrimitives[asset].Height , PrimitiveLibrary.BatchBillboardPrimitives[asset].Width) * 0.75f * treeSize,
              asset, treeSize)
         {
-            Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
+            Seedlingsheet = new SpriteSheet(seedlingAsset, 32, 32);
             SeedlingFrame = new Point(0, 0);
             HurtTimer = new Timer(1.0f, false);
             Matrix matrix = Matrix.Identity;
