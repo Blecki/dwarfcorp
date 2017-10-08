@@ -223,6 +223,7 @@ namespace DwarfCorp
             }
 
             yield return Act.Status.Success;
+            yield break;
         }
 
         public static IEnumerable<Act.Status> RestockAll(this Creature agent)
