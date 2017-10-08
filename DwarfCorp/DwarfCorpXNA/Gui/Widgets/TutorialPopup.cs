@@ -51,7 +51,7 @@ namespace DwarfCorp.Gui.Widgets
                 Text = Message == null ? "" : Message.Text,
                 Font = "font10",
                 AutoLayout = AutoLayout.DockFill,
-                OnLayout = (sender) => sender.Rect.Height -= 20
+                OnLayout = (sender) => sender.Rect.Height -= 30
             });
 
             Layout();

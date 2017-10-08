@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
+using System.Linq;
 
 namespace DwarfCorp
 {
@@ -367,8 +367,10 @@ namespace DwarfCorp
             return (C.X + 1) + (C.Y + 1) * 3 + (C.Z + 1) * 9;
         }
 
-        private static void CreateWaterFaces(VoxelHandle voxel, VoxelChunk chunk,
-                                            int x, int y, int z,
+        private static void CreateWaterFaces(
+            VoxelHandle voxel, 
+            VoxelChunk chunk,
+            int x, int y, int z,
                                             ExtendedVertex[] vertices,
                                             ushort[] Indexes,
                                             int startVertex,
@@ -439,13 +441,27 @@ namespace DwarfCorp
                         // Check if it should ramp.
                         else if (!shoreLine)
                         {
-                            rampOffset.Y = -0.4f;
+                            //rampOffset.Y = -0.4f;
                         }
 
                         pos = primitive.Vertices[vertOffset + faceDescriptor.VertexOffset].Position;
                         pos.Y -= 0.6f;// Minimum ramp position 
-                        //pos.Y *= ((float)voxel.WaterCell.WaterLevel / 8.0f); // Hack water level visualization in
-                        pos += origin + rampOffset;
+
+                        if ((currentVertex & VoxelVertex.Top) == VoxelVertex.Top)
+                        {
+                            var neighbors = VoxelHelpers.EnumerateVertexNeighbors2D(voxel.Coordinate, currentVertex)
+                                .Select(c => new VoxelHandle(chunk.Manager.ChunkData, c))
+                                .Where(h => h.IsValid)
+                                .Select(h => (float)h.WaterCell.WaterLevel / 8.0f);
+
+                            if (neighbors.Count() > 0)
+                                pos.Y *= neighbors.Average();
+
+                            pos += VertexNoise.GetNoiseVectorFromRepeatingTexture(voxel.WorldPosition +
+                            primitive.Vertices[vertOffset + faceDescriptor.VertexOffset].Position);
+                        }
+
+                        pos += origin + rampOffset;                        
 
                         // Store the vertex information for future use when we need it again on this or another face.
                         cache.vertexCalculated[(int)currentVertex] = true;
