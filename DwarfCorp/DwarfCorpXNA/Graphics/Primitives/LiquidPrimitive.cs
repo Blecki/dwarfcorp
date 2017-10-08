@@ -395,8 +395,6 @@ namespace DwarfCorp
 
                 for (int vertOffset = 0; vertOffset < faceDescriptor.VertexCount; vertOffset++)
                 {
-                    // Used twice so we'll store it for later use.
-                    ExtendedVertex vert = primitive.Vertices[faceDescriptor.VertexOffset + vertOffset];
                     VoxelVertex currentVertex = primitive.Deltas[faceDescriptor.VertexOffset + vertOffset];
 
                     // These will be filled out before being used   lh  .

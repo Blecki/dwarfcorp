@@ -2,6 +2,8 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System;
 using Microsoft.Xna.Framework;
+using System.ComponentModel;
+using System.Globalization;
 
 namespace DwarfCorp
 {
@@ -41,8 +43,8 @@ namespace DwarfCorp
                 goto Invalid;
 
             // Inline ChunkData.GetChunk
-           _cache_Chunk = Chunks.ChunkMap[(chunkZ - Chunks.ChunkMapMinZ) * Chunks.ChunkMapWidth 
-               + (chunkX - Chunks.ChunkMapMinX)];
+            _cache_Chunk = Chunks.ChunkMap[(chunkZ - Chunks.ChunkMapMinZ) * Chunks.ChunkMapWidth
+                + (chunkX - Chunks.ChunkMapMinX)];
 
             // Inline GlobalVoxelCoordinate.GetLocalVoxelCoordinate
             var localX = (sX << VoxelConstants.XDivShift) + (Coordinate.X & VoxelConstants.XModMask) - sX;
@@ -65,7 +67,7 @@ namespace DwarfCorp
         #endregion
 
         public readonly GlobalVoxelCoordinate Coordinate;
-        
+
         [JsonIgnore]
         public Vector3 WorldPosition { get { return Coordinate.ToVector3(); } }
 
@@ -87,7 +89,7 @@ namespace DwarfCorp
         }
 
         [JsonConstructor]
-        private VoxelHandle(GlobalVoxelCoordinate Coordinate)
+        internal VoxelHandle(GlobalVoxelCoordinate Coordinate)
         {
             this.Coordinate = Coordinate;
             this._cache_Chunk = null;
@@ -184,7 +186,7 @@ namespace DwarfCorp
         {
             get { return Coordinate.Y < _cache_Chunk.Manager.ChunkData.MaxViewingLevel; }
         }
-        
+
         [JsonIgnore]
         public int SunColor
         {
@@ -366,7 +368,7 @@ namespace DwarfCorp
                 chunk.InvalidateSlice(Y);
             }
         }
-       
+
         #endregion
 
         public override string ToString()

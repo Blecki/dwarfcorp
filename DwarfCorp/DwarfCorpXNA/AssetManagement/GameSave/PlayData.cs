@@ -47,8 +47,8 @@ using DwarfCorp.Saving;
 
 namespace DwarfCorp
 {
-    [Saving.SaveableObject(0)]
-    public class PlayData : Saving.ISaveableObject
+//    [Saving.SaveableObject(0)]
+    public class PlayData //: Saving.ISaveableObject
     {
         public static string Extension = "save";
 
@@ -61,7 +61,6 @@ namespace DwarfCorp
         public Dictionary<ResourceLibrary.ResourceType, Resource> Resources;
         public DesignationDrawer Designations;
         public SpellTree Spells;
-
 
         public static PlayData CreateFromWorld(WorldManager World)
         {
@@ -79,7 +78,7 @@ namespace DwarfCorp
             };
         }
 
-        Nugget ISaveableObject.SaveToNugget(Saver SaveSystem)
+        /*Nugget ISaveableObject.SaveToNugget(Saver SaveSystem)
         {
             return new PlayDataNugget
             {
@@ -99,12 +98,12 @@ namespace DwarfCorp
         {
             var nug = From as PlayDataNugget;
             Camera = SaveSystem.LoadObject(nug.Camera) as OrbitCamera;
-            /* Etc */
+            // Etc
             throw new NotImplementedException();
-        }
+        }*/
     }
 
-    public class PlayDataNugget : Saving.Nugget
+    /*public class PlayDataNugget : Saving.Nugget
     {
         public Nugget Camera;
         public Nugget Components;
@@ -115,5 +114,5 @@ namespace DwarfCorp
         public Nugget Resources;
         public Nugget Designations;
         public Nugget Spells;
-    }
+    }*/
 }
