@@ -156,7 +156,18 @@ namespace DwarfCorp.Gui.Widgets
                     {
                         Master.World.Time.CurrentDate += new TimeSpan(1, 0, 0);
                     }
-                }
+                },
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "FORCE REBUILD",
+                    OnClick = (sender, args) =>
+                    {
+                         foreach (var chunk in Master.World.ChunkManager.ChunkData.ChunkMap)
+                            for (int Y = 0; Y < VoxelConstants.ChunkSizeY; ++Y)
+                                chunk.InvalidateSlice(Y);
+                    }
+                },
+
             };
 
             base.Construct();

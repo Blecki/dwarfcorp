@@ -447,45 +447,31 @@ namespace DwarfCorp.GameStates
         {
             var bottomBar = GuiRoot.RootItem.AddChild(new Gui.Widget
             {
+                Background = new TileReference("basic", 0),
                 MinimumSize = new Point(0, 32),
                 AutoLayout = AutoLayout.DockBottom
             });
 
             #region Setup company information section
-            GuiRoot.RootItem.AddChild(new Gui.Widgets.CompanyLogo
+            bottomBar.AddChild(new Gui.Widgets.CompanyLogo
             {
                 Tag = "company info",
-                Rect = new Rectangle(8, 8, 32, 32),
                 MinimumSize = new Point(32, 32),
                 MaximumSize = new Point(32, 32),
-                AutoLayout = Gui.AutoLayout.None,
+                AutoLayout = Gui.AutoLayout.DockLeft,
                 CompanyInformation = World.PlayerCompany.Information,
                 Tooltip = "Company information"
             });
 
-            GuiRoot.RootItem.AddChild(new Gui.Widget
+            bottomBar.AddChild(new Gui.Widget
             {
-                Rect = new Rectangle(48, 8, 256, 20),
                 Text = World.PlayerCompany.Information.Name,
-                AutoLayout = Gui.AutoLayout.None,
+                AutoLayout = Gui.AutoLayout.DockLeft,
                 Font = "font18-outline",
                 TextColor = new Vector4(1, 1, 1, 1)
             });
 
-            var infoPanel = GuiRoot.RootItem.AddChild(new Gui.Widget
-            {
-                Rect = new Rectangle(0, 40, 128, 102),
-                AutoLayout = Gui.AutoLayout.None
-            });
-
-            var moneyRow = infoPanel.AddChild(new Gui.Widget
-            {
-                Tag = "money",
-                MinimumSize = new Point(0, 34),
-                AutoLayout = Gui.AutoLayout.DockTop
-            });
-
-            moneyRow.AddChild(new Gui.Widget
+            bottomBar.AddChild(new Gui.Widget
             {
                 Background = new Gui.TileReference("resources", 40),
                 MinimumSize = new Point(32, 32),
@@ -493,24 +479,17 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockLeft
             });
 
-            MoneyLabel = moneyRow.AddChild(new Gui.Widget
+            MoneyLabel = bottomBar.AddChild(new Gui.Widget
             {
-                Rect = new Rectangle(48, 32, 128, 20),
-                AutoLayout = Gui.AutoLayout.DockFill,
+                MinimumSize = new Point(128,0),
+                AutoLayout = Gui.AutoLayout.DockLeft,
                 Font = "font18-outline",
                 TextVerticalAlign = Gui.VerticalAlign.Center,
                 TextColor = new Vector4(1, 1, 1, 1),
                 Tooltip = "Amount of money in our treasury"
             });
 
-            var levelRow = infoPanel.AddChild(new Gui.Widget
-            {
-                Tag = "slice",
-                MinimumSize = new Point(0, 34),
-                AutoLayout = Gui.AutoLayout.DockTop
-            });
-
-            levelRow.AddChild(new Gui.Widget
+            bottomBar.AddChild(new Gui.Widget
             {
                 Background = new Gui.TileReference("resources", 42),
                 MinimumSize = new Point(32, 32),
@@ -519,45 +498,45 @@ namespace DwarfCorp.GameStates
                 Tooltip = "Current viewing level."
             });
 
-            levelRow.AddChild(new Gui.Widgets.ImageButton
+            bottomBar.AddChild(new Gui.Widgets.ImageButton
             {
                 Background = new Gui.TileReference("round-buttons", 7),
                 MinimumSize = new Point(16, 16),
                 MaximumSize = new Point(16, 16),
-                AutoLayout = Gui.AutoLayout.FloatLeft,
-                OnLayout = (sender) => sender.Rect.X += 18,
+                AutoLayout = Gui.AutoLayout.DockLeft,
                 OnClick = (sender, args) =>
                 {
                     World.ChunkManager.ChunkData.SetMaxViewingLevel(
                         World.ChunkManager.ChunkData.MaxViewingLevel - 1,
                         ChunkManager.SliceMode.Y);
                 },
-                Tooltip = "Go up down one viewing level."
+                Tooltip = "Go down one viewing level."
             });
 
-            levelRow.AddChild(new Gui.Widgets.ImageButton
+            bottomBar.AddChild(new Gui.Widgets.ImageButton
             {
                 Background = new Gui.TileReference("round-buttons", 3),
                 MinimumSize = new Point(16, 16),
                 MaximumSize = new Point(16, 16),
-                AutoLayout = Gui.AutoLayout.FloatLeft,
+                AutoLayout = Gui.AutoLayout.DockLeft,
                 OnClick = (sender, args) =>
                 {
                     World.ChunkManager.ChunkData.SetMaxViewingLevel(
                         World.ChunkManager.ChunkData.MaxViewingLevel + 1,
                         ChunkManager.SliceMode.Y);
                 },
-                Tooltip = "Go down up one viewing level."
+                Tooltip = "Go up one viewing level."
             });
 
-            LevelLabel = levelRow.AddChild(new Gui.Widget
+            LevelLabel = bottomBar.AddChild(new Gui.Widget
             {
-                AutoLayout = Gui.AutoLayout.DockFill,
+                AutoLayout = Gui.AutoLayout.DockLeft,
                 Font = "font18-outline",
                 OnLayout = (sender) => sender.Rect.X += 36,
                 TextVerticalAlign = Gui.VerticalAlign.Center,
                 TextColor = new Vector4(1, 1, 1, 1),
-                Tooltip = "Current viewing level."
+                Tooltip = "Current viewing level.",
+                MinimumSize = new Point(128,0)
             });
             #endregion
 
@@ -625,6 +604,8 @@ namespace DwarfCorp.GameStates
 
                     if (!SelectedEmployeeInfo.Expanded)
                         employeeInfoRect.Width = 208;
+                    else
+                        employeeInfoRect.Width = 400;
 
                     SelectedEmployeeInfo.Reposition(employeeInfoRect);
                 }
@@ -675,6 +656,16 @@ namespace DwarfCorp.GameStates
                     Text = "EMPLOYEE NAME",
                     TextVerticalAlign = VerticalAlign.Center
                 },
+
+                OnExpansionChanged = (sender) =>
+                {
+                    if ((sender as CollapsableFrame).Expanded)
+                        sender.Rect.Width = 400;
+                    else
+                        sender.Rect.Width = 208;
+
+                    (sender as CollapsableFrame).Reposition(sender.Rect);
+                }
             }) as CollapsableFrame;
 
             #endregion
@@ -1870,8 +1861,8 @@ namespace DwarfCorp.GameStates
                 OnLayout = (sender) =>
                 {
                     sender.Rect = sender.ComputeBoundingChildRect();
-                    sender.Rect.X = GuiRoot.RenderData.VirtualScreen.Center.X - 128; 
-                    sender.Rect.Y = GuiRoot.RenderData.VirtualScreen.Bottom - MainMenu.MinimumSize.Y;
+                    sender.Rect.X = MinimapFrame.Rect.Right;
+                    sender.Rect.Y = MinimapFrame.Rect.Bottom - sender.Rect.Height;
                 },
             }) as FlatToolTray.RootTray;
 

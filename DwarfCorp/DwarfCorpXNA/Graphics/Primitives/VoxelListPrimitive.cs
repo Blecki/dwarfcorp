@@ -50,10 +50,10 @@ namespace DwarfCorp
                 case BoxFace.Top:
                 case BoxFace.Bottom:
                     return true;
-                case BoxFace.Back:
+                case BoxFace.Front:
                     return CheckRamps(myRamp, RampType.TopBackLeft, RampType.TopBackRight,
                         neighborRamp, RampType.TopFrontLeft, RampType.TopFrontRight);
-                case BoxFace.Front:
+                case BoxFace.Back:
                     return CheckRamps(myRamp, RampType.TopFrontLeft, RampType.TopFrontRight,
                         neighborRamp, RampType.TopBackLeft, RampType.TopBackRight);
                 case BoxFace.Left:
