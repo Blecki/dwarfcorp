@@ -110,7 +110,7 @@ namespace DwarfCorp
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
 
-            NamedImageFrame frame = new NamedImageFrame("newgui/pointers2", 32, 5, 0);
+            NamedImageFrame frame = new NamedImageFrame("newgui/pointers", 32, 5, 0);
             foreach (Body tree in Player.BodySelector.CurrentBodies)
             {
                 if (tree.Tags.Contains("Vegetation"))

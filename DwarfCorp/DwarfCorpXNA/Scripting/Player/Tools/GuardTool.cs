@@ -142,7 +142,7 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-            NamedImageFrame frame = new NamedImageFrame("newgui/pointers2", 32, 3, 0);
+            NamedImageFrame frame = new NamedImageFrame("newgui/pointers", 32, 3, 0);
             foreach (BuildOrder d in Player.Faction.GuardDesignations)
             {
                 var v = d.Vox;

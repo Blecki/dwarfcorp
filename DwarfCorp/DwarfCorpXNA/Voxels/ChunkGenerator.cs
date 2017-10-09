@@ -320,9 +320,14 @@ namespace DwarfCorp
                                 offset -= 0.5f;
 
                             var treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
-                            EntityFactory.CreateEntity<Body>(veg.Name,
+                            var tree = EntityFactory.CreateEntity<Plant>(veg.Name,
                                 topVoxel.WorldPosition + (Vector3.Up * treeSize * offset) + Vector3.Up,
                                 Blackboard.Create("Scale", treeSize));
+
+                            if (tree != null && MathFunctions.RandEvent(0.05f))
+                            {
+                                tree.BecomeSeedling();
+                            }
 
                             break;
                         }

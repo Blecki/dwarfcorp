@@ -133,7 +133,7 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-            NamedImageFrame frame = new NamedImageFrame("newgui/pointers2", 32, 6, 0);
+            NamedImageFrame frame = new NamedImageFrame("newgui/pointers", 32, 6, 0);
             // Draw a bounding box around the currently selected bodies.
             foreach (Body body in Player.BodySelector.CurrentBodies)
             {

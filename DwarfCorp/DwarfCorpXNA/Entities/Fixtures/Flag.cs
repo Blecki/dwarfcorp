@@ -70,7 +70,7 @@ namespace DwarfCorp
             base.CreateCosmeticChildren(Manager);
 
             AddChild(new SimpleSprite(Manager, "sprite", Matrix.Identity, false,
-                new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture),
+                new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32),
                 new Point(0, 2))
             {
                 OrientationType = SimpleSprite.OrientMode.YAxis
