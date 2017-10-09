@@ -13,80 +13,76 @@ namespace DwarfCorp.Gui.Widgets
     {
         public Widget ExpandedContents;
         public Widget CollapsedContents;
-        public Widget ExpandButton;
-        public Widget CollapseButton;
 
-        public Rectangle ExpandedPosition;
-        public Rectangle CollapsedPosition;
+        public int CollapsedHeight = 16;
+        public bool Expanded = true;
+
+        public Action<Widget> OnExpansionChanged;
         
         public override void Construct()
         {
-            Border = "border-button";
-            Rect = ExpandedPosition;
-            AutoLayout = AutoLayout.None;
+            Transparent = true;
+
+            AddChild(CollapsedContents);
+            CollapsedContents.AutoLayout = AutoLayout.FloatBottom;
+            CollapsedContents.Hidden = true;
+            CollapsedContents.MinimumSize = new Point(MinimumSize.X, CollapsedHeight);
 
             AddChild(ExpandedContents);
             ExpandedContents.AutoLayout = AutoLayout.DockFill;
 
-            AddChild(CollapsedContents);
-            CollapsedContents.AutoLayout = AutoLayout.DockFill;
-            CollapsedContents.Hidden = true;
-
-            ExpandButton = AddChild(new Gui.Widgets.ImageButton
+            CollapsedContents.AddChild(new Gui.Widgets.ImageButton
             {
                 Background = new Gui.TileReference("round-buttons", 3),
                 MinimumSize = new Point(16, 16),
                 MaximumSize = new Point(16, 16),
-                AutoLayout = Gui.AutoLayout.FloatTopRight,
                 OnClick = (sender, args) =>
                 {
-                    Rect = ExpandedPosition;
-                    ExpandButton.Hidden = true;
-                    CollapseButton.Hidden = false;
                     ExpandedContents.Hidden = false;
                     CollapsedContents.Hidden = true;
-                    Layout();
+                    Expanded = true;
+                    Root.SafeCall(OnExpansionChanged, this);
                     Invalidate();
                 },
-                Hidden = true
+                OnLayout = (sender) =>
+                {
+                    sender.Rect = new Rectangle(CollapsedContents.Rect.Right - 16, CollapsedContents.Rect.Y, 16, 16);
+                }
             });
 
-            CollapseButton = AddChild(new Gui.Widgets.ImageButton
+            ExpandedContents.AddChild(new Gui.Widgets.ImageButton
             {
                 Background = new Gui.TileReference("round-buttons", 7),
                 MinimumSize = new Point(16, 16),
                 MaximumSize = new Point(16, 16),
-                AutoLayout = Gui.AutoLayout.FloatTopRight,
                 OnClick = (sender, args) =>
                 {
-                    Rect = CollapsedPosition;
-                    ExpandButton.Hidden = false;
-                    CollapseButton.Hidden = true;
                     ExpandedContents.Hidden = true;
                     CollapsedContents.Hidden = false;
-                    Layout();
+                    Expanded = false;
+                    Root.SafeCall(OnExpansionChanged, this);
                     Invalidate();
+                },
+                OnLayout = (sender) =>
+                {
+                    sender.Rect = new Rectangle(ExpandedContents.Rect.Right - 16, ExpandedContents.Rect.Y, 16, 16);
                 }
             });
 
             base.Construct();
         }
 
-        public override void Layout()
+        public void Reposition(Rectangle NewRect)
         {
-            Root.SafeCall(OnLayout, this);
-
-            Rect = CollapseButton.Hidden ? CollapsedPosition : ExpandedPosition;
-
-            ExpandedContents.Rect = GetDrawableInterior();
-            CollapsedContents.Rect = GetDrawableInterior();
-
-            ExpandButton.Rect = new Rectangle(Rect.Right - 24, Rect.Top + 8, 16, 16);
-            CollapseButton.Rect = new Rectangle(Rect.Right - 24, Rect.Top + 8, 16, 16);
-
+            Rect = NewRect;
+            ExpandedContents.Rect = NewRect;
             ExpandedContents.Layout();
-            CollapsedContents.Layout();
-        }
 
+            CollapsedContents.Rect = new Rectangle(NewRect.X, NewRect.Bottom - CollapsedHeight,
+                NewRect.Width, CollapsedHeight);
+            CollapsedContents.Layout();
+
+            Root.SafeCall(this.OnLayout, this);
+        }
     }
 }

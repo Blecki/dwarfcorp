@@ -112,21 +112,28 @@ namespace DwarfCorp
 
             for (var y = 0; y < chunk.Manager.ChunkData.MaxViewingLevel; ++y)
             {
-                if (chunk.Data.VoxelsPresentInSlice[y] == 0)
-                {
-                    lightCache.Clear(); // If we skip a slice, nothing in the cache will be reused.
-                    continue;
-                }
-
                 RawPrimitive sliceGeometry = null;
 
                 lock (chunk.Data.SliceCache)
                 {
                     var cachedSlice = chunk.Data.SliceCache[y];
+
+                    if (chunk.Data.VoxelsPresentInSlice[y] == 0)
+                    {
+                        lightCache.Clear(); // If we skip a slice, nothing in the cache will be reused.
+                        if (cachedSlice != null)
+                        {
+                            chunk.Data.SliceCache[y] = null;
+                            totalBuilt += 1;
+                        }
+                        continue;
+                    }
+
                     if (cachedSlice != null)
                     {
                         lightCache.Clear(); // If we skip a slice, nothing in the cache will be reused.
                         sliceStack.Add(cachedSlice);
+                        //totalBuilt += 1;
 
                         if (GameSettings.Default.GrassMotes)
                             chunk.RebuildMoteLayerIfNull(y);
@@ -165,8 +172,8 @@ namespace DwarfCorp
                 totalBuilt += 1;
             }
 
-            if (totalBuilt > 0)
-            {
+            //if (totalBuilt > 0)
+            //{
                 var combinedGeometry = RawPrimitive.Concat(sliceStack);
 
                 Vertices = combinedGeometry.Vertices;
@@ -178,7 +185,7 @@ namespace DwarfCorp
                 chunk.NewPrimitive = this;
                 chunk.NewPrimitiveReceived = true;
                 chunk.PrimitiveMutex.ReleaseMutex();
-            }
+            //}
         }
 
         private static GlobalVoxelCoordinate GetCacheKey(VoxelHandle Handle, VoxelVertex Vertex)

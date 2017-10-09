@@ -48,7 +48,7 @@ namespace DwarfCorp.GameStates
         private Gui.Widgets.FlatToolTray.Tray MainMenu;
         private Gui.Widget TimeLabel;
         private Gui.Widget PausePanel;
-        private Gui.Widgets.MinimapFrame MinimapFrame;
+        private CollapsableFrame MinimapFrame;
         private Gui.Widgets.MinimapRenderer MinimapRenderer;
         private Gui.Widgets.GameSpeedControls GameSpeedControls;
         private Widget PausedWidget;
@@ -386,16 +386,15 @@ namespace DwarfCorp.GameStates
                 Game.Exit();
                  */
 
-
-                if (!MinimapFrame.Hidden && !GuiRoot.RootItem.Hidden)
+                if (MinimapFrame.Expanded && !GuiRoot.RootItem.Hidden)
                     MinimapRenderer.PreRender(gameTime, DwarfGame.SpriteBatch);
 
                 World.Render(gameTime);
 
                 if (Game.StateManager.CurrentState == this)
                 {
-                    if (!MinimapFrame.Hidden && !GuiRoot.RootItem.Hidden)
-                        MinimapRenderer.Render(new Rectangle(0, GuiRoot.RenderData.VirtualScreen.Bottom - 192, 192, 192), GuiRoot);
+                    if (MinimapFrame.Expanded && !GuiRoot.RootItem.Hidden)
+                        MinimapRenderer.Render(new Rectangle(MinimapFrame.Rect.X, MinimapFrame.Rect.Bottom - 192, 192, 192), GuiRoot);
                     GuiRoot.Draw();
                 }
             }
@@ -446,6 +445,12 @@ namespace DwarfCorp.GameStates
         /// </summary>
         public void CreateGUIComponents()
         {
+            var bottomBar = GuiRoot.RootItem.AddChild(new Gui.Widget
+            {
+                MinimumSize = new Point(0, 32),
+                AutoLayout = AutoLayout.DockBottom
+            });
+
             #region Setup company information section
             GuiRoot.RootItem.AddChild(new Gui.Widgets.CompanyLogo
             {
@@ -587,45 +592,55 @@ namespace DwarfCorp.GameStates
 
             #region Minimap
 
-            var minimapRestoreButton = GuiRoot.RootItem.AddChild(new Gui.Widgets.ImageButton
-            {
-                AutoLayout = Gui.AutoLayout.FloatBottomLeft,
-                Background = new Gui.TileReference("round-buttons", 3),
-                MinimumSize = new Point(16, 16),
-                MaximumSize = new Point(16, 16),
-                Hidden = true,
-                OnClick = (sender, args) =>
-                {
-                    sender.Hidden = true;
-                    sender.Invalidate();
-                    MinimapFrame.Hidden = false;
-                    MinimapFrame.Invalidate();
-                },
-                Tooltip = "Restore minimap"
-            });
-
             MinimapRenderer = new Gui.Widgets.MinimapRenderer(192, 192, World,
                 TextureManager.GetTexture(ContentPaths.Terrain.terrain_colormap));
 
-            MinimapFrame = GuiRoot.RootItem.AddChild(new Gui.Widgets.MinimapFrame
+            MinimapFrame = GuiRoot.RootItem.AddChild(new CollapsableFrame
             {
-                Tag = "minimap",
-                AutoLayout = Gui.AutoLayout.FloatBottomLeft,
-                Renderer = MinimapRenderer,
-                RestoreButton = minimapRestoreButton
-            }) as Gui.Widgets.MinimapFrame;
+                MinimumSize = new Point(208, 204),
+                CollapsedHeight = 16,
+                AutoLayout = AutoLayout.FloatBottomLeft,
 
+                ExpandedContents = new MinimapFrame
+                {
+                    Tag = "minimap",
+                    Renderer = MinimapRenderer
+                },
+
+                CollapsedContents = new Widget
+                {
+                    Border = "border-thin",
+                    Text = "MINIMAP",
+                    TextVerticalAlign = VerticalAlign.Center
+                },
+
+                OnExpansionChanged = (sender) =>
+                {
+                    var employeeInfoRect = new Rectangle(0, 0, 400, 400);
+
+                    if (MinimapFrame.Expanded)
+                        employeeInfoRect.Y = MinimapFrame.ExpandedContents.Rect.Y - 400;
+                    else
+                        employeeInfoRect.Y = MinimapFrame.CollapsedContents.Rect.Y - 400;
+
+                    if (!SelectedEmployeeInfo.Expanded)
+                        employeeInfoRect.Width = 208;
+
+                    SelectedEmployeeInfo.Reposition(employeeInfoRect);
+                }
+            }) as CollapsableFrame;
+            
             #endregion
 
             #region Employee Info
 
             SelectedEmployeeInfo = GuiRoot.RootItem.AddChild(new CollapsableFrame
             {
-                ExpandedPosition = new Rectangle(0, GuiRoot.RenderData.VirtualScreen.Height / 2 - 450 / 2, 400, 450),
                 Hidden = true,
 
                 ExpandedContents = new Gui.Widgets.EmployeeInfo
                 {
+                    Border = "border-button",
                     Employee = null,
                     EnablePosession = true,
                     OnFireClicked = (sender) =>
@@ -656,18 +671,10 @@ namespace DwarfCorp.GameStates
 
                 CollapsedContents = new Widget
                 {
-                    Text = "EMPLOYEE NAME"
+                    Border = "border-thin",
+                    Text = "EMPLOYEE NAME",
+                    TextVerticalAlign = VerticalAlign.Center
                 },
-
-                OnLayout = (sender) =>
-                {
-                    (sender as CollapsableFrame).ExpandedPosition = new Rectangle(0,
-                        Math.Max(0, MinimapFrame.Rect.Y - 450),
-                        400,
-                        Math.Min(MinimapFrame.Rect.Y, 450));
-                    (sender as CollapsableFrame).CollapsedPosition = new Rectangle(0,
-                        MinimapFrame.Rect.Y - 40, 200, 40);
-                }
             }) as CollapsableFrame;
 
             #endregion
@@ -1886,6 +1893,9 @@ namespace DwarfCorp.GameStates
             #endregion
 
             GuiRoot.RootItem.Layout();
+
+            // Hack to put the employee info panel in the right spot.
+            MinimapFrame.OnExpansionChanged(MinimapFrame);
         }
 
         /// <summary>

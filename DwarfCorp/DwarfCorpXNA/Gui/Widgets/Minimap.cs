@@ -16,7 +16,6 @@ namespace DwarfCorp.Gui.Widgets
     {
         public String Frame = "minimap-frame";
         public MinimapRenderer Renderer;
-        public Widget RestoreButton;
 
         public override Point GetBestSize()
         {
@@ -73,22 +72,6 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = Gui.AutoLayout.DockLeft,
                 OnClick = (sender, args) => Renderer.ZoomHome(),
                 Tooltip = "Zoom to home base"
-            });
-
-            buttonRow.AddChild(new Gui.Widgets.ImageButton
-            {
-                Background = new Gui.TileReference("round-buttons", 7),
-                MinimumSize = new Point(16, 16),
-                MaximumSize = new Point(16, 16),
-                AutoLayout = Gui.AutoLayout.DockLeft,
-                OnClick = (sender, args) =>
-                    {
-                        RestoreButton.Hidden = false;
-                        RestoreButton.Invalidate();
-                        this.Hidden = true;
-                        this.Invalidate();
-                    },
-                Tooltip = "Minimize the map"
             });
 
             base.Construct();
