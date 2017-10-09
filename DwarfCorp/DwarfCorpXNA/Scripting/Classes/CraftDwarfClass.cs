@@ -201,7 +201,7 @@ namespace DwarfCorp
         {
             Actions = new List<GameMaster.ToolMode>()
             {
-                GameMaster.ToolMode.Build,
+                GameMaster.ToolMode.BuildZone,
                 GameMaster.ToolMode.Attack,
                 GameMaster.ToolMode.Gather,
                 GameMaster.ToolMode.Farm,

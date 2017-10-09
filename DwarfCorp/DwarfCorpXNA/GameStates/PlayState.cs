@@ -894,7 +894,7 @@ namespace DwarfCorp.GameStates
                             Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
                             Master.Faction.WallBuilder.CurrentVoxelType = 0;
                             Master.Faction.CraftBuilder.IsEnabled = false;
-                            ChangeTool(GameMaster.ToolMode.Build);
+                            ChangeTool(GameMaster.ToolMode.BuildZone);
                             World.ShowToolPopup("Click and drag to build " + data.Name);
                             World.Tutorial("build rooms");
                         },
@@ -982,7 +982,7 @@ namespace DwarfCorp.GameStates
                                 Master.Faction.WallBuilder.SelectionType = Master.VoxSelector.SelectionType;
                                 Master.Faction.WallBuilder.CurrentVoxelType = (byte)data.ID;
                                 Master.Faction.CraftBuilder.IsEnabled = false;
-                                ChangeTool(GameMaster.ToolMode.Build);
+                                ChangeTool(GameMaster.ToolMode.BuildWall);
                                 World.ShowToolPopup("Click and drag to build " + data.Name + " wall.");
                                 World.Tutorial("build blocks");
                             },
@@ -1032,7 +1032,7 @@ namespace DwarfCorp.GameStates
                                 Master.Faction.WallBuilder.SelectionType = Master.VoxSelector.SelectionType;
                                 Master.Faction.WallBuilder.CurrentVoxelType = (byte)data.ID;
                                 Master.Faction.CraftBuilder.IsEnabled = false;
-                                ChangeTool(GameMaster.ToolMode.Build);
+                                ChangeTool(GameMaster.ToolMode.BuildZone);
                                 World.ShowToolPopup("Click and drag to build " + data.Name + " floor.");
                                 World.Tutorial("build blocks");
                             },
@@ -1132,7 +1132,7 @@ namespace DwarfCorp.GameStates
                                     Master.Faction.CraftBuilder.CurrentCraftBody.Delete();
                                     Master.Faction.CraftBuilder.CurrentCraftBody = null;
                                 }
-                                ChangeTool(GameMaster.ToolMode.Build);
+                                ChangeTool(GameMaster.ToolMode.BuildZone);
                                 World.ShowToolPopup("Click and drag to " + data.Verb + " " + data.Name);
                             },
                         },
@@ -1269,8 +1269,8 @@ namespace DwarfCorp.GameStates
                 OnConstruct = (sender) =>
                 {
                     AddToolbarIcon(sender, () => Master.Faction.SelectedMinions.Any(minion =>
-                        minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Build)));
-                    AddToolSelectIcon(GameMaster.ToolMode.Build, sender);
+                        minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.BuildZone)));
+                    AddToolSelectIcon(GameMaster.ToolMode.BuildZone, sender);
                 },
                 Tooltip = "Build",
                 ReplacementMenu = menu_BuildTools,

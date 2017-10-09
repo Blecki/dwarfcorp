@@ -42,42 +42,24 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// Using this tool, the player can specify regions of voxels to be
-    /// turned into rooms.
-    /// </summary>
-    [JsonObject(IsReference = true)]
-    public class BuildTool : PlayerTool
+    public class CookTool : PlayerTool
     {
-        public BuildTypes BuildType;
-
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            Player.Faction.RoomBuilder.VoxelsSelected(voxels, button);
-            Player.Faction.WallBuilder.VoxelsSelected(voxels, button);
             Player.Faction.CraftBuilder.VoxelsSelected(voxels, button);
         }
 
         public override void OnBegin()
         {
-            Player.Faction.RoomBuilder.OnEnter();
         }
 
         public override void OnEnd()
         {
-            //if (BuildPanel != null && BuildPanel.Root != null)
-            //    BuildPanel.Close();
-            //BuildPanel = null;
-            Player.Faction.WallBuilder.End();
             Player.Faction.CraftBuilder.End();
-            Player.Faction.RoomBuilder.End();
-            Player.VoxSelector.Clear();
-            Player.Faction.RoomBuilder.OnExit();
         }
 
         public override void OnMouseOver(IEnumerable<Body> bodies)
         {
-            
         }
 
         public override void Update(DwarfGame game, DwarfTime time)
@@ -90,20 +72,6 @@ namespace DwarfCorp
                 return;
             }
 
-            bool hasCook = BuildType.HasFlag(BuildTypes.Cook);
-
-            if (!hasCook)
-            {
-                Player.VoxSelector.Enabled = true;
-                Player.BodySelector.Enabled = false;
-
-                if (Player.World.IsMouseOverGui)
-                    Player.World.SetMouse(Player.World.MousePointer);
-                else
-                    Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
-            }
-            else
-            {
                 Player.VoxSelector.Enabled = false;
                 Player.BodySelector.Enabled = false;
 
@@ -111,25 +79,18 @@ namespace DwarfCorp
                     Player.World.SetMouse(Player.World.MousePointer);
                 else
                     Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 11));
-            }
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-            Player.Faction.RoomBuilder.Render(time, Player.World.ChunkManager.Graphics);
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
-            
         }
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            Player.Faction.RoomBuilder.OnVoxelsDragged(voxels, button);
-            Player.Faction.WallBuilder.VoxelDragged(voxels);
         }
-
-       
     }
 }

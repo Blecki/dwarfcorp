@@ -22,7 +22,8 @@ namespace DwarfCorp
         {
             SelectUnits,
             Dig,
-            Build,
+            BuildZone,
+            BuildWall,
             Cook,
             Magic,
             Gather,
@@ -185,18 +186,22 @@ namespace DwarfCorp
                 Player = this,
             };
 
-            Tools[ToolMode.Build] = new BuildTool
+            Tools[ToolMode.BuildZone] = new BuildZoneTool
             {
                 Player = this,
                 BuildType = BuildTypes.AllButCook,
             };
 
+            Tools[ToolMode.BuildWall] = new BuildWallTool
+            {
+                Player = this
+            };
+
             Tools[ToolMode.Magic] = new MagicTool(this);
 
-            Tools[ToolMode.Cook] = new BuildTool
+            Tools[ToolMode.Cook] = new CookTool
             {
                 Player = this,
-                BuildType = BuildTypes.Cook,
             };
 
             Tools[ToolMode.MoveObjects] = new MoveObjectTool()
