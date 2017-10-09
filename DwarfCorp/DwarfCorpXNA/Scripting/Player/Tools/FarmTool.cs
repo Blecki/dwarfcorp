@@ -482,7 +482,7 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-            NamedImageFrame frame = new NamedImageFrame("newgui/pointers2", 32, 4, 1);
+            NamedImageFrame frame = new NamedImageFrame("newgui/pointers", 32, 4, 1);
             switch (Mode)
             {
                 case FarmMode.Tilling:

@@ -92,7 +92,7 @@ namespace DwarfCorp
 
             // The bird can peck at its enemies (0.1 damage)
             Attacks = new List<Attack> { new Attack("Sting", 0.01f, 1.0f, 3.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_giant_spider_attack_1, ContentPaths.Audio.Oscar.sfx_oc_giant_spider_attack_2), ContentPaths.Effects.bite),
-                new Attack("Web", 0.0f, 1.0f, 5.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_giant_spider_attack_1, ContentPaths.Audio.Oscar.sfx_oc_giant_spider_attack_2), ContentPaths.Effects.claws) {Mode = Attack.AttackMode.Ranged, LaunchSpeed = 10, ProjectileType = "Web"} };
+                new Attack("Web", 0.0f, 1.0f, 5.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_giant_spider_attack_1, ContentPaths.Audio.Oscar.sfx_oc_giant_spider_attack_2), ContentPaths.Effects.claw) {Mode = Attack.AttackMode.Ranged, LaunchSpeed = 10, ProjectileType = "Web"} };
 
 
             // The bird can hold one item at a time in its inventory

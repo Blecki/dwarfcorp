@@ -352,7 +352,6 @@ namespace DwarfCorp
             public static string slice = ProgramData.CreatePath("Effects", "slice");
             public static string slash = ProgramData.CreatePath("Effects", "slash");
             public static string claw = ProgramData.CreatePath("Effects", "claw");
-            public static string claws = ProgramData.CreatePath("Effects", "claws");
             public static string flash = ProgramData.CreatePath("Effects", "flash");
             public static string rings = ProgramData.CreatePath("Effects", "ring");
             public static string bite = ProgramData.CreatePath("Effects", "bite");
@@ -560,7 +559,7 @@ namespace DwarfCorp
                 public static string underconstruction = ProgramData.CreatePath("Entities", "DwarfObjects", "underconstruction");
                 public static string constructiontape = ProgramData.CreatePath("Entities", "DwarfObjects", "constructiontape");
                 public static string fence = ProgramData.CreatePath("Entities", "DwarfObjects", "fence");
-                public static string crafts = ProgramData.CreatePath("Entities", "DwarfObjects", "crafts");
+                public static string crafts = ProgramData.CreatePath("newgui", "crafts");
                 public static string trinkets_carve_insets_bone = ProgramData.CreatePath("newgui", "trinkets-carve-insets-bone");
                 public static string trinkets_carve_insets = ProgramData.CreatePath("newgui", "trinkets-carve-insets");
                 public static string trinkets_cast_insets = ProgramData.CreatePath("newgui", "trinkets-cast-insets");
@@ -672,13 +671,10 @@ namespace DwarfCorp
         }
         public class GUI
         {
-            public static string gui_widgets = ProgramData.CreatePath("GUI", "gui_widgets");
-            public static string icons = ProgramData.CreatePath("GUI", "icons");
+            public static string icons = ProgramData.CreatePath("newgui", "icons");
             public static string indicators = ProgramData.CreatePath("GUI", "indicators");
             public static string map_icons = ProgramData.CreatePath("GUI", "map_icons");
-            public static string pointers = ProgramData.CreatePath("GUI", "pointers");
-            public static string room_icons = ProgramData.CreatePath("GUI", "room_icons");
-            public static string gui_minimap = ProgramData.CreatePath("GUI", "gui_minimap");
+            public static string room_icons = ProgramData.CreatePath("newgui", "room_icons");
             public static string dorf_diplo = ProgramData.CreatePath("GUI", "diplo-dorf");
             public static string checker = ProgramData.CreatePath("GUI", "checker");
             public static string background = ProgramData.CreatePath("GUI", "background");

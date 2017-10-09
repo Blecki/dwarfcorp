@@ -79,31 +79,31 @@ namespace DwarfCorp
             DesignationProperties.Add(DesignationType.Dig, new DesignationTypeProperties
             {
                 Color = Color.Red,
-                Icon = new NamedImageFrame("newgui/pointers2", 32, 1, 0)
+                Icon = new NamedImageFrame("newgui/pointers", 32, 1, 0)
             });
 
             DesignationProperties.Add(DesignationType.Chop, new DesignationTypeProperties
             {
                 Color = Color.LightGreen,
-                Icon = new NamedImageFrame("newgui/pointers2", 32, 5, 0)
+                Icon = new NamedImageFrame("newgui/pointers", 32, 5, 0)
             });
 
             DesignationProperties.Add(DesignationType.Gather, new DesignationTypeProperties
             {
                 Color = Color.Orange,
-                Icon = new NamedImageFrame("newgui/pointers2", 32, 6, 0)
+                Icon = new NamedImageFrame("newgui/pointers", 32, 6, 0)
             });
 
             DesignationProperties.Add(DesignationType.Attack, new DesignationTypeProperties
             {
                 Color = Color.Red,
-                Icon = new NamedImageFrame("newgui/pointers2", 32, 2, 0)
+                Icon = new NamedImageFrame("newgui/pointers", 32, 2, 0)
             });
 
             DesignationProperties.Add(DesignationType.Wrangle, new DesignationTypeProperties
             {
                 Color = Color.Tomato,
-                Icon = new NamedImageFrame("newgui/pointers2", 32, 4, 1)
+                Icon = new NamedImageFrame("newgui/pointers", 32, 4, 1)
             });
         }
 

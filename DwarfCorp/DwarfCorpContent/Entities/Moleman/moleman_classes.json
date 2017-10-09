@@ -167,7 +167,7 @@
             "Mode": 1
           },
           "Knockback": 1.5,
-          "AnimationAsset": "Effects\\claws",
+          "AnimationAsset": "Effects\\claw",
           "HitParticles": "",
           "ProjectileType": "",
           "LaunchSpeed": 0.0
