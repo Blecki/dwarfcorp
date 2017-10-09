@@ -65,17 +65,17 @@ namespace DwarfCorp
 
         public override bool IsFeasible(Creature agent)
         {
-            return Voxel.IsValid && agent.Faction.WallBuilder.IsDesignation(Voxel);
+            return Voxel.IsValid && agent.Faction.IsPutDesignation(Voxel);
         }
 
         public override bool ShouldDelete(Creature agent)
         {
-            return !Voxel.IsValid || !agent.Faction.WallBuilder.IsDesignation(Voxel);
+            return !Voxel.IsValid || !agent.Faction.IsPutDesignation(Voxel);
         }
 
         public override bool ShouldRetry(Creature agent)
         {
-            return Voxel.IsValid && agent.Faction.WallBuilder.IsDesignation(Voxel);
+            return Voxel.IsValid && agent.Faction.IsPutDesignation(Voxel);
         }
 
         public override Task Clone()
@@ -133,7 +133,7 @@ namespace DwarfCorp
             var factionResources = agent.Faction.ListResources();
             foreach (var pair in Voxels)
             {
-                if (!agent.Faction.WallBuilder.IsDesignation(pair.Key))
+                if (!agent.Faction.IsPutDesignation(pair.Key))
                 {
                     continue;
                 }
@@ -167,7 +167,7 @@ namespace DwarfCorp
 
         private IEnumerable<Act.Status> Reloop(Creature agent)
         {
-            List<KeyValuePair<VoxelHandle, string>> feasibleVoxels = Voxels.Where(voxel => agent.Faction.WallBuilder.IsDesignation(voxel.Key)).ToList();
+            List<KeyValuePair<VoxelHandle, string>> feasibleVoxels = Voxels.Where(voxel => agent.Faction.IsPutDesignation(voxel.Key)).ToList();
 
             if (feasibleVoxels.Count > 0)
             {
@@ -188,7 +188,7 @@ namespace DwarfCorp
 
         public bool Validate(CreatureAI creature, VoxelHandle voxel, ResourceAmount resources)
         {
-            return creature.Faction.WallBuilder.IsDesignation(voxel) && 
+            return creature.Faction.IsPutDesignation(voxel) && 
                 creature.Creature.Inventory.HasResource(resources);
         }
 
@@ -201,7 +201,7 @@ namespace DwarfCorp
             var factionResources = agent.Faction.ListResources();
             foreach (var pair in Voxels)
             {
-                if (!agent.Faction.WallBuilder.IsDesignation(pair.Key))
+                if (!agent.Faction.IsPutDesignation(pair.Key))
                 {
                     continue;
                 }

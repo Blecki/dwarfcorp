@@ -62,7 +62,7 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            if (!Creature.Faction.WallBuilder.IsDesignation(Location))
+            if (!Creature.Faction.IsPutDesignation(Location))
             {
                 yield return Status.Success;
                 yield break;
@@ -75,7 +75,7 @@ namespace DwarfCorp
 
             foreach (var status in Creature.HitAndWait(1.0f, true, () => Location.ToVector3() + Vector3.One * 0.5f))
             {
-                if (!Creature.Faction.WallBuilder.IsDesignation(Location))
+                if (!Creature.Faction.IsPutDesignation(Location))
                 {
                     yield return Status.Success;
                     yield break;
@@ -95,7 +95,7 @@ namespace DwarfCorp
             }
             else
             {
-                if(Creature.Faction.WallBuilder.IsDesignation(Location))
+                if(Creature.Faction.IsPutDesignation(Location))
                 {
                     // If the creature intersects the box, find a voxel adjacent to it that is free, and jump there to avoid getting crushed.
                     if (Creature.Physics.BoundingBox.Intersects(new BoundingBox(
@@ -129,10 +129,10 @@ namespace DwarfCorp
                     grabbed.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
                     grabbed.AnimationQueue.Add(motion);
 
-                    WallBuilder put = Creature.Faction.WallBuilder.GetDesignation(Location);
-                    put.Put(Creature.Manager.World.ChunkManager);
+                    var put = Creature.Faction.GetPutDesignation(Location);
+                    PlaceVoxel(put.Voxel, put.Type, Creature.Manager.World);
                     
-                    Creature.Faction.WallBuilder.Designations.Remove(put);
+                    Creature.Faction.RemovePutDesignation(put.Voxel);
                     Creature.Stats.NumBlocksPlaced++;
                     Creature.AI.AddXP(1);
                     yield return Status.Success;
@@ -144,6 +144,32 @@ namespace DwarfCorp
                     
                     yield return Status.Success;
                 }
+            }
+        }
+
+        private void PlaceVoxel(VoxelHandle Vox, VoxelType Type, WorldManager World)
+        {
+            Vox.Type = Type;
+            Vox.WaterCell = new WaterCell();
+            Vox.Health = Type.StartingHealth;
+            World.ParticleManager.Trigger("puff", Vox.WorldPosition, Color.White, 20);
+
+            foreach (Physics phys in World.CollisionManager.EnumerateIntersectingObjects(Vox.GetBoundingBox(), CollisionManager.CollisionType.Dynamic).OfType<Physics>())
+            {
+                phys.ApplyForce((phys.GlobalTransform.Translation - (Vox.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f))) * 100, 0.01f);
+                BoundingBox box = Vox.GetBoundingBox();
+                Physics.Contact contact = new Physics.Contact();
+                Physics.TestStaticAABBAABB(box, phys.GetBoundingBox(), ref contact);
+
+                if (!contact.IsIntersecting)
+                {
+                    continue;
+                }
+
+                Vector3 diff = contact.NEnter * contact.Penetration;
+                Matrix m = phys.LocalTransform;
+                m.Translation += diff;
+                phys.LocalTransform = m;
             }
         }
     }

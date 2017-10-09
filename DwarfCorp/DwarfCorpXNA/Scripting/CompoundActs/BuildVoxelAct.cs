@@ -61,7 +61,7 @@ namespace DwarfCorp
                 new ResourceAmount(ResourceLibrary.Resources[Type.ResourceToRelease], 1)
             };
 
-            if(Agent.Faction.WallBuilder.IsDesignation(Location))
+            if(Agent.Faction.IsPutDesignation(Location))
             {
                 Tree = new Sequence(new GetResourcesAct(Agent, resources),
                     new Sequence(

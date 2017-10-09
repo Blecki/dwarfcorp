@@ -841,7 +841,7 @@ namespace DwarfCorp
 
             GamePerformance.Instance.StartTrackPerformance("Render - Drawer3D");
             // Render simple geometry (boxes, etc.)
-            Drawer3D.Render(GraphicsDevice, DefaultShader, Camera, DesignationDrawer);
+            Drawer3D.Render(GraphicsDevice, DefaultShader, Camera, DesignationDrawer, this);
             GamePerformance.Instance.StopTrackPerformance("Render - Drawer3D");
 
             GamePerformance.Instance.StartTrackPerformance("Render - Instances");
@@ -875,7 +875,6 @@ namespace DwarfCorp
                 DefaultShader.Projection = Camera.ProjectionMatrix;
                 DefaultShader.SetTexturedTechnique();
                 GraphicsDevice.BlendState = BlendState.NonPremultiplied;
-                Master.Faction.WallBuilder.Render(gameTime, GraphicsDevice, DefaultShader);
                 Master.Faction.CraftBuilder.Render(gameTime, GraphicsDevice, DefaultShader);
             }
 

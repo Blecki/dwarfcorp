@@ -39,16 +39,71 @@ using DwarfCorp.Gui.Widgets;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
     public class BuildWallTool : PlayerTool
     {
         public BuildTypes BuildType;
+        public Shader Effect;
+        public byte CurrentVoxelType { get; set; }
+        private List<VoxelHandle> Selected { get; set; }
+        private bool verified = false;
+        private InputManager.MouseButton CurrentMouse = InputManager.MouseButton.Left;
 
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            Player.Faction.WallBuilder.VoxelsSelected(voxels, button);
+            var Faction = Player.Faction;
+
+            if (CurrentVoxelType == 0)
+            {
+                return;
+            }
+            Selected.Clear();
+            switch (button)
+            {
+                case (InputManager.MouseButton.Left):
+                    {
+                        if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.BuildZone).Count == 0)
+                        {
+                            Player.World.ShowToolPopup("None of the selected units can build walls.");
+                            return;
+                        }
+                        List<Task> assignments = new List<Task>();
+                        var validRefs = voxels.Where(r => !Faction.IsPutDesignation(r) &&
+                        Player.World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? r.IsEmpty : !r.IsEmpty).ToList();
+
+                        foreach (var r in validRefs)
+                        {
+                            Faction.AddPutDesignation(new Faction.PutDesignation
+                            {
+                                Voxel = r,
+                                Type = VoxelLibrary.GetVoxelType(CurrentVoxelType)
+                            });
+                            assignments.Add(new BuildVoxelTask(r, VoxelLibrary.GetVoxelType(CurrentVoxelType).Name));
+                        }
+
+                        TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(Player.World.Master.SelectedMinions, GameMaster.ToolMode.BuildZone));
+
+                        break;
+                    }
+                case (InputManager.MouseButton.Right):
+                    {
+                        foreach (var r in voxels)
+                        {
+                            if (!Faction.IsPutDesignation(r))
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                Faction.RemovePutDesignation(r);
+                            }
+                        }
+                        break;
+                    }
+            }
         }
 
         public override void OnBegin()
@@ -58,14 +113,12 @@ namespace DwarfCorp
 
         public override void OnEnd()
         {
-            //if (BuildPanel != null && BuildPanel.Root != null)
-            //    BuildPanel.Close();
-            //BuildPanel = null;
-            Player.Faction.WallBuilder.End();
-            //Player.Faction.CraftBuilder.End();
-            //Player.Faction.RoomBuilder.End();
+            if (Selected != null)
+            {
+                Selected.Clear();
+            }
+            CurrentVoxelType = 0;
             Player.VoxSelector.Clear();
-            //Player.Faction.RoomBuilder.OnExit();
         }
 
         public override void OnMouseOver(IEnumerable<Body> bodies)
@@ -109,7 +162,47 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-            //Player.Faction.RoomBuilder.Render(time, Player.World.ChunkManager.Graphics);
+            DepthStencilState state = graphics.DepthStencilState;
+            graphics.DepthStencilState = DepthStencilState.DepthRead;
+            Effect = Player.World.DefaultShader;
+
+            float t = (float)time.TotalGameTime.TotalSeconds;
+            float st = (float)Math.Sin(t * 4) * 0.5f + 0.5f;
+            Effect.MainTexture = Player.World.ChunkManager.ChunkData.Tilemap;
+            Effect.LightRampTint = Color.White;
+            Effect.VertexColorTint = new Color(0.1f, 0.9f, 1.0f, 0.5f * st + 0.45f);
+            Effect.SetTexturedTechnique();
+            
+            if (Selected == null)
+            {
+                Selected = new List<VoxelHandle>();
+            }
+
+            if (CurrentVoxelType == 0)
+            {
+                Selected.Clear();
+            }
+
+            Effect.VertexColorTint = verified ? new Color(0.0f, 1.0f, 0.0f, 0.5f * st + 0.45f) : new Color(1.0f, 0.0f, 0.0f, 0.5f * st + 0.45f);
+            Vector3 offset = Player.World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? Vector3.Zero : Vector3.Up * 0.15f;
+            if (CurrentMouse == InputManager.MouseButton.Left)
+            {
+                foreach (var voxel in Selected)
+                {
+
+                    Effect.World = Matrix.CreateTranslation(voxel.WorldPosition + offset);
+                    foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
+                    {
+                        pass.Apply();
+                        VoxelLibrary.GetPrimitive(CurrentVoxelType).Render(graphics);
+                    }
+                }
+            }
+
+            Effect.LightRampTint = Color.White;
+            Effect.VertexColorTint = Color.White;
+            Effect.World = Matrix.Identity;
+            graphics.DepthStencilState = state;
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
@@ -119,8 +212,42 @@ namespace DwarfCorp
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            //Player.Faction.RoomBuilder.OnVoxelsDragged(voxels, button);
-            Player.Faction.WallBuilder.VoxelDragged(voxels);
+            if (CurrentVoxelType == 0)
+                return;
+            verified = true;
+            //verified = Verify(refs, CurrentVoxelType.ResourceToRelease);
+            var mouse = Mouse.GetState();
+            if (mouse.LeftButton == ButtonState.Pressed)
+            {
+                CurrentMouse = InputManager.MouseButton.Left;
+            }
+            else
+            {
+                CurrentMouse = InputManager.MouseButton.Right;
+            }
+
+            if (CurrentMouse == InputManager.MouseButton.Left)
+            {
+                if (!verified)
+                {
+                    Player.World.ShowToolPopup("Can't build this! Need at least " + voxels.Count + " " + ResourceLibrary.Resources[VoxelLibrary.GetVoxelType(CurrentVoxelType).ResourceToRelease].ResourceName + ".");
+                }
+                else
+                {
+                    Player.World.ShowToolPopup("Release to build.");
+                }
+            }
+            else
+            {
+                Player.World.ShowToolPopup("Release to cancel.");
+            }
+
+            Selected.Clear();
+
+            foreach (var voxel in voxels)
+            {
+                Selected.Add(voxel);
+            }
         }       
     }
 }

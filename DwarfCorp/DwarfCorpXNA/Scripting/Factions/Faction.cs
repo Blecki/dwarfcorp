@@ -66,7 +66,7 @@ namespace DwarfCorp
         public List<Stockpile> Stockpiles { get; set; }
         public List<CreatureAI> Minions { get; set; }
         public RoomBuilder RoomBuilder { get; set; }
-        public PutDesignator WallBuilder { get; set; }
+        //public PutDesignator WallBuilder { get; set; }
         public CraftBuilder CraftBuilder { get; set; }
         public Color PrimaryColor { get; set; }
         public Color SecondaryColor { get; set; }
@@ -89,6 +89,68 @@ namespace DwarfCorp
         }
 
         #region Designations
+
+        // This is temporary until all factions get a 'DesignationDrawer' instead.
+        public class PutDesignation
+        {
+            public VoxelHandle Voxel;
+            public VoxelType Type;
+        }
+
+        public List<PutDesignation> PutDesignations = new List<PutDesignation>();
+
+        public bool IsPutDesignation(GlobalVoxelCoordinate Location)
+        {
+            return PutDesignations.Any(d => d.Voxel.Coordinate == Location);
+        }
+
+        public bool IsPutDesignation(VoxelHandle reference)
+        {
+            foreach (var put in PutDesignations)
+            {
+                if (put.Voxel == reference)
+                    return true;
+            }
+
+            return false;
+        }
+
+        public PutDesignation GetPutDesignation(GlobalVoxelCoordinate Location)
+        {
+            return PutDesignations.FirstOrDefault(d => d.Voxel.Coordinate == Location);
+        }
+
+        // Todo: %KILL%
+        public PutDesignation GetPutDesignation(VoxelHandle v)
+        {
+            foreach (var put in PutDesignations)
+            {
+                if (put.Voxel == v)
+                    return put;
+            }
+
+            return null;
+        }
+
+        public void AddPutDesignation(PutDesignation des)
+        {
+            PutDesignations.Add(des);
+            if (World.PlayerFaction == this)
+                World.DesignationDrawer.HiliteVoxel(des.Voxel.Coordinate, DesignationType.Put, des.Type);
+        }
+
+        public void RemovePutDesignation(VoxelHandle v)
+        {
+            var des = GetPutDesignation(v);
+
+            if (des != null)
+            {
+                PutDesignations.Remove(des);
+                if (World.PlayerFaction == this)
+                    World.DesignationDrawer.UnHiliteVoxel(des.Voxel.Coordinate, DesignationType.Put);
+            }
+        }
+
 
         private class EntityDesignation
         {
@@ -182,7 +244,6 @@ namespace DwarfCorp
             WarParties = new List<WarParty>();
             OwnedObjects = new List<Body>();
             RoomBuilder = new RoomBuilder(this, world);
-            WallBuilder = new PutDesignator(this, world);
             CraftBuilder = new CraftBuilder(this, world);
             IsRaceFaction = false;
             TradeMoney = 0.0m;
@@ -232,7 +293,6 @@ namespace DwarfCorp
         {
             RoomBuilder.Faction = this;
             CraftBuilder.Faction = this;
-            WallBuilder.Faction = this;
             RoomBuilder.CheckRemovals();
 
             Minions.RemoveAll(m => m.IsDead);

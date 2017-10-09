@@ -90,7 +90,7 @@ namespace DwarfCorp
 
         public override void OnCanceled()
         {
-            Voxels.RemoveAll(pair => !Creature.Faction.WallBuilder.IsDesignation(pair.Key));
+            Voxels.RemoveAll(pair => !Creature.Faction.IsPutDesignation(pair.Key));
             base.OnCanceled();
         }
 

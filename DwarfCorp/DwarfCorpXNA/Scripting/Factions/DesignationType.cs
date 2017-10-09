@@ -41,6 +41,7 @@ namespace DwarfCorp
         Gather,
         Attack,
         Wrangle,
-        Chop
+        Chop,
+        Put
     }
 }

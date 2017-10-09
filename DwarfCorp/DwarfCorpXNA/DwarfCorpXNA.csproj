@@ -602,7 +602,6 @@
     <Compile Include="Scripting\Player\Building\BuildVoxelOrder.cs" />
     <Compile Include="Scripting\Player\Building\CraftBuilder.cs" />
     <Compile Include="Scripting\Player\Building\RoomBuilder.cs" />
-    <Compile Include="Scripting\Player\Building\WallBuilder.cs" />
     <Compile Include="Scripting\Player\Economy\Company.cs" />
     <Compile Include="Scripting\Player\Economy\Economy.cs" />
     <Compile Include="Scripting\Player\Economy\Money.cs" />

@@ -173,7 +173,12 @@ namespace DwarfCorp
 
         }
 
-        public static void Render(GraphicsDevice Device, Shader Effect, OrbitCamera Camera, DesignationDrawer DesignationSet)
+        public static void Render(
+            GraphicsDevice Device, 
+            Shader Effect, 
+            OrbitCamera Camera,
+            DesignationDrawer DesignationSet,
+            WorldManager World)
         {
             lock (renderLock)
             {
@@ -183,8 +188,33 @@ namespace DwarfCorp
 
                 var colorModulation = Math.Abs(Math.Sin(DwarfTime.LastTime.TotalGameTime.TotalSeconds*2.0f));
 
-                DesignationSet.EnumerateHilites(_addBox);
+                DesignationSet.EnumerateHilites(
+                    _addBox,
+                    (pos, type) =>
+                    {
+                        var saveState = Device.DepthStencilState;
+                        Device.DepthStencilState = DepthStencilState.DepthRead;
 
+                        Effect.MainTexture = World.ChunkManager.ChunkData.Tilemap;
+                        Effect.LightRampTint = Color.White;
+                        // Todo: Alpha pulse
+                        Effect.VertexColorTint = new Color(0.1f, 0.9f, 1.0f, 0.5f + 0.45f);
+                        Effect.SetTexturedTechnique();
+                        Effect.World = Matrix.CreateTranslation(pos + Vector3.Up * 0.15f); // Why the offset?
+
+                        foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
+                        {
+                            pass.Apply();
+                            VoxelLibrary.GetPrimitive(type).Render(Device);
+                        }
+
+                        Effect.LightRampTint = Color.White;
+                        Effect.VertexColorTint = Color.White;
+                        Effect.World = Matrix.Identity;
+                        Device.DepthStencilState = saveState;
+                    });
+
+                //Todo: Kill
                 foreach (var hilitedVoxelGroup in HighlightGroups)
                 {
                     var groupColor = new Color(
