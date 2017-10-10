@@ -143,8 +143,8 @@ namespace DwarfCorp.Gui.Widgets
                             Tooltip = label.ToString(),
                             TextHorizontalAlign = HorizontalAlign.Right,
                             TextVerticalAlign = VerticalAlign.Bottom,
-                            TextColor = new Vector4(1,1,1,1)
-                        });                        
+                            TextColor = new Vector4(1, 1, 1, 1)
+                        });
                     }
                     else
                     {
@@ -161,9 +161,13 @@ namespace DwarfCorp.Gui.Widgets
                         text += "\nI" + resource.Amount.Second.NumResources.ToString();
                     }
                     icon.Children.Last().Text = text;
-                    icon.Invalidate();                    
+                    icon.Invalidate();
                 }
 
+                var width = Root.RenderData.VirtualScreen.Width - ItemSpacing.X;
+                var itemsThatFit = width / (ItemSize.X + ItemSpacing.X);
+                var sensibleWidth = (Math.Min(Children.Count, itemsThatFit) * (ItemSize.X + ItemSpacing.X)) + ItemSpacing.X;
+                Rect = new Rectangle((Root.RenderData.VirtualScreen.Width - sensibleWidth) / 2, 0, sensibleWidth, 0);
                 Layout();
             };
         }        

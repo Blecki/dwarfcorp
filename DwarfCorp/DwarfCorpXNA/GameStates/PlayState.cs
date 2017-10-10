@@ -453,7 +453,7 @@ namespace DwarfCorp.GameStates
             });
 
             #region Setup company information section
-            bottomBar.AddChild(new Gui.Widgets.CompanyLogo
+            bottomBar.AddChild(new CompanyLogo
             {
                 Tag = "company info",
                 MinimumSize = new Point(32, 32),
@@ -463,12 +463,13 @@ namespace DwarfCorp.GameStates
                 Tooltip = "Company information"
             });
 
-            bottomBar.AddChild(new Gui.Widget
+            bottomBar.AddChild(new Widget
             {
                 Text = World.PlayerCompany.Information.Name,
                 AutoLayout = Gui.AutoLayout.DockLeft,
-                Font = "font18-outline",
-                TextColor = new Vector4(1, 1, 1, 1)
+                Font = "font10",
+                TextVerticalAlign = VerticalAlign.Center,
+                TextColor = new Vector4(0, 0, 0, 1)
             });
 
             bottomBar.AddChild(new Gui.Widget
@@ -481,11 +482,11 @@ namespace DwarfCorp.GameStates
 
             MoneyLabel = bottomBar.AddChild(new Gui.Widget
             {
-                MinimumSize = new Point(128,0),
+                MinimumSize = new Point(96,0),
                 AutoLayout = Gui.AutoLayout.DockLeft,
-                Font = "font18-outline",
+                Font = "font10",
                 TextVerticalAlign = Gui.VerticalAlign.Center,
-                TextColor = new Vector4(1, 1, 1, 1),
+                TextColor = new Vector4(0, 0, 0, 1),
                 Tooltip = "Amount of money in our treasury"
             });
 
@@ -531,40 +532,30 @@ namespace DwarfCorp.GameStates
             LevelLabel = bottomBar.AddChild(new Gui.Widget
             {
                 AutoLayout = Gui.AutoLayout.DockLeft,
-                Font = "font18-outline",
-                OnLayout = (sender) => sender.Rect.X += 36,
+                Font = "font10",
                 TextVerticalAlign = Gui.VerticalAlign.Center,
-                TextColor = new Vector4(1, 1, 1, 1),
+                TextColor = new Vector4(0, 0, 0, 1),
                 Tooltip = "Current viewing level.",
-                MinimumSize = new Point(128,0)
+                MinimumSize = new Point(64,0)
             });
             #endregion
 
             GuiRoot.RootItem.AddChild(new Gui.Widgets.ResourcePanel
             {
-                AutoLayout = AutoLayout.None,
-                //MinimumSize = new Point(GuiRoot.RenderData.ActualScreenBounds.X - 256, 0),
+                AutoLayout = AutoLayout.FloatTop,
                 Master = Master,
                 Transparent = true,
-                OnLayout = (sender) =>
-                {
-                    sender.Rect = new Rectangle(48 + 256, 0, GuiRoot.RenderData.ActualScreenBounds.X - 256 - 48 - 64, 0);
-                }
             });
 
             #region Setup time display
-            TimeLabel = GuiRoot.RootItem.AddChild(new Gui.Widget
+            TimeLabel = bottomBar.AddChild(new Gui.Widget
             {
-                AutoLayout = Gui.AutoLayout.FloatBottomRight,
+                AutoLayout = Gui.AutoLayout.DockRight,
                 TextHorizontalAlign = Gui.HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Center,
                 MinimumSize = new Point(128, 20),
                 Font = "font8",
-                TextColor = new Vector4(1, 1, 1, 1),
-                OnLayout = (sender) =>
-                {
-                    sender.Rect.X -= 8;
-                    sender.Rect.Y += 8;
-                },
+                TextColor = new Vector4(0, 0, 0, 1),
                 Tooltip = "Current time/date."
             });
             #endregion
@@ -683,8 +674,8 @@ namespace DwarfCorp.GameStates
 
             var topRightTray = GuiRoot.RootItem.AddChild(new Gui.Widgets.IconTray
             {
-                Corners = Gui.Scale9Corners.Left | Gui.Scale9Corners.Bottom,
-                AutoLayout = Gui.AutoLayout.FloatTopRight,
+                Corners = Gui.Scale9Corners.Left | Gui.Scale9Corners.Top,
+                AutoLayout = Gui.AutoLayout.FloatBottomRight,
                 SizeToGrid = new Point(2, 1),
                 ItemSource = new Gui.Widget[] 
                         {
@@ -701,15 +692,12 @@ namespace DwarfCorp.GameStates
             #endregion
 
             #region Setup game speed controls
-            GameSpeedControls = GuiRoot.RootItem.AddChild(new GameSpeedControls
+
+            GameSpeedControls = bottomBar.AddChild(new GameSpeedControls
             {
                 Tag = "speed controls",
-                AutoLayout = Gui.AutoLayout.FloatBottomRight,
-                OnLayout = (sender) =>
-                {
-                    sender.Rect.X -= 8;
-                    sender.Rect.Y -= 16;
-                },
+                AutoLayout = AutoLayout.DockRight,
+                
                 OnSpeedChanged = (sender, speed) =>
                 {
                     if ((int) DwarfTime.LastTime.Speed != speed)
@@ -763,8 +751,8 @@ namespace DwarfCorp.GameStates
             {
                 OnLayout = (sender) =>
                 {
-                    sender.Rect = new Rectangle(GameSpeedControls.Rect.X - 128,
-                        GameSpeedControls.Rect.Y - 128, GameSpeedControls.Rect.Width + 128, 128);
+                    sender.Rect = new Rectangle(GuiRoot.RenderData.VirtualScreen.Width - 256,
+                        topRightTray.Rect.Y - 128, 256, 128);
                 }
             }) as AnnouncementPopup;
 
@@ -773,27 +761,26 @@ namespace DwarfCorp.GameStates
                 Announcer.QueueAnnouncement(message);
             };
 
-            InfoTray = GuiRoot.RootItem.AddChild(new Gui.Widgets.InfoTray
+            InfoTray = GuiRoot.RootItem.AddChild(new InfoTray
             {
                 OnLayout = (sender) =>
                 {
-                    sender.Rect = new Rectangle(MinimapFrame.Rect.Right,
-                            MinimapFrame.Rect.Top, 256, MinimapFrame.Rect.Height);
+                    sender.Rect = new Rectangle(0,0,0,0);
                 },
                 Transparent = true
-            }) as Gui.Widgets.InfoTray;
+            }) as InfoTray;
 
             #endregion
 
             #region Setup brush
 
-            BrushTray = GuiRoot.RootItem.AddChild(new Gui.Widgets.ToggleTray
+            BrushTray = bottomBar.AddChild(new Gui.Widgets.ToggleTray
             {
                 Tag = "brushes",
-                AutoLayout = AutoLayout.FloatRight,
-                Rect = new Rectangle(256, 0, 32, 128),
-                SizeToGrid = new Point(1, 3),
+                AutoLayout = AutoLayout.DockLeft,
+                SizeToGrid = new Point(3, 1),
                 Border = null,
+                ItemSize = new Point(20, 20),
                 ItemSource = new Gui.Widget[]
                
                         { 

@@ -22,7 +22,7 @@ namespace DwarfCorp.Gui.Widgets
                         AddChild(child);
                         child.Hidden = true;
                     };
-
+                
                 base.Construct();
             }
 

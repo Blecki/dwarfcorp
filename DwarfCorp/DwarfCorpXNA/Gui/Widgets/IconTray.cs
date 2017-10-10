@@ -12,6 +12,7 @@ namespace DwarfCorp.Gui.Widgets
         public Point ItemSize = new Point(40, 40);
         public Point ItemSpacing = new Point(2, 2);
         public Point SizeToGrid = new Point(1, 1);
+        public int WidthLimit = 512;
 
         public IEnumerable<Widget> ItemSource;
 
@@ -44,7 +45,7 @@ namespace DwarfCorp.Gui.Widgets
 
             if (SizeToGrid.X > 1)
             {
-                SizeToGrid.X = Math.Min(SizeToGrid.X, 512/ItemSize.X);
+                SizeToGrid.X = Math.Min(SizeToGrid.X, WidthLimit/ItemSize.X);
                 int numRows = (int)Math.Ceiling((float)(ItemSource.Count())/(float)(SizeToGrid.X));
                 SizeToGrid.Y = Math.Max(numRows, 1);
             }
