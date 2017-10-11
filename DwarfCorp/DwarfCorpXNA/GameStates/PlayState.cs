@@ -1121,7 +1121,7 @@ namespace DwarfCorp.GameStates
                                     Master.Faction.CraftBuilder.CurrentCraftBody.Delete();
                                     Master.Faction.CraftBuilder.CurrentCraftBody = null;
                                 }
-                                ChangeTool(GameMaster.ToolMode.BuildZone);
+                                ChangeTool(GameMaster.ToolMode.BuildObject);
                                 World.ShowToolPopup("Click and drag to " + data.Verb + " " + data.Name);
                             },
                         },

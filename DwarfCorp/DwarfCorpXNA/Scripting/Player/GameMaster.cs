@@ -24,6 +24,7 @@ namespace DwarfCorp
             Dig,
             BuildZone,
             BuildWall,
+            BuildObject,
             Cook,
             Magic,
             Gather,
@@ -193,6 +194,11 @@ namespace DwarfCorp
             };
 
             Tools[ToolMode.BuildWall] = new BuildWallTool
+            {
+                Player = this
+            };
+
+            Tools[ToolMode.BuildObject] = new BuildObjectTool
             {
                 Player = this
             };
