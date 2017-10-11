@@ -47,6 +47,8 @@ namespace DwarfCorp
     //[Saving.SaveableObject(0)]
     public class DesignationDrawer //: Saving.ISaveableObject
     {
+        public DesignationType VisibleTypes = DesignationType._All;
+
         public class HilitedVoxel
         {
             public GlobalVoxelCoordinate Coordinate;
@@ -175,32 +177,39 @@ namespace DwarfCorp
 
             foreach (var voxel in HilitedVoxels)
             {
-                var props = DefaultProperties;
-                if (DesignationProperties.ContainsKey(voxel.DesignationType))
-                    props = DesignationProperties[voxel.DesignationType];
-
-                var v = voxel.Coordinate.ToVector3();
-                DrawBoxCallback(v, Vector3.One, props.ModulatedColor, 0.1f);
-                if (props.Icon != null)
+                if ((voxel.DesignationType & VisibleTypes) == voxel.DesignationType)
                 {
-                    Drawer2D.DrawSprite(props.Icon, v + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
-                }
+                    var props = DefaultProperties;
+                    if (DesignationProperties.ContainsKey(voxel.DesignationType))
+                        props = DesignationProperties[voxel.DesignationType];
 
-                if (voxel.Phantom != null)
-                    DrawPhantomCallback(v, voxel.Phantom);
+                    var v = voxel.Coordinate.ToVector3();
+                    if (props.Icon != null)
+                    {
+                        Drawer2D.DrawSprite(props.Icon, v + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
+                    }
+
+                    if (voxel.Phantom != null)
+                        DrawPhantomCallback(v, voxel.Phantom);
+                    else
+                        DrawBoxCallback(v, Vector3.One, props.ModulatedColor, 0.1f);
+                }
             }
 
             foreach (var entity in HilitedBodies)
             {
-                var props = DefaultProperties;
-                if (DesignationProperties.ContainsKey(entity.DesignationType))
-                    props = DesignationProperties[entity.DesignationType];
-
-                var box = entity.Body.GetBoundingBox();
-                DrawBoxCallback(box.Min, box.Max - box.Min, props.ModulatedColor, 0.1f);
-                if (props.Icon != null)
+                if ((entity.DesignationType & VisibleTypes) == entity.DesignationType)
                 {
-                    Drawer2D.DrawSprite(props.Icon, entity.Body.Position + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
+                    var props = DefaultProperties;
+                    if (DesignationProperties.ContainsKey(entity.DesignationType))
+                        props = DesignationProperties[entity.DesignationType];
+
+                    var box = entity.Body.GetBoundingBox();
+                    DrawBoxCallback(box.Min, box.Max - box.Min, props.ModulatedColor, 0.1f);
+                    if (props.Icon != null)
+                    {
+                        Drawer2D.DrawSprite(props.Icon, entity.Body.Position + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
+                    }
                 }
             }
         }

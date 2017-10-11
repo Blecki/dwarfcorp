@@ -13,6 +13,7 @@ namespace DwarfCorp.Gui.Widgets
     {
         public Widget ExpandedContents;
         public Widget CollapsedContents;
+        public Point ExpandedSize;
 
         public int CollapsedHeight = 16;
         public bool Expanded = true;
@@ -25,10 +26,11 @@ namespace DwarfCorp.Gui.Widgets
 
             AddChild(CollapsedContents);
             CollapsedContents.AutoLayout = AutoLayout.FloatBottom;
-            CollapsedContents.Hidden = true;
+            CollapsedContents.Hidden = Expanded;
             CollapsedContents.MinimumSize = new Point(MinimumSize.X, CollapsedHeight);
 
             AddChild(ExpandedContents);
+            ExpandedContents.Hidden = !Expanded;
             ExpandedContents.AutoLayout = AutoLayout.DockFill;
 
             CollapsedContents.AddChild(new Gui.Widgets.ImageButton

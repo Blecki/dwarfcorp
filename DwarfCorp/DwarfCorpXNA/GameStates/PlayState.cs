@@ -48,7 +48,8 @@ namespace DwarfCorp.GameStates
         private Gui.Widgets.FlatToolTray.Tray MainMenu;
         private Gui.Widget TimeLabel;
         private Gui.Widget PausePanel;
-        private CollapsableFrame MinimapFrame;
+        private MinimapFrame MinimapFrame;
+        private Widget SelectedEmployeeName;
         private Gui.Widgets.MinimapRenderer MinimapRenderer;
         private Gui.Widgets.GameSpeedControls GameSpeedControls;
         private Widget PausedWidget;
@@ -58,8 +59,9 @@ namespace DwarfCorp.GameStates
         private AnnouncementPopup Announcer;
         private FramedIcon EconomyIcon;
         private Timer AutoSaveTimer;
-        private CollapsableFrame SelectedEmployeeInfo;
+        private EmployeeInfo SelectedEmployeeInfo;
         private Widget ContextMenu;
+        private CollapsableStack SidePanel;
 
         private class ToolbarItem
         {
@@ -347,21 +349,20 @@ namespace DwarfCorp.GameStates
 
 #region select employee
            
-            if (Master.SelectedMinions.Count == 1 && SelectedEmployeeInfo != null)
+            if (Master.SelectedMinions.Count == 1)
             {
                 // Lol this is evil just trying to reduce the update rate for speed
                 if (MathFunctions.RandEvent(0.1f))
                 {
-                    (SelectedEmployeeInfo.ExpandedContents as Gui.Widgets.EmployeeInfo).Employee = Master.SelectedMinions[0];
-                    SelectedEmployeeInfo.CollapsedContents.Text = Master.SelectedMinions[0].Stats.FullName;
-                    SelectedEmployeeInfo.Hidden = false;
-                    SelectedEmployeeInfo.Invalidate();
+                    SelectedEmployeeInfo.Employee = Master.SelectedMinions[0];
+                    SelectedEmployeeName.Text = Master.SelectedMinions[0].Stats.FullName;
                 }
             }
 
-            if (Master.SelectedMinions.Count != 1 && SelectedEmployeeInfo != null && !SelectedEmployeeInfo.Hidden)
+            if (Master.SelectedMinions.Count != 1)
             {
-                SelectedEmployeeInfo.Hidden = true;
+                SelectedEmployeeInfo.Employee = null;
+                SelectedEmployeeName.Text = "No Employee Selected";
             }
 #endregion
         }
@@ -386,14 +387,14 @@ namespace DwarfCorp.GameStates
                 Game.Exit();
                  */
 
-                if (MinimapFrame.Expanded && !GuiRoot.RootItem.Hidden)
+                if (!MinimapFrame.Hidden && !GuiRoot.RootItem.Hidden)
                     MinimapRenderer.PreRender(gameTime, DwarfGame.SpriteBatch);
 
                 World.Render(gameTime);
 
                 if (Game.StateManager.CurrentState == this)
                 {
-                    if (MinimapFrame.Expanded && !GuiRoot.RootItem.Hidden)
+                    if (!MinimapFrame.Hidden && !GuiRoot.RootItem.Hidden)
                         MinimapRenderer.Render(new Rectangle(MinimapFrame.Rect.X, MinimapFrame.Rect.Bottom - 192, 192, 192), GuiRoot);
                     GuiRoot.Draw();
                 }
@@ -560,104 +561,105 @@ namespace DwarfCorp.GameStates
             });
             #endregion
 
-            #region Minimap
+            #region Collapsing Side Panel
 
             MinimapRenderer = new Gui.Widgets.MinimapRenderer(192, 192, World,
                 TextureManager.GetTexture(ContentPaths.Terrain.terrain_colormap));
 
-            MinimapFrame = GuiRoot.RootItem.AddChild(new CollapsableFrame
+            MinimapFrame = new MinimapFrame
             {
-                MinimumSize = new Point(208, 204),
-                CollapsedHeight = 16,
-                AutoLayout = AutoLayout.FloatBottomLeft,
+                Tag = "minimap",
+                Renderer = MinimapRenderer
+            };
 
-                ExpandedContents = new MinimapFrame
-                {
-                    Tag = "minimap",
-                    Renderer = MinimapRenderer
-                },
-
-                CollapsedContents = new Widget
-                {
-                    Border = "border-thin",
-                    Text = "MINIMAP",
-                    TextVerticalAlign = VerticalAlign.Center
-                },
-
-                OnExpansionChanged = (sender) =>
-                {
-                    var employeeInfoRect = new Rectangle(0, 0, 400, 400);
-
-                    if (MinimapFrame.Expanded)
-                        employeeInfoRect.Y = MinimapFrame.ExpandedContents.Rect.Y - 400;
-                    else
-                        employeeInfoRect.Y = MinimapFrame.CollapsedContents.Rect.Y - 400;
-
-                    if (!SelectedEmployeeInfo.Expanded)
-                        employeeInfoRect.Width = 208;
-                    else
-                        employeeInfoRect.Width = 400;
-
-                    SelectedEmployeeInfo.Reposition(employeeInfoRect);
-                }
-            }) as CollapsableFrame;
-            
-            #endregion
-
-            #region Employee Info
-
-            SelectedEmployeeInfo = GuiRoot.RootItem.AddChild(new CollapsableFrame
+            SelectedEmployeeInfo = new EmployeeInfo
             {
-                Hidden = true,
-
-                ExpandedContents = new Gui.Widgets.EmployeeInfo
+                Border = "border-button",
+                Employee = null,
+                EnablePosession = true,
+                Tag = "selected-employee-info",
+                OnFireClicked = (sender) =>
                 {
-                    Border = "border-button",
-                    Employee = null,
-                    EnablePosession = true,
-                    OnFireClicked = (sender) =>
+                    GuiRoot.ShowModalPopup(GuiRoot.ConstructWidget(new Gui.Widgets.Confirm
                     {
-                        GuiRoot.ShowModalPopup(GuiRoot.ConstructWidget(new Gui.Widgets.Confirm
+                        OkayText = "Fire this dwarf!",
+                        CancelText = "Keep this dwarf.",
+                        Padding = new Margin(32, 10, 10, 10),
+                        MinimumSize = new Point(512, 128),
+                        OnClose = (confirm) =>
                         {
-                            OkayText = "Fire this dwarf!",
-                            CancelText = "Keep this dwarf.",
-                            Padding = new Margin(32, 10, 10, 10),
-                            MinimumSize = new Point(512, 128),
-                            OnClose = (confirm) =>
+                            if ((confirm as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
                             {
-                                if ((confirm as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
-                                {
-                                    SoundManager.PlaySound(ContentPaths.Audio.change, 0.25f);
-                                    var selectedEmployee = (sender as EmployeeInfo).Employee;
-                                    selectedEmployee.GetRoot().GetComponent<Inventory>().Die();
-                                    World.MakeAnnouncement(string.Format("{0} was fired.", selectedEmployee.Stats.FullName));
-                                    selectedEmployee.GetRoot().Delete();
+                                SoundManager.PlaySound(ContentPaths.Audio.change, 0.25f);
+                                var selectedEmployee = (sender as EmployeeInfo).Employee;
+                                selectedEmployee.GetRoot().GetComponent<Inventory>().Die();
+                                World.MakeAnnouncement(string.Format("{0} was fired.", selectedEmployee.Stats.FullName));
+                                selectedEmployee.GetRoot().Delete();
 
-                                    Master.Faction.Minions.Remove(selectedEmployee);
-                                    Master.Faction.SelectedMinions.Remove(selectedEmployee);
-                                }
+                                Master.Faction.Minions.Remove(selectedEmployee);
+                                Master.Faction.SelectedMinions.Remove(selectedEmployee);
                             }
-                        }));
-                    }
-                },
-
-                CollapsedContents = new Widget
-                {
-                    Border = "border-thin",
-                    Text = "EMPLOYEE NAME",
-                    TextVerticalAlign = VerticalAlign.Center
-                },
-
-                OnExpansionChanged = (sender) =>
-                {
-                    if ((sender as CollapsableFrame).Expanded)
-                        sender.Rect.Width = 400;
-                    else
-                        sender.Rect.Width = 208;
-
-                    (sender as CollapsableFrame).Reposition(sender.Rect);
+                        }
+                    }));
                 }
-            }) as CollapsableFrame;
+            };
+
+            SelectedEmployeeName = new Widget
+            {
+                Tag = "selected-employee-name",
+                Border = "border-thin",
+                Text = "No Employee Selected",
+                TextVerticalAlign = VerticalAlign.Center
+            };
+
+            SidePanel = GuiRoot.RootItem.AddChild(new CollapsableStack
+            {
+                AutoLayout = AutoLayout.FloatBottomLeft,
+                OnLayout = (sender) =>
+                {
+                    (sender as CollapsableStack).AnchorPoint = new Point(0, sender.Rect.Bottom);
+                },
+                CollapsedSize = new Point(208, 16),
+                ItemSource = new CollapsableStack.CollapsableItem[]
+                {
+                    new CollapsableStack.CollapsableItem
+                    {
+                        ExpandedSize = new Point(208, 204),
+                        Expanded = true,
+                        ExpandedContents = MinimapFrame,
+                        CollapsedContents = new Widget
+                        {
+                            Border = "border-thin",
+                            Text = "MINIMAP",
+                            TextVerticalAlign = VerticalAlign.Center
+                        }
+                    },
+                    new CollapsableStack.CollapsableItem
+                    {
+                        ExpandedSize = new Point(400,400),
+                        Expanded = false,
+                        StartHidden = false,
+                        ExpandedContents = SelectedEmployeeInfo,
+                        CollapsedContents = SelectedEmployeeName
+                    },
+                    new CollapsableStack.CollapsableItem
+                    {
+                        ExpandedSize = new Point(208,208),
+                        Expanded = false,
+                        ExpandedContents = new DesignationFilter
+                        {
+                            Border = "border-button",
+                            DesignationDrawer = World.DesignationDrawer
+                        },
+                        CollapsedContents = new Widget
+                        {
+                            Border = "border-thin",
+                            Text = "MARKER FILTER",
+                            TextVerticalAlign = VerticalAlign.Center
+                        }
+                    }
+                }
+            }) as CollapsableStack;
 
             #endregion
 
@@ -1848,8 +1850,8 @@ namespace DwarfCorp.GameStates
                 OnLayout = (sender) =>
                 {
                     sender.Rect = sender.ComputeBoundingChildRect();
-                    sender.Rect.X = MinimapFrame.Rect.Right;
-                    sender.Rect.Y = MinimapFrame.Rect.Bottom - sender.Rect.Height;
+                    sender.Rect.X = 208;
+                    sender.Rect.Y = bottomBar.Rect.Top - sender.Rect.Height;
                 },
             }) as FlatToolTray.RootTray;
 
@@ -1873,7 +1875,7 @@ namespace DwarfCorp.GameStates
             GuiRoot.RootItem.Layout();
 
             // Hack to put the employee info panel in the right spot.
-            MinimapFrame.OnExpansionChanged(MinimapFrame);
+            SidePanel.RepositionItems();
         }
 
         /// <summary>

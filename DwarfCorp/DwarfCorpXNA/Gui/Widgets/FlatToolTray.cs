@@ -56,7 +56,7 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     SizeToGrid = new Point(ItemSource.Count(), 1);
                 }
-                Corners = Scale9Corners.Top | Scale9Corners.Right | Scale9Corners.Left;
+                Corners = Scale9Corners.Top | Scale9Corners.Right;
                 Hidden = true;
                 base.Construct();
             }
