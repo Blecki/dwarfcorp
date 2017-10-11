@@ -52,7 +52,7 @@ namespace DwarfCorp.Gui.Widgets
 
         public override void Construct()
         {
-            Border = "border-dark";
+            Border = "border-thin";
             MinimumSize = new Point(128, 40);
             Padding = new Gui.Margin(2, 2, 4, 4);
             Font = "font16";

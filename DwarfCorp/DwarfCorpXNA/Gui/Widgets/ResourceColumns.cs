@@ -9,7 +9,7 @@ using DwarfCorp.Trade;
 
 namespace DwarfCorp.Gui.Widgets
 {
-    public class ResourceColumns : TwoColumns
+    public class ResourceColumns : Columns
     {
         public ITradeEntity TradeEntity;
         public ITradeEntity ValueSourceEntity;

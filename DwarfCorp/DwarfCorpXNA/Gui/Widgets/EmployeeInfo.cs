@@ -86,7 +86,7 @@ namespace DwarfCorp.Gui.Widgets
                 MinimumSize = new Point(0, 24)
             });
             
-            var columns = InteriorPanel.AddChild(new Gui.Widgets.TwoColumns
+            var columns = InteriorPanel.AddChild(new Gui.Widgets.Columns
             {
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 120)
@@ -96,7 +96,7 @@ namespace DwarfCorp.Gui.Widgets
             var right = columns.AddChild(new Gui.Widget());
 
             #region Stats
-            var statParent = left.AddChild(new Gui.Widgets.TwoColumns
+            var statParent = left.AddChild(new Gui.Widgets.Columns
             {
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 60)

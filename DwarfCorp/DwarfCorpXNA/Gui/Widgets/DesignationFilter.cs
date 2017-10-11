@@ -11,6 +11,7 @@ namespace DwarfCorp.Gui.Widgets
     public class DesignationFilter : Widget
     {
         public DesignationDrawer DesignationDrawer;
+        public int ColumnCount = 2;
 
         private List<CheckBox> Designations = new List<CheckBox>();
         
@@ -25,21 +26,22 @@ namespace DwarfCorp.Gui.Widgets
                 Font = "font16"
             });
             
-            var columns = AddChild(new Gui.Widgets.TwoColumns
+            var columns = AddChild(new Gui.Widgets.Columns
             {
                 AutoLayout = AutoLayout.DockFill,
-                MinimumSize = new Point(0, 120)
+                MinimumSize = new Point(0, 120),
+                ColumnCount = ColumnCount
             });
-            
-            var left = columns.AddChild(new Gui.Widget());
-            var right = columns.AddChild(new Gui.Widget());
-            var sideToggle = 0;
+
+            for (var i = 0; i < ColumnCount; ++i)
+                columns.AddChild(new Widget());
+            var column = 0;
             
             foreach (var type in Enum.GetValues(typeof(DesignationType)))
             {
                 if (type.ToString().StartsWith("_")) continue;
 
-                var box = columns.GetChild(sideToggle).AddChild(new CheckBox
+                var box = columns.GetChild(column).AddChild(new CheckBox
                 {
                     Text = type.ToString(),
                     Tag = type,
@@ -50,7 +52,7 @@ namespace DwarfCorp.Gui.Widgets
                 box.CheckState = (DesignationDrawer.VisibleTypes & (DesignationType)type) == (DesignationType)type;
                 box.OnCheckStateChange += (sender) => CheckChanged();
 
-                sideToggle = (sideToggle + 1) % 2;
+                column = (column + 1) % ColumnCount;
             }
 
             base.Construct();

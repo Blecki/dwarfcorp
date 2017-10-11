@@ -43,12 +43,12 @@ namespace DwarfCorp.Gui.Widgets
 
             Padding = new Margin(0, 0, 0, 0);
 
-            if (SizeToGrid.X > 1)
-            {
-                SizeToGrid.X = Math.Min(SizeToGrid.X, WidthLimit/ItemSize.X);
-                int numRows = (int)Math.Ceiling((float)(ItemSource.Count())/(float)(SizeToGrid.X));
-                SizeToGrid.Y = Math.Max(numRows, 1);
-            }
+            //if (SizeToGrid.X > 1)
+            //{
+            //    SizeToGrid.X = Math.Min(SizeToGrid.X, WidthLimit/ItemSize.X);
+            //    int numRows = (int)Math.Ceiling((float)(ItemSource.Count())/(float)(SizeToGrid.X));
+            //    SizeToGrid.Y = Math.Max(numRows, 1);
+            //}
             // Calculate perfect size. Margins + item sizes + padding.
             MaximumSize.X = InteriorMargin.Left + InteriorMargin.Right + (SizeToGrid.X*ItemSize.X) +
                             ((SizeToGrid.X - 1)*ItemSpacing.X);

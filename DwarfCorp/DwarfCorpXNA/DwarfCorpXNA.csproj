@@ -485,7 +485,7 @@
     <Compile Include="Gui\Widgets\MoneyEditor.cs" />
     <Compile Include="Gui\Widgets\KeyEditor.cs" />
     <Compile Include="Gui\Widgets\ResourcePanel.cs" />
-    <Compile Include="Gui\Widgets\TwoColumns.cs" />
+    <Compile Include="Gui\Widgets\Columns.cs" />
     <Compile Include="Gui\Widgets\TradePanel.cs" />
     <Compile Include="Gui\Widgets\ResourceColumns.cs" />
     <Compile Include="Gui\Widgets\ToolPopup.cs" />
