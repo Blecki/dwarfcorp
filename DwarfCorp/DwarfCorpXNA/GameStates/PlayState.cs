@@ -62,6 +62,7 @@ namespace DwarfCorp.GameStates
         private EmployeeInfo SelectedEmployeeInfo;
         private Widget ContextMenu;
         private CollapsableStack SidePanel;
+        private Widget BottomBar;
 
         private class ToolbarItem
         {
@@ -330,6 +331,8 @@ namespace DwarfCorp.GameStates
 
             #endregion
 
+            BottomBar.Layout();
+
             if (GameSpeedControls.CurrentSpeed != (int) DwarfTime.LastTime.Speed)
             {
                 World.Tutorial("time");
@@ -453,7 +456,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockBottom
             });
 
-            var bottomBar = bottomBackground.AddChild(new Gui.Widget
+            BottomBar = bottomBackground.AddChild(new Gui.Widget
             {
                 Transparent = true,
                 Padding = new Margin(0, 0, 2, 2),
@@ -466,12 +469,12 @@ namespace DwarfCorp.GameStates
                 Transparent = true,
                 MinimumSize = new Point(0, 44),
                 AutoLayout = AutoLayout.DockBottom,
-                InteriorMargin = new Margin(2,2,2,2),
+                InteriorMargin = new Margin(2,0,0,0),
                 Padding = new Margin(0,0,2,2)
             });
 
             #region Setup company information section
-            bottomBar.AddChild(new CompanyLogo
+            BottomBar.AddChild(new CompanyLogo
             {
                 Tag = "company info",
                 MinimumSize = new Point(32, 32),
@@ -481,16 +484,16 @@ namespace DwarfCorp.GameStates
                 Tooltip = "Company information"
             });
 
-            bottomBar.AddChild(new Widget
+            BottomBar.AddChild(new Widget
             {
                 Text = World.PlayerCompany.Information.Name,
                 AutoLayout = Gui.AutoLayout.DockLeftCentered,
                 Font = "font10",
                 TextVerticalAlign = VerticalAlign.Center,
-                TextColor = new Vector4(0, 0, 0, 1)
+                TextColor = new Vector4(1, 1, 1, 1)
             });
 
-            bottomBar.AddChild(new Gui.Widget
+            BottomBar.AddChild(new Gui.Widget
             {
                 Background = new Gui.TileReference("resources", 40),
                 MinimumSize = new Point(32, 32),
@@ -498,17 +501,16 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockLeftCentered
             });
 
-            MoneyLabel = bottomBar.AddChild(new Gui.Widget
+            MoneyLabel = BottomBar.AddChild(new Gui.Widget
             {
-                MinimumSize = new Point(96,0),
                 AutoLayout = Gui.AutoLayout.DockLeftCentered,
                 Font = "font10",
                 TextVerticalAlign = Gui.VerticalAlign.Center,
-                TextColor = new Vector4(0, 0, 0, 1),
+                TextColor = new Vector4(1, 1, 1, 1),
                 Tooltip = "Amount of money in our treasury"
             });
 
-            bottomBar.AddChild(new Gui.Widget
+            BottomBar.AddChild(new Gui.Widget
             {
                 Background = new Gui.TileReference("resources", 42),
                 MinimumSize = new Point(32, 32),
@@ -517,7 +519,7 @@ namespace DwarfCorp.GameStates
                 Tooltip = "Current viewing level."
             });
 
-            bottomBar.AddChild(new Gui.Widgets.ImageButton
+            BottomBar.AddChild(new Gui.Widgets.ImageButton
             {
                 Background = new Gui.TileReference("round-buttons", 7),
                 MinimumSize = new Point(16, 16),
@@ -532,7 +534,7 @@ namespace DwarfCorp.GameStates
                 Tooltip = "Go down one viewing level."
             });
 
-            bottomBar.AddChild(new Gui.Widgets.ImageButton
+            BottomBar.AddChild(new Gui.Widgets.ImageButton
             {
                 Background = new Gui.TileReference("round-buttons", 3),
                 MinimumSize = new Point(16, 16),
@@ -547,14 +549,13 @@ namespace DwarfCorp.GameStates
                 Tooltip = "Go up one viewing level."
             });
 
-            LevelLabel = bottomBar.AddChild(new Gui.Widget
+            LevelLabel = BottomBar.AddChild(new Gui.Widget
             {
                 AutoLayout = Gui.AutoLayout.DockLeftCentered,
                 Font = "font10",
                 TextVerticalAlign = Gui.VerticalAlign.Center,
-                TextColor = new Vector4(0, 0, 0, 1),
+                TextColor = new Vector4(1, 1, 1, 1),
                 Tooltip = "Current viewing level.",
-                MinimumSize = new Point(64,0)
             });
             #endregion
 
@@ -566,14 +567,14 @@ namespace DwarfCorp.GameStates
             });
 
             #region Setup time display
-            TimeLabel = bottomBar.AddChild(new Gui.Widget
+            TimeLabel = BottomBar.AddChild(new Gui.Widget
             {
                 AutoLayout = Gui.AutoLayout.DockRightCentered,
                 TextHorizontalAlign = Gui.HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 MinimumSize = new Point(128, 20),
                 Font = "font8",
-                TextColor = new Vector4(0, 0, 0, 1),
+                TextColor = new Vector4(1, 1, 1, 1),
                 Tooltip = "Current time/date."
             });
             #endregion
@@ -648,7 +649,7 @@ namespace DwarfCorp.GameStates
                             {
                                Icon = null,
                                 Text = "Map",
-                                TextColor = Vector4.One,
+                                EnabledTextColor = Vector4.One,
                                 TextHorizontalAlign = HorizontalAlign.Center,
                                 TextVerticalAlign = VerticalAlign.Center,
                                 OnClick = (sender, args) =>
@@ -668,7 +669,7 @@ namespace DwarfCorp.GameStates
                             {
                                 Icon = null,
                                 Text = "Emp",
-                                TextColor = Vector4.One,
+                                EnabledTextColor = Vector4.One,
                                 TextHorizontalAlign = HorizontalAlign.Center,
                                 TextVerticalAlign = VerticalAlign.Center,
                                 OnClick = (sender, args) =>
@@ -690,7 +691,7 @@ namespace DwarfCorp.GameStates
                                Text = "Marks",
                                TextHorizontalAlign = HorizontalAlign.Center,
                                TextVerticalAlign = VerticalAlign.Center,
-                               TextColor = Vector4.One,
+                               EnabledTextColor = Vector4.One,
                                OnClick = (sender, args) =>
                                {
                                    if (markerFilter.Hidden)
@@ -800,7 +801,7 @@ namespace DwarfCorp.GameStates
 
             #region Setup game speed controls
 
-            GameSpeedControls = bottomBar.AddChild(new GameSpeedControls
+            GameSpeedControls = BottomBar.AddChild(new GameSpeedControls
             {
                 Tag = "speed controls",
                 AutoLayout = AutoLayout.DockRightCentered,
@@ -881,7 +882,7 @@ namespace DwarfCorp.GameStates
 
             #region Setup brush
 
-            BrushTray = bottomBar.AddChild(new Gui.Widgets.ToggleTray
+            BrushTray = BottomBar.AddChild(new Gui.Widgets.ToggleTray
             {
                 Tag = "brushes",
                 AutoLayout = AutoLayout.DockLeftCentered,
@@ -1018,7 +1019,7 @@ namespace DwarfCorp.GameStates
 
             var icon_BuildRoom = new FlatToolTray.Icon
             {
-                TextColor = Vector4.One,
+                EnabledTextColor = Vector4.One,
                 Text = "Zone",
                 Tooltip = "Designate zones/areas",
                 TextHorizontalAlign = HorizontalAlign.Center,
@@ -1063,7 +1064,7 @@ namespace DwarfCorp.GameStates
                             TextHorizontalAlign = HorizontalAlign.Right,
                             TextVerticalAlign = VerticalAlign.Bottom,
                             Text = Master.Faction.ListResourcesInStockpilesPlusMinions()[data.ResourceToRelease].First.NumResources.ToString(),
-                            TextColor = Color.White.ToVector4(),
+                            EnabledTextColor = Color.White.ToVector4(),
                             Font = "font10-outline-numsonly",
                             PopupChild = new BuildWallInfo
                             {
@@ -1113,7 +1114,7 @@ namespace DwarfCorp.GameStates
                             TextHorizontalAlign = HorizontalAlign.Right,
                             TextVerticalAlign = VerticalAlign.Bottom,
                             Text = Master.Faction.ListResourcesInStockpilesPlusMinions()[data.ResourceToRelease].First.NumResources.ToString(),
-                            TextColor = Color.White.ToVector4(),
+                            EnabledTextColor = Color.White.ToVector4(),
                             Font = "font10-outline-numsonly",
                             PopupChild = new BuildWallInfo
                             {
@@ -1151,7 +1152,7 @@ namespace DwarfCorp.GameStates
                 TextVerticalAlign = VerticalAlign.Center,
                 Tooltip = "Place blocks",
                 Text = "Block",
-                TextColor = Color.White.ToVector4(),
+                EnabledTextColor = Color.White.ToVector4(),
                 ReplacementMenu = menu_WallTypes,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
@@ -1166,7 +1167,7 @@ namespace DwarfCorp.GameStates
                 TextVerticalAlign = VerticalAlign.Center,
                 Tooltip = "Place floor",
                 Text = "Floor",
-                TextColor = Color.White.ToVector4(),
+                EnabledTextColor = Color.White.ToVector4(),
                 ReplacementMenu = menu_Floortypes,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
@@ -1242,7 +1243,7 @@ namespace DwarfCorp.GameStates
             {
                 Icon = null,
                 Text = "Object",
-                TextColor = Vector4.One,
+                EnabledTextColor = Vector4.One,
                 Tooltip = "Craft objects",
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
@@ -1314,7 +1315,7 @@ namespace DwarfCorp.GameStates
             var icon_BuildResource = new FlatToolTray.Icon
             {
                 Text = "Res.",
-                TextColor = Vector4.One,
+                EnabledTextColor = Vector4.One,
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 KeepChildVisible = true,
@@ -1567,7 +1568,7 @@ namespace DwarfCorp.GameStates
                 Tag = "till",
                 Text = "Till",
                 Tooltip = "Till soil",
-                TextColor = new Vector4(1, 1, 1, 1),
+                EnabledTextColor = new Vector4(1, 1, 1, 1),
                 KeepChildVisible = true,
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
@@ -1651,7 +1652,7 @@ namespace DwarfCorp.GameStates
                 Tag = "plant",
                 Text = "Plant",
                 Tooltip = "Plant",
-                TextColor = new Vector4(1, 1, 1, 1),
+                EnabledTextColor = new Vector4(1, 1, 1, 1),
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 KeepChildVisible = true,
@@ -1665,7 +1666,7 @@ namespace DwarfCorp.GameStates
             {
                 Text = "Harv.",
                 Tag = "harvest",
-                TextColor = new Vector4(1, 1, 1, 1),
+                EnabledTextColor = new Vector4(1, 1, 1, 1),
                 Tooltip = "Harvest",
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
@@ -1692,7 +1693,7 @@ namespace DwarfCorp.GameStates
             {
                 Tag = "wrangle",
                 Text = "Wrng.",
-                TextColor = new Vector4(1, 1, 1, 1),
+                EnabledTextColor = new Vector4(1, 1, 1, 1),
                 Tooltip = "Wrangle Animals",
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,

@@ -17,6 +17,8 @@ namespace DwarfCorp.Gui.Widgets
         
         public override void Construct()
         {
+            Padding = new Margin(2, 2, 2, 2);
+
             AddChild(new Gui.Widget
             {
                 Text = "Visible Markers",
@@ -34,7 +36,11 @@ namespace DwarfCorp.Gui.Widgets
             });
 
             for (var i = 0; i < ColumnCount; ++i)
-                columns.AddChild(new Widget());
+                columns.AddChild(new Widget
+                {
+                    Padding = new Margin(2, 2, 2, 2),
+                });
+
             var column = 0;
             
             foreach (var type in Enum.GetValues(typeof(DesignationType)))

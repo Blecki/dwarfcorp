@@ -79,7 +79,7 @@ namespace DwarfCorp.Gui.Widgets
                 Font = "font16",
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
-                TextColor = Vector4.One,
+                EnabledTextColor = Vector4.One,
             });
 
             AddChild(new FramedIcon
@@ -94,7 +94,7 @@ namespace DwarfCorp.Gui.Widgets
                 Font = "font16",
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
-                TextColor = Vector4.One,
+                EnabledTextColor = Vector4.One,
             });
 
             foreach (var item in ItemSource)
