@@ -47,10 +47,6 @@ namespace DwarfCorp
     /// </summary>
     public class GatherTool : PlayerTool
     {
-
-        public Color GatherDesignationColor { get; set; }
-        public float GatherDesignationGlowRate { get; set; }
-
         public GatherTool()
         {
 

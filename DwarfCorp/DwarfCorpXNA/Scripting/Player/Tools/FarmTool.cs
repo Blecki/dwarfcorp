@@ -33,23 +33,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
-using Color = Microsoft.Xna.Framework.Color;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// Using this tool, the player can specify regions of voxels to be
-    /// turned into rooms.
-    /// </summary>
-    [JsonObject(IsReference = true)]
     public class FarmTool : PlayerTool
     {
-        public BuildTypes BuildType { get; set; }
         public string PlantType { get; set; }
         public List<ResourceAmount> RequiredResources { get; set; } 
         public enum FarmMode
@@ -62,61 +53,20 @@ namespace DwarfCorp
 
         public FarmMode Mode { get; set; }
 
-        public class FarmTile
-        {
-            public VoxelHandle Vox = VoxelHandle.InvalidHandle;
-            public Plant Plant = null;
-            public float Progress = 0.0f;
-            public CreatureAI Farmer = null;
-            public bool IsCanceled = false;
-
-            public bool IsTilled()
-            {
-                return (Vox.IsValid) && Vox.Type.Name == "TilledSoil";
-            }
-
-            public bool IsFree()
-            {
-                return (Plant == null || Plant.IsDead) && Farmer == null;
-            }
-
-            public bool PlantExists()
-            {
-                return !(Plant == null || Plant.IsDead);
-            }
-
-            public void CreatePlant(string plantToCreate, WorldManager world)
-            {
-                Plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[plantToCreate].PlantToGenerate, Vox.WorldPosition + Vector3.Up * 1.5f);
-                Seedling seed = Plant.BecomeSeedling();
-
-                Matrix original = Plant.LocalTransform;
-                original.Translation += Vector3.Down;
-                seed.AnimationQueue.Add(new EaseMotion(0.5f, original, Plant.LocalTransform.Translation));
-                 
-                world.ParticleManager.Trigger("puff", original.Translation, Color.White, 20);
-                
-                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_plant_grow, Vox.WorldPosition, true);
-                
-            }
-        }
-
-        public List<FarmTile> FarmTiles = new List<FarmTile>();
-
         public bool HasTile(VoxelHandle vox)
         {
-            return FarmTiles.Any(f => f.Vox == vox);
+            return Player.Faction.FarmTiles.Any(f => f.Vox == vox);
         }
 
 
         public bool HasPlant(VoxelHandle vox)
         {
-            return HasTile(vox) && FarmTiles.Any(f => f.Vox.Equals(vox) && f.PlantExists());
+            return HasTile(vox) && Player.Faction.FarmTiles.Any(f => f.Vox.Equals(vox) && f.PlantExists());
         }
 
         public bool IsBeingWorked(VoxelHandle vox)
         {
-            return HasTile(vox) && FarmTiles.Any(f => f.Vox.Equals(vox) && f.Farmer != null);
+            return HasTile(vox) && Player.Faction.FarmTiles.Any(f => f.Vox.Equals(vox) && f.Farmer != null);
         }
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
@@ -242,11 +192,11 @@ namespace DwarfCorp
                             {
                                 FarmTile tile = new FarmTile() {Vox = voxel};
                                 goals.Add(new FarmTask(tile) {Mode = FarmAct.FarmMode.Till, Plant = PlantType});
-                                FarmTiles.Add(tile);
+                                Player.Faction.FarmTiles.Add(tile);
                             }
                             else
                             {
-                                goals.Add(new FarmTask(FarmTiles.Find(tile => tile.Vox.Equals(voxel)))
+                                goals.Add(new FarmTask(Player.Faction.FarmTiles.Find(tile => tile.Vox.Equals(voxel)))
                                 {
                                     Mode = FarmAct.FarmMode.Till,
                                     Plant = PlantType
@@ -257,7 +207,7 @@ namespace DwarfCorp
                         {
                             if (!HasTile(voxel) || HasPlant(voxel)) continue;
                             Drawer3D.UnHighlightVoxel(voxel);
-                            foreach (FarmTile tile in FarmTiles)
+                            foreach (FarmTile tile in Player.Faction.FarmTiles)
                             {
                                 if (tile.Vox.Equals(voxel))
                                 { 
@@ -265,7 +215,7 @@ namespace DwarfCorp
                                     tile.Farmer = null;
                                 }
                             }
-                            FarmTiles.RemoveAll(tile => tile.Vox.Equals(voxel));
+                            Player.Faction.FarmTiles.RemoveAll(tile => tile.Vox.Equals(voxel));
                         }
                     }
                     TaskManager.AssignTasksGreedy(goals.Cast<Task>().ToList(), minions, 1);
@@ -282,19 +232,17 @@ namespace DwarfCorp
                         .Sum(resource => resource.Key == PlantType && resource.Value.NumResources > 0 ? resource.Value.NumResources : 0);
                     foreach (var voxel in voxels)
                     {
-
                         if (currentAmount == 0)
                         {
                             Player.World.ShowToolPopup("Not enough " + PlantType + " in stocks!");
                             break;
-                        }
-                      
+                        }                      
 
                         if (ValidatePlanting(voxel))
                         {
                             FarmTile tile = new FarmTile() { Vox = voxel };
                             goals.Add(new FarmTask(tile) {  Mode = FarmAct.FarmMode.Plant, Plant = PlantType, RequiredResources = RequiredResources});
-                            FarmTiles.Add(tile);
+                            Player.Faction.FarmTiles.Add(tile);
                             currentAmount--;
                         }
                     }
@@ -407,36 +355,15 @@ namespace DwarfCorp
 
         }
 
-        void FarmPanel_OnTill()
-        {
-            Player.World.ShowToolPopup("Click and drag to till soil.");
-            Mode = FarmMode.Tilling;
-        }
-
-        void FarmPanel_OnPlant(string plantType, string resource)
-        {
-            Player.World.ShowToolPopup("Click and drag to plant " + plantType + ".");
-            Mode = FarmMode.Planting;
-            PlantType = plantType;
-            RequiredResources = new List<ResourceAmount>() {new ResourceAmount(resource)};
-        }
-
-        void FarmPanel_OnHarvest()
-        {
-            Player.World.ShowToolPopup("Click and drag to harvest.");
-            Mode = FarmMode.Harvesting;
-        }
-
         public override void OnEnd()
         {
             //FarmPanel.TweenOut(Drawer2D.Alignment.Right, 0.25f);
-            foreach (FarmTile tile in FarmTiles)
+            foreach (FarmTile tile in Player.Faction.FarmTiles)
             {
                 Drawer3D.UnHighlightVoxel(tile.Vox);
             }
             Player.VoxSelector.Clear();
         }
-
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
@@ -494,7 +421,7 @@ namespace DwarfCorp
                     drawColor.G = (byte) (Math.Min(drawColor.G*alpha + 50, 255));
                     drawColor.B = (byte) (Math.Min(drawColor.B*alpha + 50, 255));
 
-                    foreach (var tile in FarmTiles)
+                    foreach (var tile in Player.Faction.FarmTiles)
                     {
                         if (!tile.IsTilled())
                         {
@@ -510,7 +437,7 @@ namespace DwarfCorp
                 }
                 case FarmMode.Planting:
                 {
-                    foreach (var tile in FarmTiles)
+                    foreach (var tile in Player.Faction.FarmTiles)
                     {
                         if (tile.IsTilled() && !tile.PlantExists() && tile.Farmer == null)
                         {
@@ -542,116 +469,7 @@ namespace DwarfCorp
 
         public KillEntityTask AutoFarm()
         {
-            return (from tile in FarmTiles where tile.PlantExists() && tile.Plant.IsGrown && !tile.IsCanceled select new KillEntityTask(tile.Plant, KillEntityTask.KillType.Chop)).FirstOrDefault();
-        }
-    }
-
-    public class WrangleAnimalTask : Task
-    {
-        public Creature Animal { get; set; }
-        public AnimalPen LastPen { get; set; }
-
-        public WrangleAnimalTask()
-        {
-            
-        }
-        public WrangleAnimalTask(Creature animal)
-        {
-            Animal = animal;
-            Name = "Wrangle animal" + animal.GlobalID;
-            AutoRetry = true;
-        }
-
-        public IEnumerable<Act.Status> PenAnimal(CreatureAI agent, CreatureAI creature, AnimalPen animalPen)
-        {
-            foreach (var status in animalPen.AddAnimal(Animal.Physics, agent.Faction))
-            {
-                if (status == Act.Status.Fail)
-                {
-                    creature.ResetPositionConstraint();
-                    yield return Act.Status.Fail;
-                    yield break;
-                }
-            }
-            yield return Act.Status.Success;
-        }
-
-        public IEnumerable<Act.Status> ReleaseAnimal(CreatureAI animal)
-        {
-            animal.ResetPositionConstraint();
-            yield return Act.Status.Success;
-        }
-
-        public IEnumerable<Act.Status> WrangleAnimal(CreatureAI agent, CreatureAI creature)
-        {
-            creature.PositionConstraint = new BoundingBox(agent.Position - new Vector3(1.0f, 0.5f, 1.0f), 
-                agent.Position + new Vector3(1.0f, 0.5f, 1.0f));
-            Drawer3D.DrawLine(creature.Position, agent.Position, Color.Black, 0.05f);
-            yield return Act.Status.Success;
-        }
-
-        public AnimalPen GetClosestPen(Creature agent)
-        {
-            if (LastPen != null && (LastPen.Species == "" || LastPen.Species == Animal.Species) && agent.Faction.GetRooms().Contains(LastPen) && LastPen.IsBuilt)
-            {
-                return LastPen;
-            }
-
-            var pens = agent.Faction.GetRooms().Where(room => room is AnimalPen && room.IsBuilt).Cast<AnimalPen>().Where(pen => pen.Species == "" || pen.Species == Animal.Species);
-            AnimalPen closestPen = null;
-            float closestDist = float.MaxValue;
-
-            foreach (var pen in pens)
-            {
-                var dist = (pen.GetBoundingBox().Center() - agent.Physics.Position).LengthSquared();
-                if (dist < closestDist)
-                {
-                    closestDist = dist;
-                    closestPen = pen;
-                }
-            }
-            if (closestPen == null)
-            {
-                agent.World.MakeAnnouncement("Can't wrangle " + Animal.Species + "s. Need more animal pens.");
-            }
-            LastPen = closestPen;
-            return closestPen;
-        }
-
-        public override Act CreateScript(Creature agent)
-        {
-            var closestPen = GetClosestPen(agent);
-            if (closestPen == null)
-            {
-                return null;
-            }
-
-            closestPen.Species = Animal.Species;
-
-            return new Select(new Sequence(new Domain(() => IsFeasible(agent), new GoToEntityAct(Animal.Physics, agent.AI)),
-                new Domain(() => IsFeasible(agent), new Parallel(new Repeat(new Wrap(() => WrangleAnimal(agent.AI, Animal.AI)), -1, false),
-                new GoToZoneAct(agent.AI, closestPen)) { ReturnOnAllSucces = false}),
-                new Domain(() => IsFeasible(agent), new Wrap(() => PenAnimal(agent.AI, Animal.AI, closestPen)))), 
-                new Wrap(() => ReleaseAnimal(Animal.AI)));
-        }
-
-        public override Task Clone()
-        {
-            return new WrangleAnimalTask(Animal);
-        }
-
-        public override bool IsFeasible(Creature agent)
-        {
-            return Animal != null 
-                && !Animal.IsDead 
-                && agent.Faction.IsDesignation(Animal.GetRoot().GetComponent<Physics>(), DesignationType.Wrangle) 
-                && GetClosestPen(agent) != null;
-        }
-
-
-        public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
-        {
-            return (agent.AI.Position - Animal.Physics.Position).LengthSquared();
+            return (from tile in Player.Faction.FarmTiles where tile.PlantExists() && tile.Plant.IsGrown && !tile.IsCanceled select new KillEntityTask(tile.Plant, KillEntityTask.KillType.Chop)).FirstOrDefault();
         }
     }
 }

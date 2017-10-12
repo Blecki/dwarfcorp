@@ -35,14 +35,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Security.Cryptography.X509Certificates;
 using DwarfCorp.GameStates;
 using LibNoise;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace DwarfCorp
 {
@@ -70,6 +66,7 @@ namespace DwarfCorp
         public CraftBuilder CraftBuilder { get; set; }
         public Color PrimaryColor { get; set; }
         public Color SecondaryColor { get; set; }
+        public List<FarmTile> FarmTiles = new List<FarmTile>();
 
         // Todo: When converting to new save system, it can take care of this.
         [JsonProperty]
@@ -148,6 +145,59 @@ namespace DwarfCorp
                 PutDesignations.Remove(des);
                 if (World.PlayerFaction == this)
                     World.DesignationDrawer.UnHiliteVoxel(des.Voxel.Coordinate, DesignationType.Put);
+            }
+        }
+
+
+        public bool IsFarmDesignation(GlobalVoxelCoordinate Location)
+        {
+            return FarmTiles.Any(d => d.Vox.Coordinate == Location);
+        }
+
+        public bool IsFarmDesignation(VoxelHandle reference)
+        {
+            foreach (var put in FarmTiles)
+            {
+                if (put.Vox == reference)
+                    return true;
+            }
+
+            return false;
+        }
+
+        public FarmTile GetFarmDesignation(GlobalVoxelCoordinate Location)
+        {
+            return FarmTiles.FirstOrDefault(d => d.Vox.Coordinate == Location);
+        }
+
+        // Todo: %KILL%
+        public FarmTile GetFarmDesignation(VoxelHandle v)
+        {
+            foreach (var put in FarmTiles)
+            {
+                if (put.Vox == v)
+                    return put;
+            }
+
+            return null;
+        }
+
+        public void AddFarmDesignation(FarmTile des, DesignationType Type)
+        {
+            FarmTiles.Add(des);
+            if (World.PlayerFaction == this)
+                World.DesignationDrawer.HiliteVoxel(des.Vox.Coordinate, Type);
+        }
+
+        public void RemoveFarmDesignation(VoxelHandle v, DesignationType Type)
+        {
+            var des = GetFarmDesignation(v);
+
+            if (des != null)
+            {
+                FarmTiles.Remove(des);
+                if (World.PlayerFaction == this)
+                    World.DesignationDrawer.UnHiliteVoxel(des.Vox.Coordinate, Type);
             }
         }
 

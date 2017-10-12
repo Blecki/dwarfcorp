@@ -1,4 +1,4 @@
-// Drawer3D.cs
+// BuildTool.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -30,25 +30,51 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public enum DesignationType
+    public class FarmTile
     {
-        _None   = 0,
+        public VoxelHandle Vox = VoxelHandle.InvalidHandle;
+        public Plant Plant = null;
+        public float Progress = 0.0f;
+        public CreatureAI Farmer = null;
+        public bool IsCanceled = false;
 
-        Dig     = 1,
-        Farm    = 2,
-        Guard   = 4,
-        Gather  = 8,
-        Attack  = 16,
-        Wrangle = 32,
-        Chop    = 64,
-        Put     = 128,
-        Till    = 256,
-        Plant   = 512, 
-        Harvest = 1024,
+        public bool IsTilled()
+        {
+            return (Vox.IsValid) && Vox.Type.Name == "TilledSoil";
+        }
 
-        _All     = Dig | Farm | Guard | Gather | Attack | Wrangle | Chop | Put | Till | Plant | Harvest,
+        public bool IsFree()
+        {
+            return (Plant == null || Plant.IsDead) && Farmer == null;
+        }
+
+        public bool PlantExists()
+        {
+            return !(Plant == null || Plant.IsDead);
+        }
+
+        public void CreatePlant(string plantToCreate, WorldManager world)
+        {
+            Plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[plantToCreate].PlantToGenerate, Vox.WorldPosition + Vector3.Up * 1.5f);
+            Seedling seed = Plant.BecomeSeedling();
+
+            Matrix original = Plant.LocalTransform;
+            original.Translation += Vector3.Down;
+            seed.AnimationQueue.Add(new EaseMotion(0.5f, original, Plant.LocalTransform.Translation));
+
+            world.ParticleManager.Trigger("puff", original.Translation, Color.White, 20);
+
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_plant_grow, Vox.WorldPosition, true);
+
+        }
     }
 }

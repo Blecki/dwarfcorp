@@ -379,6 +379,9 @@
     <Compile Include="Scripting\Player\Tools\CookTool.cs" />
     <Compile Include="Scripting\Player\Tools\BuildWallTool.cs" />
     <Compile Include="Scripting\Player\Tools\BuiltTypes.cs" />
+    <Compile Include="Scripting\Player\Tools\FarmTile.cs" />
+    <Compile Include="Scripting\Player\Tools\TillTool.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\WrangleAnimalTask.cs" />
     <Compile Include="Scripting\Player\Tools\MoveObjectTool.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\AnimalPen.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\Graveyard.cs" />

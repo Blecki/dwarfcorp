@@ -41,7 +41,7 @@ namespace DwarfCorp
 {
     public class FarmAct : CompoundCreatureAct
     {
-        public FarmTool.FarmTile FarmToWork { get; set; }
+        public FarmTile FarmToWork { get; set; }
         public string PlantToCreate { get; set; }
         public List<ResourceAmount> Resources { get; set; }   
         public enum FarmMode 
@@ -77,7 +77,8 @@ namespace DwarfCorp
 
         public IEnumerable<Status> FarmATile()
         {
-            FarmTool.FarmTile tile = FarmToWork;
+            var tile = FarmToWork;
+
             if (tile == null) 
             {
                 yield return Status.Fail;
@@ -170,7 +171,7 @@ namespace DwarfCorp
 
         public override void OnCanceled()
         {
-            FarmTool.FarmTile tile = FarmToWork;
+            var tile = FarmToWork;
 
             if (tile != null && tile.Farmer == Agent)
             {

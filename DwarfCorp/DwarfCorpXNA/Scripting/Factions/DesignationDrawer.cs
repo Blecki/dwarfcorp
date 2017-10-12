@@ -114,6 +114,12 @@ namespace DwarfCorp
                 Color = Color.Tomato,
                 Icon = new NamedImageFrame("newgui/pointers", 32, 4, 1)
             });
+
+            DesignationProperties.Add(DesignationType.Till, new DesignationTypeProperties
+            {
+                Color = Color.PaleGoldenrod,
+                Icon = new NamedImageFrame("newgui/pointers", 32, 4, 1)
+            });
         }
 
         // Ugh...

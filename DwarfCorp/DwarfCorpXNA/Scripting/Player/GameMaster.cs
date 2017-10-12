@@ -32,6 +32,7 @@ namespace DwarfCorp
             Guard,
             Attack,
             Farm,
+            Till,
             Craft,
             MoveObjects,
             God
@@ -150,7 +151,12 @@ namespace DwarfCorp
 
             Tools[ToolMode.SelectUnits] = new DwarfSelectorTool(this);
 
-            Tools[ToolMode.Farm] = new FarmTool()
+            Tools[ToolMode.Farm] = new FarmTool
+            {
+                Player = this
+            };
+
+            Tools[ToolMode.Till] = new TillTool
             {
                 Player = this
             };
@@ -163,8 +169,6 @@ namespace DwarfCorp
             Tools[ToolMode.Gather] = new GatherTool
             {
                 Player = this,
-                GatherDesignationColor = Color.Goldenrod,
-                GatherDesignationGlowRate = 2.0f
             };
 
             Tools[ToolMode.Guard] = new GuardTool

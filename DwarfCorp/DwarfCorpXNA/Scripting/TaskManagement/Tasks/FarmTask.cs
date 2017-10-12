@@ -40,7 +40,7 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class FarmTask : Task
     {
-        public FarmTool.FarmTile FarmToWork { get; set; }
+        public FarmTile FarmToWork { get; set; }
         public FarmAct.FarmMode Mode { get; set; }
         public string Plant { get; set; }
         public List<ResourceAmount> RequiredResources { get; set; } 
@@ -50,7 +50,7 @@ namespace DwarfCorp
             Priority = PriorityType.Low;
         }
 
-        public FarmTask(FarmTool.FarmTile farmToWork)
+        public FarmTask(FarmTile farmToWork)
         {
             FarmToWork = farmToWork;
             Name = "Work " + FarmToWork.Vox.Coordinate;

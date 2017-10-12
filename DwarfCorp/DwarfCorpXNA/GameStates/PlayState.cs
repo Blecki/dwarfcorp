@@ -1575,8 +1575,7 @@ namespace DwarfCorp.GameStates
                 OnClick = (sender, args) =>
                 {
                     World.ShowToolPopup("Click and drag to till soil.");
-                    ChangeTool(GameMaster.ToolMode.Farm);
-                    ((FarmTool)(Master.Tools[GameMaster.ToolMode.Farm])).Mode = FarmTool.FarmMode.Tilling;
+                    ChangeTool(GameMaster.ToolMode.Till);
                     World.Tutorial("till");
                 },
                 PopupChild = new Widget()
