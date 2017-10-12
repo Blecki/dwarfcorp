@@ -446,18 +446,28 @@ namespace DwarfCorp.GameStates
         /// </summary>
         public void CreateGUIComponents()
         {
-            var bottomBar = GuiRoot.RootItem.AddChild(new Gui.Widget
+            var bottomBackground = GuiRoot.RootItem.AddChild(new TrayBackground
             {
-                Background = new TileReference("basic", 0),
+                Corners = Scale9Corners.Top,
+                MinimumSize = new Point(0, 92),
+                AutoLayout = AutoLayout.DockBottom
+            });
+
+            var bottomBar = bottomBackground.AddChild(new Gui.Widget
+            {
+                Transparent = true,
+                Padding = new Margin(0, 0, 2, 2),
                 MinimumSize = new Point(0, 36),
                 AutoLayout = AutoLayout.DockBottom
             });
 
-            var secondBar = GuiRoot.RootItem.AddChild(new Widget
+            var secondBar = bottomBackground.AddChild(new Widget
             {
-                Background = new TileReference("basic", 0),
-                MinimumSize = new Point(0, 36),
-                AutoLayout = AutoLayout.DockBottom
+                Transparent = true,
+                MinimumSize = new Point(0, 44),
+                AutoLayout = AutoLayout.DockBottom,
+                InteriorMargin = new Margin(2,2,2,2),
+                Padding = new Margin(0,0,2,2)
             });
 
             #region Setup company information section
@@ -578,13 +588,14 @@ namespace DwarfCorp.GameStates
                 Tag = "minimap",
                 Renderer = MinimapRenderer,
                 AutoLayout = AutoLayout.FloatBottomLeft,
-                MinimumSize = new Point(208, 204)
+                MinimumSize = new Point(208, 204),
+                OnLayout = (sender) => sender.Rect.Y += 4
             }) as MinimapFrame;
 
             SelectedEmployeeInfo = GuiRoot.RootItem.AddChild(new EmployeeInfo
             {
                 Hidden = true,
-                Border = "border-button",
+                Border = "border-fancy",
                 Employee = null,
                 EnablePosession = true,
                 Tag = "selected-employee-info",
@@ -620,22 +631,27 @@ namespace DwarfCorp.GameStates
             {
                 DesignationDrawer = World.DesignationDrawer,
                 Hidden = true,
-                Border = "border-thin",
+                Border = "border-fancy",
                 AutoLayout = AutoLayout.FloatBottomLeft,
-                MinimumSize = new Point(208, 150)
+                MinimumSize = new Point(300, 180)
             });
 
             var bottomLeft = secondBar.AddChild(new Gui.Widgets.IconTray
             {
-                Corners = Gui.Scale9Corners.Top,
+                Corners = 0,
+                Transparent = true,
                 AutoLayout = Gui.AutoLayout.DockLeft,
                 SizeToGrid = new Point(3, 1),
                 ItemSource = new Gui.Widget[]
                         {
                             new FramedIcon
                             {
-                               Icon = new TileReference("tool-icons", 12),
-                               OnClick = (sender, args) =>
+                               Icon = null,
+                                Text = "Map",
+                                TextColor = Vector4.One,
+                                TextHorizontalAlign = HorizontalAlign.Center,
+                                TextVerticalAlign = VerticalAlign.Center,
+                                OnClick = (sender, args) =>
                                {
                                    if (MinimapFrame.Hidden)
                                    {
@@ -650,8 +666,12 @@ namespace DwarfCorp.GameStates
 
                             new FramedIcon
                             {
-                               Icon = new TileReference("tool-icons", 12),
-                               OnClick = (sender, args) =>
+                                Icon = null,
+                                Text = "Emp",
+                                TextColor = Vector4.One,
+                                TextHorizontalAlign = HorizontalAlign.Center,
+                                TextVerticalAlign = VerticalAlign.Center,
+                                OnClick = (sender, args) =>
                                {
                                    if (SelectedEmployeeInfo.Hidden)
                                    {
@@ -666,7 +686,11 @@ namespace DwarfCorp.GameStates
 
                             new FramedIcon
                             {
-                               Icon = new TileReference("tool-icons", 12),
+                               Icon = null,
+                               Text = "Marks",
+                               TextHorizontalAlign = HorizontalAlign.Center,
+                               TextVerticalAlign = VerticalAlign.Center,
+                               TextColor = Vector4.One,
                                OnClick = (sender, args) =>
                                {
                                    if (markerFilter.Hidden)
@@ -756,7 +780,8 @@ namespace DwarfCorp.GameStates
 
             var topRightTray = secondBar.AddChild(new Gui.Widgets.IconTray
             {
-                Corners = Gui.Scale9Corners.Top,
+                Corners = 0,//Gui.Scale9Corners.Top,
+                Transparent = true,
                 AutoLayout = Gui.AutoLayout.DockRight,
                 SizeToGrid = new Point(2, 1),
                 ItemSource = new Gui.Widget[] 
@@ -861,8 +886,9 @@ namespace DwarfCorp.GameStates
                 Tag = "brushes",
                 AutoLayout = AutoLayout.DockLeftCentered,
                 SizeToGrid = new Point(3, 1),
-                Border = "border-thin",
+                Border = "border-thin-transparent",
                 ItemSize = new Point(20, 20),
+                InteriorMargin = new Margin(2,2,2,2),
                 ItemSource = new Gui.Widget[]
                
                         { 
@@ -1909,8 +1935,9 @@ namespace DwarfCorp.GameStates
             icon_menu_Farm_Return.ReplacementMenu = MainMenu;
             icon_menu_Magic_Return.ReplacementMenu = MainMenu;
 
-            BottomToolBar = GuiRoot.RootItem.AddChild(new FlatToolTray.RootTray
+            BottomToolBar = secondBar.AddChild(new FlatToolTray.RootTray
             {
+                AutoLayout = AutoLayout.DockFill,
                 ItemSource = new Widget[]
                 {
                     menu_BuildTools,
@@ -1927,12 +1954,12 @@ namespace DwarfCorp.GameStates
                     menu_WallTypes,
                     menu_Floortypes
                 },
-                OnLayout = (sender) =>
+                /*OnLayout = (sender) =>
                 {
                     sender.Rect = sender.ComputeBoundingChildRect();
                     sender.Rect.X = 208;
                     sender.Rect.Y = bottomBar.Rect.Top - sender.Rect.Height;
-                },
+                },*/
             }) as FlatToolTray.RootTray;
 
             BottomToolBar.SwitchTray(MainMenu);
@@ -1953,6 +1980,9 @@ namespace DwarfCorp.GameStates
             #endregion
 
             GuiRoot.RootItem.Layout();
+
+            // Now that it's laid out, bring the second bar to the front so commands draw over other shit.
+            secondBar.BringToFront();
 
             // Hack to put the employee info panel in the right spot.
             //SidePanel.RepositionItems();

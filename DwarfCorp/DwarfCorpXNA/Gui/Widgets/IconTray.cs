@@ -13,6 +13,9 @@ namespace DwarfCorp.Gui.Widgets
         public Point ItemSpacing = new Point(2, 2);
         public Point SizeToGrid = new Point(1, 1);
         public int WidthLimit = 512;
+        public int IconOffset = 0;
+        private int IconCount { get { return Children.Count - 2; } }
+        private Widget GetIcon(int i) { return GetChild(i + 2); }
 
         public IEnumerable<Widget> ItemSource;
 
@@ -35,11 +38,16 @@ namespace DwarfCorp.Gui.Widgets
             {
                 ItemSource = new List<Widget>();
             }
-            InteriorMargin = new Margin(0,0,0,0);
-            if (Corners.HasFlag(Scale9Corners.Top)) InteriorMargin.Top = 12;
-            if (Corners.HasFlag(Scale9Corners.Bottom)) InteriorMargin.Bottom = 12;
-            if (Corners.HasFlag(Scale9Corners.Left)) InteriorMargin.Left = 16;
-            if (Corners.HasFlag(Scale9Corners.Right)) InteriorMargin.Right = 16;
+
+            if (Border == "tray-border")
+            {
+                // This is a hack.
+                InteriorMargin = new Margin(0, 0, 0, 0);
+                if (Corners.HasFlag(Scale9Corners.Top)) InteriorMargin.Top = 12;
+                if (Corners.HasFlag(Scale9Corners.Bottom)) InteriorMargin.Bottom = 12;
+                if (Corners.HasFlag(Scale9Corners.Left)) InteriorMargin.Left = 16;
+                if (Corners.HasFlag(Scale9Corners.Right)) InteriorMargin.Right = 16;
+            }
 
             Padding = new Margin(0, 0, 0, 0);
 
@@ -59,6 +67,36 @@ namespace DwarfCorp.Gui.Widgets
             Rect.Width = MinimumSize.X;
             Rect.Height = MinimumSize.Y;
 
+            AddChild(new FramedIcon
+            {
+                OnClick = (sender, args) =>
+                {
+                    IconOffset -= 1;
+                    LayoutIcons();
+                },
+                Icon = null,
+                Text = "<<",
+                Font = "font16",
+                TextHorizontalAlign = HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Center,
+                TextColor = Vector4.One,
+            });
+
+            AddChild(new FramedIcon
+            {
+                OnClick = (sender, args) =>
+                {
+                    IconOffset += 1;
+                    LayoutIcons();
+                },
+                Icon = null,
+                Text = ">>",
+                Font = "font16",
+                TextHorizontalAlign = HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Center,
+                TextColor = Vector4.One,
+            });
+
             foreach (var item in ItemSource)
                 AddChild(item);
         }
@@ -66,20 +104,78 @@ namespace DwarfCorp.Gui.Widgets
         public override void Layout()
         {
             Root.SafeCall(OnLayout, this);
-            Rect = MathFunctions.SnapRect(Rect, Root.RenderData.VirtualScreen);
+            //Rect = MathFunctions.SnapRect(Rect, Root.RenderData.VirtualScreen);
+
+            LayoutIcons();
+        }
+
+        public void LayoutIcons()
+        { 
             var rect = GetDrawableInterior();
 
-            var pos = new Point(rect.X, rect.Y);
             foreach (var child in EnumerateChildren())
+                child.Hidden = true;
+
+            var totalItemWidth = (IconCount * (ItemSize.X + ItemSpacing.X)) - ItemSpacing.X;
+
+            if (totalItemWidth > rect.Width)
             {
-                child.Rect = new Rectangle(pos.X, pos.Y, ItemSize.X, ItemSize.Y);
+                // Need to paginate.
+                var itemsThatFit = (rect.Width / ItemSize.X) - 1;
+                var pos = new Point(rect.X, rect.Y);
+
+                // Always add Icon 0 first.
+                GetIcon(0).Hidden = false;
+                GetIcon(0).Rect = new Rectangle(pos.X, pos.Y, ItemSize.X, ItemSize.Y);
+                GetIcon(0).Layout();
                 pos.X += ItemSize.X + ItemSpacing.X;
-                if (pos.X > rect.Right - ItemSize.X)
+
+                // Add back button.
+                (GetChild(0) as FramedIcon).Enabled = IconOffset > 0;
+                GetChild(0).Hidden = false;
+                GetChild(0).Rect = new Rectangle(pos.X, pos.Y, ItemSize.X, ItemSize.Y);
+                pos.X += ItemSize.X + ItemSpacing.X;
+
+                (GetChild(1) as FramedIcon).Enabled = false;
+
+                for (var c = IconOffset + 1; c < IconCount; ++c)
                 {
-                    pos.X = rect.X;
-                    pos.Y += ItemSize.Y + ItemSpacing.Y;
+                    var child = GetIcon(c);
+                    child.Hidden = false;
+                    child.Rect = new Rectangle(pos.X, pos.Y, ItemSize.X, ItemSize.Y);
+                    pos.X += ItemSize.X + ItemSpacing.X;
+                    child.Layout();
+
+                    if (pos.X >= rect.Right - ItemSize.X)
+                    {
+                        (GetChild(1) as FramedIcon).Enabled = true;
+                        break;
+                    }
+
                 }
-                child.Layout();
+
+                // Add more button.
+                GetChild(1).Hidden = false;
+                GetChild(1).Rect = new Rectangle(Rect.Right - ItemSize.X, Rect.Y, ItemSize.X, ItemSize.Y);
+            }
+            else
+            {
+                IconOffset = 0;
+
+                var pos = new Point(rect.X, rect.Y);
+                for (var c = 0; c < IconCount; ++c)
+                {
+                    var child = GetIcon(c);
+                    child.Hidden = false;
+                    child.Rect = new Rectangle(pos.X, pos.Y, ItemSize.X, ItemSize.Y);
+                    pos.X += ItemSize.X + ItemSpacing.X;
+                    //if (pos.X > rect.Right - ItemSize.X)
+                    //{
+                    //    pos.X = rect.X;
+                    //    pos.Y += ItemSize.Y + ItemSpacing.Y;
+                    //}
+                    child.Layout();
+                }
             }
 
             Invalidate();   
@@ -87,7 +183,7 @@ namespace DwarfCorp.Gui.Widgets
 
         protected override Gui.Mesh Redraw()
         {
-            if (Border != null)
+            if (Border != null && !Transparent)
             {
                 return Gui.Mesh.CreateScale9Background(Rect, Root.GetTileSheet(Border), Corners);
             }

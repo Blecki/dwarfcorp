@@ -41,8 +41,7 @@ namespace DwarfCorp.Gui.Widgets
 
                 foreach (var child in Children)
                 {
-                    child.Rect.X = Rect.X;
-                    child.Rect.Y = Rect.Y;
+                    child.Rect = Rect;
                     child.Layout();
                 }
             }
@@ -56,11 +55,12 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     SizeToGrid = new Point(ItemSource.Count(), 1);
                 }
-                Corners = Scale9Corners.Top | Scale9Corners.Right;
+                Corners = 0; // Scale9Corners.Top | Scale9Corners.Right;
                 Hidden = true;
+                Transparent = true;
                 base.Construct();
             }
-                        
+
             public void Hotkey(int Key)
             {
                 if (Key < 0 || Key >= Children.Count) return;

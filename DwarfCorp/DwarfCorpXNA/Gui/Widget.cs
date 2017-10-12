@@ -29,7 +29,7 @@ namespace DwarfCorp.Gui
         /// </summary>
         public Margin InteriorMargin = Margin.Zero;
         // Todo: Exterior margin
-        
+
         // Todo: Hover styling.
 
         #endregion
@@ -231,6 +231,16 @@ namespace DwarfCorp.Gui
             Children.Remove(Child);
             Children.Insert(0, Child);
             Invalidate();
+        }
+
+        public void BringToFront()
+        {
+            if (Parent != null)
+            {
+                Parent.Children.Remove(this);
+                Parent.Children.Add(this);
+                Parent.BringToFront();
+            }
         }
 
         public void RemoveChild(Widget child)
