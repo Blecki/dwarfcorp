@@ -1678,8 +1678,7 @@ namespace DwarfCorp.GameStates
                 },
                 OnClick = (sender, args) =>
                 {
-                    ChangeTool(GameMaster.ToolMode.Farm);
-                    (Master.Tools[GameMaster.ToolMode.Farm] as FarmTool).Mode = FarmTool.FarmMode.Harvesting;
+                    ChangeTool(GameMaster.ToolMode.Harvest);
                     World.Tutorial("harvest");
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
@@ -1705,8 +1704,7 @@ namespace DwarfCorp.GameStates
                 },
                 OnClick = (sender, args) =>
                 {
-                    ChangeTool(GameMaster.ToolMode.Farm);
-                    (Master.Tools[GameMaster.ToolMode.Farm] as FarmTool).Mode = FarmTool.FarmMode.WranglingAnimals;
+                    ChangeTool(GameMaster.ToolMode.Wrangle);
                     World.Tutorial("wrangle");
                     World.ShowToolPopup(
                         "Left click to tell dwarves to wrangle animals.\nRight click to cancel wrangling.\nRequires animal pen.");
@@ -1737,10 +1735,11 @@ namespace DwarfCorp.GameStates
                 KeepChildVisible = true,
                 OnConstruct = (sender) =>
                 {
-                    AddToolbarIcon(sender, () =>
-                    Master.Faction.SelectedMinions.Any(minion =>
-                        minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm)));
-                    AddToolSelectIcon(GameMaster.ToolMode.Farm, sender);
+                    // Todo: Enable/disable individual sub icons.
+                    //AddToolbarIcon(sender, () =>
+                    //Master.Faction.SelectedMinions.Any(minion =>
+                    //    minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm)));
+                    //AddToolSelectIcon(GameMaster.ToolMode.Farm, sender);
                 },
                 ReplacementMenu = menu_Farm,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu

@@ -87,6 +87,13 @@ namespace DwarfCorp
             }
 
             var designation = Player.Faction.GetFarmDesignation(voxel);
+
+            if (designation == null)
+            {
+                Player.World.ShowToolPopup("This is not a farm.");
+                return false;
+            }
+
             if (designation != null && designation.PlantExists())
             {
                 Player.World.ShowToolPopup("Something is already planted here!");
@@ -113,7 +120,7 @@ namespace DwarfCorp
 
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            List<CreatureAI> minions = Player.World.Master.SelectedMinions.Where(minion => minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm)).ToList();
+            List<CreatureAI> minions = Player.World.Master.SelectedMinions.Where(minion => minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Plant)).ToList();
             List<FarmTask> goals = new List<FarmTask>();
 
             int currentAmount = Player.Faction.ListResources()
@@ -129,11 +136,7 @@ namespace DwarfCorp
 
                 if (ValidatePlanting(voxel))
                 {
-                    var existingTile = Player.Faction.GetFarmDesignation(voxel);
-                    if (existingTile == null)
-                    {
-                        existingTile = Player.Faction.AddFarmDesignation(voxel, DesignationType.Plant);
-                    }
+                    var existingTile = Player.Faction.AddFarmDesignation(voxel, DesignationType.Plant);
 
                     goals.Add(new FarmTask(existingTile)
                     {

@@ -192,6 +192,9 @@ namespace DwarfCorp
             }
             else
             {
+                if (Type != DesignationType.Farm)
+                    throw new InvalidOperationException();
+
                 existing = new FarmTile { Voxel = v };
                 FarmTiles.Add(existing);
             }
@@ -205,6 +208,7 @@ namespace DwarfCorp
         }
 
         // Todo: Hacks with the des type. Kill!
+        //      - Since planting does not create farm tiles, does it need to support multiple types?
         public void RemoveFarmDesignation(VoxelHandle v, DesignationType Type)
         {
             var des = GetFarmDesignation(v);

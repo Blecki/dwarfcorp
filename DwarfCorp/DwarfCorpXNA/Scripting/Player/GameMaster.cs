@@ -31,9 +31,10 @@ namespace DwarfCorp
             Chop,
             Guard,
             Attack,
-            Farm,
             Till,
             Plant,
+            Harvest,
+            Wrangle,
             Craft,
             MoveObjects,
             God
@@ -152,17 +153,22 @@ namespace DwarfCorp
 
             Tools[ToolMode.SelectUnits] = new DwarfSelectorTool(this);
 
-            Tools[ToolMode.Farm] = new FarmTool
-            {
-                Player = this
-            };
-
             Tools[ToolMode.Till] = new TillTool
             {
                 Player = this
             };
 
             Tools[ToolMode.Plant] = new PlantTool
+            {
+                Player = this
+            };
+
+            Tools[ToolMode.Harvest] = new HarvestTool
+            {
+                Player = this
+            };
+
+            Tools[ToolMode.Wrangle] = new WrangleTool
             {
                 Player = this
             };

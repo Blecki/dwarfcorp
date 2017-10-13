@@ -380,6 +380,8 @@
     <Compile Include="Scripting\Player\Tools\BuildWallTool.cs" />
     <Compile Include="Scripting\Player\Tools\BuiltTypes.cs" />
     <Compile Include="Scripting\Player\Tools\FarmTile.cs" />
+    <Compile Include="Scripting\Player\Tools\WrangleTool.cs" />
+    <Compile Include="Scripting\Player\Tools\HarvestTool.cs" />
     <Compile Include="Scripting\Player\Tools\PlantTool.cs" />
     <Compile Include="Scripting\Player\Tools\TillTool.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\WrangleAnimalTask.cs" />
@@ -629,7 +631,6 @@
     <Compile Include="Scripting\Player\Tools\ChopTool.cs" />
     <Compile Include="Scripting\Player\Tools\DigTool.cs" />
     <Compile Include="Scripting\Player\Tools\DwarfSelectorTool.cs" />
-    <Compile Include="Scripting\Player\Tools\FarmTool.cs" />
     <Compile Include="Scripting\Player\Tools\GatherTool.cs" />
     <Compile Include="Scripting\Player\Tools\GodModeTool.cs" />
     <Compile Include="Scripting\Player\Tools\GuardTool.cs" />
