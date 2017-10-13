@@ -41,15 +41,16 @@ namespace DwarfCorp
 {
     public class FarmTile
     {
-        public VoxelHandle Vox = VoxelHandle.InvalidHandle;
+        public VoxelHandle Voxel = VoxelHandle.InvalidHandle;
         public Plant Plant = null;
         public float Progress = 0.0f;
         public CreatureAI Farmer = null;
         public bool IsCanceled = false;
+        public DesignationType ActiveDesignations = DesignationType._None;
 
         public bool IsTilled()
         {
-            return (Vox.IsValid) && Vox.Type.Name == "TilledSoil";
+            return (Voxel.IsValid) && Voxel.Type.Name == "TilledSoil";
         }
 
         public bool IsFree()
@@ -64,7 +65,7 @@ namespace DwarfCorp
 
         public void CreatePlant(string plantToCreate, WorldManager world)
         {
-            Plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[plantToCreate].PlantToGenerate, Vox.WorldPosition + Vector3.Up * 1.5f);
+            Plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[plantToCreate].PlantToGenerate, Voxel.WorldPosition + Vector3.Up * 1.5f);
             Seedling seed = Plant.BecomeSeedling();
 
             Matrix original = Plant.LocalTransform;
@@ -73,7 +74,7 @@ namespace DwarfCorp
 
             world.ParticleManager.Trigger("puff", original.Translation, Color.White, 20);
 
-            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_plant_grow, Vox.WorldPosition, true);
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_plant_grow, Voxel.WorldPosition, true);
 
         }
     }

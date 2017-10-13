@@ -1620,9 +1620,8 @@ namespace DwarfCorp.GameStates
                                OnClick = (sender, args) =>
                                {
                                    World.ShowToolPopup("Click and drag to plant " + resource.ResourceType + ".");
-                                   ChangeTool(GameMaster.ToolMode.Farm);
-                                   var farmTool = Master.Tools[GameMaster.ToolMode.Farm] as FarmTool;
-                                   farmTool.Mode = FarmTool.FarmMode.Planting;
+                                   ChangeTool(GameMaster.ToolMode.Plant);
+                                   var farmTool = Master.Tools[GameMaster.ToolMode.Plant] as PlantTool;
                                    farmTool.PlantType = resource.ResourceType;
                                    farmTool.RequiredResources = new List<ResourceAmount>()
                                        {

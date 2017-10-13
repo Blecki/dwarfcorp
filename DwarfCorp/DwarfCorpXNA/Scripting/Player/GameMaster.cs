@@ -33,6 +33,7 @@ namespace DwarfCorp
             Attack,
             Farm,
             Till,
+            Plant,
             Craft,
             MoveObjects,
             God
@@ -157,6 +158,11 @@ namespace DwarfCorp
             };
 
             Tools[ToolMode.Till] = new TillTool
+            {
+                Player = this
+            };
+
+            Tools[ToolMode.Plant] = new PlantTool
             {
                 Player = this
             };

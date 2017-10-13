@@ -39,35 +39,75 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class TillTool : PlayerTool
+    public class PlantTool : PlayerTool
     {
+        public string PlantType { get; set; }
         public List<ResourceAmount> RequiredResources { get; set; }
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
+            int currentAmount = Player.Faction.ListResources()
+               .Sum(resource => resource.Key == PlantType && resource.Value.NumResources > 0 ? resource.Value.NumResources : 0);
+
+            if (currentAmount == 0)
+            {
+                Player.World.ShowToolPopup("Not enough " + PlantType + " in stocks!");
+                return;
+            }
+
             foreach (var voxel in voxels)
-                ValidateTilling(voxel);
+                ValidatePlanting(voxel);
         }
 
-        private bool ValidateTilling(VoxelHandle voxel)
+        private bool ValidatePlanting(VoxelHandle voxel)
         {
-            if (!voxel.Type.IsSoil)
+            if (voxel.Type.Name != "TilledSoil")
             {
-                Player.World.ShowToolPopup(String.Format("Can only till soil (not {0})!", voxel.Type.Name));
+                Player.World.ShowToolPopup("Can only plant on tilled soil!");
                 return false;
             }
-            if (voxel.Type.Name == "TilledSoil")
+
+            if (ResourceLibrary.Resources[PlantType].Tags.Contains(Resource.ResourceTags.AboveGroundPlant))
             {
-                Player.World.ShowToolPopup("Soil already tilled!");
+                if (voxel.SunColor == 0)
+                {
+                    Player.World.ShowToolPopup("Can only plant " + PlantType + " above ground.");
+                    return false;
+                }
+            }
+            else if (
+                ResourceLibrary.Resources[PlantType].Tags.Contains(
+                    Resource.ResourceTags.BelowGroundPlant))
+            {
+                if (voxel.SunColor > 0)
+                {
+                    Player.World.ShowToolPopup("Can only plant " + PlantType + " below ground.");
+                    return false;
+                }
+            }
+
+            var designation = Player.Faction.GetFarmDesignation(voxel);
+            if (designation != null && designation.PlantExists())
+            {
+                Player.World.ShowToolPopup("Something is already planted here!");
                 return false;
             }
+
             var above = VoxelHelpers.GetVoxelAbove(voxel);
             if (above.IsValid && !above.IsEmpty)
             {
                 Player.World.ShowToolPopup("Something is blocking the top of this tile.");
                 return false;
             }
-            Player.World.ShowToolPopup("Click to till.");
+
+            if (designation != null && designation.Farmer != null)
+            {
+                Player.World.ShowToolPopup("This tile is already being worked.");
+                return false;
+            }
+
+            Player.World.ShowToolPopup("Click to plant.");
+
             return true;
         }
 
@@ -76,37 +116,68 @@ namespace DwarfCorp
             List<CreatureAI> minions = Player.World.Master.SelectedMinions.Where(minion => minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm)).ToList();
             List<FarmTask> goals = new List<FarmTask>();
 
+            int currentAmount = Player.Faction.ListResources()
+                .Sum(resource => resource.Key == PlantType && resource.Value.NumResources > 0 ? resource.Value.NumResources : 0);
+
             foreach (var voxel in voxels)
             {
-                if (button == InputManager.MouseButton.Left)
+                if (currentAmount == 0)
                 {
-                    if (!ValidateTilling(voxel))
-                        continue;
-
-                    var existingFarmTile = Player.Faction.GetFarmDesignation(voxel);
-                    if (existingFarmTile == null)
-                    {
-                        existingFarmTile = Player.Faction.AddFarmDesignation(voxel, DesignationType.Farm);
-                    }
-
-                    goals.Add(new FarmTask(existingFarmTile) { Mode = FarmAct.FarmMode.Till });
+                    Player.World.ShowToolPopup("Not enough " + PlantType + " in stocks!");
+                    break;
                 }
-                else
+
+                if (ValidatePlanting(voxel))
                 {
-                    var existingFarmTile = Player.Faction.GetFarmDesignation(voxel);
-                    if (existingFarmTile != null && !existingFarmTile.PlantExists())
+                    var existingTile = Player.Faction.GetFarmDesignation(voxel);
+                    if (existingTile == null)
                     {
-                        existingFarmTile.IsCanceled = true;
-                        existingFarmTile.Farmer = null;
-                        Player.Faction.RemoveFarmDesignation(existingFarmTile.Voxel, DesignationType.Farm);
+                        existingTile = Player.Faction.AddFarmDesignation(voxel, DesignationType.Plant);
                     }
+
+                    goals.Add(new FarmTask(existingTile)
+                    {
+                        Mode = FarmAct.FarmMode.Plant,
+                        Plant = PlantType,
+                        RequiredResources = RequiredResources
+                    });
+                    
+                    currentAmount--;
                 }
             }
 
             TaskManager.AssignTasksGreedy(goals.Cast<Task>().ToList(), minions, 1);
+            
+            if (Player.World.Paused)
+            {
+                // Horrible hack to make it work when game is paused. Farmer doesn't get assigned until
+                // next update!
+                if (minions.Count > 0)
+                {
+                    foreach (var goal in goals)
+                    {
+                        goal.FarmToWork.Farmer = minions[0];
+                    }
+                }
+            }
 
-            foreach (CreatureAI creature in minions)
-                creature.Creature.NoiseMaker.MakeNoise("Ok", creature.Position);
+            OnConfirm(minions);
+        }
+
+
+        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        {
+
+        }
+
+        public override void OnMouseOver(IEnumerable<Body> bodies)
+        {
+
+        }
+
+        public override void OnBegin()
+        {
+
         }
 
         public override void OnEnd()
@@ -129,29 +200,15 @@ namespace DwarfCorp
             Player.VoxSelector.Enabled = true;
             Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
             Player.BodySelector.Enabled = false;
-            ValidateTilling(Player.VoxSelector.VoxelUnderMouse);
+            ValidatePlanting(Player.VoxSelector.VoxelUnderMouse);
 
             if (Player.World.IsMouseOverGui)
                 Player.World.SetMouse(Player.World.MousePointer);
             else
                 Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 12));
-        } 
+        }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
-        {
-        }
-
-        public override void OnMouseOver(IEnumerable<Body> bodies)
-        {
-            
-        }
-
-        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
-        {
-            
-        }
-
-        public override void OnBegin()
         {
            
         }

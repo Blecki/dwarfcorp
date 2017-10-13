@@ -151,14 +151,14 @@ namespace DwarfCorp
 
         public bool IsFarmDesignation(GlobalVoxelCoordinate Location)
         {
-            return FarmTiles.Any(d => d.Vox.Coordinate == Location);
+            return FarmTiles.Any(d => d.Voxel.Coordinate == Location);
         }
 
         public bool IsFarmDesignation(VoxelHandle reference)
         {
             foreach (var put in FarmTiles)
             {
-                if (put.Vox == reference)
+                if (put.Voxel == reference)
                     return true;
             }
 
@@ -167,7 +167,7 @@ namespace DwarfCorp
 
         public FarmTile GetFarmDesignation(GlobalVoxelCoordinate Location)
         {
-            return FarmTiles.FirstOrDefault(d => d.Vox.Coordinate == Location);
+            return FarmTiles.FirstOrDefault(d => d.Voxel.Coordinate == Location);
         }
 
         // Todo: %KILL%
@@ -175,29 +175,57 @@ namespace DwarfCorp
         {
             foreach (var put in FarmTiles)
             {
-                if (put.Vox == v)
+                if (put.Voxel == v)
                     return put;
             }
 
             return null;
         }
 
-        public void AddFarmDesignation(FarmTile des, DesignationType Type)
+        public FarmTile AddFarmDesignation(VoxelHandle v, DesignationType Type)
         {
-            FarmTiles.Add(des);
+            var existing = GetFarmDesignation(v);
+            if (existing != null)
+            {
+                if (World.PlayerFaction == this)
+                    World.DesignationDrawer.UnHiliteVoxel(v.Coordinate, existing.ActiveDesignations);
+            }
+            else
+            {
+                existing = new FarmTile { Voxel = v };
+                FarmTiles.Add(existing);
+            }
+
             if (World.PlayerFaction == this)
-                World.DesignationDrawer.HiliteVoxel(des.Vox.Coordinate, Type);
+                World.DesignationDrawer.HiliteVoxel(v.Coordinate, Type);
+
+            existing.ActiveDesignations = Type;
+
+            return existing;
         }
 
+        // Todo: Hacks with the des type. Kill!
         public void RemoveFarmDesignation(VoxelHandle v, DesignationType Type)
         {
             var des = GetFarmDesignation(v);
 
             if (des != null)
             {
-                FarmTiles.Remove(des);
-                if (World.PlayerFaction == this)
-                    World.DesignationDrawer.UnHiliteVoxel(des.Vox.Coordinate, Type);
+                if (des.ActiveDesignations == Type)
+                {
+                    if (World.PlayerFaction == this)
+                    {
+                        World.DesignationDrawer.UnHiliteVoxel(des.Voxel.Coordinate, Type);
+
+                        if (Type != DesignationType.Farm)
+                            World.DesignationDrawer.HiliteVoxel(v.Coordinate, DesignationType.Farm);
+                    }
+
+                    des.ActiveDesignations = DesignationType.Farm;
+
+                    if (Type == DesignationType.Farm)
+                        FarmTiles.Remove(des);
+                }
             }
         }
 

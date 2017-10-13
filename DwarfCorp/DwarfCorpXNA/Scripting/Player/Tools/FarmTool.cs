@@ -45,228 +45,22 @@ namespace DwarfCorp
         public List<ResourceAmount> RequiredResources { get; set; } 
         public enum FarmMode
         {
-            Tilling,
-            Planting,
             Harvesting,
             WranglingAnimals
         }
 
         public FarmMode Mode { get; set; }
 
-        public bool HasTile(VoxelHandle vox)
-        {
-            return Player.Faction.FarmTiles.Any(f => f.Vox == vox);
-        }
-
-
-        public bool HasPlant(VoxelHandle vox)
-        {
-            return HasTile(vox) && Player.Faction.FarmTiles.Any(f => f.Vox.Equals(vox) && f.PlantExists());
-        }
-
-        public bool IsBeingWorked(VoxelHandle vox)
-        {
-            return HasTile(vox) && Player.Faction.FarmTiles.Any(f => f.Vox.Equals(vox) && f.Farmer != null);
-        }
-
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            switch (Mode)
-            {
-                case FarmMode.Planting:
-                     int currentAmount =
-                        Player.Faction.ListResources()
-                        .Sum(resource => resource.Key == PlantType && resource.Value.NumResources > 0 ? resource.Value.NumResources : 0);
-                    foreach (var voxel in voxels)
-                    {
 
-                        if (currentAmount == 0)
-                        {
-                            Player.World.ShowToolPopup("Not enough " + PlantType + " in stocks!");
-                            break;
-                        }
-
-
-                        ValidatePlanting(voxel);
-                    }
-                    break;
-                case FarmMode.Tilling:
-                    foreach (var voxel in voxels)
-                    {
-                        ValidateTilling(voxel);
-                    }
-                    break;
-                default:
-                    break;
-            }
         }
-
-        private bool ValidatePlanting(VoxelHandle voxel)
-        {
-            if (voxel.Type.Name != "TilledSoil")
-            {
-                Player.World.ShowToolPopup("Can only plant on tilled soil!");
-                return false;
-            }
-
-            if (ResourceLibrary.Resources[PlantType].Tags.Contains(Resource.ResourceTags.AboveGroundPlant))
-            {
-                if (voxel.SunColor == 0)
-                {
-                    Player.World.ShowToolPopup("Can only plant " + PlantType + " above ground.");
-                    return false;
-                }
-            }
-            else if (
-                ResourceLibrary.Resources[PlantType].Tags.Contains(
-                    Resource.ResourceTags.BelowGroundPlant))
-            {
-                if (voxel.SunColor > 0)
-                {
-                    Player.World.ShowToolPopup("Can only plant " + PlantType + " below ground.");
-                    return false;
-                }
-            }
-
-            if (HasPlant(voxel))
-            {
-                Player.World.ShowToolPopup("Something is already planted here!");
-                return false;
-            }
-
-            var above = VoxelHelpers.GetVoxelAbove(voxel);
-            if (above.IsValid && !above.IsEmpty)
-            {
-                Player.World.ShowToolPopup("Something is blocking the top of this tile.");
-                return false;
-            }
-
-            if (IsBeingWorked(voxel))
-            {
-                Player.World.ShowToolPopup("This tile is already being worked.");
-                return false;
-            }
-
-            Player.World.ShowToolPopup("Click to plant.");
-
-            return true;
-        }
-
-
-        private bool ValidateTilling(VoxelHandle voxel)
-        {
-            if (!voxel.Type.IsSoil)
-            {
-                Player.World.ShowToolPopup(String.Format("Can only till soil (not {0})!", voxel.Type.Name));
-                return false;
-            }
-            if (voxel.Type.Name == "TilledSoil")
-            {
-                Player.World.ShowToolPopup("Soil already tilled!");
-                return false;
-            }
-            var above = VoxelHelpers.GetVoxelAbove(voxel);
-            if (above.IsValid && !above.IsEmpty)
-            {
-                Player.World.ShowToolPopup("Something is blocking the top of this tile.");
-                return false;
-            }
-            Player.World.ShowToolPopup("Click to till.");
-            return true;
-        }
-
+        
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            List<CreatureAI> minions = Player.World.Master.SelectedMinions.Where(minion => minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm)).ToList();
-            List<FarmTask> goals = new List<FarmTask>();
-            switch (Mode)
-            {
-                case FarmMode.Tilling:
-                    foreach (var voxel in voxels)
-                    {
-                        if (button == InputManager.MouseButton.Left)
-                        {
-                            if (!ValidateTilling(voxel))
-                                continue;
-                            if (!HasTile(voxel))
-                            {
-                                FarmTile tile = new FarmTile() {Vox = voxel};
-                                goals.Add(new FarmTask(tile) {Mode = FarmAct.FarmMode.Till, Plant = PlantType});
-                                Player.Faction.FarmTiles.Add(tile);
-                            }
-                            else
-                            {
-                                goals.Add(new FarmTask(Player.Faction.FarmTiles.Find(tile => tile.Vox.Equals(voxel)))
-                                {
-                                    Mode = FarmAct.FarmMode.Till,
-                                    Plant = PlantType
-                                });
-                            }
-                        }
-                        else
-                        {
-                            if (!HasTile(voxel) || HasPlant(voxel)) continue;
-                            Drawer3D.UnHighlightVoxel(voxel);
-                            foreach (FarmTile tile in Player.Faction.FarmTiles)
-                            {
-                                if (tile.Vox.Equals(voxel))
-                                { 
-                                    tile.IsCanceled = true;
-                                    tile.Farmer = null;
-                                }
-                            }
-                            Player.Faction.FarmTiles.RemoveAll(tile => tile.Vox.Equals(voxel));
-                        }
-                    }
-                    TaskManager.AssignTasksGreedy(goals.Cast<Task>().ToList(), minions, 1);
 
-                    foreach (CreatureAI creature in minions)
-                    {
-                        creature.Creature.NoiseMaker.MakeNoise("Ok", creature.Position);
-                    }
-
-                    break;
-                case FarmMode.Planting:
-                    int currentAmount =
-                        Player.Faction.ListResources()
-                        .Sum(resource => resource.Key == PlantType && resource.Value.NumResources > 0 ? resource.Value.NumResources : 0);
-                    foreach (var voxel in voxels)
-                    {
-                        if (currentAmount == 0)
-                        {
-                            Player.World.ShowToolPopup("Not enough " + PlantType + " in stocks!");
-                            break;
-                        }                      
-
-                        if (ValidatePlanting(voxel))
-                        {
-                            FarmTile tile = new FarmTile() { Vox = voxel };
-                            goals.Add(new FarmTask(tile) {  Mode = FarmAct.FarmMode.Plant, Plant = PlantType, RequiredResources = RequiredResources});
-                            Player.Faction.FarmTiles.Add(tile);
-                            currentAmount--;
-                        }
-                    }
-                    TaskManager.AssignTasksGreedy(goals.Cast<Task>().ToList(), minions, 1);
-
-
-                    if (Player.World.Paused)
-                    {
-                        // Horrible hack to make it work when game is paused. Farmer doesn't get assigned until
-                        // next update!
-                        if (minions.Count > 0)
-                        {
-                            foreach (var goal in goals)
-                            {
-                                goal.FarmToWork.Farmer = minions[0];
-                            }
-                        }
-                    }
-                    OnConfirm(minions);
-                    break;
-            }
         }
-
-
+        
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
             switch (Mode)
@@ -360,7 +154,7 @@ namespace DwarfCorp
             //FarmPanel.TweenOut(Drawer2D.Alignment.Right, 0.25f);
             foreach (FarmTile tile in Player.Faction.FarmTiles)
             {
-                Drawer3D.UnHighlightVoxel(tile.Vox);
+                Drawer3D.UnHighlightVoxel(tile.Voxel);
             }
             Player.VoxSelector.Clear();
         }
@@ -379,18 +173,6 @@ namespace DwarfCorp
 
             switch (Mode)
             {
-               case FarmMode.Tilling:
-                    Player.VoxSelector.Enabled = true;
-                    Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
-                    Player.BodySelector.Enabled = false;
-                    ValidateTilling(Player.VoxSelector.VoxelUnderMouse);
-                    break;
-                case FarmMode.Planting:
-                    Player.VoxSelector.Enabled = true;
-                    Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
-                    Player.BodySelector.Enabled = false;
-                    ValidatePlanting(Player.VoxSelector.VoxelUnderMouse);
-                    break;
                 case FarmMode.Harvesting:
                     Player.VoxSelector.Enabled = false;
                     Player.BodySelector.Enabled = true;
@@ -409,62 +191,7 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-            NamedImageFrame frame = new NamedImageFrame("newgui/pointers", 32, 4, 1);
-            switch (Mode)
-            {
-                case FarmMode.Tilling:
-                {
-                    Color drawColor = Color.PaleGoldenrod;
 
-                    float alpha = (float) Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds*2.0f));
-                    drawColor.R = (byte) (Math.Min(drawColor.R*alpha + 50, 255));
-                    drawColor.G = (byte) (Math.Min(drawColor.G*alpha + 50, 255));
-                    drawColor.B = (byte) (Math.Min(drawColor.B*alpha + 50, 255));
-
-                    foreach (var tile in Player.Faction.FarmTiles)
-                    {
-                        if (!tile.IsTilled())
-                        {
-                            Drawer3D.HighlightVoxel(tile.Vox, Color.LimeGreen);
-                            Drawer2D.DrawSprite(frame, tile.Vox.WorldPosition + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
-                        }
-                        else
-                        {
-                            Drawer3D.UnHighlightVoxel(tile.Vox);
-                        }
-                    }
-                    break;
-                }
-                case FarmMode.Planting:
-                {
-                    foreach (var tile in Player.Faction.FarmTiles)
-                    {
-                        if (tile.IsTilled() && !tile.PlantExists() && tile.Farmer == null)
-                        {
-                            Drawer3D.HighlightVoxel(tile.Vox, Color.LimeGreen);
-                            Drawer2D.DrawSprite(frame, tile.Vox.WorldPosition + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
-                        }
-                        else
-                        {
-                            Drawer3D.UnHighlightVoxel(tile.Vox);
-                        }
-                    }
-
-                    break;
-                }
-
-                case FarmMode.Harvesting:
-                {
-                    
-                    break;
-                }
-
-                case FarmMode.WranglingAnimals:
-                {
-                    
-                    break;
-                }
-            }
         }
 
         public KillEntityTask AutoFarm()
