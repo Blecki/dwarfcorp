@@ -33,7 +33,6 @@ namespace DwarfCorp
             Attack,
             Till,
             Plant,
-            Harvest,
             Wrangle,
             Craft,
             MoveObjects,
@@ -163,11 +162,6 @@ namespace DwarfCorp
                 Player = this
             };
 
-            Tools[ToolMode.Harvest] = new HarvestTool
-            {
-                Player = this
-            };
-
             Tools[ToolMode.Wrangle] = new WrangleTool
             {
                 Player = this
@@ -186,16 +180,11 @@ namespace DwarfCorp
             Tools[ToolMode.Guard] = new GuardTool
             {
                 Player = this,
-                GuardDesignationColor = new Color(10, 10, 205),
-                GuardDesignationGlowRate = 2.0f,
-                UnreachableColor = new Color(205, 10, 10)
             };
 
             Tools[ToolMode.Chop] = new ChopTool
             {
                 Player = this,
-                ChopDesignationColor = Color.LightGreen,
-                ChopDesignationGlowRate = 2.0f
             };
 
             Tools[ToolMode.Attack] = new AttackTool
@@ -206,7 +195,6 @@ namespace DwarfCorp
             Tools[ToolMode.BuildZone] = new BuildZoneTool
             {
                 Player = this,
-                BuildType = BuildTypes.AllButCook,
             };
 
             Tools[ToolMode.BuildWall] = new BuildWallTool

@@ -50,23 +50,24 @@ namespace DwarfCorp
     public class Faction
     {
         public DwarfBux TradeMoney { get; set; }
-        //public Point StartingPlace { get; set; }
         public Point Center { get; set; }
         public int TerritorySize { get; set; }
         public Economy Economy { get; set; }
         public List<TradeEnvoy> TradeEnvoys { get; set; }
         public List<WarParty> WarParties { get; set; }
         public Dictionary<ulong, BuildOrder> DigOrders { get; set; }
-        public List<BuildOrder> GuardDesignations { get; set; }
         public List<Body> OwnedObjects { get; set; }
         public List<Stockpile> Stockpiles { get; set; }
         public List<CreatureAI> Minions { get; set; }
         public RoomBuilder RoomBuilder { get; set; }
-        //public PutDesignator WallBuilder { get; set; }
         public CraftBuilder CraftBuilder { get; set; }
         public Color PrimaryColor { get; set; }
         public Color SecondaryColor { get; set; }
         public List<FarmTile> FarmTiles = new List<FarmTile>();
+        public List<VoxelDesignation> VoxelDesignations = new List<VoxelDesignation>();
+        public List<PutDesignation> PutDesignations = new List<PutDesignation>();
+        [JsonProperty] // Todo: Replace with more effecient data structure?
+        private List<EntityDesignation> EntityDesignations = new List<EntityDesignation>();
 
         // Todo: When converting to new save system, it can take care of this.
         [JsonProperty]
@@ -87,14 +88,52 @@ namespace DwarfCorp
 
         #region Designations
 
+        public class VoxelDesignation
+        {
+            public VoxelHandle Voxel;
+            public DesignationType Type;
+            public Object Tag;
+        }
+
+
+        public void AddVoxelDesignation(VoxelHandle Voxel, DesignationType Type, Object Tag)
+        {
+            VoxelDesignations.Add(new VoxelDesignation
+            {
+                Voxel = Voxel,
+                Type = Type,
+                Tag = Tag
+            });
+
+            if (World.PlayerFaction == this)
+                World.DesignationDrawer.HiliteVoxel(Voxel.Coordinate, Type);
+        }
+
+        public void RemoveVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
+        {
+            VoxelDesignations.RemoveAll(d => d.Voxel == Voxel && d.Type == Type);
+            if (World.PlayerFaction == this)
+                World.DesignationDrawer.UnHiliteVoxel(Voxel.Coordinate, Type);
+        }
+
+        public Object GetVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
+        {
+            var r = VoxelDesignations.FirstOrDefault(d => d.Voxel == Voxel && d.Type == Type);
+            if (r != null) return r.Tag;
+            return null;
+        }
+
+        public bool IsVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
+        {
+            return VoxelDesignations.Any(d => d.Voxel == Voxel && d.Type == Type);
+        }
+
         // This is temporary until all factions get a 'DesignationDrawer' instead.
         public class PutDesignation
         {
             public VoxelHandle Voxel;
             public VoxelType Type;
         }
-
-        public List<PutDesignation> PutDesignations = new List<PutDesignation>();
 
         public bool IsPutDesignation(GlobalVoxelCoordinate Location)
         {
@@ -240,8 +279,6 @@ namespace DwarfCorp
             public DesignationType Type;
         }
 
-        [JsonProperty] // Todo: Replace with more effecient data structure?
-        private List<EntityDesignation> EntityDesignations = new List<EntityDesignation>();
 
         public enum AddEntityDesignationResult
         {
@@ -321,7 +358,6 @@ namespace DwarfCorp
             TaskManager = new TaskManager();
             Stockpiles = new List<Stockpile>();
             DigOrders = new Dictionary<ulong, BuildOrder>();
-            GuardDesignations = new List<BuildOrder>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
             OwnedObjects = new List<Body>();
@@ -339,7 +375,6 @@ namespace DwarfCorp
             TaskManager = new TaskManager();
             Stockpiles = new List<Stockpile>();
             DigOrders = new Dictionary<ulong, BuildOrder>();
-            GuardDesignations = new List<BuildOrder>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
             OwnedObjects = new List<Body>();
@@ -424,26 +459,7 @@ namespace DwarfCorp
                 return b.Body.IsDead;
             });
 
-            List<BuildOrder> removals = new List<BuildOrder>();
-            foreach (BuildOrder d in GuardDesignations)
-            {
-                var v = d.Vox;
-
-                if (!v.IsValid || (!v.IsEmpty && !(v.Health <= 0.0f) && v.Type.Name != "empty"))
-                {
-                    continue;
-                }
-
-                removals.Add(d);
-
-                if (!v.IsEmpty)
-                    World.ChunkManager.KillVoxel(v);
-            }
-
-            foreach (BuildOrder v in removals)
-            {
-                GuardDesignations.Remove(v);
-            }
+            VoxelDesignations.RemoveAll(v => !v.Voxel.IsValid || v.Voxel.IsEmpty);
 
             foreach (var zone in RoomBuilder.DesignatedRooms)
             {
@@ -555,11 +571,6 @@ namespace DwarfCorp
             return Stockpiles.Sum(pile => pile.Resources.MaxResources - pile.Resources.CurrentResourceCount);
         }
 
-        public BuildOrder GetGuardDesignation(VoxelHandle vox)
-        {
-            return GuardDesignations.FirstOrDefault(d => d.Vox == vox);
-        }
-
         public BuildOrder GetDigDesignation(VoxelHandle vox)
         {
             BuildOrder returnOrder;
@@ -590,12 +601,6 @@ namespace DwarfCorp
         public bool IsDigDesignation(VoxelHandle vox)
         {
             return DigOrders.ContainsKey(GetVoxelQuickCompare(vox));
-        }
-
-
-        public bool IsGuardDesignation(VoxelHandle vox)
-        {
-            return GuardDesignations.Select(d => d.Vox).Any(v => v == vox);
         }
 
         public bool AddResources(ResourceAmount resources)

@@ -759,7 +759,7 @@ namespace DwarfCorp
                 }
 
                 // Farm stuff if applicable
-                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Harvest) && MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction)
+                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Chop) && MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction)
                 {
                     var task = Faction.FarmTiles
                         .Where(t => t.PlantExists() && t.Plant.IsGrown && !t.IsCanceled)

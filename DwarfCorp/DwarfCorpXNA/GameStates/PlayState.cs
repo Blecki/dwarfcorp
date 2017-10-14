@@ -1678,7 +1678,7 @@ namespace DwarfCorp.GameStates
                 },
                 OnClick = (sender, args) =>
                 {
-                    ChangeTool(GameMaster.ToolMode.Harvest);
+                    ChangeTool(GameMaster.ToolMode.Chop);
                     World.Tutorial("harvest");
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon

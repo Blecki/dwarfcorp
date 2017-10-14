@@ -56,7 +56,7 @@ namespace DwarfCorp
 
         public bool GuardDesignationExists()
         {
-            return Agent.Faction.GuardDesignations.Count > 0;
+            return Agent.Faction.VoxelDesignations.Any(d => d.Type == DesignationType.Guard);
         }
 
         public bool ExitCondition()
@@ -77,9 +77,14 @@ namespace DwarfCorp
 
         public IEnumerable<Act.Status> GetRandomGuardDesignation(CreatureAI agent)
         {
-            List<DwarfCorp.BuildOrder> voxes = new List<BuildOrder>();
-            voxes.AddRange(Agent.Faction.GuardDesignations);
+            List<BuildOrder> voxes = new List<BuildOrder>();
+
+            voxes.AddRange(Agent.Faction.VoxelDesignations
+                .Where(d => d.Type == DesignationType.Guard)
+                .Select(d => d.Tag as BuildOrder));
+
             voxes.Sort((a, b) => (a.Vox.WorldPosition - agent.Position).LengthSquared() < (b.Vox.WorldPosition - agent.Position).LengthSquared() ? -1 : 1);
+
             foreach (BuildOrder vox in voxes)
             {
                 if (MathFunctions.RandEvent(0.25f))

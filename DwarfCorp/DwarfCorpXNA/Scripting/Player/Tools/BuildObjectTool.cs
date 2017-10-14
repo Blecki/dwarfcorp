@@ -44,8 +44,6 @@ namespace DwarfCorp
 {
     public class BuildObjectTool : PlayerTool
     {
-        public BuildTypes BuildType;
-
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
             Player.Faction.CraftBuilder.VoxelsSelected(voxels, button);
@@ -58,7 +56,6 @@ namespace DwarfCorp
         public override void OnEnd()
         {
             Player.Faction.CraftBuilder.End();
-            Player.VoxSelector.Clear();
         }
 
         public override void OnMouseOver(IEnumerable<Body> bodies)
@@ -76,32 +73,18 @@ namespace DwarfCorp
                 return;
             }
 
-            bool hasCook = BuildType.HasFlag(BuildTypes.Cook);
+            Player.VoxSelector.Enabled = true;
+            Player.BodySelector.Enabled = false;
 
-            if (!hasCook)
-            {
-                Player.VoxSelector.Enabled = true;
-                Player.BodySelector.Enabled = false;
-
-                if (Player.World.IsMouseOverGui)
-                    Player.World.SetMouse(Player.World.MousePointer);
-                else
-                    Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
-            }
+            if (Player.World.IsMouseOverGui)
+                Player.World.SetMouse(Player.World.MousePointer);
             else
-            {
-                Player.VoxSelector.Enabled = false;
-                Player.BodySelector.Enabled = false;
-
-                if (Player.World.IsMouseOverGui)
-                    Player.World.SetMouse(Player.World.MousePointer);
-                else
-                    Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 11));
-            }
+                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
+
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
@@ -111,6 +94,7 @@ namespace DwarfCorp
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
+
         }
     }
 }

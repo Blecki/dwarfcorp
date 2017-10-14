@@ -67,7 +67,7 @@ namespace DwarfCorp
 
         public override bool ShouldRetry(Creature agent)
         {
-            return agent.Faction.GuardDesignations.Count > 0;
+            return agent.Faction.VoxelDesignations.Any(d => d.Type == DesignationType.Guard);
         }
 
         public override void Render(DwarfTime time)

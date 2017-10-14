@@ -45,12 +45,9 @@ namespace DwarfCorp
 {
     public class BuildWallTool : PlayerTool
     {
-        public BuildTypes BuildType;
         public Shader Effect;
         public byte CurrentVoxelType { get; set; }
         private List<VoxelHandle> Selected { get; set; }
-        private bool verified = false;
-        private InputManager.MouseButton CurrentMouse = InputManager.MouseButton.Left;
 
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
@@ -108,15 +105,13 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
-            //Player.Faction.RoomBuilder.OnEnter();
+
         }
 
         public override void OnEnd()
         {
             if (Selected != null)
-            {
                 Selected.Clear();
-            }
             CurrentVoxelType = 0;
             Player.VoxSelector.Clear();
         }
@@ -132,32 +127,16 @@ namespace DwarfCorp
             {
                 Player.VoxSelector.Enabled = false;
                 Player.World.SetMouse(null);
-                //Player.BodySelector.Enabled = false;
                 return;
             }
 
-            //bool hasCook = BuildType.HasFlag(BuildTypes.Cook);
+            Player.VoxSelector.Enabled = true;
+            Player.BodySelector.Enabled = false;
 
-            //if (!hasCook)
-            //{
-                Player.VoxSelector.Enabled = true;
-                Player.BodySelector.Enabled = false;
-
-                if (Player.World.IsMouseOverGui)
-                    Player.World.SetMouse(Player.World.MousePointer);
-                else
-                    Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
-            //}
-            //else
-            //{
-            //    Player.VoxSelector.Enabled = false;
-            //    Player.BodySelector.Enabled = false;
-
-            //    if (Player.World.IsMouseOverGui)
-            //        Player.World.SetMouse(Player.World.MousePointer);
-            //    else
-            //        Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 11));
-            //}
+            if (Player.World.IsMouseOverGui)
+                Player.World.SetMouse(Player.World.MousePointer);
+            else
+                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
@@ -183,13 +162,13 @@ namespace DwarfCorp
                 Selected.Clear();
             }
 
-            Effect.VertexColorTint = verified ? new Color(0.0f, 1.0f, 0.0f, 0.5f * st + 0.45f) : new Color(1.0f, 0.0f, 0.0f, 0.5f * st + 0.45f);
+            Effect.VertexColorTint = new Color(0.0f, 1.0f, 0.0f, 0.5f * st + 0.45f);
             Vector3 offset = Player.World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? Vector3.Zero : Vector3.Up * 0.15f;
-            if (CurrentMouse == InputManager.MouseButton.Left)
+
+            if (Mouse.GetState().LeftButton == ButtonState.Pressed)
             {
                 foreach (var voxel in Selected)
                 {
-
                     Effect.World = Matrix.CreateTranslation(voxel.WorldPosition + offset);
                     foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
                     {
@@ -214,40 +193,16 @@ namespace DwarfCorp
         {
             if (CurrentVoxelType == 0)
                 return;
-            verified = true;
-            //verified = Verify(refs, CurrentVoxelType.ResourceToRelease);
-            var mouse = Mouse.GetState();
-            if (mouse.LeftButton == ButtonState.Pressed)
-            {
-                CurrentMouse = InputManager.MouseButton.Left;
-            }
-            else
-            {
-                CurrentMouse = InputManager.MouseButton.Right;
-            }
 
-            if (CurrentMouse == InputManager.MouseButton.Left)
-            {
-                if (!verified)
-                {
-                    Player.World.ShowToolPopup("Can't build this! Need at least " + voxels.Count + " " + ResourceLibrary.Resources[VoxelLibrary.GetVoxelType(CurrentVoxelType).ResourceToRelease].ResourceName + ".");
-                }
-                else
-                {
-                    Player.World.ShowToolPopup("Release to build.");
-                }
-            }
+            if (Mouse.GetState().LeftButton == ButtonState.Pressed)
+                Player.World.ShowToolPopup("Release to build.");
             else
-            {
                 Player.World.ShowToolPopup("Release to cancel.");
-            }
 
             Selected.Clear();
 
             foreach (var voxel in voxels)
-            {
                 Selected.Add(voxel);
-            }
-        }       
+        }
     }
 }

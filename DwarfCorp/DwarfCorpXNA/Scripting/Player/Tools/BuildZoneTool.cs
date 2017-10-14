@@ -48,8 +48,6 @@ namespace DwarfCorp
     /// </summary>
     public class BuildZoneTool : PlayerTool
     {
-        public BuildTypes BuildType;
-
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
             Player.Faction.RoomBuilder.VoxelsSelected(voxels, button);

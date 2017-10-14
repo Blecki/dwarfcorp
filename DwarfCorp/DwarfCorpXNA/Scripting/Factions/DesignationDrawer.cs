@@ -91,6 +91,12 @@ namespace DwarfCorp
                 Icon = new NamedImageFrame("newgui/pointers", 32, 1, 0)
             });
 
+            DesignationProperties.Add(DesignationType.Guard, new DesignationTypeProperties
+            {
+                Color = new Color(10, 10, 205),
+                Icon = new NamedImageFrame("newgui/pointers", 32, 3, 0)
+            });
+
             DesignationProperties.Add(DesignationType.Chop, new DesignationTypeProperties
             {
                 Color = Color.LightGreen,

@@ -47,9 +47,6 @@ namespace DwarfCorp
     /// </summary>
     public class ChopTool : PlayerTool
     {
-        public Color ChopDesignationColor { get; set; }
-        public float ChopDesignationGlowRate { get; set; }
-
         public override void OnBegin()
         {
 
@@ -69,20 +66,14 @@ namespace DwarfCorp
         public override void OnMouseOver(IEnumerable<Body> bodies)
         {
             if (bodies == null)
-            {
                 return;
-            }
 
             var treesPicked = bodies.Where(c => c != null && c.Tags.Contains("Vegetation"));
 
             if (treesPicked.Any())
-            {
                 Player.World.ShowToolPopup("Click to harvest this plant. Right click to cancel.");
-            }
             else
-            {
                 DefaultOnMouseOver(bodies);   
-            }
         }
 
         public override void Update(DwarfGame game, DwarfTime time)
@@ -109,7 +100,6 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-
             NamedImageFrame frame = new NamedImageFrame("newgui/pointers", 32, 5, 0);
             foreach (Body tree in Player.BodySelector.CurrentBodies)
             {
@@ -141,29 +131,34 @@ namespace DwarfCorp
         {
             var treesPicked = bodies.Where(c => c.Tags.Contains("Vegetation"));
 
-            List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.Faction.SelectedMinions,
-                GameMaster.ToolMode.Chop);
-            List<Task> tasks = new List<Task>();
-     
-            foreach (Body tree in treesPicked)
+            if (button == InputManager.MouseButton.Left)
             {
-                if (!tree.IsVisible || tree.IsAboveCullPlane(Player.World.ChunkManager)) continue;
+                List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.Faction.SelectedMinions,
+                    GameMaster.ToolMode.Chop);
+                List<Task> tasks = new List<Task>();
 
-                Drawer3D.DrawBox(tree.BoundingBox, Color.LightGreen, 0.1f, false);
-                if (button == InputManager.MouseButton.Left)
+                foreach (Body tree in treesPicked)
                 {
+                    if (!tree.IsVisible || tree.IsAboveCullPlane(Player.World.ChunkManager)) continue;
+
                     var task = ChopTree(tree, Player.Faction);
                     if (task != null)
                         tasks.Add(task);
                 }
-                else if (button == InputManager.MouseButton.Right)
-                    Player.Faction.RemoveEntityDesignation(tree, DesignationType.Chop);
+
+                if (tasks.Count > 0 && minions.Count > 0)
+                {
+                    TaskManager.AssignTasks(tasks, minions);
+                    OnConfirm(minions);
+                }
             }
-           
-            if (tasks.Count > 0 && minions.Count > 0)
+            else if (button == InputManager.MouseButton.Right)
             {
-                TaskManager.AssignTasks(tasks, minions);
-                OnConfirm(minions);
+                foreach (Body tree in treesPicked)
+                {
+                    if (!tree.IsVisible || tree.IsAboveCullPlane(Player.World.ChunkManager)) continue;
+                    Player.Faction.RemoveEntityDesignation(tree, DesignationType.Chop);
+                }
             }
         }
     }
