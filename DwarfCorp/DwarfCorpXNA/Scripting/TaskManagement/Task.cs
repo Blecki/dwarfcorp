@@ -159,7 +159,7 @@ namespace DwarfCorp
 
         public override bool IsFeasible(Creature agent)
         {
-            return true;
+            return Script != null;
         }
 
         public override Act CreateScript(Creature agent)

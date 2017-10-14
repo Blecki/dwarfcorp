@@ -469,6 +469,20 @@ namespace DwarfCorp
                     AssignTask(toReturn);
             }
 
+
+            if (CurrentAct != null && CurrentAct.IsCanceled)
+            {
+                CurrentTask.Script.OnCanceled();
+                CurrentTask.Script = null;
+                CurrentTask = null;
+            }
+
+
+            if (CurrentTask != null && !CurrentTask.IsFeasible(this.Creature))
+            {
+                CurrentTask = null;
+            }
+
             // Update the current task.
             if (CurrentTask != null && CurrentAct != null)
             {
