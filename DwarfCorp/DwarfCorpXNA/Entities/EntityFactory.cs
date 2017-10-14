@@ -228,8 +228,8 @@ namespace DwarfCorp
 
         public static Body CreateBalloon(Vector3 target, Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, ShipmentOrder order, Faction master)
         {
-            var balloon = componentManager.RootComponent.AddChild(new Body(componentManager, "Balloon",
-                Matrix.CreateTranslation(position), new Vector3(0.5f, 1, 0.5f), new Vector3(0, -2, 0))) as Body;
+            var balloon = new Body(componentManager, "Balloon",
+                Matrix.CreateTranslation(position), new Vector3(0.5f, 1, 0.5f), new Vector3(0, -2, 0));
 
             SpriteSheet tex = new SpriteSheet(ContentPaths.Entities.Balloon.Sprites.balloon);
             List<Point> points = new List<Point>
