@@ -90,7 +90,6 @@ namespace DwarfCorp
             {
                 sprite = AddChild(new SimpleSprite(Manager, "Sprite",
                     Matrix.Identity,
-                    //Matrix.CreateTranslation(Vector3.UnitY * 0.25f),
                     false,
                     new SpriteSheet(type.Image.AssetName, 32),
                     new Point(type.Image.SourceRect.X / 32, type.Image.SourceRect.Y / 32))
@@ -99,6 +98,7 @@ namespace DwarfCorp
                     WorldHeight = 0.75f,
                     WorldWidth = 0.75f,
                 }) as Tinter;
+                sprite.LocalTransform = Matrix.CreateTranslation(Vector3.UnitY * 0.25f);
             }
             else
             {
