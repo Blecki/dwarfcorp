@@ -131,7 +131,10 @@ namespace DwarfCorp
 
         public static void DrawText(string text, Vector3 position, Color color, Color strokeColor)
         {
-            DrawCommands.Enqueue(new TextDrawCommand(text, DefaultFont, position, color, strokeColor));
+            if (!DrawCommands.OfType<TextDrawCommand>().Any(t => t.Text == text))
+            {
+                DrawCommands.Enqueue(new TextDrawCommand(text, DefaultFont, position, color, strokeColor));
+            }
         }
 
         public static void Render(SpriteBatch batch, Camera camera, Viewport viewport)

@@ -459,7 +459,9 @@ namespace DwarfCorp.GameStates
 
             BottomBar = bottomBackground.AddChild(new Gui.Widget
             {
-                Transparent = true,
+                Transparent = false,
+                Background = new TileReference("basic", 0),
+                BackgroundColor = new Vector4(0, 0, 0, 0.5f),
                 Padding = new Margin(0, 0, 2, 2),
                 MinimumSize = new Point(0, 36),
                 AutoLayout = AutoLayout.DockBottom
@@ -564,7 +566,6 @@ namespace DwarfCorp.GameStates
             {
                 AutoLayout = AutoLayout.FloatTop,
                 Master = Master,
-                Transparent = true,
             });
 
             #region Setup time display
@@ -574,7 +575,7 @@ namespace DwarfCorp.GameStates
                 TextHorizontalAlign = Gui.HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 MinimumSize = new Point(128, 20),
-                Font = "font8",
+                Font = "font10",
                 TextColor = new Vector4(1, 1, 1, 1),
                 Tooltip = "Current time/date."
             });
@@ -888,7 +889,6 @@ namespace DwarfCorp.GameStates
                 Tag = "brushes",
                 AutoLayout = AutoLayout.DockLeftCentered,
                 SizeToGrid = new Point(3, 1),
-                Border = "border-thin-transparent",
                 ItemSize = new Point(20, 20),
                 InteriorMargin = new Margin(2,2,2,2),
                 ItemSource = new Gui.Widget[]

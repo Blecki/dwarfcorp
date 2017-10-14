@@ -54,7 +54,7 @@ namespace DwarfCorp
         public GetMoneyAct(CreatureAI agent, DwarfBux money, Faction faction = null) :
             base(agent)
         {
-            Name = "Get Money";
+            Name = "Get paid " + money.ToString();
             Money = money;
             if (faction == null)
             {
@@ -123,16 +123,24 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
-            Agent.Blackboard.SetData<DwarfBux>("MoneyNeeded", Money);
-
-            Tree = new WhileLoop(new Sequence(new Wrap(() => GetNextTreasury()),
-                                              new GoToZoneAct(Agent, "Treasury"),
-                                              new StashMoneyAct(Agent, "MoneyNeeded", "Treasury")),
-                                 new Wrap(() => ShouldContinue())
-                )         ;
-
             base.Initialize();
 
+        }
+
+        public override IEnumerable<Status> Run()
+        {
+            if (Tree == null)
+            {
+                Agent.Blackboard.SetData<DwarfBux>("MoneyNeeded", Money);
+
+                Tree = new WhileLoop(new Sequence(new Wrap(() => GetNextTreasury()),
+                                                  new GoToZoneAct(Agent, "Treasury"),
+                                                  new StashMoneyAct(Agent, "MoneyNeeded", "Treasury")),
+                                     new Wrap(() => ShouldContinue())
+                    );
+
+            }
+            return base.Run();
         }
     }
 

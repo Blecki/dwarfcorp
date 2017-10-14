@@ -25,6 +25,10 @@ namespace DwarfCorp.Gui.Widgets
             {
                 new HorizontalMenuTray.MenuItem
                 {
+                    Text = "CHEAT MODE",
+                },
+                new HorizontalMenuTray.MenuItem
+                {
                     Text = "BUILD",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {

@@ -108,7 +108,8 @@ namespace DwarfCorp.Gui.Widgets
         {
             ItemSize = new Point(32, 32);
             Root.RegisterForUpdate(this);
-
+            Background = new TileReference("basic", 0);
+            BackgroundColor = new Vector4(0, 0, 0, 0.5f);
             OnUpdate = (sender, time) =>
             {
                 var existingResourceEntries = new List<Widget>(Children);
