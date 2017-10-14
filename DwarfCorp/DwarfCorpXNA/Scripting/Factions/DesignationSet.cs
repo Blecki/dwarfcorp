@@ -57,13 +57,13 @@ namespace DwarfCorp
             public DesignationType Type;
         }
 
-        public enum AddEntityDesignationResult
+        public enum AddDesignationResult
         {
             AlreadyExisted,
             Added
         }
 
-        public enum RemoveEntityDesignationResult
+        public enum RemoveDesignationResult
         {
             DidntExist,
             Removed
@@ -75,9 +75,15 @@ namespace DwarfCorp
         [JsonProperty] // Todo: Replace with more effecient data structure?
         private List<EntityDesignation> EntityDesignations = new List<EntityDesignation>();
 
-        public void AddVoxelDesignation(VoxelHandle Voxel, DesignationType Type, Object Tag)
+        private static bool TypeSet(DesignationType In, DesignationType T)
+        {
+            return (In & T) == T;
+        }
+
+        public AddDesignationResult AddVoxelDesignation(VoxelHandle Voxel, DesignationType Type, Object Tag)
         {
             var key = GetVoxelQuickCompare(Voxel);
+
             List<VoxelDesignation> list = null;
             if (VoxelDesignations.ContainsKey(key))
                 list = VoxelDesignations[key];
@@ -88,8 +94,12 @@ namespace DwarfCorp
             }
 
             var existingEntry = list.FirstOrDefault(d => d.Type == Type);
+
             if (existingEntry != null)
+            {
                 existingEntry.Tag = Tag;
+                return AddDesignationResult.AlreadyExisted;
+            }
             else
             {
                 list.Add(new VoxelDesignation
@@ -98,17 +108,50 @@ namespace DwarfCorp
                     Type = Type,
                     Tag = Tag
                 });
+                return AddDesignationResult.Added;
             }
         }
 
-        public void RemoveVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
+        public RemoveDesignationResult RemoveVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
         {
             var key = GetVoxelQuickCompare(Voxel);
-            if (!VoxelDesignations.ContainsKey(key)) return;
+            if (!VoxelDesignations.ContainsKey(key)) return RemoveDesignationResult.DidntExist;
             var list = VoxelDesignations[key];
-            list.RemoveAll(d => d.Type == Type);
+            var r = list.RemoveAll(d => TypeSet(d.Type, Type)) == 0 ? RemoveDesignationResult.DidntExist : RemoveDesignationResult.Removed;
             if (list.Count == 0)
                 VoxelDesignations.Remove(key);
+            return r;
+        }
+
+        public Object GetVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
+        {
+            var key = GetVoxelQuickCompare(Voxel);
+            if (!VoxelDesignations.ContainsKey(key)) return null;
+            var r = VoxelDesignations[key].FirstOrDefault(d => TypeSet(d.Type, Type));
+            if (r != null) return r.Tag;
+            return null;
+        }
+
+        public bool IsVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
+        {
+            var key = GetVoxelQuickCompare(Voxel);
+            if (!VoxelDesignations.ContainsKey(key)) return false;
+            return VoxelDesignations[key].Any(d => TypeSet(d.Type, Type));
+        }
+
+        public IEnumerable<VoxelDesignation> EnumerateDesignations(DesignationType Type)
+        {
+            foreach (var key in VoxelDesignations)
+                foreach (var d in key.Value)
+                    if (TypeSet(d.Type, Type))
+                        yield return d;
+        }
+
+        public IEnumerable<VoxelDesignation> EnumerateDesignations()
+        {
+            foreach (var key in VoxelDesignations)
+                foreach (var d in key.Value)
+                        yield return d;
         }
 
         private void RemoveVoxelDesignation(VoxelDesignation D)
@@ -119,37 +162,6 @@ namespace DwarfCorp
             list.Remove(D);
             if (list.Count == 0)
                 VoxelDesignations.Remove(key);
-        }
-
-        public Object GetVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
-        {
-            var key = GetVoxelQuickCompare(Voxel);
-            if (!VoxelDesignations.ContainsKey(key)) return null;
-            var r = VoxelDesignations[key].FirstOrDefault(d => d.Type == Type);
-            if (r != null) return r.Tag;
-            return null;
-        }
-
-        public bool IsVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
-        {
-            var key = GetVoxelQuickCompare(Voxel);
-            if (!VoxelDesignations.ContainsKey(key)) return false;
-            return VoxelDesignations[key].Any(d => d.Type == Type);
-        }
-
-        public IEnumerable<VoxelDesignation> EnumerateDesignations(DesignationType Type)
-        {
-            foreach (var key in VoxelDesignations)
-                foreach (var d in key.Value)
-                    if (d.Type == Type)
-                        yield return d;
-        }
-
-        public IEnumerable<VoxelDesignation> EnumerateDesignations()
-        {
-            foreach (var key in VoxelDesignations)
-                foreach (var d in key.Value)
-                        yield return d;
         }
 
         public void CleanupDesignations()
@@ -176,7 +188,7 @@ namespace DwarfCorp
             EntityDesignations.RemoveAll(b => b.Body.IsDead);
         }
 
-        public AddEntityDesignationResult AddEntityDesignation(Body Entity, DesignationType Type)
+        public AddDesignationResult AddEntityDesignation(Body Entity, DesignationType Type)
         {
             if (EntityDesignations.Count(e => Object.ReferenceEquals(e.Body, Entity) && e.Type == Type) == 0)
             {
@@ -186,28 +198,28 @@ namespace DwarfCorp
                     Type = Type
                 });
 
-                return AddEntityDesignationResult.Added;
+                return AddDesignationResult.Added;
             }
 
-            return AddEntityDesignationResult.AlreadyExisted;
+            return AddDesignationResult.AlreadyExisted;
         }
 
-        public RemoveEntityDesignationResult RemoveEntityDesignation(Body Entity, DesignationType Type)
+        public RemoveDesignationResult RemoveEntityDesignation(Body Entity, DesignationType Type)
         {
-            if (EntityDesignations.RemoveAll(e => Object.ReferenceEquals(e.Body, Entity) && e.Type == Type) != 0)
-                return RemoveEntityDesignationResult.Removed;
+            if (EntityDesignations.RemoveAll(e => Object.ReferenceEquals(e.Body, Entity) && TypeSet(e.Type, Type)) != 0)
+                return RemoveDesignationResult.Removed;
 
-            return RemoveEntityDesignationResult.DidntExist;
+            return RemoveDesignationResult.DidntExist;
         }
 
         public bool IsDesignation(Body Entity, DesignationType Type)
         {
-            return EntityDesignations.Count(e => Object.ReferenceEquals(e.Body, Entity) && e.Type == Type) != 0;
+            return EntityDesignations.Count(e => Object.ReferenceEquals(e.Body, Entity) && TypeSet(e.Type, Type)) != 0;
         }
 
         public IEnumerable<EntityDesignation> EnumerateEntityDesignations(DesignationType Type)
         {
-            return EntityDesignations.Where(e => e.Type == Type);
+            return EntityDesignations.Where(e => TypeSet(e.Type, Type));
         }
 
         public IEnumerable<EntityDesignation> EnumerateEntityDesignations()

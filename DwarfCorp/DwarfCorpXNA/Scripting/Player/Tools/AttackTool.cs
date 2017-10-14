@@ -139,7 +139,7 @@ namespace DwarfCorp
 
                 if (button == InputManager.MouseButton.Left)
                 {
-                    if (Player.Faction.Designations.AddEntityDesignation(other, DesignationType.Attack) == DesignationSet.AddEntityDesignationResult.Added)
+                    if (Player.Faction.Designations.AddEntityDesignation(other, DesignationType.Attack) == DesignationSet.AddDesignationResult.Added)
                     { 
                         foreach (CreatureAI minion in Player.Faction.SelectedMinions)
                         {

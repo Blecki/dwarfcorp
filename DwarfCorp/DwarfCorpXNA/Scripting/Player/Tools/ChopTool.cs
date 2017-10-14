@@ -118,7 +118,7 @@ namespace DwarfCorp
 
         public static Task ChopTree(Body Tree, Faction PlayerFaction)
         {
-            if (PlayerFaction.Designations.AddEntityDesignation(Tree, DesignationType.Chop) == DesignationSet.AddEntityDesignationResult.Added)
+            if (PlayerFaction.Designations.AddEntityDesignation(Tree, DesignationType.Chop) == DesignationSet.AddDesignationResult.Added)
                 return new KillEntityTask(Tree, KillEntityTask.KillType.Chop)
                 {
                     Priority = Task.PriorityType.Low

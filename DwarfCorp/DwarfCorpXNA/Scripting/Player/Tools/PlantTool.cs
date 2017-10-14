@@ -86,7 +86,7 @@ namespace DwarfCorp
                 }
             }
 
-            var designation = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType.Farm) as FarmTile;
+            var designation = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType.Farm | DesignationType.Plant) as FarmTile;
 
             if (designation == null)
             {

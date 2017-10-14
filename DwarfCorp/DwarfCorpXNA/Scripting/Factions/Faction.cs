@@ -255,7 +255,7 @@ namespace DwarfCorp
         public void AssignGather(IEnumerable<Body> items)
         {
             var tasks = items
-                .Where(i => Designations.AddEntityDesignation(i, DesignationType.Gather) == DesignationSet.AddEntityDesignationResult.Added)
+                .Where(i => Designations.AddEntityDesignation(i, DesignationType.Gather) == DesignationSet.AddDesignationResult.Added)
                 .Select(i => new GatherItemTask(i) as Task)
                 .ToList();
 

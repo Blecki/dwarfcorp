@@ -80,7 +80,7 @@ namespace DwarfCorp
                         }
                         break;
                     case InputManager.MouseButton.Right:
-                        if (Player.Faction.Designations.RemoveEntityDesignation(animal, DesignationType.Wrangle) == DesignationSet.RemoveEntityDesignationResult.Removed)
+                        if (Player.Faction.Designations.RemoveEntityDesignation(animal, DesignationType.Wrangle) == DesignationSet.RemoveDesignationResult.Removed)
                             this.Player.World.ShowToolPopup("Wrangle cancelled for " + animal.GetRoot().GetComponent<Creature>().Species);
                         break;
                 }
