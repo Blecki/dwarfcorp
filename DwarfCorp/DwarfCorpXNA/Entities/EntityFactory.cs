@@ -142,13 +142,13 @@ namespace DwarfCorp
             RegisterEntity("RandTrinket", (position, data) => CreateRandomTrinket(world, position));
             RegisterEntity("RandFood", (position, data) => CreateRandomFood(world, position));
             RegisterEntity("Turret", (position, data) => new TurretTrap(world.ComponentManager, position, world.PlayerFaction));
-            RegisterEntity("Snow Cloud", (position, data) => new Weather.Cloud(world.ComponentManager, 0.1f, 50, 40, position) { TypeofStorm = Weather.StormType.SnowStorm });
-            RegisterEntity("Rain Cloud", (position, data) => new Weather.Cloud(world.ComponentManager, 0.1f, 50, 40, position) { TypeofStorm = Weather.StormType.RainStorm });
+            RegisterEntity("Snow Cloud", (position, data) => new Cloud(world.ComponentManager, 0.1f, 50, 40, position) { TypeofStorm = StormType.SnowStorm });
+            RegisterEntity("Rain Cloud", (position, data) => new Cloud(world.ComponentManager, 0.1f, 50, 40, position) { TypeofStorm = StormType.RainStorm });
             RegisterEntity("Storm", (position, data) =>
             {
                 Weather.CreateForecast(world.Time.CurrentDate, world.ChunkManager.Bounds, world, 3);
                 Weather.CreateStorm(MathFunctions.RandVector3Cube() * 10, MathFunctions.Rand(0.05f, 1.0f), world);
-                return new Weather.Cloud(world.ComponentManager, 0.1f, 50, 40, position);
+                return new Cloud(world.ComponentManager, 0.1f, 50, 40, position);
             });
             RegisterEntity("Chicken", (position, data) => new Chicken(position, world.ComponentManager, "Chicken"));
             RegisterEntity("MudGolem", (position, data) => new MudGolem(new CreatureStats(new MudGolemClass(), 0), "Carnivore", world.PlanService, World.Factions.Factions["Carnivore"], world.ComponentManager, "Mud Golem", position));

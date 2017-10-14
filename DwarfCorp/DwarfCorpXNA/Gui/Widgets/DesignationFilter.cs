@@ -24,7 +24,7 @@ namespace DwarfCorp.Gui.Widgets
                 Text = "Visible Markers",
                 TextHorizontalAlign = HorizontalAlign.Center,
                 AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 32),
+                MinimumSize = new Point(0, 36),
                 Font = "font16"
             });
             

@@ -26,6 +26,7 @@ namespace DwarfCorp.Gui.Widgets
         public override void Construct()
         {
             Root.RegisterForUpdate(this);
+
             OnUpdate = (sender, time) =>
             {
                 MessageLock.WaitOne();
@@ -41,11 +42,7 @@ namespace DwarfCorp.Gui.Widgets
             // AddMessage is called by another thread - need to protect the list.
             MessageLock.WaitOne();
 
-            if (Messages.Count > 0 && Messages[Messages.Count - 1].Length > 11 &&
-                Message.StartsWith(Messages[Messages.Count - 1].Substring(0, 11)))
-                Messages[Messages.Count - 1] = Message;
-            else
-                Messages.Add(Message);
+            Messages.Add(Message);
 
             if (Messages.Count > VisibleLines)
                 Messages.RemoveAt(0);
