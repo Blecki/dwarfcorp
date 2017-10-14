@@ -54,7 +54,7 @@ namespace DwarfCorp
 
         public ResourceEntity(ComponentManager manager, ResourceAmount resourceType, Vector3 position) :
             base(manager, ResourceLibrary.Resources[resourceType.ResourceType].ResourceName, 
-                Matrix.CreateTranslation(position), new Vector3(0.25f, 0.25f, 0.25f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0))
+                Matrix.CreateTranslation(position), new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0))
         {
             Resource = resourceType;
             if (Resource.NumResources > 1)
