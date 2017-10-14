@@ -374,7 +374,7 @@ namespace DwarfCorp
                 {
                     // Update corner ramps on all chunks so that they don't have seams when they 
                     // are initially built.
-                    VoxelListPrimitive.UpdateCornerRamps(chunk, i);
+                    //VoxelListPrimitive.UpdateCornerRamps(chunk, i);
                     chunk.InvalidateSlice(i);
                 }
 

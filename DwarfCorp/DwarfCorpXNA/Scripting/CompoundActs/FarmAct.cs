@@ -41,7 +41,7 @@ namespace DwarfCorp
 {
     public class FarmAct : CompoundCreatureAct
     {
-        public FarmTool.FarmTile FarmToWork { get; set; }
+        public FarmTile FarmToWork { get; set; }
         public string PlantToCreate { get; set; }
         public List<ResourceAmount> Resources { get; set; }   
         public enum FarmMode 
@@ -77,7 +77,8 @@ namespace DwarfCorp
 
         public IEnumerable<Status> FarmATile()
         {
-            FarmTool.FarmTile tile = FarmToWork;
+            var tile = FarmToWork;
+
             if (tile == null) 
             {
                 yield return Status.Fail;
@@ -122,7 +123,7 @@ namespace DwarfCorp
                         }
                         else
                         {
-                            FarmToWork.Vox.Type = VoxelLibrary.GetVoxelType("TilledSoil");
+                            FarmToWork.Voxel.Type = VoxelLibrary.GetVoxelType("TilledSoil");
                         }
                     }
                     if (MathFunctions.RandEvent(0.01f))
@@ -142,7 +143,7 @@ namespace DwarfCorp
 
         private bool Validate()
         {
-            bool tileValid =  !FarmToWork.IsCanceled && FarmToWork.Farmer == Agent && FarmToWork.Vox.IsValid && !FarmToWork.Vox.IsEmpty;
+            bool tileValid =  !FarmToWork.IsCanceled && FarmToWork.Farmer == Agent && FarmToWork.Voxel.IsValid && !FarmToWork.Voxel.IsEmpty;
 
             if (!tileValid)
             {
@@ -154,7 +155,7 @@ namespace DwarfCorp
                 return false;
             }
 
-            if (Mode == FarmMode.Till && FarmToWork.Vox.Type.Name == "TilledSoil")
+            if (Mode == FarmMode.Till && FarmToWork.Voxel.Type.Name == "TilledSoil")
             {
                 return false;
             }
@@ -170,7 +171,7 @@ namespace DwarfCorp
 
         public override void OnCanceled()
         {
-            FarmTool.FarmTile tile = FarmToWork;
+            var tile = FarmToWork;
 
             if (tile != null && tile.Farmer == Agent)
             {
@@ -189,11 +190,11 @@ namespace DwarfCorp
         {
             if (FarmToWork != null)
             {
-                if (FarmToWork.Vox.IsValid)
+                if (FarmToWork.Voxel.IsValid)
                 {
                     FarmToWork.Farmer = Agent;
                     Tree = new Select(new Sequence(
-                        new Domain(Validate, new GoToVoxelAct(FarmToWork.Vox, PlanAct.PlanType.Adjacent, Creature.AI)),
+                        new Domain(Validate, new GoToVoxelAct(FarmToWork.Voxel, PlanAct.PlanType.Adjacent, Creature.AI)),
                         new Domain(Validate, new StopAct(Creature.AI)),
                         new Domain(Validate, new Wrap(FarmATile)),
                         new Wrap(Cleanup)), new Wrap(Cleanup));

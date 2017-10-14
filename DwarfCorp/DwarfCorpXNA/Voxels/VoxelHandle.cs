@@ -324,7 +324,7 @@ namespace DwarfCorp
             GlobalVoxelCoordinate Coordinate,
             int Y)
         {
-            Chunk.InvalidateSlice(Coordinate.Y);
+            Chunk.InvalidateSlice(Y);
 
             var localCoordinate = Coordinate.GetLocalVoxelCoordinate();
 

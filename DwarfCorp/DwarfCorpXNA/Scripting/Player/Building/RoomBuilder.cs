@@ -180,44 +180,7 @@ namespace DwarfCorp
 
         public void Render(DwarfTime game, GraphicsDevice graphics)
         {
-            /*
-            foreach(Room room in DesignatedRooms)
-            {
-                if(room.IsBuilt)
-                    Drawer3D.DrawBox(room.GetBoundingBox(), Color.White, 0.1f, true);
-            }
-
-
-            foreach(BuildRoomOrder roomDesignation in BuildDesignations)
-            {
-                BoundingBox roomBox = roomDesignation.GetBoundingBox();
-                roomBox.Max = new Vector3(roomBox.Max.X, roomBox.Max.Y + 0.1f, roomBox.Max.Z);
-
-                Drawer3D.DrawBox(roomBox, Color.White, 0.1f, true);
-                List<BuildVoxelOrder> removals = new List<BuildVoxelOrder>();
-                foreach(BuildVoxelOrder des in roomDesignation.VoxelOrders)
-                {
-                    Drawer3D.DrawBox(des.DestinationVoxel.GetBoundingBox(), Color.LightBlue, 0.05f, true);
-                    BoundingBox centerBox = des.DestinationVoxel.GetBoundingBox();
-                    centerBox.Min += new Vector3(0.7f, 1.1f, 0.7f);
-                    centerBox.Max += new Vector3(-0.7f, 0.2f, -0.7f);
-                    Drawer3D.DrawBox(centerBox, Color.LightBlue, 0.01f, true);
-
-                    if (des.DestinationVoxel.IsEmpty)
-                    {
-                        removals.Add(des);
-                    }
-                }
-
-                foreach(BuildVoxelOrder des in removals)
-                {
-                    roomDesignation.VoxelOrders.Remove(des);
-                }
-
-                Vector3 textLocation = (roomBox.Max - roomBox.Min) / 2.0f + roomBox.Min + new Vector3(0, 2.0f, 0);
-                Drawer2D.DrawTextBox(roomDesignation.GetTextDisplay(), textLocation);
-            }
-             */
+            
         }
 
         public void CheckRemovals()
@@ -328,7 +291,7 @@ namespace DwarfCorp
                 TaskManager.AssignTasks(new List<Task>()
                 {
                     new BuildRoomTask(order)
-                }, Faction.FilterMinionsWithCapability(World.Master.SelectedMinions, GameMaster.ToolMode.Build));
+                }, Faction.FilterMinionsWithCapability(World.Master.SelectedMinions, GameMaster.ToolMode.BuildZone));
             }
         }
 
@@ -371,7 +334,7 @@ namespace DwarfCorp
             if (button == InputManager.MouseButton.Left)
             {
                 World.Tutorial("build " + CurrentRoomData.Name);
-                if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Build).Count == 0)
+                if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.BuildZone).Count == 0)
                 {
                     World.ShowToolPopup("None of the selected units can build rooms.");
                 }
@@ -473,7 +436,7 @@ namespace DwarfCorp
 
             if(button == InputManager.MouseButton.Left)
             {
-                if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Build).Count == 0)
+                if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.BuildZone).Count == 0)
                 {
                     World.ShowToolPopup("None of the selected units can build rooms.");
                 }

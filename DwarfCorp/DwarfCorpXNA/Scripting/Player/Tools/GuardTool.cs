@@ -47,51 +47,42 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class GuardTool : PlayerTool
     {
-
-        public Color GuardDesignationColor { get; set; }
-        public float GuardDesignationGlowRate { get; set; }
-        public Color UnreachableColor { get; set; }
-
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            List<Task> assignedTasks = new List<Task>();
 
-
-            foreach (var v in voxels.Where(v => v.IsValid))
+            if (button == InputManager.MouseButton.Left)
             {
-                if (button == InputManager.MouseButton.Left)
+                List<Task> assignedTasks = new List<Task>();
+
+                foreach (var v in voxels.Where(v => v.IsValid))
                 {
-                    if (v.IsEmpty || Player.Faction.IsGuardDesignation(v))
-                    {
+                    if (v.IsEmpty || Player.Faction.Designations.IsVoxelDesignation(v, DesignationType.Guard))
                         continue;
-                    }
 
                     BuildOrder d = new BuildOrder
                     {
                         Vox = v
                     };
 
-                    Player.Faction.GuardDesignations.Add(d);
+                    Player.Faction.Designations.AddVoxelDesignation(v, DesignationType.Guard, d);
                     assignedTasks.Add(new GuardZoneTask());
                 }
-                else
+
+                List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.World.Master.SelectedMinions, GameMaster.ToolMode.Gather);
+                TaskManager.AssignTasks(assignedTasks, minions);
+                OnConfirm(minions);
+
+            }
+            else
+            {
+                foreach (var v in voxels.Where(v => v.IsValid))
                 {
-                    if (v.IsEmpty || !Player.Faction.IsGuardDesignation(v))
-                    {
+                    if (v.IsEmpty || !Player.Faction.Designations.IsVoxelDesignation(v, DesignationType.Guard))
                         continue;
-                    }
 
-                    Player.Faction.GuardDesignations.Remove(Player.Faction.GetGuardDesignation(v));
-                    Drawer3D.UnHighlightVoxel(v);
-
+                    Player.Faction.Designations.RemoveVoxelDesignation(v, DesignationType.Guard);
                 }
             }
-
-
-            List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.World.Master.SelectedMinions, GameMaster.ToolMode.Gather);
-            TaskManager.AssignTasks(assignedTasks, minions);
-            OnConfirm(minions);
-
         }
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
@@ -106,10 +97,6 @@ namespace DwarfCorp
 
         public override void OnEnd()
         {
-            foreach (var guard in Player.Faction.GuardDesignations)
-            {
-                Drawer3D.UnHighlightVoxel(guard.Vox);
-            }
             Player.VoxSelector.Clear();
         }
 
@@ -142,19 +129,7 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-            NamedImageFrame frame = new NamedImageFrame("newgui/pointers", 32, 3, 0);
-            foreach (BuildOrder d in Player.Faction.GuardDesignations)
-            {
-                var v = d.Vox;
 
-                if (v.IsEmpty)
-                {
-                    continue;
-                }
-                Color drawColor = GuardDesignationColor;
-                Drawer3D.HighlightVoxel(v, drawColor);
-                Drawer2D.DrawSprite(frame, v.WorldPosition + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
-            }
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)

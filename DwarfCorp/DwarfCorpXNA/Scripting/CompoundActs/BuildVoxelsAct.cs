@@ -78,7 +78,7 @@ namespace DwarfCorp
             foreach (var pair in Voxels)
             {
                 children.Add(new GoToVoxelAct(pair.Key, PlanAct.PlanType.Radius, Agent, 3.0f));
-                children.Add(new PlaceVoxelAct(pair.Key.Coordinate, Creature.AI, resources[i]));
+                children.Add(new PlaceVoxelAct(pair.Key, Creature.AI, resources[i]));
                 i++;
             }
 
@@ -90,7 +90,7 @@ namespace DwarfCorp
 
         public override void OnCanceled()
         {
-            Voxels.RemoveAll(pair => !Creature.Faction.WallBuilder.IsDesignation(pair.Key));
+            Voxels.RemoveAll(pair => !Creature.Faction.Designations.IsVoxelDesignation(pair.Key, DesignationType.Put));
             base.OnCanceled();
         }
 

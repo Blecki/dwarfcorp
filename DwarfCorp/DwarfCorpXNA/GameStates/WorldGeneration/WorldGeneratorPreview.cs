@@ -381,7 +381,9 @@ namespace DwarfCorp.GameStates
                 Root.DrawMesh(bkgmesh, Root.RenderData.Texture);
                 Root.DrawMesh(mesh, Root.RenderData.Texture);
             }
+
             lastSpawnWorld = spawnCenter;
+
             if (KeyMesh != null)
                 Root.DrawMesh(KeyMesh, Root.RenderData.Texture);
         }

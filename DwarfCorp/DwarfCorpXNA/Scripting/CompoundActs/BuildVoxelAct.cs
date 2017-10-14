@@ -50,7 +50,7 @@ namespace DwarfCorp
 
         public BuildVoxelAct(
             CreatureAI AI, 
-            GlobalVoxelCoordinate Location, 
+            VoxelHandle Location, 
             VoxelType Type) :
             base(AI)
         {
@@ -61,12 +61,11 @@ namespace DwarfCorp
                 new ResourceAmount(ResourceLibrary.Resources[Type.ResourceToRelease], 1)
             };
 
-            if(Agent.Faction.WallBuilder.IsDesignation(Location))
+            if(Agent.Faction.Designations.IsVoxelDesignation(Location, DesignationType.Put))
             {
                 Tree = new Sequence(new GetResourcesAct(Agent, resources),
                     new Sequence(
-                        new GoToVoxelAct(new VoxelHandle(AI.World.ChunkManager.ChunkData,
-                            Location), PlanAct.PlanType.Adjacent, Agent),
+                        new GoToVoxelAct(Location, PlanAct.PlanType.Adjacent, Agent),
                         new PlaceVoxelAct(Location, AI, resources.First()), new Wrap(Creature.RestockAll)) | new Wrap(Creature.RestockAll)
                     );
             }

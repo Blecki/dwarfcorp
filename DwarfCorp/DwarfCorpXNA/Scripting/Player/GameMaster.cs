@@ -22,14 +22,18 @@ namespace DwarfCorp
         {
             SelectUnits,
             Dig,
-            Build,
+            BuildZone,
+            BuildWall,
+            BuildObject,
             Cook,
             Magic,
             Gather,
             Chop,
             Guard,
             Attack,
-            Farm,
+            Till,
+            Plant,
+            Wrangle,
             Craft,
             MoveObjects,
             God
@@ -148,7 +152,17 @@ namespace DwarfCorp
 
             Tools[ToolMode.SelectUnits] = new DwarfSelectorTool(this);
 
-            Tools[ToolMode.Farm] = new FarmTool()
+            Tools[ToolMode.Till] = new TillTool
+            {
+                Player = this
+            };
+
+            Tools[ToolMode.Plant] = new PlantTool
+            {
+                Player = this
+            };
+
+            Tools[ToolMode.Wrangle] = new WrangleTool
             {
                 Player = this
             };
@@ -161,23 +175,16 @@ namespace DwarfCorp
             Tools[ToolMode.Gather] = new GatherTool
             {
                 Player = this,
-                GatherDesignationColor = Color.Goldenrod,
-                GatherDesignationGlowRate = 2.0f
             };
 
             Tools[ToolMode.Guard] = new GuardTool
             {
                 Player = this,
-                GuardDesignationColor = new Color(10, 10, 205),
-                GuardDesignationGlowRate = 2.0f,
-                UnreachableColor = new Color(205, 10, 10)
             };
 
             Tools[ToolMode.Chop] = new ChopTool
             {
                 Player = this,
-                ChopDesignationColor = Color.LightGreen,
-                ChopDesignationGlowRate = 2.0f
             };
 
             Tools[ToolMode.Attack] = new AttackTool
@@ -185,18 +192,26 @@ namespace DwarfCorp
                 Player = this,
             };
 
-            Tools[ToolMode.Build] = new BuildTool
+            Tools[ToolMode.BuildZone] = new BuildZoneTool
             {
                 Player = this,
-                BuildType = BuildTypes.AllButCook,
+            };
+
+            Tools[ToolMode.BuildWall] = new BuildWallTool
+            {
+                Player = this
+            };
+
+            Tools[ToolMode.BuildObject] = new BuildObjectTool
+            {
+                Player = this
             };
 
             Tools[ToolMode.Magic] = new MagicTool(this);
 
-            Tools[ToolMode.Cook] = new BuildTool
+            Tools[ToolMode.Cook] = new CookTool
             {
                 Player = this,
-                BuildType = BuildTypes.Cook,
             };
 
             Tools[ToolMode.MoveObjects] = new MoveObjectTool()

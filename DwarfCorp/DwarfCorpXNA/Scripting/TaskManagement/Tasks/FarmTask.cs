@@ -40,7 +40,7 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class FarmTask : Task
     {
-        public FarmTool.FarmTile FarmToWork { get; set; }
+        public FarmTile FarmToWork { get; set; }
         public FarmAct.FarmMode Mode { get; set; }
         public string Plant { get; set; }
         public List<ResourceAmount> RequiredResources { get; set; } 
@@ -50,10 +50,10 @@ namespace DwarfCorp
             Priority = PriorityType.Low;
         }
 
-        public FarmTask(FarmTool.FarmTile farmToWork)
+        public FarmTask(FarmTile farmToWork)
         {
             FarmToWork = farmToWork;
-            Name = "Work " + FarmToWork.Vox.Coordinate;
+            Name = "Work " + FarmToWork.Voxel.Coordinate;
             Priority = PriorityType.Low;
             AutoRetry = true;
         }
@@ -94,7 +94,7 @@ namespace DwarfCorp
             {
                 return false;
             }
-            if (Mode == FarmAct.FarmMode.Till && FarmToWork.Vox.Type.Name == "TilledSoil")
+            if (Mode == FarmAct.FarmMode.Till && FarmToWork.Voxel.Type.Name == "TilledSoil")
             {
                 return false;
             }
@@ -109,7 +109,7 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature agent)
         {
-            return new FarmAct(agent.AI) {Resources = RequiredResources, PlantToCreate = Plant, Mode = Mode, FarmToWork = FarmToWork, Name = "Work " + FarmToWork.Vox.Coordinate};
+            return new FarmAct(agent.AI) {Resources = RequiredResources, PlantToCreate = Plant, Mode = Mode, FarmToWork = FarmToWork, Name = "Work " + FarmToWork.Voxel.Coordinate};
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
@@ -117,7 +117,7 @@ namespace DwarfCorp
             if (FarmToWork == null) return float.MaxValue;
             else
             {
-                return (FarmToWork.Vox.WorldPosition - agent.AI.Position).LengthSquared();
+                return (FarmToWork.Voxel.WorldPosition - agent.AI.Position).LengthSquared();
             }
         }
 

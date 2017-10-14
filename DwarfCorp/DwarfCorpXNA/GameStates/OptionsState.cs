@@ -460,10 +460,10 @@ namespace DwarfCorp.GameStates
                 Padding = new Margin(4,4,4,4)
             });
 
-            var split = panel.AddChild(new Gui.Widgets.TwoColumns
+            var split = panel.AddChild(new Gui.Widgets.Columns
             {
                 AutoLayout = AutoLayout.DockFill
-            }) as Gui.Widgets.TwoColumns;
+            }) as Gui.Widgets.Columns;
 
             var leftPanel = split.AddChild(new Widget
             {

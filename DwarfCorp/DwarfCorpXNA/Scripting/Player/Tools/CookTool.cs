@@ -1,4 +1,4 @@
-// GuardVoxelTask.cs
+// BuildTool.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -34,46 +34,63 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
+using DwarfCorp.Gui.Widgets;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// Tells a creature that it should guard a voxel.
-    /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
-    internal class GuardZoneTask : Task
+    public class CookTool : PlayerTool
     {
-        public GuardZoneTask()
+        public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            Name = "Guard Area";
-            Priority = PriorityType.Medium;
+            Player.Faction.CraftBuilder.VoxelsSelected(voxels, button);
         }
 
-        public override Task Clone()
+        public override void OnBegin()
         {
-            return new GuardZoneTask();
         }
 
-        public override Act CreateScript(Creature agent)
+        public override void OnEnd()
         {
-            return new GuardAreaAct(agent.AI);
+            Player.Faction.CraftBuilder.End();
         }
 
-        public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
+        public override void OnMouseOver(IEnumerable<Body> bodies)
         {
-            return 1.0f;
         }
 
-        public override bool ShouldRetry(Creature agent)
+        public override void Update(DwarfGame game, DwarfTime time)
         {
-            return agent.Faction.Designations.EnumerateDesignations(DesignationType.Guard).Any();
+            if (Player.IsCameraRotationModeActive())
+            {
+                Player.VoxSelector.Enabled = false;
+                Player.World.SetMouse(null);
+                Player.BodySelector.Enabled = false;
+                return;
+            }
+
+                Player.VoxSelector.Enabled = false;
+                Player.BodySelector.Enabled = false;
+
+                if (Player.World.IsMouseOverGui)
+                    Player.World.SetMouse(Player.World.MousePointer);
+                else
+                    Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 11));
         }
 
-        public override void Render(DwarfTime time)
+        public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
+        }
 
+        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        {
+        }
+
+        public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
+        {
         }
     }
-
 }

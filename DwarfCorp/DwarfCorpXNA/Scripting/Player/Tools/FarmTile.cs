@@ -1,4 +1,4 @@
-// GuardVoxelTask.cs
+// BuildTool.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -33,47 +33,49 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// Tells a creature that it should guard a voxel.
-    /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
-    internal class GuardZoneTask : Task
+    public class FarmTile
     {
-        public GuardZoneTask()
+        public VoxelHandle Voxel = VoxelHandle.InvalidHandle;
+        public Plant Plant = null;
+        public float Progress = 0.0f;
+        public CreatureAI Farmer = null;
+        public bool IsCanceled = false;
+        public DesignationType ActiveDesignations = DesignationType._None;
+
+        public bool IsTilled()
         {
-            Name = "Guard Area";
-            Priority = PriorityType.Medium;
+            return (Voxel.IsValid) && Voxel.Type.Name == "TilledSoil";
         }
 
-        public override Task Clone()
+        public bool IsFree()
         {
-            return new GuardZoneTask();
+            return (Plant == null || Plant.IsDead) && Farmer == null;
         }
 
-        public override Act CreateScript(Creature agent)
+        public bool PlantExists()
         {
-            return new GuardAreaAct(agent.AI);
+            return !(Plant == null || Plant.IsDead);
         }
 
-        public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
+        public void CreatePlant(string plantToCreate, WorldManager world)
         {
-            return 1.0f;
-        }
+            Plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[plantToCreate].PlantToGenerate, Voxel.WorldPosition + Vector3.Up * 1.5f);
+            Seedling seed = Plant.BecomeSeedling();
 
-        public override bool ShouldRetry(Creature agent)
-        {
-            return agent.Faction.Designations.EnumerateDesignations(DesignationType.Guard).Any();
-        }
+            Matrix original = Plant.LocalTransform;
+            original.Translation += Vector3.Down;
+            seed.AnimationQueue.Add(new EaseMotion(0.5f, original, Plant.LocalTransform.Translation));
 
-        public override void Render(DwarfTime time)
-        {
+            world.ParticleManager.Trigger("puff", original.Translation, Color.White, 20);
+
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_plant_grow, Voxel.WorldPosition, true);
 
         }
     }
-
 }

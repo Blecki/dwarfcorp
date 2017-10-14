@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Gui.Widgets
 {
-    public class GoalPanel : TwoColumns
+    public class GoalPanel : Columns
     {
         private Gui.Widgets.ListView GoalList;
         public IEnumerable<DwarfCorp.Goals.Goal> GoalSource;

@@ -75,9 +75,9 @@ namespace DwarfCorp.Gui.Widgets
             var stringScreenSize = new Rectangle();
             var font = Root.GetTileSheet(Font);
             var basic = Root.GetTileSheet("basic");
-            var linePos = Rect.Bottom - (font.TileHeight * TextSize);
+            var linePos = 0;
 
-            foreach (var line in ActiveMessage.Lines.Reverse<String>())
+            foreach (var line in ActiveMessage.Lines)
             {
                 var stringMesh = Gui.Mesh.CreateStringMesh(line, font, new Vector2(TextSize, TextSize), out stringScreenSize)
                    .Translate(Rect.X, linePos)
@@ -88,7 +88,7 @@ namespace DwarfCorp.Gui.Widgets
                     .Texture(basic.TileMatrix(1))
                     .Colorize(TextBackgroundColor));
                 meshes.Add(stringMesh);
-                linePos -= font.TileHeight * TextSize;
+                linePos += font.TileHeight * TextSize;
             }
             
             return Gui.Mesh.Merge(meshes.ToArray());

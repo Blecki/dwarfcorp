@@ -370,7 +370,7 @@ namespace DwarfCorp
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                     if (Target.IsDead)
                     {
-                        Creature.Faction.RemoveEntityDesignation(Target, DesignationType.Attack);
+                        Creature.Faction.Designations.RemoveEntityDesignation(Target, DesignationType.Attack);
                                                 
                         Target = null;
                         Agent.AddXP(10);

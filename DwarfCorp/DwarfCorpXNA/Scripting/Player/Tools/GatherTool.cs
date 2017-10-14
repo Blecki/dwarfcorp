@@ -47,10 +47,6 @@ namespace DwarfCorp
     /// </summary>
     public class GatherTool : PlayerTool
     {
-
-        public Color GatherDesignationColor { get; set; }
-        public float GatherDesignationGlowRate { get; set; }
-
         public GatherTool()
         {
 
@@ -81,12 +77,12 @@ namespace DwarfCorp
 
                 if(button == InputManager.MouseButton.Left)
                 {
-                    Player.Faction.AddEntityDesignation(resource, DesignationType.Gather);
+                    Player.Faction.Designations.AddEntityDesignation(resource, DesignationType.Gather);
                     assignments.Add(new GatherItemTask(resource));
                 }
                 else
                 {
-                    Player.Faction.RemoveEntityDesignation(resource, DesignationType.Gather);
+                    Player.Faction.Designations.RemoveEntityDesignation(resource, DesignationType.Gather);
                 }
             }
 

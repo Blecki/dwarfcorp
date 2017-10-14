@@ -51,7 +51,6 @@ namespace DwarfCorp
         private static GraphicsDevice Device;
         private static Shader Effect;
         private static OrbitCamera Camera;
-        private static Dictionary<Color, List<GlobalVoxelCoordinate>> HighlightGroups = new Dictionary<Color, List<GlobalVoxelCoordinate>>();
         private static object renderLock = new object();
 
         private struct Box
@@ -173,7 +172,13 @@ namespace DwarfCorp
 
         }
 
-        public static void Render(GraphicsDevice Device, Shader Effect, OrbitCamera Camera, DesignationDrawer DesignationSet)
+        public static void Render(
+            GraphicsDevice Device, 
+            Shader Effect, 
+            OrbitCamera Camera,
+            DesignationDrawer DesignationDrawer,
+            DesignationSet Designations,
+            WorldManager World)
         {
             lock (renderLock)
             {
@@ -183,19 +188,32 @@ namespace DwarfCorp
 
                 var colorModulation = Math.Abs(Math.Sin(DwarfTime.LastTime.TotalGameTime.TotalSeconds*2.0f));
 
-                DesignationSet.EnumerateHilites(_addBox);
+                DesignationDrawer.DrawHilites(
+                    Designations,
+                    _addBox,
+                    (pos, type) =>
+                    {
+                        var saveState = Device.DepthStencilState;
+                        Device.DepthStencilState = DepthStencilState.DepthRead;
 
-                foreach (var hilitedVoxelGroup in HighlightGroups)
-                {
-                    var groupColor = new Color(
-                        (byte) (hilitedVoxelGroup.Key.R*colorModulation + 50),
-                        (byte) (hilitedVoxelGroup.Key.G*colorModulation + 50),
-                        (byte) (hilitedVoxelGroup.Key.B*colorModulation + 50),
-                        255);
+                        Effect.MainTexture = World.ChunkManager.ChunkData.Tilemap;
+                        Effect.LightRampTint = Color.White;
+                        // Todo: Alpha pulse
+                        Effect.VertexColorTint = new Color(0.1f, 0.9f, 1.0f, 0.5f + 0.45f);
+                        Effect.SetTexturedTechnique();
+                        Effect.World = Matrix.CreateTranslation(pos + Vector3.Up * 0.15f); // Why the offset?
 
-                    foreach (var hilitedVoxel in hilitedVoxelGroup.Value)
-                        _addBox(hilitedVoxel.ToVector3(), Vector3.One, groupColor, 0.1f);
-                }
+                        foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
+                        {
+                            pass.Apply();
+                            VoxelLibrary.GetPrimitive(type).Render(Device);
+                        }
+
+                        Effect.LightRampTint = Color.White;
+                        Effect.VertexColorTint = Color.White;
+                        Effect.World = Matrix.Identity;
+                        Device.DepthStencilState = saveState;
+                    });
 
                 foreach (var box in Boxes)
                     _addBox(box.RealBox.Min, box.RealBox.Max - box.RealBox.Min, box.Color, box.Thickness);
@@ -210,31 +228,6 @@ namespace DwarfCorp
             }
         }
 
-        public static void UnHighlightVoxel(VoxelHandle voxel)
-        {
-            lock (renderLock)
-            {
-                foreach (var group in HighlightGroups)
-                    group.Value.Remove(voxel.Coordinate);
-            }
-        }
-
-        public static void HighlightVoxel(VoxelHandle voxel, Color color)
-        {
-            lock (renderLock)
-            {
-                if (!HighlightGroups.ContainsKey(color))
-                    HighlightGroups.Add(color, new List<GlobalVoxelCoordinate>());
-            }
-            UnHighlightVoxel(voxel);
-
-            lock (renderLock)
-            {
-                HighlightGroups[color].Add(voxel.Coordinate);
-            }
-
-        }
-        
         public static void DrawBox(BoundingBox box, Color color, float thickness, bool warp)
         {
             lock (renderLock)
