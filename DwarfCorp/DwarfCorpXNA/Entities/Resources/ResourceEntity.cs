@@ -96,8 +96,8 @@ namespace DwarfCorp
                     new Point(type.Image.SourceRect.X / 32, type.Image.SourceRect.Y / 32))
                 {
                     OrientationType = SimpleSprite.OrientMode.Spherical,
-                    WorldHeight = 0.5f,
-                    WorldWidth = 0.5f,
+                    WorldHeight = 0.75f,
+                    WorldWidth = 0.75f,
                 }) as Tinter;
             }
             else
@@ -119,8 +119,8 @@ namespace DwarfCorp
                     layers)
                 {
                     OrientationType = LayeredSimpleSprite.OrientMode.Spherical,
-                    WorldHeight = 0.5f,
-                    WorldWidth = 0.5f,
+                    WorldHeight = 0.75f,
+                    WorldWidth = 0.75f,
                 }) as Tinter;
             }
 
