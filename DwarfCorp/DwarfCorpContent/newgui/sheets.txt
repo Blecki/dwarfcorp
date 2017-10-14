@@ -33,7 +33,7 @@
 		},
 		{
 			"Name": "mouse",
-			"Texture": "newgui/pointers2",
+			"Texture": "newgui/pointers",
 			"TileWidth": 32,
 			"TileHeight" : 32
 		},
@@ -262,13 +262,13 @@
 		},
 		{
 			"Name": "furniture",
-			"Texture": "newgui/interior_furniture",
+			"Texture": "Entities/Furniture/interior_furniture",
 			"TileWidth": 32,
 			"TileHeight": 32
 		},
 		{
 			"Name": "beartrap",
-			"Texture": "newgui/beartrap",
+			"Texture": "Entities/DwarfObjects/beartrap",
 			"TileWidth": 32,
 			"TileHeight": 32
 		},
