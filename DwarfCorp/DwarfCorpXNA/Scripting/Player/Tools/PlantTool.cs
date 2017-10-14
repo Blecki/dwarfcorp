@@ -86,7 +86,7 @@ namespace DwarfCorp
                 }
             }
 
-            var designation = Player.Faction.GetFarmDesignation(voxel);
+            var designation = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType.Farm) as FarmTile;
 
             if (designation == null)
             {
@@ -136,7 +136,11 @@ namespace DwarfCorp
 
                 if (ValidatePlanting(voxel))
                 {
-                    var existingTile = Player.Faction.AddFarmDesignation(voxel, DesignationType.Plant);
+                    var existingTile = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType.Farm) as FarmTile;
+                    if (existingTile == null) continue;
+
+                    Player.Faction.Designations.RemoveVoxelDesignation(voxel, DesignationType.Farm);
+                    Player.Faction.Designations.AddVoxelDesignation(voxel, DesignationType.Plant, existingTile);
 
                     goals.Add(new FarmTask(existingTile)
                     {

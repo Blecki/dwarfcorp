@@ -56,7 +56,7 @@ namespace DwarfCorp
 
         public bool GuardDesignationExists()
         {
-            return Agent.Faction.VoxelDesignations.Any(d => d.Type == DesignationType.Guard);
+            return Agent.Faction.Designations.EnumerateDesignations(DesignationType.Guard).Any();
         }
 
         public bool ExitCondition()
@@ -79,8 +79,7 @@ namespace DwarfCorp
         {
             List<BuildOrder> voxes = new List<BuildOrder>();
 
-            voxes.AddRange(Agent.Faction.VoxelDesignations
-                .Where(d => d.Type == DesignationType.Guard)
+            voxes.AddRange(Agent.Faction.Designations.EnumerateDesignations(DesignationType.Guard)
                 .Select(d => d.Tag as BuildOrder));
 
             voxes.Sort((a, b) => (a.Vox.WorldPosition - agent.Position).LengthSquared() < (b.Vox.WorldPosition - agent.Position).LengthSquared() ? -1 : 1);

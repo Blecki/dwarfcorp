@@ -479,6 +479,7 @@ namespace DwarfCorp
 
                 Thread.Sleep(1000);
                 ShowingWorld = true;
+
                 SetLoadingMessage("Complete.");
 
                 // GameFile is no longer needed.

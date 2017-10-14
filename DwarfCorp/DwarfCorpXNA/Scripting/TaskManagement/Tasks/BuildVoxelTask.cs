@@ -65,17 +65,17 @@ namespace DwarfCorp
 
         public override bool IsFeasible(Creature agent)
         {
-            return Voxel.IsValid && agent.Faction.IsPutDesignation(Voxel);
+            return Voxel.IsValid && agent.Faction.Designations.IsVoxelDesignation(Voxel, DesignationType.Put);
         }
 
         public override bool ShouldDelete(Creature agent)
         {
-            return !Voxel.IsValid || !agent.Faction.IsPutDesignation(Voxel);
+            return !Voxel.IsValid || !agent.Faction.Designations.IsVoxelDesignation(Voxel, DesignationType.Put);
         }
 
         public override bool ShouldRetry(Creature agent)
         {
-            return Voxel.IsValid && agent.Faction.IsPutDesignation(Voxel);
+            return Voxel.IsValid && agent.Faction.Designations.IsVoxelDesignation(Voxel, DesignationType.Put);
         }
 
         public override Task Clone()
@@ -133,7 +133,7 @@ namespace DwarfCorp
             var factionResources = agent.Faction.ListResources();
             foreach (var pair in Voxels)
             {
-                if (!agent.Faction.IsPutDesignation(pair.Key))
+                if (!agent.Faction.Designations.IsVoxelDesignation(pair.Key, DesignationType.Put))
                 {
                     continue;
                 }
@@ -167,7 +167,7 @@ namespace DwarfCorp
 
         private IEnumerable<Act.Status> Reloop(Creature agent)
         {
-            List<KeyValuePair<VoxelHandle, string>> feasibleVoxels = Voxels.Where(voxel => agent.Faction.IsPutDesignation(voxel.Key)).ToList();
+            List<KeyValuePair<VoxelHandle, string>> feasibleVoxels = Voxels.Where(voxel => agent.Faction.Designations.IsVoxelDesignation(voxel.Key, DesignationType.Put)).ToList();
 
             if (feasibleVoxels.Count > 0)
             {
@@ -188,7 +188,7 @@ namespace DwarfCorp
 
         public bool Validate(CreatureAI creature, VoxelHandle voxel, ResourceAmount resources)
         {
-            return creature.Faction.IsPutDesignation(voxel) && 
+            return creature.Faction.Designations.IsVoxelDesignation(voxel, DesignationType.Put) && 
                 creature.Creature.Inventory.HasResource(resources);
         }
 
@@ -201,7 +201,7 @@ namespace DwarfCorp
             var factionResources = agent.Faction.ListResources();
             foreach (var pair in Voxels)
             {
-                if (!agent.Faction.IsPutDesignation(pair.Key))
+                if (!agent.Faction.Designations.IsVoxelDesignation(pair.Key, DesignationType.Put))
                 {
                     continue;
                 }
@@ -234,7 +234,7 @@ namespace DwarfCorp
                 var localVox = pair.Key;
                 children.Add(new Select(new Sequence(new Domain(() => Validate(agent.AI, pair.Key, resources[local]), 
                              new GoToVoxelAct(pair.Key, PlanAct.PlanType.Radius, agent.AI, 4.0f)),
-                             new PlaceVoxelAct(pair.Key.Coordinate, agent.AI, resources[i])),
+                             new PlaceVoxelAct(pair.Key, agent.AI, resources[i])),
                              new Wrap(Succeed)));
                 i++;
             }

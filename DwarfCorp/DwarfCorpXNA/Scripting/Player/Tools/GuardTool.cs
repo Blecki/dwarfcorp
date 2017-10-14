@@ -56,7 +56,7 @@ namespace DwarfCorp
 
                 foreach (var v in voxels.Where(v => v.IsValid))
                 {
-                    if (v.IsEmpty || Player.Faction.IsVoxelDesignation(v, DesignationType.Guard))
+                    if (v.IsEmpty || Player.Faction.Designations.IsVoxelDesignation(v, DesignationType.Guard))
                         continue;
 
                     BuildOrder d = new BuildOrder
@@ -64,7 +64,7 @@ namespace DwarfCorp
                         Vox = v
                     };
 
-                    Player.Faction.AddVoxelDesignation(v, DesignationType.Guard, d);
+                    Player.Faction.Designations.AddVoxelDesignation(v, DesignationType.Guard, d);
                     assignedTasks.Add(new GuardZoneTask());
                 }
 
@@ -77,10 +77,10 @@ namespace DwarfCorp
             {
                 foreach (var v in voxels.Where(v => v.IsValid))
                 {
-                    if (v.IsEmpty || !Player.Faction.IsVoxelDesignation(v, DesignationType.Guard))
+                    if (v.IsEmpty || !Player.Faction.Designations.IsVoxelDesignation(v, DesignationType.Guard))
                         continue;
 
-                    Player.Faction.RemoveVoxelDesignation(v, DesignationType.Guard);
+                    Player.Faction.Designations.RemoveVoxelDesignation(v, DesignationType.Guard);
                 }
             }
         }

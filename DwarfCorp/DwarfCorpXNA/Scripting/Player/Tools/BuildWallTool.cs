@@ -67,17 +67,15 @@ namespace DwarfCorp
                             Player.World.ShowToolPopup("None of the selected units can build walls.");
                             return;
                         }
+
                         List<Task> assignments = new List<Task>();
-                        var validRefs = voxels.Where(r => !Faction.IsPutDesignation(r) &&
-                        Player.World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? r.IsEmpty : !r.IsEmpty).ToList();
+                        var validRefs = voxels.Where(r => !Faction.Designations.IsVoxelDesignation(r, DesignationType.Put)
+                            && Player.World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? r.IsEmpty : !r.IsEmpty).ToList();
 
                         foreach (var r in validRefs)
                         {
-                            Faction.AddPutDesignation(new Faction.PutDesignation
-                            {
-                                Voxel = r,
-                                Type = VoxelLibrary.GetVoxelType(CurrentVoxelType)
-                            });
+                            Faction.Designations.AddVoxelDesignation(r, DesignationType.Put,
+                                VoxelLibrary.GetVoxelType(CurrentVoxelType));
                             assignments.Add(new BuildVoxelTask(r, VoxelLibrary.GetVoxelType(CurrentVoxelType).Name));
                         }
 
@@ -89,14 +87,7 @@ namespace DwarfCorp
                     {
                         foreach (var r in voxels)
                         {
-                            if (!Faction.IsPutDesignation(r))
-                            {
-                                continue;
-                            }
-                            else
-                            {
-                                Faction.RemovePutDesignation(r);
-                            }
+                            Faction.Designations.RemoveVoxelDesignation(r, DesignationType.Put);
                         }
                         break;
                     }

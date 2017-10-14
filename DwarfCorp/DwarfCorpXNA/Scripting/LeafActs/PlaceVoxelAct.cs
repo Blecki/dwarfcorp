@@ -45,11 +45,11 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class PlaceVoxelAct : CreatureAct
     {
-        public GlobalVoxelCoordinate Location;
+        public VoxelHandle Location;
         public ResourceAmount Resource;
 
         public PlaceVoxelAct(
-            GlobalVoxelCoordinate Location,
+            VoxelHandle Location,
             CreatureAI Agent,
             ResourceAmount Resource) :
             base(Agent)
@@ -62,7 +62,7 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            if (!Creature.Faction.IsPutDesignation(Location))
+            if (!Creature.Faction.Designations.IsVoxelDesignation(Location, DesignationType.Put))
             {
                 yield return Status.Success;
                 yield break;
@@ -73,9 +73,9 @@ namespace DwarfCorp
                 yield return Status.Fail;
             }
 
-            foreach (var status in Creature.HitAndWait(1.0f, true, () => Location.ToVector3() + Vector3.One * 0.5f))
+            foreach (var status in Creature.HitAndWait(1.0f, true, () => Location.Coordinate.ToVector3() + Vector3.One * 0.5f))
             {
-                if (!Creature.Faction.IsPutDesignation(Location))
+                if (!Creature.Faction.Designations.IsVoxelDesignation(Location, DesignationType.Put))
                 {
                     yield return Status.Success;
                     yield break;
@@ -95,13 +95,12 @@ namespace DwarfCorp
             }
             else
             {
-                if(Creature.Faction.IsPutDesignation(Location))
+                if(Creature.Faction.Designations.IsVoxelDesignation(Location, DesignationType.Put))
                 {
                     // If the creature intersects the box, find a voxel adjacent to it that is free, and jump there to avoid getting crushed.
-                    if (Creature.Physics.BoundingBox.Intersects(new BoundingBox(
-                        Location.ToVector3(), Location.ToVector3() + Vector3.One)))
+                    if (Creature.Physics.BoundingBox.Intersects(Location.GetBoundingBox()))
                     {
-                        var neighbors = VoxelHelpers.EnumerateAllNeighbors(Location)
+                        var neighbors = VoxelHelpers.EnumerateAllNeighbors(Location.Coordinate)
                             .Select(c => new VoxelHandle(Agent.Chunks.ChunkData, c));
 
                         var closest = VoxelHandle.InvalidHandle;
@@ -124,15 +123,15 @@ namespace DwarfCorp
                             Creature.Physics.AnimationQueue.Add(teleport);
                         }
                     }
-                    TossMotion motion = new TossMotion(1.0f, 2.0f, grabbed.LocalTransform, Location.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f));
+                    TossMotion motion = new TossMotion(1.0f, 2.0f, grabbed.LocalTransform, Location.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f));
                     motion.OnComplete += grabbed.Die;
                     grabbed.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
                     grabbed.AnimationQueue.Add(motion);
 
-                    var put = Creature.Faction.GetPutDesignation(Location);
-                    PlaceVoxel(put.Voxel, put.Type, Creature.Manager.World);
+                    var put = Creature.Faction.Designations.GetVoxelDesignation(Location, DesignationType.Put) as VoxelType;
+                    PlaceVoxel(Location, put, Creature.Manager.World);
                     
-                    Creature.Faction.RemovePutDesignation(put.Voxel);
+                    Creature.Faction.Designations.RemoveVoxelDesignation(Location, DesignationType.Put);
                     Creature.Stats.NumBlocksPlaced++;
                     Creature.AI.AddXP(1);
                     yield return Status.Success;

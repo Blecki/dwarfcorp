@@ -371,6 +371,7 @@
     <Compile Include="Scripting\CompoundActs\GetMoneyAct.cs" />
     <Compile Include="Scripting\CompoundActs\StockMoneyAct.cs" />
     <Compile Include="Scripting\Factions\Embarkment.cs" />
+    <Compile Include="Scripting\Factions\DesignationSet.cs" />
     <Compile Include="Scripting\Factions\WarParty.cs" />
     <Compile Include="Scripting\Factions\RaceLibrary.cs" />
     <Compile Include="Scripting\LeafActs\PutMoneyInZoneAct.cs" />

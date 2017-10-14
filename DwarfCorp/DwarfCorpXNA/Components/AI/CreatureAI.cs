@@ -761,14 +761,15 @@ namespace DwarfCorp
                 // Farm stuff if applicable
                 if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Chop) && MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction)
                 {
-                    var task = Faction.FarmTiles
+                    var task = Faction.Designations.EnumerateDesignations(DesignationType.Farm)
+                        .Select(d => d.Tag as FarmTile)
                         .Where(t => t.PlantExists() && t.Plant.IsGrown && !t.IsCanceled)
                         .Select(t => new KillEntityTask(t.Plant, KillEntityTask.KillType.Chop))
                         .FirstOrDefault();
 
                     if (task != null)
                     {
-                        Faction.AddEntityDesignation(task.EntityToKill, DesignationType.Chop);
+                        Faction.Designations.AddEntityDesignation(task.EntityToKill, DesignationType.Chop);
                         return task;
                     }
                 }

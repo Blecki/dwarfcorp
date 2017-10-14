@@ -60,7 +60,7 @@ namespace DwarfCorp
 
             if(vref.IsValid)
             {
-                BuildOrder digBuildOrder = creature.Faction.GetDigDesignation(vref);
+                var digBuildOrder = creature.Faction.Designations.GetVoxelDesignation(vref, DesignationType.Dig) as BuildOrder;
 
                 if(digBuildOrder != null)
                 {
@@ -85,17 +85,12 @@ namespace DwarfCorp
 
             if (vref.IsValid)
             {
-                BuildOrder digBuildOrder = creature.Faction.GetDigDesignation(vref);
+                var digBuildOrder = creature.Faction.Designations.GetVoxelDesignation(vref, DesignationType.Dig) as BuildOrder;
 
                 if (digBuildOrder != null)
-                {
                     yield return Status.Success;
-                }
                 else
-                {
                     yield return Status.Fail;
-                }
-
             }
 
             yield return Status.Fail;

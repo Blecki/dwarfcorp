@@ -139,7 +139,7 @@ namespace DwarfCorp
 
                 if (button == InputManager.MouseButton.Left)
                 {
-                    if (Player.Faction.AddEntityDesignation(other, DesignationType.Attack) == Faction.AddEntityDesignationResult.Added)
+                    if (Player.Faction.Designations.AddEntityDesignation(other, DesignationType.Attack) == DesignationSet.AddEntityDesignationResult.Added)
                     { 
                         foreach (CreatureAI minion in Player.Faction.SelectedMinions)
                         {
@@ -157,7 +157,7 @@ namespace DwarfCorp
                 else if (button == InputManager.MouseButton.Right)
                 {
                     Player.Faction.World.ShowToolPopup("Attack cancelled for " + creature.Species);
-                    Player.Faction.RemoveEntityDesignation(other, DesignationType.Attack);
+                    Player.Faction.Designations.RemoveEntityDesignation(other, DesignationType.Attack);
                 }
             }
         }

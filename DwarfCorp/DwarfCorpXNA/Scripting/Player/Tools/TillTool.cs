@@ -56,17 +56,24 @@ namespace DwarfCorp
                 Player.World.ShowToolPopup(String.Format("Can only till soil (not {0})!", voxel.Type.Name));
                 return false;
             }
-            if (voxel.Type.Name == "TilledSoil")
+
+            var existingTile = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType.Farm);
+            if (existingTile == null)
+                existingTile = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType.Plant);
+
+            if (existingTile != null)
             {
-                Player.World.ShowToolPopup("Soil already tilled!");
+                Player.World.ShowToolPopup("You are already farming this tile.");
                 return false;
             }
+            
             var above = VoxelHelpers.GetVoxelAbove(voxel);
             if (above.IsValid && !above.IsEmpty)
             {
                 Player.World.ShowToolPopup("Something is blocking the top of this tile.");
                 return false;
             }
+
             Player.World.ShowToolPopup("Click to till.");
             return true;
         }
@@ -83,22 +90,24 @@ namespace DwarfCorp
                     if (!ValidateTilling(voxel))
                         continue;
 
-                    var existingFarmTile = Player.Faction.GetFarmDesignation(voxel);
-                    if (existingFarmTile == null)
+                    var existingFarmTile = new FarmTile
                     {
-                        existingFarmTile = Player.Faction.AddFarmDesignation(voxel, DesignationType.Farm);
-                    }
+                        Voxel = voxel
+                    };
+
+                    Player.Faction.Designations.AddVoxelDesignation(voxel, DesignationType.Farm, existingFarmTile);
 
                     goals.Add(new FarmTask(existingFarmTile) { Mode = FarmAct.FarmMode.Till });
                 }
                 else
                 {
-                    var existingFarmTile = Player.Faction.GetFarmDesignation(voxel);
+                    var existingFarmTile = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType.Farm)
+                        as FarmTile;
                     if (existingFarmTile != null && !existingFarmTile.PlantExists())
                     {
                         existingFarmTile.IsCanceled = true;
                         existingFarmTile.Farmer = null;
-                        Player.Faction.RemoveFarmDesignation(existingFarmTile.Voxel, DesignationType.Farm);
+                        Player.Faction.Designations.RemoveVoxelDesignation(existingFarmTile.Voxel, DesignationType.Farm);
                     }
                 }
             }

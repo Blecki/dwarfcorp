@@ -51,7 +51,6 @@ namespace DwarfCorp
         private static GraphicsDevice Device;
         private static Shader Effect;
         private static OrbitCamera Camera;
-        private static Dictionary<Color, List<GlobalVoxelCoordinate>> HighlightGroups = new Dictionary<Color, List<GlobalVoxelCoordinate>>();
         private static object renderLock = new object();
 
         private struct Box
@@ -177,7 +176,8 @@ namespace DwarfCorp
             GraphicsDevice Device, 
             Shader Effect, 
             OrbitCamera Camera,
-            DesignationDrawer DesignationSet,
+            DesignationDrawer DesignationDrawer,
+            DesignationSet Designations,
             WorldManager World)
         {
             lock (renderLock)
@@ -188,7 +188,8 @@ namespace DwarfCorp
 
                 var colorModulation = Math.Abs(Math.Sin(DwarfTime.LastTime.TotalGameTime.TotalSeconds*2.0f));
 
-                DesignationSet.EnumerateHilites(
+                DesignationDrawer.DrawHilites(
+                    Designations,
                     _addBox,
                     (pos, type) =>
                     {
@@ -214,19 +215,6 @@ namespace DwarfCorp
                         Device.DepthStencilState = saveState;
                     });
 
-                //Todo: Kill
-                foreach (var hilitedVoxelGroup in HighlightGroups)
-                {
-                    var groupColor = new Color(
-                        (byte) (hilitedVoxelGroup.Key.R*colorModulation + 50),
-                        (byte) (hilitedVoxelGroup.Key.G*colorModulation + 50),
-                        (byte) (hilitedVoxelGroup.Key.B*colorModulation + 50),
-                        255);
-
-                    foreach (var hilitedVoxel in hilitedVoxelGroup.Value)
-                        _addBox(hilitedVoxel.ToVector3(), Vector3.One, groupColor, 0.1f);
-                }
-
                 foreach (var box in Boxes)
                     _addBox(box.RealBox.Min, box.RealBox.Max - box.RealBox.Min, box.Color, box.Thickness);
 
@@ -240,31 +228,6 @@ namespace DwarfCorp
             }
         }
 
-        public static void UnHighlightVoxel(VoxelHandle voxel)
-        {
-            lock (renderLock)
-            {
-                foreach (var group in HighlightGroups)
-                    group.Value.Remove(voxel.Coordinate);
-            }
-        }
-
-        public static void HighlightVoxel(VoxelHandle voxel, Color color)
-        {
-            lock (renderLock)
-            {
-                if (!HighlightGroups.ContainsKey(color))
-                    HighlightGroups.Add(color, new List<GlobalVoxelCoordinate>());
-            }
-            UnHighlightVoxel(voxel);
-
-            lock (renderLock)
-            {
-                HighlightGroups[color].Add(voxel.Coordinate);
-            }
-
-        }
-        
         public static void DrawBox(BoundingBox box, Color color, float thickness, bool warp)
         {
             lock (renderLock)

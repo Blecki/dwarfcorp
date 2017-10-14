@@ -140,7 +140,7 @@ namespace DwarfCorp
         {
             return Animal != null 
                 && !Animal.IsDead 
-                && agent.Faction.IsDesignation(Animal.GetRoot().GetComponent<Physics>(), DesignationType.Wrangle) 
+                && agent.Faction.Designations.IsDesignation(Animal.GetRoot().GetComponent<Physics>(), DesignationType.Wrangle) 
                 && GetClosestPen(agent) != null;
         }
 

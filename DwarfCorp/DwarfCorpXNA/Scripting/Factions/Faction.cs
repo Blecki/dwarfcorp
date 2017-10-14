@@ -55,7 +55,6 @@ namespace DwarfCorp
         public Economy Economy { get; set; }
         public List<TradeEnvoy> TradeEnvoys { get; set; }
         public List<WarParty> WarParties { get; set; }
-        public Dictionary<ulong, BuildOrder> DigOrders { get; set; }
         public List<Body> OwnedObjects { get; set; }
         public List<Stockpile> Stockpiles { get; set; }
         public List<CreatureAI> Minions { get; set; }
@@ -63,12 +62,9 @@ namespace DwarfCorp
         public CraftBuilder CraftBuilder { get; set; }
         public Color PrimaryColor { get; set; }
         public Color SecondaryColor { get; set; }
-        public List<FarmTile> FarmTiles = new List<FarmTile>();
-        public List<VoxelDesignation> VoxelDesignations = new List<VoxelDesignation>();
-        public List<PutDesignation> PutDesignations = new List<PutDesignation>();
-        [JsonProperty] // Todo: Replace with more effecient data structure?
-        private List<EntityDesignation> EntityDesignations = new List<EntityDesignation>();
-
+        //public List<FarmTile> FarmTiles = new List<FarmTile>();
+        public DesignationSet Designations = new DesignationSet();
+        
         // Todo: When converting to new save system, it can take care of this.
         [JsonProperty]
         private string _race;
@@ -85,246 +81,6 @@ namespace DwarfCorp
                 _race = value.Name;
             }
         }
-
-        #region Designations
-
-        public class VoxelDesignation
-        {
-            public VoxelHandle Voxel;
-            public DesignationType Type;
-            public Object Tag;
-        }
-
-
-        public void AddVoxelDesignation(VoxelHandle Voxel, DesignationType Type, Object Tag)
-        {
-            VoxelDesignations.Add(new VoxelDesignation
-            {
-                Voxel = Voxel,
-                Type = Type,
-                Tag = Tag
-            });
-
-            if (World.PlayerFaction == this)
-                World.DesignationDrawer.HiliteVoxel(Voxel.Coordinate, Type);
-        }
-
-        public void RemoveVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
-        {
-            VoxelDesignations.RemoveAll(d => d.Voxel == Voxel && d.Type == Type);
-            if (World.PlayerFaction == this)
-                World.DesignationDrawer.UnHiliteVoxel(Voxel.Coordinate, Type);
-        }
-
-        public Object GetVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
-        {
-            var r = VoxelDesignations.FirstOrDefault(d => d.Voxel == Voxel && d.Type == Type);
-            if (r != null) return r.Tag;
-            return null;
-        }
-
-        public bool IsVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
-        {
-            return VoxelDesignations.Any(d => d.Voxel == Voxel && d.Type == Type);
-        }
-
-        // This is temporary until all factions get a 'DesignationDrawer' instead.
-        public class PutDesignation
-        {
-            public VoxelHandle Voxel;
-            public VoxelType Type;
-        }
-
-        public bool IsPutDesignation(GlobalVoxelCoordinate Location)
-        {
-            return PutDesignations.Any(d => d.Voxel.Coordinate == Location);
-        }
-
-        public bool IsPutDesignation(VoxelHandle reference)
-        {
-            foreach (var put in PutDesignations)
-            {
-                if (put.Voxel == reference)
-                    return true;
-            }
-
-            return false;
-        }
-
-        public PutDesignation GetPutDesignation(GlobalVoxelCoordinate Location)
-        {
-            return PutDesignations.FirstOrDefault(d => d.Voxel.Coordinate == Location);
-        }
-
-        // Todo: %KILL%
-        public PutDesignation GetPutDesignation(VoxelHandle v)
-        {
-            foreach (var put in PutDesignations)
-            {
-                if (put.Voxel == v)
-                    return put;
-            }
-
-            return null;
-        }
-
-        public void AddPutDesignation(PutDesignation des)
-        {
-            PutDesignations.Add(des);
-            if (World.PlayerFaction == this)
-                World.DesignationDrawer.HiliteVoxel(des.Voxel.Coordinate, DesignationType.Put, des.Type);
-        }
-
-        public void RemovePutDesignation(VoxelHandle v)
-        {
-            var des = GetPutDesignation(v);
-
-            if (des != null)
-            {
-                PutDesignations.Remove(des);
-                if (World.PlayerFaction == this)
-                    World.DesignationDrawer.UnHiliteVoxel(des.Voxel.Coordinate, DesignationType.Put);
-            }
-        }
-
-
-        public bool IsFarmDesignation(GlobalVoxelCoordinate Location)
-        {
-            return FarmTiles.Any(d => d.Voxel.Coordinate == Location);
-        }
-
-        public bool IsFarmDesignation(VoxelHandle reference)
-        {
-            foreach (var put in FarmTiles)
-            {
-                if (put.Voxel == reference)
-                    return true;
-            }
-
-            return false;
-        }
-
-        public FarmTile GetFarmDesignation(GlobalVoxelCoordinate Location)
-        {
-            return FarmTiles.FirstOrDefault(d => d.Voxel.Coordinate == Location);
-        }
-
-        // Todo: %KILL%
-        public FarmTile GetFarmDesignation(VoxelHandle v)
-        {
-            foreach (var put in FarmTiles)
-            {
-                if (put.Voxel == v)
-                    return put;
-            }
-
-            return null;
-        }
-
-        public FarmTile AddFarmDesignation(VoxelHandle v, DesignationType Type)
-        {
-            var existing = GetFarmDesignation(v);
-            if (existing != null)
-            {
-                if (World.PlayerFaction == this)
-                    World.DesignationDrawer.UnHiliteVoxel(v.Coordinate, existing.ActiveDesignations);
-            }
-            else
-            {
-                if (Type != DesignationType.Farm)
-                    throw new InvalidOperationException();
-
-                existing = new FarmTile { Voxel = v };
-                FarmTiles.Add(existing);
-            }
-
-            if (World.PlayerFaction == this)
-                World.DesignationDrawer.HiliteVoxel(v.Coordinate, Type);
-
-            existing.ActiveDesignations = Type;
-
-            return existing;
-        }
-
-        // Todo: Hacks with the des type. Kill!
-        //      - Since planting does not create farm tiles, does it need to support multiple types?
-        public void RemoveFarmDesignation(VoxelHandle v, DesignationType Type)
-        {
-            var des = GetFarmDesignation(v);
-
-            if (des != null)
-            {
-                if (des.ActiveDesignations == Type)
-                {
-                    if (World.PlayerFaction == this)
-                    {
-                        World.DesignationDrawer.UnHiliteVoxel(des.Voxel.Coordinate, Type);
-
-                        if (Type != DesignationType.Farm)
-                            World.DesignationDrawer.HiliteVoxel(v.Coordinate, DesignationType.Farm);
-                    }
-
-                    des.ActiveDesignations = DesignationType.Farm;
-
-                    if (Type == DesignationType.Farm)
-                        FarmTiles.Remove(des);
-                }
-            }
-        }
-
-
-        private class EntityDesignation
-        {
-            public Body Body;
-            public DesignationType Type;
-        }
-
-
-        public enum AddEntityDesignationResult
-        {
-            AlreadyExisted,
-            Added
-        }
-
-        public enum RemoveEntityDesignationResult
-        {
-            DidntExist,
-            Removed
-        }
-
-        public AddEntityDesignationResult AddEntityDesignation(Body Entity, DesignationType Type)
-        {
-            if (EntityDesignations.Count(e => Object.ReferenceEquals(e.Body, Entity) && e.Type == Type) == 0)
-            {
-                EntityDesignations.Add(new EntityDesignation
-                {
-                    Body = Entity,
-                    Type = Type
-                });
-                if (this == World.PlayerFaction)
-                    World.DesignationDrawer.HiliteEntity(Entity, Type);
-                return AddEntityDesignationResult.Added;
-            }
-            return AddEntityDesignationResult.AlreadyExisted;
-        }
-
-        public RemoveEntityDesignationResult RemoveEntityDesignation(Body Entity, DesignationType Type)
-        {
-            if (EntityDesignations.RemoveAll(e => Object.ReferenceEquals(e.Body, Entity) && e.Type == Type) != 0)
-            {
-                if (this == World.PlayerFaction)
-                    World.DesignationDrawer.UnHiliteEntity(Entity, Type);
-                return RemoveEntityDesignationResult.Removed;
-            }
-            return RemoveEntityDesignationResult.DidntExist;
-        }
-
-        public bool IsDesignation(Body Entity, DesignationType Type)
-        {
-            return EntityDesignations.Count(e => Object.ReferenceEquals(e.Body, Entity) && e.Type == Type) != 0;
-        }
-
-        #endregion
 
         public TaskManager TaskManager { get; set; }
         public List<Creature> Threats { get; set; }
@@ -357,7 +113,6 @@ namespace DwarfCorp
             SelectedMinions = new List<CreatureAI>();
             TaskManager = new TaskManager();
             Stockpiles = new List<Stockpile>();
-            DigOrders = new Dictionary<ulong, BuildOrder>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
             OwnedObjects = new List<Body>();
@@ -374,7 +129,6 @@ namespace DwarfCorp
             SelectedMinions = new List<CreatureAI>();
             TaskManager = new TaskManager();
             Stockpiles = new List<Stockpile>();
-            DigOrders = new Dictionary<ulong, BuildOrder>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
             OwnedObjects = new List<Body>();
@@ -432,34 +186,7 @@ namespace DwarfCorp
                 zone.ZoneBodies.RemoveAll(body => body.IsDead);
             }
 
-            List<ulong> removalKeys = new List<ulong>();
-            foreach (var kvp in DigOrders)
-            {
-                var v = kvp.Value.Vox;
-                if (v.IsValid && (v.IsEmpty || v.Health <= 0.0f || v.Type.Name == "empty" || v.Type.IsInvincible))
-                {
-                    if (this == World.PlayerFaction)
-                        World.DesignationDrawer.UnHiliteVoxel(kvp.Value.Vox.Coordinate, DesignationType.Dig);
-                    removalKeys.Add(kvp.Key);
-                }
-            }
-
-            for (int i = 0; i < removalKeys.Count; i++)
-            {
-                DigOrders.Remove(removalKeys[i]);
-            }
-
-            EntityDesignations.RemoveAll(b =>
-            {
-                if (b.Body.IsDead)
-                {
-                    if (this == World.PlayerFaction)
-                        World.DesignationDrawer.UnHiliteEntity(b.Body, b.Type);
-                }
-                return b.Body.IsDead;
-            });
-
-            VoxelDesignations.RemoveAll(v => !v.Voxel.IsValid || v.Voxel.IsEmpty);
+            Designations.CleanupDesignations();
 
             foreach (var zone in RoomBuilder.DesignatedRooms)
             {
@@ -503,7 +230,7 @@ namespace DwarfCorp
 
                     if (!IsTaskAssigned(g))
                     {
-                        AddEntityDesignation(threat.Physics, DesignationType.Attack);
+                        Designations.AddEntityDesignation(threat.Physics, DesignationType.Attack);
                         tasks.Add(g);
                     }
                     else
@@ -528,7 +255,7 @@ namespace DwarfCorp
         public void AssignGather(IEnumerable<Body> items)
         {
             var tasks = items
-                .Where(i => AddEntityDesignation(i, DesignationType.Gather) == AddEntityDesignationResult.Added)
+                .Where(i => Designations.AddEntityDesignation(i, DesignationType.Gather) == DesignationSet.AddEntityDesignationResult.Added)
                 .Select(i => new GatherItemTask(i) as Task)
                 .ToList();
 
@@ -569,38 +296,6 @@ namespace DwarfCorp
         public int ComputeStockpileSpace()
         {
             return Stockpiles.Sum(pile => pile.Resources.MaxResources - pile.Resources.CurrentResourceCount);
-        }
-
-        public BuildOrder GetDigDesignation(VoxelHandle vox)
-        {
-            BuildOrder returnOrder;
-            if (DigOrders.TryGetValue(GetVoxelQuickCompare(vox), out returnOrder))
-                return returnOrder;
-            return new BuildOrder();
-        }
-
-        public void AddDigDesignation(BuildOrder order)
-        {
-            if (!order.Vox.IsValid) return;
-            DigOrders.Add(GetVoxelQuickCompare(order.Vox), order);
-            if (this == World.PlayerFaction)
-                World.DesignationDrawer.HiliteVoxel(order.Vox.Coordinate, DesignationType.Dig);
-        }
-
-        public void RemoveDigDesignation(VoxelHandle vox)
-        {
-            var qc = GetVoxelQuickCompare(vox);
-            if (DigOrders.ContainsKey(qc))
-            {
-                DigOrders.Remove(qc);
-                if (this == World.PlayerFaction)
-                	World.DesignationDrawer.UnHiliteVoxel(vox.Coordinate, DesignationType.Dig);
-            }
-        }
-
-        public bool IsDigDesignation(VoxelHandle vox)
-        {
-            return DigOrders.ContainsKey(GetVoxelQuickCompare(vox));
         }
 
         public bool AddResources(ResourceAmount resources)
@@ -700,8 +395,8 @@ namespace DwarfCorp
 
         public Body GetRandomGatherDesignationWithTag(string tag)
         {
-            var des = EntityDesignations.Where(d => d.Type == DesignationType.Gather &&
-                d.Body.Tags.Contains(tag)).ToList();
+            var des = Designations.EnumerateEntityDesignations(DesignationType.Gather)
+                .Where(d => d.Body.Tags.Contains(tag)).ToList();
             return des.Count == 0 ? null : des[MathFunctions.Random.Next(0, des.Count)].Body;
         }
 

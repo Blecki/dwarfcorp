@@ -71,7 +71,7 @@ namespace DwarfCorp
 
         public override bool ShouldRetry(Creature agent)
         {
-            return !VoxelToKill.IsEmpty && agent.Faction.IsDigDesignation(VoxelToKill);
+            return !VoxelToKill.IsEmpty && agent.Faction.Designations.IsVoxelDesignation(VoxelToKill, DesignationType.Dig);
         }
 
 
@@ -80,13 +80,14 @@ namespace DwarfCorp
             if(!VoxelToKill.IsValid || VoxelToKill.IsEmpty || VoxelToKill.Health <= 0)
                 return false;
 
-            return agent.Faction.IsDigDesignation(VoxelToKill) && !VoxelHelpers.VoxelIsCompletelySurrounded(VoxelToKill);
+            return agent.Faction.Designations.IsVoxelDesignation(VoxelToKill, DesignationType.Dig) 
+                && !VoxelHelpers.VoxelIsCompletelySurrounded(VoxelToKill);
         }
 
         public override bool ShouldDelete(Creature agent)
         {
             return !VoxelToKill.IsValid || VoxelToKill.IsEmpty || VoxelToKill.Health <= 0 ||
-                   !agent.Faction.IsDigDesignation(VoxelToKill);
+                   !agent.Faction.Designations.IsVoxelDesignation(VoxelToKill, DesignationType.Dig);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)

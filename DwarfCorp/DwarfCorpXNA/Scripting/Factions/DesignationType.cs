@@ -46,8 +46,7 @@ namespace DwarfCorp
         Chop    = 64,
         Put     = 128,
         Plant   = 256, 
-        Harvest = 512,
 
-        _All     = Dig | Farm | Guard | Gather | Attack | Wrangle | Chop | Put | Plant | Harvest,
+        _All     = Dig | Farm | Guard | Gather | Attack | Wrangle | Chop | Put | Plant,
     }
 }

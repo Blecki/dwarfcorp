@@ -118,7 +118,7 @@ namespace DwarfCorp
 
         public static Task ChopTree(Body Tree, Faction PlayerFaction)
         {
-            if (PlayerFaction.AddEntityDesignation(Tree, DesignationType.Chop) == Faction.AddEntityDesignationResult.Added)
+            if (PlayerFaction.Designations.AddEntityDesignation(Tree, DesignationType.Chop) == DesignationSet.AddEntityDesignationResult.Added)
                 return new KillEntityTask(Tree, KillEntityTask.KillType.Chop)
                 {
                     Priority = Task.PriorityType.Low
@@ -157,7 +157,7 @@ namespace DwarfCorp
                 foreach (Body tree in treesPicked)
                 {
                     if (!tree.IsVisible || tree.IsAboveCullPlane(Player.World.ChunkManager)) continue;
-                    Player.Faction.RemoveEntityDesignation(tree, DesignationType.Chop);
+                    Player.Faction.Designations.RemoveEntityDesignation(tree, DesignationType.Chop);
                 }
             }
         }

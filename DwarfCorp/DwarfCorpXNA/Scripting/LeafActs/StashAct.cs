@@ -139,8 +139,8 @@ namespace DwarfCorp
                             yield return Status.Fail;
                         }
 
-                        if (Creature.Faction.IsDesignation(Target, DesignationType.Gather))
-                            Creature.Faction.RemoveEntityDesignation(Target, DesignationType.Gather);
+                        if (Creature.Faction.Designations.IsDesignation(Target, DesignationType.Gather))
+                            Creature.Faction.Designations.RemoveEntityDesignation(Target, DesignationType.Gather);
                         else
                         {
                             yield return Status.Fail;

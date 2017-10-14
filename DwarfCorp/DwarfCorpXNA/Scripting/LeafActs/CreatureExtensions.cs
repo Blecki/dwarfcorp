@@ -270,7 +270,7 @@ namespace DwarfCorp
                 }
 
                 // If the voxel has already been destroyed, just ignore it and return.
-                if(vox.Health <= 0.0f || !agent.Faction.IsDigDesignation(vox))
+                if(vox.Health <= 0.0f || !agent.Faction.Designations.IsVoxelDesignation(vox, DesignationType.Dig))
                 {
                     agent.CurrentCharacterMode = CharacterMode.Idle;
                     yield return Act.Status.Success;

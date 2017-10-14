@@ -41,32 +41,9 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// This is a convenience class for drawing lines, boxes, etc. to the screen.
-    /// </summary>
-    //[Saving.SaveableObject(0)]
-    public class DesignationDrawer //: Saving.ISaveableObject
+    public class DesignationDrawer
     {
         public DesignationType VisibleTypes = DesignationType._All;
-
-        public class HilitedVoxel
-        {
-            public GlobalVoxelCoordinate Coordinate;
-            public DesignationType DesignationType;
-            public VoxelType Phantom;
-        }
-
-        [JsonProperty]
-        private List<HilitedVoxel> HilitedVoxels = new List<HilitedVoxel>();
-
-        private class HilitedBody
-        {
-            public Body Body;
-            public DesignationType DesignationType;
-        }
-
-        [JsonProperty]
-        private List<HilitedBody> HilitedBodies = new List<HilitedBody>();
 
         private class DesignationTypeProperties
         {
@@ -134,52 +111,8 @@ namespace DwarfCorp
             });
         }
 
-        // Ugh...
-        public int CountPutDesignations(ResourceLibrary.ResourceType resourceToRelease)
-        {
-            return HilitedVoxels.Count(v => v.DesignationType == DesignationType.Put && 
-                v.Phantom.ResourceToRelease == resourceToRelease);
-        }
-
-        public void HiliteVoxel(GlobalVoxelCoordinate Coordinate, DesignationType Type)
-        {
-            HilitedVoxels.Add(new HilitedVoxel
-            {
-                Coordinate = Coordinate,
-                DesignationType = Type
-            });
-        }
-
-        public void HiliteVoxel(GlobalVoxelCoordinate Coordinate, DesignationType Type, VoxelType Phantom)
-        {
-            HilitedVoxels.Add(new HilitedVoxel
-            {
-                Coordinate = Coordinate,
-                DesignationType = Type,
-                Phantom = Phantom
-            });
-        }
-
-        public void UnHiliteVoxel(GlobalVoxelCoordinate Coordinate, DesignationType Type)
-        {
-            HilitedVoxels.RemoveAll(v => v.Coordinate == Coordinate && v.DesignationType == Type);
-        }
-
-        public void HiliteEntity(Body Entity, DesignationType Type)
-        {
-            HilitedBodies.Add(new HilitedBody
-            {
-                Body = Entity,
-                DesignationType = Type
-            });
-        }
-
-        public void UnHiliteEntity(Body Entity, DesignationType Type)
-        {
-            HilitedBodies.RemoveAll(b => Object.ReferenceEquals(b.Body, Entity) && Type == b.DesignationType);
-        }
-
-        public void EnumerateHilites(
+        public void DrawHilites(
+            DesignationSet Set,
             Action<Vector3, Vector3, Color, float> DrawBoxCallback,
             Action<Vector3, VoxelType> DrawPhantomCallback)
         {
@@ -193,34 +126,34 @@ namespace DwarfCorp
                     255);
             }
 
-            foreach (var voxel in HilitedVoxels)
+            foreach (var voxel in Set.EnumerateDesignations())
             {
-                if ((voxel.DesignationType & VisibleTypes) == voxel.DesignationType)
+                if ((voxel.Type & VisibleTypes) == voxel.Type)
                 {
                     var props = DefaultProperties;
-                    if (DesignationProperties.ContainsKey(voxel.DesignationType))
-                        props = DesignationProperties[voxel.DesignationType];
+                    if (DesignationProperties.ContainsKey(voxel.Type))
+                        props = DesignationProperties[voxel.Type];
 
-                    var v = voxel.Coordinate.ToVector3();
+                    var v = voxel.Voxel.Coordinate.ToVector3();
                     if (props.Icon != null)
                     {
                         Drawer2D.DrawSprite(props.Icon, v + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
                     }
 
-                    if (voxel.Phantom != null)
-                        DrawPhantomCallback(v, voxel.Phantom);
+                    if (voxel.Type == DesignationType.Put) // Hate this.
+                        DrawPhantomCallback(v, voxel.Tag as VoxelType);
                     else
                         DrawBoxCallback(v, Vector3.One, props.ModulatedColor, 0.1f);
                 }
             }
 
-            foreach (var entity in HilitedBodies)
+            foreach (var entity in Set.EnumerateEntityDesignations())
             {
-                if ((entity.DesignationType & VisibleTypes) == entity.DesignationType)
+                if ((entity.Type & VisibleTypes) == entity.Type)
                 {
                     var props = DefaultProperties;
-                    if (DesignationProperties.ContainsKey(entity.DesignationType))
-                        props = DesignationProperties[entity.DesignationType];
+                    if (DesignationProperties.ContainsKey(entity.Type))
+                        props = DesignationProperties[entity.Type];
 
                     var box = entity.Body.GetBoundingBox();
                     DrawBoxCallback(box.Min, box.Max - box.Min, props.ModulatedColor, 0.1f);
@@ -231,42 +164,5 @@ namespace DwarfCorp
                 }
             }
         }
-
-        public class SaveNugget : Saving.Nugget
-        {
-            public class SavedHilitedBody
-            {
-                public Saving.Nugget Body;
-                public DesignationType DesignationType;
-            }
-
-            public Dictionary<DesignationType, List<GlobalVoxelCoordinate>> HilitedVoxels;
-            public List<SavedHilitedBody> HilitedBodies;
-        }
-        /*
-        Saving.Nugget Saving.ISaveableObject.SaveToNugget(Saving.Saver SaveSystem)
-        {
-            return new SaveNugget
-            {
-                HilitedVoxels = HilitedVoxels,
-                HilitedBodies = HilitedBodies.Select(h => new SaveNugget.SavedHilitedBody
-                {
-                    Body = SaveSystem.SaveObject(h.Body),
-                    DesignationType = h.DesignationType
-                }).ToList()
-            };
-        }
-
-        void Saving.ISaveableObject.LoadFromNugget(Saving.Loader SaveSystem, Saving.Nugget From)
-        {
-            var n = From as SaveNugget;
-            HilitedVoxels = n.HilitedVoxels;
-            HilitedBodies = n.HilitedBodies.Select(h => new HilitedBody
-            {
-                Body = SaveSystem.LoadObject(h.Body) as Body,
-                DesignationType = h.DesignationType
-            }).ToList();
-        }
-        */
     }
 }
