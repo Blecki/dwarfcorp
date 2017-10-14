@@ -89,12 +89,15 @@ namespace DwarfCorp
             if (type.CompositeLayers == null || type.CompositeLayers.Count == 0)
             {
                 sprite = AddChild(new SimpleSprite(Manager, "Sprite",
-                    Matrix.CreateTranslation(Vector3.UnitY * 0.25f),
+                    Matrix.Identity,
+                    //Matrix.CreateTranslation(Vector3.UnitY * 0.25f),
                     false,
                     new SpriteSheet(type.Image.AssetName, 32),
                     new Point(type.Image.SourceRect.X / 32, type.Image.SourceRect.Y / 32))
                 {
-                    OrientationType = SimpleSprite.OrientMode.Spherical
+                    OrientationType = SimpleSprite.OrientMode.Spherical,
+                    WorldHeight = 0.5f,
+                    WorldWidth = 0.5f,
                 }) as Tinter;
             }
             else
@@ -113,7 +116,12 @@ namespace DwarfCorp
                 sprite = AddChild(new LayeredSimpleSprite(Manager, "Sprite",
                     Matrix.CreateTranslation(Vector3.UnitY * 0.25f),
                     false,
-                    layers)) as Tinter;
+                    layers)
+                {
+                    OrientationType = LayeredSimpleSprite.OrientMode.Spherical,
+                    WorldHeight = 0.5f,
+                    WorldWidth = 0.5f,
+                }) as Tinter;
             }
 
             sprite.Tint = type.Tint;

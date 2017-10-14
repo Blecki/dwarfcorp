@@ -716,7 +716,10 @@
     <Compile Include="World\FaunaData.cs" />
     <Compile Include="World\Overworld.cs" />
     <Compile Include="World\VegetationData.cs" />
-    <Compile Include="World\Weather.cs" />
+    <Compile Include="World\Weather\Cloud.cs" />
+    <Compile Include="World\Weather\Storm.cs" />
+    <Compile Include="World\Weather\StormType.cs" />
+    <Compile Include="World\Weather\Weather.cs" />
     <Compile Include="World\WorldManager-NewGameSetup.cs" />
     <Compile Include="World\WorldManager-Loading.cs" />
     <Compile Include="World\WorldManager.cs" />

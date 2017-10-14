@@ -20,7 +20,7 @@ namespace DwarfCorp.GameStates
         private bool DisplayException = false;
         private Gui.Root GuiRoot;
         private Gui.Widget Tip;
-        private Gui.Widgets.InfoTicker LoadTicker;
+        private InfoTicker LoadTicker;
         private WorldGenerator Generator;
         // Displays tips when the game is loading.
         public List<string> LoadingTips = new List<string>()
@@ -44,6 +44,7 @@ namespace DwarfCorp.GameStates
 
         private Timer TipTimer = new Timer(5, false);
         public WorldGenerationSettings Settings { get; set; }
+
         public LoadState(DwarfGame game, GameStateManager stateManager, WorldGenerationSettings settings) :
             base(game, "LoadState", stateManager)
         {
@@ -116,7 +117,6 @@ namespace DwarfCorp.GameStates
 
             World.Setup();
             World.OnSetLoadingMessage = (s) => LoadTicker.AddMessage(s);
-
         }
 
         public override void Update(DwarfTime gameTime)
@@ -138,7 +138,8 @@ namespace DwarfCorp.GameStates
                 {
                     Settings = Generator.Settings;
                     CreateWorld();
-                } else if (Settings.GenerateFromScratch)
+                }
+                else if (Settings.GenerateFromScratch)
                 {
                     if (!LoadTicker.HasMesssage(Generator.LoadingMessage))
                         LoadTicker.AddMessage(Generator.LoadingMessage);
@@ -150,6 +151,7 @@ namespace DwarfCorp.GameStates
                     if (item.Message == Gui.InputEvents.KeyPress)
                         Runner.Jump();
                 }
+
                 GuiRoot.Update(gameTime.ToGameTime());
                 Runner.Update(gameTime);
               

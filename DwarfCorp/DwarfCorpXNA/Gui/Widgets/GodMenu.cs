@@ -167,6 +167,16 @@ namespace DwarfCorp.Gui.Widgets
                                 chunk.InvalidateSlice(Y);
                     }
                 },
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "LET IT SNOW",
+                    OnClick = (sender, args) =>
+                    {
+                        var storm = Weather.CreateStorm(Vector3.One, 100.0f, Master.World);
+                        storm.TypeofStorm = StormType.SnowStorm;
+                        storm.Start();
+                    }
+                },
 
             };
 

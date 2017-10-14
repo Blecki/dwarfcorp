@@ -43,6 +43,7 @@ namespace DwarfCorp.Dialogue
 
             GuiRoot = new Gui.Root(DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
+            GuiRoot.RootItem.Font = "font8";
 
             int w = System.Math.Min(GuiRoot.RenderData.VirtualScreen.Width - 256, 550);
             int h = System.Math.Min(GuiRoot.RenderData.VirtualScreen.Height - 256, 300);
