@@ -69,7 +69,7 @@ namespace DwarfCorp
 
         public const string GameName = "DwarfCorp";
         private static StreamWriter _logwriter;
-#if SHARP_RAVEN
+#if SHARP_RAVEN && !DEBUG
         private RavenClient ravenClient;
 #endif
         public DwarfGame()
@@ -92,7 +92,7 @@ namespace DwarfCorp
 
             try
             {
-#if SHARP_RAVEN
+#if SHARP_RAVEN && !DEBUG
                 if (GameSettings.Default.AllowReporting)
                 {
                     ravenClient =
@@ -129,7 +129,7 @@ namespace DwarfCorp
             catch(NoSuitableGraphicsDeviceException exception)
             {
                 Console.Error.WriteLine(exception.Message);
-#if SHARP_RAVEN
+#if SHARP_RAVEN && !DEBUG
                 if (ravenClient != null)
                     ravenClient.Capture(new SentryEvent(exception));
 #endif
@@ -215,11 +215,11 @@ namespace DwarfCorp
 
         protected override void Initialize()
         {
-#if SHARP_RAVEN
+#if SHARP_RAVEN && !DEBUG
             try
             {
 #endif
-                var dir = GetGameDirectory();
+            var dir = GetGameDirectory();
                 if (!System.IO.Directory.Exists(dir))
                 {
                     System.IO.Directory.CreateDirectory(dir);
@@ -231,7 +231,7 @@ namespace DwarfCorp
 
                 SpriteBatch = new SpriteBatch(GraphicsDevice);
                 base.Initialize();
-#if SHARP_RAVEN
+#if SHARP_RAVEN && !DEBUG
             }
             catch (Exception exception)
             {
@@ -240,16 +240,16 @@ namespace DwarfCorp
                 throw;
             }
 #endif
-        }
+            }
 
         protected override void LoadContent()
         {
-#if SHARP_RAVEN
+#if SHARP_RAVEN && !DEBUG
             try
             {
 #endif
-                // Prepare GemGui
-                GumInputMapper = new Gui.Input.GumInputMapper(Window.Handle);
+            // Prepare GemGui
+            GumInputMapper = new Gui.Input.GumInputMapper(Window.Handle);
                 GumInput = new Gui.Input.Input(GumInputMapper);
 
                 // Register all bindable actions with the input system.
@@ -284,7 +284,7 @@ namespace DwarfCorp
                 Drawer2D.Initialize(Content, GraphicsDevice);
                 ResourceLibrary.Initialize();
                 base.LoadContent();
-#if SHARP_RAVEN
+#if SHARP_RAVEN && !DEBUG
             }
             catch (Exception exception)
             {
@@ -293,11 +293,11 @@ namespace DwarfCorp
                 throw;
             }
 #endif
-        }
+            }
 
         public void CaptureException(Exception exception)
         {
-#if SHARP_RAVEN
+#if SHARP_RAVEN && !DEBUG
             if (ravenClient != null)
                 ravenClient.Capture(new SentryEvent(exception));
 #endif
@@ -310,7 +310,7 @@ namespace DwarfCorp
                 base.Update(time);
                 return;
             }
-#if SHARP_RAVEN
+#if SHARP_RAVEN && !DEBUG
             try
             {
 #endif
@@ -319,7 +319,7 @@ namespace DwarfCorp
                 StateManager.Update(DwarfTime.LastTime);
                 base.Update(time);
                 GamePerformance.Instance.PostUpdate();
-#if SHARP_RAVEN
+#if SHARP_RAVEN && !DEBUG
             }
             catch (Exception exception)
             {
@@ -332,17 +332,17 @@ namespace DwarfCorp
 
         protected override void Draw(GameTime time)
         {
-#if SHARP_RAVEN
+#if SHARP_RAVEN && !DEBUG
             try
             {
 #endif
-                GamePerformance.Instance.PreRender();
+            GamePerformance.Instance.PreRender();
                 StateManager.Render(DwarfTime.LastTime);
                 GraphicsDevice.SetRenderTarget(null);
                 base.Draw(time);
                 GamePerformance.Instance.PostRender();
                 GamePerformance.Instance.Render(SpriteBatch);
-#if SHARP_RAVEN
+#if SHARP_RAVEN && !DEBUG
             }
             catch (Exception exception)
             {
@@ -351,7 +351,7 @@ namespace DwarfCorp
                 throw;
             }
 #endif
-            
+
         }
 
         public static void SafeSpriteBatchBegin(SpriteSortMode sortMode, BlendState blendState, SamplerState samplerstate, 
