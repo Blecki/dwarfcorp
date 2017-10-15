@@ -66,7 +66,7 @@ namespace DwarfCorp
             Light.Position = GlobalTransform.Translation;
         }
 
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             UpdateLight();
 

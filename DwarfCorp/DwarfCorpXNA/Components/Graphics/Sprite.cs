@@ -108,7 +108,7 @@ namespace DwarfCorp
             base.ReceiveMessageRecursive(messageToReceive);
         }
 
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (CurrentAnimation != null)
                 CurrentAnimation.Update(gameTime);
@@ -126,7 +126,7 @@ namespace DwarfCorp
             Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
         }
 
-        public void Render(DwarfTime gameTime,
+        public virtual void Render(DwarfTime gameTime,
             ChunkManager chunks,
             Camera camera,
             SpriteBatch spriteBatch,

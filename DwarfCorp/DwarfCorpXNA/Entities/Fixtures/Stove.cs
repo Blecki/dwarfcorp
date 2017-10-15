@@ -32,7 +32,7 @@ namespace DwarfCorp
              */
         }
 
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (MathFunctions.RandEvent(0.01f))
             {

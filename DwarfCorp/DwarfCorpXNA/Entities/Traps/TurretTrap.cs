@@ -95,7 +95,7 @@ namespace DwarfCorp
             PropogateTransforms();
         }
 
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (closestCreature != null && !closestCreature.IsDead)
             {

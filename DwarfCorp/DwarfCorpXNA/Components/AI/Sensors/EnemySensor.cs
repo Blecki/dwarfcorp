@@ -125,7 +125,7 @@ namespace DwarfCorp
             }
         }
 
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             SenseTimer.Update(gameTime);
             

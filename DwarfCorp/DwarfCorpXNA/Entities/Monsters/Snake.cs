@@ -213,7 +213,7 @@ namespace DwarfCorp
         
         }
 
-        public new void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if ((Physics.Position - Tail.First().Target).LengthSquared() > 0.5f)
             {
