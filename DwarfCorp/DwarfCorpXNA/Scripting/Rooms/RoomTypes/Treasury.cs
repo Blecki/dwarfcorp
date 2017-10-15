@@ -58,7 +58,7 @@ namespace DwarfCorp
         public List<Body> Coins { get; set; }
         public static string TreasuryName = "Treasury";
 
-        public static DwarfBux MoneyPerPile = 64m;
+        public static DwarfBux MoneyPerPile = 1024m;
 
         [JsonProperty]
         private DwarfBux _money = 0m;
