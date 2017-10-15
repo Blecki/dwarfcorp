@@ -334,16 +334,17 @@ namespace DwarfCorp
                     Creature.OverrideCharacterMode = true;
                     if (hasNextAction)
                     {
-                        transform.Translation = diff * t + currPosition;
-                        Agent.Physics.Velocity = diff;
 
-                        if (action.ActionVoxel.IsValid)
+                        if (action.MoveType == MoveType.ClimbWalls && action.ActionVoxel.IsValid)
                         {
                             Agent.Physics.Velocity = (action.DestinationVoxel.WorldPosition + Vector3.One*0.5f) - currPosition;
+                            transform.Translation = diff * t + currPosition;
                         }
-                        else if (action.InteractObject != null)
+                        else if (action.MoveType == MoveType.Climb && action.InteractObject != null)
                         {
-                            Agent.Physics.Velocity = (action.InteractObject.GetRoot().GetComponent<Body>().Position) - currPosition;
+                            var ladderPosition = action.InteractObject.GetRoot().GetComponent<Body>().Position;
+                            transform.Translation = diff * t + currPosition;
+                            Agent.Physics.Velocity = ladderPosition- currPosition;
                         }
                     }
                     else

@@ -80,6 +80,8 @@ namespace DwarfCorp
 
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            if (!Active)
+                return;
             if (firstIter)
             {
                 if (!Voxel.IsValid || Voxel.TypeID == 0)
@@ -101,6 +103,8 @@ namespace DwarfCorp
 
         void VoxelListener_OnVoxelDestroyed(LocalVoxelCoordinate voxelID)
         {
+            if (!Active)
+                return;
             if (Voxel.IsValid && Voxel.Coordinate == (Voxel.Chunk.ID + voxelID))
                 GetRoot().Die();
         }

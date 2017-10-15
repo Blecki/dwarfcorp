@@ -222,6 +222,11 @@ namespace DwarfCorp
 
         public override void Die()
         {
+            if (!Active)
+            {
+                base.Die();
+            }
+
             List<Body> release = new List<Body>();
             foreach(var resource in Resources)
             {
