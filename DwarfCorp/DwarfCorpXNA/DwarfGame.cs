@@ -68,6 +68,7 @@ namespace DwarfCorp
         public static Gui.RenderData GumSkin;
 
         public const string GameName = "DwarfCorp";
+        public static bool HasRendered = false;
         private static StreamWriter _logwriter;
 #if SHARP_RAVEN && !DEBUG
         private RavenClient ravenClient;
@@ -87,7 +88,7 @@ namespace DwarfCorp
             Window.Title = "DwarfCorp";
             Window.AllowUserResizing = false;
             TextureManager = new TextureManager(Content, GraphicsDevice);
-
+            
             GameSettings.Load();
 
             try
@@ -328,10 +329,12 @@ namespace DwarfCorp
                 throw;
             }
 #endif
+            HasRendered = false;
         }
 
         protected override void Draw(GameTime time)
         {
+            HasRendered = true;
 #if SHARP_RAVEN && !DEBUG
             try
             {
@@ -351,7 +354,6 @@ namespace DwarfCorp
                 throw;
             }
 #endif
-
         }
 
         public static void SafeSpriteBatchBegin(SpriteSortMode sortMode, BlendState blendState, SamplerState samplerstate, 
