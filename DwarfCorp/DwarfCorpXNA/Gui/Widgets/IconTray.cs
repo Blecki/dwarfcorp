@@ -16,6 +16,7 @@ namespace DwarfCorp.Gui.Widgets
         public int IconOffset = 0;
         private int IconCount { get { return Children.Count - 2; } }
         private Widget GetIcon(int i) { return GetChild(i + 2); }
+        public bool HotKeys = false;
 
         public IEnumerable<Widget> ItemSource;
 
@@ -114,9 +115,14 @@ namespace DwarfCorp.Gui.Widgets
             var rect = GetDrawableInterior();
 
             foreach (var child in EnumerateChildren())
+            {
                 child.Hidden = true;
+                (child as FramedIcon).HotkeyValue = int.MaxValue;
+            }
 
             var totalItemWidth = (IconCount * (ItemSize.X + ItemSpacing.X)) - ItemSpacing.X;
+
+            var nextHotkey = 0;
 
             if (totalItemWidth > rect.Width)
             {
@@ -130,11 +136,19 @@ namespace DwarfCorp.Gui.Widgets
                 GetIcon(0).Layout();
                 pos.X += ItemSize.X + ItemSpacing.X;
 
+                    (GetIcon(0) as FramedIcon).HotkeyValue = nextHotkey;
+                    (GetIcon(0) as FramedIcon).DrawHotkey = HotKeys;
+                    ++nextHotkey;
+
                 // Add back button.
                 (GetChild(0) as FramedIcon).Enabled = IconOffset > 0;
                 GetChild(0).Hidden = false;
                 GetChild(0).Rect = new Rectangle(pos.X, pos.Y, ItemSize.X, ItemSize.Y);
                 pos.X += ItemSize.X + ItemSpacing.X;
+                (GetChild(0) as FramedIcon).HotkeyValue = nextHotkey;
+                (GetChild(0) as FramedIcon).DrawHotkey = HotKeys;
+                ++nextHotkey;
+
 
                 (GetChild(1) as FramedIcon).Enabled = false;
 
@@ -145,6 +159,9 @@ namespace DwarfCorp.Gui.Widgets
                     child.Rect = new Rectangle(pos.X, pos.Y, ItemSize.X, ItemSize.Y);
                     pos.X += ItemSize.X + ItemSpacing.X;
                     child.Layout();
+                    (child as FramedIcon).HotkeyValue = nextHotkey;
+                    (child as FramedIcon).DrawHotkey = HotKeys;
+                    ++nextHotkey;
 
                     if (pos.X >= rect.Right - ItemSize.X)
                     {
@@ -157,6 +174,9 @@ namespace DwarfCorp.Gui.Widgets
                 // Add more button.
                 GetChild(1).Hidden = false;
                 GetChild(1).Rect = new Rectangle(Rect.Right - ItemSize.X, Rect.Y, ItemSize.X, ItemSize.Y);
+                (GetChild(1) as FramedIcon).HotkeyValue = nextHotkey;
+                (GetChild(1) as FramedIcon).DrawHotkey = HotKeys;
+                ++nextHotkey;
             }
             else
             {
@@ -168,6 +188,9 @@ namespace DwarfCorp.Gui.Widgets
                     var child = GetIcon(c);
                     child.Hidden = false;
                     child.Rect = new Rectangle(pos.X, pos.Y, ItemSize.X, ItemSize.Y);
+                    (child as FramedIcon).HotkeyValue = nextHotkey;
+                    (child as FramedIcon).DrawHotkey = HotKeys;
+                    ++nextHotkey;
                     pos.X += ItemSize.X + ItemSpacing.X;
                     //if (pos.X > rect.Right - ItemSize.X)
                     //{

@@ -89,8 +89,7 @@ namespace DwarfCorp
             if (type.CompositeLayers == null || type.CompositeLayers.Count == 0)
             {
                 sprite = AddChild(new SimpleSprite(Manager, "Sprite",
-                    Matrix.Identity,
-                    //Matrix.CreateTranslation(Vector3.UnitY * 0.25f),
+                    Matrix.CreateTranslation(Vector3.UnitY * 0.25f),
                     false,
                     new SpriteSheet(type.Image.AssetName, 32),
                     new Point(type.Image.SourceRect.X / 32, type.Image.SourceRect.Y / 32))

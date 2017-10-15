@@ -50,6 +50,7 @@ namespace DwarfCorp
             public Color Color;
             public Color ModulatedColor;
             public NamedImageFrame Icon;
+            public float LineWidth = 0.1f;
         }
 
         private Dictionary<DesignationType, DesignationTypeProperties> DesignationProperties = new Dictionary<DesignationType, DesignationTypeProperties>();
@@ -83,7 +84,8 @@ namespace DwarfCorp
             DesignationProperties.Add(DesignationType.Gather, new DesignationTypeProperties
             {
                 Color = Color.Orange,
-                Icon = new NamedImageFrame("newgui/pointers", 32, 6, 0)
+                Icon = new NamedImageFrame("newgui/pointers", 32, 6, 0),
+                LineWidth = 0.02f,
             });
 
             DesignationProperties.Add(DesignationType.Attack, new DesignationTypeProperties
@@ -143,7 +145,7 @@ namespace DwarfCorp
                     if (voxel.Type == DesignationType.Put) // Hate this.
                         DrawPhantomCallback(v, voxel.Tag as VoxelType);
                     else
-                        DrawBoxCallback(v, Vector3.One, props.ModulatedColor, 0.1f);
+                        DrawBoxCallback(v, Vector3.One, props.ModulatedColor, props.LineWidth);
                 }
             }
 
@@ -156,7 +158,7 @@ namespace DwarfCorp
                         props = DesignationProperties[entity.Type];
 
                     var box = entity.Body.GetBoundingBox();
-                    DrawBoxCallback(box.Min, box.Max - box.Min, props.ModulatedColor, 0.1f);
+                    DrawBoxCallback(box.Min, box.Max - box.Min, props.ModulatedColor, props.LineWidth);
                     if (props.Icon != null)
                     {
                         Drawer2D.DrawSprite(props.Icon, entity.Body.Position + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));

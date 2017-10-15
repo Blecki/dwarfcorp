@@ -58,13 +58,15 @@ namespace DwarfCorp.Gui.Widgets
                 Corners = 0; // Scale9Corners.Top | Scale9Corners.Right;
                 Hidden = true;
                 Transparent = true;
+                HotKeys = true;
+
                 base.Construct();
             }
 
             public void Hotkey(int Key)
             {
                 if (Key < 0 || Key >= Children.Count) return;
-                var icon = GetChild(Key) as Icon;
+                var icon = Children.FirstOrDefault(c => (c as FramedIcon).HotkeyValue == Key);
                 if (icon == null) return;
 
                 Root.SafeCall(icon.OnClick, icon, new InputEventArgs

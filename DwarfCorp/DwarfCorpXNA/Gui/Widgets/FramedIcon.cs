@@ -86,6 +86,28 @@ namespace DwarfCorp.Gui.Widgets
             }
         }
 
+        private bool _drawHotkey = false;
+        public bool DrawHotkey
+        {
+            get { return _drawHotkey; }
+            set
+            {
+                _drawHotkey = value;
+                Invalidate();
+            }
+        }
+
+        private int _hotkeyValue = 0;
+        public int HotkeyValue
+        {
+            get { return _hotkeyValue; }
+            set
+            {
+                _hotkeyValue = value;
+                Invalidate();
+            }
+        }
+
         public override void Construct()
         {
             Background = new TileReference("icon-frame", 0);
@@ -171,6 +193,21 @@ namespace DwarfCorp.Gui.Widgets
                 meshes.Add(stringMesh.
                     Translate(Rect.Right - 8 - (numberSize.Width / 2),
                     Rect.Bottom - 8 - (numberSize.Height / 2)));
+            }
+
+            if (DrawHotkey && HotkeyValue <= 9)
+            {
+                var numberSize = new Rectangle();
+                var font = Root.GetTileSheet("font10-outline-numsonly");
+                var stringMesh = Gui.Mesh.CreateStringMesh(
+                    HotkeyValue.ToString(),
+                    font,
+                    new Vector2(1, 1),
+                    out numberSize)
+                    .Colorize(new Vector4(1, 0, 0, 1));
+                meshes.Add(stringMesh.
+                    Translate(Rect.X + (Rect.Width - numberSize.Width) / 2,
+                        Rect.Bottom - font.TileHeight - (numberSize.Height / 2)));
             }
 
             return Gui.Mesh.Merge(meshes.ToArray());

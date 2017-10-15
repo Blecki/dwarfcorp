@@ -2006,25 +2006,13 @@ namespace DwarfCorp.GameStates
             // Special case: number keys reserved for changing tool mode
             if (InputManager.IsNumKey(key))
             {
-                int index = InputManager.GetNum(key) - 1;
-                
+                int index = InputManager.GetNum(key);
+
                 if (index < 0)
-                {
                     index = 9;
-                }
 
-                // In this special case, all dwarves are selected
-                if (index == 0 && Master.SelectedMinions.Count == 0)
-                {
-                    Master.SelectedMinions.AddRange(Master.Faction.Minions);
-                    World.Tutorial("dwarf selected");
-                }
-
-                if (index == 0 || Master.SelectedMinions.Count > 0)
-                {
-                    (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray)
-                        .Hotkey(index);
-                }
+                (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray)
+                   .Hotkey(index);
             }
             else if (key == Keys.Escape)
             {
@@ -2046,6 +2034,11 @@ namespace DwarfCorp.GameStates
                 {
                     OpenPauseMenu();
                 }
+            }
+            else if (key == ControlSettings.Mappings.SelectAllDwarves)
+            {
+                Master.SelectedMinions.AddRange(Master.Faction.Minions);
+                World.Tutorial("dwarf selected");
             }
             else if (key == ControlSettings.Mappings.Pause)
             {
@@ -2080,7 +2073,7 @@ namespace DwarfCorp.GameStates
                 }
                 GodMenu.Hidden = !GodMenu.Hidden;
                 GodMenu.Invalidate();
-                
+
             }
         }
 
