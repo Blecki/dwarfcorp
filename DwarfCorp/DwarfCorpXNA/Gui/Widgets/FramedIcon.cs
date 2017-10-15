@@ -204,10 +204,10 @@ namespace DwarfCorp.Gui.Widgets
                     font,
                     new Vector2(1, 1),
                     out numberSize)
-                    .Colorize(new Vector4(1, 0, 0, 1));
+                    .Colorize(new Vector4(1, 1, 1, 0.25f));
                 meshes.Add(stringMesh.
-                    Translate(Rect.X + (Rect.Width - numberSize.Width) / 2,
-                        Rect.Bottom - font.TileHeight - (numberSize.Height / 2)));
+                    Translate(Rect.X + (font.TileWidth / 2),
+                        Rect.Bottom - font.TileHeight));
             }
 
             return Gui.Mesh.Merge(meshes.ToArray());

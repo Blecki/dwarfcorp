@@ -1,11 +1,5 @@
 {
 	"Sheets": [
-		{ 
-			"Name": "logo",
-			"Texture": "newgui/gamelogo",
-			"TileWidth": 600,
-			"TileHeight": 348
-		},
 		{
 			"Name": "font8",
 			"Texture": "newgui/font-8px",
@@ -223,12 +217,6 @@
 			"Texture" : "GUI/diplo-necro",
 			"TileWidth" : 64,
 			"TileHeight" : 64
-		},
-		{
-			"Name": "minimap-frame",
-			"Texture": "newgui/gui_minimap",
-			"TileWidth": 239,
-			"TileHeight": 210
 		},
 		{
 			"Name": "resources",

@@ -122,7 +122,7 @@ namespace DwarfCorp.Gui.Widgets
 
             var totalItemWidth = (IconCount * (ItemSize.X + ItemSpacing.X)) - ItemSpacing.X;
 
-            var nextHotkey = 0;
+            var nextHotkey = 1;
 
             if (totalItemWidth > rect.Width)
             {
@@ -199,6 +199,12 @@ namespace DwarfCorp.Gui.Widgets
                     //}
                     child.Layout();
                 }
+            }
+
+            foreach (var child in EnumerateChildren())
+            {
+                if ((child as FramedIcon).HotkeyValue == 10)
+                    (child as FramedIcon).HotkeyValue = 0;
             }
 
             Invalidate();   

@@ -962,7 +962,7 @@ namespace DwarfCorp.GameStates
 
             var icon_menu_RoomTypes_Return = new FlatToolTray.Icon
             {
-                Icon = new TileReference("tool-icons", 32),
+                Icon = new TileReference("tool-icons", 11),
                 Tooltip = "Go Back",
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
@@ -1037,7 +1037,7 @@ namespace DwarfCorp.GameStates
 
             var icon_menu_WallTypes_Return = new FlatToolTray.Icon
             {
-                Icon = new TileReference("tool-icons", 32),
+                Icon = new TileReference("tool-icons", 11),
                 Tooltip = "Go Back",
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
@@ -1179,7 +1179,7 @@ namespace DwarfCorp.GameStates
 
             var icon_menu_CraftTypes_Return = new FlatToolTray.Icon
             {
-                Icon = new TileReference("tool-icons", 32),
+                Icon = new TileReference("tool-icons", 11),
                 Tooltip = "Go Back",
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
@@ -1260,7 +1260,7 @@ namespace DwarfCorp.GameStates
 
             var icon_menu_ResourceTypes_Return = new FlatToolTray.Icon
             {
-                Icon = new TileReference("tool-icons", 32),
+                Icon = new TileReference("tool-icons", 11),
                 Tooltip = "Go Back",
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
@@ -1330,7 +1330,7 @@ namespace DwarfCorp.GameStates
 
             var icon_menu_BuildTools_Return = new FlatToolTray.Icon
             {
-                Icon = new TileReference("tool-icons", 32),
+                Icon = new TileReference("tool-icons", 11),
                 Tooltip = "Go Back",
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
@@ -1380,7 +1380,7 @@ namespace DwarfCorp.GameStates
 
             var icon_menu_Edibles_Return = new FlatToolTray.Icon
             {
-                Icon = new TileReference("tool-icons", 32),
+                Icon = new TileReference("tool-icons", 11),
                 Tooltip = "Go Back",
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
@@ -1554,7 +1554,7 @@ namespace DwarfCorp.GameStates
 
             var icon_menu_Farm_Return = new FlatToolTray.Icon
             {
-                Icon = new TileReference("tool-icons", 32),
+                Icon = new TileReference("tool-icons", 11),
                 Tooltip = "Go Back",
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
@@ -1594,7 +1594,7 @@ namespace DwarfCorp.GameStates
             #region menu_Plant
             var icon_menu_Plant_Return = new FlatToolTray.Icon
             {
-                Icon = new TileReference("tool-icons", 32),
+                Icon = new TileReference("tool-icons", 11),
                 Tooltip = "Go Back",
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
@@ -1753,7 +1753,7 @@ namespace DwarfCorp.GameStates
             #region icon_Cast
             var icon_menu_CastSpells_Return = new FlatToolTray.Icon
             {
-                Icon = new TileReference("tool-icons", 32),
+                Icon = new TileReference("tool-icons", 11),
                 Tooltip = "Go Back",
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
@@ -1811,7 +1811,7 @@ namespace DwarfCorp.GameStates
 
             var icon_menu_ResearchSpells_Return = new FlatToolTray.Icon
             {
-                Icon = new TileReference("tool-icons", 32),
+                Icon = new TileReference("tool-icons", 11),
                 Tooltip = "Go Back",
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
@@ -1869,7 +1869,7 @@ namespace DwarfCorp.GameStates
 
             var icon_menu_Magic_Return = new FlatToolTray.Icon
             {
-                Icon = new TileReference("tool-icons", 32),
+                Icon = new TileReference("tool-icons", 11),
                 Tooltip = "Go Back",
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
