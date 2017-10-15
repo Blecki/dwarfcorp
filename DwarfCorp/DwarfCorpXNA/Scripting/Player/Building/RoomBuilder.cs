@@ -453,7 +453,12 @@ namespace DwarfCorp
 
         private void DeleteVoxels(IEnumerable<VoxelHandle> Voxels )
         {
-            foreach(var v in Voxels.Where(v => !v.IsEmpty))
+            if (Voxels == null)
+            {
+                return;
+            }
+
+            foreach(var v in Voxels.Where(v => v.IsValid && !v.IsEmpty))
             {
                 if(IsBuildDesignation(v))
                 {

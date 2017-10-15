@@ -60,7 +60,7 @@ namespace DwarfCorp
         private bool isCoolingDown = false;
 
 
-        public new void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
+        public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
             GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             if (!isBlinking)
@@ -195,7 +195,7 @@ namespace DwarfCorp
             blinkTrigger.Reset(blinkTime);
         }
 
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if(isBlinking)
             {

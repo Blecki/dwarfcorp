@@ -70,12 +70,14 @@ namespace DwarfCorp
             T toReturn = default(T);
             try
             {
+                stream.Position = 0;
                 toReturn = (T) formatter.Deserialize(stream);
             }
             catch (InvalidCastException)
             {
             }
 
+            stream.Flush();
             stream.Close();
             return toReturn;
         }

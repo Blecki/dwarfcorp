@@ -412,6 +412,10 @@ namespace DwarfCorp
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             //DEBUG DRAW TASK QUEUE HERE
+            if (!Active)
+            {
+                return;
+            }
 
             if (DrawPath)
             {
@@ -468,6 +472,7 @@ namespace DwarfCorp
                 if (!Tasks.Contains(toReturn))
                     AssignTask(toReturn);
             }
+
 
             // Update the current task.
             if (CurrentTask != null && CurrentAct != null)
@@ -564,6 +569,11 @@ namespace DwarfCorp
             else if (CurrentTask != null)
             {
                 CurrentTask.SetupScript(Creature);
+                if (CurrentAct == null)
+                {
+                    // Edge case where setting up script fails for whatever reason.
+                    CurrentTask = null;
+                }
             }
 
 

@@ -573,7 +573,15 @@ namespace DwarfCorp
                 file.WriteFile(
                     worldDirectory.FullName + Path.DirectorySeparatorChar + "world." + (DwarfGame.COMPRESSED_BINARY_SAVES ? OverworldFile.CompressedExtension : OverworldFile.Extension),
                     DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
-                file.SaveScreenshot(worldDirectory.FullName + Path.DirectorySeparatorChar + "screenshot.png");
+
+                try
+                {
+                    file.SaveScreenshot(worldDirectory.FullName + Path.DirectorySeparatorChar + "screenshot.png");
+                }
+                catch(Exception exception)
+                {
+                    Console.Error.WriteLine(exception.ToString());
+                }
 
                 gameFile = SaveGame.CreateFromWorld(this);
 

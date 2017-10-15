@@ -54,7 +54,7 @@ namespace DwarfCorp
 
         public ResourceEntity(ComponentManager manager, ResourceAmount resourceType, Vector3 position) :
             base(manager, ResourceLibrary.Resources[resourceType.ResourceType].ResourceName, 
-                Matrix.CreateTranslation(position), new Vector3(0.25f, 0.25f, 0.25f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0))
+                Matrix.CreateTranslation(position), new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0))
         {
             Resource = resourceType;
             if (Resource.NumResources > 1)
@@ -95,9 +95,10 @@ namespace DwarfCorp
                     new Point(type.Image.SourceRect.X / 32, type.Image.SourceRect.Y / 32))
                 {
                     OrientationType = SimpleSprite.OrientMode.Spherical,
-                    WorldHeight = 0.5f,
-                    WorldWidth = 0.5f,
+                    WorldHeight = 0.75f,
+                    WorldWidth = 0.75f,
                 }) as Tinter;
+                sprite.LocalTransform = Matrix.CreateTranslation(Vector3.UnitY * 0.25f);
             }
             else
             {
@@ -118,8 +119,8 @@ namespace DwarfCorp
                     layers)
                 {
                     OrientationType = LayeredSimpleSprite.OrientMode.Spherical,
-                    WorldHeight = 0.5f,
-                    WorldWidth = 0.5f,
+                    WorldHeight = 0.75f,
+                    WorldWidth = 0.75f,
                 }) as Tinter;
             }
 

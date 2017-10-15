@@ -79,8 +79,7 @@ namespace DwarfCorp
             return EntityToGather != null
                    && !EntityToGather.IsDead
                    && !agent.AI.Movement.IsSessile
-                   && agent.AI.Faction.Designations.IsDesignation(EntityToGather, DesignationType.Gather)
-                   && !agent.AI.GatherManager.ItemsToGather.Contains(EntityToGather);
+                   && agent.AI.Faction.Designations.IsDesignation(EntityToGather, DesignationType.Gather);
         }
 
         public override bool ShouldRetry(Creature agent)

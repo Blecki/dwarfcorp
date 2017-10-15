@@ -70,7 +70,7 @@ namespace DwarfCorp
             FireTimer = new Timer(1.0f, false);
         }
         
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             FireTimer.Update(gameTime);
             if (FireTimer.HasTriggered && OnSensed != null)

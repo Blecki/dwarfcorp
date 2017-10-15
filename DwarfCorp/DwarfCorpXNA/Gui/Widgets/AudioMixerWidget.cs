@@ -14,7 +14,6 @@ namespace DwarfCorp
         public override void Construct()
         {
 
-
             var bottomBar = AddChild(new Widget()
             {
                 AutoLayout = AutoLayout.DockBottom,
@@ -30,6 +29,12 @@ namespace DwarfCorp
                 MinimumSize = new Point(64, 24)
             });
 
+
+            if (SoundManager.Mixer == null)
+            {
+                Text = "Error. Failed to load audio mixer :(";
+                return;
+            }
 
             bottomBar.AddChild(new Button()
             {

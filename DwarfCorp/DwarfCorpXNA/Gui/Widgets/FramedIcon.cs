@@ -197,17 +197,11 @@ namespace DwarfCorp.Gui.Widgets
 
             if (DrawHotkey && HotkeyValue <= 9)
             {
-                var numberSize = new Rectangle();
-                var font = Root.GetTileSheet("font10-outline-numsonly");
-                var stringMesh = Gui.Mesh.CreateStringMesh(
-                    HotkeyValue.ToString(),
-                    font,
-                    new Vector2(1, 1),
-                    out numberSize)
-                    .Colorize(new Vector4(1, 1, 1, 0.25f));
-                meshes.Add(stringMesh.
-                    Translate(Rect.X + (font.TileWidth / 2),
-                        Rect.Bottom - font.TileHeight));
+                var font = Root.GetTileSheet("14pt-numbers");
+                meshes.Add(Mesh.Quad()
+                    .TileScaleAndTexture(font, HotkeyValue)
+                    .Translate(Rect.X + (font.TileWidth / 2), Rect.Bottom - font.TileHeight)
+                    .Colorize(new Vector4(1,1,1,0.5f)));                
             }
 
             return Gui.Mesh.Merge(meshes.ToArray());

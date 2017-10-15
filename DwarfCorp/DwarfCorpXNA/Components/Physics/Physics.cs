@@ -224,7 +224,7 @@ namespace DwarfCorp
             LocalTransform = transform;
         }
  
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (!Active) return;
 

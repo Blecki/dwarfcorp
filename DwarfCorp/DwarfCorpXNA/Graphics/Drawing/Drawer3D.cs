@@ -254,5 +254,17 @@ namespace DwarfCorp
                 });
             }
         }
+
+        public static void DrawLineList(List<Vector3> points, List<Color> colors, float v)
+        {
+            lock (renderLock)
+            {
+                for (int i = 0; i < points.Count - 1; i++)
+                {
+                    Segments.Add(new Segment { A = points[i], B = points[i + 1], Color = colors[i], Thickness = v});
+                }
+            }
+
+        }
     }
 }

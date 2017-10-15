@@ -66,7 +66,7 @@ namespace DwarfCorp
             MaxGrabs = 1;
         }
 
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             foreach(GrabbedItem grabbed in GrabbedComponents)
             {

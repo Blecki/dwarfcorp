@@ -170,7 +170,7 @@ namespace DwarfCorp.GameStates
                     GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm()
                     {
                         CancelText = "",
-                        Text = "Loading failed: " + exceptionText,
+                        Text = "Oh no! Loading failed :( This crash has been automatically reported to Completely Fair Games: " + exceptionText,
                         OnClick = (s, a) =>
                         {
                             StateManager.PopState();

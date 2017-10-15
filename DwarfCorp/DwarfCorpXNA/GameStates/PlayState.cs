@@ -207,7 +207,7 @@ namespace DwarfCorp.GameStates
                 };
             }
             World.Unpause();
-            AutoSaveTimer = new Timer(GameSettings.Default.AutoSaveTimeMinutes * 60.0f, false, Timer.TimerMode.Game);
+            AutoSaveTimer = new Timer(GameSettings.Default.AutoSaveTimeMinutes * 6.0f, false, Timer.TimerMode.Game);
 
             ContextCommands = new List<DwarfCorp.ContextCommands.ContextCommand>();
             ContextCommands.Add(new ContextCommands.ChopCommand());
@@ -574,7 +574,7 @@ namespace DwarfCorp.GameStates
                 TextHorizontalAlign = Gui.HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 MinimumSize = new Point(128, 20),
-                Font = "font8",
+                Font = "font10",
                 TextColor = new Vector4(1, 1, 1, 1),
                 Tooltip = "Current time/date."
             });
@@ -888,7 +888,6 @@ namespace DwarfCorp.GameStates
                 Tag = "brushes",
                 AutoLayout = AutoLayout.DockLeftCentered,
                 SizeToGrid = new Point(3, 1),
-                Border = "border-thin-transparent",
                 ItemSize = new Point(20, 20),
                 InteriorMargin = new Margin(2,2,2,2),
                 ItemSource = new Gui.Widget[]

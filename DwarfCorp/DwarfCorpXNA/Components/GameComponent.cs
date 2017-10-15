@@ -118,7 +118,13 @@ namespace DwarfCorp
         public void PostSerialization(ComponentManager Manager)
         {
             Children = SerializableChildren.Select(id => Manager.FindComponent(id)).ToList();
-            Children.RemoveAll(c => c == this);
+            /*
+            if (Children.Any(c => c == null))
+            {
+                throw new InvalidOperationException(String.Format("Serialized a null child of component {0}, which has {1} children.", Name, Children.Count));
+            }
+            */
+            Children.RemoveAll(c => c == this || c == null);
             SerializableChildren = null;
         }
 

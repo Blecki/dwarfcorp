@@ -16,9 +16,10 @@
 			"Type": "VariableWidthFont"
 		},
 		{
-			"Name": "font14-outline",
-			"Texture": "newgui/font-14px-outline",
-			"Type": "VariableWidthFont"
+			"Name": "14pt-numbers",
+			"Texture": "newgui/14pt-numbers",
+			"TileWidth": 12,
+			"TileHeight": 18
 		},
 		{
 			"Name": "font16",
