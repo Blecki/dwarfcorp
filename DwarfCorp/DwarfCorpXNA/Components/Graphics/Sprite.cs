@@ -144,9 +144,6 @@ namespace DwarfCorp
 
             // Everything that draws should set it's tint, making this pointless.
             Color origTint = effect.VertexColorTint;  
-            ApplyTintingToEffect(effect);            
-
-            
             CurrentAnimation.PreRender();
             SpriteSheet = CurrentAnimation.SpriteSheet;
             var currDistortion = VertexNoise.GetNoiseVectorFromRepeatingTexture(GlobalTransform.Translation);
@@ -182,6 +179,7 @@ namespace DwarfCorp
             }
              
             effect.MainTexture = SpriteSheet.GetTexture();
+            ApplyTintingToEffect(effect);
 
             if (DrawSilhouette)
             {

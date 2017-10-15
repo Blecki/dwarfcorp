@@ -877,7 +877,8 @@ namespace DwarfCorp
 
 
             if (Master.CurrentToolMode == GameMaster.ToolMode.BuildZone
-                || Master.CurrentToolMode == GameMaster.ToolMode.BuildWall)
+                || Master.CurrentToolMode == GameMaster.ToolMode.BuildWall ||
+                Master.CurrentToolMode == GameMaster.ToolMode.BuildObject)
             {
                 DefaultShader.View = Camera.ViewMatrix;
                 DefaultShader.Projection = Camera.ProjectionMatrix;

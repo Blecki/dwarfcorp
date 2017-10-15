@@ -90,6 +90,7 @@ namespace DwarfCorp
 
         private void CreateSprite()
         {
+            PropogateTransforms();
             var voxel = new VoxelHandle(Manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(LocalPosition));
             if (!voxel.IsValid)
