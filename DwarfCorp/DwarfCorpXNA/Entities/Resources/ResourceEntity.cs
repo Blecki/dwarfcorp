@@ -129,6 +129,5 @@ namespace DwarfCorp
 
             sprite.AddChild(new Bobber(Manager, 0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite.LocalTransform.Translation.Y)).SetFlag(Flag.ShouldSerialize, false);
         }
-
     }
 }

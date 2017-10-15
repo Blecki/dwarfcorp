@@ -49,7 +49,6 @@ namespace DwarfCorp
     {
         public VoxelData Data { get; set; }
 
-        //Todo: Use actions
         public Action<LocalVoxelCoordinate> OnVoxelDestroyed;
         public Action<LocalVoxelCoordinate> OnVoxelExplored;
 
@@ -63,18 +62,14 @@ namespace DwarfCorp
         public Vector3 Origin { get; set; }
         public bool RenderWireframe { get; set; }
         public ChunkManager Manager { get; set; }
-        public bool IsActive { get; set; }
-        public bool FirstWaterIter { get; set; }
 
         public Mutex PrimitiveMutex { get; set; }
-        public bool ShouldRebuildWater { get; set; }
 
         public List<DynamicLight> DynamicLights { get; set; }
 
         private static bool staticsInitialized = false;
         private static Vector3[] faceDeltas = new Vector3[6];
 
-        public bool RebuildLiquidPending { get; set; }
         public GlobalChunkCoordinate ID { get; set; }
 
         public uint GetID()
@@ -133,7 +128,6 @@ namespace DwarfCorp
 
         public VoxelChunk(ChunkManager manager, Vector3 origin, GlobalChunkCoordinate id)
         {
-            FirstWaterIter = true;
             ID = id;
             Origin = origin;
             Data = VoxelData.Allocate();
@@ -141,7 +135,6 @@ namespace DwarfCorp
             Primitive = new VoxelListPrimitive();
             RenderWireframe = false;
             Manager = manager;
-            IsActive = true;
 
             InitializeStatics();
             PrimitiveMutex = new Mutex();
@@ -150,9 +143,6 @@ namespace DwarfCorp
             Liquids = new Dictionary<LiquidType, LiquidPrimitive>();
             Liquids[LiquidType.Water] = new LiquidPrimitive(LiquidType.Water);
             Liquids[LiquidType.Lava] = new LiquidPrimitive(LiquidType.Lava);
-            ShouldRebuildWater = true;
-
-            RebuildLiquidPending = false;
         }
        
         private BoundingBox m_boundingBox;
@@ -219,7 +209,6 @@ namespace DwarfCorp
             }
 
             LiquidPrimitive.InitializePrimativesFromChunk(this, toInit);
-            ShouldRebuildWater = false;
         }
 
         public void Rebuild(GraphicsDevice g)
@@ -229,8 +218,6 @@ namespace DwarfCorp
 
             VoxelListPrimitive primitive = new VoxelListPrimitive();
             primitive.InitializeFromChunk(this);
-
-            RebuildLiquids();
 
             var changedMessage = new Message(Message.MessageType.OnChunkModified, "Chunk Modified");
             foreach (var c in Manager.World.CollisionManager.EnumerateIntersectingObjects(GetBoundingBox(),

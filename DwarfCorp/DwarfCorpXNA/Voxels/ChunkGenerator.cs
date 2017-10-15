@@ -571,7 +571,6 @@ namespace DwarfCorp
             GenerateLava(c);
 
             UpdateSunlight(c, 255);
-            c.ShouldRebuildWater = true;
             return c;
         }
 
