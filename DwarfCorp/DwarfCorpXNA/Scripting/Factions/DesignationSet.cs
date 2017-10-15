@@ -75,9 +75,9 @@ namespace DwarfCorp
         [JsonProperty] // Todo: Replace with more effecient data structure?
         private List<EntityDesignation> EntityDesignations = new List<EntityDesignation>();
 
-        private static bool TypeSet(DesignationType In, DesignationType T)
+        private static bool TypeSet(DesignationType DesType, DesignationType FilterType)
         {
-            return (In & T) == T;
+            return (FilterType & DesType) != 0;
         }
 
         public AddDesignationResult AddVoxelDesignation(VoxelHandle Voxel, DesignationType Type, Object Tag)

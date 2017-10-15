@@ -65,7 +65,7 @@ namespace DwarfCorp
 
         public void CreatePlant(string plantToCreate, WorldManager world)
         {
-            Plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[plantToCreate].PlantToGenerate, Voxel.WorldPosition + Vector3.Up * 1.5f);
+            Plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[plantToCreate].PlantToGenerate, Voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f));
             Seedling seed = Plant.BecomeSeedling();
 
             Matrix original = Plant.LocalTransform;

@@ -164,6 +164,8 @@
     <Compile Include="Components\AI\Sensors\Sensor.cs" />
     <Compile Include="Components\AI\Sensors\TrapSensor.cs" />
     <Compile Include="Components\AI\Sensors\ExploredListener.cs" />
+    <Compile Include="Components\AI\Sensors\DestroyOnTimer.cs" />
+    <Compile Include="Components\NewVoxelListener.cs" />
     <Compile Include="Components\AI\Sensors\VoxelListener.cs" />
     <Compile Include="Components\AI\StatBuff.cs" />
     <Compile Include="Components\AI\ThoughtBuff.cs" />

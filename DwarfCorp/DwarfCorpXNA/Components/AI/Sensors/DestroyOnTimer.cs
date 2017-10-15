@@ -41,16 +41,13 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// When a voxel is destroyed, this component kills whatever it is attached to.
-    /// </summary>
-    [JsonObject(IsReference = true)]
-    public class VoxelListener : GameComponent, IUpdateableComponent
+    public class DestroyOnTimer : GameComponent, IUpdateableComponent
     {
         public VoxelHandle Voxel;
+        public Timer DestroyTimer;
 
         private bool firstIter = false;
-
+        
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
@@ -60,12 +57,13 @@ namespace DwarfCorp
                 Voxel.Chunk.OnVoxelDestroyed += VoxelListener_OnVoxelDestroyed;
         }
 
-        public VoxelListener()
+        public DestroyOnTimer()
         {
 
         }
-        
-        public VoxelListener(ComponentManager Manager, ChunkManager chunkManager, VoxelHandle Voxel) :
+
+
+        public DestroyOnTimer(ComponentManager Manager, ChunkManager chunkManager, VoxelHandle Voxel) :
             base("VoxelListener", Manager)
         {
             this.Voxel = Voxel;
@@ -81,6 +79,14 @@ namespace DwarfCorp
                     Delete();
                 firstIter = false;
             }
+
+                DestroyTimer.Update(gameTime);
+
+                if (DestroyTimer.HasTriggered)
+                {
+                    Die();
+                    chunks.KillVoxel(Voxel);
+                }
         }
 
         void VoxelListener_OnVoxelDestroyed(LocalVoxelCoordinate voxelID)

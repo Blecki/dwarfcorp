@@ -52,7 +52,7 @@ namespace DwarfCorp
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.cactussprout, 32, 32);
             SeedlingFrame = new Point(0, 0);
             Matrix matrix = Matrix.Identity;
-            matrix.Translation = position + new Vector3(0.5f, -0.15f, 0.5f);
+            matrix.Translation = position + new Vector3(0.0f, -0.15f, 0.0f);
             LocalTransform = matrix;
             AddChild(new Health(Manager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
             AddChild(new Flammable(Manager, "Flames"));

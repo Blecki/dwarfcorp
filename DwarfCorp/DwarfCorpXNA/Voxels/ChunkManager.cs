@@ -79,7 +79,14 @@ namespace DwarfCorp
             return result;
         }
 
-        public Point3 WorldSize { get; set; } 
+        public Point3 WorldSize { get; set; }
+
+        private List<VoxelHandle> ChangedVoxels = new List<VoxelHandle>();
+
+        public void NotifyChangedVoxel(VoxelHandle Voxel)
+        {
+            ChangedVoxels.Add(Voxel);
+        }
 
         public ChunkGenerator ChunkGen { get; set; }
         public List<GlobalChunkCoordinate> ToGenerate { get; set; }
@@ -124,8 +131,7 @@ namespace DwarfCorp
             Y,
             Z
         }
-
-
+        
         public bool ExitThreads { get; set; }
 
         public Camera camera = null;
@@ -428,6 +434,21 @@ namespace DwarfCorp
             // Todo: This belongs up in world manager.
             Splasher.Splash(gameTime, Water.GetSplashQueue());
             Splasher.HandleTransfers(gameTime, Water.GetTransferQueue());
+
+            var localList = ChangedVoxels;
+            ChangedVoxels = new List<VoxelHandle>();
+            foreach (var voxel in localList)
+            {
+                var box = voxel.GetBoundingBox();
+                var hashmap = new HashSet<IBoundedObject>(World.CollisionManager.EnumerateIntersectingObjects(box, CollisionManager.CollisionType.Both));
+
+                foreach (var intersectingBody in hashmap)
+                {
+                    var listener = intersectingBody as NewVoxelListener;
+                    if (listener != null)
+                        listener.OnVoxelChanged(voxel);
+                }
+            }
         }
 
         public void UpdateBounds()

@@ -41,66 +41,29 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// When a voxel is destroyed, this component kills whatever it is attached to.
-    /// </summary>
-    [JsonObject(IsReference = true)]
-    public class VoxelListener : GameComponent, IUpdateableComponent
+    public class NewVoxelListener : Body
     {
-        public VoxelHandle Voxel;
+        private Action<VoxelHandle> Handler;
 
-        private bool firstIter = false;
-
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
-        {
-            firstIter = true;
-
-            if (Voxel.IsValid)
-                Voxel.Chunk.OnVoxelDestroyed += VoxelListener_OnVoxelDestroyed;
-        }
-
-        public VoxelListener()
+        public NewVoxelListener()
         {
 
         }
-        
-        public VoxelListener(ComponentManager Manager, ChunkManager chunkManager, VoxelHandle Voxel) :
-            base("VoxelListener", Manager)
+
+        public NewVoxelListener(ComponentManager Manager,
+            Matrix Transform,
+            Vector3 BoundingBoxExtents,
+            Vector3 BoundingBoxOffset,
+            Action<VoxelHandle> Handler) :
+            base(Manager, "New Voxel Listener", Transform, BoundingBoxExtents, BoundingBoxOffset, true)
         {
-            this.Voxel = Voxel;
-            if (Voxel.IsValid)
-                Voxel.Chunk.OnVoxelDestroyed += VoxelListener_OnVoxelDestroyed;
+            this.Handler = Handler;
         }
 
-        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public void OnVoxelChanged(VoxelHandle V)
         {
-            if (firstIter)
-            {
-                if (!Voxel.IsValid || Voxel.TypeID == 0)
-                    Delete();
-                firstIter = false;
-            }
-        }
-
-        void VoxelListener_OnVoxelDestroyed(LocalVoxelCoordinate voxelID)
-        {
-            if (Voxel.IsValid && Voxel.Coordinate == (Voxel.Chunk.ID + voxelID))
-                GetRoot().Die();
-        }
-
-        public override void Die()
-        {
-            if (Voxel.IsValid)
-                Voxel.Chunk.OnVoxelDestroyed -= VoxelListener_OnVoxelDestroyed;
-            base.Die();
-        }
-
-        public override void Delete()
-        {
-            if (Voxel.IsValid)
-                Voxel.Chunk.OnVoxelDestroyed -= VoxelListener_OnVoxelDestroyed;
-            base.Delete();
+            if (Handler != null)
+                Handler(V);
         }
     }
 }

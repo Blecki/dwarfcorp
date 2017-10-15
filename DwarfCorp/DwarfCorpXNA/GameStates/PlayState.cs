@@ -63,6 +63,7 @@ namespace DwarfCorp.GameStates
         private Widget ContextMenu;
         private CollapsableStack SidePanel;
         private Widget BottomBar;
+        private Widget MinimapIcon;
 
         private class ToolbarItem
         {
@@ -638,6 +639,26 @@ namespace DwarfCorp.GameStates
                 MinimumSize = new Point(300, 180)
             });
 
+            MinimapIcon = new FramedIcon
+            {
+                Icon = null,
+                Text = "Map",
+                EnabledTextColor = Vector4.One,
+                TextHorizontalAlign = HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Center,
+                OnClick = (sender, args) =>
+                {
+                    if (MinimapFrame.Hidden)
+                    {
+                        MinimapFrame.Hidden = false;
+                        SelectedEmployeeInfo.Hidden = true;
+                        markerFilter.Hidden = true;
+                    }
+                    else
+                        MinimapFrame.Hidden = true;
+                }
+            };
+
             var bottomLeft = secondBar.AddChild(new Gui.Widgets.IconTray
             {
                 Corners = 0,
@@ -646,26 +667,7 @@ namespace DwarfCorp.GameStates
                 SizeToGrid = new Point(3, 1),
                 ItemSource = new Gui.Widget[]
                         {
-                            new FramedIcon
-                            {
-                               Icon = null,
-                                Text = "Map",
-                                EnabledTextColor = Vector4.One,
-                                TextHorizontalAlign = HorizontalAlign.Center,
-                                TextVerticalAlign = VerticalAlign.Center,
-                                OnClick = (sender, args) =>
-                               {
-                                   if (MinimapFrame.Hidden)
-                                   {
-                                       MinimapFrame.Hidden = false;
-                                       SelectedEmployeeInfo.Hidden = true;
-                                       markerFilter.Hidden = true;
-                                   }
-                                   else
-                                       MinimapFrame.Hidden = true;
-                               }
-                            },
-
+                            MinimapIcon,
                             new FramedIcon
                             {
                                 Icon = null,
@@ -704,8 +706,15 @@ namespace DwarfCorp.GameStates
                                    else
                                        markerFilter.Hidden = true;
                                }
-                            },
+                            }
                         },
+            });
+
+            secondBar.AddChild(new Widget
+            {
+                Transparent = true,
+                AutoLayout = AutoLayout.DockLeft,
+                MinimumSize = new Point(21, 0)
             });
 
             /*
@@ -798,6 +807,15 @@ namespace DwarfCorp.GameStates
                             }
                         },
             });
+
+
+            secondBar.AddChild(new Widget
+            {
+                Transparent = true,
+                AutoLayout = AutoLayout.DockRight,
+                MinimumSize = new Point(21, 0)
+            });
+
             #endregion
 
             #region Setup game speed controls
@@ -2060,9 +2078,9 @@ namespace DwarfCorp.GameStates
             }
             else if (key == ControlSettings.Mappings.Map)
             {
-                World.DrawMap = !World.DrawMap;
-                MinimapFrame.Hidden = true;
-                MinimapFrame.Invalidate();
+                GuiRoot.SafeCall(MinimapIcon.OnClick, MinimapIcon, new InputEventArgs
+                {
+                });
             }
             else if (key == ControlSettings.Mappings.GodMode)
             {
