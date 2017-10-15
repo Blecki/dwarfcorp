@@ -459,9 +459,7 @@ namespace DwarfCorp.GameStates
 
             BottomBar = bottomBackground.AddChild(new Gui.Widget
             {
-                Transparent = false,
-                Background = new TileReference("basic", 0),
-                BackgroundColor = new Vector4(0, 0, 0, 0.5f),
+                Transparent = true,
                 Padding = new Margin(0, 0, 2, 2),
                 MinimumSize = new Point(0, 36),
                 AutoLayout = AutoLayout.DockBottom
@@ -566,6 +564,7 @@ namespace DwarfCorp.GameStates
             {
                 AutoLayout = AutoLayout.FloatTop,
                 Master = Master,
+                Transparent = true,
             });
 
             #region Setup time display

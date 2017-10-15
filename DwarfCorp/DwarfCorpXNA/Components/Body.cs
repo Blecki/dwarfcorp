@@ -304,7 +304,7 @@ namespace DwarfCorp
         }
 
 
-        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public virtual void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (ParentMoved) HasMoved = true;
             ParentMoved = false;
