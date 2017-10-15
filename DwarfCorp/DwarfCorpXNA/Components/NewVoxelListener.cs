@@ -1,4 +1,4 @@
-// BuildTool.cs
+﻿// VoxelListener.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -33,49 +33,37 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class FarmTile
+    public class NewVoxelListener : Body
     {
-        public VoxelHandle Voxel = VoxelHandle.InvalidHandle;
-        public Plant Plant = null;
-        public float Progress = 0.0f;
-        public CreatureAI Farmer = null;
-        public bool IsCanceled = false;
-        public DesignationType ActiveDesignations = DesignationType._None;
+        private Action<VoxelHandle> Handler;
 
-        public bool IsTilled()
+        public NewVoxelListener()
         {
-            return (Voxel.IsValid) && Voxel.Type.Name == "TilledSoil";
+
         }
 
-        public bool IsFree()
+        public NewVoxelListener(ComponentManager Manager,
+            Matrix Transform,
+            Vector3 BoundingBoxExtents,
+            Vector3 BoundingBoxOffset,
+            Action<VoxelHandle> Handler) :
+            base(Manager, "New Voxel Listener", Transform, BoundingBoxExtents, BoundingBoxOffset, true)
         {
-            return (Plant == null || Plant.IsDead) && Farmer == null;
+            this.Handler = Handler;
         }
 
-        public bool PlantExists()
+        public void OnVoxelChanged(VoxelHandle V)
         {
-            return !(Plant == null || Plant.IsDead);
-        }
-
-        public void CreatePlant(string plantToCreate, WorldManager world)
-        {
-            Plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[plantToCreate].PlantToGenerate, Voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f));
-            Seedling seed = Plant.BecomeSeedling();
-
-            Matrix original = Plant.LocalTransform;
-            original.Translation += Vector3.Down;
-            seed.AnimationQueue.Add(new EaseMotion(0.5f, original, Plant.LocalTransform.Translation));
-
-            world.ParticleManager.Trigger("puff", original.Translation, Color.White, 20);
-
-            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_plant_grow, Voxel.WorldPosition, true);
-
+            if (Handler != null)
+                Handler(V);
         }
     }
 }
