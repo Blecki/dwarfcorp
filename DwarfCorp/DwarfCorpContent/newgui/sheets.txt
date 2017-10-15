@@ -22,6 +22,11 @@
 			"Type": "VariableWidthFont"
 		},
 		{
+			"Name": "font14-outline",
+			"Texture": "newgui/font-14px-outline",
+			"Type": "VariableWidthFont"
+		},
+		{
 			"Name": "font16",
 			"Texture": "newgui/font-16px",
 			"Type": "VariableWidthFont"
