@@ -82,7 +82,16 @@ namespace DwarfCorp
             voxes.AddRange(Agent.Faction.Designations.EnumerateDesignations(DesignationType.Guard)
                 .Select(d => d.Tag as BuildOrder));
 
-            voxes.Sort((a, b) => (a.Vox.WorldPosition - agent.Position).LengthSquared() < (b.Vox.WorldPosition - agent.Position).LengthSquared() ? -1 : 1);
+            voxes.Sort((a, b) => 
+            {
+                if (a == b)
+                {
+                    return 0;
+                }
+                return (a.Vox.WorldPosition - agent.Position).LengthSquared() < (b.Vox.WorldPosition - agent.Position).LengthSquared() ? -1 : 1;
+
+            });
+
 
             foreach (BuildOrder vox in voxes)
             {
