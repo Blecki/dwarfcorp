@@ -207,23 +207,18 @@ namespace DwarfCorp
                 neighbors = mover.GetMoveActions(current);
                 //currentChunk.GetNeighborsManhattan(current, manhattanNeighbors);
 
-                var foundGoalAdjacent = VoxelHelpers.EnumerateManhattanNeighbors(current.Coordinate)
-                    .Contains(goal.GetVoxel().Coordinate);
+                var foundGoalAdjacent = neighbors.FirstOrDefault(n => n.DestinationVoxel == goal.GetVoxel());
 
                 // A quick test to see if we're already adjacent to the goal. If we are, assume
                 // that we can just walk to it.
-                if (foundGoalAdjacent)
+                if (foundGoalAdjacent.DestinationVoxel.IsValid)
                 {
                     var first = new MoveAction
                     {
                         DestinationVoxel = current,
                         MoveType = MoveType.Walk
                     };
-                    var last = new MoveAction
-                    {
-                        DestinationVoxel = goal.GetVoxel(),
-                        MoveType = MoveType.Walk
-                    };
+                    var last = foundGoalAdjacent;
                     List<MoveAction> subPath = ReconstructPath(cameFrom, first);
                     subPath.Add(last);
                     toReturn = subPath;

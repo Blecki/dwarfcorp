@@ -66,13 +66,16 @@ namespace DwarfCorp
             this.Voxel = Voxel;
         }
 
-        public override bool IsInGoalRegion(VoxelHandle voxel)
+        public override bool IsInGoalRegion(VoxelHandle query)
         {
-            // This is really just a same-voxel check. 
-            //return (Math.Abs(voxel.WorldPosition.X - Voxel.Coordinate.X) <= 0.5f &&
-            //       Math.Abs(voxel.WorldPosition.Z - Voxel.Coordinate.Z) <= 0.5f) &&
-            //       Math.Abs(voxel.WorldPosition.Y - Voxel.Coordinate.Y) <= 1.0f;
-            return voxel == Voxel;
+            if (!query.IsValid)
+                return false;
+
+            int diffX = query.Coordinate.X - Voxel.Coordinate.X;
+            int diffY = query.Coordinate.Y - Voxel.Coordinate.Y;
+            int diffZ = query.Coordinate.Z - Voxel.Coordinate.Z;
+
+            return (diffY >= 0 && diffY <= 1) && ((diffX == 0 && Math.Abs(diffZ) <= 1) || (diffZ == 0 && Math.Abs(diffX) <= 1));
         }
 
         public override VoxelHandle GetVoxel()
