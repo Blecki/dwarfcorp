@@ -39,6 +39,8 @@ using DwarfCorp.Gui;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using System.Text;
+using System;
 
 namespace DwarfCorp
 {
@@ -387,8 +389,6 @@ namespace DwarfCorp
             Add(new Resource(ResourceType.Coins, 64.0m, "Dwarfbux container.",
                 new NamedImageFrame(tileSheet, GetRect(6, 0)), 6, Color.White, Resource.ResourceTags.Precious,
                 Resource.ResourceTags.Money));
-
-
 
             //GenerateAnimalProducts();
             //GenerateFoods();
