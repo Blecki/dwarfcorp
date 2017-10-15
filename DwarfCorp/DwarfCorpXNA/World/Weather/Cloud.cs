@@ -133,7 +133,6 @@ namespace DwarfCorp
                     water.Type = stormProperties.LiquidToCreate;
 
                     above.WaterCell = water;
-                    above.Chunk.ShouldRebuildWater = true;
                 }
                 else if (stormProperties.CreatesVoxel && above.IsEmpty && above.WaterCell.WaterLevel == 0)
                 {

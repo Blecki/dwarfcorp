@@ -1,11 +1,5 @@
 {
 	"Sheets": [
-		{ 
-			"Name": "logo",
-			"Texture": "newgui/gamelogo",
-			"TileWidth": 600,
-			"TileHeight": 348
-		},
 		{
 			"Name": "font8",
 			"Texture": "newgui/font-8px",
@@ -20,6 +14,12 @@
 			"Name": "font10-outline-numsonly",
 			"Texture": "newgui/font-10px-outline-numsonly",
 			"Type": "VariableWidthFont"
+		},
+		{
+			"Name": "14pt-numbers",
+			"Texture": "newgui/14pt-numbers",
+			"TileWidth": 12,
+			"TileHeight": 18
 		},
 		{
 			"Name": "font16",
@@ -223,12 +223,6 @@
 			"Texture" : "GUI/diplo-necro",
 			"TileWidth" : 64,
 			"TileHeight" : 64
-		},
-		{
-			"Name": "minimap-frame",
-			"Texture": "newgui/gui_minimap",
-			"TileWidth": 239,
-			"TileHeight": 210
 		},
 		{
 			"Name": "resources",

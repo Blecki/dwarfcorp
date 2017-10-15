@@ -198,11 +198,10 @@ namespace DwarfCorp
             {
                 bool didUpdate = DiscreteUpdate(chunk);
 
-                if (!didUpdate && !chunk.FirstWaterIter)
-                    continue;
+                //if (!didUpdate && !chunk.FirstWaterIter)
+                //    continue;
 
                 chunk.RebuildLiquids();
-                chunk.FirstWaterIter = false;
             }
         }
 

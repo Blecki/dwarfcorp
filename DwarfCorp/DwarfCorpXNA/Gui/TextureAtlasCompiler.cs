@@ -139,7 +139,7 @@ namespace DwarfCorp.Gui.TextureAtlas
                 texSize.Height *= 2;
 
             // Be sure to pass a copy of the list since the algorithm modifies it.
-            texSize = BspSubdivision.ExpandVertical(texSize, texSize, new List<Entry>(Entries));
+            texSize = BspSubdivision.ExpandHorizontal(texSize, texSize, new List<Entry>(Entries));
             return new Atlas { Dimensions = texSize, Textures = Entries };
         }
     }

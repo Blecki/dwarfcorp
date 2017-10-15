@@ -46,18 +46,21 @@ namespace DwarfCorp.GameStates
     public class MainMenuState : GameState
     {
         private Gui.Root GuiRoot;
+        private Widget LogoWidget;
+        private Texture2D LogoTexture;
 
         public MainMenuState(DwarfGame game, GameStateManager stateManager) :
             base(game, "MainMenuState", stateManager)
         {
+       
         }
 
         private Gui.Widget MakeMenuFrame(String Name)
         {
-            GuiRoot.RootItem.AddChild(new Gui.Widget
+            LogoWidget = GuiRoot.RootItem.AddChild(new Gui.Widget
             {
                 MinimumSize = new Point(600, 348),
-                Background = new Gui.TileReference("logo", 0),
+                Transparent = true,
                 AutoLayout = Gui.AutoLayout.FloatTop
             });
 
@@ -136,6 +139,7 @@ namespace DwarfCorp.GameStates
 
         public override void OnEnter()
         {
+            LogoTexture = Game.Content.Load<Texture2D>("newgui/gamelogo");
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
 
@@ -148,6 +152,7 @@ namespace DwarfCorp.GameStates
             SoundManager.PlayMusic("menu_music");
             SoundManager.StopAmbience();
             base.OnEnter();
+
         }
 
         public override void Update(DwarfTime gameTime)
@@ -168,6 +173,11 @@ namespace DwarfCorp.GameStates
 
         public override void Render(DwarfTime gameTime)
         {
+            GuiRoot.DrawMesh(
+                        Gui.Mesh.Quad()
+                        .Scale(LogoWidget.Rect.Width, LogoWidget.Rect.Height)
+                        .Translate(LogoWidget.Rect.X,LogoWidget.Rect.Y),
+                        LogoTexture);
             GuiRoot.Draw();
             base.Render(gameTime);
         }

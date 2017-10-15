@@ -56,7 +56,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 var height = sender.Rect.Height;
                 var rowsVisible = height / 20;
-                ScrollBar.ScrollArea = Math.Max(0, bindingCount - rowsVisible);
+                ScrollBar.ScrollArea = Math.Max(0, bindingCount - rowsVisible + 1);
             };
 
             foreach (var binding in KeyManager.Buttons)

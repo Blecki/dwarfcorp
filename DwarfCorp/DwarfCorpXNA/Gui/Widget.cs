@@ -113,6 +113,7 @@ namespace DwarfCorp.Gui
 
         public Vector4 HoverTextColor = new Vector4(1,0,0,1);
         public bool ChangeColorOnHover = false;
+        public bool WrapText = true;
 
         #endregion
 
@@ -419,7 +420,7 @@ namespace DwarfCorp.Gui
             var drawableArea = GetDrawableInterior();
             var stringMeshSize = new Rectangle();
             var font = Root.GetTileSheet(Font);
-            var text = (font is VariableWidthFont)
+            var text = (font is VariableWidthFont && WrapText)
                 ? (font as VariableWidthFont).WordWrapString(Text, TextSize, drawableArea.Width)
                 : Text;
             var stringMesh = Mesh.CreateStringMesh(

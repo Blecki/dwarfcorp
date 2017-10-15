@@ -22,16 +22,19 @@ namespace DwarfCorp.Gui.Widgets
                     child = child.AddChild(new Widget()
                     {
                         Rect = this.Rect,
-                        AutoLayout = AutoLayout.DockFill,
+                        AutoLayout = AutoLayout.DockTop,
                         Background = layer,
                         MaximumSize = new Point(32, 32),
-                        TextHorizontalAlign = HorizontalAlign.Right,
-                        TextVerticalAlign = VerticalAlign.Bottom,
-                        TextColor = new Vector4(1, 1, 1, 1),
-                        Font = "font10-outline-numsonly"
+                        MinimumSize = new Point(32,32),
                     });
                 }
             }
+
+            Font = "font10-outline-numsonly";
+            TextHorizontalAlign = HorizontalAlign.Center;
+            TextVerticalAlign = VerticalAlign.Bottom;
+            TextColor = new Vector4(1, 1, 1, 1);
+            WrapText = false;
             base.Construct();
         }
 
@@ -55,11 +58,11 @@ namespace DwarfCorp.Gui.Widgets
             return true;
         }
     }
+
     public class ResourcePanel : GridPanel
     {
         public GameMaster Master;
-
-
+        
         private bool AreListsEqual<T>(List<T> listA, List<T> listB)
         {
             if (listA.Any(obj => !listB.Contains(obj)))
@@ -71,6 +74,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 return false;
             }
+
             return true;
         }
 
@@ -79,6 +83,7 @@ namespace DwarfCorp.Gui.Widgets
             public Pair<ResourceAmount> Amount;
             public List<string> Members = new List<string>(); 
         }
+
         // Aggregates resources by tags so that there aren't as many to display.
         private List<AggregatedResource> AggregateResources(IEnumerable<KeyValuePair<string, Pair<ResourceAmount>>> resources)
         {
@@ -106,7 +111,7 @@ namespace DwarfCorp.Gui.Widgets
 
         public override void Construct()
         {
-            ItemSize = new Point(32, 32);
+            ItemSize = new Point(32, 64);
             Root.RegisterForUpdate(this);
             Background = new TileReference("basic", 0);
             BackgroundColor = new Vector4(0, 0, 0, 0.5f);
@@ -136,15 +141,13 @@ namespace DwarfCorp.Gui.Widgets
                         label.Append("\n");
                     }
                     label.Append(resourceTemplate.Description);
+
                     if (icon == null)
                     {
                         icon = AddChild(new ResourceIcon()
                         {
                             Layers = resourceTemplate.GuiLayers,
                             Tooltip = label.ToString(),
-                            TextHorizontalAlign = HorizontalAlign.Right,
-                            TextVerticalAlign = VerticalAlign.Bottom,
-                            TextColor = new Vector4(1, 1, 1, 1)
                         });
                     }
                     else
@@ -157,11 +160,12 @@ namespace DwarfCorp.Gui.Widgets
                     }
 
                     string text = "S" + resource.Amount.First.NumResources.ToString();
+                    text += "\n";
                     if (resource.Amount.Second.NumResources > 0)
                     {
-                        text += "\nI" + resource.Amount.Second.NumResources.ToString();
+                        text += "I" + resource.Amount.Second.NumResources.ToString();
                     }
-                    icon.Children.Last().Text = text;
+                    icon.Text = text;
                     icon.Invalidate();
                 }
 
