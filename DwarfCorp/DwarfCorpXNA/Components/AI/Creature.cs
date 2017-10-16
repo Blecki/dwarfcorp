@@ -289,7 +289,7 @@ namespace DwarfCorp
         }
 
         /// <summary> Updates the creature </summary>
-        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public virtual void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (FirstUpdate)
             {
@@ -727,7 +727,7 @@ namespace DwarfCorp
 
             if (!AI.Tasks.Contains(gatherTask))
             {
-                AI.Faction.AddEntityDesignation(item, DesignationType.Gather);
+                AI.Faction.Designations.AddEntityDesignation(item, DesignationType.Gather);
                 AI.AssignTask(gatherTask);
             }
         }

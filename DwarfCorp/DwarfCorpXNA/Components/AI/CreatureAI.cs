@@ -412,6 +412,10 @@ namespace DwarfCorp
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             //DEBUG DRAW TASK QUEUE HERE
+            if (!Active)
+            {
+                return;
+            }
 
             if (DrawPath)
             {
@@ -468,6 +472,7 @@ namespace DwarfCorp
                 if (!Tasks.Contains(toReturn))
                     AssignTask(toReturn);
             }
+
 
             // Update the current task.
             if (CurrentTask != null && CurrentAct != null)
@@ -564,6 +569,11 @@ namespace DwarfCorp
             else if (CurrentTask != null)
             {
                 CurrentTask.SetupScript(Creature);
+                if (CurrentAct == null)
+                {
+                    // Edge case where setting up script fails for whatever reason.
+                    CurrentTask = null;
+                }
             }
 
 
@@ -759,13 +769,17 @@ namespace DwarfCorp
                 }
 
                 // Farm stuff if applicable
-                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm) && MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction)
+                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Chop) && MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction)
                 {
-                    var task = (World.Master.Tools[GameMaster.ToolMode.Farm] as FarmTool).AutoFarm();
+                    var task = Faction.Designations.EnumerateDesignations(DesignationType.Farm)
+                        .Select(d => d.Tag as FarmTile)
+                        .Where(t => t.PlantExists() && t.Plant.IsGrown && !t.IsCanceled)
+                        .Select(t => new KillEntityTask(t.Plant, KillEntityTask.KillType.Chop))
+                        .FirstOrDefault();
 
                     if (task != null)
                     {
-                        Faction.AddEntityDesignation(task.EntityToKill, DesignationType.Chop);
+                        Faction.Designations.AddEntityDesignation(task.EntityToKill, DesignationType.Chop);
                         return task;
                     }
                 }

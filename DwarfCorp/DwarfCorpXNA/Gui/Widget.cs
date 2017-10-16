@@ -29,7 +29,7 @@ namespace DwarfCorp.Gui
         /// </summary>
         public Margin InteriorMargin = Margin.Zero;
         // Todo: Exterior margin
-        
+
         // Todo: Hover styling.
 
         #endregion
@@ -113,6 +113,7 @@ namespace DwarfCorp.Gui
 
         public Vector4 HoverTextColor = new Vector4(1,0,0,1);
         public bool ChangeColorOnHover = false;
+        public bool WrapText = true;
 
         #endregion
 
@@ -231,6 +232,16 @@ namespace DwarfCorp.Gui
             Children.Remove(Child);
             Children.Insert(0, Child);
             Invalidate();
+        }
+
+        public void BringToFront()
+        {
+            if (Parent != null)
+            {
+                Parent.Children.Remove(this);
+                Parent.Children.Add(this);
+                Parent.BringToFront();
+            }
         }
 
         public void RemoveChild(Widget child)
@@ -409,7 +420,7 @@ namespace DwarfCorp.Gui
             var drawableArea = GetDrawableInterior();
             var stringMeshSize = new Rectangle();
             var font = Root.GetTileSheet(Font);
-            var text = (font is VariableWidthFont)
+            var text = (font is VariableWidthFont && WrapText)
                 ? (font as VariableWidthFont).WordWrapString(Text, TextSize, drawableArea.Width)
                 : Text;
             var stringMesh = Mesh.CreateStringMesh(

@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Gui.Widgets
 {
-    public class EmployeePanel : TwoColumns
+    public class EmployeePanel : Columns
     {
         public Faction Faction;
         private Gui.Widgets.WidgetListView EmployeeList;

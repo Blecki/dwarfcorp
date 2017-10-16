@@ -25,6 +25,10 @@ namespace DwarfCorp.Gui.Widgets
             {
                 new HorizontalMenuTray.MenuItem
                 {
+                    Text = "CHEAT MODE",
+                },
+                new HorizontalMenuTray.MenuItem
+                {
                     Text = "BUILD",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
@@ -156,7 +160,28 @@ namespace DwarfCorp.Gui.Widgets
                     {
                         Master.World.Time.CurrentDate += new TimeSpan(1, 0, 0);
                     }
-                }
+                },
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "FORCE REBUILD",
+                    OnClick = (sender, args) =>
+                    {
+                         foreach (var chunk in Master.World.ChunkManager.ChunkData.ChunkMap)
+                            for (int Y = 0; Y < VoxelConstants.ChunkSizeY; ++Y)
+                                chunk.InvalidateSlice(Y);
+                    }
+                },
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "LET IT SNOW",
+                    OnClick = (sender, args) =>
+                    {
+                        var storm = Weather.CreateStorm(Vector3.One, 100.0f, Master.World);
+                        storm.TypeofStorm = StormType.SnowStorm;
+                        storm.Start();
+                    }
+                },
+
             };
 
             base.Construct();

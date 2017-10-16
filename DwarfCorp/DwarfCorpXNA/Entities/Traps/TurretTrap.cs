@@ -59,8 +59,7 @@ namespace DwarfCorp
             Sensor.OnEnemySensed += Sensor_OnEnemySensed;
             BaseSprite = AddChild(new Fixture(Manager, Vector3.Zero, spriteSheet, new Point(2, 7))) as Fixture;
             BaseSprite.OrientMode = SimpleSprite.OrientMode.YAxis;
-            TurretSprite = AddChild(new Fixture(Manager, Vector3.Up * 0.25f, spriteSheet, new Point(1, 7))) as Fixture;
-            TurretSprite.OrientMode = SimpleSprite.OrientMode.Fixed;
+            TurretSprite = AddChild(new Fixture(Manager, Vector3.Up * 0.25f, spriteSheet, new Point(1, 7), SimpleSprite.OrientMode.Fixed)) as Fixture;
             SetTurretAngle(0.0f);
             CreateCosmeticChildren(manager);
         }
@@ -96,7 +95,7 @@ namespace DwarfCorp
             PropogateTransforms();
         }
 
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (closestCreature != null && !closestCreature.IsDead)
             {

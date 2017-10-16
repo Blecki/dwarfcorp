@@ -35,14 +35,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Security.Cryptography.X509Certificates;
 using DwarfCorp.GameStates;
 using LibNoise;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace DwarfCorp
 {
@@ -54,23 +50,21 @@ namespace DwarfCorp
     public class Faction
     {
         public DwarfBux TradeMoney { get; set; }
-        //public Point StartingPlace { get; set; }
         public Point Center { get; set; }
         public int TerritorySize { get; set; }
         public Economy Economy { get; set; }
         public List<TradeEnvoy> TradeEnvoys { get; set; }
         public List<WarParty> WarParties { get; set; }
-        public Dictionary<ulong, BuildOrder> DigOrders { get; set; }
-        public List<BuildOrder> GuardDesignations { get; set; }
         public List<Body> OwnedObjects { get; set; }
         public List<Stockpile> Stockpiles { get; set; }
         public List<CreatureAI> Minions { get; set; }
         public RoomBuilder RoomBuilder { get; set; }
-        public PutDesignator WallBuilder { get; set; }
         public CraftBuilder CraftBuilder { get; set; }
         public Color PrimaryColor { get; set; }
         public Color SecondaryColor { get; set; }
-
+        //public List<FarmTile> FarmTiles = new List<FarmTile>();
+        public DesignationSet Designations = new DesignationSet();
+        
         // Todo: When converting to new save system, it can take care of this.
         [JsonProperty]
         private string _race;
@@ -87,63 +81,6 @@ namespace DwarfCorp
                 _race = value.Name;
             }
         }
-
-        #region Designations
-
-        private class EntityDesignation
-        {
-            public Body Body;
-            public DesignationType Type;
-        }
-
-        [JsonProperty] // Todo: Replace with more effecient data structure?
-        private List<EntityDesignation> EntityDesignations = new List<EntityDesignation>();
-
-        public enum AddEntityDesignationResult
-        {
-            AlreadyExisted,
-            Added
-        }
-
-        public enum RemoveEntityDesignationResult
-        {
-            DidntExist,
-            Removed
-        }
-
-        public AddEntityDesignationResult AddEntityDesignation(Body Entity, DesignationType Type)
-        {
-            if (EntityDesignations.Count(e => Object.ReferenceEquals(e.Body, Entity) && e.Type == Type) == 0)
-            {
-                EntityDesignations.Add(new EntityDesignation
-                {
-                    Body = Entity,
-                    Type = Type
-                });
-                if (this == World.PlayerFaction)
-                    World.DesignationDrawer.HiliteEntity(Entity, Type);
-                return AddEntityDesignationResult.Added;
-            }
-            return AddEntityDesignationResult.AlreadyExisted;
-        }
-
-        public RemoveEntityDesignationResult RemoveEntityDesignation(Body Entity, DesignationType Type)
-        {
-            if (EntityDesignations.RemoveAll(e => Object.ReferenceEquals(e.Body, Entity) && e.Type == Type) != 0)
-            {
-                if (this == World.PlayerFaction)
-                    World.DesignationDrawer.UnHiliteEntity(Entity, Type);
-                return RemoveEntityDesignationResult.Removed;
-            }
-            return RemoveEntityDesignationResult.DidntExist;
-        }
-
-        public bool IsDesignation(Body Entity, DesignationType Type)
-        {
-            return EntityDesignations.Count(e => Object.ReferenceEquals(e.Body, Entity) && e.Type == Type) != 0;
-        }
-
-        #endregion
 
         public TaskManager TaskManager { get; set; }
         public List<Creature> Threats { get; set; }
@@ -176,13 +113,10 @@ namespace DwarfCorp
             SelectedMinions = new List<CreatureAI>();
             TaskManager = new TaskManager();
             Stockpiles = new List<Stockpile>();
-            DigOrders = new Dictionary<ulong, BuildOrder>();
-            GuardDesignations = new List<BuildOrder>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
             OwnedObjects = new List<Body>();
             RoomBuilder = new RoomBuilder(this, world);
-            WallBuilder = new PutDesignator(this, world);
             CraftBuilder = new CraftBuilder(this, world);
             IsRaceFaction = false;
             TradeMoney = 0.0m;
@@ -195,8 +129,6 @@ namespace DwarfCorp
             SelectedMinions = new List<CreatureAI>();
             TaskManager = new TaskManager();
             Stockpiles = new List<Stockpile>();
-            DigOrders = new Dictionary<ulong, BuildOrder>();
-            GuardDesignations = new List<BuildOrder>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
             OwnedObjects = new List<Body>();
@@ -232,7 +164,6 @@ namespace DwarfCorp
         {
             RoomBuilder.Faction = this;
             CraftBuilder.Faction = this;
-            WallBuilder.Faction = this;
             RoomBuilder.CheckRemovals();
 
             Minions.RemoveAll(m => m.IsDead);
@@ -255,53 +186,7 @@ namespace DwarfCorp
                 zone.ZoneBodies.RemoveAll(body => body.IsDead);
             }
 
-            List<ulong> removalKeys = new List<ulong>();
-            foreach (var kvp in DigOrders)
-            {
-                var v = kvp.Value.Vox;
-                if (v.IsValid && (v.IsEmpty || v.Health <= 0.0f || v.Type.Name == "empty" || v.Type.IsInvincible))
-                {
-                    if (this == World.PlayerFaction)
-                        World.DesignationDrawer.UnHiliteVoxel(kvp.Value.Vox.Coordinate, DesignationType.Dig);
-                    removalKeys.Add(kvp.Key);
-                }
-            }
-
-            for (int i = 0; i < removalKeys.Count; i++)
-            {
-                DigOrders.Remove(removalKeys[i]);
-            }
-
-            EntityDesignations.RemoveAll(b =>
-            {
-                if (b.Body.IsDead)
-                {
-                    if (this == World.PlayerFaction)
-                        World.DesignationDrawer.UnHiliteEntity(b.Body, b.Type);
-                }
-                return b.Body.IsDead;
-            });
-
-            List<BuildOrder> removals = new List<BuildOrder>();
-            foreach (BuildOrder d in GuardDesignations)
-            {
-                var v = d.Vox;
-
-                if (!v.IsValid || (!v.IsEmpty && !(v.Health <= 0.0f) && v.Type.Name != "empty"))
-                {
-                    continue;
-                }
-
-                removals.Add(d);
-
-                if (!v.IsEmpty)
-                    World.ChunkManager.KillVoxel(v);
-            }
-
-            foreach (BuildOrder v in removals)
-            {
-                GuardDesignations.Remove(v);
-            }
+            Designations.CleanupDesignations();
 
             foreach (var zone in RoomBuilder.DesignatedRooms)
             {
@@ -345,7 +230,7 @@ namespace DwarfCorp
 
                     if (!IsTaskAssigned(g))
                     {
-                        AddEntityDesignation(threat.Physics, DesignationType.Attack);
+                        Designations.AddEntityDesignation(threat.Physics, DesignationType.Attack);
                         tasks.Add(g);
                     }
                     else
@@ -370,7 +255,7 @@ namespace DwarfCorp
         public void AssignGather(IEnumerable<Body> items)
         {
             var tasks = items
-                .Where(i => AddEntityDesignation(i, DesignationType.Gather) == AddEntityDesignationResult.Added)
+                .Where(i => Designations.AddEntityDesignation(i, DesignationType.Gather) == DesignationSet.AddDesignationResult.Added)
                 .Select(i => new GatherItemTask(i) as Task)
                 .ToList();
 
@@ -411,49 +296,6 @@ namespace DwarfCorp
         public int ComputeStockpileSpace()
         {
             return Stockpiles.Sum(pile => pile.Resources.MaxResources - pile.Resources.CurrentResourceCount);
-        }
-
-        public BuildOrder GetGuardDesignation(VoxelHandle vox)
-        {
-            return GuardDesignations.FirstOrDefault(d => d.Vox == vox);
-        }
-
-        public BuildOrder GetDigDesignation(VoxelHandle vox)
-        {
-            BuildOrder returnOrder;
-            if (DigOrders.TryGetValue(GetVoxelQuickCompare(vox), out returnOrder))
-                return returnOrder;
-            return new BuildOrder();
-        }
-
-        public void AddDigDesignation(BuildOrder order)
-        {
-            if (!order.Vox.IsValid) return;
-            DigOrders.Add(GetVoxelQuickCompare(order.Vox), order);
-            if (this == World.PlayerFaction)
-                World.DesignationDrawer.HiliteVoxel(order.Vox.Coordinate, DesignationType.Dig);
-        }
-
-        public void RemoveDigDesignation(VoxelHandle vox)
-        {
-            var qc = GetVoxelQuickCompare(vox);
-            if (DigOrders.ContainsKey(qc))
-            {
-                DigOrders.Remove(qc);
-                if (this == World.PlayerFaction)
-                	World.DesignationDrawer.UnHiliteVoxel(vox.Coordinate, DesignationType.Dig);
-            }
-        }
-
-        public bool IsDigDesignation(VoxelHandle vox)
-        {
-            return DigOrders.ContainsKey(GetVoxelQuickCompare(vox));
-        }
-
-
-        public bool IsGuardDesignation(VoxelHandle vox)
-        {
-            return GuardDesignations.Select(d => d.Vox).Any(v => v == vox);
         }
 
         public bool AddResources(ResourceAmount resources)
@@ -553,8 +395,8 @@ namespace DwarfCorp
 
         public Body GetRandomGatherDesignationWithTag(string tag)
         {
-            var des = EntityDesignations.Where(d => d.Type == DesignationType.Gather &&
-                d.Body.Tags.Contains(tag)).ToList();
+            var des = Designations.EnumerateEntityDesignations(DesignationType.Gather)
+                .Where(d => d.Body.Tags.Contains(tag)).ToList();
             return des.Count == 0 ? null : des[MathFunctions.Random.Next(0, des.Count)].Body;
         }
 

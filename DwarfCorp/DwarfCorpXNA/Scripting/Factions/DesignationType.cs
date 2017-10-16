@@ -35,12 +35,18 @@ namespace DwarfCorp
 {
     public enum DesignationType
     {
-        Dig,
-        Farm,
-        Guard,
-        Gather,
-        Attack,
-        Wrangle,
-        Chop
+        _None   = 0,
+
+        Dig     = 1,
+        Farm    = 2,
+        Guard   = 4,
+        Gather  = 8,
+        Attack  = 16,
+        Wrangle = 32,
+        Chop    = 64,
+        Put     = 128,
+        Plant   = 256, 
+
+        _All     = Dig | Farm | Guard | Gather | Attack | Wrangle | Chop | Put | Plant,
     }
 }

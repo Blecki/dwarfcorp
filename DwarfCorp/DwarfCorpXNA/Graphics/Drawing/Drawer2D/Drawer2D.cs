@@ -66,28 +66,32 @@ namespace DwarfCorp
 
         public static void DrawSprite(ImageFrame image, Vector3 worldPosition)
         {
+            if (!DwarfGame.HasRendered) return;
             DrawCommands.Enqueue(new SpriteDrawCommand(worldPosition, image));
         }
 
         public static void DrawSprite(ImageFrame image, Vector3 worldPosition, Vector2 scale, Vector2 offset, Color tint, bool flip = false)
         {
+            if (!DwarfGame.HasRendered) return;
             DrawCommands.Enqueue(new SpriteDrawCommand(worldPosition, image) { Scale = scale, Offset =  offset, Tint = tint, Effects = flip? SpriteEffects.FlipHorizontally : SpriteEffects.None});
         }
 
         public static void DrawTextBox(string text, Vector3 position)
         {
+            if (!DwarfGame.HasRendered) return;
             DrawCommands.Enqueue(new TextBoxDrawCommand(text, DefaultFont, position, Color.White, new Color(0, 0, 0, 200), new Color(50, 50, 50, 100), new Color(0, 0, 0, 200), 2.0f));
         }
 
         public static void DrawLoadBar(Camera camera, Vector3 worldPos, Color backgroundColor, Color strokeColor, int width, int height, float progress)
         {
+            if (!DwarfGame.HasRendered) return;
             Drawer2D.DrawRect(camera, worldPos, new Rectangle(0, 0, width, height), strokeColor, strokeColor, 1);
             Drawer2D.DrawRect(camera, worldPos, new Rectangle((int)(width * (progress))/2 - width /2, 0, (int)(width * (progress)), height), backgroundColor, Color.Transparent, 1);
         }
 
         public static void DrawRect(Camera camera, Vector3 worldPos, Rectangle screenRect, Color backgroundColor, Color strokeColor, float strokewidth)
         {
-
+            if (!DwarfGame.HasRendered) return;
             Vector3 screenPos = GameState.Game.GraphicsDevice.Viewport.Project(worldPos, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
 
             if (screenPos.Z < 0.999f)
@@ -102,16 +106,19 @@ namespace DwarfCorp
 
         public static void DrawPolygon(List<Vector2> points, Color color, int width, bool closed)
         {
+            if (!DwarfGame.HasRendered) return;
             DrawCommands.Enqueue(new PolygonDrawCommand(points, closed, color, width));
         }
 
         public static void DrawPolygon(Camera camera, List<Vector3> points, Color color, int width, bool closed, Viewport viewport)
         {
+            if (!DwarfGame.HasRendered) return;
             DrawCommands.Enqueue(new PolygonDrawCommand(camera, points, closed, color, width, viewport));
         }
 
         public static void DrawZAlignedRect(Camera camera, Vector3 center, float xWidth, float zHeight, int width, Color color)
         {
+            if (!DwarfGame.HasRendered) return;
             List<Vector3> points = new List<Vector3>
             {
                 center + new Vector3(-xWidth, 0, -zHeight),
@@ -126,12 +133,17 @@ namespace DwarfCorp
 
         public static void DrawRect(Rectangle rect, Color backgroundColor, Color strokeColor, float strokewidth)
         {
+            if (!DwarfGame.HasRendered) return;
             DrawCommands.Enqueue(new RectDrawCommand(backgroundColor, strokeColor, strokewidth, rect));
         }
 
         public static void DrawText(string text, Vector3 position, Color color, Color strokeColor)
         {
-            DrawCommands.Enqueue(new TextDrawCommand(text, DefaultFont, position, color, strokeColor));
+            if (!DwarfGame.HasRendered) return;
+            if (!DrawCommands.OfType<TextDrawCommand>().Any(t => t.Text == text))
+            {
+                DrawCommands.Enqueue(new TextDrawCommand(text, DefaultFont, position, color, strokeColor));
+            }
         }
 
         public static void Render(SpriteBatch batch, Camera camera, Viewport viewport)

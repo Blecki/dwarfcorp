@@ -61,7 +61,7 @@ namespace DwarfCorp
 
         public Plant(ComponentManager Manager, string name, Matrix localTransform, Vector3 bboxSize,
            string meshAsset, float meshScale) :
-            base(Manager, name, localTransform, bboxSize, new Vector3(0.5f, 0, 0.5f))
+            base(Manager, name, localTransform, bboxSize, new Vector3(0.0f, bboxSize.Y / 2, 0.0f))
         {
             MeshAsset = meshAsset;
             MeshScale = meshScale;
@@ -76,12 +76,14 @@ namespace DwarfCorp
             UpdateTransform();
             SetFlagRecursive(Flag.Active, false);
             SetFlagRecursive(Flag.Visible, false);
-            VoxelHandle below = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(Manager.World.ChunkManager.ChunkData, new GlobalVoxelCoordinate((int)LocalTransform.Translation.X, 
+            VoxelHandle below = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(Manager.World.ChunkManager.ChunkData, 
+                new GlobalVoxelCoordinate((int)LocalTransform.Translation.X, 
                 (int)LocalTransform.Translation.Y, (int)LocalTransform.Translation.Z)));
             Vector3 pos = LocalTransform.Translation;
+            pos += new Vector3(0, 0.5f, 0);
             if (below.IsValid)
             {
-                pos = below.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f);
+                pos = below.WorldPosition + new Vector3(0.0f, 1.0f, 0.0f);
             }
             return Parent.AddChild(new Seedling(Manager, this, pos, Seedlingsheet, SeedlingFrame)
             {
@@ -91,7 +93,8 @@ namespace DwarfCorp
 
         public void CreateMesh(ComponentManager manager)
         {
-            var mesh = AddChild(new InstanceMesh(manager, "Model", Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(MeshScale, MeshScale, MeshScale), MeshAsset, false));
+            PropogateTransforms();
+            var mesh = AddChild(new InstanceMesh(manager, "Model", Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(MeshScale, MeshScale, MeshScale) * Matrix.CreateTranslation(GetBoundingBox().Center() - Position), MeshAsset, false));
             mesh.SetFlag(Flag.ShouldSerialize, false);
         }
 

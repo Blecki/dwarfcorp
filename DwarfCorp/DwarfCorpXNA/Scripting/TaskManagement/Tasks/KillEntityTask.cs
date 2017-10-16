@@ -110,9 +110,9 @@ namespace DwarfCorp
             switch (Mode)
             {
                 case KillType.Attack:
-                    return !agent.Faction.IsDesignation(EntityToKill, DesignationType.Attack);
+                    return !agent.Faction.Designations.IsDesignation(EntityToKill, DesignationType.Attack);
                 case KillType.Chop:
-                    return !agent.Faction.IsDesignation(EntityToKill, DesignationType.Chop);
+                    return !agent.Faction.Designations.IsDesignation(EntityToKill, DesignationType.Chop);
                 case KillType.Auto:
                     return false;
             }
@@ -133,9 +133,9 @@ namespace DwarfCorp
                 switch (Mode)
                 {
                     case KillType.Attack:
-                        return agent.Faction.IsDesignation(EntityToKill, DesignationType.Attack);
+                        return agent.Faction.Designations.IsDesignation(EntityToKill, DesignationType.Attack);
                     case KillType.Chop:
-                        return agent.Faction.IsDesignation(EntityToKill, DesignationType.Chop);
+                        return agent.Faction.Designations.IsDesignation(EntityToKill, DesignationType.Chop);
                     case KillType.Auto:
                         return true;
                 }

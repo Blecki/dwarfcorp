@@ -18,6 +18,8 @@ namespace DwarfCorp.Gui.Widgets
             set { _employee = value;  Invalidate(); }
         }
 
+        private Widget InteriorPanel;
+
         private Widget Icon;
         private Widget NameLabel;
 
@@ -48,21 +50,28 @@ namespace DwarfCorp.Gui.Widgets
 
         public override void Construct()
         {
-            var top = AddChild(new Gui.Widget
+            Text = "Select a single employee to view stats.";
+            Font = "font16";
+
+            InteriorPanel = AddChild(new Widget
+            {
+                AutoLayout = AutoLayout.DockFill,
+                Hidden = true,
+                Background = new TileReference("basic", 0),
+                Font = "font8",
+            });
+
+            var top = InteriorPanel.AddChild(new Gui.Widget
             {
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 96)
             });
 
-
-
             Icon = top.AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockLeft,
                 MinimumSize = new Point(64, 96),
-            });
-
-        
+            });        
 
             NameLabel = top.AddChild(new Gui.Widget
             {
@@ -77,7 +86,7 @@ namespace DwarfCorp.Gui.Widgets
                 MinimumSize = new Point(0, 24)
             });
             
-            var columns = AddChild(new Gui.Widgets.TwoColumns
+            var columns = InteriorPanel.AddChild(new Gui.Widgets.Columns
             {
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 120)
@@ -87,7 +96,7 @@ namespace DwarfCorp.Gui.Widgets
             var right = columns.AddChild(new Gui.Widget());
 
             #region Stats
-            var statParent = left.AddChild(new Gui.Widgets.TwoColumns
+            var statParent = left.AddChild(new Gui.Widgets.Columns
             {
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 60)
@@ -151,39 +160,38 @@ namespace DwarfCorp.Gui.Widgets
             Energy = CreateStatusBar(right, "Energy", "Exhausted", "Tired", "Okay", "Energetic");
             Happiness = CreateStatusBar(right, "Happiness", "Miserable", "Unhappy", "So So", "Happy", "Euphoric");
             Health = CreateStatusBar(right, "Health", "Near Death", "Critical", "Hurt", "Uncomfortable", "Fine", "Perfect");
-            #endregion
+            #endregion           
 
-           
-
-            PayLabel = AddChild(new Widget
+            PayLabel = InteriorPanel.AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 24)
             });
 
-            AgeLabel = AddChild(new Widget() {
+            AgeLabel = InteriorPanel.AddChild(new Widget() {
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 24)
             });
 
-            Bio = AddChild(new Widget
+            Bio = InteriorPanel.AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 24)
             });
 
-            var task = AddChild(new Widget
+            var task = InteriorPanel.AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(1, 24)
             });
+
             var inventory = task.AddChild(new Button
             {
                 AutoLayout = AutoLayout.DockRight,
                 Text = "Backpack...",
                 OnClick = (sender, args) =>
                 {
-                    var employeeInfo = sender.Parent.Parent as EmployeeInfo;
+                    var employeeInfo = sender.Parent.Parent.Parent as EmployeeInfo;
                     if (employeeInfo != null && employeeInfo.Employee != null)
                     {
                         StringBuilder stringBuilder = new StringBuilder();
@@ -205,11 +213,13 @@ namespace DwarfCorp.Gui.Widgets
                     }
                 }
             });
+
             CancelTask = task.AddChild(new Button
             {
                 AutoLayout = AutoLayout.DockRight,
                 Text = "Cancel Task"
             });
+
             TaskLabel = task.AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockRight,
@@ -218,13 +228,13 @@ namespace DwarfCorp.Gui.Widgets
                 TextHorizontalAlign = HorizontalAlign.Right
             });
 
-            Thoughts = AddChild(new Widget
+            Thoughts = InteriorPanel.AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 24)
             });
 
-            AddChild(new Button()
+            InteriorPanel.AddChild(new Button()
             {
                 Text = "Fire",
                 Border = "border-button",
@@ -237,15 +247,15 @@ namespace DwarfCorp.Gui.Widgets
 
             if (EnablePosession)
             {
-                AddChild(new Button()
+                InteriorPanel.AddChild(new Button()
                 {
                     Text = "Follow",
                     Tooltip = "Click to directly control this dwarf and have the camera follow.",
                     AutoLayout = AutoLayout.FloatBottomLeft,
                     OnClick = (sender, args) =>
                     {
-                        (sender.Parent as EmployeeInfo).Employee.World.Tutorial("follow dwarf");
-                        (sender.Parent as EmployeeInfo).Employee.IsPosessed = true;
+                        (sender.Parent.Parent as EmployeeInfo).Employee.World.Tutorial("follow dwarf");
+                        (sender.Parent.Parent as EmployeeInfo).Employee.IsPosessed = true;
                     }
                 });
             }
@@ -285,10 +295,12 @@ namespace DwarfCorp.Gui.Widgets
             // Set values from CreatureAI
             if (Employee != null)
             {
+                InteriorPanel.Hidden = false;
+
                 var idx = EmployeePanel.GetIconIndex(Employee.Stats.CurrentClass.Name);
                 Icon.Background = idx >= 0 ? new TileReference("dwarves", idx) : null;
                 Icon.Invalidate();
-                
+
                 NameLabel.Text = "\n" + Employee.Stats.FullName;
                 StatDexterity.Text = String.Format("Dex: {0}", Employee.Stats.BuffedDex);
                 StatStrength.Text = String.Format("Str: {0}", Employee.Stats.BuffedStr);
@@ -382,8 +394,9 @@ namespace DwarfCorp.Gui.Widgets
                 }
 
                 AgeLabel.Text = String.Format("Age: {0}", Employee.Stats.Age);
-
             }
+            else
+                InteriorPanel.Hidden = true;
 
             foreach (var child in Children)
                 child.Invalidate();

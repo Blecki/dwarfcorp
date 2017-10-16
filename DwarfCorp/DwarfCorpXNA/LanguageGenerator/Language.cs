@@ -178,6 +178,11 @@ namespace DwarfCorp
                 else
                 {
                     SoundEffectInstance inst = SoundManager.PlaySound(utter.Syllable, MathFunctions.Rand(0.1f, 0.25f));
+                    if (inst == null)
+                    {
+                        yield return utter;
+                        continue;
+                    }
                     inst.Pitch = MathFunctions.Rand(-0.4f, 0.4f);
                     inst.Play();
 

@@ -135,7 +135,7 @@ namespace DwarfCorp
 
         }
 
-        new public void Update(DwarfTime time, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime time, ChunkManager chunks, Camera camera)
         {
             if (Active && Battery != null)
             {

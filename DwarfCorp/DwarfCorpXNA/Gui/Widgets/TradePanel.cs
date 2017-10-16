@@ -279,7 +279,7 @@ namespace DwarfCorp.Gui.Widgets
                 }                    
             });
 
-            var mainPanel = AddChild(new TwoColumns
+            var mainPanel = AddChild(new Columns
             {
                 AutoLayout = AutoLayout.DockFill
             });

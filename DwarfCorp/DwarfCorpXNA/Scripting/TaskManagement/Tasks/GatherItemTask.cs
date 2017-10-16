@@ -79,8 +79,7 @@ namespace DwarfCorp
             return EntityToGather != null
                    && !EntityToGather.IsDead
                    && !agent.AI.Movement.IsSessile
-                   && agent.AI.Faction.IsDesignation(EntityToGather, DesignationType.Gather)
-                   && !agent.AI.GatherManager.ItemsToGather.Contains(EntityToGather);
+                   && agent.AI.Faction.Designations.IsDesignation(EntityToGather, DesignationType.Gather);
         }
 
         public override bool ShouldRetry(Creature agent)
@@ -88,7 +87,7 @@ namespace DwarfCorp
             return EntityToGather != null && 
                   !EntityToGather.IsDead && 
                   !agent.AI.GatherManager.ItemsToGather.Contains(EntityToGather) && 
-                  agent.AI.Faction.IsDesignation(EntityToGather, DesignationType.Gather) &&
+                  agent.AI.Faction.Designations.IsDesignation(EntityToGather, DesignationType.Gather) &&
                   PlanAct.PathExists(EntityToGather.GetRoot().GetComponent<Physics>().CurrentVoxel, agent.Physics.CurrentVoxel, agent.AI);
         }
 
@@ -100,20 +99,20 @@ namespace DwarfCorp
         public override void Render(DwarfTime time)
         {
 
-            if (!EntityToGather.IsDead)
-            {
-                Color drawColor = Color.Goldenrod;
+            //if (!EntityToGather.IsDead)
+            //{
+            //    Color drawColor = Color.Goldenrod;
 
-                float alpha = (float) Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds*0.5f));
-                drawColor.R = (byte) (Math.Min(drawColor.R*alpha + 50, 255));
-                drawColor.G = (byte) (Math.Min(drawColor.G*alpha + 50, 255));
-                drawColor.B = (byte) (Math.Min(drawColor.B*alpha + 50, 255));
-                BoundingBox bounds = EntityToGather.BoundingBox;
-                bounds.Min += Vector3.Up * 0.5f;
-                bounds.Max += Vector3.Up * 0.5f;
-                bounds = bounds.Expand(0.25f);
-                Drawer3D.DrawBox(bounds, drawColor, 0.01f * alpha + 0.01f, true);
-            }
+            //    float alpha = (float) Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds*0.5f));
+            //    drawColor.R = (byte) (Math.Min(drawColor.R*alpha + 50, 255));
+            //    drawColor.G = (byte) (Math.Min(drawColor.G*alpha + 50, 255));
+            //    drawColor.B = (byte) (Math.Min(drawColor.B*alpha + 50, 255));
+            //    BoundingBox bounds = EntityToGather.BoundingBox;
+            //    bounds.Min += Vector3.Up * 0.5f;
+            //    bounds.Max += Vector3.Up * 0.5f;
+            //    bounds = bounds.Expand(0.25f);
+            //    Drawer3D.DrawBox(bounds, drawColor, 0.01f * alpha + 0.01f, true);
+            //}
 
             base.Render(time);
         }

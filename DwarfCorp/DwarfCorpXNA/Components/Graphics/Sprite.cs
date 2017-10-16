@@ -108,7 +108,7 @@ namespace DwarfCorp
             base.ReceiveMessageRecursive(messageToReceive);
         }
 
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (CurrentAnimation != null)
                 CurrentAnimation.Update(gameTime);
@@ -126,7 +126,7 @@ namespace DwarfCorp
             Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
         }
 
-        public void Render(DwarfTime gameTime,
+        public virtual void Render(DwarfTime gameTime,
             ChunkManager chunks,
             Camera camera,
             SpriteBatch spriteBatch,
@@ -144,9 +144,6 @@ namespace DwarfCorp
 
             // Everything that draws should set it's tint, making this pointless.
             Color origTint = effect.VertexColorTint;  
-            ApplyTintingToEffect(effect);            
-
-            
             CurrentAnimation.PreRender();
             SpriteSheet = CurrentAnimation.SpriteSheet;
             var currDistortion = VertexNoise.GetNoiseVectorFromRepeatingTexture(GlobalTransform.Translation);
@@ -182,6 +179,7 @@ namespace DwarfCorp
             }
              
             effect.MainTexture = SpriteSheet.GetTexture();
+            ApplyTintingToEffect(effect);
 
             if (DrawSilhouette)
             {

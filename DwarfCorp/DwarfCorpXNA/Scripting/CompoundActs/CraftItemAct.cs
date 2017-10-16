@@ -162,8 +162,8 @@ namespace DwarfCorp
                             new GoToTaggedObjectAct(Agent)
                             {
                                 Tag = Item.ItemType.CraftLocation,
-                                Teleport = false,
-                                TeleportOffset = new Vector3(1, 0, 0),
+                                Teleport = true,
+                                TeleportOffset = new Vector3(0.5f, -0.5f, 0),
                                 ObjectName = Item.ItemType.CraftLocation
                             },
                             new Wrap(() => Creature.HitAndWait(time, true, 
@@ -198,8 +198,8 @@ namespace DwarfCorp
                             new GoToTaggedObjectAct(Agent)
                             {
                                 Tag = Item.ItemType.CraftLocation,
-                                Teleport = false,
-                                TeleportOffset = new Vector3(1, 0, 0),
+                                Teleport = true,
+                                TeleportOffset = new Vector3(0.5f, -0.5f, 0),
                                 ObjectName = Item.ItemType.CraftLocation
                             },
                             new Wrap(

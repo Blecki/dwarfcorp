@@ -51,10 +51,6 @@ namespace DwarfCorp
 
         private bool firstIter = false;
 
-        public bool DestroyOnTimer = false;
-        public Timer DestroyTimer { get; set; }
-
-
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
@@ -68,8 +64,7 @@ namespace DwarfCorp
         {
 
         }
-
-
+        
         public VoxelListener(ComponentManager Manager, ChunkManager chunkManager, VoxelHandle Voxel) :
             base("VoxelListener", Manager)
         {
@@ -80,27 +75,20 @@ namespace DwarfCorp
 
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            if (!Active)
+                return;
             if (firstIter)
             {
                 if (!Voxel.IsValid || Voxel.TypeID == 0)
                     Delete();
                 firstIter = false;
             }
-
-            if (DestroyOnTimer)
-            {
-                DestroyTimer.Update(gameTime);
-
-                if (DestroyTimer.HasTriggered)
-                {
-                    Die();
-                    chunks.KillVoxel(Voxel);
-                }
-            }
         }
 
         void VoxelListener_OnVoxelDestroyed(LocalVoxelCoordinate voxelID)
         {
+            if (!Active)
+                return;
             if (Voxel.IsValid && Voxel.Coordinate == (Voxel.Chunk.ID + voxelID))
                 GetRoot().Die();
         }

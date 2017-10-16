@@ -70,13 +70,13 @@ namespace DwarfCorp
                     if (!v.IsValid || (v.IsEmpty && v.IsExplored))
                         continue;
                     
-                    if(!Player.Faction.IsDigDesignation(v) && !Player.Faction.RoomBuilder.IsInRoom(v))
+                    if(!Player.Faction.Designations.IsVoxelDesignation(v, DesignationType.Dig) && !Player.Faction.RoomBuilder.IsInRoom(v))
                     {
                         BuildOrder d = new BuildOrder
                         {
                             Vox = v
                         };
-                        Player.Faction.AddDigDesignation(d);
+                        Player.Faction.Designations.AddVoxelDesignation(v, DesignationType.Dig, d);
                     }
 
                     assignments.Add(new KillVoxelTask(v));
@@ -95,7 +95,7 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    Player.Faction.RemoveDigDesignation(r);
+                    Player.Faction.Designations.RemoveVoxelDesignation(r, DesignationType.Dig);
                 }
             }
         }

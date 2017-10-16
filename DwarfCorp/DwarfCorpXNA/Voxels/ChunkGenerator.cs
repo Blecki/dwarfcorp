@@ -316,12 +316,12 @@ namespace DwarfCorp
                             float offset = veg.VerticalOffset;
 
                             // Vegetation doesn't shift with ramps - is this accomplishing anything?
-                            if (topVoxel.RampType != RampType.None)
-                                offset -= 0.5f;
+                            //if (topVoxel.RampType != RampType.None)
+                            //    offset -= 0.5f;
 
                             var treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
                             var tree = EntityFactory.CreateEntity<Plant>(veg.Name,
-                                topVoxel.WorldPosition + (Vector3.Up * treeSize * offset) + Vector3.Up,
+                                topVoxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
                                 Blackboard.Create("Scale", treeSize));
 
                             if (tree != null && MathFunctions.RandEvent(0.05f))
@@ -571,7 +571,6 @@ namespace DwarfCorp
             GenerateLava(c);
 
             UpdateSunlight(c, 255);
-            c.ShouldRebuildWater = true;
             return c;
         }
 

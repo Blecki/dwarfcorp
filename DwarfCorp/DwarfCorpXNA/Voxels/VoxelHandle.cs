@@ -314,9 +314,13 @@ namespace DwarfCorp
 
             if (blockDestroyed)
             {
+                // Invoke old voxel listener.
                 _cache_Chunk.NotifyDestroyed(Coordinate.GetLocalVoxelCoordinate());
                 VoxelHelpers.Reveal(_cache_Chunk.Manager.ChunkData, this);
             }
+
+            // Invoke new voxel listener.
+            _cache_Chunk.Manager.NotifyChangedVoxel(this);
         }
 
         private static void InvalidateVoxel(
@@ -324,7 +328,7 @@ namespace DwarfCorp
             GlobalVoxelCoordinate Coordinate,
             int Y)
         {
-            Chunk.InvalidateSlice(Coordinate.Y);
+            Chunk.InvalidateSlice(Y);
 
             var localCoordinate = Coordinate.GetLocalVoxelCoordinate();
 

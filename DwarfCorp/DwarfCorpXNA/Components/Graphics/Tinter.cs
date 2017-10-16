@@ -75,7 +75,7 @@ namespace DwarfCorp
             base.ReceiveMessageRecursive(messageToReceive);
         }
 
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (!LightsWithVoxels)
                 Tint = Color.White;
@@ -103,7 +103,7 @@ namespace DwarfCorp
         public void ApplyTintingToEffect(Shader effect)
         {
             effect.LightRampTint = Tint;
-                effect.VertexColorTint = VertexColorTint;
+            effect.VertexColorTint = VertexColorTint;
         }
     }
 

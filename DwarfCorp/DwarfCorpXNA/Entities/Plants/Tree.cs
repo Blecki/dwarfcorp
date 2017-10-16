@@ -43,14 +43,32 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     public class Tree : Plant
+#if DEBUG
+        , IRenderableComponent
+#endif
     {
         public Timer HurtTimer { get; set; }
 
         public Tree() { }
 
+#if DEBUG
+        void IRenderableComponent.Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
+        {
+            Drawer3D.DrawLine(this.LocalTransform.Translation, this.LocalTransform.Translation +
+                (Vector3.UnitY * 10), Color.Blue, 0.3f);
+            Drawer3D.DrawLine(this.LocalTransform.Translation, this.LocalTransform.Translation +
+                (Vector3.UnitX * 10), Color.Red, 0.3f);
+            Drawer3D.DrawLine(this.LocalTransform.Translation, this.LocalTransform.Translation +
+                (Vector3.UnitZ * 10), Color.Green, 0.3f);
+        }
+#endif
+
         public Tree(string name, ComponentManager manager, Vector3 position, string asset, ResourceLibrary.ResourceType seed, float treeSize, string seedlingAsset) :
-            base(manager, name, Matrix.Identity, new Vector3(PrimitiveLibrary.BatchBillboardPrimitives[asset].Width, 
-                PrimitiveLibrary.BatchBillboardPrimitives[asset].Height , PrimitiveLibrary.BatchBillboardPrimitives[asset].Width) * 0.75f * treeSize,
+            base(manager, name, Matrix.Identity, 
+                new Vector3(
+                    PrimitiveLibrary.BatchBillboardPrimitives[asset].Width * 0.75f * treeSize, 
+                    PrimitiveLibrary.BatchBillboardPrimitives[asset].Height * treeSize,
+                    PrimitiveLibrary.BatchBillboardPrimitives[asset].Width * 0.75f * treeSize),
              asset, treeSize)
         {
             Seedlingsheet = new SpriteSheet(seedlingAsset, 32, 32);
@@ -60,9 +78,9 @@ namespace DwarfCorp
             matrix.Translation = position;
             LocalTransform = matrix;
 
-            var meshTransform = GetComponent<InstanceMesh>().LocalTransform;
-            meshTransform = meshTransform*Matrix.CreateTranslation(0.5f, 0.0f, 0.5f);
-            GetComponent<InstanceMesh>().LocalTransform = meshTransform;
+            //var meshTransform = GetComponent<InstanceMesh>().LocalTransform;
+            //meshTransform = meshTransform*Matrix.CreateTranslation(0.0f, GetBoundingBox().Extents().Y / 2, 0.0f);
+            //GetComponent<InstanceMesh>().LocalTransform = meshTransform;
 
             AddChild(new Health(Manager, "HP", 100.0f * treeSize, 0.0f, 100.0f * treeSize));
             AddChild(new Flammable(Manager, "Flames"));
@@ -70,12 +88,18 @@ namespace DwarfCorp
             Tags.Add("Vegetation");
             Tags.Add("EmitsWood");
 
+            //AddChild(new NewVoxelListener(manager, Matrix.Identity, new Vector3(0.25f, 0.25f, 0.25f),
+            //    new Vector3(0.0f, -0.5f, 0.0f),
+            //    (v) => Die()));
+
+            
             var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                 manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(position)));
             if (voxelUnder.IsValid)
                 AddChild(new VoxelListener(manager, manager.World.ChunkManager,
                     voxelUnder));
+            
 
             Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)) as Inventory;
             
@@ -130,9 +154,9 @@ namespace DwarfCorp
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             base.CreateCosmeticChildren(manager);
-            var meshTransform = GetComponent<InstanceMesh>().LocalTransform;
-            meshTransform = meshTransform * Matrix.CreateTranslation(0.5f, 0.0f, 0.5f);
-            GetComponent<InstanceMesh>().LocalTransform = meshTransform;
+            //var meshTransform = GetComponent<InstanceMesh>().LocalTransform;
+            //meshTransform = meshTransform * Matrix.CreateTranslation(0.0f, GetBoundingBox().Extents().Y / 2, 0.0f);
+            //GetComponent<InstanceMesh>().LocalTransform = meshTransform;
         }
     }
 }

@@ -80,7 +80,7 @@ namespace DwarfCorp
             AddChild(new SimpleSprite(Manager, "sprite",
                 Matrix.CreateTranslation(diff * 0.2f + Vector3.Up * 0.2f),
                 false,
-                new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture),
+                new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32),
                 new Point(5, 0))
             {
                 OrientationType = SimpleSprite.OrientMode.YAxis,
@@ -90,6 +90,7 @@ namespace DwarfCorp
 
         private void CreateSprite()
         {
+            PropogateTransforms();
             var voxel = new VoxelHandle(Manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(LocalPosition));
             if (!voxel.IsValid)

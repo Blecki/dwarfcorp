@@ -13,6 +13,8 @@ namespace DwarfCorp.Gui.Widgets
     public class FramedIcon : Widget
     {
         public Vector4 Tint = Vector4.One;
+        public Vector4 EnabledTextColor = new Vector4(1, 1, 1, 1);
+        public Vector4 DisabledTextColor = new Vector4(0.15f, 0.15f, 0.15f, 1);
         
         public TileReference Icon = null;
         private bool _enabled = true;
@@ -84,6 +86,28 @@ namespace DwarfCorp.Gui.Widgets
             }
         }
 
+        private bool _drawHotkey = false;
+        public bool DrawHotkey
+        {
+            get { return _drawHotkey; }
+            set
+            {
+                _drawHotkey = value;
+                Invalidate();
+            }
+        }
+
+        private int _hotkeyValue = 0;
+        public int HotkeyValue
+        {
+            get { return _hotkeyValue; }
+            set
+            {
+                _hotkeyValue = value;
+                Invalidate();
+            }
+        }
+
         public override void Construct()
         {
             Background = new TileReference("icon-frame", 0);
@@ -145,6 +169,8 @@ namespace DwarfCorp.Gui.Widgets
 
             if (!string.IsNullOrEmpty(Text))
             {
+                if (Enabled) TextColor = EnabledTextColor;
+                else TextColor = DisabledTextColor;
                 base.GetTextMesh(meshes);
             }
 
@@ -167,6 +193,15 @@ namespace DwarfCorp.Gui.Widgets
                 meshes.Add(stringMesh.
                     Translate(Rect.Right - 8 - (numberSize.Width / 2),
                     Rect.Bottom - 8 - (numberSize.Height / 2)));
+            }
+
+            if (DrawHotkey && HotkeyValue <= 9)
+            {
+                var font = Root.GetTileSheet("14pt-numbers");
+                meshes.Add(Mesh.Quad()
+                    .TileScaleAndTexture(font, HotkeyValue)
+                    .Translate(Rect.X + (font.TileWidth / 2), Rect.Bottom - font.TileHeight)
+                    .Colorize(new Vector4(1,1,1,0.5f)));                
             }
 
             return Gui.Mesh.Merge(meshes.ToArray());

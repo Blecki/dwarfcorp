@@ -573,7 +573,15 @@ namespace DwarfCorp
                 file.WriteFile(
                     worldDirectory.FullName + Path.DirectorySeparatorChar + "world." + (DwarfGame.COMPRESSED_BINARY_SAVES ? OverworldFile.CompressedExtension : OverworldFile.Extension),
                     DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
-                file.SaveScreenshot(worldDirectory.FullName + Path.DirectorySeparatorChar + "screenshot.png");
+
+                try
+                {
+                    file.SaveScreenshot(worldDirectory.FullName + Path.DirectorySeparatorChar + "screenshot.png");
+                }
+                catch(Exception exception)
+                {
+                    Console.Error.WriteLine(exception.ToString());
+                }
 
                 gameFile = SaveGame.CreateFromWorld(this);
 
@@ -841,7 +849,7 @@ namespace DwarfCorp
 
             GamePerformance.Instance.StartTrackPerformance("Render - Drawer3D");
             // Render simple geometry (boxes, etc.)
-            Drawer3D.Render(GraphicsDevice, DefaultShader, Camera, DesignationDrawer);
+            Drawer3D.Render(GraphicsDevice, DefaultShader, Camera, DesignationDrawer, PlayerFaction.Designations, this);
             GamePerformance.Instance.StopTrackPerformance("Render - Drawer3D");
 
             GamePerformance.Instance.StartTrackPerformance("Render - Instances");
@@ -868,13 +876,14 @@ namespace DwarfCorp
 
 
 
-            if (Master.CurrentToolMode == GameMaster.ToolMode.Build)
+            if (Master.CurrentToolMode == GameMaster.ToolMode.BuildZone
+                || Master.CurrentToolMode == GameMaster.ToolMode.BuildWall ||
+                Master.CurrentToolMode == GameMaster.ToolMode.BuildObject)
             {
                 DefaultShader.View = Camera.ViewMatrix;
                 DefaultShader.Projection = Camera.ProjectionMatrix;
                 DefaultShader.SetTexturedTechnique();
                 GraphicsDevice.BlendState = BlendState.NonPremultiplied;
-                Master.Faction.WallBuilder.Render(gameTime, GraphicsDevice, DefaultShader);
                 Master.Faction.CraftBuilder.Render(gameTime, GraphicsDevice, DefaultShader);
             }
 

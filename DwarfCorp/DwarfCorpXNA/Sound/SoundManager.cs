@@ -364,15 +364,22 @@ namespace DwarfCorp
                 cue = SoundBank.GetCue(sound);
                 ActiveCues[sound] = cue;
             }
-            if (!cue.IsPlaying && !cue.IsStopped)
+            try
             {
-                cue.Play();
+                if (!cue.IsPlaying && !cue.IsStopped)
+                {
+                    cue.Play();
+                }
+                else if (cue.IsStopped)
+                {
+                    Cue newCue = SoundBank.GetCue(sound);
+                    newCue.Play();
+                    ActiveCues[sound] = newCue;
+                }
             }
-            else if (cue.IsStopped)
+            catch (InvalidOperationException exception)
             {
-                Cue newCue = SoundBank.GetCue(sound);
-                newCue.Play();
-                ActiveCues[sound] = newCue;
+                Console.Error.WriteLine(exception.ToString());
             }
         }
 

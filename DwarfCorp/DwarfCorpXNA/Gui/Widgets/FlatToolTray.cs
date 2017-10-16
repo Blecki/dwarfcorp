@@ -22,7 +22,7 @@ namespace DwarfCorp.Gui.Widgets
                         AddChild(child);
                         child.Hidden = true;
                     };
-
+                
                 base.Construct();
             }
 
@@ -41,8 +41,7 @@ namespace DwarfCorp.Gui.Widgets
 
                 foreach (var child in Children)
                 {
-                    child.Rect.X = Rect.X;
-                    child.Rect.Y = Rect.Y;
+                    child.Rect = Rect;
                     child.Layout();
                 }
             }
@@ -56,15 +55,18 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     SizeToGrid = new Point(ItemSource.Count(), 1);
                 }
-                Corners = Scale9Corners.Top | Scale9Corners.Right | Scale9Corners.Left;
+                Corners = 0; // Scale9Corners.Top | Scale9Corners.Right;
                 Hidden = true;
+                Transparent = true;
+                HotKeys = true;
+
                 base.Construct();
             }
-                        
+
             public void Hotkey(int Key)
             {
                 if (Key < 0 || Key >= Children.Count) return;
-                var icon = GetChild(Key) as Icon;
+                var icon = Children.FirstOrDefault(c => (c as FramedIcon).HotkeyValue == Key);
                 if (icon == null) return;
 
                 Root.SafeCall(icon.OnClick, icon, new InputEventArgs

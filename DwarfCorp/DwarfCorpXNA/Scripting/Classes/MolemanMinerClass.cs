@@ -208,7 +208,9 @@ namespace DwarfCorp
                 GameMaster.ToolMode.Dig,
                 GameMaster.ToolMode.Attack,
                 GameMaster.ToolMode.Gather,
-                GameMaster.ToolMode.Farm
+                GameMaster.ToolMode.Till,
+                GameMaster.ToolMode.Plant,
+                GameMaster.ToolMode.Wrangle,
             };
         }
 

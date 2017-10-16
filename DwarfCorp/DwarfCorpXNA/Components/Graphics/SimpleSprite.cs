@@ -41,7 +41,7 @@ namespace DwarfCorp
         {
             this.Sheet = Sheet;
             this.Frame = Frame;
-        }
+       }
 
         public SimpleSprite()
         {
@@ -95,8 +95,6 @@ namespace DwarfCorp
                     new Vector2(0.0f, 1.0f)
                 };
 
-
-
                 Vector2 pixelCoords = new Vector2(Frame.X * Sheet.FrameWidth, Frame.Y * Sheet.FrameHeight);
                 Vector2 normalizedCoords = new Vector2(pixelCoords.X / (float)Sheet.Width, pixelCoords.Y / (float)Sheet.Height);
                 var bounds = new Vector4(normalizedCoords.X + 0.001f, normalizedCoords.Y + 0.001f, normalizedCoords.X + normalizeX - 0.001f, normalizedCoords.Y + normalizeY - 0.001f);
@@ -105,8 +103,7 @@ namespace DwarfCorp
                 {
                     uvs[vert] = new Vector2(normalizedCoords.X + uvs[vert].X * normalizeX, normalizedCoords.Y + uvs[vert].Y * normalizeY);
                 }
-
-
+                
                 Vector3 topLeftFront = new Vector3(-0.5f * WorldWidth, 0.5f * WorldHeight, 0.0f);
                 Vector3 topRightFront = new Vector3(0.5f * WorldWidth, 0.5f * WorldHeight, 0.0f);
                 Vector3 btmRightFront = new Vector3(0.5f * WorldWidth, -0.5f * WorldHeight, 0.0f);

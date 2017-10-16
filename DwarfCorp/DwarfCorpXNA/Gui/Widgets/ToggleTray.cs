@@ -12,14 +12,14 @@ namespace DwarfCorp.Gui.Widgets
         private int _selectedChild = -1;
         public int SelectedChild { get { return _selectedChild; } private set { _selectedChild = value; } }
         public Vector4 ToggledTint = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-        public Vector4 OffTint = new Vector4(0.15f, 0.15f, 0.15f, 0.5f);
+        public Vector4 OffTint = new Vector4(1.0f, 1.0f, 1.0f, 0.6f);
         public Vector4 HoverTint = new Vector4(0.95f, 0.8f, 0.6f, 1.0f);
 
         public override void Construct()
         {
             base.Construct();
 
-
+            Border = null;
             for (int i = 0; i < Children.Count; i++)
             {
                 (Children[i] as FramedIcon).Tint = i == 0 ? ToggledTint : OffTint;

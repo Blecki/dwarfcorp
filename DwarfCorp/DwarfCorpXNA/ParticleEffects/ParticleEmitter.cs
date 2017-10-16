@@ -289,7 +289,7 @@ namespace DwarfCorp
             p.LifeRemaining = -1;
         }
 
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             ParticleEmitter._camera = camera;
 

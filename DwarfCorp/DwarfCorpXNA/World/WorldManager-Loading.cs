@@ -105,8 +105,10 @@ namespace DwarfCorp
 #if CREATE_CRASH_LOGS
             try
 #endif
+#if !DEBUG
             try
             {
+#endif
                 bool fileExists = !string.IsNullOrEmpty(ExistingFile);
 
                 SetLoadingMessage("Creating Sky...");
@@ -121,7 +123,7 @@ namespace DwarfCorp
                     Content.Load<Effect>(ContentPaths.Shaders.SkySphere),
                     Content.Load<Effect>(ContentPaths.Shaders.Background));
 
-                #region Reading game file
+#region Reading game file
 
                 if (fileExists)
                 {
@@ -165,9 +167,9 @@ namespace DwarfCorp
                     }
                 }
 
-                #endregion
+#endregion
 
-                #region Initialize static data
+#region Initialize static data
 
                 {
                     Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
@@ -212,7 +214,7 @@ namespace DwarfCorp
                     EntityFactory.Initialize(this);
                 }
 
-                #endregion
+#endregion
 
 
                 SetLoadingMessage("Creating Planner ...");
@@ -223,7 +225,7 @@ namespace DwarfCorp
 
                 SetLoadingMessage("Creating Liquids ...");
 
-                #region liquids
+#region liquids
 
                 WaterRenderer = new WaterRenderer(GraphicsDevice);
 
@@ -261,7 +263,7 @@ namespace DwarfCorp
 
                 WaterRenderer.AddLiquidAsset(lavaAsset);
 
-                #endregion
+#endregion
 
                 SetLoadingMessage("Generating Initial Terrain Chunks ...");
 
@@ -274,7 +276,7 @@ namespace DwarfCorp
                 };
 
 
-                #region Load Components
+#region Load Components
 
                 if (fileExists)
                 {
@@ -304,6 +306,14 @@ namespace DwarfCorp
                     Vector3 extents = new Vector3(1500, 1500, 1500);
                     CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
 
+                    foreach (var resource in gameFile.PlayData.Resources)
+                    {
+                        if (!ResourceLibrary.Resources.ContainsKey(resource.Key))
+                        {
+                            ResourceLibrary.Add(resource.Value);
+                        }
+                    }
+
                     ComponentManager = new ComponentManager(gameFile.PlayData.Components, this);
 
                     foreach (var component in gameFile.PlayData.Components.SaveableComponents)
@@ -313,14 +323,6 @@ namespace DwarfCorp
                         {
                             // Logically impossible.
                             throw new InvalidOperationException("Component exists in save data but not in manager.");
-                        }
-                    }
-
-                    foreach (var resource in gameFile.PlayData.Resources)
-                    {
-                        if (!ResourceLibrary.Resources.ContainsKey(resource.Key))
-                        {
-                            ResourceLibrary.Add(resource.Value);
                         }
                     }
 
@@ -407,23 +409,17 @@ namespace DwarfCorp
 
                     }
 
-                    #region Prepare Factions
+#region Prepare Factions
 
                     foreach (Faction faction in Natives)
                     {
                         faction.World = this;
-
-                        if (faction.WallBuilder == null)
-                            faction.WallBuilder = new PutDesignator(faction, this);
 
                         if (faction.RoomBuilder == null)
                             faction.RoomBuilder = new RoomBuilder(faction, this);
 
                         if (faction.CraftBuilder == null)
                             faction.CraftBuilder = new CraftBuilder(faction, this);
-
-                        faction.WallBuilder.World = this;
-
                     }
 
                     Factions = new FactionLibrary();
@@ -438,7 +434,7 @@ namespace DwarfCorp
                     Factions.Factions["Player"].Center = playerOrigin;
                     Factions.Factions["The Motherland"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
 
-                    #endregion
+#endregion
 
                     Diplomacy = new Diplomacy(this);
                     Diplomacy.Initialize(Time.CurrentDate);
@@ -461,7 +457,7 @@ namespace DwarfCorp
                 //Drawer3D.Camera = Camera;
 
 
-                #endregion
+#endregion
 
                 ChunkManager.camera = Camera;
 
@@ -485,18 +481,21 @@ namespace DwarfCorp
 
                 Thread.Sleep(1000);
                 ShowingWorld = true;
+
                 SetLoadingMessage("Complete.");
 
                 // GameFile is no longer needed.
                 gameFile = null;
                 LoadStatus = LoadingStatus.Success;
-            }
+#if !DEBUG
+        }
             catch (Exception exception)
             {
                 Game.CaptureException(exception);
                 LoadingException = exception;
                 LoadStatus = LoadingStatus.Failure;
             }
+#endif
         }
         
 

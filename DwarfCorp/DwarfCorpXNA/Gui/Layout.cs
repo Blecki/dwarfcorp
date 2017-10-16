@@ -60,6 +60,14 @@ namespace DwarfCorp.Gui
                         Inside.Y + Padding.Top, size.X, size.Y);
                     Inside = Inside.Interior(0, 0, size.X + Padding.Right, 0);
                     break;
+                case AutoLayout.DockRightCentered:
+                    // Same as dock right, except is the widget is too small, center it.
+                    size = GetClampedChildSize(Child, new Point(size.X, Inside.Height - Padding.Vertical));
+                    newPos = new Rectangle(Inside.Right - size.X - Padding.Right,
+                        Inside.Y + Padding.Top + (Inside.Height - Padding.Vertical - size.Y) / 2,
+                        size.X, size.Y);
+                    Inside = Inside.Interior(0, 0, size.X + Padding.Right, 0);
+                    break;
                 case AutoLayout.DockBottom:
                     size = GetClampedChildSize(Child, new Point(Inside.Width - Padding.Horizontal, size.Y));
                     newPos = new Rectangle(Inside.X + Padding.Left, 
@@ -69,6 +77,13 @@ namespace DwarfCorp.Gui
                 case AutoLayout.DockLeft:
                     size = GetClampedChildSize(Child, new Point(size.X, Inside.Height - Padding.Vertical));
                     newPos = new Rectangle(Inside.X + Padding.Left, Inside.Y + Padding.Top, size.X, size.Y);
+                    Inside = Inside.Interior(size.X + Padding.Left, 0, 0, 0);
+                    break;
+                case AutoLayout.DockLeftCentered:
+                    size = GetClampedChildSize(Child, new Point(size.X, Inside.Height - Padding.Vertical));
+                    newPos = new Rectangle(Inside.X + Padding.Left, 
+                        Inside.Y + Padding.Top + (Inside.Height - Padding.Vertical - size.Y) / 2,
+                        size.X, size.Y);
                     Inside = Inside.Interior(size.X + Padding.Left, 0, 0, 0);
                     break;
                 case AutoLayout.DockFill:

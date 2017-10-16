@@ -54,7 +54,7 @@ namespace DwarfCorp
         public GoToEntityAct()
         {
             PlanType = PlanAct.PlanType.Adjacent;
-            Radius = 0.0f;
+            Radius = 3.0f;
         }
 
         public bool EntityIsInHands()

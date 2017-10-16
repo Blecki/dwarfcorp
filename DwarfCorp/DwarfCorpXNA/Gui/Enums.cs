@@ -35,7 +35,9 @@ namespace DwarfCorp.Gui
         FloatTopRight,
         FloatTopLeft,
         FloatBottomRight,
-        FloatBottomLeft
+        FloatBottomLeft,
+        DockLeftCentered,
+        DockRightCentered,
     }
 
     public enum PopupDestructionType

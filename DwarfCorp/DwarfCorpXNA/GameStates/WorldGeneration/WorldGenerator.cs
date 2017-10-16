@@ -551,7 +551,6 @@ namespace DwarfCorp.GameStates
 
             for(int i = 0; i < numRains; i++)
             {
-                LoadingMessage = "Erosion " + i + "/" + numRains;
                 Progress = orig + remaining * ((float) i / (float) numRains);
                 Vector2 currentPos = new Vector2(0, 0);
                 Vector2 bestPos = currentPos;

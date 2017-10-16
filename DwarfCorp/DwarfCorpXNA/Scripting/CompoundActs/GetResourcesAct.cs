@@ -126,7 +126,8 @@ namespace DwarfCorp
 
                 if(nearestStockpile == null || (ResourcesToStash != null &&  ResourcesToStash.Count == 0))
                 {
-                    if (Resources.Any(r => r.ResourceType == Resource.ResourceTags.Edible) && Agent.Faction == Agent.World.PlayerFaction)
+                    if (Resources != null && 
+                        Resources.Any(r => r.ResourceType == Resource.ResourceTags.Edible) && Agent.Faction == Agent.World.PlayerFaction)
                     {
 
                         Agent.Manager.World.MakeAnnouncement("We're out of food!");
