@@ -88,18 +88,18 @@ namespace DwarfCorp
             Tags.Add("Vegetation");
             Tags.Add("EmitsWood");
 
-            //AddChild(new NewVoxelListener(manager, Matrix.Identity, new Vector3(0.25f, 0.25f, 0.25f),
-            //    new Vector3(0.0f, -0.5f, 0.0f),
-            //    (v) => Die()));
+            AddChild(new NewVoxelListener(manager, Matrix.Identity, new Vector3(0.25f, 0.25f, 0.25f),
+                new Vector3(0.0f, -0.5f, 0.0f),
+                (v) => Die()));
 
-            
+            /*
             var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                 manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(position)));
             if (voxelUnder.IsValid)
                 AddChild(new VoxelListener(manager, manager.World.ChunkManager,
                     voxelUnder));
-            
+            */
 
             Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)) as Inventory;
             
