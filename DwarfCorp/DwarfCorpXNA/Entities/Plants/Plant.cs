@@ -93,7 +93,8 @@ namespace DwarfCorp
 
         public void CreateMesh(ComponentManager manager)
         {
-            var mesh = AddChild(new InstanceMesh(manager, "Model", Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(MeshScale, MeshScale, MeshScale) * Matrix.CreateTranslation(GetBoundingBox().Center()), MeshAsset, false));
+            PropogateTransforms();
+            var mesh = AddChild(new InstanceMesh(manager, "Model", Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(MeshScale, MeshScale, MeshScale) * Matrix.CreateTranslation(GetBoundingBox().Center() - Position), MeshAsset, false));
             mesh.SetFlag(Flag.ShouldSerialize, false);
         }
 
