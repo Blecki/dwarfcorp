@@ -136,7 +136,7 @@ namespace DwarfCorp
 
                 if (ValidatePlanting(voxel))
                 {
-                    var existingTile = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType.Farm) as FarmTile;
+                    var existingTile = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType.Farm | DesignationType.Plant) as FarmTile;
                     if (existingTile == null) continue;
 
                     Player.Faction.Designations.RemoveVoxelDesignation(voxel, DesignationType.Farm);

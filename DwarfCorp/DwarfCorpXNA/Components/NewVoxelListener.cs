@@ -67,7 +67,8 @@ namespace DwarfCorp
 #if DEBUG
         void IRenderableComponent.Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Microsoft.Xna.Framework.Graphics.GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
-            Drawer3D.DrawBox(GetBoundingBox(), Color.DarkRed, 0.02f, false);
+            if (GamePerformance.DebugVisualizationEnabled)
+                Drawer3D.DrawBox(GetBoundingBox(), Color.DarkRed, 0.02f, false);
         }
 #endif
 

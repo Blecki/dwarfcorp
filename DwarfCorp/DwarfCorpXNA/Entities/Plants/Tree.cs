@@ -54,12 +54,15 @@ namespace DwarfCorp
 #if DEBUG
         void IRenderableComponent.Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
-            Drawer3D.DrawLine(this.LocalTransform.Translation, this.LocalTransform.Translation +
-                (Vector3.UnitY * 10), Color.Blue, 0.3f);
-            Drawer3D.DrawLine(this.LocalTransform.Translation, this.LocalTransform.Translation +
-                (Vector3.UnitX * 10), Color.Red, 0.3f);
-            Drawer3D.DrawLine(this.LocalTransform.Translation, this.LocalTransform.Translation +
-                (Vector3.UnitZ * 10), Color.Green, 0.3f);
+            if (GamePerformance.DebugVisualizationEnabled)
+            {
+                Drawer3D.DrawLine(this.LocalTransform.Translation, this.LocalTransform.Translation +
+                    (Vector3.UnitY * 10), Color.Blue, 0.3f);
+                Drawer3D.DrawLine(this.LocalTransform.Translation, this.LocalTransform.Translation +
+                    (Vector3.UnitX * 10), Color.Red, 0.3f);
+                Drawer3D.DrawLine(this.LocalTransform.Translation, this.LocalTransform.Translation +
+                    (Vector3.UnitZ * 10), Color.Green, 0.3f);
+            }
         }
 #endif
 
