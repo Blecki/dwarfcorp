@@ -320,7 +320,7 @@ namespace DwarfCorp
             }
 
             // Invoke new voxel listener.
-            _cache_Chunk.Manager.NotifyChangedVoxel(this);
+            _cache_Chunk.Manager.NotifyChangedVoxel(this, previous, (int)NewType.ID);
         }
 
         private static void InvalidateVoxel(

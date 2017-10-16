@@ -81,9 +81,6 @@ namespace DwarfCorp
             matrix.Translation = position;
             LocalTransform = matrix;
 
-            //var meshTransform = GetComponent<InstanceMesh>().LocalTransform;
-            //meshTransform = meshTransform*Matrix.CreateTranslation(0.0f, GetBoundingBox().Extents().Y / 2, 0.0f);
-            //GetComponent<InstanceMesh>().LocalTransform = meshTransform;
 
             AddChild(new Health(Manager, "HP", 100.0f * treeSize, 0.0f, 100.0f * treeSize));
             AddChild(new Flammable(Manager, "Flames"));
@@ -91,18 +88,14 @@ namespace DwarfCorp
             Tags.Add("Vegetation");
             Tags.Add("EmitsWood");
 
-            AddChild(new NewVoxelListener(manager, Matrix.Identity, new Vector3(0.25f, 0.25f, 0.25f),
-                new Vector3(0.0f, -0.5f, 0.0f),
-                (v) => Die()));
-
-            /*
+            //*
             var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                 manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(position)));
             if (voxelUnder.IsValid)
                 AddChild(new VoxelListener(manager, manager.World.ChunkManager,
                     voxelUnder));
-            */
+            //*/
 
             Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)) as Inventory;
             
@@ -157,9 +150,10 @@ namespace DwarfCorp
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             base.CreateCosmeticChildren(manager);
-            //var meshTransform = GetComponent<InstanceMesh>().LocalTransform;
-            //meshTransform = meshTransform * Matrix.CreateTranslation(0.0f, GetBoundingBox().Extents().Y / 2, 0.0f);
-            //GetComponent<InstanceMesh>().LocalTransform = meshTransform;
+
+            AddChild(new NewVoxelListener(manager, Matrix.Identity, new Vector3(0.25f, 0.25f, 0.25f),
+                new Vector3(0.0f, -0.5f, 0.0f),
+                (v) => Die())).SetFlag(Flag.ShouldSerialize, false);
         }
     }
 }

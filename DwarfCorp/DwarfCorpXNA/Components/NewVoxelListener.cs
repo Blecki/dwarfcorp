@@ -46,7 +46,13 @@ namespace DwarfCorp
         , IRenderableComponent
 #endif
     {
-        private Action<VoxelHandle> Handler;
+        private Action<ChangedVoxel> Handler;
+
+        [OnSerializing]
+        void Serializer(StreamingContext Context)
+        {
+            throw new InvalidProgramException("DO NOT SERIALIZE LISTENERS");
+        }
 
         public NewVoxelListener()
         {
@@ -57,7 +63,7 @@ namespace DwarfCorp
             Matrix Transform,
             Vector3 BoundingBoxExtents,
             Vector3 BoundingBoxOffset,
-            Action<VoxelHandle> Handler) :
+            Action<ChangedVoxel> Handler) :
             base(Manager, "New Voxel Listener", Transform, BoundingBoxExtents, BoundingBoxOffset, true)
         {
             CollisionType = CollisionManager.CollisionType.Static;
@@ -72,7 +78,7 @@ namespace DwarfCorp
         }
 #endif
 
-        public void OnVoxelChanged(VoxelHandle V)
+        public void OnVoxelChanged(ChangedVoxel V)
         {
             if (Handler != null)
                 Handler(V);
