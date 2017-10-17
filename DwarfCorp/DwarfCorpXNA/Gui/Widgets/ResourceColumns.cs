@@ -215,13 +215,12 @@ namespace DwarfCorp.Gui.Widgets
 
             var icon = r.AddChild(new ResourceIcon()
             {
-                MinimumSize = new Point(32 + 16, 32),
-                MaximumSize = new Point(32 + 16, 32),
+                MinimumSize = new Point(32 + 24, 32 + 16),
+                MaximumSize = new Point(32 + 24, 32 + 16),
                 Layers = resourceInfo.GuiLayers,
                 AutoLayout = AutoLayout.DockLeft,
                 BackgroundColor = Resource.NumResources > 0 ? resourceInfo.Tint.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
-                Font = "font8",
-                TextColor = Color.Black.ToVector4(),
+                TextColor = Color.White.ToVector4(),
                 TextHorizontalAlign = HorizontalAlign.Right,
                 TextVerticalAlign = VerticalAlign.Bottom
             });
@@ -264,16 +263,19 @@ namespace DwarfCorp.Gui.Widgets
             LineItem.GetChild(1).Invalidate();
             LineItem.GetChild(2).Text = String.Format("{0}",
                 ValueSourceEntity.ComputeValue(Resource.ResourceType));
-            var counter = LineItem.GetChild(0);
+            var counter = LineItem.GetChild(0).Children.Last();
             counter.Text = Resource.NumResources.ToString();
             counter.Invalidate();
             LineItem.GetChild(0).Invalidate();
             LineItem.Tooltip = resourceInfo.ResourceName + "\n" + resourceInfo.Description;
             for (int i = 0; i < 3; i++)
             {
-                LineItem.GetChild(i).TextColor = Resource.NumResources > 0
-                    ? Color.Black.ToVector4()
-                    : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
+                if (i > 0)
+                {
+                    LineItem.GetChild(i).TextColor = Resource.NumResources > 0
+                        ? Color.Black.ToVector4()
+                        : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
+                }
                 LineItem.GetChild(i).BackgroundColor = Resource.NumResources > 0
                     ? resourceInfo.Tint.ToVector4()
                     : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);

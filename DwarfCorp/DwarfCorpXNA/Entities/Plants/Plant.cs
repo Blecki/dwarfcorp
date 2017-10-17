@@ -78,12 +78,12 @@ namespace DwarfCorp
             SetFlagRecursive(Flag.Visible, false);
             VoxelHandle below = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(Manager.World.ChunkManager.ChunkData, 
                 new GlobalVoxelCoordinate((int)LocalTransform.Translation.X, 
-                (int)LocalTransform.Translation.Y, (int)LocalTransform.Translation.Z)));
+                (int)LocalTransform.Translation.Y + 1, (int)LocalTransform.Translation.Z)));
             Vector3 pos = LocalTransform.Translation;
             pos += new Vector3(0, 0.5f, 0);
             if (below.IsValid)
             {
-                pos = below.WorldPosition + new Vector3(0.0f, 1.0f, 0.0f);
+                pos = below.WorldPosition + new Vector3(0.0f, 1.5f, 0.0f);
             }
             return Parent.AddChild(new Seedling(Manager, this, pos, Seedlingsheet, SeedlingFrame)
             {
