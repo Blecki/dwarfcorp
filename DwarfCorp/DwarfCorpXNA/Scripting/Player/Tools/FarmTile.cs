@@ -46,6 +46,7 @@ namespace DwarfCorp
         public float Progress = 0.0f;
         public CreatureAI Farmer = null;
         public bool IsCanceled = false;
+        public string PlantedType = null;
         public DesignationType ActiveDesignations = DesignationType._None;
 
         public bool IsTilled()
@@ -63,9 +64,10 @@ namespace DwarfCorp
             return !(Plant == null || Plant.IsDead);
         }
 
-        public void CreatePlant(string plantToCreate, WorldManager world)
+        public void CreatePlant(string SeedResourceType, WorldManager world)
         {
-            Plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[plantToCreate].PlantToGenerate, Voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f));
+            PlantedType = SeedResourceType;
+            Plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[SeedResourceType].PlantToGenerate, Voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f));
             
             Matrix original = Plant.LocalTransform;
             original.Translation += Vector3.Down;

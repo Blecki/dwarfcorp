@@ -46,6 +46,7 @@ namespace DwarfCorp
     {
         public DateTime FullyGrownDay { get; set; }
         public String AdultName;
+        public FarmTile Farm;
 
         public Seedling()
         {
@@ -77,6 +78,7 @@ namespace DwarfCorp
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_plant_grow, Position, true);
             var adult = EntityFactory.CreateEntity<Plant>(AdultName, LocalPosition);
             adult.IsGrown = true;
+            if (Farm != null) Farm.Plant = adult;
             Die();
         }
     }

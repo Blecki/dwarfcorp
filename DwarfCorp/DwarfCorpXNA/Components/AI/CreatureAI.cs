@@ -771,17 +771,39 @@ namespace DwarfCorp
                 // Farm stuff if applicable
                 if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Chop) && MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction)
                 {
-                    var task = Faction.Designations.EnumerateDesignations(DesignationType.Plant)
+                    var firstFarm = Faction.Designations.EnumerateDesignations(DesignationType._InactiveFarm)
                         .Select(d => d.Tag as FarmTile)
-                        .Where(t => t.PlantExists() && t.Plant.IsGrown && !t.IsCanceled)
-                        .Select(t => new KillEntityTask(t.Plant, KillEntityTask.KillType.Chop))
                         .FirstOrDefault();
 
-                    if (task != null)
+                    if (firstFarm != null)
                     {
-                        Faction.Designations.AddEntityDesignation(task.EntityToKill, DesignationType.Chop);
-                        return task;
-                    }
+                        if (firstFarm.PlantExists() && firstFarm.Plant.IsGrown && !firstFarm.IsCanceled)
+                        {
+                            var task = new KillEntityTask(firstFarm.Plant, KillEntityTask.KillType.Chop);
+                            Faction.Designations.AddEntityDesignation(firstFarm.Plant, DesignationType.Chop);
+                            return task;
+                        }
+                        else if (firstFarm.Farmer == null && !firstFarm.PlantExists() && !String.IsNullOrEmpty(firstFarm.PlantedType))
+                        {
+                            int currentAmount = Creature.Faction.ListResources()
+                                .Sum(resource => resource.Key == firstFarm.PlantedType && resource.Value.NumResources > 0 ? resource.Value.NumResources : 0);
+
+                            if (currentAmount > 0)
+                            {
+                                Creature.Faction.Designations.RemoveVoxelDesignation(firstFarm.Voxel, DesignationType._AllFarms);
+                                Creature.Faction.Designations.AddVoxelDesignation(firstFarm.Voxel, DesignationType.Plant, firstFarm);
+
+                                var task = new FarmTask(firstFarm)
+                                {
+                                    Mode = FarmAct.FarmMode.Plant,
+                                    Plant = firstFarm.PlantedType,
+                                    RequiredResources = new List<ResourceAmount>()
+                                };
+
+                                firstFarm.Farmer = this;
+                            }
+                        }
+                    }                    
                 }
 
                 // Find a room to train in, if applicable.
