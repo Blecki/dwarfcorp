@@ -52,21 +52,15 @@ namespace DwarfCorp
 
         private void InitializeVegetationInstanceMeshes(ContentManager content)
         {
-            CreateXMeshInstanceType("pine", content);
-            CreateXMeshInstanceType("palm", content);
-            CreateXMeshInstanceType("snowpine", content);
-            CreateXMeshInstanceType("appletree", content);
-            CreateXMeshInstanceType("berrybush", content);
-            CreateXMeshInstanceType("cactus", content);
-            CreateXMeshInstanceType("grass", content, false);
-            CreateXMeshInstanceType("frostgrass", content, false);
-            CreateXMeshInstanceType("flower", content, false);
-            CreateXMeshInstanceType("deadbush", content, false);
-            CreateXMeshInstanceType("vine", content, false);
-            CreateXMeshInstanceType("gnarled", content, false);
-            CreateXMeshInstanceType("mushroom", content);
-            CreateXMeshInstanceType("wheat", content);
-            CreateXMeshInstanceType("caveshroom", content);
+            foreach (var member in typeof(ContentPaths.Entities.Plants).GetFields())
+                if (member.IsStatic && member.FieldType == typeof(String))
+                {
+                    bool isMote = false;
+                    foreach (var attribute in member.GetCustomAttributes(false))
+                        if (attribute is MoteAttribute)
+                            isMote = true;
+                    CreateXMeshInstanceType(member.Name, content, !isMote);
+                }
         }
 
         public enum RenderMode

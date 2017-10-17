@@ -10,7 +10,6 @@ namespace DwarfCorp
 {
     public class InstanceRenderData
     {
-        [JsonIgnore]
         public GeometricPrimitive Model { get; set; }
         public Texture2D Texture { get; set; }
         public BlendState BlendMode { get; set; }

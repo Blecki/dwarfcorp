@@ -66,11 +66,10 @@ namespace DwarfCorp
         public void CreatePlant(string plantToCreate, WorldManager world)
         {
             Plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[plantToCreate].PlantToGenerate, Voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f));
-            Seedling seed = Plant.BecomeSeedling();
-
+            
             Matrix original = Plant.LocalTransform;
             original.Translation += Vector3.Down;
-            seed.AnimationQueue.Add(new EaseMotion(0.5f, original, Plant.LocalTransform.Translation));
+            Plant.AnimationQueue.Add(new EaseMotion(0.5f, original, Plant.LocalTransform.Translation));
 
             world.ParticleManager.Trigger("puff", original.Translation, Color.White, 20);
 

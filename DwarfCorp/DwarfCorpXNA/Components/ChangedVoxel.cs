@@ -5,10 +5,17 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    public class ChangedVoxel
+    public enum VoxelChangeEventType
     {
+        VoxelTypeChanged,
+        // Todo: Revealed, etc.
+    }
+
+    public class VoxelChangeEvent
+    {
+        public VoxelChangeEventType Type;
         public VoxelHandle Voxel;
-        public int OriginalType;
-        public int NewType;
+        public short OriginalVoxelType;
+        public short NewVoxelType;
     }
 }

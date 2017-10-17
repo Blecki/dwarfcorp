@@ -67,15 +67,14 @@ namespace DwarfCorp
 #endif
 
         public Tree(string name, ComponentManager manager, Vector3 position, string asset, ResourceLibrary.ResourceType seed, float treeSize, string seedlingAsset) :
-            base(manager, name, Matrix.Identity, 
+            base(manager, name, Matrix.Identity,
                 new Vector3(
-                    PrimitiveLibrary.BatchBillboardPrimitives[asset].Width * 0.75f * treeSize, 
+                    PrimitiveLibrary.BatchBillboardPrimitives[asset].Width * 0.75f * treeSize,
                     PrimitiveLibrary.BatchBillboardPrimitives[asset].Height * treeSize,
                     PrimitiveLibrary.BatchBillboardPrimitives[asset].Width * 0.75f * treeSize),
              asset, treeSize)
         {
-            Seedlingsheet = new SpriteSheet(seedlingAsset, 32, 32);
-            SeedlingFrame = new Point(0, 0);
+            SeedlingAsset = seedlingAsset;
             HurtTimer = new Timer(1.0f, false);
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position;
@@ -88,7 +87,7 @@ namespace DwarfCorp
             Tags.Add("Vegetation");
             Tags.Add("EmitsWood");
 
-            //*
+            /*
             var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                 manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(position)));
@@ -98,7 +97,7 @@ namespace DwarfCorp
             //*/
 
             Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)) as Inventory;
-            
+
             // Can these be spawned when the tree dies rather than when it is created?
             for (int i = 0; i < treeSize * 10; i++)
             {
@@ -123,7 +122,7 @@ namespace DwarfCorp
             {
                 SoundToPlay = ContentPaths.Audio.Oscar.sfx_env_tree_cut_down_1
             });
-            
+
             AddToCollisionManager = true;
             CollisionType = CollisionManager.CollisionType.Static;
             PropogateTransforms();
@@ -144,16 +143,6 @@ namespace DwarfCorp
             }
 
             base.ReceiveMessageRecursive(messageToReceive);
-        }
-
-
-        public override void CreateCosmeticChildren(ComponentManager manager)
-        {
-            base.CreateCosmeticChildren(manager);
-
-            AddChild(new NewVoxelListener(manager, Matrix.Identity, new Vector3(0.25f, 0.25f, 0.25f),
-                new Vector3(0.0f, -0.5f, 0.0f),
-                (v) => Die())).SetFlag(Flag.ShouldSerialize, false);
         }
     }
 }

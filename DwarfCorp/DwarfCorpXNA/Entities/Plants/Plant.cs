@@ -44,9 +44,7 @@ namespace DwarfCorp
 {
     public class Plant : Body
     {
-        public SpriteSheet Seedlingsheet { get; set; }
-        public Point SeedlingFrame { get; set; }
-        public int GrowthDays { get; set; }
+        public String SeedlingAsset { get; set; }
         public int GrowthHours { get; set; }
         public bool IsGrown { get; set; }
         public string MeshAsset { get; set; }
@@ -54,7 +52,6 @@ namespace DwarfCorp
 
         public Plant()
         {
-            GrowthDays = 0;
             GrowthHours = 12;
             IsGrown = false;
         }
@@ -65,43 +62,34 @@ namespace DwarfCorp
         {
             MeshAsset = meshAsset;
             MeshScale = meshScale;
-            GrowthDays = 0;
             GrowthHours = 12;
             IsGrown = false;
-            CreateMesh(Manager);
+            impl_CreateCosmeticChildren(Manager);
         }
-
-        public virtual Seedling BecomeSeedling()
-        {
-            UpdateTransform();
-            SetFlagRecursive(Flag.Active, false);
-            SetFlagRecursive(Flag.Visible, false);
-            VoxelHandle below = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(Manager.World.ChunkManager.ChunkData, 
-                new GlobalVoxelCoordinate((int)LocalTransform.Translation.X, 
-                (int)LocalTransform.Translation.Y, (int)LocalTransform.Translation.Z)));
-            Vector3 pos = LocalTransform.Translation;
-            pos += new Vector3(0, 0.5f, 0);
-            if (below.IsValid)
-            {
-                pos = below.WorldPosition + new Vector3(0.0f, 1.0f, 0.0f);
-            }
-            return Parent.AddChild(new Seedling(Manager, this, pos, Seedlingsheet, SeedlingFrame)
-            {
-                FullyGrownDay = Manager.World.Time.CurrentDate.AddHours(GrowthHours).AddDays(GrowthDays)
-            }) as Seedling;
-        }
-
-        public void CreateMesh(ComponentManager manager)
+        
+        private void impl_CreateCosmeticChildren(ComponentManager Manager)
         {
             PropogateTransforms();
-            var mesh = AddChild(new InstanceMesh(manager, "Model", Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(MeshScale, MeshScale, MeshScale) * Matrix.CreateTranslation(GetBoundingBox().Center() - Position), MeshAsset, false));
+            var mesh = AddChild(new InstanceMesh(Manager, "Model", Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(MeshScale, MeshScale, MeshScale) * Matrix.CreateTranslation(GetBoundingBox().Center() - Position), MeshAsset, false));
             mesh.SetFlag(Flag.ShouldSerialize, false);
+
+            AddChild(new NewVoxelListener(Manager,
+                Matrix.Identity,
+                new Vector3(0.25f, 0.25f, 0.25f),
+                new Vector3(0.0f, -0.5f, 0.0f),
+                (v) =>
+                {
+                    if (v.Type == VoxelChangeEventType.VoxelTypeChanged 
+                        && (v.NewVoxelType == 0 || !VoxelLibrary.GetVoxelType(v.NewVoxelType).IsSoil))
+                        Die();
+                }))
+                .SetFlag(Flag.ShouldSerialize, false);
         }
 
-        public override void CreateCosmeticChildren(ComponentManager manager)
+        public override void CreateCosmeticChildren(ComponentManager Manager)
         {
-            CreateMesh(manager);
-            base.CreateCosmeticChildren(manager);
+            impl_CreateCosmeticChildren(Manager);
+            base.CreateCosmeticChildren(Manager);
         }
     }
 }

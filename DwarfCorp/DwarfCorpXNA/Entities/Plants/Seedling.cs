@@ -42,51 +42,25 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Seedling : Fixture, IUpdateableComponent
+    public class Seedling : Plant, IUpdateableComponent
     {
         public DateTime FullyGrownDay { get; set; }
-        public DateTime Birthday { get; set; }
-        public Plant Adult { get; set; }
-        public bool IsGrown { get; set; }
+        public String AdultName;
+
         public Seedling()
         {
             IsGrown = false;
         }
 
-        public Seedling(ComponentManager Manager, Plant adult, Vector3 position, SpriteSheet asset, Point frame) :
-            base(Manager, position, asset, frame)
+        public Seedling(ComponentManager Manager, String AdultName, Vector3 position, String Asset, int GrowthHours) :
+            base(Manager, "seedling", Matrix.CreateTranslation(position), Vector3.One, Asset, 1.0f)
         {
+            FullyGrownDay = Manager.World.Time.CurrentDate.AddHours(GrowthHours);
             IsGrown = false;
-            Adult = adult;
-            Name = adult.Name + " seedling";
+            Name = AdultName + " seedling";
+            this.AdultName = AdultName;
             AddChild(new Health(Manager, "HP", 1.0f, 0.0f, 1.0f));
             AddChild(new Flammable(Manager, "Flames"));
-
-            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
-                Manager.World.ChunkManager.ChunkData,
-                GlobalVoxelCoordinate.FromVector3(position)));
-            if (voxelUnder.IsValid)
-                AddChild(new VoxelListener(Manager, Manager.World.ChunkManager,
-                    voxelUnder));
-
-        }
-
-        public override void Delete()
-        {
-            if (!IsGrown)
-            {
-                Adult.Delete();
-            }
-            base.Delete();
-        }
-
-        public override void Die()
-        {
-            if (!IsGrown)
-            {
-                Adult.Delete();
-            }
-            base.Die();
         }
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
@@ -101,10 +75,8 @@ namespace DwarfCorp
         public void CreateAdult()
         {
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_plant_grow, Position, true);
-            IsGrown = true;
-            Adult.IsGrown = true;
-            Adult.SetFlagRecursive(Flag.Active, true);
-            Adult.SetFlagRecursive(Flag.Visible, true);
+            var adult = EntityFactory.CreateEntity<Plant>(AdultName, LocalPosition);
+            adult.IsGrown = true;
             Die();
         }
     }
