@@ -135,7 +135,7 @@ namespace DwarfCorp.Gui.Widgets
                 new HorizontalMenuTray.MenuItem
                 {
                     Text = "DWARF BUX",
-                    OnClick = (sender, args) => Master.Faction.AddMoney(1000m)
+                    OnClick = (sender, args) => Master.Faction.AddMoney(100m)
                 },
                 new HorizontalMenuTray.MenuItem
                 {

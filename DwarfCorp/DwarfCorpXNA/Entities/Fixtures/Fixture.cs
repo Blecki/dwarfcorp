@@ -81,6 +81,18 @@ namespace DwarfCorp
             CreateCosmeticChildren(Manager);
         }
 
+        public void ResetSprite(SpriteSheet asset, Point frame)
+        {
+            Asset = asset;
+            Frame = frame;
+            var childrenToKill = Children.OfType<SimpleSprite>().ToList();
+            foreach(var child in childrenToKill)
+            {
+                child.Delete();
+            }
+            CreateCosmeticChildren(Manager);
+        }
+
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             base.CreateCosmeticChildren(manager);
