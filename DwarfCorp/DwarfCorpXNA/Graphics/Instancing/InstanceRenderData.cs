@@ -10,9 +10,8 @@ namespace DwarfCorp
 {
     public class InstanceRenderData
     {
-        public GeometricPrimitive Model { get; set; }
-        public Texture2D Texture { get; set; }
-        public BlendState BlendMode { get; set; }
+        public BatchBillboardPrimitive Model;
+        public BlendState BlendMode;
         public bool EnableWind = false;
         public bool RenderInSelectionBuffer = true;
     }

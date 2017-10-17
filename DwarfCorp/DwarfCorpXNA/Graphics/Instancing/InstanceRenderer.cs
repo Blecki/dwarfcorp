@@ -24,34 +24,16 @@ namespace DwarfCorp
 
         private Dictionary<string, InstanceGroup> InstanceTypes = new Dictionary<string, InstanceGroup>();
 
-        public InstanceRenderer(ContentManager Content)
+        public InstanceRenderer(GraphicsDevice Device, ContentManager Content)
         {
-            InitializeVegetationInstanceMeshes(Content);
-        }
+            List<Matrix> treeTransforms = new List<Matrix>();
+            treeTransforms.Add(Matrix.Identity);
+            treeTransforms.Add(Matrix.CreateRotationY(1.57f));
 
-        private void CreateXMeshInstanceType(
-            string name, 
-            ContentManager content, 
-            bool addToSelectionBuffer = true)
-        {
-            if (!PrimitiveLibrary.BatchBillboardPrimitives.ContainsKey(name))
-                PrimitiveLibrary.CreateIntersecting(name, name, GameState.Game.GraphicsDevice, content);
+            List<Color> treeTints = new List<Color>();
+            treeTints.Add(Color.White);
+            treeTints.Add(Color.White);
 
-            InstanceTypes.Add(name, new InstanceGroup
-            {
-                RenderData = new InstanceRenderData
-                {
-                    Model = PrimitiveLibrary.BatchBillboardPrimitives[name],
-                    Texture = PrimitiveLibrary.BatchBillboardPrimitives[name].Texture,
-                    BlendMode = BlendState.NonPremultiplied,
-                    EnableWind = true,
-                    RenderInSelectionBuffer = addToSelectionBuffer
-                }
-            });
-        }
-
-        private void InitializeVegetationInstanceMeshes(ContentManager content)
-        {
             foreach (var member in typeof(ContentPaths.Entities.Plants).GetFields())
                 if (member.IsStatic && member.FieldType == typeof(String))
                 {
@@ -59,7 +41,18 @@ namespace DwarfCorp
                     foreach (var attribute in member.GetCustomAttributes(false))
                         if (attribute is MoteAttribute)
                             isMote = true;
-                    CreateXMeshInstanceType(member.Name, content, !isMote);
+
+                    InstanceTypes.Add(member.Name, new InstanceGroup
+                    {
+                        RenderData = new InstanceRenderData
+                        {
+                            Model = PrimitiveLibrary.BatchBillboardPrimitives[member.Name],
+                            BlendMode = BlendState.NonPremultiplied,
+                            EnableWind = true,
+                            RenderInSelectionBuffer = !isMote
+                        }
+                    });
+
                 }
         }
 
@@ -134,7 +127,7 @@ namespace DwarfCorp
             BlendState blendState = Device.BlendState;
             Device.BlendState = Mode == RenderMode.Normal ? Group.RenderData.BlendMode : BlendState.Opaque;
 
-            Effect.MainTexture = Group.RenderData.Texture;
+            Effect.MainTexture = Group.RenderData.Model.Texture;
             Effect.LightRampTint = Color.White;
 
             InstanceBuffer.SetData(Group.Instances, 0, Group.InstanceCount, SetDataOptions.Discard);

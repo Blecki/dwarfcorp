@@ -14,10 +14,10 @@ namespace DwarfCorp
         private InstanceRenderer Renderer;
         private ulong RenderPass = 0;
 
-        public NewInstanceManager(BoundingBox Bounds, ContentManager Content)
+        public NewInstanceManager(GraphicsDevice Device, BoundingBox Bounds, ContentManager Content)
         {
             OctTree = new OctTreeNode<NewInstanceData>(Bounds.Min, Bounds.Max);
-            Renderer = new InstanceRenderer(Content);
+            Renderer = new InstanceRenderer(Device, Content);
         }
 
         public void RemoveInstance(NewInstanceData Instance)
