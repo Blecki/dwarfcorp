@@ -8,6 +8,7 @@ namespace DwarfCorp
     public enum VoxelChangeEventType
     {
         VoxelTypeChanged,
+        RampsChanged,
         // Todo: Revealed, etc.
     }
 
@@ -17,5 +18,7 @@ namespace DwarfCorp
         public VoxelHandle Voxel;
         public short OriginalVoxelType;
         public short NewVoxelType;
+        public RampType OldRamps;
+        public RampType NewRamps;
     }
 }

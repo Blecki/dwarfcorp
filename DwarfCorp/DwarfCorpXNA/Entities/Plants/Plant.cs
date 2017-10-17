@@ -64,6 +64,15 @@ namespace DwarfCorp
             MeshScale = meshScale;
             GrowthHours = 12;
             IsGrown = false;
+
+            var under = new VoxelHandle(Manager.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(LocalTransform.Translation - new Vector3(0.0f, 0.5f, 0.0f)));
+            if (under.IsValid && under.RampType != RampType.None)
+            {
+                var local = LocalTransform;
+                local.Translation -= new Vector3(0.0f, 0.5f, 0.0f);
+                LocalTransform = local;
+            }
+
             impl_CreateCosmeticChildren(Manager);
         }
         
@@ -75,13 +84,28 @@ namespace DwarfCorp
 
             AddChild(new NewVoxelListener(Manager,
                 Matrix.Identity,
-                new Vector3(0.25f, 0.25f, 0.25f),
-                new Vector3(0.0f, -0.5f, 0.0f),
+                new Vector3(0.25f, 0.25f, 0.25f), // Position just below surface.
+                new Vector3(0.0f, -0.30f, 0.0f),
                 (v) =>
                 {
                     if (v.Type == VoxelChangeEventType.VoxelTypeChanged 
                         && (v.NewVoxelType == 0 || !VoxelLibrary.GetVoxelType(v.NewVoxelType).IsSoil))
                         Die();
+                    else if (v.Type == VoxelChangeEventType.RampsChanged)
+                    {
+                        if (v.OldRamps != RampType.None && v.NewRamps == RampType.None)
+                        {
+                            var local = LocalTransform;
+                            local.Translation += new Vector3(0.0f, 0.5f, 0.0f);
+                            LocalTransform = local;
+                        }
+                        else if (v.OldRamps == RampType.None && v.NewRamps != RampType.None)
+                        {
+                            var local = LocalTransform;
+                            local.Translation -= new Vector3(0.0f, 0.5f, 0.0f);
+                            LocalTransform = local;
+                        }
+                    }
                 }))
                 .SetFlag(Flag.ShouldSerialize, false);
         }
