@@ -142,7 +142,17 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "PAY",
                     OnClick = (sender, args) => Master.PayEmployees()
                 },
-
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "STARVE",
+                    OnClick = (sender, args) =>
+                    {
+                        foreach(var minion in Master.Faction.Minions)
+                        {
+                            minion.Status.Hunger.CurrentValue = 0;
+                        }
+                    }
+                },
 
                 // Shouldn't this go into some kind of 'debug' menu?
                 new HorizontalMenuTray.MenuItem
