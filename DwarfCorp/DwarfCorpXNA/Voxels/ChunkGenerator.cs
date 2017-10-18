@@ -323,12 +323,7 @@ namespace DwarfCorp
                             var tree = EntityFactory.CreateEntity<Plant>(veg.Name,
                                 topVoxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
                                 Blackboard.Create("Scale", treeSize));
-
-                            if (tree != null && MathFunctions.RandEvent(0.05f))
-                            {
-                                tree.BecomeSeedling();
-                            }
-
+                            
                             break;
                         }
                     }

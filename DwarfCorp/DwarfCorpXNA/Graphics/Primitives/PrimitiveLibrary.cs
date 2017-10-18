@@ -35,7 +35,6 @@ namespace DwarfCorp
             bushColors.Add(Color.White);
             bushColors.Add(Color.White);
 
-
             BatchBillboardPrimitives[name] = new BatchBillboardPrimitive(graphics, bushSheet, bushSheet.Width, bushSheet.Height, new Point(0, 0), 1.0f, 1.0f, false, bushTransforms, bushColors, bushColors);
         }
 
@@ -77,10 +76,6 @@ namespace DwarfCorp
                 BoxPrimitives["crate"] = new OldBoxPrimitive(graphics, 0.9f, 0.9f, 0.9f, crateCoords);
                 m_initialized = false;
 
-                Texture2D treeSheet = TextureManager.GetTexture(ContentPaths.Entities.Plants.pine);
-                Texture2D snowpineSheet = TextureManager.GetTexture(ContentPaths.Entities.Plants.snowpine);
-                Texture2D palmSheet = TextureManager.GetTexture(ContentPaths.Entities.Plants.palm);
-                Texture2D appleTreeSheet = TextureManager.GetTexture(ContentPaths.Entities.Plants.appletree);
                 List<Matrix> treeTransforms = new List<Matrix>();
                 List<Color> treeTints = new List<Color>();
                 treeTransforms.Add(Matrix.Identity);
@@ -88,33 +83,15 @@ namespace DwarfCorp
                 treeTints.Add(Color.White);
                 treeTints.Add(Color.White);
 
-                BatchBillboardPrimitives["pine"] = new BatchBillboardPrimitive(graphics, treeSheet, treeSheet.Width, treeSheet.Height, new Point(0, 0), treeSheet.Width / 32.0f, treeSheet.Height / 32.0f, false, treeTransforms, treeTints, treeTints);
-                BatchBillboardPrimitives["snowpine"] = new BatchBillboardPrimitive(graphics, snowpineSheet, snowpineSheet.Width, snowpineSheet.Height, new Point(0, 0), snowpineSheet.Width / 32.0f, snowpineSheet.Height / 32.0f, false, treeTransforms, treeTints, treeTints);
-                BatchBillboardPrimitives["palm"] = new BatchBillboardPrimitive(graphics, palmSheet, palmSheet.Width, palmSheet.Height, new Point(0, 0), palmSheet.Width / 32.0f, palmSheet.Height / 32.0f, false, treeTransforms, treeTints, treeTints);
-                BatchBillboardPrimitives["appletree"] = new BatchBillboardPrimitive(graphics, appleTreeSheet, appleTreeSheet.Width, appleTreeSheet.Height, new Point(0, 0), appleTreeSheet.Width / 32.0f, appleTreeSheet.Height / 32.0f, false, treeTransforms, treeTints, treeTints);
+                foreach (var member in typeof(ContentPaths.Entities.Plants).GetFields())
+                    if (member.IsStatic && member.FieldType == typeof(String))
+                    {
+                        var texture = TextureManager.GetTexture(member.GetValue(null).ToString());
+                        BatchBillboardPrimitives[member.Name] = new BatchBillboardPrimitive(graphics, texture, texture.Width, texture.Height,
+                            new Point(0, 0), texture.Width / 32.0f, texture.Height / 32.0f, false,
+                            treeTransforms, treeTints, treeTints);
+                    }
 
-
-
-                List<string> motes = new List<string>
-                {
-                    "berrybush",
-                    "cactus",
-                    "frostgrass",
-                    "flower",
-                    "grass",
-                    "deadbush",
-                    "mushroom",
-                    "vine",
-                    "gnarled",
-                    "wheat",
-                    "caveshroom"
-                };
-
-                foreach(string mote in motes)
-                {
-                    CreateIntersecting(mote, ProgramData.CreatePath("Entities", "Plants", mote), graphics, content);
-                }
-                    
             }
         }
     }

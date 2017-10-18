@@ -181,7 +181,7 @@ namespace DwarfCorp
                     CraftLibrary = new CraftLibrary();
 
                     new PrimitiveLibrary(GraphicsDevice, Content);
-                    NewInstanceManager = new NewInstanceManager(new BoundingBox(origin - extents, origin + extents),
+                    NewInstanceManager = new NewInstanceManager(GraphicsDevice, new BoundingBox(origin - extents, origin + extents),
                         Content);
 
                     Color[] white = new Color[1];

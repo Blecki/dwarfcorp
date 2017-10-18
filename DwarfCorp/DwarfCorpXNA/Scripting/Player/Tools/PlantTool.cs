@@ -86,8 +86,16 @@ namespace DwarfCorp
                 }
             }
 
-            var designation = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType.Farm | DesignationType.Plant) as FarmTile;
+            var designation = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType.Till) as FarmTile;
 
+            if (designation != null)
+            {
+                Player.World.ShowToolPopup("Finish tilling this tile first.");
+                return false;
+            }
+            
+            designation = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType._AllFarms) as FarmTile;
+            
             if (designation == null)
             {
                 Player.World.ShowToolPopup("This is not a farm.");
@@ -136,10 +144,10 @@ namespace DwarfCorp
 
                 if (ValidatePlanting(voxel))
                 {
-                    var existingTile = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType.Farm | DesignationType.Plant) as FarmTile;
+                    var existingTile = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType._AllFarms) as FarmTile;
                     if (existingTile == null) continue;
 
-                    Player.Faction.Designations.RemoveVoxelDesignation(voxel, DesignationType.Farm);
+                    Player.Faction.Designations.RemoveVoxelDesignation(voxel, DesignationType._AllFarms);
                     Player.Faction.Designations.AddVoxelDesignation(voxel, DesignationType.Plant, existingTile);
 
                     goals.Add(new FarmTask(existingTile)

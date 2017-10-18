@@ -57,9 +57,7 @@ namespace DwarfCorp
                 return false;
             }
 
-            var existingTile = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType.Farm);
-            if (existingTile == null)
-                existingTile = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType.Plant);
+            var existingTile = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType._AllFarms);
 
             if (existingTile != null)
             {
@@ -90,24 +88,24 @@ namespace DwarfCorp
                     if (!ValidateTilling(voxel))
                         continue;
 
-                    var existingFarmTile = new FarmTile
+                    var newFarmTile = new FarmTile
                     {
                         Voxel = voxel
                     };
 
-                    Player.Faction.Designations.AddVoxelDesignation(voxel, DesignationType.Farm, existingFarmTile);
+                    Player.Faction.Designations.AddVoxelDesignation(voxel, DesignationType.Till, newFarmTile);
 
-                    goals.Add(new FarmTask(existingFarmTile) { Mode = FarmAct.FarmMode.Till });
+                    goals.Add(new FarmTask(newFarmTile) { Mode = FarmAct.FarmMode.Till });
                 }
                 else
                 {
-                    var existingFarmTile = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType.Farm)
+                    var existingFarmTile = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType._AllFarms)
                         as FarmTile;
                     if (existingFarmTile != null && !existingFarmTile.PlantExists())
                     {
                         existingFarmTile.IsCanceled = true;
                         existingFarmTile.Farmer = null;
-                        Player.Faction.Designations.RemoveVoxelDesignation(existingFarmTile.Voxel, DesignationType.Farm);
+                        Player.Faction.Designations.RemoveVoxelDesignation(existingFarmTile.Voxel, DesignationType._AllFarms);
                     }
                 }
             }

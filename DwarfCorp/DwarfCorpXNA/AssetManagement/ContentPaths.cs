@@ -38,6 +38,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// Used to mark certain plants as motes.
+    /// </summary>
+    public class MoteAttribute : System.Attribute
+    { }
 
     /// <summary>
     /// This class is auto-generated. It exists to allow intellisense and compile-time awareness
@@ -612,11 +617,11 @@ namespace DwarfCorp
             {
                 public static string berrybush = ProgramData.CreatePath("Entities", "Plants", "berrybush");
                 public static string berrybushsprout = ProgramData.CreatePath("Entities", "Plants", "berrybush-sprout");
-                public static string deadbush = ProgramData.CreatePath("Entities", "Plants", "deadbush");
-                public static string flower = ProgramData.CreatePath("Entities", "Plants", "flower");
-                public static string frostgrass = ProgramData.CreatePath("Entities", "Plants", "frostgrass");
-                public static string gnarled = ProgramData.CreatePath("Entities", "Plants", "gnarled");
-                public static string grass = ProgramData.CreatePath("Entities", "Plants", "grass");
+                [Mote] public static string deadbush = ProgramData.CreatePath("Entities", "Plants", "deadbush");
+                [Mote] public static string flower = ProgramData.CreatePath("Entities", "Plants", "flower");
+                [Mote] public static string frostgrass = ProgramData.CreatePath("Entities", "Plants", "frostgrass");
+                [Mote] public static string gnarled = ProgramData.CreatePath("Entities", "Plants", "gnarled");
+                [Mote] public static string grass = ProgramData.CreatePath("Entities", "Plants", "grass");
                 public static string mushroom = ProgramData.CreatePath("Entities", "Plants", "mushroom");
                 public static string mushroomsprout = ProgramData.CreatePath("Entities", "Plants", "mushroom-sprout");
                 public static string cavemushroom = ProgramData.CreatePath("Entities", "Plants", "caveshroom");
@@ -626,7 +631,7 @@ namespace DwarfCorp
                 public static string pine = ProgramData.CreatePath("Entities", "Plants", "pinetree");
                 public static string pinesprout = ProgramData.CreatePath("Entities", "Plants", "pinetree-sprout");
                 public static string snowpine = ProgramData.CreatePath("Entities", "Plants", "snowpine");
-                public static string vine = ProgramData.CreatePath("Entities", "Plants", "vine");
+                [Mote] public static string vine = ProgramData.CreatePath("Entities", "Plants", "vine");
                 public static string wheat = ProgramData.CreatePath("Entities", "Plants", "wheat");
                 public static string wheatsprout = ProgramData.CreatePath("Entities", "Plants", "wheat-sprout");
                 public static string appletree = ProgramData.CreatePath("Entities", "Plants", "appletree");

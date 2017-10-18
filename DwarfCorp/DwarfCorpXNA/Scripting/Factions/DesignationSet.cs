@@ -177,6 +177,19 @@ namespace DwarfCorp
                             if (!d.Voxel.IsValid || d.Voxel.IsEmpty)
                                 toRemove.Add(d);
                             break;
+                        case DesignationType.Put:
+                            if (!d.Voxel.IsValid || !d.Voxel.IsEmpty)
+                                toRemove.Add(d);
+                            break;
+                        case DesignationType.Till:
+                            if (!d.Voxel.IsValid || d.Voxel.IsEmpty || d.Voxel.Type.Name == "TilledSoil")
+                                toRemove.Add(d);
+                            break;
+                        case DesignationType.Plant:
+                        case DesignationType._InactiveFarm:
+                            if (!d.Voxel.IsValid || d.Voxel.IsEmpty || d.Voxel.Type.Name != "TilledSoil")
+                                toRemove.Add(d);
+                            break;
                         default:
                             break;
                     }
