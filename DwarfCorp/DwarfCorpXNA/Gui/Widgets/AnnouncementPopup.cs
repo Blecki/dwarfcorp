@@ -43,7 +43,7 @@ namespace DwarfCorp.Gui.Widgets
         public override void Construct()
         {
             Hidden = true;
-
+            Font = "font10";
             OnUpdate += (sender, time) =>
                 {
                     lock (NewAnnouncements)
@@ -123,7 +123,7 @@ namespace DwarfCorp.Gui.Widgets
                 .TileScaleAndTexture(speakerTiles, 0)
                 .Translate(Rect.Right - speakerTiles.TileWidth, Rect.Bottom - speakerTiles.TileHeight));
 
-            var font = Root.GetTileSheet("font8") as VariableWidthFont;
+            var font = Root.GetTileSheet(Font) as VariableWidthFont;
 
             foreach (var announcement in Announcements)
             {
