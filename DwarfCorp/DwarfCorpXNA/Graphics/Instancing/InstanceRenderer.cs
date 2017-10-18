@@ -65,7 +65,10 @@ namespace DwarfCorp
         public void RenderInstance(NewInstanceData Instance,
             GraphicsDevice Device, Shader Effect, Camera Camera, RenderMode Mode)
         {
-            System.Diagnostics.Debug.Assert(InstanceTypes.ContainsKey(Instance.Type));
+            if(Instance.Type == null || !InstanceTypes.ContainsKey(Instance.Type))
+            {
+                return;
+            }
 
             var group = InstanceTypes[Instance.Type];
 
