@@ -87,9 +87,6 @@ namespace DwarfCorp
 
         public Vector3[] LightPositions = new Vector3[16];
 
-        // When true, the minimap will be drawn.
-        public bool DrawMap = true;
-
         // The texture used for the terrain tiles.
         public Texture2D Tilesheet;
 

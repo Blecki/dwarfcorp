@@ -164,6 +164,8 @@ namespace DwarfCorp
                 VoxelDesignations.Remove(key);
         }
 
+        // Todo: Kill this. It checks every designation every frame. Hook the voxel change mechanism so it
+        //      only has to check what has changed!
         public void CleanupDesignations()
         {
             var toRemove = new List<VoxelDesignation>();

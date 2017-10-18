@@ -9,6 +9,8 @@ namespace DwarfCorp.GameStates
     public class NewGameChooseWorldState : GameState
     {
         private Gui.Root GuiRoot;
+        private Widget LogoWidget;
+        private Texture2D LogoTexture;
 
         public NewGameChooseWorldState(DwarfGame game, GameStateManager stateManager) :
             base(game, "MainMenuState", stateManager)
@@ -17,11 +19,11 @@ namespace DwarfCorp.GameStates
 
         private Gui.Widget MakeMenuFrame(String Name)
         {
-            GuiRoot.RootItem.AddChild(new Gui.Widget
+            LogoWidget = GuiRoot.RootItem.AddChild(new Gui.Widget
             {
                 MinimumSize = new Point(600, 348),
-                Background = new Gui.TileReference("logo", 0),
-                AutoLayout = Gui.AutoLayout.FloatTop,
+                Transparent = true,
+                AutoLayout = Gui.AutoLayout.FloatTop
             });
 
             return GuiRoot.RootItem.AddChild(new Gui.Widget
@@ -83,6 +85,8 @@ namespace DwarfCorp.GameStates
 
         public override void OnEnter()
         {
+            LogoTexture = Game.Content.Load<Texture2D>("newgui/gamelogo");
+
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
             GuiRoot = new Gui.Root(DwarfGame.GumSkin);
@@ -111,6 +115,12 @@ namespace DwarfCorp.GameStates
 
         public override void Render(DwarfTime gameTime)
         {
+            GuiRoot.DrawMesh(
+               Gui.Mesh.Quad()
+               .Scale(LogoWidget.Rect.Width, LogoWidget.Rect.Height)
+               .Translate(LogoWidget.Rect.X, LogoWidget.Rect.Y),
+               LogoTexture);
+
             GuiRoot.Draw();
             base.Render(gameTime);
         }
