@@ -313,12 +313,6 @@ namespace DwarfCorp
                         {
                             topVoxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.SoilLayer.VoxelType));
 
-                            float offset = veg.VerticalOffset;
-
-                            // Vegetation doesn't shift with ramps - is this accomplishing anything?
-                            //if (topVoxel.RampType != RampType.None)
-                            //    offset -= 0.5f;
-
                             var treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
                             var tree = EntityFactory.CreateEntity<Plant>(veg.Name,
                                 topVoxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
@@ -436,17 +430,12 @@ namespace DwarfCorp
                 if (!vUnder.IsEmpty && vUnder.Type.Name == biome.GrassLayer.VoxelType)
                 {
                     vUnder.RawSetType(VoxelLibrary.GetVoxelType(biome.SoilLayer.VoxelType));
-                    float offset = veg.VerticalOffset;
-                    if (vUnder.RampType != RampType.None)
-                    {
-                        offset -= 0.25f;
-                    }
                     float treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
 
                     EntityFactory.DoLazy(() =>
                     {
                         GameComponent entity = EntityFactory.CreateEntity<GameComponent>(veg.Name,
-                            chunk.Origin + new Vector3(x, y, z) + new Vector3(0, treeSize * offset, 0),
+                            chunk.Origin + new Vector3(x, y, z) + new Vector3(0, treeSize, 0),
                             Blackboard.Create("Scale", treeSize));
                         entity.GetRoot().SetFlagRecursive(GameComponent.Flag.Active, false);
                         entity.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);

@@ -143,7 +143,7 @@ namespace DwarfCorp
                     }
 
                     if (voxel.Type == DesignationType.Put) // Hate this.
-                        DrawPhantomCallback(v, voxel.Tag as VoxelType);
+                        DrawPhantomCallback(v, VoxelLibrary.GetVoxelType((voxel.Tag as short?).Value));
                     else
                         DrawBoxCallback(v, Vector3.One, props.ModulatedColor, props.LineWidth);
                 }

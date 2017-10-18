@@ -75,7 +75,7 @@ namespace DwarfCorp
                         foreach (var r in validRefs)
                         {
                             Faction.Designations.AddVoxelDesignation(r, DesignationType.Put,
-                                VoxelLibrary.GetVoxelType(CurrentVoxelType));
+                                (short)CurrentVoxelType);
                             assignments.Add(new BuildVoxelTask(r, VoxelLibrary.GetVoxelType(CurrentVoxelType).Name));
                         }
 

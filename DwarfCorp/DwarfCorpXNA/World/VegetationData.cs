@@ -43,7 +43,6 @@ namespace DwarfCorp
         public float ClumpThreshold { get; set; }
         public float MeanSize { get; set; }
         public float SizeVariance { get; set; }
-        public float VerticalOffset { get; set; }
         public float NoiseOffset { get; set; }
         public float SpawnProbability { get; set; }
 
@@ -57,7 +56,6 @@ namespace DwarfCorp
             Name = name;
             MeanSize = meansize;
             SizeVariance = sizevar;
-            VerticalOffset = verticalOffset;
             ClumpThreshold = clumpThreshold;
             ClumpSize = clumpSize;
             SpawnProbability = spawnProbability;
