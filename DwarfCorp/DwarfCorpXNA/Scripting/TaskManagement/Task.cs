@@ -56,6 +56,15 @@ namespace DwarfCorp
         }
 
         public PriorityType Priority { get; set; }
+
+        public enum Feasibility
+        {
+            Feasible,
+            Infeasible,
+            Unknown
+        }
+
+        // The script is ignored and regenerated on load.
         [JsonIgnore]
         public Act Script { get; set; }
         public bool AutoRetry = false;
@@ -104,9 +113,9 @@ namespace DwarfCorp
             return 1.0f;
         }
 
-        public virtual bool IsFeasible(Creature agent)
+        public virtual Feasibility IsFeasible(Creature agent)
         {
-            return true;
+            return Feasibility.Feasible;
         }
 
         public virtual bool ShouldRetry(Creature agent)
@@ -157,9 +166,9 @@ namespace DwarfCorp
             return new ActWrapperTask(Script);
         }
 
-        public override bool IsFeasible(Creature agent)
+        public override Feasibility IsFeasible(Creature agent)
         {
-            return Script != null;
+            return Script != null ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override Act CreateScript(Creature agent)

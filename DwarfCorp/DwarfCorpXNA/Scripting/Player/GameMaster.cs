@@ -313,7 +313,7 @@ namespace DwarfCorp
 
                 foreach (Task task in creature.Tasks)
                 {
-                    if (task.IsFeasible(creature.Creature))
+                    if (task.IsFeasible(creature.Creature) == Task.Feasibility.Feasible)
                         task.Render(time);
                 }
 

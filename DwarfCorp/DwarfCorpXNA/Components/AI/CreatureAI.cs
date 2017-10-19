@@ -306,7 +306,7 @@ namespace DwarfCorp
 
                 float cost = task.ComputeCost(Creature);
 
-                if (task.IsFeasible(Creature) && task.Priority >= bestPriority && cost < bestCost)
+                if (task.IsFeasible(Creature) == Task.Feasibility.Feasible && task.Priority >= bestPriority && cost < bestCost)
                 {
                     bestCost = cost;
                     bestTask = task;
@@ -325,7 +325,7 @@ namespace DwarfCorp
             Task newTask = null;
             foreach (Task task in Tasks)
             {
-                if (task.Priority > CurrentTask.Priority && task.IsFeasible(Creature))
+                if (task.Priority > CurrentTask.Priority && task.IsFeasible(Creature) == Task.Feasibility.Feasible)
                 {
                     newTask = task;
                     break;
@@ -762,7 +762,7 @@ namespace DwarfCorp
                 foreach (var resource in Creature.Inventory.Resources.Where(resource => resource.MarkedForRestock))
                 {
                     Task task = new StockResourceTask(new ResourceAmount(resource.Resource));
-                    if (task.IsFeasible(Creature))
+                    if (task.IsFeasible(Creature) != Task.Feasibility.Infeasible)
                     {
                         return task;
                     }
@@ -860,7 +860,7 @@ namespace DwarfCorp
                     {
                         Priority = Task.PriorityType.Low
                     };
-                    if (task.IsFeasible(this.Creature))
+                    if (task.IsFeasible(this.Creature) != Task.Feasibility.Infeasible)
                     {
                         return task;
                     }

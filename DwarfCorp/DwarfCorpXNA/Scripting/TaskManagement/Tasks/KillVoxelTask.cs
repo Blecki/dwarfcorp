@@ -75,13 +75,13 @@ namespace DwarfCorp
         }
 
 
-        public override bool IsFeasible(Creature agent)
+        public override Feasibility IsFeasible(Creature agent)
         {
             if(!VoxelToKill.IsValid || VoxelToKill.IsEmpty || VoxelToKill.Health <= 0)
-                return false;
+                return Feasibility.Infeasible;
 
             return agent.Faction.Designations.IsVoxelDesignation(VoxelToKill, DesignationType.Dig) 
-                && !VoxelHelpers.VoxelIsCompletelySurrounded(VoxelToKill);
+                && !VoxelHelpers.VoxelIsCompletelySurrounded(VoxelToKill) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override bool ShouldDelete(Creature agent)

@@ -127,9 +127,9 @@ namespace DwarfCorp
             return 1.0f;
         }
 
-        public override bool IsFeasible(Creature agent)
+        public override Feasibility IsFeasible(Creature agent)
         {
-            return agent.Physics.IsInLiquid;
+            return agent.Physics.IsInLiquid ? Feasibility.Feasible : Feasibility.Infeasible;
         }
     }
 

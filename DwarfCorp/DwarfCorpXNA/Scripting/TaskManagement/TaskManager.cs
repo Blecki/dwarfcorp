@@ -148,7 +148,7 @@ namespace DwarfCorp
                     float cost = 0;
                     // We've swapped the order of the two checks to take advantage of a new ComputeCost that can act different
                     // if we say we've already called IsFeasible first.  This allows us to skip any calculations that are repeated in both.
-                    if (!task.IsFeasible(creature.Creature))
+                    if (task.IsFeasible(creature.Creature) == Task.Feasibility.Infeasible)
                     {
                         cost += 1e10f;
                     }
@@ -271,7 +271,7 @@ namespace DwarfCorp
 
                     int cost = (int)(floatCost * multiplier);
 
-                    if (!goal.IsFeasible(agent.Creature))
+                    if (goal.IsFeasible(agent.Creature) == Task.Feasibility.Infeasible)
                     {
                         cost += 99999;
                     }

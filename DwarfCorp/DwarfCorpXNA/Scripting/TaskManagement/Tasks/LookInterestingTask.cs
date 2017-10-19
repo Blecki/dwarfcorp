@@ -86,9 +86,9 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
-        public override bool IsFeasible(Creature agent)
+        public override Feasibility IsFeasible(Creature agent)
         {
-            return !agent.AI.IsPosessed;
+            return !agent.AI.IsPosessed ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override Act CreateScript(Creature creature)

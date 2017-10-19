@@ -88,9 +88,9 @@ namespace DwarfCorp
             return !agent.Faction.CraftBuilder.IsDesignation(Designation.Location);
         }
 
-        public override bool IsFeasible(Creature agent)
+        public override Feasibility IsFeasible(Creature agent)
         {
-            return CanBuild(agent);
+            return CanBuild(agent) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public bool CanBuild(Creature agent)
@@ -203,9 +203,9 @@ namespace DwarfCorp
             return true;
         }
 
-        public override bool IsFeasible(Creature agent)
+        public override Feasibility IsFeasible(Creature agent)
         {
-            return HasResources(agent) && HasLocation(agent);
+            return HasResources(agent) && HasLocation(agent) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override Act CreateScript(Creature creature)
