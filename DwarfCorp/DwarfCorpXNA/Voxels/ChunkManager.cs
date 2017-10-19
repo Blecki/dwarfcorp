@@ -85,7 +85,10 @@ namespace DwarfCorp
 
         public void NotifyChangedVoxel(VoxelChangeEvent Change)
         {
-            ChangedVoxels.Add(Change);
+            lock (ChangedVoxels)
+            {
+                ChangedVoxels.Add(Change);
+            }
         }
 
         public ChunkGenerator ChunkGen { get; set; }
@@ -435,8 +438,13 @@ namespace DwarfCorp
             Splasher.Splash(gameTime, Water.GetSplashQueue());
             Splasher.HandleTransfers(gameTime, Water.GetTransferQueue());
 
-            var localList = ChangedVoxels;
-            ChangedVoxels = new List<VoxelChangeEvent>();
+            List<VoxelChangeEvent> localList = null;
+            lock (ChangedVoxels)
+            {
+                localList = ChangedVoxels;
+                ChangedVoxels = new List<VoxelChangeEvent>();
+            }
+
             foreach (var voxel in localList)
             {
                 var box = voxel.Voxel.GetBoundingBox();

@@ -253,7 +253,6 @@ namespace DwarfCorp
             return GetMoveActions(vox);
         }
 
-        // Todo: Convert to temporary voxel handles?
         /// <summary> gets the list of actions that the creature can take from a given voxel. </summary>
         public IEnumerable<MoveAction> GetMoveActions(VoxelHandle voxel)
         {
