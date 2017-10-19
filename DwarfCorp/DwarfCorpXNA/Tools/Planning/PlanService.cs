@@ -32,14 +32,7 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
-using System.Collections.Concurrent;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using DwarfCorp.GameStates;
-using Microsoft.Xna.Framework;
-using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace DwarfCorp
 {
@@ -63,6 +56,7 @@ namespace DwarfCorp
     {
         public bool Success;
         public List<MoveAction> Path;
+        public AstarPlanRequest Request;
     }
 
     /// <summary>
@@ -78,7 +72,8 @@ namespace DwarfCorp
             AStarPlanResponse res = new AStarPlanResponse
             {
                 Path = path,
-                Success = (path != null)
+                Success = (path != null),
+                Request = req
             };
 
             return res;
