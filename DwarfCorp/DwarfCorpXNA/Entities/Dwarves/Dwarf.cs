@@ -162,7 +162,7 @@ namespace DwarfCorp
         {
             CreateSprite(Stats.CurrentClass, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
-            Physics.AddChild(new VoxelRevealer(manager, Physics, 5)).SetFlag(Flag.ShouldSerialize, false);
+            Physics.AddChild(new VoxelRevealer(manager, Physics, 10)).SetFlag(Flag.ShouldSerialize, false);
 
             base.CreateCosmeticChildren(manager);
         }
