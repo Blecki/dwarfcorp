@@ -66,9 +66,7 @@ namespace DwarfCorp
             GraphicsDevice Device, Shader Effect, Camera Camera, RenderMode Mode)
         {
             if(Instance.Type == null || !InstanceTypes.ContainsKey(Instance.Type))
-            {
                 return;
-            }
 
             var group = InstanceTypes[Instance.Type];
 

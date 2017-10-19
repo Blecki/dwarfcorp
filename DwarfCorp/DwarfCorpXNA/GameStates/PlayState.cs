@@ -2035,23 +2035,18 @@ namespace DwarfCorp.GameStates
             else if (key == Keys.Escape)
             {
                 BrushTray.Select(0);
+
                 if (MainMenu.Hidden)
-                {
-                    (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(0);
-                }
+                    (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(1);
                 else if (Master.CurrentToolMode != GameMaster.ToolMode.SelectUnits)
-                {
                     Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
-                }
                 else if (PausePanel != null)
                 {
                     PausePanel.Close();
                     Paused = false;
                 }
                 else
-                {
                     OpenPauseMenu();
-                }
             }
             else if (key == ControlSettings.Mappings.SelectAllDwarves)
             {
