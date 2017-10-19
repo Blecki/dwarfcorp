@@ -53,7 +53,7 @@ namespace DwarfCorp
         /// Run the reveal algorithm without invoking the invalidation mechanism.
         /// </summary>
         /// <param name="Data"></param>
-        /// <param name="voxels"></param>
+        /// <param name="voxel"></param>
         public static void InitialReveal(
             ChunkData Data,
             VoxelHandle voxel)
@@ -88,5 +88,48 @@ namespace DwarfCorp
 
             GameSettings.Default.FogofWar = fogOfWar;
         }
+
+        private struct VisitedVoxel
+        {
+            public int Depth;
+            public VoxelHandle Voxel;
+        }
+
+        public static void RadiusReveal(
+            ChunkData Data,
+            VoxelHandle Voxel,
+            int Radius)
+        {
+            var queue = new Queue<VisitedVoxel>(128);
+
+            if (Voxel.IsValid)
+                queue.Enqueue(new VisitedVoxel { Depth = 1, Voxel = Voxel });
+
+            while (queue.Count > 0)
+            {
+                var v = queue.Dequeue();
+                if (!v.Voxel.IsValid) continue;
+                if (v.Depth >= Radius) continue;
+
+                foreach (var neighborCoordinate in VoxelHelpers.EnumerateManhattanNeighbors(v.Voxel.Coordinate))
+                {
+                    var neighbor = new VoxelHandle(Data, neighborCoordinate);
+                    if (!neighbor.IsValid) continue;
+                    
+                    neighbor.Chunk.NotifyExplored(neighbor.Coordinate.GetLocalVoxelCoordinate());
+                    neighbor.IsExplored = true;
+
+                    if (neighbor.IsEmpty)
+                        queue.Enqueue(new VisitedVoxel
+                        {
+                            Depth = v.Depth + 1,
+                            Voxel = neighbor
+                        });
+                }
+
+                v.Voxel.IsExplored = true;
+            }
+        }
+
     }
 }
