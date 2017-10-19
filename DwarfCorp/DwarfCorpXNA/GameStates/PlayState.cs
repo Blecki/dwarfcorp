@@ -882,8 +882,8 @@ namespace DwarfCorp.GameStates
             {
                 OnLayout = (sender) =>
                 {
-                    sender.Rect = new Rectangle(GuiRoot.RenderData.VirtualScreen.Width - 256,
-                        topRightTray.Rect.Y - 128, 256, 128);
+                    sender.Rect = new Rectangle(GuiRoot.RenderData.VirtualScreen.Width - 350,
+                        secondBar.Rect.Top - 130, 350, 128);
                 }
             }) as AnnouncementPopup;
 

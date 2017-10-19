@@ -141,6 +141,17 @@ namespace DwarfCorp
                 component.CreateCosmeticChildren(this);
             }
 
+            var removals = SaveData.SaveableComponents.Where(p => p.Parent == null && p != RootComponent).ToList();
+
+            foreach(var component in removals)
+            {
+                Console.Error.WriteLine("Component {0} has no parent. removing.", component.Name);
+                RemoveComponentImmediate(component);
+                SaveData.SaveableComponents.Remove(component);
+            }
+
+           
+
             /*
             foreach (var component in Components)
             {

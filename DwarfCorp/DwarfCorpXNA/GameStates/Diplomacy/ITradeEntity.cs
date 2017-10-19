@@ -52,7 +52,19 @@ namespace DwarfCorp.Trade
             return Resources.Sum(r => ComputeValue(r.ResourceType) * (decimal)r.NumResources);
         }
 
-        public void RemoveResources(List<ResourceAmount> Resources) { }
+        public void RemoveResources(List<ResourceAmount> Resources)
+        {
+            foreach(var r in Resources)
+            {
+                foreach(var r2 in SourceEnvoy.TradeGoods)
+                {
+                    if (r.ResourceType == r2.ResourceType)
+                    {
+                        r2.NumResources -= r.NumResources;
+                    }
+                }
+            }
+        }
     }
 
     public class PlayerTradeEntity : ITradeEntity

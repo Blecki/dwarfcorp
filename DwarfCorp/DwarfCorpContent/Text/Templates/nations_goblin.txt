@@ -7,3 +7,5 @@ Lands of <goblinname>
 <goblinfamily>stan
 <goblinfamily>non
 <goblinfamily>ica
+<goblinname> Tribal Lands
+Elders of <goblinfamily>

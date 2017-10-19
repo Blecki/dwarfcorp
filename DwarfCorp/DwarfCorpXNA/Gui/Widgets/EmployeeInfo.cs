@@ -234,11 +234,18 @@ namespace DwarfCorp.Gui.Widgets
                 MinimumSize = new Point(0, 24)
             });
 
-            InteriorPanel.AddChild(new Button()
+            var bottomBar = InteriorPanel.AddChild(new Widget
+            {
+                Transparent = true,
+                AutoLayout = AutoLayout.DockBottom,
+                MinimumSize = new Point(0, 32)
+            });
+
+            bottomBar.AddChild(new Button()
             {
                 Text = "Fire",
                 Border = "border-button",
-                AutoLayout = AutoLayout.FloatBottomRight,
+                AutoLayout = AutoLayout.DockRight,
                 OnClick = (sender, args) =>
                 {
                     Root.SafeCall(OnFireClicked, this);
@@ -247,11 +254,11 @@ namespace DwarfCorp.Gui.Widgets
 
             if (EnablePosession)
             {
-                InteriorPanel.AddChild(new Button()
+                bottomBar.AddChild(new Button()
                 {
                     Text = "Follow",
                     Tooltip = "Click to directly control this dwarf and have the camera follow.",
-                    AutoLayout = AutoLayout.FloatBottomLeft,
+                    AutoLayout = AutoLayout.DockRight,
                     OnClick = (sender, args) =>
                     {
                         (sender.Parent.Parent as EmployeeInfo).Employee.World.Tutorial("follow dwarf");
@@ -260,11 +267,11 @@ namespace DwarfCorp.Gui.Widgets
                 });
             }
 
-            LevelButton = right.AddChild(new Button()
+            LevelButton = bottomBar.AddChild(new Button()
             {
                 Text = "Promote!",
                 Border = "border-button",
-                AutoLayout = AutoLayout.FloatBottomLeft,
+                AutoLayout = AutoLayout.DockRight,
                 Tooltip = "Click to promote this dwarf.\nPromoting Dwarves raises their pay and makes them\nmore effective workers.",
                 OnClick = (sender, args) =>
                 {

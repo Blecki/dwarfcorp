@@ -184,10 +184,6 @@ namespace DwarfCorp
                     Player.World.Tutorial("dwarf selected");
                 }
             }
-            if (Player.SelectedMinions.Count == 1)
-            {
-                Player.SelectedMinions[0].ZoomToMe();
-            }
             OnConfirm(newDwarves);
         }
 
