@@ -54,7 +54,6 @@ namespace DwarfCorp
 
         public CreatureAI()
         {
-            History = new Dictionary<string, TaskHistory>();
         }
 
         public CreatureAI(
@@ -64,7 +63,6 @@ namespace DwarfCorp
             PlanService planService) :
             base(name, Manager)
         {
-            History = new Dictionary<string, TaskHistory>();
             Movement = new CreatureMovement(this);
             GatherManager = new GatherManager(this);
             Blackboard = new Blackboard();
@@ -223,12 +221,6 @@ namespace DwarfCorp
         /// <summary> Blackboard used for Acts. </summary>
         public Blackboard Blackboard { get; set; }
 
-        /// <summary> 
-        /// Tells us which tasks the creature has performed in the past. Maps task names to their histories.
-        /// This is useful for determining how many times a task has failed or succeeded.
-        /// </summary>
-        public Dictionary<string, TaskHistory> History { get; set; }
-
         /// <summary>
         /// Queue of tasks that the creature is currently performing.
         /// </summary>
@@ -297,13 +289,6 @@ namespace DwarfCorp
 
             foreach (Task task in tasks)
             {
-                // A bit janky, but tasks are indexed by name. Look for any task that we have a history of
-                // and if the task is locked (because it was found to be impossible), don't try it.
-                if (History.ContainsKey(task.Name) && History[task.Name].IsLocked)
-                {
-                    continue;
-                }
-
                 float cost = task.ComputeCost(Creature);
 
                 if (task.IsFeasible(Creature) == Task.Feasibility.Feasible && task.Priority >= bestPriority && cost < bestCost)
@@ -349,19 +334,7 @@ namespace DwarfCorp
         /// <summary> remove any impossible or already completed tasks </summary>
         public void DeleteBadTasks()
         {
-            var tasksToremove = Tasks.Where(task => (task.ShouldDelete(Creature))).ToList();
-            foreach (var task in tasksToremove)
-            {
-                RemoveTask(task);
-                History.Remove(task.Name);
-            }
-
-
-            var historyToRemove = History.Where(history => Tasks.All(task => task.Name != history.Key)).ToList();
-            foreach (var history in historyToRemove)
-            {
-                History.Remove(history.Key);
-            }
+            Tasks.RemoveAll(task => task.ShouldDelete(Creature));
         }
 
         /// <summary> Animate the PlayState Camera to look at this creature </summary>
@@ -411,11 +384,8 @@ namespace DwarfCorp
         /// <summary> Update this creature </summary>
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            //DEBUG DRAW TASK QUEUE HERE
             if (!Active)
-            {
                 return;
-            }
 
             if (DrawPath)
             {
@@ -429,9 +399,7 @@ namespace DwarfCorp
                 }
                 Drawer2D.DrawText(taskString.ToString(), Position, Color.White, Color.Black);
             }
-
-            if (!Active) return;
-
+            
             if (Faction == null && !string.IsNullOrEmpty(Creature.Allies))
             {
                 Faction = Manager.World.Factions.Factions[Creature.Allies];
@@ -444,8 +412,7 @@ namespace DwarfCorp
             DeleteBadTasks();
             PreEmptTasks();
             HandleReproduction();
-
-
+            
             // Heal thyself
             if (Status.Health.IsDissatisfied() && Stats.CanSleep)
             {
@@ -472,26 +439,16 @@ namespace DwarfCorp
                 if (!Tasks.Contains(toReturn))
                     AssignTask(toReturn);
             }
-
-
+            
             // Update the current task.
             if (CurrentTask != null && CurrentAct != null)
             {
                 Act.Status status = CurrentAct.Tick();
 
-                // Update the task history on failure or success. 
                 bool retried = false;
                 if (status == Act.Status.Fail)
                 {
                     LastFailedAct = CurrentAct.Name;
-                    if (History.ContainsKey(CurrentTask.Name))
-                    {
-                        History[CurrentTask.Name].NumFailures++;
-                    }
-                    else
-                    {
-                        History[CurrentTask.Name] = new TaskHistory();
-                    }
 
                     if (CurrentTask.ShouldRetry(Creature))
                     {
@@ -505,19 +462,9 @@ namespace DwarfCorp
                         }
                     }
                 }
-                else if (status == Act.Status.Success)
-                {
-                    // Remove completed tasks.
-                    if (History.ContainsKey(CurrentTask.Name))
-                    {
-                        History.Remove(CurrentTask.Name);
-                    }
-                }
 
                 if (status != Act.Status.Running && !retried)
-                {
                     CurrentTask = null;
-                }
             }
             // Otherwise, we don't have any tasks at the moment.
             else if (CurrentTask == null)
@@ -575,8 +522,7 @@ namespace DwarfCorp
                     CurrentTask = null;
                 }
             }
-
-
+            
             PlannerTimer.Update(gameTime);
             UpdateThoughts();
             UpdateXP();
@@ -590,11 +536,6 @@ namespace DwarfCorp
                 {
                     Creature.Damage(1.0f, Health.DamageType.Normal);
                 }
-            }
-
-            foreach (var history in History)
-            {
-                history.Value.Update();
             }
 
             if (PositionConstraint.Contains(Physics.LocalPosition) == ContainmentType.Disjoint)
