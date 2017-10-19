@@ -86,10 +86,7 @@ namespace DwarfCorp
 
         public void SummonSkeleton(Vector3 pos)
         {
-            Skeleton skeleton = EntityFactory.GenerateSkeleton(pos, Manager, GameState.Game.Content,
-                GameState.Game.GraphicsDevice, Chunks, Manager.World.Camera, Faction, Manager.World.PlanService,
-                this.Creature.Allies).GetRoot().GetComponent<Skeleton>();
-
+            Skeleton skeleton = EntityFactory.CreateEntity<Physics>("Skeleton", pos).GetRoot().GetComponent<Skeleton>();
             Skeletons.Add(skeleton);
             Matrix animatePosition = skeleton.Sprite.LocalTransform;
             animatePosition.Translation = animatePosition.Translation - new Vector3(0, 1, 0);

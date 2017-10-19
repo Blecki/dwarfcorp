@@ -153,6 +153,19 @@ namespace DwarfCorp.Gui.Widgets
                         }
                     }
                 },
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "SPAWN TEST",
+                    OnClick = (sender, args) =>
+                    {
+                        var keys = EntityFactory.EntityFuncs.Keys.ToList();
+                        foreach(var key in keys)
+                        {
+                            EntityFactory.CreateEntity<GameComponent>(key, Master.World.CursorLightPos);
+                        }
+
+                    }
+                },
 
                 // Shouldn't this go into some kind of 'debug' menu?
                 new HorizontalMenuTray.MenuItem

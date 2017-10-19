@@ -105,8 +105,6 @@ namespace DwarfCorp
             MinimapIcon minimapIcon = Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 0))) as MinimapIcon;
 
             //new LightEmitter("Light Emitter", Sprite, Matrix.Identity, Vector3.One, Vector3.One, 255, 150);
-            Sprite.AddChild(new Bobber(Manager, 0.25f, 3.0f, MathFunctions.Rand(), Sprite.LocalTransform.Translation.Y));
-          
             Stats.FullName = TextGenerator.GenerateRandom("$firstname");
             //Stats.LastName = "The Fairy";
             
@@ -125,6 +123,9 @@ namespace DwarfCorp
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             CreateSprite(Stats.CurrentClass, manager);
+            var bobber = Sprite.AddChild(new Bobber(Manager, 0.25f, 3.0f, MathFunctions.Rand(), Sprite.LocalTransform.Translation.Y));
+            bobber.SetFlag(Flag.ShouldSerialize, false);
+
             Sprite.LightsWithVoxels = false;
 
             Physics.AddChild(Shadow.Create(0.75f, manager));
