@@ -53,19 +53,11 @@ namespace DwarfCorp
             base(Manager, "Wheat", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f),  "wheat", 1.0f)
         {
             BoundingBoxPos = Vector3.Zero;
-            Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.wheatsprout, 32, 32);
-            SeedlingFrame = new Point(0, 0);
+            SeedlingAsset = "wheatsprout";
             Matrix matrix = Matrix.CreateRotationY(MathFunctions.Rand(-0.1f, 0.1f));
             matrix.Translation = position;// + new Vector3(0.5f, 0.0f, 0.5f);
             LocalTransform = matrix;
 
-            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
-                Manager.World.ChunkManager.ChunkData,
-                GlobalVoxelCoordinate.FromVector3(position)));
-            if (voxelUnder.IsValid)
-                AddChild(new VoxelListener(Manager, Manager.World.ChunkManager,
-                    voxelUnder));
-            
             Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)) as Inventory;
 
             for (int i = 0; i < MathFunctions.RandInt(1, 5); i++)

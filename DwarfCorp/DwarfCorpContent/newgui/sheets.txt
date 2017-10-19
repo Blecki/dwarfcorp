@@ -21,11 +21,6 @@
 			"TileWidth": 12,
 			"TileHeight": 18
 		},
-		{	"Name": "logo",
-			"Texture": "newgui/gamelogo",
-			"TileWidth": 600,
-			"TileHeight" : 348
-		},
 		{
 			"Name": "font16",
 			"Texture": "newgui/font-16px",

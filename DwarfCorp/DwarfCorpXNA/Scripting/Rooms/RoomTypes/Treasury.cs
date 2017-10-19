@@ -165,7 +165,7 @@ namespace DwarfCorp
                 Coins.Clear();
             }
 
-            int numCoins = (int)Math.Min(Math.Max(Money / MoneyPerPile, 1), Voxels.Count);
+            int numCoins = (int)Math.Round(Math.Min(Math.Max((float)(decimal)Money / (float)(decimal)MoneyPerPile, 1.0f), (float)Voxels.Count));
             if (Money == 0m)
             {
                 numCoins = 0;
@@ -184,6 +184,19 @@ namespace DwarfCorp
                 {
                     CreateCoins(Voxels[i].WorldPosition + VertexNoise.GetNoiseVectorFromRepeatingTexture(Voxels[i].WorldPosition));
                 }
+            }
+
+          
+            for(int i = 0; i < Coins.Count - 1; i++)
+            {
+                Coins[i].GetRoot().GetComponent<CoinPileFixture>().SetFullness(1.0f);
+            }
+
+            DwarfBux remainder = Money - (Coins.Count - 1) * MoneyPerPile;
+
+            if (Coins.Count > 0)
+            {
+                Coins.Last().GetRoot().GetComponent<CoinPileFixture>().SetFullness((float)(decimal)remainder / (float)(decimal)MoneyPerPile);
             }
 
             if (IsFull() && Faction.Treasurys.Count(t => !t.IsFull()) == 0 && Voxels.Count > 0)

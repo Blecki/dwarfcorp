@@ -165,6 +165,7 @@
     <Compile Include="Components\AI\Sensors\TrapSensor.cs" />
     <Compile Include="Components\AI\Sensors\ExploredListener.cs" />
     <Compile Include="Components\AI\Sensors\DestroyOnTimer.cs" />
+    <Compile Include="Components\VoxelChangeEvent.cs" />
     <Compile Include="Components\NewVoxelListener.cs" />
     <Compile Include="Components\AI\Sensors\VoxelListener.cs" />
     <Compile Include="Components\AI\StatBuff.cs" />
@@ -638,7 +639,6 @@
     <Compile Include="Scripting\Player\Tools\MagicTool.cs" />
     <Compile Include="Scripting\Player\Tools\PlayerTool.cs" />
     <Compile Include="Scripting\Player\VoxelSelector.cs" />
-    <Compile Include="Scripting\Rooms\Farm.cs" />
     <Compile Include="Scripting\Rooms\Room.cs" />
     <Compile Include="Scripting\Rooms\RoomData.cs" />
     <Compile Include="Scripting\Rooms\RoomLibrary.cs" />
@@ -648,9 +648,7 @@
     <Compile Include="Scripting\Rooms\RoomTypes\CommonRoom.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\Kitchen.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\LibraryRoom.cs" />
-    <Compile Include="Scripting\Rooms\RoomTypes\MushroomFarm.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\TrainingRoom.cs" />
-    <Compile Include="Scripting\Rooms\RoomTypes\WheatFarm.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\WorkshopRoom.cs" />
     <Compile Include="Scripting\Rooms\Stockpile.cs" />
     <Compile Include="Scripting\Rooms\Zone.cs" />

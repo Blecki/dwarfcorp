@@ -81,11 +81,11 @@ namespace DwarfCorp
 
         public Point3 WorldSize { get; set; }
 
-        private List<VoxelHandle> ChangedVoxels = new List<VoxelHandle>();
+        private List<VoxelChangeEvent> ChangedVoxels = new List<VoxelChangeEvent>();
 
-        public void NotifyChangedVoxel(VoxelHandle Voxel)
+        public void NotifyChangedVoxel(VoxelChangeEvent Change)
         {
-            ChangedVoxels.Add(Voxel);
+            ChangedVoxels.Add(Change);
         }
 
         public ChunkGenerator ChunkGen { get; set; }
@@ -436,10 +436,10 @@ namespace DwarfCorp
             Splasher.HandleTransfers(gameTime, Water.GetTransferQueue());
 
             var localList = ChangedVoxels;
-            ChangedVoxels = new List<VoxelHandle>();
+            ChangedVoxels = new List<VoxelChangeEvent>();
             foreach (var voxel in localList)
             {
-                var box = voxel.GetBoundingBox();
+                var box = voxel.Voxel.GetBoundingBox();
                 var hashmap = new HashSet<IBoundedObject>(World.CollisionManager.EnumerateIntersectingObjects(box, CollisionManager.CollisionType.Both));
 
                 foreach (var intersectingBody in hashmap)

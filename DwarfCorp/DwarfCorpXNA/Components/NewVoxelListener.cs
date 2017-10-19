@@ -42,8 +42,17 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     public class NewVoxelListener : Body
+#if DEBUG
+        , IRenderableComponent
+#endif
     {
-        private Action<VoxelHandle> Handler;
+        private Action<VoxelChangeEvent> Handler;
+
+        [OnSerializing]
+        void Serializer(StreamingContext Context)
+        {
+            throw new InvalidProgramException("DO NOT SERIALIZE LISTENERS");
+        }
 
         public NewVoxelListener()
         {
@@ -54,13 +63,22 @@ namespace DwarfCorp
             Matrix Transform,
             Vector3 BoundingBoxExtents,
             Vector3 BoundingBoxOffset,
-            Action<VoxelHandle> Handler) :
+            Action<VoxelChangeEvent> Handler) :
             base(Manager, "New Voxel Listener", Transform, BoundingBoxExtents, BoundingBoxOffset, true)
         {
+            CollisionType = CollisionManager.CollisionType.Static;
             this.Handler = Handler;
         }
 
-        public void OnVoxelChanged(VoxelHandle V)
+#if DEBUG
+        void IRenderableComponent.Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Microsoft.Xna.Framework.Graphics.GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
+        {
+            if (GamePerformance.DebugVisualizationEnabled)
+                Drawer3D.DrawBox(GetBoundingBox(), Color.DarkRed, 0.02f, false);
+        }
+#endif
+
+        public void OnVoxelChanged(VoxelChangeEvent V)
         {
             if (Handler != null)
                 Handler(V);

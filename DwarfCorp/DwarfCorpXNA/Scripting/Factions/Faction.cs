@@ -62,7 +62,7 @@ namespace DwarfCorp
         public CraftBuilder CraftBuilder { get; set; }
         public Color PrimaryColor { get; set; }
         public Color SecondaryColor { get; set; }
-        //public List<FarmTile> FarmTiles = new List<FarmTile>();
+        
         public DesignationSet Designations = new DesignationSet();
         
         // Todo: When converting to new save system, it can take care of this.

@@ -13,6 +13,9 @@ namespace DwarfCorp
     {
         public static string Version = "UNKNOWN VERSION";
 
+        public static bool DebugVisualizationEnabled = false;
+        public static bool DebugVisualizationKeyPressed = false;
+
         /// <summary>
         /// A boolean toggle changed with a keyboard button press.  Allows realtime switching between two code blocks
         /// for comparsion testing.
@@ -1025,6 +1028,15 @@ namespace DwarfCorp
         public void Update()
         {
             KeyboardState keyboard = Keyboard.GetState();
+
+            if (keyboard.IsKeyDown(ControlSettings.Mappings.DebugVisualizationToggle))
+                DebugVisualizationKeyPressed = true;
+            else if (DebugVisualizationKeyPressed)
+            {
+                SoundManager.PlaySound(ContentPaths.Audio.pick, .15f);
+                DebugVisualizationEnabled = !DebugVisualizationEnabled;
+                DebugVisualizationKeyPressed = false;
+            }
 
             if (keyboard.IsKeyDown(ControlSettings.Mappings.TogglePerformanceOverlay))
             {

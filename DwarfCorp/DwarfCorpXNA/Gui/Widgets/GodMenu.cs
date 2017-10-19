@@ -135,14 +135,37 @@ namespace DwarfCorp.Gui.Widgets
                 new HorizontalMenuTray.MenuItem
                 {
                     Text = "DWARF BUX",
-                    OnClick = (sender, args) => Master.Faction.AddMoney(1000m)
+                    OnClick = (sender, args) => Master.Faction.AddMoney(100m)
                 },
                 new HorizontalMenuTray.MenuItem
                 {
                     Text = "PAY",
                     OnClick = (sender, args) => Master.PayEmployees()
                 },
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "STARVE",
+                    OnClick = (sender, args) =>
+                    {
+                        foreach(var minion in Master.Faction.Minions)
+                        {
+                            minion.Status.Hunger.CurrentValue = 0;
+                        }
+                    }
+                },
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "SPAWN TEST",
+                    OnClick = (sender, args) =>
+                    {
+                        var keys = EntityFactory.EntityFuncs.Keys.ToList();
+                        foreach(var key in keys)
+                        {
+                            EntityFactory.CreateEntity<GameComponent>(key, Master.World.CursorLightPos);
+                        }
 
+                    }
+                },
 
                 // Shouldn't this go into some kind of 'debug' menu?
                 new HorizontalMenuTray.MenuItem

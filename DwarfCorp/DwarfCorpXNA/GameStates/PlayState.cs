@@ -206,7 +206,9 @@ namespace DwarfCorp.GameStates
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_nighttime, 0.15f);
                     SoundManager.PlayMusic("main_theme_night");
                 };
+
             }
+
             World.Unpause();
             AutoSaveTimer = new Timer(GameSettings.Default.AutoSaveTimeMinutes * 60.0f, false, Timer.TimerMode.Game);
 
@@ -880,8 +882,8 @@ namespace DwarfCorp.GameStates
             {
                 OnLayout = (sender) =>
                 {
-                    sender.Rect = new Rectangle(GuiRoot.RenderData.VirtualScreen.Width - 256,
-                        topRightTray.Rect.Y - 128, 256, 128);
+                    sender.Rect = new Rectangle(GuiRoot.RenderData.VirtualScreen.Width - 350,
+                        secondBar.Rect.Top - 130, 350, 128);
                 }
             }) as AnnouncementPopup;
 
@@ -2001,9 +2003,6 @@ namespace DwarfCorp.GameStates
 
             // Now that it's laid out, bring the second bar to the front so commands draw over other shit.
             secondBar.BringToFront();
-
-            // Hack to put the employee info panel in the right spot.
-            //SidePanel.RepositionItems();
         }
 
         /// <summary>
@@ -2221,11 +2220,6 @@ namespace DwarfCorp.GameStates
             World.Quit();
             StateManager.ClearState();
             Destroy();
-
-            // This line needs to stay in so the GC can properly collect all the items the PlayState keeps active.
-            // If you want to remove this line you better be prepared to fully clean up the PlayState instance
-            // using another method.
-            //StateManager.States["PlayState"] = new PlayState(Game, StateManager);
 
             StateManager.PushState(new MainMenuState(Game, StateManager));
         }

@@ -77,53 +77,55 @@ namespace DwarfCorp
 
         public IEnumerable<Status> FarmATile()
         {
-            var tile = FarmToWork;
-
-            if (tile == null) 
+            if (FarmToWork == null) 
             {
                 yield return Status.Fail;
                 yield break;
             }
-            if (tile.IsCanceled)
+            if (FarmToWork.IsCanceled)
             {
                 yield return Status.Fail;
                 yield break;
             }
-            else if (tile.PlantExists())
+            else if (FarmToWork.PlantExists())
             {
-                tile.Farmer = null;
+                FarmToWork.Farmer = null;
                 yield return Status.Success;
             }
             else
             {
-                if (tile.Plant != null && tile.Plant.IsDead) tile.Plant = null;
+                if (FarmToWork.Plant != null && FarmToWork.Plant.IsDead) FarmToWork.Plant = null;
                 Creature.CurrentCharacterMode = CharacterMode.Attacking;
                 Creature.Sprite.ResetAnimations(CharacterMode.Attacking);
                 Creature.Sprite.PlayAnimations(CharacterMode.Attacking);
-                while (tile.Progress < 100.0f && !Satisfied())
+                while (FarmToWork.Progress < 100.0f && !Satisfied())
                 {
-                    if (tile.IsCanceled)
+                    if (FarmToWork.IsCanceled)
                     {
                         yield return Status.Fail;
                         yield break;
                     }
                     Creature.Physics.Velocity *= 0.1f;
-                    tile.Progress += Creature.Stats.BaseFarmSpeed*DwarfTime.Dt;
+                    FarmToWork.Progress += Creature.Stats.BaseFarmSpeed*DwarfTime.Dt;
 
                     Drawer2D.DrawLoadBar(Agent.Manager.World.Camera, Agent.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4,
-                        tile.Progress/100.0f);
+                        FarmToWork.Progress/100.0f);
 
-                    if (tile.Progress >= 100.0f && !Satisfied())
+                    if (FarmToWork.Progress >= 100.0f && !Satisfied())
                     {
-                        tile.Progress = 0.0f;
+                        FarmToWork.Progress = 0.0f;
                         if (Mode == FarmAct.FarmMode.Plant)
                         {
                             FarmToWork.CreatePlant(PlantToCreate, Creature.Manager.World);
+                            Creature.Faction.Designations.RemoveVoxelDesignation(FarmToWork.Voxel, DesignationType._AllFarms);
+                            Creature.Faction.Designations.AddVoxelDesignation(FarmToWork.Voxel, DesignationType._InactiveFarm, FarmToWork);
                             DestroyResources();
                         }
                         else
                         {
                             FarmToWork.Voxel.Type = VoxelLibrary.GetVoxelType("TilledSoil");
+                            Creature.Faction.Designations.RemoveVoxelDesignation(FarmToWork.Voxel, DesignationType._AllFarms);
+                            Creature.Faction.Designations.AddVoxelDesignation(FarmToWork.Voxel, DesignationType._InactiveFarm, FarmToWork);
                         }
                     }
                     if (MathFunctions.RandEvent(0.01f))
@@ -134,7 +136,7 @@ namespace DwarfCorp
                 Creature.CurrentCharacterMode = CharacterMode.Idle;
                 Creature.AI.AddThought(Thought.ThoughtType.Farmed);
                 Creature.AI.AddXP(1);
-                tile.Farmer = null;
+                FarmToWork.Farmer = null;
                 Creature.Sprite.PauseAnimations(CharacterMode.Attacking);
                 yield return Status.Success;
             }

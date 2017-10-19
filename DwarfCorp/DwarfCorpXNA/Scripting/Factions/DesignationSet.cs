@@ -164,6 +164,8 @@ namespace DwarfCorp
                 VoxelDesignations.Remove(key);
         }
 
+        // Todo: Kill this. It checks every designation every frame. Hook the voxel change mechanism so it
+        //      only has to check what has changed!
         public void CleanupDesignations()
         {
             var toRemove = new List<VoxelDesignation>();
@@ -175,6 +177,19 @@ namespace DwarfCorp
                         case DesignationType.Dig:
                         case DesignationType.Guard:
                             if (!d.Voxel.IsValid || d.Voxel.IsEmpty)
+                                toRemove.Add(d);
+                            break;
+                        case DesignationType.Put:
+                            if (!d.Voxel.IsValid || !d.Voxel.IsEmpty)
+                                toRemove.Add(d);
+                            break;
+                        case DesignationType.Till:
+                            if (!d.Voxel.IsValid || d.Voxel.IsEmpty || d.Voxel.Type.Name == "TilledSoil")
+                                toRemove.Add(d);
+                            break;
+                        case DesignationType.Plant:
+                        case DesignationType._InactiveFarm:
+                            if (!d.Voxel.IsValid || d.Voxel.IsEmpty || d.Voxel.Type.Name != "TilledSoil")
                                 toRemove.Add(d);
                             break;
                         default:

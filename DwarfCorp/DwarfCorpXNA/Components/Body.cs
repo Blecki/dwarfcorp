@@ -110,7 +110,7 @@ namespace DwarfCorp
                 localTransform = value;
                 HasMoved = true;
 
-                if ((Position - thresholdPos).LengthSquared() > 1.0)
+                if ((Position - thresholdPos).LengthSquared() > 0.001)
                     ExceedsMovementThreshold = true;
 
                 propogateTransforms = true;

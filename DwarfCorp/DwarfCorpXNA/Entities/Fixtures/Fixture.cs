@@ -67,7 +67,6 @@ namespace DwarfCorp
             CollisionType = CollisionManager.CollisionType.Static;
             this.OrientMode = OrientMode;
             AddChild(new Health(Manager, "Hp", 100, 0, 100));
-
             /*
             AddChild(new Flammable(Manager, "Flammable"));
             AddChild(new ParticleTrigger("dirt_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
@@ -78,6 +77,18 @@ namespace DwarfCorp
             */
 
             PropogateTransforms();
+            CreateCosmeticChildren(Manager);
+        }
+
+        public void ResetSprite(SpriteSheet asset, Point frame)
+        {
+            Asset = asset;
+            Frame = frame;
+            var childrenToKill = Children.OfType<SimpleSprite>().ToList();
+            foreach(var child in childrenToKill)
+            {
+                child.Delete();
+            }
             CreateCosmeticChildren(Manager);
         }
 

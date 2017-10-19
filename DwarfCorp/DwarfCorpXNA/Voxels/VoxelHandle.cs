@@ -143,7 +143,17 @@ namespace DwarfCorp
         public RampType RampType
         {
             get { return _cache_Chunk.Data.RampTypes[_cache_Index]; }
-            set { _cache_Chunk.Data.RampTypes[_cache_Index] = value; }
+            set {
+                if (value != _cache_Chunk.Data.RampTypes[_cache_Index])
+                    _cache_Chunk.Manager.NotifyChangedVoxel(new VoxelChangeEvent
+                    {
+                        Type = VoxelChangeEventType.RampsChanged,
+                        Voxel = this,
+                        OldRamps = _cache_Chunk.Data.RampTypes[_cache_Index],
+                        NewRamps = value
+                    });
+                _cache_Chunk.Data.RampTypes[_cache_Index] = value;
+            }
         }
 
         [JsonIgnore]
@@ -320,7 +330,13 @@ namespace DwarfCorp
             }
 
             // Invoke new voxel listener.
-            _cache_Chunk.Manager.NotifyChangedVoxel(this);
+            _cache_Chunk.Manager.NotifyChangedVoxel(new VoxelChangeEvent
+            {
+                Type = VoxelChangeEventType.VoxelTypeChanged,
+                Voxel = this,
+                OriginalVoxelType = previous,
+                NewVoxelType = NewType.ID
+            });
         }
 
         private static void InvalidateVoxel(

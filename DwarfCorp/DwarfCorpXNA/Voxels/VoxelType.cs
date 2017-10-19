@@ -41,7 +41,7 @@ namespace DwarfCorp
     /// Specifies a specific kind of voxel.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class VoxelType
+    public class VoxelType : System.IEquatable<VoxelType>
     {
         public enum TransitionType
         {
@@ -157,6 +157,67 @@ namespace DwarfCorp
             IsTransparent = false;
             HitSound = SoundSource.Create(ContentPaths.Audio.pick);
             Transitions = TransitionType.Horizontal;
+        }
+
+        public static bool operator ==(VoxelType obj1, VoxelType obj2)
+        {
+            if (ReferenceEquals(obj1, obj2))
+            {
+                return true;
+            }
+
+            if (ReferenceEquals(obj1, null))
+            {
+                return false;
+            }
+            if (ReferenceEquals(obj2, null))
+            {
+                return false;
+            }
+
+            return obj1.ID == obj2.ID;
+        }
+
+        // this is second one '!='
+        public static bool operator !=(VoxelType obj1, VoxelType obj2)
+        {
+            return !(obj1 == obj2);
+        }
+
+        public bool Equals(VoxelType other)
+        {
+            if (ReferenceEquals(null, other))
+            {
+                return false;
+            }
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            return ID == other.ID;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            return obj.GetType() == GetType() && Equals((VoxelType)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ID;
+            }
         }
     }
 

@@ -71,12 +71,24 @@ namespace DwarfCorp
             RegisterEntity("Crate", (position, data) => new Crate(world.ComponentManager, position));
             RegisterEntity("Balloon", (position, data) => CreateBalloon(position + new Vector3(0, 1000, 0), position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, null, world.PlayerFaction));
             RegisterEntity("Work Pile", (position, data) => new WorkPile(world.ComponentManager, position));
-            RegisterEntity("Pine Tree", (position, data) => new Tree("Pine Tree", world.ComponentManager, position, "pine", ResourceLibrary.ResourceType.PineCone, data.GetData("Scale", 1.0f), ContentPaths.Entities.Plants.pinesprout));
-            RegisterEntity("Snow Pine Tree", (position, data) => new Tree("Pine Tree", world.ComponentManager, position, "snowpine", ResourceLibrary.ResourceType.PineCone, data.GetData("Scale", 1.0f), ContentPaths.Entities.Plants.pinesprout));
-            RegisterEntity("Palm Tree", (position, data) => new Tree("Palm Tree", world.ComponentManager, position, "palm", ResourceLibrary.ResourceType.Coconut, data.GetData("Scale", 1.0f), ContentPaths.Entities.Plants.palmsprout));
-            RegisterEntity("Apple Tree", (position, data) => new Tree("Apple Tree", world.ComponentManager, position, "appletree", ResourceLibrary.ResourceType.Apple, data.GetData("Scale", 1.0f), ContentPaths.Entities.Plants.appletreesprout));
+
+            RegisterEntity("Pine Tree", (position, data) => new Tree("Pine Tree", world.ComponentManager, position, "pine", ResourceLibrary.ResourceType.PineCone, data.GetData("Scale", 1.0f), "pinesprout"));
+            RegisterEntity("Pine Tree Sprout", (position, data) => new Seedling(world.ComponentManager, "Pine Tree", position, "pinesprout", 12));
+            RegisterEntity("Snow Pine Tree", (position, data) => new Tree("Pine Tree", world.ComponentManager, position, "snowpine", ResourceLibrary.ResourceType.PineCone, data.GetData("Scale", 1.0f), "pinesprout"));
+            RegisterEntity("Snow Pine Tree Sprout", (position, data) => new Seedling(world.ComponentManager, "Snow Pine Tree", position, "pinesprout", 12));
+
+            RegisterEntity("Palm Tree", (position, data) => new Tree("Palm Tree", world.ComponentManager, position, "palm", ResourceLibrary.ResourceType.Coconut, data.GetData("Scale", 1.0f), "palmsprout"));
+            RegisterEntity("Palm Tree Sprout", (position, data) => new Seedling(world.ComponentManager, "Palm Tree", position, "palmsprout", 12));
+
+            RegisterEntity("Apple Tree", (position, data) => new Tree("Apple Tree", world.ComponentManager, position, "appletree", ResourceLibrary.ResourceType.Apple, data.GetData("Scale", 1.0f), "appletreesprout"));
+            RegisterEntity("Apple Tree Sprout", (position, data) => new Seedling(world.ComponentManager, "Apple Tree", position, "appletreesprout", 12));
+
             RegisterEntity("Cactus", (position, data) => new Cactus(world.ComponentManager, position, "cactus", data.GetData("Scale", 1.0f)));
+            RegisterEntity("Cactus Sprout", (position, data) => new Seedling(world.ComponentManager, "Cactus", position, "cactussprout", 12));
+
             RegisterEntity("Berry Bush", (position, data) => new Bush(world.ComponentManager, position, "berrybush", data.GetData("Scale", 1.0f)));
+            RegisterEntity("Berry Bush Sprout", (position, data) => new Seedling(world.ComponentManager, "Berry Bush", position, "berrybushsprout", 12));
+
             RegisterEntity("Bird", (position, data) => new Bird(ContentPaths.Entities.Animals.Birds.GetRandomBird(), position, world.ComponentManager, "Bird"));
             RegisterEntity("Bat", (position, data) => new Bat(world.ComponentManager, position));
             RegisterEntity("Scorpion", (position, data) => new Scorpion(ContentPaths.Entities.Animals.Scorpion.scorption_animation, position, world.ComponentManager, "Scorpion"));
@@ -106,9 +118,17 @@ namespace DwarfCorp
             RegisterEntity("Table", (position, data) => new Table(world.ComponentManager, position));
             RegisterEntity("Chair", (position, data) => new Chair(world.ComponentManager, position));
             RegisterEntity("Flag", (position, data) => new Flag(world.ComponentManager, position, world.PlayerCompany.Information));
-            RegisterEntity("Mushroom", (position, data) => new Mushroom(world.ComponentManager, position, ContentPaths.Entities.Plants.mushroom, ResourceLibrary.ResourceType.Mushroom, 2, false, ContentPaths.Entities.Plants.mushroomsprout));
-            RegisterEntity("Cave Mushroom", (position, data) => new Mushroom(world.ComponentManager, position, ContentPaths.Entities.Plants.cavemushroom, ResourceLibrary.ResourceType.CaveMushroom, 4, true, ContentPaths.Entities.Plants.cavemushroomsprout));
+
+            RegisterEntity("Mushroom", (position, data) => new Mushroom(world.ComponentManager, position, ContentPaths.Entities.Plants.mushroom, ResourceLibrary.ResourceType.Mushroom, 2, false, "mushroomsprout"));
+            RegisterEntity("Mushroom Sprout", (position, data) => new Seedling(world.ComponentManager, "Mushroom", position, "mushroomsprout", 12));
+
+            RegisterEntity("Cave Mushroom", (position, data) => new Mushroom(world.ComponentManager, position, ContentPaths.Entities.Plants.cavemushroom, ResourceLibrary.ResourceType.CaveMushroom, 4, true, "cavemushroomsprout"));
+            RegisterEntity("Cave Mushroom Sprout", (position, data) => new Seedling(world.ComponentManager, "Cave Mushroom", position, "cavemushroomsprout", 12));
+
             RegisterEntity("Wheat", (position, data) => new Wheat(world.ComponentManager, position));
+            RegisterEntity("Wheat Sprout", (position, data) => new Seedling(world.ComponentManager, "Wheat", position, "wheatsprout", 12));
+
+
             RegisterEntity("Kitchen Table", (position, data) => new Table(world.ComponentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 7)) { Tags = new List<string>() { "Cutting Board" } });
             RegisterEntity("Books", (position, data) => new Table(world.ComponentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 4)) { Tags = new List<string>() { "Research" }, Battery = new Table.ManaBattery() { Charge = 0.0f, MaxCharge = 100.0f } });
             RegisterEntity("Potions", (position, data) => new Table(world.ComponentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(1, 4)) { Tags = new List<string>() { "Research" }, Battery = new Table.ManaBattery() { Charge = 0.0f, MaxCharge = 100.0f } });

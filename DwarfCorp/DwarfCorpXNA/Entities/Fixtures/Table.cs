@@ -183,23 +183,23 @@ namespace DwarfCorp
                 false, spriteSheet, new Point(0, 6))
             {
                 OrientationType = SimpleSprite.OrientMode.Fixed,
-            }).SetFlag(Flag.ShouldSerialize, false);
+            }).SetFlagRecursive(Flag.ShouldSerialize, false);
 
             AddChild(new SimpleSprite(Manager, "chair legs 1", Matrix.CreateTranslation(0, -0.05f, 0),
                 false, spriteSheet, new Point(1, 6))
             {
                 OrientationType = SimpleSprite.OrientMode.Fixed
-            }).SetFlag(Flag.ShouldSerialize, false);
+            }).SetFlagRecursive(Flag.ShouldSerialize, false);
 
             AddChild(new SimpleSprite(Manager, "chair legs 2",
                 Matrix.CreateTranslation(0, -0.05f, 0) * Matrix.CreateRotationY((float)Math.PI * 0.5f),
                 false, spriteSheet, new Point(1, 6))
             {
                 OrientationType = SimpleSprite.OrientMode.Fixed
-            }).SetFlag(Flag.ShouldSerialize, false);
+            }).SetFlagRecursive(Flag.ShouldSerialize, false);
 
             if (fixtureAsset != null)
-                AddChild(new Fixture(Manager, new Vector3(0, 0.3f, 0), fixtureAsset, fixtureFrame)).SetFlag(Flag.ShouldSerialize, false);
+                AddChild(new Fixture(Manager, new Vector3(0, 0.3f, 0), fixtureAsset, fixtureFrame)).SetFlagRecursive(Flag.ShouldSerialize, false);
         }
     }
 }

@@ -24,49 +24,36 @@ namespace DwarfCorp
 
         private Dictionary<string, InstanceGroup> InstanceTypes = new Dictionary<string, InstanceGroup>();
 
-        public InstanceRenderer(ContentManager Content)
+        public InstanceRenderer(GraphicsDevice Device, ContentManager Content)
         {
-            InitializeVegetationInstanceMeshes(Content);
-        }
+            List<Matrix> treeTransforms = new List<Matrix>();
+            treeTransforms.Add(Matrix.Identity);
+            treeTransforms.Add(Matrix.CreateRotationY(1.57f));
 
-        private void CreateXMeshInstanceType(
-            string name, 
-            ContentManager content, 
-            bool addToSelectionBuffer = true)
-        {
-            if (!PrimitiveLibrary.BatchBillboardPrimitives.ContainsKey(name))
-                PrimitiveLibrary.CreateIntersecting(name, name, GameState.Game.GraphicsDevice, content);
+            List<Color> treeTints = new List<Color>();
+            treeTints.Add(Color.White);
+            treeTints.Add(Color.White);
 
-            InstanceTypes.Add(name, new InstanceGroup
-            {
-                RenderData = new InstanceRenderData
+            foreach (var member in typeof(ContentPaths.Entities.Plants).GetFields())
+                if (member.IsStatic && member.FieldType == typeof(String))
                 {
-                    Model = PrimitiveLibrary.BatchBillboardPrimitives[name],
-                    Texture = PrimitiveLibrary.BatchBillboardPrimitives[name].Texture,
-                    BlendMode = BlendState.NonPremultiplied,
-                    EnableWind = true,
-                    RenderInSelectionBuffer = addToSelectionBuffer
-                }
-            });
-        }
+                    bool isMote = false;
+                    foreach (var attribute in member.GetCustomAttributes(false))
+                        if (attribute is MoteAttribute)
+                            isMote = true;
 
-        private void InitializeVegetationInstanceMeshes(ContentManager content)
-        {
-            CreateXMeshInstanceType("pine", content);
-            CreateXMeshInstanceType("palm", content);
-            CreateXMeshInstanceType("snowpine", content);
-            CreateXMeshInstanceType("appletree", content);
-            CreateXMeshInstanceType("berrybush", content);
-            CreateXMeshInstanceType("cactus", content);
-            CreateXMeshInstanceType("grass", content, false);
-            CreateXMeshInstanceType("frostgrass", content, false);
-            CreateXMeshInstanceType("flower", content, false);
-            CreateXMeshInstanceType("deadbush", content, false);
-            CreateXMeshInstanceType("vine", content, false);
-            CreateXMeshInstanceType("gnarled", content, false);
-            CreateXMeshInstanceType("mushroom", content);
-            CreateXMeshInstanceType("wheat", content);
-            CreateXMeshInstanceType("caveshroom", content);
+                    InstanceTypes.Add(member.Name, new InstanceGroup
+                    {
+                        RenderData = new InstanceRenderData
+                        {
+                            Model = PrimitiveLibrary.BatchBillboardPrimitives[member.Name],
+                            BlendMode = BlendState.NonPremultiplied,
+                            EnableWind = true,
+                            RenderInSelectionBuffer = !isMote
+                        }
+                    });
+
+                }
         }
 
         public enum RenderMode
@@ -78,7 +65,10 @@ namespace DwarfCorp
         public void RenderInstance(NewInstanceData Instance,
             GraphicsDevice Device, Shader Effect, Camera Camera, RenderMode Mode)
         {
-            System.Diagnostics.Debug.Assert(InstanceTypes.ContainsKey(Instance.Type));
+            if(Instance.Type == null || !InstanceTypes.ContainsKey(Instance.Type))
+            {
+                return;
+            }
 
             var group = InstanceTypes[Instance.Type];
 
@@ -140,7 +130,7 @@ namespace DwarfCorp
             BlendState blendState = Device.BlendState;
             Device.BlendState = Mode == RenderMode.Normal ? Group.RenderData.BlendMode : BlendState.Opaque;
 
-            Effect.MainTexture = Group.RenderData.Texture;
+            Effect.MainTexture = Group.RenderData.Model.Texture;
             Effect.LightRampTint = Color.White;
 
             InstanceBuffer.SetData(Group.Instances, 0, Group.InstanceCount, SetDataOptions.Discard);

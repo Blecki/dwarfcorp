@@ -5,3 +5,8 @@
 Hell's <place>
 Wasted <place>
 <undeadfamily>ia
+The Spooky <place>
+The Haunted <place>
+Ghostly <place>
+Dead Man's <place>
+Dead <place>
