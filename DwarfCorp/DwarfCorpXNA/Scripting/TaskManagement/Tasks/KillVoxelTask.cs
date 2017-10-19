@@ -46,8 +46,6 @@ namespace DwarfCorp
     internal class KillVoxelTask : Task
     {
         public VoxelHandle VoxelToKill = VoxelHandle.InvalidHandle;
-        private bool calculatedPath = false;
-        private Feasibility pathSuccess = Feasibility.Unknown;
 
         public KillVoxelTask()
         {
@@ -82,22 +80,8 @@ namespace DwarfCorp
             if(!VoxelToKill.IsValid || VoxelToKill.IsEmpty || VoxelToKill.Health <= 0)
                 return Feasibility.Infeasible;
 
-            if(!(agent.Faction.Designations.IsVoxelDesignation(VoxelToKill, DesignationType.Dig) 
-                && !VoxelHelpers.VoxelIsCompletelySurrounded(VoxelToKill)))
-                return Feasibility.Infeasible;
-
-            if (calculatedPath)
-                return pathSuccess;
-
-            var response = agent.AI.WaitForPlan(VoxelToKill, PlanAct.PlanType.Adjacent);
-
-            if (response == null)
-            {
-                return Feasibility.Unknown;
-            }
-            calculatedPath = true;
-            pathSuccess = response.Success ? Feasibility.Feasible : Feasibility.Infeasible;
-            return pathSuccess;
+            return agent.Faction.Designations.IsVoxelDesignation(VoxelToKill, DesignationType.Dig) 
+                && !VoxelHelpers.VoxelIsCompletelySurrounded(VoxelToKill) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override bool ShouldDelete(Creature agent)
