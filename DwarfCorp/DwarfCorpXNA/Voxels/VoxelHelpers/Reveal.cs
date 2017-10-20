@@ -60,6 +60,8 @@ namespace DwarfCorp
             int Radius)
         {
             var queue = new Queue<VisitedVoxel>(128);
+            var visited = new HashSet<ulong>();
+            var explored = new List<VoxelHandle>();
 
             if (Voxel.IsValid)
                 queue.Enqueue(new VisitedVoxel { Depth = 1, Voxel = Voxel });
@@ -67,28 +69,36 @@ namespace DwarfCorp
             while (queue.Count > 0)
             {
                 var v = queue.Dequeue();
-                if (!v.Voxel.IsValid) continue;
                 if (v.Depth >= Radius) continue;
-
+                
                 foreach (var neighborCoordinate in VoxelHelpers.EnumerateManhattanNeighbors(v.Voxel.Coordinate))
                 {
                     var neighbor = new VoxelHandle(Data, neighborCoordinate);
                     if (!neighbor.IsValid) continue;
-                    
-                    neighbor.Chunk.NotifyExplored(neighbor.Coordinate.GetLocalVoxelCoordinate());
-                    neighbor.IsExplored = true;
+
+                    var longHash = neighborCoordinate.GetLongHash();
+                    if (visited.Contains(longHash)) continue;
+                    visited.Add(longHash);
+
+                    if (neighbor.IsExplored == false)
+                    {
+                        explored.Add(neighbor);
+                        neighbor.IsExplored = true;
+                    }
 
                     if (neighbor.IsEmpty)
                         queue.Enqueue(new VisitedVoxel
                         {
                             Depth = v.Depth + 1,
-                            Voxel = neighbor
+                            Voxel = neighbor,
                         });
                 }
 
                 v.Voxel.IsExplored = true;
             }
-        }
 
+            foreach (var voxel in explored)
+                voxel.Chunk.NotifyExplored(voxel.Coordinate.GetLocalVoxelCoordinate());
+        }
     }
 }
