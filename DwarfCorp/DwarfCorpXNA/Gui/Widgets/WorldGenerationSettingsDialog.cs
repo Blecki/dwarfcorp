@@ -62,6 +62,7 @@ namespace DwarfCorp.Gui.Widgets
         
         public override void Construct()
         {
+            Settings.Seed = Settings.Name.GetHashCode();
             PopupDestructionType = PopupDestructionType.Keep;
             Padding = new Margin(2, 2, 2, 2);
             //Set size and center on screen.
@@ -103,6 +104,7 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     Settings.Name = TextGenerator.GenerateRandom(TextGenerator.GetAtoms(ContentPaths.Text.Templates.worlds));
                     NameEditBox.Text = Settings.Name;
+                    Settings.Seed = Settings.Name.GetHashCode();
                 }
             });
 
@@ -113,6 +115,7 @@ namespace DwarfCorp.Gui.Widgets
                 OnTextChange = (sender) =>
                 {
                     Settings.Name = sender.Text;
+                    Settings.Seed = Settings.Name.GetHashCode();
                 }
             });
 

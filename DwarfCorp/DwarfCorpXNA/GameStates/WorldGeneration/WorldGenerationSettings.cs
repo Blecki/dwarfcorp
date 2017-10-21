@@ -31,6 +31,7 @@ namespace DwarfCorp.GameStates
         public string ExistingFile { get; set; }
         public List<Faction> Natives { get; set; }
         public bool GenerateFromScratch { get; set; }
+        public int Seed { get; set; }
 
         public static string GetRandomWorldName()
         {
@@ -56,6 +57,7 @@ namespace DwarfCorp.GameStates
             WorldOrigin = new Vector2(Width / WorldScale, Height / WorldScale) * 0.5f;
             ExistingFile = null;
             GenerateFromScratch = false;
+            Seed = Name.GetHashCode();
         }
     }
 }

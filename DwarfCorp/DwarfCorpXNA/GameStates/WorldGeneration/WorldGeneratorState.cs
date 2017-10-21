@@ -87,7 +87,7 @@ namespace DwarfCorp.GameStates
                 TextColor = new Vector4(0, 0, 0, 1),
                 Font = "font16",
                 AutoLayout = Gui.AutoLayout.DockTop,
-                OnClick = (sender, args) => RestartGeneration()
+                OnClick = (sender, args) => { Settings = new WorldGenerationSettings();  RestartGeneration(); }
             });
 
             rightPanel.AddChild(new Gui.Widget

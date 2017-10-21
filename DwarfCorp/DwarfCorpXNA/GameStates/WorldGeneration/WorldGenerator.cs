@@ -44,7 +44,7 @@ namespace DwarfCorp.GameStates
         public WorldGenerator(WorldGenerationSettings Settings)
         {
             CurrentState = GenerationState.NotStarted;
-            Seed = new Random().Next();
+            Seed = Settings.Seed;
             this.Settings = Settings;
             MathFunctions.Random = new ThreadSafeRandom(Seed);
             Overworld.Volcanoes = new List<Vector2>();
@@ -255,7 +255,9 @@ namespace DwarfCorp.GameStates
            try
 #endif
             {
+                Seed = seed;
                 MathFunctions.Random = new ThreadSafeRandom(Seed);
+                Overworld.heightNoise.Seed = seed;
                 CurrentState = GenerationState.Generating;
 
                 if (Overworld.Name == null)

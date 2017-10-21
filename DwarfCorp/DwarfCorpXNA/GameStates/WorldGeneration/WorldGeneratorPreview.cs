@@ -159,6 +159,10 @@ namespace DwarfCorp.GameStates
             PreviewPanel = AddChild(new Gui.Widget
             {
                 AutoLayout = Gui.AutoLayout.DockFill,
+                OnLayout = (sender) =>
+                {
+                    sender.Rect = sender.Rect.Interior(0, PreviewSelector.Rect.Height + 2, 0, 0);
+                },
                 OnClick = (sender, args) =>
                 {
                     if (args.MouseButton == 0)
@@ -351,8 +355,10 @@ namespace DwarfCorp.GameStates
                     Root.DrawMesh(mesh, Root.RenderData.Texture);
                 }
                 float scale = GetIconScale(civ.Center);
-                var iconMesh = Gui.Mesh.FittedSprite(new Rectangle((int)(nameBounds.Center.X - 8 * scale), 
-                    (int)(nameBounds.Center.Y - 8 * scale), (int)(16 * scale), (int)(16 * scale)),
+                var iconRect = new Rectangle((int)(nameBounds.Center.X - 8 * scale),
+                    (int)(nameBounds.Center.Y + 8 * scale), (int)(16 * scale), (int)(16 * scale));
+                if (!rect.Contains(iconRect)) continue;
+                var iconMesh = Gui.Mesh.FittedSprite(iconRect,
                     icon, civ.Race.Icon);
                 Root.DrawMesh(iconMesh, Root.RenderData.Texture);
             }
