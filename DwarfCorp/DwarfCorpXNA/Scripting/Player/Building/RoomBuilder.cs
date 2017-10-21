@@ -200,7 +200,7 @@ namespace DwarfCorp
             lock (DesignatedRooms)
             {
                 List<Room> toCheck = new List<Room>();
-                toCheck.AddRange(DesignatedRooms);
+                toCheck.AddRange(DesignatedRooms.Where(r => r.IsBuilt));
                 foreach (Room r in toCheck)
                 {
                     r.RemoveVoxel(voxDestroyed);
