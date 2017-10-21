@@ -15,6 +15,7 @@ namespace DwarfCorp
 
         public static bool DebugVisualizationEnabled = false;
         public static bool DebugVisualizationKeyPressed = false;
+        private static bool FirstFrameAfterShown = true;
 
         /// <summary>
         /// A boolean toggle changed with a keyboard button press.  Allows realtime switching between two code blocks
@@ -860,6 +861,8 @@ namespace DwarfCorp
 
         public void EnterZone(String zoneName)
         {
+            if (!GameSettings.Default.DrawDebugData || FirstFrameAfterShown) return;
+
             int id = ThreadID;
             TrackerZone z;
             if (!zoneList.TryGetValue(zoneName, out z))
@@ -879,9 +882,11 @@ namespace DwarfCorp
 
         public void ExitZone(String zoneName)
         {
+            if (!GameSettings.Default.DrawDebugData || FirstFrameAfterShown) return;
+
             TrackerZone z;
             if (!zoneList.TryGetValue(zoneName, out z))
-                throw new Exception("Unknown TrackerZone found.");
+                return; // Just give up if the zone doesn't exist.
             TrackerZone cur = zone.Peek();
             if (z != zone.Peek())
                 throw new Exception("TrackerZone " + z.Name + " trying to exit but we are actually in " + cur.Name);
@@ -901,6 +906,8 @@ namespace DwarfCorp
         /// <param name="name">The display name for the tracker.</param>
         public void StartTrackPerformance(String name)
         {
+            if (!GameSettings.Default.DrawDebugData || FirstFrameAfterShown) return;
+
             Tracker t;
             if (internalTrackers.TryGetValue(name, out t))
             {
@@ -928,6 +935,8 @@ namespace DwarfCorp
         /// <param name="name">The display name of the tracker you used to start tracking.</param>
         public void StopTrackPerformance(String name)
         {
+            if (!GameSettings.Default.DrawDebugData || FirstFrameAfterShown) return;
+
             long endTime = Stopwatch.GetTimestamp();
             Tracker t;
             if (internalTrackers.TryGetValue(name, out t))
@@ -955,6 +964,8 @@ namespace DwarfCorp
         /// <param name="variable">The ValueType based variable you wish to track.</param>
         public void TrackValueType<T>(String name, T variable) where T : struct
         {
+            if (!GameSettings.Default.DrawDebugData || FirstFrameAfterShown) return;
+
             Tracker t;
             if (internalTrackers.TryGetValue(name, out t))
             {
@@ -984,6 +995,8 @@ namespace DwarfCorp
         /// <param name="variable">The Object based variable you wish to track.</param>
         public void TrackReferenceType<T>(String name, T variable) where T : class
         {
+            if (!GameSettings.Default.DrawDebugData || FirstFrameAfterShown) return;
+
             Tracker t;
             if (internalTrackers.TryGetValue(name, out t))
             {
@@ -1012,10 +1025,15 @@ namespace DwarfCorp
         /// </summary>
         public void PreUpdate()
         {
-            EnterZone("Update");
-            foreach (Tracker t in trackers)
+            if (GameSettings.Default.DrawDebugData)
             {
-                if (t != null) t.PreUpdate();
+                FirstFrameAfterShown = false;
+
+                EnterZone("Update");
+                foreach (Tracker t in trackers)
+                {
+                    if (t != null) t.PreUpdate();
+                }
             }
 
             Update();
@@ -1048,6 +1066,7 @@ namespace DwarfCorp
                 {
                     SoundManager.PlaySound(ContentPaths.Audio.pick, .15f);
                     GameSettings.Default.DrawDebugData = !GameSettings.Default.DrawDebugData;
+                    FirstFrameAfterShown = GameSettings.Default.DrawDebugData;
                     overlayKeyPressed = false;
                 }
             }
@@ -1087,6 +1106,8 @@ namespace DwarfCorp
         /// </summary>
         public void PostUpdate()
         {
+            if (!GameSettings.Default.DrawDebugData || FirstFrameAfterShown) return;
+
             foreach (Tracker t in trackers)
             {
                 if (t != null) t.PostUpdate();
@@ -1099,6 +1120,8 @@ namespace DwarfCorp
         /// </summary>
         public void PreRender()
         {
+            if (!GameSettings.Default.DrawDebugData || FirstFrameAfterShown) return;
+
             EnterZone("Render");
             foreach (Tracker t in trackers)
             {
@@ -1111,6 +1134,8 @@ namespace DwarfCorp
         /// </summary>
         public void PostRender()
         {
+            if (!GameSettings.Default.DrawDebugData || FirstFrameAfterShown) return;
+
             foreach (Tracker t in trackers)
             {
                 if (t != null) t.PostRender();
@@ -1124,13 +1149,12 @@ namespace DwarfCorp
         /// <param name="spriteBatch"></param>
         public void Render(SpriteBatch spriteBatch)
         {
+            if (!GameSettings.Default.DrawDebugData || FirstFrameAfterShown) return;
+
             if (_game.GraphicsDevice.IsDisposed ||
                 spriteBatch.IsDisposed ||
                 spriteBatch.GraphicsDevice.IsDisposed) return;
-
-            // Do not render if the setting is off.
-            if (!GameSettings.Default.DrawDebugData) return;
-
+                        
             // If our magicPixel has vanished recreate it.
             if (pixel == null || pixel.IsDisposed)
             {
@@ -1194,6 +1218,8 @@ namespace DwarfCorp
 
         public void PreThreadLoop(ThreadIdentifier identifier)
         {
+            if (!GameSettings.Default.DrawDebugData || FirstFrameAfterShown) return;
+
             ThreadLoopTracker loopTracker;
             if (threadLoopTrackers.TryGetValue(identifier, out loopTracker))
             {
@@ -1207,6 +1233,8 @@ namespace DwarfCorp
 
         public void PostThreadLoop(ThreadIdentifier identifier)
         {
+            if (!GameSettings.Default.DrawDebugData || FirstFrameAfterShown) return;
+
             ThreadLoopTracker loopTracker;
             if (threadLoopTrackers.TryGetValue(identifier, out loopTracker))
             {
