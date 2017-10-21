@@ -159,10 +159,6 @@ namespace DwarfCorp.GameStates
             PreviewPanel = AddChild(new Gui.Widget
             {
                 AutoLayout = Gui.AutoLayout.DockFill,
-                OnLayout = (sender) => 
-                {
-                    sender.Rect = sender.Rect.Interior(0, PreviewSelector.Rect.Height + 2, 0, 0);
-                },
                 OnClick = (sender, args) =>
                 {
                     if (args.MouseButton == 0)
@@ -224,7 +220,7 @@ namespace DwarfCorp.GameStates
         public Point ScreenToWorld(Vector2 screenCoord)
         {
             // Todo: This can be simplified.
-            Viewport port = new Viewport(PreviewPanel.Rect);
+            Viewport port = new Viewport(PreviewPanel.GetDrawableInterior());
             port.MinDepth = 0.0f;
             port.MaxDepth = 1.0f;
             Vector3 rayStart = port.Unproject(new Vector3(screenCoord.X, screenCoord.Y, 0.0f), ProjectionMatrix, ViewMatrix, Matrix.Identity);
@@ -260,7 +256,7 @@ namespace DwarfCorp.GameStates
 
         public Vector3 WorldToScreen(Vector2 worldCoord)
         {
-            Viewport port = new Viewport(PreviewPanel.Rect);
+            Viewport port = new Viewport(PreviewPanel.GetDrawableInterior());
             Vector3 worldSpace = GetWorldSpace(worldCoord);
             return port.Project(worldSpace, ProjectionMatrix, ViewMatrix, Matrix.Identity);
         }
@@ -317,17 +313,19 @@ namespace DwarfCorp.GameStates
             var font = Root.GetTileSheet("font10");
             var icon = Root.GetTileSheet("map-icons");
             var bkg = Root.GetTileSheet("basic");
+            var rect = PreviewPanel.GetDrawableInterior();
             foreach (var tree in Trees)
             {
                 var treeLocation = WorldToScreen(new Vector2(tree.X, tree.Y));
                 if (treeLocation.Z > 0.9999f)
                     continue;
-                Rectangle nameBounds = new Rectangle(0, 0, 16, 16);
+                float scale = GetIconScale(new Point(tree.X, tree.Y));
+                Rectangle nameBounds = new Rectangle(0, 0, (int)(16 * scale), (int)(16 * scale));
                 nameBounds.X = (int)treeLocation.X - (nameBounds.Width / 2);
                 nameBounds.Y = (int)treeLocation.Y - (nameBounds.Height / 2);
-                if (!PreviewPanel.Rect.Contains(nameBounds)) continue;
-                float scale = GetIconScale(new Point(tree.X, tree.Y));
-                var mesh = Gui.Mesh.FittedSprite(new Rectangle(nameBounds.Center.X, nameBounds.Center.Y, (int)(16 * scale), (int)(16 * scale)),
+                if (!rect.Contains(nameBounds)) continue;
+                var mesh = Gui.Mesh.FittedSprite(new Rectangle(nameBounds.Center.X - (int)(8 * scale), 
+                    nameBounds.Center.Y - (int)(8 * scale), (int)(16 * scale), (int)(16 * scale)),
                     icon, tree.Z);
                 Root.DrawMesh(mesh, Root.RenderData.Texture);
             }
@@ -341,9 +339,9 @@ namespace DwarfCorp.GameStates
                 var mesh = Gui.Mesh.CreateStringMesh(civ.Name, font, Vector2.One, out nameBounds);
                 nameBounds.X = (int)civLocation.X - (nameBounds.Width / 2);
                 nameBounds.Y = (int)civLocation.Y - (nameBounds.Height / 2);
-                nameBounds = MathFunctions.SnapRect(nameBounds, PreviewPanel.Rect);
+                nameBounds = MathFunctions.SnapRect(nameBounds, rect);
                 mesh.Translate(nameBounds.X, nameBounds.Y);
-                if (!PreviewPanel.Rect.Contains(nameBounds)) continue;
+                if (!rect.Contains(nameBounds)) continue;
                 if (PreviewSelector.SelectedItem == "Factions") // Draw dots for capitals.
                 {
                     var bkgmesh = Gui.Mesh.FittedSprite(nameBounds, bkg, 0)
@@ -353,7 +351,8 @@ namespace DwarfCorp.GameStates
                     Root.DrawMesh(mesh, Root.RenderData.Texture);
                 }
                 float scale = GetIconScale(civ.Center);
-                var iconMesh = Gui.Mesh.FittedSprite(new Rectangle((int)(nameBounds.Center.X - 8 * scale), (int)(nameBounds.Center.Y + 8 * scale), (int)(16 * scale), (int)(16 * scale)),
+                var iconMesh = Gui.Mesh.FittedSprite(new Rectangle((int)(nameBounds.Center.X - 8 * scale), 
+                    (int)(nameBounds.Center.Y - 8 * scale), (int)(16 * scale), (int)(16 * scale)),
                     icon, civ.Race.Icon);
                 Root.DrawMesh(iconMesh, Root.RenderData.Texture);
             }
