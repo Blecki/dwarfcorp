@@ -439,7 +439,7 @@ namespace DwarfCorp.GameStates
 
             int newNum = Math.Max(factionResources[data.ResourceToRelease].First.NumResources -
                 World.PlayerFaction.Designations.EnumerateDesignations(DesignationType.Put).Count(d =>
-                    (d.Tag as VoxelType).ResourceToRelease == data.ResourceToRelease), 0);
+                    VoxelLibrary.GetVoxelType((d.Tag as short?).Value).ResourceToRelease == data.ResourceToRelease), 0);
 
             if (newNum != numResources)
             {
