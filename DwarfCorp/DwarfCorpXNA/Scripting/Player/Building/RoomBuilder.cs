@@ -245,7 +245,7 @@ namespace DwarfCorp
                 if(order == null)
                     order = GetMostLikelyDesignation(v);
 
-                if (order != null && order.ToBuild.RoomData == CurrentRoomData)
+                if (order != null && order.ToBuild.RoomData == CurrentRoomData && !order.IsBuilt)
                 {
                     order.VoxelOrders.Add(new BuildVoxelOrder(order, order.ToBuild, v));
                 }
@@ -265,7 +265,7 @@ namespace DwarfCorp
                         DesignatedRooms.Add(toBuild);
                         order = new BuildRoomOrder(toBuild, this.Faction, Faction.World);
                         order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild, v));
-                        BuildDesignations.Add(order); 
+                        BuildDesignations.Add(order);
                     }
                     else
                     {
@@ -276,9 +276,13 @@ namespace DwarfCorp
                         BuildDesignations.Add(order);
                     }
                 }
+                else if (order.ToBuild.RoomData != CurrentRoomData || order.IsBuilt)
+                {
+                    order = null;
+                }
             }
 
-            if(order != null)
+            if (order != null)
             {
                 order.WorkObjects.AddRange(Fence.CreateFences(World.ComponentManager,
                     ContentPaths.Entities.DwarfObjects.constructiontape,
