@@ -217,11 +217,6 @@ namespace DwarfCorp
                         if (response.Success)
                         {
                             Path = response.Path;
-
-                            if (Type == PlanType.Adjacent && Path.Count > 0)
-                            {
-                                Path.RemoveAt(Path.Count - 1);
-                            }
                             WaitingOnResponse = false;
 
                             statusResult = Status.Success;
