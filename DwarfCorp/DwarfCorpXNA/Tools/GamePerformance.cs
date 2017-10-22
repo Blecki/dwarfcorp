@@ -11,8 +11,6 @@ namespace DwarfCorp
 {
     public class GamePerformance : IDisposable
     {
-        public static string Version = "UNKNOWN VERSION";
-
         public static bool DebugVisualizationEnabled = false;
         public static bool DebugVisualizationKeyPressed = false;
 
@@ -194,11 +192,11 @@ namespace DwarfCorp
             internalWatch = Stopwatch.StartNew();
 
             trackers.Add(new FramerateTracker(this));
-            trackers.Add(new ReferenceTypeTracker<String>(this, "Version"));
             trackers.Add(new UpdateTimeTracker(this));
             trackers.Add(new RenderTimeTracker(this));
 
-            this.TrackReferenceType("Version", Version);
+            this.TrackReferenceType("Version", Program.Version);
+            this.TrackReferenceType("Commit", Program.Commit);
         }
 
         /// <summary>
