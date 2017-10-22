@@ -164,7 +164,8 @@ namespace DwarfCorp
                                 Tag = Item.ItemType.CraftLocation,
                                 Teleport = true,
                                 TeleportOffset = new Vector3(0.5f, -0.5f, 0),
-                                ObjectName = Item.ItemType.CraftLocation
+                                ObjectName = Item.ItemType.CraftLocation,
+                                CheckForOcclusion = true
                             },
                             new Wrap(() => Creature.HitAndWait(time, true, 
                                 () => Creature.AI.Position, "Craft")),
@@ -200,7 +201,8 @@ namespace DwarfCorp
                                 Tag = Item.ItemType.CraftLocation,
                                 Teleport = true,
                                 TeleportOffset = new Vector3(0.5f, -0.5f, 0),
-                                ObjectName = Item.ItemType.CraftLocation
+                                ObjectName = Item.ItemType.CraftLocation,
+                                CheckForOcclusion = true
                             },
                             new Wrap(
                                 () =>
