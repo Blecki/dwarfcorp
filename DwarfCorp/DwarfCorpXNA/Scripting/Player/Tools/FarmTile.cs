@@ -68,6 +68,7 @@ namespace DwarfCorp
         {
             PlantedType = SeedResourceType;
             Plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[SeedResourceType].PlantToGenerate, Voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f));
+            if (Plant is Seedling) (Plant as Seedling).Farm = this;
             
             Matrix original = Plant.LocalTransform;
             original.Translation += Vector3.Down;
