@@ -91,10 +91,7 @@ namespace DwarfCorp
         {
             hasSeed = true;
             lastSeed = seed;
-            if(generator == null)
-            {
-                generator = new Random(seed);
-            }
+            generator = new Random(seed);
         }
 
         public int Next()

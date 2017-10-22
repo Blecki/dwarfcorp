@@ -245,6 +245,7 @@ namespace DwarfCorp
             {
                 CurrentTask.Script = null;
             }
+            Sensor.OnEnemySensed += Sensor_OnEnemySensed;
         }
 
         public void ResetPositionConstraint()
