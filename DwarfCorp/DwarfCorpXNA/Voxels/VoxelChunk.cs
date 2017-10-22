@@ -215,7 +215,6 @@ namespace DwarfCorp
         {
             if (g == null || g.IsDisposed)
                 return;
-
             VoxelListPrimitive primitive = new VoxelListPrimitive();
             primitive.InitializeFromChunk(this);
 
