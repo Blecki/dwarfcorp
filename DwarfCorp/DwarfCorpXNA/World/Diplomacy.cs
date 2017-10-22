@@ -154,6 +154,7 @@ namespace DwarfCorp
 
         private TradeEnvoy CurrentTradeEnvoy = null;
         private WarParty CurrentWarParty = null;
+        public DateTime TimeOfLastTrade = new DateTime();
 
         public Diplomacy()
         {
@@ -164,6 +165,7 @@ namespace DwarfCorp
         {
             World = world;
             FactionPolitics = new PoliticsDictionary();
+            TimeOfLastTrade = world.Time.CurrentDate;
         }
 
         public Politics GetPolitics(Faction factionA, Faction factionB)
@@ -395,6 +397,7 @@ namespace DwarfCorp
         public void Update(DwarfTime time, DateTime currentDate, WorldManager world)
         {
             World = world;
+            var timeSinceLastTrade = world.Time.CurrentDate  - TimeOfLastTrade;
             foreach (var mypolitics in FactionPolitics)
             {
                 Pair<string> pair = mypolitics.Key;
@@ -433,7 +436,8 @@ namespace DwarfCorp
                     {
                         CurrentWarParty = null;
                     }
-                    
+                   
+
                     if (needsNewTradeEnvoy && otherFaction.Race.IsIntelligent  && !otherFaction.IsRaceFaction && 
                         relation.GetCurrentRelationship() != Relationship.Hateful)
                     {
@@ -441,9 +445,10 @@ namespace DwarfCorp
                         {
                             relation.TradePartyTimer.Update(currentDate);
 
-                            if (relation.TradePartyTimer.HasTriggered)
+                            if (relation.TradePartyTimer.HasTriggered && timeSinceLastTrade.TotalDays > 1.0)
                             {
                                 CurrentTradeEnvoy = SendTradeEnvoy(otherFaction, world);
+                                TimeOfLastTrade = world.Time.CurrentDate;
                             }
                         }
                         else if (otherFaction.TradeEnvoys.Count == 0)
