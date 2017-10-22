@@ -187,7 +187,10 @@ namespace DwarfCorp
                 if (vox.Health <= 0.0f)
                 {
                     var voxelType = VoxelLibrary.GetVoxelType(vox.Type.Name);
-                    agent.AI.AddXP(Math.Max((int)(voxelType.StartingHealth / 4), 1));
+                    if (MathFunctions.RandEvent(0.5f))
+                    {
+                        agent.AI.AddXP(Math.Max((int)(voxelType.StartingHealth / 4), 1));
+                    }
                     agent.Stats.NumBlocksDestroyed++;
                     agent.World.GoalManager.OnGameEvent(new Goals.Events.DigBlock(voxelType, agent));
 
