@@ -106,7 +106,7 @@ namespace DwarfCorp
                         yield break;
                     }
                     Creature.Physics.Velocity *= 0.1f;
-                    FarmToWork.Progress += Creature.Stats.BaseFarmSpeed*DwarfTime.Dt;
+                    FarmToWork.Progress += 3 * Creature.Stats.BaseFarmSpeed*DwarfTime.Dt;
 
                     Drawer2D.DrawLoadBar(Agent.Manager.World.Camera, Agent.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4,
                         FarmToWork.Progress/100.0f);
