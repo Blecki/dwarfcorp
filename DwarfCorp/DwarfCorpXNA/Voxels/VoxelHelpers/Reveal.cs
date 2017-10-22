@@ -64,7 +64,15 @@ namespace DwarfCorp
             var explored = new List<VoxelHandle>();
 
             if (Voxel.IsValid)
+            {
                 queue.Enqueue(new VisitedVoxel { Depth = 1, Voxel = Voxel });
+
+                if (!Voxel.IsExplored)
+                {
+                    Voxel.IsExplored = true;
+                    explored.Add(Voxel);
+                }
+            }
 
             while (queue.Count > 0)
             {
@@ -93,8 +101,6 @@ namespace DwarfCorp
                             Voxel = neighbor,
                         });
                 }
-
-                v.Voxel.IsExplored = true;
             }
 
             foreach (var voxel in explored)
