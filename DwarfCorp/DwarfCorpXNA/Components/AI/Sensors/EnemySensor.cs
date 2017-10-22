@@ -87,34 +87,34 @@ namespace DwarfCorp
             }
 
             List<CreatureAI> sensed = new List<CreatureAI>();
-            List<CreatureAI> collide = new List<CreatureAI>();
-            foreach (KeyValuePair<string, Faction> faction in Manager.World.Factions.Factions)
+
+            VoxelHandle currentVoxel = new VoxelHandle(World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Position));
+            if (!(currentVoxel.IsValid && currentVoxel.IsEmpty))
             {
-                if (World.Diplomacy.GetPolitics(Allies, faction.Value).GetCurrentRelationship() !=
+                return;
+            }
+
+            foreach (var thing in Manager.World.CollisionManager.EnumerateIntersectingObjects(BoundingBox, CollisionManager.CollisionType.Both))
+            {
+                Body body = thing as Body;
+                if (body == null)
+                    continue;
+                CreatureAI minion = body.GetRoot().GetComponent<CreatureAI>();
+                if (minion == null)
+                    continue;
+                Faction faction = minion.Faction;
+                if (World.Diplomacy.GetPolitics(Allies, faction).GetCurrentRelationship() !=
                     Relationship.Hateful) continue;
 
-                foreach (CreatureAI minion in faction.Value.Minions)
+                if (!minion.Active) continue;
+
+
+                float dist = (minion.Position - GlobalTransform.Translation).LengthSquared();
+                
+                if (dist < SenseRadius && !VoxelHelpers.DoesRayHitSolidVoxel(
+                    Manager.World.ChunkManager.ChunkData, Position, minion.Position))
                 {
-                    if (!minion.Active) continue;
-
-                    if (Creature != null && minion.Sensor.Enemies.Contains(Creature))
-                    {
-                        sensed.Add(minion);
-                        continue;
-                    }
-
-                    float dist = (minion.Position - GlobalTransform.Translation).LengthSquared();
-
-                    if (dist < SenseRadius && !VoxelHelpers.DoesRayHitSolidVoxel(
-                        Manager.World.ChunkManager.ChunkData, Position, minion.Position))
-                    {
-                        sensed.Add(minion);
-                    }
-
-                    if (dist < 1.0f)
-                    {
-                        collide.Add(minion);
-                    }
+                    sensed.Add(minion);
                 }
             }
 

@@ -158,13 +158,19 @@ sampler ShadowMapSampler = sampler_state { texture = <xShadowMap>; magfilter = L
 	}
 
 	UTPixelToFrame UTexturedPS(UTVertexToPixel PSIn)
-	{
-		clip(PSIn.ClipDistance);
-
-		UTPixelToFrame Output = (UTPixelToFrame)0;
-
+	{	
+	    UTPixelToFrame Output = (UTPixelToFrame)0;
 		Output.Color = PSIn.Color;
-		
+		if (GhostMode && PSIn.ClipDistance.w < 0.0f)
+ 		{
+ 			Output.Color *= clamp(-1.0f / (PSIn.ClipDistance.w * 0.75f) * 0.25f, 0, 1.0f);
+ 
+ 			clip((Output.Color.a - 0.1f));
+ 		}
+ 		else
+ 		{
+ 			clip(PSIn.ClipDistance);
+ 		}
 		return Output;
 	}
 
@@ -484,7 +490,12 @@ TPixelToFrame TexturedPS_From_Lightmap(LightmapToPixel PSIn)
 	clip((Output.Color.a - 0.5));
 	Output.Color.rgba = float4(lerp(Output.Color.rgb, xFogColor, PSIn.Fog) * Output.Color.a, Output.Color.a);
 
-	clip(PSIn.ClipDistance.w);
+	if (PSIn.ClipDistance.w < 0.0f)
+ 	{
+ 		Output.Color *= -1.0f / (PSIn.ClipDistance.w * 0.75f) * 0.25f;
+ 
+ 		clip((Output.Color.a - 0.1f));
+ 	}
 	//Output = (TPixelToFrame)0;
 	//Output.Color = float4(1, 0, 0, 1);
 	return Output;
@@ -626,7 +637,6 @@ TPixelToFrame SilhouettePS(TVertexToPixel PSIn)
 TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
 {
     TPixelToFrame Output = (TPixelToFrame)0;
-	clip(PSIn.ClipDistance.w);
 	float2 textureCoords = ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds);
 	float4 texColor = tex2D(TextureSampler, textureCoords);
 	clip((texColor.a - 0.5));
@@ -664,7 +674,12 @@ TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
 	Output.Color.rgba = lerp(Output.Color.rgba, texColor, SelfIllumination * illumColor.r);
 	
 	Output.Color.rgba = float4(lerp(Output.Color.rgb, xFogColor, PSIn.Fog) * Output.Color.a, Output.Color.a);
-
+	if (PSIn.ClipDistance.w < 0.0f)
+ 	{
+ 		Output.Color *= clamp(-1.0f / (PSIn.ClipDistance.w * 0.75f) * 0.25f, 0, 1);
+ 
+ 		clip((Output.Color.a - 0.1f));
+ 	}
     return Output;
 }
 
@@ -672,8 +687,7 @@ TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
 TPixelToFrame TexturedPS(TVertexToPixel PSIn)
 {
     TPixelToFrame Output = (TPixelToFrame)0;
-	clip(PSIn.ClipDistance);  //MSS - Water Refactor added
-    
+
 	/*
 	if (xEnableShadows)
 	{
@@ -706,6 +720,14 @@ TPixelToFrame TexturedPS(TVertexToPixel PSIn)
 	Output.Color.rgba = lerp(Output.Color.rgba, texColor, SelfIllumination * illumColor.r);
 	
 	Output.Color.rgba = float4(lerp(Output.Color.rgb, xFogColor, PSIn.Fog), Output.Color.a * PSIn.Color.a);
+
+	if (PSIn.ClipDistance.w < 0.0f)
+ 	{
+ 		Output.Color *= clamp(-1.0f / (PSIn.ClipDistance.w * 0.75f) * 0.25f, 0, 1);
+ 
+ 		clip((Output.Color.a - 0.1f));
+ 	}
+
     return Output;
 }
 

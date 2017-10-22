@@ -318,7 +318,7 @@ namespace DwarfCorp
             {
                 if (EggTimer == null)
                 {
-                    EggTimer = new Timer(1200f + MathFunctions.Rand(-30, 30), false);
+                    EggTimer = new Timer(3600f + MathFunctions.Rand(-120, 120), false);
                 }
                 EggTimer.Update(gameTime);
 

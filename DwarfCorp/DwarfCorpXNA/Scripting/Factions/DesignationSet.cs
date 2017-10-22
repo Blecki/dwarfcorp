@@ -180,7 +180,7 @@ namespace DwarfCorp
                                 toRemove.Add(d);
                             break;
                         case DesignationType.Put:
-                            if (!d.Voxel.IsValid || !d.Voxel.IsEmpty)
+                            if (!d.Voxel.IsValid || d.Voxel.TypeID == (d.Tag as short?).Value)
                                 toRemove.Add(d);
                             break;
                         case DesignationType.Till:
