@@ -94,7 +94,6 @@ namespace DwarfCorp
                 return;
             }
 
-            Drawer3D.DrawBox(currentVoxel.GetBoundingBox(), Color.Red, 0.1f, true);
             foreach (var thing in Manager.World.CollisionManager.EnumerateIntersectingObjects(BoundingBox, CollisionManager.CollisionType.Both))
             {
                 Body body = thing as Body;
