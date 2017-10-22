@@ -42,6 +42,21 @@ namespace DwarfCorp.GameStates
                         Name = path
                     }));
             };
+
+            this.ValidateItem = (path) =>
+            {
+                try
+                {
+                    var saveGame = SaveGame.CreateFromDirectory(path);
+                    return saveGame.Metadata.Version == Program.Version;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            };
+
+            this.InvalidItemText = "This save was created with a different version of DwarfCorp and cannot be loaded.";
         }
         
     }
