@@ -119,6 +119,7 @@ namespace DwarfCorp
 
             Resource resource = ResourceLibrary.Resources[Item.ItemType.ResourceCreated];
             Creature.Inventory.AddResource(new ResourceAmount(resource, 1));
+            Creature.AI.AddXP((int)Item.ItemType.BaseCraftTime);
             yield return Status.Success;
         }
 
