@@ -67,8 +67,9 @@ namespace DwarfCorp
                 
             }
 
-            public Politics(DateTime currentDate)
+            public Politics(DateTime currentDate, TimeSpan distanceToCapital)
             {
+                DistanceToCapital = distanceToCapital;
                 WasAtWar = false;
                 HasMet = false;
                 WarPartyTimer = new DateTimer(currentDate, DistanceToCapital)
@@ -187,7 +188,7 @@ namespace DwarfCorp
 
                 if (faction.Key == New.Name)
                 {
-                    FactionPolitics[pair] = new Politics(Now)
+                    FactionPolitics[pair] = new Politics(Now, new TimeSpan(0, 0, 0))
                     {
                         Faction = faction.Value,
                         HasMet = true,
@@ -209,14 +210,13 @@ namespace DwarfCorp
                     Point c2 = New.Center;
                     double dist = Math.Sqrt(Math.Pow(c1.X - c2.X, 2) + Math.Pow(c1.Y - c2.Y, 2));
                     // Time always takes between 1 and 4 days of travel.
-                    double timeInMinutes = Math.Min(Math.Max(dist * 16.0f, 1440), 1440 * 4) + MathFunctions.RandInt(0, 250);
+                    double timeInMinutes = Math.Min(Math.Max(dist * 2.0f, 1440), 1440 * 4) + MathFunctions.RandInt(0, 250);
 
-                    Politics politics = new Politics(Now)
+                    Politics politics = new Politics(Now, new TimeSpan(0, (int)(timeInMinutes), 0))
                     {
                         Faction = New,
                         HasMet = false,
                         RecentEvents = new List<PoliticalEvent>(),
-                        DistanceToCapital = new TimeSpan(0, (int)(timeInMinutes), 0)
                     };
 
                     politics.DispatchNewTradeEnvoy(Now);
@@ -617,7 +617,8 @@ namespace DwarfCorp
 
             if (hadFactions && faction.TradeEnvoys.Count == 0)
             {
-                SoundManager.PlayMusic("main_theme_day");
+                var music = World.Time.IsDay() ? "main_theme_day" : "main_theme_night";
+                SoundManager.PlayMusic(music);
             }
         }
 
