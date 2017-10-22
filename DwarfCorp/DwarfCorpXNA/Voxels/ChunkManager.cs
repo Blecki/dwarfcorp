@@ -393,11 +393,6 @@ namespace DwarfCorp
 
             GenerateOres();
 
-            SetLoadingMessage("Fog of war...");
-
-            VoxelHelpers.InitialReveal(ChunkData, new VoxelHandle(
-                ChunkData.GetChunkEnumerator().FirstOrDefault(), new LocalVoxelCoordinate(0, VoxelConstants.ChunkSizeY - 1, 0)));
-
             GenerateDistance = origBuildRadius;
         }
 

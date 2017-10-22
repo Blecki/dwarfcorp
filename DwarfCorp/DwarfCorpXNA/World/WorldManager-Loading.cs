@@ -470,7 +470,12 @@ namespace DwarfCorp
 
                 if (Master.Faction.Economy.Company.Information == null)
                     Master.Faction.Economy.Company.Information = new CompanyInformation();
+
                 CreateInitialEmbarkment();
+
+                VoxelHelpers.InitialReveal(ChunkManager.ChunkData, new VoxelHandle(
+                ChunkManager.ChunkData.GetChunkEnumerator().FirstOrDefault(), new LocalVoxelCoordinate(0, VoxelConstants.ChunkSizeY - 1, 0)));
+
                 foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
                     ChunkManager.InvalidateChunk(chunk);
 

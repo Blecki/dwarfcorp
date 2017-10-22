@@ -261,8 +261,8 @@ namespace DwarfCorp.Gui.Widgets
                     AutoLayout = AutoLayout.DockRight,
                     OnClick = (sender, args) =>
                     {
-                        (sender.Parent.Parent as EmployeeInfo).Employee.World.Tutorial("follow dwarf");
-                        (sender.Parent.Parent as EmployeeInfo).Employee.IsPosessed = true;
+                        (sender.Parent.Parent.Parent as EmployeeInfo).Employee.World.Tutorial("follow dwarf");
+                        (sender.Parent.Parent.Parent as EmployeeInfo).Employee.IsPosessed = true;
                     }
                 });
             }

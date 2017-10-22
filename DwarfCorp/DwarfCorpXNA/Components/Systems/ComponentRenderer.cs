@@ -99,9 +99,9 @@ namespace DwarfCorp
             {
                 foreach (IRenderableComponent bodyToDraw in Renderables)
                 {
-                    GamePerformance.Instance.StartTrackPerformance("Component Render - " + bodyToDraw.GetType().Name);
+                    //GamePerformance.Instance.StartTrackPerformance("Component Render - " + bodyToDraw.GetType().Name);
                     bodyToDraw.Render(gameTime, chunks, Camera, spriteBatch, graphicsDevice, effect, false);
-                    GamePerformance.Instance.StopTrackPerformance("Component Render - " + bodyToDraw.GetType().Name);
+                    //GamePerformance.Instance.StopTrackPerformance("Component Render - " + bodyToDraw.GetType().Name);
 
                 }
             }

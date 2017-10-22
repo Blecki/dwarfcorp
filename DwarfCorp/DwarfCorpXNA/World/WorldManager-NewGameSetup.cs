@@ -182,8 +182,7 @@ namespace DwarfCorp
                     {
                         var v = new VoxelHandle(baseVoxel.Chunk,
                             new LocalVoxelCoordinate((int)localCoord.X, y, (int)localCoord.Z));
-                        v.Type = VoxelLibrary.GetVoxelType(0);
-                        VoxelHelpers.Reveal(baseVoxel.Chunk.Manager.ChunkData, v);
+                        v.RawSetType(VoxelLibrary.GetVoxelType(0));
                         v.WaterCell = new WaterCell
                         {
                             Type = LiquidType.None,
@@ -229,7 +228,7 @@ namespace DwarfCorp
                     {
                         var v = new VoxelHandle(baseVoxel.Chunk, 
                             new LocalVoxelCoordinate((int)localCoord.X, y, (int)localCoord.Z));
-                        v.Type = VoxelLibrary.GetVoxelType("Scaffold");
+                        v.RawSetType(VoxelLibrary.GetVoxelType("Scaffold"));
                         v.WaterCell = new WaterCell
                         {
                             Type = LiquidType.None,

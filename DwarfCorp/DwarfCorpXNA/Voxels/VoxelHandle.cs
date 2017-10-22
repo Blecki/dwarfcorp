@@ -326,7 +326,9 @@ namespace DwarfCorp
             {
                 // Invoke old voxel listener.
                 _cache_Chunk.NotifyDestroyed(Coordinate.GetLocalVoxelCoordinate());
-                VoxelHelpers.Reveal(_cache_Chunk.Manager.ChunkData, this);
+
+                // Reveal!
+                VoxelHelpers.RadiusReveal(_cache_Chunk.Manager.ChunkData, this, 10);
             }
 
             // Invoke new voxel listener.

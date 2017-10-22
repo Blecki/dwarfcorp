@@ -74,6 +74,20 @@ namespace DwarfCorp
             return (((Z << VoxelConstants.ZDivShift) + Y) << VoxelConstants.YDivShift) + X;
         }
 
+        /// <summary>
+        /// Get a long hash of a coordinate. As long as the world is never larger than 2^16 on any dimension,
+        /// this will give unique values for every voxel.
+        /// </summary>
+        /// <returns></returns>
+        public ulong GetLongHash()
+        {
+            ulong q = 0;
+            q |= (((ulong)X & 0xFFFF) << 32);
+            q |= (((ulong)Y & 0xFFFF) << 16);
+            q |= ((ulong)Z & 0xFFFF);
+            return q;
+        }
+
         public override bool Equals(object obj)
         {
             if (!(obj is GlobalVoxelCoordinate)) return false;
