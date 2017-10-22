@@ -238,12 +238,16 @@ namespace DwarfCorp
         public BoundingBox PositionConstraint = new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue),
             new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
 
-        [OnDeserializing]
+        [OnDeserialized]
         public void OnDeserialize(StreamingContext ctx)
         {
             if (CurrentTask != null)
             {
                 CurrentTask.Script = null;
+            }
+            if (Sensor == null)
+            {
+                Sensor = GetRoot().GetComponent<EnemySensor>();
             }
             Sensor.OnEnemySensed += Sensor_OnEnemySensed;
         }
