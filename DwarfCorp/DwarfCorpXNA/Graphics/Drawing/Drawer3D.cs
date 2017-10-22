@@ -150,7 +150,7 @@ namespace DwarfCorp
         private static void _addBox(Vector3 M, Vector3 S, Color C, float T)
         {
             float halfT = T * 0.5f;
-            S += Vector3.One * halfT;
+            S += Vector3.One * T;
             M -= Vector3.One * halfT;
             // Draw bottom loop.
             _addLineSegment(new Vector3(M.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y, M.Z), C, T);

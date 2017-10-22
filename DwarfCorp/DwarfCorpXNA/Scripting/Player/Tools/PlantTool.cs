@@ -225,7 +225,8 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-           
+            foreach (var farmtile in Player.Faction.Designations.EnumerateDesignations(DesignationType._InactiveFarm))
+                Drawer3D.DrawBox(farmtile.Voxel.GetBoundingBox(), Color.White, 0.1f, true);
         }
     }
 }
