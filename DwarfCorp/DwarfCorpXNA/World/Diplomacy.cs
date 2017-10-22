@@ -155,6 +155,7 @@ namespace DwarfCorp
         private TradeEnvoy CurrentTradeEnvoy = null;
         private WarParty CurrentWarParty = null;
         public DateTime TimeOfLastTrade = new DateTime();
+        public string LastTradeEmpire = "";
 
         public Diplomacy()
         {
@@ -445,10 +446,11 @@ namespace DwarfCorp
                         {
                             relation.TradePartyTimer.Update(currentDate);
 
-                            if (relation.TradePartyTimer.HasTriggered && timeSinceLastTrade.TotalDays > 1.0)
+                            if (relation.TradePartyTimer.HasTriggered && timeSinceLastTrade.TotalDays > 1.0 && LastTradeEmpire != otherFaction.Name)
                             {
                                 CurrentTradeEnvoy = SendTradeEnvoy(otherFaction, world);
                                 TimeOfLastTrade = world.Time.CurrentDate;
+                                LastTradeEmpire = otherFaction.Name;
                             }
                         }
                         else if (otherFaction.TradeEnvoys.Count == 0)
