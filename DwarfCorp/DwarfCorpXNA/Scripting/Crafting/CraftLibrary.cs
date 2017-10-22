@@ -87,7 +87,7 @@ namespace DwarfCorp
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Fuel, 1)
                         },
                         Icon = new Gui.TileReference("furniture", 9),
-                        BaseCraftTime = 30,
+                        BaseCraftTime = 10,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
                         CraftLocation = ""
                     }
@@ -103,7 +103,7 @@ namespace DwarfCorp
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Wood, 1)
                         },
                         Icon = new Gui.TileReference("furniture", 2),
-                        BaseCraftTime = 30,
+                        BaseCraftTime = 10,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall},
                         CraftLocation = ""
                     }
@@ -119,7 +119,7 @@ namespace DwarfCorp
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Stone, 1)
                         },
                         Icon = new Gui.TileReference("furniture", 66),
-                        BaseCraftTime = 30,
+                        BaseCraftTime = 20,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall},
                         CraftLocation = ""
                     }
@@ -183,7 +183,7 @@ namespace DwarfCorp
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Metal, 1)
                         },
                         Icon = new Gui.TileReference("furniture", 65),
-                        BaseCraftTime = 30,
+                        BaseCraftTime = 40,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall},
                         CraftLocation = ""
                     }

@@ -140,7 +140,7 @@ namespace DwarfCorp
         public override void Initialize()
         {
             Act unreserveAct = new Wrap(() => Creature.Unreserve(Item.ItemType.CraftLocation));
-            float time = 5 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.BuffedInt);
+            float time = 3 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.BuffedInt);
             Act getResources = null;
             if (Item.ItemType.SelectedResources == null || Item.ItemType.SelectedResources.Count == 0)
             {
