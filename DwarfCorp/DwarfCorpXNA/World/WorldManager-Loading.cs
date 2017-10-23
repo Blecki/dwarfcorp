@@ -472,7 +472,10 @@ namespace DwarfCorp
                     Master.Faction.Economy.Company.Information = new CompanyInformation();
 
                 CreateInitialEmbarkment();
-
+                foreach(var chunk in ChunkManager.ChunkData.ChunkMap)
+                {
+                    chunk.CalculateInitialSunlight();
+                }
                 VoxelHelpers.InitialReveal(ChunkManager.ChunkData, new VoxelHandle(
                 ChunkManager.ChunkData.GetChunkEnumerator().FirstOrDefault(), new LocalVoxelCoordinate(0, VoxelConstants.ChunkSizeY - 1, 0)));
 
