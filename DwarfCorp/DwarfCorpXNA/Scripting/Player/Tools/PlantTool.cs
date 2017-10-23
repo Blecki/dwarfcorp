@@ -128,57 +128,77 @@ namespace DwarfCorp
 
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            List<CreatureAI> minions = Player.World.Master.SelectedMinions.Where(minion => minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Plant)).ToList();
-            List<FarmTask> goals = new List<FarmTask>();
-
-            int currentAmount = Player.Faction.ListResources()
-                .Sum(resource => resource.Key == PlantType && resource.Value.NumResources > 0 ? resource.Value.NumResources : 0);
-
-            foreach (var voxel in voxels)
+            if (button == InputManager.MouseButton.Left)
             {
-                if (currentAmount == 0)
+
+                List<CreatureAI> minions = Player.World.Master.SelectedMinions.Where(minion => minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Plant)).ToList();
+                List<FarmTask> goals = new List<FarmTask>();
+
+                int currentAmount = Player.Faction.ListResources()
+                    .Sum(resource => resource.Key == PlantType && resource.Value.NumResources > 0 ? resource.Value.NumResources : 0);
+
+                foreach (var voxel in voxels)
                 {
-                    Player.World.ShowToolPopup("Not enough " + PlantType + " in stocks!");
-                    break;
-                }
-
-                if (ValidatePlanting(voxel))
-                {
-                    var existingTile = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType._AllFarms) as FarmTile;
-                    if (existingTile == null) continue;
-
-                    Player.Faction.Designations.RemoveVoxelDesignation(voxel, DesignationType._AllFarms);
-                    Player.Faction.Designations.AddVoxelDesignation(voxel, DesignationType.Plant, existingTile);
-
-                    goals.Add(new FarmTask(existingTile)
+                    if (currentAmount == 0)
                     {
-                        Mode = FarmAct.FarmMode.Plant,
-                        Plant = PlantType,
-                        RequiredResources = RequiredResources
-                    });
-                    
-                    currentAmount--;
+                        Player.World.ShowToolPopup("Not enough " + PlantType + " in stocks!");
+                        break;
+                    }
+
+                    if (ValidatePlanting(voxel))
+                    {
+                        var existingTile = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType._AllFarms) as FarmTile;
+                        if (existingTile == null) continue;
+
+                        Player.Faction.Designations.RemoveVoxelDesignation(voxel, DesignationType._AllFarms);
+                        Player.Faction.Designations.AddVoxelDesignation(voxel, DesignationType.Plant, existingTile);
+
+                        goals.Add(new FarmTask(existingTile)
+                        {
+                            Mode = FarmAct.FarmMode.Plant,
+                            Plant = PlantType,
+                            RequiredResources = RequiredResources
+                        });
+
+                        currentAmount--;
+                    }
                 }
+
+                TaskManager.AssignTasksGreedy(goals.Cast<Task>().ToList(), minions, 1);
+
+                if (Player.World.Paused)
+                {
+                    // Horrible hack to make it work when game is paused. Farmer doesn't get assigned until
+                    // next update!
+                    if (minions.Count > 0)
+                    {
+                        foreach (var goal in goals)
+                        {
+                            goal.FarmToWork.Farmer = minions[0];
+                        }
+                    }
+                }
+
+                OnConfirm(minions);
             }
-
-            TaskManager.AssignTasksGreedy(goals.Cast<Task>().ToList(), minions, 1);
-            
-            if (Player.World.Paused)
+            else if (button == InputManager.MouseButton.Right)
             {
-                // Horrible hack to make it work when game is paused. Farmer doesn't get assigned until
-                // next update!
-                if (minions.Count > 0)
+                foreach (var voxel in voxels)
                 {
-                    foreach (var goal in goals)
+                    var existingFarmTile = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType.Plant)
+                            as FarmTile;
+
+                    if (existingFarmTile != null)
                     {
-                        goal.FarmToWork.Farmer = minions[0];
+                        // Cancel and revert to inactive designation type.
+                        existingFarmTile.IsCanceled = true;
+                        existingFarmTile.Farmer = null;
+                        Player.Faction.Designations.RemoveVoxelDesignation(existingFarmTile.Voxel, DesignationType._AllFarms);
+                        Player.Faction.Designations.AddVoxelDesignation(existingFarmTile.Voxel, DesignationType._InactiveFarm, existingFarmTile);
                     }
                 }
             }
-
-            OnConfirm(minions);
         }
-
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
