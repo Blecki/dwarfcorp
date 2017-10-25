@@ -148,7 +148,7 @@ namespace DwarfCorp
                         SetLoadingMessage("Loading world " + gameFile.Metadata.OverworldFile);
                         Overworld.Name = gameFile.Metadata.OverworldFile;
                         DirectoryInfo worldDirectory =
-                            Directory.CreateDirectory(DwarfGame.GetGameDirectory() + ProgramData.DirChar + "Worlds" +
+                            Directory.CreateDirectory(DwarfGame.GetWorldDirectory() +
                                                       ProgramData.DirChar + Overworld.Name);
                         OverworldFile overWorldFile =
                             new OverworldFile(

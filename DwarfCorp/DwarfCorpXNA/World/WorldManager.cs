@@ -561,7 +561,7 @@ namespace DwarfCorp
                 System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
                 System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
                 DirectoryInfo worldDirectory =
-                    Directory.CreateDirectory(DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Worlds" +
+                    Directory.CreateDirectory(DwarfGame.GetWorldDirectory() +
                                               Path.DirectorySeparatorChar + Overworld.Name);
 
                 // This is a hack. Why does the overworld have this as a static field??
@@ -583,7 +583,7 @@ namespace DwarfCorp
                 gameFile = SaveGame.CreateFromWorld(this);
 
                 gameFile.WriteFile(
-                    DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves" + Path.DirectorySeparatorChar +
+                    DwarfGame.GetSaveDirectory() + Path.DirectorySeparatorChar +
                     filename);
                 ComponentManager.CleanupSaveData();
 
@@ -591,7 +591,7 @@ namespace DwarfCorp
                 {
                     Screenshots.Add(new Screenshot()
                     {
-                        FileName = DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves" +
+                        FileName = DwarfGame.GetSaveDirectory() +
                                    Path.DirectorySeparatorChar + filename + Path.DirectorySeparatorChar +
                                    "screenshot.png",
                         Resolution = new Point(640, 480)

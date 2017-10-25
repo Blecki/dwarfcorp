@@ -19,7 +19,7 @@ namespace DwarfCorp.GameStates
 
             this.ItemSource = () =>
             {
-                System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetGameDirectory() + ProgramData.DirChar + "Worlds");
+                System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetWorldDirectory());
                 return worldDirectory.EnumerateDirectories().Select(d => d.FullName).ToList();
             };
 

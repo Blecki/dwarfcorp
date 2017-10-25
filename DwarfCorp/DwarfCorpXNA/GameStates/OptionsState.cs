@@ -49,7 +49,6 @@ namespace DwarfCorp.GameStates
         private CheckBox SelfIllumination;
         private CheckBox ParticlePhysics;
         private CheckBox Motes;
-        private HorizontalFloatSlider NumMotes;
         //private CheckBox LightMap;
         //private CheckBox DynamicShadows;
         private CheckBox GuiAutoScale;
@@ -60,6 +59,7 @@ namespace DwarfCorp.GameStates
         public WorldManager World = null;
         private CheckBox EnableTutorial;
         private CheckBox DisableTutorialForAllGames;
+        private EditableTextField SaveLocation;
 
         public OptionsState(DwarfGame Game, GameStateManager StateManager) :
             base(Game, "NewOptionsState", StateManager)
@@ -381,6 +381,13 @@ namespace DwarfCorp.GameStates
                 },
                 Tooltip = "Minutes between auto saves"
             }));
+
+            SaveLocation = panel.AddChild(LabelAndDockWidget("Save Location", new EditableTextField
+            {
+                Tooltip = "Where to look for save games. Leave blank to use default location.",
+                Text = "",
+                OnTextChange = this.OnItemChanged
+            })).GetChild(1) as EditableTextField;
         }
 
         private void CreateAudioTab()
@@ -833,6 +840,7 @@ namespace DwarfCorp.GameStates
             toReturn.AutoSave = this.Autosave.CheckState;
             toReturn.AutoSaveTimeMinutes =
                 (this.AutoSaveFrequency.GetChild(1) as HorizontalSlider).ScrollPosition + 5.0f;
+            toReturn.SaveLocation = this.SaveLocation.Text;
 
             // Audio settings
             toReturn.MasterVolume = this.MasterVolume.ScrollPosition;
@@ -914,6 +922,7 @@ namespace DwarfCorp.GameStates
             //GameSettings.Default.UseLightmaps = this.LightMap.CheckState;
             //GameSettings.Default.UseDynamicShadows = this.DynamicShadows.CheckState;
             GameSettings.Default.TutorialDisabledGlobally = this.DisableTutorialForAllGames.CheckState;
+            GameSettings.Default.SaveLocation = settings.SaveLocation;
 
             GameSettings.Default.GuiScale = GuiScale.SelectedIndex + 1;
             
@@ -980,6 +989,7 @@ namespace DwarfCorp.GameStates
             (this.AutoSaveFrequency.GetChild(1) as HorizontalSlider).ScrollPosition =
                 (int)(GameSettings.Default.AutoSaveTimeMinutes - 5);
             this.DisableTutorialForAllGames.CheckState = GameSettings.Default.TutorialDisabledGlobally;
+            this.SaveLocation.Text = String.IsNullOrEmpty(GameSettings.Default.SaveLocation) ? "" : GameSettings.Default.SaveLocation;
 
             // Audio settings
             this.MasterVolume.ScrollPosition = GameSettings.Default.MasterVolume;
