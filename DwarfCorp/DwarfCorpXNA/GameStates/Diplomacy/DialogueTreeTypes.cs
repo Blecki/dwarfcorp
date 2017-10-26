@@ -19,6 +19,7 @@ namespace DwarfCorp.Dialogue
         public Animation SpeakerAnimation;
 
         public TradeEnvoy Envoy;
+        public int NumOffensiveTrades = 0;
         public String EnvoyName = "TODO";
 
         public Faction PlayerFaction;

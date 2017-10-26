@@ -55,6 +55,7 @@ namespace DwarfCorp
             public List<string> Farewells { get; set; }
             public List<string> GoodTrades { get; set; }
             public List<string> BadTrades { get; set; }
+            public List<string> OffensiveTrades { get; set; }
             public List<string> WarDeclarations { get; set; }
             public List<string> PeaceDeclarations { get; set; }
             public Language Language { get; set; }
