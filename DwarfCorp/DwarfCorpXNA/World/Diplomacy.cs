@@ -281,6 +281,11 @@ namespace DwarfCorp
                 world.MonsterSpawner.Spawn(world.MonsterSpawner.GenerateSpawnEvent(natives,
                 world.PlayerFaction, MathFunctions.Random.Next(4) + 1, false));
 
+            if (natives.TradeMoney < 100m)
+            {
+                natives.TradeMoney += MathFunctions.Rand(250.0f, 5000.0f);
+            }
+
             envoy = new TradeEnvoy(world.Time.CurrentDate)
             {
                 Creatures = creatures,
