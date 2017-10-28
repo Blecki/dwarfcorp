@@ -123,49 +123,43 @@ namespace DwarfCorp
                     Content.Load<Effect>(ContentPaths.Shaders.SkySphere),
                     Content.Load<Effect>(ContentPaths.Shaders.Background));
 
-#region Reading game file
+            #region Reading game file
 
-                if (fileExists)
+            if (fileExists)
+            {
+                SetLoadingMessage("Loading " + ExistingFile);
+
+                gameFile = SaveGame.CreateFromDirectory(ExistingFile);
+                if (gameFile == null) throw new InvalidOperationException("Game File does not exist.");
+
+                // Todo: REMOVE THIS WHEN THE NEW SAVE SYSTEM IS COMPLETE.
+                if (gameFile.Metadata.Version != Program.Version)
+                    throw new InvalidOperationException("Game file is from a different version of the game and cannot be loaded.");
+
+                Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
+                Time = gameFile.Metadata.Time;
+                WorldOrigin = gameFile.Metadata.WorldOrigin;
+                WorldScale = gameFile.Metadata.WorldScale;
+                WorldSize = gameFile.Metadata.NumChunks;
+                GameID = gameFile.Metadata.GameID;
+
+                if (gameFile.Metadata.OverworldFile != null && gameFile.Metadata.OverworldFile != "flat")
                 {
-                    SetLoadingMessage("Loading " + ExistingFile);
-
-                    gameFile = SaveGame.CreateFromDirectory(ExistingFile);
-                    if (gameFile == null) throw new InvalidOperationException("Game File does not exist.");
-
-                    // Todo: REMOVE THIS WHEN THE NEW SAVE SYSTEM IS COMPLETE.
-                    if (gameFile.Metadata.Version != Program.Version)
-                        throw new InvalidOperationException("Game file is from a different version of the game and cannot be loaded.");
-
-                    Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
-                    Time = gameFile.Metadata.Time;
-                    WorldOrigin = gameFile.Metadata.WorldOrigin;
-                    WorldScale = gameFile.Metadata.WorldScale;
-                    WorldSize = gameFile.Metadata.NumChunks;
-                    GameID = gameFile.Metadata.GameID;
-
-                    if (gameFile.Metadata.OverworldFile != null && gameFile.Metadata.OverworldFile != "flat")
-                    {
-                        SetLoadingMessage("Loading world " + gameFile.Metadata.OverworldFile);
-                        Overworld.Name = gameFile.Metadata.OverworldFile;
-                        DirectoryInfo worldDirectory =
-                            Directory.CreateDirectory(DwarfGame.GetWorldDirectory() +
-                                                      ProgramData.DirChar + Overworld.Name);
-                        OverworldFile overWorldFile =
-                            new OverworldFile(
-                                worldDirectory.FullName + ProgramData.DirChar + "world." +
-                                (DwarfGame.COMPRESSED_BINARY_SAVES
-                                    ? OverworldFile.CompressedExtension
-                                    : OverworldFile.Extension),
-                                DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
-                        Overworld.Map = overWorldFile.Data.CreateMap();
-                        Overworld.Name = overWorldFile.Data.Name;
-                    }
-                    else
-                    {
-                        SetLoadingMessage("Generating flat world..");
-                        Overworld.CreateUniformLand(GraphicsDevice);
-                    }
+                    SetLoadingMessage("Loading world " + gameFile.Metadata.OverworldFile);
+                    Overworld.Name = gameFile.Metadata.OverworldFile;
+                    DirectoryInfo worldDirectory =
+                        Directory.CreateDirectory(DwarfGame.GetWorldDirectory() +
+                                                  ProgramData.DirChar + Overworld.Name);
+                    var overWorldFile = new OverworldFile(worldDirectory.FullName);
+                    Overworld.Map = overWorldFile.Data.Data;
+                    Overworld.Name = overWorldFile.Data.Name;
                 }
+                else
+                {
+                    SetLoadingMessage("Generating flat world..");
+                    Overworld.CreateUniformLand(GraphicsDevice);
+                }
+            }
 
 #endregion
 

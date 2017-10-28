@@ -567,9 +567,7 @@ namespace DwarfCorp
                 // This is a hack. Why does the overworld have this as a static field??
                 Overworld.NativeFactions = this.Natives;
                 OverworldFile file = new OverworldFile(Game.GraphicsDevice, Overworld.Map, Overworld.Name, SeaLevel);
-                file.WriteFile(
-                    worldDirectory.FullName + Path.DirectorySeparatorChar + "world." + (DwarfGame.COMPRESSED_BINARY_SAVES ? OverworldFile.CompressedExtension : OverworldFile.Extension),
-                    DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
+                file.WriteFile(worldDirectory.FullName);
 
                 try
                 {
