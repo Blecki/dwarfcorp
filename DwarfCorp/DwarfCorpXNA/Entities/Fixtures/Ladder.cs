@@ -47,7 +47,7 @@ namespace DwarfCorp
         }
 
         public Ladder(ComponentManager manager, Vector3 position, SpriteSheet sprites, Point frame) :
-            base(manager, position, sprites, frame)
+            base(manager, position + Vector3.Up * 0.5f, sprites, frame)
         {
             AddToCollisionManager = true;
             CollisionType = CollisionManager.CollisionType.Static;
@@ -55,7 +55,6 @@ namespace DwarfCorp
             Name = "Ladder";
             Tags.Add("Climbable");
             OrientToWalls();
-            this.BoundingBox.Expand(-0.5f);
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
