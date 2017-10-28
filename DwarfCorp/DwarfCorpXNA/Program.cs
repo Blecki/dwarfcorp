@@ -74,7 +74,7 @@ namespace DwarfCorp
             Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
             
-#if CREATE_CRASH_LOGS
+#if !DEBUG
             try
 #endif
             {
@@ -86,10 +86,11 @@ namespace DwarfCorp
 
                 SignalShutdown();
             }
-#if CREATE_CRASH_LOGS
+#if !DEBUG
             catch (Exception exception)
             {
                 WriteExceptionLog(exception);
+                System.Windows.Forms.MessageBox.Show(String.Format("An unhandled exception occurred in DwarfCorp. This has been reported to Completely Fair Games LLC.\n {0}", exception.ToString()), "ERROR");
             }
 #endif
         }
@@ -122,7 +123,6 @@ namespace DwarfCorp
             
             file.WriteLine(exception.ToString());
             file.Close();
-            throw exception;
         }
 
         public static string CreatePath(params string[] args)
