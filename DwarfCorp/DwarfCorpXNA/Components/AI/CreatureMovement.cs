@@ -535,7 +535,7 @@ namespace DwarfCorp
         {
             foreach (var v in VoxelHelpers.EnumerateAllNeighbors(current.Coordinate)
                 .Select(n => new VoxelHandle(current.Chunk.Manager.ChunkData, n))
-                .Where(h => h.IsValid))
+                .Where(h => h.IsValid && h.IsEmpty))
             {
                 foreach (var a in GetMoveActions(v).Where(a => a.DestinationVoxel == current))
                     yield return a;

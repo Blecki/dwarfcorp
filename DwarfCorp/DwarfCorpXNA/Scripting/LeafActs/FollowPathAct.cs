@@ -97,16 +97,8 @@ namespace DwarfCorp
             {
                 if (!path[i].DestinationVoxel.IsEmpty) return false;
                 var neighbors = Agent.Movement.GetMoveActions(path[i].DestinationVoxel);
-                bool valid = false;
-                foreach (MoveAction vr in neighbors)
-                {
-                    Vector3 dif = vr.DestinationVoxel.WorldPosition - path[i + 1].DestinationVoxel.WorldPosition;
-                    if (dif.Length() < .1)
-                    {
-                        valid = true;
-                    }
-                }
-                if (!valid) return false;
+                if (!neighbors.Any(n => n.DestinationVoxel == path[i + 1].SourceVoxel))
+                    return false;
             }
             return true;
         }
@@ -389,7 +381,7 @@ namespace DwarfCorp
         public override IEnumerable<Status> Run()
         {
             InitializePath();
-            if (Path.Count == 0)
+            if (Path == null || Path.Count == 0)
                 yield return Act.Status.Success;
             if (TrajectoryTimer == null) yield break;
             while (!TrajectoryTimer.HasTriggered)

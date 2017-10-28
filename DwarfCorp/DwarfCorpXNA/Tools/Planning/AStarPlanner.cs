@@ -128,6 +128,11 @@ namespace DwarfCorp
         private static bool Path(CreatureMovement mover, VoxelHandle start, GoalRegion goal, ChunkManager chunks,
             int maxExpansions, ref List<MoveAction> toReturn, float weight)
         {
+            if (mover.IsSessile)
+            {
+                return false;
+            }
+
             // Sometimes a goal may not even be achievable a.priori. If this is true, we know there can't be a path 
             // which satisifies that goal.
             if (!goal.IsPossible())
@@ -185,18 +190,15 @@ namespace DwarfCorp
 
                 // If we've reached the goal already, reconstruct the path from the start to the 
                 // goal.
+                /*
                 if (goal.IsInGoalRegion(current))
                 {
-                    // Assume that the last action in the path involves walking to the goal.
-                    var first = new MoveAction
-                    {
-                        DestinationVoxel = current,
-                        MoveType = MoveType.Walk
-                    };
-                    toReturn = ReconstructPath(cameFrom, first);
+                    toReturn = ReconstructPath(cameFrom, current);
                     return true;
                 }
 
+                */
+                //Drawer3D.DrawBox(current.GetBoundingBox(), Color.Red, 0.1f, true);
                 // We've already considered the voxel, so add it to the closed set.
                 openSet.Remove(current);
                 closedSet.Add(current);
@@ -207,20 +209,27 @@ namespace DwarfCorp
                 neighbors = mover.GetMoveActions(current);
                 //currentChunk.GetNeighborsManhattan(current, manhattanNeighbors);
 
-                var foundGoalAdjacent = neighbors.FirstOrDefault(n => n.DestinationVoxel == goal.GetVoxel());
+                var foundGoalAdjacent = neighbors.FirstOrDefault(n => goal.IsInGoalRegion(n.DestinationVoxel));
 
                 // A quick test to see if we're already adjacent to the goal. If we are, assume
                 // that we can just walk to it.
                 if (foundGoalAdjacent.DestinationVoxel.IsValid)
                 {
-                    var first = new MoveAction
+                    if (cameFrom.ContainsKey(current))
                     {
-                        DestinationVoxel = current,
-                        MoveType = MoveType.Walk
-                    };
-                    var last = foundGoalAdjacent;
-                    List<MoveAction> subPath = ReconstructPath(cameFrom, first);
-                    subPath.Add(last);
+                        cameFrom[foundGoalAdjacent.DestinationVoxel] = cameFrom[current];
+                    }
+                    else
+                    {
+                        cameFrom[foundGoalAdjacent.DestinationVoxel] = new MoveAction()
+                        {
+                            SourceVoxel = current,
+                            DestinationVoxel = current,
+                            MoveType = MoveType.Walk
+                        };
+
+                    }
+                    List<MoveAction> subPath = ReconstructPath(cameFrom, foundGoalAdjacent);
                     toReturn = subPath;
                     return true;
                 }
@@ -274,6 +283,11 @@ namespace DwarfCorp
         private static bool InversePath(CreatureMovement mover, VoxelHandle start, GoalRegion goal, ChunkManager chunks,
                 int maxExpansions, ref List<MoveAction> toReturn, float weight)
         {
+            if (mover.IsSessile)
+            {
+                return false;
+            }
+
             if (!start.IsValid)
             {
                 return false;

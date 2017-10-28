@@ -63,6 +63,7 @@ namespace DwarfCorp
                     voxelUnder));
 
             CollisionType = CollisionManager.CollisionType.Static;
+            CreateCosmeticChildren(Manager);
         }
 
         public override void CreateCosmeticChildren(ComponentManager Manager)

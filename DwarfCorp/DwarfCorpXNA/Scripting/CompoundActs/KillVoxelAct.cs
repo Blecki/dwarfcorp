@@ -79,7 +79,7 @@ namespace DwarfCorp
              
         }
 
-        public IEnumerable<Status> CheckIsDigDesignation(CreatureAI creature, string designation)
+        public bool CheckIsDigDesignation(CreatureAI creature, string designation)
         {
             VoxelHandle vref = creature.Blackboard.GetData<VoxelHandle>(designation);
 
@@ -88,12 +88,12 @@ namespace DwarfCorp
                 var digBuildOrder = creature.Faction.Designations.GetVoxelDesignation(vref, DesignationType.Dig) as BuildOrder;
 
                 if (digBuildOrder != null)
-                    yield return Status.Success;
+                    return true;
                 else
-                    yield return Status.Fail;
+                    return false;
             }
 
-            yield return Status.Fail;
+            return false;
         }
 
         public KillVoxelAct(VoxelHandle voxel, CreatureAI creature) :
@@ -103,12 +103,12 @@ namespace DwarfCorp
             Name = "Kill DestinationVoxel " + voxel.WorldPosition;
             Tree = new Sequence(
                 new SetBlackboardData<VoxelHandle>(creature, "DigVoxel", voxel),
+                new Domain(() => CheckIsDigDesignation(creature, "DigVoxel"),
                 new Sequence(
                     new Wrap(() => IncrementAssignment(creature, "DigVoxel", 1)),
                     new GoToVoxelAct(voxel, PlanAct.PlanType.Radius, creature) {Radius = 2.0f},
-                    new Wrap(() => CheckIsDigDesignation(creature, "DigVoxel")),
                     new DigAct(Agent, "DigVoxel"),
-                    new ClearBlackboardData(creature, "DigVoxel")) 
+                    new ClearBlackboardData(creature, "DigVoxel"))) 
                | new Wrap(() => IncrementAssignment(creature, "DigVoxel", -1)) & false);
         }
     }

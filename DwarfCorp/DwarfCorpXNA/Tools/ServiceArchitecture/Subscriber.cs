@@ -65,10 +65,15 @@ namespace DwarfCorp
             Responses = new ConcurrentQueue<TResponse>();
         }
 
-        public void SendRequest(TRequest request)
+        public bool SendRequest(TRequest request)
         {
-            Service.AddRequest(request, ID);
+            if(!Service.AddRequest(request, ID))
+            {
+                return false;
+            }
+
             Service.NeedsServiceEvent.Set();
+            return true;
         }
 
         public void Subscribe()

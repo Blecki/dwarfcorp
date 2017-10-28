@@ -103,6 +103,7 @@ namespace DwarfCorp
                 return creature.AI.ActOnWander();
             }
             
+            /*
             var rooms = creature.Faction.GetRooms();
             var items = creature.Faction.OwnedObjects.Where(item => !item.Tags.Contains("Climbable")).ToList();
             var minions = creature.Faction.Minions;
@@ -124,8 +125,8 @@ namespace DwarfCorp
             {
                 return new GoToEntityAct(Datastructures.SelectRandom(minions.Select(minion => minion.Physics)), creature.AI);
             }
-
-            bool getDrink = MathFunctions.RandEvent(0.0005f);
+            */
+            bool getDrink = MathFunctions.RandEvent(0.005f);
             if (getDrink && creature.Faction.HasResources(new List<Quantitiy<Resource.ResourceTags>>(){new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Alcohol)}))
             {
                 return new FindAndEatFoodAct(creature.AI) { FoodTag = Resource.ResourceTags.Alcohol, FallbackTag = Resource.ResourceTags.Alcohol};
