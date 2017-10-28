@@ -68,7 +68,7 @@ namespace DwarfCorp.Gui
             if (Key == 46) // Delete
             {
                 NewCursorPosition = CursorPosition;
-                if (CursorPosition == 0)
+                if (CursorPosition == 0 && Text.Length > 0)
                     return Text.Substring(1, Text.Length - 1);
                 else if (CursorPosition >= Text.Length)
                     return Text;
