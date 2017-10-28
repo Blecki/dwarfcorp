@@ -55,6 +55,7 @@ namespace DwarfCorp
             Name = "Ladder";
             Tags.Add("Climbable");
             OrientToWalls();
+            this.BoundingBox.Expand(-0.5f);
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)

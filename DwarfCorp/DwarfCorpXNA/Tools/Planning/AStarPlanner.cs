@@ -190,14 +190,14 @@ namespace DwarfCorp
 
                 // If we've reached the goal already, reconstruct the path from the start to the 
                 // goal.
-                /*
-                if (goal.IsInGoalRegion(current))
+       
+                if (goal.IsInGoalRegion(current) && cameFrom.ContainsKey(current))
                 {
-                    toReturn = ReconstructPath(cameFrom, current);
+                    toReturn = ReconstructPath(cameFrom, cameFrom[current]);
                     return true;
                 }
 
-                */
+              
                 //Drawer3D.DrawBox(current.GetBoundingBox(), Color.Red, 0.1f, true);
                 // We've already considered the voxel, so add it to the closed set.
                 openSet.Remove(current);
@@ -209,6 +209,7 @@ namespace DwarfCorp
                 neighbors = mover.GetMoveActions(current);
                 //currentChunk.GetNeighborsManhattan(current, manhattanNeighbors);
 
+                /*
                 var foundGoalAdjacent = neighbors.FirstOrDefault(n => goal.IsInGoalRegion(n.DestinationVoxel));
 
                 // A quick test to see if we're already adjacent to the goal. If we are, assume
@@ -218,22 +219,13 @@ namespace DwarfCorp
                     if (cameFrom.ContainsKey(current))
                     {
                         cameFrom[foundGoalAdjacent.DestinationVoxel] = cameFrom[current];
+                        List<MoveAction> subPath = ReconstructPath(cameFrom, foundGoalAdjacent);
+                        toReturn = subPath;
+                        return true;
                     }
-                    else
-                    {
-                        cameFrom[foundGoalAdjacent.DestinationVoxel] = new MoveAction()
-                        {
-                            SourceVoxel = current,
-                            DestinationVoxel = current,
-                            MoveType = MoveType.Walk
-                        };
 
-                    }
-                    List<MoveAction> subPath = ReconstructPath(cameFrom, foundGoalAdjacent);
-                    toReturn = subPath;
-                    return true;
                 }
-
+                */
                 // Otherwise, consider all of the neighbors of the current voxel that can be moved to,
                 // and determine how to add them to the list of expansions.
                 foreach (MoveAction n in neighbors)

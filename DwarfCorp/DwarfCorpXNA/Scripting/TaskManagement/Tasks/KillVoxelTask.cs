@@ -96,13 +96,20 @@ namespace DwarfCorp
                 return 1000;
 
             int surroundedValue = 0;
+            float freeTopValue = 0;
             if (!alreadyCheckedFeasible)
             {
                 if (VoxelHelpers.VoxelIsCompletelySurrounded(VoxelToKill))
                     surroundedValue = 10000;
+
+                var above = VoxelHelpers.GetVoxelAbove(VoxelToKill);
+                if (above.IsValid && !above.IsEmpty)
+                {
+                    freeTopValue = 100;
+                }
             }
 
-            return (agent.AI.Position - VoxelToKill.WorldPosition).LengthSquared() + 10 * Math.Abs(VoxelConstants.ChunkSizeY - VoxelToKill.Coordinate.Y) + surroundedValue;
+            return (agent.AI.Position - VoxelToKill.WorldPosition).LengthSquared() + 10 * Math.Abs(VoxelConstants.ChunkSizeY - VoxelToKill.Coordinate.Y) + surroundedValue + freeTopValue;
         }
     }
 

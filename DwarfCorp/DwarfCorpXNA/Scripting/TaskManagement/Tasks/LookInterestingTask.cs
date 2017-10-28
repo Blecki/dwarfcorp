@@ -103,16 +103,8 @@ namespace DwarfCorp
                 return creature.AI.ActOnWander();
             }
             
-            /*
             var rooms = creature.Faction.GetRooms();
-            var items = creature.Faction.OwnedObjects.Where(item => !item.Tags.Contains("Climbable")).ToList();
-            var minions = creature.Faction.Minions;
-
-            bool goToRoom = MathFunctions.RandEvent(0.2f);
-            if (goToRoom && rooms.Count > 0)
-            {
-                return new GoToZoneAct(creature.AI, Datastructures.SelectRandom(rooms));
-            }
+            var items = creature.Faction.OwnedObjects.OfType<Flag>().ToList();
 
             bool goToItem = MathFunctions.RandEvent(0.2f);
             if (goToItem && items.Count > 0)
@@ -120,12 +112,6 @@ namespace DwarfCorp
                 return new GoToEntityAct(Datastructures.SelectRandom(items), creature.AI) & new Wrap(() => ConverseFriends(creature.AI));
             }
 
-            bool goToMinion = MathFunctions.RandEvent(0.2f);
-            if (goToMinion && minions.Count > 1)
-            {
-                return new GoToEntityAct(Datastructures.SelectRandom(minions.Select(minion => minion.Physics)), creature.AI);
-            }
-            */
             bool getDrink = MathFunctions.RandEvent(0.005f);
             if (getDrink && creature.Faction.HasResources(new List<Quantitiy<Resource.ResourceTags>>(){new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Alcohol)}))
             {
