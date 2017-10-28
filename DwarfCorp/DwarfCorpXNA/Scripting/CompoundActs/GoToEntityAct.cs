@@ -130,8 +130,6 @@ namespace DwarfCorp
 
         public IEnumerable<Status> TrackMovingTarget()
         {
-            int maxFailures = 1;
-            int currentFailures = 0;
             while (true)
             {
                 Creature.AI.Blackboard.Erase("EntityVoxel");

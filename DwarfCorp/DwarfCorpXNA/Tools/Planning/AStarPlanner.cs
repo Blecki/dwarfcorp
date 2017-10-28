@@ -66,18 +66,26 @@ namespace DwarfCorp
         /// <param name="currentNode">The very last movement in the path.</param>
         /// <returns>The path of movements. from the start to the current node</returns>
         public static List<MoveAction> ReconstructPath(Dictionary<VoxelHandle, MoveAction> cameFrom,
-            MoveAction currentNode)
+            MoveAction currentNode, VoxelHandle start)
         {
-            var toReturn = new List<MoveAction>();
-            // If there is a dictionary entry for the current voxel, add it to the path recursively.
-            if (cameFrom.ContainsKey(currentNode.DestinationVoxel))
+            var toReturn = new List<MoveAction>() { currentNode };
+            while (currentNode.SourceVoxel != start && cameFrom.ContainsKey(currentNode.SourceVoxel))
             {
-                toReturn.AddRange(ReconstructPath(cameFrom, cameFrom[currentNode.DestinationVoxel]));
+                currentNode = cameFrom[currentNode.SourceVoxel];
                 toReturn.Add(currentNode);
-                return toReturn;
             }
-            // Otherwise, this is the start node. Add it to the path and return.
-            toReturn.Add(currentNode);
+         
+            // the path is reversed, and source/destination of edges need to be flipped
+            // keeping in mind the "cameFrom" terminology from A*
+            toReturn.Reverse();
+            for (int i = 0; i < toReturn.Count; i++)
+            {
+                var a = toReturn[i];
+                var temp = a.SourceVoxel;
+                a.SourceVoxel = a.DestinationVoxel;
+                a.DestinationVoxel = temp;
+                toReturn[i] = a;
+            }
             return toReturn;
         }
 
@@ -191,11 +199,13 @@ namespace DwarfCorp
                 // If we've reached the goal already, reconstruct the path from the start to the 
                 // goal.
        
+                /*
                 if (goal.IsInGoalRegion(current) && cameFrom.ContainsKey(current))
                 {
                     toReturn = ReconstructPath(cameFrom, cameFrom[current]);
                     return true;
                 }
+                */
 
               
                 //Drawer3D.DrawBox(current.GetBoundingBox(), Color.Red, 0.1f, true);
@@ -209,8 +219,8 @@ namespace DwarfCorp
                 neighbors = mover.GetMoveActions(current);
                 //currentChunk.GetNeighborsManhattan(current, manhattanNeighbors);
 
-                /*
-                var foundGoalAdjacent = neighbors.FirstOrDefault(n => goal.IsInGoalRegion(n.DestinationVoxel));
+
+                var foundGoalAdjacent = neighbors.FirstOrDefault(n => goal.IsInGoalRegion(n.SourceVoxel));
 
                 // A quick test to see if we're already adjacent to the goal. If we are, assume
                 // that we can just walk to it.
@@ -218,14 +228,13 @@ namespace DwarfCorp
                 {
                     if (cameFrom.ContainsKey(current))
                     {
-                        cameFrom[foundGoalAdjacent.DestinationVoxel] = cameFrom[current];
-                        List<MoveAction> subPath = ReconstructPath(cameFrom, foundGoalAdjacent);
+                        List<MoveAction> subPath = ReconstructPath(cameFrom, foundGoalAdjacent, start);
                         toReturn = subPath;
                         return true;
                     }
 
                 }
-                */
+
                 // Otherwise, consider all of the neighbors of the current voxel that can be moved to,
                 // and determine how to add them to the list of expansions.
                 foreach (MoveAction n in neighbors)
@@ -250,7 +259,7 @@ namespace DwarfCorp
 
                     // Add an edge to the voxel from the current voxel.
                     var cameAction = n;
-                    cameAction.DestinationVoxel = current;
+                    cameAction.SourceVoxel = current;
                     cameFrom[n.DestinationVoxel] = cameAction;
 
                     // Update the expansion scores for the next voxel.

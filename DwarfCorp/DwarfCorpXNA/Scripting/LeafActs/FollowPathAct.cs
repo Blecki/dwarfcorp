@@ -97,7 +97,7 @@ namespace DwarfCorp
             {
                 if (!path[i].DestinationVoxel.IsEmpty) return false;
                 var neighbors = Agent.Movement.GetMoveActions(path[i].DestinationVoxel);
-                if (!neighbors.Any(n => n.DestinationVoxel == path[i + 1].SourceVoxel))
+                if (!neighbors.Any(n => n.DestinationVoxel == path[i + 1].DestinationVoxel))
                     return false;
             }
             return true;
