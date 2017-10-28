@@ -125,7 +125,7 @@ namespace DwarfCorp
             int fgIdx = Logo.LogoSymbol.Tile;
             int fgX = (fgIdx % (logoFg.Width / 32)) * 32;
             int fgY = (fgIdx / (logoFg.Width / 32)) * 32;
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp,
+            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin,
                 DepthStencilState.None, RasterizerState.CullNone);
             Drawer2D.DrawRect(DwarfGame.SpriteBatch, new Rectangle(1, 1, width - 1, height - 2), Color.Black, 2);
             DwarfGame.SpriteBatch.Draw(logoBg, new Rectangle(width / 2 - 16, height / 2 - 16, 32, 32), new Rectangle(bgX, bgY, 32, 32),  new Color(Logo.LogoBackgroundColor));
