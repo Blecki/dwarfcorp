@@ -306,14 +306,16 @@ namespace DwarfCorp
                     Vector3 extents = new Vector3(1500, 1500, 1500);
                     CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
 
-                    foreach (var resource in gameFile.PlayData.Resources)
+                    if (gameFile.PlayData.Resources != null)
                     {
-                        if (!ResourceLibrary.Resources.ContainsKey(resource.Key))
+                        foreach (var resource in gameFile.PlayData.Resources)
                         {
-                            ResourceLibrary.Add(resource.Value);
+                            if (!ResourceLibrary.Resources.ContainsKey(resource.Key))
+                            {
+                                ResourceLibrary.Add(resource.Value);
+                            }
                         }
                     }
-
                     ComponentManager = new ComponentManager(gameFile.PlayData.Components, this);
 
                     foreach (var component in gameFile.PlayData.Components.SaveableComponents)
