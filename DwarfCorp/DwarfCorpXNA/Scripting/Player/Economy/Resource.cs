@@ -115,7 +115,10 @@ namespace DwarfCorp
             Corpse,
             Money,
             Sand,
-            Glass
+            Glass,
+            Fruit,
+            Gourd,
+            Evil
         }
 
         public Resource()

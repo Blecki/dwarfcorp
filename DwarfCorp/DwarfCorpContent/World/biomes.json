@@ -652,5 +652,82 @@
     "Height": 1.5,
     "Temp": 1.5,
     "Rain": 0.0
-  }
+  },
+    "HauntedForest": {
+    "Biome": 9,
+    "Name": "Haunted Forest",
+    "Icon": 11,
+    "Vegetation": [
+	{
+        "Name": "Pumpkin",
+        "ClumpSize": 8.0,
+        "ClumpThreshold": 0.9,
+        "MeanSize": 0.8,
+        "SizeVariance": 0.1,
+        "VerticalOffset": 0.2,
+        "NoiseOffset": 265.476837,
+        "SpawnProbability": 0.3
+      },
+	  {
+        "Name": "Haunted Tree",
+        "ClumpSize": 30.0,
+        "ClumpThreshold": 0.5,
+        "MeanSize": 2.0,
+        "SizeVariance": 0.5,
+        "VerticalOffset": 1.7,
+        "NoiseOffset": 57.248703,
+        "SpawnProbability": 0.1
+      }
+	  
+	  ],
+    "Motes": [
+      {
+        "Name": "deadbush",
+        "RegionScale": 0.5,
+        "SpawnThreshold": 0.6,
+        "MoteScale": 1.0,
+        "Asset": "Entities\\Plants\\gnarled"
+      }
+    ],
+    "Fauna": [
+      {
+        "Name": "Scorpion",
+        "SpawnProbability": 0.0005
+      },
+      {
+        "Name": "Spider",
+        "SpawnProbability": 0.0005
+      },
+      {
+        "Name": "Bat",
+        "SpawnProbability": 0.0008
+      },
+	  {
+        "Name": "Necrosnake",
+        "SpawnProbability": 0.00005
+      },
+	  ],
+    "GrassLayer": {
+        "VoxelType" :  "CaveFungus",
+        "Depth" :  1
+    },
+    "SoilLayer": {
+        "VoxelType" :  "Dirt",
+        "Depth" :  5
+    },
+    "SubsurfaceLayers": [ 
+    {
+        "VoxelType" :  "Stone",
+        "Depth" :  128
+    }
+    ],
+    "ShoreVoxel": "Sand",
+    "ClumpGrass": true,
+    "ClumpSize": 10.0,
+    "ClumpTreshold": 0.5,
+    "MapColor": [255, 30, 255, 255],
+    "Height": 1.5,
+    "Temp": 1.5,
+    "Rain": 0.0
+  },
 }

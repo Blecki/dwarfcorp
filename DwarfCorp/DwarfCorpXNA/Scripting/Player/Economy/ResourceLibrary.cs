@@ -79,12 +79,14 @@ namespace DwarfCorp
             public static ResourceType GemTrinket = "Gem-set Trinket";
             public static ResourceType PineCone = "Pine Cone";
             public static ResourceType Coconut = "Coconut";
+            public static ResourceType Pumkin = "Pumpkin";
             public static ResourceType Cactus = "Cactus";
             public static ResourceType Egg = "Egg";
             public static ResourceType Apple = "Apple";
             public static ResourceType Glass = "Glass";
             public static ResourceType Brick = "Brick";
             public static ResourceType Coins = "Coins";
+            public static ResourceType EvilSeed = "Seed of Evil";
 
             public static implicit operator ResourceType(string value)
             {
@@ -229,7 +231,7 @@ namespace DwarfCorp
                     SpriteRow = 0
                 }
             });
-            Add(new Resource(ResourceType.Berry, 5.0m, "Dwarves can eat these.", new NamedImageFrame(tileSheet, GetRect(2, 1)), 10, Color.White, Resource.ResourceTags.Edible, Resource.ResourceTags.Flammable, Resource.ResourceTags.RawFood, Resource.ResourceTags.Plantable, Resource.ResourceTags.AboveGroundPlant) { FoodContent = 50, PlantToGenerate = "Berry Bush Sprout"});
+            Add(new Resource(ResourceType.Berry, 5.0m, "Dwarves can eat these.", new NamedImageFrame(tileSheet, GetRect(2, 1)), 10, Color.White, Resource.ResourceTags.Edible, Resource.ResourceTags.Flammable, Resource.ResourceTags.RawFood, Resource.ResourceTags.Plantable, Resource.ResourceTags.AboveGroundPlant, Resource.ResourceTags.Fruit) { FoodContent = 50, PlantToGenerate = "Berry Bush Sprout"});
             Add(new Resource(ResourceType.Mushroom, 2.5m, "Dwarves can eat these.", new NamedImageFrame(tileSheet, GetRect(1, 2)), 17, Color.White, Resource.ResourceTags.Edible, Resource.ResourceTags.Fungus, Resource.ResourceTags.Flammable, Resource.ResourceTags.RawFood, Resource.ResourceTags.Brewable, Resource.ResourceTags.Plantable, Resource.ResourceTags.BelowGroundPlant) { FoodContent = 50, PlantToGenerate = "Mushroom Sprout" });
             Add(new Resource(ResourceType.CaveMushroom, 3.5m, "Dwarves can eat these.", new NamedImageFrame(tileSheet, GetRect(4, 1)), 12, Color.White, Resource.ResourceTags.SelfIlluminating, Resource.ResourceTags.Edible, Resource.ResourceTags.Fungus, Resource.ResourceTags.Flammable, Resource.ResourceTags.RawFood, Resource.ResourceTags.Brewable, Resource.ResourceTags.Plantable, Resource.ResourceTags.BelowGroundPlant) { FoodContent = 30, PlantToGenerate = "Cave Mushroom Sprout" });
             Add(new Resource(ResourceType.Grain, 2.5m, "Dwarves can eat this.", new NamedImageFrame(tileSheet, GetRect(0, 2)), 16, Color.White, Resource.ResourceTags.Edible, Resource.ResourceTags.Grain, Resource.ResourceTags.Flammable, Resource.ResourceTags.RawFood, Resource.ResourceTags.Brewable, Resource.ResourceTags.Bakeable, Resource.ResourceTags.Plantable, Resource.ResourceTags.AboveGroundPlant) { FoodContent = 100, PlantToGenerate = "Wheat Sprout" });
@@ -253,16 +255,29 @@ namespace DwarfCorp
             {
                 PlantToGenerate = "Pine Tree Sprout"
             });
+            Add(new Resource(ResourceType.EvilSeed, 3.0m, "Grows haunted trees.",
+                new NamedImageFrame(tileSheet, GetRect(7, 3)), 14, Color.White, Resource.ResourceTags.Plantable,
+                    Resource.ResourceTags.Flammable, Resource.ResourceTags.AboveGroundPlant, Resource.ResourceTags.Evil)
+            {
+                PlantToGenerate = "Haunted Tree Sprout"
+            });
             Add(new Resource(ResourceType.Coconut, 6.0m, "Grows palm trees.",
                 new NamedImageFrame(tileSheet, GetRect(5, 1)), 13, Color.White, Resource.ResourceTags.Plantable,
-                 Resource.ResourceTags.Flammable, Resource.ResourceTags.AboveGroundPlant, Resource.ResourceTags.Edible)
+                 Resource.ResourceTags.Flammable, Resource.ResourceTags.AboveGroundPlant, Resource.ResourceTags.Edible, Resource.ResourceTags.RawFood)
             {
                 PlantToGenerate = "Palm Tree Sprout",
                 FoodContent = 50
             });
+            Add(new Resource(ResourceType.Pumkin, 6.0m, "Grows pumpkins.",
+    new NamedImageFrame(tileSheet, GetRect(6, 3)), 13, Color.White, Resource.ResourceTags.Plantable,
+     Resource.ResourceTags.Flammable, Resource.ResourceTags.AboveGroundPlant, Resource.ResourceTags.Edible, Resource.ResourceTags.Gourd, Resource.ResourceTags.Bakeable, Resource.ResourceTags.RawFood)
+            {
+                PlantToGenerate = "Pumpkin Sprout",
+                FoodContent = 50
+            });
             Add(new Resource(ResourceType.Apple, 3.0m, "Grows apple trees.",
                 new NamedImageFrame(tileSheet, GetRect(4, 3)), 28, Color.White, Resource.ResourceTags.Plantable,
-                Resource.ResourceTags.Flammable, Resource.ResourceTags.AboveGroundPlant, Resource.ResourceTags.Edible, Resource.ResourceTags.RawFood)
+                Resource.ResourceTags.Fruit, Resource.ResourceTags.Flammable, Resource.ResourceTags.AboveGroundPlant, Resource.ResourceTags.Edible, Resource.ResourceTags.RawFood, Resource.ResourceTags.Brewable)
             {
                 PlantToGenerate = "Apple Tree Sprout",
                 FoodContent = 50

@@ -815,7 +815,14 @@ namespace DwarfCorp.GameStates
 
                             if (minNeighbor >= 0 && MathFunctions.RandEvent(0.25f / (neighborheights[minNeighbor] + 1e-2f)))
                             {
-                                map[x + deltas[minNeighbor].X, y + deltas[minNeighbor].Y].Faction = map[x, y].Faction;
+                                var faction = map[x, y].Faction;
+                                map[x + deltas[minNeighbor].X, y + deltas[minNeighbor].Y].Faction = faction;
+                                var biome = map[x + deltas[minNeighbor].X, y + deltas[minNeighbor].Y].Biome;
+                                var myFaction = civs[faction - 1];
+                                if (myFaction.Race.Biomes.ContainsKey(biome))
+                                {
+                                    map[x + deltas[minNeighbor].X, y + deltas[minNeighbor].Y].Biome = myFaction.Race.Biomes[biome];
+                                }
                             }
                         }
                     }

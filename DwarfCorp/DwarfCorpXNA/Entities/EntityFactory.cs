@@ -72,6 +72,9 @@ namespace DwarfCorp
             RegisterEntity("Balloon", (position, data) => CreateBalloon(position + new Vector3(0, 1000, 0), position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, null, world.PlayerFaction));
             RegisterEntity("Work Pile", (position, data) => new WorkPile(world.ComponentManager, position));
 
+            RegisterEntity("Haunted Tree", (position, data) => new Tree("Haunted Tree", world.ComponentManager, position, "eviltree", ResourceLibrary.ResourceType.EvilSeed, data.GetData("Scale", 1.0f), "eviltreesprout"));
+            RegisterEntity("Haunted Tree Sprout", (position, data) => new Seedling(world.ComponentManager, "Haunted Tree", position, "eviltreesprout", 12));
+
             RegisterEntity("Pine Tree", (position, data) => new Tree("Pine Tree", world.ComponentManager, position, "pine", ResourceLibrary.ResourceType.PineCone, data.GetData("Scale", 1.0f), "pinesprout"));
             RegisterEntity("Pine Tree Sprout", (position, data) => new Seedling(world.ComponentManager, "Pine Tree", position, "pinesprout", 12));
             RegisterEntity("Snow Pine Tree", (position, data) => new Tree("Pine Tree", world.ComponentManager, position, "snowpine", ResourceLibrary.ResourceType.PineCone, data.GetData("Scale", 1.0f), "pinesprout"));
@@ -85,6 +88,9 @@ namespace DwarfCorp
 
             RegisterEntity("Cactus", (position, data) => new Cactus(world.ComponentManager, position, "cactus", data.GetData("Scale", 1.0f)));
             RegisterEntity("Cactus Sprout", (position, data) => new Seedling(world.ComponentManager, "Cactus", position, "cactussprout", 12));
+
+            RegisterEntity("Pumpkin", (position, data) => new Pumpkin(world.ComponentManager, position, "pumpkinvine", data.GetData("Scale", 1.0f)));
+            RegisterEntity("Pumpkin Sprout", (position, data) => new Seedling(world.ComponentManager, "Pumpkin", position, "pumpkinvinesprout", 12));
 
             RegisterEntity("Berry Bush", (position, data) => new Bush(world.ComponentManager, position, "berrybush", data.GetData("Scale", 1.0f)));
             RegisterEntity("Berry Bush Sprout", (position, data) => new Seedling(world.ComponentManager, "Berry Bush", position, "berrybushsprout", 12));
@@ -152,6 +158,13 @@ namespace DwarfCorp
             });
             RegisterEntity("Snake", (position, data) => GenerateSnake(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice,
                 world.ChunkManager));
+            RegisterEntity("Necrosnake", (position, data) =>
+            {
+                var snek = new Snake(new SpriteSheet(ContentPaths.Entities.Animals.Snake.bonesnake, 32),
+                position, world.ComponentManager, "Snake");
+                snek.Attacks[0].DiseaseToSpread = "Necrorot";
+                return snek.Physics;
+            });
             RegisterEntity("Bookshelf", (position, data) => new Bookshelf(world.ComponentManager, position) { Tags = new List<string>() { "Research"}});
             RegisterEntity("Wooden Door", (position, data) => new Door(world.ComponentManager, position, world.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 1), 50));
             RegisterEntity("Metal Door", (position, data) => new Door(world.ComponentManager, position, world.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 8), 100));

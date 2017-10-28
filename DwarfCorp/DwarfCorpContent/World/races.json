@@ -271,9 +271,9 @@
                 ]
             }
        },
-        "LikedResources" :  ["Magical", "Craft", "RawFood"],
-        "HatedResources" :  ["AnimalProduct", "Wood", "Alcohol", "PreparedFood"],
-        "CommonResources" :  ["Wood", "Craft", "AboveGroundPlant",  "Magical"],
+        "LikedResources" :  ["Magical", "Craft", "Fruit", "Gourd"],
+        "HatedResources" :  ["AnimalProduct", "Wood", "Alcohol", "PreparedFood", "Evil"],
+        "CommonResources" :  ["Wood", "Craft", "Fruit",  "Magical"],
         "RareResources" :  ["Metal", "Gem", "Precious"],
         "TradeGoods" : 
         {
@@ -343,16 +343,23 @@
                 ]
             }
        },
-       "LikedResources" :  ["AnimalProduct", "Magical"],
+       "LikedResources" :  ["AnimalProduct", "Magical", "Evil"],
         "HatedResources" :  ["AboveGroundPlant", "BelowGroundPlant", "PreparedFood"],
-        "CommonResources" :  ["Bone", "Magical"],
+        "CommonResources" :  ["Bone", "Magical", "Evil"],
         "RareResources" :  ["RawFood", "AnimalProduct", "Metal", "Gem"],
         "TradeGoods" : 
         {
             "Bone" :  128,
             "Magical" :  64,
             "Precious" :  5,
-            "Craft" :  16
+            "Craft" :  16,
+			"Evil" : 4
+        },
+		"Biomes" : 
+        {
+            "BorealForest" :  "HauntedForest",
+			"DeciduousForest" :  "HauntedForest",
+			"Desert" :  "HauntedForest",
         },
         "Crafts" :  ["Bone"],
         "Encrustings":  ["Magical"],
