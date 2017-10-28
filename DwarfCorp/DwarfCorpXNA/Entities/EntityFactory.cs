@@ -161,7 +161,7 @@ namespace DwarfCorp
             RegisterEntity("Necrosnake", (position, data) =>
             {
                 var snek = new Snake(new SpriteSheet(ContentPaths.Entities.Animals.Snake.bonesnake, 32),
-                position, world.ComponentManager, "Snake");
+                position, world.ComponentManager, "Snake", false, true);
                 snek.Attacks[0].DiseaseToSpread = "Necrorot";
                 return snek.Physics;
             });

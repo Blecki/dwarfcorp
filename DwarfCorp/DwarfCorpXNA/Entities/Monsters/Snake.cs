@@ -47,7 +47,7 @@ namespace DwarfCorp
     {
         public class TailSegment
         {
-            public Fixture Sprite;
+            public Body Sprite;
             public Vector3 Target;
         }
 
@@ -58,7 +58,7 @@ namespace DwarfCorp
             
         }
 
-        public Snake(SpriteSheet sprites, Vector3 position, ComponentManager manager, string name):
+        public Snake(SpriteSheet sprites, Vector3 position, ComponentManager manager, string name, bool hasMeat = true, bool hasBones = true):
             base
             (
                 manager,
@@ -78,10 +78,12 @@ namespace DwarfCorp
                 name
             )
         {
+            HasMeat = hasMeat;
+            HasBones = hasBones;
             Physics = new Physics
                 (
                     manager,
-                    "Giant Snake",
+                    name,
                     Matrix.CreateTranslation(position),
                     new Vector3(0.5f, 0.5f, 0.5f),
                     new Vector3(0, 0, 0),
@@ -123,13 +125,51 @@ namespace DwarfCorp
             Physics.AddChild(new Shadow(Manager));
             for (int i = 0; i < 10; ++i)
             {
+                var animation = new CharacterSprite(Graphics, Manager, "tail sprite", Matrix.Identity);
+                animation.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Forward, spriteSheet, 1, frameWidth, frameHeight, 0, 1);
+                animation.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Left, spriteSheet, 1, frameWidth, frameHeight, 1, 1);
+                animation.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Right, spriteSheet, 1, frameWidth, frameHeight, 2, 1);
+                animation.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Backward, spriteSheet, 1, frameWidth, frameHeight, 3, 1);
                 Tail.Add(
                     new TailSegment()
                     {
-                        Sprite = Manager.RootComponent.AddChild(new Fixture(Manager, Physics.LocalPosition, spriteSheet, new Point(1, 0))) as Fixture,
+                        Sprite = Manager.RootComponent.AddChild(animation) as Body,
                         Target = Physics.LocalTransform.Translation
                     });
                 Tail[i].Sprite.AddChild(new Shadow(Manager));
+                var inventory = Tail[i].Sprite.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.BoundingBoxPos)) as Inventory;
+
+                if (HasMeat)
+                {
+                    ResourceLibrary.ResourceType type = Name + " " + ResourceLibrary.ResourceType.Meat;
+
+                    if (!ResourceLibrary.Resources.ContainsKey(type))
+                    {
+                        ResourceLibrary.Add(new Resource(ResourceLibrary.Resources[ResourceLibrary.ResourceType.Meat])
+                        {
+                            Type = type,
+                            ShortName = type
+                        });
+                    }
+
+                    inventory.AddResource(new ResourceAmount(type, 1));
+                }
+
+                if (HasBones)
+                {
+                    ResourceLibrary.ResourceType type = Name + " " + ResourceLibrary.ResourceType.Bones;
+
+                    if (!ResourceLibrary.Resources.ContainsKey(type))
+                    {
+                        ResourceLibrary.Add(new Resource(ResourceLibrary.Resources[ResourceLibrary.ResourceType.Bones])
+                        {
+                            Type = type,
+                            ShortName = type
+                        });
+                    }
+
+                    inventory.AddResource(new ResourceAmount(type, 1));
+                }
             }
 
             // Add sensor
@@ -224,11 +264,24 @@ namespace DwarfCorp
                 Tail[0].Target = Physics.Position;
             }
 
+            int k = 0;
             foreach (var tail in Tail)
             {
-                tail.Sprite.LocalPosition = 0.9f*tail.Sprite.LocalPosition + 0.1f*tail.Target;
+                Vector3 diff = Vector3.UnitX;
+                if (k == Tail.Count - 1)
+                {
+                    diff = AI.Position - tail.Sprite.LocalPosition;
+                }
+                else
+                {
+                    diff = Tail[k + 1].Sprite.LocalPosition - tail.Sprite.LocalPosition;
+                }
+                var mat = Matrix.CreateRotationY((float)Math.Atan2(diff.X, -diff.Z));
+                mat.Translation = 0.9f*tail.Sprite.LocalPosition + 0.1f*tail.Target;
+                tail.Sprite.LocalTransform = mat;
                 tail.Sprite.UpdateTransform();
                 tail.Sprite.PropogateTransforms();
+                k++;
             }
             base.Update(gameTime, chunks, camera);
         }
