@@ -2189,24 +2189,16 @@ namespace DwarfCorp.GameStates
             MakeMenuItem(PausePanel, "Save", "",
                 (sender, args) =>
                 {
-                    GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm
-                    {
-                        Text = "Warning: Saving is still an unstable feature. Are you sure you want to continue?",
-                        OnClose = (s) =>
+                    World.Save(
+                        String.Format("{0}_{1}", Overworld.Name, World.GameID),
+                        (success, exception) =>
                         {
-                            if ((s as Gui.Widgets.Confirm).DialogResult == DwarfCorp.Gui.Widgets.Confirm.Result.OKAY)
-                                World.Save(
-                                    String.Format("{0}_{1}", Overworld.Name, World.GameID),
-                                    (success, exception) =>
-                                    {
-                                        GuiRoot.ShowModalPopup(new Gui.Widgets.Popup
-                                        {
-                                            Text = success ? "File saved." : "Save failed - " + exception.Message,
-                                            OnClose = (s2) => OpenPauseMenu()
-                                        });
-                                    });
-                        }
-                    });
+                            GuiRoot.ShowModalPopup(new Gui.Widgets.Popup
+                            {
+                                Text = success ? "File saved." : "Save failed - " + exception.Message,
+                                OnClose = (s2) => OpenPauseMenu()
+                            });
+                        });
                 });
 
 #if DEBUG
