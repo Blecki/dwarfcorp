@@ -102,7 +102,7 @@ namespace DwarfCorp
                     surroundedValue = 10000;
             }
 
-            return (agent.AI.Position - VoxelToKill.WorldPosition).LengthSquared() + 100 * Math.Abs(agent.AI.Position.Y - VoxelToKill.Coordinate.Y) + surroundedValue;
+            return (agent.AI.Position - VoxelToKill.WorldPosition).LengthSquared() + 10 * Math.Abs(VoxelConstants.ChunkSizeY - VoxelToKill.Coordinate.Y) + surroundedValue;
         }
     }
 
