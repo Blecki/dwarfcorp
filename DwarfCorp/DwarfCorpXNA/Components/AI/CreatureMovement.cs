@@ -42,8 +42,15 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    [JsonObject(IsReference = true)]
     public class CreatureMovement
     {
+
+        public CreatureMovement()
+        {
+
+        }
+
         public CreatureMovement(CreatureAI Parent)
         {
             this.Parent = Parent;
@@ -125,7 +132,9 @@ namespace DwarfCorp
         }
 
         public CreatureAI Parent;
+        
         /// <summary> The creature associated with this AI </summary>
+        [JsonIgnore]
         public Creature Creature { get { return Parent.Creature; } }
 
         /// <summary> Wrapper around the creature's fly movement </summary>
