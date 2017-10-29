@@ -304,13 +304,14 @@ namespace DwarfCorp
 
                 if (secondaryPrimitive != null)
                 {
-                    var secondaryFaceDescriptor = secondaryPrimitive.GetFace(face);
+                    if (face != BoxFace.Top) continue;
+                    //var secondaryFaceDescriptor = secondaryPrimitive.GetFace(face);
                     var secondaryIndexOffset = VertexCount;
 
                     for (int faceVertex = 0; faceVertex < faceDescriptor.VertexCount; faceVertex++)
                     {
-                        var vertex = secondaryPrimitive.Vertices[secondaryFaceDescriptor.VertexOffset + faceVertex];
-                        var voxelVertex = secondaryPrimitive.Deltas[secondaryFaceDescriptor.VertexOffset + faceVertex];
+                        var vertex = primitive.Vertices[faceDescriptor.VertexOffset + faceVertex];
+                        var voxelVertex = primitive.Deltas[faceDescriptor.VertexOffset + faceVertex];
 
                         var rampOffset = Vector3.Zero;
                         if (v.Type.CanRamp && ShouldRamp(voxelVertex, v.RampType))
@@ -321,7 +322,7 @@ namespace DwarfCorp
                         var worldPosition = v.WorldPosition + vertex.Position;
 
                         Verticies[VertexCount] = new ExtendedVertex(
-                            worldPosition + rampOffset + VertexNoise.GetNoiseVectorFromRepeatingTexture(worldPosition),
+                            worldPosition + rampOffset + VertexNoise.GetNoiseVectorFromRepeatingTexture(worldPosition) + new Vector3(0.0f, 0.02f, 0.0f),
                             new Color(255, 255, 255, 255),
                             tint,
                             secondaryUvs.Uvs[faceDescriptor.VertexOffset + faceVertex],
@@ -330,13 +331,13 @@ namespace DwarfCorp
                         VertexCount++;
                     }
 
-                    for (int idx = secondaryFaceDescriptor.IndexOffset; idx < secondaryFaceDescriptor.IndexCount +
-                        secondaryFaceDescriptor.IndexOffset; idx++)
+                    for (int idx = faceDescriptor.IndexOffset; idx < faceDescriptor.IndexCount +
+                        faceDescriptor.IndexOffset; idx++)
                     {
                         EnsureSpace(ref Indicies, IndexCount);
 
                         ushort offset = secondaryPrimitive.Indexes[idx];
-                        ushort offset0 = secondaryPrimitive.Indexes[secondaryFaceDescriptor.IndexOffset];
+                        ushort offset0 = secondaryPrimitive.Indexes[faceDescriptor.IndexOffset];
                         Indicies[IndexCount] = (ushort)(secondaryIndexOffset + offset - offset0);
                         IndexCount++;
                     }
