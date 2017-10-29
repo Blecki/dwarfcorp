@@ -322,7 +322,7 @@ namespace DwarfCorp
                         var worldPosition = v.WorldPosition + vertex.Position;
 
                         Verticies[VertexCount] = new ExtendedVertex(
-                            worldPosition + rampOffset + VertexNoise.GetNoiseVectorFromRepeatingTexture(worldPosition) + new Vector3(0.0f, 0.02f, 0.0f),
+                            worldPosition + rampOffset + VertexNoise.GetNoiseVectorFromRepeatingTexture(worldPosition) + new Vector3(0.0f, 0.09f, 0.0f),
                             new Color(255, 255, 255, 255),
                             tint,
                             secondaryUvs.Uvs[faceDescriptor.VertexOffset + faceVertex],
