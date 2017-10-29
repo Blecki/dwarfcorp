@@ -756,7 +756,10 @@ namespace DwarfCorp
                             {
                                 Mode = FarmAct.FarmMode.Plant,
                                 Plant = plantablePlot.PlantedType,
-                                RequiredResources = new List<ResourceAmount>(),
+                                RequiredResources = new List<ResourceAmount>
+                                {
+                                    new ResourceAmount(plantablePlot.PlantedType)
+                                },
                                 FarmToWork = plantablePlot
                             };
 

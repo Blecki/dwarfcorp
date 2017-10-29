@@ -561,15 +561,13 @@ namespace DwarfCorp
                 System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
                 System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
                 DirectoryInfo worldDirectory =
-                    Directory.CreateDirectory(DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Worlds" +
+                    Directory.CreateDirectory(DwarfGame.GetWorldDirectory() +
                                               Path.DirectorySeparatorChar + Overworld.Name);
 
                 // This is a hack. Why does the overworld have this as a static field??
                 Overworld.NativeFactions = this.Natives;
                 OverworldFile file = new OverworldFile(Game.GraphicsDevice, Overworld.Map, Overworld.Name, SeaLevel);
-                file.WriteFile(
-                    worldDirectory.FullName + Path.DirectorySeparatorChar + "world." + (DwarfGame.COMPRESSED_BINARY_SAVES ? OverworldFile.CompressedExtension : OverworldFile.Extension),
-                    DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
+                file.WriteFile(worldDirectory.FullName);
 
                 try
                 {
@@ -583,7 +581,7 @@ namespace DwarfCorp
                 gameFile = SaveGame.CreateFromWorld(this);
 
                 gameFile.WriteFile(
-                    DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves" + Path.DirectorySeparatorChar +
+                    DwarfGame.GetSaveDirectory() + Path.DirectorySeparatorChar +
                     filename);
                 ComponentManager.CleanupSaveData();
 
@@ -591,7 +589,7 @@ namespace DwarfCorp
                 {
                     Screenshots.Add(new Screenshot()
                     {
-                        FileName = DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves" +
+                        FileName = DwarfGame.GetSaveDirectory() +
                                    Path.DirectorySeparatorChar + filename + Path.DirectorySeparatorChar +
                                    "screenshot.png",
                         Resolution = new Point(640, 480)

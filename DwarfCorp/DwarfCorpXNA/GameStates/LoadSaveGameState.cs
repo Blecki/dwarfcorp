@@ -19,7 +19,7 @@ namespace DwarfCorp.GameStates
 
             this.ItemSource = () =>
             {
-                System.IO.DirectoryInfo savedirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetGameDirectory() + ProgramData.DirChar + "Saves");
+                System.IO.DirectoryInfo savedirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetSaveDirectory());
                 return savedirectory.EnumerateDirectories().Select(d => d.FullName).ToList();
             };
 

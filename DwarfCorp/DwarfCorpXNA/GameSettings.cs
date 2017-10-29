@@ -85,6 +85,7 @@ namespace DwarfCorp
             public bool DrawPaths = false;
             public bool AutoSave = true;
             public float AutoSaveTimeMinutes = 2.0f;
+            public string SaveLocation = null;
             public bool VSync = true;
             public bool AllowReporting = true;
             public bool ZoomCameraTowardMouse = true;
