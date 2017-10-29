@@ -461,9 +461,9 @@ namespace DwarfCorp
                         worldPosition + rampOffset + VertexNoise.GetNoiseVectorFromRepeatingTexture(worldPosition),
                         new Color(0,0,0,255),
                         new Color(0,0,0,255),
-                        new Vector2(15.0f / 16.0f, 15.0f / 16.0f),
+                        new Vector2(12.5f / 16.0f, 0.5f / 16.0f),
                         // xy - min, zw - max
-                        new Vector4(15.0f / 16.0f, 15.0f / 16.0f, 1.0f, 1.0f));
+                        new Vector4(12.0f / 16.0f, 0.0f, 13.0f / 16.0f, 1.0f / 16.0f));
 
                     VertexCount++;
                 }
