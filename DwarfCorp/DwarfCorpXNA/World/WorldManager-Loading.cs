@@ -51,6 +51,7 @@ using Color = Microsoft.Xna.Framework.Color;
 using Point = Microsoft.Xna.Framework.Point;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using DwarfCorp.GameStates;
+using System.Text;
 
 namespace DwarfCorp
 {
@@ -133,9 +134,11 @@ namespace DwarfCorp
                 if (gameFile == null) throw new InvalidOperationException("Game File does not exist.");
 
                 // Todo: REMOVE THIS WHEN THE NEW SAVE SYSTEM IS COMPLETE.
-                if (gameFile.Metadata.Version != Program.Version)
-                    throw new InvalidOperationException("Game file is from a different version of the game and cannot be loaded.");
-
+                if (gameFile.Metadata.Version != Program.Version && !Program.CompatibleVersions.Contains(gameFile.Metadata.Version))
+                {
+                    throw new InvalidOperationException(String.Format("Game file is from version {0}. Compatible versions are {1}.", gameFile.Metadata.Version, 
+                        TextGenerator.GetListString(Program.CompatibleVersions)));
+                }
                 Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
                 Time = gameFile.Metadata.Time;
                 WorldOrigin = gameFile.Metadata.WorldOrigin;

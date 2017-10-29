@@ -236,7 +236,8 @@ namespace DwarfCorp
             Taiga = 5,
             Jungle = 6,
             Waste = 7,
-            Cave = 8
+            Cave = 8,
+            HauntedForest = 9
         }
 
 

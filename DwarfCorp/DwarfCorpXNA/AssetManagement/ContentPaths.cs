@@ -492,6 +492,7 @@ namespace DwarfCorp
                 public class Snake
                 {
                     public static string snake = ProgramData.CreatePath("Entities", "Animals", "Snake", "snake");
+                    public static string bonesnake = ProgramData.CreatePath("Entities", "Animals", "Snake", "bonesnake");
                 }
             }
 

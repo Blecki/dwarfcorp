@@ -327,7 +327,10 @@ namespace DwarfCorp.Dialogue
                     {Resource.ResourceTags.Plantable, "seeds"},
                     {Resource.ResourceTags.AboveGroundPlant, "plants"},
                     {Resource.ResourceTags.BelowGroundPlant, "cave plants"},
-                    {Resource.ResourceTags.Bone, "bones"}
+                    {Resource.ResourceTags.Bone, "bones"},
+                    {Resource.ResourceTags.Gourd, "gourds"},
+                    {Resource.ResourceTags.Fruit, "fruits"},
+                    {Resource.ResourceTags.Evil, "evil things" }
                 };
             }
 

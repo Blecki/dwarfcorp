@@ -54,6 +54,7 @@ namespace DwarfCorp
     internal static class Program
     {
         public static string Version = "17.10.22_XNA";
+        public static string[] CompatibleVersions = { "17.10.22_XNA", "17.10.22_FNA" };
         public static string Commit = "UNKNOWN";
         public static char DirChar = Path.DirectorySeparatorChar;
         
