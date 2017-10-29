@@ -43,7 +43,7 @@ using System.IO.Compression;
 namespace DwarfCorp
 {
     [Serializable]
-    public class OldOverworldFile
+    public class OverworldFile
     {
         [Serializable]
         public class OverworldData
@@ -60,7 +60,7 @@ namespace DwarfCorp
             public float SeaLevel { get; set; }
             public byte[,] Factions { get; set; }
 
-            public List<OverworldFile.OverworldData.FactionDescriptor> FactionList { get; set; }
+            public List<NewOverworldFile.OverworldData.FactionDescriptor> FactionList { get; set; }
 
             [Newtonsoft.Json.JsonIgnore]
             [NonSerialized]
@@ -145,11 +145,11 @@ namespace DwarfCorp
                 }
 
                 Screenshot = CreateTexture(device, sizeX, sizeY, seaLevel);
-                FactionList = new List<OverworldFile.OverworldData.FactionDescriptor>();
+                FactionList = new List<NewOverworldFile.OverworldData.FactionDescriptor>();
                 byte id = 0;
                 foreach (Faction f in Overworld.NativeFactions)
                 {
-                    FactionList.Add(new OverworldFile.OverworldData.FactionDescriptor()
+                    FactionList.Add(new NewOverworldFile.OverworldData.FactionDescriptor()
                     {
                         Name = f.Name,
                         PrimaryColory = f.PrimaryColor,
@@ -169,22 +169,22 @@ namespace DwarfCorp
         public static string Extension = "world";
         public static string CompressedExtension = "zworld";
 
-        public OldOverworldFile()
+        public OverworldFile()
         {
         }
 
-        public OldOverworldFile(GraphicsDevice device, Overworld.MapData[,] map, string name, float seaLevel)
+        public OverworldFile(GraphicsDevice device, Overworld.MapData[,] map, string name, float seaLevel)
         {
             Data = new OverworldData(device, map, name, seaLevel);
         }
 
-        public OldOverworldFile(string fileName, bool isCompressed, bool isBinary)
+        public OverworldFile(string fileName, bool isCompressed, bool isBinary)
         {
             ReadFile(fileName, isCompressed, isBinary);
         }
 
 
-        public void CopyFrom(OldOverworldFile file)
+        public void CopyFrom(OverworldFile file)
         {
             Data = file.Data;
         }
@@ -193,7 +193,7 @@ namespace DwarfCorp
         {
             if (!isBinary)
             {
-                var file = FileUtils.LoadJson<OldOverworldFile>(filePath, isCompressed);
+                var file = FileUtils.LoadJson<OverworldFile>(filePath, isCompressed);
 
                 if (file == null)
                 {
@@ -207,7 +207,7 @@ namespace DwarfCorp
             }
             else
             {
-                var file = FileUtils.LoadBinary<OldOverworldFile>(filePath);
+                var file = FileUtils.LoadBinary<OverworldFile>(filePath);
 
                 if (file == null)
                 {
@@ -229,10 +229,10 @@ namespace DwarfCorp
         public bool WriteFile(string filePath, bool compress, bool binary)
         {
             if (!binary)
-                return FileUtils.SaveJSon<OldOverworldFile>(this, filePath, compress);
+                return FileUtils.SaveJSon<OverworldFile>(this, filePath, compress);
             else
             {
-                return FileUtils.SaveBinary<OldOverworldFile>(this, filePath);
+                return FileUtils.SaveBinary<OverworldFile>(this, filePath);
             }
         }
     }
