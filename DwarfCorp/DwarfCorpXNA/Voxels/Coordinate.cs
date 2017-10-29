@@ -185,6 +185,12 @@ namespace DwarfCorp
         {
             return this == other;
         }
+
+        internal static GlobalVoxelOffset FromVector3(Vector3 V)
+        {
+            return new GlobalVoxelOffset(
+                (int)Math.Floor(V.X), (int)Math.Floor(V.Y), (int)Math.Floor(V.Z));
+        }
     }
 
     [Serializable]
