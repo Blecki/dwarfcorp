@@ -114,7 +114,7 @@ namespace DwarfCorp
                 Tree =
                     new Sequence
                         (
-                        new GoToEntityAct(ObjectName, Creature.AI),
+                        new GoToEntityAct(ObjectName, Creature.AI) { PlanType = PlanAct.PlanType.Adjacent, MovingTarget = false } ,
                         new Wrap(TeleportFunction)
                         );
             }
@@ -123,7 +123,7 @@ namespace DwarfCorp
                 Tree =
                     new Sequence
                         (
-                        new GoToEntityAct(ObjectName, Creature.AI)
+                        new GoToEntityAct(ObjectName, Creature.AI) { PlanType = PlanAct.PlanType.Adjacent, MovingTarget = false }
                         );
             }
             base.Initialize();

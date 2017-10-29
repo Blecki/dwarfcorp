@@ -156,7 +156,7 @@ namespace DwarfCorp
 
                 // Look at the block and slow your velocity down.
                 agent.Physics.Face(vox.WorldPosition + Vector3.One * 0.5f);
-                agent.Physics.Velocity *= 0.9f;
+                agent.Physics.Velocity *= 0.01f;
 
                 // Play the attack animations.
                 agent.CurrentCharacterMode = CharacterMode.Attacking;
@@ -174,7 +174,7 @@ namespace DwarfCorp
                     if (status == Act.Status.Running)
                     {
                         agent.Physics.Face(vox.WorldPosition + Vector3.One*0.5f);
-                        agent.Physics.Velocity *= 0.9f;
+                        agent.Physics.Velocity *= 0.01f;
 
                         // Debug drawing.
                         //if (agent.AI.DrawPath)
@@ -209,7 +209,7 @@ namespace DwarfCorp
                 while (!agent.Sprite.CurrentAnimation.IsDone() && agent.Sprite.CurrentAnimation.IsPlaying)
                 {
                     agent.Physics.Face(vox.WorldPosition + Vector3.One * 0.5f);
-                    agent.Physics.Velocity *= 0.9f;
+                    agent.Physics.Velocity *= 0.01f;
                     yield return Act.Status.Running;
                 }
 
@@ -223,7 +223,7 @@ namespace DwarfCorp
                 {
                     agent.Attacks[0].RechargeTimer.Update(DwarfTime.LastTime);
                     agent.Physics.Face(vox.WorldPosition + Vector3.One * 0.5f);
-                    agent.Physics.Velocity *= 0.9f;
+                    agent.Physics.Velocity *= 0.01f;
                     yield return Act.Status.Running;
                 }
 

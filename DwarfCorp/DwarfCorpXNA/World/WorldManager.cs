@@ -634,7 +634,7 @@ namespace DwarfCorp
             Matrix viewMatrix = Camera.ViewMatrix;
             Camera.ViewMatrix = view;
 
-            GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+            GraphicsDevice.SamplerStates[0] = Drawer2D.PointMagLinearMin;
             effect.View = view;
             effect.Projection = Camera.ProjectionMatrix;
             effect.SetTexturedTechnique();
@@ -929,7 +929,7 @@ namespace DwarfCorp
             //if (CompositeLibrary.Composites.ContainsKey("resources"))
             //    CompositeLibrary.Composites["resources"].DebugDraw(DwarfGame.SpriteBatch, 0, 0);
             //SelectionBuffer.DebugDraw(GraphicsDevice.Viewport.Bounds);
-            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp,
+            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin,
                 null, rasterizerState, null, Matrix.Identity);
             //DwarfGame.SpriteBatch.Draw(Shadows.ShadowTexture, Vector2.Zero, Color.White);
             if (IsCameraUnderwater())

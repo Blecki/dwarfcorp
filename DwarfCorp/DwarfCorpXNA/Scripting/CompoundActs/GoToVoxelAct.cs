@@ -69,7 +69,7 @@ namespace DwarfCorp
             {
                 Tree = new Sequence(
                       new SetBlackboardData<VoxelHandle>(Agent, "ActionVoxel", Voxel),
-                      new PlanAct(Agent, "PathToVoxel", "ActionVoxel", PlanType) { Radius = Radius },
+                      new PlanWithGreedyFallbackAct() { Agent = Agent, PathName = "PathToVoxel", VoxelName = "ActionVoxel", PlanType = PlanType, Radius = Radius },
                       new FollowPathAct(Agent, "PathToVoxel"),
                       new StopAct(Agent));
             }

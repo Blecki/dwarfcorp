@@ -419,16 +419,6 @@ namespace DwarfCorp
                             .Where(v => v.IsValid)
                             .ToList();
 
-                        if (!altPressed && Brush != VoxelBrush.Stairs)
-                        {
-                            if (SelectionType == VoxelSelectionType.SelectFilled)
-                                SelectionBuffer.RemoveAll(v =>
-                                {
-                                    if (v.Equals(underMouse)) return false;
-                                    return !VoxelHelpers.DoesVoxelHaveVisibleSurface(
-                                        Chunks.ChunkData, v);
-                                });
-                        }
                         if (newVoxel)
                         {
                             DragSound.Play(World.CursorLightPos, SelectionBuffer.Count / 20.0f);

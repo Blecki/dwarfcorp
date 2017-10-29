@@ -281,6 +281,11 @@ namespace DwarfCorp
                 world.MonsterSpawner.Spawn(world.MonsterSpawner.GenerateSpawnEvent(natives,
                 world.PlayerFaction, MathFunctions.Random.Next(4) + 1, false));
 
+            if (natives.TradeMoney < 100m)
+            {
+                natives.TradeMoney += MathFunctions.Rand(250.0f, 5000.0f);
+            }
+
             envoy = new TradeEnvoy(world.Time.CurrentDate)
             {
                 Creatures = creatures,
@@ -442,12 +447,13 @@ namespace DwarfCorp
                     if (needsNewTradeEnvoy && otherFaction.Race.IsIntelligent  && !otherFaction.IsRaceFaction && 
                         relation.GetCurrentRelationship() != Relationship.Hateful)
                     {
-                        if (otherFaction.TradeEnvoys.Count == 0 && !relation.TradePartyTimer.HasTriggered)
+                        if (otherFaction.TradeEnvoys.Count == 0)
                         {
                             relation.TradePartyTimer.Update(currentDate);
 
                             if (relation.TradePartyTimer.HasTriggered && timeSinceLastTrade.TotalDays > 1.0 && LastTradeEmpire != otherFaction.Name)
                             {
+                                relation.TradePartyTimer.Reset(World.Time.CurrentDate);
                                 CurrentTradeEnvoy = SendTradeEnvoy(otherFaction, world);
                                 TimeOfLastTrade = world.Time.CurrentDate;
                                 LastTradeEmpire = otherFaction.Name;

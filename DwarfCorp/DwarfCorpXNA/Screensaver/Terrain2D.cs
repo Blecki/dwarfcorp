@@ -173,7 +173,7 @@ namespace DwarfCorp
         private void Draw(GraphicsDevice graphics, DwarfTime time)
         {
             Bloom.BeginDraw();
-            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp,
+            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin,
                 DepthStencilState.Default, RasterizerState.CullNone, null, Matrix.Identity);
             graphics.Clear(Color.SkyBlue);
 

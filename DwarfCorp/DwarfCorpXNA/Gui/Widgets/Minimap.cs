@@ -190,7 +190,7 @@ namespace DwarfCorp.Gui.Widgets
             World.DefaultShader.EnbleFog = true;
 
             DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate, 
-                BlendState.NonPremultiplied, SamplerState.PointClamp, null, RasterizerState.CullNone, null, 
+                BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin, null, RasterizerState.CullNone, null, 
                 Matrix.Identity);
             Viewport viewPort = new Viewport(RenderTarget.Bounds);
 
@@ -212,7 +212,7 @@ namespace DwarfCorp.Gui.Widgets
             World.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
             World.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             World.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-            World.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+            World.GraphicsDevice.SamplerStates[0] = Drawer2D.PointMagLinearMin;
             World.GraphicsDevice.SetRenderTarget(null);
         }
     }

@@ -130,8 +130,6 @@ namespace DwarfCorp
 
         public IEnumerable<Status> TrackMovingTarget()
         {
-            int maxFailures = 10;
-            int currentFailures = 0;
             while (true)
             {
                 Creature.AI.Blackboard.Erase("EntityVoxel");
@@ -153,7 +151,8 @@ namespace DwarfCorp
 
                 Creature.AI.Blackboard.Erase("PathToEntity");
 
-                PlanAct planAct = new PlanAct(Creature.AI, "PathToEntity", "EntityVoxel", PlanType) { Radius = Radius};
+                PlanWithGreedyFallbackAct planAct = new PlanWithGreedyFallbackAct() { Agent = Creature.AI,
+                    PathName = "PathToEntity", VoxelName = "EntityVoxel", PlanType = PlanType, Radius = Radius, MaxTimeouts = 1 };
                 planAct.Initialize();
 
                 bool planSucceeded = false;
@@ -179,20 +178,10 @@ namespace DwarfCorp
                     }
 
                 }
-
+                
                 if (!planSucceeded)
                 {
-                    currentFailures++;
-                    yield return Act.Status.Running;
-                    Creature.CurrentCharacterMode = CharacterMode.Idle;
-                    Creature.Physics.Velocity = Vector3.Zero;
-                    if (currentFailures > maxFailures)
-                    {
-                        yield return Act.Status.Fail;
-                        yield break;
-                    }
-
-                    continue;
+                    yield return Act.Status.Fail;
                 }
 
                 FollowPathAct followPath = new FollowPathAct(Creature.AI, "PathToEntity")

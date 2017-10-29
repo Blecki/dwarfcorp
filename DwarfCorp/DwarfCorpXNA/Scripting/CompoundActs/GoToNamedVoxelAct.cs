@@ -66,7 +66,7 @@ namespace DwarfCorp
             if (!String.IsNullOrEmpty(VoxelName))
             {
                 Tree = new Sequence(
-                    new PlanAct(Agent, "PathToVoxel", VoxelName, PlanType) { Radius = Radius },
+                    new PlanWithGreedyFallbackAct() { Agent = Agent, PathName = "PathToVoxel", VoxelName = VoxelName, PlanType = PlanType, Radius = Radius},
                     new FollowPathAct(Agent, "PathToVoxel"),
                     new StopAct(Agent));
             }

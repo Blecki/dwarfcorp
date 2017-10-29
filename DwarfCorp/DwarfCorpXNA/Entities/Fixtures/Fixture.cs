@@ -59,7 +59,9 @@ namespace DwarfCorp
             Point frame,
             SimpleSprite.OrientMode OrientMode = SimpleSprite.OrientMode.Spherical) :
             base(Manager, "Fixture", Matrix.CreateTranslation(position), 
-                new Vector3(asset.FrameWidth * (1.0f / 32.0f), asset.FrameHeight * (1.0f / 32.0f), asset.FrameWidth * (1.0f / 32.0f)), Vector3.Zero, true)
+                new Vector3(asset.FrameWidth * (1.0f / 32.0f), 
+                            asset.FrameHeight * (1.0f / 32.0f), 
+                            asset.FrameWidth * (1.0f / 32.0f)) * 0.9f, Vector3.Zero, true)
         {
             Asset = asset;
             Frame = frame;
