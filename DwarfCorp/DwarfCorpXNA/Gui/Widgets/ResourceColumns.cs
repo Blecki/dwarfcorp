@@ -99,6 +99,7 @@ namespace DwarfCorp.Gui.Widgets
                 OnValueChanged = (sender) => Root.SafeCall(OnTotalSelectedChanged, this),
                 Tooltip = "Money to trade."
             }) as MoneyEditor;
+
             var rightList = rightPanel.AddChild(new Gui.Widgets.WidgetListView
             {
                 ItemHeight = 32,

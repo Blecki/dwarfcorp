@@ -116,7 +116,7 @@ namespace DwarfCorp.Gui.Widgets
                     Valid = false;
 
                     int newValue;
-                    if (args.NewText.Length == 0) args.NewText = "0";
+                    //if (args.NewText.Length == 0) args.NewText = "0";
 
                     if (Int32.TryParse(args.NewText, out newValue))
                     {
@@ -125,9 +125,7 @@ namespace DwarfCorp.Gui.Widgets
                         _currentValue = newValue;
                         Valid = true;
                         args.NewText = newValue.ToString();
-                    }
-                    else
-                        args.Cancelled = true;
+                    }                    
                 },
                 OnTextChange = (sender) =>
                 {
