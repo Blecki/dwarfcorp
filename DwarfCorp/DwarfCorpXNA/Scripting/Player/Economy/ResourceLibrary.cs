@@ -256,7 +256,7 @@ namespace DwarfCorp
                 PlantToGenerate = "Pine Tree Sprout"
             });
             Add(new Resource(ResourceType.EvilSeed, 3.0m, "Grows haunted trees.",
-                new NamedImageFrame(tileSheet, GetRect(7, 3)), 14, Color.White, Resource.ResourceTags.Plantable,
+                new NamedImageFrame(tileSheet, GetRect(7, 3)), 31, Color.White, Resource.ResourceTags.Plantable,
                     Resource.ResourceTags.Flammable, Resource.ResourceTags.AboveGroundPlant, Resource.ResourceTags.Evil)
             {
                 PlantToGenerate = "Haunted Tree Sprout"
@@ -269,7 +269,7 @@ namespace DwarfCorp
                 FoodContent = 50
             });
             Add(new Resource(ResourceType.Pumkin, 6.0m, "Grows pumpkins.",
-    new NamedImageFrame(tileSheet, GetRect(6, 3)), 13, Color.White, Resource.ResourceTags.Plantable,
+    new NamedImageFrame(tileSheet, GetRect(6, 3)), 30, Color.White, Resource.ResourceTags.Plantable,
      Resource.ResourceTags.Flammable, Resource.ResourceTags.AboveGroundPlant, Resource.ResourceTags.Edible, Resource.ResourceTags.Gourd, Resource.ResourceTags.Bakeable, Resource.ResourceTags.RawFood)
             {
                 PlantToGenerate = "Pumpkin Sprout",

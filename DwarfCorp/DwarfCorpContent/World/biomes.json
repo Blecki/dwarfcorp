@@ -672,8 +672,8 @@
         "Name": "Haunted Tree",
         "ClumpSize": 30.0,
         "ClumpThreshold": 0.5,
-        "MeanSize": 2.0,
-        "SizeVariance": 0.5,
+        "MeanSize": 1.5,
+        "SizeVariance": 1.0,
         "VerticalOffset": 1.7,
         "NoiseOffset": 57.248703,
         "SpawnProbability": 0.1
@@ -712,7 +712,7 @@
         "Depth" :  1
     },
     "SoilLayer": {
-        "VoxelType" :  "Dirt",
+        "VoxelType" :  "DarkDirt",
         "Depth" :  5
     },
     "SubsurfaceLayers": [ 
@@ -721,7 +721,7 @@
         "Depth" :  128
     }
     ],
-    "ShoreVoxel": "Sand",
+    "ShoreVoxel": "DarkDirt",
     "ClumpGrass": true,
     "ClumpSize": 10.0,
     "ClumpTreshold": 0.2,

@@ -119,6 +119,7 @@ namespace DwarfCorp
 
             BoxPrimitive grassCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 0), new Point(2, 0), new Point(2, 0));
             BoxPrimitive dirtCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(2, 0), new Point(2, 0), new Point(2, 0));
+            BoxPrimitive darkDirtCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(8, 1), new Point(8, 1), new Point(8, 1));
             BoxPrimitive stoneCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(3, 1), new Point(1, 0), new Point(1, 0));
             BoxPrimitive sandCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(1, 1), new Point(1, 1), new Point(1, 1));
             BoxPrimitive coalCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 11), new Point(0, 12), new Point(0, 12));
@@ -743,6 +744,22 @@ namespace DwarfCorp
 
             CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 15), new Point(8, 1), new Point(8, 1), hauntedGrass.TransitionTextures);
 
+            VoxelType darkDirtType = new VoxelType
+            {
+                Name = "DarkDirt",
+                ReleasesResource = true,
+                ResourceToRelease = ResourceLibrary.ResourceType.Dirt,
+                ProbabilityOfRelease = 1.0f,
+                StartingHealth = 10,
+                RampSize = 0.5f,
+                CanRamp = true,
+                IsBuildable = false,
+                ParticleType = "dirt_particle",
+                IsSoil = true,
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_dirt_destroy),
+                HitSound = dirtPicks
+            };
+
             RegisterType(greenGem, greenGemCube);
             RegisterType(redGem, redGemCube);
             RegisterType(purpleGem, purpleGemCube);
@@ -757,6 +774,7 @@ namespace DwarfCorp
             RegisterType(caveFungus, grassCube);
             RegisterType(emptyType, null);
             RegisterType(dirtType, dirtCube);
+            RegisterType(darkDirtType, darkDirtCube);
             RegisterType(stoneType, stoneCube);
             RegisterType(waterType, waterCube);
             RegisterType(sandType, sandCube);
