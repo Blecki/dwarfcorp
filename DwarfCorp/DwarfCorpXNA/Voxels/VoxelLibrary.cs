@@ -119,12 +119,12 @@ namespace DwarfCorp
 
             BoxPrimitive grassCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 0), new Point(2, 0), new Point(2, 0));
             BoxPrimitive dirtCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(2, 0), new Point(2, 0), new Point(2, 0));
-            BoxPrimitive stoneCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 2), new Point(1, 0), new Point(4, 2));
+            BoxPrimitive stoneCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(3, 1), new Point(1, 0), new Point(1, 0));
             BoxPrimitive sandCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(1, 1), new Point(1, 1), new Point(1, 1));
-            BoxPrimitive ironCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 1), new Point(1, 2), new Point(4, 1));
-            BoxPrimitive goldCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(3, 1), new Point(0, 2), new Point(3, 1));
-            BoxPrimitive coalCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(3, 2), new Point(2, 2), new Point(2, 2));
-            BoxPrimitive manaCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(7, 1), new Point(6, 1), new Point(7, 1));
+            BoxPrimitive coalCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 11), new Point(0, 12), new Point(0, 12));
+            BoxPrimitive ironCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(1, 11), new Point(1, 12), new Point(1, 12));
+            BoxPrimitive goldCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(2, 11), new Point(2, 12), new Point(2, 12));
+            BoxPrimitive manaCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(3, 11), new Point(3, 12), new Point(3, 12));
             BoxPrimitive frostCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 1), new Point(2, 1), new Point(2, 0));
             BoxPrimitive snowCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(3, 7), new Point(3, 7), new Point(3, 7));
             BoxPrimitive iceCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(2, 7), new Point(2, 7), new Point(2, 7));
@@ -133,19 +133,19 @@ namespace DwarfCorp
             BoxPrimitive brickCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(11, 0), new Point(11, 0), new Point(11, 0));
             BoxPrimitive plankCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 0), new Point(4, 0), new Point(4, 0));
             BoxPrimitive waterCube = CreatePrimitive(graphics, cubeTexture, cubeTexture.Width, cubeTexture.Height, new Point(0, 0), new Point(0, 0), new Point(0, 0));
-            BoxPrimitive cobblestoneCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 2), new Point(9, 0), new Point(5, 2));
+            BoxPrimitive cobblestoneCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 1), new Point(9, 0), new Point(4, 1));
             BoxPrimitive magicCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 10), new Point(0, 10), new Point(0, 10));
-            BoxPrimitive bedrockCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(6, 2), new Point(6, 2), new Point(6, 2));
+            BoxPrimitive bedrockCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(6, 1), new Point(6, 1), new Point(6, 1));
             BoxPrimitive brownTileCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 0), new Point(5, 0), new Point(5, 0));
             BoxPrimitive blueTileCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(6, 0), new Point(6, 0), new Point(6, 0));
             BoxPrimitive tilledSoilCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 1), new Point(2, 0), new Point(2, 0));
 
-            BoxPrimitive redGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 11), new Point(0, 12), new Point(0, 11));
-            BoxPrimitive orangeGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(1, 11), new Point(1, 12), new Point(1, 11));
-            BoxPrimitive yellowGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(2, 11), new Point(2, 12), new Point(2, 11));
-            BoxPrimitive greenGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(3, 11), new Point(3, 12), new Point(3, 11));
-            BoxPrimitive blueGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 11), new Point(4, 12), new Point(4, 11));
-            BoxPrimitive purpleGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 11), new Point(5, 12), new Point(5, 11));
+            BoxPrimitive redGemCube =    CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 11), new Point(4, 12), new Point(4, 12));
+            BoxPrimitive orangeGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 11), new Point(5, 12), new Point(5, 12));
+            BoxPrimitive yellowGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(6, 11), new Point(6, 12), new Point(6, 12));
+            BoxPrimitive greenGemCube =  CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(7, 11), new Point(7, 12), new Point(7, 12));
+            BoxPrimitive blueGemCube =   CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(8, 11), new Point(8, 12), new Point(8, 12));
+            BoxPrimitive purpleGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(9, 11), new Point(9, 12), new Point(9, 12));
             
             emptyType = new VoxelType
             {
@@ -221,7 +221,7 @@ namespace DwarfCorp
                 HitSound = stonePicks
             };
             RegisterType(cobblestoneFloor, cobblestoneCube);
-            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 8), new Point(9, 0), new Point(5, 2), cobblestoneFloor.TransitionTextures);
+            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 8), new Point(9, 0), new Point(4, 1), cobblestoneFloor.TransitionTextures);
             
             VoxelType stockpileType = new VoxelType
             {
@@ -405,7 +405,7 @@ namespace DwarfCorp
                 HitSound = dirtPicks
             };
 
-            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 5), new Point(2, 0), new Point(2, 0), jungleGrass.TransitionTextures);
+            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 5), new Point(7, 1), new Point(7, 1), jungleGrass.TransitionTextures);
 
 
             VoxelType caveFungus = new VoxelType

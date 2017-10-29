@@ -104,7 +104,7 @@ namespace DwarfCorp
 
             Substrate = new TerrainElement
             {
-                Image = new ImageFrame(tiles, 32, 4, 2),
+                Image = new ImageFrame(tiles, 32, 3, 1),
                 Name = "Rock"
             };
 
@@ -140,14 +140,14 @@ namespace DwarfCorp
             {
                 new TerrainElement
                 {
-                    Image = new ImageFrame(tiles, 32, 3, 1),
+                    Image = new ImageFrame(tiles, 32, 2, 11),
                     Name = "Gold",
                     SpawnScale = 0.05f,
                     SpawnThreshold = 0.9f
                 },
                 new TerrainElement
                 {
-                    Image = new ImageFrame(tiles, 32, 7, 1),
+                    Image = new ImageFrame(tiles, 32, 3, 11),
                     Name = "Mana",
                     SpawnScale = 0.04f,
                     SpawnThreshold = 0.9f
