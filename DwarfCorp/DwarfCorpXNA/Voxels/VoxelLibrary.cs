@@ -132,6 +132,7 @@ namespace DwarfCorp
             BoxPrimitive glassCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(10, 0), new Point(10, 0), new Point(10, 0));
             BoxPrimitive brickCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(11, 0), new Point(11, 0), new Point(11, 0));
             BoxPrimitive plankCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 0), new Point(4, 0), new Point(4, 0));
+            var fogOfWarFaceCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(15, 15), new Point(15, 15), new Point(15, 15));
             BoxPrimitive waterCube = CreatePrimitive(graphics, cubeTexture, cubeTexture.Width, cubeTexture.Height, new Point(0, 0), new Point(0, 0), new Point(0, 0));
             BoxPrimitive cobblestoneCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 2), new Point(9, 0), new Point(5, 2));
             BoxPrimitive magicCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 10), new Point(0, 10), new Point(0, 10));
@@ -238,6 +239,19 @@ namespace DwarfCorp
             RegisterType(stockpileType, plankCube);
 
             CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 9), new Point(9, 0), new Point(4, 0), stockpileType.TransitionTextures);
+
+            var fogOfWarFadeType = new VoxelType
+            {
+                Name = "FogOfWarFade",
+                ReleasesResource = false,
+                CanRamp = false,
+                IsBuildable = false,
+                HasTransitionTextures = true,
+                Transitions = VoxelType.TransitionType.Horizontal,
+            };
+            RegisterType(fogOfWarFadeType, fogOfWarFaceCube);
+            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 15), new Point(0, 15), new Point(0, 15), fogOfWarFadeType.TransitionTextures);
+
             
             VoxelType plankType = new VoxelType
             {
