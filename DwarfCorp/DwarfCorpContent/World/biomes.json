@@ -708,7 +708,7 @@
       },
 	  ],
     "GrassLayer": {
-        "VoxelType" :  "CaveFungus",
+        "VoxelType" :  "HauntedGrass",
         "Depth" :  1
     },
     "SoilLayer": {
@@ -724,7 +724,7 @@
     "ShoreVoxel": "Sand",
     "ClumpGrass": true,
     "ClumpSize": 10.0,
-    "ClumpTreshold": 0.5,
+    "ClumpTreshold": 0.2,
     "MapColor": [255, 30, 255, 255],
     "Height": 1.5,
     "Temp": 1.5,

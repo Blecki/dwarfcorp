@@ -428,7 +428,6 @@ namespace DwarfCorp
 
             CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 13), new Point(1, 0), new Point(1, 0), caveFungus.TransitionTextures);
 
-
             VoxelType dirtType = new VoxelType
             {
                 Name = "Dirt",
@@ -724,6 +723,26 @@ namespace DwarfCorp
                 HitSound = stonePicks
             };
 
+            VoxelType hauntedGrass = new VoxelType
+            {
+                Name = "HauntedGrass",
+                ProbabilityOfRelease = 1.0f,
+                ResourceToRelease = ResourceLibrary.ResourceType.Dirt,
+                StartingHealth = 30,
+                ReleasesResource = true,
+                CanRamp = true,
+                RampSize = 0.5f,
+                IsBuildable = false,
+                ParticleType = "dirt_particle",
+                HasTransitionTextures = true,
+                IsSurface = true,
+                IsSoil = true,
+                ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_dirt_destroy),
+                HitSound = dirtPicks
+            };
+
+            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 15), new Point(8, 1), new Point(8, 1), hauntedGrass.TransitionTextures);
+
             RegisterType(greenGem, greenGemCube);
             RegisterType(redGem, redGemCube);
             RegisterType(purpleGem, purpleGemCube);
@@ -751,6 +770,7 @@ namespace DwarfCorp
             RegisterType(magicType, magicCube);
             RegisterType(glassType, glassCube);
             RegisterType(brickType, brickCube);
+            RegisterType(hauntedGrass, grassCube);
 
             foreach (VoxelType type in VoxelType.TypeList)
             {
