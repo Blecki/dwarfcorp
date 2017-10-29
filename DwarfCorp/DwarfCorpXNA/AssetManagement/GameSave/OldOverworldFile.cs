@@ -60,7 +60,19 @@ namespace DwarfCorp
             public float SeaLevel { get; set; }
             public byte[,] Factions { get; set; }
 
-            public List<NewOverworldFile.OverworldData.FactionDescriptor> FactionList { get; set; }
+            [Serializable]
+            public struct FactionDescriptor
+            {
+                public string Name { get; set; }
+                public byte Id { get; set; }
+                public string Race { get; set; }
+                public Color PrimaryColory { get; set; }
+                public Color SecondaryColor { get; set; }
+                public int CenterX { get; set; }
+                public int CenterY { get; set; }
+            }
+
+            public List<FactionDescriptor> FactionList { get; set; }
 
             [Newtonsoft.Json.JsonIgnore]
             [NonSerialized]
@@ -145,11 +157,11 @@ namespace DwarfCorp
                 }
 
                 Screenshot = CreateTexture(device, sizeX, sizeY, seaLevel);
-                FactionList = new List<NewOverworldFile.OverworldData.FactionDescriptor>();
+                FactionList = new List<OverworldFile.OverworldData.FactionDescriptor>();
                 byte id = 0;
                 foreach (Faction f in Overworld.NativeFactions)
                 {
-                    FactionList.Add(new NewOverworldFile.OverworldData.FactionDescriptor()
+                    FactionList.Add(new OverworldFile.OverworldData.FactionDescriptor()
                     {
                         Name = f.Name,
                         PrimaryColory = f.PrimaryColor,

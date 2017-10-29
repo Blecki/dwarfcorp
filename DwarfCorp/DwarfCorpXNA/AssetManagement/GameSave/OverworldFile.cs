@@ -179,7 +179,21 @@ namespace DwarfCorp
 
                 Data = new OverworldData();
                 Data.Data = oldWorldFile.Data.CreateMap();
-                Data.FactionList = oldWorldFile.Data.FactionList;
+                Data.FactionList = new List<OverworldData.FactionDescriptor>();
+                foreach (var fact in oldWorldFile.Data.FactionList)
+                {
+                    Data.FactionList.Add(new OverworldData.FactionDescriptor()
+                    {
+                        Name = fact.Name,
+                        CenterX = fact.CenterX,
+                        CenterY = fact.CenterY,
+                        Race = fact.Race,
+                        PrimaryColory = fact.PrimaryColory,
+                        SecondaryColor = fact.SecondaryColor,
+                        Id = fact.Id
+                    });
+
+                }
                 Data.Name = oldWorldFile.Data.Name;
                 Data.SeaLevel = oldWorldFile.Data.SeaLevel;
 
