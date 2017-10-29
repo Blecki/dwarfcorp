@@ -73,8 +73,9 @@ namespace DwarfCorp
                 stream.Position = 0;
                 toReturn = (T) formatter.Deserialize(stream);
             }
-            catch (InvalidCastException)
+            catch (InvalidCastException e)
             {
+                Console.Error.WriteLine(e);
             }
 
             stream.Flush();
