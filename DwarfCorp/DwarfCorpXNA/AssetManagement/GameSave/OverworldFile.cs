@@ -54,7 +54,7 @@ using System.ComponentModel;
 namespace DwarfCorp
 {
     [Serializable]
-    public class OverworldFile
+    public class NewOverworldFile
     {
         [Serializable]
         public class OverworldData
@@ -134,16 +134,16 @@ namespace DwarfCorp
         public static string Extension = "world";
         public static string CompressedExtension = "zworld";
 
-        public OverworldFile()
+        public NewOverworldFile()
         {
         }
 
-        public OverworldFile(GraphicsDevice device, Overworld.MapData[,] map, string name, float seaLevel)
+        public NewOverworldFile(GraphicsDevice device, Overworld.MapData[,] map, string name, float seaLevel)
         {
             Data = new OverworldData(device, map, name, seaLevel);
         }
 
-        public OverworldFile(string fileName)
+        public NewOverworldFile(string fileName)
         {
             ReadFile(fileName);
         }
@@ -174,8 +174,8 @@ namespace DwarfCorp
             }
             else
             {
-                var oldWorldFile = new OldOverworldFile(filePath + Path.DirectorySeparatorChar + "world." +
-                    (DwarfGame.COMPRESSED_BINARY_SAVES ? OldOverworldFile.CompressedExtension : OldOverworldFile.Extension), DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
+                var oldWorldFile = new OverworldFile(filePath + Path.DirectorySeparatorChar + "world." +
+                    (DwarfGame.COMPRESSED_BINARY_SAVES ? OverworldFile.CompressedExtension : OverworldFile.Extension), DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
 
                 Data = new OverworldData();
                 Data.Data = oldWorldFile.Data.CreateMap();

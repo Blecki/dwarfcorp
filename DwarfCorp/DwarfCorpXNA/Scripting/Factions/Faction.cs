@@ -122,7 +122,7 @@ namespace DwarfCorp
             TradeMoney = 0.0m;
         }
 
-        public Faction(OverworldFile.OverworldData.FactionDescriptor descriptor)
+        public Faction(NewOverworldFile.OverworldData.FactionDescriptor descriptor)
         {
             Threats = new List<Creature>();
             Minions = new List<CreatureAI>();

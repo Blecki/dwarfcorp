@@ -37,7 +37,7 @@ namespace DwarfCorp.GameStates
 
             this.OnProceedClicked = (path) =>
             {
-                var file = new OverworldFile(path);
+                var file = new NewOverworldFile(path);
                 Overworld.Map = file.Data.CreateMap();
                 Overworld.Name = file.Data.Name;
                 Overworld.NativeFactions = new List<Faction>();
