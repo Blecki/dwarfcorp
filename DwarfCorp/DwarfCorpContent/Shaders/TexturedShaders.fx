@@ -161,15 +161,11 @@ sampler ShadowMapSampler = sampler_state { texture = <xShadowMap>; magfilter = L
 	{	
 	    UTPixelToFrame Output = (UTPixelToFrame)0;
 		Output.Color = PSIn.Color;
-		if (GhostMode && PSIn.ClipDistance.w < 0.0f)
+		if (PSIn.ClipDistance.w < 0.0f)
  		{
  			Output.Color *= clamp(-1.0f / (PSIn.ClipDistance.w * 0.75f) * 0.25f, 0, 1.0f);
  
- 			clip((Output.Color.a - 0.1f));
- 		}
- 		else
- 		{
- 			clip(PSIn.ClipDistance);
+ 			clip(GhostMode * (Output.Color.a) - 0.1f);
  		}
 		return Output;
 	}
@@ -491,10 +487,9 @@ TPixelToFrame TexturedPS_From_Lightmap(LightmapToPixel PSIn)
 	Output.Color.rgba = float4(lerp(Output.Color.rgb, xFogColor, PSIn.Fog) * Output.Color.a, Output.Color.a);
 
 	if (PSIn.ClipDistance.w < 0.0f)
- 	{
+	{
  		Output.Color *= -1.0f / (PSIn.ClipDistance.w * 0.75f) * 0.25f;
- 
- 		clip((Output.Color.a - 0.1f));
+ 		clip(GhostMode * (Output.Color.a) - 0.1f);
  	}
 	//Output = (TPixelToFrame)0;
 	//Output.Color = float4(1, 0, 0, 1);
@@ -678,7 +673,7 @@ TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
  	{
  		Output.Color *= clamp(-1.0f / (PSIn.ClipDistance.w * 0.75f) * 0.25f, 0, 1);
  
- 		clip((Output.Color.a - 0.1f));
+ 		clip(GhostMode * (Output.Color.a) - 0.1f);
  	}
     return Output;
 }
@@ -725,7 +720,7 @@ TPixelToFrame TexturedPS(TVertexToPixel PSIn)
  	{
  		Output.Color *= clamp(-1.0f / (PSIn.ClipDistance.w * 0.75f) * 0.25f, 0, 1);
  
- 		clip((Output.Color.a - 0.1f));
+ 		clip(GhostMode * (Output.Color.a) - 0.1f);
  	}
 
     return Output;
