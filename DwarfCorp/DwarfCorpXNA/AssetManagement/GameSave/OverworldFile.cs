@@ -203,7 +203,10 @@ namespace DwarfCorp
 
         public void SaveScreenshot(string filename)
         {
-            Data.Screenshot.SaveAsPng(new System.IO.FileStream(filename, System.IO.FileMode.Create), Data.Screenshot.Width, Data.Screenshot.Height);
+            using (var stream = new System.IO.FileStream(filename, System.IO.FileMode.Create))
+            {
+                Data.Screenshot.SaveAsPng(stream, Data.Screenshot.Width, Data.Screenshot.Height);
+            }
         }
 
         public bool WriteFile(string filePath)
