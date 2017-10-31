@@ -35,6 +35,7 @@ using System.IO;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
@@ -144,6 +145,8 @@ namespace DwarfCorp
 
         public int LevelIndex { get; set; }
         public EmployeeClass CurrentClass { get; set; }
+
+        [JsonIgnore]
         public EmployeeClass.Level CurrentLevel { get { return CurrentClass.Levels[LevelIndex]; } }
 
         private int xp = 0;
