@@ -715,7 +715,7 @@ namespace DwarfCorp
                 }
 
                 // Farm stuff if applicable
-                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Chop) && MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction)
+                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Plant) && MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction)
                 {
                     var harvestablePlot = Faction.Designations.EnumerateDesignations(DesignationType._InactiveFarm)
                         .Where(d =>
@@ -764,6 +764,7 @@ namespace DwarfCorp
                             };
 
                             plantablePlot.Farmer = this;
+                            return task;
                         }
                     }                 
                 }
