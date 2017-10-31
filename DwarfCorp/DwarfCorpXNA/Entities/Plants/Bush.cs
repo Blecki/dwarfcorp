@@ -52,9 +52,6 @@ namespace DwarfCorp
         {
             BoundingBoxPos = Vector3.Zero;
             SeedlingAsset = "berrybushsprout";
-            Matrix matrix = Matrix.Identity;
-            matrix.Translation = position + new Vector3(0.0f, -0.15f, 0.0f);
-            LocalTransform = matrix;
             AddChild(new Health(componentManager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
             AddChild(new Flammable(componentManager, "Flames"));
 
@@ -78,6 +75,11 @@ namespace DwarfCorp
             AddToCollisionManager = true;
             CollisionType = CollisionManager.CollisionType.Static;
             PropogateTransforms();
+        }
+
+        public override void CreateCosmeticChildren(ComponentManager Manager)
+        {
+            base.CreateCosmeticChildren(Manager);
         }
     }
 }
