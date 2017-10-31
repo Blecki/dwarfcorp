@@ -90,7 +90,6 @@ namespace DwarfCorp
         public Cactus(ComponentManager Manager, Vector3 position, string asset, float bushSize) :
             base(Manager, "Cactus", Matrix.Identity, new Vector3(bushSize, bushSize, bushSize),  asset, bushSize)
         {
-            BoundingBoxPos = Vector3.Zero;
             SeedlingAsset = "cactussprout";
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position;

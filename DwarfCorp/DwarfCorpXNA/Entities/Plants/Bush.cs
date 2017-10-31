@@ -50,7 +50,6 @@ namespace DwarfCorp
         public Bush(ComponentManager componentManager, Vector3 position, string asset, float bushSize) :
             base(componentManager, "Berry Bush", Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), asset, bushSize)
         {
-            BoundingBoxPos = Vector3.Zero;
             SeedlingAsset = "berrybushsprout";
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position;
