@@ -15,6 +15,7 @@ namespace DwarfCorp.GameStates
         {
             public String Path;
             public Texture2D Screenshot;
+            public bool Valid;
 
             public enum ScreenshotStatusEnum
             {
@@ -39,6 +40,8 @@ namespace DwarfCorp.GameStates
         public String ProceedButtonText = "Okay";
         public Action<String> OnProceedClicked;
         public Func<String, Texture2D> ScreenshotSource;
+        public Func<String, bool> ValidateItem;
+        public String InvalidItemText;
 
         private Widget PrevButton;
         private Widget NextButton;
@@ -53,7 +56,7 @@ namespace DwarfCorp.GameStates
         {
             if (ItemSource != null)
                 foreach (var path in ItemSource())
-                    Items.Add(new ChooserItem { Path = path });
+                    Items.Add(new ChooserItem { Path = path, Valid = ValidateItem == null ? true : ValidateItem(path) });
 
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
@@ -84,7 +87,7 @@ namespace DwarfCorp.GameStates
                 OnClick = (sender, args) =>
                 {
                     var selectedItem = Items[PreviewOffset + ItemSelected];
-                    if (OnProceedClicked != null) OnProceedClicked(selectedItem.Path);
+                    if (selectedItem.Valid && OnProceedClicked != null) OnProceedClicked(selectedItem.Path);
                 }
             });
 
@@ -227,17 +230,6 @@ namespace DwarfCorp.GameStates
                 DeleteButton.Hidden = Items.Count ==  0;
                 LoadButton.Hidden = Items.Count == 0;
 
-                if (Items.Count > 0)
-                {
-                    var directoryTime = System.IO.Directory.GetLastWriteTime(Items[PreviewOffset + ItemSelected].Path);
-
-                    BottomBar.Text = Items[PreviewOffset + ItemSelected].Path + "\n" + directoryTime.ToShortDateString() + " " + directoryTime.ToShortTimeString();
-                }
-                else
-                {
-                    BottomBar.Text = NoItemsText;
-                }
-
                 for (var i = 0; i < Grid.Children.Count; ++i)
                 {
                     var square = Grid.GetChild(i);
@@ -252,6 +244,23 @@ namespace DwarfCorp.GameStates
                         square.Hidden = true;
                     square.Invalidate();
                 }
+
+                if (Items.Count > 0)
+                {
+                    var directoryTime = System.IO.Directory.GetLastWriteTime(Items[PreviewOffset + ItemSelected].Path);
+
+                    BottomBar.Text = Items[PreviewOffset + ItemSelected].Path;
+
+                    if (!Items[PreviewOffset + ItemSelected].Valid)
+                        BottomBar.Text += "\n" + InvalidItemText;
+                    else
+                        BottomBar.Text += "\n" + directoryTime.ToShortDateString() + " " + directoryTime.ToShortTimeString();
+                }
+                else
+                {
+                    BottomBar.Text = NoItemsText;
+                }
+
             }
 
             GuiRoot.Update(gameTime.ToGameTime());

@@ -439,7 +439,7 @@ namespace DwarfCorp.GameStates
 
             int newNum = Math.Max(factionResources[data.ResourceToRelease].First.NumResources -
                 World.PlayerFaction.Designations.EnumerateDesignations(DesignationType.Put).Count(d =>
-                    (d.Tag as VoxelType).ResourceToRelease == data.ResourceToRelease), 0);
+                    VoxelLibrary.GetVoxelType((d.Tag as short?).Value).ResourceToRelease == data.ResourceToRelease), 0);
 
             if (newNum != numResources)
             {
@@ -1643,9 +1643,9 @@ namespace DwarfCorp.GameStates
                                {
                                    World.ShowToolPopup("Click and drag to plant " + resource.ResourceType + ".");
                                    ChangeTool(GameMaster.ToolMode.Plant);
-                                   var farmTool = Master.Tools[GameMaster.ToolMode.Plant] as PlantTool;
-                                   farmTool.PlantType = resource.ResourceType;
-                                   farmTool.RequiredResources = new List<ResourceAmount>()
+                                   var plantTool = Master.Tools[GameMaster.ToolMode.Plant] as PlantTool;
+                                   plantTool.PlantType = resource.ResourceType;
+                                   plantTool.RequiredResources = new List<ResourceAmount>()
                                        {
                                           new ResourceAmount(resource.ResourceType)
                                        };
@@ -2024,48 +2024,65 @@ namespace DwarfCorp.GameStates
             // Special case: number keys reserved for changing tool mode
             if (InputManager.IsNumKey(key))
             {
-                int index = InputManager.GetNum(key);
+                if (PausePanel == null || PausePanel.Hidden)
+                {
+                    int index = InputManager.GetNum(key);
 
-                if (index < 0)
-                    index = 9;
+                    if (index < 0)
+                        index = 9;
 
-                (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray)
-                   .Hotkey(index);
+                    (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray)
+                       .Hotkey(index);
+                }
             }
             else if (key == Keys.Escape)
             {
-                BrushTray.Select(0);
+                if (PausePanel == null || PausePanel.Hidden)
+                {
+                    BrushTray.Select(0);
+                }
 
-                if (MainMenu.Hidden)
+                if (MainMenu.Hidden && PausePanel == null)
                     (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(1);
-                else if (Master.CurrentToolMode != GameMaster.ToolMode.SelectUnits)
+                else if (Master.CurrentToolMode != GameMaster.ToolMode.SelectUnits && PausePanel == null)
                     Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
                 else if (PausePanel != null)
                 {
                     PausePanel.Close();
-                    Paused = false;
                 }
                 else
                     OpenPauseMenu();
             }
             else if (key == ControlSettings.Mappings.SelectAllDwarves)
             {
-                Master.SelectedMinions.AddRange(Master.Faction.Minions);
-                World.Tutorial("dwarf selected");
+                if (PausePanel == null || PausePanel.Hidden)
+                {
+                    Master.SelectedMinions.AddRange(Master.Faction.Minions);
+                    World.Tutorial("dwarf selected");
+                }
             }
             else if (key == ControlSettings.Mappings.Pause)
             {
-                Paused = !Paused;
-                if (Paused) GameSpeedControls.CurrentSpeed = 0;
-                else GameSpeedControls.CurrentSpeed = GameSpeedControls.PlaySpeed;
+                if (PausePanel == null || PausePanel.Hidden)
+                {
+                    Paused = !Paused;
+                    if (Paused) GameSpeedControls.CurrentSpeed = 0;
+                    else GameSpeedControls.CurrentSpeed = GameSpeedControls.PlaySpeed;
+                }
             }
             else if (key == ControlSettings.Mappings.TimeForward)
             {
-                GameSpeedControls.CurrentSpeed += 1;
+                if (PausePanel == null || PausePanel.Hidden)
+                {
+                    GameSpeedControls.CurrentSpeed += 1;
+                }
             }
             else if (key == ControlSettings.Mappings.TimeBackward)
             {
-                GameSpeedControls.CurrentSpeed -= 1;
+                if (PausePanel == null || PausePanel.Hidden)
+                {
+                    GameSpeedControls.CurrentSpeed -= 1;
+                }
             }
             else if (key == ControlSettings.Mappings.ToggleGUI)
             {
@@ -2074,19 +2091,24 @@ namespace DwarfCorp.GameStates
             }
             else if (key == ControlSettings.Mappings.Map)
             {
-                GuiRoot.SafeCall(MinimapIcon.OnClick, MinimapIcon, new InputEventArgs
+                if (PausePanel == null || PausePanel.Hidden)
                 {
-                });
+                    GuiRoot.SafeCall(MinimapIcon.OnClick, MinimapIcon, new InputEventArgs
+                    {
+                    });
+                }
             }
             else if (key == ControlSettings.Mappings.GodMode)
             {
-                if (!GodMenu.Hidden)
+                if (PausePanel == null || PausePanel.Hidden)
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    if (!GodMenu.Hidden)
+                    {
+                        Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    }
+                    GodMenu.Hidden = !GodMenu.Hidden;
+                    GodMenu.Invalidate();
                 }
-                GodMenu.Hidden = !GodMenu.Hidden;
-                GodMenu.Invalidate();
-
             }
         }
 
@@ -2110,8 +2132,8 @@ namespace DwarfCorp.GameStates
         public void OpenPauseMenu()
         {
             if (PausePanel != null) return;
+            bool pausedRightNow = Paused;
             GameSpeedControls.Pause();
-
             PausePanel = new Gui.Widget
             {
                 Rect = new Rectangle(GuiRoot.RenderData.VirtualScreen.Center.X - 128,
@@ -2124,6 +2146,11 @@ namespace DwarfCorp.GameStates
                 OnClose = (sender) =>
                 {
                     PausePanel = null;
+                    if (!pausedRightNow)
+                    {
+                        GameSpeedControls.Resume();
+                    }
+                    Paused = pausedRightNow;
                 },
                 Font = "font16"
             };
@@ -2133,7 +2160,11 @@ namespace DwarfCorp.GameStates
             MakeMenuItem(PausePanel, "Continue", "", (sender, args) =>
             {
                 PausePanel.Close();
-                GameSpeedControls.Resume();
+                if (!pausedRightNow)
+                {
+                    GameSpeedControls.Resume();
+                }
+                Paused = pausedRightNow;
                 PausePanel = null;
             });
 
@@ -2158,24 +2189,16 @@ namespace DwarfCorp.GameStates
             MakeMenuItem(PausePanel, "Save", "",
                 (sender, args) =>
                 {
-                    GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm
-                    {
-                        Text = "Warning: Saving is still an unstable feature. Are you sure you want to continue?",
-                        OnClose = (s) =>
+                    World.Save(
+                        String.Format("{0}_{1}", Overworld.Name, World.GameID),
+                        (success, exception) =>
                         {
-                            if ((s as Gui.Widgets.Confirm).DialogResult == DwarfCorp.Gui.Widgets.Confirm.Result.OKAY)
-                                World.Save(
-                                    String.Format("{0}_{1}", Overworld.Name, World.GameID),
-                                    (success, exception) =>
-                                    {
-                                        GuiRoot.ShowModalPopup(new Gui.Widgets.Popup
-                                        {
-                                            Text = success ? "File saved." : "Save failed - " + exception.Message,
-                                            OnClose = (s2) => OpenPauseMenu()
-                                        });
-                                    });
-                        }
-                    });
+                            GuiRoot.ShowModalPopup(new Gui.Widgets.Popup
+                            {
+                                Text = success ? "File saved." : "Save failed - " + exception.Message,
+                                OnClose = (s2) => OpenPauseMenu()
+                            });
+                        });
                 });
 
 #if DEBUG

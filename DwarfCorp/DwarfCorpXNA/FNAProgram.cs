@@ -50,7 +50,9 @@ namespace DwarfCorp
 #if WINDOWS || XBOX
     internal static class Program
     {
-        public static string Version = "17.10.15_FNA";
+        public static string Version = "17.10.31_FNA";
+        public static string[] CompatibleVersions = { "17.10.31_XNA", "17.10.31_FNA", "17.10.22_FNA", "17.10.22_XNA" };
+        public static string Commit = "UNKNOWN";
         public static char DirChar = Path.DirectorySeparatorChar;
         
         /// <summary>
@@ -58,6 +60,15 @@ namespace DwarfCorp
         /// </summary>
         private static void Main(string[] args)
         {
+            try
+            {
+                using (Stream stream = System.Reflection.Assembly.GetExecutingAssembly()
+                        .GetManifestResourceStream("DwarfCorp.version.txt"))
+                using (StreamReader reader = new StreamReader(stream))
+                    Commit = reader.ReadToEnd();
+            }
+            catch (Exception) { }
+
 #if CREATE_CRASH_LOGS
             try
 #endif

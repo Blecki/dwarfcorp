@@ -150,7 +150,7 @@ namespace DwarfCorp
         private static void _addBox(Vector3 M, Vector3 S, Color C, float T)
         {
             float halfT = T * 0.5f;
-            S += Vector3.One * halfT;
+            S += Vector3.One * T;
             M -= Vector3.One * halfT;
             // Draw bottom loop.
             _addLineSegment(new Vector3(M.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y, M.Z), C, T);
@@ -230,6 +230,7 @@ namespace DwarfCorp
 
         public static void DrawBox(BoundingBox box, Color color, float thickness, bool warp)
         {
+            if (!DwarfGame.HasRendered) return;
             lock (renderLock)
             {
                 Boxes.Add(new Box
@@ -243,6 +244,7 @@ namespace DwarfCorp
 
         public static void DrawLine(Vector3 A, Vector3 B, Color Color, float Thickness)
         {
+            if (!DwarfGame.HasRendered) return;
             lock (renderLock)
             {
                 Segments.Add(new Segment
@@ -257,6 +259,7 @@ namespace DwarfCorp
 
         public static void DrawLineList(List<Vector3> points, List<Color> colors, float v)
         {
+            if (!DwarfGame.HasRendered) return;
             lock (renderLock)
             {
                 for (int i = 0; i < points.Count - 1; i++)

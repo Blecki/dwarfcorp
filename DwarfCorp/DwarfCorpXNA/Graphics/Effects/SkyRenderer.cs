@@ -164,7 +164,7 @@ namespace DwarfCorp
         public void RenderStars(DwarfTime time, GraphicsDevice device, Camera camera, Viewport viewPort)
         {
             Matrix rot = Matrix.CreateRotationZ((-CosTime + 0.5f * (float)Math.PI));
-            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
+            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.Additive, Drawer2D.PointMagLinearMin, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
             foreach (var star in StarPositions)
             {
                 var

@@ -122,7 +122,7 @@ namespace DwarfCorp
             TradeMoney = 0.0m;
         }
 
-        public Faction(OverworldFile.OverworldData.FactionDescriptor descriptor)
+        public Faction(NewOverworldFile.OverworldData.FactionDescriptor descriptor)
         {
             Threats = new List<Creature>();
             Minions = new List<CreatureAI>();
@@ -879,62 +879,40 @@ namespace DwarfCorp
 
 
 
-            // If there are no minions, we add money to treasuries first, then generate random coin piles.
-            if (Minions.Count == 0)
+           
+            DwarfBux amountRemaining = money;
+            foreach (Treasury treasury in Treasurys)
             {
-                DwarfBux amountRemaining = money;
-                foreach (Treasury treasury in Treasurys)
-                {
-                    if (amountRemaining <= 0)
-                        break;
+                if (amountRemaining <= 0)
+                    break;
 
-                    DwarfBux maxInTreasury = treasury.Money - treasury.Voxels.Count * Treasury.MoneyPerPile;
-                    DwarfBux amountToTake = System.Math.Min(maxInTreasury, amountRemaining);
+                DwarfBux maxInTreasury =  treasury.Voxels.Count * Treasury.MoneyPerPile -  treasury.Money;
+                DwarfBux amountToTake = System.Math.Min(maxInTreasury, amountRemaining);
 
-                    amountRemaining -= amountToTake;
-                    treasury.Money += amountToTake;
-                    Economy.CurrentMoney += amountToTake;
-                }
-                if (amountRemaining > 0 && RoomBuilder.DesignatedRooms.Count > 0)
+                amountRemaining -= amountToTake;
+                treasury.Money += amountToTake;
+                Economy.CurrentMoney += amountToTake;
+            }
+            if (amountRemaining > 0 && RoomBuilder.DesignatedRooms.Count > 0)
+            {
+                World.MakeAnnouncement("We need more treasuries!");
+                // Generate a number of coin piles.
+                for (DwarfBux total = 0m; total < amountRemaining; total += 1024m)
                 {
-                    // Generate a number of coin piles.
-                    for (DwarfBux total = 0m; total < amountRemaining; total += 64m)
+                    Zone randomZone = Datastructures.SelectRandom(RoomBuilder.DesignatedRooms);
+                    Vector3 point = MathFunctions.RandVector3Box(randomZone.GetBoundingBox()) +
+                                    new Vector3(0, 1.0f, 0);
+                    CoinPile pile = EntityFactory.CreateEntity<CoinPile>("Coins Resource", point);
+                    pile.Money = 1024m;
+
+                    // Special case where we just need to add a little bit of money (less than 64 coins)
+                    if (money - total < 1024m)
                     {
-                        Zone randomZone = Datastructures.SelectRandom(RoomBuilder.DesignatedRooms);
-                        Vector3 point = MathFunctions.RandVector3Box(randomZone.GetBoundingBox()) +
-                                        new Vector3(0, 1.0f, 0);
-                        CoinPile pile = EntityFactory.CreateEntity<CoinPile>("Coins Resource", point);
-                        pile.Money = 64m;
-
-                        // Special case where we just need to add a little bit of money (less than 64 coins)
-                        if (money - total < 64m)
-                        {
-                            pile.Money = money - total;
-                        }
+                        pile.Money = money - total;
                     }
                 }
             }
-            // In this case, add money to the wallet of each minion and tell him/her to stock the money.
-            else
-            {
-                int amountPerMinion = (int)(money / (decimal)Minions.Count);
-                DwarfBux remaining = money;
-                foreach (var minion in Minions)
-                {
-                    minion.Status.Money += (DwarfBux)amountPerMinion;
-                    remaining -= (DwarfBux)amountPerMinion;
-                    minion.GatherManager.StockMoneyOrders.Add(new GatherManager.StockMoneyOrder()
-                    {
-                        Money = amountPerMinion
-                    });
-                }
-
-                Minions[0].Status.Money += remaining;
-                Minions[0].GatherManager.StockMoneyOrders.Add(new GatherManager.StockMoneyOrder()
-                {
-                    Money = remaining
-                });
-            }
+           
         }
     }
 }

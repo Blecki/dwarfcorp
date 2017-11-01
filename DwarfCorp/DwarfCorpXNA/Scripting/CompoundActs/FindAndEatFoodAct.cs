@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
@@ -67,9 +68,103 @@ namespace DwarfCorp
             Tree = new Sequence(new Select(new GetResourcesAct(Agent, FoodTag), 
                                             new GetResourcesAct(Agent, FallbackTag)), 
                                 new Select(new GoToChairAndSitAct(Agent), true),
-                                new Wrap(Creature.EatStockedFood));
+                                new EatFootAct(Agent));
                 
             base.Initialize();
         }
     }
+
+
+    public class EatFootAct : CreatureAct
+    {
+        private Body FoodBody = null;
+
+        public EatFootAct()
+        {
+
+        }
+
+
+        public EatFootAct(CreatureAI creature) :
+            base(creature)
+        {
+
+        }
+
+        public override void OnCanceled()
+        {
+            if (FoodBody != null)
+            {
+                FoodBody.Active = true;
+                Agent.Creature.Gather(FoodBody);
+            }
+            base.OnCanceled();
+        }
+
+        public override IEnumerable<Act.Status> Run()
+        {
+            List<ResourceAmount> foods =
+                Agent.Creature.Inventory.GetResources(new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Edible));
+
+            if (foods.Count == 0 && Agent.Creature.Faction == Agent.World.PlayerFaction)
+            {
+
+                Agent.Manager.World.MakeAnnouncement("We're out of food!");
+                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
+                yield return Act.Status.Fail;
+                yield break;
+            }
+
+            FoodBody = null;
+            Timer eatTimer = new Timer(3.0f, true);
+
+            foreach (ResourceAmount resourceAmount in foods)
+            {
+                if (resourceAmount.NumResources > 0)
+                {
+                    List<Body> bodies = Agent.Creature.Inventory.RemoveAndCreate(new ResourceAmount(resourceAmount.ResourceType, 1));
+                    var resource = ResourceLibrary.GetResourceByName(resourceAmount.ResourceType);
+                    Agent.Creature.NoiseMaker.MakeNoise("Chew", Agent.Creature.AI.Position);
+                    if (bodies.Count == 0)
+                    {
+                        Agent.Creature.Manager.World.MakeAnnouncement("We're out of food!");
+                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
+                        yield return Act.Status.Fail;
+                    }
+                    else
+                    {
+                        FoodBody = bodies[0];
+
+
+                        while (!eatTimer.HasTriggered)
+                        {
+                            eatTimer.Update(DwarfTime.LastTime);
+                            Matrix rot = Agent.Creature.Physics.LocalTransform;
+                            rot.Translation = Vector3.Zero;
+                            FoodBody.LocalTransform = Agent.Creature.Physics.LocalTransform;
+                            Vector3 foodPosition = Agent.Creature.Physics.Position + Vector3.Up * 0.05f + Vector3.Transform(Vector3.Forward, rot) * 0.5f;
+                            FoodBody.LocalPosition = foodPosition;
+                            FoodBody.PropogateTransforms();
+                            FoodBody.Active = false;
+                            Agent.Creature.Physics.Velocity = Vector3.Zero;
+                            Agent.Creature.CurrentCharacterMode = CharacterMode.Sitting;
+                            if (MathFunctions.RandEvent(0.05f))
+                            {
+                                Agent.Creature.World.ParticleManager.Trigger("crumbs", foodPosition, Color.White,
+                                    3);
+                            }
+                            yield return Act.Status.Running;
+                        }
+
+                        Agent.Creature.Status.Hunger.CurrentValue += resource.FoodContent;
+                        Agent.Creature.AI.AddThought(Thought.ThoughtType.AteFood);
+                        FoodBody.Delete();
+                        yield return Act.Status.Success;
+                    }
+                    yield break;
+                }
+            }
+        }
+    }
+
 }

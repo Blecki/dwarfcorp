@@ -59,7 +59,7 @@ namespace DwarfCorp
             {
                 yield return Status.Fail;
             }
-
+            float time = 5 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.BuffedInt);
             Body item = EntityFactory.CreateEntity<Body>(Item.ItemType.Name, Voxel.WorldPosition + Vector3.One * 0.5f);
             if (Item.OverrideOrientation)
             {
@@ -73,7 +73,7 @@ namespace DwarfCorp
             Creature.Faction.OwnedObjects.Add(item);
             Creature.Manager.World.ParticleManager.Trigger("puff", Voxel.WorldPosition + Vector3.One * 0.5f, Color.White, 10);
             Creature.Faction.CraftBuilder.RemoveDesignation(Voxel);
-            Creature.AI.AddXP(10);
+            Creature.AI.AddXP((int)time);
             yield return Status.Success;
         }
     }

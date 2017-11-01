@@ -49,6 +49,17 @@ namespace DwarfCorp
             public VoxelHandle Voxel;
             public DesignationType Type;
             public Object Tag;
+
+            [OnDeserialized]
+            public void OnDeserialized(StreamingContext ctx)
+            {
+                // TODO: mklingen. This is a horrible hack caused by the fact that Newtonsoft.Json does not understand
+                // that this is a numeric type with a width of 16. I have to downconvert it from 64 to 16.
+                if (Tag is Int64)
+                {
+                    Tag = (short)(long)(Tag);
+                }
+            }
         }
 
         public class EntityDesignation
@@ -180,7 +191,7 @@ namespace DwarfCorp
                                 toRemove.Add(d);
                             break;
                         case DesignationType.Put:
-                            if (!d.Voxel.IsValid || !d.Voxel.IsEmpty)
+                            if (!d.Voxel.IsValid || d.Voxel.TypeID == (short)(d.Tag))
                                 toRemove.Add(d);
                             break;
                         case DesignationType.Till:

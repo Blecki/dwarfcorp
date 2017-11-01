@@ -56,129 +56,6 @@ namespace DwarfCorp
             }
         }
 
-        public static IEnumerable<Act.Status> EatStockedFood(this Creature agent)
-        {
-            List<ResourceAmount> foods =
-                agent.Inventory.GetResources(new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Edible));
-
-            if (foods.Count == 0 && agent.Allies == "Dwarf")
-            {
-
-                agent.Manager.World.MakeAnnouncement("We're out of food!");
-                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
-                yield return Act.Status.Fail;
-                yield break;
-            }
-
-            Body foodBody = null;
-            Timer eatTimer = new Timer(3.0f, true);
-
-            foreach (ResourceAmount resourceAmount in foods)
-            {
-                if (resourceAmount.NumResources > 0)
-                {
-                    List<Body> bodies = agent.Inventory.RemoveAndCreate(new ResourceAmount(resourceAmount.ResourceType, 1));
-                    var resource = ResourceLibrary.GetResourceByName(resourceAmount.ResourceType);
-                    agent.Status.Hunger.CurrentValue += resource.FoodContent;
-                    agent.NoiseMaker.MakeNoise("Chew", agent.AI.Position);
-                    if (bodies.Count == 0)
-                    {
-                        agent.Manager.World.MakeAnnouncement("We're out of food!");
-                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
-                        yield return Act.Status.Fail;
-                    }
-                    else
-                    {
-                        foodBody = bodies[0];
-                        
-
-                        while (!eatTimer.HasTriggered)
-                        {
-                            eatTimer.Update(DwarfTime.LastTime);
-                            Matrix rot = agent.Physics.LocalTransform;
-                            rot.Translation = Vector3.Zero;
-                            foodBody.LocalTransform = agent.Physics.LocalTransform;
-                            Vector3 foodPosition = agent.Physics.Position + Vector3.Up * 0.05f + Vector3.Transform(Vector3.Forward, rot) * 0.5f;
-                            foodBody.LocalPosition = foodPosition;
-                            foodBody.PropogateTransforms();
-                            foodBody.Active = false;
-                            agent.Physics.Velocity = Vector3.Zero;
-                            agent.CurrentCharacterMode = CharacterMode.Sitting;
-                            if (MathFunctions.RandEvent(0.05f))
-                            {
-                                agent.World.ParticleManager.Trigger("crumbs", foodPosition, Color.White,
-                                    3);
-                            }
-                            yield return Act.Status.Running;
-                        }
-
-
-                        agent.AI.AddThought(Thought.ThoughtType.AteFood);
-                        foodBody.Delete();
-                        yield return Act.Status.Success;
-                    }
-                    yield break;
-                }
-            }
-
-            /*
-            List<ResourceAmount> foods = agent.Faction.ListResourcesWithTag(Resource.ResourceTags.Edible);
-
-            if (foods.Count == 0)
-            {
-
-                if (agent.Allies == "Dwarf")
-                {
-<<<<<<< HEAD
-                    agent.Manager.World.MakeAnnouncement("Our stockpiles don't have any food. Our employees will starve!");
-=======
-                    agent.Manager.World.MakeAnnouncement("We're out of food!", "Our stockpiles don't have any food. Our employees will starve!");
-                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
->>>>>>> d00c96c811e5559197158a0b31e018c5ccc324e3
-                }
-                yield return Act.Status.Fail;
-                yield break;
-            }
-            else
-            {
-                foreach (ResourceAmount resourceAmount in foods)
-                {
-                    if (resourceAmount.NumResources > 0)
-                    {
-                        Resource resource = ResourceLibrary.GetResourceByName(resourceAmount.ResourceType);
-                        bool removed = agent.Faction.RemoveResources(new List<ResourceAmount>() { new ResourceAmount(resourceAmount.ResourceType, 1) }, agent.AI.Position);
-                        agent.Status.Hunger.CurrentValue += resource.FoodContent;
-                        agent.NoiseMaker.MakeNoise("Chew", agent.AI.Position);
-                        if (!removed)
-                        {
-                            yield return Act.Status.Fail;
-                        }
-                        else
-                        {
-                            agent.DrawIndicator(resource.Image, resource.Tint);
-                            agent.AI.AddThought(Thought.ThoughtType.AteFood);
-                            yield return Act.Status.Success;
-                        }
-                        yield break;
-                    }
-                }
-
-                if (agent.Allies == "Dwarf")
-                {
-<<<<<<< HEAD
-                    agent.Manager.World.MakeAnnouncement("Our stockpiles don't have any food. Our employees will starve!");
-=======
-                    agent.Manager.World.MakeAnnouncement("We're out of food!", "Our stockpiles don't have any food. Our employees will starve!");
-                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
->>>>>>> d00c96c811e5559197158a0b31e018c5ccc324e3
-                }
-
-                yield return Act.Status.Fail;
-                yield break;
-            }
-             */
-        }
-
         public static IEnumerable<Act.Status> FindAndReserve(this Creature agent, string tag, string thing)
         {
             Body closestItem = agent.Faction.FindNearestItemWithTags(tag, agent.AI.Position, true);
@@ -279,7 +156,7 @@ namespace DwarfCorp
 
                 // Look at the block and slow your velocity down.
                 agent.Physics.Face(vox.WorldPosition + Vector3.One * 0.5f);
-                agent.Physics.Velocity *= 0.9f;
+                agent.Physics.Velocity *= 0.01f;
 
                 // Play the attack animations.
                 agent.CurrentCharacterMode = CharacterMode.Attacking;
@@ -297,7 +174,7 @@ namespace DwarfCorp
                     if (status == Act.Status.Running)
                     {
                         agent.Physics.Face(vox.WorldPosition + Vector3.One*0.5f);
-                        agent.Physics.Velocity *= 0.9f;
+                        agent.Physics.Velocity *= 0.01f;
 
                         // Debug drawing.
                         //if (agent.AI.DrawPath)
@@ -310,7 +187,10 @@ namespace DwarfCorp
                 if (vox.Health <= 0.0f)
                 {
                     var voxelType = VoxelLibrary.GetVoxelType(vox.Type.Name);
-                    agent.AI.AddXP(Math.Max((int)(voxelType.StartingHealth / 4), 1));
+                    if (MathFunctions.RandEvent(0.5f))
+                    {
+                        agent.AI.AddXP(Math.Max((int)(voxelType.StartingHealth / 4), 1));
+                    }
                     agent.Stats.NumBlocksDestroyed++;
                     agent.World.GoalManager.OnGameEvent(new Goals.Events.DigBlock(voxelType, agent));
 
@@ -329,7 +209,7 @@ namespace DwarfCorp
                 while (!agent.Sprite.CurrentAnimation.IsDone() && agent.Sprite.CurrentAnimation.IsPlaying)
                 {
                     agent.Physics.Face(vox.WorldPosition + Vector3.One * 0.5f);
-                    agent.Physics.Velocity *= 0.9f;
+                    agent.Physics.Velocity *= 0.01f;
                     yield return Act.Status.Running;
                 }
 
@@ -343,7 +223,7 @@ namespace DwarfCorp
                 {
                     agent.Attacks[0].RechargeTimer.Update(DwarfTime.LastTime);
                     agent.Physics.Face(vox.WorldPosition + Vector3.One * 0.5f);
-                    agent.Physics.Velocity *= 0.9f;
+                    agent.Physics.Velocity *= 0.01f;
                     yield return Act.Status.Running;
                 }
 

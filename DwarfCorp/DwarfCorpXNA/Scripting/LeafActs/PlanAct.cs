@@ -127,6 +127,88 @@ namespace DwarfCorp
             return path != null && path.Count > 0;
         }
 
+        public GoalRegion GetGoal()
+        {
+            GoalRegion goal = null;
+            switch (Type)
+            {
+                case PlanType.Radius:
+                    goal = new SphereGoalRegion(Target, Radius);
+                    break;
+                case PlanType.Into:
+                    goal = new VoxelGoalRegion(Target);
+                    break;
+                case PlanType.Adjacent:
+                    goal = new AdjacentVoxelGoalRegion2D(Target);
+                    break;
+                case PlanType.Edge:
+                    goal = new EdgeGoalRegion();
+                    break;
+            }
+            return goal;
+        }
+
+        public List<MoveAction> ComputeGreedyFallback(int maxsteps = 10, List<VoxelHandle> exploredVoxels = null)
+        {
+            List<MoveAction> toReturn = new List<MoveAction>();
+            GoalRegion goal = GetGoal();
+            var creatureVoxel = Agent.Physics.CurrentVoxel;
+
+            if (goal.IsInGoalRegion(creatureVoxel))
+            {
+                return toReturn;
+            }
+            var currentVoxel = creatureVoxel;
+            while (toReturn.Count < maxsteps)
+            {
+                var actions = Agent.Movement.GetMoveActions(currentVoxel);
+
+                float minCost = float.MaxValue;
+                var minAction = new MoveAction();
+                bool hasMinAction = false;
+               
+                foreach (var action in actions)
+                {
+                    if (toReturn.Any(a => a.DestinationVoxel == action.DestinationVoxel && a.MoveType == action.MoveType))
+                    {
+                        continue;
+                    }
+
+                    var vox = action.DestinationVoxel;
+
+                    float cost = goal.Heuristic(vox) * MathFunctions.Rand(1.0f, 1.1f) + Agent.Movement.Cost(action.MoveType);
+                    if (exploredVoxels != null && exploredVoxels.Contains(action.DestinationVoxel))
+                    {
+                        cost *= 10;
+                    }
+
+                    if (cost < minCost)
+                    {
+                        minAction = action;
+                        minCost = cost;
+                        hasMinAction = true;
+                    }
+                }
+
+                if (hasMinAction)
+                {
+                    MoveAction action = minAction;
+                    action.DestinationVoxel = currentVoxel;
+                    toReturn.Add(action);
+                    currentVoxel = minAction.DestinationVoxel;
+                    if (goal.IsInGoalRegion(minAction.DestinationVoxel))
+                    {
+                        return toReturn;
+                    }
+                }
+                else
+                {
+                    return toReturn;
+                }
+            }
+            return toReturn;
+        }
+
         public override IEnumerable<Status> Run()
         {
             Path = null;
@@ -179,23 +261,14 @@ namespace DwarfCorp
                         HeuristicWeight = Weights[Timeouts]
                     };
 
-                    switch (Type)
-                    {
-                        case PlanType.Radius:
-                            aspr.GoalRegion = new SphereGoalRegion(Target, Radius);
-                            break;
-                        case PlanType.Into:
-                            aspr.GoalRegion = new VoxelGoalRegion(Target);
-                            break;
-                        case PlanType.Adjacent:
-                            aspr.GoalRegion = new AdjacentVoxelGoalRegion2D(Target);
-                            break;
-                        case PlanType.Edge:
-                            aspr.GoalRegion = new EdgeGoalRegion();
-                            break;
-                    }
 
-                    PlanSubscriber.SendRequest(aspr);
+                    aspr.GoalRegion = GetGoal();
+
+                    if(!PlanSubscriber.SendRequest(aspr))
+                    {
+                        yield return Status.Fail;
+                        yield break;
+                    }
                     PlannerTimer.Reset(PlannerTimer.TargetTimeSeconds);
                     WaitingOnResponse = true;
                     yield return Status.Running;
@@ -217,11 +290,6 @@ namespace DwarfCorp
                         if (response.Success)
                         {
                             Path = response.Path;
-
-                            if (Type == PlanType.Adjacent && Path.Count > 0)
-                            {
-                                Path.RemoveAt(Path.Count - 1);
-                            }
                             WaitingOnResponse = false;
 
                             statusResult = Status.Success;
@@ -234,7 +302,6 @@ namespace DwarfCorp
                         {
                             Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                             statusResult = Status.Fail;
-
                         }
                     }
                     yield return statusResult;
@@ -243,4 +310,107 @@ namespace DwarfCorp
         }
     }
 
+    public class PlanWithGreedyFallbackAct : CreatureAct
+    {
+        public string VoxelName = "EntityVoxel";
+        public string PathName = "PathToEntity";
+        public PlanAct.PlanType PlanType = PlanAct.PlanType.Radius;
+        public float Radius = 1;
+        public int MaxTimeouts = 1;
+
+        public PlanWithGreedyFallbackAct()
+        {
+            Name = "Get near goal";
+        }
+
+        public override IEnumerable<Status> Run()
+        {
+
+            while (true)
+            {
+                Creature.AI.Blackboard.Erase(PathName);
+
+                PlanAct planAct = new PlanAct(Creature.AI, PathName, VoxelName, PlanType) { Radius = Radius, MaxTimeouts = MaxTimeouts };
+                planAct.Initialize();
+
+                bool planSucceeded = false;
+                while (true)
+                {
+                    Act.Status planStatus = planAct.Tick();
+
+                    if (planStatus == Status.Fail)
+                    {
+                        yield return Act.Status.Running;
+                        break;
+                    }
+
+                    else if (planStatus == Status.Running)
+                    {
+                        yield return Act.Status.Running;
+                    }
+
+                    else if (planStatus == Status.Success)
+                    {
+                        planSucceeded = true;
+                        break;
+                    }
+
+                }
+
+                if (!planSucceeded)
+                {
+                    yield return Act.Status.Running;
+                    Creature.CurrentCharacterMode = CharacterMode.Idle;
+                    Creature.Physics.Velocity = Vector3.Zero;
+                    Timer planTimeout = new Timer(MathFunctions.Rand(10.0f, 30.0f), false);
+                    List<VoxelHandle> exploredVoxels = new List<VoxelHandle>();
+                    Color debugColor = new Color(MathFunctions.RandVector3Cube() + Vector3.One * 0.5f);
+                    float debugScale = MathFunctions.Rand() * 0.5f + 0.5f;
+                    while (!planTimeout.HasTriggered)
+                    {
+                        // In this case, try to follow a greedy path toward the entity instead of just failing.
+                        var greedyPath = planAct.ComputeGreedyFallback(20, exploredVoxels);
+                        var goal = planAct.GetGoal();
+                        Creature.AI.Blackboard.SetData("GreedyPath", greedyPath);
+                        var greedyPathFollow = new FollowPathAct(Creature.AI, "GreedyPath")
+                        {
+                            BlendEnd = true,
+                            BlendStart = false
+                        };
+                        greedyPathFollow.Initialize();
+
+                        foreach (var currStatus in greedyPathFollow.Run())
+                        {
+                            if (Agent.DrawPath)
+                            {
+                                foreach (var voxel in exploredVoxels)
+                                {
+                                    Drawer3D.DrawBox(voxel.GetBoundingBox().Expand(-debugScale), debugColor, 0.05f, false);
+                                }
+                            }
+                            if (!exploredVoxels.Contains(Agent.Physics.CurrentVoxel))
+                            {
+                                exploredVoxels.Add(Agent.Physics.CurrentVoxel);
+                            }
+                            if (Agent.DrawPath)
+                            {
+                                Drawer3D.DrawLine(Agent.Position, goal.GetVoxel().WorldPosition, debugColor, 0.1f);
+                            }
+                            if (goal.IsInGoalRegion(Agent.Physics.CurrentVoxel))
+                            {
+                                yield return Act.Status.Success;
+                                yield break;
+                            }
+                            yield return Act.Status.Running;
+                        }
+                        planTimeout.Update(DwarfTime.LastTime);
+                    }
+                    continue;
+                }
+                yield return Act.Status.Success;
+                yield break;
+            }
+
+        }
+    }
 }

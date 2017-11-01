@@ -51,6 +51,7 @@ using Color = Microsoft.Xna.Framework.Color;
 using Point = Microsoft.Xna.Framework.Point;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using DwarfCorp.GameStates;
+using System.Text;
 
 namespace DwarfCorp
 {
@@ -123,49 +124,45 @@ namespace DwarfCorp
                     Content.Load<Effect>(ContentPaths.Shaders.SkySphere),
                     Content.Load<Effect>(ContentPaths.Shaders.Background));
 
-#region Reading game file
+            #region Reading game file
 
-                if (fileExists)
+            if (fileExists)
+            {
+                SetLoadingMessage("Loading " + ExistingFile);
+
+                gameFile = SaveGame.CreateFromDirectory(ExistingFile);
+                if (gameFile == null) throw new InvalidOperationException("Game File does not exist.");
+
+                // Todo: REMOVE THIS WHEN THE NEW SAVE SYSTEM IS COMPLETE.
+                if (gameFile.Metadata.Version != Program.Version && !Program.CompatibleVersions.Contains(gameFile.Metadata.Version))
                 {
-                    SetLoadingMessage("Loading " + ExistingFile);
-
-                    gameFile = SaveGame.CreateFromDirectory(ExistingFile);
-                    if (gameFile == null) throw new InvalidOperationException("Game File does not exist.");
-
-                    // Todo: REMOVE THIS WHEN THE NEW SAVE SYSTEM IS COMPLETE.
-                    if (gameFile.Metadata.Version != Program.Version)
-                        throw new InvalidOperationException("Game file is from a different version of the game and cannot be loaded.");
-
-                    Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
-                    Time = gameFile.Metadata.Time;
-                    WorldOrigin = gameFile.Metadata.WorldOrigin;
-                    WorldScale = gameFile.Metadata.WorldScale;
-                    WorldSize = gameFile.Metadata.NumChunks;
-                    GameID = gameFile.Metadata.GameID;
-
-                    if (gameFile.Metadata.OverworldFile != null && gameFile.Metadata.OverworldFile != "flat")
-                    {
-                        SetLoadingMessage("Loading world " + gameFile.Metadata.OverworldFile);
-                        Overworld.Name = gameFile.Metadata.OverworldFile;
-                        DirectoryInfo worldDirectory =
-                            Directory.CreateDirectory(DwarfGame.GetGameDirectory() + ProgramData.DirChar + "Worlds" +
-                                                      ProgramData.DirChar + Overworld.Name);
-                        OverworldFile overWorldFile =
-                            new OverworldFile(
-                                worldDirectory.FullName + ProgramData.DirChar + "world." +
-                                (DwarfGame.COMPRESSED_BINARY_SAVES
-                                    ? OverworldFile.CompressedExtension
-                                    : OverworldFile.Extension),
-                                DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
-                        Overworld.Map = overWorldFile.Data.CreateMap();
-                        Overworld.Name = overWorldFile.Data.Name;
-                    }
-                    else
-                    {
-                        SetLoadingMessage("Generating flat world..");
-                        Overworld.CreateUniformLand(GraphicsDevice);
-                    }
+                    throw new InvalidOperationException(String.Format("Game file is from version {0}. Compatible versions are {1}.", gameFile.Metadata.Version, 
+                        TextGenerator.GetListString(Program.CompatibleVersions)));
                 }
+                Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
+                Time = gameFile.Metadata.Time;
+                WorldOrigin = gameFile.Metadata.WorldOrigin;
+                WorldScale = gameFile.Metadata.WorldScale;
+                WorldSize = gameFile.Metadata.NumChunks;
+                GameID = gameFile.Metadata.GameID;
+
+                if (gameFile.Metadata.OverworldFile != null && gameFile.Metadata.OverworldFile != "flat")
+                {
+                    SetLoadingMessage("Loading world " + gameFile.Metadata.OverworldFile);
+                    Overworld.Name = gameFile.Metadata.OverworldFile;
+                    DirectoryInfo worldDirectory =
+                        Directory.CreateDirectory(DwarfGame.GetWorldDirectory() +
+                                                  ProgramData.DirChar + Overworld.Name);
+                    var overWorldFile = new NewOverworldFile(worldDirectory.FullName);
+                    Overworld.Map = overWorldFile.Data.Data;
+                    Overworld.Name = overWorldFile.Data.Name;
+                }
+                else
+                {
+                    SetLoadingMessage("Generating flat world..");
+                    Overworld.CreateUniformLand(GraphicsDevice);
+                }
+            }
 
 #endregion
 
@@ -306,14 +303,16 @@ namespace DwarfCorp
                     Vector3 extents = new Vector3(1500, 1500, 1500);
                     CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
 
-                    foreach (var resource in gameFile.PlayData.Resources)
+                    if (gameFile.PlayData.Resources != null)
                     {
-                        if (!ResourceLibrary.Resources.ContainsKey(resource.Key))
+                        foreach (var resource in gameFile.PlayData.Resources)
                         {
-                            ResourceLibrary.Add(resource.Value);
+                            if (!ResourceLibrary.Resources.ContainsKey(resource.Key))
+                            {
+                                ResourceLibrary.Add(resource.Value);
+                            }
                         }
                     }
-
                     ComponentManager = new ComponentManager(gameFile.PlayData.Components, this);
 
                     foreach (var component in gameFile.PlayData.Components.SaveableComponents)
@@ -470,7 +469,15 @@ namespace DwarfCorp
 
                 if (Master.Faction.Economy.Company.Information == null)
                     Master.Faction.Economy.Company.Information = new CompanyInformation();
+
                 CreateInitialEmbarkment();
+                foreach(var chunk in ChunkManager.ChunkData.ChunkMap)
+                {
+                    chunk.CalculateInitialSunlight();
+                }
+                VoxelHelpers.InitialReveal(ChunkManager.ChunkData, new VoxelHandle(
+                ChunkManager.ChunkData.GetChunkEnumerator().FirstOrDefault(), new LocalVoxelCoordinate(0, VoxelConstants.ChunkSizeY - 1, 0)));
+
                 foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
                     ChunkManager.InvalidateChunk(chunk);
 

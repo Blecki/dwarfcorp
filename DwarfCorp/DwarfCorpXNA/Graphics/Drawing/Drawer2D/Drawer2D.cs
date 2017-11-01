@@ -52,6 +52,7 @@ namespace DwarfCorp
         public static ContentManager Content { get; set; }
         public static SpriteFont DefaultFont { get; set; }
         public static Texture2D Pixel { get; set; }
+        public static SamplerState PointMagLinearMin { get; set; }
 
         public static void Initialize(ContentManager content, GraphicsDevice graphics)
         {
@@ -62,6 +63,11 @@ namespace DwarfCorp
             white[0] = Color.White;
             Pixel = new Texture2D(graphics, 1, 1);
             Pixel.SetData<Color>(white);
+            PointMagLinearMin = new SamplerState();
+            PointMagLinearMin.AddressU = TextureAddressMode.Clamp;
+            PointMagLinearMin.AddressV = TextureAddressMode.Clamp;
+            PointMagLinearMin.Filter = TextureFilter.MinLinearMagPointMipLinear;
+            PointMagLinearMin.Name = "PointMagLinearMin";
         }
 
         public static void DrawSprite(ImageFrame image, Vector3 worldPosition)

@@ -41,9 +41,9 @@ namespace DwarfCorp.Trade
         {
             var resource = ResourceLibrary.GetResourceByName(Resource);
             if (SourceEnvoy.OwnerFaction.Race.CommonResources.Any(r => resource.Tags.Contains(r)))
-                return resource.MoneyValue * 0.5m;
+                return resource.MoneyValue * 0.75m;
             if (SourceEnvoy.OwnerFaction.Race.RareResources.Any(r => resource.Tags.Contains(r)))
-                return resource.MoneyValue * 2.0m;
+                return resource.MoneyValue * 1.25m;
             return resource.MoneyValue;
         }
 

@@ -129,15 +129,26 @@ namespace DwarfCorp
 
         public static string GetLatestSaveFile()
         {
-            DirectoryInfo saveDirectory = Directory.CreateDirectory(DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves");
+            DirectoryInfo saveDirectory = Directory.CreateDirectory(DwarfGame.GetSaveDirectory());
+
             DirectoryInfo newest = null;
             foreach (var dir in saveDirectory.EnumerateDirectories())
             {
                 if (newest == null || newest.CreationTime < dir.CreationTime)
                 {
-                    newest = dir;
+                    var valid = false;
+                    try
+                    {
+                        var saveGame = SaveGame.CreateFromDirectory(dir.FullName);
+                        valid = saveGame.Metadata.Version == Program.Version;
+                    }
+                    catch (Exception e)
+                    { }
+
+                    if (valid) newest = dir;
                 }
             }
+
             return newest == null ? null : newest.FullName;
         }
 

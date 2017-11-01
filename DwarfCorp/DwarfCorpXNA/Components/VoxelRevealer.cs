@@ -1,4 +1,4 @@
-﻿// Target.cs
+﻿// VoxelListener.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -40,22 +41,35 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
-    public class Target : Fixture
+    public class VoxelRevealer : GameComponent, IUpdateableComponent
     {
-        public Target()
-        {
+        private Body Body;
+        private int Radius;
+        private GlobalVoxelCoordinate OwnerCoordinate;
 
+        [OnSerializing]
+        void Serializer(StreamingContext Context)
+        {
+            throw new InvalidProgramException("DO NOT SERIALIZE VOXEL REVEALER");
         }
 
-        public Target(ComponentManager componentManager, Vector3 position) :
-            base(componentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 5))
+        public VoxelRevealer(ComponentManager Manager, Body Body, int Radius) :
+            base(Manager)
         {
-            Name = "Target";
-            Tags.Add("Target");
-            Tags.Add("Train");
-            GetRoot().GetComponent<Health>().MaxHealth = 500;
-            GetRoot().GetComponent<Health>().Hp = 500;
+            this.Body = Body;
+            this.Radius = Radius;
+            OwnerCoordinate = new GlobalVoxelCoordinate(int.MaxValue, int.MaxValue, int.MaxValue);
+        }
+
+        void IUpdateableComponent.Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        {
+            var currentCoordinate = GlobalVoxelCoordinate.FromVector3(Body.Position);
+            if (currentCoordinate != OwnerCoordinate)
+            {
+                VoxelHelpers.RadiusReveal(Manager.World.ChunkManager.ChunkData, new VoxelHandle(
+                    Manager.World.ChunkManager.ChunkData, currentCoordinate), Radius);
+                OwnerCoordinate = currentCoordinate;
+            }
         }
     }
 }

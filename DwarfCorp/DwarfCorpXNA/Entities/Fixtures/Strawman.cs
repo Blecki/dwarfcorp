@@ -54,6 +54,8 @@ namespace DwarfCorp
             Name = "Strawman";
             Tags.Add("Strawman");
             Tags.Add("Train");
+            GetRoot().GetComponent<Health>().MaxHealth = 500;
+            GetRoot().GetComponent<Health>().Hp = 500;
         }
     }
 }

@@ -156,6 +156,15 @@ namespace DwarfCorp
                 Die();
             }
 
+            if (Target == null)
+            {
+                if (LocalPosition.Y < 0)
+                    Die();
+
+                if (CurrentVoxel.IsValid && !CurrentVoxel.IsEmpty)
+                    Die();
+            }
+
             base.Update(gameTime, chunks, camera);
         }
 

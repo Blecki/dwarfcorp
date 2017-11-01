@@ -75,7 +75,10 @@ namespace DwarfCorp
 
         public EmployeeClass()
         {
-            
+            if (!staticClassInitialized)
+            {
+                InitializeClassStatics();
+            }
         }
 
         public EmployeeClass(EmployeeClassDef definition)

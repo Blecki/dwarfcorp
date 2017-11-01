@@ -14,7 +14,8 @@ namespace DwarfCorp.Gui.Widgets
         Pending,
         Cancel,
         Propose,
-        Reject
+        RejectProfit,
+        RejectOffense
     }
 
     public class TradePanel : Widget
@@ -243,7 +244,7 @@ namespace DwarfCorp.Gui.Widgets
                         }
                         else
                         {
-                            Result = TradeDialogResult.Reject;
+                            Result = TradeDialogResult.RejectProfit;
                             this.Close();
                         }
                     }

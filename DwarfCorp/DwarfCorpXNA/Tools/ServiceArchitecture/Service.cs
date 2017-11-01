@@ -128,9 +128,15 @@ namespace DwarfCorp
                 ServiceThreadObject.Join();
         }
 
-        public void AddRequest(TRequest request, uint subscriberID)
+        public bool AddRequest(TRequest request, uint subscriberID)
         {
+            if (Requests.Count > 100)
+            {
+                return false;
+            }
+
             Requests.Enqueue(new KeyValuePair<uint, TRequest>(subscriberID, request));
+            return true;
         }
 
         public void ServiceThread()

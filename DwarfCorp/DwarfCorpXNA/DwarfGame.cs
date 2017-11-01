@@ -186,6 +186,22 @@ namespace DwarfCorp
         }
 #endif
 
+        public static string GetSaveDirectory()
+        {
+            if (String.IsNullOrEmpty(GameSettings.Default.SaveLocation))
+                return DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves";
+            else
+                return GameSettings.Default.SaveLocation + Path.DirectorySeparatorChar + "Saves";
+        }
+
+        public static string GetWorldDirectory()
+        {
+            if (String.IsNullOrEmpty(GameSettings.Default.SaveLocation))
+                return DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Worlds";
+            else
+                return GameSettings.Default.SaveLocation + Path.DirectorySeparatorChar + "Worlds";
+        }
+
         public static void InitializeLogger()
         {
             try

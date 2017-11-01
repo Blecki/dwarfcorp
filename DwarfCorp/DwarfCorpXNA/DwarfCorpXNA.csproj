@@ -132,6 +132,7 @@
     <Compile Include="AssetManagement\GameSave\ChunkFile.cs" />
     <Compile Include="AssetManagement\GameSave\FileUtils.cs" />
     <Compile Include="AssetManagement\GameSave\MetaData.cs" />
+    <Compile Include="AssetManagement\GameSave\OldOverworldFile.cs" />
     <Compile Include="AssetManagement\GameSave\PlayData.cs" />
     <Compile Include="AssetManagement\GameSave\SaveGame.cs" />
     <Compile Include="AssetManagement\GameSave\JsonConverters\BoxConverter.cs" />
@@ -165,6 +166,7 @@
     <Compile Include="Components\AI\Sensors\TrapSensor.cs" />
     <Compile Include="Components\AI\Sensors\ExploredListener.cs" />
     <Compile Include="Components\AI\Sensors\DestroyOnTimer.cs" />
+    <Compile Include="Components\VoxelRevealer.cs" />
     <Compile Include="Components\VoxelChangeEvent.cs" />
     <Compile Include="Components\NewVoxelListener.cs" />
     <Compile Include="Components\AI\Sensors\VoxelListener.cs" />

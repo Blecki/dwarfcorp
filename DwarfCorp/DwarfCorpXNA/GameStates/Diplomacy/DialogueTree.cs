@@ -220,8 +220,11 @@ namespace DwarfCorp.Dialogue
                 if (containsHatedItem)
                 {
                     Context.Envoy.OwnerFaction.Race.Speech.Language.SayBoo();
-                    Context.Transition(GoodbyeWithPrompt(Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.BadTrades)));
-
+                    Context.NumOffensiveTrades++;
+                    var phrase = Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.OffensiveTrades);
+                    var action = Context.NumOffensiveTrades >= 3 ? GoodbyeWithPrompt(phrase) : RootWithPrompt(phrase); 
+                    Context.Transition(action);
+                    
                     if (!Context.Politics.HasEvent("you tried to give us something offensive"))
                     {
                         Context.Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
@@ -275,7 +278,8 @@ namespace DwarfCorp.Dialogue
                     Context.Envoy.OwnerFaction.Race.Speech.Language.SayYay();
                 }
             } 
-            else if (Context.TradePanel.Result == Gui.Widgets.TradeDialogResult.Reject)
+            else if (Context.TradePanel.Result == Gui.Widgets.TradeDialogResult.RejectOffense || 
+                Context.TradePanel.Result == Gui.Widgets.TradeDialogResult.RejectProfit)
             {
                 Context.Envoy.OwnerFaction.Race.Speech.Language.SayBoo();
                 Context.Transition(RootWithPrompt(Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.BadTrades)));
@@ -323,7 +327,10 @@ namespace DwarfCorp.Dialogue
                     {Resource.ResourceTags.Plantable, "seeds"},
                     {Resource.ResourceTags.AboveGroundPlant, "plants"},
                     {Resource.ResourceTags.BelowGroundPlant, "cave plants"},
-                    {Resource.ResourceTags.Bone, "bones"}
+                    {Resource.ResourceTags.Bone, "bones"},
+                    {Resource.ResourceTags.Gourd, "gourds"},
+                    {Resource.ResourceTags.Fruit, "fruits"},
+                    {Resource.ResourceTags.Evil, "evil things" }
                 };
             }
 

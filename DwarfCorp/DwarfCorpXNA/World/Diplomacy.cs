@@ -67,8 +67,9 @@ namespace DwarfCorp
                 
             }
 
-            public Politics(DateTime currentDate)
+            public Politics(DateTime currentDate, TimeSpan distanceToCapital)
             {
+                DistanceToCapital = distanceToCapital;
                 WasAtWar = false;
                 HasMet = false;
                 WarPartyTimer = new DateTimer(currentDate, DistanceToCapital)
@@ -154,6 +155,8 @@ namespace DwarfCorp
 
         private TradeEnvoy CurrentTradeEnvoy = null;
         private WarParty CurrentWarParty = null;
+        public DateTime TimeOfLastTrade = new DateTime();
+        public string LastTradeEmpire = "";
 
         public Diplomacy()
         {
@@ -164,6 +167,7 @@ namespace DwarfCorp
         {
             World = world;
             FactionPolitics = new PoliticsDictionary();
+            TimeOfLastTrade = world.Time.CurrentDate;
         }
 
         public Politics GetPolitics(Faction factionA, Faction factionB)
@@ -184,7 +188,7 @@ namespace DwarfCorp
 
                 if (faction.Key == New.Name)
                 {
-                    FactionPolitics[pair] = new Politics(Now)
+                    FactionPolitics[pair] = new Politics(Now, new TimeSpan(0, 0, 0))
                     {
                         Faction = faction.Value,
                         HasMet = true,
@@ -206,14 +210,13 @@ namespace DwarfCorp
                     Point c2 = New.Center;
                     double dist = Math.Sqrt(Math.Pow(c1.X - c2.X, 2) + Math.Pow(c1.Y - c2.Y, 2));
                     // Time always takes between 1 and 4 days of travel.
-                    double timeInMinutes = Math.Min(Math.Max(dist * 16.0f, 1440), 1440 * 4) + MathFunctions.RandInt(0, 250);
+                    double timeInMinutes = Math.Min(Math.Max(dist * 2.0f, 1440), 1440 * 4) + MathFunctions.RandInt(0, 250);
 
-                    Politics politics = new Politics(Now)
+                    Politics politics = new Politics(Now, new TimeSpan(0, (int)(timeInMinutes), 0))
                     {
                         Faction = New,
                         HasMet = false,
                         RecentEvents = new List<PoliticalEvent>(),
-                        DistanceToCapital = new TimeSpan(0, (int)(timeInMinutes), 0)
                     };
 
                     politics.DispatchNewTradeEnvoy(Now);
@@ -277,6 +280,11 @@ namespace DwarfCorp
             List<CreatureAI> creatures =
                 world.MonsterSpawner.Spawn(world.MonsterSpawner.GenerateSpawnEvent(natives,
                 world.PlayerFaction, MathFunctions.Random.Next(4) + 1, false));
+
+            if (natives.TradeMoney < 100m)
+            {
+                natives.TradeMoney += MathFunctions.Rand(250.0f, 5000.0f);
+            }
 
             envoy = new TradeEnvoy(world.Time.CurrentDate)
             {
@@ -395,6 +403,7 @@ namespace DwarfCorp
         public void Update(DwarfTime time, DateTime currentDate, WorldManager world)
         {
             World = world;
+            var timeSinceLastTrade = world.Time.CurrentDate  - TimeOfLastTrade;
             foreach (var mypolitics in FactionPolitics)
             {
                 Pair<string> pair = mypolitics.Key;
@@ -433,17 +442,21 @@ namespace DwarfCorp
                     {
                         CurrentWarParty = null;
                     }
-                    
+                   
+
                     if (needsNewTradeEnvoy && otherFaction.Race.IsIntelligent  && !otherFaction.IsRaceFaction && 
                         relation.GetCurrentRelationship() != Relationship.Hateful)
                     {
-                        if (otherFaction.TradeEnvoys.Count == 0 && !relation.TradePartyTimer.HasTriggered)
+                        if (otherFaction.TradeEnvoys.Count == 0)
                         {
                             relation.TradePartyTimer.Update(currentDate);
 
-                            if (relation.TradePartyTimer.HasTriggered)
+                            if (relation.TradePartyTimer.HasTriggered && timeSinceLastTrade.TotalDays > 1.0 && LastTradeEmpire != otherFaction.Name)
                             {
+                                relation.TradePartyTimer.Reset(World.Time.CurrentDate);
                                 CurrentTradeEnvoy = SendTradeEnvoy(otherFaction, world);
+                                TimeOfLastTrade = world.Time.CurrentDate;
+                                LastTradeEmpire = otherFaction.Name;
                             }
                         }
                         else if (otherFaction.TradeEnvoys.Count == 0)
@@ -610,7 +623,8 @@ namespace DwarfCorp
 
             if (hadFactions && faction.TradeEnvoys.Count == 0)
             {
-                SoundManager.PlayMusic("main_theme_day");
+                var music = World.Time.IsDay() ? "main_theme_day" : "main_theme_night";
+                SoundManager.PlayMusic(music);
             }
         }
 

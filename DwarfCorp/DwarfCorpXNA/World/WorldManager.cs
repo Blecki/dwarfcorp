@@ -561,15 +561,13 @@ namespace DwarfCorp
                 System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
                 System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
                 DirectoryInfo worldDirectory =
-                    Directory.CreateDirectory(DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Worlds" +
+                    Directory.CreateDirectory(DwarfGame.GetWorldDirectory() +
                                               Path.DirectorySeparatorChar + Overworld.Name);
 
                 // This is a hack. Why does the overworld have this as a static field??
                 Overworld.NativeFactions = this.Natives;
-                OverworldFile file = new OverworldFile(Game.GraphicsDevice, Overworld.Map, Overworld.Name, SeaLevel);
-                file.WriteFile(
-                    worldDirectory.FullName + Path.DirectorySeparatorChar + "world." + (DwarfGame.COMPRESSED_BINARY_SAVES ? OverworldFile.CompressedExtension : OverworldFile.Extension),
-                    DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
+                NewOverworldFile file = new NewOverworldFile(Game.GraphicsDevice, Overworld.Map, Overworld.Name, SeaLevel);
+                file.WriteFile(worldDirectory.FullName);
 
                 try
                 {
@@ -583,7 +581,7 @@ namespace DwarfCorp
                 gameFile = SaveGame.CreateFromWorld(this);
 
                 gameFile.WriteFile(
-                    DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves" + Path.DirectorySeparatorChar +
+                    DwarfGame.GetSaveDirectory() + Path.DirectorySeparatorChar +
                     filename);
                 ComponentManager.CleanupSaveData();
 
@@ -591,7 +589,7 @@ namespace DwarfCorp
                 {
                     Screenshots.Add(new Screenshot()
                     {
-                        FileName = DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves" +
+                        FileName = DwarfGame.GetSaveDirectory() +
                                    Path.DirectorySeparatorChar + filename + Path.DirectorySeparatorChar +
                                    "screenshot.png",
                         Resolution = new Point(640, 480)
@@ -636,7 +634,7 @@ namespace DwarfCorp
             Matrix viewMatrix = Camera.ViewMatrix;
             Camera.ViewMatrix = view;
 
-            GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+            GraphicsDevice.SamplerStates[0] = Drawer2D.PointMagLinearMin;
             effect.View = view;
             effect.Projection = Camera.ProjectionMatrix;
             effect.SetTexturedTechnique();
@@ -931,7 +929,7 @@ namespace DwarfCorp
             //if (CompositeLibrary.Composites.ContainsKey("resources"))
             //    CompositeLibrary.Composites["resources"].DebugDraw(DwarfGame.SpriteBatch, 0, 0);
             //SelectionBuffer.DebugDraw(GraphicsDevice.Viewport.Bounds);
-            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp,
+            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin,
                 null, rasterizerState, null, Matrix.Identity);
             //DwarfGame.SpriteBatch.Draw(Shadows.ShadowTexture, Vector2.Zero, Color.White);
             if (IsCameraUnderwater())

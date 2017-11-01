@@ -70,7 +70,7 @@ namespace DwarfCorp
 
         public override Task Clone()
         {
-            return new KillEntityTask(EntityToKill, Mode);
+            return new KillEntityTask(EntityToKill, Mode) { Priority = this.Priority, AutoRetry = this.AutoRetry };
         }
 
         public override Act CreateScript(Creature creature)
@@ -120,11 +120,11 @@ namespace DwarfCorp
             return false;
         }
 
-        public override Feasibility IsFeasible(Creature agent)
+        public override bool IsFeasible(Creature agent)
         {
             if(EntityToKill == null || EntityToKill.IsDead)
             {
-                return Feasibility.Infeasible;
+                return false;
             }
             else
             {
@@ -133,29 +133,29 @@ namespace DwarfCorp
                 switch (Mode)
                 {
                     case KillType.Attack:
-                        return agent.Faction.Designations.IsDesignation(EntityToKill, DesignationType.Attack) ? Feasibility.Feasible : Feasibility.Infeasible ;
+                        return agent.Faction.Designations.IsDesignation(EntityToKill, DesignationType.Attack);
                     case KillType.Chop:
-                        return agent.Faction.Designations.IsDesignation(EntityToKill, DesignationType.Chop) ? Feasibility.Feasible : Feasibility.Infeasible;
+                        return agent.Faction.Designations.IsDesignation(EntityToKill, DesignationType.Chop);
                     case KillType.Auto:
-                        return Feasibility.Feasible;
+                        return true;
                 }
 
                 var target = new VoxelHandle(agent.World.ChunkManager.ChunkData,
                     GlobalVoxelCoordinate.FromVector3(EntityToKill.Position));
                 // Todo: Find out if it is calculating the path twice to make PathExists work.
-                if (!target.IsValid)
+                if (!target.IsValid || !PlanAct.PathExists(agent.Physics.CurrentVoxel, target, agent.AI))
                 {
-                    return Feasibility.Infeasible;
+                    return false;
                 }
 
 
                 if(ai == null)
                 {
-                    return Feasibility.Infeasible;
+                    return true;
                 }
                 Relationship relation = 
                     agent.World.Diplomacy.GetPolitics(ai.Faction, agent.Faction).GetCurrentRelationship();
-                return (relation == Relationship.Hateful || relation == Relationship.Indifferent) ? Feasibility.Feasible : Feasibility.Infeasible;
+                return relation == Relationship.Hateful || relation == Relationship.Indifferent;
             }
         }
     }

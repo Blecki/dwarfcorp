@@ -45,6 +45,7 @@ namespace DwarfCorp
         public string ObjectName { get; set; }
         public bool Teleport { get; set; }
         public Vector3 TeleportOffset { get; set; }
+        public bool CheckForOcclusion = true;
 
         public GoToTaggedObjectAct()
         {
@@ -66,7 +67,35 @@ namespace DwarfCorp
 
             if (closestItem != null)
             {
-                TeleportAct act = new TeleportAct(Creature.AI) { Location = TeleportOffset + closestItem.BoundingBox.Center() };
+                var location = TeleportOffset + closestItem.BoundingBox.Center();
+                if (CheckForOcclusion)
+                {
+                    VoxelHandle voxAt = new VoxelHandle(Agent.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(location));
+                    bool gotLocation = false;
+                    if (!voxAt.IsValid || !voxAt.IsEmpty)
+                    {
+                        // If we can't go to the preferred location, just try any free neighbor.
+                        voxAt = new VoxelHandle(Agent.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(closestItem.BoundingBox.Center()));
+                        foreach (var neighbor in VoxelHelpers.EnumerateManhattanNeighbors2D(voxAt.Coordinate))
+                        {
+                            VoxelHandle newVox = new VoxelHandle(Agent.World.ChunkManager.ChunkData, neighbor);
+
+                            if (newVox.IsValid && newVox.IsEmpty)
+                            {
+                                location = newVox.WorldPosition + new Vector3(0.5f, Agent.Physics.BoundingBox.Extents().Y, 0.5f);
+                                gotLocation = true;
+                                break;
+                            }
+                        }
+
+                        // If there's no free neighbor, just teleport directly to the object.
+                        if (!gotLocation)
+                        {
+                            location = closestItem.BoundingBox.Center();
+                        }
+                    }
+                }
+                TeleportAct act = new TeleportAct(Creature.AI) { Location = location };
                 act.Initialize();
                 foreach (Act.Status status in act.Run())
                 {
@@ -85,7 +114,7 @@ namespace DwarfCorp
                 Tree =
                     new Sequence
                         (
-                        new GoToEntityAct(ObjectName, Creature.AI),
+                        new GoToEntityAct(ObjectName, Creature.AI) { PlanType = PlanAct.PlanType.Adjacent, MovingTarget = false } ,
                         new Wrap(TeleportFunction)
                         );
             }
@@ -94,7 +123,7 @@ namespace DwarfCorp
                 Tree =
                     new Sequence
                         (
-                        new GoToEntityAct(ObjectName, Creature.AI)
+                        new GoToEntityAct(ObjectName, Creature.AI) { PlanType = PlanAct.PlanType.Adjacent, MovingTarget = false }
                         );
             }
             base.Initialize();

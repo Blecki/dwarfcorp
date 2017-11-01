@@ -39,27 +39,30 @@ using Newtonsoft.Json.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO.Compression;
+using ICSharpCode.SharpZipLib.Zip;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using Microsoft.Xna.Framework.Graphics;
+using System.IO.Compression;
+using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+using System.ComponentModel;
 
 namespace DwarfCorp
 {
     [Serializable]
-    public class OverworldFile
+    public class NewOverworldFile
     {
         [Serializable]
         public class OverworldData
         {
-            public string Name { get; set; }
-            public int[,] Biomes { get; set; }
-            public float[,] Erosion { get; set; }
-            public float[,] Faults { get; set; }
-            public float[,] Height { get; set; }
-            public float[,] Rainfall { get; set; }
-            public float[,] Temperature { get; set; }
-            public int[,] Water { get; set; }
-            public float[,] Weathering { get; set; }
-            public float SeaLevel { get; set; }
-            public byte[,] Factions { get; set; }
-
+            public string Name;
+            public float SeaLevel;
+            public Overworld.MapData[,] Data;
+            
             [Serializable]
             public struct FactionDescriptor
             {
@@ -72,37 +75,13 @@ namespace DwarfCorp
                 public int CenterY { get; set; }
             }
 
-            public List<FactionDescriptor> FactionList { get; set; }
+            public List<FactionDescriptor> FactionList;
 
-            [Newtonsoft.Json.JsonIgnore] [NonSerialized] public Texture2D Screenshot;
+            [JsonIgnore] [NonSerialized] public Texture2D Screenshot;
 
             public Overworld.MapData[,] CreateMap()
             {
-                int sx = Biomes.GetLength(0);
-                int sy = Biomes.GetLength(1);
-
-                Overworld.MapData[,] toReturn = new Overworld.MapData[Biomes.GetLength(0), Biomes.GetLength(1)];
-
-                for(int x = 0; x < sx; x++)
-                {
-                    for(int y = 0; y < sy; y++)
-                    {
-                        toReturn[x, y] = new Overworld.MapData
-                        {
-                            Biome = (Overworld.Biome) Biomes[x, y],
-                            Erosion =  Erosion[x, y],
-                            Faults =  Faults[x, y],
-                            Height =  Height[x, y],
-                            Rainfall = Rainfall[x, y],
-                            Temperature = Temperature[x, y],
-                            Water = (Overworld.WaterType) (Water[x, y]),
-                            Weathering =  Weathering[x, y],
-                            Faction = Factions[x, y]
-                        };
-                    }
-                }
-
-                return toReturn;
+                return Data;
             }
 
             public Texture2D CreateTexture(GraphicsDevice device, int width, int height, float seaLevel)
@@ -125,35 +104,11 @@ namespace DwarfCorp
             {
                 int sizeX = map.GetLength(0);
                 int sizeY = map.GetLength(1);
-                Biomes = new int[sizeX, sizeY];
-                Erosion = new float[sizeX, sizeY];
-                Faults = new float[sizeX, sizeY];
-                Rainfall = new float[sizeX, sizeY];
-                Temperature = new float[sizeX, sizeY];
-                Water = new int[sizeX, sizeY];
-                Weathering = new float[sizeX, sizeY];
-                Height = new float[sizeX, sizeY];
-                Factions = new byte[sizeX, sizeY];
+                
                 Name = name;
                 SeaLevel = seaLevel;
-
-                for(int x = 0; x < sizeX; x++)
-                {
-                    for(int y = 0; y < sizeY; y++)
-                    {
-                        Overworld.MapData data = map[x, y];
-                        Biomes[x, y] =  (int)data.Biome;
-                        Erosion[x, y] =  (data.Erosion);
-                        Faults[x, y] = (data.Faults);
-                        Height[x, y] = (data.Height);
-                        Rainfall[x, y] =  (data.Rainfall);
-                        Temperature[x, y] = (data.Temperature);
-                        Water[x, y] = (int)(data.Water);
-                        Weathering[x, y] =  (data.Weathering);
-                        Factions[x, y] = data.Faction;
-                    }
-                }
-
+                Data = map;
+                
                 Screenshot = CreateTexture(device, sizeX, sizeY, seaLevel);
                 FactionList = new List<FactionDescriptor>();
                 byte id = 0;
@@ -179,72 +134,119 @@ namespace DwarfCorp
         public static string Extension = "world";
         public static string CompressedExtension = "zworld";
 
-        public OverworldFile()
+        public NewOverworldFile()
         {
         }
 
-        public OverworldFile(GraphicsDevice device, Overworld.MapData[,] map, string name, float seaLevel)
+        public NewOverworldFile(GraphicsDevice device, Overworld.MapData[,] map, string name, float seaLevel)
         {
+            var worldFilePath = name + System.IO.Path.DirectorySeparatorChar + "world.zworld";
+            var metaFilePath = name + System.IO.Path.DirectorySeparatorChar + "meta.txt";
+            if (File.Exists(worldFilePath) && File.Exists(metaFilePath))
+            {
+                // Do noting since overworlds should be saved precisely once.
+                return;
+            }
             Data = new OverworldData(device, map, name, seaLevel);
         }
 
-        public OverworldFile(string fileName, bool isCompressed, bool isBinary)
+        public NewOverworldFile(string fileName)
         {
-            ReadFile(fileName, isCompressed, isBinary);
+            ReadFile(fileName);
         }
 
-
-        public void CopyFrom(OverworldFile file)
+        public bool ReadFile(string filePath)
         {
-            Data = file.Data;
-        }
+            // If no meta data, fall back to old save style (pass true for compressed and binary)
+            //DwarfGame.COMPRESSED_BINARY_SAVES
 
-        public  bool ReadFile(string filePath, bool isCompressed, bool isBinary)
-        {
-            if (!isBinary)
+            var worldFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "world.zworld";
+            var metaFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "meta.txt";
+
+            if (System.IO.File.Exists(metaFilePath))
             {
-                OverworldFile file = FileUtils.LoadJson<OverworldFile>(filePath, isCompressed);
+                var metaInfo = System.IO.File.ReadAllText(metaFilePath);
 
-                if (file == null)
+                using (var fileStream = new FileStream(worldFilePath, FileMode.Open))
                 {
-                    return false;
-                }
-                else
-                {
-                    CopyFrom(file);
-                    return true;
+                    using (var zip = new ZipInputStream(fileStream))
+                    {
+                        zip.GetNextEntry();
+                        var formatter = new BinaryFormatter();
+                        var file = formatter.Deserialize(zip) as OverworldData;
+
+                        if (file == null)
+                            return false;
+
+                        Data = file;
+                        return true;
+                    }
                 }
             }
             else
             {
-                OverworldFile file = FileUtils.LoadBinary<OverworldFile>(filePath);
+                var oldWorldFile = new OverworldFile(filePath + Path.DirectorySeparatorChar + "world." +
+                    (DwarfGame.COMPRESSED_BINARY_SAVES ? OverworldFile.CompressedExtension : OverworldFile.Extension), DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
 
-                if (file == null)
+                Data = new OverworldData();
+                Data.Data = oldWorldFile.Data.CreateMap();
+                Data.FactionList = new List<OverworldData.FactionDescriptor>();
+                foreach (var fact in oldWorldFile.Data.FactionList)
                 {
-                    return false;
+                    Data.FactionList.Add(new OverworldData.FactionDescriptor()
+                    {
+                        Name = fact.Name,
+                        CenterX = fact.CenterX,
+                        CenterY = fact.CenterY,
+                        Race = fact.Race,
+                        PrimaryColory = fact.PrimaryColory,
+                        SecondaryColor = fact.SecondaryColor,
+                        Id = fact.Id
+                    });
+
                 }
-                else
-                {
-                    CopyFrom(file);
-                    return true;
-                }
+                Data.Name = oldWorldFile.Data.Name;
+                Data.SeaLevel = oldWorldFile.Data.SeaLevel;
+
+                return true;
             }
         }
 
         public void SaveScreenshot(string filename)
         {
-            Data.Screenshot.SaveAsPng(new System.IO.FileStream(filename, System.IO.FileMode.Create), Data.Screenshot.Width, Data.Screenshot.Height);
-        }
-
-        public bool WriteFile(string filePath, bool compress, bool binary)
-        {
-            if (!binary)
-                return FileUtils.SaveJSon<OverworldFile>(this, filePath, compress);
-            else
+            using (var stream = new System.IO.FileStream(filename, System.IO.FileMode.Create))
             {
-                return FileUtils.SaveBinary<OverworldFile>(this, filePath);
+                Data.Screenshot.SaveAsPng(stream, Data.Screenshot.Width, Data.Screenshot.Height);
             }
         }
-    }
 
+        public bool WriteFile(string filePath)
+        {
+            var worldFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "world.zworld";
+            var metaFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "meta.txt";
+
+            if (File.Exists(worldFilePath) && File.Exists(metaFilePath))
+            {
+                Console.Out.WriteLine("Overworld {0} already exists. Just assuming it is correct.", worldFilePath);
+                return false;
+            }
+
+            // Don't use zips in FNA version
+            using (var filestream = new FileStream(worldFilePath, FileMode.OpenOrCreate))
+            {
+                using (var zip = new ZipOutputStream(filestream))
+                {
+                    var formatter = new BinaryFormatter();
+                    zip.SetLevel(9);
+                    var entry = new ZipEntry(Path.GetFileName(filePath));
+                    zip.PutNextEntry(entry);
+
+                    formatter.Serialize(zip, Data);
+                    zip.CloseEntry();
+                    System.IO.File.WriteAllText(metaFilePath, Program.Version);
+                }
+            }
+            return true;
+        }
+    }
 }

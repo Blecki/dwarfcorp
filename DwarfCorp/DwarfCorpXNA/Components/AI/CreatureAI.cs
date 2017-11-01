@@ -238,13 +238,18 @@ namespace DwarfCorp
         public BoundingBox PositionConstraint = new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue),
             new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
 
-        [OnDeserializing]
+        [OnDeserialized]
         public void OnDeserialize(StreamingContext ctx)
         {
             if (CurrentTask != null)
             {
                 CurrentTask.Script = null;
             }
+            if (Sensor == null)
+            {
+                Sensor = GetRoot().GetComponent<EnemySensor>();
+            }
+            Sensor.OnEnemySensed += Sensor_OnEnemySensed;
         }
 
         public void ResetPositionConstraint()
@@ -710,41 +715,58 @@ namespace DwarfCorp
                 }
 
                 // Farm stuff if applicable
-                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Chop) && MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction)
+                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Plant) && MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction)
                 {
-                    var firstFarm = Faction.Designations.EnumerateDesignations(DesignationType._InactiveFarm)
+                    var harvestablePlot = Faction.Designations.EnumerateDesignations(DesignationType._InactiveFarm)
+                        .Where(d =>
+                        {
+                            var farm = d.Tag as FarmTile;
+                            return farm.PlantExists() && farm.Plant.IsGrown && !farm.IsCanceled;
+                        })
                         .Select(d => d.Tag as FarmTile)
                         .FirstOrDefault();
 
-                    if (firstFarm != null)
+                    if (harvestablePlot != null)
                     {
-                        if (firstFarm.PlantExists() && firstFarm.Plant.IsGrown && !firstFarm.IsCanceled)
+                        var task = new KillEntityTask(harvestablePlot.Plant, KillEntityTask.KillType.Chop);
+                        Faction.Designations.AddEntityDesignation(harvestablePlot.Plant, DesignationType.Chop);
+                        return task;
+                    }
+
+                    var plantablePlot = Faction.Designations.EnumerateDesignations(DesignationType._InactiveFarm)
+                        .Where(d =>
                         {
-                            var task = new KillEntityTask(firstFarm.Plant, KillEntityTask.KillType.Chop);
-                            Faction.Designations.AddEntityDesignation(firstFarm.Plant, DesignationType.Chop);
+                            var farm = d.Tag as FarmTile;
+                            return farm.Farmer == null && !farm.PlantExists() && !String.IsNullOrEmpty(farm.PlantedType);
+                        })
+                        .Select(d => d.Tag as FarmTile)
+                        .FirstOrDefault();
+
+                    if (plantablePlot != null)
+                    {
+                        int currentAmount = Creature.Faction.ListResources()
+                            .Sum(resource => resource.Key == plantablePlot.PlantedType && resource.Value.NumResources > 0 ? resource.Value.NumResources : 0);
+
+                        if (currentAmount > 0)
+                        {
+                            Creature.Faction.Designations.RemoveVoxelDesignation(plantablePlot.Voxel, DesignationType._AllFarms);
+                            Creature.Faction.Designations.AddVoxelDesignation(plantablePlot.Voxel, DesignationType.Plant, plantablePlot);
+
+                            var task = new FarmTask(plantablePlot)
+                            {
+                                Mode = FarmAct.FarmMode.Plant,
+                                Plant = plantablePlot.PlantedType,
+                                RequiredResources = new List<ResourceAmount>
+                                {
+                                    new ResourceAmount(plantablePlot.PlantedType)
+                                },
+                                FarmToWork = plantablePlot
+                            };
+
+                            plantablePlot.Farmer = this;
                             return task;
                         }
-                        else if (firstFarm.Farmer == null && !firstFarm.PlantExists() && !String.IsNullOrEmpty(firstFarm.PlantedType))
-                        {
-                            int currentAmount = Creature.Faction.ListResources()
-                                .Sum(resource => resource.Key == firstFarm.PlantedType && resource.Value.NumResources > 0 ? resource.Value.NumResources : 0);
-
-                            if (currentAmount > 0)
-                            {
-                                Creature.Faction.Designations.RemoveVoxelDesignation(firstFarm.Voxel, DesignationType._AllFarms);
-                                Creature.Faction.Designations.AddVoxelDesignation(firstFarm.Voxel, DesignationType.Plant, firstFarm);
-
-                                var task = new FarmTask(firstFarm)
-                                {
-                                    Mode = FarmAct.FarmMode.Plant,
-                                    Plant = firstFarm.PlantedType,
-                                    RequiredResources = new List<ResourceAmount>()
-                                };
-
-                                firstFarm.Farmer = this;
-                            }
-                        }
-                    }                    
+                    }                 
                 }
 
                 // Find a room to train in, if applicable.

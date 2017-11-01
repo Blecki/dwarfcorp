@@ -119,6 +119,7 @@ namespace DwarfCorp
 
             Resource resource = ResourceLibrary.Resources[Item.ItemType.ResourceCreated];
             Creature.Inventory.AddResource(new ResourceAmount(resource, 1));
+            Creature.AI.AddXP((int)Item.ItemType.BaseCraftTime);
             yield return Status.Success;
         }
 
@@ -139,7 +140,7 @@ namespace DwarfCorp
         public override void Initialize()
         {
             Act unreserveAct = new Wrap(() => Creature.Unreserve(Item.ItemType.CraftLocation));
-            float time = Item.ItemType.BaseCraftTime / Creature.AI.Stats.BuffedInt;
+            float time = 3 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.BuffedInt);
             Act getResources = null;
             if (Item.ItemType.SelectedResources == null || Item.ItemType.SelectedResources.Count == 0)
             {
@@ -164,7 +165,8 @@ namespace DwarfCorp
                                 Tag = Item.ItemType.CraftLocation,
                                 Teleport = true,
                                 TeleportOffset = new Vector3(0.5f, -0.5f, 0),
-                                ObjectName = Item.ItemType.CraftLocation
+                                ObjectName = Item.ItemType.CraftLocation,
+                                CheckForOcclusion = true
                             },
                             new Wrap(() => Creature.HitAndWait(time, true, 
                                 () => Creature.AI.Position, "Craft")),
@@ -200,7 +202,8 @@ namespace DwarfCorp
                                 Tag = Item.ItemType.CraftLocation,
                                 Teleport = true,
                                 TeleportOffset = new Vector3(0.5f, -0.5f, 0),
-                                ObjectName = Item.ItemType.CraftLocation
+                                ObjectName = Item.ItemType.CraftLocation,
+                                CheckForOcclusion = true
                             },
                             new Wrap(
                                 () =>

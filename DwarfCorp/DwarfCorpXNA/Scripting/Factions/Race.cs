@@ -55,6 +55,7 @@ namespace DwarfCorp
             public List<string> Farewells { get; set; }
             public List<string> GoodTrades { get; set; }
             public List<string> BadTrades { get; set; }
+            public List<string> OffensiveTrades { get; set; }
             public List<string> WarDeclarations { get; set; }
             public List<string> PeaceDeclarations { get; set; }
             public Language Language { get; set; }
@@ -86,7 +87,7 @@ namespace DwarfCorp
         public List<Resource.ResourceTags> Crafts { get; set; }
         public List<Resource.ResourceTags> Encrustings { get; set; }
         public string TradeMusic { get; set; }
-
+        public Dictionary<Overworld.Biome, Overworld.Biome> Biomes = new Dictionary<Overworld.Biome, Overworld.Biome>();
         public int Icon { get; set; }
 
         [OnDeserialized]
