@@ -317,12 +317,6 @@ namespace DwarfCorp.GameStates
 
             #region Update toolbar tray
 
-            if (Master.SelectedMinions.Count == 0)
-            {
-                if (Master.CurrentToolMode != GameMaster.ToolMode.God)
-                    Master.CurrentToolMode = GameMaster.ToolMode.SelectUnits;
-            }
-
             foreach (var tool in ToolbarItems)
                 tool.Icon.Enabled = tool.Available();
 
