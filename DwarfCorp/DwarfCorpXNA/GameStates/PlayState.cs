@@ -1318,11 +1318,8 @@ namespace DwarfCorp.GameStates
                                 var assignments = new List<Task> { new CraftResourceTask(data) };
                                 var minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions,
                                     GameMaster.ToolMode.Craft);
-                                if (minions.Count > 0)
-                                {
-                                    TaskManager.AssignTasks(assignments, minions);
-                                    World.ShowToolPopup(data.CurrentVerb + " " + data.NumRepeats + " " + data.Name);
-                                }
+                                World.Master.TaskManager.AddTasks(assignments);
+                                World.ShowToolPopup(data.CurrentVerb + " " + data.NumRepeats + " " + data.Name);
                                 World.Tutorial("build crafts");
                             },
                         },
@@ -1437,11 +1434,8 @@ namespace DwarfCorp.GameStates
                                 List<Task> assignments = new List<Task> { new CraftResourceTask(data) };
                                 var minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions,
                                     GameMaster.ToolMode.Cook);
-                                if (minions.Count > 0)
-                                {
-                                    TaskManager.AssignTasks(assignments, minions);
-                                    World.ShowToolPopup(data.CurrentVerb + " one " + data.Name);
-                                }
+                                World.Master.TaskManager.AddTasks(assignments);
+                                World.ShowToolPopup(data.CurrentVerb + " one " + data.Name);
                                 World.Tutorial("cook");
                             },
                         },

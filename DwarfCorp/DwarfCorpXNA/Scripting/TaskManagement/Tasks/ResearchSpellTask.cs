@@ -28,6 +28,9 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
+            if (!agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.Magic))
+                return Feasibility.Infeasible;
+
             return !agent.World.Master.Spells.GetSpell(Spell).IsResearched ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 

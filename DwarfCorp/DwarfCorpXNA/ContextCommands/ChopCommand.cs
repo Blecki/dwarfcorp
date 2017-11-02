@@ -28,7 +28,8 @@ namespace DwarfCorp.ContextCommands
                 {
                     var tasks = new List<Task>();
                     tasks.Add(task);
-                    TaskManager.AssignTasks(tasks, minions);
+                    World.Master.TaskManager.AddTasks(tasks);
+                    //TaskManager.AssignTasks(tasks, minions);
                 }
             }
         }

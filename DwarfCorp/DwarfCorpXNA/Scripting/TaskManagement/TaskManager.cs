@@ -46,8 +46,35 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class TaskManager
     {
+        [JsonProperty]
+        private List<Task> Tasks = new List<Task>();
+        public Timer UpdateTimer = new Timer(1.0f, false);
+
         public TaskManager()
         {
+
+
+        }
+
+        public void AddTask(Task task)
+        {
+            Tasks.Add(task);
+        }
+
+        public void AddTasks(IEnumerable<Task> tasks)
+        {
+            Tasks.AddRange(tasks);
+        }
+
+        public void Update(List<CreatureAI> creatures)
+        {
+            UpdateTimer.Update(DwarfTime.LastTime);
+
+            if (UpdateTimer.HasTriggered)
+            {
+                Tasks = AssignTasks(Tasks, creatures);
+                Tasks.RemoveAll(task => creatures.All(c => task.ShouldDelete(c.Creature)));
+            }
         }
 
         public int GetMaxColumnValue(int[,] matrix, int column, int numRows, int numColumns)
@@ -211,12 +238,12 @@ namespace DwarfCorp
             }
         }
 
-        public static void AssignTasks(List<Task> newGoals, List<CreatureAI> creatures)
+        public static List<Task> AssignTasks(List<Task> newGoals, List<CreatureAI> creatures)
         {
 
             if(newGoals.Count == 0 || creatures.Count == 0)
             {
-                return;
+                return newGoals;
             }
 
             List<Task> unassignedGoals = new List<Task>();
@@ -230,7 +257,7 @@ namespace DwarfCorp
                 {
                     int assignment = assignments[i];
 
-                    if (assignment >= unassignedGoals.Count || creatures[i].IsDead)
+                    if (assignment >= unassignedGoals.Count || creatures[i].IsDead || unassignedGoals[assignment].IsFeasible(creatures[i].Creature) != Task.Feasibility.Feasible)
                     {
                         continue;
                     }
@@ -244,6 +271,7 @@ namespace DwarfCorp
                     unassignedGoals.Remove(removal);
                 }
             }
+            return unassignedGoals;
         }
 
         public static int[] CalculateOptimalAssignment(List<Task> newGoals, List<CreatureAI> agents )

@@ -80,6 +80,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public WorldManager World { get; set; }
 
+        public TaskManager TaskManager { get; set; }
 
         private bool sliceDownheld = false;
         private bool sliceUpheld = false;
@@ -100,6 +101,7 @@ namespace DwarfCorp
 
         public GameMaster(Faction faction, DwarfGame game, ComponentManager components, ChunkManager chunks, OrbitCamera camera, GraphicsDevice graphics)
         {
+            TaskManager = new TaskManager();
             World = components.World;
             Faction = faction;
             Initialize(game, components, chunks, camera, graphics);
@@ -335,6 +337,7 @@ namespace DwarfCorp
 
         public void Update(DwarfGame game, DwarfTime time)
         {
+            TaskManager.Update(Faction.Minions);
             CurrentTool.Update(game, time);
 
             if (!World.Paused)

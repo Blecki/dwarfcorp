@@ -89,6 +89,10 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
+            if (!agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.Till) &&
+                !agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.Plant))
+                return Feasibility.Infeasible;
+
             bool farmValid =  FarmToWork != null && !FarmToWork.IsCanceled;
             if (!farmValid)
             {

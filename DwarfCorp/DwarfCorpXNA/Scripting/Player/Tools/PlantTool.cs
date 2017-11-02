@@ -164,7 +164,7 @@ namespace DwarfCorp
                     }
                 }
 
-                TaskManager.AssignTasksGreedy(goals.Cast<Task>().ToList(), minions, 1);
+                Player.TaskManager.AddTasks(goals);
 
                 if (Player.World.Paused)
                 {

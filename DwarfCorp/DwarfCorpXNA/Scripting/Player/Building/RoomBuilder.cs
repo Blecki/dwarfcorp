@@ -292,10 +292,13 @@ namespace DwarfCorp
                 {
                     obj.Manager.RootComponent.AddChild(obj);
                 }
+                World.Master.TaskManager.AddTask(new BuildRoomTask(order));
+                /*
                 TaskManager.AssignTasks(new List<Task>()
                 {
                     new BuildRoomTask(order)
                 }, Faction.FilterMinionsWithCapability(World.Master.SelectedMinions, GameMaster.ToolMode.BuildZone));
+                */
             }
         }
 

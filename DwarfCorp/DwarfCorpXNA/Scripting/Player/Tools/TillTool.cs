@@ -110,7 +110,8 @@ namespace DwarfCorp
                 }
             }
 
-            TaskManager.AssignTasksGreedy(goals.Cast<Task>().ToList(), minions, 1);
+            Player.TaskManager.AddTasks(goals);
+            //TaskManager.AssignTasksGreedy(goals.Cast<Task>().ToList(), minions, 1);
 
             foreach (CreatureAI creature in minions)
                 creature.Creature.NoiseMaker.MakeNoise("Ok", creature.Position);
