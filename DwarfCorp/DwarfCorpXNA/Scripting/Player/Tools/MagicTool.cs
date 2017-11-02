@@ -94,24 +94,21 @@ namespace DwarfCorp
 
         public void Research(SpellTree.Node spell)
         {
-            List<CreatureAI> wizards = Faction.FilterMinionsWithCapability(Player.SelectedMinions, GameMaster.ToolMode.Magic);
+            List<CreatureAI> wizards = Faction.FilterMinionsWithCapability(Player.Faction.Minions, GameMaster.ToolMode.Magic);
             var body = Player.Faction.FindNearestItemWithTags("Research", Vector3.Zero, false);
 
             if (body != null)
             { 
                 Player.World.ShowToolPopup(string.Format("{0} wizard{2} sent to research {1}", wizards.Count, spell.Spell.Name, wizards.Count > 1 ? "s" : ""));
 
-                foreach (CreatureAI wizard in wizards)
+                Player.TaskManager.AddTask(new ResearchSpellTask(spell.Spell.Name)
                 {
-                    wizard.AssignTask(new ResearchSpellTask(spell.Spell.Name)
-                    {
-                        Priority = Task.PriorityType.Low
-                    });
-                }
+                    Priority = Task.PriorityType.Low
+                });
             }
             else
             {
-                Player.World.ShowToolPopup(string.Format("Can't research {0}, no library has been built.",
+                Player.World.ShowToolPopup(string.Format("Can't research {0}, no magical research object has been built.",
                     spell.Spell.Name));
             }
         }

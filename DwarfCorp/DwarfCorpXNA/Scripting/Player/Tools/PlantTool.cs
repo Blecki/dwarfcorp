@@ -131,7 +131,7 @@ namespace DwarfCorp
             if (button == InputManager.MouseButton.Left)
             {
 
-                List<CreatureAI> minions = Player.World.Master.SelectedMinions.Where(minion => minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Plant)).ToList();
+                List<CreatureAI> minions = Player.World.Master.Faction.Minions.Where(minion => minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Plant)).ToList();
                 List<FarmTask> goals = new List<FarmTask>();
 
                 int currentAmount = Player.Faction.ListResources()

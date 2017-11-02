@@ -58,12 +58,18 @@ namespace DwarfCorp
 
         public void AddTask(Task task)
         {
-            Tasks.Add(task);
+            // TODO(mklingen): do not depend on task name
+            // as ID.
+            if (Tasks.Any(t => t.Name == task.Name))
+                Tasks.Add(task);
         }
 
         public void AddTasks(IEnumerable<Task> tasks)
         {
-            Tasks.AddRange(tasks);
+            foreach(var task in tasks)
+            {
+                AddTask(task);
+            }
         }
 
         public void Update(List<CreatureAI> creatures)

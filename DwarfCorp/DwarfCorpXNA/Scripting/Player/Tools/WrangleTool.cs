@@ -86,7 +86,7 @@ namespace DwarfCorp
                 }
             }
 
-            if (tasks.Count > 0 && Player.SelectedMinions.Count > 0)
+            if (tasks.Count > 0)
             {
                 //TaskManager.AssignTasks(tasks, Player.SelectedMinions);
                 Player.TaskManager.AddTasks(tasks);

@@ -1383,7 +1383,7 @@ namespace DwarfCorp.GameStates
                 KeepChildVisible = true,
                 OnConstruct = (sender) =>
                 {
-                    AddToolbarIcon(sender, () => Master.Faction.SelectedMinions.Any(minion =>
+                    AddToolbarIcon(sender, () => Master.Faction.Minions.Any(minion =>
                         minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.BuildZone)));
                     AddToolSelectIcon(GameMaster.ToolMode.BuildZone, sender);
                 },
@@ -1455,7 +1455,7 @@ namespace DwarfCorp.GameStates
                 OnConstruct = (sender) =>
                 {
                     AddToolbarIcon(sender, () =>
-                    Master.Faction.SelectedMinions.Any(minion =>
+                    Master.Faction.Minions.Any(minion =>
                         minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Cook)));
                     AddToolSelectIcon(GameMaster.ToolMode.Cook, sender);
                 },
@@ -1476,7 +1476,7 @@ namespace DwarfCorp.GameStates
                 OnConstruct = (sender) =>
                 {
                     AddToolbarIcon(sender, () =>
-                    Master.Faction.SelectedMinions.Any(minion =>
+                    Master.Faction.Minions.Any(minion =>
                         minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Dig)));
                     AddToolSelectIcon(GameMaster.ToolMode.Dig, sender);
                 },
@@ -1496,7 +1496,7 @@ namespace DwarfCorp.GameStates
                 OnConstruct = (sender) =>
                 {
                     AddToolbarIcon(sender, () =>
-                    Master.Faction.SelectedMinions.Any(minion =>
+                    Master.Faction.Minions.Any(minion =>
                         minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Gather)));
                     AddToolSelectIcon(GameMaster.ToolMode.Gather, sender);
                 },
@@ -1556,7 +1556,7 @@ namespace DwarfCorp.GameStates
                 OnConstruct = (sender) =>
                 {
                     AddToolbarIcon(sender, () =>
-                    Master.Faction.SelectedMinions.Any(minion =>
+                    Master.Faction.Minions.Any(minion =>
                         minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack)));
                     AddToolSelectIcon(GameMaster.ToolMode.Attack, sender);
                 },
@@ -1914,7 +1914,7 @@ namespace DwarfCorp.GameStates
                 OnConstruct = (sender) =>
                 {
                     AddToolbarIcon(sender, () =>
-                        Master.Faction.SelectedMinions.Any(minion =>
+                        Master.Faction.Minions.Any(minion =>
                             minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Magic)));
                     AddToolSelectIcon(GameMaster.ToolMode.Magic, sender);
                 },
