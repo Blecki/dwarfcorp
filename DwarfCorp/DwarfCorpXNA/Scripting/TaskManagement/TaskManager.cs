@@ -254,20 +254,22 @@ namespace DwarfCorp
 
             List<Task> unassignedGoals = new List<Task>();
             unassignedGoals.AddRange(newGoals);
-
-            while(unassignedGoals.Count > 0)
+            int numFeasible = 1;
+            while(unassignedGoals.Count > 0 && numFeasible > 0)
             {
+                numFeasible = 0;
                 int[] assignments = CalculateOptimalAssignment(unassignedGoals, creatures);
                 List<Task> removals = new List<Task>();
                 for(int i = 0; i < creatures.Count; i++)
                 {
                     int assignment = assignments[i];
 
-                    if (assignment >= unassignedGoals.Count || creatures[i].IsDead || unassignedGoals[assignment].IsFeasible(creatures[i].Creature) != Task.Feasibility.Feasible)
+                    if (assignment >= unassignedGoals.Count || creatures[i].IsDead 
+                        || unassignedGoals[assignment].IsFeasible(creatures[i].Creature) != Task.Feasibility.Feasible)
                     {
                         continue;
                     }
-
+                    numFeasible++;
                     creatures[i].AssignTask(unassignedGoals[assignment].Clone());
                     removals.Add(unassignedGoals[assignment]);
                 }
