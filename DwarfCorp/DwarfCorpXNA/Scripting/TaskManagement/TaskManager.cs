@@ -60,7 +60,7 @@ namespace DwarfCorp
         {
             // TODO(mklingen): do not depend on task name
             // as ID.
-            if (Tasks.Any(t => t.Name == task.Name))
+            if (!Tasks.Any(t => t.Name == task.Name))
                 Tasks.Add(task);
         }
 
