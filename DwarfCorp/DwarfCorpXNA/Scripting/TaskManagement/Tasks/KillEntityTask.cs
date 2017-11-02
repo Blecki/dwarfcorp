@@ -56,11 +56,12 @@ namespace DwarfCorp
 
         public KillEntityTask()
         {
-            
+            MaxAssignable = 3;
         }
 
         public KillEntityTask(Body entity, KillType type)
         {
+            MaxAssignable = 3;
             Mode = type;
             Name = "Kill Entity: " + entity.Name + " " + entity.GlobalID;
             EntityToKill = entity;

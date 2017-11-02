@@ -49,11 +49,13 @@ namespace DwarfCorp
 
         public KillVoxelTask()
         {
+            MaxAssignable = 3;
             Priority = PriorityType.Medium;
         }
 
         public KillVoxelTask(VoxelHandle vox)
         {
+            MaxAssignable = 3;
             Name = "Mine Block " + vox.Coordinate;
             VoxelToKill = vox;
             Priority = PriorityType.Low;

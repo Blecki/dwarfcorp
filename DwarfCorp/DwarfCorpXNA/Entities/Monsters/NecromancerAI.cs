@@ -141,7 +141,7 @@ namespace DwarfCorp
             List<CreatureAI> skeletonAis = Skeletons.Select(skeleton => skeleton.AI).ToList();
             if (attackTasks.Count > 0)
             {
-                TaskManager.AssignTasks(attackTasks, skeletonAis);
+                TaskManager.AssignTasksGreedy(attackTasks, skeletonAis);
             }
         }
 

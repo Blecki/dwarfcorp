@@ -56,6 +56,7 @@ namespace DwarfCorp
         }
 
         public PriorityType Priority { get; set; }
+        public int MaxAssignable = 1;
 
         public enum Feasibility
         {

@@ -78,7 +78,7 @@ namespace DwarfCorp
 
             if (UpdateTimer.HasTriggered)
             {
-                Tasks = AssignTasks(Tasks, creatures);
+                Tasks = AssignTasksGreedy(Tasks, creatures);
                 Tasks.RemoveAll(task => creatures.All(c => task.ShouldDelete(c.Creature)));
             }
         }
@@ -131,7 +131,7 @@ namespace DwarfCorp
             return maxValue;
         }
 
-        public static void AssignTasksGreedy(List<Task> newGoals, List<CreatureAI> creatures, int maxPerGoal)
+        public static List<Task> AssignTasksGreedy(List<Task> newGoals, List<CreatureAI> creatures)
         {
             // We are going to keep track of the unassigned goal count
             // to avoid having to parse the list at the end of the loop.
@@ -223,8 +223,10 @@ namespace DwarfCorp
                         KeyValuePair<int, float> taskCost = costs[i];
                         // We've swapped the checks here.  Tasks.Contains is far more expensive so being able to skip
                         // if it's going to fail the maxPerGoal check anyways is very good.
-                        if (counts[taskCost.Key] < maxPerGoal)//  && !creature.Tasks.Contains(newGoals[taskCost.Key]))
+                        if (counts[taskCost.Key] < newGoals[taskCost.Key].MaxAssignable && !creature.Tasks.Contains(newGoals[taskCost.Key]) && 
+                            newGoals[taskCost.Key].IsFeasible(creature.Creature) == Task.Feasibility.Feasible)
                         {
+                            
                             // We have to check to see if the task we are assigning is fully unassigned.  If so 
                             // we reduce the goalsUnassigned count.  If it's already assigned we skip it.
                             if (counts[taskCost.Key] == 0) goalsUnassigned--;
@@ -242,6 +244,16 @@ namespace DwarfCorp
                 }
 
             }
+
+            List<Task> unassigned = new List<Task>();
+            for (int i = 0; i < newGoals.Count; i++)
+            {
+                if (counts[i] == 0)
+                {
+                    unassigned.Add(newGoals[i]);
+                }
+            }
+            return unassigned;
         }
 
         public static List<Task> AssignTasks(List<Task> newGoals, List<CreatureAI> creatures)
