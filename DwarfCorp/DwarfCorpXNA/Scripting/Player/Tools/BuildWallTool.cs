@@ -62,11 +62,6 @@ namespace DwarfCorp
             {
                 case (InputManager.MouseButton.Left):
                     {
-                        if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.BuildZone).Count == 0)
-                        {
-                            Player.World.ShowToolPopup("None of the selected units can build walls.");
-                            return;
-                        }
 
                         List<Task> assignments = new List<Task>();
                         var validRefs = voxels.Where(r => !Faction.Designations.IsVoxelDesignation(r, DesignationType.Put)

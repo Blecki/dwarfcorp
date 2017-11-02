@@ -380,11 +380,6 @@ namespace DwarfCorp
             {
                 case (InputManager.MouseButton.Left):
                     {
-                        if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Craft).Count == 0)
-                        {
-                            World.ShowToolPopup("None of the selected units can craft items.");
-                            return;
-                        }
                         List<Task> assignments = new List<Task>();
                         foreach (var r in refs)
                         {
