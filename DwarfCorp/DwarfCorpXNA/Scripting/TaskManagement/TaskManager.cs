@@ -223,7 +223,8 @@ namespace DwarfCorp
                         KeyValuePair<int, float> taskCost = costs[i];
                         // We've swapped the checks here.  Tasks.Contains is far more expensive so being able to skip
                         // if it's going to fail the maxPerGoal check anyways is very good.
-                        if (counts[taskCost.Key] < newGoals[taskCost.Key].MaxAssignable && !creature.Tasks.Contains(newGoals[taskCost.Key]) && 
+                        if (counts[taskCost.Key] < newGoals[taskCost.Key].MaxAssignable && 
+                            !creature.Tasks.Contains(newGoals[taskCost.Key]) && 
                             newGoals[taskCost.Key].IsFeasible(creature.Creature) == Task.Feasibility.Feasible)
                         {
                             
