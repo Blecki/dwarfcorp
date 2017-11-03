@@ -732,7 +732,10 @@ namespace DwarfCorp
                         Faction.Designations.AddEntityDesignation(harvestablePlot.Plant, DesignationType.Chop);
                         return task;
                     }
+                }
 
+                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Plant) && MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction)
+                {
                     var plantablePlot = Faction.Designations.EnumerateDesignations(DesignationType._InactiveFarm)
                         .Where(d =>
                         {
@@ -766,7 +769,7 @@ namespace DwarfCorp
                             plantablePlot.Farmer = this;
                             return task;
                         }
-                    }                 
+                    }
                 }
 
                 // Find a room to train in, if applicable.
