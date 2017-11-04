@@ -35,23 +35,6 @@ namespace DwarfCorp
             {2,1,0,3,0,2 }, // South West
         };
 
-        private class TileUV
-        {
-            public Vector2 UV;
-            public Vector4 Bounds;
-
-            public TileUV(int x, int y, int textureWidth, int textureHeight)
-            {
-                UV = new Microsoft.Xna.Framework.Vector2((float)x / (float)textureWidth,
-                    (float)y / (float)textureHeight);
-                Bounds = new Microsoft.Xna.Framework.Vector4((float)x / (float)textureWidth,
-                    (float)y / (float)textureHeight, (float)(x + 1) / (float)textureWidth,
-                    (float)(y + 1) / (float)textureHeight);
-            }
-        }
-
-        private static TileUV[] GrassTransitions;
-
         protected void InitializeStatics()
         {
             if (FaceDeltas == null)
@@ -64,15 +47,6 @@ namespace DwarfCorp
                 FaceDeltas[(int)BoxFace.Top] = new Vector3(0, 1, 0);
                 FaceDeltas[(int)BoxFace.Bottom] = new Vector3(0, -1, 0);
             }
-
-            GrassTransitions = new TileUV[8];
-            InitializeTransitionUVs(GrassTransitions, 2);
-        }
-
-        private static void InitializeTransitionUVs(TileUV[] Into, int Row)
-        {
-            for (var i = 0; i < 8; ++i)
-                Into[i] = new TileUV(i, Row, 16, 16);
         }
 
         public VoxelListPrimitive() :
@@ -213,7 +187,7 @@ namespace DwarfCorp
                 {
                     for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
                     {
-                        BuildVoxelGeometry(ref sliceGeometry.Vertices, ref sliceGeometry.Indexes, ref sliceGeometry.VertexCount, ref sliceGeometry.IndexCount,
+                        BuildVoxelGeometry(sliceGeometry,
                             x, y, z, chunk, bedrockModel, ambientValues, lightCache, exploredCache,
                             grassId);
                     }
@@ -256,10 +230,7 @@ namespace DwarfCorp
         }
 
         private static void BuildVoxelGeometry(
-            ref ExtendedVertex[] Verticies,
-            ref ushort[] Indicies,
-            ref int VertexCount,
-            ref int IndexCount,
+            RawPrimitive Into,
             int X,
             int Y,
             int Z,
@@ -283,25 +254,21 @@ namespace DwarfCorp
             var biomeName = Overworld.Map[(int)(v.Coordinate.X / Chunk.Manager.World.WorldScale), (int)(v.Coordinate.Z / Chunk.Manager.World.WorldScale)].Biome;
             var biome = BiomeLibrary.Biomes[biomeName];
 
-            var grassTint = biome.GrassTint;
 
             var uvs = primitive.UVs;
 
             if (v.Type.HasTransitionTextures && v.IsExplored)
                 uvs = ComputeTransitionTexture(new VoxelHandle(v.Chunk.Manager.ChunkData, v.Coordinate));
 
-            BuildVoxelTopFaceGeometry(ref Verticies, ref Indicies, ref VertexCount, ref IndexCount,
-                Chunk, AmbientScratchSpace, LightCache, ExploredCache, primitive, v, tint, grassTint, uvs, 0, GrassTypeID);
+            BuildVoxelTopFaceGeometry(Into,
+                Chunk, AmbientScratchSpace, LightCache, ExploredCache, primitive, v, tint, biome, uvs, 0, GrassTypeID);
             for (int i = 1; i < 6; i++)
-                BuildVoxelFaceGeometry(ref Verticies, ref Indicies, ref VertexCount, ref IndexCount, Chunk,
+                BuildVoxelFaceGeometry(Into, Chunk,
                     AmbientScratchSpace, LightCache, ExploredCache, primitive, v, tint, uvs, i);
         }
 
         private static void BuildVoxelFaceGeometry(
-            ref ExtendedVertex[] Verticies,
-            ref ushort[] Indicies,
-            ref int VertexCount,
-            ref int IndexCount,
+            RawPrimitive Into,
             VoxelChunk Chunk,
             int[] AmbientScratchSpace,
             Dictionary<GlobalVoxelCoordinate, VertexColorInfo> LightCache,
@@ -312,72 +279,63 @@ namespace DwarfCorp
             BoxPrimitive.BoxTextureCoords UVs,
             int i)
         {
-                var face = (BoxFace)i;
-                var delta = FaceDeltas[i];
+            var face = (BoxFace)i;
+            var delta = FaceDeltas[i];
 
             var faceVoxel = new VoxelHandle(Chunk.Manager.ChunkData,
                 V.Coordinate + GlobalVoxelOffset.FromVector3(delta));
 
-                if (!IsFaceVisible(V, faceVoxel, face))
-                    return;
+            if (!IsFaceVisible(V, faceVoxel, face))
+                return;
 
-                var faceDescriptor = Primitive.GetFace(face);
-                var indexOffset = VertexCount;
+            var faceDescriptor = Primitive.GetFace(face);
+            var indexOffset = Into.VertexCount;
 
-                for (int faceVertex = 0; faceVertex < faceDescriptor.VertexCount; faceVertex++)
+            for (int faceVertex = 0; faceVertex < faceDescriptor.VertexCount; faceVertex++)
+            {
+                var vertex = Primitive.Vertices[faceDescriptor.VertexOffset + faceVertex];
+                var voxelVertex = Primitive.Deltas[faceDescriptor.VertexOffset + faceVertex];
+
+                var cacheKey = GetCacheKey(V, voxelVertex);
+
+                VertexColorInfo vertexColor;
+                if (!LightCache.TryGetValue(cacheKey, out vertexColor))
                 {
-                    var vertex = Primitive.Vertices[faceDescriptor.VertexOffset + faceVertex];
-                    var voxelVertex = Primitive.Deltas[faceDescriptor.VertexOffset + faceVertex];
+                    vertexColor = CalculateVertexLight(V, voxelVertex, Chunk.Manager);
+                    LightCache.Add(cacheKey, vertexColor);
+                }
 
-                    var cacheKey = GetCacheKey(V, voxelVertex);
+                AmbientScratchSpace[faceVertex] = vertexColor.AmbientColor;
 
-                    VertexColorInfo vertexColor;
-                    if (!LightCache.TryGetValue(cacheKey, out vertexColor))
-                    {
-                        vertexColor = CalculateVertexLight(V, voxelVertex, Chunk.Manager);
-                        LightCache.Add(cacheKey, vertexColor);
-                    }
-                    
-                    AmbientScratchSpace[faceVertex] = vertexColor.AmbientColor;
+                var rampOffset = Vector3.Zero;
+                if (V.Type.CanRamp && ShouldRamp(voxelVertex, V.RampType))
+                    rampOffset = new Vector3(0, -V.Type.RampSize, 0);
 
-                    var rampOffset = Vector3.Zero;
-                    if (V.Type.CanRamp && ShouldRamp(voxelVertex, V.RampType))
-                        rampOffset = new Vector3(0, -V.Type.RampSize, 0);
-
-                    EnsureSpace(ref Verticies, VertexCount);
 
                 var worldPosition = V.WorldPosition + vertex.Position + rampOffset;
 
-                    Verticies[VertexCount] = new ExtendedVertex(
-                        worldPosition + VertexNoise.GetNoiseVectorFromRepeatingTexture(worldPosition),
-                        vertexColor.AsColor(),
-                        Tint,
-                        UVs.Uvs[faceDescriptor.VertexOffset + faceVertex],
-                        UVs.Bounds[faceDescriptor.IndexOffset / 6]);
+                Into.AddVertex(new ExtendedVertex(
+                    worldPosition + VertexNoise.GetNoiseVectorFromRepeatingTexture(worldPosition),
+                    vertexColor.AsColor(),
+                    Tint,
+                    UVs.Uvs[faceDescriptor.VertexOffset + faceVertex],
+                    UVs.Bounds[faceDescriptor.IndexOffset / 6]));
+            }
 
-                    VertexCount++;
-                }
+            bool flippedQuad = AmbientScratchSpace[0] + AmbientScratchSpace[2] >
+                              AmbientScratchSpace[1] + AmbientScratchSpace[3];
 
-                bool flippedQuad = AmbientScratchSpace[0] + AmbientScratchSpace[2] >
-                                  AmbientScratchSpace[1] + AmbientScratchSpace[3];
-
-                for (int idx = faceDescriptor.IndexOffset; idx < faceDescriptor.IndexCount +
-                    faceDescriptor.IndexOffset; idx++)
-                {
-                    EnsureSpace(ref Indicies, IndexCount);
-
-                    ushort offset = flippedQuad ? Primitive.FlippedIndexes[idx] : Primitive.Indexes[idx];
-                    ushort offset0 = flippedQuad ? Primitive.FlippedIndexes[faceDescriptor.IndexOffset] : Primitive.Indexes[faceDescriptor.IndexOffset];
-                    Indicies[IndexCount] = (ushort)(indexOffset + offset - offset0);
-                    IndexCount++;
-                }
+            for (int idx = faceDescriptor.IndexOffset; idx < faceDescriptor.IndexCount +
+                faceDescriptor.IndexOffset; idx++)
+            {
+                ushort offset = flippedQuad ? Primitive.FlippedIndexes[idx] : Primitive.Indexes[idx];
+                ushort offset0 = flippedQuad ? Primitive.FlippedIndexes[faceDescriptor.IndexOffset] : Primitive.Indexes[faceDescriptor.IndexOffset];
+                Into.AddIndex((ushort)(indexOffset + offset - offset0));
+            }
         }
 
         private static void BuildVoxelTopFaceGeometry(
-    ref ExtendedVertex[] Verticies,
-    ref ushort[] Indicies,
-    ref int VertexCount,
-    ref int IndexCount,
+            RawPrimitive Into,
     VoxelChunk Chunk,
     int[] AmbientScratchSpace,
     Dictionary<GlobalVoxelCoordinate, VertexColorInfo> LightCache,
@@ -385,7 +343,7 @@ namespace DwarfCorp
     BoxPrimitive Primitive,
     VoxelHandle V,
     Color Tint,
-    Color GrassTint,
+    BiomeData Biome,
     BoxPrimitive.BoxTextureCoords UVs,
     int i,
     int GrassTypeID)
@@ -400,9 +358,9 @@ namespace DwarfCorp
                 return;
 
             var faceDescriptor = Primitive.GetFace(face);
-            var indexOffset = VertexCount;
             int exploredVerts = 0;
-            var vertexColors = new Color[4];
+            var vertexColors = new VertexColorInfo[4];
+            var vertexTint = new Color[4];
 
             // Find all verticies to use for geometry later, and for the fringe
             var vertexPositions = new Vector3[4];
@@ -448,38 +406,46 @@ namespace DwarfCorp
             }
 
             for (int faceVertex = 0; faceVertex < faceDescriptor.VertexCount; ++faceVertex)
+            {
+                var voxelVertex = Primitive.Deltas[faceDescriptor.VertexOffset + faceVertex];
+                var cacheKey = GetCacheKey(V, voxelVertex);
+
+                VertexColorInfo vertexColor;
+                if (!LightCache.TryGetValue(cacheKey, out vertexColor))
                 {
-                    var voxelVertex = Primitive.Deltas[faceDescriptor.VertexOffset + faceVertex];
-                    var cacheKey = GetCacheKey(V, voxelVertex);
+                    vertexColor = CalculateVertexLight(V, voxelVertex, Chunk.Manager);
+                    LightCache.Add(cacheKey, vertexColor);
+                }
 
-                    VertexColorInfo vertexColor;
-                    if (!LightCache.TryGetValue(cacheKey, out vertexColor))
-                    {
-                        vertexColor = CalculateVertexLight(V, voxelVertex, Chunk.Manager);
-                        LightCache.Add(cacheKey, vertexColor);
-                    }
+                vertexColors[faceVertex] = vertexColor;
 
-                    AmbientScratchSpace[faceVertex] = vertexColor.AmbientColor;
-                    vertexColors[faceVertex] = vertexColor.AsColor();
+                vertexTint[faceVertex] = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+                if (exploredVerts != 4)
+                {
+                    bool anyNeighborExplored = true;
+                    if (!ExploredCache.TryGetValue(cacheKey, out anyNeighborExplored))
+                        throw new InvalidProgramException();
+
+                    if (!anyNeighborExplored) vertexTint[faceVertex] = new Color(0.0f, 0.0f, 0.0f, 1.0f);
+                }
             }
 
             if (exploredVerts != 0)
             {
                 var baseUVs = UVs.Uvs[11]; // EW
 
-                // Todo: Apply seam padding of 0.001f
-                var baseUVBounds = new Vector4(baseUVs.X + 0.002f, baseUVs.Y + 0.002f, baseUVs.X + (1.0f / 16.0f) - 0.002f, baseUVs.Y + (1.0f / 16.0f) - 0.002f);
+                var baseUVBounds = new Vector4(baseUVs.X + 0.001f, baseUVs.Y + 0.001f, baseUVs.X + (1.0f / 16.0f) - 0.001f, baseUVs.Y + (1.0f / 16.0f) - 0.001f);
 
-                AddTopFaceGeometry(ref Verticies, ref Indicies, ref VertexCount, ref IndexCount,
+                AddTopFaceGeometry(Into,
                     Chunk, AmbientScratchSpace, LightCache, ExploredCache, Primitive, V,
-                    V.TypeID == GrassTypeID ? GrassTint : Tint,
-                    GrassTypeID, faceDescriptor, exploredVerts,
+                    V.Type.UseBiomeGrassTint ? Biome.GrassTint : V.Type.Tint,
+                    faceDescriptor, exploredVerts,
                     vertexPositions,
                     vertexColors,
+                    vertexTint,
                     baseUVs, baseUVBounds);
 
-                // Todo: Make the existence of fringe a flag on the voxel type
-                if (V.TypeID == GrassTypeID)
+                if (V.Type.HasFringeTransitions)
                 {
                     for (var s = 0; s < 4; ++s)
                     {
@@ -500,7 +466,7 @@ namespace DwarfCorp
                                 newPositions[FringeIndicies[s, 2]] = vertexPositions[FringeIndicies[s, 5]] + VoxelHelpers.ManhattanNeighbors2D[s].AsVector3();
                                 newPositions[FringeIndicies[s, 3]] = vertexPositions[FringeIndicies[s, 5]];
 
-                                var newColors = new Color[4];
+                                var newColors = new VertexColorInfo[4];
                                 newColors[FringeIndicies[s, 0]] = vertexColors[FringeIndicies[s,4]];
                                 newColors[FringeIndicies[s, 1]] = vertexColors[FringeIndicies[s, 4]];
                                 newColors[FringeIndicies[s, 2]] = vertexColors[FringeIndicies[s, 5]];
@@ -515,14 +481,21 @@ namespace DwarfCorp
                                 newPositions[FringeIndicies[s, 1]] += slopeTweak;
                                 newPositions[FringeIndicies[s, 2]] += slopeTweak;
 
-                                AddTopFaceGeometry(ref Verticies, ref Indicies, ref VertexCount, ref IndexCount,
+                                var newTints = new Color[4];
+                                newTints[FringeIndicies[s, 0]] = vertexTint[FringeIndicies[s, 4]];
+                                newTints[FringeIndicies[s, 1]] = vertexTint[FringeIndicies[s, 4]];
+                                newTints[FringeIndicies[s, 2]] = vertexTint[FringeIndicies[s, 5]];
+                                newTints[FringeIndicies[s, 3]] = vertexTint[FringeIndicies[s, 5]];
+
+                                AddTopFaceGeometry(Into,
                                     Chunk, AmbientScratchSpace, LightCache, ExploredCache, Primitive, V,
-                                    GrassTint,
-                                    GrassTypeID, faceDescriptor, exploredVerts,
+                                    Biome.GrassTint,
+                                    faceDescriptor, exploredVerts,
                                     newPositions,
                                     newColors,
-                                    GrassTransitions[s].UV,
-                                    GrassTransitions[s].Bounds);
+                                    newTints,
+                                    V.Type.FringeTransitionUVs[s].UV,
+                                    V.Type.FringeTransitionUVs[s].Bounds);
                             }
                             else
                             {
@@ -538,20 +511,27 @@ namespace DwarfCorp
                                     + (VoxelHelpers.ManhattanNeighbors2D[s].AsVector3() * -0.1f);
                                 newPositions[FringeIndicies[s, 3]] = vertexPositions[FringeIndicies[s, 5]];
 
-                                var newColors = new Color[4];
+                                var newColors = new VertexColorInfo[4];
                                 newColors[FringeIndicies[s, 0]] = vertexColors[FringeIndicies[s, 4]];
                                 newColors[FringeIndicies[s, 1]] = vertexColors[FringeIndicies[s, 4]];
                                 newColors[FringeIndicies[s, 2]] = vertexColors[FringeIndicies[s, 5]];
                                 newColors[FringeIndicies[s, 3]] = vertexColors[FringeIndicies[s, 5]];
 
-                                AddTopFaceGeometry(ref Verticies, ref Indicies, ref VertexCount, ref IndexCount,
+                                var newTints = new Color[4];
+                                newTints[FringeIndicies[s, 0]] = vertexTint[FringeIndicies[s, 4]];
+                                newTints[FringeIndicies[s, 1]] = vertexTint[FringeIndicies[s, 4]];
+                                newTints[FringeIndicies[s, 2]] = vertexTint[FringeIndicies[s, 5]];
+                                newTints[FringeIndicies[s, 3]] = vertexTint[FringeIndicies[s, 5]];
+
+                                AddTopFaceGeometry(Into,
                                     Chunk, AmbientScratchSpace, LightCache, ExploredCache, Primitive, V,
-                                    GrassTint,
-                                    GrassTypeID, faceDescriptor, exploredVerts,
+                                    Biome.GrassTint,
+                                    faceDescriptor, exploredVerts,
                                     newPositions,
                                     newColors,
-                                    GrassTransitions[s].UV,
-                                    GrassTransitions[s].Bounds);
+                                    newTints,
+                                    V.Type.FringeTransitionUVs[s].UV,
+                                    V.Type.FringeTransitionUVs[s].Bounds);
                             }
                         }
                     }
@@ -592,61 +572,58 @@ namespace DwarfCorp
                             newPositions[FringeIndicies[4 + s, 2]] += slopeTweak;
                             newPositions[FringeIndicies[4 + s, 3]] += slopeTweak;
 
-                            var newColors = new Color[4];
+                            var newColors = new VertexColorInfo[4];
                             newColors[FringeIndicies[4 + s, 0]] = vertexColors[FringeIndicies[4 + s, 4]];
                             newColors[FringeIndicies[4 + s, 1]] = vertexColors[FringeIndicies[4 + s, 4]];
                             newColors[FringeIndicies[4 + s, 2]] = vertexColors[FringeIndicies[4 + s, 4]];
                             newColors[FringeIndicies[4 + s, 3]] = vertexColors[FringeIndicies[4 + s, 4]];
 
-                            AddTopFaceGeometry(ref Verticies, ref Indicies, ref VertexCount, ref IndexCount,
+                            var newTints = new Color[4];
+                            newTints[FringeIndicies[4 + s, 0]] = vertexTint[FringeIndicies[4 + 3, 4]];
+                            newTints[FringeIndicies[4 + s, 1]] = vertexTint[FringeIndicies[4 + 3, 4]];
+                            newTints[FringeIndicies[4 + s, 2]] = vertexTint[FringeIndicies[4 + 3, 4]];
+                            newTints[FringeIndicies[4 + s, 3]] = vertexTint[FringeIndicies[4 + 3, 4]];
+
+                            AddTopFaceGeometry(Into,
                                 Chunk, AmbientScratchSpace, LightCache, ExploredCache, Primitive, V,
-                                GrassTint,
-                                GrassTypeID, faceDescriptor, exploredVerts,
+                                Biome.GrassTint,
+                                faceDescriptor, exploredVerts,
                                 newPositions,
                                 newColors,
-                                GrassTransitions[4 + s].UV,
-                                GrassTransitions[4 + s].Bounds);
+                                newTints,
+                                V.Type.FringeTransitionUVs[4 + s].UV,
+                                V.Type.FringeTransitionUVs[4 + s].Bounds);
                         }
                     }
                 }
             }
             else
             {
-                indexOffset = VertexCount;
+                var indexOffset = Into.VertexCount;
 
                 for (int faceVertex = 0; faceVertex < faceDescriptor.VertexCount; faceVertex++)
-                {   
-                    EnsureSpace(ref Verticies, VertexCount);
-                    
-                    Verticies[VertexCount] = new ExtendedVertex(
+                {
+
+                    Into.AddVertex(new ExtendedVertex(
                         vertexPositions[faceVertex] + VertexNoise.GetNoiseVectorFromRepeatingTexture(vertexPositions[faceVertex]),
                         new Color(0, 0, 0, 255),
                         new Color(0, 0, 0, 255),
                         new Vector2(12.5f / 16.0f, 0.5f / 16.0f),
-                        // xy - min, zw - max
-                        new Vector4(12.0f / 16.0f, 0.0f, 13.0f / 16.0f, 1.0f / 16.0f));
-
-                    VertexCount++;
+                        new Vector4(12.0f / 16.0f, 0.0f, 13.0f / 16.0f, 1.0f / 16.0f)));
                 }
 
                 for (int idx = faceDescriptor.IndexOffset; idx < faceDescriptor.IndexCount +
                     faceDescriptor.IndexOffset; idx++)
                 {
-                    EnsureSpace(ref Indicies, IndexCount);
-
                     ushort offset = Primitive.Indexes[idx];
                     ushort offset0 = Primitive.Indexes[faceDescriptor.IndexOffset];
-                    Indicies[IndexCount] = (ushort)(indexOffset + offset - offset0);
-                    IndexCount++;
+                    Into.AddIndex((ushort)(indexOffset + offset - offset0));
                 }
             }
         }
 
         private static void AddTopFaceGeometry(
-            ref ExtendedVertex[] Verticies,
-            ref ushort[] Indicies,
-            ref int VertexCount,
-            ref int IndexCount,
+            RawPrimitive Into,
             VoxelChunk Chunk,
             int[] AmbientScratchSpace,
             Dictionary<GlobalVoxelCoordinate, VertexColorInfo> LightCache,
@@ -654,53 +631,28 @@ namespace DwarfCorp
             BoxPrimitive Primitive,
             VoxelHandle V,
             Color Tint,
-            int GrassTypeID,
             BoxPrimitive.FaceDescriptor faceDescriptor,
             int exploredVerts,
             Vector3[] VertexPositions,
-            Color[] VertexColors,
+            VertexColorInfo[] VertexColors,
+            Color[] VertexTints,
             Vector2 UV,
             Vector4 UVBounds)
         {
-            var indexOffset = VertexCount;
+            var indexOffset = Into.VertexCount;
 
             for (int faceVertex = 0; faceVertex < faceDescriptor.VertexCount; faceVertex++)
             {
                 var vertex = Primitive.Vertices[faceDescriptor.VertexOffset + faceVertex];
-                var voxelVertex = Primitive.Deltas[faceDescriptor.VertexOffset + faceVertex];
+               
+                AmbientScratchSpace[faceVertex] = VertexColors[faceVertex].AmbientColor;
 
-                var cacheKey = GetCacheKey(V, voxelVertex);
-                var vertexTint = Tint;
-
-                if (exploredVerts != 4)
-                {
-                    bool anyNeighborExplored = true;
-
-                    if (!ExploredCache.TryGetValue(cacheKey, out anyNeighborExplored))
-                        throw new InvalidProgramException();
-
-                    if (!anyNeighborExplored) vertexTint = new Color(0.0f, 0.0f, 0.0f, 1.0f);
-                }
-
-                VertexColorInfo vertexColor;
-                if (!LightCache.TryGetValue(cacheKey, out vertexColor))
-                {
-                    vertexColor = CalculateVertexLight(V, voxelVertex, Chunk.Manager);
-                    LightCache.Add(cacheKey, vertexColor);
-                }
-
-                AmbientScratchSpace[faceVertex] = vertexColor.AmbientColor;
-
-                EnsureSpace(ref Verticies, VertexCount);
-
-                Verticies[VertexCount] = new ExtendedVertex(
-                    VertexPositions[faceVertex] + VertexNoise.GetNoiseVectorFromRepeatingTexture(VertexPositions[faceVertex]), 
-                    VertexColors[faceVertex],
-                    vertexTint,
+                Into.AddVertex(new ExtendedVertex(
+                    VertexPositions[faceVertex] + VertexNoise.GetNoiseVectorFromRepeatingTexture(VertexPositions[faceVertex]),
+                    VertexColors[faceVertex].AsColor(),
+                    new Color(Tint.ToVector3() * VertexTints[faceVertex].ToVector3()),
                     UV + new Vector2(vertex.Position.X / 16.0f, vertex.Position.Z / 16.0f),
-                    UVBounds);
-
-                VertexCount++;
+                    UVBounds));
             }
 
             bool flippedQuad = AmbientScratchSpace[0] + AmbientScratchSpace[2] >
@@ -709,12 +661,9 @@ namespace DwarfCorp
             for (int idx = faceDescriptor.IndexOffset; idx < faceDescriptor.IndexCount +
                 faceDescriptor.IndexOffset; idx++)
             {
-                EnsureSpace(ref Indicies, IndexCount);
-
                 ushort offset = flippedQuad ? Primitive.FlippedIndexes[idx] : Primitive.Indexes[idx];
                 ushort offset0 = flippedQuad ? Primitive.FlippedIndexes[faceDescriptor.IndexOffset] : Primitive.Indexes[faceDescriptor.IndexOffset];
-                Indicies[IndexCount] = (ushort)(indexOffset + offset - offset0);
-                IndexCount++;
+                Into.AddIndex((ushort)(indexOffset + offset - offset0));
             }
         }
 
@@ -834,16 +783,6 @@ namespace DwarfCorp
             }
         }
 
-        private static void EnsureSpace<T>(ref T[] In, int Size)
-        {
-            if (Size >= In.Length)
-            {
-                var r = new T[In.Length * 2];
-                In.CopyTo(r, 0);
-                In = r;
-            }
-        }
-
         private struct VertexColorInfo
         {
             public int SunColor;
@@ -944,7 +883,7 @@ namespace DwarfCorp
         }
 
         // Todo: Reorder 2d neighbors to make this unecessary.
-        private static int[] TransitionMultipliers = new int[] { 2, 8, 4, 1 };
+        private static int[] TransitionMultipliers = new int[] { 1, 2, 4, 8 };
 
         private static int ComputeTransitionValueOnPlane(IEnumerable<VoxelHandle> Neighbors, VoxelType Type)
         {

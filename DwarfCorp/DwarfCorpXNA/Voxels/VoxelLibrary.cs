@@ -70,6 +70,11 @@ namespace DwarfCorp
         {
         }
 
+        private static VoxelType.FringeTileUV[] CreateFringeUVs(Point[] Tiles)
+        {
+            return Tiles.Select(t => new VoxelType.FringeTileUV(t.X, t.Y, 16, 16)).ToArray();
+        }
+
         public static void CreateTransitionUVs(GraphicsDevice graphics, Texture2D textureMap, int width, int height, Point top, Point sides, Point bottom, Dictionary<BoxTransition, BoxPrimitive.BoxTextureCoords> transitionTextures, VoxelType.TransitionType transitionType = VoxelType.TransitionType.Horizontal)
         {
             for(int i = 0; i < 16; i++)
@@ -308,11 +313,22 @@ namespace DwarfCorp
                 IsSoil = true,
                 IsSurface = true,
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_dirt_destroy),
-                HitSound = dirtPicks
+                HitSound = dirtPicks,
+                UseBiomeGrassTint = true,
+                HasFringeTransitions = true,
+                FringeTransitionUVs = CreateFringeUVs(new Point[]
+                {
+                    new Point(0,2),
+                    new Point(1,2),
+                    new Point(2,2),
+                    new Point(3,2),
+                    new Point(4,2),
+                    new Point(5,2),
+                    new Point(6,2),
+                    new Point(7,2)
+                })
             };
-
-            //CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 3), new Point(2, 0), new Point(2, 0), grassType.TransitionTextures);
-                        
+                       
             VoxelType snowType = new VoxelType
             {
                 Name = "Snow",
