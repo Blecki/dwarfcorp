@@ -462,8 +462,11 @@ namespace DwarfCorp
                 if(IsBuildDesignation(v))
                 {
                     BuildVoxelOrder vox = GetBuildDesignation(v);
-                    vox.Order.Destroy();
-                    BuildDesignations.Remove(vox.Order);
+                    if (vox != null && vox.Order != null)
+                    {
+                        vox.Order.Destroy();
+                        BuildDesignations.Remove(vox.Order);
+                    }
                 }
                 else if(IsInRoom(v))
                 {
