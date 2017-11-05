@@ -248,8 +248,6 @@ namespace DwarfCorp.GameStates
                 return;
             }
 
-            SoundManager.PlayAmbience("grassland_ambience_day");
-            SoundManager.PlayAmbience("grassland_ambience_night");
             // Needs to run before old input so tools work
             // Update new input system.
             DwarfGame.GumInput.FireActions(GuiRoot, (@event, args) =>

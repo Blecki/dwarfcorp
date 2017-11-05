@@ -3,6 +3,8 @@
     "Biome": 1,
     "Name": "Grassland",
     "Icon":  13,
+	"DayAmbience" : "grassland_ambience_day",
+	"NightAmbience" : "grassland_ambience_night",
     "Vegetation": [
       {
         "Name": "Wheat",
@@ -96,6 +98,8 @@
     "Biome": 2,
     "Name": "Forest (Boreal)",
     "Icon":  1,
+	"DayAmbience" : "sfx_amb_forest_day",
+	"NightAmbience" : "sfx_amb_forest_night",
     "Vegetation": [
       {
         "Name": "Pine Tree",
@@ -186,6 +190,8 @@
     "Biome": 3,
     "Name": "Forest (Deciduous)",
     "Icon": 8,
+	"DayAmbience" : "sfx_amb_forest_day",
+	"NightAmbience" : "sfx_amb_forest_night",
     "Vegetation": [
       {
         "Name": "Pine Tree",
@@ -290,6 +296,7 @@
     "Biome": 5,
     "Name": "Taiga",
     "Icon":  10,
+	"DayAmbience" : "sfx_amb_tundra",
     "Vegetation": [
       {
         "Name": "Snow Pine Tree",
@@ -347,6 +354,7 @@
     "Biome": 4,
     "Name": "Tundra",
     "Icon":  13,
+	"DayAmbience" : "sfx_amb_tundra",
     "Vegetation": [],
     "Motes": [
     ],
@@ -378,6 +386,7 @@
     "Biome": 0,
     "Name": "Desert",
     "Icon":  12,
+	"DayAmbience" : "sfx_amb_desert",
     "Vegetation": [
       {
         "Name": "Wheat",
@@ -467,6 +476,8 @@
     "Biome": 6,
     "Name": "Jungle",
     "Icon":  9,
+	"DayAmbience" : "sfx_amb_forest_day",
+	"NightAmbience" : "sfx_amb_forest_night",
     "Vegetation": [
       {
         "Name": "Mushroom",
@@ -550,6 +561,8 @@
     "Name": "Waste",
     "Icon": 11,
     "Vegetation": [],
+	"DayAmbience" : "sfx_amb_forest_day",
+	"NightAmbience" : "sfx_amb_forest_night",
     "Motes": [
       {
         "Name": "deadbush",
@@ -591,6 +604,7 @@
     "Biome": 8,
     "Name": "Cave",
     "Icon":  11,
+	"DayAmbience" : "sfx_amb_cave",
     "Underground": true,
     "Vegetation": [
       {
@@ -657,6 +671,8 @@
     "Biome": 9,
     "Name": "Haunted Forest",
     "Icon": 11,
+	"DayAmbience" : "sfx_amb_forest_day",
+	"NightAmbience" : "sfx_amb_forest_night",
     "Vegetation": [
 	{
         "Name": "Pumpkin",

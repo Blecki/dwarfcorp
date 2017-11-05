@@ -16,8 +16,8 @@ Global Settings
     Header File = Sounds.h;
     Exclude Category Names = 0;
     Exclude Variable Names = 0;
-    Last Modified Low = 2952009060;
-    Last Modified High = 30618638;
+    Last Modified Low = 1177711341;
+    Last Modified High = 30627443;
 
     Category
     {
@@ -264,7 +264,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = Sound::aee33dcc-de30-44c4-bd03-e8ee29a9f3f0;
+            Name = Sound::05b194d0-5865-498c-a08e-c473c0692f73;
             Property = 0;
             Sound = 1;
             Line Color = 4281237832;
@@ -325,7 +325,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = Sound::da3bbc82-f2f4-4e16-a495-f3e5c72e8d3c;
+            Name = Sound::7ffa828d-488b-4810-9346-f280ec03eec7;
             Property = 0;
             Sound = 1;
             Line Color = 4281571480;
@@ -372,7 +372,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::b644ed05-4111-4623-bccc-bb3661e0acba;
+            Name = 1::a8e8167a-ae78-4f1c-9f98-dfdd8199bdd7;
             Property = 0;
             Sound = 0;
             Line Color = 4290610889;
@@ -405,7 +405,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::c51df9a5-4a4b-48aa-84ee-6edaf3f75191;
+            Name = 1::ee507d2c-2a24-485f-9e73-5c3dbbe29299;
             Property = 0;
             Sound = 0;
             Line Color = 4289091284;
@@ -438,7 +438,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::c1705c90-2d6b-44c1-966a-2aa956d9cbe4;
+            Name = 1::568bead3-a957-46a0-b7df-702dfa14126d;
             Property = 0;
             Sound = 0;
             Line Color = 4286991177;
@@ -471,7 +471,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::9f969e77-421d-431a-8177-9cc742c127a9;
+            Name = 1::f019d6aa-b670-4cae-b8b1-b37632426e89;
             Property = 0;
             Sound = 0;
             Line Color = 4279643065;
@@ -494,6 +494,72 @@ Global Settings
                 X = 1071.000000;
                 Y = -35.294117;
                 Curve = 2;
+            }
+        }
+    }
+
+    RPC
+    {
+        Name = 1sFadeIn;
+
+        RPC Curve
+        {
+            Name = 1::fd146ca5-1236-457e-9769-de2a322ae27d;
+            Property = 0;
+            Sound = 0;
+            Line Color = 4279769220;
+            Viewable = 1;
+
+            Variable Entry
+            {
+                Name = AttackTime;
+            }
+
+            RPC Point
+            {
+                X = 0.000000;
+                Y = -9600.000000;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 997.000000;
+                Y = 0.000000;
+                Curve = 0;
+            }
+        }
+    }
+
+    RPC
+    {
+        Name = 4sFadeout;
+
+        RPC Curve
+        {
+            Name = 1::2e219279-c4db-4596-9eea-15a506bde902;
+            Property = 0;
+            Sound = 0;
+            Line Color = 4291114081;
+            Viewable = 1;
+
+            Variable Entry
+            {
+                Name = ReleaseTime;
+            }
+
+            RPC Point
+            {
+                X = 0.000000;
+                Y = 0.000000;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 3916.000000;
+                Y = -9600.000000;
+                Curve = 0;
             }
         }
     }
@@ -523,10 +589,10 @@ Wave Bank
     Compression Preset Name = Compressed;
     Xbox Bank Last Modified Low = 0;
     Xbox Bank Last Modified High = 0;
-    PC Bank Last Modified Low = 2952134148;
-    PC Bank Last Modified High = 30618638;
-    Bank Last Revised Low = 1661779628;
-    Bank Last Revised High = 30618638;
+    PC Bank Last Modified Low = 1858921977;
+    PC Bank Last Modified High = 30627435;
+    Bank Last Revised Low = 44136349;
+    Bank Last Revised High = 30627435;
 
     Wave
     {
@@ -684,8 +750,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 709394445;
-            Last Modified High = 30614700;
+            Last Modified Low = 292765102;
+            Last Modified High = 30624051;
         }
     }
 
@@ -707,8 +773,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 709854561;
-            Last Modified High = 30614700;
+            Last Modified Low = 296761002;
+            Last Modified High = 30624051;
         }
     }
 
@@ -822,8 +888,192 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 3630361468;
-            Last Modified High = 30618637;
+            Last Modified Low = 298124331;
+            Last Modified High = 30624051;
+        }
+    }
+
+    Wave
+    {
+        Name = sfx_amb_cave;
+        File = ..\oscar\sfx_amb_cave.wav;
+        Build Settings Last Modified Low = 3344550116;
+        Build Settings Last Modified High = 30627434;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 48000;
+            Bits Per Sample = 1;
+            Play Region Offset = 1024;
+            Play Region Length = 8617984;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 2946210208;
+            Last Modified High = 30627434;
+        }
+    }
+
+    Wave
+    {
+        Name = sfx_amb_desert;
+        File = ..\oscar\sfx_amb_desert.wav;
+        Build Settings Last Modified Low = 3344555123;
+        Build Settings Last Modified High = 30627434;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 48000;
+            Bits Per Sample = 1;
+            Play Region Offset = 1024;
+            Play Region Length = 10715136;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 2935745222;
+            Last Modified High = 30627434;
+        }
+    }
+
+    Wave
+    {
+        Name = sfx_amb_forest_day;
+        File = ..\oscar\sfx_amb_forest_day.wav;
+        Build Settings Last Modified Low = 3344560134;
+        Build Settings Last Modified High = 30627434;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 48000;
+            Bits Per Sample = 1;
+            Play Region Offset = 1024;
+            Play Region Length = 5816320;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 2936888756;
+            Last Modified High = 30627434;
+        }
+    }
+
+    Wave
+    {
+        Name = sfx_amb_forest_night;
+        File = ..\oscar\sfx_amb_forest_night.wav;
+        Build Settings Last Modified Low = 3344565148;
+        Build Settings Last Modified High = 30627434;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 48000;
+            Bits Per Sample = 1;
+            Play Region Offset = 1024;
+            Play Region Length = 9601024;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 2938573088;
+            Last Modified High = 30627434;
+        }
+    }
+
+    Wave
+    {
+        Name = sfx_amb_ocean;
+        File = ..\oscar\sfx_amb_ocean.wav;
+        Build Settings Last Modified Low = 4256459643;
+        Build Settings Last Modified High = 30627434;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 48000;
+            Bits Per Sample = 1;
+            Play Region Offset = 1024;
+            Play Region Length = 10256384;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 2940651104;
+            Last Modified High = 30627434;
+        }
+    }
+
+    Wave
+    {
+        Name = sfx_amb_rain_storm;
+        File = ..\oscar\sfx_amb_rain_storm.wav;
+        Build Settings Last Modified Low = 4256459643;
+        Build Settings Last Modified High = 30627434;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 48000;
+            Bits Per Sample = 1;
+            Play Region Offset = 1024;
+            Play Region Length = 8978432;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 2942161888;
+            Last Modified High = 30627434;
+        }
+    }
+
+    Wave
+    {
+        Name = sfx_amb_snow_storm;
+        File = ..\oscar\sfx_amb_snow_storm.wav;
+        Build Settings Last Modified Low = 4256464657;
+        Build Settings Last Modified High = 30627434;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 48000;
+            Bits Per Sample = 1;
+            Play Region Offset = 1024;
+            Play Region Length = 7868416;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 2943603264;
+            Last Modified High = 30627434;
+        }
+    }
+
+    Wave
+    {
+        Name = sfx_amb_tundra;
+        File = ..\oscar\sfx_amb_tundra.wav;
+        Build Settings Last Modified Low = 4256469668;
+        Build Settings Last Modified High = 30627434;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 48000;
+            Bits Per Sample = 1;
+            Play Region Offset = 1024;
+            Play Region Length = 5603328;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 2944683429;
+            Last Modified High = 30627434;
         }
     }
 }
@@ -853,6 +1103,16 @@ Sound Bank
         RPC Entry
         {
             RPC Name = DaySounds;
+        }
+
+        RPC Entry
+        {
+            RPC Name = 1sFadeIn;
+        }
+
+        RPC Entry
+        {
+            RPC Name = 4sFadeout;
         }
 
         Track
@@ -887,6 +1147,18 @@ Sound Bank
                     Weight = 255;
                     Weight Min = 0;
                 }
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = 1sFadeIn;
+                RPC Curve Name = 1::fd146ca5-1236-457e-9769-de2a322ae27d;
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = 4sFadeout;
+                RPC Curve Name = 1::2e219279-c4db-4596-9eea-15a506bde902;
             }
         }
 
@@ -943,6 +1215,16 @@ Sound Bank
             RPC Name = NightSounds;
         }
 
+        RPC Entry
+        {
+            RPC Name = 1sFadeIn;
+        }
+
+        RPC Entry
+        {
+            RPC Name = 4sFadeout;
+        }
+
         Track
         {
             Volume = 0;
@@ -975,6 +1257,18 @@ Sound Bank
                     Weight = 255;
                     Weight Min = 0;
                 }
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = 1sFadeIn;
+                RPC Curve Name = 1::fd146ca5-1236-457e-9769-de2a322ae27d;
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = 4sFadeout;
+                RPC Curve Name = 1::2e219279-c4db-4596-9eea-15a506bde902;
             }
         }
 
@@ -1120,13 +1414,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = FadeOut;
-                RPC Curve Name = 1::b644ed05-4111-4623-bccc-bb3661e0acba;
+                RPC Curve Name = 1::a8e8167a-ae78-4f1c-9f98-dfdd8199bdd7;
             }
 
             RPC Curve Entry
             {
                 RPC Name = ShortFadeIn;
-                RPC Curve Name = 1::c1705c90-2d6b-44c1-966a-2aa956d9cbe4;
+                RPC Curve Name = 1::568bead3-a957-46a0-b7df-702dfa14126d;
             }
         }
     }
@@ -1237,13 +1531,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = FadeOut;
-                RPC Curve Name = 1::b644ed05-4111-4623-bccc-bb3661e0acba;
+                RPC Curve Name = 1::a8e8167a-ae78-4f1c-9f98-dfdd8199bdd7;
             }
 
             RPC Curve Entry
             {
                 RPC Name = FadeIn;
-                RPC Curve Name = 1::c51df9a5-4a4b-48aa-84ee-6edaf3f75191;
+                RPC Curve Name = 1::ee507d2c-2a24-485f-9e73-5c3dbbe29299;
             }
         }
     }
@@ -1355,13 +1649,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = FadeOut;
-                RPC Curve Name = 1::b644ed05-4111-4623-bccc-bb3661e0acba;
+                RPC Curve Name = 1::a8e8167a-ae78-4f1c-9f98-dfdd8199bdd7;
             }
 
             RPC Curve Entry
             {
                 RPC Name = MediumFadeIn;
-                RPC Curve Name = 1::9f969e77-421d-431a-8177-9cc742c127a9;
+                RPC Curve Name = 1::f019d6aa-b670-4cae-b8b1-b37632426e89;
             }
         }
     }
@@ -1425,13 +1719,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = FadeOut;
-                RPC Curve Name = 1::b644ed05-4111-4623-bccc-bb3661e0acba;
+                RPC Curve Name = 1::a8e8167a-ae78-4f1c-9f98-dfdd8199bdd7;
             }
 
             RPC Curve Entry
             {
                 RPC Name = MediumFadeIn;
-                RPC Curve Name = 1::9f969e77-421d-431a-8177-9cc742c127a9;
+                RPC Curve Name = 1::f019d6aa-b670-4cae-b8b1-b37632426e89;
             }
         }
     }
@@ -1490,7 +1784,7 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = MediumFadeIn;
-                RPC Curve Name = 1::9f969e77-421d-431a-8177-9cc742c127a9;
+                RPC Curve Name = 1::f019d6aa-b670-4cae-b8b1-b37632426e89;
             }
         }
     }
@@ -1554,13 +1848,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = FadeOut;
-                RPC Curve Name = 1::b644ed05-4111-4623-bccc-bb3661e0acba;
+                RPC Curve Name = 1::a8e8167a-ae78-4f1c-9f98-dfdd8199bdd7;
             }
 
             RPC Curve Entry
             {
                 RPC Name = MediumFadeIn;
-                RPC Curve Name = 1::9f969e77-421d-431a-8177-9cc742c127a9;
+                RPC Curve Name = 1::f019d6aa-b670-4cae-b8b1-b37632426e89;
             }
         }
 
@@ -1600,6 +1894,576 @@ Sound Bank
         }
     }
 
+    Sound
+    {
+        Name = sfx_amb_cave;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Ambience;
+        }
+
+        RPC Entry
+        {
+            RPC Name = 1sFadeIn;
+        }
+
+        RPC Entry
+        {
+            RPC Name = 4sFadeout;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Loop Count = 255;
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = WaveBank;
+                    Bank Index = 0;
+                    Entry Name = sfx_amb_cave;
+                    Entry Index = 13;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = 1sFadeIn;
+                RPC Curve Name = 1::fd146ca5-1236-457e-9769-de2a322ae27d;
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = 4sFadeout;
+                RPC Curve Name = 1::2e219279-c4db-4596-9eea-15a506bde902;
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = sfx_amb_desert;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Ambience;
+        }
+
+        RPC Entry
+        {
+            RPC Name = 1sFadeIn;
+        }
+
+        RPC Entry
+        {
+            RPC Name = 4sFadeout;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Loop Count = 255;
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = WaveBank;
+                    Bank Index = 0;
+                    Entry Name = sfx_amb_desert;
+                    Entry Index = 14;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = 1sFadeIn;
+                RPC Curve Name = 1::fd146ca5-1236-457e-9769-de2a322ae27d;
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = 4sFadeout;
+                RPC Curve Name = 1::2e219279-c4db-4596-9eea-15a506bde902;
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = sfx_amb_forest_day;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Ambience;
+        }
+
+        RPC Entry
+        {
+            RPC Name = DaySounds;
+        }
+
+        RPC Entry
+        {
+            RPC Name = 1sFadeIn;
+        }
+
+        RPC Entry
+        {
+            RPC Name = 4sFadeout;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Loop Count = 255;
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = WaveBank;
+                    Bank Index = 0;
+                    Entry Name = sfx_amb_forest_day;
+                    Entry Index = 15;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = 1sFadeIn;
+                RPC Curve Name = 1::fd146ca5-1236-457e-9769-de2a322ae27d;
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = 4sFadeout;
+                RPC Curve Name = 1::2e219279-c4db-4596-9eea-15a506bde902;
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = sfx_amb_forest_night;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Ambience;
+        }
+
+        RPC Entry
+        {
+            RPC Name = NightSounds;
+        }
+
+        RPC Entry
+        {
+            RPC Name = 1sFadeIn;
+        }
+
+        RPC Entry
+        {
+            RPC Name = 4sFadeout;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Loop Count = 255;
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = WaveBank;
+                    Bank Index = 0;
+                    Entry Name = sfx_amb_forest_night;
+                    Entry Index = 16;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = 1sFadeIn;
+                RPC Curve Name = 1::fd146ca5-1236-457e-9769-de2a322ae27d;
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = 4sFadeout;
+                RPC Curve Name = 1::2e219279-c4db-4596-9eea-15a506bde902;
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = sfx_amb_ocean;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Ambience;
+        }
+
+        RPC Entry
+        {
+            RPC Name = 1sFadeIn;
+        }
+
+        RPC Entry
+        {
+            RPC Name = 4sFadeout;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Loop Count = 255;
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = WaveBank;
+                    Bank Index = 0;
+                    Entry Name = sfx_amb_ocean;
+                    Entry Index = 17;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = 1sFadeIn;
+                RPC Curve Name = 1::fd146ca5-1236-457e-9769-de2a322ae27d;
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = 4sFadeout;
+                RPC Curve Name = 1::2e219279-c4db-4596-9eea-15a506bde902;
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = sfx_amb_rain_storm;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Ambience;
+        }
+
+        RPC Entry
+        {
+            RPC Name = 1sFadeIn;
+        }
+
+        RPC Entry
+        {
+            RPC Name = 4sFadeout;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Loop Count = 255;
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = WaveBank;
+                    Bank Index = 0;
+                    Entry Name = sfx_amb_rain_storm;
+                    Entry Index = 18;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = 1sFadeIn;
+                RPC Curve Name = 1::fd146ca5-1236-457e-9769-de2a322ae27d;
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = 4sFadeout;
+                RPC Curve Name = 1::2e219279-c4db-4596-9eea-15a506bde902;
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = sfx_amb_snow_storm;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Ambience;
+        }
+
+        RPC Entry
+        {
+            RPC Name = 1sFadeIn;
+        }
+
+        RPC Entry
+        {
+            RPC Name = 4sFadeout;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Loop Count = 255;
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = WaveBank;
+                    Bank Index = 0;
+                    Entry Name = sfx_amb_snow_storm;
+                    Entry Index = 19;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = 1sFadeIn;
+                RPC Curve Name = 1::fd146ca5-1236-457e-9769-de2a322ae27d;
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = 4sFadeout;
+                RPC Curve Name = 1::2e219279-c4db-4596-9eea-15a506bde902;
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = sfx_amb_tundra;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Ambience;
+        }
+
+        RPC Entry
+        {
+            RPC Name = 1sFadeIn;
+        }
+
+        RPC Entry
+        {
+            RPC Name = 4sFadeout;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Loop Count = 255;
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = WaveBank;
+                    Bank Index = 0;
+                    Entry Name = sfx_amb_tundra;
+                    Entry Index = 20;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = 1sFadeIn;
+                RPC Curve Name = 1::fd146ca5-1236-457e-9769-de2a322ae27d;
+            }
+
+            RPC Curve Entry
+            {
+                RPC Name = 4sFadeout;
+                RPC Curve Name = 1::2e219279-c4db-4596-9eea-15a506bde902;
+            }
+        }
+    }
+
     Cue
     {
         Name = grassland_ambience_day;
@@ -1622,7 +2486,7 @@ Sound Bank
         Instance Limit
         {
             Max Instances = 1;
-            Behavior = 0;
+            Behavior = 4;
 
             Crossfade
             {
@@ -1655,7 +2519,7 @@ Sound Bank
         Instance Limit
         {
             Max Instances = 1;
-            Behavior = 0;
+            Behavior = 4;
 
             Crossfade
             {
@@ -1934,6 +2798,270 @@ Sound Bank
             Index = 10;
             Weight Min = 0;
             Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = sfx_amb_cave;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = sfx_amb_cave;
+            Index = 11;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 1;
+            Behavior = 4;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Cue
+    {
+        Name = sfx_amb_desert;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = sfx_amb_desert;
+            Index = 12;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 1;
+            Behavior = 4;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Cue
+    {
+        Name = sfx_amb_forest_day;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = sfx_amb_forest_day;
+            Index = 13;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 1;
+            Behavior = 4;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Cue
+    {
+        Name = sfx_amb_forest_night;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = sfx_amb_forest_night;
+            Index = 14;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 1;
+            Behavior = 4;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Cue
+    {
+        Name = sfx_amb_ocean;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = sfx_amb_ocean;
+            Index = 15;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 1;
+            Behavior = 4;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Cue
+    {
+        Name = sfx_amb_rain_storm;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = sfx_amb_rain_storm;
+            Index = 16;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 1;
+            Behavior = 4;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Cue
+    {
+        Name = sfx_amb_snow_storm;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = sfx_amb_snow_storm;
+            Index = 17;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 1;
+            Behavior = 4;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Cue
+    {
+        Name = sfx_amb_tundra;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = sfx_amb_tundra;
+            Index = 18;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 1;
+            Behavior = 4;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
         }
     }
 }
