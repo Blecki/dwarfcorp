@@ -103,6 +103,22 @@ namespace DwarfCorp
             yield break;
         }
 
+        public static void RestockAllImmediately(this Creature agent)
+        {
+            foreach (var resource in agent.Inventory.Resources)
+            {
+                if (!resource.MarkedForRestock || agent.AI.GatherManager.StockOrders.Count == 0)
+                {
+                    resource.MarkedForRestock = true;
+                    agent.AI.AssignTask(new StockResourceTask(new ResourceAmount(resource.Resource))
+                    {
+                        Priority = Task.PriorityType.High
+                    });
+
+                }
+            }
+        }
+
         public static IEnumerable<Act.Status> RestockAll(this Creature agent)
         {
             foreach (var resource in agent.Inventory.Resources)
@@ -113,7 +129,7 @@ namespace DwarfCorp
                     agent.AI.GatherManager.StockOrders.Add(new GatherManager.StockOrder()
                     {
                         Destination = null,
-                        Resource = new ResourceAmount(resource.Resource)
+                        Resource = new ResourceAmount(resource.Resource),
                     });
                 }
             }

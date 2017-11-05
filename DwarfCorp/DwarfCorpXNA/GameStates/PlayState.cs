@@ -2010,17 +2010,12 @@ namespace DwarfCorp.GameStates
         private void HandleKeyPress(Keys key)
         {
             // Special case: number keys reserved for changing tool mode
-            if (InputManager.IsNumKey(key))
+            if (FlatToolTray.Tray.Hotkeys.Contains(key))
             {
                 if (PausePanel == null || PausePanel.Hidden)
                 {
-                    int index = InputManager.GetNum(key);
-
-                    if (index < 0)
-                        index = 9;
-
                     (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray)
-                       .Hotkey(index);
+                       .Hotkey(key);
                 }
             }
             else if (key == Keys.Escape)
@@ -2031,7 +2026,7 @@ namespace DwarfCorp.GameStates
                 }
 
                 if (MainMenu.Hidden && PausePanel == null)
-                    (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(1);
+                    (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(FlatToolTray.Tray.Hotkeys[1]);
                 else if (Master.CurrentToolMode != GameMaster.ToolMode.SelectUnits && PausePanel == null)
                     Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
                 else if (PausePanel != null)

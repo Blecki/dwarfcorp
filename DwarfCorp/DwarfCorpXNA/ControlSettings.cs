@@ -70,6 +70,38 @@ namespace DwarfCorp
             public Keys TogglePerformanceOverlay = Keys.F10;
             public Keys RotateObjectLeft = Keys.R;
             public Keys RotateObjectRight = Keys.T;
+
+            public IEnumerable<Keys> GetKeys()
+            {
+                yield return SliceSelected;
+                yield return Forward;
+                yield return Left;
+                yield return Right;
+                yield return Back;
+                yield return CameraMode;
+                yield return GodMode;
+                yield return TimeForward;
+                yield return TimeBackward;
+                yield return SliceUp;
+                yield return SliceDown;
+                yield return Pause;
+                yield return Map;
+                yield return Unslice;
+                yield return ToggleGUI;
+                yield return Jump;
+                yield return SelectAllDwarves;
+                yield return DebugVisualizationToggle;
+                yield return DebugToggle1;
+                yield return DebugToggle2;
+                yield return TogglePerformanceOverlay;
+                yield return RotateObjectLeft;
+                yield return RotateObjectRight;
+            }
+
+            public bool Contains(Keys key)
+            {
+                return GetKeys().Any(k => k == key);
+            }
         }
 
         public static KeyMappings Mappings { get; set; }

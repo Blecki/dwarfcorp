@@ -205,11 +205,32 @@ namespace DwarfCorp.Gui.Widgets
                         {
                             stringBuilder.Append("Nothing.");
                         }
-                        sender.Root.ShowMinorPopup(new Confirm()
+
+                        Confirm popup = new Confirm()
                         {
                             CancelText = "",
                             Text = stringBuilder.ToString()
-                        });
+                        };
+
+
+                        sender.Root.ShowMinorPopup(popup);
+
+                        if (aggregateResources.Count > 0)
+                        {
+                            popup.AddChild(new Button()
+                            {
+                                Text = "Empty",
+                                Tooltip = "Click to order this dwarf to empty their backpack.",
+                                AutoLayout = AutoLayout.FloatBottomLeft,
+                                OnClick = (currSender, currArgs) =>
+                                {
+                                    employeeInfo.Employee.Creature.RestockAllImmediately();
+                                }
+                            });
+                            popup.Layout();
+
+                        }
+                       
                     }
                 }
             });
