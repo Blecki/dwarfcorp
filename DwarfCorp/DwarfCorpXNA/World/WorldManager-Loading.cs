@@ -449,6 +449,8 @@ namespace DwarfCorp
                     if (gameFile != null)
                     {
                         Master.Spells = gameFile.PlayData.Spells;
+                        if (gameFile.PlayData.Tasks != null)
+                            Master.TaskManager = gameFile.PlayData.Tasks;
                     }
                 }
 
