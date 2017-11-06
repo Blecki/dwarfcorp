@@ -72,7 +72,29 @@ namespace DwarfCorp
 
         private static VoxelType.FringeTileUV[] CreateFringeUVs(Point[] Tiles)
         {
-            return Tiles.Select(t => new VoxelType.FringeTileUV(t.X, t.Y, 16, 16)).ToArray();
+            System.Diagnostics.Debug.Assert(Tiles.Length == 3);
+
+            var r = new VoxelType.FringeTileUV[8];
+
+            // North
+            r[0] = new VoxelType.FringeTileUV(Tiles[0].X, (Tiles[0].Y * 2) + 1, 16, 32);
+            // East
+            r[1] = new VoxelType.FringeTileUV((Tiles[1].X * 2) + 1, Tiles[1].Y, 32, 16);
+            // South
+            r[2] = new VoxelType.FringeTileUV(Tiles[0].X, (Tiles[0].Y * 2), 16, 32);
+            // West
+            r[3] = new VoxelType.FringeTileUV(Tiles[1].X * 2, Tiles[1].Y, 32, 16);
+
+            // NW
+            r[4] = new VoxelType.FringeTileUV((Tiles[2].X * 2) + 1, (Tiles[2].Y * 2) + 1, 32, 32);
+            // NE
+            r[5] = new VoxelType.FringeTileUV((Tiles[2].X * 2), (Tiles[2].Y * 2) + 1, 32, 32);
+            // SE
+            r[6] = new VoxelType.FringeTileUV((Tiles[2].X * 2), (Tiles[2].Y * 2), 32, 32);
+            // SW
+            r[7] = new VoxelType.FringeTileUV((Tiles[2].X * 2) + 1, (Tiles[2].Y * 2), 32, 32);
+
+            return r;
         }
 
         public static void CreateTransitionUVs(GraphicsDevice graphics, Texture2D textureMap, int width, int height, Point top, Point sides, Point bottom, Dictionary<BoxTransition, BoxPrimitive.BoxTextureCoords> transitionTextures, VoxelType.TransitionType transitionType = VoxelType.TransitionType.Horizontal)
@@ -321,11 +343,6 @@ namespace DwarfCorp
                     new Point(0,2),
                     new Point(1,2),
                     new Point(2,2),
-                    new Point(3,2),
-                    new Point(4,2),
-                    new Point(5,2),
-                    new Point(6,2),
-                    new Point(7,2)
                 })
             };
                        

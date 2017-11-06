@@ -228,7 +228,8 @@ namespace DwarfCorp
             {
                 new GlobalVoxelOffset(-1, 0, 0),
                 new GlobalVoxelOffset(-1, 0, -1),
-                new GlobalVoxelOffset(0, 0, -1)
+                new GlobalVoxelOffset(0, 0, -1),
+                new GlobalVoxelOffset(0,0,0)
             },
             
             // Front Top Left
@@ -236,7 +237,8 @@ namespace DwarfCorp
             {
                 new GlobalVoxelOffset(-1, 0, 0),
                 new GlobalVoxelOffset(-1, 0, 1),
-                new GlobalVoxelOffset(0, 0, 1)
+                new GlobalVoxelOffset(0, 0, 1),
+                new GlobalVoxelOffset(0,0,0)
             },
             
             // Back Bottom Right
@@ -250,7 +252,8 @@ namespace DwarfCorp
             {
                 new GlobalVoxelOffset(0, 0, -1),
                 new GlobalVoxelOffset(1, 0, -1),
-                new GlobalVoxelOffset(1, 0, 0)
+                new GlobalVoxelOffset(1, 0, 0),
+                new GlobalVoxelOffset(0,0,0)
             },
 
             // Front Top Right
@@ -258,7 +261,8 @@ namespace DwarfCorp
             {
                 new GlobalVoxelOffset(0, 0, 1),
                 new GlobalVoxelOffset(1, 0, 1),
-                new GlobalVoxelOffset(1, 0, 0)
+                new GlobalVoxelOffset(1, 0, 0),
+                new GlobalVoxelOffset(0,0,0)
             },
         };
         #endregion
@@ -292,12 +296,12 @@ namespace DwarfCorp
             {
                 case ChunkManager.SliceMode.X:
                     return EnumerateNeighbors(ManhattanNeighbors2D.Select(n =>
-                        new GlobalVoxelOffset(0, n.Z, n.X)), Coordinate);
+                        new GlobalVoxelOffset(0, -n.Z, n.X)), Coordinate);
                 case ChunkManager.SliceMode.Y:
                     return EnumerateNeighbors(ManhattanNeighbors2D, Coordinate);
                 case ChunkManager.SliceMode.Z:
                     return EnumerateNeighbors(ManhattanNeighbors2D.Select(n =>
-                        new GlobalVoxelOffset(n.X, n.Z, 0)), Coordinate);
+                        new GlobalVoxelOffset(n.X, -n.Z, 0)), Coordinate);
                 default:
                     throw new InvalidOperationException();
             }

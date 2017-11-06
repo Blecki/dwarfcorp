@@ -53,8 +53,8 @@ namespace DwarfCorp
                 UV = new Microsoft.Xna.Framework.Vector2((float)x / (float)textureWidth,
                     (float)y / (float)textureHeight);
                 Bounds = new Microsoft.Xna.Framework.Vector4((float)x / (float)textureWidth + 0.001f,
-                    (float)y / (float)textureHeight + 0.001f, (float)(x + 1) / (float)textureWidth - 0.002f,
-                    (float)(y + 1) / (float)textureHeight - 0.002f);
+                    (float)y / (float)textureHeight + 0.001f, (float)(x + 1) / (float)textureWidth - 0.001f,
+                    (float)(y + 1) / (float)textureHeight - 0.001f);
             }
         }
 

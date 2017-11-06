@@ -35,6 +35,14 @@ namespace DwarfCorp
             {2,1,0,3,0,2 }, // South West
         };
 
+        private static Vector2[] SideFringeUVScales = new Vector2[]
+        {
+            new Vector2(1.0f, 0.5f),
+            new Vector2(0.5f, 1.0f),
+            new Vector2(1.0f, 0.5f),
+            new Vector2(0.5f, 1.0f)
+        };
+
         protected void InitializeStatics()
         {
             if (FaceDeltas == null)
@@ -261,7 +269,7 @@ namespace DwarfCorp
                 uvs = ComputeTransitionTexture(new VoxelHandle(v.Chunk.Manager.ChunkData, v.Coordinate));
 
             BuildVoxelTopFaceGeometry(Into,
-                Chunk, AmbientScratchSpace, LightCache, ExploredCache, primitive, v, tint, biome, uvs, 0, GrassTypeID);
+                Chunk, AmbientScratchSpace, LightCache, ExploredCache, primitive, v, uvs, 0);
             for (int i = 1; i < 6; i++)
                 BuildVoxelFaceGeometry(Into, Chunk,
                     AmbientScratchSpace, LightCache, ExploredCache, primitive, v, tint, uvs, i);
@@ -342,11 +350,8 @@ namespace DwarfCorp
     Dictionary<GlobalVoxelCoordinate, bool> ExploredCache,
     BoxPrimitive Primitive,
     VoxelHandle V,
-    Color Tint,
-    BiomeData Biome,
     BoxPrimitive.BoxTextureCoords UVs,
-    int i,
-    int GrassTypeID)
+    int i)
         {
             var face = (BoxFace)i;
             var delta = FaceDeltas[i];
@@ -428,6 +433,26 @@ namespace DwarfCorp
 
                     if (!anyNeighborExplored) vertexTint[faceVertex] = new Color(0.0f, 0.0f, 0.0f, 1.0f);
                 }
+
+                if (V.Type.UseBiomeGrassTint)
+                {
+                    var biomeTints = VoxelHelpers.EnumerateVertexNeighbors2D(V.Coordinate, voxelVertex)
+                        .Select(c => new VoxelHandle(V.Chunk.Manager.ChunkData, c))
+                        .Where(v => v.IsValid)
+                        .Select(v => BiomeLibrary.Biomes[Overworld.Map[(int)(v.Coordinate.X / Chunk.Manager.World.WorldScale), (int)(v.Coordinate.Z / Chunk.Manager.World.WorldScale)].Biome].GrassTint.ToVector4())
+                        .ToArray();
+
+                    var accumulator = Vector4.Zero;
+                    foreach (var tint in biomeTints)
+                        accumulator += tint;
+                    var averageTint = accumulator / biomeTints.Length;
+
+                    vertexTint[faceVertex] = new Color(vertexTint[faceVertex].ToVector4() * averageTint);
+                }
+                else
+                {
+                    vertexTint[faceVertex] = new Color(vertexTint[faceVertex].ToVector4() * V.Type.Tint.ToVector4());
+                }
             }
 
             if (exploredVerts != 0)
@@ -438,11 +463,11 @@ namespace DwarfCorp
 
                 AddTopFaceGeometry(Into,
                     Chunk, AmbientScratchSpace, LightCache, ExploredCache, Primitive, V,
-                    V.Type.UseBiomeGrassTint ? Biome.GrassTint : V.Type.Tint,
                     faceDescriptor, exploredVerts,
                     vertexPositions,
                     vertexColors,
                     vertexTint,
+                    Vector2.One,
                     baseUVs, baseUVBounds);
 
                 if (V.Type.HasFringeTransitions)
@@ -451,7 +476,7 @@ namespace DwarfCorp
                     {
                         var neighborCoord = V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[s];
                         var handle = new VoxelHandle(Chunk.Manager.ChunkData, neighborCoord);
-                        if (handle.IsValid && handle.TypeID != GrassTypeID)
+                        if (handle.IsValid && handle.TypeID != V.TypeID)
                         {
                             var aboveNeighbor = new VoxelHandle(Chunk.Manager.ChunkData, neighborCoord + new GlobalVoxelOffset(0, 1, 0));
 
@@ -462,8 +487,10 @@ namespace DwarfCorp
                                 // Twizzle vertex positions.
                                 var newPositions = new Vector3[4];
                                 newPositions[FringeIndicies[s, 0]] = vertexPositions[FringeIndicies[s, 4]];
-                                newPositions[FringeIndicies[s, 1]] = vertexPositions[FringeIndicies[s, 4]] + VoxelHelpers.ManhattanNeighbors2D[s].AsVector3();
-                                newPositions[FringeIndicies[s, 2]] = vertexPositions[FringeIndicies[s, 5]] + VoxelHelpers.ManhattanNeighbors2D[s].AsVector3();
+                                newPositions[FringeIndicies[s, 1]] = vertexPositions[FringeIndicies[s, 4]]
+                                    + (VoxelHelpers.ManhattanNeighbors2D[s].AsVector3() * 0.5f);
+                                newPositions[FringeIndicies[s, 2]] = vertexPositions[FringeIndicies[s, 5]]
+                                    + (VoxelHelpers.ManhattanNeighbors2D[s].AsVector3() * 0.5f);
                                 newPositions[FringeIndicies[s, 3]] = vertexPositions[FringeIndicies[s, 5]];
 
                                 var newColors = new VertexColorInfo[4];
@@ -474,9 +501,9 @@ namespace DwarfCorp
 
                                 var slopeTweak = new Vector3(0.0f, 0.0f, 0.0f);
                                 if (handle.IsEmpty)
-                                    slopeTweak.Y = -1.0f;
+                                    slopeTweak.Y = -0.5f;
                                 else
-                                    slopeTweak.Y = 0.25f;
+                                    slopeTweak.Y = 0.125f;
 
                                 newPositions[FringeIndicies[s, 1]] += slopeTweak;
                                 newPositions[FringeIndicies[s, 2]] += slopeTweak;
@@ -489,11 +516,11 @@ namespace DwarfCorp
 
                                 AddTopFaceGeometry(Into,
                                     Chunk, AmbientScratchSpace, LightCache, ExploredCache, Primitive, V,
-                                    Biome.GrassTint,
                                     faceDescriptor, exploredVerts,
                                     newPositions,
                                     newColors,
                                     newTints,
+                                    SideFringeUVScales[s],
                                     V.Type.FringeTransitionUVs[s].UV,
                                     V.Type.FringeTransitionUVs[s].Bounds);
                             }
@@ -504,11 +531,11 @@ namespace DwarfCorp
                                 var newPositions = new Vector3[4];
                                 newPositions[FringeIndicies[s, 0]] = vertexPositions[FringeIndicies[s, 4]];
                                 newPositions[FringeIndicies[s, 1]] = vertexPositions[FringeIndicies[s, 4]]
-                                    + Vector3.UnitY
-                                    + (VoxelHelpers.ManhattanNeighbors2D[s].AsVector3() * -0.1f);
+                                    + new Vector3(0.0f, 0.5f, 0.0f)
+                                    + (VoxelHelpers.ManhattanNeighbors2D[s].AsVector3() * -0.05f);
                                 newPositions[FringeIndicies[s, 2]] = vertexPositions[FringeIndicies[s, 5]]
-                                    + Vector3.UnitY
-                                    + (VoxelHelpers.ManhattanNeighbors2D[s].AsVector3() * -0.1f);
+                                    + new Vector3(0.0f, 0.5f, 0.0f)
+                                    + (VoxelHelpers.ManhattanNeighbors2D[s].AsVector3() * -0.05f);
                                 newPositions[FringeIndicies[s, 3]] = vertexPositions[FringeIndicies[s, 5]];
 
                                 var newColors = new VertexColorInfo[4];
@@ -525,11 +552,11 @@ namespace DwarfCorp
 
                                 AddTopFaceGeometry(Into,
                                     Chunk, AmbientScratchSpace, LightCache, ExploredCache, Primitive, V,
-                                    Biome.GrassTint,
                                     faceDescriptor, exploredVerts,
                                     newPositions,
                                     newColors,
                                     newTints,
+                                    SideFringeUVScales[s],
                                     V.Type.FringeTransitionUVs[s].UV,
                                     V.Type.FringeTransitionUVs[s].Bounds);
                             }
@@ -540,16 +567,16 @@ namespace DwarfCorp
                     {
                         var neighborCoord = V.Coordinate + VoxelHelpers.DiagonalNeighbors2D[s];
                         var handle = new VoxelHandle(Chunk.Manager.ChunkData, neighborCoord);
-                        if (handle.IsValid && handle.TypeID != GrassTypeID)
+                        if (handle.IsValid && handle.TypeID != V.TypeID)
                         {
                             var manhattanA = new VoxelHandle(Chunk.Manager.ChunkData,
                                 V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[s]);
-                            if (!manhattanA.IsValid || manhattanA.TypeID == GrassTypeID)
+                            if (!manhattanA.IsValid || manhattanA.TypeID == V.TypeID)
                                 continue;
 
                             manhattanA = new VoxelHandle(Chunk.Manager.ChunkData,
                                 V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[FringeIndicies[4 + s, 5]]);
-                            if (!manhattanA.IsValid || manhattanA.TypeID == GrassTypeID)
+                            if (!manhattanA.IsValid || manhattanA.TypeID == V.TypeID)
                                 continue;
 
                             // Twizzle vertex positions.
@@ -558,15 +585,15 @@ namespace DwarfCorp
                             var nDelta = VoxelHelpers.DiagonalNeighbors2D[s].AsVector3();
 
                             newPositions[FringeIndicies[4 + s, 0]] = pivot;
-                            newPositions[FringeIndicies[4 + s, 1]] = pivot + new Vector3(nDelta.X, 0, 0);
-                            newPositions[FringeIndicies[4 + s, 2]] = pivot + new Vector3(nDelta.X, 0, nDelta.Z);
-                            newPositions[FringeIndicies[4 + s, 3]] = pivot + new Vector3(0, 0, nDelta.Z);
+                            newPositions[FringeIndicies[4 + s, 1]] = pivot + new Vector3(nDelta.X * 0.5f, 0, 0);
+                            newPositions[FringeIndicies[4 + s, 2]] = pivot + new Vector3(nDelta.X * 0.5f, 0, nDelta.Z * 0.5f);
+                            newPositions[FringeIndicies[4 + s, 3]] = pivot + new Vector3(0, 0, nDelta.Z * 0.5f);
 
                             var slopeTweak = new Vector3(0.0f, 0.0f, 0.0f);
                             if (handle.IsEmpty)
-                                slopeTweak.Y = -1.0f;
+                                slopeTweak.Y = -0.5f;
                             else
-                                slopeTweak.Y = 0.25f;
+                                slopeTweak.Y = 0.125f;
 
                             newPositions[FringeIndicies[4 + s, 1]] += slopeTweak;
                             newPositions[FringeIndicies[4 + s, 2]] += slopeTweak;
@@ -579,18 +606,18 @@ namespace DwarfCorp
                             newColors[FringeIndicies[4 + s, 3]] = vertexColors[FringeIndicies[4 + s, 4]];
 
                             var newTints = new Color[4];
-                            newTints[FringeIndicies[4 + s, 0]] = vertexTint[FringeIndicies[4 + 3, 4]];
-                            newTints[FringeIndicies[4 + s, 1]] = vertexTint[FringeIndicies[4 + 3, 4]];
-                            newTints[FringeIndicies[4 + s, 2]] = vertexTint[FringeIndicies[4 + 3, 4]];
-                            newTints[FringeIndicies[4 + s, 3]] = vertexTint[FringeIndicies[4 + 3, 4]];
+                            newTints[FringeIndicies[4 + s, 0]] = vertexTint[FringeIndicies[4 + s, 4]];
+                            newTints[FringeIndicies[4 + s, 1]] = vertexTint[FringeIndicies[4 + s, 4]];
+                            newTints[FringeIndicies[4 + s, 2]] = vertexTint[FringeIndicies[4 + s, 4]];
+                            newTints[FringeIndicies[4 + s, 3]] = vertexTint[FringeIndicies[4 + s, 4]];
 
                             AddTopFaceGeometry(Into,
                                 Chunk, AmbientScratchSpace, LightCache, ExploredCache, Primitive, V,
-                                Biome.GrassTint,
                                 faceDescriptor, exploredVerts,
                                 newPositions,
                                 newColors,
                                 newTints,
+                                new Vector2(0.5f, 0.5f),
                                 V.Type.FringeTransitionUVs[4 + s].UV,
                                 V.Type.FringeTransitionUVs[4 + s].Bounds);
                         }
@@ -630,12 +657,12 @@ namespace DwarfCorp
             Dictionary<GlobalVoxelCoordinate, bool> ExploredCache,
             BoxPrimitive Primitive,
             VoxelHandle V,
-            Color Tint,
             BoxPrimitive.FaceDescriptor faceDescriptor,
             int exploredVerts,
             Vector3[] VertexPositions,
             VertexColorInfo[] VertexColors,
             Color[] VertexTints,
+            Vector2 UVScale,
             Vector2 UV,
             Vector4 UVBounds)
         {
@@ -650,8 +677,8 @@ namespace DwarfCorp
                 Into.AddVertex(new ExtendedVertex(
                     VertexPositions[faceVertex] + VertexNoise.GetNoiseVectorFromRepeatingTexture(VertexPositions[faceVertex]),
                     VertexColors[faceVertex].AsColor(),
-                    new Color(Tint.ToVector3() * VertexTints[faceVertex].ToVector3()),
-                    UV + new Vector2(vertex.Position.X / 16.0f, vertex.Position.Z / 16.0f),
+                    VertexTints[faceVertex],
+                    UV + new Vector2(vertex.Position.X / 16.0f * UVScale.X, vertex.Position.Z / 16.0f * UVScale.Y),
                     UVBounds));
             }
 
