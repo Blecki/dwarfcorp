@@ -338,6 +338,12 @@ namespace DwarfCorp
                 HitSound = dirtPicks,
                 UseBiomeGrassTint = true,
                 HasFringeTransitions = true,
+                FringeTiles = new Point[]
+                {
+                    new Point(0,2),
+                    new Point(1,2),
+                    new Point(2,2)
+                },
                 FringeTransitionUVs = CreateFringeUVs(new Point[]
                 {
                     new Point(0,2),

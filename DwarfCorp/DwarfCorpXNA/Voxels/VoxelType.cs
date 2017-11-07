@@ -64,117 +64,63 @@ namespace DwarfCorp
             Horizontal,
             Vertical
         }
-        public short ID { get; set; }
-        public string Name { get; set; }
-        public bool ReleasesResource { get; set; }
-        public ResourceLibrary.ResourceType ResourceToRelease { get; set; }
-        public float StartingHealth { get; set; }
-        public float ProbabilityOfRelease { get; set; }
-        public bool CanRamp { get; set; }
-        public float RampSize { get; set; }
-        public bool IsBuildable { get; set; }
-        public string ParticleType { get; set; }
-        public SoundSource ExplosionSound { get; set; }
-        public TransitionType Transitions = TransitionType.None;
-        public bool HasTransitionTextures { get; set; }
-        public bool EmitsLight { get; set; }
-        public float MinSpawnHeight { get; set; }
-        public float MaxSpawnHeight { get; set; }
-        public float SpawnProbability { get; set; }
-        public float Rarity { get; set; }
-        public bool SpawnVeins { get; set; }
-        public bool SpawnClusters { get; set; }
-        public float ClusterSize { get; set; }
-        public float VeinLength { get; set; }
-        public Dictionary<BoxTransition, BoxPrimitive.BoxTextureCoords> TransitionTextures { get; set; }
-        public bool IsSoil { get; set; }
-        public bool IsSurface { get; set; }
-        public bool IsInvincible { get; set; }
-        public Color Tint { get; set; }
+        public short ID;
+        public string Name = "";
+        public bool ReleasesResource = false;
+        public ResourceLibrary.ResourceType ResourceToRelease = ResourceLibrary.ResourceType.Stone;
+        public float StartingHealth = 0.0f;
+        public float ProbabilityOfRelease = 0.0f;
+        public bool CanRamp = false;
+        public float RampSize = 0.0f;
+        public bool IsBuildable = false;
+        public string ParticleType = "puff";
+        public TransitionType Transitions = TransitionType.Horizontal;
+        public bool HasTransitionTextures = false;
+        public bool EmitsLight = false;
+        public float MinSpawnHeight = -999;
+        public float MaxSpawnHeight = 999;
+        public float SpawnProbability = 1.0f;
+        public float Rarity = 1.0f;
+        public bool SpawnVeins = false;
+        public bool SpawnClusters = false;
+        public float ClusterSize = 0.0f;
+        public float VeinLength = 0.0f;
+        public Dictionary<BoxTransition, BoxPrimitive.BoxTextureCoords> TransitionTextures = new Dictionary<BoxTransition, BoxPrimitive.BoxTextureCoords>();
+        public bool IsSoil = false;
+        public bool IsSurface = false;
+        public bool IsInvincible = false;
+        public Color Tint = Color.White;
         public bool UseBiomeGrassTint = false;
-        public bool HasFringeTransitions = false;
-        public FringeTileUV[] FringeTransitionUVs = null;
-        public bool SpawnOnSurface { get; set; }
-        private static short maxID = 0;
-        public SoundSource HitSound { get; set; }
-        public static List<VoxelType> TypeList = new List<VoxelType>();
-        public bool IsTransparent { get; set; }
-        public VoxelType(VoxelType parent, string subtype)
-        {
-            ID = maxID;
-            maxID++;
-            Name = subtype;
-            ReleasesResource = parent.ReleasesResource;
-            ResourceToRelease = parent.ResourceToRelease;
-            StartingHealth = parent.StartingHealth;
-            ProbabilityOfRelease = parent.ProbabilityOfRelease;
-            CanRamp = parent.CanRamp;
-            RampSize = parent.RampSize;
-            IsBuildable = parent.IsBuildable;
-            ParticleType = parent.ParticleType;
-            IsInvincible = parent.IsInvincible;
-            ExplosionSound = parent.ExplosionSound;
-            HasTransitionTextures = parent.HasTransitionTextures;
-            TransitionTextures = parent.TransitionTextures;
-            IsSoil = parent.IsSoil;
-            EmitsLight = parent.EmitsLight;
-            Tint = parent.Tint;
-            IsSurface = parent.IsSurface;
-            IsTransparent = parent.IsTransparent;
-            if (!TypeList.Contains(this))
-            {
-                TypeList.Add(this);
-            }
 
-            MinSpawnHeight = -999;
-            MaxSpawnHeight = 999;
-            SpawnProbability = 1.0f;
-            ClusterSize = 0.0f;
-            VeinLength = 0.0f;
-            SpawnClusters = false;
-            SpawnVeins = false;
-            Rarity = 1.0f;
-            SpawnOnSurface = false;
-            HitSound = parent.HitSound;
-        }
+        public bool HasFringeTransitions = false;
+        public Point[] FringeTiles = null;
+        [JsonIgnore] public FringeTileUV[] FringeTransitionUVs = null;
+
+        public bool SpawnOnSurface = false;
+        public bool IsTransparent = false;
+
+        public string ExplosionSoundResource = ContentPaths.Audio.gravel;
+        public string HitSoundResource = ContentPaths.Audio.pick;
+
+        public SoundSource ExplosionSound;
+        public SoundSource HitSound;
+
+        private static short maxID = 0;
+        public static List<VoxelType> TypeList = new List<VoxelType>();
 
         public VoxelType()
         {
             ID = maxID;
             maxID++;
-            Name = "";
-            IsSurface = false;
-            ReleasesResource = false;
-            ResourceToRelease = ResourceLibrary.ResourceType.Dirt;
-            StartingHealth = 0.0f;
-            ProbabilityOfRelease = 0.0f;
-            CanRamp = false;
-            RampSize = 0.0f;
-            IsBuildable = false;
-            ParticleType = "puff";
-            IsInvincible = false;
-            ExplosionSound = SoundSource.Create(ContentPaths.Audio.gravel);
-            HasTransitionTextures = false;
-            TransitionTextures = new Dictionary<BoxTransition, BoxPrimitive.BoxTextureCoords>();
-            IsSoil = false;
-            EmitsLight = false;
-            Tint = Color.White;
-            if(!TypeList.Contains(this))
+
+            if (!TypeList.Contains(this))
             {
                 TypeList.Add(this);
             }
-            MinSpawnHeight = -999;
-            MaxSpawnHeight = 999;
-            SpawnProbability = 1.0f;
-            ClusterSize = 0.0f;
-            VeinLength = 0.0f;
-            SpawnClusters = false;
-            SpawnVeins = false;
-            Rarity = 1.0f;
-            SpawnOnSurface = false;
-            IsTransparent = false;
-            HitSound = SoundSource.Create(ContentPaths.Audio.pick);
-            Transitions = TransitionType.Horizontal;
+
+            // Should be in a post-deserialize init method
+            ExplosionSound = SoundSource.Create(ExplosionSoundResource);
+            HitSound = SoundSource.Create(HitSoundResource);
         }
 
         public static bool operator ==(VoxelType obj1, VoxelType obj2)
