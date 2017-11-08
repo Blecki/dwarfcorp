@@ -2028,7 +2028,7 @@ namespace DwarfCorp.GameStates
                 }
 
                 if (MainMenu.Hidden && PausePanel == null)
-                    (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(FlatToolTray.Tray.Hotkeys[1]);
+                    (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(FlatToolTray.Tray.Hotkeys[0]);
                 else if (Master.CurrentToolMode != GameMaster.ToolMode.SelectUnits && PausePanel == null)
                     Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
                 else if (PausePanel != null)

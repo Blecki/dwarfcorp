@@ -208,7 +208,7 @@ namespace DwarfCorp
         {
             if (Item.ItemType.CraftLocation != "")
             {
-                var anyCraftLocation = agent.Faction.OwnedObjects.Any(o => o.Tags.Contains(Item.ItemType.CraftLocation));
+                var anyCraftLocation = agent.Faction.OwnedObjects.Any(o => o.Tags.Contains(Item.ItemType.CraftLocation) && (!o.IsReserved || o.ReservedFor == agent.AI));
                 if (!anyCraftLocation)
                     return false;
             }
