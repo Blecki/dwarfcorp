@@ -49,6 +49,7 @@ namespace DwarfCorp
         [JsonProperty]
         private List<Task> Tasks = new List<Task>();
         public Timer UpdateTimer = new Timer(1.0f, false);
+        public int MaxDwarfTasks = 10;
 
         public TaskManager()
         {
@@ -78,7 +79,7 @@ namespace DwarfCorp
 
             if (UpdateTimer.HasTriggered)
             {
-                Tasks = AssignTasksGreedy(Tasks, creatures);
+                Tasks = AssignTasksGreedy(Tasks, creatures, MaxDwarfTasks);
                 Tasks.RemoveAll(task => creatures.All(c => task.ShouldDelete(c.Creature)));
             }
         }
@@ -131,7 +132,7 @@ namespace DwarfCorp
             return maxValue;
         }
 
-        public static List<Task> AssignTasksGreedy(List<Task> newGoals, List<CreatureAI> creatures)
+        public static List<Task> AssignTasksGreedy(List<Task> newGoals, List<CreatureAI> creatures, int maxPerDwarf=100)
         {
             // We are going to keep track of the unassigned goal count
             // to avoid having to parse the list at the end of the loop.
@@ -225,6 +226,7 @@ namespace DwarfCorp
                         // if it's going to fail the maxPerGoal check anyways is very good.
                         if (counts[taskCost.Key] < newGoals[taskCost.Key].MaxAssignable && 
                             !creature.Tasks.Contains(newGoals[taskCost.Key]) && 
+                            creature.CountFeasibleTasks() < maxPerDwarf &&
                             newGoals[taskCost.Key].IsFeasible(creature.Creature) == Task.Feasibility.Feasible)
                         {
                             
@@ -257,7 +259,7 @@ namespace DwarfCorp
             return unassigned;
         }
 
-        public static List<Task> AssignTasks(List<Task> newGoals, List<CreatureAI> creatures)
+        public static List<Task> AssignTasks(List<Task> newGoals, List<CreatureAI> creatures, int maxPerDwarf=100)
         {
 
             if(newGoals.Count == 0 || creatures.Count == 0)
@@ -278,7 +280,8 @@ namespace DwarfCorp
                     int assignment = assignments[i];
 
                     if (assignment >= unassignedGoals.Count || creatures[i].IsDead 
-                        || unassignedGoals[assignment].IsFeasible(creatures[i].Creature) != Task.Feasibility.Feasible)
+                        || unassignedGoals[assignment].IsFeasible(creatures[i].Creature) != Task.Feasibility.Feasible ||
+                        creatures[i].CountFeasibleTasks() >=  maxPerDwarf)
                     {
                         continue;
                     }
