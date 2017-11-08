@@ -137,6 +137,7 @@ namespace DwarfCorp
             return Creature.Faction.CraftBuilder.IsDesignation(Voxel);
         }
 
+
         public override void Initialize()
         {
             Act unreserveAct = new Wrap(() => Creature.Unreserve(Item.ItemType.CraftLocation));
@@ -232,6 +233,7 @@ namespace DwarfCorp
 
         public override void OnCanceled()
         {
+            Creature.Physics.Active = true;
             foreach (var statuses in Creature.Unreserve(Item.ItemType.CraftLocation))
             {
                 continue;

@@ -1306,8 +1306,12 @@ namespace DwarfCorp.GameStates
                                     return;
                                 sender.Parent.Hidden = true;
                                 data.SelectedResources = buildInfo.GetSelectedResources();
-                                data.NumRepeats = buildInfo.GetNumRepeats();
-                                var assignments = new List<Task> { new CraftResourceTask(data) };
+                                data.NumRepeats = 1;
+                                var assignments = new List<Task>();
+                                for(int i = 0; i < buildInfo.GetNumRepeats(); i++)
+                                {
+                                    assignments.Add(new CraftResourceTask(data));
+                                }
                                 var minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions,
                                     GameMaster.ToolMode.Craft);
                                 World.Master.TaskManager.AddTasks(assignments);

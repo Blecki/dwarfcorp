@@ -82,6 +82,15 @@ namespace DwarfCorp
             yield return Status.Success;
         }
 
+        bool HasResources(CreatureAI agent)
+        {
+            if (ResourcesToStash != null)
+                return agent.Faction.HasResources(ResourcesToStash);
+            if (Resources != null)
+                return agent.Faction.HasResources(Resources);
+            return true;
+        }
+
         public override void Initialize()
         {
 
@@ -138,7 +147,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    Tree = new Sequence(new GoToZoneAct(Agent, nearestStockpile),
+                    Tree = new Sequence(new Domain(() => HasResources(Agent), new GoToZoneAct(Agent, nearestStockpile)),
                                         new StashResourcesAct(Agent, ResourcesToStash),
                                         new SetBlackboardData<List<ResourceAmount>>(Agent, "ResourcesStashed", ResourcesToStash)
                                         );

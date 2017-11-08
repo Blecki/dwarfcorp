@@ -60,6 +60,12 @@ namespace DwarfCorp
             Name = "Build DestinationVoxel " + Location.ToString();
         }
 
+        public override void OnCanceled()
+        {
+            Creature.Physics.Active = true;
+            base.OnCanceled();
+        }
+
         public override IEnumerable<Status> Run()
         {
             if (!Creature.Faction.Designations.IsVoxelDesignation(Location, DesignationType.Put))

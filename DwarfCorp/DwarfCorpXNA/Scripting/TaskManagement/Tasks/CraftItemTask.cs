@@ -165,7 +165,14 @@ namespace DwarfCorp
             newItem.NumRepeats--;
             if (newItem.NumRepeats >= 1)
             {
-                creature.AI.AssignTask(new CraftResourceTask(newItem, TaskID));
+                if (creature.AI.Faction == creature.World.PlayerFaction)
+                {
+                    creature.World.Master.TaskManager.AddTask(new CraftResourceTask(newItem, TaskID));
+                }
+                else
+                {
+                    creature.AI.AssignTask(new CraftResourceTask(newItem, TaskID));
+                }
             }
             yield return Act.Status.Success;
         }
