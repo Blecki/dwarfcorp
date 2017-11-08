@@ -161,11 +161,13 @@ namespace DwarfCorp
             // in how the calculation happened between each time so we will instead make a costs list for each creature
             // and keep them all.  This not only avoids rebuilding the list but the sheer KeyValuePair object churn there already was.
             List<List<KeyValuePair<int, float>>> masterCosts = new List<List<KeyValuePair<int, float>>>(creatures.Count);
+            List<int> creatureTaskCounts = new List<int>();
 
             // We will set this up in the next loop rather than make it's own loop.
             List<int> costsPositions = new List<int>(creatures.Count);
             for (int costIndex = 0; costIndex < creatures.Count; costIndex++)
             {
+                creatureTaskCounts.Add(creatures[costIndex].CountFeasibleTasks());
                 List<KeyValuePair<int, float>> costs = new List<KeyValuePair<int, float>>();
                 CreatureAI creature = creatures[costIndex];
 
@@ -226,7 +228,7 @@ namespace DwarfCorp
                         // if it's going to fail the maxPerGoal check anyways is very good.
                         if (counts[taskCost.Key] < newGoals[taskCost.Key].MaxAssignable && 
                             !creature.Tasks.Contains(newGoals[taskCost.Key]) && 
-                            creature.CountFeasibleTasks() < maxPerDwarf &&
+                            creatureTaskCounts[randomCreature] < maxPerDwarf &&
                             newGoals[taskCost.Key].IsFeasible(creature.Creature) == Task.Feasibility.Feasible)
                         {
                             
@@ -236,6 +238,7 @@ namespace DwarfCorp
 
                             counts[taskCost.Key]++;
                             creature.AssignTask(newGoals[taskCost.Key].Clone());
+                            creatureTaskCounts[randomCreature]++;
                             break;
                         }
                     }

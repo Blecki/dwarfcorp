@@ -386,6 +386,8 @@ namespace DwarfCorp
             }
         }
 
+        private Timer restockTimer = new Timer(10.0f, false);
+
         /// <summary> Update this creature </summary>
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
@@ -443,6 +445,12 @@ namespace DwarfCorp
                 toReturn.SetupScript(Creature);
                 if (!Tasks.Contains(toReturn))
                     AssignTask(toReturn);
+            }
+
+            restockTimer.Update(DwarfTime.LastTime);
+            if (restockTimer.HasTriggered && Creature.Inventory.Resources.Count > 32)
+            {
+                Creature.RestockAllImmediately();
             }
             
             // Update the current task.
