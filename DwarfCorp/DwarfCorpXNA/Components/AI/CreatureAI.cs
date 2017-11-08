@@ -450,7 +450,8 @@ namespace DwarfCorp
             restockTimer.Update(DwarfTime.LastTime);
             if (restockTimer.HasTriggered && Creature.Inventory.Resources.Count > 32)
             {
-                Creature.RestockAllImmediately();
+                if (Faction == World.PlayerFaction)
+                    Creature.RestockAllImmediately();
             }
             
             // Update the current task.
