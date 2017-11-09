@@ -33,6 +33,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
+using System;
 
 namespace DwarfCorp
 {
@@ -43,6 +44,12 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class VoxelType : System.IEquatable<VoxelType>
     {
+        [System.Runtime.Serialization.OnSerializing]
+        internal void OnSerializingMethod(System.Runtime.Serialization.StreamingContext context)
+        {
+            throw new InvalidProgramException();
+        }
+
         public class FringeTileUV
         {
             public Vector2 UV;
@@ -64,8 +71,18 @@ namespace DwarfCorp
             Horizontal,
             Vertical
         }
+
         public short ID;
         public string Name = "";
+
+        // Graphics properties
+        public Point Top;
+        public Point Bottom;
+        public Point Sides;
+        public TransitionType Transitions = TransitionType.Horizontal;
+        public bool HasTransitionTextures = false;
+        public Point[] TransitionTiles = null;
+
         public bool ReleasesResource = false;
         public ResourceLibrary.ResourceType ResourceToRelease = ResourceLibrary.ResourceType.Stone;
         public float StartingHealth = 0.0f;
@@ -74,8 +91,7 @@ namespace DwarfCorp
         public float RampSize = 0.0f;
         public bool IsBuildable = false;
         public string ParticleType = "puff";
-        public TransitionType Transitions = TransitionType.Horizontal;
-        public bool HasTransitionTextures = false;
+        
         public bool EmitsLight = false;
         public float MinSpawnHeight = -999;
         public float MaxSpawnHeight = 999;
@@ -85,7 +101,7 @@ namespace DwarfCorp
         public bool SpawnClusters = false;
         public float ClusterSize = 0.0f;
         public float VeinLength = 0.0f;
-        public Dictionary<BoxTransition, BoxPrimitive.BoxTextureCoords> TransitionTextures = new Dictionary<BoxTransition, BoxPrimitive.BoxTextureCoords>();
+        [JsonIgnore] public Dictionary<BoxTransition, BoxPrimitive.BoxTextureCoords> TransitionTextures = new Dictionary<BoxTransition, BoxPrimitive.BoxTextureCoords>();
         public bool IsSoil = false;
         public bool IsSurface = false;
         public bool IsInvincible = false;

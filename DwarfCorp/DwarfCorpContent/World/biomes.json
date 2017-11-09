@@ -91,7 +91,7 @@
     "Height": 0.35,
     "Temp": 0.45,
     "Rain": 0.35,
-	"GrassTint": [0, 200, 0, 255]
+	"GrassTint": [0, 150, 0, 255]
   },
   "BorealForest": {
     "Biome": 2,

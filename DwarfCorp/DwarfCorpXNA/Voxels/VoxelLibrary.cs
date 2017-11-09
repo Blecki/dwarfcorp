@@ -97,11 +97,11 @@ namespace DwarfCorp
             return r;
         }
 
-        public static void CreateTransitionUVs(GraphicsDevice graphics, Texture2D textureMap, int width, int height, Point top, Point sides, Point bottom, Dictionary<BoxTransition, BoxPrimitive.BoxTextureCoords> transitionTextures, VoxelType.TransitionType transitionType = VoxelType.TransitionType.Horizontal)
+        public static void CreateTransitionUVs(GraphicsDevice graphics, Texture2D textureMap, int width, int height, Point[] tiles, Dictionary<BoxTransition, BoxPrimitive.BoxTextureCoords> transitionTextures, VoxelType.TransitionType transitionType = VoxelType.TransitionType.Horizontal)
         {
             for(int i = 0; i < 16; i++)
             {
-                Point topPoint = new Point(top.X + i, top.Y);
+                Point topPoint = new Point(tiles[0].X + i, tiles[0].Y);
 
                 if (transitionType == VoxelType.TransitionType.Horizontal)
                 {
@@ -110,13 +110,13 @@ namespace DwarfCorp
                         Top = (TransitionTexture) i
                     };
                     transitionTextures[transition] = new BoxPrimitive.BoxTextureCoords(textureMap.Width,
-                        textureMap.Height, width, height, sides, sides, topPoint, bottom, sides, sides);
+                        textureMap.Height, width, height, tiles[2], tiles[2], topPoint, tiles[1], tiles[2], tiles[2]);
                 }
                 else
                 {
                     for (int j = 0; j < 16; j++)
                     { 
-                         Point sidePoint = new Point(top.X + j, top.Y);
+                         Point sidePoint = new Point(tiles[0].X + j, tiles[0].Y);
                         // TODO: create every iteration of frontback vs. left right. There should be 16 of these.
                         BoxTransition transition = new BoxTransition()
                         {
@@ -126,7 +126,7 @@ namespace DwarfCorp
                             Back = (TransitionTexture)j
                         };
                         transitionTextures[transition] = new BoxPrimitive.BoxTextureCoords(textureMap.Width,
-                            textureMap.Height, width, height, sidePoint, sidePoint, sides, bottom, topPoint, topPoint);
+                            textureMap.Height, width, height, sidePoint, sidePoint, tiles[2], tiles[1], topPoint, topPoint);
                     }
                 }
             }
@@ -143,37 +143,6 @@ namespace DwarfCorp
         public static void InitializeDefaultLibrary(GraphicsDevice graphics, Texture2D cubeTexture)
         {
             if (PrimitiveMap.Count > 0) return;
-
-            BoxPrimitive grassCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 0), new Point(2, 0), new Point(2, 0));
-            BoxPrimitive dirtCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(2, 0), new Point(2, 0), new Point(2, 0));
-            BoxPrimitive darkDirtCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(8, 1), new Point(8, 1), new Point(8, 1));
-            BoxPrimitive stoneCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(3, 1), new Point(1, 0), new Point(1, 0));
-            BoxPrimitive sandCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(1, 1), new Point(1, 1), new Point(1, 1));
-            BoxPrimitive coalCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 11), new Point(0, 12), new Point(0, 12));
-            BoxPrimitive ironCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(1, 11), new Point(1, 12), new Point(1, 12));
-            BoxPrimitive goldCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(2, 11), new Point(2, 12), new Point(2, 12));
-            BoxPrimitive manaCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(3, 11), new Point(3, 12), new Point(3, 12));
-            BoxPrimitive frostCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 1), new Point(2, 1), new Point(2, 0));
-            BoxPrimitive snowCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(3, 7), new Point(3, 7), new Point(3, 7));
-            BoxPrimitive iceCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(2, 7), new Point(2, 7), new Point(2, 7));
-            BoxPrimitive scaffoldCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(7, 0), new Point(7, 0), new Point(7, 0));
-            BoxPrimitive glassCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(10, 0), new Point(10, 0), new Point(10, 0));
-            BoxPrimitive brickCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(11, 0), new Point(11, 0), new Point(11, 0));
-            BoxPrimitive plankCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 0), new Point(4, 0), new Point(4, 0));
-            BoxPrimitive waterCube = CreatePrimitive(graphics, cubeTexture, cubeTexture.Width, cubeTexture.Height, new Point(0, 0), new Point(0, 0), new Point(0, 0));
-            BoxPrimitive cobblestoneCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 1), new Point(9, 0), new Point(4, 1));
-            BoxPrimitive magicCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 10), new Point(0, 10), new Point(0, 10));
-            BoxPrimitive bedrockCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(6, 1), new Point(6, 1), new Point(6, 1));
-            BoxPrimitive brownTileCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 0), new Point(5, 0), new Point(5, 0));
-            BoxPrimitive blueTileCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(6, 0), new Point(6, 0), new Point(6, 0));
-            BoxPrimitive tilledSoilCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 1), new Point(2, 0), new Point(2, 0));
-
-            BoxPrimitive redGemCube =    CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 11), new Point(4, 12), new Point(4, 12));
-            BoxPrimitive orangeGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 11), new Point(5, 12), new Point(5, 12));
-            BoxPrimitive yellowGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(6, 11), new Point(6, 12), new Point(6, 12));
-            BoxPrimitive greenGemCube =  CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(7, 11), new Point(7, 12), new Point(7, 12));
-            BoxPrimitive blueGemCube =   CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(8, 11), new Point(8, 12), new Point(8, 12));
-            BoxPrimitive purpleGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(9, 11), new Point(9, 12), new Point(9, 12));
             
             emptyType = new VoxelType
             {
@@ -182,6 +151,9 @@ namespace DwarfCorp
                 IsBuildable = false,
                 ID = 0
             };
+
+            //  sounds need to be an array of strings
+            // After deserializing, loop through voxels and initialize sounds
 
             SoundSource dirtPicks = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_ic_dwarf_pick_dirt_1,
                 ContentPaths.Audio.Oscar.sfx_ic_dwarf_pick_dirt_2, ContentPaths.Audio.Oscar.sfx_ic_dwarf_pick_dirt_3);
@@ -192,9 +164,13 @@ namespace DwarfCorp
             SoundSource woodPicks = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_ic_dwarf_pick_wood_1,
                 ContentPaths.Audio.Oscar.sfx_ic_dwarf_pick_wood_2, ContentPaths.Audio.Oscar.sfx_ic_dwarf_pick_wood_3);
 
+            #region Tilled Soil
             VoxelType tilledSoil = new VoxelType
             {
                 Name = "TilledSoil",
+                Top = new Point(5,1),
+                Bottom = new Point(2,0),
+                Sides = new Point(2, 0),
                 ReleasesResource = false,
                 StartingHealth = 20,
                 CanRamp = false,
@@ -205,11 +181,15 @@ namespace DwarfCorp
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_dirt_destroy),
                 HitSound = dirtPicks
             };
-            RegisterType(tilledSoil, tilledSoilCube);
+            #endregion
 
+            #region Brown Tile
             VoxelType brownTile = new VoxelType
             {
                 Name = "Brown Tile",
+                Top = new Point(5, 0),
+                Bottom = new Point(5,0),
+                Sides = new Point(5,0),
                 ReleasesResource = true,
                 ResourceToRelease = ResourceLibrary.ResourceType.Stone,
                 IsBuildable = true,
@@ -219,11 +199,15 @@ namespace DwarfCorp
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_stone_destroy),
                 HitSound = stonePicks
             };
-            RegisterType(brownTile, brownTileCube);
+            #endregion
 
+            #region Blue Tile
             VoxelType blueTileFloor = new VoxelType
             {
                 Name = "Blue Tile",
+                Top = new Point(6,0),
+                Bottom = new Point(6,0),
+                Sides = new Point(6,0),
                 ReleasesResource = true,
                 ResourceToRelease = ResourceLibrary.ResourceType.Stone,
                 IsBuildable = true,
@@ -233,11 +217,15 @@ namespace DwarfCorp
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_stone_destroy),
                 HitSound = stonePicks
             };
-            RegisterType(blueTileFloor, blueTileCube);
+            #endregion
 
+            #region Cobble
             VoxelType cobblestoneFloor = new VoxelType
             {
                 Name = "Cobble",
+                Top = new Point(4,1),
+                Bottom = new Point(9,0),
+                Sides = new Point(4,1),
                 ReleasesResource = true,
                 ResourceToRelease = ResourceLibrary.ResourceType.Stone,
                 IsBuildable = true,
@@ -245,31 +233,38 @@ namespace DwarfCorp
                 CanRamp = false,
                 ParticleType = "stone_particle",
                 HasTransitionTextures = true,
+                TransitionTiles = new Point[] { new Point(0, 8), new Point(9,0), new Point(4,1) },
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_stone_destroy),
                 HitSound = stonePicks
             };
-            RegisterType(cobblestoneFloor, cobblestoneCube);
-            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 8), new Point(9, 0), new Point(4, 1), cobblestoneFloor.TransitionTextures);
-            
+            #endregion
+
+            #region Stockpile
             VoxelType stockpileType = new VoxelType
             {
                 Name = "Stockpile",
+                Top = new Point(4,0),
+                Bottom = new Point(4,0),
+                Sides = new Point(4,0),
                 ReleasesResource = false,
                 StartingHealth = 20,
                 CanRamp = false,
                 IsBuildable = false,
                 ParticleType = "stone_particle",
                 HasTransitionTextures = true,
+                TransitionTiles = new Point[] { new Point(0,9), new Point(9,0), new Point(4,0) },
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_wood_destroy),
                 HitSound = woodPicks
             };
-            RegisterType(stockpileType, plankCube);
+            #endregion
 
-            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 9), new Point(9, 0), new Point(4, 0), stockpileType.TransitionTextures);
-            
+            #region Plank
             VoxelType plankType = new VoxelType
             {
                 Name = "Plank",
+                Top = new Point(4, 0),
+                Bottom = new Point(4, 0),
+                Sides = new Point(4, 0),
                 ProbabilityOfRelease = 1.0f,
                 ResourceToRelease = ResourceLibrary.ResourceType.Wood,
                 StartingHealth = 20,
@@ -279,16 +274,19 @@ namespace DwarfCorp
                 IsBuildable = true,
                 ParticleType = "stone_particle",
                 HasTransitionTextures = true,
+                TransitionTiles = new Point[] { new Point(0, 9), new Point(9, 0), new Point(4, 0) },
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_wood_destroy),
                 HitSound = woodPicks
             };
+            #endregion
 
-
-            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 9), new Point(9, 0), new Point(4, 0), plankType.TransitionTextures);
-
+            #region Magic
             VoxelType magicType = new VoxelType
             {
                 Name = "Magic",
+                Top = new Point(0, 10),
+                Bottom = new Point(0,10),
+                Sides = new Point(0, 10),
                 ProbabilityOfRelease = 0.0f,
                 ResourceToRelease = ResourceLibrary.ResourceType.Mana,
                 StartingHealth = 1,
@@ -298,16 +296,18 @@ namespace DwarfCorp
                 ParticleType = "star_particle",
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.wurp),
                 HasTransitionTextures = false,
+                TransitionTiles = new Point[] { new Point(0, 10), new Point(15, 10), new Point(15, 10) },
                 EmitsLight = true
             };
+            #endregion
 
-
-            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 10), new Point(15, 10), new Point(15, 10), magicType.TransitionTextures);
-
-
+            #region Scaffold
             VoxelType scaffoldType = new VoxelType
             {
                 Name = "Scaffold",
+                Top = new Point(7,0),
+                Bottom = new Point(7,0),
+                Sides = new Point(7,0),
                 StartingHealth = 20,
                 ProbabilityOfRelease = 1.0f,
                 ResourceToRelease = ResourceLibrary.ResourceType.Wood,
@@ -319,10 +319,15 @@ namespace DwarfCorp
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_wood_destroy),
                 HitSound = woodPicks
             };
+            #endregion
 
+            #region Grass
             VoxelType grassType = new VoxelType
             {
                 Name = "Grass",
+                Top = new Point(0, 0),
+                Bottom = new Point(2, 0),
+                Sides = new Point(2, 0),
                 ProbabilityOfRelease = 1.0f,
                 ResourceToRelease = ResourceLibrary.ResourceType.Dirt,
                 StartingHealth = 10,
@@ -343,18 +348,17 @@ namespace DwarfCorp
                     new Point(0,2),
                     new Point(1,2),
                     new Point(2,2)
-                },
-                FringeTransitionUVs = CreateFringeUVs(new Point[]
-                {
-                    new Point(0,2),
-                    new Point(1,2),
-                    new Point(2,2),
-                })
+                }
             };
-                       
+            #endregion
+
+            #region Snow
             VoxelType snowType = new VoxelType
             {
                 Name = "Snow",
+                Top = new Point(3,7),
+                Bottom = new Point(3,7),
+                Sides = new Point(3,7),
                 StartingHealth = 1,
                 ReleasesResource = false,
                 CanRamp = true,
@@ -367,11 +371,15 @@ namespace DwarfCorp
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_snow_destroy),
                 HitSound = dirtPicks
             };
-            RegisterType(snowType, snowCube);
+            #endregion
 
+            #region Ice
             VoxelType iceType = new VoxelType
             {
                 Name = "Ice",
+                Top = new Point(2, 7),
+                Bottom = new Point(2, 7),
+                Sides = new Point(2, 7),
                 StartingHealth = 1,
                 ReleasesResource = false,
                 CanRamp = false,
@@ -383,11 +391,15 @@ namespace DwarfCorp
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_snow_destroy),
                 HitSound = dirtPicks
             };
-            RegisterType(iceType, iceCube);
-            
+            #endregion
+
+            #region Cave Fungus
             VoxelType caveFungus = new VoxelType
             {
                 Name = "CaveFungus",
+                Top = new Point(0, 0),
+                Bottom = new Point(2, 0),
+                Sides = new Point(2, 0),
                 ProbabilityOfRelease = 1.0f,
                 ResourceToRelease = ResourceLibrary.ResourceType.Stone,
                 StartingHealth = 30,
@@ -397,17 +409,21 @@ namespace DwarfCorp
                 IsBuildable = false,
                 ParticleType = "stone_particle",
                 HasTransitionTextures = true,
+                TransitionTiles = new Point[] { new Point(0, 13), new Point(1, 0), new Point(1, 0) },
                 IsSurface = false,
                 IsSoil = true,
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_dirt_destroy),
                 HitSound = dirtPicks
             };
+            #endregion
 
-            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 13), new Point(1, 0), new Point(1, 0), caveFungus.TransitionTextures);
-
+            #region Dirt
             VoxelType dirtType = new VoxelType
             {
                 Name = "Dirt",
+                Top = new Point(2,0),
+                Bottom = new Point(2,0),
+                Sides = new Point(2,0),
                 ReleasesResource = true,
                 ResourceToRelease = ResourceLibrary.ResourceType.Dirt,
                 ProbabilityOfRelease = 1.0f,
@@ -420,10 +436,15 @@ namespace DwarfCorp
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_dirt_destroy),
                 HitSound = dirtPicks
             };
+            #endregion
 
+            #region Stone
             VoxelType stoneType = new VoxelType
             {
                 Name = "Stone",
+                Top = new Point(3,1),
+                Bottom = new Point(1,0),
+                Sides = new Point(1,0),
                 ProbabilityOfRelease = 1.0f,
                 ReleasesResource = true,
                 ResourceToRelease = ResourceLibrary.ResourceType.Stone,
@@ -433,30 +454,45 @@ namespace DwarfCorp
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_stone_destroy),
                 HitSound = stonePicks
             };
+            #endregion
 
+            #region Bedrock
             VoxelType bedrockType = new VoxelType
             {
                 Name = "Bedrock",
+                Top = new Point(6, 1),
+                Bottom = new Point(6, 1),
+                Sides = new Point(6, 1),
                 StartingHealth = 255,
                 IsBuildable = false,
                 IsInvincible = true,
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_stone_destroy),
                 HitSound = stonePicks
             };
+            #endregion
 
+            #region Water
             VoxelType waterType = new VoxelType
             {
                 Name = "water",
+                Top = new Point(0,0),
+                Bottom = new Point(0,0),
+                Sides = new Point(0,0),
                 ReleasesResource = false,
                 CanRamp = true,
                 RampSize = 0.5f,
                 IsBuildable = false,
                 StartingHealth = 255
             };
+            #endregion
 
+            #region Sand
             VoxelType sandType = new VoxelType
             {
                 Name = "Sand",
+                Top = new Point(1,1),
+                Bottom = new Point(1,1),
+                Sides = new Point(1,1),
                 ReleasesResource = true,
                 StartingHealth = 15,
                 CanRamp = true,
@@ -469,10 +505,15 @@ namespace DwarfCorp
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_sand_destroy),
                 HitSound = dirtPicks
             };
+            #endregion
 
+            #region Iron
             VoxelType ironType = new VoxelType
             {
                 Name = "Iron",
+                Top = new Point(1,11),
+                Bottom = new Point(1,12),
+                Sides = new Point(1,12),
                 ProbabilityOfRelease = 1.0f,
                 ReleasesResource = true,
                 ResourceToRelease = ResourceLibrary.ResourceType.Iron,
@@ -490,11 +531,15 @@ namespace DwarfCorp
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_metal_destroy),
                 HitSound = stonePicks
             };
+            #endregion
 
-           
+            #region Coal
             VoxelType coalType = new VoxelType
             {
                 Name = "Coal",
+                Top = new Point(0, 11),
+                Bottom = new Point(0, 12),
+                Sides = new Point(0,12),
                 ProbabilityOfRelease = 1.0f,
                 ReleasesResource = true,
                 ResourceToRelease = ResourceLibrary.ResourceType.Coal,
@@ -511,11 +556,15 @@ namespace DwarfCorp
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_metal_destroy),
                 HitSound = stonePicks
             };
+            #endregion
 
-
+            #region Gold
             VoxelType goldType = new VoxelType
             {
                 Name = "Gold",
+                Top = new Point(2, 11),
+                Bottom = new Point(2, 12),
+                Sides = new Point(2, 12),
                 ProbabilityOfRelease = 1.0f,
                 ReleasesResource = true,
                 ResourceToRelease = ResourceLibrary.ResourceType.Gold,
@@ -531,10 +580,15 @@ namespace DwarfCorp
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_metal_destroy),
                 HitSound = stonePicks
             };
+            #endregion
 
+            #region Emerald
             VoxelType greenGem = new VoxelType
             {
                 Name = "Emerald",
+                Top = new Point(7, 11),
+                Bottom = new Point(7, 12),
+                Sides = new Point(7, 12),
                 ProbabilityOfRelease = 1.0f,
                 ReleasesResource = true,
                 ResourceToRelease = "Emerald",
@@ -550,10 +604,15 @@ namespace DwarfCorp
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_metal_destroy),
                 HitSound = stonePicks
             };
+            #endregion
 
+            #region Ruby
             VoxelType redGem = new VoxelType
             {
                 Name = "Ruby",
+                Top = new Point(4, 11),
+                Bottom = new Point(4, 12),
+                Sides = new Point(4, 12),
                 ProbabilityOfRelease = 1.0f,
                 ReleasesResource = true,
                 ResourceToRelease = "Ruby",
@@ -569,11 +628,15 @@ namespace DwarfCorp
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_metal_destroy),
                 HitSound = stonePicks
             };
+            #endregion
 
-
+            #region Amethyst
             VoxelType purpleGem = new VoxelType
             {
                 Name = "Amethyst",
+                Top = new Point(9, 11),
+                Bottom = new Point(9, 12),
+                Sides = new Point(9, 12),
                 ProbabilityOfRelease = 1.0f,
                 ReleasesResource = true,
                 ResourceToRelease = "Amethyst",
@@ -589,10 +652,15 @@ namespace DwarfCorp
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_metal_destroy),
                 HitSound = stonePicks
             };
+            #endregion
 
+            #region Sapphire
             VoxelType blueGem = new VoxelType
             {
                 Name = "Sapphire",
+                Top = new Point(8, 11),
+                Bottom = new Point(8, 12),
+                Sides = new Point(8, 12),
                 ProbabilityOfRelease = 1.0f,
                 ReleasesResource = true,
                 ResourceToRelease = "Sapphire",
@@ -608,10 +676,15 @@ namespace DwarfCorp
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_metal_destroy),
                 HitSound = stonePicks
             };
+            #endregion
 
+            #region Citrine
             VoxelType yellowGem = new VoxelType
             {
                 Name = "Citrine",
+                Top = new Point(6, 11),
+                Bottom = new Point(6, 12),
+                Sides = new Point(6, 12),
                 ProbabilityOfRelease = 1.0f,
                 ReleasesResource = true,
                 ResourceToRelease = "Citrine",
@@ -627,10 +700,15 @@ namespace DwarfCorp
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_metal_destroy),
                 HitSound = stonePicks
             };
+            #endregion
 
+            #region Garnet
             VoxelType orangeGem = new VoxelType
             {
                 Name = "Garnet",
+                Top = new Point(5, 11),
+                Bottom = new Point(5, 12),
+                Sides = new Point(5, 12),
                 ProbabilityOfRelease = 1.0f,
                 ReleasesResource = true,
                 ResourceToRelease = "Garnet",
@@ -646,11 +724,15 @@ namespace DwarfCorp
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_metal_destroy),
                 HitSound = stonePicks
             };
+            #endregion
 
-         
+            #region Mana
             VoxelType manaType = new VoxelType
             {
                 Name = "Mana",
+                Top = new Point(3, 11),
+                Bottom = new Point(3, 12),
+                Sides = new Point(3, 12),
                 ProbabilityOfRelease = 1.0f,
                 ReleasesResource = true,
                 ResourceToRelease = ResourceLibrary.ResourceType.Mana,
@@ -666,10 +748,15 @@ namespace DwarfCorp
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_metal_destroy),
                 HitSound = stonePicks
             };
+            #endregion
 
+            #region Glass
             VoxelType glassType = new VoxelType
             {
                 Name = "Glass",
+                Top = new Point(3, 11),
+                Bottom = new Point(3, 12),
+                Sides = new Point(3, 12),
                 ProbabilityOfRelease = 1.0f,
                 ReleasesResource = true,
                 ResourceToRelease = ResourceLibrary.ResourceType.Glass,
@@ -680,16 +767,18 @@ namespace DwarfCorp
                 HitSound = stonePicks,
                 IsTransparent =  true,
                 HasTransitionTextures = true,
+                TransitionTiles = new Point[] { new Point(0, 14), new Point(0, 14), new Point(0, 14) },
                 Transitions = VoxelType.TransitionType.Vertical
             };
+            #endregion
 
-            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 14), new Point(0, 14), new Point(0, 14), glassType.TransitionTextures,
-                VoxelType.TransitionType.Vertical);
-
-
+            #region Brick
             VoxelType brickType = new VoxelType
             {
                 Name = "Brick",
+                Top = new Point(11, 0),
+                Bottom = new Point(11, 0),
+                Sides = new Point(11, 0),
                 ProbabilityOfRelease = 1.0f,
                 ReleasesResource = true,
                 ResourceToRelease = ResourceLibrary.ResourceType.Brick,
@@ -699,10 +788,15 @@ namespace DwarfCorp
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_stone_destroy),
                 HitSound = stonePicks
             };
+            #endregion
 
+            #region Dark Dirt
             VoxelType darkDirtType = new VoxelType
             {
                 Name = "DarkDirt",
+                Top = new Point(8,1),
+                Bottom = new Point(8,1),
+                Sides = new Point(8,1),
                 ReleasesResource = true,
                 ResourceToRelease = ResourceLibrary.ResourceType.Dirt,
                 ProbabilityOfRelease = 1.0f,
@@ -715,36 +809,16 @@ namespace DwarfCorp
                 ExplosionSound = SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_voxel_dirt_destroy),
                 HitSound = dirtPicks
             };
+            #endregion
 
-            RegisterType(greenGem, greenGemCube);
-            RegisterType(redGem, redGemCube);
-            RegisterType(purpleGem, purpleGemCube);
-            RegisterType(blueGem, blueGemCube);
-            RegisterType(orangeGem, orangeGemCube);
-            RegisterType(yellowGem, yellowGemCube);
-
-            RegisterType(grassType, grassCube);
-            RegisterType(caveFungus, grassCube);
-            RegisterType(emptyType, null);
-            RegisterType(dirtType, dirtCube);
-            RegisterType(darkDirtType, darkDirtCube);
-            RegisterType(stoneType, stoneCube);
-            RegisterType(waterType, waterCube);
-            RegisterType(sandType, sandCube);
-            RegisterType(ironType, ironCube);
-            RegisterType(goldType, goldCube);
-            RegisterType(manaType, manaCube);
-            RegisterType(plankType, plankCube);
-            RegisterType(scaffoldType, scaffoldCube);
-            RegisterType(bedrockType, bedrockCube);
-            RegisterType(coalType, coalCube);
-            RegisterType(magicType, magicCube);
-            RegisterType(glassType, glassCube);
-            RegisterType(brickType, brickCube);
-            
             foreach (VoxelType type in VoxelType.TypeList)
             {
                 Types[type.Name] = type;
+                PrimitiveMap[type] = type.ID == 0 ? null : CreatePrimitive(graphics, cubeTexture, 32, 32, type.Top, type.Bottom, type.Sides);
+                if (type.HasTransitionTextures)
+                    CreateTransitionUVs(graphics, cubeTexture, 32, 32, type.TransitionTiles, type.TransitionTextures, type.Transitions);
+                if (type.HasFringeTransitions)
+                    type.FringeTransitionUVs = CreateFringeUVs(type.FringeTiles);
             }
         }
 
@@ -799,6 +873,7 @@ namespace DwarfCorp
             return PrimitiveMap.Keys.ToList();
         }
 
+        // Do not delete: Used to generate block icon texture for menu.
         public static Texture2D RenderIcons(GraphicsDevice device, Shader shader, ChunkManager chunks, int width, int height, int tileSize)
         {
             RenderTarget2D toReturn = new RenderTarget2D(device, width, height, false, SurfaceFormat.Color, DepthFormat.Depth16, 16, RenderTargetUsage.PreserveContents);
