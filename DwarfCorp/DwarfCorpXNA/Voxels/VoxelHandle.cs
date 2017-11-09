@@ -173,7 +173,7 @@ namespace DwarfCorp
             set
             {
                 _cache_Chunk.Data.Types[_cache_Index] = value;
-                OnTypeSet(VoxelType.TypeList[value]);
+                OnTypeSet(VoxelLibrary.TypeList[value]);
             }
         }
 
@@ -183,7 +183,7 @@ namespace DwarfCorp
         {
             get
             {
-                return VoxelType.TypeList[_cache_Chunk.Data.Types[_cache_Index]];
+                return VoxelLibrary.TypeList[_cache_Chunk.Data.Types[_cache_Index]];
             }
             set
             {

@@ -53,6 +53,7 @@ namespace DwarfCorp
         public static string controls = ProgramData.CreatePath(DwarfGame.GetGameDirectory(), "controls.json");
         public static string settings = ProgramData.CreatePath(DwarfGame.GetGameDirectory(), "settings.json");
         public static string mixer = ProgramData.CreatePath("Content", "Audio", "mixer.json");
+        public static string voxel_types = ProgramData.CreatePath("Content", "voxel-types.json");
     public class Audio
     {
         public class Oscar

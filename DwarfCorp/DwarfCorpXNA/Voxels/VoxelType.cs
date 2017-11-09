@@ -44,12 +44,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class VoxelType : System.IEquatable<VoxelType>
     {
-        [System.Runtime.Serialization.OnSerializing]
-        internal void OnSerializingMethod(System.Runtime.Serialization.StreamingContext context)
-        {
-            throw new InvalidProgramException();
-        }
-
         public class FringeTileUV
         {
             public Vector2 UV;
@@ -82,7 +76,11 @@ namespace DwarfCorp
         public TransitionType Transitions = TransitionType.Horizontal;
         public bool HasTransitionTextures = false;
         public Point[] TransitionTiles = null;
-
+        [JsonIgnore] public Dictionary<BoxTransition, BoxPrimitive.BoxTextureCoords> TransitionTextures = null;
+        public bool HasFringeTransitions = false;
+        public Point[] FringeTiles = null;
+        [JsonIgnore] public FringeTileUV[] FringeTransitionUVs = null;
+        
         public bool ReleasesResource = false;
         public ResourceLibrary.ResourceType ResourceToRelease = ResourceLibrary.ResourceType.Stone;
         public float StartingHealth = 0.0f;
@@ -101,42 +99,24 @@ namespace DwarfCorp
         public bool SpawnClusters = false;
         public float ClusterSize = 0.0f;
         public float VeinLength = 0.0f;
-        [JsonIgnore] public Dictionary<BoxTransition, BoxPrimitive.BoxTextureCoords> TransitionTextures = new Dictionary<BoxTransition, BoxPrimitive.BoxTextureCoords>();
         public bool IsSoil = false;
         public bool IsSurface = false;
         public bool IsInvincible = false;
         public Color Tint = Color.White;
         public bool UseBiomeGrassTint = false;
-
-        public bool HasFringeTransitions = false;
-        public Point[] FringeTiles = null;
-        [JsonIgnore] public FringeTileUV[] FringeTransitionUVs = null;
-
+                
         public bool SpawnOnSurface = false;
         public bool IsTransparent = false;
 
         public string ExplosionSoundResource = ContentPaths.Audio.gravel;
-        public string HitSoundResource = ContentPaths.Audio.pick;
+        public string[] HitSoundResources = new string[] { ContentPaths.Audio.pick };
 
-        public SoundSource ExplosionSound;
-        public SoundSource HitSound;
-
-        private static short maxID = 0;
-        public static List<VoxelType> TypeList = new List<VoxelType>();
+        [JsonIgnore] public SoundSource ExplosionSound;
+        [JsonIgnore] public SoundSource HitSound;
 
         public VoxelType()
         {
-            ID = maxID;
-            maxID++;
-
-            if (!TypeList.Contains(this))
-            {
-                TypeList.Add(this);
-            }
-
-            // Should be in a post-deserialize init method
-            ExplosionSound = SoundSource.Create(ExplosionSoundResource);
-            HitSound = SoundSource.Create(HitSoundResource);
+            
         }
 
         public static bool operator ==(VoxelType obj1, VoxelType obj2)
