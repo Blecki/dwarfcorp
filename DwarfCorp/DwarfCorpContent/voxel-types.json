@@ -15,11 +15,7 @@
       "HasFringeTransitions": false,
       "FringeTiles": null,
       "ReleasesResource": false,
-      "ResourceToRelease": {
-        "$id": "2",
-        "$type": "DwarfCorp.ResourceLibrary+ResourceType, DwarfCorp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-        "_value": "Stone"
-      },
+      "ResourceToRelease": "Stone",
       "StartingHealth": 0.0,
       "ProbabilityOfRelease": 0.0,
       "CanRamp": false,
