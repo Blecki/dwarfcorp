@@ -169,8 +169,9 @@ namespace DwarfCorp
                                 ObjectName = Item.ItemType.CraftLocation,
                                 CheckForOcclusion = true
                             },
-                            new Wrap(() => Creature.HitAndWait(time, true, 
-                                () => Creature.AI.Position, "Craft")),
+                            new Wrap(() => Creature.HitAndWait(true, () => 1.0f, 
+                            () => Item.Progress, () => Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime,
+                            () => Item.Location.WorldPosition + Vector3.One * 0.5f, "Craft")),
                             new Wrap(DestroyResources),
                             unreserveAct,
                             new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
@@ -183,7 +184,9 @@ namespace DwarfCorp
                     Tree = new Domain(IsNotCancelled, new Sequence(
                         getResources,
                         new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
-                        new Wrap(() => Creature.HitAndWait(time, true, () => Creature.AI.Position, "Craft")),
+                        new Wrap(() => Creature.HitAndWait(true, () => 1.0f,
+                            () => Item.Progress, () => Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime,
+                            () => Item.Location.WorldPosition + Vector3.One * 0.5f, "Craft")),
                         new Wrap(DestroyResources),
                         new CreateCraftItemAct(Voxel, Creature.AI, Item))) |
                        (new Wrap(Creature.RestockAll) & false);

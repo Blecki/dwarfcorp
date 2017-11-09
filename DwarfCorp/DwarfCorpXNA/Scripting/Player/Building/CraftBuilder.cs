@@ -55,7 +55,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class CraftBuilder
     {
-        public struct CraftDesignation
+        public class CraftDesignation
         {
             public CraftItem ItemType;
             public VoxelHandle Location;
@@ -64,6 +64,7 @@ namespace DwarfCorp
             public float Orientation;
             public bool Valid;
             public Body GhostBody;
+            public float Progress = 0.0f;
         }
 
         public Faction Faction { get; set; }
