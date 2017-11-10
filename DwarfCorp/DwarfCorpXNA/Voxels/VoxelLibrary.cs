@@ -170,13 +170,6 @@ namespace DwarfCorp
             }
         }
 
-        // Todo: Kill
-        public static void PlaceType(VoxelType type, VoxelHandle voxel)
-        {
-            voxel.Type = type;
-            voxel.WaterCell = new WaterCell();
-        }
-
         public static VoxelType GetVoxelType(short id)
         {
             return TypeList[id];

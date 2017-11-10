@@ -476,13 +476,16 @@ namespace DwarfCorp
                     {
                         var neighborCoord = V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[s];
                         var handle = new VoxelHandle(Chunk.Manager.ChunkData, neighborCoord);
-                        if (handle.IsValid && handle.TypeID != V.TypeID)
+
+                        if (handle.IsValid)
                         {
                             var aboveNeighbor = new VoxelHandle(Chunk.Manager.ChunkData, neighborCoord + new GlobalVoxelOffset(0, 1, 0));
 
                             if (!aboveNeighbor.IsValid || aboveNeighbor.IsEmpty)
                             {
                                 // Draw horizontal fringe.
+                                if (handle.Type.FringePrecedence >= V.Type.FringePrecedence)
+                                    continue;
 
                                 // Twizzle vertex positions.
                                 var newPositions = new Vector3[4];
@@ -567,8 +570,12 @@ namespace DwarfCorp
                     {
                         var neighborCoord = V.Coordinate + VoxelHelpers.DiagonalNeighbors2D[s];
                         var handle = new VoxelHandle(Chunk.Manager.ChunkData, neighborCoord);
-                        if (handle.IsValid && handle.TypeID != V.TypeID)
+
+                        if (handle.IsValid)
                         {
+                            if (!handle.IsEmpty && handle.Type.FringePrecedence >= V.Type.FringePrecedence)
+                                    continue;
+
                             var manhattanA = new VoxelHandle(Chunk.Manager.ChunkData,
                                 V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[s]);
                             if (!manhattanA.IsValid || manhattanA.TypeID == V.TypeID)

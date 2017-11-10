@@ -446,7 +446,7 @@
       },
     ],
     "GrassLayer": {
-        "VoxelType" :  "Grass",
+        "VoxelType" :  "DesertGrass",
         "Depth" :  1
     },
     "SoilLayer": {

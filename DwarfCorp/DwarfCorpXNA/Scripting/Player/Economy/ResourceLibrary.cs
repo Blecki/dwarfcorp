@@ -52,7 +52,7 @@ namespace DwarfCorp
     public static class ResourceLibrary
     {
 
-        public struct ResourceType
+        public struct ResourceType : IEquatable<ResourceType>
         {
             [JsonProperty]
             private string _value;
@@ -114,6 +114,32 @@ namespace DwarfCorp
                     return null;
                 }
                 return ResourceLibrary.GetResourceByName(_value);
+            }
+
+            public static bool operator ==(ResourceType A, ResourceType B)
+            {
+                return A._value == B._value;
+            }
+
+            public static bool operator !=(ResourceType A, ResourceType B)
+            {
+                return A._value != B._value;
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (!(obj is ResourceType)) return false;
+                return this == (ResourceType)obj;
+            }
+
+            public bool Equals(ResourceType other)
+            {
+                return this == other;
+            }
+
+            public override int GetHashCode()
+            {
+                return _value.GetHashCode();
             }
         }
 

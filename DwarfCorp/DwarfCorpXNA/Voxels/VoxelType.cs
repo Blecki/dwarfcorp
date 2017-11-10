@@ -80,6 +80,7 @@ namespace DwarfCorp
         public bool HasFringeTransitions = false;
         public Point[] FringeTiles = null;
         [JsonIgnore] public FringeTileUV[] FringeTransitionUVs = null;
+        public int FringePrecedence = 0;
         
         public bool ReleasesResource = false;
         public ResourceLibrary.ResourceType ResourceToRelease = ResourceLibrary.ResourceType.Stone;

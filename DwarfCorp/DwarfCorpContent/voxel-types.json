@@ -545,6 +545,7 @@
           "2, 2"
         ]
       },
+	  "FringePrecedence": 255,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$id": "20",
@@ -577,6 +578,68 @@
       ],
       "UseBiomeGrassTint": true,
       "SpawnOnSurface": false,
+      "IsTransparent": false,
+      "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_dirt_destroy",
+      "HitSoundResources": {
+        "$type": "System.String[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+        "$values": [
+          "Audio\\oscar\\sfx_ic_dwarf_pick_dirt_1",
+          "Audio\\oscar\\sfx_ic_dwarf_pick_dirt_2",
+          "Audio\\oscar\\sfx_ic_dwarf_pick_dirt_3"
+        ]
+      }
+    },
+	{
+      "$type": "DwarfCorp.VoxelType, DwarfCorp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "ID": 0,
+      "Name": "DesertGrass",
+      "Top": "0, 0",
+      "Bottom": "1, 1",
+      "Sides": "1, 1",
+      "Transitions": 1,
+      "HasTransitionTextures": false,
+      "TransitionTiles": null,
+      "HasFringeTransitions": true,
+      "FringeTiles": {
+        "$type": "Microsoft.Xna.Framework.Point[], Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553",
+        "$values": [
+          "0, 2",
+          "1, 2",
+          "2, 2"
+        ]
+      },
+	  "FringePrecedence": 254,
+      "ReleasesResource": true,
+      "ResourceToRelease": {
+        "$type": "DwarfCorp.ResourceLibrary+ResourceType, DwarfCorp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "_value": "Sand"
+      },
+      "StartingHealth": 10.0,
+      "ProbabilityOfRelease": 1.0,
+      "CanRamp": true,
+      "RampSize": 0.5,
+      "IsBuildable": false,
+      "ParticleType": "dirt_particle",
+      "EmitsLight": false,
+      "MinSpawnHeight": -999.0,
+      "MaxSpawnHeight": 999.0,
+      "SpawnProbability": 1.0,
+      "Rarity": 1.0,
+      "SpawnVeins": false,
+      "SpawnClusters": false,
+      "ClusterSize": 0.0,
+      "VeinLength": 0.0,
+      "IsSoil": true,
+      "IsSurface": true,
+      "IsInvincible": false,
+      "Tint": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "UseBiomeGrassTint": true,
+      "SpawnOnSurface": true,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_dirt_destroy",
       "HitSoundResources": {
