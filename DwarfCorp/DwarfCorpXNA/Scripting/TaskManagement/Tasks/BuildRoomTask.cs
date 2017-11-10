@@ -50,10 +50,12 @@ namespace DwarfCorp
         public BuildRoomTask()
         {
             Priority = PriorityType.High;
+            MaxAssignable = 3;
         }
 
         public BuildRoomTask(BuildRoomOrder zone)
         {
+            MaxAssignable = 3;
             Name = "Build Room " + zone.ToBuild.RoomData.Name + zone.ToBuild.ID;
             Zone = zone;
             Priority = PriorityType.High;
@@ -62,6 +64,11 @@ namespace DwarfCorp
         public override Task Clone()
         {
             return new BuildRoomTask(Zone);
+        }
+
+        public override Feasibility IsFeasible(Creature agent)
+        {
+            return agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.BuildZone) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override Act CreateScript(Creature creature)

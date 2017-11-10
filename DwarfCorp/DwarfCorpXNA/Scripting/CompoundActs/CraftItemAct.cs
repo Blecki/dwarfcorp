@@ -53,9 +53,13 @@ namespace DwarfCorp
 
         }
 
-        public IEnumerable<Status> DestroyResources()
+        public IEnumerable<Status> DestroyResources(Vector3 pos)
         {
-            Creature.Inventory.Remove(Item.ItemType.SelectedResources);
+            if (!Item.HasResources)
+            {
+                Creature.Inventory.RemoveAndCreateWithToss(Item.ItemType.SelectedResources, pos);
+                Item.HasResources = true;
+            }
             yield return Status.Success;
         }
 
@@ -145,11 +149,13 @@ namespace DwarfCorp
             Act getResources = null;
             if (Item.ItemType.SelectedResources == null || Item.ItemType.SelectedResources.Count == 0)
             {
-                getResources = new GetResourcesAct(Agent, Item.ItemType.RequiredResources);
+                getResources = new Select(new Domain(() => Item.HasResources, true),
+                                          new GetResourcesAct(Agent, Item.ItemType.RequiredResources));
             }
             else
             {
-                getResources = new GetResourcesAct(Agent, Item.ItemType.SelectedResources);
+                getResources = new Select(new Domain(() =>Item.HasResources, true),
+                                          new GetResourcesAct(Agent, Item.ItemType.SelectedResources));
             }
 
             if (Item.ItemType.Type == CraftItem.CraftType.Object)
@@ -169,10 +175,10 @@ namespace DwarfCorp
                                 ObjectName = Item.ItemType.CraftLocation,
                                 CheckForOcclusion = true
                             },
+                            new Wrap(() => DestroyResources(Item.Location.WorldPosition)),
                             new Wrap(() => Creature.HitAndWait(true, () => 1.0f, 
                             () => Item.Progress, () => Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime,
                             () => Item.Location.WorldPosition + Vector3.One * 0.5f, "Craft")),
-                            new Wrap(DestroyResources),
                             unreserveAct,
                             new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
                             new CreateCraftItemAct(Voxel, Creature.AI, Item)
@@ -184,10 +190,10 @@ namespace DwarfCorp
                     Tree = new Domain(IsNotCancelled, new Sequence(
                         getResources,
                         new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
+                        new Wrap(() => DestroyResources(Item.Location.WorldPosition)),
                         new Wrap(() => Creature.HitAndWait(true, () => 1.0f,
                             () => Item.Progress, () => Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime,
                             () => Item.Location.WorldPosition + Vector3.One * 0.5f, "Craft")),
-                        new Wrap(DestroyResources),
                         new CreateCraftItemAct(Voxel, Creature.AI, Item))) |
                        (new Wrap(Creature.RestockAll) & false);
                 }
@@ -209,11 +215,10 @@ namespace DwarfCorp
                                 ObjectName = Item.ItemType.CraftLocation,
                                 CheckForOcclusion = true
                             },
-                            new Wrap(
-                                () =>
-                                    Creature.HitAndWait(time, true,
-                                        () => Agent.Blackboard.GetData<Body>(Item.ItemType.CraftLocation).Position, Noise)),
-                            new Wrap(DestroyResources),
+                            new Wrap(() => DestroyResources(Agent.Position + MathFunctions.RandVector3Cube() * 0.5f)),
+                            new Wrap(() => Creature.HitAndWait(true, () => 1.0f,
+                                () => Item.Progress, () => Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime,
+                                () => Agent.Position, Noise)),
                             unreserveAct,
                             new Wrap(CreateResources),
                             new Wrap(Creature.RestockAll)
@@ -224,8 +229,8 @@ namespace DwarfCorp
                 {
                     Tree = new Sequence(
                         getResources,
+                        new Wrap(() => DestroyResources(Creature.AI.Position + MathFunctions.RandVector3Cube() * 0.5f)),
                         new Wrap(() => Creature.HitAndWait(time, true, () => Creature.AI.Position)),
-                        new Wrap(DestroyResources),
                         new Wrap(CreateResources)) |
                        (new Wrap(Creature.RestockAll) & false);
                 }

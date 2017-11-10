@@ -65,6 +65,7 @@ namespace DwarfCorp
             public bool Valid;
             public Body GhostBody;
             public float Progress = 0.0f;
+            public bool HasResources = false;
         }
 
         public Faction Faction { get; set; }

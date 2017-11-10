@@ -126,7 +126,6 @@ namespace DwarfCorp
                 {
                     Creature.NoiseMaker.MakeNoise("Stockpile", Creature.AI.Position);
                     Creature.Stats.NumItemsGathered++;
-                    Creature.AI.AddXP(1);
                     Creature.CurrentCharacterMode = CharacterMode.Attacking;
                     Creature.Sprite.ResetAnimations(CharacterMode.Attacking);
                     Creature.Sprite.PlayAnimations(CharacterMode.Attacking);

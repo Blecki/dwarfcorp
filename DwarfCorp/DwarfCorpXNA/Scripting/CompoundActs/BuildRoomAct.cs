@@ -89,20 +89,33 @@ namespace DwarfCorp
 
         }
 
+        public IEnumerable<Act.Status> PutResources()
+        {
+            if (BuildRoom.HasResources)
+            {
+                yield return Act.Status.Success;
+            }
+
+            Agent.Creature.Inventory.Remove(Resources);
+            BuildRoom.HasResources = true;
+            yield return Act.Status.Success;
+        }
+
         public BuildRoomAct(CreatureAI agent, BuildRoomOrder buildRoom) :
             base(agent)
         {
             Name = "Build BuildRoom " + buildRoom.ToString();
             Resources = buildRoom.ListRequiredResources();
-
-            Tree = new Sequence(new GetResourcesAct(Agent, Resources),
+            BuildRoom = buildRoom;
+            Tree = new Sequence(new Select(new Domain(buildRoom.HasResources, true), new GetResourcesAct(Agent, Resources)),
                 new Domain(() => IsRoomBuildOrder(buildRoom) && !buildRoom.IsBuilt && !buildRoom.IsDestroyed, new Sequence(
                     SetTargetVoxelFromRoomAct(buildRoom, "ActionVoxel"),
                     new GoToNamedVoxelAct("ActionVoxel", PlanAct.PlanType.Adjacent, Agent),
+                    new Wrap(PutResources),
                     new Wrap(() => Creature.HitAndWait(true, () => 1.0f, () => buildRoom.BuildProgress,
                     () => buildRoom.BuildProgress += agent.Stats.BuildSpeed / buildRoom.VoxelOrders.Count * 0.5f, 
                     () => MathFunctions.RandVector3Box(buildRoom.GetBoundingBox()), ContentPaths.Audio.Oscar.sfx_ic_dwarf_craft, () => !buildRoom.IsBuilt && !buildRoom.IsDestroyed)),
-                    new PlaceRoomResourcesAct(Agent, buildRoom, Resources)
+                    new CreateRoomAct(Agent, buildRoom)
                     , new Wrap(Creature.RestockAll))) | new Wrap(Creature.RestockAll)
                 );
         }

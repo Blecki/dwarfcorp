@@ -45,12 +45,14 @@ namespace DwarfCorp
         public CraftBuilder.CraftDesignation Designation { get; set; }
         public CraftItemTask()
         {
+            MaxAssignable = 3;
             Priority = PriorityType.Low;
             AutoRetry = true;
         }
 
         public CraftItemTask(CraftBuilder.CraftDesignation type)
         {
+            MaxAssignable = 3;
             Name = string.Format("Craft {0} at {1}", type.ItemType.Name, type.Location);
             Priority = PriorityType.Low;
             AutoRetry = true;
@@ -191,11 +193,21 @@ namespace DwarfCorp
                 agent.World.MakeAnnouncement(String.Format("{0} cancelled craft task: Needs {1}.", agent.Name, Item.ItemType.CraftLocation));
                 return true;
             }
+
+            if (Item.Progress > 1.0f)
+            {
+                return true;
+            }
             return false;
         }
 
         private bool HasResources(Creature agent)
         {
+            if (Item.HasResources)
+            {
+                return true;
+            }
+
             var resources = agent.Faction.HasResources(Item.ItemType.SelectedResources);
             if (!resources)
             {
