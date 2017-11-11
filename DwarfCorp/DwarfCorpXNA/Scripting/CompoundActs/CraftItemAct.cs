@@ -50,17 +50,58 @@ namespace DwarfCorp
         public string Noise { get; set; }
         public CraftItemAct()
         {
+            
+        }
 
+        public IEnumerable<Status> ReserveResources()
+        {
+            if (!Item.HasResources && Item.ResourcesReservedFor == null)
+            {
+                Item.ResourcesReservedFor = Agent;
+            }
+            yield return Status.Success;
+        }
+
+        public IEnumerable<Status> UnReserve()
+        {
+            foreach(var status in Creature.Unreserve(Item.ItemType.CraftLocation))
+            {
+                yield return status;
+            }
+            if (Item.ResourcesReservedFor == Agent)
+                Item.ResourcesReservedFor = null;
+            yield return Act.Status.Success;
         }
 
         public IEnumerable<Status> DestroyResources(Vector3 pos)
         {
-            if (!Item.HasResources)
+            if (!Item.HasResources && Item.ResourcesReservedFor == Agent)
             {
                 Creature.Inventory.RemoveAndCreateWithToss(Item.ItemType.SelectedResources, pos);
                 Item.HasResources = true;
             }
             yield return Status.Success;
+        }
+        
+        public IEnumerable<Status> WaitForResources()
+        {
+            if (Item.ResourcesReservedFor == Agent)
+            {
+                yield return Act.Status.Success;
+                yield break;
+            }
+
+            while (!Item.HasResources)
+            {
+                if (Item.ResourcesReservedFor == null || Item.ResourcesReservedFor.IsDead)
+                {
+                    yield return Act.Status.Fail;
+                    yield break;
+                }
+                yield return Act.Status.Running;
+            }
+
+            yield return Act.Status.Success;
         }
 
         public IEnumerable<Status> CreateResources()
@@ -141,31 +182,40 @@ namespace DwarfCorp
             return Creature.Faction.CraftBuilder.IsDesignation(Voxel);
         }
 
+        public bool ResourceStateValid()
+        {
+            return Item.HasResources || Item.ResourcesReservedFor != null;
+        }
+
 
         public override void Initialize()
         {
-            Act unreserveAct = new Wrap(() => Creature.Unreserve(Item.ItemType.CraftLocation));
+            Act unreserveAct = new Wrap(UnReserve);
             float time = 3 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.BuffedInt);
             Act getResources = null;
             if (Item.ItemType.SelectedResources == null || Item.ItemType.SelectedResources.Count == 0)
             {
-                getResources = new Select(new Domain(() => Item.HasResources, true),
-                                          new GetResourcesAct(Agent, Item.ItemType.RequiredResources));
+                getResources = new Select(new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true),
+                                          new Domain(() => !Item.HasResources && (Item.ResourcesReservedFor == Agent || Item.ResourcesReservedFor == null),
+                                                     new Sequence(new Wrap(ReserveResources), new GetResourcesAct(Agent, Item.ItemType.RequiredResources))),
+                                          new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true));
             }
             else
             {
-                getResources = new Select(new Domain(() =>Item.HasResources, true),
-                                          new GetResourcesAct(Agent, Item.ItemType.SelectedResources));
+                getResources = new Select(new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true),
+                                          new Domain(() => !Item.HasResources && (Item.ResourcesReservedFor == Agent || Item.ResourcesReservedFor == null),
+                                                     new Sequence(new Wrap(ReserveResources), new GetResourcesAct(Agent, Item.ItemType.SelectedResources))),
+                                          new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true));
             }
 
             if (Item.ItemType.Type == CraftItem.CraftType.Object)
             {
                 if (!String.IsNullOrEmpty(Item.ItemType.CraftLocation))
                 {
-                    Tree = new Sequence(
+                    Tree = new Domain(IsNotCancelled, new Sequence(
                         new Wrap(() => Creature.FindAndReserve(Item.ItemType.CraftLocation, Item.ItemType.CraftLocation)),
                         getResources,
-                        new Domain(IsNotCancelled, new Sequence
+                        new Domain(ResourceStateValid, new Sequence
                             (
                             new GoToTaggedObjectAct(Agent)
                             {
@@ -176,26 +226,32 @@ namespace DwarfCorp
                                 CheckForOcclusion = true
                             },
                             new Wrap(() => DestroyResources(Item.Location.WorldPosition)),
+                            new Wrap(WaitForResources) { Name = "Wait for resources."},
                             new Wrap(() => Creature.HitAndWait(true, () => 1.0f, 
                             () => Item.Progress, () => Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime,
                             () => Item.Location.WorldPosition + Vector3.One * 0.5f, "Craft")),
-                            unreserveAct,
-                            new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
-                            new CreateCraftItemAct(Voxel, Creature.AI, Item)
+                            new CreateCraftItemAct(Voxel, Creature.AI, Item))),
+                            unreserveAct
                             ) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false)
-                        )) | new Sequence(unreserveAct, false);
+                        ) | new Sequence(unreserveAct, false);
                 }
                 else
                 {
                     Tree = new Domain(IsNotCancelled, new Sequence(
                         getResources,
-                        new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
-                        new Wrap(() => DestroyResources(Item.Location.WorldPosition)),
-                        new Wrap(() => Creature.HitAndWait(true, () => 1.0f,
-                            () => Item.Progress, () => Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime,
-                            () => Item.Location.WorldPosition + Vector3.One * 0.5f, "Craft")),
-                        new CreateCraftItemAct(Voxel, Creature.AI, Item))) |
-                       (new Wrap(Creature.RestockAll) & false);
+                        new Sequence(new Domain(ResourceStateValid, 
+                            new Sequence(
+                                new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
+                                new Wrap(() => DestroyResources(Item.Location.WorldPosition)),
+                                new Wrap(WaitForResources) { Name = "Wait for resources." },
+                                new Wrap(() => Creature.HitAndWait(true, () => 1.0f,
+                                         () => Item.Progress, () => Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime,
+                                         () => Item.Location.WorldPosition + Vector3.One * 0.5f, "Craft")) { Name = "Construct object." },
+                                new CreateCraftItemAct(Voxel, Creature.AI, Item)
+                            )
+                        ))
+                     )) |
+                       new Sequence(new Wrap(Creature.RestockAll), unreserveAct, false);
                 }
             }
             else
@@ -205,7 +261,7 @@ namespace DwarfCorp
                     Tree = new Sequence(
                         new Wrap(() => Creature.FindAndReserve(Item.ItemType.CraftLocation, Item.ItemType.CraftLocation)),
                         getResources,
-                        new Sequence
+                        new Domain(ResourceStateValid, new Sequence
                             (
                             new GoToTaggedObjectAct(Agent)
                             {
@@ -216,23 +272,27 @@ namespace DwarfCorp
                                 CheckForOcclusion = true
                             },
                             new Wrap(() => DestroyResources(Agent.Position + MathFunctions.RandVector3Cube() * 0.5f)),
+                            new Wrap(WaitForResources) { Name = "Wait for resources." },
                             new Wrap(() => Creature.HitAndWait(true, () => 1.0f,
                                 () => Item.Progress, () => Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime,
-                                () => Agent.Position, Noise)),
+                                () => Agent.Position, Noise)) { Name = "Construct object." },
                             unreserveAct,
                             new Wrap(CreateResources),
                             new Wrap(Creature.RestockAll)
-                            ) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false)
-                        ) | new Sequence(unreserveAct, false);
+                            )) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false)
+                        ) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false);
                 }
                 else
                 {
                     Tree = new Sequence(
                         getResources,
-                        new Wrap(() => DestroyResources(Creature.AI.Position + MathFunctions.RandVector3Cube() * 0.5f)),
-                        new Wrap(() => Creature.HitAndWait(time, true, () => Creature.AI.Position)),
-                        new Wrap(CreateResources)) |
-                       (new Wrap(Creature.RestockAll) & false);
+                        new Domain(ResourceStateValid, new Sequence(
+                            new Wrap(() => DestroyResources(Creature.AI.Position + MathFunctions.RandVector3Cube() * 0.5f)),
+                            new Wrap(WaitForResources) { Name = "Wait for resources." },
+                            new Wrap(() => Creature.HitAndWait(time, true, () => Creature.AI.Position)) { Name = "Construct object."},
+                            new Wrap(CreateResources))
+                        )
+                    ) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false);
                 }
             }
             base.Initialize();
@@ -245,6 +305,10 @@ namespace DwarfCorp
             foreach (var statuses in Creature.Unreserve(Item.ItemType.CraftLocation))
             {
                 continue;
+            }
+            if (Item.ResourcesReservedFor == Agent)
+            {
+                Item.ResourcesReservedFor = null;
             }
             base.OnCanceled();
         }

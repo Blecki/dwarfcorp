@@ -181,19 +181,6 @@ namespace DwarfCorp
 
         public override bool ShouldDelete(Creature agent)
         {
-            bool hasresources = HasResources(agent);
-            bool hasLocation = HasLocation(agent);
-            if (!hasresources)
-            {
-                agent.World.MakeAnnouncement(String.Format("{0} cancelled craft task: Not enough resources.", agent.Name));
-                return true;
-            }
-            if (!hasLocation)
-            {
-                agent.World.MakeAnnouncement(String.Format("{0} cancelled craft task: Needs {1}.", agent.Name, Item.ItemType.CraftLocation));
-                return true;
-            }
-
             if (Item.Progress > 1.0f)
             {
                 return true;

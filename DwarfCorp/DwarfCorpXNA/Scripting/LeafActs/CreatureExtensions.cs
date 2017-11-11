@@ -90,6 +90,11 @@ namespace DwarfCorp
 
         public static IEnumerable<Act.Status> Unreserve(this Creature agent, string thing)
         {
+            if (String.IsNullOrEmpty(thing))
+            {
+                yield return Act.Status.Success;
+                yield break;
+            }
             Body objectToHit = agent.AI.Blackboard.GetData<Body>(thing);
 
             if (objectToHit != null && objectToHit.ReservedFor == agent.AI)
