@@ -395,6 +395,9 @@ namespace DwarfCorp
                     sliceUpTimer.Reset(0.1f);
                 }
             }
+
+            // Make sure that the faction's money is identical to the money in treasuries.
+            Faction.Economy.CurrentMoney = Faction.Treasurys.Sum(treasury => treasury.Money);
         }
 
 
