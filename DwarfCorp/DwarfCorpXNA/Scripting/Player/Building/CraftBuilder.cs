@@ -276,6 +276,11 @@ namespace DwarfCorp
                 designation.GhostBody.SetTintRecursive(MathFunctions.Pulsate(Color.Blue, gameTime, 0.7f));
                 designation.GhostBody.PropogateTransforms();
             }
+
+            if (CurrentCraftBody != null)
+            {
+                Drawer2D.DrawPolygon(World.Camera, new List<Vector3>() { CurrentCraftBody.Position, CurrentCraftBody.Position + CurrentCraftBody.GlobalTransform.Right * 0.5f }, Color.White, 1, false, graphics.Viewport);
+            }
         }
 
 
