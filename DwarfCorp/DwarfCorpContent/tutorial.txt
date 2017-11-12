@@ -9,13 +9,13 @@
 		{
 			"Name": "dwarf selected",
 			"Title" : "Selecting Dwarves",
-			"Text": "You selected a dwarf! You can order your employee to do something using the tools in the tray at the bottom of the screen. You can tell a dwarf to go somewhere by right clicking. Left click anywhere to unselect all dwarves. Select all dwarves again by pushing the \"1\" key. Selecting dwarves reveals the actions they can take on the tool tray at the bottom of the screen.",
+			"Text": "You selected a dwarf! You can tell a dwarf to go somewhere by right clicking. You can order your employees to do something using the tools in the tray at the bottom of the screen. Dwarfs to do not have to be selected to issue orders.",
 			"GuiHilite" : "tools"
 		},
 		{
 			"Name": "dwarf follow",
-			"Title" : "Selecting Dwarves",
-			"Text": "You are following a dwarf. Press W, A, S, D to move the dwarf, and C to jump!",
+			"Title" : "Following Dwarves",
+			"Text": "You are following a dwarf. Press W, A, S, D to move the dwarf, and C to jump! Deselect the dwarf to cancel following.",
 		},
 		{
 			"Name": "mine",
@@ -26,13 +26,13 @@
 		{
 			"Name": "slice",
 			"Title" : "Slicing",
-			"Text": "You can view slices of blocks beneath the earth. The most valuable resources are underground, and dwarves prefer living in the dark. Push the Slice key (by default Q) to slice the terrain at the mouse cursor. You can also slice terrain using the slice buttons in the top left of the screen, or by controlling a single dwarf and going underground. While controlling a single dwarf, slicing is automatic and can't be controlled directly.",
+			"Text": "You can view slices of blocks beneath the earth. The most valuable resources are underground, and dwarves prefer living in the dark. Push the Slice key (by default Q) to slice the terrain at the mouse cursor. You can also slice terrain using the slice buttons in the top left of the screen, using the slice-up and slice-down keys (by default, pageup and pagedown), or with CTRL + mousehweel.",
 			"GuiHilite" : "slice"
 		},
 		{
 			"Name" : "unslice",
 			"Title" : "Unslicing",
-			"Text": "Push the Unslice key (by default, E) to reveal all the terrain.",
+			"Text": "Push the Unslice key (by default, E) to reveal all the terrain. Pressing CTRL plus the Slice key (default Q) will re-slice to where you were last.",
 			"GuiHilite" : "slice"
 		},
 		{

@@ -923,6 +923,15 @@ namespace DwarfCorp
             Overworld.Name = "ocean_" + MathFunctions.Random.Next(9999);
         }
 
+        public static Biome GetBiomeAt(Vector3 worldPos)
+        {
+            float x = worldPos.X;
+            float y = worldPos.Z;
+            Vector2 v = new Vector2(x, y) / GameSettings.Default.WorldScale;
+            Overworld.Biome biome = Overworld.Map[(int)MathFunctions.Clamp(v.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(v.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
+            return biome;
+        }
+
     }
 
 }

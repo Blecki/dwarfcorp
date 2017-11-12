@@ -15,7 +15,7 @@ namespace DwarfCorp
         public DateTime Date { get; set; }
         public bool IsInitialized { get; set; }
         public StormType TypeofStorm { get; set; }
-
+        public List<Cloud> Clouds { get; set; }
         public struct StormProperties
         {
             public string RainEffect { get; set; }
@@ -69,6 +69,7 @@ namespace DwarfCorp
 
         public Storm(WorldManager world)
         {
+            Clouds = new List<Cloud>();
             World = world;
             IsInitialized = false;
             TypeofStorm = StormType.RainStorm;
@@ -81,7 +82,7 @@ namespace DwarfCorp
 
         public bool IsDone()
         {
-            return IsInitialized && World.Time.CurrentDate > Date;
+            return IsInitialized && World.Time.CurrentDate > Date && Clouds.All(cloud => cloud.IsDead);
         }
 
         public void Start()
@@ -115,6 +116,7 @@ namespace DwarfCorp
                     Velocity = WindSpeed,
                     TypeofStorm = TypeofStorm
                 };
+                Clouds.Add(cloud);
                 World.ComponentManager.RootComponent.AddChild(cloud);
             }
             IsInitialized = true;

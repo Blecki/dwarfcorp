@@ -58,9 +58,9 @@ namespace DwarfCorp
             return new FindBedAndSleepAct(agent.AI);
         }
 
-        public override bool IsFeasible(Creature agent)
+        public override Feasibility IsFeasible(Creature agent)
         {
-            return agent.Sensors.Enemies.Count == 0;
+            return agent.Sensors.Enemies.Count == 0 ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
@@ -91,9 +91,9 @@ namespace DwarfCorp
             return new GetHealedAct(agent.AI);
         }
 
-        public override bool IsFeasible(Creature agent)
+        public override Feasibility IsFeasible(Creature agent)
         {
-            return true;
+            return Feasibility.Feasible;
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)

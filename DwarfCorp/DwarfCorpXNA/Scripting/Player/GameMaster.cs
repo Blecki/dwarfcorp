@@ -80,6 +80,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public WorldManager World { get; set; }
 
+        public TaskManager TaskManager { get; set; }
 
         private bool sliceDownheld = false;
         private bool sliceUpheld = false;
@@ -100,6 +101,7 @@ namespace DwarfCorp
 
         public GameMaster(Faction faction, DwarfGame game, ComponentManager components, ChunkManager chunks, OrbitCamera camera, GraphicsDevice graphics)
         {
+            TaskManager = new TaskManager();
             World = components.World;
             Faction = faction;
             Initialize(game, components, chunks, camera, graphics);
@@ -313,7 +315,7 @@ namespace DwarfCorp
 
                 foreach (Task task in creature.Tasks)
                 {
-                    if (task.IsFeasible(creature.Creature))
+                    if (task.IsFeasible(creature.Creature) == Task.Feasibility.Feasible)
                         task.Render(time);
                 }
 
@@ -335,6 +337,7 @@ namespace DwarfCorp
 
         public void Update(DwarfGame game, DwarfTime time)
         {
+            TaskManager.Update(Faction.Minions);
             CurrentTool.Update(game, time);
 
             if (!World.Paused)
@@ -355,6 +358,7 @@ namespace DwarfCorp
                     minion.AddThought(Thought.ThoughtType.FriendDied);
 
                     if (!minion.IsDead) continue;
+
                     World.MakeAnnouncement(
                         String.Format("{0} ({1}) died!", minion.Stats.FullName, minion.Stats.CurrentClass.Name));
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
@@ -392,6 +396,9 @@ namespace DwarfCorp
                     sliceUpTimer.Reset(0.1f);
                 }
             }
+
+            // Make sure that the faction's money is identical to the money in treasuries.
+            Faction.Economy.CurrentMoney = Faction.Treasurys.Sum(treasury => treasury.Money);
         }
 
 
@@ -541,9 +548,11 @@ namespace DwarfCorp
                 sliceDownTimer.Reset(0.5f);
             }
         }
+        private int rememberedViewValue = VoxelConstants.ChunkSizeY;
 
         public void OnKeyReleased(Keys key)
         {
+            KeyboardState keys = Keyboard.GetState();
             if (key == ControlSettings.Mappings.SliceUp)
             {
                 sliceUpheld = false;
@@ -559,7 +568,12 @@ namespace DwarfCorp
             }
             else if (key == ControlSettings.Mappings.SliceSelected)
             {
-                if (VoxSelector.VoxelUnderMouse.IsValid)
+                if (keys.IsKeyDown(Keys.LeftControl) || keys.IsKeyDown(Keys.RightControl))
+                {
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(rememberedViewValue, 
+                        ChunkManager.SliceMode.Y);
+                }
+                else if (VoxSelector.VoxelUnderMouse.IsValid)
                 {
                     World.Tutorial("unslice");
                     World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Coordinate.Y + 1,
@@ -569,23 +583,9 @@ namespace DwarfCorp
             }
             else if (key == ControlSettings.Mappings.Unslice)
             {
+                rememberedViewValue = World.ChunkManager.ChunkData.MaxViewingLevel;
                 World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxelConstants.ChunkSizeY, ChunkManager.SliceMode.Y);
             }
-            //else if(key == ControlSettings.Mappings.GodMode)
-            //{
-            //    if(CurrentToolMode == ToolMode.God)
-            //    {
-            //        CurrentToolMode = ToolMode.SelectUnits;
-            //        GodModeTool godMode = (GodModeTool) Tools[ToolMode.God];
-            //        godMode.IsActive = false;
-            //    }
-            //    else
-            //    {
-            //        CurrentToolMode = ToolMode.God;
-            //        GodModeTool godMode = (GodModeTool)Tools[ToolMode.God];
-            //        godMode.IsActive = true;
-            //    }
-            //}
         }
 
         #endregion

@@ -46,8 +46,43 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class TaskManager
     {
+        [JsonProperty]
+        private List<Task> Tasks = new List<Task>();
+        public Timer UpdateTimer = new Timer(1.0f, false);
+        public int MaxDwarfTasks = 10;
+        public int NumAssignPerIteration = 1;
+
         public TaskManager()
         {
+
+
+        }
+
+        public void AddTask(Task task)
+        {
+            // TODO(mklingen): do not depend on task name
+            // as ID.
+            if (!Tasks.Any(t => t.Name == task.Name))
+                Tasks.Add(task);
+        }
+
+        public void AddTasks(IEnumerable<Task> tasks)
+        {
+            foreach(var task in tasks)
+            {
+                AddTask(task);
+            }
+        }
+
+        public void Update(List<CreatureAI> creatures)
+        {
+            UpdateTimer.Update(DwarfTime.LastTime);
+
+            if (UpdateTimer.HasTriggered)
+            {
+                Tasks = AssignTasksGreedy(Tasks, creatures, MaxDwarfTasks, NumAssignPerIteration);
+                Tasks.RemoveAll(task => creatures.All(c => task.ShouldDelete(c.Creature)));
+            }
         }
 
         public int GetMaxColumnValue(int[,] matrix, int column, int numRows, int numColumns)
@@ -98,8 +133,12 @@ namespace DwarfCorp
             return maxValue;
         }
 
-        public static void AssignTasksGreedy(List<Task> newGoals, List<CreatureAI> creatures, int maxPerGoal)
+        public static List<Task> AssignTasksGreedy(List<Task> newGoals, List<CreatureAI> creatures, int maxPerDwarf=100, int maxToAssign=-1)
         {
+            if (maxToAssign < 0)
+            {
+                maxToAssign = newGoals.Count;
+            }
             // We are going to keep track of the unassigned goal count
             // to avoid having to parse the list at the end of the loop.
             int goalsUnassigned = newGoals.Count;
@@ -107,7 +146,7 @@ namespace DwarfCorp
 
             for (int i = 0; i < goalsUnassigned; i++)
             {
-                counts.Add(0);
+                counts.Add(newGoals[i].CurrentAssigned);
             }
 
             // Randomized list changed from the CreatureAI objects themselves to an index into the
@@ -127,11 +166,13 @@ namespace DwarfCorp
             // in how the calculation happened between each time so we will instead make a costs list for each creature
             // and keep them all.  This not only avoids rebuilding the list but the sheer KeyValuePair object churn there already was.
             List<List<KeyValuePair<int, float>>> masterCosts = new List<List<KeyValuePair<int, float>>>(creatures.Count);
+            List<int> creatureTaskCounts = new List<int>();
 
             // We will set this up in the next loop rather than make it's own loop.
             List<int> costsPositions = new List<int>(creatures.Count);
             for (int costIndex = 0; costIndex < creatures.Count; costIndex++)
             {
+                creatureTaskCounts.Add(creatures[costIndex].CountFeasibleTasks(Task.PriorityType.Eventually));
                 List<KeyValuePair<int, float>> costs = new List<KeyValuePair<int, float>>();
                 CreatureAI creature = creatures[costIndex];
 
@@ -148,7 +189,7 @@ namespace DwarfCorp
                     float cost = 0;
                     // We've swapped the order of the two checks to take advantage of a new ComputeCost that can act different
                     // if we say we've already called IsFeasible first.  This allows us to skip any calculations that are repeated in both.
-                    if (!task.IsFeasible(creature.Creature))
+                    if (task.IsFeasible(creature.Creature) == Task.Feasibility.Infeasible)
                     {
                         cost += 1e10f;
                     }
@@ -169,7 +210,8 @@ namespace DwarfCorp
             // We are going to precalculate the maximum iterations and count down
             // instead of up.
             int iters = goalsUnassigned * creatures.Count;
-            while (goalsUnassigned > 0 && iters > 0)
+            int numAssigned = 0;
+            while (goalsUnassigned > 0 && iters > 0 && numAssigned < maxToAssign)
             {
                 randomIndex.Shuffle();
                 iters--;
@@ -190,14 +232,21 @@ namespace DwarfCorp
                         KeyValuePair<int, float> taskCost = costs[i];
                         // We've swapped the checks here.  Tasks.Contains is far more expensive so being able to skip
                         // if it's going to fail the maxPerGoal check anyways is very good.
-                        if (counts[taskCost.Key] < maxPerGoal)//  && !creature.Tasks.Contains(newGoals[taskCost.Key]))
+                        if (counts[taskCost.Key] < newGoals[taskCost.Key].MaxAssignable && 
+                            !creature.Tasks.Contains(newGoals[taskCost.Key]) && 
+                            (creatureTaskCounts[randomCreature] < maxPerDwarf || newGoals[taskCost.Key].Priority >= Task.PriorityType.High) &&
+                            newGoals[taskCost.Key].IsFeasible(creature.Creature) == Task.Feasibility.Feasible)
                         {
+                            
                             // We have to check to see if the task we are assigning is fully unassigned.  If so 
                             // we reduce the goalsUnassigned count.  If it's already assigned we skip it.
                             if (counts[taskCost.Key] == 0) goalsUnassigned--;
 
                             counts[taskCost.Key]++;
                             creature.AssignTask(newGoals[taskCost.Key].Clone());
+                            newGoals[taskCost.Key].CurrentAssigned++;
+                            creatureTaskCounts[randomCreature]++;
+                            numAssigned++;
                             break;
                         }
                     }
@@ -209,32 +258,45 @@ namespace DwarfCorp
                 }
 
             }
+
+            List<Task> unassigned = new List<Task>();
+            for (int i = 0; i < newGoals.Count; i++)
+            {
+                if (counts[i] < newGoals[i].MaxAssignable)
+                {
+                    unassigned.Add(newGoals[i]);
+                }
+            }
+            return unassigned;
         }
 
-        public static void AssignTasks(List<Task> newGoals, List<CreatureAI> creatures)
+        public static List<Task> AssignTasks(List<Task> newGoals, List<CreatureAI> creatures, int maxPerDwarf=100)
         {
 
             if(newGoals.Count == 0 || creatures.Count == 0)
             {
-                return;
+                return newGoals;
             }
 
             List<Task> unassignedGoals = new List<Task>();
             unassignedGoals.AddRange(newGoals);
-
-            while(unassignedGoals.Count > 0)
+            int numFeasible = 1;
+            while(unassignedGoals.Count > 0 && numFeasible > 0)
             {
+                numFeasible = 0;
                 int[] assignments = CalculateOptimalAssignment(unassignedGoals, creatures);
                 List<Task> removals = new List<Task>();
                 for(int i = 0; i < creatures.Count; i++)
                 {
                     int assignment = assignments[i];
 
-                    if (assignment >= unassignedGoals.Count || creatures[i].IsDead)
+                    if (assignment >= unassignedGoals.Count || creatures[i].IsDead 
+                        || unassignedGoals[assignment].IsFeasible(creatures[i].Creature) != Task.Feasibility.Feasible ||
+                        creatures[i].CountFeasibleTasks(unassignedGoals[assignment].Priority) >=  maxPerDwarf)
                     {
                         continue;
                     }
-
+                    numFeasible++;
                     creatures[i].AssignTask(unassignedGoals[assignment].Clone());
                     removals.Add(unassignedGoals[assignment]);
                 }
@@ -244,6 +306,7 @@ namespace DwarfCorp
                     unassignedGoals.Remove(removal);
                 }
             }
+            return unassignedGoals;
         }
 
         public static int[] CalculateOptimalAssignment(List<Task> newGoals, List<CreatureAI> agents )
@@ -271,7 +334,7 @@ namespace DwarfCorp
 
                     int cost = (int)(floatCost * multiplier);
 
-                    if (!goal.IsFeasible(agent.Creature))
+                    if (goal.IsFeasible(agent.Creature) == Task.Feasibility.Infeasible)
                     {
                         cost += 99999;
                     }

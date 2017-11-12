@@ -68,14 +68,15 @@ namespace DwarfCorp
             return new StockResourceAct(creature.AI, EntityToGather);
         }
 
-        public override bool IsFeasible(Creature agent)
+        public override Feasibility IsFeasible(Creature agent)
         {
-            return agent.Faction.HasFreeStockpile() && !agent.AI.Movement.IsSessile && agent.Inventory.HasResource(EntityToGather);
+            return agent.Faction.HasFreeStockpile() && 
+                !agent.AI.Movement.IsSessile && agent.Inventory.HasResource(EntityToGather) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            return IsFeasible(agent) ? 1.0f : 1000.0f;
+            return IsFeasible(agent) == Feasibility.Feasible ? 1.0f : 1000.0f;
         }
 
 

@@ -102,11 +102,6 @@ namespace DwarfCorp
         {
             Coins = new List<Body>();
             ReplacementType = VoxelLibrary.GetVoxelType("Blue Tile");
-            if (faction.Treasurys.Count == 0)
-            {
-                DwarfBux factionmoney = faction.Economy.CurrentMoney;
-                Money = Math.Min(factionmoney, Voxels.Count*MoneyPerPile);
-            }
             faction.Treasurys.Add(this);
             Faction = faction;
         }
@@ -115,12 +110,7 @@ namespace DwarfCorp
             base(designation, designations, data, world, faction)
         {
             Coins = new List<Body>();
-            if (faction.Treasurys.Count == 0)
-            {
-                Money = Faction.Economy.CurrentMoney;
-                DwarfBux factionmoney = faction.Economy.CurrentMoney;
-                Money = Math.Min(factionmoney, Voxels.Count*MoneyPerPile);
-            }
+            Money = 0;
             faction.Treasurys.Add(this);
             Faction = faction;
         }
@@ -165,7 +155,7 @@ namespace DwarfCorp
                 Coins.Clear();
             }
 
-            int numCoins = (int)Math.Round(Math.Min(Math.Max((float)(decimal)Money / (float)(decimal)MoneyPerPile, 1.0f), (float)Voxels.Count));
+            int numCoins = (int)Math.Ceiling(Math.Min(Math.Max((float)(decimal)Money / (float)(decimal)MoneyPerPile, 1.0f), (float)Voxels.Count));
             if (Money == 0m)
             {
                 numCoins = 0;
@@ -189,14 +179,18 @@ namespace DwarfCorp
           
             for(int i = 0; i < Coins.Count - 1; i++)
             {
-                Coins[i].GetRoot().GetComponent<CoinPileFixture>().SetFullness(1.0f);
+                var fixture = Coins[i].GetRoot().GetComponent<CoinPileFixture>();
+                fixture.SetFullness(1.0f);
+                fixture.Name = MoneyPerPile.ToString();
             }
 
             DwarfBux remainder = Money - (Coins.Count - 1) * MoneyPerPile;
 
             if (Coins.Count > 0)
             {
-                Coins.Last().GetRoot().GetComponent<CoinPileFixture>().SetFullness((float)(decimal)remainder / (float)(decimal)MoneyPerPile);
+                var fixture = Coins.Last().GetRoot().GetComponent<CoinPileFixture>();
+                fixture.SetFullness((float)(decimal)remainder / (float)(decimal)MoneyPerPile);
+                fixture.Name = remainder.ToString();
             }
 
             if (IsFull() && Faction.Treasurys.Count(t => !t.IsFull()) == 0 && Voxels.Count > 0)

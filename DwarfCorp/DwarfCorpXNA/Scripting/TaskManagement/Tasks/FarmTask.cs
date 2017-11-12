@@ -66,7 +66,7 @@ namespace DwarfCorp
 
         public override bool ShouldDelete(Creature agent)
         {
-            return !IsFeasible(agent);
+            return IsFeasible(agent) == Feasibility.Infeasible;
         }
 
         public override void OnAssign(Creature agent)
@@ -87,24 +87,28 @@ namespace DwarfCorp
             base.OnUnAssign(agent);
         }
 
-        public override bool IsFeasible(Creature agent)
+        public override Feasibility IsFeasible(Creature agent)
         {
+            if (!agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.Till) &&
+                !agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.Plant))
+                return Feasibility.Infeasible;
+
             bool farmValid =  FarmToWork != null && !FarmToWork.IsCanceled;
             if (!farmValid)
             {
-                return false;
+                return Feasibility.Infeasible;
             }
             if (Mode == FarmAct.FarmMode.Till && FarmToWork.Voxel.Type.Name == "TilledSoil")
             {
-                return false;
+                return Feasibility.Infeasible;
             }
 
             if (Mode == FarmAct.FarmMode.Plant && FarmToWork.PlantExists())
             {
-                return false;
+                return Feasibility.Infeasible;
             }
 
-            return true;
+            return Feasibility.Feasible;
         }
 
         public override Act CreateScript(Creature agent)

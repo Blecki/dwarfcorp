@@ -67,9 +67,9 @@ namespace DwarfCorp
             return (Them.Position - agent.AI.Position).LengthSquared();
         }
 
-        public override bool IsFeasible(Creature agent)
+        public override Feasibility IsFeasible(Creature agent)
         {
-            return Mating.CanMate(agent, Them.Creature);
+            return Mating.CanMate(agent, Them.Creature) ? Feasibility.Feasible : Feasibility.Infeasible ;
         }
 
         public IEnumerable<Act.Status> Mate(Creature me)

@@ -296,7 +296,7 @@ namespace DwarfCorp
             {
                 float cost = task.ComputeCost(Creature);
 
-                if (task.IsFeasible(Creature) && task.Priority >= bestPriority && cost < bestCost)
+                if (task.IsFeasible(Creature) == Task.Feasibility.Feasible && task.Priority >= bestPriority && cost < bestCost)
                 {
                     bestCost = cost;
                     bestTask = task;
@@ -315,7 +315,7 @@ namespace DwarfCorp
             Task newTask = null;
             foreach (Task task in Tasks)
             {
-                if (task.Priority > CurrentTask.Priority && task.IsFeasible(Creature))
+                if (task.Priority > CurrentTask.Priority && task.IsFeasible(Creature) == Task.Feasibility.Feasible)
                 {
                     newTask = task;
                     break;
@@ -386,6 +386,8 @@ namespace DwarfCorp
             }
         }
 
+        private Timer restockTimer = new Timer(10.0f, false);
+
         /// <summary> Update this creature </summary>
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
@@ -444,6 +446,13 @@ namespace DwarfCorp
                 if (!Tasks.Contains(toReturn))
                     AssignTask(toReturn);
             }
+
+            restockTimer.Update(DwarfTime.LastTime);
+            if (restockTimer.HasTriggered && Creature.Inventory.Resources.Count > 32)
+            {
+                if (Faction == World.PlayerFaction)
+                    Creature.RestockAllImmediately();
+            }
             
             // Update the current task.
             if (CurrentTask != null && CurrentAct != null)
@@ -488,7 +497,7 @@ namespace DwarfCorp
                     if (tantrum)
                     {
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Sad);
-                        if (Creature.Allies == "Dwarf")
+                        if (Creature.Faction == Manager.World.PlayerFaction)
                         {
                             Manager.World.MakeAnnouncement(
                                 new Gui.Widgets.QueuedAnnouncement
@@ -708,7 +717,7 @@ namespace DwarfCorp
                 foreach (var resource in Creature.Inventory.Resources.Where(resource => resource.MarkedForRestock))
                 {
                     Task task = new StockResourceTask(new ResourceAmount(resource.Resource));
-                    if (task.IsFeasible(Creature))
+                    if (task.IsFeasible(Creature) != Task.Feasibility.Infeasible)
                     {
                         return task;
                     }
@@ -826,7 +835,7 @@ namespace DwarfCorp
                     {
                         Priority = Task.PriorityType.Low
                     };
-                    if (task.IsFeasible(this.Creature))
+                    if (task.IsFeasible(this.Creature) != Task.Feasibility.Infeasible)
                     {
                         return task;
                     }
@@ -1316,5 +1325,156 @@ namespace DwarfCorp
             Tasks.Remove(task);
             task.OnUnAssign(this.Creature);
         }
+
+
+        private WaitForPlanHelper planHelper = null;
+
+        /// <summary>
+        /// This class exists to wrap the Astar planner thread. It keeps track of a single request
+        /// that it is trying to get a response for. Call WaitForResponse repeatedly until a plan has been
+        /// found, or a timeout is exceeded.
+        /// </summary>
+        private class WaitForPlanHelper
+        {
+            private PlanSubscriber Subscriber;
+            private Timer Timeout;
+            private AstarPlanRequest LastRequest;
+            public WaitForPlanHelper()
+            {
+
+
+            }
+
+            public WaitForPlanHelper(float timeout, PlanService planService)
+            {
+                Subscriber = new PlanSubscriber(planService);
+                Timeout = new Timer(timeout, true);
+            }
+
+            public AStarPlanResponse WaitForResponse(AstarPlanRequest request)
+            {
+                // If we already have a request, determine if it has been satisfied.
+                if (LastRequest != null)
+                {
+                    // first, if the timer has triggered, return an unsuccessful plan.
+                    Timeout.Update(DwarfTime.LastTime);
+                    if (Timeout.HasTriggered)
+                    {
+                        LastRequest = null;
+                        return new AStarPlanResponse() { Success = false };
+                    }
+
+                    // Otherwise, see if there are any responses yet.
+                    while (Subscriber.Responses.Count > 0)
+                    {
+                        AStarPlanResponse response;
+                        bool success = Subscriber.Responses.TryDequeue(out response);
+
+                        // If so, determine if the response is what we requested.
+                        if (success)
+                        {
+                            // If not, maybe try another response
+                            if (response.Request != LastRequest)
+                            {
+                                continue;
+                            }
+
+                            // Otherwise, we found our guy. return it.
+                            LastRequest = null;
+
+                            // Clear the response queue.
+                            while (Subscriber.Responses.Count > 0)
+                            {
+                                AStarPlanResponse dummy;
+                                Subscriber.Responses.TryDequeue(out dummy);
+                            }
+                            return response;
+                        }
+                    }
+                    // No responses? Return null.
+                    return null;
+                }
+
+                Timeout.Reset();
+                // Otherwise, this is a new request. Push it and return null.
+                LastRequest = request;
+                Subscriber.SendRequest(request);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Call repeatedly until a request has been met or a timeout happens. Return null until the plan can be found,
+        /// at which point return the response. If a timeout occurs, an unsuccessful reponse will be returned.
+        /// </summary>
+        public AStarPlanResponse WaitForPlan(AstarPlanRequest request)
+        {
+            request.Sender = this;
+            if (planHelper == null)
+                planHelper = new WaitForPlanHelper(5.0f, Creature.PlanService);
+
+            return planHelper.WaitForResponse(request);
+        }
+
+
+        public AStarPlanResponse WaitForPlan(VoxelHandle voxel, PlanAct.PlanType type = PlanAct.PlanType.Into)
+        {
+            GoalRegion region = null;
+            switch (type)
+            {
+                case PlanAct.PlanType.Into:
+                    region = new VoxelGoalRegion(voxel);
+                    break;
+                case PlanAct.PlanType.Adjacent:
+                    region = new AdjacentVoxelGoalRegion2D(voxel);
+                    break;
+                case PlanAct.PlanType.Radius:
+                    region = new SphereGoalRegion(voxel, 3.0f);
+                    break;
+                case PlanAct.PlanType.Edge:
+                    region = new EdgeGoalRegion();
+                     break;
+            }
+
+            AstarPlanRequest request = new AstarPlanRequest()
+            {
+                GoalRegion = region,
+                Start = Creature.Physics.CurrentVoxel,
+                Sender = this,
+                MaxExpansions = 5000
+            };
+
+            return WaitForPlan(request);
+        }
+
+        public AStarPlanResponse WaitForPlan(Vector3 pos, PlanAct.PlanType type = PlanAct.PlanType.Into)
+        {
+            VoxelHandle voxel = new VoxelHandle(World.ChunkManager.ChunkData, new GlobalVoxelCoordinate((int)Math.Round(pos.X), (int)Math.Round(pos.Y), (int)Math.Round(pos.Z)));
+            return WaitForPlan(voxel);
+        }
+
+        public AStarPlanResponse WaitForPlan(Body body, PlanAct.PlanType type = PlanAct.PlanType.Into)
+        {
+            var pos = body.GlobalTransform.Translation;
+            VoxelHandle voxel = VoxelHelpers.FindFirstVoxelBelowIncludeWater(new VoxelHandle(World.ChunkManager.ChunkData, new GlobalVoxelCoordinate((int)Math.Round(pos.X),
+                (int)Math.Round(pos.Y),
+                (int)Math.Round(pos.Z))));
+            return WaitForPlan(voxel);
+        }
+
+        public int CountFeasibleTasks(Task.PriorityType minPriority)
+        {
+            return Tasks.Count(task => task.Priority >= minPriority && task.IsFeasible(Creature) == Task.Feasibility.Feasible);
+        }
+
+        public override void Die()
+        {
+            if (CurrentTask != null)
+            {
+                CurrentTask.Cancel();
+            }
+            base.Die();
+        }
+
     }
 }

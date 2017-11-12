@@ -586,7 +586,7 @@ namespace DwarfCorp
                 {
                     yield break;
                 }
-
+                Physics.Active = false;
                 if (loadBar)
                 {
                     Drawer2D.DrawLoadBar(Manager.World.Camera, AI.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4,
@@ -606,6 +606,7 @@ namespace DwarfCorp
             }
             Sprite.PauseAnimations(CharacterMode.Attacking);
             CurrentCharacterMode = CharacterMode.Idle;
+            Physics.Active = true;
             yield return Act.Status.Success;
             yield break;
         }
@@ -631,7 +632,7 @@ namespace DwarfCorp
                     Drawer2D.DrawLoadBar(Manager.World.Camera, AI.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4,
                         progress() / maxProgress());
                 }
-
+                Physics.Active = false;
                 Attacks[0].PerformNoDamage(this, DwarfTime.LastTime, pos());
                 Physics.Velocity = Vector3.Zero;
                 Sprite.ReloopAnimations(CharacterMode.Attacking);
@@ -651,6 +652,7 @@ namespace DwarfCorp
             }
             Sprite.PauseAnimations(CharacterMode.Attacking);
             CurrentCharacterMode = CharacterMode.Idle;
+            Physics.Active = true;
             yield return Act.Status.Success;
             yield break;
         }

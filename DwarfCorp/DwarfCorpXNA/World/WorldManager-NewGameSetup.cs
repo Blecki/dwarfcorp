@@ -103,7 +103,7 @@ namespace DwarfCorp
             BalloonPort port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager,
                 Camera.Position.X, Camera.Position.Z, 3);
             CreateInitialDwarves();
-            PlayerFaction.Economy.CurrentMoney = InitialEmbark.Money;
+            PlayerFaction.AddMoney(InitialEmbark.Money);
 
             foreach (var res in InitialEmbark.Resources)
             {

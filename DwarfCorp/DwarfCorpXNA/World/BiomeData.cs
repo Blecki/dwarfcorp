@@ -74,6 +74,8 @@ namespace DwarfCorp
         public float Temp { get; set; }
         public float Rain { get; set; }
         public int Icon { get; set; }
+        public string DayAmbience { get; set; }
+        public string NightAmbience { get; set; }
 
         public BiomeData()
         {
@@ -93,6 +95,8 @@ namespace DwarfCorp
             MapColor = Color.White;
             Underground = false;
             ShoreVoxel = "Sand";
+            DayAmbience = "";
+            NightAmbience = "";
         }
     }
 

@@ -57,25 +57,6 @@ namespace DwarfCorp
             Order.Build();
         }
 
-        public Resource.ResourceTags GetNextRequiredResource()
-        {
- 
-            foreach (var s in ToBuild.RoomData.RequiredResources.Keys)
-            {
-                if(!Order.PutResources.ContainsKey(s))
-                {
-                    return ToBuild.RoomData.RequiredResources[s].ResourceType;
-                }
-                else if(Order.PutResources[s].NumResources < Math.Max((int) (ToBuild.RoomData.RequiredResources[s].NumResources * Order.VoxelOrders.Count * 0.25f), 1))
-                {
-                    return ToBuild.RoomData.RequiredResources[s].ResourceType;
-                }
-            }
-
-            return Resource.ResourceTags.None;
-        }
-
-
     }
 
 }

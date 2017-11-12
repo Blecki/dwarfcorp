@@ -97,8 +97,8 @@ namespace DwarfCorp.Gui.Widgets
             }
         }
 
-        private int _hotkeyValue = 0;
-        public int HotkeyValue
+        private Microsoft.Xna.Framework.Input.Keys _hotkeyValue = 0;
+        public Microsoft.Xna.Framework.Input.Keys HotkeyValue
         {
             get { return _hotkeyValue; }
             set
@@ -195,13 +195,21 @@ namespace DwarfCorp.Gui.Widgets
                     Rect.Bottom - 8 - (numberSize.Height / 2)));
             }
 
-            if (DrawHotkey && HotkeyValue <= 9)
+            if (DrawHotkey)
             {
-                var font = Root.GetTileSheet("14pt-numbers");
-                meshes.Add(Mesh.Quad()
-                    .TileScaleAndTexture(font, HotkeyValue)
-                    .Translate(Rect.X + (font.TileWidth / 2), Rect.Bottom - font.TileHeight)
-                    .Colorize(new Vector4(1,1,1,0.5f)));                
+                var font = Root.GetTileSheet("font8");
+                var numberSize = new Rectangle();
+                char hotkey = '?';
+                InputManager.TryConvertKeyboardInput(HotkeyValue, false, out hotkey);
+                var stringMesh = Gui.Mesh.CreateStringMesh(
+                    hotkey.ToString(),
+                    font,
+                    new Vector2(1, 1),
+                    out numberSize)
+                    .Colorize(new Vector4(1, 1, 1, 0.4f));
+                meshes.Add(stringMesh.
+                    Translate(Rect.Left + 8 - (numberSize.Width / 2),
+                    Rect.Bottom - 8 - (numberSize.Height / 2)));
             }
 
             return Gui.Mesh.Merge(meshes.ToArray());

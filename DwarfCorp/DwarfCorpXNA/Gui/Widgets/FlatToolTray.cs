@@ -5,6 +5,7 @@ using System.Text;
 using DwarfCorp.Gui;
 using DwarfCorp.Gui.Input;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp.Gui.Widgets
 {
@@ -49,6 +50,73 @@ namespace DwarfCorp.Gui.Widgets
 
         public class Tray : IconTray
         {
+            public static List<Keys> Hotkeys = null;
+            static Tray()
+            {
+                Hotkeys = new List<Keys>()
+                {
+                    Keys.D1,
+                    Keys.D2,
+                    Keys.D3,
+                    Keys.D4,
+                    Keys.D5,
+                    Keys.D6,
+                    Keys.D7,
+                    Keys.D8,
+                    Keys.D9,
+                    Keys.D0
+                };
+
+                List<Keys> extraKeys = new List<Keys>()
+                {
+                    Keys.Q,
+                    Keys.W,
+                    Keys.E,
+                    Keys.R,
+                    Keys.T,
+                    Keys.Y,
+                    Keys.U,
+                    Keys.I,
+                    Keys.O,
+                    Keys.P,
+                    Keys.A,
+                    Keys.S,
+                    Keys.D,
+                    Keys.F,
+                    Keys.G,
+                    Keys.H,
+                    Keys.J,
+                    Keys.K,
+                    Keys.L,
+                    Keys.Z,
+                    Keys.X,
+                    Keys.C,
+                    Keys.V,
+                    Keys.B,
+                    Keys.N,
+                    Keys.M,
+                    Keys.OemComma,
+                    Keys.OemPeriod,
+                    Keys.OemBackslash,
+                    Keys.OemMinus,
+                    Keys.OemPlus,
+                    Keys.OemTilde,
+                    Keys.Insert,
+                    Keys.Home,
+                    Keys.Delete,
+                    Keys.End
+                };
+
+                foreach(var key in extraKeys)
+                {
+                    if (!ControlSettings.Mappings.Contains(key))
+                    {
+                        Hotkeys.Add(key);
+                    }
+                }
+
+            }
+
             public override void Construct()
             {
                 if (ItemSource != null)
@@ -63,9 +131,10 @@ namespace DwarfCorp.Gui.Widgets
                 base.Construct();
             }
 
-            public void Hotkey(int Key)
+            public void Hotkey(Keys Key)
             {
-                if (Key < 0 || Key >= Children.Count) return;
+                int idx = Hotkeys.IndexOf(Key);
+                if (idx < 0 || idx >= Children.Count) return;
                 var icon = Children.FirstOrDefault(c => (c as FramedIcon).HotkeyValue == Key);
                 if (icon == null) return;
 

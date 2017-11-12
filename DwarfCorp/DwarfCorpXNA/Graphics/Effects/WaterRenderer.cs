@@ -108,7 +108,7 @@ namespace DwarfCorp
             return finalPlane;
         }
 
-        private static float GetTotalWaterHeightCells(VoxelHandle vox)
+        public static float GetTotalWaterHeightCells(VoxelHandle vox)
         {
             float tot = 0;
 

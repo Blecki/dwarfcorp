@@ -407,7 +407,11 @@ namespace DwarfCorp
 
             Velocity *= 0.8f;
             UpdateBasisVectors();
-            Vector3 projectedTarget = ProjectToSurface(Target);
+            Vector3 projectedTarget = GameSettings.Default.CameraFollowSurface ? ProjectToSurface(Target) : Target;
+            if (!GameSettings.Default.CameraFollowSurface && (keys.IsKeyDown(Keys.LeftControl) || keys.IsKeyDown(Keys.RightControl)))
+            {
+                projectedTarget = ProjectToSurface(Target);
+            }
             Vector3 diffTarget = projectedTarget - Target;
             Position = (Position + diffTarget) * 0.05f + Position * 0.95f;
             Target = projectedTarget * 0.05f + Target * 0.95f;

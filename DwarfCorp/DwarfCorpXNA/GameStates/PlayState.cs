@@ -248,8 +248,6 @@ namespace DwarfCorp.GameStates
                 return;
             }
 
-            SoundManager.PlayAmbience("grassland_ambience_day");
-            SoundManager.PlayAmbience("grassland_ambience_night");
             // Needs to run before old input so tools work
             // Update new input system.
             DwarfGame.GumInput.FireActions(GuiRoot, (@event, args) =>
@@ -316,12 +314,6 @@ namespace DwarfCorp.GameStates
             #endregion
 
             #region Update toolbar tray
-
-            if (Master.SelectedMinions.Count == 0)
-            {
-                if (Master.CurrentToolMode != GameMaster.ToolMode.God)
-                    Master.CurrentToolMode = GameMaster.ToolMode.SelectUnits;
-            }
 
             foreach (var tool in ToolbarItems)
                 tool.Icon.Enabled = tool.Available();
@@ -1314,15 +1306,16 @@ namespace DwarfCorp.GameStates
                                     return;
                                 sender.Parent.Hidden = true;
                                 data.SelectedResources = buildInfo.GetSelectedResources();
-                                data.NumRepeats = buildInfo.GetNumRepeats();
-                                var assignments = new List<Task> { new CraftResourceTask(data) };
+                                data.NumRepeats = 1;
+                                var assignments = new List<Task>();
+                                for(int i = 0; i < buildInfo.GetNumRepeats(); i++)
+                                {
+                                    assignments.Add(new CraftResourceTask(data));
+                                }
                                 var minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions,
                                     GameMaster.ToolMode.Craft);
-                                if (minions.Count > 0)
-                                {
-                                    TaskManager.AssignTasks(assignments, minions);
-                                    World.ShowToolPopup(data.CurrentVerb + " " + data.NumRepeats + " " + data.Name);
-                                }
+                                World.Master.TaskManager.AddTasks(assignments);
+                                World.ShowToolPopup(data.CurrentVerb + " " + data.NumRepeats + " " + data.Name);
                                 World.Tutorial("build crafts");
                             },
                         },
@@ -1386,7 +1379,7 @@ namespace DwarfCorp.GameStates
                 KeepChildVisible = true,
                 OnConstruct = (sender) =>
                 {
-                    AddToolbarIcon(sender, () => Master.Faction.SelectedMinions.Any(minion =>
+                    AddToolbarIcon(sender, () => Master.Faction.Minions.Any(minion =>
                         minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.BuildZone)));
                     AddToolSelectIcon(GameMaster.ToolMode.BuildZone, sender);
                 },
@@ -1437,11 +1430,8 @@ namespace DwarfCorp.GameStates
                                 List<Task> assignments = new List<Task> { new CraftResourceTask(data) };
                                 var minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions,
                                     GameMaster.ToolMode.Cook);
-                                if (minions.Count > 0)
-                                {
-                                    TaskManager.AssignTasks(assignments, minions);
-                                    World.ShowToolPopup(data.CurrentVerb + " one " + data.Name);
-                                }
+                                World.Master.TaskManager.AddTasks(assignments);
+                                World.ShowToolPopup(data.CurrentVerb + " one " + data.Name);
                                 World.Tutorial("cook");
                             },
                         },
@@ -1461,7 +1451,7 @@ namespace DwarfCorp.GameStates
                 OnConstruct = (sender) =>
                 {
                     AddToolbarIcon(sender, () =>
-                    Master.Faction.SelectedMinions.Any(minion =>
+                    Master.Faction.Minions.Any(minion =>
                         minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Cook)));
                     AddToolSelectIcon(GameMaster.ToolMode.Cook, sender);
                 },
@@ -1482,7 +1472,7 @@ namespace DwarfCorp.GameStates
                 OnConstruct = (sender) =>
                 {
                     AddToolbarIcon(sender, () =>
-                    Master.Faction.SelectedMinions.Any(minion =>
+                    Master.Faction.Minions.Any(minion =>
                         minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Dig)));
                     AddToolSelectIcon(GameMaster.ToolMode.Dig, sender);
                 },
@@ -1502,7 +1492,7 @@ namespace DwarfCorp.GameStates
                 OnConstruct = (sender) =>
                 {
                     AddToolbarIcon(sender, () =>
-                    Master.Faction.SelectedMinions.Any(minion =>
+                    Master.Faction.Minions.Any(minion =>
                         minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Gather)));
                     AddToolSelectIcon(GameMaster.ToolMode.Gather, sender);
                 },
@@ -1522,7 +1512,7 @@ namespace DwarfCorp.GameStates
                 OnConstruct = (sender) =>
                 {
                     AddToolbarIcon(sender, () =>
-                    Master.Faction.SelectedMinions.Any(minion =>
+                    Master.Faction.Minions.Any(minion =>
                         minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Chop)));
                     AddToolSelectIcon(GameMaster.ToolMode.Chop, sender);
                 },
@@ -1542,7 +1532,7 @@ namespace DwarfCorp.GameStates
                 OnConstruct = (sender) =>
                 {
                     AddToolbarIcon(sender, () =>
-                    Master.Faction.SelectedMinions.Any(minion =>
+                    Master.Faction.Minions.Any(minion =>
                         minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Guard)));
                     AddToolSelectIcon(GameMaster.ToolMode.Guard, sender);
                 },
@@ -1562,7 +1552,7 @@ namespace DwarfCorp.GameStates
                 OnConstruct = (sender) =>
                 {
                     AddToolbarIcon(sender, () =>
-                    Master.Faction.SelectedMinions.Any(minion =>
+                    Master.Faction.Minions.Any(minion =>
                         minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack)));
                     AddToolSelectIcon(GameMaster.ToolMode.Attack, sender);
                 },
@@ -1920,7 +1910,7 @@ namespace DwarfCorp.GameStates
                 OnConstruct = (sender) =>
                 {
                     AddToolbarIcon(sender, () =>
-                        Master.Faction.SelectedMinions.Any(minion =>
+                        Master.Faction.Minions.Any(minion =>
                             minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Magic)));
                     AddToolSelectIcon(GameMaster.ToolMode.Magic, sender);
                 },
@@ -2022,17 +2012,12 @@ namespace DwarfCorp.GameStates
         private void HandleKeyPress(Keys key)
         {
             // Special case: number keys reserved for changing tool mode
-            if (InputManager.IsNumKey(key))
+            if (FlatToolTray.Tray.Hotkeys.Contains(key))
             {
                 if (PausePanel == null || PausePanel.Hidden)
                 {
-                    int index = InputManager.GetNum(key);
-
-                    if (index < 0)
-                        index = 9;
-
                     (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray)
-                       .Hotkey(index);
+                       .Hotkey(key);
                 }
             }
             else if (key == Keys.Escape)
@@ -2043,7 +2028,7 @@ namespace DwarfCorp.GameStates
                 }
 
                 if (MainMenu.Hidden && PausePanel == null)
-                    (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(1);
+                    (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(FlatToolTray.Tray.Hotkeys[0]);
                 else if (Master.CurrentToolMode != GameMaster.ToolMode.SelectUnits && PausePanel == null)
                     Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
                 else if (PausePanel != null)

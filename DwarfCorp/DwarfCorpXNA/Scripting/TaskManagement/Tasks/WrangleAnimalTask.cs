@@ -124,10 +124,10 @@ namespace DwarfCorp
 
             closestPen.Species = Animal.Species;
 
-            return new Select(new Sequence(new Domain(() => IsFeasible(agent), new GoToEntityAct(Animal.Physics, agent.AI)),
-                new Domain(() => IsFeasible(agent), new Parallel(new Repeat(new Wrap(() => WrangleAnimal(agent.AI, Animal.AI)), -1, false),
+            return new Select(new Sequence(new Domain(() => IsFeasible(agent) == Feasibility.Feasible, new GoToEntityAct(Animal.Physics, agent.AI)),
+                new Domain(() => IsFeasible(agent) == Feasibility.Feasible, new Parallel(new Repeat(new Wrap(() => WrangleAnimal(agent.AI, Animal.AI)), -1, false),
                 new GoToZoneAct(agent.AI, closestPen)) { ReturnOnAllSucces = false}),
-                new Domain(() => IsFeasible(agent), new Wrap(() => PenAnimal(agent.AI, Animal.AI, closestPen)))), 
+                new Domain(() => IsFeasible(agent) == Feasibility.Feasible, new Wrap(() => PenAnimal(agent.AI, Animal.AI, closestPen)))), 
                 new Wrap(() => ReleaseAnimal(Animal.AI)));
         }
 
@@ -136,12 +136,15 @@ namespace DwarfCorp
             return new WrangleAnimalTask(Animal);
         }
 
-        public override bool IsFeasible(Creature agent)
+        public override Feasibility IsFeasible(Creature agent)
         {
-            return Animal != null 
-                && !Animal.IsDead 
-                && agent.Faction.Designations.IsDesignation(Animal.GetRoot().GetComponent<Physics>(), DesignationType.Wrangle) 
-                && GetClosestPen(agent) != null;
+            if (!agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.Wrangle))
+                return Feasibility.Infeasible;
+
+            return Animal != null
+                && !Animal.IsDead
+                && agent.Faction.Designations.IsDesignation(Animal.GetRoot().GetComponent<Physics>(), DesignationType.Wrangle)
+                && GetClosestPen(agent) != null ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
 
