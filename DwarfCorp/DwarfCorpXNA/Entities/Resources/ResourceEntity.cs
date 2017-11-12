@@ -46,7 +46,7 @@ namespace DwarfCorp
     public class ResourceEntity : Physics
     {
         public ResourceAmount Resource { get; set; }
-        public Timer LifeTimer = new Timer(240, true);
+        public Timer LifeTimer = new Timer(1200, true);
 
         public ResourceEntity()
         {
