@@ -173,6 +173,15 @@ namespace DwarfCorp
             return Script != null ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
+        public override bool ShouldDelete(Creature agent)
+        {
+            if (Script == null)
+            {
+                return true;
+            }
+            return base.ShouldDelete(agent);
+        }
+
         public override Act CreateScript(Creature agent)
         {
             if (Script != null)
