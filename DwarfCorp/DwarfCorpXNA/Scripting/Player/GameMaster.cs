@@ -547,9 +547,11 @@ namespace DwarfCorp
                 sliceDownTimer.Reset(0.5f);
             }
         }
+        private int rememberedViewValue = VoxelConstants.ChunkSizeY;
 
         public void OnKeyReleased(Keys key)
         {
+            KeyboardState keys = Keyboard.GetState();
             if (key == ControlSettings.Mappings.SliceUp)
             {
                 sliceUpheld = false;
@@ -565,7 +567,12 @@ namespace DwarfCorp
             }
             else if (key == ControlSettings.Mappings.SliceSelected)
             {
-                if (VoxSelector.VoxelUnderMouse.IsValid)
+                if (keys.IsKeyDown(Keys.LeftControl) || keys.IsKeyDown(Keys.RightControl))
+                {
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(rememberedViewValue, 
+                        ChunkManager.SliceMode.Y);
+                }
+                else if (VoxSelector.VoxelUnderMouse.IsValid)
                 {
                     World.Tutorial("unslice");
                     World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Coordinate.Y + 1,
@@ -575,23 +582,9 @@ namespace DwarfCorp
             }
             else if (key == ControlSettings.Mappings.Unslice)
             {
+                rememberedViewValue = World.ChunkManager.ChunkData.MaxViewingLevel;
                 World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxelConstants.ChunkSizeY, ChunkManager.SliceMode.Y);
             }
-            //else if(key == ControlSettings.Mappings.GodMode)
-            //{
-            //    if(CurrentToolMode == ToolMode.God)
-            //    {
-            //        CurrentToolMode = ToolMode.SelectUnits;
-            //        GodModeTool godMode = (GodModeTool) Tools[ToolMode.God];
-            //        godMode.IsActive = false;
-            //    }
-            //    else
-            //    {
-            //        CurrentToolMode = ToolMode.God;
-            //        GodModeTool godMode = (GodModeTool)Tools[ToolMode.God];
-            //        godMode.IsActive = true;
-            //    }
-            //}
         }
 
         #endregion

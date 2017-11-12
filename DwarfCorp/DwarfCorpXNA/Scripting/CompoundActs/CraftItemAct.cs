@@ -50,11 +50,19 @@ namespace DwarfCorp
         public string Noise { get; set; }
         public CraftItemAct()
         {
-            
+            if (Item.ResourcesReservedFor != null && Item.ResourcesReservedFor.IsDead)
+            {
+                Item.ResourcesReservedFor = null;
+            }
         }
 
         public IEnumerable<Status> ReserveResources()
         {
+            if (Item.ResourcesReservedFor != null && Item.ResourcesReservedFor.IsDead)
+            {
+                Item.ResourcesReservedFor = null;
+            }
+
             if (!Item.HasResources && Item.ResourcesReservedFor == null)
             {
                 Item.ResourcesReservedFor = Agent;
@@ -64,9 +72,14 @@ namespace DwarfCorp
 
         public IEnumerable<Status> UnReserve()
         {
-            foreach(var status in Creature.Unreserve(Item.ItemType.CraftLocation))
+            if (Item.ResourcesReservedFor != null && Item.ResourcesReservedFor.IsDead)
             {
-                yield return status;
+                Item.ResourcesReservedFor = null;
+            }
+
+            foreach (var status in Creature.Unreserve(Item.ItemType.CraftLocation))
+            {
+            
             }
             if (Item.ResourcesReservedFor == Agent)
                 Item.ResourcesReservedFor = null;

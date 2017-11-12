@@ -96,10 +96,75 @@ namespace DwarfCorp
                 yield return Act.Status.Success;
             }
 
-            Agent.Creature.Inventory.Remove(Resources);
-            BuildRoom.HasResources = true;
+            if (BuildRoom.ResourcesReservedFor == Agent)
+            {
+                Agent.Creature.Inventory.Remove(Resources);
+                BuildRoom.HasResources = true;
+            }
             yield return Act.Status.Success;
         }
+        public IEnumerable<Status> WaitForResources()
+        {
+            if (BuildRoom.ResourcesReservedFor == Agent)
+            {
+                yield return Act.Status.Success;
+                yield break;
+            }
+
+            while (!BuildRoom.HasResources)
+            {
+                if (BuildRoom.ResourcesReservedFor == null || BuildRoom.ResourcesReservedFor.IsDead)
+                {
+                    yield return Act.Status.Fail;
+                    yield break;
+                }
+                yield return Act.Status.Running;
+            }
+
+            yield return Act.Status.Success;
+        }
+
+        public IEnumerable<Act.Status> Reserve()
+        {
+            if (BuildRoom.ResourcesReservedFor == null)
+            {
+                BuildRoom.ResourcesReservedFor = Agent;
+                yield return Act.Status.Success;
+                yield break;
+            }
+            yield return Act.Status.Fail;
+        }
+
+        private bool ValidResourceState()
+        {
+            return BuildRoom.HasResources || (BuildRoom.ResourcesReservedFor != null);
+        }
+
+
+
+        public IEnumerable<Act.Status> OnFailOrCancel()
+        {
+            if (BuildRoom.ResourcesReservedFor == Agent)
+            {
+                BuildRoom.ResourcesReservedFor = null;
+            }
+            foreach(var status in Creature.RestockAll())
+            {
+
+            }
+            yield return Act.Status.Success;
+        }
+
+        public override void OnCanceled()
+        {
+            foreach(var status in OnFailOrCancel())
+            {
+
+            }
+
+            base.OnCanceled(); 
+        }
+
 
         public BuildRoomAct(CreatureAI agent, BuildRoomOrder buildRoom) :
             base(agent)
@@ -107,16 +172,26 @@ namespace DwarfCorp
             Name = "Build BuildRoom " + buildRoom.ToString();
             Resources = buildRoom.ListRequiredResources();
             BuildRoom = buildRoom;
-            Tree = new Sequence(new Select(new Domain(buildRoom.HasResources, true), new GetResourcesAct(Agent, Resources)),
-                new Domain(() => IsRoomBuildOrder(buildRoom) && !buildRoom.IsBuilt && !buildRoom.IsDestroyed, new Sequence(
+            if (BuildRoom.ResourcesReservedFor != null && BuildRoom.ResourcesReservedFor.IsDead)
+            {
+                BuildRoom.ResourcesReservedFor = null;
+            }
+
+            Tree = new Sequence(new Select(new Domain(buildRoom.HasResources || buildRoom.ResourcesReservedFor != null, true), 
+                                           new Domain(!buildRoom.HasResources && (buildRoom.ResourcesReservedFor == null || buildRoom.ResourcesReservedFor == Agent), new Sequence(new Wrap(Reserve), new GetResourcesAct(Agent, Resources))),
+                                           new Domain(buildRoom.HasResources || buildRoom.ResourcesReservedFor != null, true)),
+                new Domain(() => IsRoomBuildOrder(buildRoom) && !buildRoom.IsBuilt && !buildRoom.IsDestroyed && ValidResourceState(), 
+                new Sequence(
                     SetTargetVoxelFromRoomAct(buildRoom, "ActionVoxel"),
                     new GoToNamedVoxelAct("ActionVoxel", PlanAct.PlanType.Adjacent, Agent),
                     new Wrap(PutResources),
+                    new Wrap(WaitForResources) {  Name = "Wait for resources..."},
                     new Wrap(() => Creature.HitAndWait(true, () => 1.0f, () => buildRoom.BuildProgress,
-                    () => buildRoom.BuildProgress += agent.Stats.BuildSpeed / buildRoom.VoxelOrders.Count * 0.5f, 
-                    () => MathFunctions.RandVector3Box(buildRoom.GetBoundingBox()), ContentPaths.Audio.Oscar.sfx_ic_dwarf_craft, () => !buildRoom.IsBuilt && !buildRoom.IsDestroyed)),
+                    () => buildRoom.BuildProgress += agent.Stats.BuildSpeed / buildRoom.VoxelOrders.Count * 0.5f,
+                    () => MathFunctions.RandVector3Box(buildRoom.GetBoundingBox()), ContentPaths.Audio.Oscar.sfx_ic_dwarf_craft, () => !buildRoom.IsBuilt && !buildRoom.IsDestroyed))
+                    { Name = "Build room.." },
                     new CreateRoomAct(Agent, buildRoom)
-                    , new Wrap(Creature.RestockAll))) | new Wrap(Creature.RestockAll)
+                    , new Wrap(OnFailOrCancel))) | new Wrap(OnFailOrCancel)
                 );
         }
 

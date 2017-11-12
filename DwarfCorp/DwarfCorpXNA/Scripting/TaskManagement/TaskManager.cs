@@ -50,6 +50,7 @@ namespace DwarfCorp
         private List<Task> Tasks = new List<Task>();
         public Timer UpdateTimer = new Timer(1.0f, false);
         public int MaxDwarfTasks = 10;
+        public int NumAssignPerIteration = 1;
 
         public TaskManager()
         {
@@ -79,7 +80,7 @@ namespace DwarfCorp
 
             if (UpdateTimer.HasTriggered)
             {
-                Tasks = AssignTasksGreedy(Tasks, creatures, MaxDwarfTasks);
+                Tasks = AssignTasksGreedy(Tasks, creatures, MaxDwarfTasks, NumAssignPerIteration);
                 Tasks.RemoveAll(task => creatures.All(c => task.ShouldDelete(c.Creature)));
             }
         }
@@ -132,8 +133,12 @@ namespace DwarfCorp
             return maxValue;
         }
 
-        public static List<Task> AssignTasksGreedy(List<Task> newGoals, List<CreatureAI> creatures, int maxPerDwarf=100)
+        public static List<Task> AssignTasksGreedy(List<Task> newGoals, List<CreatureAI> creatures, int maxPerDwarf=100, int maxToAssign=-1)
         {
+            if (maxToAssign < 0)
+            {
+                maxToAssign = newGoals.Count;
+            }
             // We are going to keep track of the unassigned goal count
             // to avoid having to parse the list at the end of the loop.
             int goalsUnassigned = newGoals.Count;
@@ -141,7 +146,7 @@ namespace DwarfCorp
 
             for (int i = 0; i < goalsUnassigned; i++)
             {
-                counts.Add(0);
+                counts.Add(newGoals[i].CurrentAssigned);
             }
 
             // Randomized list changed from the CreatureAI objects themselves to an index into the
@@ -205,7 +210,8 @@ namespace DwarfCorp
             // We are going to precalculate the maximum iterations and count down
             // instead of up.
             int iters = goalsUnassigned * creatures.Count;
-            while (goalsUnassigned > 0 && iters > 0)
+            int numAssigned = 0;
+            while (goalsUnassigned > 0 && iters > 0 && numAssigned < maxToAssign)
             {
                 randomIndex.Shuffle();
                 iters--;
@@ -238,7 +244,9 @@ namespace DwarfCorp
 
                             counts[taskCost.Key]++;
                             creature.AssignTask(newGoals[taskCost.Key].Clone());
+                            newGoals[taskCost.Key].CurrentAssigned++;
                             creatureTaskCounts[randomCreature]++;
+                            numAssigned++;
                             break;
                         }
                     }
@@ -254,7 +262,7 @@ namespace DwarfCorp
             List<Task> unassigned = new List<Task>();
             for (int i = 0; i < newGoals.Count; i++)
             {
-                if (counts[i] == 0)
+                if (counts[i] < newGoals[i].MaxAssignable)
                 {
                     unassigned.Add(newGoals[i]);
                 }
