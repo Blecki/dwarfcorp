@@ -77,6 +77,22 @@ namespace DwarfCorp
                     }
                 },
                 {
+                    "Flag",
+                    new CraftItem()
+                    {
+                        Name = "Flag",
+                        Description = "Dwarfs gather at flags when they have nothing else to do.",
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
+                        {
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.HardMaterial, 1)
+                        },
+                        Icon = new Gui.TileReference("furniture", 17),
+                        BaseCraftTime = 1,
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
+                        CraftLocation = ""
+                    }
+                },
+                {
                     "Lamp",
                     new CraftItem()
                     {
