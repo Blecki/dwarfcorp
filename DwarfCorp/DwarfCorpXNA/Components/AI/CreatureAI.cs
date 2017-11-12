@@ -1462,9 +1462,18 @@ namespace DwarfCorp
             return WaitForPlan(voxel);
         }
 
-        public int CountFeasibleTasks()
+        public int CountFeasibleTasks(Task.PriorityType minPriority)
         {
-            return Tasks.Count(task => task.IsFeasible(Creature) == Task.Feasibility.Feasible);
+            return Tasks.Count(task => task.Priority >= minPriority && task.IsFeasible(Creature) == Task.Feasibility.Feasible);
+        }
+
+        public override void Die()
+        {
+            if (CurrentTask != null)
+            {
+                CurrentTask.Cancel();
+            }
+            base.Die();
         }
 
     }

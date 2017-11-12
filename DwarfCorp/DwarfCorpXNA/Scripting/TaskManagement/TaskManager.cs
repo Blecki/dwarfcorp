@@ -172,7 +172,7 @@ namespace DwarfCorp
             List<int> costsPositions = new List<int>(creatures.Count);
             for (int costIndex = 0; costIndex < creatures.Count; costIndex++)
             {
-                creatureTaskCounts.Add(creatures[costIndex].CountFeasibleTasks());
+                creatureTaskCounts.Add(creatures[costIndex].CountFeasibleTasks(Task.PriorityType.Eventually));
                 List<KeyValuePair<int, float>> costs = new List<KeyValuePair<int, float>>();
                 CreatureAI creature = creatures[costIndex];
 
@@ -234,7 +234,7 @@ namespace DwarfCorp
                         // if it's going to fail the maxPerGoal check anyways is very good.
                         if (counts[taskCost.Key] < newGoals[taskCost.Key].MaxAssignable && 
                             !creature.Tasks.Contains(newGoals[taskCost.Key]) && 
-                            creatureTaskCounts[randomCreature] < maxPerDwarf &&
+                            (creatureTaskCounts[randomCreature] < maxPerDwarf || newGoals[taskCost.Key].Priority >= Task.PriorityType.High) &&
                             newGoals[taskCost.Key].IsFeasible(creature.Creature) == Task.Feasibility.Feasible)
                         {
                             
@@ -292,7 +292,7 @@ namespace DwarfCorp
 
                     if (assignment >= unassignedGoals.Count || creatures[i].IsDead 
                         || unassignedGoals[assignment].IsFeasible(creatures[i].Creature) != Task.Feasibility.Feasible ||
-                        creatures[i].CountFeasibleTasks() >=  maxPerDwarf)
+                        creatures[i].CountFeasibleTasks(unassignedGoals[assignment].Priority) >=  maxPerDwarf)
                     {
                         continue;
                     }
