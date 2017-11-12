@@ -48,7 +48,7 @@ namespace DwarfCorp.GameStates
                 try
                 {
                     var saveGame = SaveGame.CreateFromDirectory(path);
-                    return saveGame.Metadata.Version == Program.Version;
+                    return Program.CompatibleVersions.Contains(saveGame.Metadata.Version);
                 }
                 catch (Exception)
                 {
