@@ -46,6 +46,7 @@ namespace DwarfCorp
     public class ResourceEntity : Physics
     {
         public ResourceAmount Resource { get; set; }
+        public Timer LifeTimer = new Timer(240, true);
 
         public ResourceEntity()
         {
@@ -76,6 +77,16 @@ namespace DwarfCorp
 
             PropogateTransforms();
             CreateCosmeticChildren(Manager);
+        }
+
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        {
+            LifeTimer.Update(gameTime);
+            if (LifeTimer.HasTriggered)
+            {
+                Die();
+            }
+            base.Update(gameTime, chunks, camera);
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
