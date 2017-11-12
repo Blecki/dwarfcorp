@@ -89,6 +89,7 @@ namespace DwarfCorp
             public bool VSync = true;
             public bool AllowReporting = true;
             public bool ZoomCameraTowardMouse = true;
+            public bool CameraFollowSurface = true;
 
             public Settings Clone()
             {
