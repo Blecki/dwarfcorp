@@ -497,7 +497,7 @@ namespace DwarfCorp
                     if (tantrum)
                     {
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Sad);
-                        if (Creature.Allies == "Dwarf")
+                        if (Creature.Faction == Manager.World.PlayerFaction)
                         {
                             Manager.World.MakeAnnouncement(
                                 new Gui.Widgets.QueuedAnnouncement

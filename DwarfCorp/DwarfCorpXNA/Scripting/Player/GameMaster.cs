@@ -358,6 +358,7 @@ namespace DwarfCorp
                     minion.AddThought(Thought.ThoughtType.FriendDied);
 
                     if (!minion.IsDead) continue;
+
                     World.MakeAnnouncement(
                         String.Format("{0} ({1}) died!", minion.Stats.FullName, minion.Stats.CurrentClass.Name));
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
