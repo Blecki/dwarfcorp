@@ -178,6 +178,7 @@ namespace DwarfCorp
                 ComponentRenderer.Render(Renderables, gameTime, game.ChunkManager, game.Camera,
                     DwarfGame.SpriteBatch, game.GraphicsDevice, effect,
                     ComponentRenderer.WaterRenderType.Reflective, waterHeight);
+                game.NewInstanceManager.RenderInstances(device, effect, game.Camera, InstanceRenderer.RenderMode.Normal);
             }
 
             effect.ClippingEnabled = false;
