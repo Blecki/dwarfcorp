@@ -630,6 +630,23 @@ namespace DwarfCorp
                         }
                     }
                 }
+
+                for (var gl = 0; gl < 6; ++gl)
+                {
+                    var uvs = new Vector2((3.0f + gl) / 16.0f, 2.0f / 16.0f);
+                    var uvBounds = new Vector4(uvs.X, uvs.Y, uvs.X + (1.0f / 16.0f), uvs.Y + (1.0f / 16.0f));
+                    for (var vx = 0; vx < 4; ++vx)
+                        vertexPositions[vx] += new Vector3(0.0f, 0.02f, 0.0f);
+                    AddTopFaceGeometry(Into,
+                        Chunk, AmbientScratchSpace, LightCache, ExploredCache, Primitive, V,
+                        faceDescriptor, exploredVerts,
+                        vertexPositions,
+                        vertexColors,
+                        vertexTint,
+                        Vector2.One,
+                        uvs,
+                        uvBounds);
+                }
             }
             else
             {
