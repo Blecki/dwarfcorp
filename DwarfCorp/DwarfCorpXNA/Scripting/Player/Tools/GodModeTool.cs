@@ -74,7 +74,7 @@ namespace DwarfCorp
 
         private VoxelSelectionType GetSelectionTypeBySelectionBoxValue(string arg)
         {
-            if (arg == "Delete Block" || arg.Contains("Build") || arg == "Kill Block")
+            if (arg == "Delete Block" || arg.Contains("Build") || arg == "Kill Block" || arg == "Snow")
             {
                 return VoxelSelectionType.SelectFilled;
             }
@@ -195,6 +195,12 @@ namespace DwarfCorp
                             }
                         }
                             break;
+                            case "Snow":
+                                {
+                                    var v = vox;
+                                    v.Decal = 1;
+                                }
+                                break;
                         case "Kill Things":
                         {
                             foreach(var comp in Player.World.CollisionManager.EnumerateIntersectingObjects(

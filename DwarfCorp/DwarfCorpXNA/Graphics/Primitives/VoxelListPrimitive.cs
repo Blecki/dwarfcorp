@@ -461,6 +461,7 @@ namespace DwarfCorp
 
                 var baseUVBounds = new Vector4(baseUVs.X + 0.001f, baseUVs.Y + 0.001f, baseUVs.X + (1.0f / 16.0f) - 0.001f, baseUVs.Y + (1.0f / 16.0f) - 0.001f);
 
+                // Draw central top tile.
                 AddTopFaceGeometry(Into,
                     Chunk, AmbientScratchSpace, LightCache, ExploredCache, Primitive, V,
                     faceDescriptor, exploredVerts,
@@ -470,6 +471,7 @@ namespace DwarfCorp
                     Vector2.One,
                     baseUVs, baseUVBounds);
 
+                // Draw fringe
                 if (V.Type.HasFringeTransitions)
                 {
                     for (var s = 0; s < 4; ++s)
@@ -631,22 +633,19 @@ namespace DwarfCorp
                     }
                 }
 
-                for (var gl = 0; gl < 6; ++gl)
+
+                // Draw decals
+                var decal = V.Decal;
+                if (decal != 0)
                 {
-                    var uvs = new Vector2((3.0f + gl) / 16.0f, 2.0f / 16.0f);
-                    var uvBounds = new Vector4(uvs.X, uvs.Y, uvs.X + (1.0f / 16.0f), uvs.Y + (1.0f / 16.0f));
-                    for (var vx = 0; vx < 4; ++vx)
-                        vertexPositions[vx] += new Vector3(0.0f, 0.02f, 0.0f);
-                    AddTopFaceGeometry(Into,
-                        Chunk, AmbientScratchSpace, LightCache, ExploredCache, Primitive, V,
-                        faceDescriptor, exploredVerts,
-                        vertexPositions,
-                        vertexColors,
-                        vertexTint,
-                        Vector2.One,
-                        uvs,
-                        uvBounds);
-                }
+                    var firstDecal = (byte)(decal >> 8);
+                    var secondDecal = (byte)(decal & 0x00FF);
+
+                    if (firstDecal != 0)
+                        AddDecalGeometry(Into, AmbientScratchSpace, Primitive, V, faceDescriptor, exploredVerts, vertexPositions, vertexColors, vertexTint, DecalLibrary.GetDecalType(firstDecal));
+                    if (secondDecal != 0)
+                        AddDecalGeometry(Into, AmbientScratchSpace, Primitive, V, faceDescriptor, exploredVerts, vertexPositions, vertexColors, vertexTint, DecalLibrary.GetDecalType(secondDecal));
+                }                        
             }
             else
             {
@@ -703,6 +702,48 @@ namespace DwarfCorp
                     VertexColors[faceVertex].AsColor(),
                     VertexTints[faceVertex],
                     UV + new Vector2(vertex.Position.X / 16.0f * UVScale.X, vertex.Position.Z / 16.0f * UVScale.Y),
+                    UVBounds));
+            }
+
+            bool flippedQuad = AmbientScratchSpace[0] + AmbientScratchSpace[2] >
+                              AmbientScratchSpace[1] + AmbientScratchSpace[3];
+
+            for (int idx = faceDescriptor.IndexOffset; idx < faceDescriptor.IndexCount +
+                faceDescriptor.IndexOffset; idx++)
+            {
+                ushort offset = flippedQuad ? Primitive.FlippedIndexes[idx] : Primitive.Indexes[idx];
+                ushort offset0 = flippedQuad ? Primitive.FlippedIndexes[faceDescriptor.IndexOffset] : Primitive.Indexes[faceDescriptor.IndexOffset];
+                Into.AddIndex((ushort)(indexOffset + offset - offset0));
+            }
+        }
+
+        private static void AddDecalGeometry(
+            RawPrimitive Into,
+            int[] AmbientScratchSpace,
+            BoxPrimitive Primitive,
+            VoxelHandle V,
+            BoxPrimitive.FaceDescriptor faceDescriptor,
+            int exploredVerts,
+            Vector3[] VertexPositions,
+            VertexColorInfo[] VertexColors,
+            Color[] VertexTints,
+            DecalType Decal)
+        {
+            var indexOffset = Into.VertexCount;
+            var UV = new Vector2(Decal.Tile.X * (1.0f / 16.0f), Decal.Tile.Y * (1.0f / 16.0f));
+            var UVBounds = new Vector4(UV.X + 0.0001f, UV.Y + 0.0001f, UV.X + (1.0f / 16.0f) - 0.0001f, UV.Y + (1.0f / 16.0f) - 0.0001f);
+
+            for (int faceVertex = 0; faceVertex < faceDescriptor.VertexCount; faceVertex++)
+            {
+                var vertex = Primitive.Vertices[faceDescriptor.VertexOffset + faceVertex];
+
+                AmbientScratchSpace[faceVertex] = VertexColors[faceVertex].AmbientColor;
+
+                Into.AddVertex(new ExtendedVertex(
+                    VertexPositions[faceVertex] + VertexNoise.GetNoiseVectorFromRepeatingTexture(VertexPositions[faceVertex]),
+                    VertexColors[faceVertex].AsColor(),
+                    VertexTints[faceVertex],
+                    UV + new Vector2(vertex.Position.X / 16.0f, vertex.Position.Z / 16.0f),
                     UVBounds));
             }
 

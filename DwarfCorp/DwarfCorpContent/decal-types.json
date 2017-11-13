@@ -1,0 +1,15 @@
+{
+  "$type": "System.Collections.Generic.List`1[[DwarfCorp.DecalType, DwarfCorp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+  "$values": [
+    {
+      "$type": "DwarfCorp.DecalType, DwarfCorp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "ID": 0,
+      "Name": "empty",
+	  "Tile": "0, 0"
+	},
+	{
+		"Name": "snow",
+		"Tile": "0, 7"
+	}
+	]
+}

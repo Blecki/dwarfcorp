@@ -47,20 +47,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class VoxelLibrary
     {
-        /// <summary>
-        /// Specifies that a specific voxel is a resource which should
-        /// spawn in veins.
-        /// </summary>
-        public class ResourceSpawnRate
-        {
-            public float VeinSize;
-            public float VeinSpawnThreshold;
-            public float MinimumHeight;
-            public float MaximumHeight;
-            public float Probability;
-        }
-
-
         public static Dictionary<VoxelType, BoxPrimitive> PrimitiveMap = new Dictionary<VoxelType, BoxPrimitive>();
         public static VoxelType emptyType = null;
 
