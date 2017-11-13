@@ -445,11 +445,6 @@ namespace DwarfCorp
                     TutorialManager = new Tutorial.TutorialManager("Content/tutorial.txt");
                     TutorialManager.TutorialEnabled = !GameSettings.Default.TutorialDisabledGlobally;
                     Tutorial("new game start");
-
-                    if (gameFile != null)
-                    {
-                        Master.Spells = gameFile.PlayData.Spells;
-                    }
                 }
 
                 Camera.World = this;
@@ -466,6 +461,14 @@ namespace DwarfCorp
                 SetLoadingMessage("Creating GameMaster ...");
                 Master = new GameMaster(Factions.Factions["Player"], Game, ComponentManager, ChunkManager,
                     Camera, GraphicsDevice);
+
+                if (gameFile != null)
+                {
+                    if (gameFile.PlayData.Spells != null)
+                        Master.Spells = gameFile.PlayData.Spells;
+                    if (gameFile.PlayData.Tasks != null)
+                        Master.TaskManager = gameFile.PlayData.Tasks;
+                }
 
                 if (Master.Faction.Economy.Company.Information == null)
                     Master.Faction.Economy.Company.Information = new CompanyInformation();

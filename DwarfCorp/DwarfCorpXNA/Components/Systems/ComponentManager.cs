@@ -106,6 +106,7 @@ namespace DwarfCorp
             this.World = World;
             World.ComponentManager = this;
             Components = new Dictionary<uint, GameComponent>();
+            SaveData.SaveableComponents.RemoveAll(c => c == null);
             foreach (var component in SaveData.SaveableComponents)
             {
                 Components.Add(component.GlobalID, component);

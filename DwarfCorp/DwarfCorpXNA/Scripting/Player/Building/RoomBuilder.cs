@@ -292,10 +292,13 @@ namespace DwarfCorp
                 {
                     obj.Manager.RootComponent.AddChild(obj);
                 }
+                World.Master.TaskManager.AddTask(new BuildRoomTask(order));
+                /*
                 TaskManager.AssignTasks(new List<Task>()
                 {
                     new BuildRoomTask(order)
                 }, Faction.FilterMinionsWithCapability(World.Master.SelectedMinions, GameMaster.ToolMode.BuildZone));
+                */
             }
         }
 
@@ -338,11 +341,7 @@ namespace DwarfCorp
             if (button == InputManager.MouseButton.Left)
             {
                 World.Tutorial("build " + CurrentRoomData.Name);
-                if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.BuildZone).Count == 0)
-                {
-                    World.ShowToolPopup("None of the selected units can build rooms.");
-                }
-                else if (CurrentRoomData.Verify(refs, Faction, World))
+                if (CurrentRoomData.Verify(refs, Faction, World))
                 {
                     List<Quantitiy<Resource.ResourceTags>> requirements =
                         CurrentRoomData.GetRequiredResources(refs.Count, Faction);
@@ -440,11 +439,7 @@ namespace DwarfCorp
 
             if(button == InputManager.MouseButton.Left)
             {
-                if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.BuildZone).Count == 0)
-                {
-                    World.ShowToolPopup("None of the selected units can build rooms.");
-                }
-                else if (CurrentRoomData.Verify(refs, Faction, World))
+                if (CurrentRoomData.Verify(refs, Faction, World))
                 {
                     BuildNewVoxels(refs);    
                 }
@@ -467,8 +462,11 @@ namespace DwarfCorp
                 if(IsBuildDesignation(v))
                 {
                     BuildVoxelOrder vox = GetBuildDesignation(v);
-                    vox.Order.Destroy();
-                    BuildDesignations.Remove(vox.Order);
+                    if (vox != null && vox.Order != null)
+                    {
+                        vox.Order.Destroy();
+                        BuildDesignations.Remove(vox.Order);
+                    }
                 }
                 else if(IsInRoom(v))
                 {

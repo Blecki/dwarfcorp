@@ -117,12 +117,11 @@ namespace DwarfCorp.Gui.Widgets
             foreach (var child in EnumerateChildren())
             {
                 child.Hidden = true;
-                (child as FramedIcon).HotkeyValue = int.MaxValue;
             }
 
             var totalItemWidth = (IconCount * (ItemSize.X + ItemSpacing.X)) - ItemSpacing.X;
 
-            var nextHotkey = 1;
+            var nextHotkey = 0;
 
             if (totalItemWidth > rect.Width)
             {
@@ -136,7 +135,7 @@ namespace DwarfCorp.Gui.Widgets
                 GetIcon(0).Layout();
                 pos.X += ItemSize.X + ItemSpacing.X;
 
-                    (GetIcon(0) as FramedIcon).HotkeyValue = nextHotkey;
+                    (GetIcon(0) as FramedIcon).HotkeyValue = FlatToolTray.Tray.Hotkeys[nextHotkey];
                     (GetIcon(0) as FramedIcon).DrawHotkey = HotKeys;
                     ++nextHotkey;
 
@@ -145,7 +144,7 @@ namespace DwarfCorp.Gui.Widgets
                 GetChild(0).Hidden = false;
                 GetChild(0).Rect = new Rectangle(pos.X, pos.Y, ItemSize.X, ItemSize.Y);
                 pos.X += ItemSize.X + ItemSpacing.X;
-                (GetChild(0) as FramedIcon).HotkeyValue = nextHotkey;
+                (GetChild(0) as FramedIcon).HotkeyValue = FlatToolTray.Tray.Hotkeys[nextHotkey];
                 (GetChild(0) as FramedIcon).DrawHotkey = HotKeys;
                 ++nextHotkey;
 
@@ -159,7 +158,7 @@ namespace DwarfCorp.Gui.Widgets
                     child.Rect = new Rectangle(pos.X, pos.Y, ItemSize.X, ItemSize.Y);
                     pos.X += ItemSize.X + ItemSpacing.X;
                     child.Layout();
-                    (child as FramedIcon).HotkeyValue = nextHotkey;
+                    (child as FramedIcon).HotkeyValue = FlatToolTray.Tray.Hotkeys[nextHotkey];
                     (child as FramedIcon).DrawHotkey = HotKeys;
                     ++nextHotkey;
 
@@ -174,7 +173,7 @@ namespace DwarfCorp.Gui.Widgets
                 // Add more button.
                 GetChild(1).Hidden = false;
                 GetChild(1).Rect = new Rectangle(Rect.Right - ItemSize.X, Rect.Y, ItemSize.X, ItemSize.Y);
-                (GetChild(1) as FramedIcon).HotkeyValue = nextHotkey;
+                (GetChild(1) as FramedIcon).HotkeyValue = FlatToolTray.Tray.Hotkeys[nextHotkey];
                 (GetChild(1) as FramedIcon).DrawHotkey = HotKeys;
                 ++nextHotkey;
             }
@@ -188,7 +187,7 @@ namespace DwarfCorp.Gui.Widgets
                     var child = GetIcon(c);
                     child.Hidden = false;
                     child.Rect = new Rectangle(pos.X, pos.Y, ItemSize.X, ItemSize.Y);
-                    (child as FramedIcon).HotkeyValue = nextHotkey;
+                    (child as FramedIcon).HotkeyValue = FlatToolTray.Tray.Hotkeys[nextHotkey];
                     (child as FramedIcon).DrawHotkey = HotKeys;
                     ++nextHotkey;
                     pos.X += ItemSize.X + ItemSpacing.X;
@@ -199,12 +198,6 @@ namespace DwarfCorp.Gui.Widgets
                     //}
                     child.Layout();
                 }
-            }
-
-            foreach (var child in EnumerateChildren())
-            {
-                if ((child as FramedIcon).HotkeyValue == 10)
-                    (child as FramedIcon).HotkeyValue = 0;
             }
 
             Invalidate();   

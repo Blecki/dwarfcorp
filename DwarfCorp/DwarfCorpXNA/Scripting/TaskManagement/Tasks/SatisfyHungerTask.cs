@@ -63,9 +63,9 @@ namespace DwarfCorp
             return agent.Status.Hunger.IsDissatisfied() ? 0.0f : 1e13f;
         }
 
-        public override bool IsFeasible(Creature agent)
+        public override Feasibility IsFeasible(Creature agent)
         {
-            return agent.Sensors.Enemies.Count == 0;
+            return agent.Sensors.Enemies.Count == 0 ? Feasibility.Feasible : Feasibility.Infeasible ;
         }
     }
 }

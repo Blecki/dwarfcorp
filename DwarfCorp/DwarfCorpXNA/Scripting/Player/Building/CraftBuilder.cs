@@ -55,7 +55,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class CraftBuilder
     {
-        public struct CraftDesignation
+        public class CraftDesignation
         {
             public CraftItem ItemType;
             public VoxelHandle Location;
@@ -64,6 +64,9 @@ namespace DwarfCorp
             public float Orientation;
             public bool Valid;
             public Body GhostBody;
+            public float Progress = 0.0f;
+            public bool HasResources = false;
+            public CreatureAI ResourcesReservedFor = null;
         }
 
         public Faction Faction { get; set; }
@@ -273,6 +276,11 @@ namespace DwarfCorp
                 designation.GhostBody.SetTintRecursive(MathFunctions.Pulsate(Color.Blue, gameTime, 0.7f));
                 designation.GhostBody.PropogateTransforms();
             }
+
+            if (CurrentCraftBody != null)
+            {
+                Drawer2D.DrawPolygon(World.Camera, new List<Vector3>() { CurrentCraftBody.Position, CurrentCraftBody.Position + CurrentCraftBody.GlobalTransform.Right * 0.5f }, Color.White, 1, false, graphics.Viewport);
+            }
         }
 
 
@@ -380,11 +388,6 @@ namespace DwarfCorp
             {
                 case (InputManager.MouseButton.Left):
                     {
-                        if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Craft).Count == 0)
-                        {
-                            World.ShowToolPopup("None of the selected units can craft items.");
-                            return;
-                        }
                         List<Task> assignments = new List<Task>();
                         foreach (var r in refs)
                         {
@@ -423,7 +426,8 @@ namespace DwarfCorp
 
                         if (assignments.Count > 0)
                         {
-                            TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(World.Master.SelectedMinions, GameMaster.ToolMode.Craft));
+                            World.Master.TaskManager.AddTasks(assignments);
+                            //TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(World.Master.SelectedMinions, GameMaster.ToolMode.Craft));
                         }
 
                         break;

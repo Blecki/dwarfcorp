@@ -140,6 +140,13 @@ namespace DwarfCorp
 
         public NewOverworldFile(GraphicsDevice device, Overworld.MapData[,] map, string name, float seaLevel)
         {
+            var worldFilePath = name + System.IO.Path.DirectorySeparatorChar + "world.zworld";
+            var metaFilePath = name + System.IO.Path.DirectorySeparatorChar + "meta.txt";
+            if (File.Exists(worldFilePath) && File.Exists(metaFilePath))
+            {
+                // Do noting since overworlds should be saved precisely once.
+                return;
+            }
             Data = new OverworldData(device, map, name, seaLevel);
         }
 
@@ -160,17 +167,21 @@ namespace DwarfCorp
             {
                 var metaInfo = System.IO.File.ReadAllText(metaFilePath);
 
-                var fileStream = new FileStream(worldFilePath, FileMode.Open);
-                var zip = new ZipInputStream(fileStream);
-                zip.GetNextEntry();
-                var formatter = new BinaryFormatter();
-                var file = formatter.Deserialize(zip) as OverworldData;
+                using (var fileStream = new FileStream(worldFilePath, FileMode.Open))
+                {
+                    using (var zip = new ZipInputStream(fileStream))
+                    {
+                        zip.GetNextEntry();
+                        var formatter = new BinaryFormatter();
+                        var file = formatter.Deserialize(zip) as OverworldData;
 
-                if (file == null)
-                    return false;
+                        if (file == null)
+                            return false;
 
-                Data = file;
-                return true;
+                        Data = file;
+                        return true;
+                    }
+                }
             }
             else
             {
@@ -203,28 +214,38 @@ namespace DwarfCorp
 
         public void SaveScreenshot(string filename)
         {
-            Data.Screenshot.SaveAsPng(new System.IO.FileStream(filename, System.IO.FileMode.Create), Data.Screenshot.Width, Data.Screenshot.Height);
+            using (var stream = new System.IO.FileStream(filename, System.IO.FileMode.Create))
+            {
+                Data.Screenshot.SaveAsPng(stream, Data.Screenshot.Width, Data.Screenshot.Height);
+            }
         }
 
         public bool WriteFile(string filePath)
         {
             var worldFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "world.zworld";
             var metaFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "meta.txt";
+
+            if (File.Exists(worldFilePath) && File.Exists(metaFilePath))
+            {
+                Console.Out.WriteLine("Overworld {0} already exists. Just assuming it is correct.", worldFilePath);
+                return false;
+            }
+
             // Don't use zips in FNA version
-            var fileStream = new FileStream(worldFilePath, FileMode.OpenOrCreate);
-            var zip = new ZipOutputStream(fileStream);
-            var formatter = new BinaryFormatter();
-            zip.SetLevel(9);
-            var entry = new ZipEntry(Path.GetFileName(filePath));
-            zip.PutNextEntry(entry);
+            using (var filestream = new FileStream(worldFilePath, FileMode.OpenOrCreate))
+            {
+                using (var zip = new ZipOutputStream(filestream))
+                {
+                    var formatter = new BinaryFormatter();
+                    zip.SetLevel(9);
+                    var entry = new ZipEntry(Path.GetFileName(filePath));
+                    zip.PutNextEntry(entry);
 
-            formatter.Serialize(zip, Data);
-            zip.CloseEntry();
-            zip.Close();
-            fileStream.Close();
-
-            System.IO.File.WriteAllText(metaFilePath, Program.Version);
-
+                    formatter.Serialize(zip, Data);
+                    zip.CloseEntry();
+                    System.IO.File.WriteAllText(metaFilePath, Program.Version);
+                }
+            }
             return true;
         }
     }

@@ -61,6 +61,7 @@ namespace DwarfCorp
         public Dictionary<ResourceLibrary.ResourceType, Resource> Resources;
         public DesignationDrawer Designations;
         public SpellTree Spells;
+        public TaskManager Tasks;
 
         public static PlayData CreateFromWorld(WorldManager World)
         {
@@ -74,7 +75,8 @@ namespace DwarfCorp
                 Factions = World.Factions,
                 Resources = ResourceLibrary.Resources,
                 Designations = World.DesignationDrawer,
-                Spells = World.Master.Spells
+                Spells = World.Master.Spells,
+                Tasks = World.Master.TaskManager
             };
         }
 

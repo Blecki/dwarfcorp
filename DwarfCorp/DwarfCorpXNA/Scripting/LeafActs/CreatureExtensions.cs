@@ -90,6 +90,11 @@ namespace DwarfCorp
 
         public static IEnumerable<Act.Status> Unreserve(this Creature agent, string thing)
         {
+            if (String.IsNullOrEmpty(thing))
+            {
+                yield return Act.Status.Success;
+                yield break;
+            }
             Body objectToHit = agent.AI.Blackboard.GetData<Body>(thing);
 
             if (objectToHit != null && objectToHit.ReservedFor == agent.AI)
@@ -103,6 +108,22 @@ namespace DwarfCorp
             yield break;
         }
 
+        public static void RestockAllImmediately(this Creature agent)
+        {
+            foreach (var resource in agent.Inventory.Resources)
+            {
+                if (!resource.MarkedForRestock || agent.AI.GatherManager.StockOrders.Count == 0)
+                {
+                    resource.MarkedForRestock = true;
+                    agent.AI.AssignTask(new StockResourceTask(new ResourceAmount(resource.Resource))
+                    {
+                        Priority = Task.PriorityType.High
+                    });
+
+                }
+            }
+        }
+
         public static IEnumerable<Act.Status> RestockAll(this Creature agent)
         {
             foreach (var resource in agent.Inventory.Resources)
@@ -113,7 +134,7 @@ namespace DwarfCorp
                     agent.AI.GatherManager.StockOrders.Add(new GatherManager.StockOrder()
                     {
                         Destination = null,
-                        Resource = new ResourceAmount(resource.Resource)
+                        Resource = new ResourceAmount(resource.Resource),
                     });
                 }
             }

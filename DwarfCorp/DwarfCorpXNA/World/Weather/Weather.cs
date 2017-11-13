@@ -19,6 +19,16 @@ namespace DwarfCorp
             CurrentWind = new Vector3(0, 0, 0);
         }
 
+        public bool IsRaining()
+        {
+            return Forecast.Any(storm => storm.IsInitialized && storm.TypeofStorm == StormType.RainStorm);
+        }
+
+        public bool IsSnowing()
+        {
+            return Forecast.Any(storm => storm.IsInitialized && storm.TypeofStorm == StormType.SnowStorm);
+        }
+
         public void Update(DateTime currentDate, WorldManager world)
         {
             CurrentWind = new Vector3((float)Math.Sin(world.Time.GetTotalSeconds() * 0.001f), 0, (float)Math.Cos(world.Time.GetTotalSeconds() * 0.0015f));

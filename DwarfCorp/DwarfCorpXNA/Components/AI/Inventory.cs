@@ -184,6 +184,21 @@ namespace DwarfCorp
             return true;
         }
 
+        public void RemoveAndCreateWithToss(List<ResourceAmount> resources, Vector3 pos)
+        {
+            foreach (var resource in resources)
+            {
+                List<Body> things = RemoveAndCreate(resource);
+                foreach (var body in things)
+                {
+                    TossMotion toss = new TossMotion(1.0f, 2.5f, body.LocalTransform, pos);
+                    body.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
+                    body.AnimationQueue.Add(toss);
+                    toss.OnComplete += body.Delete;
+                }
+            }
+        }
+
         public List<Body> RemoveAndCreate(ResourceAmount resources)
         {
             List<Body> toReturn = new List<Body>();

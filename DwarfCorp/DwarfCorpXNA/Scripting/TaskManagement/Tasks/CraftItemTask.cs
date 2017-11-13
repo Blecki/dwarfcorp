@@ -45,12 +45,14 @@ namespace DwarfCorp
         public CraftBuilder.CraftDesignation Designation { get; set; }
         public CraftItemTask()
         {
+            MaxAssignable = 3;
             Priority = PriorityType.Low;
             AutoRetry = true;
         }
 
         public CraftItemTask(CraftBuilder.CraftDesignation type)
         {
+            MaxAssignable = 3;
             Name = string.Format("Craft {0} at {1}", type.ItemType.Name, type.Location);
             Priority = PriorityType.Low;
             AutoRetry = true;
@@ -85,12 +87,17 @@ namespace DwarfCorp
 
         public override bool ShouldDelete(Creature agent)
         {
-            return !agent.Faction.CraftBuilder.IsDesignation(Designation.Location);
+            return !agent.Faction.CraftBuilder.IsDesignation(Designation.Location) || Designation.Progress > 1.0f;
         }
 
-        public override bool IsFeasible(Creature agent)
+        public override Feasibility IsFeasible(Creature agent)
         {
-            return CanBuild(agent);
+            if (!agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.Craft))
+            {
+                return Feasibility.Infeasible;
+            }
+
+            return CanBuild(agent) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public bool CanBuild(Creature agent)
@@ -160,23 +167,22 @@ namespace DwarfCorp
             newItem.NumRepeats--;
             if (newItem.NumRepeats >= 1)
             {
-                creature.AI.AssignTask(new CraftResourceTask(newItem, TaskID));
+                if (creature.AI.Faction == creature.World.PlayerFaction)
+                {
+                    creature.World.Master.TaskManager.AddTask(new CraftResourceTask(newItem, TaskID));
+                }
+                else
+                {
+                    creature.AI.AssignTask(new CraftResourceTask(newItem, TaskID));
+                }
             }
             yield return Act.Status.Success;
         }
 
         public override bool ShouldDelete(Creature agent)
         {
-            bool hasresources = HasResources(agent);
-            bool hasLocation = HasLocation(agent);
-            if (!hasresources)
+            if (Item.Progress > 1.0f)
             {
-                agent.World.MakeAnnouncement(String.Format("{0} cancelled craft task: Not enough resources.", agent.Name));
-                return true;
-            }
-            if (!hasLocation)
-            {
-                agent.World.MakeAnnouncement(String.Format("{0} cancelled craft task: Needs {1}.", agent.Name, Item.ItemType.CraftLocation));
                 return true;
             }
             return false;
@@ -184,6 +190,11 @@ namespace DwarfCorp
 
         private bool HasResources(Creature agent)
         {
+            if (Item.HasResources)
+            {
+                return true;
+            }
+
             var resources = agent.Faction.HasResources(Item.ItemType.SelectedResources);
             if (!resources)
             {
@@ -196,16 +207,18 @@ namespace DwarfCorp
         {
             if (Item.ItemType.CraftLocation != "")
             {
-                var anyCraftLocation = agent.Faction.OwnedObjects.Any(o => o.Tags.Contains(Item.ItemType.CraftLocation));
+                var anyCraftLocation = agent.Faction.OwnedObjects.Any(o => o.Tags.Contains(Item.ItemType.CraftLocation) && (!o.IsReserved || o.ReservedFor == agent.AI));
                 if (!anyCraftLocation)
                     return false;
             }
             return true;
         }
 
-        public override bool IsFeasible(Creature agent)
+        public override Feasibility IsFeasible(Creature agent)
         {
-            return HasResources(agent) && HasLocation(agent);
+            if (!agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.Craft))
+                return Feasibility.Infeasible;
+            return HasResources(agent) && HasLocation(agent) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override Act CreateScript(Creature creature)

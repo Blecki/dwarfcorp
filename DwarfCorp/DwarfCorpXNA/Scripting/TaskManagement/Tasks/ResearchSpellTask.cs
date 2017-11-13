@@ -26,9 +26,12 @@ namespace DwarfCorp
             return new ResearchSpellTask(Spell);
         }
 
-        public override bool IsFeasible(Creature agent)
+        public override Feasibility IsFeasible(Creature agent)
         {
-            return !agent.World.Master.Spells.GetSpell(Spell).IsResearched;
+            if (!agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.Magic))
+                return Feasibility.Infeasible;
+
+            return !agent.World.Master.Spells.GetSpell(Spell).IsResearched ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override bool ShouldRetry(Creature agent)

@@ -78,7 +78,7 @@ namespace DwarfCorp
 
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            List<CreatureAI> minions = Player.World.Master.SelectedMinions.Where(minion => minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Till)).ToList();
+            List<CreatureAI> minions = Player.World.Master.Faction.Minions.Where(minion => minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Till)).ToList();
             List<FarmTask> goals = new List<FarmTask>();
 
             foreach (var voxel in voxels)
@@ -110,7 +110,8 @@ namespace DwarfCorp
                 }
             }
 
-            TaskManager.AssignTasksGreedy(goals.Cast<Task>().ToList(), minions, 1);
+            Player.TaskManager.AddTasks(goals);
+            //TaskManager.AssignTasksGreedy(goals.Cast<Task>().ToList(), minions, 1);
 
             foreach (CreatureAI creature in minions)
                 creature.Creature.NoiseMaker.MakeNoise("Ok", creature.Position);

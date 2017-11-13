@@ -51,7 +51,7 @@ namespace DwarfCorp
             BoundingBoxPos = Vector3.Zero;
             SeedlingAsset = "pumpkinvinesprout";
             Matrix matrix = Matrix.Identity;
-            matrix.Translation = position + new Vector3(0.0f, -0.15f, 0.0f);
+            matrix.Translation = position;
             LocalTransform = matrix;
             AddChild(new Health(Manager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
             AddChild(new Flammable(Manager, "Flames"));
@@ -90,10 +90,9 @@ namespace DwarfCorp
         public Cactus(ComponentManager Manager, Vector3 position, string asset, float bushSize) :
             base(Manager, "Cactus", Matrix.Identity, new Vector3(bushSize, bushSize, bushSize),  asset, bushSize)
         {
-            BoundingBoxPos = Vector3.Zero;
             SeedlingAsset = "cactussprout";
             Matrix matrix = Matrix.Identity;
-            matrix.Translation = position + new Vector3(0.0f, -0.15f, 0.0f);
+            matrix.Translation = position;
             LocalTransform = matrix;
             AddChild(new Health(Manager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
             AddChild(new Flammable(Manager, "Flames"));

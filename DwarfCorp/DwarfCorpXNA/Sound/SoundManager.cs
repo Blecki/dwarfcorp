@@ -355,6 +355,21 @@ namespace DwarfCorp
             }
         }
 
+
+        public static void StopAmbience(string ambience)
+        {
+            if (!HasAudioDevice) return;
+            Cue cue;
+            if (!ActiveCues.TryGetValue(ambience, out cue))
+            {
+                return;
+            }
+            if (cue.IsPlaying && !cue.IsStopped)
+            {
+                cue.Stop(AudioStopOptions.AsAuthored);
+            }
+        }
+
         public static void PlayAmbience(string sound)
         {
             if (!HasAudioDevice) return;

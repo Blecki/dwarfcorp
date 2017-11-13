@@ -63,9 +63,12 @@ namespace DwarfCorp
             Priority = PriorityType.Low;
         }
 
-        public override bool IsFeasible(Creature agent)
+        public override Feasibility IsFeasible(Creature agent)
         {
-            return Voxel.IsValid && agent.Faction.Designations.IsVoxelDesignation(Voxel, DesignationType.Put);
+            if (!agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.BuildWall))
+                return Feasibility.Infeasible;
+
+            return Voxel.IsValid && agent.Faction.Designations.IsVoxelDesignation(Voxel, DesignationType.Put) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override bool ShouldDelete(Creature agent)
@@ -126,7 +129,7 @@ namespace DwarfCorp
            return new BuildVoxelsTask(Voxels);
         }
 
-        public override bool IsFeasible(Creature agent)
+        public override Feasibility IsFeasible(Creature agent)
         {
             Dictionary<ResourceLibrary.ResourceType, int> numResources = new Dictionary<ResourceLibrary.ResourceType, int>();
             int numFeasibleVoxels = 0;
@@ -152,7 +155,7 @@ namespace DwarfCorp
                 numResources[voxtype.ResourceToRelease]++;
                 numFeasibleVoxels++;
             }
-            return numFeasibleVoxels > 0;
+            return numFeasibleVoxels > 0 ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)

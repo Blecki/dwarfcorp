@@ -488,12 +488,41 @@ namespace DwarfCorp
             }
         }
 
-
-        IEnumerable<Act.Status> RecallEnvoyOnFail(TradeEnvoy envoy)
+        [JsonObject(IsReference =true)]
+        public class TradeTask : Task
         {
-            RecallEnvoy(envoy);
-            World.MakeAnnouncement("Envoy from " + envoy.OwnerFaction.Name + " left. Trade port inaccessible.");
-            yield return Act.Status.Success;
+            public Zone TradePort;
+            public TradeEnvoy Envoy;
+
+            public TradeTask()
+            {
+
+            }
+
+            public TradeTask(Zone tradePort, TradeEnvoy envoy)
+            {
+                Name = "Trade";
+                Priority = PriorityType.High;
+                TradePort = tradePort;
+                Envoy = envoy;
+            }
+
+            IEnumerable<Act.Status> RecallEnvoyOnFail(TradeEnvoy envoy)
+            {
+                Diplomacy.RecallEnvoy(envoy);
+                TradePort.Faction.World.MakeAnnouncement("Envoy from " + envoy.OwnerFaction.Name + " left. Trade port inaccessible.");
+                yield return Act.Status.Success;
+            }
+
+            public override Act CreateScript(Creature agent)
+            {
+                return new GoToZoneAct(agent.AI, TradePort) | new Wrap(() => RecallEnvoyOnFail(Envoy));
+            }
+
+            public override Task Clone()
+            {
+                return new TradeTask(TradePort, Envoy);
+            }
         }
 
         public void UpdateTradeEnvoys(Faction faction)
@@ -559,7 +588,7 @@ namespace DwarfCorp
                         if (creature.Tasks.Count == 0)
                         {
                             TradeEnvoy envoy1 = envoy;
-                            creature.Tasks.Add(new ActWrapperTask(new GoToZoneAct(creature, tradePort) | new Wrap(() => RecallEnvoyOnFail(envoy1))));
+                            creature.Tasks.Add(new TradeTask(tradePort, envoy1));
                         }
 
                         if (!tradePort.IsRestingOnZone(creature.Position)) continue;

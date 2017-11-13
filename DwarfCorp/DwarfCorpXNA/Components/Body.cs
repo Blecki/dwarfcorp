@@ -178,6 +178,14 @@ namespace DwarfCorp
 
         public bool AddToCollisionManager { get; set; }
         public bool DrawReservation { get; set; }
+
+
+        [OnDeserialized]
+        public void OnDesrialized(StreamingContext ctx)
+        {
+            WasAddedToOctree = false;
+        }
+
         public Body()
         {
             if(OnDestroyed == null)

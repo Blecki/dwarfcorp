@@ -701,7 +701,7 @@ namespace DwarfCorp
                 return;
             }
 
-            Economy.CurrentMoney -= currentApplicant.Level.Pay * 4m;
+            AddMoney(-currentApplicant.Level.Pay * 4m);
 
             var dwarfPhysics =
                 EntityFactory.GenerateDwarf(
@@ -870,16 +870,10 @@ namespace DwarfCorp
                     DwarfBux amountToTake = System.Math.Min(treasury.Money, amountLeft);
                     treasury.Money -= amountToTake;
                     amountLeft -= amountToTake;
-                    Economy.CurrentMoney -= amountToTake;
                 }
-                Economy.CurrentMoney -= amountLeft;
-                Economy.CurrentMoney = System.Math.Max(Economy.CurrentMoney, 0m);
                 return;
             }
 
-
-
-           
             DwarfBux amountRemaining = money;
             foreach (Treasury treasury in Treasurys)
             {
@@ -891,7 +885,6 @@ namespace DwarfCorp
 
                 amountRemaining -= amountToTake;
                 treasury.Money += amountToTake;
-                Economy.CurrentMoney += amountToTake;
             }
             if (amountRemaining > 0 && RoomBuilder.DesignatedRooms.Count > 0)
             {

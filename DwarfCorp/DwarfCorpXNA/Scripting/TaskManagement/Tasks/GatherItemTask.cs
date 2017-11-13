@@ -71,15 +71,15 @@ namespace DwarfCorp
 
         public override bool ShouldDelete(Creature agent)
         {
-            return !IsFeasible(agent);
+            return IsFeasible(agent) == Feasibility.Infeasible;
         }
 
-        public override bool IsFeasible(Creature agent)
+        public override Feasibility IsFeasible(Creature agent)
         {
             return EntityToGather != null
                    && !EntityToGather.IsDead
                    && !agent.AI.Movement.IsSessile
-                   && agent.AI.Faction.Designations.IsDesignation(EntityToGather, DesignationType.Gather);
+                   && agent.AI.Faction.Designations.IsDesignation(EntityToGather, DesignationType.Gather) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override bool ShouldRetry(Creature agent)

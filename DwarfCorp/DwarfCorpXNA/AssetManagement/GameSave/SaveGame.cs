@@ -140,7 +140,7 @@ namespace DwarfCorp
                     try
                     {
                         var saveGame = SaveGame.CreateFromDirectory(dir.FullName);
-                        valid = saveGame.Metadata.Version == Program.Version;
+                        valid = Program.CompatibleVersions.Contains(saveGame.Metadata.Version);
                     }
                     catch (Exception e)
                     { }

@@ -108,7 +108,7 @@ namespace DwarfCorp
             return finalPlane;
         }
 
-        private static float GetTotalWaterHeightCells(VoxelHandle vox)
+        public static float GetTotalWaterHeightCells(VoxelHandle vox)
         {
             float tot = 0;
 
@@ -142,10 +142,15 @@ namespace DwarfCorp
                 return defaultHeight;
             }
         }
-
+        private Timer reflectionTimer = new Timer(0.1f, false, Timer.TimerMode.Real);
+        private Vector3 prevCameraPos = Vector3.Zero;
         public void DrawReflectionMap(IEnumerable<IRenderableComponent> Renderables, DwarfTime gameTime, WorldManager game, float waterHeight, Matrix reflectionViewMatrix, Shader effect, GraphicsDevice device)
         {
             if (!DrawReflections) return;
+            reflectionTimer.Update(gameTime);
+            if (!reflectionTimer.HasTriggered && (prevCameraPos - game.Camera.Position).LengthSquared() < 0.001)
+                return;
+            prevCameraPos = game.Camera.Position;
             Plane reflectionPlane = CreatePlane(waterHeight, new Vector3(0, -1, 0), reflectionViewMatrix, true);
 
             effect.ClipPlane = new Vector4(reflectionPlane.Normal, reflectionPlane.D);
@@ -178,6 +183,7 @@ namespace DwarfCorp
                 ComponentRenderer.Render(Renderables, gameTime, game.ChunkManager, game.Camera,
                     DwarfGame.SpriteBatch, game.GraphicsDevice, effect,
                     ComponentRenderer.WaterRenderType.Reflective, waterHeight);
+                game.NewInstanceManager.RenderInstances(device, effect, game.Camera, InstanceRenderer.RenderMode.Normal);
             }
 
             effect.ClippingEnabled = false;

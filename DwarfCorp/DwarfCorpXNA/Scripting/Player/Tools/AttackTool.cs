@@ -140,16 +140,8 @@ namespace DwarfCorp
                 if (button == InputManager.MouseButton.Left)
                 {
                     if (Player.Faction.Designations.AddEntityDesignation(other, DesignationType.Attack) == DesignationSet.AddDesignationResult.Added)
-                    { 
-                        foreach (CreatureAI minion in Player.Faction.SelectedMinions)
-                        {
-                            minion.AssignTask(new KillEntityTask(other, KillEntityTask.KillType.Attack));
-                            CreatureAI otherAi = other.GetRoot().GetComponent<CreatureAI>();
-                            if (otherAi != null)
-                            {
-                                otherAi.AssignTask(new KillEntityTask(minion.Physics, KillEntityTask.KillType.Auto));
-                            }
-                        }
+                    {
+                        Player.TaskManager.AddTask(new KillEntityTask(other, KillEntityTask.KillType.Attack));
                         Player.Faction.World.ShowToolPopup("Will attack this " + creature.Species);
                         OnConfirm(Player.Faction.SelectedMinions);
                     }

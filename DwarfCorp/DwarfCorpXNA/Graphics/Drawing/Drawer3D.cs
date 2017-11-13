@@ -193,15 +193,12 @@ namespace DwarfCorp
                     _addBox,
                     (pos, type) =>
                     {
-                        var saveState = Device.DepthStencilState;
-                        Device.DepthStencilState = DepthStencilState.DepthRead;
-
                         Effect.MainTexture = World.ChunkManager.ChunkData.Tilemap;
                         Effect.LightRampTint = Color.White;
                         // Todo: Alpha pulse
-                        Effect.VertexColorTint = new Color(0.1f, 0.9f, 1.0f, 0.5f + 0.45f);
+                        Effect.VertexColorTint = new Color(0.1f, 0.9f, 1.0f, 1.0f);
                         Effect.SetTexturedTechnique();
-                        Effect.World = Matrix.CreateTranslation(pos + Vector3.Up * 0.15f); // Why the offset?
+                        Effect.World = Matrix.CreateTranslation(pos + Vector3.Up * 0.15f);
 
                         foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
                         {
@@ -212,7 +209,6 @@ namespace DwarfCorp
                         Effect.LightRampTint = Color.White;
                         Effect.VertexColorTint = Color.White;
                         Effect.World = Matrix.Identity;
-                        Device.DepthStencilState = saveState;
                     });
 
                 foreach (var box in Boxes)

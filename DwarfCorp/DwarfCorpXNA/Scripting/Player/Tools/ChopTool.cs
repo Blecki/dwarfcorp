@@ -146,9 +146,9 @@ namespace DwarfCorp
                         tasks.Add(task);
                 }
 
+                Player.TaskManager.AddTasks(tasks);
                 if (tasks.Count > 0 && minions.Count > 0)
                 {
-                    TaskManager.AssignTasks(tasks, minions);
                     OnConfirm(minions);
                 }
             }

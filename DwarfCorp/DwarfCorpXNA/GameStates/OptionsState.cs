@@ -27,6 +27,7 @@ namespace DwarfCorp.GameStates
         private CheckBox InvertZoom;
         private CheckBox ZoomTowardMouse;
         private CheckBox EdgeScrolling;
+        private CheckBox FollowSurface;
         private CheckBox FogOfWar;
         private CheckBox PlayIntro;
         private ComboBox GuiScale;
@@ -295,6 +296,14 @@ namespace DwarfCorp.GameStates
             {
                 Text = "Edge Scrolling",
                 Tooltip = "When checked, moving the cursor to the edge of the screen will move the camera.",
+                OnCheckStateChange = OnItemChanged,
+                AutoLayout = AutoLayout.DockTop
+            }) as CheckBox;
+
+            FollowSurface = panel.AddChild(new CheckBox
+            {
+                Text = "Camera Follows Surface Height",
+                Tooltip = "When checked, the camera will follow the ground surface height when moving.",
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
@@ -833,6 +842,7 @@ namespace DwarfCorp.GameStates
             toReturn.CameraScrollSpeed = this.MoveSpeed.ScrollPosition;
             toReturn.CameraZoomSpeed = this.ZoomSpeed.ScrollPosition;
             toReturn.EnableEdgeScroll = this.EdgeScrolling.CheckState;
+            toReturn.CameraFollowSurface = this.FollowSurface.CheckState;
             toReturn.FogofWar = this.FogOfWar.CheckState;
             toReturn.InvertZoom = this.InvertZoom.CheckState;
             toReturn.ZoomCameraTowardMouse = this.ZoomTowardMouse.CheckState;
@@ -981,6 +991,7 @@ namespace DwarfCorp.GameStates
             this.MoveSpeed.ScrollPosition = GameSettings.Default.CameraScrollSpeed;
             this.ZoomSpeed.ScrollPosition = GameSettings.Default.CameraZoomSpeed;
             this.EdgeScrolling.CheckState = GameSettings.Default.EnableEdgeScroll;
+            this.FollowSurface.CheckState = GameSettings.Default.CameraFollowSurface;
             this.FogOfWar.CheckState = GameSettings.Default.FogofWar;
             this.InvertZoom.CheckState = GameSettings.Default.InvertZoom;
             this.ZoomTowardMouse.CheckState = GameSettings.Default.ZoomCameraTowardMouse;

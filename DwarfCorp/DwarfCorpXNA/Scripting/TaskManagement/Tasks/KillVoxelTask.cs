@@ -49,11 +49,13 @@ namespace DwarfCorp
 
         public KillVoxelTask()
         {
+            MaxAssignable = 3;
             Priority = PriorityType.Medium;
         }
 
         public KillVoxelTask(VoxelHandle vox)
         {
+            MaxAssignable = 3;
             Name = "Mine Block " + vox.Coordinate;
             VoxelToKill = vox;
             Priority = PriorityType.Low;
@@ -75,13 +77,16 @@ namespace DwarfCorp
         }
 
 
-        public override bool IsFeasible(Creature agent)
+        public override Feasibility IsFeasible(Creature agent)
         {
-            if(!VoxelToKill.IsValid || VoxelToKill.IsEmpty || VoxelToKill.Health <= 0)
-                return false;
+            if (!agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.Dig))
+                return Feasibility.Infeasible;
+
+            if (!VoxelToKill.IsValid || VoxelToKill.IsEmpty || VoxelToKill.Health <= 0)
+                return Feasibility.Infeasible;
 
             return agent.Faction.Designations.IsVoxelDesignation(VoxelToKill, DesignationType.Dig) 
-                && !VoxelHelpers.VoxelIsCompletelySurrounded(VoxelToKill);
+                && !VoxelHelpers.VoxelIsCompletelySurrounded(VoxelToKill) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override bool ShouldDelete(Creature agent)
