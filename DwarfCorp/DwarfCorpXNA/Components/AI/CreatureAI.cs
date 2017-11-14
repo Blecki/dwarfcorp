@@ -469,7 +469,7 @@ namespace DwarfCorp
                         if (!Tasks.Contains(CurrentTask))
                         {
                             // Lower the priority of failed tasks.
-                            CurrentTask.Priority = Task.PriorityType.Eventually;
+                            //CurrentTask.Priority = Task.PriorityType.Eventually;
                             AssignTask(CurrentTask);
                             CurrentTask.SetupScript(Creature);
                             retried = true;
@@ -861,12 +861,6 @@ namespace DwarfCorp
                 var voxels = GatherManager.VoxelOrders.Select(order => new KeyValuePair<VoxelHandle, string>(order.Voxel, order.Type)).ToList();
 
                 GatherManager.VoxelOrders.Clear();
-                /*
-                return new ActWrapperTask(new BuildVoxelsAct(this, voxels, types))
-                {
-                    Priority = Task.PriorityType.Low,
-                    AutoRetry = true
-                };*/
                 return new BuildVoxelsTask(voxels);
             }
 
