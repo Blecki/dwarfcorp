@@ -76,6 +76,7 @@ namespace DwarfCorp
         public int Icon { get; set; }
         public string DayAmbience { get; set; }
         public string NightAmbience { get; set; }
+        public bool WaterSurfaceIce { get; set; }
 
         public BiomeData()
         {
@@ -97,6 +98,7 @@ namespace DwarfCorp
             ShoreVoxel = "Sand";
             DayAmbience = "";
             NightAmbience = "";
+            WaterSurfaceIce = false;
         }
     }
 

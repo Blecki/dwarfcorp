@@ -191,11 +191,12 @@ namespace DwarfCorp
         public void GenerateWater(VoxelChunk chunk)
         {
             int waterHeight = (int)(SeaLevel * VoxelConstants.ChunkSizeY) + 1;
-
+            var iceID = VoxelLibrary.GetVoxelType("Ice");
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
             {
                 for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
                 {
+                    var biome = GetBiomeAt(new Vector2(x, z) + new Vector2(chunk.Origin.X, chunk.Origin.Z));
                     var topVoxel = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                         chunk, new LocalVoxelCoordinate(x, VoxelConstants.ChunkSizeY - 1, z)));
 
@@ -204,11 +205,18 @@ namespace DwarfCorp
                         var vox = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
                         if (vox.IsEmpty && y > topVoxel.Coordinate.Y)
                         {
-                            vox.WaterCell = new WaterCell
+                            if (biome.WaterSurfaceIce && y == waterHeight)
                             {
-                                Type = LiquidType.Water,
-                                WaterLevel = WaterManager.maxWaterLevel
-                            };
+                                vox.RawSetType(iceID);
+                            }
+                            else
+                            {
+                                vox.WaterCell = new WaterCell
+                                {
+                                    Type = LiquidType.Water,
+                                    WaterLevel = WaterManager.maxWaterLevel
+                                };
+                            }
                         }
                     }
 
