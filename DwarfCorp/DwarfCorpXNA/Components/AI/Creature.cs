@@ -736,6 +736,18 @@ namespace DwarfCorp
 
         protected void CreateSprite(EmployeeClass employeeClass, ComponentManager manager)
         {
+            if (Physics == null)
+            {
+                // Not sure under what circumstances this happens, but apparently a user
+                // ended up with a null Physics here on loading.
+                Physics = GetRoot().GetComponent<Physics>();
+            }
+
+            if (Physics == null)
+            {
+                return;
+            }
+
             var sprite = Physics.AddChild(new CharacterSprite(manager.World.GraphicsDevice, manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)))) as CharacterSprite;
             foreach (Animation animation in employeeClass.Animations)
             {

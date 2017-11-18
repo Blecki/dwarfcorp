@@ -120,6 +120,13 @@ namespace DwarfCorp
         public IEnumerable<Status> CreateResources()
         {
             List<ResourceAmount> stashed = Agent.Blackboard.GetData<List<ResourceAmount>>("ResourcesStashed");
+
+            if (stashed == null)
+            {
+                yield return Act.Status.Fail;
+                yield break;
+            }
+
             Item.ItemType.SelectedResources = stashed;
             if (Item.ItemType.Name == ResourceLibrary.ResourceType.Trinket)
             {
