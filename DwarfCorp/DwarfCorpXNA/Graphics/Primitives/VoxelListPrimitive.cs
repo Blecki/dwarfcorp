@@ -463,8 +463,8 @@ namespace DwarfCorp
 
                 // Draw central top tile.
                 AddTopFaceGeometry(Into,
-                    Chunk, AmbientScratchSpace, LightCache, ExploredCache, Primitive, V,
-                    faceDescriptor, exploredVerts,
+                    AmbientScratchSpace, Primitive,
+                    faceDescriptor,
                     vertexPositions,
                     vertexColors,
                     vertexTint,
@@ -520,8 +520,8 @@ namespace DwarfCorp
                                 newTints[FringeIndicies[s, 3]] = vertexTint[FringeIndicies[s, 5]];
 
                                 AddTopFaceGeometry(Into,
-                                    Chunk, AmbientScratchSpace, LightCache, ExploredCache, Primitive, V,
-                                    faceDescriptor, exploredVerts,
+                                    AmbientScratchSpace, Primitive,
+                                    faceDescriptor,
                                     newPositions,
                                     newColors,
                                     newTints,
@@ -556,8 +556,8 @@ namespace DwarfCorp
                                 newTints[FringeIndicies[s, 3]] = vertexTint[FringeIndicies[s, 5]];
 
                                 AddTopFaceGeometry(Into,
-                                    Chunk, AmbientScratchSpace, LightCache, ExploredCache, Primitive, V,
-                                    faceDescriptor, exploredVerts,
+                                    AmbientScratchSpace, Primitive,
+                                    faceDescriptor,
                                     newPositions,
                                     newColors,
                                     newTints,
@@ -621,8 +621,8 @@ namespace DwarfCorp
                             newTints[FringeIndicies[4 + s, 3]] = vertexTint[FringeIndicies[4 + s, 4]];
 
                             AddTopFaceGeometry(Into,
-                                Chunk, AmbientScratchSpace, LightCache, ExploredCache, Primitive, V,
-                                faceDescriptor, exploredVerts,
+                                AmbientScratchSpace, Primitive, 
+                                faceDescriptor, 
                                 newPositions,
                                 newColors,
                                 newTints,
@@ -674,14 +674,9 @@ namespace DwarfCorp
 
         private static void AddTopFaceGeometry(
             RawPrimitive Into,
-            VoxelChunk Chunk,
             int[] AmbientScratchSpace,
-            Dictionary<GlobalVoxelCoordinate, VertexColorInfo> LightCache,
-            Dictionary<GlobalVoxelCoordinate, bool> ExploredCache,
             BoxPrimitive Primitive,
-            VoxelHandle V,
             BoxPrimitive.FaceDescriptor faceDescriptor,
-            int exploredVerts,
             Vector3[] VertexPositions,
             VertexColorInfo[] VertexColors,
             Color[] VertexTints,

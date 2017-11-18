@@ -74,7 +74,7 @@ namespace DwarfCorp
         public float Temp { get; set; }
         public float Rain { get; set; }
         public int Icon { get; set; }
-        public Color GrassTint = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+        //public Color GrassTint = new Color(1.0f, 1.0f, 1.0f, 1.0f);
         public string DayAmbience { get; set; }
         public string NightAmbience { get; set; }
 
