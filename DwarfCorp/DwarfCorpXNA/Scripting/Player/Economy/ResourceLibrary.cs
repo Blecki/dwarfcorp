@@ -528,10 +528,13 @@ namespace DwarfCorp
             toReturn.Tags = new List<Resource.ResourceTags>() {Resource.ResourceTags.Craft, Resource.ResourceTags.Precious};
             toReturn.CompositeLayers = new List<KeyValuePair<Point, string>>();
             toReturn.CompositeLayers.AddRange(Resources[resourcetype].CompositeLayers);
-            toReturn.CompositeLayers.Add(
-                new KeyValuePair<Point, string>(
-                    new Point(Resources[resourcetype].TrinketData.SpriteColumn, Resources[gemType].TrinketData.SpriteRow),
-                    Resources[resourcetype].TrinketData.EncrustingAsset));
+            if (Resources[resourcetype].TrinketData.EncrustingAsset != null)
+            {
+                toReturn.CompositeLayers.Add(
+                    new KeyValuePair<Point, string>(
+                        new Point(Resources[resourcetype].TrinketData.SpriteColumn, Resources[gemType].TrinketData.SpriteRow),
+                        Resources[resourcetype].TrinketData.EncrustingAsset));
+            }
             toReturn.GuiLayers = new List<TileReference>();
             toReturn.GuiLayers.AddRange(Resources[resourcetype].GuiLayers);
             toReturn.GuiLayers.Add(new TileReference(Resources[resourcetype].TrinketData.EncrustingAsset, Resources[gemType].TrinketData.SpriteRow * 7 + Resources[resourcetype].TrinketData.SpriteColumn));

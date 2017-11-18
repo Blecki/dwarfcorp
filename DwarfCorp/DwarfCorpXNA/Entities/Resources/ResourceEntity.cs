@@ -117,11 +117,14 @@ namespace DwarfCorp
 
                 foreach (var layer in type.CompositeLayers)
                 {
-                    layers.Add(new LayeredSimpleSprite.Layer
+                    if (layer.Value != null)
                     {
-                        Sheet = new SpriteSheet(layer.Value, 32),
-                        Frame = layer.Key
-                    });
+                        layers.Add(new LayeredSimpleSprite.Layer
+                        {
+                            Sheet = new SpriteSheet(layer.Value, 32),
+                            Frame = layer.Key
+                        });
+                    }
                 }
 
                 sprite = AddChild(new LayeredSimpleSprite(Manager, "Sprite",

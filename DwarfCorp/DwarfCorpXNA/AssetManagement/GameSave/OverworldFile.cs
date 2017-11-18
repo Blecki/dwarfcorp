@@ -169,7 +169,7 @@ namespace DwarfCorp
 
                 using (var fileStream = new FileStream(worldFilePath, FileMode.Open))
                 {
-#if WINDOWS
+#if XNA_BUILD
                     using (var zip = new ZipInputStream(fileStream))
                     {
                         zip.GetNextEntry();
@@ -244,7 +244,7 @@ namespace DwarfCorp
 
             using (var filestream = new FileStream(worldFilePath, FileMode.OpenOrCreate))
             {
-#if WINDOWS
+#if XNA_BUILD
                 using (var zip = new ZipOutputStream(filestream))
                 {
                     var formatter = new BinaryFormatter();
@@ -258,7 +258,7 @@ namespace DwarfCorp
                 }
 #else
                 var formatter = new BinaryFormatter();
-                formatter.Serialize(fileStream, Data);
+                formatter.Serialize(filestream, Data);
                 System.IO.File.WriteAllText(metaFilePath, Program.Version);
 #endif
             }

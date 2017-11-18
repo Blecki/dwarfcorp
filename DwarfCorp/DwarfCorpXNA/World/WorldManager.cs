@@ -598,6 +598,7 @@ namespace DwarfCorp
             }
             catch (Exception exception)
             {
+                Console.Error.Write(exception.ToString());
                 Game.CaptureException(exception);
                 throw new WaitStateException(exception.Message);
             }
