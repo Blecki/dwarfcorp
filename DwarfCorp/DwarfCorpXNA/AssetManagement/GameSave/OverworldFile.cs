@@ -144,7 +144,7 @@ namespace DwarfCorp
             var metaFilePath = name + System.IO.Path.DirectorySeparatorChar + "meta.txt";
             if (File.Exists(worldFilePath) && File.Exists(metaFilePath))
             {
-                // Do noting since overworlds should be saved precisely once.
+                // Do nothing since overworlds should be saved precisely once.
                 return;
             }
             Data = new OverworldData(device, map, name, seaLevel);
@@ -169,6 +169,7 @@ namespace DwarfCorp
 
                 using (var fileStream = new FileStream(worldFilePath, FileMode.Open))
                 {
+#if WINDOWS
                     using (var zip = new ZipInputStream(fileStream))
                     {
                         zip.GetNextEntry();
@@ -181,6 +182,16 @@ namespace DwarfCorp
                         Data = file;
                         return true;
                     }
+#else
+                    var formatter = new BinaryFormatter();
+                    var file = formatter.Deserialize(fileStream) as OverworldData;
+
+                    if (file == null)
+                        return false;
+
+                    Data = file;
+                    return true;
+#endif
                 }
             }
             else
@@ -211,7 +222,7 @@ namespace DwarfCorp
                 return true;
             }
         }
-
+        
         public void SaveScreenshot(string filename)
         {
             using (var stream = new System.IO.FileStream(filename, System.IO.FileMode.Create))
@@ -231,9 +242,9 @@ namespace DwarfCorp
                 return false;
             }
 
-            // Don't use zips in FNA version
             using (var filestream = new FileStream(worldFilePath, FileMode.OpenOrCreate))
             {
+#if WINDOWS
                 using (var zip = new ZipOutputStream(filestream))
                 {
                     var formatter = new BinaryFormatter();
@@ -245,6 +256,11 @@ namespace DwarfCorp
                     zip.CloseEntry();
                     System.IO.File.WriteAllText(metaFilePath, Program.Version);
                 }
+#else
+                var formatter = new BinaryFormatter();
+                formatter.Serialize(fileStream, Data);
+                System.IO.File.WriteAllText(metaFilePath, Program.Version);
+#endif
             }
             return true;
         }
