@@ -40,7 +40,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\gravel",
@@ -94,7 +94,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_dirt_destroy",
@@ -150,7 +150,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_stone_destroy",
@@ -206,7 +206,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_stone_destroy",
@@ -269,7 +269,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_stone_destroy",
@@ -332,7 +332,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_wood_destroy",
@@ -395,7 +395,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_wood_destroy",
@@ -458,7 +458,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\wurp",
@@ -512,7 +512,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_wood_destroy",
@@ -525,12 +525,13 @@
         ]
       }
     },
-    {
-      "$id": "19",
+
+
+	{
       "$type": "DwarfCorp.VoxelType, DwarfCorp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
       "ID": 0,
       "Name": "Grass",
-      "Top": "0, 0",
+      "Top": "4, 2",
       "Bottom": "2, 0",
       "Sides": "2, 0",
       "Transitions": 1,
@@ -593,7 +594,7 @@
       "$type": "DwarfCorp.VoxelType, DwarfCorp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
       "ID": 0,
       "Name": "DesertGrass",
-      "Top": "0, 0",
+      "Top": "9, 2",
       "Bottom": "1, 1",
       "Sides": "1, 1",
       "Transitions": 1,
@@ -603,12 +604,137 @@
       "FringeTiles": {
         "$type": "Microsoft.Xna.Framework.Point[], Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553",
         "$values": [
-          "0, 2",
-          "1, 2",
-          "2, 2"
+          "5, 2",
+          "6, 2",
+          "7, 2"
         ]
       },
 	  "FringePrecedence": 254,
+      "ReleasesResource": true,
+      "ResourceToRelease": {
+        "$type": "DwarfCorp.ResourceLibrary+ResourceType, DwarfCorp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "_value": "Sand"
+      },
+      "StartingHealth": 10.0,
+      "ProbabilityOfRelease": 1.0,
+      "CanRamp": true,
+      "RampSize": 0.5,
+      "IsBuildable": false,
+      "ParticleType": "dirt_particle",
+      "EmitsLight": false,
+      "MinSpawnHeight": -999.0,
+      "MaxSpawnHeight": 999.0,
+      "SpawnProbability": 1.0,
+      "Rarity": 1.0,
+      "SpawnVeins": false,
+      "SpawnClusters": false,
+      "ClusterSize": 0.0,
+      "VeinLength": 0.0,
+      "IsSoil": true,
+      "IsSurface": true,
+      "IsInvincible": false,
+      "Tint": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "UseBiomeGrassTint": true,
+      "SpawnOnSurface": true,
+      "IsTransparent": false,
+      "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_dirt_destroy",
+      "HitSoundResources": {
+        "$type": "System.String[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+        "$values": [
+          "Audio\\oscar\\sfx_ic_dwarf_pick_dirt_1",
+          "Audio\\oscar\\sfx_ic_dwarf_pick_dirt_2",
+          "Audio\\oscar\\sfx_ic_dwarf_pick_dirt_3"
+        ]
+      }
+    },    
+
+    {
+      "$type": "DwarfCorp.VoxelType, DwarfCorp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "ID": 0,
+      "Name": "SnowGrass",
+      "Top": "4, 3",
+      "Bottom": "2, 0",
+      "Sides": "2, 0",
+      "Transitions": 1,
+      "HasTransitionTextures": false,
+      "TransitionTiles": null,
+      "HasFringeTransitions": true,
+      "FringeTiles": {
+        "$type": "Microsoft.Xna.Framework.Point[], Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553",
+        "$values": [
+          "0, 3",
+          "1, 3",
+          "2, 3"
+        ]
+      },
+	  "FringePrecedence": 253,
+      "ReleasesResource": true,
+      "ResourceToRelease": {
+        "$type": "DwarfCorp.ResourceLibrary+ResourceType, DwarfCorp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "_value": "Dirt"
+      },
+      "StartingHealth": 10.0,
+      "ProbabilityOfRelease": 1.0,
+      "CanRamp": true,
+      "RampSize": 0.5,
+      "IsBuildable": false,
+      "ParticleType": "dirt_particle",
+      "EmitsLight": false,
+      "MinSpawnHeight": -999.0,
+      "MaxSpawnHeight": 999.0,
+      "SpawnProbability": 1.0,
+      "Rarity": 1.0,
+      "SpawnVeins": false,
+      "SpawnClusters": false,
+      "ClusterSize": 0.0,
+      "VeinLength": 0.0,
+      "IsSoil": true,
+      "IsSurface": true,
+      "IsInvincible": false,
+      "Tint": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "UseBiomeGrassTint": true,
+      "SpawnOnSurface": false,
+      "IsTransparent": false,
+      "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_dirt_destroy",
+      "HitSoundResources": {
+        "$type": "System.String[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+        "$values": [
+          "Audio\\oscar\\sfx_ic_dwarf_pick_dirt_1",
+          "Audio\\oscar\\sfx_ic_dwarf_pick_dirt_2",
+          "Audio\\oscar\\sfx_ic_dwarf_pick_dirt_3"
+        ]
+      }
+    },
+	{
+      "$type": "DwarfCorp.VoxelType, DwarfCorp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "ID": 0,
+      "Name": "HauntedGrass",
+      "Top": "9, 3",
+      "Bottom": "1, 1",
+      "Sides": "1, 1",
+      "Transitions": 1,
+      "HasTransitionTextures": false,
+      "TransitionTiles": null,
+      "HasFringeTransitions": true,
+      "FringeTiles": {
+        "$type": "Microsoft.Xna.Framework.Point[], Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553",
+        "$values": [
+          "5, 3",
+          "6, 3",
+          "7, 3"
+        ]
+      },
+	  "FringePrecedence": 252,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$type": "DwarfCorp.ResourceLibrary+ResourceType, DwarfCorp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
@@ -694,7 +820,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_snow_destroy",
@@ -750,7 +876,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_snow_destroy",
@@ -813,7 +939,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_dirt_destroy",
@@ -869,7 +995,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_dirt_destroy",
@@ -925,7 +1051,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_stone_destroy",
@@ -981,7 +1107,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_stone_destroy",
@@ -1037,7 +1163,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\gravel",
@@ -1091,7 +1217,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_sand_destroy",
@@ -1147,7 +1273,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_metal_destroy",
@@ -1203,7 +1329,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": true,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_metal_destroy",
@@ -1259,7 +1385,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_metal_destroy",
@@ -1315,7 +1441,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_metal_destroy",
@@ -1371,7 +1497,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_metal_destroy",
@@ -1427,7 +1553,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_metal_destroy",
@@ -1483,7 +1609,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_metal_destroy",
@@ -1539,7 +1665,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_metal_destroy",
@@ -1595,7 +1721,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_metal_destroy",
@@ -1651,7 +1777,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_metal_destroy",
@@ -1714,7 +1840,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": true,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_metal_destroy",
@@ -1770,7 +1896,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_stone_destroy",
@@ -1826,7 +1952,7 @@
         255,
         255
       ],
-      "UseBiomeGrassTint": false,
+
       "SpawnOnSurface": false,
       "IsTransparent": false,
       "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_dirt_destroy",

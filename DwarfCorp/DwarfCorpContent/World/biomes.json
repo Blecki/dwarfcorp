@@ -93,7 +93,6 @@
     "Height": 0.35,
     "Temp": 0.45,
     "Rain": 0.35,
-	"GrassTint": [0, 150, 0, 255]
   },
   "BorealForest": {
     "Biome": 2,
@@ -186,7 +185,6 @@
     "Height": 0.36,
     "Temp": 0.39,
     "Rain": 0.5,
-	"GrassTint": [24, 129, 24, 255]
   },
   "DeciduousForest": {
     "Biome": 3,
@@ -293,7 +291,6 @@
     "Height": 0.3,
     "Temp": 0.4,
     "Rain": 0.5,
-	"GrassTint": [0, 100, 0, 255]
   },
   "Taiga": {
     "Biome": 5,
@@ -332,7 +329,7 @@
       }
     ],
     "GrassLayer": {
-        "VoxelType" :  "Grass",
+        "VoxelType" :  "SnowGrass",
         "Depth" :  1
     },
     "SoilLayer": {
@@ -352,7 +349,6 @@
     "Height": 0.5,
     "Temp": 0.2,
     "Rain": 0.3,
-	"GrassTint": [255, 255, 255, 255]
   },
   "Tundra": {
     "Biome": 4,
@@ -385,7 +381,6 @@
     "Height": 0.0,
     "Temp": 0.1,
     "Rain": 0.1,
-	"GrassTint": [255, 255, 255, 255]
   },
   "Desert": {
     "Biome": 0,
@@ -476,7 +471,6 @@
     "Height": 0.2,
     "Temp": 0.65,
     "Rain": 0.05,
-	"GrassTint": [246, 158, 62, 255]
   },
   "Jungle": {
     "Biome": 6,
@@ -561,7 +555,6 @@
     "Height": 0.5,
     "Temp": 0.8,
     "Rain": 0.75,
-	"GrassTint": [0, 118, 7, 255]
   },
   "Waste": {
     "Biome": 7,
@@ -673,7 +666,6 @@
     "Height": 1.5,
     "Temp": 1.5,
     "Rain": 0.0,
-	"GrassTint": [128, 128, 128, 255]
   },
     "HauntedForest": {
     "Biome": 9,
@@ -732,7 +724,7 @@
       },
 	  ],
     "GrassLayer": {
-        "VoxelType" :  "Grass",
+        "VoxelType" :  "HauntedGrass",
         "Depth" :  1
     },
     "SoilLayer": {
@@ -753,6 +745,5 @@
     "Height": 1.5,
     "Temp": 1.5,
     "Rain": 0.0,
-	"GrassTint": [149, 82, 116, 255]
   },
 }

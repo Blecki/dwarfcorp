@@ -104,7 +104,7 @@ namespace DwarfCorp
         public bool IsSurface = false;
         public bool IsInvincible = false;
         public Color Tint = Color.White;
-        public bool UseBiomeGrassTint = false;
+        //public bool UseBiomeGrassTint = false;
                 
         public bool SpawnOnSurface = false;
         public bool IsTransparent = false;

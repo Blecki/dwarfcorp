@@ -434,25 +434,25 @@ namespace DwarfCorp
                     if (!anyNeighborExplored) vertexTint[faceVertex] = new Color(0.0f, 0.0f, 0.0f, 1.0f);
                 }
 
-                if (V.Type.UseBiomeGrassTint)
-                {
-                    var biomeTints = VoxelHelpers.EnumerateVertexNeighbors2D(V.Coordinate, voxelVertex)
-                        .Select(c => new VoxelHandle(V.Chunk.Manager.ChunkData, c))
-                        .Where(v => v.IsValid)
-                        .Select(v => BiomeLibrary.Biomes[Overworld.Map[(int)(v.Coordinate.X / Chunk.Manager.World.WorldScale), (int)(v.Coordinate.Z / Chunk.Manager.World.WorldScale)].Biome].GrassTint.ToVector4())
-                        .ToArray();
+                //if (V.Type.UseBiomeGrassTint)
+                //{
+                //    var biomeTints = VoxelHelpers.EnumerateVertexNeighbors2D(V.Coordinate, voxelVertex)
+                //        .Select(c => new VoxelHandle(V.Chunk.Manager.ChunkData, c))
+                //        .Where(v => v.IsValid)
+                //        .Select(v => BiomeLibrary.Biomes[Overworld.Map[(int)(v.Coordinate.X / Chunk.Manager.World.WorldScale), (int)(v.Coordinate.Z / Chunk.Manager.World.WorldScale)].Biome].GrassTint.ToVector4())
+                //        .ToArray();
 
-                    var accumulator = Vector4.Zero;
-                    foreach (var tint in biomeTints)
-                        accumulator += tint;
-                    var averageTint = accumulator / biomeTints.Length;
+                //    var accumulator = Vector4.Zero;
+                //    foreach (var tint in biomeTints)
+                //        accumulator += tint;
+                //    var averageTint = accumulator / biomeTints.Length;
 
-                    vertexTint[faceVertex] = new Color(vertexTint[faceVertex].ToVector4() * averageTint);
-                }
-                else
-                {
+                //    vertexTint[faceVertex] = new Color(vertexTint[faceVertex].ToVector4() * averageTint);
+                //}
+                //else
+                //{
                     vertexTint[faceVertex] = new Color(vertexTint[faceVertex].ToVector4() * V.Type.Tint.ToVector4());
-                }
+                //}
             }
 
             if (exploredVerts != 0)
