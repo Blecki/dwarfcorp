@@ -230,6 +230,11 @@ namespace DwarfCorp
 
         private void HandleOrientation()
         {
+            if (CurrentDesignation == null || CurrentCraftBody == null)
+            {
+                return;
+            }
+
             KeyboardState state = Keyboard.GetState();
             bool leftKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectLeft);
             bool rightKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectRight);
