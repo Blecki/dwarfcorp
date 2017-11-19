@@ -358,8 +358,6 @@
 		"Biomes" : 
         {
             "BorealForest" :  "HauntedForest",
-			"DeciduousForest" :  "HauntedForest",
-			"Desert" :  "HauntedForest",
         },
         "Crafts" :  ["Bone"],
         "Encrustings":  ["Gem"],
