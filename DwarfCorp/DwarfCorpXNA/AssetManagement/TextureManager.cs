@@ -89,9 +89,18 @@ namespace DwarfCorp
             {
                 return AssetMap.FirstOrDefault(pair => pair.Value == asset).Key;
             }
-            Texture2D toReturn = Content.Load<Texture2D>(asset);
-            AssetMap[toReturn] = asset;
-            return toReturn;
+            try
+            {
+                Texture2D toReturn = Content.Load<Texture2D>(asset);
+                AssetMap[toReturn] = asset;
+                return toReturn;
+            }
+            catch (ContentLoadException exception)
+            {
+                Console.Error.WriteLine(exception.ToString());
+                return Content.Load<Texture2D>("newgui/error");
+            }
+
         }
 
         public static Texture2D LoadInstanceTexture(string file)
