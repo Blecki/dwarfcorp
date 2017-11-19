@@ -444,11 +444,11 @@ namespace DwarfCorp
         {
             if (HasMeat)
             {
-                ResourceLibrary.ResourceType type = Name + " " + ResourceLibrary.ResourceType.Meat;
+                ResourceLibrary.ResourceType type = Species + " " + ResourceLibrary.ResourceType.Meat;
 
                 if (!ResourceLibrary.Resources.ContainsKey(type))
                 {
-                    ResourceLibrary.Add(new Resource(ResourceLibrary.Resources[ResourceLibrary.ResourceType.Meat])
+                    ResourceLibrary.Add(new Resource(ResourceLibrary.GetMeat(Species))
                     {
                         Type = type,
                         ShortName = type
@@ -460,7 +460,7 @@ namespace DwarfCorp
 
             if (HasBones)
             {
-                ResourceLibrary.ResourceType type = Name + " " + ResourceLibrary.ResourceType.Bones;
+                ResourceLibrary.ResourceType type = Species + " " + ResourceLibrary.ResourceType.Bones;
 
                 if (!ResourceLibrary.Resources.ContainsKey(type))
                 {
