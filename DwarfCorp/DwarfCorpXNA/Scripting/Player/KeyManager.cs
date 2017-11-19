@@ -14,6 +14,7 @@ namespace DwarfCorp
     public class KeyManager
     {
         public Dictionary<string, Keys> Buttons { get; set; }
+        public static Point TrueMousePos = new Point(0, 0);
 
         public void SaveConfigSettings()
         {

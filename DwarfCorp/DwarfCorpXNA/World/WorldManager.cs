@@ -441,9 +441,6 @@ namespace DwarfCorp
 
             Camera.Update(gameTime, ChunkManager);
             HandleAmbientSound();
-            if (KeyManager.RotationEnabled())
-                Mouse.SetPosition(Game.GraphicsDevice.Viewport.Width / 2,
-                    Game.GraphicsDevice.Viewport.Height / 2);
 
             Master.Update(Game, gameTime);
             GoalManager.Update(this);

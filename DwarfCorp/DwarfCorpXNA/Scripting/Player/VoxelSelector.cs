@@ -659,7 +659,7 @@ namespace DwarfCorp
 
         public VoxelHandle GetVoxelUnderMouse()
         {
-            MouseState mouse = Mouse.GetState();
+            var mouse = KeyManager.TrueMousePos;
 
             var v = VoxelHelpers.FindFirstVisibleVoxelOnScreenRay(
                 Chunks.ChunkData,

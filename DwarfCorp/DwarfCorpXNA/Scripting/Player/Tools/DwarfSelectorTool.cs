@@ -77,7 +77,7 @@ namespace DwarfCorp
                 return;
             }
 
-            var mouseState = Mouse.GetState();
+            var mouseState = KeyManager.TrueMousePos;
 
             var vox = VoxelHelpers.FindFirstVisibleVoxelOnScreenRay(
                 Player.World.ChunkManager.ChunkData,
