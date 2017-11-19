@@ -302,7 +302,7 @@ namespace DwarfCorp
                         }
                     }
 
-                    if (topVoxel.Type.Name != biomeData.GrassLayer.VoxelType)
+                    if (topVoxel.Type.Name != biomeData.SoilLayer.VoxelType)
                         continue;
 
                     foreach (VegetationData veg in biomeData.Vegetation)
@@ -524,11 +524,13 @@ namespace DwarfCorp
                                 NoiseGenerator.Noise(pos.X / biomeData.ClumpSize, 0, pos.Y / biomeData.ClumpSize) >
                                 biomeData.ClumpTreshold)
                             {
-                                voxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.GrassLayer.VoxelType));
+                                voxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.SoilLayer.VoxelType));
+                                // Add grass decal
                             }
                             else if (!biomeData.ClumpGrass)
                             {
-                                voxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.GrassLayer.VoxelType));
+                                voxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.SoilLayer.VoxelType));
+                                // Add grass decal
                             }
                             else
                             {

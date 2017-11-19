@@ -12,8 +12,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": false,
       "ResourceToRelease": "Stone",
       "StartingHealth": 0.0,
@@ -62,8 +60,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": false,
       "ResourceToRelease": {
         "$id": "4",
@@ -118,8 +114,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$id": "6",
@@ -174,8 +168,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$id": "8",
@@ -237,8 +229,6 @@
           "4, 1"
         ]
       },
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$id": "10",
@@ -300,8 +290,6 @@
           "4, 0"
         ]
       },
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": false,
       "ResourceToRelease": {
         "$id": "12",
@@ -363,8 +351,6 @@
           "4, 0"
         ]
       },
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$id": "14",
@@ -426,8 +412,6 @@
           "15, 10"
         ]
       },
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$id": "16",
@@ -480,8 +464,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": false,
       "ResourceToRelease": {
         "$id": "18",
@@ -537,16 +519,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": true,
-      "FringeTiles": {
-        "$type": "Microsoft.Xna.Framework.Point[], Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553",
-        "$values": [
-          "0, 2",
-          "1, 2",
-          "2, 2"
-        ]
-      },
-	  "FringePrecedence": 255,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$id": "20",
@@ -600,16 +572,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": true,
-      "FringeTiles": {
-        "$type": "Microsoft.Xna.Framework.Point[], Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553",
-        "$values": [
-          "5, 2",
-          "6, 2",
-          "7, 2"
-        ]
-      },
-	  "FringePrecedence": 254,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$type": "DwarfCorp.ResourceLibrary+ResourceType, DwarfCorp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
@@ -663,16 +625,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": true,
-      "FringeTiles": {
-        "$type": "Microsoft.Xna.Framework.Point[], Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553",
-        "$values": [
-          "0, 3",
-          "1, 3",
-          "2, 3"
-        ]
-      },
-	  "FringePrecedence": 253,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$type": "DwarfCorp.ResourceLibrary+ResourceType, DwarfCorp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
@@ -725,16 +677,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": true,
-      "FringeTiles": {
-        "$type": "Microsoft.Xna.Framework.Point[], Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553",
-        "$values": [
-          "5, 3",
-          "6, 3",
-          "7, 3"
-        ]
-      },
-	  "FringePrecedence": 252,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$type": "DwarfCorp.ResourceLibrary+ResourceType, DwarfCorp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
@@ -788,8 +730,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": false,
       "ResourceToRelease": {
         "$id": "22",
@@ -844,8 +784,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": false,
       "ResourceToRelease": {
         "$id": "24",
@@ -907,8 +845,6 @@
           "1, 0"
         ]
       },
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$id": "26",
@@ -963,8 +899,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$id": "28",
@@ -1019,8 +953,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$id": "30",
@@ -1075,8 +1007,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": false,
       "ResourceToRelease": {
         "$id": "32",
@@ -1131,8 +1061,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": false,
       "ResourceToRelease": {
         "$id": "34",
@@ -1185,8 +1113,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$id": "36",
@@ -1241,8 +1167,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$id": "38",
@@ -1297,8 +1221,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$id": "40",
@@ -1353,8 +1275,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$id": "42",
@@ -1409,8 +1329,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$id": "44",
@@ -1465,8 +1383,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$id": "46",
@@ -1521,8 +1437,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$id": "48",
@@ -1577,8 +1491,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$id": "50",
@@ -1633,8 +1545,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$id": "52",
@@ -1689,8 +1599,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$id": "54",
@@ -1745,8 +1653,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$id": "56",
@@ -1808,8 +1714,6 @@
           "0, 14"
         ]
       },
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$id": "58",
@@ -1864,8 +1768,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$id": "60",
@@ -1920,8 +1822,6 @@
       "Transitions": 1,
       "HasTransitionTextures": false,
       "TransitionTiles": null,
-      "HasFringeTransitions": false,
-      "FringeTiles": null,
       "ReleasesResource": true,
       "ResourceToRelease": {
         "$id": "62",

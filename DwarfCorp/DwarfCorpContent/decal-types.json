@@ -8,8 +8,16 @@
 	  "Tile": "0, 0"
 	},
 	{
-		"Name": "snow",
-		"Tile": "0, 7"
+		"Name": "grass",
+		"Tile": "4, 2",
+		"HasFringeTransitions": true,
+		"FringeTiles":
+        [
+          "0, 2",
+          "1, 2",
+          "2, 2"
+        ],      
+		"FringePrecedence": 255,
 	}
 	]
 }

@@ -62,6 +62,7 @@ namespace DwarfCorp
         public List<DetailMoteData> Motes { get; set; }
         public List<FaunaData> Fauna { get; set; }
         public Layer GrassLayer { get; set; }
+        public string GrassDecal = "grass";
         public Layer SoilLayer { get; set; }
         public List<Layer> SubsurfaceLayers { get; set; }
         public string ShoreVoxel { get; set; }
