@@ -36,6 +36,7 @@ namespace DwarfCorp.GameStates
         private Vector2 lastSpawnWorld = Vector2.Zero;
         private List<Point3> Trees { get; set; }
         private const float TreeProbability = 0.001f;
+        private SamplerState previewSampler = null;
 
         public Matrix ZoomedPreviewMatrix
         {
@@ -490,7 +491,16 @@ namespace DwarfCorp.GameStates
 
             Device.Clear(ClearOptions.Target, Color.Black, 1024.0f, 0);
             Device.DepthStencilState = DepthStencilState.Default;
-           
+
+            if (previewSampler == null)
+            {
+                previewSampler = new SamplerState
+                {
+                    Filter = TextureFilter.MinLinearMagPointMipPoint
+                };
+            }
+
+            Device.SamplerStates[0] = previewSampler;
             foreach (EffectPass pass in PreviewEffect.CurrentTechnique.Passes)
             {
                 pass.Apply();
