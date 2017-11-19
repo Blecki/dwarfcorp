@@ -144,10 +144,10 @@ namespace DwarfCorp
             up.Normalize();
             MouseState mouse = Mouse.GetState();
             KeyboardState keys = Keyboard.GetState();
-
+            var bounds = new BoundingBox(World.ChunkManager.Bounds.Min, World.ChunkManager.Bounds.Max + Vector3.UnitY * 20);
             if (ZoomTargets.Count > 0)
             {
-                Vector3 currTarget = ProjectToSurface(ZoomTargets.First());
+                Vector3 currTarget = MathFunctions.Clamp(ProjectToSurface(ZoomTargets.First()), bounds);
                 if (Vector3.DistanceSquared(Target, currTarget) > 5)
                 {
                     Vector3 newTarget = 0.8f * Target + 0.2f * currTarget;
@@ -160,6 +160,8 @@ namespace DwarfCorp
                     ZoomTargets.RemoveAt(0);
                 }
             }
+
+            Target = MathFunctions.Clamp(Target, bounds);
 
             int edgePadding = -10000;
 
