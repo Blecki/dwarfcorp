@@ -39,7 +39,7 @@ namespace DwarfCorp.Gui
         // Generate UV transform matricies that align the UV range 0..1 to a tile.
         public Matrix ScaleMatrix { get { return Matrix.CreateScale(TileUStep, TileVStep, 1.0f); } }
         public Matrix TranslationMatrix(int Column, int Row) { return Matrix.CreateTranslation(ColumnU(Column), RowV(Row), 0.0f); }
-        public Matrix TileMatrix(int Column, int Row) { return ScaleMatrix * TranslationMatrix(Column, Row); }
+        public Matrix TileMatrix(int Column, int Row) { return ScaleMatrix * TranslationMatrix(Column % Columns, Row % Rows); }
         public Matrix TileMatrix(int TileIndex) { return TileMatrix(Column(TileIndex), Row(TileIndex)); }
         public Matrix TileMatrix(int TileIndex, int ColumnSpan, int RowSpan)
         {
