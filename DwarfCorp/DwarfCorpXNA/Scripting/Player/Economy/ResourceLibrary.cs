@@ -52,6 +52,7 @@ namespace DwarfCorp
     public static class ResourceLibrary
     {
 
+
         public struct ResourceType
         {
             [JsonProperty]
@@ -118,6 +119,12 @@ namespace DwarfCorp
         }
 
         public static Dictionary<ResourceType, Resource> Resources = new Dictionary<ResourceType, Resource>();
+
+        public static Dictionary<string, int> MeatAssets = new Dictionary<string, string>()
+        {
+            
+        };
+
 
         public static IEnumerable<Resource> GetResourcesByTag(Resource.ResourceTags tag)
         {
