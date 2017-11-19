@@ -104,6 +104,7 @@ namespace DwarfCorp
                 inventory.Resources.Add(new Inventory.InventoryItem()
                 {
                     MarkedForRestock = false,
+                    MarkedForUse = false,
                     Resource = ResourceLibrary.ResourceType.Wood
                 });
             }
@@ -113,6 +114,7 @@ namespace DwarfCorp
                 inventory.Resources.Add(new Inventory.InventoryItem()
                 {
                     MarkedForRestock = false,
+                    MarkedForUse = false,
                     Resource = seed
                 });
             }

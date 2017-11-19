@@ -49,7 +49,8 @@ namespace DwarfCorp
         public class InventoryItem
         {
             public ResourceLibrary.ResourceType Resource;
-            public bool MarkedForRestock;
+            public bool MarkedForRestock = false;
+            public bool MarkedForUse = false;
         }
 
         public enum RestockType
@@ -89,7 +90,8 @@ namespace DwarfCorp
                 Resources.Add(new InventoryItem()
                 {
                     Resource = resourceAmount.ResourceType,
-                    MarkedForRestock = restock == RestockType.RestockResource
+                    MarkedForRestock = restock == RestockType.RestockResource,
+                    MarkedForUse = restock != RestockType.RestockResource
                 });
             }
             return true;
@@ -163,6 +165,7 @@ namespace DwarfCorp
                     Resources.Add(new InventoryItem()
                     {
                         MarkedForRestock = restockType == RestockType.RestockResource,
+                        MarkedForUse = restockType != RestockType.RestockResource,
                         Resource = entity.Resource.ResourceType
                     });
                 }
@@ -172,6 +175,7 @@ namespace DwarfCorp
                 Resources.Add(new InventoryItem()
                 {
                     MarkedForRestock = restockType == RestockType.RestockResource,
+                    MarkedForUse = restockType != RestockType.RestockResource,
                     Resource = item.Tags[0]
                 });
             }
@@ -311,9 +315,9 @@ namespace DwarfCorp
             return (from resource in Resources where ResourceLibrary.GetResourceByName(resource.Resource).Tags.Contains(quantitiy.ResourceType) select new ResourceAmount(resource.Resource)).ToList();
         }
 
-        public void AddResource(ResourceAmount tradeGood)
+        public void AddResource(ResourceAmount tradeGood, RestockType type = RestockType.RestockResource)
         {
-            Pickup(tradeGood, RestockType.RestockResource);
+            Pickup(tradeGood, type);
         }
     }
 }

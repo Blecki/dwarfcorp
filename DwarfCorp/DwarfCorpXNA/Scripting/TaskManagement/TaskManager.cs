@@ -270,6 +270,11 @@ namespace DwarfCorp
             return unassigned;
         }
 
+        internal bool HasTask(Task task)
+        {
+            return Tasks.Contains(task);
+        }
+
         public static List<Task> AssignTasks(List<Task> newGoals, List<CreatureAI> creatures, int maxPerDwarf=100)
         {
 
