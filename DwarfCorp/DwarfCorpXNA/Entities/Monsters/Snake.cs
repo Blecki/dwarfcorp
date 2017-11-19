@@ -104,7 +104,7 @@ namespace DwarfCorp
         public void Initialize(SpriteSheet spriteSheet)
         {
             Physics.Orientation = Physics.OrientMode.Fixed;
-
+            Species = "Snake";
             const int frameWidth = 32;
             const int frameHeight = 32;
 
@@ -231,7 +231,6 @@ namespace DwarfCorp
             Physics.AddChild(new Flammable(Manager, "Flames"));
             HasBones = true;
             HasMeat = true;
-            Species = "Snake";
         }
 
         public override void Die()
