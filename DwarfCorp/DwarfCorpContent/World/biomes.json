@@ -249,6 +249,10 @@
         "SpawnProbability": 0.0005
       },
       {
+        "Name": "Turkey",
+        "SpawnProbability": 0.0003
+      },
+      {
         "Name": "Deer",
         "SpawnProbability": 0.0005
       },
