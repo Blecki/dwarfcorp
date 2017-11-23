@@ -81,6 +81,8 @@ namespace DwarfCorp
         public List<Quantitiy<ResourceTags>> CraftPrereqs { get; set; }  
 
         public Color Tint { get; set; }
+        public string AleName { get; set; }
+
         public enum ResourceTags
         {
             Edible,
@@ -123,7 +125,7 @@ namespace DwarfCorp
 
         public Resource()
         {
-            
+            AleName = "";
         }
 
         public Resource(Resource other)
@@ -145,6 +147,7 @@ namespace DwarfCorp
             CraftPrereqs.AddRange(other.CraftPrereqs);
             CompositeLayers = null;
             TrinketData = other.TrinketData;
+            AleName = other.AleName;
         }
 
         public Resource(ResourceLibrary.ResourceType type,  DwarfBux money, string description, NamedImageFrame image, int WidgetsSprite, Color tint, params ResourceTags[] tags)
@@ -162,6 +165,7 @@ namespace DwarfCorp
             CanCraft = false;
             CraftPrereqs = new List<Quantitiy<Resource.ResourceTags>>();
             CompositeLayers = null;
+            AleName = "";
         }
 
         public string GetTagDescription(string delimiter)

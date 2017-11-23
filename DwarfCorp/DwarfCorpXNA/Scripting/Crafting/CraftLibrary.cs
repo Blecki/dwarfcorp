@@ -255,7 +255,7 @@ namespace DwarfCorp
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.RawFood, 1),
                         },
                         Icon = new Gui.TileReference("resources", 21),
-                        BaseCraftTime = 45,
+                        BaseCraftTime = 15,
                         Type = CraftItem.CraftType.Resource,
                         ResourceCreated = "Meal",
                         CraftLocation = "Cutting Board",
@@ -276,7 +276,7 @@ namespace DwarfCorp
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Bakeable, 1)
                         },
                         Icon = new Gui.TileReference("resources", 22),
-                        BaseCraftTime = 45,
+                        BaseCraftTime = 5,
                         Type = CraftItem.CraftType.Resource,
                         ResourceCreated = "Bread",
                         CraftLocation = "Stove",
@@ -296,7 +296,7 @@ namespace DwarfCorp
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Brewable, 1)
                         },
                         Icon = new Gui.TileReference("resources", 20),
-                        BaseCraftTime = 45,
+                        BaseCraftTime = 8,
                         Type = CraftItem.CraftType.Resource,
                         ResourceCreated = "Ale",
                         CraftLocation = "Barrel",
