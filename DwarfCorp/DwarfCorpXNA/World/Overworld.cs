@@ -128,9 +128,9 @@ namespace DwarfCorp
             [JsonProperty] private byte Erosion_;
             [JsonProperty] private byte Weathering_;
             [JsonProperty] private byte Faults_;
-            [JsonProperty] private byte Height_;
+            [JsonProperty] public byte Height_;
             [JsonProperty] private byte Temperature_;
-            [JsonProperty] private byte Rainfall_;
+            [JsonProperty] public byte Rainfall_;
             public WaterType Water;
             public Biome Biome;
 
@@ -226,6 +226,8 @@ namespace DwarfCorp
 
         public static ColorGradient JetGradient = null;
 
+        // Uuuuh TODO: Need to kill this because it means the order of biome declarations in biomes.json 
+        // matters, also prevents anding new biomes.
         public enum Biome
         {
             Desert = 0,
@@ -665,6 +667,34 @@ namespace DwarfCorp
             }
         }
 
+        public static void GenerateSaveTexture(
+            MapData[,] map,
+            int width,
+            int height,
+            Color[] worldData)
+        {
+            for (var x = 0; x < width; ++x)
+                for (var y = 0; y < height; ++y)
+                    worldData[(y * width) + x] = new Color(
+                        map[x, y].Height_, map[x, y].Faction, (byte)map[x, y].Biome, map[x, y].Rainfall_);
+        }
+
+        public static void DecodeSaveTexture(
+            MapData[,] map,
+            int width,
+            int height,
+            Color[] worldData)
+        {
+            for (var x = 0; x < width; ++x)
+                for (var y = 0; y < height; ++y)
+                {
+                    var color = worldData[(y * width) + x];
+                    map[x, y].Height_ = color.R;
+                    map[x, y].Faction = color.G;
+                    map[x, y].Biome = (Biome)color.B;
+                    map[x, y].Rainfall_ = color.A;
+                }
+        }
 
         public static void TextureFromHeightMap(string displayMode,
             MapData[,] map,
