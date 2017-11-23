@@ -183,7 +183,8 @@ namespace DwarfCorp
                 Weather.CreateStorm(MathFunctions.RandVector3Cube() * 10, MathFunctions.Rand(0.05f, 1.0f), world);
                 return new Cloud(world.ComponentManager, 0.1f, 50, 40, position);
             });
-            RegisterEntity("Chicken", (position, data) => new Chicken(position, world.ComponentManager, "Chicken"));
+            RegisterEntity("Chicken", (position, data) => new Chicken(position, world.ComponentManager, "Chicken", "Chicken"));
+            RegisterEntity("Turkey", (position, data) => new Chicken(position, world.ComponentManager, "Turkey", "Turkey"));
             RegisterEntity("MudGolem", (position, data) => new MudGolem(new CreatureStats(new MudGolemClass(), 0), "Carnivore", world.PlanService, World.Factions.Factions["Carnivore"], world.ComponentManager, "Mud Golem", position));
             RegisterEntity("Mud", (position, data) => new MudProjectile(world.ComponentManager, position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
             RegisterEntity("Grave", (position, data) => new Grave(world.ComponentManager, position));

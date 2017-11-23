@@ -51,7 +51,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public static class ResourceLibrary
     {
-
         public struct ResourceType : IEquatable<ResourceType>
         {
             [JsonProperty]
@@ -144,6 +143,7 @@ namespace DwarfCorp
         }
 
         public static Dictionary<ResourceType, Resource> Resources = new Dictionary<ResourceType, Resource>();
+
 
         public static IEnumerable<Resource> GetResourcesByTag(Resource.ResourceTags tag)
         {
@@ -274,6 +274,11 @@ namespace DwarfCorp
             Add(new Resource(ResourceType.Meat,  25.0m, "Came from an animal.",
                 new NamedImageFrame(tileSheet, GetRect(3, 2)), 19, Color.White, Resource.ResourceTags.Edible,
                 Resource.ResourceTags.AnimalProduct, Resource.ResourceTags.Meat, Resource.ResourceTags.RawFood) {FoodContent = 250});
+
+            Add(new Resource("Bird " + ResourceType.Meat, 25.0m, "Came from an animal.", 
+                new NamedImageFrame(tileSheet, GetRect(5, 3)), 29, Color.White, Resource.ResourceTags.Edible,
+    Resource.ResourceTags.AnimalProduct, Resource.ResourceTags.Meat, Resource.ResourceTags.RawFood)
+            { FoodContent = 150 });
 
             Add(new Resource(ResourceType.PineCone, 2.0m, "Grows pine trees.",
                 new NamedImageFrame(tileSheet, GetRect(6, 1)), 14, Color.White, Resource.ResourceTags.Plantable,
@@ -478,6 +483,32 @@ namespace DwarfCorp
             Resources.Remove(ResourceType.Bread);
         }
 
+        private static Dictionary<string, string> MeatAssets = new Dictionary<string, string>()
+        {
+            {
+                "Bird",
+                "Bird Meat"
+            },
+            {
+                "Chicken",
+                "Bird Meat"
+            },
+            {
+                "Turkey",
+                "Bird Meat"
+            }
+        };
+
+
+        public static Resource GetMeat(string species)
+        {
+            if (MeatAssets.ContainsKey(species))
+            {
+                return Resources[MeatAssets[species]];
+            }
+            return Resources[ResourceType.Meat];
+        }
+
         public static void GenerateAnimalProducts()
         {
             string[] animals = TextGenerator.GetDefaultStrings("Text" + ProgramData.DirChar + "animal.txt");
@@ -554,10 +585,13 @@ namespace DwarfCorp
             toReturn.Tags = new List<Resource.ResourceTags>() {Resource.ResourceTags.Craft, Resource.ResourceTags.Precious};
             toReturn.CompositeLayers = new List<KeyValuePair<Point, string>>();
             toReturn.CompositeLayers.AddRange(Resources[resourcetype].CompositeLayers);
-            toReturn.CompositeLayers.Add(
-                new KeyValuePair<Point, string>(
-                    new Point(Resources[resourcetype].TrinketData.SpriteColumn, Resources[gemType].TrinketData.SpriteRow),
-                    Resources[resourcetype].TrinketData.EncrustingAsset));
+            if (Resources[resourcetype].TrinketData.EncrustingAsset != null)
+            {
+                toReturn.CompositeLayers.Add(
+                    new KeyValuePair<Point, string>(
+                        new Point(Resources[resourcetype].TrinketData.SpriteColumn, Resources[gemType].TrinketData.SpriteRow),
+                        Resources[resourcetype].TrinketData.EncrustingAsset));
+            }
             toReturn.GuiLayers = new List<TileReference>();
             toReturn.GuiLayers.AddRange(Resources[resourcetype].GuiLayers);
             toReturn.GuiLayers.Add(new TileReference(Resources[resourcetype].TrinketData.EncrustingAsset, Resources[gemType].TrinketData.SpriteRow * 7 + Resources[resourcetype].TrinketData.SpriteColumn));

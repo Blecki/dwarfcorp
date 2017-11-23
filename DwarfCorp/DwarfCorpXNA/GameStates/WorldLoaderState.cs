@@ -17,6 +17,12 @@ namespace DwarfCorp.GameStates
             this.ProceedButtonText = "Load";
             this.NoItemsText = "No worlds found.";
 
+            this.InvalidItemText = "This world was saved by an earlier version of DwarfCorp and is not compatible.";
+            this.ValidateItem = (item) =>
+            {
+                return NewOverworldFile.CheckCompatibility(item);
+            };
+
             this.ItemSource = () =>
             {
                 System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetWorldDirectory());

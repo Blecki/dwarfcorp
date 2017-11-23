@@ -69,6 +69,7 @@ namespace DwarfCorp
                 inventory.Resources.Add(new Inventory.InventoryItem()
                 {
                     MarkedForRestock = false,
+                    MarkedForUse = false,
                     Resource = resource
                 });
             }

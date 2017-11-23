@@ -441,9 +441,6 @@ namespace DwarfCorp
 
             Camera.Update(gameTime, ChunkManager);
             HandleAmbientSound();
-            if (KeyManager.RotationEnabled())
-                Mouse.SetPosition(Game.GraphicsDevice.Viewport.Width / 2,
-                    Game.GraphicsDevice.Viewport.Height / 2);
 
             Master.Update(Game, gameTime);
             GoalManager.Update(this);
@@ -598,6 +595,7 @@ namespace DwarfCorp
             }
             catch (Exception exception)
             {
+                Console.Error.Write(exception.ToString());
                 Game.CaptureException(exception);
                 throw new WaitStateException(exception.Message);
             }

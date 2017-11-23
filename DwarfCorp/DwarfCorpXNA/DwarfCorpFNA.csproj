@@ -60,7 +60,7 @@
   </ItemGroup>
   -->
   <ItemGroup>
-     <Compile Include=".\**\*.cs"/>
+    <Compile Include=".\**\*.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -165,27 +165,27 @@ echo "Building for linux 32"
 
 MD "$(ProjectDir)\build\linux32"
 
-XCOPY "$(ProjectDir)\FNA_libs\lib\*" "$(ProjectDir)\build\linux32" /Y /E /V
+XCOPY "$(ProjectDir)\FNA_libs\lib\*" "$(ProjectDir)\build\linux32" /Y /E /V /D
 
-XCOPY "$(ProjectDir)\FNA_libs\mono\*" "$(ProjectDir)\build\linux32" /Y /E /V
+XCOPY "$(ProjectDir)\FNA_libs\mono\*" "$(ProjectDir)\build\linux32" /Y /E /V /D
 
-XCOPY "$(ProjectDir)$(OutDir)\." "$(ProjectDir)\build\linux32" /Y /E /V
+XCOPY "$(ProjectDir)$(OutDir)\." "$(ProjectDir)\build\linux32" /Y /E /V /D
 
 
 echo "Building for linux 64"
 MD "$(ProjectDir)\build\linux64"
 
-XCOPY "$(ProjectDir)\FNA_libs\lib64\*" "$(ProjectDir)\build\linux64" /Y /E /V
-XCOPY "$(ProjectDir)\FNA_libs\mono\*" "$(ProjectDir)\build\linux64" /Y /E /V
+XCOPY "$(ProjectDir)\FNA_libs\lib64\*" "$(ProjectDir)\build\linux64" /Y /E /V /D
+XCOPY "$(ProjectDir)\FNA_libs\mono\*" "$(ProjectDir)\build\linux64" /Y /E /V /D
 
-XCOPY "$(ProjectDir)$(OutDir)\." "$(ProjectDir)\build\linux64" /Y /E /V
+XCOPY "$(ProjectDir)$(OutDir)\." "$(ProjectDir)\build\linux64" /Y /E /V /D
 
 
 echo "Building for windows"
 
 if not exist "$(ProjectDir)\build\win32" MD "$(ProjectDir)\build\win32"
-XCOPY "$(ProjectDir)\FNA_libs\win32\*" "$(ProjectDir)\$(OutDir)" /Y /E /V
-XCOPY "$(ProjectDir)$(OutDir)\." "$(ProjectDir)build\win32" /Y /E /V</PostBuildEvent>
+XCOPY "$(ProjectDir)\FNA_libs\win32\*" "$(ProjectDir)\$(OutDir)" /Y /E /V /D
+XCOPY "$(ProjectDir)$(OutDir)\." "$(ProjectDir)build\win32" /Y /E /V /D</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>RD /S /Q "$(ProjectDir)$(OutDir)"
@@ -194,7 +194,7 @@ if not exist "$(ProjectDir)$(OutDir)" MD "$(ProjectDir)$(OutDir)"
 if not exist "$(ProjectDir)$(OutDir)Content" MD "$(ProjectDir)$(OutDir)Content"
 ECHO "$(ProjectDir)..\DwarfCorpXNA\bin\x86\$(ConfigurationName)\Content" 
 
-XCOPY "$(ProjectDir)\..\DwarfCorpXNA\bin\x86\$(ConfigurationName)\Content" "$(ProjectDir)$(OutDir)Content" /Y /E</PreBuildEvent>
+XCOPY "$(ProjectDir)\..\DwarfCorpXNA\bin\x86\$(ConfigurationName)\Content" "$(ProjectDir)$(OutDir)Content" /Y /E /D</PreBuildEvent>
   </PropertyGroup>
   <!--
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

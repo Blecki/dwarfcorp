@@ -44,6 +44,12 @@
 			"TileHeight": 8
 		},
 		{
+			"Name": "error",
+			"Texture": "newgui/error",
+			"TileWidth": 32,
+			"TileHeight": 32
+		},
+		{
 			"Name": "indicator-circle",
 			"Texture": "newgui/indicator-circle",
 			"TileWidth": 32,

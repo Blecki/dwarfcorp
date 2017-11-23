@@ -335,11 +335,93 @@ namespace DwarfCorp
 
         }
 
+        private Timer orphanedTaskRateLimiter = new Timer(10.0f, false);
+
+        // This hack exists to find orphaned tasks not assigned to any dwarf, and to then
+        // put them on the task list.
+        public void UpdateOrphanedTasks()
+        {
+            orphanedTaskRateLimiter.Update(DwarfTime.LastTime);
+            if (orphanedTaskRateLimiter.HasTriggered)
+            {
+                List<Task> orphanedTasks = new List<Task>();
+                foreach (var block in Faction.Designations.EnumerateDesignations())
+                {
+                    if (block.Type == DesignationType.Put)
+                    {
+                        var type = (short)(block.Tag);
+                        var task = new BuildVoxelTask(block.Voxel, VoxelLibrary.GetVoxelType(type).Name);
+
+                        if (!TaskManager.HasTask(task) && 
+                            !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
+                        {
+                            orphanedTasks.Add(task);
+                        }
+                    }
+                    else if (block.Type == DesignationType.Dig)
+                    {
+                        var task = new KillVoxelTask(block.Voxel);
+                        if (!TaskManager.HasTask(task) &&
+                            !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
+                        {
+                            orphanedTasks.Add(task);
+                        }
+                    }
+                    // TODO... other voxel task types
+
+                }
+
+                foreach (var ent in Faction.Designations.EnumerateEntityDesignations())
+                {
+                    if (ent.Type == DesignationType.Attack)
+                    {
+                        var task = new KillEntityTask(ent.Body, KillEntityTask.KillType.Attack);
+                        if (!TaskManager.HasTask(task) &&
+                            !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
+                        {
+                            orphanedTasks.Add(task);
+                        }
+                    }
+                    else if (ent.Type == DesignationType.Chop)
+                    {
+                        var task = new KillEntityTask(ent.Body, KillEntityTask.KillType.Chop);
+                        if (!TaskManager.HasTask(task) &&
+                            !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
+                        {
+                            orphanedTasks.Add(task);
+                        }
+                    }
+                    else if (ent.Type == DesignationType.Wrangle)
+                    {
+                        var task = new WrangleAnimalTask(ent.Body.GetRoot().GetComponent<Creature>());
+                        if (!TaskManager.HasTask(task) &&
+                            !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
+                        {
+                            orphanedTasks.Add(task);
+                        }
+                    }
+                    else if (ent.Type == DesignationType.Gather)
+                    {
+                        var task = new GatherItemTask(ent.Body);
+                        if (!TaskManager.HasTask(task) &&
+                            !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
+                        {
+                            orphanedTasks.Add(task);
+                        }
+                    }
+                    /// TODO ... other entity task types
+                }
+
+                if (orphanedTasks.Count > 0)
+                    TaskManager.AssignTasksGreedy(orphanedTasks, Faction.Minions);
+            }
+        }
+
         public void Update(DwarfGame game, DwarfTime time)
         {
             TaskManager.Update(Faction.Minions);
             CurrentTool.Update(game, time);
-
+            UpdateOrphanedTasks();
             if (!World.Paused)
             {
 

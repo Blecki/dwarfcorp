@@ -444,11 +444,11 @@ namespace DwarfCorp
         {
             if (HasMeat)
             {
-                ResourceLibrary.ResourceType type = Name + " " + ResourceLibrary.ResourceType.Meat;
+                ResourceLibrary.ResourceType type = Species + " " + ResourceLibrary.ResourceType.Meat;
 
                 if (!ResourceLibrary.Resources.ContainsKey(type))
                 {
-                    ResourceLibrary.Add(new Resource(ResourceLibrary.Resources[ResourceLibrary.ResourceType.Meat])
+                    ResourceLibrary.Add(new Resource(ResourceLibrary.GetMeat(Species))
                     {
                         Type = type,
                         ShortName = type
@@ -460,7 +460,7 @@ namespace DwarfCorp
 
             if (HasBones)
             {
-                ResourceLibrary.ResourceType type = Name + " " + ResourceLibrary.ResourceType.Bones;
+                ResourceLibrary.ResourceType type = Species + " " + ResourceLibrary.ResourceType.Bones;
 
                 if (!ResourceLibrary.Resources.ContainsKey(type))
                 {
@@ -736,6 +736,18 @@ namespace DwarfCorp
 
         protected void CreateSprite(EmployeeClass employeeClass, ComponentManager manager)
         {
+            if (Physics == null)
+            {
+                // Not sure under what circumstances this happens, but apparently a user
+                // ended up with a null Physics here on loading.
+                Physics = GetRoot().GetComponent<Physics>();
+            }
+
+            if (Physics == null)
+            {
+                return;
+            }
+
             var sprite = Physics.AddChild(new CharacterSprite(manager.World.GraphicsDevice, manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)))) as CharacterSprite;
             foreach (Animation animation in employeeClass.Animations)
             {

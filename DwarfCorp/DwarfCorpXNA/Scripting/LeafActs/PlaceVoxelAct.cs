@@ -142,6 +142,7 @@ namespace DwarfCorp
                     Creature.Stats.NumBlocksPlaced++;
                     Creature.AI.AddXP(1);
                     yield return Status.Success;
+                    yield break;
                 }
                 else
                 {

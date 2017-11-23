@@ -78,6 +78,7 @@ namespace DwarfCorp
         //public Color GrassTint = new Color(1.0f, 1.0f, 1.0f, 1.0f);
         public string DayAmbience { get; set; }
         public string NightAmbience { get; set; }
+        public bool WaterSurfaceIce { get; set; }
 
         public BiomeData()
         {
@@ -99,6 +100,7 @@ namespace DwarfCorp
             ShoreVoxel = "Sand";
             DayAmbience = "";
             NightAmbience = "";
+            WaterSurfaceIce = false;
         }
     }
 

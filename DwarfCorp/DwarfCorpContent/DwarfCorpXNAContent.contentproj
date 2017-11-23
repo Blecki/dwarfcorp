@@ -2026,15 +2026,15 @@
     </Compile>
     <Content Include="Audio\XACT\Win\SoundBank.xsb">
       <Name>SoundBank</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Audio\XACT\Win\Sounds.xgs">
       <Name>Sounds</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Audio\XACT\Win\WaveBank.xwb">
       <Name>WaveBank</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Compile Include="newgui\progress-fill.png">
       <Name>progress-fill</Name>
@@ -2250,6 +2250,16 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="Entities\Animals\turkey.png">
+      <Name>turkey</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="newgui\error.png">
+      <Name>error</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Particles\particles.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>particles</Name>
@@ -2271,8 +2281,12 @@
       <Name>mixer</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Entities\Animals\turkey_animation.json">
+      <Name>turkey_animation</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="tutorial.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>tutorial</Name>
     </None>
     <Compile Include="Sky\cloud1.png">
@@ -3123,6 +3137,7 @@
       <Name>Sounds</Name>
       <Importer>XactImporter</Importer>
       <Processor>XactProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
   </ItemGroup>
   <ItemGroup>

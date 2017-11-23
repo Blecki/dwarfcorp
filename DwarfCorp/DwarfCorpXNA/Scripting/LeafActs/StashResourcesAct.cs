@@ -100,7 +100,7 @@ namespace DwarfCorp
             {
                 foreach(ResourceAmount resource in Resources)
                 {
-                    Agent.Creature.Inventory.AddResource(resource.CloneResource());   
+                    Agent.Creature.Inventory.AddResource(resource.CloneResource(), Inventory.RestockType.None);   
                 }
 
                 while (!waitTimer.HasTriggered)

@@ -94,6 +94,12 @@ namespace DwarfCorp.Gui
         /// <returns></returns>
         public ITileSheet GetTileSheet(String Name)
         {
+            if (Name == null || !RenderData.TileSheets.ContainsKey(Name))
+            {
+                // Lol this is a hack to make the game behave gracefully whenever there is a bad specification for
+                // a tile sheet.
+                return RenderData.TileSheets["error"];
+            }
             return RenderData.TileSheets[Sanitize(Name)];
         }
 

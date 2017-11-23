@@ -69,7 +69,7 @@ namespace DwarfCorp.GameStates
                 MinimumSize = new Point(400, 250),
                 Font = "font18-outline",
                 Border = "basic",
-                Background = new TileReference("basic", 0),
+                Background = new TileReference("sbasic", 0),
                 BackgroundColor = new Vector4(0.0f, 0.0f, 0.0f, 0.25f),
                 AutoLayout = Gui.AutoLayout.FloatBottom,
                 TextHorizontalAlign = Gui.HorizontalAlign.Center,

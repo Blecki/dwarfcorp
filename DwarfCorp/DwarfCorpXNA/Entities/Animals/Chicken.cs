@@ -20,7 +20,7 @@ namespace DwarfCorp
 
         }
 
-        public Chicken(Vector3 position, ComponentManager manager, string name) :
+        public Chicken(Vector3 position, ComponentManager manager, string name, string species) :
             // Creature base constructor
             base
             (
@@ -51,7 +51,7 @@ namespace DwarfCorp
                 (
                 manager,
                     // It is called "bird"
-                    "A Chicken",
+                    species,
                     // It's attached to the root component of the component manager
                     // It is located at a position passed in as an argument
                     Matrix.CreateTranslation(position),
@@ -72,20 +72,21 @@ namespace DwarfCorp
                 IsVisible = false
             });
 
-            Initialize(ContentPaths.Entities.Animals.chicken_animations);
+            Species = species;
+            Initialize(ContentPaths.Entities.Animals.fowl[species], species);
         }
 
         /// <summary>
         /// Initialize function creates all the required components for the bird.
         /// </summary>
         /// <param name="sprites">The sprite sheet to use for the bird</param>
-        public void Initialize(string sprites)
+        public void Initialize(string sprites, string species)
         {
             // When true, causes the bird to face the direction its moving in
             Physics.Orientation = Physics.OrientMode.RotateY;
 
 
-            CreateSprite(ContentPaths.Entities.Animals.chicken_animations, Manager);
+            CreateSprite(ContentPaths.Entities.Animals.fowl[Species], Manager);
 
             // Used to grab other components
             Hands = Physics.AddChild(new Grabber("hands", Manager, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero)) as Grabber;
@@ -94,7 +95,7 @@ namespace DwarfCorp
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
             // Controls the behavior of the creature
-            AI = Physics.AddChild(new PacingCreatureAI(Manager, "Chicken AI", Sensors, PlanService)) as CreatureAI;
+            AI = Physics.AddChild(new PacingCreatureAI(Manager, "AI", Sensors, PlanService)) as CreatureAI;
 
             // The bird can peck at its enemies (0.1 damage)
             Attacks = new List<Attack> { new Attack("Peck", 0.01f, 2.0f, 1.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_chicken_attack), ContentPaths.Effects.pierce) {Mode = Attack.AttackMode.Dogfight} };
@@ -116,21 +117,21 @@ namespace DwarfCorp
 
             // Tag the physics component with some information 
             // that can be used later
-            Physics.Tags.Add("Chicken");
+            Physics.Tags.Add(species);
             Physics.Tags.Add("Animal");
             Physics.Tags.Add("DomesticAnimal");
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the chicken";
             Stats.CurrentClass = new EmployeeClass()
             {
-                Name = "Chicken",
-                Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Chicken" } }
+                Name = species,
+                Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = species} }
             };
 
 
             NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_chicken_hurt_1, ContentPaths.Audio.Oscar.sfx_oc_chicken_hurt_2 };
             NoiseMaker.Noises["Chirp"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_chicken_neutral_1, ContentPaths.Audio.Oscar.sfx_oc_chicken_neutral_2};
             NoiseMaker.Noises["Lay Egg"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_chicken_lay_egg};
-            Species = "Chicken";
+            Species = species;
 
             var deathParticleTrigger = Parent.EnumerateAll().OfType<ParticleTrigger>().FirstOrDefault();
             if (deathParticleTrigger != null)
@@ -142,7 +143,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            CreateSprite(ContentPaths.Entities.Animals.chicken_animations, manager);
+            CreateSprite(ContentPaths.Entities.Animals.fowl[Species], manager);
             Physics.AddChild(Shadow.Create(0.5f, manager));
             base.CreateCosmeticChildren(manager);
         }

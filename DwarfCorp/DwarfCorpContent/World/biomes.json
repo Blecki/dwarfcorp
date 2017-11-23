@@ -249,6 +249,10 @@
         "SpawnProbability": 0.0005
       },
       {
+        "Name": "Turkey",
+        "SpawnProbability": 0.0003
+      },
+      {
         "Name": "Deer",
         "SpawnProbability": 0.0005
       },
@@ -354,6 +358,7 @@
     "Biome": 4,
     "Name": "Tundra",
     "Icon":  13,
+	"WaterSurfaceIce" : true,
 	"DayAmbience" : "sfx_amb_tundra",
     "Vegetation": [],
     "Motes": [
@@ -373,7 +378,7 @@
         "Depth" :  128
     }
     ],
-    "ShoreVoxel":  "Ice",
+    "ShoreVoxel":  "Sand",
     "ClumpGrass": false,
     "ClumpSize": 30.0,
     "ClumpTreshold": 0.75,

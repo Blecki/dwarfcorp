@@ -120,13 +120,20 @@ namespace DwarfCorp
 
         public BuildVoxelsTask(List<KeyValuePair<VoxelHandle, string>> voxels)
         {
-            Name = "Build " + voxels.Count + " blocks";
+            StringBuilder nameBuilder = new StringBuilder();
+            nameBuilder.Append("Place blocks at ");
+            foreach(var voxel in voxels)
+            {
+                nameBuilder.Append(voxel.Key.Coordinate.ToString());
+            }
+            Name = nameBuilder.ToString();
             Voxels = voxels;
+            Priority = PriorityType.Medium;
         }
 
         public override Task Clone()
         {
-           return new BuildVoxelsTask(Voxels);
+            return new BuildVoxelsTask(Voxels) { Priority = this.Priority };
         }
 
         public override Feasibility IsFeasible(Creature agent)
@@ -174,7 +181,16 @@ namespace DwarfCorp
 
             if (feasibleVoxels.Count > 0)
             {
-                agent.AI.AssignTask(new BuildVoxelsTask(feasibleVoxels));
+                //agent.AI.AssignTask(new BuildVoxelsTask(feasibleVoxels) { Priority = PriorityType.Medium });
+                // This is an obscene hack to allow dwarfs to share build voxel tasks.
+                for (int i = 0; i <= feasibleVoxels.Count / 4; i++)
+                {
+                    int k = i;
+                    int k4 = Math.Min(i + 4, feasibleVoxels.Count - 1);
+                    if (k >= feasibleVoxels.Count)
+                        break;
+                    agent.World.Master.TaskManager.AddTask(new BuildVoxelsTask(feasibleVoxels.GetRange(k, k4)) { Priority = PriorityType.Medium });
+                }
             }
             yield return Act.Status.Success;
         }
@@ -235,9 +251,9 @@ namespace DwarfCorp
             {
                 int local = i;
                 var localVox = pair.Key;
-                children.Add(new Select(new Sequence(new Domain(() => Validate(agent.AI, pair.Key, resources[local]), 
-                             new GoToVoxelAct(pair.Key, PlanAct.PlanType.Radius, agent.AI, 4.0f)),
-                             new PlaceVoxelAct(pair.Key, agent.AI, resources[i])),
+                children.Add(new Select(new Sequence(new Domain(() => Validate(agent.AI, localVox, resources[local]), 
+                             new GoToVoxelAct(localVox, PlanAct.PlanType.Radius, agent.AI, 4.0f)),
+                             new PlaceVoxelAct(localVox, agent.AI, resources[local])),
                              new Wrap(Succeed)));
                 i++;
             }

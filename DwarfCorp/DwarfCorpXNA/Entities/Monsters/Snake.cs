@@ -104,7 +104,7 @@ namespace DwarfCorp
         public void Initialize(SpriteSheet spriteSheet)
         {
             Physics.Orientation = Physics.OrientMode.Fixed;
-
+            Species = "Snake";
             const int frameWidth = 32;
             const int frameHeight = 32;
 
@@ -141,11 +141,11 @@ namespace DwarfCorp
 
                 if (HasMeat)
                 {
-                    ResourceLibrary.ResourceType type = Name + " " + ResourceLibrary.ResourceType.Meat;
+                    ResourceLibrary.ResourceType type = Species + " " + ResourceLibrary.ResourceType.Meat;
 
                     if (!ResourceLibrary.Resources.ContainsKey(type))
                     {
-                        ResourceLibrary.Add(new Resource(ResourceLibrary.Resources[ResourceLibrary.ResourceType.Meat])
+                        ResourceLibrary.Add(new Resource(ResourceLibrary.GetMeat(Species))
                         {
                             Type = type,
                             ShortName = type
@@ -231,7 +231,6 @@ namespace DwarfCorp
             Physics.AddChild(new Flammable(Manager, "Flames"));
             HasBones = true;
             HasMeat = true;
-            Species = "Snake";
         }
 
         public override void Die()

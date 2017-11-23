@@ -131,6 +131,8 @@ namespace DwarfCorp
             return new Vector3(pos.X, vox.WorldPosition.Y + 0.5f, pos.Z);
         }
 
+        private Point mousePrerotate = new Point(0, 0);
+
         public void OverheadUpdate(DwarfTime time, ChunkManager chunks)
         {
             float diffPhi = 0;
@@ -144,10 +146,10 @@ namespace DwarfCorp
             up.Normalize();
             MouseState mouse = Mouse.GetState();
             KeyboardState keys = Keyboard.GetState();
-
+            var bounds = new BoundingBox(World.ChunkManager.Bounds.Min, World.ChunkManager.Bounds.Max + Vector3.UnitY * 20);
             if (ZoomTargets.Count > 0)
             {
-                Vector3 currTarget = ProjectToSurface(ZoomTargets.First());
+                Vector3 currTarget = MathFunctions.Clamp(ProjectToSurface(ZoomTargets.First()), bounds);
                 if (Vector3.DistanceSquared(Target, currTarget) > 5)
                 {
                     Vector3 newTarget = 0.8f * Target + 0.2f * currTarget;
@@ -161,6 +163,8 @@ namespace DwarfCorp
                 }
             }
 
+            Target = MathFunctions.Clamp(Target, bounds);
+
             int edgePadding = -10000;
 
             if (GameSettings.Default.EnableEdgeScroll)
@@ -169,23 +173,21 @@ namespace DwarfCorp
             }
 
             float diffX, diffY = 0;
-            bool stateChanged = false;
             float dt = (float)time.ElapsedRealTime.TotalSeconds;
             SnapToBounds(new BoundingBox(World.ChunkManager.Bounds.Min, World.ChunkManager.Bounds.Max + Vector3.UnitY * 20));
             if (KeyManager.RotationEnabled())
             {
+                World.Gui.MouseVisible = false;
                 if (!shiftPressed)
                 {
                     shiftPressed = true;
-
-                    mouse = Mouse.GetState();
                     mouseOnRotate = new Point(mouse.X, mouse.Y);
-                    stateChanged = true;
+                    mousePrerotate = new Point(mouse.X, mouse.Y);
                 }
+
                 if (!isLeftPressed && mouse.LeftButton == ButtonState.Pressed)
                 {
                     isLeftPressed = true;
-                    stateChanged = true;
                 }
                 else if (mouse.LeftButton == ButtonState.Released)
                 {
@@ -195,21 +197,13 @@ namespace DwarfCorp
                 if (!isRightPressed && mouse.RightButton == ButtonState.Pressed)
                 {
                     isRightPressed = true;
-                    stateChanged = true;
                 }
                 else if (mouse.RightButton == ButtonState.Released)
                 {
                     isRightPressed = false;
                 }
 
-                if (stateChanged)
-                {
-                    Mouse.SetPosition(GameState.Game.GraphicsDevice.Viewport.Width / 2,
-                        GameState.Game.GraphicsDevice.Viewport.Height / 2);
-                    mouse = Mouse.GetState();
-                    mouseOnRotate = new Point(mouse.X, mouse.Y);
-                }
-
+                Mouse.SetPosition(mouseOnRotate.X, mouseOnRotate.Y);
 
                 diffX = mouse.X - mouseOnRotate.X;
                 diffY = mouse.Y - mouseOnRotate.Y;
@@ -224,11 +218,21 @@ namespace DwarfCorp
                     diffTheta = (filterDiffX);
                     diffPhi = - (filterDiffY);
                 }
-
+                KeyManager.TrueMousePos = mousePrerotate;
             }
             else
             {
+                if (shiftPressed)
+                {
+                    Mouse.SetPosition(mousePrerotate.X, mousePrerotate.Y);
+                    KeyManager.TrueMousePos = new Point(mousePrerotate.X, mousePrerotate.Y);
+                }
+                else
+                {
+                    KeyManager.TrueMousePos = new Point(mouse.X, mouse.Y);
+                }
                 shiftPressed = false;
+                World.Gui.MouseVisible = true;
             }
 
             Vector3 velocityToSet = Vector3.Zero;
@@ -283,8 +287,6 @@ namespace DwarfCorp
 
             if (!KeyManager.RotationEnabled())
             {
-                World.Gui.MouseVisible = true;
-
                 if (!World.IsMouseOverGui)
                 {
 
@@ -340,10 +342,6 @@ namespace DwarfCorp
                     }
                 }
             }
-            else
-            {
-                World.Gui.MouseVisible = false;
-            }
 
             int scroll = mouse.ScrollWheelValue;
 
@@ -369,7 +367,7 @@ namespace DwarfCorp
 
                         diffRadius = delta * CameraZoomSpeed * dt;
 
-                        if (diffRadius < 0 && !FollowAutoTarget && GameSettings.Default.ZoomCameraTowardMouse)
+                        if (diffRadius < 0 && !FollowAutoTarget && GameSettings.Default.ZoomCameraTowardMouse && !shiftPressed)
                         {
                             float diffxy =
                                 (new Vector3(Target.X, 0, Target.Z) -

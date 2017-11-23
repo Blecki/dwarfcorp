@@ -114,11 +114,15 @@ namespace DwarfCorp
             {
                 if (!resource.MarkedForRestock || agent.AI.GatherManager.StockOrders.Count == 0)
                 {
-                    resource.MarkedForRestock = true;
-                    agent.AI.AssignTask(new StockResourceTask(new ResourceAmount(resource.Resource))
+                    if (!resource.MarkedForUse)
                     {
-                        Priority = Task.PriorityType.High
-                    });
+                        resource.MarkedForRestock = true;
+
+                        agent.AI.AssignTask(new StockResourceTask(new ResourceAmount(resource.Resource))
+                        {
+                            Priority = Task.PriorityType.High
+                        });
+                    }
 
                 }
             }
