@@ -288,6 +288,16 @@ namespace DwarfCorp
                 _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] -= 1;
         }
 
+        /// <summary>
+        /// Set the decal of the voxel without triggering all the bookkeeping mechanisms.
+        /// Should only be used by ChunkGenerator as it can break geometry building.
+        /// </summary>
+        /// <param name="Decal"></param>
+        public void RawSetDecal(short Decal)
+        {
+            _cache_Chunk.Data.Decals[_cache_Index] = Decal;
+        }
+
         private void OnTypeSet(VoxelType NewType)
         {
             // Changing a voxel is actually a relatively rare event, so we can afford to do a bit of 

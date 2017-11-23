@@ -71,10 +71,6 @@
         "SpawnProbability": 0.00001
       }
     ],
-    "GrassLayer": {
-        "VoxelType" :  "Grass",
-        "Depth" :  1
-    },
     "SoilLayer": {
         "VoxelType" :  "Dirt",
         "Depth" :  3
@@ -85,6 +81,7 @@
         "Depth" :  128
     }
     ],
+	"GrassDecal": "grass",
     "ShoreVoxel": "Sand",
     "ClumpGrass": false,
     "ClumpSize": 30.0,
@@ -163,10 +160,6 @@
         "SpawnProbability": 0.00005
       },
     ],
-    "GrassLayer": {
-        "VoxelType" :  "Grass",
-        "Depth" :  1
-    },
     "SoilLayer": {
         "VoxelType" :  "Dirt",
         "Depth" :  3
@@ -177,6 +170,7 @@
         "Depth" :  128
     }
     ],
+    "GrassDecal": "grass",
     "ShoreVoxel": "Sand",
     "ClumpGrass": false,
     "ClumpSize": 30.0,
@@ -273,10 +267,6 @@
         "SpawnProbability": 0.00005
       },
     ],
-    "GrassLayer": {
-        "VoxelType" :  "Grass",
-        "Depth" :  1
-    },
     "SoilLayer": {
         "VoxelType" :  "Dirt",
         "Depth" :  3
@@ -287,6 +277,7 @@
         "Depth" :  128
     }
     ],
+	"GrassDecal": "grass",
     "ShoreVoxel": "Sand",
     "ClumpGrass": false,
     "ClumpSize": 30.0,
@@ -332,10 +323,6 @@
         "SpawnProbability": 0.0005
       }
     ],
-    "GrassLayer": {
-        "VoxelType" :  "SnowGrass",
-        "Depth" :  1
-    },
     "SoilLayer": {
         "VoxelType" :  "Dirt",
         "Depth" :  3
@@ -364,10 +351,6 @@
     "Motes": [
     ],
     "Fauna": [],
-    "GrassLayer": {
-        "VoxelType" :  "Snow",
-        "Depth" :  3
-    },
     "SoilLayer": {
         "VoxelType" :  "Ice",
         "Depth" :  5
@@ -454,10 +437,6 @@
         "SpawnProbability": 0.00001
       },
     ],
-    "GrassLayer": {
-        "VoxelType" :  "DesertGrass",
-        "Depth" :  1
-    },
     "SoilLayer": {
         "VoxelType" :  "Sand",
         "Depth" :  4
@@ -538,10 +517,6 @@
         "SpawnProbability": 0.0001
       },
     ],
-    "GrassLayer": {
-        "VoxelType" :  "Grass",
-        "Depth" :  1
-    },
     "SoilLayer": {
         "VoxelType" :  "Dirt",
         "Depth" :  2
@@ -582,10 +557,6 @@
         "Name": "Demon",
         "SpawnProbability": 0.0005
       }],
-    "GrassLayer": {
-        "VoxelType" :  "Stone",
-        "Depth" :  1
-    },
     "SoilLayer": {
         "VoxelType" :  "Stone",
         "Depth" :  5
@@ -649,10 +620,6 @@
         "SpawnProbability": 0.001
       }
     ],
-    "GrassLayer": {
-        "VoxelType" :  "CaveFungus",
-        "Depth" :  1
-    },
     "SoilLayer": {
         "VoxelType" :  "CaveFungus",
         "Depth" :  5
@@ -728,10 +695,6 @@
         "SpawnProbability": 0.00005
       },
 	  ],
-    "GrassLayer": {
-        "VoxelType" :  "HauntedGrass",
-        "Depth" :  1
-    },
     "SoilLayer": {
         "VoxelType" :  "DarkDirt",
         "Depth" :  5
