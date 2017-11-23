@@ -66,7 +66,7 @@ namespace DwarfCorp
                 var resourcesToStock = Creature.Inventory.Resources.Where(a => a.MarkedForRestock).ToList();
                 foreach (var resource in resourcesToStock)
                 {
-                    List<Body> createdItems = Creature.Inventory.RemoveAndCreate(new ResourceAmount(resource.Resource));
+                    List<Body> createdItems = Creature.Inventory.RemoveAndCreate(new ResourceAmount(resource.Resource), Inventory.RestockType.RestockResource);
 
                     foreach (Body b in createdItems)
                     {

@@ -90,7 +90,7 @@ namespace DwarfCorp
         {
             if (!Item.HasResources && Item.ResourcesReservedFor == Agent)
             {
-                Creature.Inventory.RemoveAndCreateWithToss(Item.ItemType.SelectedResources, pos);
+                Creature.Inventory.RemoveAndCreateWithToss(Item.ItemType.SelectedResources, pos, Inventory.RestockType.None);
                 Item.HasResources = true;
             }
             yield return Status.Success;

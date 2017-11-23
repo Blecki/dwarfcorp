@@ -97,7 +97,7 @@ namespace DwarfCorp
             return true;
         }
 
-        public bool Remove(IEnumerable<Quantitiy<Resource.ResourceTags>> amount)
+        public bool Remove(IEnumerable<Quantitiy<Resource.ResourceTags>> amount, RestockType type)
         {
             foreach (var quantity in amount)
             {
@@ -106,6 +106,11 @@ namespace DwarfCorp
                     int kRemove = -1;
                     for (int k = 0; k < Resources.Count; k++)
                     {
+                        if (type == RestockType.None && Resources[k].MarkedForRestock)
+                            continue;
+                        else if (type == RestockType.RestockResource && !Resources[k].MarkedForRestock)
+                            continue;
+
                         if (!ResourceLibrary.GetResourceByName(Resources[k].Resource)
                             .Tags.Contains(quantity.ResourceType)) continue;
                         kRemove = k;
@@ -121,7 +126,7 @@ namespace DwarfCorp
             return true;
         }
 
-        public bool Remove(IEnumerable<ResourceAmount> resourceAmount)
+        public bool Remove(IEnumerable<ResourceAmount> resourceAmount, RestockType type)
         {
             foreach (var quantity in resourceAmount)
             {
@@ -130,6 +135,10 @@ namespace DwarfCorp
                     int kRemove = -1;
                     for (int k = 0; k < Resources.Count; k++)
                     {
+                        if (type == RestockType.None && Resources[k].MarkedForRestock)
+                            continue;
+                        else if (type == RestockType.RestockResource && !Resources[k].MarkedForRestock)
+                            continue;
                         if (Resources[k].Resource != quantity.ResourceType) continue;
                         kRemove = k;
                         break;
@@ -144,9 +153,9 @@ namespace DwarfCorp
             return true;
         }
 
-        public bool Remove(ResourceAmount resourceAmount)
+        public bool Remove(ResourceAmount resourceAmount, RestockType type)
         {
-            return Remove(new List<ResourceAmount>() {resourceAmount});
+            return Remove(new List<ResourceAmount>() {resourceAmount}, type);
         }
 
 
@@ -188,11 +197,11 @@ namespace DwarfCorp
             return true;
         }
 
-        public void RemoveAndCreateWithToss(List<ResourceAmount> resources, Vector3 pos)
+        public void RemoveAndCreateWithToss(List<ResourceAmount> resources, Vector3 pos, RestockType type)
         {
             foreach (var resource in resources)
             {
-                List<Body> things = RemoveAndCreate(resource);
+                List<Body> things = RemoveAndCreate(resource, type);
                 foreach (var body in things)
                 {
                     TossMotion toss = new TossMotion(1.0f, 2.5f, body.LocalTransform, pos);
@@ -203,11 +212,11 @@ namespace DwarfCorp
             }
         }
 
-        public List<Body> RemoveAndCreate(ResourceAmount resources)
+        public List<Body> RemoveAndCreate(ResourceAmount resources, RestockType type)
         {
             List<Body> toReturn = new List<Body>();
 
-            if(!Remove(resources.CloneResource()))
+            if(!Remove(resources.CloneResource(), type))
             {
                 return toReturn;
             }

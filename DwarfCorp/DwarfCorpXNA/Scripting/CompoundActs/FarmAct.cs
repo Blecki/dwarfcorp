@@ -185,7 +185,7 @@ namespace DwarfCorp
 
         public void DestroyResources()
         {
-            Agent.Creature.Inventory.Remove(Resources);
+            Agent.Creature.Inventory.Remove(Resources, Inventory.RestockType.None);
         }
 
         public override void Initialize()

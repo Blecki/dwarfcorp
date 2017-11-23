@@ -714,9 +714,20 @@ namespace DwarfCorp
                     }
                 }
 
+                Dictionary<string, ResourceAmount> aggregatedResources = new Dictionary<string, ResourceAmount>();
                 foreach (var resource in Creature.Inventory.Resources.Where(resource => resource.MarkedForRestock))
                 {
-                    Task task = new StockResourceTask(new ResourceAmount(resource.Resource));
+                    if (!aggregatedResources.ContainsKey(resource.Resource))
+                    {
+                        aggregatedResources[resource.Resource] = new ResourceAmount(resource.Resource, 0);
+                    }
+
+                    aggregatedResources[resource.Resource].NumResources += 1;
+                }
+
+                foreach (var resource in aggregatedResources)
+                {
+                    Task task = new StockResourceTask(resource.Value.CloneResource());
                     if (task.IsFeasible(Creature) != Task.Feasibility.Infeasible)
                     {
                         return task;

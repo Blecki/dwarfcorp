@@ -122,7 +122,7 @@ namespace DwarfCorp
             {
                 if (resourceAmount.NumResources > 0)
                 {
-                    List<Body> bodies = Agent.Creature.Inventory.RemoveAndCreate(new ResourceAmount(resourceAmount.ResourceType, 1));
+                    List<Body> bodies = Agent.Creature.Inventory.RemoveAndCreate(new ResourceAmount(resourceAmount.ResourceType, 1), Inventory.RestockType.None);
                     var resource = ResourceLibrary.GetResourceByName(resourceAmount.ResourceType);
                     Agent.Creature.NoiseMaker.MakeNoise("Chew", Agent.Creature.AI.Position);
                     if (bodies.Count == 0)
