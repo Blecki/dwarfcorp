@@ -1031,6 +1031,19 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
 
+            var icon_destroyObjects = new FlatToolTray.Icon()
+            {
+                Text = "",
+                Tooltip = "Deconstruct objects",
+                Icon = new TileReference("round-buttons", 5),
+                OnClick = (sender, args) =>
+                {
+                    World.ShowToolPopup("Left click objects to destroy them.");
+                    Master.ChangeTool(GameMaster.ToolMode.DeconstructObjects);
+                },
+                Behavior = FlatToolTray.IconBehavior.LeafIcon
+            };
+
             var icon_BuildRoom = new FlatToolTray.Icon
             {
                 EnabledTextColor = Vector4.One,
@@ -1359,6 +1372,7 @@ namespace DwarfCorp.GameStates
                     {
                         icon_menu_BuildTools_Return,
                         icon_moveObjects,
+                        icon_destroyObjects,
                         icon_BuildRoom,
                         icon_BuildWall,
                         icon_BuildFloor,
