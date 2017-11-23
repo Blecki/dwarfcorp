@@ -157,6 +157,7 @@ namespace DwarfCorp
                     if (DesignationProperties.ContainsKey(entity.Type))
                         props = DesignationProperties[entity.Type];
 
+                    entity.Body.SetTintRecursive(props.ModulatedColor, true);
                     var box = entity.Body.GetBoundingBox();
                     DrawBoxCallback(box.Min, box.Max - box.Min, props.ModulatedColor, props.LineWidth);
                     if (props.Icon != null)
