@@ -103,9 +103,15 @@ namespace DwarfCorp
                 NumRepeats = this.NumRepeats,
                 AllowHeterogenous = this.AllowHeterogenous
             };
+            foreach(var resource in this.SelectedResources)
+            {
+                item.SelectedResources.Add(resource.CloneResource());
+            }
+            foreach (var resource in this.RequiredResources)
+            {
+                item.RequiredResources.Add(resource.CloneQuantity());
+            }
             item.Prerequisites.AddRange(this.Prerequisites);
-            item.SelectedResources.AddRange(this.SelectedResources);
-            item.RequiredResources.AddRange(this.RequiredResources);
             return item;
         }
     }
