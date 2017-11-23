@@ -59,9 +59,10 @@ namespace DwarfCorp
         [Serializable]
         public class OverworldData
         {
+            public string Version;
             public string Name;
             public float SeaLevel;
-            public Overworld.MapData[,] Data;
+            [JsonIgnore] [NonSerialized] public Overworld.MapData[,] Data;
             
             [Serializable]
             public struct FactionDescriptor
@@ -94,6 +95,23 @@ namespace DwarfCorp
                 Overworld.TextureFromHeightMap("Height", mapData, Overworld.ScalarFieldType.Height, width, height, imageMutex, worldData, toReturn, seaLevel);
 
                 return toReturn;
+            }
+
+            public Texture2D CreateSaveTexture(GraphicsDevice Device, int Width, int Height)
+            {
+                var r = new Texture2D(Device, Width, Height);
+                var data = new Color[Width * Height];
+                Overworld.GenerateSaveTexture(Data, Width, Height, data);
+                r.SetData(data);
+                return r;
+            }
+
+            public void LoadFromTexture(Texture2D Texture)
+            {
+                Data = new Overworld.MapData[Texture.Width, Texture.Height];
+                var colorData = new Color[Texture.Width * Texture.Height];
+                Texture.GetData(colorData);
+                Overworld.DecodeSaveTexture(Data, Texture.Width, Texture.Height, colorData);
             }
 
             public OverworldData()
@@ -130,9 +148,9 @@ namespace DwarfCorp
         }
 
         public OverworldData Data { get; set; }
-
-        public static string Extension = "world";
-        public static string CompressedExtension = "zworld";
+        private GraphicsDevice Device;
+        private int Width;
+        private int Height;
 
         public NewOverworldFile()
         {
@@ -140,14 +158,19 @@ namespace DwarfCorp
 
         public NewOverworldFile(GraphicsDevice device, Overworld.MapData[,] map, string name, float seaLevel)
         {
-            var worldFilePath = name + System.IO.Path.DirectorySeparatorChar + "world.zworld";
+            this.Device = device;
+
+            var worldFilePath = name + System.IO.Path.DirectorySeparatorChar + "world.png";
             var metaFilePath = name + System.IO.Path.DirectorySeparatorChar + "meta.txt";
             if (File.Exists(worldFilePath) && File.Exists(metaFilePath))
             {
                 // Do nothing since overworlds should be saved precisely once.
                 return;
             }
+
             Data = new OverworldData(device, map, name, seaLevel);
+            Width = map.GetLength(0);
+            Height = map.GetLength(1);
         }
 
         public NewOverworldFile(string fileName)
@@ -155,72 +178,30 @@ namespace DwarfCorp
             ReadFile(fileName);
         }
 
+        public static bool CheckCompatibility(string filePath)
+        {
+            try
+            {
+                var metaFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "meta.txt";
+                return FileUtils.LoadJson<OverworldData>(metaFilePath, false).Version == Program.Version;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
         public bool ReadFile(string filePath)
         {
-            // If no meta data, fall back to old save style (pass true for compressed and binary)
-            //DwarfGame.COMPRESSED_BINARY_SAVES
-
-            var worldFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "world.zworld";
+            var worldFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "world.png";
             var metaFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "meta.txt";
 
-            if (System.IO.File.Exists(metaFilePath))
-            {
-                var metaInfo = System.IO.File.ReadAllText(metaFilePath);
+            Data = FileUtils.LoadJson<OverworldData>(metaFilePath, false);
 
-                using (var fileStream = new FileStream(worldFilePath, FileMode.Open))
-                {
-#if XNA_BUILD
-                    using (var zip = new ZipInputStream(fileStream))
-                    {
-                        zip.GetNextEntry();
-                        var formatter = new BinaryFormatter();
-                        var file = formatter.Deserialize(zip) as OverworldData;
+            var worldTexture = TextureManager.LoadInstanceTexture(worldFilePath);
+            Data.LoadFromTexture(worldTexture);
 
-                        if (file == null)
-                            return false;
-
-                        Data = file;
-                        return true;
-                    }
-#else
-                    var formatter = new BinaryFormatter();
-                    var file = formatter.Deserialize(fileStream) as OverworldData;
-
-                    if (file == null)
-                        return false;
-
-                    Data = file;
-                    return true;
-#endif
-                }
-            }
-            else
-            {
-                var oldWorldFile = new OverworldFile(filePath + Path.DirectorySeparatorChar + "world." +
-                    (DwarfGame.COMPRESSED_BINARY_SAVES ? OverworldFile.CompressedExtension : OverworldFile.Extension), DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
-
-                Data = new OverworldData();
-                Data.Data = oldWorldFile.Data.CreateMap();
-                Data.FactionList = new List<OverworldData.FactionDescriptor>();
-                foreach (var fact in oldWorldFile.Data.FactionList)
-                {
-                    Data.FactionList.Add(new OverworldData.FactionDescriptor()
-                    {
-                        Name = fact.Name,
-                        CenterX = fact.CenterX,
-                        CenterY = fact.CenterY,
-                        Race = fact.Race,
-                        PrimaryColory = fact.PrimaryColory,
-                        SecondaryColor = fact.SecondaryColor,
-                        Id = fact.Id
-                    });
-
-                }
-                Data.Name = oldWorldFile.Data.Name;
-                Data.SeaLevel = oldWorldFile.Data.SeaLevel;
-
-                return true;
-            }
+            return true;
         }
         
         public void SaveScreenshot(string filename)
@@ -233,7 +214,7 @@ namespace DwarfCorp
 
         public bool WriteFile(string filePath)
         {
-            var worldFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "world.zworld";
+            var worldFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "world.png";
             var metaFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "meta.txt";
 
             if (File.Exists(worldFilePath) && File.Exists(metaFilePath))
@@ -242,26 +223,17 @@ namespace DwarfCorp
                 return false;
             }
 
-            using (var filestream = new FileStream(worldFilePath, FileMode.OpenOrCreate))
-            {
-#if XNA_BUILD
-                using (var zip = new ZipOutputStream(filestream))
-                {
-                    var formatter = new BinaryFormatter();
-                    zip.SetLevel(9);
-                    var entry = new ZipEntry(Path.GetFileName(filePath));
-                    zip.PutNextEntry(entry);
+            // Write meta info
+            Data.Version = Program.Version;
+            FileUtils.SaveJSon(Data, metaFilePath, false);
 
-                    formatter.Serialize(zip, Data);
-                    zip.CloseEntry();
-                    System.IO.File.WriteAllText(metaFilePath, Program.Version);
-                }
-#else
-                var formatter = new BinaryFormatter();
-                formatter.Serialize(filestream, Data);
-                System.IO.File.WriteAllText(metaFilePath, Program.Version);
-#endif
+            // Save Image
+            var texture = Data.CreateSaveTexture(Device, Width, Height);
+            using (var stream = new System.IO.FileStream(worldFilePath, System.IO.FileMode.Create))
+            {
+                texture.SaveAsPng(stream, Width, Height);
             }
+           
             return true;
         }
     }
