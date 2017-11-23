@@ -178,6 +178,19 @@ namespace DwarfCorp
             ReadFile(fileName);
         }
 
+        public static bool CheckCompatibility(string filePath)
+        {
+            try
+            {
+                var metaFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "meta.txt";
+                return FileUtils.LoadJson<OverworldData>(metaFilePath, false).Version == Program.Version;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
         public bool ReadFile(string filePath)
         {
             var worldFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "world.png";
