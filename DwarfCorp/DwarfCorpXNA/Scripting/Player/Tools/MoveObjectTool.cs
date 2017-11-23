@@ -379,6 +379,11 @@ namespace DwarfCorp
                 Player.World.SetMouse(Player.World.MousePointer);
             else
                 Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 9));
+
+            Player.VoxSelector.Enabled = false;
+            Player.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+            Player.BodySelector.Enabled = true;
+            Player.BodySelector.AllowRightClickSelection = true;
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)

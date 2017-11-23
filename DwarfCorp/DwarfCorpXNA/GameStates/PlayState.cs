@@ -448,7 +448,7 @@ namespace DwarfCorp.GameStates
             var bottomBackground = GuiRoot.RootItem.AddChild(new TrayBackground
             {
                 Corners = Scale9Corners.Top,
-                MinimumSize = new Point(0, 92),
+                MinimumSize = new Point(0, 102),
                 AutoLayout = AutoLayout.DockBottom
             });
 
@@ -465,7 +465,7 @@ namespace DwarfCorp.GameStates
             var secondBar = bottomBackground.AddChild(new Widget
             {
                 Transparent = true,
-                MinimumSize = new Point(0, 44),
+                MinimumSize = new Point(0, 54),
                 AutoLayout = AutoLayout.DockBottom,
                 InteriorMargin = new Margin(2,0,0,0),
                 Padding = new Margin(0,0,2,2)
@@ -956,6 +956,8 @@ namespace DwarfCorp.GameStates
             var icon_SelectTool = new FlatToolTray.Icon
             {
                 Tag = "select",
+                Text = "Select",
+                TextVerticalAlign = VerticalAlign.Below,
                 Icon = new Gui.TileReference("tool-icons", 5),
                 OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.SelectUnits),
                 Tooltip = "Select dwarves",
@@ -1020,7 +1022,8 @@ namespace DwarfCorp.GameStates
 
             var icon_moveObjects = new FlatToolTray.Icon()
             {
-                Text = "",
+                Text = "Move",
+                TextVerticalAlign = VerticalAlign.Below,
                 Tooltip = "Move/Destroy objects",
                 Icon = new TileReference("mouse", 9),
                 OnClick = (sender, args) =>
@@ -1033,7 +1036,8 @@ namespace DwarfCorp.GameStates
 
             var icon_destroyObjects = new FlatToolTray.Icon()
             {
-                Text = "",
+                Text = "Destroy",
+                TextVerticalAlign = VerticalAlign.Below,
                 Tooltip = "Deconstruct objects",
                 Icon = new TileReference("round-buttons", 5),
                 OnClick = (sender, args) =>
@@ -1389,6 +1393,8 @@ namespace DwarfCorp.GameStates
             var icon_BuildTool = new FlatToolTray.Icon
             {
                 Tag = "build",
+                Text = "Build",
+                TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 2),
                 KeepChildVisible = true,
                 OnConstruct = (sender) =>
@@ -1459,6 +1465,8 @@ namespace DwarfCorp.GameStates
             var icon_CookTool = new FlatToolTray.Icon
             {
                 Tag = "cook",
+                Text = "Cook",
+                TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 27),
                 KeepChildVisible = true,
                 Tooltip = "Cook food",
@@ -1480,6 +1488,8 @@ namespace DwarfCorp.GameStates
             var icon_DigTool = new FlatToolTray.Icon
             {
                 Tag = "dig",
+                Text = "Dig",
+                TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 0),
                 Tooltip = "Dig",
                 OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Dig),
@@ -1500,6 +1510,8 @@ namespace DwarfCorp.GameStates
             var icon_GatherTool = new FlatToolTray.Icon
             {
                 Tag = "gather",
+                Text= "Pick",
+                TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 6),
                 Tooltip = "Gather",
                 OnClick = (sender, args) => { ChangeTool(GameMaster.ToolMode.Gather); World.Tutorial("gather"); },
@@ -1520,6 +1532,8 @@ namespace DwarfCorp.GameStates
             var icon_ChopTool = new FlatToolTray.Icon
             {
                 Tag = "chop",
+                Text = "Chop",
+                TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 1),
                 Tooltip = "Chop trees",
                 OnClick = (sender, args) => { ChangeTool(GameMaster.ToolMode.Chop); World.Tutorial("chop"); },
@@ -1540,6 +1554,8 @@ namespace DwarfCorp.GameStates
             var icon_GuardTool = new FlatToolTray.Icon
             {
                 Tag = "guard",
+                Text = "Guard",
+                TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 4),
                 Tooltip = "Guard",
                 OnClick = (sender, args) => { ChangeTool(GameMaster.ToolMode.Guard); World.Tutorial("guard"); },
@@ -1560,6 +1576,8 @@ namespace DwarfCorp.GameStates
             var icon_AttackTool = new FlatToolTray.Icon
             {
                 Tag = "attack",
+                Text = "Hunt",
+                TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 3),
                 Tooltip = "Attack",
                 OnClick = (sender, args) => { ChangeTool(GameMaster.ToolMode.Attack); World.Tutorial("attack"); },
@@ -1757,7 +1775,8 @@ namespace DwarfCorp.GameStates
             {
                 Icon = new Gui.TileReference("tool-icons", 13),
                 Tooltip = "Farm",
-
+                Text = "Farm",
+                TextVerticalAlign = VerticalAlign.Below,
                 KeepChildVisible = true,
                 OnConstruct = (sender) =>
                 {
@@ -1824,6 +1843,8 @@ namespace DwarfCorp.GameStates
 
             var icon_Cast = new FlatToolTray.Icon
             {
+                Text = "Cast",
+                TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 14),
                 Tooltip = "Cast",
                 KeepChildVisible = true,
@@ -1884,6 +1905,8 @@ namespace DwarfCorp.GameStates
 
             var icon_Research = new FlatToolTray.Icon
             {
+                Text = "Research",
+                TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 14),
                 Tooltip = "Research",
                 KeepChildVisible = true,
@@ -1918,6 +1941,8 @@ namespace DwarfCorp.GameStates
 
             var icon_MagicTool = new FlatToolTray.Icon
             {
+                Text = "Magic",
+                TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 14),
                 Tooltip = "Magic",
                 //OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Magic),

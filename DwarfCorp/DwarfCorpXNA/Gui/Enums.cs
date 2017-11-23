@@ -16,7 +16,8 @@ namespace DwarfCorp.Gui
     {
         Top,
         Bottom,
-        Center
+        Center,
+        Below
     }
 
     public enum AutoLayout

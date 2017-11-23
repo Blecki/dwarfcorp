@@ -454,6 +454,9 @@ namespace DwarfCorp.Gui
                 case VerticalAlign.Bottom:
                     textDrawPos.Y = drawableArea.Y + drawableArea.Height - stringMeshSize.Height;
                     break;
+                case VerticalAlign.Below:
+                    textDrawPos.Y = drawableArea.Y + drawableArea.Height;
+                    break;
                 case VerticalAlign.Center:
                     textDrawPos.Y = drawableArea.Y + ((drawableArea.Height - stringMeshSize.Height)/2);
                     break;
