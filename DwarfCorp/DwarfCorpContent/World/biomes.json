@@ -333,6 +333,7 @@
         "Depth" :  128
     }
     ],
+	"GrassDecal": "snow-grass",
     "ClumpGrass": false,
     "ClumpSize": 30.0,
     "ClumpTreshold": 0.75,
@@ -447,6 +448,7 @@
         "Depth" :  128
     }
     ],
+	"GrassDecal": "desert-grass",
     "ShoreVoxel": "Sand",
     "ClumpGrass": true,
     "ClumpSize": 30.0,
@@ -527,6 +529,7 @@
         "Depth" :  128
     }
     ],
+	"GrassDecal": "grass",
     "ShoreVoxel": "Sand",
     "ClumpGrass": false,
     "ClumpSize": 30.0,
@@ -705,6 +708,7 @@
         "Depth" :  128
     }
     ],
+	"GrassDecal": "haunted-grass",
     "ShoreVoxel": "DarkDirt",
     "ClumpGrass": true,
     "ClumpSize": 10.0,

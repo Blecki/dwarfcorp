@@ -595,7 +595,7 @@ namespace DwarfCorp
 
                                 manhattanA = new VoxelHandle(Chunk.Manager.ChunkData,
                                     V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[FringeIndicies[4 + s, 5]]);
-                                if (!manhattanA.IsValid || manhattanA.TypeID == V.TypeID)
+                                if (!manhattanA.IsValid || manhattanA.Decal == V.Decal)
                                     continue;
 
                                 // Twizzle vertex positions.

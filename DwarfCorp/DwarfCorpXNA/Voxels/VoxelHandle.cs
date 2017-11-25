@@ -280,6 +280,7 @@ namespace DwarfCorp
             // Change actual data
             _cache_Chunk.Data.Types[_cache_Index] = (byte)NewType.ID;
             _cache_Chunk.Data.Health[_cache_Index] = (byte)NewType.StartingHealth;
+            _cache_Chunk.Data.Decals[_cache_Index] = 0;
 
             // Did we go from empty to filled or vice versa? Update filled counter.
             if (previous == 0 && NewType.ID != 0)
@@ -309,6 +310,7 @@ namespace DwarfCorp
             // Change actual data
             _cache_Chunk.Data.Types[_cache_Index] = (byte)NewType.ID;
             _cache_Chunk.Data.Health[_cache_Index] = (byte)NewType.StartingHealth;
+            _cache_Chunk.Data.Decals[_cache_Index] = 0;
 
             // Did we go from empty to filled or vice versa? Update filled counter.
             if (previous == 0 && NewType.ID != 0)
@@ -317,6 +319,7 @@ namespace DwarfCorp
             {
                 blockDestroyed = true;
                 _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] -= 1;
+                _cache_Chunk.Data.Decals[_cache_Index] = 0;
             }
 
             if (Coordinate.Y < VoxelConstants.ChunkSizeY - 1)
