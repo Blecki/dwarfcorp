@@ -216,7 +216,7 @@ namespace DwarfCorp
         }
 
         [JsonIgnore]
-        public short Decal
+        public byte Decal
         {
             get { return _cache_Chunk.Data.Decals[_cache_Index]; }
             set
@@ -294,7 +294,7 @@ namespace DwarfCorp
         /// Should only be used by ChunkGenerator as it can break geometry building.
         /// </summary>
         /// <param name="Decal"></param>
-        public void RawSetDecal(short Decal)
+        public void RawSetDecal(byte Decal)
         {
             _cache_Chunk.Data.Decals[_cache_Index] = Decal;
         }
@@ -310,6 +310,8 @@ namespace DwarfCorp
             // Change actual data
             _cache_Chunk.Data.Types[_cache_Index] = (byte)NewType.ID;
             _cache_Chunk.Data.Health[_cache_Index] = (byte)NewType.StartingHealth;
+
+            // Changing the voxel type clears all decals.
             _cache_Chunk.Data.Decals[_cache_Index] = 0;
 
             // Did we go from empty to filled or vice versa? Update filled counter.
@@ -319,7 +321,6 @@ namespace DwarfCorp
             {
                 blockDestroyed = true;
                 _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] -= 1;
-                _cache_Chunk.Data.Decals[_cache_Index] = 0;
             }
 
             if (Coordinate.Y < VoxelConstants.ChunkSizeY - 1)

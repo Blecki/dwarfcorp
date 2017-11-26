@@ -35,5 +35,6 @@ namespace DwarfCorp
         public int FringePrecedence = 0;
         public String BecomeWhenSnowedOn = null;
         public String BecomeWhenSnowMelts = null;
+        public int DecayTime = -1;
     }
 }

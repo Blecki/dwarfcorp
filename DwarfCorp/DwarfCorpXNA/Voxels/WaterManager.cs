@@ -39,14 +39,6 @@ using System.Threading;
 
 namespace DwarfCorp
 {
-    public enum LiquidType
-    {
-        None = 0,
-        Water,
-        Lava,
-        Count
-    }
-
     /// <summary>
     /// Handles the water simulation in the game.
     /// </summary>
@@ -127,7 +119,7 @@ namespace DwarfCorp
             }
         }
 
-        public void CreateTransfer(VoxelHandle Vox, WaterCell From, WaterCell To)
+        public void HandleLiquidInteraction(VoxelHandle Vox, WaterCell From, WaterCell To)
         {
             if ((From.Type == LiquidType.Lava && To.Type == LiquidType.Water)
                 || (From.Type == LiquidType.Water && To.Type == LiquidType.Lava))
@@ -196,19 +188,13 @@ namespace DwarfCorp
             
             foreach(var chunk in Chunks.ChunkData.GetChunkEnumerator())
             {
-                bool didUpdate = DiscreteUpdate(chunk);
-
-                //if (!didUpdate && !chunk.FirstWaterIter)
-                //    continue;
-
+                DiscreteUpdate(chunk);
                 chunk.RebuildLiquids();
             }
         }
 
-        private bool DiscreteUpdate(VoxelChunk chunk)
+        private void DiscreteUpdate(VoxelChunk chunk)
         {
-            bool updateOccured = false;
-
             for (var y = 0; y < VoxelConstants.ChunkSizeY; ++y)
             {
                 // Apply 'liquid present' tracking in voxel data to skip entire slices.
@@ -242,7 +228,6 @@ namespace DwarfCorp
                             WaterLevel = 0
                         };
 
-                        updateOccured = true;
                         continue;
                     }
 
@@ -260,8 +245,7 @@ namespace DwarfCorp
                             CreateSplash(currentVoxel.Coordinate.ToVector3(), water.Type);
                             voxBelow.WaterCell = water;
                             currentVoxel.WaterCell = WaterCell.Empty;
-                            CreateTransfer(voxBelow, water, belowWater);
-                            updateOccured = true;
+                            HandleLiquidInteraction(voxBelow, water, belowWater);
                             continue;
                         }
 
@@ -273,8 +257,7 @@ namespace DwarfCorp
                             belowWater.WaterLevel += water.WaterLevel;
                             voxBelow.WaterCell = belowWater;
                             currentVoxel.WaterCell = WaterCell.Empty;
-                            CreateTransfer(voxBelow, water, belowWater);
-                            updateOccured = true;
+                            HandleLiquidInteraction(voxBelow, water, belowWater);
                             continue;
                         }
 
@@ -285,8 +268,7 @@ namespace DwarfCorp
                             belowWater.WaterLevel = maxWaterLevel;
                             voxBelow.WaterCell = belowWater;
                             currentVoxel.WaterCell = water;
-                            CreateTransfer(voxBelow, water, belowWater);
-                            updateOccured = true;
+                            HandleLiquidInteraction(voxBelow, water, belowWater);
                             continue;
                         }
                     }
@@ -326,8 +308,7 @@ namespace DwarfCorp
                                     WaterLevel = (byte)(neighborWater.WaterLevel + amountToMove)
                                 };
 
-                                CreateTransfer(neighborVoxel, water, neighborWater);
-                                updateOccured = true;
+                                HandleLiquidInteraction(neighborVoxel, water, neighborWater);
                                 break; 
                             }
 
@@ -335,9 +316,6 @@ namespace DwarfCorp
                     }
                 }
             }
-
-            return updateOccured;
         }
-
     }
 }

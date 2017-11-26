@@ -427,11 +427,13 @@ namespace DwarfCorp
             }
 
             foreach (var chunk in ChunkData.GetChunkEnumerator())
-                chunk.Update(gameTime);
+                chunk.RecieveNewPrimitive(gameTime);
 
             // Todo: This belongs up in world manager.
             Splasher.Splash(gameTime, Water.GetSplashQueue());
             Splasher.HandleTransfers(gameTime, Water.GetTransferQueue());
+
+            ChunkUpdate.RunUpdate(this);
 
             List<VoxelChangeEvent> localList = null;
             lock (ChangedVoxels)
