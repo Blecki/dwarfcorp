@@ -49,12 +49,14 @@ namespace DwarfCorp
 
         public BuildRoomTask()
         {
+            Category = TaskCategory.BuildZone;
             Priority = PriorityType.High;
             MaxAssignable = 3;
         }
 
         public BuildRoomTask(BuildRoomOrder zone)
         {
+            Category = TaskCategory.BuildZone;
             MaxAssignable = 3;
             Name = "Build Room " + zone.ToBuild.RoomData.Name + zone.ToBuild.ID;
             Zone = zone;

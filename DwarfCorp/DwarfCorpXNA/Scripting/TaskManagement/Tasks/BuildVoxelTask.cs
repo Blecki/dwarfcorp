@@ -52,11 +52,13 @@ namespace DwarfCorp
 
         public BuildVoxelTask()
         {
+            Category = TaskCategory.BuildBlock;
             Priority = PriorityType.Low;
         }
 
         public BuildVoxelTask(VoxelHandle voxel, string type)
         {
+            Category = TaskCategory.BuildBlock;
             Name = "Put voxel of type: " + type + " on voxel " + voxel.Coordinate;
             Voxel = voxel;
             VoxType = type;

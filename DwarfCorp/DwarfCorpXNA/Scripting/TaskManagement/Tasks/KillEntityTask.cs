@@ -67,6 +67,14 @@ namespace DwarfCorp
             EntityToKill = entity;
             Priority = PriorityType.Urgent;
             AutoRetry = true;
+            if (type == KillType.Attack || type == KillType.Auto)
+            {
+                Category = TaskCategory.Attack;
+            }
+            else if (type == KillType.Chop)
+            {
+                Category = TaskCategory.Chop;
+            }
         }
 
         public override Task Clone()

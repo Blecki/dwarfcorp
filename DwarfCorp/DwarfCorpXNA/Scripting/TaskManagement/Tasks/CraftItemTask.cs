@@ -52,6 +52,7 @@ namespace DwarfCorp
 
         public CraftItemTask(CraftBuilder.CraftDesignation type)
         {
+            Category = TaskCategory.BuildObject;
             MaxAssignable = 3;
             Name = string.Format("Craft {0} at {1}", type.ItemType.Name, type.Location);
             Priority = PriorityType.Low;
@@ -139,11 +140,12 @@ namespace DwarfCorp
 
         public CraftResourceTask()
         {
-            
+            Category = TaskCategory.CraftItem;
         }
 
         public CraftResourceTask(CraftItem selectedResource, int id = -1)
         {
+            Category = TaskCategory.CraftItem;
             TaskID = id < 0 ? MaxID : id;
             MaxID++;
             Item = new CraftBuilder.CraftDesignation()

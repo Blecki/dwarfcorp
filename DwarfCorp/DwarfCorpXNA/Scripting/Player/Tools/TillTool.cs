@@ -96,7 +96,7 @@ namespace DwarfCorp
 
                     Player.Faction.Designations.AddVoxelDesignation(voxel, DesignationType.Till, newFarmTile);
 
-                    goals.Add(new FarmTask(newFarmTile) { Mode = FarmAct.FarmMode.Till });
+                    goals.Add(new FarmTask(newFarmTile) { Mode = FarmAct.FarmMode.Till, Category = Task.TaskCategory.TillSoil });
                 }
                 else
                 {

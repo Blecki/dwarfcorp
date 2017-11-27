@@ -127,7 +127,7 @@ namespace DwarfCorp
 
         public override Task Clone()
         {
-            return new FarmTask() { RequiredResources = RequiredResources, FarmToWork = FarmToWork, Name = Name, Mode = Mode, Plant = Plant, Priority = Priority };
+            return new FarmTask() { RequiredResources = RequiredResources, FarmToWork = FarmToWork, Name = Name, Category = Category, Mode = Mode, Plant = Plant, Priority = Priority };
         }
     }
 }

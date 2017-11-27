@@ -12,11 +12,12 @@ namespace DwarfCorp
       
         public ResearchSpellTask()
         {
-
+            Category = TaskCategory.Research;
         }
 
         public ResearchSpellTask(string spell)
         {
+            Category = TaskCategory.Research;
             Spell = spell;
             Name = "Research " + Spell;
         }

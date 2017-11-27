@@ -157,6 +157,7 @@ namespace DwarfCorp
                         goals.Add(new FarmTask(existingTile)
                         {
                             Mode = FarmAct.FarmMode.Plant,
+                            Category = Task.TaskCategory.Plant,
                             Plant = PlantType,
                             RequiredResources = RequiredResources
                         });

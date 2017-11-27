@@ -49,10 +49,12 @@ namespace DwarfCorp
 
         public WrangleAnimalTask()
         {
-            
+            Category = TaskCategory.Wrangle;    
         }
+
         public WrangleAnimalTask(Creature animal)
         {
+            Category = TaskCategory.Wrangle;
             Animal = animal;
             Name = "Wrangle animal" + animal.GlobalID;
             AutoRetry = true;
