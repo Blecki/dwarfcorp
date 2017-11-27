@@ -19,8 +19,7 @@ namespace DwarfCorp.ContextCommands
 
         public override void Apply(Body Entity, WorldManager World)
         {
-            var minions = Faction.FilterMinionsWithCapability(World.PlayerFaction.Minions,
-                GameMaster.ToolMode.Chop);
+            var minions = Faction.FilterMinionsWithCapability(World.PlayerFaction.Minions, Task.TaskCategory.Chop);
             if (minions.Count > 0)
             {
                 var task = ChopTool.ChopTree(Entity, World.PlayerFaction);

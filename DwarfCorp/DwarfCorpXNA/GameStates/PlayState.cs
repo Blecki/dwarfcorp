@@ -1329,8 +1329,6 @@ namespace DwarfCorp.GameStates
                                 {
                                     assignments.Add(new CraftResourceTask(data));
                                 }
-                                var minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions,
-                                    GameMaster.ToolMode.Craft);
                                 World.Master.TaskManager.AddTasks(assignments);
                                 World.ShowToolPopup(data.CurrentVerb + " " + data.NumRepeats + " " + data.Name);
                                 World.Tutorial("build crafts");
@@ -1400,7 +1398,7 @@ namespace DwarfCorp.GameStates
                 OnConstruct = (sender) =>
                 {
                     AddToolbarIcon(sender, () => Master.Faction.Minions.Any(minion =>
-                        minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.BuildZone)));
+                        minion.Stats.CurrentClass.HasAction(Task.TaskCategory.BuildZone)));
                     AddToolSelectIcon(GameMaster.ToolMode.BuildZone, sender);
                 },
                 Tooltip = "Build",
@@ -1448,8 +1446,6 @@ namespace DwarfCorp.GameStates
                                 data.SelectedResources = buildInfo.GetSelectedResources();
                                 data.NumRepeats = buildInfo.GetNumRepeats();
                                 List<Task> assignments = new List<Task> { new CraftResourceTask(data) };
-                                var minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions,
-                                    GameMaster.ToolMode.Cook);
                                 World.Master.TaskManager.AddTasks(assignments);
                                 World.ShowToolPopup(data.CurrentVerb + " one " + data.Name);
                                 World.Tutorial("cook");
@@ -1474,7 +1470,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     Master.Faction.Minions.Any(minion =>
-                        minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Cook)));
+                        minion.Stats.CurrentClass.HasAction(Task.TaskCategory.Cook)));
                     AddToolSelectIcon(GameMaster.ToolMode.Cook, sender);
                 },
                 ReplacementMenu = menu_Edibles,
@@ -1497,7 +1493,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     Master.Faction.Minions.Any(minion =>
-                        minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Dig)));
+                        minion.Stats.CurrentClass.HasAction(Task.TaskCategory.Dig)));
                     AddToolSelectIcon(GameMaster.ToolMode.Dig, sender);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
@@ -1519,7 +1515,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     Master.Faction.Minions.Any(minion =>
-                        minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Gather)));
+                        minion.Stats.CurrentClass.HasAction(Task.TaskCategory.Gather)));
                     AddToolSelectIcon(GameMaster.ToolMode.Gather, sender);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
@@ -1541,7 +1537,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     Master.Faction.Minions.Any(minion =>
-                        minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Chop)));
+                        minion.Stats.CurrentClass.HasAction(Task.TaskCategory.Chop)));
                     AddToolSelectIcon(GameMaster.ToolMode.Chop, sender);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
@@ -1563,7 +1559,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     Master.Faction.Minions.Any(minion =>
-                        minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Guard)));
+                        minion.Stats.CurrentClass.HasAction(Task.TaskCategory.Guard)));
                     AddToolSelectIcon(GameMaster.ToolMode.Guard, sender);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
@@ -1585,7 +1581,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     Master.Faction.Minions.Any(minion =>
-                        minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack)));
+                        minion.Stats.CurrentClass.HasAction(Task.TaskCategory.Attack)));
                     AddToolSelectIcon(GameMaster.ToolMode.Attack, sender);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
@@ -1950,7 +1946,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                         Master.Faction.Minions.Any(minion =>
-                            minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Magic)));
+                            minion.Stats.CurrentClass.HasAction(Task.TaskCategory.Research)));
                     AddToolSelectIcon(GameMaster.ToolMode.Magic, sender);
                 },
                 KeepChildVisible = true,

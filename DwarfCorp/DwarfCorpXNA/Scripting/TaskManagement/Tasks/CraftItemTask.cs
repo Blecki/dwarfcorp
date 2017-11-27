@@ -92,7 +92,7 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (!agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.Craft))
+            if (!agent.Stats.CurrentClass.Actions.Contains(TaskCategory.BuildObject))
             {
                 return Feasibility.Infeasible;
             }
@@ -216,7 +216,7 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (!agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.Craft))
+            if (!agent.Stats.CurrentClass.Actions.Contains(TaskCategory.BuildObject))
                 return Feasibility.Infeasible;
             return HasResources(agent) && HasLocation(agent) ? Feasibility.Feasible : Feasibility.Infeasible;
         }

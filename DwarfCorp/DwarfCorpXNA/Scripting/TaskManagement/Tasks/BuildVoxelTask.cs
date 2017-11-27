@@ -65,7 +65,7 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (!agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.BuildWall))
+            if (!agent.Stats.CurrentClass.Actions.Contains(Task.TaskCategory.BuildBlock))
                 return Feasibility.Infeasible;
 
             return Voxel.IsValid && agent.Faction.Designations.IsVoxelDesignation(Voxel, DesignationType.Put) ? Feasibility.Feasible : Feasibility.Infeasible;

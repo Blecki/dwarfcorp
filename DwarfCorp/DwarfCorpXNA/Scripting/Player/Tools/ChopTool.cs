@@ -133,8 +133,7 @@ namespace DwarfCorp
 
             if (button == InputManager.MouseButton.Left)
             {
-                List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.Faction.SelectedMinions,
-                    GameMaster.ToolMode.Chop);
+                List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.Faction.SelectedMinions, Task.TaskCategory.Chop);
                 List<Task> tasks = new List<Task>();
 
                 foreach (Body tree in treesPicked)

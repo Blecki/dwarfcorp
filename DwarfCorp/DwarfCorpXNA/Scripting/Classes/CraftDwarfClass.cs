@@ -199,18 +199,18 @@ namespace DwarfCorp
 
         void InitializeActions()
         {
-            Actions = new List<GameMaster.ToolMode>()
+            Actions = new List<Task.TaskCategory>()
             {
-                GameMaster.ToolMode.BuildZone,
-                GameMaster.ToolMode.BuildWall,
-                GameMaster.ToolMode.BuildObject,
-                GameMaster.ToolMode.Attack,
-                GameMaster.ToolMode.Gather,
-                GameMaster.ToolMode.Craft,
-                GameMaster.ToolMode.Cook,
-                GameMaster.ToolMode.Till,
-                GameMaster.ToolMode.Plant,
-                GameMaster.ToolMode.Wrangle,
+                Task.TaskCategory.BuildZone,
+                Task.TaskCategory.BuildBlock,
+                Task.TaskCategory.BuildObject,
+                Task.TaskCategory.Attack,
+                Task.TaskCategory.Gather,
+                Task.TaskCategory.CraftItem,
+                Task.TaskCategory.Cook,
+                Task.TaskCategory.TillSoil,
+                Task.TaskCategory.Plant,
+                Task.TaskCategory.Wrangle,
             };
         }
 

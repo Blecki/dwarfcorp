@@ -138,7 +138,7 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (!agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.Wrangle))
+            if (!agent.Stats.CurrentClass.Actions.Contains(Task.TaskCategory.Wrangle))
                 return Feasibility.Infeasible;
 
             return Animal != null

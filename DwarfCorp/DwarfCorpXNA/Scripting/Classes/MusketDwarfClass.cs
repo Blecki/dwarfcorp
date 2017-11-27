@@ -204,11 +204,11 @@ namespace DwarfCorp
 
         private void InitializeActions()
         {
-            Actions = new List<GameMaster.ToolMode>
+            Actions = new List<Task.TaskCategory>
             {
-                GameMaster.ToolMode.Attack,
-                GameMaster.ToolMode.Guard,
-                GameMaster.ToolMode.Gather
+                Task.TaskCategory.Attack,
+                Task.TaskCategory.Guard,
+                Task.TaskCategory.Gather
             };
         }
 

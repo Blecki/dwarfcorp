@@ -65,7 +65,7 @@ namespace DwarfCorp
         public List<Attack> Attacks { get; set; }
         public List<Level> Levels { get; set; }
         public string Name { get; set; }
-        public List<GameMaster.ToolMode> Actions { get; set; } 
+        public List<Task.TaskCategory> Actions { get; set; } 
 
         [JsonIgnore]
         public static Dictionary<string, EmployeeClass> Classes { get; set; } 
@@ -85,10 +85,10 @@ namespace DwarfCorp
         {
             Name = definition.Name;
             Levels = definition.Levels;
-            Actions = new List<GameMaster.ToolMode>();
+            Actions = new List<Task.TaskCategory>();
             foreach (string s in definition.Actions)
             {
-                GameMaster.ToolMode value = GameMaster.ToolMode.SelectUnits;
+                var value = Task.TaskCategory.Other;
                 if (Enum.TryParse(s, true, out value))
                 {
                     Actions.Add(value);
@@ -130,7 +130,7 @@ namespace DwarfCorp
             }
         }
 
-        public bool HasAction(GameMaster.ToolMode action)
+        public bool HasAction(Task.TaskCategory action)
         {
             return Actions != null && Actions.Contains(action);
         }

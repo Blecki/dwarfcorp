@@ -155,7 +155,7 @@ namespace DwarfCorp
             return q;
         }
 
-        public static List<CreatureAI> FilterMinionsWithCapability(List<CreatureAI> minions, GameMaster.ToolMode action)
+        public static List<CreatureAI> FilterMinionsWithCapability(List<CreatureAI> minions, Task.TaskCategory action)
         {
             return minions.Where(creature => creature.Stats.CurrentClass.HasAction(action)).ToList();
         }

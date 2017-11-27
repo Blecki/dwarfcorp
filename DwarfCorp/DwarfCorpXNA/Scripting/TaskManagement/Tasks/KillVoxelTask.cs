@@ -79,7 +79,7 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (!agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.Dig))
+            if (!agent.Stats.CurrentClass.Actions.Contains(Task.TaskCategory.Dig))
                 return Feasibility.Infeasible;
 
             if (!VoxelToKill.IsValid || VoxelToKill.IsEmpty || VoxelToKill.Health <= 0)

@@ -55,6 +55,28 @@ namespace DwarfCorp
             Urgent = 4
         }
 
+        public enum TaskCategory
+        {
+            Other,
+            Dig,
+            Chop,
+            Harvest,
+            Attack,
+            Hunt,
+            Research,
+            BuildBlock,
+            BuildObject,
+            BuildZone,
+            CraftItem,
+            Cook,
+            TillSoil,
+            Gather,
+            Guard,
+            Wrangle,
+            Plant,
+        }
+
+        public TaskCategory Category { get; set; }
         public PriorityType Priority { get; set; }
         public int MaxAssignable = 1;
         public int CurrentAssigned = 0;
