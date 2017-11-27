@@ -778,7 +778,7 @@ namespace DwarfCorp
                             var task = new FarmTask(plantablePlot)
                             {
                                 Mode = FarmAct.FarmMode.Plant,
-                                Category = FarmAct.FarmMode.Plant,
+                                Category = Task.TaskCategory.Plant,
                                 Plant = plantablePlot.PlantedType,
                                 RequiredResources = new List<ResourceAmount>
                                 {
