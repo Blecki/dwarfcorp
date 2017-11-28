@@ -2581,6 +2581,14 @@
       <Name>animal</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="decal-types.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>decal-types</Name>
+    </None>
+    <None Include="voxel-types.json">
+      <Name>voxel-types</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="World\races.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>races</Name>

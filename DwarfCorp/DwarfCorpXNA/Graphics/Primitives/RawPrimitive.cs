@@ -18,6 +18,30 @@ namespace DwarfCorp
         public ushort[] Indexes = null;
         public ExtendedVertex[] Vertices = null;
 
+        private static void EnsureSpace<T>(ref T[] In, int Size)
+        {
+            if (Size >= In.Length)
+            {
+                var r = new T[In.Length * 2];
+                In.CopyTo(r, 0);
+                In = r;
+            }
+        }
+
+        public void AddVertex(ExtendedVertex Vertex)
+        {
+            EnsureSpace(ref Vertices, VertexCount);
+            Vertices[VertexCount] = Vertex;
+            VertexCount += 1;
+        }
+
+        public void AddIndex(ushort Index)
+        {
+            EnsureSpace(ref Indexes, IndexCount);
+            Indexes[IndexCount] = Index;
+            IndexCount += 1;
+        }
+
         public static RawPrimitive Concat(IEnumerable<RawPrimitive> Primitives)
         {
             var totalVertexCount = Primitives.Select(p => p.VertexCount).Sum();

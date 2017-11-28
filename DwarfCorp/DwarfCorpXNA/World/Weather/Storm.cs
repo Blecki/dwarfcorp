@@ -16,6 +16,7 @@ namespace DwarfCorp
         public bool IsInitialized { get; set; }
         public StormType TypeofStorm { get; set; }
         public List<Cloud> Clouds { get; set; }
+
         public struct StormProperties
         {
             public string RainEffect { get; set; }
@@ -24,8 +25,6 @@ namespace DwarfCorp
             public float RainRandom { get; set; }
             public bool CreatesLiquid { get; set; }
             public LiquidType LiquidToCreate { get; set; }
-            public bool CreatesVoxel { get; set; }
-            public VoxelType VoxelToCreate { get; set; }
         }
 
         public static Dictionary<StormType, StormProperties> Properties { get; set; }
@@ -58,8 +57,6 @@ namespace DwarfCorp
                             HitEffect = "snow_particle",//particles.Effects["snow_particle"],
                             RainSpeed = 10,
                             RainRandom = 10f,
-                            CreatesVoxel = true,
-                            VoxelToCreate = VoxelLibrary.GetVoxelType("Snow")
                         }
                     }
                 };

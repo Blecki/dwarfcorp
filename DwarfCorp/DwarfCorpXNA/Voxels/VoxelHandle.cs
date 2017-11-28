@@ -173,7 +173,7 @@ namespace DwarfCorp
             set
             {
                 _cache_Chunk.Data.Types[_cache_Index] = value;
-                OnTypeSet(VoxelType.TypeList[value]);
+                OnTypeSet(VoxelLibrary.TypeList[value]);
             }
         }
 
@@ -183,7 +183,7 @@ namespace DwarfCorp
         {
             get
             {
-                return VoxelType.TypeList[_cache_Chunk.Data.Types[_cache_Index]];
+                return VoxelLibrary.TypeList[_cache_Chunk.Data.Types[_cache_Index]];
             }
             set
             {
@@ -211,6 +211,17 @@ namespace DwarfCorp
             set
             {
                 _cache_Chunk.Data.IsExplored[_cache_Index] = value;
+                InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
+            }
+        }
+
+        [JsonIgnore]
+        public byte Decal
+        {
+            get { return _cache_Chunk.Data.Decals[_cache_Index]; }
+            set
+            {
+                _cache_Chunk.Data.Decals[_cache_Index] = value;
                 InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
             }
         }
@@ -269,12 +280,23 @@ namespace DwarfCorp
             // Change actual data
             _cache_Chunk.Data.Types[_cache_Index] = (byte)NewType.ID;
             _cache_Chunk.Data.Health[_cache_Index] = (byte)NewType.StartingHealth;
+            _cache_Chunk.Data.Decals[_cache_Index] = 0;
 
             // Did we go from empty to filled or vice versa? Update filled counter.
             if (previous == 0 && NewType.ID != 0)
                 _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] += 1;
             else if (previous != 0 && NewType.ID == 0)
                 _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] -= 1;
+        }
+
+        /// <summary>
+        /// Set the decal of the voxel without triggering all the bookkeeping mechanisms.
+        /// Should only be used by ChunkGenerator as it can break geometry building.
+        /// </summary>
+        /// <param name="Decal"></param>
+        public void RawSetDecal(byte Decal)
+        {
+            _cache_Chunk.Data.Decals[_cache_Index] = Decal;
         }
 
         private void OnTypeSet(VoxelType NewType)
@@ -288,6 +310,9 @@ namespace DwarfCorp
             // Change actual data
             _cache_Chunk.Data.Types[_cache_Index] = (byte)NewType.ID;
             _cache_Chunk.Data.Health[_cache_Index] = (byte)NewType.StartingHealth;
+
+            // Changing the voxel type clears all decals.
+            _cache_Chunk.Data.Decals[_cache_Index] = 0;
 
             // Did we go from empty to filled or vice versa? Update filled counter.
             if (previous == 0 && NewType.ID != 0)
