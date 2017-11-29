@@ -93,7 +93,7 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (!agent.Stats.CurrentClass.HasAction(TaskCategory.BuildObject))
+            if (!agent.Stats.IsTaskAllowed(TaskCategory.BuildObject))
             {
                 return Feasibility.Infeasible;
             }
@@ -218,7 +218,7 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (!agent.Stats.CurrentClass.HasAction(TaskCategory.BuildObject))
+            if (!agent.Stats.IsTaskAllowed(TaskCategory.BuildObject))
                 return Feasibility.Infeasible;
             return HasResources(agent) && HasLocation(agent) ? Feasibility.Feasible : Feasibility.Infeasible;
         }

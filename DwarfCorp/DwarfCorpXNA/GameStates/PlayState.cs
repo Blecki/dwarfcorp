@@ -1398,7 +1398,7 @@ namespace DwarfCorp.GameStates
                 OnConstruct = (sender) =>
                 {
                     AddToolbarIcon(sender, () => Master.Faction.Minions.Any(minion =>
-                        minion.Stats.CurrentClass.HasAction(Task.TaskCategory.BuildZone)));
+                        minion.Stats.IsTaskAllowed(Task.TaskCategory.BuildZone)));
                     AddToolSelectIcon(GameMaster.ToolMode.BuildZone, sender);
                 },
                 Tooltip = "Build",
@@ -1470,7 +1470,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     Master.Faction.Minions.Any(minion =>
-                        minion.Stats.CurrentClass.HasAction(Task.TaskCategory.Cook)));
+                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Cook)));
                     AddToolSelectIcon(GameMaster.ToolMode.Cook, sender);
                 },
                 ReplacementMenu = menu_Edibles,
@@ -1493,7 +1493,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     Master.Faction.Minions.Any(minion =>
-                        minion.Stats.CurrentClass.HasAction(Task.TaskCategory.Dig)));
+                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Dig)));
                     AddToolSelectIcon(GameMaster.ToolMode.Dig, sender);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
@@ -1515,7 +1515,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     Master.Faction.Minions.Any(minion =>
-                        minion.Stats.CurrentClass.HasAction(Task.TaskCategory.Gather)));
+                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Gather)));
                     AddToolSelectIcon(GameMaster.ToolMode.Gather, sender);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
@@ -1537,7 +1537,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     Master.Faction.Minions.Any(minion =>
-                        minion.Stats.CurrentClass.HasAction(Task.TaskCategory.Chop)));
+                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Chop)));
                     AddToolSelectIcon(GameMaster.ToolMode.Chop, sender);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
@@ -1559,7 +1559,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     Master.Faction.Minions.Any(minion =>
-                        minion.Stats.CurrentClass.HasAction(Task.TaskCategory.Guard)));
+                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Guard)));
                     AddToolSelectIcon(GameMaster.ToolMode.Guard, sender);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
@@ -1581,7 +1581,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     Master.Faction.Minions.Any(minion =>
-                        minion.Stats.CurrentClass.HasAction(Task.TaskCategory.Attack)));
+                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Attack)));
                     AddToolSelectIcon(GameMaster.ToolMode.Attack, sender);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
@@ -1946,7 +1946,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                         Master.Faction.Minions.Any(minion =>
-                            minion.Stats.CurrentClass.HasAction(Task.TaskCategory.Research)));
+                            minion.Stats.IsTaskAllowed(Task.TaskCategory.Research)));
                     AddToolSelectIcon(GameMaster.ToolMode.Magic, sender);
                 },
                 KeepChildVisible = true,

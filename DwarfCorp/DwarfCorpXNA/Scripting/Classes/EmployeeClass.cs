@@ -126,10 +126,5 @@ namespace DwarfCorp
                 staticClassInitialized = true;
             }
         }
-
-        public bool HasAction(Task.TaskCategory action)
-        {
-            return (Actions & action) == action;
-        }
     }
 }

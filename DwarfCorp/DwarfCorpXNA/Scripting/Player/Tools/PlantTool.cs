@@ -132,7 +132,7 @@ namespace DwarfCorp
             {
 
                 List<CreatureAI> minions =
-                    Player.World.Master.Faction.Minions.Where(minion => minion.Stats.CurrentClass.HasAction(Task.TaskCategory.Plant)).ToList();
+                    Player.World.Master.Faction.Minions.Where(minion => minion.Stats.IsTaskAllowed(Task.TaskCategory.Plant)).ToList();
                 List<FarmTask> goals = new List<FarmTask>();
 
                 int currentAmount = Player.Faction.ListResources()
