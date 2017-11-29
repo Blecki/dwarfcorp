@@ -689,7 +689,7 @@ namespace DwarfCorp
             {
 
                 // Craft random items for fun.
-                if (Stats.CurrentClass.HasAction(Task.TaskCategory.CraftItem) && MathFunctions.RandEvent(0.0005f))
+                if (Stats.IsTaskAllowed(Task.TaskCategory.CraftItem) && MathFunctions.RandEvent(0.0005f))
                 {
                     var item = CraftLibrary.GetRandomApplicableCraftItem(Faction);
                     if (item != null)
@@ -735,7 +735,7 @@ namespace DwarfCorp
                 }
 
                 // Farm stuff if applicable
-                if (Stats.CurrentClass.HasAction(Task.TaskCategory.Plant) && MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction)
+                if (Stats.IsTaskAllowed(Task.TaskCategory.Plant) && MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction)
                 {
                     var harvestablePlot = Faction.Designations.EnumerateDesignations(DesignationType._InactiveFarm)
                         .Where(d =>
@@ -754,7 +754,7 @@ namespace DwarfCorp
                     }
                 }
 
-                if (Stats.CurrentClass.HasAction(Task.TaskCategory.Plant) && MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction)
+                if (Stats.IsTaskAllowed(Task.TaskCategory.Plant) && MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction)
                 {
                     var plantablePlot = Faction.Designations.EnumerateDesignations(DesignationType._InactiveFarm)
                         .Where(d =>
@@ -794,7 +794,7 @@ namespace DwarfCorp
                 }
 
                 // Find a room to train in, if applicable.
-                if (Stats.CurrentClass.HasAction(Task.TaskCategory.Attack) && MathFunctions.RandEvent(0.01f))
+                if (Stats.IsTaskAllowed(Task.TaskCategory.Attack) && MathFunctions.RandEvent(0.01f))
                 {
                     Body closestTraining = Faction.FindNearestItemWithTags("Train", Position, true);
 

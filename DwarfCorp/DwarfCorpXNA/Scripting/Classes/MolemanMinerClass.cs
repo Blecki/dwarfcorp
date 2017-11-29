@@ -202,16 +202,14 @@ namespace DwarfCorp
 
         void InitializeActions()
         {
-            Actions = new List<Task.TaskCategory>()
-            {
-                Task.TaskCategory.Chop,
-                Task.TaskCategory.Dig,
-                Task.TaskCategory.Attack,
-                Task.TaskCategory.Gather,
-                Task.TaskCategory.TillSoil,
-                Task.TaskCategory.Plant,
-                Task.TaskCategory.Wrangle,
-            };
+            Actions =
+                Task.TaskCategory.Chop |
+                Task.TaskCategory.Dig |
+                Task.TaskCategory.Attack |
+                Task.TaskCategory.Gather |
+                Task.TaskCategory.TillSoil |
+                Task.TaskCategory.Plant |
+                Task.TaskCategory.Wrangle;
         }
 
         void InitializeAnimations()

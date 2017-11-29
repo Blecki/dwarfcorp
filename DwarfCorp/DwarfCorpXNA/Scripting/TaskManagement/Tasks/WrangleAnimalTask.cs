@@ -140,7 +140,7 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (!agent.Stats.CurrentClass.Actions.Contains(Task.TaskCategory.Wrangle))
+            if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Wrangle))
                 return Feasibility.Infeasible;
 
             return Animal != null

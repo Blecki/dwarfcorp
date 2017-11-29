@@ -201,12 +201,10 @@ namespace DwarfCorp
 
         void InitializeActions()
         {
-            Actions = new List<Task.TaskCategory>()
-            {
-                Task.TaskCategory.Gather,
-                Task.TaskCategory.Research,
-                Task.TaskCategory.Attack
-            };
+            Actions =
+                Task.TaskCategory.Gather |
+                Task.TaskCategory.Research |
+                Task.TaskCategory.Attack;
         }
 
         void InitializeAnimations()

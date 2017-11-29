@@ -89,8 +89,8 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (!agent.Stats.CurrentClass.Actions.Contains(Task.TaskCategory.TillSoil) &&
-                !agent.Stats.CurrentClass.Actions.Contains(Task.TaskCategory.Plant))
+            if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.TillSoil) &&
+                !agent.Stats.IsTaskAllowed(Task.TaskCategory.Plant))
                 return Feasibility.Infeasible;
 
             bool farmValid =  FarmToWork != null && !FarmToWork.IsCanceled;

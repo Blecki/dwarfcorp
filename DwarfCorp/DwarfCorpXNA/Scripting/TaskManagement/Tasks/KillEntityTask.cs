@@ -143,11 +143,11 @@ namespace DwarfCorp
                 switch (Mode)
                 {
                     case KillType.Attack:
-                        if (!agent.Stats.CurrentClass.Actions.Contains(Task.TaskCategory.Attack))
+                        if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Attack))
                             return Feasibility.Infeasible;
                         return agent.Faction.Designations.IsDesignation(EntityToKill, DesignationType.Attack) ? Feasibility.Feasible : Feasibility.Infeasible;
                     case KillType.Chop:
-                        if (!agent.Stats.CurrentClass.Actions.Contains(Task.TaskCategory.Chop))
+                        if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Chop))
                             return Feasibility.Infeasible;
                         return agent.Faction.Designations.IsDesignation(EntityToKill, DesignationType.Chop) ? Feasibility.Feasible : Feasibility.Infeasible;
                     case KillType.Auto:

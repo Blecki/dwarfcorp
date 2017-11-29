@@ -65,7 +65,7 @@ namespace DwarfCorp
         public List<Attack> Attacks { get; set; }
         public List<Level> Levels { get; set; }
         public string Name { get; set; }
-        public List<Task.TaskCategory> Actions { get; set; } 
+        public Task.TaskCategory Actions = Task.TaskCategory.None;
 
         [JsonIgnore]
         public static Dictionary<string, EmployeeClass> Classes { get; set; } 
@@ -85,14 +85,11 @@ namespace DwarfCorp
         {
             Name = definition.Name;
             Levels = definition.Levels;
-            Actions = new List<Task.TaskCategory>();
             foreach (string s in definition.Actions)
             {
-                var value = Task.TaskCategory.Other;
+                var value = Task.TaskCategory.None;
                 if (Enum.TryParse(s, true, out value))
-                {
-                    Actions.Add(value);
-                }
+                    Actions |= value;
             }
 
             CompositeAnimation.Descriptor descriptor = FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(ContentPaths.GetFileAsString(definition.Animations));
@@ -129,11 +126,5 @@ namespace DwarfCorp
                 staticClassInitialized = true;
             }
         }
-
-        public bool HasAction(Task.TaskCategory action)
-        {
-            return Actions != null && Actions.Contains(action);
-        }
-
     }
 }

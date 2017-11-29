@@ -145,6 +145,12 @@ namespace DwarfCorp
 
         public int LevelIndex { get; set; }
         public EmployeeClass CurrentClass { get; set; }
+        public Task.TaskCategory AllowedTasks = Task.TaskCategory.None;
+
+        public bool IsTaskAllowed(Task.TaskCategory TaskCategory)
+        {
+            return (AllowedTasks & TaskCategory) == TaskCategory;
+        }
 
         [JsonIgnore]
         public EmployeeClass.Level CurrentLevel { get { return CurrentClass.Levels[LevelIndex]; } }
@@ -179,6 +185,7 @@ namespace DwarfCorp
             CanEat = false;
             FullName = "";
             CurrentClass = new WorkerClass();
+            AllowedTasks = CurrentClass.Actions;
             LevelIndex = 0;
             XP = 0;
             StatBuffs = new StatNums()
@@ -200,6 +207,7 @@ namespace DwarfCorp
             CanEat = false;
             FullName = "";
             CurrentClass = creatureClass;
+            AllowedTasks = CurrentClass.Actions;
             LevelIndex = level;
             XP = creatureClass.Levels[level].XP;
             Dexterity = Math.Max(Dexterity, CurrentLevel.BaseStats.Dexterity);

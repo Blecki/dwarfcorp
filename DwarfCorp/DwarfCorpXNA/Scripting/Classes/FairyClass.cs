@@ -87,19 +87,17 @@ namespace DwarfCorp
 
         void InitializeActions()
         {
-            Actions = new List<Task.TaskCategory>()
-            {
-                Task.TaskCategory.Gather,
-                Task.TaskCategory.Dig,
-                Task.TaskCategory.CraftItem,
-                Task.TaskCategory.BuildBlock,
-                Task.TaskCategory.BuildObject,
-                Task.TaskCategory.BuildZone,
-                Task.TaskCategory.Chop,
-                Task.TaskCategory.TillSoil,
-                Task.TaskCategory.Plant,
-                Task.TaskCategory.Wrangle,
-            };
+            Actions =
+                Task.TaskCategory.Gather |
+                Task.TaskCategory.Dig |
+                Task.TaskCategory.CraftItem |
+                Task.TaskCategory.BuildBlock |
+                Task.TaskCategory.BuildObject |
+                Task.TaskCategory.BuildZone |
+                Task.TaskCategory.Chop |
+                Task.TaskCategory.TillSoil |
+                Task.TaskCategory.Plant |
+                Task.TaskCategory.Wrangle;
         }
 
         void InitializeAnimations()

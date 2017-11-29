@@ -79,7 +79,7 @@ namespace DwarfCorp
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
             List<CreatureAI> minions = 
-                Player.World.Master.Faction.Minions.Where(minion => minion.Stats.CurrentClass.HasAction(Task.TaskCategory.TillSoil)).ToList();
+                Player.World.Master.Faction.Minions.Where(minion => minion.Stats.IsTaskAllowed(Task.TaskCategory.TillSoil)).ToList();
             List<FarmTask> goals = new List<FarmTask>();
 
             foreach (var voxel in voxels)
