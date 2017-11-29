@@ -57,23 +57,24 @@ namespace DwarfCorp
 
         public enum TaskCategory
         {
-            Other,
-            Dig,
-            Chop,
-            Harvest,
-            Attack,
-            Hunt,
-            Research,
-            BuildBlock,
-            BuildObject,
-            BuildZone,
-            CraftItem,
-            Cook,
-            TillSoil,
-            Gather,
-            Guard,
-            Wrangle,
-            Plant,
+            None        = 0,
+            Other       = 1,
+            Dig         = 2,
+            Chop        = 4,
+            Harvest     = 8,
+            Attack      = 16,
+            Hunt        = 32,
+            Research    = 64,
+            BuildBlock  = 128,
+            BuildObject = 256,
+            BuildZone   = 512,
+            CraftItem   = 1024,
+            Cook        = 2048,
+            TillSoil    = 4096,
+            Gather      = 8192,
+            Guard       = 16384,
+            Wrangle     = 32768,
+            Plant       = 65536
         }
 
         public TaskCategory Category { get; set; }
