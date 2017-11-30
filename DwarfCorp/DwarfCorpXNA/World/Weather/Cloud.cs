@@ -15,7 +15,6 @@ namespace DwarfCorp
         public int MaxRainDrops { get; set; }
         public Vector3 Velocity { get; set; }
 
-
         public struct Rain
         {
             public Vector3 Pos;
@@ -120,27 +119,33 @@ namespace DwarfCorp
                 RainDrops[i].IsAlive = false;
                 hitEmitter.Trigger(1, RainDrops[i].Pos + Vector3.UnitY * 0.5f, Color.White);
 
-                if (!MathFunctions.RandEvent(0.1f)) continue;
+                //if (!MathFunctions.RandEvent(0.1f)) continue;
 
                 var above = test.IsEmpty ? test : VoxelHelpers.GetVoxelAbove(test);
 
                 if (!above.IsValid || !above.IsEmpty) continue;
-                if (stormProperties.CreatesLiquid &&
-                    (above.WaterCell.WaterLevel < WaterManager.maxWaterLevel && (above.WaterCell.Type == LiquidType.Water || above.WaterCell.Type == LiquidType.None)))
-                {
-                    WaterCell water = above.WaterCell;
-                    water.WaterLevel = (byte)Math.Min(WaterManager.maxWaterLevel, water.WaterLevel + WaterManager.rainFallAmount);
-                    water.Type = stormProperties.LiquidToCreate;
+                //if (TypeofStorm == StormType.RainStorm &&
+                //    (above.WaterCell.WaterLevel < WaterManager.maxWaterLevel && (above.WaterCell.Type == LiquidType.Water || above.WaterCell.Type == LiquidType.None)))
+                //{
+                //    WaterCell water = above.WaterCell;
+                //    water.WaterLevel = (byte)Math.Min(WaterManager.maxWaterLevel, water.WaterLevel + WaterManager.rainFallAmount);
+                //    water.Type = stormProperties.LiquidToCreate;
 
-                    above.WaterCell = water;
-                }
-                else if (stormProperties.CreatesVoxel && above.IsEmpty && above.WaterCell.WaterLevel == 0)
-                {
-                    above.Type = stormProperties.VoxelToCreate;
-                    above.WaterCell = new WaterCell();
-                    above.Health = above.Type.StartingHealth;
-                }
-
+                //    above.WaterCell = water;
+                //}
+                //else if (TypeofStorm == StormType.SnowStorm && above.IsEmpty && above.WaterCell.WaterLevel == 0)
+                //{
+                    if (test.Decal == 0)
+                        test.Decal = DecalLibrary.GetDecalType("snow").ID;
+                    else
+                    {
+                        // Todo - Just store bytes
+                        var existingDecal = DecalLibrary.GetDecalType((byte)test.Decal);
+                        if (!String.IsNullOrEmpty(existingDecal.BecomeWhenSnowedOn))
+                            test.Decal = DecalLibrary.GetDecalType(existingDecal.BecomeWhenSnowedOn).ID;
+                    }
+                    // otherwise if we're a grass type decal...
+                //}
             }
 
 

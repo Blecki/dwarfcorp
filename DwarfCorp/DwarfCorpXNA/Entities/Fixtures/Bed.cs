@@ -19,17 +19,10 @@ namespace DwarfCorp
         }
 
         public Bed(ComponentManager manager, Vector3 position) :
-            base(manager, "Bed", Matrix.CreateTranslation(position), new Vector3(1.5f, 0.5f, 0.75f), new Vector3(-0.5f + 1.5f * 0.5f, -0.5f + 0.25f, -0.5f + 0.75f * 0.5f))
+            base(manager, "Bed", Matrix.CreateTranslation(position), new Vector3(2.0f, 0.5f, 1.0f), new Vector3(0.25f, 0.25f, 0.0f))
         {
             Tags.Add("Bed");
             CollisionType = CollisionManager.CollisionType.Static;
-
-            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
-                manager.World.ChunkManager.ChunkData, 
-                GlobalVoxelCoordinate.FromVector3(position)));
-            if (voxelUnder.IsValid)
-                AddChild(new VoxelListener(manager, manager.World.ChunkManager,
-                    voxelUnder));
 
             CreateCosmeticChildren(manager);
 
@@ -45,7 +38,18 @@ namespace DwarfCorp
         public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
             GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
-            
+#if DEBUG
+            if (GamePerformance.DebugVisualizationEnabled)
+            {
+                Drawer3D.DrawBox(GetBoundingBox(), Color.DarkRed, 0.02f, false);
+                Drawer3D.DrawLine(this.LocalTransform.Translation, this.LocalTransform.Translation +
+    (Vector3.UnitY * 10), Color.Blue, 0.3f);
+                Drawer3D.DrawLine(this.LocalTransform.Translation, this.LocalTransform.Translation +
+                    (Vector3.UnitX * 10), Color.Red, 0.3f);
+                Drawer3D.DrawLine(this.LocalTransform.Translation, this.LocalTransform.Translation +
+                    (Vector3.UnitZ * 10), Color.Green, 0.3f);
+            }
+#endif
         }
 
         public override void CreateCosmeticChildren(ComponentManager Manager)
@@ -56,11 +60,23 @@ namespace DwarfCorp
 
             AddChild(new Box(Manager, 
                 "bedbox", 
-                Matrix.CreateTranslation(-0.5f, -0.5f, -0.5f) * Matrix.CreateRotationY((float)Math.PI * 0.5f), 
+                Matrix.CreateTranslation(-0.40f, 0.25f, -0.45f) * Matrix.CreateRotationY((float)Math.PI * 0.5f), 
                 new Vector3(1.0f, 1.0f, 2.0f), 
-                new Vector3(0.5f, 0.5f, 1.0f), 
+                new Vector3(0.0f, 0.0f, 0.0f), 
                 "bed", 
                 spriteSheet)).SetFlag(Flag.ShouldSerialize, false);
+
+            AddChild(new NewVoxelListener(Manager,
+                Matrix.Identity,
+                new Vector3(0.5f, 0.5f, 1.0f), // Position just below surface.
+                new Vector3(0.0f, -0.30f, -1.0f),
+                (v) =>
+                {
+                    if (v.Type == VoxelChangeEventType.VoxelTypeChanged
+                        && v.NewVoxelType == 0)
+                        Die();
+                 }))
+                .SetFlag(Flag.ShouldSerialize, false);
         }
     }
 }

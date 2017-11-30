@@ -191,6 +191,11 @@ namespace DwarfCorp
             return new GlobalVoxelOffset(
                 (int)Math.Floor(V.X), (int)Math.Floor(V.Y), (int)Math.Floor(V.Z));
         }
+
+        public Vector3 AsVector3()
+        {
+            return new Vector3(X, Y, Z);
+        }
     }
 
     [Serializable]

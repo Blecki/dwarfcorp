@@ -61,7 +61,7 @@ namespace DwarfCorp
         public List<VegetationData> Vegetation { get; set; }
         public List<DetailMoteData> Motes { get; set; }
         public List<FaunaData> Fauna { get; set; }
-        public Layer GrassLayer { get; set; }
+        public string GrassDecal = "";
         public Layer SoilLayer { get; set; }
         public List<Layer> SubsurfaceLayers { get; set; }
         public string ShoreVoxel { get; set; }
@@ -74,6 +74,7 @@ namespace DwarfCorp
         public float Temp { get; set; }
         public float Rain { get; set; }
         public int Icon { get; set; }
+        //public Color GrassTint = new Color(1.0f, 1.0f, 1.0f, 1.0f);
         public string DayAmbience { get; set; }
         public string NightAmbience { get; set; }
         public bool WaterSurfaceIce { get; set; }

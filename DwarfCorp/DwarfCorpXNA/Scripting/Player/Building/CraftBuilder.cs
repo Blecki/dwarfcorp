@@ -204,6 +204,11 @@ namespace DwarfCorp
                 return;
 
             CurrentCraftBody.LocalPosition = player.VoxSelector.VoxelUnderMouse.WorldPosition + Vector3.One * 0.5f;
+
+            //Ugly hack
+            if (this.CurrentCraftType.Name == "Bed")
+                CurrentCraftBody.LocalPosition -= new Vector3(0.0f, 0.5f, 0.0f);
+
             CurrentCraftBody.GlobalTransform = CurrentCraftBody.LocalTransform;
             CurrentCraftBody.UpdateTransform();
             CurrentCraftBody.PropogateTransforms();
@@ -410,6 +415,10 @@ namespace DwarfCorp
                             else
                             {
                                 Vector3 pos = r.WorldPosition + Vector3.One*0.5f;
+
+                                // More hack cause I broke beds.
+                                if (CurrentCraftType.Name == "Bed") pos -= new Vector3(0, 0.5f, 0);
+
                                 Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f);
                                 Vector3 endPos = pos;
                                 CraftDesignation newDesignation = new CraftDesignation()

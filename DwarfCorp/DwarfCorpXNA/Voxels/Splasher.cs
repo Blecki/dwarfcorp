@@ -74,13 +74,11 @@ namespace DwarfCorp
                 if((transfer.cellFrom.Type == LiquidType.Lava && transfer.cellTo.Type == LiquidType.Water) 
                     || (transfer.cellFrom.Type == LiquidType.Water && transfer.cellTo.Type == LiquidType.Lava))
                 {
-                    // Todo: Avoid chunk lookup by storing TVH in first place.
                     var v = transfer.Location;
 
                     if(v.IsValid)
                     {
-                        VoxelLibrary.PlaceType(VoxelLibrary.GetVoxelType("Stone"), v);
-
+                        v.Type = VoxelLibrary.GetVoxelType("Stone");
                         v.WaterCell = new WaterCell
                         {
                             Type = LiquidType.None,

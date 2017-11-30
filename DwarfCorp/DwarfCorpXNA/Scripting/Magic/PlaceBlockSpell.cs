@@ -95,7 +95,9 @@ namespace DwarfCorp
                     Vector3 p = selected.WorldPosition + Vector3.One*0.5f;
                     IndicatorManager.DrawIndicator("-" + ManaCost + " M",p, 1.0f, Color.Red);
                     World.ParticleManager.Trigger("star_particle", p, Color.White, 4);
-                    VoxelLibrary.PlaceType(VoxelLibrary.GetVoxelType(VoxelType), selected);
+                    var lSelected = selected;
+                    lSelected.Type = VoxelLibrary.GetVoxelType(VoxelType);
+                    lSelected.WaterCell = new WaterCell();
 
                     if (VoxelType == "Magic")
                     {

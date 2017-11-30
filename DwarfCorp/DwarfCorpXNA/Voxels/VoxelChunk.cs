@@ -175,7 +175,7 @@ namespace DwarfCorp
             return m_boundingSphere;
         }
 
-        public void Update(DwarfTime t)
+        public void RecieveNewPrimitive(DwarfTime t)
         {
             PrimitiveMutex.WaitOne();
             if (NewPrimitiveReceived)
