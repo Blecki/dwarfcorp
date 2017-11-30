@@ -49,7 +49,6 @@ namespace DwarfCorp.GameStates
         private Gui.Widget TimeLabel;
         private Gui.Widget PausePanel;
         private MinimapFrame MinimapFrame;
-        //private Widget SelectedEmployeeName;
         private Gui.Widgets.MinimapRenderer MinimapRenderer;
         private Gui.Widgets.GameSpeedControls GameSpeedControls;
         private Widget PausedWidget;
@@ -60,8 +59,8 @@ namespace DwarfCorp.GameStates
         private FramedIcon EconomyIcon;
         private Timer AutoSaveTimer;
         private EmployeeInfo SelectedEmployeeInfo;
+        private AllowedTaskFilter AllowedTaskFilter;
         private Widget ContextMenu;
-        private CollapsableStack SidePanel;
         private Widget BottomBar;
         private Widget MinimapIcon;
 
@@ -353,6 +352,7 @@ namespace DwarfCorp.GameStates
                 if (MathFunctions.RandEvent(0.1f))
                 {
                     SelectedEmployeeInfo.Employee = Master.SelectedMinions[0];
+                    AllowedTaskFilter.Employee = Master.SelectedMinions[0];
                     //SelectedEmployeeName.Text = Master.SelectedMinions[0].Stats.FullName;
                 }
             }
@@ -360,6 +360,7 @@ namespace DwarfCorp.GameStates
             if (Master.SelectedMinions.Count != 1)
             {
                 SelectedEmployeeInfo.Employee = null;
+                AllowedTaskFilter.Employee = null;
                 //SelectedEmployeeName.Text = "No Employee Selected";
             }
 #endregion
@@ -591,6 +592,16 @@ namespace DwarfCorp.GameStates
                 OnLayout = (sender) => sender.Rect.Y += 4
             }) as MinimapFrame;
 
+            AllowedTaskFilter = GuiRoot.RootItem.AddChild(new AllowedTaskFilter
+            {
+                Hidden = true,
+                Border = "border-fancy",
+                Employee = null,
+                Tag = "selected-employee-allowable-tasks",
+                AutoLayout = AutoLayout.FloatBottomLeft,
+                MinimumSize = new Point(300, 200)
+            }) as AllowedTaskFilter;
+
             SelectedEmployeeInfo = GuiRoot.RootItem.AddChild(new EmployeeInfo
             {
                 Hidden = true,
@@ -648,6 +659,7 @@ namespace DwarfCorp.GameStates
                     {
                         MinimapFrame.Hidden = false;
                         SelectedEmployeeInfo.Hidden = true;
+                        AllowedTaskFilter.Hidden = true;
                         markerFilter.Hidden = true;
                     }
                     else
@@ -660,7 +672,7 @@ namespace DwarfCorp.GameStates
                 Corners = 0,
                 Transparent = true,
                 AutoLayout = Gui.AutoLayout.DockLeft,
-                SizeToGrid = new Point(3, 1),
+                SizeToGrid = new Point(4, 1),
                 ItemSource = new Gui.Widget[]
                         {
                             MinimapIcon,
@@ -677,6 +689,7 @@ namespace DwarfCorp.GameStates
                                    {
                                        MinimapFrame.Hidden = true;
                                        SelectedEmployeeInfo.Hidden = false;
+                                       AllowedTaskFilter.Hidden = true;
                                        markerFilter.Hidden = true;
                                    }
                                    else
@@ -697,10 +710,32 @@ namespace DwarfCorp.GameStates
                                    {
                                        MinimapFrame.Hidden = true;
                                        SelectedEmployeeInfo.Hidden = true;
+                                       AllowedTaskFilter.Hidden = true;
                                        markerFilter.Hidden = false;
                                    }
                                    else
                                        markerFilter.Hidden = true;
+                               }
+                            },
+
+                            new FramedIcon
+                            {
+                               Icon = null,
+                               Text = "Tasks",
+                               TextHorizontalAlign = HorizontalAlign.Center,
+                               TextVerticalAlign = VerticalAlign.Center,
+                               EnabledTextColor = Vector4.One,
+                               OnClick = (sender, args) =>
+                               {
+                                   if (AllowedTaskFilter.Hidden)
+                                   {
+                                       MinimapFrame.Hidden = true;
+                                       SelectedEmployeeInfo.Hidden = true;
+                                       AllowedTaskFilter.Hidden = false;
+                                       markerFilter.Hidden = true;
+                                   }
+                                   else
+                                       AllowedTaskFilter.Hidden = true;
                                }
                             }
                         },

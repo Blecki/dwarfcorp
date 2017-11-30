@@ -10,25 +10,42 @@ namespace DwarfCorp.Gui.Widgets
 {
     public class AllowedTaskFilter : Widget
     {
-        public Dwarf Employee;
+        private CreatureAI _employee;
+        public CreatureAI Employee
+        {
+            get { return _employee; }
+            set { _employee = value; Invalidate(); }
+        }
+
         public int ColumnCount = 2;
+        private Widget InteriorPanel;
+        private Widget EmployeeName;
 
         private List<CheckBox> TaskCategories = new List<CheckBox>();
         
         public override void Construct()
         {
-            Padding = new Margin(2, 2, 2, 2);
-
-            AddChild(new Gui.Widget
+            Text = "Choose a single employee to assign their allowed tasks.";
+            Font = "font16";
+                       
+            InteriorPanel = AddChild(new Widget
             {
-                Text = String.Format("{0} Allowed Tasks", Employee.Stats.FullName),
+                AutoLayout = AutoLayout.DockFill,
+                Hidden = true,
+                Background = new TileReference("basic", 0),
+                Font = "font8",
+            });
+
+            EmployeeName = InteriorPanel.AddChild(new Gui.Widget
+            {
+                Text = String.Format("Allowed Tasks"),
                 TextHorizontalAlign = HorizontalAlign.Center,
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 36),
                 Font = "font16"
             });
             
-            var columns = AddChild(new Gui.Widgets.Columns
+            var columns = InteriorPanel.AddChild(new Gui.Widgets.Columns
             {
                 AutoLayout = AutoLayout.DockFill,
                 MinimumSize = new Point(0, 120),
@@ -55,7 +72,6 @@ namespace DwarfCorp.Gui.Widgets
                 }) as CheckBox;
 
                 TaskCategories.Add(box);
-                //box.CheckState = (Employee.Creature.VisibleTypes & (DesignationType)type) == (DesignationType)type;
                 box.OnCheckStateChange += (sender) => CheckChanged();
 
                 column = (column + 1) % ColumnCount;
@@ -69,7 +85,29 @@ namespace DwarfCorp.Gui.Widgets
             var visibleTypes = Task.TaskCategory.None;
             foreach (var box in TaskCategories)
                 if (box.CheckState) visibleTypes |= (Task.TaskCategory)box.Tag;
-            //DesignationDrawer.VisibleTypes = visibleTypes;
+            Employee.Stats.AllowedTasks = visibleTypes;
+        }
+
+        protected override Mesh Redraw()
+        {
+            if (Employee == null)
+            {
+                InteriorPanel.Hidden = true;
+            }
+            else
+            {
+                InteriorPanel.Hidden = false;
+                EmployeeName.Text = String.Format("{0} Allowed Tasks", Employee.Stats.FullName);
+                foreach (var checkbox in TaskCategories)
+                {
+                    var type = (Task.TaskCategory)checkbox.Tag;
+                    checkbox.SilentSetCheckState(Employee.Stats.IsTaskAllowed(type));
+                }
+            }
+
+            foreach (var child in Children)
+                child.Invalidate();
+            return base.Redraw();
         }
     }
 }

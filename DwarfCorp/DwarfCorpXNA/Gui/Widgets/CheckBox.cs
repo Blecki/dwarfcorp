@@ -16,6 +16,11 @@ namespace DwarfCorp.Gui.Widgets
             set { _checkState = value; Root.SafeCall(OnCheckStateChange, this); Invalidate(); }
         }
 
+        public void SilentSetCheckState(bool NewState)
+        {
+            _checkState = NewState;
+        }
+
         public Action<Widget> OnCheckStateChange = null;
 
         public override void Construct()
