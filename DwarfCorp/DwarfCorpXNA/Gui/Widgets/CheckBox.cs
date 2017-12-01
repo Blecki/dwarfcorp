@@ -9,6 +9,13 @@ namespace DwarfCorp.Gui.Widgets
 {
     public class CheckBox : Widget
     {
+        private bool _enabled = true;
+        public bool Enabled
+        {
+            get { return _enabled; }
+            set { _enabled = value;  Invalidate(); }
+        }
+
         private bool _checkState = false;
         public bool CheckState 
         {
@@ -25,7 +32,7 @@ namespace DwarfCorp.Gui.Widgets
 
         public override void Construct()
         {
-            OnClick += (sender, args) => { CheckState = !CheckState; };
+            OnClick += (sender, args) => { if (Enabled) CheckState = !CheckState; };
             TextVerticalAlign = VerticalAlign.Center;
             ChangeColorOnHover = true;
             HoverTextColor = new Vector4(0.5f, 0, 0, 1.0f);
@@ -50,7 +57,16 @@ namespace DwarfCorp.Gui.Widgets
                 .Translate(baseDrawArea.X, baseDrawArea.Y)
                 .Texture(Root.GetTileSheet(Graphics).TileMatrix(CheckState ? 1 : 0));
 
-            return Mesh.Merge(baseMesh, checkMesh);
+            var r = Mesh.Merge(baseMesh, checkMesh);
+
+            if (!Enabled)
+                r = r.MorphEx(v =>
+                {
+                    v.Color = new Vector4(1.0f, 1.0f, 1.0f, 0.1f);
+                    return v;
+                });
+
+            return r;
         }
 
         public override Point GetBestSize()

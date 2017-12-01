@@ -102,6 +102,7 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     var type = (Task.TaskCategory)checkbox.Tag;
                     checkbox.SilentSetCheckState(Employee.Stats.IsTaskAllowed(type));
+                    checkbox.Enabled = Employee.Stats.CurrentClass.IsTaskAllowed(type);
                 }
             }
 

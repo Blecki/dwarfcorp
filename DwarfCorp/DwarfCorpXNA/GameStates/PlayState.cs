@@ -599,7 +599,7 @@ namespace DwarfCorp.GameStates
                 Employee = null,
                 Tag = "selected-employee-allowable-tasks",
                 AutoLayout = AutoLayout.FloatBottomLeft,
-                MinimumSize = new Point(300, 200)
+                MinimumSize = new Point(200, 200)
             }) as AllowedTaskFilter;
 
             SelectedEmployeeInfo = GuiRoot.RootItem.AddChild(new EmployeeInfo

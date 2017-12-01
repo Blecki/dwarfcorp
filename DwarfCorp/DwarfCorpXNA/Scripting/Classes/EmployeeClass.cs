@@ -67,6 +67,11 @@ namespace DwarfCorp
         public string Name { get; set; }
         public Task.TaskCategory Actions = Task.TaskCategory.None;
 
+        public bool IsTaskAllowed(Task.TaskCategory TaskCategory)
+        {
+            return (Actions & TaskCategory) == TaskCategory;
+        }
+
         [JsonIgnore]
         public static Dictionary<string, EmployeeClass> Classes { get; set; } 
 
