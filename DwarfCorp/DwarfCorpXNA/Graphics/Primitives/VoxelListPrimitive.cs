@@ -473,174 +473,171 @@ namespace DwarfCorp
 
                 // Draw decals
                 var decal = V.Decal;
-                if (decal != 0)
+                if (decal == 0) return;
+
+                var decalType = DecalLibrary.GetDecalType(decal);
+
+                AddDecalGeometry(Into, AmbientScratchSpace, Primitive, V, faceDescriptor, exploredVerts, vertexPositions, vertexColors, vertexTint, decalType);
+
+                // Draw fringe
+                if (!decalType.HasFringeTransitions) return;
+
+                for (var s = 0; s < 4; ++s)
                 {
-                    var decalType = DecalLibrary.GetDecalType((byte)decal);
+                    var neighborCoord = V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[s];
+                    var neighbor = new VoxelHandle(Chunk.Manager.ChunkData, neighborCoord);
 
-                    AddDecalGeometry(Into, AmbientScratchSpace, Primitive, V, faceDescriptor, exploredVerts, vertexPositions, vertexColors, vertexTint, decalType);
+                    if (!neighbor.IsValid) continue;
 
-                    // Draw fringe
-                    if (decalType.HasFringeTransitions)
+                    var aboveNeighbor = new VoxelHandle(Chunk.Manager.ChunkData, neighborCoord + new GlobalVoxelOffset(0, 1, 0));
+
+                    if (!aboveNeighbor.IsValid || aboveNeighbor.IsEmpty)
                     {
-                        for (var s = 0; s < 4; ++s)
-                        {
-                            var neighborCoord = V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[s];
-                            var handle = new VoxelHandle(Chunk.Manager.ChunkData, neighborCoord);
+                        // Draw horizontal fringe.
+                        if (!neighbor.IsEmpty && neighbor.Decal != 0 && DecalLibrary.GetDecalType(neighbor.Decal).FringePrecedence >= decalType.FringePrecedence)
+                            continue;
+                        //if (handle.Type.FringePrecedence >= V.Type.FringePrecedence)
+                        //    continue;
 
-                            if (handle.IsValid)
-                            {
-                                var aboveNeighbor = new VoxelHandle(Chunk.Manager.ChunkData, neighborCoord + new GlobalVoxelOffset(0, 1, 0));
+                        // Twizzle vertex positions.
+                        var newPositions = new Vector3[4];
+                        newPositions[FringeIndicies[s, 0]] = vertexPositions[FringeIndicies[s, 4]];
+                        newPositions[FringeIndicies[s, 1]] = vertexPositions[FringeIndicies[s, 4]]
+                            + (VoxelHelpers.ManhattanNeighbors2D[s].AsVector3() * 0.5f);
+                        newPositions[FringeIndicies[s, 2]] = vertexPositions[FringeIndicies[s, 5]]
+                            + (VoxelHelpers.ManhattanNeighbors2D[s].AsVector3() * 0.5f);
+                        newPositions[FringeIndicies[s, 3]] = vertexPositions[FringeIndicies[s, 5]];
 
-                                if (!aboveNeighbor.IsValid || aboveNeighbor.IsEmpty)
-                                {
-                                    // Draw horizontal fringe.
-                                    if (!handle.IsEmpty && handle.Decal != 0 && DecalLibrary.GetDecalType((byte)handle.Decal).FringePrecedence >= decalType.FringePrecedence)
-                                        continue;
-                                    //if (handle.Type.FringePrecedence >= V.Type.FringePrecedence)
-                                    //    continue;
+                        var newColors = new VertexColorInfo[4];
+                        newColors[FringeIndicies[s, 0]] = vertexColors[FringeIndicies[s, 4]];
+                        newColors[FringeIndicies[s, 1]] = vertexColors[FringeIndicies[s, 4]];
+                        newColors[FringeIndicies[s, 2]] = vertexColors[FringeIndicies[s, 5]];
+                        newColors[FringeIndicies[s, 3]] = vertexColors[FringeIndicies[s, 5]];
 
-                                    // Twizzle vertex positions.
-                                    var newPositions = new Vector3[4];
-                                    newPositions[FringeIndicies[s, 0]] = vertexPositions[FringeIndicies[s, 4]];
-                                    newPositions[FringeIndicies[s, 1]] = vertexPositions[FringeIndicies[s, 4]]
-                                        + (VoxelHelpers.ManhattanNeighbors2D[s].AsVector3() * 0.5f);
-                                    newPositions[FringeIndicies[s, 2]] = vertexPositions[FringeIndicies[s, 5]]
-                                        + (VoxelHelpers.ManhattanNeighbors2D[s].AsVector3() * 0.5f);
-                                    newPositions[FringeIndicies[s, 3]] = vertexPositions[FringeIndicies[s, 5]];
+                        var slopeTweak = new Vector3(0.0f, 0.0f, 0.0f);
+                        if (neighbor.IsEmpty)
+                            slopeTweak.Y = -0.5f;
+                        else
+                            slopeTweak.Y = 0.125f;
 
-                                    var newColors = new VertexColorInfo[4];
-                                    newColors[FringeIndicies[s, 0]] = vertexColors[FringeIndicies[s, 4]];
-                                    newColors[FringeIndicies[s, 1]] = vertexColors[FringeIndicies[s, 4]];
-                                    newColors[FringeIndicies[s, 2]] = vertexColors[FringeIndicies[s, 5]];
-                                    newColors[FringeIndicies[s, 3]] = vertexColors[FringeIndicies[s, 5]];
+                        newPositions[FringeIndicies[s, 1]] += slopeTweak;
+                        newPositions[FringeIndicies[s, 2]] += slopeTweak;
 
-                                    var slopeTweak = new Vector3(0.0f, 0.0f, 0.0f);
-                                    if (handle.IsEmpty)
-                                        slopeTweak.Y = -0.5f;
-                                    else
-                                        slopeTweak.Y = 0.125f;
+                        var newTints = new Color[4];
+                        newTints[FringeIndicies[s, 0]] = vertexTint[FringeIndicies[s, 4]];
+                        newTints[FringeIndicies[s, 1]] = vertexTint[FringeIndicies[s, 4]];
+                        newTints[FringeIndicies[s, 2]] = vertexTint[FringeIndicies[s, 5]];
+                        newTints[FringeIndicies[s, 3]] = vertexTint[FringeIndicies[s, 5]];
 
-                                    newPositions[FringeIndicies[s, 1]] += slopeTweak;
-                                    newPositions[FringeIndicies[s, 2]] += slopeTweak;
+                        AddTopFaceGeometry(Into,
+                            AmbientScratchSpace, Primitive,
+                            faceDescriptor,
+                            newPositions,
+                            newColors,
+                            newTints,
+                            SideFringeUVScales[s],
+                            decalType.FringeTransitionUVs[s].UV,
+                            decalType.FringeTransitionUVs[s].Bounds);
+                    }
+                    else
+                    {
+                        // Draw vertical fringe!
 
-                                    var newTints = new Color[4];
-                                    newTints[FringeIndicies[s, 0]] = vertexTint[FringeIndicies[s, 4]];
-                                    newTints[FringeIndicies[s, 1]] = vertexTint[FringeIndicies[s, 4]];
-                                    newTints[FringeIndicies[s, 2]] = vertexTint[FringeIndicies[s, 5]];
-                                    newTints[FringeIndicies[s, 3]] = vertexTint[FringeIndicies[s, 5]];
+                        var newPositions = new Vector3[4];
+                        newPositions[FringeIndicies[s, 0]] = vertexPositions[FringeIndicies[s, 4]];
+                        newPositions[FringeIndicies[s, 1]] = vertexPositions[FringeIndicies[s, 4]]
+                            + new Vector3(0.0f, 0.5f, 0.0f)
+                            + (VoxelHelpers.ManhattanNeighbors2D[s].AsVector3() * -0.05f);
+                        newPositions[FringeIndicies[s, 2]] = vertexPositions[FringeIndicies[s, 5]]
+                            + new Vector3(0.0f, 0.5f, 0.0f)
+                            + (VoxelHelpers.ManhattanNeighbors2D[s].AsVector3() * -0.05f);
+                        newPositions[FringeIndicies[s, 3]] = vertexPositions[FringeIndicies[s, 5]];
 
-                                    AddTopFaceGeometry(Into,
-                                        AmbientScratchSpace, Primitive,
-                                        faceDescriptor,
-                                        newPositions,
-                                        newColors,
-                                        newTints,
-                                        SideFringeUVScales[s],
-                                        decalType.FringeTransitionUVs[s].UV,
-                                        decalType.FringeTransitionUVs[s].Bounds);
-                                }
-                                else
-                                {
-                                    // Draw vertical fringe!
+                        var newColors = new VertexColorInfo[4];
+                        newColors[FringeIndicies[s, 0]] = vertexColors[FringeIndicies[s, 4]];
+                        newColors[FringeIndicies[s, 1]] = vertexColors[FringeIndicies[s, 4]];
+                        newColors[FringeIndicies[s, 2]] = vertexColors[FringeIndicies[s, 5]];
+                        newColors[FringeIndicies[s, 3]] = vertexColors[FringeIndicies[s, 5]];
 
-                                    var newPositions = new Vector3[4];
-                                    newPositions[FringeIndicies[s, 0]] = vertexPositions[FringeIndicies[s, 4]];
-                                    newPositions[FringeIndicies[s, 1]] = vertexPositions[FringeIndicies[s, 4]]
-                                        + new Vector3(0.0f, 0.5f, 0.0f)
-                                        + (VoxelHelpers.ManhattanNeighbors2D[s].AsVector3() * -0.05f);
-                                    newPositions[FringeIndicies[s, 2]] = vertexPositions[FringeIndicies[s, 5]]
-                                        + new Vector3(0.0f, 0.5f, 0.0f)
-                                        + (VoxelHelpers.ManhattanNeighbors2D[s].AsVector3() * -0.05f);
-                                    newPositions[FringeIndicies[s, 3]] = vertexPositions[FringeIndicies[s, 5]];
+                        var newTints = new Color[4];
+                        newTints[FringeIndicies[s, 0]] = vertexTint[FringeIndicies[s, 4]];
+                        newTints[FringeIndicies[s, 1]] = vertexTint[FringeIndicies[s, 4]];
+                        newTints[FringeIndicies[s, 2]] = vertexTint[FringeIndicies[s, 5]];
+                        newTints[FringeIndicies[s, 3]] = vertexTint[FringeIndicies[s, 5]];
 
-                                    var newColors = new VertexColorInfo[4];
-                                    newColors[FringeIndicies[s, 0]] = vertexColors[FringeIndicies[s, 4]];
-                                    newColors[FringeIndicies[s, 1]] = vertexColors[FringeIndicies[s, 4]];
-                                    newColors[FringeIndicies[s, 2]] = vertexColors[FringeIndicies[s, 5]];
-                                    newColors[FringeIndicies[s, 3]] = vertexColors[FringeIndicies[s, 5]];
+                        AddTopFaceGeometry(Into,
+                            AmbientScratchSpace, Primitive,
+                            faceDescriptor,
+                            newPositions,
+                            newColors,
+                            newTints,
+                            SideFringeUVScales[s],
+                            decalType.FringeTransitionUVs[s].UV,
+                            decalType.FringeTransitionUVs[s].Bounds);
+                    }
+                }
 
-                                    var newTints = new Color[4];
-                                    newTints[FringeIndicies[s, 0]] = vertexTint[FringeIndicies[s, 4]];
-                                    newTints[FringeIndicies[s, 1]] = vertexTint[FringeIndicies[s, 4]];
-                                    newTints[FringeIndicies[s, 2]] = vertexTint[FringeIndicies[s, 5]];
-                                    newTints[FringeIndicies[s, 3]] = vertexTint[FringeIndicies[s, 5]];
+                for (var s = 0; s < 4; ++s)
+                {
+                    var neighborCoord = V.Coordinate + VoxelHelpers.DiagonalNeighbors2D[s];
+                    var handle = new VoxelHandle(Chunk.Manager.ChunkData, neighborCoord);
 
-                                    AddTopFaceGeometry(Into,
-                                        AmbientScratchSpace, Primitive,
-                                        faceDescriptor,
-                                        newPositions,
-                                        newColors,
-                                        newTints,
-                                        SideFringeUVScales[s],
-                                        decalType.FringeTransitionUVs[s].UV,
-                                        decalType.FringeTransitionUVs[s].Bounds);
-                                }
-                            }
-                        }
+                    if (handle.IsValid)
+                    {
+                        if (!handle.IsEmpty && handle.Decal != 0 && DecalLibrary.GetDecalType((byte)handle.Decal).FringePrecedence >= decalType.FringePrecedence)
+                            continue;
 
-                        for (var s = 0; s < 4; ++s)
-                        {
-                            var neighborCoord = V.Coordinate + VoxelHelpers.DiagonalNeighbors2D[s];
-                            var handle = new VoxelHandle(Chunk.Manager.ChunkData, neighborCoord);
+                        var manhattanA = new VoxelHandle(Chunk.Manager.ChunkData,
+                            V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[s]);
+                        if (!manhattanA.IsValid || manhattanA.Decal == V.Decal)
+                            continue;
 
-                            if (handle.IsValid)
-                            {
-                                if (!handle.IsEmpty && handle.Decal != 0 && DecalLibrary.GetDecalType((byte)handle.Decal).FringePrecedence >= decalType.FringePrecedence)
-                                        continue;
+                        manhattanA = new VoxelHandle(Chunk.Manager.ChunkData,
+                            V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[FringeIndicies[4 + s, 5]]);
+                        if (!manhattanA.IsValid || manhattanA.Decal == V.Decal)
+                            continue;
 
-                                var manhattanA = new VoxelHandle(Chunk.Manager.ChunkData,
-                                    V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[s]);
-                                if (!manhattanA.IsValid || manhattanA.Decal == V.Decal)
-                                    continue;
+                        // Twizzle vertex positions.
+                        var newPositions = new Vector3[4];
+                        var pivot = vertexPositions[FringeIndicies[4 + s, 4]];
+                        var nDelta = VoxelHelpers.DiagonalNeighbors2D[s].AsVector3();
 
-                                manhattanA = new VoxelHandle(Chunk.Manager.ChunkData,
-                                    V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[FringeIndicies[4 + s, 5]]);
-                                if (!manhattanA.IsValid || manhattanA.Decal == V.Decal)
-                                    continue;
+                        newPositions[FringeIndicies[4 + s, 0]] = pivot;
+                        newPositions[FringeIndicies[4 + s, 1]] = pivot + new Vector3(nDelta.X * 0.5f, 0, 0);
+                        newPositions[FringeIndicies[4 + s, 2]] = pivot + new Vector3(nDelta.X * 0.5f, 0, nDelta.Z * 0.5f);
+                        newPositions[FringeIndicies[4 + s, 3]] = pivot + new Vector3(0, 0, nDelta.Z * 0.5f);
 
-                                // Twizzle vertex positions.
-                                var newPositions = new Vector3[4];
-                                var pivot = vertexPositions[FringeIndicies[4 + s, 4]];
-                                var nDelta = VoxelHelpers.DiagonalNeighbors2D[s].AsVector3();
+                        var slopeTweak = new Vector3(0.0f, 0.0f, 0.0f);
+                        if (handle.IsEmpty)
+                            slopeTweak.Y = -0.5f;
+                        else
+                            slopeTweak.Y = 0.125f;
 
-                                newPositions[FringeIndicies[4 + s, 0]] = pivot;
-                                newPositions[FringeIndicies[4 + s, 1]] = pivot + new Vector3(nDelta.X * 0.5f, 0, 0);
-                                newPositions[FringeIndicies[4 + s, 2]] = pivot + new Vector3(nDelta.X * 0.5f, 0, nDelta.Z * 0.5f);
-                                newPositions[FringeIndicies[4 + s, 3]] = pivot + new Vector3(0, 0, nDelta.Z * 0.5f);
+                        newPositions[FringeIndicies[4 + s, 1]] += slopeTweak;
+                        newPositions[FringeIndicies[4 + s, 2]] += slopeTweak;
+                        newPositions[FringeIndicies[4 + s, 3]] += slopeTweak;
 
-                                var slopeTweak = new Vector3(0.0f, 0.0f, 0.0f);
-                                if (handle.IsEmpty)
-                                    slopeTweak.Y = -0.5f;
-                                else
-                                    slopeTweak.Y = 0.125f;
+                        var newColors = new VertexColorInfo[4];
+                        newColors[FringeIndicies[4 + s, 0]] = vertexColors[FringeIndicies[4 + s, 4]];
+                        newColors[FringeIndicies[4 + s, 1]] = vertexColors[FringeIndicies[4 + s, 4]];
+                        newColors[FringeIndicies[4 + s, 2]] = vertexColors[FringeIndicies[4 + s, 4]];
+                        newColors[FringeIndicies[4 + s, 3]] = vertexColors[FringeIndicies[4 + s, 4]];
 
-                                newPositions[FringeIndicies[4 + s, 1]] += slopeTweak;
-                                newPositions[FringeIndicies[4 + s, 2]] += slopeTweak;
-                                newPositions[FringeIndicies[4 + s, 3]] += slopeTweak;
+                        var newTints = new Color[4];
+                        newTints[FringeIndicies[4 + s, 0]] = vertexTint[FringeIndicies[4 + s, 4]];
+                        newTints[FringeIndicies[4 + s, 1]] = vertexTint[FringeIndicies[4 + s, 4]];
+                        newTints[FringeIndicies[4 + s, 2]] = vertexTint[FringeIndicies[4 + s, 4]];
+                        newTints[FringeIndicies[4 + s, 3]] = vertexTint[FringeIndicies[4 + s, 4]];
 
-                                var newColors = new VertexColorInfo[4];
-                                newColors[FringeIndicies[4 + s, 0]] = vertexColors[FringeIndicies[4 + s, 4]];
-                                newColors[FringeIndicies[4 + s, 1]] = vertexColors[FringeIndicies[4 + s, 4]];
-                                newColors[FringeIndicies[4 + s, 2]] = vertexColors[FringeIndicies[4 + s, 4]];
-                                newColors[FringeIndicies[4 + s, 3]] = vertexColors[FringeIndicies[4 + s, 4]];
-
-                                var newTints = new Color[4];
-                                newTints[FringeIndicies[4 + s, 0]] = vertexTint[FringeIndicies[4 + s, 4]];
-                                newTints[FringeIndicies[4 + s, 1]] = vertexTint[FringeIndicies[4 + s, 4]];
-                                newTints[FringeIndicies[4 + s, 2]] = vertexTint[FringeIndicies[4 + s, 4]];
-                                newTints[FringeIndicies[4 + s, 3]] = vertexTint[FringeIndicies[4 + s, 4]];
-
-                                AddTopFaceGeometry(Into,
-                                    AmbientScratchSpace, Primitive,
-                                    faceDescriptor,
-                                    newPositions,
-                                    newColors,
-                                    newTints,
-                                    new Vector2(0.5f, 0.5f),
-                                    decalType.FringeTransitionUVs[4 + s].UV,
-                                    decalType.FringeTransitionUVs[4 + s].Bounds);
-                            }
-                        }
+                        AddTopFaceGeometry(Into,
+                            AmbientScratchSpace, Primitive,
+                            faceDescriptor,
+                            newPositions,
+                            newColors,
+                            newTints,
+                            new Vector2(0.5f, 0.5f),
+                            decalType.FringeTransitionUVs[4 + s].UV,
+                            decalType.FringeTransitionUVs[4 + s].Bounds);
                     }
                 }
             }
@@ -650,7 +647,6 @@ namespace DwarfCorp
 
                 for (int faceVertex = 0; faceVertex < faceDescriptor.VertexCount; faceVertex++)
                 {
-
                     Into.AddVertex(new ExtendedVertex(
                         vertexPositions[faceVertex] + VertexNoise.GetNoiseVectorFromRepeatingTexture(vertexPositions[faceVertex]),
                         new Color(0, 0, 0, 255),
@@ -723,7 +719,7 @@ namespace DwarfCorp
         {
             var indexOffset = Into.VertexCount;
             var UV = new Vector2(Decal.Tile.X * (1.0f / 16.0f), Decal.Tile.Y * (1.0f / 16.0f));
-            var UVBounds = new Vector4(UV.X + 0.0001f, UV.Y + 0.0001f, UV.X + (1.0f / 16.0f) - 0.0001f, UV.Y + (1.0f / 16.0f) - 0.0001f);
+            var UVBounds = new Vector4(UV.X + 0.0001f, UV.Y + 0.0001f, UV.X + (1.0f / 16.0f) - 0.0002f, UV.Y + (1.0f / 16.0f) - 0.0002f);
 
             for (int faceVertex = 0; faceVertex < faceDescriptor.VertexCount; faceVertex++)
             {

@@ -62,6 +62,8 @@ namespace DwarfCorp
         public byte[] LiquidTypes;
         public byte[] Types;
 
+        // TODO: Save Decals
+
         public ChunkFile()
         {
         }
