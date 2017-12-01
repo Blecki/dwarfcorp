@@ -99,7 +99,7 @@ namespace DwarfCorp
             Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)) as Inventory;
 
             // Can these be spawned when the tree dies rather than when it is created?
-            for (int i = 0; i < treeSize * 10; i++)
+            for (int i = 0; i < treeSize * 2; i++)
             {
                 inventory.Resources.Add(new Inventory.InventoryItem()
                 {

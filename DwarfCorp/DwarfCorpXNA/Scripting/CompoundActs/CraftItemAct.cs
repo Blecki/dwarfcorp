@@ -90,7 +90,7 @@ namespace DwarfCorp
         {
             if (!Item.HasResources && Item.ResourcesReservedFor == Agent)
             {
-                Creature.Inventory.RemoveAndCreateWithToss(Item.ItemType.SelectedResources, pos);
+                Creature.Inventory.RemoveAndCreateWithToss(Item.ItemType.SelectedResources, pos, Inventory.RestockType.None);
                 Item.HasResources = true;
             }
             yield return Status.Success;
@@ -307,9 +307,9 @@ namespace DwarfCorp
                     Tree = new Sequence(
                         getResources,
                         new Domain(ResourceStateValid, new Sequence(
-                            new Wrap(() => DestroyResources(Creature.AI.Position + MathFunctions.RandVector3Cube() * 0.5f)),
+                            new Wrap(() => DestroyResources(Creature.Physics.Position + MathFunctions.RandVector3Cube() * 0.5f)),
                             new Wrap(WaitForResources) { Name = "Wait for resources." },
-                            new Wrap(() => Creature.HitAndWait(time, true, () => Creature.AI.Position)) { Name = "Construct object."},
+                            new Wrap(() => Creature.HitAndWait(time, true, () => Creature.Physics.Position)) { Name = "Construct object."},
                             new Wrap(CreateResources))
                         )
                     ) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false);

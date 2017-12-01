@@ -110,6 +110,7 @@ namespace DwarfCorp
 
         public static void RestockAllImmediately(this Creature agent)
         {
+            Dictionary<string, ResourceAmount> aggregatedResources = new Dictionary<string, ResourceAmount>();
             foreach (var resource in agent.Inventory.Resources)
             {
                 if (!resource.MarkedForRestock || agent.AI.GatherManager.StockOrders.Count == 0)
@@ -118,31 +119,46 @@ namespace DwarfCorp
                     {
                         resource.MarkedForRestock = true;
 
-                        agent.AI.AssignTask(new StockResourceTask(new ResourceAmount(resource.Resource))
+                        if (!aggregatedResources.ContainsKey(resource.Resource))
                         {
-                            Priority = Task.PriorityType.High
-                        });
+                            aggregatedResources[resource.Resource] = new ResourceAmount(resource.Resource, 0);
+                        }
+                        aggregatedResources[resource.Resource].NumResources++;
                     }
 
                 }
+            }
+
+            foreach(var resource in aggregatedResources)
+            {
+                agent.AI.AssignTask(new StockResourceTask(resource.Value)
+                {
+                    Priority = Task.PriorityType.High
+                });
             }
         }
 
         public static IEnumerable<Act.Status> RestockAll(this Creature agent)
         {
+            Dictionary<string, ResourceAmount> aggregatedResources = new Dictionary<string, ResourceAmount>();
             foreach (var resource in agent.Inventory.Resources)
             {
                 if (!resource.MarkedForRestock || agent.AI.GatherManager.StockOrders.Count == 0)
                 {
                     resource.MarkedForRestock = true;
-                    agent.AI.GatherManager.StockOrders.Add(new GatherManager.StockOrder()
+
+                    if (!aggregatedResources.ContainsKey(resource.Resource))
                     {
-                        Destination = null,
-                        Resource = new ResourceAmount(resource.Resource),
-                    });
+                        aggregatedResources[resource.Resource] = new ResourceAmount(resource.Resource, 0);
+                    }
+                    aggregatedResources[resource.Resource].NumResources++;
                 }
             }
 
+            foreach (var resource in aggregatedResources)
+            {
+                agent.AI.AssignTask(new StockResourceTask(resource.Value));
+            }
             yield return Act.Status.Success;
         }
 

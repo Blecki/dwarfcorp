@@ -36,6 +36,7 @@ namespace DwarfCorp
             Wrangle,
             Craft,
             MoveObjects,
+            DeconstructObjects,
             God
         }
 
@@ -217,6 +218,11 @@ namespace DwarfCorp
             };
 
             Tools[ToolMode.MoveObjects] = new MoveObjectTool()
+            {
+                Player = this
+            };
+
+            Tools[ToolMode.DeconstructObjects] = new DeconstructObjectTool()
             {
                 Player = this
             };

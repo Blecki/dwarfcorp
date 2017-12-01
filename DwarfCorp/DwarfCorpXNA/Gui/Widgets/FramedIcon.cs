@@ -209,7 +209,7 @@ namespace DwarfCorp.Gui.Widgets
                     .Colorize(new Vector4(1, 1, 1, 0.4f));
                 meshes.Add(stringMesh.
                     Translate(Rect.Left + 8 - (numberSize.Width / 2),
-                    Rect.Bottom - 8 - (numberSize.Height / 2)));
+                    Rect.Top + 8 - (numberSize.Height / 2)));
             }
 
             return Gui.Mesh.Merge(meshes.ToArray());

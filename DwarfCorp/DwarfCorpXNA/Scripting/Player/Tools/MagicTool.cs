@@ -94,7 +94,7 @@ namespace DwarfCorp
 
         public void Research(SpellTree.Node spell)
         {
-            List<CreatureAI> wizards = Faction.FilterMinionsWithCapability(Player.Faction.Minions, GameMaster.ToolMode.Magic);
+            List<CreatureAI> wizards = Faction.FilterMinionsWithCapability(Player.Faction.Minions, Task.TaskCategory.Research);
             var body = Player.Faction.FindNearestItemWithTags("Research", Vector3.Zero, false);
 
             if (body != null)

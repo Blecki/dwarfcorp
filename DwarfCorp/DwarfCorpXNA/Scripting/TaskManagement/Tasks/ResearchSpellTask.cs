@@ -12,11 +12,12 @@ namespace DwarfCorp
       
         public ResearchSpellTask()
         {
-
+            Category = TaskCategory.Research;
         }
 
         public ResearchSpellTask(string spell)
         {
+            Category = TaskCategory.Research;
             Spell = spell;
             Name = "Research " + Spell;
         }
@@ -28,7 +29,7 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (!agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.Magic))
+            if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Research))
                 return Feasibility.Infeasible;
 
             return !agent.World.Master.Spells.GetSpell(Spell).IsResearched ? Feasibility.Feasible : Feasibility.Infeasible;

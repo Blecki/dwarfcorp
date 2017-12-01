@@ -68,7 +68,8 @@ namespace DwarfCorp
                     assignedTasks.Add(new GuardZoneTask());
                 }
 
-                List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.World.Master.SelectedMinions, GameMaster.ToolMode.Gather);
+                List<CreatureAI> minions = 
+                    Faction.FilterMinionsWithCapability(Player.World.Master.SelectedMinions, Task.TaskCategory.Gather);
                 Player.TaskManager.AddTasks(assignedTasks);
                 //TaskManager.AssignTasks(assignedTasks, minions);
                 OnConfirm(minions);

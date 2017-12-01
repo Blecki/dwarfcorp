@@ -36,6 +36,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
@@ -50,7 +51,8 @@ namespace DwarfCorp
         public bool ColorAppplied = false;
         private bool entityLighting = GameSettings.Default.EntityLighting;
         public Color VertexColorTint { get; set; }
-
+        [JsonIgnore]
+        public Color OneShotTint = Color.White;
         public Tinter()
         {
             
@@ -103,16 +105,32 @@ namespace DwarfCorp
         public void ApplyTintingToEffect(Shader effect)
         {
             effect.LightRampTint = Tint;
-            effect.VertexColorTint = VertexColorTint;
+            var tintVec = VertexColorTint.ToVector4();
+            var oneShotvec = OneShotTint.ToVector4();
+            tintVec.X *= oneShotvec.X;
+            tintVec.Y *= oneShotvec.Y;
+            tintVec.Z *= oneShotvec.Z;
+            tintVec.W *= oneShotvec.W;
+            effect.VertexColorTint = new Color(tintVec);
+            OneShotTint = Color.White;
         }
     }
 
     public static class TintExtension
     {
-        public static void SetTintRecursive(this GameComponent component, Color color)
+        public static void SetTintRecursive(this GameComponent component, Color color, bool oneShot=false)
         {
             foreach (var sprite in component.EnumerateAll().OfType<Tinter>())
-                sprite.VertexColorTint = color;
+            {
+                if (!oneShot)
+                {
+                    sprite.VertexColorTint = color;
+                }
+                else
+                {
+                    sprite.OneShotTint = color;
+                }
+            }
         }
     }
 

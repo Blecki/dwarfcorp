@@ -201,12 +201,10 @@ namespace DwarfCorp
 
         void InitializeActions()
         {
-            Actions = new List<GameMaster.ToolMode>()
-            {
-                GameMaster.ToolMode.Gather,
-                GameMaster.ToolMode.Magic,
-                GameMaster.ToolMode.Attack
-            };
+            Actions =
+                Task.TaskCategory.Gather |
+                Task.TaskCategory.Research |
+                Task.TaskCategory.Attack;
         }
 
         void InitializeAnimations()

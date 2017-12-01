@@ -40,6 +40,7 @@ namespace DwarfCorp
         public Color Color;
         public bool ShouldDraw;
         public Color SelectionBufferColor;
+        public Color VertexColorTint;
 
         public NewInstanceData(
             NewInstanceManager Manager,
@@ -55,6 +56,7 @@ namespace DwarfCorp
             this.Transform = Transform;
             this.Color = Color;
             this.ShouldDraw = ShouldDraw;
+            this.VertexColorTint = Color.White;
             SelectionBufferColor = Color.Black;
         }
     }

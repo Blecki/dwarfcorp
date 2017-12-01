@@ -67,6 +67,14 @@ namespace DwarfCorp
             EntityToKill = entity;
             Priority = PriorityType.Urgent;
             AutoRetry = true;
+            if (type == KillType.Attack || type == KillType.Auto)
+            {
+                Category = TaskCategory.Attack;
+            }
+            else if (type == KillType.Chop)
+            {
+                Category = TaskCategory.Chop;
+            }
         }
 
         public override Task Clone()
@@ -135,11 +143,11 @@ namespace DwarfCorp
                 switch (Mode)
                 {
                     case KillType.Attack:
-                        if (!agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.Attack))
+                        if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Attack))
                             return Feasibility.Infeasible;
                         return agent.Faction.Designations.IsDesignation(EntityToKill, DesignationType.Attack) ? Feasibility.Feasible : Feasibility.Infeasible;
                     case KillType.Chop:
-                        if (!agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.Chop))
+                        if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Chop))
                             return Feasibility.Infeasible;
                         return agent.Faction.Designations.IsDesignation(EntityToKill, DesignationType.Chop) ? Feasibility.Feasible : Feasibility.Infeasible;
                     case KillType.Auto:

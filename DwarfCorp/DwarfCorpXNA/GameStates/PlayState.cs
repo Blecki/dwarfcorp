@@ -49,7 +49,6 @@ namespace DwarfCorp.GameStates
         private Gui.Widget TimeLabel;
         private Gui.Widget PausePanel;
         private MinimapFrame MinimapFrame;
-        //private Widget SelectedEmployeeName;
         private Gui.Widgets.MinimapRenderer MinimapRenderer;
         private Gui.Widgets.GameSpeedControls GameSpeedControls;
         private Widget PausedWidget;
@@ -60,8 +59,8 @@ namespace DwarfCorp.GameStates
         private FramedIcon EconomyIcon;
         private Timer AutoSaveTimer;
         private EmployeeInfo SelectedEmployeeInfo;
+        private AllowedTaskFilter AllowedTaskFilter;
         private Widget ContextMenu;
-        private CollapsableStack SidePanel;
         private Widget BottomBar;
         private Widget MinimapIcon;
 
@@ -353,6 +352,7 @@ namespace DwarfCorp.GameStates
                 if (MathFunctions.RandEvent(0.1f))
                 {
                     SelectedEmployeeInfo.Employee = Master.SelectedMinions[0];
+                    AllowedTaskFilter.Employee = Master.SelectedMinions[0];
                     //SelectedEmployeeName.Text = Master.SelectedMinions[0].Stats.FullName;
                 }
             }
@@ -360,6 +360,7 @@ namespace DwarfCorp.GameStates
             if (Master.SelectedMinions.Count != 1)
             {
                 SelectedEmployeeInfo.Employee = null;
+                AllowedTaskFilter.Employee = null;
                 //SelectedEmployeeName.Text = "No Employee Selected";
             }
 #endregion
@@ -448,7 +449,7 @@ namespace DwarfCorp.GameStates
             var bottomBackground = GuiRoot.RootItem.AddChild(new TrayBackground
             {
                 Corners = Scale9Corners.Top,
-                MinimumSize = new Point(0, 92),
+                MinimumSize = new Point(0, 102),
                 AutoLayout = AutoLayout.DockBottom
             });
 
@@ -465,7 +466,7 @@ namespace DwarfCorp.GameStates
             var secondBar = bottomBackground.AddChild(new Widget
             {
                 Transparent = true,
-                MinimumSize = new Point(0, 44),
+                MinimumSize = new Point(0, 54),
                 AutoLayout = AutoLayout.DockBottom,
                 InteriorMargin = new Margin(2,0,0,0),
                 Padding = new Margin(0,0,2,2)
@@ -591,6 +592,16 @@ namespace DwarfCorp.GameStates
                 OnLayout = (sender) => sender.Rect.Y += 4
             }) as MinimapFrame;
 
+            AllowedTaskFilter = GuiRoot.RootItem.AddChild(new AllowedTaskFilter
+            {
+                Hidden = true,
+                Border = "border-fancy",
+                Employee = null,
+                Tag = "selected-employee-allowable-tasks",
+                AutoLayout = AutoLayout.FloatBottomLeft,
+                MinimumSize = new Point(200, 200)
+            }) as AllowedTaskFilter;
+
             SelectedEmployeeInfo = GuiRoot.RootItem.AddChild(new EmployeeInfo
             {
                 Hidden = true,
@@ -648,6 +659,7 @@ namespace DwarfCorp.GameStates
                     {
                         MinimapFrame.Hidden = false;
                         SelectedEmployeeInfo.Hidden = true;
+                        AllowedTaskFilter.Hidden = true;
                         markerFilter.Hidden = true;
                     }
                     else
@@ -660,7 +672,7 @@ namespace DwarfCorp.GameStates
                 Corners = 0,
                 Transparent = true,
                 AutoLayout = Gui.AutoLayout.DockLeft,
-                SizeToGrid = new Point(3, 1),
+                SizeToGrid = new Point(4, 1),
                 ItemSource = new Gui.Widget[]
                         {
                             MinimapIcon,
@@ -677,6 +689,7 @@ namespace DwarfCorp.GameStates
                                    {
                                        MinimapFrame.Hidden = true;
                                        SelectedEmployeeInfo.Hidden = false;
+                                       AllowedTaskFilter.Hidden = true;
                                        markerFilter.Hidden = true;
                                    }
                                    else
@@ -697,10 +710,32 @@ namespace DwarfCorp.GameStates
                                    {
                                        MinimapFrame.Hidden = true;
                                        SelectedEmployeeInfo.Hidden = true;
+                                       AllowedTaskFilter.Hidden = true;
                                        markerFilter.Hidden = false;
                                    }
                                    else
                                        markerFilter.Hidden = true;
+                               }
+                            },
+
+                            new FramedIcon
+                            {
+                               Icon = null,
+                               Text = "Tasks",
+                               TextHorizontalAlign = HorizontalAlign.Center,
+                               TextVerticalAlign = VerticalAlign.Center,
+                               EnabledTextColor = Vector4.One,
+                               OnClick = (sender, args) =>
+                               {
+                                   if (AllowedTaskFilter.Hidden)
+                                   {
+                                       MinimapFrame.Hidden = true;
+                                       SelectedEmployeeInfo.Hidden = true;
+                                       AllowedTaskFilter.Hidden = false;
+                                       markerFilter.Hidden = true;
+                                   }
+                                   else
+                                       AllowedTaskFilter.Hidden = true;
                                }
                             }
                         },
@@ -956,6 +991,8 @@ namespace DwarfCorp.GameStates
             var icon_SelectTool = new FlatToolTray.Icon
             {
                 Tag = "select",
+                Text = "Select",
+                TextVerticalAlign = VerticalAlign.Below,
                 Icon = new Gui.TileReference("tool-icons", 5),
                 OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.SelectUnits),
                 Tooltip = "Select dwarves",
@@ -1020,13 +1057,28 @@ namespace DwarfCorp.GameStates
 
             var icon_moveObjects = new FlatToolTray.Icon()
             {
-                Text = "",
+                Text = "Move",
+                TextVerticalAlign = VerticalAlign.Below,
                 Tooltip = "Move/Destroy objects",
                 Icon = new TileReference("mouse", 9),
                 OnClick = (sender, args) =>
                 {
                     World.ShowToolPopup("Left click objects to move them.\nRight click to destroy them.");
                     Master.ChangeTool(GameMaster.ToolMode.MoveObjects);
+                },
+                Behavior = FlatToolTray.IconBehavior.LeafIcon
+            };
+
+            var icon_destroyObjects = new FlatToolTray.Icon()
+            {
+                Text = "Destroy",
+                TextVerticalAlign = VerticalAlign.Below,
+                Tooltip = "Deconstruct objects",
+                Icon = new TileReference("round-buttons", 5),
+                OnClick = (sender, args) =>
+                {
+                    World.ShowToolPopup("Left click objects to destroy them.");
+                    Master.ChangeTool(GameMaster.ToolMode.DeconstructObjects);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
@@ -1312,8 +1364,6 @@ namespace DwarfCorp.GameStates
                                 {
                                     assignments.Add(new CraftResourceTask(data));
                                 }
-                                var minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions,
-                                    GameMaster.ToolMode.Craft);
                                 World.Master.TaskManager.AddTasks(assignments);
                                 World.ShowToolPopup(data.CurrentVerb + " " + data.NumRepeats + " " + data.Name);
                                 World.Tutorial("build crafts");
@@ -1359,6 +1409,7 @@ namespace DwarfCorp.GameStates
                     {
                         icon_menu_BuildTools_Return,
                         icon_moveObjects,
+                        icon_destroyObjects,
                         icon_BuildRoom,
                         icon_BuildWall,
                         icon_BuildFloor,
@@ -1375,12 +1426,14 @@ namespace DwarfCorp.GameStates
             var icon_BuildTool = new FlatToolTray.Icon
             {
                 Tag = "build",
+                Text = "Build",
+                TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 2),
                 KeepChildVisible = true,
                 OnConstruct = (sender) =>
                 {
                     AddToolbarIcon(sender, () => Master.Faction.Minions.Any(minion =>
-                        minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.BuildZone)));
+                        minion.Stats.IsTaskAllowed(Task.TaskCategory.BuildZone)));
                     AddToolSelectIcon(GameMaster.ToolMode.BuildZone, sender);
                 },
                 Tooltip = "Build",
@@ -1428,8 +1481,6 @@ namespace DwarfCorp.GameStates
                                 data.SelectedResources = buildInfo.GetSelectedResources();
                                 data.NumRepeats = buildInfo.GetNumRepeats();
                                 List<Task> assignments = new List<Task> { new CraftResourceTask(data) };
-                                var minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions,
-                                    GameMaster.ToolMode.Cook);
                                 World.Master.TaskManager.AddTasks(assignments);
                                 World.ShowToolPopup(data.CurrentVerb + " one " + data.Name);
                                 World.Tutorial("cook");
@@ -1445,6 +1496,8 @@ namespace DwarfCorp.GameStates
             var icon_CookTool = new FlatToolTray.Icon
             {
                 Tag = "cook",
+                Text = "Cook",
+                TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 27),
                 KeepChildVisible = true,
                 Tooltip = "Cook food",
@@ -1452,7 +1505,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     Master.Faction.Minions.Any(minion =>
-                        minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Cook)));
+                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Cook)));
                     AddToolSelectIcon(GameMaster.ToolMode.Cook, sender);
                 },
                 ReplacementMenu = menu_Edibles,
@@ -1466,6 +1519,8 @@ namespace DwarfCorp.GameStates
             var icon_DigTool = new FlatToolTray.Icon
             {
                 Tag = "dig",
+                Text = "Dig",
+                TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 0),
                 Tooltip = "Dig",
                 OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Dig),
@@ -1473,7 +1528,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     Master.Faction.Minions.Any(minion =>
-                        minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Dig)));
+                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Dig)));
                     AddToolSelectIcon(GameMaster.ToolMode.Dig, sender);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
@@ -1486,6 +1541,8 @@ namespace DwarfCorp.GameStates
             var icon_GatherTool = new FlatToolTray.Icon
             {
                 Tag = "gather",
+                Text= "Pick",
+                TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 6),
                 Tooltip = "Gather",
                 OnClick = (sender, args) => { ChangeTool(GameMaster.ToolMode.Gather); World.Tutorial("gather"); },
@@ -1493,7 +1550,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     Master.Faction.Minions.Any(minion =>
-                        minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Gather)));
+                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Gather)));
                     AddToolSelectIcon(GameMaster.ToolMode.Gather, sender);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
@@ -1506,6 +1563,8 @@ namespace DwarfCorp.GameStates
             var icon_ChopTool = new FlatToolTray.Icon
             {
                 Tag = "chop",
+                Text = "Chop",
+                TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 1),
                 Tooltip = "Chop trees",
                 OnClick = (sender, args) => { ChangeTool(GameMaster.ToolMode.Chop); World.Tutorial("chop"); },
@@ -1513,7 +1572,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     Master.Faction.Minions.Any(minion =>
-                        minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Chop)));
+                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Chop)));
                     AddToolSelectIcon(GameMaster.ToolMode.Chop, sender);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
@@ -1526,6 +1585,8 @@ namespace DwarfCorp.GameStates
             var icon_GuardTool = new FlatToolTray.Icon
             {
                 Tag = "guard",
+                Text = "Guard",
+                TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 4),
                 Tooltip = "Guard",
                 OnClick = (sender, args) => { ChangeTool(GameMaster.ToolMode.Guard); World.Tutorial("guard"); },
@@ -1533,7 +1594,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     Master.Faction.Minions.Any(minion =>
-                        minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Guard)));
+                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Guard)));
                     AddToolSelectIcon(GameMaster.ToolMode.Guard, sender);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
@@ -1546,6 +1607,8 @@ namespace DwarfCorp.GameStates
             var icon_AttackTool = new FlatToolTray.Icon
             {
                 Tag = "attack",
+                Text = "Hunt",
+                TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 3),
                 Tooltip = "Attack",
                 OnClick = (sender, args) => { ChangeTool(GameMaster.ToolMode.Attack); World.Tutorial("attack"); },
@@ -1553,7 +1616,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     Master.Faction.Minions.Any(minion =>
-                        minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack)));
+                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Attack)));
                     AddToolSelectIcon(GameMaster.ToolMode.Attack, sender);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
@@ -1743,7 +1806,8 @@ namespace DwarfCorp.GameStates
             {
                 Icon = new Gui.TileReference("tool-icons", 13),
                 Tooltip = "Farm",
-
+                Text = "Farm",
+                TextVerticalAlign = VerticalAlign.Below,
                 KeepChildVisible = true,
                 OnConstruct = (sender) =>
                 {
@@ -1810,6 +1874,8 @@ namespace DwarfCorp.GameStates
 
             var icon_Cast = new FlatToolTray.Icon
             {
+                Text = "Cast",
+                TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 14),
                 Tooltip = "Cast",
                 KeepChildVisible = true,
@@ -1870,6 +1936,8 @@ namespace DwarfCorp.GameStates
 
             var icon_Research = new FlatToolTray.Icon
             {
+                Text = "Research",
+                TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 14),
                 Tooltip = "Research",
                 KeepChildVisible = true,
@@ -1904,6 +1972,8 @@ namespace DwarfCorp.GameStates
 
             var icon_MagicTool = new FlatToolTray.Icon
             {
+                Text = "Magic",
+                TextVerticalAlign = VerticalAlign.Below,
                 Icon = new TileReference("tool-icons", 14),
                 Tooltip = "Magic",
                 //OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Magic),
@@ -1911,7 +1981,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                         Master.Faction.Minions.Any(minion =>
-                            minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Magic)));
+                            minion.Stats.IsTaskAllowed(Task.TaskCategory.Research)));
                     AddToolSelectIcon(GameMaster.ToolMode.Magic, sender);
                 },
                 KeepChildVisible = true,

@@ -50,6 +50,7 @@ namespace DwarfCorp
         public GatherItemTask()
         {
             Priority = PriorityType.Low;
+            Category = TaskCategory.Gather;
         }
 
         public GatherItemTask(Body entity)
@@ -57,6 +58,7 @@ namespace DwarfCorp
             EntityToGather = entity;
             Name = "Gather Entity: " + entity.Name + " " + entity.GlobalID;
             Priority = PriorityType.Low;
+            Category = TaskCategory.Gather;
         }
 
         public override Task Clone()

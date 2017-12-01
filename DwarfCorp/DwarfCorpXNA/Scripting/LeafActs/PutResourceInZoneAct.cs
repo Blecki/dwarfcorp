@@ -114,7 +114,7 @@ namespace DwarfCorp
                 yield break;
             }
 
-            List<Body> createdItems = Creature.Inventory.RemoveAndCreate(Resource);
+            List<Body> createdItems = Creature.Inventory.RemoveAndCreate(Resource, Inventory.RestockType.RestockResource);
             if(createdItems.Count == 0)
             {
                 yield return Status.Success;
@@ -124,26 +124,20 @@ namespace DwarfCorp
             {
                 if (Zone.AddItem(b))
                 {
-                    Creature.NoiseMaker.MakeNoise("Stockpile", Creature.AI.Position);
                     Creature.Stats.NumItemsGathered++;
-                    Creature.CurrentCharacterMode = CharacterMode.Attacking;
-                    Creature.Sprite.ResetAnimations(CharacterMode.Attacking);
-                    Creature.Sprite.PlayAnimations(CharacterMode.Attacking);
-
-                    while (!Creature.Sprite.CurrentAnimation.IsDone())
-                    {
-                        yield return Status.Running;
-                    }
-
-                    yield return Status.Running;
                 }
-                else
-                {
-                    Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
-                    Creature.CurrentCharacterMode = CharacterMode.Idle;
-                    yield return Status.Fail;
-                }   
             }
+
+            Creature.NoiseMaker.MakeNoise("Stockpile", Creature.AI.Position);
+            Creature.CurrentCharacterMode = CharacterMode.Attacking;
+            Creature.Sprite.ResetAnimations(CharacterMode.Attacking);
+            Creature.Sprite.PlayAnimations(CharacterMode.Attacking);
+            while (!Creature.Sprite.CurrentAnimation.IsDone())
+            {
+                yield return Status.Running;
+            }
+
+            yield return Status.Running;
             Creature.CurrentCharacterMode = CharacterMode.Idle;
             yield return Status.Success;
         }

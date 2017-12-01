@@ -46,8 +46,10 @@ namespace DwarfCorp
     {
         public GuardZoneTask()
         {
+            Category = TaskCategory.Guard;
             Name = "Guard Area";
             Priority = PriorityType.Medium;
+            MaxAssignable = 10;
         }
 
         public override Task Clone()

@@ -197,6 +197,7 @@
     <Compile Include="Entities\Projectiles\MudProjectile.cs" />
     <Compile Include="Entities\Projectiles\WebProjectile.cs" />
     <Compile Include="Gui\Widgets\CollapsableStack.cs" />
+    <Compile Include="Gui\Widgets\AllowedTaskFilter.cs" />
     <Compile Include="Gui\Widgets\DesignationFilter.cs" />
     <Compile Include="Gui\Widgets\TrayBackground.cs" />
     <Compile Include="Scripting\Factions\DesignationType.cs" />

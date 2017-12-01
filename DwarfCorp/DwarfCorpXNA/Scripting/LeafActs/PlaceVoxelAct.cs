@@ -92,7 +92,8 @@ namespace DwarfCorp
                 }
             }
 
-            var grabbed = Creature.Inventory.RemoveAndCreate(Resource).FirstOrDefault();
+            var grabbed = Creature.Inventory.RemoveAndCreate(Resource, 
+                                                             Inventory.RestockType.None).FirstOrDefault();
 
             if(grabbed == null)
             {

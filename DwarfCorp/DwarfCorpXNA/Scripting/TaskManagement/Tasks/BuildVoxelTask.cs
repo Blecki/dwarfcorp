@@ -52,11 +52,13 @@ namespace DwarfCorp
 
         public BuildVoxelTask()
         {
+            Category = TaskCategory.BuildBlock;
             Priority = PriorityType.Low;
         }
 
         public BuildVoxelTask(VoxelHandle voxel, string type)
         {
+            Category = TaskCategory.BuildBlock;
             Name = "Put voxel of type: " + type + " on voxel " + voxel.Coordinate;
             Voxel = voxel;
             VoxType = type;
@@ -65,7 +67,7 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (!agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.BuildWall))
+            if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.BuildBlock))
                 return Feasibility.Infeasible;
 
             return Voxel.IsValid && agent.Faction.Designations.IsVoxelDesignation(Voxel, DesignationType.Put) ? Feasibility.Feasible : Feasibility.Infeasible;

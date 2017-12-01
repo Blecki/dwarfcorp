@@ -49,10 +49,12 @@ namespace DwarfCorp
 
         public WrangleAnimalTask()
         {
-            
+            Category = TaskCategory.Wrangle;    
         }
+
         public WrangleAnimalTask(Creature animal)
         {
+            Category = TaskCategory.Wrangle;
             Animal = animal;
             Name = "Wrangle animal" + animal.GlobalID;
             AutoRetry = true;
@@ -138,7 +140,7 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (!agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.Wrangle))
+            if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Wrangle))
                 return Feasibility.Infeasible;
 
             return Animal != null

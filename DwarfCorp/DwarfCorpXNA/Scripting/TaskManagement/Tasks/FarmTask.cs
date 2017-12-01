@@ -89,8 +89,8 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (!agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.Till) &&
-                !agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.Plant))
+            if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.TillSoil) &&
+                !agent.Stats.IsTaskAllowed(Task.TaskCategory.Plant))
                 return Feasibility.Infeasible;
 
             bool farmValid =  FarmToWork != null && !FarmToWork.IsCanceled;
@@ -127,7 +127,7 @@ namespace DwarfCorp
 
         public override Task Clone()
         {
-            return new FarmTask() { RequiredResources = RequiredResources, FarmToWork = FarmToWork, Name = Name, Mode = Mode, Plant = Plant, Priority = Priority };
+            return new FarmTask() { RequiredResources = RequiredResources, FarmToWork = FarmToWork, Name = Name, Category = Category, Mode = Mode, Plant = Plant, Priority = Priority };
         }
     }
 }

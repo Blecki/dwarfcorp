@@ -49,12 +49,14 @@ namespace DwarfCorp
 
         public BuildRoomTask()
         {
+            Category = TaskCategory.BuildZone;
             Priority = PriorityType.High;
             MaxAssignable = 3;
         }
 
         public BuildRoomTask(BuildRoomOrder zone)
         {
+            Category = TaskCategory.BuildZone;
             MaxAssignable = 3;
             Name = "Build Room " + zone.ToBuild.RoomData.Name + zone.ToBuild.ID;
             Zone = zone;
@@ -68,7 +70,7 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            return agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.BuildZone) ? Feasibility.Feasible : Feasibility.Infeasible;
+            return agent.Stats.IsTaskAllowed(Task.TaskCategory.BuildZone) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override Act CreateScript(Creature creature)

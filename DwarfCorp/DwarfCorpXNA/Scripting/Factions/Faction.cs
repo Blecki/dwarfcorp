@@ -155,9 +155,9 @@ namespace DwarfCorp
             return q;
         }
 
-        public static List<CreatureAI> FilterMinionsWithCapability(List<CreatureAI> minions, GameMaster.ToolMode action)
+        public static List<CreatureAI> FilterMinionsWithCapability(List<CreatureAI> minions, Task.TaskCategory action)
         {
-            return minions.Where(creature => creature.Stats.CurrentClass.HasAction(action)).ToList();
+            return minions.Where(creature => creature.Stats.IsTaskAllowed(action)).ToList();
         }
 
         public void Update(DwarfTime time)
@@ -713,6 +713,7 @@ namespace DwarfCorp
             System.Diagnostics.Debug.Assert(newMinion != null);
 
             newMinion.Stats.CurrentClass = currentApplicant.Class;
+            newMinion.Stats.AllowedTasks = currentApplicant.Class.Actions;
             newMinion.Stats.LevelIndex = currentApplicant.Level.Index - 1;
             newMinion.Stats.LevelUp();
             newMinion.Stats.FullName = currentApplicant.Name;

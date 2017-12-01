@@ -98,7 +98,7 @@ namespace DwarfCorp
 
             if (BuildRoom.ResourcesReservedFor == Agent)
             {
-                Agent.Creature.Inventory.Remove(Resources);
+                Agent.Creature.Inventory.Remove(Resources, Inventory.RestockType.None);
                 BuildRoom.HasResources = true;
             }
             yield return Act.Status.Success;

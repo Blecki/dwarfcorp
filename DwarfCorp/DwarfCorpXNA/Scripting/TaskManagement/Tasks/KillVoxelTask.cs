@@ -51,6 +51,7 @@ namespace DwarfCorp
         {
             MaxAssignable = 3;
             Priority = PriorityType.Medium;
+            Category = TaskCategory.Dig;
         }
 
         public KillVoxelTask(VoxelHandle vox)
@@ -59,6 +60,7 @@ namespace DwarfCorp
             Name = "Mine Block " + vox.Coordinate;
             VoxelToKill = vox;
             Priority = PriorityType.Low;
+            Category = TaskCategory.Dig;
         }
 
         public override Task Clone()
@@ -79,7 +81,7 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (!agent.Stats.CurrentClass.Actions.Contains(GameMaster.ToolMode.Dig))
+            if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Dig))
                 return Feasibility.Infeasible;
 
             if (!VoxelToKill.IsValid || VoxelToKill.IsEmpty || VoxelToKill.Health <= 0)

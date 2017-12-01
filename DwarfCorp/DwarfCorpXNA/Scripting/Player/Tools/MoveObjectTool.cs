@@ -191,13 +191,6 @@ namespace DwarfCorp
                     SelectedBody.UpdateBoundingBox();
                 }
 
-                /*
-                foreach (var obj in Player.Faction.OwnedObjects)
-                {
-                    Drawer3D.DrawBox(obj.GetRotatedBoundingBox(), Color.White, 0.001f, false);
-                }
-                 */
-
                 var intersectsAnyOther =
                     Player.Faction.OwnedObjects.FirstOrDefault(
                         o => o != SelectedBody && o.Tags.Contains("Moveable") && o.GetRotatedBoundingBox().Intersects(SelectedBody.GetRotatedBoundingBox().Expand(-0.5f)));
@@ -297,4 +290,106 @@ namespace DwarfCorp
 
         }
     }
+
+
+    public class DeconstructObjectTool : PlayerTool
+    {
+        public DeconstructObjectTool()
+        {
+        }
+
+        public override void OnBegin()
+        {
+
+        }
+
+        public override void OnEnd()
+        {
+            Player.VoxSelector.Clear();
+        }
+
+
+        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        {
+            if (bodies.Count == 0)
+                return;
+
+            foreach (var body in bodies)
+            {
+                if (Player.Faction.OwnedObjects.Contains(body) && body.Tags.Any(tag => tag == "Moveable"))
+                {
+                    if (body.IsReserved)
+                    {
+                        Player.World.ShowToolPopup(string.Format("Can't move this {0}. It is being used.", body.Name));
+                        continue;
+                    }
+                    body.Delete();
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, body.Position,
+                    0.5f);
+                    if (CraftLibrary.CraftItems.ContainsKey(body.Name))
+                    {
+                        var item = CraftLibrary.CraftItems[body.Name];
+                        foreach (var resource in item.RequiredResources)
+                        {
+                            var tag = resource.ResourceType;
+                            var resourcesWithTag = ResourceLibrary.GetLeastValuableWithTag(tag);
+                            for (int i = 0; i < resource.NumResources; i++)
+                            {
+                                EntityFactory.CreateEntity<Body>(resourcesWithTag.ResourceName + " Resource",
+                                    MathFunctions.RandVector3Box(body.GetBoundingBox()));
+                            }
+                        }
+                    }
+                }
+            }
+            
+        }
+
+        public override void OnMouseOver(IEnumerable<Body> bodies)
+        {
+            DefaultOnMouseOver(bodies);
+
+            foreach (var body in bodies)
+            {
+                if (body.Tags.Contains("Moveable"))
+                {
+                    if (body.IsReserved)
+                    {
+                        Player.World.ShowTooltip("Can't destroy this this " + body.Name + "\nIt is being used.");
+                        continue;
+                    }
+                    Player.World.ShowTooltip("Left click to destroy this " + body.Name);
+                }
+            }
+        }
+
+        public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
+        {
+
+        }
+
+        public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
+        {
+
+        }
+
+        public override void Update(DwarfGame game, DwarfTime time)
+        {
+            if (Player.World.IsMouseOverGui)
+                Player.World.SetMouse(Player.World.MousePointer);
+            else
+                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 9));
+
+            Player.VoxSelector.Enabled = false;
+            Player.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+            Player.BodySelector.Enabled = true;
+            Player.BodySelector.AllowRightClickSelection = true;
+        }
+
+        public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
+        {
+
+        }
+    }
+
 }

@@ -65,7 +65,12 @@ namespace DwarfCorp
         public List<Attack> Attacks { get; set; }
         public List<Level> Levels { get; set; }
         public string Name { get; set; }
-        public List<GameMaster.ToolMode> Actions { get; set; } 
+        public Task.TaskCategory Actions = Task.TaskCategory.None;
+
+        public bool IsTaskAllowed(Task.TaskCategory TaskCategory)
+        {
+            return (Actions & TaskCategory) == TaskCategory;
+        }
 
         [JsonIgnore]
         public static Dictionary<string, EmployeeClass> Classes { get; set; } 
@@ -85,14 +90,11 @@ namespace DwarfCorp
         {
             Name = definition.Name;
             Levels = definition.Levels;
-            Actions = new List<GameMaster.ToolMode>();
             foreach (string s in definition.Actions)
             {
-                GameMaster.ToolMode value = GameMaster.ToolMode.SelectUnits;
+                var value = Task.TaskCategory.None;
                 if (Enum.TryParse(s, true, out value))
-                {
-                    Actions.Add(value);
-                }
+                    Actions |= value;
             }
 
             CompositeAnimation.Descriptor descriptor = FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(ContentPaths.GetFileAsString(definition.Animations));
@@ -129,11 +131,5 @@ namespace DwarfCorp
                 staticClassInitialized = true;
             }
         }
-
-        public bool HasAction(GameMaster.ToolMode action)
-        {
-            return Actions != null && Actions.Contains(action);
-        }
-
     }
 }
