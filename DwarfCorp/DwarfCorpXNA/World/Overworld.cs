@@ -851,7 +851,15 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        Color ci = displayMode == "Biomes"  && index != "Water" && index != "Sea" ? BiomeLibrary.Biomes[biome].MapColor : HeightColors[index];
+                        Color ci = Color.Black;
+                        if (displayMode == "Biomes" && index != "Water" && index != "Sea")
+                        {
+                            if ((int)biome < BiomeLibrary.Biomes.Count)
+                                ci = BiomeLibrary.Biomes[biome].MapColor;
+                                    }
+                                    else
+                            ci = HeightColors[index];
+
                         Color toDraw = new Color((float) (ci.R) * (h1 + 0.5f) / 255.0f, (float) (ci.G * (h1 + 0.5f)) / 255.0f, (float) (ci.B * (h1 + 0.5f)) / 255.0f);
                         worldData[ty * width + tx] = toDraw;
                     }
