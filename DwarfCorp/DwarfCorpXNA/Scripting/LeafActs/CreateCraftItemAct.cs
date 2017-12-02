@@ -71,6 +71,19 @@ namespace DwarfCorp
                 item.OrientToWalls();
             }
             item.Tags.Add("Moveable");
+
+            CraftDetails details = item.GetComponent<CraftDetails>();
+            
+            if (details == null)
+            {
+                item.AddChild(new CraftDetails()
+                {
+                    Resources = Item.ItemType.SelectedResources.ConvertAll(p => new ResourceAmount(p)),
+                    CraftType = Item.ItemType.Name
+                });
+
+            }
+
             Creature.Faction.OwnedObjects.Add(item);
             Creature.Manager.World.ParticleManager.Trigger("puff", Voxel.WorldPosition + Vector3.One * 0.5f, Color.White, 10);
             Creature.Faction.CraftBuilder.RemoveDesignation(Voxel);
