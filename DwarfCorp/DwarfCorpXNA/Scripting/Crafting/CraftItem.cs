@@ -112,6 +112,7 @@ namespace DwarfCorp
                 item.RequiredResources.Add(resource.CloneQuantity());
             }
             item.Prerequisites.AddRange(this.Prerequisites);
+            
             return item;
         }
     }

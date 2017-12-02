@@ -323,23 +323,9 @@ namespace DwarfCorp
                         Player.World.ShowToolPopup(string.Format("Can't move this {0}. It is being used.", body.Name));
                         continue;
                     }
-                    body.Delete();
+                    body.Die();
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, body.Position,
                     0.5f);
-                    if (CraftLibrary.CraftItems.ContainsKey(body.Name))
-                    {
-                        var item = CraftLibrary.CraftItems[body.Name];
-                        foreach (var resource in item.RequiredResources)
-                        {
-                            var tag = resource.ResourceType;
-                            var resourcesWithTag = ResourceLibrary.GetLeastValuableWithTag(tag);
-                            for (int i = 0; i < resource.NumResources; i++)
-                            {
-                                EntityFactory.CreateEntity<Body>(resourcesWithTag.ResourceName + " Resource",
-                                    MathFunctions.RandVector3Box(body.GetBoundingBox()));
-                            }
-                        }
-                    }
                 }
             }
             

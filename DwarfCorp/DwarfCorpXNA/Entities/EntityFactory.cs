@@ -169,9 +169,7 @@ namespace DwarfCorp
             RegisterEntity("Wooden Door", (position, data) => new Door(world.ComponentManager, position, world.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 1), 50));
             RegisterEntity("Metal Door", (position, data) => new Door(world.ComponentManager, position, world.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 8), 100));
             RegisterEntity("Stone Door", (position, data) => new Door(world.ComponentManager, position, world.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 8), 75));
-            RegisterEntity("Wooden Ladder", (position, data) => new Ladder(world.ComponentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 0)));
-            RegisterEntity("Stone Ladder", (position, data) => new Ladder(world.ComponentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 8)));
-            RegisterEntity("Metal Ladder", (position, data) => new Ladder(world.ComponentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 8)));
+            RegisterEntity("Ladder", (position, data) => new Ladder(world.ComponentManager, position, data.GetData<List<ResourceAmount>>("Resources", new List<ResourceAmount>() { new ResourceAmount(ResourceLibrary.ResourceType.Wood) })));
             RegisterEntity("RandTrinket", (position, data) => CreateRandomTrinket(world, position));
             RegisterEntity("RandFood", (position, data) => CreateRandomFood(world, position));
             RegisterEntity("Turret", (position, data) => new TurretTrap(world.ComponentManager, position, world.PlayerFaction));

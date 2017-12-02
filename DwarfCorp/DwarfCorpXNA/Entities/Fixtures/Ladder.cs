@@ -39,22 +39,45 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    public class Ladder : Fixture
+    public class Ladder : CraftedFixture
     {
+        protected static Dictionary<Resource.ResourceTags, Point> Sprites = new Dictionary<Resource.ResourceTags, Point>()
+        {
+            {
+                Resource.ResourceTags.Metal,
+                new Point(3, 8)
+            },
+            {
+                Resource.ResourceTags.Stone,
+                new Point(2, 8)
+            },
+            {
+                Resource.ResourceTags.Wood,
+                new Point(2, 0)
+            }
+        };
+
+        protected static Point DefaultSprite = new Point(2, 8);
+
+
         public Ladder()
         {
 
         }
 
-        public Ladder(ComponentManager manager, Vector3 position, SpriteSheet sprites, Point frame) :
-            base(manager, position, sprites, frame)
+        public Ladder(ComponentManager manager, Vector3 position, List<ResourceAmount> resourceType) :
+            base(manager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new FixtureCraftDetails(manager)
+            {
+                Resources = resourceType.ConvertAll(p => new ResourceAmount(p)),
+                Sprites = Ladder.Sprites,
+                DefaultSpriteFrame = Ladder.DefaultSprite
+            }, SimpleSprite.OrientMode.Fixed)
         {
-            AddToCollisionManager = true;
-            CollisionType = CollisionManager.CollisionType.Static;
-            
-            Name = "Ladder";
+            Name = resourceType[0].ResourceType + " Ladder";
             Tags.Add("Climbable");
             OrientToWalls();
+            AddToCollisionManager = true;
+            CollisionType = CollisionManager.CollisionType.Static;
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)

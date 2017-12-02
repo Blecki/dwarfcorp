@@ -109,14 +109,14 @@ namespace DwarfCorp
                     }
                 },
                 {
-                    "Wooden Ladder",
+                    "Ladder",
                     new CraftItem()
                     {
-                        Name = "Wooden Ladder",
+                        Name = "Ladder",
                         Description = "Allows dwarves to climb up and down",
                         RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
                         {
-                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Wood, 1)
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.HardMaterial, 1)
                         },
                         Icon = new Gui.TileReference("furniture", 2),
                         BaseCraftTime = 10,
@@ -124,6 +124,7 @@ namespace DwarfCorp
                         CraftLocation = ""
                     }
                 },
+                /*
                 {
                     "Stone Ladder",
                     new CraftItem()
@@ -156,6 +157,7 @@ namespace DwarfCorp
                         CraftLocation = ""
                     }
                 },
+                */
                 {
                     "Wooden Door",
                     new CraftItem()
