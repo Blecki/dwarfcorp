@@ -83,7 +83,7 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public Texture2D GetInstanceTexture(string asset)
+        public Texture2D GetInstanceTexture(string asset, bool cache=true)
         {
             if (AssetMap.ContainsValue(asset))
             {
@@ -92,7 +92,8 @@ namespace DwarfCorp
             try
             {
                 Texture2D toReturn = Content.Load<Texture2D>(asset);
-                AssetMap[toReturn] = asset;
+                if (cache)
+                    AssetMap[toReturn] = asset;
                 return toReturn;
             }
             catch (ContentLoadException exception)
@@ -103,7 +104,7 @@ namespace DwarfCorp
 
         }
 
-        public static Texture2D LoadInstanceTexture(string file)
+        public static Texture2D LoadInstanceTexture(string file, bool cache=true)
         {
             Texture2D texture = null;
             using(var stream = new FileStream(file, FileMode.Open))
@@ -116,7 +117,8 @@ namespace DwarfCorp
                 try
                 {
                     texture = Texture2D.FromStream(GameState.Game.GraphicsDevice, stream);
-                    AssetMap[texture] = file;
+                    if (cache)
+                        AssetMap[texture] = file;
                     return texture;
                 }
                 catch (Exception exception)

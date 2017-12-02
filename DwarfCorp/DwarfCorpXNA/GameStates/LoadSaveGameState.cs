@@ -29,7 +29,7 @@ namespace DwarfCorp.GameStates
                 if (screenshots.Length == 0)
                     return null;
                 else
-                    return TextureManager.LoadInstanceTexture(screenshots[0]);
+                    return TextureManager.LoadInstanceTexture(screenshots[0], false);
             };
 
             this.OnProceedClicked = (path) =>
