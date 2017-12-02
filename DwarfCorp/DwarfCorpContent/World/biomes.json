@@ -333,7 +333,7 @@
         "Depth" :  128
     }
     ],
-	"GrassDecal": "snow-grass",
+	"GrassDecal": "permafrost-grass",
     "ClumpGrass": false,
     "ClumpSize": 30.0,
     "ClumpTreshold": 0.75,

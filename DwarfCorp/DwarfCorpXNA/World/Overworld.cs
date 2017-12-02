@@ -675,8 +675,16 @@ namespace DwarfCorp
         {
             for (var x = 0; x < width; ++x)
                 for (var y = 0; y < height; ++y)
+                {
+                    if (map[x, y].Faction > 5)
+                    {
+                        var z = map[x,y].Faction;
+                        z += 1;
+                    }
+
                     worldData[(y * width) + x] = new Color(
                         map[x, y].Height_, map[x, y].Faction, (byte)map[x, y].Biome, map[x, y].Rainfall_);
+                }
         }
 
         public static void DecodeSaveTexture(
@@ -689,6 +697,12 @@ namespace DwarfCorp
                 for (var y = 0; y < height; ++y)
                 {
                     var color = worldData[(y * width) + x];
+                    if (color.G != 0)
+                    {
+                        var z = color.G;
+                        z += 1;
+                    }
+
                     map[x, y].Height_ = color.R;
                     map[x, y].Faction = color.G;
                     map[x, y].Biome = (Biome)color.B;
@@ -810,7 +824,7 @@ namespace DwarfCorp
 
                         Color ci = Color.DarkBlue;
 
-                        if (factionColor > 0)
+                        if (factionColor > 0 && factionColor <= NativeFactions.Count)
                         {
                             bool inside = x > 0 && x < width - 1 && y > 0 && y < height - 1;
                             ci = NativeFactions[factionColor - 1].PrimaryColor;
