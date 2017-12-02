@@ -76,11 +76,14 @@ namespace DwarfCorp
             
             if (details == null)
             {
-                item.AddChild(new CraftDetails()
+                item.AddChild(new CraftDetails(Creature.Manager)
                 {
                     Resources = Item.ItemType.SelectedResources.ConvertAll(p => new ResourceAmount(p)),
                     CraftType = Item.ItemType.Name
                 });
+
+                if (Item.ItemType.SelectedResources.Count > 0)
+                    item.Name = Item.ItemType.SelectedResources.FirstOrDefault().ResourceType + " " + item.Name;
 
             }
 
