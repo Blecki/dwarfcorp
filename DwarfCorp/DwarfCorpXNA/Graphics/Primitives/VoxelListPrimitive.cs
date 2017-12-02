@@ -719,7 +719,7 @@ namespace DwarfCorp
         {
             var indexOffset = Into.VertexCount;
             var UV = new Vector2(Decal.Tile.X * (1.0f / 16.0f), Decal.Tile.Y * (1.0f / 16.0f));
-            var UVBounds = new Vector4(UV.X + 0.0001f, UV.Y + 0.0001f, UV.X + (1.0f / 16.0f) - 0.0002f, UV.Y + (1.0f / 16.0f) - 0.0002f);
+            var UVBounds = new Vector4(UV.X + 0.001f, UV.Y + 0.001f, UV.X + (1.0f / 16.0f) - 0.001f, UV.Y + (1.0f / 16.0f) - 0.001f);
 
             for (int faceVertex = 0; faceVertex < faceDescriptor.VertexCount; faceVertex++)
             {

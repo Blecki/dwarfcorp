@@ -222,6 +222,21 @@ namespace DwarfCorp
             set
             {
                 _cache_Chunk.Data.Decals[_cache_Index] = value;
+                if (value == 0)
+                    _cache_Chunk.Data.DecalData[_cache_Index] = 0;
+                else
+                    _cache_Chunk.Data.DecalData[_cache_Index] = DecalLibrary.GetDecalType(value).InitialDataValue;
+                InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
+            }
+        }
+
+        [JsonIgnore]
+        public byte DecalData
+        {
+            get { return _cache_Chunk.Data.DecalData[_cache_Index]; }
+            set
+            {
+                _cache_Chunk.Data.DecalData[_cache_Index] = value;
                 InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
             }
         }
@@ -281,6 +296,7 @@ namespace DwarfCorp
             _cache_Chunk.Data.Types[_cache_Index] = (byte)NewType.ID;
             _cache_Chunk.Data.Health[_cache_Index] = (byte)NewType.StartingHealth;
             _cache_Chunk.Data.Decals[_cache_Index] = 0;
+            _cache_Chunk.Data.DecalData[_cache_Index] = 0;
 
             // Did we go from empty to filled or vice versa? Update filled counter.
             if (previous == 0 && NewType.ID != 0)
@@ -297,6 +313,10 @@ namespace DwarfCorp
         public void RawSetDecal(byte Decal)
         {
             _cache_Chunk.Data.Decals[_cache_Index] = Decal;
+            if (Decal == 0)
+                _cache_Chunk.Data.DecalData[_cache_Index] = 0;
+            else
+                _cache_Chunk.Data.DecalData[_cache_Index] = DecalLibrary.GetDecalType(Decal).InitialDataValue;
         }
 
         private void OnTypeSet(VoxelType NewType)

@@ -61,9 +61,9 @@ namespace DwarfCorp
         public byte[] Liquid;
         public byte[] LiquidTypes;
         public byte[] Types;
-
-        // TODO: Save Decals
-
+        public byte[] Decals;
+        public byte[] DecalData;
+        
         public ChunkFile()
         {
         }
@@ -75,6 +75,8 @@ namespace DwarfCorp
             LiquidTypes = new byte[VoxelConstants.ChunkVoxelCount];
             Liquid = new byte[VoxelConstants.ChunkVoxelCount];
             Explored = new bool[VoxelConstants.ChunkVoxelCount];
+            Decals = new byte[VoxelConstants.ChunkVoxelCount];
+            DecalData = new byte[VoxelConstants.ChunkVoxelCount];
             Origin = chunk.Origin;
             FillDataFromChunk(chunk);
         }
@@ -92,6 +94,8 @@ namespace DwarfCorp
             Origin = chunkFile.Origin;
             Types = chunkFile.Types;
             Explored = chunkFile.Explored;
+            Decals = chunkFile.Decals;
+            DecalData = chunkFile.DecalData;
         }
 
         public bool ReadFile(string filePath, bool isCompressed, bool isBinary)
@@ -155,6 +159,10 @@ namespace DwarfCorp
                 if ((LiquidType)LiquidTypes[i] != LiquidType.None)
                     c.Data.LiquidPresent[(i >> VoxelConstants.ZDivShift) >> VoxelConstants.XDivShift] += 1;
             }
+
+            Decals.CopyTo(c.Data.Decals, 0);
+            DecalData.CopyTo(c.Data.Decals, 0);
+
             c.CalculateInitialSunlight();
             return c;
         }
@@ -163,6 +171,8 @@ namespace DwarfCorp
         {
             chunk.Data.Types.CopyTo(Types, 0);
             chunk.Data.IsExplored.CopyTo(Explored, 0);
+            chunk.Data.Decals.CopyTo(Decals, 0);
+            chunk.Data.DecalData.CopyTo(DecalData, 0);
 
             for (var i = 0; i < VoxelConstants.ChunkVoxelCount; ++i)
             {

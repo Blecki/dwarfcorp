@@ -74,7 +74,7 @@ namespace DwarfCorp
 
         private VoxelSelectionType GetSelectionTypeBySelectionBoxValue(string arg)
         {
-            if (arg == "Delete Block" || arg.Contains("Build") || arg == "Kill Block" || arg == "Snow")
+            if (arg == "Delete Block" || arg.Contains("Build") || arg == "Kill Block" || arg.Contains("Decal"))
             {
                 return VoxelSelectionType.SelectFilled;
             }
@@ -120,6 +120,16 @@ namespace DwarfCorp
                         if (body != null)
                             body.PropogateTransforms();
                     }
+                }
+            }
+            else if (Command.Contains("Decal/"))
+            {
+                var type = DecalLibrary.GetDecalType(Command.Substring(6));
+                foreach (var vox in refs.Where(v => v.IsValid))
+                {
+                    var v = vox;
+                    if (!vox.IsEmpty)
+                        v.Decal = type.ID;
                 }
             }
             else
@@ -195,12 +205,7 @@ namespace DwarfCorp
                             }
                         }
                             break;
-                            case "Snow":
-                                {
-                                    var v = vox;
-                                    v.Decal = 1;
-                                }
-                                break;
+                          
                         case "Kill Things":
                         {
                             foreach(var comp in Player.World.CollisionManager.EnumerateIntersectingObjects(

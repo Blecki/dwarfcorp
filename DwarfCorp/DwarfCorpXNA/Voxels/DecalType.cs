@@ -32,9 +32,11 @@ namespace DwarfCorp
         public Point[] FringeTiles = null;
         [JsonIgnore]
         public FringeTileUV[] FringeTransitionUVs = null;
+
         public int FringePrecedence = 0;
         public String BecomeWhenSnowedOn = null;
-        public String BecomeWhenSnowMelts = null;
-        public int DecayTime = -1;
+        public String BecomeWhenDecays = null;
+        public bool Decay = false;
+        public byte InitialDataValue = 0;
     }
 }

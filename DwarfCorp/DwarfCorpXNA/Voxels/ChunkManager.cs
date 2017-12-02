@@ -102,6 +102,7 @@ namespace DwarfCorp
         private static readonly AutoResetEvent NeedsGenerationEvent = new AutoResetEvent(false);
 
         private readonly Timer generateChunksTimer = new Timer(0.5f, false, Timer.TimerMode.Real);
+        
 
         public BoundingBox Bounds { get; set; }
 
@@ -433,7 +434,6 @@ namespace DwarfCorp
             Splasher.Splash(gameTime, Water.GetSplashQueue());
             Splasher.HandleTransfers(gameTime, Water.GetTransferQueue());
 
-            // Todo: Use timer to not run this every time
             ChunkUpdate.RunUpdate(this);
 
             List<VoxelChangeEvent> localList = null;

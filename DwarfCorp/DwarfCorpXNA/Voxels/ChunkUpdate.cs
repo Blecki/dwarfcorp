@@ -41,21 +41,47 @@ namespace DwarfCorp
 {
     public class ChunkUpdate
     {
+        private static int CurrentUpdateChunk = 0;
+
         public static void RunUpdate(ChunkManager Chunks)
         {
-            foreach(var chunk in Chunks.ChunkData.GetChunkEnumerator())
-            {
-                DiscreteUpdate(chunk);
-                chunk.RebuildLiquids();
-            }
+            var chunk = Chunks.ChunkData.ChunkMap[CurrentUpdateChunk];
+            CurrentUpdateChunk += 1;
+            if (CurrentUpdateChunk >= Chunks.ChunkData.ChunkMap.Length)
+                CurrentUpdateChunk = 0;
+
+            UpdateChunk(chunk);
         }
 
-        private static void DiscreteUpdate(VoxelChunk chunk)
+        private static void UpdateChunk(VoxelChunk chunk)
         {
             for (var y = 0; y < VoxelConstants.ChunkSizeY; ++y)
             {
                 // Skip empty slices.
                 if (chunk.Data.VoxelsPresentInSlice[y] == 0) continue;
+
+                for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
+                    for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
+                    {
+                        var voxel = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
+
+                        if (voxel.Decal != 0)
+                        {
+                            var decal = DecalLibrary.GetDecalType(voxel.Decal);
+                            if (decal.Decay)
+                            {
+                                voxel.DecalData -= 1;
+                                if (voxel.DecalData == 0)
+                                {
+                                    var newDecal = DecalLibrary.GetDecalType(decal.BecomeWhenDecays);
+                                    if (newDecal != null)
+                                        voxel.Decal = newDecal.ID;
+                                    else
+                                        voxel.Decal = 0;
+                                }
+                            } 
+                        }
+                    }
             }
         }
     }

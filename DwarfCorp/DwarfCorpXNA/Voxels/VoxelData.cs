@@ -35,6 +35,7 @@ namespace DwarfCorp
                 SunColors = new byte[VoxelConstants.ChunkVoxelCount],
                 Types = new byte[VoxelConstants.ChunkVoxelCount],
                 Decals = new byte[VoxelConstants.ChunkVoxelCount],
+                DecalData = new byte[VoxelConstants.ChunkVoxelCount],
                 Water = new WaterCell[VoxelConstants.ChunkVoxelCount],
                 RampTypes = new RampType[VoxelConstants.ChunkVoxelCount],
 
