@@ -427,7 +427,7 @@ namespace DwarfCorp
                                 Vector3 endPos = pos;
                                 CraftDesignation newDesignation = new CraftDesignation()
                                 {
-                                    ItemType = CurrentCraftType,
+                                    ItemType = CurrentCraftType.Clone(),
                                     Location = r,
                                     WorkPile = new WorkPile(World.ComponentManager, startPos),
                                     Orientation = CurrentDesignation.Orientation,

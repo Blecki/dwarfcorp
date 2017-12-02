@@ -124,84 +124,18 @@ namespace DwarfCorp
                         CraftLocation = ""
                     }
                 },
-                /*
                 {
-                    "Stone Ladder",
+                    "Door",
                     new CraftItem()
                     {
-                        Name = "Stone Ladder",
-                        Description = "Allows dwarves to climb up and down",
-                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
-                        {
-                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Stone, 1)
-                        },
-                        Icon = new Gui.TileReference("furniture", 66),
-                        BaseCraftTime = 20,
-                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall},
-                        CraftLocation = ""
-                    }
-                },
-                {
-                    "Metal Ladder",
-                    new CraftItem()
-                    {
-                        Name = "Metal Ladder",
-                        Description = "Allows dwarves to climb up and down",
-                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
-                        {
-                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Metal, 1)
-                        },
-                        Icon = new Gui.TileReference("furniture", 67),
-                        BaseCraftTime = 30,
-                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall},
-                        CraftLocation = ""
-                    }
-                },
-                */
-                {
-                    "Wooden Door",
-                    new CraftItem()
-                    {
-                        Name = "Wooden Door",
+                        Name = "Door",
                         Description = "Keep monsters out, and dwarves in.",
                         RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
                         {
-                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Wood, 1)
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.HardMaterial, 1)
                         },
                         Icon = new Gui.TileReference("furniture", 11),
                         BaseCraftTime = 30,
-                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall},
-                        CraftLocation = ""
-                    }
-                },
-                {
-                    "Stone Door",
-                    new CraftItem()
-                    {
-                        Name = "Stone Door",
-                        Description = "Keep monsters out, and dwarves in.",
-                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
-                        {
-                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Stone, 1)
-                        },
-                        Icon = new Gui.TileReference("furniture", 64),
-                        BaseCraftTime = 30,
-                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall},
-                        CraftLocation = ""
-                    }
-                },
-                {
-                    "Metal Door",
-                    new CraftItem()
-                    {
-                        Name = "Metal Door",
-                        Description = "Keep monsters out, and dwarves in.",
-                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
-                        {
-                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Metal, 1)
-                        },
-                        Icon = new Gui.TileReference("furniture", 65),
-                        BaseCraftTime = 40,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall},
                         CraftLocation = ""
                     }
