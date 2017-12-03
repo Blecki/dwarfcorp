@@ -16,7 +16,7 @@ namespace DwarfCorp
         public bool IsBuilding = false;
 
         // The primitive everything will be based on.
-        private static readonly BoxPrimitive primitive = VoxelLibrary.GetPrimitive("water");
+        private static BoxPrimitive primitive = null;
 
         // Easy successor lookup.
         private static GlobalVoxelOffset[] faceDeltas = new GlobalVoxelOffset[6];
@@ -95,16 +95,17 @@ namespace DwarfCorp
             if (!StaticsInitialized)
             { 
 
-            faceDeltas[(int)BoxFace.Back] = new GlobalVoxelOffset(0, 0, 1);
-            faceDeltas[(int)BoxFace.Front] = new GlobalVoxelOffset(0, 0, -1);
-            faceDeltas[(int)BoxFace.Left] = new GlobalVoxelOffset(-1, 0, 0);
-            faceDeltas[(int)BoxFace.Right] = new GlobalVoxelOffset(1, 0, 0);
-            faceDeltas[(int)BoxFace.Top] = new GlobalVoxelOffset(0, 1, 0);
-            faceDeltas[(int)BoxFace.Bottom] = new GlobalVoxelOffset(0, -1, 0);
+                faceDeltas[(int)BoxFace.Back] = new GlobalVoxelOffset(0, 0, 1);
+                faceDeltas[(int)BoxFace.Front] = new GlobalVoxelOffset(0, 0, -1);
+                faceDeltas[(int)BoxFace.Left] = new GlobalVoxelOffset(-1, 0, 0);
+                faceDeltas[(int)BoxFace.Right] = new GlobalVoxelOffset(1, 0, 0);
+                faceDeltas[(int)BoxFace.Top] = new GlobalVoxelOffset(0, 1, 0);
+                faceDeltas[(int)BoxFace.Bottom] = new GlobalVoxelOffset(0, -1, 0);
 
                 caches = new List<LiquidRebuildCache>();
 
                 StaticsInitialized = true;
+                primitive = new BoxPrimitive(GameStates.GameState.Game.GraphicsDevice, 1.0f, 1.0f, 1.0f, new BoxPrimitive.BoxTextureCoords(32, 32, 32, 32, Point.Zero, Point.Zero, Point.Zero, Point.Zero, Point.Zero, Point.Zero));
             }
         }
 
