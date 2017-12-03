@@ -108,7 +108,6 @@ namespace DwarfCorp
             {
                 return null;
             }
-
             DecalType r = null;
             Types.TryGetValue(name, out r);
             return r;
