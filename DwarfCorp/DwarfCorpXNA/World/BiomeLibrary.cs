@@ -54,9 +54,6 @@ namespace DwarfCorp
         public static void InitializeStatics()
         {
             Biomes = ContentPaths.LoadFromJson<Dictionary<Overworld.Biome, BiomeData>>(ContentPaths.World.biomes);
-            var id = 0;
-            foreach (var biome in Biomes)
-                biome.Value.Biome = (Overworld.Biome)id;
         }
 
         public static Dictionary<string, Color> CreateBiomeColors()
