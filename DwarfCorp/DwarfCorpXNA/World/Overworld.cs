@@ -132,7 +132,7 @@ namespace DwarfCorp
             [JsonProperty] private byte Temperature_;
             [JsonProperty] public byte Rainfall_;
             public WaterType Water;
-            public Biome Biome;
+            public byte Biome;
 
             public float GetValue(ScalarFieldType type)
             {
@@ -226,23 +226,6 @@ namespace DwarfCorp
 
         public static ColorGradient JetGradient = null;
 
-        // Uuuuh TODO: Need to kill this because it means the order of biome declarations in biomes.json 
-        // matters, also prevents anding new biomes.
-        public enum Biome
-        {
-            Desert = 0,
-            Grassland = 1,
-            BorealForest = 2,
-            DeciduousForest = 3,
-            Tundra = 4,
-            Taiga = 5,
-            Jungle = 6,
-            Waste = 7,
-            Cave = 8,
-            HauntedForest = 9
-        }
-
-
         private static Vector2[] deltas2d =
         {
             new Vector2(-1, 0),
@@ -251,19 +234,19 @@ namespace DwarfCorp
             new Vector2(0, 1)
         };
 
-        public static Biome GetBiome(float temp, float rainfall, float height)
+        public static BiomeData GetBiome(float temp, float rainfall, float height)
         {
 
-            Overworld.Biome closest = Biome.Waste;
+            BiomeData closest = null;
             float closestDist = float.MaxValue;
-            foreach (var pair in BiomeLibrary.Biomes)
+            foreach (var biome in BiomeLibrary.Biomes)
             {
-                float dist = Math.Abs(pair.Value.Temp - temp) + Math.Abs(pair.Value.Rain - rainfall) +
-                             Math.Abs(pair.Value.Height - height);
+                float dist = Math.Abs(biome.Temp - temp) + Math.Abs(biome.Rain - rainfall) +
+                             Math.Abs(biome.Height - height);
 
                 if (dist < closestDist)
                 {
-                    closest = pair.Key;
+                    closest = biome;
                     closestDist = dist;
                 }
             }
@@ -675,16 +658,8 @@ namespace DwarfCorp
         {
             for (var x = 0; x < width; ++x)
                 for (var y = 0; y < height; ++y)
-                {
-                    if (map[x, y].Faction > 5)
-                    {
-                        var z = map[x,y].Faction;
-                        z += 1;
-                    }
-
                     worldData[(y * width) + x] = new Color(
-                        map[x, y].Height_, map[x, y].Faction, (byte)map[x, y].Biome, map[x, y].Rainfall_);
-                }
+                        map[x, y].Height_, map[x, y].Faction, (byte)map[x, y].Biome, 255);
         }
 
         public static void DecodeSaveTexture(
@@ -697,16 +672,9 @@ namespace DwarfCorp
                 for (var y = 0; y < height; ++y)
                 {
                     var color = worldData[(y * width) + x];
-                    if (color.G != 0)
-                    {
-                        var z = color.G;
-                        z += 1;
-                    }
-
                     map[x, y].Height_ = color.R;
                     map[x, y].Faction = color.G;
-                    map[x, y].Biome = (Biome)color.B;
-                    map[x, y].Rainfall_ = color.A;
+                    map[x, y].Biome = color.B;
                 }
         }
 
@@ -774,7 +742,7 @@ namespace DwarfCorp
                     int y = ty * stepY;
    
                     float h1 = map[x, y].GetValue(type);
-                    Biome biome = Map[x, y].Biome;
+                    var biome = Map[x, y].Biome;
                     if(h1 < 0.1f)
                     {
                         index = "Sea";
@@ -897,7 +865,7 @@ namespace DwarfCorp
                     Map[x, y].Faults = 1.0f;
                     Map[x, y].Temperature = (float)(temp * 1.0f);
                     Map[x, y].Rainfall = (float)(rain * 1.0f);
-                    Map[x, y].Biome = GetBiome(temp, rain, height);
+                    Map[x, y].Biome = GetBiome(temp, rain, height).Biome;
                     Map[x, y].Height = height;
                 }
             }
@@ -919,7 +887,7 @@ namespace DwarfCorp
 
 
                     Map[x, y].Height = level;
-                    Map[x, y].Biome = Biome.DeciduousForest;
+                    Map[x, y].Biome = BiomeLibrary.GetBiome("DeciduousForest").Biome;
                     Map[x, y].Erosion = 1.0f;
                     Map[x, y].Weathering = 0;
                     Map[x, y].Faults = 1.0f;
@@ -940,7 +908,7 @@ namespace DwarfCorp
             {
                 for (int y = 0; y < size; y++)
                 {
-                    Map[x, y].Biome = Biome.Desert;
+                    Map[x, y].Biome = BiomeLibrary.GetBiome("Desert").Biome; 
                     Map[x, y].Erosion = 1.0f;
                     Map[x, y].Weathering = 0.0f;
                     Map[x, y].Faults = 1.0f;
@@ -962,7 +930,7 @@ namespace DwarfCorp
             {
                 for (int y = 0; y < size; y++)
                 {
-                    Map[x, y].Biome = Biome.Grassland;
+                    Map[x, y].Biome = BiomeLibrary.GetBiome("Grassland").Biome;
                     Map[x, y].Erosion = 1.0f;
                     Map[x, y].Weathering = 0;
                     Map[x, y].Faults = 1.0f;
@@ -975,13 +943,13 @@ namespace DwarfCorp
             Overworld.Name = "ocean_" + MathFunctions.Random.Next(9999);
         }
 
-        public static Biome GetBiomeAt(Vector3 worldPos)
+        public static BiomeData GetBiomeAt(Vector3 worldPos)
         {
             float x = worldPos.X;
             float y = worldPos.Z;
             Vector2 v = new Vector2(x, y) / GameSettings.Default.WorldScale;
-            Overworld.Biome biome = Overworld.Map[(int)MathFunctions.Clamp(v.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(v.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
-            return biome;
+            var biome = Overworld.Map[(int)MathFunctions.Clamp(v.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(v.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
+            return BiomeLibrary.Biomes[biome];
         }
 
     }

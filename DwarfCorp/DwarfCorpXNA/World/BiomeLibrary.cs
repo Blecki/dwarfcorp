@@ -44,7 +44,7 @@ namespace DwarfCorp
     /// </summary>
     public class BiomeLibrary
     {
-        public static Dictionary<Overworld.Biome, BiomeData> Biomes = new Dictionary<Overworld.Biome, BiomeData>();
+        public static List<BiomeData> Biomes = new List<BiomeData>();
 
         public BiomeLibrary()
         {
@@ -53,20 +53,23 @@ namespace DwarfCorp
 
         public static void InitializeStatics()
         {
-            Biomes = ContentPaths.LoadFromJson<Dictionary<Overworld.Biome, BiomeData>>(ContentPaths.World.biomes);
-            var id = 0;
+            Biomes = ContentPaths.LoadFromJson<List<BiomeData>>(ContentPaths.World.biomes);
+            byte id = 0;
             foreach (var biome in Biomes)
-                biome.Value.Biome = (Overworld.Biome)id;
+                biome.Biome = id;
         }
 
         public static Dictionary<string, Color> CreateBiomeColors()
         {
             Dictionary<string, Color> toReturn = new Dictionary<string, Color>();
-            foreach (var pair in Biomes)
-            {
-                toReturn[pair.Value.Name] = pair.Value.MapColor;
-            }
+            foreach (var biome in Biomes)
+                toReturn[biome.Name] = biome.MapColor;
             return toReturn;
+        }
+
+        public static BiomeData GetBiome(String Name)
+        {
+            return Biomes.FirstOrDefault(b => b.Name == Name);
         }
     }
 

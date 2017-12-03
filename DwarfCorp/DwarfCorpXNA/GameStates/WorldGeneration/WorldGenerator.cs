@@ -241,9 +241,7 @@ namespace DwarfCorp.GameStates
                         }
 
                         if(dist < volcanoSize)
-                        {
-                            Overworld.Map[x, y].Biome = Overworld.Biome.Waste;
-                        }
+                            Overworld.Map[x, y].Biome = BiomeLibrary.GetBiome("Waste").Biome;
                     }
                 }
             }
@@ -359,12 +357,8 @@ namespace DwarfCorp.GameStates
 
                 LoadingMessage = "Biome";
                 for (int x = 0; x < width; x++)
-                {
                     for (int y = 0; y < height; y++)
-                    {
-                        Overworld.Map[x, y].Biome = Overworld.GetBiome(Overworld.Map[x, y].Temperature, Overworld.Map[x, y].Rainfall, Overworld.Map[x, y].Height);
-                    }
-                }
+                        Overworld.Map[x, y].Biome = Overworld.GetBiome(Overworld.Map[x, y].Temperature, Overworld.Map[x, y].Rainfall, Overworld.Map[x, y].Height).Biome;
 
                 LoadingMessage = "Volcanoes";
 
@@ -818,11 +812,11 @@ namespace DwarfCorp.GameStates
                                 var faction = map[x, y].Faction;
                                 map[x + deltas[minNeighbor].X, y + deltas[minNeighbor].Y].Faction = faction;
                                 var biome = map[x + deltas[minNeighbor].X, y + deltas[minNeighbor].Y].Biome;
+                                var biomeName = BiomeLibrary.Biomes[biome].Name;
                                 var myFaction = civs[faction - 1];
-                                if (myFaction.Race.Biomes.ContainsKey(biome))
-                                {
-                                    map[x + deltas[minNeighbor].X, y + deltas[minNeighbor].Y].Biome = myFaction.Race.Biomes[biome];
-                                }
+                                if (myFaction.Race.Biomes.ContainsKey(biomeName))
+                                    map[x + deltas[minNeighbor].X, y + deltas[minNeighbor].Y].Biome =
+                                        BiomeLibrary.GetBiome(myFaction.Race.Biomes[biomeName]).Biome;
                             }
                         }
                     }

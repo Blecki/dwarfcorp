@@ -1,6 +1,7 @@
 {
-  "Grassland": {
-    "Biome": 1,
+  "$type": "System.Collections.Generic.List`1[[DwarfCorp.BiomeData, DwarfCorp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+  "$values": [ 
+{
     "Name": "Grassland",
     "Icon":  13,
 	"DayAmbience" : "grassland_ambience_day",
@@ -91,9 +92,9 @@
     "Temp": 0.45,
     "Rain": 0.35,
   },
-  "BorealForest": {
-    "Biome": 2,
-    "Name": "Forest (Boreal)",
+
+  {
+    "Name": "BorealForest",
     "Icon":  1,
 	"DayAmbience" : "sfx_amb_forest_day",
 	"NightAmbience" : "sfx_amb_forest_night",
@@ -180,9 +181,9 @@
     "Temp": 0.39,
     "Rain": 0.5,
   },
-  "DeciduousForest": {
-    "Biome": 3,
-    "Name": "Forest (Deciduous)",
+  
+  {
+    "Name": "DeciduousForest",
     "Icon": 8,
 	"DayAmbience" : "sfx_amb_forest_day",
 	"NightAmbience" : "sfx_amb_forest_night",
@@ -287,8 +288,8 @@
     "Temp": 0.4,
     "Rain": 0.5,
   },
-  "Taiga": {
-    "Biome": 5,
+  
+  {
     "Name": "Taiga",
     "Icon":  10,
 	"DayAmbience" : "sfx_amb_tundra",
@@ -342,8 +343,8 @@
     "Temp": 0.2,
     "Rain": 0.3,
   },
-  "Tundra": {
-    "Biome": 4,
+  
+  {
     "Name": "Tundra",
     "Icon":  13,
 	"WaterSurfaceIce" : true,
@@ -371,8 +372,8 @@
     "Temp": 0.1,
     "Rain": 0.1,
   },
-  "Desert": {
-    "Biome": 0,
+  
+  {
     "Name": "Desert",
     "Icon":  12,
 	"DayAmbience" : "sfx_amb_desert",
@@ -458,8 +459,8 @@
     "Temp": 0.65,
     "Rain": 0.05,
   },
-  "Jungle": {
-    "Biome": 6,
+  
+  {
     "Name": "Jungle",
     "Icon":  9,
 	"DayAmbience" : "sfx_amb_forest_day",
@@ -539,8 +540,8 @@
     "Temp": 0.8,
     "Rain": 0.75,
   },
-  "Waste": {
-    "Biome": 7,
+  
+  {
     "Name": "Waste",
     "Icon": 11,
     "Vegetation": [],
@@ -579,8 +580,8 @@
     "Temp": 1.5,
     "Rain": 0.0
   },
-  "Cave": {
-    "Biome": 8,
+  
+  {
     "Name": "Cave",
     "Icon":  11,
 	"DayAmbience" : "sfx_amb_cave",
@@ -642,8 +643,8 @@
     "Temp": 1.5,
     "Rain": 0.0,
   },
-    "HauntedForest": {
-    "Biome": 9,
+  
+  {
     "Name": "Haunted Forest",
     "Icon": 11,
 	"DayAmbience" : "sfx_amb_forest_day",
@@ -717,5 +718,6 @@
     "Height": 1.5,
     "Temp": 1.5,
     "Rain": 0.0,
-  },
+  }
+]
 }

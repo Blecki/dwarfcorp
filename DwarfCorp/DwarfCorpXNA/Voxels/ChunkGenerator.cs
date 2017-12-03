@@ -336,7 +336,7 @@ namespace DwarfCorp
         public void GenerateCaves(VoxelChunk chunk, WorldManager world)
         {
             Vector3 origin = chunk.Origin;
-            BiomeData biome = BiomeLibrary.Biomes[Overworld.Biome.Cave];
+            BiomeData biome = BiomeLibrary.GetBiome("Cave");
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
                 for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
@@ -489,7 +489,7 @@ namespace DwarfCorp
                 {
                     Vector2 v = new Vector2(x + origin.X, z + origin.Z) / WorldScale;
 
-                    Overworld.Biome biome = Overworld.Map[(int)MathFunctions.Clamp(v.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(v.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
+                    var biome = Overworld.Map[(int)MathFunctions.Clamp(v.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(v.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
 
                     BiomeData biomeData = BiomeLibrary.Biomes[biome];
 
