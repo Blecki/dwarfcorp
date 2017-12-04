@@ -1,6 +1,4 @@
-{
-  "$type": "System.Collections.Generic.List`1[[DwarfCorp.BiomeData, DwarfCorp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-  "$values": [ 
+[ 
 {
     "Name": "Grassland",
     "Icon":  13,
@@ -720,4 +718,3 @@
     "Rain": 0.0,
   }
 ]
-}

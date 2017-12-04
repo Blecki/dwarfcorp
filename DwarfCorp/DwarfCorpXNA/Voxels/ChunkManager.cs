@@ -434,7 +434,8 @@ namespace DwarfCorp
             Splasher.Splash(gameTime, Water.GetSplashQueue());
             Splasher.HandleTransfers(gameTime, Water.GetTransferQueue());
 
-            ChunkUpdate.RunUpdate(this);
+            if (!gameTime.IsPaused)
+                ChunkUpdate.RunUpdate(this);
 
             List<VoxelChangeEvent> localList = null;
             lock (ChangedVoxels)

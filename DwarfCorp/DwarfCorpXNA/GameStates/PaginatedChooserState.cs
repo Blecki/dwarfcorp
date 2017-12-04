@@ -139,7 +139,20 @@ namespace DwarfCorp.GameStates
                             {
                                 var selectedItem = Items[PreviewOffset + ItemSelected];
                                 Items.Remove(selectedItem);
-                                System.IO.Directory.Delete(selectedItem.Path, true);
+                                try
+                                {
+                                    System.IO.Directory.Delete(selectedItem.Path, true);
+                                }
+                                catch(Exception e)
+                                {
+                                    GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm()
+                                    {
+                                        OkayText = "Ok",
+                                        CancelText = "",
+                                        Text = e.Message
+                                    });
+
+                                }
                                 NeedsRefresh = true;
                             }
                         }

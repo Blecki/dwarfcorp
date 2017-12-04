@@ -675,6 +675,8 @@ namespace DwarfCorp
                     map[x, y].Height_ = color.R;
                     map[x, y].Faction = color.G;
                     map[x, y].Biome = color.B;
+                    map[x, y].Rainfall_ = (byte)(BiomeLibrary.Biomes[map[x, y].Biome].Rain * 255);
+                    map[x, y].Temperature = (float)(BiomeLibrary.Biomes[map[x, y].Biome].Temp);
                 }
         }
 

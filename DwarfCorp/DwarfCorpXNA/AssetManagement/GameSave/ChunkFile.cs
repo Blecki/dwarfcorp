@@ -161,7 +161,7 @@ namespace DwarfCorp
             }
 
             Decals.CopyTo(c.Data.Decals, 0);
-            DecalData.CopyTo(c.Data.Decals, 0);
+            DecalData.CopyTo(c.Data.DecalData, 0);
 
             c.CalculateInitialSunlight();
             return c;

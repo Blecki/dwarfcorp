@@ -104,6 +104,10 @@ namespace DwarfCorp
 
         public static DecalType GetDecalType(string name)
         {
+            if (name == null)
+            {
+                return null;
+            }
             DecalType r = null;
             Types.TryGetValue(name, out r);
             return r;

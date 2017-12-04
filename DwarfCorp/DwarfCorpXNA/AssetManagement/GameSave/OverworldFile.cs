@@ -99,7 +99,7 @@ namespace DwarfCorp
 
             public Texture2D CreateSaveTexture(GraphicsDevice Device, int Width, int Height)
             {
-                var r = new Texture2D(Device, Width, Height);
+                var r = new Texture2D(Device, Width, Height, false, SurfaceFormat.Color);
                 var data = new Color[Width * Height];
                 Overworld.GenerateSaveTexture(Data, Width, Height, data);
                 r.SetData(data);
@@ -110,6 +110,7 @@ namespace DwarfCorp
             {
                 Data = new Overworld.MapData[Texture.Width, Texture.Height];
                 var colorData = new Color[Texture.Width * Texture.Height];
+                GameState.Game.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
                 Texture.GetData(colorData);
                 Overworld.DecodeSaveTexture(Data, Texture.Width, Texture.Height, colorData);
             }
@@ -198,7 +199,7 @@ namespace DwarfCorp
 
             Data = FileUtils.LoadJson<OverworldData>(metaFilePath, false);
 
-            var worldTexture = TextureManager.LoadInstanceTexture(worldFilePath);
+            var worldTexture = TextureManager.LoadInstanceTexture(worldFilePath, false);
             Data.LoadFromTexture(worldTexture);
 
             return true;

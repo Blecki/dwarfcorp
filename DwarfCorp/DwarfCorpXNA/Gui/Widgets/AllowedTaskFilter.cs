@@ -20,7 +20,7 @@ namespace DwarfCorp.Gui.Widgets
         public int ColumnCount = 2;
         private Widget InteriorPanel;
         private Widget EmployeeName;
-
+        private string PrevEmployee;
         private List<CheckBox> TaskCategories = new List<CheckBox>();
         
         public override void Construct()
@@ -63,7 +63,9 @@ namespace DwarfCorp.Gui.Widgets
             foreach (var type in Enum.GetValues(typeof(Task.TaskCategory)))
             {
                 if (type.ToString().StartsWith("_")) continue;
-
+                if ((Task.TaskCategory)type == Task.TaskCategory.None) continue;
+                if (Employee != null && (Employee.Stats.CurrentClass.Actions & (Task.TaskCategory)type) != (Task.TaskCategory)type)
+                    continue;
                 var box = columns.GetChild(column).AddChild(new CheckBox
                 {
                     Text = type.ToString(),
@@ -96,8 +98,18 @@ namespace DwarfCorp.Gui.Widgets
             }
             else
             {
+                if (PrevEmployee != Employee.Stats.FullName)
+                {
+                    PrevEmployee = Employee.Stats.FullName;
+                    Clear();
+                    TaskCategories.Clear();
+                    Construct();
+                    Layout();
+                    Text = "";
+                    Invalidate();
+                }
                 InteriorPanel.Hidden = false;
-                EmployeeName.Text = String.Format("{0} Allowed Tasks", Employee.Stats.FullName);
+                EmployeeName.Text = String.Format("{0}'s Allowed Tasks", Employee.Stats.FullName);
                 foreach (var checkbox in TaskCategories)
                 {
                     var type = (Task.TaskCategory)checkbox.Tag;

@@ -378,6 +378,7 @@ namespace DwarfCorp.GameStates
                     {
                         NativeCivilizations.Add(library.GenerateFaction(null, i, Settings.NumCivilizations));
                     }
+                    Settings.Natives = NativeCivilizations;
                 }
                 else
                 {
@@ -821,6 +822,11 @@ namespace DwarfCorp.GameStates
                         }
                     }
                 }
+            }
+
+            foreach(var civ in NativeCivilizations)
+            {
+                civ.Center = new Point(0, 0);
             }
 
             for (int x = 1; x < width - 1; x++)

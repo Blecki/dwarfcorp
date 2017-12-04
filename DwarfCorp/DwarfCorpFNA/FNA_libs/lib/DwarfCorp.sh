@@ -27,9 +27,10 @@ if [ "$UNAME" == "Darwin" ]; then
 
 	./DwarfCorpFNA.bin.osx $@
 else
-	if [ "$ARCH" == "x86_64" ]; then
-		./DwarfCorpFNA.bin.x86_64 $@
-	else
-		./DwarfCorpFNA.bin.x86 $@
-	fi
-fi
+else
+    if [ "$ARCH" == "x86_64" ]; then
+        LD_PRELOAD="/usr/lib/libSDL2-2.0.so.0" ./DwarfCorpFNA.bin.x86_64 $@
+    else
+        LD_PRELOAD="/usr/lib/libSDL2-2.0.so.0" ./DwarfCorpFNA.bin.x86 $@
+    fi
+fifi
