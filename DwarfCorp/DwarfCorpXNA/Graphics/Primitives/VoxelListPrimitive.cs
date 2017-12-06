@@ -259,9 +259,6 @@ namespace DwarfCorp
             if (primitive == null) primitive = BedrockModel;
 
             var tint = v.Type.Tint;
-            var biomeName = Overworld.Map[(int)(v.Coordinate.X / Chunk.Manager.World.WorldScale), (int)(v.Coordinate.Z / Chunk.Manager.World.WorldScale)].Biome;
-            var biome = BiomeLibrary.Biomes[biomeName];
-
 
             var uvs = primitive.UVs;
 
@@ -472,10 +469,12 @@ namespace DwarfCorp
                     baseUVs, baseUVBounds);
 
                 // Draw decals
-                var decal = V.Decal;
-                if (decal == 0) return;
+                if (V.GrassType == 0) return;
 
-                var decalType = DecalLibrary.GetDecalType(decal);
+                var grassLayer = V.GrassLayer;
+                if (grassLayer != V.Coordinate.Y) return;
+
+                var decalType = GrassLibrary.GetGrassType(V.GrassType);
 
                 AddDecalGeometry(Into, AmbientScratchSpace, Primitive, V, faceDescriptor, exploredVerts, vertexPositions, vertexColors, vertexTint, decalType);
 
@@ -494,10 +493,12 @@ namespace DwarfCorp
                     if (!aboveNeighbor.IsValid || aboveNeighbor.IsEmpty)
                     {
                         // Draw horizontal fringe.
-                        if (!neighbor.IsEmpty && neighbor.Decal != 0 && DecalLibrary.GetDecalType(neighbor.Decal).FringePrecedence >= decalType.FringePrecedence)
-                            continue;
-                        //if (handle.Type.FringePrecedence >= V.Type.FringePrecedence)
-                        //    continue;
+                        if (!neighbor.IsEmpty)
+                        {
+                            if (neighbor.GrassLayer == V.GrassLayer &&
+                                GrassLibrary.GetGrassType(neighbor.GrassType).FringePrecedence >= decalType.FringePrecedence)
+                                continue;
+                        }
 
                         // Twizzle vertex positions.
                         var newPositions = new Vector3[4];
@@ -584,17 +585,17 @@ namespace DwarfCorp
 
                     if (handle.IsValid)
                     {
-                        if (!handle.IsEmpty && handle.Decal != 0 && DecalLibrary.GetDecalType((byte)handle.Decal).FringePrecedence >= decalType.FringePrecedence)
+                        if (!handle.IsEmpty && handle.GrassLayer != grassLayer && GrassLibrary.GetGrassType((byte)handle.GrassType).FringePrecedence >= decalType.FringePrecedence)
                             continue;
 
                         var manhattanA = new VoxelHandle(Chunk.Manager.ChunkData,
                             V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[s]);
-                        if (!manhattanA.IsValid || manhattanA.Decal == V.Decal)
+                        if (!manhattanA.IsValid || manhattanA.GrassType == V.GrassType)
                             continue;
 
                         manhattanA = new VoxelHandle(Chunk.Manager.ChunkData,
                             V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[FringeIndicies[4 + s, 5]]);
-                        if (!manhattanA.IsValid || manhattanA.Decal == V.Decal)
+                        if (!manhattanA.IsValid || manhattanA.GrassType == V.GrassType)
                             continue;
 
                         // Twizzle vertex positions.
@@ -715,7 +716,7 @@ namespace DwarfCorp
             Vector3[] VertexPositions,
             VertexColorInfo[] VertexColors,
             Color[] VertexTints,
-            DecalType Decal)
+            GrassType Decal)
         {
             var indexOffset = Into.VertexCount;
             var UV = new Vector2(Decal.Tile.X * (1.0f / 16.0f), Decal.Tile.Y * (1.0f / 16.0f));

@@ -310,7 +310,7 @@ namespace DwarfCorp
                         }
                     }
 
-                    if (topVoxel.Type.Name != biomeData.SoilLayer.VoxelType || topVoxel.Decal == 0)
+                    if (topVoxel.Type.Name != biomeData.SoilLayer.VoxelType || topVoxel.GrassLayer >= VoxelConstants.ChunkSizeY)
                         continue;
 
                     foreach (VegetationData veg in biomeData.Vegetation)
@@ -535,8 +535,8 @@ namespace DwarfCorp
                                 voxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.SoilLayer.VoxelType));
                                 if (!String.IsNullOrEmpty(biomeData.GrassDecal))
                                 {
-                                    var decal = DecalLibrary.GetDecalType(biomeData.GrassDecal);
-                                    voxel.RawSetDecal(decal.ID);
+                                    var decal = GrassLibrary.GetGrassType(biomeData.GrassDecal);
+                                    voxel.RawSetGrass(decal.ID);
                                 }
                             }
                             else if (!biomeData.ClumpGrass)
@@ -544,8 +544,8 @@ namespace DwarfCorp
                                 voxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.SoilLayer.VoxelType));
                                 if (!String.IsNullOrEmpty(biomeData.GrassDecal))
                                 {
-                                    var decal = DecalLibrary.GetDecalType(biomeData.GrassDecal);
-                                    voxel.RawSetDecal(decal.ID);
+                                    var decal = GrassLibrary.GetGrassType(biomeData.GrassDecal);
+                                    voxel.RawSetGrass(decal.ID);
                                 }
                             }
                             else

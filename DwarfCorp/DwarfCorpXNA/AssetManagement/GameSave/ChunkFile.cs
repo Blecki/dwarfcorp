@@ -61,8 +61,9 @@ namespace DwarfCorp
         public byte[] Liquid;
         public byte[] LiquidTypes;
         public byte[] Types;
-        public byte[] Decals;
-        public byte[] DecalData;
+        public byte[] GrassLayer;
+        public byte[] GrassType;
+        public byte[] GrassDecay;
         
         public ChunkFile()
         {
@@ -75,8 +76,9 @@ namespace DwarfCorp
             LiquidTypes = new byte[VoxelConstants.ChunkVoxelCount];
             Liquid = new byte[VoxelConstants.ChunkVoxelCount];
             Explored = new bool[VoxelConstants.ChunkVoxelCount];
-            Decals = new byte[VoxelConstants.ChunkVoxelCount];
-            DecalData = new byte[VoxelConstants.ChunkVoxelCount];
+            GrassLayer = new byte[VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeZ];
+            GrassType = new byte[VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeZ];
+            GrassDecay = new byte[VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeZ];
             Origin = chunk.Origin;
             FillDataFromChunk(chunk);
         }
@@ -94,8 +96,9 @@ namespace DwarfCorp
             Origin = chunkFile.Origin;
             Types = chunkFile.Types;
             Explored = chunkFile.Explored;
-            Decals = chunkFile.Decals;
-            DecalData = chunkFile.DecalData;
+            GrassLayer = chunkFile.GrassLayer;
+            GrassType = chunkFile.GrassType;
+            GrassDecay = chunkFile.GrassDecay;
         }
 
         public bool ReadFile(string filePath, bool isCompressed, bool isBinary)
@@ -160,8 +163,9 @@ namespace DwarfCorp
                     c.Data.LiquidPresent[(i >> VoxelConstants.ZDivShift) >> VoxelConstants.XDivShift] += 1;
             }
 
-            Decals.CopyTo(c.Data.Decals, 0);
-            DecalData.CopyTo(c.Data.DecalData, 0);
+            GrassLayer.CopyTo(c.Data.GrassLayer, 0);
+            GrassType.CopyTo(c.Data.GrassType, 0);
+            GrassDecay.CopyTo(c.Data.GrassDecay, 0);
 
             c.CalculateInitialSunlight();
             return c;
@@ -171,8 +175,9 @@ namespace DwarfCorp
         {
             chunk.Data.Types.CopyTo(Types, 0);
             chunk.Data.IsExplored.CopyTo(Explored, 0);
-            chunk.Data.Decals.CopyTo(Decals, 0);
-            chunk.Data.DecalData.CopyTo(DecalData, 0);
+            chunk.Data.GrassLayer.CopyTo(GrassLayer, 0);
+            chunk.Data.GrassType.CopyTo(GrassType, 0);
+            chunk.Data.GrassDecay.CopyTo(GrassDecay, 0);
 
             for (var i = 0; i < VoxelConstants.ChunkVoxelCount; ++i)
             {

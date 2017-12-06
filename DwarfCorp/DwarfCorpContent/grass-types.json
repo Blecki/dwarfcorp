@@ -1,7 +1,8 @@
 [
     {
       "Name": "empty",
-	  "Tile": "0, 0"
+	  "Tile": "0, 0",
+	  "FringePrecedence": 0
 	},
 
 	{
@@ -110,8 +111,16 @@
 
 	{
 		"Name": "snow",
-		"Tile": "0,1",
 		"Decay": true,
-		"InitialDataValue": 30
+		"InitialDataValue": 30,
+		"Tile": "14, 2",
+		"HasFringeTransitions": true,
+		"FringeTiles":
+        [
+          "10, 2",
+          "11, 2",
+          "12, 2"
+        ],      
+		"FringePrecedence": 251,
 	}
 ]

@@ -122,14 +122,17 @@ namespace DwarfCorp
                     }
                 }
             }
-            else if (Command.Contains("Decal/"))
+            else if (Command.Contains("Grass/"))
             {
-                var type = DecalLibrary.GetDecalType(Command.Substring(6));
+                var type = GrassLibrary.GetGrassType(Command.Substring(6));
                 foreach (var vox in refs.Where(v => v.IsValid))
                 {
                     var v = vox;
                     if (!vox.IsEmpty)
-                        v.Decal = type.ID;
+                    {
+                        v.GrassLayer = (byte)v.Coordinate.Y;
+                        v.GrassType = type.ID;
+                    }
                 }
             }
             else

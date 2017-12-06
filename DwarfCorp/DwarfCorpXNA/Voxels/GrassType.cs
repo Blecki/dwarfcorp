@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class DecalType
+    public class GrassType
     {
         public class FringeTileUV
         {
