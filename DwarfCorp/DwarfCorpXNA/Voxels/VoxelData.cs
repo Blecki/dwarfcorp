@@ -22,6 +22,8 @@ namespace DwarfCorp
         public byte[] GrassType;
         public byte[] GrassDecay;
 
+        public byte[] Decals;
+
         public WaterCell[] Water;
         public RampType[] RampTypes;
 
@@ -40,6 +42,7 @@ namespace DwarfCorp
                 GrassLayer = new byte[VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeZ],
                 GrassType = new byte[VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeZ],
                 GrassDecay = new byte[VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeZ],
+                Decals = new byte[VoxelConstants.ChunkVoxelCount],
                 Water = new WaterCell[VoxelConstants.ChunkVoxelCount],
                 RampTypes = new RampType[VoxelConstants.ChunkVoxelCount],
 

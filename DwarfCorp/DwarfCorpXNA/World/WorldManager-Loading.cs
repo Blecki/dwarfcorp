@@ -192,6 +192,7 @@ namespace DwarfCorp
 
                     VoxelLibrary.InitializeDefaultLibrary(GraphicsDevice, Tilesheet);
                     GrassLibrary.InitializeDefaultLibrary();
+                DecalLibrary.InitializeDefaultLibrary();
 
                     bloom = new BloomComponent(Game)
                     {

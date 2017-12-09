@@ -412,6 +412,8 @@
     <Compile Include="Voxels\AutoScaleThread.cs" />
     <Compile Include="Voxels\ChunkRenderer.cs" />
     <Compile Include="Voxels\Coordinate.cs" />
+    <Compile Include="Voxels\DecalType.cs" />
+    <Compile Include="Voxels\DecalLibrary.cs" />
     <Compile Include="Voxels\GrassType.cs" />
     <Compile Include="Voxels\LiquidType.cs" />
     <Compile Include="Voxels\VoxelChunk-Motes.cs" />

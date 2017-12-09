@@ -216,6 +216,17 @@ namespace DwarfCorp
         }
 
         [JsonIgnore]
+        public byte Decal
+        {
+            get { return _cache_Chunk.Data.Decals[_cache_Index]; }
+            set
+            {
+                _cache_Chunk.Data.Decals[_cache_Index] = value;
+                InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
+            }
+        }
+
+        [JsonIgnore]
         public byte GrassLayer
         {
             get { return _cache_Chunk.Data.GrassLayer[_cache_Index & 0xFF]; }

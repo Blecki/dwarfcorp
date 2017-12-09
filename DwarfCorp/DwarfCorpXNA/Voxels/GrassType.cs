@@ -28,7 +28,6 @@ namespace DwarfCorp
         public String Name;
 
         public Point Tile;
-        public bool HasFringeTransitions = false;
         public Point[] FringeTiles = null;
         [JsonIgnore]
         public FringeTileUV[] FringeTransitionUVs = null;

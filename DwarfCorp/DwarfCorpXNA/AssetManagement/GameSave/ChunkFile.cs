@@ -64,6 +64,7 @@ namespace DwarfCorp
         public byte[] GrassLayer;
         public byte[] GrassType;
         public byte[] GrassDecay;
+        public byte[] Decals;
         
         public ChunkFile()
         {
@@ -79,6 +80,7 @@ namespace DwarfCorp
             GrassLayer = new byte[VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeZ];
             GrassType = new byte[VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeZ];
             GrassDecay = new byte[VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeZ];
+            Decals = new byte[VoxelConstants.ChunkVoxelCount];
             Origin = chunk.Origin;
             FillDataFromChunk(chunk);
         }
@@ -166,6 +168,7 @@ namespace DwarfCorp
             GrassLayer.CopyTo(c.Data.GrassLayer, 0);
             GrassType.CopyTo(c.Data.GrassType, 0);
             GrassDecay.CopyTo(c.Data.GrassDecay, 0);
+            Decals.CopyTo(c.Data.Decals, 0);
 
             c.CalculateInitialSunlight();
             return c;
@@ -178,6 +181,7 @@ namespace DwarfCorp
             chunk.Data.GrassLayer.CopyTo(GrassLayer, 0);
             chunk.Data.GrassType.CopyTo(GrassType, 0);
             chunk.Data.GrassDecay.CopyTo(GrassDecay, 0);
+            chunk.Data.Decals.CopyTo(Decals, 0);
 
             for (var i = 0; i < VoxelConstants.ChunkVoxelCount; ++i)
             {

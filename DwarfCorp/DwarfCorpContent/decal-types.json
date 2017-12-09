@@ -1,0 +1,12 @@
+[
+    {
+      "Name": "empty",
+	  "Tile": "0, 0",
+	  "FringePrecedence": 0
+	},
+
+	{
+		"Name": "track",
+		"Tile": "0, 4",
+	}
+]

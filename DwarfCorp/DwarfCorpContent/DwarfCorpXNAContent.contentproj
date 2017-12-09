@@ -2285,6 +2285,10 @@
       <Name>turkey_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="decal-types.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>decal-types</Name>
+    </None>
     <None Include="tutorial.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>tutorial</Name>

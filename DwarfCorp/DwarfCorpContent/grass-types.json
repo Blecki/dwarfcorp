@@ -8,7 +8,6 @@
 	{
 		"Name": "grass",
 		"Tile": "4, 2",
-		"HasFringeTransitions": true,
 		"FringeTiles":
         [
           "0, 2",
@@ -22,7 +21,6 @@
 	{
 		"Name": "snow-grass",
 		"Tile": "4, 3",
-		"HasFringeTransitions": true,
 		"FringeTiles":
         [
           "0, 3",
@@ -39,7 +37,6 @@
 	{
 		"Name": "desert-grass",
 		"Tile": "9, 2",
-		"HasFringeTransitions": true,
 		"FringeTiles":
         [
           "5, 2",
@@ -53,7 +50,6 @@
 	{
 		"Name": "snow-desert-grass",
 		"Tile": "4, 3",
-		"HasFringeTransitions": true,
 		"FringeTiles":
         [
           "0, 3",
@@ -69,7 +65,6 @@
 	{
 		"Name": "haunted-grass",
 		"Tile": "9, 3",
-		"HasFringeTransitions": true,
 		"FringeTiles":
         [
           "5, 3",
@@ -83,7 +78,6 @@
 	{
 		"Name": "snow-haunted-grass",
 		"Tile": "4, 3",
-		"HasFringeTransitions": true,
 		"FringeTiles":
         [
           "0, 3",
@@ -99,7 +93,6 @@
 	{
 		"Name": "permafrost-grass",
 		"Tile": "4, 3",
-		"HasFringeTransitions": true,
 		"FringeTiles":
         [
           "0, 3",
@@ -114,7 +107,6 @@
 		"Decay": true,
 		"InitialDataValue": 30,
 		"Tile": "14, 2",
-		"HasFringeTransitions": true,
 		"FringeTiles":
         [
           "10, 2",
