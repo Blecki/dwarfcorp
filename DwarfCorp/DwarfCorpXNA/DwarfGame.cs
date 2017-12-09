@@ -266,14 +266,14 @@ namespace DwarfCorp
             {
 #endif
             // Prepare GemGui
-            GumInputMapper = new Gui.Input.GumInputMapper(Window.Handle);
+             GumInputMapper = new Gui.Input.GumInputMapper(Window.Handle);
                 GumInput = new Gui.Input.Input(GumInputMapper);
 
                 // Register all bindable actions with the input system.
                 GumInput.AddAction("TEST", Gui.Input.KeyBindingType.Pressed);
 
                 GumSkin = new RenderData(GraphicsDevice, Content,
-                        "newgui/xna_draw", "Content/newgui/sheets.txt");
+                        "newgui/xna_draw", ".\\Content\\newgui\\sheets.txt");
 
                 if (SoundManager.Content == null)
                 {
