@@ -127,10 +127,11 @@ namespace DwarfCorp
             return Designations.FirstOrDefault(put => put.Location == v);
         }
 
-        public void AddDesignation(CraftDesignation des)
+        public void AddDesignation(CraftDesignation des, Vector3 AdditionalOffset)
         {
-            des.GhostBody = EntityFactory.CreateGhostedEntity<Body>(des.ItemType.Name, des.Location.WorldPosition + Vector3.One * 0.5f, Color.LightBlue);
+            des.GhostBody = EntityFactory.CreateGhostedEntity<Body>(des.ItemType.Name, des.Location.WorldPosition + Vector3.One * 0.5f + AdditionalOffset, Color.LightBlue);
             World.ComponentManager.RootComponent.AddChild(des.GhostBody);
+
             if (des.OverrideOrientation)
             {
                 des.GhostBody.Orient(des.Orientation);
@@ -139,6 +140,7 @@ namespace DwarfCorp
             {
                 des.GhostBody.OrientToWalls();
             }
+
             Designations.Add(des);
         }
 
@@ -203,11 +205,7 @@ namespace DwarfCorp
             if (CurrentCraftBody == null || !player.VoxSelector.VoxelUnderMouse.IsValid) 
                 return;
 
-            CurrentCraftBody.LocalPosition = player.VoxSelector.VoxelUnderMouse.WorldPosition + Vector3.One * 0.5f;
-
-            //Ugly hack
-            if (this.CurrentCraftType.Name == "Bed")
-                CurrentCraftBody.LocalPosition -= new Vector3(0.0f, 0.5f, 0.0f);
+            CurrentCraftBody.LocalPosition = player.VoxSelector.VoxelUnderMouse.WorldPosition + Vector3.One * 0.5f + CurrentCraftType.SpawnOffset;
 
             CurrentCraftBody.GlobalTransform = CurrentCraftBody.LocalTransform;
             CurrentCraftBody.UpdateTransform();
@@ -414,10 +412,7 @@ namespace DwarfCorp
                             }
                             else
                             {
-                                Vector3 pos = r.WorldPosition + Vector3.One*0.5f;
-
-                                // More hack cause I broke beds.
-                                if (CurrentCraftType.Name == "Bed") pos -= new Vector3(0, 0.5f, 0);
+                                Vector3 pos = r.WorldPosition + Vector3.One * 0.5f + CurrentCraftType.SpawnOffset;
 
                                 Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f);
                                 Vector3 endPos = pos;
@@ -435,7 +430,7 @@ namespace DwarfCorp
                                 World.ParticleManager.Trigger("puff", pos, Color.White, 10);
                                 if (IsValid(newDesignation))
                                 {
-                                    AddDesignation(newDesignation);
+                                    AddDesignation(newDesignation, CurrentCraftType.SpawnOffset);
                                     assignments.Add(new CraftItemTask(newDesignation));
                                 }
                                 else

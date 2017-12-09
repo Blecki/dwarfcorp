@@ -19,7 +19,7 @@ namespace DwarfCorp
         }
 
         public Bed(ComponentManager manager, Vector3 position) :
-            base(manager, "Bed", Matrix.CreateTranslation(position), new Vector3(2.0f, 0.5f, 1.0f), new Vector3(0.25f, 0.25f, 0.0f))
+            base(manager, "Bed", Matrix.CreateTranslation(position), new Vector3(2.0f, 0.5f, 1.0f), new Vector3(0.25f, 0.2f, 0.0f))
         {
             Tags.Add("Bed");
             CollisionType = CollisionManager.CollisionType.Static;
@@ -60,7 +60,7 @@ namespace DwarfCorp
 
             AddChild(new Box(Manager, 
                 "bedbox", 
-                Matrix.CreateTranslation(-0.40f, 0.25f, -0.45f) * Matrix.CreateRotationY((float)Math.PI * 0.5f), 
+                Matrix.CreateTranslation(-0.40f, 0.00f, -0.45f) * Matrix.CreateRotationY((float)Math.PI * 0.5f), 
                 new Vector3(1.0f, 1.0f, 2.0f), 
                 new Vector3(0.0f, 0.0f, 0.0f), 
                 "bed", 
