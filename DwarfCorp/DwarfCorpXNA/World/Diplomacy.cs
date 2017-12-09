@@ -381,7 +381,8 @@ namespace DwarfCorp
             {
                 Creatures = creatures,
                 OtherFaction = natives.World.PlayerFaction,
-                ShouldRemove = false
+                ShouldRemove = false,
+                OwnerFaction = natives
             };
             natives.WarParties.Add(party);
 

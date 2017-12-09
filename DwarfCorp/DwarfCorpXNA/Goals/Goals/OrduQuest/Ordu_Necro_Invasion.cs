@@ -38,7 +38,7 @@ namespace DwarfCorp.Goals.Goals
         {
             // If all war parties are killed
             var warPartyKilled = Event as Events.WarPartyDefeated;
-            if (warPartyKilled != null && warPartyKilled.OtherFaction.Name == "Ordu")
+            if (warPartyKilled != null &&  warPartyKilled.OtherFaction != null && warPartyKilled.OtherFaction.Name == "Ordu")
                 WarPartiesKilled += 1;
 
             if (WarPartiesKilled >= 5)
