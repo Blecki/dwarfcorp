@@ -121,7 +121,7 @@ namespace DwarfCorp
         {
             List<ResourceAmount> stashed = Agent.Blackboard.GetData<List<ResourceAmount>>("ResourcesStashed");
 
-            if (stashed == null)
+            if (stashed == null || stashed.Count == 0)
             {
                 yield return Act.Status.Fail;
                 yield break;

@@ -70,6 +70,8 @@ namespace DwarfCorp
         public const string GameName = "DwarfCorp";
         public static bool HasRendered = false;
         private static StreamWriter _logwriter;
+        private static TextWriter _initialOut;
+        private static TextWriter _initialError;
 #if SHARP_RAVEN && !DEBUG
         private RavenClient ravenClient;
 #endif
@@ -220,6 +222,8 @@ namespace DwarfCorp
 
                 FileStream writerOutput = new FileStream(ProgramData.CreatePath(dir, "log.txt"), FileMode.Append, FileAccess.Write);
                 _logwriter = new StreamWriter(writerOutput) { AutoFlush = true };
+                _initialOut = Console.Out;
+                _initialError = Console.Error;
                 Console.SetOut(_logwriter);
                 Console.SetError(_logwriter);
                 Console.Out.WriteLine("Game started at " + DateTime.Now.ToShortDateString() + " : " + DateTime.Now.ToShortTimeString());
@@ -401,6 +405,8 @@ namespace DwarfCorp
 
         protected override void OnExiting(object sender, EventArgs args)
         {
+            Console.SetOut(_initialOut);
+            Console.SetError(_initialError);
             _logwriter.Dispose();
             ExitGame = true;
             Program.SignalShutdown();

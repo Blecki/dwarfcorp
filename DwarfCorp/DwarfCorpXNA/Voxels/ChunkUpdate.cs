@@ -45,6 +45,11 @@ namespace DwarfCorp
 
         public static void RunUpdate(ChunkManager Chunks)
         {
+            if (CurrentUpdateChunk < 0 || CurrentUpdateChunk >= Chunks.ChunkData.ChunkMap.Length)
+            {
+                return;
+            }
+
             var chunk = Chunks.ChunkData.ChunkMap[CurrentUpdateChunk];
             CurrentUpdateChunk += 1;
             if (CurrentUpdateChunk >= Chunks.ChunkData.ChunkMap.Length)

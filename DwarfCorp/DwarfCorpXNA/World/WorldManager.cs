@@ -516,6 +516,12 @@ namespace DwarfCorp
             Weather.Update(this.Time.CurrentDate, this);
             GamePerformance.Instance.StopTrackPerformance("Weather");
 
+            if (gameFile != null)
+            {
+                // Cleanup game file.
+                gameFile = null;
+            }
+
         }
 
         public bool FastForwardToDay { get; set; }

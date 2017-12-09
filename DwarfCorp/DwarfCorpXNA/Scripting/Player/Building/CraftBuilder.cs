@@ -223,14 +223,16 @@ namespace DwarfCorp
 
             HandleOrientation();
 
-            //Todo: Operator == implemented correctly for voxel handles?
-            if (CurrentDesignation.Location.Equals(player.VoxSelector.VoxelUnderMouse)) 
-                return;
+            if (CurrentDesignation != null)
+            {
+                if (CurrentDesignation.Location.Equals(player.VoxSelector.VoxelUnderMouse))
+                    return;
 
-            CurrentDesignation.Location = player.VoxSelector.VoxelUnderMouse;
+                CurrentDesignation.Location = player.VoxSelector.VoxelUnderMouse;
 
-            World.ShowTooltip("Click to build. Press R/T to rotate.");
-            CurrentCraftBody.SetTintRecursive(IsValid(CurrentDesignation) ? Color.Green : Color.Red);
+                World.ShowTooltip("Click to build. Press R/T to rotate.");
+                CurrentCraftBody.SetTintRecursive(IsValid(CurrentDesignation) ? Color.Green : Color.Red);
+            }
         }
 
         private void HandleOrientation()
