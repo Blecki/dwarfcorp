@@ -56,7 +56,8 @@ namespace DwarfCorp
         public enum RestockType
         {
             RestockResource,
-            None
+            None,
+            Any
         }
         public List<InventoryItem> Resources { get; set; } 
         public float DropRate { get; set; }
@@ -323,7 +324,7 @@ namespace DwarfCorp
         {
             return (from resource in Resources where
                     ResourceLibrary.GetResourceByName(resource.Resource).Tags.Contains(quantitiy.ResourceType) && ((type == RestockType.RestockResource 
-                    && resource.MarkedForRestock) || (type == RestockType.None && !resource.MarkedForRestock))
+                    && resource.MarkedForRestock) || (type == RestockType.None && !resource.MarkedForRestock) || (type == RestockType.Any))
                     select new ResourceAmount(resource.Resource)).ToList();
         }
 

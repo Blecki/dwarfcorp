@@ -104,7 +104,7 @@ namespace DwarfCorp
         public override IEnumerable<Act.Status> Run()
         {
             List<ResourceAmount> foods =
-                Agent.Creature.Inventory.GetResources(new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Edible), Inventory.RestockType.None);
+                Agent.Creature.Inventory.GetResources(new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Edible), Inventory.RestockType.Any);
 
             if (foods.Count == 0 && Agent.Creature.Faction == Agent.World.PlayerFaction)
             {
@@ -121,7 +121,7 @@ namespace DwarfCorp
                 if (resourceAmount.NumResources > 0)
                 {
                     List<Body> bodies = Agent.Creature.Inventory.RemoveAndCreate(new ResourceAmount(resourceAmount.ResourceType, 1), 
-                        Inventory.RestockType.None);
+                        Inventory.RestockType.Any);
                     var resource = ResourceLibrary.GetResourceByName(resourceAmount.ResourceType);
                     Agent.Creature.NoiseMaker.MakeNoise("Chew", Agent.Creature.AI.Position);
                     if (bodies.Count == 0)
