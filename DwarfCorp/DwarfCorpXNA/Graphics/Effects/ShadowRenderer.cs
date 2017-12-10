@@ -67,13 +67,19 @@ namespace DwarfCorp
 
         public void ClearEdges(GraphicsDevice device)
         {
-            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.Opaque, Drawer2D.PointMagLinearMin,
-                DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
-            DwarfGame.SpriteBatch.Draw(Drawer2D.Pixel, new Rectangle(0, 0, ShadowMap.Width, 2), Color.Black);
-            DwarfGame.SpriteBatch.Draw(Drawer2D.Pixel, new Rectangle(0, 0, 2, ShadowMap.Height), Color.Black);
-            DwarfGame.SpriteBatch.Draw(Drawer2D.Pixel, new Rectangle(ShadowMap.Width - 2, 0, 2, ShadowMap.Height), Color.Black);
-            DwarfGame.SpriteBatch.Draw(Drawer2D.Pixel, new Rectangle(0, ShadowMap.Height - 2, ShadowMap.Width, 2), Color.Black);
-            DwarfGame.SpriteBatch.End();
+            try
+            {
+                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.Opaque, Drawer2D.PointMagLinearMin,
+                    DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
+                DwarfGame.SpriteBatch.Draw(Drawer2D.Pixel, new Rectangle(0, 0, ShadowMap.Width, 2), Color.Black);
+                DwarfGame.SpriteBatch.Draw(Drawer2D.Pixel, new Rectangle(0, 0, 2, ShadowMap.Height), Color.Black);
+                DwarfGame.SpriteBatch.Draw(Drawer2D.Pixel, new Rectangle(ShadowMap.Width - 2, 0, 2, ShadowMap.Height), Color.Black);
+                DwarfGame.SpriteBatch.Draw(Drawer2D.Pixel, new Rectangle(0, ShadowMap.Height - 2, ShadowMap.Width, 2), Color.Black);
+            }
+            finally
+            {
+                DwarfGame.SpriteBatch.End();
+            }
         }
 
         public void UnbindShadowmap(GraphicsDevice device)

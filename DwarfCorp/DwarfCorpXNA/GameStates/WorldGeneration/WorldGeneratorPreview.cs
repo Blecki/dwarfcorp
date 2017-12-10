@@ -307,12 +307,18 @@ namespace DwarfCorp.GameStates
 
             GetSpawnRectangleInScreenSpace(SpawnRectanglePoints);
 
-            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin,
-            null, null, null, Matrix.Identity);
-            Drawer2D.DrawPolygon(DwarfGame.SpriteBatch, Color.Yellow, 1, SpawnRectanglePoints);
-            //Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, "Spawn", DefaultFont, new Vector2(a.X - 5, a.Y - 20),
-            //    Color.White, Color.Black);
-            DwarfGame.SpriteBatch.End();
+            try
+            {
+                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin,
+                null, null, null, Matrix.Identity);
+                Drawer2D.DrawPolygon(DwarfGame.SpriteBatch, Color.Yellow, 1, SpawnRectanglePoints);
+                //Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, "Spawn", DefaultFont, new Vector2(a.X - 5, a.Y - 20),
+                //    Color.White, Color.Black);
+            }
+            finally
+            {
+                DwarfGame.SpriteBatch.End();
+            }
 
 
             var font = Root.GetTileSheet("font10");

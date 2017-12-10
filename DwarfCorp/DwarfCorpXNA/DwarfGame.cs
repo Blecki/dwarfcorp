@@ -72,6 +72,9 @@ namespace DwarfCorp
         private static StreamWriter _logwriter;
         private static TextWriter _initialOut;
         private static TextWriter _initialError;
+
+        private static int MainThreadID;
+
 #if SHARP_RAVEN && !DEBUG
         private RavenClient ravenClient;
 #endif
@@ -90,7 +93,7 @@ namespace DwarfCorp
             Window.Title = "DwarfCorp";
             Window.AllowUserResizing = false;
             TextureManager = new TextureManager(Content, GraphicsDevice);
-            
+            MainThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
             GameSettings.Load();
 
             try
@@ -379,6 +382,7 @@ namespace DwarfCorp
         public static void SafeSpriteBatchBegin(SpriteSortMode sortMode, BlendState blendState, SamplerState samplerstate, 
             DepthStencilState depthState, RasterizerState rasterState, Effect effect, Matrix world)
         {
+            Debug.Assert(IsMainThread);
             try
             {
                 SpriteBatch.Begin(sortMode,
@@ -411,6 +415,12 @@ namespace DwarfCorp
             ExitGame = true;
             Program.SignalShutdown();
             base.OnExiting(sender, args);
+        }
+
+        // If called in the non main thread, will return false;
+        public static bool IsMainThread
+        {
+            get { return System.Threading.Thread.CurrentThread.ManagedThreadId == MainThreadID; }
         }
 
         public static bool ExitGame = false;

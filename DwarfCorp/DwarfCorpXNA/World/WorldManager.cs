@@ -933,18 +933,24 @@ namespace DwarfCorp
             //if (CompositeLibrary.Composites.ContainsKey("resources"))
             //    CompositeLibrary.Composites["resources"].DebugDraw(DwarfGame.SpriteBatch, 0, 0);
             //SelectionBuffer.DebugDraw(GraphicsDevice.Viewport.Bounds);
-            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin,
-                null, rasterizerState, null, Matrix.Identity);
-            //DwarfGame.SpriteBatch.Draw(Shadows.ShadowTexture, Vector2.Zero, Color.White);
-            if (IsCameraUnderwater())
+            try
             {
-                Drawer2D.FillRect(DwarfGame.SpriteBatch, GraphicsDevice.Viewport.Bounds, new Color(10, 40, 60, 200));
+                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin,
+                    null, rasterizerState, null, Matrix.Identity);
+                //DwarfGame.SpriteBatch.Draw(Shadows.ShadowTexture, Vector2.Zero, Color.White);
+                if (IsCameraUnderwater())
+                {
+                    Drawer2D.FillRect(DwarfGame.SpriteBatch, GraphicsDevice.Viewport.Bounds, new Color(10, 40, 60, 200));
+                }
+
+                Drawer2D.Render(DwarfGame.SpriteBatch, Camera, GraphicsDevice.Viewport);
+
+                IndicatorManager.Render(gameTime);
             }
-
-            Drawer2D.Render(DwarfGame.SpriteBatch, Camera, GraphicsDevice.Viewport);
-
-            IndicatorManager.Render(gameTime);
-            DwarfGame.SpriteBatch.End();
+            finally
+            {
+                DwarfGame.SpriteBatch.End();
+            }
 
             Master.Render(Game, gameTime, GraphicsDevice);
 

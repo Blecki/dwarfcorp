@@ -147,10 +147,16 @@ namespace DwarfCorp
 
         public void DebugDraw(Rectangle rect)
         {
-            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate, 
-                BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin, DepthStencilState.Default, RasterizerState.CullNone, null, Matrix.Identity);
-            DwarfGame.SpriteBatch.Draw((Texture2D)Buffer, rect, Color.White);
-            DwarfGame.SpriteBatch.End();
+            try
+            {
+                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate,
+                    BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin, DepthStencilState.Default, RasterizerState.CullNone, null, Matrix.Identity);
+                DwarfGame.SpriteBatch.Draw((Texture2D)Buffer, rect, Color.White);
+            }
+            finally
+            {
+                DwarfGame.SpriteBatch.End();
+            }
         }
     }
 }

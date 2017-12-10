@@ -215,25 +215,31 @@ namespace DwarfCorp
             {
                 device.SetRenderTarget(Target);
                 device.Clear(ClearOptions.Target, Color.Transparent, 1.0f, 0);
-                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp,
-                    DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
-                foreach (KeyValuePair<Frame, Point> framePair in CurrentFrames)
+                try
                 {
-                    Frame frame = framePair.Key;
-                    Point currentOffset = framePair.Value;
-                    List<NamedImageFrame> images = frame.GetFrames();
-
-                    for (int i = 0; i < images.Count; i++)
+                    DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp,
+                        DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
+                    foreach (KeyValuePair<Frame, Point> framePair in CurrentFrames)
                     {
-                        int y = FrameSize.Y - images[i].SourceRect.Height;
-                        int x = (FrameSize.X/2) - images[i].SourceRect.Width/2;
-                        DwarfGame.SpriteBatch.Draw(images[i].Image,
-                            new Rectangle(currentOffset.X*FrameSize.X + x, currentOffset.Y*FrameSize.Y + y,
-                                images[i].SourceRect.Width, images[i].SourceRect.Height), images[i].SourceRect,
-                            frame.Tints[i]);
+                        Frame frame = framePair.Key;
+                        Point currentOffset = framePair.Value;
+                        List<NamedImageFrame> images = frame.GetFrames();
+
+                        for (int i = 0; i < images.Count; i++)
+                        {
+                            int y = FrameSize.Y - images[i].SourceRect.Height;
+                            int x = (FrameSize.X / 2) - images[i].SourceRect.Width / 2;
+                            DwarfGame.SpriteBatch.Draw(images[i].Image,
+                                new Rectangle(currentOffset.X * FrameSize.X + x, currentOffset.Y * FrameSize.Y + y,
+                                    images[i].SourceRect.Width, images[i].SourceRect.Height), images[i].SourceRect,
+                                frame.Tints[i]);
+                        }
                     }
                 }
-                DwarfGame.SpriteBatch.End();
+                finally
+                {
+                    DwarfGame.SpriteBatch.End();
+                }
                 device.SetRenderTarget(null);
                 HasRendered = true;
             }
