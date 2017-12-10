@@ -29,7 +29,7 @@ namespace DwarfCorp
         }
 
         public string CompositeName { get; set; }
-        public List<Composite.Frame> CompositeFrames { get; set; }
+        public List<CompositeFrame> CompositeFrames { get; set; }
         [JsonIgnore]
         public Point CurrentOffset { get; set; }
         [JsonIgnore]
@@ -111,10 +111,10 @@ namespace DwarfCorp
 
         public CompositeAnimation()
         {
-            CompositeFrames = new List<Composite.Frame>();
+            CompositeFrames = new List<CompositeFrame>();
         }
 
-        public CompositeAnimation(string composite, List<Composite.Frame> frames) :
+        public CompositeAnimation(string composite, List<CompositeFrame> frames) :
             this()
         {
             if (!CompositeLibrary.Composites.ContainsKey(composite))
@@ -136,23 +136,23 @@ namespace DwarfCorp
             
         }
 
-        public static List<Composite.Frame> CreateFrames(List<SpriteSheet> layers, List<Color> tints, params int[][] frames)
+        public static List<CompositeFrame> CreateFrames(List<SpriteSheet> layers, List<Color> tints, params int[][] frames)
         {
-            List<Composite.Frame> frameList = new List<Composite.Frame>();
+            List<CompositeFrame> frameList = new List<CompositeFrame>();
             foreach (int[] frame in frames)
             {
-                Composite.Frame currFrame = new Composite.Frame();
+                CompositeFrame currFrame = new CompositeFrame();
 
                 int x = frame[0];
                 int y = frame[1];
 
-                currFrame.Position = new Point(x, y);
-
                 for (int j = 2; j < frame.Length; j++)
                 {
-                    int layer = frame[j];
-                    currFrame.Layers.Add(layers[layer]);
-                    currFrame.Tints.Add(tints[Math.Min(Math.Max(layer, 0), tints.Count - 1)]);
+                    var cell = new CompositeCell();
+                    cell.Tile = new Point(x, y);
+                    cell.Sheet = layers[frame[j]];
+                    cell.Tint = tints[Math.Min(Math.Max(frame[j], 0), tints.Count - 1)];
+                    currFrame.Cells.Add(cell);
                 }
 
                 frameList.Add(currFrame);
@@ -174,7 +174,7 @@ namespace DwarfCorp
                 Composite.ApplyBillboard(Primitive, CurrentOffset);
                 Primitives.Clear();
 
-                foreach (Composite.Frame frame in CompositeFrames)
+                foreach (CompositeFrame frame in CompositeFrames)
                 {
                     Primitives.Add(Primitive);
                 }
