@@ -89,10 +89,10 @@ namespace DwarfCorp
             switch (TypeofStorm)
             {
                 case StormType.RainStorm:
-                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_rain_storm_alert, 0.5f);
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_rain_storm_alert, 0.15f);
                     break;
                 case StormType.SnowStorm:
-                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_snow_storm_alert, 0.5f);
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_snow_storm_alert, 0.15f);
                     break;
             }
 

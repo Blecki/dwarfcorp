@@ -77,7 +77,7 @@ namespace DwarfCorp
         {
             if (Yays != null && Yays.Count > 0)
             {
-                SoundManager.PlaySound(Datastructures.SelectRandom(Yays), 0.5f);
+                SoundManager.PlaySound(Datastructures.SelectRandom(Yays), 0.25f);
             }
         }
 
@@ -85,7 +85,7 @@ namespace DwarfCorp
         {
             if (Boos != null && Boos.Count > 0)
             {
-                SoundManager.PlaySound(Datastructures.SelectRandom(Boos), 0.5f);
+                SoundManager.PlaySound(Datastructures.SelectRandom(Boos), 0.25f);
             }
         }
 
@@ -177,7 +177,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    SoundEffectInstance inst = SoundManager.PlaySound(utter.Syllable, MathFunctions.Rand(0.1f, 0.25f));
+                    SoundEffectInstance inst = SoundManager.PlaySound(utter.Syllable, MathFunctions.Rand(1e-2f, 2e-2f));
                     if (inst == null)
                     {
                         yield return utter;
