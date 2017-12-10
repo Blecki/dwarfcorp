@@ -377,6 +377,7 @@ namespace DwarfCorp.Gui.Widgets
                         //ExperienceLabel.Text = String.Format("XP: {0}\n({1} to next level)",
                         //    Employee.Stats.XP, diff);
                         LevelButton.Hidden = true;
+                        LevelButton.Invalidate();
                     }
                     else
                     {
@@ -384,6 +385,7 @@ namespace DwarfCorp.Gui.Widgets
                         //    Employee.Stats.XP, "(Overqualified)");
                         LevelButton.Hidden = false;
                         LevelButton.Tooltip = "Promote to " + nextLevel.Name;
+                        LevelButton.Invalidate();
                     }
                 }
                 else

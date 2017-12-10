@@ -170,6 +170,17 @@ namespace DwarfCorp.Gui.Widgets
                         }
                     }
                 },
+                 new HorizontalMenuTray.MenuItem
+                {
+                    Text = "XP",
+                    OnClick = (sender, args) =>
+                    {
+                        foreach(var minion in Master.Faction.Minions)
+                        {
+                            minion.AddXP(100);
+                        }
+                    }
+                },
                 new HorizontalMenuTray.MenuItem
                 {
                     Text = "SPAWN TEST",
