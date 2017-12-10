@@ -635,7 +635,7 @@ namespace DwarfCorp
             }
 
 
-            List<Stockpile> stockpilesCopy = new List<Stockpile>(Stockpiles);
+            List<Stockpile> stockpilesCopy = new List<Stockpile>(Stockpiles.Where(s => resources.All(r => s.IsAllowed(r.ResourceType))));
             stockpilesCopy.Sort((a, b) => CompareZones(a, b, position));
 
 

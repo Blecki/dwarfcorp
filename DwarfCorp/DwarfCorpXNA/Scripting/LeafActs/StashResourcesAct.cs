@@ -59,7 +59,7 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            Zone zone = Agent.Faction.GetNearestStockpile(Agent.Position, (s) => !s.IsFull());
+            Zone zone = Agent.Faction.GetNearestStockpile(Agent.Position, (s) => !s.IsFull() && Resources.All(resource => s.IsAllowed(resource.ResourceType)));
 
             if (zone != null)
             {
