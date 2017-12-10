@@ -23,9 +23,9 @@ namespace DwarfCorp
         [JsonIgnore]
         public IndexBuffer IndexBuffer = null;
 
-        public ushort[] Indexes = new ushort[1024];
+        public ushort[] Indexes = new ushort[8];
 
-        public ExtendedVertex[] Vertices = new ExtendedVertex[1024];
+        public ExtendedVertex[] Vertices = new ExtendedVertex[8];
 
         [JsonIgnore]
         public VertexBuffer VertexBuffer = null;

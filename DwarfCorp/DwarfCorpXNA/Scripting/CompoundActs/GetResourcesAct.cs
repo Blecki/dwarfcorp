@@ -135,13 +135,6 @@ namespace DwarfCorp
 
                 if(nearestStockpile == null || (ResourcesToStash != null &&  ResourcesToStash.Count == 0))
                 {
-                    if (Resources != null && 
-                        Resources.Any(r => r.ResourceType == Resource.ResourceTags.Edible) && Agent.Faction == Agent.World.PlayerFaction)
-                    {
-
-                        Agent.Manager.World.MakeAnnouncement("We're out of food!");
-                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
-                    }
                     Tree = null;
                     return;
                 }

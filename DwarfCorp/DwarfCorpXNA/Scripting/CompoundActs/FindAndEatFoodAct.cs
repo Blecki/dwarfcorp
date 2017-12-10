@@ -104,13 +104,11 @@ namespace DwarfCorp
         public override IEnumerable<Act.Status> Run()
         {
             List<ResourceAmount> foods =
-                Agent.Creature.Inventory.GetResources(new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Edible));
+                Agent.Creature.Inventory.GetResources(new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Edible), Inventory.RestockType.None);
 
             if (foods.Count == 0 && Agent.Creature.Faction == Agent.World.PlayerFaction)
             {
 
-                Agent.Manager.World.MakeAnnouncement("We're out of food!");
-                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                 yield return Act.Status.Fail;
                 yield break;
             }
@@ -122,13 +120,12 @@ namespace DwarfCorp
             {
                 if (resourceAmount.NumResources > 0)
                 {
-                    List<Body> bodies = Agent.Creature.Inventory.RemoveAndCreate(new ResourceAmount(resourceAmount.ResourceType, 1), Inventory.RestockType.None);
+                    List<Body> bodies = Agent.Creature.Inventory.RemoveAndCreate(new ResourceAmount(resourceAmount.ResourceType, 1), 
+                        Inventory.RestockType.None);
                     var resource = ResourceLibrary.GetResourceByName(resourceAmount.ResourceType);
                     Agent.Creature.NoiseMaker.MakeNoise("Chew", Agent.Creature.AI.Position);
                     if (bodies.Count == 0)
                     {
-                        Agent.Creature.Manager.World.MakeAnnouncement("We're out of food!");
-                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                         yield return Act.Status.Fail;
                     }
                     else

@@ -66,13 +66,13 @@ namespace DwarfCorp
         public static T LoadBinary<T>(string filepath)
         {
             IFormatter formatter = new BinaryFormatter();
+            T toReturn = default(T);
             using (var stream = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.None))
-            {
-                T toReturn = default(T);
+            { 
                 try
                 {
                     stream.Position = 0;
-                    toReturn = (T)formatter.Deserialize(stream);
+                    toReturn = (T) formatter.Deserialize(stream);
                 }
                 catch (InvalidCastException e)
                 {
