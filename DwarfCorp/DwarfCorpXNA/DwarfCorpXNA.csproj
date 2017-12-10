@@ -413,6 +413,8 @@
     <Compile Include="Voxels\ChunkRenderer.cs" />
     <Compile Include="Voxels\Coordinate.cs" />
     <Compile Include="Voxels\DecalType.cs" />
+    <Compile Include="Voxels\DecalLibrary.cs" />
+    <Compile Include="Voxels\GrassType.cs" />
     <Compile Include="Voxels\LiquidType.cs" />
     <Compile Include="Voxels\VoxelChunk-Motes.cs" />
     <Compile Include="Voxels\VoxelHelpers\GetVoxelBoundingBox.cs" />
@@ -433,7 +435,7 @@
     <Compile Include="Voxels\VoxelHelpers\FindFirstVoxelBelow.cs" />
     <Compile Include="Voxels\VoxelHelpers\FindFirstVoxelAbove.cs" />
     <Compile Include="Voxels\Splasher.cs" />
-    <Compile Include="Voxels\DecalLibrary.cs" />
+    <Compile Include="Voxels\GrassLibrary.cs" />
     <Compile Include="Voxels\ChunkUpdate.cs" />
     <Compile Include="World\IndicatorManager.cs" />
     <Compile Include="Gui\Enums.cs" />
