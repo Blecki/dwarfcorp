@@ -153,7 +153,7 @@ namespace DwarfCorp
 
                         if (!vox.IsValid || vox.IsEmpty) continue;
 
-                        if (!cluster.Type.SpawnOnSurface && vox.Type.IsSurface) continue;
+                        if (!cluster.Type.SpawnOnSurface && (vox.Type.IsSurface || vox.Type.IsSoil)) continue;
 
                         if (!MathFunctions.RandEvent(cluster.Type.SpawnProbability)) continue;
 
@@ -179,7 +179,7 @@ namespace DwarfCorp
 
                 if (!MathFunctions.RandEvent(vein.Type.SpawnProbability)) continue;
 
-                if (!vein.Type.SpawnOnSurface && vox.Type.IsSurface) continue;
+                if (!vein.Type.SpawnOnSurface && (vox.Type.IsSurface || vox.Type.IsSoil)) continue;
 
                 vox.RawSetType(vein.Type);
                 Vector3 step = directionBias + MathFunctions.RandVector3Box(-1, 1, -1, 1, -1, 1) * 0.25f;
