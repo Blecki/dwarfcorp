@@ -70,19 +70,19 @@ namespace DwarfCorp
                     {
                         var voxel = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
 
-                        if (voxel.GrassLayer == y)
+                        if (voxel.Decal != 0)
                         {
-                            var decal = GrassLibrary.GetGrassType(voxel.GrassType);
+                            var decal = DecalLibrary.GetDecalType(voxel.Decal);
                             if (decal.Decay)
                             {
-                                voxel.GrassDecay -= 1;
-                                if (voxel.GrassDecay == 0)
+                                voxel.DecalData -= 1;
+                                if (voxel.DecalData == 0)
                                 {
-                                    var newDecal = GrassLibrary.GetGrassType(decal.BecomeWhenDecays);
+                                    var newDecal = DecalLibrary.GetDecalType(decal.BecomeWhenDecays);
                                     if (newDecal != null)
-                                        voxel.GrassType = newDecal.ID;
+                                        voxel.Decal = newDecal.ID;
                                     else
-                                        voxel.GrassLayer = VoxelConstants.ChunkSizeY;
+                                        voxel.Decal = 0;
                                 }
                             } 
                         }

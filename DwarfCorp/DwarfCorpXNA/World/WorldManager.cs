@@ -1114,10 +1114,11 @@ namespace DwarfCorp
             // Now check for biome ambience.
             var pos = vox.WorldPosition;
             var biome = Overworld.GetBiomeAt(pos);
+            var biomeData = BiomeLibrary.Biomes[biome];
 
-            if (!string.IsNullOrEmpty(biome.DayAmbience))
+            if (!string.IsNullOrEmpty(biomeData.DayAmbience))
             {
-                if (prevAmbience[0] != biome.DayAmbience)
+                if (prevAmbience[0] != biomeData.DayAmbience)
                 {
                     if (!string.IsNullOrEmpty(prevAmbience[0]))
                     {
@@ -1129,17 +1130,17 @@ namespace DwarfCorp
                         SoundManager.StopAmbience(prevAmbience[1]);
                         prevAmbience[1] = null;
                     }
-                    SoundManager.PlayAmbience(biome.DayAmbience);
+                    SoundManager.PlayAmbience(biomeData.DayAmbience);
                 }
 
-                prevAmbience[0] = biome.DayAmbience;
+                prevAmbience[0] = biomeData.DayAmbience;
             }
 
-            if (!string.IsNullOrEmpty(biome.NightAmbience) && prevAmbience[1] != biome.NightAmbience)
+            if (!string.IsNullOrEmpty(biomeData.NightAmbience) && prevAmbience[1] != biomeData.NightAmbience)
             {
-                prevAmbience[1] = biome.NightAmbience;
+                prevAmbience[1] = biomeData.NightAmbience;
 
-                SoundManager.PlayAmbience(biome.NightAmbience);
+                SoundManager.PlayAmbience(biomeData.NightAmbience);
             }
         }
     }

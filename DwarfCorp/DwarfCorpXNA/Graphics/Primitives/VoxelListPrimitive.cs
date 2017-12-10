@@ -122,27 +122,21 @@ namespace DwarfCorp
                 );
         }
 
-        private class Cache
-        {
-            public int[] AmbientValues = new int[4];
-            public Dictionary<GlobalVoxelCoordinate, VertexColorInfo> LightCache = new Dictionary<GlobalVoxelCoordinate, VertexColorInfo>();
-            public Dictionary<GlobalVoxelCoordinate, bool> ExploredCache = new Dictionary<GlobalVoxelCoordinate, bool>();
-
-            public void Clear()
-            {
-                LightCache.Clear();
-                ExploredCache.Clear();
-            }
-        }
-
         public void InitializeFromChunk(VoxelChunk chunk)
         {
             if (chunk == null)
                 return;
 
+            int grassId = VoxelLibrary.GetVoxelType("Grass").ID;
+
+            int[] ambientValues = new int[4];
+            VertexCount = 0;
+            IndexCount = 0;
             BoxPrimitive bedrockModel = VoxelLibrary.GetPrimitive("Bedrock");
             var sliceStack = new List<RawPrimitive>();
-            var cache = new Cache();
+            var totalBuilt = 0;
+            var lightCache = new Dictionary<GlobalVoxelCoordinate, VertexColorInfo>();
+            var exploredCache = new Dictionary<GlobalVoxelCoordinate, bool>();
 
             for (var y = 0; y < chunk.Manager.ChunkData.MaxViewingLevel; ++y)
             {
@@ -154,20 +148,24 @@ namespace DwarfCorp
 
                     if (chunk.Data.VoxelsPresentInSlice[y] == 0)
                     {
-                        cache.Clear();
+                        lightCache.Clear(); // If we skip a slice, nothing in the cache will be reused.
+                        exploredCache.Clear();
 
                         if (cachedSlice != null)
                         {
                             chunk.Data.SliceCache[y] = null;
+                            totalBuilt += 1;
                         }
                         continue;
                     }
 
                     if (cachedSlice != null)
                     {
-                        cache.Clear();
+                        lightCache.Clear(); // If we skip a slice, nothing in the cache will be reused.
+                        exploredCache.Clear();
 
                         sliceStack.Add(cachedSlice);
+                        //totalBuilt += 1;
 
                         if (GameSettings.Default.GrassMotes)
                             chunk.RebuildMoteLayerIfNull(y);
@@ -180,7 +178,7 @@ namespace DwarfCorp
                         Vertices = new ExtendedVertex[128],
                         Indexes = new ushort[128]
                     };
-
+                    
                     chunk.Data.SliceCache[y] = sliceGeometry;
                 }
 
@@ -188,17 +186,28 @@ namespace DwarfCorp
                 {
                     UpdateCornerRamps(chunk, y);
                     UpdateNeighborEdgeRamps(chunk, y);
-                }
+                }                    
 
                 if (GameSettings.Default.GrassMotes)
                     chunk.RebuildMoteLayer(y);
-
-                BuildSliceGeometry(chunk, bedrockModel, cache, y, sliceGeometry);
+                
+                for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
+                {
+                    for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
+                    {
+                        BuildVoxelGeometry(sliceGeometry,
+                            x, y, z, chunk, bedrockModel, ambientValues, lightCache, exploredCache,
+                            grassId);
+                    }
+                }
 
                 sliceStack.Add(sliceGeometry);
+                totalBuilt += 1;
             }
 
-            var combinedGeometry = RawPrimitive.Concat(sliceStack);
+            //if (totalBuilt > 0)
+            //{
+                var combinedGeometry = RawPrimitive.Concat(sliceStack);
 
                 Vertices = combinedGeometry.Vertices;
                 VertexCount = combinedGeometry.VertexCount;
@@ -209,23 +218,7 @@ namespace DwarfCorp
                 chunk.NewPrimitive = this;
                 chunk.NewPrimitiveReceived = true;
                 chunk.PrimitiveMutex.ReleaseMutex();
-        }
-
-        private static void BuildSliceGeometry(
-            VoxelChunk chunk, 
-            BoxPrimitive bedrockModel, 
-            Cache Cache,
-            int y, 
-            RawPrimitive sliceGeometry)
-        {
-            for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
-            {
-                for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
-                {
-                    BuildVoxelGeometry(sliceGeometry,
-                        x, y, z, chunk, bedrockModel, Cache);
-                }
-            }
+            //}
         }
 
         private static GlobalVoxelCoordinate GetCacheKey(VoxelHandle Handle, VoxelVertex Vertex)
@@ -251,7 +244,10 @@ namespace DwarfCorp
             int Z,
             VoxelChunk Chunk,
             BoxPrimitive BedrockModel,
-            Cache Cache)
+            int[] AmbientScratchSpace,
+            Dictionary<GlobalVoxelCoordinate, VertexColorInfo> LightCache,
+            Dictionary<GlobalVoxelCoordinate, bool> ExploredCache,
+            int GrassTypeID)
         {
             var v = new VoxelHandle(Chunk, new LocalVoxelCoordinate(X, Y, Z));
 
@@ -263,6 +259,9 @@ namespace DwarfCorp
             if (primitive == null) primitive = BedrockModel;
 
             var tint = v.Type.Tint;
+            var biomeName = Overworld.Map[(int)(v.Coordinate.X / Chunk.Manager.World.WorldScale), (int)(v.Coordinate.Z / Chunk.Manager.World.WorldScale)].Biome;
+            var biome = BiomeLibrary.Biomes[biomeName];
+
 
             var uvs = primitive.UVs;
 
@@ -270,16 +269,18 @@ namespace DwarfCorp
                 uvs = ComputeTransitionTexture(new VoxelHandle(v.Chunk.Manager.ChunkData, v.Coordinate));
 
             BuildVoxelTopFaceGeometry(Into,
-                Chunk, Cache, primitive, v, uvs, 0);
+                Chunk, AmbientScratchSpace, LightCache, ExploredCache, primitive, v, uvs, 0);
             for (int i = 1; i < 6; i++)
                 BuildVoxelFaceGeometry(Into, Chunk,
-                    Cache, primitive, v, tint, uvs, i);
+                    AmbientScratchSpace, LightCache, ExploredCache, primitive, v, tint, uvs, i);
         }
 
         private static void BuildVoxelFaceGeometry(
             RawPrimitive Into,
             VoxelChunk Chunk,
-            Cache Cache,
+            int[] AmbientScratchSpace,
+            Dictionary<GlobalVoxelCoordinate, VertexColorInfo> LightCache,
+            Dictionary<GlobalVoxelCoordinate, bool> ExploredCache,
             BoxPrimitive Primitive,
             VoxelHandle V,
             Color Tint,
@@ -306,13 +307,13 @@ namespace DwarfCorp
                 var cacheKey = GetCacheKey(V, voxelVertex);
 
                 VertexColorInfo vertexColor;
-                if (!Cache.LightCache.TryGetValue(cacheKey, out vertexColor))
+                if (!LightCache.TryGetValue(cacheKey, out vertexColor))
                 {
                     vertexColor = CalculateVertexLight(V, voxelVertex, Chunk.Manager);
-                    Cache.LightCache.Add(cacheKey, vertexColor);
+                    LightCache.Add(cacheKey, vertexColor);
                 }
 
-                Cache.AmbientValues[faceVertex] = vertexColor.AmbientColor;
+                AmbientScratchSpace[faceVertex] = vertexColor.AmbientColor;
 
                 var rampOffset = Vector3.Zero;
                 if (V.Type.CanRamp && ShouldRamp(voxelVertex, V.RampType))
@@ -329,8 +330,8 @@ namespace DwarfCorp
                     UVs.Bounds[faceDescriptor.IndexOffset / 6]));
             }
 
-            bool flippedQuad = Cache.AmbientValues[0] + Cache.AmbientValues[2] >
-                              Cache.AmbientValues[1] + Cache.AmbientValues[3];
+            bool flippedQuad = AmbientScratchSpace[0] + AmbientScratchSpace[2] >
+                              AmbientScratchSpace[1] + AmbientScratchSpace[3];
 
             for (int idx = faceDescriptor.IndexOffset; idx < faceDescriptor.IndexCount +
                 faceDescriptor.IndexOffset; idx++)
@@ -343,12 +344,14 @@ namespace DwarfCorp
 
         private static void BuildVoxelTopFaceGeometry(
             RawPrimitive Into,
-            VoxelChunk Chunk,
-            Cache Cache,
-            BoxPrimitive Primitive,
-            VoxelHandle V,
-            BoxPrimitive.BoxTextureCoords UVs,
-            int i)
+    VoxelChunk Chunk,
+    int[] AmbientScratchSpace,
+    Dictionary<GlobalVoxelCoordinate, VertexColorInfo> LightCache,
+    Dictionary<GlobalVoxelCoordinate, bool> ExploredCache,
+    BoxPrimitive Primitive,
+    VoxelHandle V,
+    BoxPrimitive.BoxTextureCoords UVs,
+    int i)
         {
             var face = (BoxFace)i;
             var delta = FaceDeltas[i];
@@ -392,12 +395,12 @@ namespace DwarfCorp
                     var cacheKey = GetCacheKey(V, voxelVertex);
                     bool anyNeighborExplored = true;
 
-                    if (!Cache.ExploredCache.TryGetValue(cacheKey, out anyNeighborExplored))
+                    if (!ExploredCache.TryGetValue(cacheKey, out anyNeighborExplored))
                     {
                         anyNeighborExplored = VoxelHelpers.EnumerateVertexNeighbors2D(V.Coordinate, voxelVertex)
                             .Select(c => new VoxelHandle(V.Chunk.Manager.ChunkData, c))
                             .Any(n => n.IsValid && n.IsExplored);
-                        Cache.ExploredCache.Add(cacheKey, anyNeighborExplored);
+                        ExploredCache.Add(cacheKey, anyNeighborExplored);
                     }
 
 
@@ -413,10 +416,10 @@ namespace DwarfCorp
                 var cacheKey = GetCacheKey(V, voxelVertex);
 
                 VertexColorInfo vertexColor;
-                if (!Cache.LightCache.TryGetValue(cacheKey, out vertexColor))
+                if (!LightCache.TryGetValue(cacheKey, out vertexColor))
                 {
                     vertexColor = CalculateVertexLight(V, voxelVertex, Chunk.Manager);
-                    Cache.LightCache.Add(cacheKey, vertexColor);
+                    LightCache.Add(cacheKey, vertexColor);
                 }
 
                 vertexColors[faceVertex] = vertexColor;
@@ -425,13 +428,31 @@ namespace DwarfCorp
                 if (exploredVerts != 4)
                 {
                     bool anyNeighborExplored = true;
-                    if (!Cache.ExploredCache.TryGetValue(cacheKey, out anyNeighborExplored))
+                    if (!ExploredCache.TryGetValue(cacheKey, out anyNeighborExplored))
                         throw new InvalidProgramException();
 
                     if (!anyNeighborExplored) vertexTint[faceVertex] = new Color(0.0f, 0.0f, 0.0f, 1.0f);
                 }
-                
-                vertexTint[faceVertex] = new Color(vertexTint[faceVertex].ToVector4() * V.Type.Tint.ToVector4());
+
+                //if (V.Type.UseBiomeGrassTint)
+                //{
+                //    var biomeTints = VoxelHelpers.EnumerateVertexNeighbors2D(V.Coordinate, voxelVertex)
+                //        .Select(c => new VoxelHandle(V.Chunk.Manager.ChunkData, c))
+                //        .Where(v => v.IsValid)
+                //        .Select(v => BiomeLibrary.Biomes[Overworld.Map[(int)(v.Coordinate.X / Chunk.Manager.World.WorldScale), (int)(v.Coordinate.Z / Chunk.Manager.World.WorldScale)].Biome].GrassTint.ToVector4())
+                //        .ToArray();
+
+                //    var accumulator = Vector4.Zero;
+                //    foreach (var tint in biomeTints)
+                //        accumulator += tint;
+                //    var averageTint = accumulator / biomeTints.Length;
+
+                //    vertexTint[faceVertex] = new Color(vertexTint[faceVertex].ToVector4() * averageTint);
+                //}
+                //else
+                //{
+                    vertexTint[faceVertex] = new Color(vertexTint[faceVertex].ToVector4() * V.Type.Tint.ToVector4());
+                //}
             }
 
             if (exploredVerts != 0)
@@ -442,7 +463,7 @@ namespace DwarfCorp
 
                 // Draw central top tile.
                 AddTopFaceGeometry(Into,
-                    Cache.AmbientValues, Primitive,
+                    AmbientScratchSpace, Primitive,
                     faceDescriptor,
                     vertexPositions,
                     vertexColors,
@@ -450,15 +471,174 @@ namespace DwarfCorp
                     Vector2.One,
                     baseUVs, baseUVBounds);
 
-                if (V.GrassType != 0)
-                    BuildGrassFringeGeometry(Into, Chunk, Cache, Primitive, V, vertexColors,
-                        vertexTint, vertexPositions, faceDescriptor, exploredVerts);
+                // Draw decals
+                var decal = V.Decal;
+                if (decal == 0) return;
 
-                if (V.Decal != 0)
+                var decalType = DecalLibrary.GetDecalType(decal);
+
+                AddDecalGeometry(Into, AmbientScratchSpace, Primitive, V, faceDescriptor, exploredVerts, vertexPositions, vertexColors, vertexTint, decalType);
+
+                // Draw fringe
+                if (!decalType.HasFringeTransitions) return;
+
+                for (var s = 0; s < 4; ++s)
                 {
-                    var decalType = DecalLibrary.GetGrassType(V.Decal);
+                    var neighborCoord = V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[s];
+                    var neighbor = new VoxelHandle(Chunk.Manager.ChunkData, neighborCoord);
 
-                    AddDecalGeometry(Into, Cache.AmbientValues, Primitive, V, faceDescriptor, exploredVerts, vertexPositions, vertexColors, vertexTint, decalType);
+                    if (!neighbor.IsValid) continue;
+
+                    var aboveNeighbor = new VoxelHandle(Chunk.Manager.ChunkData, neighborCoord + new GlobalVoxelOffset(0, 1, 0));
+
+                    if (!aboveNeighbor.IsValid || aboveNeighbor.IsEmpty)
+                    {
+                        // Draw horizontal fringe.
+                        if (!neighbor.IsEmpty && neighbor.Decal != 0 && DecalLibrary.GetDecalType(neighbor.Decal).FringePrecedence >= decalType.FringePrecedence)
+                            continue;
+                        //if (handle.Type.FringePrecedence >= V.Type.FringePrecedence)
+                        //    continue;
+
+                        // Twizzle vertex positions.
+                        var newPositions = new Vector3[4];
+                        newPositions[FringeIndicies[s, 0]] = vertexPositions[FringeIndicies[s, 4]];
+                        newPositions[FringeIndicies[s, 1]] = vertexPositions[FringeIndicies[s, 4]]
+                            + (VoxelHelpers.ManhattanNeighbors2D[s].AsVector3() * 0.5f);
+                        newPositions[FringeIndicies[s, 2]] = vertexPositions[FringeIndicies[s, 5]]
+                            + (VoxelHelpers.ManhattanNeighbors2D[s].AsVector3() * 0.5f);
+                        newPositions[FringeIndicies[s, 3]] = vertexPositions[FringeIndicies[s, 5]];
+
+                        var newColors = new VertexColorInfo[4];
+                        newColors[FringeIndicies[s, 0]] = vertexColors[FringeIndicies[s, 4]];
+                        newColors[FringeIndicies[s, 1]] = vertexColors[FringeIndicies[s, 4]];
+                        newColors[FringeIndicies[s, 2]] = vertexColors[FringeIndicies[s, 5]];
+                        newColors[FringeIndicies[s, 3]] = vertexColors[FringeIndicies[s, 5]];
+
+                        var slopeTweak = new Vector3(0.0f, 0.0f, 0.0f);
+                        if (neighbor.IsEmpty)
+                            slopeTweak.Y = -0.5f;
+                        else
+                            slopeTweak.Y = 0.125f;
+
+                        newPositions[FringeIndicies[s, 1]] += slopeTweak;
+                        newPositions[FringeIndicies[s, 2]] += slopeTweak;
+
+                        var newTints = new Color[4];
+                        newTints[FringeIndicies[s, 0]] = vertexTint[FringeIndicies[s, 4]];
+                        newTints[FringeIndicies[s, 1]] = vertexTint[FringeIndicies[s, 4]];
+                        newTints[FringeIndicies[s, 2]] = vertexTint[FringeIndicies[s, 5]];
+                        newTints[FringeIndicies[s, 3]] = vertexTint[FringeIndicies[s, 5]];
+
+                        AddTopFaceGeometry(Into,
+                            AmbientScratchSpace, Primitive,
+                            faceDescriptor,
+                            newPositions,
+                            newColors,
+                            newTints,
+                            SideFringeUVScales[s],
+                            decalType.FringeTransitionUVs[s].UV,
+                            decalType.FringeTransitionUVs[s].Bounds);
+                    }
+                    else
+                    {
+                        // Draw vertical fringe!
+
+                        var newPositions = new Vector3[4];
+                        newPositions[FringeIndicies[s, 0]] = vertexPositions[FringeIndicies[s, 4]];
+                        newPositions[FringeIndicies[s, 1]] = vertexPositions[FringeIndicies[s, 4]]
+                            + new Vector3(0.0f, 0.5f, 0.0f)
+                            + (VoxelHelpers.ManhattanNeighbors2D[s].AsVector3() * -0.05f);
+                        newPositions[FringeIndicies[s, 2]] = vertexPositions[FringeIndicies[s, 5]]
+                            + new Vector3(0.0f, 0.5f, 0.0f)
+                            + (VoxelHelpers.ManhattanNeighbors2D[s].AsVector3() * -0.05f);
+                        newPositions[FringeIndicies[s, 3]] = vertexPositions[FringeIndicies[s, 5]];
+
+                        var newColors = new VertexColorInfo[4];
+                        newColors[FringeIndicies[s, 0]] = vertexColors[FringeIndicies[s, 4]];
+                        newColors[FringeIndicies[s, 1]] = vertexColors[FringeIndicies[s, 4]];
+                        newColors[FringeIndicies[s, 2]] = vertexColors[FringeIndicies[s, 5]];
+                        newColors[FringeIndicies[s, 3]] = vertexColors[FringeIndicies[s, 5]];
+
+                        var newTints = new Color[4];
+                        newTints[FringeIndicies[s, 0]] = vertexTint[FringeIndicies[s, 4]];
+                        newTints[FringeIndicies[s, 1]] = vertexTint[FringeIndicies[s, 4]];
+                        newTints[FringeIndicies[s, 2]] = vertexTint[FringeIndicies[s, 5]];
+                        newTints[FringeIndicies[s, 3]] = vertexTint[FringeIndicies[s, 5]];
+
+                        AddTopFaceGeometry(Into,
+                            AmbientScratchSpace, Primitive,
+                            faceDescriptor,
+                            newPositions,
+                            newColors,
+                            newTints,
+                            SideFringeUVScales[s],
+                            decalType.FringeTransitionUVs[s].UV,
+                            decalType.FringeTransitionUVs[s].Bounds);
+                    }
+                }
+
+                for (var s = 0; s < 4; ++s)
+                {
+                    var neighborCoord = V.Coordinate + VoxelHelpers.DiagonalNeighbors2D[s];
+                    var handle = new VoxelHandle(Chunk.Manager.ChunkData, neighborCoord);
+
+                    if (handle.IsValid)
+                    {
+                        if (!handle.IsEmpty && handle.Decal != 0 && DecalLibrary.GetDecalType((byte)handle.Decal).FringePrecedence >= decalType.FringePrecedence)
+                            continue;
+
+                        var manhattanA = new VoxelHandle(Chunk.Manager.ChunkData,
+                            V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[s]);
+                        if (!manhattanA.IsValid || manhattanA.Decal == V.Decal)
+                            continue;
+
+                        manhattanA = new VoxelHandle(Chunk.Manager.ChunkData,
+                            V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[FringeIndicies[4 + s, 5]]);
+                        if (!manhattanA.IsValid || manhattanA.Decal == V.Decal)
+                            continue;
+
+                        // Twizzle vertex positions.
+                        var newPositions = new Vector3[4];
+                        var pivot = vertexPositions[FringeIndicies[4 + s, 4]];
+                        var nDelta = VoxelHelpers.DiagonalNeighbors2D[s].AsVector3();
+
+                        newPositions[FringeIndicies[4 + s, 0]] = pivot;
+                        newPositions[FringeIndicies[4 + s, 1]] = pivot + new Vector3(nDelta.X * 0.5f, 0, 0);
+                        newPositions[FringeIndicies[4 + s, 2]] = pivot + new Vector3(nDelta.X * 0.5f, 0, nDelta.Z * 0.5f);
+                        newPositions[FringeIndicies[4 + s, 3]] = pivot + new Vector3(0, 0, nDelta.Z * 0.5f);
+
+                        var slopeTweak = new Vector3(0.0f, 0.0f, 0.0f);
+                        if (handle.IsEmpty)
+                            slopeTweak.Y = -0.5f;
+                        else
+                            slopeTweak.Y = 0.125f;
+
+                        newPositions[FringeIndicies[4 + s, 1]] += slopeTweak;
+                        newPositions[FringeIndicies[4 + s, 2]] += slopeTweak;
+                        newPositions[FringeIndicies[4 + s, 3]] += slopeTweak;
+
+                        var newColors = new VertexColorInfo[4];
+                        newColors[FringeIndicies[4 + s, 0]] = vertexColors[FringeIndicies[4 + s, 4]];
+                        newColors[FringeIndicies[4 + s, 1]] = vertexColors[FringeIndicies[4 + s, 4]];
+                        newColors[FringeIndicies[4 + s, 2]] = vertexColors[FringeIndicies[4 + s, 4]];
+                        newColors[FringeIndicies[4 + s, 3]] = vertexColors[FringeIndicies[4 + s, 4]];
+
+                        var newTints = new Color[4];
+                        newTints[FringeIndicies[4 + s, 0]] = vertexTint[FringeIndicies[4 + s, 4]];
+                        newTints[FringeIndicies[4 + s, 1]] = vertexTint[FringeIndicies[4 + s, 4]];
+                        newTints[FringeIndicies[4 + s, 2]] = vertexTint[FringeIndicies[4 + s, 4]];
+                        newTints[FringeIndicies[4 + s, 3]] = vertexTint[FringeIndicies[4 + s, 4]];
+
+                        AddTopFaceGeometry(Into,
+                            AmbientScratchSpace, Primitive,
+                            faceDescriptor,
+                            newPositions,
+                            newColors,
+                            newTints,
+                            new Vector2(0.5f, 0.5f),
+                            decalType.FringeTransitionUVs[4 + s].UV,
+                            decalType.FringeTransitionUVs[4 + s].Bounds);
+                    }
                 }
             }
             else
@@ -481,194 +661,6 @@ namespace DwarfCorp
                     ushort offset = Primitive.Indexes[idx];
                     ushort offset0 = Primitive.Indexes[faceDescriptor.IndexOffset];
                     Into.AddIndex((ushort)(indexOffset + offset - offset0));
-                }
-            }
-        }
-
-        private static void BuildGrassFringeGeometry(
-            RawPrimitive Into,
-            VoxelChunk Chunk,
-            Cache Cache,
-            BoxPrimitive Primitive,
-            VoxelHandle V,
-            VertexColorInfo[] VertexColors,
-            Color[] VertexTint,
-            Vector3[] VertexPositions,
-            BoxPrimitive.FaceDescriptor Face,
-            int ExploredVerts)
-        {
-            var grassLayer = V.GrassLayer;
-            if (grassLayer != V.Coordinate.Y) return;
-
-            var decalType = GrassLibrary.GetGrassType(V.GrassType);
-
-            AddGrassGeometry(Into, Cache.AmbientValues, Primitive, V, Face, ExploredVerts, VertexPositions, VertexColors, VertexTint, decalType);
-
-            // Draw fringe
-            if (decalType.FringeTransitionUVs == null) return;
-
-            for (var s = 0; s < 4; ++s)
-            {
-                var neighborCoord = V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[s];
-                var neighbor = new VoxelHandle(Chunk.Manager.ChunkData, neighborCoord);
-
-                if (!neighbor.IsValid) continue;
-
-                var aboveNeighbor = new VoxelHandle(Chunk.Manager.ChunkData, neighborCoord + new GlobalVoxelOffset(0, 1, 0));
-
-                if (!aboveNeighbor.IsValid || aboveNeighbor.IsEmpty)
-                {
-                    // Draw horizontal fringe.
-                    if (!neighbor.IsEmpty)
-                    {
-                        if (neighbor.GrassLayer == V.GrassLayer &&
-                            GrassLibrary.GetGrassType(neighbor.GrassType).FringePrecedence >= decalType.FringePrecedence)
-                            continue;
-                    }
-
-                    // Twizzle vertex positions.
-                    var newPositions = new Vector3[4];
-                    newPositions[FringeIndicies[s, 0]] = VertexPositions[FringeIndicies[s, 4]];
-                    newPositions[FringeIndicies[s, 1]] = VertexPositions[FringeIndicies[s, 4]]
-                        + (VoxelHelpers.ManhattanNeighbors2D[s].AsVector3() * 0.5f);
-                    newPositions[FringeIndicies[s, 2]] = VertexPositions[FringeIndicies[s, 5]]
-                        + (VoxelHelpers.ManhattanNeighbors2D[s].AsVector3() * 0.5f);
-                    newPositions[FringeIndicies[s, 3]] = VertexPositions[FringeIndicies[s, 5]];
-
-                    var newColors = new VertexColorInfo[4];
-                    newColors[FringeIndicies[s, 0]] = VertexColors[FringeIndicies[s, 4]];
-                    newColors[FringeIndicies[s, 1]] = VertexColors[FringeIndicies[s, 4]];
-                    newColors[FringeIndicies[s, 2]] = VertexColors[FringeIndicies[s, 5]];
-                    newColors[FringeIndicies[s, 3]] = VertexColors[FringeIndicies[s, 5]];
-
-                    var slopeTweak = new Vector3(0.0f, 0.0f, 0.0f);
-                    if (neighbor.IsEmpty)
-                        slopeTweak.Y = -0.5f;
-                    else
-                        slopeTweak.Y = 0.125f;
-
-                    newPositions[FringeIndicies[s, 1]] += slopeTweak;
-                    newPositions[FringeIndicies[s, 2]] += slopeTweak;
-
-                    var newTints = new Color[4];
-                    newTints[FringeIndicies[s, 0]] = VertexTint[FringeIndicies[s, 4]];
-                    newTints[FringeIndicies[s, 1]] = VertexTint[FringeIndicies[s, 4]];
-                    newTints[FringeIndicies[s, 2]] = VertexTint[FringeIndicies[s, 5]];
-                    newTints[FringeIndicies[s, 3]] = VertexTint[FringeIndicies[s, 5]];
-
-                    AddTopFaceGeometry(Into,
-                        Cache.AmbientValues, Primitive,
-                        Face,
-                        newPositions,
-                        newColors,
-                        newTints,
-                        SideFringeUVScales[s],
-                        decalType.FringeTransitionUVs[s].UV,
-                        decalType.FringeTransitionUVs[s].Bounds);
-                }
-                else
-                {
-                    // Draw vertical fringe!
-
-                    var newPositions = new Vector3[4];
-                    newPositions[FringeIndicies[s, 0]] = VertexPositions[FringeIndicies[s, 4]];
-                    newPositions[FringeIndicies[s, 1]] = VertexPositions[FringeIndicies[s, 4]]
-                        + new Vector3(0.0f, 0.5f, 0.0f)
-                        + (VoxelHelpers.ManhattanNeighbors2D[s].AsVector3() * -0.05f);
-                    newPositions[FringeIndicies[s, 2]] = VertexPositions[FringeIndicies[s, 5]]
-                        + new Vector3(0.0f, 0.5f, 0.0f)
-                        + (VoxelHelpers.ManhattanNeighbors2D[s].AsVector3() * -0.05f);
-                    newPositions[FringeIndicies[s, 3]] = VertexPositions[FringeIndicies[s, 5]];
-
-                    var newColors = new VertexColorInfo[4];
-                    newColors[FringeIndicies[s, 0]] = VertexColors[FringeIndicies[s, 4]];
-                    newColors[FringeIndicies[s, 1]] = VertexColors[FringeIndicies[s, 4]];
-                    newColors[FringeIndicies[s, 2]] = VertexColors[FringeIndicies[s, 5]];
-                    newColors[FringeIndicies[s, 3]] = VertexColors[FringeIndicies[s, 5]];
-
-                    var newTints = new Color[4];
-                    newTints[FringeIndicies[s, 0]] = VertexTint[FringeIndicies[s, 4]];
-                    newTints[FringeIndicies[s, 1]] = VertexTint[FringeIndicies[s, 4]];
-                    newTints[FringeIndicies[s, 2]] = VertexTint[FringeIndicies[s, 5]];
-                    newTints[FringeIndicies[s, 3]] = VertexTint[FringeIndicies[s, 5]];
-
-                    AddTopFaceGeometry(Into,
-                        Cache.AmbientValues, Primitive,
-                        Face,
-                        newPositions,
-                        newColors,
-                        newTints,
-                        SideFringeUVScales[s],
-                        decalType.FringeTransitionUVs[s].UV,
-                        decalType.FringeTransitionUVs[s].Bounds);
-                }
-            }
-
-            for (var s = 0; s < 4; ++s)
-            {
-                var neighborCoord = V.Coordinate + VoxelHelpers.DiagonalNeighbors2D[s];
-                var handle = new VoxelHandle(Chunk.Manager.ChunkData, neighborCoord);
-
-                if (handle.IsValid)
-                {
-                    if (!handle.IsEmpty)
-                    {
-                        if (handle.GrassLayer == V.GrassLayer &&
-                            GrassLibrary.GetGrassType(handle.GrassType).FringePrecedence >= decalType.FringePrecedence)
-                            continue;
-                    }
-
-                    var manhattanA = new VoxelHandle(Chunk.Manager.ChunkData,
-                        V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[s]);
-                    if (!manhattanA.IsValid || (manhattanA.GrassLayer == V.GrassLayer && manhattanA.GrassType == V.GrassType))
-                        continue;
-
-                    manhattanA = new VoxelHandle(Chunk.Manager.ChunkData,
-                        V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[FringeIndicies[4 + s, 5]]);
-                    if (!manhattanA.IsValid || (manhattanA.GrassLayer == V.GrassLayer && manhattanA.GrassType == V.GrassType))
-                        continue;
-
-                    // Twizzle vertex positions.
-                    var newPositions = new Vector3[4];
-                    var pivot = VertexPositions[FringeIndicies[4 + s, 4]];
-                    var nDelta = VoxelHelpers.DiagonalNeighbors2D[s].AsVector3();
-
-                    newPositions[FringeIndicies[4 + s, 0]] = pivot;
-                    newPositions[FringeIndicies[4 + s, 1]] = pivot + new Vector3(nDelta.X * 0.5f, 0, 0);
-                    newPositions[FringeIndicies[4 + s, 2]] = pivot + new Vector3(nDelta.X * 0.5f, 0, nDelta.Z * 0.5f);
-                    newPositions[FringeIndicies[4 + s, 3]] = pivot + new Vector3(0, 0, nDelta.Z * 0.5f);
-
-                    var slopeTweak = new Vector3(0.0f, 0.0f, 0.0f);
-                    if (handle.IsEmpty)
-                        slopeTweak.Y = -0.5f;
-                    else
-                        slopeTweak.Y = 0.125f;
-
-                    newPositions[FringeIndicies[4 + s, 1]] += slopeTweak;
-                    newPositions[FringeIndicies[4 + s, 2]] += slopeTweak;
-                    newPositions[FringeIndicies[4 + s, 3]] += slopeTweak;
-
-                    var newColors = new VertexColorInfo[4];
-                    newColors[FringeIndicies[4 + s, 0]] = VertexColors[FringeIndicies[4 + s, 4]];
-                    newColors[FringeIndicies[4 + s, 1]] = VertexColors[FringeIndicies[4 + s, 4]];
-                    newColors[FringeIndicies[4 + s, 2]] = VertexColors[FringeIndicies[4 + s, 4]];
-                    newColors[FringeIndicies[4 + s, 3]] = VertexColors[FringeIndicies[4 + s, 4]];
-
-                    var newTints = new Color[4];
-                    newTints[FringeIndicies[4 + s, 0]] = VertexTint[FringeIndicies[4 + s, 4]];
-                    newTints[FringeIndicies[4 + s, 1]] = VertexTint[FringeIndicies[4 + s, 4]];
-                    newTints[FringeIndicies[4 + s, 2]] = VertexTint[FringeIndicies[4 + s, 4]];
-                    newTints[FringeIndicies[4 + s, 3]] = VertexTint[FringeIndicies[4 + s, 4]];
-
-                    AddTopFaceGeometry(Into,
-                        Cache.AmbientValues, Primitive,
-                        Face,
-                        newPositions,
-                        newColors,
-                        newTints,
-                        new Vector2(0.5f, 0.5f),
-                        decalType.FringeTransitionUVs[4 + s].UV,
-                        decalType.FringeTransitionUVs[4 + s].Bounds);
                 }
             }
         }
@@ -698,48 +690,6 @@ namespace DwarfCorp
                     VertexColors[faceVertex].AsColor(),
                     VertexTints[faceVertex],
                     UV + new Vector2(vertex.Position.X / 16.0f * UVScale.X, vertex.Position.Z / 16.0f * UVScale.Y),
-                    UVBounds));
-            }
-
-            bool flippedQuad = AmbientScratchSpace[0] + AmbientScratchSpace[2] >
-                              AmbientScratchSpace[1] + AmbientScratchSpace[3];
-
-            for (int idx = faceDescriptor.IndexOffset; idx < faceDescriptor.IndexCount +
-                faceDescriptor.IndexOffset; idx++)
-            {
-                ushort offset = flippedQuad ? Primitive.FlippedIndexes[idx] : Primitive.Indexes[idx];
-                ushort offset0 = flippedQuad ? Primitive.FlippedIndexes[faceDescriptor.IndexOffset] : Primitive.Indexes[faceDescriptor.IndexOffset];
-                Into.AddIndex((ushort)(indexOffset + offset - offset0));
-            }
-        }
-
-        private static void AddGrassGeometry(
-            RawPrimitive Into,
-            int[] AmbientScratchSpace,
-            BoxPrimitive Primitive,
-            VoxelHandle V,
-            BoxPrimitive.FaceDescriptor faceDescriptor,
-            int exploredVerts,
-            Vector3[] VertexPositions,
-            VertexColorInfo[] VertexColors,
-            Color[] VertexTints,
-            GrassType Decal)
-        {
-            var indexOffset = Into.VertexCount;
-            var UV = new Vector2(Decal.Tile.X * (1.0f / 16.0f), Decal.Tile.Y * (1.0f / 16.0f));
-            var UVBounds = new Vector4(UV.X + 0.001f, UV.Y + 0.001f, UV.X + (1.0f / 16.0f) - 0.001f, UV.Y + (1.0f / 16.0f) - 0.001f);
-
-            for (int faceVertex = 0; faceVertex < faceDescriptor.VertexCount; faceVertex++)
-            {
-                var vertex = Primitive.Vertices[faceDescriptor.VertexOffset + faceVertex];
-
-                AmbientScratchSpace[faceVertex] = VertexColors[faceVertex].AmbientColor;
-
-                Into.AddVertex(new ExtendedVertex(
-                    VertexPositions[faceVertex] + VertexNoise.GetNoiseVectorFromRepeatingTexture(VertexPositions[faceVertex]),
-                    VertexColors[faceVertex].AsColor(),
-                    VertexTints[faceVertex],
-                    UV + new Vector2(vertex.Position.X / 16.0f, vertex.Position.Z / 16.0f),
                     UVBounds));
             }
 
@@ -796,8 +746,6 @@ namespace DwarfCorp
                 Into.AddIndex((ushort)(indexOffset + offset - offset0));
             }
         }
-
-
 
         private static bool ShouldRamp(VoxelVertex vertex, RampType rampType)
         {

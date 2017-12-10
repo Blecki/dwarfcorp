@@ -35,7 +35,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
-using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
@@ -69,7 +68,6 @@ namespace DwarfCorp
         public string PastTeseVerb { get; set; }
         public string CurrentVerb { get; set; }
         public bool AllowHeterogenous { get; set; }
-        public Vector3 SpawnOffset = Vector3.Zero;
 
         public CraftItem()
         {

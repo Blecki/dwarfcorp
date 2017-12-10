@@ -310,7 +310,7 @@ namespace DwarfCorp
                         }
                     }
 
-                    if (topVoxel.Type.Name != biomeData.SoilLayer.VoxelType || topVoxel.GrassLayer >= VoxelConstants.ChunkSizeY)
+                    if (topVoxel.Type.Name != biomeData.SoilLayer.VoxelType || topVoxel.Decal == 0)
                         continue;
 
                     foreach (VegetationData veg in biomeData.Vegetation)
@@ -336,7 +336,7 @@ namespace DwarfCorp
         public void GenerateCaves(VoxelChunk chunk, WorldManager world)
         {
             Vector3 origin = chunk.Origin;
-            BiomeData biome = BiomeLibrary.GetBiome("Cave");
+            BiomeData biome = BiomeLibrary.Biomes[Overworld.Biome.Cave];
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
                 for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
@@ -489,7 +489,7 @@ namespace DwarfCorp
                 {
                     Vector2 v = new Vector2(x + origin.X, z + origin.Z) / WorldScale;
 
-                    var biome = Overworld.Map[(int)MathFunctions.Clamp(v.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(v.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
+                    Overworld.Biome biome = Overworld.Map[(int)MathFunctions.Clamp(v.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(v.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
 
                     BiomeData biomeData = BiomeLibrary.Biomes[biome];
 
@@ -535,8 +535,8 @@ namespace DwarfCorp
                                 voxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.SoilLayer.VoxelType));
                                 if (!String.IsNullOrEmpty(biomeData.GrassDecal))
                                 {
-                                    var decal = GrassLibrary.GetGrassType(biomeData.GrassDecal);
-                                    voxel.RawSetGrass(decal.ID);
+                                    var decal = DecalLibrary.GetDecalType(biomeData.GrassDecal);
+                                    voxel.RawSetDecal(decal.ID);
                                 }
                             }
                             else if (!biomeData.ClumpGrass)
@@ -544,8 +544,8 @@ namespace DwarfCorp
                                 voxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.SoilLayer.VoxelType));
                                 if (!String.IsNullOrEmpty(biomeData.GrassDecal))
                                 {
-                                    var decal = GrassLibrary.GetGrassType(biomeData.GrassDecal);
-                                    voxel.RawSetGrass(decal.ID);
+                                    var decal = DecalLibrary.GetDecalType(biomeData.GrassDecal);
+                                    voxel.RawSetDecal(decal.ID);
                                 }
                             }
                             else

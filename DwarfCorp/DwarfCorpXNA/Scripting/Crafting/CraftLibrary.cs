@@ -35,7 +35,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
-using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
@@ -449,8 +448,7 @@ namespace DwarfCorp
                         Icon = new Gui.TileReference("furniture", 3),
                         BaseCraftTime = 30,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
-                        CraftLocation = "",
-                        SpawnOffset = new Vector3(0.0f, -0.5f, 0.0f)
+                        CraftLocation = ""
                     }
                 },
                 {
