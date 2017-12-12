@@ -422,6 +422,7 @@ namespace DwarfCorp
 
             wayUnder.RawSetType(VoxelLibrary.GetVoxelType(biome.SoilLayer.VoxelType));
 
+            wayUnder.RawSetDecal(DecalLibrary.GetDecalType(biome.GrassDecal).ID);
             foreach (VegetationData veg in biome.Vegetation)
             {
                 if (!MathFunctions.RandEvent(veg.SpawnProbability))
@@ -435,21 +436,25 @@ namespace DwarfCorp
                 }
 
 
+
                 if (!vUnder.IsEmpty && vUnder.Type.Name == biome.SoilLayer.VoxelType)
                 {
                     vUnder.RawSetType(VoxelLibrary.GetVoxelType(biome.SoilLayer.VoxelType));
+                    vUnder.RawSetDecal(0);
                     float treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
 
                     EntityFactory.DoLazy(() =>
                     {
                         GameComponent entity = EntityFactory.CreateEntity<GameComponent>(veg.Name,
-                            chunk.Origin + new Vector3(x, y, z) + new Vector3(0, treeSize, 0),
+                            vUnder.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
                             Blackboard.Create("Scale", treeSize));
-                        entity.GetRoot().SetFlagRecursive(GameComponent.Flag.Active, false);
-                        entity.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
                         if (GameSettings.Default.FogofWar)
+                        {
                             entity.AddChild(new ExploredListener(
                                 world.ComponentManager, world.ChunkManager, vUnder));
+                            entity.GetRoot().SetFlagRecursive(GameComponent.Flag.Active, false);
+                            entity.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
+                        }
                     });
                 }
             }

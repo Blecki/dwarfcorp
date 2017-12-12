@@ -624,7 +624,7 @@
       }
     ],
     "SoilLayer": {
-        "VoxelType" :  "CaveFungus",
+        "VoxelType" :  "DarkDirt",
         "Depth" :  5
     },
     "SubsurfaceLayers": [ 
@@ -633,6 +633,7 @@
         "Depth" :  128
     }
     ],
+	"GrassDecal": "haunted-grass",
     "ShoreVoxel": "Dirt",
     "ClumpGrass": false,
     "ClumpSize": 30.0,

@@ -643,8 +643,8 @@ namespace DwarfCorp
                 [Mote] public static string grass = ProgramData.CreatePath("Entities", "Plants", "grass");
                 public static string mushroom = ProgramData.CreatePath("Entities", "Plants", "mushroom");
                 public static string mushroomsprout = ProgramData.CreatePath("Entities", "Plants", "mushroom-sprout");
-                public static string cavemushroom = ProgramData.CreatePath("Entities", "Plants", "caveshroom");
-                public static string cavemushroomsprout = ProgramData.CreatePath("Entities", "Plants", "caveshroom-sprout");
+                public static string caveshroom = ProgramData.CreatePath("Entities", "Plants", "caveshroom");
+                public static string caveshroomsprout = ProgramData.CreatePath("Entities", "Plants", "caveshroom-sprout");
                 public static string palm = ProgramData.CreatePath("Entities", "Plants", "palmtree");
                 public static string palmsprout = ProgramData.CreatePath("Entities", "Plants", "palmtree-sprout");
                 public static string pine = ProgramData.CreatePath("Entities", "Plants", "pinetree");

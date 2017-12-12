@@ -128,8 +128,8 @@ namespace DwarfCorp
             RegisterEntity("Mushroom", (position, data) => new Mushroom(world.ComponentManager, position, ContentPaths.Entities.Plants.mushroom, ResourceLibrary.ResourceType.Mushroom, 2, false, "mushroomsprout"));
             RegisterEntity("Mushroom Sprout", (position, data) => new Seedling(world.ComponentManager, "Mushroom", position, "mushroomsprout", 12));
 
-            RegisterEntity("Cave Mushroom", (position, data) => new Mushroom(world.ComponentManager, position, ContentPaths.Entities.Plants.cavemushroom, ResourceLibrary.ResourceType.CaveMushroom, 4, true, "cavemushroomsprout"));
-            RegisterEntity("Cave Mushroom Sprout", (position, data) => new Seedling(world.ComponentManager, "Cave Mushroom", position, "cavemushroomsprout", 12));
+            RegisterEntity("Cave Mushroom", (position, data) => new Mushroom(world.ComponentManager, position, ContentPaths.Entities.Plants.caveshroom, ResourceLibrary.ResourceType.CaveMushroom, 4, true, "caveshroomsprout"));
+            RegisterEntity("Cave Mushroom Sprout", (position, data) => new Seedling(world.ComponentManager, "Cave Mushroom", position, "caveshroomsprout", 12));
 
             RegisterEntity("Wheat", (position, data) => new Wheat(world.ComponentManager, position));
             RegisterEntity("Wheat Sprout", (position, data) => new Seedling(world.ComponentManager, "Wheat", position, "wheatsprout", 12));

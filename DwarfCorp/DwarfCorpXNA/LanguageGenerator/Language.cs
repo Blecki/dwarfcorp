@@ -176,7 +176,7 @@ namespace DwarfCorp
                     }
                 }
                 else
-                {
+                { 
                     SoundEffectInstance inst = SoundManager.PlaySound(utter.Syllable, MathFunctions.Rand(1e-2f, 2e-2f));
                     if (inst == null)
                     {
