@@ -40,38 +40,6 @@ namespace DwarfCorp
 
         public SpriteSheet SpriteSheet { get; set; }
 
-        /*
-        public delegate void NextFrameEvent(int frame);
-        public event NextFrameEvent OnNextFrame;
-
-        public delegate void EndEvent();
-        public event EndEvent OnAnimationCompleted;
-
-        public delegate void LoopEvent();
-        public event LoopEvent OnAnimationLooped;
-
-        protected virtual void InvokeAnimationLooped()
-        {
-            LoopEvent handler = OnAnimationLooped;
-            if (handler != null) handler.Invoke();
-        }
-
-        protected virtual void InvokeAnimationCompleted()
-        {
-            EndEvent handler = OnAnimationCompleted;
-            if (handler != null) OnAnimationCompleted.Invoke();
-        }
-
-        protected virtual void InvokeNextFrame(int frame)
-        {
-            NextFrameEvent handler = OnNextFrame;
-            if (handler != null)
-            {
-                handler.Invoke(frame);
-            }
-        }
-        */
-
         public struct SimpleDescriptor
         {
             public string AssetName;
@@ -80,7 +48,6 @@ namespace DwarfCorp
             public List<int> Frames;
             public float Speed;
         }
-        
 
         public Animation()
         {

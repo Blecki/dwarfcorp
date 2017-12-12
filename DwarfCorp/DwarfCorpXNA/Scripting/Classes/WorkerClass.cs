@@ -219,8 +219,8 @@ namespace DwarfCorp
             Texture2D dwarfSprites = TextureManager.GetTexture(ContentPaths.Entities.Dwarf.Sprites.dwarf_animations);
             Animations = Dwarf.CreateDefaultAnimations(dwarfSprites, 32, 40);
              */
-            CompositeAnimation.Descriptor descriptor =
-                FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
+            var descriptor =
+                FileUtils.LoadJsonFromString<AnimationSetDescriptor>(
                     ContentPaths.GetFileAsString(ContentPaths.Entities.Dwarf.Sprites.worker_animation));
             Animations = new List<Animation>();
             Animations.AddRange(descriptor.GenerateAnimations(CompositeLibrary.Dwarf));

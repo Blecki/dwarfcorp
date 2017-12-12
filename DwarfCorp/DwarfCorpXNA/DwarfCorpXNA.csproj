@@ -196,6 +196,8 @@
     <Compile Include="Entities\Projectiles\BulletProjectile.cs" />
     <Compile Include="Entities\Projectiles\MudProjectile.cs" />
     <Compile Include="Entities\Projectiles\WebProjectile.cs" />
+    <Compile Include="Graphics\Primitives\CompositeAnimationPlayer.cs" />
+    <Compile Include="Graphics\Primitives\CompositeAnimation.cs" />
     <Compile Include="Graphics\Primitives\CompositeCell.cs" />
     <Compile Include="Graphics\Primitives\CompositeFrame.cs" />
     <Compile Include="Graphics\Primitives\CompositeLibrary.cs" />
@@ -362,7 +364,7 @@
     <Compile Include="Graphics\Primitives\BillboardPrimitive.cs" />
     <Compile Include="Graphics\Primitives\BoxPrimitive.cs" />
     <Compile Include="Graphics\Primitives\Composite.cs" />
-    <Compile Include="Graphics\Primitives\CompositeAnimation.cs" />
+    <Compile Include="Graphics\Primitives\CompositeAnimationDescriptor.cs" />
     <Compile Include="Graphics\Primitives\ExtendedVertex.cs" />
     <Compile Include="Graphics\Primitives\GeometricPrimitive.cs" />
     <Compile Include="Graphics\Primitives\LiquidPrimitive.cs" />

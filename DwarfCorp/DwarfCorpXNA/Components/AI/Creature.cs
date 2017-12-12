@@ -769,8 +769,8 @@ namespace DwarfCorp
                                   Matrix.CreateTranslation(0, 0.5f, 0)
                                   )) as CharacterSprite;
 
-            CompositeAnimation.Descriptor descriptor =
-                FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
+            var descriptor =
+                FileUtils.LoadJsonFromString<AnimationSetDescriptor>(
                     ContentPaths.GetFileAsString(animations));
 
             List<CompositeAnimation> animations_list = descriptor.GenerateAnimations(Name);

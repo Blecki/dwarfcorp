@@ -11,12 +11,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// An animation flips a billboard sprite between several
-    /// frames on a sprite sheet at a fixed rate.
-    /// </summary>
-    [JsonObject(IsReference = true)]
-    public class CompositeAnimation : Animation
+    public class CompositeAnimationPlayer : Animation
     {
         [JsonIgnore]
         private Composite Composite 
@@ -48,12 +43,12 @@ namespace DwarfCorp
             }
         }
 
-        public CompositeAnimation()
+        public CompositeAnimationPlayer()
         {
             CompositeFrames = new List<CompositeFrame>();
         }
 
-        public CompositeAnimation(string composite, List<CompositeFrame> frames) :
+        public CompositeAnimationPlayer(string composite, List<CompositeFrame> frames) :
             this()
         {
             if (!CompositeLibrary.Composites.ContainsKey(composite))
@@ -69,7 +64,7 @@ namespace DwarfCorp
             Play();
         }
 
-        public CompositeAnimation(string composite, List<SpriteSheet> layers, List<Color> tints,  int[][] frames) :
+        public CompositeAnimationPlayer(string composite, List<SpriteSheet> layers, List<Color> tints,  int[][] frames) :
             this(composite, CreateFrames(layers, tints, frames))
         {
             

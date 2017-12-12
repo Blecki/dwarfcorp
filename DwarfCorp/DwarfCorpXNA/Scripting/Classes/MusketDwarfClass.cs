@@ -217,7 +217,7 @@ namespace DwarfCorp
             Animations = Dwarf.CreateDefaultAnimations(dwarfSprites, 32, 40);
              */
             var descriptor =
-                FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
+                FileUtils.LoadJsonFromString<AnimationSetDescriptor>(
                     ContentPaths.GetFileAsString(ContentPaths.Entities.Dwarf.Sprites.musketdwarf_animations));
             Animations = new List<Animation>();
             Animations.AddRange(descriptor.GenerateAnimations(CompositeLibrary.Dwarf));

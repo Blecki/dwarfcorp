@@ -209,8 +209,8 @@ namespace DwarfCorp
 
         void InitializeAnimations()
         {
-            CompositeAnimation.Descriptor descriptor =
-    FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
+            var descriptor =
+    FileUtils.LoadJsonFromString<AnimationSetDescriptor>(
         ContentPaths.GetFileAsString(ContentPaths.Entities.Dwarf.Sprites.wizard_animation));
             Animations = new List<Animation>();
             Animations.AddRange(descriptor.GenerateAnimations(CompositeLibrary.Dwarf));
