@@ -84,7 +84,6 @@ namespace DwarfCorp
             if (animated)
             {
                Sprite.SetSimpleAnimation();
-               Sprite.CurrentAnimation.Play();
             }
             else
             {

@@ -110,23 +110,12 @@ namespace DwarfCorp
 
         public void ReloopAnimations(CharacterMode mode)
         {
-            List<Animation> animations = GetAnimations(mode);
-            foreach (Animation a in animations)
-            {
-                if (a.IsDone())
-                {
-                    a.Reset();
-                }
-            }
+            if (AnimPlayer.IsDone()) AnimPlayer.Reset();
         }
 
         public void ResetAnimations(CharacterMode mode)
         {
-            List<Animation> animations = GetAnimations(mode);
-            foreach (Animation a in animations)
-            {
-                a.Reset();
-            }
+            AnimPlayer.Reset();
         }
 
         public static Animation CreateAnimation(CharacterMode mode,
@@ -181,7 +170,7 @@ namespace DwarfCorp
             ints.AddRange(cols);
             Animation animation = CreateAnimation(mode, orient, texture, frameHz, frameWidth, frameHeight, row, ints);
             Animations[mode.ToString() + OrientationStrings[(int) orient]] = animation;
-            animation.Play();
+            AnimPlayer.Play(animation);
         }
 
         public void Blink(float blinkTime)
@@ -224,22 +213,12 @@ namespace DwarfCorp
 
         public void PauseAnimations(CharacterMode mode)
         {
-            List<Animation> animations = GetAnimations(mode);
-            foreach (Animation a in animations)
-            {
-                a.IsPlaying = false;
-            }
-
+            AnimPlayer.Pause();
         }
 
         public void PlayAnimations(CharacterMode mode)
         {
-            List<Animation> animations = GetAnimations(mode);
-            foreach (Animation a in animations)
-            {
-                a.IsPlaying = true;
-            }
-
+            AnimPlayer.Play();
         }
     }
 

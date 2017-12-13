@@ -171,11 +171,11 @@ namespace DwarfCorp
                         }
                         break;
                     case AttackTrigger.Animation:
-                        if (performer.Sprite.CurrentAnimation == null ||
-                            performer.Sprite.CurrentAnimation.CurrentFrame != TriggerFrame)
+                        if (performer.Sprite.AnimPlayer.CurrentAnimation == null ||
+                            performer.Sprite.AnimPlayer.CurrentFrame != TriggerFrame)
                         {
-                            if (performer.Sprite.CurrentAnimation != null)
-                                performer.Sprite.CurrentAnimation.Play();
+                            if (performer.Sprite.AnimPlayer.CurrentAnimation != null)
+                                performer.Sprite.AnimPlayer.Play();
                             yield return Act.Status.Running;
                             continue;
                         }
@@ -241,8 +241,8 @@ namespace DwarfCorp
                     }
                     break;
                 case AttackTrigger.Animation:
-                    if (performer.Sprite.CurrentAnimation == null ||
-                        performer.Sprite.GetAnimation("AttackingFORWARD").CurrentFrame != TriggerFrame)
+                    if (performer.Sprite.AnimPlayer.CurrentAnimation == null ||
+                        performer.Sprite.AnimPlayer.CurrentFrame != TriggerFrame)
                     {
                         HasTriggered = false;
                         return false;
@@ -283,8 +283,8 @@ namespace DwarfCorp
                     }
                     break;
                 case AttackTrigger.Animation:
-                    if (performer.Sprite.CurrentAnimation == null ||
-                        performer.Sprite.GetAnimation("AttackingFORWARD").CurrentFrame != TriggerFrame)
+                    if (performer.Sprite.AnimPlayer.CurrentAnimation == null ||
+                        performer.Sprite.AnimPlayer.CurrentFrame != TriggerFrame)
                     {
                         HasTriggered = false;
                         return false;

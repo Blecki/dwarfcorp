@@ -40,6 +40,11 @@ namespace DwarfCorp
 
         public SpriteSheet SpriteSheet { get; set; }
 
+        public virtual int GetFrameCount()
+        {
+            return Frames.Count;
+        }
+
         public struct SimpleDescriptor
         {
             public string AssetName;

@@ -196,7 +196,7 @@
     <Compile Include="Entities\Projectiles\BulletProjectile.cs" />
     <Compile Include="Entities\Projectiles\MudProjectile.cs" />
     <Compile Include="Entities\Projectiles\WebProjectile.cs" />
-    <Compile Include="Graphics\Primitives\CompositeAnimationPlayer.cs" />
+    <Compile Include="Graphics\Primitives\AnimationPlayer.cs" />
     <Compile Include="Graphics\Primitives\CompositeAnimation.cs" />
     <Compile Include="Graphics\Primitives\CompositeCell.cs" />
     <Compile Include="Graphics\Primitives\CompositeFrame.cs" />

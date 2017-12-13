@@ -323,7 +323,7 @@ namespace DwarfCorp
                         yield return Status.Running;
                     }
 
-                    while (!Agent.Creature.Sprite.CurrentAnimation.IsDone())
+                    while (!Agent.Creature.Sprite.AnimPlayer.IsDone())
                     {
                         if (Creature.AI.Movement.CanFly)
                         {

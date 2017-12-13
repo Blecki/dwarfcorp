@@ -754,8 +754,8 @@ namespace DwarfCorp
                 sprite.AddAnimation(animation.Clone());
             }
             sprite.SpriteSheet = Sprite.Animations.First().Value.SpriteSheet;
-            sprite.CurrentAnimation = Sprite.Animations.First().Value;
-            sprite.CurrentAnimation.NextFrame();
+            sprite.SetCurrentAnimation(Sprite.Animations.First().Value);
+            sprite.Animations.First().Value.NextFrame();
             sprite.SetFlag(Flag.ShouldSerialize, false);
         }
 

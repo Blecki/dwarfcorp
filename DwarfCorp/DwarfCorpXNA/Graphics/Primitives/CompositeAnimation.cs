@@ -48,6 +48,11 @@ namespace DwarfCorp
             }
         }
 
+        public override int GetFrameCount()
+        {
+            return CompositeFrames.Count;
+        }
+
         public CompositeAnimation()
         {
             CompositeFrames = new List<CompositeFrame>();

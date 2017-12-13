@@ -132,7 +132,7 @@ namespace DwarfCorp
             Creature.CurrentCharacterMode = CharacterMode.Attacking;
             Creature.Sprite.ResetAnimations(CharacterMode.Attacking);
             Creature.Sprite.PlayAnimations(CharacterMode.Attacking);
-            while (!Creature.Sprite.CurrentAnimation.IsDone())
+            while (!Creature.Sprite.AnimPlayer.IsDone())
             {
                 yield return Status.Running;
             }

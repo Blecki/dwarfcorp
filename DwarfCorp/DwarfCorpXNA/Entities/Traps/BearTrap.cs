@@ -142,13 +142,10 @@ namespace DwarfCorp
 
         public void Trigger()
         {
-            Sprite.SetCurrentAnimation(TriggerAnimation);
-            Sprite.CurrentAnimation.Play();
+            Sprite.SetCurrentAnimation(TriggerAnimation, true);
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_trap_trigger, GlobalTransform.Translation, false);
             ShouldDie = true;
             DeathTimer.Reset(DeathTimer.TargetTimeSeconds);
         }
-
-
     }
 }

@@ -68,7 +68,7 @@ namespace DwarfCorp
 
         protected string currentMode = "";
 
-        public override void SetCurrentAnimation(string name)
+        public override void SetCurrentAnimation(string name, bool Play = false)
         {
             currentMode = name;
         }
@@ -101,28 +101,26 @@ namespace DwarfCorp
         {
             CalculateCurrentOrientation(camera);
 
-            foreach (string orient in OrientationStrings)
-            {
-                string animationName = currentMode + orient;
+            //foreach (string orient in OrientationStrings)
+            //{
+            //    string animationName = currentMode + orient;
 
-                if (!Animations.ContainsKey(animationName)) continue;
+            //    if (!Animations.ContainsKey(animationName)) continue;
 
-                Animation animation = Animations[animationName];
+            //    Animation animation = Animations[animationName];
 
-                // Update all the animations! Why? Because we trigger things based on the FORWARD animation frame,
-                // not based on whatever is current.
-                if (animation != CurrentAnimation)
-                    animation.Update(gameTime);
-            }
+            //    // Update all the animations! Why? Because we trigger things based on the FORWARD animation frame,
+            //    // not based on whatever is current.
+            //    if (animation != CurrentAnimation)
+            //        animation.Update(gameTime);
+            //}
 
             string s = currentMode + OrientationStrings[(int)CurrentOrientation];
             if (Animations.ContainsKey(s))
             {
-                var previousAnimation = CurrentAnimation;
-                CurrentAnimation = Animations[s];
-                if (previousAnimation != null && previousAnimation.Name.StartsWith(currentMode))
-                    CurrentAnimation.Sychronize(previousAnimation);
-                SpriteSheet = CurrentAnimation.SpriteSheet;
+                var previousAnimation = AnimPlayer.CurrentAnimation;
+                SetCurrentAnimation(Animations[s]);
+                SpriteSheet = AnimPlayer.CurrentAnimation.SpriteSheet;
             }
 
             base.Update(gameTime, chunks, camera);
