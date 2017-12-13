@@ -118,23 +118,26 @@ namespace DwarfCorp
 
     public class AnimatedIndicator : Indicator
     {
+        public AnimationPlayer Player = new AnimationPlayer();
         public Animation Animation;
         
         public override void Update(DwarfTime time)
         {
             base.Update(time);
-            Animation.Update(time);
 
-            Image = new ImageFrame(Animation.SpriteSheet.GetTexture(), Animation.GetCurrentFrameRect());
+            if (Player.CurrentAnimation == null) Player.Play(Animation);
+            Player.Update(time);
 
-            if (Animation.IsDone())
+            Image = new ImageFrame(Animation.SpriteSheet.GetTexture(), Animation.GetFrameRect(Player.CurrentFrame));
+
+            if (Player.IsDone())
             {
                 ShouldDelete = true;
             }
-        }
-
-       
+        }       
     }
+
+
     /// <summary>
     /// This class exists to draw simple sprites (indicators) to the screen. Indicators
     /// are just a sprite at a location which grows, shrinks, and disappears over time.

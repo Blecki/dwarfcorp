@@ -154,7 +154,7 @@ namespace DwarfCorp
                 frames.AddRange(cols.Select(c => new Point(c, row)));
             }
 
-            return new Animation(GameState.Game.GraphicsDevice, texture, mode.ToString() + OrientationStrings[(int)orient], frameWidth, frameHeight, frames, true, Color.White, frameHz, (float)frameWidth / 35.0f, (float)frameHeight / 35.0f, false);
+            return new Animation(GameState.Game.GraphicsDevice, texture, mode.ToString() + OrientationStrings[(int)orient], frameWidth, frameHeight, frames, Color.White, frameHz, (float)frameWidth / 35.0f, (float)frameHeight / 35.0f, false);
         }
 
         public void AddAnimation(CharacterMode mode,

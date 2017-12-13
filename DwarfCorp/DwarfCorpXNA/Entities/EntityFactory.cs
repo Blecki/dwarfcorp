@@ -270,7 +270,7 @@ namespace DwarfCorp
             {
                 new Point(0, 0)
             };
-            Animation balloonAnimation = new Animation(graphics, new SpriteSheet(ContentPaths.Entities.Balloon.Sprites.balloon), "balloon", points, false, Color.White, 0.001f, false);
+            Animation balloonAnimation = new Animation(graphics, new SpriteSheet(ContentPaths.Entities.Balloon.Sprites.balloon), "balloon", points, Color.White, 0.001f, false);
             Sprite sprite = balloon.AddChild(new Sprite(componentManager, "sprite", Matrix.Identity, tex, false)
             {
                 OrientationType = Sprite.OrientMode.Spherical

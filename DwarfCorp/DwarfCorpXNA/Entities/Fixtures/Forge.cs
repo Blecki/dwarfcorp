@@ -85,7 +85,7 @@ namespace DwarfCorp
                 new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture), 
                 "Forge", 32, 32, 
                 frames, 
-                true, Color.White, 3.0f, 1f, 1.0f, false);
+                Color.White, 3.0f, 1f, 1.0f, false);
 
             var sprite = AddChild(new Sprite(Manager, "sprite", Matrix.Identity, spriteSheet, false)
             {
@@ -93,8 +93,8 @@ namespace DwarfCorp
             }) as Sprite;
 
             sprite.AddAnimation(lampAnimation);
+            sprite.AnimPlayer.Loop(lampAnimation);
             sprite.SetFlag(Flag.ShouldSerialize, false);
-            lampAnimation.Play();
 
             AddChild(new LightEmitter(Manager, "light", Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero, 50, 4)
             {

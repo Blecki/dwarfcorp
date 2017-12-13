@@ -66,7 +66,6 @@ namespace DwarfCorp
             };
             var anim = new Animation(ContentPaths.Effects.shadowcircle, 32, 32, 0);
             shadow.AddAnimation(anim);
-            anim.Play();
             shadow.SetCurrentAnimation(anim.Name);
             return shadow;
         }
@@ -85,9 +84,8 @@ namespace DwarfCorp
                 };
             var shadowAnimation = new Animation(Manager.World.GraphicsDevice, 
                 new SpriteSheet(ContentPaths.Effects.shadowcircle),
-                "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
+                "sh", 32, 32, shP, Color.Black, 1, 0.7f, 0.7f, false);
             AddAnimation(shadowAnimation);
-            shadowAnimation.Play();
             SetCurrentAnimation("sh");
         }
 

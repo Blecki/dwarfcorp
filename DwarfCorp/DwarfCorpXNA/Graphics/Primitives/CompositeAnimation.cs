@@ -70,8 +70,7 @@ namespace DwarfCorp
             FrameWidth = Composite.FrameSize.X;
             FrameHeight = Composite.FrameSize.Y;
             CreatePrimitive();
-            UpdatePrimitive();
-            Play();
+            UpdatePrimitive(0);
         }
 
         public CompositeAnimation(string composite, List<SpriteSheet> layers, List<Color> tints,  int[][] frames) :
@@ -110,7 +109,7 @@ namespace DwarfCorp
             Primitives = new List<BillboardPrimitive>();
         }
 
-        public void UpdatePrimitive(bool force = false)
+        public void UpdatePrimitive(int CurrentFrame)
         {
             if (HasValidFrame && CurrentFrame >= 0 && CurrentFrame < CompositeFrames.Count && lastOffset != CurrentOffset)
             {
@@ -126,50 +125,25 @@ namespace DwarfCorp
             }
         }
 
-        public override Rectangle GetCurrentFrameRect()
+        public override Rectangle GetFrameRect(int Frame)
         {
             Rectangle toReturn = new Rectangle(CurrentOffset.X * Composite.FrameSize.X, CurrentOffset.Y * Composite.FrameSize.Y, FrameWidth, FrameHeight);
             return toReturn;
         }
 
-        public override void Update(DwarfTime gameTime, Timer.TimerMode mode = Timer.TimerMode.Game)
+        public override void Update(DwarfTime gameTime, int CurrentFrame)
         {
-            base.Update(gameTime, mode);
+            base.Update(gameTime, CurrentFrame);
             CurrentFrame = Math.Min(Math.Max(CurrentFrame, 0), CompositeFrames.Count - 1);
             CurrentOffset = Composite.PushFrame(CompositeFrames[CurrentFrame]);
             HasValidFrame = true;
-            UpdatePrimitive();
+            UpdatePrimitive(CurrentFrame);
         }
 
         public override void PreRender()
         {
             SpriteSheet = new SpriteSheet((Texture2D)Composite.Target);
             base.PreRender();
-        }
-
-        public override void NextFrame()
-        {
-            CurrentFrame++;
-            //InvokeNextFrame(CurrentFrame);
-            if (CurrentFrame >= CompositeFrames.Count)
-            {
-                if (Loops)
-                {
-                    CurrentFrame = 0;
-                    //InvokeAnimationLooped();
-                }
-                else
-                {
-                    CurrentFrame = CompositeFrames.Count - 1;
-                    //InvokeAnimationCompleted();
-                }
-            }
-            UpdatePrimitive();
-        }
-
-        public override bool IsDone()
-        {
-            return CurrentFrame >= CompositeFrames.Count - 1;
         }
 
         public override Animation Clone()
@@ -179,8 +153,6 @@ namespace DwarfCorp
                 Name = Name,
                 FrameHZ = FrameHZ,
                 Flipped = Flipped,
-                Loops = Loops,
-                CurrentFrame =  CurrentFrame,
                 Speeds = new List<float>(Speeds),
                 SpriteSheet = SpriteSheet
             };

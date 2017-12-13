@@ -171,8 +171,9 @@ namespace DwarfCorp
         {
             if (HitAnimation != null)
             {
-                HitAnimation.Reset();
-                HitAnimation.Play();
+                Sprite.AnimPlayer.Reset();
+                Sprite.AnimPlayer.Play(HitAnimation);
+
                 if (Target != null)
                 {
                     Vector3 camvelocity0 = GameState.Game.GraphicsDevice.Viewport.Project( Position,

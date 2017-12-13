@@ -126,7 +126,9 @@ namespace DwarfCorp
             {
                 toReturn.Animation = new Animation(GameState.Game.GraphicsDevice,
                     new SpriteSheet(sheet.AssetName), sheet.AssetName, sheet.FrameWidth, sheet.FrameHeight,
-                    new List<Point>() {frame}, true, Color.White, 1.0f, 1.0f, 1.0f, false);
+                    new List<Point>() {frame}, 
+                    //true, 
+                    Color.White, 1.0f, 1.0f, 1.0f, false);
             }
             return toReturn;
         }
@@ -141,6 +143,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public List<FixedInstanceArray> Sprites { get; set; }
         private int maxParticles = 0;
+        private AnimationPlayer AnimPlayer = new AnimationPlayer();
 
         public int MaxParticles
         {
@@ -187,7 +190,7 @@ namespace DwarfCorp
                     Data.Animation.SpriteSheet.GetTexture(),
                     Data.MaxParticles, Data.BlendMode));
             }
-            Data.Animation.Play();
+            AnimPlayer.Play(Data.Animation);
 
             TriggerTimer = new Timer(Data.EmissionFrequency, Data.ReleaseOnce);
 
@@ -387,7 +390,7 @@ namespace DwarfCorp
                 {
                     p.TimeAlive += (float)gameTime.ElapsedGameTime.TotalSeconds + MathFunctions.Rand() * 0.01f;
                     int prevFrame = p.Frame;
-                    int newFrame = Data.Animation.GetFrame(p.TimeAlive);
+                    int newFrame = AnimPlayer.GetFrame(p.TimeAlive);
                     if (newFrame != prevFrame)
                     {
                         p.Frame = newFrame;
@@ -396,7 +399,7 @@ namespace DwarfCorp
                             Sprites[prevFrame].Remove(p.InstanceData);
                             Sprites[newFrame].Add(p.InstanceData);
                         }
-                        if (!Data.Animation.Loops && p.Frame == Data.Animation.Frames.Count - 1)
+                        if (/*!Data.Animation.Loops && */p.Frame == Data.Animation.Frames.Count - 1)
                         {
                             p.LifeRemaining *= 0.1f;
                         }

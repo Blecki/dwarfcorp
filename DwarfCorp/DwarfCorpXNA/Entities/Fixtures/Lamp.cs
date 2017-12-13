@@ -62,7 +62,7 @@ namespace DwarfCorp
 
             var lampAnimation = new Animation(GameState.Game.GraphicsDevice, 
                 spriteSheet, 
-                "Lamp", 32, 32, frames, true, Color.White, 3.0f, 1f, 1.0f, false);
+                "Lamp", 32, 32, frames, Color.White, 3.0f, 1f, 1.0f, false);
 
             var sprite = AddChild(new Sprite(Manager, "sprite", Matrix.Identity, spriteSheet, false)
             {
@@ -71,8 +71,8 @@ namespace DwarfCorp
             }) as Sprite;
 
             sprite.AddAnimation(lampAnimation);
+            sprite.AnimPlayer.Loop(lampAnimation);
             sprite.SetFlag(Flag.ShouldSerialize, false);
-            lampAnimation.Play();
         }
 
         private void CreateSpriteWall(Vector3 diff)

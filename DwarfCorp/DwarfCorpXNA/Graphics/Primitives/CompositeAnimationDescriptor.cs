@@ -61,7 +61,7 @@ namespace DwarfCorp
                 {
                     Name = descriptor.Name,
                     Speeds = speeds,
-                    Loops = !descriptor.PlayOnce,
+                    //Loops = !descriptor.PlayOnce,
                     SpriteSheet = Layers[0]
                 };
 

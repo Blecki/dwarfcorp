@@ -22,10 +22,6 @@ namespace DwarfCorp
         public int FrameHeight { get; set; }
         public string Name { get; set; }
         public List<Point> Frames { get; set; }
-        public int CurrentFrame { get; set; }
-        public int LastFrame { get; set; }
-        public bool IsPlaying { get; set; }
-        public bool Loops { get; set; }
         public Color Tint { get; set; }
         public float FrameHZ { get; set; }
         public List<float> Speeds { get; set; } 
@@ -67,11 +63,10 @@ namespace DwarfCorp
             this(descriptor.AssetName, descriptor.Width, descriptor.Height, descriptor.Frames.ToArray())
         {
             SpeedMultiplier = descriptor.Speed;
-            Play();
         }
 
         public Animation(Animation other, SpriteSheet spriteSheet, GraphicsDevice device)
-            : this(device, spriteSheet, other.Name, other.FrameWidth, other.FrameHeight, other.Frames, other.Loops, other.Tint, other.FrameHZ, other.WorldWidth, other.WorldHeight, other.Flipped)
+            : this(device, spriteSheet, other.Name, other.FrameWidth, other.FrameHeight, other.Frames, other.Tint, other.FrameHZ, other.WorldWidth, other.WorldHeight, other.Flipped)
         {
             Speeds = new List<float>();
             Speeds.AddRange(other.Speeds);
@@ -79,8 +74,8 @@ namespace DwarfCorp
         }
 
 
-        public Animation(GraphicsDevice device, SpriteSheet sheet, string name, List<Point> frames, bool loops, Color tint, float frameHZ, bool flipped) :
-            this(device, sheet, name, sheet.FrameWidth, sheet.FrameHeight, frames, loops, tint, frameHZ, sheet.FrameWidth / 32.0f, sheet.FrameHeight / 32.0f, flipped)
+        public Animation(GraphicsDevice device, SpriteSheet sheet, string name, List<Point> frames, Color tint, float frameHZ, bool flipped) :
+            this(device, sheet, name, sheet.FrameWidth, sheet.FrameHeight, frames, tint, frameHZ, sheet.FrameWidth / 32.0f, sheet.FrameHeight / 32.0f, flipped)
         {
             Speeds = new List<float>();
             SpeedMultiplier = 1.0f;
@@ -95,7 +90,7 @@ namespace DwarfCorp
         }
 
         public Animation(int row, string asset, int frameWidth, int frameHeigt, params int[] frames) :
-            this(GameState.Game.GraphicsDevice, new SpriteSheet(asset), asset, frameWidth, frameHeigt, new List<Point>(), false, Color.White, 15.0f, 1.0f, 1.0f, false)
+            this(GameState.Game.GraphicsDevice, new SpriteSheet(asset), asset, frameWidth, frameHeigt, new List<Point>(), Color.White, 15.0f, 1.0f, 1.0f, false)
         {
             Frames = new List<Point>();
             foreach (int i in frames)
@@ -108,7 +103,7 @@ namespace DwarfCorp
         }
 
         public Animation(NamedImageFrame frame) :
-            this(GameState.Game.GraphicsDevice, new SpriteSheet(frame.AssetName), frame.AssetName, frame.SourceRect.Width, frame.SourceRect.Height, new List<Point>(), false, Color.White, 15.0f, frame.SourceRect.Width / 32.0f, frame.SourceRect.Height / 32.0f, false)
+            this(GameState.Game.GraphicsDevice, new SpriteSheet(frame.AssetName), frame.AssetName, frame.SourceRect.Width, frame.SourceRect.Height, new List<Point>(), Color.White, 15.0f, frame.SourceRect.Width / 32.0f, frame.SourceRect.Height / 32.0f, false)
         {
             Frames.Add(new Point(frame.SourceRect.X / frame.SourceRect.Width, frame.SourceRect.Y / frame.SourceRect.Height));
             CreatePrimitives(GameState.Game.GraphicsDevice);
@@ -116,15 +111,12 @@ namespace DwarfCorp
             SpeedMultiplier = 1.0f;
         }
 
-        public Animation(GraphicsDevice device, SpriteSheet sheet, string name, int frameWidth, int frameHeight, List<Point> frames, bool loops, Color tint, float frameHZ, float worldWidth, float worldHeight, bool flipped)
+        public Animation(GraphicsDevice device, SpriteSheet sheet, string name, int frameWidth, int frameHeight, List<Point> frames, Color tint, float frameHZ, float worldWidth, float worldHeight, bool flipped)
         {
             Name = name;
             FrameWidth = frameWidth;
             FrameHeight = frameHeight;
             Frames = frames;
-            CurrentFrame = 0;
-            IsPlaying = false;
-            Loops = loops;
             Tint = tint;
             Speeds = new List<float>() {frameHZ + MathFunctions.Rand()};
             FrameHZ = frameHZ;
@@ -136,7 +128,6 @@ namespace DwarfCorp
             Flipped = flipped;
             SpeedMultiplier = 1.0f;
             CreatePrimitives(device);
-            Play();
         }
 
         public void CreatePrimitives(GraphicsDevice device)
@@ -153,43 +144,10 @@ namespace DwarfCorp
             }
         }
 
-        public virtual Rectangle GetCurrentFrameRect()
+        public virtual Rectangle GetFrameRect(int Frame)
         {
-            Rectangle toReturn = new Rectangle(Frames[CurrentFrame].X * FrameWidth, Frames[CurrentFrame].Y * FrameHeight, FrameWidth, FrameHeight);
+            Rectangle toReturn = new Rectangle(Frames[Frame].X * FrameWidth, Frames[Frame].Y * FrameHeight, FrameWidth, FrameHeight);
             return toReturn;
-        }
-
-        public void Reset()
-        {
-            CurrentFrame = 0;
-        }
-
-        public void Pause()
-        {
-            IsPlaying = false;
-        }
-
-        public void Play()
-        {
-            IsPlaying = true;
-        }
-
-        public void Stop()
-        {
-            IsPlaying = false;
-            CurrentFrame = 0;
-        }
-
-        public void Loop()
-        {
-            IsPlaying = true;
-            Loops = true;
-        }
-
-        public void StopLooping()
-        {
-            IsPlaying = false;
-            Loops = false;
         }
 
         [OnDeserialized]
@@ -198,54 +156,8 @@ namespace DwarfCorp
             CreatePrimitives(GameState.Game.GraphicsDevice);
         }
 
-        public void Sychronize(Animation Other)
+        public virtual void Update(DwarfTime gameTime, int CurrentFrame)
         {
-            this.LastFrame = Other.LastFrame;
-            this.CurrentFrame = Other.CurrentFrame;
-            this.FrameTimer = Other.FrameTimer;
-        }
-
-        public virtual void Update(DwarfTime gameTime, Timer.TimerMode mode = Timer.TimerMode.Game)
-        {
-            if(IsPlaying)
-            {
-                LastFrame = CurrentFrame;
-                float dt = mode == Timer.TimerMode.Game ? (float)gameTime.ElapsedGameTime.TotalSeconds : (float)gameTime.ElapsedRealTime.TotalSeconds;
-                FrameTimer += dt;
-
-                float time = FrameHZ;
-
-                if (Speeds.Count > 0)
-                {
-                    time = Speeds[Math.Min(CurrentFrame, Speeds.Count - 1)];
-                }
-
-                if(FrameTimer * SpeedMultiplier >= 1.0f / time)
-                {
-                    NextFrame();
-                    FrameTimer = 0.0f;
-                }
-            }
-        }
-
-        public virtual void NextFrame()
-        {
-            CurrentFrame++;
-            //InvokeNextFrame(CurrentFrame);
-
-            if(CurrentFrame >= Frames.Count)
-            {
-                if(Loops)
-                {
-                    //InvokeAnimationLooped();
-                    CurrentFrame = 0;
-                }
-                else
-                {
-                    //InvokeAnimationCompleted();
-                    CurrentFrame = Frames.Count - 1;
-                }
-            }
         }
 
         public virtual Animation Clone()
@@ -257,23 +169,5 @@ namespace DwarfCorp
         {
             
         }
-
-        public virtual bool IsDone()
-        {
-            return CurrentFrame >= Frames.Count - 1;
-        }
-
-        public int GetFrame(float time)
-        {
-            if (Loops)
-            {
-                return (int) (time*FrameHZ)%Frames.Count;
-            }
-            else
-            {
-                return Math.Min((int) (time*FrameHZ), Frames.Count - 1);
-            }
-        }
     }
-
 }

@@ -62,9 +62,8 @@ namespace DwarfCorp
             {
                 new Point(0, 0)
             };
-            Animation shadowAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Effects.selection_circle), "sh", 32, 32, shP, false, Color.White, 1, 1.1f, 1.1f, false);
+            Animation shadowAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Effects.selection_circle), "sh", 32, 32, shP, Color.White, 1, 1.1f, 1.1f, false);
             AddAnimation(shadowAnimation);
-            shadowAnimation.Play();
             base.SetCurrentAnimation("sh");
 
             Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);

@@ -60,12 +60,12 @@ namespace DwarfCorp
             {
                 frames.Add(new Point(c, row));
             }
-            AddAnimation(new Animation(GameState.Game.GraphicsDevice, SpriteSheet, "Sprite", frames, true, Color.White, 5.0f, false));
+            AddAnimation(new Animation(GameState.Game.GraphicsDevice, SpriteSheet, "Sprite", frames, Color.White, 5.0f, false));
         }
 
         public void SetSingleFrameAnimation(Point frame)
         {
-            AddAnimation(new Animation(GameState.Game.GraphicsDevice, SpriteSheet, "Sprite", new List<Point>() { frame }, true, Color.White, 10.0f, false));
+            AddAnimation(new Animation(GameState.Game.GraphicsDevice, SpriteSheet, "Sprite", new List<Point>() { frame }, Color.White, 10.0f, false));
         }
 
         public void SetSingleFrameAnimation()
@@ -117,7 +117,7 @@ namespace DwarfCorp
         {
             AnimPlayer.Update(gameTime);
             if (AnimPlayer.CurrentAnimation != null)
-                AnimPlayer.CurrentAnimation.Update(gameTime);
+                AnimPlayer.CurrentAnimation.Update(gameTime, AnimPlayer.CurrentFrame);
             //if (CurrentAnimation != null)
             //    CurrentAnimation.Update(gameTime);
 
@@ -145,9 +145,11 @@ namespace DwarfCorp
             if (!IsVisible)
                 return;
 
-            if (AnimPlayer.CurrentAnimation == null) return;
+            if (AnimPlayer.CurrentAnimation == null)
+                return;
             var frame = AnimPlayer.CurrentFrame;
-            if (frame < 0 || frame >= AnimPlayer.CurrentAnimation.Primitives.Count) return;
+            if (frame < 0 || frame >= AnimPlayer.CurrentAnimation.Primitives.Count)
+                return;
             //if (CurrentAnimation == null || CurrentAnimation.CurrentFrame < 0 ||
             //    CurrentAnimation.CurrentFrame >= CurrentAnimation.Primitives.Count) return;
 

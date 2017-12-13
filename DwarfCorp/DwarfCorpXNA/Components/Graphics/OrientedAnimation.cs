@@ -118,7 +118,6 @@ namespace DwarfCorp
             string s = currentMode + OrientationStrings[(int)CurrentOrientation];
             if (Animations.ContainsKey(s))
             {
-                var previousAnimation = AnimPlayer.CurrentAnimation;
                 SetCurrentAnimation(Animations[s]);
                 SpriteSheet = AnimPlayer.CurrentAnimation.SpriteSheet;
             }
