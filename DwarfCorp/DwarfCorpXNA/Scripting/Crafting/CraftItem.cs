@@ -103,7 +103,8 @@ namespace DwarfCorp
                 PastTeseVerb = this.PastTeseVerb,
                 CurrentVerb = this.CurrentVerb,
                 NumRepeats = this.NumRepeats,
-                AllowHeterogenous = this.AllowHeterogenous
+                AllowHeterogenous = this.AllowHeterogenous,
+                SpawnOffset = this.SpawnOffset
             };
             foreach(var resource in this.SelectedResources)
             {

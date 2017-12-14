@@ -102,16 +102,15 @@ namespace DwarfCorp
                         body.Delete();
                         SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, body.Position,
                         0.5f);
-                        if (CraftLibrary.CraftItems.ContainsKey(body.Name))
+                        var craftDetails = body.GetRoot().GetComponent<CraftDetails>();
+                        if (craftDetails != null)
                         {
-                            var item = CraftLibrary.CraftItems[body.Name];
-                            foreach (var resource in item.RequiredResources)
+                            foreach (var resource in craftDetails.Resources)
                             {
                                 var tag = resource.ResourceType;
-                                var resourcesWithTag = ResourceLibrary.GetLeastValuableWithTag(tag);
                                 for (int i = 0; i < resource.NumResources; i++)
                                 {
-                                    EntityFactory.CreateEntity<Body>(resourcesWithTag.ResourceName + " Resource",
+                                    EntityFactory.CreateEntity<Body>(tag + " Resource",
                                         MathFunctions.RandVector3Box(body.GetBoundingBox()));
                                 }
                             }
@@ -166,15 +165,18 @@ namespace DwarfCorp
             else
                 Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 9));
 
-
+            
             if (SelectedBody != null)
             {
+                var craftDetails = SelectedBody.GetRoot().GetComponent<CraftDetails>();
+
                 var voxelUnderMouse = Player.VoxSelector.VoxelUnderMouse;
                 if (voxelUnderMouse != prevVoxel && voxelUnderMouse.IsValid && voxelUnderMouse.IsEmpty)
                 {
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_click_voxel, voxelUnderMouse.WorldPosition,
                         0.1f);
-                    SelectedBody.LocalPosition = voxelUnderMouse.WorldPosition + Vector3.One * 0.5f;
+                    var offset = craftDetails != null ? CraftLibrary.CraftItems[craftDetails.CraftType].SpawnOffset : Vector3.Zero;
+                    SelectedBody.LocalPosition = voxelUnderMouse.WorldPosition + Vector3.One * 0.5f + offset;
                     SelectedBody.HasMoved = true;
                     SelectedBody.UpdateTransform();
                     if (OverrideOrientation)
