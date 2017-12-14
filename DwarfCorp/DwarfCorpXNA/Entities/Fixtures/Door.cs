@@ -40,7 +40,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Door : Fixture, IUpdateableComponent
+    public class Door : CraftedFixture, IUpdateableComponent
     {
         public Faction TeamFaction { get; set; }
         public Matrix ClosedTransform { get; set; }
@@ -48,26 +48,80 @@ namespace DwarfCorp
         bool IsOpen { get; set; }
         bool IsMoving { get; set; }
 
+
+        protected static Dictionary<Resource.ResourceTags, Point> Sprites = new Dictionary<Resource.ResourceTags, Point>()
+        {
+            {
+                Resource.ResourceTags.Metal,
+                new Point(1, 8)
+            },
+            {
+                Resource.ResourceTags.Stone,
+                new Point(0, 8)
+            },
+            {
+                Resource.ResourceTags.Wood,
+                new Point(3, 1)
+            }
+        };
+
+        protected static Dictionary<Resource.ResourceTags, float> Healths = new Dictionary<Resource.ResourceTags, float>()
+        {
+            {
+                Resource.ResourceTags.Metal,
+                75.0f
+            },
+            {
+                Resource.ResourceTags.Stone,
+                80.0f
+            },
+            {
+                Resource.ResourceTags.Wood,
+                30.0f
+            }
+        };
+
+        protected static float DefaultHealth = 30.0f;
+        protected static Point DefaultSprite = new Point(0, 8);
+
+        protected static float GetHealth(ResourceLibrary.ResourceType type)
+        {
+            var resource = ResourceLibrary.GetResourceByName(type);
+            foreach(var tag in resource.Tags)
+            {
+                if (Healths.ContainsKey(tag))
+                {
+                    return Healths[tag];
+                }
+            }
+            return DefaultHealth;
+        }
+
         public Door()
         {
             IsOpen = false;
         }
 
-        public Door(ComponentManager manager, Vector3 position, Faction team, SpriteSheet sheet, Point frame, float hp) :
-            base(manager,
-            position, sheet, frame)
+        public Door(ComponentManager manager, Vector3 position, Faction team, List<ResourceAmount> resourceType) :
+            base(manager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new FixtureCraftDetails(manager)
+            {
+                Resources = resourceType.ConvertAll(p => new ResourceAmount(p)),
+                Sprites = Door.Sprites,
+                DefaultSpriteFrame = Door.DefaultSprite
+            }, SimpleSprite.OrientMode.Fixed)
         {
             IsMoving = false;
             IsOpen = false;
             OpenTimer = new Timer(0.5f, false);
             TeamFaction = team;
-            Name = "Door";
+            Name = resourceType.FirstOrDefault().ResourceType + " Door";
             Tags.Add("Door");
 
             OrientToWalls();
             ClosedTransform = LocalTransform;
             AddToCollisionManager = true;
             CollisionType = CollisionManager.CollisionType.Static;
+            var hp = GetHealth(resourceType.FirstOrDefault().ResourceType);
             AddChild(new Health(manager, "Health", hp, 0.0f, hp));
         }
 
@@ -114,6 +168,11 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            if (!Active)
+            {
+                return;
+            }
+
             if (IsMoving)
             {
                 OpenTimer.Update(gameTime);
