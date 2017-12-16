@@ -280,7 +280,7 @@ namespace DwarfCorp
                 GumInput.AddAction("TEST", Gui.Input.KeyBindingType.Pressed);
 
                 GumSkin = new RenderData(GraphicsDevice, Content,
-                        "newgui/xna_draw", ".\\Content\\newgui\\sheets.txt");
+                        "newgui/xna_draw", Program.CreatePath("Content", "newgui", "sheets.txt"));
 
                 if (SoundManager.Content == null)
                 {
