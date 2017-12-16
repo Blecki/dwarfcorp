@@ -672,6 +672,15 @@ namespace DwarfCorp
                 return new FindLandTask();
             }
 
+            if (Faction == World.PlayerFaction)
+            {
+                var candidate = World.Master.TaskManager.GetBestTask(this);
+                if (candidate != null)
+                {
+                    return candidate;
+                }
+            }
+
             if (!IsPosessed && Creature.Inventory.Resources.Count > 0)
             {
                 foreach (var status in Creature.RestockAll())

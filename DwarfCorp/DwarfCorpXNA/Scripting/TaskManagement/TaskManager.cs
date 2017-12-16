@@ -74,8 +74,46 @@ namespace DwarfCorp
             }
         }
 
+        public Task GetBestTask(CreatureAI creature)
+        {
+            Task best = null;
+            float bestCost = float.MaxValue;
+            Task.PriorityType bestPriority = Task.PriorityType.Eventually;
+            foreach(var task in Tasks)
+            {
+                if (task.IsFeasible(creature.Creature) != Task.Feasibility.Feasible)
+                    continue;
+                if (task.Priority < bestPriority)
+                    continue;
+
+                var cost = task.ComputeCost(creature.Creature);
+
+                if (task.Priority > bestPriority)
+                {
+                    bestPriority = task.Priority;
+                    best = task;
+                    bestCost = cost;
+                    continue;
+                }
+
+                if (cost < bestCost)
+                {
+                    bestCost = cost;
+                    best = task;
+                }
+            }
+            if (best != null)
+            {
+                best.CurrentAssigned++;
+                if (best.CurrentAssigned >= best.MaxAssignable)
+                    Tasks.Remove(best);
+            }
+            return best;
+        }
+
         public void Update(List<CreatureAI> creatures)
         {
+            /*
             UpdateTimer.Update(DwarfTime.LastTime);
 
             if (UpdateTimer.HasTriggered)
@@ -83,6 +121,7 @@ namespace DwarfCorp
                 Tasks = AssignTasksGreedy(Tasks, creatures, MaxDwarfTasks, NumAssignPerIteration);
                 Tasks.RemoveAll(task => creatures.All(c => task.ShouldDelete(c.Creature)));
             }
+            */
         }
 
         public int GetMaxColumnValue(int[,] matrix, int column, int numRows, int numColumns)
