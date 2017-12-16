@@ -44,6 +44,17 @@ namespace DwarfCorp
     /// </summary>
     public static partial class MathFunctions
     {
+        // Finds the power of 2 strictly greater than x.
+        public static int NearestPowerOf2(int x)
+        {
+            x |= (x >> 1);
+            x |= (x >> 2);
+            x |= (x >> 4);
+            x |= (x >> 8);
+            x |= (x >> 16);
+            return (x + 1);
+        }
+
         public static Color Pulsate(Color baseColor, DwarfTime time, float alpha = 1.0f, float amplitude = 0.25f, float rate = 1.0f)
         {
             var vec = baseColor.ToVector4();
