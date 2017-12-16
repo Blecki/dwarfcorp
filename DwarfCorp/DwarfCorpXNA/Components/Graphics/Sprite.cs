@@ -147,13 +147,10 @@ namespace DwarfCorp
 
             if (AnimPlayer.CurrentAnimation == null)
                 return;
-            var frame = AnimPlayer.CurrentFrame;
-            if (frame < 0 || frame >= AnimPlayer.CurrentAnimation.Primitives.Count)
-                return;
-            //if (CurrentAnimation == null || CurrentAnimation.CurrentFrame < 0 ||
-            //    CurrentAnimation.CurrentFrame >= CurrentAnimation.Primitives.Count) return;
 
             GamePerformance.Instance.StartTrackPerformance("Render - Sprite");
+
+            AnimPlayer.PreRender(graphicsDevice);
 
             // Everything that draws should set it's tint, making this pointless.
             Color origTint = effect.VertexColorTint;  
@@ -193,6 +190,7 @@ namespace DwarfCorp
              
             effect.MainTexture = SpriteSheet.GetTexture();
             ApplyTintingToEffect(effect);
+           
 
             if (DrawSilhouette)
             {
@@ -204,7 +202,7 @@ namespace DwarfCorp
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    AnimPlayer.CurrentAnimation.Primitives[AnimPlayer.CurrentFrame].Render(graphicsDevice);
+                    AnimPlayer.Primitive.Render(graphicsDevice);
                 }
 
                 graphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -220,7 +218,7 @@ namespace DwarfCorp
             foreach(EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                AnimPlayer.CurrentAnimation.Primitives[AnimPlayer.CurrentFrame].Render(graphicsDevice);
+                AnimPlayer.Primitive.Render(graphicsDevice);
             }
             effect.VertexColorTint = origTint;
             effect.EnableWind = false;

@@ -34,8 +34,6 @@ namespace DwarfCorp
         public Point CurrentOffset { get; set; }
         [JsonIgnore]
         public bool FirstIter = false;
-        [JsonIgnore]
-        public BillboardPrimitive Primitive { get; set; }
         private Point lastOffset = new Point(-1, -1);
         private bool HasValidFrame = false;
 
@@ -69,8 +67,6 @@ namespace DwarfCorp
             CompositeFrames = frames;
             FrameWidth = Composite.FrameSize.X;
             FrameHeight = Composite.FrameSize.Y;
-            CreatePrimitive();
-            UpdatePrimitive(0);
         }
 
         public CompositeAnimation(string composite, List<SpriteSheet> layers, List<Color> tints,  int[][] frames) :
@@ -104,25 +100,13 @@ namespace DwarfCorp
             return frameList;
         }
 
-        public void CreatePrimitive()
+        public override void UpdatePrimitive(BillboardPrimitive Primitive, int CurrentFrame)
         {
-            Primitives = new List<BillboardPrimitive>();
-        }
+            if (CurrentFrame >= CompositeFrames.Count) return;
 
-        public void UpdatePrimitive(int CurrentFrame)
-        {
-            if (HasValidFrame && CurrentFrame >= 0 && CurrentFrame < CompositeFrames.Count && lastOffset != CurrentOffset)
-            {
-                Primitive = Composite.CreatePrimitive(GameState.Game.GraphicsDevice, CurrentOffset);
-                Composite.ApplyBillboard(Primitive, CurrentOffset);
-                Primitives.Clear();
-
-                foreach (CompositeFrame frame in CompositeFrames)
-                {
-                    Primitives.Add(Primitive);
-                }
-                lastOffset = CurrentOffset;
-            }
+            var currentOffset = Composite.PushFrame(CompositeFrames[CurrentFrame]);
+            Composite.ApplyBillboard(Primitive, currentOffset);
+            SpriteSheet = new SpriteSheet((Texture2D)Composite.Target);
         }
 
         public override Rectangle GetFrameRect(int Frame)
@@ -130,16 +114,7 @@ namespace DwarfCorp
             Rectangle toReturn = new Rectangle(CurrentOffset.X * Composite.FrameSize.X, CurrentOffset.Y * Composite.FrameSize.Y, FrameWidth, FrameHeight);
             return toReturn;
         }
-
-        public override void Update(DwarfTime gameTime, int CurrentFrame)
-        {
-            base.Update(gameTime, CurrentFrame);
-            CurrentFrame = Math.Min(Math.Max(CurrentFrame, 0), CompositeFrames.Count - 1);
-            CurrentOffset = Composite.PushFrame(CompositeFrames[CurrentFrame]);
-            HasValidFrame = true;
-            UpdatePrimitive(CurrentFrame);
-        }
-
+                
         public override void PreRender()
         {
             SpriteSheet = new SpriteSheet((Texture2D)Composite.Target);

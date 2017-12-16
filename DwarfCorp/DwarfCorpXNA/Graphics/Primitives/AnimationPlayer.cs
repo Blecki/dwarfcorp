@@ -51,6 +51,7 @@ namespace DwarfCorp
         public bool IsLooping = false;
         private float FrameTimer = 0.0f;
         public Animation CurrentAnimation = null;
+        public BillboardPrimitive Primitive = null;
 
         public AnimationPlayer() { }
 
@@ -72,12 +73,16 @@ namespace DwarfCorp
         public void Play(Animation Animation)
         {
             CurrentAnimation = Animation;
+            if (CurrentFrame >= Animation.GetFrameCount())
+                CurrentFrame = Animation.GetFrameCount() - 1;
             IsPlaying = true;
         }
 
         public void Play()
         {
             IsPlaying = true;
+            if (CurrentAnimation != null)
+                IsLooping = CurrentAnimation.Loops;
         }
 
         public void Stop()
@@ -126,7 +131,7 @@ namespace DwarfCorp
                     NextFrame();
                     FrameTimer = 0.0f;
                 }
-            }
+            }            
         }
 
         public void NextFrame()
@@ -155,6 +160,16 @@ namespace DwarfCorp
                 return (int)(time * CurrentAnimation.FrameHZ) % CurrentAnimation.GetFrameCount();
             else
                 return Math.Min((int)(time * CurrentAnimation.FrameHZ), CurrentAnimation.GetFrameCount() - 1);
+        }
+
+        public void PreRender(GraphicsDevice Device)
+        {
+            if (CurrentAnimation != null)
+            {
+                if (Primitive == null)
+                    Primitive = CurrentAnimation.CreateBasePrimitive(Device);
+                CurrentAnimation.UpdatePrimitive(Primitive, CurrentFrame);
+            }
         }
     }
 }

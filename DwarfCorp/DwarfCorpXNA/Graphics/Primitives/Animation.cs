@@ -30,9 +30,7 @@ namespace DwarfCorp
         public float WorldHeight { get; set; }
         public bool Flipped { get; set; }
         public float SpeedMultiplier { get; set; }
-
-        [JsonIgnore]
-        public List<BillboardPrimitive> Primitives { get; set; }
+        public bool Loops = false;
 
         public SpriteSheet SpriteSheet { get; set; }
 
@@ -52,7 +50,6 @@ namespace DwarfCorp
 
         public Animation()
         {
-            Primitives = new List<BillboardPrimitive>();
             SpriteSheet = null;
             Frames = new List<Point>();
             Speeds = new List<float>();
@@ -97,7 +94,6 @@ namespace DwarfCorp
             {
                 Frames.Add(new Point(i, row));
             }
-            CreatePrimitives(GameState.Game.GraphicsDevice);
             Speeds = new List<float>();
  
         }
@@ -106,7 +102,6 @@ namespace DwarfCorp
             this(GameState.Game.GraphicsDevice, new SpriteSheet(frame.AssetName), frame.AssetName, frame.SourceRect.Width, frame.SourceRect.Height, new List<Point>(), Color.White, 15.0f, frame.SourceRect.Width / 32.0f, frame.SourceRect.Height / 32.0f, false)
         {
             Frames.Add(new Point(frame.SourceRect.X / frame.SourceRect.Width, frame.SourceRect.Y / frame.SourceRect.Height));
-            CreatePrimitives(GameState.Game.GraphicsDevice);
             Speeds = new List<float>();
             SpeedMultiplier = 1.0f;
         }
@@ -123,37 +118,24 @@ namespace DwarfCorp
             FrameTimer = 0.0f;
             WorldWidth = worldWidth;
             WorldHeight = worldHeight;
+            if (worldHeight == 0)
+            {
+                var x = 5;
+            }
             SpriteSheet = sheet;
-            Primitives = new List<BillboardPrimitive>();
             Flipped = flipped;
             SpeedMultiplier = 1.0f;
-            CreatePrimitives(device);
         }
 
-        public void CreatePrimitives(GraphicsDevice device)
+        public BillboardPrimitive CreateBasePrimitive(GraphicsDevice device)
         {
-            foreach(Point frame in Frames)
-            {
-                string key = GetHashCode() + ": " + FrameWidth + "," + FrameHeight + frame.ToString() + "," + Flipped;
-                if(!PrimitiveLibrary.BillboardPrimitives.ContainsKey(key))
-                {
-                    PrimitiveLibrary.BillboardPrimitives[key] = new BillboardPrimitive(device, SpriteSheet.GetTexture(), FrameWidth, FrameHeight, frame, WorldWidth, WorldHeight, Tint, Flipped);
-                }
-
-                Primitives.Add(PrimitiveLibrary.BillboardPrimitives[key]);
-            }
+            return new BillboardPrimitive(device, SpriteSheet.GetTexture(), FrameWidth, FrameHeight, new Point(0,0), WorldWidth, WorldHeight, Tint, Flipped);
         }
 
         public virtual Rectangle GetFrameRect(int Frame)
         {
             Rectangle toReturn = new Rectangle(Frames[Frame].X * FrameWidth, Frames[Frame].Y * FrameHeight, FrameWidth, FrameHeight);
             return toReturn;
-        }
-
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
-        {
-            CreatePrimitives(GameState.Game.GraphicsDevice);
         }
 
         public virtual void Update(DwarfTime gameTime, int CurrentFrame)
@@ -168,6 +150,13 @@ namespace DwarfCorp
         public virtual void PreRender()
         {
             
+        }
+
+        public virtual void UpdatePrimitive(BillboardPrimitive Primitive, int CurrentFrame)
+        {
+            var rect = GetFrameRect(CurrentFrame);
+            Primitive.UVs = new BillboardPrimitive.BoardTextureCoords(SpriteSheet.Width, SpriteSheet.Height, rect.Width, rect.Height, new Point(rect.X, rect.Y), Flipped);
+            Primitive.UpdateVertexUvs();
         }
     }
 }

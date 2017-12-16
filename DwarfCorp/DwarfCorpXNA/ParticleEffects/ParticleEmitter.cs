@@ -172,7 +172,7 @@ namespace DwarfCorp
             return worldRot;
         }
 
-        public ParticleEmitter(ComponentManager manager, string name, Matrix localTransform, EmitterData emitterData) :
+        public ParticleEmitter(GraphicsDevice Device, ComponentManager manager, string name, Matrix localTransform, EmitterData emitterData) :
             base(manager, name, localTransform, Vector3.Zero, Vector3.Zero, false)
         {
             Particles = new List<Particle>();
@@ -184,9 +184,11 @@ namespace DwarfCorp
             Data = emitterData;
             maxParticles = Data.MaxParticles;
             Sprites = new List<FixedInstanceArray>();
-            foreach (BillboardPrimitive t in Data.Animation.Primitives)
+            for (var t = 0; t < Data.Animation.GetFrameCount(); ++t)
             {
-                Sprites.Add(new FixedInstanceArray(Name, t,
+                var primitive = Data.Animation.CreateBasePrimitive(Device);
+                Data.Animation.UpdatePrimitive(primitive, t);
+                Sprites.Add(new FixedInstanceArray(Name, primitive,
                     Data.Animation.SpriteSheet.GetTexture(),
                     Data.MaxParticles, Data.BlendMode));
             }

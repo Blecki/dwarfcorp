@@ -458,7 +458,7 @@ namespace DwarfCorp
                 ChunkManager.camera = Camera;
 
                 SetLoadingMessage("Creating Particles ...");
-                ParticleManager = new ParticleManager(ComponentManager);
+                ParticleManager = new ParticleManager(GraphicsDevice, ComponentManager);
 
                 SetLoadingMessage("Creating GameMaster ...");
                 Master = new GameMaster(Factions.Factions["Player"], Game, ComponentManager, ChunkManager,
