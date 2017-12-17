@@ -125,7 +125,7 @@ namespace DwarfCorp
         {
             base.Update(time);
 
-            if (Player.CurrentAnimation == null) Player.Play(Animation);
+            if (!Player.HasValidAnimation()) Player.Play(Animation);
             Player.Update(time);
 
             Image = new ImageFrame(Animation.SpriteSheet.GetTexture(), Animation.GetFrameRect(Player.CurrentFrame));

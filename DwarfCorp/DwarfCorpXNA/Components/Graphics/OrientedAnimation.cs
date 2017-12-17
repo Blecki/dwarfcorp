@@ -118,8 +118,8 @@ namespace DwarfCorp
             string s = currentMode + OrientationStrings[(int)CurrentOrientation];
             if (Animations.ContainsKey(s))
             {
-                SetCurrentAnimation(Animations[s]);
-                SpriteSheet = AnimPlayer.CurrentAnimation.SpriteSheet;
+                AnimPlayer.ChangeAnimation(Animations[s], AnimationPlayer.ChangeAnimationOptions.Play | AnimationPlayer.ChangeAnimationOptions.Loop);
+                SpriteSheet = AnimPlayer.GetSpriteSheet();
             }
 
             base.Update(gameTime, chunks, camera);

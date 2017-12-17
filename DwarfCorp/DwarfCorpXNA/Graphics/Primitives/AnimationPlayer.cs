@@ -50,7 +50,7 @@ namespace DwarfCorp
         public bool IsPlaying = false;
         public bool IsLooping = false;
         private float FrameTimer = 0.0f;
-        public Animation CurrentAnimation = null;
+        private Animation CurrentAnimation = null;
         public BillboardPrimitive Primitive = null;
 
         public AnimationPlayer() { }
@@ -68,6 +68,43 @@ namespace DwarfCorp
         public void Pause()
         {
             IsPlaying = false;
+        }
+
+        public enum ChangeAnimationOptions
+        {
+            NoStateChange = 0,
+            Reset = 1,
+            Play = 2,
+            Loop = 4,
+            Stop = 8,
+
+            ResetAndPlay = Reset | Play,
+            ResetAndLoop = Reset | Loop | Play,
+            ResetAndStop = Reset | Stop
+        }
+
+        public void ChangeAnimation(Animation Animation, ChangeAnimationOptions Options)
+        {
+            CurrentAnimation = Animation;
+
+            if ((Options & ChangeAnimationOptions.Reset) == ChangeAnimationOptions.Reset)
+                CurrentFrame = 0;
+
+            if ((Options & ChangeAnimationOptions.Play) == ChangeAnimationOptions.Play)
+                IsPlaying = true;
+
+            if ((Options & ChangeAnimationOptions.Loop) == ChangeAnimationOptions.Loop)
+                IsLooping = true;
+
+            if ((Options & ChangeAnimationOptions.Stop) == ChangeAnimationOptions.Stop)
+                IsPlaying = false;
+
+            if (CurrentAnimation != null)
+            {
+                if (CurrentFrame >= Animation.GetFrameCount())
+                    CurrentFrame = Animation.GetFrameCount() - 1;
+                IsLooping = IsLooping | Animation.Loops;
+            }
         }
 
         public void Play(Animation Animation)
@@ -167,9 +204,20 @@ namespace DwarfCorp
             if (CurrentAnimation != null)
             {
                 if (Primitive == null)
-                    Primitive = CurrentAnimation.CreateBasePrimitive(Device);
+                    Primitive = new BillboardPrimitive();
                 CurrentAnimation.UpdatePrimitive(Primitive, CurrentFrame);
             }
+        }
+
+        public SpriteSheet GetSpriteSheet()
+        {
+            // Todo: Shouldn't have to rely on CompositeAnimation setting this each frame.
+            return CurrentAnimation.SpriteSheet;
+        }
+
+        public bool HasValidAnimation()
+        {
+            return CurrentAnimation != null;
         }
     }
 }

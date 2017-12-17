@@ -186,7 +186,7 @@ namespace DwarfCorp
             Sprites = new List<FixedInstanceArray>();
             for (var t = 0; t < Data.Animation.GetFrameCount(); ++t)
             {
-                var primitive = Data.Animation.CreateBasePrimitive(Device);
+                var primitive = new BillboardPrimitive();
                 Data.Animation.UpdatePrimitive(primitive, t);
                 Sprites.Add(new FixedInstanceArray(Name, primitive,
                     Data.Animation.SpriteSheet.GetTexture(),

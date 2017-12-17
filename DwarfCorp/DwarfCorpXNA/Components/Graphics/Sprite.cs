@@ -96,8 +96,7 @@ namespace DwarfCorp
 
         public void SetCurrentAnimation(Animation Animation, bool Play = false)
         {
-            AnimPlayer.CurrentAnimation = Animation;
-            if (Play) AnimPlayer.Play(Animation);
+            AnimPlayer.ChangeAnimation(Animation, Play ? AnimationPlayer.ChangeAnimationOptions.Play : AnimationPlayer.ChangeAnimationOptions.Stop);
         }
 
         public override void ReceiveMessageRecursive(Message messageToReceive)
@@ -116,11 +115,6 @@ namespace DwarfCorp
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             AnimPlayer.Update(gameTime);
-            if (AnimPlayer.CurrentAnimation != null)
-                AnimPlayer.CurrentAnimation.Update(gameTime, AnimPlayer.CurrentFrame);
-            //if (CurrentAnimation != null)
-            //    CurrentAnimation.Update(gameTime);
-
             base.Update(gameTime, chunks, camera);
         }
 
@@ -145,7 +139,7 @@ namespace DwarfCorp
             if (!IsVisible)
                 return;
 
-            if (AnimPlayer.CurrentAnimation == null)
+            if (!AnimPlayer.HasValidAnimation())
                 return;
 
             GamePerformance.Instance.StartTrackPerformance("Render - Sprite");
@@ -153,9 +147,8 @@ namespace DwarfCorp
             AnimPlayer.PreRender(graphicsDevice);
 
             // Everything that draws should set it's tint, making this pointless.
-            Color origTint = effect.VertexColorTint;  
-            AnimPlayer.CurrentAnimation.PreRender();
-            SpriteSheet = AnimPlayer.CurrentAnimation.SpriteSheet;
+            Color origTint = effect.VertexColorTint;
+            SpriteSheet = AnimPlayer.GetSpriteSheet();
             var currDistortion = VertexNoise.GetNoiseVectorFromRepeatingTexture(GlobalTransform.Translation);
             var distortion = currDistortion * 0.1f + prevDistortion * 0.9f;
             prevDistortion = distortion;

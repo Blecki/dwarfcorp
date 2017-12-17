@@ -77,7 +77,13 @@ namespace DwarfCorp
 
         public BillboardPrimitive()
         {
-            
+            Vertices = new ExtendedVertex[4];
+
+            Indexes = new ushort[]
+            {
+                1, 0, 2,
+                1, 2, 3
+            };
         }
 
         public BillboardPrimitive(GraphicsDevice device, Texture2D spriteSheet, int frameWidth, int frameHeight, Point frame, float width, float height, Color tint, bool flipped = false)
@@ -129,6 +135,53 @@ namespace DwarfCorp
                 1, 0, 2,
                 1, 2, 3
             };
+        }
+
+        public void SetFrame(SpriteSheet Sheet,
+            Rectangle Rect,
+            float Width,
+            float Height,
+            Color Color,
+            Color VertColor,
+            bool Flipped)
+        {
+            var texture = Sheet.GetTexture();
+
+            var tileBounds = new Vector4(
+                ((float)Rect.X / texture.Width) + 0.001f,
+                ((float)Rect.Y / texture.Height) + 0.001f,
+                ((float)Rect.Right / texture.Width) - 0.001f,
+                ((float)Rect.Bottom / texture.Height) - 0.001f);
+
+            Vertices[0] = new ExtendedVertex(
+                new Vector3(-0.5f * Width, 0.5f * Height, 0.0f),
+                Color, VertColor,
+                new Vector2((float)Rect.Right / texture.Width, (float)Rect.Y / texture.Height),
+                tileBounds);
+
+            Vertices[1] = new ExtendedVertex(
+                new Vector3(-0.5f * Width, -0.5f * Height, 0.0f),
+                Color, VertColor,
+                new Vector2((float)Rect.Right / texture.Width, (float)Rect.Bottom / texture.Height),
+                tileBounds);
+
+            Vertices[2] = new ExtendedVertex(
+                new Vector3(0.5f * Width, 0.5f * Height, 0.0f),
+                Color, VertColor,
+                new Vector2((float)Rect.X / texture.Width, (float)Rect.Y / texture.Height),
+                tileBounds);
+
+            Vertices[3] = new ExtendedVertex(
+                new Vector3(0.5f * Width, -0.5f * Height, 0.0f),
+                Color, VertColor,
+                new Vector2((float)Rect.X / texture.Width, (float)Rect.Bottom / texture.Height),
+                tileBounds);
+
+            if (VertexBuffer == null)
+                ResetBuffer(GameState.Game.GraphicsDevice);
+            else
+                VertexBuffer.SetData(Vertices);
+
         }
     }
 

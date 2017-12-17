@@ -118,18 +118,9 @@ namespace DwarfCorp
             FrameTimer = 0.0f;
             WorldWidth = worldWidth;
             WorldHeight = worldHeight;
-            if (worldHeight == 0)
-            {
-                var x = 5;
-            }
             SpriteSheet = sheet;
             Flipped = flipped;
             SpeedMultiplier = 1.0f;
-        }
-
-        public BillboardPrimitive CreateBasePrimitive(GraphicsDevice device)
-        {
-            return new BillboardPrimitive(device, SpriteSheet.GetTexture(), FrameWidth, FrameHeight, new Point(0,0), WorldWidth, WorldHeight, Tint, Flipped);
         }
 
         public virtual Rectangle GetFrameRect(int Frame)
@@ -138,25 +129,20 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public virtual void Update(DwarfTime gameTime, int CurrentFrame)
-        {
-        }
-
         public virtual Animation Clone()
         {
-            return new Animation(this, SpriteSheet, GameState.Game.GraphicsDevice);
-        }
-
-        public virtual void PreRender()
-        {
-            
+            return new Animation(this, SpriteSheet, GameState.Game.GraphicsDevice)
+            {
+                Loops = Loops
+            };
         }
 
         public virtual void UpdatePrimitive(BillboardPrimitive Primitive, int CurrentFrame)
         {
+            if (CurrentFrame >= Frames.Count)
+                return;
             var rect = GetFrameRect(CurrentFrame);
-            Primitive.UVs = new BillboardPrimitive.BoardTextureCoords(SpriteSheet.Width, SpriteSheet.Height, rect.Width, rect.Height, new Point(rect.X, rect.Y), Flipped);
-            Primitive.UpdateVertexUvs();
+            Primitive.SetFrame(SpriteSheet, rect, WorldWidth, WorldHeight, Color.White, Tint, Flipped);
         }
     }
 }

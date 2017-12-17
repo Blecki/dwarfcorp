@@ -35,7 +35,6 @@ namespace DwarfCorp
         [JsonIgnore]
         public bool FirstIter = false;
         private Point lastOffset = new Point(-1, -1);
-        private bool HasValidFrame = false;
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
@@ -54,6 +53,8 @@ namespace DwarfCorp
         public CompositeAnimation()
         {
             CompositeFrames = new List<CompositeFrame>();
+            WorldHeight = 1.0f;
+            WorldWidth = 1.0f;
         }
 
         public CompositeAnimation(string composite, List<CompositeFrame> frames) :
@@ -102,25 +103,31 @@ namespace DwarfCorp
 
         public override void UpdatePrimitive(BillboardPrimitive Primitive, int CurrentFrame)
         {
-            if (CurrentFrame >= CompositeFrames.Count) return;
+            if (CurrentFrame >= CompositeFrames.Count)
+                return;
+            if (CurrentFrame != 0)
+            {
+                var x = 5;
+            }
 
-            var currentOffset = Composite.PushFrame(CompositeFrames[CurrentFrame]);
-            Composite.ApplyBillboard(Primitive, currentOffset);
-            SpriteSheet = new SpriteSheet((Texture2D)Composite.Target);
+            SpriteSheet = CompositeFrames[CurrentFrame].Cells[0].Sheet;
+            var cell = CompositeFrames[CurrentFrame].Cells[0];
+            var rect = new Rectangle(cell.Tile.X * cell.Sheet.FrameWidth,
+                cell.Tile.Y * cell.Sheet.FrameHeight, cell.Sheet.FrameWidth, cell.Sheet.FrameHeight);
+            Primitive.SetFrame(SpriteSheet, rect, cell.Sheet.FrameWidth / 32.0f,
+                cell.Sheet.FrameHeight / 32.0f, Color.White, Color.White, Flipped);
+        //    SpriteSheet = new SpriteSheet((Texture2D)Composite.Target);
+        //    CurrentOffset = Composite.PushFrame(CompositeFrames[CurrentFrame]);
+        //    var rect = Composite.GetFrameRect(CurrentOffset);
+        //    Primitive.SetFrame(SpriteSheet, rect, Composite.FrameSize.X / 32.0f, Composite.FrameSize.Y / 32.0f, Color.White, Color.White, Flipped);
         }
 
         public override Rectangle GetFrameRect(int Frame)
         {
-            Rectangle toReturn = new Rectangle(CurrentOffset.X * Composite.FrameSize.X, CurrentOffset.Y * Composite.FrameSize.Y, FrameWidth, FrameHeight);
+            Rectangle toReturn = new Rectangle(CurrentOffset.X * Composite.FrameSize.X, CurrentOffset.Y * Composite.FrameSize.Y, Composite.FrameSize.X, Composite.FrameSize.Y);
             return toReturn;
         }
                 
-        public override void PreRender()
-        {
-            SpriteSheet = new SpriteSheet((Texture2D)Composite.Target);
-            base.PreRender();
-        }
-
         public override Animation Clone()
         {
             return new CompositeAnimation(CompositeName, CompositeFrames)
@@ -129,7 +136,8 @@ namespace DwarfCorp
                 FrameHZ = FrameHZ,
                 Flipped = Flipped,
                 Speeds = new List<float>(Speeds),
-                SpriteSheet = SpriteSheet
+                SpriteSheet = SpriteSheet,
+                Loops = Loops
             };
         }
     }

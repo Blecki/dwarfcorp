@@ -171,10 +171,10 @@ namespace DwarfCorp
                         }
                         break;
                     case AttackTrigger.Animation:
-                        if (performer.Sprite.AnimPlayer.CurrentAnimation == null ||
+                        if (!performer.Sprite.AnimPlayer.HasValidAnimation() ||
                             performer.Sprite.AnimPlayer.CurrentFrame != TriggerFrame)
                         {
-                            if (performer.Sprite.AnimPlayer.CurrentAnimation != null)
+                            if (performer.Sprite.AnimPlayer.HasValidAnimation())
                                 performer.Sprite.AnimPlayer.Play();
                             yield return Act.Status.Running;
                             continue;
@@ -241,7 +241,7 @@ namespace DwarfCorp
                     }
                     break;
                 case AttackTrigger.Animation:
-                    if (performer.Sprite.AnimPlayer.CurrentAnimation == null ||
+                    if (!performer.Sprite.AnimPlayer.HasValidAnimation() ||
                         performer.Sprite.AnimPlayer.CurrentFrame != TriggerFrame)
                     {
                         HasTriggered = false;
@@ -283,7 +283,7 @@ namespace DwarfCorp
                     }
                     break;
                 case AttackTrigger.Animation:
-                    if (performer.Sprite.AnimPlayer.CurrentAnimation == null ||
+                    if (!performer.Sprite.AnimPlayer.HasValidAnimation() ||
                         performer.Sprite.AnimPlayer.CurrentFrame != TriggerFrame)
                     {
                         HasTriggered = false;

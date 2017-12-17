@@ -62,6 +62,11 @@ namespace DwarfCorp
             primitive.UpdateVertexUvs();
         }
 
+        public Rectangle GetFrameRect(Point Frame)
+        {
+            return new Rectangle(Frame.X * FrameSize.X, Frame.Y * FrameSize.Y, FrameSize.X, FrameSize.Y);
+        }
+
         public Point PushFrame(CompositeFrame frame)
         {
             if (!CurrentFrames.ContainsKey(frame))
@@ -81,17 +86,20 @@ namespace DwarfCorp
                     CurrentOffset.X = 0;
                     CurrentOffset.Y += 1;
                 }
+
                 if (CurrentOffset.Y >= TargetSizeFrames.Y)
                 {
                     TargetSizeFrames = new Point(TargetSizeFrames.X * 2, TargetSizeFrames.Y * 2);
                     Initialize();
                     return PushFrame(frame);
                 }
+
                 CurrentFrames[frame] = toReturn;
 
                 return toReturn;
             }
-            else return CurrentFrames[frame];
+            else
+                return CurrentFrames[frame];
         }
 
         public void DebugDraw(SpriteBatch batch, int x, int y)
