@@ -125,7 +125,7 @@ namespace DwarfCorp
 
                 if (!above.IsValid || !above.IsEmpty) continue;
                 if (TypeofStorm == StormType.RainStorm &&
-                    (above.WaterCell.WaterLevel < WaterManager.maxWaterLevel && (above.WaterCell.Type == LiquidType.Water || above.WaterCell.Type == LiquidType.None)))
+                    (above.WaterCell.WaterLevel < WaterManager.maxWaterLevel && (above.WaterCell.Type == LiquidType.Water)))
                 {
                     WaterCell water = above.WaterCell;
                     water.WaterLevel = (byte)Math.Min(WaterManager.maxWaterLevel, water.WaterLevel + WaterManager.rainFallAmount);
