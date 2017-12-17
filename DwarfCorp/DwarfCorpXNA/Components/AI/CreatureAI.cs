@@ -1478,8 +1478,25 @@ namespace DwarfCorp
             if (CurrentTask != null)
             {
                 CurrentTask.Cancel();
+                if (CurrentTask.ReassignOnDeath && Faction == World.PlayerFaction)
+                {
+                    World.Master.TaskManager.AddTask(CurrentTask);
+                }
             }
             base.Die();
+        }
+
+        public override void Delete()
+        {
+            if (CurrentTask != null)
+            {
+                CurrentTask.Cancel();
+                if (CurrentTask.ReassignOnDeath && Faction == World.PlayerFaction)
+                {
+                    World.Master.TaskManager.AddTask(CurrentTask);
+                }
+            }
+            base.Delete();
         }
 
     }

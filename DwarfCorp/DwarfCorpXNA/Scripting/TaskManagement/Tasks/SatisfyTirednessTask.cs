@@ -44,6 +44,7 @@ namespace DwarfCorp
     {
         public SatisfyTirednessTask()
         {
+            ReassignOnDeath = false;
             Name = "Go to sleep";
             Priority = PriorityType.Medium;
         }
