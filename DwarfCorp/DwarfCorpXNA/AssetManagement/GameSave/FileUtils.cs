@@ -208,7 +208,8 @@ namespace DwarfCorp
                 TypeNameHandling = TypeNameHandling.Auto,
                 TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple,
                 ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-                Formatting = Formatting.Indented
+                Formatting = Formatting.Indented,
+                ContractResolver = new DefaultContractResolver()
             };
 
             serializer.Converters.Add(new BoxConverter());
@@ -263,7 +264,8 @@ namespace DwarfCorp
                 TypeNameAssemblyFormat = FormatterAssemblyStyle.Full,
                 ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
                 Formatting = Formatting.Indented,
-                PreserveReferencesHandling = PreserveReferencesHandling.Objects
+                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                ContractResolver = new DefaultContractResolver()
             };
 
             serializer.Converters.Add(new BoxConverter());

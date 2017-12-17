@@ -81,7 +81,6 @@ namespace DwarfCorp
             return IsFeasible(agent) == Feasibility.Feasible ? 1.0f : 1000.0f;
         }
 
-
     }
 
 }

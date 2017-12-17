@@ -478,6 +478,7 @@ namespace DwarfCorp
 
                 GamePerformance.Instance.StartTrackPerformance("All Asleep");
                 bool allAsleep = Master.AreAllEmployeesAsleep();
+#if !UPTIME_TEST
                 if (SleepPrompt && allAsleep && !FastForwardToDay && Time.IsNight())
                 {
                     var sleepingPrompt = Gui.ConstructWidget(new Gui.Widgets.Confirm
@@ -498,6 +499,7 @@ namespace DwarfCorp
                 {
                     SleepPrompt = true;
                 }
+#endif
                 GamePerformance.Instance.StopTrackPerformance("All Asleep");
             }
 

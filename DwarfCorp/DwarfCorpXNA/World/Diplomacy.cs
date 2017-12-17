@@ -400,10 +400,12 @@ namespace DwarfCorp
             return party;
         }
 
-
         public void Update(DwarfTime time, DateTime currentDate, WorldManager world)
         {
             World = world;
+#if UPTIME_TEST
+            return;
+#endif
             var timeSinceLastTrade = world.Time.CurrentDate  - TimeOfLastTrade;
             foreach (var mypolitics in FactionPolitics)
             {
