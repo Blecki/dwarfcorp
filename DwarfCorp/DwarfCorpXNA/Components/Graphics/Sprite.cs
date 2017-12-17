@@ -144,7 +144,7 @@ namespace DwarfCorp
 
             GamePerformance.Instance.StartTrackPerformance("Render - Sprite");
 
-            AnimPlayer.PreRender(graphicsDevice);
+            //AnimPlayer.PreRender(graphicsDevice);
 
             // Everything that draws should set it's tint, making this pointless.
             Color origTint = effect.VertexColorTint;

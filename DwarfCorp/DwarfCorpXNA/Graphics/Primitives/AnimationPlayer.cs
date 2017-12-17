@@ -168,7 +168,15 @@ namespace DwarfCorp
                     NextFrame();
                     FrameTimer = 0.0f;
                 }
-            }            
+            }
+
+            // Todo: Track enough state to only do this as needed.
+            if (CurrentAnimation != null)
+            {
+                if (Primitive == null)
+                    Primitive = new BillboardPrimitive();
+                CurrentAnimation.UpdatePrimitive(Primitive, CurrentFrame);
+            }
         }
 
         public void NextFrame()
@@ -197,16 +205,6 @@ namespace DwarfCorp
                 return (int)(time * CurrentAnimation.FrameHZ) % CurrentAnimation.GetFrameCount();
             else
                 return Math.Min((int)(time * CurrentAnimation.FrameHZ), CurrentAnimation.GetFrameCount() - 1);
-        }
-
-        public void PreRender(GraphicsDevice Device)
-        {
-            if (CurrentAnimation != null)
-            {
-                if (Primitive == null)
-                    Primitive = new BillboardPrimitive();
-                CurrentAnimation.UpdatePrimitive(Primitive, CurrentFrame);
-            }
         }
 
         public SpriteSheet GetSpriteSheet()

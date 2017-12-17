@@ -105,21 +105,11 @@ namespace DwarfCorp
         {
             if (CurrentFrame >= CompositeFrames.Count)
                 return;
-            if (CurrentFrame != 0)
-            {
-                var x = 5;
-            }
 
-            SpriteSheet = CompositeFrames[CurrentFrame].Cells[0].Sheet;
-            var cell = CompositeFrames[CurrentFrame].Cells[0];
-            var rect = new Rectangle(cell.Tile.X * cell.Sheet.FrameWidth,
-                cell.Tile.Y * cell.Sheet.FrameHeight, cell.Sheet.FrameWidth, cell.Sheet.FrameHeight);
-            Primitive.SetFrame(SpriteSheet, rect, cell.Sheet.FrameWidth / 32.0f,
-                cell.Sheet.FrameHeight / 32.0f, Color.White, Color.White, Flipped);
-        //    SpriteSheet = new SpriteSheet((Texture2D)Composite.Target);
-        //    CurrentOffset = Composite.PushFrame(CompositeFrames[CurrentFrame]);
-        //    var rect = Composite.GetFrameRect(CurrentOffset);
-        //    Primitive.SetFrame(SpriteSheet, rect, Composite.FrameSize.X / 32.0f, Composite.FrameSize.Y / 32.0f, Color.White, Color.White, Flipped);
+            SpriteSheet = new SpriteSheet((Texture2D)Composite.Target);
+            CurrentOffset = Composite.PushFrame(CompositeFrames[CurrentFrame]);
+            var rect = Composite.GetFrameRect(CurrentOffset);
+            Primitive.SetFrame(SpriteSheet, rect, Composite.FrameSize.X / 32.0f, Composite.FrameSize.Y / 32.0f, Color.White, Color.White, Flipped);
         }
 
         public override Rectangle GetFrameRect(int Frame)
