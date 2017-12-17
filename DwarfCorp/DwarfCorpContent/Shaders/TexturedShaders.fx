@@ -613,7 +613,7 @@ TPixelToFrame SelectionPS_Alphatest(SelectionBufferToPixel PSIn)
 
 	clip((texColor.a - 0.5));
 
-	clip(PSIn.ClipDistance.w);
+	clip(PSIn.ClipDistance.w + 1);
 	Output.Color = PSIn.SelectionColor;
 	return Output;
 }
