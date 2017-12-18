@@ -142,6 +142,8 @@ namespace DwarfCorp
             if (!AnimPlayer.HasValidAnimation())
                 return;
 
+            if (AnimPlayer.Primitive == null) return;
+
             GamePerformance.Instance.StartTrackPerformance("Render - Sprite");
 
             //AnimPlayer.PreRender(graphicsDevice);

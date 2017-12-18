@@ -769,16 +769,9 @@ namespace DwarfCorp
                                   Matrix.CreateTranslation(0, 0.5f, 0)
                                   )) as CharacterSprite;
 
-            var descriptor =
-                FileUtils.LoadJsonFromString<AnimationSetDescriptor>(
-                    ContentPaths.GetFileAsString(animations));
-
-            List<CompositeAnimation> animations_list = descriptor.GenerateAnimations(Name);
-
-            foreach (CompositeAnimation animation in animations_list)
-            {
+            foreach (var animation in AnimationLibrary.LoadCompositeAnimationSet(animations, Name))
                 sprite.AddAnimation(animation);
-            }
+
             sprite.SetFlag(Flag.ShouldSerialize, false);
         }
 
