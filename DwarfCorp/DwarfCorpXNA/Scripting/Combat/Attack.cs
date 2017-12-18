@@ -198,7 +198,7 @@ namespace DwarfCorp
                         {
                                 performer.Sprite.AnimPlayer.Reset();
                                 performer.Sprite.AnimPlayer.Play(HitAnimation);
-                            IndicatorManager.DrawIndicator(HitAnimation.Clone(), other.WorldPosition + Vector3.One*0.5f,
+                            IndicatorManager.DrawIndicator(HitAnimation, other.WorldPosition + Vector3.One*0.5f,
                                 10.0f, 1.0f, MathFunctions.RandVector2Circle()*10, HitColor, MathFunctions.Rand() > 0.5f);
                         }
                         break;
@@ -261,7 +261,7 @@ namespace DwarfCorp
                 {
                     performer.Sprite.AnimPlayer.Reset();
                     performer.Sprite.AnimPlayer.Play(HitAnimation);
-                    IndicatorManager.DrawIndicator(HitAnimation.Clone(), pos, 10.0f, 1.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
+                    IndicatorManager.DrawIndicator(HitAnimation, pos, 10.0f, 1.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
                     PlayNoise(pos);
                 }
             }
@@ -341,7 +341,7 @@ namespace DwarfCorp
                     {
                             performer.Sprite.AnimPlayer.Reset();
                             performer.Sprite.AnimPlayer.Play(HitAnimation);
-                            IndicatorManager.DrawIndicator(HitAnimation.Clone(), other.BoundingBox.Center(), 10.0f, 1.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
+                            IndicatorManager.DrawIndicator(HitAnimation, other.BoundingBox.Center(), 10.0f, 1.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
                     }
 
                     Physics physics = other as Physics;

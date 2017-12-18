@@ -32,9 +32,6 @@ namespace DwarfCorp
         public List<CompositeFrame> CompositeFrames { get; set; }
         [JsonIgnore]
         public Point CurrentOffset { get; set; }
-        [JsonIgnore]
-        public bool FirstIter = false;
-        private Point lastOffset = new Point(-1, -1);
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
@@ -117,19 +114,5 @@ namespace DwarfCorp
             Rectangle toReturn = new Rectangle(CurrentOffset.X * Composite.FrameSize.X, CurrentOffset.Y * Composite.FrameSize.Y, Composite.FrameSize.X, Composite.FrameSize.Y);
             return toReturn;
         }
-                
-        public override Animation Clone()
-        {
-            return new CompositeAnimation(CompositeName, CompositeFrames)
-            {
-                Name = Name,
-                FrameHZ = FrameHZ,
-                Flipped = Flipped,
-                Speeds = new List<float>(Speeds),
-                SpriteSheet = SpriteSheet,
-                Loops = Loops
-            };
-        }
     }
-
 }

@@ -129,14 +129,6 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public virtual Animation Clone()
-        {
-            return new Animation(this, SpriteSheet, GameState.Game.GraphicsDevice)
-            {
-                Loops = Loops
-            };
-        }
-
         public virtual void UpdatePrimitive(BillboardPrimitive Primitive, int CurrentFrame)
         {
             if (CurrentFrame >= Frames.Count)
