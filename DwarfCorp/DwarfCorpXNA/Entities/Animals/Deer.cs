@@ -102,7 +102,7 @@ namespace DwarfCorp
             Physics.Orientation = Physics.OrientMode.RotateY;
 
             SpriteAssets = spriteSheet;
-            CreateSprites(Manager);
+            CreateSprite(ContentPaths.Entities.Animals.Deer.animations, Manager);
             // Add hands
             Hands = Physics.AddChild(new Grabber("hands", Manager, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero)) as Grabber;
 
@@ -151,42 +151,10 @@ namespace DwarfCorp
             BabyType = "Deer";
         }
 
-        private void CreateSprites(ComponentManager manager)
-        {
-            const int frameWidth = 48;
-            const int frameHeight = 40;
-
-            var sprite = Physics.AddChild(new CharacterSprite
-                (manager.World.GraphicsDevice,
-                manager,
-                "Deer Sprite",
-                Matrix.CreateTranslation(Vector3.Up * 0.6f)
-                )) as CharacterSprite;
-
-            // Add the idle animation
-            sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Forward, SpriteAssets, ANIM_SPEED, frameWidth, frameHeight, 0, 0);
-            sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Left, SpriteAssets, ANIM_SPEED, frameWidth, frameHeight, 1, 0);
-            sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Right, SpriteAssets, ANIM_SPEED, frameWidth, frameHeight, 2, 0);
-            sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Backward, SpriteAssets, ANIM_SPEED, frameWidth, frameHeight, 3, 0);
-
-            // Add the running animation
-            sprite.AddAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Forward, SpriteAssets, ANIM_SPEED, frameWidth, frameHeight, 4, 0, 1, 2, 3);
-            sprite.AddAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Left, SpriteAssets, ANIM_SPEED, frameWidth, frameHeight, 5, 0, 1, 2, 3);
-            sprite.AddAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Right, SpriteAssets, ANIM_SPEED, frameWidth, frameHeight, 6, 0, 1, 2, 3);
-            sprite.AddAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Backward, SpriteAssets, ANIM_SPEED, frameWidth, frameHeight, 7, 0, 1, 2, 3);
-
-            // Add the jumping animation
-            sprite.AddAnimation(CharacterMode.Jumping, OrientedAnimation.Orientation.Forward, SpriteAssets, ANIM_SPEED, frameWidth, frameHeight, 8, 0, 1);
-            sprite.AddAnimation(CharacterMode.Jumping, OrientedAnimation.Orientation.Left, SpriteAssets, ANIM_SPEED, frameWidth, frameHeight, 9, 0, 1);
-            sprite.AddAnimation(CharacterMode.Jumping, OrientedAnimation.Orientation.Right, SpriteAssets, ANIM_SPEED, frameWidth, frameHeight, 10, 0, 1);
-            sprite.AddAnimation(CharacterMode.Jumping, OrientedAnimation.Orientation.Backward, SpriteAssets, ANIM_SPEED, frameWidth, frameHeight, 11, 0, 1);
-            sprite.SetFlag(Flag.ShouldSerialize, false);
-        }
-
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            CreateSprites(manager);
+            CreateSprite(ContentPaths.Entities.Animals.Deer.animations, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
             base.CreateCosmeticChildren(manager);
         }

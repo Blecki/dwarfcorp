@@ -506,6 +506,7 @@ namespace DwarfCorp
                 public class Deer
                 {
                     public static string deer = ProgramData.CreatePath("Entities", "Animals", "Deer", "deer");
+                    public static string animations = ProgramData.CreatePath("Entities", "Animals", "Deer", "deer_animation.json");
                 }
 
                 public class Snake
