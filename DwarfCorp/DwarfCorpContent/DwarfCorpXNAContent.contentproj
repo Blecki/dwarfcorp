@@ -2289,6 +2289,38 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>decal-types</Name>
     </None>
+    <None Include="Entities\Animals\Birds\bird0_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bird0_animation</Name>
+    </None>
+    <None Include="Entities\Animals\Birds\bird3_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bird3_animation</Name>
+    </None>
+    <None Include="Entities\Animals\Birds\bird1_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bird1_animation</Name>
+    </None>
+    <None Include="Entities\Animals\Birds\bird7_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bird7_animation</Name>
+    </None>
+    <None Include="Entities\Animals\Birds\bird6_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bird6_animation</Name>
+    </None>
+    <None Include="Entities\Animals\Birds\bird5_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bird5_animation</Name>
+    </None>
+    <None Include="Entities\Animals\Birds\bird4_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bird4_animation</Name>
+    </None>
+    <None Include="Entities\Animals\Birds\bird2_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bird2_animation</Name>
+    </None>
     <None Include="Entities\Animals\Deer\deer_animation.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>deer_animation</Name>

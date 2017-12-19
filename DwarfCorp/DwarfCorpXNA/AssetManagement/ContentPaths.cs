@@ -478,6 +478,11 @@ namespace DwarfCorp
                     {
                         return bird_prefix + MathFunctions.Random.Next(8);
                     }
+
+                    public static string GetBirdAnimations(string Bird)
+                    {
+                        return Bird + "_animation.json";
+                    }
                 }
 
                 public class Rabbit
