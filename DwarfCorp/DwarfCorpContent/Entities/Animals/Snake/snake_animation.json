@@ -1,0 +1,42 @@
+{
+  "Animations": [
+    {
+      "Frames": [
+        [ 0, 0, 0 ]
+      ],
+      "Name": "IdleFORWARD",
+      "Speed": [ 5.0 ]
+    },
+    {
+      "Frames": [
+        [ 0, 1, 0 ]
+      ],
+      "Name": "IdleLEFT",
+      "Speed": [ 5.0 ]
+    },
+    {
+      "Frames": [
+        [ 0, 2, 0 ]
+      ],
+      "Name": "IdleRIGHT",
+      "Speed": [ 5.0 ]
+    },
+    {
+      "Frames": [
+        [ 0, 3, 0 ]
+      ],
+      "Name": "IdleBACKWARD",
+      "Speed": [ 5.0 ]
+    }
+
+   ],
+   "Layers" : [
+      {
+         "$id" : "1",
+         "AssetName" : "Entities\\Animals\\Snake\\snake",
+         "FrameHeight" : 32,
+         "FrameWidth" : 32
+      }
+   ],
+   "Tints" : [ "255, 255, 255, 255"]
+}

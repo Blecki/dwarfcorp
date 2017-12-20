@@ -156,12 +156,13 @@ namespace DwarfCorp
                     ? (Body)(new Strawman(world.ComponentManager, position))
                     : (value < 0.66 ? (Body)(new WeightRack(world.ComponentManager, position)) : (Body)(new PunchingBag(world.ComponentManager, position)));
             });
-            RegisterEntity("Snake", (position, data) => GenerateSnake(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice,
-                world.ChunkManager));
+            RegisterEntity("Snake", (position, data) =>
+                new Snake(false,
+                    position, world.ComponentManager, "Snake").Physics);
             RegisterEntity("Necrosnake", (position, data) =>
             {
-                var snek = new Snake(new SpriteSheet(ContentPaths.Entities.Animals.Snake.bonesnake, 32),
-                position, world.ComponentManager, "Snake", false, true);
+                var snek = new Snake(true, 
+                position, world.ComponentManager, "Snake");
                 snek.Attacks[0].DiseaseToSpread = "Necrorot";
                 return snek.Physics;
             });
@@ -345,16 +346,6 @@ namespace DwarfCorp
             Dwarf toReturn = new Dwarf(componentManager, stats, allies, planService, faction, "Dwarf", dwarfClass, position);
             toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, componentManager.World.Time.CurrentDate), false);
             return toReturn.Physics;
-        }
-
-        public static GameComponent GenerateSnake(Vector3 position,
-            ComponentManager componentManager,
-            ContentManager content,
-            GraphicsDevice graphics,
-            ChunkManager chunks)
-        {
-            return new Snake(new SpriteSheet(ContentPaths.Entities.Animals.Snake.snake, 32),
-                position, componentManager, "Snake").Physics;
         }
     }
 }

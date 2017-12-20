@@ -2325,6 +2325,22 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>deer_animation</Name>
     </None>
+    <None Include="Entities\Animals\Snake\snake_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>snake_animation</Name>
+    </None>
+    <None Include="Entities\Animals\Snake\tail_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>tail_animation</Name>
+    </None>
+    <None Include="Entities\Animals\Snake\bonetail_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bonetail_animation</Name>
+    </None>
+    <None Include="Entities\Animals\Snake\bonesnake_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bonesnake_animation</Name>
+    </None>
     <None Include="tutorial.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>tutorial</Name>

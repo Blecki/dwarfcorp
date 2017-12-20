@@ -517,7 +517,13 @@ namespace DwarfCorp
                 public class Snake
                 {
                     public static string snake = ProgramData.CreatePath("Entities", "Animals", "Snake", "snake");
+                    public static string snake_animation = ProgramData.CreatePath("Entities", "Animals", "Snake", "snake_animation.json");
+                    public static string tail_animation = ProgramData.CreatePath("Entities", "Animals", "Snake", "tail_animation.json");
+
                     public static string bonesnake = ProgramData.CreatePath("Entities", "Animals", "Snake", "bonesnake");
+                    public static string bonesnake_animation = ProgramData.CreatePath("Entities", "Animals", "Snake", "bonesnake_animation.json");
+                    public static string bonetail_animation = ProgramData.CreatePath("Entities", "Animals", "Snake", "bonetail_animation.json");
+
                 }
             }
 

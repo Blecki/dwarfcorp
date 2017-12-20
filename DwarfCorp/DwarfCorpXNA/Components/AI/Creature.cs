@@ -759,20 +759,25 @@ namespace DwarfCorp
             sprite.SetFlag(Flag.ShouldSerialize, false);
         }
 
-        protected void CreateSprite(string animations, ComponentManager manager)
+        protected CharacterSprite CreateSprite(string animations, ComponentManager manager,
+            float VerticalOffset = 0.5f, bool AddToPhysics = true)
         {
-            // Create the sprite component for the bird.
-            var sprite = Physics.AddChild(new CharacterSprite
+            var sprite = new CharacterSprite
                                   (manager.World.GraphicsDevice,
                                   manager,
                                   "Sprite",
-                                  Matrix.CreateTranslation(0, 0.5f, 0)
-                                  )) as CharacterSprite;
+                                  Matrix.CreateTranslation(0, VerticalOffset, 0)
+                                  );
+
+            if (AddToPhysics)
+                Physics.AddChild(sprite);
 
             foreach (var animation in AnimationLibrary.LoadCompositeAnimationSet(animations, Name))
                 sprite.AddAnimation(animation);
 
             sprite.SetFlag(Flag.ShouldSerialize, false);
+
+            return sprite;
         }
 
     }

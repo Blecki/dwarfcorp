@@ -105,8 +105,8 @@
       {
          "$id" : "1",
          "AssetName" : "Entities\\Animals\\Birds\\bird6",
-         "FrameHeight" : 24,
-         "FrameWidth" : 16
+         "FrameHeight" : 16,
+         "FrameWidth" : 24
       }
    ],
    "Tints" : [ "255, 255, 255, 255"]
