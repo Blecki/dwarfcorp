@@ -157,22 +157,6 @@ namespace DwarfCorp
             return new Animation(GameState.Game.GraphicsDevice, texture, mode.ToString() + OrientationStrings[(int)orient], frameWidth, frameHeight, frames, Color.White, frameHz, (float)frameWidth / 35.0f, (float)frameHeight / 35.0f, false);
         }
 
-        public void AddAnimation(CharacterMode mode,
-            Orientation orient,
-            SpriteSheet texture,
-            float frameHz,
-            int frameWidth,
-            int frameHeight,
-            int row,
-            params int[] cols)
-        {
-            List<int> ints = new List<int>();
-            ints.AddRange(cols);
-            Animation animation = CreateAnimation(mode, orient, texture, frameHz, frameWidth, frameHeight, row, ints);
-            Animations[mode.ToString() + OrientationStrings[(int) orient]] = animation;
-            AnimPlayer.Play(animation);
-        }
-
         public void Blink(float blinkTime)
         {
             if(isBlinking || isCoolingDown)

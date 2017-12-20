@@ -97,10 +97,7 @@ namespace DwarfCorp
                     Actions |= value;
             }
 
-            var descriptor = FileUtils.LoadJsonFromString<AnimationSetDescriptor>(ContentPaths.GetFileAsString(definition.Animations));
-            Animations = new List<Animation>();
-            Animations.AddRange(descriptor.GenerateAnimations(Name));
-
+            Animations = AnimationLibrary.LoadCompositeAnimationSet(definition.Animations, Name);
             Attacks = definition.Attacks;
         }
 

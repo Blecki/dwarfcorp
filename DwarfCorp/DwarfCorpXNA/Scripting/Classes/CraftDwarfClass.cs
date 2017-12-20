@@ -214,11 +214,7 @@ namespace DwarfCorp
 
         void InitializeAnimations()
         {
-            var descriptor =
-                FileUtils.LoadJsonFromString<AnimationSetDescriptor>(
-                    ContentPaths.GetFileAsString(ContentPaths.Entities.Dwarf.Sprites.crafter_animation));
-            Animations = new List<Animation>();
-            Animations.AddRange(descriptor.GenerateAnimations(CompositeLibrary.Dwarf));
+            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Dwarf.Sprites.crafter_animation, "Dwarf");
         }
 
         public void InitializeWeapons()
