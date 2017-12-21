@@ -205,39 +205,7 @@ namespace DwarfCorp
 
         void InitializeAnimations()
         {
-            const int frameWidth = 64;
-            const int frameHeight = 40;
-            SpriteSheet sprites = new SpriteSheet(ContentPaths.Entities.Goblin.Sprites.goblin_withsword);
-
-            Animations = new List<Animation>()
-            {
-                
-            CharacterSprite.CreateAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Forward, sprites, 15.0f, frameWidth, frameHeight, 0, 1, 0, 1, 2),
-            CharacterSprite.CreateAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Right, sprites, 15.0f, frameWidth, frameHeight, 2, 1, 0, 1, 2),
-            CharacterSprite.CreateAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Left, sprites, 15.0f, frameWidth, frameHeight, 1, 1, 0, 1, 2),
-            CharacterSprite.CreateAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Backward, sprites, 15.0f, frameWidth, frameHeight, 3, 1, 0, 1, 2),
-
-            CharacterSprite.CreateAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Forward, sprites, 0.8f, frameWidth, frameHeight, 0, 1),
-            CharacterSprite.CreateAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Right, sprites, 0.8f, frameWidth, frameHeight, 2, 1),
-            CharacterSprite.CreateAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Left, sprites, 0.8f, frameWidth, frameHeight, 1, 1),
-            CharacterSprite.CreateAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Backward, sprites, 0.8f, frameWidth, frameHeight, 3, 1),
-
-            CharacterSprite.CreateAnimation(CharacterMode.Attacking, OrientedAnimation.Orientation.Forward, sprites, 8.0f, frameWidth, frameHeight, 8, 0, 1, 2, 3),
-            CharacterSprite.CreateAnimation(CharacterMode.Attacking, OrientedAnimation.Orientation.Right, sprites, 8.0f, frameWidth, frameHeight, 10, 0, 1, 2, 3),
-            CharacterSprite.CreateAnimation(CharacterMode.Attacking, OrientedAnimation.Orientation.Left, sprites, 8.0f, frameWidth, frameHeight, 9, 0, 1, 2, 3),
-            CharacterSprite.CreateAnimation(CharacterMode.Attacking, OrientedAnimation.Orientation.Backward, sprites, 8.0f, frameWidth, frameHeight, 11, 0, 1, 2, 3),
-
-            CharacterSprite.CreateAnimation(CharacterMode.Falling, OrientedAnimation.Orientation.Forward, sprites, 15.0f, frameWidth, frameHeight, 4, 1),
-            CharacterSprite.CreateAnimation(CharacterMode.Falling, OrientedAnimation.Orientation.Right, sprites, 15.0f, frameWidth, frameHeight, 6, 1),
-            CharacterSprite.CreateAnimation(CharacterMode.Falling, OrientedAnimation.Orientation.Left, sprites, 15.0f, frameWidth, frameHeight, 5, 1),
-            CharacterSprite.CreateAnimation(CharacterMode.Falling, OrientedAnimation.Orientation.Backward, sprites, 15.0f, frameWidth, frameHeight, 7, 1),
-
-            CharacterSprite.CreateAnimation(CharacterMode.Jumping, OrientedAnimation.Orientation.Forward, sprites, 15.0f, frameWidth, frameHeight, 4, 0),
-            CharacterSprite.CreateAnimation(CharacterMode.Jumping, OrientedAnimation.Orientation.Right, sprites, 15.0f, frameWidth, frameHeight, 6, 0),
-            CharacterSprite.CreateAnimation(CharacterMode.Jumping, OrientedAnimation.Orientation.Left, sprites, 15.0f, frameWidth, frameHeight, 5, 0),
-            CharacterSprite.CreateAnimation(CharacterMode.Jumping, OrientedAnimation.Orientation.Backward, sprites, 15.0f, frameWidth, frameHeight, 7, 0),
-
-            };
+            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Goblin.Sprites.goblin_animations, "Goblin");
         }
 
         void InitializeActions()

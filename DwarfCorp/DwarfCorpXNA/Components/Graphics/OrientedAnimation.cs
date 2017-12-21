@@ -73,18 +73,6 @@ namespace DwarfCorp
             currentMode = name;
         }
 
-        public void AddAnimation(string mode, Animation rightAnimation, Animation leftAnimation, Animation forwardAnimation, Animation backwardAnimation)
-        {
-            Animations[mode + OrientationStrings[(int) Orientation.Right]] = rightAnimation;
-            Animations[mode + OrientationStrings[(int) Orientation.Left]] = leftAnimation;
-            Animations[mode + OrientationStrings[(int) Orientation.Forward]] = forwardAnimation;
-            Animations[mode + OrientationStrings[(int) Orientation.Backward]] = backwardAnimation;
-
-            if(currentMode == "")
-            {
-                currentMode = mode;
-            }
-        }
 
         public OrientedAnimation()
         {

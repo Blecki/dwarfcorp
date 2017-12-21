@@ -33,9 +33,10 @@ namespace DwarfCorp
             CurrentFrames = new Dictionary<CompositeFrame, Point>();
             CurrentOffset = new Point(0, 0);
 
-            FrameSize = new Point(frames[0].Cells[0].Sheet.FrameWidth,
-                frames[0].Cells[0].Sheet.FrameHeight);
-            TargetSizeFrames  = new Point(8, 8);
+            var frameWidth = frames.SelectMany(f => f.Cells).Select(c => c.Sheet.FrameWidth).Max();
+            var frameHeight = frames.SelectMany(f => f.Cells).Select(c => c.Sheet.FrameHeight).Max();
+            FrameSize = new Point(frameWidth, frameHeight);
+            TargetSizeFrames  = new Point(16, 16);
 
             Initialize();
 

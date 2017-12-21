@@ -55,7 +55,30 @@ namespace DwarfCorp
                 }
                 catch (Exception)
                 {
-                    Animations.Add(Path, new List<Animation>());
+                    var errorAnimations = new List<Animation>();
+
+                    errorAnimations.Add(new CompositeAnimation("ERROR",
+                        new List<CompositeFrame>
+                        {
+                            new CompositeFrame
+                            {
+                                Cells = new List<CompositeCell>
+                                {
+                                    new CompositeCell
+                                    {
+                                        Sheet = new SpriteSheet(ContentPaths.Error, 32),
+                                        Tile = Point.Zero,
+                                        Tint = Color.White
+                                    }
+                                }
+                            }
+                        })
+                    {
+                        Name = "ERROR",
+                        CompositeName = "ERROR"
+                    });
+
+                    Animations.Add(Path, errorAnimations);
                 }
             }
 
