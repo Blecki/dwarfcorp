@@ -1,0 +1,45 @@
+{
+   "Animations" : [
+      {
+         "Frames" : [
+            [ 0, 0, 0 ],
+            [ 1, 0, 0 ]
+         ],
+         "Name" : "IdleFORWARD",
+         "Speed" : [ 0.3]
+      },
+      {
+         "Frames" : [
+            [ 0, 0, 0 ],
+            [ 1, 0, 0 ]
+         ],
+         "Name" : "IdleLEFT",
+         "Speed" : [ 0.3]
+      },
+      {
+         "Frames" : [
+            [ 0, 0, 0 ],
+            [ 1, 0, 0 ]
+         ],
+         "Name" : "IdleRIGHT",
+         "Speed" : [ 0.3]
+      },
+      {
+         "Frames" : [
+            [ 0, 0, 0 ],
+            [ 1, 0, 0 ]
+         ],
+         "Name" : "IdleBACKWARD",
+         "Speed" : [ 0.3]
+      }
+   ],
+   "Layers" : [
+      {
+         "$id" : "1",
+         "AssetName" : "Entities\\Mudman\\snowman",
+         "FrameHeight" : 64,
+         "FrameWidth" : 64
+      },
+   ],
+   "Tints" : [ "255, 255, 255, 255"]
+}
