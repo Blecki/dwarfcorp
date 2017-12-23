@@ -87,6 +87,7 @@ namespace DwarfCorp
             public static ResourceType Brick = "Brick";
             public static ResourceType Coins = "Coins";
             public static ResourceType EvilSeed = "Seed of Evil";
+            public static ResourceType Ice = "Ice";
 
             public static implicit operator ResourceType(string value)
             {
@@ -216,6 +217,9 @@ namespace DwarfCorp
                     EncrustingAsset = ContentPaths.Entities.DwarfObjects.trinkets_sculpt_insets,
                     SpriteRow = 0
                 }
+            });
+            Add(new Resource(ResourceType.Ice, 1.0m, "A weak building material found in glaciers.", new NamedImageFrame(tileSheet, GetRect(5, 4)), 37, Color.White, Resource.ResourceTags.Material, Resource.ResourceTags.Flammable, Resource.ResourceTags.HardMaterial)
+            {
             });
             Add(new Resource(ResourceType.Dirt, 1.0m, "Can be used to make bricks.",
                 new NamedImageFrame(tileSheet, GetRect(0, 1)), 8, Color.White, Resource.ResourceTags.Soil,
