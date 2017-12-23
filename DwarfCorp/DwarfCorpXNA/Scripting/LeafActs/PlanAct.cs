@@ -285,7 +285,11 @@ namespace DwarfCorp
                     while (PlanSubscriber.Responses.Count > 0)
                     {
                         AStarPlanResponse response;
-                        PlanSubscriber.Responses.TryDequeue(out response);
+                        if(!PlanSubscriber.Responses.TryDequeue(out response))
+                        {
+                            yield return Status.Running;
+                            continue;
+                        }
 
                         if (response.Success)
                         {
@@ -354,7 +358,7 @@ namespace DwarfCorp
                         planSucceeded = true;
                         break;
                     }
-
+                    yield return Act.Status.Running;
                 }
 
                 if (!planSucceeded)

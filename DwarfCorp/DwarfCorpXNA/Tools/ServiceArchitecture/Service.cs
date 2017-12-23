@@ -188,6 +188,7 @@ namespace DwarfCorp
 
                 TResponse response = HandleRequest(req.Value);
                 BroadcastResponse(response, req.Key);
+                Thread.Sleep(10);
             }
         }
 

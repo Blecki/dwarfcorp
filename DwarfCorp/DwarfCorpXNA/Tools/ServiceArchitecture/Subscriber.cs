@@ -65,6 +65,14 @@ namespace DwarfCorp
             Responses = new ConcurrentQueue<TResponse>();
         }
 
+        ~Subscriber()
+        {
+            if (Service != null)
+            {
+                Service.RemoveSubscriber(this);
+            }
+        }
+
         public bool SendRequest(TRequest request)
         {
             if(!Service.AddRequest(request, ID))
