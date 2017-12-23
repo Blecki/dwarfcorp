@@ -62,7 +62,7 @@ namespace DwarfCorp
         public CraftBuilder CraftBuilder { get; set; }
         public Color PrimaryColor { get; set; }
         public Color SecondaryColor { get; set; }
-        
+        public Timer HandleThreatsTimer { get; set; }
         public DesignationSet Designations = new DesignationSet();
         
         // Todo: When converting to new save system, it can take care of this.
@@ -107,6 +107,7 @@ namespace DwarfCorp
 
         public Faction(WorldManager world)
         {
+            HandleThreatsTimer = new Timer(1.0f, false);
             World = world;
             Threats = new List<Creature>();
             Minions = new List<CreatureAI>();
@@ -192,7 +193,10 @@ namespace DwarfCorp
             {
                 zone.Update();
             }
-            HandleThreats();
+
+            HandleThreatsTimer.Update(time);
+            if (HandleThreatsTimer.HasTriggered)
+             HandleThreats();
 
             OwnedObjects.RemoveAll(obj => obj.IsDead);
 
