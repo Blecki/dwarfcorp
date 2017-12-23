@@ -103,7 +103,8 @@ namespace DwarfCorp
             AddChild(new Shadow(manager));
 
             var spriteSheet = new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap);
-            Sprite = AddChild(new Sprite(Manager, "Sprite", Matrix.Identity, spriteSheet, false)) as Sprite;
+
+            Sprite = AddChild(new Sprite(Manager, "Sprite", Matrix.Identity, false)) as Sprite;
 
             Sprite.AddAnimation(AnimationLibrary.CreateAnimation(spriteSheet, new List<Point> { Point.Zero }, IdleAnimation));
 

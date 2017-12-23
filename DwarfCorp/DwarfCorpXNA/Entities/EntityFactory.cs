@@ -264,20 +264,7 @@ namespace DwarfCorp
         public static Body CreateBalloon(
             Vector3 target, Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, ShipmentOrder order, Faction master)
         {
-            var balloon = new Body(componentManager, "Balloon",
-                Matrix.CreateTranslation(position), new Vector3(0.5f, 1, 0.5f), new Vector3(0, -2, 0));
-
-            SpriteSheet tex = new SpriteSheet(ContentPaths.Entities.Balloon.Sprites.balloon);
-
-            var balloonSprite = balloon.AddChild(new SimpleSprite(componentManager, "BALLOON", Matrix.Identity, false, tex, Point.Zero)) as SimpleSprite;
-            balloonSprite.OrientationType = SimpleSprite.OrientMode.Spherical;
-         
-            Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
-            balloon.AddChild(new Shadow(componentManager, "shadow", shadowTransform, new SpriteSheet(ContentPaths.Effects.shadowcircle)));
-            balloon.AddChild(new BalloonAI(componentManager, target, order, master));
-            balloon.AddChild(new MinimapIcon(componentManager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 0)));
-
-            return balloon;
+            return new Balloon(componentManager, position, target, order, master);
         }
 
         public static Body GenerateSkeleton(Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, ChunkManager chunks, Camera camera, Faction faction, PlanService planService, string allies)

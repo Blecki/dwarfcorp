@@ -751,10 +751,9 @@ namespace DwarfCorp
             var sprite = Physics.AddChild(new CharacterSprite(manager.World.GraphicsDevice, manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)))) as CharacterSprite;
             // Todo: Share the list of animations too?
             foreach (Animation animation in employeeClass.Animations)
-            {
                 sprite.AddAnimation(animation);
-            }
-            sprite.SpriteSheet = Sprite.Animations.First().Value.SpriteSheet;
+
+
             sprite.SetCurrentAnimation(Sprite.Animations.First().Value);
             sprite.SetFlag(Flag.ShouldSerialize, false);
         }

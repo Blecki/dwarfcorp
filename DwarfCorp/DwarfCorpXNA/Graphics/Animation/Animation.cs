@@ -69,5 +69,10 @@ namespace DwarfCorp
         {
             return new ImageFrame(SpriteSheet.GetTexture(), GetFrameRect(CurrentFrame));
         }
+
+        public virtual Texture2D GetTexture()
+        {
+            return SpriteSheet.GetTexture();
+        }
     }
 }

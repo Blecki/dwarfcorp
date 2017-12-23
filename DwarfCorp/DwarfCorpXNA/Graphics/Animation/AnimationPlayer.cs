@@ -207,10 +207,11 @@ namespace DwarfCorp
                 return Math.Min((int)(time * CurrentAnimation.FrameHZ), CurrentAnimation.GetFrameCount() - 1);
         }
 
-        public SpriteSheet GetSpriteSheet()
+        public Texture2D GetTexture()
         {
-            // Todo: Shouldn't have to rely on CompositeAnimation setting this each frame.
-            return CurrentAnimation.SpriteSheet;
+            if (CurrentAnimation != null)
+                return CurrentAnimation.GetTexture();
+            return null;
         }
 
         public bool HasValidAnimation()

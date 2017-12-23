@@ -13,6 +13,13 @@ namespace DwarfCorp
 {
     public class CompositeAnimation : Animation
     {
+        [OnSerialized]
+        private void _onSerialized(Object Context)
+        {
+            var x = 5;
+
+        }
+
         [JsonIgnore]
         private Composite _cached_Composite = null;
 
@@ -22,27 +29,19 @@ namespace DwarfCorp
             get
             {
                 if (_cached_Composite == null)
-                    _cached_Composite = CompositeLibrary.GetComposite(CompositeName, CompositeFrameSize);
+                    _cached_Composite = CompositeLibrary.GetComposite(CompositeName,
+                        new Point(CompositeFrames.SelectMany(f => f.Cells).Select(c => c.Sheet.FrameWidth).Max(),
+                        CompositeFrames.SelectMany(f => f.Cells).Select(c => c.Sheet.FrameHeight).Max()));
+
                 return _cached_Composite;
             }
         }
 
         public string CompositeName;
-        public Point CompositeFrameSize = Point.Zero;
-        public List<CompositeFrame> CompositeFrames { get; set; }
+        public List<CompositeFrame> CompositeFrames = new List<CompositeFrame>();
 
         [JsonIgnore]
         public Point CurrentOffset { get; set; }
-
-        public override int GetFrameCount()
-        {
-            return CompositeFrames.Count;
-        }
-
-        public CompositeAnimation()
-        {
-            CompositeFrames = new List<CompositeFrame>();
-        }
 
         public override void UpdatePrimitive(BillboardPrimitive Primitive, int CurrentFrame)
         {
@@ -58,6 +57,16 @@ namespace DwarfCorp
         public override ImageFrame GetAsImageFrame(int CurrentFrame)
         {
             return new ImageFrame(Composite.Target, Composite.GetFrameRect(CurrentOffset));
+        }
+
+        public override Texture2D GetTexture()
+        {
+            return Composite.Target;
+        }
+
+        public override int GetFrameCount()
+        {
+            return CompositeFrames.Count;
         }
     }
 }

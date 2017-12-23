@@ -81,7 +81,7 @@ namespace DwarfCorp
 
         public OrientedAnimation(ComponentManager manager, string name,
             Matrix localTransform) :
-                base(manager, name, localTransform, null, false)
+                base(manager, name, localTransform, false)
         {
         }
 
@@ -107,7 +107,6 @@ namespace DwarfCorp
             if (Animations.ContainsKey(s))
             {
                 AnimPlayer.ChangeAnimation(Animations[s], AnimationPlayer.ChangeAnimationOptions.Play | AnimationPlayer.ChangeAnimationOptions.Loop);
-                SpriteSheet = AnimPlayer.GetSpriteSheet();
             }
 
             base.Update(gameTime, chunks, camera);

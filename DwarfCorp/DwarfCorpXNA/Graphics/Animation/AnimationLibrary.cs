@@ -177,77 +177,49 @@ namespace DwarfCorp
             return Animations[Path];
         }
 
-        private static List<CompositeAnimation> GenerateAnimations(string composite, AnimationSetDescriptor Set)
+        private static List<CompositeAnimation> GenerateAnimations(
+            string Composite, 
+            AnimationSetDescriptor Set)
         {
-            List<CompositeAnimation> toReturn = new List<CompositeAnimation>();
-
-            var compositeWidth = Set.Layers.Select(l => l.FrameWidth).Max();
-            var compositeHeight = Set.Layers.Select(l => l.FrameHeight).Max();
-
-            foreach (var descriptor in Set.Animations)
-            {
-                int[][] frames = new int[descriptor.Frames.Count][];
-
-                int i = 0;
-                foreach (List<int> frame in descriptor.Frames)
+            return Set.Animations.Select(descriptor =>
+                new CompositeAnimation()
                 {
-                    frames[i] = new int[frame.Count];
-
-                    int k = 0;
-                    foreach (int j in frame)
-                    {
-                        frames[i][k] = j;
-                        k++;
-                    }
-
-                    i++;
-                }
-
-                List<float> speeds = new List<float>();
-
-                foreach (float speed in descriptor.Speed)
-                {
-                    speeds.Add(1.0f / speed);
-                }
-
-                CompositeAnimation animation = new CompositeAnimation()
-                {
-                    CompositeName = composite,
-                    CompositeFrames = CreateFrames(Set.Layers, Set.Tints, frames),
+                    CompositeName = Composite,
+                    CompositeFrames = CreateFrames(Set.Layers, Set.Tints, descriptor.Frames),
                     Name = descriptor.Name,
-                    Speeds = speeds,
+                    Speeds = descriptor.Speed.Select(s => 1.0f / s).ToList(),
                     Loops = !descriptor.PlayOnce,
-                    SpriteSheet = Set.Layers[0],
-                    CompositeFrameSize = new Point(compositeWidth, compositeHeight)
-                };
-
-                toReturn.Add(animation);
-            }
-
-            return toReturn;
-
+                }).ToList();
         }
 
-        private static List<CompositeFrame> CreateFrames(List<SpriteSheet> layers, List<Color> tints, params int[][] frames)
+        private static List<CompositeFrame> CreateFrames(
+            List<SpriteSheet> Layers, 
+            List<Color> Tints, 
+            List<List<int>> Frames)
         {
-            List<CompositeFrame> frameList = new List<CompositeFrame>();
-            foreach (int[] frame in frames)
+            var frameList = new List<CompositeFrame>();
+
+            foreach (var frame in Frames)
             {
-                CompositeFrame currFrame = new CompositeFrame();
+                var currentFrame = new CompositeFrame();
+                
+                //[0, 1, 2, 3]
+                //Values 0 and 1 are the tile to draw.
+                //2 and beyond are the layers to draw.
 
-                int x = frame[0];
-                int y = frame[1];
-
-                for (int j = 2; j < frame.Length; j++)
+                for (int j = 2; j < frame.Count; j++)
                 {
-                    var cell = new CompositeCell();
-                    cell.Tile = new Point(x, y);
-                    cell.Sheet = layers[frame[j]];
-                    cell.Tint = tints[Math.Min(Math.Max(frame[j], 0), tints.Count - 1)];
-                    currFrame.Cells.Add(cell);
+                    var cell = new CompositeCell
+                    {
+                        Tile = new Point(frame[0], frame[1]),
+                        Sheet = Layers[frame[j]],
+                        Tint = Tints[Math.Min(Math.Max(frame[j], 0), Tints.Count - 1)]
+                    };
+
+                    currentFrame.Cells.Add(cell);
                 }
 
-                frameList.Add(currFrame);
+                frameList.Add(currentFrame);
             }
 
             return frameList;

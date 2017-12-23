@@ -185,6 +185,7 @@
     <Compile Include="Components\Graphics\SimpleSprite.cs" />
     <Compile Include="ContextCommands\ChopCommand.cs" />
     <Compile Include="ContextCommands\ContextCommand.cs" />
+    <Compile Include="Entities\Balloon.cs" />
     <Compile Include="Entities\Fixtures\CoinPileFixture.cs" />
     <Compile Include="Entities\Fixtures\Banner.cs" />
     <Compile Include="Entities\Fixtures\Fence.cs" />

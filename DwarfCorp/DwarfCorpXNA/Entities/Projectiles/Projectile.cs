@@ -78,7 +78,7 @@ namespace DwarfCorp
             }
 
             Sprite = AddChild(new Sprite(Manager, "Sprite", Matrix.CreateRotationY((float)Math.PI * 0.5f),
-                spriteSheet, false)
+                false)
             {
                 OrientationType = Sprite.OrientMode.Fixed
             }) as Sprite;
@@ -94,7 +94,7 @@ namespace DwarfCorp
             {
                 Sprite2 = Sprite.AddChild(new Sprite(Manager, "Sprite2",
                     Matrix.CreateRotationX((float)Math.PI * 0.5f),
-                    spriteSheet, false)
+                    false)
                 {
                     OrientationType = Sprite.OrientMode.Fixed
                 }) as Sprite;

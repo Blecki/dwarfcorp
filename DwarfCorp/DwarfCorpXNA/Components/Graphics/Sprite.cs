@@ -21,9 +21,6 @@ namespace DwarfCorp
         [JsonIgnore]
         public AnimationPlayer AnimPlayer = new AnimationPlayer();
 
-        // Todo: Should only get this from animation
-        public SpriteSheet SpriteSheet { get; set; }
-        //public Animation CurrentAnimation { get; set; }
         public OrientMode OrientationType { get; set; }
         public bool DrawSilhouette { get; set; }
         public Color SilhouetteColor { get; set; }
@@ -38,10 +35,9 @@ namespace DwarfCorp
 
         public bool EnableWind { get; set; }
 
-        public Sprite(ComponentManager Manager, string name, Matrix localTransform, SpriteSheet spriteSheet, bool addToCollisionManager) :
+        public Sprite(ComponentManager Manager, string name, Matrix localTransform, bool addToCollisionManager) :
             base(Manager, name, localTransform, Vector3.Zero, Vector3.Zero, addToCollisionManager)
         {
-            SpriteSheet = spriteSheet;
             Animations = new Dictionary<string, Animation>();
             OrientationType = OrientMode.Spherical;
             DrawSilhouette = false;
@@ -126,7 +122,7 @@ namespace DwarfCorp
 
             // Everything that draws should set it's tint, making this pointless.
             Color origTint = effect.VertexColorTint;
-            SpriteSheet = AnimPlayer.GetSpriteSheet();
+
             var currDistortion = VertexNoise.GetNoiseVectorFromRepeatingTexture(GlobalTransform.Translation);
             var distortion = currDistortion * 0.1f + prevDistortion * 0.9f;
             prevDistortion = distortion;
@@ -159,7 +155,7 @@ namespace DwarfCorp
                     }
             }
              
-            effect.MainTexture = SpriteSheet.GetTexture();
+            effect.MainTexture = AnimPlayer.GetTexture();
             ApplyTintingToEffect(effect);
            
 
