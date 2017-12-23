@@ -1322,8 +1322,11 @@ namespace DwarfCorp
 
         public void AssignTask(Task task)
         {
-            Tasks.Add(task);
-            task.OnAssign(this.Creature);
+            if (!Tasks.Contains(task))
+            {
+                Tasks.Add(task);
+                task.OnAssign(this.Creature);
+            }
         }
 
         public void RemoveTask(Task task)
