@@ -120,7 +120,7 @@ namespace DwarfCorp
             Physics.Tags.Add(species);
             Physics.Tags.Add("Animal");
             Physics.Tags.Add("DomesticAnimal");
-            Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the chicken";
+            Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the " + species;
             Stats.CurrentClass = new EmployeeClass()
             {
                 Name = species,

@@ -53,10 +53,10 @@ namespace DwarfCorp
             
         }
 
-        public MudGolem(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
+        public MudGolem(CreatureStats stats, string blood, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
             base(manager, stats, allies, planService, faction, name)
         {
-            Physics = new Physics(Manager, "MudGolem", Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
+            Physics = new Physics(Manager, name, Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             Physics.AddChild(this);
 
@@ -65,10 +65,10 @@ namespace DwarfCorp
                 IsVisible = false
             });
 
-            Initialize();
+            Initialize(blood);
         }
 
-        public void Initialize()
+        public void Initialize(string blood)
         {
             HasMeat = false;
             HasBones = false;
@@ -99,7 +99,7 @@ namespace DwarfCorp
             Physics.Tags.Add("MudGolem");
             Physics.Mass = 100;
 
-            Physics.AddChild(new ParticleTrigger("dirt_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            Physics.AddChild(new ParticleTrigger(blood, Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 5,
@@ -157,6 +157,33 @@ namespace DwarfCorp
 
     public class MudGolemClass : EmployeeClass
     {
+        public string AnimationAsset;
+        public string Projectile;
+        public string ClassName;
+
+        public MudGolemClass()
+        {
+            if (!staticsInitiailized)
+            {
+                InitializeStatics();
+            }
+        }
+
+        public MudGolemClass(string class_name, string animation_asset, string projectile)
+        {
+            ClassName = class_name;
+            AnimationAsset = animation_asset;
+            Projectile = projectile;
+            if (!staticClassInitialized)
+            {
+                InitializeClassStatics();
+            }
+            if (!staticsInitiailized)
+            {
+                InitializeStatics();
+            }
+        }
+
         void InitializeLevels()
         {
             Levels = new List<Level>
@@ -187,7 +214,7 @@ namespace DwarfCorp
         {
             CompositeAnimation.Descriptor descriptor =
             FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
-                ContentPaths.GetFileAsString(ContentPaths.Entities.mudman_animation));
+                ContentPaths.GetFileAsString(AnimationAsset));
             Animations = new List<Animation>();
             Animations.AddRange(descriptor.GenerateAnimations("MudGolem"));
         }
@@ -200,7 +227,7 @@ namespace DwarfCorp
                 {
                     Mode = Attack.AttackMode.Ranged,
                     LaunchSpeed = 10.0f,
-                    ProjectileType = "Mud",
+                    ProjectileType = Projectile,
                     TriggerMode = Attack.AttackTrigger.Timer
                 }
             };
@@ -208,19 +235,12 @@ namespace DwarfCorp
 
         protected override sealed void InitializeStatics()
         {
-            Name = "MudGolem";
+            Name = ClassName;
             InitializeLevels();
             InitializeAnimations();
             InitializeWeapons();
             InitializeActions();
             base.InitializeStatics();
-        }
-        public MudGolemClass()
-        {
-            if (!staticsInitiailized)
-            {
-                InitializeStatics();
-            }
         }
     }
 

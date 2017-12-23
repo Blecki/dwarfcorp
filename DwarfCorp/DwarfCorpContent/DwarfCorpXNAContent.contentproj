@@ -2260,6 +2260,26 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="Entities\Animals\penguin.png">
+      <Name>penguin</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Mudman\mudball.png">
+      <Name>mudball</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Mudman\snowball.png">
+      <Name>snowball</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Mudman\snowman.png">
+      <Name>snowman</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Particles\particles.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>particles</Name>
@@ -2283,6 +2303,14 @@
     </Content>
     <Content Include="Entities\Animals\turkey_animation.json">
       <Name>turkey_animation</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Entities\Animals\penguin_animation.json">
+      <Name>penguin_animation</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Entities\Mudman\snowman_animation.json">
+      <Name>snowman_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="tutorial.txt">

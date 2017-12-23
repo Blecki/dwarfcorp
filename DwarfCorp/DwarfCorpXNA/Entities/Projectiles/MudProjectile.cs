@@ -41,6 +41,21 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+
+    public class SnowballProjectile : Projectile
+    {
+        public SnowballProjectile()
+        {
+
+        }
+
+        public SnowballProjectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Body target) :
+            base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 30.0f, DamageType = Health.DamageType.Normal }, 0.25f, ContentPaths.Entities.snowball, "snow_particle", ContentPaths.Audio.Oscar.sfx_env_voxel_snow_destroy, target, true, true)
+        {
+            HitAnimation = new Animation(ContentPaths.Effects.flash, 32, 32, 0, 1, 2, 3, 4);
+        }
+    }
+
     public class MudProjectile : Projectile
     {
         public MudProjectile()
