@@ -71,7 +71,7 @@
         [ 2, 4, 0 ]
       ],
       "Name": "FlyingFORWARD",
-      "Speed": [ 15.0 ]
+      "Speed": [ 0.1 ]
     },
     {
       "Frames": [
@@ -80,7 +80,7 @@
         [ 2, 5, 0 ]
       ],
       "Name": "FlyingLEFT",
-      "Speed": [ 15.0 ]
+      "Speed": [ 0.1 ]
     },
     {
       "Frames": [
@@ -89,7 +89,7 @@
         [ 2, 6, 0 ]
       ],
       "Name": "FlyingRIGHT",
-      "Speed": [ 15.0 ]
+      "Speed": [ 0.1 ]
     },
     {
       "Frames": [
@@ -98,7 +98,7 @@
         [ 2, 7, 0 ]
       ],
       "Name": "FlyingBACKWARD",
-      "Speed": [ 15.0 ]
+      "Speed": [ 0.1 ]
     }
    ],
    "Layers" : [

@@ -128,12 +128,10 @@ namespace DwarfCorp
             if (!Player.HasValidAnimation()) Player.Play(Animation);
             Player.Update(time);
 
-            Image = new ImageFrame(Animation.SpriteSheet.GetTexture(), Animation.GetFrameRect(Player.CurrentFrame));
+            Image = Animation.GetAsImageFrame(Player.CurrentFrame);
 
             if (Player.IsDone())
-            {
                 ShouldDelete = true;
-            }
         }       
     }
 

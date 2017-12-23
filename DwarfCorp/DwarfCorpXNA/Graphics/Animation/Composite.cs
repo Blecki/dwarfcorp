@@ -27,41 +27,9 @@ namespace DwarfCorp
             CurrentOffset = new Point(0, 0);
         }
 
-
-        public Composite(List<CompositeFrame> frames)
-        {
-            CurrentFrames = new Dictionary<CompositeFrame, Point>();
-            CurrentOffset = new Point(0, 0);
-
-            var frameWidth = frames.SelectMany(f => f.Cells).Select(c => c.Sheet.FrameWidth).Max();
-            var frameHeight = frames.SelectMany(f => f.Cells).Select(c => c.Sheet.FrameHeight).Max();
-            FrameSize = new Point(frameWidth, frameHeight);
-            TargetSizeFrames  = new Point(16, 16);
-
-            Initialize();
-
-        }
-
         public void Initialize()
         {
             Target = new RenderTarget2D(GameState.Game.GraphicsDevice, FrameSize.X * TargetSizeFrames.X, FrameSize.Y * TargetSizeFrames.Y, false, SurfaceFormat.Color, DepthFormat.None);
-        }
-
-        public BillboardPrimitive CreatePrimitive(GraphicsDevice device, Point frame)
-        {
-            string key = Target.GetHashCode() + ": " + FrameSize.X + "," + FrameSize.Y + " " + frame.X + " " + frame.Y;
-            if (!PrimitiveLibrary.BillboardPrimitives.ContainsKey(key))
-            {
-                PrimitiveLibrary.BillboardPrimitives[key] = new BillboardPrimitive(device, (Texture2D)Target, FrameSize.X, FrameSize.Y, new Point(0, 0), FrameSize.X / 32.0f, FrameSize.Y / 32.0f, Color.White);
-            }
-
-            return PrimitiveLibrary.BillboardPrimitives[key];
-        }
-
-        public void ApplyBillboard(BillboardPrimitive primitive, Point offset)
-        {
-            primitive.UVs = new BillboardPrimitive.BoardTextureCoords(Target.Width, Target.Height, FrameSize.X, FrameSize.Y, offset, false);
-            primitive.UpdateVertexUvs();
         }
 
         public Rectangle GetFrameRect(Point Frame)

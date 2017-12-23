@@ -173,8 +173,6 @@ namespace DwarfCorp
                     Vector3 extents = new Vector3(1500, 1500, 1500);
                     CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
 
-
-                    CompositeLibrary.Initialize();
                     CraftLibrary = new CraftLibrary();
 
                     new PrimitiveLibrary(GraphicsDevice, Content);

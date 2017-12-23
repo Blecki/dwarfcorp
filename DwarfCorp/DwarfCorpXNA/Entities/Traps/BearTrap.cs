@@ -92,15 +92,35 @@ namespace DwarfCorp
             VoxListener = AddChild(new VoxelListener(manager, manager.World.ChunkManager, voxelUnder))
                     as VoxelListener;
 
-            Sprite = AddChild(new Sprite(Manager, "Sprite", Matrix.Identity, new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap), false)) as Sprite;
-            Sprite.AddAnimation(new Animation(0, ContentPaths.Entities.DwarfObjects.beartrap, 32, 32,  0) {Name = IdleAnimation});
-            Sprite.AddAnimation(new Animation(1, ContentPaths.Entities.DwarfObjects.beartrap, 32, 32,  0, 1, 2, 3) {Name = TriggerAnimation, Speeds =  new List<float>() {6.6f} });
+            
+
             CreateCosmeticChildren(manager);
+
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             AddChild(new Shadow(manager));
+
+            var spriteSheet = new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap);
+            Sprite = AddChild(new Sprite(Manager, "Sprite", Matrix.Identity, spriteSheet, false)) as Sprite;
+
+            Sprite.AddAnimation(AnimationLibrary.CreateAnimation(spriteSheet, new List<Point> { Point.Zero }, IdleAnimation));
+
+            var sprung = AnimationLibrary.CreateAnimation
+                (spriteSheet, new List<Point>
+                {
+                    new Point(0,1),
+                    new Point(1,1),
+                    new Point(2,1),
+                    new Point(3,1)
+                }, TriggerAnimation);
+
+            sprung.FrameHZ = 6.6f;
+
+            Sprite.AddAnimation(sprung);
+
+            Sprite.SetFlag(Flag.ShouldSerialize, false);
             base.CreateCosmeticChildren(manager);
         }
 

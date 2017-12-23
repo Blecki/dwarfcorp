@@ -13,85 +13,41 @@ namespace DwarfCorp
 {
     public class CompositeLibrary
     {
-        public static Dictionary<string, Composite> Composites { get; set; }
+        public static Dictionary<string, Composite> Composites = new Dictionary<string, Composite>();
 
-        public static bool IsInitialized = false;
-
-        public static string Dwarf = "Dwarf";
-        public static string Goblin = "Goblin";
-        public static string Skeleton = "Skeleton";
-        public static string Elf = "Elf";
-        public static string Demon = "Demon";
-
-        public static void Initialize()
+        public static Composite GetComposite(String Name, Point FrameSize)
         {
-            if (IsInitialized) return;
-            Composites = new Dictionary<string, Composite>()
+            Composite r = null;
+            if (Composites.TryGetValue(Name, out r))
             {
+                if (r.FrameSize.X != FrameSize.X || r.FrameSize.Y != FrameSize.Y)
                 {
-                    Dwarf,
-                    new Composite()
-                    {
-                        FrameSize = new Point(48, 40),
-                        TargetSizeFrames = new Point(8, 8)
-                    }
-                },
-                {
-                    Goblin,
-                    new Composite()
-                    {
-                        FrameSize = new Point(48, 48),
-                        TargetSizeFrames = new Point(4, 4)
-                    }
-                },
-                {
-                    Elf,
-                    new Composite()
-                    {
-                        FrameSize = new Point(48, 48),
-                        TargetSizeFrames = new Point(4, 4)
-                    }
-                },
-                {
-                    Demon,
-                    new Composite()
-                    {
-                        FrameSize = new Point(48, 48),
-                        TargetSizeFrames = new Point(4, 4)
-                    }
-                },
-                {
-                    Skeleton,
-                    new Composite()
-                    {
-                        FrameSize = new Point(48, 48),
-                        TargetSizeFrames = new Point(4, 4)
-                    }
-                },
-            };
+                    r.FrameSize = new Point(Math.Max(r.FrameSize.X, FrameSize.X), Math.Max(r.FrameSize.Y, FrameSize.Y));
+                    r.Initialize();
 
-            foreach (var composite in Composites)
-            {
-                composite.Value.Initialize();
+                }
+                return r;
             }
-
-            IsInitialized = true;
+            r = new Composite()
+            {
+                FrameSize = FrameSize,
+                TargetSizeFrames = new Point(16, 16)
+            };
+            r.Initialize();
+            Composites.Add(Name, r);
+            return r;
         }
 
         public static void Update()
         {
             foreach (var composite in Composites)
-            {
                 composite.Value.Update();
-            }
         }
 
         public static void Render(GraphicsDevice device)
         {
             foreach (var composite in Composites)
-            {
                 composite.Value.RenderToTarget(device);
-            }
         }
     }
 }

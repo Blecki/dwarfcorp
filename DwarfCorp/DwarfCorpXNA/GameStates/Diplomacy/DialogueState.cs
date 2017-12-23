@@ -75,7 +75,7 @@ namespace DwarfCorp.Dialogue
                 AutoLayout = AutoLayout.DockFill
             });
 
-            SpeakerAnimation = new Animation(DialogueContext.Envoy.OwnerFaction.Race.TalkAnimation);
+            SpeakerAnimation = AnimationLibrary.CreateAnimation(DialogueContext.Envoy.OwnerFaction.Race.TalkAnimation);
             SpeakerAnimationPlayer = new AnimationPlayer(SpeakerAnimation);
             DialogueContext.SpeakerAnimation = SpeakerAnimationPlayer;
 

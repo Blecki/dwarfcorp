@@ -21,6 +21,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public AnimationPlayer AnimPlayer = new AnimationPlayer();
 
+        // Todo: Should only get this from animation
         public SpriteSheet SpriteSheet { get; set; }
         //public Animation CurrentAnimation { get; set; }
         public OrientMode OrientationType { get; set; }
@@ -52,34 +53,9 @@ namespace DwarfCorp
         {
         }
 
-        public void SetSimpleAnimation(int row = 0)
-        {
-            List<Point> frames = new List<Point>();
-
-            for (int c = 0; c < SpriteSheet.Width/SpriteSheet.FrameWidth; c++)
-            {
-                frames.Add(new Point(c, row));
-            }
-            AddAnimation(new Animation(GameState.Game.GraphicsDevice, SpriteSheet, "Sprite", frames, Color.White, 5.0f, false));
-        }
-
-        public void SetSingleFrameAnimation(Point frame)
-        {
-            AddAnimation(new Animation(GameState.Game.GraphicsDevice, SpriteSheet, "Sprite", new List<Point>() { frame }, Color.White, 10.0f, false));
-        }
-
-        public void SetSingleFrameAnimation()
-        {
-            SetSingleFrameAnimation(new Point(0, 0));
-        }
-
         public void AddAnimation(Animation animation)
         {
             AnimPlayer.Play(animation);
-            //if(CurrentAnimation == null)
-            //{
-            //    CurrentAnimation = animation;
-            //}
             Animations[animation.Name] = animation;
         }
 

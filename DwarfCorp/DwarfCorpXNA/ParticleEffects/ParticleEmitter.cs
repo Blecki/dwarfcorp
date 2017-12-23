@@ -117,21 +117,6 @@ namespace DwarfCorp
         {
             return this.MemberwiseClone();
         }
-
-        public EmitterData Clone(SpriteSheet sheet, Point frame)
-        {
-            EmitterData toReturn = Clone() as EmitterData;
-            if (toReturn == null) return null;
-            if (toReturn.Animation != null)
-            {
-                toReturn.Animation = new Animation(GameState.Game.GraphicsDevice,
-                    new SpriteSheet(sheet.AssetName), sheet.AssetName, sheet.FrameWidth, sheet.FrameHeight,
-                    new List<Point>() {frame}, 
-                    //true, 
-                    Color.White, 1.0f, 1.0f, 1.0f, false);
-            }
-            return toReturn;
-        }
     }
 
     /// <summary>

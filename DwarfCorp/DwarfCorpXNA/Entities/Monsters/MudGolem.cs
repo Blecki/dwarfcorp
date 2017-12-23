@@ -185,11 +185,7 @@ namespace DwarfCorp
 
         void InitializeAnimations()
         {
-            var descriptor =
-            FileUtils.LoadJsonFromString<AnimationSetDescriptor>(
-                ContentPaths.GetFileAsString(ContentPaths.Entities.mudman_animation));
-            Animations = new List<Animation>();
-            Animations.AddRange(descriptor.GenerateAnimations("MudGolem"));
+            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.mudman_animation, "MudGolem");
         }
 
         public void InitializeWeapons()

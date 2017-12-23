@@ -93,7 +93,7 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            CreateHitAnimation();
+            HitAnimation = AnimationLibrary.CreateSimpleAnimation(AnimationAsset);
         }
 
         public Attack()
@@ -122,17 +122,6 @@ namespace DwarfCorp
             DiseaseToSpread = other.DiseaseToSpread;
         }
 
-        public void CreateHitAnimation()
-        {
-            Texture2D text = TextureManager.GetTexture(AnimationAsset);
-            List<int> frames = new List<int>();
-            for (int i = 0; i < text.Width/text.Height; i++)
-            {
-                frames.Add(i);
-            }
-            HitAnimation = new Animation(AnimationAsset, text.Height, text.Height, frames.ToArray());
-        }
-
         public Attack(string name, float damage, float time, float range, SoundSource noise, string animation)
         {
             Name = name;
@@ -147,8 +136,7 @@ namespace DwarfCorp
             HitParticles = "";
             ProjectileType = "";
             AnimationAsset = animation;
-            CreateHitAnimation();
-        }
+            HitAnimation = AnimationLibrary.CreateSimpleAnimation(AnimationAsset);        }
 
         public IEnumerable<Act.Status> Perform(Creature performer, Vector3 pos, VoxelHandle other, DwarfTime time, float bonus, string faction)
         {
@@ -196,8 +184,6 @@ namespace DwarfCorp
 
                         if (HitAnimation != null)
                         {
-                                performer.Sprite.AnimPlayer.Reset();
-                                performer.Sprite.AnimPlayer.Play(HitAnimation);
                             IndicatorManager.DrawIndicator(HitAnimation, other.WorldPosition + Vector3.One*0.5f,
                                 10.0f, 1.0f, MathFunctions.RandVector2Circle()*10, HitColor, MathFunctions.Rand() > 0.5f);
                         }
@@ -259,8 +245,6 @@ namespace DwarfCorp
 
                 if (HitAnimation != null && !HasTriggered)
                 {
-                    performer.Sprite.AnimPlayer.Reset();
-                    performer.Sprite.AnimPlayer.Play(HitAnimation);
                     IndicatorManager.DrawIndicator(HitAnimation, pos, 10.0f, 1.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
                     PlayNoise(pos);
                 }
@@ -339,8 +323,6 @@ namespace DwarfCorp
 
                     if (HitAnimation != null)
                     {
-                            performer.Sprite.AnimPlayer.Reset();
-                            performer.Sprite.AnimPlayer.Play(HitAnimation);
                             IndicatorManager.DrawIndicator(HitAnimation, other.BoundingBox.Center(), 10.0f, 1.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
                     }
 

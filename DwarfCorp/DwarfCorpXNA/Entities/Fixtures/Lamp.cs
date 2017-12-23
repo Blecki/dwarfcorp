@@ -50,7 +50,7 @@ namespace DwarfCorp
 
         private void CreateSpriteStanding()
         {
-            var spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture);
+            var spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32);
 
             List<Point> frames = new List<Point>
             {
@@ -60,10 +60,8 @@ namespace DwarfCorp
                 new Point(2, 1)
             };
 
-            var lampAnimation = new Animation(GameState.Game.GraphicsDevice, 
-                spriteSheet, 
-                "Lamp", 32, 32, frames, Color.White, 3.0f, 1f, 1.0f, false);
-
+            var lampAnimation = AnimationLibrary.CreateAnimation(spriteSheet, frames, "LampAnimation");
+ 
             var sprite = AddChild(new Sprite(Manager, "sprite", Matrix.Identity, spriteSheet, false)
             {
                 LightsWithVoxels = false,

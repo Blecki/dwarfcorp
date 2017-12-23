@@ -46,7 +46,6 @@ using Newtonsoft.Json.Converters;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Race
     {
         public class RaceSpeech

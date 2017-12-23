@@ -71,9 +71,9 @@ namespace DwarfCorp
         {
             base.CreateCosmeticChildren(Manager);
 
-            SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture);
+            var spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture);
 
-            List<Point> frames = new List<Point>
+            var frames = new List<Point>
             {
                 new Point(1, 3),
                 new Point(3, 3),
@@ -81,19 +81,15 @@ namespace DwarfCorp
                 new Point(3, 3)
             };
 
-            var lampAnimation = new Animation(GameState.Game.GraphicsDevice, 
-                new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture), 
-                "Forge", 32, 32, 
-                frames, 
-                Color.White, 3.0f, 1f, 1.0f, false);
+            var forgeAnimation = AnimationLibrary.CreateAnimation(spriteSheet, frames, "ForgeLightAnimation");
 
             var sprite = AddChild(new Sprite(Manager, "sprite", Matrix.Identity, spriteSheet, false)
             {
                 LightsWithVoxels = false
             }) as Sprite;
 
-            sprite.AddAnimation(lampAnimation);
-            sprite.AnimPlayer.Loop(lampAnimation);
+            sprite.AddAnimation(forgeAnimation);
+            sprite.AnimPlayer.Loop(forgeAnimation);
             sprite.SetFlag(Flag.ShouldSerialize, false);
 
             AddChild(new LightEmitter(Manager, "light", Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero, 50, 4)

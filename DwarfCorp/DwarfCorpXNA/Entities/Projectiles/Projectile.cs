@@ -49,6 +49,8 @@ namespace DwarfCorp
         public Health.DamageAmount Damage { get; set; }
         public Body Target { get; set; }
         public float DamageRadius { get; set; }
+
+        [JsonIgnore]
         public Animation HitAnimation { get; set; }
 
         public Projectile()
@@ -81,14 +83,7 @@ namespace DwarfCorp
                 OrientationType = Sprite.OrientMode.Fixed
             }) as Sprite;
 
-            if (animated)
-            {
-               Sprite.SetSimpleAnimation();
-            }
-            else
-            {
-                Sprite.SetSingleFrameAnimation();   
-            }
+            Sprite.AddAnimation(AnimationLibrary.CreateSimpleAnimation(asset));
 
             if (singleSprite)
             {
@@ -104,14 +99,7 @@ namespace DwarfCorp
                     OrientationType = Sprite.OrientMode.Fixed
                 }) as Sprite;
 
-                if (animated)
-                {
-                    Sprite2.SetSimpleAnimation();
-                }
-                else
-                {
-                    Sprite2.SetSingleFrameAnimation();
-                }
+                Sprite2.AddAnimation(AnimationLibrary.CreateSimpleAnimation(asset));
             }
             Damage = damage;
             HitParticles = AddChild(new ParticleTrigger(hitParticles, manager, "Hit Particles",

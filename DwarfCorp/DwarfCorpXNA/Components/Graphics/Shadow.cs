@@ -67,17 +67,10 @@ namespace DwarfCorp
         }
 
         public Shadow(ComponentManager Manager) :
-            this(Manager, "Shadow", Matrix.CreateRotationX((float)Math.PI * 0.5f) * 
+            this(Manager, "Shadow", Matrix.CreateRotationX((float)Math.PI * 0.5f) *
             Matrix.CreateTranslation(Vector3.Down * 0.5f), new SpriteSheet(ContentPaths.Effects.shadowcircle))
         {
             GlobalScale = 1.0f;
-            var shP = new List<Point>
-                {
-                    new Point(0, 0)
-                };
-            var shadowAnimation = new Animation(Manager.World.GraphicsDevice, 
-                new SpriteSheet(ContentPaths.Effects.shadowcircle),
-                "sh", 32, 32, shP, Color.Black, 1, 0.7f, 0.7f, false);
         }
 
         public Shadow(ComponentManager manager, string name, Matrix localTransform, SpriteSheet spriteSheet) :

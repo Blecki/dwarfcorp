@@ -261,23 +261,17 @@ namespace DwarfCorp
             LazyActions.Add(action);
         }
 
-        public static Body CreateBalloon(Vector3 target, Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, ShipmentOrder order, Faction master)
+        public static Body CreateBalloon(
+            Vector3 target, Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, ShipmentOrder order, Faction master)
         {
             var balloon = new Body(componentManager, "Balloon",
                 Matrix.CreateTranslation(position), new Vector3(0.5f, 1, 0.5f), new Vector3(0, -2, 0));
 
             SpriteSheet tex = new SpriteSheet(ContentPaths.Entities.Balloon.Sprites.balloon);
-            List<Point> points = new List<Point>
-            {
-                new Point(0, 0)
-            };
-            Animation balloonAnimation = new Animation(graphics, new SpriteSheet(ContentPaths.Entities.Balloon.Sprites.balloon), "balloon", points, Color.White, 0.001f, false);
-            Sprite sprite = balloon.AddChild(new Sprite(componentManager, "sprite", Matrix.Identity, tex, false)
-            {
-                OrientationType = Sprite.OrientMode.Spherical
-            }) as Sprite;
-            sprite.AddAnimation(balloonAnimation);
 
+            var balloonSprite = balloon.AddChild(new SimpleSprite(componentManager, "BALLOON", Matrix.Identity, false, tex, Point.Zero)) as SimpleSprite;
+            balloonSprite.OrientationType = SimpleSprite.OrientMode.Spherical;
+         
             Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
             balloon.AddChild(new Shadow(componentManager, "shadow", shadowTransform, new SpriteSheet(ContentPaths.Effects.shadowcircle)));
             balloon.AddChild(new BalloonAI(componentManager, target, order, master));
