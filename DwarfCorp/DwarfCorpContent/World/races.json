@@ -241,6 +241,11 @@
             "Frames" :  [0, 1, 0],
             "Speed" : 2.0
         },
+		"Biomes" : 
+        {
+            "Tundra" :  "JollyForest",
+            "Taiga" :  "JollyForest",
+        },
         "NaturalEnemies" :  ["Demon", "Undead", "Goblins", "Carnivore"],
         "Speech" : {
             "Greetings" :  ["Falalala!", "Ooh, hi!", "Joyus jumping jellybeans!", "Teehee, you look like sugarplums.", "Well, fiddle-dee-dee!", "Look, garden gnomes!", "We've frolicked here to meet you!", "We come bearing tasty treats!"],

@@ -509,6 +509,10 @@ namespace DwarfCorp
             {
                 "Turkey",
                 "Bird Meat"
+            },
+            {
+                "Penguin",
+                "Bird Meat"
             }
         };
 
