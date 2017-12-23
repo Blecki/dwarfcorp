@@ -77,6 +77,7 @@ namespace DwarfCorp
             public static ResourceType CaveMushroom = "Cave Mushroom";
             public static ResourceType GemTrinket = "Gem-set Trinket";
             public static ResourceType PineCone = "Pine Cone";
+            public static ResourceType Peppermint = "Peppermint";
             public static ResourceType Coconut = "Coconut";
             public static ResourceType Pumkin = "Pumpkin";
             public static ResourceType Cactus = "Cactus";
@@ -288,9 +289,16 @@ namespace DwarfCorp
             });
             Add(new Resource(ResourceType.EvilSeed, 3.0m, "Grows haunted trees.",
                 new NamedImageFrame(tileSheet, GetRect(7, 3)), 31, Color.White, Resource.ResourceTags.Plantable,
-                    Resource.ResourceTags.Flammable, Resource.ResourceTags.AboveGroundPlant, Resource.ResourceTags.Evil)
+                    Resource.ResourceTags.Flammable, Resource.ResourceTags.Evil)
             {
                 PlantToGenerate = "Haunted Tree Sprout"
+            });
+            Add(new Resource(ResourceType.Peppermint, 3.0m, "Edible candy. Grows candycanes.",
+    new NamedImageFrame(tileSheet, GetRect(4, 4)), 36, Color.White, Resource.ResourceTags.Plantable,
+        Resource.ResourceTags.Flammable, Resource.ResourceTags.AboveGroundPlant, Resource.ResourceTags.RawFood, Resource.ResourceTags.Edible, Resource.ResourceTags.Jolly)
+            {
+                PlantToGenerate = "Candycane Sprout",
+                FoodContent = 20
             });
             Add(new Resource(ResourceType.Coconut, 6.0m, "Grows palm trees.",
                 new NamedImageFrame(tileSheet, GetRect(5, 1)), 13, Color.White, Resource.ResourceTags.Plantable,

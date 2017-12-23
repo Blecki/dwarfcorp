@@ -80,6 +80,9 @@ namespace DwarfCorp
             RegisterEntity("Snow Pine Tree", (position, data) => new Tree("Pine Tree", world.ComponentManager, position, "snowpine", ResourceLibrary.ResourceType.PineCone, data.GetData("Scale", 1.0f), "pinesprout"));
             RegisterEntity("Snow Pine Tree Sprout", (position, data) => new Seedling(world.ComponentManager, "Snow Pine Tree", position, "pinesprout", 12));
 
+            RegisterEntity("Candycane", (position, data) => new Tree("Candycane", world.ComponentManager, position, "candycane", ResourceLibrary.ResourceType.Peppermint, data.GetData("Scale", 1.0f), "candycanesprout", false));
+            RegisterEntity("Candycane Sprout", (position, data) => new Seedling(world.ComponentManager, "Candycane", position, "candycanesprout", 12));
+
             RegisterEntity("Palm Tree", (position, data) => new Tree("Palm Tree", world.ComponentManager, position, "palm", ResourceLibrary.ResourceType.Coconut, data.GetData("Scale", 1.0f), "palmsprout"));
             RegisterEntity("Palm Tree Sprout", (position, data) => new Seedling(world.ComponentManager, "Palm Tree", position, "palmsprout", 12));
 

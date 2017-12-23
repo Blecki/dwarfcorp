@@ -66,7 +66,7 @@ namespace DwarfCorp
         }
 #endif
 
-        public Tree(string name, ComponentManager manager, Vector3 position, string asset, ResourceLibrary.ResourceType seed, float treeSize, string seedlingAsset) :
+        public Tree(string name, ComponentManager manager, Vector3 position, string asset, ResourceLibrary.ResourceType seed, float treeSize, string seedlingAsset, bool emitWood = true) :
             base(manager, name, Matrix.Identity,
                 new Vector3(
                     PrimitiveLibrary.BatchBillboardPrimitives[asset].Width * 0.75f * treeSize,
@@ -85,7 +85,8 @@ namespace DwarfCorp
             AddChild(new Flammable(Manager, "Flames"));
 
             Tags.Add("Vegetation");
-            Tags.Add("EmitsWood");
+            if (emitWood)
+                Tags.Add("EmitsWood");
 
             /*
             var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
@@ -99,6 +100,7 @@ namespace DwarfCorp
             Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)) as Inventory;
 
             // Can these be spawned when the tree dies rather than when it is created?
+            if (emitWood)
             for (int i = 0; i < treeSize * 2; i++)
             {
                 inventory.Resources.Add(new Inventory.InventoryItem()

@@ -2280,6 +2280,21 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="Entities\Plants\candycane-snow.png">
+      <Name>candycane-snow</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Plants\candycane-sprout.png">
+      <Name>candycane-sprout</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Plants\candycane.png">
+      <Name>candycane</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Particles\particles.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>particles</Name>
