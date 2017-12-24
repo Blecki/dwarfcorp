@@ -267,11 +267,7 @@ namespace DwarfCorp
 
         void InitializeAnimations()
         {
-            CompositeAnimation.Descriptor descriptor =
-            FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
-                ContentPaths.GetFileAsString(ContentPaths.Entities.snowman_animation));
-            Animations = new List<Animation>();
-            Animations.AddRange(descriptor.GenerateAnimations("SnowGolem"));
+            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.snowman_animation, "Snowman");
         }
 
         public void InitializeWeapons()
