@@ -14,6 +14,7 @@ namespace DwarfCorp.GameStates
         private Gui.Root GuiRoot;
         private Gui.Widgets.ProgressBar GenerationProgress;
         private Gui.Widget ZoomedPreview;
+        private Gui.Widget StatsLabel;
         private WorldGeneratorPreview Preview;
         private Gui.Widget StartButton;
         private WorldGenerator Generator;
@@ -244,9 +245,23 @@ namespace DwarfCorp.GameStates
                     sender.Rect.Y = difficultySelectorCombo.Rect.Bottom + 2;
                     sender.Rect.X = difficultySelectorCombo.Rect.X + 
                         ((difficultySelectorCombo.Rect.Width - space) / 2);
+                    
                 }
             });
 
+
+            StatsLabel = rightPanel.AddChild(new Gui.Widget()
+            {
+                AutoLayout = Gui.AutoLayout.DockBottom,
+                Font = "font8",
+                TextColor = new Vector4(1, 1, 1, 1),
+                Background = new TileReference("sbasic", 0),
+                BackgroundColor = new Vector4(0.0f, 0.0f, 0.0f, 0.2f),
+                TextHorizontalAlign = HorizontalAlign.Left,
+                MinimumSize = new Point(128, 64),
+                WrapText = true,
+                Padding = new Margin(10, 10, 10, 0)
+            });
 
             GenerationProgress = mainPanel.AddChild(new Gui.Widgets.ProgressBar
             {
@@ -264,6 +279,12 @@ namespace DwarfCorp.GameStates
             }) as WorldGeneratorPreview;
 
             GuiRoot.RootItem.Layout();
+            Preview.PreviewPanel.OnClick += (widget, args) =>
+            {
+                StatsLabel.Text = Generator.GetSpawnStats();
+                
+                StatsLabel.Invalidate();
+            };
 
             difficultySelectorCombo.SelectedIndex = difficultySelectorCombo.Items.IndexOf("Normal");
             colonySizeCombo.SelectedIndex = colonySizeCombo.Items.IndexOf("Medium");

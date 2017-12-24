@@ -247,6 +247,35 @@ namespace DwarfCorp
                         }
                     }
 
+                    float trustingness = faction.Value.GoodWill;
+
+                    if (trustingness < -0.8f)
+                    {
+                        if (!politics.HasEvent("we just don't trust you"))
+                        {
+                            politics.RecentEvents.Add(new PoliticalEvent()
+                            {
+                                Change = -10.0f, // Make this negative and we get an instant war party rush.
+                                Description = "we just don't trust you",
+                                Duration = forever,
+                                Time = Now
+                            });
+                        }
+                    }
+                    else if (trustingness > 0.8f)
+                    {
+                        if (!politics.HasEvent("we trust you"))
+                        {
+                            politics.RecentEvents.Add(new PoliticalEvent()
+                            {
+                                Change = 10.0f,
+                                Description = "we trust you",
+                                Duration = forever,
+                                Time = Now
+                            });
+                        }
+                    }
+
                     FactionPolitics[pair] = politics;
                 }
 

@@ -89,6 +89,8 @@ namespace DwarfCorp
         public List<CreatureAI> SelectedMinions { get; set; }
         public bool IsRaceFaction { get; set; }
 
+        public float GoodWill { get; set; }
+
         [JsonIgnore]
         public WorldManager World { get; set; }
 
@@ -98,11 +100,12 @@ namespace DwarfCorp
         public void OnDeserialized(StreamingContext ctx)
         {
             World = ((WorldManager)ctx.Context);
+            HandleThreatsTimer = new Timer(1.0f, false);
         }
 
         public Faction()
         {
-
+            HandleThreatsTimer = new Timer(1.0f, false);
         }
 
         public Faction(WorldManager world)
@@ -121,6 +124,7 @@ namespace DwarfCorp
             CraftBuilder = new CraftBuilder(this, world);
             IsRaceFaction = false;
             TradeMoney = 0.0m;
+            GoodWill = 0.0f;
         }
 
         public Faction(NewOverworldFile.OverworldData.FactionDescriptor descriptor)
@@ -135,6 +139,7 @@ namespace DwarfCorp
             OwnedObjects = new List<Body>();
             IsRaceFaction = false;
             TradeMoney = 0.0m;
+            GoodWill = descriptor.GoodWill;
             PrimaryColor = descriptor.PrimaryColory;
             SecondaryColor = descriptor.SecondaryColor;
             Name = descriptor.Name;

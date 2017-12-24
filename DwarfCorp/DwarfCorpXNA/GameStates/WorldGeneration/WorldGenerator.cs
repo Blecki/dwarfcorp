@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json.Converters;
+using System.Text;
 
 namespace DwarfCorp.GameStates
 {
@@ -141,6 +142,53 @@ namespace DwarfCorp.GameStates
             } while (inWater);
         }
 
+        public string GetSpawnStats()
+        {
+            var factions = GetFactionsInSpawn();
+            var biomes = new HashSet<Overworld.Biome>();
+            Rectangle spawnRect = GetSpawnRectangle();
+            StringBuilder stats = new StringBuilder();
+            for (int x = spawnRect.X; x < spawnRect.X + spawnRect.Width; x++)
+            {
+                for (int y = spawnRect.Y; y < spawnRect.Y + spawnRect.Height; y++)
+                {
+                    biomes.Add(Overworld.Map[x, y].Biome);
+                }
+            }
+
+
+            if (factions.Count == 0)
+            {
+                stats.AppendLine("Unclaimed land.");
+            }
+            else
+            {
+                stats.Append("Claimed by: ");
+            }
+            
+            foreach (var faction in factions)
+            {
+                int goodwill = (int)(faction.GoodWill * 100);
+                string dsc = "Neutral";
+                if (goodwill < -80)
+                {
+                    dsc = "Enemies";
+                }
+                else if (goodwill > 80)
+                {
+                    dsc = "Friendly";
+                }
+                stats.AppendLine(faction.Name + "(" + faction.Race.Name + ") --" + dsc);
+            }
+            stats.AppendLine("Biomes: ");
+            foreach (var biome in biomes)
+            {
+                stats.Append(BiomeLibrary.Biomes[biome].Name);
+                stats.Append(" ");
+            }
+            return stats.ToString();
+        }
+
         public List<Faction> GetFactionsInSpawn()
         {
             Rectangle spawnRect = GetSpawnRectangle();
@@ -192,7 +240,9 @@ namespace DwarfCorp.GameStates
             toReturn["Unclaimed"] = Color.Gray;
             foreach (Faction faction in NativeCivilizations)
             {
-                toReturn[faction.Name + " (" + faction.Race.Name + ")"] = faction.PrimaryColor;
+                int goodwill = (int)(100 * faction.GoodWill);
+                string goodwillStr = goodwill > 0 ? "+" + goodwill.ToString() : goodwill.ToString();
+                toReturn[faction.Name + " (" + faction.Race.Name + ") " + goodwillStr] = faction.PrimaryColor;
             }
             return toReturn;
         }

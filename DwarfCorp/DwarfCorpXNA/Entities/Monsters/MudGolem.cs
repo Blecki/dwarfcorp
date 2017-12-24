@@ -157,23 +157,8 @@ namespace DwarfCorp
 
     public class MudGolemClass : EmployeeClass
     {
-        public string AnimationAsset;
-        public string Projectile;
-        public string ClassName;
-
         public MudGolemClass()
         {
-            if (!staticsInitiailized)
-            {
-                InitializeStatics();
-            }
-        }
-
-        public MudGolemClass(string class_name, string animation_asset, string projectile)
-        {
-            ClassName = class_name;
-            AnimationAsset = animation_asset;
-            Projectile = projectile;
             if (!staticClassInitialized)
             {
                 InitializeClassStatics();
@@ -214,7 +199,7 @@ namespace DwarfCorp
         {
             CompositeAnimation.Descriptor descriptor =
             FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
-                ContentPaths.GetFileAsString(AnimationAsset));
+                ContentPaths.GetFileAsString(ContentPaths.Entities.mudman_animation));
             Animations = new List<Animation>();
             Animations.AddRange(descriptor.GenerateAnimations("MudGolem"));
         }
@@ -227,7 +212,7 @@ namespace DwarfCorp
                 {
                     Mode = Attack.AttackMode.Ranged,
                     LaunchSpeed = 10.0f,
-                    ProjectileType = Projectile,
+                    ProjectileType = "Mud",
                     TriggerMode = Attack.AttackTrigger.Timer
                 }
             };
@@ -235,7 +220,7 @@ namespace DwarfCorp
 
         protected override sealed void InitializeStatics()
         {
-            Name = ClassName;
+            Name = "Mud Golem";
             InitializeLevels();
             InitializeAnimations();
             InitializeWeapons();
@@ -244,4 +229,77 @@ namespace DwarfCorp
         }
     }
 
+    public class SnowGolemClass : EmployeeClass
+    {
+        public SnowGolemClass()
+        {
+            if (!staticClassInitialized)
+            {
+                InitializeClassStatics();
+            }
+            if (!staticsInitiailized)
+            {
+                InitializeStatics();
+            }
+        }
+
+        void InitializeLevels()
+        {
+            Levels = new List<Level>
+            {
+                new Level
+                {
+                    Index = 0,
+                    Name = "Snow Golem",
+                    Pay = 25,
+                    XP = 0,
+                    BaseStats = new CreatureStats.StatNums()
+                    {
+                        Constitution = 20.0f
+                    }
+                }
+            };
+        }
+
+        void InitializeActions()
+        {
+            Actions =
+                Task.TaskCategory.Gather |
+                Task.TaskCategory.Guard |
+                Task.TaskCategory.Attack;
+        }
+
+        void InitializeAnimations()
+        {
+            CompositeAnimation.Descriptor descriptor =
+            FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
+                ContentPaths.GetFileAsString(ContentPaths.Entities.snowman_animation));
+            Animations = new List<Animation>();
+            Animations.AddRange(descriptor.GenerateAnimations("SnowGolem"));
+        }
+
+        public void InitializeWeapons()
+        {
+            Attacks = new List<Attack>()
+            {
+                new Attack("Snowball", 0.1f, 1.0f, 50.0f, ContentPaths.Audio.demon_attack, ContentPaths.Effects.hit)
+                {
+                    Mode = Attack.AttackMode.Ranged,
+                    LaunchSpeed = 10.0f,
+                    ProjectileType = "Snowball",
+                    TriggerMode = Attack.AttackTrigger.Timer
+                }
+            };
+        }
+
+        protected override sealed void InitializeStatics()
+        {
+            Name = "Snow Golem";
+            InitializeLevels();
+            InitializeAnimations();
+            InitializeWeapons();
+            InitializeActions();
+            base.InitializeStatics();
+        }
+    }
 }

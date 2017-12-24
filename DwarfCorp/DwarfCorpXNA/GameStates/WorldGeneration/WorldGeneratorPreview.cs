@@ -13,7 +13,7 @@ namespace DwarfCorp.GameStates
     {
         private WorldGenerator Generator;
         private GraphicsDevice Device;
-        private Gui.Widget PreviewPanel;
+        public Gui.Widget PreviewPanel;
 
         private bool UpdatePreview = false;
 
