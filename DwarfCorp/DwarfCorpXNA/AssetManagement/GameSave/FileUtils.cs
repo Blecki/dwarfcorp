@@ -66,20 +66,21 @@ namespace DwarfCorp
         public static T LoadBinary<T>(string filepath)
         {
             IFormatter formatter = new BinaryFormatter();
-            Stream stream = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.None);
             T toReturn = default(T);
-            try
-            {
-                stream.Position = 0;
-                toReturn = (T) formatter.Deserialize(stream);
-            }
-            catch (InvalidCastException e)
-            {
-                Console.Error.WriteLine(e);
-            }
+            using (var stream = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.None))
+            { 
+                try
+                {
+                    stream.Position = 0;
+                    toReturn = (T) formatter.Deserialize(stream);
+                }
+                catch (InvalidCastException e)
+                {
+                    Console.Error.WriteLine(e);
+                }
 
-            stream.Flush();
-            stream.Close();
+                stream.Flush();
+            }
             return toReturn;
         }
 
@@ -94,9 +95,10 @@ namespace DwarfCorp
         public static bool SaveBinary<T>(T obj, string filepath)
         {
             IFormatter formatter = new BinaryFormatter();
-            Stream stream = new FileStream(filepath, FileMode.Create, FileAccess.Write, FileShare.None);
-            formatter.Serialize(stream, obj);
-            stream.Close();
+            using (var stream = new FileStream(filepath, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                formatter.Serialize(stream, obj);
+            }
             return true;
         }
 
@@ -206,7 +208,8 @@ namespace DwarfCorp
                 TypeNameHandling = TypeNameHandling.Auto,
                 TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple,
                 ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-                Formatting = Formatting.Indented
+                Formatting = Formatting.Indented,
+                ContractResolver = new DefaultContractResolver()
             };
 
             serializer.Converters.Add(new BoxConverter());
@@ -261,7 +264,8 @@ namespace DwarfCorp
                 TypeNameAssemblyFormat = FormatterAssemblyStyle.Full,
                 ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
                 Formatting = Formatting.Indented,
-                PreserveReferencesHandling = PreserveReferencesHandling.Objects
+                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                ContractResolver = new DefaultContractResolver()
             };
 
             serializer.Converters.Add(new BoxConverter());

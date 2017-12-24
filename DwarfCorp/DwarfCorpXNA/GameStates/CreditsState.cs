@@ -75,38 +75,44 @@ namespace DwarfCorp
 
         public override void Render(DwarfTime gameTime)
         {
-            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointWrap,
-                DepthStencilState.Default, RasterizerState.CullNone, null, Matrix.Identity);
-            float y = -CurrentScroll;
-            int w = GameState.Game.GraphicsDevice.Viewport.Width;
-            int h = GameState.Game.GraphicsDevice.Viewport.Height; 
-            Drawer2D.FillRect(DwarfGame.SpriteBatch, new Rectangle(Padding - 30, 0, w-Padding*2 + 30, h), new Color(5, 5, 5, 150));
-            foreach (CreditEntry entry in Entries)
+            try
             {
-                if (entry.Divider)
+                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointWrap,
+                    DepthStencilState.Default, RasterizerState.CullNone, null, Matrix.Identity);
+                float y = -CurrentScroll;
+                int w = GameState.Game.GraphicsDevice.Viewport.Width;
+                int h = GameState.Game.GraphicsDevice.Viewport.Height;
+                Drawer2D.FillRect(DwarfGame.SpriteBatch, new Rectangle(Padding - 30, 0, w - Padding * 2 + 30, h), new Color(5, 5, 5, 150));
+                foreach (CreditEntry entry in Entries)
                 {
+                    if (entry.Divider)
+                    {
+                        y += EntryHeight;
+                        continue;
+                    }
+
+                    if (y + EntryHeight < -EntryHeight * 2 ||
+                        y + EntryHeight > GameState.Game.GraphicsDevice.Viewport.Height + EntryHeight * 2)
+                    {
+                        y += EntryHeight;
+                        continue;
+                    }
+                    Color color = entry.Color;
+
+                    if (entry.RandomFlash)
+                    {
+                        color = new Color(MathFunctions.RandVector3Box(-1, 1, -1, 1, -1, 1) * 0.5f + color.ToVector3());
+                    }
+                    DwarfGame.SpriteBatch.DrawString(CreditsFont, entry.Role, new Vector2(w / 2 - Datastructures.SafeMeasure(CreditsFont, entry.Role).X - 5, y), color);
+                    DwarfGame.SpriteBatch.DrawString(CreditsFont, entry.Name, new Vector2(w / 2 + 5, y), color);
+
                     y += EntryHeight;
-                    continue;
                 }
-
-                if (y + EntryHeight < -EntryHeight*2 ||
-                    y + EntryHeight > GameState.Game.GraphicsDevice.Viewport.Height + EntryHeight*2)
-                {
-                    y += EntryHeight;
-                    continue;
-                }
-                Color color = entry.Color;
-
-                if (entry.RandomFlash)
-                {
-                    color = new Color(MathFunctions.RandVector3Box(-1, 1, -1, 1, -1, 1) * 0.5f + color.ToVector3());
-                }
-                DwarfGame.SpriteBatch.DrawString(CreditsFont, entry.Role, new Vector2(w / 2 - Datastructures.SafeMeasure(CreditsFont, entry.Role).X - 5, y), color);
-                DwarfGame.SpriteBatch.DrawString(CreditsFont, entry.Name, new Vector2(w / 2 + 5, y), color);
-
-                y += EntryHeight;
             }
-            DwarfGame.SpriteBatch.End();
+            finally
+            {
+                DwarfGame.SpriteBatch.End();
+            }
             base.Render(gameTime);
         }
     }

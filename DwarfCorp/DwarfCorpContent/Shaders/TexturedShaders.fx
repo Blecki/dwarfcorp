@@ -613,7 +613,7 @@ TPixelToFrame SelectionPS_Alphatest(SelectionBufferToPixel PSIn)
 
 	clip((texColor.a - 0.5));
 
-	clip(PSIn.ClipDistance.w);
+	clip(PSIn.ClipDistance.w + 1);
 	Output.Color = PSIn.SelectionColor;
 	return Output;
 }
@@ -627,6 +627,27 @@ TPixelToFrame SilhouettePS(TVertexToPixel PSIn)
 	Output.Color.rgb = PSIn.ColorTint;
 	Output.Color.a = 0.2;
 	return Output;
+}
+
+// For drawing voxel icons
+TPixelToFrame TexturedPS_Icon(TVertexToPixel PSIn)
+{
+    TPixelToFrame Output = (TPixelToFrame)0;
+	float2 textureCoords = ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds);
+	float4 texColor = tex2D(TextureSampler, textureCoords);
+	clip((texColor.a - 0.5));
+	Output.Color.rgba = texColor;
+	float3 light1_dir = -normalize(float3(1.5, -1, 1));
+	float3 light2_dir = -normalize(float3(-2, -1, -0.5));
+	float3 normal = normalize(PSIn.WorldPosition.xyz);
+	float3 diffuse1 = normalize(float3(0.5, 0.5, 0.4));
+	float3 diffuse2 = normalize(float3(0.1, 0.1, 0.3)) * 0.5;
+	diffuse1 *= clamp(dot(normal, light1_dir), 0, 1);
+	diffuse2 *= clamp(dot(normal, light2_dir), 0, 1);
+	float4 illumColor = tex2D(IllumSampler, textureCoords);
+	Output.Color.rgb *= (diffuse1 + diffuse2 + float3(0.4, 0.42, 0.45));
+	Output.Color.rgba = lerp(Output.Color.rgba, texColor, SelfIllumination * illumColor.r);	
+    return Output;
 }
 
 TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
@@ -741,6 +762,15 @@ technique Textured
     {   
         VertexShader = compile vs_3_0 TexturedVSNonInstanced(MAX_LIGHTS);
         PixelShader  = compile ps_3_0 TexturedPS_Alphatest();
+    }
+}
+
+technique Icon
+{
+    pass Pass0
+    {   
+        VertexShader = compile vs_3_0 TexturedVSNonInstanced(MAX_LIGHTS);
+        PixelShader  = compile ps_3_0 TexturedPS_Icon();
     }
 }
 

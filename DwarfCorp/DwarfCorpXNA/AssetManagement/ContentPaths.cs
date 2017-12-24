@@ -56,7 +56,6 @@ namespace DwarfCorp
         public static string settings = ProgramData.CreatePath(DwarfGame.GetGameDirectory(), "settings.json");
         public static string mixer = ProgramData.CreatePath("Content", "Audio", "mixer.json");
         public static string voxel_types = ProgramData.CreatePath("Content", "voxel-types.json");
-        public static string grass_types = ProgramData.CreatePath("Content", "grass-types.json");
         public static string decal_types = ProgramData.CreatePath("Content", "decal-types.json");
 
         public class Audio
@@ -426,15 +425,18 @@ namespace DwarfCorp
 
         public class Entities
         {
+            public static string snowman_animation = ProgramData.CreatePath("Entities", "Mudman", "snowman_animation.json");
             public static string mudman_animation = ProgramData.CreatePath("Entities", "Mudman", "mudman_animation.json");
             public static string mudman_projectile = ProgramData.CreatePath("Entities", "Mudman", "mudman-projectile");
-
+            public static string mudball = ProgramData.CreatePath("Entities", "Mudman", "mudball");
+            public static string snowball = ProgramData.CreatePath("Entities", "Mudman", "snowball");
             public class Animals
             {
                 public static string chicken_animations = ProgramData.CreatePath("Entities", "Animals",
                     "chicken_animation.json");
 
                 public static string turkey_animations = ProgramData.CreatePath("Entities", "Animals", "turkey_animation.json");
+                public static string penguin_animations = ProgramData.CreatePath("Entities", "Animals", "penguin_animation.json");
 
                 public static Dictionary<string, string> fowl = new Dictionary<string, string>()
                 {
@@ -446,6 +448,10 @@ namespace DwarfCorp
 
                         "Turkey",
                         turkey_animations
+                    },
+                    {
+                        "Penguin",
+                        penguin_animations
                     }
                 };
 
@@ -661,8 +667,8 @@ namespace DwarfCorp
                 [Mote] public static string grass = ProgramData.CreatePath("Entities", "Plants", "grass");
                 public static string mushroom = ProgramData.CreatePath("Entities", "Plants", "mushroom");
                 public static string mushroomsprout = ProgramData.CreatePath("Entities", "Plants", "mushroom-sprout");
-                public static string cavemushroom = ProgramData.CreatePath("Entities", "Plants", "caveshroom");
-                public static string cavemushroomsprout = ProgramData.CreatePath("Entities", "Plants", "caveshroom-sprout");
+                public static string caveshroom = ProgramData.CreatePath("Entities", "Plants", "caveshroom");
+                public static string caveshroomsprout = ProgramData.CreatePath("Entities", "Plants", "caveshroom-sprout");
                 public static string palm = ProgramData.CreatePath("Entities", "Plants", "palmtree");
                 public static string palmsprout = ProgramData.CreatePath("Entities", "Plants", "palmtree-sprout");
                 public static string pine = ProgramData.CreatePath("Entities", "Plants", "pinetree");
@@ -679,6 +685,9 @@ namespace DwarfCorp
                 public static string pumpkinvinesprout = ProgramData.CreatePath("Entities", "Plants", "pumpkinvine-sprout");
                 public static string cactus = ProgramData.CreatePath("Entities", "Plants", "cactus");
                 public static string cactussprout = ProgramData.CreatePath("Entities", "Plants", "cactus-sprout");
+                public static string candycane = ProgramData.CreatePath("Entities", "Plants", "candycane");
+                public static string candycane_snow = ProgramData.CreatePath("Entities", "Plants", "candycane-snow");
+                public static string candycanesprout = ProgramData.CreatePath("Entities", "Plants", "candycane-sprout");
             }
             public class Resources
             {

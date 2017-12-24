@@ -168,11 +168,18 @@ namespace DwarfCorp
         // Do not delete: Used to generate block icon texture for menu.
         public static Texture2D RenderIcons(GraphicsDevice device, Shader shader, ChunkManager chunks, int width, int height, int tileSize)
         {
+            if (width == -1)
+            {
+                int sqrt = (int)(Math.Ceiling(Math.Sqrt(PrimitiveMap.Count)));
+                width = MathFunctions.NearestPowerOf2(sqrt * tileSize);
+                height = MathFunctions.NearestPowerOf2(sqrt * tileSize);
+            }
+
             RenderTarget2D toReturn = new RenderTarget2D(device, width, height, false, SurfaceFormat.Color, DepthFormat.Depth16, 16, RenderTargetUsage.PreserveContents);
         
             device.SetRenderTarget(toReturn);
             device.Clear(Color.Transparent);
-            shader.SetTexturedTechnique();
+            shader.SetIconTechnique();
             shader.MainTexture = chunks.ChunkData.Tilemap;
             shader.SelfIlluminationEnabled = true;
             shader.SelfIlluminationTexture = chunks.ChunkData.IllumMap;
@@ -188,13 +195,13 @@ namespace DwarfCorp
             Viewport oldview = device.Viewport;
             List<VoxelType> voxelsByType = Types.Select(type => type.Value).ToList();
             voxelsByType.Sort((a, b) => a.ID < b.ID ? -1 : 1);
-            int rows = width/tileSize;
-            int cols = height/tileSize;
+            int rows = height/tileSize;
+            int cols = width/tileSize;
             device.ScissorRectangle = new Rectangle(0, 0, tileSize, tileSize);
             device.RasterizerState = RasterizerState.CullNone;
             device.DepthStencilState = DepthStencilState.Default;
             Vector3 half = Vector3.One*0.5f;
-            half = new Vector3(half.X, half.Y + 0.3f, half.Z);
+            half = new Vector3(half.X, half.Y, half.Z);
             foreach (EffectPass pass in shader.CurrentTechnique.Passes)
             {
                 foreach (var type in voxelsByType)
@@ -209,8 +216,8 @@ namespace DwarfCorp
                         primitive = new BoxPrimitive(device, 1, 1, 1, type.TransitionTextures[new BoxTransition()]);
 
                     device.Viewport = new Viewport(col * tileSize, row * tileSize, tileSize, tileSize);
-                    Matrix viewMatrix = Matrix.CreateLookAt(new Vector3(-1.5f, 1.3f, -1.5f), Vector3.Zero, Vector3.Up);
-                    Matrix projectionMatrix = Matrix.CreateOrthographic(1.75f, 1.75f, 0, 5);
+                    Matrix viewMatrix = Matrix.CreateLookAt(new Vector3(-1.2f, 1.0f, -1.5f), Vector3.Zero, Vector3.Up);
+                    Matrix projectionMatrix = Matrix.CreateOrthographic(1.5f, 1.5f, 0, 5);
                     shader.View = viewMatrix;
                     shader.Projection = projectionMatrix;
                     shader.World = Matrix.CreateTranslation(-half);

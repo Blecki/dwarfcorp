@@ -49,7 +49,6 @@ namespace DwarfCorp
             Service = service;
             Service.AddSubscriber(this);
         }
-
     }
 
 }

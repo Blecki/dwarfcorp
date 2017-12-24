@@ -129,7 +129,9 @@ namespace DwarfCorp
 
         public void AddDesignation(CraftDesignation des, Vector3 AdditionalOffset)
         {
-            des.GhostBody = EntityFactory.CreateGhostedEntity<Body>(des.ItemType.Name, des.Location.WorldPosition + Vector3.One * 0.5f + AdditionalOffset, Color.LightBlue);
+            des.GhostBody = EntityFactory.CreateGhostedEntity<Body>(des.ItemType.Name,
+                des.Location.WorldPosition + Vector3.One * 0.5f + AdditionalOffset, Color.LightBlue,
+                Blackboard.Create<List<ResourceAmount>>("Resources", des.ItemType.SelectedResources));
             World.ComponentManager.RootComponent.AddChild(des.GhostBody);
 
             if (des.OverrideOrientation)
@@ -191,7 +193,9 @@ namespace DwarfCorp
 
             if (CurrentCraftType != null && CurrentCraftBody == null)
             {
-                CurrentCraftBody = EntityFactory.CreateGhostedEntity<Body>(CurrentCraftType.Name, player.VoxSelector.VoxelUnderMouse.WorldPosition, Color.White);
+                CurrentCraftBody = EntityFactory.CreateGhostedEntity<Body>(CurrentCraftType.Name, 
+                    player.VoxSelector.VoxelUnderMouse.WorldPosition, Color.White,
+                     Blackboard.Create<List<ResourceAmount>>("Resources", CurrentCraftType.SelectedResources));
                 CurrentDesignation = new CraftDesignation()
                 {
                     ItemType = CurrentCraftType,
@@ -221,14 +225,16 @@ namespace DwarfCorp
 
             HandleOrientation();
 
-            //Todo: Operator == implemented correctly for voxel handles?
-            if (CurrentDesignation.Location.Equals(player.VoxSelector.VoxelUnderMouse)) 
-                return;
+            if (CurrentDesignation != null)
+            {
+                if (CurrentDesignation.Location.Equals(player.VoxSelector.VoxelUnderMouse))
+                    return;
 
-            CurrentDesignation.Location = player.VoxSelector.VoxelUnderMouse;
+                CurrentDesignation.Location = player.VoxSelector.VoxelUnderMouse;
 
-            World.ShowTooltip("Click to build. Press R/T to rotate.");
-            CurrentCraftBody.SetTintRecursive(IsValid(CurrentDesignation) ? Color.Green : Color.Red);
+                World.ShowTooltip("Click to build. Press R/T to rotate.");
+                CurrentCraftBody.SetTintRecursive(IsValid(CurrentDesignation) ? Color.Green : Color.Red);
+            }
         }
 
         private void HandleOrientation()
@@ -418,7 +424,7 @@ namespace DwarfCorp
                                 Vector3 endPos = pos;
                                 CraftDesignation newDesignation = new CraftDesignation()
                                 {
-                                    ItemType = CurrentCraftType,
+                                    ItemType = CurrentCraftType.Clone(),
                                     Location = r,
                                     WorkPile = new WorkPile(World.ComponentManager, startPos),
                                     Orientation = CurrentDesignation.Orientation,

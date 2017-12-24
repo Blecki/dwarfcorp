@@ -53,10 +53,10 @@ namespace DwarfCorp
             
         }
 
-        public MudGolem(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
+        public MudGolem(CreatureStats stats, string blood, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
             base(manager, stats, allies, planService, faction, name)
         {
-            Physics = new Physics(Manager, "MudGolem", Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
+            Physics = new Physics(Manager, name, Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             Physics.AddChild(this);
 
@@ -65,10 +65,10 @@ namespace DwarfCorp
                 IsVisible = false
             });
 
-            Initialize();
+            Initialize(blood);
         }
 
-        public void Initialize()
+        public void Initialize(string blood)
         {
             HasMeat = false;
             HasBones = false;
@@ -99,7 +99,7 @@ namespace DwarfCorp
             Physics.Tags.Add("MudGolem");
             Physics.Mass = 100;
 
-            Physics.AddChild(new ParticleTrigger("dirt_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            Physics.AddChild(new ParticleTrigger(blood, Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 5,
@@ -157,6 +157,18 @@ namespace DwarfCorp
 
     public class MudGolemClass : EmployeeClass
     {
+        public MudGolemClass()
+        {
+            if (!staticClassInitialized)
+            {
+                InitializeClassStatics();
+            }
+            if (!staticsInitiailized)
+            {
+                InitializeStatics();
+            }
+        }
+
         void InitializeLevels()
         {
             Levels = new List<Level>
@@ -204,20 +216,86 @@ namespace DwarfCorp
 
         protected override sealed void InitializeStatics()
         {
-            Name = "MudGolem";
+            Name = "Mud Golem";
             InitializeLevels();
             InitializeAnimations();
             InitializeWeapons();
             InitializeActions();
             base.InitializeStatics();
         }
-        public MudGolemClass()
+    }
+
+    public class SnowGolemClass : EmployeeClass
+    {
+        public SnowGolemClass()
         {
+            if (!staticClassInitialized)
+            {
+                InitializeClassStatics();
+            }
             if (!staticsInitiailized)
             {
                 InitializeStatics();
             }
         }
-    }
 
+        void InitializeLevels()
+        {
+            Levels = new List<Level>
+            {
+                new Level
+                {
+                    Index = 0,
+                    Name = "Snow Golem",
+                    Pay = 25,
+                    XP = 0,
+                    BaseStats = new CreatureStats.StatNums()
+                    {
+                        Constitution = 20.0f
+                    }
+                }
+            };
+        }
+
+        void InitializeActions()
+        {
+            Actions =
+                Task.TaskCategory.Gather |
+                Task.TaskCategory.Guard |
+                Task.TaskCategory.Attack;
+        }
+
+        void InitializeAnimations()
+        {
+            CompositeAnimation.Descriptor descriptor =
+            FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
+                ContentPaths.GetFileAsString(ContentPaths.Entities.snowman_animation));
+            Animations = new List<Animation>();
+            Animations.AddRange(descriptor.GenerateAnimations("SnowGolem"));
+        }
+
+        public void InitializeWeapons()
+        {
+            Attacks = new List<Attack>()
+            {
+                new Attack("Snowball", 0.1f, 1.0f, 50.0f, ContentPaths.Audio.demon_attack, ContentPaths.Effects.hit)
+                {
+                    Mode = Attack.AttackMode.Ranged,
+                    LaunchSpeed = 10.0f,
+                    ProjectileType = "Snowball",
+                    TriggerMode = Attack.AttackTrigger.Timer
+                }
+            };
+        }
+
+        protected override sealed void InitializeStatics()
+        {
+            Name = "Snow Golem";
+            InitializeLevels();
+            InitializeAnimations();
+            InitializeWeapons();
+            InitializeActions();
+            base.InitializeStatics();
+        }
+    }
 }

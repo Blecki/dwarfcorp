@@ -185,6 +185,9 @@ namespace DwarfCorp
             // expansions.
             while (openSet.Count > 0 && numExpansions < maxExpansions)
             {
+                // Throttle this thread...
+                if (numExpansions % 10 == 0)
+                    System.Threading.Thread.Sleep(1);
                 // Check the next voxel to explore.
                 var current = GetVoxelWithMinimumFScore(fScore);
                 if (!current.IsValid)

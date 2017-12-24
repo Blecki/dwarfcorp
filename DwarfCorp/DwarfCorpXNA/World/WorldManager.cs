@@ -478,6 +478,7 @@ namespace DwarfCorp
 
                 GamePerformance.Instance.StartTrackPerformance("All Asleep");
                 bool allAsleep = Master.AreAllEmployeesAsleep();
+#if !UPTIME_TEST
                 if (SleepPrompt && allAsleep && !FastForwardToDay && Time.IsNight())
                 {
                     var sleepingPrompt = Gui.ConstructWidget(new Gui.Widgets.Confirm
@@ -498,6 +499,7 @@ namespace DwarfCorp
                 {
                     SleepPrompt = true;
                 }
+#endif
                 GamePerformance.Instance.StopTrackPerformance("All Asleep");
             }
 
@@ -515,6 +517,12 @@ namespace DwarfCorp
             GamePerformance.Instance.StartTrackPerformance("Weather");
             Weather.Update(this.Time.CurrentDate, this);
             GamePerformance.Instance.StopTrackPerformance("Weather");
+
+            if (gameFile != null)
+            {
+                // Cleanup game file.
+                gameFile = null;
+            }
 
         }
 
@@ -704,6 +712,14 @@ namespace DwarfCorp
             if (!ShowingWorld)
                 return;
 
+#if RENDER_VOXEL_ICONS
+            var voxels = VoxelLibrary.RenderIcons(GraphicsDevice, DefaultShader, ChunkManager, -1, -1, 32);
+            using (var stream = new FileStream("voxels.png", FileMode.OpenOrCreate))
+            {
+                GraphicsDevice.SetRenderTarget(null);
+                voxels.SaveAsPng(stream, voxels.Width, voxels.Height);
+            }
+#endif
             GamePerformance.Instance.StartTrackPerformance("Render - RENDER");
             GamePerformance.Instance.StartTrackPerformance("Render - Prep");
 
@@ -745,7 +761,7 @@ namespace DwarfCorp
             GamePerformance.Instance.StopTrackPerformance("Render - Prep");
             GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer");
 
-            #region Draw Selection Buffer.
+#region Draw Selection Buffer.
 
             if (SelectionBuffer == null)
                 SelectionBuffer = new SelectionBuffer(8, GraphicsDevice);
@@ -787,7 +803,7 @@ namespace DwarfCorp
                 GamePerformance.Instance.TrackValueType("SBUFFER RENDERED", false);
 
 
-            #endregion
+#endregion
 
             GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer");
             GamePerformance.Instance.StartTrackPerformance("Render - BG Stuff");
@@ -927,18 +943,24 @@ namespace DwarfCorp
             //if (CompositeLibrary.Composites.ContainsKey("resources"))
             //    CompositeLibrary.Composites["resources"].DebugDraw(DwarfGame.SpriteBatch, 0, 0);
             //SelectionBuffer.DebugDraw(GraphicsDevice.Viewport.Bounds);
-            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin,
-                null, rasterizerState, null, Matrix.Identity);
-            //DwarfGame.SpriteBatch.Draw(Shadows.ShadowTexture, Vector2.Zero, Color.White);
-            if (IsCameraUnderwater())
+            try
             {
-                Drawer2D.FillRect(DwarfGame.SpriteBatch, GraphicsDevice.Viewport.Bounds, new Color(10, 40, 60, 200));
+                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin,
+                    null, rasterizerState, null, Matrix.Identity);
+                //DwarfGame.SpriteBatch.Draw(Shadows.ShadowTexture, Vector2.Zero, Color.White);
+                if (IsCameraUnderwater())
+                {
+                    Drawer2D.FillRect(DwarfGame.SpriteBatch, GraphicsDevice.Viewport.Bounds, new Color(10, 40, 60, 200));
+                }
+
+                Drawer2D.Render(DwarfGame.SpriteBatch, Camera, GraphicsDevice.Viewport);
+
+                IndicatorManager.Render(gameTime);
             }
-
-            Drawer2D.Render(DwarfGame.SpriteBatch, Camera, GraphicsDevice.Viewport);
-
-            IndicatorManager.Render(gameTime);
-            DwarfGame.SpriteBatch.End();
+            finally
+            {
+                DwarfGame.SpriteBatch.End();
+            }
 
             Master.Render(Game, gameTime, GraphicsDevice);
 
@@ -1102,10 +1124,11 @@ namespace DwarfCorp
             // Now check for biome ambience.
             var pos = vox.WorldPosition;
             var biome = Overworld.GetBiomeAt(pos);
+            var biomeData = BiomeLibrary.Biomes[biome];
 
-            if (!string.IsNullOrEmpty(biome.DayAmbience))
+            if (!string.IsNullOrEmpty(biomeData.DayAmbience))
             {
-                if (prevAmbience[0] != biome.DayAmbience)
+                if (prevAmbience[0] != biomeData.DayAmbience)
                 {
                     if (!string.IsNullOrEmpty(prevAmbience[0]))
                     {
@@ -1117,17 +1140,17 @@ namespace DwarfCorp
                         SoundManager.StopAmbience(prevAmbience[1]);
                         prevAmbience[1] = null;
                     }
-                    SoundManager.PlayAmbience(biome.DayAmbience);
+                    SoundManager.PlayAmbience(biomeData.DayAmbience);
                 }
 
-                prevAmbience[0] = biome.DayAmbience;
+                prevAmbience[0] = biomeData.DayAmbience;
             }
 
-            if (!string.IsNullOrEmpty(biome.NightAmbience) && prevAmbience[1] != biome.NightAmbience)
+            if (!string.IsNullOrEmpty(biomeData.NightAmbience) && prevAmbience[1] != biomeData.NightAmbience)
             {
-                prevAmbience[1] = biome.NightAmbience;
+                prevAmbience[1] = biomeData.NightAmbience;
 
-                SoundManager.PlayAmbience(biome.NightAmbience);
+                SoundManager.PlayAmbience(biomeData.NightAmbience);
             }
         }
     }

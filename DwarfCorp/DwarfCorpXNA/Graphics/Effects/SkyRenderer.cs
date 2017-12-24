@@ -164,24 +164,30 @@ namespace DwarfCorp
         public void RenderStars(DwarfTime time, GraphicsDevice device, Camera camera, Viewport viewPort)
         {
             Matrix rot = Matrix.CreateRotationZ((-CosTime + 0.5f * (float)Math.PI));
-            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.Additive, Drawer2D.PointMagLinearMin, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
-            foreach (var star in StarPositions)
+            try
             {
-                var
-                transformed = Vector3.Transform(star, rot);
-
-                transformed += camera.Position;
-
-                Vector3 cameraFrame = Vector3.Transform(transformed, camera.ViewMatrix);
-
-                Vector3 unproject = viewPort.Project(transformed, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
-
-                if (cameraFrame.Z > 0.999f)
+                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.Additive, Drawer2D.PointMagLinearMin, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
+                foreach (var star in StarPositions)
                 {
-                    Drawer2D.FillRect(DwarfGame.SpriteBatch, new Rectangle((int)unproject.X, (int)unproject.Y, 2, 2), Color.White);
+                    var
+                    transformed = Vector3.Transform(star, rot);
+
+                    transformed += camera.Position;
+
+                    Vector3 cameraFrame = Vector3.Transform(transformed, camera.ViewMatrix);
+
+                    Vector3 unproject = viewPort.Project(transformed, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
+
+                    if (cameraFrame.Z > 0.999f)
+                    {
+                        Drawer2D.FillRect(DwarfGame.SpriteBatch, new Rectangle((int)unproject.X, (int)unproject.Y, 2, 2), Color.White);
+                    }
                 }
             }
-            DwarfGame.SpriteBatch.End();
+            finally
+            {
+                DwarfGame.SpriteBatch.End();
+            }
 
         }
 
@@ -203,17 +209,23 @@ namespace DwarfCorp
             Vector3 unProjectSun = viewPort.Project(SunPosition, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
             Vector3 unProjectMoon = viewPort.Project(moonPosition, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
 
-            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
+            try
+            {
+                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
 
-            if (cameraFrameSun.Z > 0.999f)
-            {
-                DwarfGame.SpriteBatch.Draw(SunTexture, new Vector2(unProjectSun.X - SunTexture.Width / 2 * scale, unProjectSun.Y - SunTexture.Height / 2 * scale), null, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 0.0f);
+                if (cameraFrameSun.Z > 0.999f)
+                {
+                    DwarfGame.SpriteBatch.Draw(SunTexture, new Vector2(unProjectSun.X - SunTexture.Width / 2 * scale, unProjectSun.Y - SunTexture.Height / 2 * scale), null, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 0.0f);
+                }
+                if (cameraFramMoon.Z > 0.999f)
+                {
+                    DwarfGame.SpriteBatch.Draw(MoonTexture, new Vector2(unProjectMoon.X - SunTexture.Width / 2 * scale, unProjectMoon.Y - SunTexture.Height / 2 * scale), null, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 0.0f);
+                }
             }
-            if (cameraFramMoon.Z > 0.999f)
+            finally
             {
-                DwarfGame.SpriteBatch.Draw(MoonTexture, new Vector2(unProjectMoon.X - SunTexture.Width / 2 * scale, unProjectMoon.Y - SunTexture.Height / 2 * scale), null, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 0.0f);
+                DwarfGame.SpriteBatch.End();
             }
-            DwarfGame.SpriteBatch.End();
 
             Vector3 sunDir = (camera.Position - SunPosition);
             sunDir.Normalize();

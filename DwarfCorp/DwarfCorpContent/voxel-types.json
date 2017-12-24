@@ -609,15 +609,15 @@
     "Transitions": 1,
     "HasTransitionTextures": false,
     "TransitionTiles": null,
-    "ReleasesResource": false,
+    "ReleasesResource": true,
     "ResourceToRelease": {
-      "_value": "Stone"
+      "_value": "Ice"
     },
     "StartingHealth": 1.0,
-    "ProbabilityOfRelease": 0.0,
+    "ProbabilityOfRelease": 1.0,
     "CanRamp": false,
     "RampSize": 0.0,
-    "IsBuildable": false,
+    "IsBuildable": true,
     "ParticleType": "snow_particle",
     "EmitsLight": false,
     "MinSpawnHeight": -999.0,
@@ -1433,7 +1433,7 @@
     "ClusterSize": 0.0,
     "VeinLength": 0.0,
     "IsSoil": true,
-    "IsSurface": false,
+    "IsSurface": true,
     "IsInvincible": false,
     "Tint": "255, 255, 255, 255",
     "SpawnOnSurface": false,

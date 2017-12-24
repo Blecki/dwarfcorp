@@ -74,6 +74,7 @@ namespace DwarfCorp
                 public Color SecondaryColor { get; set; }
                 public int CenterX { get; set; }
                 public int CenterY { get; set; }
+                public float GoodWill { get; set; }
             }
 
             public List<FactionDescriptor> FactionList;
@@ -142,6 +143,7 @@ namespace DwarfCorp
                         Race = f.Race.Name,
                         CenterX = f.Center.X,
                         CenterY = f.Center.Y, 
+                        GoodWill = f.GoodWill
                     });
                     id++;
                 }

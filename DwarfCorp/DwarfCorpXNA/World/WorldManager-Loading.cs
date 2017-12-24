@@ -189,8 +189,7 @@ namespace DwarfCorp
                     DefaultShader = new Shader(Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders), true);
 
                     VoxelLibrary.InitializeDefaultLibrary(GraphicsDevice, Tilesheet);
-                    GrassLibrary.InitializeDefaultLibrary();
-                DecalLibrary.InitializeDefaultLibrary();
+                    DecalLibrary.InitializeDefaultLibrary();
 
                     bloom = new BloomComponent(Game)
                     {
@@ -348,7 +347,7 @@ namespace DwarfCorp
                     GoalManager = new Goals.GoalManager();
                     GoalManager.Initialize(gameFile.PlayData.Goals);
 
-                    TutorialManager = new Tutorial.TutorialManager("Content/tutorial.txt");
+                    TutorialManager = new Tutorial.TutorialManager(Program.CreatePath("Content", "tutorial.txt"));
                     TutorialManager.SetFromSaveData(gameFile.PlayData.TutorialSaveData);
                 }
                 else
@@ -442,7 +441,7 @@ namespace DwarfCorp
                     GoalManager = new Goals.GoalManager();
                     GoalManager.Initialize(new List<Goals.Goal>());
 
-                    TutorialManager = new Tutorial.TutorialManager("Content/tutorial.txt");
+                    TutorialManager = new Tutorial.TutorialManager(Program.CreatePath("Content", "tutorial.txt"));
                     TutorialManager.TutorialEnabled = !GameSettings.Default.TutorialDisabledGlobally;
                     Tutorial("new game start");
                 }

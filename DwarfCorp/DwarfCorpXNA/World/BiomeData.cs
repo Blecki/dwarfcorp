@@ -44,10 +44,13 @@ namespace DwarfCorp
     /// </summary>
     public class BiomeData
     {
-        public byte Biome { get; set; }
+        public Overworld.Biome Biome { get; set; }
 
 
-        public string Name;
+        public string Name
+        {
+            get { return Biome.ToString(); }
+        }
 
         public struct Layer
         {
@@ -81,8 +84,7 @@ namespace DwarfCorp
             ShoreVoxel = "Sand";
         }
 
-        // Todo: Move defaults to above and remove this.
-        public BiomeData(byte biome)
+        public BiomeData(Overworld.Biome biome)
         {
             Biome = biome;
             Vegetation = new List<VegetationData>();

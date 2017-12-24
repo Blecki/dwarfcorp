@@ -131,10 +131,15 @@ namespace DwarfCorp
 
             foreach(var resource in aggregatedResources)
             {
-                agent.AI.AssignTask(new StockResourceTask(resource.Value)
+                var task = new StockResourceTask(resource.Value)
                 {
                     Priority = Task.PriorityType.High
-                });
+                };
+
+                if (!agent.AI.Tasks.Contains(task))
+                {
+                    agent.AI.AssignTask(task);
+                }
             }
         }
 
@@ -157,7 +162,11 @@ namespace DwarfCorp
 
             foreach (var resource in aggregatedResources)
             {
-                agent.AI.AssignTask(new StockResourceTask(resource.Value));
+                var task = new StockResourceTask(resource.Value);
+                if (!agent.AI.Tasks.Contains(task))
+                {
+                    agent.AI.AssignTask(task);
+                }
             }
             yield return Act.Status.Success;
         }

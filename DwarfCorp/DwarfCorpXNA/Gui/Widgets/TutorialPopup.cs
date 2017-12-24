@@ -33,7 +33,7 @@ namespace DwarfCorp.Gui.Widgets
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 Border = "border-button",
-                OnClick = (sender, args) => { this.Close(); SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_window_close, 0.25f); },
+                OnClick = (sender, args) => { this.Close(); SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_window_close, 0.15f); },
                 AutoLayout = AutoLayout.FloatBottomRight,
                 ChangeColorOnHover = true,
             });

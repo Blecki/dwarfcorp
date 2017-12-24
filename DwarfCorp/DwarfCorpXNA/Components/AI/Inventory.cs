@@ -56,7 +56,8 @@ namespace DwarfCorp
         public enum RestockType
         {
             RestockResource,
-            None
+            None,
+            Any
         }
         public List<InventoryItem> Resources { get; set; } 
         public float DropRate { get; set; }
@@ -319,9 +320,12 @@ namespace DwarfCorp
             }
         }
 
-        public List<ResourceAmount> GetResources(Quantitiy<Resource.ResourceTags> quantitiy)
+        public List<ResourceAmount> GetResources(Quantitiy<Resource.ResourceTags> quantitiy, RestockType type = RestockType.RestockResource)
         {
-            return (from resource in Resources where ResourceLibrary.GetResourceByName(resource.Resource).Tags.Contains(quantitiy.ResourceType) select new ResourceAmount(resource.Resource)).ToList();
+            return (from resource in Resources where
+                    ResourceLibrary.GetResourceByName(resource.Resource).Tags.Contains(quantitiy.ResourceType) && ((type == RestockType.RestockResource 
+                    && resource.MarkedForRestock) || (type == RestockType.None && !resource.MarkedForRestock) || (type == RestockType.Any))
+                    select new ResourceAmount(resource.Resource)).ToList();
         }
 
         public void AddResource(ResourceAmount tradeGood, RestockType type = RestockType.RestockResource)

@@ -80,6 +80,9 @@ namespace DwarfCorp
             RegisterEntity("Snow Pine Tree", (position, data) => new Tree("Pine Tree", world.ComponentManager, position, "snowpine", ResourceLibrary.ResourceType.PineCone, data.GetData("Scale", 1.0f), "pinesprout"));
             RegisterEntity("Snow Pine Tree Sprout", (position, data) => new Seedling(world.ComponentManager, "Snow Pine Tree", position, "pinesprout", 12));
 
+            RegisterEntity("Candycane", (position, data) => new Tree("Candycane", world.ComponentManager, position, "candycane", ResourceLibrary.ResourceType.Peppermint, data.GetData("Scale", 1.0f), "candycanesprout", false));
+            RegisterEntity("Candycane Sprout", (position, data) => new Seedling(world.ComponentManager, "Candycane", position, "candycanesprout", 12));
+
             RegisterEntity("Palm Tree", (position, data) => new Tree("Palm Tree", world.ComponentManager, position, "palm", ResourceLibrary.ResourceType.Coconut, data.GetData("Scale", 1.0f), "palmsprout"));
             RegisterEntity("Palm Tree Sprout", (position, data) => new Seedling(world.ComponentManager, "Palm Tree", position, "palmsprout", 12));
 
@@ -128,8 +131,8 @@ namespace DwarfCorp
             RegisterEntity("Mushroom", (position, data) => new Mushroom(world.ComponentManager, position, ContentPaths.Entities.Plants.mushroom, ResourceLibrary.ResourceType.Mushroom, 2, false, "mushroomsprout"));
             RegisterEntity("Mushroom Sprout", (position, data) => new Seedling(world.ComponentManager, "Mushroom", position, "mushroomsprout", 12));
 
-            RegisterEntity("Cave Mushroom", (position, data) => new Mushroom(world.ComponentManager, position, ContentPaths.Entities.Plants.cavemushroom, ResourceLibrary.ResourceType.CaveMushroom, 4, true, "cavemushroomsprout"));
-            RegisterEntity("Cave Mushroom Sprout", (position, data) => new Seedling(world.ComponentManager, "Cave Mushroom", position, "cavemushroomsprout", 12));
+            RegisterEntity("Cave Mushroom", (position, data) => new Mushroom(world.ComponentManager, position, ContentPaths.Entities.Plants.caveshroom, ResourceLibrary.ResourceType.CaveMushroom, 4, true, "caveshroomsprout"));
+            RegisterEntity("Cave Mushroom Sprout", (position, data) => new Seedling(world.ComponentManager, "Cave Mushroom", position, "caveshroomsprout", 12));
 
             RegisterEntity("Wheat", (position, data) => new Wheat(world.ComponentManager, position));
             RegisterEntity("Wheat Sprout", (position, data) => new Seedling(world.ComponentManager, "Wheat", position, "wheatsprout", 12));
@@ -167,12 +170,8 @@ namespace DwarfCorp
                 return snek.Physics;
             });
             RegisterEntity("Bookshelf", (position, data) => new Bookshelf(world.ComponentManager, position) { Tags = new List<string>() { "Research"}});
-            RegisterEntity("Wooden Door", (position, data) => new Door(world.ComponentManager, position, world.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 1), 50));
-            RegisterEntity("Metal Door", (position, data) => new Door(world.ComponentManager, position, world.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 8), 100));
-            RegisterEntity("Stone Door", (position, data) => new Door(world.ComponentManager, position, world.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 8), 75));
-            RegisterEntity("Wooden Ladder", (position, data) => new Ladder(world.ComponentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 0)));
-            RegisterEntity("Stone Ladder", (position, data) => new Ladder(world.ComponentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 8)));
-            RegisterEntity("Metal Ladder", (position, data) => new Ladder(world.ComponentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 8)));
+            RegisterEntity("Door", (position, data) => new Door(world.ComponentManager, position, World.PlayerFaction, data.GetData<List<ResourceAmount>>("Resources", new List<ResourceAmount>() { new ResourceAmount(ResourceLibrary.ResourceType.Wood) })));
+            RegisterEntity("Ladder", (position, data) => new Ladder(world.ComponentManager, position, data.GetData<List<ResourceAmount>>("Resources", new List<ResourceAmount>() { new ResourceAmount(ResourceLibrary.ResourceType.Wood) })));
             RegisterEntity("RandTrinket", (position, data) => CreateRandomTrinket(world, position));
             RegisterEntity("RandFood", (position, data) => CreateRandomFood(world, position));
             RegisterEntity("Turret", (position, data) => new TurretTrap(world.ComponentManager, position, world.PlayerFaction));
@@ -186,8 +185,11 @@ namespace DwarfCorp
             });
             RegisterEntity("Chicken", (position, data) => new Chicken(position, world.ComponentManager, "Chicken", "Chicken"));
             RegisterEntity("Turkey", (position, data) => new Chicken(position, world.ComponentManager, "Turkey", "Turkey"));
-            RegisterEntity("MudGolem", (position, data) => new MudGolem(new CreatureStats(new MudGolemClass(), 0), "Carnivore", world.PlanService, World.Factions.Factions["Carnivore"], world.ComponentManager, "Mud Golem", position));
+            RegisterEntity("Penguin", (position, data) => new Chicken(position, world.ComponentManager, "Penguin", "Penguin"));
+            RegisterEntity("MudGolem", (position, data) => new MudGolem(new CreatureStats(new MudGolemClass(), 0), "dirt_particle", "Carnivore", world.PlanService, World.Factions.Factions["Carnivore"], world.ComponentManager, "Mud Golem", position));
+            RegisterEntity("SnowGolem", (position, data) => new MudGolem(new CreatureStats(new SnowGolemClass(), 0), "snow_particle", "Carnivore", world.PlanService, World.Factions.Factions["Carnivore"], world.ComponentManager, "Snow Golem", position));
             RegisterEntity("Mud", (position, data) => new MudProjectile(world.ComponentManager, position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
+            RegisterEntity("Snowball", (position, data) => new SnowballProjectile(world.ComponentManager, position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
             RegisterEntity("Grave", (position, data) => new Grave(world.ComponentManager, position));
             RegisterEntity("Coins", (position, data) => new CoinPileFixture(world.ComponentManager, position));
         }

@@ -173,126 +173,131 @@ namespace DwarfCorp
         private void Draw(GraphicsDevice graphics, DwarfTime time)
         {
             Bloom.BeginDraw();
-            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin,
-                DepthStencilState.Default, RasterizerState.CullNone, null, Matrix.Identity);
-            graphics.Clear(Color.SkyBlue);
-
-
-            Rectangle screenRect = graphics.Viewport.Bounds;
-
-            int maxX = screenRect.Width/TileSize + 2;
-            int maxY = screenRect.Width/TileSize;
-
-
-            float t = (float) time.TotalRealTime.TotalSeconds;
-
-            float offsetX = t*2.0f;
-            float offsetY = 0.0f;
-
-            float st = (float) Math.Abs(Math.Sin(t));
-
-            float lava = LavaHeight;
-            int backSize = 2;
-
-            for (int ix = 0; ix < maxX*backSize; ix++)
+            try
             {
-                float x = ix + (int) (offsetX*0.6f);
+                graphics.Clear(Color.SkyBlue);
+                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin,
+                DepthStencilState.Default, RasterizerState.CullNone, null, Matrix.Identity);
 
-                float height = Noise.Noise(x*HeightScale*3, 0, 100)*0.5f + 0.6f;
-                for (int iy = 0; iy < maxY*backSize; iy++)
+
+                Rectangle screenRect = graphics.Viewport.Bounds;
+
+                int maxX = screenRect.Width / TileSize + 2;
+                int maxY = screenRect.Width / TileSize;
+
+
+                float t = (float)time.TotalRealTime.TotalSeconds;
+
+                float offsetX = t * 2.0f;
+                float offsetY = 0.0f;
+
+                float st = (float)Math.Abs(Math.Sin(t));
+
+                float lava = LavaHeight;
+                int backSize = 2;
+
+                for (int ix = 0; ix < maxX * backSize; ix++)
                 {
-                    float y = iy + (int) offsetY;
-                    float normalizedY = (1.0f) - (float) y/(float) (maxY*backSize);
+                    float x = ix + (int)(offsetX * 0.6f);
 
-                    if (normalizedY < height)
+                    float height = Noise.Noise(x * HeightScale * 3, 0, 100) * 0.5f + 0.6f;
+                    for (int iy = 0; iy < maxY * backSize; iy++)
                     {
-                        float tileX = ix*(TileSize/backSize) - ((offsetX*0.6f)*(TileSize/backSize))%(TileSize/backSize);
-                        float tileY = iy*(TileSize/backSize);
+                        float y = iy + (int)offsetY;
+                        float normalizedY = (1.0f) - (float)y / (float)(maxY * backSize);
 
-                        Drawer2D.FillRect(DwarfGame.SpriteBatch, new Rectangle((int) tileX, (int) tileY, TileSize/backSize, TileSize/backSize),
-                            new Color((int) (Color.SkyBlue.R*normalizedY*0.8f), (int) (Color.SkyBlue.G*normalizedY*0.8f),
-                                (int) (Color.SkyBlue.B*normalizedY)));
+                        if (normalizedY < height)
+                        {
+                            float tileX = ix * (TileSize / backSize) - ((offsetX * 0.6f) * (TileSize / backSize)) % (TileSize / backSize);
+                            float tileY = iy * (TileSize / backSize);
+
+                            Drawer2D.FillRect(DwarfGame.SpriteBatch, new Rectangle((int)tileX, (int)tileY, TileSize / backSize, TileSize / backSize),
+                                new Color((int)(Color.SkyBlue.R * normalizedY * 0.8f), (int)(Color.SkyBlue.G * normalizedY * 0.8f),
+                                    (int)(Color.SkyBlue.B * normalizedY)));
+                        }
                     }
                 }
-            }
 
 
-            for (int ix = 0; ix < maxX; ix++)
-            {
-                float x = ix + (int) offsetX;
-                float height = Noise.Noise(x*HeightScale, 0, 0)*0.8f + MinHeight;
-                for (int iy = 0; iy < maxY; iy++)
+                for (int ix = 0; ix < maxX; ix++)
                 {
-                    float y = iy + (int) offsetY;
-                    float normalizedY = (1.0f) - (float) y/(float) maxY;
-
-                    if (Math.Abs(normalizedY - height) < 0.01f)
+                    float x = ix + (int)offsetX;
+                    float height = Noise.Noise(x * HeightScale, 0, 0) * 0.8f + MinHeight;
+                    for (int iy = 0; iy < maxY; iy++)
                     {
-                        Color tint = new Color(normalizedY, normalizedY, normalizedY);
+                        float y = iy + (int)offsetY;
+                        float normalizedY = (1.0f) - (float)y / (float)maxY;
 
-                        RenderTile(Grass, DwarfGame.SpriteBatch, ix, iy, offsetX, t, tint);
-                    }
-                    else if (normalizedY > height - 0.1f && normalizedY < height)
-                    {
-                        Color tint = new Color((float) Math.Pow(normalizedY, 1.5f), (float) Math.Pow(normalizedY, 1.6f),
-                            normalizedY);
-
-                        RenderTile(Soil, DwarfGame.SpriteBatch, ix, iy, offsetX, t, tint);
-                    }
-                    else if (normalizedY < height)
-                    {
-                        float caviness = Noise.Noise(x*CaveScale, y*CaveScale, 0);
-
-                        if (caviness < CaveThreshold)
+                        if (Math.Abs(normalizedY - height) < 0.01f)
                         {
-                            TerrainElement? oreFound = null;
+                            Color tint = new Color(normalizedY, normalizedY, normalizedY);
 
-                            int i = 0;
-                            foreach (TerrainElement ore in Ores)
+                            RenderTile(Grass, DwarfGame.SpriteBatch, ix, iy, offsetX, t, tint);
+                        }
+                        else if (normalizedY > height - 0.1f && normalizedY < height)
+                        {
+                            Color tint = new Color((float)Math.Pow(normalizedY, 1.5f), (float)Math.Pow(normalizedY, 1.6f),
+                                normalizedY);
+
+                            RenderTile(Soil, DwarfGame.SpriteBatch, ix, iy, offsetX, t, tint);
+                        }
+                        else if (normalizedY < height)
+                        {
+                            float caviness = Noise.Noise(x * CaveScale, y * CaveScale, 0);
+
+                            if (caviness < CaveThreshold)
                             {
-                                i++;
-                                float oreNess = Noise.Noise(x*ore.SpawnScale, y*ore.SpawnScale, i);
+                                TerrainElement? oreFound = null;
 
-                                if (oreNess > ore.SpawnThreshold)
+                                int i = 0;
+                                foreach (TerrainElement ore in Ores)
                                 {
-                                    oreFound = ore;
+                                    i++;
+                                    float oreNess = Noise.Noise(x * ore.SpawnScale, y * ore.SpawnScale, i);
+
+                                    if (oreNess > ore.SpawnThreshold)
+                                    {
+                                        oreFound = ore;
+                                    }
+                                }
+
+                                Color tint = new Color((float)Math.Pow(normalizedY, 1.5f) * 0.5f,
+                                    (float)Math.Pow(normalizedY, 1.6f) * 0.5f, normalizedY * 0.5f);
+
+                                if (oreFound == null)
+                                {
+                                    RenderTile(Substrate, DwarfGame.SpriteBatch, ix, iy, offsetX, t, tint);
+                                }
+                                else
+                                {
+                                    RenderTile(oreFound.Value, DwarfGame.SpriteBatch, ix, iy, offsetX, t, tint);
                                 }
                             }
-
-                            Color tint = new Color((float) Math.Pow(normalizedY, 1.5f)*0.5f,
-                                (float) Math.Pow(normalizedY, 1.6f)*0.5f, normalizedY*0.5f);
-
-                            if (oreFound == null)
-                            {
-                                RenderTile(Substrate, DwarfGame.SpriteBatch, ix, iy, offsetX, t, tint);
-                            }
                             else
                             {
-                                RenderTile(oreFound.Value, DwarfGame.SpriteBatch, ix, iy, offsetX, t, tint);
-                            }
-                        }
-                        else
-                        {
-                            if (normalizedY < lava)
-                            {
-                                float glowiness = Noise.Noise(x*CaveScale*2, y*CaveScale*2, t);
-                                RenderTile(Lava, DwarfGame.SpriteBatch, ix, iy, offsetX, t,
-                                    new Color(0.5f*glowiness + 0.5f, 0.7f*glowiness + 0.3f*st, glowiness));
-                            }
-                            else
-                            {
-                                RenderTile(Cave, DwarfGame.SpriteBatch, ix, iy, offsetX, t,
-                                    new Color((float) Math.Pow(normalizedY, 1.5f)*(1.0f - caviness)*0.8f,
-                                        (float) Math.Pow(normalizedY, 1.6f)*(1.0f - caviness)*0.8f,
-                                        normalizedY*(1.0f - caviness)));
+                                if (normalizedY < lava)
+                                {
+                                    float glowiness = Noise.Noise(x * CaveScale * 2, y * CaveScale * 2, t);
+                                    RenderTile(Lava, DwarfGame.SpriteBatch, ix, iy, offsetX, t,
+                                        new Color(0.5f * glowiness + 0.5f, 0.7f * glowiness + 0.3f * st, glowiness));
+                                }
+                                else
+                                {
+                                    RenderTile(Cave, DwarfGame.SpriteBatch, ix, iy, offsetX, t,
+                                        new Color((float)Math.Pow(normalizedY, 1.5f) * (1.0f - caviness) * 0.8f,
+                                            (float)Math.Pow(normalizedY, 1.6f) * (1.0f - caviness) * 0.8f,
+                                            normalizedY * (1.0f - caviness)));
+                                }
                             }
                         }
                     }
                 }
+
             }
-
-
-            DwarfGame.SpriteBatch.End();
+            finally
+            {
+                DwarfGame.SpriteBatch.End();
+            }
 
             Bloom.Draw(time.ToGameTime());
         }

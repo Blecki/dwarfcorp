@@ -2260,6 +2260,41 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="Entities\Animals\penguin.png">
+      <Name>penguin</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Mudman\mudball.png">
+      <Name>mudball</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Mudman\snowball.png">
+      <Name>snowball</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Mudman\snowman.png">
+      <Name>snowman</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Plants\candycane-snow.png">
+      <Name>candycane-snow</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Plants\candycane-sprout.png">
+      <Name>candycane-sprout</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Plants\candycane.png">
+      <Name>candycane</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Particles\particles.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>particles</Name>
@@ -2285,10 +2320,10 @@
       <Name>turkey_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="decal-types.json">
+    <Content Include="Entities\Animals\penguin_animation.json">
+      <Name>penguin_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>decal-types</Name>
-    </None>
+    </Content>
     <None Include="Entities\Animals\Birds\bird0_animation.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>bird0_animation</Name>
@@ -2341,6 +2376,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>bonesnake_animation</Name>
     </None>
+    <Content Include="Entities\Mudman\snowman_animation.json">
+      <Name>snowman_animation</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="tutorial.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>tutorial</Name>
@@ -2637,9 +2676,9 @@
       <Name>animal</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="grass-types.json">
+    <None Include="decal-types.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>grass-types</Name>
+      <Name>decal-types</Name>
     </None>
     <None Include="voxel-types.json">
       <Name>voxel-types</Name>

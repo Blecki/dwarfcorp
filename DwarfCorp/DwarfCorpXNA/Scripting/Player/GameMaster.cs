@@ -342,6 +342,7 @@ namespace DwarfCorp
         }
 
         private Timer orphanedTaskRateLimiter = new Timer(10.0f, false);
+        private Timer checkFoodTimer = new Timer(60.0f, false);
 
         // This hack exists to find orphaned tasks not assigned to any dwarf, and to then
         // put them on the task list.
@@ -373,8 +374,7 @@ namespace DwarfCorp
                             orphanedTasks.Add(task);
                         }
                     }
-                    // TODO... other voxel task types
-
+                    // TODO... other tasks here ?
                 }
 
                 foreach (var ent in Faction.Designations.EnumerateEntityDesignations())
@@ -487,6 +487,16 @@ namespace DwarfCorp
 
             // Make sure that the faction's money is identical to the money in treasuries.
             Faction.Economy.CurrentMoney = Faction.Treasurys.Sum(treasury => treasury.Money);
+
+            checkFoodTimer.Update(time);
+            if (checkFoodTimer.HasTriggered)
+            {
+                var food = Faction.CountResourcesWithTag(Resource.ResourceTags.Edible);
+                if (food == 0)
+                {
+                    Faction.World.MakeAnnouncement("We're out of food!");
+                }
+            }
         }
 
 

@@ -60,7 +60,8 @@ namespace DwarfCorp
                 yield return Status.Fail;
             }
             float time = 5 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.BuffedInt);
-            Body item = EntityFactory.CreateEntity<Body>(Item.ItemType.Name, Voxel.WorldPosition + Vector3.One * 0.5f + Item.ItemType.SpawnOffset);
+            Body item = EntityFactory.CreateEntity<Body>(Item.ItemType.Name, Voxel.WorldPosition + Vector3.One * 0.5f + Item.ItemType.SpawnOffset, 
+                            Blackboard.Create("Resources", Item.ItemType.SelectedResources));
             if (Item.OverrideOrientation)
             {
                 item.Orient(Item.Orientation);
@@ -70,6 +71,22 @@ namespace DwarfCorp
                 item.OrientToWalls();
             }
             item.Tags.Add("Moveable");
+
+            CraftDetails details = item.GetComponent<CraftDetails>();
+            
+            if (details == null)
+            {
+                item.AddChild(new CraftDetails(Creature.Manager)
+                {
+                    Resources = Item.ItemType.SelectedResources.ConvertAll(p => new ResourceAmount(p)),
+                    CraftType = Item.ItemType.Name
+                });
+
+                if (Item.ItemType.SelectedResources.Count > 0)
+                    item.Name = Item.ItemType.SelectedResources.FirstOrDefault().ResourceType + " " + item.Name;
+
+            }
+
             Creature.Faction.OwnedObjects.Add(item);
             Creature.Manager.World.ParticleManager.Trigger("puff", Voxel.WorldPosition + Vector3.One * 0.5f, Color.White, 10);
             Creature.Faction.CraftBuilder.RemoveDesignation(Voxel);

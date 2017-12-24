@@ -88,23 +88,6 @@ namespace DwarfCorp.Gui.Widgets
 
                 new HorizontalMenuTray.MenuItem
                 {
-                    Text = "PLACE GRASS",
-                    ExpansionChild = new HorizontalMenuTray.Tray
-                    {
-                        Columns = 3,
-                        ItemSource = GrassLibrary.TypeList
-                            .OrderBy(s => s.Name)
-                            .Select(s =>
-                                new HorizontalMenuTray.MenuItem
-                                {
-                                    Text = s.Name,
-                                    OnClick = (sender, args) => ActivateGodTool("Grass/" + s.Name)
-                                })
-                    }
-                },
-
-                new HorizontalMenuTray.MenuItem
-                {
                     Text = "PLACE DECAL",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
@@ -184,6 +167,17 @@ namespace DwarfCorp.Gui.Widgets
                         foreach(var minion in Master.Faction.Minions)
                         {
                             minion.Status.Hunger.CurrentValue = 0;
+                        }
+                    }
+                },
+                 new HorizontalMenuTray.MenuItem
+                {
+                    Text = "XP",
+                    OnClick = (sender, args) =>
+                    {
+                        foreach(var minion in Master.Faction.Minions)
+                        {
+                            minion.AddXP(100);
                         }
                     }
                 },

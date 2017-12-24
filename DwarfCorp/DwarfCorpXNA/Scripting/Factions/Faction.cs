@@ -62,7 +62,7 @@ namespace DwarfCorp
         public CraftBuilder CraftBuilder { get; set; }
         public Color PrimaryColor { get; set; }
         public Color SecondaryColor { get; set; }
-        
+        public Timer HandleThreatsTimer { get; set; }
         public DesignationSet Designations = new DesignationSet();
         
         // Todo: When converting to new save system, it can take care of this.
@@ -89,6 +89,8 @@ namespace DwarfCorp
         public List<CreatureAI> SelectedMinions { get; set; }
         public bool IsRaceFaction { get; set; }
 
+        public float GoodWill { get; set; }
+
         [JsonIgnore]
         public WorldManager World { get; set; }
 
@@ -98,15 +100,17 @@ namespace DwarfCorp
         public void OnDeserialized(StreamingContext ctx)
         {
             World = ((WorldManager)ctx.Context);
+            HandleThreatsTimer = new Timer(1.0f, false);
         }
 
         public Faction()
         {
-
+            HandleThreatsTimer = new Timer(1.0f, false);
         }
 
         public Faction(WorldManager world)
         {
+            HandleThreatsTimer = new Timer(1.0f, false);
             World = world;
             Threats = new List<Creature>();
             Minions = new List<CreatureAI>();
@@ -120,6 +124,7 @@ namespace DwarfCorp
             CraftBuilder = new CraftBuilder(this, world);
             IsRaceFaction = false;
             TradeMoney = 0.0m;
+            GoodWill = 0.0f;
         }
 
         public Faction(NewOverworldFile.OverworldData.FactionDescriptor descriptor)
@@ -134,6 +139,7 @@ namespace DwarfCorp
             OwnedObjects = new List<Body>();
             IsRaceFaction = false;
             TradeMoney = 0.0m;
+            GoodWill = descriptor.GoodWill;
             PrimaryColor = descriptor.PrimaryColory;
             SecondaryColor = descriptor.SecondaryColor;
             Name = descriptor.Name;
@@ -192,7 +198,10 @@ namespace DwarfCorp
             {
                 zone.Update();
             }
-            HandleThreats();
+
+            HandleThreatsTimer.Update(time);
+            if (HandleThreatsTimer.HasTriggered)
+             HandleThreats();
 
             OwnedObjects.RemoveAll(obj => obj.IsDead);
 
@@ -635,7 +644,7 @@ namespace DwarfCorp
             }
 
 
-            List<Stockpile> stockpilesCopy = new List<Stockpile>(Stockpiles);
+            List<Stockpile> stockpilesCopy = new List<Stockpile>(Stockpiles.Where(s => resources.All(r => s.IsAllowed(r.ResourceType))));
             stockpilesCopy.Sort((a, b) => CompareZones(a, b, position));
 
 

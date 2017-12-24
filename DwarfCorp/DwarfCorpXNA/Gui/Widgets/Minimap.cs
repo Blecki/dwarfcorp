@@ -189,25 +189,30 @@ namespace DwarfCorp.Gui.Widgets
 
             World.DefaultShader.EnbleFog = true;
 
-            DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate, 
-                BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin, null, RasterizerState.CullNone, null, 
-                Matrix.Identity);
-            Viewport viewPort = new Viewport(RenderTarget.Bounds);
-
-            foreach (var icon in World.ComponentManager.GetMinimapIcons())
+            try
             {
-                if (!icon.Parent.IsVisible)
-                    continue;
+                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate,
+                    BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin, null, RasterizerState.CullNone, null,
+                    Matrix.Identity);
+                Viewport viewPort = new Viewport(RenderTarget.Bounds);
 
-                Vector3 screenPos = viewPort.Project(icon.GlobalTransform.Translation, Camera.ProjectionMatrix, Camera.ViewMatrix, Matrix.Identity);
-
-                if (RenderTarget.Bounds.Contains((int)screenPos.X, (int)screenPos.Y))
+                foreach (var icon in World.ComponentManager.GetMinimapIcons())
                 {
-                    DwarfGame.SpriteBatch.Draw(icon.Icon.Image, new Vector2(screenPos.X, screenPos.Y), icon.Icon.SourceRect, Color.White, 0.0f, new Vector2(icon.Icon.SourceRect.Width / 2.0f, icon.Icon.SourceRect.Height / 2.0f), icon.IconScale, SpriteEffects.None, 0);
+                    if (!icon.Parent.IsVisible)
+                        continue;
+
+                    Vector3 screenPos = viewPort.Project(icon.GlobalTransform.Translation, Camera.ProjectionMatrix, Camera.ViewMatrix, Matrix.Identity);
+
+                    if (RenderTarget.Bounds.Contains((int)screenPos.X, (int)screenPos.Y))
+                    {
+                        DwarfGame.SpriteBatch.Draw(icon.Icon.Image, new Vector2(screenPos.X, screenPos.Y), icon.Icon.SourceRect, Color.White, 0.0f, new Vector2(icon.Icon.SourceRect.Width / 2.0f, icon.Icon.SourceRect.Height / 2.0f), icon.IconScale, SpriteEffects.None, 0);
+                    }
                 }
             }
-
-            DwarfGame.SpriteBatch.End();
+            finally
+            {
+                DwarfGame.SpriteBatch.End();
+            }
 
             World.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
             World.GraphicsDevice.DepthStencilState = DepthStencilState.Default;

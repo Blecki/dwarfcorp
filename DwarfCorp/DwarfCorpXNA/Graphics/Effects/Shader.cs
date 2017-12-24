@@ -279,6 +279,7 @@ namespace DwarfCorp
 
         public class Technique
         {
+            public static string Icon = "Icon";
             public static string Water = "Water";
             public static string WaterFlat = "WaterFlat";
             public static string WaterTextured = "WaterTextured";
@@ -340,6 +341,11 @@ namespace DwarfCorp
         public void SetTexturedTechnique()
         {
             CurrentTechnique = Techniques[TexturedTechniques[CurrentNumLights]];
+        }
+
+        public void SetIconTechnique()
+        {
+            CurrentTechnique = Techniques[Shader.Technique.Icon];
         }
 
         public void SetInstancedTechnique()

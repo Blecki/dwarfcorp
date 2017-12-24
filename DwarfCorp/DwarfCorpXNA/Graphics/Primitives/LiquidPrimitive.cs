@@ -273,7 +273,7 @@ namespace DwarfCorp
                                 }
                                 else if (curVertices.Length <= maxVertex + vertexSizeIncrease)
                                 {
-                                    ExtendedVertex[] newVerts = new ExtendedVertex[curVertices.Length * 2];
+                                    ExtendedVertex[] newVerts = new ExtendedVertex[MathFunctions.NearestPowerOf2(maxVertex + vertexSizeIncrease)];
 
                                     curVertices.CopyTo(newVerts, 0);
                                     curVertices = newVerts;
@@ -288,7 +288,7 @@ namespace DwarfCorp
                                 }
                                 else if (curIndexes.Length <= maxIndex + indexSizeIncrease)
                                 {
-                                    ushort[] newIdxs = new ushort[curIndexes.Length * 2];
+                                    ushort[] newIdxs = new ushort[MathFunctions.NearestPowerOf2(maxIndex + indexSizeIncrease)];
 
                                     curIndexes.CopyTo(newIdxs, 0);
                                     curIndexes = newIdxs;
