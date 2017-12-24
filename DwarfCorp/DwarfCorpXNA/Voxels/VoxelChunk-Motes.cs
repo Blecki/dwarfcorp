@@ -143,7 +143,7 @@ namespace DwarfCorp
                     if (v.Type.Name != biomeData.SoilLayer.VoxelType)
                         continue;
 
-                    if (DecalLibrary.GetDecalType(v.Decal).Name != biomeData.GrassDecal)
+                    if (v.GrassLayer == Y && GrassLibrary.GetGrassType(v.GrassType).Name != biomeData.GrassDecal)
                         continue;
 
                     // Biomes can contain multiple types of mote.

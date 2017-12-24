@@ -2380,6 +2380,10 @@
       <Name>snowman_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="decal-types.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>decal-types</Name>
+    </None>
     <None Include="tutorial.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>tutorial</Name>
@@ -2676,9 +2680,9 @@
       <Name>animal</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="decal-types.json">
+    <None Include="grass-types.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>decal-types</Name>
+      <Name>grass-types</Name>
     </None>
     <None Include="voxel-types.json">
       <Name>voxel-types</Name>

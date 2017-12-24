@@ -86,7 +86,8 @@ namespace DwarfCorp
         public List<Resource.ResourceTags> Crafts { get; set; }
         public List<Resource.ResourceTags> Encrustings { get; set; }
         public string TradeMusic { get; set; }
-        public Dictionary<Overworld.Biome, Overworld.Biome> Biomes = new Dictionary<Overworld.Biome, Overworld.Biome>();
+
+        public Dictionary<String, String> Biomes = new Dictionary<string, string>();
         public int Icon { get; set; }
 
         [OnDeserialized]

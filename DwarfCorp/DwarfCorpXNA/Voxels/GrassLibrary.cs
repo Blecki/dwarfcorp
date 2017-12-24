@@ -1,4 +1,4 @@
-// DecalLibrary.cs
+// GrassLibrary.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -40,20 +40,48 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class DecalLibrary
+    public class GrassLibrary
     {
-        public static DecalType emptyType = null;
+        public static GrassType emptyType = null;
 
-        public static Dictionary<string, DecalType> Types = new Dictionary<string, DecalType>();
-        public static List<DecalType> TypeList;
+        public static Dictionary<string, GrassType> Types = new Dictionary<string, GrassType>();
+        public static List<GrassType> TypeList;
 
-        public DecalLibrary()
+        public GrassLibrary()
         {
         }
 
+        private static GrassType.FringeTileUV[] CreateFringeUVs(Point[] Tiles)
+        {
+            System.Diagnostics.Debug.Assert(Tiles.Length == 3);
+
+            var r = new GrassType.FringeTileUV[8];
+
+            // North
+            r[0] = new GrassType.FringeTileUV(Tiles[0].X, (Tiles[0].Y * 2) + 1, 16, 32);
+            // East
+            r[1] = new GrassType.FringeTileUV((Tiles[1].X * 2) + 1, Tiles[1].Y, 32, 16);
+            // South
+            r[2] = new GrassType.FringeTileUV(Tiles[0].X, (Tiles[0].Y * 2), 16, 32);
+            // West
+            r[3] = new GrassType.FringeTileUV(Tiles[1].X * 2, Tiles[1].Y, 32, 16);
+
+            // NW
+            r[4] = new GrassType.FringeTileUV((Tiles[2].X * 2) + 1, (Tiles[2].Y * 2) + 1, 32, 32);
+            // NE
+            r[5] = new GrassType.FringeTileUV((Tiles[2].X * 2), (Tiles[2].Y * 2) + 1, 32, 32);
+            // SE
+            r[6] = new GrassType.FringeTileUV((Tiles[2].X * 2), (Tiles[2].Y * 2), 32, 32);
+            // SW
+            r[7] = new GrassType.FringeTileUV((Tiles[2].X * 2) + 1, (Tiles[2].Y * 2), 32, 32);
+
+            return r;
+        }
+
+
         public static void InitializeDefaultLibrary()
         {
-            TypeList = FileUtils.LoadJson<List<DecalType>>(ContentPaths.decal_types, false);
+            TypeList = FileUtils.LoadJson<List<GrassType>>(ContentPaths.grass_types, false);
             emptyType = TypeList[0];
 
             byte ID = 0;
@@ -63,20 +91,24 @@ namespace DwarfCorp
                 ++ID;
 
                 Types[type.Name] = type;
+
+                if (type.FringeTiles != null)
+                    type.FringeTransitionUVs = CreateFringeUVs(type.FringeTiles);
             }
         }
 
-        public static DecalType GetGrassType(byte id)
+        public static GrassType GetGrassType(byte id)
         {
             return TypeList[id];
         }
 
-        public static DecalType GetGrassType(string name)
+        public static GrassType GetGrassType(string name)
         {
             if (name == null)
+            {
                 return null;
-
-            DecalType r = null;
+            }
+            GrassType r = null;
             Types.TryGetValue(name, out r);
             return r;
         }

@@ -60,8 +60,10 @@ namespace DwarfCorp
                 yield return Status.Fail;
             }
             float time = 5 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.BuffedInt);
+
             Body item = EntityFactory.CreateEntity<Body>(Item.ItemType.Name, Voxel.WorldPosition + Vector3.One * 0.5f + Item.ItemType.SpawnOffset, 
                             Blackboard.Create("Resources", Item.ItemType.SelectedResources));
+
             if (Item.OverrideOrientation)
             {
                 item.Orient(Item.Orientation);

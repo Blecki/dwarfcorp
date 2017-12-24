@@ -132,6 +132,7 @@ namespace DwarfCorp
             des.GhostBody = EntityFactory.CreateGhostedEntity<Body>(des.ItemType.Name,
                 des.Location.WorldPosition + Vector3.One * 0.5f + AdditionalOffset, Color.LightBlue,
                 Blackboard.Create<List<ResourceAmount>>("Resources", des.ItemType.SelectedResources));
+
             World.ComponentManager.RootComponent.AddChild(des.GhostBody);
 
             if (des.OverrideOrientation)

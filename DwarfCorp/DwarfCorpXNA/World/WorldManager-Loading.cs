@@ -189,7 +189,8 @@ namespace DwarfCorp
                     DefaultShader = new Shader(Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders), true);
 
                     VoxelLibrary.InitializeDefaultLibrary(GraphicsDevice, Tilesheet);
-                    DecalLibrary.InitializeDefaultLibrary();
+                    GrassLibrary.InitializeDefaultLibrary();
+                DecalLibrary.InitializeDefaultLibrary();
 
                     bloom = new BloomComponent(Game)
                     {
