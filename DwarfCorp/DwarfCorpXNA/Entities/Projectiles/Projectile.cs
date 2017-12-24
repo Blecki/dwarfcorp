@@ -43,8 +43,8 @@ namespace DwarfCorp
 {
     public class Projectile : Physics, IUpdateableComponent
     {
-        public Sprite Sprite { get; set; }
-        public Sprite Sprite2 { get; set; }
+        public AnimatedSprite Sprite { get; set; }
+        public AnimatedSprite Sprite2 { get; set; }
         public ParticleTrigger HitParticles { get; set; }
         public Health.DamageAmount Damage { get; set; }
         public Body Target { get; set; }
@@ -77,27 +77,27 @@ namespace DwarfCorp
                 spriteSheet.FrameHeight = spriteSheet.FrameWidth;
             }
 
-            Sprite = AddChild(new Sprite(Manager, "Sprite", Matrix.CreateRotationY((float)Math.PI * 0.5f),
+            Sprite = AddChild(new AnimatedSprite(Manager, "Sprite", Matrix.CreateRotationY((float)Math.PI * 0.5f),
                 false)
             {
-                OrientationType = Sprite.OrientMode.Fixed
-            }) as Sprite;
+                OrientationType = AnimatedSprite.OrientMode.Fixed
+            }) as AnimatedSprite;
 
             Sprite.AddAnimation(AnimationLibrary.CreateSimpleAnimation(asset));
 
             if (singleSprite)
             {
-                this.Sprite.OrientationType = Sprite.OrientMode.Spherical;
+                this.Sprite.OrientationType = AnimatedSprite.OrientMode.Spherical;
             }
 
             if (!singleSprite)
             {
-                Sprite2 = Sprite.AddChild(new Sprite(Manager, "Sprite2",
+                Sprite2 = Sprite.AddChild(new AnimatedSprite(Manager, "Sprite2",
                     Matrix.CreateRotationX((float)Math.PI * 0.5f),
                     false)
                 {
-                    OrientationType = Sprite.OrientMode.Fixed
-                }) as Sprite;
+                    OrientationType = AnimatedSprite.OrientMode.Fixed
+                }) as AnimatedSprite;
 
                 Sprite2.AddAnimation(AnimationLibrary.CreateSimpleAnimation(asset));
             }

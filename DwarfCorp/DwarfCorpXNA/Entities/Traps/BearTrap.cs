@@ -45,7 +45,7 @@ namespace DwarfCorp
     public class BearTrap : Body, IUpdateableComponent
     {
         public Sensor Sensor { get; set; }
-        public Sprite Sprite { get; set; }
+        public AnimatedSprite Sprite { get; set; }
         public VoxelListener VoxListener { get; set; }
         public ParticleTrigger DeathParticles { get; set; }
         public float DamageAmount { get; set; }
@@ -104,7 +104,7 @@ namespace DwarfCorp
 
             var spriteSheet = new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap);
 
-            Sprite = AddChild(new Sprite(Manager, "Sprite", Matrix.Identity, false)) as Sprite;
+            Sprite = AddChild(new AnimatedSprite(Manager, "Sprite", Matrix.Identity, false)) as AnimatedSprite;
 
             Sprite.AddAnimation(AnimationLibrary.CreateAnimation(spriteSheet, new List<Point> { Point.Zero }, IdleAnimation));
 

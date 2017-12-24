@@ -180,7 +180,7 @@
     <Compile Include="Components\Graphics\Follower.cs" />
     <Compile Include="Components\Graphics\LightEmitter.cs" />
     <Compile Include="Components\Graphics\InstanceMesh.cs" />
-    <Compile Include="Components\Graphics\OrientedAnimation.cs" />
+    <Compile Include="Components\Graphics\OrientedAnimatedSprite.cs" />
     <Compile Include="Components\Graphics\LayeredSimpleSprite.cs" />
     <Compile Include="Components\Graphics\SimpleSprite.cs" />
     <Compile Include="ContextCommands\ChopCommand.cs" />
@@ -221,7 +221,7 @@
     <Compile Include="ParticleEffects\ParticleTrigger.cs" />
     <Compile Include="Components\Graphics\SelectionCircle.cs" />
     <Compile Include="Components\Graphics\Shadow.cs" />
-    <Compile Include="Components\Graphics\Sprite.cs" />
+    <Compile Include="Components\Graphics\AnimatedSprite.cs" />
     <Compile Include="Components\Graphics\Tinter.cs" />
     <Compile Include="Components\GUI\MinimapIcon.cs" />
     <Compile Include="Components\IRenderableComponent.cs" />

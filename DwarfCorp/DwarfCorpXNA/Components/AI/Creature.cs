@@ -222,7 +222,7 @@ namespace DwarfCorp
                 currentCharacterMode = value;
                 if (Parent != null && Sprite != null)
                 {
-                    if (Sprite.HasAnimation(currentCharacterMode, OrientedAnimation.Orientation.Forward))
+                    if (Sprite.HasAnimation(currentCharacterMode, OrientedAnimatedSprite.Orientation.Forward))
                     {
                         Sprite.SetCurrentAnimation(value.ToString());
                     }

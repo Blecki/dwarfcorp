@@ -62,11 +62,11 @@ namespace DwarfCorp
 
             var lampAnimation = AnimationLibrary.CreateAnimation(spriteSheet, frames, "LampAnimation");
  
-            var sprite = AddChild(new Sprite(Manager, "sprite", Matrix.Identity, false)
+            var sprite = AddChild(new AnimatedSprite(Manager, "sprite", Matrix.Identity, false)
             {
                 LightsWithVoxels = false,
-                OrientationType = Sprite.OrientMode.YAxis
-            }) as Sprite;
+                OrientationType = AnimatedSprite.OrientMode.YAxis
+            }) as AnimatedSprite;
 
             sprite.AddAnimation(lampAnimation);
             sprite.AnimPlayer.Loop(lampAnimation);

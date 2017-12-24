@@ -46,7 +46,7 @@ namespace DwarfCorp
     /// of the camera.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class OrientedAnimation : Sprite, IUpdateableComponent
+    public class OrientedAnimatedSprite : AnimatedSprite, IUpdateableComponent
     {
         public enum Orientation
         {
@@ -74,12 +74,12 @@ namespace DwarfCorp
         }
 
 
-        public OrientedAnimation()
+        public OrientedAnimatedSprite()
         {
             
         }
 
-        public OrientedAnimation(ComponentManager manager, string name,
+        public OrientedAnimatedSprite(ComponentManager manager, string name,
             Matrix localTransform) :
                 base(manager, name, localTransform, false)
         {
@@ -89,25 +89,10 @@ namespace DwarfCorp
         {
             CalculateCurrentOrientation(camera);
 
-            //foreach (string orient in OrientationStrings)
-            //{
-            //    string animationName = currentMode + orient;
 
-            //    if (!Animations.ContainsKey(animationName)) continue;
-
-            //    Animation animation = Animations[animationName];
-
-            //    // Update all the animations! Why? Because we trigger things based on the FORWARD animation frame,
-            //    // not based on whatever is current.
-            //    if (animation != CurrentAnimation)
-            //        animation.Update(gameTime);
-            //}
-
-            string s = currentMode + OrientationStrings[(int)CurrentOrientation];
+            var s = currentMode + OrientationStrings[(int)CurrentOrientation];
             if (Animations.ContainsKey(s))
-            {
                 AnimPlayer.ChangeAnimation(Animations[s], AnimationPlayer.ChangeAnimationOptions.Play | AnimationPlayer.ChangeAnimationOptions.Loop);
-            }
 
             base.Update(gameTime, chunks, camera);
         }

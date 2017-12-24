@@ -14,7 +14,7 @@ namespace DwarfCorp
     /// The rectangle is drawn in such a way that it is always more or less facing the camera.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class Sprite : Tinter, IUpdateableComponent, IRenderableComponent
+    public class AnimatedSprite : Tinter, IUpdateableComponent, IRenderableComponent
     {
         public Dictionary<string, Animation> Animations { get; set; }
 
@@ -35,7 +35,7 @@ namespace DwarfCorp
 
         public bool EnableWind { get; set; }
 
-        public Sprite(ComponentManager Manager, string name, Matrix localTransform, bool addToCollisionManager) :
+        public AnimatedSprite(ComponentManager Manager, string name, Matrix localTransform, bool addToCollisionManager) :
             base(Manager, name, localTransform, Vector3.Zero, Vector3.Zero, addToCollisionManager)
         {
             Animations = new Dictionary<string, Animation>();
@@ -45,7 +45,7 @@ namespace DwarfCorp
             EnableWind = false;
         }
 
-        public Sprite()
+        public AnimatedSprite()
         {
         }
 
