@@ -70,7 +70,7 @@ namespace DwarfCorp
                     {
                         var voxel = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
 
-                        if (voxel.GrassLayer == y)
+                        if (voxel.GrassType != 0)
                         {
                             var decal = GrassLibrary.GetGrassType(voxel.GrassType);
                             if (decal.Decay)
@@ -81,8 +81,6 @@ namespace DwarfCorp
                                     var newDecal = GrassLibrary.GetGrassType(decal.BecomeWhenDecays);
                                     if (newDecal != null)
                                         voxel.GrassType = newDecal.ID;
-                                    else
-                                        voxel.GrassLayer = VoxelConstants.ChunkSizeY;
                                 }
                             } 
                         }

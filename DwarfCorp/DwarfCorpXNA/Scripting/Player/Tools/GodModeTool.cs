@@ -129,10 +129,7 @@ namespace DwarfCorp
                 {
                     var v = vox;
                     if (!vox.IsEmpty)
-                    {
-                        v.GrassLayer = (byte)v.Coordinate.Y;
                         v.GrassType = type.ID;
-                    }
                 }
             }
             else if (Command.Contains("Decal/"))

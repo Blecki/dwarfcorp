@@ -61,7 +61,6 @@ namespace DwarfCorp
         public byte[] Liquid;
         public byte[] LiquidTypes;
         public byte[] Types;
-        public byte[] GrassLayer;
         public byte[] GrassType;
         public byte[] GrassDecay;
         public byte[] Decals;
@@ -77,9 +76,8 @@ namespace DwarfCorp
             LiquidTypes = new byte[VoxelConstants.ChunkVoxelCount];
             Liquid = new byte[VoxelConstants.ChunkVoxelCount];
             Explored = new bool[VoxelConstants.ChunkVoxelCount];
-            GrassLayer = new byte[VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeZ];
-            GrassType = new byte[VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeZ];
-            GrassDecay = new byte[VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeZ];
+            GrassType = new byte[VoxelConstants.ChunkVoxelCount];
+            GrassDecay = new byte[VoxelConstants.ChunkVoxelCount];
             Decals = new byte[VoxelConstants.ChunkVoxelCount];
             Origin = chunk.Origin;
             FillDataFromChunk(chunk);
@@ -98,7 +96,6 @@ namespace DwarfCorp
             Origin = chunkFile.Origin;
             Types = chunkFile.Types;
             Explored = chunkFile.Explored;
-            GrassLayer = chunkFile.GrassLayer;
             GrassType = chunkFile.GrassType;
             GrassDecay = chunkFile.GrassDecay;
         }
@@ -165,7 +162,6 @@ namespace DwarfCorp
                     c.Data.LiquidPresent[(i >> VoxelConstants.ZDivShift) >> VoxelConstants.XDivShift] += 1;
             }
 
-            GrassLayer.CopyTo(c.Data.GrassLayer, 0);
             GrassType.CopyTo(c.Data.GrassType, 0);
             GrassDecay.CopyTo(c.Data.GrassDecay, 0);
             Decals.CopyTo(c.Data.Decals, 0);
@@ -178,7 +174,6 @@ namespace DwarfCorp
         {
             chunk.Data.Types.CopyTo(Types, 0);
             chunk.Data.IsExplored.CopyTo(Explored, 0);
-            chunk.Data.GrassLayer.CopyTo(GrassLayer, 0);
             chunk.Data.GrassType.CopyTo(GrassType, 0);
             chunk.Data.GrassDecay.CopyTo(GrassDecay, 0);
             chunk.Data.Decals.CopyTo(Decals, 0);

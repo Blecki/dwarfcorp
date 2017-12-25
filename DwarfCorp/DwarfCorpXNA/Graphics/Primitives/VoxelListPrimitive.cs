@@ -497,8 +497,7 @@ namespace DwarfCorp
             BoxPrimitive.FaceDescriptor Face,
             int ExploredVerts)
         {
-            var grassLayer = V.GrassLayer;
-            if (grassLayer != V.Coordinate.Y) return;
+            if (V.GrassType == 0) return;
 
             var decalType = GrassLibrary.GetGrassType(V.GrassType);
 
@@ -521,7 +520,7 @@ namespace DwarfCorp
                     // Draw horizontal fringe.
                     if (!neighbor.IsEmpty)
                     {
-                        if (neighbor.GrassLayer == V.GrassLayer &&
+                        if (neighbor.GrassType != 0 &&
                             GrassLibrary.GetGrassType(neighbor.GrassType).FringePrecedence >= decalType.FringePrecedence)
                             continue;
                     }
@@ -613,19 +612,19 @@ namespace DwarfCorp
                 {
                     if (!handle.IsEmpty)
                     {
-                        if (handle.GrassLayer == V.GrassLayer &&
+                        if (handle.GrassType != 0 &&
                             GrassLibrary.GetGrassType(handle.GrassType).FringePrecedence >= decalType.FringePrecedence)
                             continue;
                     }
 
                     var manhattanA = new VoxelHandle(Chunk.Manager.ChunkData,
                         V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[s]);
-                    if (!manhattanA.IsValid || (manhattanA.GrassLayer == V.GrassLayer && manhattanA.GrassType == V.GrassType))
+                    if (!manhattanA.IsValid || (manhattanA.GrassType == V.GrassType))
                         continue;
 
                     manhattanA = new VoxelHandle(Chunk.Manager.ChunkData,
                         V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[FringeIndicies[4 + s, 5]]);
-                    if (!manhattanA.IsValid || (manhattanA.GrassLayer == V.GrassLayer && manhattanA.GrassType == V.GrassType))
+                    if (!manhattanA.IsValid || (manhattanA.GrassType == V.GrassType))
                         continue;
 
                     // Twizzle vertex positions.

@@ -310,7 +310,7 @@ namespace DwarfCorp
                         }
                     }
 
-                    if (topVoxel.Type.Name != biomeData.SoilLayer.VoxelType || topVoxel.GrassLayer >= VoxelConstants.ChunkSizeY)
+                    if (topVoxel.Type.Name != biomeData.SoilLayer.VoxelType)
                         continue;
 
                     foreach (VegetationData veg in biomeData.Vegetation)
