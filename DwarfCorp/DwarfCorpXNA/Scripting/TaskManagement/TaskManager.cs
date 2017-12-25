@@ -74,7 +74,8 @@ namespace DwarfCorp
             }
         }
 
-        public Task GetBestTask(CreatureAI creature)
+
+        public Task GetBestTask(CreatureAI creature, int minPriority=-1)
         {
             Task best = null;
             float bestCost = float.MaxValue;
@@ -88,7 +89,7 @@ namespace DwarfCorp
 
                 var cost = task.ComputeCost(creature.Creature);
 
-                if (task.Priority > bestPriority)
+                if (task.Priority > bestPriority && (int)task.Priority > minPriority)
                 {
                     bestPriority = task.Priority;
                     best = task;
@@ -107,8 +108,9 @@ namespace DwarfCorp
                 best.CurrentAssigned++;
                 if (best.CurrentAssigned >= best.MaxAssignable)
                     Tasks.Remove(best);
+                return best.Clone();
             }
-            return best;
+            return null;
         }
 
         public void Update(List<CreatureAI> creatures)

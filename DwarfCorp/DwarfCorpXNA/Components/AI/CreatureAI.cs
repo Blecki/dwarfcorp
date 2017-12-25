@@ -307,6 +307,7 @@ namespace DwarfCorp
             return bestTask;
         }
 
+        private Timer _preEmptTimer = new Timer(1.21f, false);
         /// <summary> Looks for any tasks with higher priority than the current task. Cancel the current task and do that one instead. </summary>
         public void PreEmptTasks()
         {
@@ -320,6 +321,12 @@ namespace DwarfCorp
                     newTask = task;
                     break;
                 }
+            }
+
+            _preEmptTimer.Update(DwarfTime.LastTime);
+            if (_preEmptTimer.HasTriggered && newTask == null && Faction == World.PlayerFaction)
+            {
+                newTask = World.Master.TaskManager.GetBestTask(this, (int)CurrentTask.Priority);
             }
 
             if (newTask != null)
